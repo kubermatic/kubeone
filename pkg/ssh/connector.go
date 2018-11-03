@@ -1,6 +1,7 @@
 package ssh
 
 import (
+	"strings"
 	"time"
 
 	"github.com/kubermatic/kubeone/pkg/manifest"
@@ -22,14 +23,12 @@ func (c *Connector) Connect(node manifest.HostManifest) (Connection, error) {
 	conn, exists := c.connections[node.PublicAddress]
 	if !exists || conn.Closed() {
 		opts := Opts{
-			Username:       node.Username,
-			Hostname:       node.PublicAddress,
 			AgentSocketEnv: "SSH_AUTH_SOCK",
+			Hostname:       node.PublicAddress,
+			KeyFile:        strings.TrimSuffix(node.SSHPublicKeyFile, ".pub"),
+			Port:           node.Port,
 			Timeout:        10 * time.Second,
-		}
-
-		if node.Port > 0 {
-			opts.Port = node.Port
+			Username:       node.Username,
 		}
 
 		conn, err = NewConnection(opts)

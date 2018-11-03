@@ -33,7 +33,7 @@ resource "aws_default_vpc" "default" {}
 
 resource "aws_key_pair" "deployer" {
   key_name   = "${var.cluster_name}-deployer-key"
-  public_key = "${file("${var.ssh_key_file}")}"
+  public_key = "${file("${var.ssh_public_key_file}")}"
 }
 
 resource "aws_security_group" "common" {

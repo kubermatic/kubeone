@@ -46,12 +46,12 @@ func (m *Manifest) EtcdClusterToken() (string, error) {
 
 // HostManifest describes a single master node.
 type HostManifest struct {
-	PublicAddress  string `json:"public_address"`
-	PrivateAddress string `json:"private_address"`
-	Port           int    `json:"port"`
-	Username       string `json:"username"`
-	SSHKeyFile     string `json:"ssh_key_file"`
-	SSHSocket      string `json:"ssh_socket"`
+	PublicAddress    string `json:"public_address"`
+	PrivateAddress   string `json:"private_address"`
+	Port             int    `json:"port"`
+	Username         string `json:"username"`
+	SSHPublicKeyFile string `json:"ssh_public_key_file"`
+	SSHSocket        string `json:"ssh_socket"`
 }
 
 // EtcdURL with schema

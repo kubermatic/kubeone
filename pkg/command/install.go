@@ -25,12 +25,12 @@ func InstallCommand(logger *logrus.Logger) cli.Command {
 				EnvVar: "MANIFEST_FILE",
 				Name:   "manifest, m",
 				Usage:  "path to the kubeone manifest",
-				Value:  "manifest.yaml",
+				Value:  "manifest.json",
 			},
 			cli.StringFlag{
 				EnvVar: "TF_OUTPUT",
 				Name:   "tfjson, t",
-				Usage:  "path to terraform output JSON",
+				Usage:  "path to terraform output JSON or - for stdin",
 				Value:  "",
 			},
 		},
@@ -61,7 +61,7 @@ func InstallAction(logger *logrus.Logger) cli.ActionFunc {
 					return fmt.Errorf("unable to load terraform output from file: %v", err)
 				}
 			}
-			
+
 			var tfConfig *terraform.Config
 			if tfConfig, err = terraform.NewConfigFromJSON(tfJSON); err != nil {
 				return fmt.Errorf("failed to parse terraform config: %v", err)

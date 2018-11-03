@@ -2,6 +2,7 @@ package terraform
 
 import (
 	"encoding/json"
+	"strconv"
 
 	"github.com/kubermatic/kubeone/pkg/manifest"
 )
@@ -16,13 +17,13 @@ type Config struct {
 
 	KubeOneHosts struct {
 		Value struct {
-			ControlPlane struct {
-				PublicAddress  []string `json:"public_address"`
-				PrivateAddress []string `json:"private_address"`
-				User           string   `json:"user"`
-				SSHKeyFile     string   `json:"ssh_key_file"`
-				SSHPort        int      `json:"ssh_port"`
-				SSHAgentSocket string   `json:"ssh_agent_socket"`
+			ControlPlane []struct {
+				PublicAddress    []string `json:"public_address"`
+				PrivateAddress   []string `json:"private_address"`
+				User             string   `json:"user"`
+				SSHPublicKeyFile string   `json:"ssh_public_key_file"`
+				SSHPort          string   `json:"ssh_port"`
+				SSHAgentSocket   string   `json:"ssh_agent_socket"`
 			} `json:"control_plane"`
 		} `json:"value"`
 	} `json:"kubeone_hosts"`
@@ -36,28 +37,33 @@ func NewConfigFromJSON(j []byte) (c *Config, err error) {
 
 // Apply adds the terraform configuration options to the given manifest
 func (c Config) Apply(m *manifest.Manifest) {
+	if c.KubeOneAPI.Value.Endpoint != "" {
+		m.LoadBalancer.Address = c.KubeOneAPI.Value.Endpoint
+	}
+
 	var hosts []manifest.HostManifest
-	privateIPs := c.KubeOneHosts.Value.ControlPlane.PrivateAddress
-	for i, publicIP := range c.KubeOneHosts.Value.ControlPlane.PublicAddress {
+	cp := c.KubeOneHosts.Value.ControlPlane[0]
+	sshPort, _ := strconv.Atoi(cp.SSHPort)
+
+	privateIPs := cp.PrivateAddress
+
+	for i, publicIP := range cp.PublicAddress {
 		privateIP := publicIP
 		if i < len(privateIPs) {
 			privateIP = privateIPs[i]
 		}
 
 		hosts = append(hosts, manifest.HostManifest{
-			PublicAddress:  publicIP,
-			PrivateAddress: privateIP,
-			Username:       c.KubeOneHosts.Value.ControlPlane.User,
-			SSHKeyFile:     c.KubeOneHosts.Value.ControlPlane.SSHKeyFile,
-			Port:           c.KubeOneHosts.Value.ControlPlane.SSHPort,
-			SSHSocket:      c.KubeOneHosts.Value.ControlPlane.SSHAgentSocket,
+			PublicAddress:    publicIP,
+			PrivateAddress:   privateIP,
+			Username:         cp.User,
+			SSHPublicKeyFile: cp.SSHPublicKeyFile,
+			Port:             sshPort,
+			SSHSocket:        cp.SSHAgentSocket,
 		})
 	}
 
 	if len(hosts) > 0 {
 		m.Hosts = hosts
-	}
-	if c.KubeOneAPI.Value.Endpoint != "" {
-		m.LoadBalancer.Address = c.KubeOneAPI.Value.Endpoint
 	}
 }

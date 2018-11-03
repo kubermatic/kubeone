@@ -8,8 +8,13 @@ variable "aws_region" {
   description = "AWS region to speak to"
 }
 
-variable "ssh_key_file" {
+variable "ssh_public_key_file" {
   description = "SSH key name"
+}
+
+variable "ssh_port" {
+  description = "SSH port"
+  default     = 22
 }
 
 variable "control_plane_count" {
