@@ -13,13 +13,13 @@ func (t *CreateJoinTokenTask) Execute(ctx *Context) error {
 
 	node := ctx.Manifest.Hosts[0]
 	logger := ctx.Logger.WithFields(logrus.Fields{
-		"node":   node.Address,
+		"node":   node.PublicAddress,
 		"master": true,
 	})
 
 	conn, err := ctx.Connector.Connect(node)
 	if err != nil {
-		return fmt.Errorf("failed to connect to %s: %v", node.Address, err)
+		return fmt.Errorf("failed to connect to %s: %v", node.PublicAddress, err)
 	}
 
 	logger.Infoln("Running kubeadm…")

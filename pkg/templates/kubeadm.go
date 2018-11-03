@@ -57,11 +57,11 @@ func KubeadmConfig(manifest *manifest.Manifest) (string, error) {
 	apiServerCertSANs := make([]string, 0)
 
 	for _, node := range masterNodes {
-		etcdEndpoints = append(etcdEndpoints, node.EtcdUrl())
+		etcdEndpoints = append(etcdEndpoints, node.EtcdURL())
 		etcdSANs = append(etcdSANs, node.PrivateAddress)
 
 		// TODO: add loadbalancers
-		apiServerCertSANs = append(apiServerCertSANs, node.PrivateAddress, node.Address)
+		apiServerCertSANs = append(apiServerCertSANs, node.PrivateAddress, node.PublicAddress)
 	}
 
 	cfg := kubeadmMasterConfiguration{
@@ -72,7 +72,7 @@ func KubeadmConfig(manifest *manifest.Manifest) (string, error) {
 
 		API: kubeadmMasterConfigurationAPI{
 			AdvertiseAddress:     masterNodes[0].PrivateAddress,
-			ControlPlaneEndpoint: masterNodes[0].Address,
+			ControlPlaneEndpoint: masterNodes[0].PublicAddress,
 		},
 
 		Etcd: kubeadmMasterConfigurationEtcd{

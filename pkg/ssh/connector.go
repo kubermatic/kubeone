@@ -19,11 +19,11 @@ func NewConnector() *Connector {
 func (c *Connector) Connect(node manifest.HostManifest) (Connection, error) {
 	var err error
 
-	conn, exists := c.connections[node.Address]
+	conn, exists := c.connections[node.PublicAddress]
 	if !exists || conn.Closed() {
 		opts := Opts{
 			Username:       node.Username,
-			Hostname:       node.Address,
+			Hostname:       node.PublicAddress,
 			AgentSocketEnv: "SSH_AUTH_SOCK",
 			Timeout:        10 * time.Second,
 		}
@@ -37,7 +37,7 @@ func (c *Connector) Connect(node manifest.HostManifest) (Connection, error) {
 			return nil, err
 		}
 
-		c.connections[node.Address] = conn
+		c.connections[node.PublicAddress] = conn
 	}
 
 	return conn, nil

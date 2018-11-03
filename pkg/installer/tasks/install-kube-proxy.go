@@ -13,13 +13,13 @@ func (t *InstallKubeProxyTask) Execute(ctx *Context) error {
 
 	node := ctx.Manifest.Hosts[0]
 	logger := ctx.Logger.WithFields(logrus.Fields{
-		"node":   node.Address,
+		"node":   node.PublicAddress,
 		"master": true,
 	})
 
 	conn, err := ctx.Connector.Connect(node)
 	if err != nil {
-		return fmt.Errorf("failed to connect to %s: %v", node.Address, err)
+		return fmt.Errorf("failed to connect to %s: %v", node.PublicAddress, err)
 	}
 
 	logger.Infoln("Running kubectl…")
@@ -39,7 +39,7 @@ kubectl create -f kube-proxy-configmap.yaml
 kubectl -n kube-system delete pod -l k8s-app=kube-proxy
 `, map[string]string{
 		"WORK_DIR":   ctx.WorkDir,
-		"IP_ADDRESS": node.Address,
+		"IP_ADDRESS": node.PublicAddress,
 	})
 	if err != nil {
 		return fmt.Errorf("failed to construct shell script: %v", err)

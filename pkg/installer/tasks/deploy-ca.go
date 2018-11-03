@@ -18,7 +18,7 @@ func (t *DeployCATask) Execute(ctx *Context) error {
 
 	for idx, node := range ctx.Manifest.Hosts {
 		logger := ctx.Logger.WithFields(logrus.Fields{
-			"node": node.Address,
+			"node": node.PublicAddress,
 		})
 
 		err = t.executeNode(ctx, node, idx, logger)
@@ -33,7 +33,7 @@ func (t *DeployCATask) Execute(ctx *Context) error {
 func (t *DeployCATask) executeNode(ctx *Context, node manifest.HostManifest, nodeIndex int, logger logrus.FieldLogger) error {
 	conn, err := ctx.Connector.Connect(node)
 	if err != nil {
-		return fmt.Errorf("failed to connect to %s: %v", node.Address, err)
+		return fmt.Errorf("failed to connect to %s: %v", node.PublicAddress, err)
 	}
 
 	logger.Infoln("Uploading files…")

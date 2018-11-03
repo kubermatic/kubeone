@@ -24,7 +24,7 @@ func (t *InstallPrerequisitesTask) Execute(ctx *Context) error {
 
 	for _, node := range ctx.Manifest.Hosts {
 		logger := ctx.Logger.WithFields(logrus.Fields{
-			"node": node.Address,
+			"node": node.PublicAddress,
 		})
 
 		err = t.executeNode(ctx, node, logger)

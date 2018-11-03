@@ -46,7 +46,7 @@ func (m *Manifest) EtcdClusterToken() (string, error) {
 
 // HostManifest describes a single master node.
 type HostManifest struct {
-	Address        string `json:"address"`
+	PublicAddress  string `json:"address"`
 	PrivateAddress string `json:"private_address"`
 	Port           int    `json:"port"`
 	Username       string `json:"username"`
@@ -54,11 +54,11 @@ type HostManifest struct {
 	SSHSocket      string `json:"ssh_socket"`
 }
 
-func (m *HostManifest) EtcdUrl() string {
+func (m *HostManifest) EtcdURL() string {
 	return fmt.Sprintf("https://%s:2379", m.PrivateAddress)
 }
 
-func (m *HostManifest) EtcdPeerUrl() string {
+func (m *HostManifest) EtcdPeerURL() string {
 	return fmt.Sprintf("https://%s:2380", m.PrivateAddress)
 }
 

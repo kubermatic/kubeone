@@ -18,7 +18,7 @@ func (t *WaitForEtcdTask) Execute(ctx *Context) error {
 
 	for _, node := range ctx.Manifest.Hosts {
 		logger := ctx.Logger.WithFields(logrus.Fields{
-			"node": node.Address,
+			"node": node.PublicAddress,
 		})
 
 		err = t.executeNode(ctx, node, logger)
@@ -33,7 +33,7 @@ func (t *WaitForEtcdTask) Execute(ctx *Context) error {
 func (t *WaitForEtcdTask) executeNode(ctx *Context, node manifest.HostManifest, logger logrus.FieldLogger) error {
 	conn, err := ctx.Connector.Connect(node)
 	if err != nil {
-		return fmt.Errorf("failed to connect to %s: %v", node.Address, err)
+		return fmt.Errorf("failed to connect to %s: %v", node.PublicAddress, err)
 	}
 
 	command := fmt.Sprintf(`

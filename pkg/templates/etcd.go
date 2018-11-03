@@ -31,7 +31,7 @@ func EtcdConfig(manifest *manifest.Manifest, instance int) (string, error) {
 	etcdRing := make([]string, 0)
 
 	for i, node := range masterNodes {
-		etcdRing = append(etcdRing, fmt.Sprintf("etcd-%d=%s", i, node.EtcdPeerUrl()))
+		etcdRing = append(etcdRing, fmt.Sprintf("etcd-%d=%s", i, node.EtcdPeerURL()))
 	}
 
 	pod := corev1.Pod{
@@ -58,12 +58,12 @@ func EtcdConfig(manifest *manifest.Manifest, instance int) (string, error) {
 						"etcd",
 						"--data-dir=/var/lib/etcd",
 						fmt.Sprintf("--name=%s", name),
-						fmt.Sprintf("--advertise-client-urls=%s", node.EtcdUrl()),
-						fmt.Sprintf("--listen-client-urls=%s", node.EtcdUrl()),
-						fmt.Sprintf("--listen-peer-urls=%s", node.EtcdPeerUrl()),
+						fmt.Sprintf("--advertise-client-urls=%s", node.EtcdURL()),
+						fmt.Sprintf("--listen-client-urls=%s", node.EtcdURL()),
+						fmt.Sprintf("--listen-peer-urls=%s", node.EtcdPeerURL()),
 
 						"--initial-cluster-state=new",
-						fmt.Sprintf("--initial-advertise-peer-urls=%s", node.EtcdPeerUrl()),
+						fmt.Sprintf("--initial-advertise-peer-urls=%s", node.EtcdPeerURL()),
 						fmt.Sprintf("--initial-cluster=%s", strings.Join(etcdRing, ",")),
 						fmt.Sprintf("--initial-cluster-token=%s", token),
 
