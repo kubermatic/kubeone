@@ -5,12 +5,13 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-
-	"github.com/sirupsen/logrus"
-	"github.com/urfave/cli"
+	"os"
 
 	"github.com/kubermatic/kubeone/pkg/installer"
 	"github.com/kubermatic/kubeone/pkg/manifest"
+	"github.com/kubermatic/kubeone/pkg/terraform"
+	"github.com/sirupsen/logrus"
+	"github.com/urfave/cli"
 )
 
 // InstallCommand wapper for logger
@@ -50,14 +51,22 @@ func InstallAction(logger *logrus.Logger) cli.ActionFunc {
 		}
 
 		if tf := ctx.String("tfjson"); tf != "" {
-			tfjson, err1 := ioutil.ReadFile(tf)
-			if err1 != nil {
-				return fmt.Errorf("unable to load tfjson: %v", err1)
+			var tfJSON []byte
+			if tf == "-" {
+				if tfJSON, err = ioutil.ReadAll(os.Stdin); err != nil {
+					return fmt.Errorf("unable to load terraform output from stdin: %v", err)
+				}
+			} else {
+				if tfJSON, err = ioutil.ReadFile(tf); err != nil {
+					return fmt.Errorf("unable to load terraform output from file: %v", err)
+				}
 			}
-
-			if err2 := manifest.Merge(tfjson); err != nil {
-				return fmt.Errorf("tfjson is invalid %v", err2)
+			
+			var tfConfig *terraform.Config
+			if tfConfig, err = terraform.NewConfigFromJSON(tfJSON); err != nil {
+				return fmt.Errorf("failed to parse terraform config: %v", err)
 			}
+			tfConfig.Apply(manifest)
 		}
 
 		if err = manifest.Validate(); err != nil {

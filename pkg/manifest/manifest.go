@@ -19,12 +19,6 @@ type Manifest struct {
 	etcdClusterToken string
 }
 
-// Merge terraform output on top of manifest
-func (m *Manifest) Merge([]byte) error {
-	// TODO
-	return nil
-}
-
 // Validate checks if the manifest makes sense.
 func (m *Manifest) Validate() error {
 	if len(m.Hosts) == 0 {

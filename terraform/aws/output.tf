@@ -1,16 +1,18 @@
-output "api" {
+output "kubeone_api" {
   value = {
     endpoint = "${aws_lb.control_plane.dns_name}"
   }
 }
 
-output "hosts" {
+output "kubeone_hosts" {
   value = {
-    control_planes = {
+    control_plane = {
       public_address  = "${aws_instance.control_plane.*.public_ip}"
       private_address = "${aws_instance.control_plane.*.private_ip}"
       user            = "ubuntu"
       ssh_key_file    = "${var.ssh_key_file}"
+      ssh_port        = 22
+      # ssh_agent_socket = "/run/user/1000/keyring/ssh"
     }
   }
 }
