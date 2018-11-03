@@ -10,7 +10,7 @@ output "hosts" {
       public_address  = "${aws_instance.control_plane.*.public_ip}"
       private_address = "${aws_instance.control_plane.*.private_ip}"
       user           = "ubuntu"
-      ssh_key_file   = ".keys/clustomer"
+      ssh_key_file   = "${var.ssh_key_file}"
     }
   }
 }
