@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/kubermatic/kubermatic-installer/pkg/ssh"
+	"github.com/kubermatic/kubeone/pkg/ssh"
 )
 
 type Configuration struct {
