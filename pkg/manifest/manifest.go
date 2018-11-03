@@ -46,7 +46,7 @@ func (m *Manifest) EtcdClusterToken() (string, error) {
 
 // HostManifest describes a single master node.
 type HostManifest struct {
-	PublicAddress  string `json:"address"`
+	PublicAddress  string `json:"public_address"`
 	PrivateAddress string `json:"private_address"`
 	Port           int    `json:"port"`
 	Username       string `json:"username"`
