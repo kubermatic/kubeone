@@ -13,19 +13,34 @@ import (
 	"github.com/kubermatic/kubeone/pkg/manifest"
 )
 
+// InstallCommand wapper for logger
 func InstallCommand(logger *logrus.Logger) cli.Command {
 	return cli.Command{
-		Name:      "install",
-		Usage:     "Installs Kubernetes onto pre-existing machines",
-		Action:    InstallAction(logger),
-		ArgsUsage: "MANIFEST_FILE",
+		Name:   "install",
+		Usage:  "Installs Kubernetes onto pre-existing machines",
+		Action: InstallAction(logger),
+		Flags: []cli.Flag{
+			cli.StringFlag{
+				EnvVar: "MANIFEST_FILE",
+				Name:   "manifest, m",
+				Usage:  "path to the kubeone manifest",
+				Value:  "manifest.yaml",
+			},
+			cli.StringFlag{
+				EnvVar: "TF_OUTPUT",
+				Name:   "tfjson, t",
+				Usage:  "path to terraform output JSON",
+				Value:  "",
+			},
+		},
 	}
 }
 
+// InstallAction wrapper for logger
 func InstallAction(logger *logrus.Logger) cli.ActionFunc {
 	return handleErrors(logger, setupLogger(logger, func(ctx *cli.Context) error {
-		manifestFile := ctx.Args().First()
-		if len(manifestFile) == 0 {
+		manifestFile := ctx.String("manifest")
+		if manifestFile == "" {
 			return errors.New("no manifest file given")
 		}
 
@@ -34,8 +49,18 @@ func InstallAction(logger *logrus.Logger) cli.ActionFunc {
 			return fmt.Errorf("failed to load manifest: %v", err)
 		}
 
-		err = manifest.Validate()
-		if err != nil {
+		if tf := ctx.String("tfjson"); tf != "" {
+			tfjson, err1 := ioutil.ReadFile(tf)
+			if err1 != nil {
+				return fmt.Errorf("unable to load tfjson: %v", err1)
+			}
+
+			if err2 := manifest.Merge(tfjson); err != nil {
+				return fmt.Errorf("tfjson is invalid %v", err2)
+			}
+		}
+
+		if err = manifest.Validate(); err != nil {
 			return fmt.Errorf("manifest is invalid: %v", err)
 		}
 

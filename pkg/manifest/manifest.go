@@ -19,6 +19,12 @@ type Manifest struct {
 	etcdClusterToken string
 }
 
+// Merge terraform output on top of manifest
+func (m *Manifest) Merge([]byte) error {
+	// TODO
+	return nil
+}
+
 // Validate checks if the manifest makes sense.
 func (m *Manifest) Validate() error {
 	if len(m.Hosts) == 0 {
@@ -54,10 +60,12 @@ type HostManifest struct {
 	SSHSocket      string `json:"ssh_socket"`
 }
 
+// EtcdURL with schema
 func (m *HostManifest) EtcdURL() string {
 	return fmt.Sprintf("https://%s:2379", m.PrivateAddress)
 }
 
+// EtcdPeerURL with schema
 func (m *HostManifest) EtcdPeerURL() string {
 	return fmt.Sprintf("https://%s:2380", m.PrivateAddress)
 }
@@ -79,6 +87,7 @@ type VersionManifest struct {
 	Docker     string `json:"docker"`
 }
 
+// Etcd version
 func (m *VersionManifest) Etcd() string {
 	return "3.1.13"
 }

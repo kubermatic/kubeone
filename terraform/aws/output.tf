@@ -9,8 +9,8 @@ output "hosts" {
     control_planes = {
       public_address  = "${aws_instance.control_plane.*.public_ip}"
       private_address = "${aws_instance.control_plane.*.private_ip}"
-      user           = "ubuntu"
-      ssh_key_file   = "${var.ssh_key_file}"
+      user            = "ubuntu"
+      ssh_key_file    = "${var.ssh_key_file}"
     }
   }
 }
