@@ -4,12 +4,12 @@ import (
 	"bytes"
 	"fmt"
 
+	"github.com/alecthomas/template"
+	"github.com/sirupsen/logrus"
+
 	"github.com/kubermatic/kubeone/pkg/manifest"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/templates"
-
-	"github.com/alecthomas/template"
-	"github.com/sirupsen/logrus"
 )
 
 type InstallPrerequisitesTask struct{}

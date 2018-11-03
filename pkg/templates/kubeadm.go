@@ -4,8 +4,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/kubermatic/kubeone/pkg/manifest"
 	yaml "gopkg.in/yaml.v2"
+
+	"github.com/kubermatic/kubeone/pkg/manifest"
 )
 
 type kubeadmMasterConfigurationAPI struct {

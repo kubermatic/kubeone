@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/sirupsen/logrus"
+
 	"github.com/kubermatic/kubeone/pkg/installer/tasks"
 	"github.com/kubermatic/kubeone/pkg/manifest"
 	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/sirupsen/logrus"
 )
 
 type installer struct {

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/kubermatic/kubeone/pkg/manifest"
-
 	"github.com/sirupsen/logrus"
+
+	"github.com/kubermatic/kubeone/pkg/manifest"
 )
 
 type WaitForEtcdTask struct{}

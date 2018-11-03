@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"github.com/tmc/scp"
-
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
 )

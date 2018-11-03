@@ -1,9 +1,10 @@
 package tasks
 
 import (
+	"github.com/sirupsen/logrus"
+
 	"github.com/kubermatic/kubeone/pkg/manifest"
 	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/sirupsen/logrus"
 )
 
 type Context struct {

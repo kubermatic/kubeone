@@ -6,10 +6,11 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/kubermatic/kubeone/pkg/installer"
-	"github.com/kubermatic/kubeone/pkg/manifest"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
+
+	"github.com/kubermatic/kubeone/pkg/installer"
+	"github.com/kubermatic/kubeone/pkg/manifest"
 )
 
 func InstallCommand(logger *logrus.Logger) cli.Command {

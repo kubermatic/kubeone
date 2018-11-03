@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/kubermatic/kubeone/pkg/manifest"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	"github.com/kubermatic/kubeone/pkg/manifest"
 )
 
 func hostPathTypePtr(s corev1.HostPathType) *corev1.HostPathType {

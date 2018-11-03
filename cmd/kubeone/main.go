@@ -3,9 +3,10 @@ package main
 import (
 	"os"
 
-	"github.com/kubermatic/kubeone/pkg/command"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
+
+	"github.com/kubermatic/kubeone/pkg/command"
 )
 
 func main() {
