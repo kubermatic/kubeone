@@ -14,7 +14,7 @@ data "aws_ami" "ubuntu" {
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-xenial-18.04-amd64-server-*"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
   }
 
   filter {
@@ -30,6 +30,11 @@ data "aws_subnet_ids" "default" {
 }
 
 resource "aws_default_vpc" "default" {}
+
+resource "aws_key_pair" "deployer" {
+  key_name   = "${var.cluster_name}-deployer-key"
+  public_key = "${file("${var.ssh_key_file}")}"
+}
 
 resource "aws_security_group" "common" {
   name        = "${var.cluster_name}-common"
@@ -141,7 +146,7 @@ EOF
 }
 
 resource "aws_lb" "control_plane" {
-  name               = "${var.cluster_name}-control_plane-lb"
+  name               = "${var.cluster_name}-control-plane-lb"
   internal           = false
   load_balancer_type = "network"
   subnets            = ["${data.aws_subnet_ids.default.ids}"]
@@ -187,7 +192,7 @@ resource "aws_instance" "control_plane" {
   instance_type          = "${var.control_plane_type}"
   iam_instance_profile   = "${aws_iam_instance_profile.profile.name}"
   ami                    = "${data.aws_ami.ubuntu.id}"
-  key_name               = "${var.ssh_key}"
+  key_name               = "${aws_key_pair.deployer.key_name}"
   vpc_security_group_ids = ["${aws_security_group.common.id}", "${aws_security_group.control_plane.id}"]
   availability_zone      = "${data.aws_availability_zones.available.names[count.index % local.az_count]}"
 

@@ -4,11 +4,11 @@ variable "cluster_name" {
 }
 
 variable "aws_region" {
-  default     = "eu-west-2"
+  default     = "eu-central-1"
   description = "AWS region to speak to"
 }
 
-variable "ssh_key" {
+variable "ssh_key_file" {
   description = "SSH key name"
 }
 
@@ -18,7 +18,7 @@ variable "control_plane_count" {
 }
 
 variable "control_plane_type" {
-  default     = "m5.large"
+  default     = "t3.medium"
   description = "AWS instance type"
 }
 

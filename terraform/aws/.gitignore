@@ -1,1 +1,4 @@
 .terraform
+.keys
+terraform.tfstate*
+terraform.tfvars
