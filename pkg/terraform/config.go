@@ -38,7 +38,7 @@ func NewConfigFromJSON(j []byte) (c *Config, err error) {
 // Apply adds the terraform configuration options to the given manifest
 func (c Config) Apply(m *manifest.Manifest) {
 	if c.KubeOneAPI.Value.Endpoint != "" {
-		m.LoadBalancer.Address = c.KubeOneAPI.Value.Endpoint
+		m.APIServer.Address = c.KubeOneAPI.Value.Endpoint
 	}
 
 	var hosts []manifest.HostManifest

@@ -9,11 +9,11 @@ import (
 
 // Manifest describes the terraform output we expect.
 type Manifest struct {
-	Hosts        []HostManifest       `json:"hosts"`
-	LoadBalancer LoadBalancerManifest `json:"loadbalancer"`
-	Provider     ProviderManifest     `json:"provider"`
-	Versions     VersionManifest      `json:"versions"`
-	Network      NetworkManifest      `json:"network"`
+	Hosts     []HostManifest    `yaml:"hosts"`
+	APIServer APIServerManifest `yaml:"apiserver"`
+	Provider  ProviderManifest  `yaml:"provider"`
+	Versions  VersionManifest   `yaml:"versions"`
+	Network   NetworkManifest   `yaml:"network"`
 
 	// stuff generated at runtime
 	etcdClusterToken string
@@ -46,12 +46,12 @@ func (m *Manifest) EtcdClusterToken() (string, error) {
 
 // HostManifest describes a single master node.
 type HostManifest struct {
-	PublicAddress    string `json:"public_address"`
-	PrivateAddress   string `json:"private_address"`
-	Port             int    `json:"port"`
-	Username         string `json:"username"`
-	SSHPublicKeyFile string `json:"ssh_public_key_file"`
-	SSHSocket        string `json:"ssh_socket"`
+	PublicAddress    string `yaml:"public_address"`
+	PrivateAddress   string `yaml:"private_address"`
+	Port             int    `yaml:"port"`
+	Username         string `yaml:"username"`
+	SSHPublicKeyFile string `yaml:"ssh_public_key_file"`
+	SSHSocket        string `yaml:"ssh_socket"`
 }
 
 // EtcdURL with schema
@@ -64,21 +64,21 @@ func (m *HostManifest) EtcdPeerURL() string {
 	return fmt.Sprintf("https://%s:2380", m.PrivateAddress)
 }
 
-// LoadBalancerManifest describes the load balancer address.
-type LoadBalancerManifest struct {
-	Address string `json:"address"`
+// APIServerManifest describes the load balancer address.
+type APIServerManifest struct {
+	Address string `yaml:"address"`
 }
 
 // ProviderManifest describes the cloud provider that is running the machines.
 type ProviderManifest struct {
-	Name        string `json:"name"`
-	CloudConfig string `json:"cloud_config"`
+	Name        string `yaml:"name"`
+	CloudConfig string `yaml:"cloud_config"`
 }
 
 // VersionManifest describes the versions of Kubernetes and Docker that are installed.
 type VersionManifest struct {
-	Kubernetes string `json:"kubernetes"`
-	Docker     string `json:"docker"`
+	Kubernetes string `yaml:"kubernetes"`
+	Docker     string `yaml:"docker"`
 }
 
 // Etcd version
@@ -88,7 +88,7 @@ func (m *VersionManifest) Etcd() string {
 
 // NetworkManifest describes the node network.
 type NetworkManifest struct {
-	PodSubnet     string
-	ServiceSubnet string
-	NodePortRange string
+	PodSubnet     string `yaml:"pod_subnet"`
+	ServiceSubnet string `yaml:"service_subnet"`
+	NodePortRange string `yaml:"node_port_range"`
 }

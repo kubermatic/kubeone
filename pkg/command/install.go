@@ -1,7 +1,6 @@
 package command
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -12,6 +11,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/terraform"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
+	yaml "gopkg.in/yaml.v2"
 )
 
 // InstallCommand wapper for logger
@@ -87,7 +87,7 @@ func loadManifest(filename string) (*manifest.Manifest, error) {
 	}
 
 	manifest := manifest.Manifest{}
-	if err := json.Unmarshal(content, &manifest); err != nil {
+	if err := yaml.Unmarshal(content, &manifest); err != nil {
 		return nil, fmt.Errorf("failed to decode file as JSON: %v", err)
 	}
 
