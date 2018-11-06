@@ -46,7 +46,7 @@ sudo curl --max-time 3 --fail \
 
 	logger.Infoln("Waiting…")
 	for remaining := 100; remaining >= 0; remaining-- {
-		_, _, _, err = conn.Exec(command)
+		_, _, _, err := runCommand(conn, command, ctx.Verbose)
 		if err == nil {
 			break
 		}

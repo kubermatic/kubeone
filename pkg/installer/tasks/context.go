@@ -14,4 +14,5 @@ type Context struct {
 	Configuration *Configuration
 	WorkDir       string
 	JoinCommand   string
+	Verbose       bool
 }

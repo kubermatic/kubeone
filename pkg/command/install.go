@@ -74,7 +74,7 @@ func InstallAction(logger *logrus.Logger) cli.ActionFunc {
 		}
 
 		worker := installer.NewInstaller(manifest, logger)
-		_, err = worker.Run()
+		_, err = worker.Run(ctx.GlobalBool("verbose"))
 
 		return err
 	}))

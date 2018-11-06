@@ -23,12 +23,12 @@ func (t *CreateJoinTokenTask) Execute(ctx *Context) error {
 	}
 
 	logger.Infoln("Running kubeadm…")
-	stdout, stderr, _, err := conn.Exec(`
+	stdout, stderr, _, err := runCommand(conn, `
 set -xeu pipefail
 
 export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
 
-sudo kubeadm token create --print-join-command`)
+sudo kubeadm token create --print-join-command`, ctx.Verbose)
 	if err != nil {
 		err = fmt.Errorf("%v: %s", err, stderr)
 	}

@@ -42,7 +42,7 @@ sudo chown -R "$USER:$USER" ./{{ .WORK_DIR }}
 		return fmt.Errorf("failed to construct shell script: %v", err)
 	}
 
-	_, stderr, _, err := conn.Exec(command)
+	_, stderr, _, err := runCommand(conn, command, ctx.Verbose)
 	if err != nil {
 		err = fmt.Errorf("%v: %s", err, stderr)
 	}

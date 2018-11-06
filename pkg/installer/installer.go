@@ -23,12 +23,13 @@ func NewInstaller(manifest *manifest.Manifest, logger *logrus.Logger) *installer
 	}
 }
 
-func (i *installer) Run() (*Result, error) {
+func (i *installer) Run(verbose bool) (*Result, error) {
 	ctx := tasks.Context{
 		Manifest:      i.manifest,
 		Connector:     ssh.NewConnector(),
 		Configuration: tasks.NewConfiguration(),
 		WorkDir:       "kubermatic-installer",
+		Verbose:       verbose,
 	}
 
 	// install prerequisites

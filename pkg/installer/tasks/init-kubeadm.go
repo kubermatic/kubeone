@@ -55,7 +55,7 @@ sudo kubeadm init \
 		return fmt.Errorf("failed to construct shell script: %v", err)
 	}
 
-	_, stderr, _, err := conn.Exec(command)
+	_, stderr, _, err := runCommand(conn, command, ctx.Verbose)
 	if err != nil {
 		err = fmt.Errorf("%v: %s", err, stderr)
 	}
@@ -75,7 +75,7 @@ func (t *InitKubernetesTask) waitForApiserver(ctx *Context, node manifest.HostMa
 
 	logger.Infoln("Waiting for apiserver…")
 	for remaining := 20; remaining >= 0; remaining-- {
-		_, _, _, err = conn.Exec(command)
+		_, _, _, err = runCommand(conn, command, ctx.Verbose)
 		if err == nil {
 			break
 		}

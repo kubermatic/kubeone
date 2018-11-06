@@ -94,7 +94,7 @@ func (t *InstallPrerequisitesTask) executeNode(ctx *Context, node manifest.HostM
 }
 
 func (t *InstallPrerequisitesTask) determineOS(ctx *Context, conn ssh.Connection) (string, error) {
-	stdout, _, _, err := conn.Exec("cat /etc/os-release | grep '^ID=' | sed s/^ID=//")
+	stdout, _, _, err := runCommand(conn, "cat /etc/os-release | grep '^ID=' | sed s/^ID=//", ctx.Verbose)
 
 	return stdout, err
 }
@@ -141,7 +141,7 @@ func (t *InstallPrerequisitesTask) installKubeadmDebian(ctx *Context, conn ssh.C
 		return fmt.Errorf("failed to construct shell script: %v", err)
 	}
 
-	_, stderr, _, err := conn.Exec(command)
+	_, stderr, _, err := runCommand(conn, command, ctx.Verbose)
 	if err != nil {
 		err = fmt.Errorf("%v: %s", err, stderr)
 	}
@@ -200,7 +200,7 @@ func (t *InstallPrerequisitesTask) installKubeadmCoreOS(ctx *Context, conn ssh.C
 		return fmt.Errorf("failed to construct shell script: %v", err)
 	}
 
-	_, stderr, _, err := conn.Exec(command)
+	_, stderr, _, err := runCommand(conn, command, ctx.Verbose)
 	if err != nil {
 		err = fmt.Errorf("%v: %s", err, stderr)
 	}
@@ -259,7 +259,7 @@ sudo chmod 600 /etc/kubernetes/cloud-config
 		return fmt.Errorf("failed to construct shell script: %v", err)
 	}
 
-	_, stderr, _, err := conn.Exec(command)
+	_, stderr, _, err := runCommand(conn, command, ctx.Verbose)
 	if err != nil {
 		err = fmt.Errorf("%v: %s", err, stderr)
 	}
