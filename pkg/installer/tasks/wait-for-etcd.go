@@ -37,7 +37,7 @@ func (t *WaitForEtcdTask) executeNode(ctx *Context, node manifest.HostManifest, 
 	}
 
 	command := fmt.Sprintf(`
-sudo curl --max-time 3 --fail \
+sudo curl -s --max-time 3 --fail \
      --cert /etc/kubernetes/pki/etcd/peer.crt \
      --key /etc/kubernetes/pki/etcd/peer.key \
      --cacert /etc/kubernetes/pki/etcd/ca.crt \
