@@ -1,10 +1,8 @@
 package tasks
 
 import (
-	"bytes"
 	"fmt"
 
-	"github.com/alecthomas/template"
 	"github.com/sirupsen/logrus"
 
 	"github.com/kubermatic/kubeone/pkg/manifest"
@@ -118,22 +116,8 @@ func (t *InstallPrerequisitesTask) installKubeadm(ctx *Context, conn ssh.Connect
 	return err
 }
 
-func makeShellCommand(cmd string, variables map[string]string) (string, error) {
-	tpl, err := template.New("base").Parse(cmd)
-	if err != nil {
-		return "", fmt.Errorf("failed to parse shell script: %v", err)
-	}
-
-	buf := bytes.Buffer{}
-	if err := tpl.Execute(&buf, variables); err != nil {
-		return "", fmt.Errorf("failed to render shell script: %v", err)
-	}
-
-	return buf.String(), nil
-}
-
 func (t *InstallPrerequisitesTask) installKubeadmDebian(ctx *Context, conn ssh.Connection) error {
-	command, err := makeShellCommand(kubeadmDebianCommand, map[string]string{
+	command, err := makeShellCommand(kubeadmDebianCommand, templateVariables{
 		"KUBERNETES_VERSION": ctx.Manifest.Versions.Kubernetes,
 		"DOCKER_VERSION":     ctx.Manifest.Versions.Docker,
 	})
@@ -191,7 +175,7 @@ sudo systemctl daemon-reload
 `
 
 func (t *InstallPrerequisitesTask) installKubeadmCoreOS(ctx *Context, conn ssh.Connection) error {
-	command, err := makeShellCommand(kubeadmCoreOSCommand, map[string]string{
+	command, err := makeShellCommand(kubeadmCoreOSCommand, templateVariables{
 		"KUBERNETES_VERSION": ctx.Manifest.Versions.Kubernetes,
 		"DOCKER_VERSION":     ctx.Manifest.Versions.Docker,
 		"CNI_VERSION":        "v0.7.1",
@@ -252,7 +236,7 @@ sudo mv ./{{ .WORK_DIR }}/cfg/20-cloudconfig-kubelet.conf /etc/systemd/system/ku
 sudo mv ./{{ .WORK_DIR }}/cfg/cloud-config /etc/kubernetes/cloud-config
 sudo chown root:root /etc/kubernetes/cloud-config
 sudo chmod 600 /etc/kubernetes/cloud-config
-`, map[string]string{
+`, templateVariables{
 		"WORK_DIR": ctx.WorkDir,
 	})
 	if err != nil {

@@ -37,7 +37,7 @@ sed -i -e 's#server:.*#server: https://{{ .IP_ADDRESS }}:6443#g' kube-proxy-conf
 kubectl delete -f kube-proxy-configmap.yaml
 kubectl create -f kube-proxy-configmap.yaml
 kubectl -n kube-system delete pod -l k8s-app=kube-proxy
-`, map[string]string{
+`, templateVariables{
 		"WORK_DIR":   ctx.WorkDir,
 		"IP_ADDRESS": node.PublicAddress,
 	})

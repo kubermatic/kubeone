@@ -35,7 +35,7 @@ sudo kubeadm alpha phase certs etcd-ca --config=./{{ .WORK_DIR }}/cfg/master.yam
 sudo kubeadm alpha phase certs sa --config=./{{ .WORK_DIR }}/cfg/master.yaml
 sudo rsync -av /etc/kubernetes/pki/ ./{{ .WORK_DIR }}/pki/
 sudo chown -R "$USER:$USER" ./{{ .WORK_DIR }}
-`, map[string]string{
+`, templateVariables{
 		"WORK_DIR": ctx.WorkDir,
 	})
 	if err != nil {

@@ -2,10 +2,12 @@ package tasks
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"os"
 	"strings"
 
+	"github.com/alecthomas/template"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 )
 
@@ -43,4 +45,20 @@ func runCommand(conn ssh.Connection, cmd string, verbose bool) (string, string, 
 	exitCode, err := conn.Stream(cmd, stdout, os.Stderr)
 
 	return stdout.String(), stderr.String(), exitCode, err
+}
+
+type templateVariables map[string]interface{}
+
+func makeShellCommand(cmd string, variables templateVariables) (string, error) {
+	tpl, err := template.New("base").Parse(cmd)
+	if err != nil {
+		return "", fmt.Errorf("failed to parse shell script: %v", err)
+	}
+
+	buf := bytes.Buffer{}
+	if err := tpl.Execute(&buf, variables); err != nil {
+		return "", fmt.Errorf("failed to render shell script: %v", err)
+	}
+
+	return buf.String(), nil
 }

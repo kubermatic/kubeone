@@ -48,7 +48,7 @@ export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
 sudo kubeadm init \
      --config=./{{ .WORK_DIR }}/cfg/master.yaml \
      --ignore-preflight-errors=Port-10250,FileAvailable--etc-kubernetes-manifests-etcd.yaml,FileExisting-crictl
-`, map[string]string{
+`, templateVariables{
 		"WORK_DIR": ctx.WorkDir,
 	})
 	if err != nil {

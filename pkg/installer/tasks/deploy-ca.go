@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/Masterminds/semver"
 	"github.com/sirupsen/logrus"
 
 	"github.com/kubermatic/kubeone/pkg/manifest"
@@ -45,6 +46,9 @@ func (t *DeployCATask) executeNode(ctx *Context, node manifest.HostManifest, nod
 	// sudo with local binary directories manually added to path. Needed because some
 	// distros don't correctly set up path in non-interactive sessions, e.g. RHEL
 	logger.Infoln("Setting up certificates and restarting kubelet…")
+
+	k8sVersion := semver.MustParse(ctx.Manifest.Versions.Kubernetes)
+	needsConfigPhase := k8sVersion.GreaterThan(semver.MustParse("1.10"))
 	command, err := makeShellCommand(`
 set -xeu pipefail
 
@@ -59,10 +63,15 @@ sudo kubeadm alpha phase certs etcd-healthcheck-client --config=./{{ .WORK_DIR }
 sudo kubeadm alpha phase certs etcd-peer --config=./{{ .WORK_DIR }}/cfg/master.yaml
 sudo kubeadm alpha phase certs etcd-server --config=./{{ .WORK_DIR }}/cfg/master.yaml
 sudo kubeadm alpha phase kubeconfig kubelet --config=./{{ .WORK_DIR }}/cfg/master.yaml
+{{ if .NeedsConfigPhase }}
+sudo kubeadm alpha phase kubelet config write-to-disk --config=./{{ .WORK_DIR }}/cfg/master.yaml
+{{ end }}
+sudo systemctl daemon-reload
 sudo systemctl restart kubelet
-`, map[string]string{
-		"WORK_DIR":   ctx.WorkDir,
-		"NODE_INDEX": strconv.Itoa(nodeIndex),
+`, templateVariables{
+		"WORK_DIR":         ctx.WorkDir,
+		"NODE_INDEX":       strconv.Itoa(nodeIndex),
+		"NeedsConfigPhase": needsConfigPhase,
 	})
 	if err != nil {
 		return fmt.Errorf("failed to construct shell script: %v", err)
