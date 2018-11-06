@@ -1,7 +1,7 @@
 module github.com/kubermatic/kubeone
 
 require (
-	github.com/Masterminds/semver v1.4.2 // indirect
+	github.com/Masterminds/semver v1.4.2
 	github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc
 	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/gogo/protobuf v1.1.1 // indirect
