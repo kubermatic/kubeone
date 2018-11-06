@@ -25,7 +25,7 @@ func InstallCommand(logger *logrus.Logger) cli.Command {
 				EnvVar: "MANIFEST_FILE",
 				Name:   "manifest, m",
 				Usage:  "path to the kubeone manifest",
-				Value:  "manifest.json",
+				Value:  "manifest.yaml",
 			},
 			cli.StringFlag{
 				EnvVar: "TF_OUTPUT",
