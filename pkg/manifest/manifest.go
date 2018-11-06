@@ -25,6 +25,12 @@ func (m *Manifest) Validate() error {
 		return errors.New("no master hosts specified")
 	}
 
+	for idx, host := range m.Hosts {
+		if err := host.Validate(); err != nil {
+			return fmt.Errorf("host %d is invalid: %v", idx+1, err)
+		}
+	}
+
 	return nil
 }
 
@@ -46,12 +52,21 @@ func (m *Manifest) EtcdClusterToken() (string, error) {
 
 // HostManifest describes a single master node.
 type HostManifest struct {
-	PublicAddress    string `yaml:"public_address"`
-	PrivateAddress   string `yaml:"private_address"`
-	Port             int    `yaml:"port"`
-	Username         string `yaml:"username"`
-	SSHPublicKeyFile string `yaml:"ssh_public_key_file"`
-	SSHSocket        string `yaml:"ssh_socket"`
+	PublicAddress     string `yaml:"public_address"`
+	PrivateAddress    string `yaml:"private_address"`
+	SSHPort           int    `yaml:"ssh_port"`
+	SSHUsername       string `yaml:"ssh_username"`
+	SSHPrivateKeyFile string `yaml:"ssh_private_key_file"`
+	SSHAgentSocket    string `yaml:"ssh_agent_socket"`
+}
+
+// Validate checks if the manifest makes sense.
+func (m *HostManifest) Validate() error {
+	if len(m.SSHPrivateKeyFile) == 0 && len(m.SSHAgentSocket) == 0 {
+		return errors.New("neither SSH private key nor agent socket given, don't know how to authenticate")
+	}
+
+	return nil
 }
 
 // EtcdURL with schema

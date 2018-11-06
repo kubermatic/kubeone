@@ -9,7 +9,7 @@ variable "aws_region" {
 }
 
 variable "ssh_public_key_file" {
-  description = "SSH key name"
+  description = "SSH public key file"
 }
 
 variable "ssh_port" {

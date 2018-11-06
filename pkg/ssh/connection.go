@@ -18,6 +18,8 @@ import (
 	"golang.org/x/crypto/ssh/agent"
 )
 
+const socketEnvPrefix = "env:"
+
 // Connection represents an established connection to an SSH server.
 type Connection interface {
 	Close() error
@@ -36,14 +38,14 @@ type Connection interface {
 // Opts represents all the possible options for connecting to
 // a remote server via SSH.
 type Opts struct {
-	Username       string
-	Password       string
-	Hostname       string
-	Port           int
-	PrivateKey     string
-	KeyFile        string
-	AgentSocketEnv string
-	Timeout        time.Duration
+	Username    string
+	Password    string
+	Hostname    string
+	Port        int
+	PrivateKey  string
+	KeyFile     string
+	AgentSocket string
+	Timeout     time.Duration
 }
 
 func validateOptions(o Opts) (Opts, error) {
@@ -55,7 +57,7 @@ func validateOptions(o Opts) (Opts, error) {
 		return o, errors.New("no hostname specified for SSH connection")
 	}
 
-	if len(o.Password) == 0 && len(o.PrivateKey) == 0 && len(o.KeyFile) == 0 && len(o.AgentSocketEnv) == 0 {
+	if len(o.Password) == 0 && len(o.PrivateKey) == 0 && len(o.KeyFile) == 0 && len(o.AgentSocket) == 0 {
 		return o, errors.New("must specifiy at least one of password, private key, keyfile or agent socket")
 	}
 
@@ -105,10 +107,17 @@ func NewConnection(o Opts) (Connection, error) {
 		}
 
 		authMethods = append(authMethods, ssh.PublicKeys(signer))
-	} else if len(o.AgentSocketEnv) > 0 {
-		addr := os.Getenv(o.AgentSocketEnv)
-		if len(addr) == 0 {
-			return nil, fmt.Errorf("environment variable %s is empty", addr)
+	}
+
+	if len(o.AgentSocket) > 0 {
+		addr := o.AgentSocket
+
+		if strings.HasPrefix(o.AgentSocket, socketEnvPrefix) {
+			envName := strings.TrimPrefix(o.AgentSocket, socketEnvPrefix)
+
+			if envAddr := os.Getenv(envName); len(envAddr) > 0 {
+				addr = envAddr
+			}
 		}
 
 		socket, err := net.Dial("unix", addr)

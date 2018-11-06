@@ -18,12 +18,12 @@ type Config struct {
 	KubeOneHosts struct {
 		Value struct {
 			ControlPlane []struct {
-				PublicAddress    []string `json:"public_address"`
-				PrivateAddress   []string `json:"private_address"`
-				User             string   `json:"user"`
-				SSHPublicKeyFile string   `json:"ssh_public_key_file"`
-				SSHPort          string   `json:"ssh_port"`
-				SSHAgentSocket   string   `json:"ssh_agent_socket"`
+				PublicAddress     []string `json:"public_address"`
+				PrivateAddress    []string `json:"private_address"`
+				SSHUser           string   `json:"ssh_user"`
+				SSHPort           string   `json:"ssh_port"`
+				SSHPrivateKeyFile string   `json:"ssh_private_key_file"`
+				SSHAgentSocket    string   `json:"ssh_agent_socket"`
 			} `json:"control_plane"`
 		} `json:"value"`
 	} `json:"kubeone_hosts"`
@@ -54,12 +54,12 @@ func (c Config) Apply(m *manifest.Manifest) {
 		}
 
 		hosts = append(hosts, manifest.HostManifest{
-			PublicAddress:    publicIP,
-			PrivateAddress:   privateIP,
-			Username:         cp.User,
-			SSHPublicKeyFile: cp.SSHPublicKeyFile,
-			Port:             sshPort,
-			SSHSocket:        cp.SSHAgentSocket,
+			PublicAddress:     publicIP,
+			PrivateAddress:    privateIP,
+			SSHUsername:       cp.SSHUser,
+			SSHPort:           sshPort,
+			SSHPrivateKeyFile: cp.SSHPrivateKeyFile,
+			SSHAgentSocket:    cp.SSHAgentSocket,
 		})
 	}
 
