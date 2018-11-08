@@ -41,7 +41,7 @@ func MachineControllerConfiguration(manifest *manifest.Manifest, instance int) (
 }
 
 func machineControllerClusterRole() rbac_v1beta1.ClusterRole {
-	role := rbac_v1beta1.ClusterRole{
+	return rbac_v1beta1.ClusterRole{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "system:kubermatic-machine-controller",
 			Labels: map[string]string{
@@ -98,12 +98,10 @@ func machineControllerClusterRole() rbac_v1beta1.ClusterRole {
 			},
 		},
 	}
-
-	return role
 }
 
 func machineControllerClusterRoleBinding() rbac_v1beta1.ClusterRoleBinding {
-	crb := rbac_v1beta1.ClusterRoleBinding{
+	return rbac_v1beta1.ClusterRoleBinding{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "system:kubermatic-machine-controller:controller",
 			Labels: map[string]string{
@@ -123,12 +121,10 @@ func machineControllerClusterRoleBinding() rbac_v1beta1.ClusterRoleBinding {
 			},
 		},
 	}
-
-	return crb
 }
 
 func nodeBootstrapperClusterRoleBinding() rbac_v1beta1.ClusterRoleBinding {
-	crb := rbac_v1beta1.ClusterRoleBinding{
+	return rbac_v1beta1.ClusterRoleBinding{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "system:kubermatic-machine-controller:kubelet-bootstrap",
 			Labels: map[string]string{
@@ -148,12 +144,10 @@ func nodeBootstrapperClusterRoleBinding() rbac_v1beta1.ClusterRoleBinding {
 			},
 		},
 	}
-
-	return crb
 }
 
 func nodeSignerClusterRoleBinding() rbac_v1beta1.ClusterRoleBinding {
-	crb := rbac_v1beta1.ClusterRoleBinding{
+	return rbac_v1beta1.ClusterRoleBinding{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "system:kubermatic-machine-controller:node-signer",
 			Labels: map[string]string{
@@ -173,12 +167,10 @@ func nodeSignerClusterRoleBinding() rbac_v1beta1.ClusterRoleBinding {
 			},
 		},
 	}
-
-	return crb
 }
 
 func machineControllerKubeSystemRole() rbac_v1beta1.Role {
-	role := rbac_v1beta1.Role{
+	return rbac_v1beta1.Role{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller",
 			Namespace: metav1.NamespaceSystem,
@@ -210,12 +202,10 @@ func machineControllerKubeSystemRole() rbac_v1beta1.Role {
 			},
 		},
 	}
-
-	return role
 }
 
 func machineControllerKubePublicRole() rbac_v1beta1.Role {
-	role := rbac_v1beta1.Role{
+	return rbac_v1beta1.Role{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller",
 			Namespace: metav1.NamespacePublic,
@@ -235,12 +225,10 @@ func machineControllerKubePublicRole() rbac_v1beta1.Role {
 			},
 		},
 	}
-
-	return role
 }
 
 func machineControllerDefaultRole() rbac_v1beta1.Role {
-	role := rbac_v1beta1.Role{
+	return rbac_v1beta1.Role{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller",
 			Namespace: metav1.NamespaceDefault,
@@ -260,12 +248,10 @@ func machineControllerDefaultRole() rbac_v1beta1.Role {
 			},
 		},
 	}
-
-	return role
 }
 
 func machineControllerClusterInfoRole() rbac_v1beta1.Role {
-	role := rbac_v1beta1.Role{
+	return rbac_v1beta1.Role{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "cluster-info",
 			Namespace: metav1.NamespacePublic,
@@ -282,12 +268,10 @@ func machineControllerClusterInfoRole() rbac_v1beta1.Role {
 			},
 		},
 	}
-
-	return role
 }
 
 func machineControllerKubeSystemRoleBinding() rbac_v1beta1.RoleBinding {
-	rb := rbac_v1beta1.RoleBinding{
+	return rbac_v1beta1.RoleBinding{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller",
 			Namespace: metav1.NamespaceSystem,
@@ -309,12 +293,10 @@ func machineControllerKubeSystemRoleBinding() rbac_v1beta1.RoleBinding {
 			},
 		},
 	}
-
-	return rb
 }
 
 func machineControllerKubePublicRoleBinding() rbac_v1beta1.RoleBinding {
-	rb := rbac_v1beta1.RoleBinding{
+	return rbac_v1beta1.RoleBinding{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller",
 			Namespace: metav1.NamespacePublic,
@@ -336,12 +318,10 @@ func machineControllerKubePublicRoleBinding() rbac_v1beta1.RoleBinding {
 			},
 		},
 	}
-
-	return rb
 }
 
 func machineControllerDefaultRoleBinding() rbac_v1beta1.RoleBinding {
-	rb := rbac_v1beta1.RoleBinding{
+	return rbac_v1beta1.RoleBinding{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller",
 			Namespace: metav1.NamespaceDefault,
@@ -363,12 +343,10 @@ func machineControllerDefaultRoleBinding() rbac_v1beta1.RoleBinding {
 			},
 		},
 	}
-
-	return rb
 }
 
 func machineControllerClusterInfoRoleBinding() rbac_v1beta1.RoleBinding {
-	rb := rbac_v1beta1.RoleBinding{
+	return rbac_v1beta1.RoleBinding{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "cluster-info",
 			Namespace: metav1.NamespacePublic,
@@ -390,12 +368,13 @@ func machineControllerClusterInfoRoleBinding() rbac_v1beta1.RoleBinding {
 			},
 		},
 	}
-
-	return rb
 }
 
 func machineControllerMachineCRD() apiextensionsv1beta1.CustomResourceDefinition {
-	crd := apiextensionsv1beta1.CustomResourceDefinition{
+	return apiextensionsv1beta1.CustomResourceDefinition{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "machines.cluster.k8s.io",
+		},
 		Spec: apiextensionsv1beta1.CustomResourceDefinitionSpec{
 			Group:   "cluster.k8s.io",
 			Version: "v1alpha1",
@@ -408,13 +387,13 @@ func machineControllerMachineCRD() apiextensionsv1beta1.CustomResourceDefinition
 			},
 		},
 	}
-	crd.Name = "machines.cluster.k8s.io"
-
-	return crd
 }
 
 func machineControllerClusterCRD() apiextensionsv1beta1.CustomResourceDefinition {
-	crd := apiextensionsv1beta1.CustomResourceDefinition{
+	return apiextensionsv1beta1.CustomResourceDefinition{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "clusters.cluster.k8s.io",
+		},
 		Spec: apiextensionsv1beta1.CustomResourceDefinitionSpec{
 			Group:   "cluster.k8s.io",
 			Version: "v1alpha1",
@@ -427,13 +406,13 @@ func machineControllerClusterCRD() apiextensionsv1beta1.CustomResourceDefinition
 			},
 		},
 	}
-	crd.Name = "clusters.cluster.k8s.io"
-
-	return crd
 }
 
 func machineControllerMachineSetCRD() apiextensionsv1beta1.CustomResourceDefinition {
-	crd := apiextensionsv1beta1.CustomResourceDefinition{
+	return apiextensionsv1beta1.CustomResourceDefinition{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "machinesets.cluster.k8s.io",
+		},
 		Spec: apiextensionsv1beta1.CustomResourceDefinitionSpec{
 			Group:   "cluster.k8s.io",
 			Version: "v1alpha1",
@@ -446,13 +425,13 @@ func machineControllerMachineSetCRD() apiextensionsv1beta1.CustomResourceDefinit
 			},
 		},
 	}
-	crd.Name = "machinesets.cluster.k8s.io"
-
-	return crd
 }
 
 func machineControllerMachineDeploymentCRD() apiextensionsv1beta1.CustomResourceDefinition {
-	crd := apiextensionsv1beta1.CustomResourceDefinition{
+	return apiextensionsv1beta1.CustomResourceDefinition{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "machinedeployments.cluster.k8s.io",
+		},
 		Spec: apiextensionsv1beta1.CustomResourceDefinitionSpec{
 			Group:   "cluster.k8s.io",
 			Version: "v1alpha1",
@@ -465,15 +444,12 @@ func machineControllerMachineDeploymentCRD() apiextensionsv1beta1.CustomResource
 			},
 		},
 	}
-	crd.Name = "machinedeployments.cluster.k8s.io"
-
-	return crd
 }
 
 func machineControllerDeployment() appsv1.Deployment {
 	var replicas int32 = 1
 
-	deployment := appsv1.Deployment{
+	return appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "machine-controller",
 			Labels: map[string]string{
@@ -562,5 +538,4 @@ func machineControllerDeployment() appsv1.Deployment {
 			},
 		},
 	}
-	return deployment
 }
