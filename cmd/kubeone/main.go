@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	logger := setupLogging()
+	logger := setupLogginggg()
 
 	app := cli.NewApp()
 	app.Name = "kubeone"
