@@ -1,5 +1,5 @@
 workspace:
-  base: /
+  base: /app
   path: kubeone
 
 pipeline:
