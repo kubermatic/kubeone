@@ -471,10 +471,7 @@ func machineControllerMachineDeploymentCRD() apiextensionsv1beta1.CustomResource
 }
 
 func machineControllerDeployment() appsv1.Deployment {
-	var replicas int32
-	var readMode int32
-	replicas = 1
-	readMode = 0444
+	var replicas int32 = 1
 
 	deployment := appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
@@ -511,12 +508,12 @@ func machineControllerDeployment() appsv1.Deployment {
 						"prometheus.io/port":   "8085",
 					},
 				},
-				Spec: corev1.PodSpec {
+				Spec: corev1.PodSpec{
 					Tolerations: []corev1.Toleration{
 						{
-							Key: "node-role.kubernetes.io/master",
+							Key:      "node-role.kubernetes.io/master",
 							Operator: corev1.TolerationOpExists,
-							Effect: corev1.TaintEffectNoSchedule,
+							Effect:   corev1.TaintEffectNoSchedule,
 						},
 					},
 					Containers: []corev1.Container{
