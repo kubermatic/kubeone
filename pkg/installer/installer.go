@@ -2,11 +2,13 @@ package installer
 
 import (
 	"fmt"
-	"time"
 
+	"github.com/Masterminds/semver"
 	"github.com/sirupsen/logrus"
 
-	"github.com/kubermatic/kubeone/pkg/installer/tasks"
+	"github.com/kubermatic/kubeone/pkg/installer/util"
+	"github.com/kubermatic/kubeone/pkg/installer/version/v1_10"
+	"github.com/kubermatic/kubeone/pkg/installer/version/v1_11"
 	"github.com/kubermatic/kubeone/pkg/manifest"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 )
@@ -24,76 +26,28 @@ func NewInstaller(manifest *manifest.Manifest, logger *logrus.Logger) *installer
 }
 
 func (i *installer) Run(verbose bool) (*Result, error) {
-	ctx := tasks.Context{
+	var err error
+
+	ctx := &util.Context{
 		Manifest:      i.manifest,
 		Connector:     ssh.NewConnector(),
-		Configuration: tasks.NewConfiguration(),
+		Configuration: util.NewConfiguration(),
 		WorkDir:       "kubermatic-installer",
 		Verbose:       verbose,
+		Logger:        i.logger,
 	}
 
-	// install prerequisites
-	ctx.Logger = i.logger.WithField("task", "prerequisites")
-	err := (&tasks.InstallPrerequisitesTask{}).Execute(&ctx)
-	if err != nil {
-		return nil, fmt.Errorf("installation of prerequisites failed: %v", err)
+	v := semver.MustParse(i.manifest.Versions.Kubernetes)
+	majorMinor := fmt.Sprintf("%d.%d", v.Major(), v.Minor())
+
+	switch majorMinor {
+	case "1.10":
+		err = v1_10.Install(ctx)
+	case "1.11":
+		err = v1_11.Install(ctx)
+	default:
+		err = fmt.Errorf("unsupported Kubernetes version %s", majorMinor)
 	}
 
-	// generate CA
-	ctx.Logger = i.logger.WithField("task", "generate-ca")
-	err = (&tasks.GenerateCATask{}).Execute(&ctx)
-	if err != nil {
-		return nil, fmt.Errorf("CA generation failed: %v", err)
-	}
-
-	// deploy CA
-	ctx.Logger = i.logger.WithField("task", "deploy-ca")
-	err = (&tasks.DeployCATask{}).Execute(&ctx)
-	if err != nil {
-		return nil, fmt.Errorf("CA deployment failed: %v", err)
-	}
-
-	// wait for etcd
-	ctx.Logger = i.logger.WithField("task", "wait-for-etcd")
-	err = (&tasks.WaitForEtcdTask{}).Execute(&ctx)
-	if err != nil {
-		return nil, fmt.Errorf("etcd cluster initialization failed: %v", err)
-	}
-
-	// init Kubernetes
-	ctx.Logger = i.logger.WithField("task", "init-kubernetes")
-	err = (&tasks.InitKubernetesTask{}).Execute(&ctx)
-	if err != nil {
-		return nil, fmt.Errorf("Kubernetes initialization failed: %v", err)
-	}
-
-	// let the cluster settle down
-	ctx.Logger = i.logger.WithField("task", "coffee-break")
-	err = (&tasks.ClusterSettleTask{Duration: 30 * time.Second}).Execute(&ctx)
-	if err != nil {
-		return nil, fmt.Errorf("failed to let the cluster settle down: %v", err)
-	}
-
-	// init kube-proxy
-	ctx.Logger = i.logger.WithField("task", "init-kube-proxy")
-	err = (&tasks.InstallKubeProxyTask{}).Execute(&ctx)
-	if err != nil {
-		return nil, fmt.Errorf("kube-proxy initialization failed: %v", err)
-	}
-
-	// let the cluster settle down
-	ctx.Logger = i.logger.WithField("task", "coffee-break")
-	err = (&tasks.ClusterSettleTask{Duration: 10 * time.Second}).Execute(&ctx)
-	if err != nil {
-		return nil, fmt.Errorf("failed to let the cluster settle down: %v", err)
-	}
-
-	// create join token and command
-	ctx.Logger = i.logger.WithField("task", "create-join-token")
-	err = (&tasks.CreateJoinTokenTask{}).Execute(&ctx)
-	if err != nil {
-		return nil, fmt.Errorf("join token initialization failed: %v", err)
-	}
-
-	return nil, nil
+	return nil, err
 }

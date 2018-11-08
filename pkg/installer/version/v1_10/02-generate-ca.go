@@ -1,20 +1,18 @@
-package tasks
+package v1_10
 
 import (
 	"fmt"
 
+	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/sirupsen/logrus"
 )
 
-type GenerateCATask struct{}
-
-func (t *GenerateCATask) Execute(ctx *Context) error {
+func GenerateCA(ctx *util.Context) error {
 	ctx.Logger.Infoln("Generating PKI…")
 
 	node := ctx.Manifest.Hosts[0]
 	logger := ctx.Logger.WithFields(logrus.Fields{
-		"node":   node.PublicAddress,
-		"master": true,
+		"node": node.PublicAddress,
 	})
 
 	conn, err := ctx.Connector.Connect(node)
@@ -23,9 +21,8 @@ func (t *GenerateCATask) Execute(ctx *Context) error {
 	}
 
 	logger.Infoln("Running kubeadm…")
-	// sudo with local binary directories manually added to path. Needed because some
-	// distros don't correctly set up path in non-interactive sessions, e.g. RHEL
-	command, err := makeShellCommand(`
+
+	_, _, _, err = util.RunShellCommand(conn, ctx.Verbose, `
 set -xeu pipefail
 
 export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
@@ -35,16 +32,11 @@ sudo kubeadm alpha phase certs etcd-ca --config=./{{ .WORK_DIR }}/cfg/master.yam
 sudo kubeadm alpha phase certs sa --config=./{{ .WORK_DIR }}/cfg/master.yaml
 sudo rsync -av /etc/kubernetes/pki/ ./{{ .WORK_DIR }}/pki/
 sudo chown -R "$USER:$USER" ./{{ .WORK_DIR }}
-`, templateVariables{
+`, util.TemplateVariables{
 		"WORK_DIR": ctx.WorkDir,
 	})
 	if err != nil {
-		return fmt.Errorf("failed to construct shell script: %v", err)
-	}
-
-	_, stderr, _, err := runCommand(conn, command, ctx.Verbose)
-	if err != nil {
-		err = fmt.Errorf("%v: %s", err, stderr)
+		return err
 	}
 
 	logger.Infoln("Downloading PKI files…")

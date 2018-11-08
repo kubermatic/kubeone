@@ -1,20 +1,16 @@
-package tasks
+package v1_11
 
 import (
 	"fmt"
 
+	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/sirupsen/logrus"
 )
 
-type InstallKubeProxyTask struct{}
-
-func (t *InstallKubeProxyTask) Execute(ctx *Context) error {
-	ctx.Logger.Infoln("Installing kube-proxy…")
-
+func InstallKubeProxy(ctx *util.Context) error {
 	node := ctx.Manifest.Hosts[0]
 	logger := ctx.Logger.WithFields(logrus.Fields{
-		"node":   node.PublicAddress,
-		"master": true,
+		"node": node.PublicAddress,
 	})
 
 	conn, err := ctx.Connector.Connect(node)
@@ -22,8 +18,9 @@ func (t *InstallKubeProxyTask) Execute(ctx *Context) error {
 		return fmt.Errorf("failed to connect to %s: %v", node.PublicAddress, err)
 	}
 
-	logger.Infoln("Running kubectl…")
-	command, err := makeShellCommand(`
+	logger.Infoln("Installing kube-proxy…")
+
+	_, _, _, err = util.RunShellCommand(conn, ctx.Verbose, `
 set -xeu pipefail
 
 mkdir -p ~/.kube
@@ -37,18 +34,10 @@ sed -i -e 's#server:.*#server: https://{{ .IP_ADDRESS }}:6443#g' kube-proxy-conf
 kubectl delete -f kube-proxy-configmap.yaml
 kubectl create -f kube-proxy-configmap.yaml
 kubectl -n kube-system delete pod -l k8s-app=kube-proxy
-`, templateVariables{
+`, util.TemplateVariables{
 		"WORK_DIR":   ctx.WorkDir,
 		"IP_ADDRESS": node.PublicAddress,
 	})
-	if err != nil {
-		return fmt.Errorf("failed to construct shell script: %v", err)
-	}
-
-	_, stderr, _, err := runCommand(conn, command, ctx.Verbose)
-	if err != nil {
-		err = fmt.Errorf("%v: %s", err, stderr)
-	}
 
 	return err
 }

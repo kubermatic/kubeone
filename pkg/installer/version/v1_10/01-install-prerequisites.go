@@ -1,40 +1,26 @@
-package tasks
+package v1_10
 
 import (
 	"fmt"
 
-	"github.com/sirupsen/logrus"
-
+	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/manifest"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/templates"
 )
 
-type InstallPrerequisitesTask struct{}
-
-func (t *InstallPrerequisitesTask) Execute(ctx *Context) error {
+func InstallPrerequisites(ctx *util.Context) error {
 	ctx.Logger.Infoln("Installing prerequisites…")
 
-	err := t.generateConfigurationFiles(ctx)
+	err := generateConfigurationFiles(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to create configuration: %v", err)
 	}
 
-	for _, node := range ctx.Manifest.Hosts {
-		logger := ctx.Logger.WithFields(logrus.Fields{
-			"node": node.PublicAddress,
-		})
-
-		err = t.executeNode(ctx, node, logger)
-		if err != nil {
-			break
-		}
-	}
-
-	return err
+	return util.RunTaskOnNodes(ctx, installPrerequisitesOnNode)
 }
 
-func (t *InstallPrerequisitesTask) generateConfigurationFiles(ctx *Context) error {
+func generateConfigurationFiles(ctx *util.Context) error {
 	kubeadm, err := templates.KubeadmConfig(ctx.Manifest)
 	if err != nil {
 		return fmt.Errorf("failed to create kubeadm configuration: %v", err)
@@ -61,29 +47,23 @@ Environment="KUBELET_EXTRA_ARGS= --cloud-provider=%s --cloud-config=/etc/kuberne
 	return nil
 }
 
-func (t *InstallPrerequisitesTask) executeNode(ctx *Context, node manifest.HostManifest, logger logrus.FieldLogger) error {
-	logger.Infoln("Connecting…")
-	conn, err := ctx.Connector.Connect(node)
-	if err != nil {
-		return fmt.Errorf("failed to connect: %v", err)
-	}
-
-	logger.Infoln("Determine operating system…")
-	os, err := t.determineOS(ctx, conn)
+func installPrerequisitesOnNode(ctx *util.Context, node manifest.HostManifest, _ int, conn ssh.Connection) error {
+	ctx.Logger.Infoln("Determine operating system…")
+	os, err := determineOS(ctx, conn)
 	if err != nil {
 		return fmt.Errorf("failed to determine operating system: %v", err)
 	}
 
-	logger = logger.WithField("os", os)
+	logger := ctx.Logger.WithField("os", os)
 
 	logger.Infoln("Installing kubeadm…")
-	err = t.installKubeadm(ctx, conn, os)
+	err = installKubeadm(ctx, conn, os)
 	if err != nil {
 		return fmt.Errorf("failed to install kubeadm: %v", err)
 	}
 
 	logger.Infoln("Deploying configuration files…")
-	err = t.deployConfigurationFiles(ctx, conn, os)
+	err = deployConfigurationFiles(ctx, conn, os)
 	if err != nil {
 		return fmt.Errorf("failed to upload configuration files: %v", err)
 	}
@@ -91,23 +71,23 @@ func (t *InstallPrerequisitesTask) executeNode(ctx *Context, node manifest.HostM
 	return nil
 }
 
-func (t *InstallPrerequisitesTask) determineOS(ctx *Context, conn ssh.Connection) (string, error) {
-	stdout, _, _, err := runCommand(conn, "cat /etc/os-release | grep '^ID=' | sed s/^ID=//", ctx.Verbose)
+func determineOS(ctx *util.Context, conn ssh.Connection) (string, error) {
+	stdout, _, _, err := util.RunCommand(conn, "cat /etc/os-release | grep '^ID=' | sed s/^ID=//", ctx.Verbose)
 
 	return stdout, err
 }
 
-func (t *InstallPrerequisitesTask) installKubeadm(ctx *Context, conn ssh.Connection, os string) error {
+func installKubeadm(ctx *util.Context, conn ssh.Connection, os string) error {
 	var err error
 
 	switch os {
 	case "ubuntu":
 		fallthrough
 	case "debian":
-		err = t.installKubeadmDebian(ctx, conn)
+		err = installKubeadmDebian(ctx, conn)
 
 	case "coreos":
-		err = t.installKubeadmCoreOS(ctx, conn)
+		err = installKubeadmCoreOS(ctx, conn)
 
 	default:
 		err = fmt.Errorf("'%s' is not a supported operating system", os)
@@ -116,19 +96,11 @@ func (t *InstallPrerequisitesTask) installKubeadm(ctx *Context, conn ssh.Connect
 	return err
 }
 
-func (t *InstallPrerequisitesTask) installKubeadmDebian(ctx *Context, conn ssh.Connection) error {
-	command, err := makeShellCommand(kubeadmDebianCommand, templateVariables{
+func installKubeadmDebian(ctx *util.Context, conn ssh.Connection) error {
+	_, _, _, err := util.RunShellCommand(conn, ctx.Verbose, kubeadmDebianCommand, util.TemplateVariables{
 		"KUBERNETES_VERSION": ctx.Manifest.Versions.Kubernetes,
 		"DOCKER_VERSION":     ctx.Manifest.Versions.Docker,
 	})
-	if err != nil {
-		return fmt.Errorf("failed to construct shell script: %v", err)
-	}
-
-	_, stderr, _, err := runCommand(conn, command, ctx.Verbose)
-	if err != nil {
-		err = fmt.Errorf("%v: %s", err, stderr)
-	}
 
 	return err
 }
@@ -174,20 +146,12 @@ sudo apt-mark hold docker-ce kubelet kubeadm kubectl
 sudo systemctl daemon-reload
 `
 
-func (t *InstallPrerequisitesTask) installKubeadmCoreOS(ctx *Context, conn ssh.Connection) error {
-	command, err := makeShellCommand(kubeadmCoreOSCommand, templateVariables{
+func installKubeadmCoreOS(ctx *util.Context, conn ssh.Connection) error {
+	_, _, _, err := util.RunShellCommand(conn, ctx.Verbose, kubeadmCoreOSCommand, util.TemplateVariables{
 		"KUBERNETES_VERSION": ctx.Manifest.Versions.Kubernetes,
 		"DOCKER_VERSION":     ctx.Manifest.Versions.Docker,
 		"CNI_VERSION":        "v0.7.1",
 	})
-	if err != nil {
-		return fmt.Errorf("failed to construct shell script: %v", err)
-	}
-
-	_, stderr, _, err := runCommand(conn, command, ctx.Verbose)
-	if err != nil {
-		err = fmt.Errorf("%v: %s", err, stderr)
-	}
 
 	return err
 }
@@ -221,14 +185,14 @@ sudo systemctl enable docker.service kubelet.service
 sudo systemctl start docker.service kubelet.service
 `
 
-func (t *InstallPrerequisitesTask) deployConfigurationFiles(ctx *Context, conn ssh.Connection, operatingSystem string) error {
+func deployConfigurationFiles(ctx *util.Context, conn ssh.Connection, operatingSystem string) error {
 	err := ctx.Configuration.UploadTo(conn, ctx.WorkDir)
 	if err != nil {
 		return fmt.Errorf("failed to upload: %v", err)
 	}
 
 	// move config files to their permanent locations
-	command, err := makeShellCommand(`
+	_, _, _, err = util.RunShellCommand(conn, ctx.Verbose, `
 set -xeu pipefail
 
 sudo mkdir -p /etc/systemd/system/kubelet.service.d/ /etc/kubernetes
@@ -236,17 +200,9 @@ sudo mv ./{{ .WORK_DIR }}/cfg/20-cloudconfig-kubelet.conf /etc/systemd/system/ku
 sudo mv ./{{ .WORK_DIR }}/cfg/cloud-config /etc/kubernetes/cloud-config
 sudo chown root:root /etc/kubernetes/cloud-config
 sudo chmod 600 /etc/kubernetes/cloud-config
-`, templateVariables{
+`, util.TemplateVariables{
 		"WORK_DIR": ctx.WorkDir,
 	})
-	if err != nil {
-		return fmt.Errorf("failed to construct shell script: %v", err)
-	}
-
-	_, stderr, _, err := runCommand(conn, command, ctx.Verbose)
-	if err != nil {
-		err = fmt.Errorf("%v: %s", err, stderr)
-	}
 
 	return err
 }

@@ -1,4 +1,4 @@
-package tasks
+package util
 
 import (
 	"bytes"

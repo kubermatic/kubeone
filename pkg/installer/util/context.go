@@ -1,4 +1,4 @@
-package tasks
+package util
 
 import (
 	"github.com/sirupsen/logrus"
@@ -15,4 +15,17 @@ type Context struct {
 	WorkDir       string
 	JoinCommand   string
 	Verbose       bool
+}
+
+// Clone returns a shallow copy of the context.
+func (c *Context) Clone() *Context {
+	return &Context{
+		Manifest:      c.Manifest,
+		Logger:        c.Logger,
+		Connector:     c.Connector,
+		Configuration: c.Configuration,
+		WorkDir:       c.WorkDir,
+		JoinCommand:   c.JoinCommand,
+		Verbose:       c.Verbose,
+	}
 }

@@ -4,47 +4,13 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/Masterminds/semver"
 	yaml "gopkg.in/yaml.v2"
 
 	"github.com/kubermatic/kubeone/pkg/manifest"
+	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/v1alpha1"
+	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/v1alpha2"
 )
-
-type kubeadmMasterConfigurationAPI struct {
-	AdvertiseAddress     string `yaml:"advertiseAddress"`
-	ControlPlaneEndpoint string `yaml:"controlPlaneEndpoint"`
-}
-
-type kubeadmMasterConfigurationEtcd struct {
-	Endpoints      []string `yaml:"endpoints"`
-	CAFile         string   `yaml:"caFile"`
-	CertFile       string   `yaml:"certFile"`
-	KeyFile        string   `yaml:"keyFile"`
-	ServerCertSANs []string `yaml:"serverCertSANs"`
-	PeerCertSANs   []string `yaml:"peerCertSANs"`
-}
-
-type kubeadmMasterConfigurationNetworking struct {
-	PodSubnet     string `yaml:"podSubnet"`
-	ServiceSubnet string `yaml:"serviceSubnet"`
-}
-
-type kubeadmMasterConfigurationExtras struct {
-	PodSubnet     string `yaml:"podSubnet"`
-	ServiceSubnet string `yaml:"serviceSubnet"`
-}
-
-type kubeadmMasterConfiguration struct {
-	APIVersion                 string                               `yaml:"apiVersion"`
-	Kind                       string                               `yaml:"kind"`
-	CloudProvider              string                               `yaml:"cloudProvider"`
-	KubernetesVersion          string                               `yaml:"kubernetesVersion"`
-	API                        kubeadmMasterConfigurationAPI        `yaml:"api"`
-	Etcd                       kubeadmMasterConfigurationEtcd       `yaml:"etcd"`
-	Networking                 kubeadmMasterConfigurationNetworking `yaml:"networking"`
-	APIServerCertSANs          []string                             `yaml:"apiServerCertSANs"`
-	APIServerExtraArgs         map[string]string                    `yaml:"apiServerExtraArgs"`
-	ControllerManagerExtraArgs map[string]string                    `yaml:"controllerManagerExtraArgs"`
-}
 
 func KubeadmConfig(manifest *manifest.Manifest) (string, error) {
 	masterNodes := manifest.Hosts
@@ -52,57 +18,25 @@ func KubeadmConfig(manifest *manifest.Manifest) (string, error) {
 		return "", errors.New("manifest does not contain at least one master node")
 	}
 
-	etcdEndpoints := make([]string, 0)
-	etcdSANs := make([]string, 0)
-	apiServerCertSANs := make([]string, 0)
+	v := semver.MustParse(manifest.Versions.Kubernetes)
+	majorMinor := fmt.Sprintf("%d.%d", v.Major(), v.Minor())
 
-	for _, node := range masterNodes {
-		etcdEndpoints = append(etcdEndpoints, node.EtcdURL())
-		etcdSANs = append(etcdSANs, node.PrivateAddress)
+	var (
+		cfg interface{}
+		err error
+	)
 
-		// TODO: add loadbalancers
-		apiServerCertSANs = append(apiServerCertSANs, node.PrivateAddress, node.PublicAddress)
+	switch majorMinor {
+	case "1.10":
+		cfg, err = v1alpha1.NewConfig(manifest)
+	case "1.11":
+		cfg, err = v1alpha2.NewConfig(manifest)
+	default:
+		err = fmt.Errorf("unsupported Kubernetes version %s", majorMinor)
 	}
 
-	cfg := kubeadmMasterConfiguration{
-		APIVersion:        "kubeadm.k8s.io/v1alpha1",
-		Kind:              "MasterConfiguration",
-		CloudProvider:     manifest.Provider.Name,
-		KubernetesVersion: fmt.Sprintf("v%s", manifest.Versions.Kubernetes),
-
-		API: kubeadmMasterConfigurationAPI{
-			AdvertiseAddress:     masterNodes[0].PrivateAddress,
-			ControlPlaneEndpoint: masterNodes[0].PublicAddress,
-		},
-
-		Etcd: kubeadmMasterConfigurationEtcd{
-			CAFile:         "/etc/kubernetes/pki/etcd/ca.crt",
-			CertFile:       "/etc/kubernetes/pki/etcd/peer.crt",
-			KeyFile:        "/etc/kubernetes/pki/etcd/peer.key",
-			Endpoints:      etcdEndpoints,
-			ServerCertSANs: etcdSANs,
-			PeerCertSANs:   etcdSANs,
-		},
-
-		Networking: kubeadmMasterConfigurationNetworking{
-			PodSubnet:     manifest.Network.PodSubnet,
-			ServiceSubnet: manifest.Network.ServiceSubnet,
-		},
-
-		APIServerCertSANs: apiServerCertSANs,
-		APIServerExtraArgs: map[string]string{
-			"endpoint-reconciler-type": "lease",
-			"service-node-port-range":  manifest.Network.NodePortRange,
-		},
-	}
-
-	if manifest.Provider.CloudConfig != "" {
-		renderedCloudConfig := "/etc/kubernetes/cloud-config"
-
-		cfg.APIServerExtraArgs["cloud-config"] = renderedCloudConfig
-		cfg.ControllerManagerExtraArgs = map[string]string{
-			"cloud-config": renderedCloudConfig,
-		}
+	if err != nil {
+		return "", err
 	}
 
 	encoded, err := yaml.Marshal(cfg)
