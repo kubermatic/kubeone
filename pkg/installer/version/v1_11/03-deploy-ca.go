@@ -35,11 +35,12 @@ sudo rsync -av ./{{ .WORK_DIR }}/pki/ /etc/kubernetes/pki/
 rm -rf ./{{ .WORK_DIR }}/pki
 sudo chown -R root:root /etc/kubernetes/pki
 sudo mkdir -p /etc/kubernetes/manifests
-sudo cp ./{{ .WORK_DIR }}/etcd/etcd_{{ .NODE_INDEX }}.yaml /etc/kubernetes/manifests/etcd.yaml
+#sudo cp ./{{ .WORK_DIR }}/etcd/etcd_{{ .NODE_INDEX }}.yaml /etc/kubernetes/manifests/etcd.yaml
 sudo kubeadm alpha phase certs etcd-healthcheck-client --config=./{{ .WORK_DIR }}/cfg/master.yaml
 sudo kubeadm alpha phase certs etcd-peer --config=./{{ .WORK_DIR }}/cfg/master.yaml
 sudo kubeadm alpha phase certs etcd-server --config=./{{ .WORK_DIR }}/cfg/master.yaml
 sudo kubeadm alpha phase kubeconfig kubelet --config=./{{ .WORK_DIR }}/cfg/master.yaml
+sudo kubeadm alpha phase kubelet config write-to-disk --config ./{{ .WORK_DIR }}/cfg/master.yaml
 sudo systemctl daemon-reload
 sudo systemctl restart kubelet
 `, util.TemplateVariables{

@@ -22,9 +22,9 @@ func Install(ctx *util.Context) error {
 		return fmt.Errorf("failed to deploy CA: %v", err)
 	}
 
-	if err := WaitForEtcd(ctx); err != nil {
-		return fmt.Errorf("etcd bootstrapping failed: %v", err)
-	}
+	// if err := WaitForEtcd(ctx); err != nil {
+	// 	return fmt.Errorf("etcd bootstrapping failed: %v", err)
+	// }
 
 	if err := InitKubernetes(ctx); err != nil {
 		return fmt.Errorf("failed to init Kubernetes: %v", err)
