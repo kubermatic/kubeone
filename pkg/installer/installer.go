@@ -10,6 +10,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/installer/version/kube110"
 	"github.com/kubermatic/kubeone/pkg/installer/version/kube111"
+	"github.com/kubermatic/kubeone/pkg/installer/version/kube112"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 )
 
@@ -38,6 +39,8 @@ func (i *installer) Install(verbose bool) (*Result, error) {
 		err = kube110.Install(ctx)
 	case "1.11":
 		err = kube111.Install(ctx)
+	case "1.12":
+		err = kube112.Install(ctx)
 	default:
 		err = fmt.Errorf("unsupported Kubernetes version %s", majorMinor)
 	}
@@ -58,6 +61,8 @@ func (i *installer) Reset(verbose bool) (*Result, error) {
 		err = kube110.Reset(ctx)
 	case "1.11":
 		err = kube111.Reset(ctx)
+	case "1.12":
+		err = kube112.Reset(ctx)
 	default:
 		err = fmt.Errorf("unsupported Kubernetes version %s", majorMinor)
 	}

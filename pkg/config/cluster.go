@@ -54,6 +54,9 @@ func (m *Cluster) EtcdClusterToken() (string, error) {
 type HostConfig struct {
 	PublicAddress     string `yaml:"public_address"`
 	PrivateAddress    string `yaml:"private_address"`
+	PublicDNS         string `yaml:"public_dns"`
+	PrivateDNS        string `yaml:"private_dns"`
+	Hostname          string `yaml:"hostname"`
 	SSHPort           int    `yaml:"ssh_port"`
 	SSHUsername       string `yaml:"ssh_username"`
 	SSHPrivateKeyFile string `yaml:"ssh_private_key_file"`
