@@ -1,0 +1,47 @@
+# This file contains the configuration for installing a single Kubernetes
+# clusters using KubeOne. You can augment some options by providing
+# Terraform output at runtime, like explained in the documentation.
+
+versions:
+  kubernetes: '1.12'
+  docker: '18.06' # depends on the OS installed on your machines
+
+network:
+  # the subnet used for pods (flannel);
+  # leave it empty for default: 10.244.0.0/16
+  pod_subnet: ''
+
+  # the subnet used for services;
+  # leave it empty for default: 10.96.0.0/12
+  service_subnet: ''
+
+  # a nodePort range to reserve for services;
+  # leave it empty for default: 30000-32767
+  node_port_range: ''
+
+provider:
+  name: '' # Kubernetes cloud provider, like "aws"
+
+# The list of nodes can be overwritten by providing Terraform output.
+# You are strongly encouraged to provide an odd number of nodes and
+# have at least three of them.
+# Remember to only specify your *master* nodes. All further worker
+# nodes will not be provisioned by KubeOne, but rather by the
+# machine-controller from inside the cluster.
+hosts:
+  - public_address: '1.2.3.4'
+    private_address: '172.18.0.1'
+    ssh_port: 22 # can be left out if using the default (22)
+    ssh_username: ubuntu
+
+    # Uou usually want to configure either a private key OR an
+    # agent socket, but never both. The socket value can be
+    # prefixed with "env:" to refer to an environment variable.
+    ssh_private_key_file: '/home/me/.ssh/id_rsa'
+    ssh_agent_socket: 'env:SSH_AUTH_SOCK'
+
+# The API server can also be overwritten by Terraform. Provide the
+# external address of your load balancer or the public address of
+# your first node.
+apiserver:
+  address: '1.2.3.4'

@@ -86,14 +86,14 @@ func NewConfig(manifest *manifest.Manifest) (*configuration, error) {
 		},
 
 		Networking: networking{
-			PodSubnet:     manifest.Network.PodSubnet,
-			ServiceSubnet: manifest.Network.ServiceSubnet,
+			PodSubnet:     manifest.Network.PodSubnet(),
+			ServiceSubnet: manifest.Network.ServiceSubnet(),
 		},
 
 		APIServerCertSANs: apiServerCertSANs,
 		APIServerExtraArgs: map[string]string{
 			"endpoint-reconciler-type": "lease",
-			"service-node-port-range":  manifest.Network.NodePortRange,
+			"service-node-port-range":  manifest.Network.NodePortRange(),
 		},
 	}
 

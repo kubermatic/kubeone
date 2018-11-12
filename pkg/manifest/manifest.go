@@ -103,7 +103,34 @@ func (m *VersionManifest) Etcd() string {
 
 // NetworkManifest describes the node network.
 type NetworkManifest struct {
-	PodSubnet     string `yaml:"pod_subnet"`
-	ServiceSubnet string `yaml:"service_subnet"`
-	NodePortRange string `yaml:"node_port_range"`
+	PodSubnetVal     string `yaml:"pod_subnet"`
+	ServiceSubnetVal string `yaml:"service_subnet"`
+	NodePortRangeVal string `yaml:"node_port_range"`
+}
+
+// PodSubnet returns the pod subnet or the default value.
+func (m *NetworkManifest) PodSubnet() string {
+	if m.PodSubnetVal != "" {
+		return m.PodSubnetVal
+	}
+
+	return "10.244.0.0/16"
+}
+
+// ServiceSubnet returns the service subnet or the default value.
+func (m *NetworkManifest) ServiceSubnet() string {
+	if m.ServiceSubnetVal != "" {
+		return m.ServiceSubnetVal
+	}
+
+	return "10.96.0.0/12"
+}
+
+// NodePortRange returns the node port range or the default value.
+func (m *NetworkManifest) NodePortRange() string {
+	if m.NodePortRangeVal != "" {
+		return m.NodePortRangeVal
+	}
+
+	return "30000-32767"
 }
