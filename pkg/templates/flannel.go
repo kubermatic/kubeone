@@ -1,100 +1,34 @@
 package templates
 
 import (
+	"bytes"
+	"fmt"
+
+	"github.com/alecthomas/template"
 	"github.com/kubermatic/kubeone/pkg/config"
-	corev1 "k8s.io/api/core/v1"
-	rbac_v1beta1 "k8s.io/api/rbac/v1beta1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-//  Downloaded from https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
-
-func FlannelConfiguration(cluster *config.Cluster, instance int) (string, error) {
-	items := []interface{}{
-		flannelServiceAccount(),
-		flannelClusterRole(),
-		flannelClusterRoleBinding(),
+func FlannelConfiguration(cluster *config.Cluster) (string, error) {
+	tpl, err := template.New("base").Parse(flannel)
+	if err != nil {
+		return "", fmt.Errorf("failed to parse flannel config: %v", err)
 	}
 
-	return kubernetesToYAML(items)
-}
-
-func flannelServiceAccount() corev1.ServiceAccount {
-	account := corev1.ServiceAccount{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "v1",
-			Kind:       "ServiceAccount",
-		},
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      "flannel",
-			Namespace: "kube-system",
-		},
+	variables := map[string]interface{}{
+		"POD_SUBNET":  cluster.Network.PodSubnet(),
+		"QUAY_MIRROR": "quay.io",
 	}
 
-	return account
-}
-
-func flannelClusterRole() rbac_v1beta1.ClusterRole {
-	role := rbac_v1beta1.ClusterRole{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "rbac.authorization.k8s.io/v1beta1",
-			Kind:       "ClusterRole",
-		},
-		ObjectMeta: metav1.ObjectMeta{
-			Name: "flannel",
-		},
-		Rules: []rbac_v1beta1.PolicyRule{
-			{
-				APIGroups: []string{""},
-				Resources: []string{"pods"},
-				Verbs:     []string{"get"},
-			},
-			{
-				APIGroups: []string{""},
-				Resources: []string{"nodes"},
-				Verbs:     []string{"list", "watch"},
-			},
-			{
-				APIGroups: []string{""},
-				Resources: []string{"nodes/status"},
-				Verbs:     []string{"patch"},
-			},
-		},
+	buf := bytes.Buffer{}
+	if err := tpl.Execute(&buf, variables); err != nil {
+		return "", fmt.Errorf("failed to render flannel config: %v", err)
 	}
 
-	return role
+	return buf.String(), nil
 }
 
-func flannelClusterRoleBinding() rbac_v1beta1.ClusterRoleBinding {
-	role := rbac_v1beta1.ClusterRoleBinding{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "rbac.authorization.k8s.io/v1beta1",
-			Kind:       "ClusterRoleBinding",
-		},
-		ObjectMeta: metav1.ObjectMeta{
-			Name: "flannel",
-		},
-		RoleRef: rbac_v1beta1.RoleRef{
-			APIGroup: "rbac.authorization.k8s.io",
-			Kind:     "ClusterRole",
-			Name:     "flannel",
-		},
-		Subjects: []rbac_v1beta1.Subject{
-			{
-				Kind:      "ServiceAccount",
-				Name:      "flannel",
-				Namespace: "kube-system",
-			},
-		},
-	}
-
-	return role
-}
-
+// from https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 const flannel = `
-# Downloaded from https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
-# and 'quay.io' replaced with the mirror template stub
----
 kind: ConfigMap
 apiVersion: v1
 metadata:
@@ -125,7 +59,7 @@ data:
     }
   net-conf.json: |
     {
-      "Network": "{{ .PodSubnet }}",
+      "Network": "{{ .POD_SUBNET }}",
       "Backend": {
         "Type": "vxlan"
       }
@@ -156,7 +90,7 @@ spec:
       serviceAccountName: flannel
       initContainers:
       - name: install-cni
-        image: {{ .QuayMirror }}/coreos/flannel:v0.10.0-amd64
+        image: {{ .QUAY_MIRROR }}/coreos/flannel:v0.10.0-amd64
         command:
         - cp
         args:
@@ -170,7 +104,7 @@ spec:
           mountPath: /etc/kube-flannel/
       containers:
       - name: kube-flannel
-        image: {{ .QuayMirror }}/coreos/flannel:v0.10.0-amd64
+        image: {{ .QUAY_MIRROR }}/coreos/flannel:v0.10.0-amd64
         command:
         - /opt/bin/flanneld
         args:

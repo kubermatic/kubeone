@@ -28,6 +28,13 @@ func generateConfigurationFiles(ctx *util.Context) error {
 
 	ctx.Configuration.AddFile("cfg/master.yaml", kubeadm)
 
+	flannel, err := templates.FlannelConfiguration(ctx.Cluster)
+	if err != nil {
+		return fmt.Errorf("failed to create flannel configuration: %v", err)
+	}
+
+	ctx.Configuration.AddFile("kube-flannel.yaml", flannel)
+
 	for idx := range ctx.Cluster.Hosts {
 		etcd, err := templates.EtcdConfig(ctx.Cluster, idx)
 		if err != nil {
