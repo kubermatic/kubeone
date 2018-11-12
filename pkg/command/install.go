@@ -12,16 +12,11 @@ import (
 // InstallCommand returns the structure for declaring the "install" subcommand.
 func InstallCommand(logger *logrus.Logger) cli.Command {
 	return cli.Command{
-		Name:   "install",
-		Usage:  "Installs Kubernetes onto pre-existing machines",
-		Action: InstallAction(logger),
+		Name:      "install",
+		Usage:     "Installs Kubernetes onto pre-existing machines",
+		ArgsUsage: "MANIFEST_FILE",
+		Action:    InstallAction(logger),
 		Flags: []cli.Flag{
-			cli.StringFlag{
-				EnvVar: "MANIFEST_FILE",
-				Name:   "manifest, m",
-				Usage:  "path to the KubeOne manifest",
-				Value:  "manifest.yaml",
-			},
 			cli.StringFlag{
 				EnvVar: "TF_OUTPUT",
 				Name:   "tfjson, t",
@@ -35,7 +30,7 @@ func InstallCommand(logger *logrus.Logger) cli.Command {
 // InstallAction wrapper for logger
 func InstallAction(logger *logrus.Logger) cli.ActionFunc {
 	return handleErrors(logger, setupLogger(logger, func(ctx *cli.Context) error {
-		manifestFile := ctx.String("manifest")
+		manifestFile := ctx.Args().First()
 		if manifestFile == "" {
 			return errors.New("no manifest file given")
 		}

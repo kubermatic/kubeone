@@ -12,16 +12,11 @@ import (
 // ResetCommand returns the structure for declaring the "reset" subcommand.
 func ResetCommand(logger *logrus.Logger) cli.Command {
 	return cli.Command{
-		Name:   "reset",
-		Usage:  "Undos all changes made by KubeOne to the configured machines",
-		Action: ResetAction(logger),
+		Name:      "reset",
+		Usage:     "Undos all changes made by KubeOne to the configured machines",
+		ArgsUsage: "MANIFEST_FILE",
+		Action:    ResetAction(logger),
 		Flags: []cli.Flag{
-			cli.StringFlag{
-				EnvVar: "MANIFEST_FILE",
-				Name:   "manifest, m",
-				Usage:  "path to the KubeOne manifest",
-				Value:  "manifest.yaml",
-			},
 			cli.StringFlag{
 				EnvVar: "TF_OUTPUT",
 				Name:   "tfjson, t",
@@ -35,7 +30,7 @@ func ResetCommand(logger *logrus.Logger) cli.Command {
 // ResetAction handles the "reset" subcommand.
 func ResetAction(logger *logrus.Logger) cli.ActionFunc {
 	return handleErrors(logger, setupLogger(logger, func(ctx *cli.Context) error {
-		manifestFile := ctx.String("manifest")
+		manifestFile := ctx.Args().First()
 		if manifestFile == "" {
 			return errors.New("no manifest file given")
 		}
