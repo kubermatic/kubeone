@@ -28,14 +28,14 @@ func generateConfigurationFiles(ctx *util.Context) error {
 
 	ctx.Configuration.AddFile("cfg/master.yaml", kubeadm)
 
-	// for idx := range ctx.Manifest.Hosts {
-	// 	etcd, err := templates.EtcdConfig(ctx.Manifest, idx)
-	// 	if err != nil {
-	// 		return fmt.Errorf("failed to create etcd configuration: %v", err)
-	// 	}
+	for idx := range ctx.Manifest.Hosts {
+		etcd, err := templates.EtcdConfig(ctx.Manifest, idx)
+		if err != nil {
+			return fmt.Errorf("failed to create etcd configuration: %v", err)
+		}
 
-	// 	ctx.Configuration.AddFile(fmt.Sprintf("etcd/etcd_%d.yaml", idx), etcd)
-	// }
+		ctx.Configuration.AddFile(fmt.Sprintf("etcd/etcd_%d.yaml", idx), etcd)
+	}
 
 	ctx.Configuration.AddFile("cfg/20-cloudconfig-kubelet.conf", fmt.Sprintf(`
 [Service]
