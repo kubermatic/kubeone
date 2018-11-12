@@ -5,9 +5,7 @@ BUILD_IMAGE?=golang:1.11.2
 all: install
 
 .PHONY: install
-install: $(GOPATH)/bin/kubeone
-
-$(GOPATH)/bin/kubeone:
+install:
 	go install -v ./cmd/kubeone
 
 docker-make-install:
