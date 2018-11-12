@@ -7,7 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func GenerateCA(ctx *util.Context) error {
+func generateCA(ctx *util.Context) error {
 	ctx.Logger.Infoln("Generating PKI…")
 
 	node := ctx.Manifest.Hosts[0]

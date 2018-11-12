@@ -9,7 +9,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/templates"
 )
 
-func InstallPrerequisites(ctx *util.Context) error {
+func installPrerequisites(ctx *util.Context) error {
 	ctx.Logger.Infoln("Installing prerequisites…")
 
 	err := generateConfigurationFiles(ctx)

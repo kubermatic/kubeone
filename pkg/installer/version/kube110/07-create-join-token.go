@@ -7,7 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func CreateJoinToken(ctx *util.Context) error {
+func createJoinToken(ctx *util.Context) error {
 	node := ctx.Manifest.Hosts[0]
 	logger := ctx.Logger.WithFields(logrus.Fields{
 		"node": node.PublicAddress,

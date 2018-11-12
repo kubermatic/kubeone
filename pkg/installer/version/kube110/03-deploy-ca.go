@@ -9,7 +9,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/ssh"
 )
 
-func DeployCA(ctx *util.Context) error {
+func deployCA(ctx *util.Context) error {
 	ctx.Logger.Infoln("Deploying PKI…")
 
 	return util.RunTaskOnNodes(ctx, deployCAOnNode)
