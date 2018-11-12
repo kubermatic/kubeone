@@ -1,6 +1,19 @@
 export GO111MODULE=on
+export GOPATH?=$(shell go env GOPATH)
+BUILD_IMAGE?=golang:1.11.2
 
 all: install
 
-install:
-	go install -v ./cmd/...
+.PHONY: install
+install: $(GOPATH)/bin/kubeone
+
+$(GOPATH)/bin/kubeone:
+	go install -v ./cmd/kubeone
+
+docker-make-install:
+	docker run -it --rm \
+		-v $(PWD):/app \
+		-v $(GOPATH)/pkg/mod:/go/pkg/mod \
+		-w /app \
+		$(BUILD_IMAGE) \
+		make install

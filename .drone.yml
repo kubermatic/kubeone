@@ -6,4 +6,4 @@ pipeline:
   build:
     image: golang:1.11.2
     commands:
-    - go install -v ./cmd/...
+    - make install
