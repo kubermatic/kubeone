@@ -9,7 +9,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/ssh"
 )
 
-func InitKubernetes(ctx *util.Context) error {
+func initKubernetes(ctx *util.Context) error {
 	ctx.Logger.Infoln("Initializing Kubernetes…")
 
 	return util.RunTaskOnNodes(ctx, initKubernetesOnNode)

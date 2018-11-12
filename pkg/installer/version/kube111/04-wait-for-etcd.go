@@ -5,12 +5,11 @@ import (
 	"time"
 
 	"github.com/kubermatic/kubeone/pkg/installer/util"
-	"github.com/kubermatic/kubeone/pkg/ssh"
-
 	"github.com/kubermatic/kubeone/pkg/manifest"
+	"github.com/kubermatic/kubeone/pkg/ssh"
 )
 
-func WaitForEtcd(ctx *util.Context) error {
+func waitForEtcd(ctx *util.Context) error {
 	ctx.Logger.Infoln("Waiting for etcd…")
 
 	return util.RunTaskOnNodes(ctx, waitForEtcdOnNode)
@@ -29,7 +28,7 @@ sudo curl -s --max-time 3 --fail \
 
 	ctx.Logger.Infoln("Waiting…")
 	for remaining := 100; remaining >= 0; remaining-- {
-		_, _, _, err := util.RunCommand(conn, command, ctx.Verbose)
+		_, _, _, err = util.RunCommand(conn, command, ctx.Verbose)
 		if err == nil {
 			break
 		}
