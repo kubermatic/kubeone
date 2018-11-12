@@ -9,12 +9,12 @@ import (
 	"github.com/urfave/cli"
 )
 
-// InstallCommand returns the structure for declaring the "install" subcommand.
-func InstallCommand(logger *logrus.Logger) cli.Command {
+// ResetCommand returns the structure for declaring the "reset" subcommand.
+func ResetCommand(logger *logrus.Logger) cli.Command {
 	return cli.Command{
-		Name:   "install",
-		Usage:  "Installs Kubernetes onto pre-existing machines",
-		Action: InstallAction(logger),
+		Name:   "reset",
+		Usage:  "Undos all changes made by KubeOne to the configured machines",
+		Action: ResetAction(logger),
 		Flags: []cli.Flag{
 			cli.StringFlag{
 				EnvVar: "MANIFEST_FILE",
@@ -32,8 +32,8 @@ func InstallCommand(logger *logrus.Logger) cli.Command {
 	}
 }
 
-// InstallAction wrapper for logger
-func InstallAction(logger *logrus.Logger) cli.ActionFunc {
+// ResetAction handles the "reset" subcommand.
+func ResetAction(logger *logrus.Logger) cli.ActionFunc {
 	return handleErrors(logger, setupLogger(logger, func(ctx *cli.Context) error {
 		manifestFile := ctx.String("manifest")
 		if manifestFile == "" {
@@ -55,7 +55,7 @@ func InstallAction(logger *logrus.Logger) cli.ActionFunc {
 		}
 
 		worker := installer.NewInstaller(manifest, logger)
-		_, err = worker.Install(ctx.GlobalBool("verbose"))
+		_, err = worker.Reset(ctx.GlobalBool("verbose"))
 
 		return err
 	}))
