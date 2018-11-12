@@ -1,16 +1,15 @@
 package templates
 
 import (
+	"github.com/kubermatic/kubeone/pkg/config"
 	corev1 "k8s.io/api/core/v1"
 	rbac_v1beta1 "k8s.io/api/rbac/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
-	"github.com/kubermatic/kubeone/pkg/manifest"
 )
 
 //  Downloaded from https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 
-func FlannelConfiguration(manifest *manifest.Manifest, instance int) (string, error) {
+func FlannelConfiguration(cluster *config.Cluster, instance int) (string, error) {
 	items := []interface{}{
 		flannelServiceAccount(),
 		flannelClusterRole(),

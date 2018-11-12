@@ -1,4 +1,4 @@
-package manifest
+package config
 
 import (
 	"crypto/rand"
@@ -7,20 +7,20 @@ import (
 	"fmt"
 )
 
-// Manifest describes the terraform output we expect.
-type Manifest struct {
-	Hosts     []HostManifest    `yaml:"hosts"`
-	APIServer APIServerManifest `yaml:"apiserver"`
-	Provider  ProviderManifest  `yaml:"provider"`
-	Versions  VersionManifest   `yaml:"versions"`
-	Network   NetworkManifest   `yaml:"network"`
+// Cluster describes our entire configuration.
+type Cluster struct {
+	Hosts     []HostConfig    `yaml:"hosts"`
+	APIServer APIServerConfig `yaml:"apiserver"`
+	Provider  ProviderConfig  `yaml:"provider"`
+	Versions  VersionConfig   `yaml:"versions"`
+	Network   NetworkConfig   `yaml:"network"`
 
 	// stuff generated at runtime
 	etcdClusterToken string
 }
 
-// Validate checks if the manifest makes sense.
-func (m *Manifest) Validate() error {
+// Validate checks if the cluster config makes sense.
+func (m *Cluster) Validate() error {
 	if len(m.Hosts) == 0 {
 		return errors.New("no master hosts specified")
 	}
@@ -35,7 +35,7 @@ func (m *Manifest) Validate() error {
 }
 
 // EtcdClusterToken returns a randomly generated token.
-func (m *Manifest) EtcdClusterToken() (string, error) {
+func (m *Cluster) EtcdClusterToken() (string, error) {
 	if m.etcdClusterToken == "" {
 		b := make([]byte, 16)
 
@@ -50,8 +50,8 @@ func (m *Manifest) EtcdClusterToken() (string, error) {
 	return m.etcdClusterToken, nil
 }
 
-// HostManifest describes a single master node.
-type HostManifest struct {
+// HostConfig describes a single master node.
+type HostConfig struct {
 	PublicAddress     string `yaml:"public_address"`
 	PrivateAddress    string `yaml:"private_address"`
 	SSHPort           int    `yaml:"ssh_port"`
@@ -60,8 +60,8 @@ type HostManifest struct {
 	SSHAgentSocket    string `yaml:"ssh_agent_socket"`
 }
 
-// Validate checks if the manifest makes sense.
-func (m *HostManifest) Validate() error {
+// Validate checks if the Config makes sense.
+func (m *HostConfig) Validate() error {
 	if len(m.SSHPrivateKeyFile) == 0 && len(m.SSHAgentSocket) == 0 {
 		return errors.New("neither SSH private key nor agent socket given, don't know how to authenticate")
 	}
@@ -70,46 +70,46 @@ func (m *HostManifest) Validate() error {
 }
 
 // EtcdURL with schema
-func (m *HostManifest) EtcdURL() string {
+func (m *HostConfig) EtcdURL() string {
 	return fmt.Sprintf("https://%s:2379", m.PrivateAddress)
 }
 
 // EtcdPeerURL with schema
-func (m *HostManifest) EtcdPeerURL() string {
+func (m *HostConfig) EtcdPeerURL() string {
 	return fmt.Sprintf("https://%s:2380", m.PrivateAddress)
 }
 
-// APIServerManifest describes the load balancer address.
-type APIServerManifest struct {
+// APIServerConfig describes the load balancer address.
+type APIServerConfig struct {
 	Address string `yaml:"address"`
 }
 
-// ProviderManifest describes the cloud provider that is running the machines.
-type ProviderManifest struct {
+// ProviderConfig describes the cloud provider that is running the machines.
+type ProviderConfig struct {
 	Name        string `yaml:"name"`
 	CloudConfig string `yaml:"cloud_config"`
 }
 
-// VersionManifest describes the versions of Kubernetes and Docker that are installed.
-type VersionManifest struct {
+// VersionConfig describes the versions of Kubernetes and Docker that are installed.
+type VersionConfig struct {
 	Kubernetes string `yaml:"kubernetes"`
 	Docker     string `yaml:"docker"`
 }
 
 // Etcd version
-func (m *VersionManifest) Etcd() string {
+func (m *VersionConfig) Etcd() string {
 	return "3.1.13"
 }
 
-// NetworkManifest describes the node network.
-type NetworkManifest struct {
+// NetworkConfig describes the node network.
+type NetworkConfig struct {
 	PodSubnetVal     string `yaml:"pod_subnet"`
 	ServiceSubnetVal string `yaml:"service_subnet"`
 	NodePortRangeVal string `yaml:"node_port_range"`
 }
 
 // PodSubnet returns the pod subnet or the default value.
-func (m *NetworkManifest) PodSubnet() string {
+func (m *NetworkConfig) PodSubnet() string {
 	if m.PodSubnetVal != "" {
 		return m.PodSubnetVal
 	}
@@ -118,7 +118,7 @@ func (m *NetworkManifest) PodSubnet() string {
 }
 
 // ServiceSubnet returns the service subnet or the default value.
-func (m *NetworkManifest) ServiceSubnet() string {
+func (m *NetworkConfig) ServiceSubnet() string {
 	if m.ServiceSubnetVal != "" {
 		return m.ServiceSubnetVal
 	}
@@ -127,7 +127,7 @@ func (m *NetworkManifest) ServiceSubnet() string {
 }
 
 // NodePortRange returns the node port range or the default value.
-func (m *NetworkManifest) NodePortRange() string {
+func (m *NetworkConfig) NodePortRange() string {
 	if m.NodePortRangeVal != "" {
 		return m.NodePortRangeVal
 	}

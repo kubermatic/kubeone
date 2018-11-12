@@ -3,12 +3,12 @@ package util
 import (
 	"fmt"
 
-	"github.com/kubermatic/kubeone/pkg/manifest"
+	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 )
 
 // NodeTask is a task that is specifically tailored to run on a single node.
-type NodeTask func(ctx *Context, node manifest.HostManifest, nodeIndex int, conn ssh.Connection) error
+type NodeTask func(ctx *Context, node config.HostConfig, nodeIndex int, conn ssh.Connection) error
 
 // RunTaskOnNodes runs the given task on all hosts.
 func RunTaskOnNodes(ctx *Context, task NodeTask) error {
@@ -17,7 +17,7 @@ func RunTaskOnNodes(ctx *Context, task NodeTask) error {
 		conn ssh.Connection
 	)
 
-	for idx, node := range ctx.Manifest.Hosts {
+	for idx, node := range ctx.Cluster.Hosts {
 		context := ctx.Clone()
 		context.Logger = context.Logger.WithField("node", node.PublicAddress)
 

@@ -1,8 +1,8 @@
 package kube110
 
 import (
+	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
-	"github.com/kubermatic/kubeone/pkg/manifest"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 )
 
@@ -13,7 +13,7 @@ func Reset(ctx *util.Context) error {
 	return util.RunTaskOnNodes(ctx, resetNode)
 }
 
-func resetNode(ctx *util.Context, node manifest.HostManifest, _ int, conn ssh.Connection) error {
+func resetNode(ctx *util.Context, node config.HostConfig, _ int, conn ssh.Connection) error {
 	ctx.Logger.Infoln("Resetting node…")
 
 	_, _, _, err := util.RunShellCommand(conn, ctx.Verbose, resetScript, util.TemplateVariables{

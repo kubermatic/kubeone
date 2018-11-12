@@ -5,23 +5,22 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/kubermatic/kubeone/pkg/config"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
-	"github.com/kubermatic/kubeone/pkg/manifest"
 )
 
 func hostPathTypePtr(s corev1.HostPathType) *corev1.HostPathType {
 	return &s
 }
 
-func EtcdConfig(manifest *manifest.Manifest, instance int) (string, error) {
-	masterNodes := manifest.Hosts
+func EtcdConfig(cluster *config.Cluster, instance int) (string, error) {
+	masterNodes := cluster.Hosts
 	if len(masterNodes) < (instance - 1) {
-		return "", fmt.Errorf("manifest does not contain node #%d", instance)
+		return "", fmt.Errorf("cluster config does not contain node #%d", instance)
 	}
 
-	token, err := manifest.EtcdClusterToken()
+	token, err := cluster.EtcdClusterToken()
 	if err != nil {
 		return "", errors.New("failed to generate new secure etcd cluster token")
 	}
@@ -77,7 +76,7 @@ func EtcdConfig(manifest *manifest.Manifest, instance int) (string, error) {
 						"--peer-key-file=/etc/kubernetes/pki/etcd/peer.key",
 						"--peer-trusted-ca-file=/etc/kubernetes/pki/etcd/ca.crt",
 					},
-					Image: fmt.Sprintf("k8s.gcr.io/etcd-amd64:%s", manifest.Versions.Etcd()),
+					Image: fmt.Sprintf("k8s.gcr.io/etcd-amd64:%s", cluster.Versions.Etcd()),
 					VolumeMounts: []corev1.VolumeMount{
 						{
 							MountPath: "/var/lib/etcd",

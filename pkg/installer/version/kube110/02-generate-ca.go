@@ -10,7 +10,7 @@ import (
 func generateCA(ctx *util.Context) error {
 	ctx.Logger.Infoln("Generating PKI…")
 
-	node := ctx.Manifest.Hosts[0]
+	node := ctx.Cluster.Hosts[0]
 	logger := ctx.Logger.WithFields(logrus.Fields{
 		"node": node.PublicAddress,
 	})

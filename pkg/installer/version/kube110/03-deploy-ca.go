@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
-	"github.com/kubermatic/kubeone/pkg/manifest"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 )
 
@@ -15,7 +15,7 @@ func deployCA(ctx *util.Context) error {
 	return util.RunTaskOnNodes(ctx, deployCAOnNode)
 }
 
-func deployCAOnNode(ctx *util.Context, node manifest.HostManifest, nodeIndex int, conn ssh.Connection) error {
+func deployCAOnNode(ctx *util.Context, node config.HostConfig, nodeIndex int, conn ssh.Connection) error {
 	ctx.Logger.Infoln("Uploading files…")
 	err := ctx.Configuration.UploadTo(conn, ctx.WorkDir)
 	if err != nil {

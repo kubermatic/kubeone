@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"strconv"
 
-	"github.com/kubermatic/kubeone/pkg/manifest"
+	"github.com/kubermatic/kubeone/pkg/config"
 )
 
 // Config represents configuration in the terraform output format
@@ -35,13 +35,14 @@ func NewConfigFromJSON(j []byte) (c *Config, err error) {
 	return c, json.Unmarshal(j, c)
 }
 
-// Apply adds the terraform configuration options to the given manifest
-func (c Config) Apply(m *manifest.Manifest) {
+// Apply adds the terraform configuration options to the given
+// cluster config.
+func (c Config) Apply(m *config.Cluster) {
 	if c.KubeOneAPI.Value.Endpoint != "" {
 		m.APIServer.Address = c.KubeOneAPI.Value.Endpoint
 	}
 
-	var hosts []manifest.HostManifest
+	var hosts []config.HostConfig
 	cp := c.KubeOneHosts.Value.ControlPlane[0]
 	sshPort, _ := strconv.Atoi(cp.SSHPort)
 
@@ -53,7 +54,7 @@ func (c Config) Apply(m *manifest.Manifest) {
 			privateIP = privateIPs[i]
 		}
 
-		hosts = append(hosts, manifest.HostManifest{
+		hosts = append(hosts, config.HostConfig{
 			PublicAddress:     publicIP,
 			PrivateAddress:    privateIP,
 			SSHUsername:       cp.SSHUser,

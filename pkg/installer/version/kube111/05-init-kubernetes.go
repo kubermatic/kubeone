@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
-	"github.com/kubermatic/kubeone/pkg/manifest"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 )
 
@@ -15,7 +15,7 @@ func initKubernetes(ctx *util.Context) error {
 	return util.RunTaskOnNodes(ctx, initKubernetesOnNode)
 }
 
-func initKubernetesOnNode(ctx *util.Context, node manifest.HostManifest, _ int, conn ssh.Connection) error {
+func initKubernetesOnNode(ctx *util.Context, node config.HostConfig, _ int, conn ssh.Connection) error {
 	if err := kubeadmInit(ctx, conn); err != nil {
 		return err
 	}
@@ -39,7 +39,7 @@ sudo kubeadm init \
 	return err
 }
 
-func waitForApiserver(ctx *util.Context, node manifest.HostManifest, conn ssh.Connection) error {
+func waitForApiserver(ctx *util.Context, node config.HostConfig, conn ssh.Connection) error {
 	var err error
 
 	ctx.Logger.Infoln("Waiting for apiserver…")

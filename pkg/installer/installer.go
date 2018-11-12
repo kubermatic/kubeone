@@ -6,22 +6,22 @@ import (
 	"github.com/Masterminds/semver"
 	"github.com/sirupsen/logrus"
 
+	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/installer/version/kube110"
 	"github.com/kubermatic/kubeone/pkg/installer/version/kube111"
-	"github.com/kubermatic/kubeone/pkg/manifest"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 )
 
 type installer struct {
-	manifest *manifest.Manifest
-	logger   *logrus.Logger
+	cluster *config.Cluster
+	logger  *logrus.Logger
 }
 
-func NewInstaller(manifest *manifest.Manifest, logger *logrus.Logger) *installer {
+func NewInstaller(cluster *config.Cluster, logger *logrus.Logger) *installer {
 	return &installer{
-		manifest: manifest,
-		logger:   logger,
+		cluster: cluster,
+		logger:  logger,
 	}
 }
 
@@ -30,7 +30,7 @@ func (i *installer) Install(verbose bool) (*Result, error) {
 
 	ctx := i.createContext(verbose)
 
-	v := semver.MustParse(i.manifest.Versions.Kubernetes)
+	v := semver.MustParse(i.cluster.Versions.Kubernetes)
 	majorMinor := fmt.Sprintf("%d.%d", v.Major(), v.Minor())
 
 	switch majorMinor {
@@ -50,7 +50,7 @@ func (i *installer) Reset(verbose bool) (*Result, error) {
 
 	ctx := i.createContext(verbose)
 
-	v := semver.MustParse(i.manifest.Versions.Kubernetes)
+	v := semver.MustParse(i.cluster.Versions.Kubernetes)
 	majorMinor := fmt.Sprintf("%d.%d", v.Major(), v.Minor())
 
 	switch majorMinor {
@@ -67,7 +67,7 @@ func (i *installer) Reset(verbose bool) (*Result, error) {
 
 func (i *installer) createContext(verbose bool) *util.Context {
 	return &util.Context{
-		Manifest:      i.manifest,
+		Cluster:       i.cluster,
 		Connector:     ssh.NewConnector(),
 		Configuration: util.NewConfiguration(),
 		WorkDir:       "kubermatic-installer",

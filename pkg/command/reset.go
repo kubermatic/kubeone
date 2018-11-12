@@ -14,7 +14,7 @@ func ResetCommand(logger *logrus.Logger) cli.Command {
 	return cli.Command{
 		Name:      "reset",
 		Usage:     "Undos all changes made by KubeOne to the configured machines",
-		ArgsUsage: "MANIFEST_FILE",
+		ArgsUsage: "CLUSTER_FILE",
 		Action:    ResetAction(logger),
 		Flags: []cli.Flag{
 			cli.StringFlag{
@@ -30,26 +30,26 @@ func ResetCommand(logger *logrus.Logger) cli.Command {
 // ResetAction handles the "reset" subcommand.
 func ResetAction(logger *logrus.Logger) cli.ActionFunc {
 	return handleErrors(logger, setupLogger(logger, func(ctx *cli.Context) error {
-		manifestFile := ctx.Args().First()
-		if manifestFile == "" {
-			return errors.New("no manifest file given")
+		clusterFile := ctx.Args().First()
+		if clusterFile == "" {
+			return errors.New("no cluster config file given")
 		}
 
-		manifest, err := loadManifest(manifestFile)
+		cluster, err := loadClusterConfig(clusterFile)
 		if err != nil {
-			return fmt.Errorf("failed to load manifest: %v", err)
+			return fmt.Errorf("failed to load cluster: %v", err)
 		}
 
 		tf := ctx.String("tfjson")
-		if err = applyTerraform(tf, manifest); err != nil {
+		if err = applyTerraform(tf, cluster); err != nil {
 			return err
 		}
 
-		if err = manifest.Validate(); err != nil {
-			return fmt.Errorf("manifest is invalid: %v", err)
+		if err = cluster.Validate(); err != nil {
+			return fmt.Errorf("cluster is invalid: %v", err)
 		}
 
-		worker := installer.NewInstaller(manifest, logger)
+		worker := installer.NewInstaller(cluster, logger)
 		_, err = worker.Reset(ctx.GlobalBool("verbose"))
 
 		return err

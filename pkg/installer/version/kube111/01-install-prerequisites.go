@@ -3,8 +3,8 @@ package kube111
 import (
 	"fmt"
 
+	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
-	"github.com/kubermatic/kubeone/pkg/manifest"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/templates"
 )
@@ -21,15 +21,15 @@ func installPrerequisites(ctx *util.Context) error {
 }
 
 func generateConfigurationFiles(ctx *util.Context) error {
-	kubeadm, err := templates.KubeadmConfig(ctx.Manifest)
+	kubeadm, err := templates.KubeadmConfig(ctx.Cluster)
 	if err != nil {
 		return fmt.Errorf("failed to create kubeadm configuration: %v", err)
 	}
 
 	ctx.Configuration.AddFile("cfg/master.yaml", kubeadm)
 
-	for idx := range ctx.Manifest.Hosts {
-		etcd, err := templates.EtcdConfig(ctx.Manifest, idx)
+	for idx := range ctx.Cluster.Hosts {
+		etcd, err := templates.EtcdConfig(ctx.Cluster, idx)
 		if err != nil {
 			return fmt.Errorf("failed to create etcd configuration: %v", err)
 		}
@@ -40,14 +40,14 @@ func generateConfigurationFiles(ctx *util.Context) error {
 	ctx.Configuration.AddFile("cfg/20-cloudconfig-kubelet.conf", fmt.Sprintf(`
 [Service]
 Environment="KUBELET_EXTRA_ARGS= --cloud-provider=%s --cloud-config=/etc/kubernetes/cloud-config"`,
-		ctx.Manifest.Provider.Name))
+		ctx.Cluster.Provider.Name))
 
-	ctx.Configuration.AddFile("cfg/cloud-config", ctx.Manifest.Provider.CloudConfig)
+	ctx.Configuration.AddFile("cfg/cloud-config", ctx.Cluster.Provider.CloudConfig)
 
 	return nil
 }
 
-func installPrerequisitesOnNode(ctx *util.Context, node manifest.HostManifest, _ int, conn ssh.Connection) error {
+func installPrerequisitesOnNode(ctx *util.Context, node config.HostConfig, _ int, conn ssh.Connection) error {
 	ctx.Logger.Infoln("Determine operating system…")
 	os, err := determineOS(ctx, conn)
 	if err != nil {
@@ -98,8 +98,8 @@ func installKubeadm(ctx *util.Context, conn ssh.Connection, os string) error {
 
 func installKubeadmDebian(ctx *util.Context, conn ssh.Connection) error {
 	_, _, _, err := util.RunShellCommand(conn, ctx.Verbose, kubeadmDebianCommand, util.TemplateVariables{
-		"KUBERNETES_VERSION": ctx.Manifest.Versions.Kubernetes,
-		"DOCKER_VERSION":     ctx.Manifest.Versions.Docker,
+		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
+		"DOCKER_VERSION":     ctx.Cluster.Versions.Docker,
 	})
 
 	return err
@@ -148,8 +148,8 @@ sudo systemctl daemon-reload
 
 func installKubeadmCoreOS(ctx *util.Context, conn ssh.Connection) error {
 	_, _, _, err := util.RunShellCommand(conn, ctx.Verbose, kubeadmCoreOSCommand, util.TemplateVariables{
-		"KUBERNETES_VERSION": ctx.Manifest.Versions.Kubernetes,
-		"DOCKER_VERSION":     ctx.Manifest.Versions.Docker,
+		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
+		"DOCKER_VERSION":     ctx.Cluster.Versions.Docker,
 		"CNI_VERSION":        "v0.7.1",
 	})
 

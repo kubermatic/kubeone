@@ -3,7 +3,7 @@ package ssh
 import (
 	"time"
 
-	"github.com/kubermatic/kubeone/pkg/manifest"
+	"github.com/kubermatic/kubeone/pkg/config"
 )
 
 type Connector struct {
@@ -16,7 +16,7 @@ func NewConnector() *Connector {
 	}
 }
 
-func (c *Connector) Connect(node manifest.HostManifest) (Connection, error) {
+func (c *Connector) Connect(node config.HostConfig) (Connection, error) {
 	var err error
 
 	conn, exists := c.connections[node.PublicAddress]

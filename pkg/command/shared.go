@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/kubermatic/kubeone/pkg/manifest"
+	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/terraform"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
@@ -34,21 +34,21 @@ func setupLogger(logger *logrus.Logger, action cli.ActionFunc) cli.ActionFunc {
 	}
 }
 
-func loadManifest(filename string) (*manifest.Manifest, error) {
+func loadClusterConfig(filename string) (*config.Cluster, error) {
 	content, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read file: %v", err)
 	}
 
-	manifest := manifest.Manifest{}
-	if err := yaml.Unmarshal(content, &manifest); err != nil {
+	cluster := config.Cluster{}
+	if err := yaml.Unmarshal(content, &cluster); err != nil {
 		return nil, fmt.Errorf("failed to decode file as JSON: %v", err)
 	}
 
-	return &manifest, nil
+	return &cluster, nil
 }
 
-func applyTerraform(tf string, manifest *manifest.Manifest) error {
+func applyTerraform(tf string, cluster *config.Cluster) error {
 	if tf == "" {
 		return nil
 	}
@@ -73,7 +73,7 @@ func applyTerraform(tf string, manifest *manifest.Manifest) error {
 		return fmt.Errorf("failed to parse terraform config: %v", err)
 	}
 
-	tfConfig.Apply(manifest)
+	tfConfig.Apply(cluster)
 
 	return nil
 }

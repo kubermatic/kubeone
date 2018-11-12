@@ -1,14 +1,13 @@
 package templates
 
 import (
+	"github.com/kubermatic/kubeone/pkg/config"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	rbac_v1beta1 "k8s.io/api/rbac/v1beta1"
 	apiextensionsv1beta1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
-
-	"github.com/kubermatic/kubeone/pkg/manifest"
 )
 
 const (
@@ -17,7 +16,7 @@ const (
 	MachineControllerTag           = "v0.9.9"
 )
 
-func MachineControllerConfiguration(manifest *manifest.Manifest, instance int) (string, error) {
+func MachineControllerConfiguration(cluster *config.Cluster, instance int) (string, error) {
 	items := []interface{}{
 		machineControllerClusterRole(),
 		machineControllerClusterRoleBinding(),

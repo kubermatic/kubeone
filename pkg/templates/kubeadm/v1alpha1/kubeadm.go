@@ -6,7 +6,7 @@ package v1alpha1
 import (
 	"fmt"
 
-	"github.com/kubermatic/kubeone/pkg/manifest"
+	"github.com/kubermatic/kubeone/pkg/config"
 )
 
 type api struct {
@@ -41,13 +41,13 @@ type configuration struct {
 	ControllerManagerExtraArgs map[string]string `yaml:"controllerManagerExtraArgs"`
 }
 
-func NewConfig(manifest *manifest.Manifest) (*configuration, error) {
-	firstMaster := manifest.Hosts[0]
+func NewConfig(cluster *config.Cluster) (*configuration, error) {
+	firstMaster := cluster.Hosts[0]
 	etcdEndpoints := make([]string, 0)
 	etcdSANs := make([]string, 0)
 	apiServerCertSANs := make([]string, 0)
 
-	for _, node := range manifest.Hosts {
+	for _, node := range cluster.Hosts {
 		etcdEndpoints = append(etcdEndpoints, node.EtcdURL())
 		etcdSANs = append(etcdSANs, node.PrivateAddress)
 
@@ -58,8 +58,8 @@ func NewConfig(manifest *manifest.Manifest) (*configuration, error) {
 	cfg := &configuration{
 		APIVersion:        "kubeadm.k8s.io/v1alpha1",
 		Kind:              "MasterConfiguration",
-		CloudProvider:     manifest.Provider.Name,
-		KubernetesVersion: fmt.Sprintf("v%s", manifest.Versions.Kubernetes),
+		CloudProvider:     cluster.Provider.Name,
+		KubernetesVersion: fmt.Sprintf("v%s", cluster.Versions.Kubernetes),
 
 		API: api{
 			AdvertiseAddress:     firstMaster.PrivateAddress,
@@ -76,18 +76,18 @@ func NewConfig(manifest *manifest.Manifest) (*configuration, error) {
 		},
 
 		Networking: networking{
-			PodSubnet:     manifest.Network.PodSubnet(),
-			ServiceSubnet: manifest.Network.ServiceSubnet(),
+			PodSubnet:     cluster.Network.PodSubnet(),
+			ServiceSubnet: cluster.Network.ServiceSubnet(),
 		},
 
 		APIServerCertSANs: apiServerCertSANs,
 		APIServerExtraArgs: map[string]string{
 			"endpoint-reconciler-type": "lease",
-			"service-node-port-range":  manifest.Network.NodePortRange(),
+			"service-node-port-range":  cluster.Network.NodePortRange(),
 		},
 	}
 
-	if manifest.Provider.CloudConfig != "" {
+	if cluster.Provider.CloudConfig != "" {
 		renderedCloudConfig := "/etc/kubernetes/cloud-config"
 
 		cfg.APIServerExtraArgs["cloud-config"] = renderedCloudConfig
