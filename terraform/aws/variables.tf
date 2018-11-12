@@ -1,6 +1,5 @@
 variable "cluster_name" {
-  default     = "kubeone"
-  description = "profix for cloud resources"
+  description = "prefix for cloud resources"
 }
 
 variable "aws_region" {
