@@ -10,9 +10,10 @@ import (
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/v1alpha1"
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/v1alpha2"
+	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/v1alpha3"
 )
 
-func KubeadmConfig(cluster *config.Cluster) (string, error) {
+func KubeadmConfig(cluster *config.Cluster, instance int) (string, error) {
 	masterNodes := cluster.Hosts
 	if len(masterNodes) == 0 {
 		return "", errors.New("cluster does not contain at least one master node")
@@ -31,6 +32,8 @@ func KubeadmConfig(cluster *config.Cluster) (string, error) {
 		cfg, err = v1alpha1.NewConfig(cluster)
 	case "1.11":
 		cfg, err = v1alpha2.NewConfig(cluster)
+	case "1.12":
+		cfg, err = v1alpha3.NewConfig(cluster, instance)
 	default:
 		err = fmt.Errorf("unsupported Kubernetes version %s", majorMinor)
 	}

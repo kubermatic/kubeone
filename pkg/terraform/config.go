@@ -3,6 +3,7 @@ package terraform
 import (
 	"encoding/json"
 	"strconv"
+	"strings"
 
 	"github.com/kubermatic/kubeone/pkg/config"
 )
@@ -20,6 +21,8 @@ type Config struct {
 			ControlPlane []struct {
 				PublicAddress     []string `json:"public_address"`
 				PrivateAddress    []string `json:"private_address"`
+				PublicDNS         []string `json:"public_dns"`
+				PrivateDNS        []string `json:"private_dns"`
 				SSHUser           string   `json:"ssh_user"`
 				SSHPort           string   `json:"ssh_port"`
 				SSHPrivateKeyFile string   `json:"ssh_private_key_file"`
@@ -57,6 +60,9 @@ func (c Config) Apply(m *config.Cluster) {
 		hosts = append(hosts, config.HostConfig{
 			PublicAddress:     publicIP,
 			PrivateAddress:    privateIP,
+			PublicDNS:         cp.PublicDNS[i],
+			PrivateDNS:        cp.PrivateDNS[i],
+			Hostname:          strings.Split(cp.PrivateDNS[i], ".")[0],
 			SSHUsername:       cp.SSHUser,
 			SSHPort:           sshPort,
 			SSHPrivateKeyFile: cp.SSHPrivateKeyFile,

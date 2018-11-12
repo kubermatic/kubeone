@@ -21,7 +21,7 @@ func installPrerequisites(ctx *util.Context) error {
 }
 
 func generateConfigurationFiles(ctx *util.Context) error {
-	kubeadm, err := templates.KubeadmConfig(ctx.Cluster)
+	kubeadm, err := templates.KubeadmConfig(ctx.Cluster, 0)
 	if err != nil {
 		return fmt.Errorf("failed to create kubeadm configuration: %v", err)
 	}

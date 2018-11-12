@@ -1,4 +1,4 @@
-package kube111
+package kube112
 
 import (
 	"fmt"
@@ -21,28 +21,18 @@ func installPrerequisites(ctx *util.Context) error {
 }
 
 func generateConfigurationFiles(ctx *util.Context) error {
-	kubeadm, err := templates.KubeadmConfig(ctx.Cluster, 0)
-	if err != nil {
-		return fmt.Errorf("failed to create kubeadm configuration: %v", err)
-	}
-
-	ctx.Configuration.AddFile("cfg/master.yaml", kubeadm)
-
-	for idx := range ctx.Cluster.Hosts {
-		etcd, err := templates.EtcdConfig(ctx.Cluster, idx)
-		if err != nil {
-			return fmt.Errorf("failed to create etcd configuration: %v", err)
-		}
-
-		ctx.Configuration.AddFile(fmt.Sprintf("etcd/etcd_%d.yaml", idx), etcd)
-	}
-
 	ctx.Configuration.AddFile("cfg/20-cloudconfig-kubelet.conf", fmt.Sprintf(`
 [Service]
 Environment="KUBELET_EXTRA_ARGS= --cloud-provider=%s --cloud-config=/etc/kubernetes/cloud-config"`,
 		ctx.Cluster.Provider.Name))
 
 	ctx.Configuration.AddFile("cfg/cloud-config", ctx.Cluster.Provider.CloudConfig)
+
+	flannel, err := templates.FlannelConfiguration(ctx.Cluster)
+	if err != nil {
+		return fmt.Errorf("failed to create flannel configuration: %v", err)
+	}
+	ctx.Configuration.AddFile("kube-flannel.yaml", flannel)
 
 	return nil
 }
