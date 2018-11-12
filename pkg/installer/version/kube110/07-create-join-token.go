@@ -1,4 +1,4 @@
-package v1_10
+package kube110
 
 import (
 	"fmt"

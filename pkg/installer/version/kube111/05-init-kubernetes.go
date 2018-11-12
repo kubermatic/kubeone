@@ -1,4 +1,4 @@
-package v1_10
+package kube111
 
 import (
 	"fmt"
@@ -31,7 +31,7 @@ set -xeu
 export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
 sudo kubeadm init \
      --config=./{{ .WORK_DIR }}/cfg/master.yaml \
-     --ignore-preflight-errors=Port-10250,FileAvailable--etc-kubernetes-manifests-etcd.yaml,FileExisting-crictl
+     --ignore-preflight-errors=Port-2379,Port-10250,FileAvailable--etc-kubernetes-manifests-etcd.yaml,FileExisting-crictl,DirAvailable--var-lib-etcd
 `, util.TemplateVariables{
 		"WORK_DIR": ctx.WorkDir,
 	})

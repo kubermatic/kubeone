@@ -7,8 +7,8 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/kubermatic/kubeone/pkg/installer/util"
-	"github.com/kubermatic/kubeone/pkg/installer/version/v1_10"
-	"github.com/kubermatic/kubeone/pkg/installer/version/v1_11"
+	"github.com/kubermatic/kubeone/pkg/installer/version/kube110"
+	"github.com/kubermatic/kubeone/pkg/installer/version/kube111"
 	"github.com/kubermatic/kubeone/pkg/manifest"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 )
@@ -42,9 +42,9 @@ func (i *installer) Run(verbose bool) (*Result, error) {
 
 	switch majorMinor {
 	case "1.10":
-		err = v1_10.Install(ctx)
+		err = kube110.Install(ctx)
 	case "1.11":
-		err = v1_11.Install(ctx)
+		err = kube111.Install(ctx)
 	default:
 		err = fmt.Errorf("unsupported Kubernetes version %s", majorMinor)
 	}
