@@ -54,8 +54,6 @@ func (m *Cluster) EtcdClusterToken() (string, error) {
 type HostConfig struct {
 	PublicAddress     string `yaml:"public_address"`
 	PrivateAddress    string `yaml:"private_address"`
-	PublicDNS         string `yaml:"public_dns"`
-	PrivateDNS        string `yaml:"private_dns"`
 	Hostname          string `yaml:"hostname"`
 	SSHPort           int    `yaml:"ssh_port"`
 	SSHUsername       string `yaml:"ssh_username"`
@@ -65,8 +63,24 @@ type HostConfig struct {
 
 // Validate checks if the Config makes sense.
 func (m *HostConfig) Validate() error {
+	if len(m.PublicAddress) == 0 {
+		return errors.New("no public IP/address given")
+	}
+
+	if len(m.PrivateAddress) == 0 {
+		return errors.New("no private IP/address given")
+	}
+
+	if len(m.Hostname) == 0 {
+		return errors.New("no hostname given")
+	}
+
 	if len(m.SSHPrivateKeyFile) == 0 && len(m.SSHAgentSocket) == 0 {
 		return errors.New("neither SSH private key nor agent socket given, don't know how to authenticate")
+	}
+
+	if len(m.SSHUsername) == 0 {
+		return errors.New("no SSH username given")
 	}
 
 	return nil
