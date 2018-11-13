@@ -60,17 +60,21 @@ func applyTerraform(tf string, cluster *config.Cluster) error {
 
 	if tf == "-" {
 		if tfJSON, err = ioutil.ReadAll(os.Stdin); err != nil {
-			return fmt.Errorf("unable to load terraform output from stdin: %v", err)
+			return fmt.Errorf("unable to load Terraform output from stdin: %v", err)
 		}
 	} else {
 		if tfJSON, err = ioutil.ReadFile(tf); err != nil {
-			return fmt.Errorf("unable to load terraform output from file: %v", err)
+			return fmt.Errorf("unable to load Terraform output from file: %v", err)
 		}
 	}
 
 	var tfConfig *terraform.Config
 	if tfConfig, err = terraform.NewConfigFromJSON(tfJSON); err != nil {
-		return fmt.Errorf("failed to parse terraform config: %v", err)
+		return fmt.Errorf("failed to parse Terraform config: %v", err)
+	}
+
+	if err = tfConfig.Validate(); err != nil {
+		return fmt.Errorf("Terraform output is invalid: %v", err)
 	}
 
 	tfConfig.Apply(cluster)

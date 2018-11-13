@@ -1,11 +1,12 @@
 package kube112
 
 import (
+	"strconv"
+	"time"
+
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/ssh"
-	"strconv"
-	"time"
 )
 
 func joinMasterCluster(ctx *util.Context) error {
@@ -27,8 +28,8 @@ set -xeu pipefail
 export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
 
 for tries in $(seq 1 60); do
-	# Waiting for kubelet to spawn etcd before joining it a cluster.
-	sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf get -n kube-system pod etcd-{{ .MASTER_HOSTNAME }} && break
+    # Waiting for kubelet to spawn etcd before joining it a cluster.
+    sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf get -n kube-system pod etcd-{{ .MASTER_HOSTNAME }} && break
     sleep 1
 done
 

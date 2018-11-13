@@ -9,8 +9,7 @@ output "kubeone_hosts" {
     control_plane = {
       public_address  = "${aws_instance.control_plane.*.public_ip}"
       private_address = "${aws_instance.control_plane.*.private_ip}"
-      public_dns = "${aws_instance.control_plane.*.public_dns}"
-      private_dns = "${aws_instance.control_plane.*.private_dns}"
+      hostnames       = "${aws_instance.control_plane.*.private_dns}"
       ssh_user        = "ubuntu"
       ssh_port        = "${var.ssh_port}"
 
