@@ -15,8 +15,9 @@ type api struct {
 }
 
 type localEtcd struct {
-	ServerCertSANs []string `yaml:"serverCertSANs"`
-	PeerCertSANs   []string `yaml:"peerCertSANs"`
+	ServerCertSANs []string      `yaml:"serverCertSANs"`
+	PeerCertSANs   []string      `yaml:"peerCertSANs"`
+	ExtraArgs      etcdExtraArgs `yaml:"extraArgs,omitempty"`
 }
 
 type externalEtcd struct {
@@ -24,6 +25,15 @@ type externalEtcd struct {
 	CAFile    string   `yaml:"caFile"`
 	CertFile  string   `yaml:"certFile"`
 	KeyFile   string   `yaml:"keyFile"`
+}
+
+type etcdExtraArgs struct {
+	ListenClientURLs         string `yaml:"listen-client-urls,omitempty"`
+	AdvertiseClientURLs      string `yaml:"advertise-client-urls,omitempty"`
+	ListenPeerURLs           string `yaml:"listen-peer-urls,omitempty"`
+	InitialAdvertisePeerURLs string `yaml:"initial-advertise-peer-urls,omitempty"`
+	InitialCluster           string `yaml:"initial-cluster,omitempty"`
+	InitialClusterState      string `yaml:"initial-cluster-state,omitempty"`
 }
 
 type etcd struct {
@@ -48,41 +58,49 @@ type configuration struct {
 	ControllerManagerExtraArgs map[string]string `yaml:"controllerManagerExtraArgs"`
 }
 
-func NewConfig(cluster *config.Cluster) (*configuration, error) {
+func NewConfig(cluster *config.Cluster, instance int) (*configuration, error) {
 	firstMaster := cluster.Hosts[0]
-	etcdEndpoints := make([]string, 0)
-	etcdSANs := make([]string, 0)
-	apiServerCertSANs := make([]string, 0)
 
-	for _, node := range cluster.Hosts {
-		etcdEndpoints = append(etcdEndpoints, node.EtcdURL())
-		etcdSANs = append(etcdSANs, node.PrivateAddress)
+	etcdSANs := []string{cluster.Hosts[instance].PrivateAddress, cluster.Hosts[instance].Hostname}
+	listenClientURLs := fmt.Sprintf("https://127.0.0.1:2379,https://%s:2379", cluster.Hosts[instance].PrivateAddress)
+	advertiseClientURLs := fmt.Sprintf("https://%s:2379", cluster.Hosts[instance].PrivateAddress)
+	listenPeerURLs := fmt.Sprintf("https://%s:2380", cluster.Hosts[instance].PrivateAddress)
+	initialAdvertisePeerURLs := fmt.Sprintf("https://%s:2380", cluster.Hosts[instance].PrivateAddress)
+	initialCluster := fmt.Sprintf("%s=https://%s:2380", cluster.Hosts[0].Hostname, cluster.Hosts[0].PrivateAddress)
+	for i := 1; i <= instance; i++ {
+		initialCluster = fmt.Sprintf("%s,%s=https://%s:2380", initialCluster, cluster.Hosts[i].Hostname, cluster.Hosts[i].PrivateAddress)
+	}
 
-		// TODO: add loadbalancers
-		apiServerCertSANs = append(apiServerCertSANs, node.PrivateAddress, node.PublicAddress)
+	initialClusterState := "new"
+	if instance > 0 {
+		initialClusterState = "existing"
 	}
 
 	cfg := &configuration{
 		APIVersion:        "kubeadm.k8s.io/v1alpha2",
 		Kind:              "MasterConfiguration",
 		KubernetesVersion: fmt.Sprintf("v%s", cluster.Versions.Kubernetes),
+		// TODO: use loadbalancer
+		APIServerCertSANs: []string{firstMaster.PublicAddress},
 
 		API: api{
 			AdvertiseAddress:     firstMaster.PrivateAddress,
-			ControlPlaneEndpoint: firstMaster.PublicAddress,
+			ControlPlaneEndpoint: fmt.Sprintf("%s:%d", firstMaster.PublicAddress, 6443),
 		},
 
 		Etcd: etcd{
 			Local: &localEtcd{
 				ServerCertSANs: etcdSANs,
 				PeerCertSANs:   etcdSANs,
+				ExtraArgs: etcdExtraArgs{
+					ListenClientURLs:         listenClientURLs,
+					AdvertiseClientURLs:      advertiseClientURLs,
+					ListenPeerURLs:           listenPeerURLs,
+					InitialAdvertisePeerURLs: initialAdvertisePeerURLs,
+					InitialCluster:           initialCluster,
+					InitialClusterState:      initialClusterState,
+				},
 			},
-			// External: &externalEtcd{
-			// 	CAFile:    "/etc/kubernetes/pki/etcd/ca.crt",
-			// 	CertFile:  "/etc/kubernetes/pki/etcd/peer.crt",
-			// 	KeyFile:   "/etc/kubernetes/pki/etcd/peer.key",
-			// 	Endpoints: etcdEndpoints,
-			// },
 		},
 
 		Networking: networking{
@@ -90,7 +108,6 @@ func NewConfig(cluster *config.Cluster) (*configuration, error) {
 			ServiceSubnet: cluster.Network.ServiceSubnet(),
 		},
 
-		APIServerCertSANs: apiServerCertSANs,
 		APIServerExtraArgs: map[string]string{
 			"endpoint-reconciler-type": "lease",
 			"service-node-port-range":  cluster.Network.NodePortRange(),

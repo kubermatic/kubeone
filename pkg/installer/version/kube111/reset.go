@@ -26,6 +26,6 @@ func resetNode(ctx *util.Context, node config.HostConfig, _ int, conn ssh.Connec
 const resetScript = `
 set -xeu pipefail
 
-sudo kubeadm reset
+sudo kubeadm reset --force
 rm -rf "{{ .WORK_DIR }}"
 `
