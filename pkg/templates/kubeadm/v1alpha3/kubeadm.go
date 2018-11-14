@@ -57,6 +57,7 @@ type configuration struct {
 	APIServerCertSANs          []string          `yaml:"apiServerCertSANs,omitempty"`
 	APIServerExtraArgs         map[string]string `yaml:"apiServerExtraArgs,omitempty"`
 	ControllerManagerExtraArgs map[string]string `yaml:"controllerManagerExtraArgs,omitempty"`
+	FeatureGates               map[string]bool   `yaml:"featureGates,omitempty"`
 }
 
 func NewConfig(cluster *config.Cluster, instance int) (*configuration, error) {
@@ -108,6 +109,10 @@ func NewConfig(cluster *config.Cluster, instance int) (*configuration, error) {
 		APIServerExtraArgs: map[string]string{
 			"endpoint-reconciler-type": "lease",
 			"service-node-port-range":  cluster.Network.NodePortRange(),
+		},
+
+		FeatureGates: map[string]bool{
+			"CoreDNS": false,
 		},
 	}
 
