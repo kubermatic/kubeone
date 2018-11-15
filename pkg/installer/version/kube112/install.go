@@ -2,7 +2,6 @@ package kube112
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/kubermatic/kubeone/pkg/installer/util"
 )
@@ -31,8 +30,8 @@ func Install(ctx *util.Context) error {
 	if err := installKubeProxy(ctx); err != nil {
 		return fmt.Errorf("failed to install kube proxy: %v", err)
 	}
-	if err := wait(ctx, 30*time.Second); err != nil {
-		return err
+	if err := applyCNI(ctx, "flannel"); err != nil {
+		return fmt.Errorf("failed to install cni plugin flannel: %v", err)
 	}
 	if err := createJoinToken(ctx); err != nil {
 		return fmt.Errorf("failed to create join token: %v", err)
