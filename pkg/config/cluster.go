@@ -103,8 +103,9 @@ type APIServerConfig struct {
 
 // ProviderConfig describes the cloud provider that is running the machines.
 type ProviderConfig struct {
-	Name        string `yaml:"name"`
-	CloudConfig string `yaml:"cloud_config"`
+	Name        string            `yaml:"name"`
+	CloudConfig string            `yaml:"cloud_config"`
+	Credentials map[string]string `yaml:"credentials"`
 }
 
 // VersionConfig describes the versions of Kubernetes and Docker that are installed.
