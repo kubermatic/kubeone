@@ -13,35 +13,27 @@ func Install(ctx *util.Context) error {
 	if err := installPrerequisites(ctx); err != nil {
 		return fmt.Errorf("failed to install prerequisites: %v", err)
 	}
-
-	if err := generateCA(ctx); err != nil {
-		return fmt.Errorf("failed to generate CA: %v", err)
+	if err := generateKubeadm(ctx); err != nil {
+		return fmt.Errorf("failed to generate kubeadm config files: %v", err)
 	}
-
+	if err := initKubernetesLeader(ctx); err != nil {
+		return fmt.Errorf("failed to init kubernetes on leader: %v", err)
+	}
+	if err := downloadCA(ctx); err != nil {
+		return fmt.Errorf("unable to download ca from leader: %v", err)
+	}
 	if err := deployCA(ctx); err != nil {
-		return fmt.Errorf("failed to deploy CA: %v", err)
+		return fmt.Errorf("unable to deploy ca on nodes: %v", err)
 	}
-
-	if err := waitForEtcd(ctx); err != nil {
-		return fmt.Errorf("etcd bootstrapping failed: %v", err)
+	if err := joinMasterCluster(ctx); err != nil {
+		return fmt.Errorf("unable to join other masters a cluster: %v", err)
 	}
-
-	if err := initKubernetes(ctx); err != nil {
-		return fmt.Errorf("failed to init Kubernetes: %v", err)
-	}
-
-	if err := wait(ctx, 30*time.Second); err != nil {
-		return err
-	}
-
 	if err := installKubeProxy(ctx); err != nil {
 		return fmt.Errorf("failed to install kube proxy: %v", err)
 	}
-
 	if err := wait(ctx, 30*time.Second); err != nil {
 		return err
 	}
-
 	if err := createJoinToken(ctx); err != nil {
 		return fmt.Errorf("failed to create join token: %v", err)
 	}

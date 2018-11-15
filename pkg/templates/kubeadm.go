@@ -31,7 +31,7 @@ func KubeadmConfig(cluster *config.Cluster, instance int) (string, error) {
 	case "1.10":
 		cfg, err = v1alpha1.NewConfig(cluster)
 	case "1.11":
-		cfg, err = v1alpha2.NewConfig(cluster)
+		cfg, err = v1alpha2.NewConfig(cluster, instance)
 	case "1.12":
 		cfg, err = v1alpha3.NewConfig(cluster, instance)
 	default:
