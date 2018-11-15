@@ -6,6 +6,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/ssh"
+	"github.com/kubermatic/kubeone/pkg/templates"
 )
 
 func installPrerequisites(ctx *util.Context) error {
@@ -26,6 +27,12 @@ Environment="KUBELET_EXTRA_ARGS= --cloud-provider=%s --cloud-config=/etc/kuberne
 		ctx.Cluster.Provider.Name))
 
 	ctx.Configuration.AddFile("cfg/cloud-config", ctx.Cluster.Provider.CloudConfig)
+
+	mc, err := templates.MachineControllerConfiguration(ctx.Cluster)
+	if err != nil {
+		return fmt.Errorf("failed to create machine-controller configuration: %v", err)
+	}
+	ctx.Configuration.AddFile("machine-controller.yaml", mc)
 
 	return nil
 }

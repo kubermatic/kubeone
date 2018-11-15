@@ -20,7 +20,7 @@ require (
 	golang.org/x/text v0.3.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.2.1
-	k8s.io/api v0.0.0-20181102122915-de5c567eef5c
+	k8s.io/api v0.0.0-20181110191121-a33c8200050f
 	k8s.io/apiextensions-apiserver v0.0.0-20181026191334-ba848ee89ca3
 	k8s.io/apimachinery v0.0.0-20181101131016-0aa9751e8aaf
 )

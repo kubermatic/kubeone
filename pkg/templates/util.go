@@ -20,16 +20,27 @@ func kubernetesToYAML(data []interface{}) (string, error) {
 	yamlEncoder := yaml.NewEncoder(&buffer)
 
 	for _, item := range data {
-		encoded, err := json.Marshal(item)
-		if err != nil {
-			return "", fmt.Errorf("failed to encode object as JSON: %v", err)
-		}
+		var (
+			encoded []byte
+			tmp     interface{}
+			err     error
+		)
 
-		var tmp interface{}
+		if str, ok := item.(string); ok {
+			err = yaml.Unmarshal([]byte(str), &tmp)
+			if err != nil {
+				return "", fmt.Errorf("failed to decode object as YAML: %v", err)
+			}
+		} else {
+			encoded, err = json.Marshal(item)
+			if err != nil {
+				return "", fmt.Errorf("failed to encode object as JSON: %v", err)
+			}
 
-		err = json.Unmarshal(encoded, &tmp)
-		if err != nil {
-			return "", fmt.Errorf("failed to read JSON: %v", err)
+			err = json.Unmarshal(encoded, &tmp)
+			if err != nil {
+				return "", fmt.Errorf("failed to read JSON: %v", err)
+			}
 		}
 
 		err = yamlEncoder.Encode(tmp)

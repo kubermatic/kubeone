@@ -4,8 +4,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/config"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
-	rbac_v1beta1 "k8s.io/api/rbac/v1beta1"
-	apiextensionsv1beta1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
+	rbacv1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 )
@@ -16,49 +15,77 @@ const (
 	MachineControllerTag           = "v0.9.9"
 )
 
-func MachineControllerConfiguration(cluster *config.Cluster, instance int) (string, error) {
+func MachineControllerConfiguration(cluster *config.Cluster) (string, error) {
 	items := []interface{}{
+		machineControllerServiceAccount(),
+
 		machineControllerClusterRole(),
+		nodeSignerClusterRoleBinding(),
+
 		machineControllerClusterRoleBinding(),
 		nodeBootstrapperClusterRoleBinding(),
+
 		machineControllerKubeSystemRole(),
 		machineControllerKubePublicRole(),
-		machineControllerDefaultRole(),
-		machineControllerClusterInfoRole(),
+		machineControllerEndpointReaderRole(),
+		machineControllerClusterInfoReaderRole(),
+
 		machineControllerKubeSystemRoleBinding(),
 		machineControllerKubePublicRoleBinding(),
 		machineControllerDefaultRoleBinding(),
 		machineControllerClusterInfoRoleBinding(),
+
 		machineControllerMachineCRD(),
 		machineControllerClusterCRD(),
 		machineControllerMachineSetCRD(),
 		machineControllerMachineDeploymentCRD(),
+
 		machineControllerDeployment(),
 	}
 
 	return kubernetesToYAML(items)
 }
 
-func machineControllerClusterRole() rbac_v1beta1.ClusterRole {
-	return rbac_v1beta1.ClusterRole{
+func machineControllerServiceAccount() corev1.ServiceAccount {
+	return corev1.ServiceAccount{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "v1",
+			Kind:       "ServiceAccount",
+		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "system:kubermatic-machine-controller",
+			Name:      "machine-controller",
+			Namespace: metav1.NamespaceSystem,
 			Labels: map[string]string{
 				MachineControllerAppLabelKey: MachineControllerAppLabelValue,
 			},
 		},
-		Rules: []rbac_v1beta1.PolicyRule{
+	}
+}
+
+func machineControllerClusterRole() rbacv1.ClusterRole {
+	return rbacv1.ClusterRole{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "rbac.authorization.k8s.io/v1",
+			Kind:       "ClusterRole",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "machine-controller",
+			Labels: map[string]string{
+				MachineControllerAppLabelKey: MachineControllerAppLabelValue,
+			},
+		},
+		Rules: []rbacv1.PolicyRule{
 			{
 				APIGroups: []string{"apiextensions.k8s.io"},
 				Resources: []string{"customresourcedefinitions"},
 				Verbs:     []string{"get"},
 			},
-			{
-				APIGroups:     []string{"apiextensions.k8s.io"},
-				Resources:     []string{"customresourcedefinitions"},
-				ResourceNames: []string{"machines.machine.k8s.io"},
-				Verbs:         []string{"delete"},
-			},
+			// {
+			// 	APIGroups:     []string{"apiextensions.k8s.io"},
+			// 	Resources:     []string{"customresourcedefinitions"},
+			// 	ResourceNames: []string{"machines.machine.k8s.io"},
+			// 	Verbs:         []string{"delete"},
+			// },
 			{
 				APIGroups:     []string{"apiextensions.k8s.io"},
 				Resources:     []string{"customresourcedefinitions"},
@@ -99,77 +126,93 @@ func machineControllerClusterRole() rbac_v1beta1.ClusterRole {
 	}
 }
 
-func machineControllerClusterRoleBinding() rbac_v1beta1.ClusterRoleBinding {
-	return rbac_v1beta1.ClusterRoleBinding{
+func machineControllerClusterRoleBinding() rbacv1.ClusterRoleBinding {
+	return rbacv1.ClusterRoleBinding{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "rbac.authorization.k8s.io/v1",
+			Kind:       "ClusterRoleBinding",
+		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "system:kubermatic-machine-controller:controller",
+			Name: "machine-controller",
 			Labels: map[string]string{
 				MachineControllerAppLabelKey: MachineControllerAppLabelValue,
 			},
 		},
-		RoleRef: rbac_v1beta1.RoleRef{
-			Name:     "system:kubermatic-machine-controller",
+		RoleRef: rbacv1.RoleRef{
+			APIGroup: rbacv1.GroupName,
+			Name:     "machine-controller",
 			Kind:     "ClusterRole",
-			APIGroup: rbac_v1beta1.GroupName,
 		},
-		Subjects: []rbac_v1beta1.Subject{
+		Subjects: []rbacv1.Subject{
 			{
-				Kind:     "User",
-				Name:     "machine-controller",
-				APIGroup: rbac_v1beta1.GroupName,
+				Kind:      "ServiceAccount",
+				Name:      "machine-controller",
+				Namespace: metav1.NamespaceSystem,
 			},
 		},
 	}
 }
 
-func nodeBootstrapperClusterRoleBinding() rbac_v1beta1.ClusterRoleBinding {
-	return rbac_v1beta1.ClusterRoleBinding{
+func nodeBootstrapperClusterRoleBinding() rbacv1.ClusterRoleBinding {
+	return rbacv1.ClusterRoleBinding{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "rbac.authorization.k8s.io/v1",
+			Kind:       "ClusterRoleBinding",
+		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "system:kubermatic-machine-controller:kubelet-bootstrap",
+			Name: "machine-controller:kubelet-bootstrap",
 			Labels: map[string]string{
 				MachineControllerAppLabelKey: MachineControllerAppLabelValue,
 			},
 		},
-		RoleRef: rbac_v1beta1.RoleRef{
+		RoleRef: rbacv1.RoleRef{
+			APIGroup: rbacv1.GroupName,
 			Name:     "system:node-bootstrapper",
 			Kind:     "ClusterRole",
-			APIGroup: rbac_v1beta1.GroupName,
 		},
-		Subjects: []rbac_v1beta1.Subject{
+		Subjects: []rbacv1.Subject{
 			{
+				APIGroup: rbacv1.GroupName,
 				Kind:     "Group",
 				Name:     "system:bootstrappers:machine-controller:default-node-token",
-				APIGroup: rbac_v1beta1.GroupName,
 			},
 		},
 	}
 }
 
-func nodeSignerClusterRoleBinding() rbac_v1beta1.ClusterRoleBinding {
-	return rbac_v1beta1.ClusterRoleBinding{
+func nodeSignerClusterRoleBinding() rbacv1.ClusterRoleBinding {
+	return rbacv1.ClusterRoleBinding{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "rbac.authorization.k8s.io/v1",
+			Kind:       "ClusterRoleBinding",
+		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "system:kubermatic-machine-controller:node-signer",
+			Name: "machine-controller:node-signer",
 			Labels: map[string]string{
 				MachineControllerAppLabelKey: MachineControllerAppLabelValue,
 			},
 		},
-		RoleRef: rbac_v1beta1.RoleRef{
+		RoleRef: rbacv1.RoleRef{
 			Name:     "system:certificates.k8s.io:certificatesigningrequests:nodeclient",
 			Kind:     "ClusterRole",
-			APIGroup: rbac_v1beta1.GroupName,
+			APIGroup: rbacv1.GroupName,
 		},
-		Subjects: []rbac_v1beta1.Subject{
+		Subjects: []rbacv1.Subject{
 			{
 				Kind:     "Group",
 				Name:     "system:bootstrappers:machine-controller:default-node-token",
-				APIGroup: rbac_v1beta1.GroupName,
+				APIGroup: rbacv1.GroupName,
 			},
 		},
 	}
 }
 
-func machineControllerKubeSystemRole() rbac_v1beta1.Role {
-	return rbac_v1beta1.Role{
+func machineControllerKubeSystemRole() rbacv1.Role {
+	return rbacv1.Role{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "rbac.authorization.k8s.io/v1",
+			Kind:       "Role",
+		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller",
 			Namespace: metav1.NamespaceSystem,
@@ -177,7 +220,7 @@ func machineControllerKubeSystemRole() rbac_v1beta1.Role {
 				MachineControllerAppLabelKey: MachineControllerAppLabelValue,
 			},
 		},
-		Rules: []rbac_v1beta1.PolicyRule{
+		Rules: []rbacv1.PolicyRule{
 			{
 				APIGroups: []string{""},
 				Resources: []string{"secrets"},
@@ -203,8 +246,12 @@ func machineControllerKubeSystemRole() rbac_v1beta1.Role {
 	}
 }
 
-func machineControllerKubePublicRole() rbac_v1beta1.Role {
-	return rbac_v1beta1.Role{
+func machineControllerKubePublicRole() rbacv1.Role {
+	return rbacv1.Role{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "rbac.authorization.k8s.io/v1",
+			Kind:       "Role",
+		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller",
 			Namespace: metav1.NamespacePublic,
@@ -212,7 +259,7 @@ func machineControllerKubePublicRole() rbac_v1beta1.Role {
 				MachineControllerAppLabelKey: MachineControllerAppLabelValue,
 			},
 		},
-		Rules: []rbac_v1beta1.PolicyRule{
+		Rules: []rbacv1.PolicyRule{
 			{
 				APIGroups: []string{""},
 				Resources: []string{"configmaps"},
@@ -226,8 +273,12 @@ func machineControllerKubePublicRole() rbac_v1beta1.Role {
 	}
 }
 
-func machineControllerDefaultRole() rbac_v1beta1.Role {
-	return rbac_v1beta1.Role{
+func machineControllerEndpointReaderRole() rbacv1.Role {
+	return rbacv1.Role{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "rbac.authorization.k8s.io/v1",
+			Kind:       "Role",
+		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller",
 			Namespace: metav1.NamespaceDefault,
@@ -235,7 +286,7 @@ func machineControllerDefaultRole() rbac_v1beta1.Role {
 				MachineControllerAppLabelKey: MachineControllerAppLabelValue,
 			},
 		},
-		Rules: []rbac_v1beta1.PolicyRule{
+		Rules: []rbacv1.PolicyRule{
 			{
 				APIGroups: []string{""},
 				Resources: []string{"endpoints"},
@@ -249,8 +300,12 @@ func machineControllerDefaultRole() rbac_v1beta1.Role {
 	}
 }
 
-func machineControllerClusterInfoRole() rbac_v1beta1.Role {
-	return rbac_v1beta1.Role{
+func machineControllerClusterInfoReaderRole() rbacv1.Role {
+	return rbacv1.Role{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "rbac.authorization.k8s.io/v1",
+			Kind:       "Role",
+		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "cluster-info",
 			Namespace: metav1.NamespacePublic,
@@ -258,7 +313,7 @@ func machineControllerClusterInfoRole() rbac_v1beta1.Role {
 				MachineControllerAppLabelKey: MachineControllerAppLabelValue,
 			},
 		},
-		Rules: []rbac_v1beta1.PolicyRule{
+		Rules: []rbacv1.PolicyRule{
 			{
 				APIGroups:     []string{""},
 				ResourceNames: []string{"cluster-info"},
@@ -269,8 +324,12 @@ func machineControllerClusterInfoRole() rbac_v1beta1.Role {
 	}
 }
 
-func machineControllerKubeSystemRoleBinding() rbac_v1beta1.RoleBinding {
-	return rbac_v1beta1.RoleBinding{
+func machineControllerKubeSystemRoleBinding() rbacv1.RoleBinding {
+	return rbacv1.RoleBinding{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "rbac.authorization.k8s.io/v1",
+			Kind:       "RoleBinding",
+		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller",
 			Namespace: metav1.NamespaceSystem,
@@ -278,24 +337,27 @@ func machineControllerKubeSystemRoleBinding() rbac_v1beta1.RoleBinding {
 				MachineControllerAppLabelKey: MachineControllerAppLabelValue,
 			},
 		},
-		RoleRef: rbac_v1beta1.RoleRef{
+		RoleRef: rbacv1.RoleRef{
 			Name:     "machine-controller",
 			Kind:     "Role",
-			APIGroup: rbac_v1beta1.GroupName,
+			APIGroup: rbacv1.GroupName,
 		},
-		Subjects: []rbac_v1beta1.Subject{
+		Subjects: []rbacv1.Subject{
 			{
-				Kind:      "User",
+				Kind:      "ServiceAccount",
 				Name:      "machine-controller",
 				Namespace: metav1.NamespaceSystem,
-				APIGroup:  rbac_v1beta1.GroupName,
 			},
 		},
 	}
 }
 
-func machineControllerKubePublicRoleBinding() rbac_v1beta1.RoleBinding {
-	return rbac_v1beta1.RoleBinding{
+func machineControllerKubePublicRoleBinding() rbacv1.RoleBinding {
+	return rbacv1.RoleBinding{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "rbac.authorization.k8s.io/v1",
+			Kind:       "RoleBinding",
+		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller",
 			Namespace: metav1.NamespacePublic,
@@ -303,24 +365,27 @@ func machineControllerKubePublicRoleBinding() rbac_v1beta1.RoleBinding {
 				MachineControllerAppLabelKey: MachineControllerAppLabelValue,
 			},
 		},
-		RoleRef: rbac_v1beta1.RoleRef{
+		RoleRef: rbacv1.RoleRef{
 			Name:     "machine-controller",
 			Kind:     "Role",
-			APIGroup: rbac_v1beta1.GroupName,
+			APIGroup: rbacv1.GroupName,
 		},
-		Subjects: []rbac_v1beta1.Subject{
+		Subjects: []rbacv1.Subject{
 			{
-				Kind:      "User",
+				Kind:      "ServiceAccount",
 				Name:      "machine-controller",
-				Namespace: metav1.NamespacePublic,
-				APIGroup:  rbac_v1beta1.GroupName,
+				Namespace: metav1.NamespaceSystem,
 			},
 		},
 	}
 }
 
-func machineControllerDefaultRoleBinding() rbac_v1beta1.RoleBinding {
-	return rbac_v1beta1.RoleBinding{
+func machineControllerDefaultRoleBinding() rbacv1.RoleBinding {
+	return rbacv1.RoleBinding{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "rbac.authorization.k8s.io/v1",
+			Kind:       "RoleBinding",
+		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller",
 			Namespace: metav1.NamespaceDefault,
@@ -328,24 +393,27 @@ func machineControllerDefaultRoleBinding() rbac_v1beta1.RoleBinding {
 				MachineControllerAppLabelKey: MachineControllerAppLabelValue,
 			},
 		},
-		RoleRef: rbac_v1beta1.RoleRef{
+		RoleRef: rbacv1.RoleRef{
 			Name:     "machine-controller",
 			Kind:     "Role",
-			APIGroup: rbac_v1beta1.GroupName,
+			APIGroup: rbacv1.GroupName,
 		},
-		Subjects: []rbac_v1beta1.Subject{
+		Subjects: []rbacv1.Subject{
 			{
-				Kind:      "User",
+				Kind:      "ServiceAccount",
 				Name:      "machine-controller",
-				Namespace: metav1.NamespaceDefault,
-				APIGroup:  rbac_v1beta1.GroupName,
+				Namespace: metav1.NamespaceSystem,
 			},
 		},
 	}
 }
 
-func machineControllerClusterInfoRoleBinding() rbac_v1beta1.RoleBinding {
-	return rbac_v1beta1.RoleBinding{
+func machineControllerClusterInfoRoleBinding() rbacv1.RoleBinding {
+	return rbacv1.RoleBinding{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "rbac.authorization.k8s.io/v1",
+			Kind:       "RoleBinding",
+		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "cluster-info",
 			Namespace: metav1.NamespacePublic,
@@ -353,104 +421,110 @@ func machineControllerClusterInfoRoleBinding() rbac_v1beta1.RoleBinding {
 				MachineControllerAppLabelKey: MachineControllerAppLabelValue,
 			},
 		},
-		RoleRef: rbac_v1beta1.RoleRef{
+		RoleRef: rbacv1.RoleRef{
 			Name:     "cluster-info",
 			Kind:     "Role",
-			APIGroup: rbac_v1beta1.GroupName,
+			APIGroup: rbacv1.GroupName,
 		},
-		Subjects: []rbac_v1beta1.Subject{
+		Subjects: []rbacv1.Subject{
 			{
-				Kind:      "User",
-				Name:      "cluster-info",
-				Namespace: metav1.NamespacePublic,
-				APIGroup:  rbac_v1beta1.GroupName,
+				Kind:      "ServiceAccount",
+				Name:      "machine-controller",
+				Namespace: metav1.NamespaceSystem,
 			},
 		},
 	}
 }
 
-func machineControllerMachineCRD() apiextensionsv1beta1.CustomResourceDefinition {
-	return apiextensionsv1beta1.CustomResourceDefinition{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: "machines.cluster.k8s.io",
-		},
-		Spec: apiextensionsv1beta1.CustomResourceDefinitionSpec{
-			Group:   "cluster.k8s.io",
-			Version: "v1alpha1",
-			Scope:   apiextensionsv1beta1.NamespaceScoped,
-			Names: apiextensionsv1beta1.CustomResourceDefinitionNames{
-				Kind:     "Machine",
-				ListKind: "MachineList",
-				Plural:   "machines",
-				Singular: "machine",
-			},
-		},
-	}
+func machineControllerMachineCRD() string {
+	return `
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  name: machines.cluster.k8s.io
+spec:
+  version: v1alpha1
+  group: cluster.k8s.io
+  names:
+    kind: Machine
+    listKind: MachineList
+    plural: machines
+    singular: machine
+  scope: Namespaced
+`
 }
 
-func machineControllerClusterCRD() apiextensionsv1beta1.CustomResourceDefinition {
-	return apiextensionsv1beta1.CustomResourceDefinition{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: "clusters.cluster.k8s.io",
-		},
-		Spec: apiextensionsv1beta1.CustomResourceDefinitionSpec{
-			Group:   "cluster.k8s.io",
-			Version: "v1alpha1",
-			Scope:   apiextensionsv1beta1.NamespaceScoped,
-			Names: apiextensionsv1beta1.CustomResourceDefinitionNames{
-				Kind:     "Cluster",
-				ListKind: "ClusterList",
-				Plural:   "clusters",
-				Singular: "cluster",
-			},
-		},
-	}
+// NB: CRDs are defined as YAML literals because the Go structures
+// from k8s.io would always create a "status" field, which breaks the
+// validation and prevents them from being applied to the cluster.
+
+func machineControllerClusterCRD() string {
+	return `
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: machines.cluster.k8s.io
+spec:
+  version: v1alpha1
+  group: cluster.k8s.io
+  names:
+    kind: Machine
+    listKind: MachineList
+    plural: machines
+    singular: machine
+  scope: Namespaced
+`
 }
 
-func machineControllerMachineSetCRD() apiextensionsv1beta1.CustomResourceDefinition {
-	return apiextensionsv1beta1.CustomResourceDefinition{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: "machinesets.cluster.k8s.io",
-		},
-		Spec: apiextensionsv1beta1.CustomResourceDefinitionSpec{
-			Group:   "cluster.k8s.io",
-			Version: "v1alpha1",
-			Scope:   apiextensionsv1beta1.NamespaceScoped,
-			Names: apiextensionsv1beta1.CustomResourceDefinitionNames{
-				Kind:     "MachineSet",
-				ListKind: "MachineSetList",
-				Plural:   "machinesets",
-				Singular: "machineset",
-			},
-		},
-	}
+func machineControllerMachineSetCRD() string {
+	return `
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: machinesets.cluster.k8s.io
+spec:
+  version: v1alpha1
+  group: cluster.k8s.io
+  names:
+    kind: MachineSet
+    listKind: MachineSetList
+    plural: machinesets
+    singular: machineset
+  scope: Namespaced
+`
 }
 
-func machineControllerMachineDeploymentCRD() apiextensionsv1beta1.CustomResourceDefinition {
-	return apiextensionsv1beta1.CustomResourceDefinition{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: "machinedeployments.cluster.k8s.io",
-		},
-		Spec: apiextensionsv1beta1.CustomResourceDefinitionSpec{
-			Group:   "cluster.k8s.io",
-			Version: "v1alpha1",
-			Scope:   apiextensionsv1beta1.NamespaceScoped,
-			Names: apiextensionsv1beta1.CustomResourceDefinitionNames{
-				Kind:     "MachineDeployment",
-				ListKind: "MachineDeploymentList",
-				Plural:   "machinedeployments",
-				Singular: "machinedeployment",
-			},
-		},
-	}
+func machineControllerMachineDeploymentCRD() string {
+	return `
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  name: machinedeployments.cluster.k8s.io
+spec:
+  version: v1alpha1
+  group: cluster.k8s.io
+  names:
+    kind: MachineDeployment
+    listKind: MachineDeploymentList
+    plural: machinedeployments
+    singular: machinedeployment
+  scope: Namespaced
+`
 }
 
 func machineControllerDeployment() appsv1.Deployment {
 	var replicas int32 = 1
 
 	return appsv1.Deployment{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "apps/v1",
+			Kind:       "Deployment",
+		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "machine-controller",
+			Name:      "machine-controller",
+			Namespace: metav1.NamespaceSystem,
 			Labels: map[string]string{
 				MachineControllerAppLabelKey: MachineControllerAppLabelValue,
 			},
@@ -482,8 +556,12 @@ func machineControllerDeployment() appsv1.Deployment {
 						"prometheus.io/path":   "/metrics",
 						"prometheus.io/port":   "8085",
 					},
+					Labels: map[string]string{
+						MachineControllerAppLabelKey: MachineControllerAppLabelValue,
+					},
 				},
 				Spec: corev1.PodSpec{
+					ServiceAccountName: "machine-controller",
 					Tolerations: []corev1.Toleration{
 						{
 							Key:      "node-role.kubernetes.io/master",
