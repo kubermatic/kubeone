@@ -1,4 +1,6 @@
 manifest.yaml
+
 .terraform
+tfstate.json
 terraform.tfstate*
 terraform.tfvars
