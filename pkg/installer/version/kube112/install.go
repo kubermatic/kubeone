@@ -36,6 +36,9 @@ func Install(ctx *util.Context) error {
 	if err := applyCNI(ctx, "flannel"); err != nil {
 		return fmt.Errorf("failed to install cni plugin flannel: %v", err)
 	}
+	if err := createWorkerMachines(ctx); err != nil {
+		return fmt.Errorf("failed to create worker machines: %v", err)
+	}
 	if err := createJoinToken(ctx); err != nil {
 		return fmt.Errorf("failed to create join token: %v", err)
 	}

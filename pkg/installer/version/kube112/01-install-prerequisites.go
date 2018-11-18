@@ -34,6 +34,14 @@ Environment="KUBELET_EXTRA_ARGS= --cloud-provider=%s --cloud-config=/etc/kuberne
 	}
 	ctx.Configuration.AddFile("machine-controller.yaml", mc)
 
+	if len(ctx.Cluster.Workers) > 0 {
+		machines, err := templates.MachineConfigurations(ctx.Cluster)
+		if err != nil {
+			return fmt.Errorf("failed to create worker machine configuration: %v", err)
+		}
+		ctx.Configuration.AddFile("workers.yaml", machines)
+	}
+
 	return nil
 }
 

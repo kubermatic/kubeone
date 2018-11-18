@@ -58,3 +58,7 @@ k8s.io/apiextensions-apiserver v0.0.0-20181026191334-ba848ee89ca3 h1:SRZNdKpmx9C
 k8s.io/apiextensions-apiserver v0.0.0-20181026191334-ba848ee89ca3/go.mod h1:IxkesAMoaCRoLrPJdZNZUQp9NfZnzqaVzLhb2VEQzXE=
 k8s.io/apimachinery v0.0.0-20181101131016-0aa9751e8aaf h1:Qsp/DuvFWmfTAfp4tcX402hdFfowyhIIBdRGWGCiWlY=
 k8s.io/apimachinery v0.0.0-20181101131016-0aa9751e8aaf/go.mod h1:ccL7Eh7zubPUSh9A3USN90/OzHNSVN6zxzde07TDCL0=
+sigs.k8s.io/cluster-api v0.0.0-20181116183923-0734939e05ae h1:5L4RFZubeHgDjjydrdUgY1qj6DagxOBb7S8quks4rGc=
+sigs.k8s.io/cluster-api v0.0.0-20181116183923-0734939e05ae/go.mod h1:aEXstFx3krpj6/AOcV/rOP2VLKdrtSNUMDR2Kmt6YSs=
+sigs.k8s.io/controller-runtime v0.1.7 h1:cpXFqijiVp2ihngBcPxiehYxFynubuhxIg1ZRE4Yu7c=
+sigs.k8s.io/controller-runtime v0.1.7/go.mod h1:HFAYoOh6XMV+jKF1UjFwrknPbowfyHEHHRdJMf2jMX8=

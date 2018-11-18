@@ -7,7 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func installMachineController(ctx *util.Context) error {
+func createWorkerMachines(ctx *util.Context) error {
 	node := ctx.Cluster.Hosts[0]
 	logger := ctx.Logger.WithFields(logrus.Fields{
 		"node": node.PublicAddress,
@@ -18,12 +18,12 @@ func installMachineController(ctx *util.Context) error {
 		return fmt.Errorf("failed to connect to %s: %v", node.PublicAddress, err)
 	}
 
-	logger.Infoln("Installing machine-controller…")
+	logger.Infoln("Creating worker machines…")
 
 	_, _, _, err = util.RunShellCommand(conn, ctx.Verbose, `
 set -xeu pipefail
 
-kubectl apply -f ./{{ .WORK_DIR }}/machine-controller.yaml
+kubectl apply -f ./{{ .WORK_DIR }}/workers.yaml
 `, util.TemplateVariables{
 		"WORK_DIR": ctx.WorkDir,
 	})
