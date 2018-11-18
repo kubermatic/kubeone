@@ -1,3 +1,4 @@
 /vendor/*
 !/vendor/modules.txt
 /kubeone
+.envrc
