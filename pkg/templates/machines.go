@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"k8s.io/apimachinery/pkg/util/intstr"
+
 	"github.com/kubermatic/kubeone/pkg/config"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -52,6 +54,9 @@ func createMachineDeployment(cluster *config.Cluster, workerset config.WorkerCon
 	}
 
 	replicas := int32(workerset.Replicas)
+	maxSurge := intstr.FromInt(1)
+	maxUnavailable := intstr.FromInt(0)
+	minReadySeconds := int32(0)
 
 	return &clusterv1alpha1.MachineDeployment{
 		TypeMeta: metav1.TypeMeta{
@@ -72,7 +77,12 @@ func createMachineDeployment(cluster *config.Cluster, workerset config.WorkerCon
 			},
 			Strategy: &clusterv1alpha1.MachineDeploymentStrategy{
 				Type: clustercommon.RollingUpdateMachineDeploymentStrategyType,
+				RollingUpdate: &clusterv1alpha1.MachineRollingUpdateDeployment{
+					MaxSurge:       &maxSurge,
+					MaxUnavailable: &maxUnavailable,
+				},
 			},
+			MinReadySeconds: &minReadySeconds,
 			Template: clusterv1alpha1.MachineTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
 					Namespace: metav1.NamespaceSystem,
