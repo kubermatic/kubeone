@@ -63,6 +63,7 @@ func createMachineDeployment(cluster *config.Cluster, workerset config.WorkerCon
 			Name:      fmt.Sprintf("%s-deployment", workerset.Name),
 		},
 		Spec: clusterv1alpha1.MachineDeploymentSpec{
+			Paused:   false,
 			Replicas: &replicas,
 			Selector: metav1.LabelSelector{
 				MatchLabels: map[string]string{
