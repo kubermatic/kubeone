@@ -620,6 +620,10 @@ func machineControllerDeployment(cluster *config.Cluster) appsv1.Deployment {
 
 func machineControllerCredentialsSecret(cluster *config.Cluster) corev1.Secret {
 	return corev1.Secret{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "v1",
+			Kind:       "Secret",
+		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      MachineControllerCredentialsSecretName,
 			Namespace: metav1.NamespaceSystem,
