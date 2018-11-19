@@ -13,6 +13,8 @@ const (
 	MachineControllerAppLabelKey   = "app"
 	MachineControllerAppLabelValue = "machine-controller"
 	MachineControllerTag           = "v0.9.9"
+
+	MachineControllerCredentialsSecretName = "machine-controller-credentials"
 )
 
 func MachineControllerConfiguration(cluster *config.Cluster) (string, error) {
@@ -39,8 +41,8 @@ func MachineControllerConfiguration(cluster *config.Cluster) (string, error) {
 		machineControllerClusterCRD(),
 		machineControllerMachineSetCRD(),
 		machineControllerMachineDeploymentCRD(),
-
-		machineControllerDeployment(),
+		machineControllerCredentialsSecret(cluster),
+		machineControllerDeployment(cluster),
 	}
 
 	return kubernetesToYAML(items)
@@ -514,7 +516,7 @@ spec:
 `
 }
 
-func machineControllerDeployment() appsv1.Deployment {
+func machineControllerDeployment(cluster *config.Cluster) appsv1.Deployment {
 	var replicas int32 = 1
 
 	return appsv1.Deployment{
@@ -580,8 +582,7 @@ func machineControllerDeployment() appsv1.Deployment {
 								"-v", "4",
 								"-internal-listen-address", "0.0.0.0:8085",
 							},
-							// TODO(xmudrii): check what do to with vars.
-							//Env:                      getEnvVars(data),
+							Env:                      getEnvVarCredentials(cluster),
 							TerminationMessagePath:   corev1.TerminationMessagePathDefault,
 							TerminationMessagePolicy: corev1.TerminationMessageReadFile,
 							ReadinessProbe: &corev1.Probe{
@@ -615,4 +616,35 @@ func machineControllerDeployment() appsv1.Deployment {
 			},
 		},
 	}
+}
+
+func machineControllerCredentialsSecret(cluster *config.Cluster) corev1.Secret {
+	return corev1.Secret{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      MachineControllerCredentialsSecretName,
+			Namespace: metav1.NamespaceSystem,
+		},
+		Type:       corev1.SecretTypeOpaque,
+		StringData: cluster.Provider.Credentials,
+	}
+}
+
+func getEnvVarCredentials(cluster *config.Cluster) []corev1.EnvVar {
+	var env []corev1.EnvVar
+
+	for k := range cluster.Provider.Credentials {
+		env = append(env, corev1.EnvVar{
+			Name: k,
+			ValueFrom: &corev1.EnvVarSource{
+				SecretKeyRef: &corev1.SecretKeySelector{
+					LocalObjectReference: corev1.LocalObjectReference{
+						Name: MachineControllerCredentialsSecretName,
+					},
+					Key: k,
+				},
+			},
+		})
+	}
+
+	return env
 }
