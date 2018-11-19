@@ -438,6 +438,10 @@ func machineControllerClusterInfoRoleBinding() rbacv1.RoleBinding {
 	}
 }
 
+// NB: CRDs are defined as YAML literals because the Go structures
+// from k8s.io would always create a "status" field, which breaks the
+// validation and prevents them from being applied to the cluster.
+
 func machineControllerMachineCRD() string {
 	return `
 apiVersion: apiextensions.k8s.io/v1beta1
@@ -457,24 +461,20 @@ spec:
 `
 }
 
-// NB: CRDs are defined as YAML literals because the Go structures
-// from k8s.io would always create a "status" field, which breaks the
-// validation and prevents them from being applied to the cluster.
-
 func machineControllerClusterCRD() string {
 	return `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
-  name: machines.cluster.k8s.io
+  name: clusters.cluster.k8s.io
 spec:
   version: v1alpha1
   group: cluster.k8s.io
   names:
-    kind: Machine
-    listKind: MachineList
-    plural: machines
-    singular: machine
+    kind: Cluster
+    listKind: ClusterList
+    plural: clusters
+    singular: cluster
   scope: Namespaced
 `
 }
