@@ -87,7 +87,7 @@ func loadMachineControllerCredentials() map[string]string {
 
 	// ----- AWS -----
 	data["AWS_ACCESS_KEY_ID"] = os.Getenv("AWS_ACCESS_KEY_ID")
-	data["AWS_ACCESS_KEY_ID"] = os.Getenv("AWS_ACCESS_KEY_ID")
+	data["AWS_SECRET_ACCESS_KEY"] = os.Getenv("AWS_SECRET_ACCESS_KEY")
 
 	// ----- OpenStack -----
 	data["OS_AUTH_URL"] = os.Getenv("OS_AUTH_URL")
