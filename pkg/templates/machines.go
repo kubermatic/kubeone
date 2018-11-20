@@ -2,6 +2,7 @@ package templates
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"k8s.io/apimachinery/pkg/util/intstr"
@@ -43,7 +44,7 @@ func createMachineDeployment(cluster *config.Cluster, workerset config.WorkerCon
 
 	config := providerConfig{
 		CloudProvider:       provider,
-		CloudProviderSpec:   workerset.Spec,
+		CloudProviderSpec:   machineSpec(cluster, workerset, provider),
 		OperatingSystem:     workerset.OperatingSystem.Name,
 		OperatingSystemSpec: workerset.OperatingSystem.Spec,
 	}
@@ -101,4 +102,75 @@ func createMachineDeployment(cluster *config.Cluster, workerset config.WorkerCon
 			},
 		},
 	}, nil
+}
+
+func machineSpec(cluster *config.Cluster, workerset config.WorkerConfig, provider string) (map[string]interface{}, error) {
+	var err error
+
+	spec := workerset.Spec
+	tagName := fmt.Sprintf("kubernetes.io/cluster/%s", cluster.Name)
+	tagValue := "shared"
+
+	switch provider {
+	case "do":
+		spec, err = addDigitaloceanTag(spec, tagName, tagValue)
+	default:
+		spec, err = addMapTag(spec, tagName, tagValue)
+	}
+
+	return spec, nil
+}
+
+type digitaloceanTag struct {
+	Value string `json:"value"`
+}
+
+func addDigitaloceanTag(spec map[string]interface{}, tagName string, tagValue string) (map[string]interface{}, error) {
+	tags, ok := spec["tags"]
+	if !ok {
+		tags = make([]digitaloceanTag, 0)
+	}
+
+	tagList, ok := tags.([]interface{})
+	if !ok {
+		return nil, errors.New("tags for digitalocean must be a list of structs")
+	}
+
+	tagExists := false
+
+	for _, item := range tagList {
+		if tag, ok := item.(digitaloceanTag); ok {
+			if tag.Value == tagName {
+				tagExists = true
+				break
+			}
+		}
+	}
+
+	if !tagExists {
+		tagList = append(tagList, digitaloceanTag{
+			Value: tagName,
+		})
+
+		spec["tags"] = tagList
+	}
+
+	return spec, nil
+}
+
+func addMapTag(spec map[string]interface{}, tagName string, tagValue string) (map[string]interface{}, error) {
+	tags, ok := spec["tags"]
+	if !ok {
+		tags = make(map[string]string)
+	}
+
+	tagMap, ok := tags.(map[string]string)
+	if !ok {
+		return nil, errors.New("tags must be a map string->string")
+	}
+
+	tagMap[tagName] = tagValue
+	spec["tags"] = tagMap
+
+	return spec, nil
 }
