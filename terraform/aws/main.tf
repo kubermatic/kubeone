@@ -159,10 +159,10 @@ resource "aws_lb" "control_plane" {
   load_balancer_type = "network"
   subnets            = ["${data.aws_subnet_ids.default.ids}"]
 
-  tags {
-    Cluster                     = "${var.cluster_name}"
-    "${local.kube_cluster_tag}" = "shared"
-  }
+  tags = "${map(
+    "Cluster", "${var.cluster_name}",
+    "${local.kube_cluster_tag}", "shared",
+  )}"
 }
 
 resource "aws_lb_target_group" "control_plane_api" {
