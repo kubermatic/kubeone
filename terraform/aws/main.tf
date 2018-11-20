@@ -41,6 +41,10 @@ resource "aws_security_group" "common" {
   description = "cluster common rules"
   vpc_id      = "${aws_default_vpc.default.id}"
 
+  tags {
+    "${local.kube_cluster_tag}" = "shared"
+  }
+
   ingress {
     from_port   = 22
     to_port     = 22
@@ -81,6 +85,10 @@ resource "aws_security_group" "control_plane" {
   name        = "${var.cluster_name}-control_planes"
   description = "cluster control_planes"
   vpc_id      = "${aws_default_vpc.default.id}"
+
+  tags {
+    "${local.kube_cluster_tag}" = "shared"
+  }
 
   ingress {
     from_port = 2379
@@ -152,7 +160,8 @@ resource "aws_lb" "control_plane" {
   subnets            = ["${data.aws_subnet_ids.default.ids}"]
 
   tags {
-    Cluster = "${var.cluster_name}"
+    Cluster                     = "${var.cluster_name}"
+    "${local.kube_cluster_tag}" = "shared"
   }
 }
 
@@ -186,7 +195,7 @@ resource "aws_instance" "control_plane" {
 
   tags = "${map(
     "Name", "${var.cluster_name}-control_plane-${count.index + 1}",
-    "${local.kube_cluster_tag}", "shared"
+    "${local.kube_cluster_tag}", "shared",
   )}"
 
   instance_type          = "${var.control_plane_type}"

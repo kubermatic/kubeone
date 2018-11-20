@@ -7,6 +7,7 @@ output "kubeone_api" {
 output "kubeone_hosts" {
   value = {
     control_plane = {
+      cluster_name    = "${var.cluster_name}"
       public_address  = "${aws_instance.control_plane.*.public_ip}"
       private_address = "${aws_instance.control_plane.*.private_ip}"
       hostnames       = "${aws_instance.control_plane.*.private_dns}"
