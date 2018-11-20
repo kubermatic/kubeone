@@ -42,9 +42,14 @@ func createMachineDeployment(cluster *config.Cluster, workerset config.WorkerCon
 		provider = cluster.Provider.Name
 	}
 
+	providerSpec, err := machineSpec(cluster, workerset, provider)
+	if err != nil {
+		return nil, err
+	}
+
 	config := providerConfig{
 		CloudProvider:       provider,
-		CloudProviderSpec:   machineSpec(cluster, workerset, provider),
+		CloudProviderSpec:   providerSpec,
 		OperatingSystem:     workerset.OperatingSystem.Name,
 		OperatingSystemSpec: workerset.OperatingSystem.Spec,
 	}
@@ -118,7 +123,7 @@ func machineSpec(cluster *config.Cluster, workerset config.WorkerConfig, provide
 		spec, err = addMapTag(spec, tagName, tagValue)
 	}
 
-	return spec, nil
+	return spec, err
 }
 
 type digitaloceanTag struct {
