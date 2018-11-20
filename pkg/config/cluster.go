@@ -9,6 +9,7 @@ import (
 
 // Cluster describes our entire configuration.
 type Cluster struct {
+	Name      string          `yaml:"name"`
 	Hosts     []HostConfig    `yaml:"hosts"`
 	APIServer APIServerConfig `yaml:"apiserver"`
 	Provider  ProviderConfig  `yaml:"provider"`
