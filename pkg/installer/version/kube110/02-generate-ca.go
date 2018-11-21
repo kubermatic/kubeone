@@ -46,5 +46,16 @@ sudo chown -R "$USER:$USER" ./{{ .WORK_DIR }}
 		return fmt.Errorf("failed to download PKI files: %v", err)
 	}
 
+	if ctx.BackupFile != "" {
+		logger.Infoln("Creating local backup…")
+
+		err = ctx.Configuration.Backup(ctx.BackupFile)
+		if err != nil {
+			// do not stop in case of failed backups, the user can
+			// always create the backup themselves if needed
+			logger.Warnf("Failed to create backup: %v", err)
+		}
+	}
+
 	return nil
 }
