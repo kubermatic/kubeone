@@ -11,6 +11,7 @@ import (
 )
 
 type controlPlane struct {
+	ClusterName       string   `json:"cluster_name"`
 	PublicAddress     []string `json:"public_address"`
 	PrivateAddress    []string `json:"private_address"`
 	Hostnames         []string `json:"hostnames"`
@@ -22,6 +23,10 @@ type controlPlane struct {
 
 // Validate checks if the control plane conforms to our spec.
 func (c *controlPlane) Validate() error {
+	if len(c.PublicAddress) < 3 {
+		return errors.New("must specify a unique cluster name")
+	}
+
 	if len(c.PublicAddress) != len(c.PrivateAddress) || len(c.PublicAddress) != len(c.Hostnames) {
 		return errors.New("number of public addresses must be equal to number of private addresses and hostnames")
 	}
@@ -97,6 +102,8 @@ func (c *Config) Apply(m *config.Cluster) {
 	hosts := make([]config.HostConfig, 0)
 	cp := c.KubeOneHosts.Value.ControlPlane[0]
 	sshPort, _ := strconv.Atoi(cp.SSHPort)
+
+	m.Name = cp.ClusterName
 
 	for i, publicIP := range cp.PublicAddress {
 		privateIP := publicIP

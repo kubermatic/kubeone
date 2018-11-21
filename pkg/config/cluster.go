@@ -9,11 +9,13 @@ import (
 
 // Cluster describes our entire configuration.
 type Cluster struct {
+	Name      string          `yaml:"name"`
 	Hosts     []HostConfig    `yaml:"hosts"`
 	APIServer APIServerConfig `yaml:"apiserver"`
 	Provider  ProviderConfig  `yaml:"provider"`
 	Versions  VersionConfig   `yaml:"versions"`
 	Network   NetworkConfig   `yaml:"network"`
+	Workers   []WorkerConfig  `yaml:"workers"`
 
 	// stuff generated at runtime
 	etcdClusterToken string
@@ -28,6 +30,12 @@ func (m *Cluster) Validate() error {
 	for idx, host := range m.Hosts {
 		if err := host.Validate(); err != nil {
 			return fmt.Errorf("host %d is invalid: %v", idx+1, err)
+		}
+	}
+
+	for idx, workerset := range m.Workers {
+		if err := workerset.Validate(); err != nil {
+			return fmt.Errorf("worker set %d is invalid: %v", idx+1, err)
 		}
 	}
 
@@ -151,4 +159,29 @@ func (m *NetworkConfig) NodePortRange() string {
 	}
 
 	return "30000-32767"
+}
+
+// WorkerConfig describes a set of worker machines.
+type WorkerConfig struct {
+	Replicas        int                    `yaml:"replicas"`
+	Name            string                 `yaml:"name"`
+	Provider        string                 `yaml:"provider"`
+	Spec            map[string]interface{} `yaml:"spec"`
+	OperatingSystem struct {
+		Name string                 `yaml:"name"`
+		Spec map[string]interface{} `yaml:"spec"`
+	} `yaml:"operating_system"`
+}
+
+// Validate checks if the Config makes sense.
+func (m *WorkerConfig) Validate() error {
+	if len(m.Name) == 0 {
+		return errors.New("no name given")
+	}
+
+	if m.Replicas < 1 {
+		return errors.New("replicas must be >= 1")
+	}
+
+	return nil
 }
