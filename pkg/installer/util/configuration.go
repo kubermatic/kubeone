@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/kubermatic/kubeone/pkg/archive"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 )
 
@@ -76,4 +77,22 @@ func (c *Configuration) Debug() {
 	for filename, content := range c.files {
 		fmt.Printf("%s: %d bytes\n", filename, len(content))
 	}
+}
+
+// Backup dumps the files into a .tar.gz archive.
+func (c *Configuration) Backup(target string) error {
+	archive, err := archive.NewTarGzip(target)
+	if err != nil {
+		return fmt.Errorf("failed to open archive: %v", err)
+	}
+	defer archive.Close()
+
+	for filename, content := range c.files {
+		err = archive.Add(filename, content)
+		if err != nil {
+			return fmt.Errorf("failed to add %s to archive: %v", filename, err)
+		}
+	}
+
+	return nil
 }

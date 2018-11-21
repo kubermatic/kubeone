@@ -15,6 +15,7 @@ type Context struct {
 	WorkDir       string
 	JoinCommand   string
 	Verbose       bool
+	BackupFile    string
 }
 
 // Clone returns a shallow copy of the context.
@@ -27,5 +28,6 @@ func (c *Context) Clone() *Context {
 		WorkDir:       c.WorkDir,
 		JoinCommand:   c.JoinCommand,
 		Verbose:       c.Verbose,
+		BackupFile:    c.BackupFile,
 	}
 }
