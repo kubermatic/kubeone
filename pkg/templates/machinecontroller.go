@@ -12,7 +12,7 @@ import (
 const (
 	MachineControllerAppLabelKey   = "app"
 	MachineControllerAppLabelValue = "machine-controller"
-	MachineControllerTag           = "v0.9.9"
+	MachineControllerTag           = "v0.10.0"
 
 	MachineControllerCredentialsSecretName = "machine-controller-credentials"
 )
@@ -98,6 +98,11 @@ func machineControllerClusterRole() rbacv1.ClusterRole {
 				APIGroups: []string{"machine.k8s.io"},
 				Resources: []string{"machines"},
 				Verbs:     []string{"*"},
+			},
+			{
+				APIGroups: []string{""},
+				Resources: []string{"persistentvolumes"},
+				Verbs:     []string{"list", "get", "watch"},
 			},
 			{
 				APIGroups: []string{""},
