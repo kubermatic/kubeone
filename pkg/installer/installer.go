@@ -75,7 +75,7 @@ func (i *installer) createContext(verbose bool) *util.Context {
 		Cluster:       i.cluster,
 		Connector:     ssh.NewConnector(),
 		Configuration: util.NewConfiguration(),
-		WorkDir:       "kubermatic-installer",
+		WorkDir:       "kubeone",
 		Verbose:       verbose,
 		Logger:        i.logger,
 	}

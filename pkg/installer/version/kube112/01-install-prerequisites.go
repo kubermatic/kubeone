@@ -42,6 +42,12 @@ Environment="KUBELET_EXTRA_ARGS= --cloud-provider=%s --cloud-config=/etc/kuberne
 		ctx.Configuration.AddFile("workers.yaml", machines)
 	}
 
+	flannel, err := templates.FlannelConfiguration(ctx.Cluster)
+	if err != nil {
+		return fmt.Errorf("failed to create flannel configuration: %v", err)
+	}
+	ctx.Configuration.AddFile("kube-flannel.yaml", flannel)
+
 	return nil
 }
 
