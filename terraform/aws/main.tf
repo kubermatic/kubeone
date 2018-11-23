@@ -194,7 +194,7 @@ resource "aws_instance" "control_plane" {
   count = "${var.control_plane_count}"
 
   tags = "${map(
-    "Name", "${var.cluster_name}-control_plane-${count.index + 1}",
+    "Name", "${var.cluster_name}-control_plane-${var.kubernetes_version}-${count.index + 1}",
     "${local.kube_cluster_tag}", "shared",
   )}"
 
@@ -210,5 +210,13 @@ resource "aws_instance" "control_plane" {
   root_block_device {
     volume_type = "gp2"
     volume_size = "${var.control_plane_volume_size}"
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  provisioner "local-exec" {
+    command = "kubeone init -tf tf.json ${self.public_ip}"
   }
 }

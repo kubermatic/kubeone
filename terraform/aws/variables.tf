@@ -2,6 +2,11 @@ variable "cluster_name" {
   description = "prefix for cloud resources"
 }
 
+variable "kubernetes_version" {
+  description = "version of kubernetes"
+  default = "1.12.1"
+}
+
 variable "aws_region" {
   default     = "eu-central-1"
   description = "AWS region to speak to"
