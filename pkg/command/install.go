@@ -79,6 +79,16 @@ func createInstallerOptions(clusterFile string, cluster *config.Cluster, ctx *cl
 		backupFile = filepath.Join(filepath.Dir(fullPath), fmt.Sprintf("%s.tar.gz", clusterName))
 	}
 
+	// refuse to overwrite existing backups (NB: since we attempt to
+	// write to the file later on to check for write permissions, we
+	// inadvertently create a zero byte file even if the first step
+	// of the installer fails; for this reason it's okay to find an
+	// existing, zero byte backup)
+	stat, err := os.Stat(backupFile)
+	if err != nil && stat.Size() > 0 {
+		return nil, fmt.Errorf("backup %s already exists, refusing to overwrite", backupFile)
+	}
+
 	// try to write to the file before doing anything else
 	f, err := os.OpenFile(backupFile, os.O_RDWR|os.O_CREATE, 0600)
 	if err != nil {
