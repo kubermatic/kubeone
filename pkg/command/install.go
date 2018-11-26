@@ -85,7 +85,7 @@ func createInstallerOptions(clusterFile string, cluster *config.Cluster, ctx *cl
 	// of the installer fails; for this reason it's okay to find an
 	// existing, zero byte backup)
 	stat, err := os.Stat(backupFile)
-	if err != nil && stat.Size() > 0 {
+	if err != nil && stat != nil && stat.Size() > 0 {
 		return nil, fmt.Errorf("backup %s already exists, refusing to overwrite", backupFile)
 	}
 
