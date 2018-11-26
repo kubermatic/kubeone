@@ -128,10 +128,10 @@ func NewConfig(cluster *config.Cluster, instance int) (*configuration, error) {
 		renderedCloudConfig := "/etc/kubernetes/cloud-config"
 
 		cfg.APIServerExtraArgs["cloud-config"] = renderedCloudConfig
-		cfg.APIServerExtraArgs["cloud-provider"] = cluster.Provider.Name
+		cfg.APIServerExtraArgs["cloud-provider"] = string(cluster.Provider.Name)
 
 		cfg.ControllerManagerExtraArgs = map[string]string{
-			"cloud-provider": cluster.Provider.Name,
+			"cloud-provider": string(cluster.Provider.Name),
 			"cloud-config":   renderedCloudConfig,
 		}
 	}

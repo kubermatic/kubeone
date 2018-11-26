@@ -82,30 +82,67 @@ func applyTerraform(tf string, cluster *config.Cluster) error {
 	return nil
 }
 
-func loadMachineControllerCredentials() map[string]string {
-	data := map[string]string{}
+func loadMachineControllerCredentials(p config.ProviderName) (data map[string]string, err error) {
+	data = map[string]string{}
 
-	// ----- AWS -----
-	data["AWS_ACCESS_KEY_ID"] = os.Getenv("AWS_ACCESS_KEY_ID")
-	data["AWS_SECRET_ACCESS_KEY"] = os.Getenv("AWS_SECRET_ACCESS_KEY")
+	switch p {
+	case config.ProviderNameAWS:
+		if data["AWS_ACCESS_KEY_ID"], err = getEnvVar("AWS_ACCESS_KEY_ID"); err != nil {
+			return
+		}
+		if data["AWS_SECRET_ACCESS_KEY"], err = getEnvVar("AWS_SECRET_ACCESS_KEY"); err != nil {
+			return
+		}
 
-	// ----- OpenStack -----
-	data["OS_AUTH_URL"] = os.Getenv("OS_AUTH_URL")
-	data["OS_USER_NAME"] = os.Getenv("OS_USER_NAME")
-	data["OS_PASSWORD"] = os.Getenv("OS_PASSWORD")
-	data["OS_DOMAIN_NAME"] = os.Getenv("OS_DOMAIN_NAME")
-	data["OS_TENANT_NAME"] = os.Getenv("OS_TENANT_NAME")
+	case config.ProviderNameOpenStack:
+		if data["OS_AUTH_URL"], err = getEnvVar("OS_AUTH_URL"); err != nil {
+			return
+		}
+		if data["OS_USER_NAME"], err = getEnvVar("OS_USER_NAME"); err != nil {
+			return
+		}
+		if data["OS_PASSWORD"], err = getEnvVar("OS_PASSWORD"); err != nil {
+			return
+		}
+		if data["OS_DOMAIN_NAME"], err = getEnvVar("OS_DOMAIN_NAME"); err != nil {
+			return
+		}
+		if data["OS_TENANT_NAME"], err = getEnvVar("OS_TENANT_NAME"); err != nil {
+			return
+		}
 
-	// ----- Hetzner -----
-	data["HZ_TOKEN"] = os.Getenv("HZ_TOKEN")
+	case config.ProviderNameHetzner:
+		if data["HZ_TOKEN"], err = getEnvVar("HZ_TOKEN"); err != nil {
+			return
+		}
 
-	// ----- DigitalOcean -----
-	data["DO_TOKEN"] = os.Getenv("DO_TOKEN")
+	case config.ProviderNameDigitalOcean:
+		if data["DO_TOKEN"], err = getEnvVar("DO_TOKEN"); err != nil {
+			return
+		}
 
-	// ----- vSphere -----
-	data["VSPHERE_ADDRESS"] = os.Getenv("VSPHERE_ADDRESS")
-	data["VSPHERE_USERNAME"] = os.Getenv("VSPHERE_USERNAME")
-	data["VSPHERE_PASSWORD"] = os.Getenv("VSPHERE_PASSWORD")
+	case config.ProviderNameVSphere:
+		if data["VSPHERE_ADDRESS"], err = getEnvVar("VSPHERE_ADDRESS"); err != nil {
+			return
+		}
+		if data["VSPHERE_USERNAME"], err = getEnvVar("VSPHERE_USERNAME"); err != nil {
+			return
+		}
+		if data["VSPHERE_PASSWORD"], err = getEnvVar("VSPHERE_PASSWORD"); err != nil {
+			return
+		}
 
-	return data
+	default:
+		err = fmt.Errorf("missing cloud provider credentials")
+	}
+
+	return
+}
+
+func getEnvVar(ev string) (data string, err error) {
+	data = os.Getenv(ev)
+	if data == "" {
+		err = fmt.Errorf("%q environment variable is not set", ev)
+	}
+	return
 }
