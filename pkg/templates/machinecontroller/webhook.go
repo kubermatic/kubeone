@@ -7,8 +7,6 @@ import (
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/templates"
-	kubermaticv1 "github.com/kubermatic/kubermatic/api/pkg/crd/kubermatic/v1"
-	"github.com/kubermatic/kubermatic/api/pkg/resources"
 
 	admissionregistrationv1beta1 "k8s.io/api/admissionregistration/v1beta1"
 	appsv1 "k8s.io/api/apps/v1"
@@ -50,22 +48,33 @@ func WebhookConfiguration(cluster *config.Cluster, runtimeConfig *util.Configura
 		return "", err
 	}
 
+	config, err := MutatingwebhookConfiguration(caKeyPair)
+	if err != nil {
+		return "", err
+	}
+
 	return templates.KubernetesToYAML([]interface{}{
 		deployment,
 		service,
 		servingCert,
+		config,
 	})
 }
 
 // WebhookDeployment returns the deployment for the machine-controllers MutatignAdmissionWebhook
 func WebhookDeployment(cluster *config.Cluster) (*appsv1.Deployment, error) {
-	dep := &appsv1.Deployment{}
+	dep := &appsv1.Deployment{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "apps/v1",
+			Kind:       "Deployment",
+		},
+	}
 
 	dep.Name = "machine-controller-webhook"
 	dep.Labels = map[string]string{
 		WebhookAppLabelKey: WebhookAppLabelValue,
 	}
-	dep.Spec.Replicas = resources.Int32(1)
+	dep.Spec.Replicas = int32Ptr(1)
 	dep.Spec.Selector = &metav1.LabelSelector{
 		MatchLabels: map[string]string{
 			WebhookAppLabelKey: WebhookAppLabelValue,
@@ -82,7 +91,9 @@ func WebhookDeployment(cluster *config.Cluster) (*appsv1.Deployment, error) {
 			IntVal: 0,
 		},
 	}
-	dep.Spec.Template.Spec.ImagePullSecrets = []corev1.LocalObjectReference{{Name: resources.ImagePullSecretName}}
+
+	// TODO: Why whould we need this?
+	// dep.Spec.Template.Spec.ImagePullSecrets = []corev1.LocalObjectReference{{Name: resources.ImagePullSecretName}}
 
 	volumes := []corev1.Volume{getServingCertVolume()}
 	dep.Spec.Template.Spec.Volumes = volumes
@@ -135,13 +146,8 @@ func WebhookDeployment(cluster *config.Cluster) (*appsv1.Deployment, error) {
 				TimeoutSeconds:      15,
 			},
 			VolumeMounts: []corev1.VolumeMount{
-				// {
-				// 	Name:      resources.MachineControllerKubeconfigSecretName,
-				// 	MountPath: "/etc/kubernetes/kubeconfig",
-				// 	ReadOnly:  true,
-				// },
 				{
-					Name:      resources.MachineControllerWebhookServingCertSecretName,
+					Name:      "machinecontroller-webhook-serving-cert",
 					MountPath: "/tmp/cert",
 					ReadOnly:  true,
 				},
@@ -154,7 +160,12 @@ func WebhookDeployment(cluster *config.Cluster) (*appsv1.Deployment, error) {
 
 // Service returns the internal service for the machine-controller webhook
 func Service() (*corev1.Service, error) {
-	se := &corev1.Service{}
+	se := &corev1.Service{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "v1",
+			Kind:       "Service",
+		},
+	}
 
 	se.Name = "machine-controller-webhook"
 	se.Labels = map[string]string{
@@ -178,11 +189,11 @@ func Service() (*corev1.Service, error) {
 
 func getServingCertVolume() corev1.Volume {
 	return corev1.Volume{
-		Name: resources.MachineControllerWebhookServingCertSecretName,
+		Name: "machinecontroller-webhook-serving-cert",
 		VolumeSource: corev1.VolumeSource{
 			Secret: &corev1.SecretVolumeSource{
-				SecretName:  resources.MachineControllerWebhookServingCertSecretName,
-				DefaultMode: resources.Int32(0444),
+				SecretName:  "machinecontroller-webhook-serving-cert",
+				DefaultMode: int32Ptr(0444),
 			},
 		},
 	}
@@ -190,7 +201,12 @@ func getServingCertVolume() corev1.Volume {
 
 // TLSServingCertificate returns a secret with the machine-controller-webhook tls certificate
 func TLSServingCertificate(ca *triple.KeyPair) (*corev1.Secret, error) {
-	se := &corev1.Secret{}
+	se := &corev1.Secret{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "v1",
+			Kind:       "Secret",
+		},
+	}
 
 	se.Name = "machinecontroller-webhook-serving-cert"
 	se.Data = map[string][]byte{}
@@ -217,16 +233,16 @@ func TLSServingCertificate(ca *triple.KeyPair) (*corev1.Secret, error) {
 }
 
 // MutatingwebhookConfiguration returns the MutatingwebhookConfiguration for the machine controler
-func MutatingwebhookConfiguration(c *kubermaticv1.Cluster, data *resources.TemplateData, existing *admissionregistrationv1beta1.MutatingWebhookConfiguration) (*admissionregistrationv1beta1.MutatingWebhookConfiguration, error) {
-	mutatingWebhookConfiguration := &admissionregistrationv1beta1.MutatingWebhookConfiguration{}
-	mutatingWebhookConfiguration.Name = resources.MachineControllerMutatingWebhookConfigurationName
-
-	ca, err := data.GetRootCA()
-	if err != nil {
-		return nil, fmt.Errorf("failed to get root ca: %v", err)
+func MutatingwebhookConfiguration(ca *triple.KeyPair) (*admissionregistrationv1beta1.MutatingWebhookConfiguration, error) {
+	cfg := &admissionregistrationv1beta1.MutatingWebhookConfiguration{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "v1alpha1",
+			Kind:       "admissionregistration.k8s.io",
+		},
 	}
+	cfg.Name = "machine-controller.kubermatic.io"
 
-	mutatingWebhookConfiguration.Webhooks = []admissionregistrationv1beta1.Webhook{
+	cfg.Webhooks = []admissionregistrationv1beta1.Webhook{
 		{
 			Name:              "machine-controller.kubermatic.io-machinedeployments",
 			NamespaceSelector: &metav1.LabelSelector{},
@@ -273,7 +289,11 @@ func MutatingwebhookConfiguration(c *kubermaticv1.Cluster, data *resources.Templ
 		},
 	}
 
-	return mutatingWebhookConfiguration, nil
+	return cfg, nil
+}
+
+func int32Ptr(i int32) *int32 {
+	return &i
 }
 
 func strPtr(a string) *string {
