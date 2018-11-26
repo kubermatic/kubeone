@@ -4,17 +4,16 @@ import (
 	"fmt"
 
 	"github.com/kubermatic/kubeone/pkg/config"
-
 	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/kubermatic/kubeone/pkg/templates"
+	"github.com/kubermatic/kubeone/pkg/templates/kubeadm"
 )
 
 func generateKubeadm(ctx *util.Context) error {
 	ctx.Logger.Infoln("Generating kubeadm config file…")
 
 	for idx := range ctx.Cluster.Hosts {
-		kubeadm, err := templates.KubeadmConfig(ctx.Cluster, idx)
+		kubeadm, err := kubeadm.Config(ctx.Cluster, idx)
 		if err != nil {
 			return fmt.Errorf("failed to create kubeadm configuration: %v", err)
 		}

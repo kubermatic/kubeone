@@ -1,4 +1,4 @@
-package templates
+package machinecontroller
 
 import (
 	"encoding/json"
@@ -8,6 +8,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 
 	"github.com/kubermatic/kubeone/pkg/config"
+	"github.com/kubermatic/kubeone/pkg/templates"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	clustercommon "sigs.k8s.io/cluster-api/pkg/apis/cluster/common"
@@ -21,7 +22,7 @@ type providerConfig struct {
 	OperatingSystemSpec interface{} `json:"operatingSystemSpec"`
 }
 
-func MachineConfigurations(cluster *config.Cluster) (string, error) {
+func MachineDeployments(cluster *config.Cluster) (string, error) {
 	deployments := make([]interface{}, 0)
 
 	for _, workerset := range cluster.Workers {
@@ -33,7 +34,7 @@ func MachineConfigurations(cluster *config.Cluster) (string, error) {
 		deployments = append(deployments, deployment)
 	}
 
-	return kubernetesToYAML(deployments)
+	return templates.KubernetesToYAML(deployments)
 }
 
 func createMachineDeployment(cluster *config.Cluster, workerset config.WorkerConfig) (*clusterv1alpha1.MachineDeployment, error) {

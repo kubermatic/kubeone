@@ -6,7 +6,9 @@ import (
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/kubermatic/kubeone/pkg/templates"
+	"github.com/kubermatic/kubeone/pkg/templates/etcd"
+	"github.com/kubermatic/kubeone/pkg/templates/flannel"
+	"github.com/kubermatic/kubeone/pkg/templates/kubeadm"
 )
 
 func installPrerequisites(ctx *util.Context) error {
@@ -21,14 +23,14 @@ func installPrerequisites(ctx *util.Context) error {
 }
 
 func generateConfigurationFiles(ctx *util.Context) error {
-	kubeadm, err := templates.KubeadmConfig(ctx.Cluster, 0)
+	kubeadm, err := kubeadm.Config(ctx.Cluster, 0)
 	if err != nil {
 		return fmt.Errorf("failed to create kubeadm configuration: %v", err)
 	}
 
 	ctx.Configuration.AddFile("cfg/master.yaml", kubeadm)
 
-	flannel, err := templates.FlannelConfiguration(ctx.Cluster)
+	flannel, err := flannel.Configuration(ctx.Cluster)
 	if err != nil {
 		return fmt.Errorf("failed to create flannel configuration: %v", err)
 	}
@@ -36,7 +38,7 @@ func generateConfigurationFiles(ctx *util.Context) error {
 	ctx.Configuration.AddFile("kube-flannel.yaml", flannel)
 
 	for idx := range ctx.Cluster.Hosts {
-		etcd, err := templates.EtcdConfig(ctx.Cluster, idx)
+		etcd, err := etcd.Pod(ctx.Cluster, idx)
 		if err != nil {
 			return fmt.Errorf("failed to create etcd configuration: %v", err)
 		}

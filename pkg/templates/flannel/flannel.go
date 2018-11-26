@@ -1,4 +1,4 @@
-package templates
+package flannel
 
 import (
 	"bytes"
@@ -8,7 +8,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/config"
 )
 
-func FlannelConfiguration(cluster *config.Cluster) (string, error) {
+func Configuration(cluster *config.Cluster) (string, error) {
 	tpl, err := template.New("base").Parse(flannel)
 	if err != nil {
 		return "", fmt.Errorf("failed to parse flannel config: %v", err)

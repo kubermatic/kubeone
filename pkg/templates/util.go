@@ -8,13 +8,14 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
+// KubernetesToYAML properly encodes a list of resources as YAML.
 // Straight up encoding as YAML leaves us with a non-standard data
 // structure. Going through JSON eliminates the extra fields and
 // keys and results in what you would expect to see.
 // This function takes a slice of items to support creating a
 // multi-document YAML string (separated with "---" between each
 // item).
-func kubernetesToYAML(data []interface{}) (string, error) {
+func KubernetesToYAML(data []interface{}) (string, error) {
 	var buffer bytes.Buffer
 
 	yamlEncoder := yaml.NewEncoder(&buffer)

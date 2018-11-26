@@ -1,4 +1,4 @@
-package templates
+package etcd
 
 import (
 	"errors"
@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/kubermatic/kubeone/pkg/config"
+	"github.com/kubermatic/kubeone/pkg/templates"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -14,7 +15,7 @@ func hostPathTypePtr(s corev1.HostPathType) *corev1.HostPathType {
 	return &s
 }
 
-func EtcdConfig(cluster *config.Cluster, instance int) (string, error) {
+func Pod(cluster *config.Cluster, instance int) (string, error) {
 	masterNodes := cluster.Hosts
 	if len(masterNodes) < (instance - 1) {
 		return "", fmt.Errorf("cluster config does not contain node #%d", instance)
@@ -113,5 +114,5 @@ func EtcdConfig(cluster *config.Cluster, instance int) (string, error) {
 		},
 	}
 
-	return kubernetesToYAML([]interface{}{pod})
+	return templates.KubernetesToYAML([]interface{}{pod})
 }
