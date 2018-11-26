@@ -1,36 +1,22 @@
 package kube112
 
 import (
-	"fmt"
-
+	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
-	"github.com/sirupsen/logrus"
+	"github.com/kubermatic/kubeone/pkg/ssh"
 )
 
 func createJoinToken(ctx *util.Context) error {
-	node := ctx.Cluster.Hosts[0]
-	logger := ctx.Logger.WithFields(logrus.Fields{
-		"node": node.PublicAddress,
+	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, _ config.HostConfig, _ int, conn ssh.Connection) error {
+		ctx.Logger.Infoln("Creating join token…")
+
+		stdout, _, _, err := util.RunCommand(conn, `sudo kubeadm token create --print-join-command`, ctx.Verbose)
+		if err != nil {
+			return err
+		}
+
+		ctx.JoinCommand = stdout
+
+		return nil
 	})
-
-	logger.Infoln("Creating join token…")
-
-	conn, err := ctx.Connector.Connect(node)
-	if err != nil {
-		return fmt.Errorf("failed to connect to %s: %v", node.PublicAddress, err)
-	}
-
-	stdout, _, _, err := util.RunCommand(conn, `
-set -xeu pipefail
-
-export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
-
-sudo kubeadm token create --print-join-command`, ctx.Verbose)
-	if err != nil {
-		return err
-	}
-
-	ctx.JoinCommand = stdout
-
-	return nil
 }

@@ -12,7 +12,7 @@ import (
 func waitForEtcd(ctx *util.Context) error {
 	ctx.Logger.Infoln("Waiting for etcd…")
 
-	return util.RunTaskOnNodes(ctx, waitForEtcdOnNode)
+	return util.RunTaskOnAllNodes(ctx, waitForEtcdOnNode)
 }
 
 func waitForEtcdOnNode(ctx *util.Context, node config.HostConfig, _ int, conn ssh.Connection) error {

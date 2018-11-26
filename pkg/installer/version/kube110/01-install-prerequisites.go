@@ -19,7 +19,7 @@ func installPrerequisites(ctx *util.Context) error {
 		return fmt.Errorf("failed to create configuration: %v", err)
 	}
 
-	return util.RunTaskOnNodes(ctx, installPrerequisitesOnNode)
+	return util.RunTaskOnAllNodes(ctx, installPrerequisitesOnNode)
 }
 
 func generateConfigurationFiles(ctx *util.Context) error {
@@ -115,7 +115,6 @@ func installKubeadmDebian(ctx *util.Context, conn ssh.Connection) error {
 }
 
 const kubeadmDebianCommand = `
-set -xeu pipefail
 sudo swapoff -a
 
 source /etc/os-release
@@ -166,8 +165,6 @@ func installKubeadmCoreOS(ctx *util.Context, conn ssh.Connection) error {
 }
 
 const kubeadmCoreOSCommand = `
-set -xeu pipefail
-
 sudo mkdir -p /opt/cni/bin /etc/kubernetes/pki /etc/kubernetes/manifests
 curl -L "https://github.com/containernetworking/plugins/releases/download/{{ .CNI_VERSION }}/cni-plugins-amd64-{{ .CNI_VERSION }}.tgz" | \
      sudo tar -C /opt/cni/bin -xz
@@ -202,8 +199,6 @@ func deployConfigurationFiles(ctx *util.Context, conn ssh.Connection, operatingS
 
 	// move config files to their permanent locations
 	_, _, _, err = util.RunShellCommand(conn, ctx.Verbose, `
-set -xeu pipefail
-
 sudo mkdir -p /etc/systemd/system/kubelet.service.d/ /etc/kubernetes
 sudo mv ./{{ .WORK_DIR }}/cfg/20-cloudconfig-kubelet.conf /etc/systemd/system/kubelet.service.d/
 sudo mv ./{{ .WORK_DIR }}/cfg/cloud-config /etc/kubernetes/cloud-config

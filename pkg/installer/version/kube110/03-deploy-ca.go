@@ -12,7 +12,7 @@ import (
 func deployCA(ctx *util.Context) error {
 	ctx.Logger.Infoln("Deploying PKI…")
 
-	return util.RunTaskOnNodes(ctx, deployCAOnNode)
+	return util.RunTaskOnAllNodes(ctx, deployCAOnNode)
 }
 
 func deployCAOnNode(ctx *util.Context, node config.HostConfig, nodeIndex int, conn ssh.Connection) error {
@@ -22,15 +22,9 @@ func deployCAOnNode(ctx *util.Context, node config.HostConfig, nodeIndex int, co
 		return fmt.Errorf("failed to upload: %v", err)
 	}
 
-	// sudo with local binary directories manually added to path. Needed because some
-	// distros don't correctly set up path in non-interactive sessions, e.g. RHEL
 	ctx.Logger.Infoln("Setting up certificates and restarting kubelet…")
 
 	_, _, _, err = util.RunShellCommand(conn, ctx.Verbose, `
-set -xeu pipefail
-
-export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
-
 sudo rsync -av ./{{ .WORK_DIR }}/pki/ /etc/kubernetes/pki/
 rm -rf ./{{ .WORK_DIR }}/pki
 sudo chown -R root:root /etc/kubernetes/pki

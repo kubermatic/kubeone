@@ -58,6 +58,18 @@ func (m *Cluster) EtcdClusterToken() (string, error) {
 	return m.etcdClusterToken, nil
 }
 
+// Leader returns the first configured host. Only call this after
+// validating the cluster config to ensure a leader exists.
+func (m *Cluster) Leader() HostConfig {
+	return m.Hosts[0]
+}
+
+// Followers returns all but the first configured host. Only call
+// this after validating the cluster config to ensure hosts exist.
+func (m *Cluster) Followers() []HostConfig {
+	return m.Hosts[1:]
+}
+
 // HostConfig describes a single master node.
 type HostConfig struct {
 	PublicAddress     string `yaml:"public_address"`

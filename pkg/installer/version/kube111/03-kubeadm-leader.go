@@ -1,38 +1,21 @@
 package kube111
 
 import (
-	"fmt"
-
+	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
-	"github.com/sirupsen/logrus"
+	"github.com/kubermatic/kubeone/pkg/ssh"
 )
 
 func initKubernetesLeader(ctx *util.Context) error {
 	ctx.Logger.Infoln("Initializing Kubernetes on leader…")
 
-	node := ctx.Cluster.Hosts[0]
-	logger := ctx.Logger.WithFields(logrus.Fields{
-		"node": node.PublicAddress,
-	})
+	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, _ config.HostConfig, _ int, conn ssh.Connection) error {
+		ctx.Logger.Infoln("Running kubeadm…")
 
-	conn, err := ctx.Connector.Connect(node)
-	if err != nil {
-		return fmt.Errorf("failed to connect to %s: %v", node.PublicAddress, err)
-	}
+		_, _, _, err := util.RunShellCommand(conn, ctx.Verbose, `sudo kubeadm init --config=./{{ .WORK_DIR }}/cfg/master_0.yaml`, util.TemplateVariables{
+			"WORK_DIR": ctx.WorkDir,
+		})
 
-	logger.Infoln("Running kubeadm…")
-
-	_, _, _, err = util.RunShellCommand(conn, ctx.Verbose, `
-set -xeu
-export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
-sudo kubeadm init \
-     --config=./{{ .WORK_DIR }}/cfg/master_0.yaml
-`, util.TemplateVariables{
-		"WORK_DIR": ctx.WorkDir,
-	})
-	if err != nil {
 		return err
-	}
-
-	return nil
+	})
 }

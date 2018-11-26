@@ -21,7 +21,7 @@ func generateKubeadm(ctx *util.Context) error {
 		ctx.Configuration.AddFile(fmt.Sprintf("cfg/master_%d.yaml", idx), kubeadm)
 	}
 
-	return util.RunTaskOnNodes(ctx, generateKubeadmOnNode)
+	return util.RunTaskOnAllNodes(ctx, generateKubeadmOnNode)
 }
 
 func generateKubeadmOnNode(ctx *util.Context, _ config.HostConfig, _ int, conn ssh.Connection) error {

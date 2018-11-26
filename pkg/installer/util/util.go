@@ -42,6 +42,12 @@ func RunCommand(conn ssh.Connection, cmd string, verbose bool) (string, string, 
 		upstream: os.Stdout,
 	}
 
+	// ensure sudo works on exotic distros
+	cmd = fmt.Sprintf("export \"PATH=$PATH:/sbin:/usr/local/bin:/opt/bin\"\n\n%s", cmd)
+
+	// ensure we fail early
+	cmd = fmt.Sprintf("set -xeu pipefail\n\n%s", cmd)
+
 	exitCode, err := conn.Stream(cmd, stdout, os.Stderr)
 	if err != nil {
 		err = fmt.Errorf("%v: %s", err, stderr)
