@@ -7,3 +7,64 @@ pipeline:
     image: golang:1.11.2
     commands:
     - make install
+
+  tf-aws-setup:
+    image: busybox
+    secrets:
+    - ssh_public_key
+    environment:
+    - TF_DIR=terraform/aws
+    commands:
+    - mkdir -p /app/.keys
+    - echo $SSH_PUBLIC_KEY > /app/.keys/id_rsa.pub
+    when:
+      branch:
+      - master
+
+  e2e-aws-up:
+    image: hashicorp/terraform:0.11.10
+    secrets:
+    - aws_access_key_id
+    - aws_secret_access_key
+    environment:
+    - TF_DIR=terraform/aws
+    - TF_VAR_ssh_public_key_file=/app/.keys/id_rsa.pub
+    commands:
+    - set -euf -o pipefail
+    - export TF_VAR_cluster_name=e2e-$DRONE_BUILD_NUMBER
+    - cd $TF_DIR
+    - terraform init
+    - terraform apply -auto-approve
+    when:
+      branch:
+      - master
+
+  e2e-run:
+    image: hashicorp/terraform:0.11.10
+    environment:
+    - TF_DIR=terraform/aws
+    commands:
+    - terraform output -state=$TF_DIR/terraform.tfstate -json > tf.json
+    - cat tf.json
+    when:
+      branch:
+      - master
+
+  e2e-aws-teardown:
+    image: hashicorp/terraform:0.11.10
+    secrets:
+    - aws_access_key_id
+    - aws_secret_access_key
+    environment:
+    - TF_DIR=terraform/aws
+    - TF_VAR_ssh_public_key_file=/app/.keys/id_rsa.pub
+    commands:
+    - export TF_VAR_cluster_name=e2e-$DRONE_BUILD_NUMBER
+    - cd $TF_DIR
+    - terraform destroy -auto-approve
+    when:
+      status:
+      - failure
+      - success
+      branch:
+      - master
