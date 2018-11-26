@@ -14,11 +14,21 @@ import (
 	"github.com/kubermatic/kubeone/pkg/ssh"
 )
 
+// Options groups the various possible options for running
+// the Kubernetes installation.
+type Options struct {
+	Verbose    bool
+	BackupFile string
+}
+
 type installer struct {
 	cluster *config.Cluster
 	logger  *logrus.Logger
 }
 
+// NewInstaller returns a new installer, responsible for dispatching
+// between the different supported Kubernetes versions and running the
+// installation procedure.
 func NewInstaller(cluster *config.Cluster, logger *logrus.Logger) *installer {
 	return &installer{
 		cluster: cluster,
@@ -26,10 +36,10 @@ func NewInstaller(cluster *config.Cluster, logger *logrus.Logger) *installer {
 	}
 }
 
-func (i *installer) Install(verbose bool) (*Result, error) {
+func (i *installer) Install(options *Options) (*Result, error) {
 	var err error
 
-	ctx := i.createContext(verbose)
+	ctx := i.createContext(options)
 
 	v := semver.MustParse(i.cluster.Versions.Kubernetes)
 	majorMinor := fmt.Sprintf("%d.%d", v.Major(), v.Minor())
@@ -51,7 +61,9 @@ func (i *installer) Install(verbose bool) (*Result, error) {
 func (i *installer) Reset(verbose bool) (*Result, error) {
 	var err error
 
-	ctx := i.createContext(verbose)
+	ctx := i.createContext(&Options{
+		Verbose: verbose,
+	})
 
 	v := semver.MustParse(i.cluster.Versions.Kubernetes)
 	majorMinor := fmt.Sprintf("%d.%d", v.Major(), v.Minor())
@@ -70,13 +82,14 @@ func (i *installer) Reset(verbose bool) (*Result, error) {
 	return nil, err
 }
 
-func (i *installer) createContext(verbose bool) *util.Context {
+func (i *installer) createContext(options *Options) *util.Context {
 	return &util.Context{
 		Cluster:       i.cluster,
 		Connector:     ssh.NewConnector(),
 		Configuration: util.NewConfiguration(),
-		WorkDir:       "kubermatic-installer",
-		Verbose:       verbose,
+		WorkDir:       "kubeone",
 		Logger:        i.logger,
+		Verbose:       options.Verbose,
+		BackupFile:    options.BackupFile,
 	}
 }

@@ -3,7 +3,10 @@ package command
 import (
 	"errors"
 	"fmt"
+	"os"
+	"path/filepath"
 
+	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
@@ -22,6 +25,11 @@ func InstallCommand(logger *logrus.Logger) cli.Command {
 				Name:   "tfjson, t",
 				Usage:  "path to terraform output JSON or - for stdin",
 				Value:  "",
+			},
+			cli.StringFlag{
+				Name:  "backup, b",
+				Usage: "path to where the PKI backup .tar.gz file should be placed (default: location of cluster config file)",
+				Value: "",
 			},
 		},
 	}
@@ -50,9 +58,46 @@ func InstallAction(logger *logrus.Logger) cli.ActionFunc {
 			return fmt.Errorf("cluster is invalid: %v", err)
 		}
 
+		options, err := createInstallerOptions(clusterFile, cluster, ctx)
+		if err = applyTerraform(tf, cluster); err != nil {
+			return fmt.Errorf("failed to setup PKI backup: %v", err)
+		}
+
 		worker := installer.NewInstaller(cluster, logger)
-		_, err = worker.Install(ctx.GlobalBool("verbose"))
+		_, err = worker.Install(options)
 
 		return err
 	}))
+}
+
+func createInstallerOptions(clusterFile string, cluster *config.Cluster, ctx *cli.Context) (*installer.Options, error) {
+	backupFile := ctx.String("backup")
+	if len(backupFile) == 0 {
+		fullPath, _ := filepath.Abs(clusterFile)
+		clusterName := cluster.Name
+
+		backupFile = filepath.Join(filepath.Dir(fullPath), fmt.Sprintf("%s.tar.gz", clusterName))
+	}
+
+	// refuse to overwrite existing backups (NB: since we attempt to
+	// write to the file later on to check for write permissions, we
+	// inadvertently create a zero byte file even if the first step
+	// of the installer fails; for this reason it's okay to find an
+	// existing, zero byte backup)
+	stat, err := os.Stat(backupFile)
+	if err != nil && stat.Size() > 0 {
+		return nil, fmt.Errorf("backup %s already exists, refusing to overwrite", backupFile)
+	}
+
+	// try to write to the file before doing anything else
+	f, err := os.OpenFile(backupFile, os.O_RDWR|os.O_CREATE, 0600)
+	if err != nil {
+		return nil, fmt.Errorf("cannot open %s for writing", backupFile)
+	}
+	defer f.Close()
+
+	return &installer.Options{
+		BackupFile: backupFile,
+		Verbose:    ctx.GlobalBool("verbose"),
+	}, nil
 }
