@@ -5,6 +5,7 @@ package v1alpha2
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/kubermatic/kubeone/pkg/config"
 )
@@ -59,17 +60,23 @@ type configuration struct {
 }
 
 func NewConfig(cluster *config.Cluster, instance int) (*configuration, error) {
-	firstMaster := cluster.Hosts[0]
+	leader := cluster.Leader()
+	host := cluster.Hosts[instance]
 
-	etcdSANs := []string{cluster.Hosts[instance].PrivateAddress, cluster.Hosts[instance].Hostname}
-	listenClientURLs := fmt.Sprintf("https://127.0.0.1:2379,https://%s:2379", cluster.Hosts[instance].PrivateAddress)
-	advertiseClientURLs := fmt.Sprintf("https://%s:2379", cluster.Hosts[instance].PrivateAddress)
-	listenPeerURLs := fmt.Sprintf("https://%s:2380", cluster.Hosts[instance].PrivateAddress)
-	initialAdvertisePeerURLs := fmt.Sprintf("https://%s:2380", cluster.Hosts[instance].PrivateAddress)
-	initialCluster := fmt.Sprintf("%s=https://%s:2380", cluster.Hosts[0].Hostname, cluster.Hosts[0].PrivateAddress)
-	for i := 1; i <= instance; i++ {
-		initialCluster = fmt.Sprintf("%s,%s=https://%s:2380", initialCluster, cluster.Hosts[i].Hostname, cluster.Hosts[i].PrivateAddress)
+	etcdSANs := []string{host.PrivateAddress, host.Hostname}
+	listenClientURLs := fmt.Sprintf("https://127.0.0.1:2379,https://%s:2379", host.PrivateAddress)
+	advertiseClientURLs := fmt.Sprintf("https://%s:2379", host.PrivateAddress)
+	listenPeerURLs := fmt.Sprintf("https://%s:2380", host.PrivateAddress)
+	initialAdvertisePeerURLs := fmt.Sprintf("https://%s:2380", host.PrivateAddress)
+
+	initialClusterAddresses := []string{}
+	for _, host := range cluster.Hosts {
+		initialClusterAddresses = append(
+			initialClusterAddresses,
+			fmt.Sprintf("%s=https://%s:2380", host.Hostname, host.PrivateAddress),
+		)
 	}
+	initialCluster := strings.Join(initialClusterAddresses, ",")
 
 	initialClusterState := "new"
 	if instance > 0 {
@@ -81,11 +88,11 @@ func NewConfig(cluster *config.Cluster, instance int) (*configuration, error) {
 		Kind:              "MasterConfiguration",
 		KubernetesVersion: fmt.Sprintf("v%s", cluster.Versions.Kubernetes),
 		// TODO: use loadbalancer
-		APIServerCertSANs: []string{firstMaster.PublicAddress},
+		APIServerCertSANs: []string{leader.PublicAddress},
 
 		API: api{
-			AdvertiseAddress:     firstMaster.PrivateAddress,
-			ControlPlaneEndpoint: fmt.Sprintf("%s:%d", firstMaster.PublicAddress, 6443),
+			AdvertiseAddress:     leader.PrivateAddress,
+			ControlPlaneEndpoint: fmt.Sprintf("%s:%d", leader.PublicAddress, 6443),
 		},
 
 		Etcd: etcd{
