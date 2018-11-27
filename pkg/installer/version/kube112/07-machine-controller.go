@@ -1,6 +1,8 @@
 package kube112
 
 import (
+	"fmt"
+
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/ssh"
@@ -8,7 +10,7 @@ import (
 )
 
 func installMachineController(ctx *util.Context) error {
-	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, node config.HostConfig, _ int, conn ssh.Connection) error {
+	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, node config.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Infoln("Creating machine-controller certificate…")
 
 		config, err := machinecontroller.WebhookConfiguration(ctx.Cluster, ctx.Configuration)

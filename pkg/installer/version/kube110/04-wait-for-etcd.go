@@ -15,7 +15,7 @@ func waitForEtcd(ctx *util.Context) error {
 	return util.RunTaskOnAllNodes(ctx, waitForEtcdOnNode)
 }
 
-func waitForEtcdOnNode(ctx *util.Context, node config.HostConfig, _ int, conn ssh.Connection) error {
+func waitForEtcdOnNode(ctx *util.Context, node config.HostConfig, conn ssh.Connection) error {
 	var err error
 
 	command := fmt.Sprintf(`

@@ -18,7 +18,7 @@ func applyCNI(ctx *util.Context, cni string) error {
 }
 
 func applyFlannelCNI(ctx *util.Context) error {
-	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, _ config.HostConfig, _ int, conn ssh.Connection) error {
+	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, _ config.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Infoln("Applying Flannel CNI plugin…")
 
 		_, _, _, err := util.RunShellCommand(conn, ctx.Verbose, `sudo kubectl create -f ./{{ .WORK_DIR }}/kube-flannel.yaml`, util.TemplateVariables{

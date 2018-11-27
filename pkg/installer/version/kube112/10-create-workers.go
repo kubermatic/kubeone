@@ -11,7 +11,7 @@ func createWorkerMachines(ctx *util.Context) error {
 		return nil
 	}
 
-	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, _ config.HostConfig, _ int, conn ssh.Connection) error {
+	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, _ config.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Infoln("Creating worker machines…")
 
 		_, _, _, err := util.RunShellCommand(conn, ctx.Verbose, `kubectl apply -f ./{{ .WORK_DIR }}/workers.yaml`, util.TemplateVariables{

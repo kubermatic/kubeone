@@ -11,7 +11,7 @@ import (
 func generateCA(ctx *util.Context) error {
 	ctx.Logger.Infoln("Generating PKI…")
 
-	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, _ config.HostConfig, _ int, conn ssh.Connection) error {
+	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, _ config.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Infoln("Running kubeadm…")
 
 		_, _, _, err := util.RunShellCommand(conn, ctx.Verbose, `

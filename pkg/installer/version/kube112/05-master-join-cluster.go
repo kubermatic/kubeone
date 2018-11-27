@@ -15,7 +15,7 @@ func joinMasterCluster(ctx *util.Context) error {
 	return util.RunTaskOnFollowers(ctx, joinNodesMasterCluster)
 }
 
-func joinNodesMasterCluster(ctx *util.Context, node config.HostConfig, nodeIndex int, conn ssh.Connection) error {
+func joinNodesMasterCluster(ctx *util.Context, node config.HostConfig, conn ssh.Connection) error {
 	ctx.Logger.Infoln("Finalizing cluster…")
 
 	leader := ctx.Cluster.Leader()
@@ -29,14 +29,14 @@ done
 
 sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf exec -n kube-system etcd-{{ .LEADER_HOSTNAME }} -- etcdctl --ca-file /etc/kubernetes/pki/etcd/ca.crt --cert-file /etc/kubernetes/pki/etcd/peer.crt --key-file /etc/kubernetes/pki/etcd/peer.key --endpoints=https://{{ .LEADER_ADDRESS }}:2379 member add {{ .NODE_HOSTNAME }} https://{{ .NODE_ADDRESS }}:2380
 
-sudo kubeadm alpha phase etcd local --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_INDEX }}.yaml
-sudo kubeadm alpha phase kubeconfig all --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_INDEX }}.yaml
-sudo kubeadm alpha phase controlplane all --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_INDEX }}.yaml
-sudo kubeadm alpha phase kubelet config annotate-cri --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_INDEX }}.yaml
-sudo kubeadm alpha phase mark-master --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_INDEX }}.yaml
+sudo kubeadm alpha phase etcd local --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+sudo kubeadm alpha phase kubeconfig all --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+sudo kubeadm alpha phase controlplane all --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+sudo kubeadm alpha phase kubelet config annotate-cri --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+sudo kubeadm alpha phase mark-master --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
 `, util.TemplateVariables{
 		"WORK_DIR":        ctx.WorkDir,
-		"NODE_INDEX":      strconv.Itoa(nodeIndex),
+		"NODE_ID":         strconv.Itoa(node.ID),
 		"LEADER_HOSTNAME": leader.Hostname,
 		"NODE_HOSTNAME":   node.Hostname,
 		"LEADER_ADDRESS":  leader.PrivateAddress,

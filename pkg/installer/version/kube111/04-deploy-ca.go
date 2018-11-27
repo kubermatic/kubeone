@@ -13,7 +13,7 @@ import (
 func downloadCA(ctx *util.Context) error {
 	ctx.Logger.Infoln("Generating PKI…")
 
-	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, _ config.HostConfig, _ int, conn ssh.Connection) error {
+	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, _ config.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Infoln("Running kubeadm…")
 
 		_, _, _, err := util.RunShellCommand(conn, ctx.Verbose, `
@@ -68,7 +68,7 @@ func deployCA(ctx *util.Context) error {
 	return util.RunTaskOnFollowers(ctx, deployCAOnNode)
 }
 
-func deployCAOnNode(ctx *util.Context, node config.HostConfig, nodeIndex int, conn ssh.Connection) error {
+func deployCAOnNode(ctx *util.Context, node config.HostConfig, conn ssh.Connection) error {
 	ctx.Logger.Infoln("Uploading files…")
 	err := ctx.Configuration.UploadTo(conn, ctx.WorkDir)
 	if err != nil {
@@ -83,15 +83,15 @@ sudo mv /etc/kubernetes/pki/admin.conf /etc/kubernetes/admin.conf
 rm -rf ./{{ .WORK_DIR }}/pki
 sudo chown -R root:root /etc/kubernetes
 sudo mkdir -p /etc/kubernetes/manifests
-sudo kubeadm alpha phase certs all --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_INDEX }}.yaml
-sudo kubeadm alpha phase kubelet config write-to-disk --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_INDEX }}.yaml
-sudo kubeadm alpha phase kubelet write-env-file --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_INDEX }}.yaml
-sudo kubeadm alpha phase kubeconfig kubelet --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_INDEX }}.yaml
+sudo kubeadm alpha phase certs all --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+sudo kubeadm alpha phase kubelet config write-to-disk --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+sudo kubeadm alpha phase kubelet write-env-file --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+sudo kubeadm alpha phase kubeconfig kubelet --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
 sudo systemctl daemon-reload
 sudo systemctl restart kubelet
 `, util.TemplateVariables{
-		"WORK_DIR":   ctx.WorkDir,
-		"NODE_INDEX": strconv.Itoa(nodeIndex),
+		"WORK_DIR": ctx.WorkDir,
+		"NODE_ID":  strconv.Itoa(node.ID),
 	})
 
 	return err

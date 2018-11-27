@@ -13,7 +13,7 @@ func Reset(ctx *util.Context) error {
 	return util.RunTaskOnAllNodes(ctx, resetNode)
 }
 
-func resetNode(ctx *util.Context, _ config.HostConfig, _ int, conn ssh.Connection) error {
+func resetNode(ctx *util.Context, _ config.HostConfig, conn ssh.Connection) error {
 	ctx.Logger.Infoln("Resetting node…")
 
 	_, _, _, err := util.RunShellCommand(conn, ctx.Verbose, resetScript, util.TemplateVariables{

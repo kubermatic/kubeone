@@ -28,6 +28,9 @@ func (m *Cluster) Validate() error {
 	}
 
 	for idx, host := range m.Hosts {
+		// define a unique ID for each host
+		m.Hosts[idx].ID = idx
+
 		if err := host.Validate(); err != nil {
 			return fmt.Errorf("host %d is invalid: %v", idx+1, err)
 		}
@@ -72,6 +75,7 @@ func (m *Cluster) Followers() []HostConfig {
 
 // HostConfig describes a single master node.
 type HostConfig struct {
+	ID                int    `yaml:"-"`
 	PublicAddress     string `yaml:"public_address"`
 	PrivateAddress    string `yaml:"private_address"`
 	Hostname          string `yaml:"hostname"`

@@ -56,7 +56,7 @@ Environment="KUBELET_EXTRA_ARGS= --cloud-provider=%s --cloud-config=/etc/kuberne
 	return nil
 }
 
-func installPrerequisitesOnNode(ctx *util.Context, node config.HostConfig, _ int, conn ssh.Connection) error {
+func installPrerequisitesOnNode(ctx *util.Context, node config.HostConfig, conn ssh.Connection) error {
 	ctx.Logger.Infoln("Determine operating system…")
 	os, err := determineOS(ctx, conn)
 	if err != nil {

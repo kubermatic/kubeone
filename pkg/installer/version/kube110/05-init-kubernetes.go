@@ -15,7 +15,7 @@ func initKubernetes(ctx *util.Context) error {
 	return util.RunTaskOnAllNodes(ctx, initKubernetesOnNode)
 }
 
-func initKubernetesOnNode(ctx *util.Context, node config.HostConfig, _ int, conn ssh.Connection) error {
+func initKubernetesOnNode(ctx *util.Context, node config.HostConfig, conn ssh.Connection) error {
 	if err := kubeadmInit(ctx, conn); err != nil {
 		return err
 	}
