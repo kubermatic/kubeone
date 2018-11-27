@@ -7,6 +7,10 @@ import (
 )
 
 func createWorkerMachines(ctx *util.Context) error {
+	if len(ctx.Cluster.Workers) == 0 {
+		return nil
+	}
+
 	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, _ config.HostConfig, _ int, conn ssh.Connection) error {
 		ctx.Logger.Infoln("Creating worker machines…")
 
