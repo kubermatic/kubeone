@@ -104,7 +104,7 @@ k8s.io/apiextensions-apiserver v0.0.0-20181026191334-ba848ee89ca3 h1:SRZNdKpmx9C
 k8s.io/apiextensions-apiserver v0.0.0-20181026191334-ba848ee89ca3/go.mod h1:IxkesAMoaCRoLrPJdZNZUQp9NfZnzqaVzLhb2VEQzXE=
 k8s.io/apimachinery v0.0.0-20181101131016-0aa9751e8aaf h1:Qsp/DuvFWmfTAfp4tcX402hdFfowyhIIBdRGWGCiWlY=
 k8s.io/apimachinery v0.0.0-20181101131016-0aa9751e8aaf/go.mod h1:ccL7Eh7zubPUSh9A3USN90/OzHNSVN6zxzde07TDCL0=
-k8s.io/client-go v9.0.0+incompatible h1:NXWpDuPFeVB5lYP1fTqJUtwigjtmRXJNtndnN53ldGI=
+k8s.io/client-go v9.0.0+incompatible h1:2kqW3X2xQ9SbFvWZjGEHBLlWc1LG9JIJNXWkuqwdZ3A=
 k8s.io/client-go v9.0.0+incompatible/go.mod h1:7vJpHMYJwNQCWgzmNV+VYUl1zCObLyodBc8nIyt8L5s=
 sigs.k8s.io/cluster-api v0.0.0-20181116183923-0734939e05ae h1:5L4RFZubeHgDjjydrdUgY1qj6DagxOBb7S8quks4rGc=
 sigs.k8s.io/cluster-api v0.0.0-20181116183923-0734939e05ae/go.mod h1:aEXstFx3krpj6/AOcV/rOP2VLKdrtSNUMDR2Kmt6YSs=
