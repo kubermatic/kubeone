@@ -104,6 +104,14 @@ func WebhookDeployment(cluster *config.Cluster) (*appsv1.Deployment, error) {
 		},
 	}
 
+	dep.Spec.Template.Spec.Tolerations = []corev1.Toleration{
+		{
+			Key:      "node-role.kubernetes.io/master",
+			Operator: corev1.TolerationOpExists,
+			Effect:   corev1.TaintEffectNoSchedule,
+		},
+	}
+
 	dep.Spec.Template.Spec.Containers = []corev1.Container{
 		{
 			Name:            "machine-controller-webhook",
