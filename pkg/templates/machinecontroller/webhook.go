@@ -71,6 +71,7 @@ func WebhookDeployment(cluster *config.Cluster) (*appsv1.Deployment, error) {
 	}
 
 	dep.Name = "machine-controller-webhook"
+	dep.Namespace = WebhookNamespace
 	dep.Labels = map[string]string{
 		WebhookAppLabelKey: WebhookAppLabelValue,
 	}
@@ -168,6 +169,7 @@ func Service() (*corev1.Service, error) {
 	}
 
 	se.Name = "machine-controller-webhook"
+	se.Namespace = WebhookNamespace
 	se.Labels = map[string]string{
 		WebhookAppLabelKey: WebhookAppLabelValue,
 	}
@@ -209,6 +211,7 @@ func TLSServingCertificate(ca *triple.KeyPair) (*corev1.Secret, error) {
 	}
 
 	se.Name = "machinecontroller-webhook-serving-cert"
+	se.Namespace = WebhookNamespace
 	se.Data = map[string][]byte{}
 
 	commonName := fmt.Sprintf("%s.%s.svc.cluster.local.", WebbhookName, WebhookNamespace)
@@ -236,11 +239,13 @@ func TLSServingCertificate(ca *triple.KeyPair) (*corev1.Secret, error) {
 func MutatingwebhookConfiguration(ca *triple.KeyPair) (*admissionregistrationv1beta1.MutatingWebhookConfiguration, error) {
 	cfg := &admissionregistrationv1beta1.MutatingWebhookConfiguration{
 		TypeMeta: metav1.TypeMeta{
-			APIVersion: "v1alpha1",
-			Kind:       "admissionregistration.k8s.io",
+			APIVersion: "admissionregistration.k8s.io/v1beta1",
+			Kind:       "MutatingWebhookConfiguration",
 		},
 	}
+
 	cfg.Name = "machine-controller.kubermatic.io"
+	cfg.Namespace = WebhookNamespace
 
 	cfg.Webhooks = []admissionregistrationv1beta1.Webhook{
 		{
