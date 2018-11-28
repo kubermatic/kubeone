@@ -42,6 +42,9 @@ func Install(ctx *util.Context) error {
 	if err := createJoinToken(ctx); err != nil {
 		return fmt.Errorf("failed to create join token: %v", err)
 	}
+	if err := deployArk(ctx); err != nil {
+		return fmt.Errorf("failed to deploy ark: %v", err)
+	}
 
 	return nil
 }

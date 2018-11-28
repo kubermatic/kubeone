@@ -1,6 +1,7 @@
 package command
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -137,6 +138,25 @@ func loadMachineControllerCredentials(p config.ProviderName) (data map[string]st
 	}
 
 	return
+}
+
+// loadS3Credentials loads credentials for S3 bucket used to store backups
+func loadS3Credentials() (string, string, error) {
+	key, err := getEnvVar("BACKUP_S3_ACCESS_KEY")
+	if err != nil {
+		if key, err = getEnvVar("AWS_ACCESS_KEY_ID"); err != nil {
+			return "", "", errors.New("backups s3 access key not set")
+		}
+	}
+
+	secret, err := getEnvVar("BACKUP_S3_SECRET_KEY")
+	if err != nil {
+		if secret, err = getEnvVar("AWS_SECRET_ACCESS_KEY"); err != nil {
+			return "", "", errors.New("backups s3 secret access key not set")
+		}
+	}
+
+	return key, secret, nil
 }
 
 func getEnvVar(ev string) (data string, err error) {

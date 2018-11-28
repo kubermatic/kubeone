@@ -51,6 +51,13 @@ func InstallAction(logger *logrus.Logger) cli.ActionFunc {
 		if err != nil {
 			return fmt.Errorf("failed to load provider credentials: %v", err)
 		}
+		// If keys are specified in the manifest don't override them.
+		if len(cluster.Backup.S3AccessKey) == 0 && len(cluster.Backup.S3SecretAccessKey) == 0 {
+			cluster.Backup.S3AccessKey, cluster.Backup.S3SecretAccessKey, err = loadS3Credentials()
+			if err != nil {
+				return fmt.Errorf("failed to load backups configuration: %v", err)
+			}
+		}
 
 		tf := ctx.String("tfjson")
 		if err = applyTerraform(tf, cluster); err != nil {

@@ -17,6 +17,7 @@ type Cluster struct {
 	Versions  VersionConfig   `yaml:"versions"`
 	Network   NetworkConfig   `yaml:"network"`
 	Workers   []WorkerConfig  `yaml:"workers"`
+	Backup    BackupConfig    `yaml:"backup"`
 
 	// stuff generated at runtime
 	etcdClusterToken string
@@ -45,6 +46,10 @@ func (m *Cluster) Validate() error {
 
 	if err := m.Network.Validate(); err != nil {
 		return fmt.Errorf("network configuration is invalid: %v", err)
+	}
+
+	if err := m.Backup.Validate(); err != nil {
+		return fmt.Errorf("backup configuration is invalid: %v", err)
 	}
 
 	return nil
@@ -243,6 +248,54 @@ func (m *WorkerConfig) Validate() error {
 
 	if m.Replicas < 1 {
 		return errors.New("replicas must be >= 1")
+	}
+
+	return nil
+}
+
+// BackupConfig describes where and how to store Ark backups
+type BackupConfig struct {
+	// Provider is provider for buckets and volume snapshots.
+	// Possible values are: AWS (includes compatible AWS S3 storages), Azure and GCP
+	// TODO(xmudrii): By default uses specified control plane provider if compatible with Ark
+	Provider string `yaml:"provider"`
+
+	// S3AccessKey is Access Key used to access backups S3 bucket.
+	// This variable is sourced from BACKUP_AWS_ACCESS_KEY_ID,
+	// or if unset from AWS_ACCESS_KEY_ID environment variable
+	S3AccessKey string `yaml:"s3_access_key"`
+	// S3SecretAccessKey is secret key used to access backups S3 bucket.
+	// This variable is sourced from BACKUP_AWS_SECRET_ACCESS_KEY environment variable,
+	// or if unset from AWS_SECRET_ACCESS_KEY environment variable
+	S3SecretAccessKey string `yaml:"s3_secret_access_key"`
+
+	// BucketName is name of the S3 bucket where backups are stored
+	BucketName string `yaml:"bucket_name"`
+
+	// BackupStorageConfig is optional configuration depending on the provider specified
+	// Details: https://heptio.github.io/ark/v0.10.0/api-types/backupstoragelocation.html
+	BackupStorageConfig map[string]string `yaml:"backup_storage_config"`
+
+	// VolumesSnapshotConfig is optional configuration depending on the provider specified
+	// Details: https://heptio.github.io/ark/v0.10.0/api-types/volumesnapshotlocation.html
+	VolumesSnapshotConfig map[string]string `yaml:"volumes_snapshot_region"`
+}
+
+// Validate valides the BackupConfig structure, ensuring credentials and bucket name are provided
+func (m *BackupConfig) Validate() error {
+	if len(m.S3AccessKey) == 0 {
+		return errors.New("S3 Access key must be given")
+	}
+	if len(m.S3SecretAccessKey) == 0 {
+		return errors.New("S3 Secret Access Key must be given")
+	}
+
+	if len(m.BucketName) == 0 {
+		return errors.New("S3 bucket name must be given")
+	}
+
+	if m.Provider != "aws" && m.Provider != "azure" && m.Provider != "gcp" {
+		return fmt.Errorf("invalid provider %s. supported values: \"aws\", \"azure\", \"gcp\"", m.Provider)
 	}
 
 	return nil
