@@ -110,10 +110,6 @@ func NewConfig(cluster *config.Cluster, instance int) (*configuration, error) {
 			"endpoint-reconciler-type": "lease",
 			"service-node-port-range":  cluster.Network.NodePortRange(),
 		},
-
-		FeatureGates: map[string]bool{
-			"CoreDNS": false,
-		},
 	}
 
 	if cluster.Provider.CloudConfig != "" {
