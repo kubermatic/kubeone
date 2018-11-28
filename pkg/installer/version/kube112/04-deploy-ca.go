@@ -97,6 +97,9 @@ set -xeu pipefail
 
 export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
 
+mkdir -p /var/lib/kubelet
+sudo sh -c 'echo "KUBELET_KUBEADM_ARGS=--cgroup-driver=cgroupfs --network-plugin=cni --resolv-conf=/run/systemd/resolve/resolv.conf" > /var/lib/kubelet/kubeadm-flags.env'
+
 sudo rsync -av ./{{ .WORK_DIR }}/pki/ /etc/kubernetes/pki/
 sudo mv /etc/kubernetes/pki/admin.conf /etc/kubernetes/admin.conf
 rm -rf ./{{ .WORK_DIR }}/pki
