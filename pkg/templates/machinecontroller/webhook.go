@@ -274,7 +274,11 @@ func MutatingwebhookConfiguration(ca *triple.KeyPair) (*admissionregistrationv1b
 				},
 			},
 			ClientConfig: admissionregistrationv1beta1.WebhookClientConfig{
-				URL:      strPtr(fmt.Sprintf("https://%s.%s.svc.cluster.local./machinedeployments", WebbhookName, WebhookNamespace)),
+				Service: &admissionregistrationv1beta1.ServiceReference{
+					Name:      WebbhookName,
+					Namespace: WebhookNamespace,
+					Path:      strPtr("/machinedeployments"),
+				},
 				CABundle: certutil.EncodeCertPEM(ca.Cert),
 			},
 		},
@@ -296,7 +300,11 @@ func MutatingwebhookConfiguration(ca *triple.KeyPair) (*admissionregistrationv1b
 				},
 			},
 			ClientConfig: admissionregistrationv1beta1.WebhookClientConfig{
-				URL:      strPtr(fmt.Sprintf("https://%s.%s.svc.cluster.local./machines", WebbhookName, WebhookNamespace)),
+				Service: &admissionregistrationv1beta1.ServiceReference{
+					Name:      WebbhookName,
+					Namespace: WebhookNamespace,
+					Path:      strPtr("/machines"),
+				},
 				CABundle: certutil.EncodeCertPEM(ca.Cert),
 			},
 		},
