@@ -122,10 +122,6 @@ func NewConfig(cluster *config.Cluster, instance int) (*configuration, error) {
 			"service-node-port-range":  cluster.Network.NodePortRange(),
 			// "runtime-config":           "admissionregistration.k8s.io/v1beta1",
 		},
-
-		FeatureGates: map[string]bool{
-			"CoreDNS": false,
-		},
 	}
 
 	if cluster.Provider.CloudConfig != "" {
