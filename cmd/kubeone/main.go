@@ -26,6 +26,7 @@ func main() {
 	app.Commands = []cli.Command{
 		command.InstallCommand(logger),
 		command.ResetCommand(logger),
+		command.KubeconfigCommand(logger),
 	}
 
 	app.Run(os.Args)
