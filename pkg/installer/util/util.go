@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/alecthomas/template"
 	"github.com/kubermatic/kubeone/pkg/ssh"
@@ -42,11 +43,11 @@ func RunCommand(conn ssh.Connection, cmd string, verbose bool) (string, string, 
 		upstream: os.Stdout,
 	}
 
-	// ensure sudo works on exotic distros
-	cmd = fmt.Sprintf("export \"PATH=$PATH:/sbin:/usr/local/bin:/opt/bin\"\n\n%s", cmd)
-
 	// ensure we fail early
 	cmd = fmt.Sprintf("set -xeu pipefail\n\n%s", cmd)
+
+	// ensure sudo works on exotic distros
+	cmd = fmt.Sprintf("export \"PATH=$PATH:/sbin:/usr/local/bin:/opt/bin\"\n\n%s", cmd)
 
 	exitCode, err := conn.Stream(cmd, stdout, os.Stderr)
 	if err != nil {
@@ -85,4 +86,37 @@ func RunShellCommand(conn ssh.Connection, verbose bool, cmd string, variables Te
 	}
 
 	return stdout, stderr, exitCode, err
+}
+
+// WaitForPod waits for the availablity of the given Kubernetes element.
+func WaitForPod(conn ssh.Connection, verbose bool, namespace string, name string, timeout time.Duration) error {
+	cmd := fmt.Sprintf(`sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf -n "%s" get pod "%s" -o jsonpath='{.status.phase}' --ignore-not-found`, namespace, name)
+	if !WaitForCondition(conn, verbose, cmd, timeout, IsRunning) {
+		return fmt.Errorf("timed out while waiting for %s/%s to come up for %v", namespace, name, timeout)
+	}
+
+	return nil
+}
+
+type validatorFunc func(stdout string) bool
+
+// IsRunning checks if the given output represents the "Running" status of a Kubernetes pod.
+func IsRunning(stdout string) bool {
+	return strings.ToLower(stdout) == "running"
+}
+
+// WaitForCondition waits for something to be true.
+func WaitForCondition(conn ssh.Connection, verbose bool, cmd string, timeout time.Duration, validator validatorFunc) bool {
+	cutoff := time.Now().Add(timeout)
+
+	for time.Now().Before(cutoff) {
+		stdout, _, _, _ := RunCommand(conn, cmd, verbose)
+		if validator(stdout) {
+			return true
+		}
+
+		time.Sleep(1 * time.Second)
+	}
+
+	return false
 }

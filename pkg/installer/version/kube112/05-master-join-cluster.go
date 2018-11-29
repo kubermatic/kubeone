@@ -1,6 +1,7 @@
 package kube112
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 
@@ -16,18 +17,24 @@ func joinMasterCluster(ctx *util.Context) error {
 }
 
 func joinNodesMasterCluster(ctx *util.Context, node config.HostConfig, conn ssh.Connection) error {
-	ctx.Logger.Infoln("Finalizing cluster…")
-
 	leader := ctx.Cluster.Leader()
 
-	_, _, _, err := util.RunShellCommand(conn, ctx.Verbose, `
-for tries in $(seq 1 60); do
-    # Waiting for kubelet to spawn etcd before joining it a cluster.
-    sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf get -n kube-system pod etcd-{{ .LEADER_HOSTNAME }} && break
-    sleep 1
-done
+	ctx.Logger.Infoln("Waiting for etcd to come up…")
+	err := util.WaitForPod(conn, ctx.Verbose, "kube-system", fmt.Sprintf("etcd-%s", leader.Hostname), 2*time.Minute)
+	if err != nil {
+		return err
+	}
 
-sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf exec -n kube-system etcd-{{ .LEADER_HOSTNAME }} -- etcdctl --ca-file /etc/kubernetes/pki/etcd/ca.crt --cert-file /etc/kubernetes/pki/etcd/peer.crt --key-file /etc/kubernetes/pki/etcd/peer.key --endpoints=https://{{ .LEADER_ADDRESS }}:2379 member add {{ .NODE_HOSTNAME }} https://{{ .NODE_ADDRESS }}:2380
+	ctx.Logger.Infoln("Finalizing cluster…")
+	_, _, _, err = util.RunShellCommand(conn, ctx.Verbose, `
+sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf exec \
+  -n kube-system etcd-{{ .LEADER_HOSTNAME }} -- \
+  etcdctl \
+    --ca-file /etc/kubernetes/pki/etcd/ca.crt \
+    --cert-file /etc/kubernetes/pki/etcd/peer.crt \
+    --key-file /etc/kubernetes/pki/etcd/peer.key \
+    --endpoints=https://{{ .LEADER_ADDRESS }}:2379 \
+    member add {{ .NODE_HOSTNAME }} https://{{ .NODE_ADDRESS }}:2380
 
 sudo kubeadm alpha phase etcd local --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
 sudo kubeadm alpha phase kubeconfig all --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
