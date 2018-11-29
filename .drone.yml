@@ -3,24 +3,25 @@ workspace:
   path: kubeone
 
 pipeline:
+  # compile a build
   build:
     image: golang:1.11.2
     commands:
-    - make install
+    - make build
 
-  tf-aws-setup:
-    image: busybox
-    secrets:
-    - ssh_public_key
-    environment:
-    - TF_DIR=terraform/aws
+  # generate ssh keys
+  e2e-ssh-keygen:
+    image: alpine:3.8
+    pull: true
     commands:
     - mkdir -p /app/.keys
-    - echo $SSH_PUBLIC_KEY > /app/.keys/id_rsa.pub
+    - apk add --no-cache openssh-keygen
+    - ssh-keygen -t rsa -f /app/.keys/id_rsa -N ''
     when:
       branch:
       - master
 
+  # create AWS infra with terraform
   e2e-aws-up:
     image: hashicorp/terraform:0.11.10
     secrets:
@@ -28,10 +29,11 @@ pipeline:
     - aws_secret_access_key
     environment:
     - TF_DIR=terraform/aws
+    - TF_VAR_ssh_private_key_file=/app/.keys/id_rsa
     - TF_VAR_ssh_public_key_file=/app/.keys/id_rsa.pub
+    - TF_VAR_ssh_agent_socket=""
     commands:
-    - set -euf -o pipefail
-    - export TF_VAR_cluster_name=e2e-$DRONE_BUILD_NUMBER
+    - export TF_VAR_cluster_name=kubeone-e2e-$DRONE_BUILD_NUMBER
     - cd $TF_DIR
     - terraform init
     - terraform apply -auto-approve
@@ -39,7 +41,8 @@ pipeline:
       branch:
       - master
 
-  e2e-run:
+  # export terraform output as json
+  e2e-aws-tfjson:
     image: hashicorp/terraform:0.11.10
     environment:
     - TF_DIR=terraform/aws
@@ -50,6 +53,17 @@ pipeline:
       branch:
       - master
 
+  # deploy cluster with kubeone
+  e2e-run:
+    image: alpine:3.8
+    commands:
+    - apk add --no-cache ca-certificates
+    - ./dist/kubeone -v install --tfjson tf.json config.yaml.dist
+    when:
+      branch:
+      - master
+
+  # cleanup everything
   e2e-aws-teardown:
     image: hashicorp/terraform:0.11.10
     secrets:
@@ -59,7 +73,7 @@ pipeline:
     - TF_DIR=terraform/aws
     - TF_VAR_ssh_public_key_file=/app/.keys/id_rsa.pub
     commands:
-    - export TF_VAR_cluster_name=e2e-$DRONE_BUILD_NUMBER
+    - export TF_VAR_cluster_name=kubeone-e2e-$DRONE_BUILD_NUMBER
     - cd $TF_DIR
     - terraform destroy -auto-approve
     when:
