@@ -20,56 +20,56 @@ network:
   node_port_range: ''
 
 provider:
-  name: '' # Kubernetes cloud provider, like "aws"
+  name: 'aws' # Kubernetes cloud provider, like "aws"
 
 # The list of nodes can be overwritten by providing Terraform output.
 # You are strongly encouraged to provide an odd number of nodes and
 # have at least three of them.
 # Remember to only specify your *master* nodes.
-hosts:
-  - public_address: '1.2.3.4'
-    private_address: '172.18.0.1'
-    hostname: 'my-machine' # this can be a FQDN, though the domain will be stripped
-    ssh_port: 22 # can be left out if using the default (22)
-    ssh_username: ubuntu
+# hosts:
+# - public_address: '1.2.3.4'
+#   private_address: '172.18.0.1'
+#   hostname: 'my-machine' # this can be a FQDN, though the domain will be stripped
+#   ssh_port: 22 # can be left out if using the default (22)
+#   ssh_username: ubuntu
 
-    # Uou usually want to configure either a private key OR an
-    # agent socket, but never both. The socket value can be
-    # prefixed with "env:" to refer to an environment variable.
-    ssh_private_key_file: '/home/me/.ssh/id_rsa'
-    ssh_agent_socket: 'env:SSH_AUTH_SOCK'
+#   # Uou usually want to configure either a private key OR an
+#   # agent socket, but never both. The socket value can be
+#   # prefixed with "env:" to refer to an environment variable.
+#   ssh_private_key_file: '/home/me/.ssh/id_rsa'
+#   ssh_agent_socket: 'env:SSH_AUTH_SOCK'
 
 # The API server can also be overwritten by Terraform. Provide the
 # external address of your load balancer or the public address of
 # your first node.
-apiserver:
-  address: '1.2.3.4'
+# apiserver:
+#   address: '1.2.3.4'
 
 # KubeOne can automatically create MachineDeployments to create
 # worker nodes in your cluster. Each element in this "workers"
 # list is a single deployment and must have a unique name.
-#workers:
-#  - replicas: 5
-#    name: my-workers
-#
-#    # refer to the machine-controller documentation to see which
-#    # flags you need to specify for your workers; this is dependent
-#    # on the chosen cloud provider and the example below would
-#    # provision Ubuntu 18.04 machines in EU-Frankfurt with 50GB SSD
-#    # disks each.
-#    spec:
-#      ami: ami-0bdf93799014acdc4
-#      region: 'eu-central-1'
-#      availabilityZone: 'eu-central-1a'
-#      vpcId: 'vpc-819f62e9'
-#      subnetId: 'subnet-2bff4f43'
-#      instanceType: 't2.medium'
-#      diskSize: 50
-#      diskType: 'gp2'
-#
-#    # Configure the OS spec here; this is once again defined by the
-#    # machine-controller.
-#    operating_system:
-#      name: ubuntu
-#      spec:
-#        distUpgradeOnBoot: false
+# workers:
+# - replicas: 5
+#   name: my-workers
+
+#   # refer to the machine-controller documentation to see which
+#   # flags you need to specify for your workers; this is dependent
+#   # on the chosen cloud provider and the example below would
+#   # provision Ubuntu 18.04 machines in EU-Frankfurt with 50GB SSD
+#   # disks each.
+#   spec:
+#     ami: ami-0bdf93799014acdc4
+#     region: 'eu-central-1'
+#     availabilityZone: 'eu-central-1a'
+#     vpcId: 'vpc-819f62e9'
+#     subnetId: 'subnet-2bff4f43'
+#     instanceType: 't2.medium'
+#     diskSize: 50
+#     diskType: 'gp2'
+
+#   # Configure the OS spec here; this is once again defined by the
+#   # machine-controller.
+#   operating_system:
+#     name: ubuntu
+#     spec:
+#       distUpgradeOnBoot: false
