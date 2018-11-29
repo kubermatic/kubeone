@@ -53,23 +53,9 @@ resource "aws_security_group" "common" {
   }
 
   ingress {
-    from_port = 10250
-    to_port   = 10250
-    protocol  = "tcp"
-    self      = true
-  }
-
-  ingress {
-    from_port = 6783
-    to_port   = 6784
-    protocol  = "tcp"
-    self      = true
-  }
-
-  ingress {
-    from_port = 6784
-    to_port   = 6784
-    protocol  = "udp"
+    from_port = 0
+    to_port   = 0
+    protocol  = "-1"
     self      = true
   }
 
@@ -88,13 +74,6 @@ resource "aws_security_group" "control_plane" {
 
   tags {
     "${local.kube_cluster_tag}" = "shared"
-  }
-
-  ingress {
-    from_port = 2379
-    to_port   = 2380
-    protocol  = "tcp"
-    self      = true
   }
 
   ingress {
