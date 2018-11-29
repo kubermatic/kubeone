@@ -115,6 +115,7 @@ func (c *Config) Apply(m *config.Cluster) {
 		hostname := strings.Split(cp.Hostnames[i], ".")[0]
 
 		hosts = append(hosts, config.HostConfig{
+			ID:                i,
 			PublicAddress:     publicIP,
 			PrivateAddress:    privateIP,
 			Hostname:          hostname,

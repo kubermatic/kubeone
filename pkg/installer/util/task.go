@@ -8,16 +8,16 @@ import (
 )
 
 // NodeTask is a task that is specifically tailored to run on a single node.
-type NodeTask func(ctx *Context, node config.HostConfig, nodeIndex int, conn ssh.Connection) error
+type NodeTask func(ctx *Context, node config.HostConfig, conn ssh.Connection) error
 
-// RunTaskOnNodes runs the given task on all hosts.
-func RunTaskOnNodes(ctx *Context, task NodeTask) error {
+// RunTaskOnNodes runs the given task on the given selection of hosts.
+func RunTaskOnNodes(ctx *Context, nodes []config.HostConfig, task NodeTask) error {
 	var (
 		err  error
 		conn ssh.Connection
 	)
 
-	for idx, node := range ctx.Cluster.Hosts {
+	for _, node := range nodes {
 		context := ctx.Clone()
 		context.Logger = context.Logger.WithField("node", node.PublicAddress)
 
@@ -28,11 +28,30 @@ func RunTaskOnNodes(ctx *Context, task NodeTask) error {
 			return fmt.Errorf("failed to connect to %s: %v", node.PublicAddress, err)
 		}
 
-		err = task(context, node, idx, conn)
+		err = task(context, node, conn)
 		if err != nil {
 			break
 		}
 	}
 
 	return err
+}
+
+// RunTaskOnAllNodes runs the given task on all hosts.
+func RunTaskOnAllNodes(ctx *Context, task NodeTask) error {
+	return RunTaskOnNodes(ctx, ctx.Cluster.Hosts, task)
+}
+
+// RunTaskOnLeader runs the given task on the leader host.
+func RunTaskOnLeader(ctx *Context, task NodeTask) error {
+	hosts := []config.HostConfig{
+		ctx.Cluster.Leader(),
+	}
+
+	return RunTaskOnNodes(ctx, hosts, task)
+}
+
+// RunTaskOnFollowers runs the given task on the follower hosts.
+func RunTaskOnFollowers(ctx *Context, task NodeTask) error {
+	return RunTaskOnNodes(ctx, ctx.Cluster.Followers(), task)
 }

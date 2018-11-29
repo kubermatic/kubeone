@@ -28,6 +28,9 @@ func (m *Cluster) Validate() error {
 	}
 
 	for idx, host := range m.Hosts {
+		// define a unique ID for each host
+		m.Hosts[idx].ID = idx
+
 		if err := host.Validate(); err != nil {
 			return fmt.Errorf("host %d is invalid: %v", idx+1, err)
 		}
@@ -58,8 +61,21 @@ func (m *Cluster) EtcdClusterToken() (string, error) {
 	return m.etcdClusterToken, nil
 }
 
+// Leader returns the first configured host. Only call this after
+// validating the cluster config to ensure a leader exists.
+func (m *Cluster) Leader() HostConfig {
+	return m.Hosts[0]
+}
+
+// Followers returns all but the first configured host. Only call
+// this after validating the cluster config to ensure hosts exist.
+func (m *Cluster) Followers() []HostConfig {
+	return m.Hosts[1:]
+}
+
 // HostConfig describes a single master node.
 type HostConfig struct {
+	ID                int    `yaml:"-"`
 	PublicAddress     string `yaml:"public_address"`
 	PrivateAddress    string `yaml:"private_address"`
 	Hostname          string `yaml:"hostname"`

@@ -12,10 +12,10 @@ import (
 func initKubernetes(ctx *util.Context) error {
 	ctx.Logger.Infoln("Initializing Kubernetes…")
 
-	return util.RunTaskOnNodes(ctx, initKubernetesOnNode)
+	return util.RunTaskOnAllNodes(ctx, initKubernetesOnNode)
 }
 
-func initKubernetesOnNode(ctx *util.Context, node config.HostConfig, _ int, conn ssh.Connection) error {
+func initKubernetesOnNode(ctx *util.Context, node config.HostConfig, conn ssh.Connection) error {
 	if err := kubeadmInit(ctx, conn); err != nil {
 		return err
 	}
@@ -27,8 +27,6 @@ func kubeadmInit(ctx *util.Context, conn ssh.Connection) error {
 	ctx.Logger.Infoln("Running kubeadm…")
 
 	_, _, _, err := util.RunShellCommand(conn, ctx.Verbose, `
-set -xeu
-export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
 sudo kubeadm init \
      --config=./{{ .WORK_DIR }}/cfg/master.yaml \
      --ignore-preflight-errors=Port-10250,FileAvailable--etc-kubernetes-manifests-etcd.yaml,FileExisting-crictl

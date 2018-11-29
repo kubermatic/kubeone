@@ -96,3 +96,12 @@ func (c *Configuration) Backup(target string) error {
 
 	return nil
 }
+
+func (c *Configuration) Get(filename string) (string, error) {
+	content, ok := c.files[filename]
+	if !ok {
+		return "", fmt.Errorf("could not find file %s", filename)
+	}
+
+	return content, nil
+}

@@ -3,30 +3,36 @@ package kube112
 import (
 	"fmt"
 
+	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
-	"github.com/sirupsen/logrus"
+	"github.com/kubermatic/kubeone/pkg/ssh"
+	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
 )
 
 func installMachineController(ctx *util.Context) error {
-	node := ctx.Cluster.Hosts[0]
-	logger := ctx.Logger.WithFields(logrus.Fields{
-		"node": node.PublicAddress,
-	})
+	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, node config.HostConfig, conn ssh.Connection) error {
+		ctx.Logger.Infoln("Creating machine-controller certificate…")
 
-	conn, err := ctx.Connector.Connect(node)
-	if err != nil {
-		return fmt.Errorf("failed to connect to %s: %v", node.PublicAddress, err)
-	}
+		config, err := machinecontroller.WebhookConfiguration(ctx.Cluster, ctx.Configuration)
+		if err != nil {
+			return err
+		}
 
-	logger.Infoln("Installing machine-controller…")
+		ctx.Configuration.AddFile("machine-controller-webhook.yaml", config)
+		ctx.Configuration.UploadTo(conn, ctx.WorkDir)
+		if err != nil {
+			return fmt.Errorf("failed to upload: %v", err)
+		}
 
-	_, _, _, err = util.RunShellCommand(conn, ctx.Verbose, `
-set -xeu pipefail
+		ctx.Logger.Infoln("Installing machine-controller…")
 
+		_, _, _, err = util.RunShellCommand(conn, ctx.Verbose, `
 kubectl apply -f ./{{ .WORK_DIR }}/machine-controller.yaml
+kubectl apply -f ./{{ .WORK_DIR }}/machine-controller-webhook.yaml
 `, util.TemplateVariables{
-		"WORK_DIR": ctx.WorkDir,
-	})
+			"WORK_DIR": ctx.WorkDir,
+		})
 
-	return err
+		return err
+	})
 }

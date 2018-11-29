@@ -1,7 +1,8 @@
-package templates
+package machinecontroller
 
 import (
 	"github.com/kubermatic/kubeone/pkg/config"
+	"github.com/kubermatic/kubeone/pkg/templates"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
@@ -17,7 +18,7 @@ const (
 	MachineControllerCredentialsSecretName = "machine-controller-credentials"
 )
 
-func MachineControllerConfiguration(cluster *config.Cluster) (string, error) {
+func Deployment(cluster *config.Cluster) (string, error) {
 	items := []interface{}{
 		machineControllerServiceAccount(),
 
@@ -45,7 +46,7 @@ func MachineControllerConfiguration(cluster *config.Cluster) (string, error) {
 		machineControllerDeployment(cluster),
 	}
 
-	return kubernetesToYAML(items)
+	return templates.KubernetesToYAML(items)
 }
 
 func machineControllerServiceAccount() corev1.ServiceAccount {

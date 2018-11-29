@@ -42,7 +42,7 @@ type configuration struct {
 }
 
 func NewConfig(cluster *config.Cluster) (*configuration, error) {
-	firstMaster := cluster.Hosts[0]
+	leader := cluster.Leader()
 	etcdEndpoints := make([]string, 0)
 	etcdSANs := make([]string, 0)
 	apiServerCertSANs := make([]string, 0)
@@ -62,8 +62,8 @@ func NewConfig(cluster *config.Cluster) (*configuration, error) {
 		KubernetesVersion: fmt.Sprintf("v%s", cluster.Versions.Kubernetes),
 
 		API: api{
-			AdvertiseAddress:     firstMaster.PrivateAddress,
-			ControlPlaneEndpoint: firstMaster.PublicAddress,
+			AdvertiseAddress:     leader.PrivateAddress,
+			ControlPlaneEndpoint: leader.PublicAddress,
 		},
 
 		Etcd: etcd{

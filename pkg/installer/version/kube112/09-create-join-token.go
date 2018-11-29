@@ -1,4 +1,4 @@
-package kube111
+package kube112
 
 import (
 	"github.com/kubermatic/kubeone/pkg/config"

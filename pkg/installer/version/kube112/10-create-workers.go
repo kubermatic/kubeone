@@ -6,13 +6,15 @@ import (
 	"github.com/kubermatic/kubeone/pkg/ssh"
 )
 
-func initKubernetesLeader(ctx *util.Context) error {
-	ctx.Logger.Infoln("Initializing Kubernetes on leader…")
+func createWorkerMachines(ctx *util.Context) error {
+	if len(ctx.Cluster.Workers) == 0 {
+		return nil
+	}
 
 	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, _ config.HostConfig, conn ssh.Connection) error {
-		ctx.Logger.Infoln("Running kubeadm…")
+		ctx.Logger.Infoln("Creating worker machines…")
 
-		_, _, _, err := util.RunShellCommand(conn, ctx.Verbose, `sudo kubeadm init --config=./{{ .WORK_DIR }}/cfg/master_0.yaml`, util.TemplateVariables{
+		_, _, _, err := util.RunShellCommand(conn, ctx.Verbose, `kubectl apply -f ./{{ .WORK_DIR }}/workers.yaml`, util.TemplateVariables{
 			"WORK_DIR": ctx.WorkDir,
 		})
 

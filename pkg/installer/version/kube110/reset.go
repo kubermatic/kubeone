@@ -10,10 +10,10 @@ import (
 func Reset(ctx *util.Context) error {
 	ctx.Logger.Infoln("Resetting kubeadm…")
 
-	return util.RunTaskOnNodes(ctx, resetNode)
+	return util.RunTaskOnAllNodes(ctx, resetNode)
 }
 
-func resetNode(ctx *util.Context, node config.HostConfig, _ int, conn ssh.Connection) error {
+func resetNode(ctx *util.Context, node config.HostConfig, conn ssh.Connection) error {
 	ctx.Logger.Infoln("Resetting node…")
 
 	_, _, _, err := util.RunShellCommand(conn, ctx.Verbose, resetScript, util.TemplateVariables{
@@ -24,8 +24,6 @@ func resetNode(ctx *util.Context, node config.HostConfig, _ int, conn ssh.Connec
 }
 
 const resetScript = `
-set -xeu pipefail
-
 sudo kubeadm reset
 rm -rf "{{ .WORK_DIR }}"
 `

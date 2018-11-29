@@ -6,7 +6,8 @@ import (
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/kubermatic/kubeone/pkg/templates"
+	"github.com/kubermatic/kubeone/pkg/templates/flannel"
+	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
 )
 
 func installPrerequisites(ctx *util.Context) error {
@@ -17,7 +18,7 @@ func installPrerequisites(ctx *util.Context) error {
 		return fmt.Errorf("failed to create configuration: %v", err)
 	}
 
-	return util.RunTaskOnNodes(ctx, installPrerequisitesOnNode)
+	return util.RunTaskOnAllNodes(ctx, installPrerequisitesOnNode)
 }
 
 func generateConfigurationFiles(ctx *util.Context) error {
@@ -28,21 +29,21 @@ Environment="KUBELET_EXTRA_ARGS= --cloud-provider=%s --cloud-config=/etc/kuberne
 
 	ctx.Configuration.AddFile("cfg/cloud-config", ctx.Cluster.Provider.CloudConfig)
 
-	mc, err := templates.MachineControllerConfiguration(ctx.Cluster)
+	mc, err := machinecontroller.Deployment(ctx.Cluster)
 	if err != nil {
 		return fmt.Errorf("failed to create machine-controller configuration: %v", err)
 	}
 	ctx.Configuration.AddFile("machine-controller.yaml", mc)
 
 	if len(ctx.Cluster.Workers) > 0 {
-		machines, err := templates.MachineConfigurations(ctx.Cluster)
+		machines, err := machinecontroller.MachineDeployments(ctx.Cluster)
 		if err != nil {
 			return fmt.Errorf("failed to create worker machine configuration: %v", err)
 		}
 		ctx.Configuration.AddFile("workers.yaml", machines)
 	}
 
-	flannel, err := templates.FlannelConfiguration(ctx.Cluster)
+	flannel, err := flannel.Configuration(ctx.Cluster)
 	if err != nil {
 		return fmt.Errorf("failed to create flannel configuration: %v", err)
 	}
@@ -51,7 +52,7 @@ Environment="KUBELET_EXTRA_ARGS= --cloud-provider=%s --cloud-config=/etc/kuberne
 	return nil
 }
 
-func installPrerequisitesOnNode(ctx *util.Context, node config.HostConfig, _ int, conn ssh.Connection) error {
+func installPrerequisitesOnNode(ctx *util.Context, node config.HostConfig, conn ssh.Connection) error {
 	ctx.Logger.Infoln("Determine operating system…")
 	os, err := determineOS(ctx, conn)
 	if err != nil {
@@ -110,7 +111,6 @@ func installKubeadmDebian(ctx *util.Context, conn ssh.Connection) error {
 }
 
 const kubeadmDebianCommand = `
-set -xeu pipefail
 sudo swapoff -a
 
 source /etc/os-release
@@ -161,8 +161,6 @@ func installKubeadmCoreOS(ctx *util.Context, conn ssh.Connection) error {
 }
 
 const kubeadmCoreOSCommand = `
-set -xeu pipefail
-
 sudo mkdir -p /opt/cni/bin /etc/kubernetes/pki /etc/kubernetes/manifests
 curl -L "https://github.com/containernetworking/plugins/releases/download/{{ .CNI_VERSION }}/cni-plugins-amd64-{{ .CNI_VERSION }}.tgz" | \
      sudo tar -C /opt/cni/bin -xz
@@ -197,8 +195,6 @@ func deployConfigurationFiles(ctx *util.Context, conn ssh.Connection, operatingS
 
 	// move config files to their permanent locations
 	_, _, _, err = util.RunShellCommand(conn, ctx.Verbose, `
-set -xeu pipefail
-
 sudo mkdir -p /etc/systemd/system/kubelet.service.d/ /etc/kubernetes
 sudo mv ./{{ .WORK_DIR }}/cfg/20-cloudconfig-kubelet.conf /etc/systemd/system/kubelet.service.d/
 sudo mv ./{{ .WORK_DIR }}/cfg/cloud-config /etc/kubernetes/cloud-config
