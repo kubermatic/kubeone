@@ -125,11 +125,33 @@ type APIServerConfig struct {
 	Address string `yaml:"address"`
 }
 
+// ProviderName represents the name of an provider
+type ProviderName string
+
+// ProviderName values
+const (
+	ProviderNameAWS          ProviderName = "aws"
+	ProviderNameOpenStack    ProviderName = "openstack"
+	ProviderNameHetzner      ProviderName = "hetzner"
+	ProviderNameDigitalOcean ProviderName = "digitalocean"
+	ProviderNameVSphere      ProviderName = "vshere"
+)
+
 // ProviderConfig describes the cloud provider that is running the machines.
 type ProviderConfig struct {
-	Name        string            `yaml:"name"`
+	Name        ProviderName      `yaml:"name"`
 	CloudConfig string            `yaml:"cloud_config"`
 	Credentials map[string]string `yaml:"credentials"`
+}
+
+// Validate checks the ProviderConfig for errors
+func (p *ProviderConfig) Validate() error {
+	switch p.Name {
+	case ProviderNameAWS, ProviderNameOpenStack, ProviderNameHetzner, ProviderNameDigitalOcean, ProviderNameVSphere:
+	default:
+		return fmt.Errorf("unknown provider name %q", p.Name)
+	}
+	return nil
 }
 
 // VersionConfig describes the versions of Kubernetes and Docker that are installed.

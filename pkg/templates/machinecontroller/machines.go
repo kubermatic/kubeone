@@ -16,10 +16,10 @@ import (
 )
 
 type providerConfig struct {
-	CloudProvider       string      `json:"cloudProvider"`
-	CloudProviderSpec   interface{} `json:"cloudProviderSpec"`
-	OperatingSystem     string      `json:"operatingSystem"`
-	OperatingSystemSpec interface{} `json:"operatingSystemSpec"`
+	CloudProvider       config.ProviderName `json:"cloudProvider"`
+	CloudProviderSpec   interface{}         `json:"cloudProviderSpec"`
+	OperatingSystem     string              `json:"operatingSystem"`
+	OperatingSystemSpec interface{}         `json:"operatingSystemSpec"`
 }
 
 func MachineDeployments(cluster *config.Cluster) (string, error) {
@@ -107,7 +107,7 @@ func createMachineDeployment(cluster *config.Cluster, workerset config.WorkerCon
 	}, nil
 }
 
-func machineSpec(cluster *config.Cluster, workerset config.WorkerConfig, provider string) (map[string]interface{}, error) {
+func machineSpec(cluster *config.Cluster, workerset config.WorkerConfig, provider config.ProviderName) (map[string]interface{}, error) {
 	var err error
 
 	spec := workerset.Spec

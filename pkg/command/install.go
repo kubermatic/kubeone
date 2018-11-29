@@ -47,7 +47,10 @@ func InstallAction(logger *logrus.Logger) cli.ActionFunc {
 		if err != nil {
 			return fmt.Errorf("failed to load cluster: %v", err)
 		}
-		cluster.Provider.Credentials = loadMachineControllerCredentials()
+		cluster.Provider.Credentials, err = loadMachineControllerCredentials(cluster.Provider.Name)
+		if err != nil {
+			return fmt.Errorf("failed to load provider credentials: %v", err)
+		}
 
 		tf := ctx.String("tfjson")
 		if err = applyTerraform(tf, cluster); err != nil {
@@ -59,6 +62,9 @@ func InstallAction(logger *logrus.Logger) cli.ActionFunc {
 		}
 
 		options, err := createInstallerOptions(clusterFile, cluster, ctx)
+		if err != nil {
+			return fmt.Errorf("failed to create installer options: %v", err)
+		}
 		if err = applyTerraform(tf, cluster); err != nil {
 			return fmt.Errorf("failed to setup PKI backup: %v", err)
 		}

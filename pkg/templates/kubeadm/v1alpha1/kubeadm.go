@@ -29,16 +29,16 @@ type networking struct {
 }
 
 type configuration struct {
-	APIVersion                 string            `yaml:"apiVersion"`
-	Kind                       string            `yaml:"kind"`
-	CloudProvider              string            `yaml:"cloudProvider"`
-	KubernetesVersion          string            `yaml:"kubernetesVersion"`
-	API                        api               `yaml:"api"`
-	Etcd                       etcd              `yaml:"etcd"`
-	Networking                 networking        `yaml:"networking"`
-	APIServerCertSANs          []string          `yaml:"apiServerCertSANs"`
-	APIServerExtraArgs         map[string]string `yaml:"apiServerExtraArgs"`
-	ControllerManagerExtraArgs map[string]string `yaml:"controllerManagerExtraArgs"`
+	APIVersion                 string              `yaml:"apiVersion"`
+	Kind                       string              `yaml:"kind"`
+	CloudProvider              config.ProviderName `yaml:"cloudProvider"`
+	KubernetesVersion          string              `yaml:"kubernetesVersion"`
+	API                        api                 `yaml:"api"`
+	Etcd                       etcd                `yaml:"etcd"`
+	Networking                 networking          `yaml:"networking"`
+	APIServerCertSANs          []string            `yaml:"apiServerCertSANs"`
+	APIServerExtraArgs         map[string]string   `yaml:"apiServerExtraArgs"`
+	ControllerManagerExtraArgs map[string]string   `yaml:"controllerManagerExtraArgs"`
 }
 
 func NewConfig(cluster *config.Cluster) (*configuration, error) {
