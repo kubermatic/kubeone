@@ -38,10 +38,7 @@ func MachineDeployments(cluster *config.Cluster) (string, error) {
 }
 
 func createMachineDeployment(cluster *config.Cluster, workerset config.WorkerConfig) (*clusterv1alpha1.MachineDeployment, error) {
-	provider := workerset.Provider
-	if len(provider) == 0 {
-		provider = cluster.Provider.Name
-	}
+	provider := cluster.Provider.Name
 
 	providerSpec, err := machineSpec(cluster, workerset, provider)
 	if err != nil {

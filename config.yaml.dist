@@ -51,7 +51,6 @@ apiserver:
 #workers:
 #  - replicas: 5
 #    name: my-workers
-#    provider: aws # if not given, defaults to the provider.name value
 #
 #    # refer to the machine-controller documentation to see which
 #    # flags you need to specify for your workers; this is dependent

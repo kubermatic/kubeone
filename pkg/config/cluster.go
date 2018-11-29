@@ -181,7 +181,6 @@ func (m *NetworkConfig) NodePortRange() string {
 type WorkerConfig struct {
 	Replicas        int                    `yaml:"replicas"`
 	Name            string                 `yaml:"name"`
-	Provider        string                 `yaml:"provider"`
 	Spec            map[string]interface{} `yaml:"spec"`
 	OperatingSystem struct {
 		Name string                 `yaml:"name"`
