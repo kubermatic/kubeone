@@ -1,6 +1,8 @@
 package machinecontroller
 
 import (
+	"net"
+
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/templates"
 	appsv1 "k8s.io/api/apps/v1"
@@ -8,6 +10,7 @@ import (
 	rbacv1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
+	"k8s.io/kubernetes/pkg/registry/core/service/ipallocator"
 )
 
 const (
@@ -587,6 +590,7 @@ func machineControllerDeployment(cluster *config.Cluster) appsv1.Deployment {
 								"-logtostderr",
 								"-v", "4",
 								"-internal-listen-address", "0.0.0.0:8085",
+								"-cluster-dns", clusterDNSIP(cluster).String(),
 							},
 							Env:                      getEnvVarCredentials(cluster),
 							TerminationMessagePath:   corev1.TerminationMessagePathDefault,
@@ -657,4 +661,24 @@ func getEnvVarCredentials(cluster *config.Cluster) []corev1.EnvVar {
 	}
 
 	return env
+}
+
+// clusterDNSIP returns the IP address of ClusterDNS Service, which is 10th IP of the Services CIDR
+func clusterDNSIP(cluster *config.Cluster) net.IP {
+	// Get the Services CIDR
+	_, svcSubnetCIDR, err := net.ParseCIDR(cluster.Network.ServiceSubnet())
+	if err != nil {
+		// Return default ClusterDNSIP on failure
+		// TODO(xmudrii): Should we log this failure somewhere or return error?
+		return net.ParseIP("10.96.0.10")
+	}
+
+	// Select the 10th IP in Services CIDR range as ClusterDNSIP
+	clusterDNS, err := ipallocator.GetIndexedIP(svcSubnetCIDR, 10)
+	if err != nil {
+		// Return default ClusterDNSIP on failure
+		return net.ParseIP("10.96.0.10")
+	}
+
+	return clusterDNS
 }
