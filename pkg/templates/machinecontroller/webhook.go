@@ -18,9 +18,9 @@ import (
 )
 
 const (
-	WebbhookName         = "machine-controller-webhook"
+	WebhookName          = "machine-controller-webhook"
 	WebhookAppLabelKey   = "app"
-	WebhookAppLabelValue = WebbhookName
+	WebhookAppLabelValue = WebhookName
 	WebhookTag           = "v0.10.0"
 	WebhookNamespace     = "kube-system"
 
@@ -222,11 +222,11 @@ func TLSServingCertificate(ca *triple.KeyPair) (*corev1.Secret, error) {
 	se.Namespace = WebhookNamespace
 	se.Data = map[string][]byte{}
 
-	commonName := fmt.Sprintf("%s.%s.svc.cluster.local.", WebbhookName, WebhookNamespace)
+	commonName := fmt.Sprintf("%s.%s.svc.cluster.local.", WebhookName, WebhookNamespace)
 
 	newKP, err := triple.NewServerKeyPair(ca,
 		commonName,
-		WebbhookName,
+		WebhookName,
 		WebhookNamespace,
 		"",
 		nil,
@@ -275,7 +275,7 @@ func MutatingwebhookConfiguration(ca *triple.KeyPair) (*admissionregistrationv1b
 			},
 			ClientConfig: admissionregistrationv1beta1.WebhookClientConfig{
 				Service: &admissionregistrationv1beta1.ServiceReference{
-					Name:      WebbhookName,
+					Name:      WebhookName,
 					Namespace: WebhookNamespace,
 					Path:      strPtr("/machinedeployments"),
 				},
@@ -301,7 +301,7 @@ func MutatingwebhookConfiguration(ca *triple.KeyPair) (*admissionregistrationv1b
 			},
 			ClientConfig: admissionregistrationv1beta1.WebhookClientConfig{
 				Service: &admissionregistrationv1beta1.ServiceReference{
-					Name:      WebbhookName,
+					Name:      WebhookName,
 					Namespace: WebhookNamespace,
 					Path:      strPtr("/machines"),
 				},
