@@ -63,6 +63,9 @@ pipeline:
     image: alpine:3.8
     environment:
     - KUBECONFIG=/go/.kube/config
+    secrets:
+    - aws_access_key_id
+    - aws_secret_access_key
     commands:
     - apk add --no-cache ca-certificates openssh-client
     - mkdir /go/.kube
