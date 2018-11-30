@@ -22,6 +22,11 @@ const (
 )
 
 func Deployment(cluster *config.Cluster) (string, error) {
+	deployment, err := machineControllerDeployment(cluster)
+	if err != nil {
+		return "", err
+	}
+
 	items := []interface{}{
 		machineControllerServiceAccount(),
 
@@ -46,7 +51,7 @@ func Deployment(cluster *config.Cluster) (string, error) {
 		machineControllerMachineSetCRD(),
 		machineControllerMachineDeploymentCRD(),
 		machineControllerCredentialsSecret(cluster),
-		machineControllerDeployment(cluster),
+		deployment,
 	}
 
 	return templates.KubernetesToYAML(items)
@@ -525,10 +530,15 @@ spec:
 `
 }
 
-func machineControllerDeployment(cluster *config.Cluster) appsv1.Deployment {
+func machineControllerDeployment(cluster *config.Cluster) (*appsv1.Deployment, error) {
 	var replicas int32 = 1
 
-	return appsv1.Deployment{
+	clusterDNS, err := clusterDNSIP(cluster)
+	if err != nil {
+		return nil, err
+	}
+
+	return &appsv1.Deployment{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "apps/v1",
 			Kind:       "Deployment",
@@ -590,7 +600,7 @@ func machineControllerDeployment(cluster *config.Cluster) appsv1.Deployment {
 								"-logtostderr",
 								"-v", "4",
 								"-internal-listen-address", "0.0.0.0:8085",
-								"-cluster-dns", clusterDNSIP(cluster).String(),
+								"-cluster-dns", clusterDNS.String(),
 							},
 							Env:                      getEnvVarCredentials(cluster),
 							TerminationMessagePath:   corev1.TerminationMessagePathDefault,
@@ -625,7 +635,7 @@ func machineControllerDeployment(cluster *config.Cluster) appsv1.Deployment {
 				},
 			},
 		},
-	}
+	}, nil
 }
 
 func machineControllerCredentialsSecret(cluster *config.Cluster) corev1.Secret {
@@ -663,22 +673,20 @@ func getEnvVarCredentials(cluster *config.Cluster) []corev1.EnvVar {
 	return env
 }
 
-// clusterDNSIP returns the IP address of ClusterDNS Service, which is 10th IP of the Services CIDR
-func clusterDNSIP(cluster *config.Cluster) net.IP {
+// clusterDNSIP returns the IP address of ClusterDNS Service,
+// which is 10th IP of the Services CIDR.
+func clusterDNSIP(cluster *config.Cluster) (*net.IP, error) {
 	// Get the Services CIDR
 	_, svcSubnetCIDR, err := net.ParseCIDR(cluster.Network.ServiceSubnet())
 	if err != nil {
-		// Return default ClusterDNSIP on failure
-		// TODO(xmudrii): Should we log this failure somewhere or return error?
-		return net.ParseIP("10.96.0.10")
+		return nil, err
 	}
 
 	// Select the 10th IP in Services CIDR range as ClusterDNSIP
 	clusterDNS, err := ipallocator.GetIndexedIP(svcSubnetCIDR, 10)
 	if err != nil {
-		// Return default ClusterDNSIP on failure
-		return net.ParseIP("10.96.0.10")
+		return nil, err
 	}
 
-	return clusterDNS
+	return &clusterDNS, nil
 }

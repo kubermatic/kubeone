@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"net"
 )
 
 // Cluster describes our entire configuration.
@@ -40,6 +41,10 @@ func (m *Cluster) Validate() error {
 		if err := workerset.Validate(); err != nil {
 			return fmt.Errorf("worker set %d is invalid: %v", idx+1, err)
 		}
+	}
+
+	if err := m.Network.Validate(); err != nil {
+		return fmt.Errorf("network configuration is invalid: %v", err)
 	}
 
 	return nil
@@ -197,6 +202,23 @@ func (m *NetworkConfig) NodePortRange() string {
 	}
 
 	return "30000-32767"
+}
+
+// Validate checks the NetworkConfig for errors
+func (p *NetworkConfig) Validate() error {
+	if p.PodSubnetVal != "" {
+		if _, _, err := net.ParseCIDR(p.PodSubnetVal); err != nil {
+			return fmt.Errorf("invalid pod subnet specified: %v", err)
+		}
+	}
+
+	if p.ServiceSubnetVal != "" {
+		if _, _, err := net.ParseCIDR(p.ServiceSubnetVal); err != nil {
+			return fmt.Errorf("invalid service subnet specified: %v", err)
+		}
+	}
+
+	return nil
 }
 
 // WorkerConfig describes a set of worker machines.
