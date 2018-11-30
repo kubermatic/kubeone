@@ -30,11 +30,9 @@ import (
 // +genclient
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-/// [MachineSet]
 // MachineSet ensures that a specified number of machines replicas are running at any given time.
 // +k8s:openapi-gen=true
 // +kubebuilder:subresource:status
-// +kubebuilder:subresource:scale:specpath=.spec.replicas,statuspath=.status.replicas,selectorpath=.status.labelSelector
 type MachineSet struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
@@ -43,9 +41,6 @@ type MachineSet struct {
 	Status MachineSetStatus `json:"status,omitempty"`
 }
 
-/// [MachineSet]
-
-/// [MachineSetSpec]
 // MachineSetSpec defines the desired state of MachineSet
 type MachineSetSpec struct {
 	// Replicas is the number of desired replicas.
@@ -54,7 +49,7 @@ type MachineSetSpec struct {
 	// +optional
 	Replicas *int32 `json:"replicas,omitempty"`
 
-	// MinReadySeconds is the minimum number of seconds for which a newly created machine should be ready.
+	// Minimum number of seconds for which a newly created machine should be ready.
 	// Defaults to 0 (machine will be considered available as soon as it is ready)
 	// +optional
 	MinReadySeconds int32 `json:"minReadySeconds,omitempty"`
@@ -71,10 +66,7 @@ type MachineSetSpec struct {
 	Template MachineTemplateSpec `json:"template,omitempty"`
 }
 
-/// [MachineSetSpec] // doxygen marker
-
-/// [MachineTemplateSpec] // doxygen marker
-// MachineTemplateSpec describes the data needed to create a Machine from a template
+// MachineTemplateSpec describes the data a machine should have when created from a template
 type MachineTemplateSpec struct {
 	// Standard object's metadata.
 	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
@@ -87,9 +79,6 @@ type MachineTemplateSpec struct {
 	Spec MachineSpec `json:"spec,omitempty"`
 }
 
-/// [MachineTemplateSpec]
-
-/// [MachineSetStatus]
 // MachineSetStatus defines the observed state of MachineSet
 type MachineSetStatus struct {
 	// Replicas is the most recently observed number of replicas.
@@ -134,8 +123,6 @@ type MachineSetStatus struct {
 	// +optional
 	ErrorMessage *string `json:"errorMessage,omitempty"`
 }
-
-/// [MachineSetStatus]
 
 func (machineSet *MachineSet) Validate() field.ErrorList {
 	errors := field.ErrorList{}

@@ -261,14 +261,6 @@
   version = "v9.0.0"
 
 [[projects]]
-  digest = "1:9cc257b3c9ff6a0158c9c661ab6eebda1fe8a4a4453cd5c4044dc9a2ebfb992b"
-  name = "k8s.io/klog"
-  packages = ["."]
-  pruneopts = "NUT"
-  revision = "a5bc97fbc634d635061f3146511332c7e313a55a"
-  version = "v0.1.0"
-
-[[projects]]
   digest = "1:c59a74abd132eab897f0108c3e74d2cfc4322feebac236920601b0221eeed8c3"
   name = "k8s.io/kubernetes"
   packages = [
@@ -281,15 +273,14 @@
   version = "v1.12.3"
 
 [[projects]]
-  branch = "master"
-  digest = "1:ac3959dec5b4f52d0866cea4c11b41f06302984d5162b19564dc1d1a6209c1e3"
+  digest = "1:a040a17df839b73c811d0554f4c74cd90e473a869f301da6d42df24097f1a89d"
   name = "sigs.k8s.io/cluster-api"
   packages = [
     "pkg/apis/cluster/common",
     "pkg/apis/cluster/v1alpha1",
   ]
   pruneopts = "NUT"
-  revision = "4fb34c689c84186c586da058cb15ce98f8dc6ee2"
+  revision = "571cb480e561d1b1d49713e0a1db09de152dff69"
 
 [[projects]]
   digest = "1:84a8609383bec11b71d52dd813f33f1d16614b91966940bdc2aa79bea864fa25"

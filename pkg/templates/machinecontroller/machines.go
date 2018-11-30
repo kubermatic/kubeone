@@ -98,7 +98,7 @@ func createMachineDeployment(cluster *config.Cluster, workerset config.WorkerCon
 					Versions: clusterv1alpha1.MachineVersionInfo{
 						Kubelet: cluster.Versions.Kubernetes,
 					},
-					ProviderSpec: clusterv1alpha1.ProviderSpec{
+					ProviderConfig: clusterv1alpha1.ProviderConfig{
 						Value: &runtime.RawExtension{Raw: encoded},
 					},
 				},

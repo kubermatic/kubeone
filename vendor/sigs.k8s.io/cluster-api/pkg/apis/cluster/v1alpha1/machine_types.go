@@ -30,7 +30,6 @@ const MachineFinalizer = "machine.cluster.k8s.io"
 // +genclient
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-/// [Machine]
 // Machine is the Schema for the machines API
 // +k8s:openapi-gen=true
 // +kubebuilder:subresource:status
@@ -42,9 +41,6 @@ type Machine struct {
 	Status MachineStatus `json:"status,omitempty"`
 }
 
-/// [Machine]
-
-/// [MachineSpec]
 // MachineSpec defines the desired state of Machine
 type MachineSpec struct {
 	// This ObjectMeta will autopopulate the Node created. Use this to
@@ -61,7 +57,7 @@ type MachineSpec struct {
 
 	// Provider-specific configuration to use during node creation.
 	// +optional
-	ProviderSpec ProviderSpec `json:"providerSpec"`
+	ProviderConfig ProviderConfig `json:"providerConfig"`
 
 	// Versions of key software to use. This field is optional at cluster
 	// creation time, and omitting the field indicates that the cluster
@@ -81,9 +77,6 @@ type MachineSpec struct {
 	ConfigSource *corev1.NodeConfigSource `json:"configSource,omitempty"`
 }
 
-/// [MachineSpec]
-
-/// [MachineStatus]
 // MachineStatus defines the observed state of Machine
 type MachineStatus struct {
 	// If the corresponding Node exists, this will point to its object.
@@ -151,40 +144,8 @@ type MachineStatus struct {
 	// Refer: https://kubernetes.io/docs/concepts/architecture/nodes/#condition
 	// +optional
 	Conditions []corev1.NodeCondition `json:"conditions,omitempty"`
-
-	// LastOperation describes the last-operation performed by the machine-controller.
-	// This API should be useful as a history in terms of the latest operation performed on the
-	// specific machine. It should also convey the state of the latest-operation for example if
-	// it is still on-going, failed or completed successfully.
-	// +optional
-	LastOperation *LastOperation `json:"lastOperation,omitempty"`
-
-	// Phase represents the current phase of machine actuation.
-	// Eg. Pending, Running, Terminating, Failed etc.
-	// +optional
-	Phase *string `json:"phase,omitempty"`
 }
 
-// LastOperation represents the detail of the last performed operation on the MachineObject.
-type LastOperation struct {
-	// Description is the human-readable description of the last operation.
-	Description *string `json:"description,omitempty"`
-
-	// LastUpdateTime is the timestamp at which LastOperation API was last-updated.
-	LastUpdated *metav1.Time `json:"lastUpdated,omitempty"`
-
-	// State is the current status of the last performed operation.
-	// Eg.Processing, Failed, Successful etc
-	State *string `json:"state,omitempty"`
-
-	// Type is the type of operation which was last performed.
-	// Eg. Create, Delete, Update etc
-	Type *string `json:"type,omitempty"`
-}
-
-/// [MachineStatus]
-
-/// [MachineVersionInfo]
 type MachineVersionInfo struct {
 	// Semantic version of kubelet to run
 	Kubelet string `json:"kubelet"`
@@ -195,8 +156,6 @@ type MachineVersionInfo struct {
 	// +optional
 	ControlPlane string `json:"controlPlane,omitempty"`
 }
-
-/// [MachineVersionInfo]
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 

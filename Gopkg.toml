@@ -44,8 +44,8 @@
   version = "1.12.3"
 
 [[constraint]]
-  branch = "master"
   name = "sigs.k8s.io/cluster-api"
+  revision = "571cb480e561d1b1d49713e0a1db09de152dff69"
 
 [prune]
   go-tests = true
