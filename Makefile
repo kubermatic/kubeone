@@ -1,4 +1,3 @@
-export GO111MODULE=on
 export GOPATH?=$(shell go env GOPATH)
 export CGO_ENABLED=0
 BUILD_IMAGE?=golang:1.11.2
@@ -17,8 +16,8 @@ dist/kubeone:
 
 docker-make-install:
 	docker run -it --rm \
-		-v $(PWD):/app \
-		-v $(GOPATH)/pkg/mod:/go/pkg/mod \
-		-w /app \
+		-v $(PWD):/go/src/github.com/kubermatic/kubeone \
+		-v $(GOPATH)/pkg:/go/pkg \
+		-w /go/src/github.com/kubermatic/kubeone \
 		$(BUILD_IMAGE) \
 		make install

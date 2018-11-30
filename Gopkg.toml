@@ -1,0 +1,53 @@
+
+[[constraint]]
+  name = "github.com/Masterminds/semver"
+  version = "1.4.2"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/alecthomas/template"
+
+[[constraint]]
+  name = "github.com/sirupsen/logrus"
+  version = "1.2.0"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/tmc/scp"
+
+[[constraint]]
+  name = "github.com/urfave/cli"
+  version = "1.20.0"
+
+[[constraint]]
+  branch = "master"
+  name = "golang.org/x/crypto"
+
+[[constraint]]
+  name = "gopkg.in/yaml.v2"
+  version = "2.2.2"
+
+[[constraint]]
+  branch = "master"
+  name = "k8s.io/api"
+
+[[constraint]]
+  name = "k8s.io/apimachinery"
+  version = "kubernetes-1.11.2"
+
+[[constraint]]
+  name = "k8s.io/client-go"
+  version = "9.0.0"
+
+[[constraint]]
+  name = "k8s.io/kubernetes"
+  version = "1.12.3"
+
+[[constraint]]
+  name = "sigs.k8s.io/cluster-api"
+  revision = "571cb480e561d1b1d49713e0a1db09de152dff69"
+
+[prune]
+  go-tests = true
+  non-go = true
+  unused-packages = true

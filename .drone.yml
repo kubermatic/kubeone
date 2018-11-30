@@ -1,8 +1,15 @@
 workspace:
-  base: /app
-  path: kubeone
+  base: /go
+  path: src/github.com/kubermatic/kubeone
 
 pipeline:
+  # check dependencies are in-order
+  dep:
+    commands:
+    - dep ensure -v
+    - git diff --exit-code
+    image: quay.io/kubermatic/dep:0.5.0-1
+
   # compile a build
   build:
     image: golang:1.11.2
