@@ -40,3 +40,15 @@ variable "control_plane_volume_size" {
   default     = 100
   description = "Size of the EBS volume, in Gb"
 }
+
+variable "worker_instance_type" {
+  default = "t2.medium"
+}
+
+variable "worker_disk_size" {
+  default = "25g"
+}
+
+variable "worker_disk_type" {
+  default = "gp2"
+}
