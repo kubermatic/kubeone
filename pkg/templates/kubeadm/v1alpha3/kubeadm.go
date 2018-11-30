@@ -114,18 +114,20 @@ func NewConfig(cluster *config.Cluster, instance int) (*configuration, error) {
 		FeatureGates: map[string]bool{
 			"CoreDNS": false,
 		},
+
+		ControllerManagerExtraArgs: map[string]string{},
+	}
+
+	if cluster.Provider.Name != "" {
+		cfg.APIServerExtraArgs["cloud-provider"] = cluster.Provider.Name
+		cfg.ControllerManagerExtraArgs["cloud-provider"] = cluster.Provider.Name
 	}
 
 	if cluster.Provider.CloudConfig != "" {
 		renderedCloudConfig := "/etc/kubernetes/cloud-config"
 
 		cfg.APIServerExtraArgs["cloud-config"] = renderedCloudConfig
-		cfg.APIServerExtraArgs["cloud-provider"] = cluster.Provider.Name
-
-		cfg.ControllerManagerExtraArgs = map[string]string{
-			"cloud-provider": cluster.Provider.Name,
-			"cloud-config":   renderedCloudConfig,
-		}
+		cfg.ControllerManagerExtraArgs["cloud-config"] = renderedCloudConfig
 	}
 
 	return cfg, nil
