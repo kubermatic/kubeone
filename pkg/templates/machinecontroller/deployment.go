@@ -1,6 +1,8 @@
 package machinecontroller
 
 import (
+	"net"
+
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/templates"
 	appsv1 "k8s.io/api/apps/v1"
@@ -8,6 +10,7 @@ import (
 	rbacv1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
+	"k8s.io/kubernetes/pkg/registry/core/service/ipallocator"
 )
 
 const (
@@ -19,6 +22,11 @@ const (
 )
 
 func Deployment(cluster *config.Cluster) (string, error) {
+	deployment, err := machineControllerDeployment(cluster)
+	if err != nil {
+		return "", err
+	}
+
 	items := []interface{}{
 		machineControllerServiceAccount(),
 
@@ -43,7 +51,7 @@ func Deployment(cluster *config.Cluster) (string, error) {
 		machineControllerMachineSetCRD(),
 		machineControllerMachineDeploymentCRD(),
 		machineControllerCredentialsSecret(cluster),
-		machineControllerDeployment(cluster),
+		deployment,
 	}
 
 	return templates.KubernetesToYAML(items)
@@ -522,10 +530,15 @@ spec:
 `
 }
 
-func machineControllerDeployment(cluster *config.Cluster) appsv1.Deployment {
+func machineControllerDeployment(cluster *config.Cluster) (*appsv1.Deployment, error) {
 	var replicas int32 = 1
 
-	return appsv1.Deployment{
+	clusterDNS, err := clusterDNSIP(cluster)
+	if err != nil {
+		return nil, err
+	}
+
+	return &appsv1.Deployment{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "apps/v1",
 			Kind:       "Deployment",
@@ -587,6 +600,7 @@ func machineControllerDeployment(cluster *config.Cluster) appsv1.Deployment {
 								"-logtostderr",
 								"-v", "4",
 								"-internal-listen-address", "0.0.0.0:8085",
+								"-cluster-dns", clusterDNS.String(),
 							},
 							Env:                      getEnvVarCredentials(cluster),
 							TerminationMessagePath:   corev1.TerminationMessagePathDefault,
@@ -621,7 +635,7 @@ func machineControllerDeployment(cluster *config.Cluster) appsv1.Deployment {
 				},
 			},
 		},
-	}
+	}, nil
 }
 
 func machineControllerCredentialsSecret(cluster *config.Cluster) corev1.Secret {
@@ -657,4 +671,22 @@ func getEnvVarCredentials(cluster *config.Cluster) []corev1.EnvVar {
 	}
 
 	return env
+}
+
+// clusterDNSIP returns the IP address of ClusterDNS Service,
+// which is 10th IP of the Services CIDR.
+func clusterDNSIP(cluster *config.Cluster) (*net.IP, error) {
+	// Get the Services CIDR
+	_, svcSubnetCIDR, err := net.ParseCIDR(cluster.Network.ServiceSubnet())
+	if err != nil {
+		return nil, err
+	}
+
+	// Select the 10th IP in Services CIDR range as ClusterDNSIP
+	clusterDNS, err := ipallocator.GetIndexedIP(svcSubnetCIDR, 10)
+	if err != nil {
+		return nil, err
+	}
+
+	return &clusterDNS, nil
 }

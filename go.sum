@@ -106,6 +106,8 @@ k8s.io/apimachinery v0.0.0-20181101131016-0aa9751e8aaf h1:Qsp/DuvFWmfTAfp4tcX402
 k8s.io/apimachinery v0.0.0-20181101131016-0aa9751e8aaf/go.mod h1:ccL7Eh7zubPUSh9A3USN90/OzHNSVN6zxzde07TDCL0=
 k8s.io/client-go v9.0.0+incompatible h1:2kqW3X2xQ9SbFvWZjGEHBLlWc1LG9JIJNXWkuqwdZ3A=
 k8s.io/client-go v9.0.0+incompatible/go.mod h1:7vJpHMYJwNQCWgzmNV+VYUl1zCObLyodBc8nIyt8L5s=
+k8s.io/kubernetes v1.12.3 h1:1FH8TXY6pIuOHoNlsq9bB6rmCP0vfvQZH5YN7OXCHXU=
+k8s.io/kubernetes v1.12.3/go.mod h1:ocZa8+6APFNC2tX1DZASIbocyYT5jHzqFVsY5aoB7Jk=
 sigs.k8s.io/cluster-api v0.0.0-20181116183923-0734939e05ae h1:5L4RFZubeHgDjjydrdUgY1qj6DagxOBb7S8quks4rGc=
 sigs.k8s.io/cluster-api v0.0.0-20181116183923-0734939e05ae/go.mod h1:aEXstFx3krpj6/AOcV/rOP2VLKdrtSNUMDR2Kmt6YSs=
 sigs.k8s.io/controller-runtime v0.1.7 h1:cpXFqijiVp2ihngBcPxiehYxFynubuhxIg1ZRE4Yu7c=
