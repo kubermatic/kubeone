@@ -67,7 +67,7 @@ pipeline:
     - apk add --no-cache ca-certificates openssh-client
     - mkdir /go/.kube
     - eval $(ssh-agent)
-    - ssh-add /go/.ssh
+    - ssh-add /go/.ssh/id_rsa
     - ./dist/kubeone -v install --tfjson tf.json config.yaml.dist
     - ./dist/kubeone kubeconfig --tfjson tf.json config.yaml.dist > $KUBECONFIG
     when:
