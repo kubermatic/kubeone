@@ -77,6 +77,23 @@ pipeline:
       branch:
       - master
 
+  # run few kubectl commands
+  e2e-kubectl:
+    image: alpine:3.8
+    environment:
+    - KUBECONFIG=/go/.kube/config
+    - STABLEK8S=v1.12.3
+    commands:
+    - apk add --no-cache ca-certificates curl
+    - curl -LO https://storage.googleapis.com/kubernetes-release/release/$STABLEK8S/bin/linux/amd64/kubectl
+    - chmod +x kubectl
+    - mv kubectl /usr/local/bin/
+    - kubectl get nodes
+    - kubectl get pods --all-namespaces
+    when:
+      branch:
+      - master
+
   # cleanup everything
   e2e-aws-teardown:
     image: hashicorp/terraform:0.11.10
