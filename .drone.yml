@@ -21,9 +21,9 @@ pipeline:
     image: alpine:3.8
     pull: true
     commands:
-    - mkdir -p /app/.keys
+    - mkdir -p /go/.ssh
     - apk add --no-cache openssh-keygen
-    - ssh-keygen -t rsa -f /app/.keys/id_rsa -N ''
+    - ssh-keygen -t rsa -f /go/.ssh/id_rsa -N ''
     when:
       branch:
       - master
@@ -36,9 +36,7 @@ pipeline:
     - aws_secret_access_key
     environment:
     - TF_DIR=terraform/aws
-    - TF_VAR_ssh_private_key_file=/app/.keys/id_rsa
-    - TF_VAR_ssh_public_key_file=/app/.keys/id_rsa.pub
-    - TF_VAR_ssh_agent_socket=""
+    - TF_VAR_ssh_public_key_file=/go/.ssh/id_rsa.pub
     commands:
     - export TF_VAR_cluster_name=kubeone-e2e-$DRONE_BUILD_NUMBER
     - cd $TF_DIR
@@ -61,11 +59,17 @@ pipeline:
       - master
 
   # deploy cluster with kubeone
-  e2e-run:
+  e2e-crate-cluster:
     image: alpine:3.8
+    environment:
+    - KUBECONFIG=/go/.kube/config
     commands:
-    - apk add --no-cache ca-certificates
+    - apk add --no-cache ca-certificates openssh-client
+    - mkdir /go/.kube
+    - eval $(ssh-agent)
+    - ssh-agent add /go/.ssh
     - ./dist/kubeone -v install --tfjson tf.json config.yaml.dist
+    - ./dist/kubeone kubeconfig --tfjson tf.json config.yaml.dist > $KUBECONFIG
     when:
       branch:
       - master
@@ -78,7 +82,7 @@ pipeline:
     - aws_secret_access_key
     environment:
     - TF_DIR=terraform/aws
-    - TF_VAR_ssh_public_key_file=/app/.keys/id_rsa.pub
+    - TF_VAR_ssh_public_key_file=/go/.ssh/id_rsa.pub
     commands:
     - export TF_VAR_cluster_name=kubeone-e2e-$DRONE_BUILD_NUMBER
     - cd $TF_DIR
