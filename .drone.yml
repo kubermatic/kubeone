@@ -1,6 +1,6 @@
 workspace:
-  base: /app
-  path: kubeone
+  base: /go
+  path: src/github.com/kubermatic/kubeone
 
 pipeline:
   # compile a build
