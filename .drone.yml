@@ -21,7 +21,7 @@ pipeline:
     image: alpine:3.8
     pull: true
     commands:
-    - mkdir -p /go/.ssh
+    - mkdir -m700 -p /go/.ssh
     - apk add --no-cache openssh-keygen
     - ssh-keygen -t rsa -f /go/.ssh/id_rsa -N ''
     when:
