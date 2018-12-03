@@ -26,8 +26,21 @@ func createWorkerMachines(ctx *util.Context) error {
 			machinecontroller.WebhookAppLabelValue,
 		)
 		if !util.WaitForCondition(conn, ctx.Verbose, cmd, 1*time.Minute, util.IsRunning) {
+			return errors.New("machine-controller-webhook did not come up")
+		}
+
+		cmd = fmt.Sprintf(
+			`kubectl -n "%s" get pods -l '%s=%s' -o jsonpath='{.items[0].status.phase}'`,
+			machinecontroller.MachineControllerNamespace,
+			machinecontroller.MachineControllerAppLabelKey,
+			machinecontroller.MachineControllerAppLabelValue,
+		)
+		if !util.WaitForCondition(conn, ctx.Verbose, cmd, 1*time.Minute, util.IsRunning) {
 			return errors.New("machine-controller did not come up")
 		}
+
+		// it can still take a bit before the MC is actually ready
+		time.Sleep(5 * time.Second)
 
 		ctx.Logger.Infoln("Creating worker machines…")
 		_, _, _, err := util.RunShellCommand(conn, ctx.Verbose, `kubectl apply -f ./{{ .WORK_DIR }}/workers.yaml`, util.TemplateVariables{
