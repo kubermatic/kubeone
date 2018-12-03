@@ -196,8 +196,8 @@
   version = "v2.2.2"
 
 [[projects]]
-  branch = "master"
-  digest = "1:eb3781b93a6f5fdd035e2c0c6a9a13b620a4e65d16af426d6e48b261a14b1fa1"
+  branch = "release-1.11"
+  digest = "1:7b88bd74e8b8242546187b5998caa3c97d4ae05f4940d5531401e3a0dad719fd"
   name = "k8s.io/api"
   packages = [
     "admissionregistration/v1beta1",
@@ -206,10 +206,11 @@
     "rbac/v1",
   ]
   pruneopts = "NUT"
-  revision = "d04500c8c3dda9c980b668c57abc2ca61efcf5c4"
+  revision = "4e7be11eab3ffcfc1876898b8272df53785a9504"
 
 [[projects]]
-  digest = "1:2184d55b03bbdb07c7bbb79482cc72242ce015f7884511d875f248bf4a8718c3"
+  branch = "release-1.11"
+  digest = "1:386d3bbfc324b70d32b609df62ab825d2c91eaa21ce364f709ccfd3f827acca2"
   name = "k8s.io/apimachinery"
   packages = [
     "pkg/api/resource",
@@ -246,22 +247,22 @@
     "third_party/forked/golang/reflect",
   ]
   pruneopts = "NUT"
-  revision = "103fd098999dc9c0c88536f5c9ad2e5da39373ae"
-  version = "kubernetes-1.11.2"
+  revision = "70adfbae261eebb795b76321790745ad0e3c523f"
 
 [[projects]]
-  digest = "1:a1ce9567781302eebafb91ddb339bedbd305b2198cdd4f3243dd84146136fb64"
+  digest = "1:5e4d56bfeba03d97315738cc3e70e9ba0e7c9e79b233ab391ff344a01890268d"
   name = "k8s.io/client-go"
   packages = [
     "util/cert",
     "util/cert/triple",
   ]
   pruneopts = "NUT"
-  revision = "1638f8970cefaa404ff3a62950f88b08292b2696"
-  version = "v9.0.0"
+  revision = "7d04d0e2a0a1a4d4a1cd6baa432a2301492e4e65"
+  version = "v8.0.0"
 
 [[projects]]
-  digest = "1:c59a74abd132eab897f0108c3e74d2cfc4322feebac236920601b0221eeed8c3"
+  branch = "release-1.11"
+  digest = "1:35cc3c92b054857d6837bede8cad388377c05a92fe3efdc07cef71ccdf488c1c"
   name = "k8s.io/kubernetes"
   packages = [
     "pkg/apis/core",
@@ -269,8 +270,7 @@
     "pkg/registry/core/service/ipallocator",
   ]
   pruneopts = "NUT"
-  revision = "435f92c719f279a3a67808c80521ea17d5715c66"
-  version = "v1.12.3"
+  revision = "5933b9771b71c2d05543a0cd088542013c1446e0"
 
 [[projects]]
   digest = "1:a040a17df839b73c811d0554f4c74cd90e473a869f301da6d42df24097f1a89d"
