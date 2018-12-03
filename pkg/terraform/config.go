@@ -211,7 +211,7 @@ func setWorkersetFlag(w *config.WorkerConfig, name string, value interface{}) {
 		return
 	}
 
-	if _, exists := w.Spec[name]; !exists {
-		w.Spec[name] = value
+	if _, exists := w.Config.CloudProviderSpec[name]; !exists {
+		w.Config.CloudProviderSpec[name] = value
 	}
 }
