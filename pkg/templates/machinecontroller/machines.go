@@ -48,8 +48,8 @@ func createMachineDeployment(cluster *config.Cluster, workerset config.WorkerCon
 	config := providerConfig{
 		CloudProvider:       provider,
 		CloudProviderSpec:   providerSpec,
-		OperatingSystem:     workerset.OperatingSystem.Name,
-		OperatingSystemSpec: workerset.OperatingSystem.Spec,
+		OperatingSystem:     workerset.Config.OperatingSystem,
+		OperatingSystemSpec: workerset.Config.OperatingSystemSpec,
 	}
 
 	encoded, err := json.Marshal(config)
@@ -110,7 +110,7 @@ func createMachineDeployment(cluster *config.Cluster, workerset config.WorkerCon
 func machineSpec(cluster *config.Cluster, workerset config.WorkerConfig, provider config.ProviderName) (map[string]interface{}, error) {
 	var err error
 
-	spec := workerset.Spec
+	spec := workerset.Config.CloudProviderSpec
 	tagName := fmt.Sprintf("kubernetes.io/cluster/%s", cluster.Name)
 	tagValue := "shared"
 

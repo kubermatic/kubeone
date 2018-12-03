@@ -221,15 +221,17 @@ func (p *NetworkConfig) Validate() error {
 	return nil
 }
 
+type providerConfig struct {
+	CloudProviderSpec   map[string]interface{} `yaml:"cloudProviderSpec"`
+	OperatingSystem     string                 `yaml:"operatingSystem"`
+	OperatingSystemSpec map[string]interface{} `yaml:"operatingSystemSpec"`
+}
+
 // WorkerConfig describes a set of worker machines.
 type WorkerConfig struct {
-	Replicas        int                    `yaml:"replicas"`
-	Name            string                 `yaml:"name"`
-	Spec            map[string]interface{} `yaml:"spec"`
-	OperatingSystem struct {
-		Name string                 `yaml:"name"`
-		Spec map[string]interface{} `yaml:"spec"`
-	} `yaml:"operating_system"`
+	Name     string         `yaml:"name"`
+	Replicas int            `yaml:"replicas"`
+	Config   providerConfig `yaml:"config"`
 }
 
 // Validate checks if the Config makes sense.
