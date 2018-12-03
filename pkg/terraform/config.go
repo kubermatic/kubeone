@@ -52,6 +52,19 @@ func (c *controlPlane) Validate() error {
 	return nil
 }
 
+type awsWorkerConfig struct {
+	AMI                 string   `json:"ami"`
+	AvailabilityZones   []string `json:"availability_zones"`
+	DiskSize            string   `json:"disk_size"`
+	DiskType            string   `json:"disk_type"`
+	IAMInstanceProfile  string   `json:"iam_instance_profile"`
+	InstanceType        string   `json:"instance_type"`
+	Region              string   `json:"region"`
+	SubnetID            string   `json:"subnet_id"`
+	VPCID               string   `json:"vpc_id"`
+	VPCSecurityGroupIDs []string `json:"vpc_security_group_ids"`
+}
+
 // Config represents configuration in the terraform output format
 type Config struct {
 	KubeOneAPI struct {
@@ -65,6 +78,12 @@ type Config struct {
 			ControlPlane []controlPlane `json:"control_plane"`
 		} `json:"value"`
 	} `json:"kubeone_hosts"`
+
+	KubeOneWorkers struct {
+		Value struct {
+			AWS []awsWorkerConfig `json:"aws"`
+		} `json:"value"`
+	} `json:"kubeone_workers"`
 }
 
 // NewConfigFromJSON creates a new config object from json
@@ -105,6 +124,7 @@ func (c *Config) Apply(m *config.Cluster) {
 
 	m.Name = cp.ClusterName
 
+	// build up a list of master nodes
 	for i, publicIP := range cp.PublicAddress {
 		privateIP := publicIP
 		if i < len(cp.PrivateAddress) {
@@ -128,5 +148,46 @@ func (c *Config) Apply(m *config.Cluster) {
 
 	if len(hosts) > 0 {
 		m.Hosts = hosts
+	}
+
+	// if there's a cloud provider specific configuration,
+	// apply it to the worker nodes
+	if len(c.KubeOneWorkers.Value.AWS) > 0 {
+		aws := c.KubeOneWorkers.Value.AWS[0]
+
+		az := ""
+		if len(aws.AvailabilityZones) > 0 {
+			az = aws.AvailabilityZones[0]
+		}
+
+		for idx, workerset := range m.Workers {
+			setWorkersetFlag(&workerset, "ami", aws.AMI)
+			setWorkersetFlag(&workerset, "availabilityZone", az)
+			setWorkersetFlag(&workerset, "region", aws.Region)
+			setWorkersetFlag(&workerset, "vpcId", aws.VPCID)
+			setWorkersetFlag(&workerset, "subnetId", aws.SubnetID)
+			setWorkersetFlag(&workerset, "instanceType", aws.InstanceType)
+			setWorkersetFlag(&workerset, "instanceProfile", aws.IAMInstanceProfile)
+			setWorkersetFlag(&workerset, "securityGroupIDs", aws.VPCSecurityGroupIDs)
+			setWorkersetFlag(&workerset, "diskSize", aws.DiskSize)
+			setWorkersetFlag(&workerset, "diskType", aws.DiskType)
+
+			m.Workers[idx] = workerset
+		}
+	}
+}
+
+func setWorkersetFlag(w *config.WorkerConfig, name string, value interface{}) {
+	// ignore empty values (i.e. not set in terraform output)
+	if s, ok := value.(string); ok && s == "" {
+		return
+	}
+
+	if slice, ok := value.([]string); ok && len(slice) == 0 {
+		return
+	}
+
+	if _, exists := w.Spec[name]; !exists {
+		w.Spec[name] = value
 	}
 }

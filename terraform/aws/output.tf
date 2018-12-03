@@ -19,7 +19,7 @@ output "kubeone_hosts" {
   }
 }
 
-output "kubeone_worker" {
+output "kubeone_workers" {
   value = {
     aws = {
       availability_zones     = ["${data.aws_availability_zones.available.names}"]
