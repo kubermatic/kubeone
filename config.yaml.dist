@@ -49,27 +49,24 @@ provider:
 # worker nodes in your cluster. Each element in this "workers"
 # list is a single deployment and must have a unique name.
 # workers:
-# - replicas: 5
-#   name: my-workers
+# - name: my-workers
+#   replicas: 5
 
 #   # refer to the machine-controller documentation to see which
 #   # flags you need to specify for your workers; this is dependent
 #   # on the chosen cloud provider and the example below would
 #   # provision Ubuntu 18.04 machines in EU-Frankfurt with 50GB SSD
 #   # disks each.
-#   spec:
-#     ami: ami-0bdf93799014acdc4
-#     region: 'eu-central-1'
-#     availabilityZone: 'eu-central-1a'
-#     vpcId: 'vpc-819f62e9'
-#     subnetId: 'subnet-2bff4f43'
-#     instanceType: 't2.medium'
-#     diskSize: 50
-#     diskType: 'gp2'
-
-#   # Configure the OS spec here; this is once again defined by the
-#   # machine-controller.
-#   operating_system:
-#     name: ubuntu
-#     spec:
+#   config:
+#     cloudProviderSpec:
+#       ami: ami-0bdf93799014acdc4
+#       region: 'eu-central-1'
+#       availabilityZone: 'eu-central-1a'
+#       vpcId: 'vpc-819f62e9'
+#       subnetId: 'subnet-2bff4f43'
+#       instanceType: 't2.medium'
+#       diskSize: 50
+#       diskType: 'gp2'
+#     operatingSystem: ubuntu
+#     operatingSystemSpec:
 #       distUpgradeOnBoot: false
