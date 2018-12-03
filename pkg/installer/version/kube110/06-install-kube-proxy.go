@@ -15,7 +15,9 @@ mkdir -p ~/.kube
 sudo cp /etc/kubernetes/admin.conf ~/.kube/config
 sudo chown -R $(id -u):$(id -g) ~/.kube
 
-kubectl apply -f ./{{ .WORK_DIR }}/kube-flannel.yaml
+cd "{{ .WORK_DIR }}"
+
+kubectl apply -f kube-flannel.yaml
 
 kubectl -n kube-system get configmap kube-proxy -o yaml > kube-proxy-configmap.yaml
 sed -i -e 's#server:.*#server: https://{{ .IP_ADDRESS }}:6443#g' kube-proxy-configmap.yaml
