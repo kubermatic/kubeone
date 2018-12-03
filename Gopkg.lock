@@ -53,6 +53,14 @@
   revision = "44d81051d367757e1c7c6a5a86423ece9afcf63c"
 
 [[projects]]
+  digest = "1:f5aa1c7a10cac8260121441f110fe4a86b514609e0ad452d9cc18eb12f6a96ca"
+  name = "github.com/heptio/ark"
+  packages = ["pkg/apis/ark/v1"]
+  pruneopts = "NUT"
+  revision = "0fd7872ef48ce617e561e6e45f8ccb0f11637f58"
+  version = "v0.10.0"
+
+[[projects]]
   digest = "1:0243cffa4a3410f161ee613dfdd903a636d07e838a42d341da95d81f42cd1d41"
   name = "github.com/json-iterator/go"
   packages = ["."]
@@ -296,6 +304,7 @@
   input-imports = [
     "github.com/Masterminds/semver",
     "github.com/alecthomas/template",
+    "github.com/heptio/ark/pkg/apis/ark/v1",
     "github.com/sirupsen/logrus",
     "github.com/tmc/scp",
     "github.com/urfave/cli",
