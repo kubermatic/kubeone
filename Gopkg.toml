@@ -27,21 +27,21 @@
   name = "gopkg.in/yaml.v2"
   version = "2.2.2"
 
-[[constraint]]
-  branch = "master"
+[[override]]
+  branch = "release-1.11"
   name = "k8s.io/api"
 
-[[constraint]]
+[[override]]
   name = "k8s.io/apimachinery"
-  version = "kubernetes-1.11.2"
+  branch = "release-1.11"
 
-[[constraint]]
+[[override]]
   name = "k8s.io/client-go"
-  version = "9.0.0"
+  version = "8.0.0"
 
-[[constraint]]
+[[override]]
   name = "k8s.io/kubernetes"
-  version = "1.12.3"
+  branch = "release-1.11"
 
 [[constraint]]
   name = "sigs.k8s.io/cluster-api"
