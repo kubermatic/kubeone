@@ -14,6 +14,7 @@ import (
 )
 
 const (
+	MachineControllerNamespace     = metav1.NamespaceSystem
 	MachineControllerAppLabelKey   = "app"
 	MachineControllerAppLabelValue = "machine-controller"
 	MachineControllerTag           = "v0.10.0"
@@ -65,7 +66,7 @@ func machineControllerServiceAccount() corev1.ServiceAccount {
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller",
-			Namespace: metav1.NamespaceSystem,
+			Namespace: MachineControllerNamespace,
 			Labels: map[string]string{
 				MachineControllerAppLabelKey: MachineControllerAppLabelValue,
 			},
@@ -163,7 +164,7 @@ func machineControllerClusterRoleBinding() rbacv1.ClusterRoleBinding {
 			{
 				Kind:      "ServiceAccount",
 				Name:      "machine-controller",
-				Namespace: metav1.NamespaceSystem,
+				Namespace: MachineControllerNamespace,
 			},
 		},
 	}
@@ -231,7 +232,7 @@ func machineControllerKubeSystemRole() rbacv1.Role {
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller",
-			Namespace: metav1.NamespaceSystem,
+			Namespace: MachineControllerNamespace,
 			Labels: map[string]string{
 				MachineControllerAppLabelKey: MachineControllerAppLabelValue,
 			},
@@ -348,7 +349,7 @@ func machineControllerKubeSystemRoleBinding() rbacv1.RoleBinding {
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller",
-			Namespace: metav1.NamespaceSystem,
+			Namespace: MachineControllerNamespace,
 			Labels: map[string]string{
 				MachineControllerAppLabelKey: MachineControllerAppLabelValue,
 			},
@@ -362,7 +363,7 @@ func machineControllerKubeSystemRoleBinding() rbacv1.RoleBinding {
 			{
 				Kind:      "ServiceAccount",
 				Name:      "machine-controller",
-				Namespace: metav1.NamespaceSystem,
+				Namespace: MachineControllerNamespace,
 			},
 		},
 	}
@@ -390,7 +391,7 @@ func machineControllerKubePublicRoleBinding() rbacv1.RoleBinding {
 			{
 				Kind:      "ServiceAccount",
 				Name:      "machine-controller",
-				Namespace: metav1.NamespaceSystem,
+				Namespace: MachineControllerNamespace,
 			},
 		},
 	}
@@ -418,7 +419,7 @@ func machineControllerDefaultRoleBinding() rbacv1.RoleBinding {
 			{
 				Kind:      "ServiceAccount",
 				Name:      "machine-controller",
-				Namespace: metav1.NamespaceSystem,
+				Namespace: MachineControllerNamespace,
 			},
 		},
 	}
@@ -446,7 +447,7 @@ func machineControllerClusterInfoRoleBinding() rbacv1.RoleBinding {
 			{
 				Kind:      "ServiceAccount",
 				Name:      "machine-controller",
-				Namespace: metav1.NamespaceSystem,
+				Namespace: MachineControllerNamespace,
 			},
 		},
 	}
@@ -545,7 +546,7 @@ func machineControllerDeployment(cluster *config.Cluster) (*appsv1.Deployment, e
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller",
-			Namespace: metav1.NamespaceSystem,
+			Namespace: MachineControllerNamespace,
 			Labels: map[string]string{
 				MachineControllerAppLabelKey: MachineControllerAppLabelValue,
 			},
@@ -646,7 +647,7 @@ func machineControllerCredentialsSecret(cluster *config.Cluster) corev1.Secret {
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      MachineControllerCredentialsSecretName,
-			Namespace: metav1.NamespaceSystem,
+			Namespace: MachineControllerNamespace,
 		},
 		Type:       corev1.SecretTypeOpaque,
 		StringData: cluster.Provider.Credentials,

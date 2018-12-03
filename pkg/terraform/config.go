@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -63,6 +64,22 @@ type awsWorkerConfig struct {
 	SubnetID            string   `json:"subnet_id"`
 	VPCID               string   `json:"vpc_id"`
 	VPCSecurityGroupIDs []string `json:"vpc_security_group_ids"`
+}
+
+func (c awsWorkerConfig) DiskSizeGB() int {
+	regex := regexp.MustCompile(`^([0-9]+)([GT])$`)
+
+	if match := regex.FindStringSubmatch(strings.ToUpper(c.DiskSize)); match != nil {
+		size, _ := strconv.Atoi(match[1])
+
+		if match[2] == "T" {
+			size *= 1024
+		}
+
+		return size
+	}
+
+	return 0
 }
 
 // Config represents configuration in the terraform output format
@@ -155,21 +172,24 @@ func (c *Config) Apply(m *config.Cluster) {
 	if len(c.KubeOneWorkers.Value.AWS) > 0 {
 		aws := c.KubeOneWorkers.Value.AWS[0]
 
-		az := ""
-		if len(aws.AvailabilityZones) > 0 {
-			az = aws.AvailabilityZones[0]
-		}
+		// We can't take the AZ because we do not know in which of them the
+		// subnet will be created and choosing the wrong one will break
+		// worker machine creation.
+		// az := ""
+		// if len(aws.AvailabilityZones) > 0 {
+		// 	az = aws.AvailabilityZones[0]
+		// }
 
 		for idx, workerset := range m.Workers {
 			setWorkersetFlag(&workerset, "ami", aws.AMI)
-			setWorkersetFlag(&workerset, "availabilityZone", az)
 			setWorkersetFlag(&workerset, "region", aws.Region)
+			// setWorkersetFlag(&workerset, "availabilityZone", az)
 			setWorkersetFlag(&workerset, "vpcId", aws.VPCID)
 			setWorkersetFlag(&workerset, "subnetId", aws.SubnetID)
 			setWorkersetFlag(&workerset, "instanceType", aws.InstanceType)
 			setWorkersetFlag(&workerset, "instanceProfile", aws.IAMInstanceProfile)
 			setWorkersetFlag(&workerset, "securityGroupIDs", aws.VPCSecurityGroupIDs)
-			setWorkersetFlag(&workerset, "diskSize", aws.DiskSize)
+			setWorkersetFlag(&workerset, "diskSize", aws.DiskSizeGB())
 			setWorkersetFlag(&workerset, "diskType", aws.DiskType)
 
 			m.Workers[idx] = workerset
@@ -179,6 +199,10 @@ func (c *Config) Apply(m *config.Cluster) {
 
 func setWorkersetFlag(w *config.WorkerConfig, name string, value interface{}) {
 	// ignore empty values (i.e. not set in terraform output)
+	if s, ok := value.(int); ok && s == 0 {
+		return
+	}
+
 	if s, ok := value.(string); ok && s == "" {
 		return
 	}
