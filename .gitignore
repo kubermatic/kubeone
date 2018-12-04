@@ -1,3 +1,4 @@
 /kubeone
 .envrc
 /dist
+_build

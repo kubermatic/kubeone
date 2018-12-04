@@ -1,14 +1,14 @@
 export GOPATH?=$(shell go env GOPATH)
 export CGO_ENABLED=0
 BUILD_IMAGE?=golang:1.11.2
-
+TFJSON?=
+KUBEONE_CONFIG_FILE?=config.yaml.dist
 all: install
 
-.PHONY: install
 install:
 	go install -v ./cmd/kubeone
 
-.PHONY: build
+
 build: dist/kubeone
 
 dist/kubeone:
@@ -21,3 +21,8 @@ docker-make-install:
 		-w /go/src/github.com/kubermatic/kubeone \
 		$(BUILD_IMAGE) \
 		make install
+
+e2e_cluster:
+	./hack/run_cluster_e2e.sh
+
+.PHONY: build install e2e_cluster
