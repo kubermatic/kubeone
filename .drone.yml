@@ -77,6 +77,20 @@ pipeline:
       branch:
       - master
 
+  # run conformance tests
+  e2e-conformance-tests:
+    image: golang:1.11.2
+    environment:
+      - TFJSON=terraform/aws/tf.json
+      - KUBEONE_CONFIG_FILE=config.yaml.dist
+    commands:
+      - mkdir /root/.kube
+      - cp /go/.kube/config /root/.kube
+      - ./hack/run_drone_e2e.sh
+    when:
+      branch:
+        - master
+
   # cleanup everything
   e2e-aws-teardown:
     image: hashicorp/terraform:0.11.10

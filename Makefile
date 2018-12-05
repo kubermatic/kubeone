@@ -24,7 +24,7 @@ docker-make-install:
 		$(BUILD_IMAGE) \
 		make install
 
-e2e_cluster:
+e2e_test:
 	./hack/run_cluster_e2e.sh
 
-.PHONY: build install e2e_cluster
+.PHONY: build install e2e_test
