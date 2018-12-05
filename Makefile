@@ -1,8 +1,10 @@
 export GOPATH?=$(shell go env GOPATH)
 export CGO_ENABLED=0
+export TFJSON?=
+export KUBEONE_CONFIG_FILE?=config.yaml.dist
+export KUBERNETES_VERSION=1.12.3
 BUILD_IMAGE?=golang:1.11.2
-TFJSON?=
-KUBEONE_CONFIG_FILE?=config.yaml.dist
+
 all: install
 
 install:
