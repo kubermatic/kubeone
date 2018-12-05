@@ -5,12 +5,13 @@ import (
 	"errors"
 	"fmt"
 
-	"k8s.io/apimachinery/pkg/util/intstr"
-
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/templates"
+
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/util/intstr"
 	clustercommon "sigs.k8s.io/cluster-api/pkg/apis/cluster/common"
 	clusterv1alpha1 "sigs.k8s.io/cluster-api/pkg/apis/cluster/v1alpha1"
 )
@@ -22,6 +23,7 @@ type providerConfig struct {
 	OperatingSystemSpec interface{}         `json:"operatingSystemSpec"`
 }
 
+// MachineDeployments returns YAML manifests for MachineDeployments
 func MachineDeployments(cluster *config.Cluster) (string, error) {
 	deployments := make([]interface{}, 0)
 
@@ -61,6 +63,9 @@ func createMachineDeployment(cluster *config.Cluster, workerset config.WorkerCon
 	maxSurge := intstr.FromInt(1)
 	maxUnavailable := intstr.FromInt(0)
 	minReadySeconds := int32(0)
+	workersetNameLabels := map[string]string{
+		"workerset": workerset.Name,
+	}
 
 	return &clusterv1alpha1.MachineDeployment{
 		TypeMeta: metav1.TypeMeta{
@@ -75,9 +80,7 @@ func createMachineDeployment(cluster *config.Cluster, workerset config.WorkerCon
 			Paused:   false,
 			Replicas: &replicas,
 			Selector: metav1.LabelSelector{
-				MatchLabels: map[string]string{
-					"workerset": workerset.Name,
-				},
+				MatchLabels: workersetNameLabels,
 			},
 			Strategy: &clusterv1alpha1.MachineDeploymentStrategy{
 				Type: clustercommon.RollingUpdateMachineDeploymentStrategyType,
@@ -90,11 +93,12 @@ func createMachineDeployment(cluster *config.Cluster, workerset config.WorkerCon
 			Template: clusterv1alpha1.MachineTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
 					Namespace: metav1.NamespaceSystem,
-					Labels: map[string]string{
-						"workerset": workerset.Name,
-					},
+					Labels:    labels.Merge(workerset.Config.Labels, workersetNameLabels),
 				},
 				Spec: clusterv1alpha1.MachineSpec{
+					ObjectMeta: metav1.ObjectMeta{
+						Labels: labels.Merge(workerset.Config.Labels, workersetNameLabels),
+					},
 					Versions: clusterv1alpha1.MachineVersionInfo{
 						Kubelet: cluster.Versions.Kubernetes,
 					},
@@ -111,11 +115,15 @@ func machineSpec(cluster *config.Cluster, workerset config.WorkerConfig, provide
 	var err error
 
 	spec := workerset.Config.CloudProviderSpec
+	if spec == nil {
+		return nil, errors.New("could't find cloudProviderSpec")
+	}
+
 	tagName := fmt.Sprintf("kubernetes.io/cluster/%s", cluster.Name)
 	tagValue := "shared"
 
 	switch provider {
-	case "do":
+	case config.ProviderNameDigitalOcean:
 		spec, err = addDigitaloceanTag(spec, tagName, tagValue)
 	default:
 		spec, err = addMapTag(spec, tagName, tagValue)

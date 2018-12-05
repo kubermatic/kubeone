@@ -5,6 +5,7 @@ import (
 
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/templates"
+
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
@@ -13,6 +14,7 @@ import (
 	"k8s.io/kubernetes/pkg/registry/core/service/ipallocator"
 )
 
+// MachineController related constants
 const (
 	MachineControllerNamespace     = metav1.NamespaceSystem
 	MachineControllerAppLabelKey   = "app"
@@ -22,6 +24,7 @@ const (
 	MachineControllerCredentialsSecretName = "machine-controller-credentials"
 )
 
+// Deployment returns YAML manifests for MachineController deployment with RBAC
 func Deployment(cluster *config.Cluster) (string, error) {
 	deployment, err := machineControllerDeployment(cluster)
 	if err != nil {

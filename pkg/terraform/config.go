@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"regexp"
 	"strconv"
 	"strings"
 
@@ -54,32 +53,13 @@ func (c *controlPlane) Validate() error {
 }
 
 type awsWorkerConfig struct {
-	AMI                 string   `json:"ami"`
-	AvailabilityZones   []string `json:"availability_zones"`
-	DiskSize            string   `json:"disk_size"`
-	DiskType            string   `json:"disk_type"`
-	IAMInstanceProfile  string   `json:"iam_instance_profile"`
-	InstanceType        string   `json:"instance_type"`
-	Region              string   `json:"region"`
-	SubnetID            string   `json:"subnet_id"`
-	VPCID               string   `json:"vpc_id"`
-	VPCSecurityGroupIDs []string `json:"vpc_security_group_ids"`
-}
-
-func (c awsWorkerConfig) DiskSizeGB() int {
-	regex := regexp.MustCompile(`^([0-9]+)([GT])$`)
-
-	if match := regex.FindStringSubmatch(strings.ToUpper(c.DiskSize)); match != nil {
-		size, _ := strconv.Atoi(match[1])
-
-		if match[2] == "T" {
-			size *= 1024
-		}
-
-		return size
-	}
-
-	return 0
+	AMI              string   `json:"ami"`
+	AvailabilityZone string   `json:"availabilityZone"`
+	InstanceProfile  string   `json:"instanceProfile"`
+	Region           string   `json:"region"`
+	SecurityGroupIDs []string `json:"securityGroupIDs"`
+	SubnetID         string   `json:"subnetId"`
+	VPCID            string   `json:"vpcId"`
 }
 
 // Config represents configuration in the terraform output format
@@ -97,9 +77,7 @@ type Config struct {
 	} `json:"kubeone_hosts"`
 
 	KubeOneWorkers struct {
-		Value struct {
-			AWS []awsWorkerConfig `json:"aws"`
-		} `json:"value"`
+		Value map[string][]json.RawMessage `json:"value"`
 	} `json:"kubeone_workers"`
 }
 
@@ -130,7 +108,7 @@ func (c *Config) Validate() error {
 
 // Apply adds the terraform configuration options to the given
 // cluster config.
-func (c *Config) Apply(m *config.Cluster) {
+func (c *Config) Apply(m *config.Cluster) error {
 	if c.KubeOneAPI.Value.Endpoint != "" {
 		m.APIServer.Address = c.KubeOneAPI.Value.Endpoint
 	}
@@ -169,49 +147,120 @@ func (c *Config) Apply(m *config.Cluster) {
 
 	// if there's a cloud provider specific configuration,
 	// apply it to the worker nodes
-	if len(c.KubeOneWorkers.Value.AWS) > 0 {
-		aws := c.KubeOneWorkers.Value.AWS[0]
+	if len(c.KubeOneWorkers.Value) > 0 {
+		var (
+			err           error
+			workerConfigs []config.WorkerConfig
+		)
 
-		// We can't take the AZ because we do not know in which of them the
-		// subnet will be created and choosing the wrong one will break
-		// worker machine creation.
-		// az := ""
-		// if len(aws.AvailabilityZones) > 0 {
-		// 	az = aws.AvailabilityZones[0]
-		// }
-
-		for idx, workerset := range m.Workers {
-			setWorkersetFlag(&workerset, "ami", aws.AMI)
-			setWorkersetFlag(&workerset, "region", aws.Region)
-			// setWorkersetFlag(&workerset, "availabilityZone", az)
-			setWorkersetFlag(&workerset, "vpcId", aws.VPCID)
-			setWorkersetFlag(&workerset, "subnetId", aws.SubnetID)
-			setWorkersetFlag(&workerset, "instanceType", aws.InstanceType)
-			setWorkersetFlag(&workerset, "instanceProfile", aws.IAMInstanceProfile)
-			setWorkersetFlag(&workerset, "securityGroupIDs", aws.VPCSecurityGroupIDs)
-			setWorkersetFlag(&workerset, "diskSize", aws.DiskSizeGB())
-			setWorkersetFlag(&workerset, "diskType", aws.DiskType)
-
-			m.Workers[idx] = workerset
+		switch m.Provider.Name {
+		case config.ProviderNameAWS:
+			workerConfigs, err = c.updateAWSWorkers(m.Workers)
+		case config.ProviderNameDigitalOcean:
+			workerConfigs, err = c.updateDigitalOceanWorkers(m.Workers)
+		case config.ProviderNameHetzner:
+			workerConfigs, err = c.updateDigitalOceanWorkers(m.Workers)
+		case config.ProviderNameOpenStack:
+			workerConfigs, err = c.updateOpenStackWorkers(m.Workers)
+		case config.ProviderNameVSphere:
+			workerConfigs, err = c.updateVSphereWorkers(m.Workers)
+		default:
+			return errors.New("unknown provider")
 		}
+		if err != nil {
+			return err
+		}
+
+		m.Workers = workerConfigs
 	}
+
+	return nil
 }
 
-func setWorkersetFlag(w *config.WorkerConfig, name string, value interface{}) {
+func (c *Config) updateAWSWorkers(workers []config.WorkerConfig) ([]config.WorkerConfig, error) {
+	for idx, workerset := range workers {
+		cloudConfRaw, found := c.KubeOneWorkers.Value[workerset.Name]
+		if !found {
+			continue
+		}
+		if len(cloudConfRaw) != 1 {
+			// TODO: log warning? error?
+			continue
+		}
+
+		var awsCloudConfig awsWorkerConfig
+		if err := json.Unmarshal(cloudConfRaw[0], &awsCloudConfig); err != nil {
+			return nil, err
+		}
+
+		if err := setWorkersetFlag(&workerset, "ami", awsCloudConfig.AMI); err != nil {
+			return nil, err
+		}
+		if err := setWorkersetFlag(&workerset, "availabilityZone", awsCloudConfig.AvailabilityZone); err != nil {
+			return nil, err
+		}
+		if err := setWorkersetFlag(&workerset, "instanceProfile", awsCloudConfig.InstanceProfile); err != nil {
+			return nil, err
+		}
+		if err := setWorkersetFlag(&workerset, "region", awsCloudConfig.Region); err != nil {
+			return nil, err
+		}
+		if err := setWorkersetFlag(&workerset, "securityGroupIDs", awsCloudConfig.SecurityGroupIDs); err != nil {
+			return nil, err
+		}
+		if err := setWorkersetFlag(&workerset, "subnetId", awsCloudConfig.SubnetID); err != nil {
+			return nil, err
+		}
+		if err := setWorkersetFlag(&workerset, "vpcId", awsCloudConfig.VPCID); err != nil {
+			return nil, err
+		}
+
+		workers[idx] = workerset
+	}
+
+	return workers, nil
+}
+
+func (c *Config) updateDigitalOceanWorkers(workers []config.WorkerConfig) ([]config.WorkerConfig, error) {
+	return nil, errors.New("DigitalOcean is not implemented yet")
+}
+
+func (c *Config) updateHetznerWorkers(workers []config.WorkerConfig) ([]config.WorkerConfig, error) {
+	return nil, errors.New("Hetzner is not implemented yet")
+}
+
+func (c *Config) updateOpenStackWorkers(workers []config.WorkerConfig) ([]config.WorkerConfig, error) {
+	return nil, errors.New("OpenStack is not implemented yet")
+}
+
+func (c *Config) updateVSphereWorkers(workers []config.WorkerConfig) ([]config.WorkerConfig, error) {
+	return nil, errors.New("VSphere is not implemented yet")
+}
+
+func setWorkersetFlag(w *config.WorkerConfig, name string, value interface{}) error {
 	// ignore empty values (i.e. not set in terraform output)
-	if s, ok := value.(int); ok && s == 0 {
-		return
+	switch s := value.(type) {
+	case int:
+		if s == 0 {
+			return nil
+		}
+	case string:
+		if s == "" {
+			return nil
+		}
+	case []string:
+		if len(s) == 0 {
+			return nil
+		}
+	default:
+		return errors.New("unsupported type")
 	}
 
-	if s, ok := value.(string); ok && s == "" {
-		return
-	}
-
-	if slice, ok := value.([]string); ok && len(slice) == 0 {
-		return
-	}
-
+	// update CloudProviderSpec ONLY IF given terraform output is absent in
+	// original CloudProviderSpec
 	if _, exists := w.Config.CloudProviderSpec[name]; !exists {
 		w.Config.CloudProviderSpec[name] = value
 	}
+
+	return nil
 }

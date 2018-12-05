@@ -21,16 +21,36 @@ output "kubeone_hosts" {
 
 output "kubeone_workers" {
   value = {
-    aws = {
-      availability_zones     = ["${data.aws_availability_zones.available.names}"]
-      iam_instance_profile   = "${aws_iam_instance_profile.profile.name}"
-      region                 = "${var.aws_region}"
-      subnet_id              = "${data.aws_subnet_ids.default.ids[0]}"
-      vpc_id                 = "${aws_default_vpc.default.id}"
-      vpc_security_group_ids = ["${aws_security_group.common.id}"]
-      instance_type          = "${var.worker_instance_type}"
-      disk_size              = "${var.worker_disk_size}"
-      disk_type              = "${var.worker_disk_type}"
+    # following outputs will be parsed by kubeone and automatically merged into 
+    # corresponding (by name) worker definition
+    fra1-a = {
+      region           = "${var.aws_region}"
+      ami              = "${data.aws_ami.ubuntu.id}"
+      availabilityZone = "${local.az_a}"
+      instanceProfile  = "${aws_iam_instance_profile.profile.name}"
+      securityGroupIDs = ["${aws_security_group.common.id}"]
+      vpcId            = "${aws_default_vpc.default.id}"
+      subnetId         = "${data.aws_subnet.az_a.id}"
+    }
+
+    fra1-b = {
+      region           = "${var.aws_region}"
+      ami              = "${data.aws_ami.ubuntu.id}"
+      availabilityZone = "${local.az_b}"
+      instanceProfile  = "${aws_iam_instance_profile.profile.name}"
+      securityGroupIDs = ["${aws_security_group.common.id}"]
+      vpcId            = "${aws_default_vpc.default.id}"
+      subnetId         = "${data.aws_subnet.az_b.id}"
+    }
+
+    fra1-c = {
+      region           = "${var.aws_region}"
+      ami              = "${data.aws_ami.ubuntu.id}"
+      availabilityZone = "${local.az_c}"
+      instanceProfile  = "${aws_iam_instance_profile.profile.name}"
+      securityGroupIDs = ["${aws_security_group.common.id}"]
+      vpcId            = "${aws_default_vpc.default.id}"
+      subnetId         = "${data.aws_subnet.az_c.id}"
     }
   }
 }

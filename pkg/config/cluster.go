@@ -205,15 +205,15 @@ func (m *NetworkConfig) NodePortRange() string {
 }
 
 // Validate checks the NetworkConfig for errors
-func (p *NetworkConfig) Validate() error {
-	if p.PodSubnetVal != "" {
-		if _, _, err := net.ParseCIDR(p.PodSubnetVal); err != nil {
+func (m *NetworkConfig) Validate() error {
+	if m.PodSubnetVal != "" {
+		if _, _, err := net.ParseCIDR(m.PodSubnetVal); err != nil {
 			return fmt.Errorf("invalid pod subnet specified: %v", err)
 		}
 	}
 
-	if p.ServiceSubnetVal != "" {
-		if _, _, err := net.ParseCIDR(p.ServiceSubnetVal); err != nil {
+	if m.ServiceSubnetVal != "" {
+		if _, _, err := net.ParseCIDR(m.ServiceSubnetVal); err != nil {
 			return fmt.Errorf("invalid service subnet specified: %v", err)
 		}
 	}
@@ -223,6 +223,7 @@ func (p *NetworkConfig) Validate() error {
 
 type providerConfig struct {
 	CloudProviderSpec   map[string]interface{} `yaml:"cloudProviderSpec"`
+	Labels              map[string]string      `yaml:"labels"`
 	OperatingSystem     string                 `yaml:"operatingSystem"`
 	OperatingSystemSpec map[string]interface{} `yaml:"operatingSystemSpec"`
 }
@@ -236,7 +237,7 @@ type WorkerConfig struct {
 
 // Validate checks if the Config makes sense.
 func (m *WorkerConfig) Validate() error {
-	if len(m.Name) == 0 {
+	if m.Name == "" {
 		return errors.New("no name given")
 	}
 

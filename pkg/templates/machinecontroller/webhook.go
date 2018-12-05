@@ -17,16 +17,18 @@ import (
 	"k8s.io/client-go/util/cert/triple"
 )
 
+// MachineController Webhook related constants
 const (
 	WebhookName          = "machine-controller-webhook"
 	WebhookAppLabelKey   = "app"
 	WebhookAppLabelValue = WebhookName
-	WebhookTag           = "v0.10.0"
+	WebhookTag           = MachineControllerTag
 	WebhookNamespace     = "kube-system"
 
 	WebhookCredentialsSecretName = "machine-controller-credentials"
 )
 
+// WebhookConfiguration returns YAML manifest for MachineController webhook deployment
 func WebhookConfiguration(cluster *config.Cluster, runtimeConfig *util.Configuration) (string, error) {
 	caKeyPair, err := certificate.CAKeyPair(runtimeConfig)
 	if err != nil {

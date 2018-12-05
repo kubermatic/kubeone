@@ -48,25 +48,51 @@ provider:
 # KubeOne can automatically create MachineDeployments to create
 # worker nodes in your cluster. Each element in this "workers"
 # list is a single deployment and must have a unique name.
-# workers:
-# - name: my-workers
-#   replicas: 5
-
-#   # refer to the machine-controller documentation to see which
-#   # flags you need to specify for your workers; this is dependent
-#   # on the chosen cloud provider and the example below would
-#   # provision Ubuntu 18.04 machines in EU-Frankfurt with 50GB SSD
-#   # disks each.
-#   config:
-#     cloudProviderSpec:
-#       ami: ami-0bdf93799014acdc4
-#       region: 'eu-central-1'
-#       availabilityZone: 'eu-central-1a'
-#       vpcId: 'vpc-819f62e9'
-#       subnetId: 'subnet-2bff4f43'
-#       instanceType: 't2.medium'
-#       diskSize: 50
-#       diskType: 'gp2'
-#     operatingSystem: ubuntu
-#     operatingSystemSpec:
-#       distUpgradeOnBoot: false
+workers:
+- name: fra1-a
+  replicas: 1
+  config:
+    labels:
+      mylabel: 'fra1-a'
+    # cloudProviderSpec corresponds `provider.name` config
+    cloudProviderSpec:
+      ### the following params could be inferred by kubeone from terraform 
+      ### output JSON:
+      # ami: 'ami-0332a5c40cf835528',
+      # availabilityZone: 'eu-central-1a',
+      # instanceProfile: 'mycool-profile',
+      # region: 'eu-central-1',
+      # securityGroupIDs: ['sg-01f34ffd8447e70c0']
+      # subnetId: 'subnet-2bff4f43',
+      # vpcId: 'vpc-819f62e9'
+      ### end of terraform inferred kubeone params
+      instanceType: 't2.medium'
+      diskSize: 50
+      diskType: 'gp2'
+    operatingSystem: 'ubuntu'
+    operatingSystemSpec:
+      distUpgradeOnBoot: true
+- name: fra1-b
+  replicas: 1
+  config:
+    labels:
+      mylabel: 'fra1-b'
+    cloudProviderSpec:
+      instanceType: 't2.medium'
+      diskSize: 50
+      diskType: 'gp2'
+    operatingSystem: 'ubuntu'
+    operatingSystemSpec:
+      distUpgradeOnBoot: true
+- name: fra1-c
+  replicas: 1
+  config:
+    labels:
+      mylabel: 'fra1-c'
+    cloudProviderSpec:
+      instanceType: 't2.medium'
+      diskSize: 50
+      diskType: 'gp2'
+    operatingSystem: 'ubuntu'
+    operatingSystemSpec:
+      distUpgradeOnBoot: true

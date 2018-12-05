@@ -16,6 +16,10 @@ build: dist/kubeone
 dist/kubeone:
 	go build -v -o $@ ./cmd/kubeone
 
+.PHONY: dep
+dep:
+	dep ensure -v
+
 docker-make-install:
 	docker run -it --rm \
 		-v $(PWD):/go/src/github.com/kubermatic/kubeone \

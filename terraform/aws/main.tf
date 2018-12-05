@@ -4,6 +4,9 @@ provider "aws" {
 
 locals {
   az_count         = "${length(data.aws_availability_zones.available.names)}"
+  az_a             = "${var.aws_region}a"
+  az_b             = "${var.aws_region}b"
+  az_c             = "${var.aws_region}c"
   kube_cluster_tag = "kubernetes.io/cluster/${var.cluster_name}"
 }
 
@@ -27,6 +30,24 @@ data "aws_ami" "ubuntu" {
 
 data "aws_subnet_ids" "default" {
   vpc_id = "${aws_default_vpc.default.id}"
+}
+
+data "aws_subnet" "az_a" {
+  availability_zone = "${local.az_a}"
+  vpc_id            = "${aws_default_vpc.default.id}"
+  default_for_az    = true
+}
+
+data "aws_subnet" "az_b" {
+  availability_zone = "${local.az_b}"
+  vpc_id            = "${aws_default_vpc.default.id}"
+  default_for_az    = true
+}
+
+data "aws_subnet" "az_c" {
+  availability_zone = "${local.az_c}"
+  vpc_id            = "${aws_default_vpc.default.id}"
+  default_for_az    = true
 }
 
 resource "aws_default_vpc" "default" {}
