@@ -88,9 +88,27 @@ pipeline:
     - ./hack/run_drone_e2e.sh
     when:
       branch:
-        - master
+      - master
 
-  # cleanup everything
+  # cleanup worker nodes
+  e2e-worker-nodes-teardown:
+    image: alpine:3.8
+    environment:
+    - STABLEK8S=v1.12.3
+    commands:
+    - apk add --no-cache ca-certificates curl
+    - curl -Lo /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/$STABLEK8S/bin/linux/amd64/kubectl
+    - chmod +x /usr/local/bin/kubectl
+    - kubectl -n kube-system delete machinedeployments --all --wait
+    - kubectl -n kube-system delete machinedes --all --wait
+    when:
+      status:
+      - failure
+      - success
+      branch:
+      - master
+
+  # cleanup master nodes
   e2e-aws-teardown:
     image: hashicorp/terraform:0.11.10
     secrets:
