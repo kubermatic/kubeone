@@ -10,20 +10,24 @@ import (
 	"github.com/kubermatic/kubeone/pkg/ssh"
 )
 
+// Configuration holds a map of generated files
 type Configuration struct {
 	files map[string]string
 }
 
+// NewConfiguration constructor
 func NewConfiguration() *Configuration {
 	return &Configuration{
 		files: make(map[string]string),
 	}
 }
 
+// AddFile save file contents for future references
 func (c *Configuration) AddFile(filename string, content string) {
 	c.files[filename] = strings.TrimSpace(content) + "\n"
 }
 
+// UploadTo directory all the files
 func (c *Configuration) UploadTo(conn ssh.Connection, directory string) error {
 	for filename, content := range c.files {
 		size := int64(len(content))
@@ -45,6 +49,7 @@ func (c *Configuration) UploadTo(conn ssh.Connection, directory string) error {
 	return nil
 }
 
+// Download a files matching `source` pattern
 func (c *Configuration) Download(conn ssh.Connection, source string, prefix string) error {
 	// list files
 	stdout, stderr, _, err := conn.Exec(fmt.Sprintf(`cd -- "%s" && find * -type f`, source))
@@ -73,6 +78,7 @@ func (c *Configuration) Download(conn ssh.Connection, source string, prefix stri
 	return nil
 }
 
+// Debug list filenames and their size to the standard output
 func (c *Configuration) Debug() {
 	for filename, content := range c.files {
 		fmt.Printf("%s: %d bytes\n", filename, len(content))
@@ -97,6 +103,7 @@ func (c *Configuration) Backup(target string) error {
 	return nil
 }
 
+// Get returns contents of the generated file by filename
 func (c *Configuration) Get(filename string) (string, error) {
 	content, ok := c.files[filename]
 	if !ok {

@@ -28,7 +28,8 @@ type networking struct {
 	ServiceSubnet string `yaml:"serviceSubnet"`
 }
 
-type configuration struct {
+// Configuration is a simplified copy of v1alpha1 kubeadm config
+type Configuration struct {
 	APIVersion                 string              `yaml:"apiVersion"`
 	Kind                       string              `yaml:"kind"`
 	CloudProvider              config.ProviderName `yaml:"cloudProvider"`
@@ -41,7 +42,8 @@ type configuration struct {
 	ControllerManagerExtraArgs map[string]string   `yaml:"controllerManagerExtraArgs"`
 }
 
-func NewConfig(cluster *config.Cluster) (*configuration, error) {
+// NewConfig init new v1alpha1 kubeadm config
+func NewConfig(cluster *config.Cluster) (*Configuration, error) {
 	leader := cluster.Leader()
 	etcdEndpoints := make([]string, 0)
 	etcdSANs := make([]string, 0)
@@ -55,7 +57,7 @@ func NewConfig(cluster *config.Cluster) (*configuration, error) {
 		apiServerCertSANs = append(apiServerCertSANs, node.PrivateAddress, node.PublicAddress)
 	}
 
-	cfg := &configuration{
+	cfg := &Configuration{
 		APIVersion:        "kubeadm.k8s.io/v1alpha1",
 		Kind:              "MasterConfiguration",
 		CloudProvider:     cluster.Provider.Name,

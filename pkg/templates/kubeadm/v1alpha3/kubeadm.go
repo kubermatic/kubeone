@@ -47,7 +47,8 @@ type networking struct {
 	ServiceSubnet string `yaml:"serviceSubnet,omitempty"`
 }
 
-type configuration struct {
+// Configuration is a simplified version of v1alpha3 kubeadm config
+type Configuration struct {
 	APIVersion                 string            `yaml:"apiVersion,omitempty"`
 	Kind                       string            `yaml:"kind,omitempty"`
 	KubernetesVersion          string            `yaml:"kubernetesVersion,omitempty"`
@@ -61,7 +62,8 @@ type configuration struct {
 	FeatureGates               map[string]bool   `yaml:"featureGates,omitempty"`
 }
 
-func NewConfig(cluster *config.Cluster, instance int) (*configuration, error) {
+// NewConfig init new v1alpha3 kubeadm config
+func NewConfig(cluster *config.Cluster, instance int) (*Configuration, error) {
 	leader := cluster.Leader()
 	host := cluster.Hosts[instance]
 
@@ -89,7 +91,7 @@ func NewConfig(cluster *config.Cluster, instance int) (*configuration, error) {
 		initialClusterState = "existing"
 	}
 
-	cfg := &configuration{
+	cfg := &Configuration{
 		APIVersion:        "kubeadm.k8s.io/v1alpha3",
 		Kind:              "ClusterConfiguration",
 		KubernetesVersion: fmt.Sprintf("v%s", cluster.Versions.Kubernetes),

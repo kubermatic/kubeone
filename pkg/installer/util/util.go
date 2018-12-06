@@ -12,7 +12,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/ssh"
 )
 
-// tee mimics the unix `tee` command by piping its
+// Tee mimics the unix `tee` command by piping its
 // input through to the upstream writer and also
 // capturing it in a buffer.
 type Tee struct {
@@ -30,6 +30,7 @@ func (t *Tee) String() string {
 	return strings.TrimSpace(t.buffer.String())
 }
 
+// RunCommand on remove machine over SSH
 func RunCommand(conn ssh.Connection, cmd string, verbose bool) (string, string, int, error) {
 	if !verbose {
 		return conn.Exec(cmd)
@@ -57,8 +58,10 @@ func RunCommand(conn ssh.Connection, cmd string, verbose bool) (string, string, 
 	return stdout.String(), stderr.String(), exitCode, err
 }
 
+// TemplateVariables is a render context for templates
 type TemplateVariables map[string]interface{}
 
+// MakeShellCommand render text template with given `variables` render-context
 func MakeShellCommand(cmd string, variables TemplateVariables) (string, error) {
 	tpl, err := template.New("base").Parse(cmd)
 	if err != nil {
@@ -88,7 +91,7 @@ func RunShellCommand(conn ssh.Connection, verbose bool, cmd string, variables Te
 	return stdout, stderr, exitCode, err
 }
 
-// WaitForPod waits for the availablity of the given Kubernetes element.
+// WaitForPod waits for the availability of the given Kubernetes element.
 func WaitForPod(conn ssh.Connection, verbose bool, namespace string, name string, timeout time.Duration) error {
 	cmd := fmt.Sprintf(`sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf -n "%s" get pod "%s" -o jsonpath='{.status.phase}' --ignore-not-found`, namespace, name)
 	if !WaitForCondition(conn, verbose, cmd, timeout, IsRunning) {

@@ -5,10 +5,12 @@ import (
 	"errors"
 
 	"github.com/kubermatic/kubeone/pkg/installer/util"
+
 	"k8s.io/client-go/util/cert"
 	"k8s.io/client-go/util/cert/triple"
 )
 
+// CAKeyPair parses generated PKI CA certificate and key
 func CAKeyPair(config *util.Configuration) (*triple.KeyPair, error) {
 	caCert, err := config.Get("pki/ca.crt")
 	if err != nil {
