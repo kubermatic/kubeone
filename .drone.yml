@@ -93,15 +93,8 @@ pipeline:
   # cleanup worker nodes
   e2e-worker-nodes-teardown:
     image: alpine:3.8
-    environment:
-    - STABLEK8S=v1.12.3
-    - KUBECONFIG=/go/.kube/config
     commands:
-    - apk add --no-cache ca-certificates curl
-    - curl -Lo /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/$STABLEK8S/bin/linux/amd64/kubectl
-    - chmod +x /usr/local/bin/kubectl
-    - kubectl -n kube-system delete machinedeployments --all --wait
-    - kubectl -n kube-system delete machinedes --all --wait
+    - ./dist/kubeone -v reset --tfjson tf.json --destroy-workers config.yaml.dist
     when:
       status:
       - failure
