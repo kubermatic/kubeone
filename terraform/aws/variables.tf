@@ -40,3 +40,13 @@ variable "control_plane_volume_size" {
   default     = 100
   description = "Size of the EBS volume, in Gb"
 }
+
+variable "s3_access_key" {
+  default     = "env:BACKUP_AWS_ACCESS_KEY_ID"
+  description = "AWS Access Key used to access S3 bucket for storing backups"
+}
+
+variable "s3_secret_access_key" {
+  default     = "env:BACKUP_AWS_SECRET_ACCESS_KEY"
+  description = "AWS Secret Access Key used to access S3 bucket for storing backups"
+}
