@@ -40,7 +40,7 @@ func createWorkerMachines(ctx *util.Context) error {
 		}
 
 		// it can still take a bit before the MC is actually ready
-		time.Sleep(5 * time.Second)
+		time.Sleep(10 * time.Second)
 
 		ctx.Logger.Infoln("Creating worker machines…")
 		_, _, _, err := util.RunShellCommand(conn, ctx.Verbose, `kubectl apply -f ./{{ .WORK_DIR }}/workers.yaml`, util.TemplateVariables{
