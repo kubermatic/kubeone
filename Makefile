@@ -5,18 +5,15 @@ export KUBEONE_CONFIG_FILE?=config.yaml.dist
 export KUBERNETES_VERSION=1.12.3
 BUILD_IMAGE?=golang:1.11.2
 
+.PHONY: build install e2e_test dep
+
 all: install
 
 install:
 	go install -v ./cmd/kubeone
 
-
 build: dist/kubeone
 
-dist/kubeone:
-	go build -v -o $@ ./cmd/kubeone
-
-.PHONY: dep
 dep:
 	dep ensure -v
 
@@ -31,4 +28,5 @@ docker-make-install:
 e2e_test:
 	./hack/run_cluster_e2e.sh
 
-.PHONY: build install e2e_test
+dist/kubeone:
+	go build -v -o $@ ./cmd/kubeone

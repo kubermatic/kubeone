@@ -5,8 +5,8 @@ set -e
 
 KUBEONE_ROOT=$(dirname "${BASH_SOURCE}")/..
 BUILD_PATH=${KUBEONE_ROOT}/_build
-KUBECONFIG=${HOME}/.kube/config
 TEST_TIMEOUT=${TEST_TIMEOUT:-10m}
+export KUBECONFIG=${KUBECONFIG:-${HOME}/.kube/config}
 
 # Make sure KUBEONE_CONFIG_FILE is properly set
 if [[ -z ${KUBEONE_CONFIG_FILE} ]]; then
