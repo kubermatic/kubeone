@@ -47,7 +47,7 @@ if kubectl cluster-info > /dev/null; then
   kubectl delete machine -n "{{ .MACHINE_NS }}" --all
 
   for try in {1..30}; do
-	 if kubectl get machine -n "{{ .MACHINE_NS }}" 2>&1 | grep -q  'No resources found.'; then
+    if kubectl get machine -n "{{ .MACHINE_NS }}" 2>&1 | grep -q  'No resources found.'; then
       exit 0
     fi
     sleep 10s
