@@ -95,6 +95,7 @@ pipeline:
     image: alpine:3.8
     environment:
     - STABLEK8S=v1.12.3
+    - KUBECONFIG=/go/.kube/config
     commands:
     - apk add --no-cache ca-certificates curl
     - curl -Lo /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/$STABLEK8S/bin/linux/amd64/kubectl
