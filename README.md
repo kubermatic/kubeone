@@ -27,7 +27,7 @@ Armed with your configuration, you can now run KubeOne:
     ./kubeone install myconfig.yaml
 
 This will SSH into the machines, install the required dependencies and then
-perform the neccessary steps to bring up an etcd ring and a HA Kubernetes
+perform the necessary steps to bring up an etcd ring and a HA Kubernetes
 control plane.
 
 ## Config

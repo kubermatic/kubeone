@@ -6,16 +6,19 @@ import (
 	"github.com/kubermatic/kubeone/pkg/config"
 )
 
+// Connector holds a map of Connections
 type Connector struct {
 	connections map[string]Connection
 }
 
+// NewConnector constructor
 func NewConnector() *Connector {
 	return &Connector{
 		connections: make(map[string]Connection),
 	}
 }
 
+// Connect to the node
 func (c *Connector) Connect(node config.HostConfig) (Connection, error) {
 	var err error
 
@@ -41,6 +44,7 @@ func (c *Connector) Connect(node config.HostConfig) (Connection, error) {
 	return conn, nil
 }
 
+// CloseAll closes all connections
 func (c *Connector) CloseAll() {
 	for _, conn := range c.connections {
 		conn.Close()
