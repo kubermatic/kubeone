@@ -23,6 +23,10 @@ func ResetCommand(logger *logrus.Logger) cli.Command {
 				Usage:  "path to terraform output JSON or - for stdin",
 				Value:  "",
 			},
+			cli.BoolFlag{
+				Name:  "destroy-workers",
+				Usage: "de-provision all worker machines before resetting cluster",
+			},
 		},
 	}
 }
@@ -49,8 +53,13 @@ func ResetAction(logger *logrus.Logger) cli.ActionFunc {
 			return fmt.Errorf("cluster is invalid: %v", err)
 		}
 
+		options := &installer.Options{
+			Verbose:        ctx.GlobalBool("verbose"),
+			DestroyWorkers: ctx.Bool("destroy-workers"),
+		}
+
 		worker := installer.NewInstaller(cluster, logger)
-		_, err = worker.Reset(ctx.GlobalBool("verbose"))
+		_, err = worker.Reset(options)
 
 		return err
 	}))

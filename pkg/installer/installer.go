@@ -17,8 +17,9 @@ import (
 // Options groups the various possible options for running
 // the Kubernetes installation.
 type Options struct {
-	Verbose    bool
-	BackupFile string
+	Verbose        bool
+	BackupFile     string
+	DestroyWorkers bool
 }
 
 type installer struct {
@@ -58,12 +59,10 @@ func (i *installer) Install(options *Options) (*Result, error) {
 	return nil, err
 }
 
-func (i *installer) Reset(verbose bool) (*Result, error) {
+func (i *installer) Reset(options *Options) (*Result, error) {
 	var err error
 
-	ctx := i.createContext(&Options{
-		Verbose: verbose,
-	})
+	ctx := i.createContext(options)
 
 	v := semver.MustParse(i.cluster.Versions.Kubernetes)
 	majorMinor := fmt.Sprintf("%d.%d", v.Major(), v.Minor())
@@ -84,12 +83,13 @@ func (i *installer) Reset(verbose bool) (*Result, error) {
 
 func (i *installer) createContext(options *Options) *util.Context {
 	return &util.Context{
-		Cluster:       i.cluster,
-		Connector:     ssh.NewConnector(),
-		Configuration: util.NewConfiguration(),
-		WorkDir:       "kubeone",
-		Logger:        i.logger,
-		Verbose:       options.Verbose,
-		BackupFile:    options.BackupFile,
+		Cluster:        i.cluster,
+		Connector:      ssh.NewConnector(),
+		Configuration:  util.NewConfiguration(),
+		WorkDir:        "kubeone",
+		Logger:         i.logger,
+		Verbose:        options.Verbose,
+		BackupFile:     options.BackupFile,
+		DestroyWorkers: options.DestroyWorkers,
 	}
 }
