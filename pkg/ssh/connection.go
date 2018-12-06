@@ -58,7 +58,7 @@ func validateOptions(o Opts) (Opts, error) {
 	}
 
 	if len(o.Password) == 0 && len(o.PrivateKey) == 0 && len(o.KeyFile) == 0 && len(o.AgentSocket) == 0 {
-		return o, errors.New("must specifiy at least one of password, private key, keyfile or agent socket")
+		return o, errors.New("must specify at least one of password, private key, keyfile or agent socket")
 	}
 
 	if len(o.KeyFile) > 0 {
@@ -86,7 +86,7 @@ type connection struct {
 	client *ssh.Client
 }
 
-// NewConnection attemps to create a new SSH connection to the host
+// NewConnection attempts to create a new SSH connection to the host
 // specified via the given options.
 func NewConnection(o Opts) (Connection, error) {
 	o, err := validateOptions(o)
@@ -101,9 +101,9 @@ func NewConnection(o Opts) (Connection, error) {
 	}
 
 	if len(o.PrivateKey) > 0 {
-		signer, err := ssh.ParsePrivateKey([]byte(o.PrivateKey))
-		if err != nil {
-			return nil, fmt.Errorf("the given SSH key could not be parsed (note that password-protected keys are not supported): %v", err)
+		signer, parseErr := ssh.ParsePrivateKey([]byte(o.PrivateKey))
+		if parseErr != nil {
+			return nil, fmt.Errorf("the given SSH key could not be parsed (note that password-protected keys are not supported): %v", parseErr)
 		}
 
 		authMethods = append(authMethods, ssh.PublicKeys(signer))
@@ -120,17 +120,17 @@ func NewConnection(o Opts) (Connection, error) {
 			}
 		}
 
-		socket, err := net.Dial("unix", addr)
-		if err != nil {
-			return nil, fmt.Errorf("could not open socket '%s': %v", addr, err)
+		socket, dialErr := net.Dial("unix", addr)
+		if dialErr != nil {
+			return nil, fmt.Errorf("could not open socket '%s': %v", addr, dialErr)
 		}
 
 		agentClient := agent.NewClient(socket)
 
-		signers, err := agentClient.Signers()
-		if err != nil {
+		signers, signersErr := agentClient.Signers()
+		if signersErr != nil {
 			socket.Close()
-			return nil, fmt.Errorf("error when creating signer for SSH agent: %v", err)
+			return nil, fmt.Errorf("error when creating signer for SSH agent: %v", signersErr)
 		}
 
 		authMethods = append(authMethods, ssh.PublicKeys(signers...))
