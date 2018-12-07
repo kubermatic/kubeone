@@ -31,7 +31,7 @@ output "kubeone_workers" {
       securityGroupIDs = ["${aws_security_group.common.id}"]
       vpcId            = "${aws_default_vpc.default.id}"
       subnetId         = "${data.aws_subnet.az_a.id}"
-      ssh_public_keys  = ["${aws_key_pair.deployer.public_key}"]
+      sshPublicKeys    = ["${aws_key_pair.deployer.public_key}"]
     }
 
     fra1-b = {
@@ -42,7 +42,7 @@ output "kubeone_workers" {
       securityGroupIDs = ["${aws_security_group.common.id}"]
       vpcId            = "${aws_default_vpc.default.id}"
       subnetId         = "${data.aws_subnet.az_b.id}"
-      ssh_public_keys  = ["${aws_key_pair.deployer.public_key}"]
+      sshPublicKeys    = ["${aws_key_pair.deployer.public_key}"]
     }
 
     fra1-c = {
@@ -53,7 +53,7 @@ output "kubeone_workers" {
       securityGroupIDs = ["${aws_security_group.common.id}"]
       vpcId            = "${aws_default_vpc.default.id}"
       subnetId         = "${data.aws_subnet.az_c.id}"
-      ssh_public_keys  = ["${aws_key_pair.deployer.public_key}"]
+      sshPublicKeys    = ["${aws_key_pair.deployer.public_key}"]
     }
   }
 }

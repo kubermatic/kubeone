@@ -270,7 +270,7 @@ func setWorkersetFlag(w *config.WorkerConfig, name string, value interface{}) er
 }
 
 type sshKeyWorkerConfig struct {
-	SSHPublicKeys []string `json:"ssh_public_keys"`
+	SSHPublicKeys []string `json:"sshPublicKeys"`
 }
 
 func (c *Config) updateSSHKeys(workerset *config.WorkerConfig, cfg json.RawMessage) error {
