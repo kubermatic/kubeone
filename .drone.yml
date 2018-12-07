@@ -42,6 +42,7 @@ pipeline:
     - aws_secret_access_key
     environment:
     - TF_DIR=terraform/aws
+    - TF_VAR_aws_region=eu-west-3
     - TF_VAR_ssh_public_key_file=/go/.ssh/id_rsa.pub
     commands:
     - export TF_VAR_cluster_name=kubeone-e2e-$DRONE_BUILD_NUMBER
@@ -116,6 +117,7 @@ pipeline:
     - aws_secret_access_key
     environment:
     - TF_DIR=terraform/aws
+    - TF_VAR_aws_region=eu-west-3
     - TF_VAR_ssh_public_key_file=/go/.ssh/id_rsa.pub
     commands:
     - export TF_VAR_cluster_name=kubeone-e2e-$DRONE_BUILD_NUMBER
