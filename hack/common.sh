@@ -39,13 +39,13 @@ start_tests() {
   echo "start e2e tests"
 
   export KUBERNETES_CONFORMANCE_TEST=y
-  export SKIP="Alpha|\[(Disruptive|Feature:[^\]]+|Flaky)\]"
+  export SKIP="Alpha|\[(Disruptive|Feature:[^\]]+|Flaky|Slow|Serial)\]"
 
   version=""
 
   # For < Kubernetes 1.12 use
   if [ "${KUBERNETES_MINOR_VERSION}" -lt 12 ];then
-    export SKIP="Alpha|Kubectl|\[(Disruptive|Feature:[^\]]+|Flaky)\]"
+    export SKIP="Alpha|Kubectl|\[(Disruptive|Feature:[^\]]+|Flaky|Slow|Serial)\]"
   fi
 
   echo "get kubetest"
@@ -72,7 +72,7 @@ start_tests() {
     kubetest --provider=skeleton \
          --test \
          --ginkgo-parallel \
-         --timeout=${TEST_TIMEOUT}
-         --test_args="--ginkgo.focus=\[Conformance\] --ginkgo.skip=${SKIP} "
+         --timeout=${TEST_TIMEOUT} \
+         --test_args="--ginkgo.focus=\[NodeConformance\] --ginkgo.skip=${SKIP} "
   )
 }
