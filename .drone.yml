@@ -12,11 +12,13 @@ pipeline:
 
   # compile a build
   build:
+    group: build
     image: golang:1.11.2
     commands:
     - make build
 
   lint:
+    group: build
     image: golang:1.11.2
     commands:
     - go get -u golang.org/x/lint/golint
@@ -88,10 +90,11 @@ pipeline:
   e2e-conformance-tests:
     image: golang:1.11.2
     environment:
-    - TFJSON=terraform/aws/tf.json
+    - TF_DIR=terraform/aws
     - KUBEONE_CONFIG_FILE=config.yaml.dist
     - KUBECONFIG=/go/.kube/config
     commands:
+    - export TFJSON=$TF_DIR/tf.json
     - ./hack/run_drone_e2e.sh
     when:
       branch:
@@ -101,6 +104,9 @@ pipeline:
   e2e-worker-nodes-teardown:
     image: alpine:3.8
     commands:
+    - apk add --no-cache openssh-client
+    - eval $(ssh-agent)
+    - ssh-add /go/.ssh/id_rsa
     - ./dist/kubeone -v reset --tfjson tf.json --destroy-workers config.yaml.dist
     when:
       status:
