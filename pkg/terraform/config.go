@@ -159,7 +159,7 @@ func (c *Config) Apply(m *config.Cluster) error {
 		case config.ProviderNameDigitalOcean:
 			workerConfigs, err = c.updateDigitalOceanWorkers(m.Workers)
 		case config.ProviderNameHetzner:
-			workerConfigs, err = c.updateDigitalOceanWorkers(m.Workers)
+			workerConfigs, err = c.updateHetznerWorkers(m.Workers)
 		case config.ProviderNameOpenStack:
 			workerConfigs, err = c.updateOpenStackWorkers(m.Workers)
 		case config.ProviderNameVSphere:
