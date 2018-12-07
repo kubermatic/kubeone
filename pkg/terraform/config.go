@@ -159,6 +159,7 @@ func (c *Config) Apply(cluster *config.Cluster) error {
 			// TODO: log warning? error?
 			continue
 		}
+		workerset := workerset
 
 		var err error
 
