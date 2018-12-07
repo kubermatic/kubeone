@@ -9,3 +9,7 @@ linters:
   - maligned
   - megacheck
   - lll
+
+linters-settings:
+  govet:
+    check-shadowing: true
