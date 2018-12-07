@@ -56,8 +56,8 @@ workers:
       mylabel: 'fra1-a'
     # SSH keys can be inferred from Terraform if this list is empty
     # and your tf output contains a "ssh_public_keys" field.
-    sshPublicKeys:
-    - 'ssh-rsa ......'
+    # sshPublicKeys:
+    # - 'ssh-rsa ......'
     # cloudProviderSpec corresponds `provider.name` config
     cloudProviderSpec:
       ### the following params could be inferred by kubeone from terraform
