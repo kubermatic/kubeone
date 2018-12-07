@@ -8,3 +8,4 @@ linters:
   - dupl
   - maligned
   - megacheck
+  - lll
