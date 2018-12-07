@@ -224,6 +224,7 @@ func (m *NetworkConfig) Validate() error {
 type providerConfig struct {
 	CloudProviderSpec   map[string]interface{} `yaml:"cloudProviderSpec"`
 	Labels              map[string]string      `yaml:"labels"`
+	SSHPublicKeys       []string               `yaml:"sshPublicKeys"`
 	OperatingSystem     string                 `yaml:"operatingSystem"`
 	OperatingSystemSpec map[string]interface{} `yaml:"operatingSystemSpec"`
 }

@@ -17,6 +17,7 @@ import (
 )
 
 type providerConfig struct {
+	SSHPublicKeys       []string            `json:"sshPublicKeys"`
 	CloudProvider       config.ProviderName `json:"cloudProvider"`
 	CloudProviderSpec   interface{}         `json:"cloudProviderSpec"`
 	OperatingSystem     string              `json:"operatingSystem"`
@@ -52,6 +53,7 @@ func createMachineDeployment(cluster *config.Cluster, workerset config.WorkerCon
 		CloudProviderSpec:   providerSpec,
 		OperatingSystem:     workerset.Config.OperatingSystem,
 		OperatingSystemSpec: workerset.Config.OperatingSystemSpec,
+		SSHPublicKeys:       workerset.Config.SSHPublicKeys,
 	}
 
 	encoded, err := json.Marshal(config)
