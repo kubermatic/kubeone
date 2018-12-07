@@ -77,9 +77,7 @@ func applyTerraform(tf string, cluster *config.Cluster) error {
 		return fmt.Errorf("Terraform output is invalid: %v", err)
 	}
 
-	tfConfig.Apply(cluster)
-
-	return nil
+	return tfConfig.Apply(cluster)
 }
 
 func loadMachineControllerCredentials(p config.ProviderName) (map[string]string, error) {

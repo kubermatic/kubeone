@@ -29,7 +29,9 @@ func main() {
 		command.KubeconfigCommand(logger),
 	}
 
-	app.Run(os.Args)
+	if err := app.Run(os.Args); err != nil {
+		logger.Fatal(err)
+	}
 }
 
 func setupLogging() *logrus.Logger {
