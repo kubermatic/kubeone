@@ -162,6 +162,7 @@ func (c *Config) Apply(cluster *config.Cluster) error {
 
 		var err error
 
+		// copy over provider-specific fields in the cloudProviderSpec
 		switch cluster.Provider.Name {
 		case config.ProviderNameAWS:
 			err = c.updateAWSWorkerset(&workerset, cloudConfRaw[0])
@@ -177,6 +178,12 @@ func (c *Config) Apply(cluster *config.Cluster) error {
 			return fmt.Errorf("unknown provider %v", cluster.Provider.Name)
 		}
 
+		if err != nil {
+			return err
+		}
+
+		// copy over SSH keys
+		err = c.updateSSHKeys(&workerset, cloudConfRaw[0])
 		if err != nil {
 			return err
 		}
@@ -257,6 +264,23 @@ func setWorkersetFlag(w *config.WorkerConfig, name string, value interface{}) er
 	// original CloudProviderSpec
 	if _, exists := w.Config.CloudProviderSpec[name]; !exists {
 		w.Config.CloudProviderSpec[name] = value
+	}
+
+	return nil
+}
+
+type sshKeyWorkerConfig struct {
+	SSHPublicKeys []string `json:"ssh_public_keys"`
+}
+
+func (c *Config) updateSSHKeys(workerset *config.WorkerConfig, cfg json.RawMessage) error {
+	var cc sshKeyWorkerConfig
+	if err := json.Unmarshal(cfg, &cc); err != nil {
+		return err
+	}
+
+	if len(workerset.Config.SSHPublicKeys) == 0 {
+		workerset.Config.SSHPublicKeys = cc.SSHPublicKeys
 	}
 
 	return nil
