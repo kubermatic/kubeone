@@ -68,7 +68,7 @@ func installPrerequisitesOnNode(ctx *util.Context, node config.HostConfig, conn 
 	}
 
 	logger.Infoln("Deploying configuration files…")
-	err = deployConfigurationFiles(ctx, conn, os)
+	err = deployConfigurationFiles(ctx, conn)
 	if err != nil {
 		return fmt.Errorf("failed to upload configuration files: %v", err)
 	}
@@ -187,7 +187,7 @@ sudo systemctl enable docker.service kubelet.service
 sudo systemctl start docker.service kubelet.service
 `
 
-func deployConfigurationFiles(ctx *util.Context, conn ssh.Connection, operatingSystem string) error {
+func deployConfigurationFiles(ctx *util.Context, conn ssh.Connection) error {
 	err := ctx.Configuration.UploadTo(conn, ctx.WorkDir)
 	if err != nil {
 		return fmt.Errorf("failed to upload: %v", err)

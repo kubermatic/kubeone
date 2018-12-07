@@ -226,19 +226,19 @@ func (c *Config) updateAWSWorkerset(workerset *config.WorkerConfig, cfg json.Raw
 	return nil
 }
 
-func (c *Config) updateDigitalOceanWorkerset(workerset *config.WorkerConfig, cfg json.RawMessage) error {
+func (c *Config) updateDigitalOceanWorkerset(_ *config.WorkerConfig, _ json.RawMessage) error {
 	return errors.New("DigitalOcean is not implemented yet")
 }
 
-func (c *Config) updateHetznerWorkerset(workerset *config.WorkerConfig, cfg json.RawMessage) error {
+func (c *Config) updateHetznerWorkerset(_ *config.WorkerConfig, _ json.RawMessage) error {
 	return errors.New("Hetzner is not implemented yet")
 }
 
-func (c *Config) updateOpenStackWorkerset(workerset *config.WorkerConfig, cfg json.RawMessage) error {
+func (c *Config) updateOpenStackWorkerset(_ *config.WorkerConfig, _ json.RawMessage) error {
 	return errors.New("OpenStack is not implemented yet")
 }
 
-func (c *Config) updateVSphereWorkerset(workerset *config.WorkerConfig, cfg json.RawMessage) error {
+func (c *Config) updateVSphereWorkerset(_ *config.WorkerConfig, _ json.RawMessage) error {
 	return errors.New("VSphere is not implemented yet")
 }
 
