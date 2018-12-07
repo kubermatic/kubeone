@@ -7,6 +7,8 @@ import (
 	"github.com/kubermatic/kubeone/pkg/ssh"
 )
 
+// Context hold together currently test flags and parsed info, along with
+// utilities like logger
 type Context struct {
 	Cluster        *config.Cluster
 	Logger         logrus.FieldLogger
@@ -21,15 +23,6 @@ type Context struct {
 
 // Clone returns a shallow copy of the context.
 func (c *Context) Clone() *Context {
-	return &Context{
-		Cluster:        c.Cluster,
-		Logger:         c.Logger,
-		Connector:      c.Connector,
-		Configuration:  c.Configuration,
-		WorkDir:        c.WorkDir,
-		JoinCommand:    c.JoinCommand,
-		Verbose:        c.Verbose,
-		BackupFile:     c.BackupFile,
-		DestroyWorkers: c.DestroyWorkers,
-	}
+	newCtx := *c
+	return &newCtx
 }

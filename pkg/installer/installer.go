@@ -22,22 +22,23 @@ type Options struct {
 	DestroyWorkers bool
 }
 
-type installer struct {
+// Installer is entrypoint for installation process
+type Installer struct {
 	cluster *config.Cluster
 	logger  *logrus.Logger
 }
 
 // NewInstaller returns a new installer, responsible for dispatching
 // between the different supported Kubernetes versions and running the
-// installation procedure.
-func NewInstaller(cluster *config.Cluster, logger *logrus.Logger) *installer {
-	return &installer{
+func NewInstaller(cluster *config.Cluster, logger *logrus.Logger) *Installer {
+	return &Installer{
 		cluster: cluster,
 		logger:  logger,
 	}
 }
 
-func (i *installer) Install(options *Options) (*Result, error) {
+// Install run the installation process
+func (i *Installer) Install(options *Options) (*Result, error) {
 	var err error
 
 	ctx := i.createContext(options)
@@ -59,7 +60,10 @@ func (i *installer) Install(options *Options) (*Result, error) {
 	return nil, err
 }
 
-func (i *installer) Reset(options *Options) (*Result, error) {
+// Reset resets cluster:
+// * destroys all the worker machines
+// * kubeadm reset masters
+func (i *Installer) Reset(options *Options) (*Result, error) {
 	var err error
 
 	ctx := i.createContext(options)
@@ -81,7 +85,7 @@ func (i *installer) Reset(options *Options) (*Result, error) {
 	return nil, err
 }
 
-func (i *installer) createContext(options *Options) *util.Context {
+func (i *Installer) createContext(options *Options) *util.Context {
 	return &util.Context{
 		Cluster:        i.cluster,
 		Connector:      ssh.NewConnector(),

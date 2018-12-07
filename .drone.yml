@@ -16,6 +16,12 @@ pipeline:
     commands:
     - make build
 
+  lint:
+    image: golang:1.11.2
+    commands:
+    - go get -u golang.org/x/lint/golint
+    - make lint
+
   # generate ssh keys
   e2e-ssh-keygen:
     image: alpine:3.8

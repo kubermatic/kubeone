@@ -8,6 +8,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/config"
 )
 
+// Configuration returns rendered flannel YAML manifest
 func Configuration(cluster *config.Cluster) (string, error) {
 	tpl, err := template.New("base").Parse(flannel)
 	if err != nil {

@@ -13,6 +13,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/v1alpha3"
 )
 
+// Config returns appropriate version of kubeadm config as YAML
 func Config(cluster *config.Cluster, instance int) (string, error) {
 	masterNodes := cluster.Hosts
 	if len(masterNodes) == 0 {

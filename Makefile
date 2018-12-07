@@ -14,6 +14,9 @@ install:
 
 build: dist/kubeone
 
+lint:
+	golint -set_exit_status ./cmd/... ./pkg/...
+
 dep:
 	dep ensure -v
 

@@ -47,7 +47,8 @@ type networking struct {
 	ServiceSubnet string `yaml:"serviceSubnet"`
 }
 
-type configuration struct {
+// Configuration is a simplified version of v1alpha2 kubeadm config
+type Configuration struct {
 	APIVersion                 string            `yaml:"apiVersion"`
 	Kind                       string            `yaml:"kind"`
 	KubernetesVersion          string            `yaml:"kubernetesVersion"`
@@ -59,7 +60,8 @@ type configuration struct {
 	ControllerManagerExtraArgs map[string]string `yaml:"controllerManagerExtraArgs"`
 }
 
-func NewConfig(cluster *config.Cluster, instance int) (*configuration, error) {
+// NewConfig init new v1alpha2 kubeadm config
+func NewConfig(cluster *config.Cluster, instance int) (*Configuration, error) {
 	leader := cluster.Leader()
 	host := cluster.Hosts[instance]
 
@@ -83,7 +85,7 @@ func NewConfig(cluster *config.Cluster, instance int) (*configuration, error) {
 		initialClusterState = "existing"
 	}
 
-	cfg := &configuration{
+	cfg := &Configuration{
 		APIVersion:        "kubeadm.k8s.io/v1alpha2",
 		Kind:              "MasterConfiguration",
 		KubernetesVersion: fmt.Sprintf("v%s", cluster.Versions.Kubernetes),
