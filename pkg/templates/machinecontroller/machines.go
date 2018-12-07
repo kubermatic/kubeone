@@ -126,7 +126,7 @@ func machineSpec(cluster *config.Cluster, workerset config.WorkerConfig, provide
 
 	switch provider {
 	case config.ProviderNameDigitalOcean:
-		spec, err = addDigitaloceanTag(spec, tagName, tagValue)
+		spec, err = addDigitaloceanTag(spec, tagName)
 	default:
 		spec, err = addMapTag(spec, tagName, tagValue)
 	}
@@ -138,7 +138,7 @@ type digitaloceanTag struct {
 	Value string `json:"value"`
 }
 
-func addDigitaloceanTag(spec map[string]interface{}, tagName string, tagValue string) (map[string]interface{}, error) {
+func addDigitaloceanTag(spec map[string]interface{}, tagName string) (map[string]interface{}, error) {
 	tags, ok := spec["tags"]
 	if !ok {
 		tags = make([]digitaloceanTag, 0)
