@@ -40,6 +40,10 @@ func KubeconfigAction(logger *logrus.Logger) cli.ActionFunc {
 		if err != nil {
 			return fmt.Errorf("failed to load cluster: %v", err)
 		}
+		cluster.Provider.Credentials, err = loadMachineControllerCredentials(cluster.Provider.Name)
+		if err != nil {
+			return fmt.Errorf("failed to load provider credentials: %v", err)
+		}
 
 		// apply terraform
 		tf := ctx.String("tfjson")

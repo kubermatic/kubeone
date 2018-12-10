@@ -1,5 +1,9 @@
 
 [[constraint]]
+  name = "github.com/heptio/ark"
+  version = "0.10.0"
+
+[[constraint]]
   name = "github.com/Masterminds/semver"
   version = "1.4.2"
 
