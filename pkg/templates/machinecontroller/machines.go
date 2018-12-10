@@ -17,6 +17,7 @@ import (
 )
 
 type providerConfig struct {
+	SSHPublicKeys       []string            `json:"sshPublicKeys"`
 	CloudProvider       config.ProviderName `json:"cloudProvider"`
 	CloudProviderSpec   interface{}         `json:"cloudProviderSpec"`
 	OperatingSystem     string              `json:"operatingSystem"`
@@ -52,6 +53,7 @@ func createMachineDeployment(cluster *config.Cluster, workerset config.WorkerCon
 		CloudProviderSpec:   providerSpec,
 		OperatingSystem:     workerset.Config.OperatingSystem,
 		OperatingSystemSpec: workerset.Config.OperatingSystemSpec,
+		SSHPublicKeys:       workerset.Config.SSHPublicKeys,
 	}
 
 	encoded, err := json.Marshal(config)
@@ -124,7 +126,7 @@ func machineSpec(cluster *config.Cluster, workerset config.WorkerConfig, provide
 
 	switch provider {
 	case config.ProviderNameDigitalOcean:
-		spec, err = addDigitaloceanTag(spec, tagName, tagValue)
+		spec, err = addDigitaloceanTag(spec, tagName)
 	default:
 		spec, err = addMapTag(spec, tagName, tagValue)
 	}
@@ -136,7 +138,7 @@ type digitaloceanTag struct {
 	Value string `json:"value"`
 }
 
-func addDigitaloceanTag(spec map[string]interface{}, tagName string, tagValue string) (map[string]interface{}, error) {
+func addDigitaloceanTag(spec map[string]interface{}, tagName string) (map[string]interface{}, error) {
 	tags, ok := spec["tags"]
 	if !ok {
 		tags = make([]digitaloceanTag, 0)

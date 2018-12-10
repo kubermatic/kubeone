@@ -19,7 +19,7 @@ func installMachineController(ctx *util.Context) error {
 		}
 
 		ctx.Configuration.AddFile("machine-controller-webhook.yaml", config)
-		ctx.Configuration.UploadTo(conn, ctx.WorkDir)
+		err = ctx.Configuration.UploadTo(conn, ctx.WorkDir)
 		if err != nil {
 			return fmt.Errorf("failed to upload: %v", err)
 		}

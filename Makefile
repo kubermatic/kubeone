@@ -15,7 +15,7 @@ install:
 build: dist/kubeone
 
 lint:
-	golint -set_exit_status ./cmd/... ./pkg/...
+	golangci-lint run
 
 dep:
 	dep ensure -v
