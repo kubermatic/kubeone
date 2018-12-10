@@ -658,7 +658,7 @@ func machineControllerCredentialsSecret(cluster *config.Cluster) corev1.Secret {
 }
 
 func getEnvVarCredentials(cluster *config.Cluster) []corev1.EnvVar {
-	env := make([]corev1.EnvVar, len(cluster.Provider.Credentials))
+	env := make([]corev1.EnvVar, 0)
 
 	for k := range cluster.Provider.Credentials {
 		env = append(env, corev1.EnvVar{
