@@ -5,7 +5,9 @@ import (
 	"github.com/kubermatic/kubeone/pkg/templates"
 )
 
-func ArkManifest(cluster *config.Cluster) (string, error) {
+// Manifest returns the YAML-encoded manifest contianing all
+// resources for deployig Ark into a cluster.
+func Manifest(cluster *config.Cluster) (string, error) {
 	items := []interface{}{
 		// Ark CRDs
 		arkBackupsCRD(),
