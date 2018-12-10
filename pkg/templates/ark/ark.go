@@ -5,7 +5,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/templates"
 )
 
-// Manifest returns the YAML-encoded manifest contianing all
+// Manifest returns the YAML-encoded manifest containing all
 // resources for deployig Ark into a cluster.
 func Manifest(cluster *config.Cluster) (string, error) {
 	items := []interface{}{
