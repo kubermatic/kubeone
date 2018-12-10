@@ -8,8 +8,6 @@ import (
 
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
-	"github.com/kubermatic/kubeone/pkg/installer/version/kube110"
-	"github.com/kubermatic/kubeone/pkg/installer/version/kube111"
 	"github.com/kubermatic/kubeone/pkg/installer/version/kube112"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 )
@@ -47,10 +45,6 @@ func (i *Installer) Install(options *Options) (*Result, error) {
 	majorMinor := fmt.Sprintf("%d.%d", v.Major(), v.Minor())
 
 	switch majorMinor {
-	case "1.10":
-		err = kube110.Install(ctx)
-	case "1.11":
-		err = kube111.Install(ctx)
 	case "1.12":
 		err = kube112.Install(ctx)
 	default:
@@ -72,10 +66,6 @@ func (i *Installer) Reset(options *Options) (*Result, error) {
 	majorMinor := fmt.Sprintf("%d.%d", v.Major(), v.Minor())
 
 	switch majorMinor {
-	case "1.10":
-		err = kube110.Reset(ctx)
-	case "1.11":
-		err = kube111.Reset(ctx)
 	case "1.12":
 		err = kube112.Reset(ctx)
 	default:
