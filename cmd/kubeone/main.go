@@ -14,7 +14,7 @@ func main() {
 
 	app := cli.NewApp()
 	app.Name = "kubeone"
-	app.Usage = "KubeOne sets up Kubernetes clusters."
+	app.Usage = "Kubeone sets up Kubernetes clusters."
 	app.HideVersion = true
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
