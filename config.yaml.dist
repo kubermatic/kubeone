@@ -3,7 +3,7 @@
 # Terraform output at runtime, like explained in the documentation.
 
 versions:
-  kubernetes: '1.12.2'
+  kubernetes: '1.11.5'
   docker: '18.06' # depends on the OS installed on your machines
 
 network:
