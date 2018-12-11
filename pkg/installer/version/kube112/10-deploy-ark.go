@@ -10,7 +10,7 @@ import (
 )
 
 func deployArk(ctx *util.Context) error {
-	if ctx.Cluster.Backup.Provider == "" {
+	if !ctx.Cluster.Backup.Enabled() {
 		ctx.Logger.Info("Skipping Ark deployment because no backup provider was configured.")
 		return nil
 	}

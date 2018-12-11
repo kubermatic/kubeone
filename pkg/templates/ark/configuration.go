@@ -2,8 +2,6 @@ package ark
 
 import (
 	"fmt"
-	"os"
-	"strings"
 
 	"github.com/kubermatic/kubeone/pkg/config"
 	corev1 "k8s.io/api/core/v1"
@@ -16,21 +14,6 @@ const secretEnvPrefix = "env:"
 
 // TODO(xmudrii): Other providers
 func createArkAWSCredentials(cluster *config.Cluster) corev1.Secret {
-	// Parse Access Key ID
-	if strings.HasPrefix(cluster.Backup.S3AccessKey, secretEnvPrefix) {
-		envName := strings.TrimPrefix(cluster.Backup.S3AccessKey, secretEnvPrefix)
-		if envAddr := os.Getenv(envName); len(envAddr) > 0 {
-			cluster.Backup.S3AccessKey = envAddr
-		}
-	}
-	// Parse Secret Access Key ID
-	if strings.HasPrefix(cluster.Backup.S3SecretAccessKey, secretEnvPrefix) {
-		envName := strings.TrimPrefix(cluster.Backup.S3AccessKey, secretEnvPrefix)
-		if envAddr := os.Getenv(envName); len(envAddr) > 0 {
-			cluster.Backup.S3SecretAccessKey = envAddr
-		}
-	}
-
 	return corev1.Secret{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "v1",
