@@ -6,6 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"net"
+	"os"
+	"strings"
 )
 
 // Cluster describes our entire configuration.
@@ -21,6 +23,17 @@ type Cluster struct {
 
 	// stuff generated at runtime
 	etcdClusterToken string
+}
+
+// ApplyEnvironment overwrites empty values inside the configuration for
+// certain subsections of a cluster configuration, like the provider or
+// Ark credentials.
+func (m *Cluster) ApplyEnvironment() error {
+	if err := m.Provider.ApplyEnvironment(); err != nil {
+		return fmt.Errorf("invalid cloud provider credentials: %v", err)
+	}
+
+	return nil
 }
 
 // Validate checks if the cluster config makes sense.
@@ -161,6 +174,41 @@ func (p *ProviderConfig) Validate() error {
 	default:
 		return fmt.Errorf("unknown provider name %q", p.Name)
 	}
+	return nil
+}
+
+// ApplyEnvironment reads cloud provider credentials from
+// environment variables, returning an error if a required
+// variable is not set.
+func (p *ProviderConfig) ApplyEnvironment() error {
+	if p.Credentials == nil {
+		p.Credentials = make(map[string]string)
+	}
+
+	var variables []string
+
+	switch p.Name {
+	case ProviderNameAWS:
+		variables = []string{"AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY"}
+	case ProviderNameOpenStack:
+		variables = []string{"OS_AUTH_URL", "OS_USER_NAME", "OS_PASSWORD", "OS_DOMAIN_NAME", "OS_TENANT_NAME"}
+	case ProviderNameHetzner:
+		variables = []string{"HZ_TOKEN"}
+	case ProviderNameDigitalOcean:
+		variables = []string{"DO_TOKEN"}
+	case ProviderNameVSphere:
+		variables = []string{"VSPHERE_ADDRESS", "VSPHERE_USERNAME", "VSPHERE_PASSWORD"}
+	}
+
+	for _, varName := range variables {
+		value := strings.TrimSpace(os.Getenv(varName))
+		if value == "" {
+			return fmt.Errorf("environment variable %s is not set", varName)
+		}
+
+		p.Credentials[varName] = value
+	}
+
 	return nil
 }
 
