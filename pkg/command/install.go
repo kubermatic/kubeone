@@ -47,13 +47,13 @@ func InstallAction(logger *logrus.Logger) cli.ActionFunc {
 		if err != nil {
 			return fmt.Errorf("failed to load cluster: %v", err)
 		}
-		cluster.Provider.Credentials, err = loadMachineControllerCredentials(cluster.Provider.Name)
-		if err != nil {
-			return fmt.Errorf("failed to load provider credentials: %v", err)
-		}
 
 		tf := ctx.String("tfjson")
 		if err = applyTerraform(tf, cluster); err != nil {
+			return err
+		}
+
+		if err = cluster.ApplyEnvironment(); err != nil {
 			return err
 		}
 
