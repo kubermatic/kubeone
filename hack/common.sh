@@ -20,9 +20,6 @@ if [[ -z ${TFJSON} ]]; then
 fi
 
 KUBERNETES_VERSION=${KUBERNETES_VERSION:-$(grep 'kubernetes:' ${KUBEONE_CONFIG_FILE} | sed 's/[:[:alpha:]|(|[:space:]]//g'| sed "s/['\"]//g")}
-semver=( ${KUBERNETES_VERSION//./ } )
-KUBERNETES_MAJOR_VERSION="${semver[0]}"
-KUBERNETES_MINOR_VERSION="${semver[1]}"
 
 create_kubeconfig() {
   echo "creating kubeconfig"
@@ -42,11 +39,6 @@ start_tests() {
   export SKIP="Alpha|\[(Disruptive|Feature:[^\]]+|Flaky)\]"
 
   version=""
-
-  # For < Kubernetes 1.12 use
-  if [ "${KUBERNETES_MINOR_VERSION}" -lt 12 ];then
-    export SKIP="Alpha|Kubectl|\[(Disruptive|Feature:[^\]]+|Flaky)\]"
-  fi
 
   echo "get kubetest"
   go get -u k8s.io/test-infra/kubetest
@@ -72,7 +64,7 @@ start_tests() {
     kubetest --provider=skeleton \
          --test \
          --ginkgo-parallel \
-         --timeout=${TEST_TIMEOUT}
-         --test_args="--ginkgo.focus=\[Conformance\] --ginkgo.skip=${SKIP} "
+         --timeout=${TEST_TIMEOUT} \
+         --test_args="--ginkgo.focus=\[NodeConformance\] --ginkgo.skip=${SKIP} "
   )
 }

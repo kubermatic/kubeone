@@ -30,7 +30,7 @@ backup:
   # S3 Secret Access Key used to access backups bucket
   s3_secret_access_key: 'env:BACKUP_AWS_SECRET_ACCESS_KEY'
   # Name of the to store backups in
-  bucket_name: ''
+  bucket_name: 'backup'
   # Additional backup options
   # https://heptio.github.io/ark/v0.10.0/api-types/backupstoragelocation.html
   # backup_storage_config:
