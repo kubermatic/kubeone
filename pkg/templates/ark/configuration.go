@@ -10,8 +10,6 @@ import (
 	arkv1 "github.com/heptio/ark/pkg/apis/ark/v1"
 )
 
-const secretEnvPrefix = "env:"
-
 // TODO(xmudrii): Other providers
 func createArkAWSCredentials(cluster *config.Cluster) corev1.Secret {
 	return corev1.Secret{
