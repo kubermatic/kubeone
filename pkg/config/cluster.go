@@ -160,6 +160,23 @@ const (
 	ProviderNameVSphere      ProviderName = "vshere"
 )
 
+func (p ProviderName) CredentialsEnvironmentVariables() []string {
+	switch p {
+	case ProviderNameAWS:
+		return []string{"AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY"}
+	case ProviderNameOpenStack:
+		return []string{"OS_AUTH_URL", "OS_USER_NAME", "OS_PASSWORD", "OS_DOMAIN_NAME", "OS_TENANT_NAME"}
+	case ProviderNameHetzner:
+		return []string{"HZ_TOKEN"}
+	case ProviderNameDigitalOcean:
+		return []string{"DO_TOKEN"}
+	case ProviderNameVSphere:
+		return []string{"VSPHERE_ADDRESS", "VSPHERE_USERNAME", "VSPHERE_PASSWORD"}
+	}
+
+	return nil
+}
+
 // ProviderConfig describes the cloud provider that is running the machines.
 type ProviderConfig struct {
 	Name        ProviderName      `yaml:"name"`
@@ -174,39 +191,25 @@ func (p *ProviderConfig) Validate() error {
 	default:
 		return fmt.Errorf("unknown provider name %q", p.Name)
 	}
+
+	for _, varName := range p.Name.CredentialsEnvironmentVariables() {
+		if p.Credentials[varName] == "" {
+			return fmt.Errorf("environment variable %s is not set", varName)
+		}
+	}
+
 	return nil
 }
 
 // ApplyEnvironment reads cloud provider credentials from
-// environment variables, returning an error if a required
-// variable is not set.
+// environment variables.
 func (p *ProviderConfig) ApplyEnvironment() error {
 	if p.Credentials == nil {
 		p.Credentials = make(map[string]string)
 	}
 
-	var variables []string
-
-	switch p.Name {
-	case ProviderNameAWS:
-		variables = []string{"AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY"}
-	case ProviderNameOpenStack:
-		variables = []string{"OS_AUTH_URL", "OS_USER_NAME", "OS_PASSWORD", "OS_DOMAIN_NAME", "OS_TENANT_NAME"}
-	case ProviderNameHetzner:
-		variables = []string{"HZ_TOKEN"}
-	case ProviderNameDigitalOcean:
-		variables = []string{"DO_TOKEN"}
-	case ProviderNameVSphere:
-		variables = []string{"VSPHERE_ADDRESS", "VSPHERE_USERNAME", "VSPHERE_PASSWORD"}
-	}
-
-	for _, varName := range variables {
-		value := strings.TrimSpace(os.Getenv(varName))
-		if value == "" {
-			return fmt.Errorf("environment variable %s is not set", varName)
-		}
-
-		p.Credentials[varName] = value
+	for _, varName := range p.Name.CredentialsEnvironmentVariables() {
+		p.Credentials[varName] = strings.TrimSpace(os.Getenv(varName))
 	}
 
 	return nil
