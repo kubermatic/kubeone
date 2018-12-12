@@ -129,12 +129,12 @@ func (m *HostConfig) AddDefaults() error {
 	if len(m.PrivateAddress) == 0 && len(m.PublicAddress) > 0 {
 		m.PrivateAddress = m.PublicAddress
 	}
-	if len(m.Hostname) == 0 {
-		m.Hostname = m.PublicAddress
-	}
 	if len(m.SSHPrivateKeyFile) == 0 && len(m.SSHAgentSocket) == 0 {
 		m.SSHAgentSocket = "env:SSH_AUTH_SOCK"
 	}
+	//TODO: Use the same logic kubeadm uses for hostname detection
+	// as kubeadm hardcodes the hostname into the etcdname
+	// and we use the name to tell etcd the address so those two must match
 	return nil
 }
 
