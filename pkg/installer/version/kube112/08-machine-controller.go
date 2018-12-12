@@ -10,7 +10,7 @@ import (
 )
 
 func installMachineController(ctx *util.Context) error {
-	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, node config.HostConfig, conn ssh.Connection) error {
+	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Infoln("Creating machine-controller certificate…")
 
 		config, err := machinecontroller.WebhookConfiguration(ctx.Cluster, ctx.Configuration)

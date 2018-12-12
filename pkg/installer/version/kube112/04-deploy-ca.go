@@ -13,7 +13,7 @@ import (
 func downloadCA(ctx *util.Context) error {
 	ctx.Logger.Infoln("Generating PKI…")
 
-	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, _ config.HostConfig, conn ssh.Connection) error {
+	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Infoln("Running kubeadm…")
 
 		_, _, _, err := util.RunShellCommand(conn, ctx.Verbose, `
@@ -64,7 +64,7 @@ func deployCA(ctx *util.Context) error {
 	return util.RunTaskOnFollowers(ctx, deployCAOnNode)
 }
 
-func deployCAOnNode(ctx *util.Context, node config.HostConfig, conn ssh.Connection) error {
+func deployCAOnNode(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
 	ctx.Logger.Infoln("Uploading files…")
 	err := ctx.Configuration.UploadTo(conn, ctx.WorkDir)
 	if err != nil {

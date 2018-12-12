@@ -113,7 +113,7 @@ func (c *Config) Apply(cluster *config.Cluster) error {
 		cluster.APIServer.Address = c.KubeOneAPI.Value.Endpoint
 	}
 
-	hosts := make([]config.HostConfig, 0)
+	hosts := make([]*config.HostConfig, 0)
 	cp := c.KubeOneHosts.Value.ControlPlane[0]
 	sshPort, _ := strconv.Atoi(cp.SSHPort)
 
@@ -129,7 +129,7 @@ func (c *Config) Apply(cluster *config.Cluster) error {
 		// strip domain from hostname
 		hostname := strings.Split(cp.Hostnames[i], ".")[0]
 
-		hosts = append(hosts, config.HostConfig{
+		hosts = append(hosts, &config.HostConfig{
 			ID:                i,
 			PublicAddress:     publicIP,
 			PrivateAddress:    privateIP,

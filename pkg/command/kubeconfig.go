@@ -55,7 +55,7 @@ func KubeconfigAction(logger *logrus.Logger) cli.ActionFunc {
 		leader := cluster.Leader()
 		connector := ssh.NewConnector()
 
-		conn, err := connector.Connect(leader)
+		conn, err := connector.Connect(*leader)
 		if err != nil {
 			return fmt.Errorf("failed to connect to leader: %v", err)
 		}
