@@ -59,10 +59,20 @@ func installPrerequisitesOnNode(ctx *util.Context, node *config.HostConfig, conn
 		return fmt.Errorf("failed to determine operating system: %v", err)
 	}
 
+	node.OperatingSystem = os
+
+	ctx.Logger.Infoln("Determine hostname…")
+	hostname, err := determineHostname(ctx, conn, node)
+	if err != nil {
+		return fmt.Errorf("failed to determine hostname: %v", err)
+	}
+
+	node.Hostname = hostname
+
 	logger := ctx.Logger.WithField("os", os)
 
 	logger.Infoln("Installing kubeadm…")
-	err = installKubeadm(ctx, conn, os)
+	err = installKubeadm(ctx, conn, node)
 	if err != nil {
 		return fmt.Errorf("failed to install kubeadm: %v", err)
 	}
@@ -82,10 +92,16 @@ func determineOS(ctx *util.Context, conn ssh.Connection) (string, error) {
 	return stdout, err
 }
 
-func installKubeadm(ctx *util.Context, conn ssh.Connection, os string) error {
+func determineHostname(ctx *util.Context, conn ssh.Connection, _ *config.HostConfig) (string, error) {
+	stdout, _, _, err := util.RunCommand(conn, "hostname -f", ctx.Verbose)
+
+	return stdout, err
+}
+
+func installKubeadm(ctx *util.Context, conn ssh.Connection, node *config.HostConfig) error {
 	var err error
 
-	switch os {
+	switch node.OperatingSystem {
 	case "ubuntu":
 		fallthrough
 	case "debian":
@@ -95,7 +111,7 @@ func installKubeadm(ctx *util.Context, conn ssh.Connection, os string) error {
 		err = installKubeadmCoreOS(ctx, conn)
 
 	default:
-		err = fmt.Errorf("'%s' is not a supported operating system", os)
+		err = fmt.Errorf("'%s' is not a supported operating system", node.OperatingSystem)
 	}
 
 	return err
