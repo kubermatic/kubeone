@@ -62,9 +62,9 @@ resource "aws_security_group" "common" {
   description = "cluster common rules"
   vpc_id      = "${aws_default_vpc.default.id}"
 
-  tags {
-    "${local.kube_cluster_tag}" = "shared"
-  }
+  tags = "${map(
+    "${local.kube_cluster_tag}", "shared",
+  )}"
 
   ingress {
     from_port   = "${var.ssh_port}"
@@ -93,9 +93,9 @@ resource "aws_security_group" "control_plane" {
   description = "cluster control_planes"
   vpc_id      = "${aws_default_vpc.default.id}"
 
-  tags {
-    "${local.kube_cluster_tag}" = "shared"
-  }
+  tags = "${map(
+    "${local.kube_cluster_tag}", "shared",
+  )}"
 
   ingress {
     from_port   = 6443
