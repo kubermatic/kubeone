@@ -47,12 +47,8 @@ func KubeconfigAction(logger *logrus.Logger) cli.ActionFunc {
 			return err
 		}
 
-		if err = cluster.ApplyEnvironment(); err != nil {
+		if err = cluster.DefaultAndValidate(); err != nil {
 			return err
-		}
-
-		if err = cluster.Validate(); err != nil {
-			return fmt.Errorf("cluster is invalid: %v", err)
 		}
 
 		// connect to leader

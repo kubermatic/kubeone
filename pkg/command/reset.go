@@ -49,8 +49,8 @@ func ResetAction(logger *logrus.Logger) cli.ActionFunc {
 			return err
 		}
 
-		if err = cluster.Validate(); err != nil {
-			return fmt.Errorf("cluster is invalid: %v", err)
+		if err = cluster.DefaultAndValidate(); err != nil {
+			return err
 		}
 
 		options := &installer.Options{

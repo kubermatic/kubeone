@@ -53,16 +53,8 @@ func InstallAction(logger *logrus.Logger) cli.ActionFunc {
 			return err
 		}
 
-		if err = cluster.ApplyEnvironment(); err != nil {
+		if err = cluster.DefaultAndValidate(); err != nil {
 			return err
-		}
-
-		if err = cluster.AddDefaults(); err != nil {
-			return fmt.Errorf("defaulting failed: %v", err)
-		}
-
-		if err = cluster.Validate(); err != nil {
-			return fmt.Errorf("cluster is invalid: %v", err)
 		}
 
 		options, err := createInstallerOptions(clusterFile, cluster, ctx)
