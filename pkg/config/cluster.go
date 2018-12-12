@@ -41,7 +41,7 @@ func (m *Cluster) ApplyEnvironment() error {
 }
 
 func (m *Cluster) AddDefaults() error {
-	for i, _ := range m.Hosts {
+	for i := range m.Hosts {
 		if err := m.Hosts[i].AddDefaults(); err != nil {
 			return fmt.Errorf("host %d could not be defaulted: %v", i+1, err)
 		}
