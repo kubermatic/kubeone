@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	yaml "gopkg.in/yaml.v2"
+	"github.com/ghodss/yaml"
 )
 
 // KubernetesToYAML properly encodes a list of resources as YAML.

@@ -1,11 +1,11 @@
 package kubeadm
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 
 	"github.com/Masterminds/semver"
+	"github.com/ghodss/yaml"
 
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/v1alpha1"
@@ -43,7 +43,7 @@ func Config(cluster *config.Cluster, instance int) (string, error) {
 		return "", err
 	}
 
-	encoded, err := json.Marshal(cfg)
+	encoded, err := yaml.Marshal(cfg)
 
 	return string(encoded), err
 }
