@@ -39,11 +39,11 @@ func Install(ctx *util.Context) error {
 	if err := createWorkerMachines(ctx); err != nil {
 		return fmt.Errorf("failed to create worker machines: %v", err)
 	}
-	if err := createJoinToken(ctx); err != nil {
-		return fmt.Errorf("failed to create join token: %v", err)
-	}
 	if err := deployArk(ctx); err != nil {
 		return fmt.Errorf("failed to deploy ark: %v", err)
+	}
+	if err := createJoinToken(ctx); err != nil {
+		return fmt.Errorf("failed to create join token: %v", err)
 	}
 
 	return nil

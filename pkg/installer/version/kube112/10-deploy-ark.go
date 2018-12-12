@@ -10,23 +10,26 @@ import (
 )
 
 func deployArk(ctx *util.Context) error {
+	if !ctx.Cluster.Backup.Enabled() {
+		ctx.Logger.Info("Skipping Ark deployment because no backup provider was configured.")
+		return nil
+	}
+
 	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, _ config.HostConfig, conn ssh.Connection) error {
 		arkConfig, err := ark.Manifest(ctx.Cluster)
 		if err != nil {
-			return fmt.Errorf("failed to create ark configuration: %v", err)
+			return fmt.Errorf("failed to create Ark configuration: %v", err)
 		}
+
 		ctx.Configuration.AddFile("ark.yaml", arkConfig)
 		err = ctx.Configuration.UploadTo(conn, fmt.Sprintf("%s/ark", ctx.WorkDir))
 		if err != nil {
-			return fmt.Errorf("failed to upload ark configuration: %v", err)
+			return fmt.Errorf("failed to upload Ark configuration: %v", err)
 		}
 
 		ctx.Logger.Infoln("Deploying Ark…")
 
-		cmd, err := util.MakeShellCommand(`
-# Create Ark prerequisites, configuration, and deploy Ark
-sudo kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f ./{{ .WORK_DIR }}/ark/ark.yaml
-`, util.TemplateVariables{
+		cmd, err := util.MakeShellCommand(`sudo kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f "{{ .WORK_DIR }}/ark/ark.yaml"`, util.TemplateVariables{
 			"WORK_DIR": ctx.WorkDir,
 		})
 		if err != nil {

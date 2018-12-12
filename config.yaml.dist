@@ -24,7 +24,7 @@ provider:
 
 backup:
   # Ark supported provider, see https://heptio.github.io/ark/v0.10.0/support-matrix
-  provider: 'aws'
+  provider: '' # currently only aws is supported, empty provider disable ark backups
   # S3 Access Key used to access the backups bucket
   s3_access_key: 'env:BACKUP_AWS_ACCESS_KEY_ID'
   # S3 Secret Access Key used to access backups bucket

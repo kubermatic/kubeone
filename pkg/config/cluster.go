@@ -6,6 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"net"
+	"os"
+	"strings"
 )
 
 // Cluster describes our entire configuration.
@@ -21,6 +23,21 @@ type Cluster struct {
 
 	// stuff generated at runtime
 	etcdClusterToken string
+}
+
+// ApplyEnvironment overwrites empty values inside the configuration for
+// certain subsections of a cluster configuration, like the provider or
+// Ark credentials.
+func (m *Cluster) ApplyEnvironment() error {
+	if err := m.Provider.ApplyEnvironment(); err != nil {
+		return fmt.Errorf("failed to apply cloud provider credentials: %v", err)
+	}
+
+	if err := m.Backup.ApplyEnvironment(); err != nil {
+		return fmt.Errorf("failed to apply backup environment variables: %v", err)
+	}
+
+	return nil
 }
 
 // Validate checks if the cluster config makes sense.
@@ -147,6 +164,23 @@ const (
 	ProviderNameVSphere      ProviderName = "vshere"
 )
 
+func (p ProviderName) CredentialsEnvironmentVariables() []string {
+	switch p {
+	case ProviderNameAWS:
+		return []string{"AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY"}
+	case ProviderNameOpenStack:
+		return []string{"OS_AUTH_URL", "OS_USER_NAME", "OS_PASSWORD", "OS_DOMAIN_NAME", "OS_TENANT_NAME"}
+	case ProviderNameHetzner:
+		return []string{"HZ_TOKEN"}
+	case ProviderNameDigitalOcean:
+		return []string{"DO_TOKEN"}
+	case ProviderNameVSphere:
+		return []string{"VSPHERE_ADDRESS", "VSPHERE_USERNAME", "VSPHERE_PASSWORD"}
+	}
+
+	return nil
+}
+
 // ProviderConfig describes the cloud provider that is running the machines.
 type ProviderConfig struct {
 	Name        ProviderName      `yaml:"name"`
@@ -161,6 +195,27 @@ func (p *ProviderConfig) Validate() error {
 	default:
 		return fmt.Errorf("unknown provider name %q", p.Name)
 	}
+
+	for _, varName := range p.Name.CredentialsEnvironmentVariables() {
+		if p.Credentials[varName] == "" {
+			return fmt.Errorf("environment variable %s is not set", varName)
+		}
+	}
+
+	return nil
+}
+
+// ApplyEnvironment reads cloud provider credentials from
+// environment variables.
+func (p *ProviderConfig) ApplyEnvironment() error {
+	if p.Credentials == nil {
+		p.Credentials = make(map[string]string)
+	}
+
+	for _, varName := range p.Name.CredentialsEnvironmentVariables() {
+		p.Credentials[varName] = strings.TrimSpace(os.Getenv(varName))
+	}
+
 	return nil
 }
 
@@ -282,13 +337,24 @@ type BackupConfig struct {
 	VolumesSnapshotConfig map[string]string `yaml:"volumes_snapshot_region"`
 }
 
+// Enabled checks if a provider is set and Ark should be deployed.
+func (m *BackupConfig) Enabled() bool {
+	return m.Provider != ""
+}
+
 // Validate valides the BackupConfig structure, ensuring credentials and bucket name are provided
 func (m *BackupConfig) Validate() error {
-	if len(m.S3AccessKey) == 0 {
-		return errors.New("S3 Access key must be given")
+	// if the backup is not enabled, nothing else matters
+	if !m.Enabled() {
+		return nil
 	}
+
+	if len(m.S3AccessKey) == 0 {
+		return errors.New("S3 access key must be given")
+	}
+
 	if len(m.S3SecretAccessKey) == 0 {
-		return errors.New("S3 Secret Access Key must be given")
+		return errors.New("S3 secret access key must be given")
 	}
 
 	if len(m.BucketName) == 0 {
@@ -296,7 +362,25 @@ func (m *BackupConfig) Validate() error {
 	}
 
 	if m.Provider != "aws" && m.Provider != "azure" && m.Provider != "gcp" {
-		return fmt.Errorf("invalid provider %s. supported values: \"aws\", \"azure\", \"gcp\"", m.Provider)
+		return fmt.Errorf("invalid provider %s; supported values: \"aws\", \"azure\" or \"gcp\"", m.Provider)
+	}
+
+	return nil
+}
+
+// ApplyEnvironment reads credentials from environment variables,
+// returning an error if a required variable is not set.
+func (m *BackupConfig) ApplyEnvironment() error {
+	const envPrefix = "env:"
+
+	if strings.HasPrefix(m.S3AccessKey, envPrefix) {
+		envName := strings.TrimPrefix(m.S3AccessKey, envPrefix)
+		m.S3AccessKey = os.Getenv(envName)
+	}
+
+	if strings.HasPrefix(m.S3SecretAccessKey, envPrefix) {
+		envName := strings.TrimPrefix(m.S3AccessKey, envPrefix)
+		m.S3SecretAccessKey = os.Getenv(envName)
 	}
 
 	return nil
