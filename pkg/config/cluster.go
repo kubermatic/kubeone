@@ -40,6 +40,16 @@ func (m *Cluster) ApplyEnvironment() error {
 	return nil
 }
 
+func (m *Cluster) AddDefaults() error {
+	for i := range m.Hosts {
+		if err := m.Hosts[i].AddDefaults(); err != nil {
+			return fmt.Errorf("host %d could not be defaulted: %v", i+1, err)
+		}
+	}
+
+	return nil
+}
+
 // Validate checks if the cluster config makes sense.
 func (m *Cluster) Validate() error {
 	if len(m.Hosts) == 0 {
@@ -110,6 +120,22 @@ type HostConfig struct {
 	SSHUsername       string `yaml:"ssh_username"`
 	SSHPrivateKeyFile string `yaml:"ssh_private_key_file"`
 	SSHAgentSocket    string `yaml:"ssh_agent_socket"`
+}
+
+func (m *HostConfig) AddDefaults() error {
+	if len(m.PublicAddress) == 0 && len(m.PrivateAddress) > 0 {
+		m.PublicAddress = m.PrivateAddress
+	}
+	if len(m.PrivateAddress) == 0 && len(m.PublicAddress) > 0 {
+		m.PrivateAddress = m.PublicAddress
+	}
+	if len(m.SSHPrivateKeyFile) == 0 && len(m.SSHAgentSocket) == 0 {
+		m.SSHAgentSocket = "env:SSH_AUTH_SOCK"
+	}
+	//TODO: Use the same logic kubeadm uses for hostname detection
+	// as kubeadm hardcodes the hostname into the etcdname
+	// and we use the name to tell etcd the address so those two must match
+	return nil
 }
 
 // Validate checks if the Config makes sense.

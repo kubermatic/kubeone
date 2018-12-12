@@ -2,3 +2,4 @@
 .envrc
 /dist
 _build
+config.yaml
