@@ -393,7 +393,7 @@ func (m *BackupConfig) ApplyEnvironment() error {
 	}
 
 	if strings.HasPrefix(m.S3SecretAccessKey, envPrefix) {
-		envName := strings.TrimPrefix(m.S3AccessKey, envPrefix)
+		envName := strings.TrimPrefix(m.S3SecretAccessKey, envPrefix)
 		m.S3SecretAccessKey = os.Getenv(envName)
 	}
 
