@@ -81,7 +81,10 @@ func NewConfig(cluster *config.Cluster, instance int) (*kubeadmv1alpha3.InitConf
 			Kind:       "InitConfiguration",
 		},
 		NodeRegistration: kubeadmv1alpha3.NodeRegistrationOptions{
-			KubeletExtraArgs: map[string]string{},
+			Name: host.Hostname,
+			KubeletExtraArgs: map[string]string{
+				"hostname-override": host.Hostname,
+			},
 		},
 	}
 
