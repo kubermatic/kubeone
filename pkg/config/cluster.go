@@ -132,9 +132,9 @@ func (m *HostConfig) AddDefaults() error {
 	if len(m.SSHPrivateKeyFile) == 0 && len(m.SSHAgentSocket) == 0 {
 		m.SSHAgentSocket = "env:SSH_AUTH_SOCK"
 	}
-	//TODO: Use the same logic kubeadm uses for hostname detection
-	// as kubeadm hardcodes the hostname into the etcdname
-	// and we use the name to tell etcd the address so those two must match
+	if len(m.SSHPrivateKeyFile) == 0 && len(m.SSHAgentSocket) == 0 {
+		m.SSHAgentSocket = "env:SSH_AUTH_SOCK"
+	}
 	return nil
 }
 
