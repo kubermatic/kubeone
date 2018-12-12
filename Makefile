@@ -31,5 +31,5 @@ docker-make-install:
 e2e_test:
 	./hack/run_cluster_e2e.sh
 
-dist/kubeone:
+dist/kubeone: $(shell find . -name '*.go')
 	go build -v -o $@ ./cmd/kubeone
