@@ -25,10 +25,8 @@ type Cluster struct {
 	etcdClusterToken string
 }
 
-// ApplyEnvironment overwrites empty values inside the configuration for
-// certain subsections of a cluster configuration, like the provider or
-// Ark credentials.
-func (m *Cluster) ApplyEnvironment() error {
+// DefaultAndValidate checks if the cluster config makes sense.
+func (m *Cluster) DefaultAndValidate() error {
 	if err := m.Provider.ApplyEnvironment(); err != nil {
 		return fmt.Errorf("failed to apply cloud provider credentials: %v", err)
 	}
@@ -37,21 +35,6 @@ func (m *Cluster) ApplyEnvironment() error {
 		return fmt.Errorf("failed to apply backup environment variables: %v", err)
 	}
 
-	return nil
-}
-
-func (m *Cluster) AddDefaults() error {
-	for i := range m.Hosts {
-		if err := m.Hosts[i].AddDefaults(); err != nil {
-			return fmt.Errorf("host %d could not be defaulted: %v", i+1, err)
-		}
-	}
-
-	return nil
-}
-
-// Validate checks if the cluster config makes sense.
-func (m *Cluster) Validate() error {
 	if len(m.Hosts) == 0 {
 		return errors.New("no master hosts specified")
 	}
@@ -60,7 +43,7 @@ func (m *Cluster) Validate() error {
 		// define a unique ID for each host
 		m.Hosts[idx].ID = idx
 
-		if err := host.Validate(); err != nil {
+		if err := host.AddDefaultsAndValidate(); err != nil {
 			return fmt.Errorf("host %d is invalid: %v", idx+1, err)
 		}
 	}
@@ -122,7 +105,7 @@ type HostConfig struct {
 	SSHAgentSocket    string `json:"ssh_agent_socket"`
 }
 
-func (m *HostConfig) AddDefaults() error {
+func (m *HostConfig) addDefaults() error {
 	if len(m.PublicAddress) == 0 && len(m.PrivateAddress) > 0 {
 		m.PublicAddress = m.PrivateAddress
 	}
@@ -138,8 +121,12 @@ func (m *HostConfig) AddDefaults() error {
 	return nil
 }
 
-// Validate checks if the Config makes sense.
-func (m *HostConfig) Validate() error {
+// AddDefaultsAndValidate checks if the Config makes sense.
+func (m *HostConfig) AddDefaultsAndValidate() error {
+	if err := m.addDefaults(); err != nil {
+		return fmt.Errorf("defaulting failed: %v", err)
+	}
+
 	if len(m.PublicAddress) == 0 {
 		return errors.New("no public IP/address given")
 	}
