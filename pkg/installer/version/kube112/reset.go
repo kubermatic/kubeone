@@ -20,7 +20,7 @@ func Reset(ctx *util.Context) error {
 	return util.RunTaskOnAllNodes(ctx, resetNode)
 }
 
-func destroyWorkers(ctx *util.Context, _ config.HostConfig, conn ssh.Connection) error {
+func destroyWorkers(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
 	ctx.Logger.Infoln("Destroying worker nodes…")
 
 	_, _, _, err := util.RunShellCommand(conn, ctx.Verbose, destroyScript, util.TemplateVariables{
@@ -31,7 +31,7 @@ func destroyWorkers(ctx *util.Context, _ config.HostConfig, conn ssh.Connection)
 	return err
 }
 
-func resetNode(ctx *util.Context, _ config.HostConfig, conn ssh.Connection) error {
+func resetNode(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
 	ctx.Logger.Infoln("Resetting node…")
 
 	_, _, _, err := util.RunShellCommand(conn, ctx.Verbose, resetScript, util.TemplateVariables{

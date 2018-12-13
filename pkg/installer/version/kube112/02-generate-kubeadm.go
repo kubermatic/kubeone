@@ -24,7 +24,7 @@ func generateKubeadm(ctx *util.Context) error {
 	return util.RunTaskOnAllNodes(ctx, generateKubeadmOnNode)
 }
 
-func generateKubeadmOnNode(ctx *util.Context, _ config.HostConfig, conn ssh.Connection) error {
+func generateKubeadmOnNode(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
 	err := ctx.Configuration.UploadTo(conn, ctx.WorkDir)
 	if err != nil {
 		return fmt.Errorf("failed to upload: %v", err)

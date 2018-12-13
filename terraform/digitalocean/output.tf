@@ -9,7 +9,6 @@ output "kubeone_hosts" {
     control_plane = {
       public_address  = "${digitalocean_droplet.control_plane.*.ipv4_address}"
       private_address = "${digitalocean_droplet.control_plane.*.ipv4_address_private}"
-      hostnames       = "${digitalocean_droplet.control_plane.*.name}"
       ssh_user        = "root"
       ssh_port        = "${var.ssh_port}"
 

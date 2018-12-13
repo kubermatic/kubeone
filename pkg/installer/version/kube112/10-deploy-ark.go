@@ -15,7 +15,7 @@ func deployArk(ctx *util.Context) error {
 		return nil
 	}
 
-	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, _ config.HostConfig, conn ssh.Connection) error {
+	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
 		arkConfig, err := ark.Manifest(ctx.Cluster)
 		if err != nil {
 			return fmt.Errorf("failed to create Ark configuration: %v", err)

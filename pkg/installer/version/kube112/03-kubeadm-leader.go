@@ -11,7 +11,7 @@ import (
 func initKubernetesLeader(ctx *util.Context) error {
 	ctx.Logger.Infoln("Initializing Kubernetes on leader…")
 
-	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, _ config.HostConfig, conn ssh.Connection) error {
+	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Infoln("Running kubeadm…")
 
 		stdout, stderr, _, err := util.RunShellCommand(conn, ctx.Verbose, kubeadmInitCommand, util.TemplateVariables{

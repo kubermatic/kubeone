@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
-	"strings"
 
 	"github.com/kubermatic/kubeone/pkg/config"
 )
@@ -14,7 +13,6 @@ type controlPlane struct {
 	ClusterName       string   `json:"cluster_name"`
 	PublicAddress     []string `json:"public_address"`
 	PrivateAddress    []string `json:"private_address"`
-	Hostnames         []string `json:"hostnames"`
 	SSHUser           string   `json:"ssh_user"`
 	SSHPort           string   `json:"ssh_port"`
 	SSHPrivateKeyFile string   `json:"ssh_private_key_file"`
@@ -27,8 +25,8 @@ func (c *controlPlane) Validate() error {
 		return errors.New("must specify a unique cluster name")
 	}
 
-	if len(c.PublicAddress) != len(c.PrivateAddress) || len(c.PublicAddress) != len(c.Hostnames) {
-		return errors.New("number of public addresses must be equal to number of private addresses and hostnames")
+	if len(c.PublicAddress) != len(c.PrivateAddress) {
+		return errors.New("number of public addresses must be equal to number of private addresses")
 	}
 
 	if len(c.PublicAddress) < 3 {
@@ -42,10 +40,6 @@ func (c *controlPlane) Validate() error {
 
 		if len(c.PrivateAddress[i]) == 0 {
 			return fmt.Errorf("private address for host %d is empty", i+1)
-		}
-
-		if len(c.Hostnames[i]) == 0 {
-			return fmt.Errorf("hostname for host %d is empty", i+1)
 		}
 	}
 
@@ -113,7 +107,7 @@ func (c *Config) Apply(cluster *config.Cluster) error {
 		cluster.APIServer.Address = c.KubeOneAPI.Value.Endpoint
 	}
 
-	hosts := make([]config.HostConfig, 0)
+	hosts := make([]*config.HostConfig, 0)
 	cp := c.KubeOneHosts.Value.ControlPlane[0]
 	sshPort, _ := strconv.Atoi(cp.SSHPort)
 
@@ -126,14 +120,10 @@ func (c *Config) Apply(cluster *config.Cluster) error {
 			privateIP = cp.PrivateAddress[i]
 		}
 
-		// strip domain from hostname
-		hostname := strings.Split(cp.Hostnames[i], ".")[0]
-
-		hosts = append(hosts, config.HostConfig{
+		hosts = append(hosts, &config.HostConfig{
 			ID:                i,
 			PublicAddress:     publicIP,
 			PrivateAddress:    privateIP,
-			Hostname:          hostname,
 			SSHUsername:       cp.SSHUser,
 			SSHPort:           sshPort,
 			SSHPrivateKeyFile: cp.SSHPrivateKeyFile,

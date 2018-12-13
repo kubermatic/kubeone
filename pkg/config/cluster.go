@@ -13,7 +13,7 @@ import (
 // Cluster describes our entire configuration.
 type Cluster struct {
 	Name      string          `json:"name"`
-	Hosts     []HostConfig    `json:"hosts"`
+	Hosts     []*HostConfig   `json:"hosts"`
 	APIServer APIServerConfig `json:"apiserver"`
 	Provider  ProviderConfig  `json:"provider"`
 	Versions  VersionConfig   `json:"versions"`
@@ -83,13 +83,13 @@ func (m *Cluster) EtcdClusterToken() (string, error) {
 
 // Leader returns the first configured host. Only call this after
 // validating the cluster config to ensure a leader exists.
-func (m *Cluster) Leader() HostConfig {
+func (m *Cluster) Leader() *HostConfig {
 	return m.Hosts[0]
 }
 
 // Followers returns all but the first configured host. Only call
 // this after validating the cluster config to ensure hosts exist.
-func (m *Cluster) Followers() []HostConfig {
+func (m *Cluster) Followers() []*HostConfig {
 	return m.Hosts[1:]
 }
 
@@ -98,11 +98,14 @@ type HostConfig struct {
 	ID                int    `json:"-"`
 	PublicAddress     string `json:"public_address"`
 	PrivateAddress    string `json:"private_address"`
-	Hostname          string `json:"hostname"`
 	SSHPort           int    `json:"ssh_port"`
 	SSHUsername       string `json:"ssh_username"`
 	SSHPrivateKeyFile string `json:"ssh_private_key_file"`
 	SSHAgentSocket    string `json:"ssh_agent_socket"`
+
+	// runtime information
+	Hostname        string `json:"-"`
+	OperatingSystem string `json:"-"`
 }
 
 func (m *HostConfig) addDefaults() error {
@@ -133,10 +136,6 @@ func (m *HostConfig) AddDefaultsAndValidate() error {
 
 	if len(m.PrivateAddress) == 0 {
 		return errors.New("no private IP/address given")
-	}
-
-	if len(m.Hostname) == 0 {
-		return errors.New("no hostname given")
 	}
 
 	if len(m.SSHPrivateKeyFile) == 0 && len(m.SSHAgentSocket) == 0 {
@@ -392,7 +391,7 @@ func (m *BackupConfig) ApplyEnvironment() error {
 	}
 
 	if strings.HasPrefix(m.S3SecretAccessKey, envPrefix) {
-		envName := strings.TrimPrefix(m.S3AccessKey, envPrefix)
+		envName := strings.TrimPrefix(m.S3SecretAccessKey, envPrefix)
 		m.S3SecretAccessKey = os.Getenv(envName)
 	}
 

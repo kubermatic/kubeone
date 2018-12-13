@@ -16,7 +16,7 @@ func joinMasterCluster(ctx *util.Context) error {
 	return util.RunTaskOnFollowers(ctx, joinNodesMasterCluster)
 }
 
-func joinNodesMasterCluster(ctx *util.Context, node config.HostConfig, conn ssh.Connection) error {
+func joinNodesMasterCluster(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
 	leader := ctx.Cluster.Leader()
 
 	ctx.Logger.Infoln("Waiting for etcd to come up…")

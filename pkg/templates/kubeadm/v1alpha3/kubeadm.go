@@ -14,7 +14,7 @@ import (
 )
 
 // NewConfig init new v1alpha3 kubeadm config
-func NewConfig(cluster *config.Cluster, instance int) (*kubeadmv1alpha3.ClusterConfiguration, error) {
+func NewConfig(cluster *config.Cluster, instance int) (*kubeadmv1alpha3.InitConfiguration, *kubeadmv1alpha3.ClusterConfiguration, error) {
 	leader := cluster.Leader()
 	host := cluster.Hosts[instance]
 
@@ -42,7 +42,7 @@ func NewConfig(cluster *config.Cluster, instance int) (*kubeadmv1alpha3.ClusterC
 		initialClusterState = "existing"
 	}
 
-	cfg := &kubeadmv1alpha3.ClusterConfiguration{
+	clusterCfg := &kubeadmv1alpha3.ClusterConfiguration{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "kubeadm.k8s.io/v1alpha3",
 			Kind:       "ClusterConfiguration",
@@ -73,19 +73,38 @@ func NewConfig(cluster *config.Cluster, instance int) (*kubeadmv1alpha3.ClusterC
 			"endpoint-reconciler-type": "lease",
 			"service-node-port-range":  cluster.Network.NodePortRange(),
 		},
+
+		ControllerManagerExtraArgs: map[string]string{},
+	}
+
+	initCfg := &kubeadmv1alpha3.InitConfiguration{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "kubeadm.k8s.io/v1alpha3",
+			Kind:       "InitConfiguration",
+		},
+		NodeRegistration: kubeadmv1alpha3.NodeRegistrationOptions{
+			Name: host.Hostname,
+			KubeletExtraArgs: map[string]string{
+				"hostname-override": host.Hostname,
+			},
+		},
+	}
+
+	if cluster.Provider.Name != "" {
+		provider := string(cluster.Provider.Name)
+
+		clusterCfg.APIServerExtraArgs["cloud-provider"] = provider
+		clusterCfg.ControllerManagerExtraArgs["cloud-provider"] = provider
+		initCfg.NodeRegistration.KubeletExtraArgs["cloud-provider"] = provider
 	}
 
 	if cluster.Provider.CloudConfig != "" {
 		renderedCloudConfig := "/etc/kubernetes/cloud-config"
 
-		cfg.APIServerExtraArgs["cloud-config"] = renderedCloudConfig
-		cfg.APIServerExtraArgs["cloud-provider"] = string(cluster.Provider.Name)
-
-		cfg.ControllerManagerExtraArgs = map[string]string{
-			"cloud-provider": string(cluster.Provider.Name),
-			"cloud-config":   renderedCloudConfig,
-		}
+		clusterCfg.APIServerExtraArgs["cloud-config"] = renderedCloudConfig
+		clusterCfg.ControllerManagerExtraArgs["cloud-config"] = renderedCloudConfig
+		initCfg.NodeRegistration.KubeletExtraArgs["cloud-config"] = renderedCloudConfig
 	}
 
-	return cfg, nil
+	return initCfg, clusterCfg, nil
 }

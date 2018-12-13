@@ -5,11 +5,9 @@ import (
 	"fmt"
 
 	"github.com/Masterminds/semver"
-	"github.com/ghodss/yaml"
 
 	"github.com/kubermatic/kubeone/pkg/config"
-	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/v1alpha1"
-	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/v1alpha2"
+	"github.com/kubermatic/kubeone/pkg/templates"
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/v1alpha3"
 )
 
@@ -24,17 +22,13 @@ func Config(cluster *config.Cluster, instance int) (string, error) {
 	majorMinor := fmt.Sprintf("%d.%d", v.Major(), v.Minor())
 
 	var (
-		cfg interface{}
-		err error
+		clusterCfg, initCfg interface{}
+		err                 error
 	)
 
 	switch majorMinor {
-	case "1.10":
-		cfg, err = v1alpha1.NewConfig(cluster)
-	case "1.11":
-		cfg, err = v1alpha2.NewConfig(cluster, instance)
 	case "1.12":
-		cfg, err = v1alpha3.NewConfig(cluster, instance)
+		initCfg, clusterCfg, err = v1alpha3.NewConfig(cluster, instance)
 	default:
 		err = fmt.Errorf("unsupported Kubernetes version %s", majorMinor)
 	}
@@ -43,7 +37,5 @@ func Config(cluster *config.Cluster, instance int) (string, error) {
 		return "", err
 	}
 
-	encoded, err := yaml.Marshal(cfg)
-
-	return string(encoded), err
+	return templates.KubernetesToYAML([]interface{}{initCfg, clusterCfg})
 }
