@@ -73,6 +73,8 @@ func NewConfig(cluster *config.Cluster, instance int) (*kubeadmv1alpha3.InitConf
 			"endpoint-reconciler-type": "lease",
 			"service-node-port-range":  cluster.Network.NodePortRange(),
 		},
+
+		ControllerManagerExtraArgs: map[string]string{},
 	}
 
 	initCfg := &kubeadmv1alpha3.InitConfiguration{
