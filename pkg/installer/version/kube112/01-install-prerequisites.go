@@ -134,7 +134,7 @@ source /etc/os-release
 
 
 # Short-Circuit the installation if it was arleady executed
-if type docker && type kubelet; then exit 0; fi
+if { type docker && type kubelet; }; then exit 0; fi
 
 sudo apt-get update
 sudo apt-get install -y --no-install-recommends \
@@ -168,6 +168,7 @@ sudo apt-get install -y --no-install-recommends \
      kubectl=${kube_ver} \
      kubelet=${kube_ver}
 sudo apt-mark hold docker-ce kubelet kubeadm kubectl
+sudo mv /etc/systemd/system/kubelet.service.d/10-kubeadm.conf /etc/systemd/system/kubelet.service.d/10-kubeadm.conf.disabled
 sudo systemctl daemon-reload
 `
 

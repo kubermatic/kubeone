@@ -21,7 +21,12 @@ sudo kubeadm alpha phase etcd local --config=./{{ .WORK_DIR }}/cfg/master_{{ .NO
 `
 	kubeadmInitCommand = `
 if [[ ! -f /etc/kubernetes/admin.conf ]]; then
-	sudo kubeadm init --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+	sudo mv /etc/systemd/system/kubelet.service.d/10-kubeadm.conf.disabled \
+			/etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+	sudo systemctl daemon-reload
+	sudo systemctl stop kubelet
+	sudo kubeadm init --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml \
+		--ignore-preflight-errors=FileAvailable--etc-kubernetes-manifests-etcd.yaml,Port-10250,Port-2379,DirAvailable--var-lib-etcd
 else
 	echo "skip init, already initialized"
 fi
@@ -48,11 +53,12 @@ func kubeadmCertsExecutor(ctx *util.Context, node *config.HostConfig, conn ssh.C
 func initKubernetesLeader(ctx *util.Context) error {
 	ctx.Logger.Infoln("Initializing Kubernetes on leader…")
 
-	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
+	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Infoln("Running kubeadm…")
 
 		stdout, stderr, _, err := util.RunShellCommand(conn, ctx.Verbose, kubeadmInitCommand, util.TemplateVariables{
 			"WORK_DIR": ctx.WorkDir,
+			"NODE_ID":  strconv.Itoa(node.ID),
 		})
 		if err != nil {
 			return fmt.Errorf("error: %v, stdout: %s, stderr: %s", err, stdout, stderr)

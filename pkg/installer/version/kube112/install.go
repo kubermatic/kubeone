@@ -27,10 +27,10 @@ func Install(ctx *util.Context) error {
 	if err := kubeadmCertsOnFollower(ctx); err != nil {
 		return fmt.Errorf("failed to generate cerst on followers: %v", err)
 	}
-	panic("fail here")
 	if err := initKubernetesLeader(ctx); err != nil {
 		return fmt.Errorf("failed to init kubernetes on leader: %v", err)
 	}
+	panic("fail here")
 	if err := joinMasterCluster(ctx); err != nil {
 		return fmt.Errorf("unable to join other masters a cluster: %v", err)
 	}

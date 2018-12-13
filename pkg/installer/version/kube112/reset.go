@@ -62,7 +62,9 @@ fi
 
 const resetScript = `
 sudo kubeadm reset --force
-sudo rm /etc/systemd/system/kubelet.service.d/*
+sudo rm -f /etc/systemd/system/kubelet.service.d/cfg/20-cloudconfig-kubelet.conf
+sudo mv /etc/systemd/system/kubelet.service.d/10-kubeadm.conf /etc/systemd/system/kubelet.service.d/10-kubeadm.conf.disabled
+sudo systemctl daemon-reload
 sudo systemctl daemon-reload
 rm -rf "{{ .WORK_DIR }}"
 `
