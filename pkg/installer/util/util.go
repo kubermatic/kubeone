@@ -30,8 +30,20 @@ func (t *Tee) String() string {
 	return strings.TrimSpace(t.buffer.String())
 }
 
+func PrepareShell(cmd string) string {
+	// ensure we fail early
+	cmd = fmt.Sprintf("set -xeu pipefail\n\n%s", cmd)
+
+	// ensure sudo works on exotic distros
+	cmd = fmt.Sprintf("export \"PATH=$PATH:/sbin:/usr/local/bin:/opt/bin\"\n\n%s", cmd)
+
+	return cmd
+}
+
 // RunCommand on remove machine over SSH
 func RunCommand(conn ssh.Connection, cmd string, verbose bool) (string, string, int, error) {
+	cmd = PrepareShell(cmd)
+
 	if !verbose {
 		stdout, stderr, exitCode, err := conn.Exec(cmd)
 		if err != nil {
@@ -48,12 +60,6 @@ func RunCommand(conn ssh.Connection, cmd string, verbose bool) (string, string, 
 	stderr := &Tee{
 		upstream: os.Stdout,
 	}
-
-	// ensure we fail early
-	cmd = fmt.Sprintf("set -xeu pipefail\n\n%s", cmd)
-
-	// ensure sudo works on exotic distros
-	cmd = fmt.Sprintf("export \"PATH=$PATH:/sbin:/usr/local/bin:/opt/bin\"\n\n%s", cmd)
 
 	exitCode, err := conn.Stream(cmd, stdout, stderr)
 
