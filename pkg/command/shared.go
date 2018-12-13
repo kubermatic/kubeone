@@ -5,11 +5,11 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/ghodss/yaml"
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/terraform"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
-	yaml "gopkg.in/yaml.v2"
 )
 
 func handleErrors(logger logrus.FieldLogger, action cli.ActionFunc) cli.ActionFunc {

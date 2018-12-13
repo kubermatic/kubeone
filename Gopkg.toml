@@ -27,10 +27,6 @@
   branch = "master"
   name = "golang.org/x/crypto"
 
-[[constraint]]
-  name = "gopkg.in/yaml.v2"
-  version = "2.2.2"
-
 [[override]]
   branch = "release-1.11"
   name = "k8s.io/api"

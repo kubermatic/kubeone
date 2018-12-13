@@ -36,12 +36,16 @@ func NewInstaller(cluster *config.Cluster, logger *logrus.Logger) *Installer {
 }
 
 // Install run the installation process
-func (i *Installer) Install(options *Options) (*Result, error) {
+func (i *Installer) Install(options *Options) error {
 	var err error
 
 	ctx := i.createContext(options)
 
-	v := semver.MustParse(i.cluster.Versions.Kubernetes)
+	v, err := semver.NewVersion(i.cluster.Versions.Kubernetes)
+	if err != nil {
+		return fmt.Errorf("can't parse kubernetes version: %v", err)
+	}
+
 	majorMinor := fmt.Sprintf("%d.%d", v.Major(), v.Minor())
 
 	switch majorMinor {
@@ -51,13 +55,13 @@ func (i *Installer) Install(options *Options) (*Result, error) {
 		err = fmt.Errorf("unsupported Kubernetes version %s", majorMinor)
 	}
 
-	return nil, err
+	return err
 }
 
 // Reset resets cluster:
 // * destroys all the worker machines
 // * kubeadm reset masters
-func (i *Installer) Reset(options *Options) (*Result, error) {
+func (i *Installer) Reset(options *Options) error {
 	var err error
 
 	ctx := i.createContext(options)
@@ -72,7 +76,7 @@ func (i *Installer) Reset(options *Options) (*Result, error) {
 		err = fmt.Errorf("unsupported Kubernetes version %s", majorMinor)
 	}
 
-	return nil, err
+	return err
 }
 
 func (i *Installer) createContext(options *Options) *util.Context {

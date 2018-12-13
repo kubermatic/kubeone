@@ -2,10 +2,9 @@ package templates
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 
-	yaml "gopkg.in/yaml.v2"
+	"github.com/ghodss/yaml"
 )
 
 // KubernetesToYAML properly encodes a list of resources as YAML.
@@ -18,35 +17,16 @@ import (
 func KubernetesToYAML(data []interface{}) (string, error) {
 	var buffer bytes.Buffer
 
-	yamlEncoder := yaml.NewEncoder(&buffer)
-
 	for _, item := range data {
-		var (
-			encoded []byte
-			tmp     interface{}
-			err     error
-		)
-
-		if str, ok := item.(string); ok {
-			err = yaml.Unmarshal([]byte(str), &tmp)
-			if err != nil {
-				return "", fmt.Errorf("failed to decode object as YAML: %v", err)
-			}
-		} else {
-			encoded, err = json.Marshal(item)
-			if err != nil {
-				return "", fmt.Errorf("failed to encode object as JSON: %v", err)
-			}
-
-			err = json.Unmarshal(encoded, &tmp)
-			if err != nil {
-				return "", fmt.Errorf("failed to read JSON: %v", err)
-			}
-		}
-
-		err = yamlEncoder.Encode(tmp)
+		encodedItem, err := yaml.Marshal(item)
 		if err != nil {
-			return "", fmt.Errorf("failed to encode object as YAML: %v", err)
+			return "", fmt.Errorf("failed to marshal item: %v", err)
+		}
+		if _, err := buffer.Write(encodedItem); err != nil {
+			return "", fmt.Errorf("failed to write into buffer: %v", err)
+		}
+		if _, err := buffer.WriteString("\n---\n"); err != nil {
+			return "", fmt.Errorf("failed to write into buffer: %v", err)
 		}
 	}
 

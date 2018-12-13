@@ -58,9 +58,6 @@ func ResetAction(logger *logrus.Logger) cli.ActionFunc {
 			DestroyWorkers: ctx.Bool("destroy-workers"),
 		}
 
-		worker := installer.NewInstaller(cluster, logger)
-		_, err = worker.Reset(options)
-
-		return err
+		return installer.NewInstaller(cluster, logger).Reset(options)
 	}))
 }
