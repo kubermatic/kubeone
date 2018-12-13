@@ -41,16 +41,16 @@ func PrepareShell(cmd string) string {
 }
 
 // RunCommand on remove machine over SSH
-func RunCommand(conn ssh.Connection, cmd string, verbose bool) (string, string, int, error) {
+func RunCommand(conn ssh.Connection, cmd string, verbose bool) (string, string, error) {
 	cmd = PrepareShell(cmd)
 
 	if !verbose {
-		stdout, stderr, exitCode, err := conn.Exec(cmd)
+		stdout, stderr, _, err := conn.Exec(cmd)
 		if err != nil {
 			err = fmt.Errorf("%v: %s", err, stderr)
 		}
 
-		return stdout, stderr, exitCode, err
+		return stdout, stderr, err
 	}
 
 	stdout := &Tee{
@@ -61,9 +61,9 @@ func RunCommand(conn ssh.Connection, cmd string, verbose bool) (string, string, 
 		upstream: os.Stdout,
 	}
 
-	exitCode, err := conn.Stream(cmd, stdout, stderr)
+	_, err := conn.Stream(cmd, stdout, stderr)
 
-	return stdout.String(), stderr.String(), exitCode, err
+	return stdout.String(), stderr.String(), err
 }
 
 // TemplateVariables is a render context for templates
@@ -85,10 +85,10 @@ func MakeShellCommand(cmd string, variables TemplateVariables) (string, error) {
 }
 
 // RunShellCommand combines MakeShellCommand and RunCommand.
-func RunShellCommand(conn ssh.Connection, verbose bool, cmd string, variables TemplateVariables) (string, string, int, error) {
+func RunShellCommand(conn ssh.Connection, verbose bool, cmd string, variables TemplateVariables) (string, string, error) {
 	command, err := MakeShellCommand(cmd, variables)
 	if err != nil {
-		return "", "", 0, fmt.Errorf("failed to construct shell script: %v", err)
+		return "", "", fmt.Errorf("failed to construct shell script: %v", err)
 	}
 
 	return RunCommand(conn, command, verbose)
@@ -116,7 +116,7 @@ func WaitForCondition(conn ssh.Connection, verbose bool, cmd string, timeout tim
 	cutoff := time.Now().Add(timeout)
 
 	for time.Now().Before(cutoff) {
-		stdout, _, _, _ := RunCommand(conn, cmd, verbose)
+		stdout, _, _ := RunCommand(conn, cmd, verbose)
 		if validator(stdout) {
 			return true
 		}

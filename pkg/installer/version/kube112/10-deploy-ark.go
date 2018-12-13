@@ -36,7 +36,7 @@ func deployArk(ctx *util.Context) error {
 			return err
 		}
 
-		_, _, _, err = util.RunCommand(conn, cmd, ctx.Verbose)
+		_, _, err = util.RunCommand(conn, cmd, ctx.Verbose)
 		return err
 	})
 }

@@ -16,7 +16,7 @@ func downloadCA(ctx *util.Context) error {
 	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Infoln("Running kubeadm…")
 
-		_, _, _, err := util.RunShellCommand(conn, ctx.Verbose, `
+		_, _, err := util.RunShellCommand(conn, ctx.Verbose, `
 mkdir -p ./{{ .WORK_DIR }}/pki/etcd
 sudo cp /etc/kubernetes/pki/ca.crt ./{{ .WORK_DIR }}/pki/
 sudo cp /etc/kubernetes/pki/ca.key ./{{ .WORK_DIR }}/pki/
@@ -73,7 +73,7 @@ func deployCAOnNode(ctx *util.Context, node *config.HostConfig, conn ssh.Connect
 
 	ctx.Logger.Infoln("Setting up certificates and restarting kubelet…")
 
-	_, _, _, err = util.RunShellCommand(conn, ctx.Verbose, `
+	_, _, err = util.RunShellCommand(conn, ctx.Verbose, `
 sudo rsync -av ./{{ .WORK_DIR }}/pki/ /etc/kubernetes/pki/
 sudo mv /etc/kubernetes/pki/admin.conf /etc/kubernetes/admin.conf
 rm -rf ./{{ .WORK_DIR }}/pki
