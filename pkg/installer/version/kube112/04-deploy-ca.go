@@ -60,35 +60,10 @@ sudo chown -R "$USER:$USER" ./{{ .WORK_DIR }}
 
 func deployCA(ctx *util.Context) error {
 	ctx.Logger.Infoln("Deploying PKI…")
-
 	return util.RunTaskOnFollowers(ctx, deployCAOnNode)
 }
 
 func deployCAOnNode(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
 	ctx.Logger.Infoln("Uploading files…")
-	err := ctx.Configuration.UploadTo(conn, ctx.WorkDir)
-	return err
-	if err != nil {
-		return fmt.Errorf("failed to upload: %v", err)
-	}
-
-	ctx.Logger.Infoln("Setting up certificates and restarting kubelet…")
-
-	_, _, _, err = util.RunShellCommand(conn, ctx.Verbose, `
-sudo rsync -av ./{{ .WORK_DIR }}/pki/ /etc/kubernetes/pki/
-rm -rf ./{{ .WORK_DIR }}/pki
-sudo chown -R root:root /etc/kubernetes
-sudo mkdir -p /etc/kubernetes/manifests
-sudo kubeadm alpha phase certs all --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
-sudo kubeadm alpha phase kubelet config write-to-disk --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
-sudo kubeadm alpha phase kubelet write-env-file --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
-sudo kubeadm alpha phase kubeconfig kubelet --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
-sudo systemctl daemon-reload
-sudo systemctl restart kubelet
-`, util.TemplateVariables{
-		"WORK_DIR": ctx.WorkDir,
-		"NODE_ID":  strconv.Itoa(node.ID),
-	})
-
-	return err
+	return ctx.Configuration.UploadTo(conn, ctx.WorkDir)
 }
