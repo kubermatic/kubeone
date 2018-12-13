@@ -5,7 +5,6 @@ package v1alpha3
 
 import (
 	"fmt"
-	"strings"
 
 	kubeadmv1alpha3 "github.com/kubermatic/kubeone/pkg/apis/kubeadm/v1alpha3"
 	"github.com/kubermatic/kubeone/pkg/config"
@@ -20,21 +19,10 @@ func NewConfig(cluster *config.Cluster, host *config.HostConfig) (*kubeadmv1alph
 		return nil, nil, err
 	}
 
-	etcdSANs := []string{host.PrivateAddress, host.Hostname, "127.0.0.1"}
-	listenClientURLs := fmt.Sprintf("https://127.0.0.1:2379,https://%s:2379", host.PrivateAddress)
-	advertiseClientURLs := fmt.Sprintf("https://%s:2379", host.PrivateAddress)
-	listenPeerURLs := fmt.Sprintf("https://%s:2380", host.PrivateAddress)
-	initialAdvertisePeerURLs := fmt.Sprintf("https://%s:2380", host.PrivateAddress)
-
-	initialClusterAddresses := []string{}
-	initialClusterState := "new"
+	var endpoints []string
 	for _, host := range cluster.Hosts {
-		initialClusterAddresses = append(
-			initialClusterAddresses,
-			fmt.Sprintf("%s=https://%s:2380", host.Hostname, host.PrivateAddress),
-		)
+		endpoints = append(endpoints, fmt.Sprintf("http://%s:2379", host.PrivateAddress))
 	}
-	initialCluster := strings.Join(initialClusterAddresses, ",")
 
 	clusterCfg := &kubeadmv1alpha3.ClusterConfiguration{
 		TypeMeta: metav1.TypeMeta{
@@ -45,17 +33,8 @@ func NewConfig(cluster *config.Cluster, host *config.HostConfig) (*kubeadmv1alph
 		APIServerCertSANs:    []string{leader.PublicAddress},
 		ControlPlaneEndpoint: fmt.Sprintf("%s:%d", leader.PublicAddress, 6443),
 		Etcd: kubeadmv1alpha3.Etcd{
-			Local: &kubeadmv1alpha3.LocalEtcd{
-				ServerCertSANs: etcdSANs,
-				PeerCertSANs:   etcdSANs,
-				ExtraArgs: map[string]string{
-					"listen-client-urls":          listenClientURLs,
-					"advertise-client-urls":       advertiseClientURLs,
-					"listen-peer-urls":            listenPeerURLs,
-					"initial-advertise-peer-urls": initialAdvertisePeerURLs,
-					"initial-cluster":             initialCluster,
-					"initial-cluster-state":       initialClusterState,
-				},
+			External: &kubeadmv1alpha3.ExternalEtcd{
+				Endpoints: endpoints,
 			},
 		},
 		Networking: kubeadmv1alpha3.Networking{
