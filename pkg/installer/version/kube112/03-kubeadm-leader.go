@@ -96,8 +96,8 @@ func kubeadmCertsAndEtcdOnFollower(ctx *util.Context) error {
 
 func kubeadmCertsExecutor(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
 	initialCluster := make([]string, len(ctx.Cluster.Hosts))
-	for _, host := range ctx.Cluster.Hosts {
-		initialCluster = append(initialCluster, fmt.Sprintf("%s=http://%s:2380", host.Hostname, host.PrivateAddress))
+	for i, host := range ctx.Cluster.Hosts {
+		initialCluster[i] = fmt.Sprintf("%s=http://%s:2380", host.Hostname, host.PrivateAddress)
 	}
 	initialClusterString := strings.Join(initialCluster, ",")
 
