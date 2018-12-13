@@ -2,7 +2,6 @@ package kube112
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/kubermatic/kubeone/pkg/config"
 

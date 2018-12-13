@@ -19,7 +19,7 @@ func NewConfig(cluster *config.Cluster, host *config.HostConfig) (*kubeadmv1alph
 		return nil, nil, err
 	}
 
-	var endpoints []string
+	endpoints := make([]string, len(cluster.Hosts))
 	for _, host := range cluster.Hosts {
 		endpoints = append(endpoints, fmt.Sprintf("http://%s:2379", host.PrivateAddress))
 	}
