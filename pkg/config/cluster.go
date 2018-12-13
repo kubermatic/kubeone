@@ -98,12 +98,14 @@ type HostConfig struct {
 	ID                int    `json:"-"`
 	PublicAddress     string `json:"public_address"`
 	PrivateAddress    string `json:"private_address"`
-	Hostname          string `json:"hostname"`
 	SSHPort           int    `json:"ssh_port"`
 	SSHUsername       string `json:"ssh_username"`
 	SSHPrivateKeyFile string `json:"ssh_private_key_file"`
 	SSHAgentSocket    string `json:"ssh_agent_socket"`
-	OperatingSystem   string `json:"-"`
+
+	// runtime information
+	Hostname        string `json:"-"`
+	OperatingSystem string `json:"-"`
 }
 
 func (m *HostConfig) addDefaults() error {

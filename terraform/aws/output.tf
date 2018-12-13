@@ -8,7 +8,6 @@ output "kubeone_hosts" {
   value = {
     control_plane = {
       cluster_name         = "${var.cluster_name}"
-      hostnames            = "${aws_instance.control_plane.*.private_dns}"
       private_address      = "${aws_instance.control_plane.*.private_ip}"
       public_address       = "${aws_instance.control_plane.*.public_ip}"
       ssh_agent_socket     = "${var.ssh_agent_socket}"

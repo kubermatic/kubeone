@@ -45,7 +45,6 @@ backup:
 # hosts:
 # - public_address: '1.2.3.4'
 #   private_address: '172.18.0.1'
-#   hostname: 'my-machine' # this can be a FQDN, though the domain will be stripped
 #   ssh_port: 22 # can be left out if using the default (22)
 #   ssh_username: ubuntu
 
