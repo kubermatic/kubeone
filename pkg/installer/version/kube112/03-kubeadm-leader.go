@@ -14,7 +14,7 @@ func initKubernetesLeader(ctx *util.Context) error {
 	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, _ config.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Infoln("Running kubeadm…")
 
-		stdout, stderr, _, err := util.RunShellCommand(conn, ctx.Verbose, `sudo kubeadm init --config=./{{ .WORK_DIR }}/cfg/master_0.yaml`, util.TemplateVariables{
+		stdout, stderr, _, err := util.RunShellCommand(conn, ctx.Verbose, kubeadmInitCommand, util.TemplateVariables{
 			"WORK_DIR": ctx.WorkDir,
 		})
 		if err != nil {
@@ -24,3 +24,13 @@ func initKubernetesLeader(ctx *util.Context) error {
 		return nil
 	})
 }
+
+const (
+	kubeadmInitCommand = `
+if [[ ! -f /etc/kubernetes/admin.conf ]]; then
+	sudo kubeadm init --config=./{{ .WORK_DIR }}/cfg/master_0.yaml
+else
+	echo "skip init, already initialized"
+fi
+`
+)

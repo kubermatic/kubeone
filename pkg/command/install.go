@@ -69,14 +69,12 @@ func InstallAction(logger *logrus.Logger) cli.ActionFunc {
 		if err != nil {
 			return fmt.Errorf("failed to create installer options: %v", err)
 		}
+
 		if err = applyTerraform(tf, cluster); err != nil {
 			return fmt.Errorf("failed to setup PKI backup: %v", err)
 		}
 
-		worker := installer.NewInstaller(cluster, logger)
-		_, err = worker.Install(options)
-
-		return err
+		return installer.NewInstaller(cluster, logger).Install(options)
 	}))
 }
 
