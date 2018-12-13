@@ -85,10 +85,12 @@ fi
 )
 
 func kubeadmCertsAndEtcdOnLeader(ctx *util.Context) error {
+	ctx.Logger.Infoln("Configuring certs and etcd on first controller…")
 	return util.RunTaskOnLeader(ctx, kubeadmCertsExecutor)
 }
 
 func kubeadmCertsAndEtcdOnFollower(ctx *util.Context) error {
+	ctx.Logger.Infoln("Configuring certs and etcd on consecutive controller…")
 	return util.RunTaskOnFollowers(ctx, kubeadmCertsExecutor)
 }
 
