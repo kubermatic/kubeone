@@ -67,10 +67,7 @@ func installPrerequisitesOnNode(ctx *util.Context, node *config.HostConfig, conn
 		return fmt.Errorf("failed to determine hostname: %v", err)
 	}
 
-	if hostname != node.Hostname {
-		ctx.Logger.Infof("Overwriting hostname with %s.", hostname)
-		node.Hostname = hostname
-	}
+	node.Hostname = hostname
 
 	logger := ctx.Logger.WithField("os", os)
 
