@@ -3,4 +3,4 @@
 /dist
 _build
 config.yaml
-.tar.gz
+*.tar.gz
