@@ -17,16 +17,17 @@ func joinMasterCluster(ctx *util.Context) error {
 }
 func joinControlplaneNode(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
 	_, _, _, err := util.RunShellCommand(conn, ctx.Verbose, `
-sudo mv /etc/systemd/system/kubelet.service.d/10-kubeadm.conf{.disabled,}
-sudo systemctl daemon-reload
+if [[ -f /etc/systemd/system/kubelet.service.d/10-kubeadm.conf.disabled ]]; then
+	sudo mv /etc/systemd/system/kubelet.service.d/10-kubeadm.conf{.disabled,}
+	sudo systemctl daemon-reload
+fi
+
 sudo systemctl stop kubelet
 sudo {{ .JOIN_COMMAND }} \
-	 --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml \
 	 --experimental-control-plane \
 	 --ignore-preflight-errors=DirAvailable--etc-kubernetes-manifests
 `, util.TemplateVariables{
 		"WORK_DIR":     ctx.WorkDir,
-		"NODE_ID":      strconv.Itoa(node.ID),
 		"JOIN_COMMAND": ctx.JoinCommand,
 	})
 	return err

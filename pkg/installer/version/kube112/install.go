@@ -36,7 +36,6 @@ func Install(ctx *util.Context) error {
 	if err := joinMasterCluster(ctx); err != nil {
 		return fmt.Errorf("unable to join other masters a cluster: %v", err)
 	}
-	panic("fail here")
 	if err := installKubeProxy(ctx); err != nil {
 		return fmt.Errorf("failed to install kube proxy: %v", err)
 	}
