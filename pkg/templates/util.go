@@ -3,6 +3,7 @@ package templates
 import (
 	"bytes"
 	"fmt"
+	"strings"
 
 	"github.com/ghodss/yaml"
 )
@@ -18,7 +19,17 @@ func KubernetesToYAML(data []interface{}) (string, error) {
 	var buffer bytes.Buffer
 
 	for _, item := range data {
-		encodedItem, err := yaml.Marshal(item)
+		var (
+			encodedItem []byte
+			err         error
+		)
+
+		if str, ok := item.(string); ok {
+			encodedItem = []byte(strings.TrimSpace(str))
+		} else {
+			encodedItem, err = yaml.Marshal(item)
+		}
+
 		if err != nil {
 			return "", fmt.Errorf("failed to marshal item: %v", err)
 		}
