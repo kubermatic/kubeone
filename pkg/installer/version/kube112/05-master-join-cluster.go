@@ -11,16 +11,25 @@ import (
 )
 
 func joinMasterCluster(ctx *util.Context) error {
-	ctx.Logger.Infoln("Deploying PKI…")
+	ctx.Logger.Infoln("Joining controlplane node…")
 
-	if err := util.RunTaskOnFollowers(ctx, deployETCDManifest); err != nil {
-		return err
-	}
-
-	if err := util.RunTaskOnFollowers(ctx, joinETCDMember); err != nil {
-		return err
-	}
-	return util.RunTaskOnFollowers(ctx, joinNodesMasterCluster)
+	return util.RunTaskOnFollowers(ctx, joinControlplaneNode)
+}
+func joinControlplaneNode(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
+	_, _, _, err := util.RunShellCommand(conn, ctx.Verbose, `
+sudo mv /etc/systemd/system/kubelet.service.d/10-kubeadm.conf{.disabled,}
+sudo systemctl daemon-reload
+sudo systemctl stop kubelet
+sudo {{ .JOIN_COMMAND }} \
+	 --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml \
+	 --experimental-control-plane \
+	 --ignore-preflight-errors=DirAvailable--etc-kubernetes-manifests
+`, util.TemplateVariables{
+		"WORK_DIR":     ctx.WorkDir,
+		"NODE_ID":      strconv.Itoa(node.ID),
+		"JOIN_COMMAND": ctx.JoinCommand,
+	})
+	return err
 }
 
 func deployETCDManifest(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {

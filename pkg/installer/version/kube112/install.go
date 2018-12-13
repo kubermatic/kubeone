@@ -30,10 +30,13 @@ func Install(ctx *util.Context) error {
 	if err := initKubernetesLeader(ctx); err != nil {
 		return fmt.Errorf("failed to init kubernetes on leader: %v", err)
 	}
-	panic("fail here")
+	if err := createJoinToken(ctx); err != nil {
+		return fmt.Errorf("failed to create join token: %v", err)
+	}
 	if err := joinMasterCluster(ctx); err != nil {
 		return fmt.Errorf("unable to join other masters a cluster: %v", err)
 	}
+	panic("fail here")
 	if err := installKubeProxy(ctx); err != nil {
 		return fmt.Errorf("failed to install kube proxy: %v", err)
 	}
@@ -48,9 +51,6 @@ func Install(ctx *util.Context) error {
 	}
 	if err := deployArk(ctx); err != nil {
 		return fmt.Errorf("failed to deploy ark: %v", err)
-	}
-	if err := createJoinToken(ctx); err != nil {
-		return fmt.Errorf("failed to create join token: %v", err)
 	}
 
 	return nil
