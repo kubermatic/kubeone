@@ -138,10 +138,6 @@ func (m *HostConfig) AddDefaultsAndValidate() error {
 		return errors.New("no private IP/address given")
 	}
 
-	if len(m.Hostname) == 0 {
-		return errors.New("no hostname given")
-	}
-
 	if len(m.SSHPrivateKeyFile) == 0 && len(m.SSHAgentSocket) == 0 {
 		return errors.New("neither SSH private key nor agent socket given, don't know how to authenticate")
 	}
