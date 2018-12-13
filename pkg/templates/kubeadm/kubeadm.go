@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/Masterminds/semver"
-	yaml "gopkg.in/yaml.v2"
+	"github.com/ghodss/yaml"
 
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/v1alpha1"

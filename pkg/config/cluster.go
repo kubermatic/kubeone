@@ -12,14 +12,14 @@ import (
 
 // Cluster describes our entire configuration.
 type Cluster struct {
-	Name      string          `yaml:"name"`
-	Hosts     []HostConfig    `yaml:"hosts"`
-	APIServer APIServerConfig `yaml:"apiserver"`
-	Provider  ProviderConfig  `yaml:"provider"`
-	Versions  VersionConfig   `yaml:"versions"`
-	Network   NetworkConfig   `yaml:"network"`
-	Workers   []WorkerConfig  `yaml:"workers"`
-	Backup    BackupConfig    `yaml:"backup"`
+	Name      string          `json:"name"`
+	Hosts     []HostConfig    `json:"hosts"`
+	APIServer APIServerConfig `json:"apiserver"`
+	Provider  ProviderConfig  `json:"provider"`
+	Versions  VersionConfig   `json:"versions"`
+	Network   NetworkConfig   `json:"network"`
+	Workers   []WorkerConfig  `json:"workers"`
+	Backup    BackupConfig    `json:"backup"`
 
 	// stuff generated at runtime
 	etcdClusterToken string
@@ -112,14 +112,14 @@ func (m *Cluster) Followers() []HostConfig {
 
 // HostConfig describes a single master node.
 type HostConfig struct {
-	ID                int    `yaml:"-"`
-	PublicAddress     string `yaml:"public_address"`
-	PrivateAddress    string `yaml:"private_address"`
-	Hostname          string `yaml:"hostname"`
-	SSHPort           int    `yaml:"ssh_port"`
-	SSHUsername       string `yaml:"ssh_username"`
-	SSHPrivateKeyFile string `yaml:"ssh_private_key_file"`
-	SSHAgentSocket    string `yaml:"ssh_agent_socket"`
+	ID                int    `json:"-"`
+	PublicAddress     string `json:"public_address"`
+	PrivateAddress    string `json:"private_address"`
+	Hostname          string `json:"hostname"`
+	SSHPort           int    `json:"ssh_port"`
+	SSHUsername       string `json:"ssh_username"`
+	SSHPrivateKeyFile string `json:"ssh_private_key_file"`
+	SSHAgentSocket    string `json:"ssh_agent_socket"`
 }
 
 func (m *HostConfig) AddDefaults() error {
@@ -175,7 +175,7 @@ func (m *HostConfig) EtcdPeerURL() string {
 
 // APIServerConfig describes the load balancer address.
 type APIServerConfig struct {
-	Address string `yaml:"address"`
+	Address string `json:"address"`
 }
 
 // ProviderName represents the name of an provider
@@ -209,9 +209,9 @@ func (p ProviderName) CredentialsEnvironmentVariables() []string {
 
 // ProviderConfig describes the cloud provider that is running the machines.
 type ProviderConfig struct {
-	Name        ProviderName      `yaml:"name"`
-	CloudConfig string            `yaml:"cloud_config"`
-	Credentials map[string]string `yaml:"credentials"`
+	Name        ProviderName      `json:"name"`
+	CloudConfig string            `json:"cloud_config"`
+	Credentials map[string]string `json:"credentials"`
 }
 
 // Validate checks the ProviderConfig for errors
@@ -247,8 +247,8 @@ func (p *ProviderConfig) ApplyEnvironment() error {
 
 // VersionConfig describes the versions of Kubernetes and Docker that are installed.
 type VersionConfig struct {
-	Kubernetes string `yaml:"kubernetes"`
-	Docker     string `yaml:"docker"`
+	Kubernetes string `json:"kubernetes"`
+	Docker     string `json:"docker"`
 }
 
 // Etcd version
@@ -258,9 +258,9 @@ func (m *VersionConfig) Etcd() string {
 
 // NetworkConfig describes the node network.
 type NetworkConfig struct {
-	PodSubnetVal     string `yaml:"pod_subnet"`
-	ServiceSubnetVal string `yaml:"service_subnet"`
-	NodePortRangeVal string `yaml:"node_port_range"`
+	PodSubnetVal     string `json:"pod_subnet"`
+	ServiceSubnetVal string `json:"service_subnet"`
+	NodePortRangeVal string `json:"node_port_range"`
 }
 
 // PodSubnet returns the pod subnet or the default value.
@@ -308,18 +308,18 @@ func (m *NetworkConfig) Validate() error {
 }
 
 type providerConfig struct {
-	CloudProviderSpec   map[string]interface{} `yaml:"cloudProviderSpec"`
-	Labels              map[string]string      `yaml:"labels"`
-	SSHPublicKeys       []string               `yaml:"sshPublicKeys"`
-	OperatingSystem     string                 `yaml:"operatingSystem"`
-	OperatingSystemSpec map[string]interface{} `yaml:"operatingSystemSpec"`
+	CloudProviderSpec   map[string]interface{} `json:"cloudProviderSpec"`
+	Labels              map[string]string      `json:"labels"`
+	SSHPublicKeys       []string               `json:"sshPublicKeys"`
+	OperatingSystem     string                 `json:"operatingSystem"`
+	OperatingSystemSpec map[string]interface{} `json:"operatingSystemSpec"`
 }
 
 // WorkerConfig describes a set of worker machines.
 type WorkerConfig struct {
-	Name     string         `yaml:"name"`
-	Replicas int            `yaml:"replicas"`
-	Config   providerConfig `yaml:"config"`
+	Name     string         `json:"name"`
+	Replicas int            `json:"replicas"`
+	Config   providerConfig `json:"config"`
 }
 
 // Validate checks if the Config makes sense.
@@ -340,27 +340,27 @@ type BackupConfig struct {
 	// Provider is provider for buckets and volume snapshots.
 	// Possible values are: AWS (includes compatible AWS S3 storages), Azure and GCP
 	// TODO(xmudrii): By default uses specified control plane provider if compatible with Ark
-	Provider string `yaml:"provider"`
+	Provider string `json:"provider"`
 
 	// S3AccessKey is Access Key used to access backups S3 bucket.
 	// This variable is sourced from BACKUP_AWS_ACCESS_KEY_ID,
 	// or if unset from AWS_ACCESS_KEY_ID environment variable
-	S3AccessKey string `yaml:"s3_access_key"`
+	S3AccessKey string `json:"s3_access_key"`
 	// S3SecretAccessKey is secret key used to access backups S3 bucket.
 	// This variable is sourced from BACKUP_AWS_SECRET_ACCESS_KEY environment variable,
 	// or if unset from AWS_SECRET_ACCESS_KEY environment variable
-	S3SecretAccessKey string `yaml:"s3_secret_access_key"`
+	S3SecretAccessKey string `json:"s3_secret_access_key"`
 
 	// BucketName is name of the S3 bucket where backups are stored
-	BucketName string `yaml:"bucket_name"`
+	BucketName string `json:"bucket_name"`
 
 	// BackupStorageConfig is optional configuration depending on the provider specified
 	// Details: https://heptio.github.io/ark/v0.10.0/api-types/backupstoragelocation.html
-	BackupStorageConfig map[string]string `yaml:"backup_storage_config"`
+	BackupStorageConfig map[string]string `json:"backup_storage_config"`
 
 	// VolumesSnapshotConfig is optional configuration depending on the provider specified
 	// Details: https://heptio.github.io/ark/v0.10.0/api-types/volumesnapshotlocation.html
-	VolumesSnapshotConfig map[string]string `yaml:"volumes_snapshot_region"`
+	VolumesSnapshotConfig map[string]string `json:"volumes_snapshot_region"`
 }
 
 // Enabled checks if a provider is set and Ark should be deployed.
