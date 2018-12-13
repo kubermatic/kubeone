@@ -33,7 +33,12 @@ func (t *Tee) String() string {
 // RunCommand on remove machine over SSH
 func RunCommand(conn ssh.Connection, cmd string, verbose bool) (string, string, int, error) {
 	if !verbose {
-		return conn.Exec(cmd)
+		stdout, stderr, exitCode, err := conn.Exec(cmd)
+		if err != nil {
+			err = fmt.Errorf("%v: %s", err, stderr)
+		}
+
+		return stdout, stderr, exitCode, err
 	}
 
 	stdout := &Tee{
@@ -50,10 +55,7 @@ func RunCommand(conn ssh.Connection, cmd string, verbose bool) (string, string, 
 	// ensure sudo works on exotic distros
 	cmd = fmt.Sprintf("export \"PATH=$PATH:/sbin:/usr/local/bin:/opt/bin\"\n\n%s", cmd)
 
-	exitCode, err := conn.Stream(cmd, stdout, os.Stderr)
-	if err != nil {
-		err = fmt.Errorf("%v: %s", err, stderr)
-	}
+	exitCode, err := conn.Stream(cmd, stdout, stderr)
 
 	return stdout.String(), stderr.String(), exitCode, err
 }
@@ -83,12 +85,7 @@ func RunShellCommand(conn ssh.Connection, verbose bool, cmd string, variables Te
 		return "", "", 0, fmt.Errorf("failed to construct shell script: %v", err)
 	}
 
-	stdout, stderr, exitCode, err := RunCommand(conn, command, verbose)
-	if err != nil {
-		err = fmt.Errorf("%v: %s", err, stderr)
-	}
-
-	return stdout, stderr, exitCode, err
+	return RunCommand(conn, command, verbose)
 }
 
 // WaitForPod waits for the availability of the given Kubernetes element.
