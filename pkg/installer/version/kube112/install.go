@@ -15,14 +15,21 @@ func Install(ctx *util.Context) error {
 	if err := generateKubeadm(ctx); err != nil {
 		return fmt.Errorf("failed to generate kubeadm config files: %v", err)
 	}
-	if err := initKubernetesLeader(ctx); err != nil {
-		return fmt.Errorf("failed to init kubernetes on leader: %v", err)
+	if err := kubeadmCertsOnLeader(ctx); err != nil {
+		return fmt.Errorf("failed to generate certs: %v", err)
 	}
 	if err := downloadCA(ctx); err != nil {
 		return fmt.Errorf("unable to download ca from leader: %v", err)
 	}
 	if err := deployCA(ctx); err != nil {
 		return fmt.Errorf("unable to deploy ca on nodes: %v", err)
+	}
+	if err := kubeadmCertsOnFollower(ctx); err != nil {
+		return fmt.Errorf("failed to generate cerst on followers: %v", err)
+	}
+	panic("fail here")
+	if err := initKubernetesLeader(ctx); err != nil {
+		return fmt.Errorf("failed to init kubernetes on leader: %v", err)
 	}
 	if err := joinMasterCluster(ctx); err != nil {
 		return fmt.Errorf("unable to join other masters a cluster: %v", err)

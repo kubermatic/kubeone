@@ -62,5 +62,7 @@ fi
 
 const resetScript = `
 sudo kubeadm reset --force
+sudo rm /etc/systemd/system/kubelet.service.d/*
+sudo systemctl daemon-reload
 rm -rf "{{ .WORK_DIR }}"
 `

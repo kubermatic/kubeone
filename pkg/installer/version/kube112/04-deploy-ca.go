@@ -26,7 +26,7 @@ sudo cp /etc/kubernetes/pki/front-proxy-ca.crt ./{{ .WORK_DIR }}/pki/
 sudo cp /etc/kubernetes/pki/front-proxy-ca.key ./{{ .WORK_DIR }}/pki/
 sudo cp /etc/kubernetes/pki/etcd/ca.crt ./{{ .WORK_DIR }}/pki/etcd/ca.crt
 sudo cp /etc/kubernetes/pki/etcd/ca.key ./{{ .WORK_DIR }}/pki/etcd/ca.key
-sudo cp /etc/kubernetes/admin.conf ./{{ .WORK_DIR }}/pki/
+#sudo cp /etc/kubernetes/admin.conf ./{{ .WORK_DIR }}/pki/
 
 sudo chown -R "$USER:$USER" ./{{ .WORK_DIR }}
 `, util.TemplateVariables{
@@ -67,6 +67,7 @@ func deployCA(ctx *util.Context) error {
 func deployCAOnNode(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
 	ctx.Logger.Infoln("Uploading files…")
 	err := ctx.Configuration.UploadTo(conn, ctx.WorkDir)
+	return err
 	if err != nil {
 		return fmt.Errorf("failed to upload: %v", err)
 	}
@@ -75,7 +76,6 @@ func deployCAOnNode(ctx *util.Context, node *config.HostConfig, conn ssh.Connect
 
 	_, _, _, err = util.RunShellCommand(conn, ctx.Verbose, `
 sudo rsync -av ./{{ .WORK_DIR }}/pki/ /etc/kubernetes/pki/
-sudo mv /etc/kubernetes/pki/admin.conf /etc/kubernetes/admin.conf
 rm -rf ./{{ .WORK_DIR }}/pki
 sudo chown -R root:root /etc/kubernetes
 sudo mkdir -p /etc/kubernetes/manifests

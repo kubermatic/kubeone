@@ -14,33 +14,27 @@ import (
 )
 
 // NewConfig init new v1alpha3 kubeadm config
-func NewConfig(cluster *config.Cluster, instance int) (*kubeadmv1alpha3.InitConfiguration, *kubeadmv1alpha3.ClusterConfiguration, error) {
-	leader := cluster.Leader()
-	host := cluster.Hosts[instance]
+func NewConfig(cluster *config.Cluster, host *config.HostConfig) (*kubeadmv1alpha3.InitConfiguration, *kubeadmv1alpha3.ClusterConfiguration, error) {
+	leader, err := cluster.Leader()
+	if err != nil {
+		return nil, nil, err
+	}
 
-	etcdSANs := []string{host.PrivateAddress, host.Hostname}
+	etcdSANs := []string{host.PrivateAddress, host.Hostname, "127.0.0.1"}
 	listenClientURLs := fmt.Sprintf("https://127.0.0.1:2379,https://%s:2379", host.PrivateAddress)
 	advertiseClientURLs := fmt.Sprintf("https://%s:2379", host.PrivateAddress)
 	listenPeerURLs := fmt.Sprintf("https://%s:2380", host.PrivateAddress)
 	initialAdvertisePeerURLs := fmt.Sprintf("https://%s:2380", host.PrivateAddress)
 
 	initialClusterAddresses := []string{}
-	for idx, host := range cluster.Hosts {
-		if idx > instance {
-			break
-		}
-
+	initialClusterState := "new"
+	for _, host := range cluster.Hosts {
 		initialClusterAddresses = append(
 			initialClusterAddresses,
 			fmt.Sprintf("%s=https://%s:2380", host.Hostname, host.PrivateAddress),
 		)
 	}
 	initialCluster := strings.Join(initialClusterAddresses, ",")
-
-	initialClusterState := "new"
-	if instance > 0 {
-		initialClusterState = "existing"
-	}
 
 	clusterCfg := &kubeadmv1alpha3.ClusterConfiguration{
 		TypeMeta: metav1.TypeMeta{
