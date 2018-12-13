@@ -128,6 +128,7 @@ func installKubeadmDebian(ctx *util.Context, conn ssh.Connection) error {
 
 const kubeadmDebianCommand = `
 sudo swapoff -a
+sudo sed -i '/.*swap.*/d' /etc/fstab
 
 source /etc/os-release
 
