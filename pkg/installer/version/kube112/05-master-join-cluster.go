@@ -10,12 +10,12 @@ import (
 	"github.com/kubermatic/kubeone/pkg/ssh"
 )
 
-func joinMasterCluster(ctx *util.Context) error {
+func joinControlplaneNode(ctx *util.Context) error {
 	ctx.Logger.Infoln("Joining controlplane node…")
 
-	return util.RunTaskOnFollowers(ctx, joinControlplaneNode)
+	return util.RunTaskOnFollowers(ctx, joinControlplaneNodeInternal)
 }
-func joinControlplaneNode(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
+func joinControlplaneNodeInternal(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
 	_, _, _, err := util.RunShellCommand(conn, ctx.Verbose, `
 if [[ -f /etc/kubernetes/kubelet.conf ]]; then exit 0; fi
 if [[ -f /etc/systemd/system/kubelet.service.d/10-kubeadm.conf.disabled ]]; then

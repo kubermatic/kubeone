@@ -84,11 +84,11 @@ fi
 `
 )
 
-func kubeadmCertsOnLeader(ctx *util.Context) error {
+func kubeadmCertsAndEtcdOnLeader(ctx *util.Context) error {
 	return util.RunTaskOnLeader(ctx, kubeadmCertsExecutor)
 }
 
-func kubeadmCertsOnFollower(ctx *util.Context) error {
+func kubeadmCertsAndEtcdOnFollower(ctx *util.Context) error {
 	return util.RunTaskOnFollowers(ctx, kubeadmCertsExecutor)
 }
 
