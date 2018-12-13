@@ -86,7 +86,7 @@ func (m *Cluster) EtcdClusterToken() (string, error) {
 // Leader returns the first configured host. Only call this after
 // validating the cluster config to ensure a leader exists.
 func (m *Cluster) Leader() (*HostConfig, error) {
-	for i, _ := range m.Hosts {
+	for i := range m.Hosts {
 		if m.Hosts[i].IsLeader {
 			return m.Hosts[i], nil
 		}
