@@ -71,16 +71,20 @@ spec:
 EOF
 `
 	kubeadmInitCommand = `
-if [[ ! -f /etc/kubernetes/admin.conf ]]; then
-	sudo mv /etc/systemd/system/kubelet.service.d/10-kubeadm.conf.disabled \
-			/etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-	sudo systemctl daemon-reload
-	sudo systemctl stop kubelet
-	sudo kubeadm init --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml \
-		--ignore-preflight-errors=FileAvailable--etc-kubernetes-manifests-etcd.yaml,Port-10250,Port-2379,DirAvailable--var-lib-etcd
-else
-	echo "skip init, already initialized"
-fi
+if [[ -f /etc/kubernetes/admin.conf ]]; then exit 0; fi
+idx=0
+while ! curl -so /dev/null --max-time 3 --fail http://127.0.0.1:2379/health
+do
+    if [ $idx -gt 100 ]; then
+        printf "Error: Timeout waiting for etcd endpoint to get healthy.\n"
+        exit 1
+    fi
+done
+sudo mv /etc/systemd/system/kubelet.service.d/10-kubeadm.conf{.disabled,}
+sudo systemctl daemon-reload
+sudo systemctl stop kubelet
+sudo kubeadm init --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml \
+  --ignore-preflight-errors=FileAvailable--etc-kubernetes-manifests-etcd.yaml
 `
 )
 

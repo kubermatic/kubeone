@@ -13,8 +13,7 @@ import (
 func installPrerequisites(ctx *util.Context) error {
 	ctx.Logger.Infoln("Installing prerequisites…")
 
-	err := generateConfigurationFiles(ctx)
-	if err != nil {
+	if err := generateConfigurationFiles(ctx); err != nil {
 		return fmt.Errorf("failed to create configuration: %v", err)
 	}
 
@@ -134,7 +133,7 @@ source /etc/os-release
 
 
 # Short-Circuit the installation if it was arleady executed
-if { type docker && type kubelet; }; then exit 0; fi
+if type docker && type kubelet; then exit 0; fi
 
 sudo apt-get update
 sudo apt-get install -y --no-install-recommends \
