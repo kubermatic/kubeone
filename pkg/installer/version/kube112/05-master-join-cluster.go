@@ -49,9 +49,5 @@ sudo kubeadm alpha phase mark-master --config=./{{ .WORK_DIR }}/cfg/master_{{ .N
 		"LEADER_ADDRESS":  leader.PrivateAddress,
 		"NODE_ADDRESS":    node.PrivateAddress,
 	})
-	if err != nil {
-		return err
-	}
-
-	return wait(ctx, 30*time.Second)
+	return err
 }
