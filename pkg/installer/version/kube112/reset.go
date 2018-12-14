@@ -17,7 +17,7 @@ func Reset(ctx *util.Context) error {
 		}
 	}
 
-	return util.RunTaskOnAllNodes(ctx, resetNode)
+	return util.RunTaskOnAllNodes(ctx, resetNode, true)
 }
 
 func destroyWorkers(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {

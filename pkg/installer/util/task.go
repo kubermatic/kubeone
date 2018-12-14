@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/ssh"
@@ -11,11 +12,14 @@ import (
 type NodeTask func(ctx *Context, node *config.HostConfig, conn ssh.Connection) error
 
 // RunTaskOnNodes runs the given task on the given selection of hosts.
-func RunTaskOnNodes(ctx *Context, nodes []*config.HostConfig, task NodeTask) error {
+func RunTaskOnNodes(ctx *Context, nodes []*config.HostConfig, task NodeTask, parallel bool) error {
 	var (
 		err  error
 		conn ssh.Connection
 	)
+
+	wg := sync.WaitGroup{}
+	hasErrors := false
 
 	for _, node := range nodes {
 		context := ctx.Clone()
@@ -28,25 +32,47 @@ func RunTaskOnNodes(ctx *Context, nodes []*config.HostConfig, task NodeTask) err
 			return fmt.Errorf("failed to connect to %s: %v", node.PublicAddress, err)
 		}
 
+		prefix := ""
+		if parallel {
+			prefix = fmt.Sprintf("[%s] ", node.PublicAddress)
+		}
+
 		context.Runner = &Runner{
 			Conn:    conn,
 			Verbose: ctx.Verbose,
 			OS:      node.OperatingSystem,
-			Prefix:  node.PublicAddress,
+			Prefix:  prefix,
 		}
 
-		err = task(context, node, conn)
-		if err != nil {
-			break
+		if parallel {
+			wg.Add(1)
+			go func() {
+				err = task(context, node, conn)
+				if err != nil {
+					hasErrors = true
+				}
+				wg.Done()
+			}()
+		} else {
+			err = task(context, node, conn)
+			if err != nil {
+				break
+			}
 		}
+	}
+
+	wg.Wait()
+
+	if hasErrors {
+		err = fmt.Errorf("at least one of the tasks has encountered an error")
 	}
 
 	return err
 }
 
 // RunTaskOnAllNodes runs the given task on all hosts.
-func RunTaskOnAllNodes(ctx *Context, task NodeTask) error {
-	return RunTaskOnNodes(ctx, ctx.Cluster.Hosts, task)
+func RunTaskOnAllNodes(ctx *Context, task NodeTask, parallel bool) error {
+	return RunTaskOnNodes(ctx, ctx.Cluster.Hosts, task, parallel)
 }
 
 // RunTaskOnLeader runs the given task on the leader host.
@@ -59,10 +85,10 @@ func RunTaskOnLeader(ctx *Context, task NodeTask) error {
 		leader,
 	}
 
-	return RunTaskOnNodes(ctx, hosts, task)
+	return RunTaskOnNodes(ctx, hosts, task, false)
 }
 
 // RunTaskOnFollowers runs the given task on the follower hosts.
-func RunTaskOnFollowers(ctx *Context, task NodeTask) error {
-	return RunTaskOnNodes(ctx, ctx.Cluster.Followers(), task)
+func RunTaskOnFollowers(ctx *Context, task NodeTask, parallel bool) error {
+	return RunTaskOnNodes(ctx, ctx.Cluster.Followers(), task, parallel)
 }

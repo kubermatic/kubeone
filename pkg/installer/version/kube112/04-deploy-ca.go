@@ -56,7 +56,7 @@ sudo chown -R "$USER:$USER" ./{{ .WORK_DIR }}
 
 func deployCA(ctx *util.Context) error {
 	ctx.Logger.Infoln("Deploying PKI…")
-	return util.RunTaskOnFollowers(ctx, deployCAOnNode)
+	return util.RunTaskOnFollowers(ctx, deployCAOnNode, true)
 }
 
 func deployCAOnNode(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {

@@ -46,11 +46,11 @@ func (r *Runner) Run(cmd string, variables TemplateVariables) (string, string, e
 	}
 
 	stdout := &Tee{
-		upstream: prefixw.New(os.Stdout, fmt.Sprintf("[%s] ", r.Prefix)),
+		upstream: prefixw.New(os.Stdout, r.Prefix),
 	}
 
 	stderr := &Tee{
-		upstream: prefixw.New(os.Stderr, fmt.Sprintf("[%s] ", r.Prefix)),
+		upstream: prefixw.New(os.Stderr, r.Prefix),
 	}
 
 	// run the command
