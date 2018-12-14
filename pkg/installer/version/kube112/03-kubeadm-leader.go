@@ -52,7 +52,7 @@ spec:
         command:
         - /bin/sh
         - -ec
-        - ETCDCTL_API=3 etcdctl --endpoints=https://[127.0.0.1]:2379 get foo
+        - ETCDCTL_API=3 etcdctl --endpoints=http://127.0.0.1:2379 get foo
       failureThreshold: 8
       initialDelaySeconds: 15
       timeoutSeconds: 15
