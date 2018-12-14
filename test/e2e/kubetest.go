@@ -6,14 +6,12 @@ import (
 )
 
 const (
-	Pods            TestsScenario = "Pods"
-	NodeConformance TestsScenario = `\[NodeConformance\]`
-	Conformance     TestsScenario = `\[Conformance\]`
+	Pods            = "Pods"
+	NodeConformance = `\[NodeConformance\]`
+	Conformance     = `\[Conformance\]`
 )
 
 const skip = `Alpha|\[(Disruptive|Feature:[^\]]+|Flaky|Serial|Slow)\]`
-
-type TestsScenario string
 
 // Kubetest struct
 type Kubetest struct {
@@ -33,7 +31,7 @@ func NewKubetest(k8sVersion, kubetestDir string, envVars map[string]string) Kube
 }
 
 // RunTests starts e2e tests
-func (p *Kubetest) Verify(scenario TestsScenario) error {
+func (p *Kubetest) Verify(scenario string) error {
 
 	for k, v := range p.envVars {
 		os.Setenv(k, v)
@@ -45,16 +43,15 @@ func (p *Kubetest) Verify(scenario TestsScenario) error {
 		if err != nil {
 			return err
 		}
-
 	}
 
 	k8sPath := fmt.Sprintf("%s/kubernetes-%s/kubernetes", p.kubetestDir, p.kubernetesVersion)
 
 	testsArgs := fmt.Sprintf("--test_args=--ginkgo.focus=%s --ginkgo.skip=%s", scenario, skip)
 
-	_, stderr, exitCode := executeCommand(k8sPath, "kubetest", []string{"--provider=skeleton", "--test", "--ginkgo-parallel", "--check-version-skew=false", testsArgs})
-	if exitCode != 0 {
-		return fmt.Errorf("k8s conformnce tests failed: %s", stderr)
+	_, err := executeCommand(k8sPath, "kubetest", []string{"--provider=skeleton", "--test", "--ginkgo-parallel", "--check-version-skew=false", testsArgs})
+	if err != nil {
+		return fmt.Errorf("k8s conformnce tests failed: %v", err)
 	}
 
 	return nil
@@ -64,13 +61,16 @@ func (p *Kubetest) Verify(scenario TestsScenario) error {
 func getK8sBinaries(kubetestDir string, version string) error {
 
 	k8sPath := fmt.Sprintf("%s/kubernetes-%s", kubetestDir, version)
-	err := CreateDir(k8sPath)
+	err := os.MkdirAll(k8sPath, 0755)
+	if err != nil {
+		return fmt.Errorf("unable to create directory %s", k8sPath)
+	}
 	if err != nil {
 		return err
 	}
-	_, stderr, exitCode := executeCommand(k8sPath, "kubetest", []string{fmt.Sprintf("--extract=%s", version)})
-	if exitCode != 0 {
-		return fmt.Errorf("getting kubernetes binaries failed: %s", stderr)
+	_, err = executeCommand(k8sPath, "kubetest", []string{fmt.Sprintf("--extract=%s", version)})
+	if err != nil {
+		return fmt.Errorf("getting kubernetes binaries failed: %v", err)
 	}
 	return nil
 }

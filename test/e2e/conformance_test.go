@@ -1,3 +1,5 @@
+// +build e2e
+
 package e2e
 
 import (
@@ -9,32 +11,32 @@ func TestClusterConformance(t *testing.T) {
 	t.Parallel()
 
 	testcases := []struct {
-		Name              string
-		Provider          Provider
-		KubernetesVersion string
-		Scenario          TestsScenario
-		Region            string
+		name              string
+		provider          Provider
+		kubernetesVersion string
+		scenario          string
+		region            string
 	}{
 		{
-			Name:              "scenario 1, verify k8s cluster deployment on AWS",
-			Provider:          AWS,
-			KubernetesVersion: "v1.12.3",
-			Scenario:          NodeConformance,
-			Region:            "eu-west-3",
+			name:              "scenario 1, verify k8s cluster deployment on AWS",
+			provider:          AWS,
+			kubernetesVersion: "v1.12.3",
+			scenario:          NodeConformance,
+			region:            "eu-west-3",
 		},
 	}
 
 	for _, tc := range testcases {
 		// to satisfy scope linter
 		tc := tc
-		t.Run(tc.Name, func(t *testing.T) {
+		t.Run(tc.name, func(t *testing.T) {
 			testPostfix := RandomString(8)
 			testName := fmt.Sprintf("test-%s", testPostfix)
 			testPath := fmt.Sprintf("../../_build/%s", testName)
 
-			pr := CreateProvisioner(tc.Region, testName, testPath, tc.Provider)
+			pr := CreateProvisioner(tc.region, testName, testPath, tc.provider)
 			target := NewKubeone(testPath, "../../config.yaml.dist")
-			clusterVerifier := NewKubetest(tc.KubernetesVersion, "../../_build", map[string]string{
+			clusterVerifier := NewKubetest(tc.kubernetesVersion, "../../_build", map[string]string{
 				"KUBERNETES_CONFORMANCE_TEST": "y",
 			})
 
@@ -66,7 +68,7 @@ func TestClusterConformance(t *testing.T) {
 			}
 
 			t.Log("run e2e tests")
-			err = clusterVerifier.Verify(tc.Scenario)
+			err = clusterVerifier.Verify(tc.scenario)
 			if err != nil {
 				t.Fatalf("e2e tests failed: %v", err)
 			}

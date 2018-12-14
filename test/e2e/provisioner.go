@@ -7,8 +7,7 @@ import (
 )
 
 const (
-	AWS          Provider = 0
-	DIGITALOCEAN Provider = 1
+	AWS Provider = 1 + iota
 )
 
 type Provider int
@@ -32,6 +31,7 @@ type AWSProvisioner struct {
 	terraform *terraform
 }
 
+// NewAWSProvisioner creates and initialize AWSProvisioner structure
 func NewAWSProvisioner(region, testName, testPath string) *AWSProvisioner {
 
 	terraform := &terraform{terraformDir: "../../terraform/aws/",
@@ -47,6 +47,7 @@ func NewAWSProvisioner(region, testName, testPath string) *AWSProvisioner {
 	}
 }
 
+// Provision starts provisioning on AWS
 func (p *AWSProvisioner) Provision() (string, error) {
 
 	awsKeyID := os.Getenv("AWS_ACCESS_KEY_ID")
@@ -64,6 +65,7 @@ func (p *AWSProvisioner) Provision() (string, error) {
 
 }
 
+// Cleanup destroys infrastructure created by terraform
 func (p *AWSProvisioner) Cleanup() error {
 
 	err := p.terraform.destroy()
@@ -71,9 +73,9 @@ func (p *AWSProvisioner) Cleanup() error {
 		return fmt.Errorf("%v", err)
 	}
 
-	_, stderr, exitCode := executeCommand("", "rm", []string{"-rf", p.testPath})
-	if exitCode != 0 {
-		return fmt.Errorf("%s", stderr)
+	_, err = executeCommand("", "rm", []string{"-rf", p.testPath})
+	if err != nil {
+		return fmt.Errorf("%v", err)
 	}
 
 	return nil
@@ -87,14 +89,14 @@ func (p *terraform) initAndApply() (string, error) {
 		os.Setenv(k, v)
 	}
 
-	_, stderr, exitCode := executeCommand(p.terraformDir, "terraform", []string{"init"})
-	if exitCode != 0 {
-		return "", fmt.Errorf("terraform init command failed: %s", stderr)
+	_, err := executeCommand(p.terraformDir, "terraform", []string{"init"})
+	if err != nil {
+		return "", fmt.Errorf("terraform init command failed: %v", err)
 	}
 
-	_, stderr, exitCode = executeCommand(p.terraformDir, "terraform", []string{"apply", "-auto-approve"})
-	if exitCode != 0 {
-		return "", fmt.Errorf("terraform apply command failed: %s", stderr)
+	_, err = executeCommand(p.terraformDir, "terraform", []string{"apply", "-auto-approve"})
+	if err != nil {
+		return "", fmt.Errorf("terraform apply command failed: %v", err)
 	}
 
 	return p.getTFJson()
@@ -102,18 +104,18 @@ func (p *terraform) initAndApply() (string, error) {
 
 // destroy method
 func (p *terraform) destroy() error {
-	_, stderr, exitCode := executeCommand(p.terraformDir, "terraform", []string{"destroy", "-auto-approve"})
-	if exitCode != 0 {
-		return fmt.Errorf("terraform destroy command failed: %s", stderr)
+	_, err := executeCommand(p.terraformDir, "terraform", []string{"destroy", "-auto-approve"})
+	if err != nil {
+		return fmt.Errorf("terraform destroy command failed: %v", err)
 	}
 	return nil
 }
 
 // GetTFJson reads an output from a state file
 func (p *terraform) getTFJson() (string, error) {
-	tf, stderr, exitCode := executeCommand(p.terraformDir, "terraform", []string{"output", "-state=terraform.tfstate", "-json"})
-	if exitCode != 0 {
-		return "", fmt.Errorf("generating tf json failed: %s", stderr)
+	tf, err := executeCommand(p.terraformDir, "terraform", []string{"output", "-state=terraform.tfstate", "-json"})
+	if err != nil {
+		return "", fmt.Errorf("generating tf json failed: %v", err)
 	}
 
 	return tf, nil
