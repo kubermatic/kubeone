@@ -14,6 +14,7 @@ type Context struct {
 	Logger         logrus.FieldLogger
 	Connector      *ssh.Connector
 	Configuration  *Configuration
+	Runner         *Runner
 	WorkDir        string
 	JoinCommand    string
 	Verbose        bool

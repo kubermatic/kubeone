@@ -28,6 +28,13 @@ func RunTaskOnNodes(ctx *Context, nodes []*config.HostConfig, task NodeTask) err
 			return fmt.Errorf("failed to connect to %s: %v", node.PublicAddress, err)
 		}
 
+		context.Runner = &Runner{
+			Conn:    conn,
+			Verbose: ctx.Verbose,
+			OS:      node.OperatingSystem,
+			Prefix:  node.PublicAddress,
+		}
+
 		err = task(context, node, conn)
 		if err != nil {
 			break

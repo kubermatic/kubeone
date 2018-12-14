@@ -15,7 +15,7 @@ func downloadCA(ctx *util.Context) error {
 	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Infoln("Running kubeadm…")
 
-		_, _, err := util.RunShellCommand(conn, ctx.Verbose, `
+		_, _, err := ctx.Runner.Run(`
 mkdir -p ./{{ .WORK_DIR }}/pki/etcd
 sudo cp /etc/kubernetes/pki/ca.crt ./{{ .WORK_DIR }}/pki/
 sudo cp /etc/kubernetes/pki/ca.key ./{{ .WORK_DIR }}/pki/

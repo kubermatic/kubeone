@@ -29,14 +29,10 @@ func deployArk(ctx *util.Context) error {
 
 		ctx.Logger.Infoln("Deploying Ark…")
 
-		cmd, err := util.MakeShellCommand(`sudo kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f "{{ .WORK_DIR }}/ark/ark.yaml"`, util.TemplateVariables{
+		_, _, err = ctx.Runner.Run(`sudo kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f "{{ .WORK_DIR }}/ark/ark.yaml"`, util.TemplateVariables{
 			"WORK_DIR": ctx.WorkDir,
 		})
-		if err != nil {
-			return err
-		}
 
-		_, _, err = util.RunCommand(conn, cmd, ctx.Verbose)
 		return err
 	})
 }
