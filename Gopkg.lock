@@ -84,6 +84,14 @@
   version = "v1.0.1"
 
 [[projects]]
+  branch = "master"
+  digest = "1:3aa88be1d1db38973c939aebb649980dfb4af9c33dbcbb554968cf78809f23be"
+  name = "github.com/koron-go/prefixw"
+  packages = ["."]
+  pruneopts = "NUT"
+  revision = "271b207a75725c3b523859a9833c759ef43b5b73"
+
+[[projects]]
   digest = "1:2f42fa12d6911c7b7659738758631bec870b7e9b4c6be5444f963cdcfccc191f"
   name = "github.com/modern-go/concurrent"
   packages = ["."]
@@ -325,6 +333,7 @@
     "github.com/alecthomas/template",
     "github.com/ghodss/yaml",
     "github.com/heptio/ark/pkg/apis/ark/v1",
+    "github.com/koron-go/prefixw",
     "github.com/pkg/errors",
     "github.com/sirupsen/logrus",
     "github.com/tmc/scp",
