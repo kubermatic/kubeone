@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"strings"
 	"time"
@@ -85,7 +84,6 @@ func RunShellCommand(conn ssh.Connection, verbose bool, cmd string, variables Te
 		return "", "", 0, fmt.Errorf("failed to construct shell script: %v", err)
 	}
 
-	log.Printf("Executing command '%s'", command)
 	stdout, stderr, exitCode, err := RunCommand(conn, command, verbose)
 	if err != nil {
 		err = fmt.Errorf("%v: %s", err, stderr)
