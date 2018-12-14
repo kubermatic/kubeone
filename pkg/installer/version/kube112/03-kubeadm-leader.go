@@ -95,7 +95,7 @@ func kubeadmCertsAndEtcdOnLeader(ctx *util.Context) error {
 
 func kubeadmCertsAndEtcdOnFollower(ctx *util.Context) error {
 	ctx.Logger.Infoln("Configuring certs and etcd on consecutive controller…")
-	return util.RunTaskOnFollowers(ctx, kubeadmCertsExecutor)
+	return util.RunTaskOnFollowers(ctx, kubeadmCertsExecutor, true)
 }
 
 func kubeadmCertsExecutor(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
@@ -106,7 +106,7 @@ func kubeadmCertsExecutor(ctx *util.Context, node *config.HostConfig, conn ssh.C
 	initialClusterString := strings.Join(initialCluster, ",")
 
 	ctx.Logger.Infoln("Ensuring Certificates…")
-	_, _, err := util.RunShellCommand(conn, ctx.Verbose, kubeadmCertCommand, util.TemplateVariables{
+	_, _, err := ctx.Runner.Run(kubeadmCertCommand, util.TemplateVariables{
 		"PRIVATE_ADDRESS": node.PrivateAddress,
 		"HOSTNAME":        node.Hostname,
 		"INITIAL_CLUSTER": initialClusterString,
