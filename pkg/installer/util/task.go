@@ -11,50 +11,55 @@ import (
 // NodeTask is a task that is specifically tailored to run on a single node.
 type NodeTask func(ctx *Context, node *config.HostConfig, conn ssh.Connection) error
 
-// RunTaskOnNodes runs the given task on the given selection of hosts.
-func RunTaskOnNodes(ctx *Context, nodes []*config.HostConfig, task NodeTask, parallel bool) error {
+func runTask(ctx *Context, node *config.HostConfig, task NodeTask, prefixed bool) error {
 	var (
 		err  error
 		conn ssh.Connection
 	)
 
+	ctx.Logger = ctx.Logger.WithField("node", node.PublicAddress)
+
+	// connect to the host (and do not close connection
+	// because we want to re-use it for future tasks)
+	conn, err = ctx.Connector.Connect(*node)
+	if err != nil {
+		return fmt.Errorf("failed to connect to %s: %v", node.PublicAddress, err)
+	}
+
+	prefix := ""
+	if prefixed {
+		prefix = fmt.Sprintf("[%s] ", node.PublicAddress)
+	}
+
+	ctx.Runner = &Runner{
+		Conn:    conn,
+		Verbose: ctx.Verbose,
+		OS:      node.OperatingSystem,
+		Prefix:  prefix,
+	}
+
+	return task(ctx, node, conn)
+}
+
+// RunTaskOnNodes runs the given task on the given selection of hosts.
+func RunTaskOnNodes(ctx *Context, nodes []*config.HostConfig, task NodeTask, parallel bool) error {
+	var err error
+
 	wg := sync.WaitGroup{}
 	hasErrors := false
 
 	for _, node := range nodes {
-		context := ctx.Clone()
-		context.Logger = context.Logger.WithField("node", node.PublicAddress)
-
-		// connect to the host (and do not close connection
-		// because we want to re-use it for future tasks)
-		conn, err = context.Connector.Connect(*node)
-		if err != nil {
-			return fmt.Errorf("failed to connect to %s: %v", node.PublicAddress, err)
-		}
-
-		prefix := ""
-		if parallel {
-			prefix = fmt.Sprintf("[%s] ", node.PublicAddress)
-		}
-
-		context.Runner = &Runner{
-			Conn:    conn,
-			Verbose: ctx.Verbose,
-			OS:      node.OperatingSystem,
-			Prefix:  prefix,
-		}
-
 		if parallel {
 			wg.Add(1)
-			go func() {
-				err = task(context, node, conn)
+			go func(node *config.HostConfig) {
+				err = runTask(ctx.Clone(), node, task, parallel)
 				if err != nil {
 					hasErrors = true
 				}
 				wg.Done()
-			}()
+			}(node)
 		} else {
-			err = task(context, node, conn)
+			err = runTask(ctx.Clone(), node, task, parallel)
 			if err != nil {
 				break
 			}
