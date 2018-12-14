@@ -34,7 +34,7 @@ func applyFlannelCNI(ctx *util.Context) error {
 func applyCanalCNI(ctx *util.Context) error {
 	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Infoln("Applying canal CNI plugin…")
-		_, _, err := util.RunShellCommand(conn, ctx.Verbose, `sudo kubectl create -f ./{{ .WORK_DIR }}/canal.yaml`, util.TemplateVariables{
+		_, _, err := util.RunShellCommand(conn, ctx.Verbose, `sudo kubectl apply -f ./{{ .WORK_DIR }}/canal.yaml`, util.TemplateVariables{
 			"WORK_DIR": ctx.WorkDir,
 		})
 

@@ -122,6 +122,7 @@ spec:
     kind: GlobalFelixConfig
     plural: globalfelixconfigs
     singular: globalfelixconfig
+---
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
@@ -138,6 +139,7 @@ spec:
     kind: GlobalNetworkPolicy
     plural: globalnetworkpolicies
     singular: globalnetworkpolicy
+---
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
@@ -449,6 +451,7 @@ subjects:
 - kind: ServiceAccount
   name: canal
   namespace: kube-system
+---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
