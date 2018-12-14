@@ -106,7 +106,7 @@ func kubeadmCertsExecutor(ctx *util.Context, node *config.HostConfig, conn ssh.C
 	initialClusterString := strings.Join(initialCluster, ",")
 
 	ctx.Logger.Infoln("Ensuring Certificates…")
-	_, _, _, err := util.RunShellCommand(conn, ctx.Verbose, kubeadmCertCommand, util.TemplateVariables{
+	_, _, err := util.RunShellCommand(conn, ctx.Verbose, kubeadmCertCommand, util.TemplateVariables{
 		"PRIVATE_ADDRESS": node.PrivateAddress,
 		"HOSTNAME":        node.Hostname,
 		"INITIAL_CLUSTER": initialClusterString,
