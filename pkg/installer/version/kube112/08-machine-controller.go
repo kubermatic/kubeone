@@ -27,8 +27,8 @@ func installMachineController(ctx *util.Context) error {
 		ctx.Logger.Infoln("Installing machine-controller…")
 
 		_, _, err = util.RunShellCommand(conn, ctx.Verbose, `
-kubectl apply -f ./{{ .WORK_DIR }}/machine-controller.yaml
-kubectl apply -f ./{{ .WORK_DIR }}/machine-controller-webhook.yaml
+sudo kubectl apply -f ./{{ .WORK_DIR }}/machine-controller.yaml
+sudo kubectl apply -f ./{{ .WORK_DIR }}/machine-controller-webhook.yaml
 `, util.TemplateVariables{
 			"WORK_DIR": ctx.WorkDir,
 		})
