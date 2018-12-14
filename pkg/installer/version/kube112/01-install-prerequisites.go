@@ -6,7 +6,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/kubermatic/kubeone/pkg/templates/flannel"
+	"github.com/kubermatic/kubeone/pkg/templates/canal"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
 )
 
@@ -42,11 +42,11 @@ Environment="KUBELET_EXTRA_ARGS= --cloud-provider=%s --cloud-config=/etc/kuberne
 		ctx.Configuration.AddFile("workers.yaml", machines)
 	}
 
-	flannel, err := flannel.Configuration(ctx.Cluster)
+	canalManifest, err := canal.Configuration(ctx.Cluster)
 	if err != nil {
-		return fmt.Errorf("failed to create flannel configuration: %v", err)
+		return fmt.Errorf("failed to create canal config: %v", err)
 	}
-	ctx.Configuration.AddFile("kube-flannel.yaml", flannel)
+	ctx.Configuration.AddFile("canal.yaml", canalManifest)
 
 	return nil
 }
