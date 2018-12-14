@@ -23,7 +23,7 @@ func Reset(ctx *util.Context) error {
 func destroyWorkers(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
 	ctx.Logger.Infoln("Destroying worker nodes…")
 
-	_, _, _, err := util.RunShellCommand(conn, ctx.Verbose, destroyScript, util.TemplateVariables{
+	_, _, err := util.RunShellCommand(conn, ctx.Verbose, destroyScript, util.TemplateVariables{
 		"WORK_DIR":   ctx.WorkDir,
 		"MACHINE_NS": machinecontroller.MachineControllerNamespace,
 	})
@@ -34,7 +34,7 @@ func destroyWorkers(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection
 func resetNode(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
 	ctx.Logger.Infoln("Resetting node…")
 
-	_, _, _, err := util.RunShellCommand(conn, ctx.Verbose, resetScript, util.TemplateVariables{
+	_, _, err := util.RunShellCommand(conn, ctx.Verbose, resetScript, util.TemplateVariables{
 		"WORK_DIR": ctx.WorkDir,
 	})
 

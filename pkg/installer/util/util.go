@@ -30,10 +30,27 @@ func (t *Tee) String() string {
 	return strings.TrimSpace(t.buffer.String())
 }
 
+func PrepareShell(cmd string) string {
+	// ensure we fail early
+	cmd = fmt.Sprintf("set -xeu pipefail\n\n%s", cmd)
+
+	// ensure sudo works on exotic distros
+	cmd = fmt.Sprintf("export \"PATH=$PATH:/sbin:/usr/local/bin:/opt/bin\"\n\n%s", cmd)
+
+	return cmd
+}
+
 // RunCommand on remove machine over SSH
-func RunCommand(conn ssh.Connection, cmd string, verbose bool) (string, string, int, error) {
+func RunCommand(conn ssh.Connection, cmd string, verbose bool) (string, string, error) {
+	cmd = PrepareShell(cmd)
+
 	if !verbose {
-		return conn.Exec(cmd)
+		stdout, stderr, _, err := conn.Exec(cmd)
+		if err != nil {
+			err = fmt.Errorf("%v: %s", err, stderr)
+		}
+
+		return stdout, stderr, err
 	}
 
 	stdout := &Tee{
@@ -44,18 +61,9 @@ func RunCommand(conn ssh.Connection, cmd string, verbose bool) (string, string, 
 		upstream: os.Stdout,
 	}
 
-	// ensure we fail early
-	cmd = fmt.Sprintf("set -xeu pipefail\n\n%s", cmd)
+	_, err := conn.Stream(cmd, stdout, stderr)
 
-	// ensure sudo works on exotic distros
-	cmd = fmt.Sprintf("export \"PATH=$PATH:/sbin:/usr/local/bin:/opt/bin\"\n\n%s", cmd)
-
-	exitCode, err := conn.Stream(cmd, stdout, os.Stderr)
-	if err != nil {
-		err = fmt.Errorf("%v: %s", err, stderr)
-	}
-
-	return stdout.String(), stderr.String(), exitCode, err
+	return stdout.String(), stderr.String(), err
 }
 
 // TemplateVariables is a render context for templates
@@ -78,18 +86,13 @@ func MakeShellCommand(cmd string, variables TemplateVariables) (string, error) {
 }
 
 // RunShellCommand combines MakeShellCommand and RunCommand.
-func RunShellCommand(conn ssh.Connection, verbose bool, cmd string, variables TemplateVariables) (string, string, int, error) {
+func RunShellCommand(conn ssh.Connection, verbose bool, cmd string, variables TemplateVariables) (string, string, error) {
 	command, err := MakeShellCommand(cmd, variables)
 	if err != nil {
-		return "", "", 0, fmt.Errorf("failed to construct shell script: %v", err)
+		return "", "", fmt.Errorf("failed to construct shell script: %v", err)
 	}
 
-	stdout, stderr, exitCode, err := RunCommand(conn, command, verbose)
-	if err != nil {
-		err = fmt.Errorf("%v: %s", err, stderr)
-	}
-
-	return stdout, stderr, exitCode, err
+	return RunCommand(conn, command, verbose)
 }
 
 // WaitForPod waits for the availability of the given Kubernetes element.
@@ -114,7 +117,7 @@ func WaitForCondition(conn ssh.Connection, verbose bool, cmd string, timeout tim
 	cutoff := time.Now().Add(timeout)
 
 	for time.Now().Before(cutoff) {
-		stdout, _, _, _ := RunCommand(conn, cmd, verbose)
+		stdout, _, _ := RunCommand(conn, cmd, verbose)
 		if validator(stdout) {
 			return true
 		}

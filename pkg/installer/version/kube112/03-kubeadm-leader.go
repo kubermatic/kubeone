@@ -122,14 +122,11 @@ func initKubernetesLeader(ctx *util.Context) error {
 	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Infoln("Running kubeadm…")
 
-		stdout, stderr, _, err := util.RunShellCommand(conn, ctx.Verbose, kubeadmInitCommand, util.TemplateVariables{
+		_, _, err := util.RunShellCommand(conn, ctx.Verbose, kubeadmInitCommand, util.TemplateVariables{
 			"WORK_DIR": ctx.WorkDir,
 			"NODE_ID":  strconv.Itoa(node.ID),
 		})
-		if err != nil {
-			return fmt.Errorf("error: %v, stdout: %s, stderr: %s", err, stdout, stderr)
-		}
 
-		return nil
+		return err
 	})
 }
