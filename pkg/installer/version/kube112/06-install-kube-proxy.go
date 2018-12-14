@@ -19,7 +19,7 @@ cd "{{ .WORK_DIR }}"
 
 sudo kubectl -n kube-system get configmap kube-proxy -o yaml \
 	| sed -i -e 's#server:.*#server: https://{{ .IP_ADDRESS }}:6443#g' \
-	|sudo kubectl replace -f -
+	| sudo kubectl replace -f -
 sudo kubectl -n kube-system delete pod -l k8s-app=kube-proxy
 `, util.TemplateVariables{
 			"WORK_DIR":   ctx.WorkDir,
