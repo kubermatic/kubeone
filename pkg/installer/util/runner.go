@@ -56,6 +56,9 @@ func (r *Runner) Run(cmd string, variables TemplateVariables) (string, string, e
 	// run the command
 	_, err = r.Conn.Stream(cmd, stdout, stderr)
 
+	stdout.Close()
+	stderr.Close()
+
 	return stdout.String(), stderr.String(), err
 }
 

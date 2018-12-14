@@ -11,7 +11,7 @@ import (
 // capturing it in a buffer.
 type Tee struct {
 	buffer   bytes.Buffer
-	upstream io.Writer
+	upstream io.WriteCloser
 }
 
 func (t *Tee) Write(p []byte) (int, error) {
@@ -22,4 +22,8 @@ func (t *Tee) Write(p []byte) (int, error) {
 
 func (t *Tee) String() string {
 	return strings.TrimSpace(t.buffer.String())
+}
+
+func (t *Tee) Close() error {
+	return t.upstream.Close()
 }
