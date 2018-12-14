@@ -5,13 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"math/rand"
 	"os"
 	"os/exec"
 	"path"
-	"reflect"
 	"strings"
-	"testing"
 	"time"
 )
 
@@ -21,8 +20,7 @@ const charset = "abcdefghijklmnopqrstuvwxyz" +
 // CreateProvisioner returns interface for specific provisioner
 func CreateProvisioner(region, testName, testPath string, provider Provider) Provisioner {
 	if provider == AWS {
-		pr := NewAWSProvisioner(region, testName, testPath)
-		return reflect.ValueOf(pr).Interface().(Provisioner)
+		return NewAWSProvisioner(region, testName, testPath)
 	}
 
 	return nil
@@ -43,27 +41,13 @@ func IsCommandAvailable(name string) bool {
 }
 
 // executeCommand executes given command
-func executeCommand(path, name string, arg []string) (string, string, int) {
+func executeCommand(path, name string, arg []string) (string, error) {
 	var stdoutBuf, stderrBuf bytes.Buffer
 	var errStdout, errStderr error
-	verbose := testing.Verbose()
 
 	cmd := exec.Command(name, arg...)
 	if len(path) > 0 {
 		cmd.Dir = path
-	}
-
-	if !verbose {
-		var stdout, stderr bytes.Buffer
-		cmd.Stdout = &stdout
-		cmd.Stderr = &stderr
-		err := cmd.Run()
-		if err != nil {
-
-			return "", err.Error(), 1
-		}
-		outStr, errStr := string(stdout.Bytes()), string(stderr.Bytes())
-		return outStr, errStr, 0
 	}
 
 	doneStdout := make(chan struct{})
@@ -76,7 +60,7 @@ func executeCommand(path, name string, arg []string) (string, string, int) {
 
 	err := cmd.Start()
 	if err != nil {
-		return "", err.Error(), 1
+		return "", err
 	}
 
 	go func() {
@@ -94,17 +78,17 @@ func executeCommand(path, name string, arg []string) (string, string, int) {
 	<-doneStderr
 	err = cmd.Wait()
 	if err != nil {
-		return "", err.Error(), 1
+		return "", err
 	}
 	if errStdout != nil {
-		return "", errStdout.Error(), 1
+		return "", errStdout
 	}
 	if errStderr != nil {
-		return "", errStderr.Error(), 1
+		return "", errStderr
 	}
 
-	outStr, errStr := string(stdoutBuf.Bytes()), string(stderrBuf.Bytes())
-	return outStr, errStr, 0
+	outStr := string(stdoutBuf.Bytes())
+	return outStr, nil
 }
 
 // RandomString generates random string
@@ -118,14 +102,6 @@ func RandomString(length int) string {
 	return string(b)
 }
 
-// CreateDir creates directory for given path
-func CreateDir(dirName string) error {
-	if os.MkdirAll(dirName, 0755) != nil {
-		return fmt.Errorf("unable to create directory %s", dirName)
-	}
-	return nil
-}
-
 // CreateFile create file with given content
 func CreateFile(filepath, content string) error {
 
@@ -133,21 +109,13 @@ func CreateFile(filepath, content string) error {
 	basepath := path.Dir(filepath)
 	filename := path.Base(filepath)
 
-	if err := CreateDir(basepath); err != nil {
-		return err
+	err := os.MkdirAll(basepath, 0755)
+	if err != nil {
+		return fmt.Errorf("unable to create directory %s", basepath)
 	}
 
 	// Create the file.
-	fileOut, err := os.Create(strings.Join([]string{basepath, filename}, "/"))
-
-	if err != nil {
-		return fmt.Errorf("unable to create tag file! %v", err)
-	}
-
-	defer fileOut.Close()
-
-	_, err = io.WriteString(fileOut, content)
-
+	err = ioutil.WriteFile(strings.Join([]string{basepath, filename}, "/"), []byte(content), os.ModePerm)
 	if err != nil {
 		return fmt.Errorf("unable to write data to file")
 	}
