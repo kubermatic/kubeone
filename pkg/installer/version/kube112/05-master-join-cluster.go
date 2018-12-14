@@ -26,7 +26,7 @@ func joinNodesMasterCluster(ctx *util.Context, node *config.HostConfig, conn ssh
 	}
 
 	ctx.Logger.Infoln("Finalizing cluster…")
-	_, _, _, err = util.RunShellCommand(conn, ctx.Verbose, `
+	_, _, err = util.RunShellCommand(conn, ctx.Verbose, `
 sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf exec \
   -n kube-system etcd-{{ .LEADER_HOSTNAME }} -- \
   etcdctl \

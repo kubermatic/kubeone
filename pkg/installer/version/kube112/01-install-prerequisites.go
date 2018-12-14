@@ -87,13 +87,13 @@ func installPrerequisitesOnNode(ctx *util.Context, node *config.HostConfig, conn
 }
 
 func determineOS(ctx *util.Context, conn ssh.Connection) (string, error) {
-	stdout, _, _, err := util.RunCommand(conn, "cat /etc/os-release | grep '^ID=' | sed s/^ID=//", ctx.Verbose)
+	stdout, _, err := util.RunCommand(conn, "cat /etc/os-release | grep '^ID=' | sed s/^ID=//", ctx.Verbose)
 
 	return stdout, err
 }
 
 func determineHostname(ctx *util.Context, conn ssh.Connection, _ *config.HostConfig) (string, error) {
-	stdout, _, _, err := util.RunCommand(conn, "hostname -f", ctx.Verbose)
+	stdout, _, err := util.RunCommand(conn, "hostname -f", ctx.Verbose)
 
 	return stdout, err
 }
@@ -118,7 +118,7 @@ func installKubeadm(ctx *util.Context, conn ssh.Connection, node *config.HostCon
 }
 
 func installKubeadmDebian(ctx *util.Context, conn ssh.Connection) error {
-	_, _, _, err := util.RunShellCommand(conn, ctx.Verbose, kubeadmDebianCommand, util.TemplateVariables{
+	_, _, err := util.RunShellCommand(conn, ctx.Verbose, kubeadmDebianCommand, util.TemplateVariables{
 		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
 		"DOCKER_VERSION":     ctx.Cluster.Versions.Docker,
 	})
@@ -167,7 +167,7 @@ sudo systemctl daemon-reload
 `
 
 func installKubeadmCoreOS(ctx *util.Context, conn ssh.Connection) error {
-	_, _, _, err := util.RunShellCommand(conn, ctx.Verbose, kubeadmCoreOSCommand, util.TemplateVariables{
+	_, _, err := util.RunShellCommand(conn, ctx.Verbose, kubeadmCoreOSCommand, util.TemplateVariables{
 		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
 		"DOCKER_VERSION":     ctx.Cluster.Versions.Docker,
 		"CNI_VERSION":        "v0.7.1",
@@ -210,7 +210,7 @@ func deployConfigurationFiles(ctx *util.Context, conn ssh.Connection) error {
 	}
 
 	// move config files to their permanent locations
-	_, _, _, err = util.RunShellCommand(conn, ctx.Verbose, `
+	_, _, err = util.RunShellCommand(conn, ctx.Verbose, `
 sudo mkdir -p /etc/systemd/system/kubelet.service.d/ /etc/kubernetes
 sudo mv ./{{ .WORK_DIR }}/cfg/20-cloudconfig-kubelet.conf /etc/systemd/system/kubelet.service.d/
 sudo mv ./{{ .WORK_DIR }}/cfg/cloud-config /etc/kubernetes/cloud-config

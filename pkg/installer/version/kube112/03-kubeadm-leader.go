@@ -1,8 +1,6 @@
 package kube112
 
 import (
-	"fmt"
-
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/ssh"
@@ -14,14 +12,11 @@ func initKubernetesLeader(ctx *util.Context) error {
 	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Infoln("Running kubeadm…")
 
-		stdout, stderr, _, err := util.RunShellCommand(conn, ctx.Verbose, kubeadmInitCommand, util.TemplateVariables{
+		_, _, err := util.RunShellCommand(conn, ctx.Verbose, kubeadmInitCommand, util.TemplateVariables{
 			"WORK_DIR": ctx.WorkDir,
 		})
-		if err != nil {
-			return fmt.Errorf("error: %v, stdout: %s, stderr: %s", err, stdout, stderr)
-		}
 
-		return nil
+		return err
 	})
 }
 
