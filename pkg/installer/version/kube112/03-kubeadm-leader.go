@@ -12,7 +12,7 @@ import (
 
 const (
 	kubeadmCertCommand = `
-grep -q KUBECONFIG /etc/environment || echo 'export KUBECONFIG=/etc/kubernetes/admin.conf' >> /etc/environment
+grep -q KUBECONFIG /etc/environment || { echo 'export KUBECONFIG=/etc/kubernetes/admin.conf' |sudo tee -a /etc/environment; }
 if [[ -d ./{{ .WORK_DIR }}/pki ]]; then
        sudo rsync -av ./{{ .WORK_DIR }}/pki/ /etc/kubernetes/pki/
        rm -rf ./{{ .WORK_DIR }}/pki
@@ -20,7 +20,7 @@ fi
 sudo chown -R root:root /etc/kubernetes
 sudo kubeadm alpha phase certs all --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
 sudo mkdir -p /etc/kubernetes/manifests
-sudo cat <<EOF > /etc/kubernetes/manifests/etcd.yaml
+cat <<EOF |sudo tee /etc/kubernetes/manifests/etcd.yaml
 apiVersion: v1
 kind: Pod
 metadata:
@@ -79,6 +79,8 @@ do
         printf "Error: Timeout waiting for etcd endpoint to get healthy.\n"
         exit 1
     fi
+		(( idx++ ))
+		sleep 1s
 done
 sudo mv /etc/systemd/system/kubelet.service.d/10-kubeadm.conf{.disabled,}
 sudo systemctl daemon-reload
