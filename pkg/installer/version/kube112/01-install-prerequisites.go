@@ -52,6 +52,9 @@ Environment="KUBELET_EXTRA_ARGS= --cloud-provider=%s --cloud-config=/etc/kuberne
 }
 
 func installPrerequisitesOnNode(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
+	if err := forceBash(ctx, conn); err != nil {
+		return fmt.Errorf("failed to enforce bash: %v", err)
+	}
 	ctx.Logger.Infoln("Determine operating system…")
 	os, err := determineOS(ctx, conn)
 	if err != nil {
@@ -83,6 +86,12 @@ func installPrerequisitesOnNode(ctx *util.Context, node *config.HostConfig, conn
 	}
 
 	return nil
+}
+
+func forceBash(ctx *util.Context, conn ssh.Connection) error {
+	_, _, err := util.RunCommand(conn, "sudo ln --force -s /bin/bash /bin/sh", ctx.Verbose)
+
+	return err
 }
 
 func determineOS(ctx *util.Context, conn ssh.Connection) (string, error) {
