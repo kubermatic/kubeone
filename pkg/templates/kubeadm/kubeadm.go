@@ -12,7 +12,7 @@ import (
 )
 
 // Config returns appropriate version of kubeadm config as YAML
-func Config(cluster *config.Cluster, instance int) (string, error) {
+func Config(cluster *config.Cluster, instance *config.HostConfig) (string, error) {
 	masterNodes := cluster.Hosts
 	if len(masterNodes) == 0 {
 		return "", errors.New("cluster does not contain at least one master node")

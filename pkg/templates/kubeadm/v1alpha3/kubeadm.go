@@ -5,7 +5,6 @@ package v1alpha3
 
 import (
 	"fmt"
-	"strings"
 
 	kubeadmv1alpha3 "github.com/kubermatic/kubeone/pkg/apis/kubeadm/v1alpha3"
 	"github.com/kubermatic/kubeone/pkg/config"
@@ -14,32 +13,15 @@ import (
 )
 
 // NewConfig init new v1alpha3 kubeadm config
-func NewConfig(cluster *config.Cluster, instance int) (*kubeadmv1alpha3.InitConfiguration, *kubeadmv1alpha3.ClusterConfiguration, error) {
-	leader := cluster.Leader()
-	host := cluster.Hosts[instance]
-
-	etcdSANs := []string{host.PrivateAddress, host.Hostname}
-	listenClientURLs := fmt.Sprintf("https://127.0.0.1:2379,https://%s:2379", host.PrivateAddress)
-	advertiseClientURLs := fmt.Sprintf("https://%s:2379", host.PrivateAddress)
-	listenPeerURLs := fmt.Sprintf("https://%s:2380", host.PrivateAddress)
-	initialAdvertisePeerURLs := fmt.Sprintf("https://%s:2380", host.PrivateAddress)
-
-	initialClusterAddresses := []string{}
-	for idx, host := range cluster.Hosts {
-		if idx > instance {
-			break
-		}
-
-		initialClusterAddresses = append(
-			initialClusterAddresses,
-			fmt.Sprintf("%s=https://%s:2380", host.Hostname, host.PrivateAddress),
-		)
+func NewConfig(cluster *config.Cluster, host *config.HostConfig) (*kubeadmv1alpha3.InitConfiguration, *kubeadmv1alpha3.ClusterConfiguration, error) {
+	leader, err := cluster.Leader()
+	if err != nil {
+		return nil, nil, err
 	}
-	initialCluster := strings.Join(initialClusterAddresses, ",")
 
-	initialClusterState := "new"
-	if instance > 0 {
-		initialClusterState = "existing"
+	endpoints := make([]string, len(cluster.Hosts))
+	for i, host := range cluster.Hosts {
+		endpoints[i] = fmt.Sprintf("http://%s:2379", host.PrivateAddress)
 	}
 
 	clusterCfg := &kubeadmv1alpha3.ClusterConfiguration{
@@ -51,17 +33,8 @@ func NewConfig(cluster *config.Cluster, instance int) (*kubeadmv1alpha3.InitConf
 		APIServerCertSANs:    []string{leader.PublicAddress},
 		ControlPlaneEndpoint: fmt.Sprintf("%s:%d", leader.PublicAddress, 6443),
 		Etcd: kubeadmv1alpha3.Etcd{
-			Local: &kubeadmv1alpha3.LocalEtcd{
-				ServerCertSANs: etcdSANs,
-				PeerCertSANs:   etcdSANs,
-				ExtraArgs: map[string]string{
-					"listen-client-urls":          listenClientURLs,
-					"advertise-client-urls":       advertiseClientURLs,
-					"listen-peer-urls":            listenPeerURLs,
-					"initial-advertise-peer-urls": initialAdvertisePeerURLs,
-					"initial-cluster":             initialCluster,
-					"initial-cluster-state":       initialClusterState,
-				},
+			External: &kubeadmv1alpha3.ExternalEtcd{
+				Endpoints: endpoints,
 			},
 		},
 		Networking: kubeadmv1alpha3.Networking{

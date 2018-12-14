@@ -13,8 +13,7 @@ import (
 func installPrerequisites(ctx *util.Context) error {
 	ctx.Logger.Infoln("Installing prerequisites…")
 
-	err := generateConfigurationFiles(ctx)
-	if err != nil {
+	if err := generateConfigurationFiles(ctx); err != nil {
 		return fmt.Errorf("failed to create configuration: %v", err)
 	}
 
@@ -128,8 +127,13 @@ func installKubeadmDebian(ctx *util.Context, conn ssh.Connection) error {
 
 const kubeadmDebianCommand = `
 sudo swapoff -a
+sudo sed -i '/.*swap.*/d' /etc/fstab
 
 source /etc/os-release
+
+
+# Short-Circuit the installation if it was arleady executed
+if type docker && type kubelet; then exit 0; fi
 
 sudo apt-get update
 sudo apt-get install -y --no-install-recommends \
@@ -163,6 +167,7 @@ sudo apt-get install -y --no-install-recommends \
      kubectl=${kube_ver} \
      kubelet=${kube_ver}
 sudo apt-mark hold docker-ce kubelet kubeadm kubectl
+sudo mv /etc/systemd/system/kubelet.service.d/10-kubeadm.conf /etc/systemd/system/kubelet.service.d/10-kubeadm.conf.disabled
 sudo systemctl daemon-reload
 `
 
@@ -211,6 +216,11 @@ func deployConfigurationFiles(ctx *util.Context, conn ssh.Connection) error {
 
 	// move config files to their permanent locations
 	_, _, err = util.RunShellCommand(conn, ctx.Verbose, `
+sudo cp /lib/systemd/system/kubelet.service /etc/systemd/system/kubelet.service
+sudo sed -i 's#ExecStart=/usr/bin/kubelet.*#ExecStart=/usr/bin/kubelet --pod-manifest-path=/etc/kubernetes/manifests#g' /etc/systemd/system/kubelet.service
+sudo mkdir -p /etc/kubernetes/manifests
+sudo systemctl daemon-reload
+sudo systemctl restart kubelet
 sudo mkdir -p /etc/systemd/system/kubelet.service.d/ /etc/kubernetes
 sudo mv ./{{ .WORK_DIR }}/cfg/20-cloudconfig-kubelet.conf /etc/systemd/system/kubelet.service.d/
 sudo mv ./{{ .WORK_DIR }}/cfg/cloud-config /etc/kubernetes/cloud-config

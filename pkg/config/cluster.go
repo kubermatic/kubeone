@@ -39,6 +39,8 @@ func (m *Cluster) DefaultAndValidate() error {
 		return errors.New("no master hosts specified")
 	}
 
+	m.Hosts[0].IsLeader = true
+
 	for idx, host := range m.Hosts {
 		// define a unique ID for each host
 		m.Hosts[idx].ID = idx
@@ -83,8 +85,13 @@ func (m *Cluster) EtcdClusterToken() (string, error) {
 
 // Leader returns the first configured host. Only call this after
 // validating the cluster config to ensure a leader exists.
-func (m *Cluster) Leader() *HostConfig {
-	return m.Hosts[0]
+func (m *Cluster) Leader() (*HostConfig, error) {
+	for i := range m.Hosts {
+		if m.Hosts[i].IsLeader {
+			return m.Hosts[i], nil
+		}
+	}
+	return nil, errors.New("leader not found")
 }
 
 // Followers returns all but the first configured host. Only call
@@ -106,6 +113,7 @@ type HostConfig struct {
 	// runtime information
 	Hostname        string `json:"-"`
 	OperatingSystem string `json:"-"`
+	IsLeader        bool   `json:"-"`
 }
 
 func (m *HostConfig) addDefaults() error {
@@ -118,9 +126,6 @@ func (m *HostConfig) addDefaults() error {
 	if len(m.SSHPrivateKeyFile) == 0 && len(m.SSHAgentSocket) == 0 {
 		m.SSHAgentSocket = "env:SSH_AUTH_SOCK"
 	}
-	//TODO: Use the same logic kubeadm uses for hostname detection
-	// as kubeadm hardcodes the hostname into the etcdname
-	// and we use the name to tell etcd the address so those two must match
 	return nil
 }
 

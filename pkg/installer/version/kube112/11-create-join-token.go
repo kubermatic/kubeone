@@ -1,12 +1,15 @@
 package kube112
 
 import (
+	"strings"
+
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 )
 
 func createJoinToken(ctx *util.Context) error {
+	originalContext := ctx
 	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Infoln("Creating join token…")
 
@@ -15,7 +18,8 @@ func createJoinToken(ctx *util.Context) error {
 			return err
 		}
 
-		ctx.JoinCommand = stdout
+		stdout = strings.Replace(stdout, "\n", "", -1)
+		originalContext.JoinCommand = stdout
 
 		return nil
 	})
