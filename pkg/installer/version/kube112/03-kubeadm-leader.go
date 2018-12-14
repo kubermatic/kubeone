@@ -73,14 +73,12 @@ EOF
 	kubeadmInitCommand = `
 if [[ -f /etc/kubernetes/admin.conf ]]; then exit 0; fi
 idx=0
-while ! curl -so /dev/null --max-time 3 --fail http://127.0.0.1:2379/health
-do
-    if [ $idx -gt 100 ]; then
+while ! curl -so /dev/null --max-time 3 --fail http://127.0.0.1:2379/health; do
+    if [ $(( idx++ )) -gt 100 ]; then
         printf "Error: Timeout waiting for etcd endpoint to get healthy.\n"
         exit 1
     fi
-		(( idx++ ))
-		sleep 1s
+    sleep 1s
 done
 sudo mv /etc/systemd/system/kubelet.service.d/10-kubeadm.conf{.disabled,}
 sudo systemctl daemon-reload
