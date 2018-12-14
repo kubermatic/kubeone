@@ -71,8 +71,7 @@ type TemplateVariables map[string]interface{}
 
 // MakeShellCommand render text template with given `variables` render-context
 func MakeShellCommand(cmd string, variables TemplateVariables) (string, error) {
-	commandWithSettings := fmt.Sprintf("set -euo pipefail;%s", cmd)
-	tpl, err := template.New("base").Parse(commandWithSettings)
+	tpl, err := template.New("base").Parse(cmd)
 	if err != nil {
 		return "", fmt.Errorf("failed to parse shell script: %v", err)
 	}
