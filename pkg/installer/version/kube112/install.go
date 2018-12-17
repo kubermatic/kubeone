@@ -43,7 +43,7 @@ func Install(ctx *util.Context) error {
 		return fmt.Errorf("failed to install kube proxy: %v", err)
 	}
 	if err := applyCNI(ctx, "canal"); err != nil {
-		return fmt.Errorf("failed to install cni plugin flannel: %v", err)
+		return fmt.Errorf("failed to install cni plugin canal: %v", err)
 	}
 	if err := installMachineController(ctx); err != nil {
 		return fmt.Errorf("failed to install machine-controller: %v", err)
