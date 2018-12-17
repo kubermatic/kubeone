@@ -24,7 +24,7 @@ if ! [ -x "$(command -v terraform)" ]; then
 fi
 if ! [ -x "$(command -v kubetest)" ]; then
   echo "Installing kubetest"
-  go get -u k8s.io/test-infra/kubetest
+  go get k8s.io/test-infra/kubetest
 fi
 # If the following variable is set then this script is running in CI
 # and the assumption is that the image contains kubernetes binaries
