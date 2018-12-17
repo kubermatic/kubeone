@@ -44,8 +44,12 @@ func RunTaskOnAllNodes(ctx *Context, task NodeTask) error {
 
 // RunTaskOnLeader runs the given task on the leader host.
 func RunTaskOnLeader(ctx *Context, task NodeTask) error {
+	leader, err := ctx.Cluster.Leader()
+	if err != nil {
+		return err
+	}
 	hosts := []*config.HostConfig{
-		ctx.Cluster.Leader(),
+		leader,
 	}
 
 	return RunTaskOnNodes(ctx, hosts, task)

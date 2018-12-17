@@ -15,8 +15,8 @@ func Install(ctx *util.Context) error {
 	if err := generateKubeadm(ctx); err != nil {
 		return fmt.Errorf("failed to generate kubeadm config files: %v", err)
 	}
-	if err := initKubernetesLeader(ctx); err != nil {
-		return fmt.Errorf("failed to init kubernetes on leader: %v", err)
+	if err := kubeadmCertsAndEtcdOnLeader(ctx); err != nil {
+		return fmt.Errorf("failed to provision certs and etcd on leader: %v", err)
 	}
 	if err := downloadCA(ctx); err != nil {
 		return fmt.Errorf("unable to download ca from leader: %v", err)
@@ -24,7 +24,16 @@ func Install(ctx *util.Context) error {
 	if err := deployCA(ctx); err != nil {
 		return fmt.Errorf("unable to deploy ca on nodes: %v", err)
 	}
-	if err := joinMasterCluster(ctx); err != nil {
+	if err := kubeadmCertsAndEtcdOnFollower(ctx); err != nil {
+		return fmt.Errorf("failed to provision certs and etcd on followers: %v", err)
+	}
+	if err := initKubernetesLeader(ctx); err != nil {
+		return fmt.Errorf("failed to init kubernetes on leader: %v", err)
+	}
+	if err := createJoinToken(ctx); err != nil {
+		return fmt.Errorf("failed to create join token: %v", err)
+	}
+	if err := joinControlplaneNode(ctx); err != nil {
 		return fmt.Errorf("unable to join other masters a cluster: %v", err)
 	}
 	if err := installKubeProxy(ctx); err != nil {
@@ -41,9 +50,6 @@ func Install(ctx *util.Context) error {
 	}
 	if err := deployArk(ctx); err != nil {
 		return fmt.Errorf("failed to deploy ark: %v", err)
-	}
-	if err := createJoinToken(ctx); err != nil {
-		return fmt.Errorf("failed to create join token: %v", err)
 	}
 
 	return nil
