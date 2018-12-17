@@ -24,74 +24,58 @@ adjustments.
 
 Armed with your configuration, you can now run KubeOne:
 
-    ./kubeone install myconfig.yaml
+    kubeone install myconfig.yaml
 
 This will SSH into the machines, install the required dependencies and then
 perform the necessary steps to bring up an etcd ring and a HA Kubernetes
 control plane.
 
-## Config
-TBD
-
 ## Workers definition
 
-Worker nodes are managed by [machine-controller
-project](https://github.com/kubermatic/machine-controller/) (that kubeone
-automatically deploy).
+KubeOne relies on the [machine-controller
+project](https://github.com/kubermatic/machine-controller/) to create worker nodes after the kubernetes master nodes are bootstrapped.
+The machine controller will be deployed as part of the cluster creation and is configured using the cloud provider credentials from the shell environment.
+(`AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` in case of AWS)
 
-Config section `workers: []` used as a source for MachineDeployment
-(cluster-api).
+Make sure the
 
-### Worker's cloudProviderSpec
 
-It's cloud provider specific, actual fields are defined in
-https://github.com/kubermatic/machine-controller/tree/master/pkg/cloudprovider/provider
-`RawConfig` structure in corresponding provider package.
+Worker nodes are managed by the [machine-controller
+project](https://github.com/kubermatic/machine-controller/) (which kubeone
+automatically deploys).
 
-### Worker's cloudProviderSpec for AWS
+The config section `workers: []` specifies `MachineDeployment` objects that will be created when KubeOne runs.
 
-| Param | Description |
-|-------|-------------|
-| region| TBD |
-| availabilityZone | TBD |
-| vpcId | TBD |
-| subnetId | TBD |
-| securityGroupIDs | TBD |
-| instanceProfile | TBD |
-| instanceType | TBD |
-| ami | TBD |
-| diskSize | TBD |
-| diskType | TBD |
+You can find example machine deployments in the [machine-controller examples](https://github.com/kubermatic/machine-controller/blob/master/examples/aws-machinedeployment.yaml).
 
 ## Terraform Integration
 
-If you use Terraform to provision your infrastructure, you can make KubeOne read
-its output to learn about the nodes in your cluster. Take a look at the
-`terraform/aws` and especially the `output.tf` file to learn more about what
-data KubeOne expects to read from Terraform.
+KubeOne supports discovery of `hosts`, the kubernetes API LB and can read worker configuration from Terraform's output.
+Take a look at the files in the `terraform/aws` directory and especially the `output.tf` file to learn more about what data KubeOne expects to read from Terraform.
 
-To use Terraform's output, use the `--tfjson` CLI flag:
+To use Terraform's output, use the `--tfjson` CLI flag for the `install` command:
 
     terraform apply
     terraform output -json > tf.json
-    ./kubeone install --tfjson tf.json myconfig.yaml
 
-This will overwrite the nodes in your `myconfig.yaml` (if any) before installing
-Kubernetes.
+    kubeone install --tfjson tf.json myconfig.yaml
 
-## Terraform output params
 
-Output param names and types correspond to `cloudProviderSpec` for chosen
-provider, for more information please consult
-https://github.com/kubermatic/machine-controller/tree/master/pkg/cloudprovider/provider
-`RawConfig` structure in corresponding provider package.
+### Worker configuration from Terraform
+
+While the `hosts: []` configuration will be completely taken from Terraform's output, the `workers: []` configuration will be merged by populating empty config fields.
+
+Output value names and types correspond to `cloudProviderSpec` fields for the chosen
+provider, for more information please consult the `RawConfig` structure in corresponding provider package in the [machine-controller provider](https://github.com/kubermatic/machine-controller/tree/master/pkg/cloudprovider/provider) folder.
+
+The `terraform/aws` example and the `config.yaml.dist` file contain multiple worker configs that use this mechanism to add `availabilityZone`, `ami`, etc. fields.
 
 ## Debugging
 
 To see exactly what's happening during installation, pass the `--verbose` flag
 to KubeOne:
 
-    ./kubeone --verbose install myconfig.yaml
+    kubeone --verbose install myconfig.yaml
 
 This will stream the output of all shell commands to your shell.
 
