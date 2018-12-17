@@ -63,10 +63,8 @@ func (m *Cluster) DefaultAndValidate() error {
 				return fmt.Errorf("worker set %d is invalid: %v", idx+1, err)
 			}
 		}
-	} else {
-		// this effectively disables any further provisioner integration
-		// like applying Terraform configs
-		m.Workers = make([]WorkerConfig, 0)
+	} else if len(m.Workers) > 0 {
+		return errors.New("machine-controller deployment is disabled, but configuration still contains worker definitions")
 	}
 
 	if err := m.Network.Validate(); err != nil {
