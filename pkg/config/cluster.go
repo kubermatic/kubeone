@@ -10,15 +10,16 @@ import (
 
 // Cluster describes our entire configuration.
 type Cluster struct {
-	Name      string          `json:"name"`
-	Hosts     []*HostConfig   `json:"hosts"`
-	APIServer APIServerConfig `json:"apiserver"`
-	ETCD      ETCDConfig      `json:"etcd"`
-	Provider  ProviderConfig  `json:"provider"`
-	Versions  VersionConfig   `json:"versions"`
-	Network   NetworkConfig   `json:"network"`
-	Workers   []WorkerConfig  `json:"workers"`
-	Backup    BackupConfig    `json:"backup"`
+	Name              string                  `json:"name"`
+	Hosts             []*HostConfig           `json:"hosts"`
+	APIServer         APIServerConfig         `json:"apiserver"`
+	ETCD              ETCDConfig              `json:"etcd"`
+	Provider          ProviderConfig          `json:"provider"`
+	Versions          VersionConfig           `json:"versions"`
+	Network           NetworkConfig           `json:"network"`
+	Workers           []WorkerConfig          `json:"workers"`
+	Backup            BackupConfig            `json:"backup"`
+	MachineController MachineControllerConfig `json:"machine_controller"`
 }
 
 // DefaultAndValidate checks if the cluster config makes sense.
@@ -56,10 +57,16 @@ func (m *Cluster) DefaultAndValidate() error {
 		}
 	}
 
-	for idx, workerset := range m.Workers {
-		if err := workerset.Validate(); err != nil {
-			return fmt.Errorf("worker set %d is invalid: %v", idx+1, err)
+	if m.MachineController.Deploy {
+		for idx, workerset := range m.Workers {
+			if err := workerset.Validate(); err != nil {
+				return fmt.Errorf("worker set %d is invalid: %v", idx+1, err)
+			}
 		}
+	} else {
+		// this effectively disables any further provisioner integration
+		// like applying Terraform configs
+		m.Workers = make([]WorkerConfig, 0)
 	}
 
 	if err := m.Network.Validate(); err != nil {
@@ -401,4 +408,8 @@ func (m *BackupConfig) ApplyEnvironment() error {
 	}
 
 	return nil
+}
+
+type MachineControllerConfig struct {
+	Deploy bool `json:"deploy"`
 }
