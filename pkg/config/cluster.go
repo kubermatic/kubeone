@@ -1,8 +1,6 @@
 package config
 
 import (
-	"crypto/rand"
-	"encoding/hex"
 	"errors"
 	"fmt"
 	"net"
@@ -15,6 +13,7 @@ type Cluster struct {
 	Name      string          `json:"name"`
 	Hosts     []*HostConfig   `json:"hosts"`
 	APIServer APIServerConfig `json:"apiserver"`
+	ETCD      ETCDConfig      `json:"etcd"`
 	Provider  ProviderConfig  `json:"provider"`
 	Versions  VersionConfig   `json:"versions"`
 	Network   NetworkConfig   `json:"network"`
@@ -38,6 +37,16 @@ func (m *Cluster) DefaultAndValidate() error {
 	if len(m.Hosts) == 0 {
 		return errors.New("no master hosts specified")
 	}
+
+	if m.ETCD.Version == "" {
+		m.ETCD.Version = "3.2.24"
+	}
+
+	if m.ETCD.Version != "3.2.24" {
+		return fmt.Errorf("Only supported etcd version is 3.2.24")
+	}
+
+	m.EtcdClusterToken()
 
 	m.Hosts[0].IsLeader = true
 
@@ -67,20 +76,10 @@ func (m *Cluster) DefaultAndValidate() error {
 	return nil
 }
 
-// EtcdClusterToken returns a randomly generated token.
-func (m *Cluster) EtcdClusterToken() (string, error) {
-	if m.etcdClusterToken == "" {
-		b := make([]byte, 16)
-
-		_, err := rand.Read(b)
-		if err != nil {
-			return "", err
-		}
-
-		m.etcdClusterToken = hex.EncodeToString(b)
-	}
-
-	return m.etcdClusterToken, nil
+// EtcdClusterToken returns the cluster name
+// It must be deterministic across multiple runs
+func (m *Cluster) EtcdClusterToken() string {
+	return m.Name
 }
 
 // Leader returns the first configured host. Only call this after
@@ -167,6 +166,10 @@ func (m *HostConfig) EtcdPeerURL() string {
 // APIServerConfig describes the load balancer address.
 type APIServerConfig struct {
 	Address string `json:"address"`
+}
+
+type ETCDConfig struct {
+	Version string `json:"address"`
 }
 
 // ProviderName represents the name of an provider

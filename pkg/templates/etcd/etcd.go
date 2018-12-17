@@ -1,12 +1,10 @@
 package etcd
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 
 	"github.com/kubermatic/kubeone/pkg/config"
-	"github.com/kubermatic/kubeone/pkg/templates"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -17,30 +15,14 @@ func hostPathTypePtr(s corev1.HostPathType) *corev1.HostPathType {
 }
 
 // Pod returns static etcd manifest to YAML
-func Pod(cluster *config.Cluster, instance int) (string, error) {
-	masterNodes := cluster.Hosts
-	if len(masterNodes) < (instance - 1) {
-		return "", fmt.Errorf("cluster config does not contain node #%d", instance)
+func Pod(cluster *config.Cluster, node *config.HostConfig) *corev1.Pod {
+	initialCluster := make([]string, len(cluster.Hosts))
+	for i, host := range cluster.Hosts {
+		initialCluster[i] = fmt.Sprintf("%s=http://%s:2380", host.Hostname, host.PrivateAddress)
 	}
+	initialClusterString := strings.Join(initialCluster, ",")
 
-	token, err := cluster.EtcdClusterToken()
-	if err != nil {
-		return "", errors.New("failed to generate new secure etcd cluster token")
-	}
-
-	node := masterNodes[instance]
-	name := fmt.Sprintf("etcd-%d", instance)
-	etcdRing := make([]string, 0)
-
-	for i, node := range masterNodes {
-		etcdRing = append(etcdRing, fmt.Sprintf("etcd-%d=%s", i, node.EtcdPeerURL()))
-	}
-
-	pod := corev1.Pod{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "v1",
-			Kind:       "Pod",
-		},
+	pod := &corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "etcd",
 			Namespace: "kube-system",
@@ -58,41 +40,43 @@ func Pod(cluster *config.Cluster, instance int) (string, error) {
 					Name: "etcd",
 					Command: []string{
 						"etcd",
-						"--data-dir=/var/lib/etcd",
-						fmt.Sprintf("--name=%s", name),
-						fmt.Sprintf("--advertise-client-urls=%s", node.EtcdURL()),
-						fmt.Sprintf("--listen-client-urls=%s", node.EtcdURL()),
-						fmt.Sprintf("--listen-peer-urls=%s", node.EtcdPeerURL()),
-
+						fmt.Sprintf("--advertise-client-urls=http://%s:2379", node.PrivateAddress),
+						fmt.Sprintf("--initial-advertise-peer-urls=http://%s:2380", node.PrivateAddress),
+						fmt.Sprintf("--initial-cluster=%s", initialClusterString),
 						"--initial-cluster-state=new",
-						fmt.Sprintf("--initial-advertise-peer-urls=%s", node.EtcdPeerURL()),
-						fmt.Sprintf("--initial-cluster=%s", strings.Join(etcdRing, ",")),
-						fmt.Sprintf("--initial-cluster-token=%s", token),
-
-						"--client-cert-auth=true",
-						"--cert-file=/etc/kubernetes/pki/etcd/server.crt",
-						"--key-file=/etc/kubernetes/pki/etcd/server.key",
-						"--trusted-ca-file=/etc/kubernetes/pki/etcd/ca.crt",
-
-						"--peer-client-cert-auth=true",
-						"--peer-cert-file=/etc/kubernetes/pki/etcd/peer.crt",
-						"--peer-key-file=/etc/kubernetes/pki/etcd/peer.key",
-						"--peer-trusted-ca-file=/etc/kubernetes/pki/etcd/ca.crt",
+						fmt.Sprintf("--listen-client-urls=http://127.0.0.1:2379,http://%s:2379", node.PrivateAddress),
+						fmt.Sprintf("--listen-peer-urls=http://%s:2380", node.PrivateAddress),
+						"--data-dir=/var/lib/etcd",
+						fmt.Sprintf("--name=%s", node.Hostname),
+						"--snapshot-count=10000",
+						fmt.Sprintf("--initial-cluster-token=%s", cluster.EtcdClusterToken()),
 					},
-					Image: fmt.Sprintf("k8s.gcr.io/etcd-amd64:%s", cluster.Versions.Etcd()),
+					Image:           fmt.Sprintf("k8s.gcr.io/etcd-amd64:%s", cluster.ETCD.Version),
+					ImagePullPolicy: corev1.PullIfNotPresent,
+					LivenessProbe: &corev1.Probe{
+						Handler: corev1.Handler{
+							Exec: &corev1.ExecAction{
+								Command: []string{
+									"/bin/sh",
+									"-c",
+									"ETCDCTL_API=3 etcdctl --endpoints=http://127.0.0.1:2379 get foo",
+								},
+							},
+						},
+						FailureThreshold:    8,
+						InitialDelaySeconds: 15,
+						TimeoutSeconds:      15,
+					},
 					VolumeMounts: []corev1.VolumeMount{
 						{
 							MountPath: "/var/lib/etcd",
 							Name:      "etcd-data",
 						},
-						{
-							MountPath: "/etc/kubernetes/pki/etcd",
-							Name:      "etcd-certs",
-						},
 					},
 				},
 			},
-			HostNetwork: true,
+			HostNetwork:       true,
+			PriorityClassName: "system-cluster-critical",
 			Volumes: []corev1.Volume{
 				{
 					Name: "etcd-data",
@@ -103,18 +87,11 @@ func Pod(cluster *config.Cluster, instance int) (string, error) {
 						},
 					},
 				},
-				{
-					Name: "etcd-certs",
-					VolumeSource: corev1.VolumeSource{
-						HostPath: &corev1.HostPathVolumeSource{
-							Path: "/etc/kubernetes/pki/etcd",
-							Type: hostPathTypePtr(corev1.HostPathDirectoryOrCreate),
-						},
-					},
-				},
 			},
 		},
 	}
 
-	return templates.KubernetesToYAML([]interface{}{pod})
+	pod.Kind = "Pod"
+	pod.APIVersion = "v1"
+	return pod
 }
