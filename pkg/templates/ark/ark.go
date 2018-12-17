@@ -31,14 +31,22 @@ func Manifest(cluster *config.Cluster) (string, error) {
 		serviceAccount(),
 		rbacRole(),
 
-		// Configuration
+		// Credentials
+		// TODO(xmudrii): Credentials needed for other provider stores.
 		awsCredentials(cluster),
+
+		// Backup location confiugration
 		backupLocation(cluster),
 		volumeSnapshotLocation(cluster),
 
 		// Deployment
 		deploymentManifest,
+
+		// Restic
 		resticDaemonset(),
+
+		// Etcd automatic backup schedule
+		etcdBackupSchedule(cluster),
 	}
 
 	return templates.KubernetesToYAML(items)

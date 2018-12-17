@@ -6,6 +6,9 @@ import (
 	"net"
 	"os"
 	"strings"
+	"time"
+
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // Cluster describes our entire configuration.
@@ -75,7 +78,7 @@ func (m *Cluster) DefaultAndValidate() error {
 		return fmt.Errorf("network configuration is invalid: %v", err)
 	}
 
-	if err := m.Backup.Validate(); err != nil {
+	if err := m.Backup.AddDefaultsAndValidate(); err != nil {
 		return fmt.Errorf("backup configuration is invalid: %v", err)
 	}
 
@@ -353,6 +356,12 @@ type BackupConfig struct {
 
 	// BucketName is name of the S3 bucket where backups are stored
 	BucketName string `json:"bucket_name"`
+	// BackupTTL is for how long backups should be stored. By default backups are stored for 2 weeks
+	BackupTTL metav1.Duration `json:"backup_ttl"`
+	// BackupSchedule is crontab string defining how often backups are created.
+	// Default value is 0 * * * * (1 hour).
+	// Crontab reference can be found on https://crontab.guru/
+	BackupSchedule string `json:"backup_schedule"`
 
 	// BackupStorageConfig is optional configuration depending on the provider specified
 	// Details: https://heptio.github.io/ark/v0.10.0/api-types/backupstoragelocation.html
@@ -368,11 +377,26 @@ func (m *BackupConfig) Enabled() bool {
 	return m.Provider != ""
 }
 
+func (m *BackupConfig) addDefaults() error {
+	if len(m.BackupSchedule) == 0 {
+		m.BackupSchedule = "0 * * * *"
+	}
+	if m.BackupTTL.Duration == 0 {
+		m.BackupTTL.Duration = time.Hour * 24 * 14
+	}
+	return nil
+}
+
 // Validate valides the BackupConfig structure, ensuring credentials and bucket name are provided
-func (m *BackupConfig) Validate() error {
+func (m *BackupConfig) AddDefaultsAndValidate() error {
 	// if the backup is not enabled, nothing else matters
 	if !m.Enabled() {
 		return nil
+	}
+
+	// Add defaults to the Backup struct
+	if err := m.addDefaults(); err != nil {
+		return err
 	}
 
 	if len(m.S3AccessKey) == 0 {

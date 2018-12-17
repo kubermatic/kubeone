@@ -31,6 +31,10 @@ backup:
   s3_secret_access_key: 'env:BACKUP_AWS_SECRET_ACCESS_KEY'
   # Name of the to store backups in
   bucket_name: 'backup'
+  # Time for how long backups are stored
+  backup_ttl: '336h' # 14 days
+  # Crontab defining how often are we doing backups
+  backup_schedule: '0 * * * *' # each hour
   # Additional backup options
   # https://heptio.github.io/ark/v0.10.0/api-types/backupstoragelocation.html
   # backup_storage_config:
