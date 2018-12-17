@@ -7,10 +7,10 @@ import (
 )
 
 func installKubeProxy(ctx *util.Context) error {
-	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
+	return ctx.RunTaskOnLeader(func(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Infoln("Installing kube-proxy…")
 
-		_, _, err := util.RunShellCommand(conn, ctx.Verbose, `
+		_, _, err := ctx.Runner.Run(`
 mkdir -p ~/.kube
 sudo cp /etc/kubernetes/admin.conf ~/.kube/config
 sudo chown -R $(id -u):$(id -g) ~/.kube

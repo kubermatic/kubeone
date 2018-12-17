@@ -12,18 +12,18 @@ func Reset(ctx *util.Context) error {
 	ctx.Logger.Infoln("Resetting kubeadm…")
 
 	if ctx.DestroyWorkers {
-		if err := util.RunTaskOnLeader(ctx, destroyWorkers); err != nil {
+		if err := ctx.RunTaskOnLeader(destroyWorkers); err != nil {
 			return err
 		}
 	}
 
-	return util.RunTaskOnAllNodes(ctx, resetNode)
+	return ctx.RunTaskOnAllNodes(resetNode, true)
 }
 
 func destroyWorkers(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
 	ctx.Logger.Infoln("Destroying worker nodes…")
 
-	_, _, err := util.RunShellCommand(conn, ctx.Verbose, destroyScript, util.TemplateVariables{
+	_, _, err := ctx.Runner.Run(destroyScript, util.TemplateVariables{
 		"WORK_DIR":   ctx.WorkDir,
 		"MACHINE_NS": machinecontroller.MachineControllerNamespace,
 	})
@@ -34,7 +34,7 @@ func destroyWorkers(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection
 func resetNode(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
 	ctx.Logger.Infoln("Resetting node…")
 
-	_, _, err := util.RunShellCommand(conn, ctx.Verbose, resetScript, util.TemplateVariables{
+	_, _, err := ctx.Runner.Run(resetScript, util.TemplateVariables{
 		"WORK_DIR": ctx.WorkDir,
 	})
 

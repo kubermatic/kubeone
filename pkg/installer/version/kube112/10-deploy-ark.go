@@ -15,7 +15,7 @@ func deployArk(ctx *util.Context) error {
 		return nil
 	}
 
-	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
+	return ctx.RunTaskOnLeader(func(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
 		arkConfig, err := ark.Manifest(ctx.Cluster)
 		if err != nil {
 			return fmt.Errorf("failed to create Ark configuration: %v", err)
@@ -29,14 +29,10 @@ func deployArk(ctx *util.Context) error {
 
 		ctx.Logger.Infoln("Deploying Ark…")
 
-		cmd, err := util.MakeShellCommand(`sudo kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f "{{ .WORK_DIR }}/ark/ark.yaml"`, util.TemplateVariables{
+		_, _, err = ctx.Runner.Run(`sudo kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f "{{ .WORK_DIR }}/ark/ark.yaml"`, util.TemplateVariables{
 			"WORK_DIR": ctx.WorkDir,
 		})
-		if err != nil {
-			return err
-		}
 
-		_, _, err = util.RunCommand(conn, cmd, ctx.Verbose)
 		return err
 	})
 }

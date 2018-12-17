@@ -10,10 +10,10 @@ import (
 
 func createJoinToken(ctx *util.Context) error {
 	originalContext := ctx
-	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
+	return ctx.RunTaskOnLeader(func(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Infoln("Creating join token…")
 
-		stdout, _, err := util.RunCommand(conn, `sudo kubeadm token create --print-join-command`, ctx.Verbose)
+		stdout, _, err := ctx.Runner.Run(`sudo kubeadm token create --print-join-command`, nil)
 		if err != nil {
 			return err
 		}

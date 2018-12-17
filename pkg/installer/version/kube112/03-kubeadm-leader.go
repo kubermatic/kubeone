@@ -90,12 +90,12 @@ sudo kubeadm init --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml \
 
 func kubeadmCertsAndEtcdOnLeader(ctx *util.Context) error {
 	ctx.Logger.Infoln("Configuring certs and etcd on first controller…")
-	return util.RunTaskOnLeader(ctx, kubeadmCertsExecutor)
+	return ctx.RunTaskOnLeader(kubeadmCertsExecutor)
 }
 
 func kubeadmCertsAndEtcdOnFollower(ctx *util.Context) error {
 	ctx.Logger.Infoln("Configuring certs and etcd on consecutive controller…")
-	return util.RunTaskOnFollowers(ctx, kubeadmCertsExecutor)
+	return ctx.RunTaskOnFollowers(kubeadmCertsExecutor, true)
 }
 
 func kubeadmCertsExecutor(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
@@ -106,7 +106,7 @@ func kubeadmCertsExecutor(ctx *util.Context, node *config.HostConfig, conn ssh.C
 	initialClusterString := strings.Join(initialCluster, ",")
 
 	ctx.Logger.Infoln("Ensuring Certificates…")
-	_, _, err := util.RunShellCommand(conn, ctx.Verbose, kubeadmCertCommand, util.TemplateVariables{
+	_, _, err := ctx.Runner.Run(kubeadmCertCommand, util.TemplateVariables{
 		"PRIVATE_ADDRESS": node.PrivateAddress,
 		"HOSTNAME":        node.Hostname,
 		"INITIAL_CLUSTER": initialClusterString,
@@ -119,10 +119,10 @@ func kubeadmCertsExecutor(ctx *util.Context, node *config.HostConfig, conn ssh.C
 func initKubernetesLeader(ctx *util.Context) error {
 	ctx.Logger.Infoln("Initializing Kubernetes on leader…")
 
-	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
+	return ctx.RunTaskOnLeader(func(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Infoln("Running kubeadm…")
 
-		_, _, err := util.RunShellCommand(conn, ctx.Verbose, kubeadmInitCommand, util.TemplateVariables{
+		_, _, err := ctx.Runner.Run(kubeadmInitCommand, util.TemplateVariables{
 			"WORK_DIR": ctx.WorkDir,
 			"NODE_ID":  strconv.Itoa(node.ID),
 		})

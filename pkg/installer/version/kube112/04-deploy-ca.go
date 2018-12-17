@@ -12,10 +12,10 @@ import (
 func downloadCA(ctx *util.Context) error {
 	ctx.Logger.Infoln("Generating PKI…")
 
-	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
+	return ctx.RunTaskOnLeader(func(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Infoln("Running kubeadm…")
 
-		_, _, err := util.RunShellCommand(conn, ctx.Verbose, `
+		_, _, err := ctx.Runner.Run(`
 mkdir -p ./{{ .WORK_DIR }}/pki/etcd
 sudo cp /etc/kubernetes/pki/ca.crt ./{{ .WORK_DIR }}/pki/
 sudo cp /etc/kubernetes/pki/ca.key ./{{ .WORK_DIR }}/pki/
@@ -56,7 +56,7 @@ sudo chown -R "$USER:$USER" ./{{ .WORK_DIR }}
 
 func deployCA(ctx *util.Context) error {
 	ctx.Logger.Infoln("Deploying PKI…")
-	return util.RunTaskOnFollowers(ctx, deployCAOnNode)
+	return ctx.RunTaskOnFollowers(deployCAOnNode, true)
 }
 
 func deployCAOnNode(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {

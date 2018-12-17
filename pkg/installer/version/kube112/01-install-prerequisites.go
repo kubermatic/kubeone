@@ -17,7 +17,7 @@ func installPrerequisites(ctx *util.Context) error {
 		return fmt.Errorf("failed to create configuration: %v", err)
 	}
 
-	return util.RunTaskOnAllNodes(ctx, installPrerequisitesOnNode)
+	return ctx.RunTaskOnAllNodes(installPrerequisitesOnNode, true)
 }
 
 func generateConfigurationFiles(ctx *util.Context) error {
@@ -53,7 +53,7 @@ Environment="KUBELET_EXTRA_ARGS= --cloud-provider=%s --cloud-config=/etc/kuberne
 
 func installPrerequisitesOnNode(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
 	ctx.Logger.Infoln("Determine operating system…")
-	os, err := determineOS(ctx, conn)
+	os, err := determineOS(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to determine operating system: %v", err)
 	}
@@ -61,7 +61,7 @@ func installPrerequisitesOnNode(ctx *util.Context, node *config.HostConfig, conn
 	node.OperatingSystem = os
 
 	ctx.Logger.Infoln("Determine hostname…")
-	hostname, err := determineHostname(ctx, conn, node)
+	hostname, err := determineHostname(ctx, node)
 	if err != nil {
 		return fmt.Errorf("failed to determine hostname: %v", err)
 	}
@@ -71,13 +71,13 @@ func installPrerequisitesOnNode(ctx *util.Context, node *config.HostConfig, conn
 	logger := ctx.Logger.WithField("os", os)
 
 	logger.Infoln("Installing kubeadm…")
-	err = installKubeadm(ctx, conn, node)
+	err = installKubeadm(ctx, node)
 	if err != nil {
 		return fmt.Errorf("failed to install kubeadm: %v", err)
 	}
 
 	logger.Infoln("Deploying configuration files…")
-	err = deployConfigurationFiles(ctx, conn)
+	err = deployConfigurationFiles(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to upload configuration files: %v", err)
 	}
@@ -85,29 +85,29 @@ func installPrerequisitesOnNode(ctx *util.Context, node *config.HostConfig, conn
 	return nil
 }
 
-func determineOS(ctx *util.Context, conn ssh.Connection) (string, error) {
-	stdout, _, err := util.RunCommand(conn, "cat /etc/os-release | grep '^ID=' | sed s/^ID=//", ctx.Verbose)
+func determineOS(ctx *util.Context) (string, error) {
+	stdout, _, err := ctx.Runner.Run("cat /etc/os-release | grep '^ID=' | sed s/^ID=//", nil)
 
 	return stdout, err
 }
 
-func determineHostname(ctx *util.Context, conn ssh.Connection, _ *config.HostConfig) (string, error) {
-	stdout, _, err := util.RunCommand(conn, "hostname -f", ctx.Verbose)
+func determineHostname(ctx *util.Context, _ *config.HostConfig) (string, error) {
+	stdout, _, err := ctx.Runner.Run("hostname -f", nil)
 
 	return stdout, err
 }
 
-func installKubeadm(ctx *util.Context, conn ssh.Connection, node *config.HostConfig) error {
+func installKubeadm(ctx *util.Context, node *config.HostConfig) error {
 	var err error
 
 	switch node.OperatingSystem {
 	case "ubuntu":
 		fallthrough
 	case "debian":
-		err = installKubeadmDebian(ctx, conn)
+		err = installKubeadmDebian(ctx)
 
 	case "coreos":
-		err = installKubeadmCoreOS(ctx, conn)
+		err = installKubeadmCoreOS(ctx)
 
 	default:
 		err = fmt.Errorf("'%s' is not a supported operating system", node.OperatingSystem)
@@ -116,8 +116,8 @@ func installKubeadm(ctx *util.Context, conn ssh.Connection, node *config.HostCon
 	return err
 }
 
-func installKubeadmDebian(ctx *util.Context, conn ssh.Connection) error {
-	_, _, err := util.RunShellCommand(conn, ctx.Verbose, kubeadmDebianCommand, util.TemplateVariables{
+func installKubeadmDebian(ctx *util.Context) error {
+	_, _, err := ctx.Runner.Run(kubeadmDebianCommand, util.TemplateVariables{
 		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
 		"DOCKER_VERSION":     ctx.Cluster.Versions.Docker,
 	})
@@ -171,8 +171,8 @@ sudo mv /etc/systemd/system/kubelet.service.d/10-kubeadm.conf /etc/systemd/syste
 sudo systemctl daemon-reload
 `
 
-func installKubeadmCoreOS(ctx *util.Context, conn ssh.Connection) error {
-	_, _, err := util.RunShellCommand(conn, ctx.Verbose, kubeadmCoreOSCommand, util.TemplateVariables{
+func installKubeadmCoreOS(ctx *util.Context) error {
+	_, _, err := ctx.Runner.Run(kubeadmCoreOSCommand, util.TemplateVariables{
 		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
 		"DOCKER_VERSION":     ctx.Cluster.Versions.Docker,
 		"CNI_VERSION":        "v0.7.1",
@@ -208,14 +208,14 @@ sudo systemctl enable docker.service kubelet.service
 sudo systemctl start docker.service kubelet.service
 `
 
-func deployConfigurationFiles(ctx *util.Context, conn ssh.Connection) error {
-	err := ctx.Configuration.UploadTo(conn, ctx.WorkDir)
+func deployConfigurationFiles(ctx *util.Context) error {
+	err := ctx.Configuration.UploadTo(ctx.Runner.Conn, ctx.WorkDir)
 	if err != nil {
 		return fmt.Errorf("failed to upload: %v", err)
 	}
 
 	// move config files to their permanent locations
-	_, _, err = util.RunShellCommand(conn, ctx.Verbose, `
+	_, _, err = ctx.Runner.Run(`
 sudo cp /lib/systemd/system/kubelet.service /etc/systemd/system/kubelet.service
 sudo sed -i 's#ExecStart=/usr/bin/kubelet.*#ExecStart=/usr/bin/kubelet --pod-manifest-path=/etc/kubernetes/manifests#g' /etc/systemd/system/kubelet.service
 sudo mkdir -p /etc/kubernetes/manifests
