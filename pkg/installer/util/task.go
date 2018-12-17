@@ -11,12 +11,13 @@ import (
 // NodeTask is a task that is specifically tailored to run on a single node.
 type NodeTask func(ctx *Context, node *config.HostConfig, conn ssh.Connection) error
 
-func runTask(ctx *Context, node *config.HostConfig, task NodeTask, prefixed bool) error {
+func (c *Context) runTask(node *config.HostConfig, task NodeTask, prefixed bool) error {
 	var (
 		err  error
 		conn ssh.Connection
 	)
 
+	ctx := c.Clone()
 	ctx.Logger = ctx.Logger.WithField("node", node.PublicAddress)
 
 	// connect to the host (and do not close connection
@@ -42,7 +43,7 @@ func runTask(ctx *Context, node *config.HostConfig, task NodeTask, prefixed bool
 }
 
 // RunTaskOnNodes runs the given task on the given selection of hosts.
-func RunTaskOnNodes(ctx *Context, nodes []*config.HostConfig, task NodeTask, parallel bool) error {
+func (c *Context) RunTaskOnNodes(nodes []*config.HostConfig, task NodeTask, parallel bool) error {
 	var err error
 
 	wg := sync.WaitGroup{}
@@ -52,14 +53,14 @@ func RunTaskOnNodes(ctx *Context, nodes []*config.HostConfig, task NodeTask, par
 		if parallel {
 			wg.Add(1)
 			go func(node *config.HostConfig) {
-				err = runTask(ctx.Clone(), node, task, parallel)
+				err = c.runTask(node, task, parallel)
 				if err != nil {
 					hasErrors = true
 				}
 				wg.Done()
 			}(node)
 		} else {
-			err = runTask(ctx.Clone(), node, task, parallel)
+			err = c.runTask(node, task, parallel)
 			if err != nil {
 				break
 			}
@@ -76,24 +77,25 @@ func RunTaskOnNodes(ctx *Context, nodes []*config.HostConfig, task NodeTask, par
 }
 
 // RunTaskOnAllNodes runs the given task on all hosts.
-func RunTaskOnAllNodes(ctx *Context, task NodeTask, parallel bool) error {
-	return RunTaskOnNodes(ctx, ctx.Cluster.Hosts, task, parallel)
+func (c *Context) RunTaskOnAllNodes(task NodeTask, parallel bool) error {
+	return c.RunTaskOnNodes(c.Cluster.Hosts, task, parallel)
 }
 
 // RunTaskOnLeader runs the given task on the leader host.
-func RunTaskOnLeader(ctx *Context, task NodeTask) error {
-	leader, err := ctx.Cluster.Leader()
+func (c *Context) RunTaskOnLeader(task NodeTask) error {
+	leader, err := c.Cluster.Leader()
 	if err != nil {
 		return err
 	}
+
 	hosts := []*config.HostConfig{
 		leader,
 	}
 
-	return RunTaskOnNodes(ctx, hosts, task, false)
+	return c.RunTaskOnNodes(hosts, task, false)
 }
 
 // RunTaskOnFollowers runs the given task on the follower hosts.
-func RunTaskOnFollowers(ctx *Context, task NodeTask, parallel bool) error {
-	return RunTaskOnNodes(ctx, ctx.Cluster.Followers(), task, parallel)
+func (c *Context) RunTaskOnFollowers(task NodeTask, parallel bool) error {
+	return c.RunTaskOnNodes(c.Cluster.Followers(), task, parallel)
 }

@@ -12,12 +12,12 @@ func Reset(ctx *util.Context) error {
 	ctx.Logger.Infoln("Resetting kubeadm…")
 
 	if ctx.DestroyWorkers {
-		if err := util.RunTaskOnLeader(ctx, destroyWorkers); err != nil {
+		if err := ctx.RunTaskOnLeader(destroyWorkers); err != nil {
 			return err
 		}
 	}
 
-	return util.RunTaskOnAllNodes(ctx, resetNode, true)
+	return ctx.RunTaskOnAllNodes(resetNode, true)
 }
 
 func destroyWorkers(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {

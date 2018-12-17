@@ -12,7 +12,7 @@ import (
 func downloadCA(ctx *util.Context) error {
 	ctx.Logger.Infoln("Generating PKI…")
 
-	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
+	return ctx.RunTaskOnLeader(func(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Infoln("Running kubeadm…")
 
 		_, _, err := ctx.Runner.Run(`
@@ -56,7 +56,7 @@ sudo chown -R "$USER:$USER" ./{{ .WORK_DIR }}
 
 func deployCA(ctx *util.Context) error {
 	ctx.Logger.Infoln("Deploying PKI…")
-	return util.RunTaskOnFollowers(ctx, deployCAOnNode, true)
+	return ctx.RunTaskOnFollowers(deployCAOnNode, true)
 }
 
 func deployCAOnNode(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {

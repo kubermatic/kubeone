@@ -7,7 +7,7 @@ import (
 )
 
 func installKubeProxy(ctx *util.Context) error {
-	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
+	return ctx.RunTaskOnLeader(func(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Infoln("Installing kube-proxy…")
 
 		_, _, err := ctx.Runner.Run(`

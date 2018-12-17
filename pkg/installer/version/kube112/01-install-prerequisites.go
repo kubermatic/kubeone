@@ -17,7 +17,7 @@ func installPrerequisites(ctx *util.Context) error {
 		return fmt.Errorf("failed to create configuration: %v", err)
 	}
 
-	return util.RunTaskOnAllNodes(ctx, installPrerequisitesOnNode, true)
+	return ctx.RunTaskOnAllNodes(installPrerequisitesOnNode, true)
 }
 
 func generateConfigurationFiles(ctx *util.Context) error {

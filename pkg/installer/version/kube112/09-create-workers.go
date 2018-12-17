@@ -16,7 +16,7 @@ func createWorkerMachines(ctx *util.Context) error {
 		return nil
 	}
 
-	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
+	return ctx.RunTaskOnLeader(func(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Infoln("Waiting for machine-controller to come up…")
 
 		cmd := fmt.Sprintf(
