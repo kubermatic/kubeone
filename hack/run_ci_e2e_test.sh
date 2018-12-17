@@ -67,4 +67,5 @@ make install
 echo "Running E2E tests ..."
 echo $PATH
 ls /go/bin
+go env
 go test -race -tags=e2e -v -timeout 45m  ./test/e2e/...
