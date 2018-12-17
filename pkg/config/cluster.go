@@ -19,9 +19,6 @@ type Cluster struct {
 	Network   NetworkConfig   `json:"network"`
 	Workers   []WorkerConfig  `json:"workers"`
 	Backup    BackupConfig    `json:"backup"`
-
-	// stuff generated at runtime
-	etcdClusterToken string
 }
 
 // DefaultAndValidate checks if the cluster config makes sense.
