@@ -8,6 +8,9 @@ set -euxo pipefail
 RUNNING_IN_CI=${JOB_NAME:-""}
 
 # Install dependencies
+if ! [ -x "$(command -v unzip)" ]; then
+ apt update && apt install -y unzip
+fi
 if ! [ -x "$(command -v terraform)" ]; then
 (
   echo "Installing terraform"
