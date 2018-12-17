@@ -8,6 +8,7 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/kubernetes/scheme"
 )
 
 func hostPathTypePtr(s corev1.HostPathType) *corev1.HostPathType {
@@ -15,7 +16,7 @@ func hostPathTypePtr(s corev1.HostPathType) *corev1.HostPathType {
 }
 
 // Pod returns static etcd manifest to YAML
-func Pod(cluster *config.Cluster, node *config.HostConfig) *corev1.Pod {
+func Pod(cluster *config.Cluster, node *config.HostConfig) (*corev1.Pod, error) {
 	initialCluster := make([]string, len(cluster.Hosts))
 	for i, host := range cluster.Hosts {
 		initialCluster[i] = fmt.Sprintf("%s=http://%s:2380", host.Hostname, host.PrivateAddress)
@@ -91,7 +92,15 @@ func Pod(cluster *config.Cluster, node *config.HostConfig) *corev1.Pod {
 		},
 	}
 
-	pod.Kind = "Pod"
-	pod.APIVersion = "v1"
-	return pod
+	gvkList, _, err := scheme.Scheme.ObjectKinds(pod)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get GroupVersionKind: %v", err)
+	}
+	if len(gvkList) < 1 {
+		return nil, fmt.Errorf("no GroupVersionKind found: %v", err)
+	}
+	apiVersion, kind := gvkList[0].ToAPIVersionAndKind()
+	pod.APIVersion = apiVersion
+	pod.Kind = kind
+	return pod, nil
 }

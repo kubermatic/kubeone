@@ -12,7 +12,10 @@ import (
 )
 
 func setupEtcd(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
-	pod := etcd.Pod(ctx.Cluster, node)
+	pod, err := etcd.Pod(ctx.Cluster, node)
+	if err != nil {
+		return fmt.Errorf("failed to get etcd pod: %v", err)
+	}
 	manifest, err := yaml.Marshal(pod)
 	if err != nil {
 		return fmt.Errorf("failed to marhsal etcd manifest: %v", err)
