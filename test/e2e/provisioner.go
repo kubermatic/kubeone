@@ -50,10 +50,10 @@ func NewAWSProvisioner(region, testName, testPath string) *AWSProvisioner {
 // Provision starts provisioning on AWS
 func (p *AWSProvisioner) Provision() (string, error) {
 
-	awsKeyID := os.Getenv("AWS_E2E_TESTS_KEY_ID")
-	awsSecret := os.Getenv("AWS_E2E_TESTS_SECRET")
+	awsKeyID := os.Getenv("AWS_ACCESS_KEY_ID")
+	awsSecret := os.Getenv("AWS_SECRET_ACCESS_KEY")
 	if len(awsKeyID) == 0 || len(awsSecret) == 0 {
-		return "", errors.New("unable to run the test suite, AWS_E2E_TESTS_KEY_ID or AWS_E2E_TESTS_SECRET environment variables cannot be empty")
+		return "", errors.New("unable to run the test suite, AWS_ACCESS_KEY_ID or AWS_SECRET_ACCESS_KEY environment variables cannot be empty")
 	}
 
 	tf, err := p.terraform.initAndApply()

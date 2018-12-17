@@ -33,6 +33,9 @@ fi
 # note:
 # kubetest assumes that the last part of that path contains "kubernetes", if not then it complains.
 if [[ -n ${RUNNING_IN_CI} ]]; then
+ # terraform expect to find AWS credentials in the following env variables
+ export AWS_ACCESS_KEY_ID=$AWS_E2E_TESTS_KEY_ID
+ export AWS_SECRET_ACCESS_KEY=$AWS_E2E_TESTS_SECRET
  KUBE_TEST_DIR="/opt/kube-test"
  if [ -d "$KUBE_TEST_DIR" ]; then
  KUBEONE_BUILD_DIR="/go/src/github.com/kubermatic/kubeone/_build"
@@ -69,4 +72,4 @@ echo "Running E2E tests ..."
 echo $PATH
 ls /go/bin
 go env
-go test -race -tags=e2e -v -timeout 45m  ./test/e2e/...
+go test -race -tags=e2e -v -timeout 30m  ./test/e2e/...
