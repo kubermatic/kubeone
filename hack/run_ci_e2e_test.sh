@@ -50,7 +50,7 @@ if [ -n "${RUNNING_IN_CI}" ]; then
    if ! [[ ${KUBE_VERSION} =~ ${VERSION_REG_EXP} ]]; then
     KUBE_VERSION="${KUBE_VERSION}.0"
    fi
-   KUBE_TEST_DST_DIR="${KUBEONE_BUILD_DIR}/${KUBE_VERSION}/kubernetes"
+   KUBE_TEST_DST_DIR="${KUBEONE_BUILD_DIR}/kubernetes-v${KUBE_VERSION}/kubernetes"
    mkdir -p "${KUBE_TEST_DST_DIR}"
    ln -s $dir/* "${KUBE_TEST_DST_DIR}"
  done
