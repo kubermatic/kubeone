@@ -1,7 +1,7 @@
 package ark
 
-// arkDeployment deploys Ark version 0.10.0 using default settings
-func arkDeployment() string {
+// deployment deploys Ark version 0.10.0 using default settings
+func deployment() string {
 	return `
 apiVersion: apps/v1beta1
 kind: Deployment

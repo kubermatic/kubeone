@@ -1,7 +1,7 @@
 package ark
 
-// arkBackupsCRD creates Backup CRD
-func arkBackupsCRD() string {
+// backupsCRD creates Backup CRD
+func backupsCRD() string {
 	return `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -19,8 +19,8 @@ spec:
 `
 }
 
-// arkSchedulesCRD creates Schedule CRD
-func arkSchedulesCRD() string {
+// schedulesCRD creates Schedule CRD
+func schedulesCRD() string {
 	return `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -38,8 +38,8 @@ spec:
 `
 }
 
-// arkRestorescRD creates Restore CRD
-func arkRestoresCRD() string {
+// restoresCRD creates Restore CRD
+func restoresCRD() string {
 	return `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -57,8 +57,8 @@ spec:
 `
 }
 
-// arkDownloadRequestsCRD creates DownloadRequest CRD
-func arkDownloadRequestsCRD() string {
+// downloadRequestsCRD creates DownloadRequest CRD
+func downloadRequestsCRD() string {
 	return `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -76,8 +76,8 @@ spec:
 `
 }
 
-// arkDeleteBackupRequest creates BackupRequest CRD
-func arkDeleteBackupRequest() string {
+// deleteBackupRequest creates BackupRequest CRD
+func deleteBackupRequest() string {
 	return `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -95,8 +95,8 @@ spec:
 `
 }
 
-// arkPodVolumeBackupsCRD creates PodVolumeBackup CRD
-func arkPodVolumeBackupsCRD() string {
+// podVolumeBackupsCRD creates PodVolumeBackup CRD
+func podVolumeBackupsCRD() string {
 	return `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -114,8 +114,8 @@ spec:
 `
 }
 
-// arkPodVolumeRestoresCRD creates PodVolumeRestore CRD
-func arkPodVolumeRestoresCRD() string {
+// podVolumeRestoresCRD creates PodVolumeRestore CRD
+func podVolumeRestoresCRD() string {
 	return `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -133,8 +133,8 @@ spec:
 `
 }
 
-// arkRestingRepositoriesCRD creates ResticRepository CRD
-func arkResticRepositoriesCRD() string {
+// resticRepositoriesCRD creates ResticRepository CRD
+func resticRepositoriesCRD() string {
 	return `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -152,8 +152,8 @@ spec:
 `
 }
 
-// arkBackupStorageLocationsCRD creates BackupStorageLocation CRD
-func arkBackupStorageLocationsCRD() string {
+// backupStorageLocationsCRD creates BackupStorageLocation CRD
+func backupStorageLocationsCRD() string {
 	return `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -171,8 +171,8 @@ spec:
 `
 }
 
-// arkVolumeSnapshotLocationCRD creates VolumeSnapshot CRD
-func arkVolumeSnapshotLocationsCRD() string {
+// volumeSnapshotLocationsCRD creates VolumeSnapshot CRD
+func volumeSnapshotLocationsCRD() string {
 	return `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition

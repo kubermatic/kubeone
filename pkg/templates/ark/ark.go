@@ -10,30 +10,30 @@ import (
 func Manifest(cluster *config.Cluster) (string, error) {
 	items := []interface{}{
 		// Ark CRDs
-		arkBackupsCRD(),
-		arkSchedulesCRD(),
-		arkRestoresCRD(),
-		arkDownloadRequestsCRD(),
-		arkDeleteBackupRequest(),
-		arkPodVolumeBackupsCRD(),
-		arkPodVolumeRestoresCRD(),
-		arkResticRepositoriesCRD(),
-		arkBackupStorageLocationsCRD(),
-		arkVolumeSnapshotLocationsCRD(),
+		backupsCRD(),
+		schedulesCRD(),
+		restoresCRD(),
+		downloadRequestsCRD(),
+		deleteBackupRequest(),
+		podVolumeBackupsCRD(),
+		podVolumeRestoresCRD(),
+		resticRepositoriesCRD(),
+		backupStorageLocationsCRD(),
+		volumeSnapshotLocationsCRD(),
 
 		// Ark Prerequisites
-		arkNamespace(),
-		arkServiceAccount(),
-		arkRBACRole(),
+		namespace(),
+		serviceAccount(),
+		rbacRole(),
 
 		// Configuration
-		createArkAWSCredentials(cluster),
-		createArkBackupLocation(cluster),
-		createArkVolumeSnapshotLocation(cluster),
+		awsCredentials(cluster),
+		backupLocation(cluster),
+		volumeSnapshotLocation(cluster),
 
 		// Deployment
 		// TODO(xmudrii): Restic
-		arkDeployment(),
+		deployment(),
 	}
 
 	return templates.KubernetesToYAML(items)
