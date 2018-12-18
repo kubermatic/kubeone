@@ -48,6 +48,11 @@ type Opts struct {
 	Timeout     time.Duration
 }
 
+const (
+	defaultTimeout = 60 * time.Second
+	defaultSSHPort = 22
+)
+
 func validateOptions(o Opts) (Opts, error) {
 	if len(o.Username) == 0 {
 		return o, errors.New("no username specified for SSH connection")
@@ -71,12 +76,12 @@ func validateOptions(o Opts) (Opts, error) {
 		o.KeyFile = ""
 	}
 
-	if o.Port <= 0 {
-		o.Port = 22
+	if o.Port <= 0 || o.Port > 65535 {
+		o.Port = defaultSSHPort
 	}
 
 	if o.Timeout == 0 {
-		o.Timeout = 60 * time.Second
+		o.Timeout = defaultTimeout
 	}
 
 	return o, nil
@@ -182,26 +187,39 @@ func (c *connection) Stream(cmd string, stdout io.Writer, stderr io.Writer) (int
 	ses.Stdout = stdout
 	ses.Stderr = stderr
 
-	exitCode := 0
 	err = ses.Run(strings.TrimSpace(cmd))
 	if err != nil {
-		exitCode = 1
-		err = fmt.Errorf("failed to exec command: %v", err)
+		return 1, fmt.Errorf("failed to exec command: %v", err)
 	}
-
-	return exitCode, err
+	return 0, err
 }
 
 func (c *connection) Exec(cmd string) (string, string, int, error) {
-	var stdoutBuf bytes.Buffer
-	var stderrBuf bytes.Buffer
+	var (
+		stdoutBuf bytes.Buffer
+		stderrBuf bytes.Buffer
+	)
 
 	exitCode, err := c.Stream(cmd, &stdoutBuf, &stderrBuf)
 
 	return strings.TrimSpace(stdoutBuf.String()), strings.TrimSpace(stderrBuf.String()), exitCode, err
 }
 
-func (c *connection) Upload(source io.Reader, size int64, mode os.FileMode, destination string) error {
+func cpy(source io.Reader, size int64, mode os.FileMode, destination string) func(*ssh.Session) error {
+	return func(ses *ssh.Session) error {
+		filename := filepath.Base(destination)
+
+		return scp.Copy(size, mode, filename, source, destination, ses)
+	}
+}
+
+func cpyPath(source string, destination string) func(*ssh.Session) error {
+	return func(ses *ssh.Session) error {
+		return scp.CopyPath(source, destination, ses)
+	}
+}
+
+func (c *connection) upload(upload func(*ssh.Session) error) error {
 	if c.client == nil {
 		return errors.New("cannot transfer files because connection was already closed")
 	}
@@ -212,9 +230,8 @@ func (c *connection) Upload(source io.Reader, size int64, mode os.FileMode, dest
 	}
 	defer ses.Close()
 
-	filename := filepath.Base(destination)
+	err = upload(ses)
 
-	err = scp.Copy(size, mode, filename, source, destination, ses)
 	if err != nil {
 		err = fmt.Errorf("failed to transfer file: %v", err)
 	}
@@ -222,23 +239,12 @@ func (c *connection) Upload(source io.Reader, size int64, mode os.FileMode, dest
 	return err
 }
 
+func (c *connection) Upload(source io.Reader, size int64, mode os.FileMode, destination string) error {
+	return c.upload(cpy(source, size, mode, destination))
+}
+
 func (c *connection) UploadFile(source string, destination string) error {
-	if c.client == nil {
-		return errors.New("cannot transfer files because connection was already closed")
-	}
-
-	ses, err := c.client.NewSession()
-	if err != nil {
-		return fmt.Errorf("failed to create new SSH session: %v", err)
-	}
-	defer ses.Close()
-
-	err = scp.CopyPath(source, destination, ses)
-	if err != nil {
-		err = fmt.Errorf("failed to transfer file: %v", err)
-	}
-
-	return err
+	return c.upload(cpyPath(source, destination))
 }
 
 func (c *connection) Download(source string, target io.Writer) error {

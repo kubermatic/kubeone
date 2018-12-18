@@ -18,6 +18,10 @@ func NewConnector() *Connector {
 	}
 }
 
+const (
+	defaultConTimeout = 10 * time.Second
+)
+
 // Connect to the node
 func (c *Connector) Connect(node config.HostConfig) (Connection, error) {
 	var err error
@@ -30,7 +34,7 @@ func (c *Connector) Connect(node config.HostConfig) (Connection, error) {
 			Hostname:    node.PublicAddress,
 			KeyFile:     node.SSHPrivateKeyFile,
 			AgentSocket: node.SSHAgentSocket,
-			Timeout:     10 * time.Second,
+			Timeout:     defaultConTimeout,
 		}
 
 		conn, err = NewConnection(opts)
