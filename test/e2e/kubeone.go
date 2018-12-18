@@ -27,7 +27,7 @@ func (p *Kubeone) Install(tfJSON string) error {
 	if err != nil {
 		return err
 	}
-	_, err = executeCommand(p.KubeoneDir, "kubeone", []string{"install", "--tfjson", "tf.json", p.ConfigurationFile, "-v"})
+	_, err = executeCommand(p.KubeoneDir, "kubeone", []string{"--verbose", "install", "--tfjson", "tf.json", p.ConfigurationFile})
 	if err != nil {
 		return fmt.Errorf("k8s cluster deployment failed: %v", err)
 	}
@@ -36,7 +36,7 @@ func (p *Kubeone) Install(tfJSON string) error {
 
 // CreateKubeconfig creates and store kubeconfig
 func (p *Kubeone) CreateKubeconfig() error {
-	rawKubeconfig, err := executeCommand(p.KubeoneDir, "kubeone", []string{"kubeconfig", "--tfjson", "tf.json", p.ConfigurationFile, "-v"})
+	rawKubeconfig, err := executeCommand(p.KubeoneDir, "kubeone", []string{"kubeconfig", "--tfjson", "tf.json", p.ConfigurationFile, "--verbose"})
 	if err != nil {
 		return fmt.Errorf("creating kubeconfig failed: %v", err)
 	}
@@ -53,7 +53,7 @@ func (p *Kubeone) CreateKubeconfig() error {
 
 // DestroyWorkers cleanup method
 func (p *Kubeone) Reset() error {
-	_, err := executeCommand(p.KubeoneDir, "kubeone", []string{"-v", "reset", "--tfjson", "tf.json", "--destroy-workers", p.ConfigurationFile, "-v"})
+	_, err := executeCommand(p.KubeoneDir, "kubeone", []string{"-v", "reset", "--tfjson", "tf.json", "--destroy-workers", p.ConfigurationFile, "--verbose"})
 	if err != nil {
 		return fmt.Errorf("destroing workers failed: %v", err)
 	}
