@@ -57,7 +57,11 @@ func (m *Cluster) DefaultAndValidate() error {
 		}
 	}
 
-	if m.MachineController.Deploy {
+	if err := m.MachineController.DefaultAndValidate(); err != nil {
+		return fmt.Errorf("failed to configure machine-controller: %v", err)
+	}
+
+	if !*m.MachineController.Deploy {
 		for idx, workerset := range m.Workers {
 			if err := workerset.Validate(); err != nil {
 				return fmt.Errorf("worker set %d is invalid: %v", idx+1, err)
@@ -409,5 +413,18 @@ func (m *BackupConfig) ApplyEnvironment() error {
 }
 
 type MachineControllerConfig struct {
-	Deploy bool `json:"deploy"`
+	Deploy *bool `json:"deploy"`
+}
+
+// DefaultAndValidate checks if the machine-controller config makes sense.
+func (m *MachineControllerConfig) DefaultAndValidate() error {
+	if m.Deploy == nil {
+		m.Deploy = boolPtr(true)
+	}
+
+	return nil
+}
+
+func boolPtr(val bool) *bool {
+	return &val
 }

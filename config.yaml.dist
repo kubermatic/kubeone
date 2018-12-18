@@ -63,8 +63,8 @@ backup:
 # If the cluster runs on bare metal or an unsupported cloud provider,
 # you can disable the machine-controller deployment entirely. In this
 # case, anything you configure in your "workers" sections is ignored.
-machine_controller:
-  deploy: true
+#machine_controller:
+#  deploy: false
 
 # KubeOne can automatically create MachineDeployments to create
 # worker nodes in your cluster. Each element in this "workers"
