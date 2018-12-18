@@ -32,6 +32,7 @@ fi
 #
 # note:
 # kubetest assumes that the last part of that path contains "kubernetes", if not then it complains.
+# additionally if the version doesn't match the reg exp it will be changed for example, from 1.12 to 1.12.0
 if [ -n "${RUNNING_IN_CI}" ]; then
  # terraform expects to find AWS credentials in the following env variables
  {
@@ -44,7 +45,12 @@ if [ -n "${RUNNING_IN_CI}" ]; then
  mkdir -p ${KUBEONE_BUILD_DIR}
  for dir in ${KUBE_TEST_DIR}/*
   do
-   KUBE_TEST_DST_DIR="${KUBEONE_BUILD_DIR}/$(basename $dir)/kubernetes"
+   VERSION_REG_EXP="^(\d+\.\d+\.\d+[\w.\-+]*)$"
+   KUBE_VERSION=$(basename $dir)
+   if ! [[ ${KUBE_VERSION} =~ ${VERSION_REG_EXP} ]]; then
+    KUBE_VERSION="${KUBE_VERSION}.0"
+   fi
+   KUBE_TEST_DST_DIR="${KUBEONE_BUILD_DIR}/${KUBE_VERSION}/kubernetes"
    mkdir -p "${KUBE_TEST_DST_DIR}"
    ln -s $dir/* "${KUBE_TEST_DST_DIR}"
  done
