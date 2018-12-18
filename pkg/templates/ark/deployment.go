@@ -3,9 +3,9 @@ package ark
 import (
 	"bytes"
 	"fmt"
-	"github.com/kubermatic/kubeone/pkg/config"
 
 	"github.com/alecthomas/template"
+	"github.com/kubermatic/kubeone/pkg/config"
 )
 
 // deployment deploys Ark version 0.10.0 using default settings
