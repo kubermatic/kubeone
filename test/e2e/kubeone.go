@@ -27,7 +27,7 @@ func (p *Kubeone) Install(tfJSON string) error {
 	if err != nil {
 		return err
 	}
-	_, err = executeCommand(p.KubeoneDir, "kubeone", []string{"install", "--tfjson", "tf.json", p.ConfigurationFile})
+	_, err = executeCommand(p.KubeoneDir, "kubeone", []string{"--verbose", "install", "--tfjson", "tf.json", p.ConfigurationFile})
 	if err != nil {
 		return fmt.Errorf("k8s cluster deployment failed: %v", err)
 	}
