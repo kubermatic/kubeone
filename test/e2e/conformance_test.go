@@ -20,7 +20,7 @@ func TestClusterConformance(t *testing.T) {
 		{
 			name:              "scenario 1, verify k8s cluster deployment on AWS",
 			provider:          AWS,
-			kubernetesVersion: "v1.12.3",
+			kubernetesVersion: "v1.12.0",
 			scenario:          NodeConformance,
 			region:            "eu-west-3",
 		},
