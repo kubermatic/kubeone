@@ -61,7 +61,7 @@ func (m *Cluster) DefaultAndValidate() error {
 		return fmt.Errorf("failed to configure machine-controller: %v", err)
 	}
 
-	if !*m.MachineController.Deploy {
+	if *m.MachineController.Deploy {
 		for idx, workerset := range m.Workers {
 			if err := workerset.Validate(); err != nil {
 				return fmt.Errorf("worker set %d is invalid: %v", idx+1, err)
