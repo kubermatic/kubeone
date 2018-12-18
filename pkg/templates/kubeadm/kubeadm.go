@@ -11,6 +11,8 @@ import (
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/v1alpha3"
 )
 
+//TODO(GvW): Slice of supported sem-versions
+
 // Config returns appropriate version of kubeadm config as YAML
 func Config(cluster *config.Cluster, instance *config.HostConfig) (string, error) {
 	masterNodes := cluster.Hosts

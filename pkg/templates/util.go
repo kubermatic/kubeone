@@ -31,13 +31,13 @@ func KubernetesToYAML(data []interface{}) (string, error) {
 		}
 
 		if err != nil {
-			return "", fmt.Errorf("failed to marshal item: %v", err)
+			return "", fmt.Errorf("failed to marshal item: %q", err)
 		}
 		if _, err := buffer.Write(encodedItem); err != nil {
-			return "", fmt.Errorf("failed to write into buffer: %v", err)
+			return "", fmt.Errorf("failed to write into buffer: %q", err)
 		}
 		if _, err := buffer.WriteString("\n---\n"); err != nil {
-			return "", fmt.Errorf("failed to write into buffer: %v", err)
+			return "", fmt.Errorf("failed to write into buffer: %q", err)
 		}
 	}
 
