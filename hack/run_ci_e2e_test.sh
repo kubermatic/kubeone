@@ -61,7 +61,7 @@ if [ ! -f "$HOME/.ssh/id_rsa_kubeone_e2e" ]; then
  ssh-keygen -f $HOME/.ssh/id_rsa_kubeone_e2e -N ''
  SSH_PUBLIC_KEY_FILE="$HOME/.ssh/id_rsa_kubeone_e2e.pub"
  SSH_PRIVATE_KEY_FILE="$HOME/.ssh/id_rsa_kubeone_e2e"
- export ${SSH_PUBLIC_KEY_FILE}
+ export SSH_PUBLIC_KEY_FILE
  chmod 400 ${SSH_PRIVATE_KEY_FILE}
  eval `ssh-agent`
  ssh-add ${SSH_PRIVATE_KEY_FILE}
