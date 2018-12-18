@@ -22,8 +22,8 @@ fi
 
 sudo systemctl stop kubelet
 sudo {{ .JOIN_COMMAND }} \
-	  --experimental-control-plane \
-	  --node-name="{{ .NODE_NAME }}" \
+     --experimental-control-plane \
+     --node-name="{{ .NODE_NAME }}" \
      --ignore-preflight-errors=DirAvailable--etc-kubernetes-manifests
 `, util.TemplateVariables{
 		"WORK_DIR":     ctx.WorkDir,
