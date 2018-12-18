@@ -14,9 +14,14 @@ type tarGzip struct {
 	arch *tar.Writer
 }
 
+const (
+	fileMode = 06000
+)
+
 // NewTarGzip returns a new tar.gz archive.
+// TODO(GvW): Why not passing io.Writer here, so we could much more persistent backends
 func NewTarGzip(filename string) (Archive, error) {
-	f, err := os.OpenFile(filename, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0600)
+	f, err := os.OpenFile(filename, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, fileMode)
 	if err != nil {
 		return nil, err
 	}
@@ -31,14 +36,15 @@ func NewTarGzip(filename string) (Archive, error) {
 	}, nil
 }
 
-func (tgz tarGzip) Add(file string, content string) error {
+// Add a file to the archive
+func (tgz tarGzip) Add(file string, content []byte) error {
 	if tgz.arch == nil {
 		return errors.New("archive has already been closed")
 	}
 
 	hdr := &tar.Header{
 		Name: file,
-		Mode: 0600,
+		Mode: fileMode,
 		Size: int64(len(content)),
 	}
 
@@ -46,13 +52,14 @@ func (tgz tarGzip) Add(file string, content string) error {
 		return fmt.Errorf("failed to write tar file header: %v", err)
 	}
 
-	if _, err := tgz.arch.Write([]byte(content)); err != nil {
+	if _, err := tgz.arch.Write(content); err != nil {
 		return fmt.Errorf("failed to write tar file data: %v", err)
 	}
 
 	return nil
 }
 
+// Close the archive writer
 func (tgz tarGzip) Close() {
 	if tgz.arch != nil {
 		tgz.arch.Close()
