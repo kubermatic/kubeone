@@ -12,23 +12,26 @@ import (
 
 // Configuration holds a map of generated files
 type Configuration struct {
-	files map[string]string
+	files map[string][]byte
 }
 
 // NewConfiguration constructor
 func NewConfiguration() *Configuration {
 	return &Configuration{
-		files: make(map[string]string),
+		files: make(map[string][]byte),
 	}
 }
 
 // AddFile save file contents for future references
-func (c *Configuration) AddFile(filename string, content string) {
-	c.files[filename] = strings.TrimSpace(content) + "\n"
+func (c *Configuration) AddFile(filename string, content []byte) {
+	c.files[filename] = content
 }
 
 // UploadTo directory all the files
 func (c *Configuration) UploadTo(conn ssh.Connection, directory string) error {
+	const (
+		fileMode = 0644
+	)
 	for filename, content := range c.files {
 		size := int64(len(content))
 		target := filepath.Join(directory, filename)
@@ -40,7 +43,7 @@ func (c *Configuration) UploadTo(conn ssh.Connection, directory string) error {
 			return fmt.Errorf("failed to create ./%s directory: %v", dir, err)
 		}
 
-		err = conn.Upload(strings.NewReader(content), size, 0644, target)
+		err = conn.Upload(bytes.NewReader(content), size, fileMode, target)
 		if err != nil {
 			return fmt.Errorf("failed to upload file %s: %v", filename, err)
 		}
@@ -72,7 +75,7 @@ func (c *Configuration) Download(conn ssh.Connection, source string, prefix stri
 			return err
 		}
 
-		c.files[localfile] = buf.String()
+		c.files[localfile] = buf.Bytes()
 	}
 
 	return nil
@@ -104,10 +107,10 @@ func (c *Configuration) Backup(target string) error {
 }
 
 // Get returns contents of the generated file by filename
-func (c *Configuration) Get(filename string) (string, error) {
+func (c *Configuration) Get(filename string) ([]byte, error) {
 	content, ok := c.files[filename]
 	if !ok {
-		return "", fmt.Errorf("could not find file %s", filename)
+		return []byte{}, fmt.Errorf("could not find file %s", filename)
 	}
 
 	return content, nil
