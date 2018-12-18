@@ -21,32 +21,32 @@ func installPrerequisites(ctx *util.Context) error {
 }
 
 func generateConfigurationFiles(ctx *util.Context) error {
-	ctx.Configuration.AddFile("cfg/20-cloudconfig-kubelet.conf", fmt.Sprintf(`
+	ctx.Configuration.AddFile("cfg/20-cloudconfig-kubelet.conf", []byte(fmt.Sprintf(`
 [Service]
 Environment="KUBELET_EXTRA_ARGS= --cloud-provider=%s --cloud-config=/etc/kubernetes/cloud-config"`,
-		ctx.Cluster.Provider.Name))
+		ctx.Cluster.Provider.Name)))
 
-	ctx.Configuration.AddFile("cfg/cloud-config", ctx.Cluster.Provider.CloudConfig)
+	ctx.Configuration.AddFile("cfg/cloud-config", []byte(ctx.Cluster.Provider.CloudConfig))
 
 	mc, err := machinecontroller.Deployment(ctx.Cluster)
 	if err != nil {
 		return fmt.Errorf("failed to create machine-controller configuration: %v", err)
 	}
-	ctx.Configuration.AddFile("machine-controller.yaml", mc)
+	ctx.Configuration.AddFile("machine-controller.yaml", []byte(mc))
 
 	if len(ctx.Cluster.Workers) > 0 {
 		machines, deployErr := machinecontroller.MachineDeployments(ctx.Cluster)
 		if err != nil {
 			return fmt.Errorf("failed to create worker machine configuration: %v", deployErr)
 		}
-		ctx.Configuration.AddFile("workers.yaml", machines)
+		ctx.Configuration.AddFile("workers.yaml", []byte(machines))
 	}
 
 	flannel, err := flannel.Configuration(ctx.Cluster)
 	if err != nil {
 		return fmt.Errorf("failed to create flannel configuration: %v", err)
 	}
-	ctx.Configuration.AddFile("kube-flannel.yaml", flannel)
+	ctx.Configuration.AddFile("kube-flannel.yaml", []byte(flannel))
 
 	return nil
 }
@@ -105,10 +105,8 @@ func installKubeadm(ctx *util.Context, node *config.HostConfig) error {
 		fallthrough
 	case "debian":
 		err = installKubeadmDebian(ctx)
-
 	case "coreos":
 		err = installKubeadmCoreOS(ctx)
-
 	default:
 		err = fmt.Errorf("'%s' is not a supported operating system", node.OperatingSystem)
 	}

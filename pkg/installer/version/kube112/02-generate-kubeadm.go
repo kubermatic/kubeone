@@ -18,7 +18,7 @@ func generateKubeadm(ctx *util.Context) error {
 			return fmt.Errorf("failed to create kubeadm configuration: %v", err)
 		}
 
-		ctx.Configuration.AddFile(fmt.Sprintf("cfg/master_%d.yaml", idx), kubeadm)
+		ctx.Configuration.AddFile(fmt.Sprintf("cfg/master_%d.yaml", idx), []byte(kubeadm))
 	}
 
 	return ctx.RunTaskOnAllNodes(generateKubeadmOnNode, true)

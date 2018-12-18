@@ -21,7 +21,7 @@ func deployArk(ctx *util.Context) error {
 			return fmt.Errorf("failed to create Ark configuration: %v", err)
 		}
 
-		ctx.Configuration.AddFile("ark.yaml", arkConfig)
+		ctx.Configuration.AddFile("ark.yaml", []byte(arkConfig))
 		err = ctx.Configuration.UploadTo(conn, fmt.Sprintf("%s/ark", ctx.WorkDir))
 		if err != nil {
 			return fmt.Errorf("failed to upload Ark configuration: %v", err)
