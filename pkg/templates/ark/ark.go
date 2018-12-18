@@ -8,6 +8,11 @@ import (
 // Manifest returns the YAML-encoded manifest containing all
 // resources for deployig Ark into a cluster.
 func Manifest(cluster *config.Cluster) (string, error) {
+	deploymentManifest, err := deployment(cluster)
+	if err != nil {
+		return "", err
+	}
+
 	items := []interface{}{
 		// Ark CRDs
 		backupsCRD(),
@@ -33,7 +38,7 @@ func Manifest(cluster *config.Cluster) (string, error) {
 
 		// Deployment
 		// TODO(xmudrii): Restic
-		deployment(),
+		deploymentManifest,
 	}
 
 	return templates.KubernetesToYAML(items)

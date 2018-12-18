@@ -1,8 +1,16 @@
 package ark
 
+import (
+	"bytes"
+	"fmt"
+	"github.com/kubermatic/kubeone/pkg/config"
+
+	"github.com/alecthomas/template"
+)
+
 // deployment deploys Ark version 0.10.0 using default settings
-func deployment() string {
-	return `
+func deployment(cluster *config.Cluster) (string, error) {
+	const deploy = `
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
@@ -28,8 +36,6 @@ spec:
             - /ark
           args:
             - server
-            ## uncomment following line and specify values if needed for multiple provider snapshot locations
-            # - --default-volume-snapshot-locations=<provider-1:location-1,provider-2:location-2,...>
           volumeMounts:
             - name: cloud-credentials
               mountPath: /credentials
@@ -42,8 +48,8 @@ spec:
               value: /credentials/cloud
             - name: ARK_SCRATCH_DIR
               value: /scratch
-            #- name: AWS_CLUSTER_NAME
-            #  value: <YOUR_CLUSTER_NAME>
+            - name: AWS_CLUSTER_NAME
+              value: {{ .AWS_CLUSTER_NAME }}
       volumes:
         - name: cloud-credentials
           secret:
@@ -53,4 +59,20 @@ spec:
         - name: scratch
           emptyDir: {}
 `
+
+	tpl, err := template.New("base").Parse(deploy)
+	if err != nil {
+		return "", fmt.Errorf("failed to parse ark deployment manifest: %v", err)
+	}
+
+	variables := map[string]interface{}{
+		"AWS_CLUSTER_NAME": cluster.Name,
+	}
+
+	buf := bytes.Buffer{}
+	if err := tpl.Execute(&buf, variables); err != nil {
+		return "", fmt.Errorf("failed to render flannel config: %v", err)
+	}
+
+	return buf.String(), nil
 }
