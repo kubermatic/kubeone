@@ -32,22 +32,24 @@ fi
 #
 # note:
 # kubetest assumes that the last part of that path contains "kubernetes", if not then it complains.
-if [[ -n ${RUNNING_IN_CI} ]]; then
+if [ -n "${RUNNING_IN_CI}" ]; then
  # terraform expects to find AWS credentials in the following env variables
  {
   export AWS_ACCESS_KEY_ID=$AWS_E2E_TESTS_KEY_ID
   export AWS_SECRET_ACCESS_KEY=$AWS_E2E_TESTS_SECRET
  } &> /dev/null
  KUBE_TEST_DIR="/opt/kube-test"
- if [ -d "$KUBE_TEST_DIR" ]; then
+ if [ -d "${KUBE_TEST_DIR}" ]; then
  KUBEONE_BUILD_DIR="$(go env GOPATH)/src/github.com/kubermatic/kubeone/_build"
- mkdir -p $KUBEONE_BUILD_DIR
- for dir in $KUBE_TEST_DIR/*
+ mkdir -p ${KUBEONE_BUILD_DIR}
+ for dir in ${KUBE_TEST_DIR}/*
   do
-   ln -s $dir $KUBEONE_BUILD_DIR/$(basename $dir)-kubernetes
+   KUBE_TEST_DST_DIR="${KUBEONE_BUILD_DIR}/$(basename $dir)/kubernetes"
+   mkdir -p "${KUBE_TEST_DST_DIR}"
+   ln -s $dir/* "${KUBE_TEST_DST_DIR}"
  done
  else
-  echo "The directory $KUBE_TEST_DIR does not exist, we need to download additional binaries for the tests. This might make the test to run longer."
+  echo "The directory ${KUBE_TEST_DIR} does not exist, we need to download additional binaries for the tests. This might make the test to run longer."
  fi
  else
   echo "The script is not running in CI thus we need to download additional binaries for the tests. This might make the test to run longer."
@@ -59,10 +61,10 @@ if [ ! -f "$HOME/.ssh/id_rsa_kubeone_e2e" ]; then
  ssh-keygen -f $HOME/.ssh/id_rsa_kubeone_e2e -N ''
  SSH_PUBLIC_KEY_FILE="$HOME/.ssh/id_rsa_kubeone_e2e.pub"
  SSH_PRIVATE_KEY_FILE="$HOME/.ssh/id_rsa_kubeone_e2e"
- export SSH_PUBLIC_KEY_FILE
- chmod 400 $SSH_PRIVATE_KEY_FILE
+ export ${SSH_PUBLIC_KEY_FILE}
+ chmod 400 ${SSH_PRIVATE_KEY_FILE}
  eval `ssh-agent`
- ssh-add $SSH_PRIVATE_KEY_FILE
+ ssh-add ${SSH_PRIVATE_KEY_FILE}
 fi
 
 # Build binaries
