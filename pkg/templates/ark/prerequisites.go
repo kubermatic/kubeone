@@ -1,7 +1,7 @@
 package ark
 
-// arkNamespace deploys default Ark namespace (heptio-ark)
-func arkNamespace() string {
+// namespace deploys default Ark namespace (heptio-ark)
+func namespace() string {
 	return `
 apiVersion: v1
 kind: Namespace
@@ -10,8 +10,8 @@ metadata:
 `
 }
 
-// arkServiceAccount creates ServiceAccount used by Ark pods
-func arkServiceAccount() string {
+// serviceAccount creates ServiceAccount used by Ark pods
+func serviceAccount() string {
 	return `
 apiVersion: v1
 kind: ServiceAccount
@@ -23,8 +23,8 @@ metadata:
 `
 }
 
-// arkRBACRole is a ClusterAdmin RoleBinding allowing Ark to do backups and restores
-func arkRBACRole() string {
+// rbacRole is a ClusterAdmin RoleBinding allowing Ark to do backups and restores
+func rbacRole() string {
 	return `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
