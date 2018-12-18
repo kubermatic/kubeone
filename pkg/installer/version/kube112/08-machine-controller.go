@@ -10,6 +10,11 @@ import (
 )
 
 func installMachineController(ctx *util.Context) error {
+	if !*ctx.Cluster.MachineController.Deploy {
+		ctx.Logger.Info("Skipping machine-controller deployment because it was disabled in configuration.")
+		return nil
+	}
+
 	return ctx.RunTaskOnLeader(func(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Infoln("Creating machine-controller certificate…")
 
