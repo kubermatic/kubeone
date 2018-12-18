@@ -5,6 +5,7 @@
 
 set -euxo pipefail
 
+IS_DEBUG=$(echo "$-" | grep "x")
 RUNNING_IN_CI=${JOB_NAME:-""}
 
 # Install dependencies
@@ -35,10 +36,10 @@ fi
 # additionally if the version doesn't match the reg exp it will be changed for example, from 1.12 to 1.12.0
 if [ -n "${RUNNING_IN_CI}" ]; then
  # terraform expects to find AWS credentials in the following env variables
- {
-  export AWS_ACCESS_KEY_ID=$AWS_E2E_TESTS_KEY_ID
-  export AWS_SECRET_ACCESS_KEY=$AWS_E2E_TESTS_SECRET
- } &> /dev/null
+ if [ -n ${IS_DEBUG} ]; then set +x; fi
+ export AWS_ACCESS_KEY_ID=$AWS_E2E_TESTS_KEY_ID
+ export AWS_SECRET_ACCESS_KEY=$AWS_E2E_TESTS_SECRET
+ if [ -n ${IS_DEBUG} ]; then set -x; fi
  KUBE_TEST_DIR="/opt/kube-test"
  if [ -d "${KUBE_TEST_DIR}" ]; then
  KUBEONE_BUILD_DIR="$(go env GOPATH)/src/github.com/kubermatic/kubeone/_build"
