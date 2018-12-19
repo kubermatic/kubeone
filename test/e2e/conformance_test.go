@@ -78,15 +78,16 @@ func TestClusterConformance(t *testing.T) {
 
 func setupTearDown(p Provisioner, k Kubeone) func(t *testing.T) {
 	return func(t *testing.T) {
-		t.Log("clenaup ....")
+		t.Log("cleanup ....")
 
-		err := k.Reset()
-		if err != nil {
-			t.Logf("%v", err)
+		errKubeone := k.Reset()
+		errProvisioner := p.Cleanup()
+
+		if errKubeone != nil {
+			t.Fatalf("%v", errKubeone)
 		}
-		err = p.Cleanup()
-		if err != nil {
-			t.Logf("%v", err)
+		if errProvisioner != nil {
+			t.Fatalf("%v", errProvisioner)
 		}
 	}
 }
