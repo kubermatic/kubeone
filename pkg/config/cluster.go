@@ -1,8 +1,6 @@
 package config
 
 import (
-	"crypto/rand"
-	"encoding/hex"
 	"errors"
 	"fmt"
 	"net"
@@ -12,17 +10,16 @@ import (
 
 // Cluster describes our entire configuration.
 type Cluster struct {
-	Name      string          `json:"name"`
-	Hosts     []*HostConfig   `json:"hosts"`
-	APIServer APIServerConfig `json:"apiserver"`
-	Provider  ProviderConfig  `json:"provider"`
-	Versions  VersionConfig   `json:"versions"`
-	Network   NetworkConfig   `json:"network"`
-	Workers   []WorkerConfig  `json:"workers"`
-	Backup    BackupConfig    `json:"backup"`
-
-	// stuff generated at runtime
-	etcdClusterToken string
+	Name              string                  `json:"name"`
+	Hosts             []*HostConfig           `json:"hosts"`
+	APIServer         APIServerConfig         `json:"apiserver"`
+	ETCD              ETCDConfig              `json:"etcd"`
+	Provider          ProviderConfig          `json:"provider"`
+	Versions          VersionConfig           `json:"versions"`
+	Network           NetworkConfig           `json:"network"`
+	Workers           []WorkerConfig          `json:"workers"`
+	Backup            BackupConfig            `json:"backup"`
+	MachineController MachineControllerConfig `json:"machine_controller"`
 }
 
 // DefaultAndValidate checks if the cluster config makes sense.
@@ -39,6 +36,18 @@ func (m *Cluster) DefaultAndValidate() error {
 		return errors.New("no master hosts specified")
 	}
 
+	if m.ETCD.Version == "" {
+		m.ETCD.Version = "3.2.24"
+	}
+
+	if m.ETCD.Version != "3.2.24" {
+		return fmt.Errorf("Only supported etcd version is 3.2.24")
+	}
+
+	m.EtcdClusterToken()
+
+	m.Hosts[0].IsLeader = true
+
 	for idx, host := range m.Hosts {
 		// define a unique ID for each host
 		m.Hosts[idx].ID = idx
@@ -48,10 +57,18 @@ func (m *Cluster) DefaultAndValidate() error {
 		}
 	}
 
-	for idx, workerset := range m.Workers {
-		if err := workerset.Validate(); err != nil {
-			return fmt.Errorf("worker set %d is invalid: %v", idx+1, err)
+	if err := m.MachineController.DefaultAndValidate(); err != nil {
+		return fmt.Errorf("failed to configure machine-controller: %v", err)
+	}
+
+	if *m.MachineController.Deploy {
+		for idx, workerset := range m.Workers {
+			if err := workerset.Validate(); err != nil {
+				return fmt.Errorf("worker set %d is invalid: %v", idx+1, err)
+			}
 		}
+	} else if len(m.Workers) > 0 {
+		return errors.New("machine-controller deployment is disabled, but configuration still contains worker definitions")
 	}
 
 	if err := m.Network.Validate(); err != nil {
@@ -65,26 +82,21 @@ func (m *Cluster) DefaultAndValidate() error {
 	return nil
 }
 
-// EtcdClusterToken returns a randomly generated token.
-func (m *Cluster) EtcdClusterToken() (string, error) {
-	if m.etcdClusterToken == "" {
-		b := make([]byte, 16)
-
-		_, err := rand.Read(b)
-		if err != nil {
-			return "", err
-		}
-
-		m.etcdClusterToken = hex.EncodeToString(b)
-	}
-
-	return m.etcdClusterToken, nil
+// EtcdClusterToken returns the cluster name
+// It must be deterministic across multiple runs
+func (m *Cluster) EtcdClusterToken() string {
+	return m.Name
 }
 
 // Leader returns the first configured host. Only call this after
 // validating the cluster config to ensure a leader exists.
-func (m *Cluster) Leader() *HostConfig {
-	return m.Hosts[0]
+func (m *Cluster) Leader() (*HostConfig, error) {
+	for i := range m.Hosts {
+		if m.Hosts[i].IsLeader {
+			return m.Hosts[i], nil
+		}
+	}
+	return nil, errors.New("leader not found")
 }
 
 // Followers returns all but the first configured host. Only call
@@ -106,6 +118,7 @@ type HostConfig struct {
 	// runtime information
 	Hostname        string `json:"-"`
 	OperatingSystem string `json:"-"`
+	IsLeader        bool   `json:"-"`
 }
 
 func (m *HostConfig) addDefaults() error {
@@ -118,9 +131,6 @@ func (m *HostConfig) addDefaults() error {
 	if len(m.SSHPrivateKeyFile) == 0 && len(m.SSHAgentSocket) == 0 {
 		m.SSHAgentSocket = "env:SSH_AUTH_SOCK"
 	}
-	//TODO: Use the same logic kubeadm uses for hostname detection
-	// as kubeadm hardcodes the hostname into the etcdname
-	// and we use the name to tell etcd the address so those two must match
 	return nil
 }
 
@@ -162,6 +172,10 @@ func (m *HostConfig) EtcdPeerURL() string {
 // APIServerConfig describes the load balancer address.
 type APIServerConfig struct {
 	Address string `json:"address"`
+}
+
+type ETCDConfig struct {
+	Version string `json:"address"`
 }
 
 // ProviderName represents the name of an provider
@@ -396,4 +410,21 @@ func (m *BackupConfig) ApplyEnvironment() error {
 	}
 
 	return nil
+}
+
+type MachineControllerConfig struct {
+	Deploy *bool `json:"deploy"`
+}
+
+// DefaultAndValidate checks if the machine-controller config makes sense.
+func (m *MachineControllerConfig) DefaultAndValidate() error {
+	if m.Deploy == nil {
+		m.Deploy = boolPtr(true)
+	}
+
+	return nil
+}
+
+func boolPtr(val bool) *bool {
+	return &val
 }

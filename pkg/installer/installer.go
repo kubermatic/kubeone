@@ -79,6 +79,10 @@ func (i *Installer) Reset(options *Options) error {
 	return err
 }
 
+// createContext creates a basic, non-host bound context with
+// all relevant information, but *no* Runner yet. The various
+// task helper functions will take care of setting up Runner
+// structs for each task individually.
 func (i *Installer) createContext(options *Options) *util.Context {
 	return &util.Context{
 		Cluster:        i.cluster,

@@ -84,6 +84,14 @@
   version = "v1.0.1"
 
 [[projects]]
+  branch = "master"
+  digest = "1:3aa88be1d1db38973c939aebb649980dfb4af9c33dbcbb554968cf78809f23be"
+  name = "github.com/koron-go/prefixw"
+  packages = ["."]
+  pruneopts = "NUT"
+  revision = "271b207a75725c3b523859a9833c759ef43b5b73"
+
+[[projects]]
   digest = "1:2f42fa12d6911c7b7659738758631bec870b7e9b4c6be5444f963cdcfccc191f"
   name = "github.com/modern-go/concurrent"
   packages = ["."]
@@ -213,13 +221,38 @@
 
 [[projects]]
   branch = "release-1.11"
-  digest = "1:7b88bd74e8b8242546187b5998caa3c97d4ae05f4940d5531401e3a0dad719fd"
+  digest = "1:66dba704ec98aef0d6485f4fcfe544c906a7319fb2b20e0de4181b46a3b24c8a"
   name = "k8s.io/api"
   packages = [
+    "admissionregistration/v1alpha1",
     "admissionregistration/v1beta1",
     "apps/v1",
+    "apps/v1beta1",
+    "apps/v1beta2",
+    "authentication/v1",
+    "authentication/v1beta1",
+    "authorization/v1",
+    "authorization/v1beta1",
+    "autoscaling/v1",
+    "autoscaling/v2beta1",
+    "batch/v1",
+    "batch/v1beta1",
+    "batch/v2alpha1",
+    "certificates/v1beta1",
     "core/v1",
+    "events/v1beta1",
+    "extensions/v1beta1",
+    "networking/v1",
+    "policy/v1beta1",
     "rbac/v1",
+    "rbac/v1alpha1",
+    "rbac/v1beta1",
+    "scheduling/v1alpha1",
+    "scheduling/v1beta1",
+    "settings/v1alpha1",
+    "storage/v1",
+    "storage/v1alpha1",
+    "storage/v1beta1",
   ]
   pruneopts = "NUT"
   revision = "4e7be11eab3ffcfc1876898b8272df53785a9504"
@@ -266,9 +299,10 @@
   revision = "70adfbae261eebb795b76321790745ad0e3c523f"
 
 [[projects]]
-  digest = "1:5e4d56bfeba03d97315738cc3e70e9ba0e7c9e79b233ab391ff344a01890268d"
+  digest = "1:ff277985aea7a66e34151be3fc9bcaa15766711009e8e71946ee287f090e27dd"
   name = "k8s.io/client-go"
   packages = [
+    "kubernetes/scheme",
     "util/cert",
     "util/cert/triple",
   ]
@@ -325,6 +359,7 @@
     "github.com/alecthomas/template",
     "github.com/ghodss/yaml",
     "github.com/heptio/ark/pkg/apis/ark/v1",
+    "github.com/koron-go/prefixw",
     "github.com/pkg/errors",
     "github.com/sirupsen/logrus",
     "github.com/tmc/scp",
@@ -339,6 +374,7 @@
     "k8s.io/apimachinery/pkg/labels",
     "k8s.io/apimachinery/pkg/runtime",
     "k8s.io/apimachinery/pkg/util/intstr",
+    "k8s.io/client-go/kubernetes/scheme",
     "k8s.io/client-go/util/cert",
     "k8s.io/client-go/util/cert/triple",
     "k8s.io/cluster-bootstrap/token/api",

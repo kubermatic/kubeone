@@ -16,26 +16,26 @@ func createWorkerMachines(ctx *util.Context) error {
 		return nil
 	}
 
-	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
+	return ctx.RunTaskOnLeader(func(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Infoln("Waiting for machine-controller to come up…")
 
 		cmd := fmt.Sprintf(
-			`kubectl -n "%s" get pods -l '%s=%s' -o jsonpath='{.items[0].status.phase}'`,
+			`sudo kubectl -n "%s" get pods -l '%s=%s' -o jsonpath='{.items[0].status.phase}'`,
 			machinecontroller.WebhookNamespace,
 			machinecontroller.WebhookAppLabelKey,
 			machinecontroller.WebhookAppLabelValue,
 		)
-		if !util.WaitForCondition(conn, ctx.Verbose, cmd, 1*time.Minute, util.IsRunning) {
+		if !ctx.Runner.WaitForCondition(cmd, 1*time.Minute, util.IsRunning) {
 			return errors.New("machine-controller-webhook did not come up")
 		}
 
 		cmd = fmt.Sprintf(
-			`kubectl -n "%s" get pods -l '%s=%s' -o jsonpath='{.items[0].status.phase}'`,
+			`sudo kubectl -n "%s" get pods -l '%s=%s' -o jsonpath='{.items[0].status.phase}'`,
 			machinecontroller.MachineControllerNamespace,
 			machinecontroller.MachineControllerAppLabelKey,
 			machinecontroller.MachineControllerAppLabelValue,
 		)
-		if !util.WaitForCondition(conn, ctx.Verbose, cmd, 1*time.Minute, util.IsRunning) {
+		if !ctx.Runner.WaitForCondition(cmd, 1*time.Minute, util.IsRunning) {
 			return errors.New("machine-controller did not come up")
 		}
 
@@ -43,7 +43,7 @@ func createWorkerMachines(ctx *util.Context) error {
 		time.Sleep(10 * time.Second)
 
 		ctx.Logger.Infoln("Creating worker machines…")
-		_, _, err := util.RunShellCommand(conn, ctx.Verbose, `kubectl apply -f ./{{ .WORK_DIR }}/workers.yaml`, util.TemplateVariables{
+		_, _, err := ctx.Runner.Run(`kubectl apply -f ./{{ .WORK_DIR }}/workers.yaml`, util.TemplateVariables{
 			"WORK_DIR": ctx.WorkDir,
 		})
 

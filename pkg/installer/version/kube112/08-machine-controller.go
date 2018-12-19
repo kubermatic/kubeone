@@ -10,7 +10,12 @@ import (
 )
 
 func installMachineController(ctx *util.Context) error {
-	return util.RunTaskOnLeader(ctx, func(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
+	if !*ctx.Cluster.MachineController.Deploy {
+		ctx.Logger.Info("Skipping machine-controller deployment because it was disabled in configuration.")
+		return nil
+	}
+
+	return ctx.RunTaskOnLeader(func(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Infoln("Creating machine-controller certificate…")
 
 		config, err := machinecontroller.WebhookConfiguration(ctx.Cluster, ctx.Configuration)
@@ -26,9 +31,9 @@ func installMachineController(ctx *util.Context) error {
 
 		ctx.Logger.Infoln("Installing machine-controller…")
 
-		_, _, err = util.RunShellCommand(conn, ctx.Verbose, `
-kubectl apply -f ./{{ .WORK_DIR }}/machine-controller.yaml
-kubectl apply -f ./{{ .WORK_DIR }}/machine-controller-webhook.yaml
+		_, _, err = ctx.Runner.Run(`
+sudo kubectl apply -f ./{{ .WORK_DIR }}/machine-controller.yaml
+sudo kubectl apply -f ./{{ .WORK_DIR }}/machine-controller-webhook.yaml
 `, util.TemplateVariables{
 			"WORK_DIR": ctx.WorkDir,
 		})

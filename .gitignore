@@ -4,3 +4,4 @@
 _build
 config.yaml
 *.tar.gz
+tf.json

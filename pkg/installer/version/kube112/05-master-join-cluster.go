@@ -1,57 +1,34 @@
 package kube112
 
 import (
-	"fmt"
-	"strconv"
-	"time"
-
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 )
 
-func joinMasterCluster(ctx *util.Context) error {
-	ctx.Logger.Infoln("Deploying PKI…")
-
-	return util.RunTaskOnFollowers(ctx, joinNodesMasterCluster)
+func joinControlplaneNode(ctx *util.Context) error {
+	ctx.Logger.Infoln("Joining controlplane node…")
+	return ctx.RunTaskOnFollowers(joinControlplaneNodeInternal, true)
 }
 
-func joinNodesMasterCluster(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
-	leader := ctx.Cluster.Leader()
+func joinControlplaneNodeInternal(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
+	_, _, err := ctx.Runner.Run(`
+if [[ -f /etc/kubernetes/kubelet.conf ]]; then exit 0; fi
 
-	ctx.Logger.Infoln("Waiting for etcd to come up…")
-	err := util.WaitForPod(conn, ctx.Verbose, "kube-system", fmt.Sprintf("etcd-%s", leader.Hostname), 2*time.Minute)
-	if err != nil {
-		return err
-	}
+if [[ -f /etc/systemd/system/kubelet.service.d/10-kubeadm.conf.disabled ]]; then
+  sudo mv /etc/systemd/system/kubelet.service.d/10-kubeadm.conf{.disabled,}
+  sudo systemctl daemon-reload
+fi
 
-	ctx.Logger.Infoln("Finalizing cluster…")
-	_, _, err = util.RunShellCommand(conn, ctx.Verbose, `
-sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf exec \
-  -n kube-system etcd-{{ .LEADER_HOSTNAME }} -- \
-  etcdctl \
-    --ca-file /etc/kubernetes/pki/etcd/ca.crt \
-    --cert-file /etc/kubernetes/pki/etcd/peer.crt \
-    --key-file /etc/kubernetes/pki/etcd/peer.key \
-    --endpoints=https://{{ .LEADER_ADDRESS }}:2379 \
-    member add {{ .NODE_HOSTNAME }} https://{{ .NODE_ADDRESS }}:2380
-
-sudo kubeadm alpha phase etcd local --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
-sudo kubeadm alpha phase kubeconfig all --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
-sudo kubeadm alpha phase controlplane all --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
-sudo kubeadm alpha phase kubelet config annotate-cri --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
-sudo kubeadm alpha phase mark-master --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+sudo systemctl stop kubelet
+sudo {{ .JOIN_COMMAND }} \
+     --experimental-control-plane \
+     --node-name="{{ .NODE_NAME }}" \
+     --ignore-preflight-errors=DirAvailable--etc-kubernetes-manifests
 `, util.TemplateVariables{
-		"WORK_DIR":        ctx.WorkDir,
-		"NODE_ID":         strconv.Itoa(node.ID),
-		"LEADER_HOSTNAME": leader.Hostname,
-		"NODE_HOSTNAME":   node.Hostname,
-		"LEADER_ADDRESS":  leader.PrivateAddress,
-		"NODE_ADDRESS":    node.PrivateAddress,
+		"WORK_DIR":     ctx.WorkDir,
+		"JOIN_COMMAND": ctx.JoinCommand,
+		"NODE_NAME":    node.Hostname,
 	})
-	if err != nil {
-		return err
-	}
-
-	return wait(ctx, 30*time.Second)
+	return err
 }
