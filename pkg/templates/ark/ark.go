@@ -37,8 +37,8 @@ func Manifest(cluster *config.Cluster) (string, error) {
 		volumeSnapshotLocation(cluster),
 
 		// Deployment
-		// TODO(xmudrii): Restic
 		deploymentManifest,
+		resticDaemonset(),
 	}
 
 	return templates.KubernetesToYAML(items)
