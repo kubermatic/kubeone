@@ -1,15 +1,15 @@
 package ssh
 
 import (
-	"time"
 	"sync"
+	"time"
 
 	"github.com/kubermatic/kubeone/pkg/config"
 )
 
 // Connector holds a map of Connections
 type Connector struct {
-	lock sync.RWMutex
+	lock        sync.RWMutex
 	connections map[string]Connection
 }
 
