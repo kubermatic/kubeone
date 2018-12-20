@@ -11,7 +11,7 @@ import (
 )
 
 // TODO(xmudrii): Other providers
-func createArkAWSCredentials(cluster *config.Cluster) corev1.Secret {
+func awsCredentials(cluster *config.Cluster) corev1.Secret {
 	return corev1.Secret{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "v1",
@@ -28,7 +28,7 @@ func createArkAWSCredentials(cluster *config.Cluster) corev1.Secret {
 	}
 }
 
-func createArkBackupLocation(cluster *config.Cluster) arkv1.BackupStorageLocation {
+func backupLocation(cluster *config.Cluster) arkv1.BackupStorageLocation {
 	return arkv1.BackupStorageLocation{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "ark.heptio.com/v1",
@@ -50,7 +50,7 @@ func createArkBackupLocation(cluster *config.Cluster) arkv1.BackupStorageLocatio
 	}
 }
 
-func createArkVolumeSnapshotLocation(cluster *config.Cluster) arkv1.VolumeSnapshotLocation {
+func volumeSnapshotLocation(cluster *config.Cluster) arkv1.VolumeSnapshotLocation {
 	return arkv1.VolumeSnapshotLocation{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "ark.heptio.com/v1",

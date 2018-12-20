@@ -1,6 +1,7 @@
 package ssh
 
 import (
+	"sync"
 	"time"
 
 	"github.com/kubermatic/kubeone/pkg/config"
@@ -8,6 +9,7 @@ import (
 
 // Connector holds a map of Connections
 type Connector struct {
+	lock        sync.Mutex
 	connections map[string]Connection
 }
 
@@ -20,6 +22,8 @@ func NewConnector() *Connector {
 
 // Connect to the node
 func (c *Connector) Connect(node config.HostConfig) (Connection, error) {
+	c.lock.Lock()
+	defer c.lock.Unlock()
 	var err error
 
 	conn, exists := c.connections[node.PublicAddress]
@@ -46,6 +50,8 @@ func (c *Connector) Connect(node config.HostConfig) (Connection, error) {
 
 // CloseAll closes all connections
 func (c *Connector) CloseAll() {
+	c.lock.Lock()
+	defer c.lock.Unlock()
 	for _, conn := range c.connections {
 		conn.Close()
 	}

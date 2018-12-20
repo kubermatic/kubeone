@@ -8,32 +8,37 @@ import (
 // Manifest returns the YAML-encoded manifest containing all
 // resources for deployig Ark into a cluster.
 func Manifest(cluster *config.Cluster) (string, error) {
+	deploymentManifest, err := deployment(cluster)
+	if err != nil {
+		return "", err
+	}
+
 	items := []interface{}{
 		// Ark CRDs
-		arkBackupsCRD(),
-		arkSchedulesCRD(),
-		arkRestoresCRD(),
-		arkDownloadRequestsCRD(),
-		arkDeleteBackupRequest(),
-		arkPodVolumeBackupsCRD(),
-		arkPodVolumeRestoresCRD(),
-		arkResticRepositoriesCRD(),
-		arkBackupStorageLocationsCRD(),
-		arkVolumeSnapshotLocationsCRD(),
+		backupsCRD(),
+		schedulesCRD(),
+		restoresCRD(),
+		downloadRequestsCRD(),
+		deleteBackupRequest(),
+		podVolumeBackupsCRD(),
+		podVolumeRestoresCRD(),
+		resticRepositoriesCRD(),
+		backupStorageLocationsCRD(),
+		volumeSnapshotLocationsCRD(),
 
 		// Ark Prerequisites
-		arkNamespace(),
-		arkServiceAccount(),
-		arkRBACRole(),
+		namespace(),
+		serviceAccount(),
+		rbacRole(),
 
 		// Configuration
-		createArkAWSCredentials(cluster),
-		createArkBackupLocation(cluster),
-		createArkVolumeSnapshotLocation(cluster),
+		awsCredentials(cluster),
+		backupLocation(cluster),
+		volumeSnapshotLocation(cluster),
 
 		// Deployment
-		// TODO(xmudrii): Restic
-		arkDeployment(),
+		deploymentManifest,
+		resticDaemonset(),
 	}
 
 	return templates.KubernetesToYAML(items)
