@@ -33,12 +33,9 @@ control plane.
 ## Workers definition
 
 KubeOne relies on the [machine-controller
-project](https://github.com/kubermatic/machine-controller/) to create worker nodes after the kubernetes master nodes are bootstrapped.
+project](https://github.com/kubermatic/machine-controller/) to create worker nodes after the Kubernetes master nodes are bootstrapped.
 The machine controller will be deployed as part of the cluster creation and is configured using the cloud provider credentials from the shell environment.
 (`AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` in case of AWS)
-
-Make sure the
-
 
 Worker nodes are managed by the [machine-controller
 project](https://github.com/kubermatic/machine-controller/) (which kubeone
@@ -50,10 +47,10 @@ You can find example machine deployments in the [machine-controller examples](ht
 
 ## Terraform Integration
 
-KubeOne supports discovery of `hosts`, the kubernetes API LB and can read worker configuration from Terraform's output.
+KubeOne supports discovery of `hosts`, the Kubernetes API LB and can read worker configuration from Terraform's output.
 Take a look at the files in the `terraform/aws` directory and especially the `output.tf` file to learn more about what data KubeOne expects to read from Terraform.
 
-To use Terraform's output, use the `--tfjson` CLI flag for the `install` command:
+To use Terraform's output, use the `--tfjson` CLI flag:
 
     terraform apply
     terraform output -json > tf.json
