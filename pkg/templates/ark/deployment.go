@@ -76,3 +76,63 @@ spec:
 
 	return buf.String(), nil
 }
+
+func resticDaemonset() string {
+	return `
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: restic
+  namespace: heptio-ark
+spec:
+  selector:
+    matchLabels:
+      name: restic
+  template:
+    metadata:
+      labels:
+        name: restic
+    spec:
+      serviceAccountName: ark
+      securityContext:
+        runAsUser: 0
+      volumes:
+        - name: cloud-credentials
+          secret:
+            secretName: cloud-credentials
+        - name: host-pods
+          hostPath:
+            path: /var/lib/kubelet/pods
+        - name: scratch
+          emptyDir: {}
+      containers:
+        - name: ark
+          image: gcr.io/heptio-images/ark:v0.10.0
+          command:
+            - /ark
+          args:
+            - restic
+            - server
+          volumeMounts:
+            - name: cloud-credentials
+              mountPath: /credentials
+            - name: host-pods
+              mountPath: /host_pods
+              mountPropagation: HostToContainer
+            - name: scratch
+              mountPath: /scratch
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: HEPTIO_ARK_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: AWS_SHARED_CREDENTIALS_FILE
+              value: /credentials/cloud
+            - name: ARK_SCRATCH_DIR
+              value: /scratch
+`
+}
