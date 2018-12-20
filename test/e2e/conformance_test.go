@@ -84,10 +84,10 @@ func setupTearDown(p Provisioner, k Kubeone) func(t *testing.T) {
 		errProvisioner := p.Cleanup()
 
 		if errKubeone != nil {
-			t.Fatalf("%v", errKubeone)
+			t.Errorf("%v", errKubeone)
 		}
 		if errProvisioner != nil {
-			t.Fatalf("%v", errProvisioner)
+			t.Errorf("%v", errProvisioner)
 		}
 	}
 }
