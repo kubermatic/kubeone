@@ -9,7 +9,7 @@ import (
 
 // Connector holds a map of Connections
 type Connector struct {
-	lock        sync.RWMutex
+	lock        sync.Mutex
 	connections map[string]Connection
 }
 
@@ -22,11 +22,11 @@ func NewConnector() *Connector {
 
 // Connect to the node
 func (c *Connector) Connect(node config.HostConfig) (Connection, error) {
+	c.lock.Lock()
+	defer c.lock.Unlock()
 	var err error
 
-	c.lock.RLock()
 	conn, exists := c.connections[node.PublicAddress]
-	c.lock.RUnlock()
 	if !exists || conn.Closed() {
 		opts := Opts{
 			Username:    node.SSHUsername,
@@ -42,8 +42,6 @@ func (c *Connector) Connect(node config.HostConfig) (Connection, error) {
 			return nil, err
 		}
 
-		c.lock.Lock()
-		defer c.lock.Unlock()
 		c.connections[node.PublicAddress] = conn
 	}
 
@@ -52,8 +50,8 @@ func (c *Connector) Connect(node config.HostConfig) (Connection, error) {
 
 // CloseAll closes all connections
 func (c *Connector) CloseAll() {
-	c.lock.RLock()
-	defer c.lock.RUnlock()
+	c.lock.Lock()
+	defer c.lock.Unlock()
 	for _, conn := range c.connections {
 		conn.Close()
 	}
