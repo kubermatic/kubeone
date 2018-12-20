@@ -1,6 +1,7 @@
 package etcd
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -9,6 +10,12 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes/scheme"
+)
+
+const (
+	DataVolumeName   = "etcd-data"
+	BackupVolumeName = "etcd-backup"
+	ContainerImage   = "k8s.gcr.io/etcd-amd64"
 )
 
 func hostPathTypePtr(s corev1.HostPathType) *corev1.HostPathType {
@@ -23,12 +30,25 @@ func Pod(cluster *config.Cluster, node *config.HostConfig) (*corev1.Pod, error) 
 	}
 	initialClusterString := strings.Join(initialCluster, ",")
 
+	image := fmt.Sprintf("%s:%s", ContainerImage, cluster.ETCD.Version)
+
+	backupCmd, err := backupCommand()
+	if err != nil {
+		return nil, fmt.Errorf("failed to create backup command: %v", err)
+	}
+
 	pod := &corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "etcd",
 			Namespace: "kube-system",
 			Annotations: map[string]string{
 				"scheduler.alpha.kubernetes.io/critical-pod": "",
+
+				// configure backup hook
+				"backup.ark.heptio.com/backup-volumes":     BackupVolumeName,
+				"pre.hook.backup.ark.heptio.com/container": "etcd",
+				"pre.hook.backup.ark.heptio.com/timeout":   "10m",
+				"pre.hook.backup.ark.heptio.com/command":   backupCmd,
 			},
 			Labels: map[string]string{
 				"component": "etcd",
@@ -38,7 +58,8 @@ func Pod(cluster *config.Cluster, node *config.HostConfig) (*corev1.Pod, error) 
 		Spec: corev1.PodSpec{
 			Containers: []corev1.Container{
 				{
-					Name: "etcd",
+					Name:  "etcd",
+					Image: image,
 					Command: []string{
 						"etcd",
 						fmt.Sprintf("--advertise-client-urls=http://%s:2379", node.PrivateAddress),
@@ -52,7 +73,6 @@ func Pod(cluster *config.Cluster, node *config.HostConfig) (*corev1.Pod, error) 
 						"--snapshot-count=10000",
 						fmt.Sprintf("--initial-cluster-token=%s", cluster.EtcdClusterToken()),
 					},
-					Image:           fmt.Sprintf("k8s.gcr.io/etcd-amd64:%s", cluster.ETCD.Version),
 					ImagePullPolicy: corev1.PullIfNotPresent,
 					LivenessProbe: &corev1.Probe{
 						Handler: corev1.Handler{
@@ -70,8 +90,12 @@ func Pod(cluster *config.Cluster, node *config.HostConfig) (*corev1.Pod, error) 
 					},
 					VolumeMounts: []corev1.VolumeMount{
 						{
+							Name:      DataVolumeName,
 							MountPath: "/var/lib/etcd",
-							Name:      "etcd-data",
+						},
+						{
+							Name:      BackupVolumeName,
+							MountPath: "/backup",
 						},
 					},
 				},
@@ -80,12 +104,18 @@ func Pod(cluster *config.Cluster, node *config.HostConfig) (*corev1.Pod, error) 
 			PriorityClassName: "system-cluster-critical",
 			Volumes: []corev1.Volume{
 				{
-					Name: "etcd-data",
+					Name: DataVolumeName,
 					VolumeSource: corev1.VolumeSource{
 						HostPath: &corev1.HostPathVolumeSource{
 							Path: "/var/lib/etcd",
 							Type: hostPathTypePtr(corev1.HostPathDirectoryOrCreate),
 						},
+					},
+				},
+				{
+					Name: BackupVolumeName,
+					VolumeSource: corev1.VolumeSource{
+						EmptyDir: &corev1.EmptyDirVolumeSource{},
 					},
 				},
 			},
@@ -103,4 +133,23 @@ func Pod(cluster *config.Cluster, node *config.HostConfig) (*corev1.Pod, error) 
 	pod.APIVersion = apiVersion
 	pod.Kind = kind
 	return pod, nil
+}
+
+func backupCommand() (string, error) {
+	backup := strings.Join([]string{
+		"ETCDCTL_API=3",
+		"etcdctl",
+		"--endpoints=http://127.0.0.1:2379",
+		"snapshot", "save", "/backup/snapshot.db",
+	}, " ")
+
+	command := []string{
+		"/bin/sh",
+		"-c",
+		backup,
+	}
+
+	encoded, err := json.Marshal(command)
+
+	return string(encoded), err
 }
