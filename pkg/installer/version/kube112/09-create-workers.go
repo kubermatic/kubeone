@@ -43,7 +43,7 @@ func createWorkerMachines(ctx *util.Context) error {
 		time.Sleep(10 * time.Second)
 
 		ctx.Logger.Infoln("Creating worker machines…")
-		_, _, err := ctx.Runner.Run(`kubectl apply -f ./{{ .WORK_DIR }}/workers.yaml`, util.TemplateVariables{
+		_, _, err := ctx.Runner.Run(`sudo kubectl apply -f ./{{ .WORK_DIR }}/workers.yaml`, util.TemplateVariables{
 			"WORK_DIR": ctx.WorkDir,
 		})
 
