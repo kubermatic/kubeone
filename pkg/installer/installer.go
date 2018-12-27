@@ -4,12 +4,13 @@ import (
 	"fmt"
 
 	"github.com/Masterminds/semver"
-	"github.com/sirupsen/logrus"
-
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/installer/version/kube112"
+	"github.com/kubermatic/kubeone/pkg/pkigen"
 	"github.com/kubermatic/kubeone/pkg/ssh"
+	"github.com/sirupsen/logrus"
+	k8scert "k8s.io/client-go/util/cert"
 )
 
 // Options groups the various possible options for running
@@ -65,6 +66,9 @@ func (i *Installer) Reset(options *Options) error {
 	var err error
 
 	ctx := i.createContext(options)
+	if err = generatePKI(ctx.Configuration); err != nil {
+		return fmt.Errorf("can't generate CA: %v", err)
+	}
 
 	v := semver.MustParse(i.cluster.Versions.Kubernetes)
 	majorMinor := fmt.Sprintf("%d.%d", v.Major(), v.Minor())
@@ -94,4 +98,40 @@ func (i *Installer) createContext(options *Options) *util.Context {
 		BackupFile:     options.BackupFile,
 		DestroyWorkers: options.DestroyWorkers,
 	}
+}
+
+func generatePKI(cfg *util.Configuration) error {
+	caparams := []struct {
+		cn, cert, key string
+	}{
+		{cn: "kubernetes", cert: "pki/ca.crt", key: "pki/ca.key"},
+		{cn: "front-proxy-ca", cert: "pki/front-proxy-ca.crt", key: "pki/front-proxy-ca.key"},
+		{cn: "etcd-ca", cert: "pki/etcd/ca.crt", key: "pki/etcd/ca.key"},
+	}
+
+	for _, caparam := range caparams {
+		key, err := k8scert.NewPrivateKey()
+		if err != nil {
+			return err
+		}
+		ca, err := pkigen.NewCA(caparam.cn, key)
+		if err != nil {
+			return err
+		}
+		cfg.AddFile(caparam.key, ca.Key())
+		cfg.AddFile(caparam.cert, ca.Certificate())
+	}
+
+	saKey, err := k8scert.NewPrivateKey()
+	if err != nil {
+		return err
+	}
+	saPubPem, err := k8scert.EncodePublicKeyPEM(&saKey.PublicKey)
+	if err != nil {
+		return err
+	}
+	cfg.AddFile("pki/sa.key", string(k8scert.EncodePrivateKeyPEM(saKey)))
+	cfg.AddFile("pki/sa.pub", string(saPubPem))
+
+	return nil
 }

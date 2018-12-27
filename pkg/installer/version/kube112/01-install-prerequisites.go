@@ -101,14 +101,10 @@ func installKubeadm(ctx *util.Context, node *config.HostConfig) error {
 	var err error
 
 	switch node.OperatingSystem {
-	case "ubuntu":
-		fallthrough
-	case "debian":
+	case "ubuntu", "debian":
 		err = installKubeadmDebian(ctx)
-
 	case "coreos":
 		err = installKubeadmCoreOS(ctx)
-
 	default:
 		err = fmt.Errorf("'%s' is not a supported operating system", node.OperatingSystem)
 	}
