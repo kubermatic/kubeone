@@ -8,7 +8,7 @@ import (
 
 func deployCA(ctx *util.Context) error {
 	ctx.Logger.Infoln("Deploying PKI…")
-	return ctx.RunTaskOnFollowers(deployCAOnNode, true)
+	return ctx.RunTaskOnAllNodes(deployCAOnNode, true)
 }
 
 func deployCAOnNode(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
