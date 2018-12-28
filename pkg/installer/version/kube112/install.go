@@ -14,6 +14,7 @@ func Install(ctx *util.Context) error {
 		errFmt string
 	}{
 		{fn: installPrerequisites, errFmt: "failed to install prerequisites: %v"},
+		{fn: deployCA, errFmt: "unable to deploy ca on nodes: %v"},
 		{
 			fn: func(ctx *util.Context) error {
 				return ctx.RunTaskOnAllNodes(setupEtcd, true)
@@ -22,7 +23,6 @@ func Install(ctx *util.Context) error {
 		},
 		{fn: generateKubeadm, errFmt: "failed to generate kubeadm config files: %v"},
 		{fn: backup, errFmt: ""},
-		{fn: deployCA, errFmt: "unable to deploy ca on nodes: %v"},
 		{fn: kubeadmCertsAndEtcdOnLeader, errFmt: "failed to provision certs and etcd on leader: %v"},
 		{fn: kubeadmCertsAndEtcdOnFollower, errFmt: "failed to provision certs and etcd on followers: %v"},
 		{fn: initKubernetesLeader, errFmt: "failed to init kubernetes on leader: %v"},

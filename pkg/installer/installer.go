@@ -41,6 +41,9 @@ func (i *Installer) Install(options *Options) error {
 	var err error
 
 	ctx := i.createContext(options)
+	if err = generatePKI(ctx.Configuration); err != nil {
+		return fmt.Errorf("can't generate CA: %v", err)
+	}
 
 	v, err := semver.NewVersion(i.cluster.Versions.Kubernetes)
 	if err != nil {
@@ -66,9 +69,6 @@ func (i *Installer) Reset(options *Options) error {
 	var err error
 
 	ctx := i.createContext(options)
-	if err = generatePKI(ctx.Configuration); err != nil {
-		return fmt.Errorf("can't generate CA: %v", err)
-	}
 
 	v := semver.MustParse(i.cluster.Versions.Kubernetes)
 	majorMinor := fmt.Sprintf("%d.%d", v.Major(), v.Minor())
