@@ -9,50 +9,41 @@ import (
 // Install performs all the steps required to install Kubernetes on
 // an empty, pristine machine.
 func Install(ctx *util.Context) error {
-	if err := installPrerequisites(ctx); err != nil {
-		return fmt.Errorf("failed to install prerequisites: %v", err)
+	steps := []struct {
+		fn     func(ctx *util.Context) error
+		errFmt string
+	}{
+		{fn: installPrerequisites, errFmt: "failed to install prerequisites: %v"},
+		{
+			fn: func(ctx *util.Context) error {
+				return ctx.RunTaskOnAllNodes(setupEtcd, true)
+			},
+			errFmt: "failed to setup etcd: %v",
+		},
+		{fn: generateKubeadm, errFmt: "failed to generate kubeadm config files: %v"},
+		{fn: backup, errFmt: ""},
+		{fn: kubeadmCertsAndEtcdOnLeader, errFmt: "failed to provision certs and etcd on leader: %v"},
+		{fn: deployCA, errFmt: "unable to deploy ca on nodes: %v"},
+		{fn: kubeadmCertsAndEtcdOnFollower, errFmt: "failed to provision certs and etcd on followers: %v"},
+		{fn: initKubernetesLeader, errFmt: "failed to init kubernetes on leader: %v"},
+		{fn: createJoinToken, errFmt: "failed to create join token: %v"},
+		{fn: joinControlplaneNode, errFmt: "unable to join other masters a cluster: %v"},
+		{fn: installKubeProxy, errFmt: "failed to install kube proxy: %v"},
+		{
+			fn: func(ctx *util.Context) error {
+				return applyCNI(ctx, "canal")
+			},
+			errFmt: "failed to install cni plugin canal: %v",
+		},
+		{fn: installMachineController, errFmt: "failed to install machine-controller: %v"},
+		{fn: createWorkerMachines, errFmt: "failed to create worker machines: %v"},
+		{fn: deployArk, errFmt: "failed to deploy ark: %v"},
 	}
-	if err := ctx.RunTaskOnAllNodes(setupEtcd, true); err != nil {
-		return fmt.Errorf("failed to setup etcd: %v", err)
-	}
-	if err := generateKubeadm(ctx); err != nil {
-		return fmt.Errorf("failed to generate kubeadm config files: %v", err)
-	}
-	if err := kubeadmCertsAndEtcdOnLeader(ctx); err != nil {
-		return fmt.Errorf("failed to provision certs and etcd on leader: %v", err)
-	}
-	if err := downloadCA(ctx); err != nil {
-		return fmt.Errorf("unable to download ca from leader: %v", err)
-	}
-	if err := deployCA(ctx); err != nil {
-		return fmt.Errorf("unable to deploy ca on nodes: %v", err)
-	}
-	if err := kubeadmCertsAndEtcdOnFollower(ctx); err != nil {
-		return fmt.Errorf("failed to provision certs and etcd on followers: %v", err)
-	}
-	if err := initKubernetesLeader(ctx); err != nil {
-		return fmt.Errorf("failed to init kubernetes on leader: %v", err)
-	}
-	if err := createJoinToken(ctx); err != nil {
-		return fmt.Errorf("failed to create join token: %v", err)
-	}
-	if err := joinControlplaneNode(ctx); err != nil {
-		return fmt.Errorf("unable to join other masters a cluster: %v", err)
-	}
-	if err := installKubeProxy(ctx); err != nil {
-		return fmt.Errorf("failed to install kube proxy: %v", err)
-	}
-	if err := applyCNI(ctx, "canal"); err != nil {
-		return fmt.Errorf("failed to install cni plugin canal: %v", err)
-	}
-	if err := installMachineController(ctx); err != nil {
-		return fmt.Errorf("failed to install machine-controller: %v", err)
-	}
-	if err := createWorkerMachines(ctx); err != nil {
-		return fmt.Errorf("failed to create worker machines: %v", err)
-	}
-	if err := deployArk(ctx); err != nil {
-		return fmt.Errorf("failed to deploy ark: %v", err)
+
+	for _, step := range steps {
+		if err := step.fn(ctx); err != nil {
+			return fmt.Errorf("v1.12 install: "+step.errFmt, err)
+		}
 	}
 
 	return nil
