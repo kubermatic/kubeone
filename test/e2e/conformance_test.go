@@ -9,7 +9,12 @@ import (
 )
 
 // testRunIdentifier aka. the build number, a unique identifier for the test run.
-var testRunIdentifier = *flag.String("identifier", "", "The unique identifier for this test run")
+var testRunIdentifier string
+
+func init() {
+	flag.StringVar(&testRunIdentifier, "identifier", "", "The unique identifier for this test run")
+	flag.Parse()
+}
 
 func TestClusterConformance(t *testing.T) {
 	t.Parallel()

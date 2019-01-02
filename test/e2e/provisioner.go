@@ -41,7 +41,7 @@ func NewAWSProvisioner(region, testName, testPath, identifier string) *AWSProvis
 			"TF_VAR_ssh_public_key_file": os.Getenv("SSH_PUBLIC_KEY_FILE"),
 			"TF_VAR_cluster_name":        testName,
 			"TF_VAR_aws_region":          region,
-		}, idendifier:identifier}
+		}, idendifier: identifier}
 
 	return &AWSProvisioner{
 		terraform: terraform,
@@ -93,8 +93,9 @@ func (p *terraform) initAndApply() (string, error) {
 
 	initCmd := []string{"init"}
 	if len(p.idendifier) > 0 {
-		initCmd = append(initCmd, fmt.Sprintf("-backend-config=key=%s", p.idendifier))
+		initCmd = append(initCmd, fmt.Sprintf("--backend-config=key=%s", p.idendifier))
 	}
+
 	_, err := executeCommand(p.terraformDir, "terraform", initCmd)
 	if err != nil {
 		return "", fmt.Errorf("terraform init command failed: %v", err)
