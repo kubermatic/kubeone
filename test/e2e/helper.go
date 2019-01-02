@@ -18,9 +18,9 @@ const charset = "abcdefghijklmnopqrstuvwxyz" +
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
 // CreateProvisioner returns interface for specific provisioner
-func CreateProvisioner(region, testName, testPath string, provider Provider) Provisioner {
+func CreateProvisioner(region, testName, testPath string, identifier string, provider Provider) Provisioner {
 	if provider == AWS {
-		return NewAWSProvisioner(region, testName, testPath)
+		return NewAWSProvisioner(region, testName, testPath, identifier)
 	}
 
 	return nil

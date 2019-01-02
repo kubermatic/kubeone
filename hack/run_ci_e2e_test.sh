@@ -7,6 +7,7 @@ set -euxo pipefail
 
 IS_DEBUG=$(echo "$-" | grep "x")
 RUNNING_IN_CI=${JOB_NAME:-""}
+BUILD_ID=${BUILD_ID:-""}
 
 # Install dependencies
 if ! [ -x "$(command -v unzip)" ]; then
@@ -35,6 +36,31 @@ fi
 # kubetest assumes that the last part of that path contains "kubernetes", if not then it complains,
 # additionally the version must be in a very specific format.
 if [ -n "${RUNNING_IN_CI}" ]; then
+ # set up terraform remote backend configuration
+ TERRAFORM_DIR="$(go env GOPATH)/src/github.com/kubermatic/kubeone/terraform"
+ for dir in ${TERRAFORM_DIR}/*
+  do
+     ln -s "$(go env GOPATH)/src/github.com/kubermatic/kubeone/test/e2e/testdata/s3_backend.tf" $dir/s3_backend.tf
+ done
+
+ function cleanup {
+  for dir in ${TERRAFORM_DIR}/*; do
+    for try in {1..20}; do
+      (
+      COUNT_STATE_FILES=$(ls *.{tfstate} 2>/dev/null | wc -l)
+      if [ "$COUNT_STATE_FILES" -eq "0" ]; then break 1; fi
+      echo "Cleaning up terraform state, attempt ${try}, from $dir"
+      cd $dir
+      terraform destroy -auto-approve
+      if [[ $? == 0 ]]; then break; fi
+      echo "Sleeping for $try seconds"
+      sleep ${try}s
+      )
+    done
+  done
+ }
+ trap cleanup EXIT
+
  # terraform expects to find AWS credentials in the following env variables
  if [ -n ${IS_DEBUG} ]; then set +x; fi
  export AWS_ACCESS_KEY_ID=$AWS_E2E_TESTS_KEY_ID
@@ -80,4 +106,4 @@ make install
 
 # Start the tests
 echo "Running E2E tests ..."
-go test -race -tags=e2e -v -timeout 30m  ./test/e2e/...
+go test -race -tags=e2e -v -timeout 30m  ./test/e2e/... -identifier=$BUILD_ID

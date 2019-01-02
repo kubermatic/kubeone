@@ -7,7 +7,6 @@ import (
 )
 
 const (
-	s3BackendPath = "testdata/s3_backend.tf"
 	AWS Provider = 1 + iota
 )
 
@@ -24,6 +23,8 @@ type terraform struct {
 	terraformDir string
 	// envVars terraform environment variables
 	envVars map[string]string
+	// identifier aka. the build number, a unique identifier for the test run.
+	idendifier string
 }
 
 // AWSProvisioner describes AWS provisioner
@@ -33,14 +34,14 @@ type AWSProvisioner struct {
 }
 
 // NewAWSProvisioner creates and initialize AWSProvisioner structure
-func NewAWSProvisioner(region, testName, testPath string) *AWSProvisioner {
+func NewAWSProvisioner(region, testName, testPath, identifier string) *AWSProvisioner {
 
 	terraform := &terraform{terraformDir: "../../terraform/aws/",
 		envVars: map[string]string{
 			"TF_VAR_ssh_public_key_file": os.Getenv("SSH_PUBLIC_KEY_FILE"),
 			"TF_VAR_cluster_name":        testName,
 			"TF_VAR_aws_region":          region,
-		}}
+		}, idendifier:identifier}
 
 	return &AWSProvisioner{
 		terraform: terraform,
@@ -90,7 +91,11 @@ func (p *terraform) initAndApply() (string, error) {
 		os.Setenv(k, v)
 	}
 
-	_, err := executeCommand(p.terraformDir, "terraform", []string{"init", "-backend-config=key=123"})
+	initCmd := []string{"init"}
+	if len(p.idendifier) > 0 {
+		initCmd = append(initCmd, fmt.Sprintf("-backend-config=key=%s", p.idendifier))
+	}
+	_, err := executeCommand(p.terraformDir, "terraform", initCmd)
 	if err != nil {
 		return "", fmt.Errorf("terraform init command failed: %v", err)
 	}

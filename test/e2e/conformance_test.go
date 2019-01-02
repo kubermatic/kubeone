@@ -4,8 +4,12 @@ package e2e
 
 import (
 	"fmt"
+	"flag"
 	"testing"
 )
+
+// testRunIdentifier aka. the build number, a unique identifier for the test run.
+var testRunIdentifier = *flag.String("identifier", "", "The unique identifier for this test run")
 
 func TestClusterConformance(t *testing.T) {
 	t.Parallel()
@@ -34,7 +38,7 @@ func TestClusterConformance(t *testing.T) {
 			testName := fmt.Sprintf("test-%s", testPostfix)
 			testPath := fmt.Sprintf("../../_build/%s", testName)
 
-			pr := CreateProvisioner(tc.region, testName, testPath, tc.provider)
+			pr := CreateProvisioner(tc.region, testName, testPath, testRunIdentifier, tc.provider)
 			target := NewKubeone(testPath, "../../config.yaml.dist")
 			clusterVerifier := NewKubetest(tc.kubernetesVersion, "../../_build", map[string]string{
 				"KUBERNETES_CONFORMANCE_TEST": "y",
