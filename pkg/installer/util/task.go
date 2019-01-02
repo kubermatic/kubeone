@@ -17,12 +17,9 @@ func (c *Context) runTask(node *config.HostConfig, task NodeTask, prefixed bool)
 		conn ssh.Connection
 	)
 
-	ctx := c.Clone()
-	ctx.Logger = ctx.Logger.WithField("node", node.PublicAddress)
-
 	// connect to the host (and do not close connection
 	// because we want to re-use it for future tasks)
-	conn, err = ctx.Connector.Connect(*node)
+	conn, err = c.Connector.Connect(*node)
 	if err != nil {
 		return fmt.Errorf("failed to connect to %s: %v", node.PublicAddress, err)
 	}
@@ -32,14 +29,14 @@ func (c *Context) runTask(node *config.HostConfig, task NodeTask, prefixed bool)
 		prefix = fmt.Sprintf("[%s] ", node.PublicAddress)
 	}
 
-	ctx.Runner = &Runner{
+	c.Runner = &Runner{
 		Conn:    conn,
-		Verbose: ctx.Verbose,
+		Verbose: c.Verbose,
 		OS:      node.OperatingSystem,
 		Prefix:  prefix,
 	}
 
-	return task(ctx, node, conn)
+	return task(c, node, conn)
 }
 
 // RunTaskOnNodes runs the given task on the given selection of hosts.
@@ -50,17 +47,21 @@ func (c *Context) RunTaskOnNodes(nodes []*config.HostConfig, task NodeTask, para
 	hasErrors := false
 
 	for _, node := range nodes {
+		ctx := c.Clone()
+		ctx.Logger = ctx.Logger.WithField("node", node.PublicAddress)
+
 		if parallel {
 			wg.Add(1)
-			go func(node *config.HostConfig) {
-				err = c.runTask(node, task, parallel)
+			go func(ctx *Context, node *config.HostConfig) {
+				err = ctx.runTask(node, task, parallel)
 				if err != nil {
+					ctx.Logger.Error(err)
 					hasErrors = true
 				}
 				wg.Done()
-			}(node)
+			}(ctx, node)
 		} else {
-			err = c.runTask(node, task, parallel)
+			err = ctx.runTask(node, task, parallel)
 			if err != nil {
 				break
 			}

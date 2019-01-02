@@ -17,7 +17,7 @@ limitations under the License.
 */
 
 import (
-	"k8s.io/api/core/v1"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -158,7 +158,7 @@ type NodeRegistrationOptions struct {
 	// Taints specifies the taints the Node API object should be registered with. If this field is unset, i.e. nil, in the `kubeadm init` process
 	// it will be defaulted to []v1.Taint{'node-role.kubernetes.io/master=""'}. If you don't want to taint your master node, set this field to an
 	// empty slice, i.e. `taints: {}` in the YAML file. This field is solely used for Node registration.
-	Taints []v1.Taint `json:"taints,omitempty"`
+	Taints []corev1.Taint `json:"taints,omitempty"`
 
 	// KubeletExtraArgs passes through extra arguments to the kubelet. The arguments here are passed to the kubelet command line via the environment file
 	// kubeadm writes at runtime for the kubelet to source. This overrides the generic base-level configuration in the kubelet-config-1.X ConfigMap
@@ -318,7 +318,7 @@ type HostPathMount struct {
 	// Writable controls write access to the volume
 	Writable bool `json:"writable,omitempty"`
 	// PathType is the type of the HostPath.
-	PathType v1.HostPathType `json:"pathType,omitempty"`
+	PathType corev1.HostPathType `json:"pathType,omitempty"`
 }
 
 // AuditPolicyConfiguration holds the options for configuring the api server audit policy.
