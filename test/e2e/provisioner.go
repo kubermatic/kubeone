@@ -7,6 +7,7 @@ import (
 )
 
 const (
+	s3BackendPath = "testdata/s3_backend.tf"
 	AWS Provider = 1 + iota
 )
 
@@ -89,7 +90,7 @@ func (p *terraform) initAndApply() (string, error) {
 		os.Setenv(k, v)
 	}
 
-	_, err := executeCommand(p.terraformDir, "terraform", []string{"init"})
+	_, err := executeCommand(p.terraformDir, "terraform", []string{"init", "-backend-config=key=123"})
 	if err != nil {
 		return "", fmt.Errorf("terraform init command failed: %v", err)
 	}
