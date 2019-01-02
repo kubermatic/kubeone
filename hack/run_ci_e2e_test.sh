@@ -44,11 +44,12 @@ if [ -n "${RUNNING_IN_CI}" ]; then
  done
 
  function cleanup {
+  set +e
   for dir in ${TERRAFORM_DIR}/*; do
     for try in {1..20}; do
       (
       COUNT_STATE_FILES=$(ls *.{tfstate} 2>/dev/null | wc -l)
-      if [ "$COUNT_STATE_FILES" -eq "0" ]; then break 1; fi
+      if [ "$COUNT_STATE_FILES" -eq "0" ]; then break; fi
       echo "Cleaning up terraform state, attempt ${try}, from $dir"
       cd $dir
       terraform destroy -auto-approve
