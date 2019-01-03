@@ -8,17 +8,16 @@ import (
 
 func joinControlplaneNode(ctx *util.Context) error {
 	ctx.Logger.Infoln("Joining controlplane node…")
-	return ctx.RunTaskOnFollowers(joinControlplaneNodeInternal, false)
+	return ctx.RunTaskOnFollowers(joinControlPlaneNodeInternal, false)
 }
 
-func joinControlplaneNodeInternal(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
+func joinControlPlaneNodeInternal(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
 	_, _, err := ctx.Runner.Run(`
 if [[ -f /etc/kubernetes/kubelet.conf ]]; then exit 0; fi
 
 sudo {{ .JOIN_COMMAND }} \
      --experimental-control-plane \
-     --node-name="{{ .NODE_NAME }}" \
-     --ignore-preflight-errors=DirAvailable--etc-kubernetes-manifests
+     --node-name="{{ .NODE_NAME }}"
 `, util.TemplateVariables{
 		"WORK_DIR":     ctx.WorkDir,
 		"JOIN_COMMAND": ctx.JoinCommand,
