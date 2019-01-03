@@ -15,7 +15,7 @@ func Install(ctx *util.Context) error {
 	if err := generateKubeadm(ctx); err != nil {
 		return fmt.Errorf("failed to generate kubeadm config files: %v", err)
 	}
-	if err := kubeadmCertsAndEtcdOnLeader(ctx); err != nil {
+	if err := kubeadmCertsOnLeader(ctx); err != nil {
 		return fmt.Errorf("failed to provision certs and etcd on leader: %v", err)
 	}
 	if err := downloadCA(ctx); err != nil {
@@ -24,7 +24,7 @@ func Install(ctx *util.Context) error {
 	if err := deployCA(ctx); err != nil {
 		return fmt.Errorf("unable to deploy ca on nodes: %v", err)
 	}
-	if err := kubeadmCertsAndEtcdOnFollower(ctx); err != nil {
+	if err := kubeadmCertsOnFollower(ctx); err != nil {
 		return fmt.Errorf("failed to provision certs and etcd on followers: %v", err)
 	}
 	if err := initKubernetesLeader(ctx); err != nil {

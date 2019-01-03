@@ -23,12 +23,12 @@ sudo kubeadm init --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
 `
 )
 
-func kubeadmCertsAndEtcdOnLeader(ctx *util.Context) error {
+func kubeadmCertsOnLeader(ctx *util.Context) error {
 	ctx.Logger.Infoln("Configuring certs and etcd on first controller…")
 	return ctx.RunTaskOnLeader(kubeadmCertsExecutor)
 }
 
-func kubeadmCertsAndEtcdOnFollower(ctx *util.Context) error {
+func kubeadmCertsOnFollower(ctx *util.Context) error {
 	ctx.Logger.Infoln("Configuring certs and etcd on consecutive controller…")
 	return ctx.RunTaskOnFollowers(kubeadmCertsExecutor, true)
 }
