@@ -74,7 +74,7 @@ func (i *Installer) Reset(options *Options) error {
 	case "1.12":
 		err = kube112.Reset(ctx)
 	default:
-		err = installation.Install(ctx)
+		err = installation.Reset(ctx)
 	}
 
 	return err
