@@ -12,9 +12,9 @@ func Install(ctx *util.Context) error {
 	if err := installPrerequisites(ctx); err != nil {
 		return fmt.Errorf("failed to install prerequisites: %v", err)
 	}
-	if err := ctx.RunTaskOnAllNodes(setupEtcd, true); err != nil {
-		return fmt.Errorf("failed to setup etcd: %v", err)
-	}
+	//if err := ctx.RunTaskOnAllNodes(setupEtcd, true); err != nil {
+	//	return fmt.Errorf("failed to setup etcd: %v", err)
+	//}
 	if err := generateKubeadm(ctx); err != nil {
 		return fmt.Errorf("failed to generate kubeadm config files: %v", err)
 	}

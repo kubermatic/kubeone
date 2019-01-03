@@ -15,7 +15,7 @@ if [[ -d ./{{ .WORK_DIR }}/pki ]]; then
        sudo rsync -av ./{{ .WORK_DIR }}/pki/ /etc/kubernetes/pki/
        rm -rf ./{{ .WORK_DIR }}/pki
 fi
-sudo kubeadm alpha phase certs all --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+sudo kubeadm init phase certs all --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
 `
 	kubeadmInitCommand = `
 if [[ -f /etc/kubernetes/admin.conf ]]; then exit 0; fi
