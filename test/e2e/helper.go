@@ -14,8 +14,7 @@ import (
 	"time"
 )
 
-const charset = "abcdefghijklmnopqrstuvwxyz" +
-	"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+const charset = "abcdefghijklmnopqrstuvwxyz0123456789"
 
 // CreateProvisioner returns interface for specific provisioner
 func CreateProvisioner(region, testName, testPath string, provider Provider) Provisioner {

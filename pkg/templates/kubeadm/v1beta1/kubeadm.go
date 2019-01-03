@@ -2,6 +2,7 @@ package v1beta1
 
 import (
 	"fmt"
+	"strings"
 
 	kubeadmv1beta1 "github.com/kubermatic/kubeone/pkg/apis/kubeadm/v1beta1"
 	"github.com/kubermatic/kubeone/pkg/config"
@@ -39,9 +40,9 @@ func NewConfig(cluster *config.Cluster, host *config.HostConfig) ([]runtime.Obje
 
 	endpoints := []string{}
 	for _, host := range cluster.Hosts {
-		endpoints = append(endpoints, host.PublicAddress)
+		endpoints = append(endpoints, strings.ToLower(host.PublicAddress))
 	}
-	endpoints = append(endpoints, cluster.APIServer.Address)
+	endpoints = append(endpoints, strings.ToLower(cluster.APIServer.Address))
 	clusterConfig := &kubeadmv1beta1.ClusterConfiguration{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "kubeadm.k8s.io/v1beta1",
