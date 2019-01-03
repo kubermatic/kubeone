@@ -19,9 +19,6 @@ sudo kubeadm init phase certs all --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE
 `
 	kubeadmInitCommand = `
 if [[ -f /etc/kubernetes/admin.conf ]]; then exit 0; fi
-sudo mv /etc/systemd/system/kubelet.service.d/10-kubeadm.conf{.disabled,}
-sudo systemctl daemon-reload
-sudo systemctl stop kubelet
 sudo kubeadm init --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml \
   --ignore-preflight-errors=FileAvailable--etc-kubernetes-manifests-etcd.yaml
 `

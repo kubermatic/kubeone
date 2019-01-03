@@ -15,12 +15,6 @@ func joinControlplaneNodeInternal(ctx *util.Context, node *config.HostConfig, co
 	_, _, err := ctx.Runner.Run(`
 if [[ -f /etc/kubernetes/kubelet.conf ]]; then exit 0; fi
 
-if [[ -f /etc/systemd/system/kubelet.service.d/10-kubeadm.conf.disabled ]]; then
-  sudo mv /etc/systemd/system/kubelet.service.d/10-kubeadm.conf{.disabled,}
-  sudo systemctl daemon-reload
-fi
-
-sudo systemctl stop kubelet
 sudo {{ .JOIN_COMMAND }} \
      --experimental-control-plane \
      --node-name="{{ .NODE_NAME }}" \

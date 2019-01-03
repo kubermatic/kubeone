@@ -167,8 +167,6 @@ sudo apt-get install -y --no-install-recommends \
      kubectl=${kube_ver} \
      kubelet=${kube_ver}
 sudo apt-mark hold docker-ce kubelet kubeadm kubectl
-sudo mv /etc/systemd/system/kubelet.service.d/10-kubeadm.conf{,.disabled}
-sudo systemctl daemon-reload
 `
 
 func installKubeadmCoreOS(ctx *util.Context) error {
@@ -216,11 +214,6 @@ func deployConfigurationFiles(ctx *util.Context) error {
 
 	// move config files to their permanent locations
 	_, _, err = ctx.Runner.Run(`
-sudo cp /lib/systemd/system/kubelet.service /etc/systemd/system/kubelet.service
-sudo sed -i 's#ExecStart=/usr/bin/kubelet.*#ExecStart=/usr/bin/kubelet --pod-manifest-path=/etc/kubernetes/manifests#g' /etc/systemd/system/kubelet.service
-sudo mkdir -p /etc/kubernetes/manifests
-sudo systemctl daemon-reload
-sudo systemctl restart kubelet
 sudo mkdir -p /etc/systemd/system/kubelet.service.d/ /etc/kubernetes
 sudo mv ./{{ .WORK_DIR }}/cfg/20-cloudconfig-kubelet.conf /etc/systemd/system/kubelet.service.d/
 sudo mv ./{{ .WORK_DIR }}/cfg/cloud-config /etc/kubernetes/cloud-config
