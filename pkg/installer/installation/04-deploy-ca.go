@@ -23,6 +23,7 @@ sudo cp /etc/kubernetes/pki/sa.key ./{{ .WORK_DIR }}/pki/
 sudo cp /etc/kubernetes/pki/sa.pub ./{{ .WORK_DIR }}/pki/
 sudo cp /etc/kubernetes/pki/front-proxy-ca.crt ./{{ .WORK_DIR }}/pki/
 sudo cp /etc/kubernetes/pki/front-proxy-ca.key ./{{ .WORK_DIR }}/pki/
+sudo cp /etc/kubernetes/pki/etcd/ca.{crt,key} ./{{ .WORK_DIR }}/pki/etcd/
 
 sudo chown -R "$USER:$USER" ./{{ .WORK_DIR }}
 `, util.TemplateVariables{

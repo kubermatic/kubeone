@@ -8,7 +8,7 @@ import (
 
 func joinControlplaneNode(ctx *util.Context) error {
 	ctx.Logger.Infoln("Joining controlplane node…")
-	return ctx.RunTaskOnFollowers(joinControlplaneNodeInternal, true)
+	return ctx.RunTaskOnFollowers(joinControlplaneNodeInternal, false)
 }
 
 func joinControlplaneNodeInternal(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
