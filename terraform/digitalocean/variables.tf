@@ -52,6 +52,6 @@ variable "droplet_monitoring" {
 }
 
 variable "droplet_ipv6" {
-  default = "false"
+  default = false
   description = "Enable IPv6"
 }

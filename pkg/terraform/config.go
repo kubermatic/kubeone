@@ -59,6 +59,12 @@ type awsWorkerConfig struct {
 	DiskSize         *int     `json:"diskSize"`
 }
 
+// TODO: Add option for sourcing bool values (private networking, monitoring...)
+type doWorkerConfig struct {
+	DropletSize string `json:"droplet_size"`
+	Region      string `json:"region"`
+}
+
 // Config represents configuration in the terraform output format
 type Config struct {
 	KubeOneAPI struct {
@@ -234,8 +240,20 @@ func (c *Config) updateAWSWorkerset(workerset *config.WorkerConfig, cfg json.Raw
 	return nil
 }
 
-func (c *Config) updateDigitalOceanWorkerset(_ *config.WorkerConfig, _ json.RawMessage) error {
-	return errors.New("DigitalOcean is not implemented yet")
+func (c *Config) updateDigitalOceanWorkerset(workerset *config.WorkerConfig, cfg json.RawMessage) error {
+	var doCloudConfig doWorkerConfig
+	if err := json.Unmarshal(cfg, &doCloudConfig); err != nil {
+		return err
+	}
+
+	if err := setWorkersetFlag(workerset, "size", doCloudConfig.DropletSize); err != nil {
+		return err
+	}
+	if err := setWorkersetFlag(workerset, "region", doCloudConfig.Region); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (c *Config) updateHetznerWorkerset(_ *config.WorkerConfig, _ json.RawMessage) error {
