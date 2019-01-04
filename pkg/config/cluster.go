@@ -79,6 +79,10 @@ func (m *Cluster) DefaultAndValidate() error {
 		return fmt.Errorf("backup configuration is invalid: %v", err)
 	}
 
+	if m.APIServer.Address == "" {
+		m.APIServer.Address = m.Hosts[0].PublicAddress
+	}
+
 	return nil
 }
 

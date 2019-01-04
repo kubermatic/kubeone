@@ -7,6 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/kubermatic/kubeone/pkg/config"
+	"github.com/kubermatic/kubeone/pkg/installer/installation"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/installer/version/kube112"
 	"github.com/kubermatic/kubeone/pkg/ssh"
@@ -52,7 +53,7 @@ func (i *Installer) Install(options *Options) error {
 	case "1.12":
 		err = kube112.Install(ctx)
 	default:
-		err = fmt.Errorf("unsupported Kubernetes version %s", majorMinor)
+		err = installation.Install(ctx)
 	}
 
 	return err
@@ -73,7 +74,7 @@ func (i *Installer) Reset(options *Options) error {
 	case "1.12":
 		err = kube112.Reset(ctx)
 	default:
-		err = fmt.Errorf("unsupported Kubernetes version %s", majorMinor)
+		err = installation.Reset(ctx)
 	}
 
 	return err

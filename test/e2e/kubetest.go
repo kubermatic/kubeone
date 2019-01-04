@@ -47,7 +47,7 @@ func (p *Kubetest) Verify(scenario string) error {
 
 	k8sPath := fmt.Sprintf("%s/kubernetes-%s/kubernetes", p.kubetestDir, p.kubernetesVersion)
 
-	testsArgs := fmt.Sprintf("--test_args=--ginkgo.focus=%s --ginkgo.skip=%s", scenario, skip)
+	testsArgs := fmt.Sprintf("--test_args=--ginkgo.focus=%s --ginkgo.skip=%s -ginkgo.noColor=true -ginkgo.flakeAttempts=2", scenario, skip)
 
 	_, err := executeCommand(k8sPath, "kubetest", []string{"--provider=skeleton", "--test", "--ginkgo-parallel", "--check-version-skew=false", testsArgs})
 	if err != nil {

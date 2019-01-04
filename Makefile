@@ -12,6 +12,7 @@ all: install
 install:
 	go install -v ./cmd/kubeone
 
+kubeone: build
 build: dist/kubeone
 
 lint:

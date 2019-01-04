@@ -9,6 +9,9 @@ import (
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/templates"
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/v1alpha3"
+	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/v1beta1"
+
+	"k8s.io/apimachinery/pkg/runtime"
 )
 
 // Config returns appropriate version of kubeadm config as YAML
@@ -21,14 +24,13 @@ func Config(cluster *config.Cluster, instance *config.HostConfig) (string, error
 	v := semver.MustParse(cluster.Versions.Kubernetes)
 	majorMinor := fmt.Sprintf("%d.%d", v.Major(), v.Minor())
 
-	var (
-		clusterCfg, initCfg interface{}
-		err                 error
-	)
-
+	var configs []runtime.Object
+	var err error
 	switch majorMinor {
 	case "1.12":
-		initCfg, clusterCfg, err = v1alpha3.NewConfig(cluster, instance)
+		configs, err = v1alpha3.NewConfig(cluster, instance)
+	case "1.13":
+		configs, err = v1beta1.NewConfig(cluster, instance)
 	default:
 		err = fmt.Errorf("unsupported Kubernetes version %s", majorMinor)
 	}
@@ -37,5 +39,10 @@ func Config(cluster *config.Cluster, instance *config.HostConfig) (string, error
 		return "", err
 	}
 
-	return templates.KubernetesToYAML([]interface{}{initCfg, clusterCfg})
+	//TODO: Change KubernetesToYAML to accept runtime.Object instead of empty interface
+	var kubernetesToYAMLInput []interface{}
+	for _, config := range configs {
+		kubernetesToYAMLInput = append(kubernetesToYAMLInput, interface{}(config))
+	}
+	return templates.KubernetesToYAML(kubernetesToYAMLInput)
 }

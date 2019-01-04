@@ -2,8 +2,10 @@
 # clusters using KubeOne. You can augment some options by providing
 # Terraform output at runtime, like explained in the documentation.
 
+name: my-demo-cluster
+
 versions:
-  kubernetes: '1.12.2'
+  kubernetes: '1.13.1'
   docker: '18.06' # depends on the OS installed on your machines
 
 network:
