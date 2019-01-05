@@ -88,13 +88,21 @@ func (c *Config) Apply(cluster *config.Cluster) error {
 		cluster.APIServer.Address = c.KubeOneAPI.Value.Endpoint
 	}
 
-	hosts := make([]*config.HostConfig, 0)
 	cp := c.KubeOneHosts.Value.ControlPlane[0]
-	sshPort, _ := strconv.Atoi(cp.SSHPort)
+
+	var sshPort int
+	var err error
+	if cp.SSHPort != "" {
+		sshPort, err = strconv.Atoi(cp.SSHPort)
+		if err != nil {
+			return fmt.Errorf("failed to convert ssh port string '%s' to int: %v", cp.SSHPort, err)
+		}
+	}
 
 	cluster.Name = cp.ClusterName
 
 	// build up a list of master nodes
+	hosts := make([]*config.HostConfig, 0)
 	for i, publicIP := range cp.PublicAddress {
 		privateIP := publicIP
 		if i < len(cp.PrivateAddress) {
