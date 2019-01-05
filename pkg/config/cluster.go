@@ -135,6 +135,9 @@ func (m *HostConfig) addDefaults() error {
 	if len(m.SSHPrivateKeyFile) == 0 && len(m.SSHAgentSocket) == 0 {
 		m.SSHAgentSocket = "env:SSH_AUTH_SOCK"
 	}
+	if m.SSHUsername == "" {
+		m.SSHUsername = "root"
+	}
 	return nil
 }
 
