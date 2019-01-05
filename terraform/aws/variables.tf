@@ -8,6 +8,7 @@ variable "aws_region" {
 }
 
 variable "ssh_public_key_file" {
+  default     = "~/.ssh/id_rsa.pub"
   description = "SSH public key file"
 }
 

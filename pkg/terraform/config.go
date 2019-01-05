@@ -11,6 +11,7 @@ import (
 
 type controlPlane struct {
 	ClusterName       string   `json:"cluster_name"`
+	CloudProvider     *string  `json:"cloud_provider"`
 	PublicAddress     []string `json:"public_address"`
 	PrivateAddress    []string `json:"private_address"`
 	SSHUser           string   `json:"ssh_user"`
@@ -89,6 +90,10 @@ func (c *Config) Apply(cluster *config.Cluster) error {
 	}
 
 	cp := c.KubeOneHosts.Value.ControlPlane[0]
+
+	if cp.CloudProvider != nil {
+		cluster.Provider.Name = config.ProviderName(*cp.CloudProvider)
+	}
 
 	var sshPort int
 	var err error
