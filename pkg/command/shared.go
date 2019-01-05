@@ -73,9 +73,5 @@ func applyTerraform(tf string, cluster *config.Cluster) error {
 		return fmt.Errorf("failed to parse Terraform config: %v", err)
 	}
 
-	if err = tfConfig.Validate(); err != nil {
-		return fmt.Errorf("Terraform output is invalid: %v", err)
-	}
-
 	return tfConfig.Apply(cluster)
 }

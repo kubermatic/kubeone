@@ -81,25 +81,6 @@ func NewConfigFromJSON(j []byte) (c *Config, err error) {
 	return c, json.Unmarshal(j, c)
 }
 
-// Validate checks if the Terraform output conforms to our spec.
-func (c *Config) Validate() error {
-	planes := c.KubeOneHosts.Value.ControlPlane
-
-	if len(planes) == 0 {
-		return errors.New("no control plane specified")
-	}
-
-	if len(planes) > 1 {
-		return errors.New("more than one control plane specified")
-	}
-
-	if err := planes[0].Validate(); err != nil {
-		return fmt.Errorf("control plane is invalid: %v", err)
-	}
-
-	return nil
-}
-
 // Apply adds the terraform configuration options to the given
 // cluster config.
 func (c *Config) Apply(cluster *config.Cluster) error {
