@@ -42,8 +42,9 @@ $(CREATE_TARGETS): kubeone
 	$(eval PROVIDERNAME := $(@:-env=))
 	cd terraform/$(PROVIDERNAME) && terraform apply --auto-approve
 	terraform output -state=terraform/$(PROVIDERNAME)/terraform.tfstate -json > tf.json
+	$(eval USER := $(shell cat tf.json |jq -r '.kubeone_hosts.value.control_plane[0].ssh_user'|sed 's/null/root/g'))
 	for host in $$(cat tf.json |jq -r '.kubeone_hosts.value.control_plane[0].public_address|.[]'); do \
-		until ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $$host exit; do sleep 1; done; \
+		until ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $(USER)@$$host exit; do sleep 1; done; \
 	done
 	./dist/kubeone install config.yaml.dist  --tfjson tf.json
 

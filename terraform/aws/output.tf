@@ -31,7 +31,11 @@ output "kubeone_workers" {
       securityGroupIDs = ["${aws_security_group.common.id}"]
       vpcId            = "${aws_default_vpc.default.id}"
       subnetId         = "${data.aws_subnet.az_a.id}"
+      instanceType     = "t2.medium"
+      diskSize         = 50
       sshPublicKeys    = ["${aws_key_pair.deployer.public_key}"]
+      replicas         = 1
+      operatingSystem  = "ubuntu"
     }
 
     fra1-b = {
@@ -42,7 +46,11 @@ output "kubeone_workers" {
       securityGroupIDs = ["${aws_security_group.common.id}"]
       vpcId            = "${aws_default_vpc.default.id}"
       subnetId         = "${data.aws_subnet.az_b.id}"
+      instanceType     = "t2.medium"
+      diskSize         = 50
       sshPublicKeys    = ["${aws_key_pair.deployer.public_key}"]
+      replicas         = 1
+      operatingSystem  = "ubuntu"
     }
 
     fra1-c = {
@@ -53,7 +61,11 @@ output "kubeone_workers" {
       securityGroupIDs = ["${aws_security_group.common.id}"]
       vpcId            = "${aws_default_vpc.default.id}"
       subnetId         = "${data.aws_subnet.az_c.id}"
+      instanceType     = "t2.medium"
+      diskSize         = 50
       sshPublicKeys    = ["${aws_key_pair.deployer.public_key}"]
+      replicas         = 1
+      operatingSystem  = "ubuntu"
     }
   }
 }

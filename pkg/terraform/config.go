@@ -55,6 +55,8 @@ type awsWorkerConfig struct {
 	SecurityGroupIDs []string `json:"securityGroupIDs"`
 	SubnetID         string   `json:"subnetId"`
 	VPCID            string   `json:"vpcId"`
+	InstanceType     *string  `json:"instanceType"`
+	DiskSize         *int     `json:"diskSize"`
 }
 
 // Config represents configuration in the terraform output format
@@ -129,51 +131,51 @@ func (c *Config) Apply(cluster *config.Cluster) error {
 		cluster.Hosts = hosts
 	}
 
-	// walk through each of the configured workersets and
-	// see if they reference a worker config output from
-	// terraform
-	for idx, workerset := range cluster.Workers {
-		// do we have a matching terraform worker section?
-		cloudConfRaw, found := c.KubeOneWorkers.Value[workerset.Name]
-		if !found {
-			continue
-		}
-
-		if len(cloudConfRaw) != 1 {
+	// Walk through all configued workersets from terraform and apply their config
+	// by either merging it into an existing workerSet or creating a new one
+	for workersetName, workersetValue := range c.KubeOneWorkers.Value {
+		if len(workersetValue) != 1 {
 			// TODO: log warning? error?
 			continue
 		}
-		workerset := workerset
 
-		var err error
+		var existingWorkerSet *config.WorkerConfig
+		for idx, workerset := range cluster.Workers {
+			if workerset.Name == workersetName {
+				existingWorkerSet = &cluster.Workers[idx]
+				break
+			}
+		}
+		if existingWorkerSet == nil {
+			// Append copies the object when its a literal and not a pointer, hence
+			// we have to first append, then create a pointer to the appended object
+			cluster.Workers = append(cluster.Workers, config.WorkerConfig{Name: workersetName})
+			existingWorkerSet = &cluster.Workers[len(cluster.Workers)-1]
+		}
 
-		// copy over provider-specific fields in the cloudProviderSpec
 		switch cluster.Provider.Name {
 		case config.ProviderNameAWS:
-			err = c.updateAWSWorkerset(&workerset, cloudConfRaw[0])
+			err = c.updateAWSWorkerset(existingWorkerSet, workersetValue[0])
 		case config.ProviderNameDigitalOcean:
-			err = c.updateDigitalOceanWorkerset(&workerset, cloudConfRaw[0])
+			err = c.updateDigitalOceanWorkerset(existingWorkerSet, workersetValue[0])
 		case config.ProviderNameHetzner:
-			err = c.updateHetznerWorkerset(&workerset, cloudConfRaw[0])
+			err = c.updateHetznerWorkerset(existingWorkerSet, workersetValue[0])
 		case config.ProviderNameOpenStack:
-			err = c.updateOpenStackWorkerset(&workerset, cloudConfRaw[0])
+			err = c.updateOpenStackWorkerset(existingWorkerSet, workersetValue[0])
 		case config.ProviderNameVSphere:
-			err = c.updateVSphereWorkerset(&workerset, cloudConfRaw[0])
+			err = c.updateVSphereWorkerset(existingWorkerSet, workersetValue[0])
 		default:
 			return fmt.Errorf("unknown provider %v", cluster.Provider.Name)
 		}
 
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to update provider-specific config for workerset %s from tf.json: %v", workersetName, err)
 		}
 
-		// copy over SSH keys
-		err = c.updateSSHKeys(&workerset, cloudConfRaw[0])
-		if err != nil {
-			return err
+		// copy over common config
+		if err = c.updateCommonWorkerConfig(existingWorkerSet, workersetValue[0]); err != nil {
+			return fmt.Errorf("failed to update common config from tf.json: %v", err)
 		}
-
-		cluster.Workers[idx] = workerset
 	}
 
 	return nil
@@ -205,6 +207,28 @@ func (c *Config) updateAWSWorkerset(workerset *config.WorkerConfig, cfg json.Raw
 	}
 	if err := setWorkersetFlag(workerset, "vpcId", awsCloudConfig.VPCID); err != nil {
 		return err
+	}
+
+	if awsCloudConfig.InstanceType != nil {
+		if err := setWorkersetFlag(workerset, "instanceType", *awsCloudConfig.InstanceType); err != nil {
+			return err
+		}
+	}
+
+	// We effectively hardcode it here because we have no sane way to check if it was already defined
+	// as workerset.Config is a map[string]interface{}
+	// TODO: Use imported provicerConfig structs for workset.Config
+	// TODO: Add defaulting in the machine-controller for this and remove it here
+	if err := setWorkersetFlag(workerset, "diskType", "gp2"); err != nil {
+		return err
+	}
+
+	// We can not check if its defined in the workset already as workerset.Config is a map[string]interface{}
+	// TODO: Use imported provicerConfig structs for workset.Config
+	if awsCloudConfig.DiskSize != nil {
+		if err := setWorkersetFlag(workerset, "diskSize", *awsCloudConfig.DiskSize); err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -247,6 +271,9 @@ func setWorkersetFlag(w *config.WorkerConfig, name string, value interface{}) er
 
 	// update CloudProviderSpec ONLY IF given terraform output is absent in
 	// original CloudProviderSpec
+	if w.Config.CloudProviderSpec == nil {
+		w.Config.CloudProviderSpec = map[string]interface{}{}
+	}
 	if _, exists := w.Config.CloudProviderSpec[name]; !exists {
 		w.Config.CloudProviderSpec[name] = value
 	}
@@ -254,18 +281,32 @@ func setWorkersetFlag(w *config.WorkerConfig, name string, value interface{}) er
 	return nil
 }
 
-type sshKeyWorkerConfig struct {
-	SSHPublicKeys []string `json:"sshPublicKeys"`
+type commonWorkerConfig struct {
+	SSHPublicKeys   []string `json:"sshPublicKeys"`
+	Replicas        *int     `json:"replicas"`
+	OperatingSystem *string  `json:"operatingSystem"`
 }
 
-func (c *Config) updateSSHKeys(workerset *config.WorkerConfig, cfg json.RawMessage) error {
-	var cc sshKeyWorkerConfig
+func (c *Config) updateCommonWorkerConfig(workerset *config.WorkerConfig, cfg json.RawMessage) error {
+	var cc commonWorkerConfig
 	if err := json.Unmarshal(cfg, &cc); err != nil {
-		return err
+		return fmt.Errorf("failed to unmarshal common worker config: %v", err)
 	}
 
-	if len(workerset.Config.SSHPublicKeys) == 0 {
-		workerset.Config.SSHPublicKeys = cc.SSHPublicKeys
+	for _, sshKey := range cc.SSHPublicKeys {
+		workerset.Config.SSHPublicKeys = append(workerset.Config.SSHPublicKeys, sshKey)
+	}
+
+	// Only update if replicas was not configured yet to ensure config from `config.yaml`
+	// takes precedence
+	if cc.Replicas != nil && workerset.Replicas == nil {
+		workerset.Replicas = cc.Replicas
+	}
+
+	// Overwrite config from `config.yaml` as the info about the image/AMI/Whatever your cloud calls it
+	// comes from Terraform
+	if cc.OperatingSystem != nil {
+		workerset.Config.OperatingSystem = *cc.OperatingSystem
 	}
 
 	return nil
