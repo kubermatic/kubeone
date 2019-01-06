@@ -1,4 +1,0 @@
-manifest.yaml
-.terraform
-terraform.tfstate*
-terraform.tfvars
