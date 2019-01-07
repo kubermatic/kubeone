@@ -3,8 +3,8 @@
 package e2e
 
 import (
-	"fmt"
 	"flag"
+	"fmt"
 	"testing"
 )
 
@@ -21,7 +21,7 @@ func TestClusterConformance(t *testing.T) {
 
 	testcases := []struct {
 		name              string
-		provider          Provider
+		provider          string
 		kubernetesVersion string
 		scenario          string
 		region            string
@@ -39,18 +39,24 @@ func TestClusterConformance(t *testing.T) {
 		// to satisfy scope linter
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			testPostfix := RandomString(8)
+			testPostfix := testRunIdentifier
+			if len(testPostfix) == 0 {
+				testPostfix = RandomString(8)
+			}
 			testName := fmt.Sprintf("test-%s", testPostfix)
 			testPath := fmt.Sprintf("../../_build/%s", testName)
 
-			pr := CreateProvisioner(tc.region, testName, testPath, testRunIdentifier, tc.provider)
+			pr, err := CreateProvisioner(tc.region, testName, testPath, testRunIdentifier, tc.provider)
+			if err != nil {
+				t.Fatal(err)
+			}
 			target := NewKubeone(testPath, "../../config.yaml.dist")
 			clusterVerifier := NewKubetest(tc.kubernetesVersion, "../../_build", map[string]string{
 				"KUBERNETES_CONFORMANCE_TEST": "y",
 			})
 
 			t.Log("check prerequisites")
-			err := ValidateCommon()
+			err = ValidateCommon()
 			if err != nil {
 				t.Fatalf("%v", err)
 			}
