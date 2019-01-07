@@ -31,7 +31,6 @@ func TestClusterConformance(t *testing.T) {
 			provider:          AWS,
 			kubernetesVersion: "v1.12.3",
 			scenario:          NodeConformance,
-			region:            "eu-west-3",
 		},
 	}
 
@@ -40,11 +39,11 @@ func TestClusterConformance(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			if len(testRunIdentifier) == 0 {
-				testRunIdentifier = RandomString(8)
+				t.Fatalf("-identifier must be set")
 			}
 			testPath := fmt.Sprintf("../../_build/%s", testRunIdentifier)
 
-			pr, err := CreateProvisioner(tc.region, testPath, testRunIdentifier, tc.provider)
+			pr, err := CreateProvisioner(testPath, testRunIdentifier, tc.provider)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -52,6 +51,7 @@ func TestClusterConformance(t *testing.T) {
 			clusterVerifier := NewKubetest(tc.kubernetesVersion, "../../_build", map[string]string{
 				"KUBERNETES_CONFORMANCE_TEST": "y",
 			})
+			_ = clusterVerifier
 
 			t.Log("check prerequisites")
 			err = ValidateCommon()

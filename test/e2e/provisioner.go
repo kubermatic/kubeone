@@ -22,8 +22,6 @@ type Provisioner interface {
 type terraform struct {
 	// terraformDir the path to where your terraform code is located
 	terraformDir string
-	// envVars terraform environment variables
-	envVars map[string]string
 	// identifier aka. the build number, a unique identifier for the test run.
 	idendifier string
 }
@@ -35,35 +33,10 @@ type AWSProvisioner struct {
 }
 
 // NewAWSProvisioner creates and initialize AWSProvisioner structure
-//
-// Note:
-// It also stores terraform related environment variables in tf.env file,
-// primarily required to automatically destroy state (resources) in the event of failure
-//
-// identifier is used as a prefix to give names to resources, it may be truncated if the length is >= 12
-func NewAWSProvisioner(region, testPath, identifier string) (*AWSProvisioner, error) {
-	// names of some resources on AWS cannot have more than 32 characters
-	clusterName := identifier
-	if len(clusterName) >= 12 {
-		clusterName = clusterName[0:12]
-	}
-	terraform := &terraform{terraformDir: "../../terraform/aws/",
-		envVars: map[string]string{
-			"TF_VAR_ssh_public_key_file": os.Getenv("SSH_PUBLIC_KEY_FILE"),
-			"TF_VAR_cluster_name":        clusterName,
-			"TF_VAR_aws_region":          region,
-		}, idendifier: identifier}
-
-	envVarsStr := ""
-	for k, v := range terraform.envVars {
-		envVarsStr = fmt.Sprintf("%s%s=%s\n", envVarsStr, k, v)
-	}
-
-	envVarFilePath := strings.Join([]string{terraform.terraformDir, "tf.env"}, "/")
-	err := CreateFile(envVarFilePath, envVarsStr)
-	if err != nil {
-		return nil, fmt.Errorf("unable to write data to file = %s", envVarFilePath)
-	}
+func NewAWSProvisioner(testPath, identifier string) (*AWSProvisioner, error) {
+	terraform := &terraform{
+		terraformDir: "../../terraform/aws/",
+		idendifier:   identifier}
 
 	return &AWSProvisioner{
 		terraform: terraform,
@@ -108,10 +81,6 @@ func (p *AWSProvisioner) Cleanup() error {
 // initAndApply method to initialize a terraform working directory
 // and build infrastructure
 func (p *terraform) initAndApply() (string, error) {
-
-	for k, v := range p.envVars {
-		os.Setenv(k, v)
-	}
 
 	initCmd := []string{"init"}
 	if len(p.idendifier) > 0 {
