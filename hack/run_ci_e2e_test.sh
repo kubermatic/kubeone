@@ -60,7 +60,6 @@ if [ -n "${RUNNING_IN_CI}" ]; then
      ln -s "$(go env GOPATH)/src/github.com/kubermatic/kubeone/test/e2e/testdata/s3_backend.tf" $dir/s3_backend.tf
  done
 
-
  # terraform expects to find AWS credentials in the following env variables
  export AWS_ACCESS_KEY_ID=$AWS_E2E_TESTS_KEY_ID
  export AWS_SECRET_ACCESS_KEY=$AWS_E2E_TESTS_SECRET
