@@ -48,15 +48,10 @@ if [ -n "${RUNNING_IN_CI}" ]; then
     for try in {1..20}; do
       (
       cd $dir
-      COUNT_STATE_FILES=$(ls terraform.tfstate 2>/dev/null | wc -l)
-      if [ "$COUNT_STATE_FILES" -eq "0" ]; then break; fi
       echo "Cleaning up terraform state, attempt ${try}, from $dir"
-      export $(cat tf.env)
+      source tf.env
       terraform destroy -auto-approve
-      if [[ $? == 0 ]]; then
-        rm terraform.tfstate
-        break;
-      fi
+      if [[ $? == 0 ]]; then break; fi
       echo "Sleeping for $try seconds"
       sleep ${try}s
       )
