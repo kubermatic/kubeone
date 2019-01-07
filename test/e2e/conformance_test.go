@@ -39,14 +39,12 @@ func TestClusterConformance(t *testing.T) {
 		// to satisfy scope linter
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			testPostfix := testRunIdentifier
-			if len(testPostfix) == 0 {
-				testPostfix = RandomString(8)
+			if len(testRunIdentifier) == 0 {
+				testRunIdentifier = RandomString(8)
 			}
-			testName := fmt.Sprintf("test-%s", testPostfix)
-			testPath := fmt.Sprintf("../../_build/%s", testName)
+			testPath := fmt.Sprintf("../../_build/%s", testRunIdentifier)
 
-			pr, err := CreateProvisioner(tc.region, testName, testPath, testRunIdentifier, tc.provider)
+			pr, err := CreateProvisioner(tc.region, testPath, testRunIdentifier, tc.provider)
 			if err != nil {
 				t.Fatal(err)
 			}

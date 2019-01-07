@@ -40,16 +40,17 @@ type AWSProvisioner struct {
 // It also stores terraform related environment variables in tf.env file,
 // primarily required to automatically destroy state (resources) in the event of failure
 //
-// testName is used as a prefix to give names to resources, it may be truncated if the length is >= 12
-func NewAWSProvisioner(region, testName, testPath, identifier string) (*AWSProvisioner, error) {
+// identifier is used as a prefix to give names to resources, it may be truncated if the length is >= 12
+func NewAWSProvisioner(region, testPath, identifier string) (*AWSProvisioner, error) {
 	// names of some resources on AWS cannot have more than 32 characters
-	if len(testName) >= 12 {
-		testName = testName[0:12]
+	clusterName := identifier
+	if len(clusterName) >= 12 {
+		clusterName = clusterName[0:12]
 	}
 	terraform := &terraform{terraformDir: "../../terraform/aws/",
 		envVars: map[string]string{
 			"TF_VAR_ssh_public_key_file": os.Getenv("SSH_PUBLIC_KEY_FILE"),
-			"TF_VAR_cluster_name":        testName,
+			"TF_VAR_cluster_name":        clusterName,
 			"TF_VAR_aws_region":          region,
 		}, idendifier: identifier}
 
@@ -136,12 +137,6 @@ func (p *terraform) destroy() error {
 	if err != nil {
 		return fmt.Errorf("terraform destroy command failed: %v", err)
 	}
-	// remove the state file (if exists) to indicate that the infrastructure has been destroyed successfully
-	err = os.Remove(strings.Join([]string{p.terraformDir, tfStateFileName}, "/"))
-	if !os.IsNotExist(err) {
-		return err
-	}
-	return nil
 }
 
 // GetTFJson reads an output from a state file

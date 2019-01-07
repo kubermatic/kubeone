@@ -17,9 +17,9 @@ import (
 const charset = "abcdefghijklmnopqrstuvwxyz0123456789"
 
 // CreateProvisioner returns interface for specific provisioner
-func CreateProvisioner(region, testName, testPath string, identifier string, provider string) (Provisioner, error) {
+func CreateProvisioner(region, testPath string, identifier string, provider string) (Provisioner, error) {
 	if provider == AWS {
-		return NewAWSProvisioner(region, testName, testPath, identifier)
+		return NewAWSProvisioner(region, testPath, identifier)
 	}
 
 	return nil, fmt.Errorf("unsuported provider %v", provider)
