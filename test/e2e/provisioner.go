@@ -136,8 +136,12 @@ func (p *terraform) destroy() error {
 	if err != nil {
 		return fmt.Errorf("terraform destroy command failed: %v", err)
 	}
-	// remove the state file to indicate that the infrastructure has been destroyed successfully
-	return os.Remove(strings.Join([]string{p.terraformDir, tfStateFileName}, "/"))
+	// remove the state file (if exists) to indicate that the infrastructure has been destroyed successfully
+	err = os.Remove(strings.Join([]string{p.terraformDir, tfStateFileName}, "/"))
+	if !os.IsNotExist(err) {
+		return err
+	}
+	return nil
 }
 
 // GetTFJson reads an output from a state file
