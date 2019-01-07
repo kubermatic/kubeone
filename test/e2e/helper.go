@@ -6,20 +6,16 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"math/rand"
 	"os"
 	"os/exec"
 	"path"
 	"strings"
-	"time"
 )
 
-const charset = "abcdefghijklmnopqrstuvwxyz0123456789"
-
 // CreateProvisioner returns interface for specific provisioner
-func CreateProvisioner(region, testPath string, identifier string, provider string) (Provisioner, error) {
+func CreateProvisioner(testPath string, identifier string, provider string) (Provisioner, error) {
 	if provider == AWS {
-		return NewAWSProvisioner(region, testPath, identifier)
+		return NewAWSProvisioner(testPath, identifier)
 	}
 
 	return nil, fmt.Errorf("unsuported provider %v", provider)
@@ -40,13 +36,20 @@ func IsCommandAvailable(name string) bool {
 }
 
 // executeCommand executes given command
-func executeCommand(path, name string, arg []string) (string, error) {
+func executeCommand(path, name string, arg []string, additionalEnv map[string]string) (string, error) {
 	var stdoutBuf, stderrBuf bytes.Buffer
 	var errStdout, errStderr error
 
 	cmd := exec.Command(name, arg...)
 	if len(path) > 0 {
 		cmd.Dir = path
+	}
+
+	if additionalEnv != nil {
+		cmd.Env = os.Environ()
+		for k, v := range additionalEnv {
+			cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", k, v))
+		}
 	}
 
 	doneStdout := make(chan struct{})
@@ -88,17 +91,6 @@ func executeCommand(path, name string, arg []string) (string, error) {
 
 	outStr := string(stdoutBuf.Bytes())
 	return outStr, nil
-}
-
-// RandomString generates random string
-func RandomString(length int) string {
-	seededRand := rand.New(
-		rand.NewSource(time.Now().UnixNano()))
-	b := make([]byte, length)
-	for i := range b {
-		b[i] = charset[seededRand.Intn(len(charset))]
-	}
-	return string(b)
 }
 
 // CreateFile create file with given content

@@ -3,11 +3,12 @@ variable "cluster_name" {
 }
 
 variable "aws_region" {
-  default     = "eu-central-1"
+  default     = "eu-west-3"
   description = "AWS region to speak to"
 }
 
 variable "ssh_public_key_file" {
+  default     = "~/.ssh/id_rsa.pub"
   description = "SSH public key file"
 }
 

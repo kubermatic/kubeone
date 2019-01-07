@@ -32,11 +32,6 @@ func NewKubetest(k8sVersion, kubetestDir string, envVars map[string]string) Kube
 
 // RunTests starts e2e tests
 func (p *Kubetest) Verify(scenario string) error {
-
-	for k, v := range p.envVars {
-		os.Setenv(k, v)
-	}
-
 	k8sVersionPath := fmt.Sprintf("%s/kubernetes-%s/kubernetes/version", p.kubetestDir, p.kubernetesVersion)
 	if _, err := os.Stat(k8sVersionPath); os.IsNotExist(err) {
 		err = getK8sBinaries(p.kubetestDir, p.kubernetesVersion)
@@ -49,7 +44,7 @@ func (p *Kubetest) Verify(scenario string) error {
 
 	testsArgs := fmt.Sprintf("--test_args=--ginkgo.focus=%s --ginkgo.skip=%s -ginkgo.noColor=true -ginkgo.flakeAttempts=2", scenario, skip)
 
-	_, err := executeCommand(k8sPath, "kubetest", []string{"--provider=skeleton", "--test", "--ginkgo-parallel", "--check-version-skew=false", testsArgs})
+	_, err := executeCommand(k8sPath, "kubetest", []string{"--provider=skeleton", "--test", "--ginkgo-parallel", "--check-version-skew=false", testsArgs}, p.envVars)
 	if err != nil {
 		return fmt.Errorf("k8s conformnce tests failed: %v", err)
 	}
@@ -68,7 +63,7 @@ func getK8sBinaries(kubetestDir string, version string) error {
 	if err != nil {
 		return err
 	}
-	_, err = executeCommand(k8sPath, "kubetest", []string{fmt.Sprintf("--extract=%s", version)})
+	_, err = executeCommand(k8sPath, "kubetest", []string{fmt.Sprintf("--extract=%s", version)}, nil)
 	if err != nil {
 		return fmt.Errorf("getting kubernetes binaries failed: %v", err)
 	}

@@ -154,7 +154,7 @@ EOF
 }
 
 resource "aws_lb" "control_plane" {
-  name               = "${var.cluster_name}-control-plane-lb"
+  name               = "${var.cluster_name}-api-lb"
   internal           = false
   load_balancer_type = "network"
   subnets            = ["${data.aws_subnet_ids.default.ids}"]
