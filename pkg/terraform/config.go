@@ -169,12 +169,12 @@ func (c *Config) Apply(cluster *config.Cluster) error {
 		}
 
 		if err != nil {
-			return fmt.Errorf("failed to update provider-specific config for workerset %s from tf.json: %v", workersetName, err)
+			return fmt.Errorf("failed to update provider-specific config for workerset %s from terraform config: %v", workersetName, err)
 		}
 
 		// copy over common config
 		if err = c.updateCommonWorkerConfig(existingWorkerSet, workersetValue[0]); err != nil {
-			return fmt.Errorf("failed to update common config from tf.json: %v", err)
+			return fmt.Errorf("failed to update common config from terraform config: %v", err)
 		}
 	}
 

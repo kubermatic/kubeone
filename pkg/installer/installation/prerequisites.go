@@ -2,7 +2,6 @@ package installation
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
@@ -87,9 +86,7 @@ func installPrerequisitesOnNode(ctx *util.Context, node *config.HostConfig, conn
 }
 
 func determineOS(ctx *util.Context) (string, error) {
-	osID, _, err := ctx.Runner.Run("cat /etc/os-release | grep '^ID=' | sed s/^ID=//", nil)
-	osID = strings.Replace(osID, `"`, "", -1)
-
+	osID, _, err := ctx.Runner.Run("source /etc/os-release && echo -n $ID", nil)
 	return osID, err
 }
 
