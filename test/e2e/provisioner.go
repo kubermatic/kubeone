@@ -137,6 +137,7 @@ func (p *terraform) destroy() error {
 	if err != nil {
 		return fmt.Errorf("terraform destroy command failed: %v", err)
 	}
+	return nil
 }
 
 // GetTFJson reads an output from a state file
