@@ -4,13 +4,14 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 )
 
 const (
-	AWS Provider = 1 + iota
-)
+	AWS = "aws"
 
-type Provider int
+	tfStateFileName = "terraform.tfstate"
+)
 
 type Provisioner interface {
 	Provision() (string, error)
@@ -34,8 +35,11 @@ type AWSProvisioner struct {
 }
 
 // NewAWSProvisioner creates and initialize AWSProvisioner structure
-func NewAWSProvisioner(region, testName, testPath, identifier string) *AWSProvisioner {
-
+//
+// Note:
+// It also stores terraform related environment variables in tf.env file,
+// primarily required to automatically destroy state (resources) in the event of failure
+func NewAWSProvisioner(region, testName, testPath, identifier string) (*AWSProvisioner, error) {
 	terraform := &terraform{terraformDir: "../../terraform/aws/",
 		envVars: map[string]string{
 			"TF_VAR_ssh_public_key_file": os.Getenv("SSH_PUBLIC_KEY_FILE"),
@@ -43,10 +47,21 @@ func NewAWSProvisioner(region, testName, testPath, identifier string) *AWSProvis
 			"TF_VAR_aws_region":          region,
 		}, idendifier: identifier}
 
+	envVarsStr := ""
+	for k, v := range terraform.envVars {
+		envVarsStr = fmt.Sprintf("%s%s=%s\n", envVarsStr, k, v)
+	}
+
+	envVarFilePath := strings.Join([]string{terraform.terraformDir, "tf.env"}, "/")
+	err := CreateFile(envVarFilePath, envVarsStr)
+	if err != nil {
+		return nil, fmt.Errorf("unable to write data to file = %s", envVarFilePath)
+	}
+
 	return &AWSProvisioner{
 		terraform: terraform,
 		testPath:  testPath,
-	}
+	}, nil
 }
 
 // Provision starts provisioning on AWS
@@ -115,12 +130,13 @@ func (p *terraform) destroy() error {
 	if err != nil {
 		return fmt.Errorf("terraform destroy command failed: %v", err)
 	}
-	return nil
+	// remove the state file to indicate that the infrastructure has been destroyed successfully
+	return os.Remove(strings.Join([]string{p.terraformDir, tfStateFileName}, "/"))
 }
 
 // GetTFJson reads an output from a state file
 func (p *terraform) getTFJson() (string, error) {
-	tf, err := executeCommand(p.terraformDir, "terraform", []string{"output", "-state=terraform.tfstate", "-json"})
+	tf, err := executeCommand(p.terraformDir, "terraform", []string{"output", fmt.Sprintf("-state=%v", tfStateFileName), "-json"})
 	if err != nil {
 		return "", fmt.Errorf("generating tf json failed: %v", err)
 	}

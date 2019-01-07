@@ -18,12 +18,12 @@ const charset = "abcdefghijklmnopqrstuvwxyz" +
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
 // CreateProvisioner returns interface for specific provisioner
-func CreateProvisioner(region, testName, testPath string, identifier string, provider Provider) Provisioner {
+func CreateProvisioner(region, testName, testPath string, identifier string, provider string) (Provisioner, error) {
 	if provider == AWS {
 		return NewAWSProvisioner(region, testName, testPath, identifier)
 	}
 
-	return nil
+	return nil, fmt.Errorf("unsuported provider %v", provider)
 }
 
 // IsCommandAvailable checks if command is available OS
