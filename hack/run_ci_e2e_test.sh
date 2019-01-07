@@ -3,9 +3,8 @@
 # This script is mostly used in CI
 # It installs dependencies and starts the tests
 
-set -euxo pipefail
+set -euo pipefail
 
-IS_DEBUG=$(echo "$-" | grep "x")
 RUNNING_IN_CI=${JOB_NAME:-""}
 BUILD_ID=${BUILD_ID:-""}
 
@@ -61,10 +60,8 @@ if [ -n "${RUNNING_IN_CI}" ]; then
  trap cleanup EXIT
 
  # terraform expects to find AWS credentials in the following env variables
- if [ -n ${IS_DEBUG} ]; then set +x; fi
  export AWS_ACCESS_KEY_ID=$AWS_E2E_TESTS_KEY_ID
  export AWS_SECRET_ACCESS_KEY=$AWS_E2E_TESTS_SECRET
- if [ -n ${IS_DEBUG} ]; then set -x; fi
  KUBE_TEST_DIR="/opt/kube-test"
  if [ -d "${KUBE_TEST_DIR}" ]; then
  KUBEONE_BUILD_DIR="$(go env GOPATH)/src/github.com/kubermatic/kubeone/_build"
