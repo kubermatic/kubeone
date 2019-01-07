@@ -73,7 +73,6 @@ func TestClusterConformance(t *testing.T) {
 			if err != nil {
 				t.Fatalf("k8s cluster deployment failed: %v", err)
 			}
-			return
 
 			t.Log("create kubeconfig")
 			err = target.CreateKubeconfig()
