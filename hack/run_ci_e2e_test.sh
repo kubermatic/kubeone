@@ -44,18 +44,18 @@ if [ -n "${RUNNING_IN_CI}" ]; then
 
  function cleanup {
   set +e
-  for dir in ${TERRAFORM_DIR}/*; do
     for try in {1..20}; do
-      (
-      cd $dir
+      cd $TERRAFORM_DIR/aws
       echo "Cleaning up terraform state, attempt ${try}, from $dir"
       export $(cat tf.env)
+      # Upstream interpolation bug, but we dont care about the output
+      # at destroy time anyways: https://github.com/hashicorp/terraform/issues/17691
+      rm -f output.tf
+      terraform init --backend-config=key=$BUILD_ID
       terraform destroy -auto-approve
       if [[ $? == 0 ]]; then break; fi
       echo "Sleeping for $try seconds"
       sleep ${try}s
-      )
-    done
   done
  }
  trap cleanup EXIT
