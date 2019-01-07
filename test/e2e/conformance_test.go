@@ -51,7 +51,6 @@ func TestClusterConformance(t *testing.T) {
 			clusterVerifier := NewKubetest(tc.kubernetesVersion, "../../_build", map[string]string{
 				"KUBERNETES_CONFORMANCE_TEST": "y",
 			})
-			_ = clusterVerifier
 
 			t.Log("check prerequisites")
 			err = ValidateCommon()
@@ -81,11 +80,11 @@ func TestClusterConformance(t *testing.T) {
 				t.Fatalf("creating kubeconfig failed: %v", err)
 			}
 
-			//	t.Log("run e2e tests")
-			//	err = clusterVerifier.Verify(tc.scenario)
-			//	if err != nil {
-			//		t.Fatalf("e2e tests failed: %v", err)
-			//	}
+			t.Log("run e2e tests")
+			err = clusterVerifier.Verify(tc.scenario)
+			if err != nil {
+				t.Fatalf("e2e tests failed: %v", err)
+			}
 		})
 	}
 }
