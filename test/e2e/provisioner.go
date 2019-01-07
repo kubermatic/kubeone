@@ -7,10 +7,10 @@ import (
 )
 
 const (
-	AWS Provider = 1 + iota
-)
+	AWS = "aws"
 
-type Provider int
+	tfStateFileName = "terraform.tfstate"
+)
 
 type Provisioner interface {
 	Provision() (string, error)
@@ -21,8 +21,8 @@ type Provisioner interface {
 type terraform struct {
 	// terraformDir the path to where your terraform code is located
 	terraformDir string
-	// envVars terraform environment variables
-	envVars map[string]string
+	// identifier aka. the build number, a unique identifier for the test run.
+	idendifier string
 }
 
 // AWSProvisioner describes AWS provisioner
@@ -32,19 +32,15 @@ type AWSProvisioner struct {
 }
 
 // NewAWSProvisioner creates and initialize AWSProvisioner structure
-func NewAWSProvisioner(region, testName, testPath string) *AWSProvisioner {
-
-	terraform := &terraform{terraformDir: "../../terraform/aws/",
-		envVars: map[string]string{
-			"TF_VAR_ssh_public_key_file": os.Getenv("SSH_PUBLIC_KEY_FILE"),
-			"TF_VAR_cluster_name":        testName,
-			"TF_VAR_aws_region":          region,
-		}}
+func NewAWSProvisioner(testPath, identifier string) (*AWSProvisioner, error) {
+	terraform := &terraform{
+		terraformDir: "../../terraform/aws/",
+		idendifier:   identifier}
 
 	return &AWSProvisioner{
 		terraform: terraform,
 		testPath:  testPath,
-	}
+	}, nil
 }
 
 // Provision starts provisioning on AWS
@@ -73,7 +69,7 @@ func (p *AWSProvisioner) Cleanup() error {
 		return fmt.Errorf("%v", err)
 	}
 
-	_, err = executeCommand("", "rm", []string{"-rf", p.testPath})
+	_, err = executeCommand("", "rm", []string{"-rf", p.testPath}, nil)
 	if err != nil {
 		return fmt.Errorf("%v", err)
 	}
@@ -84,17 +80,17 @@ func (p *AWSProvisioner) Cleanup() error {
 // initAndApply method to initialize a terraform working directory
 // and build infrastructure
 func (p *terraform) initAndApply() (string, error) {
-
-	for k, v := range p.envVars {
-		os.Setenv(k, v)
+	initCmd := []string{"init"}
+	if len(p.idendifier) > 0 {
+		initCmd = append(initCmd, fmt.Sprintf("--backend-config=key=%s", p.idendifier))
 	}
 
-	_, err := executeCommand(p.terraformDir, "terraform", []string{"init"})
+	_, err := executeCommand(p.terraformDir, "terraform", initCmd, nil)
 	if err != nil {
 		return "", fmt.Errorf("terraform init command failed: %v", err)
 	}
 
-	_, err = executeCommand(p.terraformDir, "terraform", []string{"apply", "-auto-approve"})
+	_, err = executeCommand(p.terraformDir, "terraform", []string{"apply", "-auto-approve"}, nil)
 	if err != nil {
 		return "", fmt.Errorf("terraform apply command failed: %v", err)
 	}
@@ -104,7 +100,7 @@ func (p *terraform) initAndApply() (string, error) {
 
 // destroy method
 func (p *terraform) destroy() error {
-	_, err := executeCommand(p.terraformDir, "terraform", []string{"destroy", "-auto-approve"})
+	_, err := executeCommand(p.terraformDir, "terraform", []string{"destroy", "-auto-approve"}, nil)
 	if err != nil {
 		return fmt.Errorf("terraform destroy command failed: %v", err)
 	}
@@ -113,7 +109,7 @@ func (p *terraform) destroy() error {
 
 // GetTFJson reads an output from a state file
 func (p *terraform) getTFJson() (string, error) {
-	tf, err := executeCommand(p.terraformDir, "terraform", []string{"output", "-state=terraform.tfstate", "-json"})
+	tf, err := executeCommand(p.terraformDir, "terraform", []string{"output", fmt.Sprintf("-state=%v", tfStateFileName), "-json"}, nil)
 	if err != nil {
 		return "", fmt.Errorf("generating tf json failed: %v", err)
 	}

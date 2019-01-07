@@ -3,16 +3,25 @@
 package e2e
 
 import (
+	"flag"
 	"fmt"
 	"testing"
 )
+
+// testRunIdentifier aka. the build number, a unique identifier for the test run.
+var testRunIdentifier string
+
+func init() {
+	flag.StringVar(&testRunIdentifier, "identifier", "", "The unique identifier for this test run")
+	flag.Parse()
+}
 
 func TestClusterConformance(t *testing.T) {
 	t.Parallel()
 
 	testcases := []struct {
 		name              string
-		provider          Provider
+		provider          string
 		kubernetesVersion string
 		scenario          string
 		region            string
@@ -22,7 +31,6 @@ func TestClusterConformance(t *testing.T) {
 			provider:          AWS,
 			kubernetesVersion: "v1.13.1",
 			scenario:          NodeConformance,
-			region:            "eu-west-3",
 		},
 	}
 
@@ -30,18 +38,22 @@ func TestClusterConformance(t *testing.T) {
 		// to satisfy scope linter
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			testPostfix := RandomString(8)
-			testName := fmt.Sprintf("test-%s", testPostfix)
-			testPath := fmt.Sprintf("../../_build/%s", testName)
+			if len(testRunIdentifier) == 0 {
+				t.Fatalf("-identifier must be set")
+			}
+			testPath := fmt.Sprintf("../../_build/%s", testRunIdentifier)
 
-			pr := CreateProvisioner(tc.region, testName, testPath, tc.provider)
+			pr, err := CreateProvisioner(testPath, testRunIdentifier, tc.provider)
+			if err != nil {
+				t.Fatal(err)
+			}
 			target := NewKubeone(testPath, "../../config.yaml.dist")
 			clusterVerifier := NewKubetest(tc.kubernetesVersion, "../../_build", map[string]string{
 				"KUBERNETES_CONFORMANCE_TEST": "y",
 			})
 
 			t.Log("check prerequisites")
-			err := ValidateCommon()
+			err = ValidateCommon()
 			if err != nil {
 				t.Fatalf("%v", err)
 			}
