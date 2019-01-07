@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"strings"
 )
 
 const (
@@ -70,7 +69,7 @@ func (p *AWSProvisioner) Cleanup() error {
 		return fmt.Errorf("%v", err)
 	}
 
-	_, err = executeCommand("", "rm", []string{"-rf", p.testPath})
+	_, err = executeCommand("", "rm", []string{"-rf", p.testPath}, nil)
 	if err != nil {
 		return fmt.Errorf("%v", err)
 	}
@@ -81,18 +80,17 @@ func (p *AWSProvisioner) Cleanup() error {
 // initAndApply method to initialize a terraform working directory
 // and build infrastructure
 func (p *terraform) initAndApply() (string, error) {
-
 	initCmd := []string{"init"}
 	if len(p.idendifier) > 0 {
 		initCmd = append(initCmd, fmt.Sprintf("--backend-config=key=%s", p.idendifier))
 	}
 
-	_, err := executeCommand(p.terraformDir, "terraform", initCmd)
+	_, err := executeCommand(p.terraformDir, "terraform", initCmd, nil)
 	if err != nil {
 		return "", fmt.Errorf("terraform init command failed: %v", err)
 	}
 
-	_, err = executeCommand(p.terraformDir, "terraform", []string{"apply", "-auto-approve"})
+	_, err = executeCommand(p.terraformDir, "terraform", []string{"apply", "-auto-approve"}, nil)
 	if err != nil {
 		return "", fmt.Errorf("terraform apply command failed: %v", err)
 	}
@@ -102,7 +100,7 @@ func (p *terraform) initAndApply() (string, error) {
 
 // destroy method
 func (p *terraform) destroy() error {
-	_, err := executeCommand(p.terraformDir, "terraform", []string{"destroy", "-auto-approve"})
+	_, err := executeCommand(p.terraformDir, "terraform", []string{"destroy", "-auto-approve"}, nil)
 	if err != nil {
 		return fmt.Errorf("terraform destroy command failed: %v", err)
 	}
@@ -111,7 +109,7 @@ func (p *terraform) destroy() error {
 
 // GetTFJson reads an output from a state file
 func (p *terraform) getTFJson() (string, error) {
-	tf, err := executeCommand(p.terraformDir, "terraform", []string{"output", fmt.Sprintf("-state=%v", tfStateFileName), "-json"})
+	tf, err := executeCommand(p.terraformDir, "terraform", []string{"output", fmt.Sprintf("-state=%v", tfStateFileName), "-json"}, nil)
 	if err != nil {
 		return "", fmt.Errorf("generating tf json failed: %v", err)
 	}

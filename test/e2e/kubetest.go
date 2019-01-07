@@ -63,7 +63,7 @@ func getK8sBinaries(kubetestDir string, version string) error {
 	if err != nil {
 		return err
 	}
-	_, err = executeCommand(k8sPath, "kubetest", []string{fmt.Sprintf("--extract=%s", version)})
+	_, err = executeCommand(k8sPath, "kubetest", []string{fmt.Sprintf("--extract=%s", version)}, nil)
 	if err != nil {
 		return fmt.Errorf("getting kubernetes binaries failed: %v", err)
 	}
