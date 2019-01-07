@@ -12,6 +12,7 @@ all: install
 install:
 	go install -v ./cmd/kubeone
 
+kubeone: build
 build: dist/kubeone
 
 lint:
@@ -29,7 +30,7 @@ docker-make-install:
 		make install
 
 e2e_test:
-	./hack/run_cluster_e2e.sh
+	./hack/run_ci_e2e_test.sh
 
 dist/kubeone: $(shell find . -name '*.go')
 	go build -v -o $@ ./cmd/kubeone

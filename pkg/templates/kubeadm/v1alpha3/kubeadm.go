@@ -10,13 +10,14 @@ import (
 	"github.com/kubermatic/kubeone/pkg/config"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
 )
 
 // NewConfig init new v1alpha3 kubeadm config
-func NewConfig(cluster *config.Cluster, host *config.HostConfig) (*kubeadmv1alpha3.InitConfiguration, *kubeadmv1alpha3.ClusterConfiguration, error) {
+func NewConfig(cluster *config.Cluster, host *config.HostConfig) ([]runtime.Object, error) {
 	leader, err := cluster.Leader()
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	endpoints := make([]string, len(cluster.Hosts))
@@ -79,5 +80,5 @@ func NewConfig(cluster *config.Cluster, host *config.HostConfig) (*kubeadmv1alph
 		initCfg.NodeRegistration.KubeletExtraArgs["cloud-config"] = renderedCloudConfig
 	}
 
-	return initCfg, clusterCfg, nil
+	return []runtime.Object{initCfg, clusterCfg}, nil
 }
