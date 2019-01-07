@@ -49,7 +49,7 @@ if [ -n "${RUNNING_IN_CI}" ]; then
       (
       cd $dir
       echo "Cleaning up terraform state, attempt ${try}, from $dir"
-      source tf.env
+      export $(cat tf.env)
       terraform destroy -auto-approve
       if [[ $? == 0 ]]; then break; fi
       echo "Sleeping for $try seconds"
