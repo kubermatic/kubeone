@@ -39,7 +39,13 @@ type AWSProvisioner struct {
 // Note:
 // It also stores terraform related environment variables in tf.env file,
 // primarily required to automatically destroy state (resources) in the event of failure
+//
+// testName is used to give names to resources, it may be truncated if the length is >= 32
 func NewAWSProvisioner(region, testName, testPath, identifier string) (*AWSProvisioner, error) {
+	// names of some resources on AWS cannot have more than 32 characters
+	if len(testName) >= 32 {
+		testName = testName[0:32]
+	}
 	terraform := &terraform{terraformDir: "../../terraform/aws/",
 		envVars: map[string]string{
 			"TF_VAR_ssh_public_key_file": os.Getenv("SSH_PUBLIC_KEY_FILE"),

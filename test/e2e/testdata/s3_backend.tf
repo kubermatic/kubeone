@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket                      = "terraform-machine-controller"
+    bucket                      = "terraform-kubeone"
     endpoint                    = "http://minio.minio:9000"
     access_key                  = "PMIC1HMXNB2R67RNPIX8"
     secret_key                  = "NemiWx+uY79rcJ0hXrktzHk1dm9c0k85WepbuSlK"
