@@ -86,9 +86,8 @@ func installPrerequisitesOnNode(ctx *util.Context, node *config.HostConfig, conn
 }
 
 func determineOS(ctx *util.Context) (string, error) {
-	stdout, _, err := ctx.Runner.Run("cat /etc/os-release | grep '^ID=' | sed s/^ID=//", nil)
-
-	return stdout, err
+	osID, _, err := ctx.Runner.Run("source /etc/os-release && echo -n $ID", nil)
+	return osID, err
 }
 
 func determineHostname(ctx *util.Context, _ *config.HostConfig) (string, error) {
@@ -101,13 +100,14 @@ func installKubeadm(ctx *util.Context, node *config.HostConfig) error {
 	var err error
 
 	switch node.OperatingSystem {
-	case "ubuntu":
-		fallthrough
-	case "debian":
+	case "ubuntu", "debian":
 		err = installKubeadmDebian(ctx)
 
 	case "coreos":
 		err = installKubeadmCoreOS(ctx)
+
+	case "centos":
+		err = installKubeadmCentOS(ctx)
 
 	default:
 		err = fmt.Errorf("'%s' is not a supported operating system", node.OperatingSystem)
@@ -130,7 +130,6 @@ sudo swapoff -a
 sudo sed -i '/.*swap.*/d' /etc/fstab
 
 source /etc/os-release
-
 
 # Short-Circuit the installation if it was arleady executed
 if type docker &>/dev/null && type kubelet &>/dev/null; then exit 0; fi
@@ -173,6 +172,46 @@ sudo apt-get install -y --no-install-recommends \
      kubelet=${kube_ver}
 sudo apt-mark hold docker-ce kubelet kubeadm kubectl
 `
+
+const kubeadmCentOSCommand = `
+sudo swapoff -a
+sudo sed -i '/.*swap.*/d' /etc/fstab
+sudo setenforce 0
+sudo sed -i s/SELINUX=enforcing/SELINUX=permissive/g /etc/sysconfig/selinux
+
+# Short-Circuit the installation if it was arleady executed
+if type docker &>/dev/null && type kubelet &>/dev/null; then exit 0; fi
+
+cat <<EOF |sudo tee  /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+EOF
+sudo sysctl --system
+
+cat <<EOF |sudo tee /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+exclude=kube*
+EOF
+
+sudo yum install -y --disableexcludes=kubernetes \
+			docker kubelet-{{ .KUBERNETES_VERSION }}-0\
+			kubeadm-{{ .KUBERNETES_VERSION }}-0 \
+			kubectl-{{ .KUBERNETES_VERSION }}-0
+sudo systemctl enable --now docker
+`
+
+func installKubeadmCentOS(ctx *util.Context) error {
+	_, _, err := ctx.Runner.Run(kubeadmCentOSCommand, util.TemplateVariables{
+		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
+	})
+	return err
+}
 
 func installKubeadmCoreOS(ctx *util.Context) error {
 	_, _, err := ctx.Runner.Run(kubeadmCoreOSCommand, util.TemplateVariables{

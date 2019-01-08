@@ -8,6 +8,7 @@ output "kubeone_hosts" {
   value = {
     control_plane = {
       cluster_name         = "${var.cluster_name}"
+      cloud_provider       = "aws"
       private_address      = "${aws_instance.control_plane.*.private_ip}"
       public_address       = "${aws_instance.control_plane.*.public_ip}"
       ssh_agent_socket     = "${var.ssh_agent_socket}"
@@ -30,7 +31,11 @@ output "kubeone_workers" {
       securityGroupIDs = ["${aws_security_group.common.id}"]
       vpcId            = "${aws_default_vpc.default.id}"
       subnetId         = "${data.aws_subnet.az_a.id}"
+      instanceType     = "t2.medium"
+      diskSize         = 50
       sshPublicKeys    = ["${aws_key_pair.deployer.public_key}"]
+      replicas         = 1
+      operatingSystem  = "ubuntu"
     }
 
     fra1-b = {
@@ -41,7 +46,11 @@ output "kubeone_workers" {
       securityGroupIDs = ["${aws_security_group.common.id}"]
       vpcId            = "${aws_default_vpc.default.id}"
       subnetId         = "${data.aws_subnet.az_b.id}"
+      instanceType     = "t2.medium"
+      diskSize         = 50
       sshPublicKeys    = ["${aws_key_pair.deployer.public_key}"]
+      replicas         = 1
+      operatingSystem  = "ubuntu"
     }
 
     fra1-c = {
@@ -52,7 +61,11 @@ output "kubeone_workers" {
       securityGroupIDs = ["${aws_security_group.common.id}"]
       vpcId            = "${aws_default_vpc.default.id}"
       subnetId         = "${data.aws_subnet.az_c.id}"
+      instanceType     = "t2.medium"
+      diskSize         = 50
       sshPublicKeys    = ["${aws_key_pair.deployer.public_key}"]
+      replicas         = 1
+      operatingSystem  = "ubuntu"
     }
   }
 }

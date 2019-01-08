@@ -135,6 +135,9 @@ func (m *HostConfig) addDefaults() error {
 	if len(m.SSHPrivateKeyFile) == 0 && len(m.SSHAgentSocket) == 0 {
 		m.SSHAgentSocket = "env:SSH_AUTH_SOCK"
 	}
+	if m.SSHUsername == "" {
+		m.SSHUsername = "root"
+	}
 	return nil
 }
 
@@ -322,7 +325,7 @@ type providerConfig struct {
 // WorkerConfig describes a set of worker machines.
 type WorkerConfig struct {
 	Name     string         `json:"name"`
-	Replicas int            `json:"replicas"`
+	Replicas *int           `json:"replicas"`
 	Config   providerConfig `json:"config"`
 }
 
@@ -332,8 +335,8 @@ func (m *WorkerConfig) Validate() error {
 		return errors.New("no name given")
 	}
 
-	if m.Replicas < 1 {
-		return errors.New("replicas must be >= 1")
+	if m.Replicas == nil || *m.Replicas < 1 {
+		return errors.New("replicas must be specified and >= 1")
 	}
 
 	return nil

@@ -61,7 +61,7 @@ func createMachineDeployment(cluster *config.Cluster, workerset config.WorkerCon
 		return nil, err
 	}
 
-	replicas := int32(workerset.Replicas)
+	replicas := int32(*workerset.Replicas)
 	maxSurge := intstr.FromInt(1)
 	maxUnavailable := intstr.FromInt(0)
 	minReadySeconds := int32(0)
