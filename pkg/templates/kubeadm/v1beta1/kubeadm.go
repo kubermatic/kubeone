@@ -6,6 +6,7 @@ import (
 
 	kubeadmv1beta1 "github.com/kubermatic/kubeone/pkg/apis/kubeadm/v1beta1"
 	"github.com/kubermatic/kubeone/pkg/config"
+	"github.com/kubermatic/kubeone/pkg/installer/util"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -14,18 +15,23 @@ import (
 )
 
 // NewConfig returns all required configs to init a cluster via a set of v1beta1 configs
-func NewConfig(cluster *config.Cluster, host *config.HostConfig) ([]runtime.Object, error) {
+func NewConfig(ctx *util.Context, host *config.HostConfig) ([]runtime.Object, error) {
+	cluster := ctx.Cluster
+
 	nodeRegistration := kubeadmv1beta1.NodeRegistrationOptions{
 		Name:             host.Hostname,
 		KubeletExtraArgs: map[string]string{},
 	}
 
-	tokenStr, err := bootstraputil.GenerateBootstrapToken()
-	if err != nil {
-		return nil, err
+	if ctx.Token == "" {
+		tokenStr, err := bootstraputil.GenerateBootstrapToken()
+		if err != nil {
+			return nil, err
+		}
+		ctx.Token = tokenStr
 	}
 
-	bootstrapToken, err := kubeadmv1beta1.NewBootstrapTokenString(tokenStr)
+	bootstrapToken, err := kubeadmv1beta1.NewBootstrapTokenString(ctx.Token)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +58,7 @@ func NewConfig(cluster *config.Cluster, host *config.HostConfig) ([]runtime.Obje
 		},
 		Discovery: kubeadmv1beta1.Discovery{
 			BootstrapToken: &kubeadmv1beta1.BootstrapTokenDiscovery{
-				Token:                    tokenStr,
+				Token:                    ctx.Token,
 				APIServerEndpoint:        controlPlaneEndpoint,
 				UnsafeSkipCAVerification: true,
 			},
