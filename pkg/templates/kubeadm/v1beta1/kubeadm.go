@@ -6,10 +6,11 @@ import (
 
 	kubeadmv1beta1 "github.com/kubermatic/kubeone/pkg/apis/kubeadm/v1beta1"
 	"github.com/kubermatic/kubeone/pkg/config"
-	"k8s.io/apimachinery/pkg/runtime"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	bootstraputil "k8s.io/cluster-bootstrap/token/util"
 )
 
 // NewConfig returns all required configs to init a cluster via a set of v1beta1 configs
@@ -18,31 +19,46 @@ func NewConfig(cluster *config.Cluster, host *config.HostConfig) ([]runtime.Obje
 		Name:             host.Hostname,
 		KubeletExtraArgs: map[string]string{},
 	}
+
+	tokenStr, err := bootstraputil.GenerateBootstrapToken()
+	if err != nil {
+		return nil, err
+	}
+
+	bootstrapToken, err := kubeadmv1beta1.NewBootstrapTokenString(tokenStr)
+	if err != nil {
+		return nil, err
+	}
+
+	controlPlaneEndpoint := fmt.Sprintf("%s:6443", cluster.APIServer.Address)
+
 	initConfig := &kubeadmv1beta1.InitConfiguration{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "kubeadm.k8s.io/v1beta1",
 			Kind:       "InitConfiguration",
 		},
-		NodeRegistration: nodeRegistration,
+		BootstrapTokens: []kubeadmv1beta1.BootstrapToken{{Token: bootstrapToken}},
 	}
+
 	joinConfig := &kubeadmv1beta1.JoinConfiguration{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "kubeadm.k8s.io/v1beta1",
 			Kind:       "JoinConfiguration",
 		},
-		NodeRegistration: nodeRegistration,
 		ControlPlane: &kubeadmv1beta1.JoinControlPlane{
 			LocalAPIEndpoint: kubeadmv1beta1.APIEndpoint{
 				AdvertiseAddress: host.PrivateAddress,
 			},
 		},
+		Discovery: kubeadmv1beta1.Discovery{
+			BootstrapToken: &kubeadmv1beta1.BootstrapTokenDiscovery{
+				Token:                    tokenStr,
+				APIServerEndpoint:        controlPlaneEndpoint,
+				UnsafeSkipCAVerification: true,
+			},
+		},
 	}
 
-	endpoints := []string{}
-	for _, host := range cluster.Hosts {
-		endpoints = append(endpoints, strings.ToLower(host.PublicAddress))
-	}
-	endpoints = append(endpoints, strings.ToLower(cluster.APIServer.Address))
 	clusterConfig := &kubeadmv1beta1.ClusterConfiguration{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "kubeadm.k8s.io/v1beta1",
@@ -53,7 +69,7 @@ func NewConfig(cluster *config.Cluster, host *config.HostConfig) ([]runtime.Obje
 			ServiceSubnet: cluster.Network.ServiceSubnet(),
 		},
 		KubernetesVersion:    cluster.Versions.Kubernetes,
-		ControlPlaneEndpoint: fmt.Sprintf("%s:6443", cluster.APIServer.Address),
+		ControlPlaneEndpoint: controlPlaneEndpoint,
 		APIServer: kubeadmv1beta1.APIServer{
 			ControlPlaneComponent: kubeadmv1beta1.ControlPlaneComponent{
 				ExtraArgs: map[string]string{
@@ -62,7 +78,7 @@ func NewConfig(cluster *config.Cluster, host *config.HostConfig) ([]runtime.Obje
 				},
 				ExtraVolumes: []kubeadmv1beta1.HostPathMount{},
 			},
-			CertSANs: endpoints,
+			CertSANs: []string{strings.ToLower(cluster.APIServer.Address)},
 		},
 		ControllerManager: kubeadmv1beta1.ControlPlaneComponent{
 			ExtraArgs:    map[string]string{},
@@ -80,15 +96,20 @@ func NewConfig(cluster *config.Cluster, host *config.HostConfig) ([]runtime.Obje
 			PathType:  corev1.HostPathFile,
 		}
 		provider := string(cluster.Provider.Name)
+
 		clusterConfig.APIServer.ExtraArgs["cloud-provider"] = provider
-		clusterConfig.APIServer.ExtraVolumes = append(clusterConfig.APIServer.ExtraVolumes, cloudConfigVol)
-		clusterConfig.ControllerManager.ExtraArgs["cloud-provider"] = provider
-		clusterConfig.ControllerManager.ExtraVolumes = append(clusterConfig.ControllerManager.ExtraVolumes, cloudConfigVol)
-		nodeRegistration.KubeletExtraArgs["cloud-provider"] = provider
 		clusterConfig.APIServer.ExtraArgs["cloud-config"] = renderedCloudConfig
+		clusterConfig.APIServer.ExtraVolumes = append(clusterConfig.APIServer.ExtraVolumes, cloudConfigVol)
+
+		clusterConfig.ControllerManager.ExtraArgs["cloud-provider"] = provider
 		clusterConfig.ControllerManager.ExtraArgs["cloud-config"] = renderedCloudConfig
-		initConfig.NodeRegistration.KubeletExtraArgs["cloud-config"] = renderedCloudConfig
+		clusterConfig.ControllerManager.ExtraVolumes = append(clusterConfig.ControllerManager.ExtraVolumes, cloudConfigVol)
+
+		nodeRegistration.KubeletExtraArgs["cloud-provider"] = provider
+		nodeRegistration.KubeletExtraArgs["cloud-config"] = renderedCloudConfig
 	}
+	initConfig.NodeRegistration = nodeRegistration
+	joinConfig.NodeRegistration = nodeRegistration
 
 	return []runtime.Object{initConfig, joinConfig, clusterConfig}, nil
 }
