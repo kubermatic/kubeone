@@ -13,7 +13,7 @@ func generateKubeadm(ctx *util.Context) error {
 	ctx.Logger.Infoln("Generating kubeadm config file…")
 
 	for idx := range ctx.Cluster.Hosts {
-		kubeadm, err := kubeadm.Config(ctx.Cluster, ctx.Cluster.Hosts[idx])
+		kubeadm, err := kubeadm.Config(ctx, ctx.Cluster.Hosts[idx])
 		if err != nil {
 			return fmt.Errorf("failed to create kubeadm configuration: %v", err)
 		}

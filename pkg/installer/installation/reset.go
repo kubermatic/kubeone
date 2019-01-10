@@ -62,6 +62,5 @@ fi
 
 const resetScript = `
 sudo kubeadm reset --force
-sudo rm -f /etc/systemd/system/kubelet.service.d/cfg/20-cloudconfig-kubelet.conf
 rm -rf "{{ .WORK_DIR }}"
 `

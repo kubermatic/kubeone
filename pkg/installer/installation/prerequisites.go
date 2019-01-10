@@ -21,11 +21,6 @@ func installPrerequisites(ctx *util.Context) error {
 }
 
 func generateConfigurationFiles(ctx *util.Context) error {
-	ctx.Configuration.AddFile("cfg/20-cloudconfig-kubelet.conf", fmt.Sprintf(`
-[Service]
-Environment="KUBELET_EXTRA_ARGS= --cloud-provider=%s --cloud-config=/etc/kubernetes/cloud-config"`,
-		ctx.Cluster.Provider.Name))
-
 	ctx.Configuration.AddFile("cfg/cloud-config", ctx.Cluster.Provider.CloudConfig)
 
 	mc, err := machinecontroller.Deployment(ctx.Cluster)
@@ -259,7 +254,6 @@ func deployConfigurationFiles(ctx *util.Context) error {
 	// move config files to their permanent locations
 	_, _, err = ctx.Runner.Run(`
 sudo mkdir -p /etc/systemd/system/kubelet.service.d/ /etc/kubernetes
-sudo mv ./{{ .WORK_DIR }}/cfg/20-cloudconfig-kubelet.conf /etc/systemd/system/kubelet.service.d/
 sudo mv ./{{ .WORK_DIR }}/cfg/cloud-config /etc/kubernetes/cloud-config
 sudo chown root:root /etc/kubernetes/cloud-config
 sudo chmod 600 /etc/kubernetes/cloud-config

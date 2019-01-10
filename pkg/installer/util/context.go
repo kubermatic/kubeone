@@ -17,6 +17,7 @@ type Context struct {
 	Runner         *Runner
 	WorkDir        string
 	JoinCommand    string
+	JoinToken      string
 	Verbose        bool
 	BackupFile     string
 	DestroyWorkers bool

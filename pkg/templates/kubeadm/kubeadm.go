@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/Masterminds/semver"
-
 	"github.com/kubermatic/kubeone/pkg/config"
+	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/templates"
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/v1alpha3"
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/v1beta1"
@@ -15,7 +15,8 @@ import (
 )
 
 // Config returns appropriate version of kubeadm config as YAML
-func Config(cluster *config.Cluster, instance *config.HostConfig) (string, error) {
+func Config(ctx *util.Context, instance *config.HostConfig) (string, error) {
+	cluster := ctx.Cluster
 	masterNodes := cluster.Hosts
 	if len(masterNodes) == 0 {
 		return "", errors.New("cluster does not contain at least one master node")
@@ -30,7 +31,7 @@ func Config(cluster *config.Cluster, instance *config.HostConfig) (string, error
 	case "1.12":
 		configs, err = v1alpha3.NewConfig(cluster, instance)
 	case "1.13":
-		configs, err = v1beta1.NewConfig(cluster, instance)
+		configs, err = v1beta1.NewConfig(ctx, instance)
 	default:
 		err = fmt.Errorf("unsupported Kubernetes version %s", majorMinor)
 	}
