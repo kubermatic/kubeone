@@ -23,15 +23,15 @@ func NewConfig(ctx *util.Context, host *config.HostConfig) ([]runtime.Object, er
 		KubeletExtraArgs: map[string]string{},
 	}
 
-	if ctx.Token == "" {
+	if ctx.JoinToken == "" {
 		tokenStr, err := bootstraputil.GenerateBootstrapToken()
 		if err != nil {
 			return nil, err
 		}
-		ctx.Token = tokenStr
+		ctx.JoinToken = tokenStr
 	}
 
-	bootstrapToken, err := kubeadmv1beta1.NewBootstrapTokenString(ctx.Token)
+	bootstrapToken, err := kubeadmv1beta1.NewBootstrapTokenString(ctx.JoinToken)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func NewConfig(ctx *util.Context, host *config.HostConfig) ([]runtime.Object, er
 		},
 		Discovery: kubeadmv1beta1.Discovery{
 			BootstrapToken: &kubeadmv1beta1.BootstrapTokenDiscovery{
-				Token:                    ctx.Token,
+				Token:                    ctx.JoinToken,
 				APIServerEndpoint:        controlPlaneEndpoint,
 				UnsafeSkipCAVerification: true,
 			},

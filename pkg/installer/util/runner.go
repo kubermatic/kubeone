@@ -45,13 +45,8 @@ func (r *Runner) Run(cmd string, variables TemplateVariables) (string, string, e
 		return stdout, stderr, err
 	}
 
-	stdout := &Tee{
-		upstream: prefixw.New(os.Stdout, r.Prefix),
-	}
-
-	stderr := &Tee{
-		upstream: prefixw.New(os.Stderr, r.Prefix),
-	}
+	stdout := NewTee(prefixw.New(os.Stdout, r.Prefix))
+	stderr := NewTee(prefixw.New(os.Stderr, r.Prefix))
 
 	// run the command
 	_, err = r.Conn.Stream(cmd, stdout, stderr)
