@@ -252,6 +252,17 @@ func (p *ProviderConfig) ApplyEnvironment() error {
 	return nil
 }
 
+// CloudProviderInTree detects is there in-tree cloud provider implementation for specified provider.
+// List of in-tree provider can be found here: https://github.com/kubernetes/kubernetes/tree/master/pkg/cloudprovider
+func (p *ProviderConfig) CloudProviderInTree() bool {
+	switch p.Name {
+	case ProviderNameAWS, ProviderNameOpenStack, ProviderNameVSphere:
+		return true
+	default:
+		return false
+	}
+}
+
 // VersionConfig describes the versions of Kubernetes and Docker that are installed.
 type VersionConfig struct {
 	Kubernetes string `json:"kubernetes"`

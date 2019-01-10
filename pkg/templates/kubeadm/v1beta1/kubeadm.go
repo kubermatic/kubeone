@@ -99,7 +99,7 @@ func NewConfig(ctx *util.Context, host *config.HostConfig) ([]runtime.Object, er
 		},
 		ClusterName: cluster.Name,
 	}
-	if cluster.Provider.Name != "" {
+	if cluster.Provider.CloudProviderInTree() {
 		renderedCloudConfig := "/etc/kubernetes/cloud-config"
 		cloudConfigVol := kubeadmv1beta1.HostPathMount{
 			Name:      "cloud-config",
@@ -120,6 +120,11 @@ func NewConfig(ctx *util.Context, host *config.HostConfig) ([]runtime.Object, er
 
 		nodeRegistration.KubeletExtraArgs["cloud-provider"] = provider
 		nodeRegistration.KubeletExtraArgs["cloud-config"] = renderedCloudConfig
+	}
+	if cluster.Provider.Name == "external" {
+		clusterConfig.APIServer.ExtraArgs["cloud-provider"] = ""
+		clusterConfig.ControllerManager.ExtraArgs["cloud-provider"] = ""
+		nodeRegistration.KubeletExtraArgs["cloud-provider"] = "external"
 	}
 	initConfig.NodeRegistration = nodeRegistration
 	joinConfig.NodeRegistration = nodeRegistration
