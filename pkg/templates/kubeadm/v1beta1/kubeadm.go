@@ -37,6 +37,10 @@ func NewConfig(ctx *util.Context, host *config.HostConfig) ([]runtime.Object, er
 	}
 
 	controlPlaneEndpoint := fmt.Sprintf("%s:6443", cluster.APIServer.Address)
+	hostAdvertiseAddress := host.PrivateAddress
+	if hostAdvertiseAddress == "" {
+		hostAdvertiseAddress = host.PublicAddress
+	}
 
 	initConfig := &kubeadmv1beta1.InitConfiguration{
 		TypeMeta: metav1.TypeMeta{
@@ -44,6 +48,9 @@ func NewConfig(ctx *util.Context, host *config.HostConfig) ([]runtime.Object, er
 			Kind:       "InitConfiguration",
 		},
 		BootstrapTokens: []kubeadmv1beta1.BootstrapToken{{Token: bootstrapToken}},
+		LocalAPIEndpoint: kubeadmv1beta1.APIEndpoint{
+			AdvertiseAddress: hostAdvertiseAddress,
+		},
 	}
 
 	joinConfig := &kubeadmv1beta1.JoinConfiguration{
@@ -53,7 +60,7 @@ func NewConfig(ctx *util.Context, host *config.HostConfig) ([]runtime.Object, er
 		},
 		ControlPlane: &kubeadmv1beta1.JoinControlPlane{
 			LocalAPIEndpoint: kubeadmv1beta1.APIEndpoint{
-				AdvertiseAddress: host.PrivateAddress,
+				AdvertiseAddress: hostAdvertiseAddress,
 			},
 		},
 		Discovery: kubeadmv1beta1.Discovery{
