@@ -205,7 +205,7 @@ func (p ProviderName) ProviderCredentials() (map[string]string, error) {
 
 		return nil, errors.New("error parsing aws credentials")
 	case ProviderNameOpenStack:
-		return parseCredentialVariables([]string{"OS_AUTH_URL", "OS_USER_NAME", "OS_PASSWORD", "OS_DOMAIN_NAME", "OS_TENANT_NAME"})
+		return parseCredentialVariables([]string{"OS_AUTH_URL", "OS_USER_NAME", "OS_PASSWORD", "OS_DOMAIN_NAME", "OS_TENANT_NAME", "OS_REGION_NAME"})
 	case ProviderNameHetzner:
 		return parseCredentialVariables([]string{"HZ_TOKEN"})
 	case ProviderNameDigitalOcean:

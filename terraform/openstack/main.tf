@@ -76,7 +76,7 @@ resource "openstack_compute_instance_v2" "control_plane" {
   count = "${var.control_plane_count}"
 
   name            = "${var.cluster_name}-cluster-${count.index}"
-  image_name      = "${var.control_plane_image}"
+  image_name      = "${var.image}"
   flavor_name     = "${var.control_plane_flavor}"
   key_pair        = "${openstack_compute_keypair_v2.deployer.name}"
   security_groups = ["${openstack_networking_secgroup_v2.securitygroup.name}"]
