@@ -31,7 +31,7 @@ func generateConfigurationFiles(ctx *util.Context) error {
 
 	if len(ctx.Cluster.Workers) > 0 {
 		machines, deployErr := machinecontroller.MachineDeployments(ctx.Cluster)
-		if err != nil {
+		if deployErr != nil {
 			return fmt.Errorf("failed to create worker machine configuration: %v", deployErr)
 		}
 		ctx.Configuration.AddFile("workers.yaml", machines)
