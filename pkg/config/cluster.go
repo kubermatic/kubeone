@@ -6,6 +6,8 @@ import (
 	"net"
 	"os"
 	"strings"
+
+	"github.com/aws/aws-sdk-go/aws/credentials"
 )
 
 // Cluster describes our entire configuration.
@@ -197,21 +199,56 @@ const (
 	ProviderNameVSphere      ProviderName = "vshere"
 )
 
-func (p ProviderName) CredentialsEnvironmentVariables() []string {
+func (p ProviderName) ProviderCredentials() (map[string]string, error) {
 	switch p {
 	case ProviderNameAWS:
-		return []string{"AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY"}
+		creds := make(map[string]string)
+		envCredsProvider := credentials.NewEnvCredentials()
+		envCreds, err := envCredsProvider.Get()
+		if err != nil {
+			return nil, err
+		}
+		if envCreds.AccessKeyID != "" && envCreds.SecretAccessKey != "" {
+			creds["AWS_ACCESS_KEY_ID"] = envCreds.AccessKeyID
+			creds["AWS_SECRET_ACCESS_KEY"] = envCreds.SecretAccessKey
+			return creds, nil
+		}
+
+		// If env fails resort to config file
+		configCredsProvider := credentials.NewSharedCredentials("", "")
+		configCreds, err := configCredsProvider.Get()
+		if err != nil {
+			return nil, err
+		}
+		if configCreds.AccessKeyID != "" && configCreds.SecretAccessKey != "" {
+			creds["AWS_ACCESS_KEY_ID"] = configCreds.AccessKeyID
+			creds["AWS_SECRET_ACCESS_KEY"] = configCreds.SecretAccessKey
+			return creds, nil
+		}
+
+		return nil, errors.New("error parsing aws credentials")
 	case ProviderNameOpenStack:
-		return []string{"OS_AUTH_URL", "OS_USER_NAME", "OS_PASSWORD", "OS_DOMAIN_NAME", "OS_TENANT_NAME"}
+		return parseCredentialVariables([]string{"OS_AUTH_URL", "OS_USER_NAME", "OS_PASSWORD", "OS_DOMAIN_NAME", "OS_TENANT_NAME"})
 	case ProviderNameHetzner:
-		return []string{"HZ_TOKEN"}
+		return parseCredentialVariables([]string{"HZ_TOKEN"})
 	case ProviderNameDigitalOcean:
-		return []string{"DO_TOKEN"}
+		return parseCredentialVariables([]string{"DO_TOKEN"})
 	case ProviderNameVSphere:
-		return []string{"VSPHERE_ADDRESS", "VSPHERE_USERNAME", "VSPHERE_PASSWORD"}
+		return parseCredentialVariables([]string{"VSPHERE_ADDRESS", "VSPHERE_USERNAME", "VSPHERE_PASSWORD"})
 	}
 
-	return nil
+	return nil, errors.New("no provider matched")
+}
+
+func parseCredentialVariables(envVars []string) (map[string]string, error) {
+	creds := make(map[string]string)
+	for _, varName := range envVars {
+		creds[varName] = strings.TrimSpace(os.Getenv(varName))
+		if creds[varName] == "" {
+			return nil, fmt.Errorf("environment variable %s is not set, but is required", varName)
+		}
+	}
+	return creds, nil
 }
 
 // ProviderConfig describes the cloud provider that is running the machines.
@@ -229,10 +266,9 @@ func (p *ProviderConfig) Validate() error {
 		return fmt.Errorf("unknown provider name %q", p.Name)
 	}
 
-	for _, varName := range p.Name.CredentialsEnvironmentVariables() {
-		if p.Credentials[varName] == "" {
-			return fmt.Errorf("environment variable %s is not set", varName)
-		}
+	_, err := p.Name.ProviderCredentials()
+	if err != nil {
+		return fmt.Errorf("error parsing credentials: %v", err)
 	}
 
 	return nil
@@ -241,12 +277,10 @@ func (p *ProviderConfig) Validate() error {
 // ApplyEnvironment reads cloud provider credentials from
 // environment variables.
 func (p *ProviderConfig) ApplyEnvironment() error {
-	if p.Credentials == nil {
-		p.Credentials = make(map[string]string)
-	}
-
-	for _, varName := range p.Name.CredentialsEnvironmentVariables() {
-		p.Credentials[varName] = strings.TrimSpace(os.Getenv(varName))
+	var err error
+	p.Credentials, err = p.Name.ProviderCredentials()
+	if err != nil {
+		return err
 	}
 
 	return nil

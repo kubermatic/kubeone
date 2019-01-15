@@ -21,6 +21,19 @@
   revision = "a0175ee3bccc567396460bf5acd36800cb10c49c"
 
 [[projects]]
+  digest = "1:4af9b6332940265d7ef2cb19e34f4aad5cc2f6fe29b7a2f56e3db84bf2ff3b11"
+  name = "github.com/aws/aws-sdk-go"
+  packages = [
+    "aws/awserr",
+    "aws/credentials",
+    "internal/ini",
+    "internal/shareddefaults",
+  ]
+  pruneopts = "NUT"
+  revision = "fb5f514796fc4fdc6afdcf5a675a5b2baa714b9f"
+  version = "v1.16.14"
+
+[[projects]]
   digest = "1:abfe129dc92b16fbf0cc9d6336096a2823151756f62072a700eb10754141b38e"
   name = "github.com/ghodss/yaml"
   packages = ["."]
@@ -357,6 +370,7 @@
   input-imports = [
     "github.com/Masterminds/semver",
     "github.com/alecthomas/template",
+    "github.com/aws/aws-sdk-go/aws/credentials",
     "github.com/ghodss/yaml",
     "github.com/heptio/ark/pkg/apis/ark/v1",
     "github.com/koron-go/prefixw",
