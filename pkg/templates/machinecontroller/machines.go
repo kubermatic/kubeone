@@ -121,51 +121,14 @@ func machineSpec(cluster *config.Cluster, workerset config.WorkerConfig, provide
 		return nil, errors.New("could't find cloudProviderSpec")
 	}
 
-	tagName := fmt.Sprintf("kubernetes.io/cluster/%s", cluster.Name)
-	tagValue := "shared"
-
-	switch provider {
-	case config.ProviderNameDigitalOcean:
-		spec, err = addDigitaloceanTag(spec, tagName)
-	default:
+	// We only need this tag for AWS because it is used to coordinate nodes in ASG
+	if provider == config.ProviderNameAWS {
+		tagName := fmt.Sprintf("kubernetes.io/cluster/%s", cluster.Name)
+		tagValue := "shared"
 		spec, err = addMapTag(spec, tagName, tagValue)
-	}
-
-	return spec, err
-}
-
-type digitaloceanTag struct {
-	Value string `json:"value"`
-}
-
-func addDigitaloceanTag(spec map[string]interface{}, tagName string) (map[string]interface{}, error) {
-	tags, ok := spec["tags"]
-	if !ok {
-		tags = make([]digitaloceanTag, 0)
-	}
-
-	tagList, ok := tags.([]interface{})
-	if !ok {
-		return nil, errors.New("tags for digitalocean must be a list of structs")
-	}
-
-	tagExists := false
-
-	for _, item := range tagList {
-		if tag, ok := item.(digitaloceanTag); ok {
-			if tag.Value == tagName {
-				tagExists = true
-				break
-			}
+		if err != nil {
+			return nil, fmt.Errorf("could not parse tags for worker machines: %v", err)
 		}
-	}
-
-	if !tagExists {
-		tagList = append(tagList, digitaloceanTag{
-			Value: tagName,
-		})
-
-		spec["tags"] = tagList
 	}
 
 	return spec, nil

@@ -1,7 +1,0 @@
-provider:
-  name: digitalocean
-versions:
-  kubernetes: "1.11.4"
-  docker: "18.03.1"
-network:
-  node_port_range: 30000-32767
