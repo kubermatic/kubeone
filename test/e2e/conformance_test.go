@@ -9,10 +9,14 @@ import (
 )
 
 // testRunIdentifier aka. the build number, a unique identifier for the test run.
-var testRunIdentifier string
+var (
+	testRunIdentifier string
+	testProvider      string
+)
 
 func init() {
 	flag.StringVar(&testRunIdentifier, "identifier", "", "The unique identifier for this test run")
+	flag.StringVar(&testProvider, "provider", "", "Provider to run tests on")
 	flag.Parse()
 }
 
@@ -27,9 +31,15 @@ func TestClusterConformance(t *testing.T) {
 		region            string
 	}{
 		{
-			name:              "scenario 1, verify k8s cluster deployment on AWS",
+			name:              "verify k8s cluster deployment on AWS",
 			provider:          AWS,
-			kubernetesVersion: "v1.13.1",
+			kubernetesVersion: "v1.13.3",
+			scenario:          NodeConformance,
+		},
+		{
+			name:              "verify k8s cluster deployment on DO",
+			provider:          DigitalOcean,
+			kubernetesVersion: "v1.13.3",
 			scenario:          NodeConformance,
 		},
 	}
@@ -40,6 +50,9 @@ func TestClusterConformance(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			if len(testRunIdentifier) == 0 {
 				t.Fatalf("-identifier must be set")
+			}
+			if testProvider != tc.provider {
+				t.SkipNow()
 			}
 			testPath := fmt.Sprintf("../../_build/%s", testRunIdentifier)
 
