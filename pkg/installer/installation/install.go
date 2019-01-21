@@ -33,6 +33,9 @@ func Install(ctx *util.Context) error {
 	if err := joinControlplaneNode(ctx); err != nil {
 		return fmt.Errorf("unable to join other masters a cluster: %v", err)
 	}
+	if err := copyKubeconfig(ctx); err != nil {
+		return fmt.Errorf("unable to copy kubeconfig to home directory: %v", err)
+	}
 	if err := applyCNI(ctx, "canal"); err != nil {
 		return fmt.Errorf("failed to install cni plugin canal: %v", err)
 	}

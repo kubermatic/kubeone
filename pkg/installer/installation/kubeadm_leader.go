@@ -10,7 +10,6 @@ import (
 
 const (
 	kubeadmCertCommand = `
-grep -q KUBECONFIG /etc/environment || { echo 'export KUBECONFIG=/etc/kubernetes/admin.conf' | sudo tee -a /etc/environment; }
 if [[ -d ./{{ .WORK_DIR }}/pki ]]; then
        sudo rsync -av ./{{ .WORK_DIR }}/pki/ /etc/kubernetes/pki/
        rm -rf ./{{ .WORK_DIR }}/pki

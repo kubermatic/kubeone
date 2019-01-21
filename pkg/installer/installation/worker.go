@@ -20,7 +20,7 @@ func createWorkerMachines(ctx *util.Context) error {
 		ctx.Logger.Infoln("Waiting for machine-controller to come up…")
 
 		cmd := fmt.Sprintf(
-			`sudo kubectl -n "%s" get pods -l '%s=%s' -o jsonpath='{.items[0].status.phase}'`,
+			`kubectl -n "%s" get pods -l '%s=%s' -o jsonpath='{.items[0].status.phase}'`,
 			machinecontroller.WebhookNamespace,
 			machinecontroller.WebhookAppLabelKey,
 			machinecontroller.WebhookAppLabelValue,
@@ -30,7 +30,7 @@ func createWorkerMachines(ctx *util.Context) error {
 		}
 
 		cmd = fmt.Sprintf(
-			`sudo kubectl -n "%s" get pods -l '%s=%s' -o jsonpath='{.items[0].status.phase}'`,
+			`kubectl -n "%s" get pods -l '%s=%s' -o jsonpath='{.items[0].status.phase}'`,
 			machinecontroller.MachineControllerNamespace,
 			machinecontroller.MachineControllerAppLabelKey,
 			machinecontroller.MachineControllerAppLabelValue,
@@ -43,7 +43,7 @@ func createWorkerMachines(ctx *util.Context) error {
 		time.Sleep(10 * time.Second)
 
 		ctx.Logger.Infoln("Creating worker machines…")
-		_, _, err := ctx.Runner.Run(`sudo kubectl apply -f ./{{ .WORK_DIR }}/workers.yaml`, util.TemplateVariables{
+		_, _, err := ctx.Runner.Run(`kubectl apply -f ./{{ .WORK_DIR }}/workers.yaml`, util.TemplateVariables{
 			"WORK_DIR": ctx.WorkDir,
 		})
 
