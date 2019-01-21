@@ -67,6 +67,14 @@ backup:
 #machine_controller:
 #  deploy: false
 
+# Proxy is used to configure HTTP_PROXY, HTTPS_PROXY and NO_PROXY
+# for Docker daemon and kubelet, and to be used when provisioning cluster
+# (e.g. for curl, apt-get..).
+# proxy:
+#  http_proxy: 'http://1.2.3.4'
+#  https_proxy: 'https://1.2.3.4'
+#  no_proxy: '1.2.3.4'
+
 # KubeOne can automatically create MachineDeployments to create
 # worker nodes in your cluster. Each element in this "workers"
 # list is a single deployment and must have a unique name.
