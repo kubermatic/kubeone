@@ -1,4 +1,4 @@
-package command
+package cmd
 
 import (
 	"fmt"
@@ -9,29 +9,16 @@ import (
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/terraform"
 	"github.com/sirupsen/logrus"
-	"github.com/urfave/cli"
 )
 
-func handleErrors(logger logrus.FieldLogger, action cli.ActionFunc) cli.ActionFunc {
-	return func(ctx *cli.Context) error {
-		err := action(ctx)
-		if err != nil {
-			logger.Errorln(err)
-			err = cli.NewExitError("", 1)
-		}
-
-		return err
+func initLogger() *logrus.Logger {
+	logger := logrus.New()
+	logger.Formatter = &logrus.TextFormatter{
+		FullTimestamp:   true,
+		TimestampFormat: "15:04:05 MST",
 	}
-}
 
-func setupLogger(logger *logrus.Logger, action cli.ActionFunc) cli.ActionFunc {
-	return func(ctx *cli.Context) error {
-		if ctx.GlobalBool("verbose") {
-			logger.SetLevel(logrus.DebugLevel)
-		}
-
-		return action(ctx)
-	}
+	return logger
 }
 
 func loadClusterConfig(filename string) (*config.Cluster, error) {

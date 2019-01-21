@@ -10,6 +10,8 @@ linters:
   - megacheck
   - lll
   - prealloc
+  - gochecknoinits
+  - gochecknoglobals
 
 linters-settings:
   govet:
