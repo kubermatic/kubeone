@@ -17,6 +17,9 @@ func initLogger() *logrus.Logger {
 		FullTimestamp:   true,
 		TimestampFormat: "15:04:05 MST",
 	}
+	if o.Verbose {
+		logger.SetLevel(logrus.DebugLevel)
+	}
 
 	return logger
 }

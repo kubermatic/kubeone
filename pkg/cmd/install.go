@@ -59,16 +59,11 @@ func runInstall(logger *logrus.Logger, installOptions *installOptions) error {
 		return fmt.Errorf("failed to load cluster: %v", err)
 	}
 
-	if err = applyTerraform(installOptions.TerraformState, cluster); err != nil {
-		return err
-	}
-
 	options, err := createInstallerOptions(installOptions.Manifest, cluster, installOptions)
 	if err != nil {
 		return fmt.Errorf("failed to create installer options: %v", err)
 	}
 
-	// TODO(xmudrii): why do we call terraform two times?
 	if err = applyTerraform(installOptions.TerraformState, cluster); err != nil {
 		return fmt.Errorf("failed to setup PKI backup: %v", err)
 	}
