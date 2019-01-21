@@ -42,14 +42,14 @@ func resetNode(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) err
 }
 
 const destroyScript = `
-if sudo kubectl cluster-info > /dev/null; then
-  sudo kubectl annotate --all --overwrite node kubermatic.io/skip-eviction=true
-  sudo kubectl delete machinedeployment -n "{{ .MACHINE_NS }}" --all
-  sudo kubectl delete machineset -n "{{ .MACHINE_NS }}" --all
-  sudo kubectl delete machine -n "{{ .MACHINE_NS }}" --all
+if kubectl cluster-info > /dev/null; then
+  kubectl annotate --all --overwrite node kubermatic.io/skip-eviction=true
+  kubectl delete machinedeployment -n "{{ .MACHINE_NS }}" --all
+  kubectl delete machineset -n "{{ .MACHINE_NS }}" --all
+  kubectl delete machine -n "{{ .MACHINE_NS }}" --all
 
   for try in {1..30}; do
-    if sudo kubectl get machine -n "{{ .MACHINE_NS }}" 2>&1 | grep -q  'No resources found.'; then
+    if kubectl get machine -n "{{ .MACHINE_NS }}" 2>&1 | grep -q  'No resources found.'; then
       exit 0
     fi
     sleep 10s
