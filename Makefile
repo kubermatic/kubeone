@@ -13,7 +13,7 @@ DESTROY_TARGETS=$(addsuffix -env-cleanup,$(PROVIDER))
 all: install
 
 install:
-	go install -v ./cmd/kubeone
+	go install -v .
 
 kubeone: build
 build: dist/kubeone
@@ -36,7 +36,7 @@ e2e_test:
 	./hack/run_ci_e2e_test.sh
 
 dist/kubeone: $(shell find . -name '*.go')
-	go build -v -o $@ ./cmd/kubeone
+	go build -v -o $@ .
 
 $(CREATE_TARGETS): kubeone
 	$(eval PROVIDERNAME := $(@:-env=))
