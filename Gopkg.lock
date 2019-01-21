@@ -74,6 +74,14 @@
   version = "v0.10.0"
 
 [[projects]]
+  digest = "1:406338ad39ab2e37b7f4452906442a3dbf0eb3379dd1f06aafb5c07e769a5fbb"
+  name = "github.com/inconshreveable/mousetrap"
+  packages = ["."]
+  pruneopts = "NUT"
+  revision = "76626ae9c91c4f2a10f34cad8ce83ea42c93bb75"
+  version = "v1.0"
+
+[[projects]]
   digest = "1:0243cffa4a3410f161ee613dfdd903a636d07e838a42d341da95d81f42cd1d41"
   name = "github.com/json-iterator/go"
   packages = ["."]
@@ -137,20 +145,28 @@
   version = "v1.2.0"
 
 [[projects]]
+  digest = "1:343d44e06621142ab09ae0c76c1799104cdfddd3ffb445d78b1adf8dc3ffaf3d"
+  name = "github.com/spf13/cobra"
+  packages = ["."]
+  pruneopts = "NUT"
+  revision = "ef82de70bb3f60c65fb8eebacbb2d122ef517385"
+  version = "v0.0.3"
+
+[[projects]]
+  digest = "1:9d8420bbf131d1618bde6530af37c3799340d3762cc47210c1d9532a4c3a2779"
+  name = "github.com/spf13/pflag"
+  packages = ["."]
+  pruneopts = "NUT"
+  revision = "298182f68c66c05229eb03ac171abe6e309ee79a"
+  version = "v1.0.3"
+
+[[projects]]
   branch = "master"
   digest = "1:199a5bec77ceeb1f03e54c736c738da594b416d97e3902aacb31b88818593f12"
   name = "github.com/tmc/scp"
   packages = ["."]
   pruneopts = "NUT"
   revision = "f7b48647feef3e30991f2ecc16b2b9a977d9a7c3"
-
-[[projects]]
-  digest = "1:5dba68a1600a235630e208cb7196b24e58fcbb77bb7a6bec08fcd23f081b0a58"
-  name = "github.com/urfave/cli"
-  packages = ["."]
-  pruneopts = "NUT"
-  revision = "cfb38830724cc34fedffe9a2a29fb54fa9169cd1"
-  version = "v1.20.0"
 
 [[projects]]
   branch = "master"
@@ -376,8 +392,8 @@
     "github.com/koron-go/prefixw",
     "github.com/pkg/errors",
     "github.com/sirupsen/logrus",
+    "github.com/spf13/cobra",
     "github.com/tmc/scp",
-    "github.com/urfave/cli",
     "golang.org/x/crypto/ssh",
     "golang.org/x/crypto/ssh/agent",
     "k8s.io/api/admissionregistration/v1beta1",
