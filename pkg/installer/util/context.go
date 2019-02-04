@@ -5,22 +5,27 @@ import (
 
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/ssh"
+
+	apiextensionsclientset "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
+	"k8s.io/client-go/kubernetes"
 )
 
 // Context hold together currently test flags and parsed info, along with
 // utilities like logger
 type Context struct {
-	Cluster        *config.Cluster
-	Logger         logrus.FieldLogger
-	Connector      *ssh.Connector
-	Configuration  *Configuration
-	Runner         *Runner
-	WorkDir        string
-	JoinCommand    string
-	JoinToken      string
-	Verbose        bool
-	BackupFile     string
-	DestroyWorkers bool
+	Cluster               *config.Cluster
+	Logger                logrus.FieldLogger
+	Connector             *ssh.Connector
+	Configuration         *Configuration
+	Runner                *Runner
+	WorkDir               string
+	JoinCommand           string
+	JoinToken             string
+	Clientset             *kubernetes.Clientset
+	APIExtensionClientset *apiextensionsclientset.Clientset
+	Verbose               bool
+	BackupFile            string
+	DestroyWorkers        bool
 }
 
 // Clone returns a shallow copy of the context.
