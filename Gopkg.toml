@@ -20,10 +20,6 @@
   name = "github.com/tmc/scp"
 
 [[constraint]]
-  name = "github.com/urfave/cli"
-  version = "1.20.0"
-
-[[constraint]]
   branch = "master"
   name = "golang.org/x/crypto"
 
@@ -41,6 +37,10 @@
 
 [[override]]
   name = "k8s.io/kubernetes"
+  branch = "release-1.11"
+
+[[override]]
+  name = "k8s.io/apiextensions-apiserver"
   branch = "release-1.11"
 
 [[constraint]]
