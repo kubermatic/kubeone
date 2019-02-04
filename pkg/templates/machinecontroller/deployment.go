@@ -4,11 +4,13 @@ import (
 	"net"
 
 	"github.com/kubermatic/kubeone/pkg/config"
+	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/templates"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
+	apiextensions "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/kubernetes/pkg/registry/core/service/ipallocator"
@@ -25,44 +27,79 @@ const (
 )
 
 // Deployment returns YAML manifests for MachineController deployment with RBAC
-func Deployment(cluster *config.Cluster) (string, error) {
-	deployment, err := machineControllerDeployment(cluster)
+func Deployment(ctx *util.Context) error {
+	err := templates.CreateServiceAccounts(ctx, []*corev1.ServiceAccount{
+		machineControllerServiceAccount(),
+	})
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	items := []interface{}{
-		machineControllerServiceAccount(),
-
+	err = templates.CreateClusterRoles(ctx, []*rbacv1.ClusterRole{
 		machineControllerClusterRole(),
-		nodeSignerClusterRoleBinding(),
+	})
+	if err != nil {
+		return err
+	}
 
+	err = templates.CreateClusterRoleBindings(ctx, []*rbacv1.ClusterRoleBinding{
+		nodeSignerClusterRoleBinding(),
 		machineControllerClusterRoleBinding(),
 		nodeBootstrapperClusterRoleBinding(),
+	})
+	if err != nil {
+		return err
+	}
 
+	err = templates.CreateRoles(ctx, []*rbacv1.Role{
 		machineControllerKubeSystemRole(),
 		machineControllerKubePublicRole(),
 		machineControllerEndpointReaderRole(),
 		machineControllerClusterInfoReaderRole(),
+	})
+	if err != nil {
+		return err
+	}
 
+	err = templates.CreateRoleBindings(ctx, []*rbacv1.RoleBinding{
 		machineControllerKubeSystemRoleBinding(),
 		machineControllerKubePublicRoleBinding(),
 		machineControllerDefaultRoleBinding(),
 		machineControllerClusterInfoRoleBinding(),
+	})
+	if err != nil {
+		return err
+	}
 
+	err = templates.CreateSecrets(ctx, []*corev1.Secret{
+		machineControllerCredentialsSecret(ctx.Cluster),
+	})
+	if err != nil {
+		return err
+	}
+
+	deployment, err := machineControllerDeployment(ctx.Cluster)
+	if err != nil {
+		return err
+	}
+	err = templates.CreateDeployments(ctx, []*appsv1.Deployment{
+		deployment,
+	})
+	if err != nil {
+		return err
+	}
+
+	err = templates.CreateCRDs(ctx, []*apiextensions.CustomResourceDefinition{
 		machineControllerMachineCRD(),
 		machineControllerClusterCRD(),
 		machineControllerMachineSetCRD(),
 		machineControllerMachineDeploymentCRD(),
-		machineControllerCredentialsSecret(cluster),
-		deployment,
-	}
-
-	return templates.KubernetesToYAML(items)
+	})
+	return err
 }
 
-func machineControllerServiceAccount() corev1.ServiceAccount {
-	return corev1.ServiceAccount{
+func machineControllerServiceAccount() *corev1.ServiceAccount {
+	return &corev1.ServiceAccount{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "v1",
 			Kind:       "ServiceAccount",
@@ -77,8 +114,8 @@ func machineControllerServiceAccount() corev1.ServiceAccount {
 	}
 }
 
-func machineControllerClusterRole() rbacv1.ClusterRole {
-	return rbacv1.ClusterRole{
+func machineControllerClusterRole() *rbacv1.ClusterRole {
+	return &rbacv1.ClusterRole{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "rbac.authorization.k8s.io/v1",
 			Kind:       "ClusterRole",
@@ -146,8 +183,8 @@ func machineControllerClusterRole() rbacv1.ClusterRole {
 	}
 }
 
-func machineControllerClusterRoleBinding() rbacv1.ClusterRoleBinding {
-	return rbacv1.ClusterRoleBinding{
+func machineControllerClusterRoleBinding() *rbacv1.ClusterRoleBinding {
+	return &rbacv1.ClusterRoleBinding{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "rbac.authorization.k8s.io/v1",
 			Kind:       "ClusterRoleBinding",
@@ -173,8 +210,8 @@ func machineControllerClusterRoleBinding() rbacv1.ClusterRoleBinding {
 	}
 }
 
-func nodeBootstrapperClusterRoleBinding() rbacv1.ClusterRoleBinding {
-	return rbacv1.ClusterRoleBinding{
+func nodeBootstrapperClusterRoleBinding() *rbacv1.ClusterRoleBinding {
+	return &rbacv1.ClusterRoleBinding{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "rbac.authorization.k8s.io/v1",
 			Kind:       "ClusterRoleBinding",
@@ -200,8 +237,8 @@ func nodeBootstrapperClusterRoleBinding() rbacv1.ClusterRoleBinding {
 	}
 }
 
-func nodeSignerClusterRoleBinding() rbacv1.ClusterRoleBinding {
-	return rbacv1.ClusterRoleBinding{
+func nodeSignerClusterRoleBinding() *rbacv1.ClusterRoleBinding {
+	return &rbacv1.ClusterRoleBinding{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "rbac.authorization.k8s.io/v1",
 			Kind:       "ClusterRoleBinding",
@@ -227,8 +264,8 @@ func nodeSignerClusterRoleBinding() rbacv1.ClusterRoleBinding {
 	}
 }
 
-func machineControllerKubeSystemRole() rbacv1.Role {
-	return rbacv1.Role{
+func machineControllerKubeSystemRole() *rbacv1.Role {
+	return &rbacv1.Role{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "rbac.authorization.k8s.io/v1",
 			Kind:       "Role",
@@ -266,8 +303,8 @@ func machineControllerKubeSystemRole() rbacv1.Role {
 	}
 }
 
-func machineControllerKubePublicRole() rbacv1.Role {
-	return rbacv1.Role{
+func machineControllerKubePublicRole() *rbacv1.Role {
+	return &rbacv1.Role{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "rbac.authorization.k8s.io/v1",
 			Kind:       "Role",
@@ -293,8 +330,8 @@ func machineControllerKubePublicRole() rbacv1.Role {
 	}
 }
 
-func machineControllerEndpointReaderRole() rbacv1.Role {
-	return rbacv1.Role{
+func machineControllerEndpointReaderRole() *rbacv1.Role {
+	return &rbacv1.Role{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "rbac.authorization.k8s.io/v1",
 			Kind:       "Role",
@@ -320,8 +357,8 @@ func machineControllerEndpointReaderRole() rbacv1.Role {
 	}
 }
 
-func machineControllerClusterInfoReaderRole() rbacv1.Role {
-	return rbacv1.Role{
+func machineControllerClusterInfoReaderRole() *rbacv1.Role {
+	return &rbacv1.Role{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "rbac.authorization.k8s.io/v1",
 			Kind:       "Role",
@@ -344,8 +381,8 @@ func machineControllerClusterInfoReaderRole() rbacv1.Role {
 	}
 }
 
-func machineControllerKubeSystemRoleBinding() rbacv1.RoleBinding {
-	return rbacv1.RoleBinding{
+func machineControllerKubeSystemRoleBinding() *rbacv1.RoleBinding {
+	return &rbacv1.RoleBinding{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "rbac.authorization.k8s.io/v1",
 			Kind:       "RoleBinding",
@@ -372,8 +409,8 @@ func machineControllerKubeSystemRoleBinding() rbacv1.RoleBinding {
 	}
 }
 
-func machineControllerKubePublicRoleBinding() rbacv1.RoleBinding {
-	return rbacv1.RoleBinding{
+func machineControllerKubePublicRoleBinding() *rbacv1.RoleBinding {
+	return &rbacv1.RoleBinding{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "rbac.authorization.k8s.io/v1",
 			Kind:       "RoleBinding",
@@ -400,8 +437,8 @@ func machineControllerKubePublicRoleBinding() rbacv1.RoleBinding {
 	}
 }
 
-func machineControllerDefaultRoleBinding() rbacv1.RoleBinding {
-	return rbacv1.RoleBinding{
+func machineControllerDefaultRoleBinding() *rbacv1.RoleBinding {
+	return &rbacv1.RoleBinding{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "rbac.authorization.k8s.io/v1",
 			Kind:       "RoleBinding",
@@ -428,8 +465,8 @@ func machineControllerDefaultRoleBinding() rbacv1.RoleBinding {
 	}
 }
 
-func machineControllerClusterInfoRoleBinding() rbacv1.RoleBinding {
-	return rbacv1.RoleBinding{
+func machineControllerClusterInfoRoleBinding() *rbacv1.RoleBinding {
+	return &rbacv1.RoleBinding{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "rbac.authorization.k8s.io/v1",
 			Kind:       "RoleBinding",
@@ -460,78 +497,120 @@ func machineControllerClusterInfoRoleBinding() rbacv1.RoleBinding {
 // from k8s.io would always create a "status" field, which breaks the
 // validation and prevents them from being applied to the cluster.
 
-func machineControllerMachineCRD() string {
-	return `
-apiVersion: apiextensions.k8s.io/v1beta1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  name: machines.cluster.k8s.io
-spec:
-  version: v1alpha1
-  group: cluster.k8s.io
-  names:
-    kind: Machine
-    listKind: MachineList
-    plural: machines
-    singular: machine
-  scope: Namespaced
-`
+func machineControllerMachineCRD() *apiextensions.CustomResourceDefinition {
+	return &apiextensions.CustomResourceDefinition{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "apiextensions.k8s.io/v1beta1",
+			Kind:       "CustomResourceDefinition",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "machines.cluster.k8s.io",
+		},
+		Spec: apiextensions.CustomResourceDefinitionSpec{
+			Versions: []apiextensions.CustomResourceDefinitionVersion{
+				{
+					Name:    "v1alpha1",
+					Served:  true,
+					Storage: true,
+				},
+			},
+			Group: "cluster.k8s.io",
+			Names: apiextensions.CustomResourceDefinitionNames{
+				Plural:   "machines",
+				Singular: "machine",
+				Kind:     "Machine",
+				ListKind: "MachineList",
+			},
+			Scope: apiextensions.NamespaceScoped,
+		},
+	}
 }
 
-func machineControllerClusterCRD() string {
-	return `
-apiVersion: apiextensions.k8s.io/v1beta1
-kind: CustomResourceDefinition
-metadata:
-  name: clusters.cluster.k8s.io
-spec:
-  version: v1alpha1
-  group: cluster.k8s.io
-  names:
-    kind: Cluster
-    listKind: ClusterList
-    plural: clusters
-    singular: cluster
-  scope: Namespaced
-`
+func machineControllerClusterCRD() *apiextensions.CustomResourceDefinition {
+	return &apiextensions.CustomResourceDefinition{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "apiextensions.k8s.io/v1beta1",
+			Kind:       "CustomResourceDefinition",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "clusters.cluster.k8s.io",
+		},
+		Spec: apiextensions.CustomResourceDefinitionSpec{
+			Versions: []apiextensions.CustomResourceDefinitionVersion{
+				{
+					Name:    "v1alpha1",
+					Served:  true,
+					Storage: true,
+				},
+			},
+			Group: "cluster.k8s.io",
+			Names: apiextensions.CustomResourceDefinitionNames{
+				Plural:   "clusters",
+				Singular: "cluster",
+				Kind:     "Cluster",
+				ListKind: "ClusterList",
+			},
+			Scope: apiextensions.NamespaceScoped,
+		},
+	}
 }
 
-func machineControllerMachineSetCRD() string {
-	return `
-apiVersion: apiextensions.k8s.io/v1beta1
-kind: CustomResourceDefinition
-metadata:
-  name: machinesets.cluster.k8s.io
-spec:
-  version: v1alpha1
-  group: cluster.k8s.io
-  names:
-    kind: MachineSet
-    listKind: MachineSetList
-    plural: machinesets
-    singular: machineset
-  scope: Namespaced
-`
+func machineControllerMachineSetCRD() *apiextensions.CustomResourceDefinition {
+	return &apiextensions.CustomResourceDefinition{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "apiextensions.k8s.io/v1beta1",
+			Kind:       "CustomResourceDefinition",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "machinesets.cluster.k8s.io",
+		},
+		Spec: apiextensions.CustomResourceDefinitionSpec{
+			Versions: []apiextensions.CustomResourceDefinitionVersion{
+				{
+					Name:    "v1alpha1",
+					Served:  true,
+					Storage: true,
+				},
+			},
+			Group: "cluster.k8s.io",
+			Names: apiextensions.CustomResourceDefinitionNames{
+				Plural:   "machinesets",
+				Singular: "machineset",
+				Kind:     "MachineSet",
+				ListKind: "MachineSetList",
+			},
+			Scope: apiextensions.NamespaceScoped,
+		},
+	}
 }
 
-func machineControllerMachineDeploymentCRD() string {
-	return `
-apiVersion: apiextensions.k8s.io/v1beta1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  name: machinedeployments.cluster.k8s.io
-spec:
-  version: v1alpha1
-  group: cluster.k8s.io
-  names:
-    kind: MachineDeployment
-    listKind: MachineDeploymentList
-    plural: machinedeployments
-    singular: machinedeployment
-  scope: Namespaced
-`
+func machineControllerMachineDeploymentCRD() *apiextensions.CustomResourceDefinition {
+	return &apiextensions.CustomResourceDefinition{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "apiextensions.k8s.io/v1beta1",
+			Kind:       "CustomResourceDefinition",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "machinedeployments.cluster.k8s.io",
+		},
+		Spec: apiextensions.CustomResourceDefinitionSpec{
+			Versions: []apiextensions.CustomResourceDefinitionVersion{
+				{
+					Name:    "v1alpha1",
+					Served:  true,
+					Storage: true,
+				},
+			},
+			Group: "cluster.k8s.io",
+			Names: apiextensions.CustomResourceDefinitionNames{
+				Plural:   "machinedeployments",
+				Singular: "machinedeployment",
+				Kind:     "MachineDeployment",
+				ListKind: "MachineDeploymentList",
+			},
+			Scope: apiextensions.NamespaceScoped,
+		},
+	}
 }
 
 func machineControllerDeployment(cluster *config.Cluster) (*appsv1.Deployment, error) {
@@ -642,8 +721,8 @@ func machineControllerDeployment(cluster *config.Cluster) (*appsv1.Deployment, e
 	}, nil
 }
 
-func machineControllerCredentialsSecret(cluster *config.Cluster) corev1.Secret {
-	return corev1.Secret{
+func machineControllerCredentialsSecret(cluster *config.Cluster) *corev1.Secret {
+	return &corev1.Secret{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "v1",
 			Kind:       "Secret",

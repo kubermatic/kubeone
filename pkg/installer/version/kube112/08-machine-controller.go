@@ -15,6 +15,10 @@ func installMachineController(ctx *util.Context) error {
 		return nil
 	}
 
+	if err := machinecontroller.Deployment(ctx); err != nil {
+		return err
+	}
+
 	return ctx.RunTaskOnLeader(func(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Infoln("Creating machine-controller certificate…")
 

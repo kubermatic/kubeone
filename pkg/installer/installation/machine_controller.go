@@ -15,6 +15,10 @@ func installMachineController(ctx *util.Context) error {
 		return nil
 	}
 
+	if err := machinecontroller.Deployment(ctx); err != nil {
+		return err
+	}
+
 	return ctx.RunTaskOnLeader(func(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Infoln("Creating machine-controller certificate…")
 
@@ -32,7 +36,6 @@ func installMachineController(ctx *util.Context) error {
 		ctx.Logger.Infoln("Installing machine-controller…")
 
 		_, _, err = ctx.Runner.Run(`
-kubectl apply -f ./{{ .WORK_DIR }}/machine-controller.yaml
 kubectl apply -f ./{{ .WORK_DIR }}/machine-controller-webhook.yaml
 `, util.TemplateVariables{
 			"WORK_DIR": ctx.WorkDir,
