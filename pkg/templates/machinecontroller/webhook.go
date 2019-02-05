@@ -24,43 +24,47 @@ const (
 	WebhookAppLabelValue = WebhookName
 	WebhookTag           = MachineControllerTag
 	WebhookNamespace     = "kube-system"
-
-	WebhookCredentialsSecretName = "machine-controller-credentials"
 )
 
 // DeployWebhookConfiguration deploys MachineController webhook deployment on the cluster
 func DeployWebhookConfiguration(ctx *util.Context) error {
+	coreClient := ctx.Clientset.CoreV1()
+	appsClient := ctx.Clientset.AppsV1()
+	admissionClient := ctx.Clientset.AdmissionregistrationV1beta1()
+
+	// Generate Webhook certificate
 	caKeyPair, err := certificate.CAKeyPair(ctx.Configuration)
 	if err != nil {
 		return fmt.Errorf("failed to load CA keypair: %v", err)
 	}
 
+	// Deploy Webhook
 	deployment := WebhookDeployment(ctx.Cluster)
-	deploymentClient := ctx.Clientset.AppsV1().Deployments(deployment.Namespace)
-	err = templates.EnsureDeployment(deploymentClient, deployment)
+	err = templates.EnsureDeployment(appsClient.Deployments(deployment.Namespace), deployment)
 	if err != nil {
 		return err
 	}
 
+	// Deploy Webhook service
 	svc := Service()
-	svcClient := ctx.Clientset.CoreV1().Services(svc.Namespace)
-	err = templates.EnsureService(svcClient, svc)
+	err = templates.EnsureService(coreClient.Services(svc.Namespace), svc)
 	if err != nil {
 		return err
 	}
 
+	// Deploy serving certificate secret
 	servingCert, err := TLSServingCertificate(caKeyPair)
 	if err != nil {
 		return err
 	}
-	secretClient := ctx.Clientset.CoreV1().Secrets(servingCert.Namespace)
-	err = templates.EnsureSecret(secretClient, servingCert)
+	err = templates.EnsureSecret(coreClient.Secrets(servingCert.Namespace), servingCert)
 	if err != nil {
 		return err
 	}
 
-	webhooksClient := ctx.Clientset.AdmissionregistrationV1beta1().MutatingWebhookConfigurations()
-	return templates.EnsureMutatingWebhookConfiguration(webhooksClient, MutatingwebhookConfiguration(caKeyPair))
+	return templates.EnsureMutatingWebhookConfiguration(
+		admissionClient.MutatingWebhookConfigurations(),
+		MutatingwebhookConfiguration(caKeyPair))
 }
 
 // WebhookDeployment returns the deployment for the machine-controllers MutatignAdmissionWebhook
