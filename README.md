@@ -8,7 +8,7 @@ From a bird eye view, KubeOne connects to your machines using SSH and then uses
 
 ## Features
 
-* Kubernetes 1.12 support
+* Kubernetes 1.13 support
 * easy Terraform integration
 * provides rolling cluster upgrades (TODO)
 
