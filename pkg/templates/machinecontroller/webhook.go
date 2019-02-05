@@ -35,16 +35,16 @@ func DeployWebhookConfiguration(ctx *util.Context) error {
 		return fmt.Errorf("failed to load CA keypair: %v", err)
 	}
 
-	err = templates.CreateDeployments(ctx.Clientset, []*appsv1.Deployment{
-		WebhookDeployment(ctx.Cluster),
-	})
+	deployment := WebhookDeployment(ctx.Cluster)
+	deploymentClient := ctx.Clientset.AppsV1().Deployments(deployment.Namespace)
+	err = templates.EnsureDeployment(deploymentClient, deployment)
 	if err != nil {
 		return err
 	}
 
-	err = templates.CreateServices(ctx.Clientset, []*corev1.Service{
-		Service(),
-	})
+	svc := Service()
+	svcClient := ctx.Clientset.CoreV1().Services(svc.Namespace)
+	err = templates.EnsureService(svcClient, svc)
 	if err != nil {
 		return err
 	}
@@ -53,16 +53,14 @@ func DeployWebhookConfiguration(ctx *util.Context) error {
 	if err != nil {
 		return err
 	}
-	err = templates.CreateSecrets(ctx.Clientset, []*corev1.Secret{
-		servingCert,
-	})
+	secretClient := ctx.Clientset.CoreV1().Secrets(servingCert.Namespace)
+	err = templates.EnsureSecret(secretClient, servingCert)
 	if err != nil {
 		return err
 	}
 
-	return templates.CreateMutatingWebhookConfigurations(ctx.Clientset, []*admissionregistrationv1beta1.MutatingWebhookConfiguration{
-		MutatingwebhookConfiguration(caKeyPair),
-	})
+	webhooksClient := ctx.Clientset.AdmissionregistrationV1beta1().MutatingWebhookConfigurations()
+	return templates.EnsureMutatingWebhookConfiguration(webhooksClient, MutatingwebhookConfiguration(caKeyPair))
 }
 
 // WebhookDeployment returns the deployment for the machine-controllers MutatignAdmissionWebhook

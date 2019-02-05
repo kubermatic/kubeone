@@ -6,31 +6,22 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	apiextensionsv1beta1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
-	apiextensionsclientset "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
+	apiextensionsv1beta1types "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/typed/apiextensions/v1beta1"
 	"k8s.io/apimachinery/pkg/api/equality"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/util/errors"
-	"k8s.io/client-go/kubernetes"
+	admissionregistrationv1beta1types "k8s.io/client-go/kubernetes/typed/admissionregistration/v1beta1"
+	appsv1types "k8s.io/client-go/kubernetes/typed/apps/v1"
+	corev1types "k8s.io/client-go/kubernetes/typed/core/v1"
+	rbacv1types "k8s.io/client-go/kubernetes/typed/rbac/v1"
 )
 
-// CreateServiceAccounts takes a slice of ServiceAccounts and ensures they exist and are in the desired state
-func CreateServiceAccounts(clientset *kubernetes.Clientset, sa []*corev1.ServiceAccount) error {
-	var errs []error
-	for _, res := range sa {
-		if err := ensureServiceAccount(clientset, res); err != nil {
-			errs = append(errs, err)
-		}
-	}
-	return errors.NewAggregate(errs)
-}
-
-// ensureServiceAccount checks does ServiceAccount already exists and creates it if it doesn't. If it already exists,
+// EnsureServiceAccount checks does ServiceAccount already exists and creates it if it doesn't. If it already exists,
 // the function compares labels and annotations, and if they're not as expected updates the ServiceAccount.
-func ensureServiceAccount(clientset *kubernetes.Clientset, required *corev1.ServiceAccount) error {
-	existing, err := clientset.CoreV1().ServiceAccounts(required.Namespace).Get(required.Name, metav1.GetOptions{})
+func EnsureServiceAccount(serviceAccountInterface corev1types.ServiceAccountInterface, required *corev1.ServiceAccount) error {
+	existing, err := serviceAccountInterface.Get(required.Name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
-		_, err = clientset.CoreV1().ServiceAccounts(required.Namespace).Create(required)
+		_, err = serviceAccountInterface.Create(required)
 		return err
 	}
 	if err != nil {
@@ -44,27 +35,16 @@ func ensureServiceAccount(clientset *kubernetes.Clientset, required *corev1.Serv
 		return nil
 	}
 
-	_, err = clientset.CoreV1().ServiceAccounts(existing.Namespace).Update(existing)
+	_, err = serviceAccountInterface.Update(existing)
 	return err
 }
 
-// CreateClusterRoles takes a slice of RBAC ClusterRoles and ensures they exist and are in the desired state
-func CreateClusterRoles(clientset *kubernetes.Clientset, cr []*rbacv1.ClusterRole) error {
-	var errs []error
-	for _, res := range cr {
-		if err := ensureClusterRole(clientset, res); err != nil {
-			errs = append(errs, err)
-		}
-	}
-	return errors.NewAggregate(errs)
-}
-
-// ensureClusterRole checks does RBAC ClusterRole already exists and creates it if it doesn't. If it already exists,
+// EnsureClusterRole checks does RBAC ClusterRole already exists and creates it if it doesn't. If it already exists,
 // the function compares labels, annotations, and rules, and if they're not as expected updates the ClusterRole.
-func ensureClusterRole(clientset *kubernetes.Clientset, required *rbacv1.ClusterRole) error {
-	existing, err := clientset.RbacV1().ClusterRoles().Get(required.Name, metav1.GetOptions{})
+func EnsureClusterRole(clusterRoleInterface rbacv1types.ClusterRoleInterface, required *rbacv1.ClusterRole) error {
+	existing, err := clusterRoleInterface.Get(required.Name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
-		_, err = clientset.RbacV1().ClusterRoles().Create(required)
+		_, err = clusterRoleInterface.Create(required)
 		return err
 	}
 	if err != nil {
@@ -78,27 +58,16 @@ func ensureClusterRole(clientset *kubernetes.Clientset, required *rbacv1.Cluster
 		return nil
 	}
 
-	_, err = clientset.RbacV1().ClusterRoles().Update(existing)
+	_, err = clusterRoleInterface.Update(existing)
 	return err
 }
 
-// CreateClusterRoleBindings takes a slice of RBAC ClusterRoleBindings and ensures they exist and are in the desired state
-func CreateClusterRoleBindings(clientset *kubernetes.Clientset, crb []*rbacv1.ClusterRoleBinding) error {
-	var errs []error
-	for _, res := range crb {
-		if err := ensureClusterRoleBinding(clientset, res); err != nil {
-			errs = append(errs, err)
-		}
-	}
-	return errors.NewAggregate(errs)
-}
-
-// ensureClusterRoleBinding checks does RBAC ClusterRoleBinding already exists and creates it if it doesn't. If it already exists,
+// EnsureClusterRoleBinding checks does RBAC ClusterRoleBinding already exists and creates it if it doesn't. If it already exists,
 // the function compares labels, annotations, role references, and subjects, and if they're not as expected updates the ClusterRoleBinding.
-func ensureClusterRoleBinding(clientset *kubernetes.Clientset, required *rbacv1.ClusterRoleBinding) error {
-	existing, err := clientset.RbacV1().ClusterRoleBindings().Get(required.Name, metav1.GetOptions{})
+func EnsureClusterRoleBinding(clusterRoleBindingInterface rbacv1types.ClusterRoleBindingInterface, required *rbacv1.ClusterRoleBinding) error {
+	existing, err := clusterRoleBindingInterface.Get(required.Name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
-		_, err = clientset.RbacV1().ClusterRoleBindings().Create(required)
+		_, err = clusterRoleBindingInterface.Create(required)
 		return err
 	}
 	if err != nil {
@@ -112,27 +81,16 @@ func ensureClusterRoleBinding(clientset *kubernetes.Clientset, required *rbacv1.
 		return nil
 	}
 
-	_, err = clientset.RbacV1().ClusterRoleBindings().Update(existing)
+	_, err = clusterRoleBindingInterface.Update(existing)
 	return err
 }
 
-// CreateRoles takes a slice of RBAC Roles and ensures they exist and are in the desired state
-func CreateRoles(clientset *kubernetes.Clientset, roles []*rbacv1.Role) error {
-	var errs []error
-	for _, res := range roles {
-		if err := ensureRole(clientset, res); err != nil {
-			errs = append(errs, err)
-		}
-	}
-	return errors.NewAggregate(errs)
-}
-
-// ensureRole checks does RBAC Role already exists and creates it if it doesn't. If it already exists,
+// EnsureRole checks does RBAC Role already exists and creates it if it doesn't. If it already exists,
 // the function compares labels, annotations, and rules, and if they're not as expected updates the Role.
-func ensureRole(clientset *kubernetes.Clientset, required *rbacv1.Role) error {
-	existing, err := clientset.RbacV1().Roles(required.Namespace).Get(required.Name, metav1.GetOptions{})
+func EnsureRole(roleInterface rbacv1types.RoleInterface, required *rbacv1.Role) error {
+	existing, err := roleInterface.Get(required.Name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
-		_, err = clientset.RbacV1().Roles(required.Namespace).Create(required)
+		_, err = roleInterface.Create(required)
 		return err
 	}
 	if err != nil {
@@ -146,27 +104,16 @@ func ensureRole(clientset *kubernetes.Clientset, required *rbacv1.Role) error {
 		return nil
 	}
 
-	_, err = clientset.RbacV1().Roles(existing.Namespace).Update(existing)
+	_, err = roleInterface.Update(existing)
 	return err
 }
 
-// CreateRoleBindings takes a slice of RBAC RoleBindings and ensures they exist and are in the desired state
-func CreateRoleBindings(clientset kubernetes.Interface, rb []*rbacv1.RoleBinding) error {
-	var errs []error
-	for _, res := range rb {
-		if err := ensureRoleBinding(clientset, res); err != nil {
-			errs = append(errs, err)
-		}
-	}
-	return errors.NewAggregate(errs)
-}
-
-// ensureRoleBinding checks does RBAC RoleBinding already exists and creates it if it doesn't. If it already exists,
+// EnsureRoleBinding checks does RBAC RoleBinding already exists and creates it if it doesn't. If it already exists,
 // the function compares labels, annotations, role references, and subjects, and if they're not as expected updates the RoleBinding.
-func ensureRoleBinding(clientset kubernetes.Interface, required *rbacv1.RoleBinding) error {
-	existing, err := clientset.RbacV1().RoleBindings(required.Namespace).Get(required.Name, metav1.GetOptions{})
+func EnsureRoleBinding(roleBindingInterface rbacv1types.RoleBindingInterface, required *rbacv1.RoleBinding) error {
+	existing, err := roleBindingInterface.Get(required.Name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
-		_, err = clientset.RbacV1().RoleBindings(required.Namespace).Create(required)
+		_, err = roleBindingInterface.Create(required)
 		return err
 	}
 	if err != nil {
@@ -180,27 +127,16 @@ func ensureRoleBinding(clientset kubernetes.Interface, required *rbacv1.RoleBind
 		return nil
 	}
 
-	_, err = clientset.RbacV1().RoleBindings(existing.Namespace).Update(existing)
+	_, err = roleBindingInterface.Update(existing)
 	return err
 }
 
-// CreateSecrets takes a slice of Secrets and ensures they exist and are in the desired state
-func CreateSecrets(clientset kubernetes.Interface, s []*corev1.Secret) error {
-	var errs []error
-	for _, res := range s {
-		if err := ensureSecret(clientset, res); err != nil {
-			errs = append(errs, err)
-		}
-	}
-	return errors.NewAggregate(errs)
-}
-
-// ensureSecret checks does Secret already exists and creates it if it doesn't. If it already exists,
+// EnsureSecret checks does Secret already exists and creates it if it doesn't. If it already exists,
 // the function compares labels, annotations, and data, and if they're not as expected updates the Secret.
-func ensureSecret(clientset kubernetes.Interface, required *corev1.Secret) error {
-	existing, err := clientset.CoreV1().Secrets(required.Namespace).Get(required.Name, metav1.GetOptions{})
+func EnsureSecret(secretInterface corev1types.SecretInterface, required *corev1.Secret) error {
+	existing, err := secretInterface.Get(required.Name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
-		_, err = clientset.CoreV1().Secrets(required.Namespace).Create(required)
+		_, err = secretInterface.Create(required)
 		return err
 	}
 	if err != nil {
@@ -214,27 +150,16 @@ func ensureSecret(clientset kubernetes.Interface, required *corev1.Secret) error
 		return nil
 	}
 
-	_, err = clientset.CoreV1().Secrets(existing.Namespace).Update(existing)
+	_, err = secretInterface.Update(existing)
 	return err
 }
 
-// CreateDeployments takes a slice of Deployments and ensures they exist and are in the desired state
-func CreateDeployments(clientset kubernetes.Interface, deploy []*appsv1.Deployment) error {
-	var errs []error
-	for _, res := range deploy {
-		if err := ensureDeployment(clientset, res); err != nil {
-			errs = append(errs, err)
-		}
-	}
-	return errors.NewAggregate(errs)
-}
-
-// ensureDeployment checks does Deployment already exists and creates it if it doesn't. If it already exists,
+// EnsureDeployment checks does Deployment already exists and creates it if it doesn't. If it already exists,
 // the function compares labels, annotations, and spec, and if they're not as expected updates the Deployment.
-func ensureDeployment(clientset kubernetes.Interface, required *appsv1.Deployment) error {
-	existing, err := clientset.AppsV1().Deployments(required.Namespace).Get(required.Name, metav1.GetOptions{})
+func EnsureDeployment(deploymentInterface appsv1types.DeploymentInterface, required *appsv1.Deployment) error {
+	existing, err := deploymentInterface.Get(required.Name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
-		_, err = clientset.AppsV1().Deployments(required.Namespace).Create(required)
+		_, err = deploymentInterface.Create(required)
 		return err
 	}
 	if err != nil {
@@ -248,27 +173,16 @@ func ensureDeployment(clientset kubernetes.Interface, required *appsv1.Deploymen
 		return nil
 	}
 
-	_, err = clientset.AppsV1().Deployments(existing.Namespace).Update(existing)
+	_, err = deploymentInterface.Update(existing)
 	return err
 }
 
-// CreateServices takes a slice of Services and ensures they exist and are in the desired state
-func CreateServices(clientset kubernetes.Interface, svc []*corev1.Service) error {
-	var errs []error
-	for _, res := range svc {
-		if err := ensureService(clientset, res); err != nil {
-			errs = append(errs, err)
-		}
-	}
-	return errors.NewAggregate(errs)
-}
-
-// ensureService checks does Service already exists and creates it if it doesn't. If it already exists,
+// EnsureService checks does Service already exists and creates it if it doesn't. If it already exists,
 // the function compares labels, annotations, and spec, and if they're not as expected updates the Service.
-func ensureService(clientset kubernetes.Interface, required *corev1.Service) error {
-	existing, err := clientset.CoreV1().Services(required.Namespace).Get(required.Name, metav1.GetOptions{})
+func EnsureService(serviceInterface corev1types.ServiceInterface, required *corev1.Service) error {
+	existing, err := serviceInterface.Get(required.Name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
-		_, err = clientset.CoreV1().Services(required.Namespace).Create(required)
+		_, err = serviceInterface.Create(required)
 		return err
 	}
 	if err != nil {
@@ -282,27 +196,16 @@ func ensureService(clientset kubernetes.Interface, required *corev1.Service) err
 		return nil
 	}
 
-	_, err = clientset.CoreV1().Services(existing.Namespace).Update(existing)
+	_, err = serviceInterface.Update(existing)
 	return err
 }
 
-// CreateCRDs takes a slice of CRDs and ensures they exist and are in the desired state
-func CreateCRDs(clientset apiextensionsclientset.Interface, crds []*apiextensionsv1beta1.CustomResourceDefinition) error {
-	var errs []error
-	for _, res := range crds {
-		if err := ensureCRD(clientset, res); err != nil {
-			errs = append(errs, err)
-		}
-	}
-	return errors.NewAggregate(errs)
-}
-
-// ensureCRD checks does CRD already exists and creates it if it doesn't. If it already exists,
+// EnsureCRD checks does CRD already exists and creates it if it doesn't. If it already exists,
 // the function compares labels, annotations, and spec, and if they're not as expected updates the CRD.
-func ensureCRD(clientset apiextensionsclientset.Interface, required *apiextensionsv1beta1.CustomResourceDefinition) error {
-	existing, err := clientset.ApiextensionsV1beta1().CustomResourceDefinitions().Get(required.Name, metav1.GetOptions{})
+func EnsureCRD(customResourceDefinitionInterface apiextensionsv1beta1types.CustomResourceDefinitionInterface, required *apiextensionsv1beta1.CustomResourceDefinition) error {
+	existing, err := customResourceDefinitionInterface.Get(required.Name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
-		_, err = clientset.ApiextensionsV1beta1().CustomResourceDefinitions().Create(required)
+		_, err = customResourceDefinitionInterface.Create(required)
 		return err
 	}
 	if err != nil {
@@ -316,28 +219,17 @@ func ensureCRD(clientset apiextensionsclientset.Interface, required *apiextensio
 		return nil
 	}
 
-	_, err = clientset.ApiextensionsV1beta1().CustomResourceDefinitions().Update(existing)
+	_, err = customResourceDefinitionInterface.Update(existing)
 	return err
 }
 
-// CreateMutatingWebhookConfigurations takes a slice of MutatingWebhookConfigurations and ensures they exist and are in the desired state
-func CreateMutatingWebhookConfigurations(clientset *kubernetes.Clientset, crds []*admissionregistrationv1beta1.MutatingWebhookConfiguration) error {
-	var errs []error
-	for _, res := range crds {
-		if err := ensureMutatingWebhookConfiguration(clientset, res); err != nil {
-			errs = append(errs, err)
-		}
-	}
-	return errors.NewAggregate(errs)
-}
-
-// ensureMutatingWebhookConfiguration checks does MutatingWebhookConfiguration already exists and creates it if it doesn't.
+// EnsureMutatingWebhookConfiguration checks does MutatingWebhookConfiguration already exists and creates it if it doesn't.
 // If it already exists, the function compares labels, annotations, and spec, and if they're not as expected updates
 // the MutatingWebhookConfiguration.
-func ensureMutatingWebhookConfiguration(clientset *kubernetes.Clientset, required *admissionregistrationv1beta1.MutatingWebhookConfiguration) error {
-	existing, err := clientset.AdmissionregistrationV1beta1().MutatingWebhookConfigurations().Get(required.Name, metav1.GetOptions{})
+func EnsureMutatingWebhookConfiguration(mutatingWebhookConfigurationInterface admissionregistrationv1beta1types.MutatingWebhookConfigurationInterface, required *admissionregistrationv1beta1.MutatingWebhookConfiguration) error {
+	existing, err := mutatingWebhookConfigurationInterface.Get(required.Name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
-		_, err = clientset.AdmissionregistrationV1beta1().MutatingWebhookConfigurations().Create(required)
+		_, err = mutatingWebhookConfigurationInterface.Create(required)
 		return err
 	}
 	if err != nil {
@@ -351,7 +243,7 @@ func ensureMutatingWebhookConfiguration(clientset *kubernetes.Clientset, require
 		return nil
 	}
 
-	_, err = clientset.AdmissionregistrationV1beta1().MutatingWebhookConfigurations().Update(existing)
+	_, err = mutatingWebhookConfigurationInterface.Update(existing)
 	return err
 }
 
