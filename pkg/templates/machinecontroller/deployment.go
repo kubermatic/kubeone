@@ -26,23 +26,23 @@ const (
 	MachineControllerCredentialsSecretName = "machine-controller-credentials"
 )
 
-// Deployment returns YAML manifests for MachineController deployment with RBAC
-func Deployment(ctx *util.Context) error {
-	err := templates.CreateServiceAccounts(ctx, []*corev1.ServiceAccount{
+// Deploy deploys MachineController deployment with RBAC on the cluster
+func Deploy(ctx *util.Context) error {
+	err := templates.CreateServiceAccounts(ctx.Clientset, []*corev1.ServiceAccount{
 		machineControllerServiceAccount(),
 	})
 	if err != nil {
 		return err
 	}
 
-	err = templates.CreateClusterRoles(ctx, []*rbacv1.ClusterRole{
+	err = templates.CreateClusterRoles(ctx.Clientset, []*rbacv1.ClusterRole{
 		machineControllerClusterRole(),
 	})
 	if err != nil {
 		return err
 	}
 
-	err = templates.CreateClusterRoleBindings(ctx, []*rbacv1.ClusterRoleBinding{
+	err = templates.CreateClusterRoleBindings(ctx.Clientset, []*rbacv1.ClusterRoleBinding{
 		nodeSignerClusterRoleBinding(),
 		machineControllerClusterRoleBinding(),
 		nodeBootstrapperClusterRoleBinding(),
@@ -51,7 +51,7 @@ func Deployment(ctx *util.Context) error {
 		return err
 	}
 
-	err = templates.CreateRoles(ctx, []*rbacv1.Role{
+	err = templates.CreateRoles(ctx.Clientset, []*rbacv1.Role{
 		machineControllerKubeSystemRole(),
 		machineControllerKubePublicRole(),
 		machineControllerEndpointReaderRole(),
@@ -61,7 +61,7 @@ func Deployment(ctx *util.Context) error {
 		return err
 	}
 
-	err = templates.CreateRoleBindings(ctx, []*rbacv1.RoleBinding{
+	err = templates.CreateRoleBindings(ctx.Clientset, []*rbacv1.RoleBinding{
 		machineControllerKubeSystemRoleBinding(),
 		machineControllerKubePublicRoleBinding(),
 		machineControllerDefaultRoleBinding(),
@@ -71,7 +71,7 @@ func Deployment(ctx *util.Context) error {
 		return err
 	}
 
-	err = templates.CreateSecrets(ctx, []*corev1.Secret{
+	err = templates.CreateSecrets(ctx.Clientset, []*corev1.Secret{
 		machineControllerCredentialsSecret(ctx.Cluster),
 	})
 	if err != nil {
@@ -82,14 +82,14 @@ func Deployment(ctx *util.Context) error {
 	if err != nil {
 		return err
 	}
-	err = templates.CreateDeployments(ctx, []*appsv1.Deployment{
+	err = templates.CreateDeployments(ctx.Clientset, []*appsv1.Deployment{
 		deployment,
 	})
 	if err != nil {
 		return err
 	}
 
-	err = templates.CreateCRDs(ctx, []*apiextensions.CustomResourceDefinition{
+	err = templates.CreateCRDs(ctx.APIExtensionClientset, []*apiextensions.CustomResourceDefinition{
 		machineControllerMachineCRD(),
 		machineControllerClusterCRD(),
 		machineControllerMachineSetCRD(),

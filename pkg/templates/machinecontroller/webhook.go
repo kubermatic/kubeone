@@ -28,43 +28,45 @@ const (
 	WebhookCredentialsSecretName = "machine-controller-credentials"
 )
 
-// WebhookConfiguration returns YAML manifest for MachineController webhook deployment
-func WebhookConfiguration(cluster *config.Cluster, runtimeConfig *util.Configuration) (string, error) {
-	caKeyPair, err := certificate.CAKeyPair(runtimeConfig)
+// DeployWebhookConfiguration deploys MachineController webhook deployment on the cluster
+func DeployWebhookConfiguration(ctx *util.Context) error {
+	caKeyPair, err := certificate.CAKeyPair(ctx.Configuration)
 	if err != nil {
-		return "", fmt.Errorf("failed to load CA keypair: %v", err)
+		return fmt.Errorf("failed to load CA keypair: %v", err)
 	}
 
-	deployment, err := WebhookDeployment(cluster)
+	err = templates.CreateDeployments(ctx.Clientset, []*appsv1.Deployment{
+		WebhookDeployment(ctx.Cluster),
+	})
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	service, err := Service()
+	err = templates.CreateServices(ctx.Clientset, []*corev1.Service{
+		Service(),
+	})
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	servingCert, err := TLSServingCertificate(caKeyPair)
 	if err != nil {
-		return "", err
+		return err
 	}
-
-	config, err := MutatingwebhookConfiguration(caKeyPair)
-	if err != nil {
-		return "", err
-	}
-
-	return templates.KubernetesToYAML([]interface{}{
-		deployment,
-		service,
+	err = templates.CreateSecrets(ctx.Clientset, []*corev1.Secret{
 		servingCert,
-		config,
+	})
+	if err != nil {
+		return err
+	}
+
+	return templates.CreateMutatingWebhookConfigurations(ctx.Clientset, []*admissionregistrationv1beta1.MutatingWebhookConfiguration{
+		MutatingwebhookConfiguration(caKeyPair),
 	})
 }
 
 // WebhookDeployment returns the deployment for the machine-controllers MutatignAdmissionWebhook
-func WebhookDeployment(cluster *config.Cluster) (*appsv1.Deployment, error) {
+func WebhookDeployment(cluster *config.Cluster) *appsv1.Deployment {
 	dep := &appsv1.Deployment{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "apps/v1",
@@ -166,11 +168,11 @@ func WebhookDeployment(cluster *config.Cluster) (*appsv1.Deployment, error) {
 		},
 	}
 
-	return dep, nil
+	return dep
 }
 
 // Service returns the internal service for the machine-controller webhook
-func Service() (*corev1.Service, error) {
+func Service() *corev1.Service {
 	se := &corev1.Service{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "v1",
@@ -196,7 +198,7 @@ func Service() (*corev1.Service, error) {
 		},
 	}
 
-	return se, nil
+	return se
 }
 
 func getServingCertVolume() corev1.Volume {
@@ -246,7 +248,7 @@ func TLSServingCertificate(ca *triple.KeyPair) (*corev1.Secret, error) {
 }
 
 // MutatingwebhookConfiguration returns the MutatingwebhookConfiguration for the machine controler
-func MutatingwebhookConfiguration(ca *triple.KeyPair) (*admissionregistrationv1beta1.MutatingWebhookConfiguration, error) {
+func MutatingwebhookConfiguration(ca *triple.KeyPair) *admissionregistrationv1beta1.MutatingWebhookConfiguration {
 	cfg := &admissionregistrationv1beta1.MutatingWebhookConfiguration{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "admissionregistration.k8s.io/v1beta1",
@@ -312,7 +314,7 @@ func MutatingwebhookConfiguration(ca *triple.KeyPair) (*admissionregistrationv1b
 		},
 	}
 
-	return cfg, nil
+	return cfg
 }
 
 func int32Ptr(i int32) *int32 {
