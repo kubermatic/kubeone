@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/Masterminds/semver"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 )
 
@@ -301,6 +302,17 @@ func (p *ProviderConfig) CloudProviderInTree() bool {
 type VersionConfig struct {
 	Kubernetes string `json:"kubernetes"`
 	Docker     string `json:"docker"`
+}
+
+func (m *VersionConfig) Validate() error {
+	v, err := semver.NewVersion(m.Kubernetes)
+	if err != nil {
+		return fmt.Errorf("unable to parse version string: %v", err)
+	}
+	if v.Major() != 1 || v.Minor() < 13 {
+		return errors.New("kubernetes versions lower than 1.13 are not supported")
+	}
+	return nil
 }
 
 // Etcd version

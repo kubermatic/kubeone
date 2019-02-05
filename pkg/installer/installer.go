@@ -1,9 +1,6 @@
 package installer
 
 import (
-	"github.com/pkg/errors"
-
-	"github.com/Masterminds/semver"
 	"github.com/sirupsen/logrus"
 
 	"github.com/kubermatic/kubeone/pkg/config"
@@ -37,31 +34,14 @@ func NewInstaller(cluster *config.Cluster, logger *logrus.Logger) *Installer {
 
 // Install run the installation process
 func (i *Installer) Install(options *Options) error {
-	ctx := i.createContext(options)
-
-	v, err := semver.NewVersion(i.cluster.Versions.Kubernetes)
-	if err != nil {
-		return err
-	}
-	if v.Minor() < 13 {
-		return errors.New("kubernetes versions lower than 1.13 are not supported")
-	}
-
-	return installation.Install(ctx)
+	return installation.Install(i.createContext(options))
 }
 
 // Reset resets cluster:
 // * destroys all the worker machines
 // * kubeadm reset masters
 func (i *Installer) Reset(options *Options) error {
-	ctx := i.createContext(options)
-
-	v := semver.MustParse(i.cluster.Versions.Kubernetes)
-	if v.Minor() < 13 {
-		return errors.New("kubernetes versions lower than 1.13 are not supported")
-	}
-
-	return installation.Reset(ctx)
+	return installation.Reset(i.createContext(options))
 }
 
 // createContext creates a basic, non-host bound context with
