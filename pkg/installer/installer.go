@@ -1,7 +1,7 @@
 package installer
 
 import (
-	"fmt"
+	"github.com/pkg/errors"
 
 	"github.com/Masterminds/semver"
 	"github.com/sirupsen/logrus"
@@ -9,7 +9,6 @@ import (
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/installation"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
-	"github.com/kubermatic/kubeone/pkg/installer/version/kube112"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 )
 
@@ -38,46 +37,31 @@ func NewInstaller(cluster *config.Cluster, logger *logrus.Logger) *Installer {
 
 // Install run the installation process
 func (i *Installer) Install(options *Options) error {
-	var err error
-
 	ctx := i.createContext(options)
 
 	v, err := semver.NewVersion(i.cluster.Versions.Kubernetes)
 	if err != nil {
-		return fmt.Errorf("can't parse kubernetes version: %v", err)
+		return err
+	}
+	if v.Minor() < 13 {
+		return errors.New("kubernetes versions lower than 1.13 are not supported")
 	}
 
-	majorMinor := fmt.Sprintf("%d.%d", v.Major(), v.Minor())
-
-	switch majorMinor {
-	case "1.12":
-		err = kube112.Install(ctx)
-	default:
-		err = installation.Install(ctx)
-	}
-
-	return err
+	return installation.Install(ctx)
 }
 
 // Reset resets cluster:
 // * destroys all the worker machines
 // * kubeadm reset masters
 func (i *Installer) Reset(options *Options) error {
-	var err error
-
 	ctx := i.createContext(options)
 
 	v := semver.MustParse(i.cluster.Versions.Kubernetes)
-	majorMinor := fmt.Sprintf("%d.%d", v.Major(), v.Minor())
-
-	switch majorMinor {
-	case "1.12":
-		err = kube112.Reset(ctx)
-	default:
-		err = installation.Reset(ctx)
+	if v.Minor() < 13 {
+		return errors.New("kubernetes versions lower than 1.13 are not supported")
 	}
 
-	return err
+	return installation.Reset(ctx)
 }
 
 // createContext creates a basic, non-host bound context with
