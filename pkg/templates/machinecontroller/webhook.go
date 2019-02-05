@@ -1,6 +1,7 @@
 package machinecontroller
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/kubermatic/kubeone/pkg/certificate"
@@ -24,47 +25,55 @@ const (
 	WebhookAppLabelValue = WebhookName
 	WebhookTag           = MachineControllerTag
 	WebhookNamespace     = "kube-system"
-
-	WebhookCredentialsSecretName = "machine-controller-credentials"
 )
 
-// WebhookConfiguration returns YAML manifest for MachineController webhook deployment
-func WebhookConfiguration(cluster *config.Cluster, runtimeConfig *util.Configuration) (string, error) {
-	caKeyPair, err := certificate.CAKeyPair(runtimeConfig)
-	if err != nil {
-		return "", fmt.Errorf("failed to load CA keypair: %v", err)
+// DeployWebhookConfiguration deploys MachineController webhook deployment on the cluster
+func DeployWebhookConfiguration(ctx *util.Context) error {
+	if ctx.Clientset == nil {
+		return errors.New("kubernetes clientset not initialized")
 	}
 
-	deployment, err := WebhookDeployment(cluster)
+	coreClient := ctx.Clientset.CoreV1()
+	appsClient := ctx.Clientset.AppsV1()
+	admissionClient := ctx.Clientset.AdmissionregistrationV1beta1()
+
+	// Generate Webhook certificate
+	caKeyPair, err := certificate.CAKeyPair(ctx.Configuration)
 	if err != nil {
-		return "", err
+		return fmt.Errorf("failed to load CA keypair: %v", err)
 	}
 
-	service, err := Service()
+	// Deploy Webhook
+	deployment := WebhookDeployment(ctx.Cluster)
+	err = templates.EnsureDeployment(appsClient.Deployments(deployment.Namespace), deployment)
 	if err != nil {
-		return "", err
+		return err
 	}
 
+	// Deploy Webhook service
+	svc := Service()
+	err = templates.EnsureService(coreClient.Services(svc.Namespace), svc)
+	if err != nil {
+		return err
+	}
+
+	// Deploy serving certificate secret
 	servingCert, err := TLSServingCertificate(caKeyPair)
 	if err != nil {
-		return "", err
+		return err
 	}
-
-	config, err := MutatingwebhookConfiguration(caKeyPair)
+	err = templates.EnsureSecret(coreClient.Secrets(servingCert.Namespace), servingCert)
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	return templates.KubernetesToYAML([]interface{}{
-		deployment,
-		service,
-		servingCert,
-		config,
-	})
+	return templates.EnsureMutatingWebhookConfiguration(
+		admissionClient.MutatingWebhookConfigurations(),
+		MutatingwebhookConfiguration(caKeyPair))
 }
 
 // WebhookDeployment returns the deployment for the machine-controllers MutatignAdmissionWebhook
-func WebhookDeployment(cluster *config.Cluster) (*appsv1.Deployment, error) {
+func WebhookDeployment(cluster *config.Cluster) *appsv1.Deployment {
 	dep := &appsv1.Deployment{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "apps/v1",
@@ -166,11 +175,11 @@ func WebhookDeployment(cluster *config.Cluster) (*appsv1.Deployment, error) {
 		},
 	}
 
-	return dep, nil
+	return dep
 }
 
 // Service returns the internal service for the machine-controller webhook
-func Service() (*corev1.Service, error) {
+func Service() *corev1.Service {
 	se := &corev1.Service{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "v1",
@@ -196,7 +205,7 @@ func Service() (*corev1.Service, error) {
 		},
 	}
 
-	return se, nil
+	return se
 }
 
 func getServingCertVolume() corev1.Volume {
@@ -246,7 +255,7 @@ func TLSServingCertificate(ca *triple.KeyPair) (*corev1.Secret, error) {
 }
 
 // MutatingwebhookConfiguration returns the MutatingwebhookConfiguration for the machine controler
-func MutatingwebhookConfiguration(ca *triple.KeyPair) (*admissionregistrationv1beta1.MutatingWebhookConfiguration, error) {
+func MutatingwebhookConfiguration(ca *triple.KeyPair) *admissionregistrationv1beta1.MutatingWebhookConfiguration {
 	cfg := &admissionregistrationv1beta1.MutatingWebhookConfiguration{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "admissionregistration.k8s.io/v1beta1",
@@ -312,7 +321,7 @@ func MutatingwebhookConfiguration(ca *triple.KeyPair) (*admissionregistrationv1b
 		},
 	}
 
-	return cfg, nil
+	return cfg
 }
 
 func int32Ptr(i int32) *int32 {

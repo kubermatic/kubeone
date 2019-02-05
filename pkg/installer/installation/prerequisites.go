@@ -23,12 +23,6 @@ func installPrerequisites(ctx *util.Context) error {
 func generateConfigurationFiles(ctx *util.Context) error {
 	ctx.Configuration.AddFile("cfg/cloud-config", ctx.Cluster.Provider.CloudConfig)
 
-	mc, err := machinecontroller.Deployment(ctx.Cluster)
-	if err != nil {
-		return fmt.Errorf("failed to create machine-controller configuration: %v", err)
-	}
-	ctx.Configuration.AddFile("machine-controller.yaml", mc)
-
 	if len(ctx.Cluster.Workers) > 0 {
 		machines, deployErr := machinecontroller.MachineDeployments(ctx.Cluster)
 		if deployErr != nil {
