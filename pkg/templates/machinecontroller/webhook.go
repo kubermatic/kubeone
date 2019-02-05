@@ -1,6 +1,7 @@
 package machinecontroller
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/kubermatic/kubeone/pkg/certificate"
@@ -28,6 +29,10 @@ const (
 
 // DeployWebhookConfiguration deploys MachineController webhook deployment on the cluster
 func DeployWebhookConfiguration(ctx *util.Context) error {
+	if ctx.Clientset == nil {
+		return errors.New("kubernetes clientset not initialized")
+	}
+
 	coreClient := ctx.Clientset.CoreV1()
 	appsClient := ctx.Clientset.AppsV1()
 	admissionClient := ctx.Clientset.AdmissionregistrationV1beta1()

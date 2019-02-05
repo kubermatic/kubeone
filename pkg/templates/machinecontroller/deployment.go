@@ -1,6 +1,7 @@
 package machinecontroller
 
 import (
+	"errors"
 	"net"
 
 	"github.com/kubermatic/kubeone/pkg/config"
@@ -28,6 +29,13 @@ const (
 
 // Deploy deploys MachineController deployment with RBAC on the cluster
 func Deploy(ctx *util.Context) error {
+	if ctx.Clientset == nil {
+		return errors.New("kubernetes clientset not initialized")
+	}
+	if ctx.APIExtensionClientset == nil {
+		return errors.New("kubernetes apiextension clientset not initialized")
+	}
+
 	coreClient := ctx.Clientset.CoreV1()
 	rbacClient := ctx.Clientset.RbacV1()
 
