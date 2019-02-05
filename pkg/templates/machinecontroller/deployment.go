@@ -28,92 +28,69 @@ const (
 
 // Deploy deploys MachineController deployment with RBAC on the cluster
 func Deploy(ctx *util.Context) error {
+	coreClient := ctx.Clientset.CoreV1()
+	rbacClient := ctx.Clientset.RbacV1()
+
 	// ServiceAccounts
 	sa := machineControllerServiceAccount()
-	saClient := ctx.Clientset.CoreV1().ServiceAccounts(sa.Namespace)
-	err := templates.EnsureServiceAccount(saClient, sa)
+	err := templates.EnsureServiceAccount(coreClient.ServiceAccounts(sa.Namespace), sa)
 	if err != nil {
 		return err
 	}
 
 	// ClusterRoles
-	crClient := ctx.Clientset.RbacV1().ClusterRoles()
-	err = templates.EnsureClusterRole(crClient, machineControllerClusterRole())
+	err = templates.EnsureClusterRole(rbacClient.ClusterRoles(), machineControllerClusterRole())
 	if err != nil {
 		return err
 	}
 
 	// ClusterRoleBindings
-	crbClient := ctx.Clientset.RbacV1().ClusterRoleBindings()
-	err = templates.EnsureClusterRoleBinding(crbClient, nodeSignerClusterRoleBinding())
-	if err != nil {
-		return err
+	crbGenerators := []func() *rbacv1.ClusterRoleBinding{
+		nodeSignerClusterRoleBinding,
+		machineControllerClusterRoleBinding,
+		nodeBootstrapperClusterRoleBinding,
 	}
-	err = templates.EnsureClusterRoleBinding(crbClient, machineControllerClusterRoleBinding())
-	if err != nil {
-		return err
-	}
-	err = templates.EnsureClusterRoleBinding(crbClient, nodeBootstrapperClusterRoleBinding())
-	if err != nil {
-		return err
+
+	crbClient := rbacClient.ClusterRoleBindings()
+	for _, crbGen := range crbGenerators {
+		if err = templates.EnsureClusterRoleBinding(crbClient, crbGen()); err != nil {
+			return err
+		}
 	}
 
 	// Roles
-	kubeSystemRole := machineControllerKubeSystemRole()
-	roleClient := ctx.Clientset.RbacV1().Roles(kubeSystemRole.Namespace)
-	err = templates.EnsureRole(roleClient, kubeSystemRole)
-	if err != nil {
-		return err
+	roleGenerators := []func() *rbacv1.Role{
+		machineControllerKubeSystemRole,
+		machineControllerKubePublicRole,
+		machineControllerEndpointReaderRole,
+		machineControllerClusterInfoReaderRole,
 	}
-	kubePublicRole := machineControllerKubePublicRole()
-	roleClient = ctx.Clientset.RbacV1().Roles(kubePublicRole.Namespace)
-	err = templates.EnsureRole(roleClient, kubePublicRole)
-	if err != nil {
-		return err
-	}
-	endpointReaderRole := machineControllerEndpointReaderRole()
-	roleClient = ctx.Clientset.RbacV1().Roles(endpointReaderRole.Namespace)
-	err = templates.EnsureRole(roleClient, endpointReaderRole)
-	if err != nil {
-		return err
-	}
-	clusterInfoRole := machineControllerClusterInfoReaderRole()
-	roleClient = ctx.Clientset.RbacV1().Roles(clusterInfoRole.Namespace)
-	err = templates.EnsureRole(roleClient, clusterInfoRole)
-	if err != nil {
-		return err
+
+	for _, roleGen := range roleGenerators {
+		role := roleGen()
+		if err = templates.EnsureRole(rbacClient.Roles(role.Namespace), role); err != nil {
+			return err
+		}
 	}
 
 	// RoleBindings
-	kubeSystemRoleBinding := machineControllerKubeSystemRoleBinding()
-	roleBindingClient := ctx.Clientset.RbacV1().RoleBindings(kubeSystemRoleBinding.Namespace)
-	err = templates.EnsureRoleBinding(roleBindingClient, kubeSystemRoleBinding)
-	if err != nil {
-		return err
+	roleBindingsGenerators := []func() *rbacv1.RoleBinding{
+		machineControllerKubeSystemRoleBinding,
+		machineControllerKubePublicRoleBinding,
+		machineControllerDefaultRoleBinding,
+		machineControllerClusterInfoRoleBinding,
 	}
-	kubePublicRoleBinding := machineControllerKubePublicRoleBinding()
-	roleBindingClient = ctx.Clientset.RbacV1().RoleBindings(kubePublicRoleBinding.Namespace)
-	err = templates.EnsureRoleBinding(roleBindingClient, kubePublicRoleBinding)
-	if err != nil {
-		return err
-	}
-	defaultRoleBinding := machineControllerDefaultRoleBinding()
-	roleBindingClient = ctx.Clientset.RbacV1().RoleBindings(defaultRoleBinding.Namespace)
-	err = templates.EnsureRoleBinding(roleBindingClient, defaultRoleBinding)
-	if err != nil {
-		return err
-	}
-	clusterInfoRoleBinding := machineControllerClusterInfoRoleBinding()
-	roleBindingClient = ctx.Clientset.RbacV1().RoleBindings(clusterInfoRoleBinding.Namespace)
-	err = templates.EnsureRoleBinding(roleBindingClient, clusterInfoRoleBinding)
-	if err != nil {
-		return err
+
+	for _, roleBindingGen := range roleBindingsGenerators {
+		roleBinding := roleBindingGen()
+		if err = templates.EnsureRoleBinding(rbacClient.RoleBindings(roleBinding.Namespace), roleBinding); err != nil {
+			return err
+		}
 	}
 
 	// Secrets
 	secret := machineControllerCredentialsSecret(ctx.Cluster)
-	secretsClient := ctx.Clientset.CoreV1().Secrets(secret.Namespace)
-	err = templates.EnsureSecret(secretsClient, secret)
+	err = templates.EnsureSecret(coreClient.Secrets(secret.Namespace), secret)
 	if err != nil {
 		return err
 	}
@@ -123,6 +100,7 @@ func Deploy(ctx *util.Context) error {
 	if err != nil {
 		return err
 	}
+
 	deploymentClient := ctx.Clientset.AppsV1().Deployments(deployment.Namespace)
 	err = templates.EnsureDeployment(deploymentClient, deployment)
 	if err != nil {
@@ -130,23 +108,21 @@ func Deploy(ctx *util.Context) error {
 	}
 
 	// CRDs
+	crdGenerators := []func() *apiextensions.CustomResourceDefinition{
+		machineControllerMachineCRD,
+		machineControllerClusterCRD,
+		machineControllerMachineSetCRD,
+		machineControllerMachineDeploymentCRD,
+	}
 	crdClient := ctx.APIExtensionClientset.ApiextensionsV1beta1().CustomResourceDefinitions()
-	err = templates.EnsureCRD(crdClient, machineControllerMachineCRD())
-	if err != nil {
-		return err
+
+	for _, crdGen := range crdGenerators {
+		err = templates.EnsureCRD(crdClient, crdGen())
+		if err != nil {
+			return err
+		}
 	}
-	err = templates.EnsureCRD(crdClient, machineControllerClusterCRD())
-	if err != nil {
-		return err
-	}
-	err = templates.EnsureCRD(crdClient, machineControllerMachineSetCRD())
-	if err != nil {
-		return err
-	}
-	err = templates.EnsureCRD(crdClient, machineControllerMachineDeploymentCRD())
-	if err != nil {
-		return err
-	}
+
 	return nil
 }
 
