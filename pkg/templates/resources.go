@@ -29,8 +29,8 @@ func EnsureNamespace(namespaceInterface corev1types.NamespaceInterface, required
 	}
 
 	modified := false
-	mergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
-	mergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
+	MergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
+	MergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
 	if !modified {
 		return nil
 	}
@@ -52,8 +52,8 @@ func EnsureServiceAccount(serviceAccountInterface corev1types.ServiceAccountInte
 	}
 
 	modified := false
-	mergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
-	mergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
+	MergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
+	MergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
 	if !modified {
 		return nil
 	}
@@ -75,8 +75,8 @@ func EnsureClusterRole(clusterRoleInterface rbacv1types.ClusterRoleInterface, re
 	}
 
 	modified := false
-	mergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
-	mergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
+	MergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
+	MergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
 	if equality.Semantic.DeepEqual(required.Rules, existing.Rules) && !modified {
 		return nil
 	}
@@ -98,8 +98,8 @@ func EnsureClusterRoleBinding(clusterRoleBindingInterface rbacv1types.ClusterRol
 	}
 
 	modified := false
-	mergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
-	mergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
+	MergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
+	MergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
 	if equality.Semantic.DeepEqual(required.RoleRef, existing.RoleRef) && equality.Semantic.DeepEqual(required.Subjects, existing.Subjects) && !modified {
 		return nil
 	}
@@ -121,8 +121,8 @@ func EnsureRole(roleInterface rbacv1types.RoleInterface, required *rbacv1.Role) 
 	}
 
 	modified := false
-	mergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
-	mergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
+	MergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
+	MergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
 	if equality.Semantic.DeepEqual(required.Rules, existing.Rules) && !modified {
 		return nil
 	}
@@ -144,8 +144,8 @@ func EnsureRoleBinding(roleBindingInterface rbacv1types.RoleBindingInterface, re
 	}
 
 	modified := false
-	mergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
-	mergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
+	MergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
+	MergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
 	if equality.Semantic.DeepEqual(required.RoleRef, existing.RoleRef) && equality.Semantic.DeepEqual(required.Subjects, existing.Subjects) && !modified {
 		return nil
 	}
@@ -167,8 +167,8 @@ func EnsureSecret(secretInterface corev1types.SecretInterface, required *corev1.
 	}
 
 	modified := false
-	mergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
-	mergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
+	MergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
+	MergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
 	if equality.Semantic.DeepEqual(required.Data, existing.Data) && !modified {
 		return nil
 	}
@@ -190,8 +190,8 @@ func EnsureDeployment(deploymentInterface appsv1types.DeploymentInterface, requi
 	}
 
 	modified := false
-	mergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
-	mergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
+	MergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
+	MergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
 	if equality.Semantic.DeepEqual(required.Spec, existing.Spec) && !modified {
 		return nil
 	}
@@ -213,8 +213,8 @@ func EnsureDaemonSet(daemonSetInterface appsv1types.DaemonSetInterface, required
 	}
 
 	modified := false
-	mergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
-	mergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
+	MergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
+	MergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
 	if equality.Semantic.DeepEqual(required.Spec, existing.Spec) && !modified {
 		return nil
 	}
@@ -236,8 +236,8 @@ func EnsureService(serviceInterface corev1types.ServiceInterface, required *core
 	}
 
 	modified := false
-	mergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
-	mergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
+	MergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
+	MergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
 	if equality.Semantic.DeepEqual(required.Spec, existing.Spec) && !modified {
 		return nil
 	}
@@ -259,8 +259,8 @@ func EnsureCRD(customResourceDefinitionInterface apiextensionsv1beta1types.Custo
 	}
 
 	modified := false
-	mergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
-	mergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
+	MergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
+	MergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
 	if equality.Semantic.DeepEqual(required.Spec, existing.Spec) && !modified {
 		return nil
 	}
@@ -283,25 +283,12 @@ func EnsureMutatingWebhookConfiguration(mutatingWebhookConfigurationInterface ad
 	}
 
 	modified := false
-	mergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
-	mergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
+	MergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
+	MergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
 	if equality.Semantic.DeepEqual(required.Webhooks, existing.Webhooks) && !modified {
 		return nil
 	}
 
 	_, err = mutatingWebhookConfigurationInterface.Update(existing)
 	return err
-}
-
-func mergeStringMap(modified *bool, destination *map[string]string, required map[string]string) {
-	if *destination == nil {
-		*destination = map[string]string{}
-	}
-
-	for k, v := range required {
-		if destinationV, ok := (*destination)[k]; !ok || destinationV != v {
-			(*destination)[k] = v
-			*modified = true
-		}
-	}
 }
