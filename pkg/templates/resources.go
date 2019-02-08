@@ -16,6 +16,29 @@ import (
 	rbacv1types "k8s.io/client-go/kubernetes/typed/rbac/v1"
 )
 
+// EnsureNamespace checks does Namespace already exists and creates it if it doesn't. If it already exists,
+// the function compares labels and annotations, and if they're not as expected updates the Namespace.
+func EnsureNamespace(namespaceInterface corev1types.NamespaceInterface, required *corev1.Namespace) error {
+	existing, err := namespaceInterface.Get(required.Name, metav1.GetOptions{})
+	if apierrors.IsNotFound(err) {
+		_, err = namespaceInterface.Create(required)
+		return err
+	}
+	if err != nil {
+		return err
+	}
+
+	modified := false
+	mergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
+	mergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
+	if !modified {
+		return nil
+	}
+
+	_, err = namespaceInterface.Update(existing)
+	return err
+}
+
 // EnsureServiceAccount checks does ServiceAccount already exists and creates it if it doesn't. If it already exists,
 // the function compares labels and annotations, and if they're not as expected updates the ServiceAccount.
 func EnsureServiceAccount(serviceAccountInterface corev1types.ServiceAccountInterface, required *corev1.ServiceAccount) error {
@@ -174,6 +197,29 @@ func EnsureDeployment(deploymentInterface appsv1types.DeploymentInterface, requi
 	}
 
 	_, err = deploymentInterface.Update(existing)
+	return err
+}
+
+// EnsureDaemonSet checks does DaemonSet already exists and creates it if it doesn't. If it already exists,
+// the function compares labels, annotations, and spec, and if they're not as expected updates the DaemonSet.
+func EnsureDaemonSet(daemonSetInterface appsv1types.DaemonSetInterface, required *appsv1.DaemonSet) error {
+	existing, err := daemonSetInterface.Get(required.Name, metav1.GetOptions{})
+	if apierrors.IsNotFound(err) {
+		_, err = daemonSetInterface.Create(required)
+		return err
+	}
+	if err != nil {
+		return err
+	}
+
+	modified := false
+	mergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
+	mergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
+	if equality.Semantic.DeepEqual(required.Spec, existing.Spec) && !modified {
+		return nil
+	}
+
+	_, err = daemonSetInterface.Update(existing)
 	return err
 }
 
