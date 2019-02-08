@@ -1,138 +1,210 @@
 package ark
 
 import (
-	"bytes"
-	"fmt"
-
-	"github.com/alecthomas/template"
 	"github.com/kubermatic/kubeone/pkg/config"
+
+	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // deployment deploys Ark version 0.10.0 using default settings
-func deployment(cluster *config.Cluster) (string, error) {
-	const deploy = `
-apiVersion: apps/v1beta1
-kind: Deployment
-metadata:
-  namespace: heptio-ark
-  name: ark
-spec:
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        component: ark
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "8085"
-        prometheus.io/path: "/metrics"
-    spec:
-      restartPolicy: Always
-      serviceAccountName: ark
-      containers:
-        - name: ark
-          image: gcr.io/heptio-images/ark:v0.10.0
-          command:
-            - /ark
-          args:
-            - server
-          volumeMounts:
-            - name: cloud-credentials
-              mountPath: /credentials
-            - name: plugins
-              mountPath: /plugins
-            - name: scratch
-              mountPath: /scratch
-          env:
-            - name: AWS_SHARED_CREDENTIALS_FILE
-              value: /credentials/cloud
-            - name: ARK_SCRATCH_DIR
-              value: /scratch
-            - name: AWS_CLUSTER_NAME
-              value: {{ .AWS_CLUSTER_NAME }}
-      volumes:
-        - name: cloud-credentials
-          secret:
-            secretName: cloud-credentials
-        - name: plugins
-          emptyDir: {}
-        - name: scratch
-          emptyDir: {}
-`
-
-	tpl, err := template.New("base").Parse(deploy)
-	if err != nil {
-		return "", fmt.Errorf("failed to parse ark deployment manifest: %v", err)
+func deployment(cluster *config.Cluster) *appsv1.Deployment {
+	replicas := int32(1)
+	return &appsv1.Deployment{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "ark",
+			Namespace: arkNamespace,
+		},
+		Spec: appsv1.DeploymentSpec{
+			Replicas: &replicas,
+			Template: corev1.PodTemplateSpec{
+				ObjectMeta: metav1.ObjectMeta{
+					Labels: map[string]string{
+						"component": "ark",
+					},
+					Annotations: map[string]string{
+						"prometheus.io/scrape": "true",
+						"prometheus.io/port":   "8085",
+						"prometheus.io/path":   "/metrics",
+					},
+				},
+				Spec: corev1.PodSpec{
+					RestartPolicy:      corev1.RestartPolicyAlways,
+					ServiceAccountName: "ark",
+					Containers: []corev1.Container{
+						{
+							Name:  "ark",
+							Image: arkContainerImage,
+							Command: []string{
+								"/ark",
+							},
+							Args: []string{
+								"server",
+							},
+							VolumeMounts: []corev1.VolumeMount{
+								{
+									Name:      "cloud-credentials",
+									MountPath: "/credentials",
+								},
+								{
+									Name:      "plugins",
+									MountPath: "/plugins",
+								},
+								{
+									Name:      "scratch",
+									MountPath: "/scratch",
+								},
+							},
+							Env: []corev1.EnvVar{
+								{
+									Name:  "AWS_SHARED_CREDENTIALS_FILE",
+									Value: "/credentials/cloud",
+								},
+								{
+									Name:  "ARK_SCRATCH_DIR",
+									Value: "/scratch",
+								},
+								{
+									Name:  "AWS_CLUSTER_NAME",
+									Value: cluster.Name,
+								},
+							},
+						},
+					},
+					Volumes: []corev1.Volume{
+						{
+							Name: "cloud-credentials",
+							VolumeSource: corev1.VolumeSource{
+								Secret: &corev1.SecretVolumeSource{
+									SecretName: "cloud-credentials",
+								},
+							},
+						},
+						{
+							Name: "plugins",
+							VolumeSource: corev1.VolumeSource{
+								EmptyDir: &corev1.EmptyDirVolumeSource{},
+							},
+						},
+						{
+							Name: "scratch",
+							VolumeSource: corev1.VolumeSource{
+								EmptyDir: &corev1.EmptyDirVolumeSource{},
+							},
+						},
+					},
+				},
+			},
+		},
 	}
-
-	variables := map[string]interface{}{
-		"AWS_CLUSTER_NAME": cluster.Name,
-	}
-
-	buf := bytes.Buffer{}
-	if err := tpl.Execute(&buf, variables); err != nil {
-		return "", fmt.Errorf("failed to render flannel config: %v", err)
-	}
-
-	return buf.String(), nil
 }
 
-func resticDaemonset() string {
-	return `
-apiVersion: apps/v1
-kind: DaemonSet
-metadata:
-  name: restic
-  namespace: heptio-ark
-spec:
-  selector:
-    matchLabels:
-      name: restic
-  template:
-    metadata:
-      labels:
-        name: restic
-    spec:
-      serviceAccountName: ark
-      securityContext:
-        runAsUser: 0
-      volumes:
-        - name: cloud-credentials
-          secret:
-            secretName: cloud-credentials
-        - name: host-pods
-          hostPath:
-            path: /var/lib/kubelet/pods
-        - name: scratch
-          emptyDir: {}
-      containers:
-        - name: ark
-          image: gcr.io/heptio-images/ark:v0.10.0
-          command:
-            - /ark
-          args:
-            - restic
-            - server
-          volumeMounts:
-            - name: cloud-credentials
-              mountPath: /credentials
-            - name: host-pods
-              mountPath: /host_pods
-              mountPropagation: HostToContainer
-            - name: scratch
-              mountPath: /scratch
-          env:
-            - name: NODE_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: spec.nodeName
-            - name: HEPTIO_ARK_NAMESPACE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
-            - name: AWS_SHARED_CREDENTIALS_FILE
-              value: /credentials/cloud
-            - name: ARK_SCRATCH_DIR
-              value: /scratch
-`
+func resticDaemonset() *appsv1.DaemonSet {
+	user := int64(0)
+	hostToContainer := corev1.MountPropagationHostToContainer
+	return &appsv1.DaemonSet{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "restic",
+			Namespace: arkNamespace,
+		},
+		Spec: appsv1.DaemonSetSpec{
+			Selector: &metav1.LabelSelector{
+				MatchLabels: map[string]string{
+					"name": "restic",
+				},
+			},
+			Template: corev1.PodTemplateSpec{
+				ObjectMeta: metav1.ObjectMeta{
+					Labels: map[string]string{
+						"name": "restic",
+					},
+				},
+				Spec: corev1.PodSpec{
+					ServiceAccountName: arkServiceAccount,
+					SecurityContext: &corev1.PodSecurityContext{
+						RunAsUser: &user,
+					},
+					Volumes: []corev1.Volume{
+						{
+							Name: "cloud-credentials",
+							VolumeSource: corev1.VolumeSource{
+								Secret: &corev1.SecretVolumeSource{
+									SecretName: "cloud-credentials",
+								},
+							},
+						},
+						{
+							Name: "host-pods",
+							VolumeSource: corev1.VolumeSource{
+								HostPath: &corev1.HostPathVolumeSource{
+									Path: "/var/lib/kubelet/pods",
+								},
+							},
+						},
+						{
+							Name: "scratch",
+							VolumeSource: corev1.VolumeSource{
+								EmptyDir: &corev1.EmptyDirVolumeSource{},
+							},
+						},
+					},
+					Containers: []corev1.Container{
+						{
+							Name:  "ark",
+							Image: arkContainerImage,
+							Command: []string{
+								"/ark",
+							},
+							Args: []string{
+								"restic",
+								"server",
+							},
+							VolumeMounts: []corev1.VolumeMount{
+								{
+									Name:      "cloud-credentials",
+									MountPath: "/credentials",
+								},
+								{
+									Name:             "host-pods",
+									MountPath:        "/host_pods",
+									MountPropagation: &hostToContainer,
+								},
+								{
+									Name:      "scratch",
+									MountPath: "/scratch",
+								},
+							},
+							Env: []corev1.EnvVar{
+								{
+									Name: "NODE_NAME",
+									ValueFrom: &corev1.EnvVarSource{
+										FieldRef: &corev1.ObjectFieldSelector{
+											FieldPath: "spec.nodeName",
+										},
+									},
+								},
+								{
+									Name: "HEPTIO_ARK_NAMESPACE",
+									ValueFrom: &corev1.EnvVarSource{
+										FieldRef: &corev1.ObjectFieldSelector{
+											FieldPath: "metadata.namespace",
+										},
+									},
+								},
+								{
+									Name:  "AWS_SHARED_CREDENTIALS_FILE",
+									Value: "/credentials/cloud",
+								},
+								{
+									Name:  "ARK_SCRATCH_DIR",
+									Value: "/scratch",
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
 }
