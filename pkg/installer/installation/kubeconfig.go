@@ -51,17 +51,17 @@ func buildKubernetesClientset(ctx *util.Context) error {
 		return fmt.Errorf("failed to read kubeconfig: %v", err)
 	}
 
-	c, err := clientcmd.RESTConfigFromKubeConfig([]byte(kubeconfig))
+	ctx.RESTConfig, err = clientcmd.RESTConfigFromKubeConfig([]byte(kubeconfig))
 	if err != nil {
 		return fmt.Errorf("unable to build config from kubeconfig bytes: %v", err)
 	}
 
-	ctx.Clientset, err = kubernetes.NewForConfig(c)
+	ctx.Clientset, err = kubernetes.NewForConfig(ctx.RESTConfig)
 	if err != nil {
 		return fmt.Errorf("unable to build kubernetes clientset: %v", err)
 	}
 
-	ctx.APIExtensionClientset, err = apiextensionsclientset.NewForConfig(c)
+	ctx.APIExtensionClientset, err = apiextensionsclientset.NewForConfig(ctx.RESTConfig)
 	if err != nil {
 		return fmt.Errorf("unable to build apiextension-apiserver clientset: %v", err)
 	}
