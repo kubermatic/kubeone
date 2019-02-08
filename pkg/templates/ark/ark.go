@@ -57,9 +57,9 @@ func Deploy(ctx *util.Context) error {
 	crdClient := ctx.APIExtensionClientset.ApiextensionsV1beta1().CustomResourceDefinitions()
 
 	for _, crdGen := range crdGenerators {
-		err := templates.EnsureCRD(crdClient, crdGen())
-		if err != nil {
-			return err
+		crdErr := templates.EnsureCRD(crdClient, crdGen())
+		if crdErr != nil {
+			return crdErr
 		}
 	}
 
