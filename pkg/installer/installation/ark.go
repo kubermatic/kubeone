@@ -11,5 +11,7 @@ func deployArk(ctx *util.Context) error {
 		return nil
 	}
 
+	ctx.Logger.Infoln("Deploying Ark…")
+
 	return ark.Deploy(ctx)
 }

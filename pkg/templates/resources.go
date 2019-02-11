@@ -154,6 +154,29 @@ func EnsureRoleBinding(roleBindingInterface rbacv1types.RoleBindingInterface, re
 	return err
 }
 
+// EnsureConfigMap checks does ConfigMap already exists and creates it if it doesn't. If it already exists,
+// the function compares labels, annotations, and data, and if they're not as expected updates the ConfigMap.
+func EnsureConfigMap(configMapInterface corev1types.ConfigMapInterface, required *corev1.ConfigMap) error {
+	existing, err := configMapInterface.Get(required.Name, metav1.GetOptions{})
+	if apierrors.IsNotFound(err) {
+		_, err = configMapInterface.Create(required)
+		return err
+	}
+	if err != nil {
+		return err
+	}
+
+	modified := false
+	MergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
+	MergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
+	if equality.Semantic.DeepEqual(required.Data, existing.Data) && !modified {
+		return nil
+	}
+
+	_, err = configMapInterface.Update(existing)
+	return err
+}
+
 // EnsureSecret checks does Secret already exists and creates it if it doesn't. If it already exists,
 // the function compares labels, annotations, and data, and if they're not as expected updates the Secret.
 func EnsureSecret(secretInterface corev1types.SecretInterface, required *corev1.Secret) error {
