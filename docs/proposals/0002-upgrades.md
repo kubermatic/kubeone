@@ -45,6 +45,8 @@ loop over nodes nodes do:
 * uncordon node
 * unlabel `kubeone.io/upgrade-in-process`
 
+Once done, update MachineDeployment to upgrade workers as well.
+
 ## Tasks & effort
 * build intel gathering process
 * build drain process (using eviction API)
