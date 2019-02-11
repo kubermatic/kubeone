@@ -16,6 +16,29 @@ import (
 	rbacv1types "k8s.io/client-go/kubernetes/typed/rbac/v1"
 )
 
+// EnsureNamespace checks does Namespace already exists and creates it if it doesn't. If it already exists,
+// the function compares labels and annotations, and if they're not as expected updates the Namespace.
+func EnsureNamespace(namespaceInterface corev1types.NamespaceInterface, required *corev1.Namespace) error {
+	existing, err := namespaceInterface.Get(required.Name, metav1.GetOptions{})
+	if apierrors.IsNotFound(err) {
+		_, err = namespaceInterface.Create(required)
+		return err
+	}
+	if err != nil {
+		return err
+	}
+
+	modified := false
+	MergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
+	MergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
+	if !modified {
+		return nil
+	}
+
+	_, err = namespaceInterface.Update(existing)
+	return err
+}
+
 // EnsureServiceAccount checks does ServiceAccount already exists and creates it if it doesn't. If it already exists,
 // the function compares labels and annotations, and if they're not as expected updates the ServiceAccount.
 func EnsureServiceAccount(serviceAccountInterface corev1types.ServiceAccountInterface, required *corev1.ServiceAccount) error {
@@ -29,8 +52,8 @@ func EnsureServiceAccount(serviceAccountInterface corev1types.ServiceAccountInte
 	}
 
 	modified := false
-	mergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
-	mergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
+	MergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
+	MergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
 	if !modified {
 		return nil
 	}
@@ -52,8 +75,8 @@ func EnsureClusterRole(clusterRoleInterface rbacv1types.ClusterRoleInterface, re
 	}
 
 	modified := false
-	mergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
-	mergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
+	MergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
+	MergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
 	if equality.Semantic.DeepEqual(required.Rules, existing.Rules) && !modified {
 		return nil
 	}
@@ -75,8 +98,8 @@ func EnsureClusterRoleBinding(clusterRoleBindingInterface rbacv1types.ClusterRol
 	}
 
 	modified := false
-	mergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
-	mergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
+	MergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
+	MergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
 	if equality.Semantic.DeepEqual(required.RoleRef, existing.RoleRef) && equality.Semantic.DeepEqual(required.Subjects, existing.Subjects) && !modified {
 		return nil
 	}
@@ -98,8 +121,8 @@ func EnsureRole(roleInterface rbacv1types.RoleInterface, required *rbacv1.Role) 
 	}
 
 	modified := false
-	mergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
-	mergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
+	MergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
+	MergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
 	if equality.Semantic.DeepEqual(required.Rules, existing.Rules) && !modified {
 		return nil
 	}
@@ -121,8 +144,8 @@ func EnsureRoleBinding(roleBindingInterface rbacv1types.RoleBindingInterface, re
 	}
 
 	modified := false
-	mergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
-	mergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
+	MergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
+	MergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
 	if equality.Semantic.DeepEqual(required.RoleRef, existing.RoleRef) && equality.Semantic.DeepEqual(required.Subjects, existing.Subjects) && !modified {
 		return nil
 	}
@@ -144,8 +167,8 @@ func EnsureSecret(secretInterface corev1types.SecretInterface, required *corev1.
 	}
 
 	modified := false
-	mergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
-	mergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
+	MergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
+	MergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
 	if equality.Semantic.DeepEqual(required.Data, existing.Data) && !modified {
 		return nil
 	}
@@ -167,13 +190,36 @@ func EnsureDeployment(deploymentInterface appsv1types.DeploymentInterface, requi
 	}
 
 	modified := false
-	mergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
-	mergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
+	MergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
+	MergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
 	if equality.Semantic.DeepEqual(required.Spec, existing.Spec) && !modified {
 		return nil
 	}
 
 	_, err = deploymentInterface.Update(existing)
+	return err
+}
+
+// EnsureDaemonSet checks does DaemonSet already exists and creates it if it doesn't. If it already exists,
+// the function compares labels, annotations, and spec, and if they're not as expected updates the DaemonSet.
+func EnsureDaemonSet(daemonSetInterface appsv1types.DaemonSetInterface, required *appsv1.DaemonSet) error {
+	existing, err := daemonSetInterface.Get(required.Name, metav1.GetOptions{})
+	if apierrors.IsNotFound(err) {
+		_, err = daemonSetInterface.Create(required)
+		return err
+	}
+	if err != nil {
+		return err
+	}
+
+	modified := false
+	MergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
+	MergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
+	if equality.Semantic.DeepEqual(required.Spec, existing.Spec) && !modified {
+		return nil
+	}
+
+	_, err = daemonSetInterface.Update(existing)
 	return err
 }
 
@@ -190,8 +236,8 @@ func EnsureService(serviceInterface corev1types.ServiceInterface, required *core
 	}
 
 	modified := false
-	mergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
-	mergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
+	MergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
+	MergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
 	if equality.Semantic.DeepEqual(required.Spec, existing.Spec) && !modified {
 		return nil
 	}
@@ -213,8 +259,8 @@ func EnsureCRD(customResourceDefinitionInterface apiextensionsv1beta1types.Custo
 	}
 
 	modified := false
-	mergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
-	mergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
+	MergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
+	MergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
 	if equality.Semantic.DeepEqual(required.Spec, existing.Spec) && !modified {
 		return nil
 	}
@@ -237,25 +283,12 @@ func EnsureMutatingWebhookConfiguration(mutatingWebhookConfigurationInterface ad
 	}
 
 	modified := false
-	mergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
-	mergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
+	MergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
+	MergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
 	if equality.Semantic.DeepEqual(required.Webhooks, existing.Webhooks) && !modified {
 		return nil
 	}
 
 	_, err = mutatingWebhookConfigurationInterface.Update(existing)
 	return err
-}
-
-func mergeStringMap(modified *bool, destination *map[string]string, required map[string]string) {
-	if *destination == nil {
-		*destination = map[string]string{}
-	}
-
-	for k, v := range required {
-		if destinationV, ok := (*destination)[k]; !ok || destinationV != v {
-			(*destination)[k] = v
-			*modified = true
-		}
-	}
 }
