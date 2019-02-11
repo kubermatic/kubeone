@@ -28,7 +28,7 @@ func configMap() *corev1.ConfigMap {
 			"cni_network_config": cniNetworkConfig,
 
 			// Flannel network configuration. Mounted into the flannel container
-			"net-conf.json": flannelNetworkConfig,
+			"net-conf.json": "",
 		},
 	}
 }

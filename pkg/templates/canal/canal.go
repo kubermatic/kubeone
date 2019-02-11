@@ -50,9 +50,6 @@ const (
     ]
 }
 `
-)
-
-var (
 	// Flannel network configuration (mounted into the flannel container)
 	flannelNetworkConfig = `
 {
@@ -95,6 +92,7 @@ func Deploy(ctx *util.Context) error {
 
 	// ConfigMap
 	cm := configMap()
+	cm.Data["net-conf.json"] = buf.String()
 	if err := templates.EnsureConfigMap(coreClient.ConfigMaps(cm.Namespace), cm); err != nil {
 		return err
 	}
