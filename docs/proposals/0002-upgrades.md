@@ -40,11 +40,12 @@ loop over nodes nodes do:
 * cordon/drain node
 * run `kubeadm upgrade`
 * upgrade/restart kubelet
-* wait for etcd to settle after restart
+* wait for etcd to settle after restart (watch pod to became ready, which means
+  Running 1/1)
 * uncordon node
 * unlabel `kubeone.io/upgrade-in-process`
 
 ## Tasks & effort
 * build intel gathering process
 * build drain process (using eviction API)
-* provide access to the etcd (over the SSH port forward), using etcd-client
+* build new `kubeone upgrade` CLI command
