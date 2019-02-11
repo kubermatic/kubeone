@@ -6,7 +6,6 @@ import (
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/kubermatic/kubeone/pkg/templates/canal"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
 )
 
@@ -30,12 +29,6 @@ func generateConfigurationFiles(ctx *util.Context) error {
 		}
 		ctx.Configuration.AddFile("workers.yaml", machines)
 	}
-
-	canalManifest, err := canal.Configuration(ctx.Cluster)
-	if err != nil {
-		return fmt.Errorf("failed to create canal config: %v", err)
-	}
-	ctx.Configuration.AddFile("canal.yaml", canalManifest)
 
 	return nil
 }

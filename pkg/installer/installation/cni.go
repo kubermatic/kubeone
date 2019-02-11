@@ -3,9 +3,8 @@ package installation
 import (
 	"fmt"
 
-	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
-	"github.com/kubermatic/kubeone/pkg/ssh"
+	"github.com/kubermatic/kubeone/pkg/templates/canal"
 )
 
 func applyCNI(ctx *util.Context, cni string) error {
@@ -18,12 +17,6 @@ func applyCNI(ctx *util.Context, cni string) error {
 }
 
 func applyCanalCNI(ctx *util.Context) error {
-	return ctx.RunTaskOnLeader(func(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
-		ctx.Logger.Infoln("Applying canal CNI plugin…")
-		_, _, err := ctx.Runner.Run(`kubectl apply -f {{ .WORK_DIR }}/canal.yaml`, util.TemplateVariables{
-			"WORK_DIR": ctx.WorkDir,
-		})
-
-		return err
-	})
+	ctx.Logger.Infoln("Applying canal CNI plugin…")
+	return canal.Deploy(ctx)
 }
