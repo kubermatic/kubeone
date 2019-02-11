@@ -8,7 +8,7 @@ idle((idle)) -- start_scan --> 0_of_3((0/3))
 1_of_3 -- no_more_hosts --> error
 1_of_3 -- host_unreachable --> error
 2_of_3 -- found_node --> 3_of_3((3/3))
-2_of_3 -- no_more_hosts --> reconcile
+2_of_3 -- no_more_hosts --> repair
 2_of_3 -- host_unreachable --> error
 3_of_3 -- no_more_hosts --> version_check
 version_check((version check)) -- versions_match_config --> exit_0["exit(0)"]
