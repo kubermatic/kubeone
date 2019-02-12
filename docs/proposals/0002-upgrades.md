@@ -12,7 +12,7 @@ time.
 `kubeadm` makes the process of upgrade quite simple. Before proceed to actual
 upgrade kubeone need to grab some info about cluster in question:
 
-### Reconciliation
+### Pre-flight checks
 * grab nodes info from API server
     * versions
     * external/internal IPs
@@ -22,6 +22,7 @@ upgrade kubeone need to grab some info about cluster in question:
     * 3/3 of hosts are accessible / initialized
     * 3/3 of nodes are ready
     * 3/3 of nodes versions <= requested version
+    * 3/3 of nodes pass the kubernetes version skew policy
     * 0/3 of nodes have `kubeone.io/upgrade-in-process` label (overridden by --force)
 
 ### `kubeone.io/upgrading-in-process` label
@@ -37,12 +38,11 @@ manually and remove that label from the node.
 loop over nodes nodes do:
 * upgrade kubeadm binary
 * label as `kubeone.io/upgrade-in-process`
-* cordon/drain node
-* run `kubeadm upgrade`
+* run `kubeadm upgrade apply` on "leader node"
+* run `kubeadm upgrade node experimental-control-plane` on "other nodes"
 * upgrade/restart kubelet
 * wait for etcd to settle after restart (watch pod to became ready, which means
   Running 1/1)
-* uncordon node
 * unlabel `kubeone.io/upgrade-in-process`
 
 Once done, update MachineDeployment to upgrade workers as well.
