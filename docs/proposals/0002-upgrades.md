@@ -8,6 +8,16 @@ The point of `kubeone` project since the beginning was to provide full cluster
 life-cycle experience, which should include ability to upgrade cluster over
 time.
 
+## Goals
+* orchestrate a minimally viable way to upgrade kubernetes control plain
+  components
+
+## Non Goals
+Following topics are subjects for future proposals:
+* "addons manager"
+    * upgrading whatsoever custom deployments kubeone created during `install`
+* live backups
+
 ## Implementation
 `kubeadm` makes the process of upgrade quite simple. Before proceed to actual
 upgrade kubeone need to grab some info about cluster in question:
