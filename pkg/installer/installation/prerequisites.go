@@ -9,6 +9,8 @@ import (
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
 )
 
+const dockerVersion = "18.09.2"
+
 func installPrerequisites(ctx *util.Context) error {
 	ctx.Logger.Infoln("Installing prerequisites…")
 
@@ -101,7 +103,7 @@ func installKubeadm(ctx *util.Context, node *config.HostConfig) error {
 func installKubeadmDebian(ctx *util.Context) error {
 	_, _, err := ctx.Runner.Run(kubeadmDebianCommand, util.TemplateVariables{
 		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
-		"DOCKER_VERSION":     ctx.Cluster.Versions.Docker,
+		"DOCKER_VERSION":     dockerVersion,
 	})
 
 	return err
@@ -198,7 +200,6 @@ func installKubeadmCentOS(ctx *util.Context) error {
 func installKubeadmCoreOS(ctx *util.Context) error {
 	_, _, err := ctx.Runner.Run(kubeadmCoreOSCommand, util.TemplateVariables{
 		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
-		"DOCKER_VERSION":     ctx.Cluster.Versions.Docker,
 		"CNI_VERSION":        "v0.7.1",
 	})
 

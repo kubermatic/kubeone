@@ -298,10 +298,9 @@ func (p *ProviderConfig) CloudProviderInTree() bool {
 	}
 }
 
-// VersionConfig describes the versions of Kubernetes and Docker that are installed.
+// VersionConfig describes the versions of Kubernetes that is installed.
 type VersionConfig struct {
 	Kubernetes string `json:"kubernetes"`
-	Docker     string `json:"docker"`
 }
 
 func (m *VersionConfig) Validate() error {
