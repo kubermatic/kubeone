@@ -6,7 +6,6 @@ name: my-demo-cluster
 
 versions:
   kubernetes: '1.13.1'
-  docker: '18.06' # depends on the OS installed on your machines
 
 network:
   # the subnet used for pods (flannel);
