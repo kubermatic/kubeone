@@ -16,7 +16,7 @@ import (
 	clusterv1alpha1 "sigs.k8s.io/cluster-api/pkg/apis/cluster/v1alpha1"
 )
 
-type providerConfig struct {
+type providerSpec struct {
 	SSHPublicKeys       []string            `json:"sshPublicKeys"`
 	CloudProvider       config.ProviderName `json:"cloudProvider"`
 	CloudProviderSpec   interface{}         `json:"cloudProviderSpec"`
@@ -43,14 +43,14 @@ func MachineDeployments(cluster *config.Cluster) (string, error) {
 func createMachineDeployment(cluster *config.Cluster, workerset config.WorkerConfig) (*clusterv1alpha1.MachineDeployment, error) {
 	provider := cluster.Provider.Name
 
-	providerSpec, err := machineSpec(cluster, workerset, provider)
+	cloudProviderSpec, err := machineSpec(cluster, workerset, provider)
 	if err != nil {
 		return nil, err
 	}
 
-	config := providerConfig{
+	config := providerSpec{
 		CloudProvider:       provider,
-		CloudProviderSpec:   providerSpec,
+		CloudProviderSpec:   cloudProviderSpec,
 		OperatingSystem:     workerset.Config.OperatingSystem,
 		OperatingSystemSpec: workerset.Config.OperatingSystemSpec,
 		SSHPublicKeys:       workerset.Config.SSHPublicKeys,
@@ -104,7 +104,7 @@ func createMachineDeployment(cluster *config.Cluster, workerset config.WorkerCon
 					Versions: clusterv1alpha1.MachineVersionInfo{
 						Kubelet: cluster.Versions.Kubernetes,
 					},
-					ProviderConfig: clusterv1alpha1.ProviderConfig{
+					ProviderSpec: clusterv1alpha1.ProviderSpec{
 						Value: &runtime.RawExtension{Raw: encoded},
 					},
 				},
