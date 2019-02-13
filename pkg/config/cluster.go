@@ -16,7 +16,6 @@ type Cluster struct {
 	Name              string                  `json:"name"`
 	Hosts             []*HostConfig           `json:"hosts"`
 	APIServer         APIServerConfig         `json:"apiserver"`
-	ETCD              ETCDConfig              `json:"etcd"`
 	Provider          ProviderConfig          `json:"provider"`
 	Versions          VersionConfig           `json:"versions"`
 	Network           NetworkConfig           `json:"network"`
@@ -38,16 +37,6 @@ func (m *Cluster) DefaultAndValidate() error {
 	if len(m.Hosts) == 0 {
 		return errors.New("no master hosts specified")
 	}
-
-	if m.ETCD.Version == "" {
-		m.ETCD.Version = "3.2.24"
-	}
-
-	if m.ETCD.Version != "3.2.24" {
-		return fmt.Errorf("Only supported etcd version is 3.2.24")
-	}
-
-	m.EtcdClusterToken()
 
 	m.Hosts[0].IsLeader = true
 
@@ -87,12 +76,6 @@ func (m *Cluster) DefaultAndValidate() error {
 	}
 
 	return nil
-}
-
-// EtcdClusterToken returns the cluster name
-// It must be deterministic across multiple runs
-func (m *Cluster) EtcdClusterToken() string {
-	return m.Name
 }
 
 // Leader returns the first configured host. Only call this after
@@ -169,23 +152,9 @@ func (m *HostConfig) AddDefaultsAndValidate() error {
 	return nil
 }
 
-// EtcdURL with schema
-func (m *HostConfig) EtcdURL() string {
-	return fmt.Sprintf("https://%s:2379", m.PrivateAddress)
-}
-
-// EtcdPeerURL with schema
-func (m *HostConfig) EtcdPeerURL() string {
-	return fmt.Sprintf("https://%s:2380", m.PrivateAddress)
-}
-
 // APIServerConfig describes the load balancer address.
 type APIServerConfig struct {
 	Address string `json:"address"`
-}
-
-type ETCDConfig struct {
-	Version string `json:"address"`
 }
 
 // ProviderName represents the name of an provider
@@ -313,11 +282,6 @@ func (m *VersionConfig) Validate() error {
 		return errors.New("kubernetes versions lower than 1.13 are not supported")
 	}
 	return nil
-}
-
-// Etcd version
-func (m *VersionConfig) Etcd() string {
-	return "3.1.13"
 }
 
 // NetworkConfig describes the node network.
