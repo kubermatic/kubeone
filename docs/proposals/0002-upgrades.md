@@ -9,14 +9,14 @@ life-cycle experience, which should include ability to upgrade cluster over
 time.
 
 ## Goals
-* orchestrate a minimally viable way to upgrade kubernetes control plain
+* orchestrate a minimally viable way to upgrade kubernetes control plane
   components
 
 ## Non Goals
 Following topics are subjects for future proposals:
 * "addons manager"
     * upgrading whatsoever custom deployments kubeone created during `install`
-* live backups
+* before upgrade backups of currently running configuration and etcd snapshots
 
 ## Implementation
 `kubeadm` makes the process of upgrade quite simple. Before proceed to actual
@@ -58,6 +58,8 @@ loop over nodes nodes do:
 Once done, update MachineDeployment to upgrade workers as well.
 
 ## Tasks & effort
-* build intel gathering process
-* build drain process (using eviction API)
+* build pre-flight checks
+* scripts to support system packages upgrades
+* scripts to support `kubeadm` invocations
+* upgrade MachineDeployments if any
 * build new `kubeone upgrade` CLI command
