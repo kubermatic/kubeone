@@ -29,6 +29,9 @@ func Deploy(ctx *util.Context) error {
 	if ctx.APIExtensionClientset == nil {
 		return errors.New("kubernetes apiextension clientset not initialized")
 	}
+	if ctx.RESTConfig == nil {
+		return errors.New("kubernetes rest config not initialized")
+	}
 
 	// Kubernetes clientsets
 	coreClient := ctx.Clientset.CoreV1()

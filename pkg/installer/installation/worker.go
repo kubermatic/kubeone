@@ -16,7 +16,7 @@ func createWorkerMachines(ctx *util.Context) error {
 		return nil
 	}
 
-	return ctx.RunTaskOnLeader(func(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
+	err := ctx.RunTaskOnLeader(func(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Infoln("Waiting for machine-controller to come up…")
 
 		cmd := fmt.Sprintf(
@@ -42,11 +42,16 @@ func createWorkerMachines(ctx *util.Context) error {
 		// it can still take a bit before the MC is actually ready
 		time.Sleep(10 * time.Second)
 
-		ctx.Logger.Infoln("Creating worker machines…")
 		_, _, err := ctx.Runner.Run(`kubectl apply -f ./{{ .WORK_DIR }}/workers.yaml`, util.TemplateVariables{
 			"WORK_DIR": ctx.WorkDir,
 		})
 
 		return err
 	})
+	if err != nil {
+		return err
+	}
+
+	ctx.Logger.Infoln("Creating worker machines…")
+	return machinecontroller.DeployMachineDeployments(ctx)
 }

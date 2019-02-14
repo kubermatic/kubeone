@@ -6,14 +6,19 @@ import (
 	"fmt"
 
 	"github.com/kubermatic/kubeone/pkg/config"
+	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/templates"
 
+	"k8s.io/apimachinery/pkg/api/equality"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	clustercommon "sigs.k8s.io/cluster-api/pkg/apis/cluster/common"
 	clusterv1alpha1 "sigs.k8s.io/cluster-api/pkg/apis/cluster/v1alpha1"
+	clusterclientset "sigs.k8s.io/cluster-api/pkg/client/clientset_generated/clientset"
+	clustertypes "sigs.k8s.io/cluster-api/pkg/client/clientset_generated/clientset/typed/cluster/v1alpha1"
 )
 
 type providerSpec struct {
@@ -24,20 +29,36 @@ type providerSpec struct {
 	OperatingSystemSpec interface{}         `json:"operatingSystemSpec"`
 }
 
-// MachineDeployments returns YAML manifests for MachineDeployments
-func MachineDeployments(cluster *config.Cluster) (string, error) {
-	deployments := make([]interface{}, 0)
-
-	for _, workerset := range cluster.Workers {
-		deployment, err := createMachineDeployment(cluster, workerset)
-		if err != nil {
-			return "", err
-		}
-
-		deployments = append(deployments, deployment)
+// DeployMachineDeployments deploys MachineDeployments that create appropriate machines
+func DeployMachineDeployments(ctx *util.Context) error {
+	if ctx.Clientset == nil {
+		return errors.New("kubernetes clientset not initialized")
+	}
+	if ctx.RESTConfig == nil {
+		return errors.New("kubernetes rest config not initialized")
 	}
 
-	return templates.KubernetesToYAML(deployments)
+	// Create Cluster-API clientset
+	clusterapiClientset, err := clusterclientset.NewForConfig(ctx.RESTConfig)
+	if err != nil {
+		return err
+	}
+	clusterapiClient := clusterapiClientset.ClusterV1alpha1()
+
+	// Apply MachineDeployments
+	for _, workerset := range ctx.Cluster.Workers {
+		deployment, err := createMachineDeployment(ctx.Cluster, workerset)
+		if err != nil {
+			return err
+		}
+
+		err = ensureMachineDeployment(clusterapiClient.MachineDeployments(deployment.Namespace), deployment)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func createMachineDeployment(cluster *config.Cluster, workerset config.WorkerConfig) (*clusterv1alpha1.MachineDeployment, error) {
@@ -111,6 +132,27 @@ func createMachineDeployment(cluster *config.Cluster, workerset config.WorkerCon
 			},
 		},
 	}, nil
+}
+
+func ensureMachineDeployment(machineDeploymentInterface clustertypes.MachineDeploymentInterface, required *clusterv1alpha1.MachineDeployment) error {
+	existing, err := machineDeploymentInterface.Get(required.Name, metav1.GetOptions{})
+	if apierrors.IsNotFound(err) {
+		_, err = machineDeploymentInterface.Create(required)
+		return err
+	}
+	if err != nil {
+		return err
+	}
+
+	modified := false
+	templates.MergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
+	templates.MergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
+	if equality.Semantic.DeepEqual(required.Spec, existing.Spec) && !modified {
+		return nil
+	}
+
+	_, err = machineDeploymentInterface.Update(existing)
+	return err
 }
 
 func machineSpec(cluster *config.Cluster, workerset config.WorkerConfig, provider config.ProviderName) (map[string]interface{}, error) {
