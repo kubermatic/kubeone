@@ -24,6 +24,10 @@ lint:
 dep:
 	dep ensure -v
 
+check-dependencies:
+	dep status
+	dep check
+
 docker-make-install:
 	docker run -it --rm \
 		-v $(PWD):/go/src/github.com/kubermatic/kubeone \
