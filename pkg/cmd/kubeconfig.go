@@ -6,17 +6,18 @@ import (
 
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 type kubeconfigOptions struct {
-	options
+	globalOptions
 	Manifest string
 }
 
 // KubeconfigCommand returns the structure for declaring the "install" subcommand.
-func kubeconfigCmd() *cobra.Command {
-	var ko = &kubeconfigOptions{}
-	var kubeconfigCmd = &cobra.Command{
+func kubeconfigCmd(rootFlags *pflag.FlagSet) *cobra.Command {
+	kopts := &kubeconfigOptions{}
+	cmd := &cobra.Command{
 		Use:   "kubeconfig <manifest>",
 		Short: "Download the kubeconfig file from master",
 		Long: `Download the kubeconfig file from master.
@@ -24,23 +25,28 @@ func kubeconfigCmd() *cobra.Command {
 This command takes KubeOne manifest which contains information about hosts.
 It's possible to source information about hosts from Terraform output, using the '--tfjson' flag.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			ko.TerraformState = o.TerraformState
-			ko.Verbose = o.Verbose
+			gopts, err := persistentGlobalOptions(rootFlags)
+			if err != nil {
+				return err
+			}
+
+			kopts.TerraformState = gopts.TerraformState
+			kopts.Verbose = gopts.Verbose
 
 			if len(args) != 1 {
 				return errors.New("expected path to a cluster config file as an argument")
 			}
 
-			ko.Manifest = args[0]
-			if ko.Manifest == "" {
+			kopts.Manifest = args[0]
+			if kopts.Manifest == "" {
 				return errors.New("no cluster config file given")
 			}
 
-			return runKubeconfig(ko)
+			return runKubeconfig(kopts)
 		},
 	}
 
-	return kubeconfigCmd
+	return cmd
 }
 
 // runKubeconfig downloads kubeconfig file

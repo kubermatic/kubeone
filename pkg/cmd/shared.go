@@ -9,15 +9,45 @@ import (
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/terraform"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/pflag"
 )
 
-func initLogger() *logrus.Logger {
+const (
+	globalTerraformFlagName = "tfjson"
+	globalVerboseFlagName   = "verbose"
+)
+
+// globalOptions are global globalOptions same for all commands
+type globalOptions struct {
+	TerraformState string
+	Verbose        bool
+}
+
+func persistentGlobalOptions(fs *pflag.FlagSet) (*globalOptions, error) {
+	verbose, err := fs.GetBool(globalVerboseFlagName)
+	if err != nil {
+		return nil, err
+	}
+
+	tfjson, err := fs.GetString(globalTerraformFlagName)
+	if err != nil {
+		return nil, err
+	}
+
+	return &globalOptions{
+		Verbose:        verbose,
+		TerraformState: tfjson,
+	}, nil
+}
+
+func initLogger(verbose bool) *logrus.Logger {
 	logger := logrus.New()
 	logger.Formatter = &logrus.TextFormatter{
 		FullTimestamp:   true,
 		TimestampFormat: "15:04:05 MST",
 	}
-	if o.Verbose {
+
+	if verbose {
 		logger.SetLevel(logrus.DebugLevel)
 	}
 

@@ -6,23 +6,24 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/spf13/pflag"
+
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer"
-
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
 type installOptions struct {
-	options
+	globalOptions
 	Manifest   string
 	BackupFile string
 }
 
 // installCmd setups install command
-func installCmd() *cobra.Command {
-	var io = &installOptions{}
-	var installCmd = &cobra.Command{
+func installCmd(rootFlags *pflag.FlagSet) *cobra.Command {
+	iopts := &installOptions{}
+	cmd := &cobra.Command{
 		Use:   "install <manifest>",
 		Short: "Install Kubernetes",
 		Long: `Install Kubernetes on pre-existing machines
@@ -30,26 +31,31 @@ func installCmd() *cobra.Command {
 This command takes KubeOne manifest which contains information about hosts and how the cluster should be provisioned.
 It's possible to source information about hosts from Terraform output, using the '--tfjson' flag.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			logger := initLogger()
-			io.TerraformState = o.TerraformState
-			io.Verbose = o.Verbose
+			gopts, err := persistentGlobalOptions(rootFlags)
+			if err != nil {
+				return err
+			}
+
+			logger := initLogger(gopts.Verbose)
+			iopts.TerraformState = gopts.TerraformState
+			iopts.Verbose = gopts.Verbose
 
 			if len(args) != 1 {
 				return errors.New("expected path to a cluster config file as an argument")
 			}
 
-			io.Manifest = args[0]
-			if io.Manifest == "" {
+			iopts.Manifest = args[0]
+			if iopts.Manifest == "" {
 				return errors.New("no cluster config file given")
 			}
 
-			return runInstall(logger, io)
+			return runInstall(logger, iopts)
 		},
 	}
 
-	installCmd.Flags().StringVarP(&io.BackupFile, "backup", "b", "", "path to where the PKI backup .tar.gz file should be placed (default: location of cluster config file)")
+	cmd.Flags().StringVarP(&iopts.BackupFile, "backup", "b", "", "path to where the PKI backup .tar.gz file should be placed (default: location of cluster config file)")
 
-	return installCmd
+	return cmd
 }
 
 // runInstall provisions Kubernetes on the provided machines
