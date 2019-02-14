@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/pflag"
 )
 
-func upgradeCmd(rootFlags *pflag.FlagSet) *cobra.Command {
+func upgradeCmd(_ *pflag.FlagSet) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "upgrade <manifest>",
 		Short: "Upgrade Kubernetes",
