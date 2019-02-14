@@ -511,11 +511,14 @@
   revision = "5933b9771b71c2d05543a0cd088542013c1446e0"
 
 [[projects]]
-  digest = "1:032b67ae5a3cd593171814b4f6e659831d4de7885e4aedae9dfb9f2b89d612c0"
+  digest = "1:2c310b2c2e8837e5cbfce86ca9af127bf312877337168f20b7e5e382352ff25a"
   name = "sigs.k8s.io/cluster-api"
   packages = [
     "pkg/apis/cluster/common",
     "pkg/apis/cluster/v1alpha1",
+    "pkg/client/clientset_generated/clientset",
+    "pkg/client/clientset_generated/clientset/scheme",
+    "pkg/client/clientset_generated/clientset/typed/cluster/v1alpha1",
   ]
   pruneopts = "NUT"
   revision = "45f1c93260140936c610e56575d7505ba3d52444"
@@ -558,6 +561,7 @@
     "k8s.io/apimachinery/pkg/labels",
     "k8s.io/apimachinery/pkg/runtime",
     "k8s.io/apimachinery/pkg/util/intstr",
+    "k8s.io/apimachinery/pkg/util/wait",
     "k8s.io/client-go/kubernetes",
     "k8s.io/client-go/kubernetes/typed/admissionregistration/v1beta1",
     "k8s.io/client-go/kubernetes/typed/apps/v1",
@@ -572,6 +576,8 @@
     "k8s.io/kubernetes/pkg/registry/core/service/ipallocator",
     "sigs.k8s.io/cluster-api/pkg/apis/cluster/common",
     "sigs.k8s.io/cluster-api/pkg/apis/cluster/v1alpha1",
+    "sigs.k8s.io/cluster-api/pkg/client/clientset_generated/clientset",
+    "sigs.k8s.io/cluster-api/pkg/client/clientset_generated/clientset/typed/cluster/v1alpha1",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
