@@ -37,6 +37,7 @@ func newRoot() *cobra.Command {
 
 	rootCmd.AddCommand(
 		installCmd(fs),
+		upgradeCmd(fs),
 		resetCmd(fs),
 		kubeconfigCmd(fs),
 	)
