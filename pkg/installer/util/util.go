@@ -3,8 +3,7 @@ package util
 import (
 	"bytes"
 	"fmt"
-
-	"github.com/alecthomas/template"
+	"text/template"
 )
 
 // TemplateVariables is a render context for templates

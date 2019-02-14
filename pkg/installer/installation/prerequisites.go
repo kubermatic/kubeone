@@ -50,6 +50,12 @@ func installPrerequisitesOnNode(ctx *util.Context, node *config.HostConfig, conn
 		return fmt.Errorf("failed to determine hostname: %v", err)
 	}
 
+	ctx.Logger.Infoln("Creating environment file…")
+	err = createEnvironmentFile(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to create environment file: %v", err)
+	}
+
 	node.Hostname = hostname
 
 	logger := ctx.Logger.WithField("os", os)
@@ -58,6 +64,11 @@ func installPrerequisitesOnNode(ctx *util.Context, node *config.HostConfig, conn
 	err = installKubeadm(ctx, node)
 	if err != nil {
 		return fmt.Errorf("failed to install kubeadm: %v", err)
+	}
+
+	err = configureDockerDaemonProxy(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to configure proxy for docker daemon: %v", err)
 	}
 
 	logger.Infoln("Deploying configuration files…")
@@ -79,6 +90,34 @@ func determineHostname(ctx *util.Context, _ *config.HostConfig) (string, error) 
 
 	return stdout, err
 }
+
+func createEnvironmentFile(ctx *util.Context) error {
+	_, _, err := ctx.Runner.Run(environmentFileCommand, util.TemplateVariables{
+		"HTTP_PROXY":  ctx.Cluster.Proxy.HTTPProxy,
+		"HTTPS_PROXY": ctx.Cluster.Proxy.HTTPSProxy,
+		"NO_PROXY":    ctx.Cluster.Proxy.NoProxy,
+	})
+
+	return err
+}
+
+const environmentFileCommand = `
+sudo mkdir -p /etc/kubeone
+cat <<EOF |sudo tee /etc/kubeone/proxy-env
+{{ if .HTTP_PROXY -}}
+HTTP_PROXY="{{ .HTTP_PROXY }}"
+http_proxy="{{ .HTTP_PROXY }}"
+{{ end }}
+{{- if .HTTPS_PROXY -}}
+HTTPS_PROXY="{{ .HTTPS_PROXY }}"
+https_proxy="{{ .HTTPS_PROXY }}"
+{{ end }}
+{{- if .NO_PROXY -}}
+NO_PROXY="{{ .NO_PROXY }}"
+no_proxy="{{ .NO_PROXY }}"
+{{ end }}
+EOF
+`
 
 func installKubeadm(ctx *util.Context, node *config.HostConfig) error {
 	var err error
@@ -114,6 +153,7 @@ sudo swapoff -a
 sudo sed -i '/.*swap.*/d' /etc/fstab
 
 source /etc/os-release
+source /etc/kubeone/proxy-env
 
 # Short-Circuit the installation if it was arleady executed
 if type docker &>/dev/null && type kubelet &>/dev/null; then exit 0; fi
@@ -163,6 +203,8 @@ sudo sed -i '/.*swap.*/d' /etc/fstab
 sudo setenforce 0
 sudo sed -i s/SELINUX=enforcing/SELINUX=permissive/g /etc/sysconfig/selinux
 
+source /etc/kubeone/proxy-env
+
 # Short-Circuit the installation if it was arleady executed
 if type docker &>/dev/null && type kubelet &>/dev/null; then exit 0; fi
 
@@ -207,6 +249,8 @@ func installKubeadmCoreOS(ctx *util.Context) error {
 }
 
 const kubeadmCoreOSCommand = `
+source /etc/kubeone/proxy-env
+
 sudo mkdir -p /opt/cni/bin /etc/kubernetes/pki /etc/kubernetes/manifests
 curl -L "https://github.com/containernetworking/plugins/releases/download/{{ .CNI_VERSION }}/cni-plugins-amd64-{{ .CNI_VERSION }}.tgz" | \
      sudo tar -C /opt/cni/bin -xz
@@ -251,3 +295,25 @@ sudo chmod 600 /etc/kubernetes/cloud-config
 
 	return err
 }
+
+func configureDockerDaemonProxy(ctx *util.Context) error {
+	if ctx.Cluster.Proxy.HTTPProxy == "" && ctx.Cluster.Proxy.HTTPSProxy == "" && ctx.Cluster.Proxy.NoProxy == "" {
+		return nil
+	}
+
+	ctx.Logger.Infoln("Configuring docker proxy…")
+	_, _, err := ctx.Runner.Run(dockerDaemonProxy, util.TemplateVariables{})
+
+	return err
+}
+
+const dockerDaemonProxy = `
+# Configure HTTP/HTTPS proxy for Docker
+sudo mkdir -p /etc/systemd/system/docker.service.d
+cat <<EOF |sudo tee /etc/systemd/system/docker.service.d/http-proxy.conf
+[Service]
+EnvironmentFile=/etc/kubeone/proxy-env
+EOF
+sudo systemctl daemon-reload
+if sudo systemctl status docker  &>/dev/null; then sudo systemctl restart docker; fi
+`

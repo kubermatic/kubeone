@@ -10,17 +10,6 @@
   version = "v1.4.2"
 
 [[projects]]
-  branch = "master"
-  digest = "1:f3793f8a708522400cef1dba23385e901aede5519f68971fd69938ef330b07a1"
-  name = "github.com/alecthomas/template"
-  packages = [
-    ".",
-    "parse",
-  ]
-  pruneopts = "NUT"
-  revision = "a0175ee3bccc567396460bf5acd36800cb10c49c"
-
-[[projects]]
   digest = "1:4af9b6332940265d7ef2cb19e34f4aad5cc2f6fe29b7a2f56e3db84bf2ff3b11"
   name = "github.com/aws/aws-sdk-go"
   packages = [
@@ -544,7 +533,6 @@
   analyzer-version = 1
   input-imports = [
     "github.com/Masterminds/semver",
-    "github.com/alecthomas/template",
     "github.com/aws/aws-sdk-go/aws/credentials",
     "github.com/ghodss/yaml",
     "github.com/heptio/ark/pkg/apis/ark/v1",

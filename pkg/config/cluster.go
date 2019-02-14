@@ -19,6 +19,7 @@ type Cluster struct {
 	Provider          ProviderConfig          `json:"provider"`
 	Versions          VersionConfig           `json:"versions"`
 	Network           NetworkConfig           `json:"network"`
+	Proxy             ProxyConfig             `json:"proxy"`
 	Workers           []WorkerConfig          `json:"workers"`
 	Backup            BackupConfig            `json:"backup"`
 	MachineController MachineControllerConfig `json:"machine_controller"`
@@ -155,6 +156,12 @@ func (m *HostConfig) AddDefaultsAndValidate() error {
 // APIServerConfig describes the load balancer address.
 type APIServerConfig struct {
 	Address string `json:"address"`
+}
+
+type ProxyConfig struct {
+	HTTPProxy  string `json:"http_proxy"`
+	HTTPSProxy string `json:"https_proxy"`
+	NoProxy    string `json:"no_proxy"`
 }
 
 // ProviderName represents the name of an provider
