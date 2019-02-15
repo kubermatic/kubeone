@@ -3,6 +3,7 @@ package machinecontroller
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/kubermatic/kubeone/pkg/certificate"
 	"github.com/kubermatic/kubeone/pkg/config"
@@ -14,6 +15,8 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
+	"k8s.io/apimachinery/pkg/util/wait"
+	corev1types "k8s.io/client-go/kubernetes/typed/core/v1"
 	certutil "k8s.io/client-go/util/cert"
 	"k8s.io/client-go/util/cert/triple"
 )
@@ -44,21 +47,21 @@ func DeployWebhookConfiguration(ctx *util.Context) error {
 	}
 
 	// Deploy Webhook
-	deployment := WebhookDeployment(ctx.Cluster)
+	deployment := webhookDeployment(ctx.Cluster)
 	err = templates.EnsureDeployment(appsClient.Deployments(deployment.Namespace), deployment)
 	if err != nil {
 		return err
 	}
 
 	// Deploy Webhook service
-	svc := Service()
+	svc := service()
 	err = templates.EnsureService(coreClient.Services(svc.Namespace), svc)
 	if err != nil {
 		return err
 	}
 
 	// Deploy serving certificate secret
-	servingCert, err := TLSServingCertificate(caKeyPair)
+	servingCert, err := tlsServingCertificate(caKeyPair)
 	if err != nil {
 		return err
 	}
@@ -69,11 +72,27 @@ func DeployWebhookConfiguration(ctx *util.Context) error {
 
 	return templates.EnsureMutatingWebhookConfiguration(
 		admissionClient.MutatingWebhookConfigurations(),
-		MutatingwebhookConfiguration(caKeyPair))
+		mutatingwebhookConfiguration(caKeyPair))
 }
 
-// WebhookDeployment returns the deployment for the machine-controllers MutatignAdmissionWebhook
-func WebhookDeployment(cluster *config.Cluster) *appsv1.Deployment {
+// WaitForWebhook waits for machine-controller-webhook to become running
+func WaitForWebhook(coreInterface corev1types.CoreV1Interface) error {
+	return wait.Poll(500*time.Millisecond, time.Minute, func() (bool, error) {
+		webhookPods, err := coreInterface.Pods(WebhookNamespace).List(metav1.ListOptions{
+			LabelSelector: fmt.Sprintf("%s=%s", WebhookAppLabelKey, WebhookAppLabelValue),
+		})
+		if err != nil {
+			return false, err
+		}
+		if webhookPods.Items[0].Status.Phase == corev1.PodRunning {
+			return true, nil
+		}
+		return false, nil
+	})
+}
+
+// webhookDeployment returns the deployment for the machine-controllers MutatignAdmissionWebhook
+func webhookDeployment(cluster *config.Cluster) *appsv1.Deployment {
 	dep := &appsv1.Deployment{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "apps/v1",
@@ -178,8 +197,8 @@ func WebhookDeployment(cluster *config.Cluster) *appsv1.Deployment {
 	return dep
 }
 
-// Service returns the internal service for the machine-controller webhook
-func Service() *corev1.Service {
+// service returns the internal service for the machine-controller webhook
+func service() *corev1.Service {
 	se := &corev1.Service{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "v1",
@@ -220,8 +239,8 @@ func getServingCertVolume() corev1.Volume {
 	}
 }
 
-// TLSServingCertificate returns a secret with the machine-controller-webhook tls certificate
-func TLSServingCertificate(ca *triple.KeyPair) (*corev1.Secret, error) {
+// tlsServingCertificate returns a secret with the machine-controller-webhook tls certificate
+func tlsServingCertificate(ca *triple.KeyPair) (*corev1.Secret, error) {
 	se := &corev1.Secret{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "v1",
@@ -254,8 +273,8 @@ func TLSServingCertificate(ca *triple.KeyPair) (*corev1.Secret, error) {
 	return se, nil
 }
 
-// MutatingwebhookConfiguration returns the MutatingwebhookConfiguration for the machine controler
-func MutatingwebhookConfiguration(ca *triple.KeyPair) *admissionregistrationv1beta1.MutatingWebhookConfiguration {
+// mutatingwebhookConfiguration returns the MutatingwebhookConfiguration for the machine controler
+func mutatingwebhookConfiguration(ca *triple.KeyPair) *admissionregistrationv1beta1.MutatingWebhookConfiguration {
 	cfg := &admissionregistrationv1beta1.MutatingWebhookConfiguration{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "admissionregistration.k8s.io/v1beta1",
