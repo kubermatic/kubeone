@@ -121,10 +121,10 @@ func Deploy(ctx *util.Context) error {
 	return nil
 }
 
-func ensureBackupStorageLocation(backupLocationInterface arkclientset.BackupStorageLocationInterface, required *arkv1.BackupStorageLocation) error {
-	existing, err := backupLocationInterface.Get(required.Name, metav1.GetOptions{})
+func ensureBackupStorageLocation(backupStorageLocationClient arkclientset.BackupStorageLocationInterface, required *arkv1.BackupStorageLocation) error {
+	existing, err := backupStorageLocationClient.Get(required.Name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
-		_, err = backupLocationInterface.Create(required)
+		_, err = backupStorageLocationClient.Create(required)
 		return err
 	}
 	if err != nil {
@@ -138,14 +138,14 @@ func ensureBackupStorageLocation(backupLocationInterface arkclientset.BackupStor
 		return nil
 	}
 
-	_, err = backupLocationInterface.Update(existing)
+	_, err = backupStorageLocationClient.Update(existing)
 	return err
 }
 
-func ensureVolumeSnapshotLocation(snapshotLocationInterface arkclientset.VolumeSnapshotLocationInterface, required *arkv1.VolumeSnapshotLocation) error {
-	existing, err := snapshotLocationInterface.Get(required.Name, metav1.GetOptions{})
+func ensureVolumeSnapshotLocation(volumeSnapshotLocationClient arkclientset.VolumeSnapshotLocationInterface, required *arkv1.VolumeSnapshotLocation) error {
+	existing, err := volumeSnapshotLocationClient.Get(required.Name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
-		_, err = snapshotLocationInterface.Create(required)
+		_, err = volumeSnapshotLocationClient.Create(required)
 		return err
 	}
 	if err != nil {
@@ -159,6 +159,6 @@ func ensureVolumeSnapshotLocation(snapshotLocationInterface arkclientset.VolumeS
 		return nil
 	}
 
-	_, err = snapshotLocationInterface.Update(existing)
+	_, err = volumeSnapshotLocationClient.Update(existing)
 	return err
 }
