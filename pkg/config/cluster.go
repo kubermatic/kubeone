@@ -112,7 +112,7 @@ type HostConfig struct {
 	IsLeader        bool   `json:"-"`
 }
 
-func (m *HostConfig) addDefaults() error {
+func (m *HostConfig) addDefaults() {
 	if len(m.PublicAddress) == 0 && len(m.PrivateAddress) > 0 {
 		m.PublicAddress = m.PrivateAddress
 	}
@@ -125,14 +125,11 @@ func (m *HostConfig) addDefaults() error {
 	if m.SSHUsername == "" {
 		m.SSHUsername = "root"
 	}
-	return nil
 }
 
 // AddDefaultsAndValidate checks if the Config makes sense.
 func (m *HostConfig) AddDefaultsAndValidate() error {
-	if err := m.addDefaults(); err != nil {
-		return fmt.Errorf("defaulting failed: %v", err)
-	}
+	m.addDefaults()
 
 	if len(m.PublicAddress) == 0 {
 		return errors.New("no public IP/address given")
@@ -158,6 +155,7 @@ type APIServerConfig struct {
 	Address string `json:"address"`
 }
 
+// ProxyConfig object
 type ProxyConfig struct {
 	HTTPProxy  string `json:"http_proxy"`
 	HTTPSProxy string `json:"https_proxy"`
@@ -176,6 +174,8 @@ const (
 	ProviderNameVSphere      ProviderName = "vshere"
 )
 
+// ProviderCredentials match the cloudprovider and parses its credentials from
+// environment
 func (p ProviderName) ProviderCredentials() (map[string]string, error) {
 	switch p {
 	case ProviderNameAWS:
@@ -279,6 +279,7 @@ type VersionConfig struct {
 	Kubernetes string `json:"kubernetes"`
 }
 
+// Validate semversion of config
 func (m *VersionConfig) Validate() error {
 	v, err := semver.NewVersion(m.Kubernetes)
 	if err != nil {
@@ -410,19 +411,19 @@ func (m *BackupConfig) Validate() error {
 	}
 
 	if len(m.S3AccessKey) == 0 {
-		return errors.New("S3 access key must be given")
+		return errors.New("object storage access key must be given")
 	}
 
 	if len(m.S3SecretAccessKey) == 0 {
-		return errors.New("S3 secret access key must be given")
+		return errors.New("object storage secret access key must be given")
 	}
 
 	if len(m.BucketName) == 0 {
-		return errors.New("S3 bucket name must be given")
+		return errors.New("object storage bucket name must be given")
 	}
 
 	if m.Provider != "aws" && m.Provider != "azure" && m.Provider != "gcp" {
-		return fmt.Errorf("invalid provider %s; supported values: \"aws\", \"azure\" or \"gcp\"", m.Provider)
+		return fmt.Errorf(`invalid provider %s; supported values: "aws", "azure" or "gcp"`, m.Provider)
 	}
 
 	return nil
@@ -446,6 +447,7 @@ func (m *BackupConfig) ApplyEnvironment() error {
 	return nil
 }
 
+// MachineControllerConfig controls
 type MachineControllerConfig struct {
 	Deploy *bool `json:"deploy"`
 }

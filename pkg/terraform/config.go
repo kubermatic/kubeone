@@ -97,6 +97,10 @@ func (c *Config) Apply(cluster *config.Cluster) error {
 		cluster.APIServer.Address = c.KubeOneAPI.Value.Endpoint
 	}
 
+	if len(c.KubeOneHosts.Value.ControlPlane) == 0 {
+		return errors.New("no control plane hosts are given")
+	}
+
 	cp := c.KubeOneHosts.Value.ControlPlane[0]
 
 	if cp.CloudProvider != nil {
@@ -257,15 +261,15 @@ func (c *Config) updateDigitalOceanWorkerset(workerset *config.WorkerConfig, cfg
 }
 
 func (c *Config) updateHetznerWorkerset(_ *config.WorkerConfig, _ json.RawMessage) error {
-	return errors.New("Hetzner is not implemented yet")
+	return errors.New("cloudprovider Hetzner is not implemented yet")
 }
 
 func (c *Config) updateOpenStackWorkerset(_ *config.WorkerConfig, _ json.RawMessage) error {
-	return errors.New("OpenStack is not implemented yet")
+	return errors.New("cloudprovider OpenStack is not implemented yet")
 }
 
 func (c *Config) updateVSphereWorkerset(_ *config.WorkerConfig, _ json.RawMessage) error {
-	return errors.New("VSphere is not implemented yet")
+	return errors.New("cloudprovider VSphere is not implemented yet")
 }
 
 func setWorkersetFlag(w *config.WorkerConfig, name string, value interface{}) error {

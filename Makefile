@@ -19,6 +19,7 @@ kubeone: build
 build: dist/kubeone
 
 lint:
+	golangci-lint --version
 	golangci-lint run
 
 dep:

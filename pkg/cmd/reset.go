@@ -7,18 +7,19 @@ import (
 	"github.com/kubermatic/kubeone/pkg/installer"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 type resetOptions struct {
-	options
+	globalOptions
 	Manifest       string
 	DestroyWorkers bool
 }
 
 // resetCmd setups reset command
-func resetCmd() *cobra.Command {
-	var ro = &resetOptions{}
-	var resetCmd = &cobra.Command{
+func resetCmd(rootFlags *pflag.FlagSet) *cobra.Command {
+	ropts := &resetOptions{}
+	cmd := &cobra.Command{
 		Use:   "reset <manifest>",
 		Short: "Revert changes",
 		Long: `Undo all changes done by KubeOne to the configured machines.
@@ -26,26 +27,31 @@ func resetCmd() *cobra.Command {
 This command takes KubeOne manifest which contains information about hosts.
 It's possible to source information about hosts from Terraform output, using the '--tfjson' flag.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			logger := initLogger()
-			ro.TerraformState = o.TerraformState
-			ro.Verbose = o.Verbose
+			gopts, err := persistentGlobalOptions(rootFlags)
+			if err != nil {
+				return err
+			}
+
+			logger := initLogger(gopts.Verbose)
+			ropts.TerraformState = gopts.TerraformState
+			ropts.Verbose = gopts.Verbose
 
 			if len(args) != 1 {
 				return errors.New("expected path to a cluster config file as an argument")
 			}
 
-			ro.Manifest = args[0]
-			if ro.Manifest == "" {
+			ropts.Manifest = args[0]
+			if ropts.Manifest == "" {
 				return errors.New("no cluster config file given")
 			}
 
-			return runReset(logger, ro)
+			return runReset(logger, ropts)
 		},
 	}
 
-	resetCmd.Flags().BoolVarP(&ro.DestroyWorkers, "destroy-workers", "", false, "destroy all worker machines before resetting cluster")
+	cmd.Flags().BoolVarP(&ropts.DestroyWorkers, "destroy-workers", "", false, "destroy all worker machines before resetting cluster")
 
-	return resetCmd
+	return cmd
 }
 
 // runReset resets all machines provisioned by KubeOne

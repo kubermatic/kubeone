@@ -544,6 +544,7 @@
     "github.com/pkg/errors",
     "github.com/sirupsen/logrus",
     "github.com/spf13/cobra",
+    "github.com/spf13/pflag",
     "github.com/tmc/scp",
     "golang.org/x/crypto/ssh",
     "golang.org/x/crypto/ssh/agent",
