@@ -29,6 +29,9 @@ func Deploy(ctx *util.Context) error {
 	if ctx.APIExtensionClientset == nil {
 		return errors.New("kubernetes apiextension clientset not initialized")
 	}
+	if ctx.RESTConfig == nil {
+		return errors.New("kubernetes rest config not initialized")
+	}
 
 	// Kubernetes clientsets
 	coreClient := ctx.Clientset.CoreV1()
@@ -118,10 +121,10 @@ func Deploy(ctx *util.Context) error {
 	return nil
 }
 
-func ensureBackupStorageLocation(backupLocationInterface arkclientset.BackupStorageLocationInterface, required *arkv1.BackupStorageLocation) error {
-	existing, err := backupLocationInterface.Get(required.Name, metav1.GetOptions{})
+func ensureBackupStorageLocation(backupStorageLocationsClient arkclientset.BackupStorageLocationInterface, required *arkv1.BackupStorageLocation) error {
+	existing, err := backupStorageLocationsClient.Get(required.Name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
-		_, err = backupLocationInterface.Create(required)
+		_, err = backupStorageLocationsClient.Create(required)
 		return err
 	}
 	if err != nil {
@@ -135,14 +138,14 @@ func ensureBackupStorageLocation(backupLocationInterface arkclientset.BackupStor
 		return nil
 	}
 
-	_, err = backupLocationInterface.Update(existing)
+	_, err = backupStorageLocationsClient.Update(existing)
 	return err
 }
 
-func ensureVolumeSnapshotLocation(snapshotLocationInterface arkclientset.VolumeSnapshotLocationInterface, required *arkv1.VolumeSnapshotLocation) error {
-	existing, err := snapshotLocationInterface.Get(required.Name, metav1.GetOptions{})
+func ensureVolumeSnapshotLocation(volumeSnapshotLocationsClient arkclientset.VolumeSnapshotLocationInterface, required *arkv1.VolumeSnapshotLocation) error {
+	existing, err := volumeSnapshotLocationsClient.Get(required.Name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
-		_, err = snapshotLocationInterface.Create(required)
+		_, err = volumeSnapshotLocationsClient.Create(required)
 		return err
 	}
 	if err != nil {
@@ -156,6 +159,6 @@ func ensureVolumeSnapshotLocation(snapshotLocationInterface arkclientset.VolumeS
 		return nil
 	}
 
-	_, err = snapshotLocationInterface.Update(existing)
+	_, err = volumeSnapshotLocationsClient.Update(existing)
 	return err
 }

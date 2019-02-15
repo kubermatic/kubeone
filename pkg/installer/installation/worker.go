@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
-	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
 )
 
@@ -16,37 +14,17 @@ func createWorkerMachines(ctx *util.Context) error {
 		return nil
 	}
 
-	return ctx.RunTaskOnLeader(func(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
-		ctx.Logger.Infoln("Waiting for machine-controller to come up…")
+	ctx.Logger.Infoln("Waiting for machine-controller to come up…")
+	if err := machinecontroller.WaitForWebhook(ctx.Clientset.CoreV1()); err != nil {
+		return fmt.Errorf("machine-controller-webhook did not come up: %v", err)
+	}
+	if err := machinecontroller.WaitForMachineController(ctx.Clientset.CoreV1()); err != nil {
+		return errors.New("machine-controller did not come up")
+	}
 
-		cmd := fmt.Sprintf(
-			`kubectl -n "%s" get pods -l '%s=%s' -o jsonpath='{.items[0].status.phase}'`,
-			machinecontroller.WebhookNamespace,
-			machinecontroller.WebhookAppLabelKey,
-			machinecontroller.WebhookAppLabelValue,
-		)
-		if !ctx.Runner.WaitForCondition(cmd, 1*time.Minute, util.IsRunning) {
-			return errors.New("machine-controller-webhook did not come up")
-		}
+	// it can still take a bit before the MC is actually ready
+	time.Sleep(10 * time.Second)
 
-		cmd = fmt.Sprintf(
-			`kubectl -n "%s" get pods -l '%s=%s' -o jsonpath='{.items[0].status.phase}'`,
-			machinecontroller.MachineControllerNamespace,
-			machinecontroller.MachineControllerAppLabelKey,
-			machinecontroller.MachineControllerAppLabelValue,
-		)
-		if !ctx.Runner.WaitForCondition(cmd, 1*time.Minute, util.IsRunning) {
-			return errors.New("machine-controller did not come up")
-		}
-
-		// it can still take a bit before the MC is actually ready
-		time.Sleep(10 * time.Second)
-
-		ctx.Logger.Infoln("Creating worker machines…")
-		_, _, err := ctx.Runner.Run(`kubectl apply -f ./{{ .WORK_DIR }}/workers.yaml`, util.TemplateVariables{
-			"WORK_DIR": ctx.WorkDir,
-		})
-
-		return err
-	})
+	ctx.Logger.Infoln("Creating worker machines…")
+	return machinecontroller.DeployMachineDeployments(ctx)
 }

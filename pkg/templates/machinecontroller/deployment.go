@@ -2,7 +2,9 @@ package machinecontroller
 
 import (
 	"errors"
+	"fmt"
 	"net"
+	"time"
 
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
@@ -14,6 +16,8 @@ import (
 	apiextensions "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
+	"k8s.io/apimachinery/pkg/util/wait"
+	corev1types "k8s.io/client-go/kubernetes/typed/core/v1"
 	"k8s.io/kubernetes/pkg/registry/core/service/ipallocator"
 )
 
@@ -132,6 +136,22 @@ func Deploy(ctx *util.Context) error {
 	}
 
 	return nil
+}
+
+// WaitForMachineController waits for machine-controller-webhook to become running
+func WaitForMachineController(corev1Client corev1types.CoreV1Interface) error {
+	return wait.Poll(5*time.Second, 3*time.Minute, func() (bool, error) {
+		machineControllerPods, err := corev1Client.Pods(WebhookNamespace).List(metav1.ListOptions{
+			LabelSelector: fmt.Sprintf("%s=%s", MachineControllerAppLabelKey, MachineControllerAppLabelValue),
+		})
+		if err != nil {
+			return false, err
+		}
+		if machineControllerPods.Items[0].Status.Phase == corev1.PodRunning {
+			return true, nil
+		}
+		return false, nil
+	})
 }
 
 func machineControllerServiceAccount() *corev1.ServiceAccount {

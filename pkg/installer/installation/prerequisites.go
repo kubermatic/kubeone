@@ -6,7 +6,6 @@ import (
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
 )
 
 const dockerVersion = "18.09.2"
@@ -23,15 +22,6 @@ func installPrerequisites(ctx *util.Context) error {
 
 func generateConfigurationFiles(ctx *util.Context) error {
 	ctx.Configuration.AddFile("cfg/cloud-config", ctx.Cluster.Provider.CloudConfig)
-
-	if len(ctx.Cluster.Workers) > 0 {
-		machines, deployErr := machinecontroller.MachineDeployments(ctx.Cluster)
-		if deployErr != nil {
-			return fmt.Errorf("failed to create worker machine configuration: %v", deployErr)
-		}
-		ctx.Configuration.AddFile("workers.yaml", machines)
-	}
-
 	return nil
 }
 
