@@ -76,9 +76,9 @@ func DeployWebhookConfiguration(ctx *util.Context) error {
 }
 
 // WaitForWebhook waits for machine-controller-webhook to become running
-func WaitForWebhook(coreClient corev1types.CoreV1Interface) error {
+func WaitForWebhook(corev1Client corev1types.CoreV1Interface) error {
 	return wait.Poll(5*time.Second, 3*time.Minute, func() (bool, error) {
-		webhookPods, err := coreClient.Pods(WebhookNamespace).List(metav1.ListOptions{
+		webhookPods, err := corev1Client.Pods(WebhookNamespace).List(metav1.ListOptions{
 			LabelSelector: fmt.Sprintf("%s=%s", WebhookAppLabelKey, WebhookAppLabelValue),
 		})
 		if err != nil {

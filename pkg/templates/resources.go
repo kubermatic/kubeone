@@ -18,10 +18,10 @@ import (
 
 // EnsureNamespace checks does Namespace already exists and creates it if it doesn't. If it already exists,
 // the function compares labels and annotations, and if they're not as expected updates the Namespace.
-func EnsureNamespace(namespaceClient corev1types.NamespaceInterface, required *corev1.Namespace) error {
-	existing, err := namespaceClient.Get(required.Name, metav1.GetOptions{})
+func EnsureNamespace(namespacesClient corev1types.NamespaceInterface, required *corev1.Namespace) error {
+	existing, err := namespacesClient.Get(required.Name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
-		_, err = namespaceClient.Create(required)
+		_, err = namespacesClient.Create(required)
 		return err
 	}
 	if err != nil {
@@ -35,16 +35,16 @@ func EnsureNamespace(namespaceClient corev1types.NamespaceInterface, required *c
 		return nil
 	}
 
-	_, err = namespaceClient.Update(existing)
+	_, err = namespacesClient.Update(existing)
 	return err
 }
 
 // EnsureServiceAccount checks does ServiceAccount already exists and creates it if it doesn't. If it already exists,
 // the function compares labels and annotations, and if they're not as expected updates the ServiceAccount.
-func EnsureServiceAccount(serviceAccoutnClient corev1types.ServiceAccountInterface, required *corev1.ServiceAccount) error {
-	existing, err := serviceAccoutnClient.Get(required.Name, metav1.GetOptions{})
+func EnsureServiceAccount(serviceAccountsClient corev1types.ServiceAccountInterface, required *corev1.ServiceAccount) error {
+	existing, err := serviceAccountsClient.Get(required.Name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
-		_, err = serviceAccoutnClient.Create(required)
+		_, err = serviceAccountsClient.Create(required)
 		return err
 	}
 	if err != nil {
@@ -58,16 +58,16 @@ func EnsureServiceAccount(serviceAccoutnClient corev1types.ServiceAccountInterfa
 		return nil
 	}
 
-	_, err = serviceAccoutnClient.Update(existing)
+	_, err = serviceAccountsClient.Update(existing)
 	return err
 }
 
 // EnsureClusterRole checks does RBAC ClusterRole already exists and creates it if it doesn't. If it already exists,
 // the function compares labels, annotations, and rules, and if they're not as expected updates the ClusterRole.
-func EnsureClusterRole(clusterRoleClient rbacv1types.ClusterRoleInterface, required *rbacv1.ClusterRole) error {
-	existing, err := clusterRoleClient.Get(required.Name, metav1.GetOptions{})
+func EnsureClusterRole(clusterRolesClient rbacv1types.ClusterRoleInterface, required *rbacv1.ClusterRole) error {
+	existing, err := clusterRolesClient.Get(required.Name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
-		_, err = clusterRoleClient.Create(required)
+		_, err = clusterRolesClient.Create(required)
 		return err
 	}
 	if err != nil {
@@ -81,16 +81,16 @@ func EnsureClusterRole(clusterRoleClient rbacv1types.ClusterRoleInterface, requi
 		return nil
 	}
 
-	_, err = clusterRoleClient.Update(existing)
+	_, err = clusterRolesClient.Update(existing)
 	return err
 }
 
 // EnsureClusterRoleBinding checks does RBAC ClusterRoleBinding already exists and creates it if it doesn't. If it already exists,
 // the function compares labels, annotations, role references, and subjects, and if they're not as expected updates the ClusterRoleBinding.
-func EnsureClusterRoleBinding(clusterRoleBindingClient rbacv1types.ClusterRoleBindingInterface, required *rbacv1.ClusterRoleBinding) error {
-	existing, err := clusterRoleBindingClient.Get(required.Name, metav1.GetOptions{})
+func EnsureClusterRoleBinding(clusterRoleBindingsClient rbacv1types.ClusterRoleBindingInterface, required *rbacv1.ClusterRoleBinding) error {
+	existing, err := clusterRoleBindingsClient.Get(required.Name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
-		_, err = clusterRoleBindingClient.Create(required)
+		_, err = clusterRoleBindingsClient.Create(required)
 		return err
 	}
 	if err != nil {
@@ -104,16 +104,16 @@ func EnsureClusterRoleBinding(clusterRoleBindingClient rbacv1types.ClusterRoleBi
 		return nil
 	}
 
-	_, err = clusterRoleBindingClient.Update(existing)
+	_, err = clusterRoleBindingsClient.Update(existing)
 	return err
 }
 
 // EnsureRole checks does RBAC Role already exists and creates it if it doesn't. If it already exists,
 // the function compares labels, annotations, and rules, and if they're not as expected updates the Role.
-func EnsureRole(roleClient rbacv1types.RoleInterface, required *rbacv1.Role) error {
-	existing, err := roleClient.Get(required.Name, metav1.GetOptions{})
+func EnsureRole(rolesClient rbacv1types.RoleInterface, required *rbacv1.Role) error {
+	existing, err := rolesClient.Get(required.Name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
-		_, err = roleClient.Create(required)
+		_, err = rolesClient.Create(required)
 		return err
 	}
 	if err != nil {
@@ -127,16 +127,16 @@ func EnsureRole(roleClient rbacv1types.RoleInterface, required *rbacv1.Role) err
 		return nil
 	}
 
-	_, err = roleClient.Update(existing)
+	_, err = rolesClient.Update(existing)
 	return err
 }
 
 // EnsureRoleBinding checks does RBAC RoleBinding already exists and creates it if it doesn't. If it already exists,
 // the function compares labels, annotations, role references, and subjects, and if they're not as expected updates the RoleBinding.
-func EnsureRoleBinding(roleBindingClient rbacv1types.RoleBindingInterface, required *rbacv1.RoleBinding) error {
-	existing, err := roleBindingClient.Get(required.Name, metav1.GetOptions{})
+func EnsureRoleBinding(roleBindingsClient rbacv1types.RoleBindingInterface, required *rbacv1.RoleBinding) error {
+	existing, err := roleBindingsClient.Get(required.Name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
-		_, err = roleBindingClient.Create(required)
+		_, err = roleBindingsClient.Create(required)
 		return err
 	}
 	if err != nil {
@@ -150,16 +150,16 @@ func EnsureRoleBinding(roleBindingClient rbacv1types.RoleBindingInterface, requi
 		return nil
 	}
 
-	_, err = roleBindingClient.Update(existing)
+	_, err = roleBindingsClient.Update(existing)
 	return err
 }
 
 // EnsureConfigMap checks does ConfigMap already exists and creates it if it doesn't. If it already exists,
 // the function compares labels, annotations, and data, and if they're not as expected updates the ConfigMap.
-func EnsureConfigMap(configMapClient corev1types.ConfigMapInterface, required *corev1.ConfigMap) error {
-	existing, err := configMapClient.Get(required.Name, metav1.GetOptions{})
+func EnsureConfigMap(configMapsClient corev1types.ConfigMapInterface, required *corev1.ConfigMap) error {
+	existing, err := configMapsClient.Get(required.Name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
-		_, err = configMapClient.Create(required)
+		_, err = configMapsClient.Create(required)
 		return err
 	}
 	if err != nil {
@@ -173,16 +173,16 @@ func EnsureConfigMap(configMapClient corev1types.ConfigMapInterface, required *c
 		return nil
 	}
 
-	_, err = configMapClient.Update(existing)
+	_, err = configMapsClient.Update(existing)
 	return err
 }
 
 // EnsureSecret checks does Secret already exists and creates it if it doesn't. If it already exists,
 // the function compares labels, annotations, and data, and if they're not as expected updates the Secret.
-func EnsureSecret(secretClient corev1types.SecretInterface, required *corev1.Secret) error {
-	existing, err := secretClient.Get(required.Name, metav1.GetOptions{})
+func EnsureSecret(secretsClient corev1types.SecretInterface, required *corev1.Secret) error {
+	existing, err := secretsClient.Get(required.Name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
-		_, err = secretClient.Create(required)
+		_, err = secretsClient.Create(required)
 		return err
 	}
 	if err != nil {
@@ -196,16 +196,16 @@ func EnsureSecret(secretClient corev1types.SecretInterface, required *corev1.Sec
 		return nil
 	}
 
-	_, err = secretClient.Update(existing)
+	_, err = secretsClient.Update(existing)
 	return err
 }
 
 // EnsureDeployment checks does Deployment already exists and creates it if it doesn't. If it already exists,
 // the function compares labels, annotations, and spec, and if they're not as expected updates the Deployment.
-func EnsureDeployment(deploymentClient appsv1types.DeploymentInterface, required *appsv1.Deployment) error {
-	existing, err := deploymentClient.Get(required.Name, metav1.GetOptions{})
+func EnsureDeployment(deploymentsClient appsv1types.DeploymentInterface, required *appsv1.Deployment) error {
+	existing, err := deploymentsClient.Get(required.Name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
-		_, err = deploymentClient.Create(required)
+		_, err = deploymentsClient.Create(required)
 		return err
 	}
 	if err != nil {
@@ -219,16 +219,16 @@ func EnsureDeployment(deploymentClient appsv1types.DeploymentInterface, required
 		return nil
 	}
 
-	_, err = deploymentClient.Update(existing)
+	_, err = deploymentsClient.Update(existing)
 	return err
 }
 
 // EnsureDaemonSet checks does DaemonSet already exists and creates it if it doesn't. If it already exists,
 // the function compares labels, annotations, and spec, and if they're not as expected updates the DaemonSet.
-func EnsureDaemonSet(daemonSetClient appsv1types.DaemonSetInterface, required *appsv1.DaemonSet) error {
-	existing, err := daemonSetClient.Get(required.Name, metav1.GetOptions{})
+func EnsureDaemonSet(daemonSetsClient appsv1types.DaemonSetInterface, required *appsv1.DaemonSet) error {
+	existing, err := daemonSetsClient.Get(required.Name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
-		_, err = daemonSetClient.Create(required)
+		_, err = daemonSetsClient.Create(required)
 		return err
 	}
 	if err != nil {
@@ -242,16 +242,16 @@ func EnsureDaemonSet(daemonSetClient appsv1types.DaemonSetInterface, required *a
 		return nil
 	}
 
-	_, err = daemonSetClient.Update(existing)
+	_, err = daemonSetsClient.Update(existing)
 	return err
 }
 
 // EnsureService checks does Service already exists and creates it if it doesn't. If it already exists,
 // the function compares labels, annotations, and spec, and if they're not as expected updates the Service.
-func EnsureService(serviceClient corev1types.ServiceInterface, required *corev1.Service) error {
-	existing, err := serviceClient.Get(required.Name, metav1.GetOptions{})
+func EnsureService(servicesClient corev1types.ServiceInterface, required *corev1.Service) error {
+	existing, err := servicesClient.Get(required.Name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
-		_, err = serviceClient.Create(required)
+		_, err = servicesClient.Create(required)
 		return err
 	}
 	if err != nil {
@@ -265,16 +265,16 @@ func EnsureService(serviceClient corev1types.ServiceInterface, required *corev1.
 		return nil
 	}
 
-	_, err = serviceClient.Update(existing)
+	_, err = servicesClient.Update(existing)
 	return err
 }
 
 // EnsureCRD checks does CRD already exists and creates it if it doesn't. If it already exists,
 // the function compares labels, annotations, and spec, and if they're not as expected updates the CRD.
-func EnsureCRD(customResourceDefinitionClient apiextensionsv1beta1types.CustomResourceDefinitionInterface, required *apiextensionsv1beta1.CustomResourceDefinition) error {
-	existing, err := customResourceDefinitionClient.Get(required.Name, metav1.GetOptions{})
+func EnsureCRD(customResourceDefinitionsClient apiextensionsv1beta1types.CustomResourceDefinitionInterface, required *apiextensionsv1beta1.CustomResourceDefinition) error {
+	existing, err := customResourceDefinitionsClient.Get(required.Name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
-		_, err = customResourceDefinitionClient.Create(required)
+		_, err = customResourceDefinitionsClient.Create(required)
 		return err
 	}
 	if err != nil {
@@ -288,17 +288,17 @@ func EnsureCRD(customResourceDefinitionClient apiextensionsv1beta1types.CustomRe
 		return nil
 	}
 
-	_, err = customResourceDefinitionClient.Update(existing)
+	_, err = customResourceDefinitionsClient.Update(existing)
 	return err
 }
 
 // EnsureMutatingWebhookConfiguration checks does MutatingWebhookConfiguration already exists and creates it if it doesn't.
 // If it already exists, the function compares labels, annotations, and spec, and if they're not as expected updates
 // the MutatingWebhookConfiguration.
-func EnsureMutatingWebhookConfiguration(mutatingWebhookConfigurationClient admissionregistrationv1beta1types.MutatingWebhookConfigurationInterface, required *admissionregistrationv1beta1.MutatingWebhookConfiguration) error {
-	existing, err := mutatingWebhookConfigurationClient.Get(required.Name, metav1.GetOptions{})
+func EnsureMutatingWebhookConfiguration(mutatingWebhookConfigurationsClient admissionregistrationv1beta1types.MutatingWebhookConfigurationInterface, required *admissionregistrationv1beta1.MutatingWebhookConfiguration) error {
+	existing, err := mutatingWebhookConfigurationsClient.Get(required.Name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
-		_, err = mutatingWebhookConfigurationClient.Create(required)
+		_, err = mutatingWebhookConfigurationsClient.Create(required)
 		return err
 	}
 	if err != nil {
@@ -312,6 +312,6 @@ func EnsureMutatingWebhookConfiguration(mutatingWebhookConfigurationClient admis
 		return nil
 	}
 
-	_, err = mutatingWebhookConfigurationClient.Update(existing)
+	_, err = mutatingWebhookConfigurationsClient.Update(existing)
 	return err
 }

@@ -134,10 +134,10 @@ func createMachineDeployment(cluster *config.Cluster, workerset config.WorkerCon
 	}, nil
 }
 
-func ensureMachineDeployment(machineDeploymentClient clustertypes.MachineDeploymentInterface, required *clusterv1alpha1.MachineDeployment) error {
-	existing, err := machineDeploymentClient.Get(required.Name, metav1.GetOptions{})
+func ensureMachineDeployment(machineDeploymentsClient clustertypes.MachineDeploymentInterface, required *clusterv1alpha1.MachineDeployment) error {
+	existing, err := machineDeploymentsClient.Get(required.Name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
-		_, err = machineDeploymentClient.Create(required)
+		_, err = machineDeploymentsClient.Create(required)
 		return err
 	}
 	if err != nil {
@@ -151,7 +151,7 @@ func ensureMachineDeployment(machineDeploymentClient clustertypes.MachineDeploym
 		return nil
 	}
 
-	_, err = machineDeploymentClient.Update(existing)
+	_, err = machineDeploymentsClient.Update(existing)
 	return err
 }
 
