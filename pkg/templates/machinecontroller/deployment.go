@@ -140,7 +140,7 @@ func Deploy(ctx *util.Context) error {
 
 // WaitForMachineController waits for machine-controller-webhook to become running
 func WaitForMachineController(coreClient corev1types.CoreV1Interface) error {
-	return wait.Poll(500*time.Millisecond, time.Minute, func() (bool, error) {
+	return wait.Poll(5*time.Second, 3*time.Minute, func() (bool, error) {
 		machineControllerPods, err := coreClient.Pods(WebhookNamespace).List(metav1.ListOptions{
 			LabelSelector: fmt.Sprintf("%s=%s", MachineControllerAppLabelKey, MachineControllerAppLabelValue),
 		})
