@@ -26,6 +26,8 @@ func resetCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 
 This command takes KubeOne manifest which contains information about hosts.
 It's possible to source information about hosts from Terraform output, using the '--tfjson' flag.`,
+		Args:    cobra.ExactArgs(1),
+		Example: `kubeone reset mycluster.yaml -t terraformoutput.json`,
 		RunE: func(_ *cobra.Command, args []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
@@ -35,10 +37,6 @@ It's possible to source information about hosts from Terraform output, using the
 			logger := initLogger(gopts.Verbose)
 			ropts.TerraformState = gopts.TerraformState
 			ropts.Verbose = gopts.Verbose
-
-			if len(args) != 1 {
-				return errors.New("expected path to a cluster config file as an argument")
-			}
 
 			ropts.Manifest = args[0]
 			if ropts.Manifest == "" {
