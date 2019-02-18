@@ -4,9 +4,10 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+
+	"github.com/kubermatic/kubeone/pkg/installer/util"
 )
 
 type kubeconfigOptions struct {
@@ -69,26 +70,12 @@ func runKubeconfig(kubeconfigOptions *kubeconfigOptions) error {
 		return err
 	}
 
-	// connect to leader
-	leader, err := cluster.Leader()
+	kubeconfig, err := util.DownloadKubeconfig(cluster)
 	if err != nil {
 		return err
 	}
-	connector := ssh.NewConnector()
 
-	conn, err := connector.Connect(*leader)
-	if err != nil {
-		return fmt.Errorf("failed to connect to leader: %v", err)
-	}
-	defer conn.Close()
-
-	// get the kubeconfig
-	kubeconfig, _, _, err := conn.Exec("sudo cat /etc/kubernetes/admin.conf")
-	if err != nil {
-		return fmt.Errorf("failed to read kubeconfig: %v", err)
-	}
-
-	fmt.Println(kubeconfig)
+	fmt.Println(string(kubeconfig))
 
 	return nil
 }
