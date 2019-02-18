@@ -18,6 +18,14 @@ Following topics are subjects for future proposals:
     * upgrading whatsoever custom deployments kubeone created during `install`
 * before upgrade backups of currently running configuration and etcd snapshots
 
+## Upgrade policy
+* block upgrades to unknown future major/minor kubernetes versions (e.g. v1.14)
+* allow upgrades to known major/minor kubernetes versions (e.g. v1.14)
+* allow upgrades between patch-level version without limits (e.g. 1.13.0 ->
+  1.13.3)
+* updated kubeone for the next major/minor (e.g. v1.14) kubernetes version will
+  be released within short period of time from said release
+
 ## Implementation
 `kubeadm` makes the process of upgrade quite simple. Before proceed to actual
 upgrade kubeone need to grab some info about cluster in question:
@@ -27,13 +35,13 @@ upgrade kubeone need to grab some info about cluster in question:
     * versions
     * external/internal IPs
     * node labels
-* grab previously saved `kubeone config` from configmap
 * make sure cluster in healthy before next steps
     * 3/3 of hosts are accessible / initialized
     * 3/3 of nodes are ready
     * 3/3 of nodes versions <= requested version
     * 3/3 of nodes pass the kubernetes version skew policy
-    * 0/3 of nodes have `kubeone.io/upgrade-in-process` label (overridden by --force)
+    * 0/3 of nodes have `kubeone.io/upgrade-in-process` label (overridden by
+      --force)
 
 ### `kubeone.io/upgrading-in-process` label
 This node label is a fail-safe mechanism. It signify that node is being upgraded
