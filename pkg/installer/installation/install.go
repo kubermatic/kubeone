@@ -36,7 +36,7 @@ func Install(ctx *util.Context) error {
 	if err := copyKubeconfig(ctx); err != nil {
 		return fmt.Errorf("unable to copy kubeconfig to home directory: %v", err)
 	}
-	if err := buildKubernetesClientset(ctx); err != nil {
+	if err := util.BuildKubernetesClientset(ctx); err != nil {
 		return fmt.Errorf("unable to build kubernetes clientset: %v", err)
 	}
 	if err := applyCNI(ctx, "canal"); err != nil {
