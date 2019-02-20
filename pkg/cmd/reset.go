@@ -26,7 +26,7 @@ func resetCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 
 This command takes KubeOne manifest which contains information about hosts.
 It's possible to source information about hosts from Terraform output, using the '--tfjson' flag.`,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, args []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
 				return err
