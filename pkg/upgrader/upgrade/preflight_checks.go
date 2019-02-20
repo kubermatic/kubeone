@@ -161,8 +161,8 @@ func verifyVersion(ctx *util.Context, nodes *corev1.NodeList, verbose bool) erro
 	}
 	// This ensures all API server pods are running the same apiserver version
 	for _, p := range apiserverPods.Items {
-		ver, err := parseContainerImageVersion(p.Spec.Containers[0])
-		if err != nil {
+		ver, apiserverErr := parseContainerImageVersion(p.Spec.Containers[0].Image)
+		if apiserverErr != nil {
 			return fmt.Errorf("unable to parse apiserver version: %v", err)
 		}
 		if verbose {
@@ -182,8 +182,8 @@ func verifyVersion(ctx *util.Context, nodes *corev1.NodeList, verbose bool) erro
 
 	// Check Kubelet version
 	for _, n := range nodes.Items {
-		kubeletVer, err := semver.NewVersion(n.Status.NodeInfo.KubeletVersion)
-		if err != nil {
+		kubeletVer, kubeletErr := semver.NewVersion(n.Status.NodeInfo.KubeletVersion)
+		if kubeletErr != nil {
 			return fmt.Errorf("unable to parse kubelet version: %v", err)
 		}
 		if verbose {
@@ -202,10 +202,10 @@ func verifyVersion(ctx *util.Context, nodes *corev1.NodeList, verbose bool) erro
 	return nil
 }
 
-func parseContainerImageVersion(container corev1.Container) (*semver.Version, error) {
-	ver := strings.Split(container.Image, ":")
+func parseContainerImageVersion(image string) (*semver.Version, error) {
+	ver := strings.Split(image, ":")
 	if len(ver) != 2 {
-		return nil, fmt.Errorf("invalid apiserver container image format: %s", container.Image)
+		return nil, fmt.Errorf("invalid container image format: %s", image)
 	}
 	return semver.NewVersion(ver[1])
 }
