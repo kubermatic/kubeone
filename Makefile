@@ -2,26 +2,34 @@ export GOPATH?=$(shell go env GOPATH)
 export CGO_ENABLED=0
 export TFJSON?=
 export KUBEONE_CONFIG_FILE?=config.yaml.dist
-export KUBERNETES_VERSION=1.12.3
-BUILD_IMAGE?=golang:1.11.2
+export KUBERNETES_VERSION=1.13.3
+BUILD_IMAGE?=golang:1.11.5
+GOLDFLAGS?=-w -s
+
 PROVIDER=$(notdir $(wildcard ./terraform/*))
 CREATE_TARGETS=$(addsuffix -env,$(PROVIDER))
 DESTROY_TARGETS=$(addsuffix -env-cleanup,$(PROVIDER))
 
-.PHONY: build install e2e_test dep
-
 all: install
 
+.PHONY: install
 install:
-	go install -v .
+	go install -ldflags='$(GOLDFLAGS)' -v .
 
+.PHONY: build
 kubeone: build
 build: dist/kubeone
 
+.PHONY: lint
 lint:
-	golangci-lint --version
+	@golangci-lint --version
 	golangci-lint run
 
+.PHONY: test
+test:
+	go test -v ./...
+
+.PHONY: dep
 dep:
 	dep ensure -v
 
@@ -37,11 +45,12 @@ docker-make-install:
 		$(BUILD_IMAGE) \
 		make install
 
+.PHONY: e2e_test
 e2e_test:
 	./hack/run_ci_e2e_test.sh
 
 dist/kubeone: $(shell find . -name '*.go')
-	go build -v -o $@ .
+	go build -ldflags='$(GOLDFLAGS)' -v -o $@ .
 
 $(CREATE_TARGETS): kubeone
 	$(eval PROVIDERNAME := $(@:-env=))

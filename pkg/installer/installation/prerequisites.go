@@ -13,16 +13,13 @@ const dockerVersion = "18.09.2"
 func installPrerequisites(ctx *util.Context) error {
 	ctx.Logger.Infoln("Installing prerequisites…")
 
-	if err := generateConfigurationFiles(ctx); err != nil {
-		return fmt.Errorf("failed to create configuration: %v", err)
-	}
+	generateConfigurationFiles(ctx)
 
 	return ctx.RunTaskOnAllNodes(installPrerequisitesOnNode, true)
 }
 
-func generateConfigurationFiles(ctx *util.Context) error {
+func generateConfigurationFiles(ctx *util.Context) {
 	ctx.Configuration.AddFile("cfg/cloud-config", ctx.Cluster.Provider.CloudConfig)
-	return nil
 }
 
 func installPrerequisitesOnNode(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
