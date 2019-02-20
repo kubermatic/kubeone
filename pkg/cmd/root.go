@@ -25,7 +25,7 @@ func newRoot() *cobra.Command {
 		Use:   "kubeone",
 		Short: "Kubernetes Cluster provisioning and maintaining tool",
 		Long:  "Provision and maintain Kubernetes High-Availability clusters with ease",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *cobra.Command, _ []string) error {
 			return cmd.Help()
 		},
 	}

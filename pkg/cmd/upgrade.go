@@ -16,7 +16,7 @@ func upgradeCmd(_ *pflag.FlagSet) *cobra.Command {
 This command takes KubeOne manifest which contains information about hosts and how the cluster should be provisioned.
 It's possible to source information about hosts from Terraform output, using the '--tfjson' flag.`,
 		Hidden: true,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			return errors.New("not implemented yet")
 		},
 	}
