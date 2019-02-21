@@ -28,7 +28,7 @@ It's possible to source information about hosts from Terraform output, using the
 		Hidden:  true,
 		Args:    cobra.ExactArgs(1),
 		Example: `kubeone upgrade mycluster.yaml -t terraformoutput.json`,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, args []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
 				return err

@@ -60,7 +60,7 @@ func runPreflightChecks(ctx *util.Context) error {
 	}
 
 	ctx.Logger.Infoln("Verifying is it possible to upgrade to the desired version…")
-	if err := verifyVersion(ctx, nodes, ctx.Verbose); err != nil {
+	if err := verifyVersion(ctx.Cluster.Versions.Kubernetes, nodes, ctx.Verbose); err != nil {
 		return fmt.Errorf("unable to verify components version: %v", err)
 	}
 	if err := verifyVersionSkew(ctx, nodes, ctx.Verbose); err != nil {
@@ -155,15 +155,20 @@ func verifyEndpoints(nodes *corev1.NodeList, hosts []*config.HostConfig, verbose
 }
 
 // verifyVersion verifies is it possible to upgrade to the requested version
-func verifyVersion(ctx *util.Context, nodes *corev1.NodeList, verbose bool) error {
-	reqVer, err := semver.NewVersion(ctx.Cluster.Versions.Kubernetes)
+func verifyVersion(version string, nodes *corev1.NodeList, verbose bool) error {
+	reqVer, err := semver.NewVersion(version)
 	if err != nil {
 		return fmt.Errorf("provided version is invalid: %v", err)
 	}
 
 	kubelet, err := semver.NewVersion(nodes.Items[0].Status.NodeInfo.KubeletVersion)
 	if err != nil {
-			return err
+		return err
+	}
+
+	if verbose {
+		fmt.Printf("Kubelet version on the control plane node: %s", kubelet.String())
+		fmt.Printf("Requested version: %s", reqVer.String())
 	}
 
 	if reqVer.Compare(kubelet) <= 0 {
