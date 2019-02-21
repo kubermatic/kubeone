@@ -28,6 +28,7 @@ type Context struct {
 	Verbose               bool
 	BackupFile            string
 	DestroyWorkers        bool
+	ForceUpgrade          bool
 }
 
 // Clone returns a shallow copy of the context.
