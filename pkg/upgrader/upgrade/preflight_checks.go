@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/Masterminds/semver"
-
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/ssh"

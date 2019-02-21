@@ -4,11 +4,10 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/kubermatic/kubeone/pkg/upgrader"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-
-	"github.com/kubermatic/kubeone/pkg/upgrader"
 )
 
 type upgradeOptions struct {
