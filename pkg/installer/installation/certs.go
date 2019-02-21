@@ -1,12 +1,10 @@
 package installation
 
 import (
-	"fmt"
-
 	"github.com/kubermatic/kubeone/pkg/config"
-
 	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/ssh"
+	"github.com/pkg/errors"
 )
 
 func downloadCA(ctx *util.Context) error {
@@ -37,7 +35,7 @@ sudo chown -R "$USER:$USER" ./{{ .WORK_DIR }}
 
 		err = ctx.Configuration.Download(conn, ctx.WorkDir+"/pki", "pki")
 		if err != nil {
-			return fmt.Errorf("failed to download PKI files: %v", err)
+			return errors.Wrap(err, "failed to download PKI files")
 		}
 
 		if ctx.BackupFile != "" {

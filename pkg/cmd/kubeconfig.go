@@ -1,13 +1,12 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
 
+	"github.com/kubermatic/kubeone/pkg/installer/util"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-
-	"github.com/kubermatic/kubeone/pkg/installer/util"
 )
 
 type kubeconfigOptions struct {
@@ -30,7 +29,7 @@ It's possible to source information about hosts from Terraform output, using the
 		RunE: func(_ *cobra.Command, args []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
-				return err
+				return errors.Wrap(err, "unable to get global flags")
 			}
 
 			kopts.TerraformState = gopts.TerraformState
@@ -56,7 +55,7 @@ func runKubeconfig(kubeconfigOptions *kubeconfigOptions) error {
 
 	cluster, err := loadClusterConfig(kubeconfigOptions.Manifest)
 	if err != nil {
-		return fmt.Errorf("failed to load cluster: %v", err)
+		return errors.Wrap(err, "failed to load cluster")
 	}
 
 	// apply terraform

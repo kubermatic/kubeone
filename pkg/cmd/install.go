@@ -1,13 +1,13 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -36,7 +36,7 @@ It's possible to source information about hosts from Terraform output, using the
 		RunE: func(_ *cobra.Command, args []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
-				return err
+				return errors.Wrap(err, "unable to get global flags")
 			}
 
 			logger := initLogger(gopts.Verbose)
@@ -61,16 +61,16 @@ It's possible to source information about hosts from Terraform output, using the
 func runInstall(logger *logrus.Logger, installOptions *installOptions) error {
 	cluster, err := loadClusterConfig(installOptions.Manifest)
 	if err != nil {
-		return fmt.Errorf("failed to load cluster: %v", err)
+		return errors.Wrap(err, "failed to load cluster")
 	}
 
 	options, err := createInstallerOptions(installOptions.Manifest, cluster, installOptions)
 	if err != nil {
-		return fmt.Errorf("failed to create installer options: %v", err)
+		return errors.Wrap(err, "failed to create installer options")
 	}
 
 	if err = applyTerraform(installOptions.TerraformState, cluster); err != nil {
-		return fmt.Errorf("failed to setup PKI backup: %v", err)
+		return errors.Wrap(err, "failed to setup PKI backup")
 	}
 
 	if err = cluster.DefaultAndValidate(); err != nil {
@@ -95,13 +95,13 @@ func createInstallerOptions(clusterFile string, cluster *config.Cluster, options
 	// existing, zero byte backup)
 	stat, err := os.Stat(options.BackupFile)
 	if err != nil && stat != nil && stat.Size() > 0 {
-		return nil, fmt.Errorf("backup %s already exists, refusing to overwrite", options.BackupFile)
+		return nil, errors.Errorf("backup %s already exists, refusing to overwrite", options.BackupFile)
 	}
 
 	// try to write to the file before doing anything else
 	f, err := os.OpenFile(options.BackupFile, os.O_RDWR|os.O_CREATE, 0600)
 	if err != nil {
-		return nil, fmt.Errorf("cannot open %s for writing", options.BackupFile)
+		return nil, errors.Errorf("cannot open %s for writing", options.BackupFile)
 	}
 	defer f.Close()
 

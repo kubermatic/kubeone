@@ -1,11 +1,10 @@
 package installation
 
 import (
-	"fmt"
-
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/ssh"
+	"github.com/pkg/errors"
 )
 
 const dockerVersion = "18.09.2"
@@ -26,7 +25,7 @@ func installPrerequisitesOnNode(ctx *util.Context, node *config.HostConfig, conn
 	ctx.Logger.Infoln("Determine operating system…")
 	os, err := determineOS(ctx)
 	if err != nil {
-		return fmt.Errorf("failed to determine operating system: %v", err)
+		return errors.Wrap(err, "failed to determine operating system")
 	}
 
 	node.OperatingSystem = os
@@ -34,13 +33,13 @@ func installPrerequisitesOnNode(ctx *util.Context, node *config.HostConfig, conn
 	ctx.Logger.Infoln("Determine hostname…")
 	hostname, err := determineHostname(ctx, node)
 	if err != nil {
-		return fmt.Errorf("failed to determine hostname: %v", err)
+		return errors.Wrap(err, "failed to determine hostname")
 	}
 
 	ctx.Logger.Infoln("Creating environment file…")
 	err = createEnvironmentFile(ctx)
 	if err != nil {
-		return fmt.Errorf("failed to create environment file: %v", err)
+		return errors.Wrap(err, "failed to create environment file")
 	}
 
 	node.Hostname = hostname
@@ -50,18 +49,18 @@ func installPrerequisitesOnNode(ctx *util.Context, node *config.HostConfig, conn
 	logger.Infoln("Installing kubeadm…")
 	err = installKubeadm(ctx, node)
 	if err != nil {
-		return fmt.Errorf("failed to install kubeadm: %v", err)
+		return errors.Wrap(err, "failed to install kubeadm")
 	}
 
 	err = configureDockerDaemonProxy(ctx)
 	if err != nil {
-		return fmt.Errorf("failed to configure proxy for docker daemon: %v", err)
+		return errors.Wrap(err, "failed to configure proxy for docker daemon")
 	}
 
 	logger.Infoln("Deploying configuration files…")
 	err = deployConfigurationFiles(ctx)
 	if err != nil {
-		return fmt.Errorf("failed to upload configuration files: %v", err)
+		return errors.Wrap(err, "failed to upload configuration files")
 	}
 
 	return nil
@@ -120,7 +119,7 @@ func installKubeadm(ctx *util.Context, node *config.HostConfig) error {
 		err = installKubeadmCentOS(ctx)
 
 	default:
-		err = fmt.Errorf("'%s' is not a supported operating system", node.OperatingSystem)
+		err = errors.Errorf("'%s' is not a supported operating system", node.OperatingSystem)
 	}
 
 	return err
@@ -132,7 +131,7 @@ func installKubeadmDebian(ctx *util.Context) error {
 		"DOCKER_VERSION":     dockerVersion,
 	})
 
-	return err
+	return errors.WithStack(err)
 }
 
 const kubeadmDebianCommand = `
@@ -267,7 +266,7 @@ sudo systemctl start docker.service kubelet.service
 func deployConfigurationFiles(ctx *util.Context) error {
 	err := ctx.Configuration.UploadTo(ctx.Runner.Conn, ctx.WorkDir)
 	if err != nil {
-		return fmt.Errorf("failed to upload: %v", err)
+		return errors.Wrap(err, "failed to upload")
 	}
 
 	// move config files to their permanent locations

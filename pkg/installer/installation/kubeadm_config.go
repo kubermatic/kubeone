@@ -7,6 +7,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm"
+	"github.com/pkg/errors"
 )
 
 func generateKubeadm(ctx *util.Context) error {
@@ -15,7 +16,7 @@ func generateKubeadm(ctx *util.Context) error {
 	for idx := range ctx.Cluster.Hosts {
 		kubeadm, err := kubeadm.Config(ctx, ctx.Cluster.Hosts[idx])
 		if err != nil {
-			return fmt.Errorf("failed to create kubeadm configuration: %v", err)
+			return errors.Wrap(err, "failed to create kubeadm configuration")
 		}
 
 		ctx.Configuration.AddFile(fmt.Sprintf("cfg/master_%d.yaml", idx), kubeadm)
@@ -27,7 +28,7 @@ func generateKubeadm(ctx *util.Context) error {
 func generateKubeadmOnNode(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
 	err := ctx.Configuration.UploadTo(conn, ctx.WorkDir)
 	if err != nil {
-		return fmt.Errorf("failed to upload: %v", err)
+		return errors.Wrap(err, "failed to upload")
 	}
 
 	return nil

@@ -2,10 +2,9 @@ package certificate
 
 import (
 	"crypto/rsa"
-	"errors"
 
 	"github.com/kubermatic/kubeone/pkg/installer/util"
-
+	"github.com/pkg/errors"
 	"k8s.io/client-go/util/cert"
 	"k8s.io/client-go/util/cert/triple"
 )

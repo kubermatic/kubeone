@@ -2,12 +2,11 @@ package canal
 
 import (
 	"bytes"
-	"errors"
-	"fmt"
 	"text/template"
 
 	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/templates"
+	"github.com/pkg/errors"
 
 	rbacv1 "k8s.io/api/rbac/v1"
 	apiextensions "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
@@ -72,7 +71,7 @@ func Deploy(ctx *util.Context) error {
 	// Populate Flannel network configuration
 	tpl, err := template.New("base").Parse(flannelNetworkConfig)
 	if err != nil {
-		return fmt.Errorf("failed to parse canal config: %v", err)
+		return errors.Wrap(err, "failed to parse canal config")
 	}
 
 	variables := map[string]interface{}{
@@ -81,7 +80,7 @@ func Deploy(ctx *util.Context) error {
 
 	buf := bytes.Buffer{}
 	if err := tpl.Execute(&buf, variables); err != nil {
-		return fmt.Errorf("failed to render canal config: %v", err)
+		return errors.Wrap(err, "failed to render canal config")
 	}
 
 	// Kubernetes clientsets
