@@ -83,8 +83,12 @@ if ! type docker &>/dev/null; then exit 1; fi
 if ! type kubelet &>/dev/null; then exit 1; fi
 # Check is Kubeadm installed
 if ! type kubeadm &>/dev/null; then exit 1; fi
-# Check does Kubernetes directory exists
-if ! ls /etc/kubernetes &>/dev/null; then exit 1; fi
+# Check do Kubernetes directories and files exist
+if [[ ! -d "/etc/kubernetes/manifests" ]]; then exit 1; fi
+if [[ ! -d "/etc/kubernetes/pki" ]]; then exit 1; fi
+if [[ ! -f "/etc/kubernetes/kubelet.conf" ]]; then exit 1; fi
+# Check are kubelet running
+if ! sudo systemctl is-active --quiet kubelet &>/dev/null; then exit 1; fi
 `
 
 // verifyControlPlaneRunning ensures all control plane nodes are running
