@@ -15,12 +15,14 @@ import (
 const (
 	globalTerraformFlagName = "tfjson"
 	globalVerboseFlagName   = "verbose"
+	globalDebugFlagName     = "debug"
 )
 
 // globalOptions are global globalOptions same for all commands
 type globalOptions struct {
 	TerraformState string
 	Verbose        bool
+	Debug          bool
 }
 
 func persistentGlobalOptions(fs *pflag.FlagSet) (*globalOptions, error) {

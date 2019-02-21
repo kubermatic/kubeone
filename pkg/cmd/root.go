@@ -14,7 +14,12 @@ func Execute() {
 	rootCmd := newRoot()
 
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
+		debug, _ := rootCmd.PersistentFlags().GetBool(globalDebugFlagName)
+		if debug {
+			fmt.Printf("%+v\n", err)
+		} else {
+			fmt.Println(err)
+		}
 		os.Exit(-1)
 	}
 }
@@ -34,6 +39,7 @@ func newRoot() *cobra.Command {
 
 	fs.StringVarP(&opts.TerraformState, globalTerraformFlagName, "t", "", "path to terraform output JSON or - for stdin")
 	fs.BoolVarP(&opts.Verbose, globalVerboseFlagName, "v", false, "verbose")
+	fs.BoolVarP(&opts.Debug, globalDebugFlagName, "d", false, "debug")
 
 	rootCmd.AddCommand(
 		installCmd(fs),
