@@ -63,6 +63,13 @@ func runPreflightChecks(ctx *util.Context) error {
 	if err := verifyVersion(ctx, nodes, ctx.Verbose); err != nil {
 		return fmt.Errorf("unable to verify components version: %v", err)
 	}
+	if err := verifyVersionSkew(ctx, nodes, ctx.Verbose); err != nil {
+		if ctx.ForceUpgrade {
+			ctx.Logger.Warningf("version skew check failed: %v", err)
+		} else {
+			return fmt.Errorf("version skew check failed: %v", err)
+		}
+	}
 
 	return nil
 }
@@ -147,8 +154,27 @@ func verifyEndpoints(nodes *corev1.NodeList, hosts []*config.HostConfig, verbose
 	return nil
 }
 
-// verifyVersion ensures it's possible to upgrade to the requested version and that the version skew policy is fulfilled
+// verifyVersion verifies is it possible to upgrade to the requested version
 func verifyVersion(ctx *util.Context, nodes *corev1.NodeList, verbose bool) error {
+	reqVer, err := semver.NewVersion(ctx.Cluster.Versions.Kubernetes)
+	if err != nil {
+		return fmt.Errorf("provided version is invalid: %v", err)
+	}
+
+	kubelet, err := semver.NewVersion(nodes.Items[0].Status.NodeInfo.KubeletVersion)
+	if err != nil {
+			return err
+	}
+
+	if reqVer.Compare(kubelet) <= 0 {
+		return fmt.Errorf("unable to upgrade to same or lower version")
+	}
+
+	return nil
+}
+
+// verifyVersionSkew ensures the requested version matches the version skew policy
+func verifyVersionSkew(ctx *util.Context, nodes *corev1.NodeList, verbose bool) error {
 	reqVer, err := semver.NewVersion(ctx.Cluster.Versions.Kubernetes)
 	if err != nil {
 		return fmt.Errorf("provided version is invalid: %v", err)
@@ -220,7 +246,7 @@ func checkVersionSkew(reqVer, currVer *semver.Version, diff int64) error {
 	}
 	// Check are we upgrading to newer minor or patch release
 	if reqVer.Minor()-currVer.Minor() < 0 ||
-		(reqVer.Minor() == currVer.Minor() && reqVer.Patch() < reqVer.Patch()) {
+		(reqVer.Minor() == currVer.Minor() && reqVer.Patch() < currVer.Patch()) {
 		return fmt.Errorf("requested version can't be lower than current")
 	}
 	// Ensure the version skew policy

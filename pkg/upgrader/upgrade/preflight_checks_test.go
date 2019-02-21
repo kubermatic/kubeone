@@ -205,27 +205,33 @@ func TestCheckVersionSkewInvalid(t *testing.T) {
 			diff:           2,
 		},
 		{
-			name:           "upgrade 1.13.0 to 1.12.1 with diff of 1",
+			name:           "downgrade 1.13.0 to 1.12.1 with diff of 1",
 			currentVersion: semver.MustParse("1.13.0"),
 			desiredVersion: semver.MustParse("1.12.1"),
 			diff:           1,
 		},
 		{
-			name:           "upgrade 1.13.3 to 1.12.1 with diff of 1",
+			name:           "downgrade 1.13.3 to 1.12.1 with diff of 1",
 			currentVersion: semver.MustParse("1.13.3"),
 			desiredVersion: semver.MustParse("1.12.1"),
 			diff:           1,
 		},
 		{
-			name:           "upgrade 1.13.3 to 1.12.3 with diff of 1",
+			name:           "downgrade 1.13.3 to 1.12.3 with diff of 1",
 			currentVersion: semver.MustParse("1.13.3"),
 			desiredVersion: semver.MustParse("1.12.3"),
 			diff:           1,
 		},
 		{
-			name:           "upgrade 1.13.3 to 1.12.4 with diff of 1",
+			name:           "downgrade 1.13.3 to 1.12.4 with diff of 1",
 			currentVersion: semver.MustParse("1.13.3"),
 			desiredVersion: semver.MustParse("1.12.4"),
+			diff:           1,
+		},
+		{
+			name:           "downgrade 1.13.3 to 1.13.2 with diff of 1",
+			currentVersion: semver.MustParse("v1.13.3"),
+			desiredVersion: semver.MustParse("v1.13.2"),
 			diff:           1,
 		},
 	}
