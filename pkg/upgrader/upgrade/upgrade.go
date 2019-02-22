@@ -1,8 +1,9 @@
 package upgrade
 
 import (
-	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/pkg/errors"
+
+	"github.com/kubermatic/kubeone/pkg/installer/util"
 )
 
 const (

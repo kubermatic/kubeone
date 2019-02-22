@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/pkg/errors"
+
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/pkg/errors"
 )
 
 // NodeTask is a task that is specifically tailored to run on a single node.

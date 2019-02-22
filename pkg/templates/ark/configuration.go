@@ -3,11 +3,12 @@ package ark
 import (
 	"fmt"
 
+	arkv1 "github.com/heptio/ark/pkg/apis/ark/v1"
+
 	"github.com/kubermatic/kubeone/pkg/config"
+
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
-	arkv1 "github.com/heptio/ark/pkg/apis/ark/v1"
 )
 
 // TODO(xmudrii): Other providers

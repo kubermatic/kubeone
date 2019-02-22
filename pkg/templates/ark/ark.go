@@ -3,9 +3,10 @@ package ark
 import (
 	arkv1 "github.com/heptio/ark/pkg/apis/ark/v1"
 	arkclientset "github.com/heptio/ark/pkg/generated/clientset/versioned/typed/ark/v1"
+	"github.com/pkg/errors"
+
 	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/templates"
-	"github.com/pkg/errors"
 
 	apiextensions "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
 	"k8s.io/apimachinery/pkg/api/equality"

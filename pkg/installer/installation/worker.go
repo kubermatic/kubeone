@@ -3,9 +3,10 @@ package installation
 import (
 	"time"
 
+	"github.com/pkg/errors"
+
 	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
-	"github.com/pkg/errors"
 )
 
 func createWorkerMachines(ctx *util.Context) error {

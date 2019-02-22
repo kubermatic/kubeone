@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"strconv"
 
-	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/pkg/errors"
+
+	"github.com/kubermatic/kubeone/pkg/config"
 )
 
 type controlPlane struct {

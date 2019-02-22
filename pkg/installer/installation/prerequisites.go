@@ -1,10 +1,11 @@
 package installation
 
 import (
+	"github.com/pkg/errors"
+
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/pkg/errors"
 )
 
 const dockerVersion = "18.09.2"

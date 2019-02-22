@@ -7,8 +7,9 @@ import (
 	"time"
 
 	"github.com/koron-go/prefixw"
-	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/pkg/errors"
+
+	"github.com/kubermatic/kubeone/pkg/ssh"
 )
 
 // Runner bundles a connection to a host with the verbosity and

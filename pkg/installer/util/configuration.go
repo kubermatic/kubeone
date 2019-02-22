@@ -6,9 +6,10 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/pkg/errors"
+
 	"github.com/kubermatic/kubeone/pkg/archive"
 	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/pkg/errors"
 )
 
 // Configuration holds a map of generated files

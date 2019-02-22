@@ -5,11 +5,12 @@ import (
 	"os"
 
 	"github.com/ghodss/yaml"
-	"github.com/kubermatic/kubeone/pkg/config"
-	"github.com/kubermatic/kubeone/pkg/terraform"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
+
+	"github.com/kubermatic/kubeone/pkg/config"
+	"github.com/kubermatic/kubeone/pkg/terraform"
 )
 
 const (
