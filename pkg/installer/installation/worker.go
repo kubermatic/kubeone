@@ -1,9 +1,9 @@
 package installation
 
 import (
-	"errors"
-	"fmt"
 	"time"
+
+	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
@@ -16,10 +16,11 @@ func createWorkerMachines(ctx *util.Context) error {
 
 	ctx.Logger.Infoln("Waiting for machine-controller to come up…")
 	if err := machinecontroller.WaitForWebhook(ctx.Clientset.CoreV1()); err != nil {
-		return fmt.Errorf("machine-controller-webhook did not come up: %v", err)
+		return errors.Wrap(err, "machine-controller-webhook did not come up")
 	}
+
 	if err := machinecontroller.WaitForMachineController(ctx.Clientset.CoreV1()); err != nil {
-		return errors.New("machine-controller did not come up")
+		return errors.Wrap(err, "machine-controller did not come up")
 	}
 
 	// it can still take a bit before the MC is actually ready

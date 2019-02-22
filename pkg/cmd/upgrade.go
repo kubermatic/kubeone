@@ -1,13 +1,12 @@
 package cmd
 
 import (
-	"errors"
-	"fmt"
-
-	"github.com/kubermatic/kubeone/pkg/upgrader"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+
+	"github.com/kubermatic/kubeone/pkg/upgrader"
 )
 
 type upgradeOptions struct {
@@ -31,7 +30,7 @@ It's possible to source information about hosts from Terraform output, using the
 		RunE: func(_ *cobra.Command, args []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
-				return err
+				return errors.Wrap(err, "unable to get global flags")
 			}
 
 			logger := initLogger(gopts.Verbose)
@@ -60,13 +59,13 @@ It's possible to source information about hosts from Terraform output, using the
 func runUpgrade(logger *logrus.Logger, upgradeOptions *upgradeOptions) error {
 	cluster, err := loadClusterConfig(upgradeOptions.Manifest)
 	if err != nil {
-		return fmt.Errorf("failed to load cluster: %v", err)
+		return errors.Wrap(err, "failed to load cluster")
 	}
 
 	options := createUpgradeOptions(upgradeOptions)
 
 	if err = applyTerraform(upgradeOptions.TerraformState, cluster); err != nil {
-		return fmt.Errorf("failed to parse terraform state: %v", err)
+		return errors.Wrap(err, "failed to parse terraform state")
 	}
 
 	if err = cluster.DefaultAndValidate(); err != nil {

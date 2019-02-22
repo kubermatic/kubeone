@@ -2,9 +2,9 @@ package canal
 
 import (
 	"bytes"
-	"errors"
-	"fmt"
 	"text/template"
+
+	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/templates"
@@ -72,7 +72,7 @@ func Deploy(ctx *util.Context) error {
 	// Populate Flannel network configuration
 	tpl, err := template.New("base").Parse(flannelNetworkConfig)
 	if err != nil {
-		return fmt.Errorf("failed to parse canal config: %v", err)
+		return errors.Wrap(err, "failed to parse canal config")
 	}
 
 	variables := map[string]interface{}{
@@ -81,7 +81,7 @@ func Deploy(ctx *util.Context) error {
 
 	buf := bytes.Buffer{}
 	if err := tpl.Execute(&buf, variables); err != nil {
-		return fmt.Errorf("failed to render canal config: %v", err)
+		return errors.Wrap(err, "failed to render canal config")
 	}
 
 	// Kubernetes clientsets

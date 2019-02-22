@@ -1,14 +1,13 @@
 package config
 
 import (
-	"errors"
-	"fmt"
 	"net"
 	"os"
 	"strings"
 
 	"github.com/Masterminds/semver"
 	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/pkg/errors"
 )
 
 // Cluster describes our entire configuration.
@@ -28,11 +27,11 @@ type Cluster struct {
 // DefaultAndValidate checks if the cluster config makes sense.
 func (m *Cluster) DefaultAndValidate() error {
 	if err := m.Provider.ApplyEnvironment(); err != nil {
-		return fmt.Errorf("failed to apply cloud provider credentials: %v", err)
+		return errors.Wrap(err, "failed to apply cloud provider credentials")
 	}
 
 	if err := m.Backup.ApplyEnvironment(); err != nil {
-		return fmt.Errorf("failed to apply backup environment variables: %v", err)
+		return errors.Wrap(err, "failed to apply backup environment variables")
 	}
 
 	if len(m.Hosts) == 0 {
@@ -46,18 +45,18 @@ func (m *Cluster) DefaultAndValidate() error {
 		m.Hosts[idx].ID = idx
 
 		if err := host.AddDefaultsAndValidate(); err != nil {
-			return fmt.Errorf("host %d is invalid: %v", idx+1, err)
+			return errors.WithMessagef(err, "host %d is invalid", idx+1)
 		}
 	}
 
 	if err := m.MachineController.DefaultAndValidate(); err != nil {
-		return fmt.Errorf("failed to configure machine-controller: %v", err)
+		return errors.Wrap(err, "failed to configure machine-controller")
 	}
 
 	if *m.MachineController.Deploy {
 		for idx, workerset := range m.Workers {
 			if err := workerset.Validate(); err != nil {
-				return fmt.Errorf("worker set %d is invalid: %v", idx+1, err)
+				return errors.WithMessagef(err, "worker set %d is invalid", idx+1)
 			}
 		}
 	} else if len(m.Workers) > 0 {
@@ -65,11 +64,11 @@ func (m *Cluster) DefaultAndValidate() error {
 	}
 
 	if err := m.Network.Validate(); err != nil {
-		return fmt.Errorf("network configuration is invalid: %v", err)
+		return errors.Wrap(err, "network configuration is invalid")
 	}
 
 	if err := m.Backup.Validate(); err != nil {
-		return fmt.Errorf("backup configuration is invalid: %v", err)
+		return errors.Wrap(err, "backup configuration is invalid")
 	}
 
 	if m.APIServer.Address == "" {
@@ -222,7 +221,7 @@ func parseCredentialVariables(envVars []string) (map[string]string, error) {
 	for _, varName := range envVars {
 		creds[varName] = strings.TrimSpace(os.Getenv(varName))
 		if creds[varName] == "" {
-			return nil, fmt.Errorf("environment variable %s is not set, but is required", varName)
+			return nil, errors.Errorf("environment variable %s is not set, but is required", varName)
 		}
 	}
 	return creds, nil
@@ -240,12 +239,12 @@ func (p *ProviderConfig) Validate() error {
 	switch p.Name {
 	case ProviderNameAWS, ProviderNameOpenStack, ProviderNameHetzner, ProviderNameDigitalOcean, ProviderNameVSphere:
 	default:
-		return fmt.Errorf("unknown provider name %q", p.Name)
+		return errors.Errorf("unknown provider name %q", p.Name)
 	}
 
 	_, err := p.Name.ProviderCredentials()
 	if err != nil {
-		return fmt.Errorf("error parsing credentials: %v", err)
+		return errors.Wrap(err, "error parsing credentials")
 	}
 
 	return nil
@@ -283,7 +282,7 @@ type VersionConfig struct {
 func (m *VersionConfig) Validate() error {
 	v, err := semver.NewVersion(m.Kubernetes)
 	if err != nil {
-		return fmt.Errorf("unable to parse version string: %v", err)
+		return errors.Wrap(err, "unable to parse version string")
 	}
 	if v.Major() != 1 || v.Minor() < 13 {
 		return errors.New("kubernetes versions lower than 1.13 are not supported")
@@ -329,13 +328,13 @@ func (m *NetworkConfig) NodePortRange() string {
 func (m *NetworkConfig) Validate() error {
 	if m.PodSubnetVal != "" {
 		if _, _, err := net.ParseCIDR(m.PodSubnetVal); err != nil {
-			return fmt.Errorf("invalid pod subnet specified: %v", err)
+			return errors.Wrap(err, "invalid pod subnet specified")
 		}
 	}
 
 	if m.ServiceSubnetVal != "" {
 		if _, _, err := net.ParseCIDR(m.ServiceSubnetVal); err != nil {
-			return fmt.Errorf("invalid service subnet specified: %v", err)
+			return errors.Wrap(err, "invalid service subnet specified")
 		}
 	}
 
@@ -423,7 +422,7 @@ func (m *BackupConfig) Validate() error {
 	}
 
 	if m.Provider != "aws" && m.Provider != "azure" && m.Provider != "gcp" {
-		return fmt.Errorf(`invalid provider %s; supported values: "aws", "azure" or "gcp"`, m.Provider)
+		return errors.Errorf(`invalid provider %s; supported values: "aws", "azure" or "gcp"`, m.Provider)
 	}
 
 	return nil

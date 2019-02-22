@@ -2,9 +2,9 @@ package terraform
 
 import (
 	"encoding/json"
-	"errors"
-	"fmt"
 	"strconv"
+
+	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/config"
 )
@@ -36,11 +36,11 @@ func (c *controlPlane) Validate() error {
 
 	for i := 0; i < len(c.PublicAddress); i++ {
 		if len(c.PublicAddress[i]) == 0 {
-			return fmt.Errorf("public address for host %d is empty", i+1)
+			return errors.Errorf("public address for host %d is empty", i+1)
 		}
 
 		if len(c.PrivateAddress[i]) == 0 {
-			return fmt.Errorf("private address for host %d is empty", i+1)
+			return errors.Errorf("private address for host %d is empty", i+1)
 		}
 	}
 
@@ -112,7 +112,7 @@ func (c *Config) Apply(cluster *config.Cluster) error {
 	if cp.SSHPort != "" {
 		sshPort, err = strconv.Atoi(cp.SSHPort)
 		if err != nil {
-			return fmt.Errorf("failed to convert ssh port string '%s' to int: %v", cp.SSHPort, err)
+			return errors.Wrapf(err, "failed to convert ssh port string %q to int", cp.SSHPort)
 		}
 	}
 
@@ -175,16 +175,16 @@ func (c *Config) Apply(cluster *config.Cluster) error {
 		case config.ProviderNameVSphere:
 			err = c.updateVSphereWorkerset(existingWorkerSet, workersetValue[0])
 		default:
-			return fmt.Errorf("unknown provider %v", cluster.Provider.Name)
+			return errors.Errorf("unknown provider %v", cluster.Provider.Name)
 		}
 
 		if err != nil {
-			return fmt.Errorf("failed to update provider-specific config for workerset %s from terraform config: %v", workersetName, err)
+			return errors.Wrapf(err, "failed to update provider-specific config for workerset %q from terraform config", workersetName)
 		}
 
 		// copy over common config
 		if err = c.updateCommonWorkerConfig(existingWorkerSet, workersetValue[0]); err != nil {
-			return fmt.Errorf("failed to update common config from terraform config: %v", err)
+			return errors.Wrap(err, "failed to update common config from terraform config")
 		}
 	}
 
@@ -194,34 +194,34 @@ func (c *Config) Apply(cluster *config.Cluster) error {
 func (c *Config) updateAWSWorkerset(workerset *config.WorkerConfig, cfg json.RawMessage) error {
 	var awsCloudConfig awsWorkerConfig
 	if err := json.Unmarshal(cfg, &awsCloudConfig); err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	if err := setWorkersetFlag(workerset, "ami", awsCloudConfig.AMI); err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 	if err := setWorkersetFlag(workerset, "availabilityZone", awsCloudConfig.AvailabilityZone); err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 	if err := setWorkersetFlag(workerset, "instanceProfile", awsCloudConfig.InstanceProfile); err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 	if err := setWorkersetFlag(workerset, "region", awsCloudConfig.Region); err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 	if err := setWorkersetFlag(workerset, "securityGroupIDs", awsCloudConfig.SecurityGroupIDs); err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 	if err := setWorkersetFlag(workerset, "subnetId", awsCloudConfig.SubnetID); err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 	if err := setWorkersetFlag(workerset, "vpcId", awsCloudConfig.VPCID); err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	if awsCloudConfig.InstanceType != nil {
 		if err := setWorkersetFlag(workerset, "instanceType", *awsCloudConfig.InstanceType); err != nil {
-			return err
+			return errors.WithStack(err)
 		}
 	}
 
@@ -230,14 +230,14 @@ func (c *Config) updateAWSWorkerset(workerset *config.WorkerConfig, cfg json.Raw
 	// TODO: Use imported provicerConfig structs for workset.Config
 	// TODO: Add defaulting in the machine-controller for this and remove it here
 	if err := setWorkersetFlag(workerset, "diskType", "gp2"); err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	// We can not check if its defined in the workset already as workerset.Config is a map[string]interface{}
 	// TODO: Use imported provicerConfig structs for workset.Config
 	if awsCloudConfig.DiskSize != nil {
 		if err := setWorkersetFlag(workerset, "diskSize", *awsCloudConfig.DiskSize); err != nil {
-			return err
+			return errors.WithStack(err)
 		}
 	}
 
@@ -247,14 +247,14 @@ func (c *Config) updateAWSWorkerset(workerset *config.WorkerConfig, cfg json.Raw
 func (c *Config) updateDigitalOceanWorkerset(workerset *config.WorkerConfig, cfg json.RawMessage) error {
 	var doCloudConfig doWorkerConfig
 	if err := json.Unmarshal(cfg, &doCloudConfig); err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	if err := setWorkersetFlag(workerset, "size", doCloudConfig.DropletSize); err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 	if err := setWorkersetFlag(workerset, "region", doCloudConfig.Region); err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	return nil
@@ -312,7 +312,7 @@ type commonWorkerConfig struct {
 func (c *Config) updateCommonWorkerConfig(workerset *config.WorkerConfig, cfg json.RawMessage) error {
 	var cc commonWorkerConfig
 	if err := json.Unmarshal(cfg, &cc); err != nil {
-		return fmt.Errorf("failed to unmarshal common worker config: %v", err)
+		return errors.Wrap(err, "failed to unmarshal common worker config")
 	}
 
 	for _, sshKey := range cc.SSHPublicKeys {

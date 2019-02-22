@@ -1,7 +1,7 @@
 package kubeadm
 
 import (
-	"errors"
+	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"

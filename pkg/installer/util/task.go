@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/pkg/errors"
+
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 )
@@ -21,7 +23,7 @@ func (c *Context) runTask(node *config.HostConfig, task NodeTask, prefixed bool)
 	// because we want to re-use it for future tasks)
 	conn, err = c.Connector.Connect(*node)
 	if err != nil {
-		return fmt.Errorf("failed to connect to %s: %v", node.PublicAddress, err)
+		return errors.Wrapf(err, "failed to connect to %s", node.PublicAddress)
 	}
 
 	prefix := ""
@@ -71,7 +73,7 @@ func (c *Context) RunTaskOnNodes(nodes []*config.HostConfig, task NodeTask, para
 	wg.Wait()
 
 	if hasErrors {
-		err = fmt.Errorf("at least one of the tasks has encountered an error")
+		err = errors.New("at least one of the tasks has encountered an error")
 	}
 
 	return err

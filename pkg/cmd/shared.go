@@ -1,37 +1,40 @@
 package cmd
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 
 	"github.com/ghodss/yaml"
-	"github.com/kubermatic/kubeone/pkg/config"
-	"github.com/kubermatic/kubeone/pkg/terraform"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
+
+	"github.com/kubermatic/kubeone/pkg/config"
+	"github.com/kubermatic/kubeone/pkg/terraform"
 )
 
 const (
 	globalTerraformFlagName = "tfjson"
 	globalVerboseFlagName   = "verbose"
+	globalDebugFlagName     = "debug"
 )
 
 // globalOptions are global globalOptions same for all commands
 type globalOptions struct {
 	TerraformState string
 	Verbose        bool
+	Debug          bool
 }
 
 func persistentGlobalOptions(fs *pflag.FlagSet) (*globalOptions, error) {
 	verbose, err := fs.GetBool(globalVerboseFlagName)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	tfjson, err := fs.GetString(globalTerraformFlagName)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return &globalOptions{
@@ -57,12 +60,12 @@ func initLogger(verbose bool) *logrus.Logger {
 func loadClusterConfig(filename string) (*config.Cluster, error) {
 	content, err := ioutil.ReadFile(filename)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read file: %v", err)
+		return nil, errors.Wrap(err, "failed to read file")
 	}
 
 	cluster := config.Cluster{}
 	if err := yaml.Unmarshal(content, &cluster); err != nil {
-		return nil, fmt.Errorf("failed to decode file as JSON: %v", err)
+		return nil, errors.Wrap(err, "failed to decode file as JSON")
 	}
 
 	return &cluster, nil
@@ -80,17 +83,17 @@ func applyTerraform(tf string, cluster *config.Cluster) error {
 
 	if tf == "-" {
 		if tfJSON, err = ioutil.ReadAll(os.Stdin); err != nil {
-			return fmt.Errorf("unable to load Terraform output from stdin: %v", err)
+			return errors.Wrap(err, "unable to load Terraform output from stdin")
 		}
 	} else {
 		if tfJSON, err = ioutil.ReadFile(tf); err != nil {
-			return fmt.Errorf("unable to load Terraform output from file: %v", err)
+			return errors.Wrap(err, "unable to load Terraform output from file")
 		}
 	}
 
 	var tfConfig *terraform.Config
 	if tfConfig, err = terraform.NewConfigFromJSON(tfJSON); err != nil {
-		return fmt.Errorf("failed to parse Terraform config: %v", err)
+		return errors.Wrap(err, "failed to parse Terraform config")
 	}
 
 	return tfConfig.Apply(cluster)

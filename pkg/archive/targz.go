@@ -3,9 +3,9 @@ package archive
 import (
 	"archive/tar"
 	"compress/gzip"
-	"errors"
-	"fmt"
 	"os"
+
+	"github.com/pkg/errors"
 )
 
 type tarGzip struct {
@@ -43,11 +43,11 @@ func (tgz tarGzip) Add(file string, content string) error {
 	}
 
 	if err := tgz.arch.WriteHeader(hdr); err != nil {
-		return fmt.Errorf("failed to write tar file header: %v", err)
+		return errors.Wrap(err, "failed to write tar file header")
 	}
 
 	if _, err := tgz.arch.Write([]byte(content)); err != nil {
-		return fmt.Errorf("failed to write tar file data: %v", err)
+		return errors.Wrap(err, "failed to write tar file data")
 	}
 
 	return nil

@@ -2,8 +2,9 @@ package machinecontroller
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
+
+	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
@@ -169,7 +170,7 @@ func machineSpec(cluster *config.Cluster, workerset config.WorkerConfig, provide
 		tagValue := "shared"
 		spec, err = addMapTag(spec, tagName, tagValue)
 		if err != nil {
-			return nil, fmt.Errorf("could not parse tags for worker machines: %v", err)
+			return nil, errors.Wrap(err, "could not parse tags for worker machines")
 		}
 	}
 

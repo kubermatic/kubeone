@@ -2,7 +2,6 @@ package ssh
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -13,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/pkg/errors"
 	"github.com/tmc/scp"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
@@ -64,7 +64,7 @@ func validateOptions(o Opts) (Opts, error) {
 	if len(o.KeyFile) > 0 {
 		content, err := ioutil.ReadFile(o.KeyFile)
 		if err != nil {
-			return o, fmt.Errorf("failed to read keyfile '%s': %v", o.KeyFile, err)
+			return o, errors.Wrapf(err, "failed to read keyfile %q", o.KeyFile)
 		}
 
 		o.PrivateKey = string(content)
@@ -103,7 +103,7 @@ func NewConnection(o Opts) (Connection, error) {
 	if len(o.PrivateKey) > 0 {
 		signer, parseErr := ssh.ParsePrivateKey([]byte(o.PrivateKey))
 		if parseErr != nil {
-			return nil, fmt.Errorf("the given SSH key could not be parsed (note that password-protected keys are not supported): %v", parseErr)
+			return nil, errors.Wrap(parseErr, "the given SSH key could not be parsed (note that password-protected keys are not supported)")
 		}
 
 		authMethods = append(authMethods, ssh.PublicKeys(signer))
@@ -122,7 +122,7 @@ func NewConnection(o Opts) (Connection, error) {
 
 		socket, dialErr := net.Dial("unix", addr)
 		if dialErr != nil {
-			return nil, fmt.Errorf("could not open socket '%s': %v", addr, dialErr)
+			return nil, errors.Wrapf(dialErr, "could not open socket %q", addr)
 		}
 
 		agentClient := agent.NewClient(socket)
@@ -130,7 +130,7 @@ func NewConnection(o Opts) (Connection, error) {
 		signers, signersErr := agentClient.Signers()
 		if signersErr != nil {
 			socket.Close()
-			return nil, fmt.Errorf("error when creating signer for SSH agent: %v", signersErr)
+			return nil, errors.Wrap(signersErr, "error when creating signer for SSH agent")
 		}
 
 		authMethods = append(authMethods, ssh.PublicKeys(signers...))
@@ -148,7 +148,7 @@ func NewConnection(o Opts) (Connection, error) {
 
 	client, err := ssh.Dial("tcp", endpoint, sshConfig)
 	if err != nil {
-		return nil, fmt.Errorf("could not establish connection to %s: %v", endpoint, err)
+		return nil, errors.Wrapf(err, "could not establish connection to %s", endpoint)
 	}
 
 	return &connection{client}, nil
@@ -175,7 +175,7 @@ func (c *connection) Stream(cmd string, stdout io.Writer, stderr io.Writer) (int
 
 	ses, err := c.client.NewSession()
 	if err != nil {
-		return 0, fmt.Errorf("failed to create new SSH session: %v", err)
+		return 0, errors.Wrap(err, "failed to create new SSH session")
 	}
 	defer ses.Close()
 
@@ -186,7 +186,7 @@ func (c *connection) Stream(cmd string, stdout io.Writer, stderr io.Writer) (int
 	err = ses.Run(strings.TrimSpace(cmd))
 	if err != nil {
 		exitCode = 1
-		err = fmt.Errorf("failed to exec command: %v", err)
+		err = errors.Wrap(err, "failed to exec command")
 	}
 
 	return exitCode, err
@@ -208,7 +208,7 @@ func (c *connection) Upload(source io.Reader, size int64, mode os.FileMode, dest
 
 	ses, err := c.client.NewSession()
 	if err != nil {
-		return fmt.Errorf("failed to create new SSH session: %v", err)
+		return errors.Wrap(err, "failed to create new SSH session")
 	}
 	defer ses.Close()
 
@@ -216,7 +216,7 @@ func (c *connection) Upload(source io.Reader, size int64, mode os.FileMode, dest
 
 	err = scp.Copy(size, mode, filename, source, destination, ses)
 	if err != nil {
-		err = fmt.Errorf("failed to transfer file: %v", err)
+		err = errors.Wrap(err, "failed to transfer file")
 	}
 
 	return err
@@ -229,13 +229,13 @@ func (c *connection) UploadFile(source string, destination string) error {
 
 	ses, err := c.client.NewSession()
 	if err != nil {
-		return fmt.Errorf("failed to create new SSH session: %v", err)
+		return errors.Wrap(err, "failed to create new SSH session")
 	}
 	defer ses.Close()
 
 	err = scp.CopyPath(source, destination, ses)
 	if err != nil {
-		err = fmt.Errorf("failed to transfer file: %v", err)
+		err = errors.Wrap(err, "failed to transfer file")
 	}
 
 	return err
@@ -250,7 +250,7 @@ func (c *connection) Download(source string, target io.Writer) error {
 
 	_, err := c.Stream(fmt.Sprintf(`cat -- "%s"`, source), target, &stderrBuf)
 	if err != nil {
-		err = fmt.Errorf("failed to transfer file: %v", err)
+		err = errors.Wrap(err, "failed to transfer file")
 	}
 
 	return err
@@ -263,7 +263,7 @@ func (c *connection) DownloadToFile(source string, target string) error {
 
 	f, err := os.Create(target)
 	if err != nil {
-		return fmt.Errorf("failed to create local file: %v", err)
+		return errors.Wrap(err, "failed to create local file")
 	}
 	defer f.Close()
 

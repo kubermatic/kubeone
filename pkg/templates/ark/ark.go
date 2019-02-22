@@ -1,7 +1,9 @@
 package ark
 
 import (
-	"errors"
+	arkv1 "github.com/heptio/ark/pkg/apis/ark/v1"
+	arkclientset "github.com/heptio/ark/pkg/generated/clientset/versioned/typed/ark/v1"
+	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/templates"
@@ -10,9 +12,6 @@ import (
 	"k8s.io/apimachinery/pkg/api/equality"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
-	arkv1 "github.com/heptio/ark/pkg/apis/ark/v1"
-	arkclientset "github.com/heptio/ark/pkg/generated/clientset/versioned/typed/ark/v1"
 )
 
 const (

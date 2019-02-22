@@ -1,7 +1,7 @@
 package util
 
 import (
-	"fmt"
+	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/ssh"
@@ -41,22 +41,22 @@ func BuildKubernetesClientset(ctx *Context) error {
 
 	kubeconfig, err := DownloadKubeconfig(ctx.Cluster)
 	if err != nil {
-		return fmt.Errorf("unable to download kubeconfig: %v", err)
+		return errors.Wrap(err, "unable to download kubeconfig")
 	}
 
 	ctx.RESTConfig, err = clientcmd.RESTConfigFromKubeConfig(kubeconfig)
 	if err != nil {
-		return fmt.Errorf("unable to build config from kubeconfig bytes: %v", err)
+		return errors.Wrap(err, "unable to build config from kubeconfig bytes")
 	}
 
 	ctx.Clientset, err = kubernetes.NewForConfig(ctx.RESTConfig)
 	if err != nil {
-		return fmt.Errorf("unable to build kubernetes clientset: %v", err)
+		return errors.Wrap(err, "unable to build kubernetes clientset")
 	}
 
 	ctx.APIExtensionClientset, err = apiextensionsclientset.NewForConfig(ctx.RESTConfig)
 	if err != nil {
-		return fmt.Errorf("unable to build apiextension-apiserver clientset: %v", err)
+		return errors.Wrap(err, "unable to build apiextension-apiserver clientset")
 	}
 
 	return nil

@@ -1,13 +1,14 @@
 package util
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"strings"
 	"time"
 
 	"github.com/koron-go/prefixw"
+	"github.com/pkg/errors"
+
 	"github.com/kubermatic/kubeone/pkg/ssh"
 )
 
@@ -39,7 +40,7 @@ func (r *Runner) Run(cmd string, variables TemplateVariables) (string, string, e
 
 		stdout, stderr, _, err = r.Conn.Exec(cmd)
 		if err != nil {
-			err = fmt.Errorf("%v: %s", err, stderr)
+			err = errors.Wrap(err, stderr)
 		}
 
 		return stdout, stderr, err
@@ -61,7 +62,7 @@ func (r *Runner) Run(cmd string, variables TemplateVariables) (string, string, e
 func (r *Runner) WaitForPod(namespace string, name string, timeout time.Duration) error {
 	cmd := fmt.Sprintf(`sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf -n "%s" get pod "%s" -o jsonpath='{.status.phase}' --ignore-not-found`, namespace, name)
 	if !r.WaitForCondition(cmd, timeout, IsRunning) {
-		return fmt.Errorf("timed out while waiting for %s/%s to come up for %v", namespace, name, timeout)
+		return errors.Errorf("timed out while waiting for %s/%s to come up for %v", namespace, name, timeout)
 	}
 
 	return nil

@@ -1,11 +1,12 @@
 package upgrade
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 
 	"github.com/Masterminds/semver"
+	"github.com/pkg/errors"
+
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/ssh"
@@ -23,7 +24,7 @@ func runPreflightChecks(ctx *util.Context) error {
 
 	// Check are Docker, Kubelet and Kubeadm installed
 	if err := checkPrerequisites(ctx); err != nil {
-		return fmt.Errorf("unable to check are prerequisites installed: %v", err)
+		return errors.Wrap(err, "unable to check are prerequisites installed")
 	}
 
 	// Get list of nodes and verify number of nodes
@@ -31,10 +32,10 @@ func runPreflightChecks(ctx *util.Context) error {
 		LabelSelector: fmt.Sprintf("%s=%s", labelControlPlaneNode, ""),
 	})
 	if err != nil {
-		return fmt.Errorf("unable to list nodes: %v", err)
+		return errors.Wrap(err, "unable to list nodes")
 	}
 	if len(nodes.Items) != len(ctx.Cluster.Hosts) {
-		return fmt.Errorf("expected %d cluster nodes but got %d", len(ctx.Cluster.Hosts), len(nodes.Items))
+		return errors.Errorf("expected %d cluster nodes but got %d", len(ctx.Cluster.Hosts), len(nodes.Items))
 	}
 
 	// Run preflight checks on nodes
@@ -42,7 +43,7 @@ func runPreflightChecks(ctx *util.Context) error {
 
 	ctx.Logger.Infoln("Verifying are all nodes running…")
 	if err := verifyNodesRunning(nodes, ctx.Verbose); err != nil {
-		return fmt.Errorf("unable to verify are nodes running: %v", err)
+		return errors.Wrap(err, "unable to verify are nodes running")
 	}
 
 	ctx.Logger.Infoln("Verifying are correct labels set on nodes…")
@@ -50,24 +51,24 @@ func runPreflightChecks(ctx *util.Context) error {
 		if ctx.ForceUpgrade {
 			ctx.Logger.Warningf("unable to verify node labels: %v", err)
 		} else {
-			return fmt.Errorf("unable to verify node labels: %v", err)
+			return errors.Wrap(err, "unable to verify node labels")
 		}
 	}
 
 	ctx.Logger.Infoln("Verifying do all node IP addresses match with our state…")
 	if err := verifyEndpoints(nodes, ctx.Cluster.Hosts, ctx.Verbose); err != nil {
-		return fmt.Errorf("unable to verify node endpoints: %v", err)
+		return errors.Wrap(err, "unable to verify node endpoints")
 	}
 
 	ctx.Logger.Infoln("Verifying is it possible to upgrade to the desired version…")
 	if err := verifyVersion(ctx.Cluster.Versions.Kubernetes, nodes, ctx.Verbose); err != nil {
-		return fmt.Errorf("unable to verify components version: %v", err)
+		return errors.Wrap(err, "unable to verify components version")
 	}
 	if err := verifyVersionSkew(ctx, nodes, ctx.Verbose); err != nil {
 		if ctx.ForceUpgrade {
 			ctx.Logger.Warningf("version skew check failed: %v", err)
 		} else {
-			return fmt.Errorf("version skew check failed: %v", err)
+			return errors.Wrap(err, "version skew check failed")
 		}
 	}
 
@@ -113,7 +114,7 @@ func verifyNodesRunning(nodes *corev1.NodeList, verbose bool) error {
 			}
 		}
 		if !found {
-			return fmt.Errorf("node %s is not running", n.ObjectMeta.Name)
+			return errors.Errorf("node %s is not running", n.ObjectMeta.Name)
 		}
 	}
 	return nil
@@ -124,7 +125,7 @@ func verifyLabels(nodes *corev1.NodeList, verbose bool) error {
 	for _, n := range nodes.Items {
 		_, ok := n.ObjectMeta.Labels[labelUpgradeLock]
 		if ok {
-			return fmt.Errorf("label %s is present on node %s", labelUpgradeLock, n.ObjectMeta.Name)
+			return errors.Errorf("label %s is present on node %s", labelUpgradeLock, n.ObjectMeta.Name)
 		}
 		if verbose {
 			fmt.Printf("[%s] Label %s isn't present\n", n.ObjectMeta.Name, labelUpgradeLock)
@@ -148,7 +149,7 @@ func verifyEndpoints(nodes *corev1.NodeList, hosts []*config.HostConfig, verbose
 			}
 		}
 		if !found {
-			return fmt.Errorf("cannot match node by ip address")
+			return errors.New("cannot match node by ip address")
 		}
 	}
 	return nil
@@ -158,7 +159,7 @@ func verifyEndpoints(nodes *corev1.NodeList, hosts []*config.HostConfig, verbose
 func verifyVersion(version string, nodes *corev1.NodeList, verbose bool) error {
 	reqVer, err := semver.NewVersion(version)
 	if err != nil {
-		return fmt.Errorf("provided version is invalid: %v", err)
+		return errors.Wrap(err, "provided version is invalid")
 	}
 
 	kubelet, err := semver.NewVersion(nodes.Items[0].Status.NodeInfo.KubeletVersion)
@@ -172,7 +173,7 @@ func verifyVersion(version string, nodes *corev1.NodeList, verbose bool) error {
 	}
 
 	if reqVer.Compare(kubelet) <= 0 {
-		return fmt.Errorf("unable to upgrade to same or lower version")
+		return errors.New("unable to upgrade to same or lower version")
 	}
 
 	return nil
@@ -182,7 +183,7 @@ func verifyVersion(version string, nodes *corev1.NodeList, verbose bool) error {
 func verifyVersionSkew(ctx *util.Context, nodes *corev1.NodeList, verbose bool) error {
 	reqVer, err := semver.NewVersion(ctx.Cluster.Versions.Kubernetes)
 	if err != nil {
-		return fmt.Errorf("provided version is invalid: %v", err)
+		return errors.Wrap(err, "provided version is invalid")
 	}
 
 	// Check API server version
@@ -191,13 +192,13 @@ func verifyVersionSkew(ctx *util.Context, nodes *corev1.NodeList, verbose bool) 
 		LabelSelector: "component=kube-apiserver",
 	})
 	if err != nil {
-		return fmt.Errorf("unable to list apiserver pods: %v", err)
+		return errors.Wrap(err, "unable to list apiserver pods")
 	}
 	// This ensures all API server pods are running the same apiserver version
 	for _, p := range apiserverPods.Items {
 		ver, apiserverErr := parseContainerImageVersion(p.Spec.Containers[0].Image)
 		if apiserverErr != nil {
-			return fmt.Errorf("unable to parse apiserver version: %v", err)
+			return errors.Wrap(err, "unable to parse apiserver version")
 		}
 		if verbose {
 			fmt.Printf("Pod %s is running apiserver version %s\n", p.ObjectMeta.Name, ver.String())
@@ -206,19 +207,19 @@ func verifyVersionSkew(ctx *util.Context, nodes *corev1.NodeList, verbose bool) 
 			apiserverVersion = ver
 		}
 		if apiserverVersion.Compare(ver) != 0 {
-			return fmt.Errorf("all apiserver pods must be running same version before upgrade")
+			return errors.New("all apiserver pods must be running same version before upgrade")
 		}
 	}
 	err = checkVersionSkew(reqVer, apiserverVersion, 1)
 	if err != nil {
-		return fmt.Errorf("apiserver version check failed: %v", err)
+		return errors.Wrap(err, "apiserver version check failed")
 	}
 
 	// Check Kubelet version
 	for _, n := range nodes.Items {
 		kubeletVer, kubeletErr := semver.NewVersion(n.Status.NodeInfo.KubeletVersion)
 		if kubeletErr != nil {
-			return fmt.Errorf("unable to parse kubelet version: %v", err)
+			return errors.Wrap(err, "unable to parse kubelet version")
 		}
 		if verbose {
 			fmt.Printf("Node %s is running kubelet version %s\n", n.ObjectMeta.Name, kubeletVer.String())
@@ -226,10 +227,10 @@ func verifyVersionSkew(ctx *util.Context, nodes *corev1.NodeList, verbose bool) 
 		// Check is requested version different than current and ensure version skew policy
 		err = checkVersionSkew(reqVer, kubeletVer, 2)
 		if err != nil {
-			return fmt.Errorf("kubelet version check failed: %v", err)
+			return errors.Wrap(err, "kubelet version check failed")
 		}
 		if kubeletVer.Minor() > apiserverVersion.Minor() {
-			return fmt.Errorf("kubelet cannot be newer than apiserver")
+			return errors.New("kubelet cannot be newer than apiserver")
 		}
 	}
 
@@ -239,7 +240,7 @@ func verifyVersionSkew(ctx *util.Context, nodes *corev1.NodeList, verbose bool) 
 func parseContainerImageVersion(image string) (*semver.Version, error) {
 	ver := strings.Split(image, ":")
 	if len(ver) != 2 {
-		return nil, fmt.Errorf("invalid container image format: %s", image)
+		return nil, errors.Errorf("invalid container image format: %s", image)
 	}
 	return semver.NewVersion(ver[1])
 }
@@ -247,17 +248,17 @@ func parseContainerImageVersion(image string) (*semver.Version, error) {
 func checkVersionSkew(reqVer, currVer *semver.Version, diff int64) error {
 	// Check is requested version different than current and ensure version skew policy
 	if currVer.Equal(reqVer) {
-		return fmt.Errorf("requested version is same as current")
+		return errors.New("requested version is same as current")
 	}
 	// Check are we upgrading to newer minor or patch release
 	if reqVer.Minor()-currVer.Minor() < 0 ||
 		(reqVer.Minor() == currVer.Minor() && reqVer.Patch() < currVer.Patch()) {
-		return fmt.Errorf("requested version can't be lower than current")
+		return errors.New("requested version can't be lower than current")
 	}
 	// Ensure the version skew policy
 	// https://kubernetes.io/docs/setup/version-skew-policy/#supported-version-skew
 	if reqVer.Minor()-currVer.Minor() > diff {
-		return fmt.Errorf("version skew check failed: component can be only %d minor version older than requested version", diff)
+		return errors.Errorf("version skew check failed: component can be only %d minor version older than requested version", diff)
 	}
 	return nil
 }

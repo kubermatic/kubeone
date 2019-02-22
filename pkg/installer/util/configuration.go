@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/pkg/errors"
+
 	"github.com/kubermatic/kubeone/pkg/archive"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 )
@@ -37,12 +39,12 @@ func (c *Configuration) UploadTo(conn ssh.Connection, directory string) error {
 		dir := filepath.Dir(target)
 		_, _, _, err := conn.Exec(fmt.Sprintf(`mkdir -p -- "%s"`, dir))
 		if err != nil {
-			return fmt.Errorf("failed to create ./%s directory: %v", dir, err)
+			return errors.Wrapf(err, "failed to create ./%s directory", dir)
 		}
 
 		err = conn.Upload(strings.NewReader(content), size, 0644, target)
 		if err != nil {
-			return fmt.Errorf("failed to upload file %s: %v", filename, err)
+			return errors.Wrapf(err, "failed to upload file %s", filename)
 		}
 	}
 
@@ -54,7 +56,7 @@ func (c *Configuration) Download(conn ssh.Connection, source string, prefix stri
 	// list files
 	stdout, stderr, _, err := conn.Exec(fmt.Sprintf(`cd -- "%s" && find * -type f`, source))
 	if err != nil {
-		return fmt.Errorf("%v: %s", err, stderr)
+		return errors.Wrapf(err, "%s", stderr)
 	}
 
 	filenames := strings.Split(stdout, "\n")
@@ -89,14 +91,14 @@ func (c *Configuration) Debug() {
 func (c *Configuration) Backup(target string) error {
 	archive, err := archive.NewTarGzip(target)
 	if err != nil {
-		return fmt.Errorf("failed to open archive: %v", err)
+		return errors.Wrap(err, "failed to open archive")
 	}
 	defer archive.Close()
 
 	for filename, content := range c.files {
 		err = archive.Add(filename, content)
 		if err != nil {
-			return fmt.Errorf("failed to add %s to archive: %v", filename, err)
+			return errors.Wrapf(err, "failed to add %s to archive", filename)
 		}
 	}
 
@@ -107,7 +109,7 @@ func (c *Configuration) Backup(target string) error {
 func (c *Configuration) Get(filename string) (string, error) {
 	content, ok := c.files[filename]
 	if !ok {
-		return "", fmt.Errorf("could not find file %s", filename)
+		return "", errors.Errorf("could not find file %s", filename)
 	}
 
 	return content, nil

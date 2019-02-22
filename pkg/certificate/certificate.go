@@ -2,7 +2,8 @@ package certificate
 
 import (
 	"crypto/rsa"
-	"errors"
+
+	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/installer/util"
 

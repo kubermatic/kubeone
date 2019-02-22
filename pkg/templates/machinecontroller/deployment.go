@@ -1,10 +1,11 @@
 package machinecontroller
 
 import (
-	"errors"
 	"fmt"
 	"net"
 	"time"
+
+	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/installer/util"

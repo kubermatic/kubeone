@@ -1,7 +1,7 @@
 package upgrade
 
 import (
-	"fmt"
+	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/installer/util"
 )
@@ -15,10 +15,10 @@ const (
 // cluster provisioned using KubeOne
 func Upgrade(ctx *util.Context) error {
 	if err := util.BuildKubernetesClientset(ctx); err != nil {
-		return fmt.Errorf("unable to build kubernetes clientset: %v", err)
+		return errors.Wrap(err, "unable to build kubernetes clientset")
 	}
 	if err := runPreflightChecks(ctx); err != nil {
-		return fmt.Errorf("preflight checks failed: %v", err)
+		return errors.Wrap(err, "preflight checks failed")
 	}
 
 	return nil

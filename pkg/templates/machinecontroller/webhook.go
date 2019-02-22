@@ -1,9 +1,10 @@
 package machinecontroller
 
 import (
-	"errors"
 	"fmt"
 	"time"
+
+	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/certificate"
 	"github.com/kubermatic/kubeone/pkg/config"
@@ -43,7 +44,7 @@ func DeployWebhookConfiguration(ctx *util.Context) error {
 	// Generate Webhook certificate
 	caKeyPair, err := certificate.CAKeyPair(ctx.Configuration)
 	if err != nil {
-		return fmt.Errorf("failed to load CA keypair: %v", err)
+		return errors.Wrap(err, "failed to load CA keypair")
 	}
 
 	// Deploy Webhook
@@ -263,7 +264,7 @@ func tlsServingCertificate(ca *triple.KeyPair) (*corev1.Secret, error) {
 		// For some reason the name the APIServer validates against must be in the SANs, having it as CN is not enough
 		[]string{commonName})
 	if err != nil {
-		return nil, fmt.Errorf("failed to generate serving cert: %v", err)
+		return nil, errors.Wrap(err, "failed to generate serving cert")
 	}
 	se.Data["cert.pem"] = certutil.EncodeCertPEM(newKP.Cert)
 	se.Data["key.pem"] = certutil.EncodePrivateKeyPEM(newKP.Key)

@@ -2,10 +2,10 @@ package templates
 
 import (
 	"bytes"
-	"fmt"
 	"strings"
 
 	"github.com/ghodss/yaml"
+	"github.com/pkg/errors"
 )
 
 // KubernetesToYAML properly encodes a list of resources as YAML.
@@ -31,13 +31,13 @@ func KubernetesToYAML(data []interface{}) (string, error) {
 		}
 
 		if err != nil {
-			return "", fmt.Errorf("failed to marshal item: %v", err)
+			return "", errors.Wrap(err, "failed to marshal item")
 		}
 		if _, err := buffer.Write(encodedItem); err != nil {
-			return "", fmt.Errorf("failed to write into buffer: %v", err)
+			return "", errors.Wrap(err, "failed to write into buffer")
 		}
 		if _, err := buffer.WriteString("\n---\n"); err != nil {
-			return "", fmt.Errorf("failed to write into buffer: %v", err)
+			return "", errors.Wrap(err, "failed to write into buffer")
 		}
 	}
 
