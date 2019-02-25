@@ -11,8 +11,10 @@ import (
 
 type upgradeOptions struct {
 	globalOptions
-	Manifest     string
-	ForceUpgrade bool
+
+	ForceUpgrade              bool
+	Manifest                  string
+	UpgradeMachineDeployments bool
 }
 
 func upgradeCmd(rootFlags *pflag.FlagSet) *cobra.Command {
@@ -37,10 +39,6 @@ It's possible to source information about hosts from Terraform output, using the
 			uopts.TerraformState = gopts.TerraformState
 			uopts.Verbose = gopts.Verbose
 
-			if len(args) != 1 {
-				return errors.New("expected path to a cluster config file as an argument")
-			}
-
 			uopts.Manifest = args[0]
 			if uopts.Manifest == "" {
 				return errors.New("no cluster config file given")
@@ -51,6 +49,7 @@ It's possible to source information about hosts from Terraform output, using the
 	}
 
 	cmd.Flags().BoolVarP(&uopts.ForceUpgrade, "force", "f", false, "force start upgrade process")
+	cmd.Flags().BoolVarP(&uopts.UpgradeMachineDeployments, "upgrade-machine-deployments", "", false, "upgrade MachineDeployments objects")
 
 	return cmd
 }
@@ -77,7 +76,8 @@ func runUpgrade(logger *logrus.Logger, upgradeOptions *upgradeOptions) error {
 
 func createUpgradeOptions(options *upgradeOptions) *upgrader.Options {
 	return &upgrader.Options{
-		ForceUpgrade: options.ForceUpgrade,
-		Verbose:      options.Verbose,
+		ForceUpgrade:              options.ForceUpgrade,
+		Verbose:                   options.Verbose,
+		UpgradeMachineDeployments: options.UpgradeMachineDeployments,
 	}
 }

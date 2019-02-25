@@ -11,8 +11,9 @@ import (
 
 // Options groups the various possible options for running KubeOne upgrade
 type Options struct {
-	Verbose      bool
-	ForceUpgrade bool
+	ForceUpgrade              bool
+	UpgradeMachineDeployments bool
+	Verbose                   bool
 }
 
 // Upgrader is entrypoint for the upgrade process
@@ -38,12 +39,13 @@ func (u *Upgrader) Upgrade(options *Options) error {
 // The various task helper functions will take care of setting up Runner structs for each task individually
 func (u *Upgrader) createContext(options *Options) *util.Context {
 	return &util.Context{
-		Cluster:       u.cluster,
-		Connector:     ssh.NewConnector(),
-		Configuration: util.NewConfiguration(),
-		WorkDir:       "kubeone",
-		Logger:        u.logger,
-		Verbose:       options.Verbose,
-		ForceUpgrade:  options.ForceUpgrade,
+		Cluster:                   u.cluster,
+		Connector:                 ssh.NewConnector(),
+		Configuration:             util.NewConfiguration(),
+		WorkDir:                   "kubeone",
+		Logger:                    u.logger,
+		Verbose:                   options.Verbose,
+		ForceUpgrade:              options.ForceUpgrade,
+		UpgradeMachineDeployments: options.UpgradeMachineDeployments,
 	}
 }

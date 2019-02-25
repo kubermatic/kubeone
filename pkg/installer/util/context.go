@@ -14,21 +14,22 @@ import (
 // Context hold together currently test flags and parsed info, along with
 // utilities like logger
 type Context struct {
-	Cluster               *config.Cluster
-	Logger                logrus.FieldLogger
-	Connector             *ssh.Connector
-	Configuration         *Configuration
-	Runner                *Runner
-	WorkDir               string
-	JoinCommand           string
-	JoinToken             string
-	Clientset             *kubernetes.Clientset
-	APIExtensionClientset *apiextensionsclientset.Clientset
-	RESTConfig            *rest.Config
-	Verbose               bool
-	BackupFile            string
-	DestroyWorkers        bool
-	ForceUpgrade          bool
+	Cluster                   *config.Cluster
+	Logger                    logrus.FieldLogger
+	Connector                 *ssh.Connector
+	Configuration             *Configuration
+	Runner                    *Runner
+	WorkDir                   string
+	JoinCommand               string
+	JoinToken                 string
+	Clientset                 *kubernetes.Clientset
+	APIExtensionClientset     *apiextensionsclientset.Clientset
+	RESTConfig                *rest.Config
+	Verbose                   bool
+	BackupFile                string
+	DestroyWorkers            bool
+	ForceUpgrade              bool
+	UpgradeMachineDeployments bool
 }
 
 // Clone returns a shallow copy of the context.
