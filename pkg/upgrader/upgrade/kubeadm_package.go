@@ -17,7 +17,7 @@ sudo apt-get update
 kube_ver=$(apt-cache madison kubelet | grep "{{ .KUBERNETES_VERSION }}" | head -1 | awk '{print $3}')
 
 sudo apt-mark unhold kubeadm
-sudo apt-get install kubeadm=${kube_ver}
+sudo apt-get install -y --no-install-recommends kubeadm=${kube_ver}
 sudo apt-mark hold kubeadm
 `
 	upgradeKubeadmCentOSCommand = `
