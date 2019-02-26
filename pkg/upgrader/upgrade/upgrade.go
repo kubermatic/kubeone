@@ -25,6 +25,7 @@ func Upgrade(ctx *util.Context) error {
 		{fn: runPreflightChecks, errMsg: "preflight checks failed"},
 		{fn: upgradeLeader, errMsg: "unable to upgrade leader control plane"},
 		{fn: upgradeFollower, errMsg: "unable to upgrade follower control plane"},
+		{fn: upgradeMachineDeployments, errMsg: "unable to upgrade MachineDeployments"},
 	}
 
 	for _, step := range commonSteps {

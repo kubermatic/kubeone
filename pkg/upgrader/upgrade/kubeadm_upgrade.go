@@ -7,7 +7,7 @@ import (
 const (
 	kubeadmUpgradeLeaderCommand = `
 if [[ -f /etc/kubernetes/kubelet.conf ]]; then exit 0; fi
-sudo kubeadm upgrade {{ .VERSION }}
+sudo kubeadm upgrade apply -y {{ .VERSION }}
 `
 	kubeadmUpgradeFollowerCommand = `
 if [[ -f /etc/kubernetes/kubelet.conf ]]; then exit 0; fi

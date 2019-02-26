@@ -564,6 +564,8 @@ func machineControllerMachineCRD() *apiextensions.CustomResourceDefinition {
 			Name: "machines.cluster.k8s.io",
 		},
 		Spec: apiextensions.CustomResourceDefinitionSpec{
+			Group: "cluster.k8s.io",
+			Scope: apiextensions.NamespaceScoped,
 			Versions: []apiextensions.CustomResourceDefinitionVersion{
 				{
 					Name:    "v1alpha1",
@@ -571,14 +573,34 @@ func machineControllerMachineCRD() *apiextensions.CustomResourceDefinition {
 					Storage: true,
 				},
 			},
-			Group: "cluster.k8s.io",
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Plural:   "machines",
 				Singular: "machine",
 				Kind:     "Machine",
 				ListKind: "MachineList",
 			},
-			Scope: apiextensions.NamespaceScoped,
+			AdditionalPrinterColumns: []apiextensions.CustomResourceColumnDefinition{
+				{
+					Name:     "Provider",
+					Type:     "string",
+					JSONPath: ".spec.providerSpec.value.cloudProvider",
+				},
+				{
+					Name:     "OS",
+					Type:     "string",
+					JSONPath: ".spec.providerSpec.value.operatingSystem",
+				},
+				{
+					Name:     "Address",
+					Type:     "string",
+					JSONPath: ".status.addresses[0].address",
+				},
+				{
+					Name:     "Age",
+					Type:     "date",
+					JSONPath: ".metadata.creationTimestamp",
+				},
+			},
 		},
 	}
 }
@@ -593,6 +615,8 @@ func machineControllerClusterCRD() *apiextensions.CustomResourceDefinition {
 			Name: "clusters.cluster.k8s.io",
 		},
 		Spec: apiextensions.CustomResourceDefinitionSpec{
+			Group: "cluster.k8s.io",
+			Scope: apiextensions.NamespaceScoped,
 			Versions: []apiextensions.CustomResourceDefinitionVersion{
 				{
 					Name:    "v1alpha1",
@@ -600,14 +624,15 @@ func machineControllerClusterCRD() *apiextensions.CustomResourceDefinition {
 					Storage: true,
 				},
 			},
-			Group: "cluster.k8s.io",
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Plural:   "clusters",
 				Singular: "cluster",
 				Kind:     "Cluster",
 				ListKind: "ClusterList",
 			},
-			Scope: apiextensions.NamespaceScoped,
+			Subresources: &apiextensions.CustomResourceSubresources{
+				Status: &apiextensions.CustomResourceSubresourceStatus{},
+			},
 		},
 	}
 }
@@ -622,6 +647,8 @@ func machineControllerMachineSetCRD() *apiextensions.CustomResourceDefinition {
 			Name: "machinesets.cluster.k8s.io",
 		},
 		Spec: apiextensions.CustomResourceDefinitionSpec{
+			Group: "cluster.k8s.io",
+			Scope: apiextensions.NamespaceScoped,
 			Versions: []apiextensions.CustomResourceDefinitionVersion{
 				{
 					Name:    "v1alpha1",
@@ -629,14 +656,37 @@ func machineControllerMachineSetCRD() *apiextensions.CustomResourceDefinition {
 					Storage: true,
 				},
 			},
-			Group: "cluster.k8s.io",
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Plural:   "machinesets",
 				Singular: "machineset",
 				Kind:     "MachineSet",
 				ListKind: "MachineSetList",
 			},
-			Scope: apiextensions.NamespaceScoped,
+			Subresources: &apiextensions.CustomResourceSubresources{
+				Status: &apiextensions.CustomResourceSubresourceStatus{},
+			},
+			AdditionalPrinterColumns: []apiextensions.CustomResourceColumnDefinition{
+				{
+					Name:     "Replicas",
+					Type:     "integer",
+					JSONPath: ".spec.replicas",
+				},
+				{
+					Name:     "Provider",
+					Type:     "string",
+					JSONPath: ".spec.template.spec.providerSpec.value.cloudProvider",
+				},
+				{
+					Name:     "OS",
+					Type:     "string",
+					JSONPath: ".spec.template.spec.providerSpec.value.operatingSystem",
+				},
+				{
+					Name:     "Age",
+					Type:     "date",
+					JSONPath: ".metadata.creationTimestamp",
+				},
+			},
 		},
 	}
 }
@@ -651,6 +701,8 @@ func machineControllerMachineDeploymentCRD() *apiextensions.CustomResourceDefini
 			Name: "machinedeployments.cluster.k8s.io",
 		},
 		Spec: apiextensions.CustomResourceDefinitionSpec{
+			Group: "cluster.k8s.io",
+			Scope: apiextensions.NamespaceScoped,
 			Versions: []apiextensions.CustomResourceDefinitionVersion{
 				{
 					Name:    "v1alpha1",
@@ -658,14 +710,37 @@ func machineControllerMachineDeploymentCRD() *apiextensions.CustomResourceDefini
 					Storage: true,
 				},
 			},
-			Group: "cluster.k8s.io",
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Plural:   "machinedeployments",
 				Singular: "machinedeployment",
 				Kind:     "MachineDeployment",
 				ListKind: "MachineDeploymentList",
 			},
-			Scope: apiextensions.NamespaceScoped,
+			Subresources: &apiextensions.CustomResourceSubresources{
+				Status: &apiextensions.CustomResourceSubresourceStatus{},
+			},
+			AdditionalPrinterColumns: []apiextensions.CustomResourceColumnDefinition{
+				{
+					Name:     "Replicas",
+					Type:     "integer",
+					JSONPath: ".spec.replicas",
+				},
+				{
+					Name:     "Provider",
+					Type:     "string",
+					JSONPath: ".spec.template.spec.providerSpec.value.cloudProvider",
+				},
+				{
+					Name:     "OS",
+					Type:     "string",
+					JSONPath: ".spec.template.spec.providerSpec.value.operatingSystem",
+				},
+				{
+					Name:     "Age",
+					Type:     "date",
+					JSONPath: ".metadata.creationTimestamp",
+				},
+			},
 		},
 	}
 }
