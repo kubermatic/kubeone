@@ -23,6 +23,9 @@ network:
 provider:
   name: '' # Kubernetes cloud provider, like "aws"
 
+features:
+  enable_psp: false  # controls PodSecurityPolicy admission plugin
+
 backup:
   # Ark supported provider, see https://heptio.github.io/ark/v0.10.0/support-matrix
   provider: '' # currently only aws is supported, empty provider disable ark backups

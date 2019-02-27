@@ -22,6 +22,7 @@ type Cluster struct {
 	Workers           []WorkerConfig          `json:"workers"`
 	Backup            BackupConfig            `json:"backup"`
 	MachineController MachineControllerConfig `json:"machine_controller"`
+	Features          Features                `json:"features"`
 }
 
 // DefaultAndValidate checks if the cluster config makes sense.
@@ -458,6 +459,11 @@ func (m *MachineControllerConfig) DefaultAndValidate() error {
 	}
 
 	return nil
+}
+
+// Features switches
+type Features struct {
+	EnablePSP bool `json:"enable_psp"` // controls PodSecurityPolicy admission plugin
 }
 
 func boolPtr(val bool) *bool {

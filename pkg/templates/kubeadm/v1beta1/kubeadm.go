@@ -14,6 +14,11 @@ import (
 	bootstraputil "k8s.io/cluster-bootstrap/token/util"
 )
 
+const (
+	defaultAdmissionPlugins = "NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeClaimResize,DefaultStorageClass,DefaultTolerationSeconds,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota,Priority"
+	pspAdmissionPlugin      = "PodSecurityPolicy"
+)
+
 // NewConfig returns all required configs to init a cluster via a set of v1beta1 configs
 func NewConfig(ctx *util.Context, host *config.HostConfig) ([]runtime.Object, error) {
 	cluster := ctx.Cluster
@@ -88,6 +93,7 @@ func NewConfig(ctx *util.Context, host *config.HostConfig) ([]runtime.Object, er
 				ExtraArgs: map[string]string{
 					"endpoint-reconciler-type": "lease",
 					"service-node-port-range":  cluster.Network.NodePortRange(),
+					"enable-admission-plugins": defaultAdmissionPlugins,
 				},
 				ExtraVolumes: []kubeadmv1beta1.HostPathMount{},
 			},
@@ -99,6 +105,7 @@ func NewConfig(ctx *util.Context, host *config.HostConfig) ([]runtime.Object, er
 		},
 		ClusterName: cluster.Name,
 	}
+
 	if cluster.Provider.CloudProviderInTree() {
 		renderedCloudConfig := "/etc/kubernetes/cloud-config"
 		cloudConfigVol := kubeadmv1beta1.HostPathMount{
@@ -121,11 +128,17 @@ func NewConfig(ctx *util.Context, host *config.HostConfig) ([]runtime.Object, er
 		nodeRegistration.KubeletExtraArgs["cloud-provider"] = provider
 		nodeRegistration.KubeletExtraArgs["cloud-config"] = renderedCloudConfig
 	}
+
 	if cluster.Provider.Name == "external" {
 		clusterConfig.APIServer.ExtraArgs["cloud-provider"] = ""
 		clusterConfig.ControllerManager.ExtraArgs["cloud-provider"] = ""
 		nodeRegistration.KubeletExtraArgs["cloud-provider"] = "external"
 	}
+
+	if cluster.Features.EnablePSP {
+		clusterConfig.APIServer.ExtraArgs["enable-admission-plugins"] += "," + pspAdmissionPlugin
+	}
+
 	initConfig.NodeRegistration = nodeRegistration
 	joinConfig.NodeRegistration = nodeRegistration
 

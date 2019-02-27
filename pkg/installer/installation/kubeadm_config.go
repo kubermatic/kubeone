@@ -27,10 +27,5 @@ func generateKubeadm(ctx *util.Context) error {
 }
 
 func generateKubeadmOnNode(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
-	err := ctx.Configuration.UploadTo(conn, ctx.WorkDir)
-	if err != nil {
-		return errors.Wrap(err, "failed to upload")
-	}
-
-	return nil
+	return errors.Wrap(ctx.Configuration.UploadTo(conn, ctx.WorkDir), "failed to upload")
 }

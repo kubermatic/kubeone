@@ -7,7 +7,9 @@ import (
 const (
 	kubeadmUpgradeLeaderCommand = `
 if [[ -f /etc/kubernetes/kubelet.conf ]]; then exit 0; fi
-sudo kubeadm upgrade apply -y {{ .VERSION }}
+sudo kubeadm upgrade apply \
+	--config=./{{ .WORK_DIR }}/cfg/master_0.yaml \
+	-y {{ .VERSION }}
 `
 	kubeadmUpgradeFollowerCommand = `
 if [[ -f /etc/kubernetes/kubelet.conf ]]; then exit 0; fi
@@ -17,8 +19,10 @@ sudo kubeadm upgrade node experimental-control-plane
 
 func upgradeLeaderControlPlane(ctx *util.Context) error {
 	_, _, err := ctx.Runner.Run(kubeadmUpgradeLeaderCommand, util.TemplateVariables{
-		"VERSION": ctx.Cluster.Versions.Kubernetes,
+		"VERSION":  ctx.Cluster.Versions.Kubernetes,
+		"WORK_DIR": ctx.WorkDir,
 	})
+
 	return err
 }
 
