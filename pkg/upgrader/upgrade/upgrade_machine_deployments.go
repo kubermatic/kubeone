@@ -3,7 +3,7 @@ package upgrade
 import (
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/installer/util"
+	"github.com/kubermatic/kubeone/pkg/util"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	clusterclientset "sigs.k8s.io/cluster-api/pkg/client/clientset_generated/clientset"

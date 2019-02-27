@@ -2,9 +2,9 @@ package installation
 
 import (
 	"github.com/kubermatic/kubeone/pkg/config"
-	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
+	"github.com/kubermatic/kubeone/pkg/util"
 )
 
 // Reset undos all changes made by KubeOne to the configured machines.

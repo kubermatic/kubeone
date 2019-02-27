@@ -4,8 +4,8 @@ import (
 	"strconv"
 
 	"github.com/kubermatic/kubeone/pkg/config"
-	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/ssh"
+	"github.com/kubermatic/kubeone/pkg/util"
 )
 
 func joinControlplaneNode(ctx *util.Context) error {

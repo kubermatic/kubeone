@@ -4,9 +4,9 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/config"
-	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/templates"
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/v1beta1"
+	"github.com/kubermatic/kubeone/pkg/util"
 )
 
 // Config returns appropriate version of kubeadm config as YAML

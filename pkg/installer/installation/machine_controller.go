@@ -1,8 +1,8 @@
 package installation
 
 import (
-	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
+	"github.com/kubermatic/kubeone/pkg/util"
 )
 
 func installMachineController(ctx *util.Context) error {

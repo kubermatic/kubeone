@@ -4,9 +4,9 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/kubermatic/kubeone/pkg/config"
-	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/upgrader/upgrade"
+	"github.com/kubermatic/kubeone/pkg/util"
 )
 
 // Options groups the various possible options for running KubeOne upgrade

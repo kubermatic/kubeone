@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
-	"github.com/kubermatic/kubeone/pkg/installer/util"
+	"github.com/kubermatic/kubeone/pkg/util"
 )
 
 type kubeconfigOptions struct {
