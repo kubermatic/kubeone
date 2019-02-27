@@ -24,11 +24,10 @@ import (
 
 // MachineController related constants
 const (
-	MachineControllerNamespace     = metav1.NamespaceSystem
-	MachineControllerAppLabelKey   = "app"
-	MachineControllerAppLabelValue = "machine-controller"
-	MachineControllerTag           = "v1.0.4"
-
+	MachineControllerNamespace             = metav1.NamespaceSystem
+	MachineControllerAppLabelKey           = "app"
+	MachineControllerAppLabelValue         = "machine-controller"
+	MachineControllerTag                   = "v1.0.4"
 	MachineControllerCredentialsSecretName = "machine-controller-credentials"
 )
 
@@ -37,6 +36,7 @@ func Deploy(ctx *util.Context) error {
 	if ctx.Clientset == nil {
 		return errors.New("kubernetes clientset not initialized")
 	}
+
 	if ctx.APIExtensionClientset == nil {
 		return errors.New("kubernetes apiextension clientset not initialized")
 	}
@@ -48,13 +48,13 @@ func Deploy(ctx *util.Context) error {
 	sa := machineControllerServiceAccount()
 	err := templates.EnsureServiceAccount(coreClient.ServiceAccounts(sa.Namespace), sa)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to ensure machine-controller service account")
 	}
 
 	// ClusterRoles
 	err = templates.EnsureClusterRole(rbacClient.ClusterRoles(), machineControllerClusterRole())
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to ensure machine-controller cluster role")
 	}
 
 	// ClusterRoleBindings
@@ -67,7 +67,7 @@ func Deploy(ctx *util.Context) error {
 	crbClient := rbacClient.ClusterRoleBindings()
 	for _, crbGen := range crbGenerators {
 		if err = templates.EnsureClusterRoleBinding(crbClient, crbGen()); err != nil {
-			return err
+			return errors.Wrap(err, "failed to ensure machine-controller cluster-role binding")
 		}
 	}
 
@@ -82,7 +82,7 @@ func Deploy(ctx *util.Context) error {
 	for _, roleGen := range roleGenerators {
 		role := roleGen()
 		if err = templates.EnsureRole(rbacClient.Roles(role.Namespace), role); err != nil {
-			return err
+			return errors.Wrap(err, "failed to ensure machine-controller role")
 		}
 	}
 
@@ -97,7 +97,7 @@ func Deploy(ctx *util.Context) error {
 	for _, roleBindingGen := range roleBindingsGenerators {
 		roleBinding := roleBindingGen()
 		if err = templates.EnsureRoleBinding(rbacClient.RoleBindings(roleBinding.Namespace), roleBinding); err != nil {
-			return err
+			return errors.Wrap(err, "failed to ensure machine-controller role binding")
 		}
 	}
 
@@ -105,19 +105,19 @@ func Deploy(ctx *util.Context) error {
 	secret := machineControllerCredentialsSecret(ctx.Cluster)
 	err = templates.EnsureSecret(coreClient.Secrets(secret.Namespace), secret)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to ensure machine-controller credentials secret")
 	}
 
 	// Deployments
 	deployment, err := machineControllerDeployment(ctx.Cluster)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to generate machine-controller deployment")
 	}
 
 	deploymentClient := ctx.Clientset.AppsV1().Deployments(deployment.Namespace)
 	err = templates.EnsureDeployment(deploymentClient, deployment)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to ensure machine-controller deployment")
 	}
 
 	// CRDs
@@ -132,7 +132,7 @@ func Deploy(ctx *util.Context) error {
 	for _, crdGen := range crdGenerators {
 		err = templates.EnsureCRD(crdClient, crdGen())
 		if err != nil {
-			return err
+			return errors.Wrap(err, "failed to ensure machine-controller CRDs")
 		}
 	}
 
@@ -146,7 +146,7 @@ func WaitForMachineController(corev1Client corev1types.CoreV1Interface) error {
 			LabelSelector: fmt.Sprintf("%s=%s", MachineControllerAppLabelKey, MachineControllerAppLabelValue),
 		})
 		if err != nil {
-			return false, err
+			return false, errors.Wrap(err, "failed to list machine-controller pod")
 		}
 
 		if len(machineControllerPods.Items) == 0 {
@@ -191,12 +191,6 @@ func machineControllerClusterRole() *rbacv1.ClusterRole {
 				Resources: []string{"customresourcedefinitions"},
 				Verbs:     []string{"get"},
 			},
-			// {
-			// 	APIGroups:     []string{"apiextensions.k8s.io"},
-			// 	Resources:     []string{"customresourcedefinitions"},
-			// 	ResourceNames: []string{"machines.machine.k8s.io"},
-			// 	Verbs:         []string{"delete"},
-			// },
 			{
 				APIGroups:     []string{"apiextensions.k8s.io"},
 				Resources:     []string{"customresourcedefinitions"},
@@ -235,8 +229,16 @@ func machineControllerClusterRole() *rbacv1.ClusterRole {
 			},
 			{
 				APIGroups: []string{"cluster.k8s.io"},
-				Resources: []string{"machines", "machinesets", "machinesets/status", "machinedeployments", "machinedeployments/status", "clusters", "clusters/status"},
-				Verbs:     []string{"*"},
+				Resources: []string{
+					"clusters",
+					"clusters/status",
+					"machinedeployments",
+					"machinedeployments/status",
+					"machines",
+					"machinesets",
+					"machinesets/status",
+				},
+				Verbs: []string{"*"},
 			},
 		},
 	}
@@ -342,8 +344,8 @@ func machineControllerKubeSystemRole() *rbacv1.Role {
 				Resources: []string{"secrets"},
 				Verbs: []string{
 					"create",
-					"update",
 					"list",
+					"update",
 					"watch",
 				},
 			},
@@ -752,7 +754,7 @@ func machineControllerDeployment(cluster *config.Cluster) (*appsv1.Deployment, e
 
 	clusterDNS, err := clusterDNSIP(cluster)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "failed to get clusterDNS IP")
 	}
 
 	return &appsv1.Deployment{
@@ -896,13 +898,13 @@ func clusterDNSIP(cluster *config.Cluster) (*net.IP, error) {
 	// Get the Services CIDR
 	_, svcSubnetCIDR, err := net.ParseCIDR(cluster.Network.ServiceSubnet())
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "failed to parse network.service_subnet")
 	}
 
 	// Select the 10th IP in Services CIDR range as ClusterDNSIP
 	clusterDNS, err := ipallocator.GetIndexedIP(svcSubnetCIDR, 10)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "failed to get IP from service subnet")
 	}
 
 	return &clusterDNS, nil

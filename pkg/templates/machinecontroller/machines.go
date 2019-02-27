@@ -42,7 +42,7 @@ func DeployMachineDeployments(ctx *util.Context) error {
 	// Create Cluster-API clientset
 	clusterapiClientset, err := clusterclientset.NewForConfig(ctx.RESTConfig)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to create kubernetes clientset")
 	}
 	clusterapiClient := clusterapiClientset.ClusterV1alpha1()
 
@@ -50,12 +50,12 @@ func DeployMachineDeployments(ctx *util.Context) error {
 	for _, workerset := range ctx.Cluster.Workers {
 		deployment, err := createMachineDeployment(ctx.Cluster, workerset)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "failed to generate MachineDeployment")
 		}
 
 		err = ensureMachineDeployment(clusterapiClient.MachineDeployments(deployment.Namespace), deployment)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "failed to ensure MachineDeployment")
 		}
 	}
 
@@ -67,7 +67,7 @@ func createMachineDeployment(cluster *config.Cluster, workerset config.WorkerCon
 
 	cloudProviderSpec, err := machineSpec(cluster, workerset, provider)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "failed to generate machineSpec")
 	}
 
 	config := providerSpec{
@@ -80,7 +80,7 @@ func createMachineDeployment(cluster *config.Cluster, workerset config.WorkerCon
 
 	encoded, err := json.Marshal(config)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "failed to JSON marshal providerSpec")
 	}
 
 	replicas := int32(*workerset.Replicas)
@@ -139,10 +139,11 @@ func ensureMachineDeployment(machineDeploymentsClient clustertypes.MachineDeploy
 	existing, err := machineDeploymentsClient.Get(required.Name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
 		_, err = machineDeploymentsClient.Create(required)
-		return err
+		return errors.Wrap(err, "failed to create MachineDeployment")
 	}
+
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to get MachineDeployment")
 	}
 
 	modified := false
@@ -153,7 +154,7 @@ func ensureMachineDeployment(machineDeploymentsClient clustertypes.MachineDeploy
 	}
 
 	_, err = machineDeploymentsClient.Update(existing)
-	return err
+	return errors.Wrap(err, "failed to update MachineDeployment")
 }
 
 func machineSpec(cluster *config.Cluster, workerset config.WorkerConfig, provider config.ProviderName) (map[string]interface{}, error) {

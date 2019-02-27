@@ -51,24 +51,25 @@ func DeployWebhookConfiguration(ctx *util.Context) error {
 	deployment := webhookDeployment(ctx.Cluster)
 	err = templates.EnsureDeployment(appsClient.Deployments(deployment.Namespace), deployment)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to ensure machine-controller webhook deployment")
 	}
 
 	// Deploy Webhook service
 	svc := service()
 	err = templates.EnsureService(coreClient.Services(svc.Namespace), svc)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to ensure machine-controller webhook service")
 	}
 
 	// Deploy serving certificate secret
 	servingCert, err := tlsServingCertificate(caKeyPair)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to generate machine-controller webhook TLS secret")
 	}
+
 	err = templates.EnsureSecret(coreClient.Secrets(servingCert.Namespace), servingCert)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to ensure machine-controller webhook secret")
 	}
 
 	return templates.EnsureMutatingWebhookConfiguration(
@@ -268,6 +269,7 @@ func tlsServingCertificate(ca *triple.KeyPair) (*corev1.Secret, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to generate serving cert")
 	}
+
 	se.Data["cert.pem"] = certutil.EncodeCertPEM(newKP.Cert)
 	se.Data["key.pem"] = certutil.EncodePrivateKeyPEM(newKP.Key)
 	// Include the CA for simplicity
