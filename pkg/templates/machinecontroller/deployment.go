@@ -148,10 +148,12 @@ func WaitForMachineController(corev1Client corev1types.CoreV1Interface) error {
 		if err != nil {
 			return false, err
 		}
-		if machineControllerPods.Items[0].Status.Phase == corev1.PodRunning {
-			return true, nil
+
+		if len(machineControllerPods.Items) == 0 {
+			return false, nil
 		}
-		return false, nil
+
+		return machineControllerPods.Items[0].Status.Phase == corev1.PodRunning, nil
 	})
 }
 

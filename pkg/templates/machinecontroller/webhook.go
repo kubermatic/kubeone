@@ -83,12 +83,14 @@ func WaitForWebhook(corev1Client corev1types.CoreV1Interface) error {
 			LabelSelector: fmt.Sprintf("%s=%s", WebhookAppLabelKey, WebhookAppLabelValue),
 		})
 		if err != nil {
-			return false, err
+			return false, errors.Wrap(err, "failed to list machine-controller's webhook pods")
 		}
-		if webhookPods.Items[0].Status.Phase == corev1.PodRunning {
-			return true, nil
+
+		if len(webhookPods.Items) == 0 {
+			return false, nil
 		}
-		return false, nil
+
+		return webhookPods.Items[0].Status.Phase == corev1.PodRunning, nil
 	})
 }
 
