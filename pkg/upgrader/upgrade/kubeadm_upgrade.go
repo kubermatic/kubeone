@@ -6,13 +6,11 @@ import (
 
 const (
 	kubeadmUpgradeLeaderCommand = `
-if [[ -f /etc/kubernetes/kubelet.conf ]]; then exit 0; fi
 sudo kubeadm upgrade apply \
 	--config=./{{ .WORK_DIR }}/cfg/master_0.yaml \
 	-y {{ .VERSION }}
 `
 	kubeadmUpgradeFollowerCommand = `
-if [[ -f /etc/kubernetes/kubelet.conf ]]; then exit 0; fi
 sudo kubeadm upgrade node experimental-control-plane
 `
 )
