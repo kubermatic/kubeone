@@ -3,6 +3,7 @@ package installation
 import (
 	"github.com/pkg/errors"
 
+	"github.com/kubermatic/kubeone/pkg/features"
 	"github.com/kubermatic/kubeone/pkg/util"
 )
 
@@ -23,6 +24,7 @@ func Install(ctx *util.Context) error {
 		{fn: joinControlplaneNode, errMsg: "unable to join other masters a cluster"},
 		{fn: copyKubeconfig, errMsg: "unable to copy kubeconfig to home directory"},
 		{fn: util.BuildKubernetesClientset, errMsg: "unable to build kubernetes clientset"},
+		{fn: features.Activate, errMsg: "unable to activate features"},
 		{fn: applyCanalCNI, errMsg: "failed to install cni plugin canal"},
 		{fn: installMachineController, errMsg: "failed to install machine-controller"},
 		{fn: createWorkerMachines, errMsg: "failed to create worker machines"},
