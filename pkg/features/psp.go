@@ -1,6 +1,8 @@
 package features
 
 import (
+	"strings"
+
 	"github.com/pkg/errors"
 
 	kubeadmv1beta1 "github.com/kubermatic/kubeone/pkg/apis/kubeadm/v1beta1"
@@ -14,10 +16,24 @@ import (
 )
 
 const (
-	defaultAdmissionPlugins       = "NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeClaimResize,DefaultStorageClass,DefaultTolerationSeconds,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota,Priority"
 	pspAdmissionPlugin            = "PodSecurityPolicy"
 	apiServerAdmissionPluginsFlag = "enable-admission-plugins"
 	pspRoleNamespace              = "kube-system"
+)
+
+var (
+	defaultAdmissionPlugins = []string{
+		"NamespaceLifecycle",
+		"LimitRanger",
+		"ServiceAccount",
+		"PersistentVolumeClaimResize",
+		"DefaultStorageClass",
+		"DefaultTolerationSeconds",
+		"MutatingAdmissionWebhook",
+		"ValidatingAdmissionWebhook",
+		"ResourceQuota",
+		"Priority",
+	}
 )
 
 func activateKubeadmPSP(activate bool, clusterConfig *kubeadmv1beta1.ClusterConfiguration) {
@@ -28,7 +44,7 @@ func activateKubeadmPSP(activate bool, clusterConfig *kubeadmv1beta1.ClusterConf
 	if _, ok := clusterConfig.APIServer.ExtraArgs[apiServerAdmissionPluginsFlag]; ok {
 		clusterConfig.APIServer.ExtraArgs[apiServerAdmissionPluginsFlag] += "," + pspAdmissionPlugin
 	} else {
-		clusterConfig.APIServer.ExtraArgs[apiServerAdmissionPluginsFlag] = defaultAdmissionPlugins + "," + pspAdmissionPlugin
+		clusterConfig.APIServer.ExtraArgs[apiServerAdmissionPluginsFlag] = strings.Join(append(defaultAdmissionPlugins, pspAdmissionPlugin), ",")
 	}
 }
 
