@@ -6,9 +6,9 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/config"
-	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm"
+	"github.com/kubermatic/kubeone/pkg/util"
 )
 
 func generateKubeadm(ctx *util.Context) error {
@@ -27,10 +27,5 @@ func generateKubeadm(ctx *util.Context) error {
 }
 
 func generateKubeadmOnNode(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
-	err := ctx.Configuration.UploadTo(conn, ctx.WorkDir)
-	if err != nil {
-		return errors.Wrap(err, "failed to upload")
-	}
-
-	return nil
+	return errors.Wrap(ctx.Configuration.UploadTo(conn, ctx.WorkDir), "failed to upload")
 }

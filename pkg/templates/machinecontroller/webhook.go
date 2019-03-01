@@ -8,8 +8,8 @@ import (
 
 	"github.com/kubermatic/kubeone/pkg/certificate"
 	"github.com/kubermatic/kubeone/pkg/config"
-	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/templates"
+	"github.com/kubermatic/kubeone/pkg/util"
 
 	admissionregistrationv1beta1 "k8s.io/api/admissionregistration/v1beta1"
 	appsv1 "k8s.io/api/apps/v1"
@@ -51,24 +51,25 @@ func DeployWebhookConfiguration(ctx *util.Context) error {
 	deployment := webhookDeployment(ctx.Cluster)
 	err = templates.EnsureDeployment(appsClient.Deployments(deployment.Namespace), deployment)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to ensure machine-controller webhook deployment")
 	}
 
 	// Deploy Webhook service
 	svc := service()
 	err = templates.EnsureService(coreClient.Services(svc.Namespace), svc)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to ensure machine-controller webhook service")
 	}
 
 	// Deploy serving certificate secret
 	servingCert, err := tlsServingCertificate(caKeyPair)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to generate machine-controller webhook TLS secret")
 	}
+
 	err = templates.EnsureSecret(coreClient.Secrets(servingCert.Namespace), servingCert)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to ensure machine-controller webhook secret")
 	}
 
 	return templates.EnsureMutatingWebhookConfiguration(
@@ -83,12 +84,14 @@ func WaitForWebhook(corev1Client corev1types.CoreV1Interface) error {
 			LabelSelector: fmt.Sprintf("%s=%s", WebhookAppLabelKey, WebhookAppLabelValue),
 		})
 		if err != nil {
-			return false, err
+			return false, errors.Wrap(err, "failed to list machine-controller's webhook pods")
 		}
-		if webhookPods.Items[0].Status.Phase == corev1.PodRunning {
-			return true, nil
+
+		if len(webhookPods.Items) == 0 {
+			return false, nil
 		}
-		return false, nil
+
+		return webhookPods.Items[0].Status.Phase == corev1.PodRunning, nil
 	})
 }
 
@@ -266,6 +269,7 @@ func tlsServingCertificate(ca *triple.KeyPair) (*corev1.Secret, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to generate serving cert")
 	}
+
 	se.Data["cert.pem"] = certutil.EncodeCertPEM(newKP.Cert)
 	se.Data["key.pem"] = certutil.EncodePrivateKeyPEM(newKP.Key)
 	// Include the CA for simplicity

@@ -5,7 +5,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/installer/util"
+	"github.com/kubermatic/kubeone/pkg/util"
 
 	"k8s.io/client-go/util/cert"
 	"k8s.io/client-go/util/cert/triple"

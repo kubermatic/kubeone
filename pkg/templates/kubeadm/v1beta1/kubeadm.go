@@ -6,7 +6,8 @@ import (
 
 	kubeadmv1beta1 "github.com/kubermatic/kubeone/pkg/apis/kubeadm/v1beta1"
 	"github.com/kubermatic/kubeone/pkg/config"
-	"github.com/kubermatic/kubeone/pkg/installer/util"
+	"github.com/kubermatic/kubeone/pkg/features"
+	"github.com/kubermatic/kubeone/pkg/util"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -99,6 +100,7 @@ func NewConfig(ctx *util.Context, host *config.HostConfig) ([]runtime.Object, er
 		},
 		ClusterName: cluster.Name,
 	}
+
 	if cluster.Provider.CloudProviderInTree() {
 		renderedCloudConfig := "/etc/kubernetes/cloud-config"
 		cloudConfigVol := kubeadmv1beta1.HostPathMount{
@@ -121,11 +123,15 @@ func NewConfig(ctx *util.Context, host *config.HostConfig) ([]runtime.Object, er
 		nodeRegistration.KubeletExtraArgs["cloud-provider"] = provider
 		nodeRegistration.KubeletExtraArgs["cloud-config"] = renderedCloudConfig
 	}
+
 	if cluster.Provider.Name == "external" {
 		clusterConfig.APIServer.ExtraArgs["cloud-provider"] = ""
 		clusterConfig.ControllerManager.ExtraArgs["cloud-provider"] = ""
 		nodeRegistration.KubeletExtraArgs["cloud-provider"] = "external"
 	}
+
+	features.UpdateKubeadmClusterConfiguration(cluster.Features, clusterConfig)
+
 	initConfig.NodeRegistration = nodeRegistration
 	joinConfig.NodeRegistration = nodeRegistration
 

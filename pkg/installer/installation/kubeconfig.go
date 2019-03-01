@@ -2,8 +2,8 @@ package installation
 
 import (
 	"github.com/kubermatic/kubeone/pkg/config"
-	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/ssh"
+	"github.com/kubermatic/kubeone/pkg/util"
 )
 
 func copyKubeconfig(ctx *util.Context) error {

@@ -1,8 +1,8 @@
 package installation
 
 import (
-	"github.com/kubermatic/kubeone/pkg/installer/util"
 	"github.com/kubermatic/kubeone/pkg/templates/ark"
+	"github.com/kubermatic/kubeone/pkg/util"
 )
 
 func deployArk(ctx *util.Context) error {
