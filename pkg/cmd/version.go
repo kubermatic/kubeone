@@ -10,7 +10,7 @@ import (
 var versionString = "development"
 
 // versionCmd setups version command
-func versionCmd(rootFlags *pflag.FlagSet) *cobra.Command {
+func versionCmd(_ *pflag.FlagSet) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "version",
 		Short: "Display KubeOne version",
