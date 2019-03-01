@@ -463,7 +463,7 @@ func (m *MachineControllerConfig) DefaultAndValidate() error {
 
 // Features switches
 type Features struct {
-	EnablePSP bool `json:"enable_psp"` // controls PodSecurityPolicy admission plugin
+	EnablePodSecurityPolicy bool `json:"enable_pod_security_policy"`
 }
 
 func boolPtr(val bool) *bool {

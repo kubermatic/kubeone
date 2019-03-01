@@ -130,7 +130,7 @@ func NewConfig(ctx *util.Context, host *config.HostConfig) ([]runtime.Object, er
 		nodeRegistration.KubeletExtraArgs["cloud-provider"] = "external"
 	}
 
-	features.KubeadmActivate(cluster.Features, clusterConfig)
+	features.UpdateKubeadmClusterConfiguration(cluster.Features, clusterConfig)
 
 	initConfig.NodeRegistration = nodeRegistration
 	joinConfig.NodeRegistration = nodeRegistration

@@ -24,7 +24,10 @@ provider:
   name: '' # Kubernetes cloud provider, like "aws"
 
 features:
-  enable_psp: false  # controls PodSecurityPolicy admission plugin
+  # enables PodSecurityPolicy admission plugin in API server, as well as creates
+  # default `privileged` PodSecurityPolicy, plus RBAC rules to authorize
+  # `kube-system` namespace pods to `use` it.
+  enable_pod_security_policy: false
 
 backup:
   # Ark supported provider, see https://heptio.github.io/ark/v0.10.0/support-matrix
