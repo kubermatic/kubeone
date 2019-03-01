@@ -4,7 +4,8 @@ export TFJSON?=
 export KUBEONE_CONFIG_FILE?=config.yaml.dist
 export KUBERNETES_VERSION=1.13.3
 BUILD_IMAGE?=golang:1.11.5
-GOLDFLAGS?=-w -s
+GITTAG=$(shell git describe --tags --always)
+GOLDFLAGS?=-w -s -X github.com/kubermatic/kubeone/pkg/cmd.versionString=$(GITTAG)
 
 PROVIDER=$(notdir $(wildcard ./terraform/*))
 CREATE_TARGETS=$(addsuffix -env,$(PROVIDER))
