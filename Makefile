@@ -5,7 +5,7 @@ export KUBEONE_CONFIG_FILE?=config.yaml.dist
 export KUBERNETES_VERSION=1.13.3
 BUILD_IMAGE?=golang:1.11.5
 GITTAG=$(shell git describe --tags --always)
-GOLDFLAGS?=-w -s -X github.com/kubermatic/kubeone/pkg/cmd.versionString=$(GITTAG)
+GOLDFLAGS?=-w -s
 
 PROVIDER=$(notdir $(wildcard ./terraform/*))
 CREATE_TARGETS=$(addsuffix -env,$(PROVIDER))
