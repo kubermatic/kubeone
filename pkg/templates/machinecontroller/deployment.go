@@ -868,14 +868,14 @@ func machineControllerCredentialsSecret(cluster *config.Cluster) *corev1.Secret 
 			Namespace: MachineControllerNamespace,
 		},
 		Type:       corev1.SecretTypeOpaque,
-		StringData: cluster.Provider.Credentials,
+		StringData: cluster.MachineController.Credentials,
 	}
 }
 
 func getEnvVarCredentials(cluster *config.Cluster) []corev1.EnvVar {
 	env := make([]corev1.EnvVar, 0)
 
-	for k := range cluster.Provider.Credentials {
+	for k := range cluster.MachineController.Credentials {
 		env = append(env, corev1.EnvVar{
 			Name: k,
 			ValueFrom: &corev1.EnvVarSource{

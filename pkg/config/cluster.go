@@ -27,8 +27,8 @@ type Cluster struct {
 
 // DefaultAndValidate checks if the cluster config makes sense.
 func (m *Cluster) DefaultAndValidate() error {
-	if err := m.Provider.ApplyEnvironment(); err != nil {
-		return errors.Wrap(err, "failed to apply cloud provider credentials")
+	if err := m.Provider.Validate(); err != nil {
+		return errors.Wrap(err, "provider configuration is invalid")
 	}
 
 	if err := m.Backup.ApplyEnvironment(); err != nil {
@@ -50,10 +50,9 @@ func (m *Cluster) DefaultAndValidate() error {
 		}
 	}
 
-	if err := m.MachineController.DefaultAndValidate(); err != nil {
+	if err := m.MachineController.DefaultAndValidate(m.Provider.Name); err != nil {
 		return errors.Wrap(err, "failed to configure machine-controller")
 	}
-
 	if *m.MachineController.Deploy {
 		for idx, workerset := range m.Workers {
 			if err := workerset.Validate(); err != nil {
@@ -172,92 +171,21 @@ const (
 	ProviderNameHetzner      ProviderName = "hetzner"
 	ProviderNameDigitalOcean ProviderName = "digitalocean"
 	ProviderNameVSphere      ProviderName = "vshere"
+	ProviderNameNone         ProviderName = "none"
 )
-
-// ProviderCredentials match the cloudprovider and parses its credentials from
-// environment
-func (p ProviderName) ProviderCredentials() (map[string]string, error) {
-	switch p {
-	case ProviderNameAWS:
-		creds := make(map[string]string)
-		envCredsProvider := credentials.NewEnvCredentials()
-		envCreds, err := envCredsProvider.Get()
-		if err != nil {
-			return nil, err
-		}
-		if envCreds.AccessKeyID != "" && envCreds.SecretAccessKey != "" {
-			creds["AWS_ACCESS_KEY_ID"] = envCreds.AccessKeyID
-			creds["AWS_SECRET_ACCESS_KEY"] = envCreds.SecretAccessKey
-			return creds, nil
-		}
-
-		// If env fails resort to config file
-		configCredsProvider := credentials.NewSharedCredentials("", "")
-		configCreds, err := configCredsProvider.Get()
-		if err != nil {
-			return nil, err
-		}
-		if configCreds.AccessKeyID != "" && configCreds.SecretAccessKey != "" {
-			creds["AWS_ACCESS_KEY_ID"] = configCreds.AccessKeyID
-			creds["AWS_SECRET_ACCESS_KEY"] = configCreds.SecretAccessKey
-			return creds, nil
-		}
-
-		return nil, errors.New("error parsing aws credentials")
-	case ProviderNameOpenStack:
-		return parseCredentialVariables([]string{"OS_AUTH_URL", "OS_USER_NAME", "OS_PASSWORD", "OS_DOMAIN_NAME", "OS_TENANT_NAME", "OS_REGION_NAME"})
-	case ProviderNameHetzner:
-		return parseCredentialVariables([]string{"HZ_TOKEN"})
-	case ProviderNameDigitalOcean:
-		return parseCredentialVariables([]string{"DO_TOKEN"})
-	case ProviderNameVSphere:
-		return parseCredentialVariables([]string{"VSPHERE_ADDRESS", "VSPHERE_USERNAME", "VSPHERE_PASSWORD"})
-	}
-
-	return nil, errors.New("no provider matched")
-}
-
-func parseCredentialVariables(envVars []string) (map[string]string, error) {
-	creds := make(map[string]string)
-	for _, varName := range envVars {
-		creds[varName] = strings.TrimSpace(os.Getenv(varName))
-		if creds[varName] == "" {
-			return nil, errors.Errorf("environment variable %s is not set, but is required", varName)
-		}
-	}
-	return creds, nil
-}
 
 // ProviderConfig describes the cloud provider that is running the machines.
 type ProviderConfig struct {
-	Name        ProviderName      `json:"name"`
-	CloudConfig string            `json:"cloud_config"`
-	Credentials map[string]string `json:"credentials"`
+	Name        ProviderName `json:"name"`
+	CloudConfig string       `json:"cloud_config"`
 }
 
 // Validate checks the ProviderConfig for errors
 func (p *ProviderConfig) Validate() error {
 	switch p.Name {
-	case ProviderNameAWS, ProviderNameOpenStack, ProviderNameHetzner, ProviderNameDigitalOcean, ProviderNameVSphere:
+	case ProviderNameAWS, ProviderNameOpenStack, ProviderNameHetzner, ProviderNameDigitalOcean, ProviderNameVSphere, ProviderNameNone:
 	default:
 		return errors.Errorf("unknown provider name %q", p.Name)
-	}
-
-	_, err := p.Name.ProviderCredentials()
-	if err != nil {
-		return errors.Wrap(err, "error parsing credentials")
-	}
-
-	return nil
-}
-
-// ApplyEnvironment reads cloud provider credentials from
-// environment variables.
-func (p *ProviderConfig) ApplyEnvironment() error {
-	var err error
-	p.Credentials, err = p.Name.ProviderCredentials()
-	if err != nil {
-		return err
 	}
 
 	return nil
@@ -447,23 +375,104 @@ func (m *BackupConfig) ApplyEnvironment() error {
 	return nil
 }
 
+// Features switches
+type Features struct {
+	EnablePodSecurityPolicy bool `json:"enable_pod_security_policy"`
+}
+
 // MachineControllerConfig controls
 type MachineControllerConfig struct {
 	Deploy *bool `json:"deploy"`
+	// Provider is provider to be used for machine-controller
+	// Defaults and must be same as chosen cloud provider, unless cloud provider is set to None
+	Provider    ProviderName      `json:"provider"`
+	Credentials map[string]string `json:"credentials"`
 }
 
 // DefaultAndValidate checks if the machine-controller config makes sense.
-func (m *MachineControllerConfig) DefaultAndValidate() error {
+func (m *MachineControllerConfig) DefaultAndValidate(cloudProvider ProviderName) error {
 	if m.Deploy == nil {
 		m.Deploy = boolPtr(true)
+	}
+	if *m.Deploy == false {
+		return nil
+	}
+
+	// If ProviderName is not None default to cloud provider and ensure user have not
+	// manually provided machine-controller provider different than cloud provider.
+	// If ProviderName is None, take user input or default to None.
+	if cloudProvider != ProviderNameNone {
+		if m.Provider == "" {
+			m.Provider = cloudProvider
+		}
+		if m.Provider != cloudProvider {
+			return errors.New("cloud provider must be same as machine-controller provider")
+		}
+	} else if cloudProvider == ProviderNameNone && m.Provider == "" {
+		return errors.New("machine-controller deployed but no provider selected")
+	}
+
+	var err error
+	m.Credentials, err = m.Provider.ProviderCredentials()
+	if err != nil {
+		return errors.Wrap(err, "failed to apply cloud provider credentials")
 	}
 
 	return nil
 }
 
-// Features switches
-type Features struct {
-	EnablePodSecurityPolicy bool `json:"enable_pod_security_policy"`
+// ProviderCredentials match the cloudprovider and parses its credentials from
+// environment
+func (p ProviderName) ProviderCredentials() (map[string]string, error) {
+	switch p {
+	case ProviderNameAWS:
+		creds := make(map[string]string)
+		envCredsProvider := credentials.NewEnvCredentials()
+		envCreds, err := envCredsProvider.Get()
+		if err != nil {
+			return nil, err
+		}
+		if envCreds.AccessKeyID != "" && envCreds.SecretAccessKey != "" {
+			creds["AWS_ACCESS_KEY_ID"] = envCreds.AccessKeyID
+			creds["AWS_SECRET_ACCESS_KEY"] = envCreds.SecretAccessKey
+			return creds, nil
+		}
+
+		// If env fails resort to config file
+		configCredsProvider := credentials.NewSharedCredentials("", "")
+		configCreds, err := configCredsProvider.Get()
+		if err != nil {
+			return nil, err
+		}
+		if configCreds.AccessKeyID != "" && configCreds.SecretAccessKey != "" {
+			creds["AWS_ACCESS_KEY_ID"] = configCreds.AccessKeyID
+			creds["AWS_SECRET_ACCESS_KEY"] = configCreds.SecretAccessKey
+			return creds, nil
+		}
+
+		return nil, errors.New("error parsing aws credentials")
+	case ProviderNameOpenStack:
+		return parseCredentialVariables([]string{"OS_AUTH_URL", "OS_USER_NAME", "OS_PASSWORD", "OS_DOMAIN_NAME", "OS_TENANT_NAME"})
+	case ProviderNameHetzner:
+		return parseCredentialVariables([]string{"HZ_TOKEN"})
+	case ProviderNameDigitalOcean:
+		return parseCredentialVariables([]string{"DO_TOKEN"})
+	case ProviderNameVSphere:
+		return parseCredentialVariables([]string{"VSPHERE_ADDRESS", "VSPHERE_USERNAME", "VSPHERE_PASSWORD"})
+	}
+
+	return nil, errors.New("no provider matched")
+}
+
+func parseCredentialVariables(envVars []string) (map[string]string, error) {
+	creds := make(map[string]string)
+	for _, varName := range envVars {
+		creds[varName] = strings.TrimSpace(os.Getenv(varName))
+		if creds[varName] == "" {
+			return nil, errors.Errorf("environment variable %s is not set, but is required", varName)
+		}
+	}
+	return creds, nil
 }
 
 func boolPtr(val bool) *bool {
