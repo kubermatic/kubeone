@@ -69,7 +69,7 @@ type openStackWorkerConfig struct {
 	Image            string   `json:"image"`
 	Flavor           string   `json:"flavor"`
 	SecurityGroups   []string `json:"securityGroups"`
-	FloatingIpPool   string   `json:"floatingIpPool"`
+	FloatingIPPool   string   `json:"floatingIPPool"`
 	AvailabilityZone string   `json:"availabilityZone"`
 	Network          string   `json:"network"`
 	Subnet           string   `json:"subnet"`
@@ -280,7 +280,7 @@ func (c *Config) updateOpenStackWorkerset(workerset *config.WorkerConfig, cfg js
 		return err
 	}
 
-	if err := setWorkersetFlag(workerset, "floatingIpPool", openstackConfig.FloatingIpPool); err != nil {
+	if err := setWorkersetFlag(workerset, "floatingIPPool", openstackConfig.FloatingIPPool); err != nil {
 		return err
 	}
 	if err := setWorkersetFlag(workerset, "image", openstackConfig.Image); err != nil {
