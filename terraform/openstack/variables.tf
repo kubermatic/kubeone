@@ -28,12 +28,17 @@ variable "control_plane_count" {
 
 variable "control_plane_flavor" {
   default     = "m1.small"
-  description = "OpenStack instance flavor"
+  description = "OpenStack instance flavor for the control plane nodes"
 }
 
-variable "control_plane_image" {
+variable "image" {
   default     = "Ubuntu 18.04 LTS"
   description = "OpenStack image for the control plane nodes"
+}
+
+variable "worker_flavor" {
+  default     = "m1.small"
+  description = "OpenStack instance flavor for the worker nodes"
 }
 
 variable "subnet_cidr" {

@@ -65,6 +65,16 @@ type doWorkerConfig struct {
 	Region      string `json:"region"`
 }
 
+type openStackWorkerConfig struct {
+	Image            string   `json:"image"`
+	Flavor           string   `json:"flavor"`
+	SecurityGroups   []string `json:"securityGroups"`
+	FloatingIPPool   string   `json:"floatingIPPool"`
+	AvailabilityZone string   `json:"availabilityZone"`
+	Network          string   `json:"network"`
+	Subnet           string   `json:"subnet"`
+}
+
 // Config represents configuration in the terraform output format
 type Config struct {
 	KubeOneAPI struct {
@@ -264,8 +274,35 @@ func (c *Config) updateHetznerWorkerset(_ *config.WorkerConfig, _ json.RawMessag
 	return errors.New("cloudprovider Hetzner is not implemented yet")
 }
 
-func (c *Config) updateOpenStackWorkerset(_ *config.WorkerConfig, _ json.RawMessage) error {
-	return errors.New("cloudprovider OpenStack is not implemented yet")
+func (c *Config) updateOpenStackWorkerset(workerset *config.WorkerConfig, cfg json.RawMessage) error {
+	var openstackConfig openStackWorkerConfig
+	if err := json.Unmarshal(cfg, &openstackConfig); err != nil {
+		return err
+	}
+
+	if err := setWorkersetFlag(workerset, "floatingIPPool", openstackConfig.FloatingIPPool); err != nil {
+		return err
+	}
+	if err := setWorkersetFlag(workerset, "image", openstackConfig.Image); err != nil {
+		return err
+	}
+	if err := setWorkersetFlag(workerset, "flavor", openstackConfig.Flavor); err != nil {
+		return err
+	}
+	if err := setWorkersetFlag(workerset, "securityGroups", openstackConfig.SecurityGroups); err != nil {
+		return err
+	}
+	if err := setWorkersetFlag(workerset, "availabilityZone", openstackConfig.AvailabilityZone); err != nil {
+		return err
+	}
+	if err := setWorkersetFlag(workerset, "network", openstackConfig.Network); err != nil {
+		return err
+	}
+	if err := setWorkersetFlag(workerset, "subnet", openstackConfig.Subnet); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (c *Config) updateVSphereWorkerset(_ *config.WorkerConfig, _ json.RawMessage) error {
