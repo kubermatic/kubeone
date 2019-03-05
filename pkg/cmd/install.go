@@ -71,7 +71,7 @@ func runInstall(logger *logrus.Logger, installOptions *installOptions) error {
 	}
 
 	if err = applyTerraform(installOptions.TerraformState, cluster); err != nil {
-		return errors.Wrap(err, "failed to setup PKI backup")
+		return errors.Wrap(err, "failed to apply Terraform options")
 	}
 
 	if err = cluster.DefaultAndValidate(); err != nil {
