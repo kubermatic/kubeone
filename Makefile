@@ -3,9 +3,11 @@ export CGO_ENABLED=0
 export TFJSON?=
 export KUBEONE_CONFIG_FILE?=config.yaml.dist
 export KUBERNETES_VERSION=1.13.3
+BUILD_DATE=$(shell if hash gdate 2>/dev/null; then gdate --rfc-3339=seconds | sed 's/ /T/'; else date --rfc-3339=seconds | sed 's/ /T/'; fi)
 BUILD_IMAGE?=golang:1.11.5
+GITCOMMIT=$(shell git log -1 --pretty=format:"%H")
 GITTAG=$(shell git describe --tags --always)
-GOLDFLAGS?=-w -s -X github.com/kubermatic/kubeone/pkg/cmd.versionString=$(GITTAG)
+GOLDFLAGS?=-s -w -X github.com/kubermatic/kubeone/pkg/cmd.version=$(GITTAG) -X github.com/kubermatic/kubeone/pkg/cmd.commit=$(GITCOMMIT) -X github.com/kubermatic/kubeone/pkg/cmd.date=$(BUILD_DATE)
 
 PROVIDER=$(notdir $(wildcard ./terraform/*))
 CREATE_TARGETS=$(addsuffix -env,$(PROVIDER))
