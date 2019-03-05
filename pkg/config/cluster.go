@@ -176,8 +176,9 @@ const (
 
 // ProviderConfig describes the cloud provider that is running the machines.
 type ProviderConfig struct {
-	Name        ProviderName `json:"name"`
-	CloudConfig string       `json:"cloud_config"`
+	Name                                 ProviderName `json:"name"`
+	EnableExternalCloudControllerManager bool         `json:"enable_external_cloud_controller_manager"`
+	CloudConfig                          string       `json:"cloud_config"`
 }
 
 // Validate checks the ProviderConfig for errors
