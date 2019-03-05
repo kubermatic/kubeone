@@ -124,7 +124,7 @@ func NewConfig(ctx *util.Context, host *config.HostConfig) ([]runtime.Object, er
 		nodeRegistration.KubeletExtraArgs["cloud-config"] = renderedCloudConfig
 	}
 
-	if cluster.Provider.Name == "external" {
+	if cluster.Provider.EnableExternalCloudControllerManager {
 		clusterConfig.APIServer.ExtraArgs["cloud-provider"] = ""
 		clusterConfig.ControllerManager.ExtraArgs["cloud-provider"] = ""
 		nodeRegistration.KubeletExtraArgs["cloud-provider"] = "external"
