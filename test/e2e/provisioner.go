@@ -7,7 +7,8 @@ import (
 )
 
 const (
-	AWS = "aws"
+	AWS          = "aws"
+	DigitalOcean = "digitalocean"
 
 	tfStateFileName = "terraform.tfstate"
 )
@@ -35,7 +36,8 @@ type AWSProvisioner struct {
 func NewAWSProvisioner(testPath, identifier string) (*AWSProvisioner, error) {
 	terraform := &terraform{
 		terraformDir: "../../terraform/aws/",
-		idendifier:   identifier}
+		idendifier:   identifier,
+	}
 
 	return &AWSProvisioner{
 		terraform: terraform,
@@ -45,7 +47,6 @@ func NewAWSProvisioner(testPath, identifier string) (*AWSProvisioner, error) {
 
 // Provision starts provisioning on AWS
 func (p *AWSProvisioner) Provision() (string, error) {
-
 	awsKeyID := os.Getenv("AWS_ACCESS_KEY_ID")
 	awsSecret := os.Getenv("AWS_SECRET_ACCESS_KEY")
 	if len(awsKeyID) == 0 || len(awsSecret) == 0 {
@@ -58,12 +59,59 @@ func (p *AWSProvisioner) Provision() (string, error) {
 	}
 
 	return tf, nil
-
 }
 
 // Cleanup destroys infrastructure created by terraform
 func (p *AWSProvisioner) Cleanup() error {
+	err := p.terraform.destroy()
+	if err != nil {
+		return fmt.Errorf("%v", err)
+	}
 
+	_, err = executeCommand("", "rm", []string{"-rf", p.testPath}, nil)
+	if err != nil {
+		return fmt.Errorf("%v", err)
+	}
+
+	return nil
+}
+
+// DOProvisioner describes DigitalOcean provisioner
+type DOProvisioner struct {
+	testPath  string
+	terraform *terraform
+}
+
+// NewDOProvisioner creates and initialize DOProvisioner structure
+func NewDOProvisioner(testPath, identifier string) (*DOProvisioner, error) {
+	terraform := &terraform{
+		terraformDir: "../../terraform/digitalocean/",
+		idendifier:   identifier,
+	}
+
+	return &DOProvisioner{
+		terraform: terraform,
+		testPath:  testPath,
+	}, nil
+}
+
+// Provision starts provisioning on DigitalOcean
+func (p *DOProvisioner) Provision() (string, error) {
+	doToken := os.Getenv("DIGITALOCEAN_TOKEN")
+	if len(doToken) == 0 {
+		return "", errors.New("unable to run the test suite, DIGITALOCEAN_TOKEN environment variable cannot be empty")
+	}
+
+	tf, err := p.terraform.initAndApply()
+	if err != nil {
+		return "", err
+	}
+
+	return tf, nil
+}
+
+// Cleanup destroys infrastructure created by terraform
+func (p *DOProvisioner) Cleanup() error {
 	err := p.terraform.destroy()
 	if err != nil {
 		return fmt.Errorf("%v", err)

@@ -7,6 +7,7 @@ set -euo pipefail
 
 RUNNING_IN_CI=${JOB_NAME:-""}
 BUILD_ID=${BUILD_ID:-"${USER}-local"}
+PROVIDER=${PROVIDER:-"aws"}
 export TF_VAR_cluster_name=$BUILD_ID
 
 # Install dependencies
@@ -35,7 +36,7 @@ TERRAFORM_DIR="$(go env GOPATH)/src/github.com/kubermatic/kubeone/terraform"
 function cleanup {
 set +e
 for try in {1..20}; do
-  cd $TERRAFORM_DIR/aws
+  cd $TERRAFORM_DIR/$PROVIDER
   echo "Cleaning up terraform state, attempt ${try}"
   # Upstream interpolation bug, but we dont care about the output
   # at destroy time anyways: https://github.com/hashicorp/terraform/issues/17691
@@ -61,8 +62,15 @@ if [ -n "${RUNNING_IN_CI}" ]; then
  done
 
  # terraform expects to find AWS credentials in the following env variables
- export AWS_ACCESS_KEY_ID=$AWS_E2E_TESTS_KEY_ID
- export AWS_SECRET_ACCESS_KEY=$AWS_E2E_TESTS_SECRET
+ if [[ $PROVIDER == "aws" ]]; then
+  export AWS_ACCESS_KEY_ID=$AWS_E2E_TESTS_KEY_ID
+  export AWS_SECRET_ACCESS_KEY=$AWS_E2E_TESTS_SECRET
+ fi
+ # terraform expects to find DigitalOcean credentials in the following env variables
+ if [[ $PROVIDER == "digitalocean" ]]; then
+  export DO_TOKEN=$DIGITALOCEAN_E2E_ACCESS_TOKEN
+  export DIGITALOCEAN_TOKEN=$DIGITALOCEAN_E2E_ACCESS_TOKEN
+ fi
  KUBE_TEST_DIR="/opt/kube-test"
  if [ -d "${KUBE_TEST_DIR}" ]; then
  KUBEONE_BUILD_DIR="$(go env GOPATH)/src/github.com/kubermatic/kubeone/_build"
@@ -104,4 +112,4 @@ make install
 
 # Start the tests
 echo "Running E2E tests ..."
-go test -race -tags=e2e -v -timeout 30m  ./test/e2e/... -identifier=$BUILD_ID
+go test -race -tags=e2e -v -timeout 30m  ./test/e2e/... -identifier=$BUILD_ID -provider=$PROVIDER

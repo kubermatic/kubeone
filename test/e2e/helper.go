@@ -17,13 +17,15 @@ func CreateProvisioner(testPath string, identifier string, provider string) (Pro
 	if provider == AWS {
 		return NewAWSProvisioner(testPath, identifier)
 	}
+	if provider == DigitalOcean {
+		return NewDOProvisioner(testPath, identifier)
+	}
 
 	return nil, fmt.Errorf("unsuported provider %v", provider)
 }
 
 // IsCommandAvailable checks if command is available OS
 func IsCommandAvailable(name string) bool {
-
 	path, err := exec.LookPath(name)
 	if err != nil {
 		return false
@@ -95,7 +97,6 @@ func executeCommand(path, name string, arg []string, additionalEnv map[string]st
 
 // CreateFile create file with given content
 func CreateFile(filepath, content string) error {
-
 	// Create directory if needed.
 	basepath := path.Dir(filepath)
 	filename := path.Base(filepath)
@@ -115,7 +116,6 @@ func CreateFile(filepath, content string) error {
 
 // ValidateCommon validates variables necessary to start process
 func ValidateCommon() error {
-
 	sshPublicKey := os.Getenv("SSH_PUBLIC_KEY_FILE")
 	if len(sshPublicKey) == 0 {
 		return errors.New("unable to run the test suite, SSH_PUBLIC_KEY_FILE environment variables cannot be empty")
