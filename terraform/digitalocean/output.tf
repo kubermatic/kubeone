@@ -8,6 +8,7 @@ output "kubeone_hosts" {
   value = {
     control_plane = {
       cluster_name          = "${var.cluster_name}"
+      cloud_provider        = "digitalocean"
       private_address       = "${digitalocean_droplet.control_plane.*.ipv4_address_private}"
       public_address        = "${digitalocean_droplet.control_plane.*.ipv4_address}"
       ssh_agent_socket      = "${var.ssh_agent_socket}"
