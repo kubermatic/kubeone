@@ -29,18 +29,21 @@ func TestClusterConformance(t *testing.T) {
 		kubernetesVersion string
 		scenario          string
 		region            string
+		configFilePath    string
 	}{
 		{
 			name:              "verify k8s cluster deployment on AWS",
 			provider:          AWS,
 			kubernetesVersion: "v1.13.3",
 			scenario:          NodeConformance,
+			configFilePath:    "../../test/e2e/testdata/aws_config.yaml",
 		},
 		{
 			name:              "verify k8s cluster deployment on DO",
 			provider:          DigitalOcean,
 			kubernetesVersion: "v1.13.3",
 			scenario:          NodeConformance,
+			configFilePath:    "../../test/e2e/testdata/do_config.yaml",
 		},
 	}
 
@@ -60,7 +63,7 @@ func TestClusterConformance(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			target := NewKubeone(testPath, "../../config.yaml.dist")
+			target := NewKubeone(testPath, tc.configFilePath)
 			clusterVerifier := NewKubetest(tc.kubernetesVersion, "../../_build", map[string]string{
 				"KUBERNETES_CONFORMANCE_TEST": "y",
 			})
