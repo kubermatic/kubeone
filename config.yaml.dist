@@ -30,7 +30,7 @@ provider:
   # * vshere
   name: ''
   
-  # Regulate kubelet flag --cloud-provider=external, to be used with external
+  # Set kubelet flag --cloud-provider=external, to be used with external
   # Cloud Controller Managers (CCM)
   external: false
 
