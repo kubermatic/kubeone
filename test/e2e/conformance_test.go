@@ -90,7 +90,7 @@ func TestClusterConformance(t *testing.T) {
 			}
 
 			t.Log("create kubeconfig")
-			err = target.CreateKubeconfig()
+			_, err = target.CreateKubeconfig()
 			if err != nil {
 				t.Fatalf("creating kubeconfig failed: %v", err)
 			}
