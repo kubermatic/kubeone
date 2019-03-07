@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"testing"
 	"time"
+	"strings"
 
 	"github.com/pkg/errors"
+	"github.com/Masterminds/semver"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -114,6 +116,12 @@ func TestClusterUpgrade(t *testing.T) {
 				t.Fatalf("nodes are not ready: %v", err)
 			}
 
+			t.Log("verifying cluster version before upgrade")
+			err = verifyVersion(clientset.CoreV1().Nodes(), clientset.CoreV1().Pods(metav1.NamespaceSystem), tc.initialVersion)
+			if err != nil {
+				t.Fatalf("version mismatch before running upgrade: %v", err)
+			}
+
 			// Create a new KubeOne provisioner pointing to the new configuration file
 			target = NewKubeone(testPath, tc.targetConfigPath)
 			clusterVerifier := NewKubetest(tc.targetVersion, "../../_build", map[string]string{
@@ -130,6 +138,12 @@ func TestClusterUpgrade(t *testing.T) {
 			err = waitForNodesReady(clientset.CoreV1().Nodes())
 			if err != nil {
 				t.Fatalf("nodes are not ready: %v", err)
+			}
+
+			t.Log("verifying cluster version after upgrade")
+			err = verifyVersion(clientset.CoreV1().Nodes(), clientset.CoreV1().Pods(metav1.NamespaceSystem), tc.initialVersion)
+			if err != nil {
+				t.Fatalf("version mismatch after running upgrade: %v", err)
 			}
 
 			t.Log("run e2e tests")
@@ -158,4 +172,52 @@ func waitForNodesReady(nodeClient corev1types.NodeInterface) error {
 		}
 		return true, nil
 	})
+}
+
+func verifyVersion(nodeClient corev1types.NodeInterface, systemPodsClient corev1types.PodInterface, desiredVersion string) error {
+	reqVer, err := semver.NewVersion(desiredVersion)
+	if err != nil {
+		return errors.Wrap(err, "desired version is invalid")
+	}
+
+	// Kubelet version check
+	nodes, err := nodeClient.List(metav1.ListOptions{
+		LabelSelector: fmt.Sprintf("%s=%s", labelControlPlaneNode, ""),
+	})
+	for _, n := range nodes.Items {
+		kubeletVer, err := semver.NewVersion(n.Status.NodeInfo.KubeletVersion)
+		if err != nil {
+			return err
+		}
+		if reqVer.Compare(kubeletVer) != 0 {
+			return errors.Errorf("kubelet version mismatch: expected %v, got %v", reqVer.String(), kubeletVer.String())
+		}
+	}
+
+	// apiserver version check
+	apiserverPods, err := systemPodsClient.List(metav1.ListOptions{
+		LabelSelector: "component=kube-apiserver",
+	})
+	if err != nil {
+		return errors.Wrap(err, "unable to list apiserver pods")
+	}
+	for _, p := range apiserverPods.Items {
+		apiserverVer, err := parseContainerImageVersion(p.Spec.Containers[0].Image)
+		if err != nil {
+			return errors.Wrap(err, "unable to parse apiserver version")
+		}
+		if reqVer.Compare(apiserverVer) != 0 {
+			return errors.Errorf("apiserver version mismatch: expected %v, got %v", reqVer.String(), apiserverVer.String())
+		}
+	}
+
+	return nil
+}
+
+func parseContainerImageVersion(image string) (*semver.Version, error) {
+	ver := strings.Split(image, ":")
+	if len(ver) != 2 {
+		return nil, errors.Errorf("invalid container image format: %s", image)
+	}
+	return semver.NewVersion(ver[1])
 }
