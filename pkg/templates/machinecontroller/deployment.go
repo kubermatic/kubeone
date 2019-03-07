@@ -808,6 +808,15 @@ func machineControllerDeployment(cluster *config.Cluster) (*appsv1.Deployment, e
 							Operator: corev1.TolerationOpExists,
 							Effect:   corev1.TaintEffectNoSchedule,
 						},
+						{
+							Key:    "node.cloudprovider.kubernetes.io/uninitialized",
+							Value:  "true",
+							Effect: corev1.TaintEffectNoSchedule,
+						},
+						{
+							Key:      "CriticalAddonsOnly",
+							Operator: corev1.TolerationOpExists,
+						},
 					},
 					Containers: []corev1.Container{
 						{
