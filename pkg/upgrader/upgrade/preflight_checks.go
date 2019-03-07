@@ -136,22 +136,38 @@ func verifyLabels(nodes *corev1.NodeList, verbose bool) error {
 
 // verifyEndpoints verifies are IP addresses defined in the KubeOne manifest same as IP addresses of nodes
 func verifyEndpoints(nodes *corev1.NodeList, hosts []*config.HostConfig, verbose bool) error {
-	for _, n := range nodes.Items {
-		found := false
-		for _, addr := range n.Status.Addresses {
-			if verbose && addr.Type == corev1.NodeExternalIP {
-				fmt.Printf("[%s] Endpoint: %s\n", n.ObjectMeta.Name, addr.Address)
+	for _, node := range nodes.Items {
+		for _, addr := range node.Status.Addresses {
+			switch addr.Type {
+			case corev1.NodeInternalIP, corev1.NodeExternalIP:
+				if verbose {
+					fmt.Printf("[%s] %s Endpoint: %s\n", node.ObjectMeta.Name, addr.Type, addr.Address)
+				}
+			default:
+				// we don't care about other types of NodeAddress
+				continue
 			}
+
+			found := false
 			for _, host := range hosts {
-				if addr.Type == corev1.NodeExternalIP && host.PublicAddress == addr.Address {
-					found = true
+				switch addr.Type {
+				case corev1.NodeExternalIP:
+					if addr.Address == host.PublicAddress {
+						found = true
+					}
+				case corev1.NodeInternalIP:
+					if addr.Address == host.PrivateAddress {
+						found = true
+					}
 				}
 			}
-		}
-		if !found {
-			return errors.New("cannot match node by ip address")
+
+			if !found {
+				return errors.New("cannot match node by ip address")
+			}
 		}
 	}
+
 	return nil
 }
 
