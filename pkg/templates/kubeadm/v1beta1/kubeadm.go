@@ -21,7 +21,7 @@ func NewConfig(ctx *util.Context, host *config.HostConfig) ([]runtime.Object, er
 
 	nodeRegistration := kubeadmv1beta1.NodeRegistrationOptions{
 		Name:             host.Hostname,
-		KubeletExtraArgs: map[string]string{},
+		KubeletExtraArgs: map[string]string{"node-ip": host.PrivateAddress},
 	}
 
 	if ctx.JoinToken == "" {
