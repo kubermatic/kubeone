@@ -144,6 +144,15 @@ func webhookDeployment(cluster *config.Cluster) *appsv1.Deployment {
 			Operator: corev1.TolerationOpExists,
 			Effect:   corev1.TaintEffectNoSchedule,
 		},
+		{
+			Key:    "node.cloudprovider.kubernetes.io/uninitialized",
+			Value:  "true",
+			Effect: corev1.TaintEffectNoSchedule,
+		},
+		{
+			Key:      "CriticalAddonsOnly",
+			Operator: corev1.TolerationOpExists,
+		},
 	}
 
 	dep.Spec.Template.Spec.Containers = []corev1.Container{
