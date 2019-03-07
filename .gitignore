@@ -5,7 +5,6 @@ _build
 config.yaml
 *.tar.gz
 tf.json
-terraform.tfstate
-terraform.tfstate.backup
+*terraform.tfstate*
 .terraform
 terraform.tfvars

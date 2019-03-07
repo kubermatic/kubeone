@@ -14,10 +14,11 @@ variable "control_plane_count" {
 
 variable "ssh_public_key_file" {
   description = "SSH public key file"
+  default     = "~/.ssh/id_rsa.pub"
 }
 
 variable "ssh_port" {
-  default = 22
+  default     = 22
   description = "SSH port to be used to provision instances"
 }
 
@@ -32,26 +33,26 @@ variable "ssh_agent_socket" {
 }
 
 variable "droplet_image" {
-    default = "ubuntu-18-04-x64"
-    description = "Image to use for provisioning droplet"
+  default     = "ubuntu-18-04-x64"
+  description = "Image to use for provisioning droplet"
 }
 
 variable "droplet_size" {
-    default = "s-2vcpu-4gb"
-    description = "Size of Droplets"
+  default     = "s-2vcpu-4gb"
+  description = "Size of Droplets"
 }
 
 variable "droplet_private_networking" {
-  default = true
+  default     = true
   description = "Enable Private Networking on Droplets (recommended)"
 }
 
 variable "droplet_monitoring" {
-  default = false
+  default     = false
   description = "Enable advance Droplet metrics"
 }
 
 variable "droplet_ipv6" {
-  default = false
+  default     = false
   description = "Enable IPv6"
 }
