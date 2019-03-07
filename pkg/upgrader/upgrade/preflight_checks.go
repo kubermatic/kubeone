@@ -198,7 +198,7 @@ func verifyVersionSkew(ctx *util.Context, nodes *corev1.NodeList, verbose bool) 
 	for _, p := range apiserverPods.Items {
 		ver, apiserverErr := parseContainerImageVersion(p.Spec.Containers[0].Image)
 		if apiserverErr != nil {
-			return errors.Wrap(err, "unable to parse apiserver version")
+			return errors.Wrap(apiserverErr, "unable to parse apiserver version")
 		}
 		if verbose {
 			fmt.Printf("Pod %s is running apiserver version %s\n", p.ObjectMeta.Name, ver.String())
