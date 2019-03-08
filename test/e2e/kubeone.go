@@ -35,7 +35,7 @@ func (p *Kubeone) Install(tfJSON string) error {
 }
 
 func (p *Kubeone) Upgrade() error {
-	_, err := executeCommand(p.KubeoneDir, "kubeone", []string{"upgrade", "--tfjson", "tf.json", p.ConfigurationFile}, nil)
+	_, err := executeCommand(p.KubeoneDir, "kubeone", []string{"upgrade", "--tfjson", "tf.json", "--upgrade-machine-deployments", p.ConfigurationFile}, nil)
 	if err != nil {
 		return fmt.Errorf("k8s cluster upgrade failed: %v", err)
 	}

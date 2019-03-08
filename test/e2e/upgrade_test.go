@@ -4,12 +4,12 @@ package e2e
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 	"time"
-	"strings"
 
-	"github.com/pkg/errors"
 	"github.com/Masterminds/semver"
+	"github.com/pkg/errors"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -141,9 +141,15 @@ func TestClusterUpgrade(t *testing.T) {
 			}
 
 			t.Log("verifying cluster version after upgrade")
-			err = verifyVersion(clientset.CoreV1().Nodes(), clientset.CoreV1().Pods(metav1.NamespaceSystem), tc.initialVersion)
+			err = verifyVersion(clientset.CoreV1().Nodes(), clientset.CoreV1().Pods(metav1.NamespaceSystem), tc.targetVersion)
 			if err != nil {
 				t.Fatalf("version mismatch after running upgrade: %v", err)
+			}
+
+			t.Log("polling nodes to verify are all workers upgraded")
+			err = waitForNodesUpgraded(clientset.CoreV1().Nodes(), tc.targetVersion)
+			if err != nil {
+				t.Fatalf("nodes are not running the target version: %v", err)
 			}
 
 			t.Log("run e2e tests")
@@ -174,8 +180,35 @@ func waitForNodesReady(nodeClient corev1types.NodeInterface) error {
 	})
 }
 
-func verifyVersion(nodeClient corev1types.NodeInterface, systemPodsClient corev1types.PodInterface, desiredVersion string) error {
-	reqVer, err := semver.NewVersion(desiredVersion)
+func waitForNodesUpgraded(nodeClient corev1types.NodeInterface, targetVersion string) error {
+	reqVer, err := semver.NewVersion(targetVersion)
+	if err != nil {
+		return errors.Wrap(err, "desired version is invalid")
+	}
+
+	return wait.Poll(5*time.Second, 10*time.Minute, func() (bool, error) {
+		nodes, err := nodeClient.List(metav1.ListOptions{})
+		if err != nil {
+			return false, errors.Wrap(err, "unable to list nodes")
+		}
+		// In this case it's safe to check kubelet version because once nodes are replaced
+		// there are provisioned from zero with the new version, so we'll not have
+		// kubelet and apiserver version mismatch.
+		for _, n := range nodes.Items {
+			kubeletVer, err := semver.NewVersion(n.Status.NodeInfo.KubeletVersion)
+			if err != nil {
+				return false, err
+			}
+			if reqVer.Compare(kubeletVer) != 0 {
+				return false, errors.Errorf("kubelet version mismatch: expected %v, got %v", reqVer.String(), kubeletVer.String())
+			}
+		}
+		return true, nil
+	})
+}
+
+func verifyVersion(nodeClient corev1types.NodeInterface, systemPodsClient corev1types.PodInterface, targetVersion string) error {
+	reqVer, err := semver.NewVersion(targetVersion)
 	if err != nil {
 		return errors.Wrap(err, "desired version is invalid")
 	}
