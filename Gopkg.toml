@@ -16,6 +16,10 @@
   version = "0.8.1"
 
 [[constraint]]
+  name = "github.com/pkg/sftp"
+  version = "1.10.0"
+
+[[constraint]]
   branch = "master"
   name = "github.com/tmc/scp"
 
