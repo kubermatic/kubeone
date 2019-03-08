@@ -172,7 +172,7 @@ func waitForNodesReady(nodeClient corev1types.NodeInterface) error {
 		for _, n := range nodes.Items {
 			for _, c := range n.Status.Conditions {
 				if c.Type == corev1.NodeReady && c.Status != corev1.ConditionTrue {
-					return false, errors.Errorf("node %s is not running", n.ObjectMeta.Name)
+					return false, nil
 				}
 			}
 		}
@@ -200,7 +200,7 @@ func waitForNodesUpgraded(nodeClient corev1types.NodeInterface, targetVersion st
 				return false, err
 			}
 			if reqVer.Compare(kubeletVer) != 0 {
-				return false, errors.Errorf("kubelet version mismatch: expected %v, got %v", reqVer.String(), kubeletVer.String())
+				return false, nil
 			}
 		}
 		return true, nil
