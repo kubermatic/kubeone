@@ -1,0 +1,6 @@
+versions:
+  kubernetes: '1.13.3'
+provider:
+  name: 'aws'
+features:
+  enable_pod_security_policy: false

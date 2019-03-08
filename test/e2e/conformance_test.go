@@ -3,22 +3,9 @@
 package e2e
 
 import (
-	"flag"
 	"fmt"
 	"testing"
 )
-
-// testRunIdentifier aka. the build number, a unique identifier for the test run.
-var (
-	testRunIdentifier string
-	testProvider      string
-)
-
-func init() {
-	flag.StringVar(&testRunIdentifier, "identifier", "", "The unique identifier for this test run")
-	flag.StringVar(&testProvider, "provider", "", "Provider to run tests on")
-	flag.Parse()
-}
 
 func TestClusterConformance(t *testing.T) {
 	t.Parallel()
@@ -90,7 +77,7 @@ func TestClusterConformance(t *testing.T) {
 			}
 
 			t.Log("create kubeconfig")
-			err = target.CreateKubeconfig()
+			_, err = target.CreateKubeconfig()
 			if err != nil {
 				t.Fatalf("creating kubeconfig failed: %v", err)
 			}
@@ -101,21 +88,5 @@ func TestClusterConformance(t *testing.T) {
 				t.Fatalf("e2e tests failed: %v", err)
 			}
 		})
-	}
-}
-
-func setupTearDown(p Provisioner, k Kubeone) func(t *testing.T) {
-	return func(t *testing.T) {
-		t.Log("cleanup ....")
-
-		errKubeone := k.Reset()
-		errProvisioner := p.Cleanup()
-
-		if errKubeone != nil {
-			t.Errorf("%v", errKubeone)
-		}
-		if errProvisioner != nil {
-			t.Errorf("%v", errProvisioner)
-		}
 	}
 }

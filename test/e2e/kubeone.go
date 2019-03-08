@@ -34,11 +34,19 @@ func (p *Kubeone) Install(tfJSON string) error {
 	return nil
 }
 
+func (p *Kubeone) Upgrade() error {
+	_, err := executeCommand(p.KubeoneDir, "kubeone", []string{"upgrade", "--tfjson", "tf.json", "--upgrade-machine-deployments", p.ConfigurationFile}, nil)
+	if err != nil {
+		return fmt.Errorf("k8s cluster upgrade failed: %v", err)
+	}
+	return nil
+}
+
 // CreateKubeconfig creates and store kubeconfig
-func (p *Kubeone) CreateKubeconfig() error {
+func (p *Kubeone) CreateKubeconfig() ([]byte, error) {
 	rawKubeconfig, err := executeCommand(p.KubeoneDir, "kubeone", []string{"kubeconfig", "--tfjson", "tf.json", p.ConfigurationFile}, nil)
 	if err != nil {
-		return fmt.Errorf("creating kubeconfig failed: %v", err)
+		return nil, fmt.Errorf("creating kubeconfig failed: %v", err)
 	}
 
 	homePath := os.Getenv("HOME")
@@ -46,9 +54,9 @@ func (p *Kubeone) CreateKubeconfig() error {
 
 	err = CreateFile(kubeconfigPath, rawKubeconfig)
 	if err != nil {
-		return fmt.Errorf("saving kubeconfig for given path %s failed: %v", kubeconfigPath, err)
+		return nil, fmt.Errorf("saving kubeconfig for given path %s failed: %v", kubeconfigPath, err)
 	}
-	return nil
+	return []byte(rawKubeconfig), nil
 }
 
 // DestroyWorkers cleanup method
