@@ -135,14 +135,6 @@
   revision = "f2b4162afba35581b6d4a50d3b8f34e33c144682"
 
 [[projects]]
-  branch = "master"
-  digest = "1:cf68a79fd02ab0f6942b9567d03d054b6568212fcc22de2a4afdefd096923749"
-  name = "github.com/kballard/go-shellquote"
-  packages = ["."]
-  pruneopts = "NUT"
-  revision = "95032a82bc518f77982ea72343cc1ade730072f0"
-
-[[projects]]
   digest = "1:4059c14e87a2de3a434430340521b5feece186c1469eff0834c29a63870de3ed"
   name = "github.com/konsorten/go-windows-terminal-sequences"
   packages = ["."]
@@ -237,14 +229,6 @@
   pruneopts = "NUT"
   revision = "298182f68c66c05229eb03ac171abe6e309ee79a"
   version = "v1.0.3"
-
-[[projects]]
-  branch = "master"
-  digest = "1:199a5bec77ceeb1f03e54c736c738da594b416d97e3902aacb31b88818593f12"
-  name = "github.com/tmc/scp"
-  packages = ["."]
-  pruneopts = "NUT"
-  revision = "f7b48647feef3e30991f2ecc16b2b9a977d9a7c3"
 
 [[projects]]
   branch = "master"
@@ -562,7 +546,6 @@
     "github.com/sirupsen/logrus",
     "github.com/spf13/cobra",
     "github.com/spf13/pflag",
-    "github.com/tmc/scp",
     "golang.org/x/crypto/ssh",
     "golang.org/x/crypto/ssh/agent",
     "k8s.io/api/admissionregistration/v1beta1",

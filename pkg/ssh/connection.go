@@ -2,19 +2,17 @@ package ssh
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/pkg/errors"
-	_ "github.com/pkg/sftp"
-	"github.com/tmc/scp"
+	"github.com/pkg/sftp"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
 )
@@ -23,17 +21,10 @@ const socketEnvPrefix = "env:"
 
 // Connection represents an established connection to an SSH server.
 type Connection interface {
-	Close() error
-	Closed() bool
-
-	Exec(string) (string, string, int, error)
-	Stream(string, io.Writer, io.Writer) (int, error)
-
-	Upload(io.Reader, int64, os.FileMode, string) error
-	UploadFile(string, string) error
-
-	Download(string, io.Writer) error
-	DownloadToFile(string, string) error
+	Exec(cmd string) (stdout string, stderr string, exitCode int, err error)
+	File(filename string, flags int) (io.ReadWriteCloser, error)
+	Stream(cmd string, stdout io.Writer, stderr io.Writer) (exitCode int, err error)
+	io.Closer
 }
 
 // Opts represents all the possible options for connecting to
@@ -84,7 +75,9 @@ func validateOptions(o Opts) (Opts, error) {
 }
 
 type connection struct {
-	client *ssh.Client
+	mu         sync.Mutex
+	sftpclient *sftp.Client
+	sshclient  *ssh.Client
 }
 
 // NewConnection attempts to create a new SSH connection to the host
@@ -92,7 +85,7 @@ type connection struct {
 func NewConnection(o Opts) (Connection, error) {
 	o, err := validateOptions(o)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "failed to validate ssh connection options")
 	}
 
 	authMethods := make([]ssh.AuthMethod, 0)
@@ -152,121 +145,88 @@ func NewConnection(o Opts) (Connection, error) {
 		return nil, errors.Wrapf(err, "could not establish connection to %s", endpoint)
 	}
 
-	return &connection{client}, nil
+	return &connection{sshclient: client}, nil
+}
+
+// File return remote file (as an io.ReadWriteCloser).
+//
+// mode is os package file modes: https://golang.org/pkg/os/#pkg-constants
+// returned file optionally implement
+func (c *connection) File(filename string, flags int) (io.ReadWriteCloser, error) {
+	sftpClient, err := c.sftp()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to open SFTP")
+	}
+
+	return sftpClient.OpenFile(filename, flags)
 }
 
 func (c *connection) Close() error {
-	var err error
-	if !c.Closed() {
-		err = c.client.Close()
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	if c.sshclient == nil {
+		return nil
 	}
+	defer func() { c.sshclient = nil }()
+	defer func() { c.sftpclient = nil }()
 
-	c.client = nil
-	return err
-}
-
-func (c *connection) Closed() bool {
-	return c.client == nil
+	return c.sshclient.Close()
 }
 
 func (c *connection) Stream(cmd string, stdout io.Writer, stderr io.Writer) (int, error) {
-	if c.client == nil {
-		return 0, errors.New("cannot exec commands because connection was already closed")
-	}
-
-	ses, err := c.client.NewSession()
+	sess, err := c.session()
 	if err != nil {
-		return 0, errors.Wrap(err, "failed to create new SSH session")
+		return 0, errors.Wrap(err, "failed to get SSH session")
 	}
-	defer ses.Close()
+	defer sess.Close()
 
-	ses.Stdout = stdout
-	ses.Stderr = stderr
+	sess.Stdout = stdout
+	sess.Stderr = stderr
 
 	exitCode := 0
-	err = ses.Run(strings.TrimSpace(cmd))
+	err = sess.Run(strings.TrimSpace(cmd))
 	if err != nil {
 		exitCode = 1
-		err = errors.Wrap(err, "failed to exec command")
 	}
 
-	return exitCode, err
+	return exitCode, errors.Wrapf(err, "failed to exec command: %s", cmd)
 }
 
 func (c *connection) Exec(cmd string) (string, string, int, error) {
-	var stdoutBuf bytes.Buffer
-	var stderrBuf bytes.Buffer
+	var stdoutBuf, stderrBuf bytes.Buffer
 
 	exitCode, err := c.Stream(cmd, &stdoutBuf, &stderrBuf)
 
 	return strings.TrimSpace(stdoutBuf.String()), strings.TrimSpace(stderrBuf.String()), exitCode, err
 }
 
-func (c *connection) Upload(source io.Reader, size int64, mode os.FileMode, destination string) error {
-	if c.client == nil {
-		return errors.New("cannot transfer files because connection was already closed")
+func (c *connection) session() (*ssh.Session, error) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	if c.sshclient == nil {
+		return nil, errors.New("connection closed")
 	}
 
-	ses, err := c.client.NewSession()
-	if err != nil {
-		return errors.Wrap(err, "failed to create new SSH session")
-	}
-	defer ses.Close()
-
-	filename := filepath.Base(destination)
-
-	err = scp.Copy(size, mode, filename, source, destination, ses)
-	if err != nil {
-		err = errors.Wrap(err, "failed to transfer file")
-	}
-
-	return err
+	return c.sshclient.NewSession()
 }
 
-func (c *connection) UploadFile(source string, destination string) error {
-	if c.client == nil {
-		return errors.New("cannot transfer files because connection was already closed")
+func (c *connection) sftp() (*sftp.Client, error) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	if c.sshclient == nil {
+		return nil, errors.New("connection closed")
 	}
 
-	ses, err := c.client.NewSession()
-	if err != nil {
-		return errors.Wrap(err, "failed to create new SSH session")
-	}
-	defer ses.Close()
-
-	err = scp.CopyPath(source, destination, ses)
-	if err != nil {
-		err = errors.Wrap(err, "failed to transfer file")
+	if c.sftpclient == nil {
+		s, err := sftp.NewClient(c.sshclient)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get sftp.Client")
+		}
+		c.sftpclient = s
 	}
 
-	return err
-}
-
-func (c *connection) Download(source string, target io.Writer) error {
-	if c.client == nil {
-		return errors.New("cannot transfer files because connection was already closed")
-	}
-
-	var stderrBuf bytes.Buffer
-
-	_, err := c.Stream(fmt.Sprintf(`cat -- "%s"`, source), target, &stderrBuf)
-	if err != nil {
-		err = errors.Wrap(err, "failed to transfer file")
-	}
-
-	return err
-}
-
-func (c *connection) DownloadToFile(source string, target string) error {
-	if c.client == nil {
-		return errors.New("cannot transfer files because connection was already closed")
-	}
-
-	f, err := os.Create(target)
-	if err != nil {
-		return errors.Wrap(err, "failed to create local file")
-	}
-	defer f.Close()
-
-	return c.Download(source, f)
+	return c.sftpclient, nil
 }

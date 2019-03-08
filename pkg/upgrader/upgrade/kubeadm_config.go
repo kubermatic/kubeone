@@ -1,8 +1,6 @@
 package upgrade
 
 import (
-	"fmt"
-
 	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/config"
@@ -17,7 +15,7 @@ func generateKubeadmConfig(ctx *util.Context, node *config.HostConfig) error {
 		return errors.Wrap(err, "failed to create kubeadm configuration")
 	}
 
-	ctx.Configuration.AddFile(fmt.Sprintf("cfg/master_0.yaml"), kubeadmConf)
+	ctx.Configuration.AddFile("cfg/master_0.yaml", kubeadmConf)
 
 	return nil
 }
