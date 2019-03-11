@@ -33,7 +33,7 @@ if ! [ -x "$(command -v kubetest)" ]; then
   PATH=$PATH:$(go env GOPATH)/bin
 fi
 
-TERRAFORM_DIR="$(go env GOPATH)/src/github.com/kubermatic/kubeone/terraform"
+TERRAFORM_DIR="$(go env GOPATH)/src/github.com/kubermatic/kubeone/examples/terraform"
 function cleanup {
 set +e
 for try in {1..20}; do
