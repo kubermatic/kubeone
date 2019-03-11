@@ -26,8 +26,8 @@ func (c *Connector) Connect(node config.HostConfig) (Connection, error) {
 	defer c.lock.Unlock()
 	var err error
 
-	conn, exists := c.connections[node.PublicAddress]
-	if !exists || conn.Closed() {
+	conn, found := c.connections[node.PublicAddress]
+	if !found {
 		opts := Opts{
 			Username:    node.SSHUsername,
 			Port:        node.SSHPort,
@@ -52,7 +52,9 @@ func (c *Connector) Connect(node config.HostConfig) (Connection, error) {
 func (c *Connector) CloseAll() {
 	c.lock.Lock()
 	defer c.lock.Unlock()
+
 	for _, conn := range c.connections {
 		conn.Close()
 	}
+	c.connections = make(map[string]Connection)
 }

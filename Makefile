@@ -30,7 +30,7 @@ lint:
 
 .PHONY: test
 test:
-	go test -v ./...
+	CGO_ENABLED=1 go test -race ./...
 
 .PHONY: dep
 dep:

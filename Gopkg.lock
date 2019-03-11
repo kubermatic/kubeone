@@ -135,14 +135,6 @@
   revision = "f2b4162afba35581b6d4a50d3b8f34e33c144682"
 
 [[projects]]
-  branch = "master"
-  digest = "1:cf68a79fd02ab0f6942b9567d03d054b6568212fcc22de2a4afdefd096923749"
-  name = "github.com/kballard/go-shellquote"
-  packages = ["."]
-  pruneopts = "NUT"
-  revision = "95032a82bc518f77982ea72343cc1ade730072f0"
-
-[[projects]]
   digest = "1:4059c14e87a2de3a434430340521b5feece186c1469eff0834c29a63870de3ed"
   name = "github.com/konsorten/go-windows-terminal-sequences"
   packages = ["."]
@@ -157,6 +149,14 @@
   packages = ["."]
   pruneopts = "NUT"
   revision = "271b207a75725c3b523859a9833c759ef43b5b73"
+
+[[projects]]
+  digest = "1:47fa0ef6ae6b0387dacb77c7ab8827b4ef621650fd613e43ece61de4cb3f5019"
+  name = "github.com/kr/fs"
+  packages = ["."]
+  pruneopts = "NUT"
+  revision = "1455def202f6e05b95cc7bfc7e8ae67ae5141eba"
+  version = "v0.1.0"
 
 [[projects]]
   digest = "1:2f42fa12d6911c7b7659738758631bec870b7e9b4c6be5444f963cdcfccc191f"
@@ -199,6 +199,14 @@
   version = "v0.8.1"
 
 [[projects]]
+  digest = "1:11a5954c7d1ffda43672b7dff106a4a32d632ae24496d9e52dc7d4e5fb70cde5"
+  name = "github.com/pkg/sftp"
+  packages = ["."]
+  pruneopts = "NUT"
+  revision = "a713b07e6d90e1831d7fefcb69f1310edb3783ae"
+  version = "v1.10.0"
+
+[[projects]]
   digest = "1:d848e2bdc690ea54c4b49894b67a05db318a97ee6561879b814c2c1f82f61406"
   name = "github.com/sirupsen/logrus"
   packages = ["."]
@@ -221,14 +229,6 @@
   pruneopts = "NUT"
   revision = "298182f68c66c05229eb03ac171abe6e309ee79a"
   version = "v1.0.3"
-
-[[projects]]
-  branch = "master"
-  digest = "1:199a5bec77ceeb1f03e54c736c738da594b416d97e3902aacb31b88818593f12"
-  name = "github.com/tmc/scp"
-  packages = ["."]
-  pruneopts = "NUT"
-  revision = "f7b48647feef3e30991f2ecc16b2b9a977d9a7c3"
 
 [[projects]]
   branch = "master"
@@ -542,10 +542,10 @@
     "github.com/heptio/ark/pkg/generated/clientset/versioned/typed/ark/v1",
     "github.com/koron-go/prefixw",
     "github.com/pkg/errors",
+    "github.com/pkg/sftp",
     "github.com/sirupsen/logrus",
     "github.com/spf13/cobra",
     "github.com/spf13/pflag",
-    "github.com/tmc/scp",
     "golang.org/x/crypto/ssh",
     "golang.org/x/crypto/ssh/agent",
     "k8s.io/api/admissionregistration/v1beta1",

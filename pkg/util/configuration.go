@@ -3,6 +3,8 @@ package util
 import (
 	"bytes"
 	"fmt"
+	"io"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -32,7 +34,6 @@ func (c *Configuration) AddFile(filename string, content string) {
 // UploadTo directory all the files
 func (c *Configuration) UploadTo(conn ssh.Connection, directory string) error {
 	for filename, content := range c.files {
-		size := int64(len(content))
 		target := filepath.Join(directory, filename)
 
 		// ensure the base dir exists
@@ -42,9 +43,21 @@ func (c *Configuration) UploadTo(conn ssh.Connection, directory string) error {
 			return errors.Wrapf(err, "failed to create ./%s directory", dir)
 		}
 
-		err = conn.Upload(strings.NewReader(content), size, 0644, target)
+		w, err := conn.File(target, os.O_RDWR|os.O_CREATE|os.O_TRUNC)
 		if err != nil {
-			return errors.Wrapf(err, "failed to upload file %s", filename)
+			return errors.Wrapf(err, "failed to open remote file for write: %s", filename)
+		}
+		defer w.Close()
+
+		_, err = io.Copy(w, strings.NewReader(content))
+		if err != nil {
+			return errors.Wrapf(err, "failed to write remote file %s", filename)
+		}
+
+		if wchmod, ok := w.(interface{ Chmod(os.FileMode) error }); ok {
+			if err := wchmod.Chmod(0644); err != nil {
+				return errors.Wrapf(err, "failed to chmod %s", filename)
+			}
 		}
 	}
 
@@ -69,9 +82,14 @@ func (c *Configuration) Download(conn ssh.Connection, source string, prefix stri
 		}
 
 		var buf bytes.Buffer
-		err := conn.Download(fullsource, &buf)
+		r, err := conn.File(fullsource, os.O_RDONLY)
 		if err != nil {
-			return err
+			return errors.Wrapf(err, "failed to open remote file for read: %s", fullsource)
+		}
+
+		_, err = io.Copy(&buf, r)
+		if err != nil {
+			return errors.Wrapf(err, "failed to read remote file: %s", fullsource)
 		}
 
 		c.files[localfile] = buf.String()
