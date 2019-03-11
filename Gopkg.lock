@@ -511,7 +511,7 @@
   revision = "5933b9771b71c2d05543a0cd088542013c1446e0"
 
 [[projects]]
-  digest = "1:2c310b2c2e8837e5cbfce86ca9af127bf312877337168f20b7e5e382352ff25a"
+  digest = "1:f9121674515662ba794b28097c1d92380cc54bac687cd7c79b64223b2c6ec3c8"
   name = "sigs.k8s.io/cluster-api"
   packages = [
     "pkg/apis/cluster/common",
@@ -521,15 +521,15 @@
     "pkg/client/clientset_generated/clientset/typed/cluster/v1alpha1",
   ]
   pruneopts = "NUT"
-  revision = "45f1c93260140936c610e56575d7505ba3d52444"
+  revision = "813b1fec840d79b37fe86778237b6db6d1cb959d"
 
 [[projects]]
   digest = "1:84a8609383bec11b71d52dd813f33f1d16614b91966940bdc2aa79bea864fa25"
   name = "sigs.k8s.io/controller-runtime"
   packages = ["pkg/runtime/scheme"]
   pruneopts = "NUT"
-  revision = "5fd1e9e9fac5261e9ad9d47c375afc014fc31d21"
-  version = "v0.1.7"
+  revision = "12d98582e72927b6cd0123e2b4e819f9341ce62c"
+  version = "v0.1.10"
 
 [solve-meta]
   analyzer-name = "dep"

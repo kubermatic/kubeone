@@ -45,7 +45,7 @@
 
 [[constraint]]
   name = "sigs.k8s.io/cluster-api"
-  revision = "45f1c93260140936c610e56575d7505ba3d52444"
+  revision = "813b1fec840d79b37fe86778237b6db6d1cb959d"
 
 [prune]
   go-tests = true
