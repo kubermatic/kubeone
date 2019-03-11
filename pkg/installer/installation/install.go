@@ -23,6 +23,7 @@ func Install(ctx *util.Context) error {
 		{fn: initKubernetesLeader, errMsg: "failed to init kubernetes on leader"},
 		{fn: joinControlplaneNode, errMsg: "unable to join other masters a cluster"},
 		{fn: copyKubeconfig, errMsg: "unable to copy kubeconfig to home directory"},
+		{fn: saveKubeconfig, errMsg: "unable to save kubeconfig to the local machine"},
 		{fn: util.BuildKubernetesClientset, errMsg: "unable to build kubernetes clientset"},
 		{fn: features.Activate, errMsg: "unable to activate features"},
 		{fn: applyCanalCNI, errMsg: "failed to install cni plugin canal"},

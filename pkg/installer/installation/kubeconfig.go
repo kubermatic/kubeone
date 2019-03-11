@@ -1,6 +1,11 @@
 package installation
 
 import (
+	"fmt"
+	"io/ioutil"
+
+	"github.com/pkg/errors"
+
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/util"
@@ -21,4 +26,15 @@ sudo chown $(id -u):$(id -u) $HOME/.kube/config
 
 		return nil
 	}, true)
+}
+
+func saveKubeconfig(ctx *util.Context) error {
+	kubeconfig, err := util.DownloadKubeconfig(ctx.Cluster)
+	if err != nil {
+		return err
+	}
+
+	fileName := fmt.Sprintf("%s-kubeconfig", ctx.Cluster.Name)
+	err = ioutil.WriteFile(fileName, kubeconfig, 0644)
+	return errors.Wrap(err, "error saving kubeconfig file to the local machine")
 }
