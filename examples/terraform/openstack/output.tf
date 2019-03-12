@@ -1,6 +1,6 @@
 output "kubeone_api" {
   value = {
-    endpoint = "${openstack_networking_floatingip_v2.lb.fixed_ip}"
+    endpoint = "${openstack_networking_floatingip_v2.lb.address}"
   }
 }
 
@@ -28,9 +28,8 @@ output "kubeone_workers" {
       floatingIPPool   = "${var.external_network_name}"
       network          = "${openstack_networking_network_v2.network.name}"
       subnet           = "${openstack_networking_subnet_v2.subnet.name}"
-
-      operatingSystem = "ubuntu"
-      replicas        = 1
+      operatingSystem  = "ubuntu"
+      replicas         = 1
     }
   }
 }

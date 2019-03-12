@@ -42,14 +42,6 @@ resource "openstack_networking_secgroup_rule_v2" "secgroup_allow_internal_ipv4" 
   security_group_id = "${openstack_networking_secgroup_v2.securitygroup.id}"
 }
 
-resource "openstack_networking_secgroup_rule_v2" "secgroup_allow_internal_ipv6" {
-  description       = "Allow security group internal IPv6 traffic"
-  direction         = "ingress"
-  ethertype         = "IPv6"
-  remote_group_id   = "${openstack_networking_secgroup_v2.securitygroup.id}"
-  security_group_id = "${openstack_networking_secgroup_v2.securitygroup.id}"
-}
-
 resource "openstack_networking_secgroup_rule_v2" "secgroup_ssh" {
   description       = "Allow SSH"
   direction         = "ingress"
@@ -142,9 +134,9 @@ resource "openstack_lb_monitor_v2" "monitor" {
   name        = "${var.cluster_name}-cluster"
   pool_id     = "${openstack_lb_pool_v2.pool.id}"
   type        = "TCP"
-  delay       = "60"
-  timeout     = "10"
-  max_retries = "3"
+  delay       = 10
+  timeout     = 2
+  max_retries = 2
 }
 
 resource "openstack_networking_floatingip_v2" "lb" {

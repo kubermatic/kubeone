@@ -184,7 +184,15 @@ type ProviderConfig struct {
 // Validate checks the ProviderConfig for errors
 func (p *ProviderConfig) Validate() error {
 	switch p.Name {
-	case ProviderNameAWS, ProviderNameOpenStack, ProviderNameHetzner, ProviderNameDigitalOcean, ProviderNameVSphere, ProviderNameNone:
+	case ProviderNameAWS:
+	case ProviderNameOpenStack:
+		if p.CloudConfig == "" {
+			return errors.New("`provider.cloud_config` is required for openstack provider")
+		}
+	case ProviderNameHetzner:
+	case ProviderNameDigitalOcean:
+	case ProviderNameVSphere:
+	case ProviderNameNone:
 	default:
 		return errors.Errorf("unknown provider name %q", p.Name)
 	}
