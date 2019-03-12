@@ -35,7 +35,7 @@ type AWSProvisioner struct {
 // NewAWSProvisioner creates and initialize AWSProvisioner structure
 func NewAWSProvisioner(testPath, identifier string) (*AWSProvisioner, error) {
 	terraform := &terraform{
-		terraformDir: "../../terraform/aws/",
+		terraformDir: "../../examples/terraform/aws/",
 		idendifier:   identifier,
 	}
 
@@ -85,7 +85,7 @@ type DOProvisioner struct {
 // NewDOProvisioner creates and initialize DOProvisioner structure
 func NewDOProvisioner(testPath, identifier string) (*DOProvisioner, error) {
 	terraform := &terraform{
-		terraformDir: "../../terraform/digitalocean/",
+		terraformDir: "../../examples/terraform/digitalocean/",
 		idendifier:   identifier,
 	}
 

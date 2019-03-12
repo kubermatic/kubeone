@@ -48,7 +48,7 @@ You can find example machine deployments in the [machine-controller examples](ht
 ## Terraform Integration
 
 KubeOne supports discovery of `hosts`, the Kubernetes API LB and can read worker configuration from Terraform's output.
-Take a look at the files in the `terraform/aws` directory and especially the `output.tf` file to learn more about what data KubeOne expects to read from Terraform.
+Take a look at the files in the `examples/terraform/aws` directory and especially the `output.tf` file to learn more about what data KubeOne expects to read from Terraform.
 
 To use Terraform's output, use the `--tfjson` CLI flag:
 
@@ -65,7 +65,7 @@ While the `hosts: []` configuration will be completely taken from Terraform's ou
 Output value names and types correspond to `cloudProviderSpec` fields for the chosen
 provider, for more information please consult the `RawConfig` structure in corresponding provider package in the [machine-controller provider](https://github.com/kubermatic/machine-controller/tree/master/pkg/cloudprovider/provider) folder.
 
-The `terraform/aws` example and the `config.yaml.dist` file contain multiple worker configs that use this mechanism to add `availabilityZone`, `ami`, etc. fields.
+The `examples/terraform/aws` example and the `config.yaml.dist` file contain multiple worker configs that use this mechanism to add `availabilityZone`, `ami`, etc. fields.
 
 ## Debugging
 
