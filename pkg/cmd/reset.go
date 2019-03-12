@@ -46,7 +46,7 @@ It's possible to source information about hosts from Terraform output, using the
 		},
 	}
 
-	cmd.Flags().BoolVarP(&ropts.DestroyWorkers, "destroy-workers", "", false, "destroy all worker machines before resetting cluster")
+	cmd.Flags().BoolVarP(&ropts.DestroyWorkers, "destroy-workers", "", true, "destroy all worker machines before resetting the cluster")
 
 	return cmd
 }
