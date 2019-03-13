@@ -64,7 +64,7 @@ The `terraform.tfvars` file can look like:
 ```
 cluster_name = "demo"
 
-region = "nyc3"
+region = "fra1"
 ```
 
 Now that you configured Terraform, you can use the `plan` command to see what changes will be made:
