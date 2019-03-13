@@ -31,18 +31,24 @@ provider:
   name: ''
   
   # Set kubelet flag --cloud-provider=external, to be used with external
-  # Cloud Controller Managers (CCM)
+  # Cloud Controller Managers (CCM).
   external: false
 
-  # path to file that will be uploaded and used as custom --cloud-config file
+  # Path to file that will be uploaded and used as custom --cloud-config file.
   cloud_config: ''
 
 features:
-  # enables PodSecurityPolicy admission plugin in API server, as well as creates
+  # Enables PodSecurityPolicy admission plugin in API server, as well as creates
   # default `privileged` PodSecurityPolicy, plus RBAC rules to authorize
   # `kube-system` namespace pods to `use` it.
   enable_pod_security_policy: false
 
+  # Enables dynamic audit logs.
+  # After enablig this, operator should create auditregistration.k8s.io/v1alpha1
+  # AuditSink object.
+  # More info: https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#dynamic-backend
+  enable_dynamic_audit_log: false
+    
 backup:
   # Ark supported provider, see https://heptio.github.io/ark/v0.10.0/support-matrix
   provider: '' # currently only aws is supported, empty provider disable ark backups

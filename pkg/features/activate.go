@@ -21,9 +21,6 @@ func Activate(ctx *util.Context) error {
 // UpdateKubeadmClusterConfiguration update additional config options in the kubeadm's
 // v1beta1.ClusterConfiguration according to enabled features
 func UpdateKubeadmClusterConfiguration(featuresCfg config.Features, clusterConfig *kubeadmv1beta1.ClusterConfiguration) {
-	if clusterConfig.APIServer.ExtraArgs == nil {
-		clusterConfig.APIServer.ExtraArgs = make(map[string]string)
-	}
-
 	activateKubeadmPSP(featuresCfg.EnablePodSecurityPolicy, clusterConfig)
+	activateKubeadmDynamicAuditLogs(featuresCfg.EnableDynamicAuditLog, clusterConfig)
 }

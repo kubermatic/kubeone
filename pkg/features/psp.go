@@ -41,6 +41,10 @@ func activateKubeadmPSP(activate bool, clusterConfig *kubeadmv1beta1.ClusterConf
 		return
 	}
 
+	if clusterConfig.APIServer.ExtraArgs == nil {
+		clusterConfig.APIServer.ExtraArgs = make(map[string]string)
+	}
+
 	if _, ok := clusterConfig.APIServer.ExtraArgs[apiServerAdmissionPluginsFlag]; ok {
 		clusterConfig.APIServer.ExtraArgs[apiServerAdmissionPluginsFlag] += "," + pspAdmissionPlugin
 	} else {
