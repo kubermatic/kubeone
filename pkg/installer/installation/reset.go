@@ -62,5 +62,6 @@ fi
 
 const resetScript = `
 sudo kubeadm reset --force
+sudo rm /etc/kubernetes/cloud-config
 rm -rf "{{ .WORK_DIR }}"
 `

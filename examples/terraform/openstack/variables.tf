@@ -4,6 +4,7 @@ variable "cluster_name" {
 
 variable "ssh_public_key_file" {
   description = "SSH public key file"
+  default     = "~/.ssh/id_rsa.pub"
 }
 
 variable "ssh_private_key_file" {
