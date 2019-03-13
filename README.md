@@ -46,7 +46,7 @@ make install
 ## Getting Started
 
 We have a getting started tutorial for each cloud provider we support in our [documentation](./docs).
-For example, the following document shows [how to get started with KubeOne on AWS]().
+For example, the following document shows [how to get started with KubeOne on AWS](./docs/quickstart-aws.md).
 
 A cluster is created using the `kubeone install` command. It takes a KubeOne configuration file and
 optionally Terraform state used to source information about the infrastructure.
@@ -59,7 +59,7 @@ For advanced use cases and other features, check the [KubeOne features]() docume
 
 ## Getting Involved
 
-We very appreciate contributions! If you want to get in touch with us and discuss about improvements and new features, please create a new issue on GitHub. Currently, we don't have a communication channel for users and contributors beside GitHub, but we're work on setting it up.
+We very appreciate contributions! If you want to get in touch with us and discuss about improvements and new features, please create a new issue on GitHub. Currently, we don't have a communication channel for users and contributors beside GitHub, but we're working on setting it up.
 
 ### Reporting Bugs
 
@@ -74,4 +74,4 @@ If you think you found a bug, please [create a new issue](https://github.com/kub
 
 To propose a new feature, please [create a new issue](https://github.com/kubermatic/kubeone/issues/new) and include details about what do you expect from the feature and potential use cases. If the feature is approved by the project maintainers, we'd love help coding it! You can go ahead a create a Work-in-Progress (**WIP**) PR and start coding! In [the contributing guidelines]() you can find information about practices we're following, so make sure to check it out.
 
-For upcoming features please check our [issue trakcer](https://github.com/kubermatic/kubeone/issues) and [milestones](https://github.com/kubermatic/kubeone/milestones). We use milestones as a way to track what features will be added in upcoming releases.
+For upcoming features please check our [issue trakcer](https://github.com/kubermatic/kubeone/issues) and [milestones](https://github.com/kubermatic/kubeone/milestones). We use milestones as a way to track what features will be added in the upcoming releases.
