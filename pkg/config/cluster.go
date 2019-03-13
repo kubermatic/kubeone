@@ -387,6 +387,7 @@ func (m *BackupConfig) ApplyEnvironment() error {
 // Features switches
 type Features struct {
 	EnablePodSecurityPolicy bool `json:"enable_pod_security_policy"`
+	EnableDynamicAuditLog   bool `json:"enable_dynamic_audit_log"`
 }
 
 // MachineControllerConfig controls
