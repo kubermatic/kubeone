@@ -1,81 +1,77 @@
 # KubeOne
 
-KubeOne makes installing and upgrading a HA Kubernetes cluster a breeze.
-It integrates with your favorite infrastructure tools or can be used standalone.
+<!--[![GoDoc](https://godoc.org/github.com/kubermatic/kubeone?status.svg)](https://godoc.org/github.com/kubermatic/kubeone) [![Go Report Card](https://goreportcard.com/badge/github.com/kubermatic/kubeone)](https://goreportcard.com/report/github.com/kubermatic/kubeone)-->
 
-From a bird eye view, KubeOne connects to your machines using SSH and then uses
-`kubeadm` to bootstrap the cluster.
+`kubeone` is a CLI tool and a Go library for installing, managing, and upgrading Kubernetes High-Available (HA) clusters. It can be used on any cloud provider, on-perm or bare-metal cluster.
+
+## Project Status
+
+KubeOne is currently in the alpha phase, so breaking changes can be expected in the upcoming period.
+You can find more details about breaking changes and actions needed to migrate them in the [Release Notes](https://github.com/kubermatic/kubeone/releases). In the upcoming weeks we're planning to enter the beta phase and and define a backwards compatibility policy.
+
+## KubeOne in Action
+
+TBD
 
 ## Features
 
-* Kubernetes 1.13 support
-* easy Terraform integration
-* provides rolling cluster upgrades (TODO)
+* Supports Kubernetes 1.13+ High-Available (HA) clusters
+* Uses `kubeadm` to provision clusters
+* Comes with a straightforward and easy to use CLI
+* Choice of Linux distributions between Ubuntu, CentOS and CoreOS
+* Integrates with Cluster-API and [Kubermatic machine-controller](https://github.com/kubermatic/machine-controller) to manage worker nodes
+* Integrates with Terraform for sourcing data about infrastructure and control plane nodes
+* Officially supports AWS, DigitalOcean, Hetzner and OpenStack
 
-## Usage
+## Installing KubeOne
 
-First, build the binary by running `make`. After that you need to provide
-KubeOne with a configuration with details about the node IPs, Kubernetes
-versions etc.
+The easiest way to install KubeOne is using `go get`:
+```bash
+go get -u github.com/kubermatic/kubeone
+```
+However, running of the master branch introduces potential risks as the project is currently in the alpha phase and backwards incompatible changes can be expected.
 
-By default, the configuration happens by providing a single YAML file. Take a
-look at the `config.yaml.dist` for more details and create a copy of it to make
-adjustments.
+Alternatively, you can obtain KubeOne via [GitHub Releases](https://github.com/kubermatic/kubeone/releases):
+```bash
+curl -LO https://github.com/kubermatic/kubeone/releases/download/v0.3.0/kubeone_0.3.0_linux_amd64.zip
+unzip kubeone_0.3.0_linux_amd64.zip
+sudo mv kubeone /usr/local/bin
+```
 
-Armed with your configuration, you can now run KubeOne:
+If you already have KubeOne repository cloned, you can use Makefile to install KubeOne.
+```bash
+make install
+```
 
-    kubeone install myconfig.yaml
+## Getting Started
 
-This will SSH into the machines, install the required dependencies and then
-perform the necessary steps to bring up an etcd ring and a HA Kubernetes
-control plane.
+We have a getting started tutorial for each cloud provider we support in our [documentation](./docs).
+For example, the following document shows [how to get started with KubeOne on AWS]().
 
-## Workers definition
+A cluster is created using the `kubeone install` command. It takes a KubeOne configuration file and
+optionally Terraform state used to source information about the infrastructure.
+```bash
+kubeone install config.yaml --tfjson tf.json
+```
+To learn more about KubeOne configuration, check out [the example configuration file](./config.yaml.dist).
 
-KubeOne relies on the [machine-controller
-project](https://github.com/kubermatic/machine-controller/) to create worker nodes after the Kubernetes master nodes are bootstrapped.
-The machine controller will be deployed as part of the cluster creation and is configured using the cloud provider credentials from the shell environment.
-(`AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` in case of AWS)
+For advanced use cases and other features, check the [KubeOne features]() document.
 
-Worker nodes are managed by the [machine-controller
-project](https://github.com/kubermatic/machine-controller/) (which kubeone
-automatically deploys).
+## Getting Involved
 
-The config section `workers: []` specifies `MachineDeployment` objects that will be created when KubeOne runs.
+We very appreciate contributions! If you want to get in touch with us and discuss about improvements and new features, please create a new issue on GitHub. Currently, we don't have a communication channel for users and contributors beside GitHub, but we're work on setting it up.
 
-You can find example machine deployments in the [machine-controller examples](https://github.com/kubermatic/machine-controller/blob/master/examples/aws-machinedeployment.yaml).
+### Reporting Bugs
 
-## Terraform Integration
+If you think you found a bug, please [create a new issue](https://github.com/kubermatic/kubeone/issues/new) and include the following information:
 
-KubeOne supports discovery of `hosts`, the Kubernetes API LB and can read worker configuration from Terraform's output.
-Take a look at the files in the `examples/terraform/aws` directory and especially the `output.tf` file to learn more about what data KubeOne expects to read from Terraform.
+* KubeOne version or Git commit that you're running (`kubeone version`),
+* description of the bug and logs from the relevant `kubeone` command (if applicable),
+* steps to reproduce the issue,
+* expected behavior
 
-To use Terraform's output, use the `--tfjson` CLI flag:
+### Proposing a New Feature
 
-    terraform apply
-    terraform output -json > tf.json
+To propose a new feature, please [create a new issue](https://github.com/kubermatic/kubeone/issues/new) and include details about what do you expect from the feature and potential use cases. If the feature is approved by the project maintainers, we'd love help coding it! You can go ahead a create a Work-in-Progress (**WIP**) PR and start coding! In [the contributing guidelines]() you can find information about practices we're following, so make sure to check it out.
 
-    kubeone install --tfjson tf.json myconfig.yaml
-
-
-### Worker configuration from Terraform
-
-While the `hosts: []` configuration will be completely taken from Terraform's output, the `workers: []` configuration will be merged by populating empty config fields.
-
-Output value names and types correspond to `cloudProviderSpec` fields for the chosen
-provider, for more information please consult the `RawConfig` structure in corresponding provider package in the [machine-controller provider](https://github.com/kubermatic/machine-controller/tree/master/pkg/cloudprovider/provider) folder.
-
-The `examples/terraform/aws` example and the `config.yaml.dist` file contain multiple worker configs that use this mechanism to add `availabilityZone`, `ami`, etc. fields.
-
-## Debugging
-
-To see exactly what's happening during installation, pass the `--verbose` flag
-to KubeOne:
-
-    kubeone --verbose install myconfig.yaml
-
-This will stream the output of all shell commands to your shell.
-
-## License
-
-Apache License
+For upcoming features please check our [issue trakcer](https://github.com/kubermatic/kubeone/issues) and [milestones](https://github.com/kubermatic/kubeone/milestones). We use milestones as a way to track what features will be added in upcoming releases.
