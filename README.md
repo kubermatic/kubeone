@@ -19,7 +19,7 @@ TBD
 * Uses `kubeadm` to provision clusters
 * Comes with a straightforward and easy to use CLI
 * Choice of Linux distributions between Ubuntu, CentOS and CoreOS
-* Integrates with Cluster-API to manage worker nodes
+* Integrates with Cluster-API and [Kubermatic machine-controller](https://github.com/kubermatic/machine-controller) to manage worker nodes
 * Integrates with Terraform for sourcing data about infrastructure and control plane nodes
 * Officially supports AWS, DigitalOcean, Hetzner and OpenStack
 
