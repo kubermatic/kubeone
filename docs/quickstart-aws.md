@@ -105,17 +105,17 @@ provider:
   name: 'aws'
 workers:
 - name: fra1-a
- replicas: 2
- config:
-   labels:
-     mylabel: 'fra1-a'
-   cloudProviderSpec:
-     instanceType: 't2.medium'
-     diskSize: 50
-     diskType: 'gp2'
-   operatingSystem: 'ubuntu'
-   operatingSystemSpec:
-     distUpgradeOnBoot: true
+  replicas: 2
+  config:
+    labels:
+      mylabel: 'fra1-a'
+    cloudProviderSpec:
+      instanceType: 't2.medium'
+      diskSize: 50
+      diskType: 'gp2'
+    operatingSystem: 'ubuntu'
+    operatingSystemSpec:
+      distUpgradeOnBoot: true
 ```
 
 Finally, we're going to install Kubernetes by using the `install` command and providing the configuration file and the Terraform output:
@@ -173,7 +173,7 @@ time="12:04:10 UTC" level=info msg="Skipping Ark deployment because no backup pr
 
 KubeOne automatically downloads the Kubeconfig file for the cluster. It's named as `cluster-name-kubeconfig`. You can use it with kubectl such as `kubectl --kubeconfig cluster-name-kubeconfig` or export the `KUBECONFIG` variable environment variable:
 ```bash
-export KUBECONFIG=cluster-name-kubeconfig
+export KUBECONFIG=$PWD/cluster-name-kubeconfig
 ```
 
 ## Deleting The Cluster
@@ -181,7 +181,7 @@ export KUBECONFIG=cluster-name-kubeconfig
 Before deleting a cluster you should clean up all MachineDeployments, so all worker nodes are deleted. You can do it with the `kubeone reset` command:
 
 ```bash
-kubeone reset config.yaml --tfjson tf.json --destroy-workers
+kubeone reset config.yaml --tfjson tf.json
 ```
 
 This command will wait for all worker nodes to be gone. Once it's done, you can proceed and destroy the AWS infrastructure using Terraform:
