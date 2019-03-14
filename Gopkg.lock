@@ -41,13 +41,6 @@
   version = "v0.5"
 
 [[projects]]
-  digest = "1:78b8040ece2ff622580def2708b9eb0b2857711b6744c475439bf337e9c677ea"
-  name = "github.com/golang/glog"
-  packages = ["."]
-  pruneopts = "NUT"
-  revision = "44145f04b68cf362d9c4df2182967c2275eaefed"
-
-[[projects]]
   digest = "1:63ccdfbd20f7ccd2399d0647a7d100b122f79c13bb83da9660b1598396fd9f62"
   name = "github.com/golang/protobuf"
   packages = [
@@ -336,7 +329,7 @@
   version = "v2.2.2"
 
 [[projects]]
-  digest = "1:0aac630281e8a44312f031a20d82b409122bab43c438ebca81df1c31d1804606"
+  digest = "1:c453ddc26bdab1e4267683a588ad9046e48d803a73f124fe2927adbab6ff02a5"
   name = "k8s.io/api"
   packages = [
     "admissionregistration/v1alpha1",
@@ -344,6 +337,7 @@
     "apps/v1",
     "apps/v1beta1",
     "apps/v1beta2",
+    "auditregistration/v1alpha1",
     "authentication/v1",
     "authentication/v1beta1",
     "authorization/v1",
@@ -438,10 +432,11 @@
   version = "kubernetes-1.13.1"
 
 [[projects]]
-  digest = "1:c639795ccf965e877d3f91d8c4d2f2c442cd02e226d210e88746b1ac66cd890b"
+  digest = "1:fc293afeb324df110b606ae92c554b63ffdb20f337aca08fe313d621c25121d0"
   name = "k8s.io/client-go"
   packages = [
     "discovery",
+    "dynamic",
     "kubernetes",
     "kubernetes/scheme",
     "kubernetes/typed/admissionregistration/v1alpha1",
@@ -449,6 +444,7 @@
     "kubernetes/typed/apps/v1",
     "kubernetes/typed/apps/v1beta1",
     "kubernetes/typed/apps/v1beta2",
+    "kubernetes/typed/auditregistration/v1alpha1",
     "kubernetes/typed/authentication/v1",
     "kubernetes/typed/authentication/v1beta1",
     "kubernetes/typed/authorization/v1",
@@ -482,6 +478,7 @@
     "plugin/pkg/client/auth/exec",
     "rest",
     "rest/watch",
+    "restmapper",
     "tools/auth",
     "tools/clientcmd",
     "tools/clientcmd/api",
@@ -491,15 +488,14 @@
     "tools/reference",
     "transport",
     "util/cert",
-    "util/cert/triple",
     "util/connrotation",
     "util/flowcontrol",
     "util/homedir",
     "util/integer",
   ]
   pruneopts = "NUT"
-  revision = "1638f8970cefaa404ff3a62950f88b08292b2696"
-  version = "v9.0.0"
+  revision = "8d9ed539ba3134352c586810e749e58df4e94e4f"
+  version = "kubernetes-1.13.1"
 
 [[projects]]
   branch = "master"
@@ -521,7 +517,7 @@
   version = "v0.2.0"
 
 [[projects]]
-  digest = "1:2cc31ee5f199dd2b41726b5245402c95a75cdee9b9a4f9641c77f347647b10d0"
+  digest = "1:2ea1125fe6fdeb4c20427bc03049c3dc816cf5e46249b7b5a6427d3f68291066"
   name = "k8s.io/kubernetes"
   packages = [
     "pkg/apis/core",
@@ -529,8 +525,8 @@
     "pkg/registry/core/service/ipallocator",
   ]
   pruneopts = "NUT"
-  revision = "c27b913fddd1a6c480c229191a087698aa92f0b1"
-  version = "v1.13.4"
+  revision = "eec55b9ba98609a46fee712359c7b5b365bdd920"
+  version = "v1.13.1"
 
 [[projects]]
   digest = "1:f9121674515662ba794b28097c1d92380cc54bac687cd7c79b64223b2c6ec3c8"
@@ -546,9 +542,13 @@
   revision = "813b1fec840d79b37fe86778237b6db6d1cb959d"
 
 [[projects]]
-  digest = "1:84a8609383bec11b71d52dd813f33f1d16614b91966940bdc2aa79bea864fa25"
+  digest = "1:9b89872389bed1e6647547b868c3f9fa813f8adf098ba0984bc672e4b78ae235"
   name = "sigs.k8s.io/controller-runtime"
-  packages = ["pkg/runtime/scheme"]
+  packages = [
+    "pkg/client",
+    "pkg/client/apiutil",
+    "pkg/runtime/scheme",
+  ]
   pruneopts = "NUT"
   revision = "12d98582e72927b6cd0123e2b4e819f9341ce62c"
   version = "v0.1.10"
@@ -602,7 +602,6 @@
     "k8s.io/client-go/rest",
     "k8s.io/client-go/tools/clientcmd",
     "k8s.io/client-go/util/cert",
-    "k8s.io/client-go/util/cert/triple",
     "k8s.io/cluster-bootstrap/token/api",
     "k8s.io/cluster-bootstrap/token/util",
     "k8s.io/kubernetes/pkg/registry/core/service/ipallocator",
@@ -610,6 +609,7 @@
     "sigs.k8s.io/cluster-api/pkg/apis/cluster/v1alpha1",
     "sigs.k8s.io/cluster-api/pkg/client/clientset_generated/clientset",
     "sigs.k8s.io/cluster-api/pkg/client/clientset_generated/clientset/typed/cluster/v1alpha1",
+    "sigs.k8s.io/controller-runtime/pkg/client",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

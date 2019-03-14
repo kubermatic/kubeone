@@ -28,11 +28,11 @@
 
 [[override]]
   name = "k8s.io/client-go"
-  version = "9.0.0"
+  version = "kubernetes-1.13.1"
 
 [[override]]
   name = "k8s.io/kubernetes"
-  version = "1.13.1"
+  version = "=1.13.1"
 
 [[override]]
   name = "k8s.io/apiextensions-apiserver"
@@ -41,6 +41,10 @@
 [[constraint]]
   name = "sigs.k8s.io/cluster-api"
   revision = "813b1fec840d79b37fe86778237b6db6d1cb959d"
+
+[[constraint]]
+  name = "sigs.k8s.io/controller-runtime"
+  version = "0.1.10"
 
 [prune]
   go-tests = true
