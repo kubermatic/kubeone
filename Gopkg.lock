@@ -542,11 +542,12 @@
   revision = "813b1fec840d79b37fe86778237b6db6d1cb959d"
 
 [[projects]]
-  digest = "1:9b89872389bed1e6647547b868c3f9fa813f8adf098ba0984bc672e4b78ae235"
+  digest = "1:d58a6193316103ee408ce0891398cf66b7977df81d2c40b75a3b1c92925fa76f"
   name = "sigs.k8s.io/controller-runtime"
   packages = [
     "pkg/client",
     "pkg/client/apiutil",
+    "pkg/controller/controllerutil",
     "pkg/runtime/scheme",
   ]
   pruneopts = "NUT"
@@ -610,6 +611,7 @@
     "sigs.k8s.io/cluster-api/pkg/client/clientset_generated/clientset",
     "sigs.k8s.io/cluster-api/pkg/client/clientset_generated/clientset/typed/cluster/v1alpha1",
     "sigs.k8s.io/controller-runtime/pkg/client",
+    "sigs.k8s.io/controller-runtime/pkg/controller/controllerutil",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

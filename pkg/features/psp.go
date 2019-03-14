@@ -1,18 +1,20 @@
 package features
 
 import (
+	"context"
 	"strings"
 
 	"github.com/pkg/errors"
 
 	kubeadmv1beta1 "github.com/kubermatic/kubeone/pkg/apis/kubeadm/v1beta1"
-	"github.com/kubermatic/kubeone/pkg/templates"
 	"github.com/kubermatic/kubeone/pkg/util"
 
 	corev1 "k8s.io/api/core/v1"
 	policybeta1 "k8s.io/api/policy/v1beta1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
 
 const (
@@ -57,19 +59,20 @@ func installKubeSystemPSP(activate bool, ctx *util.Context) error {
 		return nil
 	}
 
-	rbacClient := ctx.Clientset.RbacV1()
+	bgContext := context.Background()
+	okFunc := func(runtime.Object) error { return nil }
 
-	err := templates.EnsurePodSecurityPolicy(ctx.Clientset.PolicyV1beta1().PodSecurityPolicies(), privilegedPSP())
+	_, err := controllerutil.CreateOrUpdate(bgContext, ctx.DynamicClient, privilegedPSP(), okFunc)
 	if err != nil {
 		return errors.Wrap(err, "failed to ensure PodSecurityPolicy")
 	}
 
-	err = templates.EnsureClusterRole(rbacClient.ClusterRoles(), privilegedPSPClusterRole())
+	_, err = controllerutil.CreateOrUpdate(bgContext, ctx.DynamicClient, privilegedPSPClusterRole(), okFunc)
 	if err != nil {
 		return errors.Wrap(err, "failed to ensure PodSecurityPolicy cluster role")
 	}
 
-	err = templates.EnsureRoleBinding(rbacClient.RoleBindings(pspRoleNamespace), privilegedPSPRoleBinding())
+	_, err = controllerutil.CreateOrUpdate(bgContext, ctx.DynamicClient, privilegedPSPRoleBinding(), okFunc)
 	if err != nil {
 		return errors.Wrap(err, "failed to ensure PodSecurityPolicy role binding")
 	}

@@ -269,6 +269,10 @@ func tlsServingCertificate(caKey *rsa.PrivateKey, caCert *x509.Certificate) (*co
 	se.Data = map[string][]byte{}
 
 	commonName := fmt.Sprintf("%s.%s.svc.cluster.local.", WebhookName, WebhookNamespace)
+	altdnsNames := []string{
+		commonName,
+		fmt.Sprintf("%s.%s.svc", WebhookName, WebhookNamespace),
+	}
 
 	newKPKey, err := certutil.NewPrivateKey()
 	if err != nil {
@@ -277,9 +281,7 @@ func tlsServingCertificate(caKey *rsa.PrivateKey, caCert *x509.Certificate) (*co
 
 	certCfg := certutil.Config{
 		AltNames: certutil.AltNames{
-			DNSNames: []string{
-				commonName,
-			},
+			DNSNames: altdnsNames,
 		},
 		CommonName: commonName,
 		Usages:     []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
