@@ -19,24 +19,24 @@
   name = "golang.org/x/crypto"
 
 [[override]]
-  branch = "release-1.11"
   name = "k8s.io/api"
+  version = "kubernetes-1.13.1"
 
 [[override]]
   name = "k8s.io/apimachinery"
-  branch = "release-1.11"
+  version = "kubernetes-1.13.1"
 
 [[override]]
   name = "k8s.io/client-go"
-  version = "8.0.0"
+  version = "9.0.0"
 
 [[override]]
   name = "k8s.io/kubernetes"
-  branch = "release-1.11"
+  version = "1.13.1"
 
 [[override]]
   name = "k8s.io/apiextensions-apiserver"
-  branch = "release-1.11"
+  version = "kubernetes-1.13.1"
 
 [[constraint]]
   name = "sigs.k8s.io/cluster-api"
