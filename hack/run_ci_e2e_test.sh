@@ -69,7 +69,6 @@ if [ -n "${RUNNING_IN_CI}" ]; then
  fi
  # terraform expects to find DigitalOcean credentials in the following env variables
  if [[ $PROVIDER == "digitalocean" ]]; then
-  export DO_TOKEN=$DO_E2E_TESTS_TOKEN
   export DIGITALOCEAN_TOKEN=$DO_E2E_TESTS_TOKEN
  fi
  KUBE_TEST_DIR="/opt/kube-test"

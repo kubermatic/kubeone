@@ -8,8 +8,6 @@ Example
 export OS_AUTH_URL="https://some-keystone-endpoint:5000/v3"
 export OS_IDENTITY_API_VERSION=3
 export OS_USERNAME="some-username"
-# Kubeone takes the username from a different env-var
-export OS_USER_NAME=${OS_USERNAME}
 export OS_PASSWORD="some-password"
 export OS_REGION_NAME="region1"
 export OS_INTERFACE=public
