@@ -4,23 +4,10 @@ This document lists all environment variables used by KubeOne and related compon
 
 ## Sourcing Environment Variables
 
-Some configuration variables can be sourced from an environment variable by specifying name of the environment variable with the `env:` prefix.
-
-For example, the following snippet is used to source the AWS Access Key and Secret Access Key to be used with Ark from `BACKUP_AWS_ACCESS_KEY_ID` and `BACKUP_AWS_SECRET_ACCESS_KEY` environment variables:
-
-```yaml
-backup:
-  provider: 'aws'
-  s3_access_key: 'env:BACKUP_AWS_ACCESS_KEY_ID'
-  s3_secret_access_key: 'env:BACKUP_AWS_SECRET_ACCESS_KEY'
-```
-
 In the following table you can find all configuration variables with support for sourcing using the `env:` prefix:
 
 | Variable | Type | Default Value | Description |
 |----------|------|---------------|-------------|
-| `backup.s3_access_key` | string | "" | The AWS Access Key to be used with [Ark (Velero)](https://github.com/heptio/velero/) |
-| `backup.s3_secret_access_key` | string | "" | The AWS Secret Access Key to be used with [Ark (Velero)](https://github.com/heptio/velero/) |
 | `hosts.ssh_agent_socket` | string | "" | Socket to be used for SSH |
 
 ## `machine-controller` Environment Variables

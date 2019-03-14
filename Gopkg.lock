@@ -100,18 +100,6 @@
   revision = "7a902570cb17174de4ac788094f8ebedec136f57"
 
 [[projects]]
-  digest = "1:8b986112dd2d9215cef5a505b825347633496ddb56492247d5280c68fc209073"
-  name = "github.com/heptio/ark"
-  packages = [
-    "pkg/apis/ark/v1",
-    "pkg/generated/clientset/versioned/scheme",
-    "pkg/generated/clientset/versioned/typed/ark/v1",
-  ]
-  pruneopts = "NUT"
-  revision = "0fd7872ef48ce617e561e6e45f8ccb0f11637f58"
-  version = "v0.10.0"
-
-[[projects]]
   digest = "1:aaa38889f11896ee3644d77e17dc7764cc47f5f3d3b488268df2af2b52541c5f"
   name = "github.com/imdario/mergo"
   packages = ["."]
@@ -538,8 +526,6 @@
     "github.com/Masterminds/semver",
     "github.com/aws/aws-sdk-go/aws/credentials",
     "github.com/ghodss/yaml",
-    "github.com/heptio/ark/pkg/apis/ark/v1",
-    "github.com/heptio/ark/pkg/generated/clientset/versioned/typed/ark/v1",
     "github.com/koron-go/prefixw",
     "github.com/pkg/errors",
     "github.com/pkg/sftp",

@@ -29,7 +29,6 @@ func Install(ctx *util.Context) error {
 		{fn: applyCanalCNI, errMsg: "failed to install cni plugin canal"},
 		{fn: installMachineController, errMsg: "failed to install machine-controller"},
 		{fn: createWorkerMachines, errMsg: "failed to create worker machines"},
-		{fn: deployArk, errMsg: "failed to deploy ark"},
 	}
 
 	for _, step := range installSteps {
