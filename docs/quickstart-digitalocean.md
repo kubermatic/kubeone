@@ -15,14 +15,13 @@ To follow this quick start, you'll need:
 
 In order for Terraform to successfully create the infrastructure and for KubeOne to install Kubernetes and create worker nodes you need an API Access Token with read and write permissions. You can refer to [the official documentation](https://www.digitalocean.com/docs/api/create-personal-access-token/) for guidelines for generating the token.
 
-Once you have the API access token you need to set two environment variables containing the (same) token: `DIGITALOCEAN_TOKEN`, used by Terraform, and `DO_TOKEN`, used by KubeOne:
+Once you have the API access token you need to set the `DIGITALOCEAN_TOKEN` environment variable containing the token:
 
 ```bash
 export DIGITALOCEAN_TOKEN=...
-export DO_TOKEN=...
 ```
 
-**Note:** The API access token from the `DO_TOKEN` environment variable is deployed to the cluster to be used by `machine-controller` for creating worker nodes.
+**Note:** The API access token is deployed to the cluster to be used by `machine-controller` for creating worker nodes.
 
 ## Creating Infrastructure
 

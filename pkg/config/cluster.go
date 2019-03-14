@@ -431,6 +431,13 @@ func (m *MachineControllerConfig) DefaultAndValidate(cloudProvider ProviderName)
 	return nil
 }
 
+// ProviderEnvironmentVariable is used to match environment variable used by KubeOne to environment variable used by
+// machine-controller.
+type ProviderEnvironmentVariable struct {
+	Name                  string
+	MachineControllerName string
+}
+
 // ProviderCredentials match the cloudprovider and parses its credentials from
 // environment
 func (p ProviderName) ProviderCredentials() (map[string]string, error) {
@@ -462,24 +469,41 @@ func (p ProviderName) ProviderCredentials() (map[string]string, error) {
 
 		return nil, errors.New("error parsing aws credentials")
 	case ProviderNameOpenStack:
-		return parseCredentialVariables([]string{"OS_AUTH_URL", "OS_USER_NAME", "OS_PASSWORD", "OS_DOMAIN_NAME", "OS_TENANT_NAME"})
+		return parseCredentialVariables([]ProviderEnvironmentVariable{
+			{Name: "OS_AUTH_URL"},
+			{Name: "OS_USERNAME", MachineControllerName: "OS_USER_NAME"},
+			{Name: "OS_PASSWORD"},
+			{Name: "OS_DOMAIN_NAME"},
+			{Name: "OS_TENANT_NAME"},
+		})
 	case ProviderNameHetzner:
-		return parseCredentialVariables([]string{"HZ_TOKEN"})
+		return parseCredentialVariables([]ProviderEnvironmentVariable{
+			{Name: "HCLOUD_TOKEN", MachineControllerName: "HZ_TOKEN"},
+		})
 	case ProviderNameDigitalOcean:
-		return parseCredentialVariables([]string{"DO_TOKEN"})
+		return parseCredentialVariables([]ProviderEnvironmentVariable{
+			{Name: "DIGITALOCEAN_TOKEN", MachineControllerName: "DO_TOKEN"},
+		})
 	case ProviderNameVSphere:
-		return parseCredentialVariables([]string{"VSPHERE_ADDRESS", "VSPHERE_USERNAME", "VSPHERE_PASSWORD"})
+		return parseCredentialVariables([]ProviderEnvironmentVariable{
+			{Name: "VSPHERE_ADDRESS"},
+			{Name: "VSPHERE_USERNAME"},
+			{Name: "VSPHERE_PASSWORD"},
+		})
 	}
 
 	return nil, errors.New("no provider matched")
 }
 
-func parseCredentialVariables(envVars []string) (map[string]string, error) {
+func parseCredentialVariables(envVars []ProviderEnvironmentVariable) (map[string]string, error) {
 	creds := make(map[string]string)
-	for _, varName := range envVars {
-		creds[varName] = strings.TrimSpace(os.Getenv(varName))
-		if creds[varName] == "" {
-			return nil, errors.Errorf("environment variable %s is not set, but is required", varName)
+	for _, env := range envVars {
+		if len(env.MachineControllerName) == 0 {
+			env.MachineControllerName = env.Name
+		}
+		creds[env.MachineControllerName] = strings.TrimSpace(os.Getenv(env.Name))
+		if creds[env.MachineControllerName] == "" {
+			return nil, errors.Errorf("environment variable %s is not set, but is required", env.Name)
 		}
 	}
 	return creds, nil
