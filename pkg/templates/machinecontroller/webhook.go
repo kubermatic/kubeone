@@ -1,6 +1,8 @@
 package machinecontroller
 
 import (
+	"crypto/rsa"
+	"crypto/x509"
 	"fmt"
 	"time"
 
@@ -19,7 +21,6 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 	corev1types "k8s.io/client-go/kubernetes/typed/core/v1"
 	certutil "k8s.io/client-go/util/cert"
-	"k8s.io/client-go/util/cert/triple"
 )
 
 // MachineController Webhook related constants
@@ -42,7 +43,8 @@ func DeployWebhookConfiguration(ctx *util.Context) error {
 	admissionClient := ctx.Clientset.AdmissionregistrationV1beta1()
 
 	// Generate Webhook certificate
-	caKeyPair, err := certificate.CAKeyPair(ctx.Configuration)
+	// caKeyPair, err := certificate.CAKeyPair(ctx.Configuration)
+	caPrivateKey, caCert, err := certificate.CAKeyPair(ctx.Configuration)
 	if err != nil {
 		return errors.Wrap(err, "failed to load CA keypair")
 	}
@@ -62,7 +64,7 @@ func DeployWebhookConfiguration(ctx *util.Context) error {
 	}
 
 	// Deploy serving certificate secret
-	servingCert, err := tlsServingCertificate(caKeyPair)
+	servingCert, err := tlsServingCertificate(caPrivateKey, caCert)
 	if err != nil {
 		return errors.Wrap(err, "failed to generate machine-controller webhook TLS secret")
 	}
@@ -74,7 +76,7 @@ func DeployWebhookConfiguration(ctx *util.Context) error {
 
 	return templates.EnsureMutatingWebhookConfiguration(
 		admissionClient.MutatingWebhookConfigurations(),
-		mutatingwebhookConfiguration(caKeyPair))
+		mutatingwebhookConfiguration(caCert))
 }
 
 // WaitForWebhook waits for machine-controller-webhook to become running
@@ -253,7 +255,8 @@ func getServingCertVolume() corev1.Volume {
 }
 
 // tlsServingCertificate returns a secret with the machine-controller-webhook tls certificate
-func tlsServingCertificate(ca *triple.KeyPair) (*corev1.Secret, error) {
+// func tlsServingCertificate(ca *triple.KeyPair) (*corev1.Secret, error) {
+func tlsServingCertificate(caKey *rsa.PrivateKey, caCert *x509.Certificate) (*corev1.Secret, error) {
 	se := &corev1.Secret{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "v1",
@@ -266,29 +269,39 @@ func tlsServingCertificate(ca *triple.KeyPair) (*corev1.Secret, error) {
 	se.Data = map[string][]byte{}
 
 	commonName := fmt.Sprintf("%s.%s.svc.cluster.local.", WebhookName, WebhookNamespace)
-
-	newKP, err := triple.NewServerKeyPair(ca,
+	altdnsNames := []string{
 		commonName,
-		WebhookName,
-		WebhookNamespace,
-		"",
-		nil,
-		// For some reason the name the APIServer validates against must be in the SANs, having it as CN is not enough
-		[]string{commonName})
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to generate serving cert")
+		fmt.Sprintf("%s.%s.svc", WebhookName, WebhookNamespace),
 	}
 
-	se.Data["cert.pem"] = certutil.EncodeCertPEM(newKP.Cert)
-	se.Data["key.pem"] = certutil.EncodePrivateKeyPEM(newKP.Key)
+	newKPKey, err := certutil.NewPrivateKey()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to generate private key")
+	}
+
+	certCfg := certutil.Config{
+		AltNames: certutil.AltNames{
+			DNSNames: altdnsNames,
+		},
+		CommonName: commonName,
+		Usages:     []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
+	}
+
+	newKPCert, err := certutil.NewSignedCert(certCfg, newKPKey, caCert, caKey)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to generate certificate")
+	}
+
+	se.Data["cert.pem"] = certutil.EncodeCertPEM(newKPCert)
+	se.Data["key.pem"] = certutil.EncodePrivateKeyPEM(newKPKey)
 	// Include the CA for simplicity
-	se.Data["ca.crt"] = certutil.EncodeCertPEM(ca.Cert)
+	se.Data["ca.crt"] = certutil.EncodeCertPEM(caCert)
 
 	return se, nil
 }
 
 // mutatingwebhookConfiguration returns the MutatingwebhookConfiguration for the machine controler
-func mutatingwebhookConfiguration(ca *triple.KeyPair) *admissionregistrationv1beta1.MutatingWebhookConfiguration {
+func mutatingwebhookConfiguration(caCert *x509.Certificate) *admissionregistrationv1beta1.MutatingWebhookConfiguration {
 	cfg := &admissionregistrationv1beta1.MutatingWebhookConfiguration{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "admissionregistration.k8s.io/v1beta1",
@@ -323,7 +336,7 @@ func mutatingwebhookConfiguration(ca *triple.KeyPair) *admissionregistrationv1be
 					Namespace: WebhookNamespace,
 					Path:      strPtr("/machinedeployments"),
 				},
-				CABundle: certutil.EncodeCertPEM(ca.Cert),
+				CABundle: certutil.EncodeCertPEM(caCert),
 			},
 		},
 		{
@@ -349,7 +362,7 @@ func mutatingwebhookConfiguration(ca *triple.KeyPair) *admissionregistrationv1be
 					Namespace: WebhookNamespace,
 					Path:      strPtr("/machines"),
 				},
-				CABundle: certutil.EncodeCertPEM(ca.Cert),
+				CABundle: certutil.EncodeCertPEM(caCert),
 			},
 		},
 	}

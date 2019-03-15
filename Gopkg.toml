@@ -19,28 +19,32 @@
   name = "golang.org/x/crypto"
 
 [[override]]
-  branch = "release-1.11"
   name = "k8s.io/api"
+  version = "kubernetes-1.13.1"
 
 [[override]]
   name = "k8s.io/apimachinery"
-  branch = "release-1.11"
+  version = "kubernetes-1.13.1"
 
 [[override]]
   name = "k8s.io/client-go"
-  version = "8.0.0"
+  version = "kubernetes-1.13.1"
 
 [[override]]
   name = "k8s.io/kubernetes"
-  branch = "release-1.11"
+  version = "=1.13.1"
 
 [[override]]
   name = "k8s.io/apiextensions-apiserver"
-  branch = "release-1.11"
+  version = "kubernetes-1.13.1"
 
 [[constraint]]
   name = "sigs.k8s.io/cluster-api"
   revision = "813b1fec840d79b37fe86778237b6db6d1cb959d"
+
+[[constraint]]
+  name = "sigs.k8s.io/controller-runtime"
+  version = "0.1.10"
 
 [prune]
   go-tests = true

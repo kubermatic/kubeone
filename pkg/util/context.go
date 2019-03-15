@@ -9,6 +9,7 @@ import (
 	apiextensionsclientset "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
+	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 // Context hold together currently test flags and parsed info, along with
@@ -25,6 +26,7 @@ type Context struct {
 	Clientset                 *kubernetes.Clientset
 	APIExtensionClientset     *apiextensionsclientset.Clientset
 	RESTConfig                *rest.Config
+	DynamicClient             dynclient.Client
 	Verbose                   bool
 	BackupFile                string
 	DestroyWorkers            bool

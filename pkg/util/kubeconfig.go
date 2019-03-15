@@ -2,6 +2,7 @@ package util
 
 import (
 	"github.com/pkg/errors"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/ssh"
@@ -57,6 +58,11 @@ func BuildKubernetesClientset(ctx *Context) error {
 	ctx.APIExtensionClientset, err = apiextensionsclientset.NewForConfig(ctx.RESTConfig)
 	if err != nil {
 		return errors.Wrap(err, "unable to build apiextension-apiserver clientset")
+	}
+
+	ctx.DynamicClient, err = client.New(ctx.RESTConfig, client.Options{})
+	if err != nil {
+		return errors.Wrap(err, "unable to build dynamic client")
 	}
 
 	return nil
