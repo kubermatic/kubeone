@@ -82,7 +82,6 @@ Feedback and discussion are available on [the mailing list][11].
 
 * Please familiarize yourself with the [Code of Conduct][4] before contributing.
 * See [CONTRIBUTING.md][2] for instructions on the developer certificate of origin that we require.
-* Read how [we're using ZenHub][13] for project and roadmap planning
 
 ### Proposing a New Feature
 
@@ -106,6 +105,5 @@ See [the list of releases][3] to find out about feature changes.
 
 [11]: https://groups.google.com/forum/#!forum/projectKubeOne
 [12]: https://kubermatic.slack.com/messages/KubeOne
-[13]: https://github.com/kubermatic/KubeOne/blob/master/docs/zenhub.md
 
 [21]: https://kubermatic.github.io/KubeOne/
