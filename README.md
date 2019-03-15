@@ -59,19 +59,51 @@ For advanced use cases and other features, check the [KubeOne features]() docume
 
 ## Getting Involved
 
-We very appreciate contributions! If you want to get in touch with us and discuss about improvements and new features, please create a new issue on GitHub. Currently, we don't have a communication channel for users and contributors beside GitHub, but we're working on setting it up.
+We very appreciate contributions! If you want to get in touch with us and discuss about improvements and new features, please create a new issue on GitHub. You can contact us also via the general Loodse email list and Slack channel:
+- Email: [loodse-dev](https://groups.google.com/forum/#!forum/loodse-dev)
+- Slack: #[Slack](http://slack.kubermatic.io/) on Slack
 
-### Reporting Bugs
+### Troubleshooting
 
-If you think you found a bug, please [create a new issue](https://github.com/kubermatic/kubeone/issues/new) and include the following information:
+If you encounter issues [file an issue][1] or talk to us on the [#KubeOne channel][12] on the Loodse Slack server. Please include the following information:
 
 * KubeOne version or Git commit that you're running (`kubeone version`),
 * description of the bug and logs from the relevant `kubeone` command (if applicable),
 * steps to reproduce the issue,
 * expected behavior
 
+## Contributing
+
+Thanks for taking the time to join our community and start contributing!
+
+Feedback and discussion are available on [the mailing list][11].
+
+### Before you start
+
+* Please familiarize yourself with the [Code of Conduct][4] before contributing.
+* See [CONTRIBUTING.md][2] for instructions on the developer certificate of origin that we require.
+
 ### Proposing a New Feature
 
 To propose a new feature, please [create a new issue](https://github.com/kubermatic/kubeone/issues/new) and include details about what do you expect from the feature and potential use cases. If the feature is approved by the project maintainers, we'd love help coding it! You can go ahead a create a Work-in-Progress (**WIP**) PR and start coding! In [the contributing guidelines]() you can find information about practices we're following, so make sure to check it out.
 
 For upcoming features please check our [issue trakcer](https://github.com/kubermatic/kubeone/issues) and [milestones](https://github.com/kubermatic/kubeone/milestones). We use milestones as a way to track what features will be added in the upcoming releases.
+
+
+### Pull requests
+
+* We welcome pull requests. Feel free to dig through the [issues][1] and jump in.
+
+## Changelog
+
+See [the list of releases][3] to find out about feature changes.
+
+[1]: https://github.com/kubermatic/KubeOne/issues
+[2]: https://github.com/kubermatic/KubeOne/blob/master/CONTRIBUTING.md
+[3]: https://github.com/kubermatic/KubeOne/releases
+[4]: https://github.com/kubermatic/KubeOne/blob/master/CODE_OF_CONDUCT.md
+
+[11]: https://groups.google.com/forum/#!forum/projectKubeOne
+[12]: https://kubermatic.slack.com/messages/KubeOne
+
+[21]: https://kubermatic.github.io/KubeOne/
