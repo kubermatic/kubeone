@@ -1,16 +1,18 @@
 package machinecontroller
 
 import (
+	"context"
 	"crypto/rsa"
 	"crypto/x509"
 	"fmt"
 	"time"
 
+	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
+
 	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/certificate"
 	"github.com/kubermatic/kubeone/pkg/config"
-	"github.com/kubermatic/kubeone/pkg/templates"
 	"github.com/kubermatic/kubeone/pkg/util"
 
 	admissionregistrationv1beta1 "k8s.io/api/admissionregistration/v1beta1"
@@ -19,7 +21,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/apimachinery/pkg/util/wait"
-	corev1types "k8s.io/client-go/kubernetes/typed/core/v1"
 	certutil "k8s.io/client-go/util/cert"
 )
 
@@ -34,13 +35,9 @@ const (
 
 // DeployWebhookConfiguration deploys MachineController webhook deployment on the cluster
 func DeployWebhookConfiguration(ctx *util.Context) error {
-	if ctx.Clientset == nil {
+	if ctx.DynamicClient == nil {
 		return errors.New("kubernetes clientset not initialized")
 	}
-
-	coreClient := ctx.Clientset.CoreV1()
-	appsClient := ctx.Clientset.AppsV1()
-	admissionClient := ctx.Clientset.AdmissionregistrationV1beta1()
 
 	// Generate Webhook certificate
 	// caKeyPair, err := certificate.CAKeyPair(ctx.Configuration)
@@ -49,16 +46,16 @@ func DeployWebhookConfiguration(ctx *util.Context) error {
 		return errors.Wrap(err, "failed to load CA keypair")
 	}
 
+	bgCtx := context.Background()
+
 	// Deploy Webhook
-	deployment := webhookDeployment(ctx.Cluster)
-	err = templates.EnsureDeployment(appsClient.Deployments(deployment.Namespace), deployment)
+	err = simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, webhookDeployment(ctx.Cluster))
 	if err != nil {
 		return errors.Wrap(err, "failed to ensure machine-controller webhook deployment")
 	}
 
 	// Deploy Webhook service
-	svc := service()
-	err = templates.EnsureService(coreClient.Services(svc.Namespace), svc)
+	err = simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, service())
 	if err != nil {
 		return errors.Wrap(err, "failed to ensure machine-controller webhook service")
 	}
@@ -69,22 +66,32 @@ func DeployWebhookConfiguration(ctx *util.Context) error {
 		return errors.Wrap(err, "failed to generate machine-controller webhook TLS secret")
 	}
 
-	err = templates.EnsureSecret(coreClient.Secrets(servingCert.Namespace), servingCert)
+	err = simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, servingCert)
 	if err != nil {
 		return errors.Wrap(err, "failed to ensure machine-controller webhook secret")
 	}
 
-	return templates.EnsureMutatingWebhookConfiguration(
-		admissionClient.MutatingWebhookConfigurations(),
-		mutatingwebhookConfiguration(caCert))
+	err = simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, mutatingwebhookConfiguration(caCert))
+	if err != nil {
+		return errors.Wrap(err, "failed to ensure machine-controller mutating webhook")
+	}
+
+	return nil
 }
 
 // WaitForWebhook waits for machine-controller-webhook to become running
-func WaitForWebhook(corev1Client corev1types.CoreV1Interface) error {
+func WaitForWebhook(client dynclient.Client) error {
+	listOpts := dynclient.ListOptions{
+		Namespace: WebhookNamespace,
+	}
+	err := listOpts.SetLabelSelector(fmt.Sprintf("%s=%s", WebhookAppLabelKey, WebhookAppLabelValue))
+	if err != nil {
+		return errors.Wrap(err, "failed to parse machine-controller labels")
+	}
+
 	return wait.Poll(5*time.Second, 3*time.Minute, func() (bool, error) {
-		webhookPods, err := corev1Client.Pods(WebhookNamespace).List(metav1.ListOptions{
-			LabelSelector: fmt.Sprintf("%s=%s", WebhookAppLabelKey, WebhookAppLabelValue),
-		})
+		webhookPods := corev1.PodList{}
+		err = client.List(context.Background(), &listOpts, &webhookPods)
 		if err != nil {
 			return false, errors.Wrap(err, "failed to list machine-controller's webhook pods")
 		}

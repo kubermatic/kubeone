@@ -384,10 +384,9 @@
   version = "kubernetes-1.13.1"
 
 [[projects]]
-  digest = "1:f1bc1e4470cf13226b2982ad21375018eff8577e39bbdf7e5ed6bf5c27ea1a12"
+  digest = "1:68d90606438b6e7a844d15a4227ffd495bd61c3e6f27712ead6f6e793fffd4b8"
   name = "k8s.io/apimachinery"
   packages = [
-    "pkg/api/equality",
     "pkg/api/errors",
     "pkg/api/meta",
     "pkg/api/resource",
@@ -584,9 +583,7 @@
     "k8s.io/api/rbac/v1",
     "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1",
     "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset",
-    "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/typed/apiextensions/v1beta1",
-    "k8s.io/apimachinery/pkg/api/equality",
-    "k8s.io/apimachinery/pkg/api/errors",
+    "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/scheme",
     "k8s.io/apimachinery/pkg/api/resource",
     "k8s.io/apimachinery/pkg/apis/meta/v1",
     "k8s.io/apimachinery/pkg/labels",
@@ -595,11 +592,8 @@
     "k8s.io/apimachinery/pkg/util/wait",
     "k8s.io/apimachinery/pkg/version",
     "k8s.io/client-go/kubernetes",
-    "k8s.io/client-go/kubernetes/typed/admissionregistration/v1beta1",
-    "k8s.io/client-go/kubernetes/typed/apps/v1",
+    "k8s.io/client-go/kubernetes/scheme",
     "k8s.io/client-go/kubernetes/typed/core/v1",
-    "k8s.io/client-go/kubernetes/typed/policy/v1beta1",
-    "k8s.io/client-go/kubernetes/typed/rbac/v1",
     "k8s.io/client-go/rest",
     "k8s.io/client-go/tools/clientcmd",
     "k8s.io/client-go/util/cert",
@@ -609,7 +603,7 @@
     "sigs.k8s.io/cluster-api/pkg/apis/cluster/common",
     "sigs.k8s.io/cluster-api/pkg/apis/cluster/v1alpha1",
     "sigs.k8s.io/cluster-api/pkg/client/clientset_generated/clientset",
-    "sigs.k8s.io/cluster-api/pkg/client/clientset_generated/clientset/typed/cluster/v1alpha1",
+    "sigs.k8s.io/cluster-api/pkg/client/clientset_generated/clientset/scheme",
     "sigs.k8s.io/controller-runtime/pkg/client",
     "sigs.k8s.io/controller-runtime/pkg/controller/controllerutil",
   ]
