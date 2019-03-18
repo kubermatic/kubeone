@@ -7,8 +7,6 @@ import (
 	"fmt"
 	"time"
 
-	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
-
 	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/certificate"
@@ -22,6 +20,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/apimachinery/pkg/util/wait"
 	certutil "k8s.io/client-go/util/cert"
+	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 // MachineController Webhook related constants

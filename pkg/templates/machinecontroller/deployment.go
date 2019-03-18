@@ -128,7 +128,9 @@ func Deploy(ctx *util.Context) error {
 		}
 	}
 
-	return nil
+	// HACK: re-init dynamic client in order to re-init RestMapper, to drop caches
+	err = util.HackIssue321InitDynamicClient(ctx)
+	return errors.Wrap(err, "failed to re-init dynamic client")
 }
 
 // WaitForMachineController waits for machine-controller-webhook to become running

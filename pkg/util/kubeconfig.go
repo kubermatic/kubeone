@@ -60,10 +60,18 @@ func BuildKubernetesClientset(ctx *Context) error {
 		return errors.Wrap(err, "unable to build apiextension-apiserver clientset")
 	}
 
-	ctx.DynamicClient, err = client.New(ctx.RESTConfig, client.Options{})
-	if err != nil {
-		return errors.Wrap(err, "unable to build dynamic client")
+	err = HackIssue321InitDynamicClient(ctx)
+	return errors.Wrap(err, "unable to build dynamic client")
+}
+
+// HackIssue321InitDynamicClient initialize controller-runtime/client
+// name comes from: https://github.com/kubernetes-sigs/controller-runtime/issues/321
+func HackIssue321InitDynamicClient(ctx *Context) error {
+	if ctx.RESTConfig == nil {
+		return errors.New("rest config is not initialized")
 	}
 
-	return nil
+	var err error
+	ctx.DynamicClient, err = client.New(ctx.RESTConfig, client.Options{})
+	return errors.Wrap(err, "unable to build dynamic client")
 }
