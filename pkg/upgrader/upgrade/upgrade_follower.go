@@ -14,7 +14,7 @@ func upgradeFollower(ctx *util.Context) error {
 
 func upgradeFollowerExecutor(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
 	ctx.Logger.Infoln("Labeling follower control plane…")
-	err := labelNode(ctx.Clientset.CoreV1().Nodes(), node)
+	err := labelNode(ctx.DynamicClient, node)
 	if err != nil {
 		return errors.Wrap(err, "failed to label leader control plane node")
 	}
@@ -38,7 +38,7 @@ func upgradeFollowerExecutor(ctx *util.Context, node *config.HostConfig, conn ss
 	}
 
 	ctx.Logger.Infoln("Unlabeling follower control plane…")
-	err = unlabelNode(ctx.Clientset.CoreV1().Nodes(), node)
+	err = unlabelNode(ctx.DynamicClient, node)
 	if err != nil {
 		return errors.Wrap(err, "failed to unlabel follower control plane node")
 	}

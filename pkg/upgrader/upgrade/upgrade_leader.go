@@ -16,7 +16,7 @@ func upgradeLeaderExecutor(ctx *util.Context, node *config.HostConfig, conn ssh.
 	logger := ctx.Logger.WithField("node", node.PublicAddress)
 
 	logger.Infoln("Labeling leader control plane…")
-	if err := labelNode(ctx.Clientset.CoreV1().Nodes(), node); err != nil {
+	if err := labelNode(ctx.DynamicClient, node); err != nil {
 		return errors.Wrap(err, "failed to label leader control plane node")
 	}
 
@@ -46,7 +46,7 @@ func upgradeLeaderExecutor(ctx *util.Context, node *config.HostConfig, conn ssh.
 	}
 
 	logger.Infoln("Unlabeling leader control plane…")
-	if err := unlabelNode(ctx.Clientset.CoreV1().Nodes(), node); err != nil {
+	if err := unlabelNode(ctx.DynamicClient, node); err != nil {
 		return errors.Wrap(err, "failed to unlabel leader control plane node")
 	}
 
