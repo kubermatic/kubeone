@@ -1,25 +1,21 @@
 package machinecontroller
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 
 	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/config"
-	"github.com/kubermatic/kubeone/pkg/templates"
 	"github.com/kubermatic/kubeone/pkg/util"
 
-	"k8s.io/apimachinery/pkg/api/equality"
-	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	clustercommon "sigs.k8s.io/cluster-api/pkg/apis/cluster/common"
 	clusterv1alpha1 "sigs.k8s.io/cluster-api/pkg/apis/cluster/v1alpha1"
-	clusterclientset "sigs.k8s.io/cluster-api/pkg/client/clientset_generated/clientset"
-	clustertypes "sigs.k8s.io/cluster-api/pkg/client/clientset_generated/clientset/typed/cluster/v1alpha1"
 )
 
 type providerSpec struct {
@@ -32,28 +28,20 @@ type providerSpec struct {
 
 // DeployMachineDeployments deploys MachineDeployments that create appropriate machines
 func DeployMachineDeployments(ctx *util.Context) error {
-	if ctx.Clientset == nil {
-		return errors.New("kubernetes clientset not initialized")
-	}
-	if ctx.RESTConfig == nil {
-		return errors.New("kubernetes rest config not initialized")
+	if ctx.DynamicClient == nil {
+		return errors.New("kubernetes dynamic client in not initialized")
 	}
 
-	// Create Cluster-API clientset
-	clusterapiClientset, err := clusterclientset.NewForConfig(ctx.RESTConfig)
-	if err != nil {
-		return errors.Wrap(err, "failed to create kubernetes clientset")
-	}
-	clusterapiClient := clusterapiClientset.ClusterV1alpha1()
+	bgCtx := context.Background()
 
 	// Apply MachineDeployments
 	for _, workerset := range ctx.Cluster.Workers {
-		deployment, err := createMachineDeployment(ctx.Cluster, workerset)
+		machinedeployment, err := createMachineDeployment(ctx.Cluster, workerset)
 		if err != nil {
 			return errors.Wrap(err, "failed to generate MachineDeployment")
 		}
 
-		err = ensureMachineDeployment(clusterapiClient.MachineDeployments(deployment.Namespace), deployment)
+		err = simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, machinedeployment)
 		if err != nil {
 			return errors.Wrap(err, "failed to ensure MachineDeployment")
 		}
@@ -133,28 +121,6 @@ func createMachineDeployment(cluster *config.Cluster, workerset config.WorkerCon
 			},
 		},
 	}, nil
-}
-
-func ensureMachineDeployment(machineDeploymentsClient clustertypes.MachineDeploymentInterface, required *clusterv1alpha1.MachineDeployment) error {
-	existing, err := machineDeploymentsClient.Get(required.Name, metav1.GetOptions{})
-	if apierrors.IsNotFound(err) {
-		_, err = machineDeploymentsClient.Create(required)
-		return errors.Wrap(err, "failed to create MachineDeployment")
-	}
-
-	if err != nil {
-		return errors.Wrap(err, "failed to get MachineDeployment")
-	}
-
-	modified := false
-	templates.MergeStringMap(&modified, &existing.ObjectMeta.Annotations, required.ObjectMeta.Annotations)
-	templates.MergeStringMap(&modified, &existing.ObjectMeta.Labels, required.ObjectMeta.Labels)
-	if equality.Semantic.DeepEqual(required.Spec, existing.Spec) && !modified {
-		return nil
-	}
-
-	_, err = machineDeploymentsClient.Update(existing)
-	return errors.Wrap(err, "failed to update MachineDeployment")
 }
 
 func machineSpec(cluster *config.Cluster, workerset config.WorkerConfig, provider config.ProviderName) (map[string]interface{}, error) {

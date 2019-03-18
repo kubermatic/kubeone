@@ -15,11 +15,11 @@ func createWorkerMachines(ctx *util.Context) error {
 	}
 
 	ctx.Logger.Infoln("Waiting for machine-controller to come up…")
-	if err := machinecontroller.WaitForWebhook(ctx.Clientset.CoreV1()); err != nil {
+	if err := machinecontroller.WaitForWebhook(ctx.DynamicClient); err != nil {
 		return errors.Wrap(err, "machine-controller-webhook did not come up")
 	}
 
-	if err := machinecontroller.WaitForMachineController(ctx.Clientset.CoreV1()); err != nil {
+	if err := machinecontroller.WaitForMachineController(ctx.DynamicClient); err != nil {
 		return errors.Wrap(err, "machine-controller did not come up")
 	}
 

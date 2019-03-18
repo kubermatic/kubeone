@@ -2,11 +2,11 @@ package canal
 
 import (
 	"bytes"
+	"context"
 	"text/template"
 
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/templates"
 	"github.com/kubermatic/kubeone/pkg/util"
 
 	rbacv1 "k8s.io/api/rbac/v1"
@@ -62,11 +62,8 @@ const (
 
 // Deploy deploys Canal (Calico + Flannel) CNI on the cluster
 func Deploy(ctx *util.Context) error {
-	if ctx.Clientset == nil {
-		return errors.New("kubernetes clientset not initialized")
-	}
-	if ctx.APIExtensionClientset == nil {
-		return errors.New("kubernetes apiextension clientset not initialized")
+	if ctx.DynamicClient == nil {
+		return errors.New("kubernetes dynamic client is not initialized")
 	}
 
 	// Populate Flannel network configuration
@@ -80,32 +77,28 @@ func Deploy(ctx *util.Context) error {
 	}
 
 	buf := bytes.Buffer{}
-	if err := tpl.Execute(&buf, variables); err != nil {
+	if err = tpl.Execute(&buf, variables); err != nil {
 		return errors.Wrap(err, "failed to render canal config")
 	}
 
-	// Kubernetes clientsets
-	coreClient := ctx.Clientset.CoreV1()
-	rbacClient := ctx.Clientset.RbacV1()
-	appsClient := ctx.Clientset.AppsV1()
-
+	bgCtx := context.Background()
 	// ConfigMap
 	cm := configMap()
 	cm.Data["net-conf.json"] = buf.String()
-	if err := templates.EnsureConfigMap(coreClient.ConfigMaps(cm.Namespace), cm); err != nil {
-		return err
+	if err = simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, cm); err != nil {
+		return errors.Wrap(err, "failed to ensure canal ConfigMap")
 	}
 
 	// DaemonSet
 	ds := daemonSet()
-	if err := templates.EnsureDaemonSet(appsClient.DaemonSets(ds.Namespace), ds); err != nil {
-		return err
+	if err = simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, ds); err != nil {
+		return errors.Wrap(err, "failed to ensure canal DaemonSet")
 	}
 
 	// ServiceAccount
 	sa := serviceAccount()
-	if err := templates.EnsureServiceAccount(coreClient.ServiceAccounts(sa.Namespace), sa); err != nil {
-		return err
+	if err = simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, sa); err != nil {
+		return errors.Wrap(err, "failed to ensure canal ServiceAccount")
 	}
 
 	// CRDs
@@ -119,12 +112,17 @@ func Deploy(ctx *util.Context) error {
 		globalNetworksetsConfigurationCRD,
 		networkPoliciesConfigurationCRD,
 	}
-	crdClient := ctx.APIExtensionClientset.ApiextensionsV1beta1().CustomResourceDefinitions()
 
 	for _, crdGen := range crdGenerators {
-		if err := templates.EnsureCRD(crdClient, crdGen()); err != nil {
-			return err
+		if err = simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, crdGen()); err != nil {
+			return errors.Wrap(err, "failed to ensure canal CustomResourceDefinition")
 		}
+	}
+
+	// HACK: re-init dynamic client in order to re-init RestMapper, to drop caches
+	err = util.HackIssue321InitDynamicClient(ctx)
+	if err != nil {
+		return errors.Wrap(err, "failed to re-init dynamic client")
 	}
 
 	// ClusterRoles
@@ -132,9 +130,10 @@ func Deploy(ctx *util.Context) error {
 		calicoClusterRole,
 		flannelClusterRole,
 	}
+
 	for _, crGen := range crGenerators {
-		if err := templates.EnsureClusterRole(rbacClient.ClusterRoles(), crGen()); err != nil {
-			return err
+		if err := simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, crGen()); err != nil {
+			return errors.Wrap(err, "failed to ensure canal ClusterRole")
 		}
 	}
 
@@ -145,8 +144,8 @@ func Deploy(ctx *util.Context) error {
 		canalClusterRoleBinding,
 	}
 	for _, crbGen := range crbGenerators {
-		if err := templates.EnsureClusterRoleBinding(rbacClient.ClusterRoleBindings(), crbGen()); err != nil {
-			return err
+		if err := simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, crbGen()); err != nil {
+			return errors.Wrap(err, "failed to ensure canal ClusterRoleBinding")
 		}
 	}
 

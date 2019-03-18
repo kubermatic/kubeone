@@ -1,6 +1,7 @@
 package machinecontroller
 
 import (
+	"context"
 	"fmt"
 	"net"
 	"time"
@@ -8,7 +9,6 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/config"
-	"github.com/kubermatic/kubeone/pkg/templates"
 	"github.com/kubermatic/kubeone/pkg/util"
 
 	appsv1 "k8s.io/api/apps/v1"
@@ -18,8 +18,8 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/apimachinery/pkg/util/wait"
-	corev1types "k8s.io/client-go/kubernetes/typed/core/v1"
 	"k8s.io/kubernetes/pkg/registry/core/service/ipallocator"
+	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 // MachineController related constants
@@ -33,27 +33,19 @@ const (
 
 // Deploy deploys MachineController deployment with RBAC on the cluster
 func Deploy(ctx *util.Context) error {
-	if ctx.Clientset == nil {
-		return errors.New("kubernetes clientset not initialized")
+	if ctx.DynamicClient == nil {
+		return errors.New("kubernetes client not initialized")
 	}
 
-	if ctx.APIExtensionClientset == nil {
-		return errors.New("kubernetes apiextension clientset not initialized")
-	}
-
-	coreClient := ctx.Clientset.CoreV1()
-	rbacClient := ctx.Clientset.RbacV1()
+	bgCtx := context.Background()
 
 	// ServiceAccounts
-	sa := machineControllerServiceAccount()
-	err := templates.EnsureServiceAccount(coreClient.ServiceAccounts(sa.Namespace), sa)
-	if err != nil {
+	if err := simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, machineControllerServiceAccount()); err != nil {
 		return errors.Wrap(err, "failed to ensure machine-controller service account")
 	}
 
 	// ClusterRoles
-	err = templates.EnsureClusterRole(rbacClient.ClusterRoles(), machineControllerClusterRole())
-	if err != nil {
+	if err := simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, machineControllerClusterRole()); err != nil {
 		return errors.Wrap(err, "failed to ensure machine-controller cluster role")
 	}
 
@@ -64,9 +56,8 @@ func Deploy(ctx *util.Context) error {
 		nodeBootstrapperClusterRoleBinding,
 	}
 
-	crbClient := rbacClient.ClusterRoleBindings()
 	for _, crbGen := range crbGenerators {
-		if err = templates.EnsureClusterRoleBinding(crbClient, crbGen()); err != nil {
+		if err := simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, crbGen()); err != nil {
 			return errors.Wrap(err, "failed to ensure machine-controller cluster-role binding")
 		}
 	}
@@ -80,8 +71,7 @@ func Deploy(ctx *util.Context) error {
 	}
 
 	for _, roleGen := range roleGenerators {
-		role := roleGen()
-		if err = templates.EnsureRole(rbacClient.Roles(role.Namespace), role); err != nil {
+		if err := simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, roleGen()); err != nil {
 			return errors.Wrap(err, "failed to ensure machine-controller role")
 		}
 	}
@@ -95,16 +85,14 @@ func Deploy(ctx *util.Context) error {
 	}
 
 	for _, roleBindingGen := range roleBindingsGenerators {
-		roleBinding := roleBindingGen()
-		if err = templates.EnsureRoleBinding(rbacClient.RoleBindings(roleBinding.Namespace), roleBinding); err != nil {
+		if err := simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, roleBindingGen()); err != nil {
 			return errors.Wrap(err, "failed to ensure machine-controller role binding")
 		}
 	}
 
 	// Secrets
 	secret := machineControllerCredentialsSecret(ctx.Cluster)
-	err = templates.EnsureSecret(coreClient.Secrets(secret.Namespace), secret)
-	if err != nil {
+	if err := simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, secret); err != nil {
 		return errors.Wrap(err, "failed to ensure machine-controller credentials secret")
 	}
 
@@ -114,9 +102,7 @@ func Deploy(ctx *util.Context) error {
 		return errors.Wrap(err, "failed to generate machine-controller deployment")
 	}
 
-	deploymentClient := ctx.Clientset.AppsV1().Deployments(deployment.Namespace)
-	err = templates.EnsureDeployment(deploymentClient, deployment)
-	if err != nil {
+	if err = simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, deployment); err != nil {
 		return errors.Wrap(err, "failed to ensure machine-controller deployment")
 	}
 
@@ -127,24 +113,30 @@ func Deploy(ctx *util.Context) error {
 		machineControllerMachineSetCRD,
 		machineControllerMachineDeploymentCRD,
 	}
-	crdClient := ctx.APIExtensionClientset.ApiextensionsV1beta1().CustomResourceDefinitions()
 
 	for _, crdGen := range crdGenerators {
-		err = templates.EnsureCRD(crdClient, crdGen())
-		if err != nil {
+		if err = simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, crdGen()); err != nil {
 			return errors.Wrap(err, "failed to ensure machine-controller CRDs")
 		}
 	}
 
-	return nil
+	// HACK: re-init dynamic client in order to re-init RestMapper, to drop caches
+	err = util.HackIssue321InitDynamicClient(ctx)
+	return errors.Wrap(err, "failed to re-init dynamic client")
 }
 
 // WaitForMachineController waits for machine-controller-webhook to become running
-func WaitForMachineController(corev1Client corev1types.CoreV1Interface) error {
+// func WaitForMachineController(corev1Client corev1types.CoreV1Interface) error {
+func WaitForMachineController(client dynclient.Client) error {
+	listOpts := dynclient.ListOptions{Namespace: WebhookNamespace}
+	err := listOpts.SetLabelSelector(fmt.Sprintf("%s=%s", MachineControllerAppLabelKey, MachineControllerAppLabelValue))
+	if err != nil {
+		return errors.Wrap(err, "failed to parse machine-controller labels")
+	}
+
 	return wait.Poll(5*time.Second, 3*time.Minute, func() (bool, error) {
-		machineControllerPods, err := corev1Client.Pods(WebhookNamespace).List(metav1.ListOptions{
-			LabelSelector: fmt.Sprintf("%s=%s", MachineControllerAppLabelKey, MachineControllerAppLabelValue),
-		})
+		machineControllerPods := corev1.PodList{}
+		err = client.List(context.Background(), &listOpts, &machineControllerPods)
 		if err != nil {
 			return false, errors.Wrap(err, "failed to list machine-controller pod")
 		}

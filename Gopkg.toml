@@ -44,7 +44,7 @@
 
 [[constraint]]
   name = "sigs.k8s.io/controller-runtime"
-  version = "0.1.10"
+  version = "^0.1.10"
 
 [prune]
   go-tests = true
