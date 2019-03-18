@@ -15,8 +15,15 @@ import (
 
 // Execute is the root command entry function
 func Execute() {
-	_ = clusterscheme.AddToScheme(scheme.Scheme)
-	_ = apiextensionsscheme.AddToScheme(scheme.Scheme)
+	// quite unlikely to happen errors here, but in case if errors present:
+	// let's panic
+	if err := clusterscheme.AddToScheme(scheme.Scheme); err != nil {
+		panic(err)
+	}
+
+	if err := apiextensionsscheme.AddToScheme(scheme.Scheme); err != nil {
+		panic(err)
+	}
 
 	rootCmd := newRoot()
 

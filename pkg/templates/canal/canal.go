@@ -66,8 +66,6 @@ func Deploy(ctx *util.Context) error {
 		return errors.New("kubernetes dynamic client is not initialized")
 	}
 
-	var err error
-
 	// Populate Flannel network configuration
 	tpl, err := template.New("base").Parse(flannelNetworkConfig)
 	if err != nil {

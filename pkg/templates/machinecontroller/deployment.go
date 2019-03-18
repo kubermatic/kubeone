@@ -40,14 +40,12 @@ func Deploy(ctx *util.Context) error {
 	bgCtx := context.Background()
 
 	// ServiceAccounts
-	err := simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, machineControllerServiceAccount())
-	if err != nil {
+	if err := simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, machineControllerServiceAccount()); err != nil {
 		return errors.Wrap(err, "failed to ensure machine-controller service account")
 	}
 
 	// ClusterRoles
-	err = simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, machineControllerClusterRole())
-	if err != nil {
+	if err := simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, machineControllerClusterRole()); err != nil {
 		return errors.Wrap(err, "failed to ensure machine-controller cluster role")
 	}
 
@@ -59,8 +57,7 @@ func Deploy(ctx *util.Context) error {
 	}
 
 	for _, crbGen := range crbGenerators {
-		err = simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, crbGen())
-		if err != nil {
+		if err := simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, crbGen()); err != nil {
 			return errors.Wrap(err, "failed to ensure machine-controller cluster-role binding")
 		}
 	}
@@ -74,8 +71,7 @@ func Deploy(ctx *util.Context) error {
 	}
 
 	for _, roleGen := range roleGenerators {
-		err = simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, roleGen())
-		if err != nil {
+		if err := simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, roleGen()); err != nil {
 			return errors.Wrap(err, "failed to ensure machine-controller role")
 		}
 	}
@@ -89,16 +85,14 @@ func Deploy(ctx *util.Context) error {
 	}
 
 	for _, roleBindingGen := range roleBindingsGenerators {
-		err = simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, roleBindingGen())
-		if err != nil {
+		if err := simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, roleBindingGen()); err != nil {
 			return errors.Wrap(err, "failed to ensure machine-controller role binding")
 		}
 	}
 
 	// Secrets
 	secret := machineControllerCredentialsSecret(ctx.Cluster)
-	err = simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, secret)
-	if err != nil {
+	if err := simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, secret); err != nil {
 		return errors.Wrap(err, "failed to ensure machine-controller credentials secret")
 	}
 
@@ -108,8 +102,7 @@ func Deploy(ctx *util.Context) error {
 		return errors.Wrap(err, "failed to generate machine-controller deployment")
 	}
 
-	err = simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, deployment)
-	if err != nil {
+	if err = simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, deployment); err != nil {
 		return errors.Wrap(err, "failed to ensure machine-controller deployment")
 	}
 
@@ -122,8 +115,7 @@ func Deploy(ctx *util.Context) error {
 	}
 
 	for _, crdGen := range crdGenerators {
-		err = simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, crdGen())
-		if err != nil {
+		if err = simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, crdGen()); err != nil {
 			return errors.Wrap(err, "failed to ensure machine-controller CRDs")
 		}
 	}
