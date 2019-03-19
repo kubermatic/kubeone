@@ -36,6 +36,12 @@ test:
 dep:
 	dep ensure -v
 
+
+.PHONY: licence-check
+licence-check:
+	wwhrd check
+
+.PHONY: check-dependencies
 check-dependencies:
 	dep status
 	dep check
