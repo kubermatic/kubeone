@@ -20,7 +20,7 @@ import (
 const (
 	pspAdmissionPlugin            = "PodSecurityPolicy"
 	apiServerAdmissionPluginsFlag = "enable-admission-plugins"
-	pspRoleNamespace              = "kube-system"
+	pspRoleNamespace              = metav1.NamespaceSystem
 )
 
 var (
