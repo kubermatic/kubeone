@@ -429,7 +429,7 @@
   version = "kubernetes-1.13.1"
 
 [[projects]]
-  digest = "1:ecda5f3994fc995e1b1796a49dfafa5839a93cdf594c786e0da4c7c1a3d6f3e8"
+  digest = "1:5da8d167b479af241562f924f48c3c3cfcac19f286246aba4d42900de892ef6c"
   name = "k8s.io/client-go"
   packages = [
     "discovery",
@@ -455,6 +455,7 @@
     "util/flowcontrol",
     "util/homedir",
     "util/integer",
+    "util/retry",
   ]
   pruneopts = "NUT"
   revision = "8d9ed539ba3134352c586810e749e58df4e94e4f"
@@ -556,6 +557,7 @@
     "k8s.io/client-go/rest",
     "k8s.io/client-go/tools/clientcmd",
     "k8s.io/client-go/util/cert",
+    "k8s.io/client-go/util/retry",
     "k8s.io/cluster-bootstrap/token/api",
     "k8s.io/cluster-bootstrap/token/util",
     "k8s.io/kubernetes/pkg/registry/core/service/ipallocator",
