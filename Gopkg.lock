@@ -370,14 +370,12 @@
   version = "kubernetes-1.13.1"
 
 [[projects]]
-  digest = "1:501a73762f1b2c4530206ffb657b39d8b58a9b40280d30e4509ae1232767962c"
+  digest = "1:e9f7fa79848e63962835ad3df85bb0fc3df46059bc9d8b84a946be894dd49e39"
   name = "k8s.io/apiextensions-apiserver"
   packages = [
     "pkg/apis/apiextensions",
     "pkg/apis/apiextensions/v1beta1",
-    "pkg/client/clientset/clientset",
     "pkg/client/clientset/clientset/scheme",
-    "pkg/client/clientset/clientset/typed/apiextensions/v1beta1",
   ]
   pruneopts = "NUT"
   revision = "0fe22c71c47604641d9aa352c785b7912c200562"
@@ -528,14 +526,12 @@
   version = "v1.13.1"
 
 [[projects]]
-  digest = "1:f9121674515662ba794b28097c1d92380cc54bac687cd7c79b64223b2c6ec3c8"
+  digest = "1:501f147af95df7681eeeabd516fec151ea6094beb4334ef790aa9d6396c439ab"
   name = "sigs.k8s.io/cluster-api"
   packages = [
     "pkg/apis/cluster/common",
     "pkg/apis/cluster/v1alpha1",
-    "pkg/client/clientset_generated/clientset",
     "pkg/client/clientset_generated/clientset/scheme",
-    "pkg/client/clientset_generated/clientset/typed/cluster/v1alpha1",
   ]
   pruneopts = "NUT"
   revision = "813b1fec840d79b37fe86778237b6db6d1cb959d"
@@ -582,7 +578,6 @@
     "k8s.io/api/policy/v1beta1",
     "k8s.io/api/rbac/v1",
     "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1",
-    "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset",
     "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/scheme",
     "k8s.io/apimachinery/pkg/api/resource",
     "k8s.io/apimachinery/pkg/apis/meta/v1",
@@ -602,7 +597,6 @@
     "k8s.io/kubernetes/pkg/registry/core/service/ipallocator",
     "sigs.k8s.io/cluster-api/pkg/apis/cluster/common",
     "sigs.k8s.io/cluster-api/pkg/apis/cluster/v1alpha1",
-    "sigs.k8s.io/cluster-api/pkg/client/clientset_generated/clientset",
     "sigs.k8s.io/cluster-api/pkg/client/clientset_generated/clientset/scheme",
     "sigs.k8s.io/controller-runtime/pkg/client",
     "sigs.k8s.io/controller-runtime/pkg/controller/controllerutil",

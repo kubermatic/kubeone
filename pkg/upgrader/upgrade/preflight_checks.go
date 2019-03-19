@@ -1,6 +1,7 @@
 package upgrade
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -13,13 +14,13 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 // runPreflightChecks runs all preflight checks
 func runPreflightChecks(ctx *util.Context) error {
-	// Verify clientset is initialized so we can reach API server
-	if ctx.Clientset == nil {
-		return errors.New("kubernetes clientset not initialized")
+	if ctx.DynamicClient == nil {
+		return errors.New("kubernetes dynamic client is not initialized")
 	}
 
 	// Check are Docker, Kubelet and Kubeadm installed
@@ -27,13 +28,18 @@ func runPreflightChecks(ctx *util.Context) error {
 		return errors.Wrap(err, "unable to check are prerequisites installed")
 	}
 
-	// Get list of nodes and verify number of nodes
-	nodes, err := ctx.Clientset.CoreV1().Nodes().List(metav1.ListOptions{
-		LabelSelector: fmt.Sprintf("%s=%s", labelControlPlaneNode, ""),
-	})
+	nodes := corev1.NodeList{}
+	nodeListOpts := dynclient.ListOptions{}
+	err := nodeListOpts.SetLabelSelector(fmt.Sprintf("%s=%s", labelControlPlaneNode, ""))
+	if err != nil {
+		return errors.Wrap(err, "failed to set node selector labels")
+	}
+
+	err = ctx.DynamicClient.List(context.Background(), &nodeListOpts, &nodes)
 	if err != nil {
 		return errors.Wrap(err, "unable to list nodes")
 	}
+
 	if len(nodes.Items) != len(ctx.Cluster.Hosts) {
 		return errors.Errorf("expected %d cluster nodes but got %d", len(ctx.Cluster.Hosts), len(nodes.Items))
 	}
@@ -42,12 +48,12 @@ func runPreflightChecks(ctx *util.Context) error {
 	ctx.Logger.Infoln("Running preflight checks…")
 
 	ctx.Logger.Infoln("Verifying are all nodes running…")
-	if err := verifyNodesRunning(nodes, ctx.Verbose); err != nil {
+	if err := verifyNodesRunning(&nodes, ctx.Verbose); err != nil {
 		return errors.Wrap(err, "unable to verify are nodes running")
 	}
 
 	ctx.Logger.Infoln("Verifying are correct labels set on nodes…")
-	if err := verifyLabels(nodes, ctx.Verbose); err != nil {
+	if err := verifyLabels(&nodes, ctx.Verbose); err != nil {
 		if ctx.ForceUpgrade {
 			ctx.Logger.Warningf("unable to verify node labels: %v", err)
 		} else {
@@ -56,15 +62,16 @@ func runPreflightChecks(ctx *util.Context) error {
 	}
 
 	ctx.Logger.Infoln("Verifying do all node IP addresses match with our state…")
-	if err := verifyEndpoints(nodes, ctx.Cluster.Hosts, ctx.Verbose); err != nil {
+	if err := verifyEndpoints(&nodes, ctx.Cluster.Hosts, ctx.Verbose); err != nil {
 		return errors.Wrap(err, "unable to verify node endpoints")
 	}
 
 	ctx.Logger.Infoln("Verifying is it possible to upgrade to the desired version…")
-	if err := verifyVersion(ctx.Cluster.Versions.Kubernetes, nodes, ctx.Verbose); err != nil {
+	if err := verifyVersion(ctx.Cluster.Versions.Kubernetes, &nodes, ctx.Verbose); err != nil {
 		return errors.Wrap(err, "unable to verify components version")
 	}
-	if err := verifyVersionSkew(ctx, nodes, ctx.Verbose); err != nil {
+
+	if err := verifyVersionSkew(ctx, &nodes, ctx.Verbose); err != nil {
 		if ctx.ForceUpgrade {
 			ctx.Logger.Warningf("version skew check failed: %v", err)
 		} else {
@@ -204,12 +211,20 @@ func verifyVersionSkew(ctx *util.Context, nodes *corev1.NodeList, verbose bool) 
 
 	// Check API server version
 	var apiserverVersion *semver.Version
-	apiserverPods, err := ctx.Clientset.CoreV1().Pods(metav1.NamespaceSystem).List(metav1.ListOptions{
-		LabelSelector: "component=kube-apiserver",
-	})
+
+	apiserverPods := &corev1.PodList{}
+	apiserverListOpts := &dynclient.ListOptions{Namespace: metav1.NamespaceSystem}
+
+	err = apiserverListOpts.SetLabelSelector("component=kube-apiserver")
+	if err != nil {
+		return errors.Wrap(err, "failed to set labels selector for kube-apiserver")
+	}
+
+	err = ctx.DynamicClient.List(context.Background(), apiserverListOpts, apiserverPods)
 	if err != nil {
 		return errors.Wrap(err, "unable to list apiserver pods")
 	}
+
 	// This ensures all API server pods are running the same apiserver version
 	for _, p := range apiserverPods.Items {
 		ver, apiserverErr := parseContainerImageVersion(p.Spec.Containers[0].Image)
@@ -226,6 +241,7 @@ func verifyVersionSkew(ctx *util.Context, nodes *corev1.NodeList, verbose bool) 
 			return errors.New("all apiserver pods must be running same version before upgrade")
 		}
 	}
+
 	err = checkVersionSkew(reqVer, apiserverVersion, 1)
 	if err != nil {
 		return errors.Wrap(err, "apiserver version check failed")

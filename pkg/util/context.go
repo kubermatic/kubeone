@@ -6,8 +6,6 @@ import (
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 
-	apiextensionsclientset "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
-	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -23,8 +21,6 @@ type Context struct {
 	WorkDir                   string
 	JoinCommand               string
 	JoinToken                 string
-	Clientset                 *kubernetes.Clientset
-	APIExtensionClientset     *apiextensionsclientset.Clientset
 	RESTConfig                *rest.Config
 	DynamicClient             dynclient.Client
 	Verbose                   bool

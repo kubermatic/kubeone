@@ -7,8 +7,6 @@ import (
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 
-	apiextensionsclientset "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
-	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
 )
 
@@ -48,16 +46,6 @@ func BuildKubernetesClientset(ctx *Context) error {
 	ctx.RESTConfig, err = clientcmd.RESTConfigFromKubeConfig(kubeconfig)
 	if err != nil {
 		return errors.Wrap(err, "unable to build config from kubeconfig bytes")
-	}
-
-	ctx.Clientset, err = kubernetes.NewForConfig(ctx.RESTConfig)
-	if err != nil {
-		return errors.Wrap(err, "unable to build kubernetes clientset")
-	}
-
-	ctx.APIExtensionClientset, err = apiextensionsclientset.NewForConfig(ctx.RESTConfig)
-	if err != nil {
-		return errors.Wrap(err, "unable to build apiextension-apiserver clientset")
 	}
 
 	err = HackIssue321InitDynamicClient(ctx)

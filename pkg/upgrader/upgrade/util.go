@@ -1,12 +1,18 @@
 package upgrade
 
 import (
+	"context"
+
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/util"
+	"github.com/pkg/errors"
 
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	corev1types "k8s.io/client-go/kubernetes/typed/core/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
 
 func determineHostname(ctx *util.Context) error {
@@ -35,46 +41,34 @@ func determineOS(ctx *util.Context) error {
 	}, true)
 }
 
-func labelNode(nodeClient corev1types.NodeInterface, host *config.HostConfig) error {
-	node, err := nodeClient.Get(host.Hostname, metav1.GetOptions{})
-	if err != nil {
-		return err
+func labelNode(client dynclient.Client, host *config.HostConfig) error {
+	node := corev1.Node{
+		ObjectMeta: metav1.ObjectMeta{Name: host.Hostname},
 	}
 
-	var modified bool
-	label := map[string]string{
-		labelUpgradeLock: "",
-	}
-	mergeStringMap(&modified, &node.ObjectMeta.Labels, label)
-	if !modified {
-		return nil
-	}
-
-	_, err = nodeClient.Update(node)
-	return err
-}
-
-func unlabelNode(nodeClient corev1types.NodeInterface, host *config.HostConfig) error {
-	node, err := nodeClient.Get(host.Hostname, metav1.GetOptions{})
-	if err != nil {
-		return err
-	}
-
-	delete(node.ObjectMeta.Labels, labelUpgradeLock)
-	_, err = nodeClient.Update(node)
-	return err
-}
-
-// mergeStringMap merges two string maps into destination string map
-func mergeStringMap(modified *bool, destination *map[string]string, required map[string]string) {
-	if *destination == nil {
-		*destination = map[string]string{}
-	}
-
-	for k, v := range required {
-		if destinationV, ok := (*destination)[k]; !ok || destinationV != v {
-			(*destination)[k] = v
-			*modified = true
+	_, err := controllerutil.CreateOrUpdate(context.Background(), client, &node, func(runtime.Object) error {
+		if node.ObjectMeta.CreationTimestamp.IsZero() {
+			return errors.New("node not found")
 		}
+		node.Labels[labelUpgradeLock] = ""
+		return nil
+	})
+
+	return errors.Wrapf(err, "failed to label node %q with label %q", host.Hostname, labelUpgradeLock)
+}
+
+func unlabelNode(client dynclient.Client, host *config.HostConfig) error {
+	node := corev1.Node{
+		ObjectMeta: metav1.ObjectMeta{Name: host.Hostname},
 	}
+
+	_, err := controllerutil.CreateOrUpdate(context.Background(), client, &node, func(runtime.Object) error {
+		if node.ObjectMeta.CreationTimestamp.IsZero() {
+			return errors.New("node not found")
+		}
+		delete(node.ObjectMeta.Labels, labelUpgradeLock)
+		return nil
+	})
+
+	return errors.Wrapf(err, "failed to remove label %s from node %s", labelUpgradeLock, host.Hostname)
 }
