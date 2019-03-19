@@ -29,7 +29,7 @@ const (
 	WebhookAppLabelKey   = "app"
 	WebhookAppLabelValue = WebhookName
 	WebhookTag           = MachineControllerTag
-	WebhookNamespace     = "kube-system"
+	WebhookNamespace     = metav1.NamespaceSystem
 )
 
 // DeployWebhookConfiguration deploys MachineController webhook deployment on the cluster

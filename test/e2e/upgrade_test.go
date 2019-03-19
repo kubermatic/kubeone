@@ -3,6 +3,7 @@
 package e2e
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"testing"
@@ -14,9 +15,8 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
-	"k8s.io/client-go/kubernetes"
-	corev1types "k8s.io/client-go/kubernetes/typed/core/v1"
 	"k8s.io/client-go/tools/clientcmd"
+	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 const (
@@ -62,17 +62,19 @@ func TestClusterUpgrade(t *testing.T) {
 			if len(testRunIdentifier) == 0 {
 				t.Fatalf("-identifier must be set")
 			}
+
 			if testProvider != tc.provider {
 				t.SkipNow()
 			}
+
 			testPath := fmt.Sprintf("../../_build/%s", testRunIdentifier)
 
 			pr, err := CreateProvisioner(testPath, testRunIdentifier, tc.provider)
 			if err != nil {
 				t.Fatal(err)
 			}
-			target := NewKubeone(testPath, tc.initialConfigPath)
 
+			target := NewKubeone(testPath, tc.initialConfigPath)
 			teardown := setupTearDown(pr, target)
 			defer teardown(t)
 
@@ -105,19 +107,20 @@ func TestClusterUpgrade(t *testing.T) {
 			if err != nil {
 				t.Errorf("unable to build config from kubeconfig bytes: %v", err)
 			}
-			clientset, err := kubernetes.NewForConfig(restConfig)
+
+			client, err := dynclient.New(restConfig, dynclient.Options{})
 			if err != nil {
-				t.Errorf("unable to build kubernetes clientset: %v", err)
+				t.Fatalf("failed to init dynamic client: %s", err)
 			}
 
 			t.Log("waiting for nodes to become ready")
-			err = waitForNodesReady(clientset.CoreV1().Nodes())
+			err = waitForNodesReady(client)
 			if err != nil {
 				t.Fatalf("nodes are not ready: %v", err)
 			}
 
 			t.Log("verifying cluster version before upgrade")
-			err = verifyVersion(clientset.CoreV1().Nodes(), clientset.CoreV1().Pods(metav1.NamespaceSystem), tc.initialVersion)
+			err = verifyVersion(client, metav1.NamespaceSystem, tc.initialVersion)
 			if err != nil {
 				t.Fatalf("version mismatch before running upgrade: %v", err)
 			}
@@ -135,19 +138,19 @@ func TestClusterUpgrade(t *testing.T) {
 			}
 
 			t.Log("waiting for nodes to become ready")
-			err = waitForNodesReady(clientset.CoreV1().Nodes())
+			err = waitForNodesReady(client)
 			if err != nil {
 				t.Fatalf("nodes are not ready: %v", err)
 			}
 
 			t.Log("verifying cluster version after upgrade")
-			err = verifyVersion(clientset.CoreV1().Nodes(), clientset.CoreV1().Pods(metav1.NamespaceSystem), tc.targetVersion)
+			err = verifyVersion(client, metav1.NamespaceSystem, tc.targetVersion)
 			if err != nil {
 				t.Fatalf("version mismatch after running upgrade: %v", err)
 			}
 
 			t.Log("polling nodes to verify are all workers upgraded")
-			err = waitForNodesUpgraded(clientset.CoreV1().Nodes(), tc.targetVersion)
+			err = waitForNodesUpgraded(client, tc.targetVersion)
 			if err != nil {
 				t.Fatalf("nodes are not running the target version: %v", err)
 			}
@@ -161,14 +164,17 @@ func TestClusterUpgrade(t *testing.T) {
 	}
 }
 
-func waitForNodesReady(nodeClient corev1types.NodeInterface) error {
+func waitForNodesReady(client dynclient.Client) error {
 	return wait.Poll(5*time.Second, 3*time.Minute, func() (bool, error) {
-		nodes, err := nodeClient.List(metav1.ListOptions{
-			LabelSelector: fmt.Sprintf("%s=%s", labelControlPlaneNode, ""),
-		})
+		nodes := corev1.NodeList{}
+		nodeListOpts := dynclient.ListOptions{}
+		nodeListOpts.SetLabelSelector(fmt.Sprintf("%s=%s", labelControlPlaneNode, ""))
+
+		err := client.List(context.Background(), &nodeListOpts, &nodes)
 		if err != nil {
 			return false, errors.Wrap(err, "unable to list nodes")
 		}
+
 		for _, n := range nodes.Items {
 			for _, c := range n.Status.Conditions {
 				if c.Type == corev1.NodeReady && c.Status != corev1.ConditionTrue {
@@ -180,17 +186,19 @@ func waitForNodesReady(nodeClient corev1types.NodeInterface) error {
 	})
 }
 
-func waitForNodesUpgraded(nodeClient corev1types.NodeInterface, targetVersion string) error {
+func waitForNodesUpgraded(client dynclient.Client, targetVersion string) error {
 	reqVer, err := semver.NewVersion(targetVersion)
 	if err != nil {
 		return errors.Wrap(err, "desired version is invalid")
 	}
 
 	return wait.Poll(5*time.Second, 10*time.Minute, func() (bool, error) {
-		nodes, err := nodeClient.List(metav1.ListOptions{})
+		nodes := corev1.NodeList{}
+		err := client.List(context.Background(), &dynclient.ListOptions{}, &nodes)
 		if err != nil {
 			return false, errors.Wrap(err, "unable to list nodes")
 		}
+
 		// In this case it's safe to check kubelet version because once nodes are replaced
 		// there are provisioned from zero with the new version, so we'll not have
 		// kubelet and apiserver version mismatch.
@@ -207,16 +215,21 @@ func waitForNodesUpgraded(nodeClient corev1types.NodeInterface, targetVersion st
 	})
 }
 
-func verifyVersion(nodeClient corev1types.NodeInterface, systemPodsClient corev1types.PodInterface, targetVersion string) error {
+func verifyVersion(client dynclient.Client, namespace string, targetVersion string) error {
 	reqVer, err := semver.NewVersion(targetVersion)
 	if err != nil {
 		return errors.Wrap(err, "desired version is invalid")
 	}
 
+	nodes := corev1.NodeList{}
+	nodeListOpts := dynclient.ListOptions{}
+	_ = nodeListOpts.SetLabelSelector(fmt.Sprintf("%s=%s", labelControlPlaneNode, ""))
+	err = client.List(context.Background(), &nodeListOpts, &nodes)
+	if err != nil {
+		return errors.Wrap(err, "failed to list nodes")
+	}
+
 	// Kubelet version check
-	nodes, err := nodeClient.List(metav1.ListOptions{
-		LabelSelector: fmt.Sprintf("%s=%s", labelControlPlaneNode, ""),
-	})
 	for _, n := range nodes.Items {
 		kubeletVer, err := semver.NewVersion(n.Status.NodeInfo.KubeletVersion)
 		if err != nil {
@@ -227,13 +240,14 @@ func verifyVersion(nodeClient corev1types.NodeInterface, systemPodsClient corev1
 		}
 	}
 
-	// apiserver version check
-	apiserverPods, err := systemPodsClient.List(metav1.ListOptions{
-		LabelSelector: "component=kube-apiserver",
-	})
+	apiserverPods := corev1.PodList{}
+	podsListOpts := dynclient.ListOptions{Namespace: namespace}
+	_ = podsListOpts.SetLabelSelector("component=kube-apiserver")
+	err = client.List(context.Background(), &podsListOpts, &apiserverPods)
 	if err != nil {
 		return errors.Wrap(err, "unable to list apiserver pods")
 	}
+
 	for _, p := range apiserverPods.Items {
 		apiserverVer, err := parseContainerImageVersion(p.Spec.Containers[0].Image)
 		if err != nil {
