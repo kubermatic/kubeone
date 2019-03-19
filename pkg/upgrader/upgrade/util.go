@@ -11,6 +11,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/client-go/util/retry"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
@@ -42,33 +43,39 @@ func determineOS(ctx *util.Context) error {
 }
 
 func labelNode(client dynclient.Client, host *config.HostConfig) error {
-	node := corev1.Node{
-		ObjectMeta: metav1.ObjectMeta{Name: host.Hostname},
-	}
-
-	_, err := controllerutil.CreateOrUpdate(context.Background(), client, &node, func(runtime.Object) error {
-		if node.ObjectMeta.CreationTimestamp.IsZero() {
-			return errors.New("node not found")
+	retErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
+		node := corev1.Node{
+			ObjectMeta: metav1.ObjectMeta{Name: host.Hostname},
 		}
-		node.Labels[labelUpgradeLock] = ""
-		return nil
+
+		_, err := controllerutil.CreateOrUpdate(context.Background(), client, &node, func(runtime.Object) error {
+			if node.ObjectMeta.CreationTimestamp.IsZero() {
+				return errors.New("node not found")
+			}
+			node.Labels[labelUpgradeLock] = ""
+			return nil
+		})
+		return err
 	})
 
-	return errors.Wrapf(err, "failed to label node %q with label %q", host.Hostname, labelUpgradeLock)
+	return errors.Wrapf(retErr, "failed to label node %q with label %q", host.Hostname, labelUpgradeLock)
 }
 
 func unlabelNode(client dynclient.Client, host *config.HostConfig) error {
-	node := corev1.Node{
-		ObjectMeta: metav1.ObjectMeta{Name: host.Hostname},
-	}
-
-	_, err := controllerutil.CreateOrUpdate(context.Background(), client, &node, func(runtime.Object) error {
-		if node.ObjectMeta.CreationTimestamp.IsZero() {
-			return errors.New("node not found")
+	retErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
+		node := corev1.Node{
+			ObjectMeta: metav1.ObjectMeta{Name: host.Hostname},
 		}
-		delete(node.ObjectMeta.Labels, labelUpgradeLock)
-		return nil
+
+		_, err := controllerutil.CreateOrUpdate(context.Background(), client, &node, func(runtime.Object) error {
+			if node.ObjectMeta.CreationTimestamp.IsZero() {
+				return errors.New("node not found")
+			}
+			delete(node.ObjectMeta.Labels, labelUpgradeLock)
+			return nil
+		})
+		return err
 	})
 
-	return errors.Wrapf(err, "failed to remove label %s from node %s", labelUpgradeLock, host.Hostname)
+	return errors.Wrapf(retErr, "failed to remove label %s from node %s", labelUpgradeLock, host.Hostname)
 }
