@@ -19,7 +19,7 @@ TBD
 * Uses `kubeadm` to provision clusters
 * Comes with a straightforward and easy to use CLI
 * Choice of Linux distributions between Ubuntu, CentOS and CoreOS
-* Integrates with Cluster-API and [Kubermatic machine-controller](https://github.com/kubermatic/machine-controller) to manage worker nodes
+* Integrates with [Cluster-API](https://github.com/kubernetes-sigs/cluster-api) and [Kubermatic machine-controller](https://github.com/kubermatic/machine-controller) to manage worker nodes
 * Integrates with Terraform for sourcing data about infrastructure and control plane nodes
 * Officially supports AWS, DigitalOcean, Hetzner and OpenStack
 
@@ -43,6 +43,22 @@ If you already have KubeOne repository cloned, you can use Makefile to install K
 make install
 ```
 
+## Kubernetes Versions Compatibility
+
+Each KubeOne version is supposed to support and work with a set of Kubernetes minor versions. We're targeting to support at least 3 minor Kubernetes versions, however for early KubeOne releases we're supporting only one or two minor versions.
+
+New KubeOne release will be done for each minor Kubernetes version. Usually, a new release is targeted 2-3 weeks after Kubernetes release, depending on number of changes needed to support a new version.
+
+In the following table you can find what are supported Kubernetes versions for each KubeOne version. KubeOne versions that are crossed out are not supported. It's highly recommended to use the latest version whenever possible.
+
+| KubeOne version | 1.14 | 1.13 | 1.12 |
+|-----------------|------|------|------|
+| v0.3.0 | - | + | - |
+| <s>v0.2.0</s> | - | + | - |
+| <s>v0.1.0-beta0</s> | - | + | +
+
+**Note:** Versions v0.2.0 and v0.1.0-beta0 don't support upgrading to the newer Kubernetes version.
+
 ## Getting Started
 
 We have a getting started tutorial for each cloud provider we support in our [documentation](./docs).
@@ -59,40 +75,23 @@ For advanced use cases and other features, check the [KubeOne features]() docume
 
 ## Getting Involved
 
-We very appreciate contributions! If you want to get in touch with us and discuss about improvements and new features, please create a new issue on GitHub. You can contact us also via the general Loodse email list and Slack channel:
-- Email: [loodse-dev](https://groups.google.com/forum/#!forum/loodse-dev)
-- Slack: #[Slack](http://slack.kubermatic.io/) on Slack
+We very appreciate contributions! If you want to contribute or have an idea for a new feature or improvement, please check out our [contributing guide][2].
 
-### Troubleshooting
+If you want to get in touch with us and discuss about improvements and new features, please create a new issue on GitHub or connect with us over the mailing list or Slack:
 
-If you encounter issues [file an issue][1] or talk to us on the [#KubeOne channel][12] on the Loodse Slack server. Please include the following information:
+* [loodse-dev mailing list](https://groups.google.com/forum/#!forum/loodse-dev)
+* [Kubermatic Slack](http://slack.kubermatic.io/)
+
+## Reporting Bugs
+
+If you encounter issues, please [create a new issue on GitHub][1] or talk to us on the [#KubeOne Slack channel][12]. When reporting a bug please include the following information:
 
 * KubeOne version or Git commit that you're running (`kubeone version`),
 * description of the bug and logs from the relevant `kubeone` command (if applicable),
 * steps to reproduce the issue,
 * expected behavior
 
-## Contributing
-
-Thanks for taking the time to join our community and start contributing!
-
-Feedback and discussion are available on [the mailing list][11].
-
-### Before you start
-
-* Please familiarize yourself with the [Code of Conduct][4] before contributing.
-* See [CONTRIBUTING.md][2] for instructions on the developer certificate of origin that we require.
-
-### Proposing a New Feature
-
-To propose a new feature, please [create a new issue](https://github.com/kubermatic/kubeone/issues/new) and include details about what do you expect from the feature and potential use cases. If the feature is approved by the project maintainers, we'd love help coding it! You can go ahead a create a Work-in-Progress (**WIP**) PR and start coding! In [the contributing guidelines]() you can find information about practices we're following, so make sure to check it out.
-
-For upcoming features please check our [issue trakcer](https://github.com/kubermatic/kubeone/issues) and [milestones](https://github.com/kubermatic/kubeone/milestones). We use milestones as a way to track what features will be added in the upcoming releases.
-
-
-### Pull requests
-
-* We welcome pull requests. Feel free to dig through the [issues][1] and jump in.
+If you're reporting a security vulnerability, please follow [the process for reporting security issues](https://github.com/kubermatic/kubeone/blob/master/CONTRIBUTING.md#reporting-a-security-vulnerability).
 
 ## Changelog
 
