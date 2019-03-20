@@ -21,11 +21,13 @@ KubeOne is a CLI and a Go library for installing, maintaining and upgrading Kube
 
 ## What cloud providers KubeOne does support?
 
-KubeOne should work on any cloud provider, on-perm and bare-metal cluster, as long as there is no need for additional, complex configuration. Officially, we support AWS, DigitalOcean, Hetzner, and OpenStack.
+KubeOne is supposed to work on any cloud provider, on-perm and bare-metal cluster, as long as there is no need for additional configuration. However, to utilize all features of KubeOne, such as Terraform integration and creating worker nodes, KubeOne and [Kubermatic machine-controller](https://github.com/kubermatic/machine-controller) need to support that provider.
+
+Currently we support AWS, DigitalOcean, Hetzner, and OpenStack.
 
 ## Are on-perm and bare metal clusters supported?
 
-Yes. We officialy support OpenStack, with support for vSphere coming soon.
+Yes. We support OpenStack, with support for vSphere coming soon.
 
 ## Does KubeOne handles the infrastructure and cloud resources?
 
