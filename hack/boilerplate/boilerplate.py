@@ -150,7 +150,7 @@ def file_extension(filename):
     return os.path.splitext(filename)[1].split(".")[-1].lower()
 
 
-skipped_dirs = ['bin', 'Godeps', '.git', "vendor", "hack/boilerplate/test"]
+skipped_dirs = ['bin', 'Godeps', '.git', "vendor", "hack/boilerplate/test", 'pkg/apis/kubeadm/v1beta1/bootstraptokenstring.go', 'pkg/apis/kubeadm/v1beta1/types.go', 'pkg/apis/kubeadm/v1beta1/zz_generated.deepcopy.go']
 
 # list all the files contain 'DO NOT EDIT', but are not generated
 skipped_ungenerated_files = ['hack/boilerplate/boilerplate.py']
