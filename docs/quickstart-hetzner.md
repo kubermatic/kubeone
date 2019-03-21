@@ -1,6 +1,6 @@
-# How To Install Kubernetes On DigitalOcean Cluster Using KubeOne
+# How To Install Kubernetes On Hetzner Cluster Using KubeOne
 
-In this quick start we're going to show how to get started with KubeOne on DigitalOcean. We'll cover how to create the needed infrastructure using our example Terraform scripts and then install Kubernetes. Finally, we're going to show how to destroy the cluster along with the infrastructure.
+In this quick start we're going to show how to get started with KubeOne on Hetzner. We'll cover how to create the needed infrastructure using our example Terraform scripts and then install Kubernetes. Finally, we're going to show how to destroy the cluster along with the infrastructure.
 
 As a result, you'll get Kubernetes 1.13.4 High-Available (HA) clusters with three control plane nodes and two worker nodes.
 
@@ -13,31 +13,31 @@ To follow this quick start, you'll need:
 
 ## Setting Up Credentials
 
-In order for Terraform to successfully create the infrastructure and for KubeOne to install Kubernetes and create worker nodes you need an API Access Token with read and write permissions. You can refer to [the official documentation](https://www.digitalocean.com/docs/api/create-personal-access-token/) for guidelines for generating the token.
+In order for Terraform to successfully create the infrastructure and for KubeOne to install Kubernetes and create worker nodes you need a Hetzner API Token.
 
-Once you have the API access token you need to set the `DIGITALOCEAN_TOKEN` environment variable containing the token:
+Once you have the API token you need to set the `HCLOUD_TOKEN` environment variable containing the token:
 
 ```bash
-export DIGITALOCEAN_TOKEN=...
+export HCLOUD_TOKEN=...
 ```
 
-**Note:** The API access token is deployed to the cluster to be used by `machine-controller` for creating worker nodes.
+**Note:** The API token is deployed to the cluster to be used by `machine-controller` for creating worker nodes.
 
 ## Creating Infrastructure
 
 KubeOne is based on the Bring-Your-Own-Infra approach, which means that you have to provide machines and needed resources yourself. To make this task easier we are providing Terraform scripts that you can use to get started. You're free to use your own scripts or any other preferred approach.
 
-The Terraform scripts for DigitalOcean are located in the [`./examples/terraform/digitalocean`](https://github.com/kubermatic/kubeone/tree/master/examples/terraform/digitalocean) directory.
+The Terraform scripts for Hetzner are located in the [`./examples/terraform/hetzner`](https://github.com/kubermatic/kubeone/tree/master/examples/terraform/hetzner) directory.
 
 **Note:** KubeOne comes with Terraform integration that is capable of reading information about the infrastructure from Terraform output. If you decide not to use our Terraform scripts but want to use Terraform integration, make sure variable names in the output match variable names used by KubeOne. Alternatively, if you decide not to use Terraform, you can provide needed information about the infrastructure manually in the KubeOne configuration file.
 
 First, we need to switch to the directory with Terraform scripts:
 
 ```bash
-cd ./examples/terraform/digitalocean
+cd ./examples/terraform/hetzner
 ```
 
-Before we can use Terraform to create the infrastructure for us, Terraform needs to download the DigitalOcean plugin and setup it's environment. This is done by running the `init` command:
+Before we can use Terraform to create the infrastructure for us, Terraform needs to download the Hetzner plugin and setup it's environment. This is done by running the `init` command:
 
 ```bash
 terraform init
@@ -45,25 +45,18 @@ terraform init
 
 **Note:** You need to run this command only the first time before using scripts.
 
-You may want to configure the provisioning process by setting variables defining the cluster name, Droplets region, size and similar. The easiest way is to create the `terraform.tfvars` file and store variables there. This file is automatically read by Terraform.
+You may want to configure the provisioning process by setting variables defining the cluster name, control plane count and similar. The easiest way is to create the `terraform.tfvars` file and store variables there. This file is automatically read by Terraform.
 
 ```bash
 nano terraform.tfvars
 ```
 
-For the list of available settings along with their names, please see the [`variables.tf`](https://github.com/kubermatic/kubeone/blob/master/examples/terraform/digitalocean/variables.tf) file. You should consider setting:
-
-* `cluster_name` (required) - prefix for cloud resources
-* `region` (default: fra1)
-* `ssh_public_key_file` (default: `~/.ssh/id_rsa.pub`) - path to your SSH public key that's deployed on instances
-* `droplet_size` (default: s-2vcpu-4gb) - note that you should have at least 2 GB RAM and 2 CPUs for Kubernetes to work properly
+For the list of available settings along with their names, please see the [`variables.tf`](https://github.com/kubermatic/kubeone/blob/master/examples/terraform/hetzner/variables.tf) file. You should consider setting `cluster_name` which is a prefix for cloud resources and required.
 
 The `terraform.tfvars` file can look like:
 
 ```
 cluster_name = "demo"
-
-region = "fra1"
 ```
 
 Now that you configured Terraform, you can use the `plan` command to see what changes will be made:
@@ -92,33 +85,32 @@ Now that you have infrastructure you can proceed with installing Kubernetes usin
 
 Before you start, you'll need a configuration file that defines how Kubernetes will be installed, e.g. what version will be used and what features will be enabled. For the configuration file reference, see [`config.yaml.dist`](https://github.com/kubermatic/kubeone/blob/master/config.yaml.dist).
 
-To get started you can use the following configuration. It'll install Kubernetes 1.13.4 and create 2 worker nodes. KubeOne automatically populates information about region and size for worker nodes from the Terraform output. Alternatively, you can set those information manually. As KubeOne is using [Kubermatic `machine-controller`](https://github.com/kubermatic/machine-controller) for creating worker nodes, see [DigitalOcean example manifest](https://github.com/kubermatic/machine-controller/blob/master/examples/digitalocean-machinedeployment.yaml) for available options.
+To get started you can use the following configuration. It'll install Kubernetes 1.13.4 and create 2 worker nodes. As KubeOne is using [Kubermatic `machine-controller`](https://github.com/kubermatic/machine-controller) for creating worker nodes see [Hetzner example manifest](https://github.com/kubermatic/machine-controller/blob/master/examples/hetzner-machinedeployment.yaml) for available options.
+
+**Note:** The Terraform integration for populating information about worker nodes from the Terraform state is not available for Hetzner, so you have to provide all information explicitly.
 
 ```yaml
 name: demo
 versions:
   kubernetes: '1.13.4'
 provider:
-  name: 'digitalocean'
+  name: 'hetzner'
 workers:
-- name: fra1-1
+- name: workers-1
   replicas: 2
   config:
     labels:
-      mylabel: 'fra1-1'
+      mylabel: 'workers-1'
     cloudProviderSpec:
-      backups: false
-      ipv6: false
-      private_networking: true
-      monitoring: true
+      serverType: "cx21"
+      datacenter: ""
+      location: "fsn1"
     operatingSystem: 'ubuntu'
     operatingSystemSpec:
       distUpgradeOnBoot: true
 ```
 
-**Note:** It is recommended to enable private networking so cluster can function properly.
-
-Finally, we're going to install Kubernetes by using the `install` command and providing the configuration file and the Terraform output:
+Finally, we're going to install Kubernetes by using the `install` command and providing the configuration file:
 
 ```bash
 kubeone install config.yaml --tfjson tf.json
@@ -184,7 +176,7 @@ Before deleting a cluster you should clean up all MachineDeployments, so all wor
 kubeone reset config.yaml --tfjson tf.json
 ```
 
-This command will wait for all worker nodes to be gone. Once it's done, you can proceed and destroy the DigitalOcean infrastructure using Terraform:
+This command will wait for all worker nodes to be gone. Once it's done, you can proceed and destroy the Hetzner infrastructure using Terraform:
 
 ```bash
 terraform destroy
