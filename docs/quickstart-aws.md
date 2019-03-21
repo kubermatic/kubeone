@@ -54,7 +54,7 @@ You may want to configure the provisioning process by setting variables defining
 nano terraform.tfvars
 ```
 
-For the list of available settings along with their names, please see the [`variables.tf`](https://github.com/kubermatic/kubeone/blob/master/examples/terraform/aws/variables.tf) file. You should consider setting:
+For the list of available settings along with their names please see the [`variables.tf`](https://github.com/kubermatic/kubeone/blob/master/examples/terraform/aws/variables.tf) file. You should consider setting:
 
 * `cluster_name` (required) - prefix for cloud resources
 * `aws_region` (default: eu-west-3)
@@ -69,13 +69,13 @@ cluster_name = "demo"
 aws_region = "us-east-1"
 ```
 
-Now that you configured Terraform, you can use the `plan` command to see what changes will be made:
+Now that you configured Terraform you can use the `plan` command to see what changes will be made:
 
 ```bash
 terraform plan
 ```
 
-Finally, if you agree with changes, you can proceed and provision the infrastructure:
+Finally, if you agree with changes you can proceed and provision the infrastructure:
 
 ```bash
 terraform apply
@@ -93,9 +93,9 @@ terraform output -json > tf.json
 
 Now that you have infrastructure you can proceed with installing Kubernetes using KubeOne.
 
-Before you start, you'll need a configuration file that defines how Kubernetes will be installed, e.g. what version will be used and what features will be enabled. For the configuration file reference, see [`config.yaml.dist`](https://github.com/kubermatic/kubeone/blob/master/config.yaml.dist).
+Before you start you'll need a configuration file that defines how Kubernetes will be installed, e.g. what version will be used and what features will be enabled. For the configuration file reference see [`config.yaml.dist`](https://github.com/kubermatic/kubeone/blob/master/config.yaml.dist).
 
-To get started you can use the following configuration. It'll install Kubernetes 1.13.4 and create 2 worker nodes. KubeOne automatically populates information about VPC IDs and region from the Terraform output. Alternatively, you can set those information manually. As KubeOne is using [Kubermatic `machine-controller`](https://github.com/kubermatic/machine-controller) for creating worker nodes, see [AWS example manifest](https://github.com/kubermatic/machine-controller/blob/master/examples/aws-machinedeployment.yaml) for available options.
+To get started you can use the following configuration. It'll install Kubernetes 1.13.4 and create 2 worker nodes. KubeOne automatically populates information about VPC IDs and region for worker nodes from the Terraform output. Alternatively, you can set those information manually. As KubeOne is using [Kubermatic `machine-controller`](https://github.com/kubermatic/machine-controller) for creating worker nodes, see [AWS example manifest](https://github.com/kubermatic/machine-controller/blob/master/examples/aws-machinedeployment.yaml) for available options.
 
 ```yaml
 name: demo
@@ -184,7 +184,7 @@ Before deleting a cluster you should clean up all MachineDeployments, so all wor
 kubeone reset config.yaml --tfjson tf.json
 ```
 
-This command will wait for all worker nodes to be gone. Once it's done, you can proceed and destroy the AWS infrastructure using Terraform:
+This command will wait for all worker nodes to be gone. Once it's done you can proceed and destroy the AWS infrastructure using Terraform:
 
 ```bash
 terraform destroy
@@ -192,4 +192,4 @@ terraform destroy
 
 You'll be asked to enter `yes` to confirm your intention to destroy the cluster.
 
-Congratulations! You're now running Kubernetes 1.13.4 HA cluster with three control plane nodes and two worker nodes. If you want to learn more about KubeOne and its features, such as [upgrades](), make sure to check our [documentation](https://github.com/kubermatic/kubeone/tree/master/docs).
+Congratulations! You're now running Kubernetes 1.13.4 HA cluster with three control plane nodes and two worker nodes. If you want to learn more about KubeOne and its features, such as [upgrades](upgrading_cluster.md), make sure to check our [documentation](https://github.com/kubermatic/kubeone/tree/master/docs).
