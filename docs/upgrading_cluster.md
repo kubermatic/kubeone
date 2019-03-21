@@ -23,7 +23,7 @@ Once the upgrade process starts for a node, KubeOne applies the `kubeone.io/upgr
 
 It's recommended to backup your cluster before running the upgrade process. You can do it using [Velero](https://github.com/heptio/velero) or any other tool of your choice.
 
-Before running upgrade please ensure that your KubeOne version supports upgrading to the desired Kubernetes version. Check the [Kubernetes Versions Compatibility](https://github.com/kubermatic/kubeone#kubernetes-versions-compatibility) part of the KubeOne's README for more details on supported Kubernetes versions for each KubeOne release.
+Before running upgrade please ensure that your KubeOne version supports upgrading to the desired Kubernetes version. Check the [Kubernetes Versions Compatibility](https://github.com/kubermatic/kubeone#kubernetes-versions-compatibility) part of the KubeOne's README for more details on supported Kubernetes versions for each KubeOne release. You can what KubeOne version you're running using the `kubeone version` command.
 
 ## Running Upgrades
 
