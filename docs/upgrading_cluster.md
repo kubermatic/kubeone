@@ -75,6 +75,6 @@ time="11:20:19 UTC" level=info msg="Upgrade MachineDeployments…"
 
 **Note:** By default KubeOne does **not** update the MachineDeployment objects. If you want to update them run the `upgrade` command with the `--upgrade-machine-deployments` flag. This updates all MachineDeployment objects regardless of what's specified in the KubeOne configuration.
 
-If the upgrade process fails, it's recommended to continue manually and resolve errors. In this case the `kubeone.io/upgrade-in-progress` will prevent you from running KubeOne once again but you can ignore it using the `--force` flag.
+If the upgrade process fails, it's recommended to continue manually and resolve errors. In this case the `kubeone.io/upgrade-in-progress` label will prevent you from running KubeOne again but you can ignore it using the `--force` flag.
 
-Optionally, you can now manually upgrade other cluster components, such as `machine-controller` or Canal CNI plugin.
+Optionally, you can now manually upgrade other cluster components such as `machine-controller` or Canal CNI plugin.
