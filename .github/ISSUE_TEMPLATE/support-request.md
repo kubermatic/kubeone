@@ -1,6 +1,6 @@
 ---
 name: Support Request
-about: Use this template if you have questions about how to use KubeOne
+about: Use this template if you have questions about KubeOne
 labels: triage/support
 
 ---
