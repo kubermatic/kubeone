@@ -6,7 +6,7 @@ The cluster is upgraded using the `kubeone upgrade` command invoked with the Kub
 
 KubeOne takes care of upgrading `kubeadm` and `kubelet` binaries, running `kubeadm upgrade` on all control plane nodes, and optionally upgrading all MachineDeployments objects to the desired Kubernetes version. Upgrades are done in-place, i.e. KubeOne connects to nodes over SSH and runs commands needed to upgrade the node.
 
-**Note:** KubeOne currently doesn't take care of upgrading the Canal CNI plugin and `machine-controller`.
+**Note:** KubeOne currently doesn't take care of upgrading the Canal CNI plugin and `machine-controller` (see the [issue #236](https://github.com/kubermatic/kubeone/issues/236) for more details).
 
 ## Prerequisites
 
