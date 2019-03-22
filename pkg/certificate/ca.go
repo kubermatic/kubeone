@@ -26,11 +26,7 @@ import (
 
 // DownloadCA grabs CA certs/keys from leader host
 func DownloadCA(ctx *util.Context) error {
-	ctx.Logger.Infoln("Generating PKI…")
-
 	return ctx.RunTaskOnLeader(func(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
-		ctx.Logger.Infoln("Running kubeadm…")
-
 		_, _, err := ctx.Runner.Run(`
 mkdir -p ./{{ .WORK_DIR }}/pki/etcd
 sudo cp /etc/kubernetes/pki/ca.crt ./{{ .WORK_DIR }}/pki/

@@ -24,6 +24,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/util"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/util/retry"
 	clusterv1alpha1 "sigs.k8s.io/cluster-api/pkg/apis/cluster/v1alpha1"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -36,9 +37,11 @@ func upgradeMachineDeployments(ctx *util.Context) error {
 
 	ctx.Logger.Info("Upgrade MachineDeployments…")
 
+	bg := context.Background()
+
 	machineDeployments := clusterv1alpha1.MachineDeploymentList{}
 	err := ctx.DynamicClient.List(
-		context.Background(),
+		bg,
 		&dynclient.ListOptions{Namespace: metav1.NamespaceSystem},
 		&machineDeployments,
 	)
@@ -47,11 +50,23 @@ func upgradeMachineDeployments(ctx *util.Context) error {
 	}
 
 	for _, md := range machineDeployments.Items {
-		md := md
-		md.Spec.Template.Spec.Versions.Kubelet = ctx.Cluster.Versions.Kubernetes
-		err := ctx.DynamicClient.Update(context.Background(), &md)
-		if err != nil {
-			return errors.Wrap(err, "failed to upgrade MachineDeployment")
+		machineKey := dynclient.ObjectKey{Name: md.Name, Namespace: md.Namespace}
+
+		retErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
+			machine := clusterv1alpha1.MachineDeployment{}
+			if err := ctx.DynamicClient.Get(bg, machineKey, &machine); err != nil {
+				return err
+			}
+
+			machine.Spec.Template.Spec.Versions.Kubelet = ctx.Cluster.Versions.Kubernetes
+			if err := ctx.DynamicClient.Update(bg, &machine); err != nil {
+				return err
+			}
+			return nil
+		})
+
+		if retErr != nil {
+			return errors.Wrapf(retErr, "failed to update MachineDeployment %s", md.Name)
 		}
 	}
 
