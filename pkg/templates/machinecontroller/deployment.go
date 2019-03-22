@@ -161,7 +161,17 @@ func WaitForMachineController(client dynclient.Client) error {
 			return false, nil
 		}
 
-		return machineControllerPods.Items[0].Status.Phase == corev1.PodRunning, nil
+		mcpod := machineControllerPods.Items[0]
+
+		if mcpod.Status.Phase == corev1.PodRunning {
+			for _, podcond := range mcpod.Status.Conditions {
+				if podcond.Type == corev1.PodReady && podcond.Status == corev1.ConditionTrue {
+					return true, nil
+				}
+			}
+		}
+
+		return false, nil
 	})
 }
 

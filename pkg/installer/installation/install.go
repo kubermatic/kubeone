@@ -19,7 +19,9 @@ package installation
 import (
 	"github.com/pkg/errors"
 
+	"github.com/kubermatic/kubeone/pkg/certificate"
 	"github.com/kubermatic/kubeone/pkg/features"
+	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
 	"github.com/kubermatic/kubeone/pkg/util"
 )
 
@@ -33,7 +35,7 @@ func Install(ctx *util.Context) error {
 		{fn: installPrerequisites, errMsg: "failed to install prerequisites"},
 		{fn: generateKubeadm, errMsg: "failed to generate kubeadm config files"},
 		{fn: kubeadmCertsOnLeader, errMsg: "failed to provision certs and etcd on leader"},
-		{fn: downloadCA, errMsg: "unable to download ca from leader"},
+		{fn: certificate.DownloadCA, errMsg: "unable to download ca from leader"},
 		{fn: deployCA, errMsg: "unable to deploy ca on nodes"},
 		{fn: kubeadmCertsOnFollower, errMsg: "failed to provision certs and etcd on followers"},
 		{fn: initKubernetesLeader, errMsg: "failed to init kubernetes on leader"},
@@ -43,7 +45,8 @@ func Install(ctx *util.Context) error {
 		{fn: util.BuildKubernetesClientset, errMsg: "unable to build kubernetes clientset"},
 		{fn: features.Activate, errMsg: "unable to activate features"},
 		{fn: applyCanalCNI, errMsg: "failed to install cni plugin canal"},
-		{fn: installMachineController, errMsg: "failed to install machine-controller"},
+		{fn: machinecontroller.EnsureMachineController, errMsg: "failed to install machine-controller"},
+		{fn: machinecontroller.WaitReady, errMsg: "failed to wait for machine-controller"},
 		{fn: createWorkerMachines, errMsg: "failed to create worker machines"},
 	}
 

@@ -19,7 +19,9 @@ package upgrade
 import (
 	"github.com/pkg/errors"
 
+	"github.com/kubermatic/kubeone/pkg/certificate"
 	"github.com/kubermatic/kubeone/pkg/features"
+	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
 	"github.com/kubermatic/kubeone/pkg/util"
 )
 
@@ -43,6 +45,9 @@ func Upgrade(ctx *util.Context) error {
 		{fn: upgradeLeader, errMsg: "unable to upgrade leader control plane"},
 		{fn: upgradeFollower, errMsg: "unable to upgrade follower control plane"},
 		{fn: features.Activate, errMsg: "unable to activate features"},
+		{fn: certificate.DownloadCA, errMsg: "unable to download ca from leader"},
+		{fn: machinecontroller.EnsureMachineController, errMsg: "failed to update machine-controller"},
+		{fn: machinecontroller.WaitReady, errMsg: "failed to wait for machine-controller"},
 		{fn: upgradeMachineDeployments, errMsg: "unable to upgrade MachineDeployments"},
 	}
 

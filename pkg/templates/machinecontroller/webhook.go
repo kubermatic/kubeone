@@ -55,7 +55,6 @@ func DeployWebhookConfiguration(ctx *util.Context) error {
 	}
 
 	// Generate Webhook certificate
-	// caKeyPair, err := certificate.CAKeyPair(ctx.Configuration)
 	caPrivateKey, caCert, err := certificate.CAKeyPair(ctx.Configuration)
 	if err != nil {
 		return errors.Wrap(err, "failed to load CA keypair")
@@ -115,7 +114,17 @@ func WaitForWebhook(client dynclient.Client) error {
 			return false, nil
 		}
 
-		return webhookPods.Items[0].Status.Phase == corev1.PodRunning, nil
+		whpod := webhookPods.Items[0]
+
+		if whpod.Status.Phase == corev1.PodRunning {
+			for _, podcond := range whpod.Status.Conditions {
+				if podcond.Type == corev1.PodReady && podcond.Status == corev1.ConditionTrue {
+					return true, nil
+				}
+			}
+		}
+
+		return false, nil
 	})
 }
 
