@@ -47,7 +47,7 @@ output "kubeone_workers" {
       securityGroupIDs = ["${aws_security_group.common.id}"]
       vpcId            = "${local.vpc_id}"
       subnetId         = "${data.aws_subnet.az_a.id}"
-      instanceType     = "t2.medium"
+      instanceType     = "t3.medium"
       diskSize         = 50
       sshPublicKeys    = ["${aws_key_pair.deployer.public_key}"]
       replicas         = 1
@@ -62,7 +62,7 @@ output "kubeone_workers" {
       securityGroupIDs = ["${aws_security_group.common.id}"]
       vpcId            = "${local.vpc_id}"
       subnetId         = "${data.aws_subnet.az_b.id}"
-      instanceType     = "t2.medium"
+      instanceType     = "t3.medium"
       diskSize         = 50
       sshPublicKeys    = ["${aws_key_pair.deployer.public_key}"]
       replicas         = 1
@@ -77,7 +77,7 @@ output "kubeone_workers" {
       securityGroupIDs = ["${aws_security_group.common.id}"]
       vpcId            = "${local.vpc_id}"
       subnetId         = "${data.aws_subnet.az_c.id}"
-      instanceType     = "t2.medium"
+      instanceType     = "t3.medium"
       diskSize         = 50
       sshPublicKeys    = ["${aws_key_pair.deployer.public_key}"]
       replicas         = 1
