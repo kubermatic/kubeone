@@ -1,3 +1,19 @@
+/*
+Copyright 2019 The KubeOne Authors.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 provider "google" {
   credentials = "${file("~/credentials.json")}"
   region      = "${var.region}"
@@ -5,7 +21,7 @@ provider "google" {
 }
 
 locals {
-  zones_count   = "${length(data.google_compute_zones.available.names)}"
+  zones_count = "${length(data.google_compute_zones.available.names)}"
 }
 
 data "google_compute_zones" "available" {}
@@ -31,8 +47,8 @@ resource "google_compute_firewall" "common" {
   network = "${google_compute_network.network.self_link}"
 
   allow {
-    protocol  = "tcp"
-    ports     = ["${var.ssh_port}"]    
+    protocol = "tcp"
+    ports    = ["${var.ssh_port}"]
   }
 
   source_ranges = [
@@ -59,15 +75,15 @@ resource "google_compute_firewall" "internal" {
   network = "${google_compute_network.network.self_link}"
 
   allow {
-    protocol  = "tcp"
-    ports     = ["0-65535"]
+    protocol = "tcp"
+    ports    = ["0-65535"]
   }
   allow {
-    protocol  = "udp"
-    ports     = ["0-65535"]
+    protocol = "udp"
+    ports    = ["0-65535"]
   }
   allow {
-    protocol  = "icmp"   
+    protocol = "icmp"
   }
 
   source_ranges = [
@@ -79,32 +95,30 @@ resource "google_compute_address" "lb_ip" {
   name = "${var.cluster_name}-lb-ip"
 }
 
-resource "google_compute_health_check" "control_plane" {
+resource "google_compute_http_health_check" "control_plane" {
   name = "${var.cluster_name}-control-plane-health"
 
-  timeout_sec         = 5
-  check_interval_sec  = 3
+  port         = 10256
+  request_path = "/healthz"
 
-  https_health_check {
-    port          = "6443"
-    request_path  = "/healthz"
-  }
+  timeout_sec        = 3
+  check_interval_sec = 5
 }
 
 resource "google_compute_target_pool" "control_plane_pool" {
-  name  = "${var.cluster_name}-pool"
-    
-  #instances = [
-  # TODO: expand this with all instances  
-  #]
+  name = "${var.cluster_name}-control-plane"
+
+  instances = [
+    "${google_compute_instance.control_plane.*.self_link}"
+  ]
 
   health_checks = [
-    "${google_compute_health_check.control_plane.self_link}"
+    "${google_compute_http_health_check.control_plane.self_link}"
   ]
 }
 
 resource "google_compute_forwarding_rule" "control_plane" {
-  name       = "${var.cluster_name}-forwarding"
+  name       = "${var.cluster_name}-apiserver"
   target     = "${google_compute_target_pool.control_plane_pool.self_link}"
   port_range = "6443"
   ip_address = "${google_compute_address.lb_ip.self_link}"
@@ -113,22 +127,24 @@ resource "google_compute_forwarding_rule" "control_plane" {
 resource "google_compute_instance" "control_plane" {
   count = "${var.control_plane_count}"
 
-  name          = "${var.cluster_name}-control-plane-${count.index+1}"
-  machine_type  = "${var.control_plane_type}"
-  zone          = "${data.google_compute_zones.available.names[count.index % local.zones_count]}"
-  
+  name         = "${var.cluster_name}-control-plane-${count.index+1}"
+  machine_type = "${var.control_plane_type}"
+  zone         = "${data.google_compute_zones.available.names[count.index % local.zones_count]}"
+
   boot_disk {
     initialize_params {
       size  = "${var.control_plane_volume_size}"
-      image = "${data.google_compute_image.control_plane_image.self_link}"      
+      image = "${data.google_compute_image.control_plane_image.self_link}"
     }
   }
 
   network_interface {
-    network = "${google_compute_network.network.self_link}"
-  }  
+    subnetwork = "${google_compute_subnetwork.subnet.self_link}"
+  }
 
-  tags = ["kubernetes.io/cluster/${var.cluster_name}: shared"]
+  metadata = {
+    sshKeys = "${var.ssh_username}:${file(var.ssh_public_key_file)}"
+  }
 
   service_account {
     scopes = ["compute-rw", "storage-ro"]
