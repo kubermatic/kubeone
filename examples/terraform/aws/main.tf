@@ -124,7 +124,7 @@ resource "aws_security_group" "control_plane" {
 }
 
 resource "aws_iam_role" "role" {
-  name = "${var.cluster_name}_host"
+  name = "${var.cluster_name}-host"
 
   assume_role_policy = <<EOF
 {
@@ -149,7 +149,7 @@ resource "aws_iam_instance_profile" "profile" {
 }
 
 resource "aws_iam_role_policy" "policy" {
-  name = "${var.cluster_name}_host"
+  name = "${var.cluster_name}-host"
   role = "${aws_iam_role.role.id}"
 
   policy = <<EOF
