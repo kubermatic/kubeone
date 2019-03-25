@@ -23,6 +23,11 @@ variable "aws_region" {
   description = "AWS region to speak to"
 }
 
+variable "vpc_id" {
+  default     = "default"
+  description = "VPC to use ('default' for default VPC)"
+}
+
 variable "ssh_public_key_file" {
   default     = "~/.ssh/id_rsa.pub"
   description = "SSH public key file"

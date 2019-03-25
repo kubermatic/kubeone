@@ -24,6 +24,7 @@ locals {
   az_b             = "${var.aws_region}b"
   az_c             = "${var.aws_region}c"
   kube_cluster_tag = "kubernetes.io/cluster/${var.cluster_name}"
+  vpc_id           = "${var.vpc_id == "default" ? aws_default_vpc.default.id : var.vpc_id}"
 }
 
 data "aws_availability_zones" "available" {}
@@ -45,25 +46,26 @@ data "aws_ami" "ubuntu" {
 }
 
 data "aws_subnet_ids" "default" {
-  vpc_id = "${aws_default_vpc.default.id}"
+  vpc_id = "${local.vpc_id}"
 }
 
 data "aws_subnet" "az_a" {
   availability_zone = "${local.az_a}"
-  vpc_id            = "${aws_default_vpc.default.id}"
-  default_for_az    = true
+  vpc_id            = "${local.vpc_id}"
 }
 
 data "aws_subnet" "az_b" {
   availability_zone = "${local.az_b}"
-  vpc_id            = "${aws_default_vpc.default.id}"
-  default_for_az    = true
+  vpc_id            = "${local.vpc_id}"
 }
 
 data "aws_subnet" "az_c" {
   availability_zone = "${local.az_c}"
-  vpc_id            = "${aws_default_vpc.default.id}"
-  default_for_az    = true
+  vpc_id            = "${local.vpc_id}"
+}
+
+locals {
+  all_subnets = ["${data.aws_subnet.az_a.id}", "${data.aws_subnet.az_b.id}", "${data.aws_subnet.az_c.id}"]
 }
 
 resource "aws_default_vpc" "default" {}
@@ -76,7 +78,7 @@ resource "aws_key_pair" "deployer" {
 resource "aws_security_group" "common" {
   name        = "${var.cluster_name}-common"
   description = "cluster common rules"
-  vpc_id      = "${aws_default_vpc.default.id}"
+  vpc_id      = "${local.vpc_id}"
 
   tags = "${map(
     "${local.kube_cluster_tag}", "shared",
@@ -107,7 +109,7 @@ resource "aws_security_group" "common" {
 resource "aws_security_group" "control_plane" {
   name        = "${var.cluster_name}-control_planes"
   description = "cluster control_planes"
-  vpc_id      = "${aws_default_vpc.default.id}"
+  vpc_id      = "${local.vpc_id}"
 
   tags = "${map(
     "${local.kube_cluster_tag}", "shared",
@@ -173,7 +175,7 @@ resource "aws_lb" "control_plane" {
   name               = "${var.cluster_name}-api-lb"
   internal           = false
   load_balancer_type = "network"
-  subnets            = ["${data.aws_subnet_ids.default.ids}"]
+  subnets            = ["${local.all_subnets}"]
 
   tags = "${map(
     "Cluster", "${var.cluster_name}",
@@ -185,7 +187,7 @@ resource "aws_lb_target_group" "control_plane_api" {
   name     = "${var.cluster_name}-api"
   port     = 6443
   protocol = "TCP"
-  vpc_id   = "${aws_default_vpc.default.id}"
+  vpc_id   = "${local.vpc_id}"
 }
 
 resource "aws_lb_listener" "control_plane_api" {
@@ -220,6 +222,7 @@ resource "aws_instance" "control_plane" {
   key_name               = "${aws_key_pair.deployer.key_name}"
   vpc_security_group_ids = ["${aws_security_group.common.id}", "${aws_security_group.control_plane.id}"]
   availability_zone      = "${data.aws_availability_zones.available.names[count.index % local.az_count]}"
+  subnet_id              = "${local.all_subnets[count.index % local.az_count]}"
 
   ebs_optimized = true
 

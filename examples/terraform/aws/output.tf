@@ -45,7 +45,7 @@ output "kubeone_workers" {
       availabilityZone = "${local.az_a}"
       instanceProfile  = "${aws_iam_instance_profile.profile.name}"
       securityGroupIDs = ["${aws_security_group.common.id}"]
-      vpcId            = "${aws_default_vpc.default.id}"
+      vpcId            = "${local.vpc_id}"
       subnetId         = "${data.aws_subnet.az_a.id}"
       instanceType     = "t2.medium"
       diskSize         = 50
@@ -60,7 +60,7 @@ output "kubeone_workers" {
       availabilityZone = "${local.az_b}"
       instanceProfile  = "${aws_iam_instance_profile.profile.name}"
       securityGroupIDs = ["${aws_security_group.common.id}"]
-      vpcId            = "${aws_default_vpc.default.id}"
+      vpcId            = "${local.vpc_id}"
       subnetId         = "${data.aws_subnet.az_b.id}"
       instanceType     = "t2.medium"
       diskSize         = 50
@@ -75,7 +75,7 @@ output "kubeone_workers" {
       availabilityZone = "${local.az_c}"
       instanceProfile  = "${aws_iam_instance_profile.profile.name}"
       securityGroupIDs = ["${aws_security_group.common.id}"]
-      vpcId            = "${aws_default_vpc.default.id}"
+      vpcId            = "${local.vpc_id}"
       subnetId         = "${data.aws_subnet.az_c.id}"
       instanceType     = "t2.medium"
       diskSize         = 50
