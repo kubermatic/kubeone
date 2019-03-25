@@ -124,7 +124,7 @@ features:
 #      # subnetId: 'subnet-2bff4f43',
 #      # vpcId: 'vpc-819f62e9'
 #      ### end of terraform inferred kubeone params
-#      instanceType: 't2.medium'
+#      instanceType: 't3.medium'
 #      diskSize: 50
 #      diskType: 'gp2'
 #    operatingSystem: 'ubuntu'
@@ -136,7 +136,7 @@ features:
 #    labels:
 #      mylabel: 'fra1-b'
 #    cloudProviderSpec:
-#      instanceType: 't2.medium'
+#      instanceType: 't3.medium'
 #      diskSize: 50
 #      diskType: 'gp2'
 #    operatingSystem: 'ubuntu'
@@ -148,7 +148,7 @@ features:
 #    labels:
 #      mylabel: 'fra1-c'
 #    cloudProviderSpec:
-#      instanceType: 't2.medium'
+#      instanceType: 't3.medium'
 #      diskSize: 50
 #      diskType: 'gp2'
 #    operatingSystem: 'ubuntu'
