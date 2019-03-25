@@ -15,9 +15,8 @@ limitations under the License.
 */
 
 provider "google" {
-  credentials = "${file("~/credentials.json")}"
-  region      = "${var.region}"
-  project     = "${var.project}"
+  region  = "${var.region}"
+  project = "${var.project}"
 }
 
 locals {
@@ -52,7 +51,7 @@ resource "google_compute_firewall" "common" {
   }
 
   source_ranges = [
-    "0.0.0.0/0"
+    "0.0.0.0/0",
   ]
 }
 
@@ -66,7 +65,7 @@ resource "google_compute_firewall" "control_plane" {
   }
 
   source_ranges = [
-    "0.0.0.0/0"
+    "0.0.0.0/0",
   ]
 }
 
@@ -78,16 +77,18 @@ resource "google_compute_firewall" "internal" {
     protocol = "tcp"
     ports    = ["0-65535"]
   }
+
   allow {
     protocol = "udp"
     ports    = ["0-65535"]
   }
+
   allow {
     protocol = "icmp"
   }
 
   source_ranges = [
-    "${var.cluster_network_cidr}"
+    "${var.cluster_network_cidr}",
   ]
 }
 
@@ -109,11 +110,11 @@ resource "google_compute_target_pool" "control_plane_pool" {
   name = "${var.cluster_name}-control-plane"
 
   instances = [
-    "${google_compute_instance.control_plane.*.self_link}"
+    "${google_compute_instance.control_plane.*.self_link}",
   ]
 
   health_checks = [
-    "${google_compute_http_health_check.control_plane.self_link}"
+    "${google_compute_http_health_check.control_plane.self_link}",
   ]
 }
 
