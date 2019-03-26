@@ -33,8 +33,8 @@ However, running of the master branch introduces potential risks as the project 
 
 Alternatively, you can obtain KubeOne via [GitHub Releases](https://github.com/kubermatic/kubeone/releases):
 ```bash
-curl -LO https://github.com/kubermatic/kubeone/releases/download/v0.4.0/kubeone_0.4.0_linux_amd64.zip
-unzip kubeone_0.4.0_linux_amd64.zip
+curl -LO https://github.com/kubermatic/kubeone/releases/download/v0.4.1/kubeone_0.4.1_linux_amd64.zip
+unzip kubeone_0.4.1_linux_amd64.zip
 sudo mv kubeone /usr/local/bin
 ```
 
@@ -53,8 +53,9 @@ In the following table you can find what are supported Kubernetes versions for e
 
 | KubeOne version | 1.14 | 1.13 | 1.12 |
 |-----------------|------|------|------|
-| v0.4.0 | - | + | - |
-| v0.3.0 | - | + | - |
+| v0.4.1 | - | + | - |
+| <s>v0.4.0<s> | - | + | - |
+| <s>v0.3.0<s> | - | + | - |
 | <s>v0.2.0</s> | - | + | - |
 | <s>v0.1.0-beta0</s> | - | + | +
 
