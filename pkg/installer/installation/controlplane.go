@@ -34,8 +34,7 @@ func joinControlPlaneNodeInternal(ctx *util.Context, node *config.HostConfig, co
 if [[ -f /etc/kubernetes/kubelet.conf ]]; then exit 0; fi
 
 sudo kubeadm join \
-	--config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml \
-	--experimental-control-plane
+	--config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
 `, util.TemplateVariables{
 		"WORK_DIR": ctx.WorkDir,
 		"NODE_ID":  strconv.Itoa(node.ID),
