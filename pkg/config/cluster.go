@@ -235,6 +235,22 @@ func (m *VersionConfig) Validate() error {
 	return nil
 }
 
+// KubernetesCNIVersion returns kubernetes-cni package version
+func (m *VersionConfig) KubernetesCNIVersion() string {
+	s := semver.MustParse(m.Kubernetes)
+	c, _ := semver.NewConstraint(">= 1.13.0, <= 1.13.4")
+
+	switch {
+	// Validation ensures that the oldest cluster version is 1.13.0.
+	// Versions 1.13.0-1.13.4 uses 0.6.0, so it's safe to return 0.6.0
+	// if >= 1.13.0, <= 1.13.4 constraint check successes.
+	case c.Check(s):
+		return "0.6.0"
+	default:
+		return "0.7.5"
+	}
+}
+
 // NetworkConfig describes the node network.
 type NetworkConfig struct {
 	PodSubnetVal     string `json:"pod_subnet"`
