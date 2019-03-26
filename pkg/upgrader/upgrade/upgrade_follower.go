@@ -35,22 +35,16 @@ func upgradeFollowerExecutor(ctx *util.Context, node *config.HostConfig, conn ss
 		return errors.Wrap(err, "failed to label leader control plane node")
 	}
 
-	ctx.Logger.Infoln("Upgrading kubeadm on follower control plane…")
-	err = upgradeKubeadm(ctx, node)
+	ctx.Logger.Infoln("Upgrading Kubernetes binaries on follower control plane…")
+	err = upgradeKubernetesBinaries(ctx, node)
 	if err != nil {
-		return errors.Wrap(err, "failed to upgrade kubeadm on follower control plane")
+		return errors.Wrap(err, "failed to upgrade kubernetes binaries on follower control plane")
 	}
 
 	ctx.Logger.Infoln("Running 'kubeadm upgrade' on the follower control plane node…")
 	err = upgradeFollowerControlPlane(ctx)
 	if err != nil {
 		return errors.Wrap(err, "failed to upgrade follower control plane")
-	}
-
-	ctx.Logger.Infoln("Upgrading kubelet…")
-	err = upgradeKubelet(ctx, node)
-	if err != nil {
-		return errors.Wrap(err, "failed to upgrade kubelet")
 	}
 
 	ctx.Logger.Infoln("Unlabeling follower control plane…")
