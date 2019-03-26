@@ -17,6 +17,8 @@ limitations under the License.
 package installation
 
 import (
+	"fmt"
+
 	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/config"
@@ -146,6 +148,7 @@ func installKubeadmDebian(ctx *util.Context) error {
 	_, _, err := ctx.Runner.Run(kubeadmDebianCommand, util.TemplateVariables{
 		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
 		"DOCKER_VERSION":     dockerVersion,
+		"CNI_VERSION":        ctx.Cluster.Versions.KubernetesCNIVersion(),
 	})
 
 	return errors.WithStack(err)
@@ -190,14 +193,16 @@ sudo apt-get update
 
 docker_ver=$(apt-cache madison docker-ce | grep "{{ .DOCKER_VERSION }}" | head -1 | awk '{print $3}')
 kube_ver=$(apt-cache madison kubelet | grep "{{ .KUBERNETES_VERSION }}" | head -1 | awk '{print $3}')
+cni_ver=$(apt-cache madison kubernetes-cni | grep "{{ .CNI_VERSION }}" | head -1 | awk '{print $3}')
 
-sudo apt-mark unhold docker-ce kubelet kubeadm kubectl
+sudo apt-mark unhold docker-ce kubelet kubeadm kubectl kubernetes-cni
 sudo apt-get install -y --no-install-recommends \
      docker-ce=${docker_ver} \
      kubeadm=${kube_ver} \
      kubectl=${kube_ver} \
-     kubelet=${kube_ver}
-sudo apt-mark hold docker-ce kubelet kubeadm kubectl
+     kubelet=${kube_ver} \
+     kubernetes-cni=${cni_ver}
+sudo apt-mark hold docker-ce kubelet kubeadm kubectl kubernetes-cni
 `
 
 const kubeadmCentOSCommand = `
@@ -231,13 +236,15 @@ EOF
 sudo yum install -y --disableexcludes=kubernetes \
 			docker kubelet-{{ .KUBERNETES_VERSION }}-0\
 			kubeadm-{{ .KUBERNETES_VERSION }}-0 \
-			kubectl-{{ .KUBERNETES_VERSION }}-0
+			kubectl-{{ .KUBERNETES_VERSION }}-0 \
+			kubernetes-cni-{{ .CNI_VERSION }}-0
 sudo systemctl enable --now docker
 `
 
 func installKubeadmCentOS(ctx *util.Context) error {
 	_, _, err := ctx.Runner.Run(kubeadmCentOSCommand, util.TemplateVariables{
 		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
+		"CNI_VERSION":        ctx.Cluster.Versions.KubernetesCNIVersion(),
 	})
 	return err
 }
@@ -245,7 +252,7 @@ func installKubeadmCentOS(ctx *util.Context) error {
 func installKubeadmCoreOS(ctx *util.Context) error {
 	_, _, err := ctx.Runner.Run(kubeadmCoreOSCommand, util.TemplateVariables{
 		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
-		"CNI_VERSION":        "v0.7.1",
+		"CNI_VERSION":        fmt.Sprintf("v%s", ctx.Cluster.Versions.KubernetesCNIVersion()),
 	})
 
 	return err
