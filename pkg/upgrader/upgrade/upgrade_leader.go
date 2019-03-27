@@ -17,6 +17,8 @@ limitations under the License.
 package upgrade
 
 import (
+	"time"
+
 	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/config"
@@ -60,6 +62,9 @@ func upgradeLeaderExecutor(ctx *util.Context, node *config.HostConfig, conn ssh.
 	if err := unlabelNode(ctx.DynamicClient, node); err != nil {
 		return errors.Wrap(err, "failed to unlabel leader control plane node")
 	}
+
+	logger.Infoln("Waiting 10 seconds to ensure all components are up…")
+	time.Sleep(10 * time.Second)
 
 	return nil
 }
