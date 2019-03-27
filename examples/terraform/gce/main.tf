@@ -141,6 +141,10 @@ resource "google_compute_instance" "control_plane" {
 
   network_interface {
     subnetwork = "${google_compute_subnetwork.subnet.self_link}"
+
+    access_config = {
+      nat_ip = ""
+    }
   }
 
   metadata = {

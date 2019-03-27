@@ -71,3 +71,8 @@ variable "ssh_username" {
   default     = "kubeadmin"
   description = "Username to provision with the ssh_public_key_file"
 }
+
+variable "ssh_agent_socket" {
+  description = "SSH Agent socket, default to grab from $SSH_AUTH_SOCK"
+  default     = "env:SSH_AUTH_SOCK"
+}
