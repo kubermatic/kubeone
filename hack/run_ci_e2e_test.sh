@@ -23,6 +23,7 @@ RUNNING_IN_CI=${JOB_NAME:-""}
 BUILD_ID=${BUILD_ID:-"${USER}-local"}
 PROVIDER=${PROVIDER:-"aws"}
 TEST_SET=${TEST_SET:-"conformance"}
+TEST_CLUSTER_TARGET_VERSION=${TEST_CLUSTER_VERSION:-"v1.14.0"}
 export TF_VAR_cluster_name=$BUILD_ID
 
 # Install dependencies
@@ -127,8 +128,8 @@ make install
 # Start the tests
 echo "Running E2E tests ..."
 if [[ $TEST_SET == "conformance" ]]; then
-  go test -race -tags=e2e -v -timeout 30m -run TestClusterConformance ./test/e2e/... -identifier=$BUILD_ID -provider=$PROVIDER
+  go test -race -tags=e2e -v -timeout 30m -run TestClusterConformance ./test/e2e/... -identifier=$BUILD_ID -provider=$PROVIDER -cluster-version=$TEST_CLUSTER_TARGET_VERSION
 fi
 if [[ $TEST_SET == "upgrades" ]]; then
-  go test -race -tags=e2e -v -timeout 30m -run TestClusterUpgrade ./test/e2e/... -identifier=$BUILD_ID -provider=$PROVIDER
+  go test -race -tags=e2e -v -timeout 30m -run TestClusterUpgrade ./test/e2e/... -identifier=$BUILD_ID -provider=$PROVIDER -cluster-version=$TEST_CLUSTER_TARGET_VERSION
 fi
