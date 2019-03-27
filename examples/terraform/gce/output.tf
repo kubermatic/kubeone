@@ -15,12 +15,16 @@ limitations under the License.
 */
 
 output "kubeone_api" {
+  description = "kubernetes API loadbalancer"
+
   value = {
     endpoint = "${google_compute_address.lb_ip.address}"
   }
 }
 
 output "kubeone_hosts" {
+  description = "control plain nodes"
+
   value = {
     control_plane = {
       cluster_name     = "${var.cluster_name}"
@@ -35,13 +39,21 @@ output "kubeone_hosts" {
 }
 
 output "kubeone_workers" {
+  description = "workers definitions translated into MachineDeployment ClusterAPI objects"
+
   value = {
     # following outputs will be parsed by kubeone and automatically merged into
     # corresponding (by name) worker definition
     workers1 = {
-      replicas      = 2
-      region        = "${var.region}"
-      sshPublicKeys = ["${file("${var.ssh_public_key_file}")}"]
+      replicas        = 1
+      operatingSystem = "ubuntu"
+      sshPublicKeys   = ["${file("${var.ssh_public_key_file}")}"]
+      diskSize        = "${var.workers_volume_size}"
+      diskType        = "pd-ssd"
+      machineType     = "${var.workers_type}"
+      network         = "${google_compute_network.network.self_link}"
+      subnetwork      = "${google_compute_subnetwork.subnet.self_link}"
+      zone            = "${var.region}a"                                // hardcoded
     }
   }
 }

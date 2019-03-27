@@ -178,6 +178,7 @@ const (
 	ProviderNameHetzner      ProviderName = "hetzner"
 	ProviderNameDigitalOcean ProviderName = "digitalocean"
 	ProviderNameVSphere      ProviderName = "vshere"
+	ProviderNameGCE          ProviderName = "gce"
 	ProviderNameNone         ProviderName = "none"
 )
 
@@ -199,6 +200,7 @@ func (p *ProviderConfig) Validate() error {
 	case ProviderNameHetzner:
 	case ProviderNameDigitalOcean:
 	case ProviderNameVSphere:
+	case ProviderNameGCE:
 	case ProviderNameNone:
 	default:
 		return errors.Errorf("unknown provider name %q", p.Name)
@@ -211,7 +213,7 @@ func (p *ProviderConfig) Validate() error {
 // List of in-tree provider can be found here: https://github.com/kubernetes/kubernetes/tree/master/pkg/cloudprovider
 func (p *ProviderConfig) CloudProviderInTree() bool {
 	switch p.Name {
-	case ProviderNameAWS, ProviderNameOpenStack, ProviderNameVSphere:
+	case ProviderNameAWS, ProviderNameGCE, ProviderNameOpenStack, ProviderNameVSphere:
 		return true
 	default:
 		return false
@@ -429,6 +431,10 @@ func (p ProviderName) ProviderCredentials() (map[string]string, error) {
 	case ProviderNameDigitalOcean:
 		return parseCredentialVariables([]ProviderEnvironmentVariable{
 			{Name: "DIGITALOCEAN_TOKEN", MachineControllerName: "DO_TOKEN"},
+		})
+	case ProviderNameGCE:
+		return parseCredentialVariables([]ProviderEnvironmentVariable{
+			{Name: "GOOGLE_CREDENTIALS", MachineControllerName: "GOOGLE_SERVICE_ACCOUNT"},
 		})
 	case ProviderNameVSphere:
 		return parseCredentialVariables([]ProviderEnvironmentVariable{

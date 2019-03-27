@@ -38,6 +38,7 @@ resource "google_compute_network" "network" {
 resource "google_compute_subnetwork" "subnet" {
   name          = "${var.cluster_name}-subnet"
   network       = "${google_compute_network.network.self_link}"
+  region        = "${var.region}"
   ip_cidr_range = "${var.cluster_network_cidr}"
 }
 

@@ -52,6 +52,17 @@ variable "control_plane_image_project" {
   description = "Project of the image to use for provisioning instances"
 }
 
+variable "workers_type" {
+  default     = "n1-standard-1"
+  description = "GCE instance type"
+}
+
+variable "workers_volume_size" {
+  default     = 100
+  description = "Size of the boot volume, in GB"
+}
+
+
 variable "cluster_network_cidr" {
   default     = "10.240.0.0/24"
   description = "Cluster network subnet cidr"

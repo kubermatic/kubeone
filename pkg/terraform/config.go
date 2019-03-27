@@ -91,6 +91,15 @@ type openStackWorkerConfig struct {
 	Subnet           string   `json:"subnet"`
 }
 
+type gceWorkerConfig struct {
+	DiskSize    int    `json:"diskSize"`
+	DiskType    string `json:"diskType"`
+	MachineType string `json:"machineType"`
+	Network     string `json:"network"`
+	Subnetwork  string `json:"subnetwork"`
+	Zone        string `json:"zone"`
+}
+
 // Config represents configuration in the terraform output format
 type Config struct {
 	KubeOneAPI struct {
@@ -108,6 +117,11 @@ type Config struct {
 	KubeOneWorkers struct {
 		Value map[string][]json.RawMessage `json:"value"`
 	} `json:"kubeone_workers"`
+}
+
+type cloudProviderFlags struct {
+	key   string
+	value interface{}
 }
 
 // NewConfigFromJSON creates a new config object from json
@@ -192,6 +206,8 @@ func (c *Config) Apply(cluster *config.Cluster) error {
 		switch cluster.Provider.Name {
 		case config.ProviderNameAWS:
 			err = c.updateAWSWorkerset(existingWorkerSet, workersetValue[0])
+		case config.ProviderNameGCE:
+			err = c.updateGCEWorkerset(existingWorkerSet, workersetValue[0])
 		case config.ProviderNameDigitalOcean:
 			err = c.updateDigitalOceanWorkerset(existingWorkerSet, workersetValue[0])
 		case config.ProviderNameHetzner:
@@ -223,30 +239,19 @@ func (c *Config) updateAWSWorkerset(workerset *config.WorkerConfig, cfg json.Raw
 		return errors.WithStack(err)
 	}
 
-	if err := setWorkersetFlag(workerset, "ami", awsCloudConfig.AMI); err != nil {
-		return errors.WithStack(err)
-	}
-	if err := setWorkersetFlag(workerset, "availabilityZone", awsCloudConfig.AvailabilityZone); err != nil {
-		return errors.WithStack(err)
-	}
-	if err := setWorkersetFlag(workerset, "instanceProfile", awsCloudConfig.InstanceProfile); err != nil {
-		return errors.WithStack(err)
-	}
-	if err := setWorkersetFlag(workerset, "region", awsCloudConfig.Region); err != nil {
-		return errors.WithStack(err)
-	}
-	if err := setWorkersetFlag(workerset, "securityGroupIDs", awsCloudConfig.SecurityGroupIDs); err != nil {
-		return errors.WithStack(err)
-	}
-	if err := setWorkersetFlag(workerset, "subnetId", awsCloudConfig.SubnetID); err != nil {
-		return errors.WithStack(err)
-	}
-	if err := setWorkersetFlag(workerset, "vpcId", awsCloudConfig.VPCID); err != nil {
-		return errors.WithStack(err)
+	flags := []cloudProviderFlags{
+		{key: "ami", value: awsCloudConfig.AMI},
+		{key: "availabilityZone", value: awsCloudConfig.AvailabilityZone},
+		{key: "instanceProfile", value: awsCloudConfig.InstanceProfile},
+		{key: "region", value: awsCloudConfig.Region},
+		{key: "securityGroupIDs", value: awsCloudConfig.SecurityGroupIDs},
+		{key: "subnetId", value: awsCloudConfig.SubnetID},
+		{key: "vpcId", value: awsCloudConfig.VPCID},
+		{key: "instanceType", value: awsCloudConfig.InstanceType},
 	}
 
-	if awsCloudConfig.InstanceType != nil {
-		if err := setWorkersetFlag(workerset, "instanceType", *awsCloudConfig.InstanceType); err != nil {
+	for _, flag := range flags {
+		if err := setWorkersetFlag(workerset, flag.key, flag.value); err != nil {
 			return errors.WithStack(err)
 		}
 	}
@@ -270,6 +275,30 @@ func (c *Config) updateAWSWorkerset(workerset *config.WorkerConfig, cfg json.Raw
 	return nil
 }
 
+func (c *Config) updateGCEWorkerset(workerset *config.WorkerConfig, cfg json.RawMessage) error {
+	var gceCloudConfig gceWorkerConfig
+	if err := json.Unmarshal(cfg, &gceCloudConfig); err != nil {
+		return errors.WithStack(err)
+	}
+
+	flags := []cloudProviderFlags{
+		{key: "diskSize", value: gceCloudConfig.DiskSize},
+		{key: "diskType", value: gceCloudConfig.DiskType},
+		{key: "machineType", value: gceCloudConfig.MachineType},
+		{key: "network", value: gceCloudConfig.Network},
+		{key: "subnetwork", value: gceCloudConfig.Subnetwork},
+		{key: "zone", value: gceCloudConfig.Zone},
+	}
+
+	for _, flag := range flags {
+		if err := setWorkersetFlag(workerset, flag.key, flag.value); err != nil {
+			return errors.WithStack(err)
+		}
+	}
+
+	return nil
+}
+
 func (c *Config) updateDigitalOceanWorkerset(workerset *config.WorkerConfig, cfg json.RawMessage) error {
 	var doCloudConfig doWorkerConfig
 	if err := json.Unmarshal(cfg, &doCloudConfig); err != nil {
@@ -279,6 +308,7 @@ func (c *Config) updateDigitalOceanWorkerset(workerset *config.WorkerConfig, cfg
 	if err := setWorkersetFlag(workerset, "size", doCloudConfig.DropletSize); err != nil {
 		return errors.WithStack(err)
 	}
+
 	if err := setWorkersetFlag(workerset, "region", doCloudConfig.Region); err != nil {
 		return errors.WithStack(err)
 	}
@@ -296,26 +326,20 @@ func (c *Config) updateOpenStackWorkerset(workerset *config.WorkerConfig, cfg js
 		return err
 	}
 
-	if err := setWorkersetFlag(workerset, "floatingIPPool", openstackConfig.FloatingIPPool); err != nil {
-		return err
+	flags := []cloudProviderFlags{
+		{key: "floatingIPPool", value: openstackConfig.FloatingIPPool},
+		{key: "image", value: openstackConfig.Image},
+		{key: "flavor", value: openstackConfig.Flavor},
+		{key: "securityGroups", value: openstackConfig.SecurityGroups},
+		{key: "availabilityZone", value: openstackConfig.AvailabilityZone},
+		{key: "network", value: openstackConfig.Network},
+		{key: "subnet", value: openstackConfig.Subnet},
 	}
-	if err := setWorkersetFlag(workerset, "image", openstackConfig.Image); err != nil {
-		return err
-	}
-	if err := setWorkersetFlag(workerset, "flavor", openstackConfig.Flavor); err != nil {
-		return err
-	}
-	if err := setWorkersetFlag(workerset, "securityGroups", openstackConfig.SecurityGroups); err != nil {
-		return err
-	}
-	if err := setWorkersetFlag(workerset, "availabilityZone", openstackConfig.AvailabilityZone); err != nil {
-		return err
-	}
-	if err := setWorkersetFlag(workerset, "network", openstackConfig.Network); err != nil {
-		return err
-	}
-	if err := setWorkersetFlag(workerset, "subnet", openstackConfig.Subnet); err != nil {
-		return err
+
+	for _, flag := range flags {
+		if err := setWorkersetFlag(workerset, flag.key, flag.value); err != nil {
+			return errors.WithStack(err)
+		}
 	}
 
 	return nil
@@ -334,6 +358,10 @@ func setWorkersetFlag(w *config.WorkerConfig, name string, value interface{}) er
 		}
 	case string:
 		if s == "" {
+			return nil
+		}
+	case *string:
+		if s == nil {
 			return nil
 		}
 	case []string:
