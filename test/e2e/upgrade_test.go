@@ -52,21 +52,21 @@ func TestClusterUpgrade(t *testing.T) {
 		scenario          string
 	}{
 		{
-			name:              "verify k8s cluster deployment on AWS",
+			name:              "upgrade k8s 1.13.5 cluster to 1.14.0 on AWS",
 			provider:          AWS,
-			initialVersion:    "v1.13.1",
-			targetVersion:     "v1.13.3",
-			initialConfigPath: "../../test/e2e/testdata/upgrades_aws_1.13.1.yaml",
-			targetConfigPath:  "../../test/e2e/testdata/upgrades_aws_1.13.3.yaml",
+			initialVersion:    "v1.13.5",
+			targetVersion:     "v1.14.0",
+			initialConfigPath: "../../test/e2e/testdata/config_aws_1.13.5.yaml",
+			targetConfigPath:  "../../test/e2e/testdata/config_aws_1.14.0.yaml",
 			scenario:          NodeConformance,
 		},
 		{
-			name:              "verify k8s cluster deployment on AWS",
+			name:              "upgrade k8s 1.13.5 cluster to 1.14.0 on DO",
 			provider:          DigitalOcean,
-			initialVersion:    "v1.13.1",
-			targetVersion:     "v1.13.3",
-			initialConfigPath: "../../test/e2e/testdata/upgrades_do_1.13.1.yaml",
-			targetConfigPath:  "../../test/e2e/testdata/upgrades_do_1.13.3.yaml",
+			initialVersion:    "v1.13.5",
+			targetVersion:     "v1.14.0",
+			initialConfigPath: "../../test/e2e/testdata/config_do_1.13.5.yaml",
+			targetConfigPath:  "../../test/e2e/testdata/config_do_1.14.0.yaml",
 			scenario:          NodeConformance,
 		},
 	}
@@ -82,7 +82,9 @@ func TestClusterUpgrade(t *testing.T) {
 			if testProvider != tc.provider {
 				t.SkipNow()
 			}
-
+			if testClusterVersion != tc.targetVersion {
+				t.SkipNow()
+			}
 			testPath := fmt.Sprintf("../../_build/%s", testRunIdentifier)
 
 			pr, err := CreateProvisioner(testPath, testRunIdentifier, tc.provider)

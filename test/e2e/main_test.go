@@ -25,12 +25,14 @@ import (
 
 // testRunIdentifier aka. the build number, a unique identifier for the test run.
 var (
-	testRunIdentifier string
-	testProvider      string
+	testRunIdentifier  string
+	testClusterVersion string
+	testProvider       string
 )
 
 func init() {
 	flag.StringVar(&testRunIdentifier, "identifier", "", "The unique identifier for this test run")
+	flag.StringVar(&testClusterVersion, "cluster-version", "", "Cluster version to run tests for")
 	flag.StringVar(&testProvider, "provider", "", "Provider to run tests on")
 	flag.Parse()
 }

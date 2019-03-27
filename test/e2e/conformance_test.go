@@ -31,22 +31,35 @@ func TestClusterConformance(t *testing.T) {
 		provider          string
 		kubernetesVersion string
 		scenario          string
-		region            string
 		configFilePath    string
 	}{
 		{
-			name:              "verify k8s cluster deployment on AWS",
+			name:              "verify k8s 1.13.5 cluster deployment on AWS",
 			provider:          AWS,
-			kubernetesVersion: "v1.13.3",
+			kubernetesVersion: "v1.13.5",
 			scenario:          NodeConformance,
-			configFilePath:    "../../test/e2e/testdata/aws_config.yaml",
+			configFilePath:    "../../test/e2e/testdata/config_aws_1.13.5.yaml",
 		},
 		{
-			name:              "verify k8s cluster deployment on DO",
-			provider:          DigitalOcean,
-			kubernetesVersion: "v1.13.3",
+			name:              "verify k8s 1.14.0 cluster deployment on AWS",
+			provider:          AWS,
+			kubernetesVersion: "v1.14.0",
 			scenario:          NodeConformance,
-			configFilePath:    "../../test/e2e/testdata/do_config.yaml",
+			configFilePath:    "../../test/e2e/testdata/config_aws_1.14.0.yaml",
+		},
+		{
+			name:              "verify k8s 1.13.5 cluster deployment on DO",
+			provider:          DigitalOcean,
+			kubernetesVersion: "v1.13.5",
+			scenario:          NodeConformance,
+			configFilePath:    "../../test/e2e/testdata/config_do_1.13.5.yaml",
+		},
+		{
+			name:              "verify k8s 1.14.0 cluster deployment on DO",
+			provider:          DigitalOcean,
+			kubernetesVersion: "v1.14.0",
+			scenario:          NodeConformance,
+			configFilePath:    "../../test/e2e/testdata/config_do_1.14.0.yaml",
 		},
 	}
 
@@ -58,6 +71,9 @@ func TestClusterConformance(t *testing.T) {
 				t.Fatalf("-identifier must be set")
 			}
 			if testProvider != tc.provider {
+				t.SkipNow()
+			}
+			if testClusterVersion != tc.kubernetesVersion {
 				t.SkipNow()
 			}
 			testPath := fmt.Sprintf("../../_build/%s", testRunIdentifier)
