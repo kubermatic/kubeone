@@ -12,20 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 versions:
-  kubernetes: '1.13.1'
+  kubernetes: '1.13.5'
 provider:
-  name: 'digitalocean'
+  name: 'aws'
 features:
   enable_pod_security_policy: false
-workers:
-- name: fra1-1
-  replicas: 3
-  config:
-    cloudProviderSpec:
-      backups: false
-      ipv6: false
-      private_networking: true
-      monitoring: false
-    operatingSystem: 'ubuntu'
-    operatingSystemSpec:
-      distUpgradeOnBoot: true

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 versions:
-  kubernetes: '1.13.1'
+  kubernetes: '1.14.0'
 provider:
   name: 'aws'
 features:
