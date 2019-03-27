@@ -17,6 +17,8 @@ limitations under the License.
 package upgrade
 
 import (
+	"time"
+
 	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/config"
@@ -29,29 +31,34 @@ func upgradeFollower(ctx *util.Context) error {
 }
 
 func upgradeFollowerExecutor(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
-	ctx.Logger.Infoln("Labeling follower control plane…")
+	logger := ctx.Logger.WithField("node", node.PublicAddress)
+
+	logger.Infoln("Labeling follower control plane…")
 	err := labelNode(ctx.DynamicClient, node)
 	if err != nil {
 		return errors.Wrap(err, "failed to label leader control plane node")
 	}
 
-	ctx.Logger.Infoln("Upgrading Kubernetes binaries on follower control plane…")
+	logger.Infoln("Upgrading Kubernetes binaries on follower control plane…")
 	err = upgradeKubernetesBinaries(ctx, node)
 	if err != nil {
 		return errors.Wrap(err, "failed to upgrade kubernetes binaries on follower control plane")
 	}
 
-	ctx.Logger.Infoln("Running 'kubeadm upgrade' on the follower control plane node…")
+	logger.Infoln("Running 'kubeadm upgrade' on the follower control plane node…")
 	err = upgradeFollowerControlPlane(ctx)
 	if err != nil {
 		return errors.Wrap(err, "failed to upgrade follower control plane")
 	}
 
-	ctx.Logger.Infoln("Unlabeling follower control plane…")
+	logger.Infoln("Unlabeling follower control plane…")
 	err = unlabelNode(ctx.DynamicClient, node)
 	if err != nil {
 		return errors.Wrap(err, "failed to unlabel follower control plane node")
 	}
+
+	logger.Infoln("Waiting 10 seconds to ensure all components are up…")
+	time.Sleep(10 * time.Second)
 
 	return nil
 }
