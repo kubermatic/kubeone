@@ -48,7 +48,7 @@ output "kubeone_workers" {
       replicas        = 1
       operatingSystem = "ubuntu"
       sshPublicKeys   = ["${file("${var.ssh_public_key_file}")}"]
-      diskSize        = "${var.workers_volume_size}"
+      diskSize        = 50
       diskType        = "pd-ssd"
       machineType     = "${var.workers_type}"
       network         = "${google_compute_network.network.self_link}"

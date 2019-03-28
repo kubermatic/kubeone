@@ -133,6 +133,11 @@ resource "google_compute_instance" "control_plane" {
   machine_type = "${var.control_plane_type}"
   zone         = "${data.google_compute_zones.available.names[count.index % local.zones_count]}"
 
+  # Changing the machine_type, min_cpu_platform, or service_account on an
+  # instance requires stopping it. To acknowledge this, 
+  # allow_stopping_for_update = true is required
+  allow_stopping_for_update = true
+
   boot_disk {
     initialize_params {
       size  = "${var.control_plane_volume_size}"
@@ -152,7 +157,16 @@ resource "google_compute_instance" "control_plane" {
     sshKeys = "${var.ssh_username}:${file(var.ssh_public_key_file)}"
   }
 
+  # https://cloud.google.com/sdk/gcloud/reference/alpha/compute/instances/set-scopes#--scopes
+  # listing of possible scopes
   service_account {
-    scopes = ["compute-rw", "storage-ro"]
+    scopes = [
+      "compute-rw",
+      "logging-write",
+      "monitoring-write",
+      "service-control",
+      "service-management",
+      "storage-ro",
+    ]
   }
 }

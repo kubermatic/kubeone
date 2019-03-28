@@ -33,7 +33,7 @@ variable "control_plane_count" {
 }
 
 variable "control_plane_type" {
-  default     = "n1-standard-1"
+  default     = "n1-standard-2"
   description = "GCE instance type"
 }
 
@@ -53,7 +53,7 @@ variable "control_plane_image_project" {
 }
 
 variable "workers_type" {
-  default     = "n1-standard-1"
+  default     = "n1-standard-2"
   description = "GCE instance type"
 }
 
