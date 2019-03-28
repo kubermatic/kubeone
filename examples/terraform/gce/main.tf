@@ -122,7 +122,7 @@ resource "google_compute_target_pool" "control_plane_pool" {
 resource "google_compute_forwarding_rule" "control_plane" {
   name       = "${var.cluster_name}-apiserver"
   target     = "${google_compute_target_pool.control_plane_pool.self_link}"
-  port_range = "6443"
+  port_range = "6443-6443"
   ip_address = "${google_compute_address.lb_ip.self_link}"
 }
 
