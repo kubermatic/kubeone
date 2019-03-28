@@ -45,20 +45,23 @@ func upgradeFollowerExecutor(ctx *util.Context, node *config.HostConfig, conn ss
 		return errors.Wrap(err, "failed to upgrade kubernetes binaries on follower control plane")
 	}
 
+	logger.Infof("Waiting %v seconds to ensure kubelet is up…", timeoutKubeletUpgrade.String())
+	time.Sleep(timeoutKubeletUpgrade)
+
 	logger.Infoln("Running 'kubeadm upgrade' on the follower control plane node…")
 	err = upgradeFollowerControlPlane(ctx)
 	if err != nil {
 		return errors.Wrap(err, "failed to upgrade follower control plane")
 	}
 
+	logger.Infof("Waiting %v seconds to ensure all components are up…", timeoutNodeUpgrade.String())
+	time.Sleep(timeoutNodeUpgrade)
+
 	logger.Infoln("Unlabeling follower control plane…")
 	err = unlabelNode(ctx.DynamicClient, node)
 	if err != nil {
 		return errors.Wrap(err, "failed to unlabel follower control plane node")
 	}
-
-	logger.Infoln("Waiting 10 seconds to ensure all components are up…")
-	time.Sleep(10 * time.Second)
 
 	return nil
 }
