@@ -36,6 +36,7 @@ import (
 
 const (
 	labelControlPlaneNode = "node-role.kubernetes.io/master"
+	delayUpgrade          = 2 * time.Minute
 )
 
 func TestClusterUpgrade(t *testing.T) {
@@ -144,6 +145,9 @@ func TestClusterUpgrade(t *testing.T) {
 			if err != nil {
 				t.Fatalf("version mismatch before running upgrade: %v", err)
 			}
+
+			t.Logf("waiting %s for nodes to settle down", delayUpgrade.String())
+			time.Sleep(delayUpgrade)
 
 			// Create a new KubeOne provisioner pointing to the new configuration file
 			target = NewKubeone(testPath, tc.targetConfigPath)
