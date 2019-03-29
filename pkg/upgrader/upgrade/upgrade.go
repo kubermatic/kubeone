@@ -17,6 +17,8 @@ limitations under the License.
 package upgrade
 
 import (
+	"time"
+
 	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/certificate"
@@ -28,6 +30,12 @@ import (
 const (
 	labelUpgradeLock      = "kubeone.io/upgrade-in-progress"
 	labelControlPlaneNode = "node-role.kubernetes.io/master"
+	// timeoutKubeletUpgrade is time for how long kubeone will wait after upgrading kubelet
+	// and running the upgrade process on the node
+	timeoutKubeletUpgrade = 1 * time.Minute
+	// timeoutNodeUpgrade is time for how long kubeone will wait after finishing the upgrade
+	// process on the node
+	timeoutNodeUpgrade = 15 * time.Second
 )
 
 // Upgrade performs all the steps required to upgrade Kubernetes on

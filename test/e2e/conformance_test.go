@@ -21,45 +21,54 @@ package e2e
 import (
 	"fmt"
 	"testing"
+
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/tools/clientcmd"
+	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 func TestClusterConformance(t *testing.T) {
 	t.Parallel()
 
 	testcases := []struct {
-		name              string
-		provider          string
-		kubernetesVersion string
-		scenario          string
-		configFilePath    string
+		name                  string
+		provider              string
+		kubernetesVersion     string
+		scenario              string
+		configFilePath        string
+		expectedNumberOfNodes int
 	}{
 		{
-			name:              "verify k8s 1.13.5 cluster deployment on AWS",
-			provider:          AWS,
-			kubernetesVersion: "v1.13.5",
-			scenario:          NodeConformance,
-			configFilePath:    "../../test/e2e/testdata/config_aws_1.13.5.yaml",
+			name:                  "verify k8s 1.13.5 cluster deployment on AWS",
+			provider:              AWS,
+			kubernetesVersion:     "v1.13.5",
+			scenario:              NodeConformance,
+			configFilePath:        "../../test/e2e/testdata/config_aws_1.13.5.yaml",
+			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
 		},
 		{
-			name:              "verify k8s 1.14.0 cluster deployment on AWS",
-			provider:          AWS,
-			kubernetesVersion: "v1.14.0",
-			scenario:          NodeConformance,
-			configFilePath:    "../../test/e2e/testdata/config_aws_1.14.0.yaml",
+			name:                  "verify k8s 1.14.0 cluster deployment on AWS",
+			provider:              AWS,
+			kubernetesVersion:     "v1.14.0",
+			scenario:              NodeConformance,
+			configFilePath:        "../../test/e2e/testdata/config_aws_1.14.0.yaml",
+			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
 		},
 		{
-			name:              "verify k8s 1.13.5 cluster deployment on DO",
-			provider:          DigitalOcean,
-			kubernetesVersion: "v1.13.5",
-			scenario:          NodeConformance,
-			configFilePath:    "../../test/e2e/testdata/config_do_1.13.5.yaml",
+			name:                  "verify k8s 1.13.5 cluster deployment on DO",
+			provider:              DigitalOcean,
+			kubernetesVersion:     "v1.13.5",
+			scenario:              NodeConformance,
+			configFilePath:        "../../test/e2e/testdata/config_do_1.13.5.yaml",
+			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
 		},
 		{
-			name:              "verify k8s 1.14.0 cluster deployment on DO",
-			provider:          DigitalOcean,
-			kubernetesVersion: "v1.14.0",
-			scenario:          NodeConformance,
-			configFilePath:    "../../test/e2e/testdata/config_do_1.14.0.yaml",
+			name:                  "verify k8s 1.14.0 cluster deployment on DO",
+			provider:              DigitalOcean,
+			kubernetesVersion:     "v1.14.0",
+			scenario:              NodeConformance,
+			configFilePath:        "../../test/e2e/testdata/config_do_1.14.0.yaml",
+			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
 		},
 	}
 
@@ -109,9 +118,32 @@ func TestClusterConformance(t *testing.T) {
 			}
 
 			t.Log("create kubeconfig")
-			_, err = target.CreateKubeconfig()
+			kubeconfig, err := target.CreateKubeconfig()
 			if err != nil {
 				t.Fatalf("creating kubeconfig failed: %v", err)
+			}
+
+			t.Log("build kubernetes clientset")
+			restConfig, err := clientcmd.RESTConfigFromKubeConfig(kubeconfig)
+			if err != nil {
+				t.Errorf("unable to build config from kubeconfig bytes: %v", err)
+			}
+
+			client, err := dynclient.New(restConfig, dynclient.Options{})
+			if err != nil {
+				t.Fatalf("failed to init dynamic client: %s", err)
+			}
+
+			t.Log("waiting for nodes to become ready")
+			err = waitForNodesReady(client, tc.expectedNumberOfNodes)
+			if err != nil {
+				t.Fatalf("nodes are not ready: %v", err)
+			}
+
+			t.Log("verifying cluster version")
+			err = verifyVersion(client, metav1.NamespaceSystem, tc.kubernetesVersion)
+			if err != nil {
+				t.Fatalf("version mismatch: %v", err)
 			}
 
 			t.Log("run e2e tests")

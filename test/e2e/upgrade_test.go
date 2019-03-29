@@ -21,7 +21,6 @@ package e2e
 import (
 	"context"
 	"fmt"
-	"strings"
 	"testing"
 	"time"
 
@@ -43,31 +42,34 @@ func TestClusterUpgrade(t *testing.T) {
 	t.Parallel()
 
 	testcases := []struct {
-		name              string
-		provider          string
-		initialVersion    string
-		targetVersion     string
-		initialConfigPath string
-		targetConfigPath  string
-		scenario          string
+		name                  string
+		provider              string
+		initialVersion        string
+		targetVersion         string
+		initialConfigPath     string
+		targetConfigPath      string
+		expectedNumberOfNodes int
+		scenario              string
 	}{
 		{
-			name:              "upgrade k8s 1.13.5 cluster to 1.14.0 on AWS",
-			provider:          AWS,
-			initialVersion:    "v1.13.5",
-			targetVersion:     "v1.14.0",
-			initialConfigPath: "../../test/e2e/testdata/config_aws_1.13.5.yaml",
-			targetConfigPath:  "../../test/e2e/testdata/config_aws_1.14.0.yaml",
-			scenario:          NodeConformance,
+			name:                  "upgrade k8s 1.13.5 cluster to 1.14.0 on AWS",
+			provider:              AWS,
+			initialVersion:        "v1.13.5",
+			targetVersion:         "v1.14.0",
+			initialConfigPath:     "../../test/e2e/testdata/config_aws_1.13.5.yaml",
+			targetConfigPath:      "../../test/e2e/testdata/config_aws_1.14.0.yaml",
+			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
+			scenario:              NodeConformance,
 		},
 		{
-			name:              "upgrade k8s 1.13.5 cluster to 1.14.0 on DO",
-			provider:          DigitalOcean,
-			initialVersion:    "v1.13.5",
-			targetVersion:     "v1.14.0",
-			initialConfigPath: "../../test/e2e/testdata/config_do_1.13.5.yaml",
-			targetConfigPath:  "../../test/e2e/testdata/config_do_1.14.0.yaml",
-			scenario:          NodeConformance,
+			name:                  "upgrade k8s 1.13.5 cluster to 1.14.0 on DO",
+			provider:              DigitalOcean,
+			initialVersion:        "v1.13.5",
+			targetVersion:         "v1.14.0",
+			initialConfigPath:     "../../test/e2e/testdata/config_do_1.13.5.yaml",
+			targetConfigPath:      "../../test/e2e/testdata/config_do_1.14.0.yaml",
+			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
+			scenario:              NodeConformance,
 		},
 	}
 
@@ -132,7 +134,7 @@ func TestClusterUpgrade(t *testing.T) {
 			}
 
 			t.Log("waiting for nodes to become ready")
-			err = waitForNodesReady(client)
+			err = waitForNodesReady(client, tc.expectedNumberOfNodes)
 			if err != nil {
 				t.Fatalf("nodes are not ready: %v", err)
 			}
@@ -156,7 +158,7 @@ func TestClusterUpgrade(t *testing.T) {
 			}
 
 			t.Log("waiting for nodes to become ready")
-			err = waitForNodesReady(client)
+			err = waitForNodesReady(client, tc.expectedNumberOfNodes)
 			if err != nil {
 				t.Fatalf("nodes are not ready: %v", err)
 			}
@@ -180,28 +182,6 @@ func TestClusterUpgrade(t *testing.T) {
 			}
 		})
 	}
-}
-
-func waitForNodesReady(client dynclient.Client) error {
-	return wait.Poll(5*time.Second, 3*time.Minute, func() (bool, error) {
-		nodes := corev1.NodeList{}
-		nodeListOpts := dynclient.ListOptions{}
-		nodeListOpts.SetLabelSelector(fmt.Sprintf("%s=%s", labelControlPlaneNode, ""))
-
-		err := client.List(context.Background(), &nodeListOpts, &nodes)
-		if err != nil {
-			return false, errors.Wrap(err, "unable to list nodes")
-		}
-
-		for _, n := range nodes.Items {
-			for _, c := range n.Status.Conditions {
-				if c.Type == corev1.NodeReady && c.Status != corev1.ConditionTrue {
-					return false, nil
-				}
-			}
-		}
-		return true, nil
-	})
 }
 
 func waitForNodesUpgraded(client dynclient.Client, targetVersion string) error {
@@ -231,58 +211,4 @@ func waitForNodesUpgraded(client dynclient.Client, targetVersion string) error {
 		}
 		return true, nil
 	})
-}
-
-func verifyVersion(client dynclient.Client, namespace string, targetVersion string) error {
-	reqVer, err := semver.NewVersion(targetVersion)
-	if err != nil {
-		return errors.Wrap(err, "desired version is invalid")
-	}
-
-	nodes := corev1.NodeList{}
-	nodeListOpts := dynclient.ListOptions{}
-	_ = nodeListOpts.SetLabelSelector(fmt.Sprintf("%s=%s", labelControlPlaneNode, ""))
-	err = client.List(context.Background(), &nodeListOpts, &nodes)
-	if err != nil {
-		return errors.Wrap(err, "failed to list nodes")
-	}
-
-	// Kubelet version check
-	for _, n := range nodes.Items {
-		kubeletVer, err := semver.NewVersion(n.Status.NodeInfo.KubeletVersion)
-		if err != nil {
-			return err
-		}
-		if reqVer.Compare(kubeletVer) != 0 {
-			return errors.Errorf("kubelet version mismatch: expected %v, got %v", reqVer.String(), kubeletVer.String())
-		}
-	}
-
-	apiserverPods := corev1.PodList{}
-	podsListOpts := dynclient.ListOptions{Namespace: namespace}
-	_ = podsListOpts.SetLabelSelector("component=kube-apiserver")
-	err = client.List(context.Background(), &podsListOpts, &apiserverPods)
-	if err != nil {
-		return errors.Wrap(err, "unable to list apiserver pods")
-	}
-
-	for _, p := range apiserverPods.Items {
-		apiserverVer, err := parseContainerImageVersion(p.Spec.Containers[0].Image)
-		if err != nil {
-			return errors.Wrap(err, "unable to parse apiserver version")
-		}
-		if reqVer.Compare(apiserverVer) != 0 {
-			return errors.Errorf("apiserver version mismatch: expected %v, got %v", reqVer.String(), apiserverVer.String())
-		}
-	}
-
-	return nil
-}
-
-func parseContainerImageVersion(image string) (*semver.Version, error) {
-	ver := strings.Split(image, ":")
-	if len(ver) != 2 {
-		return nil, errors.Errorf("invalid container image format: %s", image)
-	}
-	return semver.NewVersion(ver[1])
 }

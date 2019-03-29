@@ -43,6 +43,9 @@ func upgradeLeaderExecutor(ctx *util.Context, node *config.HostConfig, conn ssh.
 		return errors.Wrap(err, "failed to upgrade kubernetes binaries on leader control plane")
 	}
 
+	logger.Infof("Waiting %v seconds to ensure kubelet is up…", timeoutKubeletUpgrade.String())
+	time.Sleep(timeoutKubeletUpgrade)
+
 	logger.Infoln("Generating kubeadm config …")
 	if err := generateKubeadmConfig(ctx, node); err != nil {
 		return errors.Wrap(err, "failed to generate kubeadm config")
@@ -58,13 +61,13 @@ func upgradeLeaderExecutor(ctx *util.Context, node *config.HostConfig, conn ssh.
 		return errors.Wrap(err, "failed to run 'kubeadm upgrade' on leader control plane")
 	}
 
+	logger.Infof("Waiting %v seconds to ensure all components are up…", timeoutNodeUpgrade.String())
+	time.Sleep(timeoutNodeUpgrade)
+
 	logger.Infoln("Unlabeling leader control plane…")
 	if err := unlabelNode(ctx.DynamicClient, node); err != nil {
 		return errors.Wrap(err, "failed to unlabel leader control plane node")
 	}
-
-	logger.Infoln("Waiting 10 seconds to ensure all components are up…")
-	time.Sleep(10 * time.Second)
 
 	return nil
 }
