@@ -73,7 +73,7 @@ kubeone install config.yaml --tfjson tf.json
 ```
 To learn more about KubeOne configuration, check out [the example configuration file](./config.yaml.dist).
 
-For advanced use cases and other features, check the [KubeOne features]() document.
+For advanced use cases and other features, check the [KubeOne features](https://github.com/kubermatic/kubeone#features) document.
 
 ## Getting Involved
 
