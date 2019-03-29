@@ -23,6 +23,7 @@ import (
 
 	"github.com/Masterminds/semver"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/ssh"
@@ -83,7 +84,7 @@ func runPreflightChecks(ctx *util.Context) error {
 	}
 
 	ctx.Logger.Infoln("Verifying is it possible to upgrade to the desired version…")
-	if err := verifyVersion(ctx.Cluster.Versions.Kubernetes, &nodes, ctx.Verbose); err != nil {
+	if err := verifyVersion(ctx.Logger, ctx.Cluster.Versions.Kubernetes, &nodes, ctx.Verbose, ctx.ForceUpgrade); err != nil {
 		return errors.Wrap(err, "unable to verify components version")
 	}
 
@@ -195,7 +196,7 @@ func verifyEndpoints(nodes *corev1.NodeList, hosts []*config.HostConfig, verbose
 }
 
 // verifyVersion verifies is it possible to upgrade to the requested version
-func verifyVersion(version string, nodes *corev1.NodeList, verbose bool) error {
+func verifyVersion(logger logrus.FieldLogger, version string, nodes *corev1.NodeList, verbose, force bool) error {
 	reqVer, err := semver.NewVersion(version)
 	if err != nil {
 		return errors.Wrap(err, "provided version is invalid")
@@ -211,8 +212,15 @@ func verifyVersion(version string, nodes *corev1.NodeList, verbose bool) error {
 		fmt.Printf("Requested version: %s", reqVer.String())
 	}
 
-	if reqVer.Compare(kubelet) <= 0 {
-		return errors.New("unable to upgrade to same or lower version")
+	if reqVer.Compare(kubelet) < 0 {
+		return errors.New("unable to upgrade to lower version")
+	}
+	if reqVer.Compare(kubelet) == 0 {
+		if force {
+			logger.Warningf("upgrading to the same kubernetes version")
+			return nil
+		}
+		return errors.New("unable to upgrade to the same version")
 	}
 
 	return nil
