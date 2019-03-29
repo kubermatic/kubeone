@@ -44,7 +44,7 @@ output "kubeone_workers" {
   value = {
     # following outputs will be parsed by kubeone and automatically merged into
     # corresponding (by name) worker definition
-    workers1 = {
+    az-a = {
       replicas        = 1
       operatingSystem = "ubuntu"
       sshPublicKeys   = ["${file("${var.ssh_public_key_file}")}"]
@@ -53,7 +53,29 @@ output "kubeone_workers" {
       machineType     = "${var.workers_type}"
       network         = "${google_compute_network.network.self_link}"
       subnetwork      = "${google_compute_subnetwork.subnet.self_link}"
-      zone            = "${var.region}a"                                // hardcoded
+      zone            = "${var.region}-a"
+    }
+    az-b = {
+      replicas        = 1
+      operatingSystem = "ubuntu"
+      sshPublicKeys   = ["${file("${var.ssh_public_key_file}")}"]
+      diskSize        = 50
+      diskType        = "pd-ssd"
+      machineType     = "${var.workers_type}"
+      network         = "${google_compute_network.network.self_link}"
+      subnetwork      = "${google_compute_subnetwork.subnet.self_link}"
+      zone            = "${var.region}-b"
+    }
+    az-c = {
+      replicas        = 1
+      operatingSystem = "ubuntu"
+      sshPublicKeys   = ["${file("${var.ssh_public_key_file}")}"]
+      diskSize        = 50
+      diskType        = "pd-ssd"
+      machineType     = "${var.workers_type}"
+      network         = "${google_compute_network.network.self_link}"
+      subnetwork      = "${google_compute_subnetwork.subnet.self_link}"
+      zone            = "${var.region}-c"
     }
   }
 }
