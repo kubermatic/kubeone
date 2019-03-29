@@ -5,7 +5,7 @@ We'll cover how to create the needed infrastructure using our example terraform
 configuration and then install Kubernetes. Finally, we're going to show how to
 destroy the cluster along with the infrastructure.
 
-As a result, you'll get Kubernetes 1.13.5 High-Available (HA) clusters with
+As a result, you'll get Kubernetes 1.14.0 High-Available (HA) clusters with
 three control plane nodes and two worker nodes.
 
 ### Prerequisites
