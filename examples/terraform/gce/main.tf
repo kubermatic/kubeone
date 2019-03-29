@@ -111,7 +111,9 @@ resource "google_compute_target_pool" "control_plane_pool" {
   name = "${var.cluster_name}-control-plane"
 
   instances = [
-    "${google_compute_instance.control_plane.*.self_link}",
+    "${slice(
+      "${google_compute_instance.control_plane.*.self_link}",
+      0, "${var.control_plane_target_pool_members_count}")}",
   ]
 
   health_checks = [

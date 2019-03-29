@@ -27,6 +27,10 @@ variable "region" {
   description = "GCP region to speak to"
 }
 
+variable "control_plane_target_pool_members_count" {
+  default = 3
+}
+
 variable "control_plane_count" {
   default     = 3
   description = "Number of instances"
@@ -61,7 +65,6 @@ variable "workers_volume_size" {
   default     = 100
   description = "Size of the boot volume, in GB"
 }
-
 
 variable "cluster_network_cidr" {
   default     = "10.240.0.0/24"
