@@ -111,8 +111,12 @@ Finally, if you agree with changes you can proceed and provision the
 infrastructure:
 
 ```bash
-terraform apply
+terraform apply control_plane_target_pool_members_count=1
 ```
+
+`control_plane_target_pool_members_count` is needed in order to bootstrap
+control plane. Once install is done it's recommended to include all control
+plane VMs into the LB (will be covered a bit later in this document).
 
 Shortly after you'll be asked to enter `yes` to confirm your intention to
 provision the infrastructure.
@@ -147,15 +151,9 @@ for available options.
 ```yaml
 name: demo
 versions:
-  kubernetes: '1.13.5'
+  kubernetes: '1.14.0'
 provider:
   name: 'gce'
-workers:
-- name: workers1
-  config:
-    labels:
-      mylabel: 'mylabel-value'
-    operatingSystem: 'ubuntu'
 ```
 
 Finally, we're going to install Kubernetes by using the `install` command and
@@ -169,48 +167,50 @@ The installation process takes some time, usually 5-10 minutes. The output
 should look like the following one:
 
 ```
-time="11:59:19 UTC" level=info msg="Installing prerequisites…"
-time="11:59:20 UTC" level=info msg="Determine operating system…" node=157.230.114.40
-time="11:59:20 UTC" level=info msg="Determine operating system…" node=157.230.114.39
-time="11:59:20 UTC" level=info msg="Determine operating system…" node=157.230.114.42
-time="11:59:21 UTC" level=info msg="Determine hostname…" node=157.230.114.40
-time="11:59:21 UTC" level=info msg="Creating environment file…" node=157.230.114.40
-time="11:59:21 UTC" level=info msg="Installing kubeadm…" node=157.230.114.40 os=ubuntu
-time="11:59:21 UTC" level=info msg="Determine hostname…" node=157.230.114.39
-time="11:59:21 UTC" level=info msg="Creating environment file…" node=157.230.114.39
-time="11:59:21 UTC" level=info msg="Installing kubeadm…" node=157.230.114.39 os=ubuntu
-time="11:59:22 UTC" level=info msg="Determine hostname…" node=157.230.114.42
-time="11:59:22 UTC" level=info msg="Creating environment file…" node=157.230.114.42
-time="11:59:22 UTC" level=info msg="Installing kubeadm…" node=157.230.114.42 os=ubuntu
-time="11:59:59 UTC" level=info msg="Deploying configuration files…" node=157.230.114.39 os=ubuntu
-time="12:00:03 UTC" level=info msg="Deploying configuration files…" node=157.230.114.42 os=ubuntu
-time="12:00:04 UTC" level=info msg="Deploying configuration files…" node=157.230.114.40 os=ubuntu
-time="12:00:05 UTC" level=info msg="Generating kubeadm config file…"
-time="12:00:06 UTC" level=info msg="Configuring certs and etcd on first controller…"
-time="12:00:06 UTC" level=info msg="Ensuring Certificates…" node=157.230.114.39
-time="12:00:09 UTC" level=info msg="Generating PKI…"
-time="12:00:09 UTC" level=info msg="Running kubeadm…" node=157.230.114.39
-time="12:00:09 UTC" level=info msg="Downloading PKI files…" node=157.230.114.39
-time="12:00:10 UTC" level=info msg="Creating local backup…" node=157.230.114.39
-time="12:00:10 UTC" level=info msg="Deploying PKI…"
-time="12:00:10 UTC" level=info msg="Uploading files…" node=157.230.114.42
-time="12:00:10 UTC" level=info msg="Uploading files…" node=157.230.114.40
-time="12:00:13 UTC" level=info msg="Configuring certs and etcd on consecutive controller…"
-time="12:00:13 UTC" level=info msg="Ensuring Certificates…" node=157.230.114.40
-time="12:00:13 UTC" level=info msg="Ensuring Certificates…" node=157.230.114.42
-time="12:00:15 UTC" level=info msg="Initializing Kubernetes on leader…"
-time="12:00:15 UTC" level=info msg="Running kubeadm…" node=157.230.114.39
-time="12:01:47 UTC" level=info msg="Joining controlplane node…"
-time="12:03:01 UTC" level=info msg="Copying Kubeconfig to home directory…" node=157.230.114.39
-time="12:03:01 UTC" level=info msg="Copying Kubeconfig to home directory…" node=157.230.114.40
-time="12:03:01 UTC" level=info msg="Copying Kubeconfig to home directory…" node=157.230.114.42
-time="12:03:03 UTC" level=info msg="Building Kubernetes clientset…"
-time="12:03:04 UTC" level=info msg="Applying canal CNI plugin…"
-time="12:03:06 UTC" level=info msg="Installing machine-controller…"
-time="12:03:28 UTC" level=info msg="Installing machine-controller webhooks…"
-time="12:03:28 UTC" level=info msg="Waiting for machine-controller to come up…"
-time="12:04:08 UTC" level=info msg="Creating worker machines…"
-time="12:04:10 UTC" level=info msg="Skipping Ark deployment because no backup provider was configured."
+INFO[17:24:41 EET] Installing prerequisites…
+INFO[17:24:42 EET] Determine operating system…                   node=35.198.117.209
+INFO[17:24:42 EET] Determine operating system…                   node=35.246.186.88
+INFO[17:24:42 EET] Determine operating system…                   node=35.198.129.205
+INFO[17:24:42 EET] Determine hostname…                           node=35.198.117.209
+INFO[17:24:42 EET] Creating environment file…                    node=35.198.117.209
+INFO[17:24:42 EET] Installing kubeadm…                           node=35.198.117.209 os=ubuntu
+INFO[17:24:43 EET] Deploying configuration files…                node=35.198.117.209 os=ubuntu
+INFO[17:24:43 EET] Determine hostname…                           node=35.246.186.88
+INFO[17:24:43 EET] Creating environment file…                    node=35.246.186.88
+INFO[17:24:43 EET] Installing kubeadm…                           node=35.246.186.88 os=ubuntu
+INFO[17:24:43 EET] Determine hostname…                           node=35.198.129.205
+INFO[17:24:43 EET] Deploying configuration files…                node=35.246.186.88 os=ubuntu
+INFO[17:24:43 EET] Creating environment file…                    node=35.198.129.205
+INFO[17:24:43 EET] Installing kubeadm…                           node=35.198.129.205 os=ubuntu
+INFO[17:24:43 EET] Deploying configuration files…                node=35.198.129.205 os=ubuntu
+INFO[17:24:44 EET] Generating kubeadm config file…
+INFO[17:24:45 EET] Configuring certs and etcd on first controller…
+INFO[17:24:45 EET] Ensuring Certificates…                        node=35.246.186.88
+INFO[17:24:47 EET] Downloading PKI files…                        node=35.246.186.88
+INFO[17:24:49 EET] Creating local backup…                        node=35.246.186.88
+INFO[17:24:49 EET] Deploying PKI…
+INFO[17:24:49 EET] Uploading files…                              node=35.198.117.209
+INFO[17:24:49 EET] Uploading files…                              node=35.198.129.205
+INFO[17:24:52 EET] Configuring certs and etcd on consecutive controller…
+INFO[17:24:52 EET] Ensuring Certificates…                        node=35.198.117.209
+INFO[17:24:52 EET] Ensuring Certificates…                        node=35.198.129.205
+INFO[17:24:54 EET] Initializing Kubernetes on leader…
+INFO[17:24:54 EET] Running kubeadm…                              node=35.246.186.88
+INFO[17:25:09 EET] Joining controlplane node…
+INFO[17:26:36 EET] Copying Kubeconfig to home directory…         node=35.198.117.209
+INFO[17:26:36 EET] Copying Kubeconfig to home directory…         node=35.246.186.88
+INFO[17:26:36 EET] Copying Kubeconfig to home directory…         node=35.198.129.205
+INFO[17:26:37 EET] Building Kubernetes clientset…
+INFO[17:26:39 EET] Applying canal CNI plugin…
+INFO[17:26:43 EET] Installing machine-controller…
+INFO[17:26:46 EET] Installing machine-controller webhooks…
+INFO[17:26:47 EET] Waiting for machine-controller to come up…
+INFO[17:27:12 EET] Creating worker machines…
+```
+
+Once it's finished in order in include 2 other control plane VMs into the LB:
+```bash
+terraform apply
 ```
 
 KubeOne automatically downloads the Kubeconfig file for the cluster. It's named
