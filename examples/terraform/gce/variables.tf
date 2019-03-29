@@ -27,13 +27,17 @@ variable "region" {
   description = "GCP region to speak to"
 }
 
+variable "control_plane_target_pool_members_count" {
+  default = 3
+}
+
 variable "control_plane_count" {
   default     = 3
   description = "Number of instances"
 }
 
 variable "control_plane_type" {
-  default     = "n1-standard-1"
+  default     = "n1-standard-2"
   description = "GCE instance type"
 }
 
@@ -50,6 +54,16 @@ variable "control_plane_image_family" {
 variable "control_plane_image_project" {
   default     = "ubuntu-os-cloud"
   description = "Project of the image to use for provisioning instances"
+}
+
+variable "workers_type" {
+  default     = "n1-standard-2"
+  description = "GCE instance type"
+}
+
+variable "workers_volume_size" {
+  default     = 100
+  description = "Size of the boot volume, in GB"
 }
 
 variable "cluster_network_cidr" {
@@ -70,4 +84,9 @@ variable "ssh_public_key_file" {
 variable "ssh_username" {
   default     = "kubeadmin"
   description = "Username to provision with the ssh_public_key_file"
+}
+
+variable "ssh_agent_socket" {
+  description = "SSH Agent socket, default to grab from $SSH_AUTH_SOCK"
+  default     = "env:SSH_AUTH_SOCK"
 }

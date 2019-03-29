@@ -38,6 +38,7 @@ resource "google_compute_network" "network" {
 resource "google_compute_subnetwork" "subnet" {
   name          = "${var.cluster_name}-subnet"
   network       = "${google_compute_network.network.self_link}"
+  region        = "${var.region}"
   ip_cidr_range = "${var.cluster_network_cidr}"
 }
 
@@ -110,7 +111,9 @@ resource "google_compute_target_pool" "control_plane_pool" {
   name = "${var.cluster_name}-control-plane"
 
   instances = [
-    "${google_compute_instance.control_plane.*.self_link}",
+    "${slice(
+      "${google_compute_instance.control_plane.*.self_link}",
+      0, "${var.control_plane_target_pool_members_count}")}",
   ]
 
   health_checks = [
@@ -121,8 +124,8 @@ resource "google_compute_target_pool" "control_plane_pool" {
 resource "google_compute_forwarding_rule" "control_plane" {
   name       = "${var.cluster_name}-apiserver"
   target     = "${google_compute_target_pool.control_plane_pool.self_link}"
-  port_range = "6443"
-  ip_address = "${google_compute_address.lb_ip.self_link}"
+  port_range = "6443-6443"
+  ip_address = "${google_compute_address.lb_ip.address}"
 }
 
 resource "google_compute_instance" "control_plane" {
@@ -131,6 +134,11 @@ resource "google_compute_instance" "control_plane" {
   name         = "${var.cluster_name}-control-plane-${count.index+1}"
   machine_type = "${var.control_plane_type}"
   zone         = "${data.google_compute_zones.available.names[count.index % local.zones_count]}"
+
+  # Changing the machine_type, min_cpu_platform, or service_account on an
+  # instance requires stopping it. To acknowledge this, 
+  # allow_stopping_for_update = true is required
+  allow_stopping_for_update = true
 
   boot_disk {
     initialize_params {
@@ -141,13 +149,26 @@ resource "google_compute_instance" "control_plane" {
 
   network_interface {
     subnetwork = "${google_compute_subnetwork.subnet.self_link}"
+
+    access_config = {
+      nat_ip = ""
+    }
   }
 
   metadata = {
     sshKeys = "${var.ssh_username}:${file(var.ssh_public_key_file)}"
   }
 
+  # https://cloud.google.com/sdk/gcloud/reference/alpha/compute/instances/set-scopes#--scopes
+  # listing of possible scopes
   service_account {
-    scopes = ["compute-rw", "storage-ro"]
+    scopes = [
+      "compute-rw",
+      "logging-write",
+      "monitoring-write",
+      "service-control",
+      "service-management",
+      "storage-ro",
+    ]
   }
 }

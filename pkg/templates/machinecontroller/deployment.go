@@ -43,7 +43,7 @@ const (
 	MachineControllerNamespace             = metav1.NamespaceSystem
 	MachineControllerAppLabelKey           = "app"
 	MachineControllerAppLabelValue         = "machine-controller"
-	MachineControllerTag                   = "v1.1.0"
+	MachineControllerTag                   = "v1.1.2"
 	MachineControllerCredentialsSecretName = "machine-controller-credentials"
 )
 
