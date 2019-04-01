@@ -23,7 +23,23 @@ variable "control_plane_count" {
   description = "Number of instances"
 }
 
+variable "control_plane_type" {
+  default = "cx21"
+}
+
+variable "worker_type" {
+  default = "cx21"
+}
+
+variable "datacenter" {
+  default = "hel1"
+}
+
 variable "ssh_public_key_file" {
   default     = "~/.ssh/id_rsa.pub"
   description = "SSH public key file"
+}
+
+variable "image" {
+  default = "ubuntu-18.04"
 }

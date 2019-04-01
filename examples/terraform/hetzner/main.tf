@@ -22,9 +22,9 @@ resource "hcloud_ssh_key" "kubeone" {
 resource "hcloud_server" "control_plane" {
   count       = "${var.control_plane_count}"
   name        = "${var.cluster_name}-control-plane-${count.index +1}"
-  server_type = "cx31"
-  image       = "centos-7"
-  location    = "hel1"
+  server_type = "${var.control_plane_type}"
+  image       = "${var.image}"
+  location    = "${var.datacenter}"
 
   ssh_keys = [
     "${hcloud_ssh_key.kubeone.id}",
