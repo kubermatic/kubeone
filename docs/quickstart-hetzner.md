@@ -2,13 +2,13 @@
 
 In this quick start we're going to show how to get started with KubeOne on Hetzner. We'll cover how to create the needed infrastructure using our example Terraform scripts and then install Kubernetes. Finally, we're going to show how to destroy the cluster along with the infrastructure.
 
-As a result, you'll get Kubernetes 1.13.4 High-Available (HA) clusters with three control plane nodes and two worker nodes.
+As a result, you'll get Kubernetes 1.14.0 High-Available (HA) clusters with three control plane nodes and two worker nodes.
 
 ### Prerequisites
 
 To follow this quick start, you'll need:
 
-* `kubeone` installed, which can be done by following the `Installing KubeOne` section of [the README](https://github.com/kubermatic/kubeone/blob/master/README.md),
+* `kubeone` v0.5.0 or newer installed, which can be done by following the `Installing KubeOne` section of [the README](https://github.com/kubermatic/kubeone/blob/master/README.md),
 * `terraform` installed. The binaries for `terraform` can be found on the [Terraform website](https://www.terraform.io/downloads.html)
 
 ## Setting Up Credentials
@@ -85,14 +85,14 @@ Now that you have infrastructure you can proceed with installing Kubernetes usin
 
 Before you start you'll need a configuration file that defines how Kubernetes will be installed, e.g. what version will be used and what features will be enabled. For the configuration file reference see [`config.yaml.dist`](https://github.com/kubermatic/kubeone/blob/master/config.yaml.dist).
 
-To get started you can use the following configuration. It'll install Kubernetes 1.13.4 and create 2 worker nodes. As KubeOne is using [Kubermatic `machine-controller`](https://github.com/kubermatic/machine-controller) for creating worker nodes see [Hetzner example manifest](https://github.com/kubermatic/machine-controller/blob/master/examples/hetzner-machinedeployment.yaml) for available options.
+To get started you can use the following configuration. It'll install Kubernetes 1.14.0 and create 2 worker nodes. As KubeOne is using [Kubermatic `machine-controller`](https://github.com/kubermatic/machine-controller) for creating worker nodes see [Hetzner example manifest](https://github.com/kubermatic/machine-controller/blob/master/examples/hetzner-machinedeployment.yaml) for available options.
 
 **Note:** The Terraform integration for populating information about worker nodes from the Terraform state is not available for Hetzner, so you have to provide all information explicitly.
 
 ```yaml
 name: demo
 versions:
-  kubernetes: '1.13.4'
+  kubernetes: '1.14.0'
 provider:
   name: 'hetzner'
 workers:
@@ -184,4 +184,4 @@ terraform destroy
 
 You'll be asked to enter `yes` to confirm your intention to destroy the cluster.
 
-Congratulations! You're now running Kubernetes 1.13.4 HA cluster with three control plane nodes and two worker nodes. If you want to learn more about KubeOne and its features, such as [upgrades](upgrading_cluster.md), make sure to check our [documentation](https://github.com/kubermatic/kubeone/tree/master/docs).
+Congratulations! You're now running Kubernetes 1.14.40 HA cluster with three control plane nodes and two worker nodes. If you want to learn more about KubeOne and its features, such as [upgrades](upgrading_cluster.md), make sure to check our [documentation](https://github.com/kubermatic/kubeone/tree/master/docs).

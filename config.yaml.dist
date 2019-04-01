@@ -19,7 +19,7 @@
 name: my-demo-cluster
 
 versions:
-  kubernetes: '1.13.1'
+  kubernetes: '1.14.0'
 
 network:
   # the subnet used for pods (flannel);

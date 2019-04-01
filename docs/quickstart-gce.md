@@ -12,7 +12,7 @@ three control plane nodes and two worker nodes.
 
 To follow this quick start, you'll need:
 
-* `kubeone` installed, which can be done by following the `Installing KubeOne`
+* `kubeone` v0.5.0 or newer installed, which can be done by following the `Installing KubeOne`
   section of [the
   README](https://github.com/kubermatic/kubeone/blob/master/README.md),
 * `terraform` installed. The binaries for `terraform` can be found on the
@@ -139,7 +139,7 @@ enabled. For the configuration file reference see
 [`config.yaml.dist`](https://github.com/kubermatic/kubeone/blob/master/config.yaml.dist).
 
 To get started you can use the following configuration. It'll install Kubernetes
-1.13.4 and create 2 worker nodes. KubeOne automatically populates information
+1.14.0 and create 2 worker nodes. KubeOne automatically populates information
 about VPC IDs and region for worker nodes from the Terraform output.
 Alternatively, you can set those information manually. As KubeOne is using
 [Kubermatic
@@ -239,7 +239,7 @@ terraform destroy
 
 You'll be asked to enter `yes` to confirm your intention to destroy the cluster.
 
-Congratulations! You're now running Kubernetes 1.13.4 HA cluster with three
+Congratulations! You're now running Kubernetes 1.14.0 HA cluster with three
 control plane nodes and two worker nodes. If you want to learn more about
 KubeOne and its features, such as [upgrades](upgrading_cluster.md), make sure to
 check our
