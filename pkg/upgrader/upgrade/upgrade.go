@@ -23,6 +23,7 @@ import (
 
 	"github.com/kubermatic/kubeone/pkg/certificate"
 	"github.com/kubermatic/kubeone/pkg/features"
+	"github.com/kubermatic/kubeone/pkg/task"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
 	"github.com/kubermatic/kubeone/pkg/util"
 )
@@ -42,26 +43,23 @@ const (
 // cluster provisioned using KubeOne
 func Upgrade(ctx *util.Context) error {
 	// commonSteps are same for all worker nodes and they are safe to be run in parallel
-	commonSteps := []struct {
-		fn     func(ctx *util.Context) error
-		errMsg string
-	}{
-		{fn: util.BuildKubernetesClientset, errMsg: "unable to build kubernetes clientset"},
-		{fn: determineHostname, errMsg: "unable to determine hostname"},
-		{fn: determineOS, errMsg: "unable to determine operating system"},
-		{fn: runPreflightChecks, errMsg: "preflight checks failed"},
-		{fn: upgradeLeader, errMsg: "unable to upgrade leader control plane"},
-		{fn: upgradeFollower, errMsg: "unable to upgrade follower control plane"},
-		{fn: features.Activate, errMsg: "unable to activate features"},
-		{fn: certificate.DownloadCA, errMsg: "unable to download ca from leader"},
-		{fn: machinecontroller.EnsureMachineController, errMsg: "failed to update machine-controller"},
-		{fn: machinecontroller.WaitReady, errMsg: "failed to wait for machine-controller"},
-		{fn: upgradeMachineDeployments, errMsg: "unable to upgrade MachineDeployments"},
+	commonSteps := []task.Task{
+		{Fn: util.BuildKubernetesClientset, ErrMsg: "unable to build kubernetes clientset"},
+		{Fn: determineHostname, ErrMsg: "unable to determine hostname"},
+		{Fn: determineOS, ErrMsg: "unable to determine operating system"},
+		{Fn: runPreflightChecks, ErrMsg: "preflight checks failed"},
+		{Fn: upgradeLeader, ErrMsg: "unable to upgrade leader control plane", Retries: 3},
+		{Fn: upgradeFollower, ErrMsg: "unable to upgrade follower control plane", Retries: 3},
+		{Fn: features.Activate, ErrMsg: "unable to activate features"},
+		{Fn: certificate.DownloadCA, ErrMsg: "unable to download ca from leader", Retries: 3},
+		{Fn: machinecontroller.EnsureMachineController, ErrMsg: "failed to update machine-controller", Retries: 3},
+		{Fn: machinecontroller.WaitReady, ErrMsg: "failed to wait for machine-controller", Retries: 3},
+		{Fn: upgradeMachineDeployments, ErrMsg: "unable to upgrade MachineDeployments", Retries: 3},
 	}
 
 	for _, step := range commonSteps {
-		if err := step.fn(ctx); err != nil {
-			return errors.Wrap(err, step.errMsg)
+		if err := step.Run(ctx); err != nil {
+			return errors.Wrap(err, step.ErrMsg)
 		}
 	}
 

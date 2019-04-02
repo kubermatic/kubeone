@@ -21,6 +21,7 @@ import (
 
 	"github.com/kubermatic/kubeone/pkg/certificate"
 	"github.com/kubermatic/kubeone/pkg/features"
+	"github.com/kubermatic/kubeone/pkg/task"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
 	"github.com/kubermatic/kubeone/pkg/util"
 )
@@ -28,31 +29,28 @@ import (
 // Install performs all the steps required to install Kubernetes on
 // an empty, pristine machine.
 func Install(ctx *util.Context) error {
-	installSteps := []struct {
-		fn     func(*util.Context) error
-		errMsg string
-	}{
-		{fn: installPrerequisites, errMsg: "failed to install prerequisites"},
-		{fn: generateKubeadm, errMsg: "failed to generate kubeadm config files"},
-		{fn: kubeadmCertsOnLeader, errMsg: "failed to provision certs and etcd on leader"},
-		{fn: certificate.DownloadCA, errMsg: "unable to download ca from leader"},
-		{fn: deployCA, errMsg: "unable to deploy ca on nodes"},
-		{fn: kubeadmCertsOnFollower, errMsg: "failed to provision certs and etcd on followers"},
-		{fn: initKubernetesLeader, errMsg: "failed to init kubernetes on leader"},
-		{fn: joinControlplaneNode, errMsg: "unable to join other masters a cluster"},
-		{fn: copyKubeconfig, errMsg: "unable to copy kubeconfig to home directory"},
-		{fn: saveKubeconfig, errMsg: "unable to save kubeconfig to the local machine"},
-		{fn: util.BuildKubernetesClientset, errMsg: "unable to build kubernetes clientset"},
-		{fn: features.Activate, errMsg: "unable to activate features"},
-		{fn: applyCanalCNI, errMsg: "failed to install cni plugin canal"},
-		{fn: machinecontroller.EnsureMachineController, errMsg: "failed to install machine-controller"},
-		{fn: machinecontroller.WaitReady, errMsg: "failed to wait for machine-controller"},
-		{fn: createWorkerMachines, errMsg: "failed to create worker machines"},
+	installSteps := []task.Task{
+		{Fn: installPrerequisites, ErrMsg: "failed to install prerequisites"},
+		{Fn: generateKubeadm, ErrMsg: "failed to generate kubeadm config files"},
+		{Fn: kubeadmCertsOnLeader, ErrMsg: "failed to provision certs and etcd on leader"},
+		{Fn: certificate.DownloadCA, ErrMsg: "unable to download ca from leader", Retries: 3},
+		{Fn: deployCA, ErrMsg: "unable to deploy ca on nodes", Retries: 3},
+		{Fn: kubeadmCertsOnFollower, ErrMsg: "failed to provision certs and etcd on followers"},
+		{Fn: initKubernetesLeader, ErrMsg: "failed to init kubernetes on leader"},
+		{Fn: joinControlplaneNode, ErrMsg: "unable to join other masters a cluster"},
+		{Fn: copyKubeconfig, ErrMsg: "unable to copy kubeconfig to home directory", Retries: 3},
+		{Fn: saveKubeconfig, ErrMsg: "unable to save kubeconfig to the local machine", Retries: 3},
+		{Fn: util.BuildKubernetesClientset, ErrMsg: "unable to build kubernetes clientset", Retries: 3},
+		{Fn: features.Activate, ErrMsg: "unable to activate features"},
+		{Fn: applyCanalCNI, ErrMsg: "failed to install cni plugin canal", Retries: 3},
+		{Fn: machinecontroller.EnsureMachineController, ErrMsg: "failed to install machine-controller", Retries: 3},
+		{Fn: machinecontroller.WaitReady, ErrMsg: "failed to wait for machine-controller", Retries: 3},
+		{Fn: createWorkerMachines, ErrMsg: "failed to create worker machines", Retries: 3},
 	}
 
 	for _, step := range installSteps {
-		if err := step.fn(ctx); err != nil {
-			return errors.Wrap(err, step.errMsg)
+		if err := step.Run(ctx); err != nil {
+			return errors.Wrap(err, step.ErrMsg)
 		}
 	}
 
