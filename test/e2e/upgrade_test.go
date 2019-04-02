@@ -194,7 +194,7 @@ func waitForNodesUpgraded(client dynclient.Client, targetVersion string) error {
 		return errors.Wrap(err, "desired version is invalid")
 	}
 
-	return wait.Poll(5*time.Second, 10*time.Minute, func() (bool, error) {
+	return wait.Poll(5*time.Second, 20*time.Minute, func() (bool, error) {
 		nodes := corev1.NodeList{}
 		err := client.List(context.Background(), &dynclient.ListOptions{}, &nodes)
 		if err != nil {
