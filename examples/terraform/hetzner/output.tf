@@ -22,3 +22,15 @@ output "kubeone_hosts" {
     }
   }
 }
+
+output "kubeone_workers" {
+  value = {
+    pool1 = {
+      serverType      = "${var.worker_type}"
+      location        = "${var.datacenter}"
+      replicas        = 1
+      sshPublicKeys   = ["${file("${var.ssh_public_key_file}")}"]
+      operatingSystem = "${var.image}"
+    }
+  }
+}
