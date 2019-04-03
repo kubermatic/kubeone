@@ -65,7 +65,7 @@ func setupTearDown(p Provisioner, k Kubeone) func(t *testing.T) {
 }
 
 func waitForNodesReady(client dynclient.Client, expectedNumberOfNodes int) error {
-	return wait.Poll(5*time.Second, 5*time.Minute, func() (bool, error) {
+	return wait.Poll(5*time.Second, 10*time.Minute, func() (bool, error) {
 		nodes := corev1.NodeList{}
 		nodeListOpts := dynclient.ListOptions{}
 

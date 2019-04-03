@@ -128,8 +128,8 @@ make install
 # Start the tests
 echo "Running E2E tests ..."
 if [[ $TEST_SET == "conformance" ]]; then
-  go test -race -tags=e2e -v -timeout 30m -run TestClusterConformance ./test/e2e/... -identifier=$BUILD_ID -provider=$PROVIDER -cluster-version=$TEST_CLUSTER_TARGET_VERSION
+  go test -race -tags=e2e -v -timeout 60m -run TestClusterConformance ./test/e2e/... -identifier=$BUILD_ID -provider=$PROVIDER -cluster-version=$TEST_CLUSTER_TARGET_VERSION
 fi
 if [[ $TEST_SET == "upgrades" ]]; then
-  go test -race -tags=e2e -v -timeout 60m -run TestClusterUpgrade ./test/e2e/... -identifier=$BUILD_ID -provider=$PROVIDER -cluster-version=$TEST_CLUSTER_TARGET_VERSION
+  go test -race -tags=e2e -v -timeout 120m -run TestClusterUpgrade ./test/e2e/... -identifier=$BUILD_ID -provider=$PROVIDER -cluster-version=$TEST_CLUSTER_TARGET_VERSION
 fi
