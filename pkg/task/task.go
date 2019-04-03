@@ -40,7 +40,7 @@ type Task struct {
 	Retries int
 }
 
-// RunTask runs a task
+// Run runs a task
 func (t *Task) Run(ctx *util.Context) error {
 	if t.Retries == 0 {
 		t.Retries = 1

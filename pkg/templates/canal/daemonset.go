@@ -29,7 +29,7 @@ import (
 func daemonSet() *appsv1.DaemonSet {
 	maxUnavailable := intstr.FromInt(1)
 	terminationGracePeriodSeconds := int64(0)
-	priviliged := true
+	privileged := true
 	fileOrCreate := corev1.HostPathFileOrCreate
 	return &appsv1.DaemonSet{
 		ObjectMeta: metav1.ObjectMeta{
@@ -217,7 +217,7 @@ func daemonSet() *appsv1.DaemonSet {
 								},
 							},
 							SecurityContext: &corev1.SecurityContext{
-								Privileged: &priviliged,
+								Privileged: &privileged,
 							},
 							Resources: corev1.ResourceRequirements{
 								Requests: map[corev1.ResourceName]resource.Quantity{
@@ -268,7 +268,7 @@ func daemonSet() *appsv1.DaemonSet {
 								"--kube-subnet-mgr",
 							},
 							SecurityContext: &corev1.SecurityContext{
-								Privileged: &priviliged,
+								Privileged: &privileged,
 							},
 							Env: []corev1.EnvVar{
 								{
