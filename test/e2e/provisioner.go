@@ -25,6 +25,7 @@ import (
 const (
 	AWS          = "aws"
 	DigitalOcean = "digitalocean"
+	Hetzner      = "hetzner"
 
 	tfStateFileName = "terraform.tfstate"
 )
@@ -128,6 +129,55 @@ func (p *DOProvisioner) Provision() (string, error) {
 
 // Cleanup destroys infrastructure created by terraform
 func (p *DOProvisioner) Cleanup() error {
+	err := p.terraform.destroy()
+	if err != nil {
+		return fmt.Errorf("%v", err)
+	}
+
+	_, err = executeCommand("", "rm", []string{"-rf", p.testPath}, nil)
+	if err != nil {
+		return fmt.Errorf("%v", err)
+	}
+
+	return nil
+}
+
+// HetznerProvisioner describes the Hetzner provisioner
+type HetznerProvisioner struct {
+	testPath  string
+	terraform *terraform
+}
+
+// NewHetznerProvisioner creates and initialize the HetznerProvisioner structure
+func NewHetznerProvisioner(testPath, identifier string) (*HetznerProvisioner, error) {
+	terraform := &terraform{
+		terraformDir: "../../examples/terraform/hetzner/",
+		idendifier:   identifier,
+	}
+
+	return &HetznerProvisioner{
+		terraform: terraform,
+		testPath:  testPath,
+	}, nil
+}
+
+// Provision starts provisioning on Hetzner
+func (p *HetznerProvisioner) Provision() (string, error) {
+	hcloudToken := os.Getenv("HCLOUD_TOKEN")
+	if len(hcloudToken) == 0 {
+		return "", errors.New("unable to run the test suite, HCLOUD_TOKEN environment variable cannot be empty")
+	}
+
+	tf, err := p.terraform.initAndApply()
+	if err != nil {
+		return "", err
+	}
+
+	return tf, nil
+}
+
+// Cleanup destroys infrastructure created by terraform
+func (p *HetznerProvisioner) Cleanup() error {
 	err := p.terraform.destroy()
 	if err != nil {
 		return fmt.Errorf("%v", err)

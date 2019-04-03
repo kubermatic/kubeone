@@ -30,14 +30,16 @@ import (
 
 // CreateProvisioner returns interface for specific provisioner
 func CreateProvisioner(testPath string, identifier string, provider string) (Provisioner, error) {
-	if provider == AWS {
+	switch provider {
+	case AWS:
 		return NewAWSProvisioner(testPath, identifier)
-	}
-	if provider == DigitalOcean {
+	case DigitalOcean:
 		return NewDOProvisioner(testPath, identifier)
+	case Hetzner:
+		return NewHetznerProvisioner(testPath, identifier)
+	default:
+		return nil, fmt.Errorf("unsuported provider %v", provider)
 	}
-
-	return nil, fmt.Errorf("unsuported provider %v", provider)
 }
 
 // IsCommandAvailable checks if command is available OS

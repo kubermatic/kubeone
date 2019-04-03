@@ -72,6 +72,16 @@ func TestClusterUpgrade(t *testing.T) {
 			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
 			scenario:              NodeConformance,
 		},
+		{
+			name:                  "upgrade k8s 1.13.5 cluster to 1.14.0 on Hetzner",
+			provider:              Hetzner,
+			initialVersion:        "v1.13.5",
+			targetVersion:         "v1.14.0",
+			initialConfigPath:     "../../test/e2e/testdata/config_hetzner_1.13.5.yaml",
+			targetConfigPath:      "../../test/e2e/testdata/config_hetzner_1.14.0.yaml",
+			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
+			scenario:              NodeConformance,
+		},
 	}
 
 	for _, tc := range testcases {
