@@ -100,6 +100,12 @@ type gceWorkerConfig struct {
 	Zone        string `json:"zone"`
 }
 
+type hetznerWorkerConfig struct {
+	ServerType string `json:"serverType"`
+	Datacenter string `json:"datacenter"`
+	Location   string `json:"location"`
+}
+
 // Config represents configuration in the terraform output format
 type Config struct {
 	KubeOneAPI struct {
@@ -316,8 +322,25 @@ func (c *Config) updateDigitalOceanWorkerset(workerset *config.WorkerConfig, cfg
 	return nil
 }
 
-func (c *Config) updateHetznerWorkerset(_ *config.WorkerConfig, _ json.RawMessage) error {
-	return errors.New("cloudprovider Hetzner is not implemented yet")
+func (c *Config) updateHetznerWorkerset(workerset *config.WorkerConfig, cfg json.RawMessage) error {
+	var hetznerConfig hetznerWorkerConfig
+	if err := json.Unmarshal(cfg, &hetznerConfig); err != nil {
+		return err
+	}
+
+	flags := []cloudProviderFlags{
+		{key: "serverType", value: hetznerConfig.ServerType},
+		{key: "datacenter", value: hetznerConfig.Datacenter},
+		{key: "location", value: hetznerConfig.Location},
+	}
+
+	for _, flag := range flags {
+		if err := setWorkersetFlag(workerset, flag.key, flag.value); err != nil {
+			return errors.WithStack(err)
+		}
+	}
+
+	return nil
 }
 
 func (c *Config) updateOpenStackWorkerset(workerset *config.WorkerConfig, cfg json.RawMessage) error {

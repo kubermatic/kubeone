@@ -28,7 +28,7 @@ output "kubeone_workers" {
     pool1 = {
       serverType      = "${var.worker_type}"
       location        = "${var.datacenter}"
-      replicas        = 1
+      replicas        = 3
       sshPublicKeys   = ["${file("${var.ssh_public_key_file}")}"]
       operatingSystem = "${var.image}"
     }
