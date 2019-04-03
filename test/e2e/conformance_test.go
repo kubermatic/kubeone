@@ -70,6 +70,22 @@ func TestClusterConformance(t *testing.T) {
 			configFilePath:        "../../test/e2e/testdata/config_do_1.14.0.yaml",
 			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
 		},
+		{
+			name:                  "verify k8s 1.13.5 cluster deployment on Hetzner",
+			provider:              Hetzner,
+			kubernetesVersion:     "v1.13.5",
+			scenario:              NodeConformance,
+			configFilePath:        "../../test/e2e/testdata/config_hetzner_1.13.5.yaml",
+			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
+		},
+		{
+			name:                  "verify k8s 1.14.0 cluster deployment on Hetzner",
+			provider:              Hetzner,
+			kubernetesVersion:     "v1.14.0",
+			scenario:              NodeConformance,
+			configFilePath:        "../../test/e2e/testdata/config_hetzner_1.14.0.yaml",
+			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
+		},
 	}
 
 	for _, tc := range testcases {
