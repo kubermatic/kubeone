@@ -86,6 +86,9 @@ if [ -n "${RUNNING_IN_CI}" ]; then
  if [[ $PROVIDER == "digitalocean" ]]; then
   export DIGITALOCEAN_TOKEN=$DO_E2E_TESTS_TOKEN
  fi
+ if [[ $PROVIDER == "hetzner" ]]; then
+  export HCLOUD_TOKEN=$HZ_E2E_TOKEN
+ fi
  KUBE_TEST_DIR="/opt/kube-test"
  if [ -d "${KUBE_TEST_DIR}" ]; then
  KUBEONE_BUILD_DIR="$(go env GOPATH)/src/github.com/kubermatic/kubeone/_build"
