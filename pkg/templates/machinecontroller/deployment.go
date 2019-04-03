@@ -740,6 +740,10 @@ func machineControllerMachineDeploymentCRD() *apiextensions.CustomResourceDefini
 			},
 			Subresources: &apiextensions.CustomResourceSubresources{
 				Status: &apiextensions.CustomResourceSubresourceStatus{},
+				Scale: &apiextensions.CustomResourceSubresourceScale{
+					SpecReplicasPath:   ".spec.replicas",
+					StatusReplicasPath: ".status.replicas",
+				},
 			},
 			AdditionalPrinterColumns: []apiextensions.CustomResourceColumnDefinition{
 				{
