@@ -1,23 +1,60 @@
+/*
+Copyright 2019 The KubeOne Authors.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package metricsserver
 
 import (
-	"github.com/pkg/errors"
-	"k8s.io/apimachinery/pkg/util/intstr"
+	"context"
 
-	"github.com/kubermatic/kubeone/pkg/config"
+	"github.com/pkg/errors"
+
 	"github.com/kubermatic/kubeone/pkg/util"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	apireg "k8s.io/kube-aggregator/pkg/apis/apiregistration"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/util/intstr"
+	apiregv1 "k8s.io/kube-aggregator/pkg/apis/apiregistration/v1"
 )
 
 // Deploy generate and POST all objects to apiserver
 func Deploy(ctx *util.Context) error {
 	if ctx.DynamicClient == nil {
 		return errors.New("kubernetes client not initialized")
+	}
+
+	objs := []runtime.Object{
+		aggregatedMetricsReaderClusterRole(),
+		authDelegatorClusterRoleBinding(),
+		metricsServerKubeSystemRoleBinding(),
+		metricsServerAPIService(),
+		metricsServerServiceAccount(),
+		metricsServerDeployment(),
+		metricsServerService(),
+		metricServerClusterRole(),
+		metricServerClusterRoleBinding(),
+	}
+
+	bgCtx := context.Background()
+	for _, o := range objs {
+		if err := simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, o); err != nil {
+			return errors.WithStack(err)
+		}
 	}
 
 	return nil
@@ -96,17 +133,17 @@ func metricsServerKubeSystemRoleBinding() *rbacv1.RoleBinding {
 	}
 }
 
-func metricsServerAPIService() *apireg.APIService {
-	return &apireg.APIService{
+func metricsServerAPIService() *apiregv1.APIService {
+	return &apiregv1.APIService{
 		TypeMeta: metav1.TypeMeta{
-			APIVersion: "apiregistration.k8s.io/v1beta1",
+			APIVersion: "apiregistration.k8s.io/v1",
 			Kind:       "APIService",
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "v1beta1.metrics.k8s.io",
 		},
-		Spec: apireg.APIServiceSpec{
-			Service: &apireg.ServiceReference{
+		Spec: apiregv1.APIServiceSpec{
+			Service: &apiregv1.ServiceReference{
 				Name:      "metrics-server",
 				Namespace: metav1.NamespaceSystem,
 			},
@@ -132,7 +169,7 @@ func metricsServerServiceAccount() *corev1.ServiceAccount {
 	}
 }
 
-func metricsServerDeployment(cluster *config.Cluster) *appsv1.Deployment {
+func metricsServerDeployment() *appsv1.Deployment {
 	k8sAppLabels := map[string]string{"k8s-app": "metrics-server"}
 
 	return &appsv1.Deployment{
@@ -165,7 +202,7 @@ func metricsServerDeployment(cluster *config.Cluster) *appsv1.Deployment {
 						},
 					},
 					Containers: []corev1.Container{
-						corev1.Container{
+						{
 							Name:            "metrics-server",
 							Image:           "k8s.gcr.io/metrics-server-amd64:v0.3.1",
 							ImagePullPolicy: corev1.PullIfNotPresent,
@@ -174,7 +211,7 @@ func metricsServerDeployment(cluster *config.Cluster) *appsv1.Deployment {
 								"--kubelet-insecure-tls",
 							},
 							VolumeMounts: []corev1.VolumeMount{
-								corev1.VolumeMount{
+								{
 									Name:      "tmp-dir",
 									MountPath: "/tmp",
 								},

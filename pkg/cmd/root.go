@@ -24,6 +24,7 @@ import (
 
 	apiextensionsscheme "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/scheme"
 	"k8s.io/client-go/kubernetes/scheme"
+	apiregscheme "k8s.io/kube-aggregator/pkg/client/clientset_generated/clientset/scheme"
 	clusterscheme "sigs.k8s.io/cluster-api/pkg/client/clientset_generated/clientset/scheme"
 )
 
@@ -38,6 +39,10 @@ func Execute() {
 	}
 
 	if err := apiextensionsscheme.AddToScheme(scheme.Scheme); err != nil {
+		panic(err)
+	}
+
+	if err := apiregscheme.AddToScheme(scheme.Scheme); err != nil {
 		panic(err)
 	}
 
