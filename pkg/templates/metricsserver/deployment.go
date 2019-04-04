@@ -207,7 +207,6 @@ func metricsServerDeployment() *appsv1.Deployment {
 							Image:           "k8s.gcr.io/metrics-server-amd64:v0.3.1",
 							ImagePullPolicy: corev1.PullIfNotPresent,
 							Args: []string{
-								"--kubelet-preferred-address-types=Hostname",
 								"--kubelet-insecure-tls",
 							},
 							VolumeMounts: []corev1.VolumeMount{

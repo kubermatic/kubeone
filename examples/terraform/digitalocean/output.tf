@@ -40,9 +40,11 @@ output "kubeone_workers" {
     # following outputs will be parsed by kubeone and automatically merged into
     # corresponding (by name) worker definition
     fra1-1 = {
-      droplet_size  = "${var.droplet_size}"
-      region        = "${var.region}"
-      sshPublicKeys = ["${digitalocean_ssh_key.deployer.public_key}"]
+      replicas        = 3
+      operatingSystem = "ubuntu"
+      droplet_size    = "${var.droplet_size}"
+      region          = "${var.region}"
+      sshPublicKeys   = ["${digitalocean_ssh_key.deployer.public_key}"]
     }
   }
 }
