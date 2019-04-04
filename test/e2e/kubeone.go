@@ -30,6 +30,7 @@ type Kubeone struct {
 	ConfigurationFile string
 }
 
+// NewKubeone creates and initializes the Kubeone structure
 func NewKubeone(kubeoneDir, configurationFile string) Kubeone {
 	return Kubeone{
 		KubeoneDir:        kubeoneDir,
@@ -53,6 +54,7 @@ func (p *Kubeone) Install(tfJSON string) error {
 	return nil
 }
 
+// Upgrade upgrades the cluster
 func (p *Kubeone) Upgrade() error {
 	_, err := executeCommand(p.KubeoneDir, "kubeone", []string{"upgrade", "--tfjson", "tf.json", "--upgrade-machine-deployments", p.ConfigurationFile}, nil)
 	if err != nil {
@@ -78,7 +80,7 @@ func (p *Kubeone) CreateKubeconfig() ([]byte, error) {
 	return []byte(rawKubeconfig), nil
 }
 
-// DestroyWorkers cleanup method
+// Reset resets and cleanups the cluster
 func (p *Kubeone) Reset() error {
 	_, err := executeCommand(p.KubeoneDir, "kubeone", []string{"-v", "reset", "--tfjson", "tf.json", "--destroy-workers", p.ConfigurationFile}, nil)
 	if err != nil {

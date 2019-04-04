@@ -22,14 +22,13 @@ import (
 )
 
 const (
-	Pods            = "Pods"
 	NodeConformance = `\[NodeConformance\]`
 	Conformance     = `\[Conformance\]`
 )
 
 const skip = `Alpha|\[(Disruptive|Feature:[^\]]+|Flaky|Serial|Slow)\]`
 
-// Kubetest struct
+// Kubetest configures the Kubetest conformance tester
 type Kubetest struct {
 	kubetestDir       string
 	kubernetesVersion string
@@ -37,6 +36,7 @@ type Kubetest struct {
 	envVars map[string]string
 }
 
+// NewKubetest creates and provisions the Kubetest structure
 func NewKubetest(k8sVersion, kubetestDir string, envVars map[string]string) Kubetest {
 	return Kubetest{
 		kubetestDir:       kubetestDir,
@@ -46,7 +46,7 @@ func NewKubetest(k8sVersion, kubetestDir string, envVars map[string]string) Kube
 
 }
 
-// RunTests starts e2e tests
+// Verify verifies the cluster
 func (p *Kubetest) Verify(scenario string) error {
 	k8sVersionPath := fmt.Sprintf("%s/kubernetes-%s/kubernetes/version", p.kubetestDir, p.kubernetesVersion)
 	if _, err := os.Stat(k8sVersionPath); os.IsNotExist(err) {

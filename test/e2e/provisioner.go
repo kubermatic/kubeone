@@ -23,13 +23,17 @@ import (
 )
 
 const (
-	AWS          = "aws"
+	// AWS cloud provider
+	AWS = "aws"
+	// DigitalOcean cloud provider
 	DigitalOcean = "digitalocean"
-	Hetzner      = "hetzner"
+	// Hetzner cloud provider
+	Hetzner = "hetzner"
 
 	tfStateFileName = "terraform.tfstate"
 )
 
+// Provisioner provisions and cleanups the cluster
 type Provisioner interface {
 	Provision() (string, error)
 	Cleanup() error
