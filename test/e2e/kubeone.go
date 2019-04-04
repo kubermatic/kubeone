@@ -19,6 +19,7 @@ package e2e
 import (
 	"fmt"
 	"os"
+	"time"
 )
 
 // Kubeone structure
@@ -38,6 +39,8 @@ func NewKubeone(kubeoneDir, configurationFile string) Kubeone {
 
 // Install starts k8s cluster deployment
 func (p *Kubeone) Install(tfJSON string) error {
+	// deliberate delay, to give nodes time to start
+	time.Sleep(2 * time.Minute)
 
 	err := p.storeTFJson(tfJSON)
 	if err != nil {

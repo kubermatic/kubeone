@@ -30,7 +30,7 @@ output "kubeone_workers" {
       location        = "${var.datacenter}"
       replicas        = 3
       sshPublicKeys   = ["${file("${var.ssh_public_key_file}")}"]
-      operatingSystem = "${var.image}"
+      operatingSystem = "ubuntu"
     }
   }
 }
