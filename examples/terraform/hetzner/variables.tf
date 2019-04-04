@@ -32,7 +32,7 @@ variable "worker_type" {
 }
 
 variable "datacenter" {
-  default = "hel1"
+  default = "fsn1"
 }
 
 variable "ssh_public_key_file" {
