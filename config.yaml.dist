@@ -41,7 +41,7 @@ provider:
   # * hetzner
   # * none
   # * openstack
-  # * vshere
+  # * vsphere
   name: ''
   
   # Set kubelet flag --cloud-provider=external, to be used with external

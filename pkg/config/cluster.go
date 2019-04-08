@@ -178,7 +178,7 @@ const (
 	ProviderNameOpenStack    ProviderName = "openstack"
 	ProviderNameHetzner      ProviderName = "hetzner"
 	ProviderNameDigitalOcean ProviderName = "digitalocean"
-	ProviderNameVSphere      ProviderName = "vshere"
+	ProviderNameVSphere      ProviderName = "vsphere"
 	ProviderNameGCE          ProviderName = "gce"
 	ProviderNameNone         ProviderName = "none"
 )
