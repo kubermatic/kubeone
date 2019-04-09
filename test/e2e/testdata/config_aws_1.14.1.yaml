@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 versions:
-  kubernetes: '1.14.0'
+  kubernetes: '1.14.1'
 provider:
-  name: 'hetzner'
+  name: 'aws'
 features:
   enable_pod_security_policy: false
