@@ -65,6 +65,7 @@ func (m *Cluster) DefaultAndValidate() error {
 	if err := m.MachineController.DefaultAndValidate(m.Provider.Name); err != nil {
 		return errors.Wrap(err, "failed to configure machine-controller")
 	}
+
 	if *m.MachineController.Deploy {
 		for idx, workerset := range m.Workers {
 			if err := workerset.Validate(); err != nil {
@@ -77,6 +78,10 @@ func (m *Cluster) DefaultAndValidate() error {
 
 	if err := m.Network.Validate(); err != nil {
 		return errors.Wrap(err, "network configuration is invalid")
+	}
+
+	if err := m.Features.Validate(); err != nil {
+		return errors.Wrap(err, "oidc confiuration is invalid")
 	}
 
 	if m.APIServer.Address == "" {
@@ -338,6 +343,7 @@ type Features struct {
 	PodSecurityPolicy PodSecurityPolicy `json:"pod_security_policy"`
 	DynamicAuditLog   DynamicAuditLog   `json:"dynamic_audit_log"`
 	MetricsServer     MetricsServer     `json:"metrics_server"`
+	OpenIDConnect     OpenIDConnect     `json:"openid_connect"`
 }
 
 // PodSecurityPolicy feature flag
@@ -353,6 +359,43 @@ type DynamicAuditLog struct {
 // MetricsServer feature flag
 type MetricsServer struct {
 	Disable bool `json:"disable"`
+}
+
+// OpenIDConnect feature flag
+type OpenIDConnect struct {
+	Enable bool                `json:"enable"`
+	Config OpenIDConnectConfig `json:"config"`
+}
+
+// OpenIDConnectConfig config
+type OpenIDConnectConfig struct {
+	IssuerURL      string `json:"issuer_url"`
+	ClientID       string `json:"client_id"`
+	UsernameClaim  string `json:"username_claim"`
+	UsernamePrefix string `json:"username_prefix"`
+	GroupsClaim    string `json:"groups_claim"`
+	GroupsPrefix   string `json:"groups_prefix"`
+	RequiredClaim  string `json:"required_claim"`
+	SigningAlgs    string `json:"signing_algs"`
+	CAFile         string `json:"ca_file"`
+}
+
+// Validate features config
+func (f *Features) Validate() error {
+	// Currently only validate OIDC config
+	if !f.OpenIDConnect.Enable {
+		return nil
+	}
+
+	if f.OpenIDConnect.Config.IssuerURL == "" {
+		return errors.New("openid_connect.config.issuer_url can't be empty")
+	}
+
+	if f.OpenIDConnect.Config.ClientID == "" {
+		return errors.New("openid_connect.config.client_id can't be empty")
+	}
+
+	return nil
 }
 
 // MachineControllerConfig controls
