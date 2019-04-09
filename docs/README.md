@@ -10,4 +10,4 @@
 * [Environment variables used by KubeOne](environment_variables.md)
 * [Adding support for provider](adding_provider_support.md)
 * [Proposals](./proposals)
-  * [Cluster Upgrades](./proposals/0002-upgrades.md)
+  * [Cluster Upgrades](./proposals/20190211-upgrades.md)
