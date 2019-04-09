@@ -27,7 +27,7 @@ import (
 // Activate configured features.
 // Installing CRDs, creating policies and so on
 func Activate(ctx *util.Context) error {
-	if err := installKubeSystemPSP(ctx.Cluster.Features.EnablePodSecurityPolicy, ctx); err != nil {
+	if err := installKubeSystemPSP(ctx.Cluster.Features.PodSecurityPolicy.Enable, ctx); err != nil {
 		return errors.Wrap(err, "failed to install PodSecurityPolicy")
 	}
 
@@ -37,6 +37,6 @@ func Activate(ctx *util.Context) error {
 // UpdateKubeadmClusterConfiguration update additional config options in the kubeadm's
 // v1beta1.ClusterConfiguration according to enabled features
 func UpdateKubeadmClusterConfiguration(featuresCfg config.Features, clusterConfig *kubeadmv1beta1.ClusterConfiguration) {
-	activateKubeadmPSP(featuresCfg.EnablePodSecurityPolicy, clusterConfig)
-	activateKubeadmDynamicAuditLogs(featuresCfg.EnableDynamicAuditLog, clusterConfig)
+	activateKubeadmPSP(featuresCfg.PodSecurityPolicy.Enable, clusterConfig)
+	activateKubeadmDynamicAuditLogs(featuresCfg.DynamicAuditLog.Enable, clusterConfig)
 }
