@@ -19,20 +19,20 @@
 name: my-demo-cluster
 
 versions:
-  kubernetes: '1.14.0'
+  kubernetes: "1.14.1"
 
 network:
   # the subnet used for pods (flannel);
   # leave it empty for default: 10.244.0.0/16
-  pod_subnet: ''
+  pod_subnet: ""
 
   # the subnet used for services;
   # leave it empty for default: 10.96.0.0/12
-  service_subnet: ''
+  service_subnet: ""
 
   # a nodePort range to reserve for services;
   # leave it empty for default: 30000-32767
-  node_port_range: ''
+  node_port_range: ""
 
 provider:
   # Supported cloud provider names:
@@ -42,27 +42,29 @@ provider:
   # * none
   # * openstack
   # * vsphere
-  name: ''
-  
+  name: ""
+
   # Set kubelet flag --cloud-provider=external, to be used with external
   # Cloud Controller Managers (CCM).
   external: false
 
   # Path to file that will be uploaded and used as custom --cloud-config file.
-  cloud_config: ''
+  cloud_config: ""
 
 features:
   # Enables PodSecurityPolicy admission plugin in API server, as well as creates
   # default `privileged` PodSecurityPolicy, plus RBAC rules to authorize
   # `kube-system` namespace pods to `use` it.
-  enable_pod_security_policy: false
+  pod_security_policy:
+    enable: false
 
   # Enables dynamic audit logs.
   # After enablig this, operator should create auditregistration.k8s.io/v1alpha1
   # AuditSink object.
   # More info: https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#dynamic-backend
-  enable_dynamic_audit_log: false
-    
+  dynamic_audit_log:
+    enable: false
+
 # The list of nodes can be overwritten by providing Terraform output.
 # You are strongly encouraged to provide an odd number of nodes and
 # have at least three of them.

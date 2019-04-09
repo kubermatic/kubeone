@@ -335,8 +335,18 @@ func (m *WorkerConfig) Validate() error {
 
 // Features switches
 type Features struct {
-	EnablePodSecurityPolicy bool `json:"enable_pod_security_policy"`
-	EnableDynamicAuditLog   bool `json:"enable_dynamic_audit_log"`
+	PodSecurityPolicy PodSecurityPolicy `json:"pod_security_policy"`
+	DynamicAuditLog   DynamicAuditLog   `json:"dynamic_audit_log"`
+}
+
+// PodSecurityPolicy feature flag
+type PodSecurityPolicy struct {
+	Enable bool `json:"enable"`
+}
+
+// DynamicAuditLog feature flag
+type DynamicAuditLog struct {
+	Enable bool `json:"enable"`
 }
 
 // MachineControllerConfig controls
