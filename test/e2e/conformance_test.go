@@ -47,11 +47,11 @@ func TestClusterConformance(t *testing.T) {
 			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
 		},
 		{
-			name:                  "verify k8s 1.14.0 cluster deployment on AWS",
+			name:                  "verify k8s 1.14.1 cluster deployment on AWS",
 			provider:              AWS,
-			kubernetesVersion:     "v1.14.0",
+			kubernetesVersion:     "v1.14.1",
 			scenario:              NodeConformance,
-			configFilePath:        "../../test/e2e/testdata/config_aws_1.14.0.yaml",
+			configFilePath:        "../../test/e2e/testdata/config_aws_1.14.1.yaml",
 			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
 		},
 		{
@@ -63,11 +63,11 @@ func TestClusterConformance(t *testing.T) {
 			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
 		},
 		{
-			name:                  "verify k8s 1.14.0 cluster deployment on DO",
+			name:                  "verify k8s 1.14.1 cluster deployment on DO",
 			provider:              DigitalOcean,
-			kubernetesVersion:     "v1.14.0",
+			kubernetesVersion:     "v1.14.1",
 			scenario:              NodeConformance,
-			configFilePath:        "../../test/e2e/testdata/config_do_1.14.0.yaml",
+			configFilePath:        "../../test/e2e/testdata/config_do_1.14.1.yaml",
 			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
 		},
 		{
@@ -79,11 +79,11 @@ func TestClusterConformance(t *testing.T) {
 			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
 		},
 		{
-			name:                  "verify k8s 1.14.0 cluster deployment on Hetzner",
+			name:                  "verify k8s 1.14.1 cluster deployment on Hetzner",
 			provider:              Hetzner,
-			kubernetesVersion:     "v1.14.0",
+			kubernetesVersion:     "v1.14.1",
 			scenario:              NodeConformance,
-			configFilePath:        "../../test/e2e/testdata/config_hetzner_1.14.0.yaml",
+			configFilePath:        "../../test/e2e/testdata/config_hetzner_1.14.1.yaml",
 			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
 		},
 	}

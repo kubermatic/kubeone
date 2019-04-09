@@ -53,32 +53,32 @@ func TestClusterUpgrade(t *testing.T) {
 		scenario              string
 	}{
 		{
-			name:                  "upgrade k8s 1.13.5 cluster to 1.14.0 on AWS",
+			name:                  "upgrade k8s 1.13.5 cluster to 1.14.1 on AWS",
 			provider:              AWS,
 			initialVersion:        "v1.13.5",
-			targetVersion:         "v1.14.0",
+			targetVersion:         "v1.14.1",
 			initialConfigPath:     "../../test/e2e/testdata/config_aws_1.13.5.yaml",
-			targetConfigPath:      "../../test/e2e/testdata/config_aws_1.14.0.yaml",
+			targetConfigPath:      "../../test/e2e/testdata/config_aws_1.14.1.yaml",
 			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
 			scenario:              NodeConformance,
 		},
 		{
-			name:                  "upgrade k8s 1.13.5 cluster to 1.14.0 on DO",
+			name:                  "upgrade k8s 1.13.5 cluster to 1.14.1 on DO",
 			provider:              DigitalOcean,
 			initialVersion:        "v1.13.5",
-			targetVersion:         "v1.14.0",
+			targetVersion:         "v1.14.1",
 			initialConfigPath:     "../../test/e2e/testdata/config_do_1.13.5.yaml",
-			targetConfigPath:      "../../test/e2e/testdata/config_do_1.14.0.yaml",
+			targetConfigPath:      "../../test/e2e/testdata/config_do_1.14.1.yaml",
 			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
 			scenario:              NodeConformance,
 		},
 		{
-			name:                  "upgrade k8s 1.13.5 cluster to 1.14.0 on Hetzner",
+			name:                  "upgrade k8s 1.13.5 cluster to 1.14.1 on Hetzner",
 			provider:              Hetzner,
 			initialVersion:        "v1.13.5",
-			targetVersion:         "v1.14.0",
+			targetVersion:         "v1.14.1",
 			initialConfigPath:     "../../test/e2e/testdata/config_hetzner_1.13.5.yaml",
-			targetConfigPath:      "../../test/e2e/testdata/config_hetzner_1.14.0.yaml",
+			targetConfigPath:      "../../test/e2e/testdata/config_hetzner_1.14.1.yaml",
 			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
 			scenario:              NodeConformance,
 		},
