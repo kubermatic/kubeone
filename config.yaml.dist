@@ -65,6 +65,11 @@ features:
   dynamic_audit_log:
     enable: false
 
+  # Opt-out from deploying metrics-server
+  # more info: https://github.com/kubernetes-incubator/metrics-server
+  metrics_server:
+    disable: false
+    
 # The list of nodes can be overwritten by providing Terraform output.
 # You are strongly encouraged to provide an odd number of nodes and
 # have at least three of them.

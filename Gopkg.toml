@@ -39,6 +39,10 @@
   version = "kubernetes-1.13.1"
 
 [[constraint]]
+  name = "k8s.io/kube-aggregator"
+  version = "kubernetes-1.13.1"
+
+[[constraint]]
   name = "sigs.k8s.io/cluster-api"
   revision = "813b1fec840d79b37fe86778237b6db6d1cb959d"
 

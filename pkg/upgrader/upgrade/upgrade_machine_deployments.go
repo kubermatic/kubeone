@@ -59,10 +59,7 @@ func upgradeMachineDeployments(ctx *util.Context) error {
 			}
 
 			machine.Spec.Template.Spec.Versions.Kubelet = ctx.Cluster.Versions.Kubernetes
-			if err := ctx.DynamicClient.Update(bg, &machine); err != nil {
-				return err
-			}
-			return nil
+			return errors.WithStack(ctx.DynamicClient.Update(bg, &machine))
 		})
 
 		if retErr != nil {

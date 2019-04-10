@@ -481,6 +481,19 @@
   version = "v0.2.0"
 
 [[projects]]
+  digest = "1:2feb5a8342be566ea44003c1bb5acaf7a4fb0bf4a4aca97f86220b423f63112e"
+  name = "k8s.io/kube-aggregator"
+  packages = [
+    "pkg/apis/apiregistration",
+    "pkg/apis/apiregistration/v1",
+    "pkg/apis/apiregistration/v1beta1",
+    "pkg/client/clientset_generated/clientset/scheme",
+  ]
+  pruneopts = "NUT"
+  revision = "1e8cd453c47488cff773c5ebcd70ca0b0ce054d9"
+  version = "kubernetes-1.13.1"
+
+[[projects]]
   digest = "1:2ea1125fe6fdeb4c20427bc03049c3dc816cf5e46249b7b5a6427d3f68291066"
   name = "k8s.io/kubernetes"
   packages = [
@@ -560,6 +573,8 @@
     "k8s.io/client-go/util/retry",
     "k8s.io/cluster-bootstrap/token/api",
     "k8s.io/cluster-bootstrap/token/util",
+    "k8s.io/kube-aggregator/pkg/apis/apiregistration/v1",
+    "k8s.io/kube-aggregator/pkg/client/clientset_generated/clientset/scheme",
     "k8s.io/kubernetes/pkg/registry/core/service/ipallocator",
     "sigs.k8s.io/cluster-api/pkg/apis/cluster/common",
     "sigs.k8s.io/cluster-api/pkg/apis/cluster/v1alpha1",

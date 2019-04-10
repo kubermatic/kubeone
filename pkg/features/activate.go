@@ -31,6 +31,10 @@ func Activate(ctx *util.Context) error {
 		return errors.Wrap(err, "failed to install PodSecurityPolicy")
 	}
 
+	if err := installMetricsServer(!ctx.Cluster.Features.MetricsServer.Disable, ctx); err != nil {
+		return errors.Wrap(err, "failed to install metrics-server")
+	}
+
 	return nil
 }
 
