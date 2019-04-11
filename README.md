@@ -51,12 +51,12 @@ New KubeOne release will be done for each minor Kubernetes version. Usually, a n
 
 In the following table you can find what are supported Kubernetes versions for each KubeOne version. KubeOne versions that are crossed out are not supported. It's highly recommended to use the latest version whenever possible.
 
-| KubeOne version | 1.14 | 1.13 | 1.12 |
-|-----------------|------|------|------|
-| v0.5.0 | + | + | - |
-| v0.4.1 | - | + | - |
-| <s>v0.4.0<s> | - | + | - |
-| <s>v0.3.0<s> | - | + | - |
+| KubeOne version | 1.14 | 1.13 | 1.12 | Supported providers |
+|-----------------|------|------|------|---------------------|
+| v0.5.0 | + | + | - | AWS, DigitalOcean, GCE, Hetzner, OpenStack |
+| v0.4.1 | - | + | - | AWS, DigitalOcean, Hetzner, OpenStack |
+| <s>v0.4.0<s> | - | + | - | AWS, DigitalOcean, Hetzner, OpenStack |
+| <s>v0.3.0<s> | - | + | - | AWS, DigitalOcean, Hetzner, OpenStack |
 
 **Note:** Versions v0.2.0 and v0.1.0-beta0 don't support upgrading to the newer Kubernetes version.
 
