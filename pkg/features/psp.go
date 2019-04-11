@@ -23,6 +23,7 @@ import (
 	"github.com/pkg/errors"
 
 	kubeadmv1beta1 "github.com/kubermatic/kubeone/pkg/apis/kubeadm/v1beta1"
+	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/util"
 
 	corev1 "k8s.io/api/core/v1"
@@ -54,8 +55,8 @@ var (
 	}
 )
 
-func activateKubeadmPSP(activate bool, clusterConfig *kubeadmv1beta1.ClusterConfiguration) {
-	if !activate {
+func activateKubeadmPSP(feature config.PodSecurityPolicy, clusterConfig *kubeadmv1beta1.ClusterConfiguration) {
+	if !feature.Enable {
 		return
 	}
 
