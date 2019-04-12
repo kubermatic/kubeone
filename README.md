@@ -1,6 +1,10 @@
 # KubeOne
 
-[![GoDoc](https://godoc.org/github.com/kubermatic/kubeone?status.svg)](https://godoc.org/github.com/kubermatic/kubeone) [![Go Report Card](https://goreportcard.com/badge/github.com/kubermatic/kubeone)](https://goreportcard.com/report/github.com/kubermatic/kubeone)
+<p align="center"><img src="docs/img/kubeone-logo-text.png" width="700px"></p>
+<p align="center">
+  <a href="https://godoc.org/github.com/kubermatic/kubeone"><img src="https://godoc.org/github.com/kubermatic/kubeone?status.svg" alt="GoDoc"></img></a>
+  <a href="https://goreportcard.com/report/github.com/kubermatic/kubeone"><img src="https://goreportcard.com/badge/github.com/kubermatic/kubeone" alt="Go Report Card"></img></a>
+</p>
 
 `kubeone` is a CLI tool and a Go library for installing, managing, and upgrading Kubernetes High-Available (HA) clusters. It can be used on any cloud provider, on-perm or bare-metal cluster.
 
