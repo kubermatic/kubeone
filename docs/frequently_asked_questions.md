@@ -4,7 +4,7 @@ This document lists some commonly asked questions about KubeOne, what it does, a
 
 - [What is KubeOne?](#what-is-kubeone-)
 - [What cloud providers KubeOne does support?](#what-cloud-providers-kubeone-does-support-)
-- [Are on-perm and bare metal clusters supported?](#are-on-perm-and-bare-metal-clusters-supported-)
+- [Are on-prem and bare metal clusters supported?](#are-on-prem-and-bare-metal-clusters-supported-)
 - [Does KubeOne handles the infrastructure and cloud resources?](#does-kubeone-handles-the-infrastructure-and-cloud-resources-)
 - [How KubeOne works?](#how-kubeone-works-)
 - [How are commands executed on nodes?](#how-are-commands-executed-on-nodes-)
@@ -21,11 +21,11 @@ KubeOne is a CLI and a Go library for installing, maintaining and upgrading Kube
 
 ## What cloud providers KubeOne does support?
 
-KubeOne is supposed to work on any cloud provider, on-perm and bare-metal cluster, as long as there is no need for additional configuration. However, to utilize all features of KubeOne, such as Terraform integration and creating worker nodes, KubeOne and [Kubermatic machine-controller](https://github.com/kubermatic/machine-controller) need to support that provider.
+KubeOne is supposed to work on any cloud provider, on-prem and bare-metal cluster, as long as there is no need for additional configuration. However, to utilize all features of KubeOne, such as Terraform integration and creating worker nodes, KubeOne and [Kubermatic machine-controller](https://github.com/kubermatic/machine-controller) need to support that provider.
 
 Currently we support AWS, DigitalOcean, Google Compute Engine (GCE), Hetzner, and OpenStack.
 
-## Are on-perm and bare metal clusters supported?
+## Are on-prem and bare metal clusters supported?
 
 Yes. We support OpenStack, with support for vSphere coming soon.
 
