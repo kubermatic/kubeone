@@ -19,7 +19,8 @@ ether of the following ENV variables should be accessible:
 | control\_plane\_count | Number of instances | string | `"3"` | no |
 | control\_plane\_image\_family | Image family to use for provisioning instances | string | `"ubuntu-1804-lts"` | no |
 | control\_plane\_image\_project | Project of the image to use for provisioning instances | string | `"ubuntu-os-cloud"` | no |
-| control\_plane\_type | GCE instance type | string | `"n1-standard-1"` | no |
+| control\_plane\_target\_pool\_members\_count |  | string | `"3"` | no |
+| control\_plane\_type | GCE instance type | string | `"n1-standard-2"` | no |
 | control\_plane\_volume\_size | Size of the boot volume, in GB | string | `"100"` | no |
 | project | Project to be used for all resources | string | n/a | yes |
 | region | GCP region to speak to | string | `"europe-west3"` | no |
@@ -27,7 +28,7 @@ ether of the following ENV variables should be accessible:
 | ssh\_port | SSH port | string | `"22"` | no |
 | ssh\_public\_key\_file | SSH public key file | string | `"~/.ssh/id_rsa.pub"` | no |
 | ssh\_username | Username to provision with the ssh_public_key_file | string | `"kubeadmin"` | no |
-| workers\_type | GCE instance type | string | `"n1-standard-1"` | no |
+| workers\_type | GCE instance type | string | `"n1-standard-2"` | no |
 | workers\_volume\_size | Size of the boot volume, in GB | string | `"100"` | no |
 
 ## Outputs
