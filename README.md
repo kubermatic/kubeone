@@ -25,7 +25,7 @@ TBD
 * Choice of Linux distributions between Ubuntu, CentOS and CoreOS
 * Integrates with [Cluster-API](https://github.com/kubernetes-sigs/cluster-api) and [Kubermatic machine-controller](https://github.com/kubermatic/machine-controller) to manage worker nodes
 * Integrates with Terraform for sourcing data about infrastructure and control plane nodes
-* Officially supports AWS, DigitalOcean, Hetzner and OpenStack
+* Officially supports AWS, DigitalOcean, GCE, Hetzner and OpenStack
 
 ## Installing KubeOne
 
