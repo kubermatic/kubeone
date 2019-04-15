@@ -48,6 +48,11 @@ variable "ssh_port" {
   default     = 22
 }
 
+variable "ssh_username" {
+  default     = "ubuntu"
+  description = "SSH user, used only in output"
+}
+
 variable "control_plane_count" {
   default     = 3
   description = "Number of instances"

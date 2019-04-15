@@ -38,6 +38,11 @@ variable "ssh_port" {
   description = "SSH port to be used to provision instances"
 }
 
+variable "ssh_username" {
+  default     = "root"
+  description = "SSH user, used only in output"
+}
+
 variable "ssh_private_key_file" {
   description = "SSH private key file used to access instances"
   default     = ""
