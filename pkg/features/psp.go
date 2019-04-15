@@ -56,7 +56,7 @@ var (
 )
 
 func activateKubeadmPSP(feature config.PodSecurityPolicy, clusterConfig *kubeadmv1beta1.ClusterConfiguration) {
-	if !feature.Enable {
+	if feature.Enable == nil || !*feature.Enable {
 		return
 	}
 
@@ -71,8 +71,8 @@ func activateKubeadmPSP(feature config.PodSecurityPolicy, clusterConfig *kubeadm
 	}
 }
 
-func installKubeSystemPSP(activate bool, ctx *util.Context) error {
-	if !activate {
+func installKubeSystemPSP(activate *bool, ctx *util.Context) error {
+	if activate == nil || !*activate {
 		return nil
 	}
 

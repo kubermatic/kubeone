@@ -21,8 +21,8 @@ import (
 	"github.com/kubermatic/kubeone/pkg/util"
 )
 
-func installMetricsServer(activate bool, ctx *util.Context) error {
-	if !activate {
+func installMetricsServer(activate *bool, ctx *util.Context) error {
+	if activate != nil && !*activate {
 		return nil
 	}
 

@@ -348,17 +348,17 @@ type Features struct {
 
 // PodSecurityPolicy feature flag
 type PodSecurityPolicy struct {
-	Enable bool `json:"enable"`
+	Enable *bool `json:"enable,omitempty"`
 }
 
 // DynamicAuditLog feature flag
 type DynamicAuditLog struct {
-	Enable bool `json:"enable"`
+	Enable *bool `json:"enable,omitempty"`
 }
 
 // MetricsServer feature flag
 type MetricsServer struct {
-	Disable bool `json:"disable"`
+	Enable *bool `json:"enable,omitempty"`
 }
 
 // OpenIDConnect feature flag
@@ -382,6 +382,10 @@ type OpenIDConnectConfig struct {
 
 // Validate features config
 func (f *Features) Validate() error {
+	if f.MetricsServer.Enable == nil {
+		f.MetricsServer.Enable = boolPtr(true)
+	}
+
 	// Currently only validate OIDC config
 	if !f.OpenIDConnect.Enable {
 		return nil
