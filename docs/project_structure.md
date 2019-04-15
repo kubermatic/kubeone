@@ -44,6 +44,7 @@ The example Terraform scripts are located in the [`examples/terraform`](https://
 │   └── terraform           # Terraform example scripts
 │       ├── aws             # Scripts for Amazon Web Services (AWS)
 │       ├── digitalocean    # Scripts for DigitalOcean
+│       ├── gce             # Scripts for Google Compute Engine (GCE)
 │       ├── hetzner         # Scripts for Hetzner
 │       └── openstack       # Scripts for OpenStack
 ```
