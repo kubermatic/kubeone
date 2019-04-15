@@ -28,7 +28,7 @@ const (
 )
 
 func activateKubeadmDynamicAuditLogs(feature config.DynamicAuditLog, clusterConfig *kubeadmv1beta1.ClusterConfiguration) {
-	if !feature.Enable {
+	if feature.Enable == nil || !*feature.Enable {
 		return
 	}
 

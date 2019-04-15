@@ -68,7 +68,8 @@ features:
   # Opt-out from deploying metrics-server
   # more info: https://github.com/kubernetes-incubator/metrics-server
   metrics_server:
-    disable: false
+    # enabled by default
+    enable: true
 
   # Enable OpenID-Connect support in API server
   # More info: https://kubernetes.io/docs/reference/access-authn-authz/authentication/#openid-connect-tokens
