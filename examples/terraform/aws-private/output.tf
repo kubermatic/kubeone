@@ -37,7 +37,7 @@ output "kubeone_workers" {
       instanceType     = "${var.worker_type}"
       diskSize         = 100
       sshPublicKeys    = ["${aws_key_pair.deployer.public_key}"]
-      replicas         = 3
+      replicas         = 1
       operatingSystem  = "ubuntu"
     }
 
@@ -52,7 +52,7 @@ output "kubeone_workers" {
       instanceType     = "${var.worker_type}"
       diskSize         = 100
       sshPublicKeys    = ["${aws_key_pair.deployer.public_key}"]
-      replicas         = 3
+      replicas         = 1
       operatingSystem  = "ubuntu"
     }
 
@@ -67,7 +67,7 @@ output "kubeone_workers" {
       instanceType     = "${var.worker_type}"
       diskSize         = 100
       sshPublicKeys    = ["${aws_key_pair.deployer.public_key}"]
-      replicas         = 3
+      replicas         = 1
       operatingSystem  = "ubuntu"
     }
   }
