@@ -39,18 +39,18 @@ func (c KubeOneCluster) Followers() []HostConfig {
 	return c.Hosts[1:]
 }
 
-// HostHostname sets the hostname for the given host
-func (h *HostConfig) HostHostname(hostname string) {
+// SetHostname sets the hostname for the given host
+func (h *HostConfig) SetHostname(hostname string) {
 	h.Hostname = hostname
 }
 
-// HostOperatingSystem sets the operating system for the given host
-func (h *HostConfig) HostOperatingSystem(os string) {
+// SetOperatingSystem sets the operating system for the given host
+func (h *HostConfig) SetOperatingSystem(os string) {
 	h.OperatingSystem = os
 }
 
-// HostIsLeader sets is the given host leader
-func (h *HostConfig) HostIsLeader(leader bool) {
+// SetLeader sets is the given host leader
+func (h *HostConfig) SetLeader(leader bool) {
 	h.IsLeader = leader
 }
 
