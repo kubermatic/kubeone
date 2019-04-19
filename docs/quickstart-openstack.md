@@ -188,9 +188,17 @@ time="12:04:08 UTC" level=info msg="Creating worker machines…"
 time="12:04:10 UTC" level=info msg="Skipping Ark deployment because no backup provider was configured."
 ```
 
-KubeOne automatically downloads the Kubeconfig file for the cluster. It's named as `cluster-name-kubeconfig`. You can use it with kubectl such as `kubectl --kubeconfig cluster-name-kubeconfig` or export the `KUBECONFIG` variable environment variable:
+KubeOne automatically downloads the Kubeconfig file for the cluster. It's named
+as **\<cluster_name>-kubeconfig**, where **\<cluster_name>** is the name from
+your configuration. You can use it with kubectl such as
+
 ```bash
-export KUBECONFIG=$PWD/cluster-name-kubeconfig
+kubectl --kubeconfig=<cluster_name>-kubeconfig
+```
+
+or export the `KUBECONFIG` variable environment variable:
+```bash
+export KUBECONFIG=$PWD/<cluster_name>-kubeconfig
 ```
 
 ## Deleting The Cluster
