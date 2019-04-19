@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package v1beta1
+package v1alpha1
 
 import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -23,10 +23,10 @@ import (
 )
 
 // GroupName is the name of the group used by this API
-const GroupName = "cluster.kubeone.io"
+const GroupName = "kubeone.io"
 
 // SchemeGroupVersion is group version used to register API objects
-var SchemeGroupVersion = schema.GroupVersion{Group: GroupName, Version: "v1beta1"}
+var SchemeGroupVersion = schema.GroupVersion{Group: GroupName, Version: "v1alpha1"}
 
 var (
 	// SchemeBuilder points to a list of functions added to Scheme

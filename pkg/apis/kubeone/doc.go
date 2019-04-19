@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 // +k8s:deepcopy-gen=package
-// +groupName=cluster.kubeone.io
+// +groupName=kubeone.io
 
 // Package kubeone is the implementation of KubeOneCluster API
 package kubeone

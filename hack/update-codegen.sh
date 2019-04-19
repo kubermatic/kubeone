@@ -29,6 +29,6 @@ CODEGEN_PKG=${CODEGEN_PKG:-$(cd ${SCRIPT_ROOT}; ls -d -1 ./vendor/k8s.io/code-ge
 # * group and versions to generate code for
 ${CODEGEN_PKG}/generate-internal-groups.sh "deepcopy,conversion,defaulter" \
   "" github.com/kubermatic/kubeone/pkg/apis github.com/kubermatic/kubeone/pkg/apis \
-  kubeone:v1beta1 \
+  kubeone:v1alpha1 \
   --output-base "$(dirname ${BASH_SOURCE})/../../../.." \
   --go-header-file ${SCRIPT_ROOT}/hack/boilerplate/boilerplate.generatego.txt

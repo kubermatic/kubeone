@@ -22,31 +22,31 @@ import (
 	"github.com/kubermatic/kubeone/pkg/apis/kubeone"
 )
 
-func TestValidateProviderConfig(t *testing.T) {
+func TestValidateCloudProviderSpec(t *testing.T) {
 	tests := []struct {
 		name           string
-		providerConfig kubeone.ProviderConfig
+		providerConfig kubeone.CloudProviderSpec
 		expectedError  bool
 	}{
 		{
 			name: "valid provider config (AWS)",
-			providerConfig: kubeone.ProviderConfig{
-				Name: kubeone.ProviderNameAWS,
+			providerConfig: kubeone.CloudProviderSpec{
+				Name: kubeone.CloudProviderNameAWS,
 			},
 			expectedError: false,
 		},
 		{
 			name: "valid provider config with external CCM ",
-			providerConfig: kubeone.ProviderConfig{
-				Name:     kubeone.ProviderNameAWS,
+			providerConfig: kubeone.CloudProviderSpec{
+				Name:     kubeone.CloudProviderNameAWS,
 				External: true,
 			},
 			expectedError: false,
 		},
 		{
 			name: "valid provider config with external CCM and cloud-config",
-			providerConfig: kubeone.ProviderConfig{
-				Name:        kubeone.ProviderNameAWS,
+			providerConfig: kubeone.CloudProviderSpec{
+				Name:        kubeone.CloudProviderNameAWS,
 				External:    true,
 				CloudConfig: "test",
 			},
@@ -54,23 +54,23 @@ func TestValidateProviderConfig(t *testing.T) {
 		},
 		{
 			name: "valid openstack provider config with cloud-config",
-			providerConfig: kubeone.ProviderConfig{
-				Name:        kubeone.ProviderNameOpenStack,
+			providerConfig: kubeone.CloudProviderSpec{
+				Name:        kubeone.CloudProviderNameOpenStack,
 				CloudConfig: "test",
 			},
 			expectedError: false,
 		},
 		{
 			name: "invalid provider config (invalid provider name)",
-			providerConfig: kubeone.ProviderConfig{
+			providerConfig: kubeone.CloudProviderSpec{
 				Name: "testProvider",
 			},
 			expectedError: true,
 		},
 		{
 			name: "invalid openstack provider config (without cloud-config)",
-			providerConfig: kubeone.ProviderConfig{
-				Name: kubeone.ProviderNameOpenStack,
+			providerConfig: kubeone.CloudProviderSpec{
+				Name: kubeone.CloudProviderNameOpenStack,
 			},
 			expectedError: true,
 		},
@@ -79,7 +79,7 @@ func TestValidateProviderConfig(t *testing.T) {
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			errs := ValidateProviderConfig(tc.providerConfig, nil)
+			errs := ValidateCloudProviderSpec(tc.providerConfig, nil)
 			if (len(errs) == 0) == tc.expectedError {
 				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
 			}
@@ -90,12 +90,12 @@ func TestValidateProviderConfig(t *testing.T) {
 func TestValidateHostConfig(t *testing.T) {
 	tests := []struct {
 		name          string
-		hostConfig    []*kubeone.HostConfig
+		hostConfig    []kubeone.HostConfig
 		expectedError bool
 	}{
 		{
 			name: "valid host config (with ip addresses)",
-			hostConfig: []*kubeone.HostConfig{
+			hostConfig: []kubeone.HostConfig{
 				{
 					PublicAddress:     "192.168.1.1",
 					PrivateAddress:    "192.168.0.1",
@@ -108,7 +108,7 @@ func TestValidateHostConfig(t *testing.T) {
 		},
 		{
 			name: "valid host config (with dns domain)",
-			hostConfig: []*kubeone.HostConfig{
+			hostConfig: []kubeone.HostConfig{
 				{
 					PublicAddress:     "cluster-test.public.local",
 					PrivateAddress:    "cluster-test.private.local",
@@ -121,7 +121,7 @@ func TestValidateHostConfig(t *testing.T) {
 		},
 		{
 			name: "invalid host config (no public address)",
-			hostConfig: []*kubeone.HostConfig{
+			hostConfig: []kubeone.HostConfig{
 				{
 					PublicAddress:     "",
 					PrivateAddress:    "cluster-test.private.local",
@@ -134,7 +134,7 @@ func TestValidateHostConfig(t *testing.T) {
 		},
 		{
 			name: "invalid host config (no private address)",
-			hostConfig: []*kubeone.HostConfig{
+			hostConfig: []kubeone.HostConfig{
 				{
 					PublicAddress:     "cluster-test.public.local",
 					PrivateAddress:    "",
@@ -147,7 +147,7 @@ func TestValidateHostConfig(t *testing.T) {
 		},
 		{
 			name: "invalid host config (no private key file and agent)",
-			hostConfig: []*kubeone.HostConfig{
+			hostConfig: []kubeone.HostConfig{
 				{
 					PublicAddress:     "cluster-test.public.local",
 					PrivateAddress:    "cluster-test.private.local",
@@ -160,7 +160,7 @@ func TestValidateHostConfig(t *testing.T) {
 		},
 		{
 			name: "invalid host config (no username)",
-			hostConfig: []*kubeone.HostConfig{
+			hostConfig: []kubeone.HostConfig{
 				{
 					PublicAddress:     "cluster-test.public.local",
 					PrivateAddress:    "cluster-test.private.local",
@@ -173,7 +173,7 @@ func TestValidateHostConfig(t *testing.T) {
 		},
 		{
 			name: "one valid host config and one invalid host config (no username)",
-			hostConfig: []*kubeone.HostConfig{
+			hostConfig: []kubeone.HostConfig{
 				{
 					PublicAddress:     "192.168.1.1",
 					PrivateAddress:    "192.168.0.1",
@@ -204,41 +204,112 @@ func TestValidateHostConfig(t *testing.T) {
 	}
 }
 
+func TestValidateVersionConfig(t *testing.T) {
+	tests := []struct {
+		name          string
+		versionConfig kubeone.VersionConfig
+		expectedError bool
+	}{
+		{
+			name: "valid version config (1.13.0)",
+			versionConfig: kubeone.VersionConfig{
+				Kubernetes: "1.13.0",
+			},
+			expectedError: false,
+		},
+		{
+			name: "valid version config (v1.13.0)",
+			versionConfig: kubeone.VersionConfig{
+				Kubernetes: "v1.13.0",
+			},
+			expectedError: false,
+		},
+		{
+			name: "valid version config (1.13.5)",
+			versionConfig: kubeone.VersionConfig{
+				Kubernetes: "1.13.5",
+			},
+			expectedError: false,
+		},
+		{
+			name: "valid version config (1.14.0)",
+			versionConfig: kubeone.VersionConfig{
+				Kubernetes: "1.14.0",
+			},
+			expectedError: false,
+		},
+		{
+			name: "valid version config (v1.14.0)",
+			versionConfig: kubeone.VersionConfig{
+				Kubernetes: "v1.14.0",
+			},
+			expectedError: false,
+		},
+		{
+			name: "valid version config (1.14.2)",
+			versionConfig: kubeone.VersionConfig{
+				Kubernetes: "1.14.2",
+			},
+			expectedError: false,
+		},
+		{
+			name: "invalid version config (1.12.0)",
+			versionConfig: kubeone.VersionConfig{
+				Kubernetes: "1.12.0",
+			},
+			expectedError: true,
+		},
+	}
+
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			errs := ValidateVersionConfig(tc.versionConfig, nil)
+			if (len(errs) == 0) == tc.expectedError {
+				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
+			}
+		})
+	}
+}
 func TestValidateMachineControllerConfig(t *testing.T) {
 	tests := []struct {
 		name                    string
-		cloudProvider           kubeone.ProviderName
-		machineControllerConfig kubeone.MachineControllerConfig
+		cloudProvider           kubeone.CloudProviderName
+		machineControllerConfig *kubeone.MachineControllerConfig
 		expectedError           bool
 	}{
 		{
 			name:          "valid machine-controller config",
-			cloudProvider: kubeone.ProviderNameAWS,
-			machineControllerConfig: kubeone.MachineControllerConfig{
-				Provider: kubeone.ProviderNameAWS,
+			cloudProvider: kubeone.CloudProviderNameAWS,
+			machineControllerConfig: &kubeone.MachineControllerConfig{
+				Deploy:   true,
+				Provider: kubeone.CloudProviderNameAWS,
 			},
 			expectedError: false,
 		},
 		{
 			name:          "valid machine-controller config (provider none with machine-controller provider set)",
-			cloudProvider: kubeone.ProviderNameNone,
-			machineControllerConfig: kubeone.MachineControllerConfig{
-				Provider: kubeone.ProviderNameAWS,
+			cloudProvider: kubeone.CloudProviderNameNone,
+			machineControllerConfig: &kubeone.MachineControllerConfig{
+				Deploy:   true,
+				Provider: kubeone.CloudProviderNameAWS,
 			},
 			expectedError: false,
 		},
 		{
 			name:          "invalid machine-controller config (provider and machine-controller provider different)",
-			cloudProvider: kubeone.ProviderNameAWS,
-			machineControllerConfig: kubeone.MachineControllerConfig{
-				Provider: kubeone.ProviderNameDigitalOcean,
+			cloudProvider: kubeone.CloudProviderNameAWS,
+			machineControllerConfig: &kubeone.MachineControllerConfig{
+				Deploy:   true,
+				Provider: kubeone.CloudProviderNameDigitalOcean,
 			},
 			expectedError: true,
 		},
 		{
 			name:          "invalid machine-controller config (provider set and machine-controller provider not set)",
-			cloudProvider: kubeone.ProviderNameAWS,
-			machineControllerConfig: kubeone.MachineControllerConfig{
+			cloudProvider: kubeone.CloudProviderNameAWS,
+			machineControllerConfig: &kubeone.MachineControllerConfig{
+				Deploy:   true,
 				Provider: "",
 			},
 			expectedError: true,
@@ -415,7 +486,7 @@ func TestValidateFeatures(t *testing.T) {
 			features: kubeone.Features{
 				OpenIDConnect: &kubeone.OpenIDConnect{
 					Enable: true,
-					Config: &kubeone.OpenIDConnectConfig{
+					Config: kubeone.OpenIDConnectConfig{
 						IssuerURL:     "test.cluster.local",
 						ClientID:      "123",
 						RequiredClaim: "test",
@@ -429,7 +500,7 @@ func TestValidateFeatures(t *testing.T) {
 			features: kubeone.Features{
 				OpenIDConnect: &kubeone.OpenIDConnect{
 					Enable: true,
-					Config: &kubeone.OpenIDConnectConfig{},
+					Config: kubeone.OpenIDConnectConfig{},
 				},
 			},
 			expectedError: true,
@@ -450,12 +521,12 @@ func TestValidateFeatures(t *testing.T) {
 func TestValidateOIDCConfig(t *testing.T) {
 	tests := []struct {
 		name          string
-		oidcConfig    *kubeone.OpenIDConnectConfig
+		oidcConfig    kubeone.OpenIDConnectConfig
 		expectedError bool
 	}{
 		{
 			name: "valid oidc config",
-			oidcConfig: &kubeone.OpenIDConnectConfig{
+			oidcConfig: kubeone.OpenIDConnectConfig{
 				IssuerURL: "test.cluster.local",
 				ClientID:  "test",
 			},
@@ -463,14 +534,14 @@ func TestValidateOIDCConfig(t *testing.T) {
 		},
 		{
 			name: "invalid oidc config (no issuer url)",
-			oidcConfig: &kubeone.OpenIDConnectConfig{
+			oidcConfig: kubeone.OpenIDConnectConfig{
 				ClientID: "test",
 			},
 			expectedError: true,
 		},
 		{
 			name: "invalid oidc config (no client id)",
-			oidcConfig: &kubeone.OpenIDConnectConfig{
+			oidcConfig: kubeone.OpenIDConnectConfig{
 				IssuerURL: "test.cluster.local",
 			},
 			expectedError: true,

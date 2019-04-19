@@ -27,22 +27,24 @@ import (
 type KubeOneCluster struct {
 	metav1.TypeMeta `json:",inline"`
 
-	Spec KubeOneClusterSpec `json:"spec,omitempty"`
-}
-
-// KubeOneClusterSpec is spec for the Cluster object
-type KubeOneClusterSpec struct {
-	Hosts        []*HostConfig `json:"hosts,omitempty"`
+	// Hosts describes the control plane nodes and how to access them
+	Hosts []HostConfig `json:"hosts,omitempty"`
+	// APIEndpoints are pairs of address and port used to communicate with the Kubernetes API
 	APIEndpoints []APIEndpoint `json:"apiEndpoint,omitempty"`
-	// TODO(xmudrii): Provider or another name?
-	Provider       ProviderConfig       `json:"provider,omitempty"`
-	Versions       VersionConfig        `json:"versions,omitempty"`
+	// CloudProvider configures the cloud provider specific features
+	CloudProvider CloudProviderSpec `json:"cloudProvider,omitempty"`
+	// Versions defines which Kubernetes version will be installed
+	Versions VersionConfig `json:"versions,omitempty"`
+	// ClusterNetwork configures the in-cluster networking
 	ClusterNetwork ClusterNetworkConfig `json:"clusterNetwork,omitempty"`
-	// TODO(xmudrii): Proxy or another name?
-	Proxy             ProxyConfig             `json:"proxy,omitempty"`
-	Workers           []WorkerConfig          `json:"workers,omitempty"`
-	MachineController MachineControllerConfig `json:"machineController,omitempty"`
-	Features          Features                `json:"features,omitempty"`
+	// Proxy configures proxy used while installing Kubernetes and by the Docker daemon
+	Proxy ProxyConfig `json:"proxy,omitempty"`
+	// Workers is used to create worker nodes using the Kubermatic machine-controller
+	Workers []WorkerConfig `json:"workers,omitempty"`
+	// MachineController configures the Kubermatic machine-controller component
+	MachineController *MachineControllerConfig `json:"machineController,omitempty"`
+	// Features enables and configures additional cluster features
+	Features Features `json:"features,omitempty"`
 }
 
 // HostConfig describes a single control plane node.
@@ -71,24 +73,24 @@ type APIEndpoint struct {
 }
 
 // ProviderName represents the name of a provider
-type ProviderName string
+type CloudProviderName string
 
-// ProviderName values
+// CloudProviderName values
 const (
-	ProviderNameAWS          ProviderName = "aws"
-	ProviderNameOpenStack    ProviderName = "openstack"
-	ProviderNameHetzner      ProviderName = "hetzner"
-	ProviderNameDigitalOcean ProviderName = "digitalocean"
-	ProviderNameVSphere      ProviderName = "vsphere"
-	ProviderNameGCE          ProviderName = "gce"
-	ProviderNameNone         ProviderName = "none"
+	CloudProviderNameAWS          CloudProviderName = "aws"
+	CloudProviderNameOpenStack    CloudProviderName = "openstack"
+	CloudProviderNameHetzner      CloudProviderName = "hetzner"
+	CloudProviderNameDigitalOcean CloudProviderName = "digitalocean"
+	CloudProviderNameVSphere      CloudProviderName = "vsphere"
+	CloudProviderNameGCE          CloudProviderName = "gce"
+	CloudProviderNameNone         CloudProviderName = "none"
 )
 
-// ProviderConfig describes the provider that is running the machines
-type ProviderConfig struct {
-	Name        ProviderName `json:"name"`
-	External    bool         `json:"external"`
-	CloudConfig string       `json:"cloudConfig"`
+// CloudProviderSpec describes the cloud provider that is running the machines
+type CloudProviderSpec struct {
+	Name        CloudProviderName `json:"name"`
+	External    bool              `json:"external"`
+	CloudConfig string            `json:"cloudConfig"`
 }
 
 // VersionConfig describes the versions of components that are installed on the machines
@@ -130,10 +132,10 @@ type ProviderSpec struct {
 
 // MachineControllerConfig configures kubermatic machine-controller deployment
 type MachineControllerConfig struct {
-	Deploy *bool `json:"deploy"`
+	Deploy bool `json:"deploy"`
 	// Provider is provider to be used for machine-controller
 	// Defaults and must be same as chosen cloud provider, unless cloud provider is set to None
-	Provider    ProviderName      `json:"provider"`
+	Provider    CloudProviderName `json:"provider"`
 	Credentials map[string]string `json:"credentials"`
 }
 
@@ -162,8 +164,8 @@ type MetricsServer struct {
 
 // OpenIDConnect feature flag
 type OpenIDConnect struct {
-	Enable bool                 `json:"enable"`
-	Config *OpenIDConnectConfig `json:"config"`
+	Enable bool                `json:"enable"`
+	Config OpenIDConnectConfig `json:"config"`
 }
 
 // OpenIDConnectConfig config

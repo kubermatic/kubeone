@@ -15,9 +15,9 @@ limitations under the License.
 */
 
 // +k8s:defaulter-gen=TypeMeta
-// +groupName=cluster.kubeone.io
+// +groupName=kubeone.io
 // +k8s:deepcopy-gen=package
 // +k8s:conversion-gen=github.com/kubermatic/kubeone/pkg/apis/kubeone
 
-// Package v1beta1 defines the v1beta1 version of KubeOneCluster API
-package v1beta1
+// Package v1alpha1 defines the v1alpha1 version of KubeOneCluster API
+package v1alpha1

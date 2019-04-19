@@ -24,26 +24,41 @@ import (
 
 // Leader returns the first configured host. Only call this after
 // validating the cluster config to ensure a leader exists.
-func (c *KubeOneCluster) Leader() (*HostConfig, error) {
-	for i := range c.Spec.Hosts {
-		if c.Spec.Hosts[i].IsLeader {
-			return c.Spec.Hosts[i], nil
+func (c KubeOneCluster) Leader() (HostConfig, error) {
+	for _, host := range c.Hosts {
+		if host.IsLeader {
+			return host, nil
 		}
 	}
-	return nil, errors.New("leader not found")
+	return HostConfig{}, errors.New("leader not found")
 }
 
 // Followers returns all but the first configured host. Only call
 // this after validating the cluster config to ensure hosts exist.
-func (c *KubeOneCluster) Followers() []*HostConfig {
-	return c.Spec.Hosts[1:]
+func (c KubeOneCluster) Followers() []HostConfig {
+	return c.Hosts[1:]
+}
+
+// HostHostname sets the hostname for the given host
+func (h *HostConfig) HostHostname(hostname string) {
+	h.Hostname = hostname
+}
+
+// HostOperatingSystem sets the operating system for the given host
+func (h *HostConfig) HostOperatingSystem(os string) {
+	h.OperatingSystem = os
+}
+
+// HostIsLeader sets is the given host leader
+func (h *HostConfig) HostIsLeader(leader bool) {
+	h.IsLeader = leader
 }
 
 // CloudProviderInTree detects is there in-tree cloud provider implementation for specified provider.
 // List of in-tree provider can be found here: https://github.com/kubernetes/kubernetes/tree/master/pkg/cloudprovider
-func (p *ProviderConfig) CloudProviderInTree() bool {
+func (p CloudProviderSpec) CloudProviderInTree() bool {
 	switch p.Name {
-	case ProviderNameAWS, ProviderNameGCE, ProviderNameOpenStack, ProviderNameVSphere:
+	case CloudProviderNameAWS, CloudProviderNameGCE, CloudProviderNameOpenStack, CloudProviderNameVSphere:
 		return true
 	default:
 		return false
@@ -51,7 +66,7 @@ func (p *ProviderConfig) CloudProviderInTree() bool {
 }
 
 // KubernetesCNIVersion returns kubernetes-cni package version
-func (m *VersionConfig) KubernetesCNIVersion() string {
+func (m VersionConfig) KubernetesCNIVersion() string {
 	s := semver.MustParse(m.Kubernetes)
 	c, _ := semver.NewConstraint(">= 1.13.0, <= 1.13.4")
 

@@ -19,6 +19,7 @@ package validation
 import (
 	"net"
 
+	"github.com/Masterminds/semver"
 	"github.com/kubermatic/kubeone/pkg/apis/kubeone"
 
 	"k8s.io/apimachinery/pkg/util/validation/field"
@@ -28,42 +29,43 @@ import (
 func ValidateKubeOneCluster(c kubeone.KubeOneCluster) field.ErrorList {
 	allErrs := field.ErrorList{}
 
-	allErrs = append(allErrs, ValidateProviderConfig(c.Spec.Provider, field.NewPath("provider"))...)
+	allErrs = append(allErrs, ValidateCloudProviderSpec(c.CloudProvider, field.NewPath("provider"))...)
 
-	if len(c.Spec.Hosts) > 0 {
-		allErrs = append(allErrs, ValidateHostConfig(c.Spec.Hosts, field.NewPath("hosts"))...)
+	if len(c.Hosts) > 0 {
+		allErrs = append(allErrs, ValidateHostConfig(c.Hosts, field.NewPath("hosts"))...)
 	} else {
-		allErrs = append(allErrs, field.Invalid(field.NewPath("hosts"), c.Spec.Hosts, "no host specified"))
+		allErrs = append(allErrs, field.Invalid(field.NewPath("hosts"), c.Hosts, "no host specified"))
 	}
 
-	if *c.Spec.MachineController.Deploy {
-		allErrs = append(allErrs, ValidateMachineControllerConfig(c.Spec.MachineController, c.Spec.Provider.Name, field.NewPath("machineController"))...)
-		allErrs = append(allErrs, ValidateWorkerConfig(c.Spec.Workers, field.NewPath("workers"))...)
-	} else if len(c.Spec.Workers) > 0 {
-		allErrs = append(allErrs, field.Invalid(field.NewPath("workers"), c.Spec.Workers, "machine-controller deployment is disabled, but configuration still contains worker definitions"))
+	if c.MachineController != nil && c.MachineController.Deploy {
+		allErrs = append(allErrs, ValidateMachineControllerConfig(c.MachineController, c.CloudProvider.Name, field.NewPath("machineController"))...)
+		allErrs = append(allErrs, ValidateWorkerConfig(c.Workers, field.NewPath("workers"))...)
+	} else if len(c.Workers) > 0 {
+		allErrs = append(allErrs, field.Invalid(field.NewPath("workers"), c.Workers, "machine-controller deployment is disabled, but configuration still contains worker definitions"))
 	}
 
-	allErrs = append(allErrs, ValidateClusterNetworkConfig(c.Spec.ClusterNetwork, field.NewPath("clusterNetwork"))...)
-	allErrs = append(allErrs, ValidateFeatures(c.Spec.Features, field.NewPath("features"))...)
+	allErrs = append(allErrs, ValidateVersionConfig(c.Versions, field.NewPath("versions"))...)
+	allErrs = append(allErrs, ValidateClusterNetworkConfig(c.ClusterNetwork, field.NewPath("clusterNetwork"))...)
+	allErrs = append(allErrs, ValidateFeatures(c.Features, field.NewPath("features"))...)
 
 	return allErrs
 }
 
-// ValidateProviderConfig checks the ProviderConfig for errors
-func ValidateProviderConfig(p kubeone.ProviderConfig, fldPath *field.Path) field.ErrorList {
+// ValidateCloudProviderSpec checks the CloudProviderSpec structure for errors
+func ValidateCloudProviderSpec(p kubeone.CloudProviderSpec, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	switch p.Name {
-	case kubeone.ProviderNameAWS:
-	case kubeone.ProviderNameOpenStack:
+	case kubeone.CloudProviderNameAWS:
+	case kubeone.CloudProviderNameOpenStack:
 		if p.CloudConfig == "" {
 			allErrs = append(allErrs, field.Invalid(fldPath, p.CloudConfig, "`provider.cloud_config` is required for openstack provider"))
 		}
-	case kubeone.ProviderNameHetzner:
-	case kubeone.ProviderNameDigitalOcean:
-	case kubeone.ProviderNameVSphere:
-	case kubeone.ProviderNameGCE:
-	case kubeone.ProviderNameNone:
+	case kubeone.CloudProviderNameHetzner:
+	case kubeone.CloudProviderNameDigitalOcean:
+	case kubeone.CloudProviderNameVSphere:
+	case kubeone.CloudProviderNameGCE:
+	case kubeone.CloudProviderNameNone:
 	default:
 		allErrs = append(allErrs, field.Invalid(fldPath, p.Name, "unknown provider name"))
 	}
@@ -71,10 +73,8 @@ func ValidateProviderConfig(p kubeone.ProviderConfig, fldPath *field.Path) field
 	return allErrs
 }
 
-// TODO(xmudrii): hosts == 0
-
 // ValidateHostConfig validates the HostConfig structure
-func ValidateHostConfig(hosts []*kubeone.HostConfig, fldPath *field.Path) field.ErrorList {
+func ValidateHostConfig(hosts []kubeone.HostConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	for _, h := range hosts {
@@ -96,18 +96,35 @@ func ValidateHostConfig(hosts []*kubeone.HostConfig, fldPath *field.Path) field.
 	return allErrs
 }
 
+// ValidateVersionConfig validates the VersionConfig structure
+func ValidateVersionConfig(version kubeone.VersionConfig, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	v, err := semver.NewVersion(version.Kubernetes)
+	if err != nil {
+		allErrs = append(allErrs, field.Invalid(fldPath, version, "failed to parse kubernetes version"))
+		return allErrs
+	}
+
+	if v.Major() != 1 || v.Minor() < 13 {
+		allErrs = append(allErrs, field.Invalid(fldPath, version, "kubernetes versions lower than 1.13 are not supported"))
+	}
+
+	return allErrs
+}
+
 // ValidateMachineControllerConfig validates the MachineControllerConfig structure
-func ValidateMachineControllerConfig(m kubeone.MachineControllerConfig, cloudProviderName kubeone.ProviderName, fldPath *field.Path) field.ErrorList {
+func ValidateMachineControllerConfig(m *kubeone.MachineControllerConfig, cloudProviderName kubeone.CloudProviderName, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	// If ProviderName is not None default to cloud provider and ensure user have not
 	// manually provided machine-controller provider different than cloud provider.
 	// If ProviderName is None, take user input or default to None.
-	if cloudProviderName != kubeone.ProviderNameNone {
+	if cloudProviderName != kubeone.CloudProviderNameNone {
 		if m.Provider != cloudProviderName {
 			allErrs = append(allErrs, field.Invalid(fldPath, m.Provider, "cloud provider must be same as machine-controller provider"))
 		}
-	} else if cloudProviderName == kubeone.ProviderNameNone && m.Provider == "" {
+	} else if cloudProviderName == kubeone.CloudProviderNameNone && m.Provider == "" {
 		allErrs = append(allErrs, field.Invalid(fldPath, m.Provider, "machine-controller deployed but no provider selected"))
 	}
 
@@ -160,7 +177,7 @@ func ValidateFeatures(f kubeone.Features, fldPath *field.Path) field.ErrorList {
 }
 
 // ValidateOIDCConfig validates the OpenID Connect configuration
-func ValidateOIDCConfig(o *kubeone.OpenIDConnectConfig, fldPath *field.Path) field.ErrorList {
+func ValidateOIDCConfig(o kubeone.OpenIDConnectConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	if o.IssuerURL == "" {

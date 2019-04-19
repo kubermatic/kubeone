@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package v1beta1
+package v1alpha1
 
 import (
 	"k8s.io/apimachinery/pkg/runtime"
@@ -44,48 +44,58 @@ func SetDefaults_KubeOneCluster(obj *KubeOneCluster) {
 
 func SetDefaults_Hosts(obj *KubeOneCluster) {
 	// Set first host to be the leader
-	obj.Spec.Hosts[0].IsLeader = true
+	obj.Hosts[0].IsLeader = true
 
 	// Define a unique ID for each host
-	for idx := range obj.Spec.Hosts {
-		obj.Spec.Hosts[idx].ID = idx
-		defaultHostConfig(obj.Spec.Hosts[idx])
+	for idx := range obj.Hosts {
+		obj.Hosts[idx].ID = idx
+		defaultHostConfig(&obj.Hosts[idx])
 	}
 }
 
 func SetDefaults_APIEndpoints(obj *KubeOneCluster) {
-	if len(obj.Spec.APIEndpoints) == 0 {
-		obj.Spec.APIEndpoints = []APIEndpoint{
+	if len(obj.APIEndpoints) == 0 {
+		obj.APIEndpoints = []APIEndpoint{
 			{
-				Host: obj.Spec.Hosts[0].PublicAddress,
+				Host: obj.Hosts[0].PublicAddress,
 			},
 		}
 	}
 }
 
 func SetDefaults_ClusterNetwork(obj *KubeOneCluster) {
-	obj.Spec.ClusterNetwork.PodSubnet = DefaultPodSubnet
-	obj.Spec.ClusterNetwork.ServiceSubnet = DefaultServiceSubnet
-	obj.Spec.ClusterNetwork.ServiceDomainName = DefaultServiceDNS
-	obj.Spec.ClusterNetwork.NodePortRange = DefaultNodePortRange
+	obj.ClusterNetwork.PodSubnet = DefaultPodSubnet
+	obj.ClusterNetwork.ServiceSubnet = DefaultServiceSubnet
+	obj.ClusterNetwork.ServiceDomainName = DefaultServiceDNS
+	obj.ClusterNetwork.NodePortRange = DefaultNodePortRange
 }
 
 func SetDefaults_MachineController(obj *KubeOneCluster) {
-	if obj.Spec.MachineController.Deploy == nil {
-		obj.Spec.MachineController.Deploy = boolPtr(true)
+	if obj.MachineController == nil {
+		obj.MachineController = &MachineControllerConfig{
+			Deploy: true,
+		}
 	}
 
 	// If ProviderName is not None default to cloud provider and ensure user have not
 	// manually provided machine-controller provider different than cloud provider.
 	// If ProviderName is None, take user input or default to None.
-	if obj.Spec.Provider.Name != ProviderNameNone {
-		if obj.Spec.MachineController.Provider == "" {
-			obj.Spec.MachineController.Provider = obj.Spec.Provider.Name
+	if obj.CloudProvider.Name != CloudProviderNameNone {
+		if obj.MachineController.Provider == "" {
+			obj.MachineController.Provider = obj.CloudProvider.Name
 		}
 	}
 
 	// TODO(xmudrii): error
-	obj.Spec.MachineController.Credentials, _ = obj.Spec.MachineController.Provider.ProviderCredentials()
+	obj.MachineController.Credentials, _ = obj.MachineController.Provider.ProviderCredentials()
+}
+
+func SetDefaults_Features(obj *KubeOneCluster) {
+	if obj.Features.MetricsServer == nil {
+		obj.Features.MetricsServer = &MetricsServer{
+			Enable: true,
+		}
+	}
 }
 
 func defaultHostConfig(obj *HostConfig) {
@@ -101,8 +111,4 @@ func defaultHostConfig(obj *HostConfig) {
 	if obj.SSHUsername == "" {
 		obj.SSHUsername = "root"
 	}
-}
-
-func boolPtr(val bool) *bool {
-	return &val
 }

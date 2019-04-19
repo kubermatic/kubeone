@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package v1beta1
+package v1alpha1
 
 import (
 	"encoding/base64"
@@ -34,9 +34,9 @@ type ProviderEnvironmentVariable struct {
 
 // ProviderCredentials match the cloudprovider and parses its credentials from
 // environment
-func (p ProviderName) ProviderCredentials() (map[string]string, error) {
+func (p CloudProviderName) ProviderCredentials() (map[string]string, error) {
 	switch p {
-	case ProviderNameAWS:
+	case CloudProviderNameAWS:
 		creds := make(map[string]string)
 		envCredsProvider := credentials.NewEnvCredentials()
 		envCreds, err := envCredsProvider.Get()
@@ -62,7 +62,7 @@ func (p ProviderName) ProviderCredentials() (map[string]string, error) {
 		}
 
 		return nil, errors.New("error parsing aws credentials")
-	case ProviderNameOpenStack:
+	case CloudProviderNameOpenStack:
 		return parseCredentialVariables([]ProviderEnvironmentVariable{
 			{Name: "OS_AUTH_URL"},
 			{Name: "OS_USERNAME", MachineControllerName: "OS_USER_NAME"},
@@ -70,15 +70,15 @@ func (p ProviderName) ProviderCredentials() (map[string]string, error) {
 			{Name: "OS_DOMAIN_NAME"},
 			{Name: "OS_TENANT_NAME"},
 		})
-	case ProviderNameHetzner:
+	case CloudProviderNameHetzner:
 		return parseCredentialVariables([]ProviderEnvironmentVariable{
 			{Name: "HCLOUD_TOKEN", MachineControllerName: "HZ_TOKEN"},
 		})
-	case ProviderNameDigitalOcean:
+	case CloudProviderNameDigitalOcean:
 		return parseCredentialVariables([]ProviderEnvironmentVariable{
 			{Name: "DIGITALOCEAN_TOKEN", MachineControllerName: "DO_TOKEN"},
 		})
-	case ProviderNameGCE:
+	case CloudProviderNameGCE:
 		gsa, err := parseCredentialVariables([]ProviderEnvironmentVariable{
 			{Name: "GOOGLE_CREDENTIALS", MachineControllerName: "GOOGLE_SERVICE_ACCOUNT"},
 		})
@@ -89,7 +89,7 @@ func (p ProviderName) ProviderCredentials() (map[string]string, error) {
 		// machine-controller, as machine-controller assumes it will be double encoded
 		gsa["GOOGLE_SERVICE_ACCOUNT"] = base64.StdEncoding.EncodeToString([]byte(gsa["GOOGLE_SERVICE_ACCOUNT"]))
 		return gsa, nil
-	case ProviderNameVSphere:
+	case CloudProviderNameVSphere:
 		return parseCredentialVariables([]ProviderEnvironmentVariable{
 			{Name: "VSPHERE_ADDRESS"},
 			{Name: "VSPHERE_USERNAME"},
