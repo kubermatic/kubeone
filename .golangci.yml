@@ -16,3 +16,13 @@ linters:
 linters-settings:
   govet:
     check-shadowing: true
+
+issues:
+  exclude:
+    - "type name will be used as kubeone.KubeOneCluster by other packages, and that stutters; consider calling this Cluster"
+    - "don't use underscores in Go names; func SetDefaults_KubeOneCluster should be SetDefaultsKubeOneCluster"
+    - "don't use underscores in Go names; func SetDefaults_Hosts should be SetDefaultsHosts"
+    - "don't use underscores in Go names; func SetDefaults_APIEndpoints should be SetDefaultsAPIEndpoints"
+    - "don't use underscores in Go names; func SetDefaults_ClusterNetwork should be SetDefaultsClusterNetwork"
+    - "don't use underscores in Go names; func SetDefaults_Features should be SetDefaultsFeatures"
+    - "don't use underscores in Go names; func SetDefaults_MachineController should be SetDefaultsMachineController"
