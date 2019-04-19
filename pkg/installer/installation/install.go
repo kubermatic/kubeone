@@ -43,6 +43,7 @@ func Install(ctx *util.Context) error {
 		{Fn: util.BuildKubernetesClientset, ErrMsg: "unable to build kubernetes clientset", Retries: 3},
 		{Fn: features.Activate, ErrMsg: "unable to activate features"},
 		{Fn: applyCanalCNI, ErrMsg: "failed to install cni plugin canal", Retries: 3},
+		{Fn: patchCoreDNS, ErrMsg: "failed to patch CoreDNS", Retries: 3},
 		{Fn: machinecontroller.EnsureMachineController, ErrMsg: "failed to install machine-controller", Retries: 3},
 		{Fn: machinecontroller.WaitReady, ErrMsg: "failed to wait for machine-controller", Retries: 3},
 		{Fn: createWorkerMachines, ErrMsg: "failed to create worker machines", Retries: 3},
