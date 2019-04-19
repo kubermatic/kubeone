@@ -1,3 +1,12 @@
+# Force dep to vendor the code generators, which aren't imported just used at dev time.
+# Picking a subpackage with Go code won't be necessary once https://github.com/golang/dep/pull/1545 is merged.
+# See https://github.com/golang/dep/issues/1306#issuecomment-384678415 for more details.
+required = [
+  "k8s.io/code-generator/cmd/defaulter-gen",
+  "k8s.io/code-generator/cmd/deepcopy-gen",
+  "k8s.io/code-generator/cmd/conversion-gen",
+]
+
 [[constraint]]
   name = "github.com/Masterminds/semver"
   version = "1.4.2"
@@ -50,7 +59,18 @@
   name = "sigs.k8s.io/controller-runtime"
   version = "^0.1.10"
 
+[[override]]
+  name = "k8s.io/code-generator"
+  version = "kubernetes-1.13.1"
+
 [prune]
   go-tests = true
   non-go = true
   unused-packages = true
+
+# Prevent dep from pruning build scripts and codegen templates
+[[prune.project]]
+  name = "k8s.io/code-generator"
+  non-go = false
+  go-tests = false
+  unused-packages = false
