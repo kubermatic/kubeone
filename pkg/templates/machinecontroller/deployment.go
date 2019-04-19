@@ -779,6 +779,17 @@ func machineControllerDeployment(cluster *config.Cluster) (*appsv1.Deployment, e
 		return nil, errors.Wrap(err, "failed to get clusterDNS IP")
 	}
 
+	args := []string{
+		"-logtostderr",
+		"-v", "4",
+		"-internal-listen-address", "0.0.0.0:8085",
+		"-cluster-dns", clusterDNS.String(),
+	}
+
+	if cluster.Provider.External {
+		args = append(args, "-external-cloud-provider")
+	}
+
 	return &appsv1.Deployment{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "apps/v1",
@@ -842,16 +853,11 @@ func machineControllerDeployment(cluster *config.Cluster) (*appsv1.Deployment, e
 					},
 					Containers: []corev1.Container{
 						{
-							Name:            "machine-controller",
-							Image:           "docker.io/kubermatic/machine-controller:" + MachineControllerTag,
-							ImagePullPolicy: corev1.PullIfNotPresent,
-							Command:         []string{"/usr/local/bin/machine-controller"},
-							Args: []string{
-								"-logtostderr",
-								"-v", "4",
-								"-internal-listen-address", "0.0.0.0:8085",
-								"-cluster-dns", clusterDNS.String(),
-							},
+							Name:                     "machine-controller",
+							Image:                    "docker.io/kubermatic/machine-controller:" + MachineControllerTag,
+							ImagePullPolicy:          corev1.PullIfNotPresent,
+							Command:                  []string{"/usr/local/bin/machine-controller"},
+							Args:                     args,
 							Env:                      getEnvVarCredentials(cluster),
 							TerminationMessagePath:   corev1.TerminationMessagePathDefault,
 							TerminationMessagePolicy: corev1.TerminationMessageReadFile,
