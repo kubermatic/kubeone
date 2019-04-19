@@ -128,7 +128,6 @@ func (in *HostConfig) DeepCopy() *HostConfig {
 func (in *KubeOneCluster) DeepCopyInto(out *KubeOneCluster) {
 	*out = *in
 	out.TypeMeta = in.TypeMeta
-	in.ObjectMeta.DeepCopyInto(&out.ObjectMeta)
 	in.Spec.DeepCopyInto(&out.Spec)
 	return
 }

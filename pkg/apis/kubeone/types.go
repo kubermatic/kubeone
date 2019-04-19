@@ -25,8 +25,7 @@ import (
 
 // KubeOneCluster is KubeOne Cluster API Schema
 type KubeOneCluster struct {
-	metav1.TypeMeta   `json:",inline"`
-	metav1.ObjectMeta `json:"metadata,omitempty"`
+	metav1.TypeMeta `json:",inline"`
 
 	Spec KubeOneClusterSpec `json:"spec,omitempty"`
 }

@@ -341,7 +341,6 @@ func Convert_kubeone_HostConfig_To_v1beta1_HostConfig(in *kubeone.HostConfig, ou
 }
 
 func autoConvert_v1beta1_KubeOneCluster_To_kubeone_KubeOneCluster(in *KubeOneCluster, out *kubeone.KubeOneCluster, s conversion.Scope) error {
-	out.ObjectMeta = in.ObjectMeta
 	if err := Convert_v1beta1_KubeOneClusterSpec_To_kubeone_KubeOneClusterSpec(&in.Spec, &out.Spec, s); err != nil {
 		return err
 	}
@@ -354,7 +353,6 @@ func Convert_v1beta1_KubeOneCluster_To_kubeone_KubeOneCluster(in *KubeOneCluster
 }
 
 func autoConvert_kubeone_KubeOneCluster_To_v1beta1_KubeOneCluster(in *kubeone.KubeOneCluster, out *KubeOneCluster, s conversion.Scope) error {
-	out.ObjectMeta = in.ObjectMeta
 	if err := Convert_kubeone_KubeOneClusterSpec_To_v1beta1_KubeOneClusterSpec(&in.Spec, &out.Spec, s); err != nil {
 		return err
 	}
