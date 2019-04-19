@@ -72,7 +72,7 @@ type APIEndpoint struct {
 	Port string `json:"port"`
 }
 
-// ProviderName represents the name of a provider
+// CloudProviderName represents the name of a provider
 type CloudProviderName string
 
 // CloudProviderName values
