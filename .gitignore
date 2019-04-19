@@ -9,5 +9,3 @@ tf.json
 .terraform
 terraform.tfvars
 *kubeconfig
-
-vendor/k8s.io/code-generator/_examples/
