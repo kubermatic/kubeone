@@ -13,3 +13,4 @@
 * [Adding support for provider](adding_provider_support.md)
 * [Proposals](./proposals)
   * [Cluster Upgrades](./proposals/20190211-upgrades.md)
+  * [KubeOneCluster API](./proposals/20190409-kubeonecluster-api.md)

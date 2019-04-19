@@ -1,9 +1,9 @@
-# KubeOne Cluster API
+# KubeOneCluster API
 
 **Author:** Marko Mudrinić ([@xmudrii](https://github.com/xmudrii))  
-**Status:** Draft | **Review** | Final  
+**Status:** Draft | Review | **Final**  
 **Created:** 2019-04-09  
-**Last updated:** 2019-04-09
+**Last updated:** 2019-04-19
 
 ## Abstract
 
@@ -30,14 +30,15 @@ for some time, while migrating to the new API version should be as easy as possi
 * Store the manifest used to provision the cluster on the target cluster in form of a Secret or a CustomResource.
   * See [the issue #173](https://github.com/kubermatic/kubeone/issues/173) for more details about this feature.
 * Provide a mechanism for automatic migration from the old KubeOne API to the new API.
+  * The steps needed to be done in order to migrate to the new API will be documented.
 
 ## Implementation
 
 The new API should try to match the old one as much as possible. If there is space to improve the user experience,
 those improvements should be done now.
 
-The API group is going to be called `cluster.kubeone.io` and the object will be called `Cluster`. The first API
-version is going to be `v1beta1`.
+The API group is going to be called `kubeone.io` and the object will be called `KubeOneCluster`. The first API
+version is going to be `v1alpha1`.
 
 The following changes **will be made** in order to improve the user experience:
 
@@ -46,9 +47,6 @@ The following changes **will be made** in order to improve the user experience:
   node port range). Therefore, it makes more sense to name it `ClusterNetwork`, so it's clear it's about the cluster
   and not individual machines.
   * A new field for service domain name will be added (`ServiceDomain`).
-* Rename `Proxy` to make it clear what components are configured to use Proxy
-  * Currently, proxy is only configured for Docker daemon and used on runtime for our scripts. Using `Proxy` as the
-  structure name can assume that it configures in-cluster proxy as well.
 * The `Name` field will be removed from the Spec. Instead, we'll use the object name as the cluster name.
 
 The following changes **should be considered** in order to improve the user experience:
@@ -61,20 +59,11 @@ The following changes **should be considered** in order to improve the user expe
   * All config structures inside the `Features` structure should at least have a field for enabling the feature.
   * Currently, `PodSecurityPolicy` and `DynamicAuditing` have the `enable` field, while the `MetricsServer` has the
   the `disable` field. This can lead to confusion and therefore should be made consistent.
-
-To make some of those changes possible (especially making `Features` consistent), we should use pointers for non-required
-fields, and continue using non-pointer types for required fields. For example, in case of `Features`, we could check is
-a config field for a feature provided or is it `nil`:
-
-```go
-if features.metricsServer != nil && features.metricsServer.Enabled == false {
-  return
-}
-```
+  * To make this possible, all fields in the `Features` structure will be turned into pointers.
 
 ### API versioning
 
-Each Kubernetes API has the `internal` API, that is used in code, and the versioned API (e.g. `v1beta1` API), that is consumed
+Each Kubernetes API has the `internal` API, that is used in code, and the versioned API (e.g. `v1alpha1` API), that is consumed
 by the end user.
 
 Kubernetes automatically generates code that converts any supported versioned API to the internal API. In some cases,
