@@ -19,30 +19,35 @@ import (
 )
 
 const (
-	hetznerCCMVersion     = "v1.3.0"
-	hetznerSAName         = "cloud-controller-manager"
-	hetznerDeploymentName = "hcloud-cloud-controller-manager"
+	digitaloceanCCMVersion     = "v0.1.9"
+	digitaloceanSAName         = "cloud-controller-manager"
+	digitaloceanDeploymentName = "digitalocean-cloud-controller-manager"
 )
 
-func ensureHetzner(ctx *util.Context) error {
+func ensureDigitalOcean(ctx *util.Context) error {
 	if ctx.DynamicClient == nil {
 		return errors.New("kubernetes client not initialized")
 	}
 
 	bgctx := context.Background()
 
-	sa := hetznerServiceAccount()
+	sa := doServiceAccount()
 	if err := simpleCreateOrUpdate(bgctx, ctx.DynamicClient, sa); err != nil {
-		return errors.Wrap(err, "failed to ensure hetzner CCM ServiceAccount")
+		return errors.Wrap(err, "failed to ensure digitalocean CCM ServiceAccount")
 	}
 
-	crb := hetznerClusterRoleBinding()
+	cr := doClusterRole()
+	if err := simpleCreateOrUpdate(bgctx, ctx.DynamicClient, cr); err != nil {
+		return errors.Wrap(err, "failed to ensure digitalocean CCM ClusterRole")
+	}
+
+	crb := doClusterRoleBinding()
 	if err := simpleCreateOrUpdate(bgctx, ctx.DynamicClient, crb); err != nil {
-		return errors.Wrap(err, "failed to ensure hetzner CCM ClusterRoleBinding")
+		return errors.Wrap(err, "failed to ensure digitalocean CCM ClusterRoleBinding")
 	}
 
-	dep := hetznerDeployment()
-	want, err := semver.NewConstraint("<= " + hetznerCCMVersion)
+	dep := doDeployment()
+	want, err := semver.NewConstraint("<= " + digitaloceanCCMVersion)
 	if err != nil {
 		return errors.Wrap(err, "failed to parse digital CCM version constraint")
 	}
@@ -52,26 +57,82 @@ func ensureHetzner(ctx *util.Context) error {
 		dep,
 		mutateDeploymentWithVersionCheck(want))
 	if err != nil {
-		ctx.Logger.Warnf("unable to ensure hetzner CCM Deployment: %v, skipping", err)
+		ctx.Logger.Warnf("unable to ensure digitalocean CCM Deployment: %v, skipping", err)
 	}
-
 	return nil
 }
 
-func hetznerServiceAccount() *corev1.ServiceAccount {
+func doServiceAccount() *corev1.ServiceAccount {
 	return &corev1.ServiceAccount{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "v1",
 			Kind:       "ServiceAccount",
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      hetznerSAName,
+			Name:      digitaloceanSAName,
 			Namespace: metav1.NamespaceSystem,
 		},
 	}
 }
 
-func hetznerClusterRoleBinding() *rbacv1.ClusterRoleBinding {
+func doClusterRole() *rbacv1.ClusterRole {
+	return &rbacv1.ClusterRole{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "rbac.authorization.k8s.io/v1",
+			Kind:       "ClusterRole",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "system:cloud-controller-manager",
+			Annotations: map[string]string{
+				"rbac.authorization.kubernetes.io/autoupdate": "true",
+			},
+		},
+		Rules: []rbacv1.PolicyRule{
+			{
+				APIGroups: []string{""},
+				Resources: []string{"events"},
+				Verbs:     []string{"create", "patch", "update"},
+			},
+			{
+				APIGroups: []string{""},
+				Resources: []string{"nodes"},
+				Verbs:     []string{"*"},
+			},
+			{
+				APIGroups: []string{""},
+				Resources: []string{"nodes/status"},
+				Verbs:     []string{"patch"},
+			},
+			{
+				APIGroups: []string{""},
+				Resources: []string{"services"},
+				Verbs:     []string{"list", "patch", "update", "watch"},
+			},
+			{
+				APIGroups: []string{""},
+				Resources: []string{"services/status"},
+				Verbs:     []string{"list", "patch", "update", "watch"},
+			},
+			{
+				APIGroups: []string{""},
+				Resources: []string{"serviceaccounts"},
+				Verbs:     []string{"create"},
+			},
+			{
+				APIGroups: []string{""},
+				Resources: []string{"persistentvolumes"},
+				Verbs:     []string{"get", "list", "update", "watch"},
+			},
+			{
+				APIGroups: []string{""},
+				Resources: []string{"endpoints"},
+				Verbs:     []string{"create", "get", "list", "watch", "update"},
+			},
+		},
+	}
+}
+
+func doClusterRoleBinding() *rbacv1.ClusterRoleBinding {
 	return &rbacv1.ClusterRoleBinding{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "rbac.authorization.k8s.io/v1",
@@ -81,21 +142,21 @@ func hetznerClusterRoleBinding() *rbacv1.ClusterRoleBinding {
 			Name: "system:cloud-controller-manager",
 		},
 		RoleRef: rbacv1.RoleRef{
-			Name:     "cluster-admin",
-			Kind:     "ClusterRole",
 			APIGroup: rbacv1.GroupName,
+			Name:     "system:cloud-controller-manager",
+			Kind:     "ClusterRole",
 		},
 		Subjects: []rbacv1.Subject{
 			{
 				Kind:      "ServiceAccount",
-				Name:      hetznerSAName,
+				Name:      digitaloceanSAName,
 				Namespace: metav1.NamespaceSystem,
 			},
 		},
 	}
 }
 
-func hetznerDeployment() *appsv1.Deployment {
+func doDeployment() *appsv1.Deployment {
 	var (
 		replicas  int32 = 1
 		revisions int32 = 2
@@ -107,7 +168,7 @@ func hetznerDeployment() *appsv1.Deployment {
 			Kind:       "Deployment",
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      hetznerDeploymentName,
+			Name:      digitaloceanDeploymentName,
 			Namespace: metav1.NamespaceSystem,
 		},
 		Spec: appsv1.DeploymentSpec{
@@ -115,7 +176,7 @@ func hetznerDeployment() *appsv1.Deployment {
 			RevisionHistoryLimit: &revisions,
 			Selector: &metav1.LabelSelector{
 				MatchLabels: map[string]string{
-					"app": "hcloud-cloud-controller-manager",
+					"app": "digitalocean-cloud-controller-manager",
 				},
 			},
 			Strategy: appsv1.DeploymentStrategy{
@@ -127,11 +188,11 @@ func hetznerDeployment() *appsv1.Deployment {
 						"scheduler.alpha.kubernetes.io/critical-pod": "",
 					},
 					Labels: map[string]string{
-						"app": "hcloud-cloud-controller-manager",
+						"app": "digitalocean-cloud-controller-manager",
 					},
 				},
 				Spec: corev1.PodSpec{
-					ServiceAccountName: hetznerSAName,
+					ServiceAccountName: digitaloceanSAName,
 					Tolerations: []corev1.Toleration{
 						{
 							Key:      "node-role.kubernetes.io/master",
@@ -150,31 +211,22 @@ func hetznerDeployment() *appsv1.Deployment {
 					},
 					Containers: []corev1.Container{
 						{
-							Name:  "hcloud-cloud-controller-manager",
-							Image: "hetznercloud/hcloud-cloud-controller-manager:" + hetznerCCMVersion,
+							Name:  "digitalocean-cloud-controller-manager",
+							Image: "digitalocean/digitalocean-cloud-controller-manager" + digitaloceanCCMVersion,
 							Command: []string{
-								"/bin/hcloud-cloud-controller-manager",
-								"--cloud-provider=hcloud",
+								"/bin/digitalocean-cloud-controller-manager",
+								"--cloud-provider=digitalocean",
 								"--leader-elect=false",
-								"--allow-untagged-cloud",
 							},
 							Env: []corev1.EnvVar{
 								{
-									Name: "NODE_NAME",
-									ValueFrom: &corev1.EnvVarSource{
-										FieldRef: &corev1.ObjectFieldSelector{
-											FieldPath: "spec.nodeName",
-										},
-									},
-								},
-								{
-									Name: "HCLOUD_TOKEN",
+									Name: "DO_ACCESS_TOKEN",
 									ValueFrom: &corev1.EnvVarSource{
 										SecretKeyRef: &corev1.SecretKeySelector{
 											LocalObjectReference: corev1.LocalObjectReference{
 												Name: machinecontroller.MachineControllerCredentialsSecretName,
 											},
-											Key: config.HetznerTokenKey,
+											Key: config.DigitalOceanTokenKey,
 										},
 									},
 								},
