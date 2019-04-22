@@ -228,7 +228,7 @@ func doDeployment() *appsv1.Deployment {
 					Containers: []corev1.Container{
 						{
 							Name:  "digitalocean-cloud-controller-manager",
-							Image: "digitalocean/digitalocean-cloud-controller-manager" + digitaloceanCCMVersion,
+							Image: "digitalocean/digitalocean-cloud-controller-manager:" + digitaloceanCCMVersion,
 							Command: []string{
 								"/bin/digitalocean-cloud-controller-manager",
 								"--cloud-provider=digitalocean",
