@@ -15,17 +15,3 @@ versions:
   kubernetes: '1.13.5'
 provider:
   name: 'digitalocean'
-features:
-  enable_pod_security_policy: false
-workers:
-- name: fra1-1
-  replicas: 3
-  config:
-    cloudProviderSpec:
-      backups: false
-      ipv6: false
-      private_networking: true
-      monitoring: false
-    operatingSystem: 'ubuntu'
-    operatingSystemSpec:
-      distUpgradeOnBoot: true

@@ -41,10 +41,19 @@ output "kubeone_workers" {
     # corresponding (by name) worker definition
     fra1-1 = {
       replicas        = 3
-      operatingSystem = "ubuntu"
-      droplet_size    = "${var.droplet_size}"
-      region          = "${var.region}"
       sshPublicKeys   = ["${digitalocean_ssh_key.deployer.public_key}"]
+      operatingSystem = "ubuntu"
+
+      operatingSystemSpec = {
+        distUpgradeOnBoot = false
+      }
+
+      region             = "${var.region}"
+      size               = "${var.droplet_size}"
+      private_networking = true
+      backups            = false
+      ipv6               = false
+      monitoring         = false
     }
   }
 }
