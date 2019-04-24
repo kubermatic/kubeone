@@ -77,8 +77,13 @@ type awsWorkerConfig struct {
 
 // TODO: Add option for sourcing bool values (private networking, monitoring...)
 type doWorkerConfig struct {
-	DropletSize string `json:"droplet_size"`
-	Region      string `json:"region"`
+	Region            string   `json:"region"`
+	Size              string   `json:"size"`
+	Backups           bool     `json:"backups"`
+	IPv6              bool     `json:"ipv6"`
+	PrivateNetworking bool     `json:"private_networking"`
+	Monitoring        bool     `json:"monitoring"`
+	Tags              []string `json:"tags"`
 }
 
 type openStackWorkerConfig struct {
@@ -311,12 +316,19 @@ func (c *Config) updateDigitalOceanWorkerset(workerset *config.WorkerConfig, cfg
 		return errors.WithStack(err)
 	}
 
-	if err := setWorkersetFlag(workerset, "size", doCloudConfig.DropletSize); err != nil {
-		return errors.WithStack(err)
+	flags := []cloudProviderFlags{
+		{key: "region", value: doCloudConfig.Region},
+		{key: "size", value: doCloudConfig.Size},
+		{key: "backups", value: doCloudConfig.Backups},
+		{key: "ipv6", value: doCloudConfig.IPv6},
+		{key: "private_networking", value: doCloudConfig.PrivateNetworking},
+		{key: "monitoring", value: doCloudConfig.Monitoring},
 	}
 
-	if err := setWorkersetFlag(workerset, "region", doCloudConfig.Region); err != nil {
-		return errors.WithStack(err)
+	for _, flag := range flags {
+		if err := setWorkersetFlag(workerset, flag.key, flag.value); err != nil {
+			return errors.WithStack(err)
+		}
 	}
 
 	return nil
@@ -391,6 +403,7 @@ func setWorkersetFlag(w *config.WorkerConfig, name string, value interface{}) er
 		if len(s) == 0 {
 			return nil
 		}
+	case bool:
 	default:
 		return errors.New("unsupported type")
 	}
@@ -408,9 +421,14 @@ func setWorkersetFlag(w *config.WorkerConfig, name string, value interface{}) er
 }
 
 type commonWorkerConfig struct {
-	SSHPublicKeys   []string `json:"sshPublicKeys"`
-	Replicas        *int     `json:"replicas"`
-	OperatingSystem *string  `json:"operatingSystem"`
+	SSHPublicKeys       []string              `json:"sshPublicKeys"`
+	Replicas            *int                  `json:"replicas"`
+	OperatingSystem     *string               `json:"operatingSystem"`
+	OperatingSystemSpec []operatingSystemSpec `json:"operatingSystemSpec"`
+}
+
+type operatingSystemSpec struct {
+	DistUpgradeOnBoot *bool `json:"distUpgradeOnBoot"`
 }
 
 func (c *Config) updateCommonWorkerConfig(workerset *config.WorkerConfig, cfg json.RawMessage) error {
@@ -433,6 +451,17 @@ func (c *Config) updateCommonWorkerConfig(workerset *config.WorkerConfig, cfg js
 	// comes from Terraform
 	if cc.OperatingSystem != nil {
 		workerset.Config.OperatingSystem = *cc.OperatingSystem
+	}
+
+	osSpecMap := make(map[string]interface{})
+	for _, v := range cc.OperatingSystemSpec {
+		if v.DistUpgradeOnBoot != nil {
+			osSpecMap["distUpgradeOnBoot"] = *v.DistUpgradeOnBoot
+		}
+	}
+
+	if len(osSpecMap) > 0 {
+		workerset.Config.OperatingSystemSpec = osSpecMap
 	}
 
 	return nil

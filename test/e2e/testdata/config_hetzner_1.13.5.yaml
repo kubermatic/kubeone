@@ -15,5 +15,4 @@ versions:
   kubernetes: '1.13.5'
 provider:
   name: 'hetzner'
-features:
-  enable_pod_security_policy: false
+  external: true
