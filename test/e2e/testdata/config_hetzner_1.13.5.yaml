@@ -15,3 +15,4 @@ versions:
   kubernetes: '1.13.5'
 provider:
   name: 'hetzner'
+  external: true
