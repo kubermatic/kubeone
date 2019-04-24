@@ -27,6 +27,23 @@ import (
 	"github.com/pkg/errors"
 )
 
+// ENV variable names with credential in them that machine-controller expects to see
+const (
+	AWSAccessKeyID          = "AWS_ACCESS_KEY_ID"
+	AWSSecretAccessKey      = "AWS_SECRET_ACCESS_KEY"
+	DigitalOceanTokenKey    = "DO_TOKEN"
+	GoogleServiceAccountKey = "GOOGLE_SERVICE_ACCOUNT"
+	HetznerTokenKey         = "HZ_TOKEN"
+	OpenStackAuthURL        = "OS_AUTH_URL"
+	OpenStackDomainName     = "OS_DOMAIN_NAME"
+	OpenStackPassword       = "OS_PASSWORD"
+	OpenStackTenantName     = "OS_TENANT_NAME"
+	OpenStackUserName       = "OS_USER_NAME"
+	VSphereAddress          = "VSPHERE_ADDRESS"
+	VSpherePasswords        = "VSPHERE_PASSWORD"
+	VSphereUsername         = "VSPHERE_USERNAME"
+)
+
 // Cluster describes our entire configuration.
 type Cluster struct {
 	Name              string                  `json:"name"`
@@ -462,8 +479,8 @@ func (p ProviderName) ProviderCredentials() (map[string]string, error) {
 			return nil, err
 		}
 		if envCreds.AccessKeyID != "" && envCreds.SecretAccessKey != "" {
-			creds["AWS_ACCESS_KEY_ID"] = envCreds.AccessKeyID
-			creds["AWS_SECRET_ACCESS_KEY"] = envCreds.SecretAccessKey
+			creds[AWSAccessKeyID] = envCreds.AccessKeyID
+			creds[AWSSecretAccessKey] = envCreds.SecretAccessKey
 			return creds, nil
 		}
 
@@ -474,44 +491,44 @@ func (p ProviderName) ProviderCredentials() (map[string]string, error) {
 			return nil, err
 		}
 		if configCreds.AccessKeyID != "" && configCreds.SecretAccessKey != "" {
-			creds["AWS_ACCESS_KEY_ID"] = configCreds.AccessKeyID
-			creds["AWS_SECRET_ACCESS_KEY"] = configCreds.SecretAccessKey
+			creds[AWSAccessKeyID] = configCreds.AccessKeyID
+			creds[AWSSecretAccessKey] = configCreds.SecretAccessKey
 			return creds, nil
 		}
 
 		return nil, errors.New("error parsing aws credentials")
 	case ProviderNameOpenStack:
 		return parseCredentialVariables([]ProviderEnvironmentVariable{
-			{Name: "OS_AUTH_URL"},
-			{Name: "OS_USERNAME", MachineControllerName: "OS_USER_NAME"},
-			{Name: "OS_PASSWORD"},
-			{Name: "OS_DOMAIN_NAME"},
-			{Name: "OS_TENANT_NAME"},
+			{Name: OpenStackAuthURL},
+			{Name: "OS_USERNAME", MachineControllerName: OpenStackUserName},
+			{Name: OpenStackPassword},
+			{Name: OpenStackDomainName},
+			{Name: OpenStackTenantName},
 		})
 	case ProviderNameHetzner:
 		return parseCredentialVariables([]ProviderEnvironmentVariable{
-			{Name: "HCLOUD_TOKEN", MachineControllerName: "HZ_TOKEN"},
+			{Name: "HCLOUD_TOKEN", MachineControllerName: HetznerTokenKey},
 		})
 	case ProviderNameDigitalOcean:
 		return parseCredentialVariables([]ProviderEnvironmentVariable{
-			{Name: "DIGITALOCEAN_TOKEN", MachineControllerName: "DO_TOKEN"},
+			{Name: "DIGITALOCEAN_TOKEN", MachineControllerName: DigitalOceanTokenKey},
 		})
 	case ProviderNameGCE:
 		gsa, err := parseCredentialVariables([]ProviderEnvironmentVariable{
-			{Name: "GOOGLE_CREDENTIALS", MachineControllerName: "GOOGLE_SERVICE_ACCOUNT"},
+			{Name: "GOOGLE_CREDENTIALS", MachineControllerName: GoogleServiceAccountKey},
 		})
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
 		// encode it before sending to secret to be consumed by
 		// machine-controller, as machine-controller assumes it will be double encoded
-		gsa["GOOGLE_SERVICE_ACCOUNT"] = base64.StdEncoding.EncodeToString([]byte(gsa["GOOGLE_SERVICE_ACCOUNT"]))
+		gsa[GoogleServiceAccountKey] = base64.StdEncoding.EncodeToString([]byte(gsa[GoogleServiceAccountKey]))
 		return gsa, nil
 	case ProviderNameVSphere:
 		return parseCredentialVariables([]ProviderEnvironmentVariable{
-			{Name: "VSPHERE_ADDRESS"},
-			{Name: "VSPHERE_USERNAME"},
-			{Name: "VSPHERE_PASSWORD"},
+			{Name: VSphereAddress},
+			{Name: VSphereUsername},
+			{Name: VSpherePasswords},
 		})
 	}
 

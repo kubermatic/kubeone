@@ -24,6 +24,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/certificate"
 	"github.com/kubermatic/kubeone/pkg/features"
 	"github.com/kubermatic/kubeone/pkg/task"
+	"github.com/kubermatic/kubeone/pkg/templates/externalccm"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
 	"github.com/kubermatic/kubeone/pkg/util"
 )
@@ -52,7 +53,8 @@ func Upgrade(ctx *util.Context) error {
 		{Fn: upgradeFollower, ErrMsg: "unable to upgrade follower control plane", Retries: 3},
 		{Fn: features.Activate, ErrMsg: "unable to activate features"},
 		{Fn: certificate.DownloadCA, ErrMsg: "unable to download ca from leader", Retries: 3},
-		{Fn: machinecontroller.EnsureMachineController, ErrMsg: "failed to update machine-controller", Retries: 3},
+		{Fn: externalccm.Ensure, ErrMsg: "failed to install external CCM"},
+		{Fn: machinecontroller.Ensure, ErrMsg: "failed to update machine-controller", Retries: 3},
 		{Fn: machinecontroller.WaitReady, ErrMsg: "failed to wait for machine-controller", Retries: 3},
 		{Fn: upgradeMachineDeployments, ErrMsg: "unable to upgrade MachineDeployments", Retries: 3},
 	}
