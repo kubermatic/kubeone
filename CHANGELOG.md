@@ -6,16 +6,16 @@
 
 * Add support for Kubernetes 1.14
 * Add support for upgrading from Kubernetes 1.13 to 1.14
-* Add support for Google Compute Engine (#307, #317)
-* Update machine-controller when upgrading the cluster (#304)
-* Add timeout after upgrading each node to let nodes to settle down (#316, #319)
+* Add support for Google Compute Engine ([#307](https://github.com/kubermatic/kubeone/pull/307), [#317](https://github.com/kubermatic/kubeone/pull/317))
+* Update machine-controller when upgrading the cluster ([#304](https://github.com/kubermatic/kubeone/pull/304))
+* Add timeout after upgrading each node to let nodes to settle down ([#316](https://github.com/kubermatic/kubeone/pull/316), [#319](https://github.com/kubermatic/kubeone/pull/319))
 
 ## Changed
 
-* Deploy machine-controller v1.1.2 on the new clusters (#317)
-* Creating MachineDeployments and upgrading nodes tasks are repeated three times on the failure (#328)
-* Allow upgrading to the same Kubernetes version (#315)
-* Allow the custom VPC to be used with the example AWS Terraform scripts and switch to the T3 instances (#306)
+* Deploy machine-controller v1.1.2 on the new clusters ([#317](https://github.com/kubermatic/kubeone/pull/317))
+* Creating MachineDeployments and upgrading nodes tasks are repeated three times on the failure ([#328](https://github.com/kubermatic/kubeone/pull/328))
+* Allow upgrading to the same Kubernetes version ([#315](https://github.com/kubermatic/kubeone/pull/315))
+* Allow the custom VPC to be used with the example AWS Terraform scripts and switch to the T3 instances ([#306](https://github.com/kubermatic/kubeone/pull/306))
 
 # [v0.4.0](https://github.com/kubermatic/kubeone/releases/tag/v0.4.0) - 2019-03-21
 
