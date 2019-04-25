@@ -560,7 +560,7 @@
   version = "v1.13.1"
 
 [[projects]]
-  digest = "1:501f147af95df7681eeeabd516fec151ea6094beb4334ef790aa9d6396c439ab"
+  digest = "1:500ca96976d373a2242dab5c4597a2858458b6d26d8c3d3db8414525e6fc505f"
   name = "sigs.k8s.io/cluster-api"
   packages = [
     "pkg/apis/cluster/common",
@@ -568,7 +568,7 @@
     "pkg/client/clientset_generated/clientset/scheme",
   ]
   pruneopts = "NUT"
-  revision = "813b1fec840d79b37fe86778237b6db6d1cb959d"
+  revision = "c63bf6f67ab631a449b6eb76dfe29458441051e0"
 
 [[projects]]
   digest = "1:d58a6193316103ee408ce0891398cf66b7977df81d2c40b75a3b1c92925fa76f"

@@ -53,7 +53,7 @@ required = [
 
 [[constraint]]
   name = "sigs.k8s.io/cluster-api"
-  revision = "813b1fec840d79b37fe86778237b6db6d1cb959d"
+  revision = "c63bf6f67ab631a449b6eb76dfe29458441051e0"
 
 [[constraint]]
   name = "sigs.k8s.io/controller-runtime"
