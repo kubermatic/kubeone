@@ -27,7 +27,6 @@ import (
 	kubeonescheme "github.com/kubermatic/kubeone/pkg/apis/kubeone/scheme"
 	kubeonev1alpha1 "github.com/kubermatic/kubeone/pkg/apis/kubeone/v1alpha1"
 	"github.com/kubermatic/kubeone/pkg/apis/kubeone/validation"
-	"github.com/kubermatic/kubeone/pkg/terraform"
 	"github.com/kubermatic/kubeone/pkg/util/credentials"
 )
 
@@ -56,29 +55,29 @@ func SetKubeOneClusterCredentials(cfg *kubeoneapi.KubeOneCluster) error {
 }
 
 // SourceKubeOneClusterFromTerraformOutput sources information about the cluster from the Terraform output
-func SourceKubeOneClusterFromTerraformOutput(terraformOutput []byte, cluster *kubeonev1alpha1.KubeOneCluster) error {
-	var (
-		tfConfig *terraform.Config
-		err      error
-	)
+// func SourceKubeOneClusterFromTerraformOutput(terraformOutput []byte, cluster *kubeonev1alpha1.KubeOneCluster) error {
+// 	var (
+// 		tfConfig *terraform.Config
+// 		err      error
+// 	)
 
-	if tfConfig, err = terraform.NewConfigFromJSON(terraformOutput); err != nil {
-		return errors.Wrap(err, "failed to parse Terraform config")
-	}
+// 	if tfConfig, err = terraform.NewConfigFromJSON(terraformOutput); err != nil {
+// 		return errors.Wrap(err, "failed to parse Terraform config")
+// 	}
 
-	return tfConfig.Apply(cluster)
-}
+// 	return tfConfig.Apply(cluster)
+// }
 
 // DefaultedKubeOneCluster takes a versioned KubeOneCluster object and optionally a Terraform output, and converts versioned object to the
 // internal API type, defaults and validates the object.
 func DefaultedKubeOneCluster(versionedCluster *kubeonev1alpha1.KubeOneCluster, tfOutput []byte) (*kubeoneapi.KubeOneCluster, error) {
 	internalCfg := &kubeoneapi.KubeOneCluster{}
 
-	if tfOutput != nil {
-		if err := SourceKubeOneClusterFromTerraformOutput(tfOutput, versionedCluster); err != nil {
-			return nil, errors.Wrap(err, "unable to source information about cluster from a given terraform output")
-		}
-	}
+	// if tfOutput != nil {
+	// 	if err := SourceKubeOneClusterFromTerraformOutput(tfOutput, versionedCluster); err != nil {
+	// 		return nil, errors.Wrap(err, "unable to source information about cluster from a given terraform output")
+	// 	}
+	// }
 
 	// Default and convert to the internal API type
 	kubeonescheme.Scheme.Default(versionedCluster)
