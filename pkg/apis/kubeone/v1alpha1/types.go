@@ -128,11 +128,11 @@ type WorkerConfig struct {
 
 // ProviderSpec describes a worker node
 type ProviderSpec struct {
-	CloudProviderSpec   json.RawMessage  `json:"cloudProviderSpec"`
+	CloudProviderSpec   json.RawMessage   `json:"cloudProviderSpec"`
 	Labels              map[string]string `json:"labels"`
 	SSHPublicKeys       []string          `json:"sshPublicKeys"`
 	OperatingSystem     string            `json:"operatingSystem"`
-	OperatingSystemSpec json.RawMessage  `json:"operatingSystemSpec"`
+	OperatingSystemSpec json.RawMessage   `json:"operatingSystemSpec"`
 }
 
 // MachineControllerConfig configures kubermatic machine-controller deployment
