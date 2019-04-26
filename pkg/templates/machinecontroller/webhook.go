@@ -25,8 +25,8 @@ import (
 
 	"github.com/pkg/errors"
 
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/certificate"
-	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/util"
 
 	admissionregistrationv1beta1 "k8s.io/api/admissionregistration/v1beta1"
@@ -129,7 +129,7 @@ func WaitForWebhook(client dynclient.Client) error {
 }
 
 // webhookDeployment returns the deployment for the machine-controllers MutatignAdmissionWebhook
-func webhookDeployment(cluster *config.Cluster) *appsv1.Deployment {
+func webhookDeployment(cluster *kubeoneapi.KubeOneCluster) *appsv1.Deployment {
 	dep := &appsv1.Deployment{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "apps/v1",
