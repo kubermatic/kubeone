@@ -89,7 +89,7 @@ func Deploy(ctx *util.Context) error {
 	}
 
 	variables := map[string]interface{}{
-		"POD_SUBNET": ctx.Cluster.Network.PodSubnet(),
+		"POD_SUBNET": ctx.Cluster.ClusterNetwork.PodSubnet,
 	}
 
 	buf := bytes.Buffer{}

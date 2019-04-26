@@ -21,7 +21,7 @@ import (
 	"strings"
 
 	kubeadmv1beta1 "github.com/kubermatic/kubeone/pkg/apis/kubeadm/v1beta1"
-	"github.com/kubermatic/kubeone/pkg/config"
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/features"
 	"github.com/kubermatic/kubeone/pkg/util"
 
@@ -32,7 +32,7 @@ import (
 )
 
 // NewConfig returns all required configs to init a cluster via a set of v1beta1 configs
-func NewConfig(ctx *util.Context, host *config.HostConfig) ([]runtime.Object, error) {
+func NewConfig(ctx *util.Context, host kubeoneapi.HostConfig) ([]runtime.Object, error) {
 	cluster := ctx.Cluster
 
 	nodeRegistration := kubeadmv1beta1.NodeRegistrationOptions{
@@ -53,7 +53,8 @@ func NewConfig(ctx *util.Context, host *config.HostConfig) ([]runtime.Object, er
 		return nil, err
 	}
 
-	controlPlaneEndpoint := fmt.Sprintf("%s:6443", cluster.APIServer.Address)
+	// TODO(xmudrii): Support more than one API endpoint
+	controlPlaneEndpoint := fmt.Sprintf("%s:%d", cluster.APIEndpoints[0].Host, cluster.APIEndpoints[0].Port)
 	hostAdvertiseAddress := host.PrivateAddress
 	if hostAdvertiseAddress == "" {
 		hostAdvertiseAddress = host.PublicAddress
@@ -95,8 +96,8 @@ func NewConfig(ctx *util.Context, host *config.HostConfig) ([]runtime.Object, er
 			Kind:       "ClusterConfiguration",
 		},
 		Networking: kubeadmv1beta1.Networking{
-			PodSubnet:     cluster.Network.PodSubnet(),
-			ServiceSubnet: cluster.Network.ServiceSubnet(),
+			PodSubnet:     cluster.ClusterNetwork.PodSubnet,
+			ServiceSubnet: cluster.ClusterNetwork.ServiceSubnet,
 		},
 		KubernetesVersion:    cluster.Versions.Kubernetes,
 		ControlPlaneEndpoint: controlPlaneEndpoint,
@@ -104,11 +105,12 @@ func NewConfig(ctx *util.Context, host *config.HostConfig) ([]runtime.Object, er
 			ControlPlaneComponent: kubeadmv1beta1.ControlPlaneComponent{
 				ExtraArgs: map[string]string{
 					"endpoint-reconciler-type": "lease",
-					"service-node-port-range":  cluster.Network.NodePortRange(),
+					"service-node-port-range":  cluster.ClusterNetwork.NodePortRange,
 				},
 				ExtraVolumes: []kubeadmv1beta1.HostPathMount{},
 			},
-			CertSANs: []string{strings.ToLower(cluster.APIServer.Address)},
+			// TODO(xmudrii): Support more than one API endpoint
+			CertSANs: []string{strings.ToLower(cluster.APIEndpoints[0].Host)},
 		},
 		ControllerManager: kubeadmv1beta1.ControlPlaneComponent{
 			ExtraArgs:    map[string]string{},
@@ -117,7 +119,7 @@ func NewConfig(ctx *util.Context, host *config.HostConfig) ([]runtime.Object, er
 		ClusterName: cluster.Name,
 	}
 
-	if cluster.Provider.CloudProviderInTree() {
+	if cluster.CloudProvider.CloudProviderInTree() {
 		renderedCloudConfig := "/etc/kubernetes/cloud-config"
 		cloudConfigVol := kubeadmv1beta1.HostPathMount{
 			Name:      "cloud-config",
@@ -126,7 +128,7 @@ func NewConfig(ctx *util.Context, host *config.HostConfig) ([]runtime.Object, er
 			ReadOnly:  true,
 			PathType:  corev1.HostPathFile,
 		}
-		provider := string(cluster.Provider.Name)
+		provider := string(cluster.CloudProvider.Name)
 
 		clusterConfig.APIServer.ExtraArgs["cloud-provider"] = provider
 		clusterConfig.APIServer.ExtraArgs["cloud-config"] = renderedCloudConfig
@@ -140,7 +142,7 @@ func NewConfig(ctx *util.Context, host *config.HostConfig) ([]runtime.Object, er
 		nodeRegistration.KubeletExtraArgs["cloud-config"] = renderedCloudConfig
 	}
 
-	if cluster.Provider.External {
+	if cluster.CloudProvider.External {
 		clusterConfig.APIServer.ExtraArgs["cloud-provider"] = ""
 		clusterConfig.ControllerManager.ExtraArgs["cloud-provider"] = ""
 		nodeRegistration.KubeletExtraArgs["cloud-provider"] = "external"
