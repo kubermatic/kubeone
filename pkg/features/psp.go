@@ -23,7 +23,7 @@ import (
 	"github.com/pkg/errors"
 
 	kubeadmv1beta1 "github.com/kubermatic/kubeone/pkg/apis/kubeadm/v1beta1"
-	"github.com/kubermatic/kubeone/pkg/config"
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/util"
 
 	corev1 "k8s.io/api/core/v1"
@@ -55,8 +55,8 @@ var (
 	}
 )
 
-func activateKubeadmPSP(feature config.PodSecurityPolicy, clusterConfig *kubeadmv1beta1.ClusterConfiguration) {
-	if feature.Enable == nil || !*feature.Enable {
+func activateKubeadmPSP(feature *kubeoneapi.PodSecurityPolicy, clusterConfig *kubeadmv1beta1.ClusterConfiguration) {
+	if feature == nil || !feature.Enable {
 		return
 	}
 
@@ -71,8 +71,8 @@ func activateKubeadmPSP(feature config.PodSecurityPolicy, clusterConfig *kubeadm
 	}
 }
 
-func installKubeSystemPSP(activate *bool, ctx *util.Context) error {
-	if activate == nil || !*activate {
+func installKubeSystemPSP(psp *kubeoneapi.PodSecurityPolicy, ctx *util.Context) error {
+	if psp == nil || !psp.Enable {
 		return nil
 	}
 

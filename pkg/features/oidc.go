@@ -18,11 +18,11 @@ package features
 
 import (
 	kubeadmv1beta1 "github.com/kubermatic/kubeone/pkg/apis/kubeadm/v1beta1"
-	"github.com/kubermatic/kubeone/pkg/config"
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 )
 
-func activateKubeadmOIDC(feature config.OpenIDConnect, cfg *kubeadmv1beta1.ClusterConfiguration) {
-	if !feature.Enable {
+func activateKubeadmOIDC(feature *kubeoneapi.OpenIDConnect, cfg *kubeadmv1beta1.ClusterConfiguration) {
+	if feature == nil || !feature.Enable {
 		return
 	}
 
