@@ -20,14 +20,14 @@ import (
 	"github.com/pkg/errors"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	"github.com/kubermatic/kubeone/pkg/config"
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 
 	"k8s.io/client-go/tools/clientcmd"
 )
 
 // DownloadKubeconfig downloads Kubeconfig over SSH
-func DownloadKubeconfig(cluster *config.Cluster) ([]byte, error) {
+func DownloadKubeconfig(cluster *kubeoneapi.KubeOneCluster) ([]byte, error) {
 	// connect to leader
 	leader, err := cluster.Leader()
 	if err != nil {
@@ -35,7 +35,7 @@ func DownloadKubeconfig(cluster *config.Cluster) ([]byte, error) {
 	}
 	connector := ssh.NewConnector()
 
-	conn, err := connector.Connect(*leader)
+	conn, err := connector.Connect(leader)
 	if err != nil {
 		return nil, err
 	}
