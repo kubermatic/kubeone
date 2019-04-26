@@ -73,17 +73,9 @@ func runReset(logger *logrus.Logger, resetOptions *resetOptions) error {
 		return errors.New("no cluster config file given")
 	}
 
-	cluster, err := loadClusterConfig(resetOptions.Manifest)
+	cluster, err := loadClusterConfig(resetOptions.Manifest, resetOptions.TerraformState)
 	if err != nil {
 		return errors.Wrap(err, "failed to load cluster")
-	}
-
-	if err = applyTerraform(resetOptions.TerraformState, cluster); err != nil {
-		return err
-	}
-
-	if err = cluster.DefaultAndValidate(); err != nil {
-		return err
 	}
 
 	options := &installer.Options{

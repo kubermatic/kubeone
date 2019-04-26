@@ -71,21 +71,12 @@ It's possible to source information about hosts from Terraform output, using the
 
 // runUpgrade upgrades Kubernetes on the provided machines
 func runUpgrade(logger *logrus.Logger, upgradeOptions *upgradeOptions) error {
-	cluster, err := loadClusterConfig(upgradeOptions.Manifest)
+	cluster, err := loadClusterConfig(upgradeOptions.Manifest, upgradeOptions.TerraformState)
 	if err != nil {
 		return errors.Wrap(err, "failed to load cluster")
 	}
 
 	options := createUpgradeOptions(upgradeOptions)
-
-	if err = applyTerraform(upgradeOptions.TerraformState, cluster); err != nil {
-		return errors.Wrap(err, "failed to parse terraform state")
-	}
-
-	if err = cluster.DefaultAndValidate(); err != nil {
-		return err
-	}
-
 	return upgrader.NewUpgrader(cluster, logger).Upgrade(options)
 }
 
