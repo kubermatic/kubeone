@@ -26,7 +26,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
-	"github.com/kubermatic/kubeone/pkg/config"
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/installer"
 )
 
@@ -76,7 +76,7 @@ It's possible to source information about hosts from Terraform output, using the
 
 // runInstall provisions Kubernetes on the provided machines
 func runInstall(logger *logrus.Logger, installOptions *installOptions) error {
-	cluster, err := loadClusterConfig(installOptions.Manifest)
+	cluster, err := loadClusterConfig(installOptions.Manifest, installOptions.TerraformState)
 	if err != nil {
 		return errors.Wrap(err, "failed to load cluster")
 	}
@@ -86,22 +86,17 @@ func runInstall(logger *logrus.Logger, installOptions *installOptions) error {
 		return errors.Wrap(err, "failed to create installer options")
 	}
 
-	if err = applyTerraform(installOptions.TerraformState, cluster); err != nil {
-		return errors.Wrap(err, "failed to apply Terraform options")
-	}
-
-	if err = cluster.DefaultAndValidate(); err != nil {
-		return err
-	}
+	// TODO(xmudrii): Remove the cluster object output and panic
+	fmt.Printf("\n\n%#v\n\n", cluster)
+	//panic(".")
 
 	return installer.NewInstaller(cluster, logger).Install(options)
 }
 
-func createInstallerOptions(clusterFile string, cluster *config.Cluster, options *installOptions) (*installer.Options, error) {
+func createInstallerOptions(clusterFile string, cluster *kubeoneapi.KubeOneCluster, options *installOptions) (*installer.Options, error) {
 	if len(options.BackupFile) == 0 {
 		fullPath, _ := filepath.Abs(clusterFile)
 		clusterName := cluster.Name
-
 		options.BackupFile = filepath.Join(filepath.Dir(fullPath), fmt.Sprintf("%s.tar.gz", clusterName))
 	}
 
