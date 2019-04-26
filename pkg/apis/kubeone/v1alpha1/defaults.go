@@ -40,9 +40,15 @@ func SetDefaults_KubeOneCluster(obj *KubeOneCluster) {
 	SetDefaults_APIEndpoints(obj)
 	SetDefaults_ClusterNetwork(obj)
 	SetDefaults_MachineController(obj)
+	SetDefaults_Features(obj)
 }
 
 func SetDefaults_Hosts(obj *KubeOneCluster) {
+	// No hosts, so skip defaulting
+	if len(obj.Hosts) == 0 {
+		return
+	}
+
 	// Set first host to be the leader
 	obj.Hosts[0].IsLeader = true
 
@@ -54,13 +60,33 @@ func SetDefaults_Hosts(obj *KubeOneCluster) {
 }
 
 func SetDefaults_APIEndpoints(obj *KubeOneCluster) {
+	// If no API endpoint is provided, assume the public address is an endpoint
 	if len(obj.APIEndpoints) == 0 {
+		if len(obj.Hosts) == 0 {
+			// No hosts, so can't default to the first one
+			return
+		}
 		obj.APIEndpoints = []APIEndpoint{
 			{
 				Host: obj.Hosts[0].PublicAddress,
+				Port: 6443,
 			},
 		}
+	} else {
+		// There's APIEndpoint provided, default host and port
+		for i := range obj.APIEndpoints {
+			if len(obj.APIEndpoints[i].Host) == 0 {
+				if len(obj.Hosts) > 0 {
+					// Can only default to the first host if it exists
+					obj.APIEndpoints[i].Host = obj.Hosts[0].PublicAddress
+				}
+			}
+			if obj.APIEndpoints[i].Port == 0 {
+				obj.APIEndpoints[i].Port = 6443
+			}
+		}
 	}
+
 }
 
 func SetDefaults_ClusterNetwork(obj *KubeOneCluster) {
@@ -77,17 +103,9 @@ func SetDefaults_MachineController(obj *KubeOneCluster) {
 		}
 	}
 
-	// If ProviderName is not None default to cloud provider and ensure user have not
-	// manually provided machine-controller provider different than cloud provider.
-	// If ProviderName is None, take user input or default to None.
-	if obj.CloudProvider.Name != CloudProviderNameNone {
-		if obj.MachineController.Provider == "" {
-			obj.MachineController.Provider = obj.CloudProvider.Name
-		}
+	if obj.MachineController.Provider == "" {
+		obj.MachineController.Provider = obj.CloudProvider.Name
 	}
-
-	// TODO(xmudrii): error
-	obj.MachineController.Credentials, _ = obj.MachineController.Provider.ProviderCredentials()
 }
 
 func SetDefaults_Features(obj *KubeOneCluster) {

@@ -21,6 +21,7 @@ limitations under the License.
 package v1alpha1
 
 import (
+	json "encoding/json"
 	unsafe "unsafe"
 
 	kubeone "github.com/kubermatic/kubeone/pkg/apis/kubeone"
@@ -355,6 +356,7 @@ func Convert_kubeone_HostConfig_To_v1alpha1_HostConfig(in *kubeone.HostConfig, o
 }
 
 func autoConvert_v1alpha1_KubeOneCluster_To_kubeone_KubeOneCluster(in *KubeOneCluster, out *kubeone.KubeOneCluster, s conversion.Scope) error {
+	out.Name = in.Name
 	out.Hosts = *(*[]kubeone.HostConfig)(unsafe.Pointer(&in.Hosts))
 	out.APIEndpoints = *(*[]kubeone.APIEndpoint)(unsafe.Pointer(&in.APIEndpoints))
 	if err := Convert_v1alpha1_CloudProviderSpec_To_kubeone_CloudProviderSpec(&in.CloudProvider, &out.CloudProvider, s); err != nil {
@@ -374,6 +376,7 @@ func autoConvert_v1alpha1_KubeOneCluster_To_kubeone_KubeOneCluster(in *KubeOneCl
 	if err := Convert_v1alpha1_Features_To_kubeone_Features(&in.Features, &out.Features, s); err != nil {
 		return err
 	}
+	out.Credentials = *(*map[string]string)(unsafe.Pointer(&in.Credentials))
 	return nil
 }
 
@@ -383,6 +386,7 @@ func Convert_v1alpha1_KubeOneCluster_To_kubeone_KubeOneCluster(in *KubeOneCluste
 }
 
 func autoConvert_kubeone_KubeOneCluster_To_v1alpha1_KubeOneCluster(in *kubeone.KubeOneCluster, out *KubeOneCluster, s conversion.Scope) error {
+	out.Name = in.Name
 	out.Hosts = *(*[]HostConfig)(unsafe.Pointer(&in.Hosts))
 	out.APIEndpoints = *(*[]APIEndpoint)(unsafe.Pointer(&in.APIEndpoints))
 	if err := Convert_kubeone_CloudProviderSpec_To_v1alpha1_CloudProviderSpec(&in.CloudProvider, &out.CloudProvider, s); err != nil {
@@ -402,6 +406,7 @@ func autoConvert_kubeone_KubeOneCluster_To_v1alpha1_KubeOneCluster(in *kubeone.K
 	if err := Convert_kubeone_Features_To_v1alpha1_Features(&in.Features, &out.Features, s); err != nil {
 		return err
 	}
+	out.Credentials = *(*map[string]string)(unsafe.Pointer(&in.Credentials))
 	return nil
 }
 
@@ -413,7 +418,6 @@ func Convert_kubeone_KubeOneCluster_To_v1alpha1_KubeOneCluster(in *kubeone.KubeO
 func autoConvert_v1alpha1_MachineControllerConfig_To_kubeone_MachineControllerConfig(in *MachineControllerConfig, out *kubeone.MachineControllerConfig, s conversion.Scope) error {
 	out.Deploy = in.Deploy
 	out.Provider = kubeone.CloudProviderName(in.Provider)
-	out.Credentials = *(*map[string]string)(unsafe.Pointer(&in.Credentials))
 	return nil
 }
 
@@ -425,7 +429,6 @@ func Convert_v1alpha1_MachineControllerConfig_To_kubeone_MachineControllerConfig
 func autoConvert_kubeone_MachineControllerConfig_To_v1alpha1_MachineControllerConfig(in *kubeone.MachineControllerConfig, out *MachineControllerConfig, s conversion.Scope) error {
 	out.Deploy = in.Deploy
 	out.Provider = CloudProviderName(in.Provider)
-	out.Credentials = *(*map[string]string)(unsafe.Pointer(&in.Credentials))
 	return nil
 }
 
@@ -537,11 +540,11 @@ func Convert_kubeone_PodSecurityPolicy_To_v1alpha1_PodSecurityPolicy(in *kubeone
 }
 
 func autoConvert_v1alpha1_ProviderSpec_To_kubeone_ProviderSpec(in *ProviderSpec, out *kubeone.ProviderSpec, s conversion.Scope) error {
-	out.CloudProviderSpec = (*runtime.RawExtension)(unsafe.Pointer(in.CloudProviderSpec))
+	out.CloudProviderSpec = *(*json.RawMessage)(unsafe.Pointer(&in.CloudProviderSpec))
 	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
 	out.SSHPublicKeys = *(*[]string)(unsafe.Pointer(&in.SSHPublicKeys))
 	out.OperatingSystem = in.OperatingSystem
-	out.OperatingSystemSpec = (*runtime.RawExtension)(unsafe.Pointer(in.OperatingSystemSpec))
+	out.OperatingSystemSpec = *(*json.RawMessage)(unsafe.Pointer(&in.OperatingSystemSpec))
 	return nil
 }
 
@@ -551,11 +554,11 @@ func Convert_v1alpha1_ProviderSpec_To_kubeone_ProviderSpec(in *ProviderSpec, out
 }
 
 func autoConvert_kubeone_ProviderSpec_To_v1alpha1_ProviderSpec(in *kubeone.ProviderSpec, out *ProviderSpec, s conversion.Scope) error {
-	out.CloudProviderSpec = (*runtime.RawExtension)(unsafe.Pointer(in.CloudProviderSpec))
+	out.CloudProviderSpec = *(*json.RawMessage)(unsafe.Pointer(&in.CloudProviderSpec))
 	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
 	out.SSHPublicKeys = *(*[]string)(unsafe.Pointer(&in.SSHPublicKeys))
 	out.OperatingSystem = in.OperatingSystem
-	out.OperatingSystemSpec = (*runtime.RawExtension)(unsafe.Pointer(in.OperatingSystemSpec))
+	out.OperatingSystemSpec = *(*json.RawMessage)(unsafe.Pointer(&in.OperatingSystemSpec))
 	return nil
 }
 

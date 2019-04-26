@@ -31,6 +31,9 @@ func ValidateKubeOneCluster(c kubeone.KubeOneCluster) field.ErrorList {
 
 	allErrs = append(allErrs, ValidateCloudProviderSpec(c.CloudProvider, field.NewPath("provider"))...)
 
+	if c.Name == "" {
+		allErrs = append(allErrs, field.Invalid(field.NewPath("name"), c.Name, "no cluster name specified"))
+	}
 	if len(c.Hosts) > 0 {
 		allErrs = append(allErrs, ValidateHostConfig(c.Hosts, field.NewPath("hosts"))...)
 	} else {

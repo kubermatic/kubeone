@@ -17,8 +17,9 @@ limitations under the License.
 package kubeone
 
 import (
+	"encoding/json"
+
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 )
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
@@ -27,6 +28,8 @@ import (
 type KubeOneCluster struct {
 	metav1.TypeMeta `json:",inline"`
 
+	// Name is the name of the cluster
+	Name string
 	// Hosts describes the control plane nodes and how to access them
 	Hosts []HostConfig `json:"hosts,omitempty"`
 	// APIEndpoints are pairs of address and port used to communicate with the Kubernetes API
@@ -45,6 +48,8 @@ type KubeOneCluster struct {
 	MachineController *MachineControllerConfig `json:"machineController,omitempty"`
 	// Features enables and configures additional cluster features
 	Features Features `json:"features,omitempty"`
+	// Credentials used for machine-controller and external CCM
+	Credentials map[string]string `json:"credentials,omitempty"`
 }
 
 // HostConfig describes a single control plane node.
@@ -69,7 +74,7 @@ type APIEndpoint struct {
 	Host string `json:"host"`
 
 	// Port is the port used to reach to the API
-	Port string `json:"port"`
+	Port int `json:"port"`
 }
 
 // CloudProviderName represents the name of a provider
@@ -123,11 +128,11 @@ type WorkerConfig struct {
 
 // ProviderSpec describes a worker node
 type ProviderSpec struct {
-	CloudProviderSpec   *runtime.RawExtension `json:"cloudProviderSpec"`
-	Labels              map[string]string     `json:"labels"`
-	SSHPublicKeys       []string              `json:"sshPublicKeys"`
-	OperatingSystem     string                `json:"operatingSystem"`
-	OperatingSystemSpec *runtime.RawExtension `json:"operatingSystemSpec"`
+	CloudProviderSpec   json.RawMessage   `json:"cloudProviderSpec"`
+	Labels              map[string]string `json:"labels"`
+	SSHPublicKeys       []string          `json:"sshPublicKeys"`
+	OperatingSystem     string            `json:"operatingSystem"`
+	OperatingSystemSpec json.RawMessage   `json:"operatingSystemSpec"`
 }
 
 // MachineControllerConfig configures kubermatic machine-controller deployment
@@ -135,8 +140,7 @@ type MachineControllerConfig struct {
 	Deploy bool `json:"deploy"`
 	// Provider is provider to be used for machine-controller
 	// Defaults and must be same as chosen cloud provider, unless cloud provider is set to None
-	Provider    CloudProviderName `json:"provider"`
-	Credentials map[string]string `json:"credentials"`
+	Provider CloudProviderName `json:"provider"`
 }
 
 // Features controls what features will be enabled on the cluster
