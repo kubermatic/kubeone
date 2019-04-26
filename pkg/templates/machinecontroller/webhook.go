@@ -32,6 +32,7 @@ import (
 	admissionregistrationv1beta1 "k8s.io/api/admissionregistration/v1beta1"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/apimachinery/pkg/util/wait"
@@ -130,117 +131,126 @@ func WaitForWebhook(client dynclient.Client) error {
 
 // webhookDeployment returns the deployment for the machine-controllers MutatignAdmissionWebhook
 func webhookDeployment(cluster *config.Cluster) *appsv1.Deployment {
-	dep := &appsv1.Deployment{
+	return &appsv1.Deployment{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "apps/v1",
 			Kind:       "Deployment",
 		},
-	}
-
-	dep.Name = "machine-controller-webhook"
-	dep.Namespace = WebhookNamespace
-	dep.Labels = map[string]string{
-		WebhookAppLabelKey: WebhookAppLabelValue,
-	}
-	dep.Spec.Replicas = int32Ptr(1)
-	dep.Spec.Selector = &metav1.LabelSelector{
-		MatchLabels: map[string]string{
-			WebhookAppLabelKey: WebhookAppLabelValue,
-		},
-	}
-	dep.Spec.Strategy.Type = appsv1.RollingUpdateStatefulSetStrategyType
-	dep.Spec.Strategy.RollingUpdate = &appsv1.RollingUpdateDeployment{
-		MaxSurge: &intstr.IntOrString{
-			Type:   intstr.Int,
-			IntVal: 1,
-		},
-		MaxUnavailable: &intstr.IntOrString{
-			Type:   intstr.Int,
-			IntVal: 0,
-		},
-	}
-
-	// TODO: Why whould we need this?
-	// dep.Spec.Template.Spec.ImagePullSecrets = []corev1.LocalObjectReference{{Name: resources.ImagePullSecretName}}
-
-	volumes := []corev1.Volume{getServingCertVolume()}
-	dep.Spec.Template.Spec.Volumes = volumes
-	dep.Spec.Template.ObjectMeta = metav1.ObjectMeta{
-		Labels: map[string]string{
-			WebhookAppLabelKey: WebhookAppLabelValue,
-		},
-	}
-
-	dep.Spec.Template.Spec.Tolerations = []corev1.Toleration{
-		{
-			Key:      "node-role.kubernetes.io/master",
-			Operator: corev1.TolerationOpExists,
-			Effect:   corev1.TaintEffectNoSchedule,
-		},
-		{
-			Key:    "node.cloudprovider.kubernetes.io/uninitialized",
-			Value:  "true",
-			Effect: corev1.TaintEffectNoSchedule,
-		},
-		{
-			Key:      "CriticalAddonsOnly",
-			Operator: corev1.TolerationOpExists,
-		},
-	}
-
-	dep.Spec.Template.Spec.Containers = []corev1.Container{
-		{
-			Name:            "machine-controller-webhook",
-			Image:           "kubermatic/machine-controller:" + WebhookTag,
-			ImagePullPolicy: corev1.PullIfNotPresent,
-			Command:         []string{"/usr/local/bin/webhook"},
-			Args: []string{
-				// "-kubeconfig", "/etc/kubernetes/kubeconfig/kubeconfig",
-				"-logtostderr",
-				"-v", "4",
-				"-listen-address", "0.0.0.0:9876",
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "machine-controller-webhook",
+			Namespace: WebhookNamespace,
+			Labels: map[string]string{
+				WebhookAppLabelKey: WebhookAppLabelValue,
 			},
-			Env:                      getEnvVarCredentials(cluster),
-			TerminationMessagePath:   corev1.TerminationMessagePathDefault,
-			TerminationMessagePolicy: corev1.TerminationMessageReadFile,
-			ReadinessProbe: &corev1.Probe{
-				Handler: corev1.Handler{
-					HTTPGet: &corev1.HTTPGetAction{
-						Path:   "/healthz",
-						Port:   intstr.FromInt(9876),
-						Scheme: corev1.URISchemeHTTPS,
+		},
+		Spec: appsv1.DeploymentSpec{
+			Replicas: int32Ptr(1),
+			Selector: &metav1.LabelSelector{
+				MatchLabels: map[string]string{
+					WebhookAppLabelKey: WebhookAppLabelValue,
+				},
+			},
+			Strategy: appsv1.DeploymentStrategy{
+				Type: appsv1.RollingUpdateStatefulSetStrategyType,
+				RollingUpdate: &appsv1.RollingUpdateDeployment{
+					MaxSurge: &intstr.IntOrString{
+						Type:   intstr.Int,
+						IntVal: 1,
+					},
+					MaxUnavailable: &intstr.IntOrString{
+						Type:   intstr.Int,
+						IntVal: 0,
 					},
 				},
-				FailureThreshold: 3,
-				PeriodSeconds:    10,
-				SuccessThreshold: 1,
-				TimeoutSeconds:   15,
 			},
-			LivenessProbe: &corev1.Probe{
-				FailureThreshold: 8,
-				Handler: corev1.Handler{
-					HTTPGet: &corev1.HTTPGetAction{
-						Path:   "/healthz",
-						Port:   intstr.FromInt(9876),
-						Scheme: corev1.URISchemeHTTPS,
+			Template: corev1.PodTemplateSpec{
+				ObjectMeta: metav1.ObjectMeta{
+					Labels: map[string]string{
+						WebhookAppLabelKey: WebhookAppLabelValue,
 					},
 				},
-				InitialDelaySeconds: 15,
-				PeriodSeconds:       10,
-				SuccessThreshold:    1,
-				TimeoutSeconds:      15,
-			},
-			VolumeMounts: []corev1.VolumeMount{
-				{
-					Name:      "machinecontroller-webhook-serving-cert",
-					MountPath: "/tmp/cert",
-					ReadOnly:  true,
+				Spec: corev1.PodSpec{
+					Volumes: []corev1.Volume{getServingCertVolume()},
+					Tolerations: []corev1.Toleration{
+						{
+							Key:      "node-role.kubernetes.io/master",
+							Operator: corev1.TolerationOpExists,
+							Effect:   corev1.TaintEffectNoSchedule,
+						},
+						{
+							Key:    "node.cloudprovider.kubernetes.io/uninitialized",
+							Value:  "true",
+							Effect: corev1.TaintEffectNoSchedule,
+						},
+						{
+							Key:      "CriticalAddonsOnly",
+							Operator: corev1.TolerationOpExists,
+						},
+					},
+					Containers: []corev1.Container{
+						{
+							Name:            "machine-controller-webhook",
+							Image:           "kubermatic/machine-controller:" + WebhookTag,
+							ImagePullPolicy: corev1.PullIfNotPresent,
+							Command:         []string{"/usr/local/bin/webhook"},
+							Args: []string{
+								"-logtostderr",
+								"-v", "4",
+								"-listen-address", "0.0.0.0:9876",
+							},
+							Env:                      getEnvVarCredentials(cluster),
+							TerminationMessagePath:   corev1.TerminationMessagePathDefault,
+							TerminationMessagePolicy: corev1.TerminationMessageReadFile,
+							Resources: corev1.ResourceRequirements{
+								Requests: corev1.ResourceList{
+									corev1.ResourceCPU:    resource.MustParse("100m"),
+									corev1.ResourceMemory: resource.MustParse("50Mi"),
+								},
+								Limits: map[corev1.ResourceName]resource.Quantity{
+									corev1.ResourceCPU:    resource.MustParse("500m"),
+									corev1.ResourceMemory: resource.MustParse("100Mi"),
+								},
+							},
+							ReadinessProbe: &corev1.Probe{
+								Handler: corev1.Handler{
+									HTTPGet: &corev1.HTTPGetAction{
+										Path:   "/healthz",
+										Port:   intstr.FromInt(9876),
+										Scheme: corev1.URISchemeHTTPS,
+									},
+								},
+								FailureThreshold: 3,
+								PeriodSeconds:    10,
+								SuccessThreshold: 1,
+								TimeoutSeconds:   15,
+							},
+							LivenessProbe: &corev1.Probe{
+								FailureThreshold: 8,
+								Handler: corev1.Handler{
+									HTTPGet: &corev1.HTTPGetAction{
+										Path:   "/healthz",
+										Port:   intstr.FromInt(9876),
+										Scheme: corev1.URISchemeHTTPS,
+									},
+								},
+								InitialDelaySeconds: 15,
+								PeriodSeconds:       10,
+								SuccessThreshold:    1,
+								TimeoutSeconds:      15,
+							},
+							VolumeMounts: []corev1.VolumeMount{
+								{
+									Name:      "machinecontroller-webhook-serving-cert",
+									MountPath: "/tmp/cert",
+									ReadOnly:  true,
+								},
+							},
+						},
+					},
 				},
 			},
 		},
 	}
-
-	return dep
 }
 
 // service returns the internal service for the machine-controller webhook

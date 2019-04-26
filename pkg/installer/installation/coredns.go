@@ -25,15 +25,12 @@ import (
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 func patchCoreDNS(ctx *util.Context) error {
-	if !ctx.Cluster.Provider.External {
-		return nil
-	}
-
 	ctx.Logger.Infoln("Patching coreDNS with uninitialized toleration…")
 
 	if ctx.DynamicClient == nil {
@@ -47,8 +44,7 @@ func patchCoreDNS(ctx *util.Context) error {
 		Namespace: metav1.NamespaceSystem,
 	}
 
-	err := ctx.DynamicClient.Get(bgCtx, key, dep)
-	if err != nil {
+	if err := ctx.DynamicClient.Get(bgCtx, key, dep); err != nil {
 		return errors.Wrap(err, "failed to get coredns deployment")
 	}
 
@@ -59,6 +55,15 @@ func patchCoreDNS(ctx *util.Context) error {
 			Effect: corev1.TaintEffectNoSchedule,
 		},
 	)
+
+	for _, cnt := range dep.Spec.Template.Spec.Containers {
+		if cnt.Resources.Limits == nil {
+			cnt.Resources.Limits = map[corev1.ResourceName]resource.Quantity{
+				corev1.ResourceCPU:    resource.MustParse("100m"),
+				corev1.ResourceMemory: resource.MustParse("200Mi"),
+			}
+		}
+	}
 
 	return errors.Wrap(ctx.DynamicClient.Update(bgCtx, dep), "failed to update coredns deployment")
 }

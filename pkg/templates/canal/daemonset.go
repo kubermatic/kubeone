@@ -223,6 +223,10 @@ func daemonSet() *appsv1.DaemonSet {
 								Requests: map[corev1.ResourceName]resource.Quantity{
 									corev1.ResourceCPU: resource.MustParse("250m"),
 								},
+								Limits: map[corev1.ResourceName]resource.Quantity{
+									corev1.ResourceCPU:    resource.MustParse("500m"),
+									corev1.ResourceMemory: resource.MustParse("500Mi"),
+								},
 							},
 							LivenessProbe: &corev1.Probe{
 								Handler: corev1.Handler{
@@ -269,6 +273,15 @@ func daemonSet() *appsv1.DaemonSet {
 							},
 							SecurityContext: &corev1.SecurityContext{
 								Privileged: &privileged,
+							},
+							Resources: corev1.ResourceRequirements{
+								Requests: map[corev1.ResourceName]resource.Quantity{
+									corev1.ResourceCPU: resource.MustParse("250m"),
+								},
+								Limits: map[corev1.ResourceName]resource.Quantity{
+									corev1.ResourceCPU:    resource.MustParse("500m"),
+									corev1.ResourceMemory: resource.MustParse("500Mi"),
+								},
 							},
 							Env: []corev1.EnvVar{
 								{

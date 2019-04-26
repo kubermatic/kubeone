@@ -200,6 +200,10 @@ func hetznerDeployment() *appsv1.Deployment {
 									corev1.ResourceCPU:    resource.MustParse("100m"),
 									corev1.ResourceMemory: resource.MustParse("50Mi"),
 								},
+								Limits: map[corev1.ResourceName]resource.Quantity{
+									corev1.ResourceCPU:    resource.MustParse("500m"),
+									corev1.ResourceMemory: resource.MustParse("100Mi"),
+								},
 							},
 						},
 					},
