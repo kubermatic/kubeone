@@ -21,7 +21,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/config"
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/util"
 )
@@ -30,7 +30,7 @@ func upgradeLeader(ctx *util.Context) error {
 	return ctx.RunTaskOnLeader(upgradeLeaderExecutor)
 }
 
-func upgradeLeaderExecutor(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
+func upgradeLeaderExecutor(ctx *util.Context, node kubeoneapi.HostConfig, conn ssh.Connection) error {
 	logger := ctx.Logger.WithField("node", node.PublicAddress)
 
 	logger.Infoln("Labeling leader control plane…")

@@ -19,7 +19,7 @@ package upgrade
 import (
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/config"
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/util"
 )
 
@@ -76,7 +76,7 @@ curl -sSL "https://raw.githubusercontent.com/kubernetes/kubernetes/${RELEASE}/bu
 `
 )
 
-func upgradeKubernetesBinaries(ctx *util.Context, node *config.HostConfig) error {
+func upgradeKubernetesBinaries(ctx *util.Context, node kubeoneapi.HostConfig) error {
 	var err error
 
 	switch node.OperatingSystem {

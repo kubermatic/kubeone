@@ -19,7 +19,7 @@ package upgrader
 import (
 	"github.com/sirupsen/logrus"
 
-	"github.com/kubermatic/kubeone/pkg/config"
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/upgrader/upgrade"
 	"github.com/kubermatic/kubeone/pkg/util"
@@ -34,12 +34,12 @@ type Options struct {
 
 // Upgrader is entrypoint for the upgrade process
 type Upgrader struct {
-	cluster *config.Cluster
+	cluster *kubeoneapi.KubeOneCluster
 	logger  *logrus.Logger
 }
 
 // NewUpgrader returns a new upgrader, responsible for running the upgrade process
-func NewUpgrader(cluster *config.Cluster, logger *logrus.Logger) *Upgrader {
+func NewUpgrader(cluster *kubeoneapi.KubeOneCluster, logger *logrus.Logger) *Upgrader {
 	return &Upgrader{
 		cluster: cluster,
 		logger:  logger,

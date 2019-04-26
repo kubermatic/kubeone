@@ -25,7 +25,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
-	"github.com/kubermatic/kubeone/pkg/config"
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/util"
 
@@ -101,7 +101,7 @@ func runPreflightChecks(ctx *util.Context) error {
 
 // checkPrerequisites checks are Docker, Kubelet, and Kubeadm installed on every machine in the cluster
 func checkPrerequisites(ctx *util.Context) error {
-	return ctx.RunTaskOnAllNodes(func(ctx *util.Context, _ *config.HostConfig, _ ssh.Connection) error {
+	return ctx.RunTaskOnAllNodes(func(ctx *util.Context, _ kubeoneapi.HostConfig, _ ssh.Connection) error {
 		ctx.Logger.Infoln("Checking are all prerequisites installed…")
 		_, _, err := ctx.Runner.Run(checkPrerequisitesCommand, util.TemplateVariables{})
 		return err
@@ -159,7 +159,7 @@ func verifyLabels(nodes *corev1.NodeList, verbose bool) error {
 }
 
 // verifyEndpoints verifies are IP addresses defined in the KubeOne manifest same as IP addresses of nodes
-func verifyEndpoints(nodes *corev1.NodeList, hosts []*config.HostConfig, verbose bool) error {
+func verifyEndpoints(nodes *corev1.NodeList, hosts []kubeoneapi.HostConfig, verbose bool) error {
 	for _, node := range nodes.Items {
 		for _, addr := range node.Status.Addresses {
 			switch addr.Type {
