@@ -19,7 +19,7 @@ package util
 import (
 	"github.com/sirupsen/logrus"
 
-	"github.com/kubermatic/kubeone/pkg/config"
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 
 	"k8s.io/client-go/rest"
@@ -29,7 +29,7 @@ import (
 // Context hold together currently test flags and parsed info, along with
 // utilities like logger
 type Context struct {
-	Cluster                   *config.Cluster
+	Cluster                   *kubeoneapi.KubeOneCluster
 	Logger                    logrus.FieldLogger
 	Connector                 *ssh.Connector
 	Configuration             *Configuration

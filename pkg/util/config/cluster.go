@@ -70,11 +70,11 @@ func SourceKubeOneClusterFromTerraformOutput(terraformOutput []byte, cluster *ku
 func DefaultedKubeOneCluster(versionedCluster *kubeonev1alpha1.KubeOneCluster, tfOutput []byte) (*kubeoneapi.KubeOneCluster, error) {
 	internalCfg := &kubeoneapi.KubeOneCluster{}
 
-	// if tfOutput != nil {
-	// 	if err := SourceKubeOneClusterFromTerraformOutput(tfOutput, versionedCluster); err != nil {
-	// 		return nil, errors.Wrap(err, "unable to source information about cluster from a given terraform output")
-	// 	}
-	// }
+	if tfOutput != nil {
+		if err := SourceKubeOneClusterFromTerraformOutput(tfOutput, versionedCluster); err != nil {
+			return nil, errors.Wrap(err, "unable to source information about cluster from a given terraform output")
+		}
+	}
 
 	// Default and convert to the internal API type
 	kubeonescheme.Scheme.Default(versionedCluster)
