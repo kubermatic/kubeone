@@ -21,7 +21,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/config"
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm"
 	"github.com/kubermatic/kubeone/pkg/util"
@@ -42,6 +42,6 @@ func generateKubeadm(ctx *util.Context) error {
 	return ctx.RunTaskOnAllNodes(generateKubeadmOnNode, true)
 }
 
-func generateKubeadmOnNode(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
+func generateKubeadmOnNode(ctx *util.Context, _ kubeoneapi.HostConfig, conn ssh.Connection) error {
 	return errors.Wrap(ctx.Configuration.UploadTo(conn, ctx.WorkDir), "failed to upload")
 }

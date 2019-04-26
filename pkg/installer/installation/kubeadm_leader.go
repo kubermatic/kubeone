@@ -19,7 +19,7 @@ package installation
 import (
 	"strconv"
 
-	"github.com/kubermatic/kubeone/pkg/config"
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/util"
 )
@@ -48,7 +48,7 @@ func kubeadmCertsOnFollower(ctx *util.Context) error {
 	return ctx.RunTaskOnFollowers(kubeadmCertsExecutor, true)
 }
 
-func kubeadmCertsExecutor(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
+func kubeadmCertsExecutor(ctx *util.Context, node kubeoneapi.HostConfig, conn ssh.Connection) error {
 
 	ctx.Logger.Infoln("Ensuring Certificates…")
 	_, _, err := ctx.Runner.Run(kubeadmCertCommand, util.TemplateVariables{
@@ -61,7 +61,7 @@ func kubeadmCertsExecutor(ctx *util.Context, node *config.HostConfig, conn ssh.C
 func initKubernetesLeader(ctx *util.Context) error {
 	ctx.Logger.Infoln("Initializing Kubernetes on leader…")
 
-	return ctx.RunTaskOnLeader(func(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
+	return ctx.RunTaskOnLeader(func(ctx *util.Context, node kubeoneapi.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Infoln("Running kubeadm…")
 
 		_, _, err := ctx.Runner.Run(kubeadmInitCommand, util.TemplateVariables{

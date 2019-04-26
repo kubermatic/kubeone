@@ -30,7 +30,7 @@ import (
 )
 
 func patchCoreDNS(ctx *util.Context) error {
-	if !ctx.Cluster.Provider.External {
+	if !ctx.Cluster.CloudProvider.External {
 		return nil
 	}
 
