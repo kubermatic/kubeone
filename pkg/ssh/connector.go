@@ -20,7 +20,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/kubermatic/kubeone/pkg/config"
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 )
 
 // Connector holds a map of Connections
@@ -37,7 +37,7 @@ func NewConnector() *Connector {
 }
 
 // Connect to the node
-func (c *Connector) Connect(node config.HostConfig) (Connection, error) {
+func (c *Connector) Connect(node kubeoneapi.HostConfig) (Connection, error) {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 	var err error
