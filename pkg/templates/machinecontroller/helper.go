@@ -37,7 +37,7 @@ func simpleCreateOrUpdate(ctx context.Context, client dynclient.Client, obj runt
 
 // Ensure install/update machine-controller
 func Ensure(ctx *util.Context) error {
-	if !*ctx.Cluster.MachineController.Deploy {
+	if !ctx.Cluster.MachineController.Deploy {
 		ctx.Logger.Info("Skipping machine-controller deployment because it was disabled in configuration.")
 		return nil
 	}
