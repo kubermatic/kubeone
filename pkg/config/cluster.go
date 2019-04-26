@@ -39,6 +39,7 @@ const (
 	OpenStackPassword       = "OS_PASSWORD"
 	OpenStackTenantName     = "OS_TENANT_NAME"
 	OpenStackUserName       = "OS_USER_NAME"
+	PacketAPIKey            = "PACKET_API_KEY"
 	VSphereAddress          = "VSPHERE_ADDRESS"
 	VSpherePasswords        = "VSPHERE_PASSWORD"
 	VSphereUsername         = "VSPHERE_USERNAME"
@@ -202,6 +203,7 @@ const (
 	ProviderNameDigitalOcean ProviderName = "digitalocean"
 	ProviderNameVSphere      ProviderName = "vsphere"
 	ProviderNameGCE          ProviderName = "gce"
+	ProviderNamePacket       ProviderName = "packet"
 	ProviderNameNone         ProviderName = "none"
 )
 
@@ -224,6 +226,7 @@ func (p *ProviderConfig) Validate() error {
 	case ProviderNameDigitalOcean:
 	case ProviderNameVSphere:
 	case ProviderNameGCE:
+	case ProviderNamePacket:
 	case ProviderNameNone:
 	default:
 		return errors.Errorf("unknown provider name %q", p.Name)
@@ -524,6 +527,10 @@ func (p ProviderName) ProviderCredentials() (map[string]string, error) {
 		// machine-controller, as machine-controller assumes it will be double encoded
 		gsa[GoogleServiceAccountKey] = base64.StdEncoding.EncodeToString([]byte(gsa[GoogleServiceAccountKey]))
 		return gsa, nil
+	case ProviderNamePacket:
+		return parseCredentialVariables([]ProviderEnvironmentVariable{
+			{Name: "PACKET_AUTH_TOKEN", MachineControllerName: PacketAPIKey},
+		})
 	case ProviderNameVSphere:
 		return parseCredentialVariables([]ProviderEnvironmentVariable{
 			{Name: VSphereAddress},

@@ -45,6 +45,8 @@ func Ensure(ctx *util.Context) error {
 		return ensureHetzner(ctx)
 	case kubeoneapi.CloudProviderNameDigitalOcean:
 		return ensureDigitalOcean(ctx)
+	case config.ProviderNamePacket:
+		return ensurePacket(ctx)
 	default:
 		ctx.Logger.Infof("External CCM for %q not yet supported, skipping", ctx.Cluster.CloudProvider.Name)
 		return nil
