@@ -82,7 +82,9 @@ func DefaultedKubeOneCluster(versionedCluster *kubeonev1alpha1.KubeOneCluster, t
 
 	// Default and convert to the internal API type
 	kubeonescheme.Scheme.Default(versionedCluster)
-	kubeonescheme.Scheme.Convert(versionedCluster, internalCfg, nil)
+	if err := kubeonescheme.Scheme.Convert(versionedCluster, internalCfg, nil); err != nil {
+		return nil, errors.Wrap(err, "unable to convert versioned to internal cluster object")
+	}
 
 	// Apply the dynamic defaults
 	if err := SetKubeOneClusterDynamicDefaults(internalCfg); err != nil {
@@ -97,49 +99,36 @@ func DefaultedKubeOneCluster(versionedCluster *kubeonev1alpha1.KubeOneCluster, t
 	return internalCfg, nil
 }
 
-// LoadKubeOneClusterFromFile parses the KubeOneCluster configuration file and returns a KubeOneCluster object
-func LoadKubeOneClusterFromFile(clusterCfgPath string) (*kubeoneapi.KubeOneCluster, error) {
+// LoadKubeOneCluster takes a KubeOneCluster manifests and optionally a Terraform output, and
+// returns a KubeOneCluster object
+func LoadKubeOneCluster(clusterCfgPath, tfOutputPath string) (*kubeoneapi.KubeOneCluster, error) {
 	if len(clusterCfgPath) == 0 {
 		return nil, errors.New("cluster configuration path not provided")
 	}
 
-	b, err := ioutil.ReadFile(clusterCfgPath)
+	cluster, err := ioutil.ReadFile(clusterCfgPath)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to read the given cluster configuration file")
 	}
 
-	return BytesToKubeOneCluster(b, nil)
-}
-
-// LoadKubeOneClusterFromTerraformOutput parses the KubeOneCluster configuration file and the Terraform output
-// and returns a KubeOneCluster object
-func LoadKubeOneClusterFromTerraformOutput(clusterCfgPath, tfOutputPath string) (*kubeoneapi.KubeOneCluster, error) {
-	if len(clusterCfgPath) == 0 {
-		return nil, errors.New("cluster configuration path not provided")
-	}
-	if len(tfOutputPath) == 0 {
-		return nil, errors.New("terraform output path not provided")
+	var tfOutput []byte
+	if len(tfOutputPath) > 0 {
+		tfOutput, err = ioutil.ReadFile(tfOutputPath)
+		if err != nil {
+			return nil, errors.Wrap(err, "unable to read the given terraform output file")
+		}
 	}
 
-	bCluster, err := ioutil.ReadFile(clusterCfgPath)
-	if err != nil {
-		return nil, errors.Wrap(err, "unable to read the given cluster configuration file")
-	}
-	bTfOutput, err := ioutil.ReadFile(tfOutputPath)
-	if err != nil {
-		return nil, errors.Wrap(err, "unable to read the given terraform output file")
-	}
-
-	return BytesToKubeOneCluster(bCluster, bTfOutput)
+	return BytesToKubeOneCluster(cluster, tfOutput)
 }
 
 // BytesToKubeOneCluster parses the bytes slice of cluster configuration and optionally terraform output
 // and returns a KubeOneCluster object
-func BytesToKubeOneCluster(cluster, tf []byte) (*kubeoneapi.KubeOneCluster, error) {
+func BytesToKubeOneCluster(cluster, tfOutput []byte) (*kubeoneapi.KubeOneCluster, error) {
 	initCfg := &kubeonev1alpha1.KubeOneCluster{}
 	if err := runtime.DecodeInto(kubeonescheme.Codecs.UniversalDecoder(), cluster, initCfg); err != nil {
 		return nil, err
 	}
 
-	return DefaultedKubeOneCluster(initCfg, tf)
+	return DefaultedKubeOneCluster(initCfg, tfOutput)
 }
