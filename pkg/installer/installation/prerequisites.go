@@ -82,6 +82,7 @@ func installPrerequisitesOnNode(ctx *util.Context, node kubeoneapi.HostConfig, c
 		return errors.Wrap(err, "failed to upload configuration files")
 	}
 
+	// TODO(xmudrii): Remove the hack
 	for idx := range ctx.Cluster.Hosts {
 		if ctx.Cluster.Hosts[idx].ID == node.ID {
 			ctx.Cluster.Hosts[idx] = node

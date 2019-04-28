@@ -41,6 +41,14 @@ func determineHostname(ctx *util.Context) error {
 		}
 
 		node.SetHostname(stdout)
+
+		// TODO(xmudrii): Remove the hack
+		for idx := range ctx.Cluster.Hosts {
+			if ctx.Cluster.Hosts[idx].ID == node.ID {
+				ctx.Cluster.Hosts[idx] = node
+			}
+		}
+
 		return nil
 	}, true)
 }
@@ -54,6 +62,14 @@ func determineOS(ctx *util.Context) error {
 		}
 
 		node.SetOperatingSystem(osID)
+
+		// TODO(xmudrii): Remove the hack
+		for idx := range ctx.Cluster.Hosts {
+			if ctx.Cluster.Hosts[idx].ID == node.ID {
+				ctx.Cluster.Hosts[idx] = node
+			}
+		}
+
 		return nil
 	}, true)
 }
