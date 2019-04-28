@@ -147,7 +147,8 @@ func machineSpec(cluster *kubeoneapi.KubeOneCluster, workerset kubeoneapi.Worker
 		return nil, errors.New("could't find cloudProviderSpec")
 	}
 	spec := make(map[string]interface{})
-	if err := json.Unmarshal(specRaw, &spec); err != nil {
+	err = json.Unmarshal(specRaw, &spec)
+	if err != nil {
 		return nil, errors.Wrap(err, "unable to parse the workerset spec")
 	}
 
@@ -155,6 +156,7 @@ func machineSpec(cluster *kubeoneapi.KubeOneCluster, workerset kubeoneapi.Worker
 	if provider == kubeoneapi.CloudProviderNameAWS {
 		tagName := fmt.Sprintf("kubernetes.io/cluster/%s", cluster.Name)
 		tagValue := "shared"
+
 		spec, err = addMapTag(spec, tagName, tagValue)
 		if err != nil {
 			return nil, errors.Wrap(err, "could not parse tags for worker machines")
