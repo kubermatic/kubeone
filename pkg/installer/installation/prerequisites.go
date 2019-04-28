@@ -82,6 +82,13 @@ func installPrerequisitesOnNode(ctx *util.Context, node kubeoneapi.HostConfig, c
 		return errors.Wrap(err, "failed to upload configuration files")
 	}
 
+	for idx := range ctx.Cluster.Hosts {
+		if ctx.Cluster.Hosts[idx].ID == node.ID {
+			ctx.Cluster.Hosts[idx] = node
+			break
+		}
+	}
+
 	return nil
 }
 
