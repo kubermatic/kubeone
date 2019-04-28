@@ -59,7 +59,7 @@ func ensureHetzner(ctx *util.Context) error {
 	dep := hetznerDeployment()
 	want, err := semver.NewConstraint("<= " + hetznerCCMVersion)
 	if err != nil {
-		return errors.Wrap(err, "failed to parse digital CCM version constraint")
+		return errors.Wrap(err, "failed to parse hetzner CCM version constraint")
 	}
 
 	_, err = controllerutil.CreateOrUpdate(bgctx,

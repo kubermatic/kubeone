@@ -40,6 +40,7 @@ const (
 	OpenStackTenantName     = "OS_TENANT_NAME"
 	OpenStackUserName       = "OS_USER_NAME"
 	PacketAPIKey            = "PACKET_API_KEY"
+	PacketProjectID         = "PACKET_PROJECT_ID"
 	VSphereAddress          = "VSPHERE_ADDRESS"
 	VSpherePasswords        = "VSPHERE_PASSWORD"
 	VSphereUsername         = "VSPHERE_USERNAME"
@@ -530,6 +531,7 @@ func (p ProviderName) ProviderCredentials() (map[string]string, error) {
 	case ProviderNamePacket:
 		return parseCredentialVariables([]ProviderEnvironmentVariable{
 			{Name: "PACKET_AUTH_TOKEN", MachineControllerName: PacketAPIKey},
+			{Name: PacketProjectID},
 		})
 	case ProviderNameVSphere:
 		return parseCredentialVariables([]ProviderEnvironmentVariable{
