@@ -57,6 +57,10 @@ func Ensure(ctx *util.Context) error {
 
 // WaitReady waits for machine-controller and its webhook to became ready
 func WaitReady(ctx *util.Context) error {
+	if !*ctx.Cluster.MachineController.Deploy {
+		return nil
+	}
+
 	ctx.Logger.Infoln("Waiting for machine-controller to come up…")
 
 	// Wait a bit to let scheduler to react
