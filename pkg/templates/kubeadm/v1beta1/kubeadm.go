@@ -98,6 +98,7 @@ func NewConfig(ctx *util.Context, host kubeoneapi.HostConfig) ([]runtime.Object,
 		Networking: kubeadmv1beta1.Networking{
 			PodSubnet:     cluster.ClusterNetwork.PodSubnet,
 			ServiceSubnet: cluster.ClusterNetwork.ServiceSubnet,
+			DNSDomain:     cluster.ClusterNetwork.ServiceDomainName,
 		},
 		KubernetesVersion:    cluster.Versions.Kubernetes,
 		ControlPlaneEndpoint: controlPlaneEndpoint,
