@@ -26,6 +26,7 @@ import (
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/util"
+	"github.com/kubermatic/kubeone/pkg/util/credentials"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -40,11 +41,10 @@ import (
 
 // MachineController related constants
 const (
-	MachineControllerNamespace             = metav1.NamespaceSystem
-	MachineControllerAppLabelKey           = "app"
-	MachineControllerAppLabelValue         = "machine-controller"
-	MachineControllerTag                   = "v1.1.5"
-	MachineControllerCredentialsSecretName = "machine-controller-credentials"
+	MachineControllerNamespace     = metav1.NamespaceSystem
+	MachineControllerAppLabelKey   = "app"
+	MachineControllerAppLabelValue = "machine-controller"
+	MachineControllerTag           = "v1.1.5"
 )
 
 // Deploy deploys MachineController deployment with RBAC on the cluster
@@ -104,12 +104,6 @@ func Deploy(ctx *util.Context) error {
 		if err := simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, roleBindingGen()); err != nil {
 			return errors.Wrap(err, "failed to ensure machine-controller role binding")
 		}
-	}
-
-	// Secrets
-	secret := machineControllerCredentialsSecret(ctx.Cluster)
-	if err := simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, secret); err != nil {
-		return errors.Wrap(err, "failed to ensure machine-controller credentials secret")
 	}
 
 	// Deployments
@@ -894,21 +888,6 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster) (*appsv1.De
 	}, nil
 }
 
-func machineControllerCredentialsSecret(cluster *kubeoneapi.KubeOneCluster) *corev1.Secret {
-	return &corev1.Secret{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "v1",
-			Kind:       "Secret",
-		},
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      MachineControllerCredentialsSecretName,
-			Namespace: MachineControllerNamespace,
-		},
-		Type:       corev1.SecretTypeOpaque,
-		StringData: cluster.Credentials,
-	}
-}
-
 func getEnvVarCredentials(cluster *kubeoneapi.KubeOneCluster) []corev1.EnvVar {
 	env := make([]corev1.EnvVar, 0)
 
@@ -918,7 +897,7 @@ func getEnvVarCredentials(cluster *kubeoneapi.KubeOneCluster) []corev1.EnvVar {
 			ValueFrom: &corev1.EnvVarSource{
 				SecretKeyRef: &corev1.SecretKeySelector{
 					LocalObjectReference: corev1.LocalObjectReference{
-						Name: MachineControllerCredentialsSecretName,
+						Name: credentials.CredentialsSecretName,
 					},
 					Key: k,
 				},

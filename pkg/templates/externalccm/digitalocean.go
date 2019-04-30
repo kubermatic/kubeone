@@ -22,7 +22,6 @@ import (
 	"github.com/Masterminds/semver"
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
 	"github.com/kubermatic/kubeone/pkg/util"
 	"github.com/kubermatic/kubeone/pkg/util/credentials"
 
@@ -240,7 +239,7 @@ func doDeployment() *appsv1.Deployment {
 									ValueFrom: &corev1.EnvVarSource{
 										SecretKeyRef: &corev1.SecretKeySelector{
 											LocalObjectReference: corev1.LocalObjectReference{
-												Name: machinecontroller.MachineControllerCredentialsSecretName,
+												Name: credentials.CredentialsSecretName,
 											},
 											Key: credentials.DigitalOceanTokenKey,
 										},

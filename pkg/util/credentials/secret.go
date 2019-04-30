@@ -1,0 +1,79 @@
+/*
+Copyright 2019 The KubeOne Authors.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+package credentials
+
+import (
+	"context"
+
+	"github.com/kubermatic/kubeone/pkg/util"
+	"github.com/pkg/errors"
+
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
+)
+
+const (
+	CredentialsSecretName      = "credentials"
+	CredentialsSecretNamespace = "kube-system"
+)
+
+func simpleCreateOrUpdate(ctx context.Context, client dynclient.Client, obj runtime.Object) error {
+	okFunc := func(runtime.Object) error { return nil }
+	_, err := controllerutil.CreateOrUpdate(ctx, client, obj, okFunc)
+	return err
+}
+
+// Ensure creates/updates the credentials secret
+func Ensure(ctx *util.Context) error {
+	if !ctx.Cluster.MachineController.Deploy && !ctx.Cluster.CloudProvider.External {
+		ctx.Logger.Info("Skipping creating credentials secret because both machine-controller and external CCM are disabled.")
+		return nil
+	}
+
+	ctx.Logger.Infoln("Creating credentials secret…")
+
+	creds, err := ProviderCredentials(ctx.Cluster.CloudProvider.Name)
+	if err != nil {
+		return errors.Wrap(err, "unable to fetch cloud provider credentials")
+	}
+
+	bgCtx := context.Background()
+	secret := credentialsSecret(creds)
+	if err := simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, secret); err != nil {
+		return errors.Wrap(err, "failed to ensure credentials secret")
+	}
+
+	return nil
+}
+
+func credentialsSecret(credentials map[string]string) *corev1.Secret {
+	return &corev1.Secret{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "v1",
+			Kind:       "Secret",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      CredentialsSecretName,
+			Namespace: CredentialsSecretNamespace,
+		},
+		Type:       corev1.SecretTypeOpaque,
+		StringData: credentials,
+	}
+}
