@@ -27,7 +27,7 @@ func deployCA(ctx *util.Context) error {
 	return ctx.RunTaskOnFollowers(deployCAOnNode, true)
 }
 
-func deployCAOnNode(ctx *util.Context, node kubeoneapi.HostConfig, conn ssh.Connection) error {
+func deployCAOnNode(ctx *util.Context, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	ctx.Logger.Infoln("Uploading files…")
 	return ctx.Configuration.UploadTo(conn, ctx.WorkDir)
 }

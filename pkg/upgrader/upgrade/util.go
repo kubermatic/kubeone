@@ -34,47 +34,31 @@ import (
 
 func determineHostname(ctx *util.Context) error {
 	ctx.Logger.Infoln("Determine hostname…")
-	return ctx.RunTaskOnAllNodes(func(ctx *util.Context, node kubeoneapi.HostConfig, conn ssh.Connection) error {
+	return ctx.RunTaskOnAllNodes(func(ctx *util.Context, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 		stdout, _, err := ctx.Runner.Run("hostname -f", nil)
 		if err != nil {
 			return err
 		}
 
 		node.SetHostname(stdout)
-
-		// TODO(xmudrii): Remove the hack
-		for idx := range ctx.Cluster.Hosts {
-			if ctx.Cluster.Hosts[idx].ID == node.ID {
-				ctx.Cluster.Hosts[idx] = node
-			}
-		}
-
 		return nil
 	}, true)
 }
 
 func determineOS(ctx *util.Context) error {
 	ctx.Logger.Infoln("Determine operating system…")
-	return ctx.RunTaskOnAllNodes(func(ctx *util.Context, node kubeoneapi.HostConfig, conn ssh.Connection) error {
+	return ctx.RunTaskOnAllNodes(func(ctx *util.Context, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 		osID, _, err := ctx.Runner.Run("source /etc/os-release && echo -n $ID", nil)
 		if err != nil {
 			return err
 		}
 
 		node.SetOperatingSystem(osID)
-
-		// TODO(xmudrii): Remove the hack
-		for idx := range ctx.Cluster.Hosts {
-			if ctx.Cluster.Hosts[idx].ID == node.ID {
-				ctx.Cluster.Hosts[idx] = node
-			}
-		}
-
 		return nil
 	}, true)
 }
 
-func labelNode(client dynclient.Client, host kubeoneapi.HostConfig) error {
+func labelNode(client dynclient.Client, host *kubeoneapi.HostConfig) error {
 	retErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
 		node := corev1.Node{
 			ObjectMeta: metav1.ObjectMeta{Name: host.Hostname},
@@ -93,7 +77,7 @@ func labelNode(client dynclient.Client, host kubeoneapi.HostConfig) error {
 	return errors.Wrapf(retErr, "failed to label node %q with label %q", host.Hostname, labelUpgradeLock)
 }
 
-func unlabelNode(client dynclient.Client, host kubeoneapi.HostConfig) error {
+func unlabelNode(client dynclient.Client, host *kubeoneapi.HostConfig) error {
 	retErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
 		node := corev1.Node{
 			ObjectMeta: metav1.ObjectMeta{Name: host.Hostname},

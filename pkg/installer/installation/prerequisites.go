@@ -40,7 +40,7 @@ func generateConfigurationFiles(ctx *util.Context) {
 	ctx.Configuration.AddFile("cfg/cloud-config", ctx.Cluster.CloudProvider.CloudConfig)
 }
 
-func installPrerequisitesOnNode(ctx *util.Context, node kubeoneapi.HostConfig, conn ssh.Connection) error {
+func installPrerequisitesOnNode(ctx *util.Context, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	ctx.Logger.Infoln("Determine operating system…")
 	os, err := determineOS(ctx)
 	if err != nil {
@@ -50,7 +50,7 @@ func installPrerequisitesOnNode(ctx *util.Context, node kubeoneapi.HostConfig, c
 	node.SetOperatingSystem(os)
 
 	ctx.Logger.Infoln("Determine hostname…")
-	hostname, err := determineHostname(ctx, node)
+	hostname, err := determineHostname(ctx, *node)
 	if err != nil {
 		return errors.Wrap(err, "failed to determine hostname")
 	}
@@ -66,7 +66,7 @@ func installPrerequisitesOnNode(ctx *util.Context, node kubeoneapi.HostConfig, c
 	logger := ctx.Logger.WithField("os", os)
 
 	logger.Infoln("Installing kubeadm…")
-	err = installKubeadm(ctx, node)
+	err = installKubeadm(ctx, *node)
 	if err != nil {
 		return errors.Wrap(err, "failed to install kubeadm")
 	}
@@ -80,14 +80,6 @@ func installPrerequisitesOnNode(ctx *util.Context, node kubeoneapi.HostConfig, c
 	err = deployConfigurationFiles(ctx)
 	if err != nil {
 		return errors.Wrap(err, "failed to upload configuration files")
-	}
-
-	// TODO(xmudrii): Remove the hack
-	for idx := range ctx.Cluster.Hosts {
-		if ctx.Cluster.Hosts[idx].ID == node.ID {
-			ctx.Cluster.Hosts[idx] = node
-			break
-		}
 	}
 
 	return nil

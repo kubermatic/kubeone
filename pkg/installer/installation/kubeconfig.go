@@ -28,7 +28,7 @@ import (
 )
 
 func copyKubeconfig(ctx *util.Context) error {
-	return ctx.RunTaskOnAllNodes(func(ctx *util.Context, _ kubeoneapi.HostConfig, conn ssh.Connection) error {
+	return ctx.RunTaskOnAllNodes(func(ctx *util.Context, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Infoln("Copying Kubeconfig to home directory…")
 
 		_, _, err := ctx.Runner.Run(`

@@ -36,7 +36,7 @@ func Reset(ctx *util.Context) error {
 	return ctx.RunTaskOnAllNodes(resetNode, true)
 }
 
-func destroyWorkers(ctx *util.Context, _ kubeoneapi.HostConfig, conn ssh.Connection) error {
+func destroyWorkers(ctx *util.Context, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	ctx.Logger.Infoln("Destroying worker nodes…")
 
 	_, _, err := ctx.Runner.Run(destroyScript, util.TemplateVariables{
@@ -47,7 +47,7 @@ func destroyWorkers(ctx *util.Context, _ kubeoneapi.HostConfig, conn ssh.Connect
 	return err
 }
 
-func resetNode(ctx *util.Context, _ kubeoneapi.HostConfig, conn ssh.Connection) error {
+func resetNode(ctx *util.Context, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	ctx.Logger.Infoln("Resetting node…")
 
 	_, _, err := ctx.Runner.Run(resetScript, util.TemplateVariables{

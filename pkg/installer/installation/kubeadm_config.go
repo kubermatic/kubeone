@@ -42,6 +42,6 @@ func generateKubeadm(ctx *util.Context) error {
 	return ctx.RunTaskOnAllNodes(generateKubeadmOnNode, true)
 }
 
-func generateKubeadmOnNode(ctx *util.Context, _ kubeoneapi.HostConfig, conn ssh.Connection) error {
+func generateKubeadmOnNode(ctx *util.Context, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	return errors.Wrap(ctx.Configuration.UploadTo(conn, ctx.WorkDir), "failed to upload")
 }

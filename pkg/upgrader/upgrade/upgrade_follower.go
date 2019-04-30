@@ -30,7 +30,7 @@ func upgradeFollower(ctx *util.Context) error {
 	return ctx.RunTaskOnFollowers(upgradeFollowerExecutor, false)
 }
 
-func upgradeFollowerExecutor(ctx *util.Context, node kubeoneapi.HostConfig, conn ssh.Connection) error {
+func upgradeFollowerExecutor(ctx *util.Context, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	logger := ctx.Logger.WithField("node", node.PublicAddress)
 
 	logger.Infoln("Labeling follower control plane…")
@@ -40,7 +40,7 @@ func upgradeFollowerExecutor(ctx *util.Context, node kubeoneapi.HostConfig, conn
 	}
 
 	logger.Infoln("Upgrading Kubernetes binaries on follower control plane…")
-	err = upgradeKubernetesBinaries(ctx, node)
+	err = upgradeKubernetesBinaries(ctx, *node)
 	if err != nil {
 		return errors.Wrap(err, "failed to upgrade kubernetes binaries on follower control plane")
 	}

@@ -27,9 +27,9 @@ import (
 )
 
 // NodeTask is a task that is specifically tailored to run on a single node.
-type NodeTask func(ctx *Context, node kubeoneapi.HostConfig, conn ssh.Connection) error
+type NodeTask func(ctx *Context, node *kubeoneapi.HostConfig, conn ssh.Connection) error
 
-func (c *Context) runTask(node kubeoneapi.HostConfig, task NodeTask, prefixed bool) error {
+func (c *Context) runTask(node *kubeoneapi.HostConfig, task NodeTask, prefixed bool) error {
 	var (
 		err  error
 		conn ssh.Connection
@@ -37,7 +37,7 @@ func (c *Context) runTask(node kubeoneapi.HostConfig, task NodeTask, prefixed bo
 
 	// connect to the host (and do not close connection
 	// because we want to re-use it for future tasks)
-	conn, err = c.Connector.Connect(node)
+	conn, err = c.Connector.Connect(*node)
 	if err != nil {
 		return errors.Wrapf(err, "failed to connect to %s", node.PublicAddress)
 	}
@@ -64,22 +64,22 @@ func (c *Context) RunTaskOnNodes(nodes []kubeoneapi.HostConfig, task NodeTask, p
 	wg := sync.WaitGroup{}
 	hasErrors := false
 
-	for _, node := range nodes {
+	for i := range nodes {
 		ctx := c.Clone()
-		ctx.Logger = ctx.Logger.WithField("node", node.PublicAddress)
+		ctx.Logger = ctx.Logger.WithField("node", nodes[i].PublicAddress)
 
 		if parallel {
 			wg.Add(1)
-			go func(ctx *Context, node kubeoneapi.HostConfig) {
+			go func(ctx *Context, node *kubeoneapi.HostConfig) {
 				err = ctx.runTask(node, task, parallel)
 				if err != nil {
 					ctx.Logger.Error(err)
 					hasErrors = true
 				}
 				wg.Done()
-			}(ctx, node)
+			}(ctx, &nodes[i])
 		} else {
-			err = ctx.runTask(node, task, parallel)
+			err = ctx.runTask(&nodes[i], task, parallel)
 			if err != nil {
 				break
 			}

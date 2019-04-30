@@ -101,7 +101,7 @@ func runPreflightChecks(ctx *util.Context) error {
 
 // checkPrerequisites checks are Docker, Kubelet, and Kubeadm installed on every machine in the cluster
 func checkPrerequisites(ctx *util.Context) error {
-	return ctx.RunTaskOnAllNodes(func(ctx *util.Context, _ kubeoneapi.HostConfig, _ ssh.Connection) error {
+	return ctx.RunTaskOnAllNodes(func(ctx *util.Context, _ *kubeoneapi.HostConfig, _ ssh.Connection) error {
 		ctx.Logger.Infoln("Checking are all prerequisites installed…")
 		_, _, err := ctx.Runner.Run(checkPrerequisitesCommand, util.TemplateVariables{})
 		return err
