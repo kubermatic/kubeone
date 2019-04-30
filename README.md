@@ -10,8 +10,9 @@
 
 ## Project Status
 
-KubeOne is currently in the alpha phase, so breaking changes can be expected in the upcoming period.
-You can find more details about breaking changes and actions needed to migrate them in the [Release Notes](https://github.com/kubermatic/kubeone/releases). In the upcoming weeks we're planning to enter the beta phase and and define a backwards compatibility policy.
+As of v0.6.0, KubeOne is in the beta phase. Check out the [Backwards Compatibility Policy](./docs/backwards_compatibility_policy.md) for more details on backwards compatibility, KubeOne versioning, and maturity of each KubeOne component.
+
+Versions earlier than v0.6.0 are considered alpha and it's strongly advised to upgrade to the v0.6.0 or newer as soon as possible.
 
 ## KubeOne in Action
 
