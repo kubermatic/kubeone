@@ -23,30 +23,28 @@ versions:
   kubernetes: "1.14.1"
 
 clusterNetwork:
-  # the subnet used for pods (flannel);
-  # leave it empty for default: 10.244.0.0/16
+  # the subnet used for pods (default: 10.244.0.0/16)
   podSubnet: ""
-  # the subnet used for services;
-  # leave it empty for default: 10.96.0.0/12
+  # the subnet used for services (default: 10.96.0.0/12)
   serviceSubnet: ""
-  # a nodePort range to reserve for services;
-  # leave it empty for default: 30000-32767
+  # the domain name used for services (default: cluster.local)
+  serviceDomainName: ""
+  # a nodePort range to reserve for services (default: 30000-32767)
   nodePortRange: ""
 
-provider:
+cloudProvider:
   # Supported cloud provider names:
   # * aws
   # * digitalocean
   # * hetzner
-  # * none
   # * openstack
   # * vsphere
+  # * none
   name: ""
-  # Set kubelet flag --cloud-provider=external, to be used with external
-  # Cloud Controller Managers (CCM).
+  # Set the kubelet flag '--cloud-provider=external' and deploy the external CCM for supported providers
   external: false
-  # Path to file that will be uploaded and used as custom --cloud-config file.
-  cloud_config: ""
+  # Path to file that will be uploaded and used as custom '--cloud-config' file.
+  cloudConfig: ""
 
 features:
   # Enables PodSecurityPolicy admission plugin in API server, as well as creates
@@ -122,17 +120,19 @@ features:
 #   sshAgentSocket: 'env:SSH_AUTH_SOCK'
 
 # The API server can also be overwritten by Terraform. Provide the
-# external address of your load balancer or the public address of
-# your first node.
+# external address of your load balancer or the public addresses of
+# your control plane nodes.
 # apiEndpoints:
-#   - host: '1.2.3.4'
-#     port: 6443
+# - host: '1.2.3.4'
+#   port: 6443
 
 # If the cluster runs on bare metal or an unsupported cloud provider,
 # you can disable the machine-controller deployment entirely. In this
 # case, anything you configure in your "workers" sections is ignored.
-#machineController:
+# machineController:
 #  deploy: false
+#  # Defines for what provider the machine-controller will be configured (defaults to cloudProvider.Name)
+#  provider: ""
 
 # Proxy is used to configure HTTP_PROXY, HTTPS_PROXY and NO_PROXY
 # for Docker daemon and kubelet, and to be used when provisioning cluster
@@ -145,55 +145,55 @@ features:
 # KubeOne can automatically create MachineDeployments to create
 # worker nodes in your cluster. Each element in this "workers"
 # list is a single deployment and must have a unique name.
-#workers:
-#- name: fra1-a
-#  replicas: 1
-#  config:
-#    labels:
-#      mylabel: 'fra1-a'
-#    # SSH keys can be inferred from Terraform if this list is empty
-#    # and your tf output contains a "ssh_public_keys" field.
-#    # sshPublicKeys:
-#    # - 'ssh-rsa ......'
-#    # cloudProviderSpec corresponds `provider.name` config
-#    cloudProviderSpec:
-#      ### the following params could be inferred by kubeone from terraform
-#      ### output JSON:
-#      # ami: 'ami-0332a5c40cf835528',
-#      # availabilityZone: 'eu-central-1a',
-#      # instanceProfile: 'mycool-profile',
-#      # region: 'eu-central-1',
-#      # securityGroupIDs: ['sg-01f34ffd8447e70c0']
-#      # subnetId: 'subnet-2bff4f43',
-#      # vpcId: 'vpc-819f62e9'
-#      ### end of terraform inferred kubeone params
-#      instanceType: 't3.medium'
-#      diskSize: 50
-#      diskType: 'gp2'
-#    operatingSystem: 'ubuntu'
-#    operatingSystemSpec:
-#      distUpgradeOnBoot: true
-#- name: fra1-b
-#  replicas: 1
-#  config:
-#    labels:
-#      mylabel: 'fra1-b'
-#    cloudProviderSpec:
-#      instanceType: 't3.medium'
-#      diskSize: 50
-#      diskType: 'gp2'
-#    operatingSystem: 'ubuntu'
-#    operatingSystemSpec:
-#      distUpgradeOnBoot: true
-#- name: fra1-c
-#  replicas: 1
-#  config:
-#    labels:
-#      mylabel: 'fra1-c'
-#    cloudProviderSpec:
-#      instanceType: 't3.medium'
-#      diskSize: 50
-#      diskType: 'gp2'
-#    operatingSystem: 'ubuntu'
-#    operatingSystemSpec:
-#      distUpgradeOnBoot: true
+# workers:
+# - name: fra1-a
+#   replicas: 1
+#   providerSpec:
+#     labels:
+#       mylabel: 'fra1-a'
+#     # SSH keys can be inferred from Terraform if this list is empty
+#     # and your tf output contains a "ssh_public_keys" field.
+#     # sshPublicKeys:
+#     # - 'ssh-rsa ......'
+#     # cloudProviderSpec corresponds `provider.name` config
+#     cloudProviderSpec:
+#       ### the following params could be inferred by kubeone from terraform
+#       ### output JSON:
+#       # ami: 'ami-0332a5c40cf835528',
+#       # availabilityZone: 'eu-central-1a',
+#       # instanceProfile: 'mycool-profile',
+#       # region: 'eu-central-1',
+#       # securityGroupIDs: ['sg-01f34ffd8447e70c0']
+#       # subnetId: 'subnet-2bff4f43',
+#       # vpcId: 'vpc-819f62e9'
+#       ### end of terraform inferred kubeone params
+#       instanceType: 't3.medium'
+#       diskSize: 50
+#       diskType: 'gp2'
+#     operatingSystem: 'ubuntu'
+#     operatingSystemSpec:
+#       distUpgradeOnBoot: true
+# - name: fra1-b
+#   replicas: 1
+#   providerSpec:
+#     labels:
+#       mylabel: 'fra1-b'
+#     cloudProviderSpec:
+#       instanceType: 't3.medium'
+#       diskSize: 50
+#       diskType: 'gp2'
+#     operatingSystem: 'ubuntu'
+#     operatingSystemSpec:
+#       distUpgradeOnBoot: true
+# - name: fra1-c
+#   replicas: 1
+#   providerSpec:
+#     labels:
+#       mylabel: 'fra1-c'
+#     cloudProviderSpec:
+#       instanceType: 't3.medium'
+#       diskSize: 50
+#       diskType: 'gp2'
+#     operatingSystem: 'ubuntu'
+#     operatingSystemSpec:
+#       distUpgradeOnBoot: true
