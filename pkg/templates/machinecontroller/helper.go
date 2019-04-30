@@ -57,7 +57,7 @@ func Ensure(ctx *util.Context) error {
 
 // WaitReady waits for machine-controller and its webhook to became ready
 func WaitReady(ctx *util.Context) error {
-	if !*ctx.Cluster.MachineController.Deploy {
+	if !ctx.Cluster.MachineController.Deploy {
 		return nil
 	}
 
