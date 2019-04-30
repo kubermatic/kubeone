@@ -45,7 +45,7 @@ output "kubeone_workers" {
       operatingSystem = "ubuntu"
 
       operatingSystemSpec = {
-        distUpgradeOnBoot = false
+        distUpgradeOnBoot = true
       }
 
       projectID    = "${var.project_id}"
