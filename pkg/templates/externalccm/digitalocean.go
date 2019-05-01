@@ -239,7 +239,7 @@ func doDeployment() *appsv1.Deployment {
 									ValueFrom: &corev1.EnvVarSource{
 										SecretKeyRef: &corev1.SecretKeySelector{
 											LocalObjectReference: corev1.LocalObjectReference{
-												Name: credentials.CredentialsSecretName,
+												Name: credentials.SecretName,
 											},
 											Key: credentials.DigitalOceanTokenKey,
 										},

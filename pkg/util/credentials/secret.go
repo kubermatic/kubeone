@@ -31,8 +31,10 @@ import (
 )
 
 const (
-	CredentialsSecretName      = "credentials"
-	CredentialsSecretNamespace = "kube-system"
+	// SecretName is name of the secret which contains the cloud provider credentials
+	SecretName = "credentials"
+	// SecretNamespace is namespace of the credentials secret
+	SecretNamespace = "kube-system"
 )
 
 func simpleCreateOrUpdate(ctx context.Context, client dynclient.Client, obj runtime.Object) error {
@@ -71,8 +73,8 @@ func credentialsSecret(credentials map[string]string) *corev1.Secret {
 			Kind:       "Secret",
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      CredentialsSecretName,
-			Namespace: CredentialsSecretNamespace,
+			Name:      SecretName,
+			Namespace: SecretNamespace,
 		},
 		Type:       corev1.SecretTypeOpaque,
 		StringData: credentials,
