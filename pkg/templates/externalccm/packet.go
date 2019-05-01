@@ -23,8 +23,8 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/config"
-	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
 	"github.com/kubermatic/kubeone/pkg/util"
+	"github.com/kubermatic/kubeone/pkg/util/credentials"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -240,7 +240,7 @@ func packetDeployment() *appsv1.Deployment {
 									ValueFrom: &corev1.EnvVarSource{
 										SecretKeyRef: &corev1.SecretKeySelector{
 											LocalObjectReference: corev1.LocalObjectReference{
-												Name: machinecontroller.MachineControllerCredentialsSecretName,
+												Name: credentials.SecretName,
 											},
 											Key: config.PacketAPIKey,
 										},
@@ -251,7 +251,7 @@ func packetDeployment() *appsv1.Deployment {
 									ValueFrom: &corev1.EnvVarSource{
 										SecretKeyRef: &corev1.SecretKeySelector{
 											LocalObjectReference: corev1.LocalObjectReference{
-												Name: machinecontroller.MachineControllerCredentialsSecretName,
+												Name: credentials.SecretName,
 											},
 											Key: config.PacketProjectID,
 										},

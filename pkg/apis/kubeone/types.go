@@ -86,6 +86,7 @@ const (
 	CloudProviderNameOpenStack    CloudProviderName = "openstack"
 	CloudProviderNameHetzner      CloudProviderName = "hetzner"
 	CloudProviderNameDigitalOcean CloudProviderName = "digitalocean"
+	CloudProviderNamePacket       CloudProviderName = "packet"
 	CloudProviderNameVSphere      CloudProviderName = "vsphere"
 	CloudProviderNameGCE          CloudProviderName = "gce"
 	CloudProviderNameNone         CloudProviderName = "none"

@@ -118,6 +118,8 @@ func NewConfig(ctx *util.Context, host kubeoneapi.HostConfig) ([]runtime.Object,
 		ClusterName: cluster.Name,
 	}
 
+	clusterConfig.APIServer.ExtraArgs["bind-address"] = hostAdvertiseAddress
+
 	if cluster.CloudProvider.CloudProviderInTree() {
 		renderedCloudConfig := "/etc/kubernetes/cloud-config"
 		cloudConfigVol := kubeadmv1beta1.HostPathMount{
@@ -142,8 +144,8 @@ func NewConfig(ctx *util.Context, host kubeoneapi.HostConfig) ([]runtime.Object,
 	}
 
 	if cluster.CloudProvider.External {
-		clusterConfig.APIServer.ExtraArgs["cloud-provider"] = ""
-		clusterConfig.ControllerManager.ExtraArgs["cloud-provider"] = ""
+		delete(clusterConfig.APIServer.ExtraArgs, "cloud-provider")
+		delete(clusterConfig.ControllerManager.ExtraArgs, "cloud-provider")
 		nodeRegistration.KubeletExtraArgs["cloud-provider"] = "external"
 	}
 
