@@ -16,7 +16,7 @@ limitations under the License.
 
 output "kubeone_api" {
   value = {
-    endpoint = "${packet_device.control_plane.0.access_public_ipv4}"
+    endpoint = "${packet_device.lb.access_public_ipv4}"
   }
 }
 
@@ -42,7 +42,7 @@ output "kubeone_workers" {
     pool1 = {
       replicas        = 1
       sshPublicKeys   = ["${file("${var.ssh_public_key_file}")}"]
-      operatingSystem = "ubuntu"
+      operatingSystem = "${var.workers_operating_system}"
 
       operatingSystemSpec = {
         distUpgradeOnBoot = true

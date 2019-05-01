@@ -55,7 +55,12 @@ variable "ssh_agent_socket" {
 
 variable "operating_system" {
   default     = "ubuntu_18_04"
-  description = "Image to use for provisioning device"
+  description = "Image to use for provisioning control plane"
+}
+
+variable "workers_operating_system" {
+  default     = "ubuntu"
+  description = "Image to use for provisioning workers"
 }
 
 variable "device_type" {
