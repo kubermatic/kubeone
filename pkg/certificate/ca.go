@@ -19,14 +19,14 @@ package certificate
 import (
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/config"
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/util"
 )
 
 // DownloadCA grabs CA certs/keys from leader host
 func DownloadCA(ctx *util.Context) error {
-	return ctx.RunTaskOnLeader(func(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
+	return ctx.RunTaskOnLeader(func(ctx *util.Context, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
 		_, _, err := ctx.Runner.Run(`
 mkdir -p ./{{ .WORK_DIR }}/pki/etcd
 sudo cp /etc/kubernetes/pki/ca.crt ./{{ .WORK_DIR }}/pki/

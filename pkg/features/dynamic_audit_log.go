@@ -18,7 +18,7 @@ package features
 
 import (
 	kubeadmv1beta1 "github.com/kubermatic/kubeone/pkg/apis/kubeadm/v1beta1"
-	"github.com/kubermatic/kubeone/pkg/config"
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 )
 
 const (
@@ -27,8 +27,8 @@ const (
 	auditRegistrationAPI          = "auditregistration.k8s.io/v1alpha1=true"
 )
 
-func activateKubeadmDynamicAuditLogs(feature config.DynamicAuditLog, clusterConfig *kubeadmv1beta1.ClusterConfiguration) {
-	if feature.Enable == nil || !*feature.Enable {
+func activateKubeadmDynamicAuditLogs(feature *kubeoneapi.DynamicAuditLog, clusterConfig *kubeadmv1beta1.ClusterConfiguration) {
+	if feature == nil || !feature.Enable {
 		return
 	}
 

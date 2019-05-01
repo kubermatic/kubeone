@@ -23,7 +23,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/config"
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/util"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -35,11 +35,11 @@ import (
 )
 
 type providerSpec struct {
-	SSHPublicKeys       []string            `json:"sshPublicKeys"`
-	CloudProvider       config.ProviderName `json:"cloudProvider"`
-	CloudProviderSpec   interface{}         `json:"cloudProviderSpec"`
-	OperatingSystem     string              `json:"operatingSystem"`
-	OperatingSystemSpec interface{}         `json:"operatingSystemSpec"`
+	SSHPublicKeys       []string                     `json:"sshPublicKeys"`
+	CloudProvider       kubeoneapi.CloudProviderName `json:"cloudProvider"`
+	CloudProviderSpec   interface{}                  `json:"cloudProviderSpec"`
+	OperatingSystem     string                       `json:"operatingSystem"`
+	OperatingSystemSpec interface{}                  `json:"operatingSystemSpec"`
 }
 
 // DeployMachineDeployments deploys MachineDeployments that create appropriate machines
@@ -66,8 +66,8 @@ func DeployMachineDeployments(ctx *util.Context) error {
 	return nil
 }
 
-func createMachineDeployment(cluster *config.Cluster, workerset config.WorkerConfig) (*clusterv1alpha1.MachineDeployment, error) {
-	provider := cluster.Provider.Name
+func createMachineDeployment(cluster *kubeoneapi.KubeOneCluster, workerset kubeoneapi.WorkerConfig) (*clusterv1alpha1.MachineDeployment, error) {
+	provider := cluster.CloudProvider.Name
 
 	cloudProviderSpec, err := machineSpec(cluster, workerset, provider)
 	if err != nil {
@@ -139,18 +139,24 @@ func createMachineDeployment(cluster *config.Cluster, workerset config.WorkerCon
 	}, nil
 }
 
-func machineSpec(cluster *config.Cluster, workerset config.WorkerConfig, provider config.ProviderName) (map[string]interface{}, error) {
+func machineSpec(cluster *kubeoneapi.KubeOneCluster, workerset kubeoneapi.WorkerConfig, provider kubeoneapi.CloudProviderName) (map[string]interface{}, error) {
 	var err error
 
-	spec := workerset.Config.CloudProviderSpec
-	if spec == nil {
+	specRaw := workerset.Config.CloudProviderSpec
+	if specRaw == nil {
 		return nil, errors.New("could't find cloudProviderSpec")
+	}
+	spec := make(map[string]interface{})
+	err = json.Unmarshal(specRaw, &spec)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to parse the workerset spec")
 	}
 
 	// We only need this tag for AWS because it is used to coordinate nodes in ASG
-	if provider == config.ProviderNameAWS {
+	if provider == kubeoneapi.CloudProviderNameAWS {
 		tagName := fmt.Sprintf("kubernetes.io/cluster/%s", cluster.Name)
 		tagValue := "shared"
+
 		spec, err = addMapTag(spec, tagName, tagValue)
 		if err != nil {
 			return nil, errors.Wrap(err, "could not parse tags for worker machines")

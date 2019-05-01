@@ -17,7 +17,7 @@ limitations under the License.
 package installation
 
 import (
-	"github.com/kubermatic/kubeone/pkg/config"
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
 	"github.com/kubermatic/kubeone/pkg/util"
@@ -36,7 +36,7 @@ func Reset(ctx *util.Context) error {
 	return ctx.RunTaskOnAllNodes(resetNode, true)
 }
 
-func destroyWorkers(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
+func destroyWorkers(ctx *util.Context, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	ctx.Logger.Infoln("Destroying worker nodes…")
 
 	_, _, err := ctx.Runner.Run(destroyScript, util.TemplateVariables{
@@ -47,7 +47,7 @@ func destroyWorkers(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection
 	return err
 }
 
-func resetNode(ctx *util.Context, _ *config.HostConfig, conn ssh.Connection) error {
+func resetNode(ctx *util.Context, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	ctx.Logger.Infoln("Resetting node…")
 
 	_, _, err := ctx.Runner.Run(resetScript, util.TemplateVariables{

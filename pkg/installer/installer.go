@@ -19,7 +19,7 @@ package installer
 import (
 	"github.com/sirupsen/logrus"
 
-	"github.com/kubermatic/kubeone/pkg/config"
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/installer/installation"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/util"
@@ -35,13 +35,13 @@ type Options struct {
 
 // Installer is entrypoint for installation process
 type Installer struct {
-	cluster *config.Cluster
+	cluster *kubeoneapi.KubeOneCluster
 	logger  *logrus.Logger
 }
 
 // NewInstaller returns a new installer, responsible for dispatching
 // between the different supported Kubernetes versions and running the
-func NewInstaller(cluster *config.Cluster, logger *logrus.Logger) *Installer {
+func NewInstaller(cluster *kubeoneapi.KubeOneCluster, logger *logrus.Logger) *Installer {
 	return &Installer{
 		cluster: cluster,
 		logger:  logger,

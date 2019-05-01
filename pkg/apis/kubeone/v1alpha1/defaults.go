@@ -61,32 +61,16 @@ func SetDefaults_Hosts(obj *KubeOneCluster) {
 
 func SetDefaults_APIEndpoints(obj *KubeOneCluster) {
 	// If no API endpoint is provided, assume the public address is an endpoint
-	if len(obj.APIEndpoints) == 0 {
+	if len(obj.APIEndpoint.Host) == 0 {
 		if len(obj.Hosts) == 0 {
 			// No hosts, so can't default to the first one
 			return
 		}
-		obj.APIEndpoints = []APIEndpoint{
-			{
-				Host: obj.Hosts[0].PublicAddress,
-				Port: 6443,
-			},
-		}
-	} else {
-		// There's APIEndpoint provided, default host and port
-		for i := range obj.APIEndpoints {
-			if len(obj.APIEndpoints[i].Host) == 0 {
-				if len(obj.Hosts) > 0 {
-					// Can only default to the first host if it exists
-					obj.APIEndpoints[i].Host = obj.Hosts[0].PublicAddress
-				}
-			}
-			if obj.APIEndpoints[i].Port == 0 {
-				obj.APIEndpoints[i].Port = 6443
-			}
-		}
+		obj.APIEndpoint.Host = obj.Hosts[0].PublicAddress
 	}
-
+	if obj.APIEndpoint.Port == 0 {
+		obj.APIEndpoint.Port = 6443
+	}
 }
 
 func SetDefaults_ClusterNetwork(obj *KubeOneCluster) {

@@ -32,8 +32,8 @@ type KubeOneCluster struct {
 	Name string
 	// Hosts describes the control plane nodes and how to access them
 	Hosts []HostConfig `json:"hosts,omitempty"`
-	// APIEndpoints are pairs of address and port used to communicate with the Kubernetes API
-	APIEndpoints []APIEndpoint `json:"apiEndpoint,omitempty"`
+	// APIEndpoint are pairs of address and port used to communicate with the Kubernetes API
+	APIEndpoint APIEndpoint `json:"apiEndpoint,omitempty"`
 	// CloudProvider configures the cloud provider specific features
 	CloudProvider CloudProviderSpec `json:"cloudProvider,omitempty"`
 	// Versions defines which Kubernetes version will be installed

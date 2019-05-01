@@ -19,13 +19,13 @@ package upgrade
 import (
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/config"
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm"
 	"github.com/kubermatic/kubeone/pkg/util"
 )
 
-func generateKubeadmConfig(ctx *util.Context, node *config.HostConfig) error {
+func generateKubeadmConfig(ctx *util.Context, node kubeoneapi.HostConfig) error {
 	kubeadmConf, err := kubeadm.Config(ctx, node)
 	if err != nil {
 		return errors.Wrap(err, "failed to create kubeadm configuration")

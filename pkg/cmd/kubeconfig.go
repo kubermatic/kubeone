@@ -70,18 +70,9 @@ func runKubeconfig(kubeconfigOptions *kubeconfigOptions) error {
 		return errors.New("no cluster config file given")
 	}
 
-	cluster, err := loadClusterConfig(kubeconfigOptions.Manifest)
+	cluster, err := loadClusterConfig(kubeconfigOptions.Manifest, kubeconfigOptions.TerraformState)
 	if err != nil {
 		return errors.Wrap(err, "failed to load cluster")
-	}
-
-	// apply terraform
-	if err = applyTerraform(kubeconfigOptions.TerraformState, cluster); err != nil {
-		return err
-	}
-
-	if err = cluster.DefaultAndValidate(); err != nil {
-		return err
 	}
 
 	kubeconfig, err := util.DownloadKubeconfig(cluster)

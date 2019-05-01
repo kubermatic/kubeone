@@ -23,7 +23,7 @@ import (
 	"github.com/Masterminds/semver"
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/config"
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/util"
 
 	appsv1 "k8s.io/api/apps/v1"
@@ -34,19 +34,19 @@ import (
 
 // Ensure external CCM deployen if Provider.External
 func Ensure(ctx *util.Context) error {
-	if !ctx.Cluster.Provider.External {
+	if !ctx.Cluster.CloudProvider.External {
 		return nil
 	}
 
 	ctx.Logger.Info("Ensure external CCM is up to date")
 
-	switch ctx.Cluster.Provider.Name {
-	case config.ProviderNameHetzner:
+	switch ctx.Cluster.CloudProvider.Name {
+	case kubeoneapi.CloudProviderNameHetzner:
 		return ensureHetzner(ctx)
-	case config.ProviderNameDigitalOcean:
+	case kubeoneapi.CloudProviderNameDigitalOcean:
 		return ensureDigitalOcean(ctx)
 	default:
-		ctx.Logger.Infof("External CCM for %q not yet supported, skipping", ctx.Cluster.Provider.Name)
+		ctx.Logger.Infof("External CCM for %q not yet supported, skipping", ctx.Cluster.CloudProvider.Name)
 		return nil
 	}
 }

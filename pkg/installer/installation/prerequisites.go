@@ -21,7 +21,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/config"
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/util"
 )
@@ -37,20 +37,20 @@ func installPrerequisites(ctx *util.Context) error {
 }
 
 func generateConfigurationFiles(ctx *util.Context) {
-	ctx.Configuration.AddFile("cfg/cloud-config", ctx.Cluster.Provider.CloudConfig)
+	ctx.Configuration.AddFile("cfg/cloud-config", ctx.Cluster.CloudProvider.CloudConfig)
 }
 
-func installPrerequisitesOnNode(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
+func installPrerequisitesOnNode(ctx *util.Context, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	ctx.Logger.Infoln("Determine operating system…")
 	os, err := determineOS(ctx)
 	if err != nil {
 		return errors.Wrap(err, "failed to determine operating system")
 	}
 
-	node.OperatingSystem = os
+	node.SetOperatingSystem(os)
 
 	ctx.Logger.Infoln("Determine hostname…")
-	hostname, err := determineHostname(ctx, node)
+	hostname, err := determineHostname(ctx, *node)
 	if err != nil {
 		return errors.Wrap(err, "failed to determine hostname")
 	}
@@ -61,12 +61,12 @@ func installPrerequisitesOnNode(ctx *util.Context, node *config.HostConfig, conn
 		return errors.Wrap(err, "failed to create environment file")
 	}
 
-	node.Hostname = hostname
+	node.SetHostname(hostname)
 
 	logger := ctx.Logger.WithField("os", os)
 
 	logger.Infoln("Installing kubeadm…")
-	err = installKubeadm(ctx, node)
+	err = installKubeadm(ctx, *node)
 	if err != nil {
 		return errors.Wrap(err, "failed to install kubeadm")
 	}
@@ -90,7 +90,7 @@ func determineOS(ctx *util.Context) (string, error) {
 	return osID, err
 }
 
-func determineHostname(ctx *util.Context, _ *config.HostConfig) (string, error) {
+func determineHostname(ctx *util.Context, _ kubeoneapi.HostConfig) (string, error) {
 	stdout, _, err := ctx.Runner.Run("hostname -f", nil)
 
 	return stdout, err
@@ -98,8 +98,8 @@ func determineHostname(ctx *util.Context, _ *config.HostConfig) (string, error) 
 
 func createEnvironmentFile(ctx *util.Context) error {
 	_, _, err := ctx.Runner.Run(environmentFileCommand, util.TemplateVariables{
-		"HTTP_PROXY":  ctx.Cluster.Proxy.HTTPProxy,
-		"HTTPS_PROXY": ctx.Cluster.Proxy.HTTPSProxy,
+		"HTTP_PROXY":  ctx.Cluster.Proxy.HTTP,
+		"HTTPS_PROXY": ctx.Cluster.Proxy.HTTPS,
 		"NO_PROXY":    ctx.Cluster.Proxy.NoProxy,
 	})
 
@@ -124,7 +124,7 @@ no_proxy="{{ .NO_PROXY }}"
 EOF
 `
 
-func installKubeadm(ctx *util.Context, node *config.HostConfig) error {
+func installKubeadm(ctx *util.Context, node kubeoneapi.HostConfig) error {
 	var err error
 
 	switch node.OperatingSystem {
@@ -307,7 +307,7 @@ sudo chmod 600 /etc/kubernetes/cloud-config
 }
 
 func configureDockerDaemonProxy(ctx *util.Context) error {
-	if ctx.Cluster.Proxy.HTTPProxy == "" && ctx.Cluster.Proxy.HTTPSProxy == "" && ctx.Cluster.Proxy.NoProxy == "" {
+	if ctx.Cluster.Proxy.HTTP == "" && ctx.Cluster.Proxy.HTTPS == "" && ctx.Cluster.Proxy.NoProxy == "" {
 		return nil
 	}
 

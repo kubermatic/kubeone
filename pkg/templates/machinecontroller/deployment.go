@@ -24,7 +24,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/config"
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/util"
 
 	appsv1 "k8s.io/api/apps/v1"
@@ -771,7 +771,7 @@ func machineControllerMachineDeploymentCRD() *apiextensions.CustomResourceDefini
 	}
 }
 
-func machineControllerDeployment(cluster *config.Cluster) (*appsv1.Deployment, error) {
+func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster) (*appsv1.Deployment, error) {
 	var replicas int32 = 1
 
 	clusterDNS, err := clusterDNSIP(cluster)
@@ -786,7 +786,7 @@ func machineControllerDeployment(cluster *config.Cluster) (*appsv1.Deployment, e
 		"-cluster-dns", clusterDNS.String(),
 	}
 
-	if cluster.Provider.External {
+	if cluster.CloudProvider.External {
 		args = append(args, "-external-cloud-provider")
 	}
 
@@ -894,7 +894,7 @@ func machineControllerDeployment(cluster *config.Cluster) (*appsv1.Deployment, e
 	}, nil
 }
 
-func machineControllerCredentialsSecret(cluster *config.Cluster) *corev1.Secret {
+func machineControllerCredentialsSecret(cluster *kubeoneapi.KubeOneCluster) *corev1.Secret {
 	return &corev1.Secret{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "v1",
@@ -905,14 +905,14 @@ func machineControllerCredentialsSecret(cluster *config.Cluster) *corev1.Secret 
 			Namespace: MachineControllerNamespace,
 		},
 		Type:       corev1.SecretTypeOpaque,
-		StringData: cluster.MachineController.Credentials,
+		StringData: cluster.Credentials,
 	}
 }
 
-func getEnvVarCredentials(cluster *config.Cluster) []corev1.EnvVar {
+func getEnvVarCredentials(cluster *kubeoneapi.KubeOneCluster) []corev1.EnvVar {
 	env := make([]corev1.EnvVar, 0)
 
-	for k := range cluster.MachineController.Credentials {
+	for k := range cluster.Credentials {
 		env = append(env, corev1.EnvVar{
 			Name: k,
 			ValueFrom: &corev1.EnvVarSource{
@@ -931,9 +931,9 @@ func getEnvVarCredentials(cluster *config.Cluster) []corev1.EnvVar {
 
 // clusterDNSIP returns the IP address of ClusterDNS Service,
 // which is 10th IP of the Services CIDR.
-func clusterDNSIP(cluster *config.Cluster) (*net.IP, error) {
+func clusterDNSIP(cluster *kubeoneapi.KubeOneCluster) (*net.IP, error) {
 	// Get the Services CIDR
-	_, svcSubnetCIDR, err := net.ParseCIDR(cluster.Network.ServiceSubnet())
+	_, svcSubnetCIDR, err := net.ParseCIDR(cluster.ClusterNetwork.ServiceSubnet)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse network.service_subnet")
 	}

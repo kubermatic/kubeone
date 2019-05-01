@@ -11,8 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+apiVersion: kubeone.io/v1alpha1
+kind: KubeOneCluster
 versions:
   kubernetes: '1.13.5'
-provider:
+cloudProvider:
   name: 'hetzner'
   external: true

@@ -151,11 +151,7 @@ func (in *KubeOneCluster) DeepCopyInto(out *KubeOneCluster) {
 		*out = make([]HostConfig, len(*in))
 		copy(*out, *in)
 	}
-	if in.APIEndpoints != nil {
-		in, out := &in.APIEndpoints, &out.APIEndpoints
-		*out = make([]APIEndpoint, len(*in))
-		copy(*out, *in)
-	}
+	out.APIEndpoint = in.APIEndpoint
 	out.CloudProvider = in.CloudProvider
 	out.Versions = in.Versions
 	out.ClusterNetwork = in.ClusterNetwork

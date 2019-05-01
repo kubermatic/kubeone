@@ -19,7 +19,7 @@ package upgrade
 import (
 	"context"
 
-	"github.com/kubermatic/kubeone/pkg/config"
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/util"
 	"github.com/pkg/errors"
@@ -34,31 +34,31 @@ import (
 
 func determineHostname(ctx *util.Context) error {
 	ctx.Logger.Infoln("Determine hostname…")
-	return ctx.RunTaskOnAllNodes(func(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
+	return ctx.RunTaskOnAllNodes(func(ctx *util.Context, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 		stdout, _, err := ctx.Runner.Run("hostname -f", nil)
 		if err != nil {
 			return err
 		}
 
-		node.Hostname = stdout
+		node.SetHostname(stdout)
 		return nil
 	}, true)
 }
 
 func determineOS(ctx *util.Context) error {
 	ctx.Logger.Infoln("Determine operating system…")
-	return ctx.RunTaskOnAllNodes(func(ctx *util.Context, node *config.HostConfig, conn ssh.Connection) error {
+	return ctx.RunTaskOnAllNodes(func(ctx *util.Context, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 		osID, _, err := ctx.Runner.Run("source /etc/os-release && echo -n $ID", nil)
 		if err != nil {
 			return err
 		}
 
-		node.OperatingSystem = osID
+		node.SetOperatingSystem(osID)
 		return nil
 	}, true)
 }
 
-func labelNode(client dynclient.Client, host *config.HostConfig) error {
+func labelNode(client dynclient.Client, host *kubeoneapi.HostConfig) error {
 	retErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
 		node := corev1.Node{
 			ObjectMeta: metav1.ObjectMeta{Name: host.Hostname},
@@ -77,7 +77,7 @@ func labelNode(client dynclient.Client, host *config.HostConfig) error {
 	return errors.Wrapf(retErr, "failed to label node %q with label %q", host.Hostname, labelUpgradeLock)
 }
 
-func unlabelNode(client dynclient.Client, host *config.HostConfig) error {
+func unlabelNode(client dynclient.Client, host *kubeoneapi.HostConfig) error {
 	retErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
 		node := corev1.Node{
 			ObjectMeta: metav1.ObjectMeta{Name: host.Hostname},
