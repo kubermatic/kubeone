@@ -2,13 +2,13 @@
 
 In this quick start we're going to show how to get started with KubeOne on AWS. We'll cover how to create the needed infrastructure using our example Terraform scripts and then install Kubernetes. Finally, we're going to show how to destroy the cluster along with the infrastructure.
 
-As a result, you'll get Kubernetes 1.14.0 High-Available (HA) clusters with three control plane nodes and two worker nodes.
+As a result, you'll get Kubernetes 1.14.1 High-Available (HA) clusters with three control plane nodes and two worker nodes.
 
 ### Prerequisites
 
 To follow this quick start, you'll need:
 
-* `kubeone` v0.5.0 or newer installed, which can be done by following the `Installing KubeOne` section of [the README](https://github.com/kubermatic/kubeone/blob/master/README.md),
+* `kubeone` v0.6.0 or newer installed, which can be done by following the `Installing KubeOne` section of [the README](https://github.com/kubermatic/kubeone/blob/master/README.md),
 * `terraform` installed. The binaries for `terraform` can be found on the [Terraform website](https://www.terraform.io/downloads.html)
 
 ## Setting Up Credentials
@@ -95,27 +95,14 @@ Now that you have infrastructure you can proceed with installing Kubernetes usin
 
 Before you start you'll need a configuration file that defines how Kubernetes will be installed, e.g. what version will be used and what features will be enabled. For the configuration file reference see [`config.yaml.dist`](https://github.com/kubermatic/kubeone/blob/master/config.yaml.dist).
 
-To get started you can use the following configuration. It'll install Kubernetes 1.14.0 and create 2 worker nodes. KubeOne automatically populates information about VPC IDs and region for worker nodes from the Terraform output. Alternatively, you can set those information manually. As KubeOne is using [Kubermatic `machine-controller`](https://github.com/kubermatic/machine-controller) for creating worker nodes, see [AWS example manifest](https://github.com/kubermatic/machine-controller/blob/master/examples/aws-machinedeployment.yaml) for available options.
+To get started you can use the following configuration. It'll install Kubernetes 1.14.1 and create 3 worker nodes. KubeOne automatically populates all needed information about worker nodes from the [Terraform output](https://github.com/kubermatic/kubeone/blob/ec8bf305446ac22529e9683fd4ce3c9abf753d1e/examples/terraform/aws/output.tf#L38-L87). Alternatively, you can set those information manually. As KubeOne is using [Kubermatic `machine-controller`](https://github.com/kubermatic/machine-controller) for creating worker nodes, see [AWS example manifest](https://github.com/kubermatic/machine-controller/blob/master/examples/aws-machinedeployment.yaml) for available options.
 
 ```yaml
 name: demo
 versions:
-  kubernetes: '1.14.0'
-provider:
+  kubernetes: '1.14.1'
+cloudProvider:
   name: 'aws'
-workers:
-- name: fra1-a
-  replicas: 2
-  config:
-    labels:
-      mylabel: 'fra1-a'
-    cloudProviderSpec:
-      instanceType: 't2.medium'
-      diskSize: 50
-      diskType: 'gp2'
-    operatingSystem: 'ubuntu'
-    operatingSystemSpec:
-      distUpgradeOnBoot: true
 ```
 
 Finally, we're going to install Kubernetes by using the `install` command and providing the configuration file and the Terraform output:
@@ -200,4 +187,4 @@ terraform destroy
 
 You'll be asked to enter `yes` to confirm your intention to destroy the cluster.
 
-Congratulations! You're now running Kubernetes 1.14.0 HA cluster with three control plane nodes and two worker nodes. If you want to learn more about KubeOne and its features, such as [upgrades](upgrading_cluster.md), make sure to check our [documentation](https://github.com/kubermatic/kubeone/tree/master/docs).
+Congratulations! You're now running Kubernetes 1.14.1 HA cluster with three control plane nodes and three worker nodes. If you want to learn more about KubeOne and its features, such as [upgrades](upgrading_cluster.md), make sure to check our [documentation](https://github.com/kubermatic/kubeone/tree/master/docs).
