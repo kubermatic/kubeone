@@ -19,8 +19,9 @@ package credentials
 import (
 	"context"
 
-	"github.com/kubermatic/kubeone/pkg/util"
 	"github.com/pkg/errors"
+
+	"github.com/kubermatic/kubeone/pkg/util"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
