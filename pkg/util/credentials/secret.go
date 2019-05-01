@@ -32,7 +32,7 @@ import (
 
 const (
 	// SecretName is name of the secret which contains the cloud provider credentials
-	SecretName = "credentials"
+	SecretName = "cloud-provider-credentials"
 	// SecretNamespace is namespace of the credentials secret
 	SecretNamespace = "kube-system"
 )
