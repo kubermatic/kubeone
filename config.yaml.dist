@@ -121,9 +121,9 @@ features:
 
 # The API server can also be overwritten by Terraform. Provide the
 # external address of your load balancer or the public addresses of
-# your control plane nodes.
-# apiEndpoints:
-# - host: '1.2.3.4'
+# the first control plane nodes.
+# apiEndpoint:
+#   host: '1.2.3.4'
 #   port: 6443
 
 # If the cluster runs on bare metal or an unsupported cloud provider,
