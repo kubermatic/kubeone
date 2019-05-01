@@ -118,7 +118,7 @@ func NewConfig(ctx *util.Context, host kubeoneapi.HostConfig) ([]runtime.Object,
 		ClusterName: cluster.Name,
 	}
 
-	clusterConfig.APIServer.ExtraArgs["bind-address"] = hostAdvertiseAddress
+	// clusterConfig.APIServer.ExtraArgs["bind-address"] = hostAdvertiseAddress
 
 	if cluster.CloudProvider.CloudProviderInTree() {
 		renderedCloudConfig := "/etc/kubernetes/cloud-config"
