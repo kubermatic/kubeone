@@ -18,6 +18,7 @@ package installation
 
 import (
 	"strconv"
+	"time"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/ssh"
@@ -30,6 +31,7 @@ func joinControlplaneNode(ctx *util.Context) error {
 }
 
 func joinControlPlaneNodeInternal(ctx *util.Context, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+	time.Sleep(30 * time.Second)
 	_, _, err := ctx.Runner.Run(`
 if [[ -f /etc/kubernetes/kubelet.conf ]]; then exit 0; fi
 
