@@ -91,7 +91,7 @@ func determineOS(ctx *util.Context) (string, error) {
 }
 
 func determineHostname(ctx *util.Context, _ kubeoneapi.HostConfig) (string, error) {
-	stdout, _, err := ctx.Runner.Run("hostname -f", nil)
+	stdout, _, err := ctx.Runner.Run("hostname", nil)
 
 	return stdout, err
 }
