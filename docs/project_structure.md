@@ -58,10 +58,12 @@ The [`pkg`](https://github.com/kubermatic/kubeone/tree/master/pkg) package has a
 │   ├── apis                # External APIs used by KubeOne
 │   │   └── kubeadm             # kubeadm v1beta1 API
 │   │       └── v1beta1
+│   │   └── kubeone             # KubeOneCluster API used as of v0.6.0
+│   │       └── v1alpha1
 │   ├── archive             # Create .tar.gz archive
 │   ├── certificate         # Generate certificates needed for the machine-controller webhook
 │   ├── cmd                 # KubeOne CLI
-│   ├── config              # KubeOne Configuration API
+│   ├── config              # KubeOne Configuration API (deprecated as of v0.6.0)
 │   ├── features            # Activate optional cluster features (e.g. dynamic audit, PodSecurityPolicy)
 │   ├── installer           # Install Kubernetes
 │   │   └── installation        # Scripts used to install Kubernetes

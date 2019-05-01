@@ -1,65 +1,71 @@
 # Adding Support For A New Provider
 
-KubeOne is supposed to work on any cluster out-of-box as long as there is no need for additional and potentially complex configuration. However, if additional configuration is needed and in order to utilize all features of KubeOne, KubeOne and [Kubermatic machine-controller](https://github.com/kubermatic/machine-controller) need to support that provider.
+KubeOne is supposed to work on any cluster out-of-box as long as there is no need for additional and potentially complex configuration. However, in order to utilize all features of KubeOne or if additional configuration is needed to provision the cluster, KubeOne and [Kubermatic machine-controller](https://github.com/kubermatic/machine-controller) need to support the provider.
 
 This walkthrough shows what are prerequisites and how to implement support for a provider.
 
 ## Prerequisites
 
-Before KubeOne can support a provider, [Kubermatic machine-controller](https://github.com/kubermatic/machine-controller) needs to support creating worker nodes for that provider. For details how to implement support for the provider in the machine-controller, please check the [machine-controller repository](https://github.com/kubermatic/machine-controller).
+Before KubeOne can support a provider, [Kubermatic machine-controller](https://github.com/kubermatic/machine-controller) needs to support creating worker nodes for that provider. For details how to implement support for the provider in the `machine-controller`, please check the [`machine-controller` repository](https://github.com/kubermatic/machine-controller).
 
 Once there is support for the provider in the machine-controller, KubeOne support is implemented by:
 
 * adding example Terraform scripts,
-* modifying the KubeOne API to support the provider,
+* adding the needed API types for a new provider to the KubeOneCluster API,
 * implementing Terraform integration for worker nodes,
 * (optionally) adding provider-specific configuration for provisioning the cluster,
-* adding E2E tests verifying the cluster creation and cluster upgrade processes.
+* adding E2E tests verifying the cluster creation and the cluster upgrade processes.
 
 ## Adding Example Terraform Scripts
 
-In the [`./examples/terraform` directory](https://github.com/kubermatic/kubeone/tree/master/examples/terraform) you can find example Terraform scripts for each supported provider. You can check them for the reference how scripts should look like and what variables you should expose and return as the output.
+In the [`./examples/terraform` directory](https://github.com/kubermatic/kubeone/tree/master/examples/terraform) you can find example Terraform scripts for each supported provider. You can check them for the reference how scripts should look like and what variables should be exposed and returned as the output.
 
-The [Terraform documentation](https://www.terraform.io/docs/providers/) has a document showing how to provision the infrastructure for each supported provider. If there is no Terraform support for such provider, please create an issue in the KubeOne repository or contact us over [Slack](https://kubermatic.slack.com/messages/KubeOne) to discuss about potential alternatives.
+The [Terraform documentation](https://www.terraform.io/docs/providers/) has a document showing how to provision the infrastructure for each Terraform-supported provider. If there is no Terraform support for such provider, please create an issue in the KubeOne repository or contact us over [Kubermatic Slack](http://slack.kubermatic.io/) to discuss about potential alternatives.
 
-Once Terraform scripts are done, you should proceed to modifying the KubeOne API to support the provider.
+Once Terraform scripts are done, you should proceed to adding the needed API types to the KubeOneCluster API.
 
-## Modifying The KubeOne API To Support The Provider
+## Adding The Needed API Types
 
-The KubeOne API has references for each supported provider used for various tasks including validating the provider specific settings and grabbing credentials for the machine-controller. The API is defined in the [`pkg/config` package](https://github.com/kubermatic/kubeone/tree/master/pkg/config).
+The [KubeOneCluster API](https://github.com/kubermatic/kubeone/tree/master/pkg/apis/kubeone) has references for each supported provider used for various tasks including validating the provider specific settings and grabbing credentials for the `machine-controller`. The API is defined in the [`pkg/apis/kubeone` package](https://github.com/kubermatic/kubeone/tree/master/pkg/apis/kubeone).
 
-The first change you need to make is to add a [`ProviderName` value](https://github.com/kubermatic/kubeone/blob/8b35b17876dd2f547205a3ab8468cf3b5d37d95c/pkg/config/cluster.go#L174-L182) for the provider. Once the `ProviderName` value is in the place, you need to add validation for provider-specific configuration [to the Validate function](https://github.com/kubermatic/kubeone/blob/8b35b17876dd2f547205a3ab8468cf3b5d37d95c/pkg/config/cluster.go#L191-L208). Usually in validation we check are all [ProviderConfig](https://github.com/kubermatic/kubeone/blob/8b35b17876dd2f547205a3ab8468cf3b5d37d95c/pkg/config/cluster.go#L184-L189) fields required by the provider populated. For example, if provider requires `cloud_config` to be present, we can check it here. If the provider has an [in-tree cloud controller manager](https://github.com/kubernetes/kubernetes/tree/master/pkg/cloudprovider) please add an entry to the [`CloudProviderInTree` function](https://github.com/kubermatic/kubeone/blob/8b35b17876dd2f547205a3ab8468cf3b5d37d95c/pkg/config/cluster.go#L210-L219).
+The first change you need to make is to add a `CloudProviderName` value for the provider to the [internal API](https://github.com/kubermatic/kubeone/blob/ec8bf305446ac22529e9683fd4ce3c9abf753d1e/pkg/apis/kubeone/types.go#L83-L92) and to the versioned APIs (e.g. [`v1alpha1`](https://github.com/kubermatic/kubeone/blob/ec8bf305446ac22529e9683fd4ce3c9abf753d1e/pkg/apis/kubeone/v1alpha1/types.go#L83-L92)). Once the `CloudProviderName` value is in the place, you need to add validation for provider-specific configuration [to the `ValidateCloudProviderSpec` function](https://github.com/kubermatic/kubeone/blob/ec8bf305446ac22529e9683fd4ce3c9abf753d1e/pkg/apis/kubeone/validation/validation.go#L57-L77). In validation we usually check are all [CloudProviderSpec](https://github.com/kubermatic/kubeone/blob/ec8bf305446ac22529e9683fd4ce3c9abf753d1e/pkg/apis/kubeone/types.go#L94-L99) fields required by the provider populated. For example, if provider requires `cloudConfig` to be present, we can check it here. If the provider has an [in-tree cloud controller manager](https://github.com/kubernetes/kubernetes/tree/master/pkg/cloudprovider) please add an entry to the [`CloudProviderInTree` function](https://github.com/kubermatic/kubeone/blob/ec8bf305446ac22529e9683fd4ce3c9abf753d1e/pkg/apis/kubeone/helpers.go#L57-L66).
 
-Finally, you need to configure how credentials for machine-controller are obtained by modifying the [`ProviderCredentials` function](https://github.com/kubermatic/kubeone/blob/8b35b17876dd2f547205a3ab8468cf3b5d37d95c/pkg/config/cluster.go#L210-L219). Credentials are usually obtained by reading them from the environment variables, but custom workflows are supposed as well. For example AWS uses the AWS SDK to fetch credentials.
+Finally, you need to configure how credentials for `machine-controller` and the external CCM (if applicable) are obtained. First, you need to add a constant with the environment variable name used by the `machine-controller` to the [`pkg/util/credentials`](https://github.com/kubermatic/kubeone/blob/ec8bf305446ac22529e9683fd4ce3c9abf753d1e/pkg/util/credentials/credentials.go#L30-L45) package. Then, you need to add the logic for obtaining credentials to the [`ProviderCredentials` function](https://github.com/kubermatic/kubeone/blob/ec8bf305446ac22529e9683fd4ce3c9abf753d1e/pkg/util/credentials/credentials.go#L54-L119). Credentials are usually obtained by reading them from the environment variables, but custom workflows are supported as well. For example AWS uses the AWS SDK to fetch the credentials.
 
-With API modified to support the new provider, you need to implement Terraform integration for worker nodes, so it's possible to easily create worker nodes.
+With the API types added to support the new provider, you need to implement Terraform integration for worker nodes.
 
 ## Implementing Terraform Integration for Worker Nodes
 
-The Terraform Integration for Worker Nodes is used to source common information used to create the worker nodes. For example, information such as region, instance size, VPC IDs, are usually same as for the control plane nodes. If infrastructure is provisioned using Terraform, those information can be easily sourced from the Terraform state, so operator doesn't have to manually provide them upon provisioning the cluster. The Terraform integration is implemented in the [`pkg/terraform` package](https://github.com/kubermatic/kubeone/tree/8b35b17876dd2f547205a3ab8468cf3b5d37d95c/pkg/terraform).
+The Terraform Integration for worker nodes is used to source common information used to create the worker nodes. For example, information such as region, instance size, VPC IDs, are usually same as for the control plane nodes. If infrastructure is provisioned using Terraform, those information can be sourced from the Terraform state, so operator doesn't have to manually provide them upon provisioning the cluster. The Terraform integration is implemented in the [`pkg/terraform` package](https://github.com/kubermatic/kubeone/tree/ec8bf305446ac22529e9683fd4ce3c9abf753d1e/pkg/terraform).
 
-For the reference what fields are part of the WorkerSet, check the `CloudProviderSpec` API implemented in the machine-controller. You can find example manifests with all available options in the [examples directory of machine-controller](https://github.com/kubermatic/machine-controller/tree/master/examples) or check out the [API implementation](https://github.com/kubermatic/machine-controller/tree/master/pkg/cloudprovider/provider) for more details.
+For the reference what fields are part of the WorkerSet, check the `CloudProviderSpec` API implemented in the machine-controller. You can find example manifests with all available options in the [`examples` directory in the `machine-controller` repository](https://github.com/kubermatic/machine-controller/tree/master/examples) or check out the [API implementation](https://github.com/kubermatic/machine-controller/tree/master/pkg/cloudprovider/provider) for more details.
 
-First, you need to implement a `WorkerConfig` structure in the `pkg/terraform` package with fields that will be sourced from the Terraform state. You can refer to the [`awsWorkerConfig` structure](https://github.com/kubermatic/kubeone/blob/8b35b17876dd2f547205a3ab8468cf3b5d37d95c/pkg/terraform/config.go#L66-L76) as an example.
+First, you need to implement a `WorkerConfig` structure in the `pkg/terraform` package with fields that will be sourced from the Terraform state. You can refer to the [`awsWorkerConfig` structure](https://github.com/kubermatic/kubeone/blob/ec8bf305446ac22529e9683fd4ce3c9abf753d1e/pkg/terraform/config.go#L39-L49) as an example.
 
-**Note:** Using types other than string and integer in the `WorkerConfig` structure may not work as expected.
+Then, you need to implement a `update<CloudProviderName>Workerset` function that replaces values in the KubeOne WorkerSet configuration with values from the Terraform state. See the [`updateAWSWorkerset` function](https://github.com/kubermatic/kubeone/blob/ec8bf305446ac22529e9683fd4ce3c9abf753d1e/pkg/terraform/config.go#L221-L261) as an reference how the function should look like.
 
-Then, you need to implement a `updateProviderNameWorkerset` function that replaces values in the KubeOne WorkerSet configuration with values from the Terraform state. See the [`updateAWSWorkerset` function](https://github.com/kubermatic/kubeone/blob/8b35b17876dd2f547205a3ab8468cf3b5d37d95c/pkg/terraform/config.go#L220-L271) as an reference how the function should look like.
-
-Finally, update the [`Apply` function](https://github.com/kubermatic/kubeone/blob/8b35b17876dd2f547205a3ab8468cf3b5d37d95c/pkg/terraform/config.go#L192-L205) to utilize the newly-added functions.
+Finally, update the [`Apply` function](https://github.com/kubermatic/kubeone/blob/ec8bf305446ac22529e9683fd4ce3c9abf753d1e/pkg/terraform/config.go#L191-L206) to utilize the newly-added functions.
 
 With those changes in the place, KubeOne will automatically source information about worker nodes from the Terraform output if it's provided.
 
 ## Adding Provider-Specific Configuration For Provisioning The Cluster
 
-If the provider you're implementing requires provider-specific steps for provisioning or upgrading the cluster make sure to add them to the [`installer`](https://github.com/kubermatic/kubeone/tree/8b35b17876dd2f547205a3ab8468cf3b5d37d95c/pkg/installer) or [`upgrader`](https://github.com/kubermatic/kubeone/tree/8b35b17876dd2f547205a3ab8468cf3b5d37d95c/pkg/upgrader) package.
+If the provider you're implementing requires provider-specific steps for provisioning or upgrading the cluster make sure to add them to the [`installer`](https://github.com/kubermatic/kubeone/tree/ec8bf305446ac22529e9683fd4ce3c9abf753d1e/pkg/installer) and/or [`upgrader`](https://github.com/kubermatic/kubeone/tree/ec8bf305446ac22529e9683fd4ce3c9abf753d1e/pkg/upgrader) packages.
 
 ## Adding E2E tests
 
 End-to-End (E2E) tests are used to verify is KubeOne correctly provisioning clusters on the provider. This is done by creating the needed infrastructure, provisioning the cluster, and running Kubernetes conformance tests.
 
-First, you should add a test case to the [`TestClusterConformance` function](https://github.com/kubermatic/kubeone/blob/8b35b17876dd2f547205a3ab8468cf3b5d37d95c/test/e2e/conformance_test.go#L26). This function creates a cluster using example Terraform scripts, provisions the cluster, and then runs the conformance tests on the cluster. The manifest used to provision the cluster should be stored in the [`testdata`](https://github.com/kubermatic/kubeone/tree/8b35b17876dd2f547205a3ab8468cf3b5d37d95c/test/e2e/testdata) directory.
+First, you need to implement the `Provisioner` interface for the provider in [`test/e2e/provisioner.go`](https://github.com/kubermatic/kubeone/blob/ec8bf305446ac22529e9683fd4ce3c9abf753d1e/test/e2e/provisioner.go). You can see the [`AWSProvisioner`](https://github.com/kubermatic/kubeone/blob/ec8bf305446ac22529e9683fd4ce3c9abf753d1e/test/e2e/provisioner.go#L50-L54) implementation as an example.
 
-Then, add a test case to the [`TestClusterUpgrade` function](https://github.com/kubermatic/kubeone/blob/8b35b17876dd2f547205a3ab8468cf3b5d37d95c/test/e2e/upgrade_test.go) which provisions the cluster with older Kubernetes version and then upgrades to the newer version.
+The `Provisioner` should implement three functions:
+
+* [`New<CloudProviderName>Provisioner`](https://github.com/kubermatic/kubeone/blob/ec8bf305446ac22529e9683fd4ce3c9abf753d1e/test/e2e/provisioner.go#L56-L67) that builds the provisioner,
+* [`Provision`](https://github.com/kubermatic/kubeone/blob/ec8bf305446ac22529e9683fd4ce3c9abf753d1e/test/e2e/provisioner.go#L69-L83) that verifies the credentials and provisions the cluster using Terraform,
+* [`Cleanup`](https://github.com/kubermatic/kubeone/blob/ec8bf305446ac22529e9683fd4ce3c9abf753d1e/test/e2e/provisioner.go#L85-L98) that cleanups the cluster after tests are done.
+
+Once the `Provisioner` interface implementation is in the place, you need to add a testcase to the [`TestClusterConformance` function](https://github.com/kubermatic/kubeone/blob/ec8bf305446ac22529e9683fd4ce3c9abf753d1e/test/e2e/conformance_test.go#L30-L172). This function creates a cluster using example Terraform scripts, provisions the cluster, and then runs the conformance tests on the cluster. The manifests used to provision the cluster are stored in the [`testdata`](https://github.com/kubermatic/kubeone/tree/ec8bf305446ac22529e9683fd4ce3c9abf753d1e/test/e2e/testdata) directory.
+
+Then, add a test case to the [`TestClusterUpgrade` function](https://github.com/kubermatic/kubeone/blob/ec8bf305446ac22529e9683fd4ce3c9abf753d1e/test/e2e/upgrade_test.go#L42-L199) which provisions the cluster with older Kubernetes version, then upgrades to the newer version and at the end runs the conformance tests.
 
 After the PR is merged, the KubeOne maintainers will create a ProwJob that runs E2E tests for a newly-added provider in the CI pipeline.
