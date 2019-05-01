@@ -227,7 +227,7 @@ func packetDeployment() *appsv1.Deployment {
 					Containers: []corev1.Container{
 						{
 							Name:  "packet-cloud-controller-manager",
-							Image: "packethost/packet-ccm:" + digitaloceanCCMVersion,
+							Image: "packethost/packet-ccm:" + packetCCMVersion,
 							Command: []string{
 								"./packet-cloud-controller-manager",
 								"--cloud-provider=packet",
