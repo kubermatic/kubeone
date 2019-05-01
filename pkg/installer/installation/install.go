@@ -25,6 +25,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/templates/externalccm"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
 	"github.com/kubermatic/kubeone/pkg/util"
+	"github.com/kubermatic/kubeone/pkg/util/credentials"
 )
 
 // Install performs all the steps required to install Kubernetes on
@@ -43,6 +44,7 @@ func Install(ctx *util.Context) error {
 		{Fn: saveKubeconfig, ErrMsg: "unable to save kubeconfig to the local machine", Retries: 3},
 		{Fn: util.BuildKubernetesClientset, ErrMsg: "unable to build kubernetes clientset", Retries: 3},
 		{Fn: features.Activate, ErrMsg: "unable to activate features"},
+		{Fn: credentials.Ensure, ErrMsg: "unable to ensure credentials secret"},
 		{Fn: externalccm.Ensure, ErrMsg: "failed to install external CCM"},
 		{Fn: patchCoreDNS, ErrMsg: "failed to patch CoreDNS", Retries: 3},
 		{Fn: applyCanalCNI, ErrMsg: "failed to install cni plugin canal", Retries: 3},
