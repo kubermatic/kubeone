@@ -74,10 +74,18 @@ func SetDefaults_APIEndpoints(obj *KubeOneCluster) {
 }
 
 func SetDefaults_ClusterNetwork(obj *KubeOneCluster) {
-	obj.ClusterNetwork.PodSubnet = DefaultPodSubnet
-	obj.ClusterNetwork.ServiceSubnet = DefaultServiceSubnet
-	obj.ClusterNetwork.ServiceDomainName = DefaultServiceDNS
-	obj.ClusterNetwork.NodePortRange = DefaultNodePortRange
+	if len(obj.ClusterNetwork.PodSubnet) == 0 {
+		obj.ClusterNetwork.PodSubnet = DefaultPodSubnet
+	}
+	if len(obj.ClusterNetwork.ServiceSubnet) == 0 {
+		obj.ClusterNetwork.ServiceSubnet = DefaultServiceSubnet
+	}
+	if len(obj.ClusterNetwork.ServiceDomainName) == 0 {
+		obj.ClusterNetwork.ServiceDomainName = DefaultServiceDNS
+	}
+	if len(obj.ClusterNetwork.NodePortRange) == 0 {
+		obj.ClusterNetwork.NodePortRange = DefaultNodePortRange
+	}
 }
 
 func SetDefaults_MachineController(obj *KubeOneCluster) {
