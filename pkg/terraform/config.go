@@ -117,11 +117,8 @@ func NewConfigFromJSON(j []byte) (c *Config, err error) {
 // cluster config.
 func (c *Config) Apply(cluster *kubeonev1alpha1.KubeOneCluster) error {
 	if c.KubeOneAPI.Value.Endpoint != "" {
-		// TODO(xmudrii): Support more than one API endpoint
-		cluster.APIEndpoints = []kubeonev1alpha1.APIEndpoint{
-			{
-				Host: c.KubeOneAPI.Value.Endpoint,
-			},
+		cluster.APIEndpoint = kubeonev1alpha1.APIEndpoint{
+			Host: c.KubeOneAPI.Value.Endpoint,
 		}
 	}
 

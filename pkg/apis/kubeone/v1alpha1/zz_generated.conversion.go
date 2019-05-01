@@ -358,7 +358,9 @@ func Convert_kubeone_HostConfig_To_v1alpha1_HostConfig(in *kubeone.HostConfig, o
 func autoConvert_v1alpha1_KubeOneCluster_To_kubeone_KubeOneCluster(in *KubeOneCluster, out *kubeone.KubeOneCluster, s conversion.Scope) error {
 	out.Name = in.Name
 	out.Hosts = *(*[]kubeone.HostConfig)(unsafe.Pointer(&in.Hosts))
-	out.APIEndpoints = *(*[]kubeone.APIEndpoint)(unsafe.Pointer(&in.APIEndpoints))
+	if err := Convert_v1alpha1_APIEndpoint_To_kubeone_APIEndpoint(&in.APIEndpoint, &out.APIEndpoint, s); err != nil {
+		return err
+	}
 	if err := Convert_v1alpha1_CloudProviderSpec_To_kubeone_CloudProviderSpec(&in.CloudProvider, &out.CloudProvider, s); err != nil {
 		return err
 	}
@@ -388,7 +390,9 @@ func Convert_v1alpha1_KubeOneCluster_To_kubeone_KubeOneCluster(in *KubeOneCluste
 func autoConvert_kubeone_KubeOneCluster_To_v1alpha1_KubeOneCluster(in *kubeone.KubeOneCluster, out *KubeOneCluster, s conversion.Scope) error {
 	out.Name = in.Name
 	out.Hosts = *(*[]HostConfig)(unsafe.Pointer(&in.Hosts))
-	out.APIEndpoints = *(*[]APIEndpoint)(unsafe.Pointer(&in.APIEndpoints))
+	if err := Convert_kubeone_APIEndpoint_To_v1alpha1_APIEndpoint(&in.APIEndpoint, &out.APIEndpoint, s); err != nil {
+		return err
+	}
 	if err := Convert_kubeone_CloudProviderSpec_To_v1alpha1_CloudProviderSpec(&in.CloudProvider, &out.CloudProvider, s); err != nil {
 		return err
 	}

@@ -53,8 +53,7 @@ func NewConfig(ctx *util.Context, host kubeoneapi.HostConfig) ([]runtime.Object,
 		return nil, err
 	}
 
-	// TODO(xmudrii): Support more than one API endpoint
-	controlPlaneEndpoint := fmt.Sprintf("%s:%d", cluster.APIEndpoints[0].Host, cluster.APIEndpoints[0].Port)
+	controlPlaneEndpoint := fmt.Sprintf("%s:%d", cluster.APIEndpoint.Host, cluster.APIEndpoint.Port)
 	hostAdvertiseAddress := host.PrivateAddress
 	if hostAdvertiseAddress == "" {
 		hostAdvertiseAddress = host.PublicAddress
@@ -110,8 +109,7 @@ func NewConfig(ctx *util.Context, host kubeoneapi.HostConfig) ([]runtime.Object,
 				},
 				ExtraVolumes: []kubeadmv1beta1.HostPathMount{},
 			},
-			// TODO(xmudrii): Support more than one API endpoint
-			CertSANs: []string{strings.ToLower(cluster.APIEndpoints[0].Host)},
+			CertSANs: []string{strings.ToLower(cluster.APIEndpoint.Host)},
 		},
 		ControllerManager: kubeadmv1beta1.ControlPlaneComponent{
 			ExtraArgs:    map[string]string{},
