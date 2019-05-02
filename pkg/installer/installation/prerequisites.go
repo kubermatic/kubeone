@@ -90,8 +90,14 @@ func determineOS(ctx *util.Context) (string, error) {
 	return osID, err
 }
 
+const hostnameCommand = `
+fqdn=$(hostname -f)
+[ "$fqdn" = localhost ] && fqdn=$(hostname)
+echo "$fqdn"
+`
+
 func determineHostname(ctx *util.Context, _ kubeoneapi.HostConfig) (string, error) {
-	stdout, _, err := ctx.Runner.Run("hostname -f", nil)
+	stdout, _, err := ctx.Runner.Run(hostnameCommand, nil)
 
 	return stdout, err
 }

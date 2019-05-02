@@ -34,32 +34,37 @@ import (
 )
 
 const (
-	hetznerCCMVersion     = "v1.3.0"
-	hetznerSAName         = "cloud-controller-manager"
-	hetznerDeploymentName = "hcloud-cloud-controller-manager"
+	packetCCMVersion     = "v0.0.4"
+	packetSAName         = "cloud-controller-manager"
+	packetDeploymentName = "packet-cloud-controller-manager"
 )
 
-func ensureHetzner(ctx *util.Context) error {
+func ensurePacket(ctx *util.Context) error {
 	if ctx.DynamicClient == nil {
 		return errors.New("kubernetes client not initialized")
 	}
 
 	bgctx := context.Background()
 
-	sa := hetznerServiceAccount()
+	sa := packetServiceAccount()
 	if err := simpleCreateOrUpdate(bgctx, ctx.DynamicClient, sa); err != nil {
-		return errors.Wrap(err, "failed to ensure hetzner CCM ServiceAccount")
+		return errors.Wrap(err, "failed to ensure packet CCM ServiceAccount")
 	}
 
-	crb := hetznerClusterRoleBinding()
+	cr := packetClusterRole()
+	if err := simpleCreateOrUpdate(bgctx, ctx.DynamicClient, cr); err != nil {
+		return errors.Wrap(err, "failed to ensure packet CCM ClusterRole")
+	}
+
+	crb := packetClusterRoleBinding()
 	if err := simpleCreateOrUpdate(bgctx, ctx.DynamicClient, crb); err != nil {
-		return errors.Wrap(err, "failed to ensure hetzner CCM ClusterRoleBinding")
+		return errors.Wrap(err, "failed to ensure packet CCM ClusterRoleBinding")
 	}
 
-	dep := hetznerDeployment()
-	want, err := semver.NewConstraint("<= " + hetznerCCMVersion)
+	dep := packetDeployment()
+	want, err := semver.NewConstraint("<= " + packetCCMVersion)
 	if err != nil {
-		return errors.Wrap(err, "failed to parse hetzner CCM version constraint")
+		return errors.Wrap(err, "failed to parse packet CCM version constraint")
 	}
 
 	_, err = controllerutil.CreateOrUpdate(bgctx,
@@ -67,26 +72,83 @@ func ensureHetzner(ctx *util.Context) error {
 		dep,
 		mutateDeploymentWithVersionCheck(want))
 	if err != nil {
-		ctx.Logger.Warnf("unable to ensure hetzner CCM Deployment: %v, skipping", err)
+		ctx.Logger.Warnf("unable to ensure packet CCM Deployment: %v, skipping", err)
 	}
 
 	return nil
 }
 
-func hetznerServiceAccount() *corev1.ServiceAccount {
+func packetServiceAccount() *corev1.ServiceAccount {
 	return &corev1.ServiceAccount{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "v1",
 			Kind:       "ServiceAccount",
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      hetznerSAName,
+			Name:      packetSAName,
 			Namespace: metav1.NamespaceSystem,
 		},
 	}
 }
 
-func hetznerClusterRoleBinding() *rbacv1.ClusterRoleBinding {
+func packetClusterRole() *rbacv1.ClusterRole {
+	return &rbacv1.ClusterRole{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "rbac.authorization.k8s.io/v1",
+			Kind:       "ClusterRole",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "system:cloud-controller-manager",
+			Annotations: map[string]string{
+				"rbac.authorization.kubernetes.io/autoupdate": "true",
+			},
+		},
+		Rules: []rbacv1.PolicyRule{
+			{
+				APIGroups: []string{""},
+				Resources: []string{"events"},
+				Verbs:     []string{"create", "patch", "update"},
+			},
+			{
+				APIGroups: []string{""},
+				Resources: []string{"nodes"},
+				Verbs:     []string{"*"},
+			},
+			{
+				APIGroups: []string{""},
+				Resources: []string{"nodes/status"},
+				Verbs:     []string{"patch"},
+			},
+			{
+				APIGroups: []string{""},
+				Resources: []string{"services"},
+				Verbs:     []string{"list", "patch", "update", "watch"},
+			},
+			{
+				APIGroups: []string{""},
+				Resources: []string{"services/status"},
+				Verbs:     []string{"list", "patch", "update", "watch"},
+			},
+			{
+				APIGroups: []string{""},
+				Resources: []string{"serviceaccounts"},
+				Verbs:     []string{"create"},
+			},
+			{
+				APIGroups: []string{""},
+				Resources: []string{"persistentvolumes"},
+				Verbs:     []string{"get", "list", "update", "watch"},
+			},
+			{
+				APIGroups: []string{""},
+				Resources: []string{"endpoints"},
+				Verbs:     []string{"create", "get", "list", "watch", "update"},
+			},
+		},
+	}
+}
+
+func packetClusterRoleBinding() *rbacv1.ClusterRoleBinding {
 	return &rbacv1.ClusterRoleBinding{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "rbac.authorization.k8s.io/v1",
@@ -96,24 +158,23 @@ func hetznerClusterRoleBinding() *rbacv1.ClusterRoleBinding {
 			Name: "system:cloud-controller-manager",
 		},
 		RoleRef: rbacv1.RoleRef{
-			Name:     "cluster-admin",
-			Kind:     "ClusterRole",
 			APIGroup: rbacv1.GroupName,
+			Name:     "system:cloud-controller-manager",
+			Kind:     "ClusterRole",
 		},
 		Subjects: []rbacv1.Subject{
 			{
 				Kind:      "ServiceAccount",
-				Name:      hetznerSAName,
+				Name:      packetSAName,
 				Namespace: metav1.NamespaceSystem,
 			},
 		},
 	}
 }
 
-func hetznerDeployment() *appsv1.Deployment {
+func packetDeployment() *appsv1.Deployment {
 	var (
-		replicas  int32 = 1
-		revisions int32 = 2
+		replicas int32 = 1
 	)
 
 	return &appsv1.Deployment{
@@ -122,19 +183,18 @@ func hetznerDeployment() *appsv1.Deployment {
 			Kind:       "Deployment",
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      hetznerDeploymentName,
+			Name:      packetDeploymentName,
 			Namespace: metav1.NamespaceSystem,
+			Labels: map[string]string{
+				"app": "packet-cloud-controller-manager",
+			},
 		},
 		Spec: appsv1.DeploymentSpec{
-			Replicas:             &replicas,
-			RevisionHistoryLimit: &revisions,
+			Replicas: &replicas,
 			Selector: &metav1.LabelSelector{
 				MatchLabels: map[string]string{
-					"app": "hcloud-cloud-controller-manager",
+					"app": "packet-cloud-controller-manager",
 				},
-			},
-			Strategy: appsv1.DeploymentStrategy{
-				Type: appsv1.RecreateDeploymentStrategyType,
 			},
 			Template: corev1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
@@ -142,11 +202,11 @@ func hetznerDeployment() *appsv1.Deployment {
 						"scheduler.alpha.kubernetes.io/critical-pod": "",
 					},
 					Labels: map[string]string{
-						"app": "hcloud-cloud-controller-manager",
+						"app": "packet-cloud-controller-manager",
 					},
 				},
 				Spec: corev1.PodSpec{
-					ServiceAccountName: hetznerSAName,
+					ServiceAccountName: packetSAName,
 					Tolerations: []corev1.Toleration{
 						{
 							Key:      "node-role.kubernetes.io/master",
@@ -165,31 +225,34 @@ func hetznerDeployment() *appsv1.Deployment {
 					},
 					Containers: []corev1.Container{
 						{
-							Name:  "hcloud-cloud-controller-manager",
-							Image: "hetznercloud/hcloud-cloud-controller-manager:" + hetznerCCMVersion,
+							Name:  "packet-cloud-controller-manager",
+							Image: "packethost/packet-ccm:" + packetCCMVersion,
 							Command: []string{
-								"/bin/hcloud-cloud-controller-manager",
-								"--cloud-provider=hcloud",
+								"./packet-cloud-controller-manager",
+								"--cloud-provider=packet",
 								"--leader-elect=false",
-								"--allow-untagged-cloud",
+								"--allow-untagged-cloud=true",
 							},
 							Env: []corev1.EnvVar{
 								{
-									Name: "NODE_NAME",
-									ValueFrom: &corev1.EnvVarSource{
-										FieldRef: &corev1.ObjectFieldSelector{
-											FieldPath: "spec.nodeName",
-										},
-									},
-								},
-								{
-									Name: "HCLOUD_TOKEN",
+									Name: "PACKET_AUTH_TOKEN",
 									ValueFrom: &corev1.EnvVarSource{
 										SecretKeyRef: &corev1.SecretKeySelector{
 											LocalObjectReference: corev1.LocalObjectReference{
 												Name: credentials.SecretName,
 											},
-											Key: credentials.HetznerTokenKey,
+											Key: credentials.PacketAPIKey,
+										},
+									},
+								},
+								{
+									Name: "PACKET_PROJECT_ID",
+									ValueFrom: &corev1.EnvVarSource{
+										SecretKeyRef: &corev1.SecretKeySelector{
+											LocalObjectReference: corev1.LocalObjectReference{
+												Name: credentials.SecretName,
+											},
+											Key: credentials.PacketProjectID,
 										},
 									},
 								},

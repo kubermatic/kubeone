@@ -66,6 +66,7 @@ func ValidateCloudProviderSpec(p kubeone.CloudProviderSpec, fldPath *field.Path)
 		}
 	case kubeone.CloudProviderNameHetzner:
 	case kubeone.CloudProviderNameDigitalOcean:
+	case kubeone.CloudProviderNamePacket:
 	case kubeone.CloudProviderNameVSphere:
 	case kubeone.CloudProviderNameGCE:
 	case kubeone.CloudProviderNameNone:

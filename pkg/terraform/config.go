@@ -83,6 +83,12 @@ type hetznerWorkerConfig struct {
 	Location   string `json:"location"`
 }
 
+type packetWorkerConfig struct {
+	ProjectID    string   `json:"projectID"`
+	Facilities   []string `json:"facilities"`
+	InstanceType string   `json:"instanceType"`
+}
+
 // Config represents configuration in the terraform output format
 type Config struct {
 	KubeOneAPI struct {
@@ -201,6 +207,8 @@ func (c *Config) Apply(cluster *kubeonev1alpha1.KubeOneCluster) error {
 			err = c.updateOpenStackWorkerset(existingWorkerSet, workersetValue[0])
 		case kubeonev1alpha1.CloudProviderNameVSphere:
 			err = c.updateVSphereWorkerset(existingWorkerSet, workersetValue[0])
+		case kubeonev1alpha1.CloudProviderNamePacket:
+			err = c.updatePacketWorkerset(existingWorkerSet, workersetValue[0])
 		default:
 			return errors.Errorf("unknown provider %v", cluster.CloudProvider.Name)
 		}
@@ -343,6 +351,27 @@ func (c *Config) updateOpenStackWorkerset(workerset *kubeonev1alpha1.WorkerConfi
 		{key: "availabilityZone", value: openstackConfig.AvailabilityZone},
 		{key: "network", value: openstackConfig.Network},
 		{key: "subnet", value: openstackConfig.Subnet},
+	}
+
+	for _, flag := range flags {
+		if err := setWorkersetFlag(workerset, flag.key, flag.value); err != nil {
+			return errors.WithStack(err)
+		}
+	}
+
+	return nil
+}
+
+func (c *Config) updatePacketWorkerset(workerset *kubeonev1alpha1.WorkerConfig, cfg json.RawMessage) error {
+	var packetConfig packetWorkerConfig
+	if err := json.Unmarshal(cfg, &packetConfig); err != nil {
+		return err
+	}
+
+	flags := []cloudProviderFlags{
+		{key: "projectID", value: packetConfig.ProjectID},
+		{key: "facilities", value: packetConfig.Facilities},
+		{key: "instanceType", value: packetConfig.InstanceType},
 	}
 
 	for _, flag := range flags {

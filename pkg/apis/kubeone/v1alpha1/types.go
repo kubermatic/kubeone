@@ -83,12 +83,13 @@ type CloudProviderName string
 // CloudProviderName values
 const (
 	CloudProviderNameAWS          CloudProviderName = "aws"
-	CloudProviderNameOpenStack    CloudProviderName = "openstack"
-	CloudProviderNameHetzner      CloudProviderName = "hetzner"
 	CloudProviderNameDigitalOcean CloudProviderName = "digitalocean"
-	CloudProviderNameVSphere      CloudProviderName = "vsphere"
 	CloudProviderNameGCE          CloudProviderName = "gce"
+	CloudProviderNameHetzner      CloudProviderName = "hetzner"
 	CloudProviderNameNone         CloudProviderName = "none"
+	CloudProviderNameOpenStack    CloudProviderName = "openstack"
+	CloudProviderNamePacket       CloudProviderName = "packet"
+	CloudProviderNameVSphere      CloudProviderName = "vsphere"
 )
 
 // CloudProviderSpec describes the cloud provider that is running the machines

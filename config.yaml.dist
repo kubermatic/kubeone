@@ -37,9 +37,10 @@ cloudProvider:
   # * aws
   # * digitalocean
   # * hetzner
-  # * openstack
-  # * vsphere
   # * none
+  # * openstack
+  # * packet
+  # * vsphere
   name: ""
   # Set the kubelet flag '--cloud-provider=external' and deploy the external CCM for supported providers
   external: false
