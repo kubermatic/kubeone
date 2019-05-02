@@ -21,13 +21,13 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/ghodss/yaml"
+	"github.com/kubermatic/kubeone/pkg/apis/kubeone/v1alpha1"
+	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-
-	"github.com/kubermatic/kubeone/pkg/config"
+	yaml "gopkg.in/yaml.v2"
 )
 
 type migrateOptions struct {
@@ -74,8 +74,21 @@ func runMigrate(logger *logrus.Logger, migrateOptions *migrateOptions) error {
 		return errors.Wrap(err, "unable to migrate the provided configuration")
 	}
 
+	var buffer bytes.Buffer
+
+	err = yaml.NewEncoder(&buffer).Encode(newConfig)
+	if err != nil {
+		return errors.Wrap(err, "failed to encode new config as YAML")
+	}
+
+	config := v1alpha1.KubeOneCluster{}
+	err = yaml.Unmarshal(buffer.Bytes(), &config)
+	if err != nil {
+		return errors.Wrap(err, "failed to decode new config as YAML")
+	}
+
 	cfg := []interface{}{
-		newConfig,
+		config,
 	}
 
 	configYaml, err := kubernetesToYAML(cfg)

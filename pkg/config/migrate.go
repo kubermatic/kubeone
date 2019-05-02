@@ -17,165 +17,142 @@ limitations under the License.
 package config
 
 import (
-	"encoding/json"
-	"io/ioutil"
+	"fmt"
+	"net"
+	"os"
+	"strconv"
 
-	"github.com/ghodss/yaml"
+	"github.com/kubermatic/kubeone/pkg/yamled"
 	"github.com/pkg/errors"
-
-	"github.com/kubermatic/kubeone/pkg/apis/kubeone/v1alpha1"
-	kubeonev1alpha1 "github.com/kubermatic/kubeone/pkg/apis/kubeone/v1alpha1"
-
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	yaml "gopkg.in/yaml.v2"
 )
 
 // MigrateToKubeOneClusterAPI migrates the old API to the new KubeOneCluster API
-func MigrateToKubeOneClusterAPI(oldConfigPath string) (*kubeonev1alpha1.KubeOneCluster, error) {
+func MigrateToKubeOneClusterAPI(oldConfigPath string) (interface{}, error) {
 	oldConfig, err := loadClusterConfig(oldConfigPath)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to parse the old config")
 	}
 
-	// Initialize the KubeOneCluster structure
-	newConfig := &kubeonev1alpha1.KubeOneCluster{
-		TypeMeta: metav1.TypeMeta{
-			Kind:       "KubeOneCluster",
-			APIVersion: "v1alpha1",
-		},
-		Name: oldConfig.Name,
-	}
+	oldConfig.Set(yamled.Path{"apiVersion"}, "kubeone.io/v1alpha1")
+	oldConfig.Set(yamled.Path{"kind"}, "KubeOneCluster")
 
-	// Append hosts
-	newConfig.Hosts = []kubeonev1alpha1.HostConfig{}
-	for _, oldHost := range oldConfig.Hosts {
-		newHost := kubeonev1alpha1.HostConfig{
-			PublicAddress:     oldHost.PublicAddress,
-			PrivateAddress:    oldHost.PrivateAddress,
-			SSHPort:           oldHost.SSHPort,
-			SSHUsername:       oldHost.SSHUsername,
-			SSHPrivateKeyFile: oldHost.SSHPrivateKeyFile,
-			SSHAgentSocket:    oldHost.SSHAgentSocket,
+	// basic root-level renames
+	rename(oldConfig, yamled.Path{}, "apiserver", "apiEndpoints")
+	rename(oldConfig, yamled.Path{}, "provider", "cloudProvider")
+	rename(oldConfig, yamled.Path{}, "network", "clusterNetwork")
+	rename(oldConfig, yamled.Path{}, "machine_controller", "machineController")
+
+	// camel-casing host fields
+	hosts, exists := oldConfig.GetArray(yamled.Path{"hosts"})
+	if exists {
+		total := len(hosts)
+
+		for i := 0; i < total; i++ {
+			path := yamled.Path{"hosts", i}
+
+			rename(oldConfig, path, "public_address", "publicAddress")
+			rename(oldConfig, path, "private_address", "privateAddress")
+			rename(oldConfig, path, "ssh_port", "sshPort")
+			rename(oldConfig, path, "ssh_username", "sshUsername")
+			rename(oldConfig, path, "ssh_private_key_file", "sshPrivateKeyFile")
+			rename(oldConfig, path, "ssh_agent_socket", "sshAgentSocket")
 		}
-		newConfig.Hosts = append(newConfig.Hosts, newHost)
 	}
 
-	// Create the initial API endpoint from the old API server configuration
-	newConfig.APIEndpoints = []kubeonev1alpha1.APIEndpoint{
-		{
-			Host: oldConfig.APIServer.Address,
-		},
-	}
-
-	// Populate the cloud provider settings
-	newConfig.CloudProvider = kubeonev1alpha1.CloudProviderSpec{
-		Name:        kubeonev1alpha1.CloudProviderName(oldConfig.Provider.Name),
-		External:    oldConfig.Provider.External,
-		CloudConfig: oldConfig.Provider.CloudConfig,
-	}
-
-	// Populate the Kubernetes version
-	newConfig.Versions = kubeonev1alpha1.VersionConfig{
-		Kubernetes: oldConfig.Versions.Kubernetes,
-	}
-
-	// Populate the ClusterNetwork structure
-	newConfig.ClusterNetwork = kubeonev1alpha1.ClusterNetworkConfig{
-		PodSubnet:     oldConfig.Network.PodSubnetVal,
-		ServiceSubnet: oldConfig.Network.ServiceSubnetVal,
-		NodePortRange: oldConfig.Network.NodePortRangeVal,
-	}
-
-	// Populate the proxy configuration
-	newConfig.Proxy = kubeonev1alpha1.ProxyConfig{
-		HTTP:    oldConfig.Proxy.HTTPProxy,
-		HTTPS:   oldConfig.Proxy.HTTPSProxy,
-		NoProxy: oldConfig.Proxy.NoProxy,
-	}
-
-	// Populate the workers information
-	newConfig.Workers = []v1alpha1.WorkerConfig{}
-	for _, oldWorker := range oldConfig.Workers {
-		oldCloudProviderSpec, err := json.Marshal(oldWorker.Config.CloudProviderSpec)
+	// separating host and port for api endpoints
+	apiserver, exists := oldConfig.GetString(yamled.Path{"apiEndpoints", "address"})
+	if exists {
+		host, port, err := net.SplitHostPort(apiserver)
 		if err != nil {
-			return nil, errors.Errorf("unable to parse workers.Config.CloudProviderSpec for worker: %s: %v", oldWorker.Name, err)
-		}
-		oldOperatingSystemSpec, err := json.Marshal(oldWorker.Config.OperatingSystemSpec)
-		if err != nil {
-			return nil, errors.Errorf("unable to parse workers.Config.OperatingSystemSpec for worker: %s: %v", oldWorker.Name, err)
+			host = apiserver
+			port = "6443"
 		}
 
-		newWorker := kubeonev1alpha1.WorkerConfig{
-			Name:     oldWorker.Name,
-			Replicas: oldWorker.Replicas,
-			Config: v1alpha1.ProviderSpec{
-				CloudProviderSpec:   oldCloudProviderSpec,
-				Labels:              oldWorker.Config.Labels,
-				SSHPublicKeys:       oldWorker.Config.SSHPublicKeys,
-				OperatingSystem:     oldWorker.Config.OperatingSystem,
-				OperatingSystemSpec: oldOperatingSystemSpec,
-			},
-		}
-		newConfig.Workers = append(newConfig.Workers, newWorker)
-	}
+		oldConfig.Remove(yamled.Path{"apiEndpoints", "address"})
+		oldConfig.Set(yamled.Path{"apiEndpoints", "host"}, host)
 
-	// Populate the machine-controller configuration
-	var deployMachineController bool
-	if oldConfig.MachineController.Deploy == nil || (oldConfig.MachineController.Deploy != nil && *oldConfig.MachineController.Deploy) {
-		deployMachineController = true
-	} else {
-		deployMachineController = false
-	}
-	newConfig.MachineController = &kubeonev1alpha1.MachineControllerConfig{
-		Deploy:   deployMachineController,
-		Provider: kubeonev1alpha1.CloudProviderName(oldConfig.MachineController.Provider),
-	}
+		if port != "6443" {
+			p, err := strconv.Atoi(port)
+			if err != nil {
+				return yaml.MapSlice{}, fmt.Errorf("invalid port specified for API server: %s", port)
+			}
 
-	// Populate the features configuration
-	if oldConfig.Features.PodSecurityPolicy.Enable != nil {
-		newConfig.Features.PodSecurityPolicy = &v1alpha1.PodSecurityPolicy{
-			Enable: *oldConfig.Features.PodSecurityPolicy.Enable,
-		}
-	}
-	if oldConfig.Features.DynamicAuditLog.Enable != nil {
-		newConfig.Features.DynamicAuditLog = &v1alpha1.DynamicAuditLog{
-			Enable: *oldConfig.Features.DynamicAuditLog.Enable,
-		}
-	}
-	if oldConfig.Features.MetricsServer.Enable != nil {
-		newConfig.Features.MetricsServer = &v1alpha1.MetricsServer{
-			Enable: *oldConfig.Features.MetricsServer.Enable,
-		}
-	}
-	if oldConfig.Features.OpenIDConnect.Enable {
-		newConfig.Features.OpenIDConnect = &v1alpha1.OpenIDConnect{
-			Enable: *oldConfig.Features.MetricsServer.Enable,
-			Config: v1alpha1.OpenIDConnectConfig{
-				IssuerURL:      oldConfig.Features.OpenIDConnect.Config.IssuerURL,
-				ClientID:       oldConfig.Features.OpenIDConnect.Config.ClientID,
-				UsernameClaim:  oldConfig.Features.OpenIDConnect.Config.UsernameClaim,
-				UsernamePrefix: oldConfig.Features.OpenIDConnect.Config.UsernamePrefix,
-				GroupsClaim:    oldConfig.Features.OpenIDConnect.Config.GroupsClaim,
-				GroupsPrefix:   oldConfig.Features.OpenIDConnect.Config.GroupsPrefix,
-				RequiredClaim:  oldConfig.Features.OpenIDConnect.Config.RequiredClaim,
-				SigningAlgs:    oldConfig.Features.OpenIDConnect.Config.SigningAlgs,
-				CAFile:         oldConfig.Features.OpenIDConnect.Config.CAFile,
-			},
+			oldConfig.Set(yamled.Path{"apiEndpoints", "port"}, p)
 		}
 	}
 
-	return newConfig, nil
+	// camel-casing cloudConfig
+	rename(oldConfig, yamled.Path{"cloudProvider"}, "cloud_config", "cloudConfig")
+
+	// camel-casing clusterNetwork
+	path := yamled.Path{"clusterNetwork"}
+	rename(oldConfig, path, "pod_subnet", "podSubnet")
+	rename(oldConfig, path, "service_subnet", "serviceSubnet")
+	rename(oldConfig, path, "node_port_range", "nodePortRange")
+
+	// camel-casing proxy
+	path = yamled.Path{"proxy"}
+	rename(oldConfig, path, "http_proxy", "http")
+	rename(oldConfig, path, "https_proxy", "https")
+	rename(oldConfig, path, "no_proxy", "noProxy")
+
+	// move machine-controller credentials to root level
+	credentials, exists := oldConfig.Get(yamled.Path{"machineController", "credentials"})
+	if exists {
+		oldConfig.Remove(yamled.Path{"machineController", "credentials"})
+		oldConfig.Set(yamled.Path{"credentials"}, credentials)
+	}
+
+	// camel-casing features
+	path = yamled.Path{"features"}
+	rename(oldConfig, path, "pod_security_policy", "podSecurityPolicy")
+	rename(oldConfig, path, "dynamic_audit_log", "dynamicAuditLog")
+	rename(oldConfig, path, "metrics_server", "metricsServer")
+	rename(oldConfig, path, "openid_connect", "openidConnect")
+
+	// camel-casing openidConnect
+	path = yamled.Path{"features", "openidConnect", "config"}
+	rename(oldConfig, path, "issuer_url", "issuerUrl")
+	rename(oldConfig, path, "client_id", "clientId")
+	rename(oldConfig, path, "username_claim", "usernameClaim")
+	rename(oldConfig, path, "username_prefix", "usernamePrefix")
+	rename(oldConfig, path, "groups_claim", "groupsClaim")
+	rename(oldConfig, path, "groups_prefix", "groupsPrefix")
+	rename(oldConfig, path, "signing_algs", "signingAlgs")
+	rename(oldConfig, path, "required_claim", "requiredClaim")
+	rename(oldConfig, path, "ca_file", "caFile")
+
+	// rename workers.config to providerSpec
+	workers, exists := oldConfig.GetArray(yamled.Path{"workers"})
+	if exists {
+		total := len(workers)
+
+		for i := 0; i < total; i++ {
+			rename(oldConfig, yamled.Path{"workers", i}, "config", "providerSpec")
+		}
+	}
+
+	return oldConfig.Root(), nil
 }
 
-func loadClusterConfig(oldConfigPath string) (*Cluster, error) {
-	content, err := ioutil.ReadFile(oldConfigPath)
+func loadClusterConfig(oldConfigPath string) (*yamled.Document, error) {
+	f, err := os.Open(oldConfigPath)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to read file")
+		return nil, errors.Wrap(err, "failed to open file")
 	}
+	defer f.Close()
 
-	cluster := Cluster{}
-	if err := yaml.Unmarshal(content, &cluster); err != nil {
-		return nil, errors.Wrap(err, "failed to decode file as JSON")
+	return yamled.Load(f)
+}
+
+func rename(doc *yamled.Document, basePath yamled.Path, oldKey string, newKey string) {
+	oldPath := append(basePath, oldKey)
+	newPath := append(basePath, newKey)
+
+	data, exists := doc.Get(oldPath)
+	if exists {
+		doc.Remove(oldPath)
+		doc.Set(newPath, data)
 	}
-
-	return &cluster, nil
 }

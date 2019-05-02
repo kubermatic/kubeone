@@ -1,0 +1,6 @@
+foo: bar
+xyz:
+  foo: bar
+###
+foo: bar
+xyz: {}

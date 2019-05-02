@@ -1,0 +1,9 @@
+rootIntKey: 12
+rootStringKey: a string
+rootNullKey: null
+rootBoolKey: true
+###
+rootIntKey: 12
+rootStringKey: a string
+rootNullKey: new value
+rootBoolKey: true

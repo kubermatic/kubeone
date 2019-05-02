@@ -1,0 +1,9 @@
+items:
+- a
+- b
+- c
+###
+items:
+- a
+- new b
+- c
