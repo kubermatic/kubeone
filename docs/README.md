@@ -5,6 +5,7 @@
   * [DigitalOcean](quickstart-digitalocean.md)
   * [Google Compute Engine (GCE)](quickstart-gce.md)
   * [Hetnzer](quickstart-hetzner.md)
+  * [Packet](quickstart-packet.md)
   * [OpenStack](quickstart-openstack.md)
 * [Frequently Asked Questions](frequently_asked_questions.md)
 * [Backwards Compatibility Policy](backwards_compatibility_policy.md)
