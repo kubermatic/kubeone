@@ -29,6 +29,9 @@ In the following table you can find all configuration variables with support for
 | `OS_DOMAIN_NAME` | The name of the OpenStack domain |
 | `OS_TENANT_NAME` | The name of the OpenStack tenant |
 | | |
+| `PACKET_AUTH_TOKEN` | Packet auth token |
+| `PACKET_PROJECT_ID` | Packet project ID |
+| | |
 | `VSPHERE_ADDRESS` | The address of the vSphere instance |
 | `VSPHERE_USERNAME` | The username of the vSphere user |
 | `VSPHERE_PASSWORD` | The password of the vSphere user |
