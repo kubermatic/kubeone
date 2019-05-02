@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"strings"
 
+	kyaml "github.com/ghodss/yaml"
 	"github.com/kubermatic/kubeone/pkg/apis/kubeone/v1alpha1"
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/pkg/errors"
@@ -82,7 +83,7 @@ func runMigrate(logger *logrus.Logger, migrateOptions *migrateOptions) error {
 	}
 
 	config := v1alpha1.KubeOneCluster{}
-	err = yaml.Unmarshal(buffer.Bytes(), &config)
+	err = kyaml.Unmarshal(buffer.Bytes(), &config)
 	if err != nil {
 		return errors.Wrap(err, "failed to decode new config as YAML")
 	}
@@ -117,7 +118,7 @@ func kubernetesToYAML(data []interface{}) (string, error) {
 		if str, ok := item.(string); ok {
 			encodedItem = []byte(strings.TrimSpace(str))
 		} else {
-			encodedItem, err = yaml.Marshal(item)
+			encodedItem, err = kyaml.Marshal(item)
 		}
 
 		if err != nil {
