@@ -60,26 +60,27 @@ func MigrateToKubeOneClusterAPI(oldConfigPath string) (interface{}, error) {
 		}
 	}
 
-	// separating host and port for api endpoints
+	// separating host and port for api endpoints, turn it into an array
 	apiserver, exists := oldConfig.GetString(yamled.Path{"apiEndpoints", "address"})
 	if exists {
-		host, port, err := net.SplitHostPort(apiserver)
+		host, sport, err := net.SplitHostPort(apiserver)
 		if err != nil {
 			host = apiserver
-			port = "6443"
+			sport = "6443"
 		}
 
-		oldConfig.Remove(yamled.Path{"apiEndpoints", "address"})
-		oldConfig.Set(yamled.Path{"apiEndpoints", "host"}, host)
-
-		if port != "6443" {
-			p, err := strconv.Atoi(port)
-			if err != nil {
-				return yaml.MapSlice{}, fmt.Errorf("invalid port specified for API server: %s", port)
-			}
-
-			oldConfig.Set(yamled.Path{"apiEndpoints", "port"}, p)
+		port, err := strconv.Atoi(sport)
+		if err != nil {
+			return yaml.MapSlice{}, fmt.Errorf("invalid port specified for API server: %s", port)
 		}
+
+		oldConfig.Remove(yamled.Path{"apiEndpoints"})
+		oldConfig.Set(yamled.Path{"apiEndpoints"}, []map[string]interface{}{
+			map[string]interface{}{
+				"host": host,
+				"port": port,
+			},
+		})
 	}
 
 	// camel-casing cloudConfig
