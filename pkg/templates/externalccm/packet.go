@@ -22,7 +22,6 @@ import (
 	"github.com/Masterminds/semver"
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/util"
 	"github.com/kubermatic/kubeone/pkg/util/credentials"
 
@@ -166,7 +165,7 @@ func packetClusterRoleBinding() *rbacv1.ClusterRoleBinding {
 		Subjects: []rbacv1.Subject{
 			{
 				Kind:      "ServiceAccount",
-				Name:      digitaloceanSAName,
+				Name:      packetSAName,
 				Namespace: metav1.NamespaceSystem,
 			},
 		},
@@ -242,7 +241,7 @@ func packetDeployment() *appsv1.Deployment {
 											LocalObjectReference: corev1.LocalObjectReference{
 												Name: credentials.SecretName,
 											},
-											Key: config.PacketAPIKey,
+											Key: credentials.PacketAPIKey,
 										},
 									},
 								},
@@ -253,7 +252,7 @@ func packetDeployment() *appsv1.Deployment {
 											LocalObjectReference: corev1.LocalObjectReference{
 												Name: credentials.SecretName,
 											},
-											Key: config.PacketProjectID,
+											Key: credentials.PacketProjectID,
 										},
 									},
 								},
@@ -262,10 +261,6 @@ func packetDeployment() *appsv1.Deployment {
 								Requests: corev1.ResourceList{
 									corev1.ResourceCPU:    resource.MustParse("100m"),
 									corev1.ResourceMemory: resource.MustParse("50Mi"),
-								},
-								Limits: corev1.ResourceList{
-									corev1.ResourceCPU:    resource.MustParse("100m"),
-									corev1.ResourceMemory: resource.MustParse("200Mi"),
 								},
 							},
 						},

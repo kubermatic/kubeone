@@ -64,7 +64,7 @@ func ensureDigitalOcean(ctx *util.Context) error {
 	dep := doDeployment()
 	want, err := semver.NewConstraint("<= " + digitaloceanCCMVersion)
 	if err != nil {
-		return errors.Wrap(err, "failed to parse digital CCM version constraint")
+		return errors.Wrap(err, "failed to parse digitalocean CCM version constraint")
 	}
 
 	_, err = controllerutil.CreateOrUpdate(bgctx,

@@ -31,7 +31,12 @@ func joinControlplaneNode(ctx *util.Context) error {
 }
 
 func joinControlPlaneNodeInternal(ctx *util.Context, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
-	time.Sleep(30 * time.Second)
+	sleepTime := 30 * time.Second
+
+	logger := ctx.Logger.WithField("node", node.PublicAddress)
+	logger.Infof("Waiting %s to ensure main control plane components are up…", sleepTime)
+	time.Sleep(sleepTime)
+
 	_, _, err := ctx.Runner.Run(`
 if [[ -f /etc/kubernetes/kubelet.conf ]]; then exit 0; fi
 

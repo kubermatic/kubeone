@@ -118,6 +118,10 @@ func NewConfig(ctx *util.Context, host kubeoneapi.HostConfig) ([]runtime.Object,
 		ClusterName: cluster.Name,
 	}
 
+	// TODO(kron4eg): figure out working way to provide `bind-address` to
+	// apiservers as currently following line always renders only first node IP
+	// which is incorrent and leads to broken apiservers on non-1st CP nodes
+	//
 	// clusterConfig.APIServer.ExtraArgs["bind-address"] = hostAdvertiseAddress
 
 	if cluster.CloudProvider.CloudProviderInTree() {
