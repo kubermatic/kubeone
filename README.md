@@ -26,7 +26,7 @@ upgrade to the v0.6.0 or newer as soon as possible.
 
 ## KubeOne in Action
 
-TBD
+[![KubeOne Demo asciicast](https://asciinema.org/a/244104.svg)](https://asciinema.org/a/244104)
 
 ## Features
 
