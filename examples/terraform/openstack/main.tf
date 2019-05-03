@@ -16,6 +16,11 @@ limitations under the License.
 
 provider "openstack" {}
 
+data "openstack_networking_network_v2" "external_network" {
+  name     = "${var.external_network_name}"
+  external = true
+}
+
 resource "openstack_compute_keypair_v2" "deployer" {
   name       = "${var.cluster_name}-deployer-key"
   public_key = "${file("${var.ssh_public_key_file}")}"
@@ -70,7 +75,7 @@ resource "openstack_networking_secgroup_rule_v2" "secgroup_ssh" {
 }
 
 resource "openstack_networking_secgroup_rule_v2" "secgroup_apiserver" {
-  description       = "Allow SSH"
+  description       = "Allow kube-apiserver"
   direction         = "ingress"
   ethertype         = "IPv4"
   protocol          = "tcp"
@@ -83,7 +88,7 @@ resource "openstack_networking_secgroup_rule_v2" "secgroup_apiserver" {
 resource "openstack_compute_instance_v2" "control_plane" {
   count = "${var.control_plane_count}"
 
-  name            = "${var.cluster_name}-cluster-${count.index}"
+  name            = "${var.cluster_name}-cp-${count.index}"
   image_name      = "${var.image}"
   flavor_name     = "${var.control_plane_flavor}"
   key_pair        = "${openstack_compute_keypair_v2.deployer.name}"
@@ -94,11 +99,43 @@ resource "openstack_compute_instance_v2" "control_plane" {
   }
 }
 
-resource "openstack_networking_port_v2" "control_plane" {
-  count          = 3
-  name           = "${var.cluster_name}-cluster-${count.index}"
-  admin_state_up = "true"
+resource "openstack_compute_instance_v2" "lb" {
+  name            = "${var.cluster_name}-lb"
+  image_name      = "${var.image}"
+  flavor_name     = "${var.lb_flavor}"
+  key_pair        = "${openstack_compute_keypair_v2.deployer.name}"
+  security_groups = ["${openstack_networking_secgroup_v2.securitygroup.name}"]
 
+  network {
+    port = "${openstack_networking_port_v2.lb.id}"
+  }
+
+  connection {
+    host = "${openstack_networking_floatingip_v2.lb.address}"
+    user = "${var.ssh_username}"
+  }
+
+  provisioner "remote-exec" {
+    script = "gobetween.sh"
+  }
+}
+
+resource "openstack_networking_port_v2" "control_plane" {
+  count = "${var.control_plane_count}"
+
+  name               = "${var.cluster_name}-control_plane-${count.index}"
+  admin_state_up     = "true"
+  network_id         = "${openstack_networking_network_v2.network.id}"
+  security_group_ids = ["${openstack_networking_secgroup_v2.securitygroup.id}"]
+
+  fixed_ip = {
+    subnet_id = "${openstack_networking_subnet_v2.subnet.id}"
+  }
+}
+
+resource "openstack_networking_port_v2" "lb" {
+  name               = "${var.cluster_name}-lb"
+  admin_state_up     = "true"
   network_id         = "${openstack_networking_network_v2.network.id}"
   security_group_ids = ["${openstack_networking_secgroup_v2.securitygroup.id}"]
 
@@ -112,54 +149,52 @@ resource "openstack_networking_floatingip_v2" "control_plane" {
   pool  = "${var.external_network_name}"
 }
 
-resource "openstack_networking_floatingip_associate_v2" "control_plane" {
-  count       = 3
-  floating_ip = "${element(openstack_networking_floatingip_v2.control_plane.*.address, count.index)}"
-  port_id     = "${element(openstack_networking_port_v2.control_plane.*.id, count.index)}"
-}
-
-resource "openstack_lb_loadbalancer_v2" "loadbalancer" {
-  name               = "${var.cluster_name}-cluster"
-  vip_subnet_id      = "${openstack_networking_subnet_v2.subnet.id}"
-  security_group_ids = ["${openstack_networking_secgroup_v2.securitygroup.id}"]
-}
-
-resource "openstack_lb_listener_v2" "listener" {
-  name            = "${var.cluster_name}-cluster"
-  protocol        = "TCP"
-  protocol_port   = 6443
-  loadbalancer_id = "${openstack_lb_loadbalancer_v2.loadbalancer.id}"
-}
-
-resource "openstack_lb_member_v2" "member_1" {
-  count         = 3
-  address       = "${element(openstack_compute_instance_v2.control_plane.*.network.0.fixed_ip_v4, count.index)}"
-  protocol_port = 6443
-  pool_id       = "${openstack_lb_pool_v2.pool.id}"
-  subnet_id     = "${openstack_networking_subnet_v2.subnet.id}"
-}
-
-resource "openstack_lb_pool_v2" "pool" {
-  name        = "${var.cluster_name}-cluster"
-  protocol    = "TCP"
-  lb_method   = "ROUND_ROBIN"
-  listener_id = "${openstack_lb_listener_v2.listener.id}"
-}
-
-resource "openstack_lb_monitor_v2" "monitor" {
-  name        = "${var.cluster_name}-cluster"
-  pool_id     = "${openstack_lb_pool_v2.pool.id}"
-  type        = "TCP"
-  delay       = 10
-  timeout     = 2
-  max_retries = 2
-}
-
 resource "openstack_networking_floatingip_v2" "lb" {
   pool = "${var.external_network_name}"
 }
 
+resource "openstack_networking_floatingip_associate_v2" "control_plane" {
+  count = "${var.control_plane_count}"
+
+  floating_ip = "${element(openstack_networking_floatingip_v2.control_plane.*.address, count.index)}"
+  port_id     = "${element(openstack_networking_port_v2.control_plane.*.id, count.index)}"
+}
+
 resource "openstack_networking_floatingip_associate_v2" "lb" {
   floating_ip = "${openstack_networking_floatingip_v2.lb.address}"
-  port_id     = "${openstack_lb_loadbalancer_v2.loadbalancer.vip_port_id}"
+  port_id     = "${openstack_networking_port_v2.lb.id}"
+}
+
+data "template_file" "lbconfig" {
+  template = "${file("etc_gobetween.tpl")}"
+
+  vars = {
+    lb_target1 = "${openstack_compute_instance_v2.control_plane.0.access_ip_v4}"
+    lb_target2 = "${openstack_compute_instance_v2.control_plane.1.access_ip_v4}"
+    lb_target3 = "${openstack_compute_instance_v2.control_plane.2.access_ip_v4}"
+  }
+}
+
+resource "null_resource" "lb_config" {
+  triggers = {
+    cluster_instance_ids = "${join(",", openstack_compute_instance_v2.control_plane.*.id)}"
+    config               = "${data.template_file.lbconfig.rendered}"
+  }
+
+  connection {
+    host = "${openstack_networking_floatingip_v2.lb.address}"
+    user = "${var.ssh_username}"
+  }
+
+  provisioner "file" {
+    content     = "${data.template_file.lbconfig.rendered}"
+    destination = "/tmp/gobetween.toml"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo mv /tmp/gobetween.toml /etc/gobetween.toml",
+      "sudo systemctl restart gobetween",
+    ]
+  }
 }
