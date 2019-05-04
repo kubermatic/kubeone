@@ -1,9 +1,10 @@
-```
-$ terraform init
-$ terraform plan
-$ terraform apply
-$ terraform output -json > tf.json
-```
+# AWS Quickstart Terraform scripts
+
+The AWS Quickstart Terraform scripts can be used to create the needed infrastructure for a Kubernetes HA cluster.
+Check out the following [AWS getting started walkthrough][aws-quickstart] to learn more about how to use the
+scripts and how to provision a Kubernetes cluster using KubeOne.
+
+[aws-quickstart]: https://github.com/kubermatic/kubeone/blob/master/docs/quickstart-aws.md
 
 ## Inputs
 

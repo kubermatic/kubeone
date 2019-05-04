@@ -1,3 +1,11 @@
+# Hetzner Quickstart Terraform scripts
+
+The Hetzner Quickstart Terraform scripts can be used to create the needed infrastructure for a Kubernetes HA cluster.
+Check out the following [Hetzner getting started walkthrough][hetzner-quickstart] to learn more about how to use the
+scripts and how to provision a Kubernetes cluster using KubeOne.
+
+[hetzner-quickstart]: https://github.com/kubermatic/kubeone/blob/master/docs/quickstart-hetzner.md
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
@@ -16,4 +24,3 @@
 |------|-------------|
 | kubeone\_hosts |  |
 | kubeone\_workers |  |
-

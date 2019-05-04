@@ -1,3 +1,8 @@
+# AWS with Private VPC Quickstart Terraform scripts
+
+:warning: **Experimental: The following setup is experimental and can't be used with KubeOne out-of-box.
+Follow the [issue #337](https://github.com/kubermatic/kubeone/issues/337) for more details about progress.** :warning:
+
 ## Assumptions
 
 * VPC (default or custom) with attached internet gateway exists
