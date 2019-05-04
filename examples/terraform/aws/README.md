@@ -4,6 +4,8 @@ The AWS Quickstart Terraform scripts can be used to create the needed infrastruc
 Check out the following [AWS getting started walkthrough][aws-quickstart] to learn more about how to use the
 scripts and how to provision a Kubernetes cluster using KubeOne.
 
+[aws-quickstart]: https://github.com/kubermatic/kubeone/blob/master/docs/quickstart-aws.md
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
@@ -27,5 +29,3 @@ scripts and how to provision a Kubernetes cluster using KubeOne.
 | kubeone\_api |  |
 | kubeone\_hosts |  |
 | kubeone\_workers |  |
-
-[aws-quickstart]: https://github.com/kubermatic/kubeone/blob/master/docs/quickstart-aws.md

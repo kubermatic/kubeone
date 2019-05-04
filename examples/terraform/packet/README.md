@@ -4,6 +4,8 @@ The Packet Quickstart Terraform scripts can be used to create the needed infrast
 Check out the following [Packet getting started walkthrough][packet-quickstart] to learn more about how to use the
 scripts and how to provision a Kubernetes cluster using KubeOne.
 
+[packet-quickstart]: https://github.com/kubermatic/kubeone/blob/master/docs/quickstart-packet.md
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
@@ -28,5 +30,3 @@ scripts and how to provision a Kubernetes cluster using KubeOne.
 | kubeone\_api |  |
 | kubeone\_hosts |  |
 | kubeone\_workers |  |
-
-[packet-quickstart]: https://github.com/kubermatic/kubeone/blob/master/docs/quickstart-packet.md

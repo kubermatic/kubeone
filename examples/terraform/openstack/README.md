@@ -4,6 +4,8 @@ The OpenStack Quickstart Terraform scripts can be used to create the needed infr
 Check out the following [OpenStack getting started walkthrough][os-quickstart] to learn more about how to use the
 scripts and how to provision a Kubernetes cluster using KubeOne.
 
+[os-quickstart]: https://github.com/kubermatic/kubeone/blob/master/docs/quickstart-openstack.md
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
@@ -30,5 +32,3 @@ scripts and how to provision a Kubernetes cluster using KubeOne.
 | kubeone\_api |  |
 | kubeone\_hosts |  |
 | kubeone\_workers |  |
-
-[os-quickstart]: https://github.com/kubermatic/kubeone/blob/master/docs/quickstart-openstack.md

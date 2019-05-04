@@ -4,6 +4,8 @@ The DigitalOcean Quickstart Terraform scripts can be used to create the needed i
 Check out the following [DigitalOcean getting started walkthrough][do-quickstart] to learn more about how to use the
 scripts and how to provision a Kubernetes cluster using KubeOne.
 
+[do-quickstart]: https://github.com/kubermatic/kubeone/blob/master/docs/quickstart-digitalocean.md
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
@@ -29,5 +31,3 @@ scripts and how to provision a Kubernetes cluster using KubeOne.
 | kubeone\_api |  |
 | kubeone\_hosts |  |
 | kubeone\_workers |  |
-
-[do-quickstart]: https://github.com/kubermatic/kubeone/blob/master/docs/quickstart-digitalocean.md
