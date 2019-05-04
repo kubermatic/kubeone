@@ -41,7 +41,8 @@ kubeone install --tfjson tf.json config.yaml
 | control\_plane\_count | Number of instances | string | `"3"` | no |
 | control\_plane\_flavor | OpenStack instance flavor for the control plane nodes | string | `"m1.small"` | no |
 | external\_network\_name | OpenStack external network name | string | n/a | yes |
-| image | OpenStack image for the control plane nodes | string | `"Ubuntu 18.04 LTS"` | no |
+| image | image name to use | string | `"Ubuntu 18.04"` | no |
+| lb\_flavor | OpenStack instance flavor for the LoadBalancer node | string | `"m1.micro"` | no |
 | ssh\_agent\_socket | SSH Agent socket, default to grab from $SSH_AUTH_SOCK | string | `"env:SSH_AUTH_SOCK"` | no |
 | ssh\_port | SSH port | string | `"22"` | no |
 | ssh\_private\_key\_file | SSH private key file, only specify in absence of SSH agent | string | `""` | no |

@@ -53,14 +53,19 @@ variable "control_plane_flavor" {
   description = "OpenStack instance flavor for the control plane nodes"
 }
 
-variable "image" {
-  default     = "Ubuntu 18.04 LTS"
-  description = "OpenStack image for the control plane nodes"
-}
-
 variable "worker_flavor" {
   default     = "m1.small"
   description = "OpenStack instance flavor for the worker nodes"
+}
+
+variable "lb_flavor" {
+  default     = "m1.micro"
+  description = "OpenStack instance flavor for the LoadBalancer node"
+}
+
+variable "image" {
+  default = "Ubuntu 18.04"
+  description = "image name to use"
 }
 
 variable "subnet_cidr" {

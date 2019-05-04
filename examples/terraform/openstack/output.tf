@@ -37,15 +37,19 @@ output "kubeone_hosts" {
 
 output "kubeone_workers" {
   value = {
-    nodes1 = {
-      image            = "${var.image}"
-      instanceProfile  = "${var.worker_flavor}"
-      securityGroupIDs = ["${openstack_networking_secgroup_v2.securitygroup.id}"]
-      floatingIPPool   = "${var.external_network_name}"
-      network          = "${openstack_networking_network_v2.network.name}"
-      subnet           = "${openstack_networking_subnet_v2.subnet.name}"
-      operatingSystem  = "ubuntu"
-      replicas         = 1
+    pool1 = {
+      image           = "${var.image}"
+      flavor          = "${var.worker_flavor}"
+      securityGroups  = ["${openstack_networking_secgroup_v2.securitygroup.name}"]
+      floatingIPPool  = "${var.external_network_name}"
+      network         = "${openstack_networking_network_v2.network.name}"
+      subnet          = "${openstack_networking_subnet_v2.subnet.name}"
+      operatingSystem = "ubuntu"
+      replicas        = 1
+
+      operatingSystemSpec = {
+        distUpgradeOnBoot = true
+      }
     }
   }
 }
