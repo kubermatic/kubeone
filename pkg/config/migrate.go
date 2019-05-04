@@ -22,12 +22,13 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/kubermatic/kubeone/pkg/yamled"
 	"github.com/pkg/errors"
 	yaml "gopkg.in/yaml.v2"
+
+	"github.com/kubermatic/kubeone/pkg/yamled"
 )
 
-// MigrateToKubeOneClusterAPI migrates the old API to the new KubeOneCluster API
+// MigrateToKubeOneClusterAPI migrates the old API manifest to the new KubeOneCluster API
 func MigrateToKubeOneClusterAPI(oldConfigPath string) (interface{}, error) {
 	oldConfig, err := loadClusterConfig(oldConfigPath)
 	if err != nil {
@@ -38,7 +39,7 @@ func MigrateToKubeOneClusterAPI(oldConfigPath string) (interface{}, error) {
 	oldConfig.Set(yamled.Path{"kind"}, "KubeOneCluster")
 
 	// basic root-level renames
-	rename(oldConfig, yamled.Path{}, "apiserver", "apiEndpoints")
+	rename(oldConfig, yamled.Path{}, "apiserver", "apiEndpoint")
 	rename(oldConfig, yamled.Path{}, "provider", "cloudProvider")
 	rename(oldConfig, yamled.Path{}, "network", "clusterNetwork")
 	rename(oldConfig, yamled.Path{}, "machine_controller", "machineController")
@@ -61,7 +62,7 @@ func MigrateToKubeOneClusterAPI(oldConfigPath string) (interface{}, error) {
 	}
 
 	// separating host and port for api endpoints, turn it into an array
-	apiserver, exists := oldConfig.GetString(yamled.Path{"apiEndpoints", "address"})
+	apiserver, exists := oldConfig.GetString(yamled.Path{"apiEndpoint", "address"})
 	if exists {
 		host, sport, err := net.SplitHostPort(apiserver)
 		if err != nil {
@@ -71,16 +72,12 @@ func MigrateToKubeOneClusterAPI(oldConfigPath string) (interface{}, error) {
 
 		port, err := strconv.Atoi(sport)
 		if err != nil {
-			return yaml.MapSlice{}, fmt.Errorf("invalid port specified for API server: %s", port)
+			return yaml.MapSlice{}, fmt.Errorf("invalid port specified for API server: %d", port)
 		}
 
-		oldConfig.Remove(yamled.Path{"apiEndpoints"})
-		oldConfig.Set(yamled.Path{"apiEndpoints"}, []map[string]interface{}{
-			map[string]interface{}{
-				"host": host,
-				"port": port,
-			},
-		})
+		oldConfig.Remove(yamled.Path{"apiEndpoint"})
+		oldConfig.Set(yamled.Path{"apiEndpoint", "host"}, host)
+		oldConfig.Set(yamled.Path{"apiEndpoint", "port"}, port)
 	}
 
 	// camel-casing cloudConfig
@@ -137,6 +134,7 @@ func MigrateToKubeOneClusterAPI(oldConfigPath string) (interface{}, error) {
 	return oldConfig.Root(), nil
 }
 
+// loadClusterConfig takes path to the Cluster Config (old API) and returns yamled.Document
 func loadClusterConfig(oldConfigPath string) (*yamled.Document, error) {
 	f, err := os.Open(oldConfigPath)
 	if err != nil {
@@ -147,6 +145,7 @@ func loadClusterConfig(oldConfigPath string) (*yamled.Document, error) {
 	return yamled.Load(f)
 }
 
+// rename renames the YAML field
 func rename(doc *yamled.Document, basePath yamled.Path, oldKey string, newKey string) {
 	oldPath := append(basePath, oldKey)
 	newPath := append(basePath, newKey)
