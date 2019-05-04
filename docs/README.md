@@ -9,6 +9,7 @@
   * [OpenStack](quickstart-openstack.md)
 * [Frequently Asked Questions](frequently_asked_questions.md)
 * [Backwards Compatibility Policy](backwards_compatibility_policy.md)
+* [Migrating to the KubeOneCluster API](api_migration.md)
 * [Upgrading Kubernetes Cluster Using KubeOne](upgrading_cluster.md)
 * [Project Structure](project_structure.md)
 * [Environment variables used by KubeOne](environment_variables.md)
