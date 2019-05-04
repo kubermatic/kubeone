@@ -83,25 +83,6 @@ func removeKeyFromMapSlice(m yaml.MapSlice, key interface{}) yaml.MapSlice {
 	return m
 }
 
-func untypedSliceHas(haystack []interface{}, needle interface{}) bool {
-	for _, item := range haystack {
-		if item == needle {
-			return true
-		}
-	}
-
-	return false
-}
-
-func mapSliceKeys(m yaml.MapSlice) []interface{} {
-	keys := make([]interface{}, 0)
-	for _, item := range m {
-		keys = append(keys, item.Key)
-	}
-
-	return keys
-}
-
 func mapSliceGet(haystack yaml.MapSlice, key interface{}) (interface{}, bool) {
 	for _, item := range haystack {
 		if item.Key == key {

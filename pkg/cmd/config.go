@@ -45,7 +45,7 @@ func configCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 }
 
 // migrateCmd setups the migrate command
-func migrateCmd(rootFlags *pflag.FlagSet) *cobra.Command {
+func migrateCmd(_ *pflag.FlagSet) *cobra.Command {
 	mOpts := &migrateOptions{}
 	cmd := &cobra.Command{
 		Use:   "migrate <cluster-manifest>",
