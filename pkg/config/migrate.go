@@ -108,6 +108,17 @@ func MigrateToKubeOneClusterAPI(oldConfigPath string) (interface{}, error) {
 	rename(oldConfig, path, "dynamic_audit_log", "dynamicAuditLog")
 	rename(oldConfig, path, "metrics_server", "metricsServer")
 	rename(oldConfig, path, "openid_connect", "openidConnect")
+	// migrate v0.5.0 features api
+	enablePSP, exists := oldConfig.Get(yamled.Path{"features", "enable_pod_security_policy"})
+	if exists {
+		oldConfig.Remove(yamled.Path{"features", "enable_pod_security_policy"})
+		oldConfig.Set(yamled.Path{"features", "podSecurityPolicy", "enable"}, enablePSP)
+	}
+	enableDynamicAuditLog, exists := oldConfig.Get(yamled.Path{"features", "enable_dynamic_audit_log"})
+	if exists {
+		oldConfig.Remove(yamled.Path{"features", "enable_dynamic_audit_log"})
+		oldConfig.Set(yamled.Path{"features", "dynamicAuditLog", "enable"}, enableDynamicAuditLog)
+	}
 
 	// camel-casing openidConnect
 	path = yamled.Path{"features", "openidConnect", "config"}
