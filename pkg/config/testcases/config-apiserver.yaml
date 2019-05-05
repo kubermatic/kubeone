@@ -1,0 +1,7 @@
+name: demo
+versions:
+  kubernetes: '1.14.1'
+provider:
+  name: 'aws'
+apiserver:
+  address: 1.1.1.1

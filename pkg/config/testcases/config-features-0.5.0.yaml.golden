@@ -1,0 +1,12 @@
+name: demo
+versions:
+  kubernetes: 1.14.1
+features:
+  podSecurityPolicy:
+    enable: true
+  dynamicAuditLog:
+    enable: true
+apiVersion: kubeone.io/v1alpha1
+kind: KubeOneCluster
+cloudProvider:
+  name: aws

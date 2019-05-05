@@ -1,0 +1,24 @@
+name: demo
+versions:
+  kubernetes: '1.14.1'
+provider:
+  name: 'aws'
+features:
+  pod_security_policy:
+    enable: true
+  dynamic_audit_log:
+    enable: false
+  metrics_server:
+    enable: true
+  openid_connect:
+    enable: true
+    config:
+      issuer_url: ""
+      client_id: "kubernetes"
+      username_claim: "sub"
+      username_prefix: "oidc:"
+      groups_claim: "groups"
+      groups_prefix: "oidc:"
+      signing_algs: "RS256"
+      required_claim: ""
+      ca_file: ""
