@@ -18,15 +18,20 @@ package config
 
 import (
 	"bytes"
+	"flag"
 	"io/ioutil"
+	"path/filepath"
 	"testing"
 
 	yaml "gopkg.in/yaml.v2"
 
 	kubeonev1alpha1 "github.com/kubermatic/kubeone/pkg/apis/kubeone/v1alpha1"
+	"github.com/pmezard/go-difflib/difflib"
 
 	kyaml "sigs.k8s.io/yaml"
 )
+
+var update = flag.Bool("update", false, "update .golden files")
 
 func TestMigrateToKubeOneClusterAPI(t *testing.T) {
 	testcases := []struct {
@@ -70,7 +75,7 @@ func TestMigrateToKubeOneClusterAPI(t *testing.T) {
 	for _, tc := range testcases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			newConfigYAML, err := MigrateToKubeOneClusterAPI("testcases/" + tc.name + ".yaml")
+			newConfigYAML, err := MigrateToKubeOneClusterAPI(filepath.Join("testdata", tc.name+".yaml"))
 			if err != nil {
 				t.Errorf("error converting old config: %v", err)
 			}
@@ -89,17 +94,39 @@ func TestMigrateToKubeOneClusterAPI(t *testing.T) {
 				t.Errorf("failed to decode new config: %v", err)
 			}
 
-			// Read expected config from a .golden file
-			expectedConfigBytes, err := ioutil.ReadFile("testcases/" + tc.name + ".yaml.golden")
-			if err != nil {
-				t.Errorf("error reading golden file: %v", err)
-			}
-
-			// TODO(xmudrii): Can we use testify here?
-			// Compare new and expected configs
-			if !bytes.Equal(buffer.Bytes(), expectedConfigBytes) {
-				t.Error("mismatch between new and expected configs")
-			}
+			compareOutput(t, tc.name, buffer.Bytes(), *update)
 		})
+	}
+}
+
+func compareOutput(t *testing.T, name string, output []byte, update bool) {
+	golden, err := filepath.Abs(filepath.Join("testdata", name+".yaml.golden"))
+	if err != nil {
+		t.Fatalf("failed to get absolute path to goldan file: %v", err)
+	}
+	if update {
+		if err := ioutil.WriteFile(golden, output, 0644); err != nil {
+			t.Fatalf("failed to write updated fixture: %v", err)
+		}
+	}
+	expected, err := ioutil.ReadFile(golden)
+	if err != nil {
+		t.Fatalf("failed to read .golden file: %v", err)
+	}
+
+	diff := difflib.UnifiedDiff{
+		A:        difflib.SplitLines(string(expected)),
+		B:        difflib.SplitLines(string(output)),
+		FromFile: "Fixture",
+		ToFile:   "Current",
+		Context:  3,
+	}
+	diffStr, err := difflib.GetUnifiedDiffString(diff)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if diffStr != "" {
+		t.Errorf("got diff between expected and actual result: \n%s\n", diffStr)
 	}
 }
