@@ -17,6 +17,7 @@ limitations under the License.
 package cmd
 
 import (
+	"bytes"
 	"os"
 
 	"github.com/pkg/errors"
@@ -24,7 +25,10 @@ import (
 	"github.com/spf13/pflag"
 	yaml "gopkg.in/yaml.v2"
 
+	kubeonev1alpha1 "github.com/kubermatic/kubeone/pkg/apis/kubeone/v1alpha1"
 	"github.com/kubermatic/kubeone/pkg/config"
+
+	kyaml "sigs.k8s.io/yaml"
 )
 
 type migrateOptions struct {
@@ -71,12 +75,27 @@ The new manifest is printed on the standard output.
 
 // runMigrate migrates the pre-v0.6.0 KubeOne API manifest to the KubeOneCluster manifest used as of v0.6.0
 func runMigrate(migrateOptions *migrateOptions) error {
-	newConfig, err := config.MigrateToKubeOneClusterAPI(migrateOptions.Manifest)
+	// Convert old config yaml to new config yaml
+	newConfigYAML, err := config.MigrateToKubeOneClusterAPI(migrateOptions.Manifest)
 	if err != nil {
 		return errors.Wrap(err, "unable to migrate the provided configuration")
 	}
 
-	err = yaml.NewEncoder(os.Stdout).Encode(newConfig)
+	// Validate new config by unmarshaling
+	var buffer bytes.Buffer
+	err = yaml.NewEncoder(&buffer).Encode(newConfigYAML)
+	if err != nil {
+		return errors.Wrap(err, "failed to encode new config as YAML")
+	}
+
+	newConfig := &kubeonev1alpha1.KubeOneCluster{}
+	err = kyaml.UnmarshalStrict(buffer.Bytes(), &newConfig)
+	if err != nil {
+		return errors.Wrap(err, "failed to decode new config")
+	}
+
+	// Print new config yaml
+	err = yaml.NewEncoder(os.Stdout).Encode(newConfigYAML)
 	if err != nil {
 		return errors.Wrap(err, "failed to encode new config as YAML")
 	}
