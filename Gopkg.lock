@@ -653,6 +653,7 @@
     "sigs.k8s.io/cluster-api/pkg/client/clientset_generated/clientset/scheme",
     "sigs.k8s.io/controller-runtime/pkg/client",
     "sigs.k8s.io/controller-runtime/pkg/controller/controllerutil",
+    "sigs.k8s.io/yaml",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
