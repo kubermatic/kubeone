@@ -2,7 +2,7 @@
 
 In this quick start we're going to show how to get started with KubeOne on Hetzner. We'll cover how to create the needed infrastructure using our example Terraform scripts and then install Kubernetes. Finally, we're going to show how to destroy the cluster along with the infrastructure.
 
-As a result, you'll get Kubernetes 1.14.1 High-Available (HA) clusters with three control plane nodes and two worker nodes.
+As a result, you'll get Kubernetes 1.14.1 High-Available (HA) clusters with three control plane nodes and three worker nodes.
 
 ### Prerequisites
 
@@ -178,4 +178,4 @@ terraform destroy
 
 You'll be asked to enter `yes` to confirm your intention to destroy the cluster.
 
-Congratulations! You're now running Kubernetes 1.14.1 HA cluster with three control plane nodes and two worker nodes. If you want to learn more about KubeOne and its features, such as [upgrades](upgrading_cluster.md), make sure to check our [documentation](https://github.com/kubermatic/kubeone/tree/master/docs).
+Congratulations! You're now running Kubernetes 1.14.1 HA cluster with three control plane nodes and three worker nodes. If you want to learn more about KubeOne and its features, such as [upgrades](upgrading_cluster.md), make sure to check our [documentation](https://github.com/kubermatic/kubeone/tree/master/docs).
