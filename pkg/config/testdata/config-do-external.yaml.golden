@@ -1,0 +1,8 @@
+name: demo
+versions:
+  kubernetes: 1.14.1
+apiVersion: kubeone.io/v1alpha1
+kind: KubeOneCluster
+cloudProvider:
+  name: digitalocean
+  external: true

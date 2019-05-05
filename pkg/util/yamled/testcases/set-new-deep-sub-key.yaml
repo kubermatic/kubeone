@@ -1,0 +1,9 @@
+root:
+  sub: foo
+###
+root:
+  sub: foo
+  deep:
+    deeper:
+      reallyDeep:
+        newKey: foo

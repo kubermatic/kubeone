@@ -1,0 +1,18 @@
+name: demo
+versions:
+  kubernetes: '1.14.1'
+provider:
+  name: 'aws'
+workers:
+- name: fra1-a
+  replicas: 1
+  config:
+    labels:
+      mylabel: 'fra1-a'   
+    cloudProviderSpec:     
+      instanceType: 't3.medium'
+      diskSize: 50
+      diskType: 'gp2'
+    operatingSystem: 'ubuntu'
+    operatingSystemSpec:
+      distUpgradeOnBoot: true

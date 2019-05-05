@@ -1,0 +1,11 @@
+name: demo
+versions:
+  kubernetes: 1.14.1
+apiVersion: kubeone.io/v1alpha1
+kind: KubeOneCluster
+cloudProvider:
+  name: aws
+clusterNetwork:
+  podSubnet: 1.1.1.1/24
+  serviceSubnet: 1.1.1.1/24
+  nodePortRange: 30000-32767

@@ -1,0 +1,8 @@
+name: demo
+versions:
+  kubernetes: '1.14.1'
+provider:
+  name: 'aws'
+features:
+  enable_pod_security_policy: true
+  enable_dynamic_audit_log: true
