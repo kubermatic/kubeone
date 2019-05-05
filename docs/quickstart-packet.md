@@ -52,6 +52,12 @@ variable names in the output match variable names used by KubeOne.
 Alternatively, if you decide not to use Terraform, you can provide needed
 information about the infrastructure manually in the KubeOne configuration file.
 
+**Note:** As Packet doesn't have Load Balancers as a Service (LBaaS), the example
+Terraform scripts will create an instance for a Load Balancer and setup it using
+[GoBetween](https://github.com/yyyar/gobetween). This setup may not be appropriate
+for the production usage, but it allows us to provide better HA experience in an
+easy to consume manner.
+
 First, we need to switch to the directory with Terraform scripts:
 
 ```bash
