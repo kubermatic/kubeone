@@ -23,10 +23,10 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/pmezard/go-difflib/difflib"
 	yaml "gopkg.in/yaml.v2"
 
 	kubeonev1alpha1 "github.com/kubermatic/kubeone/pkg/apis/kubeone/v1alpha1"
-	"github.com/pmezard/go-difflib/difflib"
 
 	kyaml "sigs.k8s.io/yaml"
 )
@@ -105,7 +105,7 @@ func compareOutput(t *testing.T, name string, output []byte, update bool) {
 		t.Fatalf("failed to get absolute path to goldan file: %v", err)
 	}
 	if update {
-		if err := ioutil.WriteFile(golden, output, 0644); err != nil {
+		if writeErr := ioutil.WriteFile(golden, output, 0644); writeErr != nil {
 			t.Fatalf("failed to write updated fixture: %v", err)
 		}
 	}
