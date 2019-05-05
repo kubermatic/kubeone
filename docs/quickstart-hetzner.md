@@ -85,9 +85,7 @@ Now that you have infrastructure you can proceed with installing Kubernetes usin
 
 Before you start you'll need a configuration file that defines how Kubernetes will be installed, e.g. what version will be used and what features will be enabled. For the configuration file reference see [`config.yaml.dist`](https://github.com/kubermatic/kubeone/blob/master/config.yaml.dist).
 
-To get started you can use the following configuration. It'll install Kubernetes 1.14.1, create 2 worker nodes and deploy the [external cloud controller manager](https://github.com/hetznercloud/hcloud-cloud-controller-manager). The external cloud controller manager takes care of providing correct information about the nodes. As KubeOne is using [Kubermatic `machine-controller`](https://github.com/kubermatic/machine-controller) for creating worker nodes see [Hetzner example manifest](https://github.com/kubermatic/machine-controller/blob/master/examples/hetzner-machinedeployment.yaml) for available options.
-
-**Note:** The Terraform integration for populating information about worker nodes from the Terraform state is not available for Hetzner, so you have to provide all information explicitly.
+To get started you can use the following configuration. It'll install Kubernetes 1.14.1, create 3 worker nodes and deploy the [external cloud controller manager](https://github.com/hetznercloud/hcloud-cloud-controller-manager). The external cloud controller manager takes care of providing correct information about the nodes. KubeOne automatically populates all needed information about worker nodes from the [Terraform output](https://github.com/kubermatic/kubeone/blob/a874fd5913ca2a86c3b8136982c2a00e835c2f62/examples/terraform/hetzner/output.tf#L26-L36). Alternatively, you can set those information manually. As KubeOne is using [Kubermatic `machine-controller`](https://github.com/kubermatic/machine-controller) for creating worker nodes see [Hetzner example manifest](https://github.com/kubermatic/machine-controller/blob/master/examples/hetzner-machinedeployment.yaml) for available options.
 
 ```yaml
 name: demo
@@ -96,19 +94,6 @@ versions:
 cloudProvider:
   name: 'hetzner'
   external: true
-workers:
-- name: workers-1
-  replicas: 2
-  providerSpec:
-    labels:
-      mylabel: 'workers-1'
-    cloudProviderSpec:
-      serverType: "cx21"
-      datacenter: ""
-      location: "fsn1"
-    operatingSystem: 'ubuntu'
-    operatingSystemSpec:
-      distUpgradeOnBoot: true
 ```
 
 Finally, we're going to install Kubernetes by using the `install` command and providing the configuration file:
