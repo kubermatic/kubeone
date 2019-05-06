@@ -20,8 +20,6 @@ import (
 	"bytes"
 	"os"
 
-	"github.com/kubermatic/kubeone/pkg/util/yamled"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -30,6 +28,7 @@ import (
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	kubeonev1alpha1 "github.com/kubermatic/kubeone/pkg/apis/kubeone/v1alpha1"
 	"github.com/kubermatic/kubeone/pkg/config"
+	"github.com/kubermatic/kubeone/pkg/util/yamled"
 
 	kyaml "sigs.k8s.io/yaml"
 )
