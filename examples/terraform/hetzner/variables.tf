@@ -18,17 +18,16 @@ variable "cluster_name" {
   description = "prefix for cloud resources"
 }
 
-variable "control_plane_count" {
-  default     = 3
-  description = "Number of instances"
-}
-
 variable "control_plane_type" {
   default = "cx21"
 }
 
 variable "worker_type" {
   default = "cx21"
+}
+
+variable "lb_type" {
+  default = "cx11"
 }
 
 variable "datacenter" {
