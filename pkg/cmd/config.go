@@ -194,7 +194,9 @@ func runPrint(printOptions *printOptions) error {
 
 	// Hosts
 	if len(printOptions.Hosts) != 0 {
-		parseHosts(cfg, printOptions.Hosts)
+		if err := parseHosts(cfg, printOptions.Hosts); err != nil {
+			return errors.Wrap(err, "unable to parse provided hosts")
+		}
 	}
 
 	// API endpoint
