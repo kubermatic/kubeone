@@ -19,6 +19,8 @@ package cmd
 import (
 	"bytes"
 	"os"
+	"strconv"
+	"strings"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -46,11 +48,26 @@ type printOptions struct {
 	KubernetesVersion string
 	CloudProviderName string
 
-	DeployMachineController bool
+	Hosts string
+
+	APIEndpointHost string
+	APIEndpointPort int
+
+	PodSubnet     string
+	ServiceSubnet string
+	ServiceDNS    string
+	NodePortRange string
+
+	HTTPProxy  string
+	HTTPSProxy string
+	NoProxy    string
 
 	EnablePodSecurityPolicy bool
 	EnableDynamicAuditLog   bool
 	EnableMetricsServer     bool
+	EnableOpenIDConnect     bool
+
+	DeployMachineController bool
 }
 
 type migrateOptions struct {
@@ -83,21 +100,43 @@ For the full reference of the configuration manifest check the config.yaml.dist 
 https://github.com/kubermatic/kubeone/blob/master/config.yaml.dist
 `,
 		Args:    cobra.ExactArgs(0),
-		Example: `kubeone config print`,
+		Example: `kubeone config print --provider digitalocean --kubernetes-version 1.14.1 --cluster-name example`,
 		RunE: func(_ *cobra.Command, args []string) error {
 			return runPrint(pOpts)
 		},
 	}
 
+	// General
 	cmd.Flags().StringVarP(&pOpts.ClusterName, "cluster-name", "n", "", "cluster name")
 	cmd.Flags().StringVarP(&pOpts.KubernetesVersion, "kubernetes-version", "k", defaultKubernetesVersion, "Kubernetes version")
 	cmd.Flags().StringVarP(&pOpts.CloudProviderName, "provider", "p", defaultCloudProviderName, "cloud provider name (aws, digitalocean, gce, hetzner, packet, openstack, none)")
 
-	cmd.Flags().BoolVarP(&pOpts.DeployMachineController, "deploy-machine-controller", "", true, "deploy kubermatic machine-controller")
+	// Hosts
+	cmd.Flags().StringVarP(&pOpts.Hosts, "hosts", "", "", "hosts in format of comma-separated key:value list, example: publicAddress:192.168.0.100,privateAddress:192.168.1.100,sshUsername:ubuntu,sshPort:22. Use quoted string of space separated values for multiple hosts")
 
+	// API endpoint
+	cmd.Flags().StringVarP(&pOpts.APIEndpointHost, "api-endpoint-host", "", "", "API endpoint hostname or address")
+	cmd.Flags().IntVarP(&pOpts.APIEndpointPort, "api-endpoint-port", "", 0, "API endpoint port")
+
+	// Cluster networking
+	cmd.Flags().StringVarP(&pOpts.PodSubnet, "pod-subnet", "", "", "Subnet to be used for pods networking")
+	cmd.Flags().StringVarP(&pOpts.ServiceSubnet, "service-subnet", "", "", "Subnet to be used for Services")
+	cmd.Flags().StringVarP(&pOpts.ServiceDNS, "service-dns", "", "", "Domain name to be used for Services")
+	cmd.Flags().StringVarP(&pOpts.NodePortRange, "node-port-range", "", "", "Port range to be used for NodePort")
+
+	// Proxy
+	cmd.Flags().StringVarP(&pOpts.HTTPProxy, "proxy-http", "", "", "HTTP proxy to be used for provisioning and Docker")
+	cmd.Flags().StringVarP(&pOpts.HTTPSProxy, "proxy-https", "", "", "HTTPs proxy to be used for provisioning and Docker")
+	cmd.Flags().StringVarP(&pOpts.NoProxy, "proxy-no-proxy", "", "", "No Proxy to be used for provisioning and Docker")
+
+	// Features
 	cmd.Flags().BoolVarP(&pOpts.EnablePodSecurityPolicy, "enable-pod-security-policy", "", false, "enable PodSecurityPolicy")
 	cmd.Flags().BoolVarP(&pOpts.EnableDynamicAuditLog, "enable-dynamic-audit-log", "", false, "enable DynamicAuditLog")
 	cmd.Flags().BoolVarP(&pOpts.EnableMetricsServer, "enable-metrics-server", "", true, "enable metrics-server")
+	cmd.Flags().BoolVarP(&pOpts.EnableOpenIDConnect, "enable-openid-connect", "", false, "enable OpenID Connect authentication")
+
+	// MachineController
+	cmd.Flags().BoolVarP(&pOpts.DeployMachineController, "deploy-machine-controller", "", true, "deploy kubermatic machine-controller")
 
 	return cmd
 }
@@ -149,11 +188,46 @@ func runPrint(printOptions *printOptions) error {
 	switch p {
 	case kubeoneapi.CloudProviderNameDigitalOcean, kubeoneapi.CloudProviderNamePacket, kubeoneapi.CloudProviderNameHetzner:
 		cfg.Set(yamled.Path{"cloudProvider", "external"}, true)
+	case kubeoneapi.CloudProviderNameOpenStack:
+		cfg.Set(yamled.Path{"cloudProvider", "cloudConfig"}, "")
 	}
 
-	// machine-controller
-	if !printOptions.DeployMachineController {
-		cfg.Set(yamled.Path{"machineController", "deploy"}, printOptions.DeployMachineController)
+	// Hosts
+	if len(printOptions.Hosts) != 0 {
+		parseHosts(cfg, printOptions.Hosts)
+	}
+
+	// API endpoint
+	if len(printOptions.APIEndpointHost) != 0 {
+		cfg.Set(yamled.Path{"apiEndpoint", "host"}, printOptions.APIEndpointHost)
+	}
+	if printOptions.APIEndpointPort != 0 {
+		cfg.Set(yamled.Path{"apiEndpoint", "port"}, printOptions.APIEndpointPort)
+	}
+
+	// Cluster networking
+	if len(printOptions.PodSubnet) != 0 {
+		cfg.Set(yamled.Path{"clusterNetwork", "podSubnet"}, printOptions.PodSubnet)
+	}
+	if len(printOptions.ServiceSubnet) != 0 {
+		cfg.Set(yamled.Path{"clusterNetwork", "serviceSubnet"}, printOptions.ServiceSubnet)
+	}
+	if len(printOptions.ServiceDNS) != 0 {
+		cfg.Set(yamled.Path{"clusterNetwork", "serviceDomainName"}, printOptions.ServiceDNS)
+	}
+	if len(printOptions.NodePortRange) != 0 {
+		cfg.Set(yamled.Path{"clusterNetwork", "nodePortRange"}, printOptions.NodePortRange)
+	}
+
+	// Proxy
+	if len(printOptions.HTTPProxy) != 0 {
+		cfg.Set(yamled.Path{"proxy", "http"}, printOptions.HTTPProxy)
+	}
+	if len(printOptions.HTTPSProxy) != 0 {
+		cfg.Set(yamled.Path{"proxy", "https"}, printOptions.HTTPSProxy)
+	}
+	if len(printOptions.NoProxy) != 0 {
+		cfg.Set(yamled.Path{"proxy", "noProxy"}, printOptions.NoProxy)
 	}
 
 	// Features
@@ -166,11 +240,58 @@ func runPrint(printOptions *printOptions) error {
 	if !printOptions.EnableMetricsServer {
 		cfg.Set(yamled.Path{"features", "metricsServer", "enable"}, printOptions.EnableMetricsServer)
 	}
+	if printOptions.EnableOpenIDConnect {
+		cfg.Set(yamled.Path{"features", "openidConnect", "enable"}, printOptions.EnableOpenIDConnect)
+
+		cfg.Set(yamled.Path{"features", "openidConnect", "config", "issuerUrl"}, "")
+		cfg.Set(yamled.Path{"features", "openidConnect", "config", "clientId"}, "")
+		cfg.Set(yamled.Path{"features", "openidConnect", "config", "usernameClaim"}, "")
+		cfg.Set(yamled.Path{"features", "openidConnect", "config", "usernamePrefix"}, "")
+		cfg.Set(yamled.Path{"features", "openidConnect", "config", "groupsClaim"}, "")
+		cfg.Set(yamled.Path{"features", "openidConnect", "config", "groupsPrefix"}, "")
+		cfg.Set(yamled.Path{"features", "openidConnect", "config", "signingAlgs"}, "")
+		cfg.Set(yamled.Path{"features", "openidConnect", "config", "requiredClaim"}, "")
+		cfg.Set(yamled.Path{"features", "openidConnect", "config", "caFile"}, "")
+	}
+
+	// machine-controller
+	if !printOptions.DeployMachineController {
+		cfg.Set(yamled.Path{"machineController", "deploy"}, printOptions.DeployMachineController)
+	}
 
 	// Print the manifest
 	err := validateAndPrintConfig(cfg)
 	if err != nil {
 		return errors.Wrap(err, "unable to validate and print config")
+	}
+
+	return nil
+}
+
+func parseHosts(cfg *yamled.Document, hostList string) error {
+	hosts := strings.Split(hostList, " ")
+	for i, host := range hosts {
+		fields := strings.Split(host, ",")
+		h := make(map[string]interface{})
+
+		for _, field := range fields {
+			val := strings.Split(field, ":")
+			if len(val) != 2 {
+				return errors.New("incorrect format of host variable")
+			}
+
+			if val[0] == "sshPort" {
+				portInt, err := strconv.Atoi(val[1])
+				if err != nil {
+					return errors.Wrap(err, "unable to convert ssh port to integer")
+				}
+				h[val[0]] = portInt
+				continue
+			}
+			h[val[0]] = val[1]
+		}
+
+		cfg.Set(yamled.Path{"hosts", i}, h)
 	}
 
 	return nil
