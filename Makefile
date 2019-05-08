@@ -57,7 +57,6 @@ licence-check:
 
 .PHONY: check-dependencies
 check-dependencies:
-	dep status
 	dep check
 
 docker-make-install:
