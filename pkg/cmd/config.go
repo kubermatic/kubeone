@@ -21,14 +21,15 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"text/template"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	yaml "gopkg.in/yaml.v2"
 
-	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	kubeonev1alpha1 "github.com/kubermatic/kubeone/pkg/apis/kubeone/v1alpha1"
+	kubeonevalidation "github.com/kubermatic/kubeone/pkg/apis/kubeone/validation"
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"	
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/util/yamled"
 
@@ -44,9 +45,11 @@ const (
 
 type printOptions struct {
 	globalOptions
+	FullConfig bool
+
 	ClusterName       string
-	KubernetesVersion string
-	CloudProviderName string
+	KubernetesVersion string	
+	CloudProviderName string	
 
 	Hosts string
 
@@ -96,8 +99,7 @@ func printCmd(_ *pflag.FlagSet) *cobra.Command {
 		Short: "Print an example configuration manifest",
 		Long: `
 Print an example configuration manifest. Using the appropriate flags you can customize the configuration manifest.
-For the full reference of the configuration manifest check the config.yaml.dist manifest
-https://github.com/kubermatic/kubeone/blob/master/config.yaml.dist
+For the full reference of the configuration manifest, run the print command with --full flag.
 `,
 		Args:    cobra.ExactArgs(0),
 		Example: `kubeone config print --provider digitalocean --kubernetes-version 1.14.1 --cluster-name example`,
@@ -107,7 +109,9 @@ https://github.com/kubermatic/kubeone/blob/master/config.yaml.dist
 	}
 
 	// General
-	cmd.Flags().StringVarP(&pOpts.ClusterName, "cluster-name", "n", "", "cluster name")
+	cmd.Flags().BoolVarP(&pOpts.FullConfig, "full", "f", false, "show full manifest")
+
+	cmd.Flags().StringVarP(&pOpts.ClusterName, "cluster-name", "n", "demo-cluster", "cluster name")
 	cmd.Flags().StringVarP(&pOpts.KubernetesVersion, "kubernetes-version", "k", defaultKubernetesVersion, "Kubernetes version")
 	cmd.Flags().StringVarP(&pOpts.CloudProviderName, "provider", "p", defaultCloudProviderName, "cloud provider name (aws, digitalocean, gce, hetzner, packet, openstack, none)")
 
@@ -168,6 +172,29 @@ The new manifest is printed on the standard output.
 
 // runPrint prints an example configuration file
 func runPrint(printOptions *printOptions) error {
+	if printOptions.FullConfig {
+		tmpl, err := template.New("example-manifest").Parse(exampleManifest)
+		if err != nil {
+			return errors.Wrap(err, "unable to parse the example manifest template")
+		}
+
+		err = tmpl.Execute(os.Stdout, printOptions)
+		if err != nil {
+			return errors.Wrap(err, "unable to run the example manifest template")
+		}
+
+		return nil
+	} else {
+		err := createAndPrintManifest(printOptions)
+		if err != nil {
+			return errors.Wrap(err, "unable to create example manifest")
+		}
+
+		return nil
+	}	
+}
+
+func createAndPrintManifest(printOptions *printOptions) error {
 	cfg := &yamled.Document{}
 
 	// API data
@@ -189,9 +216,9 @@ func runPrint(printOptions *printOptions) error {
 	case kubeoneapi.CloudProviderNameDigitalOcean, kubeoneapi.CloudProviderNamePacket, kubeoneapi.CloudProviderNameHetzner:
 		cfg.Set(yamled.Path{"cloudProvider", "external"}, true)
 	case kubeoneapi.CloudProviderNameOpenStack:
-		cfg.Set(yamled.Path{"cloudProvider", "cloudConfig"}, "")
+		cfg.Set(yamled.Path{"cloudProvider", "cloudConfig"}, "<< cloudConfig is required for OpenStack >>")
 	}
-
+	
 	// Hosts
 	if len(printOptions.Hosts) != 0 {
 		if err := parseHosts(cfg, printOptions.Hosts); err != nil {
@@ -323,10 +350,16 @@ func validateAndPrintConfig(cfgYaml interface{}) error {
 		return errors.Wrap(err, "failed to encode new config as YAML")
 	}
 
-	cfg := &kubeonev1alpha1.KubeOneCluster{}
+	cfg := &kubeoneapi.KubeOneCluster{}
 	err = kyaml.UnmarshalStrict(buffer.Bytes(), &cfg)
 	if err != nil {
 		return errors.Wrap(err, "failed to decode new config")
+	}
+
+	// CloudProvider validation
+	errs := kubeonevalidation.ValidateCloudProviderSpec(cfg.CloudProvider, nil)
+	if len(errs) != 0 {
+		return errors.Errorf("unable to validate cloud provider spec: %s", errs.ToAggregate().Error())
 	}
 
 	// Print new config yaml
@@ -337,3 +370,206 @@ func validateAndPrintConfig(cfgYaml interface{}) error {
 
 	return nil
 }
+
+const exampleManifest = `
+# Copyright 2019 The KubeOne Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# This file contains the configuration for installing a single Kubernetes
+# clusters using KubeOne. You can augment some options by providing
+# Terraform output at runtime, like explained in the documentation.
+apiVersion: kubeone.io/v1alpha1
+kind: KubeOneCluster
+name: {{ .ClusterName }}
+
+versions:
+  kubernetes: "{{ .KubernetesVersion }}"
+
+clusterNetwork:
+  # the subnet used for pods (default: 10.244.0.0/16)
+  podSubnet: "{{ .PodSubnet }}"
+  # the subnet used for services (default: 10.96.0.0/12)
+  serviceSubnet: "{{ .ServiceSubnet }}"
+  # the domain name used for services (default: cluster.local)
+  serviceDomainName: "{{ .ServiceDNS }}"
+  # a nodePort range to reserve for services (default: 30000-32767)
+  nodePortRange: "{{ .NodePortRange }}"
+
+cloudProvider:
+  # Supported cloud provider names:
+  # * aws
+  # * digitalocean
+  # * hetzner
+  # * none
+  # * openstack
+  # * packet
+  # * vsphere
+  name: "{{ .CloudProviderName }}"
+  # Set the kubelet flag '--cloud-provider=external' and deploy the external CCM for supported providers
+  external: false
+  # Path to file that will be uploaded and used as custom '--cloud-config' file.
+  cloudConfig: "{{ .CloudConfig }}"
+
+features:
+  # Enables PodSecurityPolicy admission plugin in API server, as well as creates
+  # default 'privileged' PodSecurityPolicy, plus RBAC rules to authorize
+  # 'kube-system' namespace pods to 'use' it.
+  podSecurityPolicy:
+    enable: {{ .EnablePodSecurityPolicy }}
+  # Enables dynamic audit logs.
+  # After enablig this, operator should create auditregistration.k8s.io/v1alpha1
+  # AuditSink object.
+  # More info: https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#dynamic-backend
+  dynamicAuditLog:
+    enable: {{ .EnableDynamicAuditLog }}
+  # Opt-out from deploying metrics-server
+  # more info: https://github.com/kubernetes-incubator/metrics-server
+  metricsServer:
+    # enabled by default
+    enable: {{ .EnableMetricsServer }}
+  # Enable OpenID-Connect support in API server
+  # More info: https://kubernetes.io/docs/reference/access-authn-authz/authentication/#openid-connect-tokens
+  openidConnect:
+    enable: {{ .EnableOpenIDConnect }}
+    config:
+      # The URL of the OpenID issuer, only HTTPS scheme will be accepted. If
+      # set, it will be used to verify the OIDC JSON Web Token (JWT).
+      issuerUrl: ""
+      # The client ID for the OpenID Connect client, must be set if
+      # issuer_url is set.
+      clientId: "kubernetes"
+      # The OpenID claim to use as the user name. Note that claims other than
+      # the default ('sub') is not guaranteed to be unique and immutable. This
+      # flag is experimental in kubernetes, please see the kubernetes
+      # authentication documentation for further details.
+      usernameClaim: "sub"
+      # If provided, all usernames will be prefixed with this value. If not
+      # provided, username claims other than 'email' are prefixed by the issuer
+      # URL to avoid clashes. To skip any prefixing, provide the value '-'.
+      usernamePrefix: "oidc:"
+      # If provided, the name of a custom OpenID Connect claim for specifying
+      # user groups. The claim value is expected to be a string or array of
+      # strings. This flag is experimental in kubernetes, please see the
+      # kubernetes authentication documentation for further details.
+      groupsClaim: "groups"
+      # If provided, all groups will be prefixed with this value to prevent
+      # conflicts with other authentication strategies.
+      groupsPrefix: "oidc:"
+      # Comma-separated list of allowed JOSE asymmetric signing algorithms. JWTs
+      # with a 'alg' header value not in this list will be rejected. Values are
+      # defined by RFC 7518 https://tools.ietf.org/html/rfc7518#section-3.1.
+      signingAlgs: "RS256"
+      # A key=value pair that describes a required claim in the ID Token. If
+      # set, the claim is verified to be present in the ID Token with a matching
+      # value. Only single pair is currently supported.
+      requiredClaim: ""
+      # If set, the OpenID server's certificate will be verified by one of the
+      # authorities in the oidc-ca-file, otherwise the host's root CA set will
+      # be used.
+      caFile: ""
+
+# The list of nodes can be overwritten by providing Terraform output.
+# You are strongly encouraged to provide an odd number of nodes and
+# have at least three of them.
+# Remember to only specify your *master* nodes.
+# hosts:
+# - publicAddress: '1.2.3.4'
+#   privateAddress: '172.18.0.1'
+#   sshPort: 22 # can be left out if using the default (22)
+#   sshUsername: ubuntu
+#   # You usually want to configure either a private key OR an
+#   # agent socket, but never both. The socket value can be
+#   # prefixed with "env:" to refer to an environment variable.
+#   sshPrivateKeyFile: '/home/me/.ssh/id_rsa'
+#   sshAgentSocket: 'env:SSH_AUTH_SOCK'
+
+# The API server can also be overwritten by Terraform. Provide the
+# external address of your load balancer or the public addresses of
+# the first control plane nodes.
+# apiEndpoint:
+#   host: '{{ .APIEndpointHost }}'
+#   port: {{ .APIEndpointPort }}
+
+# If the cluster runs on bare metal or an unsupported cloud provider,
+# you can disable the machine-controller deployment entirely. In this
+# case, anything you configure in your "workers" sections is ignored.
+machineController:
+  deploy: {{ .DeployMachineController }}
+  # Defines for what provider the machine-controller will be configured (defaults to cloudProvider.Name)
+  # provider: ""
+
+# Proxy is used to configure HTTP_PROXY, HTTPS_PROXY and NO_PROXY
+# for Docker daemon and kubelet, and to be used when provisioning cluster
+# (e.g. for curl, apt-get..).
+# proxy:
+#  http: '{{ .HTTPProxy }}'
+#  https: '{{ .HTTPSProxy }}'
+#  noProxy: '{{ .NoProxy }}'
+
+# KubeOne can automatically create MachineDeployments to create
+# worker nodes in your cluster. Each element in this "workers"
+# list is a single deployment and must have a unique name.
+# workers:
+# - name: fra1-a
+#   replicas: 1
+#   providerSpec:
+#     labels:
+#       mylabel: 'fra1-a'
+#     # SSH keys can be inferred from Terraform if this list is empty
+#     # and your tf output contains a "ssh_public_keys" field.
+#     # sshPublicKeys:
+#     # - 'ssh-rsa ......'
+#     # cloudProviderSpec corresponds 'provider.name' config
+#     cloudProviderSpec:
+#       ### the following params could be inferred by kubeone from terraform
+#       ### output JSON:
+#       # ami: 'ami-0332a5c40cf835528',
+#       # availabilityZone: 'eu-central-1a',
+#       # instanceProfile: 'mycool-profile',
+#       # region: 'eu-central-1',
+#       # securityGroupIDs: ['sg-01f34ffd8447e70c0']
+#       # subnetId: 'subnet-2bff4f43',
+#       # vpcId: 'vpc-819f62e9'
+#       ### end of terraform inferred kubeone params
+#       instanceType: 't3.medium'
+#       diskSize: 50
+#       diskType: 'gp2'
+#     operatingSystem: 'ubuntu'
+#     operatingSystemSpec:
+#       distUpgradeOnBoot: true
+# - name: fra1-b
+#   replicas: 1
+#   providerSpec:
+#     labels:
+#       mylabel: 'fra1-b'
+#     cloudProviderSpec:
+#       instanceType: 't3.medium'
+#       diskSize: 50
+#       diskType: 'gp2'
+#     operatingSystem: 'ubuntu'
+#     operatingSystemSpec:
+#       distUpgradeOnBoot: true
+# - name: fra1-c
+#   replicas: 1
+#   providerSpec:
+#     labels:
+#       mylabel: 'fra1-c'
+#     cloudProviderSpec:
+#       instanceType: 't3.medium'
+#       diskSize: 50
+#       diskType: 'gp2'
+#     operatingSystem: 'ubuntu'
+#     operatingSystemSpec:
+#       distUpgradeOnBoot: true
+`
