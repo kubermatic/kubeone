@@ -41,6 +41,7 @@ ether of the following ENV variables should be accessible:
 
 | Name | Description |
 |------|-------------|
-| kubeone\_api | kubernetes API loadbalancer |
-| kubeone\_hosts | control plain nodes |
-| kubeone\_workers | workers definitions translated into MachineDeployment ClusterAPI objects |
+| kubeone\_api | kube-apiserver LB endpoint |
+| kubeone\_hosts | Control plane endpoints to SSH to |
+| kubeone\_workers | Workers definitions, that will be transformed into MachineDeployment object |
+

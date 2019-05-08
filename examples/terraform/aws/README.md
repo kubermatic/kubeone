@@ -26,6 +26,7 @@ scripts and how to provision a Kubernetes cluster using KubeOne.
 
 | Name | Description |
 |------|-------------|
-| kubeone\_api |  |
-| kubeone\_hosts |  |
-| kubeone\_workers |  |
+| kubeone\_api | kube-apiserver LB endpoint |
+| kubeone\_hosts | Control plane endpoints to SSH to |
+| kubeone\_workers | Workers definitions, that will be transformed into MachineDeployment object |
+

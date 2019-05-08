@@ -15,12 +15,16 @@ limitations under the License.
 */
 
 output "kubeone_api" {
+  description = "kube-apiserver LB endpoint"
+
   value = {
     endpoint = "${openstack_networking_floatingip_v2.lb.address}"
   }
 }
 
 output "kubeone_hosts" {
+  description = "Control plane endpoints to SSH to"
+
   value = {
     control_plane = {
       cluster_name         = "${var.cluster_name}"
@@ -36,6 +40,8 @@ output "kubeone_hosts" {
 }
 
 output "kubeone_workers" {
+  description = "Workers definitions, that will be transformed into MachineDeployment object"
+
   value = {
     pool1 = {
       image           = "${var.image}"
