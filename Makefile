@@ -57,7 +57,6 @@ licence-check:
 
 .PHONY: check-dependencies
 check-dependencies:
-	dep version || go get -u github.com/golang/dep/cmd/dep
 	dep check
 
 docker-make-install:
