@@ -2,11 +2,20 @@
 
 # [v0.6.0](https://github.com/kubermatic/kubeone/releases/tag/v0.6.0) - 2019-05-08
 
+We're excited to announce that as of this release KubeOne is in **beta**! We have the new
+[backwards compatibility policy](https://github.com/kubermatic/kubeone/blob/v0.6.0/docs/api_migration.md)
+going in effect as of this release.
 
+Check out the [documentation](https://github.com/kubermatic/kubeone/tree/v0.6.0/docs) for this release to find out how to get started with KubeOne.
 
 ## Action Required
 
-
+* This release introduces the new KubeOneCluster API. The new API is supposed to the improve user experience and bring
+many new possibilities, like API versioning.
+  * **Old KubeOne configuration manifests will not work as of this release!**
+  * To continue using KubeOne, you need to migrate your existing manifests to the new KubeOneCluster API. Follow
+  [the migration guidelines](https://github.com/kubermatic/kubeone/blob/v0.6.0/docs/api_migration.md) to find out
+  how to migrate.
 
 ## Added
 
