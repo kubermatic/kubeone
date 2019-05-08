@@ -419,7 +419,7 @@ cloudProvider:
   # Set the kubelet flag '--cloud-provider=external' and deploy the external CCM for supported providers
   external: false
   # Path to file that will be uploaded and used as custom '--cloud-config' file.
-  cloudConfig: "{{ .CloudConfig }}"
+  cloudConfig: ""
 
 features:
   # Enables PodSecurityPolicy admission plugin in API server, as well as creates
