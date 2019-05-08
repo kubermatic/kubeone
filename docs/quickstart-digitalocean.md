@@ -95,6 +95,8 @@ Before you start you'll need a configuration file that defines how Kubernetes wi
 To get started you can use the following configuration. It'll install Kubernetes 1.14.1, create 3 worker nodes and deploy the [external cloud controller manager](https://github.com/digitalocean/digitalocean-cloud-controller-manager). The external cloud controller manager takes care of providing correct information about nodes from the DigitalOcean API and allows you to use the `type: LoadBalancer` services. KubeOne automatically populates information about the worker nodes from the [Terraform output](https://github.com/kubermatic/kubeone/blob/ec8bf305446ac22529e9683fd4ce3c9abf753d1e/examples/terraform/digitalocean/output.tf#L38-L59). Alternatively, you can set those information manually. As KubeOne is using [Kubermatic `machine-controller`](https://github.com/kubermatic/machine-controller) for creating worker nodes, see [DigitalOcean example manifest](https://github.com/kubermatic/machine-controller/blob/master/examples/digitalocean-machinedeployment.yaml) for available options.
 
 ```yaml
+apiVersion: kubeone.io/v1alpha1
+kind: KubeOneCluster
 name: demo
 versions:
   kubernetes: '1.14.1'

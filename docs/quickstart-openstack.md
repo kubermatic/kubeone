@@ -112,6 +112,8 @@ To get started you can use the following configuration. It'll install Kubernetes
 For OpenStack you also need to provide a `cloud-config` file containing credentials, so OpenStack Cloud Controller Manager works as expected. Make sure to replace sample values with real values.
 
 ```yaml
+apiVersion: kubeone.io/v1alpha1
+kind: KubeOneCluster
 name: demo
 versions:
   kubernetes: '1.14.1'
