@@ -22,6 +22,7 @@ import (
 	"strconv"
 	"strings"
 	"text/template"
+	"fmt"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -189,10 +190,25 @@ func runPrint(printOptions *printOptions) error {
 			return errors.Wrap(err, "unable to parse the example manifest template")
 		}
 
-		err = tmpl.Execute(os.Stdout, printOptions)
+		var buffer bytes.Buffer
+		err = tmpl.Execute(&buffer, printOptions)
 		if err != nil {
 			return errors.Wrap(err, "unable to run the example manifest template")
 		}
+
+		cfg := &kubeoneapi.KubeOneCluster{}
+		err = kyaml.UnmarshalStrict(buffer.Bytes(), &cfg)
+		if err != nil {
+			return errors.Wrap(err, "failed to decode new config")
+		}
+
+		// CloudProvider validation
+		errs := kubeonevalidation.ValidateCloudProviderSpec(cfg.CloudProvider, nil)
+		if len(errs) != 0 {
+			return errors.Errorf("unable to validate cloud provider spec: %s", errs.ToAggregate().Error())
+		}
+
+		fmt.Println(buffer.String())
 
 		return nil
 	}
