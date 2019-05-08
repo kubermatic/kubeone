@@ -53,8 +53,8 @@ expected.
 Alternatively, you can obtain KubeOne via [GitHub Releases][9]:
 
 ```bash
-curl -LO https://github.com/kubermatic/kubeone/releases/download/v0.5.0/kubeone_0.5.0_linux_amd64.zip
-unzip kubeone_0.5.0_linux_amd64.zip
+curl -LO https://github.com/kubermatic/kubeone/releases/download/v0.6.0/kubeone_0.6.0_linux_amd64.zip
+unzip kubeone_0.6.0_linux_amd64.zip
 sudo mv kubeone /usr/local/bin
 ```
 
@@ -84,7 +84,7 @@ It's highly recommended to use the latest version whenever possible.
 |-----------------|------|------|------|----------------------------------------------------|
 | v0.6.0          | +    | +    | -    | AWS, DigitalOcean, GCE, Hetzner, Packet, OpenStack |
 | v0.5.0          | +    | +    | -    | AWS, DigitalOcean, GCE, Hetzner, OpenStack         |
-| v0.4.1          | -    | +    | -    | AWS, DigitalOcean, Hetzner, OpenStack              |
+| ~~v0.4.1~~      | -    | +    | -    | AWS, DigitalOcean, Hetzner, OpenStack              |
 | ~~v0.4.0~~      | -    | +    | -    | AWS, DigitalOcean, Hetzner, OpenStack              |
 | ~~v0.3.0~~      | -    | +    | -    | AWS, DigitalOcean, Hetzner, OpenStack              |
 
