@@ -184,14 +184,14 @@ func runPrint(printOptions *printOptions) error {
 		}
 
 		return nil
-	} else {
-		err := createAndPrintManifest(printOptions)
-		if err != nil {
-			return errors.Wrap(err, "unable to create example manifest")
-		}
-
-		return nil
 	}
+
+	err := createAndPrintManifest(printOptions)
+	if err != nil {
+		return errors.Wrap(err, "unable to create example manifest")
+	}
+
+	return nil
 }
 
 func createAndPrintManifest(printOptions *printOptions) error {
