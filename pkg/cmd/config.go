@@ -28,8 +28,8 @@ import (
 	"github.com/spf13/pflag"
 	yaml "gopkg.in/yaml.v2"
 
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	kubeonevalidation "github.com/kubermatic/kubeone/pkg/apis/kubeone/validation"
-	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"	
 	"github.com/kubermatic/kubeone/pkg/config"
 	"github.com/kubermatic/kubeone/pkg/util/yamled"
 
@@ -48,8 +48,8 @@ type printOptions struct {
 	FullConfig bool
 
 	ClusterName       string
-	KubernetesVersion string	
-	CloudProviderName string	
+	KubernetesVersion string
+	CloudProviderName string
 
 	Hosts string
 
@@ -191,7 +191,7 @@ func runPrint(printOptions *printOptions) error {
 		}
 
 		return nil
-	}	
+	}
 }
 
 func createAndPrintManifest(printOptions *printOptions) error {
@@ -218,7 +218,7 @@ func createAndPrintManifest(printOptions *printOptions) error {
 	case kubeoneapi.CloudProviderNameOpenStack:
 		cfg.Set(yamled.Path{"cloudProvider", "cloudConfig"}, "<< cloudConfig is required for OpenStack >>")
 	}
-	
+
 	// Hosts
 	if len(printOptions.Hosts) != 0 {
 		if err := parseHosts(cfg, printOptions.Hosts); err != nil {
