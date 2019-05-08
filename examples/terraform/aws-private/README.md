@@ -28,8 +28,8 @@ Follow the [issue #337](https://github.com/kubermatic/kubeone/issues/337) for mo
 
 | Name | Description |
 |------|-------------|
-| kubeone\_api |  |
+| kubeone\_api | kube-apiserver LB endpoint |
 | kubeone\_bastion |  |
-| kubeone\_hosts |  |
-| kubeone\_workers |  |
+| kubeone\_hosts | Control plane endpoints to SSH to |
+| kubeone\_workers | Workers definitions, that will be transformed into MachineDeployment object |
 

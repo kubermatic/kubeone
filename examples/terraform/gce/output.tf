@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 output "kubeone_api" {
-  description = "kubernetes API loadbalancer"
+  description = "kube-apiserver LB endpoint"
 
   value = {
     endpoint = "${google_compute_address.lb_ip.address}"
@@ -23,7 +23,7 @@ output "kubeone_api" {
 }
 
 output "kubeone_hosts" {
-  description = "control plain nodes"
+  description = "Control plane endpoints to SSH to"
 
   value = {
     control_plane = {
@@ -39,7 +39,7 @@ output "kubeone_hosts" {
 }
 
 output "kubeone_workers" {
-  description = "workers definitions translated into MachineDeployment ClusterAPI objects"
+  description = "Workers definitions, that will be transformed into MachineDeployment object"
 
   value = {
     # following outputs will be parsed by kubeone and automatically merged into
@@ -55,6 +55,7 @@ output "kubeone_workers" {
       subnetwork      = "${google_compute_subnetwork.subnet.self_link}"
       zone            = "${var.region}-a"
     }
+
     az-b = {
       replicas        = 1
       operatingSystem = "ubuntu"
@@ -66,6 +67,7 @@ output "kubeone_workers" {
       subnetwork      = "${google_compute_subnetwork.subnet.self_link}"
       zone            = "${var.region}-b"
     }
+
     az-c = {
       replicas        = 1
       operatingSystem = "ubuntu"
