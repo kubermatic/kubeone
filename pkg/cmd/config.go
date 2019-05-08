@@ -18,11 +18,11 @@ package cmd
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"strconv"
 	"strings"
 	"text/template"
-	"fmt"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
