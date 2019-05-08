@@ -149,6 +149,8 @@ manifest](https://github.com/kubermatic/machine-controller/blob/master/examples/
 for available options.
 
 ```yaml
+apiVersion: kubeone.io/v1alpha1
+kind: KubeOneCluster
 name: demo
 versions:
   kubernetes: '1.14.1'
