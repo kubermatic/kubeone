@@ -49,7 +49,10 @@ type printOptions struct {
 
 	ClusterName       string
 	KubernetesVersion string
-	CloudProviderName string
+
+	CloudProviderName     string
+	CloudProviderExternal bool
+	CloudProviderCloudCfg string
 
 	Hosts string
 
@@ -173,6 +176,14 @@ The new manifest is printed on the standard output.
 // runPrint prints an example configuration file
 func runPrint(printOptions *printOptions) error {
 	if printOptions.FullConfig {
+		p := kubeoneapi.CloudProviderName(printOptions.CloudProviderName)
+		switch p {
+		case kubeoneapi.CloudProviderNameDigitalOcean, kubeoneapi.CloudProviderNamePacket, kubeoneapi.CloudProviderNameHetzner:
+			printOptions.CloudProviderExternal = true
+		case kubeoneapi.CloudProviderNameOpenStack:
+			printOptions.CloudProviderCloudCfg = "<< cloudConfig is required for OpenStack >>"
+		}
+
 		tmpl, err := template.New("example-manifest").Parse(exampleManifest)
 		if err != nil {
 			return errors.Wrap(err, "unable to parse the example manifest template")
@@ -372,23 +383,6 @@ func validateAndPrintConfig(cfgYaml interface{}) error {
 }
 
 const exampleManifest = `
-# Copyright 2019 The KubeOne Authors.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-# This file contains the configuration for installing a single Kubernetes
-# clusters using KubeOne. You can augment some options by providing
-# Terraform output at runtime, like explained in the documentation.
 apiVersion: kubeone.io/v1alpha1
 kind: KubeOneCluster
 name: {{ .ClusterName }}
@@ -417,9 +411,9 @@ cloudProvider:
   # * vsphere
   name: "{{ .CloudProviderName }}"
   # Set the kubelet flag '--cloud-provider=external' and deploy the external CCM for supported providers
-  external: false
+  external: {{ .CloudProviderExternal }}
   # Path to file that will be uploaded and used as custom '--cloud-config' file.
-  cloudConfig: ""
+  cloudConfig: "{{ .CloudProviderCloudCfg }}"
 
 features:
   # Enables PodSecurityPolicy admission plugin in API server, as well as creates
