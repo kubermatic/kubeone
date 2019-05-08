@@ -59,7 +59,6 @@ licence-check:
 check-dependencies:
 	dep version || go get -u github.com/golang/dep/cmd/dep
 	dep check
-	git diff --exit-code
 
 docker-make-install:
 	docker run -it --rm \
