@@ -208,6 +208,7 @@ func metricsServerDeployment() *appsv1.Deployment {
 							ImagePullPolicy: corev1.PullIfNotPresent,
 							Args: []string{
 								"--kubelet-insecure-tls",
+								"--kubelet-preferred-address-types=InternalIP,InternalDNS,ExternalDNS,ExternalIP",
 							},
 							VolumeMounts: []corev1.VolumeMount{
 								{
