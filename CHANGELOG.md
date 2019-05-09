@@ -1,5 +1,11 @@
 # Changelog
 
+# [v0.6.1](https://github.com/kubermatic/kubeone/releases/tag/v0.6.1) - 2019-05-09
+
+## Changed
+
+* Provide the `--kubelet-preferred-address-types` flag to metrics-server, so it works on all providers ([#424](https://github.com/kubermatic/kubeone/pull/424))
+
 # [v0.6.0](https://github.com/kubermatic/kubeone/releases/tag/v0.6.0) - 2019-05-08
 
 We're excited to announce that as of this release KubeOne is in **beta**! We have the new
