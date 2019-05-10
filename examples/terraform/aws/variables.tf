@@ -19,7 +19,7 @@ variable "cluster_name" {
 }
 
 variable "aws_region" {
-  default     = "eu-central-1"
+  default     = "eu-west-3"
   description = "AWS region to speak to"
 }
 

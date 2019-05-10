@@ -22,6 +22,7 @@ resource "aws_default_vpc" "default" {}
 
 locals {
   kube_cluster_tag = "kubernetes.io/cluster/${var.cluster_name}"
+  ami              = "${var.ami == "" ? data.aws_ami.ubuntu.id : var.ami}"
 }
 
 ################################# DATA SOURCES #################################
@@ -68,10 +69,11 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch = true
   vpc_id                  = "${data.aws_vpc.selected.id}"
 
-  tags {
-    Name    = "${var.cluster_name}_public_${data.aws_availability_zones.available.names[count.index]}"
-    Cluster = "${var.cluster_name}"
-  }
+  tags = "${map(
+    "Name", "${var.cluster_name}_public_${data.aws_availability_zones.available.names[count.index]}",
+    "Cluster", "${var.cluster_name}",
+    "${local.kube_cluster_tag}", "shared",
+  )}"
 }
 
 resource "aws_subnet" "private" {
@@ -81,10 +83,11 @@ resource "aws_subnet" "private" {
   map_public_ip_on_launch = false
   vpc_id                  = "${data.aws_vpc.selected.id}"
 
-  tags {
-    Name    = "${var.cluster_name}_private_${data.aws_availability_zones.available.names[count.index]}"
-    Cluster = "${var.cluster_name}"
-  }
+  tags = "${map(
+    "Name", "${var.cluster_name}_private_${data.aws_availability_zones.available.names[count.index]}",
+    "Cluster", "${var.cluster_name}",
+    "${local.kube_cluster_tag}", "shared",
+  )}"
 }
 
 resource "aws_nat_gateway" "main" {
@@ -100,6 +103,10 @@ resource "aws_route_table" "public" {
     cidr_block = "0.0.0.0/0"
     gateway_id = "${data.aws_internet_gateway.default.id}"
   }
+
+  tags = "${map(
+    "${local.kube_cluster_tag}", "shared",
+  )}"
 }
 
 resource "aws_route_table" "private" {
@@ -110,6 +117,10 @@ resource "aws_route_table" "private" {
     cidr_block     = "0.0.0.0/0"
     nat_gateway_id = "${element(aws_nat_gateway.main.*.id, count.index)}"
   }
+
+  tags = "${map(
+    "${local.kube_cluster_tag}", "shared",
+  )}"
 }
 
 resource "aws_route_table_association" "public" {
@@ -331,7 +342,7 @@ resource "aws_instance" "control_plane" {
 
   instance_type          = "${var.control_plane_type}"
   iam_instance_profile   = "${aws_iam_instance_profile.control_plane.name}"
-  ami                    = "${data.aws_ami.ubuntu.id}"
+  ami                    = "${local.ami}"
   key_name               = "${aws_key_pair.deployer.key_name}"
   vpc_security_group_ids = ["${aws_security_group.common.id}", "${aws_security_group.control_plane.id}"]
   availability_zone      = "${data.aws_availability_zones.available.names[count.index]}"
@@ -352,7 +363,7 @@ resource "aws_instance" "bastion" {
   )}"
 
   instance_type          = "t3.nano"
-  ami                    = "${data.aws_ami.ubuntu.id}"
+  ami                    = "${local.ami}"
   key_name               = "${aws_key_pair.deployer.key_name}"
   vpc_security_group_ids = ["${aws_security_group.common.id}"]
   availability_zone      = "${data.aws_availability_zones.available.names[count.index]}"
