@@ -19,7 +19,7 @@ variable "cluster_name" {
 }
 
 variable "aws_region" {
-  default     = "eu-west-3"
+  default     = "eu-central-1"
   description = "AWS region to speak to"
 }
 
@@ -66,4 +66,9 @@ variable "control_plane_type" {
 variable "control_plane_volume_size" {
   default     = 100
   description = "Size of the EBS volume, in Gb"
+}
+
+variable "ami" {
+  default     = ""
+  description = "AMI ID, use it to fixate control-plane AMI in order to avoid force-recreation it at later times"
 }
