@@ -47,7 +47,7 @@ func Install(ctx *util.Context) error {
 		{Fn: credentials.Ensure, ErrMsg: "unable to ensure credentials secret"},
 		{Fn: externalccm.Ensure, ErrMsg: "failed to install external CCM"},
 		{Fn: patchCoreDNS, ErrMsg: "failed to patch CoreDNS", Retries: 3},
-		{Fn: applyCanalCNI, ErrMsg: "failed to install cni plugin canal", Retries: 3},
+		{Fn: ensureCNI, ErrMsg: "failed to install cni plugin", Retries: 3},
 		{Fn: machinecontroller.Ensure, ErrMsg: "failed to install machine-controller", Retries: 3},
 		{Fn: machinecontroller.WaitReady, ErrMsg: "failed to wait for machine-controller", Retries: 3},
 		{Fn: createWorkerMachines, ErrMsg: "failed to create worker machines", Retries: 3},

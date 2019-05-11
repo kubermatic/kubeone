@@ -17,11 +17,31 @@ limitations under the License.
 package installation
 
 import (
+	"github.com/pkg/errors"
+
+	"github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/templates/canal"
+	"github.com/kubermatic/kubeone/pkg/templates/weave"
 	"github.com/kubermatic/kubeone/pkg/util"
 )
 
-func applyCanalCNI(ctx *util.Context) error {
+func ensureCNI(ctx *util.Context) error {
+	switch ctx.Cluster.ClusterNetwork.CNI.Provider {
+	case kubeone.CNIProviderCanal:
+		return ensureCNICanal(ctx)
+	case kubeone.CNIProviderWeaveNet:
+		return ensureCNIWeaveNet(ctx)
+	}
+
+	return errors.Errorf("unknown CNI provider: %s", ctx.Cluster.ClusterNetwork.CNI.Provider)
+}
+
+func ensureCNIWeaveNet(ctx *util.Context) error {
+	ctx.Logger.Infoln("Applying weave-net CNI plugin…")
+	return weave.Deploy(ctx)
+}
+
+func ensureCNICanal(ctx *util.Context) error {
 	ctx.Logger.Infoln("Applying canal CNI plugin…")
 	return canal.Deploy(ctx)
 }

@@ -167,6 +167,19 @@ func ValidateClusterNetworkConfig(c kubeone.ClusterNetworkConfig, fldPath *field
 		}
 	}
 
+	if c.CNI != nil {
+		switch c.CNI.Provider {
+		case kubeone.CNIProviderCanal:
+		case kubeone.CNIProviderWeaveNet:
+		default:
+			allErrs = append(allErrs, field.Invalid(fldPath, c.CNI.Provider, "unknown CNI provider"))
+		}
+
+		if c.CNI.Encrypted && c.CNI.Provider != kubeone.CNIProviderWeaveNet {
+			allErrs = append(allErrs, field.Invalid(fldPath, c.CNI, "only `weave-net` cni provider support `encrypted: true`"))
+		}
+	}
+
 	return allErrs
 }
 

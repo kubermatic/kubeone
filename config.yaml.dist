@@ -31,6 +31,16 @@ clusterNetwork:
   serviceDomainName: ""
   # a nodePort range to reserve for services (default: 30000-32767)
   nodePortRange: ""
+  # CNI plugin choise
+  cni:
+    # possible values:
+    # * canal
+    # * weave-net
+    provider: canal
+    # when selected CNI provider support encryption and `encrypted: true` is
+    # set, secret will be automatically generated and referenced in appropriate
+    # manifests
+    encrypted: false
 
 cloudProvider:
   # Supported cloud provider names:
@@ -42,7 +52,8 @@ cloudProvider:
   # * packet
   # * vsphere
   name: ""
-  # Set the kubelet flag '--cloud-provider=external' and deploy the external CCM for supported providers
+  # Set the kubelet flag '--cloud-provider=external' and deploy the external CCM
+  # for supported providers
   external: false
   # Path to file that will be uploaded and used as custom '--cloud-config' file.
   cloudConfig: ""
@@ -132,7 +143,8 @@ features:
 # case, anything you configure in your "workers" sections is ignored.
 # machineController:
 #  deploy: false
-#  # Defines for what provider the machine-controller will be configured (defaults to cloudProvider.Name)
+#  # Defines for what provider the machine-controller will be configured
+#  # (defaults to cloudProvider.Name)
 #  provider: ""
 
 # Proxy is used to configure HTTP_PROXY, HTTPS_PROXY and NO_PROXY
