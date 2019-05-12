@@ -43,9 +43,10 @@ func NewConfig(ctx *util.Context, host kubeoneapi.HostConfig) ([]runtime.Object,
 	nodeRegistration := kubeadmv1beta1.NodeRegistrationOptions{
 		Name: host.Hostname,
 		KubeletExtraArgs: map[string]string{
-			"node-ip":        nodeIP,
-			"anonymous-auth": "false",
-			"read-only-port": "0",
+			"anonymous-auth":      "false",
+			"node-ip":             nodeIP,
+			"read-only-port":      "0",
+			"rotate-certificates": "true",
 		},
 	}
 
