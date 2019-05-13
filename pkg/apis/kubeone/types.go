@@ -29,7 +29,7 @@ type KubeOneCluster struct {
 	metav1.TypeMeta `json:",inline"`
 
 	// Name is the name of the cluster
-	Name string `json:"name,omitempty"`
+	Name string `json:"name"`
 	// Hosts describes the control plane nodes and how to access them
 	Hosts []HostConfig `json:"hosts,omitempty"`
 	// APIEndpoint are pairs of address and port used to communicate with the Kubernetes API
