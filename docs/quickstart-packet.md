@@ -130,8 +130,7 @@ using KubeOne.
 
 Before you start you'll need a configuration file that defines how Kubernetes
 will be installed, e.g. what version will be used and what features will be
-enabled. For the configuration file reference see
-[`config.yaml.dist`][config_yaml_dist].
+enabled. For the configuration file reference run `kubeone config print --full`.
 
 To get started you can use the following configuration. It'll install Kubernetes
 1.14.1, create 1 worker node and deploy the 
@@ -272,7 +271,6 @@ our [documentation][kubeone_docs].
 [packet_support_docs]: https://support.packet.com/kb/articles/api-integrations
 [packet_terraform]: https://github.com/kubermatic/kubeone/tree/master/examples/terraform/packet
 [packet_variables]: https://github.com/kubermatic/kubeone/blob/master/examples/terraform/packet/variables.tf
-[config_yaml_dist]: https://github.com/kubermatic/kubeone/blob/master/config.yaml.dist
 [packet_ccm]: https://github.com/packethost/packet-ccm
 [packet_tf_output]: https://github.com/kubermatic/kubeone/blob/789509f54b3a4aed7b15cd8b27b2e5bb2a4fa6c1/examples/terraform/packet/output.tf
 [machine_controller]: https://github.com/kubermatic/machine-controller

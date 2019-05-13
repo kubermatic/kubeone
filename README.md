@@ -106,8 +106,7 @@ about the infrastructure.
 kubeone install config.yaml --tfjson tf.json
 ```
 
-To learn more about KubeOne configuration, check out
-[the example configuration file][12].
+To learn more about KubeOne configuration, please run `kubeone config print --full`.
 
 For advanced use cases and other features, check the [KubeOne features][13]
 document.
@@ -154,7 +153,6 @@ See [the list of releases][3] to find out about feature changes.
 [9]: https://github.com/kubermatic/kubeone/releases
 [10]: ./docs
 [11]: ./docs/quickstart-aws.md
-[12]: ./config.yaml.dist
 [13]: https://github.com/kubermatic/kubeone#features
 [14]: https://groups.google.com/forum/#!forum/loodse-dev
 [15]: http://slack.kubermatic.io/

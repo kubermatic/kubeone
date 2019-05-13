@@ -415,6 +415,16 @@ clusterNetwork:
   serviceDomainName: "{{ .ServiceDNS }}"
   # a nodePort range to reserve for services (default: 30000-32767)
   nodePortRange: "{{ .NodePortRange }}"
+  # CNI plugin of choice. CNI can not be changed later at upgrade time.
+  cni:
+    # possible values:
+    # * canal
+    # * weave-net
+    provider: canal
+    # when selected CNI provider support encryption and encrypted: true is
+    # set, secret will be automatically generated and referenced in appropriate
+    # manifests. Currently only weave-net supports encryption.
+    encrypted: false
 
 cloudProvider:
   # Supported cloud provider names:

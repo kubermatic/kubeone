@@ -135,8 +135,7 @@ using KubeOne.
 
 Before you start you'll need a configuration file that defines how Kubernetes
 will be installed, e.g. what version will be used and what features will be
-enabled. For the configuration file reference see
-[`config.yaml.dist`](https://github.com/kubermatic/kubeone/blob/master/config.yaml.dist).
+enabled. For the configuration file reference run `kubeone config print --full`.
 
 To get started you can use the following configuration. It'll install Kubernetes
 1.14.1 and create 3 worker nodes. KubeOne automatically populates information
