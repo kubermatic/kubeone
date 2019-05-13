@@ -12,7 +12,7 @@ three control plane nodes and one worker node (which can be easily scaled).
 
 To follow this quick start, you'll need:
 
-* `kubeone` v0.6.1 or newer installed, which can be done by following the
+* `kubeone` v0.6.2 or newer installed, which can be done by following the
   `Installing KubeOne` section of [the README][main_readme],
 * `terraform` installed. The binaries for `terraform` can be found on the
   [Terraform website][terraform_website]
