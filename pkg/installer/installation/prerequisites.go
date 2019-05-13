@@ -214,7 +214,7 @@ sudo apt-mark hold docker-ce kubelet kubeadm kubectl kubernetes-cni
 const kubeadmCentOSCommand = `
 sudo swapoff -a
 sudo sed -i '/.*swap.*/d' /etc/fstab
-sudo setenforce 0
+sudo setenforce 0 || true
 sudo sed -i s/SELINUX=enforcing/SELINUX=permissive/g /etc/sysconfig/selinux
 
 source /etc/kubeone/proxy-env
