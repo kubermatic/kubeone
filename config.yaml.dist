@@ -31,7 +31,7 @@ clusterNetwork:
   serviceDomainName: ""
   # a nodePort range to reserve for services (default: 30000-32767)
   nodePortRange: ""
-  # CNI plugin choise
+  # CNI plugin choice
   cni:
     # possible values:
     # * canal
@@ -39,7 +39,7 @@ clusterNetwork:
     provider: canal
     # when selected CNI provider support encryption and `encrypted: true` is
     # set, secret will be automatically generated and referenced in appropriate
-    # manifests
+    # manifests. Currently only `weave-net` support encryption.
     encrypted: false
 
 cloudProvider:
@@ -65,7 +65,7 @@ features:
   podSecurityPolicy:
     enable: false
   # Enables dynamic audit logs.
-  # After enablig this, operator should create auditregistration.k8s.io/v1alpha1
+  # After enabling this, operator should create auditregistration.k8s.io/v1alpha1
   # AuditSink object.
   # More info: https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#dynamic-backend
   dynamicAuditLog:
