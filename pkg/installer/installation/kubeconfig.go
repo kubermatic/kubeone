@@ -34,7 +34,7 @@ func copyKubeconfig(ctx *util.Context) error {
 		_, _, err := ctx.Runner.Run(`
 mkdir -p $HOME/.kube/
 sudo cp /etc/kubernetes/admin.conf $HOME/.kube/config
-sudo chown $(id -u):$(id -u) $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
 `, util.TemplateVariables{})
 		if err != nil {
 			return err
