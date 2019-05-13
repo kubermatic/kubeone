@@ -8,7 +8,7 @@ As a result, you'll get Kubernetes 1.14.1 High-Available (HA) clusters with thre
 
 To follow this quick start, you'll need:
 
-* `kubeone` v0.6.1 or newer installed, which can be done by following the `Installing KubeOne` section of [the README](https://github.com/kubermatic/kubeone/blob/master/README.md),
+* `kubeone` v0.6.2 or newer installed, which can be done by following the `Installing KubeOne` section of [the README](https://github.com/kubermatic/kubeone/blob/master/README.md),
 * `terraform` installed. The binaries for `terraform` can be found on the [Terraform website](https://www.terraform.io/downloads.html)
 
 ## Setting Up Credentials
