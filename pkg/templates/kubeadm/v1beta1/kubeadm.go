@@ -35,9 +35,19 @@ import (
 func NewConfig(ctx *util.Context, host kubeoneapi.HostConfig) ([]runtime.Object, error) {
 	cluster := ctx.Cluster
 
+	nodeIP := host.PrivateAddress
+	if nodeIP == "" {
+		nodeIP = host.PublicAddress
+	}
+
 	nodeRegistration := kubeadmv1beta1.NodeRegistrationOptions{
-		Name:             host.Hostname,
-		KubeletExtraArgs: map[string]string{"node-ip": host.PrivateAddress},
+		Name: host.Hostname,
+		KubeletExtraArgs: map[string]string{
+			"anonymous-auth":      "false",
+			"node-ip":             nodeIP,
+			"read-only-port":      "0",
+			"rotate-certificates": "true",
+		},
 	}
 
 	if ctx.JoinToken == "" {
@@ -54,10 +64,6 @@ func NewConfig(ctx *util.Context, host kubeoneapi.HostConfig) ([]runtime.Object,
 	}
 
 	controlPlaneEndpoint := fmt.Sprintf("%s:%d", cluster.APIEndpoint.Host, cluster.APIEndpoint.Port)
-	hostAdvertiseAddress := host.PrivateAddress
-	if hostAdvertiseAddress == "" {
-		hostAdvertiseAddress = host.PublicAddress
-	}
 
 	initConfig := &kubeadmv1beta1.InitConfiguration{
 		TypeMeta: metav1.TypeMeta{
@@ -66,7 +72,7 @@ func NewConfig(ctx *util.Context, host kubeoneapi.HostConfig) ([]runtime.Object,
 		},
 		BootstrapTokens: []kubeadmv1beta1.BootstrapToken{{Token: bootstrapToken}},
 		LocalAPIEndpoint: kubeadmv1beta1.APIEndpoint{
-			AdvertiseAddress: hostAdvertiseAddress,
+			AdvertiseAddress: nodeIP,
 		},
 	}
 
@@ -77,7 +83,7 @@ func NewConfig(ctx *util.Context, host kubeoneapi.HostConfig) ([]runtime.Object,
 		},
 		ControlPlane: &kubeadmv1beta1.JoinControlPlane{
 			LocalAPIEndpoint: kubeadmv1beta1.APIEndpoint{
-				AdvertiseAddress: hostAdvertiseAddress,
+				AdvertiseAddress: nodeIP,
 			},
 		},
 		Discovery: kubeadmv1beta1.Discovery{

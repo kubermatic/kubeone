@@ -15,10 +15,9 @@
 export GOPATH?=$(shell go env GOPATH)
 export CGO_ENABLED=0
 export TFJSON?=
-export KUBEONE_CONFIG_FILE?=config.yaml.dist
-export KUBERNETES_VERSION=1.13.3
+export KUBERNETES_VERSION=1.14.1
 BUILD_DATE=$(shell if hash gdate 2>/dev/null; then gdate --rfc-3339=seconds | sed 's/ /T/'; else date --rfc-3339=seconds | sed 's/ /T/'; fi)
-BUILD_IMAGE?=golang:1.11.5
+BUILD_IMAGE?=golang:1.12.5
 GITCOMMIT=$(shell git log -1 --pretty=format:"%H")
 GITTAG=$(shell git describe --tags --always)
 GOLDFLAGS?=-s -w -X github.com/kubermatic/kubeone/pkg/cmd.version=$(GITTAG) -X github.com/kubermatic/kubeone/pkg/cmd.commit=$(GITCOMMIT) -X github.com/kubermatic/kubeone/pkg/cmd.date=$(BUILD_DATE)
@@ -82,9 +81,11 @@ $(CREATE_TARGETS): kubeone
 	for host in $$(cat tf.json |jq -r '.kubeone_hosts.value.control_plane[0].public_address|.[]'); do \
 		until ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $(USER)@$$host exit; do sleep 1; done; \
 	done
-	./dist/kubeone install config.yaml.dist  --tfjson tf.json
+	./dist/kubeone config print --full --provider $(PROVIDERNAME) > ./dist/fresh_config.yaml
+	./dist/kubeone install ./dist/fresh_config.yaml  --tfjson tf.json
 
 $(DESTROY_TARGETS): kubeone
 	$(eval PROVIDERNAME := $(@:-env-cleanup=))
-	./dist/kubeone reset config.yaml.dist  --tfjson tf.json
+	./dist/kubeone config print --full --provider $(PROVIDERNAME) > ./dist/fresh_config.yaml
+	./dist/kubeone reset ./dist/fresh_config.yaml  --tfjson tf.json
 	cd terraform/$(PROVIDERNAME) && terraform destroy --auto-approve

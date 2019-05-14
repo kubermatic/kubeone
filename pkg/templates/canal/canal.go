@@ -39,38 +39,38 @@ const (
 	cniNetworkConfig = `
 {
 	"name": "k8s-pod-network",
-    "cniVersion": "0.3.0",
-    "plugins": [
-      {
-        "type": "calico",
-        "log_level": "info",
-        "datastore_type": "kubernetes",
-        "nodename": "__KUBERNETES_NODE_NAME__",
-        "ipam": {
-          "type": "host-local",
-          "subnet": "usePodCidr"
-        },
-        "policy": {
-            "type": "k8s"
-        },
-        "kubernetes": {
-            "kubeconfig": "__KUBECONFIG_FILEPATH__"
-        }
-      },
-      {
-        "type": "portmap",
-        "snat": true,
-        "capabilities": {"portMappings": true}
-      }
-    ]
+	"cniVersion": "0.3.0",
+	"plugins": [
+		{
+			"type": "calico",
+			"log_level": "info",
+			"datastore_type": "kubernetes",
+			"nodename": "__KUBERNETES_NODE_NAME__",
+			"ipam": {
+				"type": "host-local",
+				"subnet": "usePodCidr"
+			},
+			"policy": {
+					"type": "k8s"
+			},
+			"kubernetes": {
+					"kubeconfig": "__KUBECONFIG_FILEPATH__"
+			}
+		},
+		{
+			"type": "portmap",
+			"snat": true,
+			"capabilities": {"portMappings": true}
+		}
+	]
 }
 `
 	// Flannel network configuration (mounted into the flannel container)
 	flannelNetworkConfig = `
 {
 	"Network": "{{ .POD_SUBNET }}",
-    "Backend": {
-	"Type": "vxlan"
+	"Backend": {
+		"Type": "vxlan"
 	}
 }
 `

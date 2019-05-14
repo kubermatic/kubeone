@@ -81,9 +81,12 @@ terraform output -json > tf.json
 
 ## Installing Kubernetes
 
-Now that you have infrastructure you can proceed with installing Kubernetes using KubeOne.
+Now that you have infrastructure you can proceed with installing Kubernetes
+using KubeOne.
 
-Before you start you'll need a configuration file that defines how Kubernetes will be installed, e.g. what version will be used and what features will be enabled. For the configuration file reference see [`config.yaml.dist`](https://github.com/kubermatic/kubeone/blob/master/config.yaml.dist).
+Before you start you'll need a configuration file that defines how Kubernetes
+will be installed, e.g. what version will be used and what features will be
+enabled. For the configuration file reference run `kubeone config print --full`.
 
 To get started you can use the following configuration. It'll install Kubernetes 1.14.1, create 3 worker nodes and deploy the [external cloud controller manager](https://github.com/hetznercloud/hcloud-cloud-controller-manager). The external cloud controller manager takes care of providing correct information about the nodes. KubeOne automatically populates all needed information about worker nodes from the [Terraform output](https://github.com/kubermatic/kubeone/blob/a874fd5913ca2a86c3b8136982c2a00e835c2f62/examples/terraform/hetzner/output.tf#L26-L36). Alternatively, you can set those information manually. As KubeOne is using [Kubermatic `machine-controller`](https://github.com/kubermatic/machine-controller) for creating worker nodes see [Hetzner example manifest](https://github.com/kubermatic/machine-controller/blob/master/examples/hetzner-machinedeployment.yaml) for available options.
 

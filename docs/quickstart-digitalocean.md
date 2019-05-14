@@ -90,7 +90,9 @@ terraform output -json > tf.json
 
 Now that you have infrastructure you can proceed with installing Kubernetes using KubeOne.
 
-Before you start you'll need a configuration file that defines how Kubernetes will be installed, e.g. what version will be used and what features will be enabled. For the configuration file reference see [`config.yaml.dist`](https://github.com/kubermatic/kubeone/blob/master/config.yaml.dist).
+Before you start you'll need a configuration file that defines how Kubernetes
+will be installed, e.g. what version will be used and what features will be
+enabled. For the configuration file reference run `kubeone config print --full`.
 
 To get started you can use the following configuration. It'll install Kubernetes 1.14.1, create 3 worker nodes and deploy the [external cloud controller manager](https://github.com/digitalocean/digitalocean-cloud-controller-manager). The external cloud controller manager takes care of providing correct information about nodes from the DigitalOcean API and allows you to use the `type: LoadBalancer` services. KubeOne automatically populates information about the worker nodes from the [Terraform output](https://github.com/kubermatic/kubeone/blob/ec8bf305446ac22529e9683fd4ce3c9abf753d1e/examples/terraform/digitalocean/output.tf#L38-L59). Alternatively, you can set those information manually. As KubeOne is using [Kubermatic `machine-controller`](https://github.com/kubermatic/machine-controller) for creating worker nodes, see [DigitalOcean example manifest](https://github.com/kubermatic/machine-controller/blob/master/examples/digitalocean-machinedeployment.yaml) for available options.
 

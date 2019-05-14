@@ -52,6 +52,9 @@ func (t *Task) Run(ctx *util.Context) error {
 		lastError = t.Fn(ctx)
 		if lastError != nil {
 			ctx.Logger.Warn("Task failed, retrying…")
+			if ctx.Verbose {
+				ctx.Logger.Warnf("error was: %s", lastError)
+			}
 			return false, nil
 		}
 		return true, nil

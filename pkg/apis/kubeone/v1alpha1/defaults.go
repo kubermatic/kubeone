@@ -86,6 +86,11 @@ func SetDefaults_ClusterNetwork(obj *KubeOneCluster) {
 	if len(obj.ClusterNetwork.NodePortRange) == 0 {
 		obj.ClusterNetwork.NodePortRange = DefaultNodePortRange
 	}
+	if obj.ClusterNetwork.CNI == nil {
+		obj.ClusterNetwork.CNI = &CNI{
+			Provider: CNIProviderCanal,
+		}
+	}
 }
 
 func SetDefaults_MachineController(obj *KubeOneCluster) {

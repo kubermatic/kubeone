@@ -103,9 +103,12 @@ terraform output -json > tf.json
 
 ## Installing Kubernetes
 
-Now that you have infrastructure you can proceed with installing Kubernetes using KubeOne.
+Now that you have infrastructure you can proceed with installing Kubernetes
+using KubeOne.
 
-Before you start you'll need a configuration file that defines how Kubernetes will be installed, e.g. what version will be used and what features will be enabled. For the configuration file reference see [`config.yaml.dist`](https://github.com/kubermatic/kubeone/blob/master/config.yaml.dist).
+Before you start you'll need a configuration file that defines how Kubernetes
+will be installed, e.g. what version will be used and what features will be
+enabled. For the configuration file reference run `kubeone config print --full`.
 
 To get started you can use the following configuration. It'll install Kubernetes 1.14.1 and create 2 worker nodes. KubeOne automatically populates information about image, instance size and networking settings for worker nodes from the Terraform output. Alternatively, you can set those information manually. As KubeOne is using [Kubermatic `machine-controller`](https://github.com/kubermatic/machine-controller) for creating worker nodes, see [OpenStack example manifest](https://github.com/kubermatic/machine-controller/blob/master/examples/openstack-machinedeployment.yaml) for available options.
 
