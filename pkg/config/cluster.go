@@ -14,6 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+// Package config implements the KubeOne configuration API.
+// Deprecated: This API is deprecated and is used only for migration purposes.
+// The config package will be removed after 2019-08-12.
 package config
 
 import (
