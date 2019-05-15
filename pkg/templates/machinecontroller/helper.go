@@ -81,10 +81,10 @@ func WaitReady(ctx *util.Context) error {
 	return nil
 }
 
-// DeleteAllMachines deletes all MachineDeployment, MachineSet and Machine objects.
-func DeleteAllMachines(ctx *util.Context) error {
+// DestroyWorkers destroys all MachineDeployment, MachineSet and Machine objects
+func DestroyWorkers(ctx *util.Context) error {
 	if !ctx.Cluster.MachineController.Deploy {
-		ctx.Logger.Info("Skipping deleting worker machines because machine-controller is disabled in configuration.")
+		ctx.Logger.Info("Skipping deleting workers because machine-controller is disabled in configuration.")
 		return nil
 	}
 	if ctx.DynamicClient == nil {
@@ -93,7 +93,8 @@ func DeleteAllMachines(ctx *util.Context) error {
 
 	bgCtx := context.Background()
 
-	// Annotate nodes with kubermatic.io/skip-eviction=true
+	// Annotate nodes with kubermatic.io/skip-eviction=true to skip eviction
+	ctx.Logger.Info("Annotating nodes to skip eviction…")
 	nodes := &corev1.NodeList{}
 	if err := ctx.DynamicClient.List(bgCtx, &dynclient.ListOptions{}, nodes); err != nil {
 		return errors.Wrap(err, "unable to list nodes")
@@ -120,6 +121,7 @@ func DeleteAllMachines(ctx *util.Context) error {
 	}
 
 	// Delete all MachineDeployment objects
+	ctx.Logger.Info("Deleting MachineDeployment objects…")
 	mdList := &clusterv1alpha1.MachineDeploymentList{}
 	if err := ctx.DynamicClient.List(bgCtx, dynclient.InNamespace(MachineControllerNamespace), mdList); err != nil {
 		if errorsutil.IsTimeout(err) || errorsutil.IsServerTimeout(err) {
@@ -135,6 +137,7 @@ func DeleteAllMachines(ctx *util.Context) error {
 	}
 
 	// Delete all MachineSet objects
+	ctx.Logger.Info("Deleting MachineSet objects…")
 	msList := &clusterv1alpha1.MachineSetList{}
 	if err := ctx.DynamicClient.List(bgCtx, dynclient.InNamespace(MachineControllerNamespace), msList); err != nil {
 		return errors.Wrap(err, "unable to list machineset objects")
@@ -146,6 +149,7 @@ func DeleteAllMachines(ctx *util.Context) error {
 	}
 
 	// Delete all Machine objects
+	ctx.Logger.Info("Deleting Machine objects…")
 	mList := &clusterv1alpha1.MachineList{}
 	if err := ctx.DynamicClient.List(bgCtx, dynclient.InNamespace(MachineControllerNamespace), mList); err != nil {
 		return errors.Wrap(err, "unable to list machine objects")
@@ -157,6 +161,7 @@ func DeleteAllMachines(ctx *util.Context) error {
 	}
 
 	// Wait for all Machines to be deleted
+	ctx.Logger.Info("Waiting for all machines to get deleted…")
 	return wait.Poll(5*time.Second, 3*time.Minute, func() (bool, error) {
 		list := &clusterv1alpha1.MachineList{}
 		if err := ctx.DynamicClient.List(bgCtx, dynclient.InNamespace(MachineControllerNamespace), list); err != nil {

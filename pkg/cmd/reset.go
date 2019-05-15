@@ -29,6 +29,7 @@ type resetOptions struct {
 	globalOptions
 	Manifest       string
 	DestroyWorkers bool
+	RemovePackages bool
 }
 
 // resetCmd setups reset command
@@ -63,6 +64,7 @@ It's possible to source information about hosts from Terraform output, using the
 	}
 
 	cmd.Flags().BoolVarP(&ropts.DestroyWorkers, "destroy-workers", "", true, "destroy all worker machines before resetting the cluster")
+	cmd.Flags().BoolVarP(&ropts.RemovePackages, "remove-packages", "", false, "remove kubernetes packages after resetting the cluster")
 
 	return cmd
 }
@@ -81,6 +83,7 @@ func runReset(logger *logrus.Logger, resetOptions *resetOptions) error {
 	options := &installer.Options{
 		Verbose:        resetOptions.Verbose,
 		DestroyWorkers: resetOptions.DestroyWorkers,
+		RemovePackages: resetOptions.RemovePackages,
 	}
 
 	return installer.NewInstaller(cluster, logger).Reset(options)
