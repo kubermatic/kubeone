@@ -24,6 +24,7 @@ import (
 
 	"github.com/kubermatic/kubeone/pkg/util"
 
+	corev1 "k8s.io/api/core/v1"
 	errorsutil "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/wait"
@@ -90,6 +91,21 @@ func DeleteAllMachines(ctx *util.Context) error {
 	}
 
 	bgCtx := context.Background()
+
+	// Annotate nodes with kubermatic.io/skip-eviction=true
+	nodes := &corev1.NodeList{}
+	if err := ctx.DynamicClient.List(bgCtx, &dynclient.ListOptions{}, nodes); err != nil {
+		return errors.Wrap(err, "unable to list nodes")
+	}
+	for i := range nodes.Items {
+		if nodes.Items[i].Annotations == nil {
+			nodes.Items[i].Annotations = map[string]string{}
+		}
+		nodes.Items[i].Annotations["kubermatic.io/skip-eviction"] = "true"
+		if err := ctx.DynamicClient.Update(bgCtx, &nodes.Items[i]); err != nil {
+			return errors.Wrap(err, "unable to apply annotation on the node object")
+		}
+	}
 
 	// Delete all MachineDeployment objects
 	mdList := &clusterv1alpha1.MachineDeploymentList{}
