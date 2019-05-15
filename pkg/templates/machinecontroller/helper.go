@@ -79,7 +79,7 @@ func WaitReady(ctx *util.Context) error {
 	return nil
 }
 
-// DeleteAllMachines destory all MachineDeployment, MachineSet and Machine objects.
+// DeleteAllMachines deletes all MachineDeployment, MachineSet and Machine objects.
 func DeleteAllMachines(ctx *util.Context) error {
 	if !ctx.Cluster.MachineController.Deploy {
 		ctx.Logger.Info("Skipping deleting worker machines because machine-controller is disabled in configuration.")
@@ -100,8 +100,8 @@ func DeleteAllMachines(ctx *util.Context) error {
 		ctx.Logger.Info("Skipping deleting worker nodes because MachineDeployments CRD is not deployed")
 		return nil
 	}
-	for _, obj := range mdList.Items {
-		if err := ctx.DynamicClient.Delete(bgCtx, &obj); err != nil {
+	for i := range mdList.Items {
+		if err := ctx.DynamicClient.Delete(bgCtx, &mdList.Items[i]); err != nil {
 			return errors.Wrap(err, "unable to delete machinedeployment object")
 		}
 	}
@@ -111,8 +111,8 @@ func DeleteAllMachines(ctx *util.Context) error {
 	if err := ctx.DynamicClient.List(bgCtx, dynclient.InNamespace(MachineControllerNamespace), msList); err != nil {
 		return errors.Wrap(err, "unable to list machineset objects")
 	}
-	for _, obj := range msList.Items {
-		if err := ctx.DynamicClient.Delete(bgCtx, &obj); err != nil {
+	for i := range msList.Items {
+		if err := ctx.DynamicClient.Delete(bgCtx, &msList.Items[i]); err != nil {
 			return errors.Wrap(err, "unable to delete machineset object")
 		}
 	}
@@ -122,8 +122,8 @@ func DeleteAllMachines(ctx *util.Context) error {
 	if err := ctx.DynamicClient.List(bgCtx, dynclient.InNamespace(MachineControllerNamespace), mList); err != nil {
 		return errors.Wrap(err, "unable to list machine objects")
 	}
-	for _, obj := range mList.Items {
-		if err := ctx.DynamicClient.Delete(bgCtx, &obj); err != nil {
+	for i := range mList.Items {
+		if err := ctx.DynamicClient.Delete(bgCtx, &mList.Items[i]); err != nil {
 			return errors.Wrap(err, "unable to delete machine object")
 		}
 	}
