@@ -24,7 +24,10 @@ import (
 
 	"github.com/kubermatic/kubeone/pkg/util"
 
+	errorsutil "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/util/wait"
+	clusterv1alpha1 "sigs.k8s.io/cluster-api/pkg/apis/cluster/v1alpha1"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
@@ -74,4 +77,66 @@ func WaitReady(ctx *util.Context) error {
 		return errors.Wrap(err, "machine-controller did not come up")
 	}
 	return nil
+}
+
+// DeleteAllMachines destory all MachineDeployment, MachineSet and Machine objects.
+func DeleteAllMachines(ctx *util.Context) error {
+	if !ctx.Cluster.MachineController.Deploy {
+		ctx.Logger.Info("Skipping deleting worker machines because machine-controller is disabled in configuration.")
+		return nil
+	}
+	if ctx.DynamicClient == nil {
+		return errors.New("kubernetes client not initialized")
+	}
+
+	bgCtx := context.Background()
+
+	// Delete all MachineDeployment objects
+	mdList := &clusterv1alpha1.MachineDeploymentList{}
+	if err := ctx.DynamicClient.List(bgCtx, dynclient.InNamespace(MachineControllerNamespace), mdList); err != nil {
+		if errorsutil.IsTimeout(err) || errorsutil.IsServerTimeout(err) {
+			return errors.Wrap(err, "unable to list machinedeployment objects")
+		}
+		ctx.Logger.Info("Skipping deleting worker nodes because MachineDeployments CRD is not deployed")
+		return nil
+	}
+	for _, obj := range mdList.Items {
+		if err := ctx.DynamicClient.Delete(bgCtx, &obj); err != nil {
+			return errors.Wrap(err, "unable to delete machinedeployment object")
+		}
+	}
+
+	// Delete all MachineSet objects
+	msList := &clusterv1alpha1.MachineSetList{}
+	if err := ctx.DynamicClient.List(bgCtx, dynclient.InNamespace(MachineControllerNamespace), msList); err != nil {
+		return errors.Wrap(err, "unable to list machineset objects")
+	}
+	for _, obj := range msList.Items {
+		if err := ctx.DynamicClient.Delete(bgCtx, &obj); err != nil {
+			return errors.Wrap(err, "unable to delete machineset object")
+		}
+	}
+
+	// Delete all Machine objects
+	mList := &clusterv1alpha1.MachineList{}
+	if err := ctx.DynamicClient.List(bgCtx, dynclient.InNamespace(MachineControllerNamespace), mList); err != nil {
+		return errors.Wrap(err, "unable to list machine objects")
+	}
+	for _, obj := range mList.Items {
+		if err := ctx.DynamicClient.Delete(bgCtx, &obj); err != nil {
+			return errors.Wrap(err, "unable to delete machine object")
+		}
+	}
+
+	// Wait for all Machines to be deleted
+	return wait.Poll(5*time.Second, 3*time.Minute, func() (bool, error) {
+		list := &clusterv1alpha1.MachineList{}
+		if err := ctx.DynamicClient.List(bgCtx, dynclient.InNamespace(MachineControllerNamespace), list); err != nil {
+			return false, errors.Wrap(err, "unable to list machine objects")
+		}
+		if len(list.Items) != 0 {
+			return false, nil
+		}
+		return true, nil
+	})
 }
