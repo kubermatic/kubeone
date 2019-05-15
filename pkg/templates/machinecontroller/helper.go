@@ -28,6 +28,7 @@ import (
 	errorsutil "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/wait"
+	"k8s.io/client-go/util/retry"
 	clusterv1alpha1 "sigs.k8s.io/cluster-api/pkg/apis/cluster/v1alpha1"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
@@ -97,13 +98,24 @@ func DeleteAllMachines(ctx *util.Context) error {
 	if err := ctx.DynamicClient.List(bgCtx, &dynclient.ListOptions{}, nodes); err != nil {
 		return errors.Wrap(err, "unable to list nodes")
 	}
-	for i := range nodes.Items {
-		if nodes.Items[i].Annotations == nil {
-			nodes.Items[i].Annotations = map[string]string{}
-		}
-		nodes.Items[i].Annotations["kubermatic.io/skip-eviction"] = "true"
-		if err := ctx.DynamicClient.Update(bgCtx, &nodes.Items[i]); err != nil {
-			return errors.Wrap(err, "unable to apply annotation on the node object")
+	for _, node := range nodes.Items {
+		nodeKey := dynclient.ObjectKey{Name: node.Name}
+
+		retErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
+			n := corev1.Node{}
+			if err := ctx.DynamicClient.Get(bgCtx, nodeKey, &n); err != nil {
+				return err
+			}
+
+			if n.Annotations == nil {
+				n.Annotations = map[string]string{}
+			}
+			n.Annotations["kubermatic.io/skip-eviction"] = "true"
+			return errors.WithStack(ctx.DynamicClient.Update(bgCtx, &n))
+		})
+
+		if retErr != nil {
+			return errors.Wrapf(retErr, "unable to annotate node %s", node.Name)
 		}
 	}
 
@@ -118,7 +130,7 @@ func DeleteAllMachines(ctx *util.Context) error {
 	}
 	for i := range mdList.Items {
 		if err := ctx.DynamicClient.Delete(bgCtx, &mdList.Items[i]); err != nil {
-			return errors.Wrap(err, "unable to delete machinedeployment object")
+			return errors.Wrapf(err, "unable to delete machinedeployment object %s", mdList.Items[i].Name)
 		}
 	}
 
@@ -129,7 +141,7 @@ func DeleteAllMachines(ctx *util.Context) error {
 	}
 	for i := range msList.Items {
 		if err := ctx.DynamicClient.Delete(bgCtx, &msList.Items[i]); err != nil {
-			return errors.Wrap(err, "unable to delete machineset object")
+			return errors.Wrapf(err, "unable to delete machineset object %s", msList.Items[i].Name)
 		}
 	}
 
@@ -140,7 +152,7 @@ func DeleteAllMachines(ctx *util.Context) error {
 	}
 	for i := range mList.Items {
 		if err := ctx.DynamicClient.Delete(bgCtx, &mList.Items[i]); err != nil {
-			return errors.Wrap(err, "unable to delete machine object")
+			return errors.Wrapf(err, "unable to delete machine object %s", mList.Items[i].Name)
 		}
 	}
 
