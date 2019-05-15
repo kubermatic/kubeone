@@ -112,7 +112,7 @@ func DestroyWorkers(ctx *util.Context) error {
 				n.Annotations = map[string]string{}
 			}
 			n.Annotations["kubermatic.io/skip-eviction"] = "true"
-			return errors.WithStack(ctx.DynamicClient.Update(bgCtx, &n))
+			return ctx.DynamicClient.Update(bgCtx, &n)
 		})
 
 		if retErr != nil {
