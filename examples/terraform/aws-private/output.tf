@@ -34,7 +34,7 @@ output "kubeone_workers" {
     # corresponding (by name) worker definition
     pool-a = {
       region           = "${var.aws_region}"
-      ami              = "${data.aws_ami.ubuntu.id}"
+      ami              = "${local.ami}"
       availabilityZone = "${data.aws_availability_zones.available.names[0]}"
       instanceProfile  = "${aws_iam_instance_profile.workers.name}"
       securityGroupIDs = ["${aws_security_group.common.id}"]
@@ -45,11 +45,15 @@ output "kubeone_workers" {
       sshPublicKeys    = ["${aws_key_pair.deployer.public_key}"]
       replicas         = 1
       operatingSystem  = "ubuntu"
+
+      operatingSystemSpec = {
+        distUpgradeOnBoot = false
+      }
     }
 
     pool-b = {
       region           = "${var.aws_region}"
-      ami              = "${data.aws_ami.ubuntu.id}"
+      ami              = "${local.ami}"
       availabilityZone = "${data.aws_availability_zones.available.names[1]}"
       instanceProfile  = "${aws_iam_instance_profile.workers.name}"
       securityGroupIDs = ["${aws_security_group.common.id}"]
@@ -60,11 +64,15 @@ output "kubeone_workers" {
       sshPublicKeys    = ["${aws_key_pair.deployer.public_key}"]
       replicas         = 1
       operatingSystem  = "ubuntu"
+
+      operatingSystemSpec = {
+        distUpgradeOnBoot = false
+      }
     }
 
     pool-c = {
       region           = "${var.aws_region}"
-      ami              = "${data.aws_ami.ubuntu.id}"
+      ami              = "${local.ami}"
       availabilityZone = "${data.aws_availability_zones.available.names[2]}"
       instanceProfile  = "${aws_iam_instance_profile.workers.name}"
       securityGroupIDs = ["${aws_security_group.common.id}"]
@@ -75,6 +83,10 @@ output "kubeone_workers" {
       sshPublicKeys    = ["${aws_key_pair.deployer.public_key}"]
       replicas         = 1
       operatingSystem  = "ubuntu"
+
+      operatingSystemSpec = {
+        distUpgradeOnBoot = false
+      }
     }
   }
 }

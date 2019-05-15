@@ -45,9 +45,9 @@ output "kubeone_workers" {
   value = {
     # following outputs will be parsed by kubeone and automatically merged into
     # corresponding (by name) worker definition
-    fra1-a = {
+    pool-a = {
       region           = "${var.aws_region}"
-      ami              = "${data.aws_ami.ubuntu.id}"
+      ami              = "${local.ami}"
       availabilityZone = "${local.az_a}"
       instanceProfile  = "${aws_iam_instance_profile.profile.name}"
       securityGroupIDs = ["${aws_security_group.common.id}"]
@@ -58,11 +58,15 @@ output "kubeone_workers" {
       sshPublicKeys    = ["${aws_key_pair.deployer.public_key}"]
       replicas         = 1
       operatingSystem  = "ubuntu"
+
+      operatingSystemSpec = {
+        distUpgradeOnBoot = false
+      }
     }
 
-    fra1-b = {
+    pool-b = {
       region           = "${var.aws_region}"
-      ami              = "${data.aws_ami.ubuntu.id}"
+      ami              = "${local.ami}"
       availabilityZone = "${local.az_b}"
       instanceProfile  = "${aws_iam_instance_profile.profile.name}"
       securityGroupIDs = ["${aws_security_group.common.id}"]
@@ -73,11 +77,15 @@ output "kubeone_workers" {
       sshPublicKeys    = ["${aws_key_pair.deployer.public_key}"]
       replicas         = 1
       operatingSystem  = "ubuntu"
+
+      operatingSystemSpec = {
+        distUpgradeOnBoot = false
+      }
     }
 
-    fra1-c = {
+    pool-c = {
       region           = "${var.aws_region}"
-      ami              = "${data.aws_ami.ubuntu.id}"
+      ami              = "${local.ami}"
       availabilityZone = "${local.az_c}"
       instanceProfile  = "${aws_iam_instance_profile.profile.name}"
       securityGroupIDs = ["${aws_security_group.common.id}"]
@@ -88,6 +96,10 @@ output "kubeone_workers" {
       sshPublicKeys    = ["${aws_key_pair.deployer.public_key}"]
       replicas         = 1
       operatingSystem  = "ubuntu"
+
+      operatingSystemSpec = {
+        distUpgradeOnBoot = false
+      }
     }
   }
 }

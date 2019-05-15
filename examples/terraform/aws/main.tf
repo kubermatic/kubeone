@@ -25,6 +25,8 @@ locals {
   az_c             = "${var.aws_region}c"
   kube_cluster_tag = "kubernetes.io/cluster/${var.cluster_name}"
   vpc_id           = "${var.vpc_id == "default" ? aws_default_vpc.default.id : var.vpc_id}"
+  
+  ami = "${var.ami == "" ? data.aws_ami.ubuntu.id : var.ami}"
 }
 
 data "aws_availability_zones" "available" {}
@@ -218,7 +220,7 @@ resource "aws_instance" "control_plane" {
 
   instance_type          = "${var.control_plane_type}"
   iam_instance_profile   = "${aws_iam_instance_profile.profile.name}"
-  ami                    = "${data.aws_ami.ubuntu.id}"
+  ami                    = "${local.ami}"
   key_name               = "${aws_key_pair.deployer.key_name}"
   vpc_security_group_ids = ["${aws_security_group.common.id}", "${aws_security_group.control_plane.id}"]
   availability_zone      = "${data.aws_availability_zones.available.names[count.index % local.az_count]}"
