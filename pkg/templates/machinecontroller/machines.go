@@ -45,7 +45,7 @@ type providerSpec struct {
 // DeployMachineDeployments deploys MachineDeployments that create appropriate machines
 func DeployMachineDeployments(ctx *util.Context) error {
 	if ctx.DynamicClient == nil {
-		return errors.New("kubernetes dynamic client in not initialized")
+		return errors.New("kubernetes dynamic client is not initialized")
 	}
 
 	bgCtx := context.Background()
