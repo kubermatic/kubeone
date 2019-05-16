@@ -37,7 +37,7 @@ import (
 )
 
 const (
-	version        = ":2.5.1"
+	version        = ":2.5.2"
 	weaveKubeImage = "docker.io/weaveworks/weave-kube"
 	weaveNPCImage  = "docker.io/weaveworks/weave-npc"
 )
