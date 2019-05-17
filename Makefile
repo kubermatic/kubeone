@@ -49,7 +49,6 @@ test:
 dep:
 	dep ensure -v
 
-
 .PHONY: licence-check
 licence-check:
 	wwhrd check
@@ -67,7 +66,7 @@ docker-make-install:
 		make install
 
 .PHONY: e2e_test
-e2e_test:
+e2e_test: build lint test dep
 	./hack/run_ci_e2e_test.sh
 
 dist/kubeone: $(shell find . -name '*.go')

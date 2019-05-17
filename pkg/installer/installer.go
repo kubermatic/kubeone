@@ -31,6 +31,7 @@ type Options struct {
 	Verbose        bool
 	BackupFile     string
 	DestroyWorkers bool
+	RemoveBinaries bool
 }
 
 // Installer is entrypoint for installation process
@@ -74,5 +75,6 @@ func (i *Installer) createContext(options *Options) *util.Context {
 		Verbose:        options.Verbose,
 		BackupFile:     options.BackupFile,
 		DestroyWorkers: options.DestroyWorkers,
+		RemoveBinaries: options.RemoveBinaries,
 	}
 }

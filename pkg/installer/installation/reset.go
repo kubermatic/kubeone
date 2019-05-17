@@ -17,6 +17,8 @@ limitations under the License.
 package installation
 
 import (
+	"github.com/pkg/errors"
+
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
@@ -25,26 +27,38 @@ import (
 
 // Reset undos all changes made by KubeOne to the configured machines.
 func Reset(ctx *util.Context) error {
-	ctx.Logger.Infoln("Resetting kubeadm…")
+	ctx.Logger.Infoln("Resetting cluster…")
 
 	if ctx.DestroyWorkers {
-		if err := ctx.RunTaskOnLeader(destroyWorkers); err != nil {
+		if err := destroyWorkers(ctx); err != nil {
 			return err
 		}
 	}
 
-	return ctx.RunTaskOnAllNodes(resetNode, true)
+	if err := ctx.RunTaskOnAllNodes(resetNode, true); err != nil {
+		return err
+	}
+
+	if ctx.RemoveBinaries {
+		if err := ctx.RunTaskOnAllNodes(removeBinaries, true); err != nil {
+			return errors.Wrap(err, "unable to remove kubernetes binaries")
+		}
+	}
+
+	return nil
 }
 
-func destroyWorkers(ctx *util.Context, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func destroyWorkers(ctx *util.Context) error {
 	ctx.Logger.Infoln("Destroying worker nodes…")
 
-	_, _, err := ctx.Runner.Run(destroyScript, util.TemplateVariables{
-		"WORK_DIR":   ctx.WorkDir,
-		"MACHINE_NS": machinecontroller.MachineControllerNamespace,
-	})
+	if err := util.BuildKubernetesClientset(ctx); err != nil {
+		return errors.Wrap(err, "unable to build kubernetes clientset")
+	}
+	if err := machinecontroller.DestroyWorkers(ctx); err != nil {
+		return errors.Wrap(err, "unable to delete all worker nodes")
+	}
 
-	return err
+	return nil
 }
 
 func resetNode(ctx *util.Context, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
@@ -57,27 +71,83 @@ func resetNode(ctx *util.Context, _ *kubeoneapi.HostConfig, conn ssh.Connection)
 	return err
 }
 
-const destroyScript = `
-if kubectl cluster-info > /dev/null; then
-  kubectl annotate --all --overwrite node kubermatic.io/skip-eviction=true
-  kubectl delete machinedeployment -n "{{ .MACHINE_NS }}" --all
-  kubectl delete machineset -n "{{ .MACHINE_NS }}" --all
-  kubectl delete machine -n "{{ .MACHINE_NS }}" --all
+func removeBinaries(ctx *util.Context, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+	ctx.Logger.Infoln("Removing Kubernetes binaries")
 
-  for try in {1..30}; do
-    if kubectl get machine -n "{{ .MACHINE_NS }}" 2>&1 | grep -q  'No resources found.'; then
-      exit 0
-    fi
-    sleep 10s
-  done
+	// Determine operating system
+	os, err := determineOS(ctx)
+	if err != nil {
+		return errors.Wrap(err, "failed to determine operating system")
+	}
+	node.SetOperatingSystem(os)
 
-  echo "Error: Couldn't delete all machines!"
-  exit 1
-fi
+	// Remove Kubernetes binaries
+	switch node.OperatingSystem {
+	case "ubuntu", "debian":
+		err = removeBinariesDebian(ctx)
+	case "centos":
+		err = removeBinariesCentOS(ctx)
+	case "coreos":
+		err = removeBinariesCoreOS(ctx)
+	default:
+		err = errors.Errorf("'%s' is not a supported operating system", node.OperatingSystem)
+	}
+
+	return err
+}
+
+func removeBinariesDebian(ctx *util.Context) error {
+	_, _, err := ctx.Runner.Run(removeBinariesDebianCommand, util.TemplateVariables{
+		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
+		"CNI_VERSION":        ctx.Cluster.Versions.KubernetesCNIVersion(),
+	})
+
+	return errors.WithStack(err)
+}
+
+func removeBinariesCentOS(ctx *util.Context) error {
+	_, _, err := ctx.Runner.Run(removeBinariesCentOSCommand, util.TemplateVariables{
+		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
+		"CNI_VERSION":        ctx.Cluster.Versions.KubernetesCNIVersion(),
+	})
+
+	return errors.WithStack(err)
+}
+
+func removeBinariesCoreOS(ctx *util.Context) error {
+	_, _, err := ctx.Runner.Run(removeBinariesCoreOSCommand, util.TemplateVariables{})
+
+	return errors.WithStack(err)
+}
+
+const (
+	removeBinariesDebianCommand = `
+kube_ver=$(apt-cache madison kubelet | grep "{{ .KUBERNETES_VERSION }}" | head -1 | awk '{print $3}')
+cni_ver=$(apt-cache madison kubernetes-cni | grep "{{ .CNI_VERSION }}" | head -1 | awk '{print $3}')
+
+sudo apt-mark unhold kubelet kubeadm kubectl kubernetes-cni
+sudo apt-get remove --purge -y \
+     kubeadm=${kube_ver} \
+     kubectl=${kube_ver} \
+     kubelet=${kube_ver} \
+     kubernetes-cni=${cni_ver}
 `
-
-const resetScript = `
+	removeBinariesCentOSCommand = `
+sudo yum remove -y \
+	kubelet-{{ .KUBERNETES_VERSION }}-0\
+	kubeadm-{{ .KUBERNETES_VERSION }}-0 \
+	kubectl-{{ .KUBERNETES_VERSION }}-0 \
+	kubernetes-cni-{{ .CNI_VERSION }}-0
+`
+	removeBinariesCoreOSCommand = `
+# Remove CNI and binaries
+sudo rm -rf /opt/cni /opt/bin/kubeadm /opt/bin/kubectl /opt/bin/kubelet
+# Remove systemd unit files
+sudo rm /etc/systemd/system/kubelet.service /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+`
+	resetScript = `
 sudo kubeadm reset --force
 sudo rm /etc/kubernetes/cloud-config
 rm -rf "{{ .WORK_DIR }}"
 `
+)

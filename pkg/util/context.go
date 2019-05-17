@@ -42,6 +42,7 @@ type Context struct {
 	Verbose                   bool
 	BackupFile                string
 	DestroyWorkers            bool
+	RemoveBinaries            bool
 	ForceUpgrade              bool
 	UpgradeMachineDeployments bool
 }
