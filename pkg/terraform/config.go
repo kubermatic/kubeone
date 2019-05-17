@@ -37,15 +37,16 @@ type controlPlane struct {
 }
 
 type awsWorkerConfig struct {
-	AMI              string   `json:"ami"`
-	AvailabilityZone string   `json:"availabilityZone"`
-	InstanceProfile  string   `json:"instanceProfile"`
-	Region           string   `json:"region"`
-	SecurityGroupIDs []string `json:"securityGroupIDs"`
-	SubnetID         string   `json:"subnetId"`
-	VPCID            string   `json:"vpcId"`
-	InstanceType     *string  `json:"instanceType"`
-	DiskSize         *int     `json:"diskSize"`
+	AMI              string            `json:"ami"`
+	AvailabilityZone string            `json:"availabilityZone"`
+	InstanceProfile  string            `json:"instanceProfile"`
+	Region           string            `json:"region"`
+	SecurityGroupIDs []string          `json:"securityGroupIDs"`
+	SubnetID         string            `json:"subnetId"`
+	VPCID            string            `json:"vpcId"`
+	InstanceType     *string           `json:"instanceType"`
+	DiskSize         *int              `json:"diskSize"`
+	Tags             map[string]string `json:"tags"`
 }
 
 type doWorkerConfig struct {
@@ -59,22 +60,29 @@ type doWorkerConfig struct {
 }
 
 type openStackWorkerConfig struct {
-	Image            string   `json:"image"`
-	Flavor           string   `json:"flavor"`
-	SecurityGroups   []string `json:"securityGroups"`
-	FloatingIPPool   string   `json:"floatingIPPool"`
-	AvailabilityZone string   `json:"availabilityZone"`
-	Network          string   `json:"network"`
-	Subnet           string   `json:"subnet"`
+	Image            string            `json:"image"`
+	Flavor           string            `json:"flavor"`
+	SecurityGroups   []string          `json:"securityGroups"`
+	FloatingIPPool   string            `json:"floatingIPPool"`
+	AvailabilityZone string            `json:"availabilityZone"`
+	Network          string            `json:"network"`
+	Subnet           string            `json:"subnet"`
+	Tags             map[string]string `json:"tags"`
 }
 
 type gceWorkerConfig struct {
-	DiskSize    int    `json:"diskSize"`
-	DiskType    string `json:"diskType"`
-	MachineType string `json:"machineType"`
-	Network     string `json:"network"`
-	Subnetwork  string `json:"subnetwork"`
-	Zone        string `json:"zone"`
+	DiskSize              int               `json:"diskSize"`
+	DiskType              string            `json:"diskType"`
+	MachineType           string            `json:"machineType"`
+	Network               string            `json:"network"`
+	Subnetwork            string            `json:"subnetwork"`
+	Zone                  string            `json:"zone"`
+	Preemptible           bool              `json:"preemptible"`
+	AssignPublicIPAddress *bool             `json:"assignPublicIPAddress"`
+	Labels                map[string]string `json:"labels"`
+	Tags                  []string          `json:"tags"`
+	MultiZone             *bool             `json:"multizone"`
+	Regional              *bool             `json:"regional"`
 }
 
 type hetznerWorkerConfig struct {
@@ -241,6 +249,7 @@ func (c *Config) updateAWSWorkerset(workerset *kubeonev1alpha1.WorkerConfig, cfg
 		{key: "subnetId", value: awsCloudConfig.SubnetID},
 		{key: "vpcId", value: awsCloudConfig.VPCID},
 		{key: "instanceType", value: awsCloudConfig.InstanceType},
+		{key: "tags", value: awsCloudConfig.Tags},
 	}
 
 	for _, flag := range flags {
@@ -281,6 +290,12 @@ func (c *Config) updateGCEWorkerset(workerset *kubeonev1alpha1.WorkerConfig, cfg
 		{key: "network", value: gceCloudConfig.Network},
 		{key: "subnetwork", value: gceCloudConfig.Subnetwork},
 		{key: "zone", value: gceCloudConfig.Zone},
+		{key: "preemptible", value: gceCloudConfig.Preemptible},
+		{key: "assignPublicIPAddress", value: gceCloudConfig.AssignPublicIPAddress},
+		{key: "labels", value: gceCloudConfig.Labels},
+		{key: "tags", value: gceCloudConfig.Tags},
+		{key: "multizone", value: gceCloudConfig.MultiZone},
+		{key: "regional", value: gceCloudConfig.Regional},
 	}
 
 	for _, flag := range flags {
@@ -305,6 +320,7 @@ func (c *Config) updateDigitalOceanWorkerset(workerset *kubeonev1alpha1.WorkerCo
 		{key: "ipv6", value: doCloudConfig.IPv6},
 		{key: "private_networking", value: doCloudConfig.PrivateNetworking},
 		{key: "monitoring", value: doCloudConfig.Monitoring},
+		{key: "tags", value: doCloudConfig.Tags},
 	}
 
 	for _, flag := range flags {
@@ -351,6 +367,7 @@ func (c *Config) updateOpenStackWorkerset(workerset *kubeonev1alpha1.WorkerConfi
 		{key: "availabilityZone", value: openstackConfig.AvailabilityZone},
 		{key: "network", value: openstackConfig.Network},
 		{key: "subnet", value: openstackConfig.Subnet},
+		{key: "tags", value: openstackConfig.Tags},
 	}
 
 	for _, flag := range flags {
@@ -406,7 +423,15 @@ func setWorkersetFlag(w *kubeonev1alpha1.WorkerConfig, name string, value interf
 		if len(s) == 0 {
 			return nil
 		}
+	case map[string]string:
+		if s == nil {
+			return nil
+		}
 	case bool:
+	case *bool:
+		if s == nil {
+			return nil
+		}
 	default:
 		return errors.New("unsupported type")
 	}

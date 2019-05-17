@@ -96,10 +96,6 @@ func createMachineDeployment(cluster *kubeoneapi.KubeOneCluster, workerset kubeo
 	}
 
 	return &clusterv1alpha1.MachineDeployment{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "cluster.k8s.io/v1alpha1",
-			Kind:       "MachineDeployment",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: metav1.NamespaceSystem,
 			Name:      fmt.Sprintf("%s-deployment", workerset.Name),
