@@ -39,8 +39,8 @@ func Reset(ctx *util.Context) error {
 		return err
 	}
 
-	if ctx.RemovePackages {
-		if err := ctx.RunTaskOnAllNodes(removePackages, true); err != nil {
+	if ctx.RemoveBinaries {
+		if err := ctx.RunTaskOnAllNodes(removeBinaries, true); err != nil {
 			return errors.Wrap(err, "unable to remove kubernetes packages")
 		}
 	}
@@ -71,7 +71,7 @@ func resetNode(ctx *util.Context, _ *kubeoneapi.HostConfig, conn ssh.Connection)
 	return err
 }
 
-func removePackages(ctx *util.Context, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func removeBinaries(ctx *util.Context, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	ctx.Logger.Infoln("Removing Kubernetes packages…")
 
 	// Determine operating system
@@ -84,11 +84,11 @@ func removePackages(ctx *util.Context, node *kubeoneapi.HostConfig, conn ssh.Con
 	// Remove Kubernetes packages
 	switch node.OperatingSystem {
 	case "ubuntu", "debian":
-		err = removePackagesDebian(ctx)
+		err = removeBinariesDebian(ctx)
 	case "centos":
-		err = removePackagesCentOS(ctx)
+		err = removeBinariesCentOS(ctx)
 	case "coreos":
-		err = removePackagesCoreOS(ctx)
+		err = removeBinariesCoreOS(ctx)
 	default:
 		err = errors.Errorf("'%s' is not a supported operating system", node.OperatingSystem)
 	}
@@ -96,8 +96,8 @@ func removePackages(ctx *util.Context, node *kubeoneapi.HostConfig, conn ssh.Con
 	return err
 }
 
-func removePackagesDebian(ctx *util.Context) error {
-	_, _, err := ctx.Runner.Run(removePackagesDebianCommand, util.TemplateVariables{
+func removeBinariesDebian(ctx *util.Context) error {
+	_, _, err := ctx.Runner.Run(removeBinariesDebianCommand, util.TemplateVariables{
 		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
 		"CNI_VERSION":        ctx.Cluster.Versions.KubernetesCNIVersion(),
 	})
@@ -105,8 +105,8 @@ func removePackagesDebian(ctx *util.Context) error {
 	return errors.WithStack(err)
 }
 
-func removePackagesCentOS(ctx *util.Context) error {
-	_, _, err := ctx.Runner.Run(removePackagesCentOSCommand, util.TemplateVariables{
+func removeBinariesCentOS(ctx *util.Context) error {
+	_, _, err := ctx.Runner.Run(removeBinariesCentOSCommand, util.TemplateVariables{
 		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
 		"CNI_VERSION":        ctx.Cluster.Versions.KubernetesCNIVersion(),
 	})
@@ -114,14 +114,14 @@ func removePackagesCentOS(ctx *util.Context) error {
 	return errors.WithStack(err)
 }
 
-func removePackagesCoreOS(ctx *util.Context) error {
-	_, _, err := ctx.Runner.Run(removePackagesCoreOSCommand, util.TemplateVariables{})
+func removeBinariesCoreOS(ctx *util.Context) error {
+	_, _, err := ctx.Runner.Run(removeBinariesCoreOSCommand, util.TemplateVariables{})
 
 	return errors.WithStack(err)
 }
 
 const (
-	removePackagesDebianCommand = `
+	removeBinariesDebianCommand = `
 kube_ver=$(apt-cache madison kubelet | grep "{{ .KUBERNETES_VERSION }}" | head -1 | awk '{print $3}')
 cni_ver=$(apt-cache madison kubernetes-cni | grep "{{ .CNI_VERSION }}" | head -1 | awk '{print $3}')
 
@@ -132,14 +132,14 @@ sudo apt-get remove --purge -y \
      kubelet=${kube_ver} \
      kubernetes-cni=${cni_ver}
 `
-	removePackagesCentOSCommand = `
+	removeBinariesCentOSCommand = `
 sudo yum remove -y \
 	kubelet-{{ .KUBERNETES_VERSION }}-0\
 	kubeadm-{{ .KUBERNETES_VERSION }}-0 \
 	kubectl-{{ .KUBERNETES_VERSION }}-0 \
 	kubernetes-cni-{{ .CNI_VERSION }}-0
 `
-	removePackagesCoreOSCommand = `
+	removeBinariesCoreOSCommand = `
 # Remove CNI and binaries
 sudo rm -rf /opt/cni /opt/bin/kubeadm /opt/bin/kubectl /opt/bin/kubelet
 # Remove systemd unit files
