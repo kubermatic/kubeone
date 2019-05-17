@@ -166,7 +166,7 @@ func DestroyWorkers(ctx *util.Context) error {
 
 	// Wait for all Machines to be deleted
 	ctx.Logger.Info("Waiting for all machines to get deleted…")
-	return wait.Poll(5*time.Second, 3*time.Minute, func() (bool, error) {
+	return wait.Poll(5*time.Second, 5*time.Minute, func() (bool, error) {
 		list := &clusterv1alpha1.MachineList{}
 		if err := ctx.DynamicClient.List(bgCtx, dynclient.InNamespace(MachineControllerNamespace), list); err != nil {
 			return false, errors.Wrap(err, "unable to list machine objects")
