@@ -41,7 +41,7 @@ func Reset(ctx *util.Context) error {
 
 	if ctx.RemoveBinaries {
 		if err := ctx.RunTaskOnAllNodes(removeBinaries, true); err != nil {
-			return errors.Wrap(err, "unable to remove kubernetes packages")
+			return errors.Wrap(err, "unable to remove kubernetes binaries")
 		}
 	}
 
@@ -72,7 +72,7 @@ func resetNode(ctx *util.Context, _ *kubeoneapi.HostConfig, conn ssh.Connection)
 }
 
 func removeBinaries(ctx *util.Context, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
-	ctx.Logger.Infoln("Removing Kubernetes packages…")
+	ctx.Logger.Infoln("Removing Kubernetes binaries")
 
 	// Determine operating system
 	os, err := determineOS(ctx)
@@ -81,7 +81,7 @@ func removeBinaries(ctx *util.Context, node *kubeoneapi.HostConfig, conn ssh.Con
 	}
 	node.SetOperatingSystem(os)
 
-	// Remove Kubernetes packages
+	// Remove Kubernetes binaries
 	switch node.OperatingSystem {
 	case "ubuntu", "debian":
 		err = removeBinariesDebian(ctx)
