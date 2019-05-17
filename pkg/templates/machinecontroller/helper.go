@@ -140,7 +140,9 @@ func DestroyWorkers(ctx *util.Context) error {
 	ctx.Logger.Info("Deleting MachineSet objects…")
 	msList := &clusterv1alpha1.MachineSetList{}
 	if err := ctx.DynamicClient.List(bgCtx, dynclient.InNamespace(MachineControllerNamespace), msList); err != nil {
-		return errors.Wrap(err, "unable to list machineset objects")
+		if !errorsutil.IsNotFound(err) {
+			return errors.Wrap(err, "unable to list machineset objects")
+		}
 	}
 	for i := range msList.Items {
 		if err := ctx.DynamicClient.Delete(bgCtx, &msList.Items[i]); err != nil {
@@ -152,7 +154,9 @@ func DestroyWorkers(ctx *util.Context) error {
 	ctx.Logger.Info("Deleting Machine objects…")
 	mList := &clusterv1alpha1.MachineList{}
 	if err := ctx.DynamicClient.List(bgCtx, dynclient.InNamespace(MachineControllerNamespace), mList); err != nil {
-		return errors.Wrap(err, "unable to list machine objects")
+		if !errorsutil.IsNotFound(err) {
+			return errors.Wrap(err, "unable to list machine objects")
+		}
 	}
 	for i := range mList.Items {
 		if err := ctx.DynamicClient.Delete(bgCtx, &mList.Items[i]); err != nil {
