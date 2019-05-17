@@ -30,20 +30,20 @@ resource "digitalocean_ssh_key" "deployer" {
 }
 
 resource "digitalocean_droplet" "control_plane" {
-  count = "${var.control_plane_count}"
+  count = 3
   name  = "${var.cluster_name}-control-plane-${count.index + 1}"
 
   tags = [
     "${local.kube_cluster_tag}",
+    "kubeone",
   ]
 
-  image  = "${var.droplet_image}"
-  region = "${var.region}"
-  size   = "${var.droplet_size}"
-
-  private_networking = "${var.droplet_private_networking}"
-  monitoring         = "${var.droplet_monitoring}"
-  ipv6               = "${var.droplet_ipv6}"
+  image              = "${var.control_plane_droplet_image}"
+  region             = "${var.region}"
+  size               = "${var.control_plane_size}"
+  private_networking = true
+  monitoring         = false
+  ipv6               = false
 
   ssh_keys = [
     "${digitalocean_ssh_key.deployer.id}",
@@ -51,7 +51,7 @@ resource "digitalocean_droplet" "control_plane" {
 }
 
 resource "digitalocean_loadbalancer" "control_plane" {
-  name   = "${var.cluster_name}-load-balancer"
+  name   = "${var.cluster_name}-lb"
   region = "${var.region}"
 
   forwarding_rule {

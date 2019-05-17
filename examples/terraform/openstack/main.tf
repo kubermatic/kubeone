@@ -86,9 +86,9 @@ resource "openstack_networking_secgroup_rule_v2" "secgroup_apiserver" {
 }
 
 resource "openstack_compute_instance_v2" "control_plane" {
-  count = "${var.control_plane_count}"
+  count = 3
+  name  = "${var.cluster_name}-cp-${count.index}"
 
-  name            = "${var.cluster_name}-cp-${count.index}"
   image_name      = "${var.image}"
   flavor_name     = "${var.control_plane_flavor}"
   key_pair        = "${openstack_compute_keypair_v2.deployer.name}"
@@ -100,8 +100,9 @@ resource "openstack_compute_instance_v2" "control_plane" {
 }
 
 resource "openstack_compute_instance_v2" "lb" {
-  name            = "${var.cluster_name}-lb"
-  image_name      = "${var.image}"
+  name       = "${var.cluster_name}-lb"
+  image_name = "${var.image}"
+
   flavor_name     = "${var.lb_flavor}"
   key_pair        = "${openstack_compute_keypair_v2.deployer.name}"
   security_groups = ["${openstack_networking_secgroup_v2.securitygroup.name}"]
@@ -121,9 +122,9 @@ resource "openstack_compute_instance_v2" "lb" {
 }
 
 resource "openstack_networking_port_v2" "control_plane" {
-  count = "${var.control_plane_count}"
+  count = 3
+  name  = "${var.cluster_name}-control_plane-${count.index}"
 
-  name               = "${var.cluster_name}-control_plane-${count.index}"
   admin_state_up     = "true"
   network_id         = "${openstack_networking_network_v2.network.id}"
   security_group_ids = ["${openstack_networking_secgroup_v2.securitygroup.id}"]
@@ -134,7 +135,8 @@ resource "openstack_networking_port_v2" "control_plane" {
 }
 
 resource "openstack_networking_port_v2" "lb" {
-  name               = "${var.cluster_name}-lb"
+  name = "${var.cluster_name}-lb"
+
   admin_state_up     = "true"
   network_id         = "${openstack_networking_network_v2.network.id}"
   security_group_ids = ["${openstack_networking_secgroup_v2.securitygroup.id}"]
@@ -145,7 +147,7 @@ resource "openstack_networking_port_v2" "lb" {
 }
 
 resource "openstack_networking_floatingip_v2" "control_plane" {
-  count = "${var.control_plane_count}"
+  count = 3
   pool  = "${var.external_network_name}"
 }
 
@@ -154,7 +156,7 @@ resource "openstack_networking_floatingip_v2" "lb" {
 }
 
 resource "openstack_networking_floatingip_associate_v2" "control_plane" {
-  count = "${var.control_plane_count}"
+  count = 3
 
   floating_ip = "${element(openstack_networking_floatingip_v2.control_plane.*.address, count.index)}"
   port_id     = "${element(openstack_networking_port_v2.control_plane.*.id, count.index)}"

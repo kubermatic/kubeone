@@ -18,14 +18,14 @@ variable "cluster_name" {
   description = "Name of the cluster"
 }
 
-variable "region" {
-  default     = "fra1"
-  description = "Region to speak to"
-}
+variable "worker_os" {
+  description = "OS to run on worker machines"
 
-variable "control_plane_count" {
-  default     = 3
-  description = "Number of master instances"
+  # valid choices are:
+  # * ubuntu
+  # * centos
+  # * coreos
+  default = "ubuntu"
 }
 
 variable "ssh_public_key_file" {
@@ -34,13 +34,13 @@ variable "ssh_public_key_file" {
 }
 
 variable "ssh_port" {
-  default     = 22
   description = "SSH port to be used to provision instances"
+  default     = 22
 }
 
 variable "ssh_username" {
-  default     = "root"
   description = "SSH user, used only in output"
+  default     = "root"
 }
 
 variable "ssh_private_key_file" {
@@ -53,27 +53,24 @@ variable "ssh_agent_socket" {
   default     = "env:SSH_AUTH_SOCK"
 }
 
-variable "droplet_image" {
+# Provider specific settings
+
+variable "region" {
+  description = "Region to speak to"
+  default     = "fra1"
+}
+
+variable "control_plane_droplet_image" {
+  description = "Image to use for provisioning control plane droplets"
   default     = "ubuntu-18-04-x64"
-  description = "Image to use for provisioning droplet"
 }
 
-variable "droplet_size" {
+variable "control_plane_size" {
+  description = "Size of control plane nodes"
   default     = "s-2vcpu-4gb"
-  description = "Size of Droplets"
 }
 
-variable "droplet_private_networking" {
-  default     = true
-  description = "Enable Private Networking on Droplets (recommended)"
-}
-
-variable "droplet_monitoring" {
-  default     = false
-  description = "Enable advance Droplet metrics"
-}
-
-variable "droplet_ipv6" {
-  default     = false
-  description = "Enable IPv6"
+variable "worker_size" {
+  description = "Size of worker nodes"
+  default     = "s-2vcpu-4gb"
 }
