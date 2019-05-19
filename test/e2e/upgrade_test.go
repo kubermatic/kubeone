@@ -59,7 +59,7 @@ func TestClusterUpgrade(t *testing.T) {
 			targetVersion:         "v1.14.1",
 			initialConfigPath:     "../../test/e2e/testdata/config_aws_1.13.5.yaml",
 			targetConfigPath:      "../../test/e2e/testdata/config_aws_1.14.1.yaml",
-			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
+			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
 			scenario:              NodeConformance,
 		},
 		{
@@ -69,7 +69,7 @@ func TestClusterUpgrade(t *testing.T) {
 			targetVersion:         "v1.14.1",
 			initialConfigPath:     "../../test/e2e/testdata/config_do_1.13.5.yaml",
 			targetConfigPath:      "../../test/e2e/testdata/config_do_1.14.1.yaml",
-			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
+			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
 			scenario:              NodeConformance,
 		},
 		{
@@ -79,7 +79,7 @@ func TestClusterUpgrade(t *testing.T) {
 			targetVersion:         "v1.14.1",
 			initialConfigPath:     "../../test/e2e/testdata/config_hetzner_1.13.5.yaml",
 			targetConfigPath:      "../../test/e2e/testdata/config_hetzner_1.14.1.yaml",
-			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
+			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
 			scenario:              NodeConformance,
 		},
 	}

@@ -44,7 +44,7 @@ func TestClusterConformance(t *testing.T) {
 			kubernetesVersion:     "v1.13.5",
 			scenario:              NodeConformance,
 			configFilePath:        "../../test/e2e/testdata/config_aws_1.13.5.yaml",
-			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
+			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
 		},
 		{
 			name:                  "verify k8s 1.14.1 cluster deployment on AWS",
@@ -52,7 +52,7 @@ func TestClusterConformance(t *testing.T) {
 			kubernetesVersion:     "v1.14.1",
 			scenario:              NodeConformance,
 			configFilePath:        "../../test/e2e/testdata/config_aws_1.14.1.yaml",
-			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
+			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
 		},
 		{
 			name:                  "verify k8s 1.13.5 cluster deployment on DO",
@@ -60,7 +60,7 @@ func TestClusterConformance(t *testing.T) {
 			kubernetesVersion:     "v1.13.5",
 			scenario:              NodeConformance,
 			configFilePath:        "../../test/e2e/testdata/config_do_1.13.5.yaml",
-			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
+			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
 		},
 		{
 			name:                  "verify k8s 1.14.1 cluster deployment on DO",
@@ -68,7 +68,7 @@ func TestClusterConformance(t *testing.T) {
 			kubernetesVersion:     "v1.14.1",
 			scenario:              NodeConformance,
 			configFilePath:        "../../test/e2e/testdata/config_do_1.14.1.yaml",
-			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
+			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
 		},
 		{
 			name:                  "verify k8s 1.13.5 cluster deployment on Hetzner",
@@ -76,7 +76,7 @@ func TestClusterConformance(t *testing.T) {
 			kubernetesVersion:     "v1.13.5",
 			scenario:              NodeConformance,
 			configFilePath:        "../../test/e2e/testdata/config_hetzner_1.13.5.yaml",
-			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
+			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
 		},
 		{
 			name:                  "verify k8s 1.14.1 cluster deployment on Hetzner",
@@ -84,7 +84,7 @@ func TestClusterConformance(t *testing.T) {
 			kubernetesVersion:     "v1.14.1",
 			scenario:              NodeConformance,
 			configFilePath:        "../../test/e2e/testdata/config_hetzner_1.14.1.yaml",
-			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
+			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
 		},
 	}
 
