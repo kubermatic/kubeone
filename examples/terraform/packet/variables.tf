@@ -18,14 +18,14 @@ variable "cluster_name" {
   description = "Name of the cluster"
 }
 
-variable "facility" {
-  default     = "ams1"
-  description = "Facility (datacenter)"
-}
+variable "worker_os" {
+  description = "OS to run on worker machines"
 
-variable "control_plane_count" {
-  default     = 3
-  description = "Number of master instances"
+  # valid choices are:
+  # * ubuntu
+  # * centos
+  # * coreos
+  default = "ubuntu"
 }
 
 variable "ssh_public_key_file" {
@@ -34,13 +34,13 @@ variable "ssh_public_key_file" {
 }
 
 variable "ssh_port" {
-  default     = 22
   description = "SSH port to be used to provision instances"
+  default     = 22
 }
 
 variable "ssh_username" {
-  default     = "root"
   description = "SSH user, used only in output"
+  default     = "root"
 }
 
 variable "ssh_private_key_file" {
@@ -53,14 +53,21 @@ variable "ssh_agent_socket" {
   default     = "env:SSH_AUTH_SOCK"
 }
 
-variable "operating_system" {
-  default     = "ubuntu_18_04"
-  description = "Image to use for provisioning control plane"
+# Provider specific settings
+
+variable "facility" {
+  default     = "ams1"
+  description = "Facility (datacenter)"
 }
 
-variable "workers_operating_system" {
-  default     = "ubuntu"
-  description = "Image to use for provisioning workers"
+variable "control_plane_operating_system" {
+  default     = "ubuntu_18_04"
+  description = "Image to use for control plane provisioning"
+}
+
+variable "lb_operating_system" {
+  default     = "ubuntu_18_04"
+  description = "Image to use for loadbalancer provisioning"
 }
 
 variable "device_type" {

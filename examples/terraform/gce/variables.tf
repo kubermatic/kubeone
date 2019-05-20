@@ -15,8 +15,45 @@ limitations under the License.
 */
 
 variable "cluster_name" {
-  description = "prefix for cloud resources"
+  description = "Name of the cluster"
 }
+
+variable "worker_os" {
+  description = "OS to run on worker machines"
+
+  # valid choices are:
+  # * ubuntu
+  # * centos
+  # * coreos
+  default = "ubuntu"
+}
+
+variable "ssh_public_key_file" {
+  description = "SSH public key file"
+  default     = "~/.ssh/id_rsa.pub"
+}
+
+variable "ssh_port" {
+  description = "SSH port to be used to provision instances"
+  default     = 22
+}
+
+variable "ssh_username" {
+  description = "SSH user, used only in output"
+  default     = "root"
+}
+
+variable "ssh_private_key_file" {
+  description = "SSH private key file used to access instances"
+  default     = ""
+}
+
+variable "ssh_agent_socket" {
+  description = "SSH Agent socket, default to grab from $SSH_AUTH_SOCK"
+  default     = "env:SSH_AUTH_SOCK"
+}
+
+# Provider specific settings
 
 variable "project" {
   description = "Project to be used for all resources"
@@ -29,11 +66,6 @@ variable "region" {
 
 variable "control_plane_target_pool_members_count" {
   default = 3
-}
-
-variable "control_plane_count" {
-  default     = 3
-  description = "Number of instances"
 }
 
 variable "control_plane_type" {
@@ -61,32 +93,7 @@ variable "workers_type" {
   description = "GCE instance type"
 }
 
-variable "workers_volume_size" {
-  default     = 100
-  description = "Size of the boot volume, in GB"
-}
-
 variable "cluster_network_cidr" {
   default     = "10.240.0.0/24"
   description = "Cluster network subnet cidr"
-}
-
-variable "ssh_port" {
-  description = "SSH port"
-  default     = 22
-}
-
-variable "ssh_public_key_file" {
-  default     = "~/.ssh/id_rsa.pub"
-  description = "SSH public key file"
-}
-
-variable "ssh_username" {
-  default     = "kubeadmin"
-  description = "Username to provision with the ssh_public_key_file"
-}
-
-variable "ssh_agent_socket" {
-  description = "SSH Agent socket, default to grab from $SSH_AUTH_SOCK"
-  default     = "env:SSH_AUTH_SOCK"
 }

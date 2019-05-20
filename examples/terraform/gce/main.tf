@@ -129,7 +129,7 @@ resource "google_compute_forwarding_rule" "control_plane" {
 }
 
 resource "google_compute_instance" "control_plane" {
-  count = "${var.control_plane_count}"
+  count = 3
 
   name         = "${var.cluster_name}-control-plane-${count.index+1}"
   machine_type = "${var.control_plane_type}"

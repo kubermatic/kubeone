@@ -45,21 +45,29 @@ output "kubeone_workers" {
   value = {
     # following outputs will be parsed by kubeone and automatically merged into
     # corresponding (by name) worker definition
-    fra1-1 = {
-      replicas        = 3
+    pool1 = {
+      replicas        = 1
       sshPublicKeys   = ["${digitalocean_ssh_key.deployer.public_key}"]
-      operatingSystem = "ubuntu"
+      operatingSystem = "${var.worker_os}"
 
       operatingSystemSpec = {
         distUpgradeOnBoot = false
       }
 
+      # provider specific fields:
+      # see example under `cloudProviderSpec` section at: 
+      # https://github.com/kubermatic/machine-controller/blob/master/examples/digitalocean-machinedeployment.yaml
+
       region             = "${var.region}"
-      size               = "${var.droplet_size}"
+      size               = "${var.worker_size}"
       private_networking = true
       backups            = false
       ipv6               = false
       monitoring         = false
+      tags = [
+        "${local.kube_cluster_tag}",
+        "kubeone",
+      ]
     }
   }
 }

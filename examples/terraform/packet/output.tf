@@ -48,11 +48,15 @@ output "kubeone_workers" {
     pool1 = {
       replicas        = 1
       sshPublicKeys   = ["${file("${var.ssh_public_key_file}")}"]
-      operatingSystem = "${var.workers_operating_system}"
+      operatingSystem = "${var.worker_os}"
 
       operatingSystemSpec = {
-        distUpgradeOnBoot = true
+        distUpgradeOnBoot = false
       }
+
+      # provider specific fields:
+      # see example under `cloudProviderSpec` section at: 
+      # https://github.com/kubermatic/machine-controller/blob/master/examples/packet-machinedeployment.yaml
 
       projectID    = "${var.project_id}"
       facilities   = ["${var.facility}"]

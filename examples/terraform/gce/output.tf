@@ -27,13 +27,14 @@ output "kubeone_hosts" {
 
   value = {
     control_plane = {
-      cluster_name     = "${var.cluster_name}"
-      cloud_provider   = "gce"
-      private_address  = "${google_compute_instance.control_plane.*.network_interface.0.network_ip}"
-      public_address   = "${google_compute_instance.control_plane.*.network_interface.0.access_config.0.nat_ip}"
-      ssh_agent_socket = "${var.ssh_agent_socket}"
-      ssh_port         = "${var.ssh_port}"
-      ssh_user         = "${var.ssh_username}"
+      cluster_name         = "${var.cluster_name}"
+      cloud_provider       = "gce"
+      private_address      = "${google_compute_instance.control_plane.*.network_interface.0.network_ip}"
+      public_address       = "${google_compute_instance.control_plane.*.network_interface.0.access_config.0.nat_ip}"
+      ssh_agent_socket     = "${var.ssh_agent_socket}"
+      ssh_port             = "${var.ssh_port}"
+      ssh_private_key_file = "${var.ssh_private_key_file}"
+      ssh_user             = "${var.ssh_username}"
     }
   }
 }
@@ -44,40 +45,25 @@ output "kubeone_workers" {
   value = {
     # following outputs will be parsed by kubeone and automatically merged into
     # corresponding (by name) worker definition
-    az-a = {
+    pool1 = {
       replicas        = 1
-      operatingSystem = "ubuntu"
       sshPublicKeys   = ["${file("${var.ssh_public_key_file}")}"]
-      diskSize        = 50
-      diskType        = "pd-ssd"
-      machineType     = "${var.workers_type}"
-      network         = "${google_compute_network.network.self_link}"
-      subnetwork      = "${google_compute_subnetwork.subnet.self_link}"
-      zone            = "${var.region}-a"
-    }
+      operatingSystem = "${var.worker_os}"
 
-    az-b = {
-      replicas        = 1
-      operatingSystem = "ubuntu"
-      sshPublicKeys   = ["${file("${var.ssh_public_key_file}")}"]
-      diskSize        = 50
-      diskType        = "pd-ssd"
-      machineType     = "${var.workers_type}"
-      network         = "${google_compute_network.network.self_link}"
-      subnetwork      = "${google_compute_subnetwork.subnet.self_link}"
-      zone            = "${var.region}-b"
-    }
+      operatingSystemSpec = {
+        distUpgradeOnBoot = false
+      }
 
-    az-c = {
-      replicas        = 1
-      operatingSystem = "ubuntu"
-      sshPublicKeys   = ["${file("${var.ssh_public_key_file}")}"]
-      diskSize        = 50
-      diskType        = "pd-ssd"
-      machineType     = "${var.workers_type}"
-      network         = "${google_compute_network.network.self_link}"
-      subnetwork      = "${google_compute_subnetwork.subnet.self_link}"
-      zone            = "${var.region}-c"
+      # provider specific fields:
+      # see example under `cloudProviderSpec` section at: 
+      # https://github.com/kubermatic/machine-controller/blob/master/examples/gce-machinedeployment.yaml
+
+      diskSize    = 50
+      diskType    = "pd-ssd"
+      machineType = "${var.workers_type}"
+      network     = "${google_compute_network.network.self_link}"
+      subnetwork  = "${google_compute_subnetwork.subnet.self_link}"
+      zone        = "${var.region}-a"
     }
   }
 }

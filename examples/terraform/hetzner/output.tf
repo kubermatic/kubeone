@@ -27,8 +27,14 @@ output "kubeone_hosts" {
 
   value = {
     control_plane = {
-      cluster_name   = "${var.cluster_name}"
-      public_address = "${hcloud_server.control_plane.*.ipv4_address}"
+      cluster_name         = "${var.cluster_name}"
+      cloud_provider       = "hetzner"
+      private_address      = []                                              # hetzner doesn't provide private addressed
+      public_address       = "${hcloud_server.control_plane.*.ipv4_address}"
+      ssh_agent_socket     = "${var.ssh_agent_socket}"
+      ssh_port             = "${var.ssh_port}"
+      ssh_private_key_file = "${var.ssh_private_key_file}"
+      ssh_user             = "${var.ssh_username}"
     }
   }
 }
@@ -37,16 +43,23 @@ output "kubeone_workers" {
   description = "Workers definitions, that will be transformed into MachineDeployment object"
 
   value = {
+    # following outputs will be parsed by kubeone and automatically merged into
+    # corresponding (by name) worker definition
     pool1 = {
-      serverType      = "${var.worker_type}"
-      location        = "${var.datacenter}"
-      replicas        = 3
+      replicas        = 1
       sshPublicKeys   = ["${file("${var.ssh_public_key_file}")}"]
-      operatingSystem = "ubuntu"
+      operatingSystem = "${var.worker_os}"
 
       operatingSystemSpec = {
-        distUpgradeOnBoot = true
+        distUpgradeOnBoot = false
       }
+
+      # provider specific fields:
+      # see example under `cloudProviderSpec` section at: 
+      # https://github.com/kubermatic/machine-controller/blob/master/examples/hetzner-machinedeployment.yaml
+
+      serverType = "${var.worker_type}"
+      location   = "${var.datacenter}"
     }
   }
 }

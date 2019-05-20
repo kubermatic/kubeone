@@ -15,7 +15,17 @@ limitations under the License.
 */
 
 variable "cluster_name" {
-  description = "prefix for cloud resources"
+  description = "Name of the cluster"
+}
+
+variable "worker_os" {
+  description = "OS to run on worker machines"
+
+  # valid choices are:
+  # * ubuntu
+  # * centos
+  # * coreos
+  default = "ubuntu"
 }
 
 variable "ssh_public_key_file" {
@@ -23,8 +33,18 @@ variable "ssh_public_key_file" {
   default     = "~/.ssh/id_rsa.pub"
 }
 
+variable "ssh_port" {
+  description = "SSH port to be used to provision instances"
+  default     = 22
+}
+
+variable "ssh_username" {
+  description = "SSH user, used only in output"
+  default     = "ubuntu"
+}
+
 variable "ssh_private_key_file" {
-  description = "SSH private key file, only specify in absence of SSH agent"
+  description = "SSH private key file used to access instances"
   default     = ""
 }
 
@@ -33,20 +53,8 @@ variable "ssh_agent_socket" {
   default     = "env:SSH_AUTH_SOCK"
 }
 
-variable "ssh_port" {
-  description = "SSH port"
-  default     = 22
-}
 
-variable "ssh_username" {
-  default     = "ubuntu"
-  description = "SSH user, used only in output"
-}
-
-variable "control_plane_count" {
-  default     = 3
-  description = "Number of instances"
-}
+# Provider specific settings
 
 variable "control_plane_flavor" {
   default     = "m1.small"

@@ -45,7 +45,19 @@ output "kubeone_workers" {
   value = {
     # following outputs will be parsed by kubeone and automatically merged into
     # corresponding (by name) worker definition
-    pool-a = {
+    pool1 = {
+      replicas        = 1
+      sshPublicKeys   = ["${aws_key_pair.deployer.public_key}"]
+      operatingSystem = "${var.worker_os}"
+
+      operatingSystemSpec = {
+        distUpgradeOnBoot = false
+      }
+
+      # provider specific fields:
+      # see example under `cloudProviderSpec` section at: 
+      # https://github.com/kubermatic/machine-controller/blob/master/examples/aws-machinedeployment.yaml
+
       region           = "${var.aws_region}"
       ami              = "${local.ami}"
       availabilityZone = "${local.az_a}"
@@ -53,53 +65,8 @@ output "kubeone_workers" {
       securityGroupIDs = ["${aws_security_group.common.id}"]
       vpcId            = "${local.vpc_id}"
       subnetId         = "${data.aws_subnet.az_a.id}"
-      instanceType     = "t3.medium"
+      instanceType     = "${var.worker_type}"
       diskSize         = 50
-      sshPublicKeys    = ["${aws_key_pair.deployer.public_key}"]
-      replicas         = 1
-      operatingSystem  = "ubuntu"
-
-      operatingSystemSpec = {
-        distUpgradeOnBoot = false
-      }
-    }
-
-    pool-b = {
-      region           = "${var.aws_region}"
-      ami              = "${local.ami}"
-      availabilityZone = "${local.az_b}"
-      instanceProfile  = "${aws_iam_instance_profile.profile.name}"
-      securityGroupIDs = ["${aws_security_group.common.id}"]
-      vpcId            = "${local.vpc_id}"
-      subnetId         = "${data.aws_subnet.az_b.id}"
-      instanceType     = "t3.medium"
-      diskSize         = 50
-      sshPublicKeys    = ["${aws_key_pair.deployer.public_key}"]
-      replicas         = 1
-      operatingSystem  = "ubuntu"
-
-      operatingSystemSpec = {
-        distUpgradeOnBoot = false
-      }
-    }
-
-    pool-c = {
-      region           = "${var.aws_region}"
-      ami              = "${local.ami}"
-      availabilityZone = "${local.az_c}"
-      instanceProfile  = "${aws_iam_instance_profile.profile.name}"
-      securityGroupIDs = ["${aws_security_group.common.id}"]
-      vpcId            = "${local.vpc_id}"
-      subnetId         = "${data.aws_subnet.az_c.id}"
-      instanceType     = "t3.medium"
-      diskSize         = 50
-      sshPublicKeys    = ["${aws_key_pair.deployer.public_key}"]
-      replicas         = 1
-      operatingSystem  = "ubuntu"
-
-      operatingSystemSpec = {
-        distUpgradeOnBoot = false
-      }
     }
   }
 }

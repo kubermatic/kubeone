@@ -1,3 +1,19 @@
+/*
+Copyright 2019 The KubeOne Authors.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 output "kubeone_api" {
   description = "kube-apiserver LB endpoint"
 
@@ -32,7 +48,19 @@ output "kubeone_workers" {
   value = {
     # following outputs will be parsed by kubeone and automatically merged into
     # corresponding (by name) worker definition
-    pool-a = {
+    pool1 = {
+      replicas        = 1
+      sshPublicKeys   = ["${aws_key_pair.deployer.public_key}"]
+      operatingSystem = "${var.worker_os}"
+
+      operatingSystemSpec = {
+        distUpgradeOnBoot = false
+      }
+
+      # provider specific fields:
+      # see example under `cloudProviderSpec` section at: 
+      # https://github.com/kubermatic/machine-controller/blob/master/examples/aws-machinedeployment.yaml
+
       region           = "${var.aws_region}"
       ami              = "${local.ami}"
       availabilityZone = "${data.aws_availability_zones.available.names[0]}"
@@ -42,51 +70,6 @@ output "kubeone_workers" {
       subnetId         = "${aws_subnet.private.0.id}"
       instanceType     = "${var.worker_type}"
       diskSize         = 100
-      sshPublicKeys    = ["${aws_key_pair.deployer.public_key}"]
-      replicas         = 1
-      operatingSystem  = "ubuntu"
-
-      operatingSystemSpec = {
-        distUpgradeOnBoot = false
-      }
-    }
-
-    pool-b = {
-      region           = "${var.aws_region}"
-      ami              = "${local.ami}"
-      availabilityZone = "${data.aws_availability_zones.available.names[1]}"
-      instanceProfile  = "${aws_iam_instance_profile.workers.name}"
-      securityGroupIDs = ["${aws_security_group.common.id}"]
-      vpcId            = "${data.aws_vpc.selected.id}"
-      subnetId         = "${aws_subnet.private.1.id}"
-      instanceType     = "${var.worker_type}"
-      diskSize         = 100
-      sshPublicKeys    = ["${aws_key_pair.deployer.public_key}"]
-      replicas         = 1
-      operatingSystem  = "ubuntu"
-
-      operatingSystemSpec = {
-        distUpgradeOnBoot = false
-      }
-    }
-
-    pool-c = {
-      region           = "${var.aws_region}"
-      ami              = "${local.ami}"
-      availabilityZone = "${data.aws_availability_zones.available.names[2]}"
-      instanceProfile  = "${aws_iam_instance_profile.workers.name}"
-      securityGroupIDs = ["${aws_security_group.common.id}"]
-      vpcId            = "${data.aws_vpc.selected.id}"
-      subnetId         = "${aws_subnet.private.2.id}"
-      instanceType     = "${var.worker_type}"
-      diskSize         = 100
-      sshPublicKeys    = ["${aws_key_pair.deployer.public_key}"]
-      replicas         = 1
-      operatingSystem  = "ubuntu"
-
-      operatingSystemSpec = {
-        distUpgradeOnBoot = false
-      }
     }
   }
 }

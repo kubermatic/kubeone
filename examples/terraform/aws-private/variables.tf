@@ -15,8 +15,45 @@ limitations under the License.
 */
 
 variable "cluster_name" {
-  description = "prefix for cloud resources"
+  description = "Name of the cluster"
 }
+
+variable "worker_os" {
+  description = "OS to run on worker machines"
+
+  # valid choices are:
+  # * ubuntu
+  # * centos
+  # * coreos
+  default = "ubuntu"
+}
+
+variable "ssh_public_key_file" {
+  description = "SSH public key file"
+  default     = "~/.ssh/id_rsa.pub"
+}
+
+variable "ssh_port" {
+  description = "SSH port to be used to provision instances"
+  default     = 22
+}
+
+variable "ssh_username" {
+  description = "SSH user, used only in output"
+  default     = "ubuntu"
+}
+
+variable "ssh_private_key_file" {
+  description = "SSH private key file used to access instances"
+  default     = ""
+}
+
+variable "ssh_agent_socket" {
+  description = "SSH Agent socket, default to grab from $SSH_AUTH_SOCK"
+  default     = "env:SSH_AUTH_SOCK"
+}
+
+# Provider specific settings
 
 variable "aws_region" {
   default     = "eu-west-3"
@@ -36,31 +73,6 @@ variable "subnet_offset" {
 variable "subnet_netmask_bits" {
   default     = 8
   description = "default 8 bits in /16 CIDR, makes it /24 subnetworks"
-}
-
-variable "ssh_public_key_file" {
-  default     = "~/.ssh/id_rsa.pub"
-  description = "SSH public key file"
-}
-
-variable "ssh_private_key_file" {
-  default     = ""
-  description = "SSH private key file, only specify in absence of SSH agent"
-}
-
-variable "ssh_agent_socket" {
-  description = "SSH Agent socket, default to grab from $SSH_AUTH_SOCK"
-  default     = "env:SSH_AUTH_SOCK"
-}
-
-variable "ssh_port" {
-  description = "SSH port"
-  default     = 22
-}
-
-variable "ssh_username" {
-  default     = "ubuntu"
-  description = "SSH user, used only in output"
 }
 
 variable "control_plane_type" {

@@ -26,13 +26,13 @@ resource "packet_ssh_key" "deployer" {
 }
 
 resource "packet_device" "control_plane" {
-  count      = "${var.control_plane_count}"
+  count      = 3
   depends_on = ["packet_ssh_key.deployer"]
 
   hostname         = "${var.cluster_name}-control-plane-${count.index + 1}"
   plan             = "${var.device_type}"
   facilities       = ["${var.facility}"]
-  operating_system = "${var.operating_system}"
+  operating_system = "${var.control_plane_operating_system}"
   billing_cycle    = "hourly"
   project_id       = "${var.project_id}"
   tags             = ["${local.kube_cluster_tag}"]
@@ -44,7 +44,7 @@ resource "packet_device" "lb" {
   hostname         = "${var.cluster_name}-lb"
   plan             = "t1.small.x86"
   facilities       = ["${var.facility}"]
-  operating_system = "${var.operating_system}"
+  operating_system = "${var.lb_operating_system}"
   billing_cycle    = "hourly"
   project_id       = "${var.project_id}"
   tags             = ["${local.kube_cluster_tag}"]
@@ -62,7 +62,6 @@ data "template_file" "lbconfig" {
   template = "${file("etc_gobetween.tpl")}"
 
   vars = {
-    bind       = "${packet_device.lb.access_public_ipv4}"
     lb_target1 = "${packet_device.control_plane.0.access_private_ipv4}"
     lb_target2 = "${packet_device.control_plane.1.access_private_ipv4}"
     lb_target3 = "${packet_device.control_plane.2.access_private_ipv4}"
