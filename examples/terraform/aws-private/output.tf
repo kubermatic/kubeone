@@ -70,6 +70,9 @@ output "kubeone_workers" {
       subnetId         = "${aws_subnet.private.0.id}"
       instanceType     = "${var.worker_type}"
       diskSize         = 100
+      tags = "${map(
+        "kubeone", "pool1",
+      )}"
     }
   }
 }
