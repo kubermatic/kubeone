@@ -23,6 +23,7 @@ import (
 	"github.com/pkg/errors"
 
 	kubeonev1alpha1 "github.com/kubermatic/kubeone/pkg/apis/kubeone/v1alpha1"
+	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
 )
 
 type controlPlane struct {
@@ -34,67 +35,6 @@ type controlPlane struct {
 	SSHPort           string   `json:"ssh_port"`
 	SSHPrivateKeyFile string   `json:"ssh_private_key_file"`
 	SSHAgentSocket    string   `json:"ssh_agent_socket"`
-}
-
-type awsWorkerConfig struct {
-	AMI              string            `json:"ami"`
-	AvailabilityZone string            `json:"availabilityZone"`
-	InstanceProfile  string            `json:"instanceProfile"`
-	Region           string            `json:"region"`
-	SecurityGroupIDs []string          `json:"securityGroupIDs"`
-	SubnetID         string            `json:"subnetId"`
-	VPCID            string            `json:"vpcId"`
-	InstanceType     *string           `json:"instanceType"`
-	DiskSize         *int              `json:"diskSize"`
-	Tags             map[string]string `json:"tags"`
-}
-
-type doWorkerConfig struct {
-	Region            string   `json:"region"`
-	Size              string   `json:"size"`
-	Backups           bool     `json:"backups"`
-	IPv6              bool     `json:"ipv6"`
-	PrivateNetworking bool     `json:"private_networking"`
-	Monitoring        bool     `json:"monitoring"`
-	Tags              []string `json:"tags"`
-}
-
-type openStackWorkerConfig struct {
-	Image            string            `json:"image"`
-	Flavor           string            `json:"flavor"`
-	SecurityGroups   []string          `json:"securityGroups"`
-	FloatingIPPool   string            `json:"floatingIPPool"`
-	AvailabilityZone string            `json:"availabilityZone"`
-	Network          string            `json:"network"`
-	Subnet           string            `json:"subnet"`
-	Tags             map[string]string `json:"tags"`
-}
-
-type gceWorkerConfig struct {
-	DiskSize              int               `json:"diskSize"`
-	DiskType              string            `json:"diskType"`
-	MachineType           string            `json:"machineType"`
-	Network               string            `json:"network"`
-	Subnetwork            string            `json:"subnetwork"`
-	Zone                  string            `json:"zone"`
-	Preemptible           bool              `json:"preemptible"`
-	AssignPublicIPAddress *bool             `json:"assignPublicIPAddress"`
-	Labels                map[string]string `json:"labels"`
-	Tags                  []string          `json:"tags"`
-	MultiZone             *bool             `json:"multizone"`
-	Regional              *bool             `json:"regional"`
-}
-
-type hetznerWorkerConfig struct {
-	ServerType string `json:"serverType"`
-	Datacenter string `json:"datacenter"`
-	Location   string `json:"location"`
-}
-
-type packetWorkerConfig struct {
-	ProjectID    string   `json:"projectID"`
-	Facilities   []string `json:"facilities"`
-	InstanceType string   `json:"instanceType"`
 }
 
 // Config represents configuration in the terraform output format
@@ -235,7 +175,8 @@ func (c *Config) Apply(cluster *kubeonev1alpha1.KubeOneCluster) error {
 }
 
 func (c *Config) updateAWSWorkerset(workerset *kubeonev1alpha1.WorkerConfig, cfg json.RawMessage) error {
-	var awsCloudConfig awsWorkerConfig
+	var awsCloudConfig machinecontroller.AWSSpec
+
 	if err := json.Unmarshal(cfg, &awsCloudConfig); err != nil {
 		return errors.WithStack(err)
 	}
@@ -278,7 +219,8 @@ func (c *Config) updateAWSWorkerset(workerset *kubeonev1alpha1.WorkerConfig, cfg
 }
 
 func (c *Config) updateGCEWorkerset(workerset *kubeonev1alpha1.WorkerConfig, cfg json.RawMessage) error {
-	var gceCloudConfig gceWorkerConfig
+	var gceCloudConfig machinecontroller.GCESpec
+
 	if err := json.Unmarshal(cfg, &gceCloudConfig); err != nil {
 		return errors.WithStack(err)
 	}
@@ -308,7 +250,8 @@ func (c *Config) updateGCEWorkerset(workerset *kubeonev1alpha1.WorkerConfig, cfg
 }
 
 func (c *Config) updateDigitalOceanWorkerset(workerset *kubeonev1alpha1.WorkerConfig, cfg json.RawMessage) error {
-	var doCloudConfig doWorkerConfig
+	var doCloudConfig machinecontroller.DigitalOceanSpec
+
 	if err := json.Unmarshal(cfg, &doCloudConfig); err != nil {
 		return errors.WithStack(err)
 	}
@@ -333,7 +276,8 @@ func (c *Config) updateDigitalOceanWorkerset(workerset *kubeonev1alpha1.WorkerCo
 }
 
 func (c *Config) updateHetznerWorkerset(workerset *kubeonev1alpha1.WorkerConfig, cfg json.RawMessage) error {
-	var hetznerConfig hetznerWorkerConfig
+	var hetznerConfig machinecontroller.HetznerSpec
+
 	if err := json.Unmarshal(cfg, &hetznerConfig); err != nil {
 		return err
 	}
@@ -354,7 +298,8 @@ func (c *Config) updateHetznerWorkerset(workerset *kubeonev1alpha1.WorkerConfig,
 }
 
 func (c *Config) updateOpenStackWorkerset(workerset *kubeonev1alpha1.WorkerConfig, cfg json.RawMessage) error {
-	var openstackConfig openStackWorkerConfig
+	var openstackConfig machinecontroller.OpenStackSpec
+
 	if err := json.Unmarshal(cfg, &openstackConfig); err != nil {
 		return err
 	}
@@ -380,7 +325,8 @@ func (c *Config) updateOpenStackWorkerset(workerset *kubeonev1alpha1.WorkerConfi
 }
 
 func (c *Config) updatePacketWorkerset(workerset *kubeonev1alpha1.WorkerConfig, cfg json.RawMessage) error {
-	var packetConfig packetWorkerConfig
+	var packetConfig machinecontroller.PacketSpec
+
 	if err := json.Unmarshal(cfg, &packetConfig); err != nil {
 		return err
 	}

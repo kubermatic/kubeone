@@ -98,7 +98,7 @@ func createMachineDeployment(cluster *kubeoneapi.KubeOneCluster, workerset kubeo
 	return &clusterv1alpha1.MachineDeployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: metav1.NamespaceSystem,
-			Name:      fmt.Sprintf("%s-deployment", workerset.Name),
+			Name:      workerset.Name,
 		},
 		Spec: clusterv1alpha1.MachineDeploymentSpec{
 			Paused:   false,
@@ -142,39 +142,34 @@ func machineSpec(cluster *kubeoneapi.KubeOneCluster, workerset kubeoneapi.Worker
 	if specRaw == nil {
 		return nil, errors.New("could't find cloudProviderSpec")
 	}
+
+	if provider == kubeoneapi.CloudProviderNameAWS {
+		var awsSpec AWSSpec
+
+		err = json.Unmarshal(specRaw, &awsSpec)
+		if err != nil {
+			return nil, errors.Wrap(err, "could not parse AWS Spec for worker machines")
+		}
+
+		tagName := fmt.Sprintf("kubernetes.io/cluster/%s", cluster.Name)
+		tagValue := "shared"
+		if awsSpec.Tags == nil {
+			awsSpec.Tags = make(map[string]string)
+		}
+		awsSpec.Tags[tagName] = tagValue
+
+		// effectively overwrite specRaw retrieved earlier
+		specRaw, err = json.Marshal(awsSpec)
+		if err != nil {
+			return nil, errors.Wrap(err, "could not marshal AWSSpec")
+		}
+	}
+
 	spec := make(map[string]interface{})
 	err = json.Unmarshal(specRaw, &spec)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to parse the workerset spec")
 	}
-
-	// We only need this tag for AWS because it is used to coordinate nodes in ASG
-	if provider == kubeoneapi.CloudProviderNameAWS {
-		tagName := fmt.Sprintf("kubernetes.io/cluster/%s", cluster.Name)
-		tagValue := "shared"
-
-		spec, err = addMapTag(spec, tagName, tagValue)
-		if err != nil {
-			return nil, errors.Wrap(err, "could not parse tags for worker machines")
-		}
-	}
-
-	return spec, nil
-}
-
-func addMapTag(spec map[string]interface{}, tagName string, tagValue string) (map[string]interface{}, error) {
-	tags, ok := spec["tags"]
-	if !ok {
-		tags = make(map[string]string)
-	}
-
-	tagMap, ok := tags.(map[string]string)
-	if !ok {
-		return nil, errors.New("tags must be a map string->string")
-	}
-
-	tagMap[tagName] = tagValue
-	spec["tags"] = tagMap
 
 	return spec, nil
 }
