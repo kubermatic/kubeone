@@ -58,12 +58,19 @@ output "kubeone_workers" {
       # see example under `cloudProviderSpec` section at: 
       # https://github.com/kubermatic/machine-controller/blob/master/examples/gce-machinedeployment.yaml
 
-      diskSize    = 50
-      diskType    = "pd-ssd"
-      machineType = "${var.workers_type}"
-      network     = "${google_compute_network.network.self_link}"
-      subnetwork  = "${google_compute_subnetwork.subnet.self_link}"
-      zone        = "${var.region}-a"
+      diskSize              = 50
+      diskType              = "pd-ssd"
+      machineType           = "${var.workers_type}"
+      network               = "${google_compute_network.network.self_link}"
+      subnetwork            = "${google_compute_subnetwork.subnet.self_link}"
+      zone                  = "${var.region}-a"
+      preemptible           = false
+      assignPublicIPAddress = true
+      labels = "${map(
+        "kubeone", "workers",
+      )}"
+      tags     = ["firewall", "targets"]
+      regional = false
     }
   }
 }
