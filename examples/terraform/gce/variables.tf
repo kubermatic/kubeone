@@ -97,3 +97,4 @@ variable "cluster_network_cidr" {
   default     = "10.240.0.0/24"
   description = "Cluster network subnet cidr"
 }
+

@@ -18,7 +18,7 @@ output "kubeone_api" {
   description = "kube-apiserver LB endpoint"
 
   value = {
-    endpoint = "${azurerm_public_ip.lbip.ip_address}"
+    endpoint = azurerm_public_ip.lbip.ip_address
   }
 }
 
@@ -27,14 +27,14 @@ output "kubeone_hosts" {
 
   value = {
     control_plane = {
-      cluster_name         = "${var.cluster_name}"
+      cluster_name         = var.cluster_name
       cloud_provider       = "azure"
-      private_address      = "${azurerm_network_interface.control_plane.*.private_ip_address}"
-      public_address       = "${azurerm_public_ip.control_plane.*.ip_address}"
-      ssh_agent_socket     = "${var.ssh_agent_socket}"
-      ssh_port             = "${var.ssh_port}"
-      ssh_private_key_file = "${var.ssh_private_key_file}"
-      ssh_user             = "${var.ssh_username}"
+      private_address      = azurerm_network_interface.control_plane.*.private_ip_address
+      public_address       = azurerm_public_ip.control_plane.*.ip_address
+      ssh_agent_socket     = var.ssh_agent_socket
+      ssh_port             = var.ssh_port
+      ssh_private_key_file = var.ssh_private_key_file
+      ssh_user             = var.ssh_username
     }
   }
 }
@@ -47,29 +47,27 @@ output "kubeone_workers" {
     # corresponding (by name) worker definition
     pool1 = {
       replicas        = 1
-      sshPublicKeys   = ["${file("${var.ssh_public_key_file}")}"]
-      operatingSystem = "${var.worker_os}"
-
+      sshPublicKeys   = [file(var.ssh_public_key_file)]
+      operatingSystem = var.worker_os
       operatingSystemSpec = {
         distUpgradeOnBoot = false
       }
-
-      # provider specific fields:
-      # see example under `cloudProviderSpec` section at: 
-      # https://github.com/kubermatic/machine-controller/blob/master/examples/azure-machinedeployment.yaml
-
       assignPublicIP    = true
-      availabilitySet   = "${azurerm_availability_set.avset.name}"
-      location          = "${var.location}"
-      resourceGroup     = "${azurerm_resource_group.rg.name}"
+      availabilitySet   = azurerm_availability_set.avset.name
+      location          = var.location
+      resourceGroup     = azurerm_resource_group.rg.name
       routeTableName    = ""
-      securityGroupName = "${azurerm_network_security_group.sg.name}"
-      subnetName        = "${azurerm_subnet.subnet.name}"
-      vmSize            = "${var.worker_vm_size}"
-      vnetName          = "${azurerm_virtual_network.vpc.name}"
-      tags = "${map(
-        "kubeone", "${var.cluster_name}",
-      )}"
+      securityGroupName = azurerm_network_security_group.sg.name
+      subnetName        = azurerm_subnet.subnet.name
+      vmSize            = var.worker_vm_size
+      vnetName          = azurerm_virtual_network.vpc.name
+      tags = {
+        "kubeone" = var.cluster_name
+      }
     }
   }
+  # provider specific fields:
+  # see example under `cloudProviderSpec` section at: 
+  # https://github.com/kubermatic/machine-controller/blob/master/examples/azure-machinedeployment.yaml
 }
+

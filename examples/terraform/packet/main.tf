@@ -14,7 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-provider "packet" {}
+provider "packet" {
+}
 
 locals {
   kube_cluster_tag = "kubernetes-cluster:${var.cluster_name}"
@@ -22,35 +23,36 @@ locals {
 
 resource "packet_ssh_key" "deployer" {
   name       = "terraform"
-  public_key = "${file("${var.ssh_public_key_file}")}"
+  public_key = file(var.ssh_public_key_file)
 }
 
 resource "packet_device" "control_plane" {
   count      = 3
-  depends_on = ["packet_ssh_key.deployer"]
+  depends_on = [packet_ssh_key.deployer]
 
   hostname         = "${var.cluster_name}-control-plane-${count.index + 1}"
-  plan             = "${var.device_type}"
-  facilities       = ["${var.facility}"]
-  operating_system = "${var.control_plane_operating_system}"
+  plan             = var.device_type
+  facilities       = [var.facility]
+  operating_system = var.control_plane_operating_system
   billing_cycle    = "hourly"
-  project_id       = "${var.project_id}"
-  tags             = ["${local.kube_cluster_tag}"]
+  project_id       = var.project_id
+  tags = [local.kube_cluster_tag]
 }
 
 resource "packet_device" "lb" {
-  depends_on = ["packet_ssh_key.deployer"]
+  depends_on = [packet_ssh_key.deployer]
 
   hostname         = "${var.cluster_name}-lb"
   plan             = "t1.small.x86"
-  facilities       = ["${var.facility}"]
-  operating_system = "${var.lb_operating_system}"
+  facilities       = [var.facility]
+  operating_system = var.lb_operating_system
   billing_cycle    = "hourly"
-  project_id       = "${var.project_id}"
-  tags             = ["${local.kube_cluster_tag}"]
+  project_id       = var.project_id
+  tags = [local.kube_cluster_tag]
 
   connection {
-    host = "${self.access_public_ipv4}"
+    type = "ssh"
+    host = self.access_public_ipv4
   }
 
   provisioner "remote-exec" {
@@ -59,27 +61,27 @@ resource "packet_device" "lb" {
 }
 
 data "template_file" "lbconfig" {
-  template = "${file("etc_gobetween.tpl")}"
+  template = file("etc_gobetween.tpl")
 
   vars = {
-    lb_target1 = "${packet_device.control_plane.0.access_private_ipv4}"
-    lb_target2 = "${packet_device.control_plane.1.access_private_ipv4}"
-    lb_target3 = "${packet_device.control_plane.2.access_private_ipv4}"
+    lb_target1 = packet_device.control_plane[0].access_private_ipv4
+    lb_target2 = packet_device.control_plane[1].access_private_ipv4
+    lb_target3 = packet_device.control_plane[2].access_private_ipv4
   }
 }
 
 resource "null_resource" "lb_config" {
   triggers = {
-    cluster_instance_ids = "${join(",", packet_device.control_plane.*.id)}"
-    config               = "${data.template_file.lbconfig.rendered}"
+    cluster_instance_ids = join(",", packet_device.control_plane.*.id)
+    config               = data.template_file.lbconfig.rendered
   }
 
   connection {
-    host = "${packet_device.lb.access_public_ipv4}"
+    host = packet_device.lb.access_public_ipv4
   }
 
   provisioner "file" {
-    content     = "${data.template_file.lbconfig.rendered}"
+    content     = data.template_file.lbconfig.rendered
     destination = "/etc/gobetween.toml"
   }
 

@@ -18,7 +18,7 @@ output "kubeone_api" {
   description = "kube-apiserver LB endpoint"
 
   value = {
-    endpoint = "${google_compute_address.lb_ip.address}"
+    endpoint = google_compute_address.lb_ip.address
   }
 }
 
@@ -27,14 +27,14 @@ output "kubeone_hosts" {
 
   value = {
     control_plane = {
-      cluster_name         = "${var.cluster_name}"
+      cluster_name         = var.cluster_name
       cloud_provider       = "gce"
-      private_address      = "${google_compute_instance.control_plane.*.network_interface.0.network_ip}"
-      public_address       = "${google_compute_instance.control_plane.*.network_interface.0.access_config.0.nat_ip}"
-      ssh_agent_socket     = "${var.ssh_agent_socket}"
-      ssh_port             = "${var.ssh_port}"
-      ssh_private_key_file = "${var.ssh_private_key_file}"
-      ssh_user             = "${var.ssh_username}"
+      private_address      = google_compute_instance.control_plane.*.network_interface.0.network_ip
+      public_address       = google_compute_instance.control_plane.*.network_interface.0.access_config.0.nat_ip
+      ssh_agent_socket     = var.ssh_agent_socket
+      ssh_port             = var.ssh_port
+      ssh_private_key_file = var.ssh_private_key_file
+      ssh_user             = var.ssh_username
     }
   }
 }
@@ -47,30 +47,28 @@ output "kubeone_workers" {
     # corresponding (by name) worker definition
     pool1 = {
       replicas        = 1
-      sshPublicKeys   = ["${file("${var.ssh_public_key_file}")}"]
-      operatingSystem = "${var.worker_os}"
-
+      sshPublicKeys   = [file(var.ssh_public_key_file)]
+      operatingSystem = var.worker_os
       operatingSystemSpec = {
         distUpgradeOnBoot = false
       }
-
-      # provider specific fields:
-      # see example under `cloudProviderSpec` section at: 
-      # https://github.com/kubermatic/machine-controller/blob/master/examples/gce-machinedeployment.yaml
-
       diskSize              = 50
       diskType              = "pd-ssd"
-      machineType           = "${var.workers_type}"
-      network               = "${google_compute_network.network.self_link}"
-      subnetwork            = "${google_compute_subnetwork.subnet.self_link}"
+      machineType           = var.workers_type
+      network               = google_compute_network.network.self_link
+      subnetwork            = google_compute_subnetwork.subnet.self_link
       zone                  = "${var.region}-a"
       preemptible           = false
       assignPublicIPAddress = true
-      labels = "${map(
-        "kubeone", "workers",
-      )}"
+      labels = {
+        "kubeone" = "workers"
+      }
       tags     = ["firewall", "targets"]
       regional = false
     }
   }
+  # provider specific fields:
+  # see example under `cloudProviderSpec` section at: 
+  # https://github.com/kubermatic/machine-controller/blob/master/examples/gce-machinedeployment.yaml
 }
+

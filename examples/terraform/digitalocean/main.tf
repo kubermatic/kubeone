@@ -14,19 +14,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-provider "digitalocean" {}
+provider "digitalocean" {
+}
 
 locals {
   kube_cluster_tag = "kubernetes-cluster:${var.cluster_name}"
 }
 
 resource "digitalocean_tag" "kube_cluster_tag" {
-  name = "${local.kube_cluster_tag}"
+  name = local.kube_cluster_tag
 }
 
 resource "digitalocean_ssh_key" "deployer" {
   name       = "${var.cluster_name}-deployer-key"
-  public_key = "${file("${var.ssh_public_key_file}")}"
+  public_key = file(var.ssh_public_key_file)
 }
 
 resource "digitalocean_droplet" "control_plane" {
@@ -34,25 +35,25 @@ resource "digitalocean_droplet" "control_plane" {
   name  = "${var.cluster_name}-control-plane-${count.index + 1}"
 
   tags = [
-    "${local.kube_cluster_tag}",
+    local.kube_cluster_tag,
     "kubeone",
   ]
 
-  image              = "${var.control_plane_droplet_image}"
-  region             = "${var.region}"
-  size               = "${var.control_plane_size}"
+  image              = var.control_plane_droplet_image
+  region             = var.region
+  size               = var.control_plane_size
   private_networking = true
   monitoring         = false
   ipv6               = false
 
   ssh_keys = [
-    "${digitalocean_ssh_key.deployer.id}",
+    digitalocean_ssh_key.deployer.id,
   ]
 }
 
 resource "digitalocean_loadbalancer" "control_plane" {
   name   = "${var.cluster_name}-lb"
-  region = "${var.region}"
+  region = var.region
 
   forwarding_rule {
     entry_port     = 6443
@@ -67,5 +68,6 @@ resource "digitalocean_loadbalancer" "control_plane" {
     protocol = "tcp"
   }
 
-  droplet_tag = "${local.kube_cluster_tag}"
+  droplet_tag = local.kube_cluster_tag
 }
+

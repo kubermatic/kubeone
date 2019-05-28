@@ -14,16 +14,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-provider "openstack" {}
+provider "openstack" {
+}
 
 data "openstack_networking_network_v2" "external_network" {
-  name     = "${var.external_network_name}"
+  name     = var.external_network_name
   external = true
 }
 
 resource "openstack_compute_keypair_v2" "deployer" {
   name       = "${var.cluster_name}-deployer-key"
-  public_key = "${file("${var.ssh_public_key_file}")}"
+  public_key = file(var.ssh_public_key_file)
 }
 
 resource "openstack_networking_network_v2" "network" {
@@ -33,21 +34,21 @@ resource "openstack_networking_network_v2" "network" {
 
 resource "openstack_networking_subnet_v2" "subnet" {
   name            = "${var.cluster_name}-cluster"
-  network_id      = "${openstack_networking_network_v2.network.id}"
-  cidr            = "${var.subnet_cidr}"
+  network_id      = openstack_networking_network_v2.network.id
+  cidr            = var.subnet_cidr
   ip_version      = 4
-  dns_nameservers = "${var.subnet_dns_servers}"
+  dns_nameservers = var.subnet_dns_servers
 }
 
 resource "openstack_networking_router_v2" "router" {
   name                = "${var.cluster_name}-cluster"
   admin_state_up      = "true"
-  external_network_id = "${data.openstack_networking_network_v2.external_network.id}"
+  external_network_id = data.openstack_networking_network_v2.external_network.id
 }
 
 resource "openstack_networking_router_interface_v2" "router_subnet_link" {
-  router_id = "${openstack_networking_router_v2.router.id}"
-  subnet_id = "${openstack_networking_subnet_v2.subnet.id}"
+  router_id = openstack_networking_router_v2.router.id
+  subnet_id = openstack_networking_subnet_v2.subnet.id
 }
 
 resource "openstack_networking_secgroup_v2" "securitygroup" {
@@ -59,8 +60,8 @@ resource "openstack_networking_secgroup_rule_v2" "secgroup_allow_internal_ipv4" 
   description       = "Allow security group internal IPv4 traffic"
   direction         = "ingress"
   ethertype         = "IPv4"
-  remote_group_id   = "${openstack_networking_secgroup_v2.securitygroup.id}"
-  security_group_id = "${openstack_networking_secgroup_v2.securitygroup.id}"
+  remote_group_id   = openstack_networking_secgroup_v2.securitygroup.id
+  security_group_id = openstack_networking_secgroup_v2.securitygroup.id
 }
 
 resource "openstack_networking_secgroup_rule_v2" "secgroup_ssh" {
@@ -71,7 +72,7 @@ resource "openstack_networking_secgroup_rule_v2" "secgroup_ssh" {
   port_range_min    = 22
   port_range_max    = 22
   remote_ip_prefix  = "0.0.0.0/0"
-  security_group_id = "${openstack_networking_secgroup_v2.securitygroup.id}"
+  security_group_id = openstack_networking_secgroup_v2.securitygroup.id
 }
 
 resource "openstack_networking_secgroup_rule_v2" "secgroup_apiserver" {
@@ -82,38 +83,39 @@ resource "openstack_networking_secgroup_rule_v2" "secgroup_apiserver" {
   port_range_min    = 6443
   port_range_max    = 6443
   remote_ip_prefix  = "0.0.0.0/0"
-  security_group_id = "${openstack_networking_secgroup_v2.securitygroup.id}"
+  security_group_id = openstack_networking_secgroup_v2.securitygroup.id
 }
 
 resource "openstack_compute_instance_v2" "control_plane" {
   count = 3
   name  = "${var.cluster_name}-cp-${count.index}"
 
-  image_name      = "${var.image}"
-  flavor_name     = "${var.control_plane_flavor}"
-  key_pair        = "${openstack_compute_keypair_v2.deployer.name}"
-  security_groups = ["${openstack_networking_secgroup_v2.securitygroup.name}"]
+  image_name      = var.image
+  flavor_name     = var.control_plane_flavor
+  key_pair        = openstack_compute_keypair_v2.deployer.name
+  security_groups = [openstack_networking_secgroup_v2.securitygroup.name]
 
   network {
-    port = "${element(openstack_networking_port_v2.control_plane.*.id, count.index)}"
+    port = element(openstack_networking_port_v2.control_plane.*.id, count.index)
   }
 }
 
 resource "openstack_compute_instance_v2" "lb" {
   name       = "${var.cluster_name}-lb"
-  image_name = "${var.image}"
+  image_name = var.image
 
-  flavor_name     = "${var.lb_flavor}"
-  key_pair        = "${openstack_compute_keypair_v2.deployer.name}"
-  security_groups = ["${openstack_networking_secgroup_v2.securitygroup.name}"]
+  flavor_name     = var.lb_flavor
+  key_pair        = openstack_compute_keypair_v2.deployer.name
+  security_groups = [openstack_networking_secgroup_v2.securitygroup.name]
 
   network {
-    port = "${openstack_networking_port_v2.lb.id}"
+    port = openstack_networking_port_v2.lb.id
   }
 
   connection {
-    host = "${openstack_networking_floatingip_v2.lb.address}"
-    user = "${var.ssh_username}"
+    type = "ssh"
+    host = openstack_networking_floatingip_v2.lb.address
+    user = var.ssh_username
   }
 
   provisioner "remote-exec" {
@@ -126,11 +128,11 @@ resource "openstack_networking_port_v2" "control_plane" {
   name  = "${var.cluster_name}-control_plane-${count.index}"
 
   admin_state_up     = "true"
-  network_id         = "${openstack_networking_network_v2.network.id}"
-  security_group_ids = ["${openstack_networking_secgroup_v2.securitygroup.id}"]
+  network_id         = openstack_networking_network_v2.network.id
+  security_group_ids = [openstack_networking_secgroup_v2.securitygroup.id]
 
-  fixed_ip = {
-    subnet_id = "${openstack_networking_subnet_v2.subnet.id}"
+  fixed_ip {
+    subnet_id = openstack_networking_subnet_v2.subnet.id
   }
 }
 
@@ -138,58 +140,61 @@ resource "openstack_networking_port_v2" "lb" {
   name = "${var.cluster_name}-lb"
 
   admin_state_up     = "true"
-  network_id         = "${openstack_networking_network_v2.network.id}"
-  security_group_ids = ["${openstack_networking_secgroup_v2.securitygroup.id}"]
+  network_id         = openstack_networking_network_v2.network.id
+  security_group_ids = [openstack_networking_secgroup_v2.securitygroup.id]
 
-  fixed_ip = {
-    subnet_id = "${openstack_networking_subnet_v2.subnet.id}"
+  fixed_ip {
+    subnet_id = openstack_networking_subnet_v2.subnet.id
   }
 }
 
 resource "openstack_networking_floatingip_v2" "control_plane" {
   count = 3
-  pool  = "${var.external_network_name}"
+  pool  = var.external_network_name
 }
 
 resource "openstack_networking_floatingip_v2" "lb" {
-  pool = "${var.external_network_name}"
+  pool = var.external_network_name
 }
 
 resource "openstack_networking_floatingip_associate_v2" "control_plane" {
   count = 3
 
-  floating_ip = "${element(openstack_networking_floatingip_v2.control_plane.*.address, count.index)}"
-  port_id     = "${element(openstack_networking_port_v2.control_plane.*.id, count.index)}"
+  floating_ip = element(
+    openstack_networking_floatingip_v2.control_plane.*.address,
+    count.index,
+  )
+  port_id = element(openstack_networking_port_v2.control_plane.*.id, count.index)
 }
 
 resource "openstack_networking_floatingip_associate_v2" "lb" {
-  floating_ip = "${openstack_networking_floatingip_v2.lb.address}"
-  port_id     = "${openstack_networking_port_v2.lb.id}"
+  floating_ip = openstack_networking_floatingip_v2.lb.address
+  port_id     = openstack_networking_port_v2.lb.id
 }
 
 data "template_file" "lbconfig" {
-  template = "${file("etc_gobetween.tpl")}"
+  template = file("etc_gobetween.tpl")
 
   vars = {
-    lb_target1 = "${openstack_compute_instance_v2.control_plane.0.access_ip_v4}"
-    lb_target2 = "${openstack_compute_instance_v2.control_plane.1.access_ip_v4}"
-    lb_target3 = "${openstack_compute_instance_v2.control_plane.2.access_ip_v4}"
+    lb_target1 = openstack_compute_instance_v2.control_plane[0].access_ip_v4
+    lb_target2 = openstack_compute_instance_v2.control_plane[1].access_ip_v4
+    lb_target3 = openstack_compute_instance_v2.control_plane[2].access_ip_v4
   }
 }
 
 resource "null_resource" "lb_config" {
   triggers = {
-    cluster_instance_ids = "${join(",", openstack_compute_instance_v2.control_plane.*.id)}"
-    config               = "${data.template_file.lbconfig.rendered}"
+    cluster_instance_ids = join(",", openstack_compute_instance_v2.control_plane.*.id)
+    config               = data.template_file.lbconfig.rendered
   }
 
   connection {
-    host = "${openstack_networking_floatingip_v2.lb.address}"
-    user = "${var.ssh_username}"
+    host = openstack_networking_floatingip_v2.lb.address
+    user = var.ssh_username
   }
 
   provisioner "file" {
-    content     = "${data.template_file.lbconfig.rendered}"
+    content     = data.template_file.lbconfig.rendered
     destination = "/tmp/gobetween.toml"
   }
 
@@ -200,3 +205,4 @@ resource "null_resource" "lb_config" {
     ]
   }
 }
+

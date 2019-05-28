@@ -74,3 +74,4 @@ variable "worker_size" {
   description = "Size of worker nodes"
   default     = "s-2vcpu-4gb"
 }
+

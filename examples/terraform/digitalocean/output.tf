@@ -18,7 +18,7 @@ output "kubeone_api" {
   description = "kube-apiserver LB endpoint"
 
   value = {
-    endpoint = "${digitalocean_loadbalancer.control_plane.ip}"
+    endpoint = digitalocean_loadbalancer.control_plane.ip
   }
 }
 
@@ -27,14 +27,14 @@ output "kubeone_hosts" {
 
   value = {
     control_plane = {
-      cluster_name         = "${var.cluster_name}"
+      cluster_name         = var.cluster_name
       cloud_provider       = "digitalocean"
-      private_address      = "${digitalocean_droplet.control_plane.*.ipv4_address_private}"
-      public_address       = "${digitalocean_droplet.control_plane.*.ipv4_address}"
-      ssh_agent_socket     = "${var.ssh_agent_socket}"
-      ssh_port             = "${var.ssh_port}"
-      ssh_private_key_file = "${var.ssh_private_key_file}"
-      ssh_user             = "${var.ssh_username}"
+      private_address      = digitalocean_droplet.control_plane.*.ipv4_address_private
+      public_address       = digitalocean_droplet.control_plane.*.ipv4_address
+      ssh_agent_socket     = var.ssh_agent_socket
+      ssh_port             = var.ssh_port
+      ssh_private_key_file = var.ssh_private_key_file
+      ssh_user             = var.ssh_username
     }
   }
 }
@@ -47,27 +47,25 @@ output "kubeone_workers" {
     # corresponding (by name) worker definition
     pool1 = {
       replicas        = 1
-      sshPublicKeys   = ["${digitalocean_ssh_key.deployer.public_key}"]
-      operatingSystem = "${var.worker_os}"
-
+      sshPublicKeys   = [digitalocean_ssh_key.deployer.public_key]
+      operatingSystem = var.worker_os
       operatingSystemSpec = {
         distUpgradeOnBoot = false
       }
-
-      # provider specific fields:
-      # see example under `cloudProviderSpec` section at: 
-      # https://github.com/kubermatic/machine-controller/blob/master/examples/digitalocean-machinedeployment.yaml
-
-      region             = "${var.region}"
-      size               = "${var.worker_size}"
+      region             = var.region
+      size               = var.worker_size
       private_networking = true
       backups            = false
       ipv6               = false
       monitoring         = false
       tags = [
-        "${local.kube_cluster_tag}",
+        local.kube_cluster_tag,
         "kubeone",
       ]
     }
   }
+  # provider specific fields:
+  # see example under `cloudProviderSpec` section at: 
+  # https://github.com/kubermatic/machine-controller/blob/master/examples/digitalocean-machinedeployment.yaml
 }
+

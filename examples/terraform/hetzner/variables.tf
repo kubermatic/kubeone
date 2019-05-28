@@ -74,3 +74,4 @@ variable "datacenter" {
 variable "image" {
   default = "ubuntu-18.04"
 }
+

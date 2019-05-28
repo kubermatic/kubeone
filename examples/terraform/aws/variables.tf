@@ -84,3 +84,4 @@ variable "ami" {
   default     = ""
   description = "AMI ID, use it to fixate control-plane AMI in order to avoid force-recreation it at later times"
 }
+

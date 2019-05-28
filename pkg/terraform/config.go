@@ -18,7 +18,6 @@ package terraform
 
 import (
 	"encoding/json"
-	"strconv"
 
 	"github.com/pkg/errors"
 
@@ -32,7 +31,7 @@ type controlPlane struct {
 	PublicAddress     []string `json:"public_address"`
 	PrivateAddress    []string `json:"private_address"`
 	SSHUser           string   `json:"ssh_user"`
-	SSHPort           string   `json:"ssh_port"`
+	SSHPort           int      `json:"ssh_port"`
 	SSHPrivateKeyFile string   `json:"ssh_private_key_file"`
 	SSHAgentSocket    string   `json:"ssh_agent_socket"`
 }
@@ -47,12 +46,12 @@ type Config struct {
 
 	KubeOneHosts struct {
 		Value struct {
-			ControlPlane []controlPlane `json:"control_plane"`
+			ControlPlane controlPlane `json:"control_plane"`
 		} `json:"value"`
 	} `json:"kubeone_hosts"`
 
 	KubeOneWorkers struct {
-		Value map[string][]json.RawMessage `json:"value"`
+		Value map[string]json.RawMessage `json:"value"`
 	} `json:"kubeone_workers"`
 }
 
@@ -76,24 +75,13 @@ func (c *Config) Apply(cluster *kubeonev1alpha1.KubeOneCluster) error {
 		}
 	}
 
-	if len(c.KubeOneHosts.Value.ControlPlane) == 0 {
-		return errors.New("no control plane hosts are given")
-	}
-
-	cp := c.KubeOneHosts.Value.ControlPlane[0]
+	cp := c.KubeOneHosts.Value.ControlPlane
 
 	if cp.CloudProvider != nil {
 		cluster.CloudProvider.Name = kubeonev1alpha1.CloudProviderName(*cp.CloudProvider)
 	}
 
-	var sshPort int
 	var err error
-	if cp.SSHPort != "" {
-		sshPort, err = strconv.Atoi(cp.SSHPort)
-		if err != nil {
-			return errors.Wrapf(err, "failed to convert ssh port string %q to int", cp.SSHPort)
-		}
-	}
 
 	cluster.Name = cp.ClusterName
 
@@ -110,7 +98,7 @@ func (c *Config) Apply(cluster *kubeonev1alpha1.KubeOneCluster) error {
 			PublicAddress:     publicIP,
 			PrivateAddress:    privateIP,
 			SSHUsername:       cp.SSHUser,
-			SSHPort:           sshPort,
+			SSHPort:           cp.SSHPort,
 			SSHPrivateKeyFile: cp.SSHPrivateKeyFile,
 			SSHAgentSocket:    cp.SSHAgentSocket,
 		})
@@ -123,11 +111,6 @@ func (c *Config) Apply(cluster *kubeonev1alpha1.KubeOneCluster) error {
 	// Walk through all configued workersets from terraform and apply their config
 	// by either merging it into an existing workerSet or creating a new one
 	for workersetName, workersetValue := range c.KubeOneWorkers.Value {
-		if len(workersetValue) != 1 {
-			// TODO: log warning? error?
-			continue
-		}
-
 		var existingWorkerSet *kubeonev1alpha1.WorkerConfig
 		for idx, workerset := range cluster.Workers {
 			if workerset.Name == workersetName {
@@ -144,21 +127,21 @@ func (c *Config) Apply(cluster *kubeonev1alpha1.KubeOneCluster) error {
 
 		switch cluster.CloudProvider.Name {
 		case kubeonev1alpha1.CloudProviderNameAWS:
-			err = c.updateAWSWorkerset(existingWorkerSet, workersetValue[0])
+			err = c.updateAWSWorkerset(existingWorkerSet, workersetValue)
 		case kubeonev1alpha1.CloudProviderNameAzure:
-			err = c.updateAzureWorkerset(existingWorkerSet, workersetValue[0])
+			err = c.updateAzureWorkerset(existingWorkerSet, workersetValue)
 		case kubeonev1alpha1.CloudProviderNameGCE:
-			err = c.updateGCEWorkerset(existingWorkerSet, workersetValue[0])
+			err = c.updateGCEWorkerset(existingWorkerSet, workersetValue)
 		case kubeonev1alpha1.CloudProviderNameDigitalOcean:
-			err = c.updateDigitalOceanWorkerset(existingWorkerSet, workersetValue[0])
+			err = c.updateDigitalOceanWorkerset(existingWorkerSet, workersetValue)
 		case kubeonev1alpha1.CloudProviderNameHetzner:
-			err = c.updateHetznerWorkerset(existingWorkerSet, workersetValue[0])
+			err = c.updateHetznerWorkerset(existingWorkerSet, workersetValue)
 		case kubeonev1alpha1.CloudProviderNameOpenStack:
-			err = c.updateOpenStackWorkerset(existingWorkerSet, workersetValue[0])
+			err = c.updateOpenStackWorkerset(existingWorkerSet, workersetValue)
 		case kubeonev1alpha1.CloudProviderNameVSphere:
-			err = c.updateVSphereWorkerset(existingWorkerSet, workersetValue[0])
+			err = c.updateVSphereWorkerset(existingWorkerSet, workersetValue)
 		case kubeonev1alpha1.CloudProviderNamePacket:
-			err = c.updatePacketWorkerset(existingWorkerSet, workersetValue[0])
+			err = c.updatePacketWorkerset(existingWorkerSet, workersetValue)
 		default:
 			return errors.Errorf("unknown provider %v", cluster.CloudProvider.Name)
 		}
@@ -168,7 +151,7 @@ func (c *Config) Apply(cluster *kubeonev1alpha1.KubeOneCluster) error {
 		}
 
 		// copy over common config
-		if err = c.updateCommonWorkerConfig(existingWorkerSet, workersetValue[0]); err != nil {
+		if err = c.updateCommonWorkerConfig(existingWorkerSet, workersetValue); err != nil {
 			return errors.Wrap(err, "failed to update common config from terraform config")
 		}
 	}
@@ -466,10 +449,10 @@ func setWorkersetFlag(w *kubeonev1alpha1.WorkerConfig, name string, value interf
 }
 
 type commonWorkerConfig struct {
-	SSHPublicKeys       []string              `json:"sshPublicKeys"`
-	Replicas            *int                  `json:"replicas"`
-	OperatingSystem     *string               `json:"operatingSystem"`
-	OperatingSystemSpec []operatingSystemSpec `json:"operatingSystemSpec"`
+	SSHPublicKeys       []string             `json:"sshPublicKeys"`
+	Replicas            *int                 `json:"replicas"`
+	OperatingSystem     *string              `json:"operatingSystem"`
+	OperatingSystemSpec *operatingSystemSpec `json:"operatingSystemSpec"`
 }
 
 type operatingSystemSpec struct {
@@ -499,10 +482,8 @@ func (c *Config) updateCommonWorkerConfig(workerset *kubeonev1alpha1.WorkerConfi
 	}
 
 	osSpecMap := make(map[string]interface{})
-	for _, v := range cc.OperatingSystemSpec {
-		if v.DistUpgradeOnBoot != nil {
-			osSpecMap["distUpgradeOnBoot"] = *v.DistUpgradeOnBoot
-		}
+	if cc.OperatingSystemSpec.DistUpgradeOnBoot != nil {
+		osSpecMap["distUpgradeOnBoot"] = *cc.OperatingSystemSpec.DistUpgradeOnBoot
 	}
 
 	if len(osSpecMap) > 0 {

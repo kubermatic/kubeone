@@ -78,3 +78,4 @@ variable "device_type" {
 variable "project_id" {
   description = "project ID"
 }
+

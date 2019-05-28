@@ -53,7 +53,6 @@ variable "ssh_agent_socket" {
   default     = "env:SSH_AUTH_SOCK"
 }
 
-
 # Provider specific settings
 
 variable "control_plane_flavor" {
@@ -72,7 +71,7 @@ variable "lb_flavor" {
 }
 
 variable "image" {
-  default = "Ubuntu 18.04"
+  default     = "Ubuntu 18.04"
   description = "image name to use"
 }
 
@@ -86,6 +85,7 @@ variable "external_network_name" {
 }
 
 variable "subnet_dns_servers" {
-  type    = "list"
+  type    = list(string)
   default = ["8.8.8.8", "8.8.4.4"]
 }
+

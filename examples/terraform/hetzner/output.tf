@@ -18,7 +18,7 @@ output "kubeone_api" {
   description = "kube-apiserver LB endpoint"
 
   value = {
-    endpoint = "${hcloud_server.lb.ipv4_address}"
+    endpoint = hcloud_server.lb.ipv4_address
   }
 }
 
@@ -27,14 +27,14 @@ output "kubeone_hosts" {
 
   value = {
     control_plane = {
-      cluster_name         = "${var.cluster_name}"
+      cluster_name         = var.cluster_name
       cloud_provider       = "hetzner"
-      private_address      = []                                              # hetzner doesn't provide private addressed
-      public_address       = "${hcloud_server.control_plane.*.ipv4_address}"
-      ssh_agent_socket     = "${var.ssh_agent_socket}"
-      ssh_port             = "${var.ssh_port}"
-      ssh_private_key_file = "${var.ssh_private_key_file}"
-      ssh_user             = "${var.ssh_username}"
+      private_address      = [] # hetzner doesn't provide private addressed
+      public_address       = hcloud_server.control_plane.*.ipv4_address
+      ssh_agent_socket     = var.ssh_agent_socket
+      ssh_port             = var.ssh_port
+      ssh_private_key_file = var.ssh_private_key_file
+      ssh_user             = var.ssh_username
     }
   }
 }
@@ -47,19 +47,17 @@ output "kubeone_workers" {
     # corresponding (by name) worker definition
     pool1 = {
       replicas        = 1
-      sshPublicKeys   = ["${file("${var.ssh_public_key_file}")}"]
-      operatingSystem = "${var.worker_os}"
-
+      sshPublicKeys   = [file(var.ssh_public_key_file)]
+      operatingSystem = var.worker_os
       operatingSystemSpec = {
         distUpgradeOnBoot = false
       }
-
-      # provider specific fields:
-      # see example under `cloudProviderSpec` section at: 
-      # https://github.com/kubermatic/machine-controller/blob/master/examples/hetzner-machinedeployment.yaml
-
-      serverType = "${var.worker_type}"
-      location   = "${var.datacenter}"
+      serverType = var.worker_type
+      location   = var.datacenter
     }
   }
+  # provider specific fields:
+  # see example under `cloudProviderSpec` section at: 
+  # https://github.com/kubermatic/machine-controller/blob/master/examples/hetzner-machinedeployment.yaml
 }
+
