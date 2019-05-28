@@ -12,11 +12,13 @@ three control plane nodes and two worker nodes.
 
 To follow this quick start, you'll need:
 
-* `kubeone` v0.6.2 or newer installed, which can be done by following the `Installing KubeOne`
+* `kubeone` v0.7.0 or newer installed, which can be done by following the `Installing KubeOne`
   section of [the
   README](https://github.com/kubermatic/kubeone/blob/master/README.md),
-* `terraform` installed. The binaries for `terraform` can be found on the
+* `terraform` v0.11 installed. The binaries for `terraform` can be found on the
   [Terraform website](https://www.terraform.io/downloads.html)
+
+**Note:** Due to breaking changes made in Terraform v0.12, it's currently not possible to use example Terraform scripts with Terraform v0.12.
 
 ## Setting Up Credentials
 
