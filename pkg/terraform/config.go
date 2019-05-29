@@ -346,8 +346,32 @@ func (c *Config) updatePacketWorkerset(workerset *kubeonev1alpha1.WorkerConfig, 
 	return nil
 }
 
-func (c *Config) updateVSphereWorkerset(_ *kubeonev1alpha1.WorkerConfig, _ json.RawMessage) error {
-	return errors.New("cloudprovider VSphere is not implemented yet")
+func (c *Config) updateVSphereWorkerset(workerset *kubeonev1alpha1.WorkerConfig, cfg json.RawMessage) error {
+	var vsphereConfig machinecontroller.VSphereSpec
+
+	if err := json.Unmarshal(cfg, &vsphereConfig); err != nil {
+		return err
+	}
+
+	flags := []cloudProviderFlags{
+		{key: "datacenter", value: vsphereConfig.Datacenter},
+		{key: "cluster", value: vsphereConfig.Cluster},
+		{key: "datastore", value: vsphereConfig.Datastore},
+		{key: "templateVMName", value: vsphereConfig.TemplateVMName},
+		{key: "allowInsecure", value: vsphereConfig.AllowInsecure},
+		{key: "cpus", value: vsphereConfig.CPUs},
+		{key: "memoryMB", value: vsphereConfig.MemoryMB},
+		{key: "diskSizeGB", value: vsphereConfig.DiskSizeGB},
+		{key: "folder", value: vsphereConfig.Folder},
+	}
+
+	for _, flag := range flags {
+		if err := setWorkersetFlag(workerset, flag.key, flag.value); err != nil {
+			return errors.WithStack(err)
+		}
+	}
+
+	return nil
 }
 
 func setWorkersetFlag(w *kubeonev1alpha1.WorkerConfig, name string, value interface{}) error {
@@ -355,6 +379,10 @@ func setWorkersetFlag(w *kubeonev1alpha1.WorkerConfig, name string, value interf
 	switch s := value.(type) {
 	case int:
 		if s == 0 {
+			return nil
+		}
+	case *int:
+		if s == nil {
 			return nil
 		}
 	case string:

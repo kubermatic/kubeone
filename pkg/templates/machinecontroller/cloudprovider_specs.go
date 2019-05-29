@@ -82,3 +82,16 @@ type PacketSpec struct {
 	Facilities   []string `json:"facilities"`
 	InstanceType string   `json:"instanceType"`
 }
+
+// VSphereSpec holds cloudprovider spec for vSphere
+type VSphereSpec struct {
+	Datacenter     string `json:"datacenter"`
+	Cluster        string `json:"cluster"`
+	Datastore      string `json:"datastore"`
+	TemplateVMName string `json:"templateVMName"`
+	AllowInsecure  bool   `json:"allowInsecure"`
+	CPUs           int    `json:"cpus"`
+	MemoryMB       int    `json:"memoryMB"`
+	DiskSizeGB     *int   `json:"diskSizeGB,omitempty"`
+	Folder         string `json:"folder"`
+}
