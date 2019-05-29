@@ -85,6 +85,7 @@ resource "vsphere_virtual_machine" "control_plane" {
   lifecycle {
     ignore_changes = [
       "vapp.0.properties",
+      "tags",
     ]
   }
 }
@@ -129,6 +130,7 @@ resource "vsphere_virtual_machine" "lb" {
   lifecycle {
     ignore_changes = [
       "vapp.0.properties",
+      "tags",
     ]
   }
 

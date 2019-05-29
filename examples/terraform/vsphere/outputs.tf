@@ -29,7 +29,7 @@ output "kubeone_hosts" {
     control_plane = {
       cluster_name         = "${var.cluster_name}"
       cloud_provider       = "vsphere"
-      private_address      = ""
+      private_address      = []
       public_address       = "${vsphere_virtual_machine.control_plane.*.default_ip_address}"
       ssh_agent_socket     = "${var.ssh_agent_socket}"
       ssh_port             = "${var.ssh_port}"
