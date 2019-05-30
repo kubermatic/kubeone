@@ -35,4 +35,5 @@ In the following table you can find all configuration variables with support for
 | `VSPHERE_ADDRESS` | The address of the vSphere instance |
 | `VSPHERE_USERNAME` | The username of the vSphere user |
 | `VSPHERE_PASSWORD` | The password of the vSphere user |
+| | |
 | `GOOGLE_CREDENTIALS` | GCE Service Account |

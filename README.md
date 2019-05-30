@@ -38,7 +38,7 @@ upgrade to the v0.6.0 or newer as soon as possible.
   manage worker nodes
 * Integrates with Terraform for sourcing data about infrastructure and control
   plane nodes
-* Officially supports AWS, DigitalOcean, GCE, Hetzner, Packet and OpenStack
+* Officially supports AWS, DigitalOcean, GCE, Hetzner, Packet, OpenStack and VMware vSphere
 
 ## Installing KubeOne
 
@@ -53,8 +53,8 @@ expected.
 Alternatively, you can obtain KubeOne via [GitHub Releases][9]:
 
 ```bash
-curl -LO https://github.com/kubermatic/kubeone/releases/download/v0.7.0/kubeone_0.7.0_linux_amd64.zip
-unzip kubeone_0.7.0_linux_amd64.zip
+curl -LO https://github.com/kubermatic/kubeone/releases/download/v0.8.0/kubeone_0.8.0_linux_amd64.zip
+unzip kubeone_0.8.0_linux_amd64.zip
 sudo mv kubeone /usr/local/bin
 ```
 
@@ -80,10 +80,11 @@ In the following table you can find what are supported Kubernetes versions for
 each KubeOne version. KubeOne versions that are crossed out are not supported.
 It's highly recommended to use the latest version whenever possible.
 
-| KubeOne version | 1.14 | 1.13 | Supported providers                                |
-|-----------------|------|------|----------------------------------------------------|
-| v0.6.0+         | +    | +    | AWS, DigitalOcean, GCE, Hetzner, Packet, OpenStack |
-| v0.5.0          | +    | +    | AWS, DigitalOcean, GCE, Hetzner, OpenStack         |
+| KubeOne version | 1.14 | 1.13 | Supported providers                                         |
+|-----------------|------|------|-------------------------------------------------------------|
+| v0.8.0+         | +    | +    | AWS, DigitalOcean, GCE, Hetzner, Packet, OpenStack, vSphere |
+| v0.6.0+         | +    | +    | AWS, DigitalOcean, GCE, Hetzner, Packet, OpenStack          |
+| v0.5.0          | +    | +    | AWS, DigitalOcean, GCE, Hetzner, OpenStack                  |
 
 ## Getting Started
 

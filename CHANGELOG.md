@@ -1,5 +1,11 @@
 # Changelog
 
+# [v0.8.0](https://github.com/kubermatic/kubeone/releases/tag/v0.8.0) - 2019-05-30
+
+## Added
+
+* Add support for VMware vSphere ([#428](https://github.com/kubermatic/kubeone/pull/428))
+
 # [v0.7.0](https://github.com/kubermatic/kubeone/releases/tag/v0.7.0) - 2019-05-28
 
 ## Added
