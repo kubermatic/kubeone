@@ -5,14 +5,14 @@ Packet. We'll cover how to create the needed infrastructure using our
 example Terraform scripts and then install Kubernetes. Finally, we're going to
 show how to destroy the cluster along with the infrastructure.
 
-As a result, you'll get Kubernetes 1.14.1 High-Available (HA) clusters with
+As a result, you'll get Kubernetes 1.14.2 High-Available (HA) clusters with
 three control plane nodes and one worker node (which can be easily scaled).
 
 ### Prerequisites
 
 To follow this quick start, you'll need:
 
-* `kubeone` v0.7.0 or newer installed, which can be done by following the
+* `kubeone` v0.8.0 or newer installed, which can be done by following the
   `Installing KubeOne` section of [the README][main_readme],
 * `terraform` v0.11 installed. The binaries for `terraform` can be found on the
   [Terraform website][terraform_website]
@@ -135,7 +135,7 @@ will be installed, e.g. what version will be used and what features will be
 enabled. For the configuration file reference run `kubeone config print --full`.
 
 To get started you can use the following configuration. It'll install Kubernetes
-1.14.1, create 1 worker node and deploy the 
+1.14.2, create 1 worker node and deploy the 
 [external cloud controller manager][packet_ccm]. The external cloud controller
 manager takes care of providing correct information about nodes from the Packet
 API. KubeOne automatically populates information about the worker nodes from the
@@ -151,7 +151,7 @@ kind: KubeOneCluster
 name: demo
 
 versions:
-  kubernetes: "1.14.1"
+  kubernetes: "1.14.2"
 
 cloudProvider:
   name: "packet"
@@ -263,7 +263,7 @@ terraform destroy
 
 You'll be asked to enter `yes` to confirm your intention to destroy the cluster.
 
-Congratulations! You're now running Kubernetes 1.14.1 HA cluster with three
+Congratulations! You're now running Kubernetes 1.14.2 HA cluster with three
 control plane nodes and one worker node. If you want to learn more about KubeOne
 and its features, such as [upgrades](upgrading_cluster.md), make sure to check
 our [documentation][kubeone_docs].
