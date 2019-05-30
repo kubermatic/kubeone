@@ -93,7 +93,7 @@ type VSphereSpec struct {
 	DiskSizeGB      *int   `json:"diskSizeGB,omitempty"`
 	Folder          string `json:"folder"`
 	MemoryMB        int    `json:"memoryMB"`
-	TemplateNetName string `json:"templateNetName"`
+	TemplateNetName string `json:"templateNetName,omitempty"`
 	TemplateVMName  string `json:"templateVMName"`
-	VMNetName       string `json:"vmNetName"`
+	VMNetName       string `json:"vmNetName,omitempty"`
 }

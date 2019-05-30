@@ -354,15 +354,17 @@ func (c *Config) updateVSphereWorkerset(workerset *kubeonev1alpha1.WorkerConfig,
 	}
 
 	flags := []cloudProviderFlags{
-		{key: "datacenter", value: vsphereConfig.Datacenter},
-		{key: "cluster", value: vsphereConfig.Cluster},
-		{key: "datastore", value: vsphereConfig.Datastore},
-		{key: "templateVMName", value: vsphereConfig.TemplateVMName},
 		{key: "allowInsecure", value: vsphereConfig.AllowInsecure},
+		{key: "cluster", value: vsphereConfig.Cluster},
 		{key: "cpus", value: vsphereConfig.CPUs},
-		{key: "memoryMB", value: vsphereConfig.MemoryMB},
+		{key: "datacenter", value: vsphereConfig.Datacenter},
+		{key: "datastore", value: vsphereConfig.Datastore},
 		{key: "diskSizeGB", value: vsphereConfig.DiskSizeGB},
 		{key: "folder", value: vsphereConfig.Folder},
+		{key: "memoryMB", value: vsphereConfig.MemoryMB},
+		{key: "templateNetName", value: vsphereConfig.TemplateNetName},
+		{key: "templateVMName", value: vsphereConfig.TemplateVMName},
+		{key: "vmNetName", value: vsphereConfig.VMNetName},
 	}
 
 	for _, flag := range flags {
