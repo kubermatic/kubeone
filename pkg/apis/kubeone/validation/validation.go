@@ -60,6 +60,7 @@ func ValidateCloudProviderSpec(p kubeone.CloudProviderSpec, fldPath *field.Path)
 
 	switch p.Name {
 	case kubeone.CloudProviderNameAWS:
+	case kubeone.CloudProviderNameAzure:
 	case kubeone.CloudProviderNameOpenStack:
 		if p.CloudConfig == "" {
 			allErrs = append(allErrs, field.Invalid(fldPath, p.CloudConfig, "`cloudProvider.cloudConfig` is required for openstack provider"))

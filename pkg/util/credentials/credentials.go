@@ -31,6 +31,10 @@ import (
 const (
 	AWSAccessKeyID          = "AWS_ACCESS_KEY_ID"
 	AWSSecretAccessKey      = "AWS_SECRET_ACCESS_KEY"
+	AzureClientID           = "ARM_CLIENT_ID"
+	AzureClientSecret       = "ARM_CLIENT_SECRET"
+	AzureTenantID           = "ARM_TENANT_ID"
+	AzureSubscribtionID     = "ARM_SUBSCRIPTION_ID"
 	DigitalOceanTokenKey    = "DO_TOKEN"
 	GoogleServiceAccountKey = "GOOGLE_SERVICE_ACCOUNT"
 	HetznerTokenKey         = "HZ_TOKEN"
@@ -83,6 +87,13 @@ func ProviderCredentials(p kubeone.CloudProviderName) (map[string]string, error)
 		}
 
 		return nil, errors.New("error parsing aws credentials")
+	case kubeone.CloudProviderNameAzure:
+		return parseCredentialVariables([]ProviderEnvironmentVariable{
+			{Name: AzureClientID, MachineControllerName: "AZURE_CLIENT_ID"},
+			{Name: AzureClientSecret, MachineControllerName: "AZURE_CLIENT_SECRET"},
+			{Name: AzureTenantID, MachineControllerName: "AZURE_TENANT_ID"},
+			{Name: AzureSubscribtionID, MachineControllerName: "AZURE_SUBSCRIPTION_ID"},
+		})
 	case kubeone.CloudProviderNameOpenStack:
 		return parseCredentialVariables([]ProviderEnvironmentVariable{
 			{Name: "OS_AUTH_URL"},
