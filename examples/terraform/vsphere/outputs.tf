@@ -18,7 +18,7 @@ output "kubeone_api" {
   description = "kube-apiserver LB endpoint"
 
   value = {
-    endpoint = "${vsphere_virtual_machine.control_plane.0.default_ip_address}"
+    endpoint = "${vsphere_virtual_machine.lb.default_ip_address}"
   }
 }
 
@@ -58,13 +58,17 @@ output "kubeone_workers" {
       # see example under `cloudProviderSpec` section at: 
       # https://github.com/kubermatic/machine-controller/blob/master/examples/vsphere-machinedeployment.yaml
 
-      templateVMName = "${var.template_name}"
       allowInsecure  = false
+      cluster        = "${var.compute_cluster_name}"
       cpus           = 2
-      memoryMB       = 2048
+      datacenter     = "${var.dc_name}"
+      datastore      = "${var.datastore_name}"
       # Optional: Resize the root disk to this size. Must be bigger than the existing size
       # Default is to leave the disk at the same size as the template
-      diskSizeGB = 10
+      diskSizeGB     = 10
+      memoryMB       = 2048
+      templateVMName = "${var.template_name}"
+      vmNetName      = "${var.network_name}"
     }
   }
 }
