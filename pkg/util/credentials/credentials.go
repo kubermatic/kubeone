@@ -43,7 +43,7 @@ const (
 	PacketAPIKey            = "PACKET_API_KEY"
 	PacketProjectID         = "PACKET_PROJECT_ID"
 	VSphereAddress          = "VSPHERE_ADDRESS"
-	VSpherePasswords        = "VSPHERE_PASSWORD"
+	VSpherePassword         = "VSPHERE_PASSWORD"
 	VSphereUsername         = "VSPHERE_USERNAME"
 )
 
@@ -117,11 +117,18 @@ func ProviderCredentials(p kubeone.CloudProviderName) (map[string]string, error)
 			{Name: PacketProjectID},
 		})
 	case kubeone.CloudProviderNameVSphere:
-		return parseCredentialVariables([]ProviderEnvironmentVariable{
-			{Name: "VSPHERE_ADDRESS"},
-			{Name: "VSPHERE_USERNAME"},
-			{Name: "VSPHERE_PASSWORD"},
+		vscreds, err := parseCredentialVariables([]ProviderEnvironmentVariable{
+			{Name: "VSPHERE_SERVER", MachineControllerName: VSphereAddress},
+			{Name: "VSPHERE_USER", MachineControllerName: VSphereUsername},
+			{Name: VSpherePassword},
 		})
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+
+		// force scheme, as machine-controller requires it while terraform does not
+		vscreds[VSphereAddress] = "https://" + vscreds[VSphereAddress]
+		return vscreds, nil
 	}
 
 	return nil, errors.New("no provider matched")
