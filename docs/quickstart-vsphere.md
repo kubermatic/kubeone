@@ -12,8 +12,8 @@ three control plane nodes and two worker nodes.
 
 To follow this quick start, you'll need:
 
-* `kubeone` v0.7.0 or newer installed, which can be done by following the
-  `Installing KubeOne` section of [the README][1],
+* `kubeone` v0.8.0 (or build from master) or newer installed, which can be
+  done by following the `Installing KubeOne` section of [the README][1],
 * `terraform` v0.11 installed. The binaries for `terraform` can be found on the
   [Terraform website][2]
 
@@ -29,6 +29,7 @@ your vSphere cluster.
 For the terraform reference please take a look at [vSphere provider docs][3]
 
 The following environment variables should be set:
+
 ```bash
 export VSPHERE_ALLOW_UNVERIFIED_SSL=false
 export VSPHERE_SERVER=<YOUR VCENTER ENDPOINT>
