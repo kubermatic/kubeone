@@ -58,7 +58,7 @@ output "kubeone_workers" {
       # see example under `cloudProviderSpec` section at: 
       # https://github.com/kubermatic/machine-controller/blob/master/examples/azure-machinedeployment.yaml
 
-      assignPublicIP    = false
+      assignPublicIP    = true
       availabilitySet   = "${azurerm_availability_set.avset.name}"
       location          = "${var.location}"
       resourceGroup     = "${azurerm_resource_group.rg.name}"
