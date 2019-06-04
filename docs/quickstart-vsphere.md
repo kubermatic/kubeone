@@ -160,7 +160,7 @@ versions:
   kubernetes: '1.14.2'
 cloudProvider:
   name: 'vsphere'
-  cloud_config: |
+  cloudConfig: |
     [Global]
     user = "<USERNAME>"
     password = "<PASSWORD>"
@@ -184,9 +184,7 @@ cloudProvider:
 workers:
 - name: pool1
   replicas: 2
-  config:
-    labels:
-      mylabel: 'nodes1'
+  providerSpec:
     operatingSystem: 'ubuntu'
     operatingSystemSpec:
       distUpgradeOnBoot: true
