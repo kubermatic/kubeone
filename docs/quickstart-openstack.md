@@ -124,7 +124,7 @@ versions:
   kubernetes: '1.14.2'
 cloudProvider:
   name: 'openstack'
-  cloud_config: |
+  cloudConfig: |
     [Global]
     username=OS_USERNAME
     password=OS_PASSWORD
@@ -137,7 +137,7 @@ cloudProvider:
 workers:
 - name: nodes1
   replicas: 2
-  config:
+  providerSpec:
     labels:
       mylabel: 'nodes1'
     cloudProviderSpec:
