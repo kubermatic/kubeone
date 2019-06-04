@@ -96,8 +96,16 @@ fqdn=$(hostname -f)
 echo "$fqdn"
 `
 
+const hostnameShortCommand = `hostname`
+
 func determineHostname(ctx *util.Context, _ kubeoneapi.HostConfig) (string, error) {
-	stdout, _, err := ctx.Runner.Run(hostnameCommand, nil)
+	hostcmd := hostnameCommand
+
+	// on azure the name of the Node should == name of the VM
+	if ctx.Cluster.CloudProvider.Name == kubeoneapi.CloudProviderNameAzure {
+		hostcmd = hostnameShortCommand
+	}
+	stdout, _, err := ctx.Runner.Run(hostcmd, nil)
 
 	return stdout, err
 }
