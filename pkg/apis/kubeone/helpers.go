@@ -58,7 +58,9 @@ func (h *HostConfig) SetLeader(leader bool) {
 // List of in-tree provider can be found here: https://github.com/kubernetes/kubernetes/tree/master/pkg/cloudprovider
 func (p CloudProviderSpec) CloudProviderInTree() bool {
 	switch p.Name {
-	case CloudProviderNameAWS, CloudProviderNameGCE, CloudProviderNameOpenStack, CloudProviderNameVSphere:
+	case CloudProviderNameAWS, CloudProviderNameGCE, CloudProviderNameOpenStack:
+		return true
+	case CloudProviderNameVSphere, CloudProviderNameAzure:
 		return true
 	default:
 		return false
