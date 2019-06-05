@@ -61,6 +61,9 @@ func ValidateCloudProviderSpec(p kubeone.CloudProviderSpec, fldPath *field.Path)
 	switch p.Name {
 	case kubeone.CloudProviderNameAWS:
 	case kubeone.CloudProviderNameAzure:
+		if p.CloudConfig == "" {
+			allErrs = append(allErrs, field.Invalid(fldPath, p.CloudConfig, "`cloudProvider.cloudConfig` is required for azure provider"))
+		}
 	case kubeone.CloudProviderNameOpenStack:
 		if p.CloudConfig == "" {
 			allErrs = append(allErrs, field.Invalid(fldPath, p.CloudConfig, "`cloudProvider.cloudConfig` is required for openstack provider"))
@@ -69,6 +72,9 @@ func ValidateCloudProviderSpec(p kubeone.CloudProviderSpec, fldPath *field.Path)
 	case kubeone.CloudProviderNameDigitalOcean:
 	case kubeone.CloudProviderNamePacket:
 	case kubeone.CloudProviderNameVSphere:
+		if p.CloudConfig == "" {
+			allErrs = append(allErrs, field.Invalid(fldPath, p.CloudConfig, "`cloudProvider.cloudConfig` is required for vsphere provider"))
+		}
 	case kubeone.CloudProviderNameGCE:
 	case kubeone.CloudProviderNameNone:
 	default:
