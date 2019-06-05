@@ -38,7 +38,8 @@ upgrade to the v0.6.0 or newer as soon as possible.
   manage worker nodes
 * Integrates with Terraform for sourcing data about infrastructure and control
   plane nodes
-* Officially supports AWS, DigitalOcean, GCE, Hetzner, Packet, OpenStack and VMware vSphere
+* Officially supports AWS, DigitalOcean, GCE, Hetzner, Packet, OpenStack, VMware
+  vSphere and Azure
 
 ## Installing KubeOne
 
