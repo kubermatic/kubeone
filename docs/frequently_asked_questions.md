@@ -31,7 +31,7 @@ worker nodes, KubeOne and [Kubermatic machine-controller][4] need to support
 that provider.
 
 Currently we support AWS, DigitalOcean, Google Compute Engine (GCE), Hetzner,
-Packet, OpenStack and VMware vSphere.
+Packet, OpenStack, VMware vSphere and Azure.
 
 ## Are on-prem and bare metal clusters supported?
 

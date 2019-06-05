@@ -145,6 +145,8 @@ func (c *Config) Apply(cluster *kubeonev1alpha1.KubeOneCluster) error {
 		switch cluster.CloudProvider.Name {
 		case kubeonev1alpha1.CloudProviderNameAWS:
 			err = c.updateAWSWorkerset(existingWorkerSet, workersetValue[0])
+		case kubeonev1alpha1.CloudProviderNameAzure:
+			err = c.updateAzureWorkerset(existingWorkerSet, workersetValue[0])
 		case kubeonev1alpha1.CloudProviderNameGCE:
 			err = c.updateGCEWorkerset(existingWorkerSet, workersetValue[0])
 		case kubeonev1alpha1.CloudProviderNameDigitalOcean:
@@ -211,6 +213,35 @@ func (c *Config) updateAWSWorkerset(workerset *kubeonev1alpha1.WorkerConfig, cfg
 	// TODO: Use imported provicerConfig structs for workset.Config
 	if awsCloudConfig.DiskSize != nil {
 		if err := setWorkersetFlag(workerset, "diskSize", *awsCloudConfig.DiskSize); err != nil {
+			return errors.WithStack(err)
+		}
+	}
+
+	return nil
+}
+
+func (c *Config) updateAzureWorkerset(workerset *kubeonev1alpha1.WorkerConfig, cfg json.RawMessage) error {
+	var azureCloudConfig machinecontroller.AzureSpec
+
+	if err := json.Unmarshal(cfg, &azureCloudConfig); err != nil {
+		return errors.WithStack(err)
+	}
+
+	flags := []cloudProviderFlags{
+		{key: "assignPublicIP", value: azureCloudConfig.AssignPublicIP},
+		{key: "availabilitySet", value: azureCloudConfig.AvailabilitySet},
+		{key: "location", value: azureCloudConfig.Location},
+		{key: "resourceGroup", value: azureCloudConfig.ResourceGroup},
+		{key: "routeTableName", value: azureCloudConfig.RouteTableName},
+		{key: "securityGroupName", value: azureCloudConfig.SecurityGroupName},
+		{key: "subnetName", value: azureCloudConfig.SubnetName},
+		{key: "tags", value: azureCloudConfig.Tags},
+		{key: "vmSize", value: azureCloudConfig.VMSize},
+		{key: "vnetName", value: azureCloudConfig.VNetName},
+	}
+
+	for _, flag := range flags {
+		if err := setWorkersetFlag(workerset, flag.key, flag.value); err != nil {
 			return errors.WithStack(err)
 		}
 	}

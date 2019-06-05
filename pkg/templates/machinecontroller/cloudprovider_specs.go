@@ -97,3 +97,17 @@ type VSphereSpec struct {
 	TemplateVMName  string `json:"templateVMName"`
 	VMNetName       string `json:"vmNetName,omitempty"`
 }
+
+// AzureSpec holds cloudprovider spec for Azure
+type AzureSpec struct {
+	AssignPublicIP    bool              `json:"assignPublicIP"`
+	AvailabilitySet   string            `json:"availabilitySet"`
+	Location          string            `json:"location"`
+	ResourceGroup     string            `json:"resourceGroup"`
+	RouteTableName    string            `json:"routeTableName"`
+	SecurityGroupName string            `json:"securityGroupName"`
+	SubnetName        string            `json:"subnetName"`
+	Tags              map[string]string `json:"tags"`
+	VMSize            string            `json:"vmSize"`
+	VNetName          string            `json:"vnetName"`
+}

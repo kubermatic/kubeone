@@ -44,7 +44,7 @@ const (
 	MachineControllerNamespace     = metav1.NamespaceSystem
 	MachineControllerAppLabelKey   = "app"
 	MachineControllerAppLabelValue = "machine-controller"
-	MachineControllerTag           = "v1.1.8"
+	MachineControllerTag           = "v1.1.9"
 )
 
 // Deploy deploys MachineController deployment with RBAC on the cluster
@@ -171,10 +171,6 @@ func WaitForMachineController(client dynclient.Client) error {
 
 func machineControllerServiceAccount() *corev1.ServiceAccount {
 	return &corev1.ServiceAccount{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "v1",
-			Kind:       "ServiceAccount",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller",
 			Namespace: MachineControllerNamespace,
@@ -187,10 +183,6 @@ func machineControllerServiceAccount() *corev1.ServiceAccount {
 
 func machineControllerClusterRole() *rbacv1.ClusterRole {
 	return &rbacv1.ClusterRole{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "rbac.authorization.k8s.io/v1",
-			Kind:       "ClusterRole",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "machine-controller",
 			Labels: map[string]string{
@@ -258,10 +250,6 @@ func machineControllerClusterRole() *rbacv1.ClusterRole {
 
 func machineControllerClusterRoleBinding() *rbacv1.ClusterRoleBinding {
 	return &rbacv1.ClusterRoleBinding{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "rbac.authorization.k8s.io/v1",
-			Kind:       "ClusterRoleBinding",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "machine-controller",
 			Labels: map[string]string{
@@ -285,10 +273,6 @@ func machineControllerClusterRoleBinding() *rbacv1.ClusterRoleBinding {
 
 func nodeBootstrapperClusterRoleBinding() *rbacv1.ClusterRoleBinding {
 	return &rbacv1.ClusterRoleBinding{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "rbac.authorization.k8s.io/v1",
-			Kind:       "ClusterRoleBinding",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "machine-controller:kubelet-bootstrap",
 			Labels: map[string]string{
@@ -312,10 +296,6 @@ func nodeBootstrapperClusterRoleBinding() *rbacv1.ClusterRoleBinding {
 
 func nodeSignerClusterRoleBinding() *rbacv1.ClusterRoleBinding {
 	return &rbacv1.ClusterRoleBinding{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "rbac.authorization.k8s.io/v1",
-			Kind:       "ClusterRoleBinding",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "machine-controller:node-signer",
 			Labels: map[string]string{
@@ -339,10 +319,6 @@ func nodeSignerClusterRoleBinding() *rbacv1.ClusterRoleBinding {
 
 func machineControllerKubeSystemRole() *rbacv1.Role {
 	return &rbacv1.Role{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "rbac.authorization.k8s.io/v1",
-			Kind:       "Role",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller",
 			Namespace: MachineControllerNamespace,
@@ -378,10 +354,6 @@ func machineControllerKubeSystemRole() *rbacv1.Role {
 
 func machineControllerKubePublicRole() *rbacv1.Role {
 	return &rbacv1.Role{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "rbac.authorization.k8s.io/v1",
-			Kind:       "Role",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller",
 			Namespace: metav1.NamespacePublic,
@@ -405,10 +377,6 @@ func machineControllerKubePublicRole() *rbacv1.Role {
 
 func machineControllerEndpointReaderRole() *rbacv1.Role {
 	return &rbacv1.Role{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "rbac.authorization.k8s.io/v1",
-			Kind:       "Role",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller",
 			Namespace: metav1.NamespaceDefault,
@@ -432,10 +400,6 @@ func machineControllerEndpointReaderRole() *rbacv1.Role {
 
 func machineControllerClusterInfoReaderRole() *rbacv1.Role {
 	return &rbacv1.Role{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "rbac.authorization.k8s.io/v1",
-			Kind:       "Role",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "cluster-info",
 			Namespace: metav1.NamespacePublic,
@@ -456,10 +420,6 @@ func machineControllerClusterInfoReaderRole() *rbacv1.Role {
 
 func machineControllerKubeSystemRoleBinding() *rbacv1.RoleBinding {
 	return &rbacv1.RoleBinding{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "rbac.authorization.k8s.io/v1",
-			Kind:       "RoleBinding",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller",
 			Namespace: MachineControllerNamespace,
@@ -484,10 +444,6 @@ func machineControllerKubeSystemRoleBinding() *rbacv1.RoleBinding {
 
 func machineControllerKubePublicRoleBinding() *rbacv1.RoleBinding {
 	return &rbacv1.RoleBinding{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "rbac.authorization.k8s.io/v1",
-			Kind:       "RoleBinding",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller",
 			Namespace: metav1.NamespacePublic,
@@ -512,10 +468,6 @@ func machineControllerKubePublicRoleBinding() *rbacv1.RoleBinding {
 
 func machineControllerDefaultRoleBinding() *rbacv1.RoleBinding {
 	return &rbacv1.RoleBinding{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "rbac.authorization.k8s.io/v1",
-			Kind:       "RoleBinding",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller",
 			Namespace: metav1.NamespaceDefault,
@@ -540,10 +492,6 @@ func machineControllerDefaultRoleBinding() *rbacv1.RoleBinding {
 
 func machineControllerClusterInfoRoleBinding() *rbacv1.RoleBinding {
 	return &rbacv1.RoleBinding{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "rbac.authorization.k8s.io/v1",
-			Kind:       "RoleBinding",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "cluster-info",
 			Namespace: metav1.NamespacePublic,
@@ -572,10 +520,6 @@ func machineControllerClusterInfoRoleBinding() *rbacv1.RoleBinding {
 
 func machineControllerMachineCRD() *apiextensions.CustomResourceDefinition {
 	return &apiextensions.CustomResourceDefinition{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "apiextensions.k8s.io/v1beta1",
-			Kind:       "CustomResourceDefinition",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "machines.cluster.k8s.io",
 		},
@@ -612,6 +556,11 @@ func machineControllerMachineCRD() *apiextensions.CustomResourceDefinition {
 					JSONPath: ".status.addresses[0].address",
 				},
 				{
+					Name:     "Kubelet",
+					Type:     "string",
+					JSONPath: ".spec.versions.kubelet",
+				},
+				{
 					Name:     "Age",
 					Type:     "date",
 					JSONPath: ".metadata.creationTimestamp",
@@ -623,10 +572,6 @@ func machineControllerMachineCRD() *apiextensions.CustomResourceDefinition {
 
 func machineControllerClusterCRD() *apiextensions.CustomResourceDefinition {
 	return &apiextensions.CustomResourceDefinition{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "apiextensions.k8s.io/v1beta1",
-			Kind:       "CustomResourceDefinition",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "clusters.cluster.k8s.io",
 		},
@@ -655,10 +600,6 @@ func machineControllerClusterCRD() *apiextensions.CustomResourceDefinition {
 
 func machineControllerMachineSetCRD() *apiextensions.CustomResourceDefinition {
 	return &apiextensions.CustomResourceDefinition{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "apiextensions.k8s.io/v1beta1",
-			Kind:       "CustomResourceDefinition",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "machinesets.cluster.k8s.io",
 		},
@@ -698,6 +639,11 @@ func machineControllerMachineSetCRD() *apiextensions.CustomResourceDefinition {
 					JSONPath: ".spec.template.spec.providerSpec.value.operatingSystem",
 				},
 				{
+					Name:     "Kubelet",
+					Type:     "string",
+					JSONPath: ".spec.template.spec.versions.kubelet",
+				},
+				{
 					Name:     "Age",
 					Type:     "date",
 					JSONPath: ".metadata.creationTimestamp",
@@ -709,10 +655,6 @@ func machineControllerMachineSetCRD() *apiextensions.CustomResourceDefinition {
 
 func machineControllerMachineDeploymentCRD() *apiextensions.CustomResourceDefinition {
 	return &apiextensions.CustomResourceDefinition{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "apiextensions.k8s.io/v1beta1",
-			Kind:       "CustomResourceDefinition",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "machinedeployments.cluster.k8s.io",
 		},
@@ -756,6 +698,11 @@ func machineControllerMachineDeploymentCRD() *apiextensions.CustomResourceDefini
 					JSONPath: ".spec.template.spec.providerSpec.value.operatingSystem",
 				},
 				{
+					Name:     "Kubelet",
+					Type:     "string",
+					JSONPath: ".spec.template.spec.versions.kubelet",
+				},
+				{
 					Name:     "Age",
 					Type:     "date",
 					JSONPath: ".metadata.creationTimestamp",
@@ -785,10 +732,6 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster) (*appsv1.De
 	}
 
 	return &appsv1.Deployment{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "apps/v1",
-			Kind:       "Deployment",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller",
 			Namespace: MachineControllerNamespace,

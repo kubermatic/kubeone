@@ -83,6 +83,7 @@ type CloudProviderName string
 // CloudProviderName values
 const (
 	CloudProviderNameAWS          CloudProviderName = "aws"
+	CloudProviderNameAzure        CloudProviderName = "azure"
 	CloudProviderNameOpenStack    CloudProviderName = "openstack"
 	CloudProviderNameHetzner      CloudProviderName = "hetzner"
 	CloudProviderNameDigitalOcean CloudProviderName = "digitalocean"

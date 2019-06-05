@@ -151,6 +151,10 @@ func NewConfig(ctx *util.Context, host kubeoneapi.HostConfig) ([]runtime.Object,
 
 		nodeRegistration.KubeletExtraArgs["cloud-provider"] = provider
 		nodeRegistration.KubeletExtraArgs["cloud-config"] = renderedCloudConfig
+
+		if cluster.CloudProvider.Name == kubeoneapi.CloudProviderNameAzure {
+			clusterConfig.ControllerManager.ExtraArgs["configure-cloud-routes"] = "false"
+		}
 	}
 
 	if cluster.CloudProvider.External {
