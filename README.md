@@ -80,11 +80,12 @@ In the following table you can find what are supported Kubernetes versions for
 each KubeOne version. KubeOne versions that are crossed out are not supported.
 It's highly recommended to use the latest version whenever possible.
 
-| KubeOne version | 1.14 | 1.13 | Supported providers                                         |
-|-----------------|------|------|-------------------------------------------------------------|
-| v0.8.0+         | +    | +    | AWS, DigitalOcean, GCE, Hetzner, Packet, OpenStack, vSphere |
-| v0.6.0+         | +    | +    | AWS, DigitalOcean, GCE, Hetzner, Packet, OpenStack          |
-| v0.5.0          | +    | +    | AWS, DigitalOcean, GCE, Hetzner, OpenStack                  |
+| KubeOne version | 1.14 | 1.13 | Supported providers                                                |
+|-----------------|------|------|--------------------------------------------------------------------|
+| v0.9.0+         | +    | +    | AWS, DigitalOcean, GCE, Hetzner, Packet, OpenStack, vSphere, Azure |
+| v0.8.0+         | +    | +    | AWS, DigitalOcean, GCE, Hetzner, Packet, OpenStack, vSphere        |
+| v0.6.0+         | +    | +    | AWS, DigitalOcean, GCE, Hetzner, Packet, OpenStack                 |
+| v0.5.0          | +    | +    | AWS, DigitalOcean, GCE, Hetzner, OpenStack                         |
 
 ## Getting Started
 

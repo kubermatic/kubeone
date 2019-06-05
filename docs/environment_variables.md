@@ -37,3 +37,8 @@ In the following table you can find all configuration variables with support for
 | `VSPHERE_PASSWORD` | The password of the vSphere user |
 | | |
 | `GOOGLE_CREDENTIALS` | GCE Service Account |
+| | |
+| `ARM_CLIENT_ID` | Azure ClientID |
+| `ARM_CLIENT_SECRET` | Azure Client secret |
+| `ARM_TENANT_ID` | Azure TenantID |
+| `ARM_SUBSCRIPTION_ID` | Azure SubscriptionID |

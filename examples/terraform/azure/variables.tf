@@ -56,16 +56,16 @@ variable "ssh_agent_socket" {
 # Provider specific settings
 
 variable "location" {
-  description = ""
+  description = "Azure datacenter to use"
   default     = "westeurope"
 }
 
 variable "control_plane_vm_size" {
-  description = ""
+  description = "VM Size for control plane machines"
   default     = "Standard_B2s"
 }
 
 variable "worker_vm_size" {
-  description = ""
+  description = "VM Size for worker machines"
   default     = "Standard_B2s"
 }
