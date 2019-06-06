@@ -36,6 +36,7 @@ func joinControlPlaneNodeInternal(ctx *util.Context, node *kubeoneapi.HostConfig
 	logger := ctx.Logger.WithField("node", node.PublicAddress)
 	logger.Infof("Waiting %s to ensure main control plane components are up…", sleepTime)
 	time.Sleep(sleepTime)
+	logger.Info("Joining control plane node")
 
 	_, _, err := ctx.Runner.Run(`
 if [[ -f /etc/kubernetes/kubelet.conf ]]; then exit 0; fi

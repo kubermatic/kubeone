@@ -17,30 +17,46 @@ limitations under the License.
 package upgrade
 
 import (
+	"github.com/pkg/errors"
+
+	"github.com/kubermatic/kubeone/pkg/templates/kubeadm"
 	"github.com/kubermatic/kubeone/pkg/util"
 )
 
 const (
 	kubeadmUpgradeLeaderCommand = `
-sudo kubeadm upgrade apply \
+sudo {{ .KUBEADM_UPGRADE }} \
 	--config=./{{ .WORK_DIR }}/cfg/master_0.yaml \
 	-y {{ .VERSION }}
 `
 	kubeadmUpgradeFollowerCommand = `
-sudo kubeadm upgrade node experimental-control-plane
+sudo {{ .KUBEADM_UPGRADE }}
 `
 )
 
 func upgradeLeaderControlPlane(ctx *util.Context) error {
-	_, _, err := ctx.Runner.Run(kubeadmUpgradeLeaderCommand, util.TemplateVariables{
-		"VERSION":  ctx.Cluster.Versions.Kubernetes,
-		"WORK_DIR": ctx.WorkDir,
+	kadm, err := kubeadm.New(ctx.Cluster.Versions.Kubernetes)
+	if err != nil {
+		return errors.Wrap(err, "failed to init kubeadm")
+	}
+
+	_, _, err = ctx.Runner.Run(kubeadmUpgradeLeaderCommand, util.TemplateVariables{
+		"KUBEADM_UPGRADE": kadm.UpgradeLeaderCMD(),
+		"VERSION":         ctx.Cluster.Versions.Kubernetes,
+		"WORK_DIR":        ctx.WorkDir,
 	})
 
 	return err
 }
 
 func upgradeFollowerControlPlane(ctx *util.Context) error {
-	_, _, err := ctx.Runner.Run(kubeadmUpgradeFollowerCommand, util.TemplateVariables{})
+	kadm, err := kubeadm.New(ctx.Cluster.Versions.Kubernetes)
+	if err != nil {
+		return errors.Wrap(err, "failed to init kubadm")
+	}
+
+	_, _, err = ctx.Runner.Run(kubeadmUpgradeFollowerCommand, util.TemplateVariables{
+		"KUBEADM_UPGRADE": kadm.UpgradeFollowerCMD(),
+	})
 	return err
 }

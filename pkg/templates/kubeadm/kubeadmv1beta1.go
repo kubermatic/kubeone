@@ -17,31 +17,28 @@ limitations under the License.
 package kubeadm
 
 import (
-	"github.com/pkg/errors"
-
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/templates"
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/v1beta1"
 	"github.com/kubermatic/kubeone/pkg/util"
 )
 
-// Config returns appropriate version of kubeadm config as YAML
-func Config(ctx *util.Context, instance kubeoneapi.HostConfig) (string, error) {
-	cluster := ctx.Cluster
-	masterNodes := cluster.Hosts
-	if len(masterNodes) == 0 {
-		return "", errors.New("cluster does not contain at least one master node")
-	}
+type kubeadmv1beta1 struct {
+}
 
-	configs, err := v1beta1.NewConfig(ctx, instance)
+func (*kubeadmv1beta1) Config(ctx *util.Context, instance kubeoneapi.HostConfig) (string, error) {
+	config, err := v1beta1.NewConfig(ctx, instance)
 	if err != nil {
 		return "", err
 	}
 
-	//TODO: Change KubernetesToYAML to accept runtime.Object instead of empty interface
-	var kubernetesToYAMLInput []interface{}
-	for _, config := range configs {
-		kubernetesToYAMLInput = append(kubernetesToYAMLInput, interface{}(config))
-	}
-	return templates.KubernetesToYAML(kubernetesToYAMLInput)
+	return templates.KubernetesToYAML(config)
+}
+
+func (*kubeadmv1beta1) UpgradeLeaderCMD() string {
+	return "kubeadm upgrade apply"
+}
+
+func (*kubeadmv1beta1) UpgradeFollowerCMD() string {
+	return "kubeadm upgrade node experimental-control-plane"
 }

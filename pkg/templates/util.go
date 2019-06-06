@@ -18,10 +18,11 @@ package templates
 
 import (
 	"bytes"
-	"strings"
 
 	"github.com/ghodss/yaml"
 	"github.com/pkg/errors"
+
+	"k8s.io/apimachinery/pkg/runtime"
 )
 
 // KubernetesToYAML properly encodes a list of resources as YAML.
@@ -31,7 +32,7 @@ import (
 // This function takes a slice of items to support creating a
 // multi-document YAML string (separated with "---" between each
 // item).
-func KubernetesToYAML(data []interface{}) (string, error) {
+func KubernetesToYAML(data []runtime.Object) (string, error) {
 	var buffer bytes.Buffer
 
 	for _, item := range data {
@@ -40,18 +41,15 @@ func KubernetesToYAML(data []interface{}) (string, error) {
 			err         error
 		)
 
-		if str, ok := item.(string); ok {
-			encodedItem = []byte(strings.TrimSpace(str))
-		} else {
-			encodedItem, err = yaml.Marshal(item)
-		}
-
+		encodedItem, err = yaml.Marshal(item)
 		if err != nil {
 			return "", errors.Wrap(err, "failed to marshal item")
 		}
+
 		if _, err := buffer.Write(encodedItem); err != nil {
 			return "", errors.Wrap(err, "failed to write into buffer")
 		}
+
 		if _, err := buffer.WriteString("\n---\n"); err != nil {
 			return "", errors.Wrap(err, "failed to write into buffer")
 		}
