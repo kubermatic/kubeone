@@ -29,6 +29,8 @@ import (
 	"github.com/Masterminds/semver"
 	"github.com/pkg/errors"
 
+	"github.com/kubermatic/kubeone/test/e2e/provisioner"
+
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
@@ -48,7 +50,7 @@ func init() {
 	flag.Parse()
 }
 
-func setupTearDown(p Provisioner, k Kubeone) func(t *testing.T) {
+func setupTearDown(p provisioner.Provisioner, k Kubeone) func(t *testing.T) {
 	return func(t *testing.T) {
 		t.Log("cleanup ....")
 

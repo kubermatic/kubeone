@@ -19,6 +19,8 @@ package e2e
 import (
 	"fmt"
 	"os"
+
+	"github.com/kubermatic/kubeone/test/e2e/testutil"
 )
 
 const (
@@ -60,7 +62,7 @@ func (p *Kubetest) Verify(scenario string) error {
 
 	testsArgs := fmt.Sprintf("--test_args=--ginkgo.focus=%s --ginkgo.skip=%s -ginkgo.noColor=true -ginkgo.flakeAttempts=2", scenario, skip)
 
-	_, err := executeCommand(k8sPath, "kubetest", []string{"--provider=skeleton", "--test", "--ginkgo-parallel", "--check-version-skew=false", testsArgs}, p.envVars)
+	_, err := testutil.ExecuteCommand(k8sPath, "kubetest", []string{"--provider=skeleton", "--test", "--ginkgo-parallel", "--check-version-skew=false", testsArgs}, p.envVars)
 	if err != nil {
 		return fmt.Errorf("k8s conformnce tests failed: %v", err)
 	}
@@ -77,7 +79,7 @@ func getK8sBinaries(kubetestDir string, version string) error {
 		return fmt.Errorf("unable to create directory %s", k8sPath)
 	}
 
-	_, err = executeCommand(k8sPath, "kubetest", []string{fmt.Sprintf("--extract=%s", version)}, nil)
+	_, err = testutil.ExecuteCommand(k8sPath, "kubetest", []string{fmt.Sprintf("--extract=%s", version)}, nil)
 	if err != nil {
 		return fmt.Errorf("getting kubernetes binaries failed: %v", err)
 	}
