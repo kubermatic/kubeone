@@ -64,7 +64,7 @@ cd ./examples/terraform/azure
 ```
 
 Before we can use Terraform to create the infrastructure for us Terraform needs
-to download the vSphere plugin and setup it's environment. This is done by
+to download the Azure plugin and setup it's environment. This is done by
 running the `init` command:
 
 ```bash
@@ -113,8 +113,17 @@ terraform apply
 Shortly after you'll be asked to enter `yes` to confirm your intention to
 provision the infrastructure.
 
-Infrastructure provisioning takes around 5-10 minutes. Once it's done you need
-to create a Terraform state file that is parsed by KubeOne:
+Infrastructure provisioning takes around 5-10 minutes.
+
+**Note:** To obtain IP addresses (which are a bit delayed) of the VMs, it's
+required to run:
+
+```bash
+terraform refresh
+```
+
+Once it's done you need to create a Terraform state file that is parsed by
+KubeOne:
 
 ```bash
 terraform output -json > tf.json
@@ -147,7 +156,7 @@ kind: KubeOneCluster
 versions:
   kubernetes: '1.14.2'
 cloudProvider:
-  name: 'vsphere'
+  name: 'azure'
   cloudConfig: |
     {
       "tenantId": "<AZURE TENANT ID>",
@@ -246,7 +255,7 @@ kubeone reset config.yaml --tfjson tf.json
 ```
 
 This command will wait for all worker nodes to be gone. Once it's done you can
-proceed and destroy the vSphere infrastructure using Terraform:
+proceed and destroy the Azure infrastructure using Terraform:
 
 ```bash
 terraform destroy
