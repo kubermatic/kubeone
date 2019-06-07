@@ -147,7 +147,7 @@ kind: KubeOneCluster
 versions:
   kubernetes: '1.14.2'
 cloudProvider:
-  name: 'vsphere'
+  name: 'azure'
   cloudConfig: |
     {
       "tenantId": "<AZURE TENANT ID>",
