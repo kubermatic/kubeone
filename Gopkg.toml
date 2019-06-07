@@ -74,3 +74,6 @@ required = [
   non-go = false
   go-tests = false
   unused-packages = false
+[[constraint]]
+  name = "github.com/cpuguy83/go-md2man"
+  revision = "691ee98543af2f262f35fbb54bdd42f00b9b9cc5"
