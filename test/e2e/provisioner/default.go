@@ -17,40 +17,38 @@ limitations under the License.
 package provisioner
 
 import (
-	"errors"
 	"fmt"
-	"os"
+
+	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/test/e2e/testutil"
 )
 
-// DOProvisioner is provisioner used to provision cluster on DigitalOcean
-type DOProvisioner struct {
+// DefaultProvisioner contains default implementation of provisioner interface
+type DefaultProvisioner struct {
 	testPath  string
 	terraform *terraform
 }
 
-// NewDOProvisioner creates and initialize DOProvisioner structure
-func NewDOProvisioner(testPath, identifier string) (*DOProvisioner, error) {
+// NewDefaultProvisioner creates and initialize universal provisioner
+func NewDefaultProvisioner(creds func() error, testPath, identifier, provider string) (*DefaultProvisioner, error) {
+	if err := creds(); err != nil {
+		return nil, errors.Wrap(err, "unable to validate credentials")
+	}
+
 	terraform := &terraform{
-		terraformDir: "../../examples/terraform/digitalocean/",
+		terraformDir: fmt.Sprintf("../../examples/terraform/%s/", provider),
 		identifier:   identifier,
 	}
 
-	return &DOProvisioner{
+	return &DefaultProvisioner{
 		terraform: terraform,
 		testPath:  testPath,
 	}, nil
 }
 
-// Provision provisions a DigitalOcean cluster
-func (p *DOProvisioner) Provision() (string, error) {
-	doToken := os.Getenv("DIGITALOCEAN_TOKEN")
-
-	if len(doToken) == 0 {
-		return "", errors.New("unable to run the test suite, DIGITALOCEAN_TOKEN environment variable cannot be empty")
-	}
-
+// Provision provisions a cluster using Terraform
+func (p *DefaultProvisioner) Provision() (string, error) {
 	tf, err := p.terraform.initAndApply()
 	if err != nil {
 		return "", err
@@ -60,15 +58,15 @@ func (p *DOProvisioner) Provision() (string, error) {
 }
 
 // Cleanup destroys infrastructure created by Terraform
-func (p *DOProvisioner) Cleanup() error {
+func (p *DefaultProvisioner) Cleanup() error {
 	err := p.terraform.destroy()
 	if err != nil {
-		return fmt.Errorf("%v", err)
+		return err
 	}
 
 	_, err = testutil.ExecuteCommand("", "rm", []string{"-rf", p.testPath}, nil)
 	if err != nil {
-		return fmt.Errorf("%v", err)
+		return err
 	}
 
 	return nil

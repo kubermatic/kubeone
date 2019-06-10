@@ -18,8 +18,9 @@ package provisioner
 
 import (
 	"fmt"
+	"os"
 
-	"github.com/kubermatic/kubeone/test/e2e/testutil"
+	"github.com/pkg/errors"
 )
 
 const (
@@ -44,59 +45,28 @@ type Provisioner interface {
 func CreateProvisioner(testPath string, identifier string, provider string) (Provisioner, error) {
 	switch provider {
 	case AWS:
-		return NewAWSProvisioner(testPath, identifier)
+		creds := verifyCredentials("AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY")
+		return NewDefaultProvisioner(creds, testPath, identifier, provider)
 	case DigitalOcean:
-		return NewDOProvisioner(testPath, identifier)
+		creds := verifyCredentials("DIGITALOCEAN_TOKEN")
+		return NewDefaultProvisioner(creds, testPath, identifier, provider)
 	case Hetzner:
-		return NewHetznerProvisioner(testPath, identifier)
+		creds := verifyCredentials("HCLOUD_TOKEN")
+		return NewDefaultProvisioner(creds, testPath, identifier, provider)
 	default:
-		return nil, fmt.Errorf("unsuported provider %v", provider)
+		return nil, fmt.Errorf("unsupported provider %v", provider)
 	}
 }
 
-// terraform contains information needed to provision infrastructure using Terraform
-type terraform struct {
-	// terraformDir is the path to the Terraform scripts
-	terraformDir string
-	// identifier is an unique identifier for the test run
-	identifier string
-}
+func verifyCredentials(envs ...string) func() error {
+	return func() error {
+		for _, env := range envs {
+			_, ok := os.LookupEnv(env)
+			if !ok {
+				return errors.New("key not found")
+			}
+		}
 
-// initAndApply method initializes a Terraform working directory and applies scripts
-func (p *terraform) initAndApply() (string, error) {
-	initCmd := []string{"init"}
-	if len(p.identifier) > 0 {
-		initCmd = append(initCmd, fmt.Sprintf("--backend-config=key=%s", p.identifier))
+		return nil
 	}
-
-	_, err := testutil.ExecuteCommand(p.terraformDir, "terraform", initCmd, nil)
-	if err != nil {
-		return "", fmt.Errorf("terraform init command failed: %v", err)
-	}
-
-	_, err = testutil.ExecuteCommand(p.terraformDir, "terraform", []string{"apply", "-auto-approve"}, nil)
-	if err != nil {
-		return "", fmt.Errorf("terraform apply command failed: %v", err)
-	}
-
-	return p.getTFJson()
-}
-
-// destroy destories the infrastructure
-func (p *terraform) destroy() error {
-	_, err := testutil.ExecuteCommand(p.terraformDir, "terraform", []string{"destroy", "-auto-approve"}, nil)
-	if err != nil {
-		return fmt.Errorf("terraform destroy command failed: %v", err)
-	}
-	return nil
-}
-
-// getTFJson reads an output from a state file
-func (p *terraform) getTFJson() (string, error) {
-	tf, err := testutil.ExecuteCommand(p.terraformDir, "terraform", []string{"output", fmt.Sprintf("-state=%v", tfStateFileName), "-json"}, nil)
-	if err != nil {
-		return "", fmt.Errorf("generating tf json failed: %v", err)
-	}
-
-	return tf, nil
 }
