@@ -57,7 +57,7 @@ variable "ssh_agent_socket" {
 
 variable "region" {
   description = "Region to speak to"
-  default     = "fra1"
+  default     = "ams3"
 }
 
 variable "control_plane_droplet_image" {
