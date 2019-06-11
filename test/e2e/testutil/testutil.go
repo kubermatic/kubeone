@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package e2e
+package testutil
 
 import (
 	"bytes"
@@ -27,20 +27,6 @@ import (
 	"path"
 	"strings"
 )
-
-// CreateProvisioner returns interface for specific provisioner
-func CreateProvisioner(testPath string, identifier string, provider string) (Provisioner, error) {
-	switch provider {
-	case AWS:
-		return NewAWSProvisioner(testPath, identifier)
-	case DigitalOcean:
-		return NewDOProvisioner(testPath, identifier)
-	case Hetzner:
-		return NewHetznerProvisioner(testPath, identifier)
-	default:
-		return nil, fmt.Errorf("unsuported provider %v", provider)
-	}
-}
 
 // IsCommandAvailable checks if command is available OS
 func IsCommandAvailable(name string) bool {
@@ -55,8 +41,8 @@ func IsCommandAvailable(name string) bool {
 	return false
 }
 
-// executeCommand executes given command
-func executeCommand(path, name string, arg []string, additionalEnv map[string]string) (string, error) {
+// ExecuteCommand executes the given command
+func ExecuteCommand(path, name string, arg []string, additionalEnv map[string]string) (string, error) {
 	var stdoutBuf, stderrBuf bytes.Buffer
 	var errStdout, errStderr error
 

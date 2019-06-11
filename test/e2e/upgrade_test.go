@@ -27,6 +27,9 @@ import (
 	"github.com/Masterminds/semver"
 	"github.com/pkg/errors"
 
+	"github.com/kubermatic/kubeone/test/e2e/provisioner"
+	"github.com/kubermatic/kubeone/test/e2e/testutil"
+
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
@@ -45,42 +48,42 @@ func TestClusterUpgrade(t *testing.T) {
 	testcases := []struct {
 		name                  string
 		provider              string
+		providerExternal      bool
 		initialVersion        string
 		targetVersion         string
 		initialConfigPath     string
 		targetConfigPath      string
 		expectedNumberOfNodes int
-		scenario              string
 	}{
 		{
 			name:                  "upgrade k8s 1.13.5 cluster to 1.14.1 on AWS",
-			provider:              AWS,
-			initialVersion:        "v1.13.5",
-			targetVersion:         "v1.14.1",
+			provider:              provisioner.AWS,
+			providerExternal:      false,
+			initialVersion:        "1.13.5",
+			targetVersion:         "1.14.1",
 			initialConfigPath:     "../../test/e2e/testdata/config_aws_1.13.5.yaml",
 			targetConfigPath:      "../../test/e2e/testdata/config_aws_1.14.1.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
-			scenario:              NodeConformance,
 		},
 		{
 			name:                  "upgrade k8s 1.13.5 cluster to 1.14.1 on DO",
-			provider:              DigitalOcean,
-			initialVersion:        "v1.13.5",
-			targetVersion:         "v1.14.1",
+			provider:              provisioner.DigitalOcean,
+			providerExternal:      true,
+			initialVersion:        "1.13.5",
+			targetVersion:         "1.14.1",
 			initialConfigPath:     "../../test/e2e/testdata/config_do_1.13.5.yaml",
 			targetConfigPath:      "../../test/e2e/testdata/config_do_1.14.1.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
-			scenario:              NodeConformance,
 		},
 		{
 			name:                  "upgrade k8s 1.13.5 cluster to 1.14.1 on Hetzner",
-			provider:              Hetzner,
-			initialVersion:        "v1.13.5",
-			targetVersion:         "v1.14.1",
+			provider:              provisioner.Hetzner,
+			providerExternal:      true,
+			initialVersion:        "1.13.5",
+			targetVersion:         "1.14.1",
 			initialConfigPath:     "../../test/e2e/testdata/config_hetzner_1.13.5.yaml",
 			targetConfigPath:      "../../test/e2e/testdata/config_hetzner_1.14.1.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
-			scenario:              NodeConformance,
 		},
 	}
 
@@ -88,111 +91,126 @@ func TestClusterUpgrade(t *testing.T) {
 		// to satisfy scope linter
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
+			// Only run selected test suite.
+			// Test options are controlled using flags.
 			if len(testRunIdentifier) == 0 {
 				t.Fatalf("-identifier must be set")
 			}
-
 			if testProvider != tc.provider {
 				t.SkipNow()
 			}
 			if testClusterVersion != tc.targetVersion {
 				t.SkipNow()
 			}
-			testPath := fmt.Sprintf("../../_build/%s", testRunIdentifier)
 
-			pr, err := CreateProvisioner(testPath, testRunIdentifier, tc.provider)
+			// Create provisioner
+			testPath := fmt.Sprintf("../../_build/%s", testRunIdentifier)
+			pr, err := provisioner.CreateProvisioner(testPath, testRunIdentifier, tc.provider)
 			if err != nil {
-				t.Fatal(err)
+				t.Fatalf("failed to create provisioner: %v", err)
 			}
 
+			// Create KubeOne target
 			target := NewKubeone(testPath, tc.initialConfigPath)
+
+			// Ensure terraform, kubetest and all needed prerequisites are in place before running test
+			t.Log("Validating prerequisites…")
+			err = testutil.ValidateCommon()
+			if err != nil {
+				t.Fatalf("unable to validate prerequisites: %v", err)
+			}
+
+			// Create configuration manifest
+			t.Log("Creating KubeOneCluster manifest…")
+			err = target.CreateConfig(tc.initialVersion, tc.provider, tc.providerExternal)
+			if err != nil {
+				t.Fatalf("failed to create KubeOneCluster manifest: %v", err)
+			}
+
+			// Ensure cleanup at the end
 			teardown := setupTearDown(pr, target)
 			defer teardown(t)
 
-			t.Log("check prerequisites")
-			err = ValidateCommon()
-			if err != nil {
-				t.Fatalf("%v", err)
-			}
-
-			t.Log("start provisioning")
+			// Create infrastructure
+			t.Log("Provisioning infrastructure using Terraform…")
 			tf, err := pr.Provision()
 			if err != nil {
-				t.Fatalf("provisioning failed: %v", err)
+				t.Fatalf("failed to provision the infrastructure: %v", err)
 			}
 
-			t.Log("start cluster deployment")
+			// Run 'kubeone install'
+			t.Log("Running 'kubeone install'…")
 			err = target.Install(tf)
 			if err != nil {
-				t.Fatalf("k8s cluster deployment failed: %v", err)
+				t.Fatalf("failed to install cluster ('kubeone install'): %v", err)
 			}
 
-			t.Log("create kubeconfig")
-			kubeconfig, err := target.CreateKubeconfig()
+			// Run 'kubeone kubeconfig'
+			t.Log("Downloading kubeconfig…")
+			kubeconfig, err := target.Kubeconfig()
 			if err != nil {
-				t.Fatalf("creating kubeconfig failed: %v", err)
+				t.Fatalf("failed to download kubeconfig failed ('kubeone kubeconfig'): %v", err)
 			}
 
-			t.Log("build kubernetes clientset")
+			// Build clientset
+			t.Log("Building Kubernetes clientset…")
 			restConfig, err := clientcmd.RESTConfigFromKubeConfig(kubeconfig)
 			if err != nil {
 				t.Errorf("unable to build config from kubeconfig bytes: %v", err)
 			}
-
 			client, err := dynclient.New(restConfig, dynclient.Options{})
 			if err != nil {
 				t.Fatalf("failed to init dynamic client: %s", err)
 			}
 
-			t.Log("waiting for nodes to become ready")
+			// Ensure nodes are ready and version is matching desired
+			t.Log("Waiting for all nodes to become ready…")
 			err = waitForNodesReady(client, tc.expectedNumberOfNodes)
 			if err != nil {
 				t.Fatalf("nodes are not ready: %v", err)
 			}
-
-			t.Log("verifying cluster version before upgrade")
+			t.Log("Verifying cluster version before running upgrade…")
 			err = verifyVersion(client, metav1.NamespaceSystem, tc.initialVersion)
 			if err != nil {
 				t.Fatalf("version mismatch before running upgrade: %v", err)
 			}
 
-			t.Logf("waiting %s for nodes to settle down", delayUpgrade.String())
+			// Delay running upgrade to leave some time for all components to become ready
+			t.Logf("Waiting %s for nodes to settle down…", delayUpgrade.String())
 			time.Sleep(delayUpgrade)
 
 			// Create a new KubeOne provisioner pointing to the new configuration file
 			target = NewKubeone(testPath, tc.targetConfigPath)
-			clusterVerifier := NewKubetest(tc.targetVersion, "../../_build", map[string]string{
-				"KUBERNETES_CONFORMANCE_TEST": "y",
-			})
 
-			t.Log("start cluster upgrade")
-			err = target.Upgrade()
+			// Create new configuration manifest
+			t.Log("Creating KubeOneCluster manifest…")
+			err = target.CreateConfig(tc.targetVersion, tc.provider, tc.providerExternal)
 			if err != nil {
-				t.Fatalf("k8s cluster upgrade failed: %v", err)
+				t.Fatalf("failed to create KubeOneCluster manifest: %v", err)
 			}
 
-			t.Log("waiting for nodes to become ready")
+			// Run 'kubeone install'
+			t.Log("Running 'kubeone upgrade'…")
+			err = target.Upgrade()
+			if err != nil {
+				t.Fatalf("failed to upgrade the cluster ('kubeone upgrade'): %v", err)
+			}
+
+			// Ensure nodes are ready and version is matching desired
+			t.Log("Waiting for all nodes to become ready…")
 			err = waitForNodesReady(client, tc.expectedNumberOfNodes)
 			if err != nil {
 				t.Fatalf("nodes are not ready: %v", err)
 			}
-
-			t.Log("verifying cluster version after upgrade")
+			t.Log("Verifying cluster version after running upgrade…")
 			err = verifyVersion(client, metav1.NamespaceSystem, tc.targetVersion)
 			if err != nil {
-				t.Fatalf("version mismatch after running upgrade: %v", err)
+				t.Fatalf("version mismatch before running upgrade: %v", err)
 			}
-
-			t.Log("polling nodes to verify are all workers upgraded")
+			t.Log("Polling nodes to verify are all workers upgraded…")
 			err = waitForNodesUpgraded(client, tc.targetVersion)
 			if err != nil {
 				t.Fatalf("nodes are not running the target version: %v", err)
-			}
-
-			t.Log("run e2e tests")
-			err = clusterVerifier.Verify(tc.scenario)
-			if err != nil {
-				t.Fatalf("e2e tests failed: %v", err)
 			}
 		})
 	}

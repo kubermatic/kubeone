@@ -17,28 +17,70 @@ limitations under the License.
 package e2e
 
 import (
+	"bytes"
 	"fmt"
+	"io/ioutil"
 	"os"
+	"text/template"
 	"time"
+
+	"github.com/pkg/errors"
+
+	"github.com/kubermatic/kubeone/test/e2e/testutil"
 )
 
-// Kubeone structure
+const configurationTpl = `
+apiVersion: kubeone.io/v1alpha1
+kind: KubeOneCluster
+versions:
+  kubernetes: {{ .KUBERNETES_VERSION }}
+cloudProvider:
+  name: {{ .CLOUD_PROVIDER_NAME }}
+  external: {{ .CLOUD_PROVIDER_EXTERNAL }}
+`
+
+// Kubeone is wrapper around KubeOne CLI
 type Kubeone struct {
-	// KubeoneDir temporary directory for test purpose
+	// KubeoneDir is a temporary directory for storing test files (e.g. tf.json)
 	KubeoneDir string
-	// ConfigurationFile for Kubeone
-	ConfigurationFile string
+	// ConfigurationFilePath is a path to the KubeOneCluster manifest
+	ConfigurationFilePath string
 }
 
 // NewKubeone creates and initializes the Kubeone structure
-func NewKubeone(kubeoneDir, configurationFile string) Kubeone {
+func NewKubeone(kubeoneDir, configurationFilePath string) Kubeone {
 	return Kubeone{
-		KubeoneDir:        kubeoneDir,
-		ConfigurationFile: configurationFile,
+		KubeoneDir:            kubeoneDir,
+		ConfigurationFilePath: configurationFilePath,
 	}
 }
 
-// Install starts k8s cluster deployment
+// CreateConfig creates a KubeOneCluster manifest
+func (p *Kubeone) CreateConfig(kubernetesVersion, providerName string, providerExternal bool) error {
+	variables := map[string]interface{}{
+		"KUBERNETES_VERSION":      kubernetesVersion,
+		"CLOUD_PROVIDER_NAME":     providerName,
+		"CLOUD_PROVIDER_EXTERNAL": providerExternal,
+	}
+
+	tpl, err := template.New("base").Parse(configurationTpl)
+	if err != nil {
+		return errors.Wrap(err, "failed to parse KubeOne configuration template")
+	}
+	buf := bytes.Buffer{}
+	if tplErr := tpl.Execute(&buf, variables); tplErr != nil {
+		return errors.Wrap(tplErr, "failed to render KubeOne configuration template")
+	}
+
+	err = ioutil.WriteFile(p.ConfigurationFilePath, buf.Bytes(), 0644)
+	if err != nil {
+		return errors.Wrap(err, "failed to write KubeOne configuration manifest")
+	}
+
+	return nil
+}
+
+// Install runs 'kubeone install' command to provision the cluster
 func (p *Kubeone) Install(tfJSON string) error {
 	// deliberate delay, to give nodes time to start
 	time.Sleep(2 * time.Minute)
@@ -47,25 +89,25 @@ func (p *Kubeone) Install(tfJSON string) error {
 	if err != nil {
 		return err
 	}
-	_, err = executeCommand(p.KubeoneDir, "kubeone", []string{"install", "--tfjson", "tf.json", p.ConfigurationFile}, nil)
+	_, err = testutil.ExecuteCommand(p.KubeoneDir, "kubeone", []string{"install", "--tfjson", "tf.json", p.ConfigurationFilePath}, nil)
 	if err != nil {
 		return fmt.Errorf("k8s cluster deployment failed: %v", err)
 	}
 	return nil
 }
 
-// Upgrade upgrades the cluster
+// Upgrade runs 'kubeone upgrade' command to upgrade the cluster
 func (p *Kubeone) Upgrade() error {
-	_, err := executeCommand(p.KubeoneDir, "kubeone", []string{"upgrade", "--tfjson", "tf.json", "--upgrade-machine-deployments", p.ConfigurationFile}, nil)
+	_, err := testutil.ExecuteCommand(p.KubeoneDir, "kubeone", []string{"upgrade", "--tfjson", "tf.json", "--upgrade-machine-deployments", p.ConfigurationFilePath}, nil)
 	if err != nil {
 		return fmt.Errorf("k8s cluster upgrade failed: %v", err)
 	}
 	return nil
 }
 
-// CreateKubeconfig creates and store kubeconfig
-func (p *Kubeone) CreateKubeconfig() ([]byte, error) {
-	rawKubeconfig, err := executeCommand(p.KubeoneDir, "kubeone", []string{"kubeconfig", "--tfjson", "tf.json", p.ConfigurationFile}, nil)
+// Kubeconfig runs 'kubeone kubeconfig' command to create and store kubeconfig file
+func (p *Kubeone) Kubeconfig() ([]byte, error) {
+	rawKubeconfig, err := testutil.ExecuteCommand(p.KubeoneDir, "kubeone", []string{"kubeconfig", "--tfjson", "tf.json", p.ConfigurationFilePath}, nil)
 	if err != nil {
 		return nil, fmt.Errorf("creating kubeconfig failed: %v", err)
 	}
@@ -73,26 +115,26 @@ func (p *Kubeone) CreateKubeconfig() ([]byte, error) {
 	homePath := os.Getenv("HOME")
 	kubeconfigPath := fmt.Sprintf("%s/.kube/config", homePath)
 
-	err = CreateFile(kubeconfigPath, rawKubeconfig)
+	err = testutil.CreateFile(kubeconfigPath, rawKubeconfig)
 	if err != nil {
 		return nil, fmt.Errorf("saving kubeconfig for given path %s failed: %v", kubeconfigPath, err)
 	}
 	return []byte(rawKubeconfig), nil
 }
 
-// Reset resets and cleanups the cluster
+// Reset runs 'kubeone reset' command to destroy worker nodes and unprovision the cluster
 func (p *Kubeone) Reset() error {
-	_, err := executeCommand(p.KubeoneDir, "kubeone", []string{"-v", "reset", "--tfjson", "tf.json", "--destroy-workers", p.ConfigurationFile}, nil)
+	_, err := testutil.ExecuteCommand(p.KubeoneDir, "kubeone", []string{"-v", "reset", "--tfjson", "tf.json", "--destroy-workers", p.ConfigurationFilePath}, nil)
 	if err != nil {
 		return fmt.Errorf("destroing workers failed: %v", err)
 	}
 	return nil
 }
 
-// StoreTFJson saves tf.json in temporary test directory
+// storeTFJson saves tf.json in the temporary test directory
 func (p *Kubeone) storeTFJson(tfJSON string) error {
 	tfJSONPath := fmt.Sprintf("%s/tf.json", p.KubeoneDir)
-	err := CreateFile(tfJSONPath, tfJSON)
+	err := testutil.CreateFile(tfJSONPath, tfJSON)
 	if err != nil {
 		return fmt.Errorf("saving tf.json for given path %s failed: %v", tfJSONPath, err)
 	}
