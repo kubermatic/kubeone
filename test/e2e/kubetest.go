@@ -19,6 +19,7 @@ package e2e
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/kubermatic/kubeone/test/e2e/testutil"
 )
@@ -50,6 +51,11 @@ func NewKubetest(k8sVersion, kubetestDir string, envVars map[string]string) Kube
 
 // Verify verifies the cluster
 func (p *Kubetest) Verify(scenario string) error {
+	// Kubetest requires version to have the "v" prefix
+	if !strings.HasPrefix(p.kubernetesVersion, "v") {
+		p.kubernetesVersion = fmt.Sprintf("v%s", p.kubernetesVersion)
+	}
+
 	k8sVersionPath := fmt.Sprintf("%s/kubernetes-%s/kubernetes/version", p.kubetestDir, p.kubernetesVersion)
 	if _, err := os.Stat(k8sVersionPath); os.IsNotExist(err) {
 		err = getK8sBinaries(p.kubetestDir, p.kubernetesVersion)
