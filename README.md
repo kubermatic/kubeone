@@ -16,7 +16,7 @@ on-prem or bare-metal cluster.
 
 ## Project Status
 
-As of v0.6.0, KubeOne is in the beta phase. Check out the 
+As of v0.6.0, KubeOne is in the beta phase. Check out the
 [Backwards Compatibility Policy][6] for more details on
 backwards compatibility, KubeOne versioning, and maturity of each KubeOne
 component.
@@ -64,6 +64,16 @@ KubeOne.
 
 ```bash
 make install
+```
+
+To install completions for bash (zsh also available), run or put this command into your .bashrc file:
+```bash
+. <(kubeone completion bash)
+```
+
+To generate documentation (man pages for example, more available), run:
+```bash
+kubeone document man -o /tmp/man
 ```
 
 ## Kubernetes Versions Compatibility
