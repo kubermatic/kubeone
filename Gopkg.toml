@@ -53,7 +53,7 @@ required = [
 
 [[constraint]]
   name = "sigs.k8s.io/cluster-api"
-  revision = "c63bf6f67ab631a449b6eb76dfe29458441051e0"
+  revision = "2ec456177c0e8f0a903f4e746d44baaae54cc591"
 
 [[constraint]]
   name = "sigs.k8s.io/controller-runtime"
@@ -74,6 +74,3 @@ required = [
   non-go = false
   go-tests = false
   unused-packages = false
-[[constraint]]
-  name = "github.com/cpuguy83/go-md2man"
-  revision = "691ee98543af2f262f35fbb54bdd42f00b9b9cc5"

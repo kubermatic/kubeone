@@ -44,7 +44,7 @@ const (
 	MachineControllerNamespace     = metav1.NamespaceSystem
 	MachineControllerAppLabelKey   = "app"
 	MachineControllerAppLabelValue = "machine-controller"
-	MachineControllerTag           = "v1.1.9"
+	MachineControllerTag           = "v1.2.0"
 )
 
 // Deploy deploys MachineController deployment with RBAC on the cluster
@@ -725,6 +725,14 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster) (*appsv1.De
 		"-v", "4",
 		"-internal-listen-address", "0.0.0.0:8085",
 		"-cluster-dns", clusterDNS.String(),
+	}
+
+	if cluster.Proxy.HTTP != "" {
+		args = append(args, "-node-http-proxy", cluster.Proxy.HTTP)
+	}
+
+	if cluster.Proxy.NoProxy != "" {
+		args = append(args, "-node-no-proxy", cluster.Proxy.NoProxy)
 	}
 
 	if cluster.CloudProvider.External {
