@@ -17,39 +17,46 @@ limitations under the License.
 package provisioner
 
 import (
-	"fmt"
-
 	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/test/e2e/testutil"
 )
 
-// DefaultProvisioner contains default implementation of provisioner interface
-type DefaultProvisioner struct {
+// GCEProvisioner contains implementation of GCE provisioner interface
+type GCEProvisioner struct {
 	testPath  string
 	terraform *terraform
+
+	init bool
 }
 
-// NewDefaultProvisioner creates and initialize universal provisioner
-func NewDefaultProvisioner(creds func() error, testPath, identifier, provider string) (*DefaultProvisioner, error) {
+// NewGCEProvisioner creates and initialize GCE provisioner
+func NewGCEProvisioner(creds func() error, testPath, identifier string) (*GCEProvisioner, error) {
 	if err := creds(); err != nil {
 		return nil, errors.Wrap(err, "unable to validate credentials")
 	}
 
 	terraform := &terraform{
-		terraformDir: fmt.Sprintf("../../examples/terraform/%s/", provider),
+		terraformDir: "../../examples/terraform/gce/",
 		identifier:   identifier,
 	}
 
-	return &DefaultProvisioner{
+	return &GCEProvisioner{
 		terraform: terraform,
 		testPath:  testPath,
+
+		init: false,
 	}, nil
 }
 
 // Provision provisions a cluster using Terraform
-func (p *DefaultProvisioner) Provision() (string, error) {
-	tf, err := p.terraform.initAndApply(nil)
+func (p *GCEProvisioner) Provision() (string, error) {
+	args := []string{}
+	if !p.init {
+		args = []string{"-var", "control_plane_target_pool_members_count=1"}
+		p.init = true
+	}
+	tf, err := p.terraform.initAndApply(args)
 	if err != nil {
 		return "", err
 	}
@@ -58,7 +65,7 @@ func (p *DefaultProvisioner) Provision() (string, error) {
 }
 
 // Cleanup destroys infrastructure created by Terraform
-func (p *DefaultProvisioner) Cleanup() error {
+func (p *GCEProvisioner) Cleanup() error {
 	err := p.terraform.destroy()
 	if err != nil {
 		return err

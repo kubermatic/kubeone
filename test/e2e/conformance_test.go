@@ -96,6 +96,42 @@ func TestClusterConformance(t *testing.T) {
 			configFilePath:        "../../test/e2e/testdata/config_hetzner_1.14.1.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
 		},
+		{
+			name:                  "verify k8s 1.13.5 cluster deployment on GCE",
+			provider:              provisioner.GCE,
+			providerExternal:      false,
+			kubernetesVersion:     "1.13.5",
+			scenario:              NodeConformance,
+			configFilePath:        "../../test/e2e/testdata/config_gce_1.13.5.yaml",
+			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
+		},
+		{
+			name:                  "verify k8s 1.14.1 cluster deployment on GCE",
+			provider:              provisioner.GCE,
+			providerExternal:      false,
+			kubernetesVersion:     "1.14.1",
+			scenario:              NodeConformance,
+			configFilePath:        "../../test/e2e/testdata/config_gce_1.14.1.yaml",
+			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
+		},
+		{
+			name:                  "verify k8s 1.13.5 cluster deployment on Packet",
+			provider:              provisioner.Packet,
+			providerExternal:      true,
+			kubernetesVersion:     "1.13.5",
+			scenario:              NodeConformance,
+			configFilePath:        "../../test/e2e/testdata/config_packet_1.13.5.yaml",
+			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
+		},
+		{
+			name:                  "verify k8s 1.14.1 cluster deployment on Packet",
+			provider:              provisioner.Packet,
+			providerExternal:      true,
+			kubernetesVersion:     "1.14.1",
+			scenario:              NodeConformance,
+			configFilePath:        "../../test/e2e/testdata/config_packet_1.14.1.yaml",
+			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
+		},
 	}
 
 	for _, tc := range testcases {
@@ -164,6 +200,14 @@ func TestClusterConformance(t *testing.T) {
 			kubeconfig, err := target.Kubeconfig()
 			if err != nil {
 				t.Fatalf("failed to download kubeconfig failed ('kubeone kubeconfig'): %v", err)
+			}
+
+			// Run Terraform again for GCE to add nodes to the load balancer
+			if tc.provider == provisioner.GCE {
+				tf, err = pr.Provision()
+				if err != nil {
+					t.Fatalf("failed to provision the infrastructure: %v", err)
+				}
 			}
 
 			// Build clientset

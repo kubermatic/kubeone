@@ -90,6 +90,12 @@ if [ -n "${RUNNING_IN_CI}" ]; then
   "hetzner")
     export HCLOUD_TOKEN=${HZ_E2E_TOKEN}
     ;;
+  "packet")
+    export PACKET_AUTH_TOKEN=${PACKET_API_KEY}
+    ;;
+  "gce")
+    export GOOGLE_CREDENTIALS=${serviceAccount}
+    ;;
   *)
     echo "unknown provider ${PROVIDER}"
     exit -1

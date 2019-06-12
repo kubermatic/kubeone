@@ -30,6 +30,10 @@ const (
 	DigitalOcean = "digitalocean"
 	// Hetzner cloud provider
 	Hetzner = "hetzner"
+	// GCE cloud provider
+	GCE = "gce"
+	// Packet cloud provider
+	Packet = "packet"
 
 	// tfStateFileName is name of the Terraform state file
 	tfStateFileName = "terraform.tfstate"
@@ -52,6 +56,12 @@ func CreateProvisioner(testPath string, identifier string, provider string) (Pro
 		return NewDefaultProvisioner(creds, testPath, identifier, provider)
 	case Hetzner:
 		creds := verifyCredentials("HCLOUD_TOKEN")
+		return NewDefaultProvisioner(creds, testPath, identifier, provider)
+	case GCE:
+		creds := verifyCredentials("GOOGLE_CREDENTIALS")
+		return NewGCEProvisioner(creds, testPath, identifier)
+	case Packet:
+		creds := verifyCredentials("PACKET_AUTH_TOKEN", "PACKET_PROJECT_ID")
 		return NewDefaultProvisioner(creds, testPath, identifier, provider)
 	default:
 		return nil, fmt.Errorf("unsupported provider %v", provider)

@@ -85,6 +85,26 @@ func TestClusterUpgrade(t *testing.T) {
 			targetConfigPath:      "../../test/e2e/testdata/config_hetzner_1.14.1.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
 		},
+		{
+			name:                  "upgrade k8s 1.13.5 cluster to 1.14.1 on GCE",
+			provider:              provisioner.GCE,
+			providerExternal:      false,
+			initialVersion:        "1.13.5",
+			targetVersion:         "1.14.1",
+			initialConfigPath:     "../../test/e2e/testdata/config_gce_1.13.5.yaml",
+			targetConfigPath:      "../../test/e2e/testdata/config_gce_1.14.1.yaml",
+			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
+		},
+		{
+			name:                  "upgrade k8s 1.13.5 cluster to 1.14.1 on Packet",
+			provider:              provisioner.Packet,
+			providerExternal:      true,
+			initialVersion:        "1.13.5",
+			targetVersion:         "1.14.1",
+			initialConfigPath:     "../../test/e2e/testdata/config_packet_1.13.5.yaml",
+			targetConfigPath:      "../../test/e2e/testdata/config_packet_1.14.1.yaml",
+			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
+		},
 	}
 
 	for _, tc := range testcases {
@@ -150,6 +170,14 @@ func TestClusterUpgrade(t *testing.T) {
 			kubeconfig, err := target.Kubeconfig()
 			if err != nil {
 				t.Fatalf("failed to download kubeconfig failed ('kubeone kubeconfig'): %v", err)
+			}
+
+			// Run Terraform again for GCE to add nodes to the load balancer
+			if tc.provider == provisioner.GCE {
+				tf, err = pr.Provision()
+				if err != nil {
+					t.Fatalf("failed to provision the infrastructure: %v", err)
+				}
 			}
 
 			// Build clientset
