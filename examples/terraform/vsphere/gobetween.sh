@@ -17,7 +17,7 @@
 # This script is mostly used in CI
 # It installs dependencies and starts the tests
 
-set -x
+set -xe
 
 mkdir /tmp/gobetween
 cd /tmp/gobetween
