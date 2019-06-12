@@ -18,8 +18,14 @@ package provisioner
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/kubermatic/kubeone/test/e2e/testutil"
+)
+
+const (
+	applyRetryNumber  = 5
+	applyRetryTimeout = 30 * time.Second
 )
 
 // terraform contains information needed to provision infrastructure using Terraform
@@ -42,8 +48,15 @@ func (p *terraform) initAndApply() (string, error) {
 		return "", fmt.Errorf("terraform init command failed: %v", err)
 	}
 
-	_, err = testutil.ExecuteCommand(p.terraformDir, "terraform", []string{"apply", "-auto-approve"}, nil)
-	if err != nil {
+	var applyErr error
+	for i := 0; i < applyRetryNumber; i++ {
+		_, applyErr = testutil.ExecuteCommand(p.terraformDir, "terraform", []string{"apply", "-auto-approve"}, nil)
+		if applyErr == nil {
+			break
+		}
+		time.Sleep(applyRetryTimeout)
+	}
+	if applyErr != nil {
 		return "", fmt.Errorf("terraform apply command failed: %v", err)
 	}
 
