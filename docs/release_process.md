@@ -93,7 +93,7 @@ Before running the release process, ensure your
 ```
 git checkout master
 git fetch origin
-git merge origin/master
+git reset --hard origin/master
 ```
 
 Create a release branch and push it:
