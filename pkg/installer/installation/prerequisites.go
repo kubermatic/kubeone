@@ -26,7 +26,174 @@ import (
 	"github.com/kubermatic/kubeone/pkg/util"
 )
 
-const dockerVersion = "18.09.2"
+const (
+	dockerVersion = "18.09.6"
+)
+
+const (
+	daemonsProxyScript = `
+sudo mkdir -p /etc/systemd/system/docker.service.d
+cat <<EOF | sudo tee /etc/systemd/system/docker.service.d/http-proxy.conf
+[Service]
+EnvironmentFile=/etc/kubeone/proxy-env
+EOF
+
+sudo mkdir -p /etc/systemd/system/kubelet.service.d
+cat <<EOF | sudo tee /etc/systemd/system/kubelet.service.d/http-proxy.conf
+[Service]
+EnvironmentFile=/etc/kubeone/proxy-env
+EOF
+
+sudo systemctl daemon-reload
+if sudo systemctl status docker &>/dev/null; then sudo systemctl restart docker; fi
+if sudo systemctl status kubelet &>/dev/null; then sudo systemctl restart kubelet; fi
+`
+
+	hostnameScript = `
+fqdn=$(hostname -f)
+[ "$fqdn" = localhost ] && fqdn=$(hostname)
+echo "$fqdn"
+`
+
+	environmentFileScript = `
+sudo mkdir -p /etc/kubeone
+cat <<EOF | sudo tee /etc/kubeone/proxy-env
+{{ if .HTTP_PROXY -}}
+HTTP_PROXY="{{ .HTTP_PROXY }}"
+http_proxy="{{ .HTTP_PROXY }}"
+{{ end }}
+{{- if .HTTPS_PROXY -}}
+HTTPS_PROXY="{{ .HTTPS_PROXY }}"
+https_proxy="{{ .HTTPS_PROXY }}"
+{{ end }}
+{{- if .NO_PROXY -}}
+NO_PROXY="{{ .NO_PROXY }}"
+no_proxy="{{ .NO_PROXY }}"
+{{ end }}
+EOF
+	`
+
+	kubeadmDebianScript = `
+sudo swapoff -a
+sudo sed -i '/.*swap.*/d' /etc/fstab
+
+source /etc/os-release
+source /etc/kubeone/proxy-env
+
+# Short-Circuit the installation if it was arleady executed
+if type docker &>/dev/null && type kubelet &>/dev/null; then exit 0; fi
+
+sudo mkdir -p /etc/docker
+cat <<EOF | sudo tee /etc/docker/daemon.json
+{"storage-driver": "overlay2"}
+EOF
+
+sudo apt-get update
+sudo apt-get install -y --no-install-recommends \
+	apt-transport-https \
+	ca-certificates \
+	curl \
+	htop \
+	lsb-release \
+	rsync \
+	tree
+
+curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
+	sudo apt-key add -
+curl -fsSL https://download.docker.com/linux/${ID}/gpg | \
+	sudo apt-key add -
+
+echo "deb [arch=amd64] https://download.docker.com/linux/${ID} $(lsb_release -sc) stable" | \
+	sudo tee /etc/apt/sources.list.d/docker.list
+
+# You'd think that kubernetes-$(lsb_release -sc) belongs there instead, but the debian repo
+# contains neither kubeadm nor kubelet, and the docs themselves suggest using xenial repo.
+echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | \
+	sudo tee /etc/apt/sources.list.d/kubernetes.list
+sudo apt-get update
+
+docker_ver=$(apt-cache madison docker-ce | \
+	grep "{{ .DOCKER_VERSION }}" | head -1 | awk '{print $3}')
+kube_ver=$(apt-cache madison kubelet | \
+	grep "{{ .KUBERNETES_VERSION }}" | head -1 | awk '{print $3}')
+cni_ver=$(apt-cache madison kubernetes-cni | \
+	grep "{{ .CNI_VERSION }}" | head -1 | awk '{print $3}')
+
+sudo apt-mark unhold docker-ce kubelet kubeadm kubectl kubernetes-cni
+sudo apt-get install -y --no-install-recommends \
+	docker-ce=${docker_ver} \
+	kubeadm=${kube_ver} \
+	kubectl=${kube_ver} \
+	kubelet=${kube_ver} \
+	kubernetes-cni=${cni_ver}
+sudo apt-mark hold docker-ce kubelet kubeadm kubectl kubernetes-cni
+`
+
+	kubeadmCentOSScript = `
+sudo swapoff -a
+sudo sed -i '/.*swap.*/d' /etc/fstab
+sudo setenforce 0 || true
+sudo sed -i s/SELINUX=enforcing/SELINUX=permissive/g /etc/sysconfig/selinux
+
+source /etc/kubeone/proxy-env
+
+# Short-Circuit the installation if it was arleady executed
+if type docker &>/dev/null && type kubelet &>/dev/null; then exit 0; fi
+
+cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+EOF
+sudo sysctl --system
+
+cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+exclude=kube*
+EOF
+
+sudo yum install -y --disableexcludes=kubernetes \
+	docker kubelet-{{ .KUBERNETES_VERSION }}-0\
+	kubeadm-{{ .KUBERNETES_VERSION }}-0 \
+	kubectl-{{ .KUBERNETES_VERSION }}-0 \
+	kubernetes-cni-{{ .CNI_VERSION }}-0
+sudo systemctl enable --now docker
+`
+
+	kubeadmCoreOSScript = `
+source /etc/kubeone/proxy-env
+
+sudo mkdir -p /opt/cni/bin /etc/kubernetes/pki /etc/kubernetes/manifests
+curl -L "https://github.com/containernetworking/plugins/releases/download/{{ .CNI_VERSION }}/cni-plugins-amd64-{{ .CNI_VERSION }}.tgz" | \
+	sudo tar -C /opt/cni/bin -xz
+
+RELEASE="v{{ .KUBERNETES_VERSION }}"
+
+sudo mkdir -p /opt/bin
+cd /opt/bin
+sudo curl -L --remote-name-all \
+	https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/amd64/{kubeadm,kubelet,kubectl}
+sudo chmod +x {kubeadm,kubelet,kubectl}
+
+curl -sSL "https://raw.githubusercontent.com/kubernetes/kubernetes/${RELEASE}/build/debs/kubelet.service" | \
+	sed "s:/usr/bin:/opt/bin:g" | \
+	sudo tee /etc/systemd/system/kubelet.service
+
+sudo mkdir -p /etc/systemd/system/kubelet.service.d
+curl -sSL "https://raw.githubusercontent.com/kubernetes/kubernetes/${RELEASE}/build/debs/10-kubeadm.conf" | \
+	sed "s:/usr/bin:/opt/bin:g" | \
+	sudo tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+
+sudo systemctl daemon-reload
+sudo systemctl enable docker.service kubelet.service
+sudo systemctl start docker.service kubelet.service
+`
+)
 
 func installPrerequisites(ctx *util.Context) error {
 	ctx.Logger.Infoln("Installing prerequisites…")
@@ -71,7 +238,7 @@ func installPrerequisitesOnNode(ctx *util.Context, node *kubeoneapi.HostConfig, 
 		return errors.Wrap(err, "failed to install kubeadm")
 	}
 
-	err = configureDockerDaemonProxy(ctx)
+	err = configureProxy(ctx)
 	if err != nil {
 		return errors.Wrap(err, "failed to configure proxy for docker daemon")
 	}
@@ -90,20 +257,12 @@ func determineOS(ctx *util.Context) (string, error) {
 	return osID, err
 }
 
-const hostnameCommand = `
-fqdn=$(hostname -f)
-[ "$fqdn" = localhost ] && fqdn=$(hostname)
-echo "$fqdn"
-`
-
-const hostnameShortCommand = `hostname`
-
 func determineHostname(ctx *util.Context, _ kubeoneapi.HostConfig) (string, error) {
-	hostcmd := hostnameCommand
+	hostcmd := hostnameScript
 
 	// on azure the name of the Node should == name of the VM
 	if ctx.Cluster.CloudProvider.Name == kubeoneapi.CloudProviderNameAzure {
-		hostcmd = hostnameShortCommand
+		hostcmd = `hostname`
 	}
 	stdout, _, err := ctx.Runner.Run(hostcmd, nil)
 
@@ -111,7 +270,7 @@ func determineHostname(ctx *util.Context, _ kubeoneapi.HostConfig) (string, erro
 }
 
 func createEnvironmentFile(ctx *util.Context) error {
-	_, _, err := ctx.Runner.Run(environmentFileCommand, util.TemplateVariables{
+	_, _, err := ctx.Runner.Run(environmentFileScript, util.TemplateVariables{
 		"HTTP_PROXY":  ctx.Cluster.Proxy.HTTP,
 		"HTTPS_PROXY": ctx.Cluster.Proxy.HTTPS,
 		"NO_PROXY":    ctx.Cluster.Proxy.NoProxy,
@@ -119,24 +278,6 @@ func createEnvironmentFile(ctx *util.Context) error {
 
 	return err
 }
-
-const environmentFileCommand = `
-sudo mkdir -p /etc/kubeone
-cat <<EOF |sudo tee /etc/kubeone/proxy-env
-{{ if .HTTP_PROXY -}}
-HTTP_PROXY="{{ .HTTP_PROXY }}"
-http_proxy="{{ .HTTP_PROXY }}"
-{{ end }}
-{{- if .HTTPS_PROXY -}}
-HTTPS_PROXY="{{ .HTTPS_PROXY }}"
-https_proxy="{{ .HTTPS_PROXY }}"
-{{ end }}
-{{- if .NO_PROXY -}}
-NO_PROXY="{{ .NO_PROXY }}"
-no_proxy="{{ .NO_PROXY }}"
-{{ end }}
-EOF
-`
 
 func installKubeadm(ctx *util.Context, node kubeoneapi.HostConfig) error {
 	var err error
@@ -159,7 +300,7 @@ func installKubeadm(ctx *util.Context, node kubeoneapi.HostConfig) error {
 }
 
 func installKubeadmDebian(ctx *util.Context) error {
-	_, _, err := ctx.Runner.Run(kubeadmDebianCommand, util.TemplateVariables{
+	_, _, err := ctx.Runner.Run(kubeadmDebianScript, util.TemplateVariables{
 		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
 		"DOCKER_VERSION":     dockerVersion,
 		"CNI_VERSION":        ctx.Cluster.Versions.KubernetesCNIVersion(),
@@ -168,95 +309,8 @@ func installKubeadmDebian(ctx *util.Context) error {
 	return errors.WithStack(err)
 }
 
-const kubeadmDebianCommand = `
-sudo swapoff -a
-sudo sed -i '/.*swap.*/d' /etc/fstab
-
-source /etc/os-release
-source /etc/kubeone/proxy-env
-
-# Short-Circuit the installation if it was arleady executed
-if type docker &>/dev/null && type kubelet &>/dev/null; then exit 0; fi
-
-sudo mkdir -p /etc/docker
-cat <<EOF |sudo tee /etc/docker/daemon.json
-{"storage-driver": "overlay2"}
-EOF
-
-sudo apt-get update
-sudo apt-get install -y --no-install-recommends \
-     apt-transport-https \
-     ca-certificates \
-     curl \
-     htop \
-     lsb-release \
-     rsync \
-     tree
-
-curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-curl -fsSL https://download.docker.com/linux/${ID}/gpg | sudo apt-key add -
-
-echo "deb [arch=amd64] https://download.docker.com/linux/${ID} $(lsb_release -sc) stable" | \
-     sudo tee /etc/apt/sources.list.d/docker.list
-
-# You'd think that kubernetes-$(lsb_release -sc) belongs there instead, but the debian repo
-# contains neither kubeadm nor kubelet, and the docs themselves suggest using xenial repo.
-echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | \
-     sudo tee /etc/apt/sources.list.d/kubernetes.list
-sudo apt-get update
-
-docker_ver=$(apt-cache madison docker-ce | grep "{{ .DOCKER_VERSION }}" | head -1 | awk '{print $3}')
-kube_ver=$(apt-cache madison kubelet | grep "{{ .KUBERNETES_VERSION }}" | head -1 | awk '{print $3}')
-cni_ver=$(apt-cache madison kubernetes-cni | grep "{{ .CNI_VERSION }}" | head -1 | awk '{print $3}')
-
-sudo apt-mark unhold docker-ce kubelet kubeadm kubectl kubernetes-cni
-sudo apt-get install -y --no-install-recommends \
-     docker-ce=${docker_ver} \
-     kubeadm=${kube_ver} \
-     kubectl=${kube_ver} \
-     kubelet=${kube_ver} \
-     kubernetes-cni=${cni_ver}
-sudo apt-mark hold docker-ce kubelet kubeadm kubectl kubernetes-cni
-`
-
-const kubeadmCentOSCommand = `
-sudo swapoff -a
-sudo sed -i '/.*swap.*/d' /etc/fstab
-sudo setenforce 0 || true
-sudo sed -i s/SELINUX=enforcing/SELINUX=permissive/g /etc/sysconfig/selinux
-
-source /etc/kubeone/proxy-env
-
-# Short-Circuit the installation if it was arleady executed
-if type docker &>/dev/null && type kubelet &>/dev/null; then exit 0; fi
-
-cat <<EOF |sudo tee  /etc/sysctl.d/k8s.conf
-net.bridge.bridge-nf-call-ip6tables = 1
-net.bridge.bridge-nf-call-iptables = 1
-EOF
-sudo sysctl --system
-
-cat <<EOF |sudo tee /etc/yum.repos.d/kubernetes.repo
-[kubernetes]
-name=Kubernetes
-baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
-enabled=1
-gpgcheck=1
-repo_gpgcheck=1
-gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-exclude=kube*
-EOF
-
-sudo yum install -y --disableexcludes=kubernetes \
-			docker kubelet-{{ .KUBERNETES_VERSION }}-0\
-			kubeadm-{{ .KUBERNETES_VERSION }}-0 \
-			kubectl-{{ .KUBERNETES_VERSION }}-0 \
-			kubernetes-cni-{{ .CNI_VERSION }}-0
-sudo systemctl enable --now docker
-`
-
 func installKubeadmCentOS(ctx *util.Context) error {
-	_, _, err := ctx.Runner.Run(kubeadmCentOSCommand, util.TemplateVariables{
+	_, _, err := ctx.Runner.Run(kubeadmCentOSScript, util.TemplateVariables{
 		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
 		"CNI_VERSION":        ctx.Cluster.Versions.KubernetesCNIVersion(),
 	})
@@ -264,42 +318,13 @@ func installKubeadmCentOS(ctx *util.Context) error {
 }
 
 func installKubeadmCoreOS(ctx *util.Context) error {
-	_, _, err := ctx.Runner.Run(kubeadmCoreOSCommand, util.TemplateVariables{
+	_, _, err := ctx.Runner.Run(kubeadmCoreOSScript, util.TemplateVariables{
 		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
 		"CNI_VERSION":        fmt.Sprintf("v%s", ctx.Cluster.Versions.KubernetesCNIVersion()),
 	})
 
 	return err
 }
-
-const kubeadmCoreOSCommand = `
-source /etc/kubeone/proxy-env
-
-sudo mkdir -p /opt/cni/bin /etc/kubernetes/pki /etc/kubernetes/manifests
-curl -L "https://github.com/containernetworking/plugins/releases/download/{{ .CNI_VERSION }}/cni-plugins-amd64-{{ .CNI_VERSION }}.tgz" | \
-     sudo tar -C /opt/cni/bin -xz
-
-RELEASE="v{{ .KUBERNETES_VERSION }}"
-
-sudo mkdir -p /opt/bin
-cd /opt/bin
-sudo curl -L --remote-name-all \
-     https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/amd64/{kubeadm,kubelet,kubectl}
-sudo chmod +x {kubeadm,kubelet,kubectl}
-
-curl -sSL "https://raw.githubusercontent.com/kubernetes/kubernetes/${RELEASE}/build/debs/kubelet.service" | \
-     sed "s:/usr/bin:/opt/bin:g" | \
-	  sudo tee /etc/systemd/system/kubelet.service
-
-sudo mkdir -p /etc/systemd/system/kubelet.service.d
-curl -sSL "https://raw.githubusercontent.com/kubernetes/kubernetes/${RELEASE}/build/debs/10-kubeadm.conf" | \
-     sed "s:/usr/bin:/opt/bin:g" | \
-     sudo tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-
-sudo systemctl daemon-reload
-sudo systemctl enable docker.service kubelet.service
-sudo systemctl start docker.service kubelet.service
-`
 
 func deployConfigurationFiles(ctx *util.Context) error {
 	err := ctx.Configuration.UploadTo(ctx.Runner.Conn, ctx.WorkDir)
@@ -320,24 +345,13 @@ sudo chmod 600 /etc/kubernetes/cloud-config
 	return err
 }
 
-func configureDockerDaemonProxy(ctx *util.Context) error {
+func configureProxy(ctx *util.Context) error {
 	if ctx.Cluster.Proxy.HTTP == "" && ctx.Cluster.Proxy.HTTPS == "" && ctx.Cluster.Proxy.NoProxy == "" {
 		return nil
 	}
 
 	ctx.Logger.Infoln("Configuring docker proxy…")
-	_, _, err := ctx.Runner.Run(dockerDaemonProxy, util.TemplateVariables{})
+	_, _, err := ctx.Runner.Run(daemonsProxyScript, util.TemplateVariables{})
 
 	return err
 }
-
-const dockerDaemonProxy = `
-# Configure HTTP/HTTPS proxy for Docker
-sudo mkdir -p /etc/systemd/system/docker.service.d
-cat <<EOF |sudo tee /etc/systemd/system/docker.service.d/http-proxy.conf
-[Service]
-EnvironmentFile=/etc/kubeone/proxy-env
-EOF
-sudo systemctl daemon-reload
-if sudo systemctl status docker  &>/dev/null; then sudo systemctl restart docker; fi
-`
