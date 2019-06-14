@@ -17,15 +17,18 @@
 # This script is mostly used in CI
 # It installs dependencies and starts the tests
 
-set -xe
+set -euf -o pipefail
+
+GOBETWEEN_VERSION=0.7.0
 
 mkdir /tmp/gobetween
 cd /tmp/gobetween
-curl -L -o gobetween_0.7.0_linux_amd64.tar.gz \
-    https://github.com/yyyar/gobetween/releases/download/0.7.0/gobetween_0.7.0_linux_amd64.tar.gz
-tar xvf gobetween_0.7.0_linux_amd64.tar.gz
-sudo mv gobetween /usr/local/sbin/gobetween
-sudo chown root:root /usr/local/sbin/gobetween
+curl -L -o gobetween_${GOBETWEEN_VERSION}_linux_amd64.tar.gz \
+    https://github.com/yyyar/gobetween/releases/download/${GOBETWEEN_VERSION}/gobetween_${GOBETWEEN_VERSION}_linux_amd64.tar.gz
+tar xvf gobetween_${GOBETWEEN_VERSION}_linux_amd64.tar.gz
+sudo mkdir -p /opt/bin
+sudo mv gobetween /opt/bin/gobetween
+sudo chown root:root /opt/bin/gobetween
 
 cat <<EOF | sudo tee /etc/systemd/system/gobetween.service
 [Unit]
@@ -36,7 +39,7 @@ After=network.target remote-fs.target nss-lookup.target
 [Service]
 Type=simple
 PIDFile=/run/gobetween.pid
-ExecStart=/usr/local/sbin/gobetween -c /etc/gobetween.toml
+ExecStart=/opt/bin/gobetween -c /etc/gobetween.toml
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s QUIT $MAINPID
 PrivateTmp=true
