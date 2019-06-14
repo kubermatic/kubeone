@@ -21,7 +21,7 @@ set -euf -o pipefail
 
 GOBETWEEN_VERSION=0.7.0
 
-mkdir /tmp/gobetween
+mkdir -p /tmp/gobetween
 cd /tmp/gobetween
 curl -L -o gobetween_${GOBETWEEN_VERSION}_linux_amd64.tar.gz \
     https://github.com/yyyar/gobetween/releases/download/${GOBETWEEN_VERSION}/gobetween_${GOBETWEEN_VERSION}_linux_amd64.tar.gz
@@ -38,10 +38,7 @@ After=network.target remote-fs.target nss-lookup.target
 
 [Service]
 Type=simple
-PIDFile=/run/gobetween.pid
 ExecStart=/opt/bin/gobetween -c /etc/gobetween.toml
-ExecReload=/bin/kill -s HUP $MAINPID
-ExecStop=/bin/kill -s QUIT $MAINPID
 PrivateTmp=true
 User=nobody
 Group=nogroup
