@@ -110,25 +110,30 @@ func LoadKubeOneCluster(clusterCfgPath, tfOutputPath string) (*kubeoneapi.KubeOn
 	}
 
 	var tfOutput []byte
-	if len(tfOutputPath) == 0 {
 
-	} else if tfOutputPath == "-" {
+	switch {
+	case tfOutputPath == "-":
 		if tfOutput, err = ioutil.ReadAll(os.Stdin); err != nil {
 			return nil, errors.Wrap(err, "unable to read terraform output from stdin")
 		}
-	} else if stat, err := os.Stat(tfOutputPath); err == nil && stat.Mode().IsDir() {
+	case isDir(tfOutputPath):
 		cmd := exec.Command("terraform", "output", "-json")
 		cmd.Dir = tfOutputPath
 		if tfOutput, err = cmd.Output(); err != nil {
-			return nil, errors.Wrap(err, "unable to read terraform output from the given directory")
+			return nil, errors.Wrapf(err, "unable to read terraform output from the %q directory", tfOutputPath)
 		}
-	} else {
+	default:
 		if tfOutput, err = ioutil.ReadFile(tfOutputPath); err != nil {
 			return nil, errors.Wrap(err, "unable to read the given terraform output file")
 		}
 	}
 
 	return BytesToKubeOneCluster(cluster, tfOutput)
+}
+
+func isDir(dirname string) bool {
+	stat, statErr := os.Stat(dirname)
+	return statErr == nil && stat.Mode().IsDir()
 }
 
 // BytesToKubeOneCluster returns the KubeOneCluster object parsed from the KubeOneCluster manifest and optionally
