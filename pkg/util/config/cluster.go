@@ -19,6 +19,7 @@ package config
 import (
 	"io/ioutil"
 	"os"
+	"os/exec"
 
 	"github.com/pkg/errors"
 
@@ -109,11 +110,19 @@ func LoadKubeOneCluster(clusterCfgPath, tfOutputPath string) (*kubeoneapi.KubeOn
 	}
 
 	var tfOutput []byte
-	if tfOutputPath == "-" {
+	if len(tfOutputPath) == 0 {
+
+	} else if tfOutputPath == "-" {
 		if tfOutput, err = ioutil.ReadAll(os.Stdin); err != nil {
 			return nil, errors.Wrap(err, "unable to read terraform output from stdin")
 		}
-	} else if len(tfOutputPath) > 0 {
+	} else if stat, err := os.Stat(tfOutputPath); err == nil && stat.Mode().IsDir() {
+		cmd := exec.Command("terraform", "output", "-json")
+		cmd.Dir = tfOutputPath
+		if tfOutput, err = cmd.Output(); err != nil {
+			return nil, errors.Wrap(err, "unable to read terraform output from the given directory")
+		}
+	} else {
 		if tfOutput, err = ioutil.ReadFile(tfOutputPath); err != nil {
 			return nil, errors.Wrap(err, "unable to read the given terraform output file")
 		}
