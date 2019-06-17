@@ -20,6 +20,7 @@ import (
 	"fmt"
 
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
@@ -49,6 +50,7 @@ It's possible to source information about hosts from Terraform output, using the
 				return errors.Wrap(err, "unable to get global flags")
 			}
 
+			logger := initLogger(gopts.Verbose)
 			kopts.TerraformState = gopts.TerraformState
 			kopts.Verbose = gopts.Verbose
 
@@ -57,7 +59,7 @@ It's possible to source information about hosts from Terraform output, using the
 				return errors.New("no cluster config file given")
 			}
 
-			return runKubeconfig(kopts)
+			return runKubeconfig(logger, kopts)
 		},
 	}
 
@@ -65,12 +67,12 @@ It's possible to source information about hosts from Terraform output, using the
 }
 
 // runKubeconfig downloads kubeconfig file
-func runKubeconfig(kubeconfigOptions *kubeconfigOptions) error {
+func runKubeconfig(logger *logrus.Logger, kubeconfigOptions *kubeconfigOptions) error {
 	if kubeconfigOptions.Manifest == "" {
 		return errors.New("no cluster config file given")
 	}
 
-	cluster, err := loadClusterConfig(kubeconfigOptions.Manifest, kubeconfigOptions.TerraformState)
+	cluster, err := loadClusterConfig(kubeconfigOptions.Manifest, kubeconfigOptions.TerraformState, logger)
 	if err != nil {
 		return errors.Wrap(err, "failed to load cluster")
 	}

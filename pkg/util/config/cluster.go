@@ -22,6 +22,7 @@ import (
 	"os/exec"
 
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 
 	"k8s.io/apimachinery/pkg/runtime"
 
@@ -99,7 +100,7 @@ func DefaultedKubeOneCluster(versionedCluster *kubeonev1alpha1.KubeOneCluster, t
 
 // LoadKubeOneCluster returns the KubeOneCluster object parsed from the KubeOneCluster configuration file and
 // optionally Terraform output
-func LoadKubeOneCluster(clusterCfgPath, tfOutputPath string) (*kubeoneapi.KubeOneCluster, error) {
+func LoadKubeOneCluster(clusterCfgPath, tfOutputPath string, logger *logrus.Logger) (*kubeoneapi.KubeOneCluster, error) {
 	if len(clusterCfgPath) == 0 {
 		return nil, errors.New("cluster configuration path not provided")
 	}
@@ -119,6 +120,7 @@ func LoadKubeOneCluster(clusterCfgPath, tfOutputPath string) (*kubeoneapi.KubeOn
 	case isDir(tfOutputPath):
 		cmd := exec.Command("terraform", "output", "-json")
 		cmd.Dir = tfOutputPath
+		logger.Debugln("Executing `terraform output -json` to query terraform state")
 		if tfOutput, err = cmd.Output(); err != nil {
 			return nil, errors.Wrapf(err, "unable to read terraform output from the %q directory", tfOutputPath)
 		}
