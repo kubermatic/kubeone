@@ -18,7 +18,7 @@ output "kubeone_api" {
   description = "kube-apiserver LB endpoint"
 
   value = {
-    endpoint = "${aws_lb.control_plane.dns_name}"
+    endpoint = aws_lb.control_plane.dns_name
   }
 }
 
@@ -27,14 +27,14 @@ output "kubeone_hosts" {
 
   value = {
     control_plane = {
-      cluster_name         = "${var.cluster_name}"
+      cluster_name         = var.cluster_name
       cloud_provider       = "aws"
-      private_address      = "${aws_instance.control_plane.*.private_ip}"
-      public_address       = "${aws_instance.control_plane.*.public_ip}"
-      ssh_agent_socket     = "${var.ssh_agent_socket}"
-      ssh_port             = "${var.ssh_port}"
-      ssh_private_key_file = "${var.ssh_private_key_file}"
-      ssh_user             = "${var.ssh_username}"
+      private_address      = aws_instance.control_plane.*.private_ip
+      public_address       = aws_instance.control_plane.*.public_ip
+      ssh_agent_socket     = var.ssh_agent_socket
+      ssh_port             = var.ssh_port
+      ssh_private_key_file = var.ssh_private_key_file
+      ssh_user             = var.ssh_username
     }
   }
 }
@@ -47,29 +47,27 @@ output "kubeone_workers" {
     # corresponding (by name) worker definition
     pool1 = {
       replicas        = 1
-      sshPublicKeys   = ["${aws_key_pair.deployer.public_key}"]
-      operatingSystem = "${var.worker_os}"
-
+      sshPublicKeys   = [aws_key_pair.deployer.public_key]
+      operatingSystem = var.worker_os
       operatingSystemSpec = {
         distUpgradeOnBoot = false
       }
-
-      # provider specific fields:
-      # see example under `cloudProviderSpec` section at: 
-      # https://github.com/kubermatic/machine-controller/blob/master/examples/aws-machinedeployment.yaml
-
-      region           = "${var.aws_region}"
-      ami              = "${local.ami}"
-      availabilityZone = "${local.az_a}"
-      instanceProfile  = "${aws_iam_instance_profile.profile.name}"
-      securityGroupIDs = ["${aws_security_group.common.id}"]
-      vpcId            = "${local.vpc_id}"
-      subnetId         = "${data.aws_subnet.az_a.id}"
-      instanceType     = "${var.worker_type}"
+      region           = var.aws_region
+      ami              = local.ami
+      availabilityZone = local.az_a
+      instanceProfile  = aws_iam_instance_profile.profile.name
+      securityGroupIDs = [aws_security_group.common.id]
+      vpcId            = local.vpc_id
+      subnetId         = data.aws_subnet.az_a.id
+      instanceType     = var.worker_type
       diskSize         = 50
-      tags = "${map(
-        "kubeone", "pool1",
-      )}"
+      tags = {
+        "kubeone" = "pool1"
+      }
     }
   }
+  # provider specific fields:
+  # see example under `cloudProviderSpec` section at: 
+  # https://github.com/kubermatic/machine-controller/blob/master/examples/aws-machinedeployment.yaml
 }
+

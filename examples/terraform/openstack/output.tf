@@ -18,7 +18,7 @@ output "kubeone_api" {
   description = "kube-apiserver LB endpoint"
 
   value = {
-    endpoint = "${openstack_networking_floatingip_v2.lb.address}"
+    endpoint = openstack_networking_floatingip_v2.lb.address
   }
 }
 
@@ -27,14 +27,14 @@ output "kubeone_hosts" {
 
   value = {
     control_plane = {
-      cluster_name         = "${var.cluster_name}"
+      cluster_name         = var.cluster_name
       cloud_provider       = "openstack"
-      private_address      = "${openstack_compute_instance_v2.control_plane.*.access_ip_v4}"
-      public_address       = "${openstack_networking_floatingip_v2.control_plane.*.address}"
-      ssh_agent_socket     = "${var.ssh_agent_socket}"
-      ssh_port             = "${var.ssh_port}"
-      ssh_private_key_file = "${var.ssh_private_key_file}"
-      ssh_user             = "${var.ssh_username}"
+      private_address      = openstack_compute_instance_v2.control_plane.*.access_ip_v4
+      public_address       = openstack_networking_floatingip_v2.control_plane.*.address
+      ssh_agent_socket     = var.ssh_agent_socket
+      ssh_port             = var.ssh_port
+      ssh_private_key_file = var.ssh_private_key_file
+      ssh_user             = var.ssh_username
     }
   }
 }
@@ -47,26 +47,24 @@ output "kubeone_workers" {
     # corresponding (by name) worker definition
     pool1 = {
       replicas        = 1
-      sshPublicKeys   = ["${file("${var.ssh_public_key_file}")}"]
-      operatingSystem = "${var.worker_os}"
-
+      sshPublicKeys   = [file(var.ssh_public_key_file)]
+      operatingSystem = var.worker_os
       operatingSystemSpec = {
         distUpgradeOnBoot = false
       }
-
-      # provider specific fields:
-      # see example under `cloudProviderSpec` section at: 
-      # https://github.com/kubermatic/machine-controller/blob/master/examples/openstack-machinedeployment.yaml
-
-      image          = "${var.image}"
-      flavor         = "${var.worker_flavor}"
-      securityGroups = ["${openstack_networking_secgroup_v2.securitygroup.name}"]
-      floatingIPPool = "${var.external_network_name}"
-      network        = "${openstack_networking_network_v2.network.name}"
-      subnet         = "${openstack_networking_subnet_v2.subnet.name}"
-      tags = "${map(
-        "kubeone", "worker",
-      )}"
+      image          = var.image
+      flavor         = var.worker_flavor
+      securityGroups = [openstack_networking_secgroup_v2.securitygroup.name]
+      floatingIPPool = var.external_network_name
+      network        = openstack_networking_network_v2.network.name
+      subnet         = openstack_networking_subnet_v2.subnet.name
+      tags = {
+        "kubeone" = "worker"
+      }
     }
   }
+  # provider specific fields:
+  # see example under `cloudProviderSpec` section at: 
+  # https://github.com/kubermatic/machine-controller/blob/master/examples/openstack-machinedeployment.yaml
 }
+

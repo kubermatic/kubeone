@@ -69,3 +69,4 @@ variable "worker_vm_size" {
   description = "VM Size for worker machines"
   default     = "Standard_B2s"
 }
+

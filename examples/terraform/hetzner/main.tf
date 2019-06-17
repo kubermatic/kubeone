@@ -16,43 +16,44 @@ limitations under the License.
 
 resource "hcloud_ssh_key" "kubeone" {
   name       = "kubeone-${var.cluster_name}"
-  public_key = "${file("${var.ssh_public_key_file}")}"
+  public_key = file(var.ssh_public_key_file)
 }
 
 resource "hcloud_server" "control_plane" {
   count       = 3
-  name        = "${var.cluster_name}-control-plane-${count.index +1}"
-  server_type = "${var.control_plane_type}"
-  image       = "${var.image}"
-  location    = "${var.datacenter}"
+  name        = "${var.cluster_name}-control-plane-${count.index + 1}"
+  server_type = var.control_plane_type
+  image       = var.image
+  location    = var.datacenter
 
   ssh_keys = [
-    "${hcloud_ssh_key.kubeone.id}",
+    hcloud_ssh_key.kubeone.id,
   ]
 
-  labels = "${map(
-    "kubeone_cluster_name", "${var.cluster_name}",
-    "role", "api",
-  )}"
+  labels = {
+    "kubeone_cluster_name" = var.cluster_name
+    "role"                 = "api"
+  }
 }
 
 resource "hcloud_server" "lb" {
   name        = "${var.cluster_name}-lb"
-  server_type = "${var.lb_type}"
-  image       = "${var.image}"
-  location    = "${var.datacenter}"
+  server_type = var.lb_type
+  image       = var.image
+  location    = var.datacenter
 
   ssh_keys = [
-    "${hcloud_ssh_key.kubeone.id}",
+    hcloud_ssh_key.kubeone.id,
   ]
 
-  labels = "${map(
-    "kubeone_cluster_name", "${var.cluster_name}",
-    "role", "lb",
-  )}"
+  labels = {
+    "kubeone_cluster_name" = var.cluster_name
+    "role"                 = "lb"
+  }
 
   connection {
-    host = "${self.ipv4_address}"
+    type = "ssh"
+    host = self.ipv4_address
   }
 
   provisioner "remote-exec" {
@@ -61,27 +62,27 @@ resource "hcloud_server" "lb" {
 }
 
 data "template_file" "lbconfig" {
-  template = "${file("etc_gobetween.tpl")}"
+  template = file("etc_gobetween.tpl")
 
   vars = {
-    lb_target1 = "${hcloud_server.control_plane.0.ipv4_address}"
-    lb_target2 = "${hcloud_server.control_plane.1.ipv4_address}"
-    lb_target3 = "${hcloud_server.control_plane.2.ipv4_address}"
+    lb_target1 = hcloud_server.control_plane[0].ipv4_address
+    lb_target2 = hcloud_server.control_plane[1].ipv4_address
+    lb_target3 = hcloud_server.control_plane[2].ipv4_address
   }
 }
 
 resource "null_resource" "lb_config" {
   triggers = {
-    cluster_instance_ids = "${join(",", hcloud_server.control_plane.*.id)}"
-    config               = "${data.template_file.lbconfig.rendered}"
+    cluster_instance_ids = join(",", hcloud_server.control_plane.*.id)
+    config               = data.template_file.lbconfig.rendered
   }
 
   connection {
-    host = "${hcloud_server.lb.ipv4_address}"
+    host = hcloud_server.lb.ipv4_address
   }
 
   provisioner "file" {
-    content     = "${data.template_file.lbconfig.rendered}"
+    content     = data.template_file.lbconfig.rendered
     destination = "/etc/gobetween.toml"
   }
 
@@ -91,3 +92,4 @@ resource "null_resource" "lb_config" {
     ]
   }
 }
+

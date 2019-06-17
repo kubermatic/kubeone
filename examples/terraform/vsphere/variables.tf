@@ -84,3 +84,4 @@ variable "disk_size" {
   default     = 50
   description = "disk size"
 }
+
