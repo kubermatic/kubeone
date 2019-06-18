@@ -176,26 +176,13 @@ func (c *Config) updateAWSWorkerset(workerset *kubeonev1alpha1.WorkerConfig, cfg
 		{key: "vpcId", value: awsCloudConfig.VPCID},
 		{key: "instanceType", value: awsCloudConfig.InstanceType},
 		{key: "tags", value: awsCloudConfig.Tags},
+		{key: "diskType", value: awsCloudConfig.DiskType},
+		{key: "diskSize", value: awsCloudConfig.DiskSize},
+		{key: "diskIops", value: awsCloudConfig.DiskIops},
 	}
 
 	for _, flag := range flags {
 		if err := setWorkersetFlag(workerset, flag.key, flag.value); err != nil {
-			return errors.WithStack(err)
-		}
-	}
-
-	// We effectively hardcode it here because we have no sane way to check if it was already defined
-	// as workerset.Config is a map[string]interface{}
-	// TODO: Use imported provicerConfig structs for workset.Config
-	// TODO: Add defaulting in the machine-controller for this and remove it here
-	if err := setWorkersetFlag(workerset, "diskType", "gp2"); err != nil {
-		return errors.WithStack(err)
-	}
-
-	// We can not check if its defined in the workset already as workerset.Config is a map[string]interface{}
-	// TODO: Use imported provicerConfig structs for workset.Config
-	if awsCloudConfig.DiskSize != nil {
-		if err := setWorkersetFlag(workerset, "diskSize", *awsCloudConfig.DiskSize); err != nil {
 			return errors.WithStack(err)
 		}
 	}

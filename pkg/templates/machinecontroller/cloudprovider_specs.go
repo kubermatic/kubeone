@@ -27,6 +27,8 @@ type AWSSpec struct {
 	VPCID            string            `json:"vpcId"`
 	InstanceType     *string           `json:"instanceType"`
 	DiskSize         *int              `json:"diskSize"`
+	DiskType         string            `json:"diskType"`
+	DiskIops         *int              `json:"diskIops,omitempty"`
 	Tags             map[string]string `json:"tags"`
 }
 
