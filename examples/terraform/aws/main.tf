@@ -177,7 +177,7 @@ resource "aws_lb" "control_plane" {
   name               = "${var.cluster_name}-api-lb"
   internal           = false
   load_balancer_type = "network"
-  subnets = local.all_subnets
+  subnets            = local.all_subnets
 
   tags = map("Cluster", var.cluster_name, local.kube_cluster_tag, "shared")
 }

@@ -46,26 +46,30 @@ output "kubeone_workers" {
     # following outputs will be parsed by kubeone and automatically merged into
     # corresponding (by name) worker definition
     "${var.cluster_name}-pool1" = {
-      replicas        = 1
-      sshPublicKeys   = [file(var.ssh_public_key_file)]
-      operatingSystem = var.worker_os
-      operatingSystemSpec = {
-        distUpgradeOnBoot = false
+      replicas = 1
+      providerSpec = {
+        sshPublicKeys   = [file(var.ssh_public_key_file)]
+        operatingSystem = var.worker_os
+        operatingSystemSpec = {
+          distUpgradeOnBoot = false
+        }
+        cloudProviderSpec = {
+          # provider specific fields:
+          # see example under `cloudProviderSpec` section at:
+          # https://github.com/kubermatic/machine-controller/blob/master/examples/vsphere-machinedeployment.yaml
+          allowInsecure = false
+          cluster       = var.compute_cluster_name
+          cpus          = 2
+          datacenter    = var.dc_name
+          datastore     = var.datastore_name
+          # Optional: Resize the root disk to this size. Must be bigger than the existing size
+          # Default is to leave the disk at the same size as the template
+          diskSizeGB     = 10
+          memoryMB       = 2048
+          templateVMName = var.template_name
+          vmNetName      = var.network_name
+        }
       }
-      # provider specific fields:
-      # see example under `cloudProviderSpec` section at: 
-      # https://github.com/kubermatic/machine-controller/blob/master/examples/vsphere-machinedeployment.yaml
-      allowInsecure = false
-      cluster       = var.compute_cluster_name
-      cpus          = 2
-      datacenter    = var.dc_name
-      datastore     = var.datastore_name
-      # Optional: Resize the root disk to this size. Must be bigger than the existing size
-      # Default is to leave the disk at the same size as the template
-      diskSizeGB     = 10
-      memoryMB       = 2048
-      templateVMName = var.template_name
-      vmNetName      = var.network_name
     }
   }
 }

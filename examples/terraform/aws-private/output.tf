@@ -49,29 +49,33 @@ output "kubeone_workers" {
     # following outputs will be parsed by kubeone and automatically merged into
     # corresponding (by name) worker definition
     "${var.cluster_name}-pool1" = {
-      replicas        = 1
-      sshPublicKeys   = [aws_key_pair.deployer.public_key]
-      operatingSystem = var.worker_os
-      operatingSystemSpec = {
-        distUpgradeOnBoot = false
-      }
-      # provider specific fields:
-      # see example under `cloudProviderSpec` section at: 
-      # https://github.com/kubermatic/machine-controller/blob/master/examples/aws-machinedeployment.yaml
-      region           = var.aws_region
-      ami              = local.ami
-      availabilityZone = data.aws_availability_zones.available.names[0]
-      instanceProfile  = aws_iam_instance_profile.workers.name
-      securityGroupIDs = [aws_security_group.common.id]
-      vpcId            = data.aws_vpc.selected.id
-      subnetId         = aws_subnet.private[0].id
-      instanceType     = var.worker_type
-      diskSize         = 100
-      diskType         = "gp2"
-      ## Only application if diskType = io1
-      diskIops         = 500
-      tags = {
-        "kubeone" = "pool1"
+      replicas = 1
+      providerSpec = {
+        sshPublicKeys   = [aws_key_pair.deployer.public_key]
+        operatingSystem = var.worker_os
+        operatingSystemSpec = {
+          distUpgradeOnBoot = false
+        }
+        cloudProviderSpec = {
+          # provider specific fields:
+          # see example under `cloudProviderSpec` section at:
+          # https://github.com/kubermatic/machine-controller/blob/master/examples/aws-machinedeployment.yaml
+          region           = var.aws_region
+          ami              = local.ami
+          availabilityZone = data.aws_availability_zones.available.names[0]
+          instanceProfile  = aws_iam_instance_profile.workers.name
+          securityGroupIDs = [aws_security_group.common.id]
+          vpcId            = data.aws_vpc.selected.id
+          subnetId         = aws_subnet.private[0].id
+          instanceType     = var.worker_type
+          diskSize         = 100
+          diskType         = "gp2"
+          ## Only application if diskType = io1
+          diskIops = 500
+          tags = {
+            "${var.cluster_name}-workers" = "pool1"
+          }
+        }
       }
     }
   }

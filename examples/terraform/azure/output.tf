@@ -46,26 +46,30 @@ output "kubeone_workers" {
     # following outputs will be parsed by kubeone and automatically merged into
     # corresponding (by name) worker definition
     "${var.cluster_name}-pool1" = {
-      replicas        = 1
-      sshPublicKeys   = [file(var.ssh_public_key_file)]
-      operatingSystem = var.worker_os
-      operatingSystemSpec = {
-        distUpgradeOnBoot = false
-      }
-      # provider specific fields:
-      # see example under `cloudProviderSpec` section at: 
-      # https://github.com/kubermatic/machine-controller/blob/master/examples/azure-machinedeployment.yaml
-      assignPublicIP    = true
-      availabilitySet   = azurerm_availability_set.avset.name
-      location          = var.location
-      resourceGroup     = azurerm_resource_group.rg.name
-      routeTableName    = ""
-      securityGroupName = azurerm_network_security_group.sg.name
-      subnetName        = azurerm_subnet.subnet.name
-      vmSize            = var.worker_vm_size
-      vnetName          = azurerm_virtual_network.vpc.name
-      tags = {
-        "kubeone" = var.cluster_name
+      replicas = 1
+      providerSpec = {
+        sshPublicKeys   = [file(var.ssh_public_key_file)]
+        operatingSystem = var.worker_os
+        operatingSystemSpec = {
+          distUpgradeOnBoot = false
+        }
+        cloudProviderSpec = {
+          # provider specific fields:
+          # see example under `cloudProviderSpec` section at: 
+          # https://github.com/kubermatic/machine-controller/blob/master/examples/azure-machinedeployment.yaml
+          assignPublicIP    = true
+          availabilitySet   = azurerm_availability_set.avset.name
+          location          = var.location
+          resourceGroup     = azurerm_resource_group.rg.name
+          routeTableName    = ""
+          securityGroupName = azurerm_network_security_group.sg.name
+          subnetName        = azurerm_subnet.subnet.name
+          vmSize            = var.worker_vm_size
+          vnetName          = azurerm_virtual_network.vpc.name
+          tags = {
+            "${var.cluster_name}-workers" = "pool1"
+          }
+        }
       }
     }
   }
