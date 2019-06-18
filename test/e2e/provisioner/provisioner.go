@@ -41,7 +41,7 @@ const (
 
 // Provisioner contains cluster management operations such as provision and cleanup
 type Provisioner interface {
-	Provision() (string, error)
+	Provision(args ...string) (string, error)
 	Cleanup() error
 }
 
@@ -59,7 +59,7 @@ func CreateProvisioner(testPath string, identifier string, provider string) (Pro
 		return NewDefaultProvisioner(creds, testPath, identifier, provider)
 	case GCE:
 		creds := verifyCredentials("GOOGLE_CREDENTIALS")
-		return NewGCEProvisioner(creds, testPath, identifier)
+		return NewDefaultProvisioner(creds, testPath, identifier, provider)
 	case Packet:
 		creds := verifyCredentials("PACKET_AUTH_TOKEN", "PACKET_PROJECT_ID")
 		return NewDefaultProvisioner(creds, testPath, identifier, provider)

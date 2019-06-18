@@ -138,7 +138,11 @@ func TestClusterConformance(t *testing.T) {
 
 			// Create infrastructure
 			t.Log("Provisioning infrastructure using Terraform…")
-			tf, err := pr.Provision()
+			args := []string{}
+			if tc.provider == provisioner.GCE {
+				args = []string{"-var", "control_plane_target_pool_members_count=1"}
+			}
+			tf, err := pr.Provision(args...)
 			if err != nil {
 				t.Fatalf("failed to provision the infrastructure: %v", err)
 			}
@@ -159,6 +163,7 @@ func TestClusterConformance(t *testing.T) {
 
 			// Run Terraform again for GCE to add nodes to the load balancer
 			if tc.provider == provisioner.GCE {
+				t.Log("Adding other control plane nodes to the load balancer…")
 				tf, err = pr.Provision()
 				if err != nil {
 					t.Fatalf("failed to provision the infrastructure: %v", err)

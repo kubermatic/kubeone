@@ -37,7 +37,7 @@ type terraform struct {
 }
 
 // initAndApply method initializes a Terraform working directory and applies scripts
-func (p *terraform) initAndApply(applyArgs []string) (string, error) {
+func (p *terraform) initAndApply(applyArgs ...string) (string, error) {
 	initCmd := []string{"init"}
 	if len(p.identifier) > 0 {
 		initCmd = append(initCmd, fmt.Sprintf("--backend-config=key=%s", p.identifier))

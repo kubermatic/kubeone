@@ -48,8 +48,8 @@ func NewDefaultProvisioner(creds func() error, testPath, identifier, provider st
 }
 
 // Provision provisions a cluster using Terraform
-func (p *DefaultProvisioner) Provision() (string, error) {
-	tf, err := p.terraform.initAndApply(nil)
+func (p *DefaultProvisioner) Provision(args ...string) (string, error) {
+	tf, err := p.terraform.initAndApply(args...)
 	if err != nil {
 		return "", err
 	}
