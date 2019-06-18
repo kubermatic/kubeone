@@ -165,6 +165,24 @@ type ProviderSpec struct {
 	SSHPublicKeys       []string          `json:"sshPublicKeys"`
 	OperatingSystem     string            `json:"operatingSystem"`
 	OperatingSystemSpec json.RawMessage   `json:"operatingSystemSpec"`
+
+	// +optional
+	Network *NetworkConfig `json:"network,omitempty"`
+
+	// +optional
+	OverwriteCloudConfig *string `json:"overwriteCloudConfig,omitempty"`
+}
+
+// DNSConfig contains a machine's DNS configuration
+type DNSConfig struct {
+	Servers []string `json:"servers"`
+}
+
+// NetworkConfig contains a machine's static network configuration
+type NetworkConfig struct {
+	CIDR    string    `json:"cidr"`
+	Gateway string    `json:"gateway"`
+	DNS     DNSConfig `json:"dns"`
 }
 
 // MachineControllerConfig configures kubermatic machine-controller deployment

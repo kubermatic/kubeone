@@ -453,6 +453,24 @@ type commonWorkerConfig struct {
 	Replicas            *int                 `json:"replicas"`
 	OperatingSystem     *string              `json:"operatingSystem"`
 	OperatingSystemSpec *operatingSystemSpec `json:"operatingSystemSpec"`
+
+	// +optional
+	Network *networkConfig `json:"network,omitempty"`
+
+	// +optional
+	OverwriteCloudConfig *string `json:"overwriteCloudConfig,omitempty"`
+}
+
+// dnsConfig contains a machine's DNS configuration
+type dnsConfig struct {
+	Servers []string `json:"servers"`
+}
+
+// networkConfig contains a machine's static network configuration
+type networkConfig struct {
+	CIDR    string    `json:"cidr"`
+	Gateway string    `json:"gateway"`
+	DNS     dnsConfig `json:"dns"`
 }
 
 type operatingSystemSpec struct {
@@ -492,6 +510,16 @@ func (c *Config) updateCommonWorkerConfig(workerset *kubeonev1alpha1.WorkerConfi
 		if err != nil {
 			return errors.Wrap(err, "unable to update the cloud provider spec")
 		}
+	}
+
+	if cc.Network != nil {
+		workerset.Config.Network.CIDR = cc.Network.CIDR
+		workerset.Config.Network.Gateway = cc.Network.Gateway
+		workerset.Config.Network.DNS.Servers = cc.Network.DNS.Servers
+	}
+
+	if cc.OverwriteCloudConfig != nil {
+		workerset.Config.OverwriteCloudConfig = cc.OverwriteCloudConfig
 	}
 
 	return nil
