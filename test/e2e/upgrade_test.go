@@ -56,33 +56,53 @@ func TestClusterUpgrade(t *testing.T) {
 		expectedNumberOfNodes int
 	}{
 		{
-			name:                  "upgrade k8s 1.13.5 cluster to 1.14.1 on AWS",
+			name:                  "upgrade k8s 1.13.7 cluster to 1.14.3 on AWS",
 			provider:              provisioner.AWS,
 			providerExternal:      false,
-			initialVersion:        "1.13.5",
-			targetVersion:         "1.14.1",
-			initialConfigPath:     "../../test/e2e/testdata/config_aws_1.13.5.yaml",
-			targetConfigPath:      "../../test/e2e/testdata/config_aws_1.14.1.yaml",
+			initialVersion:        "1.13.7",
+			targetVersion:         "1.14.3",
+			initialConfigPath:     "../../test/e2e/testdata/config_aws_1.13.7.yaml",
+			targetConfigPath:      "../../test/e2e/testdata/config_aws_1.14.3.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
 		},
 		{
-			name:                  "upgrade k8s 1.13.5 cluster to 1.14.1 on DO",
+			name:                  "upgrade k8s 1.13.7 cluster to 1.14.3 on DO",
 			provider:              provisioner.DigitalOcean,
 			providerExternal:      true,
-			initialVersion:        "1.13.5",
-			targetVersion:         "1.14.1",
-			initialConfigPath:     "../../test/e2e/testdata/config_do_1.13.5.yaml",
-			targetConfigPath:      "../../test/e2e/testdata/config_do_1.14.1.yaml",
+			initialVersion:        "1.13.7",
+			targetVersion:         "1.14.3",
+			initialConfigPath:     "../../test/e2e/testdata/config_do_1.13.7.yaml",
+			targetConfigPath:      "../../test/e2e/testdata/config_do_1.14.3.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
 		},
 		{
-			name:                  "upgrade k8s 1.13.5 cluster to 1.14.1 on Hetzner",
+			name:                  "upgrade k8s 1.13.7 cluster to 1.14.3 on Hetzner",
 			provider:              provisioner.Hetzner,
 			providerExternal:      true,
-			initialVersion:        "1.13.5",
-			targetVersion:         "1.14.1",
-			initialConfigPath:     "../../test/e2e/testdata/config_hetzner_1.13.5.yaml",
-			targetConfigPath:      "../../test/e2e/testdata/config_hetzner_1.14.1.yaml",
+			initialVersion:        "1.13.7",
+			targetVersion:         "1.14.3",
+			initialConfigPath:     "../../test/e2e/testdata/config_hetzner_1.13.7.yaml",
+			targetConfigPath:      "../../test/e2e/testdata/config_hetzner_1.14.3.yaml",
+			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
+		},
+		{
+			name:                  "upgrade k8s 1.13.7 cluster to 1.14.3 on GCE",
+			provider:              provisioner.GCE,
+			providerExternal:      false,
+			initialVersion:        "1.13.7",
+			targetVersion:         "1.14.3",
+			initialConfigPath:     "../../test/e2e/testdata/config_gce_1.13.7.yaml",
+			targetConfigPath:      "../../test/e2e/testdata/config_gce_1.14.3.yaml",
+			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
+		},
+		{
+			name:                  "upgrade k8s 1.13.7 cluster to 1.14.3 on Packet",
+			provider:              provisioner.Packet,
+			providerExternal:      true,
+			initialVersion:        "1.13.7",
+			targetVersion:         "1.14.3",
+			initialConfigPath:     "../../test/e2e/testdata/config_packet_1.13.7.yaml",
+			targetConfigPath:      "../../test/e2e/testdata/config_packet_1.14.3.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
 		},
 	}
@@ -133,7 +153,11 @@ func TestClusterUpgrade(t *testing.T) {
 
 			// Create infrastructure
 			t.Log("Provisioning infrastructure using Terraform…")
-			tf, err := pr.Provision()
+			args := []string{}
+			if tc.provider == provisioner.GCE {
+				args = []string{"-var", "control_plane_target_pool_members_count=1"}
+			}
+			tf, err := pr.Provision(args...)
 			if err != nil {
 				t.Fatalf("failed to provision the infrastructure: %v", err)
 			}
@@ -150,6 +174,15 @@ func TestClusterUpgrade(t *testing.T) {
 			kubeconfig, err := target.Kubeconfig()
 			if err != nil {
 				t.Fatalf("failed to download kubeconfig failed ('kubeone kubeconfig'): %v", err)
+			}
+
+			// Run Terraform again for GCE to add nodes to the load balancer
+			if tc.provider == provisioner.GCE {
+				t.Log("Adding other control plane nodes to the load balancer…")
+				tf, err = pr.Provision()
+				if err != nil {
+					t.Fatalf("failed to provision the infrastructure: %v", err)
+				}
 			}
 
 			// Build clientset

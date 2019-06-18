@@ -37,7 +37,7 @@ type terraform struct {
 }
 
 // initAndApply method initializes a Terraform working directory and applies scripts
-func (p *terraform) initAndApply() (string, error) {
+func (p *terraform) initAndApply(applyArgs ...string) (string, error) {
 	initCmd := []string{"init"}
 	if len(p.identifier) > 0 {
 		initCmd = append(initCmd, fmt.Sprintf("--backend-config=key=%s", p.identifier))
@@ -48,9 +48,13 @@ func (p *terraform) initAndApply() (string, error) {
 		return "", fmt.Errorf("terraform init command failed: %v", err)
 	}
 
+	args := []string{"apply", "-auto-approve"}
+	if applyArgs != nil {
+		args = append(args, applyArgs...)
+	}
 	var applyErr error
 	for i := 0; i < applyRetryNumber; i++ {
-		_, applyErr = testutil.ExecuteCommand(p.terraformDir, "terraform", []string{"apply", "-auto-approve"}, nil)
+		_, applyErr = testutil.ExecuteCommand(p.terraformDir, "terraform", args, nil)
 		if applyErr == nil {
 			break
 		}

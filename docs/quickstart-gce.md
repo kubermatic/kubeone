@@ -108,7 +108,7 @@ Finally, if you agree with changes you can proceed and provision the
 infrastructure:
 
 ```bash
-terraform apply control_plane_target_pool_members_count=1
+terraform apply -var control_plane_target_pool_members_count=1
 ```
 
 `control_plane_target_pool_members_count` is needed in order to bootstrap
