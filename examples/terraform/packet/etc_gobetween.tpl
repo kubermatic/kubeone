@@ -13,9 +13,9 @@ backend_connection_timeout = "2s"
 [servers.default.discovery]
 kind = "static"
 static_list = [
-    "${lb_target1}:6443",
-    "${lb_target2}:6443",
-    "${lb_target3}:6443",
+    %{ for target in lb_targets ~}
+    "${target}:6443",
+    %{ endfor ~}
 ]
 
 [servers.default.healthcheck]
