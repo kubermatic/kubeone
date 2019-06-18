@@ -73,9 +73,10 @@ type GCESpec struct {
 
 // HetznerSpec holds cloudprovider spec for Hetzner
 type HetznerSpec struct {
-	ServerType string `json:"serverType"`
-	Datacenter string `json:"datacenter"`
-	Location   string `json:"location"`
+	ServerType string            `json:"serverType"`
+	Datacenter string            `json:"datacenter"`
+	Location   string            `json:"location"`
+	Labels     map[string]string `json:"labels,omitempty"`
 }
 
 // PacketSpec holds cloudprovider spec for Packet

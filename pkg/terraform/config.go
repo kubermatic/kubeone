@@ -287,6 +287,7 @@ func (c *Config) updateHetznerWorkerset(workerset *kubeonev1alpha1.WorkerConfig,
 		{key: "serverType", value: hetznerConfig.ServerType},
 		{key: "datacenter", value: hetznerConfig.Datacenter},
 		{key: "location", value: hetznerConfig.Location},
+		{key: "labels", value: hetznerConfig.Labels},
 	}
 
 	for _, flag := range flags {
@@ -461,7 +462,10 @@ type networkConfig struct {
 }
 
 type operatingSystemSpec struct {
-	DistUpgradeOnBoot *bool `json:"distUpgradeOnBoot"`
+	DistUpgradeOnBoot   *bool `json:"distUpgradeOnBoot"`
+	DisableAutoUpdate   *bool `json:"disableAutoUpdate"`
+	DisableLocksmithD   *bool `json:"disableLocksmithD"`
+	DisableUpdateEngine *bool `json:"disableUpdateEngine"`
 }
 
 func (c *Config) updateCommonWorkerConfig(workerset *kubeonev1alpha1.WorkerConfig, cfg json.RawMessage) error {
@@ -489,6 +493,18 @@ func (c *Config) updateCommonWorkerConfig(workerset *kubeonev1alpha1.WorkerConfi
 	osSpecMap := make(map[string]interface{})
 	if cc.OperatingSystemSpec.DistUpgradeOnBoot != nil {
 		osSpecMap["distUpgradeOnBoot"] = *cc.OperatingSystemSpec.DistUpgradeOnBoot
+	}
+	// CoreOS specific
+	if cc.OperatingSystemSpec.DisableAutoUpdate != nil {
+		osSpecMap["disableAutoUpdate"] = *cc.OperatingSystemSpec.DisableAutoUpdate
+	}
+	// CoreOS specific
+	if cc.OperatingSystemSpec.DisableLocksmithD != nil {
+		osSpecMap["disableLocksmithD"] = *cc.OperatingSystemSpec.DisableLocksmithD
+	}
+	// CoreOS specific
+	if cc.OperatingSystemSpec.DisableUpdateEngine != nil {
+		osSpecMap["disableUpdateEngine"] = *cc.OperatingSystemSpec.DisableUpdateEngine
 	}
 
 	if len(osSpecMap) > 0 {

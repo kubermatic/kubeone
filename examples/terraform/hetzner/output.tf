@@ -54,6 +54,9 @@ output "kubeone_workers" {
       }
       serverType = var.worker_type
       location   = var.datacenter
+      labels = {
+        "kubeone": "pool1"
+      }
     }
   }
   # provider specific fields:
