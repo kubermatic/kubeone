@@ -176,26 +176,13 @@ func (c *Config) updateAWSWorkerset(workerset *kubeonev1alpha1.WorkerConfig, cfg
 		{key: "vpcId", value: awsCloudConfig.VPCID},
 		{key: "instanceType", value: awsCloudConfig.InstanceType},
 		{key: "tags", value: awsCloudConfig.Tags},
+		{key: "diskType", value: awsCloudConfig.DiskType},
+		{key: "diskSize", value: awsCloudConfig.DiskSize},
+		{key: "diskIops", value: awsCloudConfig.DiskIops},
 	}
 
 	for _, flag := range flags {
 		if err := setWorkersetFlag(workerset, flag.key, flag.value); err != nil {
-			return errors.WithStack(err)
-		}
-	}
-
-	// We effectively hardcode it here because we have no sane way to check if it was already defined
-	// as workerset.Config is a map[string]interface{}
-	// TODO: Use imported provicerConfig structs for workset.Config
-	// TODO: Add defaulting in the machine-controller for this and remove it here
-	if err := setWorkersetFlag(workerset, "diskType", "gp2"); err != nil {
-		return errors.WithStack(err)
-	}
-
-	// We can not check if its defined in the workset already as workerset.Config is a map[string]interface{}
-	// TODO: Use imported provicerConfig structs for workset.Config
-	if awsCloudConfig.DiskSize != nil {
-		if err := setWorkersetFlag(workerset, "diskSize", *awsCloudConfig.DiskSize); err != nil {
 			return errors.WithStack(err)
 		}
 	}
@@ -300,6 +287,7 @@ func (c *Config) updateHetznerWorkerset(workerset *kubeonev1alpha1.WorkerConfig,
 		{key: "serverType", value: hetznerConfig.ServerType},
 		{key: "datacenter", value: hetznerConfig.Datacenter},
 		{key: "location", value: hetznerConfig.Location},
+		{key: "labels", value: hetznerConfig.Labels},
 	}
 
 	for _, flag := range flags {
@@ -453,10 +441,31 @@ type commonWorkerConfig struct {
 	Replicas            *int                 `json:"replicas"`
 	OperatingSystem     *string              `json:"operatingSystem"`
 	OperatingSystemSpec *operatingSystemSpec `json:"operatingSystemSpec"`
+
+	// +optional
+	Network *networkConfig `json:"network,omitempty"`
+
+	// +optional
+	OverwriteCloudConfig *string `json:"overwriteCloudConfig,omitempty"`
+}
+
+// dnsConfig contains a machine's DNS configuration
+type dnsConfig struct {
+	Servers []string `json:"servers"`
+}
+
+// networkConfig contains a machine's static network configuration
+type networkConfig struct {
+	CIDR    string    `json:"cidr"`
+	Gateway string    `json:"gateway"`
+	DNS     dnsConfig `json:"dns"`
 }
 
 type operatingSystemSpec struct {
-	DistUpgradeOnBoot *bool `json:"distUpgradeOnBoot"`
+	DistUpgradeOnBoot   *bool `json:"distUpgradeOnBoot"`
+	DisableAutoUpdate   *bool `json:"disableAutoUpdate"`
+	DisableLocksmithD   *bool `json:"disableLocksmithD"`
+	DisableUpdateEngine *bool `json:"disableUpdateEngine"`
 }
 
 func (c *Config) updateCommonWorkerConfig(workerset *kubeonev1alpha1.WorkerConfig, cfg json.RawMessage) error {
@@ -485,6 +494,18 @@ func (c *Config) updateCommonWorkerConfig(workerset *kubeonev1alpha1.WorkerConfi
 	if cc.OperatingSystemSpec.DistUpgradeOnBoot != nil {
 		osSpecMap["distUpgradeOnBoot"] = *cc.OperatingSystemSpec.DistUpgradeOnBoot
 	}
+	// CoreOS specific
+	if cc.OperatingSystemSpec.DisableAutoUpdate != nil {
+		osSpecMap["disableAutoUpdate"] = *cc.OperatingSystemSpec.DisableAutoUpdate
+	}
+	// CoreOS specific
+	if cc.OperatingSystemSpec.DisableLocksmithD != nil {
+		osSpecMap["disableLocksmithD"] = *cc.OperatingSystemSpec.DisableLocksmithD
+	}
+	// CoreOS specific
+	if cc.OperatingSystemSpec.DisableUpdateEngine != nil {
+		osSpecMap["disableUpdateEngine"] = *cc.OperatingSystemSpec.DisableUpdateEngine
+	}
 
 	if len(osSpecMap) > 0 {
 		var err error
@@ -492,6 +513,16 @@ func (c *Config) updateCommonWorkerConfig(workerset *kubeonev1alpha1.WorkerConfi
 		if err != nil {
 			return errors.Wrap(err, "unable to update the cloud provider spec")
 		}
+	}
+
+	if cc.Network != nil {
+		workerset.Config.Network.CIDR = cc.Network.CIDR
+		workerset.Config.Network.Gateway = cc.Network.Gateway
+		workerset.Config.Network.DNS.Servers = cc.Network.DNS.Servers
+	}
+
+	if cc.OverwriteCloudConfig != nil {
+		workerset.Config.OverwriteCloudConfig = cc.OverwriteCloudConfig
 	}
 
 	return nil

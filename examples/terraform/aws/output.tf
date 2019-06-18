@@ -61,6 +61,9 @@ output "kubeone_workers" {
       subnetId         = data.aws_subnet.az_a.id
       instanceType     = var.worker_type
       diskSize         = 50
+      diskType         = "gp2"
+      ## Only application if diskType = io1
+      diskIops         = 500
       tags = {
         "kubeone" = "pool1"
       }
