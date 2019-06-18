@@ -172,20 +172,16 @@ resource "openstack_networking_floatingip_associate_v2" "lb" {
   port_id     = openstack_networking_port_v2.lb.id
 }
 
-data "template_file" "lbconfig" {
-  template = file("etc_gobetween.tpl")
-
-  vars = {
-    lb_target1 = openstack_compute_instance_v2.control_plane[0].access_ip_v4
-    lb_target2 = openstack_compute_instance_v2.control_plane[1].access_ip_v4
-    lb_target3 = openstack_compute_instance_v2.control_plane[2].access_ip_v4
-  }
+locals {
+  rendered_lb_config = templatefile("./etc_gobetween.tpl", {
+    lb_targets = openstack_compute_instance_v2.control_plane.*.access_ip_v4,
+  })
 }
 
 resource "null_resource" "lb_config" {
   triggers = {
     cluster_instance_ids = join(",", openstack_compute_instance_v2.control_plane.*.id)
-    config               = data.template_file.lbconfig.rendered
+    config               = rendered_lb_config
   }
 
   connection {
@@ -194,7 +190,7 @@ resource "null_resource" "lb_config" {
   }
 
   provisioner "file" {
-    content     = data.template_file.lbconfig.rendered
+    content     = rendered_lb_config
     destination = "/tmp/gobetween.toml"
   }
 

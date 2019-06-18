@@ -145,20 +145,16 @@ resource "vsphere_virtual_machine" "lb" {
   }
 }
 
-data "template_file" "lbconfig" {
-  template = file("etc_gobetween.tpl")
-
-  vars = {
-    lb_target1 = vsphere_virtual_machine.control_plane[0].default_ip_address
-    lb_target2 = vsphere_virtual_machine.control_plane[1].default_ip_address
-    lb_target3 = vsphere_virtual_machine.control_plane[2].default_ip_address
-  }
+locals {
+  rendered_lb_config = templatefile("./etc_gobetween.tpl", {
+    lb_targets = vsphere_virtual_machine.control_plane.*.default_ip_address,
+  })
 }
 
 resource "null_resource" "lb_config" {
   triggers = {
     cluster_instance_ids = join(",", vsphere_virtual_machine.control_plane.*.id)
-    config               = data.template_file.lbconfig.rendered
+    config               = rendered_lb_config
   }
 
   connection {
@@ -167,7 +163,7 @@ resource "null_resource" "lb_config" {
   }
 
   provisioner "file" {
-    content     = data.template_file.lbconfig.rendered
+    content     = rendered_lb_config
     destination = "/tmp/gobetween.toml"
   }
 

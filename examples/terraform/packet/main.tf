@@ -60,20 +60,16 @@ resource "packet_device" "lb" {
   }
 }
 
-data "template_file" "lbconfig" {
-  template = file("etc_gobetween.tpl")
-
-  vars = {
-    lb_target1 = packet_device.control_plane[0].access_private_ipv4
-    lb_target2 = packet_device.control_plane[1].access_private_ipv4
-    lb_target3 = packet_device.control_plane[2].access_private_ipv4
-  }
+locals {
+  rendered_lb_config = templatefile("./etc_gobetween.tpl", {
+    lb_targets = packet_device.control_plane.*.access_private_ipv4,
+  })
 }
 
 resource "null_resource" "lb_config" {
   triggers = {
     cluster_instance_ids = join(",", packet_device.control_plane.*.id)
-    config               = data.template_file.lbconfig.rendered
+    config               = rendered_lb_config
   }
 
   connection {
@@ -81,7 +77,7 @@ resource "null_resource" "lb_config" {
   }
 
   provisioner "file" {
-    content     = data.template_file.lbconfig.rendered
+    content     = rendered_lb_config
     destination = "/etc/gobetween.toml"
   }
 

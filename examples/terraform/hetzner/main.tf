@@ -61,20 +61,16 @@ resource "hcloud_server" "lb" {
   }
 }
 
-data "template_file" "lbconfig" {
-  template = file("etc_gobetween.tpl")
-
-  vars = {
-    lb_target1 = hcloud_server.control_plane[0].ipv4_address
-    lb_target2 = hcloud_server.control_plane[1].ipv4_address
-    lb_target3 = hcloud_server.control_plane[2].ipv4_address
-  }
+locals {
+  rendered_lb_config = templatefile("./etc_gobetween.tpl", {
+    lb_targets = hcloud_server.control_plane.*.ipv4_address,
+  })
 }
 
 resource "null_resource" "lb_config" {
   triggers = {
     cluster_instance_ids = join(",", hcloud_server.control_plane.*.id)
-    config               = data.template_file.lbconfig.rendered
+    config               = local.rendered_lb_config
   }
 
   connection {
@@ -82,7 +78,7 @@ resource "null_resource" "lb_config" {
   }
 
   provisioner "file" {
-    content     = data.template_file.lbconfig.rendered
+    content     = local.rendered_lb_config
     destination = "/etc/gobetween.toml"
   }
 
