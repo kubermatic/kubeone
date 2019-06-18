@@ -45,13 +45,16 @@ output "kubeone_workers" {
   value = {
     # following outputs will be parsed by kubeone and automatically merged into
     # corresponding (by name) worker definition
-    pool1 = {
+    "${var.cluster_name}-pool1" = {
       replicas        = 1
       sshPublicKeys   = [aws_key_pair.deployer.public_key]
       operatingSystem = var.worker_os
       operatingSystemSpec = {
         distUpgradeOnBoot = false
       }
+      # provider specific fields:
+      # see example under `cloudProviderSpec` section at: 
+      # https://github.com/kubermatic/machine-controller/blob/master/examples/aws-machinedeployment.yaml
       region           = var.aws_region
       ami              = local.ami
       availabilityZone = local.az_a
@@ -66,8 +69,5 @@ output "kubeone_workers" {
       }
     }
   }
-  # provider specific fields:
-  # see example under `cloudProviderSpec` section at: 
-  # https://github.com/kubermatic/machine-controller/blob/master/examples/aws-machinedeployment.yaml
 }
 
