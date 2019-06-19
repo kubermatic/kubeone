@@ -46,23 +46,27 @@ output "kubeone_workers" {
     # following outputs will be parsed by kubeone and automatically merged into
     # corresponding (by name) worker definition
     "${var.cluster_name}-pool1" = {
-      replicas        = 1
-      sshPublicKeys   = [file(var.ssh_public_key_file)]
-      operatingSystem = var.worker_os
-      operatingSystemSpec = {
-        distUpgradeOnBoot = false
-      }
-      # provider specific fields:
-      # see example under `cloudProviderSpec` section at: 
-      # https://github.com/kubermatic/machine-controller/blob/master/examples/openstack-machinedeployment.yaml
-      image          = var.image
-      flavor         = var.worker_flavor
-      securityGroups = [openstack_networking_secgroup_v2.securitygroup.name]
-      floatingIPPool = var.external_network_name
-      network        = openstack_networking_network_v2.network.name
-      subnet         = openstack_networking_subnet_v2.subnet.name
-      tags = {
-        "kubeone" = "worker"
+      replicas = 1
+      providerSpec = {
+        sshPublicKeys   = [file(var.ssh_public_key_file)]
+        operatingSystem = var.worker_os
+        operatingSystemSpec = {
+          distUpgradeOnBoot = false
+        }
+        cloudProviderSpec = {
+          # provider specific fields:
+          # see example under `cloudProviderSpec` section at:
+          # https://github.com/kubermatic/machine-controller/blob/master/examples/openstack-machinedeployment.yaml
+          image          = var.image
+          flavor         = var.worker_flavor
+          securityGroups = [openstack_networking_secgroup_v2.securitygroup.name]
+          floatingIPPool = var.external_network_name
+          network        = openstack_networking_network_v2.network.name
+          subnet         = openstack_networking_subnet_v2.subnet.name
+          tags = {
+            "${var.cluster_name}-workers" = "pool1"
+          }
+        }
       }
     }
   }

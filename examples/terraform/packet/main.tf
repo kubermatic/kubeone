@@ -36,7 +36,7 @@ resource "packet_device" "control_plane" {
   operating_system = var.control_plane_operating_system
   billing_cycle    = "hourly"
   project_id       = var.project_id
-  tags = [local.kube_cluster_tag]
+  tags             = [local.kube_cluster_tag]
 }
 
 resource "packet_device" "lb" {
@@ -48,7 +48,7 @@ resource "packet_device" "lb" {
   operating_system = var.lb_operating_system
   billing_cycle    = "hourly"
   project_id       = var.project_id
-  tags = [local.kube_cluster_tag]
+  tags             = [local.kube_cluster_tag]
 
   connection {
     type = "ssh"

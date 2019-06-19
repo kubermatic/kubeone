@@ -45,20 +45,23 @@ output "kubeone_workers" {
   value = {
     # following outputs will be parsed by kubeone and automatically merged into
     # corresponding (by name) worker definition
-    pool1 = {
-      replicas        = 1
-      sshPublicKeys   = [file(var.ssh_public_key_file)]
-      operatingSystem = var.worker_os
-      operatingSystemSpec = {
-        distUpgradeOnBoot = false
+    "${var.cluster_name}-pool1" = {
+      replicas = 1
+      providerSpec = {
+        sshPublicKeys   = [file(var.ssh_public_key_file)]
+        operatingSystem = var.worker_os
+        operatingSystemSpec = {
+          distUpgradeOnBoot = false
+        }
+        cloudProviderSpec = {
+          # provider specific fields:
+          # see example under `cloudProviderSpec` section at: 
+          # https://github.com/kubermatic/machine-controller/blob/master/examples/packet-machinedeployment.yaml
+          projectID    = var.project_id
+          facilities   = [var.facility]
+          instanceType = var.device_type
+        }
       }
-      projectID    = var.project_id
-      facilities   = [var.facility]
-      instanceType = var.device_type
     }
   }
-  # provider specific fields:
-  # see example under `cloudProviderSpec` section at: 
-  # https://github.com/kubermatic/machine-controller/blob/master/examples/packet-machinedeployment.yaml
 }
-

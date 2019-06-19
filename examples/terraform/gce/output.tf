@@ -46,28 +46,32 @@ output "kubeone_workers" {
     # following outputs will be parsed by kubeone and automatically merged into
     # corresponding (by name) worker definition
     "${var.cluster_name}-pool1" = {
-      replicas        = 1
-      sshPublicKeys   = [file(var.ssh_public_key_file)]
-      operatingSystem = var.worker_os
-      operatingSystemSpec = {
-        distUpgradeOnBoot = false
+      replicas = 1
+      providerSpec = {
+        sshPublicKeys   = [file(var.ssh_public_key_file)]
+        operatingSystem = var.worker_os
+        operatingSystemSpec = {
+          distUpgradeOnBoot = false
+        }
+        cloudProviderSpec = {
+          # provider specific fields:
+          # see example under `cloudProviderSpec` section at:
+          # https://github.com/kubermatic/machine-controller/blob/master/examples/gce-machinedeployment.yaml
+          diskSize              = 50
+          diskType              = "pd-ssd"
+          machineType           = var.workers_type
+          network               = google_compute_network.network.self_link
+          subnetwork            = google_compute_subnetwork.subnet.self_link
+          zone                  = "${var.region}-a"
+          preemptible           = false
+          assignPublicIPAddress = true
+          labels = {
+            "${var.cluster_name}-workers" = "pool1"
+          }
+          tags     = ["firewall", "targets"]
+          regional = false
+        }
       }
-      # provider specific fields:
-      # see example under `cloudProviderSpec` section at: 
-      # https://github.com/kubermatic/machine-controller/blob/master/examples/gce-machinedeployment.yaml
-      diskSize              = 50
-      diskType              = "pd-ssd"
-      machineType           = var.workers_type
-      network               = google_compute_network.network.self_link
-      subnetwork            = google_compute_subnetwork.subnet.self_link
-      zone                  = "${var.region}-a"
-      preemptible           = false
-      assignPublicIPAddress = true
-      labels = {
-        "kubeone" = "workers"
-      }
-      tags     = ["firewall", "targets"]
-      regional = false
     }
   }
 }
