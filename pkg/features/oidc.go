@@ -17,28 +17,24 @@ limitations under the License.
 package features
 
 import (
-	kubeadmv1beta1 "github.com/kubermatic/kubeone/pkg/apis/kubeadm/v1beta1"
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/kubeadmargs"
 )
 
-func activateKubeadmOIDC(feature *kubeoneapi.OpenIDConnect, cfg *kubeadmv1beta1.ClusterConfiguration) {
+func activateKubeadmOIDC(feature *kubeoneapi.OpenIDConnect, args *kubeadmargs.Args) {
 	if feature == nil || !feature.Enable {
 		return
 	}
 
-	if cfg.APIServer.ExtraArgs == nil {
-		cfg.APIServer.ExtraArgs = map[string]string{}
-	}
-
-	cfg.APIServer.ExtraArgs["oidc-issuer-url"] = feature.Config.IssuerURL
-	cfg.APIServer.ExtraArgs["oidc-client-id"] = feature.Config.ClientID
-	optionalMapSet(cfg.APIServer.ExtraArgs, "oidc-username-claim", feature.Config.UsernameClaim)
-	optionalMapSet(cfg.APIServer.ExtraArgs, "oidc-username-prefix", feature.Config.UsernamePrefix)
-	optionalMapSet(cfg.APIServer.ExtraArgs, "oidc-groups-claim", feature.Config.GroupsClaim)
-	optionalMapSet(cfg.APIServer.ExtraArgs, "oidc-groups-prefix", feature.Config.GroupsPrefix)
-	optionalMapSet(cfg.APIServer.ExtraArgs, "oidc-required-claim", feature.Config.RequiredClaim)
-	optionalMapSet(cfg.APIServer.ExtraArgs, "oidc-signing-algs", feature.Config.SigningAlgs)
-	optionalMapSet(cfg.APIServer.ExtraArgs, "oidc-ca-file", feature.Config.CAFile)
+	args.APIServer.ExtraArgs["oidc-issuer-url"] = feature.Config.IssuerURL
+	args.APIServer.ExtraArgs["oidc-client-id"] = feature.Config.ClientID
+	optionalMapSet(args.APIServer.ExtraArgs, "oidc-username-claim", feature.Config.UsernameClaim)
+	optionalMapSet(args.APIServer.ExtraArgs, "oidc-username-prefix", feature.Config.UsernamePrefix)
+	optionalMapSet(args.APIServer.ExtraArgs, "oidc-groups-claim", feature.Config.GroupsClaim)
+	optionalMapSet(args.APIServer.ExtraArgs, "oidc-groups-prefix", feature.Config.GroupsPrefix)
+	optionalMapSet(args.APIServer.ExtraArgs, "oidc-required-claim", feature.Config.RequiredClaim)
+	optionalMapSet(args.APIServer.ExtraArgs, "oidc-signing-algs", feature.Config.SigningAlgs)
+	optionalMapSet(args.APIServer.ExtraArgs, "oidc-ca-file", feature.Config.CAFile)
 }
 
 func optionalMapSet(m map[string]string, key string, val string) {

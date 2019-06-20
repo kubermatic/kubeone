@@ -41,7 +41,7 @@ func upgradeLeaderControlPlane(ctx *util.Context) error {
 	}
 
 	_, _, err = ctx.Runner.Run(kubeadmUpgradeLeaderCommand, util.TemplateVariables{
-		"KUBEADM_UPGRADE": kadm.UpgradeLeaderCMD(),
+		"KUBEADM_UPGRADE": kadm.UpgradeLeaderCommand(),
 		"VERSION":         ctx.Cluster.Versions.Kubernetes,
 		"WORK_DIR":        ctx.WorkDir,
 	})
@@ -56,7 +56,7 @@ func upgradeFollowerControlPlane(ctx *util.Context) error {
 	}
 
 	_, _, err = ctx.Runner.Run(kubeadmUpgradeFollowerCommand, util.TemplateVariables{
-		"KUBEADM_UPGRADE": kadm.UpgradeFollowerCMD(),
+		"KUBEADM_UPGRADE": kadm.UpgradeFollowerCommand(),
 	})
 	return err
 }

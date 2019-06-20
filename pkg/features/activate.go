@@ -19,8 +19,8 @@ package features
 import (
 	"github.com/pkg/errors"
 
-	kubeadmv1beta1 "github.com/kubermatic/kubeone/pkg/apis/kubeadm/v1beta1"
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/kubeadmargs"
 	"github.com/kubermatic/kubeone/pkg/util"
 )
 
@@ -40,8 +40,8 @@ func Activate(ctx *util.Context) error {
 
 // UpdateKubeadmClusterConfiguration update additional config options in the kubeadm's
 // v1beta1.ClusterConfiguration according to enabled features
-func UpdateKubeadmClusterConfiguration(featuresCfg kubeoneapi.Features, clusterConfig *kubeadmv1beta1.ClusterConfiguration) {
-	activateKubeadmPSP(featuresCfg.PodSecurityPolicy, clusterConfig)
-	activateKubeadmDynamicAuditLogs(featuresCfg.DynamicAuditLog, clusterConfig)
-	activateKubeadmOIDC(featuresCfg.OpenIDConnect, clusterConfig)
+func UpdateKubeadmClusterConfiguration(featuresCfg kubeoneapi.Features, args *kubeadmargs.Args) {
+	activateKubeadmPSP(featuresCfg.PodSecurityPolicy, args)
+	activateKubeadmDynamicAuditLogs(featuresCfg.DynamicAuditLog, args)
+	activateKubeadmOIDC(featuresCfg.OpenIDConnect, args)
 }

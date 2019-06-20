@@ -17,9 +17,9 @@ limitations under the License.
 package kubeadm
 
 import (
-	"github.com/pkg/errors"
-
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/templates"
+	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/v1beta2"
 	"github.com/kubermatic/kubeone/pkg/util"
 )
 
@@ -28,7 +28,12 @@ type kubeadmv1beta2 struct {
 }
 
 func (*kubeadmv1beta2) Config(ctx *util.Context, instance kubeoneapi.HostConfig) (string, error) {
-	return "", errors.New("kubeadm v1beta2 not implemented")
+	config, err := v1beta2.NewConfig(ctx, instance)
+	if err != nil {
+		return "", err
+	}
+
+	return templates.KubernetesToYAML(config)
 }
 
 func (*kubeadmv1beta2) UpgradeFollowerCMD() string {

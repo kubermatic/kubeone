@@ -30,19 +30,20 @@ var (
 	v15x = mustParseConstraint("1.15.x")
 )
 
-// KubeADM interface abstract differences between different kubeadm versions
-type KubeADM interface {
+// Kubedm interface abstract differences between different kubeadm versions
+type Kubedm interface {
 	Config(ctx *util.Context, instance kubeoneapi.HostConfig) (string, error)
-	UpgradeLeaderCMD() string
-	UpgradeFollowerCMD() string
+	UpgradeLeaderCommand() string
+	UpgradeFollowerCommand() string
 }
 
 // New constructor
-func New(ver string) (KubeADM, error) {
+func New(ver string) (Kubedm, error) {
 	sver, err := semver.NewVersion(ver)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse version")
 	}
+
 	switch {
 	case v13x.Check(sver):
 		return &kubeadmv1beta1{}, nil

@@ -17,8 +17,8 @@ limitations under the License.
 package features
 
 import (
-	kubeadmv1beta1 "github.com/kubermatic/kubeone/pkg/apis/kubeadm/v1beta1"
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/kubeadmargs"
 )
 
 const (
@@ -27,25 +27,12 @@ const (
 	auditRegistrationAPI          = "auditregistration.k8s.io/v1alpha1=true"
 )
 
-func activateKubeadmDynamicAuditLogs(feature *kubeoneapi.DynamicAuditLog, clusterConfig *kubeadmv1beta1.ClusterConfiguration) {
+func activateKubeadmDynamicAuditLogs(feature *kubeoneapi.DynamicAuditLog, args *kubeadmargs.Args) {
 	if feature == nil || !feature.Enable {
 		return
 	}
 
-	if clusterConfig.APIServer.ExtraArgs == nil {
-		clusterConfig.APIServer.ExtraArgs = make(map[string]string)
-	}
-
-	clusterConfig.APIServer.ExtraArgs[auditDynamicConfigurationFlag] = "true"
-
-	if _, ok := clusterConfig.APIServer.ExtraArgs[runtimeConfigFlag]; ok {
-		clusterConfig.APIServer.ExtraArgs[runtimeConfigFlag] += "," + auditRegistrationAPI
-	} else {
-		clusterConfig.APIServer.ExtraArgs[runtimeConfigFlag] = auditRegistrationAPI
-	}
-
-	if clusterConfig.FeatureGates == nil {
-		clusterConfig.FeatureGates = map[string]bool{}
-	}
-	clusterConfig.FeatureGates["DynamicAuditing"] = true
+	args.APIServer.ExtraArgs[auditDynamicConfigurationFlag] = "true"
+	args.APIServer.AppendMapStringStringExtraArg(runtimeConfigFlag, auditRegistrationAPI)
+	args.FeatureGates["DynamicAuditing"] = true
 }
