@@ -46,7 +46,7 @@ func TestClusterConformance(t *testing.T) {
 			provider:              provisioner.AWS,
 			providerExternal:      false,
 			scenario:              NodeConformance,
-			configFilePath:        "../../test/e2e/testdata/config_aws_1.14.3.yaml",
+			configFilePath:        "../../test/e2e/testdata/config_aws.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
 		},
 		{
@@ -54,7 +54,7 @@ func TestClusterConformance(t *testing.T) {
 			provider:              provisioner.DigitalOcean,
 			providerExternal:      true,
 			scenario:              NodeConformance,
-			configFilePath:        "../../test/e2e/testdata/config_do_1.14.3.yaml",
+			configFilePath:        "../../test/e2e/testdata/config_do.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
 		},
 		{
@@ -62,7 +62,7 @@ func TestClusterConformance(t *testing.T) {
 			provider:              provisioner.Hetzner,
 			providerExternal:      true,
 			scenario:              NodeConformance,
-			configFilePath:        "../../test/e2e/testdata/config_hetzner_1.14.3.yaml",
+			configFilePath:        "../../test/e2e/testdata/config_hetzner.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
 		},
 		{
@@ -70,7 +70,7 @@ func TestClusterConformance(t *testing.T) {
 			provider:              provisioner.GCE,
 			providerExternal:      false,
 			scenario:              NodeConformance,
-			configFilePath:        "../../test/e2e/testdata/config_gce_1.14.3.yaml",
+			configFilePath:        "../../test/e2e/testdata/config_gce.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
 		},
 		{
@@ -78,7 +78,7 @@ func TestClusterConformance(t *testing.T) {
 			provider:              provisioner.Packet,
 			providerExternal:      true,
 			scenario:              NodeConformance,
-			configFilePath:        "../../test/e2e/testdata/config_packet_1.14.3.yaml",
+			configFilePath:        "../../test/e2e/testdata/config_packet.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
 		},
 	}

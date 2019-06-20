@@ -57,40 +57,40 @@ func TestClusterUpgrade(t *testing.T) {
 			name:                  "upgrade k8s cluster on AWS",
 			provider:              provisioner.AWS,
 			providerExternal:      false,
-			initialConfigPath:     "../../test/e2e/testdata/config_aws_1.13.7.yaml",
-			targetConfigPath:      "../../test/e2e/testdata/config_aws_1.14.3.yaml",
+			initialConfigPath:     "../../test/e2e/testdata/config_aws_initial.yaml",
+			targetConfigPath:      "../../test/e2e/testdata/config_aws_target.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
 		},
 		{
 			name:                  "upgrade k8s cluster on DO",
 			provider:              provisioner.DigitalOcean,
 			providerExternal:      true,
-			initialConfigPath:     "../../test/e2e/testdata/config_do_1.13.7.yaml",
-			targetConfigPath:      "../../test/e2e/testdata/config_do_1.14.3.yaml",
+			initialConfigPath:     "../../test/e2e/testdata/config_do_initial.yaml",
+			targetConfigPath:      "../../test/e2e/testdata/config_do_target.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
 		},
 		{
 			name:                  "upgrade k8s cluster on Hetzner",
 			provider:              provisioner.Hetzner,
 			providerExternal:      true,
-			initialConfigPath:     "../../test/e2e/testdata/config_hetzner_1.13.7.yaml",
-			targetConfigPath:      "../../test/e2e/testdata/config_hetzner_1.14.3.yaml",
+			initialConfigPath:     "../../test/e2e/testdata/config_hetzner_initial.yaml",
+			targetConfigPath:      "../../test/e2e/testdata/config_hetzner_target.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
 		},
 		{
-			name:                  "upgrade k8s cluster to 1.14.3 on GCE",
+			name:                  "upgrade k8s cluster on GCE",
 			provider:              provisioner.GCE,
 			providerExternal:      false,
-			initialConfigPath:     "../../test/e2e/testdata/config_gce_1.13.7.yaml",
-			targetConfigPath:      "../../test/e2e/testdata/config_gce_1.14.3.yaml",
+			initialConfigPath:     "../../test/e2e/testdata/config_gce_initial.yaml",
+			targetConfigPath:      "../../test/e2e/testdata/config_gce_target.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
 		},
 		{
 			name:                  "upgrade k8s cluster on Packet",
 			provider:              provisioner.Packet,
 			providerExternal:      true,
-			initialConfigPath:     "../../test/e2e/testdata/config_packet_1.13.7.yaml",
-			targetConfigPath:      "../../test/e2e/testdata/config_packet_1.14.3.yaml",
+			initialConfigPath:     "../../test/e2e/testdata/config_packet_initial.yaml",
+			targetConfigPath:      "../../test/e2e/testdata/config_packet_target.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
 		},
 	}
