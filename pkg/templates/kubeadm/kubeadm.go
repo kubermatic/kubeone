@@ -17,31 +17,51 @@ limitations under the License.
 package kubeadm
 
 import (
+	"github.com/Masterminds/semver"
 	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/templates"
-	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/v1beta1"
 	"github.com/kubermatic/kubeone/pkg/util"
 )
 
-// Config returns appropriate version of kubeadm config as YAML
-func Config(ctx *util.Context, instance kubeoneapi.HostConfig) (string, error) {
-	cluster := ctx.Cluster
-	masterNodes := cluster.Hosts
-	if len(masterNodes) == 0 {
-		return "", errors.New("cluster does not contain at least one master node")
-	}
+var (
+	v13x = mustParseConstraint("1.13.x")
+	v14x = mustParseConstraint("1.14.x")
+	v15x = mustParseConstraint("1.15.x")
+)
 
-	configs, err := v1beta1.NewConfig(ctx, instance)
+// Kubedm interface abstract differences between different kubeadm versions
+type Kubedm interface {
+	Config(ctx *util.Context, instance kubeoneapi.HostConfig) (string, error)
+	UpgradeLeaderCommand() string
+	UpgradeFollowerCommand() string
+}
+
+// New constructor
+func New(ver string) (Kubedm, error) {
+	sver, err := semver.NewVersion(ver)
 	if err != nil {
-		return "", err
+		return nil, errors.Wrap(err, "failed to parse version")
 	}
 
-	//TODO: Change KubernetesToYAML to accept runtime.Object instead of empty interface
-	var kubernetesToYAMLInput []interface{}
-	for _, config := range configs {
-		kubernetesToYAMLInput = append(kubernetesToYAMLInput, interface{}(config))
+	switch {
+	case v13x.Check(sver):
+		return &kubeadmv1beta1{}, nil
+	case v14x.Check(sver):
+		return &kubeadmv1beta1{}, nil
+	case v15x.Check(sver):
+		return &kubeadmv1beta2{}, nil
 	}
-	return templates.KubernetesToYAML(kubernetesToYAMLInput)
+
+	// By default use latest known kubeadm API version
+	return &kubeadmv1beta2{}, nil
+}
+
+func mustParseConstraint(constraint string) *semver.Constraints {
+	c, err := semver.NewConstraint(constraint)
+	if err != nil {
+		panic(err)
+	}
+
+	return c
 }

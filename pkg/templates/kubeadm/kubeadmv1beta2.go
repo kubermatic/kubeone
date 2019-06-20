@@ -14,32 +14,28 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package upgrade
+package kubeadm
 
 import (
-	"github.com/pkg/errors"
-
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/kubermatic/kubeone/pkg/templates/kubeadm"
+	"github.com/kubermatic/kubeone/pkg/templates"
+	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/v1beta2"
 	"github.com/kubermatic/kubeone/pkg/util"
 )
 
-func generateKubeadmConfig(ctx *util.Context, node kubeoneapi.HostConfig) error {
-	kadm, err := kubeadm.New(ctx.Cluster.Versions.Kubernetes)
-	if err != nil {
-		return errors.Wrap(err, "failed to init kubeadm")
-	}
-
-	kubeadmConf, err := kadm.Config(ctx, node)
-	if err != nil {
-		return errors.Wrap(err, "failed to create kubeadm configuration")
-	}
-
-	ctx.Configuration.AddFile("cfg/master_0.yaml", kubeadmConf)
-	return nil
+type kubeadmv1beta2 struct {
+	kubeadmv1beta1
 }
 
-func uploadKubeadmConfig(ctx *util.Context, sshConn ssh.Connection) error {
-	return errors.Wrap(ctx.Configuration.UploadTo(sshConn, ctx.WorkDir), "failed to upload")
+func (*kubeadmv1beta2) Config(ctx *util.Context, instance kubeoneapi.HostConfig) (string, error) {
+	config, err := v1beta2.NewConfig(ctx, instance)
+	if err != nil {
+		return "", err
+	}
+
+	return templates.KubernetesToYAML(config)
+}
+
+func (*kubeadmv1beta2) UpgradeFollowerCMD() string {
+	return "kubeadm upgrade node control-plane"
 }

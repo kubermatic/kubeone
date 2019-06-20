@@ -30,8 +30,13 @@ import (
 func generateKubeadm(ctx *util.Context) error {
 	ctx.Logger.Infoln("Generating kubeadm config file…")
 
+	kadm, err := kubeadm.New(ctx.Cluster.Versions.Kubernetes)
+	if err != nil {
+		return errors.Wrap(err, "failed to init kubeadm")
+	}
+
 	for idx := range ctx.Cluster.Hosts {
-		kubeadm, err := kubeadm.Config(ctx, ctx.Cluster.Hosts[idx])
+		kubeadm, err := kadm.Config(ctx, ctx.Cluster.Hosts[idx])
 		if err != nil {
 			return errors.Wrap(err, "failed to create kubeadm configuration")
 		}

@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package v1beta1
+package v1beta2
 
 import (
 	"fmt"
@@ -23,7 +23,7 @@ import (
 	"github.com/Masterminds/semver"
 	"github.com/pkg/errors"
 
-	kubeadmv1beta1 "github.com/kubermatic/kubeone/pkg/apis/kubeadm/v1beta1"
+	kubeadmv1beta2 "github.com/kubermatic/kubeone/pkg/apis/kubeadm/v1beta2"
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/features"
 	"github.com/kubermatic/kubeone/pkg/kubeflags"
@@ -36,7 +36,7 @@ import (
 	bootstraputil "k8s.io/cluster-bootstrap/token/util"
 )
 
-// NewConfig returns all required configs to init a cluster via a set of v1beta1 configs
+// NewConfig returns all required configs to init a cluster via a set of v1beta2 configs
 func NewConfig(ctx *util.Context, host kubeoneapi.HostConfig) ([]runtime.Object, error) {
 	cluster := ctx.Cluster
 	kubeSemVer, err := semver.NewVersion(cluster.Versions.Kubernetes)
@@ -49,7 +49,7 @@ func NewConfig(ctx *util.Context, host kubeoneapi.HostConfig) ([]runtime.Object,
 		nodeIP = host.PublicAddress
 	}
 
-	nodeRegistration := kubeadmv1beta1.NodeRegistrationOptions{
+	nodeRegistration := kubeadmv1beta2.NodeRegistrationOptions{
 		Name: host.Hostname,
 		KubeletExtraArgs: map[string]string{
 			"anonymous-auth":      "false",
@@ -67,36 +67,36 @@ func NewConfig(ctx *util.Context, host kubeoneapi.HostConfig) ([]runtime.Object,
 		ctx.JoinToken = tokenStr
 	}
 
-	bootstrapToken, err := kubeadmv1beta1.NewBootstrapTokenString(ctx.JoinToken)
+	bootstrapToken, err := kubeadmv1beta2.NewBootstrapTokenString(ctx.JoinToken)
 	if err != nil {
 		return nil, err
 	}
 
 	controlPlaneEndpoint := fmt.Sprintf("%s:%d", cluster.APIEndpoint.Host, cluster.APIEndpoint.Port)
 
-	initConfig := &kubeadmv1beta1.InitConfiguration{
+	initConfig := &kubeadmv1beta2.InitConfiguration{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "kubeadm.k8s.io/v1beta1",
 			Kind:       "InitConfiguration",
 		},
-		BootstrapTokens: []kubeadmv1beta1.BootstrapToken{{Token: bootstrapToken}},
-		LocalAPIEndpoint: kubeadmv1beta1.APIEndpoint{
+		BootstrapTokens: []kubeadmv1beta2.BootstrapToken{{Token: bootstrapToken}},
+		LocalAPIEndpoint: kubeadmv1beta2.APIEndpoint{
 			AdvertiseAddress: nodeIP,
 		},
 	}
 
-	joinConfig := &kubeadmv1beta1.JoinConfiguration{
+	joinConfig := &kubeadmv1beta2.JoinConfiguration{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "kubeadm.k8s.io/v1beta1",
 			Kind:       "JoinConfiguration",
 		},
-		ControlPlane: &kubeadmv1beta1.JoinControlPlane{
-			LocalAPIEndpoint: kubeadmv1beta1.APIEndpoint{
+		ControlPlane: &kubeadmv1beta2.JoinControlPlane{
+			LocalAPIEndpoint: kubeadmv1beta2.APIEndpoint{
 				AdvertiseAddress: nodeIP,
 			},
 		},
-		Discovery: kubeadmv1beta1.Discovery{
-			BootstrapToken: &kubeadmv1beta1.BootstrapTokenDiscovery{
+		Discovery: kubeadmv1beta2.Discovery{
+			BootstrapToken: &kubeadmv1beta2.BootstrapTokenDiscovery{
 				Token:                    ctx.JoinToken,
 				APIServerEndpoint:        controlPlaneEndpoint,
 				UnsafeSkipCAVerification: true,
@@ -104,39 +104,39 @@ func NewConfig(ctx *util.Context, host kubeoneapi.HostConfig) ([]runtime.Object,
 		},
 	}
 
-	clusterConfig := &kubeadmv1beta1.ClusterConfiguration{
+	clusterConfig := &kubeadmv1beta2.ClusterConfiguration{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "kubeadm.k8s.io/v1beta1",
 			Kind:       "ClusterConfiguration",
 		},
-		Networking: kubeadmv1beta1.Networking{
+		Networking: kubeadmv1beta2.Networking{
 			PodSubnet:     cluster.ClusterNetwork.PodSubnet,
 			ServiceSubnet: cluster.ClusterNetwork.ServiceSubnet,
 			DNSDomain:     cluster.ClusterNetwork.ServiceDomainName,
 		},
 		KubernetesVersion:    cluster.Versions.Kubernetes,
 		ControlPlaneEndpoint: controlPlaneEndpoint,
-		APIServer: kubeadmv1beta1.APIServer{
-			ControlPlaneComponent: kubeadmv1beta1.ControlPlaneComponent{
+		APIServer: kubeadmv1beta2.APIServer{
+			ControlPlaneComponent: kubeadmv1beta2.ControlPlaneComponent{
 				ExtraArgs: map[string]string{
 					"endpoint-reconciler-type": "lease",
 					"service-node-port-range":  cluster.ClusterNetwork.NodePortRange,
 					"enable-admission-plugins": kubeflags.DefaultAdmissionControllers(kubeSemVer),
 				},
-				ExtraVolumes: []kubeadmv1beta1.HostPathMount{},
+				ExtraVolumes: []kubeadmv1beta2.HostPathMount{},
 			},
 			CertSANs: []string{strings.ToLower(cluster.APIEndpoint.Host)},
 		},
-		ControllerManager: kubeadmv1beta1.ControlPlaneComponent{
+		ControllerManager: kubeadmv1beta2.ControlPlaneComponent{
 			ExtraArgs:    map[string]string{},
-			ExtraVolumes: []kubeadmv1beta1.HostPathMount{},
+			ExtraVolumes: []kubeadmv1beta2.HostPathMount{},
 		},
 		ClusterName: cluster.Name,
 	}
 
 	if cluster.CloudProvider.CloudProviderInTree() {
 		renderedCloudConfig := "/etc/kubernetes/cloud-config"
-		cloudConfigVol := kubeadmv1beta1.HostPathMount{
+		cloudConfigVol := kubeadmv1beta2.HostPathMount{
 			Name:      "cloud-config",
 			HostPath:  renderedCloudConfig,
 			MountPath: renderedCloudConfig,
