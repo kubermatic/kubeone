@@ -24,7 +24,8 @@ BUILD_ID=${BUILD_ID:-"${USER}-local"}
 PROVIDER=${PROVIDER:-"aws"}
 TERRAFORM_VERSION=${TERRAFORM_VERSION:-"0.12.2"}
 TEST_SET=${TEST_SET:-"conformance"}
-TEST_CLUSTER_TARGET_VERSION=${TEST_CLUSTER_VERSION:-"1.14.1"}
+TEST_CLUSTER_TARGET_VERSION=${TEST_CLUSTER_TARGET_VERSION:-""}
+TEST_CLUSTER_INITIAL_VERSION=${TEST_CLUSTER_INITIAL_VERSION:-""}
 export TF_VAR_cluster_name=${BUILD_ID}
 
 # Install dependencies
@@ -153,7 +154,8 @@ function runE2E() {
     ./test/e2e/... \
     -identifier=${BUILD_ID} \
     -provider=${PROVIDER} \
-    -cluster-version=${TEST_CLUSTER_TARGET_VERSION}
+    -target-version=${TEST_CLUSTER_TARGET_VERSION} \
+    -initial-version=${TEST_CLUSTER_INITIAL_VERSION}
 }
 
 # Start the tests

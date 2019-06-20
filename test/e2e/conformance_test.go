@@ -37,52 +37,46 @@ func TestClusterConformance(t *testing.T) {
 		name                  string
 		provider              string
 		providerExternal      bool
-		kubernetesVersion     string
 		scenario              string
 		configFilePath        string
 		expectedNumberOfNodes int
 	}{
 		{
-			name:                  "verify k8s 1.14.3 cluster deployment on AWS",
+			name:                  "verify k8s cluster deployment on AWS",
 			provider:              provisioner.AWS,
 			providerExternal:      false,
-			kubernetesVersion:     "1.14.3",
 			scenario:              NodeConformance,
 			configFilePath:        "../../test/e2e/testdata/config_aws_1.14.3.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
 		},
 		{
-			name:                  "verify k8s 1.14.3 cluster deployment on DO",
+			name:                  "verify k8s cluster deployment on DO",
 			provider:              provisioner.DigitalOcean,
 			providerExternal:      true,
-			kubernetesVersion:     "1.14.3",
 			scenario:              NodeConformance,
 			configFilePath:        "../../test/e2e/testdata/config_do_1.14.3.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
 		},
 		{
-			name:                  "verify k8s 1.14.3 cluster deployment on Hetzner",
+			name:                  "verify k8s cluster deployment on Hetzner",
 			provider:              provisioner.Hetzner,
 			providerExternal:      true,
-			kubernetesVersion:     "1.14.3",
 			scenario:              NodeConformance,
 			configFilePath:        "../../test/e2e/testdata/config_hetzner_1.14.3.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
 		},
 		{
-			name:                  "verify k8s 1.14.3 cluster deployment on GCE",
+			name:                  "verify k8s cluster deployment on GCE",
 			provider:              provisioner.GCE,
 			providerExternal:      false,
-			kubernetesVersion:     "1.14.3",
 			scenario:              NodeConformance,
 			configFilePath:        "../../test/e2e/testdata/config_gce_1.14.3.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
 		},
 		{
-			name:                  "verify k8s 1.14.3 cluster deployment on Packet",
+			name:                  "verify k8s cluster deployment on Packet",
 			provider:              provisioner.Packet,
 			providerExternal:      true,
-			kubernetesVersion:     "1.14.3",
 			scenario:              NodeConformance,
 			configFilePath:        "../../test/e2e/testdata/config_packet_1.14.3.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
@@ -96,14 +90,15 @@ func TestClusterConformance(t *testing.T) {
 			// Only run selected test suite.
 			// Test options are controlled using flags.
 			if len(testRunIdentifier) == 0 {
-				t.Fatalf("-identifier must be set")
+				t.Fatal("-identifier must be set")
+			}
+			if len(testTargetVersion) == 0 {
+				t.Fatal("-target-version must be set")
 			}
 			if testProvider != tc.provider {
 				t.SkipNow()
 			}
-			if testClusterVersion != tc.kubernetesVersion {
-				t.SkipNow()
-			}
+			t.Logf("Running conformance tests for Kubernetes v%s…", testTargetVersion)
 
 			// Create provisioner
 			testPath := fmt.Sprintf("../../_build/%s", testRunIdentifier)
@@ -114,7 +109,7 @@ func TestClusterConformance(t *testing.T) {
 
 			// Create KubeOne target and prepare kubetest
 			target := NewKubeone(testPath, tc.configFilePath)
-			clusterVerifier := NewKubetest(tc.kubernetesVersion, "../../_build", map[string]string{
+			clusterVerifier := NewKubetest(testTargetVersion, "../../_build", map[string]string{
 				"KUBERNETES_CONFORMANCE_TEST": "y",
 			})
 
@@ -127,7 +122,7 @@ func TestClusterConformance(t *testing.T) {
 
 			// Create configuration manifest
 			t.Log("Creating KubeOneCluster manifest…")
-			err = target.CreateConfig(tc.kubernetesVersion, tc.provider, tc.providerExternal)
+			err = target.CreateConfig(testTargetVersion, tc.provider, tc.providerExternal)
 			if err != nil {
 				t.Fatalf("failed to create KubeOneCluster manifest: %v", err)
 			}
@@ -188,7 +183,7 @@ func TestClusterConformance(t *testing.T) {
 				t.Fatalf("failed to bring up all nodes up: %v", err)
 			}
 			t.Log("Verifying cluster version…")
-			err = verifyVersion(client, metav1.NamespaceSystem, tc.kubernetesVersion)
+			err = verifyVersion(client, metav1.NamespaceSystem, testTargetVersion)
 			if err != nil {
 				t.Fatalf("version mismatch: %v", err)
 			}
