@@ -49,60 +49,48 @@ func TestClusterUpgrade(t *testing.T) {
 		name                  string
 		provider              string
 		providerExternal      bool
-		initialVersion        string
-		targetVersion         string
 		initialConfigPath     string
 		targetConfigPath      string
 		expectedNumberOfNodes int
 	}{
 		{
-			name:                  "upgrade k8s 1.13.7 cluster to 1.14.3 on AWS",
+			name:                  "upgrade k8s cluster on AWS",
 			provider:              provisioner.AWS,
 			providerExternal:      false,
-			initialVersion:        "1.13.7",
-			targetVersion:         "1.14.3",
-			initialConfigPath:     "../../test/e2e/testdata/config_aws_1.13.7.yaml",
-			targetConfigPath:      "../../test/e2e/testdata/config_aws_1.14.3.yaml",
+			initialConfigPath:     "../../test/e2e/testdata/config_aws_initial.yaml",
+			targetConfigPath:      "../../test/e2e/testdata/config_aws_target.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
 		},
 		{
-			name:                  "upgrade k8s 1.13.7 cluster to 1.14.3 on DO",
+			name:                  "upgrade k8s cluster on DO",
 			provider:              provisioner.DigitalOcean,
 			providerExternal:      true,
-			initialVersion:        "1.13.7",
-			targetVersion:         "1.14.3",
-			initialConfigPath:     "../../test/e2e/testdata/config_do_1.13.7.yaml",
-			targetConfigPath:      "../../test/e2e/testdata/config_do_1.14.3.yaml",
+			initialConfigPath:     "../../test/e2e/testdata/config_do_initial.yaml",
+			targetConfigPath:      "../../test/e2e/testdata/config_do_target.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
 		},
 		{
-			name:                  "upgrade k8s 1.13.7 cluster to 1.14.3 on Hetzner",
+			name:                  "upgrade k8s cluster on Hetzner",
 			provider:              provisioner.Hetzner,
 			providerExternal:      true,
-			initialVersion:        "1.13.7",
-			targetVersion:         "1.14.3",
-			initialConfigPath:     "../../test/e2e/testdata/config_hetzner_1.13.7.yaml",
-			targetConfigPath:      "../../test/e2e/testdata/config_hetzner_1.14.3.yaml",
+			initialConfigPath:     "../../test/e2e/testdata/config_hetzner_initial.yaml",
+			targetConfigPath:      "../../test/e2e/testdata/config_hetzner_target.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
 		},
 		{
-			name:                  "upgrade k8s 1.13.7 cluster to 1.14.3 on GCE",
+			name:                  "upgrade k8s cluster on GCE",
 			provider:              provisioner.GCE,
 			providerExternal:      false,
-			initialVersion:        "1.13.7",
-			targetVersion:         "1.14.3",
-			initialConfigPath:     "../../test/e2e/testdata/config_gce_1.13.7.yaml",
-			targetConfigPath:      "../../test/e2e/testdata/config_gce_1.14.3.yaml",
+			initialConfigPath:     "../../test/e2e/testdata/config_gce_initial.yaml",
+			targetConfigPath:      "../../test/e2e/testdata/config_gce_target.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
 		},
 		{
-			name:                  "upgrade k8s 1.13.7 cluster to 1.14.3 on Packet",
+			name:                  "upgrade k8s cluster on Packet",
 			provider:              provisioner.Packet,
 			providerExternal:      true,
-			initialVersion:        "1.13.7",
-			targetVersion:         "1.14.3",
-			initialConfigPath:     "../../test/e2e/testdata/config_packet_1.13.7.yaml",
-			targetConfigPath:      "../../test/e2e/testdata/config_packet_1.14.3.yaml",
+			initialConfigPath:     "../../test/e2e/testdata/config_packet_initial.yaml",
+			targetConfigPath:      "../../test/e2e/testdata/config_packet_target.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
 		},
 	}
@@ -116,12 +104,16 @@ func TestClusterUpgrade(t *testing.T) {
 			if len(testRunIdentifier) == 0 {
 				t.Fatalf("-identifier must be set")
 			}
+			if len(testInitialVersion) == 0 {
+				t.Fatal("-initial-version must be set")
+			}
+			if len(testTargetVersion) == 0 {
+				t.Fatal("-target-version must be set")
+			}
 			if testProvider != tc.provider {
 				t.SkipNow()
 			}
-			if testClusterVersion != tc.targetVersion {
-				t.SkipNow()
-			}
+			t.Logf("Running upgrade tests from Kubernetes v%s to v%s…", testInitialVersion, testTargetVersion)
 
 			// Create provisioner
 			testPath := fmt.Sprintf("../../_build/%s", testRunIdentifier)
@@ -142,7 +134,7 @@ func TestClusterUpgrade(t *testing.T) {
 
 			// Create configuration manifest
 			t.Log("Creating KubeOneCluster manifest…")
-			err = target.CreateConfig(tc.initialVersion, tc.provider, tc.providerExternal)
+			err = target.CreateConfig(testInitialVersion, tc.provider, tc.providerExternal)
 			if err != nil {
 				t.Fatalf("failed to create KubeOneCluster manifest: %v", err)
 			}
@@ -203,7 +195,7 @@ func TestClusterUpgrade(t *testing.T) {
 				t.Fatalf("nodes are not ready: %v", err)
 			}
 			t.Log("Verifying cluster version before running upgrade…")
-			err = verifyVersion(client, metav1.NamespaceSystem, tc.initialVersion)
+			err = verifyVersion(client, metav1.NamespaceSystem, testInitialVersion)
 			if err != nil {
 				t.Fatalf("version mismatch before running upgrade: %v", err)
 			}
@@ -217,7 +209,7 @@ func TestClusterUpgrade(t *testing.T) {
 
 			// Create new configuration manifest
 			t.Log("Creating KubeOneCluster manifest…")
-			err = target.CreateConfig(tc.targetVersion, tc.provider, tc.providerExternal)
+			err = target.CreateConfig(testTargetVersion, tc.provider, tc.providerExternal)
 			if err != nil {
 				t.Fatalf("failed to create KubeOneCluster manifest: %v", err)
 			}
@@ -236,12 +228,12 @@ func TestClusterUpgrade(t *testing.T) {
 				t.Fatalf("nodes are not ready: %v", err)
 			}
 			t.Log("Verifying cluster version after running upgrade…")
-			err = verifyVersion(client, metav1.NamespaceSystem, tc.targetVersion)
+			err = verifyVersion(client, metav1.NamespaceSystem, testTargetVersion)
 			if err != nil {
 				t.Fatalf("version mismatch before running upgrade: %v", err)
 			}
 			t.Log("Polling nodes to verify are all workers upgraded…")
-			err = waitForNodesUpgraded(client, tc.targetVersion)
+			err = waitForNodesUpgraded(client, testTargetVersion)
 			if err != nil {
 				t.Fatalf("nodes are not running the target version: %v", err)
 			}
