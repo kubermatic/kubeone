@@ -16,6 +16,7 @@
 
 ## Added
 
+* Add support for Kubernetes 1.15 ([#486](https://github.com/kubermatic/kubeone/pull/486))
 * Add support for Microsoft Azure ([#469](https://github.com/kubermatic/kubeone/pull/469))
 * Add `kubeone completion` command for generating the shell completion scripts for `bash` and `zsh` ([#484](https://github.com/kubermatic/kubeone/pull/484))
 * Add `kubeone document` command for generating the KubeOne documentation ([#484](https://github.com/kubermatic/kubeone/pull/484))
