@@ -4,6 +4,9 @@ The OpenStack Quickstart Terraform scripts can be used to create the needed infr
 Check out the following [OpenStack getting started walkthrough][os-quickstart] to learn more about how to use the
 scripts and how to provision a Kubernetes cluster using KubeOne.
 
+## Kubernetes APIserver LoadBalancing
+See https://github.com/kubermatic/kubeone/blob/master/docs/example-loadbalancer.md
+
 [os-quickstart]: https://github.com/kubermatic/kubeone/blob/master/docs/quickstart-openstack.md
 
 ## Inputs

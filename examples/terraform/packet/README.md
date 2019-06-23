@@ -4,6 +4,9 @@ The Packet Quickstart Terraform scripts can be used to create the needed infrast
 Check out the following [Packet getting started walkthrough][packet-quickstart] to learn more about how to use the
 scripts and how to provision a Kubernetes cluster using KubeOne.
 
+## Kubernetes APIserver LoadBalancing
+See https://github.com/kubermatic/kubeone/blob/master/docs/example-loadbalancer.md
+
 [packet-quickstart]: https://github.com/kubermatic/kubeone/blob/master/docs/quickstart-packet.md
 
 ## Inputs
