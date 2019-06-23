@@ -31,6 +31,7 @@
 * Configure proxy for `kubelet` on control plane nodes if proxy settings are provided ([#496](https://github.com/kubermatic/kubeone/pull/496))
 * Configure proxy on worker nodes if proxy settings are provided ([#490](https://github.com/kubermatic/kubeone/pull/490))
 * Make GoBetween Load balancer configuration script work on all operating systems and fix minor bugs ([#494](https://github.com/kubermatic/kubeone/pull/494))
+* Fix `kubeone reset` failing if a MachineSet or Machine object has been already deleted and include more details in the error messages ([#508](https://github.com/kubermatic/kubeone/pull/508))
 
 # [v0.8.0](https://github.com/kubermatic/kubeone/releases/tag/v0.8.0) - 2019-05-30
 
