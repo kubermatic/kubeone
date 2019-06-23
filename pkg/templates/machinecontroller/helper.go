@@ -146,7 +146,9 @@ func DestroyWorkers(ctx *util.Context) error {
 	}
 	for i := range msList.Items {
 		if err := ctx.DynamicClient.Delete(bgCtx, &msList.Items[i]); err != nil {
-			return errors.Wrapf(err, "unable to delete machineset object %s", msList.Items[i].Name)
+			if !errorsutil.IsNotFound(err) {
+				return errors.Wrapf(err, "unable to delete machineset object %s", msList.Items[i].Name)
+			}
 		}
 	}
 
@@ -160,7 +162,9 @@ func DestroyWorkers(ctx *util.Context) error {
 	}
 	for i := range mList.Items {
 		if err := ctx.DynamicClient.Delete(bgCtx, &mList.Items[i]); err != nil {
-			return errors.Wrapf(err, "unable to delete machine object %s", mList.Items[i].Name)
+			if !errorsutil.IsNotFound(err) {
+				return errors.Wrapf(err, "unable to delete machine object %s", mList.Items[i].Name)
+			}
 		}
 	}
 
