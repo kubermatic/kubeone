@@ -6,8 +6,10 @@
 * `VSPHERE_ALLOW_UNVERIFIED_SSL`
 
 ## How to prepare a template
-
 See https://github.com/kubermatic/machine-controller/blob/master/docs/vsphere.md
+
+## Kubernetes APIserver LoadBalancing
+See https://github.com/kubermatic/kubeone/blob/master/docs/example-loadbalancer.md
 
 ## Inputs
 
