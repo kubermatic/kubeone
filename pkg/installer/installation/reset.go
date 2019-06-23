@@ -17,12 +17,16 @@ limitations under the License.
 package installation
 
 import (
+	"time"
+
 	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
 	"github.com/kubermatic/kubeone/pkg/util"
+
+	"k8s.io/apimachinery/pkg/util/wait"
 )
 
 // Reset undos all changes made by KubeOne to the configured machines.
@@ -51,14 +55,22 @@ func Reset(ctx *util.Context) error {
 func destroyWorkers(ctx *util.Context) error {
 	ctx.Logger.Infoln("Destroying worker nodes…")
 
-	if err := util.BuildKubernetesClientset(ctx); err != nil {
-		return errors.Wrap(err, "unable to build kubernetes clientset")
-	}
-	if err := machinecontroller.DestroyWorkers(ctx); err != nil {
-		return errors.Wrap(err, "unable to delete all worker nodes")
+	waitErr := wait.ExponentialBackoff(defaultRetryBackoff(3), func() (bool, error) {
+		err := util.BuildKubernetesClientset(ctx)
+		return err == nil, errors.Wrap(err, "unable to build kubernetes clientset")
+	})
+	if waitErr != nil {
+		ctx.Logger.Warn("Unable to connect to the control plane API and destroy worker nodes")
+		ctx.Logger.Warn("You can skip destorying worker nodes and destroy them manually using `--destroy-workers=false`")
+		return waitErr
 	}
 
-	return nil
+	waitErr = wait.ExponentialBackoff(defaultRetryBackoff(3), func() (bool, error) {
+		err := machinecontroller.DestroyWorkers(ctx)
+		return err == nil, errors.Wrap(err, "unable to delete all worker nodes")
+	})
+
+	return waitErr
 }
 
 func resetNode(ctx *util.Context, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
@@ -151,3 +163,15 @@ sudo rm /etc/kubernetes/cloud-config
 rm -rf "{{ .WORK_DIR }}"
 `
 )
+
+func defaultRetryBackoff(retries int) wait.Backoff {
+	if retries == 0 {
+		retries = 1
+	}
+
+	return wait.Backoff{
+		Steps:    retries,
+		Duration: 5 * time.Second,
+		Factor:   2.0,
+	}
+}
