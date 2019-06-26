@@ -127,6 +127,7 @@ sudo apt-get install -y --no-install-recommends \
 	kubelet=${kube_ver} \
 	kubernetes-cni=${cni_ver}
 sudo apt-mark hold docker-ce kubelet kubeadm kubectl kubernetes-cni
+sudo systemctl enable --now docker
 `
 
 	kubeadmCentOSScript = `
