@@ -70,6 +70,7 @@ type printOptions struct {
 	NoProxy    string
 
 	EnablePodSecurityPolicy bool
+	EnableNodeLocalDNSCache bool
 	EnableDynamicAuditLog   bool
 	EnableMetricsServer     bool
 	EnableOpenIDConnect     bool
@@ -139,6 +140,7 @@ For the full reference of the configuration manifest, run the print command with
 
 	// Features
 	cmd.Flags().BoolVarP(&pOpts.EnablePodSecurityPolicy, "enable-pod-security-policy", "", false, "enable PodSecurityPolicy")
+	cmd.Flags().BoolVarP(&pOpts.EnableNodeLocalDNSCache, "enable-node-local-dns-cache", "", false, "enable NodeLocalDNSCache")
 	cmd.Flags().BoolVarP(&pOpts.EnableDynamicAuditLog, "enable-dynamic-audit-log", "", false, "enable DynamicAuditLog")
 	cmd.Flags().BoolVarP(&pOpts.EnableMetricsServer, "enable-metrics-server", "", true, "enable metrics-server")
 	cmd.Flags().BoolVarP(&pOpts.EnableOpenIDConnect, "enable-openid-connect", "", false, "enable OpenID Connect authentication")
