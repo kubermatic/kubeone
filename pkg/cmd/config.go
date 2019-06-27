@@ -447,6 +447,14 @@ features:
   # 'kube-system' namespace pods to 'use' it.
   podSecurityPolicy:
     enable: {{ .EnablePodSecurityPolicy }}
+  # Enables initialization of local DNS cache on every node in the cluster so
+  # known problematic race conditions could be avoided. This only needed on
+  # really busy clusters.
+  # More info:
+  # * https://www.weave.works/blog/racy-conntrack-and-dns-lookup-timeouts
+  # * https://github.com/kubernetes/enhancements/blob/master/keps/sig-network/0030-nodelocal-dns-cache.md
+  nodeLocalDNSCache:
+    enable: {{ .EnableNodeLocalDNSCache }}
   # Enables dynamic audit logs.
   # After enablig this, operator should create auditregistration.k8s.io/v1alpha1
   # AuditSink object.
