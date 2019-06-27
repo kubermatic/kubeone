@@ -18,6 +18,7 @@ package dnscache
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/pkg/errors"
 
@@ -34,7 +35,7 @@ import (
 const (
 	imagetag         = "k8s.gcr.io/k8s-dns-node-cache:1.15.2"
 	dnscacheCorefile = `
-cluster.local:53 {
+%s:53 {
 	errors
 	cache {
 		success 9984 30
@@ -96,7 +97,7 @@ func Deploy(ctx *util.Context) error {
 
 	objs := []runtime.Object{
 		dnscacheServiceAccount(),
-		dnscacheConfigMap(),
+		dnscacheConfigMap(ctx.Cluster.ClusterNetwork.ServiceDomainName),
 		dnscacheDaemonSet(),
 	}
 
@@ -122,14 +123,14 @@ func dnscacheServiceAccount() *corev1.ServiceAccount {
 	}
 }
 
-func dnscacheConfigMap() *corev1.ConfigMap {
+func dnscacheConfigMap(clusterDomain string) *corev1.ConfigMap {
 	return &corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "node-local-dns",
 			Namespace: metav1.NamespaceSystem,
 		},
 		Data: map[string]string{
-			"Corefile": dnscacheCorefile,
+			"Corefile": fmt.Sprintf(dnscacheCorefile, clusterDomain),
 		},
 	}
 }
