@@ -34,7 +34,7 @@ import (
 )
 
 const (
-	digitaloceanCCMVersion     = "v0.1.9"
+	digitaloceanCCMVersion     = "v0.1.15"
 	digitaloceanSAName         = "cloud-controller-manager"
 	digitaloceanDeploymentName = "digitalocean-cloud-controller-manager"
 )
@@ -230,7 +230,6 @@ func doDeployment() *appsv1.Deployment {
 							Image: "digitalocean/digitalocean-cloud-controller-manager:" + digitaloceanCCMVersion,
 							Command: []string{
 								"/bin/digitalocean-cloud-controller-manager",
-								"--cloud-provider=digitalocean",
 								"--leader-elect=false",
 							},
 							Env: []corev1.EnvVar{
