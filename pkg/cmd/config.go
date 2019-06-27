@@ -450,7 +450,7 @@ features:
   podSecurityPolicy:
     enable: {{ .EnablePodSecurityPolicy }}
   # Enables initialization of local DNS cache on every node in the cluster so
-  # known problematic race conditions could be avoided. This only needed on
+  # known problematic race conditions could be avoided. This is only needed on
   # really busy clusters.
   # More info:
   # * https://www.weave.works/blog/racy-conntrack-and-dns-lookup-timeouts

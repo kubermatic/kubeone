@@ -28,7 +28,11 @@ const (
 )
 
 func activateKubeadmDynamicAuditLogs(feature *kubeoneapi.DynamicAuditLog, args *kubeadmargs.Args) {
-	if feature == nil || !feature.Enable {
+	if feature == nil {
+		return
+	}
+
+	if !feature.Enable {
 		return
 	}
 

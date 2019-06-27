@@ -17,12 +17,17 @@ limitations under the License.
 package features
 
 import (
+	"github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/templates/dnscache"
 	"github.com/kubermatic/kubeone/pkg/util"
 )
 
-func installNodeLocalDNSCache(activate bool, ctx *util.Context) error {
-	if !activate {
+func installNodeLocalDNSCache(nodelocalcache *kubeone.NodeLocalDNSCache, ctx *util.Context) error {
+	if nodelocalcache == nil {
+		return nil
+	}
+
+	if !nodelocalcache.Enable {
 		return nil
 	}
 

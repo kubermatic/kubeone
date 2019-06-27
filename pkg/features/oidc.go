@@ -22,7 +22,11 @@ import (
 )
 
 func activateKubeadmOIDC(feature *kubeoneapi.OpenIDConnect, args *kubeadmargs.Args) {
-	if feature == nil || !feature.Enable {
+	if feature == nil {
+		return
+	}
+
+	if !feature.Enable {
 		return
 	}
 

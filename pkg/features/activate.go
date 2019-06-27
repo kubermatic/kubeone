@@ -31,11 +31,11 @@ func Activate(ctx *util.Context) error {
 		return errors.Wrap(err, "failed to install PodSecurityPolicy")
 	}
 
-	if err := installMetricsServer(ctx.Cluster.Features.MetricsServer.Enable, ctx); err != nil {
+	if err := installMetricsServer(ctx.Cluster.Features.MetricsServer, ctx); err != nil {
 		return errors.Wrap(err, "failed to install metrics-server")
 	}
 
-	if err := installNodeLocalDNSCache(ctx.Cluster.Features.NodeLocalDNSCache.Enable, ctx); err != nil {
+	if err := installNodeLocalDNSCache(ctx.Cluster.Features.NodeLocalDNSCache, ctx); err != nil {
 		return errors.Wrap(err, "failed to install nodeLocal DNSCache")
 	}
 
