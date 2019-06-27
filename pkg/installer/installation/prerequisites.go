@@ -27,7 +27,7 @@ import (
 )
 
 const (
-	dockerVersion = "18.09.6"
+	dockerVersion = "18.09.7"
 )
 
 const (
