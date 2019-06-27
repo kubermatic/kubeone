@@ -181,7 +181,7 @@ locals {
 resource "null_resource" "lb_config" {
   triggers = {
     cluster_instance_ids = join(",", openstack_compute_instance_v2.control_plane.*.id)
-    config               = rendered_lb_config
+    config               = local.rendered_lb_config
   }
 
   connection {
@@ -190,7 +190,7 @@ resource "null_resource" "lb_config" {
   }
 
   provisioner "file" {
-    content     = rendered_lb_config
+    content     = local.rendered_lb_config
     destination = "/tmp/gobetween.toml"
   }
 
