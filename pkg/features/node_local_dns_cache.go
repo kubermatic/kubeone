@@ -17,17 +17,26 @@ limitations under the License.
 package features
 
 import (
+	"github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/templates/dnscache"
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/kubeadmargs"
+	"github.com/kubermatic/kubeone/pkg/util"
 )
 
-const (
-	auditDynamicConfigurationFlag = "audit-dynamic-configuration"
-	runtimeConfigFlag             = "runtime-config"
-	auditRegistrationAPI          = "auditregistration.k8s.io/v1alpha1=true"
-)
+func installNodeLocalDNSCache(nodelocalcache *kubeone.NodeLocalDNSCache, ctx *util.Context) error {
+	if nodelocalcache == nil {
+		return nil
+	}
 
-func updateDynamicAuditLogsKubeadmConfig(feature *kubeoneapi.DynamicAuditLog, args *kubeadmargs.Args) {
+	if !nodelocalcache.Enable {
+		return nil
+	}
+
+	return dnscache.Deploy(ctx)
+}
+
+func updateNodeLocalDNSCacheKubeadmConfig(feature *kubeoneapi.NodeLocalDNSCache, args *kubeadmargs.Args) {
 	if feature == nil {
 		return
 	}
@@ -36,7 +45,5 @@ func updateDynamicAuditLogsKubeadmConfig(feature *kubeoneapi.DynamicAuditLog, ar
 		return
 	}
 
-	args.APIServer.ExtraArgs[auditDynamicConfigurationFlag] = "true"
-	args.APIServer.AppendMapStringStringExtraArg(runtimeConfigFlag, auditRegistrationAPI)
-	args.FeatureGates["DynamicAuditing"] = true
+	args.Kubelet.ExtraArgs["cluster-dns"] = dnscache.VirtualIP
 }

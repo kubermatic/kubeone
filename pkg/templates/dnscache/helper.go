@@ -14,22 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package features
+package dnscache
 
 import (
-	"github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/templates/metricsserver"
-	"github.com/kubermatic/kubeone/pkg/util"
+	"context"
+
+	"k8s.io/apimachinery/pkg/runtime"
+	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
 
-func installMetricsServer(metricsServer *kubeone.MetricsServer, ctx *util.Context) error {
-	if metricsServer == nil {
-		return nil
-	}
-
-	if !metricsServer.Enable {
-		return nil
-	}
-
-	return metricsserver.Deploy(ctx)
+func simpleCreateOrUpdate(ctx context.Context, client dynclient.Client, obj runtime.Object) error {
+	okFunc := func(runtime.Object) error { return nil }
+	_, err := controllerutil.CreateOrUpdate(ctx, client, obj, okFunc)
+	return err
 }

@@ -25,6 +25,7 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/templates/dnscache"
 	"github.com/kubermatic/kubeone/pkg/util"
 	"github.com/kubermatic/kubeone/pkg/util/credentials"
 
@@ -715,16 +716,23 @@ func machineControllerMachineDeploymentCRD() *apiextensions.CustomResourceDefini
 func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster) (*appsv1.Deployment, error) {
 	var replicas int32 = 1
 
-	clusterDNS, err := clusterDNSIP(cluster)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to get clusterDNS IP")
+	var clusterDNSstring string
+
+	if cluster.Features.NodeLocalDNSCache != nil && cluster.Features.NodeLocalDNSCache.Enable {
+		clusterDNSstring = dnscache.VirtualIP
+	} else {
+		clusterDNS, err := clusterDNSIP(cluster)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get clusterDNS IP")
+		}
+		clusterDNSstring = clusterDNS.String()
 	}
 
 	args := []string{
 		"-logtostderr",
 		"-v", "4",
 		"-internal-listen-address", "0.0.0.0:8085",
-		"-cluster-dns", clusterDNS.String(),
+		"-cluster-dns", clusterDNSstring,
 	}
 
 	if cluster.Proxy.HTTP != "" {

@@ -61,7 +61,7 @@ func destroyWorkers(ctx *util.Context) error {
 	})
 	if waitErr != nil {
 		ctx.Logger.Warn("Unable to connect to the control plane API and destroy worker nodes")
-		ctx.Logger.Warn("You can skip destorying worker nodes and destroy them manually using `--destroy-workers=false`")
+		ctx.Logger.Warn("You can skip destroying worker nodes and destroy them manually using `--destroy-workers=false`")
 		return waitErr
 	}
 

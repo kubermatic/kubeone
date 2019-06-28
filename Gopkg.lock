@@ -632,6 +632,7 @@
     "github.com/Masterminds/semver",
     "github.com/aws/aws-sdk-go/aws/credentials",
     "github.com/ghodss/yaml",
+    "github.com/imdario/mergo",
     "github.com/koron-go/prefixw",
     "github.com/pkg/errors",
     "github.com/pkg/sftp",
