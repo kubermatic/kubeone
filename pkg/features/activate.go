@@ -45,7 +45,8 @@ func Activate(ctx *util.Context) error {
 // UpdateKubeadmClusterConfiguration update additional config options in the kubeadm's
 // v1beta1.ClusterConfiguration according to enabled features
 func UpdateKubeadmClusterConfiguration(featuresCfg kubeoneapi.Features, args *kubeadmargs.Args) {
-	activateKubeadmPSP(featuresCfg.PodSecurityPolicy, args)
-	activateKubeadmDynamicAuditLogs(featuresCfg.DynamicAuditLog, args)
-	activateKubeadmOIDC(featuresCfg.OpenIDConnect, args)
+	updatePSPKubeadmConfig(featuresCfg.PodSecurityPolicy, args)
+	updateNodeLocalDNSCacheKubeadmConfig(featuresCfg.NodeLocalDNSCache, args)
+	updateDynamicAuditLogsKubeadmConfig(featuresCfg.DynamicAuditLog, args)
+	updateOIDCKubeadmConfig(featuresCfg.OpenIDConnect, args)
 }

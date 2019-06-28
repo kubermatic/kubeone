@@ -25,6 +25,7 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/templates/dnscache"
 	"github.com/kubermatic/kubeone/pkg/util"
 	"github.com/kubermatic/kubeone/pkg/util/credentials"
 
@@ -718,7 +719,7 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster) (*appsv1.De
 	var clusterDNSstring string
 
 	if cluster.Features.NodeLocalDNSCache != nil && cluster.Features.NodeLocalDNSCache.Enable {
-		clusterDNSstring = "169.254.20.10"
+		clusterDNSstring = dnscache.VirtualIP
 	} else {
 		clusterDNS, err := clusterDNSIP(cluster)
 		if err != nil {

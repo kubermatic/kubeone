@@ -18,7 +18,9 @@ package features
 
 import (
 	"github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/templates/dnscache"
+	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/kubeadmargs"
 	"github.com/kubermatic/kubeone/pkg/util"
 )
 
@@ -32,4 +34,16 @@ func installNodeLocalDNSCache(nodelocalcache *kubeone.NodeLocalDNSCache, ctx *ut
 	}
 
 	return dnscache.Deploy(ctx)
+}
+
+func updateNodeLocalDNSCacheKubeadmConfig(feature *kubeoneapi.NodeLocalDNSCache, args *kubeadmargs.Args) {
+	if feature == nil {
+		return
+	}
+
+	if !feature.Enable {
+		return
+	}
+
+	args.Kubelet.ExtraArgs["cluster-dns"] = dnscache.VirtualIP
 }

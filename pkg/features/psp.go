@@ -39,7 +39,7 @@ const (
 	pspRoleNamespace              = metav1.NamespaceSystem
 )
 
-func activateKubeadmPSP(feature *kubeoneapi.PodSecurityPolicy, args *kubeadmargs.Args) {
+func updatePSPKubeadmConfig(feature *kubeoneapi.PodSecurityPolicy, args *kubeadmargs.Args) {
 	if feature == nil {
 		return
 	}

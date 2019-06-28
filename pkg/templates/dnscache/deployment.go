@@ -18,7 +18,8 @@ package dnscache
 
 import (
 	"context"
-	"fmt"
+	"strings"
+	"text/template"
 
 	"github.com/pkg/errors"
 
@@ -32,10 +33,13 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
+// VirtualIP that will be used as DNS
+const VirtualIP = "169.254.20.10"
+
 const (
-	imagetag         = "k8s.gcr.io/k8s-dns-node-cache:1.15.2"
-	dnscacheCorefile = `
-%s:53 {
+	imagetag                 = "k8s.gcr.io/k8s-dns-node-cache:1.15.2"
+	dnscacheCorefileTemplate = `
+{{ .ClusterDomain }}:53 {
 	errors
 	cache {
 		success 9984 30
@@ -43,12 +47,12 @@ const (
 	}
 	reload
 	loop
-	bind 169.254.20.10
+	bind {{ .VirtualIP }}
 	forward . 10.96.0.10 {
 		force_tcp
 	}
 	prometheus :9253
-	health 169.254.20.10:8080
+	health {{ .VirtualIP }}:8080
 }
 
 in-addr.arpa:53 {
@@ -56,7 +60,7 @@ in-addr.arpa:53 {
 	cache 30
 	reload
 	loop
-	bind 169.254.20.10
+	bind {{ .VirtualIP }}
 	forward . 10.96.0.10 {
 		force_tcp
 	}
@@ -68,7 +72,7 @@ ip6.arpa:53 {
 	cache 30
 	reload
 	loop
-	bind 169.254.20.10
+	bind {{ .VirtualIP }}
 	forward . 10.96.0.10 {
 		force_tcp
 	}
@@ -80,7 +84,7 @@ ip6.arpa:53 {
 	cache 30
 	reload
 	loop
-	bind 169.254.20.10
+	bind {{ .VirtualIP }}
 	forward . /etc/resolv.conf {
 		force_tcp
 	}
@@ -95,9 +99,27 @@ func Deploy(ctx *util.Context) error {
 		return errors.New("kubernetes client not initialized")
 	}
 
+	tpl, err := template.New("Corefile").Parse(dnscacheCorefileTemplate)
+	if err != nil {
+		return errors.Wrap(err, "unable to parse Corefile template")
+	}
+
+	tplData := struct {
+		ClusterDomain string
+		VirtualIP     string
+	}{
+		ClusterDomain: ctx.Cluster.ClusterNetwork.ServiceDomainName,
+		VirtualIP:     VirtualIP,
+	}
+
+	corefileBuf := &strings.Builder{}
+	if err := tpl.Execute(corefileBuf, tplData); err != nil {
+		return errors.Wrap(err, "unable to execute Corefile template")
+	}
+
 	objs := []runtime.Object{
 		dnscacheServiceAccount(),
-		dnscacheConfigMap(ctx.Cluster.ClusterNetwork.ServiceDomainName),
+		dnscacheConfigMap(corefileBuf.String()),
 		dnscacheDaemonSet(),
 	}
 
@@ -123,14 +145,14 @@ func dnscacheServiceAccount() *corev1.ServiceAccount {
 	}
 }
 
-func dnscacheConfigMap(clusterDomain string) *corev1.ConfigMap {
+func dnscacheConfigMap(corefile string) *corev1.ConfigMap {
 	return &corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "node-local-dns",
 			Namespace: metav1.NamespaceSystem,
 		},
 		Data: map[string]string{
-			"Corefile": fmt.Sprintf(dnscacheCorefile, clusterDomain),
+			"Corefile": corefile,
 		},
 	}
 }
@@ -180,7 +202,7 @@ func dnscacheDaemonSet() *appsv1.DaemonSet {
 							Image: imagetag,
 							Args: []string{
 								"-localip",
-								"169.254.20.10",
+								VirtualIP,
 								"-conf",
 								"/etc/coredns/Corefile",
 							},
@@ -217,7 +239,7 @@ func dnscacheDaemonSet() *appsv1.DaemonSet {
 							LivenessProbe: &corev1.Probe{
 								Handler: corev1.Handler{
 									HTTPGet: &corev1.HTTPGetAction{
-										Host: "169.254.20.10",
+										Host: VirtualIP,
 										Path: "/health",
 										Port: intstr.FromInt(8080),
 									},
