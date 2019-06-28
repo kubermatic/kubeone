@@ -8,6 +8,8 @@
   <a href="https://goreportcard.com/report/github.com/kubermatic/kubeone">
     <img src="https://goreportcard.com/badge/github.com/kubermatic/kubeone" alt="Go Report Card" />
   </a>
+  <a href="https://bestpractices.coreinfrastructure.org/projects/2934"><img src="https://bestpractices.coreinfrastructure.org/projects/2934/badge">
+  </a>
 </p>
 
 `kubeone` is a CLI tool and a Go library for installing, managing, and upgrading
