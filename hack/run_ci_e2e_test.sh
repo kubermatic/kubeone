@@ -93,6 +93,7 @@ if [ -n "${RUNNING_IN_CI}" ]; then
     ;;
   "packet")
     export PACKET_AUTH_TOKEN=${PACKET_API_KEY}
+    export TF_VAR_project_id=${PACKET_PROJECT_ID}
     ;;
   "gce")
     export GOOGLE_CREDENTIALS=${serviceAccount}
