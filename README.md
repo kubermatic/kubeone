@@ -10,6 +10,7 @@
   </a>
 </p>
 
+
 `kubeone` is a CLI tool and a Go library for installing, managing, and upgrading
 Kubernetes High-Available (HA) clusters. It can be used on any cloud provider,
 on-prem or bare-metal cluster.
