@@ -17,6 +17,7 @@ limitations under the License.
 provider "digitalocean" {
 }
 
+
 locals {
   kube_cluster_tag = "kubernetes-cluster:${var.cluster_name}"
 }
