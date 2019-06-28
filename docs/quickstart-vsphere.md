@@ -176,13 +176,6 @@ cloudProvider:
 
     [Network]
     public-network = "NAT Network"  
-workers:
-- name: pool1
-  replicas: 2
-  providerSpec:
-    operatingSystem: 'ubuntu'
-    operatingSystemSpec:
-      distUpgradeOnBoot: true
 ```
 
 Finally, we're going to install Kubernetes by using the `install` command and
