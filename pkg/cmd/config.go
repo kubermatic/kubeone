@@ -117,7 +117,7 @@ For the full reference of the configuration manifest, run the print command with
 
 	cmd.Flags().StringVarP(&pOpts.ClusterName, "cluster-name", "n", "demo-cluster", "cluster name")
 	cmd.Flags().StringVarP(&pOpts.KubernetesVersion, "kubernetes-version", "k", defaultKubernetesVersion, "Kubernetes version")
-	cmd.Flags().StringVarP(&pOpts.CloudProviderName, "provider", "p", defaultCloudProviderName, "cloud provider name (aws, digitalocean, gce, hetzner, packet, openstack, none)")
+	cmd.Flags().StringVarP(&pOpts.CloudProviderName, "provider", "p", defaultCloudProviderName, "cloud provider name (aws, digitalocean, gce, hetzner, packet, openstack, vsphere, none)")
 
 	// Hosts
 	cmd.Flags().StringVarP(&pOpts.Hosts, "hosts", "", "", "hosts in format of comma-separated key:value list, example: publicAddress:192.168.0.100,privateAddress:192.168.1.100,sshUsername:ubuntu,sshPort:22. Use quoted string of space separated values for multiple hosts")
