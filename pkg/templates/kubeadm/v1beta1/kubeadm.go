@@ -21,7 +21,6 @@ import (
 	"strings"
 
 	"github.com/Masterminds/semver"
-	"github.com/imdario/mergo"
 	"github.com/pkg/errors"
 
 	kubeadmv1beta1 "github.com/kubermatic/kubeone/pkg/apis/kubeadm/v1beta1"
@@ -170,10 +169,6 @@ func NewConfig(ctx *util.Context, host kubeoneapi.HostConfig) ([]runtime.Object,
 
 	args := kubeadmargs.NewFrom(clusterConfig.APIServer.ExtraArgs)
 	features.UpdateKubeadmClusterConfiguration(cluster.Features, args)
-
-	if err = mergo.Merge(&nodeRegistration.KubeletExtraArgs, &args.Kubelet.ExtraArgs); err != nil {
-		return nil, errors.Wrap(err, "unable to merge kubelet flags")
-	}
 
 	clusterConfig.APIServer.ExtraArgs = args.APIServer.ExtraArgs
 	clusterConfig.FeatureGates = args.FeatureGates
