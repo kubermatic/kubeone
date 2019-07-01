@@ -27,12 +27,8 @@ const (
 	auditRegistrationAPI          = "auditregistration.k8s.io/v1alpha1=true"
 )
 
-func updateDynamicAuditLogsKubeadmConfig(feature *kubeoneapi.DynamicAuditLog, args *kubeadmargs.Args) {
-	if feature == nil {
-		return
-	}
-
-	if !feature.Enable {
+func activateKubeadmDynamicAuditLogs(feature *kubeoneapi.DynamicAuditLog, args *kubeadmargs.Args) {
+	if feature == nil || !feature.Enable {
 		return
 	}
 

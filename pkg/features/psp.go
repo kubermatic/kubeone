@@ -39,12 +39,8 @@ const (
 	pspRoleNamespace              = metav1.NamespaceSystem
 )
 
-func updatePSPKubeadmConfig(feature *kubeoneapi.PodSecurityPolicy, args *kubeadmargs.Args) {
-	if feature == nil {
-		return
-	}
-
-	if !feature.Enable {
+func activateKubeadmPSP(feature *kubeoneapi.PodSecurityPolicy, args *kubeadmargs.Args) {
+	if feature == nil || !feature.Enable {
 		return
 	}
 
@@ -52,11 +48,7 @@ func updatePSPKubeadmConfig(feature *kubeoneapi.PodSecurityPolicy, args *kubeadm
 }
 
 func installKubeSystemPSP(psp *kubeoneapi.PodSecurityPolicy, ctx *util.Context) error {
-	if psp == nil {
-		return nil
-	}
-
-	if !psp.Enable {
+	if psp == nil || !psp.Enable {
 		return nil
 	}
 

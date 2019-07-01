@@ -196,7 +196,6 @@ type MachineControllerConfig struct {
 // Features controls what features will be enabled on the cluster
 type Features struct {
 	PodSecurityPolicy *PodSecurityPolicy `json:"podSecurityPolicy"`
-	NodeLocalDNSCache *NodeLocalDNSCache `json:"nodeLocalDNSCache"`
 	DynamicAuditLog   *DynamicAuditLog   `json:"dynamicAuditLog"`
 	MetricsServer     *MetricsServer     `json:"metricsServer"`
 	OpenIDConnect     *OpenIDConnect     `json:"openidConnect"`
@@ -204,11 +203,6 @@ type Features struct {
 
 // PodSecurityPolicy feature flag
 type PodSecurityPolicy struct {
-	Enable bool `json:"enable"`
-}
-
-// NodeLocalDNSCache feature flag
-type NodeLocalDNSCache struct {
 	Enable bool `json:"enable"`
 }
 

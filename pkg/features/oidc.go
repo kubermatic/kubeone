@@ -21,12 +21,8 @@ import (
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/kubeadmargs"
 )
 
-func updateOIDCKubeadmConfig(feature *kubeoneapi.OpenIDConnect, args *kubeadmargs.Args) {
-	if feature == nil {
-		return
-	}
-
-	if !feature.Enable {
+func activateKubeadmOIDC(feature *kubeoneapi.OpenIDConnect, args *kubeadmargs.Args) {
+	if feature == nil || !feature.Enable {
 		return
 	}
 

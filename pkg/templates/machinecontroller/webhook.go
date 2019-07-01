@@ -75,7 +75,7 @@ func DeployWebhookConfiguration(ctx *util.Context) error {
 	}
 
 	// Deploy serving certificate secret
-	servingCert, err := tlsServingCertificate(caPrivateKey, caCert, ctx.Cluster.ClusterNetwork.ServiceDomainName)
+	servingCert, err := tlsServingCertificate(caPrivateKey, caCert)
 	if err != nil {
 		return errors.Wrap(err, "failed to generate machine-controller webhook TLS secret")
 	}
@@ -287,7 +287,7 @@ func getServingCertVolume() corev1.Volume {
 
 // tlsServingCertificate returns a secret with the machine-controller-webhook tls certificate
 // func tlsServingCertificate(ca *triple.KeyPair) (*corev1.Secret, error) {
-func tlsServingCertificate(caKey *rsa.PrivateKey, caCert *x509.Certificate, clusterDNSName string) (*corev1.Secret, error) {
+func tlsServingCertificate(caKey *rsa.PrivateKey, caCert *x509.Certificate) (*corev1.Secret, error) {
 	se := &corev1.Secret{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "v1",
@@ -299,7 +299,7 @@ func tlsServingCertificate(caKey *rsa.PrivateKey, caCert *x509.Certificate, clus
 	se.Namespace = WebhookNamespace
 	se.Data = map[string][]byte{}
 
-	commonName := fmt.Sprintf("%s.%s.svc.%s.", WebhookName, WebhookNamespace, clusterDNSName)
+	commonName := fmt.Sprintf("%s.%s.svc.cluster.local.", WebhookName, WebhookNamespace)
 	altdnsNames := []string{
 		commonName,
 		fmt.Sprintf("%s.%s.svc", WebhookName, WebhookNamespace),
