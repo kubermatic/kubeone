@@ -111,6 +111,11 @@ func SetDefaults_Features(obj *KubeOneCluster) {
 			Enable: true,
 		}
 	}
+	if obj.Features.NodeLocalDNSCache == nil {
+		obj.Features.NodeLocalDNSCache = &NodeLocalDNSCache{
+			Enable: true,
+		}
+	}
 }
 
 func defaultHostConfig(obj *HostConfig) {
