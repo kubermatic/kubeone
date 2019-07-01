@@ -53,6 +53,12 @@ Signed-off-by: Joe Example <joe@example.com>
 
 This can easily be done with the `--signoff` option to `git commit`.
 
+Note that we're requiring all commits in a PR to be signed-off. If you already created a PR, you can sign-off all existing commits by rebasing with the `--signoff` flag.
+
+```
+git rebase --signoff origin/master
+```
+
 By doing this you state that you can certify the following (from https://developercertificate.org/).
 
 ## Contributing Process
