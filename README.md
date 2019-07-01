@@ -79,7 +79,7 @@ go get -u github.com/kubermatic/kubeone
 ```
 
 While running of the master branch is a great way to peak at and test
-the new features before they are released note that master branch can
+the new features before they are released, note that master branch can
 break at any time or may contain bugs. Official releases are considered
 stable and recommended for the production usage.
 
