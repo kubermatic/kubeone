@@ -158,8 +158,9 @@ sudo rm -rf /opt/cni /opt/bin/kubeadm /opt/bin/kubectl /opt/bin/kubelet
 sudo rm /etc/systemd/system/kubelet.service /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
 `
 	resetScript = `
-sudo kubeadm reset --force
-sudo rm /etc/kubernetes/cloud-config
+sudo kubeadm reset --force || true
+sudo rm -f /etc/kubernetes/cloud-config
+sudo rm -rf /var/lib/etcd/
 rm -rf "{{ .WORK_DIR }}"
 `
 )
