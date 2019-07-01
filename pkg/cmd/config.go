@@ -140,7 +140,7 @@ For the full reference of the configuration manifest, run the print command with
 
 	// Features
 	cmd.Flags().BoolVarP(&pOpts.EnablePodSecurityPolicy, "enable-pod-security-policy", "", false, "enable PodSecurityPolicy")
-	cmd.Flags().BoolVarP(&pOpts.EnableNodeLocalDNSCache, "enable-node-local-dns-cache", "", false, "enable NodeLocalDNSCache")
+	cmd.Flags().BoolVarP(&pOpts.EnableNodeLocalDNSCache, "enable-node-local-dns-cache", "", true, "enable NodeLocalDNSCache")
 	cmd.Flags().BoolVarP(&pOpts.EnableDynamicAuditLog, "enable-dynamic-audit-log", "", false, "enable DynamicAuditLog")
 	cmd.Flags().BoolVarP(&pOpts.EnableMetricsServer, "enable-metrics-server", "", true, "enable metrics-server")
 	cmd.Flags().BoolVarP(&pOpts.EnableOpenIDConnect, "enable-openid-connect", "", false, "enable OpenID Connect authentication")
@@ -449,13 +449,13 @@ features:
   # 'kube-system' namespace pods to 'use' it.
   podSecurityPolicy:
     enable: {{ .EnablePodSecurityPolicy }}
-  # Enables initialization of local DNS cache on every node in the cluster so
-  # known problematic race conditions could be avoided. This is only needed on
-  # really busy clusters.
+  # Opt-out from deploying NodeLocal DNS cache on every node in the cluster.
+  # NodeLocal DNS cache is used to prevent the known race conditions.
   # More info:
   # * https://www.weave.works/blog/racy-conntrack-and-dns-lookup-timeouts
   # * https://github.com/kubernetes/enhancements/blob/master/keps/sig-network/0030-nodelocal-dns-cache.md
   nodeLocalDNSCache:
+    # enabled by default
     enable: {{ .EnableNodeLocalDNSCache }}
   # Enables dynamic audit logs.
   # After enablig this, operator should create auditregistration.k8s.io/v1alpha1
