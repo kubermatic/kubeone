@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package util
+package context
 
 import (
 	"fmt"
@@ -24,6 +24,7 @@ import (
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/ssh"
+	"github.com/kubermatic/kubeone/pkg/util/runner"
 )
 
 // NodeTask is a task that is specifically tailored to run on a single node.
@@ -47,7 +48,7 @@ func (c *Context) runTask(node *kubeoneapi.HostConfig, task NodeTask, prefixed b
 		prefix = fmt.Sprintf("[%s] ", node.PublicAddress)
 	}
 
-	c.Runner = &Runner{
+	c.Runner = &runner.Runner{
 		Conn:    conn,
 		Verbose: c.Verbose,
 		OS:      node.OperatingSystem,

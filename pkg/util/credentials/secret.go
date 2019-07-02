@@ -21,7 +21,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/util"
+	kubeonecontext "github.com/kubermatic/kubeone/pkg/util/context"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -44,7 +44,7 @@ func simpleCreateOrUpdate(ctx context.Context, client dynclient.Client, obj runt
 }
 
 // Ensure creates/updates the credentials secret
-func Ensure(ctx *util.Context) error {
+func Ensure(ctx *kubeonecontext.Context) error {
 	if !ctx.Cluster.MachineController.Deploy && !ctx.Cluster.CloudProvider.External {
 		ctx.Logger.Info("Skipping creating credentials secret because both machine-controller and external CCM are disabled.")
 		return nil
