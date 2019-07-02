@@ -27,11 +27,9 @@ to reference to the upcoming version and generate a changelog.
 
 You need to update the following documents to point to the new release:
 
-* `README.md`
-  * Links and binary name should point to the upcoming version in the
-  [Installing KubeOne section][4]
-  * [Kubernetes versions compatibility section][5] if there are changes
-  in supported Kubernetes versions, Terraform versions and/or providers
+* The [Kubernetes versions compatibility][5] section of the
+`README.md` file should be updated if there are changes in supported
+Kubernetes versions, Terraform versions and/or providers
 * [Optional] Update [the quickstart guides][6] to require/recommend
 the latest version
 

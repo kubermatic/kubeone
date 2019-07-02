@@ -45,35 +45,78 @@ upgrade to the v0.6.0 or newer as soon as possible.
 
 ## Installing KubeOne
 
-The easiest way to install KubeOne is using `go get`:
+### Downloading a binary from GitHub Releases
+
+The recommended way to obtain KubeOne is to grab the
+binary from the [GitHub Releases][9] page. On the
+releases page, find the binary for your operating system
+and architecture and download it or grab the URL and use
+`wget` or `curl` to download the binary.
+
 ```bash
-go get -u github.com/kubermatic/kubeone
+curl -LO https://github.com/kubermatic/kubeone/releases/download/v<version>/kubeone_<version>_linux_amd64.zip
 ```
-However, running of the master branch introduces potential risks as the project
-is currently in the alpha phase and backwards incompatible changes can be
-expected.
 
-Alternatively, you can obtain KubeOne via [GitHub Releases][9]:
+Extract the binary. On Linux and macOS, you can use `unzip`.
 
 ```bash
-curl -LO https://github.com/kubermatic/kubeone/releases/download/v0.8.0/kubeone_0.8.0_linux_amd64.zip
 unzip kubeone_0.8.0_linux_amd64.zip
+```
+
+Move the `kubeone` binary to your path, so you can easily
+invoke it from your terminal.
+
+```bash
 sudo mv kubeone /usr/local/bin
 ```
 
-If you already have KubeOne repository cloned, you can use Makefile to install
-KubeOne.
+### Building KubeOne
+
+The alternative way to install KubeOne is using `go get`.
+
+```bash
+go get -u github.com/kubermatic/kubeone
+```
+
+While running of the master branch is a great way to peak at and test
+the new features before they are released, note that master branch can
+break at any time or may contain bugs. Official releases are considered
+stable and recommended for the production usage.
+
+If you already have KubeOne repository cloned, you can use `make`
+to install it.
 
 ```bash
 make install
 ```
 
-To install completions for bash (zsh also available), run or put this command into your .bashrc file:
+### Using package managers
+
+Support for packages managers is still work in progress and expected
+to be finished for one of the upcoming release. For details about the
+progress follow the [issue #471][17]
+
+### Shell completion and generating documentation
+
+KubeOne comes with commands for generating scripts for the shell
+completion and for the documentation in format of man pages
+and more.
+
+To activate completions for `bash` (or `zsh`), run or put this command
+into your `.bashrc` file:
+
 ```bash
 . <(kubeone completion bash)
 ```
 
+To put changes in the effect, source your `.bashrc` file.
+
+```bash
+source ~/.bashrc
+```
+
 To generate documentation (man pages for example, more available), run:
+
 ```bash
 kubeone document man -o /tmp/man
 ```
@@ -96,12 +139,12 @@ In the following table you can find what are supported Kubernetes and Terraform
 versions for each KubeOne version. KubeOne versions that are crossed out are not
 supported. It's highly recommended to use the latest version whenever possible.
 
-| KubeOne version | 1.14 | 1.13 | Terraform | Supported providers                                                |
-|-----------------|------|------|-----------|--------------------------------------------------------------------|
-| v0.9.0+         | +    | +    | v0.12+    | AWS, DigitalOcean, GCE, Hetzner, Packet, OpenStack, vSphere, Azure |
-| v0.8.0+         | +    | +    | v0.11     | AWS, DigitalOcean, GCE, Hetzner, Packet, OpenStack, vSphere        |
-| v0.6.0+         | +    | +    | v0.11     | AWS, DigitalOcean, GCE, Hetzner, Packet, OpenStack                 |
-| v0.5.0          | +    | +    | v0.11     | AWS, DigitalOcean, GCE, Hetzner, OpenStack                         |
+| KubeOne version | 1.15 | 1.14 | 1.13 | Terraform | Supported providers                                                |
+|-----------------|------|------|------|-----------|--------------------------------------------------------------------|
+| v0.9.0+         | +    | +    | +    | v0.12+    | AWS, DigitalOcean, GCE, Hetzner, Packet, OpenStack, vSphere, Azure |
+| v0.8.0+         | -    | +    | +    | v0.11     | AWS, DigitalOcean, GCE, Hetzner, Packet, OpenStack, vSphere        |
+| v0.6.0+         | -    | +    | +    | v0.11     | AWS, DigitalOcean, GCE, Hetzner, Packet, OpenStack                 |
+| v0.5.0          | -    | +    | +    | v0.11     | AWS, DigitalOcean, GCE, Hetzner, OpenStack                         |
 
 ## Getting Started
 
@@ -168,3 +211,4 @@ See [the list of releases][3] to find out about feature changes.
 [14]: https://groups.google.com/forum/#!forum/loodse-dev
 [15]: http://slack.kubermatic.io/
 [16]: https://github.com/kubermatic/kubeone/blob/master/CONTRIBUTING.md#reporting-a-security-vulnerability
+[17]: https://github.com/kubermatic/kubeone/issues/471
