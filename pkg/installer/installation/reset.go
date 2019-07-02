@@ -22,11 +22,11 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/runner"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
 	"github.com/kubermatic/kubeone/pkg/util/context"
 	"github.com/kubermatic/kubeone/pkg/util/kubeconfig"
-	"github.com/kubermatic/kubeone/pkg/util/runner"
 
 	"k8s.io/apimachinery/pkg/util/wait"
 )

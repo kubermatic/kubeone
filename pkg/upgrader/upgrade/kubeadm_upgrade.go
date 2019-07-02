@@ -19,9 +19,9 @@ package upgrade
 import (
 	"github.com/pkg/errors"
 
+	"github.com/kubermatic/kubeone/pkg/runner"
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm"
 	"github.com/kubermatic/kubeone/pkg/util/context"
-	"github.com/kubermatic/kubeone/pkg/util/runner"
 )
 
 const (

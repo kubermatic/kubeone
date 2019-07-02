@@ -20,9 +20,9 @@ import (
 	"github.com/sirupsen/logrus"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/runner"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/util/file"
-	"github.com/kubermatic/kubeone/pkg/util/runner"
 
 	"k8s.io/client-go/rest"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
