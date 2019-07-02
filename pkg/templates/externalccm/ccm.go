@@ -24,7 +24,7 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/util"
+	kubeonecontext "github.com/kubermatic/kubeone/pkg/util/context"
 
 	appsv1 "k8s.io/api/apps/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -33,7 +33,7 @@ import (
 )
 
 // Ensure external CCM deployen if Provider.External
-func Ensure(ctx *util.Context) error {
+func Ensure(ctx *kubeonecontext.Context) error {
 	if !ctx.Cluster.CloudProvider.External {
 		return nil
 	}

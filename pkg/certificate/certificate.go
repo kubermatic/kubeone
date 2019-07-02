@@ -22,13 +22,13 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/util"
+	"github.com/kubermatic/kubeone/pkg/util/file"
 
 	"k8s.io/client-go/util/cert"
 )
 
 // CAKeyPair parses generated PKI CA certificate and key
-func CAKeyPair(config *util.Configuration) (*rsa.PrivateKey, *x509.Certificate, error) {
+func CAKeyPair(config *file.Configuration) (*rsa.PrivateKey, *x509.Certificate, error) {
 	caCert, err := config.Get("pki/ca.crt")
 	if err != nil {
 		return nil, nil, err

@@ -20,14 +20,14 @@ import (
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/templates"
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/v1beta2"
-	"github.com/kubermatic/kubeone/pkg/util"
+	"github.com/kubermatic/kubeone/pkg/util/context"
 )
 
 type kubeadmv1beta2 struct {
 	kubeadmv1beta1
 }
 
-func (*kubeadmv1beta2) Config(ctx *util.Context, instance kubeoneapi.HostConfig) (string, error) {
+func (*kubeadmv1beta2) Config(ctx *context.Context, instance kubeoneapi.HostConfig) (string, error) {
 	config, err := v1beta2.NewConfig(ctx, instance)
 	if err != nil {
 		return "", err

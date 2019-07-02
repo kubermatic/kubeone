@@ -27,7 +27,8 @@ import (
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/kubermatic/kubeone/pkg/util"
+	kubeonecontext "github.com/kubermatic/kubeone/pkg/util/context"
+	"github.com/kubermatic/kubeone/pkg/util/runner"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -35,7 +36,7 @@ import (
 )
 
 // runPreflightChecks runs all preflight checks
-func runPreflightChecks(ctx *util.Context) error {
+func runPreflightChecks(ctx *kubeonecontext.Context) error {
 	if ctx.DynamicClient == nil {
 		return errors.New("kubernetes dynamic client is not initialized")
 	}
@@ -100,10 +101,10 @@ func runPreflightChecks(ctx *util.Context) error {
 }
 
 // checkPrerequisites checks are Docker, Kubelet, and Kubeadm installed on every machine in the cluster
-func checkPrerequisites(ctx *util.Context) error {
-	return ctx.RunTaskOnAllNodes(func(ctx *util.Context, _ *kubeoneapi.HostConfig, _ ssh.Connection) error {
+func checkPrerequisites(ctx *kubeonecontext.Context) error {
+	return ctx.RunTaskOnAllNodes(func(ctx *kubeonecontext.Context, _ *kubeoneapi.HostConfig, _ ssh.Connection) error {
 		ctx.Logger.Infoln("Checking are all prerequisites installed…")
-		_, _, err := ctx.Runner.Run(checkPrerequisitesCommand, util.TemplateVariables{})
+		_, _, err := ctx.Runner.Run(checkPrerequisitesCommand, runner.TemplateVariables{})
 		return err
 	}, true)
 }
@@ -227,7 +228,7 @@ func verifyVersion(logger logrus.FieldLogger, version string, nodes *corev1.Node
 }
 
 // verifyVersionSkew ensures the requested version matches the version skew policy
-func verifyVersionSkew(ctx *util.Context, nodes *corev1.NodeList, verbose bool) error {
+func verifyVersionSkew(ctx *kubeonecontext.Context, nodes *corev1.NodeList, verbose bool) error {
 	reqVer, err := semver.NewVersion(ctx.Cluster.Versions.Kubernetes)
 	if err != nil {
 		return errors.Wrap(err, "provided version is invalid")

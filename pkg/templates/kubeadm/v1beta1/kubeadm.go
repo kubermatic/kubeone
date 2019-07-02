@@ -28,7 +28,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/features"
 	"github.com/kubermatic/kubeone/pkg/kubeflags"
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/kubeadmargs"
-	"github.com/kubermatic/kubeone/pkg/util"
+	"github.com/kubermatic/kubeone/pkg/util/context"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -37,7 +37,7 @@ import (
 )
 
 // NewConfig returns all required configs to init a cluster via a set of v1beta1 configs
-func NewConfig(ctx *util.Context, host kubeoneapi.HostConfig) ([]runtime.Object, error) {
+func NewConfig(ctx *context.Context, host kubeoneapi.HostConfig) ([]runtime.Object, error) {
 	cluster := ctx.Cluster
 	kubeSemVer, err := semver.NewVersion(cluster.Versions.Kubernetes)
 	if err != nil {

@@ -21,7 +21,7 @@ import (
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/kubermatic/kubeone/pkg/util"
+	kubeonecontext "github.com/kubermatic/kubeone/pkg/util/context"
 	"github.com/pkg/errors"
 
 	corev1 "k8s.io/api/core/v1"
@@ -32,9 +32,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
 
-func determineHostname(ctx *util.Context) error {
+func determineHostname(ctx *kubeonecontext.Context) error {
 	ctx.Logger.Infoln("Determine hostname…")
-	return ctx.RunTaskOnAllNodes(func(ctx *util.Context, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+	return ctx.RunTaskOnAllNodes(func(ctx *kubeonecontext.Context, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 		stdout, _, err := ctx.Runner.Run("hostname -f", nil)
 		if err != nil {
 			return err
@@ -45,9 +45,9 @@ func determineHostname(ctx *util.Context) error {
 	}, true)
 }
 
-func determineOS(ctx *util.Context) error {
+func determineOS(ctx *kubeonecontext.Context) error {
 	ctx.Logger.Infoln("Determine operating system…")
-	return ctx.RunTaskOnAllNodes(func(ctx *util.Context, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+	return ctx.RunTaskOnAllNodes(func(ctx *kubeonecontext.Context, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 		osID, _, err := ctx.Runner.Run("source /etc/os-release && echo -n $ID", nil)
 		if err != nil {
 			return err

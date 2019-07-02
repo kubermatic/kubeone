@@ -20,10 +20,10 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
-	"github.com/kubermatic/kubeone/pkg/util"
+	"github.com/kubermatic/kubeone/pkg/util/context"
 )
 
-func createWorkerMachines(ctx *util.Context) error {
+func createWorkerMachines(ctx *context.Context) error {
 	if len(ctx.Cluster.Workers) == 0 {
 		return nil
 	}

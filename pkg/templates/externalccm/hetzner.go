@@ -22,7 +22,7 @@ import (
 	"github.com/Masterminds/semver"
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/util"
+	kubeonecontext "github.com/kubermatic/kubeone/pkg/util/context"
 	"github.com/kubermatic/kubeone/pkg/util/credentials"
 
 	appsv1 "k8s.io/api/apps/v1"
@@ -39,7 +39,7 @@ const (
 	hetznerDeploymentName = "hcloud-cloud-controller-manager"
 )
 
-func ensureHetzner(ctx *util.Context) error {
+func ensureHetzner(ctx *kubeonecontext.Context) error {
 	if ctx.DynamicClient == nil {
 		return errors.New("kubernetes client not initialized")
 	}

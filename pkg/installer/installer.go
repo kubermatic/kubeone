@@ -22,7 +22,8 @@ import (
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/installer/installation"
 	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/kubermatic/kubeone/pkg/util"
+	"github.com/kubermatic/kubeone/pkg/util/context"
+	"github.com/kubermatic/kubeone/pkg/util/file"
 )
 
 // Options groups the various possible options for running
@@ -65,11 +66,11 @@ func (i *Installer) Reset(options *Options) error {
 // all relevant information, but *no* Runner yet. The various
 // task helper functions will take care of setting up Runner
 // structs for each task individually.
-func (i *Installer) createContext(options *Options) *util.Context {
-	return &util.Context{
+func (i *Installer) createContext(options *Options) *context.Context {
+	return &context.Context{
 		Cluster:        i.cluster,
 		Connector:      ssh.NewConnector(),
-		Configuration:  util.NewConfiguration(),
+		Configuration:  file.NewConfiguration(),
 		WorkDir:        "kubeone",
 		Logger:         i.logger,
 		Verbose:        options.Verbose,

@@ -21,7 +21,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/util"
+	kubeonecontext "github.com/kubermatic/kubeone/pkg/util/context"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -33,7 +33,7 @@ import (
 )
 
 // Deploy generate and POST all objects to apiserver
-func Deploy(ctx *util.Context) error {
+func Deploy(ctx *kubeonecontext.Context) error {
 	if ctx.DynamicClient == nil {
 		return errors.New("kubernetes client not initialized")
 	}

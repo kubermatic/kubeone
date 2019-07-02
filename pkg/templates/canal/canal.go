@@ -23,7 +23,8 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/util"
+	kubeonecontext "github.com/kubermatic/kubeone/pkg/util/context"
+	"github.com/kubermatic/kubeone/pkg/util/kubeconfig"
 
 	rbacv1 "k8s.io/api/rbac/v1"
 	apiextensions "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
@@ -77,7 +78,7 @@ const (
 )
 
 // Deploy deploys Canal (Calico + Flannel) CNI on the cluster
-func Deploy(ctx *util.Context) error {
+func Deploy(ctx *kubeonecontext.Context) error {
 	if ctx.DynamicClient == nil {
 		return errors.New("kubernetes dynamic client is not initialized")
 	}
@@ -136,7 +137,7 @@ func Deploy(ctx *util.Context) error {
 	}
 
 	// HACK: re-init dynamic client in order to re-init RestMapper, to drop caches
-	err = util.HackIssue321InitDynamicClient(ctx)
+	err = kubeconfig.HackIssue321InitDynamicClient(ctx)
 	if err != nil {
 		return errors.Wrap(err, "failed to re-init dynamic client")
 	}

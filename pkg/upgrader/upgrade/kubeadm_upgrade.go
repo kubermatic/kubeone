@@ -20,7 +20,8 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm"
-	"github.com/kubermatic/kubeone/pkg/util"
+	"github.com/kubermatic/kubeone/pkg/util/context"
+	"github.com/kubermatic/kubeone/pkg/util/runner"
 )
 
 const (
@@ -34,13 +35,13 @@ sudo {{ .KUBEADM_UPGRADE }}
 `
 )
 
-func upgradeLeaderControlPlane(ctx *util.Context) error {
+func upgradeLeaderControlPlane(ctx *context.Context) error {
 	kadm, err := kubeadm.New(ctx.Cluster.Versions.Kubernetes)
 	if err != nil {
 		return errors.Wrap(err, "failed to init kubeadm")
 	}
 
-	_, _, err = ctx.Runner.Run(kubeadmUpgradeLeaderCommand, util.TemplateVariables{
+	_, _, err = ctx.Runner.Run(kubeadmUpgradeLeaderCommand, runner.TemplateVariables{
 		"KUBEADM_UPGRADE": kadm.UpgradeLeaderCommand(),
 		"VERSION":         ctx.Cluster.Versions.Kubernetes,
 		"WORK_DIR":        ctx.WorkDir,
@@ -49,13 +50,13 @@ func upgradeLeaderControlPlane(ctx *util.Context) error {
 	return err
 }
 
-func upgradeFollowerControlPlane(ctx *util.Context) error {
+func upgradeFollowerControlPlane(ctx *context.Context) error {
 	kadm, err := kubeadm.New(ctx.Cluster.Versions.Kubernetes)
 	if err != nil {
 		return errors.Wrap(err, "failed to init kubadm")
 	}
 
-	_, _, err = ctx.Runner.Run(kubeadmUpgradeFollowerCommand, util.TemplateVariables{
+	_, _, err = ctx.Runner.Run(kubeadmUpgradeFollowerCommand, runner.TemplateVariables{
 		"KUBEADM_UPGRADE": kadm.UpgradeFollowerCommand(),
 	})
 	return err

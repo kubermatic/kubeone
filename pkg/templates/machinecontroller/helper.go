@@ -22,7 +22,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/util"
+	kubeonecontext "github.com/kubermatic/kubeone/pkg/util/context"
 
 	corev1 "k8s.io/api/core/v1"
 	errorsutil "k8s.io/apimachinery/pkg/api/errors"
@@ -41,7 +41,7 @@ func simpleCreateOrUpdate(ctx context.Context, client dynclient.Client, obj runt
 }
 
 // Ensure install/update machine-controller
-func Ensure(ctx *util.Context) error {
+func Ensure(ctx *kubeonecontext.Context) error {
 	if !ctx.Cluster.MachineController.Deploy {
 		ctx.Logger.Info("Skipping machine-controller deployment because it was disabled in configuration.")
 		return nil
@@ -61,7 +61,7 @@ func Ensure(ctx *util.Context) error {
 }
 
 // WaitReady waits for machine-controller and its webhook to became ready
-func WaitReady(ctx *util.Context) error {
+func WaitReady(ctx *kubeonecontext.Context) error {
 	if !ctx.Cluster.MachineController.Deploy {
 		return nil
 	}
@@ -82,7 +82,7 @@ func WaitReady(ctx *util.Context) error {
 }
 
 // DestroyWorkers destroys all MachineDeployment, MachineSet and Machine objects
-func DestroyWorkers(ctx *util.Context) error {
+func DestroyWorkers(ctx *kubeonecontext.Context) error {
 	if !ctx.Cluster.MachineController.Deploy {
 		ctx.Logger.Info("Skipping deleting workers because machine-controller is disabled in configuration.")
 		return nil

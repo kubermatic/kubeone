@@ -24,13 +24,15 @@ import (
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
-	"github.com/kubermatic/kubeone/pkg/util"
+	"github.com/kubermatic/kubeone/pkg/util/context"
+	"github.com/kubermatic/kubeone/pkg/util/kubeconfig"
+	"github.com/kubermatic/kubeone/pkg/util/runner"
 
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
 // Reset undos all changes made by KubeOne to the configured machines.
-func Reset(ctx *util.Context) error {
+func Reset(ctx *context.Context) error {
 	ctx.Logger.Infoln("Resetting cluster…")
 
 	if ctx.DestroyWorkers {
@@ -52,11 +54,11 @@ func Reset(ctx *util.Context) error {
 	return nil
 }
 
-func destroyWorkers(ctx *util.Context) error {
+func destroyWorkers(ctx *context.Context) error {
 	ctx.Logger.Infoln("Destroying worker nodes…")
 
 	waitErr := wait.ExponentialBackoff(defaultRetryBackoff(3), func() (bool, error) {
-		err := util.BuildKubernetesClientset(ctx)
+		err := kubeconfig.BuildKubernetesClientset(ctx)
 		return err == nil, errors.Wrap(err, "unable to build kubernetes clientset")
 	})
 	if waitErr != nil {
@@ -73,17 +75,17 @@ func destroyWorkers(ctx *util.Context) error {
 	return waitErr
 }
 
-func resetNode(ctx *util.Context, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func resetNode(ctx *context.Context, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	ctx.Logger.Infoln("Resetting node…")
 
-	_, _, err := ctx.Runner.Run(resetScript, util.TemplateVariables{
+	_, _, err := ctx.Runner.Run(resetScript, runner.TemplateVariables{
 		"WORK_DIR": ctx.WorkDir,
 	})
 
 	return err
 }
 
-func removeBinaries(ctx *util.Context, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func removeBinaries(ctx *context.Context, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	ctx.Logger.Infoln("Removing Kubernetes binaries")
 
 	// Determine operating system
@@ -108,8 +110,8 @@ func removeBinaries(ctx *util.Context, node *kubeoneapi.HostConfig, conn ssh.Con
 	return err
 }
 
-func removeBinariesDebian(ctx *util.Context) error {
-	_, _, err := ctx.Runner.Run(removeBinariesDebianCommand, util.TemplateVariables{
+func removeBinariesDebian(ctx *context.Context) error {
+	_, _, err := ctx.Runner.Run(removeBinariesDebianCommand, runner.TemplateVariables{
 		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
 		"CNI_VERSION":        ctx.Cluster.Versions.KubernetesCNIVersion(),
 	})
@@ -117,8 +119,8 @@ func removeBinariesDebian(ctx *util.Context) error {
 	return errors.WithStack(err)
 }
 
-func removeBinariesCentOS(ctx *util.Context) error {
-	_, _, err := ctx.Runner.Run(removeBinariesCentOSCommand, util.TemplateVariables{
+func removeBinariesCentOS(ctx *context.Context) error {
+	_, _, err := ctx.Runner.Run(removeBinariesCentOSCommand, runner.TemplateVariables{
 		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
 		"CNI_VERSION":        ctx.Cluster.Versions.KubernetesCNIVersion(),
 	})
@@ -126,8 +128,8 @@ func removeBinariesCentOS(ctx *util.Context) error {
 	return errors.WithStack(err)
 }
 
-func removeBinariesCoreOS(ctx *util.Context) error {
-	_, _, err := ctx.Runner.Run(removeBinariesCoreOSCommand, util.TemplateVariables{})
+func removeBinariesCoreOS(ctx *context.Context) error {
+	_, _, err := ctx.Runner.Run(removeBinariesCoreOSCommand, runner.TemplateVariables{})
 
 	return errors.WithStack(err)
 }

@@ -23,14 +23,14 @@ import (
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/kubermatic/kubeone/pkg/util"
+	"github.com/kubermatic/kubeone/pkg/util/context"
 )
 
-func upgradeFollower(ctx *util.Context) error {
+func upgradeFollower(ctx *context.Context) error {
 	return ctx.RunTaskOnFollowers(upgradeFollowerExecutor, false)
 }
 
-func upgradeFollowerExecutor(ctx *util.Context, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func upgradeFollowerExecutor(ctx *context.Context, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	logger := ctx.Logger.WithField("node", node.PublicAddress)
 
 	logger.Infoln("Labeling follower control plane…")

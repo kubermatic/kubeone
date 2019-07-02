@@ -21,12 +21,13 @@ import (
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/kubermatic/kubeone/pkg/util"
+	"github.com/kubermatic/kubeone/pkg/util/context"
+	"github.com/kubermatic/kubeone/pkg/util/runner"
 )
 
 // DownloadCA grabs CA certs/keys from leader host
-func DownloadCA(ctx *util.Context) error {
-	return ctx.RunTaskOnLeader(func(ctx *util.Context, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func DownloadCA(ctx *context.Context) error {
+	return ctx.RunTaskOnLeader(func(ctx *context.Context, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
 		_, _, err := ctx.Runner.Run(`
 mkdir -p ./{{ .WORK_DIR }}/pki/etcd
 sudo cp /etc/kubernetes/pki/ca.crt ./{{ .WORK_DIR }}/pki/
@@ -38,7 +39,7 @@ sudo cp /etc/kubernetes/pki/front-proxy-ca.key ./{{ .WORK_DIR }}/pki/
 sudo cp /etc/kubernetes/pki/etcd/ca.{crt,key} ./{{ .WORK_DIR }}/pki/etcd/
 
 sudo chown -R "$(id -u):$(id -g)" ./{{ .WORK_DIR }}
-`, util.TemplateVariables{
+`, runner.TemplateVariables{
 			"WORK_DIR": ctx.WorkDir,
 		})
 		if err != nil {

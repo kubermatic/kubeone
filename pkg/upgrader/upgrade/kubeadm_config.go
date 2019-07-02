@@ -22,10 +22,10 @@ import (
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm"
-	"github.com/kubermatic/kubeone/pkg/util"
+	"github.com/kubermatic/kubeone/pkg/util/context"
 )
 
-func generateKubeadmConfig(ctx *util.Context, node kubeoneapi.HostConfig) error {
+func generateKubeadmConfig(ctx *context.Context, node kubeoneapi.HostConfig) error {
 	kadm, err := kubeadm.New(ctx.Cluster.Versions.Kubernetes)
 	if err != nil {
 		return errors.Wrap(err, "failed to init kubeadm")
@@ -40,6 +40,6 @@ func generateKubeadmConfig(ctx *util.Context, node kubeoneapi.HostConfig) error 
 	return nil
 }
 
-func uploadKubeadmConfig(ctx *util.Context, sshConn ssh.Connection) error {
+func uploadKubeadmConfig(ctx *context.Context, sshConn ssh.Connection) error {
 	return errors.Wrap(ctx.Configuration.UploadTo(sshConn, ctx.WorkDir), "failed to upload")
 }

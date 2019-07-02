@@ -25,8 +25,9 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/util"
+	kubeonecontext "github.com/kubermatic/kubeone/pkg/util/context"
 	"github.com/kubermatic/kubeone/pkg/util/credentials"
+	"github.com/kubermatic/kubeone/pkg/util/kubeconfig"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -48,7 +49,7 @@ const (
 )
 
 // Deploy deploys MachineController deployment with RBAC on the cluster
-func Deploy(ctx *util.Context) error {
+func Deploy(ctx *kubeonecontext.Context) error {
 	if ctx.DynamicClient == nil {
 		return errors.New("kubernetes client not initialized")
 	}
@@ -131,7 +132,7 @@ func Deploy(ctx *util.Context) error {
 	}
 
 	// HACK: re-init dynamic client in order to re-init RestMapper, to drop caches
-	err = util.HackIssue321InitDynamicClient(ctx)
+	err = kubeconfig.HackIssue321InitDynamicClient(ctx)
 	return errors.Wrap(err, "failed to re-init dynamic client")
 }
 

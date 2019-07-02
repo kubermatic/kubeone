@@ -27,7 +27,7 @@ import (
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/certificate"
-	"github.com/kubermatic/kubeone/pkg/util"
+	kubeonecontext "github.com/kubermatic/kubeone/pkg/util/context"
 
 	admissionregistrationv1beta1 "k8s.io/api/admissionregistration/v1beta1"
 	appsv1 "k8s.io/api/apps/v1"
@@ -49,7 +49,7 @@ const (
 )
 
 // DeployWebhookConfiguration deploys MachineController webhook deployment on the cluster
-func DeployWebhookConfiguration(ctx *util.Context) error {
+func DeployWebhookConfiguration(ctx *kubeonecontext.Context) error {
 	if ctx.DynamicClient == nil {
 		return errors.New("kubernetes clientset not initialized")
 	}

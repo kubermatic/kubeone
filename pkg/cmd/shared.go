@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/pflag"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/util/config"
+	"github.com/kubermatic/kubeone/pkg/util/cluster"
 )
 
 const (
@@ -70,7 +70,7 @@ func initLogger(verbose bool) *logrus.Logger {
 }
 
 func loadClusterConfig(filename, terraformOutputPath string, logger *logrus.Logger) (*kubeoneapi.KubeOneCluster, error) {
-	a, err := config.LoadKubeOneCluster(filename, terraformOutputPath, logger)
+	a, err := cluster.LoadKubeOneCluster(filename, terraformOutputPath, logger)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to load a given KubeOneCluster object")
 	}

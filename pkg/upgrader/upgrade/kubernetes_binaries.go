@@ -20,7 +20,8 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/util"
+	"github.com/kubermatic/kubeone/pkg/util/context"
+	"github.com/kubermatic/kubeone/pkg/util/runner"
 )
 
 const (
@@ -76,7 +77,7 @@ curl -sSL "https://raw.githubusercontent.com/kubernetes/kubernetes/${RELEASE}/bu
 `
 )
 
-func upgradeKubernetesBinaries(ctx *util.Context, node kubeoneapi.HostConfig) error {
+func upgradeKubernetesBinaries(ctx *context.Context, node kubeoneapi.HostConfig) error {
 	var err error
 
 	switch node.OperatingSystem {
@@ -96,8 +97,8 @@ func upgradeKubernetesBinaries(ctx *util.Context, node kubeoneapi.HostConfig) er
 	return err
 }
 
-func upgradeKubernetesBinariesDebian(ctx *util.Context) error {
-	_, _, err := ctx.Runner.Run(upgradeKubeBinariesDebianCommand, util.TemplateVariables{
+func upgradeKubernetesBinariesDebian(ctx *context.Context) error {
+	_, _, err := ctx.Runner.Run(upgradeKubeBinariesDebianCommand, runner.TemplateVariables{
 		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
 		"CNI_VERSION":        ctx.Cluster.Versions.KubernetesCNIVersion(),
 	})
@@ -105,8 +106,8 @@ func upgradeKubernetesBinariesDebian(ctx *util.Context) error {
 	return errors.WithStack(err)
 }
 
-func upgradeKubernetesBinariesCentOS(ctx *util.Context) error {
-	_, _, err := ctx.Runner.Run(upgradeKubeBinariesCentOSCommand, util.TemplateVariables{
+func upgradeKubernetesBinariesCentOS(ctx *context.Context) error {
+	_, _, err := ctx.Runner.Run(upgradeKubeBinariesCentOSCommand, runner.TemplateVariables{
 		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
 		"CNI_VERSION":        ctx.Cluster.Versions.KubernetesCNIVersion(),
 	})
@@ -114,8 +115,8 @@ func upgradeKubernetesBinariesCentOS(ctx *util.Context) error {
 	return errors.WithStack(err)
 }
 
-func upgradeKubernetesBinariesCoreOS(ctx *util.Context) error {
-	_, _, err := ctx.Runner.Run(upgradeKubeBinariesCoreOSCommand, util.TemplateVariables{
+func upgradeKubernetesBinariesCoreOS(ctx *context.Context) error {
+	_, _, err := ctx.Runner.Run(upgradeKubeBinariesCoreOSCommand, runner.TemplateVariables{
 		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
 		"CNI_VERSION":        ctx.Cluster.Versions.KubernetesCNIVersion(),
 	})

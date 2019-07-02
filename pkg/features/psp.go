@@ -23,7 +23,7 @@ import (
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/kubeadmargs"
-	"github.com/kubermatic/kubeone/pkg/util"
+	kubeonecontext "github.com/kubermatic/kubeone/pkg/util/context"
 
 	corev1 "k8s.io/api/core/v1"
 	policybeta1 "k8s.io/api/policy/v1beta1"
@@ -47,7 +47,7 @@ func activateKubeadmPSP(feature *kubeoneapi.PodSecurityPolicy, args *kubeadmargs
 	args.APIServer.AppendMapStringStringExtraArg(apiServerAdmissionPluginsFlag, pspAdmissionPlugin)
 }
 
-func installKubeSystemPSP(psp *kubeoneapi.PodSecurityPolicy, ctx *util.Context) error {
+func installKubeSystemPSP(psp *kubeoneapi.PodSecurityPolicy, ctx *kubeonecontext.Context) error {
 	if psp == nil || !psp.Enable {
 		return nil
 	}

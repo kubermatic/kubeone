@@ -21,12 +21,12 @@ import (
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/kubeadmargs"
-	"github.com/kubermatic/kubeone/pkg/util"
+	"github.com/kubermatic/kubeone/pkg/util/context"
 )
 
 // Activate configured features.
 // Installing CRDs, creating policies and so on
-func Activate(ctx *util.Context) error {
+func Activate(ctx *context.Context) error {
 	if err := installKubeSystemPSP(ctx.Cluster.Features.PodSecurityPolicy, ctx); err != nil {
 		return errors.Wrap(err, "failed to install PodSecurityPolicy")
 	}

@@ -22,7 +22,8 @@ import (
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/upgrader/upgrade"
-	"github.com/kubermatic/kubeone/pkg/util"
+	"github.com/kubermatic/kubeone/pkg/util/context"
+	"github.com/kubermatic/kubeone/pkg/util/file"
 )
 
 // Options groups the various possible options for running KubeOne upgrade
@@ -53,11 +54,11 @@ func (u *Upgrader) Upgrade(options *Options) error {
 
 // createContext creates a basic, non-host bound context with all relevant information, but no Runner yet.
 // The various task helper functions will take care of setting up Runner structs for each task individually
-func (u *Upgrader) createContext(options *Options) *util.Context {
-	return &util.Context{
+func (u *Upgrader) createContext(options *Options) *context.Context {
+	return &context.Context{
 		Cluster:                   u.cluster,
 		Connector:                 ssh.NewConnector(),
-		Configuration:             util.NewConfiguration(),
+		Configuration:             file.NewConfiguration(),
 		WorkDir:                   "kubeone",
 		Logger:                    u.logger,
 		Verbose:                   options.Verbose,

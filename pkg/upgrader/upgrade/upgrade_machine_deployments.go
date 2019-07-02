@@ -21,7 +21,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/util"
+	kubeonecontext "github.com/kubermatic/kubeone/pkg/util/context"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/util/retry"
@@ -29,7 +29,7 @@ import (
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-func upgradeMachineDeployments(ctx *util.Context) error {
+func upgradeMachineDeployments(ctx *kubeonecontext.Context) error {
 	if !ctx.UpgradeMachineDeployments {
 		ctx.Logger.Info("Upgrade MachineDeployments skip per lack of flag…")
 		return nil
