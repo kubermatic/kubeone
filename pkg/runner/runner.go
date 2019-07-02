@@ -28,7 +28,6 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/kubermatic/kubeone/pkg/util/tee"
 )
 
 // Runner bundles a connection to a host with the verbosity and
@@ -68,8 +67,8 @@ func (r *Runner) Run(cmd string, variables TemplateVariables) (string, string, e
 		return stdout, stderr, err
 	}
 
-	stdout := tee.NewTee(prefixw.New(os.Stdout, r.Prefix))
-	stderr := tee.NewTee(prefixw.New(os.Stderr, r.Prefix))
+	stdout := NewTee(prefixw.New(os.Stdout, r.Prefix))
+	stderr := NewTee(prefixw.New(os.Stderr, r.Prefix))
 
 	// run the command
 	_, err = r.Conn.Stream(cmd, stdout, stderr)
