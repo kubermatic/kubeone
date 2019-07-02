@@ -32,7 +32,7 @@ import (
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	kubeonevalidation "github.com/kubermatic/kubeone/pkg/apis/kubeone/validation"
 	"github.com/kubermatic/kubeone/pkg/config"
-	"github.com/kubermatic/kubeone/pkg/util/yamled"
+	"github.com/kubermatic/kubeone/pkg/yamled"
 
 	kyaml "sigs.k8s.io/yaml"
 )
