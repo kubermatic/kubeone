@@ -20,10 +20,10 @@ import (
 	"github.com/sirupsen/logrus"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/configupload"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/upgrader/upgrade"
 	"github.com/kubermatic/kubeone/pkg/util/context"
-	"github.com/kubermatic/kubeone/pkg/util/file"
 )
 
 // Options groups the various possible options for running KubeOne upgrade
@@ -58,7 +58,7 @@ func (u *Upgrader) createContext(options *Options) *context.Context {
 	return &context.Context{
 		Cluster:                   u.cluster,
 		Connector:                 ssh.NewConnector(),
-		Configuration:             file.NewConfiguration(),
+		Configuration:             configupload.NewConfiguration(),
 		WorkDir:                   "kubeone",
 		Logger:                    u.logger,
 		Verbose:                   options.Verbose,

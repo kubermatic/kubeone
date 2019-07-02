@@ -20,10 +20,10 @@ import (
 	"github.com/sirupsen/logrus"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/configupload"
 	"github.com/kubermatic/kubeone/pkg/installer/installation"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/util/context"
-	"github.com/kubermatic/kubeone/pkg/util/file"
 )
 
 // Options groups the various possible options for running
@@ -70,7 +70,7 @@ func (i *Installer) createContext(options *Options) *context.Context {
 	return &context.Context{
 		Cluster:        i.cluster,
 		Connector:      ssh.NewConnector(),
-		Configuration:  file.NewConfiguration(),
+		Configuration:  configupload.NewConfiguration(),
 		WorkDir:        "kubeone",
 		Logger:         i.logger,
 		Verbose:        options.Verbose,

@@ -20,9 +20,9 @@ import (
 	"github.com/sirupsen/logrus"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/configupload"
 	"github.com/kubermatic/kubeone/pkg/runner"
 	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/kubermatic/kubeone/pkg/util/file"
 
 	"k8s.io/client-go/rest"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
@@ -34,7 +34,7 @@ type Context struct {
 	Cluster                   *kubeoneapi.KubeOneCluster
 	Logger                    logrus.FieldLogger
 	Connector                 *ssh.Connector
-	Configuration             *file.Configuration
+	Configuration             *configupload.Configuration
 	Runner                    *runner.Runner
 	WorkDir                   string
 	JoinCommand               string
