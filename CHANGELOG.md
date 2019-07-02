@@ -1,6 +1,6 @@
 # Changelog
 
-# [v0.9.0](https://github.com/kubermatic/kubeone/releases/tag/v0.9.0) - 2019-07-01
+# [v0.9.0](https://github.com/kubermatic/kubeone/releases/tag/v0.9.0) - 2019-07-02
 
 ## Action Required
 
