@@ -30,8 +30,8 @@ import (
 	kubeonescheme "github.com/kubermatic/kubeone/pkg/apis/kubeone/scheme"
 	kubeonev1alpha1 "github.com/kubermatic/kubeone/pkg/apis/kubeone/v1alpha1"
 	"github.com/kubermatic/kubeone/pkg/apis/kubeone/validation"
+	"github.com/kubermatic/kubeone/pkg/credentials"
 	"github.com/kubermatic/kubeone/pkg/terraform"
-	"github.com/kubermatic/kubeone/pkg/util/credentials"
 )
 
 // SetKubeOneClusterDynamicDefaults sets the dynamic defaults for a given KubeOneCluster object

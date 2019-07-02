@@ -20,12 +20,12 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/certificate"
+	"github.com/kubermatic/kubeone/pkg/credentials"
 	"github.com/kubermatic/kubeone/pkg/features"
 	"github.com/kubermatic/kubeone/pkg/task"
 	"github.com/kubermatic/kubeone/pkg/templates/externalccm"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
 	"github.com/kubermatic/kubeone/pkg/util/context"
-	"github.com/kubermatic/kubeone/pkg/util/credentials"
 	"github.com/kubermatic/kubeone/pkg/util/kubeconfig"
 )
 

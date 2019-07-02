@@ -25,8 +25,8 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/credentials"
 	kubeonecontext "github.com/kubermatic/kubeone/pkg/util/context"
-	"github.com/kubermatic/kubeone/pkg/util/credentials"
 	"github.com/kubermatic/kubeone/pkg/util/kubeconfig"
 
 	appsv1 "k8s.io/api/apps/v1"

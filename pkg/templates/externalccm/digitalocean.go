@@ -22,8 +22,8 @@ import (
 	"github.com/Masterminds/semver"
 	"github.com/pkg/errors"
 
+	"github.com/kubermatic/kubeone/pkg/credentials"
 	kubeonecontext "github.com/kubermatic/kubeone/pkg/util/context"
-	"github.com/kubermatic/kubeone/pkg/util/credentials"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
