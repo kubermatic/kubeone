@@ -85,7 +85,10 @@ if type docker &>/dev/null && type kubelet &>/dev/null; then exit 0; fi
 
 sudo mkdir -p /etc/docker
 cat <<EOF | sudo tee /etc/docker/daemon.json
-{"storage-driver": "overlay2"}
+{
+	"exec-opts": ["native.cgroupdriver=systemd"],
+	"storage-driver": "overlay2"
+}
 EOF
 
 sudo apt-get update
