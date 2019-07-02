@@ -23,10 +23,10 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/kubeconfig"
 	"github.com/kubermatic/kubeone/pkg/runner"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/util/context"
-	"github.com/kubermatic/kubeone/pkg/util/kubeconfig"
 )
 
 func copyKubeconfig(ctx *context.Context) error {

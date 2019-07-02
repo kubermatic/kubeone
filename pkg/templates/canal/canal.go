@@ -23,8 +23,8 @@ import (
 
 	"github.com/pkg/errors"
 
+	"github.com/kubermatic/kubeone/pkg/kubeconfig"
 	kubeonecontext "github.com/kubermatic/kubeone/pkg/util/context"
-	"github.com/kubermatic/kubeone/pkg/util/kubeconfig"
 
 	rbacv1 "k8s.io/api/rbac/v1"
 	apiextensions "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
