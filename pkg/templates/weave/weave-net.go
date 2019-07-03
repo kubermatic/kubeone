@@ -101,7 +101,7 @@ func Deploy(ctx *util.Context) error {
 		peers = append(peers, h.PrivateAddress)
 	}
 
-	ds := daemonSet(ctx.Cluster.ClusterNetwork.CNI.Encrypted, strings.Join(peers, " "))
+	ds := daemonSet(ctx.Cluster.ClusterNetwork.CNI.Encrypted, strings.Join(peers, " "), ctx.Cluster.ClusterNetwork.PodSubnet)
 	if err := simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, ds); err != nil {
 		return errors.Wrap(err, "failed to ensure weave DaemonSet")
 	}
@@ -245,7 +245,7 @@ func secret(pass string) *corev1.Secret {
 	}
 }
 
-func dsEnv(passwordRef bool, peers string) []corev1.EnvVar {
+func dsEnv(passwordRef bool, peers string, podsubnet string) []corev1.EnvVar {
 	env := []corev1.EnvVar{
 		{
 			Name: "HOSTNAME",
@@ -268,6 +268,10 @@ func dsEnv(passwordRef bool, peers string) []corev1.EnvVar {
 			Name:  "KUBE_PEERS",
 			Value: peers,
 		},
+		{
+			Name:  "IPALLOC_RANGE",
+			Value: podsubnet,
+		},
 	}
 
 	if passwordRef {
@@ -287,7 +291,7 @@ func dsEnv(passwordRef bool, peers string) []corev1.EnvVar {
 	return env
 }
 
-func daemonSet(passwordRef bool, peers string) *appsv1.DaemonSet {
+func daemonSet(passwordRef bool, peers string, podsubnet string) *appsv1.DaemonSet {
 	var (
 		priviledged  = true
 		fileOrCreate = corev1.HostPathFileOrCreate
@@ -322,7 +326,7 @@ func daemonSet(passwordRef bool, peers string) *appsv1.DaemonSet {
 						{
 							Name:    "weave",
 							Command: []string{"/home/weave/launch.sh"},
-							Env:     dsEnv(passwordRef, peers),
+							Env:     dsEnv(passwordRef, peers, podsubnet),
 							Image:   weaveKubeImage + version,
 							ReadinessProbe: &corev1.Probe{
 								Handler: corev1.Handler{
