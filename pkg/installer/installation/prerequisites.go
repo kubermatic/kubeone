@@ -80,7 +80,7 @@ sudo sed -i '/.*swap.*/d' /etc/fstab
 source /etc/os-release
 source /etc/kubeone/proxy-env
 
-# Short-Circuit the installation if it was arleady executed
+# Short-Circuit the installation if it was already executed
 if type docker &>/dev/null && type kubelet &>/dev/null; then exit 0; fi
 
 sudo mkdir -p /etc/docker
@@ -128,6 +128,7 @@ sudo apt-get install -y --no-install-recommends \
 	kubernetes-cni=${cni_ver}
 sudo apt-mark hold docker-ce kubelet kubeadm kubectl kubernetes-cni
 sudo systemctl enable --now docker
+sudo systemctl enable --now kubelet
 `
 
 	kubeadmCentOSScript = `
@@ -138,7 +139,7 @@ sudo sed -i s/SELINUX=enforcing/SELINUX=permissive/g /etc/sysconfig/selinux
 
 source /etc/kubeone/proxy-env
 
-# Short-Circuit the installation if it was arleady executed
+# Short-Circuit the installation if it was already executed
 if type docker &>/dev/null && type kubelet &>/dev/null; then exit 0; fi
 
 cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
@@ -164,10 +165,23 @@ sudo yum install -y --disableexcludes=kubernetes \
 	kubectl-{{ .KUBERNETES_VERSION }}-0 \
 	kubernetes-cni-{{ .CNI_VERSION }}-0
 sudo systemctl enable --now docker
+sudo systemctl enable --now kubelet
 `
 
 	kubeadmCoreOSScript = `
 source /etc/kubeone/proxy-env
+
+# Short-Circuit the installation if it was already executed
+if type docker &>/dev/null && type kubelet &>/dev/null; then exit 0; fi
+
+sudo mkdir -p /etc/docker
+cat <<EOF | sudo tee /etc/docker/daemon.json
+{
+	"exec-opts": ["native.cgroupdriver=systemd"],
+	"storage-driver": "overlay2"
+}
+EOF
+sudo systemctl restart docker
 
 sudo mkdir -p /opt/cni/bin /etc/kubernetes/pki /etc/kubernetes/manifests
 curl -L "https://github.com/containernetworking/plugins/releases/download/{{ .CNI_VERSION }}/cni-plugins-amd64-{{ .CNI_VERSION }}.tgz" | \
