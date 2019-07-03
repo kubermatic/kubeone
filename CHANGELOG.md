@@ -1,5 +1,13 @@
 # Changelog
 
+# [v0.9.1](https://github.com/kubermatic/kubeone/releases/tag/v0.9.1) - 2019-07-03
+
+## Changed
+
+* Fix `.ClusterNetwork.PodSubnet` not being respected when using the Weave-Net CNI plugin ([#540](https://github.com/kubermatic/kubeone/pull/540))
+* Fix `kubeadm` preflight check failure (`IsDockerSystemdCheck`) on Ubuntu and CoreOS by making Docker use `systemd` cgroups driver ([#536](https://github.com/kubermatic/kubeone/pull/536), [#541](https://github.com/kubermatic/kubeone/pull/541))
+* Fix `kubeadm` preflight check failure on CentOS due to `kubelet` service not being enabled ([#541](https://github.com/kubermatic/kubeone/pull/541))
+
 # [v0.9.0](https://github.com/kubermatic/kubeone/releases/tag/v0.9.0) - 2019-07-02
 
 ## Action Required
