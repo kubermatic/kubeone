@@ -96,6 +96,15 @@ Support for packages managers is still work in progress and expected
 to be finished for one of the upcoming release. For details about the
 progress follow the [issue #471][17]
 
+#### Arch Linux
+
+We have a package in the AUR [here](https://aur.archlinux.org/packages/kubeone).
+Use your favorite method to build it on your system, for example by using
+`aurutils`:
+```bash
+aur sync kubeone && pacman -S kubeone
+```
+
 ### Shell completion and generating documentation
 
 KubeOne comes with commands for generating scripts for the shell
