@@ -29,7 +29,7 @@ PROVIDER=$(notdir $(wildcard ./terraform/*))
 CREATE_TARGETS=$(addsuffix -env,$(PROVIDER))
 DESTROY_TARGETS=$(addsuffix -env-cleanup,$(PROVIDER))
 
-.PHONY: all install-via-docker install build vendor download-dependencies
+.PHONY: all install-via-docker docker install build vendor download-dependencies
 .PHONY: generate-internal-groups verify-dependencies
 all: install
 
@@ -40,6 +40,10 @@ install-via-docker: docker-make-install
 		-w /go/src/github.com/kubermatic/kubeone \
 		$(BUILD_IMAGE) \
 		make install
+
+.PHONY: docker
+docker: dist/kubeone
+	docker build -t quay.io/kubermatic/kubeone:$(GITTAG) -f build/docker/Dockerfile .
 
 install:
 	go install $(GOBUILDFLAGS) -ldflags='$(GOLDFLAGS)' -v .

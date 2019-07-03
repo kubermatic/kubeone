@@ -106,6 +106,25 @@ Use your favorite method to build it on your system, for example by using
 `aurutils`:
 ```bash
 aur sync kubeone && pacman -S kubeone
+#### Docker
+
+We distribute a docker image that contains KubeOne and Terraform to use for your
+setup.
+
+##### Building
+
+```bash
+docker build -t kubeone:<Tag> .
+```
+
+##### Running
+
+To receive SSH credentials KubeOne needs to connect to the local SSH
+agent. This is done by mounting its UNIX socket. You can execute KubeOne and
+Terraform that way by running the following command line:
+
+```bash
+docker run --rm --user $(id -u) --name kubeone --mount type=bind,source="$SSH_AUTH_SOCK",target=/run/ssh.sock --mount type=bind,source="$(pwd)",target=/mnt -t kubeone:<Version> <Command>
 ```
 
 ### Shell completion and generating documentation
