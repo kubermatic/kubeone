@@ -66,7 +66,7 @@ output "kubeone_workers" {
           # Optional: If set, the rootDisk will be a volume. 
           # Otherwise, the rootDisk will be on ephemeral storage and its size will
           # be derived from the flavor
-          rootDiskSizeGB = 10
+          rootDiskSizeGB = 50
           tags = {
             "${var.cluster_name}-workers" = "pool1"
           }
