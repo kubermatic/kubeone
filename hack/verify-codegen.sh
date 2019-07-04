@@ -14,15 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -o errexit
-set -o nounset
-set -o pipefail
+set -eu -o pipefail
 
-SCRIPT_ROOT=$(dirname "${BASH_SOURCE}")/..
+cd $(dirname "${BASH_SOURCE}")/..
 
-DIFFROOT="${SCRIPT_ROOT}/pkg"
-TMP_DIFFROOT="${SCRIPT_ROOT}/_tmp/pkg"
-_tmp="${SCRIPT_ROOT}/_tmp"
+DIFFROOT="pkg"
+TMP_DIFFROOT="_tmp/pkg"
+_tmp="_tmp"
 
 cleanup() {
   rm -rf "${_tmp}"
@@ -34,7 +32,7 @@ cleanup
 mkdir -p "${TMP_DIFFROOT}"
 cp -a "${DIFFROOT}"/* "${TMP_DIFFROOT}"
 
-"${SCRIPT_ROOT}/hack/update-codegen.sh"
+./hack/update-codegen.sh
 echo "diffing ${DIFFROOT} against freshly generated codegen"
 ret=0
 diff -Naupr "${DIFFROOT}" "${TMP_DIFFROOT}" || ret=$?

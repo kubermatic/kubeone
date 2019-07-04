@@ -10,3 +10,4 @@ tf.json
 terraform.tfvars
 *kubeconfig
 !*kubeconfig/
+/vendor

@@ -16,6 +16,9 @@ export GOPATH?=$(shell go env GOPATH)
 export CGO_ENABLED=0
 export TFJSON?=
 export KUBERNETES_VERSION=1.14.1
+export GOPROXY=https://proxy.golang.org
+export GO111MODULE=on
+
 BUILD_DATE=$(shell if hash gdate 2>/dev/null; then gdate --rfc-3339=seconds | sed 's/ /T/'; else date --rfc-3339=seconds | sed 's/ /T/'; fi)
 BUILD_IMAGE?=golang:1.12.5
 GITCOMMIT=$(shell git log -1 --pretty=format:"%H")
@@ -26,38 +29,11 @@ PROVIDER=$(notdir $(wildcard ./terraform/*))
 CREATE_TARGETS=$(addsuffix -env,$(PROVIDER))
 DESTROY_TARGETS=$(addsuffix -env-cleanup,$(PROVIDER))
 
+.PHONY: all install-via-docker install build vendor
+.PHONY: generate-internal-groups verify-dependencies
 all: install
 
-.PHONY: install
-install:
-	go install -ldflags='$(GOLDFLAGS)' -v .
-
-.PHONY: build
-kubeone: build
-build: dist/kubeone
-
-.PHONY: lint
-lint:
-	@golangci-lint --version
-	golangci-lint run
-
-.PHONY: test
-test:
-	CGO_ENABLED=1 go test -race ./...
-
-.PHONY: dep
-dep:
-	dep ensure -v
-
-.PHONY: licence-check
-licence-check:
-	wwhrd check
-
-.PHONY: check-dependencies
-check-dependencies:
-	dep check
-
-docker-make-install:
+install-via-docker: docker-make-install
 	docker run -it --rm \
 		-v $(PWD):/go/src/github.com/kubermatic/kubeone \
 		-v $(GOPATH)/pkg:/go/pkg \
@@ -65,14 +41,48 @@ docker-make-install:
 		$(BUILD_IMAGE) \
 		make install
 
-.PHONY: e2e_test
-e2e_test: build lint test dep
-	./hack/run_ci_e2e_test.sh
+install:
+	go install -ldflags='$(GOLDFLAGS)' -v .
+
+build: dist/kubeone
+
+vendor:
+	go mod vendor
 
 dist/kubeone: $(shell find . -name '*.go')
-	go build -ldflags='$(GOLDFLAGS)' -v -o $@ .
+	go build -mod readonly -ldflags='$(GOLDFLAGS)' -v -o $@ .
 
-$(CREATE_TARGETS): kubeone
+generate-internal-groups: vendor
+	./hack/update-codegen.sh
+
+verify-dependencies:
+	go mod verify
+
+
+
+.PHONY: test e2e-test lint verify-licence verify-codegen verify-boilerplate
+test:
+	CGO_ENABLED=1 go test -race ./...
+
+e2e-test: build lint test
+	./hack/run-ci-e2e_test.sh
+
+lint:
+	@golangci-lint --version
+	golangci-lint run
+
+verify-licence:
+	wwhrd check
+
+verify-codegen: vendor
+	./hack/verify-codegen.sh
+
+verify-boilerplate:
+	./hack/verify-boilerplate.sh
+
+
+
+$(CREATE_TARGETS): dist/kubeone
 	$(eval PROVIDERNAME := $(@:-env=))
 	cd terraform/$(PROVIDERNAME) && terraform apply --auto-approve
 	terraform output -state=terraform/$(PROVIDERNAME)/terraform.tfstate -json > tf.json
@@ -83,7 +93,7 @@ $(CREATE_TARGETS): kubeone
 	./dist/kubeone config print --full --provider $(PROVIDERNAME) > ./dist/fresh_config.yaml
 	./dist/kubeone install ./dist/fresh_config.yaml  --tfjson tf.json
 
-$(DESTROY_TARGETS): kubeone
+$(DESTROY_TARGETS): dist/kubeone
 	$(eval PROVIDERNAME := $(@:-env-cleanup=))
 	./dist/kubeone config print --full --provider $(PROVIDERNAME) > ./dist/fresh_config.yaml
 	./dist/kubeone reset ./dist/fresh_config.yaml  --tfjson tf.json
