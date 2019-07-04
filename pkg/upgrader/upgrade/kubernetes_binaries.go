@@ -54,7 +54,7 @@ sudo yum install -y --disableexcludes=kubernetes \
 source /etc/kubeone/proxy-env
 
 sudo mkdir -p /opt/cni/bin
-curl -L "https://github.com/containernetworking/plugins/releases/download/{{ .CNI_VERSION }}/cni-plugins-amd64-{{ .CNI_VERSION }}.tgz" | \
+curl -L "https://github.com/containernetworking/plugins/releases/download/v{{ .CNI_VERSION }}/cni-plugins-amd64-v{{ .CNI_VERSION }}.tgz" | \
      sudo tar -C /opt/cni/bin -xz
 
 RELEASE="v{{ .KUBERNETES_VERSION }}"
