@@ -58,31 +58,31 @@ type ProviderEnvironmentVariable struct {
 	MachineControllerName string
 }
 
-// ProviderCredentials match the cloudprovider and parses its credentials from environment
-func ProviderCredentials(p kubeone.CloudProviderName) (map[string]string, error) {
+// ProviderCredentials match the cloudprovider and parses its credentials from environment.
+// AWS profile path and name are only needed if this function is used to obtain AWS credentials
+func ProviderCredentials(p kubeone.CloudProviderName, awsProfilePath, awsProfileName string) (map[string]string, error) {
 	switch p {
 	case kubeone.CloudProviderNameAWS:
 		creds := make(map[string]string)
-		envCredsProvider := credentials.NewEnvCredentials()
-		envCreds, err := envCredsProvider.Get()
+		// Environment variables have higher priority in order to maintain the backwards compatibility.
+		credsProvider := credentials.NewEnvCredentials()
+		awsCreds, err := credsProvider.Get()
 		if err != nil {
-			return nil, err
-		}
-		if envCreds.AccessKeyID != "" && envCreds.SecretAccessKey != "" {
-			creds["AWS_ACCESS_KEY_ID"] = envCreds.AccessKeyID
-			creds["AWS_SECRET_ACCESS_KEY"] = envCreds.SecretAccessKey
-			return creds, nil
+			// If error is not related to missing credentials
+			if err != credentials.ErrAccessKeyIDNotFound && err != credentials.ErrSecretAccessKeyNotFound {
+				return nil, err
+			}
+			// In case environment variables are not present, resort to the profile
+			credsProvider = credentials.NewSharedCredentials(awsProfilePath, awsProfileName)
+			awsCreds, err = credsProvider.Get()
+			if err != nil {
+				return nil, err
+			}
 		}
 
-		// If env fails resort to config file
-		configCredsProvider := credentials.NewSharedCredentials("", "")
-		configCreds, err := configCredsProvider.Get()
-		if err != nil {
-			return nil, err
-		}
-		if configCreds.AccessKeyID != "" && configCreds.SecretAccessKey != "" {
-			creds["AWS_ACCESS_KEY_ID"] = configCreds.AccessKeyID
-			creds["AWS_SECRET_ACCESS_KEY"] = configCreds.SecretAccessKey
+		if awsCreds.AccessKeyID != "" && awsCreds.SecretAccessKey != "" {
+			creds["AWS_ACCESS_KEY_ID"] = awsCreds.AccessKeyID
+			creds["AWS_SECRET_ACCESS_KEY"] = awsCreds.SecretAccessKey
 			return creds, nil
 		}
 
