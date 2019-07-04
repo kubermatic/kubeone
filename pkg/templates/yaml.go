@@ -57,17 +57,3 @@ func KubernetesToYAML(data []runtime.Object) (string, error) {
 
 	return buffer.String(), nil
 }
-
-// MergeStringMap merges two string maps into destination string map
-func MergeStringMap(modified *bool, destination *map[string]string, required map[string]string) {
-	if *destination == nil {
-		*destination = map[string]string{}
-	}
-
-	for k, v := range required {
-		if destinationV, ok := (*destination)[k]; !ok || destinationV != v {
-			(*destination)[k] = v
-			*modified = true
-		}
-	}
-}

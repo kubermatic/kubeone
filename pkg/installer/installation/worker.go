@@ -19,15 +19,15 @@ package installation
 import (
 	"github.com/pkg/errors"
 
+	"github.com/kubermatic/kubeone/pkg/state"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
-	"github.com/kubermatic/kubeone/pkg/util"
 )
 
-func createWorkerMachines(ctx *util.Context) error {
-	if len(ctx.Cluster.Workers) == 0 {
+func createWorkerMachines(s *state.State) error {
+	if len(s.Cluster.Workers) == 0 {
 		return nil
 	}
 
-	ctx.Logger.Infoln("Creating worker machines…")
-	return errors.Wrap(machinecontroller.DeployMachineDeployments(ctx), "failed to deploy Machines")
+	s.Logger.Infoln("Creating worker machines…")
+	return errors.Wrap(machinecontroller.DeployMachineDeployments(s), "failed to deploy Machines")
 }

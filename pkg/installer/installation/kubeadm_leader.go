@@ -20,8 +20,9 @@ import (
 	"strconv"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/runner"
 	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/kubermatic/kubeone/pkg/util"
+	"github.com/kubermatic/kubeone/pkg/state"
 )
 
 const (
@@ -38,34 +39,34 @@ sudo kubeadm init --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
 `
 )
 
-func kubeadmCertsOnLeader(ctx *util.Context) error {
-	ctx.Logger.Infoln("Configuring certs and etcd on first controller…")
-	return ctx.RunTaskOnLeader(kubeadmCertsExecutor)
+func kubeadmCertsOnLeader(s *state.State) error {
+	s.Logger.Infoln("Configuring certs and etcd on first controller…")
+	return s.RunTaskOnLeader(kubeadmCertsExecutor)
 }
 
-func kubeadmCertsOnFollower(ctx *util.Context) error {
-	ctx.Logger.Infoln("Configuring certs and etcd on consecutive controller…")
-	return ctx.RunTaskOnFollowers(kubeadmCertsExecutor, true)
+func kubeadmCertsOnFollower(s *state.State) error {
+	s.Logger.Infoln("Configuring certs and etcd on consecutive controller…")
+	return s.RunTaskOnFollowers(kubeadmCertsExecutor, true)
 }
 
-func kubeadmCertsExecutor(ctx *util.Context, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func kubeadmCertsExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 
-	ctx.Logger.Infoln("Ensuring Certificates…")
-	_, _, err := ctx.Runner.Run(kubeadmCertCommand, util.TemplateVariables{
-		"WORK_DIR": ctx.WorkDir,
+	s.Logger.Infoln("Ensuring Certificates…")
+	_, _, err := s.Runner.Run(kubeadmCertCommand, runner.TemplateVariables{
+		"WORK_DIR": s.WorkDir,
 		"NODE_ID":  strconv.Itoa(node.ID),
 	})
 	return err
 }
 
-func initKubernetesLeader(ctx *util.Context) error {
-	ctx.Logger.Infoln("Initializing Kubernetes on leader…")
+func initKubernetesLeader(s *state.State) error {
+	s.Logger.Infoln("Initializing Kubernetes on leader…")
 
-	return ctx.RunTaskOnLeader(func(ctx *util.Context, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
-		ctx.Logger.Infoln("Running kubeadm…")
+	return s.RunTaskOnLeader(func(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+		s.Logger.Infoln("Running kubeadm…")
 
-		_, _, err := ctx.Runner.Run(kubeadmInitCommand, util.TemplateVariables{
-			"WORK_DIR": ctx.WorkDir,
+		_, _, err := s.Runner.Run(kubeadmInitCommand, runner.TemplateVariables{
+			"WORK_DIR": s.WorkDir,
 			"NODE_ID":  strconv.Itoa(node.ID),
 		})
 

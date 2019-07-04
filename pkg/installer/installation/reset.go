@@ -22,29 +22,31 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/kubeconfig"
+	"github.com/kubermatic/kubeone/pkg/runner"
 	"github.com/kubermatic/kubeone/pkg/ssh"
+	"github.com/kubermatic/kubeone/pkg/state"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
-	"github.com/kubermatic/kubeone/pkg/util"
 
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
 // Reset undos all changes made by KubeOne to the configured machines.
-func Reset(ctx *util.Context) error {
-	ctx.Logger.Infoln("Resetting cluster…")
+func Reset(s *state.State) error {
+	s.Logger.Infoln("Resetting cluster…")
 
-	if ctx.DestroyWorkers {
-		if err := destroyWorkers(ctx); err != nil {
+	if s.DestroyWorkers {
+		if err := destroyWorkers(s); err != nil {
 			return err
 		}
 	}
 
-	if err := ctx.RunTaskOnAllNodes(resetNode, true); err != nil {
+	if err := s.RunTaskOnAllNodes(resetNode, true); err != nil {
 		return err
 	}
 
-	if ctx.RemoveBinaries {
-		if err := ctx.RunTaskOnAllNodes(removeBinaries, true); err != nil {
+	if s.RemoveBinaries {
+		if err := s.RunTaskOnAllNodes(removeBinaries, true); err != nil {
 			return errors.Wrap(err, "unable to remove kubernetes binaries")
 		}
 	}
@@ -52,42 +54,42 @@ func Reset(ctx *util.Context) error {
 	return nil
 }
 
-func destroyWorkers(ctx *util.Context) error {
-	ctx.Logger.Infoln("Destroying worker nodes…")
+func destroyWorkers(s *state.State) error {
+	s.Logger.Infoln("Destroying worker nodes…")
 
 	waitErr := wait.ExponentialBackoff(defaultRetryBackoff(3), func() (bool, error) {
-		err := util.BuildKubernetesClientset(ctx)
+		err := kubeconfig.BuildKubernetesClientset(s)
 		return err == nil, errors.Wrap(err, "unable to build kubernetes clientset")
 	})
 	if waitErr != nil {
-		ctx.Logger.Warn("Unable to connect to the control plane API and destroy worker nodes")
-		ctx.Logger.Warn("You can skip destorying worker nodes and destroy them manually using `--destroy-workers=false`")
+		s.Logger.Warn("Unable to connect to the control plane API and destroy worker nodes")
+		s.Logger.Warn("You can skip destorying worker nodes and destroy them manually using `--destroy-workers=false`")
 		return waitErr
 	}
 
 	waitErr = wait.ExponentialBackoff(defaultRetryBackoff(3), func() (bool, error) {
-		err := machinecontroller.DestroyWorkers(ctx)
+		err := machinecontroller.DestroyWorkers(s)
 		return err == nil, errors.Wrap(err, "unable to delete all worker nodes")
 	})
 
 	return waitErr
 }
 
-func resetNode(ctx *util.Context, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
-	ctx.Logger.Infoln("Resetting node…")
+func resetNode(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
+	s.Logger.Infoln("Resetting node…")
 
-	_, _, err := ctx.Runner.Run(resetScript, util.TemplateVariables{
-		"WORK_DIR": ctx.WorkDir,
+	_, _, err := s.Runner.Run(resetScript, runner.TemplateVariables{
+		"WORK_DIR": s.WorkDir,
 	})
 
 	return err
 }
 
-func removeBinaries(ctx *util.Context, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
-	ctx.Logger.Infoln("Removing Kubernetes binaries")
+func removeBinaries(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+	s.Logger.Infoln("Removing Kubernetes binaries")
 
 	// Determine operating system
-	os, err := determineOS(ctx)
+	os, err := determineOS(s)
 	if err != nil {
 		return errors.Wrap(err, "failed to determine operating system")
 	}
@@ -96,11 +98,11 @@ func removeBinaries(ctx *util.Context, node *kubeoneapi.HostConfig, conn ssh.Con
 	// Remove Kubernetes binaries
 	switch node.OperatingSystem {
 	case "ubuntu", "debian":
-		err = removeBinariesDebian(ctx)
+		err = removeBinariesDebian(s)
 	case "centos":
-		err = removeBinariesCentOS(ctx)
+		err = removeBinariesCentOS(s)
 	case "coreos":
-		err = removeBinariesCoreOS(ctx)
+		err = removeBinariesCoreOS(s)
 	default:
 		err = errors.Errorf("'%s' is not a supported operating system", node.OperatingSystem)
 	}
@@ -108,26 +110,26 @@ func removeBinaries(ctx *util.Context, node *kubeoneapi.HostConfig, conn ssh.Con
 	return err
 }
 
-func removeBinariesDebian(ctx *util.Context) error {
-	_, _, err := ctx.Runner.Run(removeBinariesDebianCommand, util.TemplateVariables{
-		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
-		"CNI_VERSION":        ctx.Cluster.Versions.KubernetesCNIVersion(),
+func removeBinariesDebian(s *state.State) error {
+	_, _, err := s.Runner.Run(removeBinariesDebianCommand, runner.TemplateVariables{
+		"KUBERNETES_VERSION": s.Cluster.Versions.Kubernetes,
+		"CNI_VERSION":        s.Cluster.Versions.KubernetesCNIVersion(),
 	})
 
 	return errors.WithStack(err)
 }
 
-func removeBinariesCentOS(ctx *util.Context) error {
-	_, _, err := ctx.Runner.Run(removeBinariesCentOSCommand, util.TemplateVariables{
-		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
-		"CNI_VERSION":        ctx.Cluster.Versions.KubernetesCNIVersion(),
+func removeBinariesCentOS(s *state.State) error {
+	_, _, err := s.Runner.Run(removeBinariesCentOSCommand, runner.TemplateVariables{
+		"KUBERNETES_VERSION": s.Cluster.Versions.Kubernetes,
+		"CNI_VERSION":        s.Cluster.Versions.KubernetesCNIVersion(),
 	})
 
 	return errors.WithStack(err)
 }
 
-func removeBinariesCoreOS(ctx *util.Context) error {
-	_, _, err := ctx.Runner.Run(removeBinariesCoreOSCommand, util.TemplateVariables{})
+func removeBinariesCoreOS(s *state.State) error {
+	_, _, err := s.Runner.Run(removeBinariesCoreOSCommand, runner.TemplateVariables{})
 
 	return errors.WithStack(err)
 }

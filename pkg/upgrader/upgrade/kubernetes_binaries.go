@@ -20,7 +20,8 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/util"
+	"github.com/kubermatic/kubeone/pkg/runner"
+	"github.com/kubermatic/kubeone/pkg/state"
 )
 
 const (
@@ -76,18 +77,18 @@ curl -sSL "https://raw.githubusercontent.com/kubernetes/kubernetes/${RELEASE}/bu
 `
 )
 
-func upgradeKubernetesBinaries(ctx *util.Context, node kubeoneapi.HostConfig) error {
+func upgradeKubernetesBinaries(s *state.State, node kubeoneapi.HostConfig) error {
 	var err error
 
 	switch node.OperatingSystem {
 	case "ubuntu", "debian":
-		err = upgradeKubernetesBinariesDebian(ctx)
+		err = upgradeKubernetesBinariesDebian(s)
 
 	case "coreos":
-		err = upgradeKubernetesBinariesCoreOS(ctx)
+		err = upgradeKubernetesBinariesCoreOS(s)
 
 	case "centos":
-		err = upgradeKubernetesBinariesCentOS(ctx)
+		err = upgradeKubernetesBinariesCentOS(s)
 
 	default:
 		err = errors.Errorf("'%s' is not a supported operating system", node.OperatingSystem)
@@ -96,28 +97,28 @@ func upgradeKubernetesBinaries(ctx *util.Context, node kubeoneapi.HostConfig) er
 	return err
 }
 
-func upgradeKubernetesBinariesDebian(ctx *util.Context) error {
-	_, _, err := ctx.Runner.Run(upgradeKubeBinariesDebianCommand, util.TemplateVariables{
-		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
-		"CNI_VERSION":        ctx.Cluster.Versions.KubernetesCNIVersion(),
+func upgradeKubernetesBinariesDebian(s *state.State) error {
+	_, _, err := s.Runner.Run(upgradeKubeBinariesDebianCommand, runner.TemplateVariables{
+		"KUBERNETES_VERSION": s.Cluster.Versions.Kubernetes,
+		"CNI_VERSION":        s.Cluster.Versions.KubernetesCNIVersion(),
 	})
 
 	return errors.WithStack(err)
 }
 
-func upgradeKubernetesBinariesCentOS(ctx *util.Context) error {
-	_, _, err := ctx.Runner.Run(upgradeKubeBinariesCentOSCommand, util.TemplateVariables{
-		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
-		"CNI_VERSION":        ctx.Cluster.Versions.KubernetesCNIVersion(),
+func upgradeKubernetesBinariesCentOS(s *state.State) error {
+	_, _, err := s.Runner.Run(upgradeKubeBinariesCentOSCommand, runner.TemplateVariables{
+		"KUBERNETES_VERSION": s.Cluster.Versions.Kubernetes,
+		"CNI_VERSION":        s.Cluster.Versions.KubernetesCNIVersion(),
 	})
 
 	return errors.WithStack(err)
 }
 
-func upgradeKubernetesBinariesCoreOS(ctx *util.Context) error {
-	_, _, err := ctx.Runner.Run(upgradeKubeBinariesCoreOSCommand, util.TemplateVariables{
-		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
-		"CNI_VERSION":        ctx.Cluster.Versions.KubernetesCNIVersion(),
+func upgradeKubernetesBinariesCoreOS(s *state.State) error {
+	_, _, err := s.Runner.Run(upgradeKubeBinariesCoreOSCommand, runner.TemplateVariables{
+		"KUBERNETES_VERSION": s.Cluster.Versions.Kubernetes,
+		"CNI_VERSION":        s.Cluster.Versions.KubernetesCNIVersion(),
 	})
 
 	return errors.WithStack(err)

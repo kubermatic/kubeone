@@ -22,12 +22,13 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/certificate"
+	"github.com/kubermatic/kubeone/pkg/credentials"
 	"github.com/kubermatic/kubeone/pkg/features"
+	"github.com/kubermatic/kubeone/pkg/kubeconfig"
+	"github.com/kubermatic/kubeone/pkg/state"
 	"github.com/kubermatic/kubeone/pkg/task"
 	"github.com/kubermatic/kubeone/pkg/templates/externalccm"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
-	"github.com/kubermatic/kubeone/pkg/util"
-	"github.com/kubermatic/kubeone/pkg/util/credentials"
 )
 
 const (
@@ -43,10 +44,10 @@ const (
 
 // Upgrade performs all the steps required to upgrade Kubernetes on
 // cluster provisioned using KubeOne
-func Upgrade(ctx *util.Context) error {
+func Upgrade(s *state.State) error {
 	// commonSteps are same for all worker nodes and they are safe to be run in parallel
 	commonSteps := []task.Task{
-		{Fn: util.BuildKubernetesClientset, ErrMsg: "unable to build kubernetes clientset"},
+		{Fn: kubeconfig.BuildKubernetesClientset, ErrMsg: "unable to build kubernetes clientset"},
 		{Fn: determineHostname, ErrMsg: "unable to determine hostname"},
 		{Fn: determineOS, ErrMsg: "unable to determine operating system"},
 		{Fn: runPreflightChecks, ErrMsg: "preflight checks failed"},
@@ -62,7 +63,7 @@ func Upgrade(ctx *util.Context) error {
 	}
 
 	for _, step := range commonSteps {
-		if err := step.Run(ctx); err != nil {
+		if err := step.Run(s); err != nil {
 			return errors.Wrap(err, step.ErrMsg)
 		}
 	}

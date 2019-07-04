@@ -9,3 +9,4 @@ tf.json
 .terraform
 terraform.tfvars
 *kubeconfig
+!*kubeconfig/

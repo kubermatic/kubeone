@@ -22,8 +22,8 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/state"
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/kubeadmargs"
-	"github.com/kubermatic/kubeone/pkg/util"
 
 	corev1 "k8s.io/api/core/v1"
 	policybeta1 "k8s.io/api/policy/v1beta1"
@@ -47,7 +47,7 @@ func activateKubeadmPSP(feature *kubeoneapi.PodSecurityPolicy, args *kubeadmargs
 	args.APIServer.AppendMapStringStringExtraArg(apiServerAdmissionPluginsFlag, pspAdmissionPlugin)
 }
 
-func installKubeSystemPSP(psp *kubeoneapi.PodSecurityPolicy, ctx *util.Context) error {
+func installKubeSystemPSP(psp *kubeoneapi.PodSecurityPolicy, s *state.State) error {
 	if psp == nil || !psp.Enable {
 		return nil
 	}
@@ -55,17 +55,17 @@ func installKubeSystemPSP(psp *kubeoneapi.PodSecurityPolicy, ctx *util.Context) 
 	bgContext := context.Background()
 	okFunc := func(runtime.Object) error { return nil }
 
-	_, err := controllerutil.CreateOrUpdate(bgContext, ctx.DynamicClient, privilegedPSP(), okFunc)
+	_, err := controllerutil.CreateOrUpdate(bgContext, s.DynamicClient, privilegedPSP(), okFunc)
 	if err != nil {
 		return errors.Wrap(err, "failed to ensure PodSecurityPolicy")
 	}
 
-	_, err = controllerutil.CreateOrUpdate(bgContext, ctx.DynamicClient, privilegedPSPClusterRole(), okFunc)
+	_, err = controllerutil.CreateOrUpdate(bgContext, s.DynamicClient, privilegedPSPClusterRole(), okFunc)
 	if err != nil {
 		return errors.Wrap(err, "failed to ensure PodSecurityPolicy cluster role")
 	}
 
-	_, err = controllerutil.CreateOrUpdate(bgContext, ctx.DynamicClient, privilegedPSPRoleBinding(), okFunc)
+	_, err = controllerutil.CreateOrUpdate(bgContext, s.DynamicClient, privilegedPSPRoleBinding(), okFunc)
 	if err != nil {
 		return errors.Wrap(err, "failed to ensure PodSecurityPolicy role binding")
 	}

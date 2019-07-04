@@ -22,8 +22,8 @@ import (
 	"github.com/Masterminds/semver"
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/util"
-	"github.com/kubermatic/kubeone/pkg/util/credentials"
+	"github.com/kubermatic/kubeone/pkg/credentials"
+	"github.com/kubermatic/kubeone/pkg/state"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -39,25 +39,25 @@ const (
 	digitaloceanDeploymentName = "digitalocean-cloud-controller-manager"
 )
 
-func ensureDigitalOcean(ctx *util.Context) error {
-	if ctx.DynamicClient == nil {
+func ensureDigitalOcean(s *state.State) error {
+	if s.DynamicClient == nil {
 		return errors.New("kubernetes client not initialized")
 	}
 
 	bgctx := context.Background()
 
 	sa := doServiceAccount()
-	if err := simpleCreateOrUpdate(bgctx, ctx.DynamicClient, sa); err != nil {
+	if err := simpleCreateOrUpdate(bgctx, s.DynamicClient, sa); err != nil {
 		return errors.Wrap(err, "failed to ensure digitalocean CCM ServiceAccount")
 	}
 
 	cr := doClusterRole()
-	if err := simpleCreateOrUpdate(bgctx, ctx.DynamicClient, cr); err != nil {
+	if err := simpleCreateOrUpdate(bgctx, s.DynamicClient, cr); err != nil {
 		return errors.Wrap(err, "failed to ensure digitalocean CCM ClusterRole")
 	}
 
 	crb := doClusterRoleBinding()
-	if err := simpleCreateOrUpdate(bgctx, ctx.DynamicClient, crb); err != nil {
+	if err := simpleCreateOrUpdate(bgctx, s.DynamicClient, crb); err != nil {
 		return errors.Wrap(err, "failed to ensure digitalocean CCM ClusterRoleBinding")
 	}
 
@@ -68,11 +68,11 @@ func ensureDigitalOcean(ctx *util.Context) error {
 	}
 
 	_, err = controllerutil.CreateOrUpdate(bgctx,
-		ctx.DynamicClient,
+		s.DynamicClient,
 		dep,
 		mutateDeploymentWithVersionCheck(want))
 	if err != nil {
-		ctx.Logger.Warnf("unable to ensure digitalocean CCM Deployment: %v, skipping", err)
+		s.Logger.Warnf("unable to ensure digitalocean CCM Deployment: %v, skipping", err)
 	}
 	return nil
 }

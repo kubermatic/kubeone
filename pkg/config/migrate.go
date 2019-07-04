@@ -25,7 +25,7 @@ import (
 	"github.com/pkg/errors"
 	yaml "gopkg.in/yaml.v2"
 
-	"github.com/kubermatic/kubeone/pkg/util/yamled"
+	"github.com/kubermatic/kubeone/pkg/yamled"
 )
 
 // MigrateToKubeOneClusterAPI migrates the old API manifest to the new KubeOneCluster API

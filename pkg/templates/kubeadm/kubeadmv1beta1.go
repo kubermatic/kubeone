@@ -18,15 +18,15 @@ package kubeadm
 
 import (
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/state"
 	"github.com/kubermatic/kubeone/pkg/templates"
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/v1beta1"
-	"github.com/kubermatic/kubeone/pkg/util"
 )
 
 type kubeadmv1beta1 struct{}
 
-func (*kubeadmv1beta1) Config(ctx *util.Context, instance kubeoneapi.HostConfig) (string, error) {
-	config, err := v1beta1.NewConfig(ctx, instance)
+func (*kubeadmv1beta1) Config(s *state.State, instance kubeoneapi.HostConfig) (string, error) {
+	config, err := v1beta1.NewConfig(s, instance)
 	if err != nil {
 		return "", err
 	}

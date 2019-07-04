@@ -19,15 +19,15 @@ package installation
 import (
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/kubermatic/kubeone/pkg/util"
+	"github.com/kubermatic/kubeone/pkg/state"
 )
 
-func deployCA(ctx *util.Context) error {
-	ctx.Logger.Infoln("Deploying PKI…")
-	return ctx.RunTaskOnFollowers(deployCAOnNode, true)
+func deployCA(s *state.State) error {
+	s.Logger.Infoln("Deploying PKI…")
+	return s.RunTaskOnFollowers(deployCAOnNode, true)
 }
 
-func deployCAOnNode(ctx *util.Context, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
-	ctx.Logger.Infoln("Uploading files…")
-	return ctx.Configuration.UploadTo(conn, ctx.WorkDir)
+func deployCAOnNode(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+	s.Logger.Infoln("Uploading files…")
+	return s.Configuration.UploadTo(conn, s.WorkDir)
 }

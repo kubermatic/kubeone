@@ -23,19 +23,21 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/kubeconfig"
+	"github.com/kubermatic/kubeone/pkg/runner"
 	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/kubermatic/kubeone/pkg/util"
+	"github.com/kubermatic/kubeone/pkg/state"
 )
 
-func copyKubeconfig(ctx *util.Context) error {
-	return ctx.RunTaskOnAllNodes(func(ctx *util.Context, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
-		ctx.Logger.Infoln("Copying Kubeconfig to home directory…")
+func copyKubeconfig(s *state.State) error {
+	return s.RunTaskOnAllNodes(func(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
+		s.Logger.Infoln("Copying Kubeconfig to home directory…")
 
-		_, _, err := ctx.Runner.Run(`
+		_, _, err := s.Runner.Run(`
 mkdir -p $HOME/.kube/
 sudo cp /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
-`, util.TemplateVariables{})
+`, runner.TemplateVariables{})
 		if err != nil {
 			return err
 		}
@@ -44,13 +46,13 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 	}, true)
 }
 
-func saveKubeconfig(ctx *util.Context) error {
-	kubeconfig, err := util.DownloadKubeconfig(ctx.Cluster)
+func saveKubeconfig(s *state.State) error {
+	kc, err := kubeconfig.Download(s.Cluster)
 	if err != nil {
 		return err
 	}
 
-	fileName := fmt.Sprintf("%s-kubeconfig", ctx.Cluster.Name)
-	err = ioutil.WriteFile(fileName, kubeconfig, 0644)
+	fileName := fmt.Sprintf("%s-kubeconfig", s.Cluster.Name)
+	err = ioutil.WriteFile(fileName, kc, 0644)
 	return errors.Wrap(err, "error saving kubeconfig file to the local machine")
 }

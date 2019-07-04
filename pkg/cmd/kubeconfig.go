@@ -24,7 +24,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
-	"github.com/kubermatic/kubeone/pkg/util"
+	"github.com/kubermatic/kubeone/pkg/kubeconfig"
 )
 
 type kubeconfigOptions struct {
@@ -77,12 +77,12 @@ func runKubeconfig(logger *logrus.Logger, kubeconfigOptions *kubeconfigOptions) 
 		return errors.Wrap(err, "failed to load cluster")
 	}
 
-	kubeconfig, err := util.DownloadKubeconfig(cluster)
+	konfig, err := kubeconfig.Download(cluster)
 	if err != nil {
 		return err
 	}
 
-	fmt.Println(string(kubeconfig))
+	fmt.Println(string(konfig))
 
 	return nil
 }

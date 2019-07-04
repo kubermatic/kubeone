@@ -24,7 +24,7 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/util"
+	"github.com/kubermatic/kubeone/pkg/state"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
@@ -43,21 +43,21 @@ type providerSpec struct {
 }
 
 // DeployMachineDeployments deploys MachineDeployments that create appropriate machines
-func DeployMachineDeployments(ctx *util.Context) error {
-	if ctx.DynamicClient == nil {
+func DeployMachineDeployments(s *state.State) error {
+	if s.DynamicClient == nil {
 		return errors.New("kubernetes dynamic client in not initialized")
 	}
 
 	bgCtx := context.Background()
 
 	// Apply MachineDeployments
-	for _, workerset := range ctx.Cluster.Workers {
-		machinedeployment, err := createMachineDeployment(ctx.Cluster, workerset)
+	for _, workerset := range s.Cluster.Workers {
+		machinedeployment, err := createMachineDeployment(s.Cluster, workerset)
 		if err != nil {
 			return errors.Wrap(err, "failed to generate MachineDeployment")
 		}
 
-		err = simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, machinedeployment)
+		err = simpleCreateOrUpdate(bgCtx, s.DynamicClient, machinedeployment)
 		if err != nil {
 			return errors.Wrap(err, "failed to ensure MachineDeployment")
 		}

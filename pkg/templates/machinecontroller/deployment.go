@@ -25,8 +25,9 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/util"
-	"github.com/kubermatic/kubeone/pkg/util/credentials"
+	"github.com/kubermatic/kubeone/pkg/credentials"
+	"github.com/kubermatic/kubeone/pkg/kubeconfig"
+	"github.com/kubermatic/kubeone/pkg/state"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -48,20 +49,20 @@ const (
 )
 
 // Deploy deploys MachineController deployment with RBAC on the cluster
-func Deploy(ctx *util.Context) error {
-	if ctx.DynamicClient == nil {
+func Deploy(s *state.State) error {
+	if s.DynamicClient == nil {
 		return errors.New("kubernetes client not initialized")
 	}
 
 	bgCtx := context.Background()
 
 	// ServiceAccounts
-	if err := simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, machineControllerServiceAccount()); err != nil {
+	if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, machineControllerServiceAccount()); err != nil {
 		return errors.Wrap(err, "failed to ensure machine-controller service account")
 	}
 
 	// ClusterRoles
-	if err := simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, machineControllerClusterRole()); err != nil {
+	if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, machineControllerClusterRole()); err != nil {
 		return errors.Wrap(err, "failed to ensure machine-controller cluster role")
 	}
 
@@ -73,7 +74,7 @@ func Deploy(ctx *util.Context) error {
 	}
 
 	for _, crbGen := range crbGenerators {
-		if err := simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, crbGen()); err != nil {
+		if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, crbGen()); err != nil {
 			return errors.Wrap(err, "failed to ensure machine-controller cluster-role binding")
 		}
 	}
@@ -87,7 +88,7 @@ func Deploy(ctx *util.Context) error {
 	}
 
 	for _, roleGen := range roleGenerators {
-		if err := simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, roleGen()); err != nil {
+		if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, roleGen()); err != nil {
 			return errors.Wrap(err, "failed to ensure machine-controller role")
 		}
 	}
@@ -101,18 +102,18 @@ func Deploy(ctx *util.Context) error {
 	}
 
 	for _, roleBindingGen := range roleBindingsGenerators {
-		if err := simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, roleBindingGen()); err != nil {
+		if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, roleBindingGen()); err != nil {
 			return errors.Wrap(err, "failed to ensure machine-controller role binding")
 		}
 	}
 
 	// Deployments
-	deployment, err := machineControllerDeployment(ctx.Cluster)
+	deployment, err := machineControllerDeployment(s.Cluster)
 	if err != nil {
 		return errors.Wrap(err, "failed to generate machine-controller deployment")
 	}
 
-	if err = simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, deployment); err != nil {
+	if err = simpleCreateOrUpdate(bgCtx, s.DynamicClient, deployment); err != nil {
 		return errors.Wrap(err, "failed to ensure machine-controller deployment")
 	}
 
@@ -125,13 +126,13 @@ func Deploy(ctx *util.Context) error {
 	}
 
 	for _, crdGen := range crdGenerators {
-		if err = simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, crdGen()); err != nil {
+		if err = simpleCreateOrUpdate(bgCtx, s.DynamicClient, crdGen()); err != nil {
 			return errors.Wrap(err, "failed to ensure machine-controller CRDs")
 		}
 	}
 
 	// HACK: re-init dynamic client in order to re-init RestMapper, to drop caches
-	err = util.HackIssue321InitDynamicClient(ctx)
+	err = kubeconfig.HackIssue321InitDynamicClient(s)
 	return errors.Wrap(err, "failed to re-init dynamic client")
 }
 

@@ -24,7 +24,7 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/util"
+	"github.com/kubermatic/kubeone/pkg/state"
 
 	appsv1 "k8s.io/api/apps/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -33,22 +33,22 @@ import (
 )
 
 // Ensure external CCM deployen if Provider.External
-func Ensure(ctx *util.Context) error {
-	if !ctx.Cluster.CloudProvider.External {
+func Ensure(s *state.State) error {
+	if !s.Cluster.CloudProvider.External {
 		return nil
 	}
 
-	ctx.Logger.Info("Ensure external CCM is up to date")
+	s.Logger.Info("Ensure external CCM is up to date")
 
-	switch ctx.Cluster.CloudProvider.Name {
+	switch s.Cluster.CloudProvider.Name {
 	case kubeoneapi.CloudProviderNameHetzner:
-		return ensureHetzner(ctx)
+		return ensureHetzner(s)
 	case kubeoneapi.CloudProviderNameDigitalOcean:
-		return ensureDigitalOcean(ctx)
+		return ensureDigitalOcean(s)
 	case kubeoneapi.CloudProviderNamePacket:
-		return ensurePacket(ctx)
+		return ensurePacket(s)
 	default:
-		ctx.Logger.Infof("External CCM for %q not yet supported, skipping", ctx.Cluster.CloudProvider.Name)
+		s.Logger.Infof("External CCM for %q not yet supported, skipping", s.Cluster.CloudProvider.Name)
 		return nil
 	}
 }

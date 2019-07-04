@@ -20,18 +20,18 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/state"
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/kubeadmargs"
-	"github.com/kubermatic/kubeone/pkg/util"
 )
 
 // Activate configured features.
 // Installing CRDs, creating policies and so on
-func Activate(ctx *util.Context) error {
-	if err := installKubeSystemPSP(ctx.Cluster.Features.PodSecurityPolicy, ctx); err != nil {
+func Activate(s *state.State) error {
+	if err := installKubeSystemPSP(s.Cluster.Features.PodSecurityPolicy, s); err != nil {
 		return errors.Wrap(err, "failed to install PodSecurityPolicy")
 	}
 
-	if err := installMetricsServer(ctx.Cluster.Features.MetricsServer.Enable, ctx); err != nil {
+	if err := installMetricsServer(s.Cluster.Features.MetricsServer.Enable, s); err != nil {
 		return errors.Wrap(err, "failed to install metrics-server")
 	}
 

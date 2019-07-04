@@ -20,17 +20,18 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/certificate"
+	"github.com/kubermatic/kubeone/pkg/credentials"
 	"github.com/kubermatic/kubeone/pkg/features"
+	"github.com/kubermatic/kubeone/pkg/kubeconfig"
+	"github.com/kubermatic/kubeone/pkg/state"
 	"github.com/kubermatic/kubeone/pkg/task"
 	"github.com/kubermatic/kubeone/pkg/templates/externalccm"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
-	"github.com/kubermatic/kubeone/pkg/util"
-	"github.com/kubermatic/kubeone/pkg/util/credentials"
 )
 
 // Install performs all the steps required to install Kubernetes on
 // an empty, pristine machine.
-func Install(ctx *util.Context) error {
+func Install(s *state.State) error {
 	installSteps := []task.Task{
 		{Fn: installPrerequisites, ErrMsg: "failed to install prerequisites"},
 		{Fn: generateKubeadm, ErrMsg: "failed to generate kubeadm config files"},
@@ -42,7 +43,7 @@ func Install(ctx *util.Context) error {
 		{Fn: joinControlplaneNode, ErrMsg: "unable to join other masters a cluster"},
 		{Fn: copyKubeconfig, ErrMsg: "unable to copy kubeconfig to home directory", Retries: 3},
 		{Fn: saveKubeconfig, ErrMsg: "unable to save kubeconfig to the local machine", Retries: 3},
-		{Fn: util.BuildKubernetesClientset, ErrMsg: "unable to build kubernetes clientset", Retries: 3},
+		{Fn: kubeconfig.BuildKubernetesClientset, ErrMsg: "unable to build kubernetes clientset", Retries: 3},
 		{Fn: features.Activate, ErrMsg: "unable to activate features"},
 		{Fn: credentials.Ensure, ErrMsg: "unable to ensure credentials secret"},
 		{Fn: externalccm.Ensure, ErrMsg: "failed to install external CCM"},
@@ -54,7 +55,7 @@ func Install(ctx *util.Context) error {
 	}
 
 	for _, step := range installSteps {
-		if err := step.Run(ctx); err != nil {
+		if err := step.Run(s); err != nil {
 			return errors.Wrap(err, step.ErrMsg)
 		}
 	}

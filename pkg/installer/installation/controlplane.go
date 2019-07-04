@@ -21,30 +21,31 @@ import (
 	"time"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/runner"
 	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/kubermatic/kubeone/pkg/util"
+	"github.com/kubermatic/kubeone/pkg/state"
 )
 
-func joinControlplaneNode(ctx *util.Context) error {
-	ctx.Logger.Infoln("Joining controlplane node…")
-	return ctx.RunTaskOnFollowers(joinControlPlaneNodeInternal, false)
+func joinControlplaneNode(s *state.State) error {
+	s.Logger.Infoln("Joining controlplane node…")
+	return s.RunTaskOnFollowers(joinControlPlaneNodeInternal, false)
 }
 
-func joinControlPlaneNodeInternal(ctx *util.Context, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func joinControlPlaneNodeInternal(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	sleepTime := 30 * time.Second
 
-	logger := ctx.Logger.WithField("node", node.PublicAddress)
+	logger := s.Logger.WithField("node", node.PublicAddress)
 	logger.Infof("Waiting %s to ensure main control plane components are up…", sleepTime)
 	time.Sleep(sleepTime)
 	logger.Info("Joining control plane node")
 
-	_, _, err := ctx.Runner.Run(`
+	_, _, err := s.Runner.Run(`
 if [[ -f /etc/kubernetes/kubelet.conf ]]; then exit 0; fi
 
 sudo kubeadm join \
 	--config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
-`, util.TemplateVariables{
-		"WORK_DIR": ctx.WorkDir,
+`, runner.TemplateVariables{
+		"WORK_DIR": s.WorkDir,
 		"NODE_ID":  strconv.Itoa(node.ID),
 	})
 	return err

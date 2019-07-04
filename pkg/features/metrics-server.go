@@ -17,14 +17,14 @@ limitations under the License.
 package features
 
 import (
+	"github.com/kubermatic/kubeone/pkg/state"
 	"github.com/kubermatic/kubeone/pkg/templates/metricsserver"
-	"github.com/kubermatic/kubeone/pkg/util"
 )
 
-func installMetricsServer(activate bool, ctx *util.Context) error {
+func installMetricsServer(activate bool, s *state.State) error {
 	if !activate {
 		return nil
 	}
 
-	return metricsserver.Deploy(ctx)
+	return metricsserver.Deploy(s)
 }

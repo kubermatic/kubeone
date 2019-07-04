@@ -14,12 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package util
+package runner
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"strings"
+	"text/template"
 	"time"
 
 	"github.com/koron-go/prefixw"
@@ -36,6 +38,9 @@ type Runner struct {
 	OS      string
 	Verbose bool
 }
+
+// TemplateVariables is a render context for templates
+type TemplateVariables map[string]interface{}
 
 // Run executes a given command/script, optionally printing its output to
 // stdout/stderr.
@@ -116,4 +121,19 @@ func (r *Runner) prepareShell(cmd string) string {
 	cmd = fmt.Sprintf("export \"PATH=$PATH:/sbin:/usr/local/bin:/opt/bin\"\n\n%s", cmd)
 
 	return cmd
+}
+
+// MakeShellCommand render text template with given `variables` render-context
+func MakeShellCommand(cmd string, variables TemplateVariables) (string, error) {
+	tpl, err := template.New("base").Parse(cmd)
+	if err != nil {
+		return "", errors.Wrap(err, "failed to parse shell script")
+	}
+
+	buf := bytes.Buffer{}
+	if err := tpl.Execute(&buf, variables); err != nil {
+		return "", errors.Wrap(err, "failed to render shell script")
+	}
+
+	return buf.String(), nil
 }

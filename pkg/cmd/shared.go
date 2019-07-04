@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/pflag"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/util/config"
+	"github.com/kubermatic/kubeone/pkg/apis/kubeone/config"
 )
 
 const (
