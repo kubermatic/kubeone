@@ -1,5 +1,12 @@
 # Changelog
 
+# [v0.9.2](https://github.com/kubermatic/kubeone/releases/tag/v0.9.2) - 2019-07-04
+
+## Changed
+
+* Fix the CNI plugin URL for cluster upgrades on CoreOS ([#554](https://github.com/kubermatic/kubeone/pull/554))
+* Fix `kubelet` binary upgrade failure on CoreOS because of binary lock ([#556](https://github.com/kubermatic/kubeone/pull/556))
+
 # [v0.9.1](https://github.com/kubermatic/kubeone/releases/tag/v0.9.1) - 2019-07-03
 
 ## Changed
