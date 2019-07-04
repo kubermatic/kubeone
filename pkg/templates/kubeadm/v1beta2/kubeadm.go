@@ -28,7 +28,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/features"
 	"github.com/kubermatic/kubeone/pkg/kubeflags"
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/kubeadmargs"
-	"github.com/kubermatic/kubeone/pkg/util/context"
+	"github.com/kubermatic/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -37,8 +37,8 @@ import (
 )
 
 // NewConfig returns all required configs to init a cluster via a set of v1beta2 configs
-func NewConfig(ctx *context.Context, host kubeoneapi.HostConfig) ([]runtime.Object, error) {
-	cluster := ctx.Cluster
+func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, error) {
+	cluster := s.Cluster
 	kubeSemVer, err := semver.NewVersion(cluster.Versions.Kubernetes)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to parse generate config, wrong kubernetes version %s", cluster.Versions.Kubernetes)
@@ -59,15 +59,15 @@ func NewConfig(ctx *context.Context, host kubeoneapi.HostConfig) ([]runtime.Obje
 		},
 	}
 
-	if ctx.JoinToken == "" {
+	if s.JoinToken == "" {
 		tokenStr, errBootstrap := bootstraputil.GenerateBootstrapToken()
 		if errBootstrap != nil {
 			return nil, errBootstrap
 		}
-		ctx.JoinToken = tokenStr
+		s.JoinToken = tokenStr
 	}
 
-	bootstrapToken, err := kubeadmv1beta2.NewBootstrapTokenString(ctx.JoinToken)
+	bootstrapToken, err := kubeadmv1beta2.NewBootstrapTokenString(s.JoinToken)
 	if err != nil {
 		return nil, err
 	}
@@ -97,7 +97,7 @@ func NewConfig(ctx *context.Context, host kubeoneapi.HostConfig) ([]runtime.Obje
 		},
 		Discovery: kubeadmv1beta2.Discovery{
 			BootstrapToken: &kubeadmv1beta2.BootstrapTokenDiscovery{
-				Token:                    ctx.JoinToken,
+				Token:                    s.JoinToken,
 				APIServerEndpoint:        controlPlaneEndpoint,
 				UnsafeSkipCAVerification: true,
 			},

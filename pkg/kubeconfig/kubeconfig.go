@@ -22,7 +22,7 @@ import (
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/kubermatic/kubeone/pkg/util/context"
+	"github.com/kubermatic/kubeone/pkg/state"
 
 	"k8s.io/client-go/tools/clientcmd"
 )
@@ -52,31 +52,31 @@ func DownloadKubeconfig(cluster *kubeoneapi.KubeOneCluster) ([]byte, error) {
 }
 
 // BuildKubernetesClientset builds core kubernetes and apiextensions clientsets
-func BuildKubernetesClientset(ctx *context.Context) error {
-	ctx.Logger.Infoln("Building Kubernetes clientset…")
+func BuildKubernetesClientset(s *state.State) error {
+	s.Logger.Infoln("Building Kubernetes clientset…")
 
-	kubeconfig, err := DownloadKubeconfig(ctx.Cluster)
+	kubeconfig, err := DownloadKubeconfig(s.Cluster)
 	if err != nil {
 		return errors.Wrap(err, "unable to download kubeconfig")
 	}
 
-	ctx.RESTConfig, err = clientcmd.RESTConfigFromKubeConfig(kubeconfig)
+	s.RESTConfig, err = clientcmd.RESTConfigFromKubeConfig(kubeconfig)
 	if err != nil {
 		return errors.Wrap(err, "unable to build config from kubeconfig bytes")
 	}
 
-	err = HackIssue321InitDynamicClient(ctx)
+	err = HackIssue321InitDynamicClient(s)
 	return errors.Wrap(err, "unable to build dynamic client")
 }
 
 // HackIssue321InitDynamicClient initialize controller-runtime/client
 // name comes from: https://github.com/kubernetes-sigs/controller-runtime/issues/321
-func HackIssue321InitDynamicClient(ctx *context.Context) error {
-	if ctx.RESTConfig == nil {
+func HackIssue321InitDynamicClient(s *state.State) error {
+	if s.RESTConfig == nil {
 		return errors.New("rest config is not initialized")
 	}
 
 	var err error
-	ctx.DynamicClient, err = client.New(ctx.RESTConfig, client.Options{})
+	s.DynamicClient, err = client.New(s.RESTConfig, client.Options{})
 	return errors.Wrap(err, "unable to build dynamic client")
 }

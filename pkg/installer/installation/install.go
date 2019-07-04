@@ -23,15 +23,15 @@ import (
 	"github.com/kubermatic/kubeone/pkg/credentials"
 	"github.com/kubermatic/kubeone/pkg/features"
 	"github.com/kubermatic/kubeone/pkg/kubeconfig"
+	"github.com/kubermatic/kubeone/pkg/state"
 	"github.com/kubermatic/kubeone/pkg/task"
 	"github.com/kubermatic/kubeone/pkg/templates/externalccm"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
-	"github.com/kubermatic/kubeone/pkg/util/context"
 )
 
 // Install performs all the steps required to install Kubernetes on
 // an empty, pristine machine.
-func Install(ctx *context.Context) error {
+func Install(s *state.State) error {
 	installSteps := []task.Task{
 		{Fn: installPrerequisites, ErrMsg: "failed to install prerequisites"},
 		{Fn: generateKubeadm, ErrMsg: "failed to generate kubeadm config files"},
@@ -55,7 +55,7 @@ func Install(ctx *context.Context) error {
 	}
 
 	for _, step := range installSteps {
-		if err := step.Run(ctx); err != nil {
+		if err := step.Run(s); err != nil {
 			return errors.Wrap(err, step.ErrMsg)
 		}
 	}

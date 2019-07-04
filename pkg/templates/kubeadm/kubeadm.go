@@ -21,7 +21,7 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/util/context"
+	"github.com/kubermatic/kubeone/pkg/state"
 )
 
 var (
@@ -32,7 +32,7 @@ var (
 
 // Kubedm interface abstract differences between different kubeadm versions
 type Kubedm interface {
-	Config(ctx *context.Context, instance kubeoneapi.HostConfig) (string, error)
+	Config(s *state.State, instance kubeoneapi.HostConfig) (string, error)
 	UpgradeLeaderCommand() string
 	UpgradeFollowerCommand() string
 }

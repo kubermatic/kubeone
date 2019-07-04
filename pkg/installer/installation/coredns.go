@@ -21,7 +21,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	kubeonecontext "github.com/kubermatic/kubeone/pkg/util/context"
+	"github.com/kubermatic/kubeone/pkg/state"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -29,14 +29,14 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-func patchCoreDNS(ctx *kubeonecontext.Context) error {
-	if !ctx.Cluster.CloudProvider.External {
+func patchCoreDNS(s *state.State) error {
+	if !s.Cluster.CloudProvider.External {
 		return nil
 	}
 
-	ctx.Logger.Infoln("Patching coreDNS with uninitialized toleration…")
+	s.Logger.Infoln("Patching coreDNS with uninitialized toleration…")
 
-	if ctx.DynamicClient == nil {
+	if s.DynamicClient == nil {
 		return errors.New("kubernetes client not initialized")
 	}
 
@@ -47,7 +47,7 @@ func patchCoreDNS(ctx *kubeonecontext.Context) error {
 		Namespace: metav1.NamespaceSystem,
 	}
 
-	err := ctx.DynamicClient.Get(bgCtx, key, dep)
+	err := s.DynamicClient.Get(bgCtx, key, dep)
 	if err != nil {
 		return errors.Wrap(err, "failed to get coredns deployment")
 	}
@@ -60,5 +60,5 @@ func patchCoreDNS(ctx *kubeonecontext.Context) error {
 		},
 	)
 
-	return errors.Wrap(ctx.DynamicClient.Update(bgCtx, dep), "failed to update coredns deployment")
+	return errors.Wrap(s.DynamicClient.Update(bgCtx, dep), "failed to update coredns deployment")
 }

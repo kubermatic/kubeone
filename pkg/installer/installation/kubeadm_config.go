@@ -23,30 +23,30 @@ import (
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/ssh"
+	"github.com/kubermatic/kubeone/pkg/state"
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm"
-	"github.com/kubermatic/kubeone/pkg/util/context"
 )
 
-func generateKubeadm(ctx *context.Context) error {
-	ctx.Logger.Infoln("Generating kubeadm config file…")
+func generateKubeadm(s *state.State) error {
+	s.Logger.Infoln("Generating kubeadm config file…")
 
-	kadm, err := kubeadm.New(ctx.Cluster.Versions.Kubernetes)
+	kadm, err := kubeadm.New(s.Cluster.Versions.Kubernetes)
 	if err != nil {
 		return errors.Wrap(err, "failed to init kubeadm")
 	}
 
-	for idx := range ctx.Cluster.Hosts {
-		kubeadm, err := kadm.Config(ctx, ctx.Cluster.Hosts[idx])
+	for idx := range s.Cluster.Hosts {
+		kubeadm, err := kadm.Config(s, s.Cluster.Hosts[idx])
 		if err != nil {
 			return errors.Wrap(err, "failed to create kubeadm configuration")
 		}
 
-		ctx.Configuration.AddFile(fmt.Sprintf("cfg/master_%d.yaml", idx), kubeadm)
+		s.Configuration.AddFile(fmt.Sprintf("cfg/master_%d.yaml", idx), kubeadm)
 	}
 
-	return ctx.RunTaskOnAllNodes(generateKubeadmOnNode, true)
+	return s.RunTaskOnAllNodes(generateKubeadmOnNode, true)
 }
 
-func generateKubeadmOnNode(ctx *context.Context, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
-	return errors.Wrap(ctx.Configuration.UploadTo(conn, ctx.WorkDir), "failed to upload")
+func generateKubeadmOnNode(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
+	return errors.Wrap(s.Configuration.UploadTo(conn, s.WorkDir), "failed to upload")
 }

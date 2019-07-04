@@ -18,13 +18,13 @@ package features
 
 import (
 	"github.com/kubermatic/kubeone/pkg/templates/metricsserver"
-	"github.com/kubermatic/kubeone/pkg/util/context"
+	"github.com/kubermatic/kubeone/pkg/state"
 )
 
-func installMetricsServer(activate bool, ctx *context.Context) error {
+func installMetricsServer(activate bool, s *state.State) error {
 	if !activate {
 		return nil
 	}
 
-	return metricsserver.Deploy(ctx)
+	return metricsserver.Deploy(s)
 }

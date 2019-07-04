@@ -22,7 +22,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	kubeonecontext "github.com/kubermatic/kubeone/pkg/util/context"
+	"github.com/kubermatic/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
 	errorsutil "k8s.io/apimachinery/pkg/api/errors"
@@ -41,19 +41,19 @@ func simpleCreateOrUpdate(ctx context.Context, client dynclient.Client, obj runt
 }
 
 // Ensure install/update machine-controller
-func Ensure(ctx *kubeonecontext.Context) error {
-	if !ctx.Cluster.MachineController.Deploy {
-		ctx.Logger.Info("Skipping machine-controller deployment because it was disabled in configuration.")
+func Ensure(s *state.State) error {
+	if !s.Cluster.MachineController.Deploy {
+		s.Logger.Info("Skipping machine-controller deployment because it was disabled in configuration.")
 		return nil
 	}
 
-	ctx.Logger.Infoln("Installing machine-controller…")
-	if err := Deploy(ctx); err != nil {
+	s.Logger.Infoln("Installing machine-controller…")
+	if err := Deploy(s); err != nil {
 		return errors.Wrap(err, "failed to deploy machine-controller")
 	}
 
-	ctx.Logger.Infoln("Installing machine-controller webhooks…")
-	if err := DeployWebhookConfiguration(ctx); err != nil {
+	s.Logger.Infoln("Installing machine-controller webhooks…")
+	if err := DeployWebhookConfiguration(s); err != nil {
 		return errors.Wrap(err, "failed to deploy machine-controller webhook configuration")
 	}
 
@@ -61,42 +61,42 @@ func Ensure(ctx *kubeonecontext.Context) error {
 }
 
 // WaitReady waits for machine-controller and its webhook to became ready
-func WaitReady(ctx *kubeonecontext.Context) error {
-	if !ctx.Cluster.MachineController.Deploy {
+func WaitReady(s *state.State) error {
+	if !s.Cluster.MachineController.Deploy {
 		return nil
 	}
 
-	ctx.Logger.Infoln("Waiting for machine-controller to come up…")
+	s.Logger.Infoln("Waiting for machine-controller to come up…")
 
 	// Wait a bit to let scheduler to react
 	time.Sleep(10 * time.Second)
 
-	if err := WaitForWebhook(ctx.DynamicClient); err != nil {
+	if err := WaitForWebhook(s.DynamicClient); err != nil {
 		return errors.Wrap(err, "machine-controller-webhook did not come up")
 	}
 
-	if err := WaitForMachineController(ctx.DynamicClient); err != nil {
+	if err := WaitForMachineController(s.DynamicClient); err != nil {
 		return errors.Wrap(err, "machine-controller did not come up")
 	}
 	return nil
 }
 
 // DestroyWorkers destroys all MachineDeployment, MachineSet and Machine objects
-func DestroyWorkers(ctx *kubeonecontext.Context) error {
-	if !ctx.Cluster.MachineController.Deploy {
-		ctx.Logger.Info("Skipping deleting workers because machine-controller is disabled in configuration.")
+func DestroyWorkers(s *state.State) error {
+	if !s.Cluster.MachineController.Deploy {
+		s.Logger.Info("Skipping deleting workers because machine-controller is disabled in configuration.")
 		return nil
 	}
-	if ctx.DynamicClient == nil {
+	if s.DynamicClient == nil {
 		return errors.New("kubernetes client not initialized")
 	}
 
 	bgCtx := context.Background()
 
 	// Annotate nodes with kubermatic.io/skip-eviction=true to skip eviction
-	ctx.Logger.Info("Annotating nodes to skip eviction…")
+	s.Logger.Info("Annotating nodes to skip eviction…")
 	nodes := &corev1.NodeList{}
-	if err := ctx.DynamicClient.List(bgCtx, &dynclient.ListOptions{}, nodes); err != nil {
+	if err := s.DynamicClient.List(bgCtx, &dynclient.ListOptions{}, nodes); err != nil {
 		return errors.Wrap(err, "unable to list nodes")
 	}
 	for _, node := range nodes.Items {
@@ -104,7 +104,7 @@ func DestroyWorkers(ctx *kubeonecontext.Context) error {
 
 		retErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
 			n := corev1.Node{}
-			if err := ctx.DynamicClient.Get(bgCtx, nodeKey, &n); err != nil {
+			if err := s.DynamicClient.Get(bgCtx, nodeKey, &n); err != nil {
 				return err
 			}
 
@@ -112,7 +112,7 @@ func DestroyWorkers(ctx *kubeonecontext.Context) error {
 				n.Annotations = map[string]string{}
 			}
 			n.Annotations["kubermatic.io/skip-eviction"] = "true"
-			return ctx.DynamicClient.Update(bgCtx, &n)
+			return s.DynamicClient.Update(bgCtx, &n)
 		})
 
 		if retErr != nil {
@@ -121,31 +121,31 @@ func DestroyWorkers(ctx *kubeonecontext.Context) error {
 	}
 
 	// Delete all MachineDeployment objects
-	ctx.Logger.Info("Deleting MachineDeployment objects…")
+	s.Logger.Info("Deleting MachineDeployment objects…")
 	mdList := &clusterv1alpha1.MachineDeploymentList{}
-	if err := ctx.DynamicClient.List(bgCtx, dynclient.InNamespace(MachineControllerNamespace), mdList); err != nil {
+	if err := s.DynamicClient.List(bgCtx, dynclient.InNamespace(MachineControllerNamespace), mdList); err != nil {
 		if errorsutil.IsTimeout(err) || errorsutil.IsServerTimeout(err) {
 			return errors.Wrap(err, "unable to list machinedeployment objects")
 		}
-		ctx.Logger.Info("Skipping deleting worker nodes because MachineDeployments CRD is not deployed")
+		s.Logger.Info("Skipping deleting worker nodes because MachineDeployments CRD is not deployed")
 		return nil
 	}
 	for i := range mdList.Items {
-		if err := ctx.DynamicClient.Delete(bgCtx, &mdList.Items[i]); err != nil {
+		if err := s.DynamicClient.Delete(bgCtx, &mdList.Items[i]); err != nil {
 			return errors.Wrapf(err, "unable to delete machinedeployment object %s", mdList.Items[i].Name)
 		}
 	}
 
 	// Delete all MachineSet objects
-	ctx.Logger.Info("Deleting MachineSet objects…")
+	s.Logger.Info("Deleting MachineSet objects…")
 	msList := &clusterv1alpha1.MachineSetList{}
-	if err := ctx.DynamicClient.List(bgCtx, dynclient.InNamespace(MachineControllerNamespace), msList); err != nil {
+	if err := s.DynamicClient.List(bgCtx, dynclient.InNamespace(MachineControllerNamespace), msList); err != nil {
 		if !errorsutil.IsNotFound(err) {
 			return errors.Wrap(err, "unable to list machineset objects")
 		}
 	}
 	for i := range msList.Items {
-		if err := ctx.DynamicClient.Delete(bgCtx, &msList.Items[i]); err != nil {
+		if err := s.DynamicClient.Delete(bgCtx, &msList.Items[i]); err != nil {
 			if !errorsutil.IsNotFound(err) {
 				return errors.Wrapf(err, "unable to delete machineset object %s", msList.Items[i].Name)
 			}
@@ -153,15 +153,15 @@ func DestroyWorkers(ctx *kubeonecontext.Context) error {
 	}
 
 	// Delete all Machine objects
-	ctx.Logger.Info("Deleting Machine objects…")
+	s.Logger.Info("Deleting Machine objects…")
 	mList := &clusterv1alpha1.MachineList{}
-	if err := ctx.DynamicClient.List(bgCtx, dynclient.InNamespace(MachineControllerNamespace), mList); err != nil {
+	if err := s.DynamicClient.List(bgCtx, dynclient.InNamespace(MachineControllerNamespace), mList); err != nil {
 		if !errorsutil.IsNotFound(err) {
 			return errors.Wrap(err, "unable to list machine objects")
 		}
 	}
 	for i := range mList.Items {
-		if err := ctx.DynamicClient.Delete(bgCtx, &mList.Items[i]); err != nil {
+		if err := s.DynamicClient.Delete(bgCtx, &mList.Items[i]); err != nil {
 			if !errorsutil.IsNotFound(err) {
 				return errors.Wrapf(err, "unable to delete machine object %s", mList.Items[i].Name)
 			}
@@ -169,10 +169,10 @@ func DestroyWorkers(ctx *kubeonecontext.Context) error {
 	}
 
 	// Wait for all Machines to be deleted
-	ctx.Logger.Info("Waiting for all machines to get deleted…")
+	s.Logger.Info("Waiting for all machines to get deleted…")
 	return wait.Poll(5*time.Second, 5*time.Minute, func() (bool, error) {
 		list := &clusterv1alpha1.MachineList{}
-		if err := ctx.DynamicClient.List(bgCtx, dynclient.InNamespace(MachineControllerNamespace), list); err != nil {
+		if err := s.DynamicClient.List(bgCtx, dynclient.InNamespace(MachineControllerNamespace), list); err != nil {
 			return false, errors.Wrap(err, "unable to list machine objects")
 		}
 		if len(list.Items) != 0 {

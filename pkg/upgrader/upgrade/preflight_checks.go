@@ -28,7 +28,7 @@ import (
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/runner"
 	"github.com/kubermatic/kubeone/pkg/ssh"
-	kubeonecontext "github.com/kubermatic/kubeone/pkg/util/context"
+	"github.com/kubermatic/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -36,13 +36,13 @@ import (
 )
 
 // runPreflightChecks runs all preflight checks
-func runPreflightChecks(ctx *kubeonecontext.Context) error {
-	if ctx.DynamicClient == nil {
+func runPreflightChecks(s *state.State) error {
+	if s.DynamicClient == nil {
 		return errors.New("kubernetes dynamic client is not initialized")
 	}
 
 	// Check are Docker, Kubelet and Kubeadm installed
-	if err := checkPrerequisites(ctx); err != nil {
+	if err := checkPrerequisites(s); err != nil {
 		return errors.Wrap(err, "unable to check are prerequisites installed")
 	}
 
@@ -53,45 +53,45 @@ func runPreflightChecks(ctx *kubeonecontext.Context) error {
 		return errors.Wrap(err, "failed to set node selector labels")
 	}
 
-	err = ctx.DynamicClient.List(context.Background(), &nodeListOpts, &nodes)
+	err = s.DynamicClient.List(context.Background(), &nodeListOpts, &nodes)
 	if err != nil {
 		return errors.Wrap(err, "unable to list nodes")
 	}
 
-	if len(nodes.Items) != len(ctx.Cluster.Hosts) {
-		return errors.Errorf("expected %d cluster nodes but got %d", len(ctx.Cluster.Hosts), len(nodes.Items))
+	if len(nodes.Items) != len(s.Cluster.Hosts) {
+		return errors.Errorf("expected %d cluster nodes but got %d", len(s.Cluster.Hosts), len(nodes.Items))
 	}
 
 	// Run preflight checks on nodes
-	ctx.Logger.Infoln("Running preflight checks…")
+	s.Logger.Infoln("Running preflight checks…")
 
-	ctx.Logger.Infoln("Verifying are all nodes running…")
-	if err := verifyNodesRunning(&nodes, ctx.Verbose); err != nil {
+	s.Logger.Infoln("Verifying are all nodes running…")
+	if err := verifyNodesRunning(&nodes, s.Verbose); err != nil {
 		return errors.Wrap(err, "unable to verify are nodes running")
 	}
 
-	ctx.Logger.Infoln("Verifying are correct labels set on nodes…")
-	if err := verifyLabels(&nodes, ctx.Verbose); err != nil {
-		if ctx.ForceUpgrade {
-			ctx.Logger.Warningf("unable to verify node labels: %v", err)
+	s.Logger.Infoln("Verifying are correct labels set on nodes…")
+	if err := verifyLabels(&nodes, s.Verbose); err != nil {
+		if s.ForceUpgrade {
+			s.Logger.Warningf("unable to verify node labels: %v", err)
 		} else {
 			return errors.Wrap(err, "unable to verify node labels")
 		}
 	}
 
-	ctx.Logger.Infoln("Verifying do all node IP addresses match with our state…")
-	if err := verifyEndpoints(&nodes, ctx.Cluster.Hosts, ctx.Verbose); err != nil {
+	s.Logger.Infoln("Verifying do all node IP addresses match with our state…")
+	if err := verifyEndpoints(&nodes, s.Cluster.Hosts, s.Verbose); err != nil {
 		return errors.Wrap(err, "unable to verify node endpoints")
 	}
 
-	ctx.Logger.Infoln("Verifying is it possible to upgrade to the desired version…")
-	if err := verifyVersion(ctx.Logger, ctx.Cluster.Versions.Kubernetes, &nodes, ctx.Verbose, ctx.ForceUpgrade); err != nil {
+	s.Logger.Infoln("Verifying is it possible to upgrade to the desired version…")
+	if err := verifyVersion(s.Logger, s.Cluster.Versions.Kubernetes, &nodes, s.Verbose, s.ForceUpgrade); err != nil {
 		return errors.Wrap(err, "unable to verify components version")
 	}
 
-	if err := verifyVersionSkew(ctx, &nodes, ctx.Verbose); err != nil {
-		if ctx.ForceUpgrade {
-			ctx.Logger.Warningf("version skew check failed: %v", err)
+	if err := verifyVersionSkew(s, &nodes, s.Verbose); err != nil {
+		if s.ForceUpgrade {
+			s.Logger.Warningf("version skew check failed: %v", err)
 		} else {
 			return errors.Wrap(err, "version skew check failed")
 		}
@@ -101,10 +101,10 @@ func runPreflightChecks(ctx *kubeonecontext.Context) error {
 }
 
 // checkPrerequisites checks are Docker, Kubelet, and Kubeadm installed on every machine in the cluster
-func checkPrerequisites(ctx *kubeonecontext.Context) error {
-	return ctx.RunTaskOnAllNodes(func(ctx *kubeonecontext.Context, _ *kubeoneapi.HostConfig, _ ssh.Connection) error {
-		ctx.Logger.Infoln("Checking are all prerequisites installed…")
-		_, _, err := ctx.Runner.Run(checkPrerequisitesCommand, runner.TemplateVariables{})
+func checkPrerequisites(s *state.State) error {
+	return s.RunTaskOnAllNodes(func(s *state.State, _ *kubeoneapi.HostConfig, _ ssh.Connection) error {
+		s.Logger.Infoln("Checking are all prerequisites installed…")
+		_, _, err := s.Runner.Run(checkPrerequisitesCommand, runner.TemplateVariables{})
 		return err
 	}, true)
 }
@@ -228,8 +228,8 @@ func verifyVersion(logger logrus.FieldLogger, version string, nodes *corev1.Node
 }
 
 // verifyVersionSkew ensures the requested version matches the version skew policy
-func verifyVersionSkew(ctx *kubeonecontext.Context, nodes *corev1.NodeList, verbose bool) error {
-	reqVer, err := semver.NewVersion(ctx.Cluster.Versions.Kubernetes)
+func verifyVersionSkew(s *state.State, nodes *corev1.NodeList, verbose bool) error {
+	reqVer, err := semver.NewVersion(s.Cluster.Versions.Kubernetes)
 	if err != nil {
 		return errors.Wrap(err, "provided version is invalid")
 	}
@@ -245,7 +245,7 @@ func verifyVersionSkew(ctx *kubeonecontext.Context, nodes *corev1.NodeList, verb
 		return errors.Wrap(err, "failed to set labels selector for kube-apiserver")
 	}
 
-	err = ctx.DynamicClient.List(context.Background(), apiserverListOpts, apiserverPods)
+	err = s.DynamicClient.List(context.Background(), apiserverListOpts, apiserverPods)
 	if err != nil {
 		return errors.Wrap(err, "unable to list apiserver pods")
 	}

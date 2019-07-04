@@ -17,12 +17,12 @@ limitations under the License.
 package cmd
 
 import (
-	"github.com/kubermatic/kubeone/pkg/apis/kubeone/config"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/apis/kubeone/config"
 )
 
 const (

@@ -27,7 +27,7 @@ import (
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/certificate"
-	kubeonecontext "github.com/kubermatic/kubeone/pkg/util/context"
+	"github.com/kubermatic/kubeone/pkg/state"
 
 	admissionregistrationv1beta1 "k8s.io/api/admissionregistration/v1beta1"
 	appsv1 "k8s.io/api/apps/v1"
@@ -49,13 +49,13 @@ const (
 )
 
 // DeployWebhookConfiguration deploys MachineController webhook deployment on the cluster
-func DeployWebhookConfiguration(ctx *kubeonecontext.Context) error {
-	if ctx.DynamicClient == nil {
+func DeployWebhookConfiguration(s *state.State) error {
+	if s.DynamicClient == nil {
 		return errors.New("kubernetes clientset not initialized")
 	}
 
 	// Generate Webhook certificate
-	caPrivateKey, caCert, err := certificate.CAKeyPair(ctx.Configuration)
+	caPrivateKey, caCert, err := certificate.CAKeyPair(s.Configuration)
 	if err != nil {
 		return errors.Wrap(err, "failed to load CA keypair")
 	}
@@ -63,13 +63,13 @@ func DeployWebhookConfiguration(ctx *kubeonecontext.Context) error {
 	bgCtx := context.Background()
 
 	// Deploy Webhook
-	err = simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, webhookDeployment(ctx.Cluster))
+	err = simpleCreateOrUpdate(bgCtx, s.DynamicClient, webhookDeployment(s.Cluster))
 	if err != nil {
 		return errors.Wrap(err, "failed to ensure machine-controller webhook deployment")
 	}
 
 	// Deploy Webhook service
-	err = simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, service())
+	err = simpleCreateOrUpdate(bgCtx, s.DynamicClient, service())
 	if err != nil {
 		return errors.Wrap(err, "failed to ensure machine-controller webhook service")
 	}
@@ -80,12 +80,12 @@ func DeployWebhookConfiguration(ctx *kubeonecontext.Context) error {
 		return errors.Wrap(err, "failed to generate machine-controller webhook TLS secret")
 	}
 
-	err = simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, servingCert)
+	err = simpleCreateOrUpdate(bgCtx, s.DynamicClient, servingCert)
 	if err != nil {
 		return errors.Wrap(err, "failed to ensure machine-controller webhook secret")
 	}
 
-	err = simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, mutatingwebhookConfiguration(caCert))
+	err = simpleCreateOrUpdate(bgCtx, s.DynamicClient, mutatingwebhookConfiguration(caCert))
 	if err != nil {
 		return errors.Wrap(err, "failed to ensure machine-controller mutating webhook")
 	}

@@ -23,24 +23,24 @@ import (
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/kubermatic/kubeone/pkg/util/context"
+	"github.com/kubermatic/kubeone/pkg/state"
 )
 
-func upgradeFollower(ctx *context.Context) error {
-	return ctx.RunTaskOnFollowers(upgradeFollowerExecutor, false)
+func upgradeFollower(s *state.State) error {
+	return s.RunTaskOnFollowers(upgradeFollowerExecutor, false)
 }
 
-func upgradeFollowerExecutor(ctx *context.Context, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
-	logger := ctx.Logger.WithField("node", node.PublicAddress)
+func upgradeFollowerExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+	logger := s.Logger.WithField("node", node.PublicAddress)
 
 	logger.Infoln("Labeling follower control plane…")
-	err := labelNode(ctx.DynamicClient, node)
+	err := labelNode(s.DynamicClient, node)
 	if err != nil {
 		return errors.Wrap(err, "failed to label leader control plane node")
 	}
 
 	logger.Infoln("Upgrading Kubernetes binaries on follower control plane…")
-	err = upgradeKubernetesBinaries(ctx, *node)
+	err = upgradeKubernetesBinaries(s, *node)
 	if err != nil {
 		return errors.Wrap(err, "failed to upgrade kubernetes binaries on follower control plane")
 	}
@@ -49,7 +49,7 @@ func upgradeFollowerExecutor(ctx *context.Context, node *kubeoneapi.HostConfig, 
 	time.Sleep(timeoutKubeletUpgrade)
 
 	logger.Infoln("Running 'kubeadm upgrade' on the follower control plane node…")
-	err = upgradeFollowerControlPlane(ctx)
+	err = upgradeFollowerControlPlane(s)
 	if err != nil {
 		return errors.Wrap(err, "failed to upgrade follower control plane")
 	}
@@ -58,7 +58,7 @@ func upgradeFollowerExecutor(ctx *context.Context, node *kubeoneapi.HostConfig, 
 	time.Sleep(timeoutNodeUpgrade)
 
 	logger.Infoln("Unlabeling follower control plane…")
-	err = unlabelNode(ctx.DynamicClient, node)
+	err = unlabelNode(s.DynamicClient, node)
 	if err != nil {
 		return errors.Wrap(err, "failed to unlabel follower control plane node")
 	}

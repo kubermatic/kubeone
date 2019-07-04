@@ -21,7 +21,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	kubeonecontext "github.com/kubermatic/kubeone/pkg/util/context"
+	"github.com/kubermatic/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -44,22 +44,22 @@ func simpleCreateOrUpdate(ctx context.Context, client dynclient.Client, obj runt
 }
 
 // Ensure creates/updates the credentials secret
-func Ensure(ctx *kubeonecontext.Context) error {
-	if !ctx.Cluster.MachineController.Deploy && !ctx.Cluster.CloudProvider.External {
-		ctx.Logger.Info("Skipping creating credentials secret because both machine-controller and external CCM are disabled.")
+func Ensure(s *state.State) error {
+	if !s.Cluster.MachineController.Deploy && !s.Cluster.CloudProvider.External {
+		s.Logger.Info("Skipping creating credentials secret because both machine-controller and external CCM are disabled.")
 		return nil
 	}
 
-	ctx.Logger.Infoln("Creating credentials secret…")
+	s.Logger.Infoln("Creating credentials secret…")
 
-	creds, err := ProviderCredentials(ctx.Cluster.CloudProvider.Name)
+	creds, err := ProviderCredentials(s.Cluster.CloudProvider.Name)
 	if err != nil {
 		return errors.Wrap(err, "unable to fetch cloud provider credentials")
 	}
 
 	bgCtx := context.Background()
 	secret := credentialsSecret(creds)
-	if err := simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, secret); err != nil {
+	if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, secret); err != nil {
 		return errors.Wrap(err, "failed to ensure credentials secret")
 	}
 

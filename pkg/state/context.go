@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package context
+package state
 
 import (
 	"github.com/sirupsen/logrus"
@@ -28,9 +28,9 @@ import (
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-// Context hold together currently test flags and parsed info, along with
+// State holds together currently test flags and parsed info, along with
 // utilities like logger
-type Context struct {
+type State struct {
 	Cluster                   *kubeoneapi.KubeOneCluster
 	Logger                    logrus.FieldLogger
 	Connector                 *ssh.Connector
@@ -50,7 +50,7 @@ type Context struct {
 }
 
 // Clone returns a shallow copy of the context.
-func (c *Context) Clone() *Context {
-	newCtx := *c
-	return &newCtx
+func (s *State) Clone() *State {
+	newState := *s
+	return &newState
 }

@@ -23,7 +23,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/configupload"
 	"github.com/kubermatic/kubeone/pkg/installer/installation"
 	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/kubermatic/kubeone/pkg/util/context"
+	"github.com/kubermatic/kubeone/pkg/state"
 )
 
 // Options groups the various possible options for running
@@ -52,22 +52,22 @@ func NewInstaller(cluster *kubeoneapi.KubeOneCluster, logger *logrus.Logger) *In
 
 // Install run the installation process
 func (i *Installer) Install(options *Options) error {
-	return installation.Install(i.createContext(options))
+	return installation.Install(i.createState(options))
 }
 
 // Reset resets cluster:
 // * destroys all the worker machines
 // * kubeadm reset masters
 func (i *Installer) Reset(options *Options) error {
-	return installation.Reset(i.createContext(options))
+	return installation.Reset(i.createState(options))
 }
 
-// createContext creates a basic, non-host bound context with
+// createState creates a basic, non-host bound state with
 // all relevant information, but *no* Runner yet. The various
 // task helper functions will take care of setting up Runner
 // structs for each task individually.
-func (i *Installer) createContext(options *Options) *context.Context {
-	return &context.Context{
+func (i *Installer) createState(options *Options) *state.State {
+	return &state.State{
 		Cluster:        i.cluster,
 		Connector:      ssh.NewConnector(),
 		Configuration:  configupload.NewConfiguration(),

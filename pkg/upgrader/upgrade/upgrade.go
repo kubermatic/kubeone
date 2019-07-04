@@ -28,7 +28,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/task"
 	"github.com/kubermatic/kubeone/pkg/templates/externalccm"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
-	"github.com/kubermatic/kubeone/pkg/util/context"
+	"github.com/kubermatic/kubeone/pkg/state"
 )
 
 const (
@@ -44,7 +44,7 @@ const (
 
 // Upgrade performs all the steps required to upgrade Kubernetes on
 // cluster provisioned using KubeOne
-func Upgrade(ctx *context.Context) error {
+func Upgrade(s *state.State) error {
 	// commonSteps are same for all worker nodes and they are safe to be run in parallel
 	commonSteps := []task.Task{
 		{Fn: kubeconfig.BuildKubernetesClientset, ErrMsg: "unable to build kubernetes clientset"},
@@ -63,7 +63,7 @@ func Upgrade(ctx *context.Context) error {
 	}
 
 	for _, step := range commonSteps {
-		if err := step.Run(ctx); err != nil {
+		if err := step.Run(s); err != nil {
 			return errors.Wrap(err, step.ErrMsg)
 		}
 	}

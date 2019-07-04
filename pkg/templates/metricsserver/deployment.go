@@ -21,7 +21,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	kubeonecontext "github.com/kubermatic/kubeone/pkg/util/context"
+	"github.com/kubermatic/kubeone/pkg/state"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -33,8 +33,8 @@ import (
 )
 
 // Deploy generate and POST all objects to apiserver
-func Deploy(ctx *kubeonecontext.Context) error {
-	if ctx.DynamicClient == nil {
+func Deploy(s *state.State) error {
+	if s.DynamicClient == nil {
 		return errors.New("kubernetes client not initialized")
 	}
 
@@ -52,7 +52,7 @@ func Deploy(ctx *kubeonecontext.Context) error {
 
 	bgCtx := context.Background()
 	for _, o := range objs {
-		if err := simpleCreateOrUpdate(bgCtx, ctx.DynamicClient, o); err != nil {
+		if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, o); err != nil {
 			return errors.WithStack(err)
 		}
 	}

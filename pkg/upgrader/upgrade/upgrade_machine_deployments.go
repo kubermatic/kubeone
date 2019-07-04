@@ -21,7 +21,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	kubeonecontext "github.com/kubermatic/kubeone/pkg/util/context"
+	"github.com/kubermatic/kubeone/pkg/state"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/util/retry"
@@ -29,18 +29,18 @@ import (
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-func upgradeMachineDeployments(ctx *kubeonecontext.Context) error {
-	if !ctx.UpgradeMachineDeployments {
-		ctx.Logger.Info("Upgrade MachineDeployments skip per lack of flag…")
+func upgradeMachineDeployments(s *state.State) error {
+	if !s.UpgradeMachineDeployments {
+		s.Logger.Info("Upgrade MachineDeployments skip per lack of flag…")
 		return nil
 	}
 
-	ctx.Logger.Info("Upgrade MachineDeployments…")
+	s.Logger.Info("Upgrade MachineDeployments…")
 
 	bg := context.Background()
 
 	machineDeployments := clusterv1alpha1.MachineDeploymentList{}
-	err := ctx.DynamicClient.List(
+	err := s.DynamicClient.List(
 		bg,
 		&dynclient.ListOptions{Namespace: metav1.NamespaceSystem},
 		&machineDeployments,
@@ -54,12 +54,12 @@ func upgradeMachineDeployments(ctx *kubeonecontext.Context) error {
 
 		retErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
 			machine := clusterv1alpha1.MachineDeployment{}
-			if err := ctx.DynamicClient.Get(bg, machineKey, &machine); err != nil {
+			if err := s.DynamicClient.Get(bg, machineKey, &machine); err != nil {
 				return err
 			}
 
-			machine.Spec.Template.Spec.Versions.Kubelet = ctx.Cluster.Versions.Kubernetes
-			return ctx.DynamicClient.Update(bg, &machine)
+			machine.Spec.Template.Spec.Versions.Kubelet = s.Cluster.Versions.Kubernetes
+			return s.DynamicClient.Update(bg, &machine)
 		})
 
 		if retErr != nil {

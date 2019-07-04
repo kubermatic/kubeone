@@ -20,28 +20,28 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/state"
 	"github.com/kubermatic/kubeone/pkg/templates/canal"
 	"github.com/kubermatic/kubeone/pkg/templates/weave"
-	"github.com/kubermatic/kubeone/pkg/util/context"
 )
 
-func ensureCNI(ctx *context.Context) error {
-	switch ctx.Cluster.ClusterNetwork.CNI.Provider {
+func ensureCNI(s *state.State) error {
+	switch s.Cluster.ClusterNetwork.CNI.Provider {
 	case kubeone.CNIProviderCanal:
-		return ensureCNICanal(ctx)
+		return ensureCNICanal(s)
 	case kubeone.CNIProviderWeaveNet:
-		return ensureCNIWeaveNet(ctx)
+		return ensureCNIWeaveNet(s)
 	}
 
-	return errors.Errorf("unknown CNI provider: %s", ctx.Cluster.ClusterNetwork.CNI.Provider)
+	return errors.Errorf("unknown CNI provider: %s", s.Cluster.ClusterNetwork.CNI.Provider)
 }
 
-func ensureCNIWeaveNet(ctx *context.Context) error {
-	ctx.Logger.Infoln("Applying weave-net CNI plugin…")
-	return weave.Deploy(ctx)
+func ensureCNIWeaveNet(s *state.State) error {
+	s.Logger.Infoln("Applying weave-net CNI plugin…")
+	return weave.Deploy(s)
 }
 
-func ensureCNICanal(ctx *context.Context) error {
-	ctx.Logger.Infoln("Applying canal CNI plugin…")
-	return canal.Deploy(ctx)
+func ensureCNICanal(s *state.State) error {
+	s.Logger.Infoln("Applying canal CNI plugin…")
+	return canal.Deploy(s)
 }

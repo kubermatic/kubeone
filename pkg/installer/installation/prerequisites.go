@@ -22,7 +22,7 @@ import (
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/runner"
 	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/kubermatic/kubeone/pkg/util/context"
+	"github.com/kubermatic/kubeone/pkg/state"
 )
 
 const (
@@ -212,56 +212,56 @@ sudo systemctl start docker.service kubelet.service
 `
 )
 
-func installPrerequisites(ctx *context.Context) error {
-	ctx.Logger.Infoln("Installing prerequisites…")
+func installPrerequisites(s *state.State) error {
+	s.Logger.Infoln("Installing prerequisites…")
 
-	generateConfigurationFiles(ctx)
+	generateConfigurationFiles(s)
 
-	return ctx.RunTaskOnAllNodes(installPrerequisitesOnNode, true)
+	return s.RunTaskOnAllNodes(installPrerequisitesOnNode, true)
 }
 
-func generateConfigurationFiles(ctx *context.Context) {
-	ctx.Configuration.AddFile("cfg/cloud-config", ctx.Cluster.CloudProvider.CloudConfig)
+func generateConfigurationFiles(s *state.State) {
+	s.Configuration.AddFile("cfg/cloud-config", s.Cluster.CloudProvider.CloudConfig)
 }
 
-func installPrerequisitesOnNode(ctx *context.Context, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
-	ctx.Logger.Infoln("Determine operating system…")
-	os, err := determineOS(ctx)
+func installPrerequisitesOnNode(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+	s.Logger.Infoln("Determine operating system…")
+	os, err := determineOS(s)
 	if err != nil {
 		return errors.Wrap(err, "failed to determine operating system")
 	}
 
 	node.SetOperatingSystem(os)
 
-	ctx.Logger.Infoln("Determine hostname…")
-	hostname, err := determineHostname(ctx, *node)
+	s.Logger.Infoln("Determine hostname…")
+	hostname, err := determineHostname(s, *node)
 	if err != nil {
 		return errors.Wrap(err, "failed to determine hostname")
 	}
 
-	ctx.Logger.Infoln("Creating environment file…")
-	err = createEnvironmentFile(ctx)
+	s.Logger.Infoln("Creating environment file…")
+	err = createEnvironmentFile(s)
 	if err != nil {
 		return errors.Wrap(err, "failed to create environment file")
 	}
 
 	node.SetHostname(hostname)
 
-	logger := ctx.Logger.WithField("os", os)
+	logger := s.Logger.WithField("os", os)
 
 	logger.Infoln("Installing kubeadm…")
-	err = installKubeadm(ctx, *node)
+	err = installKubeadm(s, *node)
 	if err != nil {
 		return errors.Wrap(err, "failed to install kubeadm")
 	}
 
-	err = configureProxy(ctx)
+	err = configureProxy(s)
 	if err != nil {
 		return errors.Wrap(err, "failed to configure proxy for docker daemon")
 	}
 
 	logger.Infoln("Deploying configuration files…")
-	err = deployConfigurationFiles(ctx)
+	err = deployConfigurationFiles(s)
 	if err != nil {
 		return errors.Wrap(err, "failed to upload configuration files")
 	}
@@ -269,45 +269,45 @@ func installPrerequisitesOnNode(ctx *context.Context, node *kubeoneapi.HostConfi
 	return nil
 }
 
-func determineOS(ctx *context.Context) (string, error) {
-	osID, _, err := ctx.Runner.Run("source /etc/os-release && echo -n $ID", nil)
+func determineOS(s *state.State) (string, error) {
+	osID, _, err := s.Runner.Run("source /etc/os-release && echo -n $ID", nil)
 	return osID, err
 }
 
-func determineHostname(ctx *context.Context, _ kubeoneapi.HostConfig) (string, error) {
+func determineHostname(s *state.State, _ kubeoneapi.HostConfig) (string, error) {
 	hostcmd := hostnameScript
 
 	// on azure the name of the Node should == name of the VM
-	if ctx.Cluster.CloudProvider.Name == kubeoneapi.CloudProviderNameAzure {
+	if s.Cluster.CloudProvider.Name == kubeoneapi.CloudProviderNameAzure {
 		hostcmd = `hostname`
 	}
-	stdout, _, err := ctx.Runner.Run(hostcmd, nil)
+	stdout, _, err := s.Runner.Run(hostcmd, nil)
 
 	return stdout, err
 }
 
-func createEnvironmentFile(ctx *context.Context) error {
-	_, _, err := ctx.Runner.Run(environmentFileScript, runner.TemplateVariables{
-		"HTTP_PROXY":  ctx.Cluster.Proxy.HTTP,
-		"HTTPS_PROXY": ctx.Cluster.Proxy.HTTPS,
-		"NO_PROXY":    ctx.Cluster.Proxy.NoProxy,
+func createEnvironmentFile(s *state.State) error {
+	_, _, err := s.Runner.Run(environmentFileScript, runner.TemplateVariables{
+		"HTTP_PROXY":  s.Cluster.Proxy.HTTP,
+		"HTTPS_PROXY": s.Cluster.Proxy.HTTPS,
+		"NO_PROXY":    s.Cluster.Proxy.NoProxy,
 	})
 
 	return err
 }
 
-func installKubeadm(ctx *context.Context, node kubeoneapi.HostConfig) error {
+func installKubeadm(s *state.State, node kubeoneapi.HostConfig) error {
 	var err error
 
 	switch node.OperatingSystem {
 	case "ubuntu", "debian":
-		err = installKubeadmDebian(ctx)
+		err = installKubeadmDebian(s)
 
 	case "coreos":
-		err = installKubeadmCoreOS(ctx)
+		err = installKubeadmCoreOS(s)
 
 	case "centos":
-		err = installKubeadmCentOS(ctx)
+		err = installKubeadmCentOS(s)
 
 	default:
 		err = errors.Errorf("'%s' is not a supported operating system", node.OperatingSystem)
@@ -316,59 +316,59 @@ func installKubeadm(ctx *context.Context, node kubeoneapi.HostConfig) error {
 	return err
 }
 
-func installKubeadmDebian(ctx *context.Context) error {
-	_, _, err := ctx.Runner.Run(kubeadmDebianScript, runner.TemplateVariables{
-		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
+func installKubeadmDebian(s *state.State) error {
+	_, _, err := s.Runner.Run(kubeadmDebianScript, runner.TemplateVariables{
+		"KUBERNETES_VERSION": s.Cluster.Versions.Kubernetes,
 		"DOCKER_VERSION":     dockerVersion,
-		"CNI_VERSION":        ctx.Cluster.Versions.KubernetesCNIVersion(),
+		"CNI_VERSION":        s.Cluster.Versions.KubernetesCNIVersion(),
 	})
 
 	return errors.WithStack(err)
 }
 
-func installKubeadmCentOS(ctx *context.Context) error {
-	_, _, err := ctx.Runner.Run(kubeadmCentOSScript, runner.TemplateVariables{
-		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
-		"CNI_VERSION":        ctx.Cluster.Versions.KubernetesCNIVersion(),
+func installKubeadmCentOS(s *state.State) error {
+	_, _, err := s.Runner.Run(kubeadmCentOSScript, runner.TemplateVariables{
+		"KUBERNETES_VERSION": s.Cluster.Versions.Kubernetes,
+		"CNI_VERSION":        s.Cluster.Versions.KubernetesCNIVersion(),
 	})
 	return err
 }
 
-func installKubeadmCoreOS(ctx *context.Context) error {
-	_, _, err := ctx.Runner.Run(kubeadmCoreOSScript, runner.TemplateVariables{
-		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
-		"CNI_VERSION":        ctx.Cluster.Versions.KubernetesCNIVersion(),
+func installKubeadmCoreOS(s *state.State) error {
+	_, _, err := s.Runner.Run(kubeadmCoreOSScript, runner.TemplateVariables{
+		"KUBERNETES_VERSION": s.Cluster.Versions.Kubernetes,
+		"CNI_VERSION":        s.Cluster.Versions.KubernetesCNIVersion(),
 	})
 
 	return err
 }
 
-func deployConfigurationFiles(ctx *context.Context) error {
-	err := ctx.Configuration.UploadTo(ctx.Runner.Conn, ctx.WorkDir)
+func deployConfigurationFiles(s *state.State) error {
+	err := s.Configuration.UploadTo(s.Runner.Conn, s.WorkDir)
 	if err != nil {
 		return errors.Wrap(err, "failed to upload")
 	}
 
 	// move config files to their permanent locations
-	_, _, err = ctx.Runner.Run(`
+	_, _, err = s.Runner.Run(`
 sudo mkdir -p /etc/systemd/system/kubelet.service.d/ /etc/kubernetes
 sudo mv ./{{ .WORK_DIR }}/cfg/cloud-config /etc/kubernetes/cloud-config
 sudo chown root:root /etc/kubernetes/cloud-config
 sudo chmod 600 /etc/kubernetes/cloud-config
 `, runner.TemplateVariables{
-		"WORK_DIR": ctx.WorkDir,
+		"WORK_DIR": s.WorkDir,
 	})
 
 	return err
 }
 
-func configureProxy(ctx *context.Context) error {
-	if ctx.Cluster.Proxy.HTTP == "" && ctx.Cluster.Proxy.HTTPS == "" && ctx.Cluster.Proxy.NoProxy == "" {
+func configureProxy(s *state.State) error {
+	if s.Cluster.Proxy.HTTP == "" && s.Cluster.Proxy.HTTPS == "" && s.Cluster.Proxy.NoProxy == "" {
 		return nil
 	}
 
-	ctx.Logger.Infoln("Configuring docker proxy…")
-	_, _, err := ctx.Runner.Run(daemonsProxyScript, runner.TemplateVariables{})
+	s.Logger.Infoln("Configuring docker proxy…")
+	_, _, err := s.Runner.Run(daemonsProxyScript, runner.TemplateVariables{})
 
 	return err
 }

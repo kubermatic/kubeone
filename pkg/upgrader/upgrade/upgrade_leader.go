@@ -23,23 +23,23 @@ import (
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/kubermatic/kubeone/pkg/util/context"
+	"github.com/kubermatic/kubeone/pkg/state"
 )
 
-func upgradeLeader(ctx *context.Context) error {
-	return ctx.RunTaskOnLeader(upgradeLeaderExecutor)
+func upgradeLeader(s *state.State) error {
+	return s.RunTaskOnLeader(upgradeLeaderExecutor)
 }
 
-func upgradeLeaderExecutor(ctx *context.Context, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
-	logger := ctx.Logger.WithField("node", node.PublicAddress)
+func upgradeLeaderExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+	logger := s.Logger.WithField("node", node.PublicAddress)
 
 	logger.Infoln("Labeling leader control plane…")
-	if err := labelNode(ctx.DynamicClient, node); err != nil {
+	if err := labelNode(s.DynamicClient, node); err != nil {
 		return errors.Wrap(err, "failed to label leader control plane node")
 	}
 
 	logger.Infoln("Upgrading Kubernetes binaries on leader control plane…")
-	if err := upgradeKubernetesBinaries(ctx, *node); err != nil {
+	if err := upgradeKubernetesBinaries(s, *node); err != nil {
 		return errors.Wrap(err, "failed to upgrade kubernetes binaries on leader control plane")
 	}
 
@@ -47,17 +47,17 @@ func upgradeLeaderExecutor(ctx *context.Context, node *kubeoneapi.HostConfig, co
 	time.Sleep(timeoutKubeletUpgrade)
 
 	logger.Infoln("Generating kubeadm config …")
-	if err := generateKubeadmConfig(ctx, *node); err != nil {
+	if err := generateKubeadmConfig(s, *node); err != nil {
 		return errors.Wrap(err, "failed to generate kubeadm config")
 	}
 
 	logger.Infoln("Uploading kubeadm config to leader control plane node…")
-	if err := uploadKubeadmConfig(ctx, conn); err != nil {
+	if err := uploadKubeadmConfig(s, conn); err != nil {
 		return errors.Wrap(err, "failed to upload kubeadm config")
 	}
 
 	logger.Infoln("Running 'kubeadm upgrade' on leader control plane node…")
-	if err := upgradeLeaderControlPlane(ctx); err != nil {
+	if err := upgradeLeaderControlPlane(s); err != nil {
 		return errors.Wrap(err, "failed to run 'kubeadm upgrade' on leader control plane")
 	}
 
@@ -65,7 +65,7 @@ func upgradeLeaderExecutor(ctx *context.Context, node *kubeoneapi.HostConfig, co
 	time.Sleep(timeoutNodeUpgrade)
 
 	logger.Infoln("Unlabeling leader control plane…")
-	if err := unlabelNode(ctx.DynamicClient, node); err != nil {
+	if err := unlabelNode(s.DynamicClient, node); err != nil {
 		return errors.Wrap(err, "failed to unlabel leader control plane node")
 	}
 
