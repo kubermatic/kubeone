@@ -63,6 +63,10 @@ output "kubeone_workers" {
           floatingIPPool = var.external_network_name
           network        = openstack_networking_network_v2.network.name
           subnet         = openstack_networking_subnet_v2.subnet.name
+          # Optional: If set, the rootDisk will be a volume. 
+          # Otherwise, the rootDisk will be on ephemeral storage and its size will
+          # be derived from the flavor
+          rootDiskSizeGB = 10
           tags = {
             "${var.cluster_name}-workers" = "pool1"
           }

@@ -312,6 +312,7 @@ func (c *Config) updateOpenStackWorkerset(existingWorkerSet *kubeonev1alpha1.Wor
 		{key: "availabilityZone", value: openstackConfig.AvailabilityZone},
 		{key: "network", value: openstackConfig.Network},
 		{key: "subnet", value: openstackConfig.Subnet},
+		{key: "rootDiskSizeGB", value: openstackConfig.RootDiskSizeGB},
 		{key: "tags", value: openstackConfig.Tags},
 	}
 
