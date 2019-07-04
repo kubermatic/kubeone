@@ -18,9 +18,9 @@ package kubeadm
 
 import (
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/state"
 	"github.com/kubermatic/kubeone/pkg/templates"
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/v1beta1"
-	"github.com/kubermatic/kubeone/pkg/state"
 )
 
 type kubeadmv1beta1 struct{}

@@ -20,8 +20,8 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/kubeadmargs"
 	"github.com/kubermatic/kubeone/pkg/state"
+	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/kubeadmargs"
 )
 
 // Activate configured features.

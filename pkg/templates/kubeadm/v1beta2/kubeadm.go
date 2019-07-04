@@ -27,8 +27,8 @@ import (
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/features"
 	"github.com/kubermatic/kubeone/pkg/kubeflags"
-	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/kubeadmargs"
 	"github.com/kubermatic/kubeone/pkg/state"
+	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/kubeadmargs"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"

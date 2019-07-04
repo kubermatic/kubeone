@@ -25,10 +25,10 @@ import (
 	"github.com/kubermatic/kubeone/pkg/credentials"
 	"github.com/kubermatic/kubeone/pkg/features"
 	"github.com/kubermatic/kubeone/pkg/kubeconfig"
+	"github.com/kubermatic/kubeone/pkg/state"
 	"github.com/kubermatic/kubeone/pkg/task"
 	"github.com/kubermatic/kubeone/pkg/templates/externalccm"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
-	"github.com/kubermatic/kubeone/pkg/state"
 )
 
 const (

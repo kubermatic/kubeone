@@ -21,8 +21,8 @@ import (
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/kubermatic/kubeone/pkg/templates/kubeadm"
 	"github.com/kubermatic/kubeone/pkg/state"
+	"github.com/kubermatic/kubeone/pkg/templates/kubeadm"
 )
 
 func generateKubeadmConfig(s *state.State, node kubeoneapi.HostConfig) error {

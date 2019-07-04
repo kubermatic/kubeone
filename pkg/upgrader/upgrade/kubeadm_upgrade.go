@@ -20,8 +20,8 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/runner"
-	"github.com/kubermatic/kubeone/pkg/templates/kubeadm"
 	"github.com/kubermatic/kubeone/pkg/state"
+	"github.com/kubermatic/kubeone/pkg/templates/kubeadm"
 )
 
 const (

@@ -19,8 +19,8 @@ package installation
 import (
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
 	"github.com/kubermatic/kubeone/pkg/state"
+	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
 )
 
 func createWorkerMachines(s *state.State) error {
