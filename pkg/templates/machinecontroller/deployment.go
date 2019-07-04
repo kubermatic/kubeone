@@ -44,7 +44,7 @@ const (
 	MachineControllerNamespace     = metav1.NamespaceSystem
 	MachineControllerAppLabelKey   = "app"
 	MachineControllerAppLabelValue = "machine-controller"
-	MachineControllerTag           = "v1.3.0"
+	MachineControllerTag           = "v1.4.0"
 )
 
 // Deploy deploys MachineController deployment with RBAC on the cluster
