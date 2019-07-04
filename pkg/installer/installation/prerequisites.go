@@ -17,8 +17,6 @@ limitations under the License.
 package installation
 
 import (
-	"fmt"
-
 	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
@@ -187,7 +185,7 @@ EOF
 sudo systemctl restart docker
 
 sudo mkdir -p /opt/cni/bin /etc/kubernetes/pki /etc/kubernetes/manifests
-curl -L "https://github.com/containernetworking/plugins/releases/download/{{ .CNI_VERSION }}/cni-plugins-amd64-{{ .CNI_VERSION }}.tgz" | \
+curl -L "https://github.com/containernetworking/plugins/releases/download/v{{ .CNI_VERSION }}/cni-plugins-amd64-v{{ .CNI_VERSION }}.tgz" | \
 	sudo tar -C /opt/cni/bin -xz
 
 RELEASE="v{{ .KUBERNETES_VERSION }}"
@@ -338,7 +336,7 @@ func installKubeadmCentOS(ctx *util.Context) error {
 func installKubeadmCoreOS(ctx *util.Context) error {
 	_, _, err := ctx.Runner.Run(kubeadmCoreOSScript, util.TemplateVariables{
 		"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
-		"CNI_VERSION":        fmt.Sprintf("v%s", ctx.Cluster.Versions.KubernetesCNIVersion()),
+		"CNI_VERSION":        ctx.Cluster.Versions.KubernetesCNIVersion(),
 	})
 
 	return err
