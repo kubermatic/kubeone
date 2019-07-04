@@ -59,10 +59,18 @@ curl -L "https://github.com/containernetworking/plugins/releases/download/v{{ .C
 
 RELEASE="v{{ .KUBERNETES_VERSION }}"
 
-sudo mkdir -p /opt/bin
-cd /opt/bin
+
+
+sudo mkdir -p /var/tmp/kube-binaries
+cd /var/tmp/kube-binaries
 sudo curl -L --remote-name-all \
      https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/amd64/{kubeadm,kubelet,kubectl}
+
+
+sudo mkdir -p /opt/bin
+cd /opt/bin
+sudo systemctl stop kubelet
+sudo mv /var/tmp/kube-binaries/{kubeadm,kubelet,kubectl} .
 sudo chmod +x {kubeadm,kubelet,kubectl}
 
 curl -sSL "https://raw.githubusercontent.com/kubernetes/kubernetes/${RELEASE}/build/debs/kubelet.service" | \
@@ -72,7 +80,10 @@ curl -sSL "https://raw.githubusercontent.com/kubernetes/kubernetes/${RELEASE}/bu
 sudo mkdir -p /etc/systemd/system/kubelet.service.d
 curl -sSL "https://raw.githubusercontent.com/kubernetes/kubernetes/${RELEASE}/build/debs/10-kubeadm.conf" | \
      sed "s:/usr/bin:/opt/bin:g" | \
-     sudo tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+	 sudo tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+	 
+sudo systemctl daemon-reload
+sudo systemctl start kubelet
 `
 )
 
