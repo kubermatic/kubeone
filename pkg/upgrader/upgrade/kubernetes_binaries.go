@@ -59,14 +59,18 @@ curl -L "https://github.com/containernetworking/plugins/releases/download/v{{ .C
 
 RELEASE="v{{ .KUBERNETES_VERSION }}"
 
-sudo systemctl stop kubelet
+
+
+sudo mkdir -p /var/tmp/kube-binaries
+cd /var/tmp/kube-binaries
+sudo curl -L --remote-name-all \
+     https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/amd64/{kubeadm,kubelet,kubectl}
+
 
 sudo mkdir -p /opt/bin
 cd /opt/bin
-
-
-sudo curl -L --remote-name-all \
-     https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/amd64/{kubeadm,kubelet,kubectl}
+sudo systemctl stop kubelet
+sudo mv /var/tmp/kube-binaries/{kubeadm,kubelet,kubectl} .
 sudo chmod +x {kubeadm,kubelet,kubectl}
 
 curl -sSL "https://raw.githubusercontent.com/kubernetes/kubernetes/${RELEASE}/build/debs/kubelet.service" | \
