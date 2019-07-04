@@ -28,6 +28,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/credentials"
 	"github.com/kubermatic/kubeone/pkg/kubeconfig"
 	"github.com/kubermatic/kubeone/pkg/state"
+	"github.com/kubermatic/kubeone/pkg/templates/dnscache"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -54,15 +55,15 @@ func Deploy(s *state.State) error {
 		return errors.New("kubernetes client not initialized")
 	}
 
-	bgCtx := context.Background()
+	ctx := context.Background()
 
 	// ServiceAccounts
-	if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, machineControllerServiceAccount()); err != nil {
+	if err := simpleCreateOrUpdate(ctx, s.DynamicClient, machineControllerServiceAccount()); err != nil {
 		return errors.Wrap(err, "failed to ensure machine-controller service account")
 	}
 
 	// ClusterRoles
-	if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, machineControllerClusterRole()); err != nil {
+	if err := simpleCreateOrUpdate(ctx, s.DynamicClient, machineControllerClusterRole()); err != nil {
 		return errors.Wrap(err, "failed to ensure machine-controller cluster role")
 	}
 
@@ -74,7 +75,7 @@ func Deploy(s *state.State) error {
 	}
 
 	for _, crbGen := range crbGenerators {
-		if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, crbGen()); err != nil {
+		if err := simpleCreateOrUpdate(ctx, s.DynamicClient, crbGen()); err != nil {
 			return errors.Wrap(err, "failed to ensure machine-controller cluster-role binding")
 		}
 	}
@@ -88,7 +89,7 @@ func Deploy(s *state.State) error {
 	}
 
 	for _, roleGen := range roleGenerators {
-		if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, roleGen()); err != nil {
+		if err := simpleCreateOrUpdate(ctx, s.DynamicClient, roleGen()); err != nil {
 			return errors.Wrap(err, "failed to ensure machine-controller role")
 		}
 	}
@@ -102,7 +103,7 @@ func Deploy(s *state.State) error {
 	}
 
 	for _, roleBindingGen := range roleBindingsGenerators {
-		if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, roleBindingGen()); err != nil {
+		if err := simpleCreateOrUpdate(ctx, s.DynamicClient, roleBindingGen()); err != nil {
 			return errors.Wrap(err, "failed to ensure machine-controller role binding")
 		}
 	}
@@ -113,7 +114,7 @@ func Deploy(s *state.State) error {
 		return errors.Wrap(err, "failed to generate machine-controller deployment")
 	}
 
-	if err = simpleCreateOrUpdate(bgCtx, s.DynamicClient, deployment); err != nil {
+	if err = simpleCreateOrUpdate(ctx, s.DynamicClient, deployment); err != nil {
 		return errors.Wrap(err, "failed to ensure machine-controller deployment")
 	}
 
@@ -126,7 +127,7 @@ func Deploy(s *state.State) error {
 	}
 
 	for _, crdGen := range crdGenerators {
-		if err = simpleCreateOrUpdate(bgCtx, s.DynamicClient, crdGen()); err != nil {
+		if err = simpleCreateOrUpdate(ctx, s.DynamicClient, crdGen()); err != nil {
 			return errors.Wrap(err, "failed to ensure machine-controller CRDs")
 		}
 	}
@@ -873,7 +874,7 @@ func clusterDNSIP(cluster *kubeoneapi.KubeOneCluster) (*net.IP, error) {
 	// Get the Services CIDR
 	_, svcSubnetCIDR, err := net.ParseCIDR(cluster.ClusterNetwork.ServiceSubnet)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to parse network.service_subnet")
+		return nil, errors.Wrap(err, "failed to parse clusterNetwork.serviceSubnet")
 	}
 
 	// Select the 10th IP in Services CIDR range as ClusterDNSIP

@@ -50,9 +50,9 @@ func Deploy(s *state.State) error {
 		metricServerClusterRoleBinding(),
 	}
 
-	bgCtx := context.Background()
+	ctx := context.Background()
 	for _, o := range objs {
-		if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, o); err != nil {
+		if err := simpleCreateOrUpdate(ctx, s.DynamicClient, o); err != nil {
 			return errors.WithStack(err)
 		}
 	}

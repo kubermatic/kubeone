@@ -48,25 +48,25 @@ func Deploy(s *state.State) error {
 		return errors.New("kubernetes dynamic client is not initialized")
 	}
 
-	bgCtx := context.Background()
+	ctx := context.Background()
 
-	if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, serviceAccount()); err != nil {
+	if err := simpleCreateOrUpdate(ctx, s.DynamicClient, serviceAccount()); err != nil {
 		return errors.Wrap(err, "failed to ensure weave ServiceAccount")
 	}
 
-	if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, clusterRole()); err != nil {
+	if err := simpleCreateOrUpdate(ctx, s.DynamicClient, clusterRole()); err != nil {
 		return errors.Wrap(err, "failed to ensure weave ClusterRole")
 	}
 
-	if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, clusterRoleBinding()); err != nil {
+	if err := simpleCreateOrUpdate(ctx, s.DynamicClient, clusterRoleBinding()); err != nil {
 		return errors.Wrap(err, "failed to ensure weave ClusterRoleBinding")
 	}
 
-	if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, role()); err != nil {
+	if err := simpleCreateOrUpdate(ctx, s.DynamicClient, role()); err != nil {
 		return errors.Wrap(err, "failed to ensure weave Role")
 	}
 
-	if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, roleBinding()); err != nil {
+	if err := simpleCreateOrUpdate(ctx, s.DynamicClient, roleBinding()); err != nil {
 		return errors.Wrap(err, "failed to ensure weave RoleBinding")
 	}
 
@@ -83,14 +83,14 @@ func Deploy(s *state.State) error {
 		}
 
 		secCopy := sec.DeepCopy()
-		err = s.DynamicClient.Get(bgCtx, key, secCopy)
+		err = s.DynamicClient.Get(ctx, key, secCopy)
 		switch {
 		case k8serrors.IsNotFound(err):
 		case err != nil:
 			return errors.Wrap(err, "failed to get weave-net Secret")
 		}
 
-		err = s.DynamicClient.Create(bgCtx, sec)
+		err = s.DynamicClient.Create(ctx, sec)
 		if err != nil {
 			return errors.Wrap(err, "failed to create weave-net Secret")
 		}
@@ -102,7 +102,7 @@ func Deploy(s *state.State) error {
 	}
 
 	ds := daemonSet(s.Cluster.ClusterNetwork.CNI.Encrypted, strings.Join(peers, " "), s.Cluster.ClusterNetwork.PodSubnet)
-	if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, ds); err != nil {
+	if err := simpleCreateOrUpdate(ctx, s.DynamicClient, ds); err != nil {
 		return errors.Wrap(err, "failed to ensure weave DaemonSet")
 	}
 

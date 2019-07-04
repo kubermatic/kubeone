@@ -39,8 +39,12 @@ const (
 	pspRoleNamespace              = metav1.NamespaceSystem
 )
 
-func activateKubeadmPSP(feature *kubeoneapi.PodSecurityPolicy, args *kubeadmargs.Args) {
-	if feature == nil || !feature.Enable {
+func updatePSPKubeadmConfig(feature *kubeoneapi.PodSecurityPolicy, args *kubeadmargs.Args) {
+	if feature == nil {
+		return
+	}
+
+	if !feature.Enable {
 		return
 	}
 
@@ -48,24 +52,28 @@ func activateKubeadmPSP(feature *kubeoneapi.PodSecurityPolicy, args *kubeadmargs
 }
 
 func installKubeSystemPSP(psp *kubeoneapi.PodSecurityPolicy, s *state.State) error {
-	if psp == nil || !psp.Enable {
+	if psp == nil {
 		return nil
 	}
 
-	bgContext := context.Background()
+	if !psp.Enable {
+		return nil
+	}
+
+	ctx := context.Background()
 	okFunc := func(runtime.Object) error { return nil }
 
-	_, err := controllerutil.CreateOrUpdate(bgContext, s.DynamicClient, privilegedPSP(), okFunc)
+	_, err := controllerutil.CreateOrUpdate(ctx, s.DynamicClient, privilegedPSP(), okFunc)
 	if err != nil {
 		return errors.Wrap(err, "failed to ensure PodSecurityPolicy")
 	}
 
-	_, err = controllerutil.CreateOrUpdate(bgContext, s.DynamicClient, privilegedPSPClusterRole(), okFunc)
+	_, err = controllerutil.CreateOrUpdate(ctx, s.DynamicClient, privilegedPSPClusterRole(), okFunc)
 	if err != nil {
 		return errors.Wrap(err, "failed to ensure PodSecurityPolicy cluster role")
 	}
 
-	_, err = controllerutil.CreateOrUpdate(bgContext, s.DynamicClient, privilegedPSPRoleBinding(), okFunc)
+	_, err = controllerutil.CreateOrUpdate(ctx, s.DynamicClient, privilegedPSPRoleBinding(), okFunc)
 	if err != nil {
 		return errors.Wrap(err, "failed to ensure PodSecurityPolicy role binding")
 	}

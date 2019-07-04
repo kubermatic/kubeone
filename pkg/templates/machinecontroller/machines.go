@@ -48,7 +48,7 @@ func DeployMachineDeployments(s *state.State) error {
 		return errors.New("kubernetes dynamic client in not initialized")
 	}
 
-	bgCtx := context.Background()
+	ctx := context.Background()
 
 	// Apply MachineDeployments
 	for _, workerset := range s.Cluster.Workers {
@@ -57,7 +57,7 @@ func DeployMachineDeployments(s *state.State) error {
 			return errors.Wrap(err, "failed to generate MachineDeployment")
 		}
 
-		err = simpleCreateOrUpdate(bgCtx, s.DynamicClient, machinedeployment)
+		err = simpleCreateOrUpdate(ctx, s.DynamicClient, machinedeployment)
 		if err != nil {
 			return errors.Wrap(err, "failed to ensure MachineDeployment")
 		}

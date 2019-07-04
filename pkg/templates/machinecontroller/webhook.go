@@ -60,32 +60,32 @@ func DeployWebhookConfiguration(s *state.State) error {
 		return errors.Wrap(err, "failed to load CA keypair")
 	}
 
-	bgCtx := context.Background()
+	ctx := context.Background()
 
 	// Deploy Webhook
-	err = simpleCreateOrUpdate(bgCtx, s.DynamicClient, webhookDeployment(s.Cluster))
+	err = simpleCreateOrUpdate(ctx, s.DynamicClient, webhookDeployment(s.Cluster))
 	if err != nil {
 		return errors.Wrap(err, "failed to ensure machine-controller webhook deployment")
 	}
 
 	// Deploy Webhook service
-	err = simpleCreateOrUpdate(bgCtx, s.DynamicClient, service())
+	err = simpleCreateOrUpdate(ctx, s.DynamicClient, service())
 	if err != nil {
 		return errors.Wrap(err, "failed to ensure machine-controller webhook service")
 	}
 
 	// Deploy serving certificate secret
-	servingCert, err := tlsServingCertificate(caPrivateKey, caCert, ctx.Cluster.ClusterNetwork.ServiceDomainName)
+	servingCert, err := tlsServingCertificate(caPrivateKey, caCert, s.Cluster.ClusterNetwork.ServiceDomainName)
 	if err != nil {
 		return errors.Wrap(err, "failed to generate machine-controller webhook TLS secret")
 	}
 
-	err = simpleCreateOrUpdate(bgCtx, s.DynamicClient, servingCert)
+	err = simpleCreateOrUpdate(ctx, s.DynamicClient, servingCert)
 	if err != nil {
 		return errors.Wrap(err, "failed to ensure machine-controller webhook secret")
 	}
 
-	err = simpleCreateOrUpdate(bgCtx, s.DynamicClient, mutatingwebhookConfiguration(caCert))
+	err = simpleCreateOrUpdate(ctx, s.DynamicClient, mutatingwebhookConfiguration(caCert))
 	if err != nil {
 		return errors.Wrap(err, "failed to ensure machine-controller mutating webhook")
 	}
@@ -105,7 +105,8 @@ func WaitForWebhook(client dynclient.Client) error {
 
 	return wait.Poll(5*time.Second, 3*time.Minute, func() (bool, error) {
 		webhookPods := corev1.PodList{}
-		err = client.List(context.Background(), &listOpts, &webhookPods)
+		ctx := context.Background()
+		err = client.List(ctx, &listOpts, &webhookPods)
 		if err != nil {
 			return false, errors.Wrap(err, "failed to list machine-controller's webhook pods")
 		}

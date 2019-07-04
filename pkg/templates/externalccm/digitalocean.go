@@ -44,20 +44,20 @@ func ensureDigitalOcean(s *state.State) error {
 		return errors.New("kubernetes client not initialized")
 	}
 
-	bgctx := context.Background()
+	ctx := context.Background()
 
 	sa := doServiceAccount()
-	if err := simpleCreateOrUpdate(bgctx, s.DynamicClient, sa); err != nil {
+	if err := simpleCreateOrUpdate(ctx, s.DynamicClient, sa); err != nil {
 		return errors.Wrap(err, "failed to ensure digitalocean CCM ServiceAccount")
 	}
 
 	cr := doClusterRole()
-	if err := simpleCreateOrUpdate(bgctx, s.DynamicClient, cr); err != nil {
+	if err := simpleCreateOrUpdate(ctx, s.DynamicClient, cr); err != nil {
 		return errors.Wrap(err, "failed to ensure digitalocean CCM ClusterRole")
 	}
 
 	crb := doClusterRoleBinding()
-	if err := simpleCreateOrUpdate(bgctx, s.DynamicClient, crb); err != nil {
+	if err := simpleCreateOrUpdate(ctx, s.DynamicClient, crb); err != nil {
 		return errors.Wrap(err, "failed to ensure digitalocean CCM ClusterRoleBinding")
 	}
 
@@ -67,7 +67,7 @@ func ensureDigitalOcean(s *state.State) error {
 		return errors.Wrap(err, "failed to parse digitalocean CCM version constraint")
 	}
 
-	_, err = controllerutil.CreateOrUpdate(bgctx,
+	_, err = controllerutil.CreateOrUpdate(ctx,
 		s.DynamicClient,
 		dep,
 		mutateDeploymentWithVersionCheck(want))

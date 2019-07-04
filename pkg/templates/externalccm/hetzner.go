@@ -44,15 +44,15 @@ func ensureHetzner(s *state.State) error {
 		return errors.New("kubernetes client not initialized")
 	}
 
-	bgctx := context.Background()
+	ctx := context.Background()
 
 	sa := hetznerServiceAccount()
-	if err := simpleCreateOrUpdate(bgctx, s.DynamicClient, sa); err != nil {
+	if err := simpleCreateOrUpdate(ctx, s.DynamicClient, sa); err != nil {
 		return errors.Wrap(err, "failed to ensure hetzner CCM ServiceAccount")
 	}
 
 	crb := hetznerClusterRoleBinding()
-	if err := simpleCreateOrUpdate(bgctx, s.DynamicClient, crb); err != nil {
+	if err := simpleCreateOrUpdate(ctx, s.DynamicClient, crb); err != nil {
 		return errors.Wrap(err, "failed to ensure hetzner CCM ClusterRoleBinding")
 	}
 
@@ -62,7 +62,7 @@ func ensureHetzner(s *state.State) error {
 		return errors.Wrap(err, "failed to parse hetzner CCM version constraint")
 	}
 
-	_, err = controllerutil.CreateOrUpdate(bgctx,
+	_, err = controllerutil.CreateOrUpdate(ctx,
 		s.DynamicClient,
 		dep,
 		mutateDeploymentWithVersionCheck(want))

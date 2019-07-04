@@ -31,8 +31,12 @@ func Activate(s *state.State) error {
 		return errors.Wrap(err, "failed to install PodSecurityPolicy")
 	}
 
-	if err := installMetricsServer(s.Cluster.Features.MetricsServer.Enable, s); err != nil {
+	if err := installMetricsServer(s.Cluster.Features.MetricsServer, s); err != nil {
 		return errors.Wrap(err, "failed to install metrics-server")
+	}
+
+	if err := installNodeLocalDNSCache(s.Cluster.Features.NodeLocalDNSCache, s); err != nil {
+		return errors.Wrap(err, "failed to install nodeLocal DNSCache")
 	}
 
 	return nil
@@ -41,7 +45,7 @@ func Activate(s *state.State) error {
 // UpdateKubeadmClusterConfiguration update additional config options in the kubeadm's
 // v1beta1.ClusterConfiguration according to enabled features
 func UpdateKubeadmClusterConfiguration(featuresCfg kubeoneapi.Features, args *kubeadmargs.Args) {
-	activateKubeadmPSP(featuresCfg.PodSecurityPolicy, args)
-	activateKubeadmDynamicAuditLogs(featuresCfg.DynamicAuditLog, args)
-	activateKubeadmOIDC(featuresCfg.OpenIDConnect, args)
+	updatePSPKubeadmConfig(featuresCfg.PodSecurityPolicy, args)
+	updateDynamicAuditLogsKubeadmConfig(featuresCfg.DynamicAuditLog, args)
+	updateOIDCKubeadmConfig(featuresCfg.OpenIDConnect, args)
 }

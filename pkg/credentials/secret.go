@@ -57,9 +57,9 @@ func Ensure(s *state.State) error {
 		return errors.Wrap(err, "unable to fetch cloud provider credentials")
 	}
 
-	bgCtx := context.Background()
+	ctx := context.Background()
 	secret := credentialsSecret(creds)
-	if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, secret); err != nil {
+	if err := simpleCreateOrUpdate(ctx, s.DynamicClient, secret); err != nil {
 		return errors.Wrap(err, "failed to ensure credentials secret")
 	}
 
