@@ -52,6 +52,7 @@ type OpenStackSpec struct {
 	AvailabilityZone string            `json:"availabilityZone"`
 	Network          string            `json:"network"`
 	Subnet           string            `json:"subnet"`
+	RootDiskSizeGB   *int              `json:"rootDiskSizeGB,omitempty"`
 	Tags             map[string]string `json:"tags"`
 }
 
