@@ -77,12 +77,12 @@ func runKubeconfig(logger *logrus.Logger, kubeconfigOptions *kubeconfigOptions) 
 		return errors.Wrap(err, "failed to load cluster")
 	}
 
-	kc, err := kubeconfig.DownloadKubeconfig(cluster)
+	konfig, err := kubeconfig.Download(cluster)
 	if err != nil {
 		return err
 	}
 
-	fmt.Println(string(kc))
+	fmt.Println(string(konfig))
 
 	return nil
 }

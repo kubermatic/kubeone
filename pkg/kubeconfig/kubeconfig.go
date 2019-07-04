@@ -27,8 +27,8 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-// DownloadKubeconfig downloads Kubeconfig over SSH
-func DownloadKubeconfig(cluster *kubeoneapi.KubeOneCluster) ([]byte, error) {
+// Download downloads Kubeconfig over SSH
+func Download(cluster *kubeoneapi.KubeOneCluster) ([]byte, error) {
 	// connect to leader
 	leader, err := cluster.Leader()
 	if err != nil {
@@ -43,19 +43,19 @@ func DownloadKubeconfig(cluster *kubeoneapi.KubeOneCluster) ([]byte, error) {
 	defer conn.Close()
 
 	// get the kubeconfig
-	kubeconfig, _, _, err := conn.Exec("sudo cat /etc/kubernetes/admin.conf")
+	konfig, _, _, err := conn.Exec("sudo cat /etc/kubernetes/admin.conf")
 	if err != nil {
 		return nil, err
 	}
 
-	return []byte(kubeconfig), nil
+	return []byte(konfig), nil
 }
 
 // BuildKubernetesClientset builds core kubernetes and apiextensions clientsets
 func BuildKubernetesClientset(s *state.State) error {
 	s.Logger.Infoln("Building Kubernetes clientset…")
 
-	kubeconfig, err := DownloadKubeconfig(s.Cluster)
+	kubeconfig, err := Download(s.Cluster)
 	if err != nil {
 		return errors.Wrap(err, "unable to download kubeconfig")
 	}
