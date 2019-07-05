@@ -16,14 +16,9 @@ limitations under the License.
 
 package kubeadmargs
 
-import (
-	kubelet "k8s.io/kubelet/config/v1beta1"
-)
-
 // Args is a wrapper abstract type on top of kubeadm
 type Args struct {
 	APIServer    APIServer
-	Kubelet      kubelet.KubeletConfiguration
 	FeatureGates map[string]bool
 }
 
