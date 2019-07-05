@@ -72,7 +72,7 @@ func runKubeconfig(logger *logrus.Logger, kubeconfigOptions *kubeconfigOptions) 
 		return errors.New("no cluster config file given")
 	}
 
-	cluster, err := loadClusterConfig(kubeconfigOptions.Manifest, kubeconfigOptions.TerraformState, logger)
+	cluster, err := loadClusterConfig(kubeconfigOptions.Manifest, kubeconfigOptions.TerraformState, logger, "", "")
 	if err != nil {
 		return errors.Wrap(err, "failed to load cluster")
 	}

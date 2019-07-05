@@ -75,7 +75,7 @@ func runReset(logger *logrus.Logger, resetOptions *resetOptions) error {
 		return errors.New("no cluster config file given")
 	}
 
-	cluster, err := loadClusterConfig(resetOptions.Manifest, resetOptions.TerraformState, logger)
+	cluster, err := loadClusterConfig(resetOptions.Manifest, resetOptions.TerraformState, logger, "", "")
 	if err != nil {
 		return errors.Wrap(err, "failed to load cluster")
 	}

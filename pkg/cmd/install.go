@@ -82,7 +82,7 @@ It's possible to source information about hosts from Terraform output, using the
 
 // runInstall provisions Kubernetes on the provided machines
 func runInstall(logger *logrus.Logger, installOptions *installOptions) error {
-	cluster, err := loadClusterConfig(installOptions.Manifest, installOptions.TerraformState, logger)
+	cluster, err := loadClusterConfig(installOptions.Manifest, installOptions.TerraformState, logger, installOptions.AWSProfilePath, installOptions.AWSProfileName)
 	if err != nil {
 		return errors.Wrap(err, "failed to load cluster")
 	}

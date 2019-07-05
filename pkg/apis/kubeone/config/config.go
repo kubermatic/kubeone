@@ -35,21 +35,21 @@ import (
 )
 
 // SetKubeOneClusterDynamicDefaults sets the dynamic defaults for a given KubeOneCluster object
-func SetKubeOneClusterDynamicDefaults(cfg *kubeoneapi.KubeOneCluster) error {
-	if err := SetKubeOneClusterCredentials(cfg); err != nil {
+func SetKubeOneClusterDynamicDefaults(cfg *kubeoneapi.KubeOneCluster, awsProfilePath, awsProfileName string) error {
+	if err := SetKubeOneClusterCredentials(cfg, awsProfilePath, awsProfileName); err != nil {
 		return errors.Wrap(err, "unable to set dynamic defaults for a given KubeOneCluster object")
 	}
 	return nil
 }
 
 // SetKubeOneClusterCredentials populates credentials used for machine-controller and external CCM
-func SetKubeOneClusterCredentials(cfg *kubeoneapi.KubeOneCluster) error {
+func SetKubeOneClusterCredentials(cfg *kubeoneapi.KubeOneCluster, awsProfilePath, awsProfileName string) error {
 	// Only populate credentials if machine-controller is deployed or cloud provider is external
 	if (cfg.MachineController != nil && !cfg.MachineController.Deploy) && !cfg.CloudProvider.External {
 		return nil
 	}
 
-	creds, err := credentials.ProviderCredentials(cfg.CloudProvider.Name)
+	creds, err := credentials.ProviderCredentials(cfg.CloudProvider.Name, awsProfilePath, awsProfileName)
 	if err != nil {
 		return errors.Wrap(err, "unable to fetch cloud provider credentials")
 	}
@@ -70,7 +70,7 @@ func SourceKubeOneClusterFromTerraformOutput(terraformOutput []byte, cluster *ku
 // DefaultedKubeOneCluster converts a versioned KubeOneCluster object to an internal representation of KubeOneCluster
 // object while sourcing information from Terraform output, applying default values and validating the KubeOneCluster
 // object
-func DefaultedKubeOneCluster(versionedCluster *kubeonev1alpha1.KubeOneCluster, tfOutput []byte) (*kubeoneapi.KubeOneCluster, error) {
+func DefaultedKubeOneCluster(versionedCluster *kubeonev1alpha1.KubeOneCluster, tfOutput []byte, awsProfilePath, awsProfileName string) (*kubeoneapi.KubeOneCluster, error) {
 	internalCfg := &kubeoneapi.KubeOneCluster{}
 
 	if tfOutput != nil {
@@ -86,7 +86,7 @@ func DefaultedKubeOneCluster(versionedCluster *kubeonev1alpha1.KubeOneCluster, t
 	}
 
 	// Apply the dynamic defaults
-	if err := SetKubeOneClusterDynamicDefaults(internalCfg); err != nil {
+	if err := SetKubeOneClusterDynamicDefaults(internalCfg, awsProfilePath, awsProfileName); err != nil {
 		return nil, err
 	}
 
@@ -100,7 +100,7 @@ func DefaultedKubeOneCluster(versionedCluster *kubeonev1alpha1.KubeOneCluster, t
 
 // LoadKubeOneCluster returns the KubeOneCluster object parsed from the KubeOneCluster configuration file and
 // optionally Terraform output
-func LoadKubeOneCluster(clusterCfgPath, tfOutputPath string, logger *logrus.Logger) (*kubeoneapi.KubeOneCluster, error) {
+func LoadKubeOneCluster(clusterCfgPath, tfOutputPath string, logger *logrus.Logger, awsProfilePath, awsProfileName string) (*kubeoneapi.KubeOneCluster, error) {
 	if len(clusterCfgPath) == 0 {
 		return nil, errors.New("cluster configuration path not provided")
 	}
@@ -130,7 +130,7 @@ func LoadKubeOneCluster(clusterCfgPath, tfOutputPath string, logger *logrus.Logg
 		}
 	}
 
-	return BytesToKubeOneCluster(cluster, tfOutput)
+	return BytesToKubeOneCluster(cluster, tfOutput, awsProfilePath, awsProfileName)
 }
 
 func isDir(dirname string) bool {
@@ -140,11 +140,11 @@ func isDir(dirname string) bool {
 
 // BytesToKubeOneCluster returns the KubeOneCluster object parsed from the KubeOneCluster manifest and optionally
 // Terraform output
-func BytesToKubeOneCluster(cluster, tfOutput []byte) (*kubeoneapi.KubeOneCluster, error) {
+func BytesToKubeOneCluster(cluster, tfOutput []byte, awsProfilePath, awsProfileName string) (*kubeoneapi.KubeOneCluster, error) {
 	initCfg := &kubeonev1alpha1.KubeOneCluster{}
 	if err := runtime.DecodeInto(kubeonescheme.Codecs.UniversalDecoder(), cluster, initCfg); err != nil {
 		return nil, err
 	}
 
-	return DefaultedKubeOneCluster(initCfg, tfOutput)
+	return DefaultedKubeOneCluster(initCfg, tfOutput, awsProfilePath, awsProfileName)
 }
