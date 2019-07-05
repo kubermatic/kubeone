@@ -1,5 +1,8 @@
 run:
   issues-exit-code: 1
+  skip-dirs:
+  - hack
+  - vendor
 
 linters:
   enable-all: true
@@ -27,3 +30,4 @@ issues:
     - "don't use underscores in Go names; func SetDefaults_Features should be SetDefaultsFeatures"
     - "don't use underscores in Go names; func SetDefaults_MachineController should be SetDefaultsMachineController"
     - "G101: Potential hardcoded credentials"
+    - "G106: Use of ssh InsecureIgnoreHostKey should be audited"

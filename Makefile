@@ -14,16 +14,16 @@
 
 export GOPATH?=$(shell go env GOPATH)
 export CGO_ENABLED=0
-export TFJSON?=
 export KUBERNETES_VERSION=1.14.1
 export GOPROXY=https://proxy.golang.org
 export GO111MODULE=on
 
 BUILD_DATE=$(shell if hash gdate 2>/dev/null; then gdate --rfc-3339=seconds | sed 's/ /T/'; else date --rfc-3339=seconds | sed 's/ /T/'; fi)
-BUILD_IMAGE?=golang:1.12.5
+BUILD_IMAGE?=golang:1.12.6
 GITCOMMIT=$(shell git log -1 --pretty=format:"%H")
 GITTAG=$(shell git describe --tags --always)
 GOLDFLAGS?=-s -w -X github.com/kubermatic/kubeone/pkg/cmd.version=$(GITTAG) -X github.com/kubermatic/kubeone/pkg/cmd.commit=$(GITCOMMIT) -X github.com/kubermatic/kubeone/pkg/cmd.date=$(BUILD_DATE)
+GOBUILDFLAGS?=-mod readonly
 
 PROVIDER=$(notdir $(wildcard ./terraform/*))
 CREATE_TARGETS=$(addsuffix -env,$(PROVIDER))
@@ -42,7 +42,7 @@ install-via-docker: docker-make-install
 		make install
 
 install:
-	go install -ldflags='$(GOLDFLAGS)' -v .
+	go install $(GOBUILDFLAGS) -ldflags='$(GOLDFLAGS)' -v .
 
 build: dist/kubeone
 
@@ -50,7 +50,7 @@ vendor:
 	go mod vendor
 
 dist/kubeone: $(shell find . -name '*.go')
-	go build -mod readonly -ldflags='$(GOLDFLAGS)' -v -o $@ .
+	go build $(GOBUILDFLAGS) -ldflags='$(GOLDFLAGS)' -v -o $@ .
 
 generate-internal-groups: vendor
 	./hack/update-codegen.sh
@@ -58,11 +58,9 @@ generate-internal-groups: vendor
 verify-dependencies:
 	go mod verify
 
-
-
 .PHONY: test e2e-test lint verify-licence verify-codegen verify-boilerplate
 test:
-	CGO_ENABLED=1 go test -race ./...
+	CGO_ENABLED=1 go test $(GOBUILDFLAGS) -race ./...
 
 e2e-test: build lint test
 	./hack/run-ci-e2e_test.sh
@@ -80,8 +78,6 @@ verify-codegen: vendor
 verify-boilerplate:
 	./hack/verify-boilerplate.sh
 
-
-
 $(CREATE_TARGETS): dist/kubeone
 	$(eval PROVIDERNAME := $(@:-env=))
 	cd terraform/$(PROVIDERNAME) && terraform apply --auto-approve
@@ -91,10 +87,10 @@ $(CREATE_TARGETS): dist/kubeone
 		until ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $(USER)@$$host exit; do sleep 1; done; \
 	done
 	./dist/kubeone config print --full --provider $(PROVIDERNAME) > ./dist/fresh_config.yaml
-	./dist/kubeone install ./dist/fresh_config.yaml  --tfjson tf.json
+	./dist/kubeone install ./dist/fresh_config.yaml --tfjson tf.json
 
 $(DESTROY_TARGETS): dist/kubeone
 	$(eval PROVIDERNAME := $(@:-env-cleanup=))
 	./dist/kubeone config print --full --provider $(PROVIDERNAME) > ./dist/fresh_config.yaml
-	./dist/kubeone reset ./dist/fresh_config.yaml  --tfjson tf.json
+	./dist/kubeone reset ./dist/fresh_config.yaml --tfjson tf.json
 	cd terraform/$(PROVIDERNAME) && terraform destroy --auto-approve
