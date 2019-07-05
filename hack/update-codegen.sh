@@ -14,12 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -o errexit
-set -o nounset
-set -o pipefail
+set -eu -o pipefail
 
-SCRIPT_ROOT=$(dirname ${BASH_SOURCE})/..
-CODEGEN_PKG=${CODEGEN_PKG:-$(cd ${SCRIPT_ROOT}; ls -d -1 ./vendor/k8s.io/code-generator 2>/dev/null || echo ../code-generator)}
 
 # The code generation script takes the following arguments:
 # * generators (we use only deepcopy, conversion and defaulter)
@@ -27,8 +23,7 @@ CODEGEN_PKG=${CODEGEN_PKG:-$(cd ${SCRIPT_ROOT}; ls -d -1 ./vendor/k8s.io/code-ge
 # * the internal types dir
 # * the external types dir
 # * group and versions to generate code for
-${CODEGEN_PKG}/generate-internal-groups.sh "deepcopy,conversion,defaulter" \
-  "" github.com/kubermatic/kubeone/pkg/apis github.com/kubermatic/kubeone/pkg/apis \
-  kubeone:v1alpha1 \
-  --output-base "$(dirname ${BASH_SOURCE})/../../../.." \
-  --go-header-file ${SCRIPT_ROOT}/hack/boilerplate/boilerplate.generatego.txt
+cd $(dirname ${BASH_SOURCE})/..
+bash vendor/k8s.io/code-generator/generate-internal-groups.sh \
+  "deepcopy,conversion,defaulter" "" ./pkg/apis ./pkg/apis  kubeone:v1alpha1 \
+  --go-header-file hack/boilerplate/boilerplate.generatego.txt
