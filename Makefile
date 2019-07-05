@@ -63,14 +63,14 @@ verify-dependencies:
 
 .PHONY: test e2e-test lint verify-licence verify-codegen verify-boilerplate
 test:
-	CGO_ENABLED=1 go test $(GOBUILDFLAGS) -race ./pkg/...
+	CGO_ENABLED=1 go test $(GOBUILDFLAGS) -race ./pkg/... ./test/...
 
-e2e-test: build lint test
-	./hack/run-ci-e2e_test.sh
+e2e-test: dist/kubeone
+	CGO_ENABLED=1 ./hack/run-ci-e2e-test.sh
 
-lint: download-dependencies
+lint: dist/kubeone
 	@golangci-lint --version
-	golangci-lint run
+	golangci-lint run ./pkg/... ./test/...
 
 verify-licence: vendor
 	wwhrd check

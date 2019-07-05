@@ -50,7 +50,7 @@ if ! [ -x "$(command -v kubetest)" ]; then
   PATH=$PATH:$(go env GOPATH)/bin
 fi
 
-TERRAFORM_DIR="$(go env GOPATH)/src/github.com/kubermatic/kubeone/examples/terraform"
+TERRAFORM_DIR=$PWD/examples/terraform
 function cleanup() {
   set +e
   for try in {1..20}; do
@@ -77,7 +77,7 @@ trap cleanup EXIT
 if [ -n "${RUNNING_IN_CI}" ]; then
   # set up terraform remote backend configuration
   for dir in ${TERRAFORM_DIR}/*; do
-    ln -s "$(go env GOPATH)/src/github.com/kubermatic/kubeone/test/e2e/testdata/s3_backend.tf" $dir/s3_backend.tf
+    ln -s $PWD/test/e2e/testdata/s3_backend.tf $dir/s3_backend.tf
   done
 
   case ${PROVIDER} in
@@ -106,7 +106,7 @@ if [ -n "${RUNNING_IN_CI}" ]; then
 
   KUBE_TEST_DIR="/opt/kube-test"
   if [ -d "${KUBE_TEST_DIR}" ]; then
-    KUBEONE_BUILD_DIR="$(go env GOPATH)/src/github.com/kubermatic/kubeone/_build"
+    KUBEONE_BUILD_DIR=_build
     mkdir -p ${KUBEONE_BUILD_DIR}
     for dir in ${KUBE_TEST_DIR}/*; do
       VERSION_REG_EXP="^(\d+\.\d+\.\d+[\w.\-+]*)$"
@@ -146,7 +146,7 @@ function runE2E() {
   local timeout=$2
   set -x
 
-  go test \
+  CGO_ENABLED=1 go test \
     -race \
     -tags=e2e \
     -v \
