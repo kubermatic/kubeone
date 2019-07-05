@@ -10,6 +10,9 @@
   </a>
   <a href="https://bestpractices.coreinfrastructure.org/projects/2934"><img src="https://bestpractices.coreinfrastructure.org/projects/2934/badge">
   </a>
+  <a href="https://aur.archlinux.org/packages/kubeone">
+    <img src="https://img.shields.io/aur/version/kubeone.svg" alt="AUR version" />
+  </a>
 </p>
 
 `kubeone` is a CLI tool and a Go library for installing, managing, and upgrading
