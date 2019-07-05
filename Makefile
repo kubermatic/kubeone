@@ -29,7 +29,7 @@ PROVIDER=$(notdir $(wildcard ./terraform/*))
 CREATE_TARGETS=$(addsuffix -env,$(PROVIDER))
 DESTROY_TARGETS=$(addsuffix -env-cleanup,$(PROVIDER))
 
-.PHONY: all install-via-docker install build vendor
+.PHONY: all install-via-docker install build vendor download-dependencies
 .PHONY: generate-internal-groups verify-dependencies
 all: install
 
@@ -46,8 +46,11 @@ install:
 
 build: dist/kubeone
 
-vendor:
+vendor: download-dependencies
 	go mod vendor
+
+download-dependencies:
+	go mod download
 
 dist/kubeone: $(shell find . -name '*.go')
 	go build $(GOBUILDFLAGS) -ldflags='$(GOLDFLAGS)' -v -o $@ .
@@ -60,16 +63,16 @@ verify-dependencies:
 
 .PHONY: test e2e-test lint verify-licence verify-codegen verify-boilerplate
 test:
-	CGO_ENABLED=1 go test $(GOBUILDFLAGS) -race ./...
+	CGO_ENABLED=1 go test $(GOBUILDFLAGS) -race ./pkg/...
 
 e2e-test: build lint test
 	./hack/run-ci-e2e_test.sh
 
-lint:
+lint: download-dependencies
 	@golangci-lint --version
 	golangci-lint run
 
-verify-licence:
+verify-licence: vendor
 	wwhrd check
 
 verify-codegen: vendor
