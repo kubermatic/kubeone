@@ -34,6 +34,9 @@ type installOptions struct {
 	globalOptions
 	Manifest   string
 	BackupFile string
+
+	AWSProfilePath string
+	AWSProfileName string
 }
 
 // installCmd setups install command
@@ -70,6 +73,9 @@ It's possible to source information about hosts from Terraform output, using the
 	}
 
 	cmd.Flags().StringVarP(&iopts.BackupFile, "backup", "b", "", "path to where the PKI backup .tar.gz file should be placed (default: location of cluster config file)")
+
+	cmd.Flags().StringVarP(&iopts.AWSProfilePath, "aws-profile-path", "", "~/.aws/credentials", "path to the file where aws credentials are located")
+	cmd.Flags().StringVarP(&iopts.AWSProfileName, "aws-profile-name", "", "default", "name of the aws profile to be deployed on the cluster for machine-controller")
 
 	return cmd
 }
@@ -114,7 +120,9 @@ func createInstallerOptions(clusterFile string, cluster *kubeoneapi.KubeOneClust
 	defer f.Close()
 
 	return &installer.Options{
-		BackupFile: options.BackupFile,
-		Verbose:    options.Verbose,
+		BackupFile:     options.BackupFile,
+		Verbose:        options.Verbose,
+		AWSProfilePath: options.AWSProfilePath,
+		AWSProfileName: options.AWSProfileName,
 	}, nil
 }

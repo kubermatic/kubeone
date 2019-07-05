@@ -47,6 +47,8 @@ type State struct {
 	RemoveBinaries            bool
 	ForceUpgrade              bool
 	UpgradeMachineDeployments bool
+	AWSProfilePath            string
+	AWSProfileName            string
 }
 
 // Clone returns a shallow copy of the context.

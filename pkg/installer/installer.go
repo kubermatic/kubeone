@@ -33,6 +33,8 @@ type Options struct {
 	BackupFile     string
 	DestroyWorkers bool
 	RemoveBinaries bool
+	AWSProfilePath string
+	AWSProfileName string
 }
 
 // Installer is entrypoint for installation process
@@ -77,5 +79,7 @@ func (i *Installer) createState(options *Options) *state.State {
 		BackupFile:     options.BackupFile,
 		DestroyWorkers: options.DestroyWorkers,
 		RemoveBinaries: options.RemoveBinaries,
+		AWSProfilePath: options.AWSProfilePath,
+		AWSProfileName: options.AWSProfileName,
 	}
 }
