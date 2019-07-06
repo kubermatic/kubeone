@@ -51,7 +51,7 @@ require (
 	k8s.io/kube-aggregator v0.0.0-20181213152105-1e8cd453c474
 	k8s.io/kubernetes v1.13.1
 	sigs.k8s.io/cluster-api v0.0.0-20190603191137-2ec456177c0e
-	sigs.k8s.io/controller-runtime v0.1.10
+	sigs.k8s.io/controller-runtime v0.1.12
 	sigs.k8s.io/testing_frameworks v0.1.1 // indirect
 	sigs.k8s.io/yaml v1.1.0
 )
