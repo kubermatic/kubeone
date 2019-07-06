@@ -42,6 +42,7 @@ const (
 	OpenStackDomainName     = "OS_DOMAIN_NAME"
 	OpenStackPassword       = "OS_PASSWORD"
 	OpenStackRegionName     = "OS_REGION_NAME"
+	OpenStackTenantID       = "OS_TENANT_ID"
 	OpenStackTenantName     = "OS_TENANT_NAME"
 	OpenStackUserName       = "OS_USER_NAME"
 	PacketAPIKey            = "PACKET_API_KEY"
@@ -93,7 +94,7 @@ func ProviderCredentials(p kubeone.CloudProviderName) (map[string]string, error)
 			{Name: AzureClientSecret, MachineControllerName: "AZURE_CLIENT_SECRET"},
 			{Name: AzureTenantID, MachineControllerName: "AZURE_TENANT_ID"},
 			{Name: AzureSubscribtionID, MachineControllerName: "AZURE_SUBSCRIPTION_ID"},
-		})
+		}, defaultValidationFunc)
 	case kubeone.CloudProviderNameOpenStack:
 		return parseCredentialVariables([]ProviderEnvironmentVariable{
 			{Name: "OS_AUTH_URL"},
@@ -101,20 +102,21 @@ func ProviderCredentials(p kubeone.CloudProviderName) (map[string]string, error)
 			{Name: "OS_PASSWORD"},
 			{Name: "OS_DOMAIN_NAME"},
 			{Name: "OS_REGION_NAME"},
+			{Name: "OS_TENANT_ID"},
 			{Name: "OS_TENANT_NAME"},
-		})
+		}, openstackValidationFunc)
 	case kubeone.CloudProviderNameHetzner:
 		return parseCredentialVariables([]ProviderEnvironmentVariable{
 			{Name: "HCLOUD_TOKEN", MachineControllerName: "HZ_TOKEN"},
-		})
+		}, defaultValidationFunc)
 	case kubeone.CloudProviderNameDigitalOcean:
 		return parseCredentialVariables([]ProviderEnvironmentVariable{
 			{Name: "DIGITALOCEAN_TOKEN", MachineControllerName: "DO_TOKEN"},
-		})
+		}, defaultValidationFunc)
 	case kubeone.CloudProviderNameGCE:
 		gsa, err := parseCredentialVariables([]ProviderEnvironmentVariable{
 			{Name: "GOOGLE_CREDENTIALS", MachineControllerName: "GOOGLE_SERVICE_ACCOUNT"},
-		})
+		}, defaultValidationFunc)
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
@@ -126,13 +128,13 @@ func ProviderCredentials(p kubeone.CloudProviderName) (map[string]string, error)
 		return parseCredentialVariables([]ProviderEnvironmentVariable{
 			{Name: "PACKET_AUTH_TOKEN", MachineControllerName: PacketAPIKey},
 			{Name: PacketProjectID},
-		})
+		}, defaultValidationFunc)
 	case kubeone.CloudProviderNameVSphere:
 		vscreds, err := parseCredentialVariables([]ProviderEnvironmentVariable{
 			{Name: "VSPHERE_SERVER", MachineControllerName: VSphereAddress},
 			{Name: "VSPHERE_USER", MachineControllerName: VSphereUsername},
 			{Name: VSpherePassword},
-		})
+		}, defaultValidationFunc)
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
@@ -145,16 +147,53 @@ func ProviderCredentials(p kubeone.CloudProviderName) (map[string]string, error)
 	return nil, errors.New("no provider matched")
 }
 
-func parseCredentialVariables(envVars []ProviderEnvironmentVariable) (map[string]string, error) {
+func parseCredentialVariables(envVars []ProviderEnvironmentVariable, validationFunc func(map[string]string) error) (map[string]string, error) {
+	// Validate credentials using given validation function
 	creds := make(map[string]string)
 	for _, env := range envVars {
-		if len(env.MachineControllerName) == 0 {
-			env.MachineControllerName = env.Name
+		creds[env.Name] = strings.TrimSpace(os.Getenv(env.Name))
+	}
+	if err := validationFunc(creds); err != nil {
+		return nil, errors.Wrap(err, "unable to validate credentials")
+	}
+
+	// Prepare credentials to be used by machine-controller
+	mcCreds := make(map[string]string)
+	for _, env := range envVars {
+		name := env.MachineControllerName
+		if len(name) == 0 {
+			name = env.Name
 		}
-		creds[env.MachineControllerName] = strings.TrimSpace(os.Getenv(env.Name))
-		if creds[env.MachineControllerName] == "" {
-			return nil, errors.Errorf("environment variable %s is not set, but is required", env.Name)
+		mcCreds[name] = creds[env.Name]
+	}
+
+	return mcCreds, nil
+}
+
+func defaultValidationFunc(creds map[string]string) error {
+	for k, v := range creds {
+		if len(v) == 0 {
+			return errors.Errorf("key %v is required but isn't present", k)
 		}
 	}
-	return creds, nil
+	return nil
+}
+
+func openstackValidationFunc(creds map[string]string) error {
+	for k, v := range creds {
+		if k == OpenStackTenantID || k == OpenStackTenantName {
+			continue
+		}
+		if len(v) == 0 {
+			return errors.Errorf("key %v is required but isn't present", k)
+		}
+	}
+
+	if v, ok := creds[OpenStackTenantID]; !ok || len(v) == 0 {
+		if v, ok := creds[OpenStackTenantName]; !ok || len(v) == 0 {
+			return errors.Errorf("key %v or %v is required but isn't present", OpenStackTenantID, OpenStackTenantName)
+		}
+	}
+
+	return nil
 }
