@@ -4,8 +4,8 @@ go 1.12
 
 require (
 	github.com/Masterminds/semver v1.4.2
-	github.com/aws/aws-sdk-go v1.16.14
-	github.com/ghodss/yaml v0.0.0-20150909031657-73d445a93680
+	github.com/aws/aws-sdk-go v1.20.15
+	github.com/ghodss/yaml v1.0.0
 	github.com/go-logr/logr v0.1.0 // indirect
 	github.com/go-logr/zapr v0.1.1 // indirect
 	github.com/gogo/protobuf v1.2.1 // indirect
@@ -40,18 +40,18 @@ require (
 	golang.org/x/tools v0.0.0-20190703212419-2214986f1668 // indirect
 	gopkg.in/inf.v0 v0.9.0 // indirect
 	gopkg.in/yaml.v2 v2.2.2
-	k8s.io/api v0.0.0-20181213150558-05914d821849
-	k8s.io/apiextensions-apiserver v0.0.0-20181213153335-0fe22c71c476
-	k8s.io/apimachinery v0.0.0-20181127025237-2b1284ed4c93
-	k8s.io/client-go v0.0.0-20181213151034-8d9ed539ba31
-	k8s.io/cluster-bootstrap v0.0.0-20181110194056-c71be3de9a2f
+	k8s.io/api v0.0.0-20190222213804-5cb15d344471
+	k8s.io/apiextensions-apiserver v0.0.0-20190228180357-d002e88f6236
+	k8s.io/apimachinery v0.0.0-20190221213512-86fb29eff628
+	k8s.io/client-go v0.0.0-20190228174230-b40b2a5939e4
+	k8s.io/cluster-bootstrap v0.0.0-20190228181738-e96ff33745e4
 	k8s.io/code-generator v0.0.0-20190703204957-583809a49343
 	k8s.io/gengo v0.0.0-20190327210449-e17681d19d3a // indirect
 	k8s.io/klog v0.3.3 // indirect
-	k8s.io/kube-aggregator v0.0.0-20181213152105-1e8cd453c474
-	k8s.io/kubernetes v1.13.1
+	k8s.io/kube-aggregator v0.0.0-20190228175259-3e0149950b0e
+	k8s.io/kubernetes v1.13.4
 	sigs.k8s.io/cluster-api v0.0.0-20190603191137-2ec456177c0e
-	sigs.k8s.io/controller-runtime v0.1.10
+	sigs.k8s.io/controller-runtime v0.1.12
 	sigs.k8s.io/testing_frameworks v0.1.1 // indirect
 	sigs.k8s.io/yaml v1.1.0
 )
