@@ -17,13 +17,13 @@ export CGO_ENABLED=0
 export KUBERNETES_VERSION=1.14.1
 export GOPROXY=https://proxy.golang.org
 export GO111MODULE=on
+export GOFLAGS?=-mod=readonly
 
 BUILD_DATE=$(shell if hash gdate 2>/dev/null; then gdate --rfc-3339=seconds | sed 's/ /T/'; else date --rfc-3339=seconds | sed 's/ /T/'; fi)
 BUILD_IMAGE?=golang:1.12.6
 GITCOMMIT=$(shell git log -1 --pretty=format:"%H")
 GITTAG=$(shell git describe --tags --always)
 GOLDFLAGS?=-s -w -X github.com/kubermatic/kubeone/pkg/cmd.version=$(GITTAG) -X github.com/kubermatic/kubeone/pkg/cmd.commit=$(GITCOMMIT) -X github.com/kubermatic/kubeone/pkg/cmd.date=$(BUILD_DATE)
-GOBUILDFLAGS?=-mod readonly
 
 PROVIDER=$(notdir $(wildcard ./terraform/*))
 CREATE_TARGETS=$(addsuffix -env,$(PROVIDER))
@@ -42,7 +42,7 @@ install-via-docker: docker-make-install
 		make install
 
 install:
-	go install $(GOBUILDFLAGS) -ldflags='$(GOLDFLAGS)' -v .
+	go install -ldflags='$(GOLDFLAGS)' -v .
 
 build: dist/kubeone
 
@@ -53,7 +53,7 @@ download-dependencies:
 	go mod download
 
 dist/kubeone: $(shell find . -name '*.go')
-	go build $(GOBUILDFLAGS) -ldflags='$(GOLDFLAGS)' -v -o $@ .
+	go build -ldflags='$(GOLDFLAGS)' -v -o $@ .
 
 generate-internal-groups: vendor
 	./hack/update-codegen.sh
