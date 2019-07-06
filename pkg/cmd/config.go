@@ -506,6 +506,8 @@ features:
 # hosts:
 # - publicAddress: '1.2.3.4'
 #   privateAddress: '172.18.0.1'
+#   bastion: '4.3.2.1'
+#   bastionPort: 22  # can be left out if using the default (22)
 #   sshPort: 22 # can be left out if using the default (22)
 #   sshUsername: ubuntu
 #   # You usually want to configure either a private key OR an

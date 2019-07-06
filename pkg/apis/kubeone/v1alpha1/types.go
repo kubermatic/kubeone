@@ -61,6 +61,8 @@ type HostConfig struct {
 	SSHUsername       string `json:"sshUsername"`
 	SSHPrivateKeyFile string `json:"sshPrivateKeyFile"`
 	SSHAgentSocket    string `json:"sshAgentSocket"`
+	Bastion           string `json:"bastion"`
+	BastionPort       int    `json:"bastionPort"`
 
 	// Information populated at the runtime
 	Hostname        string `json:"-"`

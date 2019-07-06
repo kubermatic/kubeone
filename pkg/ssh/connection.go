@@ -54,6 +54,8 @@ type Opts struct {
 	KeyFile     string
 	AgentSocket string
 	Timeout     time.Duration
+	Bastion     string
+	BastionPort int
 }
 
 func validateOptions(o Opts) (Opts, error) {
@@ -81,6 +83,10 @@ func validateOptions(o Opts) (Opts, error) {
 
 	if o.Port <= 0 {
 		o.Port = 22
+	}
+
+	if o.BastionPort <= 0 {
+		o.BastionPort = 22
 	}
 
 	if o.Timeout == 0 {
@@ -153,15 +159,42 @@ func NewConnection(o Opts) (Connection, error) {
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
 
+	targetHost := o.Hostname
+	targetPort := strconv.Itoa(o.Port)
+
+	if o.Bastion != "" {
+		targetHost = o.Bastion
+		targetPort = strconv.Itoa(o.BastionPort)
+	}
+
 	// do not use fmt.Sprintf() to allow proper IPv6 handling if hostname is an IP address
-	endpoint := net.JoinHostPort(o.Hostname, strconv.Itoa(o.Port))
+	endpoint := net.JoinHostPort(targetHost, targetPort)
 
 	client, err := ssh.Dial("tcp", endpoint, sshConfig)
 	if err != nil {
 		return nil, errors.Wrapf(err, "could not establish connection to %s", endpoint)
 	}
 
-	return &connection{sshclient: client}, nil
+	if o.Bastion == "" {
+		// connection established
+		return &connection{sshclient: client}, nil
+	}
+
+	// continue to setup if we are running over bastion
+	endpointBehindBastion := net.JoinHostPort(o.Hostname, strconv.Itoa(o.Port))
+
+	// Dial a connection to the service host, from the bastion
+	conn, err := client.Dial("tcp", endpointBehindBastion)
+	if err != nil {
+		return nil, errors.Wrapf(err, "could not establish connection to %s", endpointBehindBastion)
+	}
+
+	ncc, chans, reqs, err := ssh.NewClientConn(conn, endpointBehindBastion, sshConfig)
+	if err != nil {
+		return nil, errors.Wrapf(err, "could not establish connection to %s", endpointBehindBastion)
+	}
+
+	return &connection{sshclient: ssh.NewClient(ncc, chans, reqs)}, nil
 }
 
 // File return remote file (as an io.ReadWriteCloser).

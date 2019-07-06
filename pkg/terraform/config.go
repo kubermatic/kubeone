@@ -34,6 +34,8 @@ type controlPlane struct {
 	SSHPort           int      `json:"ssh_port"`
 	SSHPrivateKeyFile string   `json:"ssh_private_key_file"`
 	SSHAgentSocket    string   `json:"ssh_agent_socket"`
+	Bastion           string   `json:"bastion"`
+	BastionPort       int      `json:"bastion_port"`
 }
 
 // Config represents configuration in the terraform output format
@@ -101,6 +103,8 @@ func (c *Config) Apply(cluster *kubeonev1alpha1.KubeOneCluster) error {
 			SSHPort:           cp.SSHPort,
 			SSHPrivateKeyFile: cp.SSHPrivateKeyFile,
 			SSHAgentSocket:    cp.SSHAgentSocket,
+			Bastion:           cp.Bastion,
+			BastionPort:       cp.BastionPort,
 		})
 	}
 

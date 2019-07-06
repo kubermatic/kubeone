@@ -51,6 +51,8 @@ func (c *Connector) Connect(node kubeoneapi.HostConfig) (Connection, error) {
 			KeyFile:     node.SSHPrivateKeyFile,
 			AgentSocket: node.SSHAgentSocket,
 			Timeout:     10 * time.Second,
+			Bastion:     node.Bastion,
+			BastionPort: node.BastionPort,
 		}
 
 		conn, err = NewConnection(opts)

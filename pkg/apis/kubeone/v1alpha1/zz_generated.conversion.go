@@ -399,6 +399,8 @@ func autoConvert_v1alpha1_HostConfig_To_kubeone_HostConfig(in *HostConfig, out *
 	out.SSHUsername = in.SSHUsername
 	out.SSHPrivateKeyFile = in.SSHPrivateKeyFile
 	out.SSHAgentSocket = in.SSHAgentSocket
+	out.Bastion = in.Bastion
+	out.BastionPort = in.BastionPort
 	out.Hostname = in.Hostname
 	out.OperatingSystem = in.OperatingSystem
 	out.IsLeader = in.IsLeader
@@ -418,6 +420,8 @@ func autoConvert_kubeone_HostConfig_To_v1alpha1_HostConfig(in *kubeone.HostConfi
 	out.SSHUsername = in.SSHUsername
 	out.SSHPrivateKeyFile = in.SSHPrivateKeyFile
 	out.SSHAgentSocket = in.SSHAgentSocket
+	out.Bastion = in.Bastion
+	out.BastionPort = in.BastionPort
 	out.Hostname = in.Hostname
 	out.OperatingSystem = in.OperatingSystem
 	out.IsLeader = in.IsLeader

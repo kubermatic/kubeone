@@ -75,11 +75,11 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch = true
   vpc_id                  = data.aws_vpc.selected.id
 
-  tags = {
-    "Name"                 = "${var.cluster_name}_public_${data.aws_availability_zones.available.names[count.index]}"
-    "Cluster"              = var.cluster_name
-    local.kube_cluster_tag = "shared"
-  }
+  tags = map(
+    "Name", "${var.cluster_name}_public_${data.aws_availability_zones.available.names[count.index]}",
+    "Cluster", var.cluster_name,
+    local.kube_cluster_tag, "shared",
+  )
 }
 
 resource "aws_subnet" "private" {
@@ -93,11 +93,11 @@ resource "aws_subnet" "private" {
   map_public_ip_on_launch = false
   vpc_id                  = data.aws_vpc.selected.id
 
-  tags = {
-    "Name"                 = "${var.cluster_name}_private_${data.aws_availability_zones.available.names[count.index]}"
-    "Cluster"              = var.cluster_name
-    local.kube_cluster_tag = "shared"
-  }
+  tags = map(
+    "Name", "${var.cluster_name}_private_${data.aws_availability_zones.available.names[count.index]}",
+    "Cluster", var.cluster_name,
+    local.kube_cluster_tag, "shared",
+  )
 }
 
 resource "aws_nat_gateway" "main" {
@@ -114,9 +114,7 @@ resource "aws_route_table" "public" {
     gateway_id = data.aws_internet_gateway.default.id
   }
 
-  tags = {
-    local.kube_cluster_tag = "shared"
-  }
+  tags = map(local.kube_cluster_tag, "shared")
 }
 
 resource "aws_route_table" "private" {
@@ -128,9 +126,7 @@ resource "aws_route_table" "private" {
     nat_gateway_id = element(aws_nat_gateway.main.*.id, count.index)
   }
 
-  tags = {
-    local.kube_cluster_tag = "shared"
-  }
+  tags = map(local.kube_cluster_tag, "shared")
 }
 
 resource "aws_route_table_association" "public" {
@@ -153,11 +149,11 @@ resource "aws_lb" "control_plane" {
   load_balancer_type = "network"
   subnets            = aws_subnet.private.*.id
 
-  tags = {
-    "Name"                 = "${var.cluster_name}-control_plane"
-    "Cluster"              = var.cluster_name
-    local.kube_cluster_tag = "shared"
-  }
+  tags = map(
+    "Name", "${var.cluster_name}-control_plane",
+    "Cluster", var.cluster_name,
+    local.kube_cluster_tag, "shared",
+  )
 }
 
 resource "aws_lb_target_group" "control_plane_api" {
@@ -191,11 +187,11 @@ resource "aws_security_group" "common" {
   description = "cluster common rules"
   vpc_id      = data.aws_vpc.selected.id
 
-  tags = {
-    "Name"                 = "${var.cluster_name}-common"
-    "Cluster"              = local.kube_cluster_tag
-    local.kube_cluster_tag = "shared"
-  }
+  tags = map(
+    "Name", "${var.cluster_name}-common",
+    "Cluster", local.kube_cluster_tag,
+    local.kube_cluster_tag, "shared",
+  )
 
   ingress {
     from_port   = var.ssh_port
@@ -224,11 +220,11 @@ resource "aws_security_group" "control_plane" {
   description = "cluster control_planes"
   vpc_id      = data.aws_vpc.selected.id
 
-  tags = {
-    "Name"                 = "${var.cluster_name}-control_plane"
-    "Cluster"              = var.cluster_name
-    local.kube_cluster_tag = "shared"
-  }
+  tags = map(
+    "Name", "${var.cluster_name}-control_plane",
+    "Cluster", var.cluster_name,
+    local.kube_cluster_tag, "shared",
+  )
 
   ingress {
     from_port   = 6443
@@ -348,11 +344,11 @@ resource "aws_key_pair" "deployer" {
 resource "aws_instance" "control_plane" {
   count = 3
 
-  tags = {
-    "Cluster"              = var.cluster_name
-    "Name"                 = "${var.cluster_name}-control_plane-${count.index + 1}"
-    local.kube_cluster_tag = "shared"
-  }
+  tags = map(
+    "Cluster", var.cluster_name,
+    "Name", "${var.cluster_name}-control_plane-${count.index + 1}",
+    local.kube_cluster_tag, "shared",
+  )
 
   instance_type          = var.control_plane_type
   iam_instance_profile   = aws_iam_instance_profile.control_plane.name
@@ -370,18 +366,18 @@ resource "aws_instance" "control_plane" {
 }
 
 resource "aws_instance" "bastion" {
-  tags = {
-    "Cluster"              = var.cluster_name
-    "Name"                 = "${var.cluster_name}-control_plane-${count.index + 1}"
-    local.kube_cluster_tag = "shared"
-  }
+  tags = map(
+    "Cluster", var.cluster_name,
+    "Name", "${var.cluster_name}-bastion",
+    local.kube_cluster_tag, "shared",
+  )
 
   instance_type          = "t3.nano"
   ami                    = local.ami
   key_name               = aws_key_pair.deployer.key_name
   vpc_security_group_ids = [aws_security_group.common.id]
-  availability_zone      = data.aws_availability_zones.available.names[count.index]
-  subnet_id              = element(aws_subnet.public.*.id, count.index)
+  availability_zone      = data.aws_availability_zones.available.names[0]
+  subnet_id              = element(aws_subnet.public.*.id, 0)
 
   root_block_device {
     volume_type = "gp2"

@@ -53,6 +53,11 @@ variable "ssh_agent_socket" {
   default     = "env:SSH_AUTH_SOCK"
 }
 
+variable "bastion_port" {
+  description = "Bastion SSH port"
+  default     = 22
+}
+
 # Provider specific settings
 
 variable "aws_region" {

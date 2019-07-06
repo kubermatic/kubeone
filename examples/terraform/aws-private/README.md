@@ -20,6 +20,7 @@ Follow the [issue #337](https://github.com/kubermatic/kubeone/issues/337) for mo
 | ssh\_private\_key\_file | SSH private key file used to access instances | string | `""` | no |
 | ssh\_public\_key\_file | SSH public key file | string | `"~/.ssh/id_rsa.pub"` | no |
 | ssh\_username | SSH user, used only in output | string | `"root"` | no |
+| bastion\_port | Bastion SSH port | string | `"22"` | no |
 | subnet\_netmask\_bits | default 8 bits in /16 CIDR, makes it /24 subnetworks | string | `"8"` | no |
 | subnet\_offset | subnet offset (from main VPC cidr_block) number to be cut | string | `"0"` | no |
 | vpc\_id | VPC to use ('default' for default VPC) | string | `"default"` | no |
