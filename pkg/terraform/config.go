@@ -95,17 +95,14 @@ func (c *Config) Apply(cluster *kubeonev1alpha1.KubeOneCluster) error {
 			privateIP = cp.PrivateAddress[i]
 		}
 
-		hosts = append(hosts, kubeonev1alpha1.HostConfig{
-			ID:                i,
-			PublicAddress:     publicIP,
-			PrivateAddress:    privateIP,
-			SSHUsername:       cp.SSHUser,
-			SSHPort:           cp.SSHPort,
-			SSHPrivateKeyFile: cp.SSHPrivateKeyFile,
-			SSHAgentSocket:    cp.SSHAgentSocket,
-			Bastion:           cp.Bastion,
-			BastionPort:       cp.BastionPort,
-		})
+		hosts = append(hosts, newHostConfig(i, publicIP, privateIP, cp))
+	}
+
+	if len(hosts) == 0 {
+		// there was no public IPs available
+		for i, privateIP := range cp.PrivateAddress {
+			hosts = append(hosts, newHostConfig(i, "", privateIP, cp))
+		}
 	}
 
 	if len(hosts) > 0 {
@@ -164,6 +161,20 @@ func (c *Config) Apply(cluster *kubeonev1alpha1.KubeOneCluster) error {
 	}
 
 	return nil
+}
+
+func newHostConfig(id int, publicIP, privateIP string, cp controlPlane) kubeonev1alpha1.HostConfig {
+	return kubeonev1alpha1.HostConfig{
+		ID:                id,
+		PublicAddress:     publicIP,
+		PrivateAddress:    privateIP,
+		SSHUsername:       cp.SSHUser,
+		SSHPort:           cp.SSHPort,
+		SSHPrivateKeyFile: cp.SSHPrivateKeyFile,
+		SSHAgentSocket:    cp.SSHAgentSocket,
+		Bastion:           cp.Bastion,
+		BastionPort:       cp.BastionPort,
+	}
 }
 
 func (c *Config) updateAWSWorkerset(existingWorkerSet *kubeonev1alpha1.WorkerConfig, cfg json.RawMessage) error {
