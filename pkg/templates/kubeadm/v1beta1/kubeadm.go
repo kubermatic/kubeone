@@ -19,6 +19,7 @@ package v1beta1
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/Masterminds/semver"
 	"github.com/pkg/errors"
@@ -36,6 +37,10 @@ import (
 	bootstraputil "k8s.io/cluster-bootstrap/token/util"
 )
 
+const (
+	bootstrapTokenTTL = 60 * time.Minute
+)
+
 // NewConfig returns all required configs to init a cluster via a set of v1beta1 configs
 func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, error) {
 	cluster := s.Cluster
@@ -51,6 +56,12 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 
 	nodeRegistration := kubeadmv1beta1.NodeRegistrationOptions{
 		Name: host.Hostname,
+		Taints: []corev1.Taint{
+			{
+				Effect: corev1.TaintEffectNoSchedule,
+				Key:    "node-role.kubernetes.io/master",
+			},
+		},
 		KubeletExtraArgs: map[string]string{
 			"anonymous-auth":      "false",
 			"node-ip":             nodeIP,
@@ -79,7 +90,21 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 			APIVersion: "kubeadm.k8s.io/v1beta1",
 			Kind:       "InitConfiguration",
 		},
-		BootstrapTokens: []kubeadmv1beta1.BootstrapToken{{Token: bootstrapToken}},
+		BootstrapTokens: []kubeadmv1beta1.BootstrapToken{
+			{
+				Token: bootstrapToken,
+				Groups: []string{
+					"system:bootstrappers:kubeadm:default-node-token",
+				},
+				TTL: &metav1.Duration{
+					Duration: bootstrapTokenTTL,
+				},
+				Usages: []string{
+					"signing",
+					"authentication",
+				},
+			},
+		},
 		LocalAPIEndpoint: kubeadmv1beta1.APIEndpoint{
 			AdvertiseAddress: nodeIP,
 		},
