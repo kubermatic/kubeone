@@ -147,7 +147,7 @@ resource "aws_lb" "control_plane" {
   name               = "${var.cluster_name}-api-lb"
   internal           = false
   load_balancer_type = "network"
-  subnets            = aws_subnet.private.*.id
+  subnets            = aws_subnet.public.*.id
 
   tags = map(
     "Name", "${var.cluster_name}-control_plane",
