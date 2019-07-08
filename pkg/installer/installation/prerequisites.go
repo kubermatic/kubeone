@@ -234,9 +234,12 @@ func installPrerequisitesOnNode(s *state.State, node *kubeoneapi.HostConfig, con
 	node.SetOperatingSystem(os)
 
 	s.Logger.Infoln("Determine hostname…")
-	hostname, err := determineHostname(s, *node)
-	if err != nil {
-		return errors.Wrap(err, "failed to determine hostname")
+	if node.Hostname == "" {
+		hostname, hostnameErr := determineHostname(s, *node)
+		if hostnameErr != nil {
+			return errors.Wrap(hostnameErr, "failed to determine hostname")
+		}
+		node.SetHostname(hostname)
 	}
 
 	s.Logger.Infoln("Creating environment file…")
@@ -244,8 +247,6 @@ func installPrerequisitesOnNode(s *state.State, node *kubeoneapi.HostConfig, con
 	if err != nil {
 		return errors.Wrap(err, "failed to create environment file")
 	}
-
-	node.SetHostname(hostname)
 
 	logger := s.Logger.WithField("os", os)
 

@@ -63,9 +63,9 @@ type HostConfig struct {
 	SSHAgentSocket    string `json:"sshAgentSocket"`
 	Bastion           string `json:"bastion"`
 	BastionPort       int    `json:"bastionPort"`
+	Hostname          string `json:"hostname"`
 
 	// Information populated at the runtime
-	Hostname        string `json:"-"`
 	OperatingSystem string `json:"-"`
 	IsLeader        bool   `json:"-"`
 }
