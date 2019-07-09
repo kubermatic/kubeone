@@ -22,10 +22,6 @@ output "kubeone_api" {
   }
 }
 
-output "kubeone_bastion" {
-  value = aws_instance.bastion.public_ip
-}
-
 output "kubeone_hosts" {
   description = "Control plane endpoints to SSH to"
 
@@ -34,10 +30,13 @@ output "kubeone_hosts" {
       cluster_name         = var.cluster_name
       cloud_provider       = "aws"
       private_address      = aws_instance.control_plane.*.private_ip
+      hostnames            = aws_instance.control_plane.*.private_dns
       ssh_agent_socket     = var.ssh_agent_socket
       ssh_port             = var.ssh_port
       ssh_private_key_file = var.ssh_private_key_file
       ssh_user             = var.ssh_username
+      bastion              = aws_instance.bastion.public_ip
+      bastion_port         = var.bastion_port
     }
   }
 }

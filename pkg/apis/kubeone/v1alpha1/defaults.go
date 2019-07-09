@@ -126,4 +126,10 @@ func defaultHostConfig(obj *HostConfig) {
 	if obj.SSHUsername == "" {
 		obj.SSHUsername = "root"
 	}
+	if obj.SSHPort == 0 {
+		obj.SSHPort = 22
+	}
+	if obj.BastionPort == 0 {
+		obj.BastionPort = 22
+	}
 }

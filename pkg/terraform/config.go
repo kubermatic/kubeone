@@ -30,10 +30,13 @@ type controlPlane struct {
 	CloudProvider     *string  `json:"cloud_provider"`
 	PublicAddress     []string `json:"public_address"`
 	PrivateAddress    []string `json:"private_address"`
+	Hostnames         []string `json:"hostnames"`
 	SSHUser           string   `json:"ssh_user"`
 	SSHPort           int      `json:"ssh_port"`
 	SSHPrivateKeyFile string   `json:"ssh_private_key_file"`
 	SSHAgentSocket    string   `json:"ssh_agent_socket"`
+	Bastion           string   `json:"bastion"`
+	BastionPort       int      `json:"bastion_port"`
 }
 
 // Config represents configuration in the terraform output format
@@ -93,15 +96,24 @@ func (c *Config) Apply(cluster *kubeonev1alpha1.KubeOneCluster) error {
 			privateIP = cp.PrivateAddress[i]
 		}
 
-		hosts = append(hosts, kubeonev1alpha1.HostConfig{
-			ID:                i,
-			PublicAddress:     publicIP,
-			PrivateAddress:    privateIP,
-			SSHUsername:       cp.SSHUser,
-			SSHPort:           cp.SSHPort,
-			SSHPrivateKeyFile: cp.SSHPrivateKeyFile,
-			SSHAgentSocket:    cp.SSHAgentSocket,
-		})
+		hostname := ""
+		if i < len(cp.Hostnames) {
+			hostname = cp.Hostnames[i]
+		}
+
+		hosts = append(hosts, newHostConfig(i, publicIP, privateIP, hostname, cp))
+	}
+
+	if len(hosts) == 0 {
+		// there was no public IPs available
+		for i, privateIP := range cp.PrivateAddress {
+			hostname := ""
+			if i < len(cp.Hostnames) {
+				hostname = cp.Hostnames[i]
+			}
+
+			hosts = append(hosts, newHostConfig(i, "", privateIP, hostname, cp))
+		}
 	}
 
 	if len(hosts) > 0 {
@@ -160,6 +172,21 @@ func (c *Config) Apply(cluster *kubeonev1alpha1.KubeOneCluster) error {
 	}
 
 	return nil
+}
+
+func newHostConfig(id int, publicIP, privateIP, hostname string, cp controlPlane) kubeonev1alpha1.HostConfig {
+	return kubeonev1alpha1.HostConfig{
+		ID:                id,
+		PublicAddress:     publicIP,
+		PrivateAddress:    privateIP,
+		Hostname:          hostname,
+		SSHUsername:       cp.SSHUser,
+		SSHPort:           cp.SSHPort,
+		SSHPrivateKeyFile: cp.SSHPrivateKeyFile,
+		SSHAgentSocket:    cp.SSHAgentSocket,
+		Bastion:           cp.Bastion,
+		BastionPort:       cp.BastionPort,
+	}
 }
 
 func (c *Config) updateAWSWorkerset(existingWorkerSet *kubeonev1alpha1.WorkerConfig, cfg json.RawMessage) error {
