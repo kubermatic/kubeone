@@ -345,6 +345,7 @@ func (c *Config) updateOpenStackWorkerset(existingWorkerSet *kubeonev1alpha1.Wor
 		{key: "network", value: openstackConfig.Network},
 		{key: "subnet", value: openstackConfig.Subnet},
 		{key: "rootDiskSizeGB", value: openstackConfig.RootDiskSizeGB},
+		{key: "nodeVolumeAttachLimit", value: openstackConfig.NodeVolumeAttachLimit},
 		{key: "tags", value: openstackConfig.Tags},
 	}
 
@@ -417,6 +418,10 @@ func setWorkersetFlag(w *kubeonev1alpha1.WorkerConfig, name string, value interf
 			return nil
 		}
 	case *int:
+		if s == nil {
+			return nil
+		}
+	case *uint:
 		if s == nil {
 			return nil
 		}
