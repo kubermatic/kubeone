@@ -45,15 +45,16 @@ type DigitalOceanSpec struct {
 
 // OpenStackSpec holds cloudprovider spec for OpenStack
 type OpenStackSpec struct {
-	Image            string            `json:"image"`
-	Flavor           string            `json:"flavor"`
-	SecurityGroups   []string          `json:"securityGroups"`
-	FloatingIPPool   string            `json:"floatingIPPool"`
-	AvailabilityZone string            `json:"availabilityZone"`
-	Network          string            `json:"network"`
-	Subnet           string            `json:"subnet"`
-	RootDiskSizeGB   *int              `json:"rootDiskSizeGB,omitempty"`
-	Tags             map[string]string `json:"tags"`
+	Image                 string            `json:"image"`
+	Flavor                string            `json:"flavor"`
+	SecurityGroups        []string          `json:"securityGroups"`
+	FloatingIPPool        string            `json:"floatingIPPool"`
+	AvailabilityZone      string            `json:"availabilityZone"`
+	Network               string            `json:"network"`
+	Subnet                string            `json:"subnet"`
+	RootDiskSizeGB        *int              `json:"rootDiskSizeGB,omitempty"`
+	NodeVolumeAttachLimit *uint             `json:"nodeVolumeAttachLimit,omitempty"`
+	Tags                  map[string]string `json:"tags"`
 }
 
 // GCESpec holds cloudprovider spec for GCE

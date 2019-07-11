@@ -67,6 +67,8 @@ output "kubeone_workers" {
           # Otherwise, the rootDisk will be on ephemeral storage and its size will
           # be derived from the flavor
           rootDiskSizeGB = 50
+          # Optional: limit how many volumes can be attached to a node
+          # nodeVolumeAttachLimit = 25
           tags = {
             "${var.cluster_name}-workers" = "pool1"
           }
