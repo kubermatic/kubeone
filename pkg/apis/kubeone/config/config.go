@@ -124,7 +124,7 @@ func LoadKubeOneCluster(clusterCfgPath, tfOutputPath string, logger *logrus.Logg
 		if tfOutput, err = cmd.Output(); err != nil {
 			return nil, errors.Wrapf(err, "unable to read terraform output from the %q directory", tfOutputPath)
 		}
-	default:
+	case len(tfOutputPath) != 0:
 		if tfOutput, err = ioutil.ReadFile(tfOutputPath); err != nil {
 			return nil, errors.Wrap(err, "unable to read the given terraform output file")
 		}
