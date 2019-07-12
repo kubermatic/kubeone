@@ -164,9 +164,7 @@ We have a getting started tutorial for each cloud provider we support in our
 [documentation][10]. For example, the following document shows
 [how to get started with KubeOne on AWS][11].
 
-A cluster is created using the `kubeone install` command. It takes a KubeOne
-configuration file and optionally Terraform state used to source information
-about the infrastructure.
+A cluster is created using the `kubeone install` command. It takes a KubeOne configuration file and optionally Terraform state used to source information about the infrastructure. You may also use our [Ansible roles][12] to create the configuration file.
 
 ```bash
 kubeone install config.yaml --tfjson tf.json
@@ -218,6 +216,7 @@ See [the list of releases][3] to find out about feature changes.
 [8]: https://github.com/kubermatic/machine-controller
 [9]: https://github.com/kubermatic/kubeone/releases
 [10]: ./docs
+[12]: https://github.com/kubermatic/kubeone/tree/master/examples/ansible
 [11]: ./docs/quickstart-aws.md
 [13]: https://github.com/kubermatic/kubeone#features
 [14]: https://groups.google.com/forum/#!forum/loodse-dev
