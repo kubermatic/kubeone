@@ -542,6 +542,8 @@ func (p ProviderName) ProviderCredentials() (map[string]string, error) {
 			{Name: VSphereUsername},
 			{Name: VSpherePasswords},
 		})
+	case ProviderNameNone:
+		return parseCredentialVariables([]ProviderEnvironmentVariable{})
 	}
 
 	return nil, errors.New("no provider matched")

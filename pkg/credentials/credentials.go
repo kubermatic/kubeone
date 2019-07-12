@@ -142,6 +142,8 @@ func ProviderCredentials(p kubeone.CloudProviderName) (map[string]string, error)
 		// force scheme, as machine-controller requires it while terraform does not
 		vscreds[VSphereAddress] = "https://" + vscreds[VSphereAddress]
 		return vscreds, nil
+	case kubeone.CloudProviderNameNone:
+		return parseCredentialVariables([]ProviderEnvironmentVariable{}, defaultValidationFunc)
 	}
 
 	return nil, errors.New("no provider matched")
