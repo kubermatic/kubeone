@@ -12,18 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Create temporary file for KubeOne config
-  tempfile:
-    state: file
-    suffix: kubeone_config
-  register: kubeone_config_tempfile
-
-- name: Create KubeOne configuration
-  template:
-    src: config.yaml.j2
-    dest: "{{ kubeone_config_tempfile.path }}"
-  when: kubeone_config_tempfile.path is defined
-
 - name: Install cluster via KubeOne
-  shell: kubeone install "{{ kubeone_config_tempfile.path }}"
+  shell: kubeone upgrade "{{ kubeone_config_tempfile.path }}"
   when: kubeone_config_tempfile.path is defined
