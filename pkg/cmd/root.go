@@ -62,9 +62,10 @@ func Execute() {
 func newRoot() *cobra.Command {
 	opts := &globalOptions{}
 	rootCmd := &cobra.Command{
-		Use:   "kubeone",
-		Short: "Kubernetes Cluster provisioning and maintaining tool",
-		Long:  "Provision and maintain Kubernetes High-Availability clusters with ease",
+		Use:          "kubeone",
+		Short:        "Kubernetes Cluster provisioning and maintaining tool",
+		Long:         "Provision and maintain Kubernetes High-Availability clusters with ease",
+		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			return cmd.Help()
 		},
