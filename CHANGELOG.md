@@ -1,5 +1,28 @@
 # Changelog
 
+# [v0.10.0-alpha.0](https://github.com/kubermatic/kubeone/releases/tag/v0.10.0-alpha.0) - 2019-07-15
+
+## Attention Needed
+
+* KubeOne now uses Go modules! :tada: ([#550](https://github.com/kubermatic/kubeone/pull/550))
+  * This should not introduce any breaking change
+  * If you're using `go get` to obtain KubeOne, you may have to enable support for Go modules by setting the `GO111MODULE` environment variable to `on`
+
+## Added
+
+* Add support for SSH over a bastion host ([#567](https://github.com/kubermatic/kubeone/pull/567))
+* Add an optional `rootDiskSizeGB` field to the worker spec for OpenStack ([#549](https://github.com/kubermatic/kubeone/pull/549))
+* Add an optional `nodeVolumeAttachLimit` field to the worker spec for OpenStack ([#572](https://github.com/kubermatic/kubeone/pull/572))
+* Add support for specifying OpenStack Tenant ID using the `OS_TENANT_ID` environment variable ([#551](https://github.com/kubermatic/kubeone/pull/551))
+* Add an example KubeOne Ansible playbook ([#576](https://github.com/kubermatic/kubeone/pull/576))
+
+## Changed
+
+* Fix Terraform integration not respecting multiple workerset definitions from `output.tf` ([#568](https://github.com/kubermatic/kubeone/pull/568))
+* Fix `install` failing if Terraform output is not provided ([#574](https://github.com/kubermatic/kubeone/pull/574))
+* Update `machine-controller` to v1.4.2 ([#572](https://github.com/kubermatic/kubeone/pull/572))
+* Control plane nodes are now tainted by default ([#564](https://github.com/kubermatic/kubeone/pull/564))
+
 # [v0.9.2](https://github.com/kubermatic/kubeone/releases/tag/v0.9.2) - 2019-07-04
 
 ## Changed
