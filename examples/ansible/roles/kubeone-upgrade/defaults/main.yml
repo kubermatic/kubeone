@@ -1,0 +1,35 @@
+# Copyright 2019 The KubeOne Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+kubeone_versions_kubernetes: 1.14.1
+kubeone_clusterNetwork_podSubnet: 10.244.0.0/16
+kubeone_clusterNetwork_serviceSubnet: 10.96.0.0/12
+kubeone_clusterNetwork_serviceDomainName: cluster.local
+kubeone_clusterNetwork_nodePortRange: 30000-32767
+kubeone_clusterNetwork_cni_provider: canal
+kubeone_clusterNetwork_cni_encrypted: false
+kubeone_cloudProvider_name: aws
+kubeone_cloudProvider_external: false
+kubeone_cloudProvider_cloudconfig: ""
+kubeone_apiEndpoint_host: ""
+kubeone_apiEndpoint_port: 0
+kubeone_features_podSecurityPolicy_enable: false
+kubeone_features_dynamicAuditLog_enable: false
+kubeone_features_metricsServer_enable: true
+kubeone_machineController_deploy: true
+kubeone_machineController_provider: ""
+kubeone_proxy_http: ""
+kubeone_proxy_https: ""
+kubeone_proxy_noProxy: ""
+kubeone_hosts: []
