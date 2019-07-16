@@ -1,6 +1,6 @@
 # Changelog
 
-# [v0.10.0-alpha.0](https://github.com/kubermatic/kubeone/releases/tag/v0.10.0-alpha.0) - 2019-07-15
+# [v0.10.0-alpha.0](https://github.com/kubermatic/kubeone/releases/tag/v0.10.0-alpha.0) - 2019-07-17
 
 ## Attention Needed
 
