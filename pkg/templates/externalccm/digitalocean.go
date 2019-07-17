@@ -34,7 +34,7 @@ import (
 )
 
 const (
-	digitaloceanCCMVersion     = "v0.1.15"
+	digitaloceanCCMVersion     = "v0.1.16"
 	digitaloceanSAName         = "cloud-controller-manager"
 	digitaloceanDeploymentName = "digitalocean-cloud-controller-manager"
 )
