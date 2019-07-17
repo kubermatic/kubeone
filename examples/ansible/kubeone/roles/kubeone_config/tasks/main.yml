@@ -23,7 +23,3 @@
     src: config.yaml.j2
     dest: "{{ kubeone_config_tempfile.path }}"
   when: kubeone_config_tempfile.path is defined
-
-- name: Install cluster via KubeOne
-  shell: kubeone upgrade "{{ kubeone_config_tempfile.path }}"
-  when: kubeone_config_tempfile.path is defined

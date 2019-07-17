@@ -12,17 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Install KubeOne cluster
-  hosts: localhost
-  connection: local
-  roles:
-    - kubeone-install
-  vars:
-    kubeone_name: testcluster
-    kubeone_cloudProvider_name: none
-    kubeone_machineController_deploy: false
-    kubeone_hosts:
-      - publicAddress: alpha.example.com
-        sshUsername: root
-      - publicAddress: beta.example.com
-        sshUsername: root
+- name: Install cluster via KubeOne
+  shell: kubeone install "{{ kubeone_config_tempfile.path }}"
+  when: kubeone_config_tempfile.path is defined

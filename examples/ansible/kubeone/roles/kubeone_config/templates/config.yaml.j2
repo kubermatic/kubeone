@@ -29,11 +29,14 @@ cloudProvider:
   name: {{ kubeone_cloudProvider_name }}
   external: {{ kubeone_cloudProvider_external }}
   cloudConfig: {{ kubeone_cloudProvider_cloudconfig }}
+{% if kubeone_hosts %}
 hosts:
-{% for host in kubeone_hosts %}
-  - publicAddress: {{ host.publicAddress }}
-    sshUsername: {{ host.sshUsername }}
-{% endfor %}
+ {{ kubeone_hosts }}
+{% endif %}
+{% if kubeone_workers %}
+workers:
+ {{ kubeone_workers }}
+{% endif %}
 apiEndpoint:
   host: {{ kubeone_apiEndpoint_host }}
   port: {{ kubeone_apiEndpoint_port }}
@@ -44,6 +47,18 @@ features:
     enable: {{ kubeone_features_dynamicAuditLog_enable }}
   metricsServer:
     enable: {{ kubeone_features_metricsServer_enable }}
+  openidConnect:
+      enable: {{ kubeone_openidConnect_enable }}
+      config:
+        issuerUrl: {{ kubeone_openidConnect_config_issuerUrl }}
+        clientId: {{ kubeone_openidConnect_config_clientId }}
+        usernameClaim: {{ kubeone_openidConnect_config_usernameClaim }}
+        usernamePrefix: "{{ kubeone_openidConnect_config_usernamePrefix }}"
+        groupsClaim: {{ kubeone_openidConnect_config_groupsClaim }}
+        groupsPrefix: "{{ kubeone_openidConnect_config_config_groupsPrefix }}"
+        signingAlgs: {{ kubeone_openidConnect_config_signingAlgs }}
+        requiredClaim: {{ kubeone_openidConnect_config_requiredClaim }}
+        caFile: {{ kubeone_openidConnect_config_caFile }}
 proxy:
   http: {{ kubeone_proxy_http }}
   https: {{ kubeone_proxy_https }}
