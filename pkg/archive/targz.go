@@ -27,6 +27,7 @@ import (
 type tarGzip struct {
 	file *os.File
 	gz   *gzip.Writer
+
 	arch *tar.Writer
 }
 
