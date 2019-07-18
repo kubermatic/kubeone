@@ -27,6 +27,7 @@ TEST_SET=${TEST_SET:-"conformance"}
 TEST_CLUSTER_TARGET_VERSION=${TEST_CLUSTER_TARGET_VERSION:-""}
 TEST_CLUSTER_INITIAL_VERSION=${TEST_CLUSTER_INITIAL_VERSION:-""}
 export TF_VAR_cluster_name=${BUILD_ID}
+export GOFLAGS=-mod=readonly
 
 # Install dependencies
 if ! [ -x "$(command -v terraform)" ]; then
@@ -46,7 +47,7 @@ fi
 
 if ! [ -x "$(command -v kubetest)" ]; then
   echo "Installing kubetest"
-  GO111MODULE=off go get k8s.io/test-infra/kubetest
+  go get k8s.io/test-infra/kubetest
   PATH=$PATH:$(go env GOPATH)/bin
 fi
 
