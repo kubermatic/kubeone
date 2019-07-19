@@ -59,6 +59,7 @@ For the list of available settings along with their names please see the [`varia
 * `cluster_name` (required) - prefix for cloud resources
 * `aws_region` (default: eu-west-3)
 * `ssh_public_key_file` (default: `~/.ssh/id_rsa.pub`) - path to your SSH public key that's deployed on instances
+* `ssh_private_key_file` - path to the SSH private key corresponding to the public key
 * `control_plane_type` (default: t3.medium) - note that you should have at least 2 GB RAM and 2 CPUs for Kubernetes to work properly
 
 The `terraform.tfvars` file can look like:
@@ -67,6 +68,8 @@ The `terraform.tfvars` file can look like:
 cluster_name = "demo"
 
 aws_region = "us-east-1"
+
+ssh_private_key_file = "~/.ssh/id_rsa"
 ```
 
 Now that you configured Terraform you can use the `plan` command to see what changes will be made:
