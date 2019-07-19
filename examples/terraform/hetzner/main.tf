@@ -19,6 +19,24 @@ resource "hcloud_ssh_key" "kubeone" {
   public_key = file(var.ssh_public_key_file)
 }
 
+resource "hcloud_network" "net" {
+  name     = var.cluster_name
+  ip_range = "192.168.0.0/16"
+}
+
+resource "hcloud_network_subnet" "kubeone" {
+  network_id   = hcloud_network.net.id
+  type         = "server"
+  network_zone = "eu-central"
+  ip_range     = "192.168.0.0/24"
+}
+
+resource "hcloud_server_network" "control_plane" {
+  count       = 3
+  server_id  = element(hcloud_server.control_plane.*.id, count.index)
+  network_id = hcloud_network.net.id
+}
+
 resource "hcloud_server" "control_plane" {
   count       = 3
   name        = "${var.cluster_name}-control-plane-${count.index + 1}"
@@ -34,6 +52,11 @@ resource "hcloud_server" "control_plane" {
     "kubeone_cluster_name" = var.cluster_name
     "role"                 = "api"
   }
+}
+
+resource "hcloud_server_network" "lb" {
+  server_id  = hcloud_server.lb.id
+  network_id = hcloud_network.net.id
 }
 
 resource "hcloud_server" "lb" {
@@ -63,13 +86,13 @@ resource "hcloud_server" "lb" {
 
 locals {
   rendered_lb_config = templatefile("./etc_gobetween.tpl", {
-    lb_targets = hcloud_server.control_plane.*.ipv4_address,
+    lb_targets = hcloud_server_network.control_plane.*.ip,
   })
 }
 
 resource "null_resource" "lb_config" {
   triggers = {
-    cluster_instance_ids = join(",", hcloud_server.control_plane.*.id)
+    cluster_instance_ids = join(",", hcloud_server_network.control_plane.*.ip)
     config               = local.rendered_lb_config
   }
 

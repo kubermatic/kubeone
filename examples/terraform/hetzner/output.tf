@@ -29,7 +29,7 @@ output "kubeone_hosts" {
     control_plane = {
       cluster_name         = var.cluster_name
       cloud_provider       = "hetzner"
-      private_address      = [] # hetzner doesn't provide private addressed
+      private_address      = hcloud_server_network.control_plane.*.ip
       public_address       = hcloud_server.control_plane.*.ipv4_address
       ssh_agent_socket     = var.ssh_agent_socket
       ssh_port             = var.ssh_port
