@@ -26,19 +26,11 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	errorsutil "k8s.io/apimachinery/pkg/api/errors"
-	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/util/retry"
 	clusterv1alpha1 "sigs.k8s.io/cluster-api/pkg/apis/cluster/v1alpha1"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
-
-func simpleCreateOrUpdate(ctx context.Context, client dynclient.Client, obj runtime.Object) error {
-	okFunc := func(runtime.Object) error { return nil }
-	_, err := controllerutil.CreateOrUpdate(ctx, client, obj, okFunc)
-	return err
-}
 
 // Ensure install/update machine-controller
 func Ensure(s *state.State) error {

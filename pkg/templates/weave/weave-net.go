@@ -24,6 +24,7 @@ import (
 
 	"github.com/pkg/errors"
 
+	"github.com/kubermatic/kubeone/pkg/clientutil"
 	"github.com/kubermatic/kubeone/pkg/state"
 
 	appsv1 "k8s.io/api/apps/v1"
@@ -32,6 +33,7 @@ import (
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -48,26 +50,20 @@ func Deploy(s *state.State) error {
 		return errors.New("kubernetes dynamic client is not initialized")
 	}
 
-	bgCtx := context.Background()
+	ctx := context.Background()
 
-	if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, serviceAccount()); err != nil {
-		return errors.Wrap(err, "failed to ensure weave ServiceAccount")
+	k8sobjects := []runtime.Object{
+		serviceAccount(),
+		clusterRole(),
+		clusterRoleBinding(),
+		role(),
+		roleBinding(),
 	}
 
-	if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, clusterRole()); err != nil {
-		return errors.Wrap(err, "failed to ensure weave ClusterRole")
-	}
-
-	if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, clusterRoleBinding()); err != nil {
-		return errors.Wrap(err, "failed to ensure weave ClusterRoleBinding")
-	}
-
-	if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, role()); err != nil {
-		return errors.Wrap(err, "failed to ensure weave Role")
-	}
-
-	if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, roleBinding()); err != nil {
-		return errors.Wrap(err, "failed to ensure weave RoleBinding")
+	for _, obj := range k8sobjects {
+		if err := clientutil.CreateOrUpdate(ctx, s.DynamicClient, obj); err != nil {
+			return errors.Wrapf(err, "failed to ensure weave %s", obj.GetObjectKind().GroupVersionKind().Kind)
+		}
 	}
 
 	if s.Cluster.ClusterNetwork.CNI.Encrypted {
@@ -83,14 +79,14 @@ func Deploy(s *state.State) error {
 		}
 
 		secCopy := sec.DeepCopy()
-		err = s.DynamicClient.Get(bgCtx, key, secCopy)
+		err = s.DynamicClient.Get(ctx, key, secCopy)
 		switch {
 		case k8serrors.IsNotFound(err):
 		case err != nil:
 			return errors.Wrap(err, "failed to get weave-net Secret")
 		}
 
-		err = s.DynamicClient.Create(bgCtx, sec)
+		err = s.DynamicClient.Create(ctx, sec)
 		if err != nil {
 			return errors.Wrap(err, "failed to create weave-net Secret")
 		}
@@ -102,7 +98,7 @@ func Deploy(s *state.State) error {
 	}
 
 	ds := daemonSet(s.Cluster.ClusterNetwork.CNI.Encrypted, strings.Join(peers, " "), s.Cluster.ClusterNetwork.PodSubnet)
-	if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, ds); err != nil {
+	if err := clientutil.CreateOrUpdate(ctx, s.DynamicClient, ds); err != nil {
 		return errors.Wrap(err, "failed to ensure weave DaemonSet")
 	}
 

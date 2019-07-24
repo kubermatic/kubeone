@@ -13,7 +13,7 @@ require (
 	github.com/google/gofuzz v0.0.0-20161122191042-44d81051d367 // indirect
 	github.com/googleapis/gnostic v0.2.0 // indirect
 	github.com/gregjones/httpcache v0.0.0-20190203031600-7a902570cb17 // indirect
-	github.com/imdario/mergo v0.3.7 // indirect
+	github.com/imdario/mergo v0.3.7
 	github.com/json-iterator/go v0.0.0-20180612202835-f2b4162afba3 // indirect
 	github.com/koron-go/prefixw v0.0.0-20181013140428-271b207a7572
 	github.com/kr/fs v0.1.0 // indirect

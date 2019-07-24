@@ -19,6 +19,7 @@ package externalccm
 import (
 	"context"
 	"strings"
+	"time"
 
 	"github.com/Masterminds/semver"
 	"github.com/pkg/errors"
@@ -27,9 +28,14 @@ import (
 	"github.com/kubermatic/kubeone/pkg/state"
 
 	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/util/wait"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
+)
+
+const (
+	uninitializedTaint = "node.cloudprovider.kubernetes.io/uninitialized"
 )
 
 // Ensure external CCM deployen if Provider.External
@@ -38,25 +44,54 @@ func Ensure(s *state.State) error {
 		return nil
 	}
 
-	s.Logger.Info("Ensure external CCM is up to date")
+	s.Logger.Info("Ensure external CCM is up to date…")
+	var err error
+
+	s.PatchCNI = true
 
 	switch s.Cluster.CloudProvider.Name {
 	case kubeoneapi.CloudProviderNameHetzner:
-		return ensureHetzner(s)
+		err = ensureHetzner(s)
 	case kubeoneapi.CloudProviderNameDigitalOcean:
-		return ensureDigitalOcean(s)
+		err = ensureDigitalOcean(s)
 	case kubeoneapi.CloudProviderNamePacket:
-		return ensurePacket(s)
+		err = ensurePacket(s)
 	default:
 		s.Logger.Infof("External CCM for %q not yet supported, skipping", s.Cluster.CloudProvider.Name)
 		return nil
 	}
+
+	if err != nil {
+		return errors.Wrap(err, "failed to ensure CCM is installed")
+	}
+
+	err = waitForInitializedNodes(s)
+	return errors.Wrap(err, "failed waiting for nodes to be initialized by CCM")
 }
 
-func simpleCreateOrUpdate(ctx context.Context, client dynclient.Client, obj runtime.Object) error {
-	okFunc := func(runtime.Object) error { return nil }
-	_, err := controllerutil.CreateOrUpdate(ctx, client, obj, okFunc)
-	return err
+func waitForInitializedNodes(s *state.State) error {
+	ctx := context.Background()
+
+	s.Logger.Info("Waiting for nodes to initialize by CCM…")
+
+	return wait.Poll(5*time.Second, 60*time.Second, func() (bool, error) {
+		nodes := corev1.NodeList{}
+		nodeListOpts := dynclient.ListOptions{}
+
+		if err := s.DynamicClient.List(ctx, &nodeListOpts, &nodes); err != nil {
+			return false, err
+		}
+
+		for _, node := range nodes.Items {
+			for _, taint := range node.Spec.Taints {
+				if taint.Key == uninitializedTaint && taint.Value == "true" {
+					return false, nil
+				}
+			}
+		}
+
+		return true, nil
+	})
 }
 
 func mutateDeploymentWithVersionCheck(want *semver.Constraints) func(obj runtime.Object) error {

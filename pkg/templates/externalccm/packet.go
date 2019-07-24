@@ -22,6 +22,7 @@ import (
 	"github.com/Masterminds/semver"
 	"github.com/pkg/errors"
 
+	"github.com/kubermatic/kubeone/pkg/clientutil"
 	"github.com/kubermatic/kubeone/pkg/credentials"
 	"github.com/kubermatic/kubeone/pkg/state"
 
@@ -30,6 +31,7 @@ import (
 	rbacv1 "k8s.io/api/rbac/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
 
@@ -44,21 +46,17 @@ func ensurePacket(s *state.State) error {
 		return errors.New("kubernetes client not initialized")
 	}
 
-	bgctx := context.Background()
-
-	sa := packetServiceAccount()
-	if err := simpleCreateOrUpdate(bgctx, s.DynamicClient, sa); err != nil {
-		return errors.Wrap(err, "failed to ensure packet CCM ServiceAccount")
+	ctx := context.Background()
+	k8sobjects := []runtime.Object{
+		packetServiceAccount(),
+		packetClusterRole(),
+		packetClusterRoleBinding(),
 	}
 
-	cr := packetClusterRole()
-	if err := simpleCreateOrUpdate(bgctx, s.DynamicClient, cr); err != nil {
-		return errors.Wrap(err, "failed to ensure packet CCM ClusterRole")
-	}
-
-	crb := packetClusterRoleBinding()
-	if err := simpleCreateOrUpdate(bgctx, s.DynamicClient, crb); err != nil {
-		return errors.Wrap(err, "failed to ensure packet CCM ClusterRoleBinding")
+	for _, obj := range k8sobjects {
+		if err := clientutil.CreateOrUpdate(ctx, s.DynamicClient, obj); err != nil {
+			return errors.Wrapf(err, "failed to ensure packet CCM %T", obj)
+		}
 	}
 
 	dep := packetDeployment()
@@ -67,7 +65,7 @@ func ensurePacket(s *state.State) error {
 		return errors.Wrap(err, "failed to parse packet CCM version constraint")
 	}
 
-	_, err = controllerutil.CreateOrUpdate(bgctx,
+	_, err = controllerutil.CreateOrUpdate(ctx,
 		s.DynamicClient,
 		dep,
 		mutateDeploymentWithVersionCheck(want))
@@ -80,10 +78,6 @@ func ensurePacket(s *state.State) error {
 
 func packetServiceAccount() *corev1.ServiceAccount {
 	return &corev1.ServiceAccount{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "v1",
-			Kind:       "ServiceAccount",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      packetSAName,
 			Namespace: metav1.NamespaceSystem,
@@ -93,10 +87,6 @@ func packetServiceAccount() *corev1.ServiceAccount {
 
 func packetClusterRole() *rbacv1.ClusterRole {
 	return &rbacv1.ClusterRole{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "rbac.authorization.k8s.io/v1",
-			Kind:       "ClusterRole",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "system:cloud-controller-manager",
 			Annotations: map[string]string{
@@ -150,10 +140,6 @@ func packetClusterRole() *rbacv1.ClusterRole {
 
 func packetClusterRoleBinding() *rbacv1.ClusterRoleBinding {
 	return &rbacv1.ClusterRoleBinding{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "rbac.authorization.k8s.io/v1",
-			Kind:       "ClusterRoleBinding",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "system:cloud-controller-manager",
 		},
@@ -178,10 +164,6 @@ func packetDeployment() *appsv1.Deployment {
 	)
 
 	return &appsv1.Deployment{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "apps/v1",
-			Kind:       "Deployment",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      packetDeploymentName,
 			Namespace: metav1.NamespaceSystem,

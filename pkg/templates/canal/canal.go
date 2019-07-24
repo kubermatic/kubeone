@@ -23,11 +23,11 @@ import (
 
 	"github.com/pkg/errors"
 
+	"github.com/kubermatic/kubeone/pkg/clientutil"
 	"github.com/kubermatic/kubeone/pkg/kubeconfig"
 	"github.com/kubermatic/kubeone/pkg/state"
 
-	rbacv1 "k8s.io/api/rbac/v1"
-	apiextensions "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
+	"k8s.io/apimachinery/pkg/runtime"
 )
 
 const (
@@ -39,40 +39,42 @@ const (
 	// automatically populated
 	cniNetworkConfig = `
 {
-	"name": "k8s-pod-network",
-	"cniVersion": "0.3.0",
-	"plugins": [
-		{
-			"type": "calico",
-			"log_level": "info",
-			"datastore_type": "kubernetes",
-			"nodename": "__KUBERNETES_NODE_NAME__",
-			"ipam": {
-				"type": "host-local",
-				"subnet": "usePodCidr"
-			},
-			"policy": {
-					"type": "k8s"
-			},
-			"kubernetes": {
-					"kubeconfig": "__KUBECONFIG_FILEPATH__"
-			}
-		},
-		{
-			"type": "portmap",
-			"snat": true,
-			"capabilities": {"portMappings": true}
-		}
-	]
+  "name": "k8s-pod-network",
+  "cniVersion": "0.3.0",
+  "plugins": [
+    {
+      "type": "calico",
+      "log_level": "info",
+      "datastore_type": "kubernetes",
+      "nodename": "__KUBERNETES_NODE_NAME__",
+      "ipam": {
+        "type": "host-local",
+        "subnet": "usePodCidr"
+      },
+      "policy": {
+        "type": "k8s"
+      },
+      "kubernetes": {
+        "kubeconfig": "__KUBECONFIG_FILEPATH__"
+      }
+    },
+    {
+      "type": "portmap",
+      "snat": true,
+      "capabilities": {
+        "portMappings": true
+      }
+    }
+  ]
 }
 `
 	// Flannel network configuration (mounted into the flannel container)
 	flannelNetworkConfig = `
 {
-	"Network": "{{ .POD_SUBNET }}",
-	"Backend": {
-		"Type": "vxlan"
-	}
+  "Network": "{{ .POD_SUBNET }}",
+  "Backend": {
+    "Type": "vxlan"
+  }
 }
 `
 )
@@ -98,41 +100,30 @@ func Deploy(s *state.State) error {
 		return errors.Wrap(err, "failed to render canal config")
 	}
 
-	bgCtx := context.Background()
-	// ConfigMap
-	cm := configMap()
-	cm.Data["net-conf.json"] = buf.String()
-	if err = simpleCreateOrUpdate(bgCtx, s.DynamicClient, cm); err != nil {
-		return errors.Wrap(err, "failed to ensure canal ConfigMap")
+	ctx := context.Background()
+
+	k8sobjects := []runtime.Object{
+		configMap(buf),
+		daemonSet(s.PatchCNI),
+		serviceAccount(),
+		calicoClusterRole(),
+		flannelClusterRole(),
+		calicoClusterRoleBinding(),
+		flannelClusterRoleBinding(),
+		canalClusterRoleBinding(),
+		felixConfigurationCRD(),
+		bgpConfigurationCRD(),
+		ipPoolsConfigurationCRD(),
+		hostEndpointsConfigurationCRD(),
+		clusterInformationsConfigurationCRD(),
+		globalNetworkPoliciesConfigurationCRD(),
+		globalNetworksetsConfigurationCRD(),
+		networkPoliciesConfigurationCRD(),
 	}
 
-	// DaemonSet
-	ds := daemonSet()
-	if err = simpleCreateOrUpdate(bgCtx, s.DynamicClient, ds); err != nil {
-		return errors.Wrap(err, "failed to ensure canal DaemonSet")
-	}
-
-	// ServiceAccount
-	sa := serviceAccount()
-	if err = simpleCreateOrUpdate(bgCtx, s.DynamicClient, sa); err != nil {
-		return errors.Wrap(err, "failed to ensure canal ServiceAccount")
-	}
-
-	// CRDs
-	crdGenerators := []func() *apiextensions.CustomResourceDefinition{
-		felixConfigurationCRD,
-		bgpConfigurationCRD,
-		ipPoolsConfigurationCRD,
-		hostEndpointsConfigurationCRD,
-		clusterInformationsConfigurationCRD,
-		globalNetworkPoliciesConfigurationCRD,
-		globalNetworksetsConfigurationCRD,
-		networkPoliciesConfigurationCRD,
-	}
-
-	for _, crdGen := range crdGenerators {
-		if err = simpleCreateOrUpdate(bgCtx, s.DynamicClient, crdGen()); err != nil {
-			return errors.Wrap(err, "failed to ensure canal CustomResourceDefinition")
+	for _, obj := range k8sobjects {
+		if err = clientutil.CreateOrUpdate(ctx, s.DynamicClient, obj); err != nil {
+			return errors.WithStack(err)
 		}
 	}
 
@@ -140,30 +131,6 @@ func Deploy(s *state.State) error {
 	err = kubeconfig.HackIssue321InitDynamicClient(s)
 	if err != nil {
 		return errors.Wrap(err, "failed to re-init dynamic client")
-	}
-
-	// ClusterRoles
-	crGenerators := []func() *rbacv1.ClusterRole{
-		calicoClusterRole,
-		flannelClusterRole,
-	}
-
-	for _, crGen := range crGenerators {
-		if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, crGen()); err != nil {
-			return errors.Wrap(err, "failed to ensure canal ClusterRole")
-		}
-	}
-
-	// ClusterRoleBindings
-	crbGenerators := []func() *rbacv1.ClusterRoleBinding{
-		calicoClusterRoleBinding,
-		flannelClusterRoleBinding,
-		canalClusterRoleBinding,
-	}
-	for _, crbGen := range crbGenerators {
-		if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, crbGen()); err != nil {
-			return errors.Wrap(err, "failed to ensure canal ClusterRoleBinding")
-		}
 	}
 
 	return nil

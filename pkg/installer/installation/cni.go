@@ -45,3 +45,12 @@ func ensureCNICanal(s *state.State) error {
 	s.Logger.Infoln("Applying canal CNI plugin…")
 	return canal.Deploy(s)
 }
+
+func patchCNI(s *state.State) error {
+	if !s.PatchCNI {
+		return nil
+	}
+
+	s.Logger.Info("Patching CNI…")
+	return ensureCNI(s)
+}
