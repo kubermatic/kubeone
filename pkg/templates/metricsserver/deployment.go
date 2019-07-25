@@ -21,6 +21,7 @@ import (
 
 	"github.com/pkg/errors"
 
+	"github.com/kubermatic/kubeone/pkg/clientutil"
 	"github.com/kubermatic/kubeone/pkg/state"
 
 	appsv1 "k8s.io/api/apps/v1"
@@ -38,7 +39,7 @@ func Deploy(s *state.State) error {
 		return errors.New("kubernetes client not initialized")
 	}
 
-	objs := []runtime.Object{
+	k8sobjects := []runtime.Object{
 		aggregatedMetricsReaderClusterRole(),
 		authDelegatorClusterRoleBinding(),
 		metricsServerKubeSystemRoleBinding(),
@@ -50,9 +51,9 @@ func Deploy(s *state.State) error {
 		metricServerClusterRoleBinding(),
 	}
 
-	bgCtx := context.Background()
-	for _, o := range objs {
-		if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, o); err != nil {
+	ctx := context.Background()
+	for _, obj := range k8sobjects {
+		if err := clientutil.CreateOrUpdate(ctx, s.DynamicClient, obj); err != nil {
 			return errors.WithStack(err)
 		}
 	}
@@ -62,10 +63,6 @@ func Deploy(s *state.State) error {
 
 func aggregatedMetricsReaderClusterRole() *rbacv1.ClusterRole {
 	return &rbacv1.ClusterRole{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "rbac.authorization.k8s.io/v1",
-			Kind:       "ClusterRole",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "system:aggregated-metrics-reader",
 			Labels: map[string]string{
@@ -86,10 +83,6 @@ func aggregatedMetricsReaderClusterRole() *rbacv1.ClusterRole {
 
 func authDelegatorClusterRoleBinding() *rbacv1.ClusterRoleBinding {
 	return &rbacv1.ClusterRoleBinding{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "rbac.authorization.k8s.io/v1",
-			Kind:       "ClusterRoleBinding",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "metrics-server:system:auth-delegator",
 		},
@@ -110,10 +103,6 @@ func authDelegatorClusterRoleBinding() *rbacv1.ClusterRoleBinding {
 
 func metricsServerKubeSystemRoleBinding() *rbacv1.RoleBinding {
 	return &rbacv1.RoleBinding{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "rbac.authorization.k8s.io/v1",
-			Kind:       "RoleBinding",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "metrics-server-auth-reader",
 			Namespace: metav1.NamespaceSystem,
@@ -135,10 +124,6 @@ func metricsServerKubeSystemRoleBinding() *rbacv1.RoleBinding {
 
 func metricsServerAPIService() *apiregv1.APIService {
 	return &apiregv1.APIService{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "apiregistration.k8s.io/v1",
-			Kind:       "APIService",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "v1beta1.metrics.k8s.io",
 		},
@@ -158,10 +143,6 @@ func metricsServerAPIService() *apiregv1.APIService {
 
 func metricsServerServiceAccount() *corev1.ServiceAccount {
 	return &corev1.ServiceAccount{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "v1",
-			Kind:       "ServiceAccount",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "metrics-server",
 			Namespace: metav1.NamespaceSystem,
@@ -173,10 +154,6 @@ func metricsServerDeployment() *appsv1.Deployment {
 	k8sAppLabels := map[string]string{"k8s-app": "metrics-server"}
 
 	return &appsv1.Deployment{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "apps/v1",
-			Kind:       "Deployment",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "metrics-server",
 			Namespace: metav1.NamespaceSystem,
@@ -226,10 +203,6 @@ func metricsServerDeployment() *appsv1.Deployment {
 
 func metricsServerService() *corev1.Service {
 	return &corev1.Service{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "v1",
-			Kind:       "Service",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "metrics-server",
 			Namespace: metav1.NamespaceSystem,
@@ -241,6 +214,7 @@ func metricsServerService() *corev1.Service {
 			Selector: map[string]string{
 				"k8s-app": "metrics-server",
 			},
+			Type: corev1.ServiceTypeClusterIP,
 			Ports: []corev1.ServicePort{
 				{
 					Port:       443,
@@ -254,10 +228,6 @@ func metricsServerService() *corev1.Service {
 
 func metricServerClusterRole() *rbacv1.ClusterRole {
 	return &rbacv1.ClusterRole{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "rbac.authorization.k8s.io/v1",
-			Kind:       "ClusterRole",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "system:metrics-server",
 		},
@@ -273,10 +243,6 @@ func metricServerClusterRole() *rbacv1.ClusterRole {
 
 func metricServerClusterRoleBinding() *rbacv1.ClusterRoleBinding {
 	return &rbacv1.ClusterRoleBinding{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "rbac.authorization.k8s.io/v1",
-			Kind:       "ClusterRoleBinding",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "system:metrics-server",
 		},

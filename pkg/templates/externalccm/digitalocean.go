@@ -22,6 +22,7 @@ import (
 	"github.com/Masterminds/semver"
 	"github.com/pkg/errors"
 
+	"github.com/kubermatic/kubeone/pkg/clientutil"
 	"github.com/kubermatic/kubeone/pkg/credentials"
 	"github.com/kubermatic/kubeone/pkg/state"
 
@@ -30,6 +31,7 @@ import (
 	rbacv1 "k8s.io/api/rbac/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
 
@@ -44,21 +46,17 @@ func ensureDigitalOcean(s *state.State) error {
 		return errors.New("kubernetes client not initialized")
 	}
 
-	bgctx := context.Background()
-
-	sa := doServiceAccount()
-	if err := simpleCreateOrUpdate(bgctx, s.DynamicClient, sa); err != nil {
-		return errors.Wrap(err, "failed to ensure digitalocean CCM ServiceAccount")
+	ctx := context.Background()
+	k8sobject := []runtime.Object{
+		doServiceAccount(),
+		doClusterRole(),
+		doClusterRoleBinding(),
 	}
 
-	cr := doClusterRole()
-	if err := simpleCreateOrUpdate(bgctx, s.DynamicClient, cr); err != nil {
-		return errors.Wrap(err, "failed to ensure digitalocean CCM ClusterRole")
-	}
-
-	crb := doClusterRoleBinding()
-	if err := simpleCreateOrUpdate(bgctx, s.DynamicClient, crb); err != nil {
-		return errors.Wrap(err, "failed to ensure digitalocean CCM ClusterRoleBinding")
+	for _, obj := range k8sobject {
+		if err := clientutil.CreateOrUpdate(ctx, s.DynamicClient, obj); err != nil {
+			return errors.Wrapf(err, "failed to ensure digitalocean CCM %T", obj)
+		}
 	}
 
 	dep := doDeployment()
@@ -67,7 +65,7 @@ func ensureDigitalOcean(s *state.State) error {
 		return errors.Wrap(err, "failed to parse digitalocean CCM version constraint")
 	}
 
-	_, err = controllerutil.CreateOrUpdate(bgctx,
+	_, err = controllerutil.CreateOrUpdate(ctx,
 		s.DynamicClient,
 		dep,
 		mutateDeploymentWithVersionCheck(want))
@@ -79,10 +77,6 @@ func ensureDigitalOcean(s *state.State) error {
 
 func doServiceAccount() *corev1.ServiceAccount {
 	return &corev1.ServiceAccount{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "v1",
-			Kind:       "ServiceAccount",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      digitaloceanSAName,
 			Namespace: metav1.NamespaceSystem,
@@ -92,10 +86,6 @@ func doServiceAccount() *corev1.ServiceAccount {
 
 func doClusterRole() *rbacv1.ClusterRole {
 	return &rbacv1.ClusterRole{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "rbac.authorization.k8s.io/v1",
-			Kind:       "ClusterRole",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "system:cloud-controller-manager",
 			Annotations: map[string]string{
@@ -149,10 +139,6 @@ func doClusterRole() *rbacv1.ClusterRole {
 
 func doClusterRoleBinding() *rbacv1.ClusterRoleBinding {
 	return &rbacv1.ClusterRoleBinding{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "rbac.authorization.k8s.io/v1",
-			Kind:       "ClusterRoleBinding",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "system:cloud-controller-manager",
 		},
@@ -178,10 +164,6 @@ func doDeployment() *appsv1.Deployment {
 	)
 
 	return &appsv1.Deployment{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "apps/v1",
-			Kind:       "Deployment",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      digitaloceanDeploymentName,
 			Namespace: metav1.NamespaceSystem,

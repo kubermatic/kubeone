@@ -17,13 +17,15 @@ limitations under the License.
 package canal
 
 import (
+	"bytes"
+
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // configMap creates a ConfigMap used to configure a self-hosted Canal installation
-func configMap() *corev1.ConfigMap {
+func configMap(netConf bytes.Buffer) *corev1.ConfigMap {
 	return &corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "canal-config",
@@ -44,7 +46,7 @@ func configMap() *corev1.ConfigMap {
 			"cni_network_config": cniNetworkConfig,
 
 			// Flannel network configuration. Mounted into the flannel container
-			"net-conf.json": "",
+			"net-conf.json": netConf.String(),
 		},
 	}
 }

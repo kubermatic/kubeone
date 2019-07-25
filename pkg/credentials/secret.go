@@ -21,13 +21,11 @@ import (
 
 	"github.com/pkg/errors"
 
+	"github.com/kubermatic/kubeone/pkg/clientutil"
 	"github.com/kubermatic/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
-	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
 
 const (
@@ -36,12 +34,6 @@ const (
 	// SecretNamespace is namespace of the credentials secret
 	SecretNamespace = "kube-system"
 )
-
-func simpleCreateOrUpdate(ctx context.Context, client dynclient.Client, obj runtime.Object) error {
-	okFunc := func(runtime.Object) error { return nil }
-	_, err := controllerutil.CreateOrUpdate(ctx, client, obj, okFunc)
-	return err
-}
 
 // Ensure creates/updates the credentials secret
 func Ensure(s *state.State) error {
@@ -57,9 +49,8 @@ func Ensure(s *state.State) error {
 		return errors.Wrap(err, "unable to fetch cloud provider credentials")
 	}
 
-	bgCtx := context.Background()
 	secret := credentialsSecret(creds)
-	if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, secret); err != nil {
+	if err := clientutil.CreateOrUpdate(context.Background(), s.DynamicClient, secret); err != nil {
 		return errors.Wrap(err, "failed to ensure credentials secret")
 	}
 
@@ -68,10 +59,6 @@ func Ensure(s *state.State) error {
 
 func credentialsSecret(credentials map[string]string) *corev1.Secret {
 	return &corev1.Secret{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "v1",
-			Kind:       "Secret",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      SecretName,
 			Namespace: SecretNamespace,

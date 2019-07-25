@@ -26,11 +26,53 @@ import (
 
 // daemonSet installs the calico/node container, as well as the Calico CNI plugins and network config on each
 // master and worker node in a Kubernetes cluster
-func daemonSet() *appsv1.DaemonSet {
+func daemonSet(ifacePatch bool) *appsv1.DaemonSet {
 	maxUnavailable := intstr.FromInt(1)
 	terminationGracePeriodSeconds := int64(0)
 	privileged := true
 	fileOrCreate := corev1.HostPathFileOrCreate
+
+	flannelEnv := []corev1.EnvVar{
+		{
+			Name: "POD_NAME",
+			ValueFrom: &corev1.EnvVarSource{
+				FieldRef: &corev1.ObjectFieldSelector{
+					FieldPath: "metadata.name",
+				},
+			},
+		},
+		{
+			Name: "POD_NAMESPACE",
+			ValueFrom: &corev1.EnvVarSource{
+				FieldRef: &corev1.ObjectFieldSelector{
+					FieldPath: "metadata.namespace",
+				},
+			},
+		},
+		{
+			Name: "FLANNELD_IP_MASQ",
+			ValueFrom: &corev1.EnvVarSource{
+				ConfigMapKeyRef: &corev1.ConfigMapKeySelector{
+					Key: "masquerade",
+					LocalObjectReference: corev1.LocalObjectReference{
+						Name: "canal-config",
+					},
+				},
+			},
+		},
+	}
+
+	if ifacePatch {
+		flannelEnv = append(flannelEnv, corev1.EnvVar{
+			Name: "FLANNELD_IFACE",
+			ValueFrom: &corev1.EnvVarSource{
+				FieldRef: &corev1.ObjectFieldSelector{
+					FieldPath: "status.hostIP",
+				},
+			},
+		})
+	}
+
 	return &appsv1.DaemonSet{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "canal",
@@ -270,46 +312,7 @@ func daemonSet() *appsv1.DaemonSet {
 							SecurityContext: &corev1.SecurityContext{
 								Privileged: &privileged,
 							},
-							Env: []corev1.EnvVar{
-								{
-									Name: "POD_NAME",
-									ValueFrom: &corev1.EnvVarSource{
-										FieldRef: &corev1.ObjectFieldSelector{
-											FieldPath: "metadata.name",
-										},
-									},
-								},
-								{
-									Name: "POD_NAMESPACE",
-									ValueFrom: &corev1.EnvVarSource{
-										FieldRef: &corev1.ObjectFieldSelector{
-											FieldPath: "metadata.namespace",
-										},
-									},
-								},
-								{
-									Name: "FLANNELD_IFACE",
-									ValueFrom: &corev1.EnvVarSource{
-										ConfigMapKeyRef: &corev1.ConfigMapKeySelector{
-											Key: "canal_iface",
-											LocalObjectReference: corev1.LocalObjectReference{
-												Name: "canal-config",
-											},
-										},
-									},
-								},
-								{
-									Name: "FLANNELD_IP_MASQ",
-									ValueFrom: &corev1.EnvVarSource{
-										ConfigMapKeyRef: &corev1.ConfigMapKeySelector{
-											Key: "masquerade",
-											LocalObjectReference: corev1.LocalObjectReference{
-												Name: "canal-config",
-											},
-										},
-									},
-								},
-							},
+							Env: flannelEnv,
 							VolumeMounts: []corev1.VolumeMount{
 								{
 									MountPath: "/run/xtables.lock",

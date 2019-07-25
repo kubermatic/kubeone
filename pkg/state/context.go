@@ -47,9 +47,10 @@ type State struct {
 	RemoveBinaries            bool
 	ForceUpgrade              bool
 	UpgradeMachineDeployments bool
+	PatchCNI                  bool
 }
 
-// Clone returns a shallow copy of the context.
+// Clone returns a shallow copy of the State.
 func (s *State) Clone() *State {
 	newState := *s
 	return &newState

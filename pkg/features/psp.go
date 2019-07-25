@@ -22,6 +22,7 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/clientutil"
 	"github.com/kubermatic/kubeone/pkg/state"
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/kubeadmargs"
 
@@ -30,7 +31,6 @@ import (
 	rbacv1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
 
 const (
@@ -52,33 +52,26 @@ func installKubeSystemPSP(psp *kubeoneapi.PodSecurityPolicy, s *state.State) err
 		return nil
 	}
 
-	bgContext := context.Background()
-	okFunc := func(runtime.Object) error { return nil }
-
-	_, err := controllerutil.CreateOrUpdate(bgContext, s.DynamicClient, privilegedPSP(), okFunc)
-	if err != nil {
-		return errors.Wrap(err, "failed to ensure PodSecurityPolicy")
+	ctx := context.Background()
+	k8sobjects := []runtime.Object{
+		privilegedPSP(),
+		privilegedPSPClusterRole(),
+		privilegedPSPRoleBinding(),
 	}
 
-	_, err = controllerutil.CreateOrUpdate(bgContext, s.DynamicClient, privilegedPSPClusterRole(), okFunc)
-	if err != nil {
-		return errors.Wrap(err, "failed to ensure PodSecurityPolicy cluster role")
-	}
-
-	_, err = controllerutil.CreateOrUpdate(bgContext, s.DynamicClient, privilegedPSPRoleBinding(), okFunc)
-	if err != nil {
-		return errors.Wrap(err, "failed to ensure PodSecurityPolicy role binding")
+	for _, obj := range k8sobjects {
+		if err := clientutil.CreateOrUpdate(ctx, s.DynamicClient, obj); err != nil {
+			return errors.Wrap(err, "failed to ensure PodSecurityPolicy role binding")
+		}
 	}
 
 	return nil
 }
 
 func privilegedPSP() *policybeta1.PodSecurityPolicy {
+	t := true
+
 	return &policybeta1.PodSecurityPolicy{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "policy/v1beta1",
-			Kind:       "PodSecurityPolicy",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "privileged",
 		},
@@ -87,7 +80,7 @@ func privilegedPSP() *policybeta1.PodSecurityPolicy {
 			HostNetwork:              true,
 			HostIPC:                  true,
 			HostPID:                  true,
-			AllowPrivilegeEscalation: boolPtr(true),
+			AllowPrivilegeEscalation: &t,
 			AllowedCapabilities:      []corev1.Capability{"*"},
 			Volumes:                  []policybeta1.FSType{policybeta1.All},
 			HostPorts: []policybeta1.HostPortRange{
@@ -111,10 +104,6 @@ func privilegedPSP() *policybeta1.PodSecurityPolicy {
 
 func privilegedPSPClusterRole() *rbacv1.ClusterRole {
 	return &rbacv1.ClusterRole{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "rbac.authorization.k8s.io/v1",
-			Kind:       "ClusterRole",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "privileged-psp",
 		},
@@ -131,10 +120,6 @@ func privilegedPSPClusterRole() *rbacv1.ClusterRole {
 
 func privilegedPSPRoleBinding() *rbacv1.RoleBinding {
 	return &rbacv1.RoleBinding{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "rbac.authorization.k8s.io/v1",
-			Kind:       "RoleBinding",
-		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "privileged-psp",
 			Namespace: pspRoleNamespace,
@@ -157,8 +142,4 @@ func privilegedPSPRoleBinding() *rbacv1.RoleBinding {
 			},
 		},
 	}
-}
-
-func boolPtr(b bool) *bool {
-	return &b
 }

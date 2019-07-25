@@ -25,6 +25,7 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/clientutil"
 	"github.com/kubermatic/kubeone/pkg/credentials"
 	"github.com/kubermatic/kubeone/pkg/kubeconfig"
 	"github.com/kubermatic/kubeone/pkg/state"
@@ -34,6 +35,7 @@ import (
 	rbacv1 "k8s.io/api/rbac/v1"
 	apiextensions "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/kubernetes/pkg/registry/core/service/ipallocator"
@@ -54,80 +56,37 @@ func Deploy(s *state.State) error {
 		return errors.New("kubernetes client not initialized")
 	}
 
-	bgCtx := context.Background()
+	ctx := context.Background()
 
-	// ServiceAccounts
-	if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, machineControllerServiceAccount()); err != nil {
-		return errors.Wrap(err, "failed to ensure machine-controller service account")
-	}
-
-	// ClusterRoles
-	if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, machineControllerClusterRole()); err != nil {
-		return errors.Wrap(err, "failed to ensure machine-controller cluster role")
-	}
-
-	// ClusterRoleBindings
-	crbGenerators := []func() *rbacv1.ClusterRoleBinding{
-		nodeSignerClusterRoleBinding,
-		machineControllerClusterRoleBinding,
-		nodeBootstrapperClusterRoleBinding,
-	}
-
-	for _, crbGen := range crbGenerators {
-		if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, crbGen()); err != nil {
-			return errors.Wrap(err, "failed to ensure machine-controller cluster-role binding")
-		}
-	}
-
-	// Roles
-	roleGenerators := []func() *rbacv1.Role{
-		machineControllerKubeSystemRole,
-		machineControllerKubePublicRole,
-		machineControllerEndpointReaderRole,
-		machineControllerClusterInfoReaderRole,
-	}
-
-	for _, roleGen := range roleGenerators {
-		if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, roleGen()); err != nil {
-			return errors.Wrap(err, "failed to ensure machine-controller role")
-		}
-	}
-
-	// RoleBindings
-	roleBindingsGenerators := []func() *rbacv1.RoleBinding{
-		machineControllerKubeSystemRoleBinding,
-		machineControllerKubePublicRoleBinding,
-		machineControllerDefaultRoleBinding,
-		machineControllerClusterInfoRoleBinding,
-	}
-
-	for _, roleBindingGen := range roleBindingsGenerators {
-		if err := simpleCreateOrUpdate(bgCtx, s.DynamicClient, roleBindingGen()); err != nil {
-			return errors.Wrap(err, "failed to ensure machine-controller role binding")
-		}
-	}
-
-	// Deployments
 	deployment, err := machineControllerDeployment(s.Cluster)
 	if err != nil {
 		return errors.Wrap(err, "failed to generate machine-controller deployment")
 	}
 
-	if err = simpleCreateOrUpdate(bgCtx, s.DynamicClient, deployment); err != nil {
-		return errors.Wrap(err, "failed to ensure machine-controller deployment")
+	k8sobject := []runtime.Object{
+		machineControllerServiceAccount(),
+		machineControllerClusterRole(),
+		nodeSignerClusterRoleBinding(),
+		machineControllerClusterRoleBinding(),
+		nodeBootstrapperClusterRoleBinding(),
+		machineControllerKubeSystemRole(),
+		machineControllerKubePublicRole(),
+		machineControllerEndpointReaderRole(),
+		machineControllerClusterInfoReaderRole(),
+		machineControllerKubeSystemRoleBinding(),
+		machineControllerKubePublicRoleBinding(),
+		machineControllerDefaultRoleBinding(),
+		machineControllerClusterInfoRoleBinding(),
+		machineControllerMachineCRD(),
+		machineControllerClusterCRD(),
+		machineControllerMachineSetCRD(),
+		machineControllerMachineDeploymentCRD(),
+		deployment,
 	}
 
-	// CRDs
-	crdGenerators := []func() *apiextensions.CustomResourceDefinition{
-		machineControllerMachineCRD,
-		machineControllerClusterCRD,
-		machineControllerMachineSetCRD,
-		machineControllerMachineDeploymentCRD,
-	}
-
-	for _, crdGen := range crdGenerators {
-		if err = simpleCreateOrUpdate(bgCtx, s.DynamicClient, crdGen()); err != nil {
-			return errors.Wrap(err, "failed to ensure machine-controller CRDs")
+	for _, obj := range k8sobject {
+		if err = clientutil.CreateOrUpdate(ctx, s.DynamicClient, obj); err != nil {
+			return errors.Wrapf(err, "failed to ensure machine-controller %T", obj)
 		}
 	}
 

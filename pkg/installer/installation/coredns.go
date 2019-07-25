@@ -40,14 +40,14 @@ func patchCoreDNS(s *state.State) error {
 		return errors.New("kubernetes client not initialized")
 	}
 
-	bgCtx := context.Background()
+	ctx := context.Background()
 	dep := &appsv1.Deployment{}
 	key := client.ObjectKey{
 		Name:      "coredns",
 		Namespace: metav1.NamespaceSystem,
 	}
 
-	err := s.DynamicClient.Get(bgCtx, key, dep)
+	err := s.DynamicClient.Get(ctx, key, dep)
 	if err != nil {
 		return errors.Wrap(err, "failed to get coredns deployment")
 	}
@@ -60,5 +60,5 @@ func patchCoreDNS(s *state.State) error {
 		},
 	)
 
-	return errors.Wrap(s.DynamicClient.Update(bgCtx, dep), "failed to update coredns deployment")
+	return errors.Wrap(s.DynamicClient.Update(ctx, dep), "failed to update coredns deployment")
 }

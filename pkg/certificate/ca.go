@@ -27,6 +27,8 @@ import (
 
 // DownloadCA grabs CA certs/keys from leader host
 func DownloadCA(s *state.State) error {
+	s.Logger.Info("Downloading PKI…")
+
 	return s.RunTaskOnLeader(func(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
 		_, _, err := s.Runner.Run(`
 mkdir -p ./{{ .WORK_DIR }}/pki/etcd
