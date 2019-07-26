@@ -18,6 +18,9 @@
 # It installs dependencies and starts the tests
 
 set -euo pipefail
+# Required for signal propagation to work so the cleanup trap
+# gets executed when the script receives a SIGINT
+set -o monitor
 
 RUNNING_IN_CI=${JOB_NAME:-""}
 BUILD_ID=${BUILD_ID:-"${USER}-local"}
