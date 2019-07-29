@@ -31,6 +31,8 @@ TEST_CLUSTER_TARGET_VERSION=${TEST_CLUSTER_TARGET_VERSION:-""}
 TEST_CLUSTER_INITIAL_VERSION=${TEST_CLUSTER_INITIAL_VERSION:-""}
 export TF_VAR_cluster_name=${BUILD_ID}
 
+PATH=$PATH:$(go env GOPATH)/bin
+
 # Install dependencies
 if ! [ -x "$(command -v terraform)" ]; then
   echo "Installing unzip"
@@ -52,7 +54,6 @@ if ! [ -x "$(command -v kubetest)" ]; then
   pushd .
   cd /tmp
   go get k8s.io/test-infra/kubetest
-  PATH=$PATH:$(go env GOPATH)/bin
   popd
 fi
 
