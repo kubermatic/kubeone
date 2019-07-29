@@ -68,7 +68,7 @@ output "kubeone_workers" {
           labels = {
             "${var.cluster_name}-workers" = "pool1"
           }
-          tags     = ["firewall", "targets"]
+          tags     = ["firewall", "targets", "${var.cluster_name}-pool1"]
           regional = false
         }
       }
