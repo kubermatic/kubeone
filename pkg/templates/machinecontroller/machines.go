@@ -35,14 +35,6 @@ import (
 	clusterv1alpha1 "sigs.k8s.io/cluster-api/pkg/apis/cluster/v1alpha1"
 )
 
-type providerSpec struct {
-	SSHPublicKeys       []string                     `json:"sshPublicKeys"`
-	CloudProvider       kubeoneapi.CloudProviderName `json:"cloudProvider"`
-	CloudProviderSpec   interface{}                  `json:"cloudProviderSpec"`
-	OperatingSystem     string                       `json:"operatingSystem"`
-	OperatingSystemSpec interface{}                  `json:"operatingSystemSpec"`
-}
-
 // DeployMachineDeployments deploys MachineDeployments that create appropriate machines
 func DeployMachineDeployments(s *state.State) error {
 	if s.DynamicClient == nil {
@@ -75,15 +67,20 @@ func createMachineDeployment(cluster *kubeoneapi.KubeOneCluster, workerset kubeo
 		return nil, errors.Wrap(err, "failed to generate machineSpec")
 	}
 
-	config := providerSpec{
-		CloudProvider:       provider,
-		CloudProviderSpec:   cloudProviderSpec,
-		OperatingSystem:     workerset.Config.OperatingSystem,
-		OperatingSystemSpec: workerset.Config.OperatingSystemSpec,
-		SSHPublicKeys:       workerset.Config.SSHPublicKeys,
+	cloudProviderSpecJSON, err := json.Marshal(cloudProviderSpec)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to marshal cloudProviderSpec to JSON")
 	}
 
-	encoded, err := json.Marshal(config)
+	workerset.Config.CloudProviderSpec = cloudProviderSpecJSON
+
+	encoded, err := json.Marshal(struct {
+		kubeoneapi.ProviderSpec
+		CloudProvider kubeoneapi.CloudProviderName `json:"cloudProvider"`
+	}{
+		ProviderSpec:  workerset.Config,
+		CloudProvider: provider,
+	})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to JSON marshal providerSpec")
 	}
@@ -94,6 +91,12 @@ func createMachineDeployment(cluster *kubeoneapi.KubeOneCluster, workerset kubeo
 	minReadySeconds := int32(0)
 	workersetNameLabels := map[string]string{
 		"workerset": workerset.Name,
+	}
+
+	if workerset.Config.Network != nil {
+		// we have static network config
+		maxSurge = intstr.FromInt(0)
+		maxUnavailable = intstr.FromInt(1)
 	}
 
 	return &clusterv1alpha1.MachineDeployment{
@@ -121,9 +124,6 @@ func createMachineDeployment(cluster *kubeoneapi.KubeOneCluster, workerset kubeo
 					Labels:    labels.Merge(workerset.Config.Labels, workersetNameLabels),
 				},
 				Spec: clusterv1alpha1.MachineSpec{
-					ObjectMeta: metav1.ObjectMeta{
-						Labels: labels.Merge(workerset.Config.Labels, workersetNameLabels),
-					},
 					Versions: clusterv1alpha1.MachineVersionInfo{
 						Kubelet: cluster.Versions.Kubernetes,
 					},
