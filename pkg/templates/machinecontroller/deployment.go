@@ -47,7 +47,7 @@ const (
 	MachineControllerNamespace     = metav1.NamespaceSystem
 	MachineControllerAppLabelKey   = "app"
 	MachineControllerAppLabelValue = "machine-controller"
-	MachineControllerTag           = "v1.4.2"
+	MachineControllerTag           = "v1.5.1"
 )
 
 // Deploy deploys MachineController deployment with RBAC on the cluster
@@ -153,7 +153,7 @@ func machineControllerClusterRole() *rbacv1.ClusterRole {
 			{
 				APIGroups: []string{"apiextensions.k8s.io"},
 				Resources: []string{"customresourcedefinitions"},
-				Verbs:     []string{"get"},
+				Verbs:     []string{"create", "get", "list", "watch"},
 			},
 			{
 				APIGroups:     []string{"apiextensions.k8s.io"},
@@ -168,7 +168,7 @@ func machineControllerClusterRole() *rbacv1.ClusterRole {
 			},
 			{
 				APIGroups: []string{""},
-				Resources: []string{"persistentvolumes"},
+				Resources: []string{"persistentvolumes", "secrets", "configmaps"},
 				Verbs:     []string{"list", "get", "watch"},
 			},
 			{
