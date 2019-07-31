@@ -19,17 +19,18 @@ package machinecontroller
 // AWSSpec holds cloudprovider spec for AWS
 type AWSSpec struct {
 	AMI              string            `json:"ami"`
+	AssignPublicIP   *bool             `json:"assignPublicIP"`
 	AvailabilityZone string            `json:"availabilityZone"`
+	DiskIops         *int              `json:"diskIops,omitempty"`
+	DiskSize         *int              `json:"diskSize"`
+	DiskType         string            `json:"diskType"`
 	InstanceProfile  string            `json:"instanceProfile"`
+	InstanceType     *string           `json:"instanceType"`
 	Region           string            `json:"region"`
 	SecurityGroupIDs []string          `json:"securityGroupIDs"`
 	SubnetID         string            `json:"subnetId"`
-	VPCID            string            `json:"vpcId"`
-	InstanceType     *string           `json:"instanceType"`
-	DiskSize         *int              `json:"diskSize"`
-	DiskType         string            `json:"diskType"`
-	DiskIops         *int              `json:"diskIops,omitempty"`
 	Tags             map[string]string `json:"tags"`
+	VPCID            string            `json:"vpcId"`
 }
 
 // DigitalOceanSpec holds cloudprovider spec for DigitalOcean

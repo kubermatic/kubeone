@@ -24,6 +24,22 @@ resource "aws_default_vpc" "default" {
 locals {
   kube_cluster_tag = "kubernetes.io/cluster/${var.cluster_name}"
   ami              = var.ami == "" ? data.aws_ami.ubuntu.id : var.ami
+  zoneA            = data.aws_availability_zones.available.names[0]
+  zoneB            = data.aws_availability_zones.available.names[1]
+  zoneC            = data.aws_availability_zones.available.names[2]
+
+  subnets = {
+    public = {
+      "${local.zoneA}" = aws_subnet.public[0].id
+      "${local.zoneB}" = aws_subnet.public[1].id
+      "${local.zoneC}" = aws_subnet.public[2].id
+    }
+    private = {
+      "${local.zoneA}" = aws_subnet.private[0].id
+      "${local.zoneB}" = aws_subnet.private[1].id
+      "${local.zoneC}" = aws_subnet.private[2].id
+    }
+  }
 }
 
 ################################# DATA SOURCES #################################
@@ -38,8 +54,7 @@ data "aws_internet_gateway" "default" {
   }
 }
 
-data "aws_availability_zones" "available" {
-}
+data "aws_availability_zones" "available" {}
 
 data "aws_ami" "ubuntu" {
   most_recent = true
@@ -237,23 +252,18 @@ resource "aws_security_group" "control_plane" {
 ##################################### IAM ######################################
 resource "aws_iam_role" "control_plane" {
   name = "${var.cluster_name}-host"
-
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "",
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "ec2.amazonaws.com"
-      },
-      "Action": "sts:AssumeRole"
-    }
-  ]
-}
-EOF
-
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        },
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
 }
 
 resource "aws_iam_instance_profile" "control_plane" {
@@ -264,72 +274,59 @@ resource "aws_iam_instance_profile" "control_plane" {
 resource "aws_iam_role_policy" "control_plane" {
   name = "${var.cluster_name}-control-plane"
   role = aws_iam_role.control_plane.id
-
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": ["ec2:*"],
-      "Resource": ["*"]
-    },
-    {
-      "Effect": "Allow",
-      "Action": ["elasticloadbalancing:*"],
-      "Resource": ["*"]
-    }
-  ]
-}
-EOF
-
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow",
+        Action   = ["ec2:*"],
+        Resource = ["*"],
+      },
+      {
+        Effect   = "Allow",
+        Action   = ["elasticloadbalancing:*"],
+        Resource = ["*"],
+      }
+    ]
+  })
 }
 
 resource "aws_iam_role" "workers" {
-name = "${var.cluster_name}-workers"
-
-assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "",
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "ec2.amazonaws.com"
-      },
-      "Action": "sts:AssumeRole"
-    }
-  ]
-}
-EOF
-
+  name = "${var.cluster_name}-workers"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        },
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
 }
 
 resource "aws_iam_instance_profile" "workers" {
-name = "${var.cluster_name}-workers"
-role = aws_iam_role.workers.name
+  name = "${var.cluster_name}-workers"
+  role = aws_iam_role.workers.name
 }
 
 resource "aws_iam_role_policy" "workers" {
-name = "${var.cluster_name}-workers"
-role = aws_iam_role.workers.id
-
-policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": [
-        "ec2:Describe*"
-      ],
-      "Effect": "Allow",
-      "Resource": "*"
-    }
-  ]
-}
-EOF
-
+  name = "${var.cluster_name}-workers"
+  role = aws_iam_role.workers.id
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = [
+          "ec2:Describe*"
+        ],
+        Effect   = "Allow",
+        Resource = "*"
+      }
+    ]
+  })
 }
 
 ################################## SSH ACCESS ##################################
@@ -350,14 +347,15 @@ resource "aws_instance" "control_plane" {
     local.kube_cluster_tag, "shared",
   )
 
-  instance_type          = var.control_plane_type
-  iam_instance_profile   = aws_iam_instance_profile.control_plane.name
-  ami                    = local.ami
-  key_name               = aws_key_pair.deployer.key_name
-  vpc_security_group_ids = [aws_security_group.common.id, aws_security_group.control_plane.id]
-  availability_zone      = data.aws_availability_zones.available.names[count.index]
-  subnet_id              = element(aws_subnet.private.*.id, count.index)
-  ebs_optimized          = true
+  instance_type               = var.control_plane_type
+  iam_instance_profile        = aws_iam_instance_profile.control_plane.name
+  ami                         = local.ami
+  key_name                    = aws_key_pair.deployer.key_name
+  vpc_security_group_ids      = [aws_security_group.common.id, aws_security_group.control_plane.id]
+  availability_zone           = data.aws_availability_zones.available.names[count.index]
+  subnet_id                   = local.subnets["private"][data.aws_availability_zones.available.names[count.index]]
+  associate_public_ip_address = false
+  ebs_optimized               = true
 
   root_block_device {
     volume_type = "gp2"
@@ -372,12 +370,13 @@ resource "aws_instance" "bastion" {
     local.kube_cluster_tag, "shared",
   )
 
-  instance_type          = "t3.nano"
-  ami                    = local.ami
-  key_name               = aws_key_pair.deployer.key_name
-  vpc_security_group_ids = [aws_security_group.common.id]
-  availability_zone      = data.aws_availability_zones.available.names[0]
-  subnet_id              = element(aws_subnet.public.*.id, 0)
+  instance_type               = "t3.nano"
+  ami                         = local.ami
+  key_name                    = aws_key_pair.deployer.key_name
+  vpc_security_group_ids      = [aws_security_group.common.id]
+  availability_zone           = data.aws_availability_zones.available.names[0]
+  subnet_id                   = local.subnets["public"][local.zoneA]
+  associate_public_ip_address = true
 
   root_block_device {
     volume_type = "gp2"
