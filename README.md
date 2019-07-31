@@ -20,6 +20,7 @@
 Kubernetes High-Available (HA) clusters. It can be used on any cloud provider,
 on-prem or bare-metal cluster.
 
+
 ## Project Status
 
 As of v0.6.0, KubeOne is in the beta phase. Check out the
