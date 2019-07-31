@@ -21,6 +21,7 @@ on-prem or bare-metal cluster.
 
 ## Project Status
 
+
 As of v0.6.0, KubeOne is in the beta phase. Check out the
 [Backwards Compatibility Policy][6] for more details on
 backwards compatibility, KubeOne versioning, and maturity of each KubeOne
