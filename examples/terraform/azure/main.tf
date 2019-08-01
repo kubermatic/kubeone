@@ -111,7 +111,7 @@ resource "azurerm_public_ip" "control_plane" {
 
 resource "azurerm_lb" "lb" {
   resource_group_name = azurerm_resource_group.rg.name
-  name                = "${var.cluster_name}-lb"
+  name                = "kubernetes"
   location            = var.location
 
   frontend_ip_configuration {
