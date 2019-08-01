@@ -58,7 +58,7 @@ func Deploy(s *state.State) error {
 
 	ctx := context.Background()
 
-	deployment, err := machineControllerDeployment(s.Cluster)
+	deployment, err := machineControllerDeployment(s.Cluster, s.Secrets)
 	if err != nil {
 		return errors.Wrap(err, "failed to generate machine-controller deployment")
 	}
@@ -672,12 +672,17 @@ func machineControllerMachineDeploymentCRD() *apiextensions.CustomResourceDefini
 	}
 }
 
-func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster) (*appsv1.Deployment, error) {
+func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster, secrets *kubeoneapi.KubeOneSecrets) (*appsv1.Deployment, error) {
 	var replicas int32 = 1
 
 	clusterDNS, err := clusterDNSIP(cluster)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get clusterDNS IP")
+	}
+
+	env, err := credentials.EnvBindings(cluster.CloudProvider.Name, secrets, credentials.SecretName)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to parse env bindings")
 	}
 
 	args := []string{
@@ -763,7 +768,7 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster) (*appsv1.De
 							ImagePullPolicy:          corev1.PullIfNotPresent,
 							Command:                  []string{"/usr/local/bin/machine-controller"},
 							Args:                     args,
-							Env:                      getEnvVarCredentials(cluster),
+							Env:                      env,
 							TerminationMessagePath:   corev1.TerminationMessagePathDefault,
 							TerminationMessagePolicy: corev1.TerminationMessageReadFile,
 							ReadinessProbe: &corev1.Probe{
@@ -797,26 +802,6 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster) (*appsv1.De
 			},
 		},
 	}, nil
-}
-
-func getEnvVarCredentials(cluster *kubeoneapi.KubeOneCluster) []corev1.EnvVar {
-	env := make([]corev1.EnvVar, 0)
-
-	for k := range cluster.Credentials {
-		env = append(env, corev1.EnvVar{
-			Name: k,
-			ValueFrom: &corev1.EnvVarSource{
-				SecretKeyRef: &corev1.SecretKeySelector{
-					LocalObjectReference: corev1.LocalObjectReference{
-						Name: credentials.SecretName,
-					},
-					Key: k,
-				},
-			},
-		})
-	}
-
-	return env
 }
 
 // clusterDNSIP returns the IP address of ClusterDNS Service,
