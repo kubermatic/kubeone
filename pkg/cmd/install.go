@@ -70,6 +70,7 @@ It's possible to source information about hosts from Terraform output, using the
 	}
 
 	cmd.Flags().StringVarP(&iopts.BackupFile, "backup", "b", "", "path to where the PKI backup .tar.gz file should be placed (default: location of cluster config file)")
+	cmd.Flags().StringVarP(&iopts.Secrets, "secrets", "s", "", "path to secrets manifest")
 
 	return cmd
 }
@@ -80,16 +81,23 @@ func runInstall(logger *logrus.Logger, installOptions *installOptions) error {
 	if err != nil {
 		return errors.Wrap(err, "failed to load cluster")
 	}
+	var secrets *kubeoneapi.KubeOneSecrets
+	if len(installOptions.Secrets) > 0 {
+		secrets, err = loadSecrets(installOptions.Secrets)
+		if err != nil {
+			return errors.Wrap(err, "failed to load secrets")
+		}
+	}
 
-	options, err := createInstallerOptions(installOptions.Manifest, cluster, installOptions)
+	options, err := createInstallerOptions(installOptions.Manifest, cluster, secrets, installOptions)
 	if err != nil {
 		return errors.Wrap(err, "failed to create installer options")
 	}
 
-	return installer.NewInstaller(cluster, logger).Install(options)
+	return installer.NewInstaller(cluster, secrets, logger).Install(options)
 }
 
-func createInstallerOptions(clusterFile string, cluster *kubeoneapi.KubeOneCluster, options *installOptions) (*installer.Options, error) {
+func createInstallerOptions(clusterFile string, cluster *kubeoneapi.KubeOneCluster, secrets *kubeoneapi.KubeOneSecrets, options *installOptions) (*installer.Options, error) {
 	if len(options.BackupFile) == 0 {
 		fullPath, _ := filepath.Abs(clusterFile)
 		clusterName := cluster.Name

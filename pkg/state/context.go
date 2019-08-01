@@ -32,6 +32,7 @@ import (
 // utilities like logger
 type State struct {
 	Cluster                   *kubeoneapi.KubeOneCluster
+	Secrets                   *kubeoneapi.KubeOneSecrets
 	Logger                    logrus.FieldLogger
 	Connector                 *ssh.Connector
 	Configuration             *configupload.Configuration

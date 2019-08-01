@@ -34,6 +34,7 @@ const (
 // globalOptions are global globalOptions same for all commands
 type globalOptions struct {
 	TerraformState string
+	Secrets        string
 	Verbose        bool
 	Debug          bool
 }
@@ -73,6 +74,15 @@ func loadClusterConfig(filename, terraformOutputPath string, logger *logrus.Logg
 	a, err := config.LoadKubeOneCluster(filename, terraformOutputPath, logger)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to load a given KubeOneCluster object")
+	}
+
+	return a, nil
+}
+
+func loadSecrets(filename string) (*kubeoneapi.KubeOneSecrets, error) {
+	a, err := config.LoadKubeOneSecrets(filename)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to load a given KubeOneSecrets object")
 	}
 
 	return a, nil

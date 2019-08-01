@@ -36,13 +36,15 @@ type Options struct {
 // Upgrader is entrypoint for the upgrade process
 type Upgrader struct {
 	cluster *kubeoneapi.KubeOneCluster
+	secrets *kubeoneapi.KubeOneSecrets
 	logger  *logrus.Logger
 }
 
 // NewUpgrader returns a new upgrader, responsible for running the upgrade process
-func NewUpgrader(cluster *kubeoneapi.KubeOneCluster, logger *logrus.Logger) *Upgrader {
+func NewUpgrader(cluster *kubeoneapi.KubeOneCluster, secrets *kubeoneapi.KubeOneSecrets, logger *logrus.Logger) *Upgrader {
 	return &Upgrader{
 		cluster: cluster,
+		secrets: secrets,
 		logger:  logger,
 	}
 }
@@ -57,6 +59,7 @@ func (u *Upgrader) Upgrade(options *Options) error {
 func (u *Upgrader) createState(options *Options) *state.State {
 	return &state.State{
 		Cluster:                   u.cluster,
+		Secrets:                   u.secrets,
 		Connector:                 ssh.NewConnector(),
 		Configuration:             configupload.NewConfiguration(),
 		WorkDir:                   "kubeone",

@@ -21,6 +21,7 @@ import (
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/configupload"
+	"github.com/kubermatic/kubeone/pkg/credentials"
 	"github.com/kubermatic/kubeone/pkg/installer/installation"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/state"
@@ -38,20 +39,27 @@ type Options struct {
 // Installer is entrypoint for installation process
 type Installer struct {
 	cluster *kubeoneapi.KubeOneCluster
+	secrets *kubeoneapi.KubeOneSecrets
 	logger  *logrus.Logger
 }
 
 // NewInstaller returns a new installer, responsible for dispatching
 // between the different supported Kubernetes versions and running the
-func NewInstaller(cluster *kubeoneapi.KubeOneCluster, logger *logrus.Logger) *Installer {
+func NewInstaller(cluster *kubeoneapi.KubeOneCluster, secrets *kubeoneapi.KubeOneSecrets, logger *logrus.Logger) *Installer {
 	return &Installer{
 		cluster: cluster,
+		secrets: secrets,
 		logger:  logger,
 	}
 }
 
 // Install run the installation process
 func (i *Installer) Install(options *Options) error {
+	_, err := credentials.ProviderCredentials(i.cluster.CloudProvider.Name, i.secrets)
+	if err != nil {
+		return err
+	}
+
 	return installation.Install(i.createState(options))
 }
 
@@ -69,6 +77,7 @@ func (i *Installer) Reset(options *Options) error {
 func (i *Installer) createState(options *Options) *state.State {
 	return &state.State{
 		Cluster:        i.cluster,
+		Secrets:        i.secrets,
 		Connector:      ssh.NewConnector(),
 		Configuration:  configupload.NewConfiguration(),
 		WorkDir:        "kubeone",

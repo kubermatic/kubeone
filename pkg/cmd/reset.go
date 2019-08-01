@@ -22,6 +22,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/installer"
 )
 
@@ -65,6 +66,7 @@ It's possible to source information about hosts from Terraform output, using the
 
 	cmd.Flags().BoolVarP(&ropts.DestroyWorkers, "destroy-workers", "", true, "destroy all worker machines before resetting the cluster")
 	cmd.Flags().BoolVarP(&ropts.RemoveBinaries, "remove-binaries", "", false, "remove kubernetes binaries after resetting the cluster")
+	cmd.Flags().StringVarP(&ropts.Secrets, "secrets", "s", "", "path to secrets manifest")
 
 	return cmd
 }
@@ -79,6 +81,13 @@ func runReset(logger *logrus.Logger, resetOptions *resetOptions) error {
 	if err != nil {
 		return errors.Wrap(err, "failed to load cluster")
 	}
+	var secrets *kubeoneapi.KubeOneSecrets
+	if len(resetOptions.Secrets) > 0 {
+		secrets, err = loadSecrets(resetOptions.Secrets)
+		if err != nil {
+			return errors.Wrap(err, "failed to load secrets")
+		}
+	}
 
 	options := &installer.Options{
 		Verbose:        resetOptions.Verbose,
@@ -86,5 +95,5 @@ func runReset(logger *logrus.Logger, resetOptions *resetOptions) error {
 		RemoveBinaries: resetOptions.RemoveBinaries,
 	}
 
-	return installer.NewInstaller(cluster, logger).Reset(options)
+	return installer.NewInstaller(cluster, secrets, logger).Reset(options)
 }

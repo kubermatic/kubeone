@@ -22,6 +22,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/upgrader"
 )
 
@@ -65,6 +66,7 @@ It's possible to source information about hosts from Terraform output, using the
 
 	cmd.Flags().BoolVarP(&uopts.ForceUpgrade, "force", "f", false, "force start upgrade process")
 	cmd.Flags().BoolVarP(&uopts.UpgradeMachineDeployments, "upgrade-machine-deployments", "", false, "upgrade MachineDeployments objects")
+	cmd.Flags().StringVarP(&uopts.Secrets, "secrets", "s", "", "path to secrets manifest")
 
 	return cmd
 }
@@ -75,9 +77,16 @@ func runUpgrade(logger *logrus.Logger, upgradeOptions *upgradeOptions) error {
 	if err != nil {
 		return errors.Wrap(err, "failed to load cluster")
 	}
+	var secrets *kubeoneapi.KubeOneSecrets
+	if len(upgradeOptions.Secrets) > 0 {
+		secrets, err = loadSecrets(upgradeOptions.Secrets)
+		if err != nil {
+			return errors.Wrap(err, "failed to load secrets")
+		}
+	}
 
 	options := createUpgradeOptions(upgradeOptions)
-	return upgrader.NewUpgrader(cluster, logger).Upgrade(options)
+	return upgrader.NewUpgrader(cluster, secrets, logger).Upgrade(options)
 }
 
 func createUpgradeOptions(options *upgradeOptions) *upgrader.Options {
