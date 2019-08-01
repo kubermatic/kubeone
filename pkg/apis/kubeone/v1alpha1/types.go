@@ -52,6 +52,17 @@ type KubeOneCluster struct {
 	Credentials map[string]string `json:"credentials,omitempty"`
 }
 
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+// KubeOneSecrets hold secrets needed to provision the cluster
+type KubeOneSecrets struct {
+	metav1.TypeMeta `json:",inline"`
+
+	// Secrets contains list of secrets to be used by KubeOne instead of
+	// environment variables
+	Secrets map[string]string `json:"secrets"`
+}
+
 // HostConfig describes a single control plane node.
 type HostConfig struct {
 	ID                int    `json:"-"`
