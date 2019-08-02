@@ -44,7 +44,7 @@ func ValidateKubeOneCluster(c kubeone.KubeOneCluster) field.ErrorList {
 		allErrs = append(allErrs, ValidateMachineControllerConfig(c.MachineController, c.CloudProvider.Name, field.NewPath("machineController"))...)
 		allErrs = append(allErrs, ValidateWorkerConfig(c.Workers, field.NewPath("workers"))...)
 	} else if len(c.Workers) > 0 {
-		allErrs = append(allErrs, field.Invalid(field.NewPath("workers"), c.Workers, "machine-controller deployment is disabled, but configuration still contains worker definitions"))
+		allErrs = append(allErrs, field.Forbidden(field.NewPath("workers"), "machine-controller deployment is disabled, but configuration still contains worker definitions"))
 	}
 
 	allErrs = append(allErrs, ValidateVersionConfig(c.Versions, field.NewPath("versions"))...)
