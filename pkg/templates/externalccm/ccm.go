@@ -50,6 +50,8 @@ func Ensure(s *state.State) error {
 	s.PatchCNI = true
 
 	switch s.Cluster.CloudProvider.Name {
+	case kubeoneapi.CloudProviderNameOpenStack:
+		err = ensureOpenStack(s)
 	case kubeoneapi.CloudProviderNameHetzner:
 		err = ensureHetzner(s)
 	case kubeoneapi.CloudProviderNameDigitalOcean:
@@ -111,6 +113,41 @@ func mutateDeploymentWithVersionCheck(want *semver.Constraints) func(obj runtime
 		}
 
 		imageSpec := strings.SplitN(dep.Spec.Template.Spec.Containers[0].Image, ":", 2)
+		if len(imageSpec) != 2 {
+			return errors.New("unable to grab CCM image version")
+		}
+
+		existing, err := semver.NewVersion(imageSpec[1])
+		if err != nil {
+			return errors.Wrap(err, "failed to parse deployed CCM version")
+		}
+
+		if !want.Check(existing) {
+			return errors.New("newer version deployed, skipping")
+		}
+
+		// OK to update the deployment
+		return nil
+	}
+}
+
+func mutateDaemonsetWithVersionCheck(want *semver.Constraints) func(obj runtime.Object) error {
+	return func(obj runtime.Object) error {
+		ds, ok := obj.(*appsv1.DaemonSet)
+		if !ok {
+			return errors.Errorf("unknown object type %T passed", obj)
+		}
+
+		if ds.ObjectMeta.CreationTimestamp.IsZero() {
+			// let it create deployment
+			return nil
+		}
+
+		if len(ds.Spec.Template.Spec.Containers) != 1 {
+			return errors.New("unable to choose a CCM container, as number of containers > 1")
+		}
+
+		imageSpec := strings.SplitN(ds.Spec.Template.Spec.Containers[0].Image, ":", 2)
 		if len(imageSpec) != 2 {
 			return errors.New("unable to grab CCM image version")
 		}
