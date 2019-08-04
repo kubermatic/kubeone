@@ -209,6 +209,8 @@ func osDaemonSet(version, os string) *appsv1.DaemonSet {
 		caCertsPath = "/usr/share/ca-certificates"
 	}
 
+	var user int64 = 1001
+
 	return &appsv1.DaemonSet{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: openstackDeploymentName,
@@ -286,6 +288,12 @@ func osDaemonSet(version, os string) *appsv1.DaemonSet {
 								},
 							},
 						},
+					},
+					NodeSelector: map[string]string{
+						"node-role.kubernetes.io/master": "",
+					},
+					SecurityContext: &corev1.PodSecurityContext{
+						RunAsUser: &user,
 					},
 					HostNetwork: true,
 					Volumes: []corev1.Volume{
