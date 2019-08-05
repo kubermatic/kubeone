@@ -17,19 +17,22 @@ limitations under the License.
 package externalccm
 
 import (
-	"github.com/Masterminds/semver"
-	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
-	"strings"
 	"context"
+	"strings"
+
+	"github.com/Masterminds/semver"
 	"github.com/pkg/errors"
+
 	"github.com/kubermatic/kubeone/pkg/clientutil"
-	"k8s.io/apimachinery/pkg/runtime"
 	"github.com/kubermatic/kubeone/pkg/state"
-	"k8s.io/apimachinery/pkg/api/resource"
+
 	appsv1 "k8s.io/api/apps/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
 
 const (
