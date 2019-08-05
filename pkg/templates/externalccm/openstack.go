@@ -36,14 +36,14 @@ import (
 )
 
 const (
-	openstackSAName = "cloud-controller-manager"
-	openstackDeploymentName = "openstack-cloud-controller-manager"
+	openstackSAName           = "cloud-controller-manager"
+	openstackDeploymentName   = "openstack-cloud-controller-manager"
 	openstackConfigSecretName = "cloud-config"
 )
 
 // Starting with v1.15.x the OS cloud provider started pinning their CCM versions.
 var ccmVersionMapping = map[string]string{
-	"1.15.":  "v1.15.0",
+	"1.15.": "v1.15.0",
 }
 
 func ensureOpenStack(s *state.State) error {
@@ -102,7 +102,7 @@ func ensureOpenStack(s *state.State) error {
 func osServiceAccount() *corev1.ServiceAccount {
 	return &corev1.ServiceAccount{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: openstackSAName,
+			Name:      openstackSAName,
 			Namespace: metav1.NamespaceSystem,
 		},
 	}
@@ -111,7 +111,7 @@ func osServiceAccount() *corev1.ServiceAccount {
 func osSecret(cloudConfig string) *corev1.Secret {
 	return &corev1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: openstackConfigSecretName,
+			Name:      openstackConfigSecretName,
 			Namespace: metav1.NamespaceSystem,
 		},
 		StringData: map[string]string{
@@ -216,8 +216,8 @@ func osDaemonSet(version, os string) *appsv1.DaemonSet {
 
 	return &appsv1.DaemonSet{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: openstackDeploymentName,
-			Namespace: metav1.NamespaceSystem, 
+			Name:      openstackDeploymentName,
+			Namespace: metav1.NamespaceSystem,
 		},
 		Spec: appsv1.DaemonSetSpec{
 			RevisionHistoryLimit: &revisions,
@@ -254,7 +254,7 @@ func osDaemonSet(version, os string) *appsv1.DaemonSet {
 					},
 					Containers: []corev1.Container{
 						{
-							Name: "openstack-cloud-controller-manager",
+							Name:  "openstack-cloud-controller-manager",
 							Image: "docker.io/k8scloudprovider/openstack-cloud-controller-manager:" + version,
 							Command: []string{
 								"/bin/openstack-cloud-controller-manager",
@@ -265,23 +265,23 @@ func osDaemonSet(version, os string) *appsv1.DaemonSet {
 								"--address=127.0.0.1",
 							},
 							VolumeMounts: []corev1.VolumeMount{
-								corev1.VolumeMount{
-									Name: "k8s-certs",
+								{
+									Name:      "k8s-certs",
 									MountPath: "/etc/kubernetes/pki",
-									ReadOnly: true,
+									ReadOnly:  true,
 								},
-								corev1.VolumeMount{
-									Name: "ca-certs",
+								{
+									Name:      "ca-certs",
 									MountPath: "/etc/ssl/certs",
-									ReadOnly: true,
+									ReadOnly:  true,
 								},
-								corev1.VolumeMount{
-									Name: "cloud-config-volume",
+								{
+									Name:      "cloud-config-volume",
 									MountPath: "/etc/config",
-									ReadOnly: true,
+									ReadOnly:  true,
 								},
-								corev1.VolumeMount{
-									Name: "flexvolume-dir",
+								{
+									Name:      "flexvolume-dir",
 									MountPath: "/usr/libexec/kubernetes/kubelet-plugins/volume/exec",
 								},
 							},
@@ -300,7 +300,7 @@ func osDaemonSet(version, os string) *appsv1.DaemonSet {
 					},
 					HostNetwork: true,
 					Volumes: []corev1.Volume{
-						corev1.Volume{
+						{
 							Name: "flexvolume-dir",
 							VolumeSource: corev1.VolumeSource{
 								// TODO: Fix for CoreOS
@@ -310,7 +310,7 @@ func osDaemonSet(version, os string) *appsv1.DaemonSet {
 								},
 							},
 						},
-						corev1.Volume{
+						{
 							Name: "k8s-certs",
 							VolumeSource: corev1.VolumeSource{
 								HostPath: &corev1.HostPathVolumeSource{
@@ -319,7 +319,7 @@ func osDaemonSet(version, os string) *appsv1.DaemonSet {
 								},
 							},
 						},
-						corev1.Volume{
+						{
 							Name: "ca-certs",
 							VolumeSource: corev1.VolumeSource{
 								// TODO: Fix for CoreOS
@@ -329,11 +329,11 @@ func osDaemonSet(version, os string) *appsv1.DaemonSet {
 								},
 							},
 						},
-						corev1.Volume{
+						{
 							Name: "cloud-config-volume",
 							VolumeSource: corev1.VolumeSource{
 								Secret: &corev1.SecretVolumeSource{
-								SecretName: openstackConfigSecretName,
+									SecretName: openstackConfigSecretName,
 								},
 							},
 						},
