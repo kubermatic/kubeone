@@ -31,11 +31,11 @@ cloudProvider:
   cloudConfig: {{ kubeone_cloudProvider_cloudconfig }}
 {% if kubeone_hosts %}
 hosts:
- {{ kubeone_hosts }}
+{{ kubeone_hosts|to_yaml }}
 {% endif %}
 {% if kubeone_workers %}
 workers:
- {{ kubeone_workers }}
+{{ kubeone_workers|to_yaml }}
 {% endif %}
 apiEndpoint:
   host: {{ kubeone_apiEndpoint_host }}
