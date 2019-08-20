@@ -91,17 +91,16 @@ type PacketSpec struct {
 
 // VSphereSpec holds cloudprovider spec for vSphere
 type VSphereSpec struct {
-	AllowInsecure   bool   `json:"allowInsecure"`
-	Cluster         string `json:"cluster"`
-	CPUs            int    `json:"cpus"`
-	Datacenter      string `json:"datacenter"`
-	Datastore       string `json:"datastore"`
-	DiskSizeGB      *int   `json:"diskSizeGB,omitempty"`
-	Folder          string `json:"folder"`
-	MemoryMB        int    `json:"memoryMB"`
-	TemplateNetName string `json:"templateNetName,omitempty"`
-	TemplateVMName  string `json:"templateVMName"`
-	VMNetName       string `json:"vmNetName,omitempty"`
+	AllowInsecure  bool   `json:"allowInsecure"`
+	Cluster        string `json:"cluster"`
+	CPUs           int    `json:"cpus"`
+	Datacenter     string `json:"datacenter"`
+	Datastore      string `json:"datastore"`
+	DiskSizeGB     *int   `json:"diskSizeGB,omitempty"`
+	Folder         string `json:"folder"`
+	MemoryMB       int    `json:"memoryMB"`
+	TemplateVMName string `json:"templateVMName"`
+	VMNetName      string `json:"vmNetName,omitempty"`
 }
 
 // AzureSpec holds cloudprovider spec for Azure
