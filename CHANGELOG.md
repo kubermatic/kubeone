@@ -9,6 +9,7 @@
 
 ## Removed
 
+* Remove `TemplateNetName` field from the vSphere workers spec ([#624](https://github.com/kubermatic/kubeone/pull/624))
 * Remove the old KubeOne configuration API ([#626](https://github.com/kubermatic/kubeone/pull/626))
 
 # [v0.10.0-alpha.1](https://github.com/kubermatic/kubeone/releases/tag/v0.10.0-alpha.1) - 2019-08-16
