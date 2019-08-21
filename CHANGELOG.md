@@ -1,5 +1,17 @@
 # Changelog
 
+# [v0.10.0-alpha.2](https://github.com/kubermatic/kubeone/releases/tag/v0.10.0-alpha.2) - 2019-08-21
+
+## Changed
+
+* Fix cluster provisioning failures when DynamicAuditLog feature is enabled ([#630](https://github.com/kubermatic/kubeone/pull/630))
+* Update `machine-controller` to v1.5.2 ([#624](https://github.com/kubermatic/kubeone/pull/624))
+
+## Removed
+
+* Remove `TemplateNetName` field from the vSphere workers spec ([#624](https://github.com/kubermatic/kubeone/pull/624))
+* Remove the old KubeOne configuration API ([#626](https://github.com/kubermatic/kubeone/pull/626))
+
 # [v0.10.0-alpha.1](https://github.com/kubermatic/kubeone/releases/tag/v0.10.0-alpha.1) - 2019-08-16
 
 ## Added
