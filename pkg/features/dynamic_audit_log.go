@@ -23,8 +23,10 @@ import (
 
 const (
 	auditDynamicConfigurationFlag = "audit-dynamic-configuration"
-	runtimeConfigFlag             = "runtime-config"
 	auditRegistrationAPI          = "auditregistration.k8s.io/v1alpha1=true"
+	auditFeatureGate              = "DynamicAuditing=true"
+	runtimeConfigFlag             = "runtime-config"
+	featureGatesFlag              = "feature-gates"
 )
 
 func activateKubeadmDynamicAuditLogs(feature *kubeoneapi.DynamicAuditLog, args *kubeadmargs.Args) {
@@ -34,5 +36,5 @@ func activateKubeadmDynamicAuditLogs(feature *kubeoneapi.DynamicAuditLog, args *
 
 	args.APIServer.ExtraArgs[auditDynamicConfigurationFlag] = "true"
 	args.APIServer.AppendMapStringStringExtraArg(runtimeConfigFlag, auditRegistrationAPI)
-	args.FeatureGates["DynamicAuditing"] = true
+	args.APIServer.AppendMapStringStringExtraArg(featureGatesFlag, auditFeatureGate)
 }
