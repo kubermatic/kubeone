@@ -1,5 +1,11 @@
 # Changelog
 
+# [v0.10.0-alpha.3](https://github.com/kubermatic/kubeone/releases/tag/v0.10.0-alpha.3) - 2019-08-22
+
+## Changed
+
+* Update `machine-controller` to v1.5.3 ([#633](https://github.com/kubermatic/kubeone/pull/633))
+
 # [v0.10.0-alpha.2](https://github.com/kubermatic/kubeone/releases/tag/v0.10.0-alpha.2) - 2019-08-21
 
 ## Changed
