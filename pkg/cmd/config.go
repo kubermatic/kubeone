@@ -70,6 +70,7 @@ type printOptions struct {
 	NoProxy    string
 
 	EnablePodSecurityPolicy bool
+	EnableStaticAuditLog    bool
 	EnableDynamicAuditLog   bool
 	EnableMetricsServer     bool
 	EnableOpenIDConnect     bool
@@ -139,6 +140,7 @@ For the full reference of the configuration manifest, run the print command with
 
 	// Features
 	cmd.Flags().BoolVarP(&pOpts.EnablePodSecurityPolicy, "enable-pod-security-policy", "", false, "enable PodSecurityPolicy")
+	cmd.Flags().BoolVarP(&pOpts.EnableStaticAuditLog, "enable-static-audit-log", "", false, "enable StaticAuditLog")
 	cmd.Flags().BoolVarP(&pOpts.EnableDynamicAuditLog, "enable-dynamic-audit-log", "", false, "enable DynamicAuditLog")
 	cmd.Flags().BoolVarP(&pOpts.EnableMetricsServer, "enable-metrics-server", "", true, "enable metrics-server")
 	cmd.Flags().BoolVarP(&pOpts.EnableOpenIDConnect, "enable-openid-connect", "", false, "enable OpenID Connect authentication")
@@ -447,6 +449,24 @@ features:
   # 'kube-system' namespace pods to 'use' it.
   podSecurityPolicy:
     enable: {{ .EnablePodSecurityPolicy }}
+  # Enables and configures audit log backend.
+  # More info: https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#log-backend  
+  staticAuditLog:
+    enable: {{ .EnableStaticAuditLog }}
+    config:
+      # PolicyFilePath is a path on local file system to the audit policy manifest
+      # which defines what events should be recorded and what data they should include.
+      # PolicyFilePath is a required field.
+      # More info: https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#audit-policy
+      policyFilePath: ""
+      # LogPath is path on control plane instances where audit log files are stored
+      logPath: "/var/log/kubernetes/audit.log"
+      # LogMaxAge is maximum number of days to retain old audit log files
+      logMaxAge: 30
+      # LogMaxBackup is maximum number of audit log files to retain
+      logMaxBackup: 3
+      # LogMaxSize is maximum size in megabytes of audit log file before it gets rotated
+      logMaxSize: 100
   # Enables dynamic audit logs.
   # After enablig this, operator should create auditregistration.k8s.io/v1alpha1
   # AuditSink object.
