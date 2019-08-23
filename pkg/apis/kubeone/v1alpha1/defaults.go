@@ -111,6 +111,24 @@ func SetDefaults_Features(obj *KubeOneCluster) {
 			Enable: true,
 		}
 	}
+	if obj.Features.StaticAuditLog != nil && obj.Features.StaticAuditLog.Enable {
+		defaultStaticAuditLogConfig(&obj.Features.StaticAuditLog.Config)
+	}
+}
+
+func defaultStaticAuditLogConfig(obj *StaticAuditLogConfig) {
+	if obj.LogPath == "" {
+		obj.LogPath = "/var/log/kubernetes/audit.log"
+	}
+	if obj.LogMaxAge == 0 {
+		obj.LogMaxAge = 30
+	}
+	if obj.LogMaxBackup == 0 {
+		obj.LogMaxBackup = 3
+	}
+	if obj.LogMaxSize == 0 {
+		obj.LogMaxSize = 100
+	}
 }
 
 func defaultHostConfig(obj *HostConfig) {

@@ -20,6 +20,7 @@ import (
 	"net"
 
 	"github.com/Masterminds/semver"
+
 	"github.com/kubermatic/kubeone/pkg/apis/kubeone"
 
 	"k8s.io/apimachinery/pkg/util/validation/field"
@@ -202,10 +203,35 @@ func ValidateCNI(c *kubeone.CNI, fldPath *field.Path) field.ErrorList {
 // ValidateFeatures validates the Features structure
 func ValidateFeatures(f kubeone.Features, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
+	if f.StaticAuditLog != nil && f.StaticAuditLog.Enable {
+		allErrs = append(allErrs, ValidateStaticAuditLogConfig(f.StaticAuditLog.Config, fldPath.Child("staticAuditLog"))...)
+	}
 	if f.OpenIDConnect != nil && f.OpenIDConnect.Enable {
 		allErrs = append(allErrs, ValidateOIDCConfig(f.OpenIDConnect.Config, fldPath.Child("openidConnect"))...)
 	}
 	allErrs = append(allErrs)
+	return allErrs
+}
+
+func ValidateStaticAuditLogConfig(s kubeone.StaticAuditLogConfig, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	if s.PolicyFilePath == "" {
+		allErrs = append(allErrs, field.Invalid(fldPath, s.PolicyFilePath, "staticAuditLog.config.policyFilePath can't be empty"))
+	}
+	if s.LogPath == "" {
+		allErrs = append(allErrs, field.Invalid(fldPath, s.LogPath, "staticAuditLog.config.logPath can't be empty"))
+	}
+	if s.LogMaxAge <= 0 {
+		allErrs = append(allErrs, field.Invalid(fldPath, s.LogMaxAge, "staticAuditLog.config.logMaxAge must be greater than 0"))
+	}
+	if s.LogMaxBackup <= 0 {
+		allErrs = append(allErrs, field.Invalid(fldPath, s.LogMaxBackup, "staticAuditLog.config.logMaxBackup must be greater than 0"))
+	}
+	if s.LogMaxSize <= 0 {
+		allErrs = append(allErrs, field.Invalid(fldPath, s.LogMaxSize, "staticAuditLog.config.logMaxSize must be greater than 0"))
+	}
+
 	return allErrs
 }
 
@@ -214,10 +240,10 @@ func ValidateOIDCConfig(o kubeone.OpenIDConnectConfig, fldPath *field.Path) fiel
 	allErrs := field.ErrorList{}
 
 	if o.IssuerURL == "" {
-		allErrs = append(allErrs, field.Invalid(fldPath, o.IssuerURL, "openid_connect.config.issuer_url can't be empty"))
+		allErrs = append(allErrs, field.Invalid(fldPath, o.IssuerURL, "openidConnect.config.issuer_url can't be empty"))
 	}
 	if o.ClientID == "" {
-		allErrs = append(allErrs, field.Invalid(fldPath, o.ClientID, "openid_connect.config.client_id can't be empty"))
+		allErrs = append(allErrs, field.Invalid(fldPath, o.ClientID, "openidConnect.config.client_id can't be empty"))
 	}
 
 	return allErrs
