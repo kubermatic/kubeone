@@ -198,6 +198,7 @@ type MachineControllerConfig struct {
 // Features controls what features will be enabled on the cluster
 type Features struct {
 	PodSecurityPolicy *PodSecurityPolicy `json:"podSecurityPolicy"`
+	StaticAuditLog    *StaticAuditLog    `json:"staticAuditLog"`
 	DynamicAuditLog   *DynamicAuditLog   `json:"dynamicAuditLog"`
 	MetricsServer     *MetricsServer     `json:"metricsServer"`
 	OpenIDConnect     *OpenIDConnect     `json:"openidConnect"`
@@ -206,6 +207,33 @@ type Features struct {
 // PodSecurityPolicy feature flag
 type PodSecurityPolicy struct {
 	Enable bool `json:"enable"`
+}
+
+// StaticAuditLog feature flag
+type StaticAuditLog struct {
+	Enable bool                 `json:"enable"`
+	Config StaticAuditLogConfig `json:"config"`
+}
+
+// StaticAuditLogConfig config
+type StaticAuditLogConfig struct {
+	// PolicyFilePath is a path on local file system to the audit policy manifest
+	// which defines what events should be recorded and what data they should include.
+	// PolicyFilePath is a required field.
+	// More info: https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#audit-policy
+	PolicyFilePath string `json:"policyFilePath"`
+	// LogPath is path on control plane instances where audit log files are stored.
+	// Default value is /var/log/kubernetes/audit.log
+	LogPath string `json:"logPath"`
+	// LogMaxAge is maximum number of days to retain old audit log files.
+	// Default value is 30
+	LogMaxAge int `json:"logMaxAge"`
+	// LogMaxBackup is maximum number of audit log files to retain.
+	// Default value is 3
+	LogMaxBackup int `json:"logMaxBackup"`
+	// LogMaxSize is maximum size in megabytes of audit log file before it gets rotated.
+	// Default value is 100
+	LogMaxSize int `json:"logMaxSize"`
 }
 
 // DynamicAuditLog feature flag
