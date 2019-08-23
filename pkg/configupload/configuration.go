@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -45,6 +46,17 @@ func NewConfiguration() *Configuration {
 // AddFile save file contents for future references
 func (c *Configuration) AddFile(filename string, content string) {
 	c.files[filename] = strings.TrimSpace(content) + "\n"
+}
+
+// AddFilePath saves file contents from a file on filesystem for future references
+func (c *Configuration) AddFilePath(filename, filePath string) error {
+	b, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		return errors.Wrap(err, "unable to open given file")
+	}
+
+	c.AddFile(filename, string(b))
+	return nil
 }
 
 // UploadTo directory all the files

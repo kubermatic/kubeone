@@ -18,6 +18,7 @@ package v1beta1
 
 import (
 	"fmt"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -190,6 +191,25 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		delete(clusterConfig.APIServer.ExtraArgs, "cloud-provider")
 		delete(clusterConfig.ControllerManager.ExtraArgs, "cloud-provider")
 		nodeRegistration.KubeletExtraArgs["cloud-provider"] = "external"
+	}
+
+	if cluster.Features.StaticAuditLog != nil && cluster.Features.StaticAuditLog.Enable {
+		auditPolicyVol := kubeadmv1beta1.HostPathMount{
+			Name:      "audit-conf",
+			HostPath:  "/etc/kubernetes/audit",
+			MountPath: "/etc/kubernetes/audit",
+			ReadOnly:  true,
+			PathType:  corev1.HostPathDirectoryOrCreate,
+		}
+		logVol := kubeadmv1beta1.HostPathMount{
+			Name:      "log",
+			HostPath:  filepath.Dir(cluster.Features.StaticAuditLog.Config.LogPath),
+			MountPath: "/var/log/kubernetes",
+			ReadOnly:  false,
+			PathType:  corev1.HostPathDirectoryOrCreate,
+		}
+		clusterConfig.APIServer.ExtraVolumes = append(clusterConfig.APIServer.ExtraVolumes, auditPolicyVol)
+		clusterConfig.APIServer.ExtraVolumes = append(clusterConfig.APIServer.ExtraVolumes, logVol)
 	}
 
 	args := kubeadmargs.NewFrom(clusterConfig.APIServer.ExtraArgs)
