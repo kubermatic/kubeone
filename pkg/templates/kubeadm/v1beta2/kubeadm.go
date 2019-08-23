@@ -204,7 +204,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		logVol := kubeadmv1beta2.HostPathMount{
 			Name:      "log",
 			HostPath:  filepath.Dir(cluster.Features.StaticAuditLog.Config.LogPath),
-			MountPath: "/var/log/kubernetes",
+			MountPath: filepath.Dir(cluster.Features.StaticAuditLog.Config.LogPath),
 			ReadOnly:  false,
 			PathType:  corev1.HostPathDirectoryOrCreate,
 		}

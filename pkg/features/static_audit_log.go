@@ -37,7 +37,7 @@ func activateKubeadmStaticAuditLogs(feature *kubeoneapi.StaticAuditLog, args *ku
 	}
 
 	args.APIServer.ExtraArgs[auditPolicyFileFlag] = "/etc/kubernetes/audit/policy.yaml"
-	args.APIServer.ExtraArgs[auditLogPathFlag] = "/var/log/kubernetes"
+	args.APIServer.ExtraArgs[auditLogPathFlag] = feature.Config.LogPath
 	args.APIServer.ExtraArgs[auditLogMaxAgeFlag] = strconv.Itoa(feature.Config.LogMaxAge)
 	args.APIServer.ExtraArgs[auditLogMaxBackupFlag] = strconv.Itoa(feature.Config.LogMaxBackup)
 	args.APIServer.ExtraArgs[auditLogMaxSizeFlag] = strconv.Itoa(feature.Config.LogMaxSize)
