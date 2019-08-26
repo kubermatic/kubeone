@@ -179,7 +179,7 @@ func hetznerDeployment() *appsv1.Deployment {
 											LocalObjectReference: corev1.LocalObjectReference{
 												Name: credentials.SecretName,
 											},
-											Key: credentials.HetznerTokenKey,
+											Key: credentials.HetznerTokenKeyMC,
 										},
 									},
 								},

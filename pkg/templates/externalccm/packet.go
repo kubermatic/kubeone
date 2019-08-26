@@ -223,7 +223,7 @@ func packetDeployment() *appsv1.Deployment {
 											LocalObjectReference: corev1.LocalObjectReference{
 												Name: credentials.SecretName,
 											},
-											Key: credentials.PacketAPIKey,
+											Key: credentials.PacketAPIKeyMC,
 										},
 									},
 								},

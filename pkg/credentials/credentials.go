@@ -18,38 +18,54 @@ package credentials
 
 import (
 	"encoding/base64"
+	"io/ioutil"
 	"os"
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/pkg/errors"
+	"gopkg.in/yaml.v2"
 
 	"github.com/kubermatic/kubeone/pkg/apis/kubeone"
 )
 
-// The environment variable names with credential in them that machine-controller expects to see
+// The environment variable names with credential in them
 const (
+	// Variables that KubeOne (and Terraform) expect to see
 	AWSAccessKeyID          = "AWS_ACCESS_KEY_ID"
 	AWSSecretAccessKey      = "AWS_SECRET_ACCESS_KEY"
 	AzureClientID           = "ARM_CLIENT_ID"
 	AzureClientSecret       = "ARM_CLIENT_SECRET"
 	AzureTenantID           = "ARM_TENANT_ID"
 	AzureSubscribtionID     = "ARM_SUBSCRIPTION_ID"
-	DigitalOceanTokenKey    = "DO_TOKEN"
-	GoogleServiceAccountKey = "GOOGLE_SERVICE_ACCOUNT"
-	HetznerTokenKey         = "HZ_TOKEN"
+	DigitalOceanTokenKey    = "DIGITALOCEAN_TOKEN"
+	GoogleServiceAccountKey = "GOOGLE_CREDENTIALS"
+	HetznerTokenKey         = "HCLOUD_TOKEN"
 	OpenStackAuthURL        = "OS_AUTH_URL"
 	OpenStackDomainName     = "OS_DOMAIN_NAME"
 	OpenStackPassword       = "OS_PASSWORD"
 	OpenStackRegionName     = "OS_REGION_NAME"
 	OpenStackTenantID       = "OS_TENANT_ID"
 	OpenStackTenantName     = "OS_TENANT_NAME"
-	OpenStackUserName       = "OS_USER_NAME"
-	PacketAPIKey            = "PACKET_API_KEY"
+	OpenStackUserName       = "OS_USERNAME"
+	PacketAPIKey            = "PACKET_AUTH_TOKEN"
 	PacketProjectID         = "PACKET_PROJECT_ID"
-	VSphereAddress          = "VSPHERE_ADDRESS"
+	VSphereAddress          = "VSPHERE_SERVER"
 	VSpherePassword         = "VSPHERE_PASSWORD"
-	VSphereUsername         = "VSPHERE_USERNAME"
+	VSphereUsername         = "VSPHERE_USER"
+
+	// Variables that machine-controller expects
+	AzureClientIDMC           = "AZURE_CLIENT_ID"
+	AzureClientSecretMC       = "AZURE_CLIENT_SECRET"
+	AzureTenantIDMC           = "AZURE_TENANT_ID"
+	AzureSubscribtionIDMC     = "AZURE_SUBSCRIPTION_ID"
+	DigitalOceanTokenKeyMC    = "DO_TOKEN"
+	GoogleServiceAccountKeyMC = "GOOGLE_SERVICE_ACCOUNT"
+	HetznerTokenKeyMC         = "HZ_TOKEN"
+	OpenStackUserNameMC       = "OS_USER_NAME"
+	PacketAPIKeyMC            = "PACKET_API_KEY"
+	VSphereAddressMC          = "VSPHERE_ADDRESS"
+	VSphereUsernameMC         = "VSPHERE_USERNAME"
 )
 
 // ProviderEnvironmentVariable is used to match environment variable used by KubeOne to environment variable used by
@@ -59,80 +75,61 @@ type ProviderEnvironmentVariable struct {
 	MachineControllerName string
 }
 
-// ProviderCredentials match the cloudprovider and parses its credentials from environment
-func ProviderCredentials(p kubeone.CloudProviderName) (map[string]string, error) {
+// ProviderCredentials implements fetching credentials for each supported provider
+func ProviderCredentials(p kubeone.CloudProviderName, credentialsFilePath string) (map[string]string, error) {
+	f, err := newFetcher(credentialsFilePath)
+	if err != nil {
+		return nil, err
+	}
+
 	switch p {
 	case kubeone.CloudProviderNameAWS:
-		creds := make(map[string]string)
-		envCredsProvider := credentials.NewEnvCredentials()
-		envCreds, err := envCredsProvider.Get()
-		if err != nil {
-			return nil, err
-		}
-		if envCreds.AccessKeyID != "" && envCreds.SecretAccessKey != "" {
-			creds["AWS_ACCESS_KEY_ID"] = envCreds.AccessKeyID
-			creds["AWS_SECRET_ACCESS_KEY"] = envCreds.SecretAccessKey
-			return creds, nil
-		}
-
-		// If env fails resort to config file
-		configCredsProvider := credentials.NewSharedCredentials("", "")
-		configCreds, err := configCredsProvider.Get()
-		if err != nil {
-			return nil, err
-		}
-		if configCreds.AccessKeyID != "" && configCreds.SecretAccessKey != "" {
-			creds["AWS_ACCESS_KEY_ID"] = configCreds.AccessKeyID
-			creds["AWS_SECRET_ACCESS_KEY"] = configCreds.SecretAccessKey
-			return creds, nil
-		}
-
-		return nil, errors.New("error parsing aws credentials")
+		return parseAWSCredentials()
 	case kubeone.CloudProviderNameAzure:
-		return parseCredentialVariables([]ProviderEnvironmentVariable{
-			{Name: AzureClientID, MachineControllerName: "AZURE_CLIENT_ID"},
-			{Name: AzureClientSecret, MachineControllerName: "AZURE_CLIENT_SECRET"},
-			{Name: AzureTenantID, MachineControllerName: "AZURE_TENANT_ID"},
-			{Name: AzureSubscribtionID, MachineControllerName: "AZURE_SUBSCRIPTION_ID"},
+		return f.parseCredentialVariables([]ProviderEnvironmentVariable{
+			{Name: AzureClientID, MachineControllerName: AzureClientIDMC},
+			{Name: AzureClientSecret, MachineControllerName: AzureClientSecretMC},
+			{Name: AzureTenantID, MachineControllerName: AzureTenantIDMC},
+			{Name: AzureSubscribtionID, MachineControllerName: AzureSubscribtionIDMC},
 		}, defaultValidationFunc)
 	case kubeone.CloudProviderNameOpenStack:
-		return parseCredentialVariables([]ProviderEnvironmentVariable{
-			{Name: "OS_AUTH_URL"},
-			{Name: "OS_USERNAME", MachineControllerName: "OS_USER_NAME"},
-			{Name: "OS_PASSWORD"},
-			{Name: "OS_DOMAIN_NAME"},
-			{Name: "OS_REGION_NAME"},
-			{Name: "OS_TENANT_ID"},
-			{Name: "OS_TENANT_NAME"},
+		return f.parseCredentialVariables([]ProviderEnvironmentVariable{
+			{Name: OpenStackAuthURL},
+			{Name: OpenStackUserName, MachineControllerName: OpenStackUserNameMC},
+			{Name: OpenStackPassword},
+			{Name: OpenStackDomainName},
+			{Name: OpenStackRegionName},
+			{Name: OpenStackTenantID},
+			{Name: OpenStackTenantName},
 		}, openstackValidationFunc)
 	case kubeone.CloudProviderNameHetzner:
-		return parseCredentialVariables([]ProviderEnvironmentVariable{
-			{Name: "HCLOUD_TOKEN", MachineControllerName: "HZ_TOKEN"},
+		return f.parseCredentialVariables([]ProviderEnvironmentVariable{
+			{Name: HetznerTokenKey, MachineControllerName: HetznerTokenKeyMC},
 		}, defaultValidationFunc)
 	case kubeone.CloudProviderNameDigitalOcean:
-		return parseCredentialVariables([]ProviderEnvironmentVariable{
-			{Name: "DIGITALOCEAN_TOKEN", MachineControllerName: "DO_TOKEN"},
+		return f.parseCredentialVariables([]ProviderEnvironmentVariable{
+			{Name: DigitalOceanTokenKey, MachineControllerName: DigitalOceanTokenKeyMC},
 		}, defaultValidationFunc)
 	case kubeone.CloudProviderNameGCE:
-		gsa, err := parseCredentialVariables([]ProviderEnvironmentVariable{
-			{Name: "GOOGLE_CREDENTIALS", MachineControllerName: "GOOGLE_SERVICE_ACCOUNT"},
+		gsa, err := f.parseCredentialVariables([]ProviderEnvironmentVariable{
+			{Name: GoogleServiceAccountKey, MachineControllerName: GoogleServiceAccountKeyMC},
 		}, defaultValidationFunc)
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
 		// encode it before sending to secret to be consumed by
 		// machine-controller, as machine-controller assumes it will be double encoded
-		gsa["GOOGLE_SERVICE_ACCOUNT"] = base64.StdEncoding.EncodeToString([]byte(gsa["GOOGLE_SERVICE_ACCOUNT"]))
+		gsa[GoogleServiceAccountKeyMC] = base64.StdEncoding.EncodeToString([]byte(gsa[GoogleServiceAccountKeyMC]))
 		return gsa, nil
 	case kubeone.CloudProviderNamePacket:
-		return parseCredentialVariables([]ProviderEnvironmentVariable{
-			{Name: "PACKET_AUTH_TOKEN", MachineControllerName: PacketAPIKey},
+		return f.parseCredentialVariables([]ProviderEnvironmentVariable{
+			{Name: PacketAPIKey, MachineControllerName: PacketAPIKeyMC},
 			{Name: PacketProjectID},
 		}, defaultValidationFunc)
 	case kubeone.CloudProviderNameVSphere:
-		vscreds, err := parseCredentialVariables([]ProviderEnvironmentVariable{
-			{Name: "VSPHERE_SERVER", MachineControllerName: VSphereAddress},
-			{Name: "VSPHERE_USER", MachineControllerName: VSphereUsername},
+		vscreds, err := f.parseCredentialVariables([]ProviderEnvironmentVariable{
+			{Name: VSphereAddress, MachineControllerName: VSphereAddressMC},
+			{Name: VSphereUsername, MachineControllerName: VSphereUsernameMC},
 			{Name: VSpherePassword},
 		}, defaultValidationFunc)
 		if err != nil {
@@ -140,18 +137,77 @@ func ProviderCredentials(p kubeone.CloudProviderName) (map[string]string, error)
 		}
 
 		// force scheme, as machine-controller requires it while terraform does not
-		vscreds[VSphereAddress] = "https://" + vscreds[VSphereAddress]
+		vscreds[VSphereAddressMC] = "https://" + vscreds[VSphereAddressMC]
 		return vscreds, nil
 	}
 
 	return nil, errors.New("no provider matched")
 }
 
-func parseCredentialVariables(envVars []ProviderEnvironmentVariable, validationFunc func(map[string]string) error) (map[string]string, error) {
+func parseAWSCredentials() (map[string]string, error) {
+	creds := make(map[string]string)
+	envCredsProvider := credentials.NewEnvCredentials()
+	envCreds, err := envCredsProvider.Get()
+	if err != nil {
+		return nil, err
+	}
+	if envCreds.AccessKeyID != "" && envCreds.SecretAccessKey != "" {
+		creds[AWSAccessKeyID] = envCreds.AccessKeyID
+		creds[AWSSecretAccessKey] = envCreds.SecretAccessKey
+		return creds, nil
+	}
+
+	// If env fails resort to config file
+	configCredsProvider := credentials.NewSharedCredentials("", "")
+	configCreds, err := configCredsProvider.Get()
+	if err != nil {
+		return nil, err
+	}
+	if configCreds.AccessKeyID != "" && configCreds.SecretAccessKey != "" {
+		creds[AWSAccessKeyID] = configCreds.AccessKeyID
+		creds[AWSSecretAccessKey] = configCreds.SecretAccessKey
+		return creds, nil
+	}
+
+	return nil, errors.New("error parsing aws credentials")
+}
+
+type fetcher struct {
+	// Source is custom source for credentials, by default environment is used
+	Source map[string]string
+	// F is function that retrieves variable from the source
+	F func(string) string
+}
+
+func newFetcher(credentialsFilePath string) (*fetcher, error) {
+	f := &fetcher{
+		F: os.Getenv,
+	}
+
+	if credentialsFilePath != "" {
+		b, err := ioutil.ReadFile(credentialsFilePath)
+		if err != nil {
+			return nil, errors.Wrap(err, "unable to load credentials file")
+		}
+		m := make(map[string]string)
+		err = yaml.Unmarshal(b, &m)
+		if err != nil {
+			return nil, errors.Wrap(err, "unable to unmarshal credentials file")
+		}
+		f.Source = m
+		f.F = func(name string) string {
+			return m[name]
+		}
+	}
+
+	return f, nil
+}
+
+func (f fetcher) parseCredentialVariables(envVars []ProviderEnvironmentVariable, validationFunc func(map[string]string) error) (map[string]string, error) {
 	// Validate credentials using given validation function
 	creds := make(map[string]string)
 	for _, env := range envVars {
-		creds[env.Name] = strings.TrimSpace(os.Getenv(env.Name))
+		creds[env.Name] = strings.TrimSpace(f.F(env.Name))
 	}
 	if err := validationFunc(creds); err != nil {
 		return nil, errors.Wrap(err, "unable to validate credentials")
