@@ -81,9 +81,10 @@ func runReset(logger *logrus.Logger, resetOptions *resetOptions) error {
 	}
 
 	options := &installer.Options{
-		Verbose:        resetOptions.Verbose,
-		DestroyWorkers: resetOptions.DestroyWorkers,
-		RemoveBinaries: resetOptions.RemoveBinaries,
+		Verbose:         resetOptions.Verbose,
+		CredentialsFile: resetOptions.CredentialsFilePath,
+		DestroyWorkers:  resetOptions.DestroyWorkers,
+		RemoveBinaries:  resetOptions.RemoveBinaries,
 	}
 
 	return installer.NewInstaller(cluster, logger).Reset(options)

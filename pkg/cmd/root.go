@@ -75,6 +75,7 @@ func newRoot() *cobra.Command {
 
 	fs.StringVarP(&opts.TerraformState, globalTerraformFlagName, "t", "",
 		"Source for terrafor output JSON. - to read from stdin. If path is file, contents will be used. If path is dictionary, `terraform output -json` is executed in this path")
+	fs.StringVarP(&opts.CredentialsFilePath, globalCredentialsFlagName, "c", "", "File to source credentials and secrets from")
 	fs.BoolVarP(&opts.Verbose, globalVerboseFlagName, "v", false, "verbose")
 	fs.BoolVarP(&opts.Debug, globalDebugFlagName, "d", false, "debug")
 

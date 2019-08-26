@@ -59,6 +59,7 @@ It's possible to source information about hosts from Terraform output, using the
 			logger := initLogger(gopts.Verbose)
 			iopts.TerraformState = gopts.TerraformState
 			iopts.Verbose = gopts.Verbose
+			iopts.CredentialsFilePath = gopts.CredentialsFilePath
 
 			iopts.Manifest = args[0]
 			if iopts.Manifest == "" {
@@ -114,7 +115,8 @@ func createInstallerOptions(clusterFile string, cluster *kubeoneapi.KubeOneClust
 	defer f.Close()
 
 	return &installer.Options{
-		BackupFile: options.BackupFile,
-		Verbose:    options.Verbose,
+		CredentialsFile: options.CredentialsFilePath,
+		BackupFile:      options.BackupFile,
+		Verbose:         options.Verbose,
 	}, nil
 }
