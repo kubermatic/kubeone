@@ -28,6 +28,7 @@ import (
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/certificate"
 	"github.com/kubermatic/kubeone/pkg/clientutil"
+	"github.com/kubermatic/kubeone/pkg/credentials"
 	"github.com/kubermatic/kubeone/pkg/state"
 
 	admissionregistrationv1beta1 "k8s.io/api/admissionregistration/v1beta1"
@@ -68,10 +69,15 @@ func DeployWebhookConfiguration(s *state.State) error {
 		return errors.Wrap(err, "failed to generate machine-controller webhook TLS secret")
 	}
 
+	deployment, err := webhookDeployment(s.Cluster, s.CredentialsFilePath)
+	if err != nil {
+		return errors.Wrap(err, "failed to generate machine-controller webhook deployment")
+	}
+
 	ctx := context.Background()
 
 	k8sobjects := []runtime.Object{
-		webhookDeployment(s.Cluster),
+		deployment,
 		service(),
 		servingCert,
 		mutatingwebhookConfiguration(caCert),
@@ -122,8 +128,13 @@ func WaitForWebhook(client dynclient.Client) error {
 }
 
 // webhookDeployment returns the deployment for the machine-controllers MutatignAdmissionWebhook
-func webhookDeployment(cluster *kubeoneapi.KubeOneCluster) *appsv1.Deployment {
+func webhookDeployment(cluster *kubeoneapi.KubeOneCluster, credentialsFilePath string) (*appsv1.Deployment, error) {
 	var replicas int32 = 1
+
+	envVar, err := credentials.EnvVarBindings(cluster.CloudProvider.Name, credentialsFilePath)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to get env var bindings for a secret")
+	}
 
 	return &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
@@ -190,7 +201,7 @@ func webhookDeployment(cluster *kubeoneapi.KubeOneCluster) *appsv1.Deployment {
 								"-v", "4",
 								"-listen-address", "0.0.0.0:9876",
 							},
-							Env:                      getEnvVarCredentials(cluster),
+							Env:                      envVar,
 							TerminationMessagePath:   corev1.TerminationMessagePathDefault,
 							TerminationMessagePolicy: corev1.TerminationMessageReadFile,
 							ReadinessProbe: &corev1.Probe{
@@ -232,7 +243,7 @@ func webhookDeployment(cluster *kubeoneapi.KubeOneCluster) *appsv1.Deployment {
 				},
 			},
 		},
-	}
+	}, nil
 }
 
 // service returns the internal service for the machine-controller webhook
