@@ -175,6 +175,22 @@ or export the `KUBECONFIG` variable environment variable:
 export KUBECONFIG=$PWD/<cluster_name>-kubeconfig
 ```
 
+## Scaling Worker Nodes
+
+As worker nodes are managed by machine-controller, they can be scaled up and down
+(including to 0) using Kubernetes API.
+
+```bash
+kubectl --namespace kube-system scale machinedeployment/pool1-deployment --replicas=3
+```
+
+**Note:** The `kubectl scale` command is not working as expected with `kubectl` 1.15,
+returning an error such as:
+```
+The machinedeployments "pool1" is invalid: metadata.resourceVersion: Invalid value: 0x0: must be specified for an update
+```
+For a workaround, please follow the steps described in the [issue 593][scale_issue].
+
 ## Deleting The Cluster
 
 Before deleting a cluster you should clean up all MachineDeployments, so all worker nodes are deleted. You can do it with the `kubeone reset` command:
@@ -192,3 +208,5 @@ terraform destroy
 You'll be asked to enter `yes` to confirm your intention to destroy the cluster.
 
 Congratulations! You're now running Kubernetes 1.14.2 HA cluster with three control plane nodes and three worker nodes. If you want to learn more about KubeOne and its features, such as [upgrades](upgrading_cluster.md), make sure to check our [documentation](https://github.com/kubermatic/kubeone/tree/master/docs).
+
+[scale_issue]: https://github.com/kubermatic/kubeone/issues/593#issuecomment-513282468

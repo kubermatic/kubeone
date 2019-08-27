@@ -234,12 +234,19 @@ export KUBECONFIG=$PWD/<cluster_name>-kubeconfig
 
 ## Scaling Worker Nodes
 
-As worker nodes are managed by MachineController, they can be scaled up and down
+As worker nodes are managed by machine-controller, they can be scaled up and down
 (including to 0) using Kubernetes API.
 
 ```bash
 kubectl --namespace kube-system scale machinedeployment/pool1-deployment --replicas=3
 ```
+
+**Note:** The `kubectl scale` command is not working as expected with `kubectl` 1.15,
+returning an error such as:
+```
+The machinedeployments "pool1" is invalid: metadata.resourceVersion: Invalid value: 0x0: must be specified for an update
+```
+For a workaround, please follow the steps described in the [issue 593][scale_issue].
 
 ## Deleting The Cluster
 
@@ -274,3 +281,4 @@ our [documentation][kubeone_docs].
 [machine_controller]: https://github.com/kubermatic/machine-controller
 [packet_mc_example]: https://github.com/kubermatic/machine-controller/blob/master/examples/packet-machinedeployment.yaml
 [kubeone_docs]: https://github.com/kubermatic/kubeone/tree/master/docs
+[scale_issue]: https://github.com/kubermatic/kubeone/issues/593#issuecomment-513282468
