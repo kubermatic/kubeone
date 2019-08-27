@@ -27,6 +27,7 @@ import (
 	"github.com/spf13/pflag"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/credentials"
 	"github.com/kubermatic/kubeone/pkg/installer"
 )
 
@@ -85,6 +86,12 @@ func runInstall(logger *logrus.Logger, installOptions *installOptions) error {
 	options, err := createInstallerOptions(installOptions.Manifest, cluster, installOptions)
 	if err != nil {
 		return errors.Wrap(err, "failed to create installer options")
+	}
+
+	// Validate credentials
+	_, err = credentials.ProviderCredentials(cluster.CloudProvider.Name, installOptions.CredentialsFilePath)
+	if err != nil {
+		return errors.Wrap(err, "failed to validate credentials")
 	}
 
 	return installer.NewInstaller(cluster, logger).Install(options)

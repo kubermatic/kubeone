@@ -22,6 +22,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
+	"github.com/kubermatic/kubeone/pkg/credentials"
 	"github.com/kubermatic/kubeone/pkg/upgrader"
 )
 
@@ -74,6 +75,12 @@ func runUpgrade(logger *logrus.Logger, upgradeOptions *upgradeOptions) error {
 	cluster, err := loadClusterConfig(upgradeOptions.Manifest, upgradeOptions.TerraformState, logger)
 	if err != nil {
 		return errors.Wrap(err, "failed to load cluster")
+	}
+
+	// Validate credentials
+	_, err = credentials.ProviderCredentials(cluster.CloudProvider.Name, upgradeOptions.CredentialsFilePath)
+	if err != nil {
+		return errors.Wrap(err, "failed to validate credentials")
 	}
 
 	options := createUpgradeOptions(upgradeOptions)
