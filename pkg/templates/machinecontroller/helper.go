@@ -160,8 +160,14 @@ func DestroyWorkers(s *state.State) error {
 		}
 	}
 
-	// Wait for all Machines to be deleted
+	return nil
+}
+
+// WaitDestroy waits for all Machines to be deleted
+func WaitDestroy(s *state.State) error {
 	s.Logger.Info("Waiting for all machines to get deleted…")
+
+	bgCtx := context.Background()
 	return wait.Poll(5*time.Second, 5*time.Minute, func() (bool, error) {
 		list := &clusterv1alpha1.MachineList{}
 		if err := s.DynamicClient.List(bgCtx, dynclient.InNamespace(MachineControllerNamespace), list); err != nil {
