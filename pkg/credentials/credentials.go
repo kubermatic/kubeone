@@ -84,7 +84,7 @@ func ProviderCredentials(p kubeone.CloudProviderName, credentialsFilePath string
 
 	switch p {
 	case kubeone.CloudProviderNameAWS:
-		return parseAWSCredentials()
+		return f.parseAWSCredentials()
 	case kubeone.CloudProviderNameAzure:
 		return f.parseCredentialVariables([]ProviderEnvironmentVariable{
 			{Name: AzureClientID, MachineControllerName: AzureClientIDMC},
@@ -144,34 +144,6 @@ func ProviderCredentials(p kubeone.CloudProviderName, credentialsFilePath string
 	return nil, errors.New("no provider matched")
 }
 
-func parseAWSCredentials() (map[string]string, error) {
-	creds := make(map[string]string)
-	envCredsProvider := credentials.NewEnvCredentials()
-	envCreds, err := envCredsProvider.Get()
-	if err != nil {
-		return nil, err
-	}
-	if envCreds.AccessKeyID != "" && envCreds.SecretAccessKey != "" {
-		creds[AWSAccessKeyID] = envCreds.AccessKeyID
-		creds[AWSSecretAccessKey] = envCreds.SecretAccessKey
-		return creds, nil
-	}
-
-	// If env fails resort to config file
-	configCredsProvider := credentials.NewSharedCredentials("", "")
-	configCreds, err := configCredsProvider.Get()
-	if err != nil {
-		return nil, err
-	}
-	if configCreds.AccessKeyID != "" && configCreds.SecretAccessKey != "" {
-		creds[AWSAccessKeyID] = configCreds.AccessKeyID
-		creds[AWSSecretAccessKey] = configCreds.SecretAccessKey
-		return creds, nil
-	}
-
-	return nil, errors.New("error parsing aws credentials")
-}
-
 type fetcher struct {
 	// Source is custom source for credentials, by default environment is used
 	Source map[string]string
@@ -201,6 +173,41 @@ func newFetcher(credentialsFilePath string) (*fetcher, error) {
 	}
 
 	return f, nil
+}
+
+func (f *fetcher) parseAWSCredentials() (map[string]string, error) {
+	if f.Source != nil {
+		return map[string]string{
+			AWSAccessKeyID:     f.F(AWSAccessKeyID),
+			AWSSecretAccessKey: f.F(AWSSecretAccessKey),
+		}, nil
+	}
+
+	creds := make(map[string]string)
+	envCredsProvider := credentials.NewEnvCredentials()
+	envCreds, err := envCredsProvider.Get()
+	if err != nil {
+		return nil, err
+	}
+	if envCreds.AccessKeyID != "" && envCreds.SecretAccessKey != "" {
+		creds[AWSAccessKeyID] = envCreds.AccessKeyID
+		creds[AWSSecretAccessKey] = envCreds.SecretAccessKey
+		return creds, nil
+	}
+
+	// If env fails resort to config file
+	configCredsProvider := credentials.NewSharedCredentials("", "")
+	configCreds, err := configCredsProvider.Get()
+	if err != nil {
+		return nil, err
+	}
+	if configCreds.AccessKeyID != "" && configCreds.SecretAccessKey != "" {
+		creds[AWSAccessKeyID] = configCreds.AccessKeyID
+		creds[AWSSecretAccessKey] = configCreds.SecretAccessKey
+		return creds, nil
+	}
+
+	return nil, errors.New("error parsing aws credentials")
 }
 
 func (f fetcher) parseCredentialVariables(envVars []ProviderEnvironmentVariable, validationFunc func(map[string]string) error) (map[string]string, error) {
