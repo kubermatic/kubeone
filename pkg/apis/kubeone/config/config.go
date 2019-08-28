@@ -28,35 +28,10 @@ import (
 	kubeonescheme "github.com/kubermatic/kubeone/pkg/apis/kubeone/scheme"
 	kubeonev1alpha1 "github.com/kubermatic/kubeone/pkg/apis/kubeone/v1alpha1"
 	"github.com/kubermatic/kubeone/pkg/apis/kubeone/validation"
-	"github.com/kubermatic/kubeone/pkg/credentials"
 	"github.com/kubermatic/kubeone/pkg/terraform"
 
 	"k8s.io/apimachinery/pkg/runtime"
 )
-
-// SetKubeOneClusterDynamicDefaults sets the dynamic defaults for a given KubeOneCluster object
-func SetKubeOneClusterDynamicDefaults(cfg *kubeoneapi.KubeOneCluster) error {
-	if err := SetKubeOneClusterCredentials(cfg); err != nil {
-		return errors.Wrap(err, "unable to set dynamic defaults for a given KubeOneCluster object")
-	}
-	return nil
-}
-
-// SetKubeOneClusterCredentials populates credentials used for machine-controller and external CCM
-func SetKubeOneClusterCredentials(cfg *kubeoneapi.KubeOneCluster) error {
-	// Only populate credentials if machine-controller is deployed or cloud provider is external
-	if (cfg.MachineController != nil && !cfg.MachineController.Deploy) && !cfg.CloudProvider.External {
-		return nil
-	}
-
-	creds, err := credentials.ProviderCredentials(cfg.CloudProvider.Name)
-	if err != nil {
-		return errors.Wrap(err, "unable to fetch cloud provider credentials")
-	}
-	cfg.Credentials = creds
-
-	return nil
-}
 
 // SourceKubeOneClusterFromTerraformOutput sources information about the cluster from the Terraform output
 func SourceKubeOneClusterFromTerraformOutput(terraformOutput []byte, cluster *kubeonev1alpha1.KubeOneCluster) error {
@@ -83,11 +58,6 @@ func DefaultedKubeOneCluster(versionedCluster *kubeonev1alpha1.KubeOneCluster, t
 	kubeonescheme.Scheme.Default(versionedCluster)
 	if err := kubeonescheme.Scheme.Convert(versionedCluster, internalCfg, nil); err != nil {
 		return nil, errors.Wrap(err, "unable to convert versioned to internal cluster object")
-	}
-
-	// Apply the dynamic defaults
-	if err := SetKubeOneClusterDynamicDefaults(internalCfg); err != nil {
-		return nil, err
 	}
 
 	// Validate the configuration

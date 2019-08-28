@@ -222,7 +222,7 @@ func doDeployment() *appsv1.Deployment {
 											LocalObjectReference: corev1.LocalObjectReference{
 												Name: credentials.SecretName,
 											},
-											Key: credentials.DigitalOceanTokenKey,
+											Key: credentials.DigitalOceanTokenKeyMC,
 										},
 									},
 								},
