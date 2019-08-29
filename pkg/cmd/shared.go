@@ -77,8 +77,8 @@ func initLogger(verbose bool) *logrus.Logger {
 	return logger
 }
 
-func loadClusterConfig(filename, terraformOutputPath string, logger *logrus.Logger) (*kubeoneapi.KubeOneCluster, error) {
-	a, err := config.LoadKubeOneCluster(filename, terraformOutputPath, logger)
+func loadClusterConfig(filename, terraformOutputPath, credentialsFilePath string, logger *logrus.Logger) (*kubeoneapi.KubeOneCluster, error) {
+	a, err := config.LoadKubeOneCluster(filename, terraformOutputPath, credentialsFilePath, logger)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to load a given KubeOneCluster object")
 	}

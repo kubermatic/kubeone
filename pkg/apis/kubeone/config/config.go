@@ -23,6 +23,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"gopkg.in/yaml.v2"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	kubeonescheme "github.com/kubermatic/kubeone/pkg/apis/kubeone/scheme"
@@ -42,10 +43,27 @@ func SourceKubeOneClusterFromTerraformOutput(terraformOutput []byte, cluster *ku
 	return tfConfig.Apply(cluster)
 }
 
+// SetKubeOneClusterDynamicDefaults sets the dynamic defaults for a given KubeOneCluster object
+func SetKubeOneClusterDynamicDefaults(cfg *kubeoneapi.KubeOneCluster, credentialsFile []byte) error {
+	// Parse the credentials file
+	credentials := make(map[string]string)
+	err := yaml.Unmarshal(credentialsFile, &credentials)
+	if err != nil {
+		return errors.Wrap(err, "unable to convert credentials file to yaml")
+	}
+
+	// Cloud-Config
+	if cc, ok := credentials["cloudConfig"]; ok {
+		cfg.CloudProvider.CloudConfig = cc
+	}
+
+	return nil
+}
+
 // DefaultedKubeOneCluster converts a versioned KubeOneCluster object to an internal representation of KubeOneCluster
 // object while sourcing information from Terraform output, applying default values and validating the KubeOneCluster
 // object
-func DefaultedKubeOneCluster(versionedCluster *kubeonev1alpha1.KubeOneCluster, tfOutput []byte) (*kubeoneapi.KubeOneCluster, error) {
+func DefaultedKubeOneCluster(versionedCluster *kubeonev1alpha1.KubeOneCluster, tfOutput, credentialsFile []byte) (*kubeoneapi.KubeOneCluster, error) {
 	internalCfg := &kubeoneapi.KubeOneCluster{}
 
 	if tfOutput != nil {
@@ -60,6 +78,12 @@ func DefaultedKubeOneCluster(versionedCluster *kubeonev1alpha1.KubeOneCluster, t
 		return nil, errors.Wrap(err, "unable to convert versioned to internal cluster object")
 	}
 
+	// Apply the dynamic defaults
+	err := SetKubeOneClusterDynamicDefaults(internalCfg, credentialsFile)
+	if err != nil {
+		return nil, err
+	}
+
 	// Validate the configuration
 	if err := validation.ValidateKubeOneCluster(*internalCfg).ToAggregate(); err != nil {
 		return nil, errors.Wrap(err, "unable to validate the given KubeOneCluster object")
@@ -70,7 +94,7 @@ func DefaultedKubeOneCluster(versionedCluster *kubeonev1alpha1.KubeOneCluster, t
 
 // LoadKubeOneCluster returns the KubeOneCluster object parsed from the KubeOneCluster configuration file and
 // optionally Terraform output
-func LoadKubeOneCluster(clusterCfgPath, tfOutputPath string, logger *logrus.Logger) (*kubeoneapi.KubeOneCluster, error) {
+func LoadKubeOneCluster(clusterCfgPath, tfOutputPath, credentialsFilePath string, logger *logrus.Logger) (*kubeoneapi.KubeOneCluster, error) {
 	if len(clusterCfgPath) == 0 {
 		return nil, errors.New("cluster configuration path not provided")
 	}
@@ -100,7 +124,15 @@ func LoadKubeOneCluster(clusterCfgPath, tfOutputPath string, logger *logrus.Logg
 		}
 	}
 
-	return BytesToKubeOneCluster(cluster, tfOutput)
+	var credentialsFile []byte
+	if len(credentialsFilePath) != 0 {
+		credentialsFile, err = ioutil.ReadFile(credentialsFilePath)
+		if err != nil {
+			return nil, errors.Wrap(err, "unable to read the given credentials file")
+		}
+	}
+
+	return BytesToKubeOneCluster(cluster, tfOutput, credentialsFile)
 }
 
 func isDir(dirname string) bool {
@@ -110,11 +142,11 @@ func isDir(dirname string) bool {
 
 // BytesToKubeOneCluster returns the KubeOneCluster object parsed from the KubeOneCluster manifest and optionally
 // Terraform output
-func BytesToKubeOneCluster(cluster, tfOutput []byte) (*kubeoneapi.KubeOneCluster, error) {
+func BytesToKubeOneCluster(cluster, tfOutput, credentialsFile []byte) (*kubeoneapi.KubeOneCluster, error) {
 	initCfg := &kubeonev1alpha1.KubeOneCluster{}
 	if err := runtime.DecodeInto(kubeonescheme.Codecs.UniversalDecoder(), cluster, initCfg); err != nil {
 		return nil, err
 	}
 
-	return DefaultedKubeOneCluster(initCfg, tfOutput)
+	return DefaultedKubeOneCluster(initCfg, tfOutput, credentialsFile)
 }

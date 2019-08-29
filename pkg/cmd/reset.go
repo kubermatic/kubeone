@@ -53,6 +53,7 @@ It's possible to source information about hosts from Terraform output, using the
 			logger := initLogger(gopts.Verbose)
 			ropts.TerraformState = gopts.TerraformState
 			ropts.Verbose = gopts.Verbose
+			ropts.CredentialsFilePath = gopts.CredentialsFilePath
 
 			ropts.Manifest = args[0]
 			if ropts.Manifest == "" {
@@ -75,7 +76,7 @@ func runReset(logger *logrus.Logger, resetOptions *resetOptions) error {
 		return errors.New("no cluster config file given")
 	}
 
-	cluster, err := loadClusterConfig(resetOptions.Manifest, resetOptions.TerraformState, logger)
+	cluster, err := loadClusterConfig(resetOptions.Manifest, resetOptions.TerraformState, resetOptions.CredentialsFilePath, logger)
 	if err != nil {
 		return errors.Wrap(err, "failed to load cluster")
 	}
