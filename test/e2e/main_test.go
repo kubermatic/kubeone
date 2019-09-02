@@ -42,6 +42,8 @@ var (
 	testInitialVersion string
 	testTargetVersion  string
 	testProvider       string
+	testOSControlPlane string
+	testOSWorkers      string
 )
 
 func init() {
@@ -49,6 +51,8 @@ func init() {
 	flag.StringVar(&testProvider, "provider", "", "Provider to run tests on")
 	flag.StringVar(&testInitialVersion, "initial-version", "", "Cluster version to provision for tests")
 	flag.StringVar(&testTargetVersion, "target-version", "", "Cluster version to provision for tests")
+	flag.StringVar(&testOSControlPlane, "os-control-plane", "", "Operating system to use for control plane nodes")
+	flag.StringVar(&testOSWorkers, "os-workers", "", "Operating system to use for worker nodes")
 	flag.Parse()
 }
 
