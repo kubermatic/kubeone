@@ -33,8 +33,10 @@ import (
 
 type installOptions struct {
 	globalOptions
-	Manifest   string
-	BackupFile string
+	Manifest       string
+	BackupFile     string
+	NoFQDN         bool
+	EnableNodeName bool
 }
 
 // installCmd setups install command
@@ -72,6 +74,8 @@ It's possible to source information about hosts from Terraform output, using the
 	}
 
 	cmd.Flags().StringVarP(&iopts.BackupFile, "backup", "b", "", "path to where the PKI backup .tar.gz file should be placed (default: location of cluster config file)")
+	cmd.Flags().BoolVar(&iopts.NoFQDN, "no-fqdn", false, "use hostname instead of fqdn for node name")
+	cmd.Flags().BoolVar(&iopts.EnableNodeName, "enable-node-name", false, "set --node-name on kubeadm with node hostname")
 
 	return cmd
 }
@@ -125,5 +129,7 @@ func createInstallerOptions(clusterFile string, cluster *kubeoneapi.KubeOneClust
 		CredentialsFile: options.CredentialsFilePath,
 		BackupFile:      options.BackupFile,
 		Verbose:         options.Verbose,
+		NoFQDN:          options.NoFQDN,
+		EnableNodeName:  options.EnableNodeName,
 	}, nil
 }

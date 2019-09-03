@@ -49,6 +49,8 @@ type State struct {
 	UpgradeMachineDeployments bool
 	PatchCNI                  bool
 	CredentialsFilePath       string
+	NoFQDN                    bool
+	EnableNodeName            bool
 }
 
 // Clone returns a shallow copy of the State.

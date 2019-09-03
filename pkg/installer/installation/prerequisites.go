@@ -49,7 +49,7 @@ if sudo systemctl status kubelet &>/dev/null; then sudo systemctl restart kubele
 `
 
 	hostnameScript = `
-fqdn=$(hostname -f)
+fqdn=$(hostname {{.HOST_CMD_SUFFIX}})
 [ "$fqdn" = localhost ] && fqdn=$(hostname)
 echo "$fqdn"
 `
@@ -290,11 +290,14 @@ func determineOS(s *state.State) (string, error) {
 func determineHostname(s *state.State, _ kubeoneapi.HostConfig) (string, error) {
 	hostcmd := hostnameScript
 
-	// on azure the name of the Node should == name of the VM
-	if s.Cluster.CloudProvider.Name == kubeoneapi.CloudProviderNameAzure {
-		hostcmd = `hostname`
+	hostcmdSuffix := "-f"
+	if s.Cluster.CloudProvider.Name == kubeoneapi.CloudProviderNameAzure || s.NoFQDN {
+		hostcmdSuffix = ""
 	}
-	stdout, _, err := s.Runner.Run(hostcmd, nil)
+
+	stdout, _, err := s.Runner.Run(hostcmd, runner.TemplateVariables{
+		"HOST_CMD_SUFFIX": hostcmdSuffix,
+	})
 
 	return stdout, err
 }

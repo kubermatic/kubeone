@@ -20,6 +20,7 @@ import (
 	"context"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/runner"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/state"
 	"github.com/pkg/errors"
@@ -35,7 +36,13 @@ import (
 func determineHostname(s *state.State) error {
 	s.Logger.Infoln("Determine hostname…")
 	return s.RunTaskOnAllNodes(func(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
-		stdout, _, err := s.Runner.Run("hostname -f", nil)
+		hostcmdSuffix := "-f"
+		if s.NoFQDN {
+			hostcmdSuffix = ""
+		}
+		stdout, _, err := s.Runner.Run("hostname {{.HOST_CMD_SUFFIX}}", runner.TemplateVariables{
+			"HOST_CMD_SUFFIX": hostcmdSuffix,
+		})
 		if err != nil {
 			return err
 		}

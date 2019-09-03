@@ -35,7 +35,7 @@ sudo kubeadm init phase certs all --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE
 `
 	kubeadmInitCommand = `
 if [[ -f /etc/kubernetes/admin.conf ]]; then exit 0; fi
-sudo kubeadm init --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+sudo kubeadm init --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml {{ if .ENABLE_NODE_NAME }} --node-name={{ .HOST }} {{ end }}
 `
 )
 
@@ -66,8 +66,10 @@ func initKubernetesLeader(s *state.State) error {
 		s.Logger.Infoln("Running kubeadm…")
 
 		_, _, err := s.Runner.Run(kubeadmInitCommand, runner.TemplateVariables{
-			"WORK_DIR": s.WorkDir,
-			"NODE_ID":  strconv.Itoa(node.ID),
+			"WORK_DIR":         s.WorkDir,
+			"NODE_ID":          strconv.Itoa(node.ID),
+			"HOST":             node.Hostname,
+			"ENABLE_NODE_NAME": s.EnableNodeName,
 		})
 
 		return err

@@ -32,6 +32,8 @@ type Options struct {
 	ForceUpgrade              bool
 	UpgradeMachineDeployments bool
 	Verbose                   bool
+	NoFQDN                    bool
+	EnableNodeName            bool
 }
 
 // Upgrader is entrypoint for the upgrade process
@@ -66,5 +68,7 @@ func (u *Upgrader) createState(options *Options) *state.State {
 		ForceUpgrade:              options.ForceUpgrade,
 		UpgradeMachineDeployments: options.UpgradeMachineDeployments,
 		CredentialsFilePath:       options.CredentialsFile,
+		NoFQDN:                    options.NoFQDN,
+		EnableNodeName:            options.EnableNodeName,
 	}
 }

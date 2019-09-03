@@ -32,6 +32,8 @@ type upgradeOptions struct {
 	ForceUpgrade              bool
 	Manifest                  string
 	UpgradeMachineDeployments bool
+	NoFQDN                    bool
+	EnableNodeName            bool
 }
 
 func upgradeCmd(rootFlags *pflag.FlagSet) *cobra.Command {
@@ -66,6 +68,8 @@ It's possible to source information about hosts from Terraform output, using the
 
 	cmd.Flags().BoolVarP(&uopts.ForceUpgrade, "force", "f", false, "force start upgrade process")
 	cmd.Flags().BoolVarP(&uopts.UpgradeMachineDeployments, "upgrade-machine-deployments", "", false, "upgrade MachineDeployments objects")
+	cmd.Flags().BoolVar(&uopts.NoFQDN, "no-fqdn", false, "use hostname instead of fqdn for node names")
+	cmd.Flags().BoolVar(&uopts.EnableNodeName, "enable-node-name", false, "set --node-name on kubeadm with node hostname")
 
 	return cmd
 }
@@ -93,5 +97,7 @@ func createUpgradeOptions(options *upgradeOptions) *upgrader.Options {
 		ForceUpgrade:              options.ForceUpgrade,
 		Verbose:                   options.Verbose,
 		UpgradeMachineDeployments: options.UpgradeMachineDeployments,
+		NoFQDN:                    options.NoFQDN,
+		EnableNodeName:            options.EnableNodeName,
 	}
 }

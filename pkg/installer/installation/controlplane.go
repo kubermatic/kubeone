@@ -43,10 +43,12 @@ func joinControlPlaneNodeInternal(s *state.State, node *kubeoneapi.HostConfig, c
 if [[ -f /etc/kubernetes/kubelet.conf ]]; then exit 0; fi
 
 sudo kubeadm join \
-	--config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+	--config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml {{ if .ENABLE_NODE_NAME }} --node-name={{ .HOST }} {{ end }}
 `, runner.TemplateVariables{
-		"WORK_DIR": s.WorkDir,
-		"NODE_ID":  strconv.Itoa(node.ID),
+		"WORK_DIR":         s.WorkDir,
+		"NODE_ID":          strconv.Itoa(node.ID),
+		"HOST":             node.Hostname,
+		"ENABLE_NODE_NAME": s.EnableNodeName,
 	})
 	return err
 }
