@@ -22,6 +22,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
+	"github.com/kubermatic/kubeone/pkg/credentials"
 	"github.com/kubermatic/kubeone/pkg/upgrader"
 )
 
@@ -71,9 +72,15 @@ It's possible to source information about hosts from Terraform output, using the
 
 // runUpgrade upgrades Kubernetes on the provided machines
 func runUpgrade(logger *logrus.Logger, upgradeOptions *upgradeOptions) error {
-	cluster, err := loadClusterConfig(upgradeOptions.Manifest, upgradeOptions.TerraformState, logger)
+	cluster, err := loadClusterConfig(upgradeOptions.Manifest, upgradeOptions.TerraformState, upgradeOptions.CredentialsFilePath, logger)
 	if err != nil {
 		return errors.Wrap(err, "failed to load cluster")
+	}
+
+	// Validate credentials
+	_, err = credentials.ProviderCredentials(cluster.CloudProvider.Name, upgradeOptions.CredentialsFilePath)
+	if err != nil {
+		return errors.Wrap(err, "failed to validate credentials")
 	}
 
 	options := createUpgradeOptions(upgradeOptions)
@@ -82,6 +89,7 @@ func runUpgrade(logger *logrus.Logger, upgradeOptions *upgradeOptions) error {
 
 func createUpgradeOptions(options *upgradeOptions) *upgrader.Options {
 	return &upgrader.Options{
+		CredentialsFile:           options.CredentialsFilePath,
 		ForceUpgrade:              options.ForceUpgrade,
 		Verbose:                   options.Verbose,
 		UpgradeMachineDeployments: options.UpgradeMachineDeployments,

@@ -215,13 +215,25 @@ sudo systemctl start docker.service kubelet.service
 func installPrerequisites(s *state.State) error {
 	s.Logger.Infoln("Installing prerequisites…")
 
-	generateConfigurationFiles(s)
+	err := generateConfigurationFiles(s)
+	if err != nil {
+		return errors.Wrap(err, "unable to generate configuration files")
+	}
 
 	return s.RunTaskOnAllNodes(installPrerequisitesOnNode, true)
 }
 
-func generateConfigurationFiles(s *state.State) {
+func generateConfigurationFiles(s *state.State) error {
 	s.Configuration.AddFile("cfg/cloud-config", s.Cluster.CloudProvider.CloudConfig)
+
+	if s.Cluster.Features.StaticAuditLog != nil && s.Cluster.Features.StaticAuditLog.Enable {
+		err := s.Configuration.AddFilePath("cfg/audit-policy.yaml", s.Cluster.Features.StaticAuditLog.Config.PolicyFilePath)
+		if err != nil {
+			return errors.Wrap(err, "unable to add policy file")
+		}
+	}
+
+	return nil
 }
 
 func installPrerequisitesOnNode(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
@@ -356,6 +368,12 @@ sudo mkdir -p /etc/systemd/system/kubelet.service.d/ /etc/kubernetes
 sudo mv ./{{ .WORK_DIR }}/cfg/cloud-config /etc/kubernetes/cloud-config
 sudo chown root:root /etc/kubernetes/cloud-config
 sudo chmod 600 /etc/kubernetes/cloud-config
+
+if [[ -f "./{{ .WORK_DIR }}/cfg/audit-policy.yaml" ]]; then
+	sudo mkdir -p /etc/kubernetes/audit
+	sudo mv ./{{ .WORK_DIR }}/cfg/audit-policy.yaml /etc/kubernetes/audit/policy.yaml
+	sudo chown root:root /etc/kubernetes/audit/policy.yaml
+fi
 `, runner.TemplateVariables{
 		"WORK_DIR": s.WorkDir,
 	})

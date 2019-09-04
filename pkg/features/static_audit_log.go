@@ -17,24 +17,28 @@ limitations under the License.
 package features
 
 import (
+	"strconv"
+
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/kubeadmargs"
 )
 
 const (
-	auditDynamicConfigurationFlag = "audit-dynamic-configuration"
-	auditRegistrationAPI          = "auditregistration.k8s.io/v1alpha1=true"
-	auditFeatureGate              = "DynamicAuditing=true"
-	runtimeConfigFlag             = "runtime-config"
-	featureGatesFlag              = "feature-gates"
+	auditPolicyFileFlag   = "audit-policy-file"
+	auditLogPathFlag      = "audit-log-path"
+	auditLogMaxAgeFlag    = "audit-log-maxage"
+	auditLogMaxBackupFlag = "audit-log-maxbackup"
+	auditLogMaxSizeFlag   = "audit-log-maxsize"
 )
 
-func activateKubeadmDynamicAuditLogs(feature *kubeoneapi.DynamicAuditLog, args *kubeadmargs.Args) {
+func activateKubeadmStaticAuditLogs(feature *kubeoneapi.StaticAuditLog, args *kubeadmargs.Args) {
 	if feature == nil || !feature.Enable {
 		return
 	}
 
-	args.APIServer.ExtraArgs[auditDynamicConfigurationFlag] = "true"
-	args.APIServer.AppendMapStringStringExtraArg(runtimeConfigFlag, auditRegistrationAPI)
-	args.APIServer.AppendMapStringStringExtraArg(featureGatesFlag, auditFeatureGate)
+	args.APIServer.ExtraArgs[auditPolicyFileFlag] = "/etc/kubernetes/audit/policy.yaml"
+	args.APIServer.ExtraArgs[auditLogPathFlag] = feature.Config.LogPath
+	args.APIServer.ExtraArgs[auditLogMaxAgeFlag] = strconv.Itoa(feature.Config.LogMaxAge)
+	args.APIServer.ExtraArgs[auditLogMaxBackupFlag] = strconv.Itoa(feature.Config.LogMaxBackup)
+	args.APIServer.ExtraArgs[auditLogMaxSizeFlag] = strconv.Itoa(feature.Config.LogMaxSize)
 }

@@ -44,6 +44,7 @@ func Activate(s *state.State) error {
 // v1beta1.ClusterConfiguration according to enabled features
 func UpdateKubeadmClusterConfiguration(featuresCfg kubeoneapi.Features, args *kubeadmargs.Args) {
 	activateKubeadmPSP(featuresCfg.PodSecurityPolicy, args)
+	activateKubeadmStaticAuditLogs(featuresCfg.StaticAuditLog, args)
 	activateKubeadmDynamicAuditLogs(featuresCfg.DynamicAuditLog, args)
 	activateKubeadmOIDC(featuresCfg.OpenIDConnect, args)
 }

@@ -19,17 +19,18 @@ package machinecontroller
 // AWSSpec holds cloudprovider spec for AWS
 type AWSSpec struct {
 	AMI              string            `json:"ami"`
+	AssignPublicIP   *bool             `json:"assignPublicIP"`
 	AvailabilityZone string            `json:"availabilityZone"`
+	DiskIops         *int              `json:"diskIops,omitempty"`
+	DiskSize         *int              `json:"diskSize"`
+	DiskType         string            `json:"diskType"`
 	InstanceProfile  string            `json:"instanceProfile"`
+	InstanceType     *string           `json:"instanceType"`
 	Region           string            `json:"region"`
 	SecurityGroupIDs []string          `json:"securityGroupIDs"`
 	SubnetID         string            `json:"subnetId"`
-	VPCID            string            `json:"vpcId"`
-	InstanceType     *string           `json:"instanceType"`
-	DiskSize         *int              `json:"diskSize"`
-	DiskType         string            `json:"diskType"`
-	DiskIops         *int              `json:"diskIops,omitempty"`
 	Tags             map[string]string `json:"tags"`
+	VPCID            string            `json:"vpcId"`
 }
 
 // DigitalOceanSpec holds cloudprovider spec for DigitalOcean
@@ -90,17 +91,16 @@ type PacketSpec struct {
 
 // VSphereSpec holds cloudprovider spec for vSphere
 type VSphereSpec struct {
-	AllowInsecure   bool   `json:"allowInsecure"`
-	Cluster         string `json:"cluster"`
-	CPUs            int    `json:"cpus"`
-	Datacenter      string `json:"datacenter"`
-	Datastore       string `json:"datastore"`
-	DiskSizeGB      *int   `json:"diskSizeGB,omitempty"`
-	Folder          string `json:"folder"`
-	MemoryMB        int    `json:"memoryMB"`
-	TemplateNetName string `json:"templateNetName,omitempty"`
-	TemplateVMName  string `json:"templateVMName"`
-	VMNetName       string `json:"vmNetName,omitempty"`
+	AllowInsecure  bool   `json:"allowInsecure"`
+	Cluster        string `json:"cluster"`
+	CPUs           int    `json:"cpus"`
+	Datacenter     string `json:"datacenter"`
+	Datastore      string `json:"datastore"`
+	DiskSizeGB     *int   `json:"diskSizeGB,omitempty"`
+	Folder         string `json:"folder"`
+	MemoryMB       int    `json:"memoryMB"`
+	TemplateVMName string `json:"templateVMName"`
+	VMNetName      string `json:"vmNetName,omitempty"`
 }
 
 // AzureSpec holds cloudprovider spec for Azure

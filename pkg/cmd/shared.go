@@ -26,16 +26,18 @@ import (
 )
 
 const (
-	globalTerraformFlagName = "tfjson"
-	globalVerboseFlagName   = "verbose"
-	globalDebugFlagName     = "debug"
+	globalTerraformFlagName   = "tfjson"
+	globalCredentialsFlagName = "credentials"
+	globalVerboseFlagName     = "verbose"
+	globalDebugFlagName       = "debug"
 )
 
 // globalOptions are global globalOptions same for all commands
 type globalOptions struct {
-	TerraformState string
-	Verbose        bool
-	Debug          bool
+	TerraformState      string
+	CredentialsFilePath string
+	Verbose             bool
+	Debug               bool
 }
 
 func persistentGlobalOptions(fs *pflag.FlagSet) (*globalOptions, error) {
@@ -49,9 +51,15 @@ func persistentGlobalOptions(fs *pflag.FlagSet) (*globalOptions, error) {
 		return nil, errors.WithStack(err)
 	}
 
+	creds, err := fs.GetString(globalCredentialsFlagName)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
 	return &globalOptions{
-		Verbose:        verbose,
-		TerraformState: tfjson,
+		Verbose:             verbose,
+		TerraformState:      tfjson,
+		CredentialsFilePath: creds,
 	}, nil
 }
 
@@ -69,8 +77,8 @@ func initLogger(verbose bool) *logrus.Logger {
 	return logger
 }
 
-func loadClusterConfig(filename, terraformOutputPath string, logger *logrus.Logger) (*kubeoneapi.KubeOneCluster, error) {
-	a, err := config.LoadKubeOneCluster(filename, terraformOutputPath, logger)
+func loadClusterConfig(filename, terraformOutputPath, credentialsFilePath string, logger *logrus.Logger) (*kubeoneapi.KubeOneCluster, error) {
+	a, err := config.LoadKubeOneCluster(filename, terraformOutputPath, credentialsFilePath, logger)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to load a given KubeOneCluster object")
 	}

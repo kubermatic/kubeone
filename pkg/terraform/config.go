@@ -198,17 +198,18 @@ func (c *Config) updateAWSWorkerset(existingWorkerSet *kubeonev1alpha1.WorkerCon
 
 	flags := []cloudProviderFlags{
 		{key: "ami", value: awsCloudConfig.AMI},
+		{key: "assignPublicIP", value: awsCloudConfig.AssignPublicIP},
 		{key: "availabilityZone", value: awsCloudConfig.AvailabilityZone},
+		{key: "diskIops", value: awsCloudConfig.DiskIops},
+		{key: "diskSize", value: awsCloudConfig.DiskSize},
+		{key: "diskType", value: awsCloudConfig.DiskType},
 		{key: "instanceProfile", value: awsCloudConfig.InstanceProfile},
+		{key: "instanceType", value: awsCloudConfig.InstanceType},
 		{key: "region", value: awsCloudConfig.Region},
 		{key: "securityGroupIDs", value: awsCloudConfig.SecurityGroupIDs},
 		{key: "subnetId", value: awsCloudConfig.SubnetID},
-		{key: "vpcId", value: awsCloudConfig.VPCID},
-		{key: "instanceType", value: awsCloudConfig.InstanceType},
 		{key: "tags", value: awsCloudConfig.Tags},
-		{key: "diskType", value: awsCloudConfig.DiskType},
-		{key: "diskSize", value: awsCloudConfig.DiskSize},
-		{key: "diskIops", value: awsCloudConfig.DiskIops},
+		{key: "vpcId", value: awsCloudConfig.VPCID},
 	}
 
 	for _, flag := range flags {
@@ -396,7 +397,6 @@ func (c *Config) updateVSphereWorkerset(existingWorkerSet *kubeonev1alpha1.Worke
 		{key: "diskSizeGB", value: vsphereConfig.DiskSizeGB},
 		{key: "folder", value: vsphereConfig.Folder},
 		{key: "memoryMB", value: vsphereConfig.MemoryMB},
-		{key: "templateNetName", value: vsphereConfig.TemplateNetName},
 		{key: "templateVMName", value: vsphereConfig.TemplateVMName},
 		{key: "vmNetName", value: vsphereConfig.VMNetName},
 	}

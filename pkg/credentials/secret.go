@@ -21,6 +21,7 @@ import (
 
 	"github.com/pkg/errors"
 
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/clientutil"
 	"github.com/kubermatic/kubeone/pkg/state"
 
@@ -44,7 +45,7 @@ func Ensure(s *state.State) error {
 
 	s.Logger.Infoln("Creating credentials secret…")
 
-	creds, err := ProviderCredentials(s.Cluster.CloudProvider.Name)
+	creds, err := ProviderCredentials(s.Cluster.CloudProvider.Name, s.CredentialsFilePath)
 	if err != nil {
 		return errors.Wrap(err, "unable to fetch cloud provider credentials")
 	}
@@ -55,6 +56,31 @@ func Ensure(s *state.State) error {
 	}
 
 	return nil
+}
+
+func EnvVarBindings(cloudProviderName kubeoneapi.CloudProviderName, credentialsFilePath string) ([]corev1.EnvVar, error) {
+	creds, err := ProviderCredentials(cloudProviderName, credentialsFilePath)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to fetch cloud provider credentials")
+	}
+
+	env := make([]corev1.EnvVar, 0)
+
+	for k := range creds {
+		env = append(env, corev1.EnvVar{
+			Name: k,
+			ValueFrom: &corev1.EnvVarSource{
+				SecretKeyRef: &corev1.SecretKeySelector{
+					LocalObjectReference: corev1.LocalObjectReference{
+						Name: SecretName,
+					},
+					Key: k,
+				},
+			},
+		})
+	}
+
+	return env, nil
 }
 
 func credentialsSecret(credentials map[string]string) *corev1.Secret {

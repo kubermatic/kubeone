@@ -29,10 +29,11 @@ import (
 // Options groups the various possible options for running
 // the Kubernetes installation.
 type Options struct {
-	Verbose        bool
-	BackupFile     string
-	DestroyWorkers bool
-	RemoveBinaries bool
+	Verbose         bool
+	CredentialsFile string
+	BackupFile      string
+	DestroyWorkers  bool
+	RemoveBinaries  bool
 }
 
 // Installer is entrypoint for installation process
@@ -68,14 +69,15 @@ func (i *Installer) Reset(options *Options) error {
 // structs for each task individually.
 func (i *Installer) createState(options *Options) *state.State {
 	return &state.State{
-		Cluster:        i.cluster,
-		Connector:      ssh.NewConnector(),
-		Configuration:  configupload.NewConfiguration(),
-		WorkDir:        "kubeone",
-		Logger:         i.logger,
-		Verbose:        options.Verbose,
-		BackupFile:     options.BackupFile,
-		DestroyWorkers: options.DestroyWorkers,
-		RemoveBinaries: options.RemoveBinaries,
+		Cluster:             i.cluster,
+		Connector:           ssh.NewConnector(),
+		Configuration:       configupload.NewConfiguration(),
+		WorkDir:             "kubeone",
+		Logger:              i.logger,
+		Verbose:             options.Verbose,
+		CredentialsFilePath: options.CredentialsFile,
+		BackupFile:          options.BackupFile,
+		DestroyWorkers:      options.DestroyWorkers,
+		RemoveBinaries:      options.RemoveBinaries,
 	}
 }

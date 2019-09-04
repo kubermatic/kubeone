@@ -47,7 +47,7 @@ const (
 	MachineControllerNamespace     = metav1.NamespaceSystem
 	MachineControllerAppLabelKey   = "app"
 	MachineControllerAppLabelValue = "machine-controller"
-	MachineControllerTag           = "v1.4.2"
+	MachineControllerTag           = "v1.5.4"
 )
 
 // Deploy deploys MachineController deployment with RBAC on the cluster
@@ -58,7 +58,7 @@ func Deploy(s *state.State) error {
 
 	ctx := context.Background()
 
-	deployment, err := machineControllerDeployment(s.Cluster)
+	deployment, err := machineControllerDeployment(s.Cluster, s.CredentialsFilePath)
 	if err != nil {
 		return errors.Wrap(err, "failed to generate machine-controller deployment")
 	}
@@ -153,7 +153,7 @@ func machineControllerClusterRole() *rbacv1.ClusterRole {
 			{
 				APIGroups: []string{"apiextensions.k8s.io"},
 				Resources: []string{"customresourcedefinitions"},
-				Verbs:     []string{"get"},
+				Verbs:     []string{"create", "get", "list", "watch"},
 			},
 			{
 				APIGroups:     []string{"apiextensions.k8s.io"},
@@ -168,7 +168,7 @@ func machineControllerClusterRole() *rbacv1.ClusterRole {
 			},
 			{
 				APIGroups: []string{""},
-				Resources: []string{"persistentvolumes"},
+				Resources: []string{"persistentvolumes", "secrets", "configmaps"},
 				Verbs:     []string{"list", "get", "watch"},
 			},
 			{
@@ -672,7 +672,7 @@ func machineControllerMachineDeploymentCRD() *apiextensions.CustomResourceDefini
 	}
 }
 
-func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster) (*appsv1.Deployment, error) {
+func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster, credentialsFilePath string) (*appsv1.Deployment, error) {
 	var replicas int32 = 1
 
 	clusterDNS, err := clusterDNSIP(cluster)
@@ -697,6 +697,11 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster) (*appsv1.De
 
 	if cluster.CloudProvider.External {
 		args = append(args, "-external-cloud-provider")
+	}
+
+	envVar, err := credentials.EnvVarBindings(cluster.CloudProvider.Name, credentialsFilePath)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to get env var bindings for a secret")
 	}
 
 	return &appsv1.Deployment{
@@ -763,7 +768,7 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster) (*appsv1.De
 							ImagePullPolicy:          corev1.PullIfNotPresent,
 							Command:                  []string{"/usr/local/bin/machine-controller"},
 							Args:                     args,
-							Env:                      getEnvVarCredentials(cluster),
+							Env:                      envVar,
 							TerminationMessagePath:   corev1.TerminationMessagePathDefault,
 							TerminationMessagePolicy: corev1.TerminationMessageReadFile,
 							ReadinessProbe: &corev1.Probe{
@@ -797,26 +802,6 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster) (*appsv1.De
 			},
 		},
 	}, nil
-}
-
-func getEnvVarCredentials(cluster *kubeoneapi.KubeOneCluster) []corev1.EnvVar {
-	env := make([]corev1.EnvVar, 0)
-
-	for k := range cluster.Credentials {
-		env = append(env, corev1.EnvVar{
-			Name: k,
-			ValueFrom: &corev1.EnvVarSource{
-				SecretKeyRef: &corev1.SecretKeySelector{
-					LocalObjectReference: corev1.LocalObjectReference{
-						Name: credentials.SecretName,
-					},
-					Key: k,
-				},
-			},
-		})
-	}
-
-	return env
 }
 
 // clusterDNSIP returns the IP address of ClusterDNS Service,

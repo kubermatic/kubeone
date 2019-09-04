@@ -58,6 +58,11 @@ variable "bastion_port" {
   default     = 22
 }
 
+variable "dist_upgrade_on_boot" {
+  description = "run worker upgrade distribution on boot"
+  default     = false
+}
+
 # Provider specific settings
 
 variable "aws_region" {

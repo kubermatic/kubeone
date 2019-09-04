@@ -10,15 +10,13 @@ require (
 	github.com/go-logr/zapr v0.1.1 // indirect
 	github.com/gogo/protobuf v1.2.1 // indirect
 	github.com/google/btree v1.0.0 // indirect
-	github.com/google/gofuzz v0.0.0-20161122191042-44d81051d367 // indirect
 	github.com/googleapis/gnostic v0.2.0 // indirect
 	github.com/gregjones/httpcache v0.0.0-20190203031600-7a902570cb17 // indirect
 	github.com/imdario/mergo v0.3.7
-	github.com/json-iterator/go v0.0.0-20180612202835-f2b4162afba3 // indirect
+	github.com/json-iterator/go v1.1.7 // indirect
 	github.com/koron-go/prefixw v0.0.0-20181013140428-271b207a7572
 	github.com/kr/fs v0.1.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
-	github.com/modern-go/reflect2 v0.0.0-20180701023420-4b7aa43c6742 // indirect
 	github.com/onsi/ginkgo v1.8.0 // indirect
 	github.com/onsi/gomega v1.5.0 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
@@ -26,7 +24,7 @@ require (
 	github.com/pkg/sftp v1.10.0
 	github.com/pmezard/go-difflib v1.0.0
 	github.com/sirupsen/logrus v1.2.0
-	github.com/spf13/cobra v0.0.4
+	github.com/spf13/cobra v0.0.5
 	github.com/spf13/pflag v1.0.3
 	go.uber.org/atomic v1.4.0 // indirect
 	go.uber.org/multierr v1.1.0 // indirect

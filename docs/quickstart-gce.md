@@ -57,7 +57,7 @@ cd ./examples/terraform/gce
 ```
 
 Before we can use Terraform to create the infrastructure for us, Terraform needs
-to download the AWS plugin and setup it's environment. This is done by running
+to download the GCE plugin and setup it's environment. This is done by running
 the `init` command:
 
 ```bash
@@ -67,7 +67,7 @@ terraform init
 **Note:** You need to run this command only the first time before using scripts.
 
 You may want to configure the provisioning process by setting variables defining
-the cluster name, AWS region, instances size and similar. The easiest way is to
+the cluster name, GCE region, instances size and similar. The easiest way is to
 create the `terraform.tfvars` file and store variables there. This file is
 automatically read by Terraform.
 
@@ -219,6 +219,22 @@ environment variable:
 export KUBECONFIG=$PWD/cluster-name-kubeconfig
 ```
 
+## Scaling Worker Nodes
+
+As worker nodes are managed by machine-controller, they can be scaled up and down
+(including to 0) using Kubernetes API.
+
+```bash
+kubectl --namespace kube-system scale machinedeployment/pool1-deployment --replicas=3
+```
+
+**Note:** The `kubectl scale` command is not working as expected with `kubectl` 1.15,
+returning an error such as:
+```
+The machinedeployments "pool1" is invalid: metadata.resourceVersion: Invalid value: 0x0: must be specified for an update
+```
+For a workaround, please follow the steps described in the [issue 593][scale_issue].
+
 ## Deleting The Cluster
 
 Before deleting a cluster you should clean up all MachineDeployments, so all
@@ -229,7 +245,7 @@ kubeone reset config.yaml --tfjson tf.json
 ```
 
 This command will wait for all worker nodes to be gone. Once it's done you can
-proceed and destroy the AWS infrastructure using Terraform:
+proceed and destroy the GCE infrastructure using Terraform:
 
 ```bash
 terraform destroy
@@ -242,3 +258,5 @@ control plane nodes and three worker nodes. If you want to learn more about
 KubeOne and its features, such as [upgrades](upgrading_cluster.md), make sure to
 check our
 [documentation](https://github.com/kubermatic/kubeone/tree/master/docs).
+
+[scale_issue]: https://github.com/kubermatic/kubeone/issues/593#issuecomment-513282468

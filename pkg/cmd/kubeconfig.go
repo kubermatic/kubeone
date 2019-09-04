@@ -53,6 +53,7 @@ It's possible to source information about hosts from Terraform output, using the
 			logger := initLogger(gopts.Verbose)
 			kopts.TerraformState = gopts.TerraformState
 			kopts.Verbose = gopts.Verbose
+			kopts.CredentialsFilePath = gopts.CredentialsFilePath
 
 			kopts.Manifest = args[0]
 			if kopts.Manifest == "" {
@@ -72,7 +73,7 @@ func runKubeconfig(logger *logrus.Logger, kubeconfigOptions *kubeconfigOptions) 
 		return errors.New("no cluster config file given")
 	}
 
-	cluster, err := loadClusterConfig(kubeconfigOptions.Manifest, kubeconfigOptions.TerraformState, logger)
+	cluster, err := loadClusterConfig(kubeconfigOptions.Manifest, kubeconfigOptions.TerraformState, kubeconfigOptions.CredentialsFilePath, logger)
 	if err != nil {
 		return errors.Wrap(err, "failed to load cluster")
 	}
