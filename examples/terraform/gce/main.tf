@@ -132,7 +132,7 @@ resource "google_compute_forwarding_rule" "control_plane" {
 resource "google_compute_instance" "control_plane" {
   count = 3
 
-  name         = "${var.cluster_name}-control-plane-${count.index + 1}"
+  name         = "${var.cluster_name}-master-${count.index + 1}"
   machine_type = var.control_plane_type
   zone         = data.google_compute_zones.available.names[count.index % local.zones_count]
 
