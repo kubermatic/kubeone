@@ -29,7 +29,7 @@ TERRAFORM_VERSION=${TERRAFORM_VERSION:-"0.12.5"}
 TEST_SET=${TEST_SET:-"conformance"}
 TEST_CLUSTER_TARGET_VERSION=${TEST_CLUSTER_TARGET_VERSION:-""}
 TEST_CLUSTER_INITIAL_VERSION=${TEST_CLUSTER_INITIAL_VERSION:-""}
-export TF_VAR_cluster_name=${BUILD_ID}
+export TF_VAR_cluster_name=k1-${BUILD_ID}
 
 PATH=$PATH:$(go env GOPATH)/bin
 
@@ -103,7 +103,7 @@ if [ -n "${RUNNING_IN_CI}" ]; then
     export TF_VAR_project_id=${PACKET_PROJECT_ID}
     ;;
   "gce")
-    export GOOGLE_CREDENTIALS=${serviceAccount}
+    export GOOGLE_CREDENTIALS=$(echo ${GOOGLE_SERVICE_ACCOUNT} | base64 -d)
     ;;
   *)
     echo "unknown provider ${PROVIDER}"
