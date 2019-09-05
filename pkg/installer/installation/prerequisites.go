@@ -199,7 +199,7 @@ RELEASE="v{{ .KUBERNETES_VERSION }}"
 
 sudo mkdir -p /opt/bin
 cd /opt/bin
-sudo curl -L --remote-name-all \
+sudo -E curl -L --remote-name-all \
 	https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/amd64/{kubeadm,kubelet,kubectl}
 sudo chmod +x {kubeadm,kubelet,kubectl}
 
