@@ -60,14 +60,20 @@ cat <<EOF | sudo tee /etc/kubeone/proxy-env
 {{ if .HTTP_PROXY -}}
 HTTP_PROXY="{{ .HTTP_PROXY }}"
 http_proxy="{{ .HTTP_PROXY }}"
+export HTTP_PROXY http_proxy
+
 {{ end }}
 {{- if .HTTPS_PROXY -}}
 HTTPS_PROXY="{{ .HTTPS_PROXY }}"
 https_proxy="{{ .HTTPS_PROXY }}"
+export HTTPS_PROXY https_proxy
+
 {{ end }}
 {{- if .NO_PROXY -}}
 NO_PROXY="{{ .NO_PROXY }}"
 no_proxy="{{ .NO_PROXY }}"
+export NO_PROXY no_proxy
+
 {{ end }}
 EOF
 	`
@@ -76,8 +82,8 @@ EOF
 sudo swapoff -a
 sudo sed -i '/.*swap.*/d' /etc/fstab
 
-source /etc/os-release
-source /etc/kubeone/proxy-env
+. /etc/os-release
+. /etc/kubeone/proxy-env
 
 # Short-Circuit the installation if it was already executed
 if type docker &>/dev/null && type kubelet &>/dev/null; then exit 0; fi
@@ -139,7 +145,7 @@ sudo sed -i '/.*swap.*/d' /etc/fstab
 sudo setenforce 0 || true
 sudo sed -i s/SELINUX=enforcing/SELINUX=permissive/g /etc/sysconfig/selinux
 
-source /etc/kubeone/proxy-env
+. /etc/kubeone/proxy-env
 
 # Short-Circuit the installation if it was already executed
 if type docker &>/dev/null && type kubelet &>/dev/null; then exit 0; fi
@@ -171,7 +177,7 @@ sudo systemctl enable --now kubelet
 `
 
 	kubeadmCoreOSScript = `
-source /etc/kubeone/proxy-env
+. /etc/kubeone/proxy-env
 
 # Short-Circuit the installation if it was already executed
 if type docker &>/dev/null && type kubelet &>/dev/null; then exit 0; fi
@@ -193,7 +199,7 @@ RELEASE="v{{ .KUBERNETES_VERSION }}"
 
 sudo mkdir -p /opt/bin
 cd /opt/bin
-sudo curl -L --remote-name-all \
+sudo -E curl -L --remote-name-all \
 	https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/amd64/{kubeadm,kubelet,kubectl}
 sudo chmod +x {kubeadm,kubelet,kubectl}
 
@@ -283,7 +289,7 @@ func installPrerequisitesOnNode(s *state.State, node *kubeoneapi.HostConfig, con
 }
 
 func determineOS(s *state.State) (string, error) {
-	osID, _, err := s.Runner.Run("source /etc/os-release && echo -n $ID", nil)
+	osID, _, err := s.Runner.Run(". /etc/os-release && echo -n $ID", nil)
 	return osID, err
 }
 
