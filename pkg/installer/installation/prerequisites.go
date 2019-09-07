@@ -76,8 +76,12 @@ export NO_PROXY no_proxy
 
 {{ end }}
 EOF
-	`
 
+envtmp=/tmp/k1-etc-environment
+grep -v '#kubeone$' /etc/environment > $envtmp
+grep = /etc/kubeone/proxy-env | sed 's/$/#kubeone/' >> $envtmp
+sudo tee /etc/environment < $envtmp
+`
 	kubeadmDebianScript = `
 sudo swapoff -a
 sudo sed -i '/.*swap.*/d' /etc/fstab
