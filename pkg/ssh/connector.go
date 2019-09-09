@@ -53,6 +53,7 @@ func (c *Connector) Connect(node kubeoneapi.HostConfig) (Connection, error) {
 			Timeout:     10 * time.Second,
 			Bastion:     node.Bastion,
 			BastionPort: node.BastionPort,
+			BastionUser: node.BastionUser,
 		}
 
 		conn, err = NewConnection(opts)

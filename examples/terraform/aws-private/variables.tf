@@ -58,6 +58,11 @@ variable "bastion_port" {
   default     = 22
 }
 
+variable "bastion_user" {
+  description = "Bastion SSH username"
+  default     = "ubuntu"
+}
+
 variable "dist_upgrade_on_boot" {
   description = "run worker upgrade distribution on boot"
   default     = false
@@ -99,4 +104,3 @@ variable "ami" {
   default     = ""
   description = "AMI ID, use it to fixate control-plane AMI in order to avoid force-recreation it at later times"
 }
-
