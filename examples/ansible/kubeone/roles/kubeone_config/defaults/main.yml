@@ -48,6 +48,7 @@ kubeone_openidConnect_config_caFile: ""
 #   privateAddress: '172.18.0.1'
 #   bastion: '4.3.2.1'
 #   bastionPort: 22
+#   bastionUser: ubuntu
 #   sshPort: 22
 #   sshUsername: ubuntu
 #   sshPrivateKeyFile: '/home/me/.ssh/id_rsa'

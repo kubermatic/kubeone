@@ -37,6 +37,7 @@ type controlPlane struct {
 	SSHAgentSocket    string   `json:"ssh_agent_socket"`
 	Bastion           string   `json:"bastion"`
 	BastionPort       int      `json:"bastion_port"`
+	BastionUser       string   `json:"bastion_user"`
 }
 
 // Config represents configuration in the terraform output format
@@ -186,6 +187,7 @@ func newHostConfig(id int, publicIP, privateIP, hostname string, cp controlPlane
 		SSHAgentSocket:    cp.SSHAgentSocket,
 		Bastion:           cp.Bastion,
 		BastionPort:       cp.BastionPort,
+		BastionUser:       cp.BastionUser,
 	}
 }
 

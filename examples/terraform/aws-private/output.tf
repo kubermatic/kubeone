@@ -42,6 +42,7 @@ output "kubeone_hosts" {
       ssh_user             = var.ssh_username
       bastion              = aws_instance.bastion.public_ip
       bastion_port         = var.bastion_port
+      bastion_user         = var.bastion_user
     }
   }
 }
@@ -147,4 +148,3 @@ output "kubeone_workers" {
     }
   }
 }
-

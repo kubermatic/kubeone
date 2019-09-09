@@ -19,8 +19,9 @@ Follow the [issue #337](https://github.com/kubermatic/kubeone/issues/337) for mo
 | ssh\_port | SSH port to be used to provision instances | string | `"22"` | no |
 | ssh\_private\_key\_file | SSH private key file used to access instances | string | `""` | no |
 | ssh\_public\_key\_file | SSH public key file | string | `"~/.ssh/id_rsa.pub"` | no |
-| ssh\_username | SSH user, used only in output | string | `"root"` | no |
+| ssh\_username | SSH user, used only in output | string | `"ubuntu"` | no |
 | bastion\_port | Bastion SSH port | string | `"22"` | no |
+| bastion\_user | Bastion SSH username | string | `"ubuntu"` | no |
 | subnet\_netmask\_bits | default 8 bits in /16 CIDR, makes it /24 subnetworks | string | `"8"` | no |
 | subnet\_offset | subnet offset (from main VPC cidr_block) number to be cut | string | `"0"` | no |
 | vpc\_id | VPC to use ('default' for default VPC) | string | `"default"` | no |
@@ -35,4 +36,3 @@ Follow the [issue #337](https://github.com/kubermatic/kubeone/issues/337) for mo
 | kubeone\_bastion |  |
 | kubeone\_hosts | Control plane endpoints to SSH to |
 | kubeone\_workers | Workers definitions, that will be transformed into MachineDeployment object |
-

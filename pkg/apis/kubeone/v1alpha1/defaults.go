@@ -150,4 +150,7 @@ func defaultHostConfig(obj *HostConfig) {
 	if obj.BastionPort == 0 {
 		obj.BastionPort = 22
 	}
+	if obj.BastionUser == "" {
+		obj.BastionUser = obj.SSHUsername
+	}
 }

@@ -450,7 +450,7 @@ features:
   podSecurityPolicy:
     enable: {{ .EnablePodSecurityPolicy }}
   # Enables and configures audit log backend.
-  # More info: https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#log-backend  
+  # More info: https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#log-backend
   staticAuditLog:
     enable: {{ .EnableStaticAuditLog }}
     config:
@@ -528,6 +528,7 @@ features:
 #   privateAddress: '172.18.0.1'
 #   bastion: '4.3.2.1'
 #   bastionPort: 22  # can be left out if using the default (22)
+#   bastionUser: 'root'  # can be left out if using the default ('root')
 #   sshPort: 22 # can be left out if using the default (22)
 #   sshUsername: ubuntu
 #   # You usually want to configure either a private key OR an

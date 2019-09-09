@@ -56,6 +56,7 @@ type Opts struct {
 	Timeout     time.Duration
 	Bastion     string
 	BastionPort int
+	BastionUser string
 }
 
 func validateOptions(o Opts) (Opts, error) {
@@ -87,6 +88,10 @@ func validateOptions(o Opts) (Opts, error) {
 
 	if o.BastionPort <= 0 {
 		o.BastionPort = 22
+	}
+
+	if o.BastionUser == "" {
+		o.BastionUser = o.Username
 	}
 
 	if o.Timeout == 0 {
@@ -165,6 +170,7 @@ func NewConnection(o Opts) (Connection, error) {
 	if o.Bastion != "" {
 		targetHost = o.Bastion
 		targetPort = strconv.Itoa(o.BastionPort)
+		sshConfig.User = o.BastionUser
 	}
 
 	// do not use fmt.Sprintf() to allow proper IPv6 handling if hostname is an IP address
@@ -189,6 +195,7 @@ func NewConnection(o Opts) (Connection, error) {
 		return nil, errors.Wrapf(err, "could not establish connection to %s", endpointBehindBastion)
 	}
 
+	sshConfig.User = o.Username
 	ncc, chans, reqs, err := ssh.NewClientConn(conn, endpointBehindBastion, sshConfig)
 	if err != nil {
 		return nil, errors.Wrapf(err, "could not establish connection to %s", endpointBehindBastion)
