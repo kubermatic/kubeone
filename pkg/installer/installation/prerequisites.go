@@ -199,9 +199,13 @@ RELEASE="v{{ .KUBERNETES_VERSION }}"
 
 sudo mkdir -p /opt/bin
 cd /opt/bin
-sudo -E curl -L --remote-name-all \
-	https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/amd64/{kubeadm,kubelet,kubectl}
-sudo chmod +x {kubeadm,kubelet,kubectl}
+k8s_rel_baseurl=https://storage.googleapis.com/kubernetes-release/release
+for binary in kubeadm kubelet kubectl; do
+	curl -L --output /tmp/$binary \
+		$k8s_rel_baseurl/${RELEASE}/bin/linux/amd64/$binary
+	sudo install --owner=0 --group=0 --mode=0755 /tmp/$binary /opt/bin/$binary
+	rm /tmp/$binary
+done
 
 curl -sSL "https://raw.githubusercontent.com/kubernetes/kubernetes/${RELEASE}/build/debs/kubelet.service" | \
 	sed "s:/usr/bin:/opt/bin:g" | \
