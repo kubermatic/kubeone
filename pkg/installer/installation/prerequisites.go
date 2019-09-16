@@ -111,13 +111,15 @@ curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
 curl -fsSL https://download.docker.com/linux/${ID}/gpg | \
 	sudo apt-key add -
 
-echo "deb [arch=amd64] https://download.docker.com/linux/${ID} $(lsb_release -sc) stable" | \
-	sudo tee /etc/apt/sources.list.d/docker.list
+if [ ! -e /etc/apt/sources.list.d/offline.list ]; then
+	echo "deb [arch=amd64] https://download.docker.com/linux/${ID} ${UBUNTU_CODENAME} stable" | \
+		sudo tee /etc/apt/sources.list.d/docker.list
 
-# You'd think that kubernetes-$(lsb_release -sc) belongs there instead, but the debian repo
-# contains neither kubeadm nor kubelet, and the docs themselves suggest using xenial repo.
-echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | \
-	sudo tee /etc/apt/sources.list.d/kubernetes.list
+	# You'd think that kubernetes-${UBUNTU_CODENAME} belongs there instead, but the debian repo
+	# contains neither kubeadm nor kubelet, and the docs themselves suggest using xenial repo.
+	echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | \
+		sudo tee /etc/apt/sources.list.d/kubernetes.list
+fi
 sudo apt-get update
 
 docker_ver=$(apt-cache madison docker-ce | \
