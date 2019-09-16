@@ -700,6 +700,16 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster, credentials
 	}
 
 	envVar, err := credentials.EnvVarBindings(cluster.CloudProvider.Name, credentialsFilePath)
+	envVar = append(envVar,
+		corev1.EnvVar{
+			Name:  "HTTPS_PROXY",
+			Value: cluster.Proxy.HTTPS,
+		},
+		corev1.EnvVar{
+			Name:  "NO_PROXY",
+			Value: cluster.Proxy.NoProxy,
+		},
+	)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to get env var bindings for a secret")
 	}
