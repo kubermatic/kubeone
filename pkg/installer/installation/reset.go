@@ -105,6 +105,7 @@ func resetNode(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) er
 
 	_, _, err := s.Runner.Run(resetScript, runner.TemplateVariables{
 		"WORK_DIR": s.WorkDir,
+		"VERBOSE":  s.KubeAdmVerboseFlag(),
 	})
 
 	return err
@@ -166,10 +167,10 @@ cni_ver=$(apt-cache madison kubernetes-cni | grep "{{ .CNI_VERSION }}" | head -1
 
 sudo apt-mark unhold kubelet kubeadm kubectl kubernetes-cni
 sudo apt-get remove --purge -y \
-     kubeadm=${kube_ver} \
-     kubectl=${kube_ver} \
-     kubelet=${kube_ver} \
-     kubernetes-cni=${cni_ver}
+	kubeadm=${kube_ver} \
+	kubectl=${kube_ver} \
+	kubelet=${kube_ver} \
+	kubernetes-cni=${cni_ver}
 `
 	removeBinariesCentOSCommand = `
 sudo yum remove -y \
@@ -185,7 +186,7 @@ sudo rm -rf /opt/cni /opt/bin/kubeadm /opt/bin/kubectl /opt/bin/kubelet
 sudo rm /etc/systemd/system/kubelet.service /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
 `
 	resetScript = `
-sudo kubeadm reset --force || true
+sudo kubeadm {{ .VERBOSE }} reset --force || true
 sudo rm -f /etc/kubernetes/cloud-config
 sudo rm -rf /var/lib/etcd/
 rm -rf "{{ .WORK_DIR }}"

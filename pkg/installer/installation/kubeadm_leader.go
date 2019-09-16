@@ -28,14 +28,18 @@ import (
 const (
 	kubeadmCertCommand = `
 if [[ -d ./{{ .WORK_DIR }}/pki ]]; then
-       sudo rsync -av ./{{ .WORK_DIR }}/pki/ /etc/kubernetes/pki/
-       rm -rf ./{{ .WORK_DIR }}/pki
+   sudo rsync -av ./{{ .WORK_DIR }}/pki/ /etc/kubernetes/pki/
+   sudo chown -R root:root /etc/kubernetes
+   rm -rf ./{{ .WORK_DIR }}/pki
 fi
-sudo kubeadm init phase certs all --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+sudo kubeadm {{ .VERBOSE }} init phase certs all --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
 `
 	kubeadmInitCommand = `
-if [[ -f /etc/kubernetes/admin.conf ]]; then exit 0; fi
-sudo kubeadm init --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+if [[ -f /etc/kubernetes/admin.conf ]]; then
+	sudo kubeadm {{ .VERBOSE }} token create {{ .TOKEN }} --ttl {{ .TOKEN_DURATION }}
+	exit 0;
+fi
+sudo kubeadm {{ .VERBOSE }} init --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
 `
 )
 
@@ -50,24 +54,26 @@ func kubeadmCertsOnFollower(s *state.State) error {
 }
 
 func kubeadmCertsExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
-
 	s.Logger.Infoln("Ensuring Certificates…")
 	_, _, err := s.Runner.Run(kubeadmCertCommand, runner.TemplateVariables{
 		"WORK_DIR": s.WorkDir,
 		"NODE_ID":  strconv.Itoa(node.ID),
+		"VERBOSE":  s.KubeAdmVerboseFlag(),
 	})
 	return err
 }
 
 func initKubernetesLeader(s *state.State) error {
 	s.Logger.Infoln("Initializing Kubernetes on leader…")
-
 	return s.RunTaskOnLeader(func(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 		s.Logger.Infoln("Running kubeadm…")
 
 		_, _, err := s.Runner.Run(kubeadmInitCommand, runner.TemplateVariables{
-			"WORK_DIR": s.WorkDir,
-			"NODE_ID":  strconv.Itoa(node.ID),
+			"WORK_DIR":       s.WorkDir,
+			"NODE_ID":        strconv.Itoa(node.ID),
+			"VERBOSE":        s.KubeAdmVerboseFlag(),
+			"TOKEN":          s.JoinToken,
+			"TOKEN_DURATION": "1h",
 		})
 
 		return err

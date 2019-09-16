@@ -35,7 +35,6 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	bootstraputil "k8s.io/cluster-bootstrap/token/util"
 )
 
 const (
@@ -69,14 +68,6 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 			"read-only-port":      "0",
 			"rotate-certificates": "true",
 		},
-	}
-
-	if s.JoinToken == "" {
-		tokenStr, errBootstrap := bootstraputil.GenerateBootstrapToken()
-		if errBootstrap != nil {
-			return nil, errBootstrap
-		}
-		s.JoinToken = tokenStr
 	}
 
 	bootstrapToken, err := kubeadmv1beta1.NewBootstrapTokenString(s.JoinToken)

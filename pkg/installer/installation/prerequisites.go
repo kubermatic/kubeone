@@ -325,15 +325,12 @@ func installKubeadm(s *state.State, node kubeoneapi.HostConfig) error {
 	switch node.OperatingSystem {
 	case "ubuntu", "debian":
 		err = installKubeadmDebian(s)
-
 	case "coreos":
 		err = installKubeadmCoreOS(s)
-
 	case "centos":
 		err = installKubeadmCentOS(s)
-
 	default:
-		err = errors.Errorf("'%s' is not a supported operating system", node.OperatingSystem)
+		err = errors.Errorf("%q is not a supported operating system", node.OperatingSystem)
 	}
 
 	return err

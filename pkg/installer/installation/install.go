@@ -27,24 +27,33 @@ import (
 	"github.com/kubermatic/kubeone/pkg/task"
 	"github.com/kubermatic/kubeone/pkg/templates/externalccm"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
+
+	bootstraputil "k8s.io/cluster-bootstrap/token/util"
 )
+
+func generateBootstrapToken(s *state.State) error {
+	var err error
+	s.JoinToken, err = bootstraputil.GenerateBootstrapToken()
+	return err
+}
 
 // Install performs all the steps required to install Kubernetes on
 // an empty, pristine machine.
 func Install(s *state.State) error {
 	installSteps := []task.Task{
 		{Fn: installPrerequisites, ErrMsg: "failed to install prerequisites"},
+		{Fn: generateBootstrapToken, ErrMsg: "failed to generate bootstrap token"},
 		{Fn: generateKubeadm, ErrMsg: "failed to generate kubeadm config files"},
-		{Fn: kubeadmCertsOnLeader, ErrMsg: "failed to provision certs and etcd on leader"},
+		{Fn: kubeadmCertsOnLeader, ErrMsg: "failed to provision certs and etcd on leader", Retries: 3},
 		{Fn: certificate.DownloadCA, ErrMsg: "unable to download ca from leader", Retries: 3},
 		{Fn: deployCA, ErrMsg: "unable to deploy ca on nodes", Retries: 3},
-		{Fn: kubeadmCertsOnFollower, ErrMsg: "failed to provision certs and etcd on followers"},
-		{Fn: initKubernetesLeader, ErrMsg: "failed to init kubernetes on leader"},
-		{Fn: joinControlplaneNode, ErrMsg: "unable to join other masters a cluster"},
+		{Fn: kubeadmCertsOnFollower, ErrMsg: "failed to provision certs and etcd on followers", Retries: 3},
+		{Fn: initKubernetesLeader, ErrMsg: "failed to init kubernetes on leader", Retries: 3},
+		{Fn: joinControlplaneNode, ErrMsg: "unable to join other masters a cluster", Retries: 3},
 		{Fn: copyKubeconfig, ErrMsg: "unable to copy kubeconfig to home directory", Retries: 3},
 		{Fn: saveKubeconfig, ErrMsg: "unable to save kubeconfig to the local machine", Retries: 3},
 		{Fn: kubeconfig.BuildKubernetesClientset, ErrMsg: "unable to build kubernetes clientset", Retries: 3},
-		{Fn: features.Activate, ErrMsg: "unable to activate features"},
+		{Fn: features.Activate, ErrMsg: "unable to activate features", Retries: 3},
 		{Fn: ensureCNI, ErrMsg: "failed to install cni plugin", Retries: 3},
 		{Fn: patchCoreDNS, ErrMsg: "failed to patch CoreDNS", Retries: 3},
 		{Fn: credentials.Ensure, ErrMsg: "unable to ensure credentials secret", Retries: 3},

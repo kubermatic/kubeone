@@ -51,6 +51,13 @@ type State struct {
 	CredentialsFilePath       string
 }
 
+func (s *State) KubeAdmVerboseFlag() string {
+	if s.Verbose {
+		return "--v=6"
+	}
+	return ""
+}
+
 // Clone returns a shallow copy of the State.
 func (s *State) Clone() *State {
 	newState := *s
