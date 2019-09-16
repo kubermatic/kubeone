@@ -29,6 +29,8 @@ TERRAFORM_VERSION=${TERRAFORM_VERSION:-"0.12.5"}
 TEST_SET=${TEST_SET:-"conformance"}
 TEST_CLUSTER_TARGET_VERSION=${TEST_CLUSTER_TARGET_VERSION:-""}
 TEST_CLUSTER_INITIAL_VERSION=${TEST_CLUSTER_INITIAL_VERSION:-""}
+TEST_OS_CONTROL_PLANE=${TEST_OS_CONTROL_PLANE:-"ubuntu"}
+TEST_OS_WORKERS=${TEST_OS_WORKERS:-"ubuntu"}
 export TF_VAR_cluster_name=k1-${BUILD_ID}
 
 PATH=$PATH:$(go env GOPATH)/bin
@@ -157,6 +159,8 @@ function runE2E() {
     ./test/e2e/... \
     -identifier=${BUILD_ID} \
     -provider=${PROVIDER} \
+    -os-control-plane=${TEST_OS_CONTROL_PLANE} \
+    -os-workers=${TEST_OS_WORKERS} \
     -target-version=${TEST_CLUSTER_TARGET_VERSION} \
     -initial-version=${TEST_CLUSTER_INITIAL_VERSION}
 }
