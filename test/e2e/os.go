@@ -40,26 +40,29 @@ func ValidateOperatingSystem(osName string) error {
 	return errors.New("failed to validate operating system")
 }
 
-// DiscoverControlPlaneOSImage returns Terraform flag with the image to be used for provisioning
-func DiscoverControlPlaneOSImage(provider string, osName OperatingSystem) (string, error) {
+// ControlPlaneImageFlags returns Terraform flags for control plane image and SSH username
+func ControlPlaneImageFlags(provider string, osName OperatingSystem) ([]string, error) {
 	if provider == provisioner.AWS {
-		img, err := discoverAWSImage(osName)
+		img, user, err := discoverAWSImage(osName)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
-		return fmt.Sprintf("ami=%s", img), nil
+		return []string{
+			"-var", fmt.Sprintf("ami=%s", img),
+			"-var", fmt.Sprintf("ssh_username=%s", user),
+		}, nil
 	}
-	return "", errors.New("custom operating system is not supported for selected provider")
+	return nil, errors.New("custom operating system is not supported for selected provider")
 }
 
-func discoverAWSImage(osName OperatingSystem) (string, error) {
+func discoverAWSImage(osName OperatingSystem) (string, string, error) {
 	switch osName {
 	case OperatingSystemUbuntu:
-		return "ami-0119667e27598718e", nil
+		return "ami-0119667e27598718e", "ubuntu", nil
 	case OperatingSystemCentOS:
-		return "ami-0e1ab783dc9489f34", nil
+		return "ami-0e1ab783dc9489f34", "centos", nil
 	case OperatingSystemCoreOS:
-		return "ami-04de4c2943ebaa320", nil
+		return "ami-04de4c2943ebaa320", "core", nil
 	}
-	return "", errors.New("operating system not matched")
+	return "", "", errors.New("operating system not matched")
 }
