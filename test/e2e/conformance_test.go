@@ -143,11 +143,11 @@ func TestClusterConformance(t *testing.T) {
 			t.Log("Provisioning infrastructure using Terraform…")
 			args := []string{}
 			if osControlPlane != OperatingSystemDefault {
-				img, err := DiscoverControlPlaneOSImage(tc.provider, osControlPlane)
+				tfFlags, err := ControlPlaneImageFlags(tc.provider, osControlPlane)
 				if err != nil {
 					t.Fatalf("failed to discover control plane os image: %v", err)
 				}
-				args = append(args, "-var", img)
+				args = append(args, tfFlags...)
 			}
 			if osWorkers != OperatingSystemDefault {
 				args = append(args, "-var", fmt.Sprintf("worker_os=%s", osWorkers))
@@ -179,11 +179,11 @@ func TestClusterConformance(t *testing.T) {
 				t.Log("Adding other control plane nodes to the load balancer…")
 				args = []string{}
 				if osControlPlane != OperatingSystemDefault {
-					img, err := DiscoverControlPlaneOSImage(tc.provider, osControlPlane)
+					tfFlags, err := ControlPlaneImageFlags(tc.provider, osControlPlane)
 					if err != nil {
 						t.Fatalf("failed to discover control plane os image: %v", err)
 					}
-					args = append(args, "-var", img)
+					args = append(args, tfFlags...)
 				}
 				if osWorkers != OperatingSystemDefault {
 					args = append(args, "-var", fmt.Sprintf("worker_os=%s", osWorkers))
