@@ -56,15 +56,16 @@ func (u *Upgrader) Upgrade(options *Options) error {
 // createState creates a basic, non-host bound context with all relevant information, but no Runner yet.
 // The various task helper functions will take care of setting up Runner structs for each task individually
 func (u *Upgrader) createState(options *Options) *state.State {
-	return &state.State{
-		Cluster:                   u.cluster,
-		Connector:                 ssh.NewConnector(),
-		Configuration:             configupload.NewConfiguration(),
-		WorkDir:                   "kubeone",
-		Logger:                    u.logger,
-		Verbose:                   options.Verbose,
-		ForceUpgrade:              options.ForceUpgrade,
-		UpgradeMachineDeployments: options.UpgradeMachineDeployments,
-		CredentialsFilePath:       options.CredentialsFile,
-	}
+	s := state.New()
+
+	s.Cluster = u.cluster
+	s.Connector = ssh.NewConnector()
+	s.Configuration = configupload.NewConfiguration()
+	s.WorkDir = "kubeone"
+	s.Logger = u.logger
+	s.Verbose = options.Verbose
+	s.ForceUpgrade = options.ForceUpgrade
+	s.UpgradeMachineDeployments = options.UpgradeMachineDeployments
+	s.CredentialsFilePath = options.CredentialsFile
+	return s
 }

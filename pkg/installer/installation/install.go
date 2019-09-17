@@ -27,22 +27,14 @@ import (
 	"github.com/kubermatic/kubeone/pkg/task"
 	"github.com/kubermatic/kubeone/pkg/templates/externalccm"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
-
-	bootstraputil "k8s.io/cluster-bootstrap/token/util"
 )
-
-func generateBootstrapToken(s *state.State) error {
-	var err error
-	s.JoinToken, err = bootstraputil.GenerateBootstrapToken()
-	return err
-}
 
 // Install performs all the steps required to install Kubernetes on
 // an empty, pristine machine.
 func Install(s *state.State) error {
 	installSteps := []task.Task{
 		{Fn: installPrerequisites, ErrMsg: "failed to install prerequisites"},
-		{Fn: generateBootstrapToken, ErrMsg: "failed to generate bootstrap token"},
+		{Fn: state.GenerateBootstrapToken, ErrMsg: "failed to generate bootstrap token"},
 		{Fn: generateKubeadm, ErrMsg: "failed to generate kubeadm config files"},
 		{Fn: kubeadmCertsOnLeader, ErrMsg: "failed to provision certs and etcd on leader", Retries: 3},
 		{Fn: certificate.DownloadCA, ErrMsg: "unable to download ca from leader", Retries: 3},

@@ -17,6 +17,8 @@ limitations under the License.
 package state
 
 import (
+	"sync"
+
 	"github.com/sirupsen/logrus"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
@@ -25,8 +27,15 @@ import (
 	"github.com/kubermatic/kubeone/pkg/ssh"
 
 	"k8s.io/client-go/rest"
+	bootstraputil "k8s.io/cluster-bootstrap/token/util"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
+
+func New() *State {
+	return &State{
+		lock: &sync.Mutex{},
+	}
+}
 
 // State holds together currently test flags and parsed info, along with
 // utilities like logger
@@ -49,6 +58,8 @@ type State struct {
 	UpgradeMachineDeployments bool
 	PatchCNI                  bool
 	CredentialsFilePath       string
+
+	lock *sync.Mutex
 }
 
 func (s *State) KubeAdmVerboseFlag() string {
@@ -61,5 +72,17 @@ func (s *State) KubeAdmVerboseFlag() string {
 // Clone returns a shallow copy of the State.
 func (s *State) Clone() *State {
 	newState := *s
+	newState.lock = &sync.Mutex{}
 	return &newState
+}
+
+func GenerateBootstrapToken(s *State) error {
+	s.lock.Lock()
+	defer s.lock.Unlock()
+
+	var err error
+	if s.JoinToken == "" {
+		s.JoinToken, err = bootstraputil.GenerateBootstrapToken()
+	}
+	return err
 }

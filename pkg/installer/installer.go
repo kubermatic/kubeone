@@ -68,16 +68,17 @@ func (i *Installer) Reset(options *Options) error {
 // task helper functions will take care of setting up Runner
 // structs for each task individually.
 func (i *Installer) createState(options *Options) *state.State {
-	return &state.State{
-		Cluster:             i.cluster,
-		Connector:           ssh.NewConnector(),
-		Configuration:       configupload.NewConfiguration(),
-		WorkDir:             "kubeone",
-		Logger:              i.logger,
-		Verbose:             options.Verbose,
-		CredentialsFilePath: options.CredentialsFile,
-		BackupFile:          options.BackupFile,
-		DestroyWorkers:      options.DestroyWorkers,
-		RemoveBinaries:      options.RemoveBinaries,
-	}
+	s := state.New()
+
+	s.Cluster = i.cluster
+	s.Connector = ssh.NewConnector()
+	s.Configuration = configupload.NewConfiguration()
+	s.WorkDir = "kubeone"
+	s.Logger = i.logger
+	s.Verbose = options.Verbose
+	s.CredentialsFilePath = options.CredentialsFile
+	s.BackupFile = options.BackupFile
+	s.DestroyWorkers = options.DestroyWorkers
+	s.RemoveBinaries = options.RemoveBinaries
+	return s
 }
