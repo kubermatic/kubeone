@@ -17,8 +17,6 @@ limitations under the License.
 package state
 
 import (
-	"sync"
-
 	"github.com/sirupsen/logrus"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
@@ -59,8 +57,6 @@ type State struct {
 	UpgradeMachineDeployments bool
 	PatchCNI                  bool
 	CredentialsFilePath       string
-
-	lock *sync.Mutex
 }
 
 func (s *State) KubeadmVerboseFlag() string {
