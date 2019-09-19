@@ -50,21 +50,29 @@ func NewUpgrader(cluster *kubeoneapi.KubeOneCluster, logger *logrus.Logger) *Upg
 
 // Upgrade run the upgrade process
 func (u *Upgrader) Upgrade(options *Options) error {
-	return upgrade.Upgrade(u.createState(options))
+	s, err := u.createState(options)
+	if err != nil {
+		return err
+	}
+	return upgrade.Upgrade(s)
 }
 
 // createState creates a basic, non-host bound context with all relevant information, but no Runner yet.
 // The various task helper functions will take care of setting up Runner structs for each task individually
-func (u *Upgrader) createState(options *Options) *state.State {
-	return &state.State{
-		Cluster:                   u.cluster,
-		Connector:                 ssh.NewConnector(),
-		Configuration:             configupload.NewConfiguration(),
-		WorkDir:                   "kubeone",
-		Logger:                    u.logger,
-		Verbose:                   options.Verbose,
-		ForceUpgrade:              options.ForceUpgrade,
-		UpgradeMachineDeployments: options.UpgradeMachineDeployments,
-		CredentialsFilePath:       options.CredentialsFile,
+func (u *Upgrader) createState(options *Options) (*state.State, error) {
+	s, err := state.New()
+	if err != nil {
+		return nil, err
 	}
+
+	s.Cluster = u.cluster
+	s.Connector = ssh.NewConnector()
+	s.Configuration = configupload.NewConfiguration()
+	s.WorkDir = "kubeone"
+	s.Logger = u.logger
+	s.Verbose = options.Verbose
+	s.ForceUpgrade = options.ForceUpgrade
+	s.UpgradeMachineDeployments = options.UpgradeMachineDeployments
+	s.CredentialsFilePath = options.CredentialsFile
+	return s, nil
 }

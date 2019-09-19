@@ -53,31 +53,43 @@ func NewInstaller(cluster *kubeoneapi.KubeOneCluster, logger *logrus.Logger) *In
 
 // Install run the installation process
 func (i *Installer) Install(options *Options) error {
-	return installation.Install(i.createState(options))
+	s, err := i.createState(options)
+	if err != nil {
+		return err
+	}
+	return installation.Install(s)
 }
 
 // Reset resets cluster:
 // * destroys all the worker machines
 // * kubeadm reset masters
 func (i *Installer) Reset(options *Options) error {
-	return installation.Reset(i.createState(options))
+	s, err := i.createState(options)
+	if err != nil {
+		return err
+	}
+	return installation.Reset(s)
 }
 
 // createState creates a basic, non-host bound state with
 // all relevant information, but *no* Runner yet. The various
 // task helper functions will take care of setting up Runner
 // structs for each task individually.
-func (i *Installer) createState(options *Options) *state.State {
-	return &state.State{
-		Cluster:             i.cluster,
-		Connector:           ssh.NewConnector(),
-		Configuration:       configupload.NewConfiguration(),
-		WorkDir:             "kubeone",
-		Logger:              i.logger,
-		Verbose:             options.Verbose,
-		CredentialsFilePath: options.CredentialsFile,
-		BackupFile:          options.BackupFile,
-		DestroyWorkers:      options.DestroyWorkers,
-		RemoveBinaries:      options.RemoveBinaries,
+func (i *Installer) createState(options *Options) (*state.State, error) {
+	s, err := state.New()
+	if err != nil {
+		return nil, err
 	}
+
+	s.Cluster = i.cluster
+	s.Connector = ssh.NewConnector()
+	s.Configuration = configupload.NewConfiguration()
+	s.WorkDir = "kubeone"
+	s.Logger = i.logger
+	s.Verbose = options.Verbose
+	s.CredentialsFilePath = options.CredentialsFile
+	s.BackupFile = options.BackupFile
+	s.DestroyWorkers = options.DestroyWorkers
+	s.RemoveBinaries = options.RemoveBinaries
+	return s, nil
 }

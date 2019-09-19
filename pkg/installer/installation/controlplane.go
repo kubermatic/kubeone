@@ -40,13 +40,14 @@ func joinControlPlaneNodeInternal(s *state.State, node *kubeoneapi.HostConfig, c
 	logger.Info("Joining control plane node")
 
 	_, _, err := s.Runner.Run(`
-if [[ -f /etc/kubernetes/kubelet.conf ]]; then exit 0; fi
+if [[ -f /etc/kubernetes/admin.conf ]]; then exit 0; fi
 
-sudo kubeadm join \
+sudo kubeadm join {{ .VERBOSE }} \
 	--config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
 `, runner.TemplateVariables{
 		"WORK_DIR": s.WorkDir,
 		"NODE_ID":  strconv.Itoa(node.ID),
+		"VERBOSE":  s.KubeadmVerboseFlag(),
 	})
 	return err
 }
