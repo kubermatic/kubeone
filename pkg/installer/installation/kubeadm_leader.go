@@ -58,7 +58,7 @@ func kubeadmCertsExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh.
 	_, _, err := s.Runner.Run(kubeadmCertCommand, runner.TemplateVariables{
 		"WORK_DIR": s.WorkDir,
 		"NODE_ID":  strconv.Itoa(node.ID),
-		"VERBOSE":  s.KubeAdmVerboseFlag(),
+		"VERBOSE":  s.KubeadmVerboseFlag(),
 	})
 	return err
 }
@@ -71,7 +71,7 @@ func initKubernetesLeader(s *state.State) error {
 		_, _, err := s.Runner.Run(kubeadmInitCommand, runner.TemplateVariables{
 			"WORK_DIR":       s.WorkDir,
 			"NODE_ID":        strconv.Itoa(node.ID),
-			"VERBOSE":        s.KubeAdmVerboseFlag(),
+			"VERBOSE":        s.KubeadmVerboseFlag(),
 			"TOKEN":          s.JoinToken,
 			"TOKEN_DURATION": "1h",
 		})

@@ -47,7 +47,6 @@ const (
 func Upgrade(s *state.State) error {
 	// commonSteps are same for all worker nodes and they are safe to be run in parallel
 	commonSteps := []task.Task{
-		{Fn: state.GenerateBootstrapToken, ErrMsg: "failed to generate bootstrap token"},
 		{Fn: kubeconfig.BuildKubernetesClientset, ErrMsg: "unable to build kubernetes clientset"},
 		{Fn: determineHostname, ErrMsg: "unable to determine hostname"},
 		{Fn: determineOS, ErrMsg: "unable to determine operating system"},

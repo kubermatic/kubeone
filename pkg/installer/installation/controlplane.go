@@ -47,7 +47,7 @@ sudo kubeadm join {{ .VERBOSE }} \
 `, runner.TemplateVariables{
 		"WORK_DIR": s.WorkDir,
 		"NODE_ID":  strconv.Itoa(node.ID),
-		"VERBOSE":  s.KubeAdmVerboseFlag(),
+		"VERBOSE":  s.KubeadmVerboseFlag(),
 	})
 	return err
 }

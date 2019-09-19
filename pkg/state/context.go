@@ -31,10 +31,11 @@ import (
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-func New() *State {
+func New() (*State, error) {
+	joinToken, err := bootstraputil.GenerateBootstrapToken()
 	return &State{
-		lock: &sync.Mutex{},
-	}
+		JoinToken: joinToken,
+	}, err
 }
 
 // State holds together currently test flags and parsed info, along with
@@ -62,7 +63,7 @@ type State struct {
 	lock *sync.Mutex
 }
 
-func (s *State) KubeAdmVerboseFlag() string {
+func (s *State) KubeadmVerboseFlag() string {
 	if s.Verbose {
 		return "--v=6"
 	}
@@ -72,17 +73,5 @@ func (s *State) KubeAdmVerboseFlag() string {
 // Clone returns a shallow copy of the State.
 func (s *State) Clone() *State {
 	newState := *s
-	newState.lock = &sync.Mutex{}
 	return &newState
-}
-
-func GenerateBootstrapToken(s *State) error {
-	s.lock.Lock()
-	defer s.lock.Unlock()
-
-	var err error
-	if s.JoinToken == "" {
-		s.JoinToken, err = bootstraputil.GenerateBootstrapToken()
-	}
-	return err
 }

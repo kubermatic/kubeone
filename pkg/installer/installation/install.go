@@ -34,7 +34,6 @@ import (
 func Install(s *state.State) error {
 	installSteps := []task.Task{
 		{Fn: installPrerequisites, ErrMsg: "failed to install prerequisites"},
-		{Fn: state.GenerateBootstrapToken, ErrMsg: "failed to generate bootstrap token"},
 		{Fn: generateKubeadm, ErrMsg: "failed to generate kubeadm config files"},
 		{Fn: kubeadmCertsOnLeader, ErrMsg: "failed to provision certs and etcd on leader", Retries: 3},
 		{Fn: certificate.DownloadCA, ErrMsg: "unable to download ca from leader", Retries: 3},

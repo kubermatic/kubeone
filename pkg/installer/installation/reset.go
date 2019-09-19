@@ -105,7 +105,7 @@ func resetNode(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) er
 
 	_, _, err := s.Runner.Run(resetScript, runner.TemplateVariables{
 		"WORK_DIR": s.WorkDir,
-		"VERBOSE":  s.KubeAdmVerboseFlag(),
+		"VERBOSE":  s.KubeadmVerboseFlag(),
 	})
 
 	return err
