@@ -37,7 +37,8 @@ the output.
 The [Terraform documentation][3] has a document showing how to provision the
 infrastructure for each Terraform-supported provider. If there is no Terraform
 support for such provider, please create an issue in the KubeOne repository or
-contact us over [Kubermatic Slack][4] to discuss about potential alternatives.
+contact us on the [`#kubeone` channel on Kubernetes Slack][4] to discuss about
+potential alternatives.
 
 Once Terraform scripts are done, you should proceed to adding the needed API
 types to the KubeOneCluster API.
@@ -141,7 +142,7 @@ E2E tests for a newly-added provider in the CI pipeline.
 [1]: https://github.com/kubermatic/machine-controller
 [2]: https://github.com/kubermatic/kubeone/tree/19e5e6bf792ae47d65bd8adf75f390c74159e3de/examples/terraform
 [3]: https://www.terraform.io/docs/providers/
-[4]: http://slack.kubermatic.io/
+[4]: http://slack.k8s.io/
 [5]: https://github.com/kubermatic/kubeone/tree/19e5e6bf792ae47d65bd8adf75f390c74159e3de/pkg/apis/kubeone
 [6]: https://github.com/kubermatic/kubeone/blob/19e5e6bf792ae47d65bd8adf75f390c74159e3de/pkg/apis/kubeone/types.go#L83-L92
 [7]: https://github.com/kubermatic/kubeone/blob/19e5e6bf792ae47d65bd8adf75f390c74159e3de/pkg/apis/kubeone/v1alpha1/types.go#L83-L92

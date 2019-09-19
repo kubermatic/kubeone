@@ -69,7 +69,7 @@ This part of the document explains how to get started with contributing, includi
 
 One of the most challenging part of contributing to the open source projects is finding what to work on. To make it easier, we're trying to label all issues that may be good for first time contributors using the [`good first issue`](https://github.com/kubermatic/kubeone/labels/good%20first%20issue) label. Another label you can take a look at is the [`help wanted`](https://github.com/kubermatic/kubeone/labels/help%20wanted) label, however there may be issue that can be harder to solve if you're not experienced with the code base.
 
-If you have any questions or need assistance, please feel free to comment on the appropriate issue, create a new issue or ping us on [Slack](http://slack.kubermatic.io/) or [`loodse-dev` mailing list](https://groups.google.com/forum/#!forum/loodse-dev)!
+If you have any questions or need assistance, please feel free to comment on the appropriate issue, create a new issue or ping us on [`#kubeone` channel on Kubernetes Slack](http://slack.k8s.io/) or [`loodse-dev` mailing list](https://groups.google.com/forum/#!forum/loodse-dev)!
 
 ### Submitting Feature Requests
 
@@ -193,7 +193,7 @@ import (
 
 ## Contact
 
-The KubeOne project currently uses the general [Loodse (`loodse-dev`) mailing list](https://groups.google.com/forum/#!forum/loodse-dev) and KubeOne Slack channel on [Kubermatic Slack](http://slack.kubermatic.io/). You can also ask questions by creating a new issue on GitHub, but using mailing list or Slack is preferred.
+The KubeOne project currently uses the general [Loodse (`loodse-dev`) mailing list](https://groups.google.com/forum/#!forum/loodse-dev) and [`#kubeone` Slack channel](https://kubernetes.slack.com/messages/CNEV2UMT7) on [Kubernetes Slack](http://slack.k8s.io/). You can also ask questions by creating a new issue on GitHub, but using mailing list or Slack is preferred.
 
 Please avoid emailing maintainers found in the MAINTAINERS file directly. They are very busy, but they often read the mailing list and the Slack channel.
 
