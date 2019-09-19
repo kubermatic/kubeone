@@ -58,4 +58,20 @@ var (
 		"ValidatingAdmissionWebhook",
 		"ResourceQuota",
 	}
+
+	defaultAdmissionControllersv116x = []string{
+		"NamespaceLifecycle",
+		"LimitRanger",
+		"ServiceAccount",
+		"TaintNodesByCondition",
+		"Priority",
+		"DefaultTolerationSeconds",
+		"DefaultStorageClass",
+		"StorageObjectInUseProtection",
+		"PersistentVolumeClaimResize",
+		"MutatingAdmissionWebhook",
+		"ValidatingAdmissionWebhook",
+		"RuntimeClass",
+		"ResourceQuota",
+	}
 )
