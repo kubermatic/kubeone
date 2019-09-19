@@ -185,12 +185,12 @@ features, please create a new issue on GitHub or connect with us over the
 mailing list or Slack:
 
 * [loodse-dev mailing list][14]
-* [Kubermatic Slack][15]
+* [`#kubeone` channel][5] on [Kubernetes Slack][15]
 
 ## Reporting Bugs
 
 If you encounter issues, please [create a new issue on GitHub][1] or talk to us
-on the [#KubeOne Slack channel][5]. When reporting a bug please include the
+on the [`#kubeone` Slack channel][5]. When reporting a bug please include the
 following information:
 
 * KubeOne version or Git commit that you're running (`kubeone version`),
@@ -210,7 +210,7 @@ See [the list of releases][3] to find out about feature changes.
 [2]: https://github.com/kubermatic/KubeOne/blob/master/CONTRIBUTING.md
 [3]: https://github.com/kubermatic/KubeOne/releases
 [4]: https://github.com/kubermatic/KubeOne/blob/master/CODE_OF_CONDUCT.md
-[5]: https://kubermatic.slack.com/messages/KubeOne
+[5]: https://kubernetes.slack.com/messages/CNEV2UMT7
 [6]: ./docs/backwards_compatibility_policy.md
 [7]: https://github.com/kubernetes-sigs/cluster-api
 [8]: https://github.com/kubermatic/machine-controller
@@ -220,6 +220,6 @@ See [the list of releases][3] to find out about feature changes.
 [11]: ./docs/quickstart-aws.md
 [13]: https://github.com/kubermatic/kubeone#features
 [14]: https://groups.google.com/forum/#!forum/loodse-dev
-[15]: http://slack.kubermatic.io/
+[15]: http://slack.k8s.io/
 [16]: https://github.com/kubermatic/kubeone/blob/master/CONTRIBUTING.md#reporting-a-security-vulnerability
 [17]: https://github.com/kubermatic/kubeone/issues/471

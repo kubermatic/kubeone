@@ -2,7 +2,8 @@
 
 This document lists some commonly asked questions about KubeOne, what it does,
 and how it works. If you have any question not covered here, please create 
-[a new GitHub issue][1] or contact us on [the mailing list][2] or [Slack][3].
+[a new GitHub issue][1] or contact us on [the mailing list][2] or 
+on the [`#kubeone` channel on Kubernetes Slack][3].
 
 - [What is KubeOne?](#what-is-kubeone-)
 - [What cloud providers KubeOne does support?](#what-cloud-providers-kubeone-does-support-)
@@ -50,7 +51,8 @@ the infrastructure can be configured and what resources can be used. There are
 many possible setups and supporting each of them in most of cases isn't
 possible. Operators are free to define infrastructure how they prefer and then
 use KubeOne to provision the cluster. We're open to feedback, so if you have any
-suggestion or idea ping us on [the mailing list][6] or [Slack][3].
+suggestion or idea ping us on [the mailing list][6] or on the 
+[`#kubeone` channel on Kubernetes Slack][3].
 
 ## How KubeOne works?
 
@@ -102,7 +104,7 @@ Please check our [contributing guide](CONTRIBUTING.md).
 
 [1]: https://github.com/kubermatic/kubeone/issues
 [2]: https://groups.google.com/forum/#!forum/loodse-dev
-[3]: http://slack.kubermatic.io/
+[3]: http://slack.k8s.io/
 [4]: https://github.com/kubermatic/machine-controller
 [5]: http://github.com/kubermatic/kubeone/tree/master/examples/terraform
 [6]: https://groups.google.com/forum/#!forum/loodse-dev
