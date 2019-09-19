@@ -26,6 +26,7 @@ var (
 	constrainv1130v1132 = mustConstraint(">= 1.13.0, < 1.13.3")
 	constrainv1133v114x = mustConstraint(">= 1.13.3, < 1.15.0")
 	constrainv115x      = mustConstraint("1.15.x")
+	constrainv116x      = mustConstraint("1.16.x")
 )
 
 // DefaultAdmissionControllers return list of default admission controllers for
@@ -38,10 +39,12 @@ func DefaultAdmissionControllers(kubeVersion *semver.Version) string {
 		return strings.Join(defaultAdmissionControllersv1133v114x, ",")
 	case constrainv115x.Check(kubeVersion):
 		return strings.Join(defaultAdmissionControllersv115x, ",")
+	case constrainv116x.Check(kubeVersion):
+		return strings.Join(defaultAdmissionControllersv116x, ",")
 	}
 
 	// return same as for last known release
-	return strings.Join(defaultAdmissionControllersv115x, ",")
+	return strings.Join(defaultAdmissionControllersv116x, ",")
 }
 
 func mustConstraint(c string) *semver.Constraints {
