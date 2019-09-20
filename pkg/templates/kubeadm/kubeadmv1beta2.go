@@ -39,5 +39,5 @@ func (*kubeadmv1beta2) UpgradeLeaderCommand() string {
 }
 
 func (*kubeadmv1beta2) UpgradeFollowerCommand() string {
-	return "kubeadm upgrade node control-plane"
+	return "kubeadm upgrade node"
 }
