@@ -28,6 +28,7 @@ var (
 	v13x = mustParseConstraint("1.13.x")
 	v14x = mustParseConstraint("1.14.x")
 	v15x = mustParseConstraint("1.15.x")
+	v16x = mustParseConstraint("1.16.x")
 )
 
 // Kubedm interface abstract differences between different kubeadm versions
@@ -50,6 +51,8 @@ func New(ver string) (Kubedm, error) {
 	case v14x.Check(sver):
 		return &kubeadmv1beta1{}, nil
 	case v15x.Check(sver):
+		return &kubeadmv1beta2{}, nil
+	case v16x.Check(sver):
 		return &kubeadmv1beta2{}, nil
 	}
 

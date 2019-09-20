@@ -23,9 +23,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/v1beta2"
 )
 
-type kubeadmv1beta2 struct {
-	kubeadmv1beta1
-}
+type kubeadmv1beta2 struct{}
 
 func (*kubeadmv1beta2) Config(s *state.State, instance kubeoneapi.HostConfig) (string, error) {
 	config, err := v1beta2.NewConfig(s, instance)
@@ -36,6 +34,10 @@ func (*kubeadmv1beta2) Config(s *state.State, instance kubeoneapi.HostConfig) (s
 	return templates.KubernetesToYAML(config)
 }
 
-func (*kubeadmv1beta2) UpgradeFollowerCMD() string {
+func (*kubeadmv1beta2) UpgradeLeaderCommand() string {
+	return "kubeadm upgrade apply"
+}
+
+func (*kubeadmv1beta2) UpgradeFollowerCommand() string {
 	return "kubeadm upgrade node control-plane"
 }
