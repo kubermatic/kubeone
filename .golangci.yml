@@ -30,5 +30,6 @@ issues:
     - "don't use underscores in Go names; func SetDefaults_ClusterNetwork should be SetDefaultsClusterNetwork"
     - "don't use underscores in Go names; func SetDefaults_Features should be SetDefaultsFeatures"
     - "don't use underscores in Go names; func SetDefaults_MachineController should be SetDefaultsMachineController"
+    - "don't use underscores in Go names; func SetDefaults_SystemPackages should be SetDefaultsSystemPackages"
     - "G101: Potential hardcoded credentials"
     - "G106: Use of ssh InsecureIgnoreHostKey should be audited"

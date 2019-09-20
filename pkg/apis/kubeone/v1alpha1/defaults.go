@@ -40,6 +40,7 @@ func SetDefaults_KubeOneCluster(obj *KubeOneCluster) {
 	SetDefaults_APIEndpoints(obj)
 	SetDefaults_ClusterNetwork(obj)
 	SetDefaults_MachineController(obj)
+	SetDefaults_SystemPackages(obj)
 	SetDefaults_Features(obj)
 }
 
@@ -102,6 +103,14 @@ func SetDefaults_MachineController(obj *KubeOneCluster) {
 
 	if obj.MachineController.Provider == "" {
 		obj.MachineController.Provider = obj.CloudProvider.Name
+	}
+}
+
+func SetDefaults_SystemPackages(obj *KubeOneCluster) {
+	if obj.SystemPackages == nil {
+		obj.SystemPackages = &SystemPackages{
+			ConfigureRepositories: true,
+		}
 	}
 }
 

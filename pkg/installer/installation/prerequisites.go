@@ -106,6 +106,7 @@ sudo apt-get install -y --no-install-recommends \
 	rsync \
 	tree
 
+{{ if .CONFIGURE_REPOSITORIES }}
 curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
 	sudo apt-key add -
 curl -fsSL https://download.docker.com/linux/${ID}/gpg | \
@@ -119,6 +120,7 @@ echo "deb [arch=amd64] https://download.docker.com/linux/${ID} $(lsb_release -sc
 echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | \
 	sudo tee /etc/apt/sources.list.d/kubernetes.list
 sudo apt-get update
+{{ end }}
 
 docker_ver=$(apt-cache madison docker-ce | \
 	grep "{{ .DOCKER_VERSION }}" | head -1 | awk '{print $3}')
@@ -156,6 +158,7 @@ net.bridge.bridge-nf-call-iptables = 1
 EOF
 sudo sysctl --system
 
+{{ if .CONFIGURE_REPOSITORIES }}
 cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
 name=Kubernetes
@@ -166,6 +169,7 @@ repo_gpgcheck=1
 gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
 exclude=kube*
 EOF
+{{ end }}
 
 sudo yum install -y --disableexcludes=kubernetes \
 	docker kubelet-{{ .KUBERNETES_VERSION }}-0\
@@ -338,9 +342,10 @@ func installKubeadm(s *state.State, node kubeoneapi.HostConfig) error {
 
 func installKubeadmDebian(s *state.State) error {
 	_, _, err := s.Runner.Run(kubeadmDebianScript, runner.TemplateVariables{
-		"KUBERNETES_VERSION": s.Cluster.Versions.Kubernetes,
-		"DOCKER_VERSION":     dockerVersion,
-		"CNI_VERSION":        s.Cluster.Versions.KubernetesCNIVersion(),
+		"KUBERNETES_VERSION":     s.Cluster.Versions.Kubernetes,
+		"DOCKER_VERSION":         dockerVersion,
+		"CNI_VERSION":            s.Cluster.Versions.KubernetesCNIVersion(),
+		"CONFIGURE_REPOSITORIES": s.Cluster.SystemPackages.ConfigureRepositories,
 	})
 
 	return errors.WithStack(err)
@@ -348,8 +353,9 @@ func installKubeadmDebian(s *state.State) error {
 
 func installKubeadmCentOS(s *state.State) error {
 	_, _, err := s.Runner.Run(kubeadmCentOSScript, runner.TemplateVariables{
-		"KUBERNETES_VERSION": s.Cluster.Versions.Kubernetes,
-		"CNI_VERSION":        s.Cluster.Versions.KubernetesCNIVersion(),
+		"KUBERNETES_VERSION":     s.Cluster.Versions.Kubernetes,
+		"CNI_VERSION":            s.Cluster.Versions.KubernetesCNIVersion(),
+		"CONFIGURE_REPOSITORIES": s.Cluster.SystemPackages.ConfigureRepositories,
 	})
 	return err
 }
