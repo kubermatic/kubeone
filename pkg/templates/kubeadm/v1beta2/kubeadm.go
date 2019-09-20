@@ -79,7 +79,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 
 	initConfig := &kubeadmv1beta2.InitConfiguration{
 		TypeMeta: metav1.TypeMeta{
-			APIVersion: "kubeadm.k8s.io/v1beta1",
+			APIVersion: "kubeadm.k8s.io/v1beta2",
 			Kind:       "InitConfiguration",
 		},
 		BootstrapTokens: []kubeadmv1beta2.BootstrapToken{
@@ -104,7 +104,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 
 	joinConfig := &kubeadmv1beta2.JoinConfiguration{
 		TypeMeta: metav1.TypeMeta{
-			APIVersion: "kubeadm.k8s.io/v1beta1",
+			APIVersion: "kubeadm.k8s.io/v1beta2",
 			Kind:       "JoinConfiguration",
 		},
 		ControlPlane: &kubeadmv1beta2.JoinControlPlane{
@@ -123,7 +123,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 
 	clusterConfig := &kubeadmv1beta2.ClusterConfiguration{
 		TypeMeta: metav1.TypeMeta{
-			APIVersion: "kubeadm.k8s.io/v1beta1",
+			APIVersion: "kubeadm.k8s.io/v1beta2",
 			Kind:       "ClusterConfiguration",
 		},
 		Networking: kubeadmv1beta2.Networking{
