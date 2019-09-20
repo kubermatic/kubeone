@@ -48,6 +48,8 @@ type KubeOneCluster struct {
 	MachineController *MachineControllerConfig `json:"machineController,omitempty"`
 	// Features enables and configures additional cluster features
 	Features Features `json:"features,omitempty"`
+	// SystemPackages configure kubeone behaviour regarding OS packages
+	SystemPackages *SystemPackages `json:"systemPackages,omitempty"`
 	// Credentials used for machine-controller and external CCM
 	Credentials map[string]string `json:"credentials,omitempty"`
 }
@@ -203,6 +205,13 @@ type Features struct {
 	DynamicAuditLog   *DynamicAuditLog   `json:"dynamicAuditLog"`
 	MetricsServer     *MetricsServer     `json:"metricsServer"`
 	OpenIDConnect     *OpenIDConnect     `json:"openidConnect"`
+}
+
+// SystemPackages controls configurations of APT/YUM
+type SystemPackages struct {
+	// ConfigureRepositories (true by default) is a flag to control automatic
+	// configuration of kubeadm / docker repositories.
+	ConfigureRepositories bool `json:"configureRepositories,omitempty"`
 }
 
 // PodSecurityPolicy feature flag

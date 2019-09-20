@@ -1,6 +1,6 @@
 module github.com/kubermatic/kubeone
 
-go 1.12
+go 1.13
 
 require (
 	github.com/Masterminds/semver v1.4.2

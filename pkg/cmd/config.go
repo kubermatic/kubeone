@@ -519,6 +519,11 @@ features:
       # be used.
       caFile: ""
 
+systemPackages:
+  # if set (true by default), will configure OS package manager with
+  # docker / kubernetes repositories
+  configureRepositories: true
+
 # The list of nodes can be overwritten by providing Terraform output.
 # You are strongly encouraged to provide an odd number of nodes and
 # have at least three of them.
