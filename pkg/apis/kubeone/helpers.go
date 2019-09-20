@@ -30,6 +30,7 @@ func (c KubeOneCluster) Leader() (HostConfig, error) {
 			return host, nil
 		}
 	}
+
 	return HostConfig{}, errors.New("leader not found")
 }
 

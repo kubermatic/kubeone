@@ -1,5 +1,6 @@
 # KubeOne
 
+
 <p align="center"><img src="docs/img/kubeone-logo-text.png" width="700px" /></p>
 <p align="center">
   <a href="https://godoc.org/github.com/kubermatic/kubeone">
