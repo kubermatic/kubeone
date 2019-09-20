@@ -211,7 +211,7 @@ type Features struct {
 type SystemPackages struct {
 	// ConfigureRepositories (true by default) is a flag to control automatic
 	// configuration of kubeadm / docker repositories.
-	ConfigureRepositories bool `json:"configureRepositories,omitempty"`
+	ConfigureRepositories bool `json:"configureRepositories"`
 }
 
 // PodSecurityPolicy feature flag
