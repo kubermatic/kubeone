@@ -16,12 +16,12 @@ export GOPATH?=$(shell go env GOPATH)
 export CGO_ENABLED=0
 export GOPROXY=https://proxy.golang.org
 export GO111MODULE=on
-export GOFLAGS?=-mod=readonly
+export GOFLAGS?=-mod=readonly -trimpath
 
 BUILD_DATE=$(shell if hash gdate 2>/dev/null; then gdate --rfc-3339=seconds | sed 's/ /T/'; else date --rfc-3339=seconds | sed 's/ /T/'; fi)
 GITCOMMIT=$(shell git log -1 --pretty=format:"%H")
 GITTAG=$(shell git describe --tags --always)
-GOLDFLAGS?=-s -w -X github.com/kubermatic/kubeone/pkg/cmd.version=$(GITTAG) -X github.com/kubermatic/kubeone/pkg/cmd.commit=$(GITCOMMIT) -X github.com/kubermatic/kubeone/pkg/cmd.date=$(BUILD_DATE)
+GOLDFLAGS?=-extldflags=-zrelro -extldflags=-znow -s -w -X github.com/kubermatic/kubeone/pkg/cmd.version=$(GITTAG) -X github.com/kubermatic/kubeone/pkg/cmd.commit=$(GITCOMMIT) -X github.com/kubermatic/kubeone/pkg/cmd.date=$(BUILD_DATE)
 
 .PHONY: all
 all: install
