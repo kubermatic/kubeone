@@ -23,6 +23,7 @@ package v1alpha1
 import (
 	json "encoding/json"
 
+	v1 "k8s.io/api/core/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 )
 
@@ -360,6 +361,13 @@ func (in *ProviderSpec) DeepCopyInto(out *ProviderSpec) {
 		*out = make(map[string]string, len(*in))
 		for key, val := range *in {
 			(*out)[key] = val
+		}
+	}
+	if in.Taints != nil {
+		in, out := &in.Taints, &out.Taints
+		*out = make([]v1.Taint, len(*in))
+		for i := range *in {
+			(*in)[i].DeepCopyInto(&(*out)[i])
 		}
 	}
 	if in.SSHPublicKeys != nil {
