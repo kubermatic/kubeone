@@ -115,10 +115,6 @@ if [ -n "${RUNNING_IN_CI}" ]; then
     export OS_USERNAME=${OS_USERNAME}
     export OS_PASSWORD=${OS_PASSWORD}
     echo ${k1_credentials} > /tmp/credentials.yaml
-
-    export TF_VAR_external_network_name = "ext-net"
-    export TF_VAR_subnet_cidr = "10.0.42.0/24"
-    export TF_VAR_image = "Ubuntu Bionic 18.04 (2019-05-02)"
     ;;
   *)
     echo "unknown provider ${PROVIDER}"
