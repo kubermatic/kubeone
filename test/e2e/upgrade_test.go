@@ -93,6 +93,14 @@ func TestClusterUpgrade(t *testing.T) {
 			targetConfigPath:      "../../test/e2e/testdata/config_packet_target.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
 		},
+		{
+			name:                  "upgrade k8s cluster on OpenStack",
+			provider:              provisioner.OpenStack,
+			providerExternal:      false,
+			initialConfigPath:     "../../test/e2e/testdata/config_openstack_initial.yaml",
+			targetConfigPath:      "../../test/e2e/testdata/config_openstack_target.yaml",
+			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
+		},
 	}
 
 	for _, tc := range testcases {
@@ -134,7 +142,14 @@ func TestClusterUpgrade(t *testing.T) {
 
 			// Create configuration manifest
 			t.Log("Creating KubeOneCluster manifest…")
-			err = target.CreateConfig(testInitialVersion, tc.provider, tc.providerExternal)
+			var clusterNetworkPod string
+			var clusterNetworkService string
+			if tc.provider == provisioner.OpenStack {
+				clusterNetworkPod = "192.168.0.0/16"
+				clusterNetworkService = "172.16.0.0/12"
+			}
+			err = target.CreateConfig(testTargetVersion, tc.provider,
+				tc.providerExternal, clusterNetworkPod, clusterNetworkService)
 			if err != nil {
 				t.Fatalf("failed to create KubeOneCluster manifest: %v", err)
 			}
@@ -156,7 +171,11 @@ func TestClusterUpgrade(t *testing.T) {
 
 			// Run 'kubeone install'
 			t.Log("Running 'kubeone install'…")
-			err = target.Install(tf)
+			var installFlags []string
+			if tc.provider == provisioner.OpenStack {
+				installFlags = append(installFlags, "-c", "/tmp/credentials.yaml")
+			}
+			err = target.Install(tf, installFlags)
 			if err != nil {
 				t.Fatalf("failed to install cluster ('kubeone install'): %v", err)
 			}
@@ -209,7 +228,14 @@ func TestClusterUpgrade(t *testing.T) {
 
 			// Create new configuration manifest
 			t.Log("Creating KubeOneCluster manifest…")
-			err = target.CreateConfig(testTargetVersion, tc.provider, tc.providerExternal)
+			var clusterNetworkPod string
+			var clusterNetworkService string
+			if tc.provider == provisioner.OpenStack {
+				clusterNetworkPod = "192.168.0.0/16"
+				clusterNetworkService = "172.16.0.0/12"
+			}
+			err = target.CreateConfig(testTargetVersion, tc.provider,
+				tc.providerExternal, clusterNetworkPod, clusterNetworkService)
 			if err != nil {
 				t.Fatalf("failed to create KubeOneCluster manifest: %v", err)
 			}

@@ -37,6 +37,11 @@ versions:
 cloudProvider:
   name: {{ .CLOUD_PROVIDER_NAME }}
   external: {{ .CLOUD_PROVIDER_EXTERNAL }}
+{{ if .CLUSTER_NETWORK_POD }}
+clusterNetwork:
+  podSubnet: "{{ .CLUSTER_NETWORK_POD }}"
+  serviceSubnet: "{{ .CLUSTER_NETWORK_SERVICE }}"
+{{ end }}
 `
 
 // Kubeone is wrapper around KubeOne CLI
@@ -56,11 +61,14 @@ func NewKubeone(kubeoneDir, configurationFilePath string) Kubeone {
 }
 
 // CreateConfig creates a KubeOneCluster manifest
-func (p *Kubeone) CreateConfig(kubernetesVersion, providerName string, providerExternal bool) error {
+func (p *Kubeone) CreateConfig(kubernetesVersion, providerName string,
+	providerExternal bool, clusterNetworkPod string, clusterNetworkService string) error {
 	variables := map[string]interface{}{
 		"KUBERNETES_VERSION":      kubernetesVersion,
 		"CLOUD_PROVIDER_NAME":     providerName,
 		"CLOUD_PROVIDER_EXTERNAL": providerExternal,
+		"CLUSTER_NETWORK_POD":     clusterNetworkPod,
+		"CLUSTER_NETWORK_SERVICE": clusterNetworkService,
 	}
 
 	tpl, err := template.New("base").Parse(configurationTpl)
@@ -81,7 +89,7 @@ func (p *Kubeone) CreateConfig(kubernetesVersion, providerName string, providerE
 }
 
 // Install runs 'kubeone install' command to provision the cluster
-func (p *Kubeone) Install(tfJSON string) error {
+func (p *Kubeone) Install(tfJSON string, installFlags []string) error {
 	// deliberate delay, to give nodes time to start
 	time.Sleep(2 * time.Minute)
 
@@ -89,7 +97,12 @@ func (p *Kubeone) Install(tfJSON string) error {
 	if err != nil {
 		return err
 	}
-	_, err = testutil.ExecuteCommand(p.KubeoneDir, "kubeone", []string{"install", "--tfjson", "tf.json", p.ConfigurationFilePath}, nil)
+
+	flags := []string{"install", "--tfjson", "tf.json", p.ConfigurationFilePath}
+	if len(installFlags) != 0 {
+		flags = append(flags, installFlags...)
+	}
+	_, err = testutil.ExecuteCommand(p.KubeoneDir, "kubeone", flags, nil)
 	if err != nil {
 		return fmt.Errorf("k8s cluster deployment failed: %v", err)
 	}

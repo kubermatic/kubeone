@@ -81,6 +81,14 @@ func TestClusterConformance(t *testing.T) {
 			configFilePath:        "../../test/e2e/testdata/config_packet.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
 		},
+		{
+			name:                  "verify k8s cluster deployment on OpenStack",
+			provider:              provisioner.OpenStack,
+			providerExternal:      false,
+			scenario:              NodeConformance,
+			configFilePath:        "../../test/e2e/testdata/config_os.yaml",
+			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
+		},
 	}
 
 	for _, tc := range testcases {
@@ -130,7 +138,14 @@ func TestClusterConformance(t *testing.T) {
 
 			// Create configuration manifest
 			t.Log("Creating KubeOneCluster manifest…")
-			err = target.CreateConfig(testTargetVersion, tc.provider, tc.providerExternal)
+			var clusterNetworkPod string
+			var clusterNetworkService string
+			if tc.provider == provisioner.OpenStack {
+				clusterNetworkPod = "192.168.0.0/16"
+				clusterNetworkService = "172.16.0.0/12"
+			}
+			err = target.CreateConfig(testTargetVersion, tc.provider,
+				tc.providerExternal, clusterNetworkPod, clusterNetworkService)
 			if err != nil {
 				t.Fatalf("failed to create KubeOneCluster manifest: %v", err)
 			}
@@ -162,7 +177,11 @@ func TestClusterConformance(t *testing.T) {
 
 			// Run 'kubeone install'
 			t.Log("Running 'kubeone install'…")
-			err = target.Install(tf)
+			var installFlags []string
+			if tc.provider == provisioner.OpenStack {
+				installFlags = append(installFlags, "-c", "/tmp/credentials.yaml")
+			}
+			err = target.Install(tf, installFlags)
 			if err != nil {
 				t.Fatalf("failed to install cluster ('kubeone install'): %v", err)
 			}

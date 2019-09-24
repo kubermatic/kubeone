@@ -107,6 +107,19 @@ if [ -n "${RUNNING_IN_CI}" ]; then
   "gce")
     export GOOGLE_CREDENTIALS=$(echo ${GOOGLE_SERVICE_ACCOUNT} | base64 -d)
     ;;
+  "openstack")
+    export OS_AUTH_URL=${OS_AUTH_URL}
+    export OS_DOMAIN_NAME=${OS_DOMAIN_NAME}
+    export OS_REGION_NAME=${OS_REGION_NAME}
+    export OS_TENANT_NAME=${OS_TENANT_NAME}
+    export OS_USERNAME=${OS_USERNAME}
+    export OS_PASSWORD=${OS_PASSWORD}
+    echo ${k1_credentials} > /tmp/credentials.yaml
+
+    export TF_VAR_external_network_name = "ext-net"
+    export TF_VAR_subnet_cidr = "10.0.42.0/24"
+    export TF_VAR_image = "Ubuntu Bionic 18.04 (2019-05-02)"
+    ;;
   *)
     echo "unknown provider ${PROVIDER}"
     exit -1
