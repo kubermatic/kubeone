@@ -31,6 +31,7 @@ type AWSSpec struct {
 	SubnetID         string            `json:"subnetId"`
 	Tags             map[string]string `json:"tags"`
 	VPCID            string            `json:"vpcId"`
+	IsSpotInstance   *bool             `json:"isSpotInstance,omitempty"`
 }
 
 // DigitalOceanSpec holds cloudprovider spec for DigitalOcean
@@ -55,6 +56,7 @@ type OpenStackSpec struct {
 	Subnet                string            `json:"subnet"`
 	RootDiskSizeGB        *int              `json:"rootDiskSizeGB,omitempty"`
 	NodeVolumeAttachLimit *uint             `json:"nodeVolumeAttachLimit,omitempty"`
+	TrustDevicePath       bool              `json:"trustDevicePath"`
 	Tags                  map[string]string `json:"tags"`
 }
 
@@ -85,8 +87,10 @@ type HetznerSpec struct {
 // PacketSpec holds cloudprovider spec for Packet
 type PacketSpec struct {
 	ProjectID    string   `json:"projectID"`
+	BillingCycle string   `json:"billingCycle"`
 	Facilities   []string `json:"facilities"`
 	InstanceType string   `json:"instanceType"`
+	Tags         []string `json:"tags,omitempty"`
 }
 
 // VSphereSpec holds cloudprovider spec for vSphere
