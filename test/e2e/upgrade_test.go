@@ -161,8 +161,13 @@ func TestClusterUpgrade(t *testing.T) {
 			// Create infrastructure
 			t.Log("Provisioning infrastructure using Terraform…")
 			args := []string{}
-			if tc.provider == provisioner.GCE {
-				args = []string{"-var", "control_plane_target_pool_members_count=1"}
+			switch tc.provider {
+			case provisioner.GCE:
+				args = append(args, "-var", "control_plane_target_pool_members_count=1")
+			case provisioner.OpenStack:
+				args = append(args, "-var", "external_network_name=ext-net")
+				args = append(args, "-var", "subnet_cidr='10.0.42.0/24'")
+				args = append(args, "-var", "image='Ubuntu Bionic 18.04 (2019-05-02)'")
 			}
 			tf, err := pr.Provision(args...)
 			if err != nil {
@@ -228,8 +233,6 @@ func TestClusterUpgrade(t *testing.T) {
 
 			// Create new configuration manifest
 			t.Log("Creating KubeOneCluster manifest…")
-			var clusterNetworkPod string
-			var clusterNetworkService string
 			if tc.provider == provisioner.OpenStack {
 				clusterNetworkPod = "192.168.0.0/16"
 				clusterNetworkService = "172.16.0.0/12"
