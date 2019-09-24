@@ -148,7 +148,7 @@ func TestClusterUpgrade(t *testing.T) {
 				clusterNetworkPod = "192.168.0.0/16"
 				clusterNetworkService = "172.16.0.0/12"
 			}
-			err = target.CreateConfig(testTargetVersion, tc.provider,
+			err = target.CreateConfig(testInitialVersion, tc.provider,
 				tc.providerExternal, clusterNetworkPod, clusterNetworkService)
 			if err != nil {
 				t.Fatalf("failed to create KubeOneCluster manifest: %v", err)
