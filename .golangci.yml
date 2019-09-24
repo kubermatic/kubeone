@@ -33,3 +33,4 @@ issues:
     - "don't use underscores in Go names; func SetDefaults_SystemPackages should be SetDefaultsSystemPackages"
     - "G101: Potential hardcoded credentials"
     - "G106: Use of ssh InsecureIgnoreHostKey should be audited"
+    - "`defaultRetryBackoff` - `retries` always receives `3`"
