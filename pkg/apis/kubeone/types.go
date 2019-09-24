@@ -168,7 +168,7 @@ type WorkerConfig struct {
 type ProviderSpec struct {
 	CloudProviderSpec   json.RawMessage   `json:"cloudProviderSpec"`
 	Labels              map[string]string `json:"labels"`
-	Taints              []corev1.Taint    `json:"taints"`
+	Taints              []corev1.Taint    `json:"taints,omitempty"`
 	SSHPublicKeys       []string          `json:"sshPublicKeys"`
 	OperatingSystem     string            `json:"operatingSystem"`
 	OperatingSystemSpec json.RawMessage   `json:"operatingSystemSpec"`
