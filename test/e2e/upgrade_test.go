@@ -245,7 +245,11 @@ func TestClusterUpgrade(t *testing.T) {
 
 			// Run 'kubeone install'
 			t.Log("Running 'kubeone upgrade'…")
-			err = target.Upgrade()
+			var upgradeFlags []string
+			if tc.provider == provisioner.OpenStack {
+				upgradeFlags = append(upgradeFlags, "-c", "/tmp/credentials.yaml")
+			}
+			err = target.Upgrade(upgradeFlags)
 			if err != nil {
 				t.Fatalf("failed to upgrade the cluster ('kubeone upgrade'): %v", err)
 			}

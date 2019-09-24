@@ -110,8 +110,12 @@ func (p *Kubeone) Install(tfJSON string, installFlags []string) error {
 }
 
 // Upgrade runs 'kubeone upgrade' command to upgrade the cluster
-func (p *Kubeone) Upgrade() error {
-	_, err := testutil.ExecuteCommand(p.KubeoneDir, "kubeone", []string{"upgrade", "--tfjson", "tf.json", "--upgrade-machine-deployments", p.ConfigurationFilePath}, nil)
+func (p *Kubeone) Upgrade(upgradeFlags []string) error {
+	flags := []string{"upgrade", "--tfjson", "tf.json", "--upgrade-machine-deployments", p.ConfigurationFilePath}
+	if len(upgradeFlags) != 0 {
+		flags = append(flags, upgradeFlags...)
+	}
+	_, err := testutil.ExecuteCommand(p.KubeoneDir, "kubeone", flags, nil)
 	if err != nil {
 		return fmt.Errorf("k8s cluster upgrade failed: %v", err)
 	}
