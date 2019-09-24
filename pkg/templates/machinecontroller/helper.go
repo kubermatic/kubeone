@@ -25,6 +25,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
+	apiextensions "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
 	errorsutil "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/util/retry"
@@ -73,6 +74,32 @@ func WaitReady(s *state.State) error {
 	return nil
 }
 
+// VerifyCRDs verifies are Cluster-API CRDs deployed
+func VerifyCRDs(s *state.State) error {
+	bgCtx := context.Background()
+	crd := &apiextensions.CustomResourceDefinition{}
+
+	// Verify MachineDeployment CRD
+	key := dynclient.ObjectKey{Name: "machinedeployments.cluster.k8s.io"}
+	if err := s.DynamicClient.Get(bgCtx, key, crd); err != nil {
+		return errors.Wrap(err, "MachineDeployments CRD is not deployed")
+	}
+
+	// Verify MachineSet CRD
+	key = dynclient.ObjectKey{Name: "machinesets.cluster.k8s.io"}
+	if err := s.DynamicClient.Get(bgCtx, key, crd); err != nil {
+		return errors.Wrap(err, "MachineSet CRD is not deployed")
+	}
+
+	// Verify Machine CRD
+	key = dynclient.ObjectKey{Name: "machines.cluster.k8s.io"}
+	if err := s.DynamicClient.Get(bgCtx, key, crd); err != nil {
+		return errors.Wrap(err, "MachineSet CRD is not deployed")
+	}
+
+	return nil
+}
+
 // DestroyWorkers destroys all MachineDeployment, MachineSet and Machine objects
 func DestroyWorkers(s *state.State) error {
 	if !s.Cluster.MachineController.Deploy {
@@ -116,11 +143,9 @@ func DestroyWorkers(s *state.State) error {
 	s.Logger.Info("Deleting MachineDeployment objects…")
 	mdList := &clusterv1alpha1.MachineDeploymentList{}
 	if err := s.DynamicClient.List(bgCtx, dynclient.InNamespace(MachineControllerNamespace), mdList); err != nil {
-		if errorsutil.IsTimeout(err) || errorsutil.IsServerTimeout(err) {
+		if !errorsutil.IsNotFound(err) {
 			return errors.Wrap(err, "unable to list machinedeployment objects")
 		}
-		s.Logger.Info("Skipping deleting worker nodes because MachineDeployments CRD is not deployed")
-		return nil
 	}
 	for i := range mdList.Items {
 		if err := s.DynamicClient.Delete(bgCtx, &mdList.Items[i]); err != nil {

@@ -74,6 +74,18 @@ func destroyWorkers(s *state.State) error {
 	}
 
 	_ = wait.ExponentialBackoff(defaultRetryBackoff(3), func() (bool, error) {
+		lastErr = machinecontroller.VerifyCRDs(s)
+		if lastErr != nil {
+			return false, nil
+		}
+		return true, nil
+	})
+	if lastErr != nil {
+		s.Logger.Info("Skipping deleting worker nodes because machine-controller CRDs are not deployed")
+		return nil
+	}
+
+	_ = wait.ExponentialBackoff(defaultRetryBackoff(3), func() (bool, error) {
 		lastErr = machinecontroller.DestroyWorkers(s)
 		if lastErr != nil {
 			s.Logger.Warn("Unable to destroy worker nodes. Retrying…")
