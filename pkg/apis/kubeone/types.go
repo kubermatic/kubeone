@@ -19,6 +19,7 @@ package kubeone
 import (
 	"encoding/json"
 
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -167,6 +168,7 @@ type WorkerConfig struct {
 type ProviderSpec struct {
 	CloudProviderSpec   json.RawMessage   `json:"cloudProviderSpec"`
 	Labels              map[string]string `json:"labels"`
+	Taints              []corev1.Taint    `json:"taints,omitempty"`
 	SSHPublicKeys       []string          `json:"sshPublicKeys"`
 	OperatingSystem     string            `json:"operatingSystem"`
 	OperatingSystemSpec json.RawMessage   `json:"operatingSystemSpec"`

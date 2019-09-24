@@ -133,6 +133,7 @@ func createMachineDeployment(cluster *kubeoneapi.KubeOneCluster, workerset kubeo
 					ProviderSpec: clusterv1alpha1.ProviderSpec{
 						Value: &runtime.RawExtension{Raw: encoded},
 					},
+					Taints: workerset.Config.Taints,
 				},
 			},
 		},
