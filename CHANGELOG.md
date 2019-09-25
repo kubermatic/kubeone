@@ -1,6 +1,6 @@
 # Changelog
 
-# [v0.10.0](https://github.com/kubermatic/kubeone/releases/tag/v0.10.0) - unreleased
+# [v0.10.0](https://github.com/kubermatic/kubeone/releases/tag/v0.10.0) - 2019-09-26
 
 ## Attention Needed
 
@@ -29,6 +29,9 @@
 * Add ability to apply taints on the worker nodes using the `.workers.providerSpec.Taints` field ([#678](https://github.com/kubermatic/kubeone/pull/678))
 * Add an optional `rootDiskSizeGB` field to the worker spec for OpenStack ([#549](https://github.com/kubermatic/kubeone/pull/549))
 * Add an optional `nodeVolumeAttachLimit` field to the worker spec for OpenStack ([#572](https://github.com/kubermatic/kubeone/pull/572))
+* Add an optional `TrustDevicePath` field to the worker spec for OpenStack ([#686](https://github.com/kubermatic/kubeone/pull/686))
+* Add optional `BillingCycle` and `Tags` fields to the worker spec for Packet ([#686](https://github.com/kubermatic/kubeone/pull/686))
+* Add ability to use AWS spot instances for worker nodes using the `isSpotInstance` field ([#686](https://github.com/kubermatic/kubeone/pull/686))
 * Add an example KubeOne Ansible playbook ([#576](https://github.com/kubermatic/kubeone/pull/576))
 
 ## Changed
