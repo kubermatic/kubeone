@@ -494,10 +494,11 @@ func machineControllerMachineCRD() *apiextensions.CustomResourceDefinition {
 				},
 			},
 			Names: apiextensions.CustomResourceDefinitionNames{
-				Plural:   "machines",
-				Singular: "machine",
-				Kind:     "Machine",
-				ListKind: "MachineList",
+				Plural:     "machines",
+				Singular:   "machine",
+				Kind:       "Machine",
+				ListKind:   "MachineList",
+				ShortNames: []string{"ma"},
 			},
 			AdditionalPrinterColumns: []apiextensions.CustomResourceColumnDefinition{
 				{
@@ -510,6 +511,19 @@ func machineControllerMachineCRD() *apiextensions.CustomResourceDefinition {
 					Type:     "string",
 					JSONPath: ".spec.providerSpec.value.operatingSystem",
 				},
+				{
+					Name:     "MachineSet",
+					Type:     "string",
+					JSONPath: ".metadata.ownerReferences[0].name",
+					Priority: 1,
+				},
+				{
+					Name:     "Node",
+					Type:     "string",
+					JSONPath: ".status.nodeRef.name",
+					Priority: 1,
+				},
+
 				{
 					Name:     "Address",
 					Type:     "string",
@@ -524,6 +538,12 @@ func machineControllerMachineCRD() *apiextensions.CustomResourceDefinition {
 					Name:     "Age",
 					Type:     "date",
 					JSONPath: ".metadata.creationTimestamp",
+				},
+				{
+					Name:     "Deleted",
+					Type:     "date",
+					JSONPath: ".metadata.deletionTimestamp",
+					Priority: 1,
 				},
 			},
 		},
@@ -546,10 +566,11 @@ func machineControllerClusterCRD() *apiextensions.CustomResourceDefinition {
 				},
 			},
 			Names: apiextensions.CustomResourceDefinitionNames{
-				Plural:   "clusters",
-				Singular: "cluster",
-				Kind:     "Cluster",
-				ListKind: "ClusterList",
+				Plural:     "clusters",
+				Singular:   "cluster",
+				Kind:       "Cluster",
+				ListKind:   "ClusterList",
+				ShortNames: []string{"cl"},
 			},
 			Subresources: &apiextensions.CustomResourceSubresources{
 				Status: &apiextensions.CustomResourceSubresourceStatus{},
@@ -574,19 +595,29 @@ func machineControllerMachineSetCRD() *apiextensions.CustomResourceDefinition {
 				},
 			},
 			Names: apiextensions.CustomResourceDefinitionNames{
-				Plural:   "machinesets",
-				Singular: "machineset",
-				Kind:     "MachineSet",
-				ListKind: "MachineSetList",
+				Plural:     "machinesets",
+				Singular:   "machineset",
+				Kind:       "MachineSet",
+				ListKind:   "MachineSetList",
+				ShortNames: []string{"ms"},
 			},
 			Subresources: &apiextensions.CustomResourceSubresources{
 				Status: &apiextensions.CustomResourceSubresourceStatus{},
+				Scale: &apiextensions.CustomResourceSubresourceScale{
+					SpecReplicasPath:   ".spec.replicas",
+					StatusReplicasPath: ".status.replicas",
+				},
 			},
 			AdditionalPrinterColumns: []apiextensions.CustomResourceColumnDefinition{
 				{
 					Name:     "Replicas",
 					Type:     "integer",
 					JSONPath: ".spec.replicas",
+				},
+				{
+					Name:     "Available-Replicas",
+					Type:     "integer",
+					JSONPath: ".status.availableReplicas",
 				},
 				{
 					Name:     "Provider",
@@ -599,6 +630,12 @@ func machineControllerMachineSetCRD() *apiextensions.CustomResourceDefinition {
 					JSONPath: ".spec.template.spec.providerSpec.value.operatingSystem",
 				},
 				{
+					Name:     "MachineDeployment",
+					Type:     "string",
+					JSONPath: ".metadata.ownerReferences[0].name",
+					Priority: 1,
+				},
+				{
 					Name:     "Kubelet",
 					Type:     "string",
 					JSONPath: ".spec.template.spec.versions.kubelet",
@@ -607,6 +644,12 @@ func machineControllerMachineSetCRD() *apiextensions.CustomResourceDefinition {
 					Name:     "Age",
 					Type:     "date",
 					JSONPath: ".metadata.creationTimestamp",
+				},
+				{
+					Name:     "Deleted",
+					Type:     "date",
+					JSONPath: ".metadata.deletionTimestamp",
+					Priority: 1,
 				},
 			},
 		},
@@ -629,10 +672,11 @@ func machineControllerMachineDeploymentCRD() *apiextensions.CustomResourceDefini
 				},
 			},
 			Names: apiextensions.CustomResourceDefinitionNames{
-				Plural:   "machinedeployments",
-				Singular: "machinedeployment",
-				Kind:     "MachineDeployment",
-				ListKind: "MachineDeploymentList",
+				Plural:     "machinedeployments",
+				Singular:   "machinedeployment",
+				Kind:       "MachineDeployment",
+				ListKind:   "MachineDeploymentList",
+				ShortNames: []string{"md"},
 			},
 			Subresources: &apiextensions.CustomResourceSubresources{
 				Status: &apiextensions.CustomResourceSubresourceStatus{},
@@ -646,6 +690,11 @@ func machineControllerMachineDeploymentCRD() *apiextensions.CustomResourceDefini
 					Name:     "Replicas",
 					Type:     "integer",
 					JSONPath: ".spec.replicas",
+				},
+				{
+					Name:     "Available-Replicas",
+					Type:     "integer",
+					JSONPath: ".status.availableReplicas",
 				},
 				{
 					Name:     "Provider",
@@ -666,6 +715,12 @@ func machineControllerMachineDeploymentCRD() *apiextensions.CustomResourceDefini
 					Name:     "Age",
 					Type:     "date",
 					JSONPath: ".metadata.creationTimestamp",
+				},
+				{
+					Name:     "Deleted",
+					Type:     "date",
+					JSONPath: ".metadata.deletionTimestamp",
+					Priority: 1,
 				},
 			},
 		},
