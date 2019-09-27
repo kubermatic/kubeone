@@ -1,6 +1,6 @@
 # Changelog
 
-# [v0.10.0](https://github.com/kubermatic/kubeone/releases/tag/v0.10.0) - 2019-09-27
+# v0.10.0 - unreleased
 
 ## Attention Needed
 
