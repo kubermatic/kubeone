@@ -144,7 +144,7 @@ New KubeOne release will be done for each minor Kubernetes version. Usually, a
 new release is targeted 2-3 weeks after Kubernetes release, depending on number
 of changes needed to support a new version.
 
-Since some terraform releases introduces incompatibilities to previuos versions,
+Since some Terraform releases introduces incompatibilities to previuos versions,
 only a specific version range is supported with each KubeOne release.
 
 In the following table you can find what are supported Kubernetes and Terraform
@@ -153,10 +153,8 @@ supported. It's highly recommended to use the latest version whenever possible.
 
 | KubeOne version | 1.16 | 1.15 | 1.14 | 1.13 | Terraform | Supported providers                                                |
 |-----------------|------|------|------|------|-----------|--------------------------------------------------------------------|
-| v0.10.0+        | +    | +    | +    | *    | v0.12+    | AWS, DigitalOcean, GCE, Hetzner, Packet, OpenStack, vSphere, Azure |
+| v0.10.0+        | +    | +    | +    | -    | v0.12+    | AWS, DigitalOcean, GCE, Hetzner, Packet, OpenStack, vSphere, Azure |
 | v0.9.0+         | -    | +    | +    | +    | v0.12+    | AWS, DigitalOcean, GCE, Hetzner, Packet, OpenStack, vSphere, Azure |
-\* This Kubernetes version is not officially supported anymore, however it'll remain
-possible to install it using KubeOne as long as it doesn't require modifications.
 
 ## Getting Started
 
