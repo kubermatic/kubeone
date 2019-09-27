@@ -1,5 +1,77 @@
 # Changelog
 
+# [v0.10.0](https://github.com/kubermatic/kubeone/releases/tag/v0.10.0) - 2019-09-27
+
+## Attention Needed
+
+* Kubernetes 1.13 clusters are not supported as of this release because 1.13 isn't supported by the upstream anymore
+  * It remains possible to upgrade 1.13 clusters to 1.14 and is strongly advised
+  * Currently, it also remains possible to provision 1.13 clusters, but that can be dropped at any time and it'll not be fixed if it stops working 
+* KubeOne now uses Go modules! :tada: ([#550](https://github.com/kubermatic/kubeone/pull/550))
+  * This should not introduce any breaking changes
+  * If you're using `go get` to obtain KubeOne, you have to enable support for Go modules by setting the `GO111MODULE` environment variable to `on`
+  * You can obtain KubeOne v0.10.0 using the following `go get` command: `go get github.com/kubermatic/kubeone@v0.10.0`
+
+## Known Issues
+
+* `kubectl scale` is not working with `kubectl` v1.15 to due an [upstream issue](https://github.com/kubernetes/kubernetes/issues/80515). Please upgrade to `kubectl` v1.16 if you want to use the `kubectl scale` command.
+
+## Added
+
+* Add support for Kubernetes 1.16
+    * Fix cluster upgrade failures when upgrading from 1.15 to 1.16 ([#670](https://github.com/kubermatic/kubeone/pull/670))
+    * Update default admission controllers for 1.16 ([#667](https://github.com/kubermatic/kubeone/pull/667))
+* Add support for sourcing credentials and `cloud-config` file from a YAML file ([#623](https://github.com/kubermatic/kubeone/pull/623), [#641](https://github.com/kubermatic/kubeone/pull/641))
+* Add the `StaticAuditLog` feature used to configure the [audit log backend](https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#log-backend) ([#631](https://github.com/kubermatic/kubeone/pull/631))
+* Add `SystemPackages` API field used to control configuration of repositories and packages ([#670](https://github.com/kubermatic/kubeone/pull/670))
+* Add support for managing clusters over a bastion host ([#567](https://github.com/kubermatic/kubeone/pull/567), [#651](https://github.com/kubermatic/kubeone/pull/651))
+* Add support for specifying OpenStack Tenant ID using the `OS_TENANT_ID` environment variable ([#551](https://github.com/kubermatic/kubeone/pull/551))
+* Add ability to configure static networking for worker nodes ([#606](https://github.com/kubermatic/kubeone/pull/606))
+* Add taints on control plane nodes by default ([#564](https://github.com/kubermatic/kubeone/pull/564))
+* Add ability to apply labels on the Node object using the `.workers.providerSpec.Labels` field ([#677](https://github.com/kubermatic/kubeone/pull/677))
+* Add ability to apply taints on the worker nodes using the `.workers.providerSpec.Taints` field ([#678](https://github.com/kubermatic/kubeone/pull/678))
+* Add an optional `rootDiskSizeGB` field to the worker spec for OpenStack ([#549](https://github.com/kubermatic/kubeone/pull/549))
+* Add an optional `nodeVolumeAttachLimit` field to the worker spec for OpenStack ([#572](https://github.com/kubermatic/kubeone/pull/572))
+* Add an optional `TrustDevicePath` field to the worker spec for OpenStack ([#686](https://github.com/kubermatic/kubeone/pull/686))
+* Add optional `BillingCycle` and `Tags` fields to the worker spec for Packet ([#686](https://github.com/kubermatic/kubeone/pull/686))
+* Add ability to use AWS spot instances for worker nodes using the `isSpotInstance` field ([#686](https://github.com/kubermatic/kubeone/pull/686))
+* Add `ShortNames` and `AdditionalPrinterColumns` for Cluster-API CRDs ([#689](https://github.com/kubermatic/kubeone/pull/689))
+* Add an example KubeOne Ansible playbook ([#576](https://github.com/kubermatic/kubeone/pull/576))
+
+## Changed
+
+### Bug Fixes
+
+* Fix `kubeone install` and `kubeone upgrade` generating `v1beta1` instead of `v1beta2` `kubeadm` configuration file for 1.15 and 1.16 clusters ([#670](https://github.com/kubermatic/kubeone/pull/670))
+* Fix cluster provisioning failures when the `DynamicAuditLog` feature is enabled ([#630](https://github.com/kubermatic/kubeone/pull/630))
+* Fix `kubeone reset` not retrying deleting worker nodes on error ([#639](https://github.com/kubermatic/kubeone/pull/639))
+* Fix `kubeone reset` not skipping deleting worker nodes if the `machine-controller` CRDs are not deployed ([#683](https://github.com/kubermatic/kubeone/pull/683))
+* Fix Terraform integration not respecting multiple workerset definitions from `output.tf` ([#568](https://github.com/kubermatic/kubeone/pull/568))
+* Fix `kubeone install` failing if Terraform output is not provided ([#574](https://github.com/kubermatic/kubeone/pull/574))
+* Flannel CNI is forced use an internal network if it's available ([#598](https://github.com/kubermatic/kubeone/pull/598))
+
+### Updates
+
+* Update `machine-controller` to v1.5.7 ([#682](https://github.com/kubermatic/kubeone/pull/682))
+* Update [DigitalOcean Cloud Controller Manager (CCM)](https://github.com/digitalocean/digitalocean-cloud-controller-manager) to v0.1.16 ([#591](https://github.com/kubermatic/kubeone/pull/591))
+
+### Proxy
+
+* Write proxy configuration to the `/etc/environment` file ([#687](https://github.com/kubermatic/kubeone/pull/687), [#688](https://github.com/kubermatic/kubeone/pull/688))
+* Fix proxy configuration file (`/etc/kubeone/proxy-env`) generation ([#650](https://github.com/kubermatic/kubeone/pull/650))
+* Fix `machine-controller` and `machine-controller-webhook` deployments not receiving the proxy configuration ([#657](https://github.com/kubermatic/kubeone/pull/657))
+
+### Examples
+
+* Fix GCE provisioning failure when using a longer cluster name with the example Terraform script ([#607](https://github.com/kubermatic/kubeone/pull/607))
+
+## Removed
+
+* Remove `TemplateNetName` field from the vSphere workers spec ([#624](https://github.com/kubermatic/kubeone/pull/624))
+* Remove the old KubeOne configuration API ([#626](https://github.com/kubermatic/kubeone/pull/626))
+    * This should not affect you unless you're using the pre-v0.6.0 configuration API manually
+    * The `kubeone config migrate` command is still available, but might be deleted at any time
+
 # [v0.10.0-alpha.3](https://github.com/kubermatic/kubeone/releases/tag/v0.10.0-alpha.3) - 2019-08-22
 
 ## Changed
