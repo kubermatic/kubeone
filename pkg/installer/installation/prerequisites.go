@@ -78,7 +78,8 @@ export NO_PROXY no_proxy
 EOF
 
 envtmp=/tmp/k1-etc-environment
-grep -v '#kubeone$' /etc/environment > $envtmp
+grep -v '#kubeone$' /etc/environment > $envtmp || true
+set +o pipefail # grep exits non-zero without match
 grep = /etc/kubeone/proxy-env | sed 's/$/#kubeone/' >> $envtmp
 sudo tee /etc/environment < $envtmp
 `
