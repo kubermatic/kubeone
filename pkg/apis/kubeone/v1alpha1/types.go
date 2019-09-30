@@ -119,6 +119,10 @@ type ClusterNetworkConfig struct {
 	ServiceDomainName string `json:"serviceDomainName"`
 	NodePortRange     string `json:"nodePortRange"`
 	CNI               *CNI   `json:"cni,omitempty"`
+
+	// TODO(xmudrii): Revisit do we want to put this here.
+	// +optional
+	NetworkID string `json:"networkID,omitempty"`
 }
 
 // CNIProvider type

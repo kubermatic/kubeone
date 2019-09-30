@@ -81,6 +81,7 @@ type HetznerSpec struct {
 	ServerType string            `json:"serverType"`
 	Datacenter string            `json:"datacenter"`
 	Location   string            `json:"location"`
+	Networks   []string          `json:"networks"`
 	Labels     map[string]string `json:"labels,omitempty"`
 }
 

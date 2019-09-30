@@ -38,6 +38,7 @@ type controlPlane struct {
 	Bastion           string   `json:"bastion"`
 	BastionPort       int      `json:"bastion_port"`
 	BastionUser       string   `json:"bastion_user"`
+	NetworkID         string   `json:"network_id"`
 }
 
 // Config represents configuration in the terraform output format
@@ -119,6 +120,10 @@ func (c *Config) Apply(cluster *kubeonev1alpha1.KubeOneCluster) error {
 
 	if len(hosts) > 0 {
 		cluster.Hosts = hosts
+	}
+
+	if len(cp.NetworkID) > 0 {
+		cluster.ClusterNetwork.NetworkID = cp.NetworkID
 	}
 
 	// Walk through all configued workersets from terraform and apply their config
@@ -320,6 +325,7 @@ func (c *Config) updateHetznerWorkerset(existingWorkerSet *kubeonev1alpha1.Worke
 		{key: "serverType", value: hetznerConfig.ServerType},
 		{key: "datacenter", value: hetznerConfig.Datacenter},
 		{key: "location", value: hetznerConfig.Location},
+		{key: "networks", value: hetznerConfig.Networks},
 		{key: "labels", value: hetznerConfig.Labels},
 	}
 

@@ -31,6 +31,7 @@ output "kubeone_hosts" {
       cloud_provider       = "hetzner"
       private_address      = hcloud_server_network.control_plane.*.ip
       public_address       = hcloud_server.control_plane.*.ipv4_address
+      network_id           = hcloud_network.net.id
       ssh_agent_socket     = var.ssh_agent_socket
       ssh_port             = var.ssh_port
       ssh_private_key_file = var.ssh_private_key_file
@@ -59,6 +60,9 @@ output "kubeone_workers" {
           # https://github.com/kubermatic/machine-controller/blob/master/examples/hetzner-machinedeployment.yaml
           serverType = var.worker_type
           location   = var.datacenter
+          networks = [
+            hcloud_network.net.id
+          ]
           labels = {
             "${var.cluster_name}-workers" = "pool1"
           }

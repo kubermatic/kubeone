@@ -334,6 +334,7 @@ func autoConvert_v1alpha1_ClusterNetworkConfig_To_kubeone_ClusterNetworkConfig(i
 	out.ServiceDomainName = in.ServiceDomainName
 	out.NodePortRange = in.NodePortRange
 	out.CNI = (*kubeone.CNI)(unsafe.Pointer(in.CNI))
+	out.NetworkID = in.NetworkID
 	return nil
 }
 
@@ -348,6 +349,7 @@ func autoConvert_kubeone_ClusterNetworkConfig_To_v1alpha1_ClusterNetworkConfig(i
 	out.ServiceDomainName = in.ServiceDomainName
 	out.NodePortRange = in.NodePortRange
 	out.CNI = (*CNI)(unsafe.Pointer(in.CNI))
+	out.NetworkID = in.NetworkID
 	return nil
 }
 

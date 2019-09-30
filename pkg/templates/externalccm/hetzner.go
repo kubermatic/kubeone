@@ -18,6 +18,7 @@ package externalccm
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/Masterminds/semver"
 	"github.com/pkg/errors"
@@ -36,7 +37,7 @@ import (
 )
 
 const (
-	hetznerCCMVersion     = "v1.3.0"
+	hetznerCCMVersion     = "v1.4.0"
 	hetznerSAName         = "cloud-controller-manager"
 	hetznerDeploymentName = "hcloud-cloud-controller-manager"
 )
@@ -58,7 +59,8 @@ func ensureHetzner(s *state.State) error {
 		}
 	}
 
-	dep := hetznerDeployment()
+	// TODO(xmudrii): Populate with the network ID/name.
+	dep := hetznerDeployment(s.Cluster.ClusterNetwork.NetworkID, s.Cluster.ClusterNetwork.PodSubnet)
 	want, err := semver.NewConstraint("<= " + hetznerCCMVersion)
 	if err != nil {
 		return errors.Wrap(err, "failed to parse hetzner CCM version constraint")
@@ -104,11 +106,23 @@ func hetznerClusterRoleBinding() *rbacv1.ClusterRoleBinding {
 	}
 }
 
-func hetznerDeployment() *appsv1.Deployment {
+func hetznerDeployment(networkID, podSubnet string) *appsv1.Deployment {
 	var (
-		replicas  int32 = 1
-		revisions int32 = 2
+		replicas    int32 = 1
+		revisions   int32 = 2
+		hostNetwork       = false
+		cmd               = []string{
+			"/bin/hcloud-cloud-controller-manager",
+			"--cloud-provider=hcloud",
+			"--leader-elect=false",
+			"--allow-untagged-cloud",
+		}
 	)
+	if len(networkID) > 0 {
+		cmd = append(cmd, "--allocate-node-cidrs=true")
+		cmd = append(cmd, fmt.Sprintf("--cluster-cidr='%s'", podSubnet))
+		hostNetwork = true
+	}
 
 	return &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
@@ -153,16 +167,12 @@ func hetznerDeployment() *appsv1.Deployment {
 							Operator: corev1.TolerationOpExists,
 						},
 					},
+					HostNetwork: hostNetwork,
 					Containers: []corev1.Container{
 						{
-							Name:  "hcloud-cloud-controller-manager",
-							Image: "hetznercloud/hcloud-cloud-controller-manager:" + hetznerCCMVersion,
-							Command: []string{
-								"/bin/hcloud-cloud-controller-manager",
-								"--cloud-provider=hcloud",
-								"--leader-elect=false",
-								"--allow-untagged-cloud",
-							},
+							Name:    "hcloud-cloud-controller-manager",
+							Image:   "hetznercloud/hcloud-cloud-controller-manager:" + hetznerCCMVersion,
+							Command: cmd,
 							Env: []corev1.EnvVar{
 								{
 									Name: "NODE_NAME",
@@ -182,6 +192,11 @@ func hetznerDeployment() *appsv1.Deployment {
 											Key: credentials.HetznerTokenKeyMC,
 										},
 									},
+								},
+								{
+									Name: "HCLOUD_NETWORK",
+									// TODO(xmudrii): Should we keep the network ID/name in the secret?
+									Value: networkID,
 								},
 							},
 							Resources: corev1.ResourceRequirements{
