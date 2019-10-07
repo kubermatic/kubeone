@@ -35,6 +35,7 @@
 * Add an optional `TrustDevicePath` field to the worker spec for OpenStack ([#686](https://github.com/kubermatic/kubeone/pull/686))
 * Add optional `BillingCycle` and `Tags` fields to the worker spec for Packet ([#686](https://github.com/kubermatic/kubeone/pull/686))
 * Add ability to use AWS spot instances for worker nodes using the `isSpotInstance` field ([#686](https://github.com/kubermatic/kubeone/pull/686))
+* Add support for Hetzner Private Networking ([#596](https://github.com/kubermatic/kubeone/pull/596))
 * Add `ShortNames` and `AdditionalPrinterColumns` for Cluster-API CRDs ([#689](https://github.com/kubermatic/kubeone/pull/689))
 * Add an example KubeOne Ansible playbook ([#576](https://github.com/kubermatic/kubeone/pull/576))
 
