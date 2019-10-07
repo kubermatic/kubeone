@@ -120,7 +120,7 @@ func hetznerDeployment(networkID, podSubnet string) *appsv1.Deployment {
 	)
 	if len(networkID) > 0 {
 		cmd = append(cmd, "--allocate-node-cidrs=true")
-		cmd = append(cmd, fmt.Sprintf("--cluster-cidr='%s'", podSubnet))
+		cmd = append(cmd, fmt.Sprintf("--cluster-cidr=%s", podSubnet))
 		hostNetwork = true
 	}
 
