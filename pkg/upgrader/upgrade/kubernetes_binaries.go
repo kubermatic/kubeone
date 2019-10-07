@@ -35,7 +35,7 @@ kube_ver=$(apt-cache madison kubelet | grep "{{ .KUBERNETES_VERSION }}" | head -
 cni_ver=$(apt-cache madison kubernetes-cni | grep "{{ .CNI_VERSION }}" | head -1 | awk '{print $3}')
 
 sudo apt-mark unhold kubeadm kubelet kubectl kubernetes-cni
-sudo apt-get install --option "Dpkg::Options::=--force-confold" -y --no-install-recommends \
+sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--force-confold" -y --no-install-recommends \
      kubeadm=${kube_ver} \
      kubectl=${kube_ver} \
      kubelet=${kube_ver} \
