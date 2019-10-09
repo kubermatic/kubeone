@@ -59,7 +59,6 @@ func ensureHetzner(s *state.State) error {
 		}
 	}
 
-	// TODO(xmudrii): Populate with the network ID/name.
 	dep := hetznerDeployment(s.Cluster.ClusterNetwork.NetworkID, s.Cluster.ClusterNetwork.PodSubnet)
 	want, err := semver.NewConstraint("<= " + hetznerCCMVersion)
 	if err != nil {
@@ -194,8 +193,7 @@ func hetznerDeployment(networkID, podSubnet string) *appsv1.Deployment {
 									},
 								},
 								{
-									Name: "HCLOUD_NETWORK",
-									// TODO(xmudrii): Should we keep the network ID/name in the secret?
+									Name:  "HCLOUD_NETWORK",
 									Value: networkID,
 								},
 							},

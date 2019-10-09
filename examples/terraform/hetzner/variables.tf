@@ -75,3 +75,12 @@ variable "image" {
   default = "ubuntu-18.04"
 }
 
+variable "ip_range" {
+  default     = "192.168.0.0/16"
+  description = "ip range to use for private network"
+}
+
+variable "network_zone" {
+  default     = "eu-central"
+  description = "network zone to use for private network"
+}

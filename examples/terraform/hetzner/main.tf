@@ -21,14 +21,14 @@ resource "hcloud_ssh_key" "kubeone" {
 
 resource "hcloud_network" "net" {
   name     = var.cluster_name
-  ip_range = "192.168.0.0/16"
+  ip_range = var.ip_range
 }
 
 resource "hcloud_network_subnet" "kubeone" {
   network_id   = hcloud_network.net.id
   type         = "server"
-  network_zone = "eu-central"
-  ip_range     = "192.168.0.0/24"
+  network_zone = var.network_zone
+  ip_range     = var.ip_range
 }
 
 resource "hcloud_server_network" "control_plane" {
