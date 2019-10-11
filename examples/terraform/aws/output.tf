@@ -62,7 +62,7 @@ output "kubeone_workers" {
           ami              = local.ami
           availabilityZone = local.az_a
           instanceProfile  = aws_iam_instance_profile.profile.name
-          securityGroupIDs = [aws_security_group.common.id]
+          securityGroupIDs = [aws_security_group.common.id, aws_security_group.nodeports.id]
           vpcId            = local.vpc_id
           subnetId         = data.aws_subnet.az_a.id
           instanceType     = var.worker_type

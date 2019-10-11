@@ -123,6 +123,21 @@ resource "aws_security_group" "control_plane" {
   }
 }
 
+resource "aws_security_group" "nodeports" {
+  name = "${var.cluster_name}-nodeports"
+  description = "nodeport whitelist"
+  vpc_id = local.vpc_id
+
+  tags = map(local.kube_cluster_tag, "shared")
+
+  ingress {
+    from_port   = 30000
+    to_port     = 32767
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 resource "aws_iam_role" "role" {
   name = "${var.cluster_name}-host"
 
@@ -216,7 +231,7 @@ resource "aws_instance" "control_plane" {
   iam_instance_profile   = aws_iam_instance_profile.profile.name
   ami                    = local.ami
   key_name               = aws_key_pair.deployer.key_name
-  vpc_security_group_ids = [aws_security_group.common.id, aws_security_group.control_plane.id]
+  vpc_security_group_ids = [aws_security_group.common.id, aws_security_group.control_plane.id, aws_security_group.nodeports.id]
   availability_zone      = data.aws_availability_zones.available.names[count.index % local.az_count]
   subnet_id              = local.all_subnets[count.index % local.az_count]
 
