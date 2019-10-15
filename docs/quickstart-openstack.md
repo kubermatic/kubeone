@@ -2,7 +2,7 @@
 
 In this quick start we're going to show how to get started with KubeOne on OpenStack. We'll cover how to create the needed infrastructure using our example Terraform scripts and then install Kubernetes. Finally, we're going to show how to destroy the cluster along with the infrastructure.
 
-As a result, you'll get Kubernetes 1.14.2 High-Available (HA) clusters with three control plane nodes and two worker nodes.
+As a result, you'll get Kubernetes 1.16.1 High-Available (HA) clusters with three control plane nodes and two worker nodes.
 
 ### Prerequisites
 
@@ -110,16 +110,15 @@ Before you start you'll need a configuration file that defines how Kubernetes
 will be installed, e.g. what version will be used and what features will be
 enabled. For the configuration file reference run `kubeone config print --full`.
 
-To get started you can use the following configuration. It'll install Kubernetes 1.14.2 and create 2 worker nodes. KubeOne automatically populates information about image, instance size and networking settings for worker nodes from the Terraform output. Alternatively, you can set those information manually. As KubeOne is using [Kubermatic `machine-controller`](https://github.com/kubermatic/machine-controller) for creating worker nodes, see [OpenStack example manifest](https://github.com/kubermatic/machine-controller/blob/master/examples/openstack-machinedeployment.yaml) for available options.
+To get started you can use the following configuration. It'll install Kubernetes 1.16.1 and create one worker node. KubeOne automatically populates information about image, instance size and networking settings for worker nodes from the Terraform output. Alternatively, you can set those information manually. As KubeOne is using [Kubermatic `machine-controller`](https://github.com/kubermatic/machine-controller) for creating worker nodes, see [OpenStack example manifest](https://github.com/kubermatic/machine-controller/blob/master/examples/openstack-machinedeployment.yaml) for available options.
 
 For OpenStack you also need to provide a `cloud-config` file containing credentials, so OpenStack Cloud Controller Manager works as expected. Make sure to replace sample values with real values.
 
 ```yaml
 apiVersion: kubeone.io/v1alpha1
 kind: KubeOneCluster
-name: demo
 versions:
-  kubernetes: '1.14.2'
+  kubernetes: '1.16.1'
 cloudProvider:
   name: 'openstack'
   cloudConfig: |
@@ -132,18 +131,6 @@ cloudProvider:
 
     [LoadBalancer]
     subnet-id=SUBNET_ID
-workers:
-- name: nodes1
-  replicas: 2
-  providerSpec:
-    labels:
-      mylabel: 'nodes1'
-    cloudProviderSpec:
-      tags:
-        tagKey: tagValue
-    operatingSystem: 'ubuntu'
-    operatingSystemSpec:
-      distUpgradeOnBoot: true
 ```
 
 Finally, we're going to install Kubernetes by using the `install` command and providing the configuration file and the Terraform output:
@@ -244,6 +231,6 @@ terraform destroy
 
 You'll be asked to enter `yes` to confirm your intention to destroy the cluster.
 
-Congratulations! You're now running Kubernetes 1.14.2 HA cluster with three control plane nodes and two worker nodes. If you want to learn more about KubeOne and its features, such as [upgrades](upgrading_cluster.md), make sure to check our [documentation](https://github.com/kubermatic/kubeone/tree/master/docs).
+Congratulations! You're now running Kubernetes 1.16.1 HA cluster with three control plane nodes and two worker nodes. If you want to learn more about KubeOne and its features, such as [upgrades](upgrading_cluster.md), make sure to check our [documentation](https://github.com/kubermatic/kubeone/tree/master/docs).
 
 [scale_issue]: https://github.com/kubermatic/kubeone/issues/593#issuecomment-513282468
