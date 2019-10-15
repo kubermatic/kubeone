@@ -58,6 +58,10 @@ type Config struct {
 	KubeOneWorkers struct {
 		Value map[string]kubeonev1alpha1.WorkerConfig `json:"value"`
 	} `json:"kubeone_workers"`
+
+	Proxy struct {
+		Value kubeonev1alpha1.ProxyConfig `json:"value"`
+	} `json:"proxy"`
 }
 
 type cloudProviderFlags struct {
@@ -121,6 +125,8 @@ func (c *Config) Apply(cluster *kubeonev1alpha1.KubeOneCluster) error {
 	if len(hosts) > 0 {
 		cluster.Hosts = hosts
 	}
+
+	cluster.Proxy = c.Proxy.Value
 
 	if len(cp.NetworkID) > 0 {
 		cluster.ClusterNetwork.NetworkID = cp.NetworkID
