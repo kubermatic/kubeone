@@ -47,6 +47,15 @@ output "kubeone_hosts" {
   }
 }
 
+output "proxy" {
+  description = "Proxy settings"
+  value = {
+    http    = ""
+    https   = ""
+    noProxy = "${aws_lb.control_plane.dns_name}"
+  }
+}
+
 output "kubeone_workers" {
   description = "Workers definitions, that will be transformed into MachineDeployment object"
 
