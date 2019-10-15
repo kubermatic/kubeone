@@ -39,7 +39,7 @@ import (
 
 const (
 	// defaultKubernetesVersion is default Kubernetes version for the example configuration file
-	defaultKubernetesVersion = "1.14.1"
+	defaultKubernetesVersion = "1.16.1"
 	// defaultCloudProviderName is cloud provider to build the example configuration file for
 	defaultCloudProviderName = "aws"
 )
@@ -107,7 +107,7 @@ Print an example configuration manifest. Using the appropriate flags you can cus
 For the full reference of the configuration manifest, run the print command with --full flag.
 `,
 		Args:    cobra.ExactArgs(0),
-		Example: `kubeone config print --provider digitalocean --kubernetes-version 1.14.1 --cluster-name example`,
+		Example: fmt.Sprintf("kubeone config print --provider digitalocean --kubernetes-version %s --cluster-name example", defaultKubernetesVersion),
 		RunE: func(_ *cobra.Command, args []string) error {
 			return runPrint(pOpts)
 		},

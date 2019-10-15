@@ -5,7 +5,7 @@ vSphere. We'll cover how to create the needed infrastructure using our example
 Terraform scripts and then install Kubernetes. Finally, we're going to show how
 to destroy the cluster along with the infrastructure.
 
-As a result, you'll get Kubernetes 1.14.2 High-Available (HA) clusters with
+As a result, you'll get Kubernetes 1.16.1 High-Available (HA) clusters with
 three control plane nodes and two worker nodes.
 
 ### Prerequisites
@@ -137,7 +137,7 @@ will be installed, e.g. what version will be used and what features will be
 enabled. For the configuration file reference run `kubeone config print --full`.
 
 To get started you can use the following configuration. It'll install Kubernetes
-1.14.2 and create 1 worker nodes. KubeOne automatically populates information
+1.16.1 and create one worker node. KubeOne automatically populates information
 about template, VM size and networking settings for worker nodes from the
 Terraform output. Alternatively, you can set those information manually. As
 KubeOne is using [Kubermatic `machine-controller`][7] for creating worker nodes,
@@ -150,9 +150,8 @@ to replace sample values with real values.
 ```yaml
 apiVersion: kubeone.io/v1alpha1
 kind: KubeOneCluster
-name: demo
 versions:
-  kubernetes: '1.14.2'
+  kubernetes: '1.16.1'
 cloudProvider:
   name: 'vsphere'
   cloudConfig: |
@@ -281,7 +280,7 @@ terraform destroy
 
 You'll be asked to enter `yes` to confirm your intention to destroy the cluster.
 
-Congratulations! You're now running Kubernetes 1.14.2 HA cluster with three
+Congratulations! You're now running Kubernetes 1.16.1 HA cluster with three
 control plane nodes and two worker nodes. If you want to learn more about
 KubeOne and its features, such as [upgrades](upgrading_cluster.md), make sure to
 check our [documentation][9].
