@@ -139,6 +139,8 @@ func ProviderCredentials(p kubeone.CloudProviderName, credentialsFilePath string
 		// force scheme, as machine-controller requires it while terraform does not
 		vscreds[VSphereAddressMC] = "https://" + vscreds[VSphereAddressMC]
 		return vscreds, nil
+	case kubeone.CloudProviderNameNone:
+		return map[string]string{}, nil
 	}
 
 	return nil, errors.New("no provider matched")
