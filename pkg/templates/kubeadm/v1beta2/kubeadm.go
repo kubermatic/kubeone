@@ -31,6 +31,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/kubeflags"
 	"github.com/kubermatic/kubeone/pkg/state"
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/kubeadmargs"
+	"github.com/kubermatic/kubeone/pkg/templates/nodelocaldns"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -67,6 +68,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 			"node-ip":             nodeIP,
 			"read-only-port":      "0",
 			"rotate-certificates": "true",
+			"cluster-dns":         nodelocaldns.VirtualIP,
 		},
 	}
 
