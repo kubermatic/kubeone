@@ -29,6 +29,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/task"
 	"github.com/kubermatic/kubeone/pkg/templates/externalccm"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
+	"github.com/kubermatic/kubeone/pkg/templates/nodelocaldns"
 )
 
 const (
@@ -51,6 +52,7 @@ func Upgrade(s *state.State) error {
 		{Fn: determineHostname, ErrMsg: "unable to determine hostname"},
 		{Fn: determineOS, ErrMsg: "unable to determine operating system"},
 		{Fn: runPreflightChecks, ErrMsg: "preflight checks failed"},
+		{Fn: nodelocaldns.Deploy, ErrMsg: "unable to deploy nodelocaldns", Retries: 3},
 		{Fn: upgradeLeader, ErrMsg: "unable to upgrade leader control plane", Retries: 3},
 		{Fn: upgradeFollower, ErrMsg: "unable to upgrade follower control plane", Retries: 3},
 		{Fn: features.Activate, ErrMsg: "unable to activate features"},

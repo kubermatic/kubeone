@@ -47,7 +47,6 @@ require (
 	k8s.io/gengo v0.0.0-20190327210449-e17681d19d3a // indirect
 	k8s.io/klog v0.3.3 // indirect
 	k8s.io/kube-aggregator v0.0.0-20190228175259-3e0149950b0e
-	k8s.io/kubernetes v1.13.4
 	sigs.k8s.io/cluster-api v0.0.0-20190603191137-2ec456177c0e
 	sigs.k8s.io/controller-runtime v0.1.12
 	sigs.k8s.io/testing_frameworks v0.1.1 // indirect
