@@ -32,10 +32,28 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
 
+const (
+	hostnameScript = `
+fqdn=$(hostname -f)
+[ "$fqdn" = localhost ] && fqdn=$(hostname)
+echo "$fqdn"
+`
+)
+
 func determineHostname(s *state.State) error {
 	s.Logger.Infoln("Determine hostname…")
 	return s.RunTaskOnAllNodes(func(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
-		stdout, _, err := s.Runner.Run("hostname -f", nil)
+		if node.Hostname != "" {
+			return nil
+		}
+
+		hostcmd := hostnameScript
+
+		// on azure the name of the Node should == name of the VM
+		if s.Cluster.CloudProvider.Name == kubeoneapi.CloudProviderNameAzure {
+			hostcmd = `hostname`
+		}
+		stdout, _, err := s.Runner.Run(hostcmd, nil)
 		if err != nil {
 			return err
 		}
