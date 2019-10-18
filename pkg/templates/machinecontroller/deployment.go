@@ -19,7 +19,6 @@ package machinecontroller
 import (
 	"context"
 	"fmt"
-	"net"
 	"time"
 
 	"github.com/pkg/errors"
@@ -29,6 +28,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/credentials"
 	"github.com/kubermatic/kubeone/pkg/kubeconfig"
 	"github.com/kubermatic/kubeone/pkg/state"
+	"github.com/kubermatic/kubeone/pkg/templates/nodelocaldns"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -38,7 +38,6 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/apimachinery/pkg/util/wait"
-	"k8s.io/kubernetes/pkg/registry/core/service/ipallocator"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -730,16 +729,11 @@ func machineControllerMachineDeploymentCRD() *apiextensions.CustomResourceDefini
 func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster, credentialsFilePath string) (*appsv1.Deployment, error) {
 	var replicas int32 = 1
 
-	clusterDNS, err := clusterDNSIP(cluster)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to get clusterDNS IP")
-	}
-
 	args := []string{
 		"-logtostderr",
 		"-v", "4",
 		"-internal-listen-address", "0.0.0.0:8085",
-		"-cluster-dns", clusterDNS.String(),
+		"-cluster-dns", nodelocaldns.VirtualIP,
 	}
 
 	if cluster.Proxy.HTTP != "" {
@@ -867,22 +861,4 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster, credentials
 			},
 		},
 	}, nil
-}
-
-// clusterDNSIP returns the IP address of ClusterDNS Service,
-// which is 10th IP of the Services CIDR.
-func clusterDNSIP(cluster *kubeoneapi.KubeOneCluster) (*net.IP, error) {
-	// Get the Services CIDR
-	_, svcSubnetCIDR, err := net.ParseCIDR(cluster.ClusterNetwork.ServiceSubnet)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to parse network.service_subnet")
-	}
-
-	// Select the 10th IP in Services CIDR range as ClusterDNSIP
-	clusterDNS, err := ipallocator.GetIndexedIP(svcSubnetCIDR, 10)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to get IP from service subnet")
-	}
-
-	return &clusterDNS, nil
 }

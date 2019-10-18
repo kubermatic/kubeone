@@ -27,6 +27,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/task"
 	"github.com/kubermatic/kubeone/pkg/templates/externalccm"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
+	"github.com/kubermatic/kubeone/pkg/templates/nodelocaldns"
 )
 
 // Install performs all the steps required to install Kubernetes on
@@ -45,6 +46,7 @@ func Install(s *state.State) error {
 		{Fn: saveKubeconfig, ErrMsg: "unable to save kubeconfig to the local machine", Retries: 3},
 		{Fn: kubeconfig.BuildKubernetesClientset, ErrMsg: "unable to build kubernetes clientset", Retries: 3},
 		{Fn: features.Activate, ErrMsg: "unable to activate features", Retries: 3},
+		{Fn: nodelocaldns.Deploy, ErrMsg: "unable to deploy nodelocaldns"},
 		{Fn: ensureCNI, ErrMsg: "failed to install cni plugin", Retries: 3},
 		{Fn: patchCoreDNS, ErrMsg: "failed to patch CoreDNS", Retries: 3},
 		{Fn: credentials.Ensure, ErrMsg: "unable to ensure credentials secret", Retries: 3},
