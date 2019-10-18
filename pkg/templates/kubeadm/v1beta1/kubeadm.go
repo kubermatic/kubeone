@@ -145,7 +145,9 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 			CertSANs: []string{strings.ToLower(cluster.APIEndpoint.Host)},
 		},
 		ControllerManager: kubeadmv1beta1.ControlPlaneComponent{
-			ExtraArgs:    map[string]string{},
+			ExtraArgs: map[string]string{
+				"configure-cloud-routes": "false",
+			},
 			ExtraVolumes: []kubeadmv1beta1.HostPathMount{},
 		},
 		ClusterName: cluster.Name,
