@@ -148,7 +148,17 @@ versions:
   kubernetes: '1.16.1'
 cloudProvider:
   name: 'gce'
+  cloudConfig: |
+    [global]
+    multizone = true
 ```
+
+**Note:** If control plane nodes are created in multiple zones,
+you must configure `kube-controller-manager` to support multiple zones by
+setting `multizone` to `true`. Otherwise, `kube-controller-manager` will
+fail to create the needed routes and other cloud resources, without which
+the cluster can't function properly. The example Terraform configuration
+creates control plane nodes in multiple zones by default.
 
 Finally, we're going to install Kubernetes by using the `install` command and
 providing the configuration file and the Terraform output:

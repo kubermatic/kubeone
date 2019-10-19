@@ -66,6 +66,8 @@ output "kubeone_workers" {
           zone                  = "${var.region}-a"
           preemptible           = false
           assignPublicIPAddress = true
+          # Enable support for multizone clusters
+          multizone             = true
           labels = {
             "${var.cluster_name}-workers" = "pool1"
           }
