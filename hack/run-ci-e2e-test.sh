@@ -105,7 +105,7 @@ if [ -n "${RUNNING_IN_CI}" ]; then
     export TF_VAR_project_id=${PACKET_PROJECT_ID}
     ;;
   "gce")
-    export GOOGLE_CREDENTIALS=$(echo ${GOOGLE_SERVICE_ACCOUNT} | base64 -d)
+    export GOOGLE_CREDENTIALS=$(echo ${KUBEONE_GOOGLE_SERVICE_ACCOUNT} | base64 -d)
     ;;
   "openstack")
     export OS_AUTH_URL=${OS_AUTH_URL}
