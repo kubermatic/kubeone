@@ -37,13 +37,13 @@ func upgradeMachineDeployments(s *state.State) error {
 
 	s.Logger.Info("Upgrade MachineDeployments…")
 
-	bg := context.Background()
+	ctx := context.Background()
 
 	machineDeployments := clusterv1alpha1.MachineDeploymentList{}
 	err := s.DynamicClient.List(
-		bg,
-		&dynclient.ListOptions{Namespace: metav1.NamespaceSystem},
+		ctx,
 		&machineDeployments,
+		dynclient.InNamespace(metav1.NamespaceSystem),
 	)
 	if err != nil {
 		return errors.Wrap(err, "failed to list MachineDeployments")
@@ -54,12 +54,12 @@ func upgradeMachineDeployments(s *state.State) error {
 
 		retErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
 			machine := clusterv1alpha1.MachineDeployment{}
-			if err := s.DynamicClient.Get(bg, machineKey, &machine); err != nil {
+			if err := s.DynamicClient.Get(ctx, machineKey, &machine); err != nil {
 				return err
 			}
 
 			machine.Spec.Template.Spec.Versions.Kubelet = s.Cluster.Versions.Kubernetes
-			return s.DynamicClient.Update(bg, &machine)
+			return s.DynamicClient.Update(ctx, &machine)
 		})
 
 		if retErr != nil {

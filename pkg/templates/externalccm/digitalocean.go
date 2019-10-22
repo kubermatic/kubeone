@@ -19,7 +19,6 @@ package externalccm
 import (
 	"context"
 
-	"github.com/Masterminds/semver"
 	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/clientutil"
@@ -32,7 +31,6 @@ import (
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
 
 const (
@@ -59,20 +57,7 @@ func ensureDigitalOcean(s *state.State) error {
 		}
 	}
 
-	dep := doDeployment()
-	want, err := semver.NewConstraint("<= " + digitaloceanCCMVersion)
-	if err != nil {
-		return errors.Wrap(err, "failed to parse digitalocean CCM version constraint")
-	}
-
-	_, err = controllerutil.CreateOrUpdate(ctx,
-		s.DynamicClient,
-		dep,
-		mutateDeploymentWithVersionCheck(want))
-	if err != nil {
-		s.Logger.Warnf("unable to ensure digitalocean CCM Deployment: %v, skipping", err)
-	}
-	return nil
+	return clientutil.CreateOrUpdate(ctx, s.DynamicClient, doDeployment())
 }
 
 func doServiceAccount() *corev1.ServiceAccount {

@@ -27,7 +27,6 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/util/retry"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
@@ -83,7 +82,7 @@ func labelNode(client dynclient.Client, host *kubeoneapi.HostConfig) error {
 			ObjectMeta: metav1.ObjectMeta{Name: host.Hostname},
 		}
 
-		_, err := controllerutil.CreateOrUpdate(context.Background(), client, &node, func(runtime.Object) error {
+		_, err := controllerutil.CreateOrUpdate(context.Background(), client, &node, func() error {
 			if node.ObjectMeta.CreationTimestamp.IsZero() {
 				return errors.New("node not found")
 			}
@@ -102,7 +101,7 @@ func unlabelNode(client dynclient.Client, host *kubeoneapi.HostConfig) error {
 			ObjectMeta: metav1.ObjectMeta{Name: host.Hostname},
 		}
 
-		_, err := controllerutil.CreateOrUpdate(context.Background(), client, &node, func(runtime.Object) error {
+		_, err := controllerutil.CreateOrUpdate(context.Background(), client, &node, func() error {
 			if node.ObjectMeta.CreationTimestamp.IsZero() {
 				return errors.New("node not found")
 			}

@@ -19,7 +19,6 @@ package externalccm
 import (
 	"context"
 
-	"github.com/Masterminds/semver"
 	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/clientutil"
@@ -32,7 +31,6 @@ import (
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
 
 const (
@@ -59,21 +57,7 @@ func ensurePacket(s *state.State) error {
 		}
 	}
 
-	dep := packetDeployment()
-	want, err := semver.NewConstraint("<= " + packetCCMVersion)
-	if err != nil {
-		return errors.Wrap(err, "failed to parse packet CCM version constraint")
-	}
-
-	_, err = controllerutil.CreateOrUpdate(ctx,
-		s.DynamicClient,
-		dep,
-		mutateDeploymentWithVersionCheck(want))
-	if err != nil {
-		s.Logger.Warnf("unable to ensure packet CCM Deployment: %v, skipping", err)
-	}
-
-	return nil
+	return clientutil.CreateOrUpdate(ctx, s.DynamicClient, packetDeployment())
 }
 
 func packetServiceAccount() *corev1.ServiceAccount {

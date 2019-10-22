@@ -98,6 +98,8 @@ func Deploy(s *state.State) error {
 		return errors.New("kubernetes client not initialized")
 	}
 
+	s.Logger.Infoln("Ensure node local DNS…")
+
 	objs := []runtime.Object{
 		dnscacheServiceAccount(),
 		dnscacheService(),

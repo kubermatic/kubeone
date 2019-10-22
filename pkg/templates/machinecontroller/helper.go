@@ -110,12 +110,12 @@ func DestroyWorkers(s *state.State) error {
 		return errors.New("kubernetes client not initialized")
 	}
 
-	bgCtx := context.Background()
+	ctx := context.Background()
 
 	// Annotate nodes with kubermatic.io/skip-eviction=true to skip eviction
 	s.Logger.Info("Annotating nodes to skip eviction…")
 	nodes := &corev1.NodeList{}
-	if err := s.DynamicClient.List(bgCtx, &dynclient.ListOptions{}, nodes); err != nil {
+	if err := s.DynamicClient.List(ctx, nodes); err != nil {
 		return errors.Wrap(err, "unable to list nodes")
 	}
 	for _, node := range nodes.Items {
@@ -123,7 +123,7 @@ func DestroyWorkers(s *state.State) error {
 
 		retErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
 			n := corev1.Node{}
-			if err := s.DynamicClient.Get(bgCtx, nodeKey, &n); err != nil {
+			if err := s.DynamicClient.Get(ctx, nodeKey, &n); err != nil {
 				return err
 			}
 
@@ -131,7 +131,7 @@ func DestroyWorkers(s *state.State) error {
 				n.Annotations = map[string]string{}
 			}
 			n.Annotations["kubermatic.io/skip-eviction"] = "true"
-			return s.DynamicClient.Update(bgCtx, &n)
+			return s.DynamicClient.Update(ctx, &n)
 		})
 
 		if retErr != nil {
@@ -142,13 +142,13 @@ func DestroyWorkers(s *state.State) error {
 	// Delete all MachineDeployment objects
 	s.Logger.Info("Deleting MachineDeployment objects…")
 	mdList := &clusterv1alpha1.MachineDeploymentList{}
-	if err := s.DynamicClient.List(bgCtx, dynclient.InNamespace(MachineControllerNamespace), mdList); err != nil {
+	if err := s.DynamicClient.List(ctx, mdList, dynclient.InNamespace(MachineControllerNamespace)); err != nil {
 		if !errorsutil.IsNotFound(err) {
 			return errors.Wrap(err, "unable to list machinedeployment objects")
 		}
 	}
 	for i := range mdList.Items {
-		if err := s.DynamicClient.Delete(bgCtx, &mdList.Items[i]); err != nil {
+		if err := s.DynamicClient.Delete(ctx, &mdList.Items[i]); err != nil {
 			return errors.Wrapf(err, "unable to delete machinedeployment object %s", mdList.Items[i].Name)
 		}
 	}
@@ -156,13 +156,13 @@ func DestroyWorkers(s *state.State) error {
 	// Delete all MachineSet objects
 	s.Logger.Info("Deleting MachineSet objects…")
 	msList := &clusterv1alpha1.MachineSetList{}
-	if err := s.DynamicClient.List(bgCtx, dynclient.InNamespace(MachineControllerNamespace), msList); err != nil {
+	if err := s.DynamicClient.List(ctx, msList, dynclient.InNamespace(MachineControllerNamespace)); err != nil {
 		if !errorsutil.IsNotFound(err) {
 			return errors.Wrap(err, "unable to list machineset objects")
 		}
 	}
 	for i := range msList.Items {
-		if err := s.DynamicClient.Delete(bgCtx, &msList.Items[i]); err != nil {
+		if err := s.DynamicClient.Delete(ctx, &msList.Items[i]); err != nil {
 			if !errorsutil.IsNotFound(err) {
 				return errors.Wrapf(err, "unable to delete machineset object %s", msList.Items[i].Name)
 			}
@@ -172,13 +172,13 @@ func DestroyWorkers(s *state.State) error {
 	// Delete all Machine objects
 	s.Logger.Info("Deleting Machine objects…")
 	mList := &clusterv1alpha1.MachineList{}
-	if err := s.DynamicClient.List(bgCtx, dynclient.InNamespace(MachineControllerNamespace), mList); err != nil {
+	if err := s.DynamicClient.List(ctx, mList, dynclient.InNamespace(MachineControllerNamespace)); err != nil {
 		if !errorsutil.IsNotFound(err) {
 			return errors.Wrap(err, "unable to list machine objects")
 		}
 	}
 	for i := range mList.Items {
-		if err := s.DynamicClient.Delete(bgCtx, &mList.Items[i]); err != nil {
+		if err := s.DynamicClient.Delete(ctx, &mList.Items[i]); err != nil {
 			if !errorsutil.IsNotFound(err) {
 				return errors.Wrapf(err, "unable to delete machine object %s", mList.Items[i].Name)
 			}
@@ -192,10 +192,10 @@ func DestroyWorkers(s *state.State) error {
 func WaitDestroy(s *state.State) error {
 	s.Logger.Info("Waiting for all machines to get deleted…")
 
-	bgCtx := context.Background()
+	ctx := context.Background()
 	return wait.Poll(5*time.Second, 5*time.Minute, func() (bool, error) {
 		list := &clusterv1alpha1.MachineList{}
-		if err := s.DynamicClient.List(bgCtx, dynclient.InNamespace(MachineControllerNamespace), list); err != nil {
+		if err := s.DynamicClient.List(ctx, list, dynclient.InNamespace(MachineControllerNamespace)); err != nil {
 			return false, errors.Wrap(err, "unable to list machine objects")
 		}
 		if len(list.Items) != 0 {
