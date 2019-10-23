@@ -14,8 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// Following code is a slightly modified copy from
-// k8s.io/kubernetes/cmd/kubeadm/app/util/pkiutil
+// Upstream PR https://github.com/kubernetes/kubernetes/pull/73198 moved few
+// functions from "k8s.io/client-go/util/cert" to
+// "k8s.io/kubernetes/cmd/kubeadm/app/util/pkiutil".
+//
+// to avoid importing "k8s.io/kubernetes" those functions are copied over here.
 
 package certificate
 
