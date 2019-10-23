@@ -24,6 +24,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/state"
 
 	"k8s.io/client-go/tools/clientcmd"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 // Download downloads Kubeconfig over SSH
@@ -60,6 +61,10 @@ func BuildKubernetesClientset(s *state.State) error {
 	}
 
 	s.RESTConfig, err = clientcmd.RESTConfigFromKubeConfig(kubeconfig)
+	if err != nil {
+		return errors.Wrap(err, "unable to build config from kubeconfig bytes")
+	}
 
-	return errors.Wrap(err, "unable to build config from kubeconfig bytes")
+	s.DynamicClient, err = client.New(s.RESTConfig, client.Options{})
+	return errors.Wrap(err, "unable to build dynamic client")
 }
