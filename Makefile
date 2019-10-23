@@ -65,7 +65,7 @@ buildenv:
 	@go version
 
 .PHONY: lint
-lint: dist/kubeone
+lint:
 	@golangci-lint --version
 	golangci-lint run ./pkg/... ./test/...
 

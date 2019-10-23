@@ -25,6 +25,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/configupload"
 
 	"k8s.io/client-go/util/cert"
+	"k8s.io/client-go/util/keyutil"
 )
 
 // CAKeyPair parses generated PKI CA certificate and key
@@ -48,7 +49,7 @@ func CAKeyPair(config *configupload.Configuration) (*rsa.PrivateKey, *x509.Certi
 		return nil, nil, errors.New("ca.crt does not contain at least one valid certificate")
 	}
 
-	possibleKey, err := cert.ParsePrivateKeyPEM([]byte(caKey))
+	possibleKey, err := keyutil.ParsePrivateKeyPEM([]byte(caKey))
 	if err != nil {
 		return nil, nil, err
 	}

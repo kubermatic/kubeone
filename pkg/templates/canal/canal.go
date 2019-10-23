@@ -129,9 +129,5 @@ func Deploy(s *state.State) error {
 
 	// HACK: re-init dynamic client in order to re-init RestMapper, to drop caches
 	err = kubeconfig.HackIssue321InitDynamicClient(s)
-	if err != nil {
-		return errors.Wrap(err, "failed to re-init dynamic client")
-	}
-
-	return nil
+	return errors.Wrap(err, "failed to re-init dynamic client")
 }

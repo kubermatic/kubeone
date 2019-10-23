@@ -32,6 +32,7 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/labels"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -47,13 +48,11 @@ func runPreflightChecks(s *state.State) error {
 	}
 
 	nodes := corev1.NodeList{}
-	nodeListOpts := dynclient.ListOptions{}
-	err := nodeListOpts.SetLabelSelector(fmt.Sprintf("%s=%s", labelControlPlaneNode, ""))
-	if err != nil {
-		return errors.Wrap(err, "failed to set node selector labels")
+	nodeListOpts := dynclient.ListOptions{
+		LabelSelector: labels.SelectorFromSet(map[string]string{labelControlPlaneNode: ""}),
 	}
 
-	err = s.DynamicClient.List(context.Background(), &nodeListOpts, &nodes)
+	err := s.DynamicClient.List(context.Background(), &nodes, &nodeListOpts)
 	if err != nil {
 		return errors.Wrap(err, "unable to list nodes")
 	}
@@ -238,14 +237,12 @@ func verifyVersionSkew(s *state.State, nodes *corev1.NodeList, verbose bool) err
 	var apiserverVersion *semver.Version
 
 	apiserverPods := &corev1.PodList{}
-	apiserverListOpts := &dynclient.ListOptions{Namespace: metav1.NamespaceSystem}
-
-	err = apiserverListOpts.SetLabelSelector("component=kube-apiserver")
-	if err != nil {
-		return errors.Wrap(err, "failed to set labels selector for kube-apiserver")
+	apiserverListOpts := &dynclient.ListOptions{
+		Namespace:     metav1.NamespaceSystem,
+		LabelSelector: labels.SelectorFromSet(map[string]string{"component": "kube-apiserver"}),
 	}
 
-	err = s.DynamicClient.List(context.Background(), apiserverListOpts, apiserverPods)
+	err = s.DynamicClient.List(context.Background(), apiserverPods, apiserverListOpts)
 	if err != nil {
 		return errors.Wrap(err, "unable to list apiserver pods")
 	}

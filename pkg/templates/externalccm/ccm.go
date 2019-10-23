@@ -18,20 +18,15 @@ package externalccm
 
 import (
 	"context"
-	"strings"
 	"time"
 
-	"github.com/Masterminds/semver"
 	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/state"
 
-	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/wait"
-	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 const (
@@ -76,9 +71,8 @@ func waitForInitializedNodes(s *state.State) error {
 
 	return wait.Poll(5*time.Second, 60*time.Second, func() (bool, error) {
 		nodes := corev1.NodeList{}
-		nodeListOpts := dynclient.ListOptions{}
 
-		if err := s.DynamicClient.List(ctx, &nodeListOpts, &nodes); err != nil {
+		if err := s.DynamicClient.List(ctx, &nodes); err != nil {
 			return false, err
 		}
 
@@ -92,39 +86,4 @@ func waitForInitializedNodes(s *state.State) error {
 
 		return true, nil
 	})
-}
-
-func mutateDeploymentWithVersionCheck(want *semver.Constraints) func(obj runtime.Object) error {
-	return func(obj runtime.Object) error {
-		dep, ok := obj.(*appsv1.Deployment)
-		if !ok {
-			return errors.Errorf("unknown object type %T passed", obj)
-		}
-
-		if dep.ObjectMeta.CreationTimestamp.IsZero() {
-			// let it create deployment
-			return nil
-		}
-
-		if len(dep.Spec.Template.Spec.Containers) != 1 {
-			return errors.New("unable to choose a CCM container, as number of containers > 1")
-		}
-
-		imageSpec := strings.SplitN(dep.Spec.Template.Spec.Containers[0].Image, ":", 2)
-		if len(imageSpec) != 2 {
-			return errors.New("unable to grab CCM image version")
-		}
-
-		existing, err := semver.NewVersion(imageSpec[1])
-		if err != nil {
-			return errors.Wrap(err, "failed to parse deployed CCM version")
-		}
-
-		if !want.Check(existing) {
-			return errors.New("newer version deployed, skipping")
-		}
-
-		// OK to update the deployment
-		return nil
-	}
 }
