@@ -24,7 +24,6 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/clientutil"
-	"github.com/kubermatic/kubeone/pkg/kubeconfig"
 	"github.com/kubermatic/kubeone/pkg/state"
 
 	"k8s.io/apimachinery/pkg/runtime"
@@ -125,12 +124,6 @@ func Deploy(s *state.State) error {
 		if err = clientutil.CreateOrUpdate(ctx, s.DynamicClient, obj); err != nil {
 			return errors.WithStack(err)
 		}
-	}
-
-	// HACK: re-init dynamic client in order to re-init RestMapper, to drop caches
-	err = kubeconfig.HackIssue321InitDynamicClient(s)
-	if err != nil {
-		return errors.Wrap(err, "failed to re-init dynamic client")
 	}
 
 	return nil

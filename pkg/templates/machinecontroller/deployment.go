@@ -25,7 +25,6 @@ import (
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/clientutil"
 	"github.com/kubermatic/kubeone/pkg/credentials"
-	"github.com/kubermatic/kubeone/pkg/kubeconfig"
 	"github.com/kubermatic/kubeone/pkg/state"
 	"github.com/kubermatic/kubeone/pkg/templates/nodelocaldns"
 
@@ -89,9 +88,7 @@ func Deploy(s *state.State) error {
 		}
 	}
 
-	// HACK: re-init dynamic client in order to re-init RestMapper, to drop caches
-	err = kubeconfig.HackIssue321InitDynamicClient(s)
-	return errors.Wrap(err, "failed to re-init dynamic client")
+	return nil
 }
 
 // WaitForMachineController waits for machine-controller-webhook to become running
@@ -760,6 +757,7 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster, credentials
 			Value: cluster.Proxy.NoProxy,
 		},
 	)
+
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to get env var bindings for a secret")
 	}

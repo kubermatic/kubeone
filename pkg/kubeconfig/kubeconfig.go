@@ -18,7 +18,6 @@ package kubeconfig
 
 import (
 	"github.com/pkg/errors"
-	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/ssh"
@@ -61,22 +60,6 @@ func BuildKubernetesClientset(s *state.State) error {
 	}
 
 	s.RESTConfig, err = clientcmd.RESTConfigFromKubeConfig(kubeconfig)
-	if err != nil {
-		return errors.Wrap(err, "unable to build config from kubeconfig bytes")
-	}
 
-	err = HackIssue321InitDynamicClient(s)
-	return errors.Wrap(err, "unable to build dynamic client")
-}
-
-// HackIssue321InitDynamicClient initialize controller-runtime/client
-// name comes from: https://github.com/kubernetes-sigs/controller-runtime/issues/321
-func HackIssue321InitDynamicClient(s *state.State) error {
-	if s.RESTConfig == nil {
-		return errors.New("rest config is not initialized")
-	}
-
-	var err error
-	s.DynamicClient, err = client.New(s.RESTConfig, client.Options{})
-	return errors.Wrap(err, "unable to build dynamic client")
+	return errors.Wrap(err, "unable to build config from kubeconfig bytes")
 }
