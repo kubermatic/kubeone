@@ -65,7 +65,6 @@ func destroyWorkers(s *state.State) error {
 			return false, nil
 		}
 		return true, nil
-
 	})
 	if lastErr != nil {
 		s.Logger.Warn("Unable to connect to the control plane API and destroy worker nodes")

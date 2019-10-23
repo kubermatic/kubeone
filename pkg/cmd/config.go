@@ -300,7 +300,6 @@ func createAndPrintManifest(printOptions *printOptions) error {
 	}
 	if printOptions.EnableOpenIDConnect {
 		cfg.Set(yamled.Path{"features", "openidConnect", "enable"}, printOptions.EnableOpenIDConnect)
-
 		cfg.Set(yamled.Path{"features", "openidConnect", "config", "issuerUrl"}, "")
 		cfg.Set(yamled.Path{"features", "openidConnect", "config", "clientId"}, "")
 		cfg.Set(yamled.Path{"features", "openidConnect", "config", "usernameClaim"}, "")

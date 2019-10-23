@@ -195,7 +195,7 @@ func TestClusterUpgrade(t *testing.T) {
 			// Run Terraform again for GCE to add nodes to the load balancer
 			if tc.provider == provisioner.GCE {
 				t.Log("Adding other control plane nodes to the load balancer…")
-				tf, err = pr.Provision()
+				_, err = pr.Provision()
 				if err != nil {
 					t.Fatalf("failed to provision the infrastructure: %v", err)
 				}

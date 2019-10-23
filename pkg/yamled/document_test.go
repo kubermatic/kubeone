@@ -250,7 +250,6 @@ func TestSetNewSubKey(t *testing.T) {
 }
 
 func TestSetNewDeepSubKey(t *testing.T) {
-
 	doc, expected := loadTestcase(t, "set-new-deep-sub-key.yaml")
 
 	doc.Set(Path{"root", "deep", "deeper", "reallyDeep", "newKey"}, "foo")

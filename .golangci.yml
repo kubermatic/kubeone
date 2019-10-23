@@ -1,36 +1,53 @@
 run:
   issues-exit-code: 1
+  build-tags:
+  - e2e
   skip-dirs:
   - hack
   - vendor
+  - pkg/apis/kubeadm
+
+  skip-files:
+  - zz_generated.*.go
 
 linters:
-  enable-all: true
-  disable:
-  - funlen
+  disable-all: true
+  enable:
+  - bodyclose
+  - deadcode
+  - errcheck
+  - goconst
+  - gocritic
+  - gocyclo
+  - gofmt
+  - goimports
+  - gosec
+  - gosimple
+  - govet
+  - ineffassign
   - interfacer
-  - dupl
-  - maligned
-  - megacheck
-  - lll
-  - prealloc
-  - gochecknoinits
-  - gochecknoglobals
+  - misspell
+  - nakedret
+  - staticcheck
+  - structcheck
+  - stylecheck
+  - unconvert
+  - unused
+  - varcheck
 
 linters-settings:
   govet:
     check-shadowing: true
+  goimports:
+    local-prefixes: github.com/kubermatic/kubeone
 
 issues:
   exclude:
-    - "type name will be used as kubeone.KubeOneCluster by other packages, and that stutters; consider calling this Cluster"
-    - "don't use underscores in Go names; func SetDefaults_KubeOneCluster should be SetDefaultsKubeOneCluster"
-    - "don't use underscores in Go names; func SetDefaults_Hosts should be SetDefaultsHosts"
-    - "don't use underscores in Go names; func SetDefaults_APIEndpoints should be SetDefaultsAPIEndpoints"
-    - "don't use underscores in Go names; func SetDefaults_ClusterNetwork should be SetDefaultsClusterNetwork"
-    - "don't use underscores in Go names; func SetDefaults_Features should be SetDefaultsFeatures"
-    - "don't use underscores in Go names; func SetDefaults_MachineController should be SetDefaultsMachineController"
-    - "don't use underscores in Go names; func SetDefaults_SystemPackages should be SetDefaultsSystemPackages"
-    - "G101: Potential hardcoded credentials"
-    - "G106: Use of ssh InsecureIgnoreHostKey should be audited"
-    - "`defaultRetryBackoff` - `retries` always receives `3`"
+  - "`defaultRetryBackoff` - `retries` always receives `3`"
+  - "func SetDefaults_APIEndpoints should be SetDefaultsAPIEndpoints"
+  - "func SetDefaults_ClusterNetwork should be SetDefaultsClusterNetwork"
+  - "func SetDefaults_Features should be SetDefaultsFeatures"
+  - "func SetDefaults_Hosts should be SetDefaultsHosts"
+  - "func SetDefaults_KubeOneCluster should be SetDefaultsKubeOneCluster"
+  - "func SetDefaults_MachineController should be SetDefaultsMachineController"
+  - "func SetDefaults_SystemPackages should be SetDefaultsSystemPackages"

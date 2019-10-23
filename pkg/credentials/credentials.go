@@ -33,9 +33,9 @@ import (
 const (
 	// Variables that KubeOne (and Terraform) expect to see
 	AWSAccessKeyID          = "AWS_ACCESS_KEY_ID"
-	AWSSecretAccessKey      = "AWS_SECRET_ACCESS_KEY"
+	AWSSecretAccessKey      = "AWS_SECRET_ACCESS_KEY" //nolint:gosec
 	AzureClientID           = "ARM_CLIENT_ID"
-	AzureClientSecret       = "ARM_CLIENT_SECRET"
+	AzureClientSecret       = "ARM_CLIENT_SECRET" //nolint:gosec
 	AzureTenantID           = "ARM_TENANT_ID"
 	AzureSubscribtionID     = "ARM_SUBSCRIPTION_ID"
 	DigitalOceanTokenKey    = "DIGITALOCEAN_TOKEN"
@@ -56,7 +56,7 @@ const (
 
 	// Variables that machine-controller expects
 	AzureClientIDMC           = "AZURE_CLIENT_ID"
-	AzureClientSecretMC       = "AZURE_CLIENT_SECRET"
+	AzureClientSecretMC       = "AZURE_CLIENT_SECRET" //nolint:gosec
 	AzureTenantIDMC           = "AZURE_TENANT_ID"
 	AzureSubscribtionIDMC     = "AZURE_SUBSCRIPTION_ID"
 	DigitalOceanTokenKeyMC    = "DO_TOKEN"
