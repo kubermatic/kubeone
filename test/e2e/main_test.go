@@ -21,7 +21,6 @@ package e2e
 import (
 	"context"
 	"flag"
-	"fmt"
 	"strings"
 	"testing"
 	"time"
@@ -32,6 +31,7 @@ import (
 	"github.com/kubermatic/kubeone/test/e2e/provisioner"
 
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/util/wait"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -75,10 +75,8 @@ func setupTearDown(p provisioner.Provisioner, k Kubeone) func(t *testing.T) {
 func waitForNodesReady(client dynclient.Client, expectedNumberOfNodes int) error {
 	return wait.Poll(5*time.Second, 10*time.Minute, func() (bool, error) {
 		nodes := corev1.NodeList{}
-		nodeListOpts := dynclient.ListOptions{}
 
-		err := client.List(context.Background(), &nodeListOpts, &nodes)
-		if err != nil {
+		if err := client.List(context.Background(), &nodes); err != nil {
 			return false, errors.Wrap(err, "unable to list nodes")
 		}
 
@@ -104,10 +102,13 @@ func verifyVersion(client dynclient.Client, namespace string, targetVersion stri
 	}
 
 	nodes := corev1.NodeList{}
-	nodeListOpts := dynclient.ListOptions{}
-	_ = nodeListOpts.SetLabelSelector(fmt.Sprintf("%s=%s", labelControlPlaneNode, ""))
-	err = client.List(context.Background(), &nodeListOpts, &nodes)
-	if err != nil {
+	nodeListOpts := dynclient.ListOptions{
+		LabelSelector: labels.SelectorFromSet(map[string]string{
+			labelControlPlaneNode: "",
+		}),
+	}
+
+	if err = client.List(context.Background(), &nodes, &nodeListOpts); err != nil {
 		return errors.Wrap(err, "failed to list nodes")
 	}
 
@@ -123,10 +124,14 @@ func verifyVersion(client dynclient.Client, namespace string, targetVersion stri
 	}
 
 	apiserverPods := corev1.PodList{}
-	podsListOpts := dynclient.ListOptions{Namespace: namespace}
-	_ = podsListOpts.SetLabelSelector("component=kube-apiserver")
-	err = client.List(context.Background(), &podsListOpts, &apiserverPods)
-	if err != nil {
+	podsListOpts := dynclient.ListOptions{
+		Namespace: namespace,
+		LabelSelector: labels.SelectorFromSet(map[string]string{
+			"component": "kube-apiserver",
+		}),
+	}
+
+	if err = client.List(context.Background(), &apiserverPods, &podsListOpts); err != nil {
 		return errors.Wrap(err, "unable to list apiserver pods")
 	}
 
