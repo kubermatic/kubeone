@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// Following code is a slightly modified copy from 
+// Following code is a slightly modified copy from
 // k8s.io/kubernetes/cmd/kubeadm/app/util/pkiutil
 
 package certificate
