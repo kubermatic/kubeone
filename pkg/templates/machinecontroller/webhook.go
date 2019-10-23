@@ -18,7 +18,7 @@ package machinecontroller
 
 import (
 	"context"
-	"crypto/rsa"
+	"crypto"
 	"crypto/x509"
 	"fmt"
 	"time"
@@ -299,7 +299,7 @@ func getServingCertVolume() corev1.Volume {
 
 // tlsServingCertificate returns a secret with the machine-controller-webhook tls certificate
 // func tlsServingCertificate(ca *triple.KeyPair) (*corev1.Secret, error) {
-func tlsServingCertificate(caKey *rsa.PrivateKey, caCert *x509.Certificate) (*corev1.Secret, error) {
+func tlsServingCertificate(caKey crypto.Signer, caCert *x509.Certificate) (*corev1.Secret, error) {
 	commonName := fmt.Sprintf("%s.%s.svc.cluster.local.", WebhookName, WebhookNamespace)
 	altdnsNames := []string{
 		commonName,

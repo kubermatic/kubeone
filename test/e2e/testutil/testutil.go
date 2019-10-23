@@ -43,8 +43,10 @@ func IsCommandAvailable(name string) bool {
 
 // ExecuteCommand executes the given command
 func ExecuteCommand(path, name string, arg []string, additionalEnv map[string]string) (string, error) {
-	var stdoutBuf, stderrBuf bytes.Buffer
-	var errStdout, errStderr error
+	var (
+		stdoutBuf, stderrBuf bytes.Buffer
+		errStdout, errStderr error
+	)
 
 	cmd := exec.Command(name, arg...)
 	if len(path) > 0 {
@@ -74,7 +76,6 @@ func ExecuteCommand(path, name string, arg []string, additionalEnv map[string]st
 	go func() {
 		_, errStdout = io.Copy(stdout, stdoutIn)
 		doneStdout <- struct{}{}
-
 	}()
 
 	go func() {
@@ -95,7 +96,7 @@ func ExecuteCommand(path, name string, arg []string, additionalEnv map[string]st
 		return "", errStderr
 	}
 
-	outStr := string(stdoutBuf.Bytes())
+	outStr := stdoutBuf.String()
 	return outStr, nil
 }
 

@@ -30,6 +30,11 @@ import (
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
+const (
+	clusterNetworkPodCIDR     = "192.168.0.0/16"
+	clusterNetworkServiceCIDR = "172.16.0.0/12"
+)
+
 func TestClusterConformance(t *testing.T) {
 	t.Parallel()
 
@@ -138,11 +143,13 @@ func TestClusterConformance(t *testing.T) {
 
 			// Create configuration manifest
 			t.Log("Creating KubeOneCluster manifest…")
-			var clusterNetworkPod string
-			var clusterNetworkService string
+			var (
+				clusterNetworkPod     string
+				clusterNetworkService string
+			)
 			if tc.provider == provisioner.OpenStack {
-				clusterNetworkPod = "192.168.0.0/16"
-				clusterNetworkService = "172.16.0.0/12"
+				clusterNetworkPod = clusterNetworkPodCIDR
+				clusterNetworkService = clusterNetworkServiceCIDR
 			}
 			err = target.CreateConfig(testTargetVersion, tc.provider,
 				tc.providerExternal, clusterNetworkPod, clusterNetworkService)
@@ -158,9 +165,9 @@ func TestClusterConformance(t *testing.T) {
 			t.Log("Provisioning infrastructure using Terraform…")
 			args := []string{}
 			if osControlPlane != OperatingSystemDefault {
-				tfFlags, err := ControlPlaneImageFlags(tc.provider, osControlPlane)
-				if err != nil {
-					t.Fatalf("failed to discover control plane os image: %v", err)
+				tfFlags, errFlags := ControlPlaneImageFlags(tc.provider, osControlPlane)
+				if errFlags != nil {
+					t.Fatalf("failed to discover control plane os image: %v", errFlags)
 				}
 				args = append(args, tfFlags...)
 			}
@@ -203,16 +210,16 @@ func TestClusterConformance(t *testing.T) {
 				t.Log("Adding other control plane nodes to the load balancer…")
 				args = []string{}
 				if osControlPlane != OperatingSystemDefault {
-					tfFlags, err := ControlPlaneImageFlags(tc.provider, osControlPlane)
-					if err != nil {
-						t.Fatalf("failed to discover control plane os image: %v", err)
+					tfFlags, errFlags := ControlPlaneImageFlags(tc.provider, osControlPlane)
+					if errFlags != nil {
+						t.Fatalf("failed to discover control plane os image: %v", errFlags)
 					}
 					args = append(args, tfFlags...)
 				}
 				if osWorkers != OperatingSystemDefault {
 					args = append(args, "-var", fmt.Sprintf("worker_os=%s", osWorkers))
 				}
-				tf, err = pr.Provision(args...)
+				_, err = pr.Provision(args...)
 				if err != nil {
 					t.Fatalf("failed to provision the infrastructure: %v", err)
 				}

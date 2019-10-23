@@ -113,9 +113,9 @@ func verifyVersion(client dynclient.Client, namespace string, targetVersion stri
 
 	// Kubelet version check
 	for _, n := range nodes.Items {
-		kubeletVer, err := semver.NewVersion(n.Status.NodeInfo.KubeletVersion)
-		if err != nil {
-			return err
+		kubeletVer, errSemver := semver.NewVersion(n.Status.NodeInfo.KubeletVersion)
+		if errSemver != nil {
+			return errSemver
 		}
 		if reqVer.Compare(kubeletVer) != 0 {
 			return errors.Errorf("kubelet version mismatch: expected %v, got %v", reqVer.String(), kubeletVer.String())

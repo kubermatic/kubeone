@@ -94,13 +94,10 @@ func upgradeKubernetesBinaries(s *state.State, node kubeoneapi.HostConfig) error
 	switch node.OperatingSystem {
 	case "ubuntu", "debian":
 		err = upgradeKubernetesBinariesDebian(s)
-
 	case "coreos":
 		err = upgradeKubernetesBinariesCoreOS(s)
-
 	case "centos":
 		err = upgradeKubernetesBinariesCentOS(s)
-
 	default:
 		err = errors.Errorf("'%s' is not a supported operating system", node.OperatingSystem)
 	}

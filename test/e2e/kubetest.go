@@ -46,7 +46,6 @@ func NewKubetest(k8sVersion, kubetestDir string, envVars map[string]string) Kube
 		kubernetesVersion: k8sVersion,
 		envVars:           envVars,
 	}
-
 }
 
 // Verify verifies the cluster
@@ -78,7 +77,6 @@ func (p *Kubetest) Verify(scenario string) error {
 
 // getK8sBinaries retrieves kubernetes binaries for version
 func getK8sBinaries(kubetestDir string, version string) error {
-
 	k8sPath := fmt.Sprintf("%s/kubernetes-%s", kubetestDir, version)
 	err := os.MkdirAll(k8sPath, 0755)
 	if err != nil {

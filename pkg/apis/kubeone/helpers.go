@@ -56,7 +56,7 @@ func (h *HostConfig) SetLeader(leader bool) {
 
 // CloudProviderInTree detects is there in-tree cloud provider implementation for specified provider.
 // List of in-tree provider can be found here: https://github.com/kubernetes/kubernetes/tree/master/pkg/cloudprovider
-func (p CloudProviderSpec) CloudProviderInTree() bool {
+func (p CloudProviderSpec) CloudProviderInTree() bool { //nolint:stylecheck
 	switch p.Name {
 	case CloudProviderNameAWS, CloudProviderNameGCE, CloudProviderNameOpenStack:
 		return true

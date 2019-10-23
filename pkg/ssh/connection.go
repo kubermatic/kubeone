@@ -161,7 +161,7 @@ func NewConnection(o Opts) (Connection, error) {
 		User:            o.Username,
 		Timeout:         o.Timeout,
 		Auth:            authMethods,
-		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+		HostKeyCallback: ssh.InsecureIgnoreHostKey(), //nolint:gosec
 	}
 
 	targetHost := o.Hostname

@@ -209,7 +209,6 @@ func ValidateFeatures(f kubeone.Features, fldPath *field.Path) field.ErrorList {
 	if f.OpenIDConnect != nil && f.OpenIDConnect.Enable {
 		allErrs = append(allErrs, ValidateOIDCConfig(f.OpenIDConnect.Config, fldPath.Child("openidConnect"))...)
 	}
-	allErrs = append(allErrs)
 	return allErrs
 }
 
