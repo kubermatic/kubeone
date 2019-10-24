@@ -18,6 +18,7 @@ package kubeone
 
 import (
 	"errors"
+	"math/rand"
 
 	"github.com/Masterminds/semver"
 )
@@ -31,6 +32,11 @@ func (c KubeOneCluster) Leader() (HostConfig, error) {
 		}
 	}
 	return HostConfig{}, errors.New("leader not found")
+}
+
+func (c KubeOneCluster) RandomHost() HostConfig {
+	n := rand.Int31n(int32(len(c.Hosts)))
+	return c.Hosts[n]
 }
 
 // Followers returns all but the first configured host. Only call

@@ -20,40 +20,58 @@ import (
 	"sync"
 	"time"
 
+	"github.com/pkg/errors"
+
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 )
 
 // Connector holds a map of Connections
 type Connector struct {
 	lock        sync.Mutex
-	connections map[string]Connection
+	connections map[int]Connection
 }
 
 // NewConnector constructor
 func NewConnector() *Connector {
 	return &Connector{
-		connections: make(map[string]Connection),
+		connections: make(map[int]Connection),
 	}
 }
 
+// Tunnel returns established SSH tunnel
+func (c *Connector) Tunnel(host kubeoneapi.HostConfig) (Tunneler, error) {
+	conn, err := c.Connect(host)
+	if err != nil {
+		return nil, err
+	}
+
+	tunn, ok := conn.(Tunneler)
+	if !ok {
+		err = errors.New("unable to assert Tunneler")
+	}
+
+	return tunn, err
+}
+
 // Connect to the node
-func (c *Connector) Connect(node kubeoneapi.HostConfig) (Connection, error) {
-	c.lock.Lock()
-	defer c.lock.Unlock()
+func (c *Connector) Connect(host kubeoneapi.HostConfig) (Connection, error) {
 	var err error
 
-	conn, found := c.connections[node.PublicAddress]
+	c.lock.Lock()
+	defer c.lock.Unlock()
+
+	conn, found := c.connections[host.ID]
 	if !found {
 		opts := Opts{
-			Username:    node.SSHUsername,
-			Port:        node.SSHPort,
-			Hostname:    node.PublicAddress,
-			KeyFile:     node.SSHPrivateKeyFile,
-			AgentSocket: node.SSHAgentSocket,
+			Username:    host.SSHUsername,
+			Port:        host.SSHPort,
+			Hostname:    host.PublicAddress,
+			KeyFile:     host.SSHPrivateKeyFile,
+			AgentSocket: host.SSHAgentSocket,
 			Timeout:     10 * time.Second,
-			Bastion:     node.Bastion,
-			BastionPort: node.BastionPort,
-			BastionUser: node.BastionUser,
+			Bastion:     host.Bastion,
+			BastionPort: host.BastionPort,
+			BastionUser: host.BastionUser,
 		}
 
 		conn, err = NewConnection(opts)
@@ -61,19 +79,8 @@ func (c *Connector) Connect(node kubeoneapi.HostConfig) (Connection, error) {
 			return nil, err
 		}
 
-		c.connections[node.PublicAddress] = conn
+		c.connections[host.ID] = conn
 	}
 
 	return conn, nil
-}
-
-// CloseAll closes all connections
-func (c *Connector) CloseAll() {
-	c.lock.Lock()
-	defer c.lock.Unlock()
-
-	for _, conn := range c.connections {
-		conn.Close()
-	}
-	c.connections = make(map[string]Connection)
 }

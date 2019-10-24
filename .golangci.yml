@@ -19,6 +19,7 @@ linters:
   - goconst
   - gocritic
   - gocyclo
+  - golint
   - gofmt
   - goimports
   - gosec
@@ -28,12 +29,15 @@ linters:
   - interfacer
   - misspell
   - nakedret
+  - scopelint
   - staticcheck
   - structcheck
   - stylecheck
   - unconvert
+  - unparam
   - unused
   - varcheck
+  - whitespace
 
 linters-settings:
   govet:
@@ -51,3 +55,4 @@ issues:
   - "func SetDefaults_KubeOneCluster should be SetDefaultsKubeOneCluster"
   - "func SetDefaults_MachineController should be SetDefaultsMachineController"
   - "func SetDefaults_SystemPackages should be SetDefaultsSystemPackages"
+  - "type name will be used as kubeone.KubeOneCluster by other packages"
