@@ -31,16 +31,17 @@ import (
 )
 
 const (
-	installCNIImage = "quay.io/calico/cni:v3.4.0"
-	calicoImage     = "quay.io/calico/node:v3.4.0"
-	flannelImage    = "quay.io/coreos/flannel:v0.9.1"
+	installCNIImage    = "calico/cni:v3.10.0"
+	flexVolDriverImage = "calico/pod2daemon-flexvol:v3.10.0"
+	calicoImage        = "calico/node:v3.10.0"
+	flannelImage       = "quay.io/coreos/flannel:v0.11.0"
 
 	// cniNetworkConfig configures installation on the each node. The special values in this config will be
 	// automatically populated
 	cniNetworkConfig = `
 {
   "name": "k8s-pod-network",
-  "cniVersion": "0.3.0",
+  "cniVersion": "0.3.1",
   "plugins": [
     {
       "type": "calico",
@@ -106,19 +107,29 @@ func Deploy(s *state.State) error {
 		configMap(buf),
 		daemonSet(s.PatchCNI),
 		serviceAccount(),
+
+		// RBAC
 		calicoClusterRole(),
 		flannelClusterRole(),
 		calicoClusterRoleBinding(),
 		flannelClusterRoleBinding(),
 		canalClusterRoleBinding(),
+
+		// CRDs
 		felixConfigurationCRD(),
+		ipamBlockCRD(),
+		blockAffinityCRD(),
+		ipamHandleCRD(),
+		ipamConfigCRD(),
+		bgpPeerCRD(),
 		bgpConfigurationCRD(),
-		ipPoolsConfigurationCRD(),
-		hostEndpointsConfigurationCRD(),
-		clusterInformationsConfigurationCRD(),
-		globalNetworkPoliciesConfigurationCRD(),
-		globalNetworksetsConfigurationCRD(),
-		networkPoliciesConfigurationCRD(),
+		ipPoolCRD(),
+		hostEndpointCRD(),
+		clusterInformationCRD(),
+		globalNetworkPolicyCRD(),
+		globalNetworksetCRD(),
+		networkPolicyCRD(),
+		networkSetCRD(),
 	}
 
 	for _, obj := range k8sobjects {
