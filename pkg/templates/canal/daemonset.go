@@ -67,11 +67,8 @@ func daemonSet(ifacePatch bool) *appsv1.DaemonSet {
 		flannelEnv = append(flannelEnv, corev1.EnvVar{
 			Name: "FLANNELD_IFACE",
 			ValueFrom: &corev1.EnvVarSource{
-				ConfigMapKeyRef: &corev1.ConfigMapKeySelector{
-					Key: "canal_iface",
-					LocalObjectReference: corev1.LocalObjectReference{
-						Name: "canal-config",
-					},
+				FieldRef: &corev1.ObjectFieldSelector{
+					FieldPath: "status.hostIP",
 				},
 			},
 		})
