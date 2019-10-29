@@ -49,7 +49,7 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 func saveKubeconfig(s *state.State) error {
 	s.Logger.Info("Downloading kubeconfig…")
 
-	kc, err := kubeconfig.Download(s.Cluster)
+	kc, err := kubeconfig.Download(s)
 	if err != nil {
 		return err
 	}

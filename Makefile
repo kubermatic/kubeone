@@ -48,10 +48,6 @@ dist/kubeone: buildenv
 generate-internal-groups: vendor
 	./hack/update-codegen.sh
 
-.PHONY: verify-dependencies
-verify-dependencies: buildenv
-	go mod verify
-
 .PHONY: test
 test:
 	go test ./pkg/... ./test/...

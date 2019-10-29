@@ -18,6 +18,7 @@ package ssh
 
 import (
 	"bytes"
+	"context"
 	"io"
 	"io/ioutil"
 	"net"
@@ -35,12 +36,24 @@ import (
 
 const socketEnvPrefix = "env:"
 
+var (
+	_ Connection = &connection{}
+	_ Tunneler   = &connection{}
+)
+
 // Connection represents an established connection to an SSH server.
 type Connection interface {
 	Exec(cmd string) (stdout string, stderr string, exitCode int, err error)
 	File(filename string, flags int) (io.ReadWriteCloser, error)
 	Stream(cmd string, stdout io.Writer, stderr io.Writer) (exitCode int, err error)
 	io.Closer
+}
+
+// Tunneler interface creates net.Conn originating from the remote ssh host to
+// target `addr`
+type Tunneler interface {
+	// `network` can be tcp, tcp4, tcp6, unix
+	TunnelTo(ctx context.Context, network, addr string) (net.Conn, error)
 }
 
 // Opts represents all the possible options for connecting to
@@ -105,6 +118,8 @@ type connection struct {
 	mu         sync.Mutex
 	sftpclient *sftp.Client
 	sshclient  *ssh.Client
+	ctx        context.Context
+	cancel     context.CancelFunc
 }
 
 // NewConnection attempts to create a new SSH connection to the host
@@ -181,9 +196,16 @@ func NewConnection(o Opts) (Connection, error) {
 		return nil, errors.Wrapf(err, "could not establish connection to %s", endpoint)
 	}
 
+	ctx, cancelFn := context.WithCancel(context.Background())
+	sshConn := &connection{
+		ctx:    ctx,
+		cancel: cancelFn,
+	}
+
 	if o.Bastion == "" {
+		sshConn.sshclient = client
 		// connection established
-		return &connection{sshclient: client}, nil
+		return sshConn, nil
 	}
 
 	// continue to setup if we are running over bastion
@@ -201,7 +223,8 @@ func NewConnection(o Opts) (Connection, error) {
 		return nil, errors.Wrapf(err, "could not establish connection to %s", endpointBehindBastion)
 	}
 
-	return &connection{sshclient: ssh.NewClient(ncc, chans, reqs)}, nil
+	sshConn.sshclient = ssh.NewClient(ncc, chans, reqs)
+	return sshConn, nil
 }
 
 // File return remote file (as an io.ReadWriteCloser).
@@ -217,6 +240,17 @@ func (c *connection) File(filename string, flags int) (io.ReadWriteCloser, error
 	return sftpClient.OpenFile(filename, flags)
 }
 
+func (c *connection) TunnelTo(_ context.Context, network, addr string) (net.Conn, error) {
+	netconn, err := c.sshclient.Dial(network, addr)
+	if err == nil {
+		go func() {
+			<-c.ctx.Done()
+			netconn.Close()
+		}()
+	}
+	return netconn, err
+}
+
 func (c *connection) Close() error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
@@ -224,6 +258,8 @@ func (c *connection) Close() error {
 	if c.sshclient == nil {
 		return nil
 	}
+	c.cancel()
+
 	defer func() { c.sshclient = nil }()
 	defer func() { c.sftpclient = nil }()
 

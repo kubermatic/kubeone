@@ -25,6 +25,8 @@ import (
 	"github.com/spf13/pflag"
 
 	"github.com/kubermatic/kubeone/pkg/kubeconfig"
+	"github.com/kubermatic/kubeone/pkg/ssh"
+	"github.com/kubermatic/kubeone/pkg/state"
 )
 
 type kubeconfigOptions struct {
@@ -78,7 +80,15 @@ func runKubeconfig(logger *logrus.Logger, kubeconfigOptions *kubeconfigOptions) 
 		return errors.Wrap(err, "failed to load cluster")
 	}
 
-	konfig, err := kubeconfig.Download(cluster)
+	s, err := state.New()
+	if err != nil {
+		return err
+	}
+
+	s.Cluster = cluster
+	s.Connector = ssh.NewConnector()
+
+	konfig, err := kubeconfig.Download(s)
 	if err != nil {
 		return err
 	}
