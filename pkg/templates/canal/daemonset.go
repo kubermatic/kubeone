@@ -31,6 +31,7 @@ func daemonSet(ifacePatch bool) *appsv1.DaemonSet {
 	terminationGracePeriodSeconds := int64(0)
 	privileged := true
 	fileOrCreate := corev1.HostPathFileOrCreate
+	directoryOrCreate := corev1.HostPathDirectoryOrCreate
 
 	flannelEnv := []corev1.EnvVar{
 		{
@@ -181,6 +182,19 @@ func daemonSet(ifacePatch bool) *appsv1.DaemonSet {
 								},
 							},
 						},
+						{
+							// Adds a Flex Volume Driver that creates a per-pod
+							// Unix Domain Socket to allow Dikastes to communicate
+							// with Felix over the Policy Sync API
+							Name:  "flexvol-driver",
+							Image: flexVolDriverImage,
+							VolumeMounts: []corev1.VolumeMount{
+								{
+									Name:      "flexvol-driver-host",
+									MountPath: "/host/driver",
+								},
+							},
+						},
 					},
 					Containers: []corev1.Container{
 						{
@@ -191,6 +205,11 @@ func daemonSet(ifacePatch bool) *appsv1.DaemonSet {
 									// Use Kubernetes API as the backing datastore
 									Name:  "DATASTORE_TYPE",
 									Value: "kubernetes",
+								},
+								{
+									// Configure route aggregation based on pod CIDR
+									Name:  "USE_POD_CIDR",
+									Value: "true",
 								},
 								{
 									// Wait for the datastore
@@ -268,8 +287,21 @@ func daemonSet(ifacePatch bool) *appsv1.DaemonSet {
 							},
 							LivenessProbe: &corev1.Probe{
 								Handler: corev1.Handler{
+									Exec: &corev1.ExecAction{
+										Command: []string{
+											"/bin/calico-node",
+											"-felix-live",
+										},
+									},
+								},
+								PeriodSeconds:       int32(10),
+								InitialDelaySeconds: int32(10),
+								FailureThreshold:    int32(6),
+							},
+							ReadinessProbe: &corev1.Probe{
+								Handler: corev1.Handler{
 									HTTPGet: &corev1.HTTPGetAction{
-										Path: "/liveness",
+										Path: "/readiness",
 										Port: intstr.FromInt(9099),
 										Host: "localhost",
 									},
@@ -296,6 +328,10 @@ func daemonSet(ifacePatch bool) *appsv1.DaemonSet {
 									MountPath: "/var/lib/calico",
 									Name:      "var-lib-calico",
 									ReadOnly:  false,
+								},
+								{
+									MountPath: "/var/run/nodeagent",
+									Name:      "policysync",
 								},
 							},
 						},
@@ -384,6 +420,24 @@ func daemonSet(ifacePatch bool) *appsv1.DaemonSet {
 							VolumeSource: corev1.VolumeSource{
 								HostPath: &corev1.HostPathVolumeSource{
 									Path: "/etc/cni/net.d",
+								},
+							},
+						},
+						{
+							Name: "policysync",
+							VolumeSource: corev1.VolumeSource{
+								HostPath: &corev1.HostPathVolumeSource{
+									Path: "/var/run/nodeagent",
+									Type: &directoryOrCreate,
+								},
+							},
+						},
+						{
+							Name: "flexvol-driver-host",
+							VolumeSource: corev1.VolumeSource{
+								HostPath: &corev1.HostPathVolumeSource{
+									Path: "/usr/libexec/kubernetes/kubelet-plugins/volume/exec/nodeagent~uds",
+									Type: &directoryOrCreate,
 								},
 							},
 						},

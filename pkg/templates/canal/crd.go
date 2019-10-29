@@ -46,6 +46,131 @@ func felixConfigurationCRD() *apiextensions.CustomResourceDefinition {
 	}
 }
 
+// ipamBlockCRD creates the IPAMBlocks CRD
+func ipamBlockCRD() *apiextensions.CustomResourceDefinition {
+	return &apiextensions.CustomResourceDefinition{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "ipamblocks.crd.projectcalico.org",
+		},
+		Spec: apiextensions.CustomResourceDefinitionSpec{
+			Scope: apiextensions.ClusterScoped,
+			Group: "crd.projectcalico.org",
+			Versions: []apiextensions.CustomResourceDefinitionVersion{
+				{
+					Name:    "v1",
+					Served:  true,
+					Storage: true,
+				},
+			},
+			Names: apiextensions.CustomResourceDefinitionNames{
+				Kind:     "IPAMBlock",
+				Plural:   "ipamblocks",
+				Singular: "ipamblock",
+			},
+		},
+	}
+}
+
+// blockAffinityCRD creates the BlockAffinity CRD
+func blockAffinityCRD() *apiextensions.CustomResourceDefinition {
+	return &apiextensions.CustomResourceDefinition{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "blockaffinities.crd.projectcalico.org",
+		},
+		Spec: apiextensions.CustomResourceDefinitionSpec{
+			Scope: apiextensions.ClusterScoped,
+			Group: "crd.projectcalico.org",
+			Versions: []apiextensions.CustomResourceDefinitionVersion{
+				{
+					Name:    "v1",
+					Served:  true,
+					Storage: true,
+				},
+			},
+			Names: apiextensions.CustomResourceDefinitionNames{
+				Kind:     "BlockAffinity",
+				Plural:   "blockaffinities",
+				Singular: "blockaffinity",
+			},
+		},
+	}
+}
+
+// ipamHandleCRD creates the IPAMHandle CRD
+func ipamHandleCRD() *apiextensions.CustomResourceDefinition {
+	return &apiextensions.CustomResourceDefinition{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "ipamhandles.crd.projectcalico.org",
+		},
+		Spec: apiextensions.CustomResourceDefinitionSpec{
+			Scope: apiextensions.ClusterScoped,
+			Group: "crd.projectcalico.org",
+			Versions: []apiextensions.CustomResourceDefinitionVersion{
+				{
+					Name:    "v1",
+					Served:  true,
+					Storage: true,
+				},
+			},
+			Names: apiextensions.CustomResourceDefinitionNames{
+				Kind:     "IPAMHandle",
+				Plural:   "ipamhandles",
+				Singular: "ipamhandle",
+			},
+		},
+	}
+}
+
+// ipamConfigCRD creates the IPAMConfig CRD
+func ipamConfigCRD() *apiextensions.CustomResourceDefinition {
+	return &apiextensions.CustomResourceDefinition{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "ipamconfigs.crd.projectcalico.org",
+		},
+		Spec: apiextensions.CustomResourceDefinitionSpec{
+			Scope: apiextensions.ClusterScoped,
+			Group: "crd.projectcalico.org",
+			Versions: []apiextensions.CustomResourceDefinitionVersion{
+				{
+					Name:    "v1",
+					Served:  true,
+					Storage: true,
+				},
+			},
+			Names: apiextensions.CustomResourceDefinitionNames{
+				Kind:     "IPAMConfig",
+				Plural:   "ipamconfigs",
+				Singular: "ipamconfig",
+			},
+		},
+	}
+}
+
+// bgpPeerCRD creates the BGPPeer CRD
+func bgpPeerCRD() *apiextensions.CustomResourceDefinition {
+	return &apiextensions.CustomResourceDefinition{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "bgppeers.crd.projectcalico.org",
+		},
+		Spec: apiextensions.CustomResourceDefinitionSpec{
+			Scope: apiextensions.ClusterScoped,
+			Group: "crd.projectcalico.org",
+			Versions: []apiextensions.CustomResourceDefinitionVersion{
+				{
+					Name:    "v1",
+					Served:  true,
+					Storage: true,
+				},
+			},
+			Names: apiextensions.CustomResourceDefinitionNames{
+				Kind:     "BGPPeer",
+				Plural:   "bgppeers",
+				Singular: "bgppeer",
+			},
+		},
+	}
+}
+
 // bgpConfigurationCRD creates the BGPConfiguration CRD
 func bgpConfigurationCRD() *apiextensions.CustomResourceDefinition {
 	return &apiextensions.CustomResourceDefinition{
@@ -71,8 +196,8 @@ func bgpConfigurationCRD() *apiextensions.CustomResourceDefinition {
 	}
 }
 
-// ipPoolsConfigurationCRD creates the IPPool CRD
-func ipPoolsConfigurationCRD() *apiextensions.CustomResourceDefinition {
+// ipPoolCRD creates the IPPool CRD
+func ipPoolCRD() *apiextensions.CustomResourceDefinition {
 	return &apiextensions.CustomResourceDefinition{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "ippools.crd.projectcalico.org",
@@ -96,8 +221,8 @@ func ipPoolsConfigurationCRD() *apiextensions.CustomResourceDefinition {
 	}
 }
 
-// hostEndpointsConfigurationCRD creates the HostEndpoint CRD
-func hostEndpointsConfigurationCRD() *apiextensions.CustomResourceDefinition {
+// hostEndpointCRD creates the HostEndpoint CRD
+func hostEndpointCRD() *apiextensions.CustomResourceDefinition {
 	return &apiextensions.CustomResourceDefinition{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "hostendpoints.crd.projectcalico.org",
@@ -121,8 +246,8 @@ func hostEndpointsConfigurationCRD() *apiextensions.CustomResourceDefinition {
 	}
 }
 
-// clusterInformationsConfigurationCRD creates the ClusterInformation CRD
-func clusterInformationsConfigurationCRD() *apiextensions.CustomResourceDefinition {
+// clusterInformationCRD creates the ClusterInformation CRD
+func clusterInformationCRD() *apiextensions.CustomResourceDefinition {
 	return &apiextensions.CustomResourceDefinition{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "clusterinformations.crd.projectcalico.org",
@@ -146,8 +271,8 @@ func clusterInformationsConfigurationCRD() *apiextensions.CustomResourceDefiniti
 	}
 }
 
-// globalNetworkPoliciesConfigurationCRD creates the GlobalNetworkPolicy CRD
-func globalNetworkPoliciesConfigurationCRD() *apiextensions.CustomResourceDefinition {
+// globalNetworkPolicyCRD creates the GlobalNetworkPolicy CRD
+func globalNetworkPolicyCRD() *apiextensions.CustomResourceDefinition {
 	return &apiextensions.CustomResourceDefinition{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "globalnetworkpolicies.crd.projectcalico.org",
@@ -171,8 +296,8 @@ func globalNetworkPoliciesConfigurationCRD() *apiextensions.CustomResourceDefini
 	}
 }
 
-// globalNetworksetsConfigurationCRD creates the GlobalNetworkSet CRD
-func globalNetworksetsConfigurationCRD() *apiextensions.CustomResourceDefinition {
+// globalNetworksetCRD creates the GlobalNetworkSet CRD
+func globalNetworksetCRD() *apiextensions.CustomResourceDefinition {
 	return &apiextensions.CustomResourceDefinition{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "globalnetworksets.crd.projectcalico.org",
@@ -196,8 +321,8 @@ func globalNetworksetsConfigurationCRD() *apiextensions.CustomResourceDefinition
 	}
 }
 
-// networkPoliciesConfigurationCRD creates the NetworkPolicy CRD
-func networkPoliciesConfigurationCRD() *apiextensions.CustomResourceDefinition {
+// networkPolicyCRD creates the NetworkPolicy CRD
+func networkPolicyCRD() *apiextensions.CustomResourceDefinition {
 	return &apiextensions.CustomResourceDefinition{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "networkpolicies.crd.projectcalico.org",
@@ -216,6 +341,31 @@ func networkPoliciesConfigurationCRD() *apiextensions.CustomResourceDefinition {
 				Kind:     "NetworkPolicy",
 				Plural:   "networkpolicies",
 				Singular: "networkpolicy",
+			},
+		},
+	}
+}
+
+// networkSetCRD creates the NetworkSet CRD
+func networkSetCRD() *apiextensions.CustomResourceDefinition {
+	return &apiextensions.CustomResourceDefinition{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "networksets.crd.projectcalico.org",
+		},
+		Spec: apiextensions.CustomResourceDefinitionSpec{
+			Scope: apiextensions.NamespaceScoped,
+			Group: "crd.projectcalico.org",
+			Versions: []apiextensions.CustomResourceDefinitionVersion{
+				{
+					Name:    "v1",
+					Served:  true,
+					Storage: true,
+				},
+			},
+			Names: apiextensions.CustomResourceDefinitionNames{
+				Kind:     "NetworkSet",
+				Plural:   "networksets",
+				Singular: "networkset",
 			},
 		},
 	}

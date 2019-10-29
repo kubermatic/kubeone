@@ -32,6 +32,9 @@ func configMap(netConf bytes.Buffer) *corev1.ConfigMap {
 			Namespace: metav1.NamespaceSystem,
 		},
 		Data: map[string]string{
+			// Typha is disabled.
+			"typha_service_name": "none",
+
 			// The interface used by canal for host <-> host communication.
 			// If left blank, then the interface is chosen using the node's
 			// default route
@@ -154,11 +157,14 @@ func calicoClusterRole() *rbacv1.ClusterRole {
 					"globalbgpconfigs",
 					"bgpconfigurations",
 					"ippools",
+					"ipamblocks",
 					"globalnetworkpolicies",
 					"globalnetworksets",
 					"networkpolicies",
+					"networksets",
 					"clusterinformations",
 					"hostendpoints",
+					"blockaffinities",
 				},
 				Verbs: []string{
 					"get",
@@ -210,6 +216,7 @@ func calicoClusterRole() *rbacv1.ClusterRole {
 	}
 }
 
+// TODO(xmudrii): This doesn't exist anymore in the original manifest.
 // calicoClusterRoleBinding creates a ClusterRoleBinding to bind the Calico ClusterRole to the Canal ServiceAccount
 func calicoClusterRoleBinding() *rbacv1.ClusterRoleBinding {
 	return &rbacv1.ClusterRoleBinding{
