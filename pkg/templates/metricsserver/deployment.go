@@ -74,7 +74,7 @@ func aggregatedMetricsReaderClusterRole() *rbacv1.ClusterRole {
 		Rules: []rbacv1.PolicyRule{
 			{
 				APIGroups: []string{"metrics.k8s.io"},
-				Resources: []string{"pods"},
+				Resources: []string{"pods", "nodes"},
 				Verbs:     []string{"get", "list", "watch"},
 			},
 		},
@@ -181,7 +181,7 @@ func metricsServerDeployment() *appsv1.Deployment {
 					Containers: []corev1.Container{
 						{
 							Name:            "metrics-server",
-							Image:           "k8s.gcr.io/metrics-server-amd64:v0.3.1",
+							Image:           "k8s.gcr.io/metrics-server-amd64:v0.3.6",
 							ImagePullPolicy: corev1.PullIfNotPresent,
 							Args: []string{
 								"--kubelet-insecure-tls",
@@ -207,7 +207,8 @@ func metricsServerService() *corev1.Service {
 			Name:      "metrics-server",
 			Namespace: metav1.NamespaceSystem,
 			Labels: map[string]string{
-				"kubernetes.io/name": "Metrics-server",
+				"kubernetes.io/name":            "Metrics-server",
+				"kubernetes.io/cluster-service": "true",
 			},
 		},
 		Spec: corev1.ServiceSpec{
@@ -234,7 +235,7 @@ func metricServerClusterRole() *rbacv1.ClusterRole {
 		Rules: []rbacv1.PolicyRule{
 			{
 				APIGroups: []string{""},
-				Resources: []string{"pods", "nodes", "nodes/stats"},
+				Resources: []string{"pods", "nodes", "nodes/stats", "namespaces"},
 				Verbs:     []string{"get", "list", "watch"},
 			},
 		},
