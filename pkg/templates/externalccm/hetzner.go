@@ -35,7 +35,7 @@ import (
 )
 
 const (
-	hetznerCCMVersion     = "v1.4.0"
+	hetznerCCMVersion     = "v1.5.0"
 	hetznerSAName         = "cloud-controller-manager"
 	hetznerDeploymentName = "hcloud-cloud-controller-manager"
 )
