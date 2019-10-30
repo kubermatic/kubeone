@@ -92,10 +92,9 @@ func hetznerClusterRoleBinding() *rbacv1.ClusterRoleBinding {
 
 func hetznerDeployment(networkID, podSubnet string) *appsv1.Deployment {
 	var (
-		replicas    int32 = 1
-		revisions   int32 = 2
-		hostNetwork       = false
-		cmd               = []string{
+		replicas  int32 = 1
+		revisions int32 = 2
+		cmd             = []string{
 			"/bin/hcloud-cloud-controller-manager",
 			"--cloud-provider=hcloud",
 			"--leader-elect=false",
@@ -105,7 +104,6 @@ func hetznerDeployment(networkID, podSubnet string) *appsv1.Deployment {
 	if len(networkID) > 0 {
 		cmd = append(cmd, "--allocate-node-cidrs=true")
 		cmd = append(cmd, fmt.Sprintf("--cluster-cidr=%s", podSubnet))
-		hostNetwork = true
 	}
 
 	return &appsv1.Deployment{
@@ -151,7 +149,6 @@ func hetznerDeployment(networkID, podSubnet string) *appsv1.Deployment {
 							Operator: corev1.TolerationOpExists,
 						},
 					},
-					HostNetwork: hostNetwork,
 					Containers: []corev1.Container{
 						{
 							Name:    "hcloud-cloud-controller-manager",
