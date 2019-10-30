@@ -141,18 +141,18 @@ see [vSphere example manifest][8] for available options.
 For vSphere you also need to provide a `cloud-config` file containing
 credentials, so vSphere Cloud Controller Manager works as expected. Make sure
 to replace sample values with real values. For example, to create a cluster with
-Kubernetes `1.16.1`, save the following to `config.yaml`:
+Kubernetes `1.16.2`, save the following to `config.yaml`:
 ```yaml
 apiVersion: kubeone.io/v1alpha1
 kind: KubeOneCluster
 versions:
-  kubernetes: '1.16.1'
+  kubernetes: '1.16.2'
 cloudProvider:
   name: 'vsphere'
   cloudConfig: |
     [Global]
-    user = "<USERNAME>"
-    password = "<PASSWORD>"
+    secret-name = "cloud-provider-credentials"
+    secret-namespace = "kube-system"
     port = "443"
     insecure-flag = "0"
 
@@ -163,7 +163,6 @@ cloudProvider:
     datacenter = "dc-1"
     default-datastore="exsi-nas"
     resourcepool-path="kubeone"
-    folder = "kubeone"
 
     [Disk]
     scsicontrollertype = pvscsi
