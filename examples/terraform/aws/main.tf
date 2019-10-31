@@ -19,21 +19,24 @@ provider "aws" {
 }
 
 locals {
-  az_count         = length(data.aws_availability_zones.available.names)
-  az_a             = "${var.aws_region}a"
-  az_b             = "${var.aws_region}b"
-  az_c             = "${var.aws_region}c"
-  kube_cluster_tag = "kubernetes.io/cluster/${var.cluster_name}"
-  vpc_id           = var.vpc_id == "default" ? aws_default_vpc.default.id : var.vpc_id
-
-  ami = var.ami == "" ? data.aws_ami.ubuntu.id : var.ami
+  cluster_name     = random_pet.cluster_name.id
+  kube_cluster_tag = "kubernetes.io/cluster/${local.cluster_name}"
+  ami              = var.ami == "" ? data.aws_ami.ubuntu.id : var.ami
+  zoneA            = data.aws_availability_zones.available.names[0]
+  zoneB            = data.aws_availability_zones.available.names[1]
+  zoneC            = data.aws_availability_zones.available.names[2]
+  subnets = {
+    "${local.zoneA}" = aws_subnet.public[0].id
+    "${local.zoneB}" = aws_subnet.public[1].id
+    "${local.zoneC}" = aws_subnet.public[2].id
+  }
 }
 
-data "aws_availability_zones" "available" {
-}
+data "aws_availability_zones" "available" {}
 
 data "aws_ami" "ubuntu" {
   most_recent = true
+  owners      = ["099720109477"] # Canonical
 
   filter {
     name   = "name"
@@ -44,47 +47,56 @@ data "aws_ami" "ubuntu" {
     name   = "virtualization-type"
     values = ["hvm"]
   }
-
-  owners = ["099720109477"] # Canonical
 }
 
-data "aws_subnet_ids" "default" {
-  vpc_id = local.vpc_id
+data "aws_vpc" "selected" {
+  id = var.vpc_id == "default" ? aws_default_vpc.default.id : var.vpc_id
 }
 
-data "aws_subnet" "az_a" {
-  availability_zone = local.az_a
-  vpc_id            = local.vpc_id
+resource "random_integer" "cidr_block" {
+  min = 0
+  max = var.subnet_total - 1
 }
 
-data "aws_subnet" "az_b" {
-  availability_zone = local.az_b
-  vpc_id            = local.vpc_id
+resource "random_pet" "cluster_name" {
+  prefix = var.cluster_name
+  length = 1
 }
 
-data "aws_subnet" "az_c" {
-  availability_zone = local.az_c
-  vpc_id            = local.vpc_id
-}
+resource "aws_default_vpc" "default" {}
 
-locals {
-  all_subnets = [data.aws_subnet.az_a.id, data.aws_subnet.az_b.id, data.aws_subnet.az_c.id]
-}
+resource "aws_subnet" "public" {
+  count             = 3
+  availability_zone = data.aws_availability_zones.available.names[count.index]
+  map_public_ip_on_launch = true
+  vpc_id                  = data.aws_vpc.selected.id
 
-resource "aws_default_vpc" "default" {
+  cidr_block = cidrsubnet(
+    data.aws_vpc.selected.cidr_block,
+    var.subnet_mask,
+    (random_integer.cidr_block.result + count.index) % var.subnet_total,
+  )
+
+  tags = map(
+    "Name", "${local.cluster_name}_${data.aws_availability_zones.available.names[count.index]}",
+    "Cluster", local.cluster_name,
+    local.kube_cluster_tag, "shared",
+  )
 }
 
 resource "aws_key_pair" "deployer" {
-  key_name   = "${var.cluster_name}-deployer-key"
+  key_name   = "${local.cluster_name}-deployer-key"
   public_key = file(var.ssh_public_key_file)
 }
 
 resource "aws_security_group" "common" {
-  name        = "${var.cluster_name}-common"
+  name        = "${local.cluster_name}-common"
   description = "cluster common rules"
-  vpc_id      = local.vpc_id
+  vpc_id      = data.aws_vpc.selected.id
 
-  tags = map(local.kube_cluster_tag, "shared")
+  tags = map(
+    local.kube_cluster_tag, "shared",
+  )
 
   ingress {
     from_port   = var.ssh_port
@@ -109,11 +121,13 @@ resource "aws_security_group" "common" {
 }
 
 resource "aws_security_group" "control_plane" {
-  name        = "${var.cluster_name}-control_planes"
+  name        = "${local.cluster_name}-control_planes"
   description = "cluster control_planes"
-  vpc_id      = local.vpc_id
+  vpc_id      = data.aws_vpc.selected.id
 
-  tags = map(local.kube_cluster_tag, "shared")
+  tags = map(
+    local.kube_cluster_tag, "shared",
+  )
 
   ingress {
     from_port   = 6443
@@ -124,11 +138,13 @@ resource "aws_security_group" "control_plane" {
 }
 
 resource "aws_security_group" "nodeports" {
-  name = "${var.cluster_name}-nodeports"
+  name        = "${local.cluster_name}-nodeports"
   description = "nodeport whitelist"
-  vpc_id = local.vpc_id
+  vpc_id      = data.aws_vpc.selected.id
 
-  tags = map(local.kube_cluster_tag, "shared")
+  tags = map(
+    local.kube_cluster_tag, "shared",
+  )
 
   ingress {
     from_port   = 30000
@@ -139,69 +155,65 @@ resource "aws_security_group" "nodeports" {
 }
 
 resource "aws_iam_role" "role" {
-  name = "${var.cluster_name}-host"
+  name = "${local.cluster_name}-host"
 
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "",
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "ec2.amazonaws.com"
-      },
-      "Action": "sts:AssumeRole"
-    }
-  ]
-}
-EOF
-
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        },
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
 }
 
 resource "aws_iam_instance_profile" "profile" {
-  name = "${var.cluster_name}-host"
+  name = "${local.cluster_name}-host"
   role = aws_iam_role.role.name
 }
 
 resource "aws_iam_role_policy" "policy" {
-  name = "${var.cluster_name}-host"
+  name = "${local.cluster_name}-host"
   role = aws_iam_role.role.id
 
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": ["ec2:*"],
-      "Resource": ["*"]
-    },
-    {
-      "Effect": "Allow",
-      "Action": ["elasticloadbalancing:*"],
-      "Resource": ["*"]
-    }
-  ]
-}
-EOF
-
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect   = "Allow",
+        Action   = ["ec2:*"],
+        Resource = ["*"]
+      },
+      {
+        Effect   = "Allow",
+        Action   = ["elasticloadbalancing:*"],
+        Resource = ["*"]
+      }
+    ]
+  })
 }
 
 resource "aws_lb" "control_plane" {
-  name               = "${var.cluster_name}-api-lb"
+  name               = "${local.cluster_name}-api-lb"
   internal           = false
   load_balancer_type = "network"
-  subnets            = local.all_subnets
+  subnets            = aws_subnet.public.*.id
 
-  tags = map("Cluster", var.cluster_name, local.kube_cluster_tag, "shared")
+  tags = map(
+    "Cluster", local.cluster_name,
+    local.kube_cluster_tag, "shared",
+  )
 }
 
 resource "aws_lb_target_group" "control_plane_api" {
-  name     = "${var.cluster_name}-api"
+  name     = "${local.cluster_name}-api"
   port     = 6443
   protocol = "TCP"
-  vpc_id   = local.vpc_id
+  vpc_id   = data.aws_vpc.selected.id
 }
 
 resource "aws_lb_listener" "control_plane_api" {
@@ -223,22 +235,23 @@ resource "aws_lb_target_group_attachment" "control_plane_api" {
 }
 
 resource "aws_instance" "control_plane" {
-  count = 3
-
-  tags = map("Name", "${var.cluster_name}-control_plane-${count.index + 1}", local.kube_cluster_tag, "shared")
-
+  count                  = 3
   instance_type          = var.control_plane_type
   iam_instance_profile   = aws_iam_instance_profile.profile.name
   ami                    = local.ami
   key_name               = aws_key_pair.deployer.key_name
   vpc_security_group_ids = [aws_security_group.common.id, aws_security_group.control_plane.id, aws_security_group.nodeports.id]
-  availability_zone      = data.aws_availability_zones.available.names[count.index % local.az_count]
-  subnet_id              = local.all_subnets[count.index % local.az_count]
-
-  ebs_optimized = true
+  availability_zone      = data.aws_availability_zones.available.names[count.index]
+  subnet_id              = local.subnets[data.aws_availability_zones.available.names[count.index]]
+  ebs_optimized          = true
 
   root_block_device {
     volume_type = "gp2"
     volume_size = var.control_plane_volume_size
   }
+
+  tags = map(
+    "Name", "${local.cluster_name}-cp-${count.index + 1}",
+    local.kube_cluster_tag, "shared",
+  )
 }
