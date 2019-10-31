@@ -41,7 +41,7 @@ func Reset(s *state.State) error {
 		}
 	}
 
-	if err := s.RunTaskOnAllNodes(resetNode, true); err != nil {
+	if err := s.RunTaskOnAllNodes(resetNode, false); err != nil {
 		return err
 	}
 

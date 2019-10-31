@@ -69,7 +69,7 @@ func waitForInitializedNodes(s *state.State) error {
 
 	s.Logger.Info("Waiting for nodes to initialize by CCM…")
 
-	return wait.Poll(5*time.Second, 60*time.Second, func() (bool, error) {
+	return wait.Poll(5*time.Second, 10*time.Minute, func() (bool, error) {
 		nodes := corev1.NodeList{}
 
 		if err := s.DynamicClient.List(ctx, &nodes); err != nil {
