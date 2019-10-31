@@ -34,7 +34,7 @@ import (
 )
 
 const (
-	digitaloceanCCMVersion     = "v0.1.16"
+	digitaloceanCCMVersion     = "v0.1.21"
 	digitaloceanSAName         = "cloud-controller-manager"
 	digitaloceanDeploymentName = "digitalocean-cloud-controller-manager"
 )
@@ -174,6 +174,7 @@ func doDeployment() *appsv1.Deployment {
 					},
 				},
 				Spec: corev1.PodSpec{
+					DNSPolicy:          corev1.DNSDefault,
 					ServiceAccountName: digitaloceanSAName,
 					Tolerations: []corev1.Toleration{
 						{
