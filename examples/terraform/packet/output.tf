@@ -27,7 +27,7 @@ output "kubeone_hosts" {
 
   value = {
     control_plane = {
-      cluster_name         = var.cluster_name
+      cluster_name         = local.cluster_name
       cloud_provider       = "packet"
       private_address      = packet_device.control_plane.*.access_private_ipv4
       public_address       = packet_device.control_plane.*.access_public_ipv4
@@ -45,7 +45,7 @@ output "kubeone_workers" {
   value = {
     # following outputs will be parsed by kubeone and automatically merged into
     # corresponding (by name) worker definition
-    "${var.cluster_name}-pool1" = {
+    "${local.cluster_name}-pool1" = {
       replicas = 1
       providerSpec = {
         sshPublicKeys   = [file(var.ssh_public_key_file)]

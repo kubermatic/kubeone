@@ -27,7 +27,7 @@ output "kubeone_hosts" {
 
   value = {
     control_plane = {
-      cluster_name         = var.cluster_name
+      cluster_name         = local.cluster_name
       cloud_provider       = "openstack"
       private_address      = openstack_compute_instance_v2.control_plane.*.access_ip_v4
       public_address       = openstack_networking_floatingip_v2.control_plane.*.address
@@ -45,7 +45,7 @@ output "kubeone_workers" {
   value = {
     # following outputs will be parsed by kubeone and automatically merged into
     # corresponding (by name) worker definition
-    "${var.cluster_name}-pool1" = {
+    "${local.cluster_name}-pool1" = {
       replicas = 1
       providerSpec = {
         sshPublicKeys   = [file(var.ssh_public_key_file)]
@@ -70,7 +70,7 @@ output "kubeone_workers" {
           # Optional: limit how many volumes can be attached to a node
           # nodeVolumeAttachLimit = 25
           tags = {
-            "${var.cluster_name}-workers" = "pool1"
+            "${local.cluster_name}-workers" = "pool1"
           }
         }
       }

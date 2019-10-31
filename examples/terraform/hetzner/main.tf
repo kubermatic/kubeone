@@ -14,13 +14,22 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+locals {
+  cluster_name = random_pet.cluster_name.id
+}
+
+resource "random_pet" "cluster_name" {
+  prefix = var.cluster_name
+  length = 1
+}
+
 resource "hcloud_ssh_key" "kubeone" {
-  name       = "kubeone-${var.cluster_name}"
+  name       = "kubeone-${local.cluster_name}"
   public_key = file(var.ssh_public_key_file)
 }
 
 resource "hcloud_network" "net" {
-  name     = var.cluster_name
+  name     = local.cluster_name
   ip_range = var.ip_range
 }
 
@@ -32,14 +41,14 @@ resource "hcloud_network_subnet" "kubeone" {
 }
 
 resource "hcloud_server_network" "control_plane" {
-  count       = 3
+  count      = 3
   server_id  = element(hcloud_server.control_plane.*.id, count.index)
   network_id = hcloud_network.net.id
 }
 
 resource "hcloud_server" "control_plane" {
   count       = 3
-  name        = "${var.cluster_name}-control-plane-${count.index + 1}"
+  name        = "${local.cluster_name}-cp-${count.index + 1}"
   server_type = var.control_plane_type
   image       = var.image
   location    = var.datacenter
@@ -49,7 +58,7 @@ resource "hcloud_server" "control_plane" {
   ]
 
   labels = {
-    "kubeone_cluster_name" = var.cluster_name
+    "kubeone_cluster_name" = local.cluster_name
     "role"                 = "api"
   }
 }
@@ -60,7 +69,7 @@ resource "hcloud_server_network" "lb" {
 }
 
 resource "hcloud_server" "lb" {
-  name        = "${var.cluster_name}-lb"
+  name        = "${local.cluster_name}-lb"
   server_type = var.lb_type
   image       = var.image
   location    = var.datacenter
@@ -70,7 +79,7 @@ resource "hcloud_server" "lb" {
   ]
 
   labels = {
-    "kubeone_cluster_name" = var.cluster_name
+    "kubeone_cluster_name" = local.cluster_name
     "role"                 = "lb"
   }
 

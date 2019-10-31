@@ -27,7 +27,7 @@ output "kubeone_hosts" {
 
   value = {
     control_plane = {
-      cluster_name         = var.cluster_name
+      cluster_name         = local.cluster_name
       cloud_provider       = "hetzner"
       private_address      = hcloud_server_network.control_plane.*.ip
       public_address       = hcloud_server.control_plane.*.ipv4_address
@@ -46,7 +46,7 @@ output "kubeone_workers" {
   value = {
     # following outputs will be parsed by kubeone and automatically merged into
     # corresponding (by name) worker definition
-    "${var.cluster_name}-pool1" = {
+    "${local.cluster_name}-pool1" = {
       replicas = 1
       providerSpec = {
         sshPublicKeys   = [file(var.ssh_public_key_file)]
@@ -64,7 +64,7 @@ output "kubeone_workers" {
             hcloud_network.net.id
           ]
           labels = {
-            "${var.cluster_name}-workers" = "pool1"
+            "${local.cluster_name}-workers" = "pool1"
           }
         }
       }

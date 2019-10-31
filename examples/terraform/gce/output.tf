@@ -27,7 +27,7 @@ output "kubeone_hosts" {
 
   value = {
     control_plane = {
-      cluster_name         = var.cluster_name
+      cluster_name         = local.cluster_name
       cloud_provider       = "gce"
       private_address      = google_compute_instance.control_plane.*.network_interface.0.network_ip
       public_address       = google_compute_instance.control_plane.*.network_interface.0.access_config.0.nat_ip
@@ -46,7 +46,7 @@ output "kubeone_workers" {
   value = {
     # following outputs will be parsed by kubeone and automatically merged into
     # corresponding (by name) worker definition
-    "${var.cluster_name}-pool1" = {
+    "${local.cluster_name}-pool1" = {
       replicas = 1
       providerSpec = {
         sshPublicKeys   = [file(var.ssh_public_key_file)]
@@ -67,11 +67,11 @@ output "kubeone_workers" {
           preemptible           = false
           assignPublicIPAddress = true
           # Enable support for multizone clusters
-          multizone             = true
+          multizone = true
           labels = {
-            "${var.cluster_name}-workers" = "pool1"
+            "${local.cluster_name}-workers" = "pool1"
           }
-          tags     = ["firewall", "targets", "${var.cluster_name}-pool1"]
+          tags     = ["firewall", "targets", "${local.cluster_name}-pool1"]
           regional = false
         }
       }

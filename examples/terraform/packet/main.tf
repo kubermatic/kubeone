@@ -18,7 +18,13 @@ provider "packet" {
 }
 
 locals {
-  kube_cluster_tag = "kubernetes-cluster:${var.cluster_name}"
+  cluster_name     = random_pet.cluster_name.id
+  kube_cluster_tag = "kubernetes-cluster:${local.cluster_name}"
+}
+
+resource "random_pet" "cluster_name" {
+  prefix = var.cluster_name
+  length = 1
 }
 
 resource "packet_ssh_key" "deployer" {
@@ -30,7 +36,7 @@ resource "packet_device" "control_plane" {
   count      = 3
   depends_on = [packet_ssh_key.deployer]
 
-  hostname         = "${var.cluster_name}-control-plane-${count.index + 1}"
+  hostname         = "${local.cluster_name}-cp-${count.index + 1}"
   plan             = var.device_type
   facilities       = [var.facility]
   operating_system = var.control_plane_operating_system
@@ -42,7 +48,7 @@ resource "packet_device" "control_plane" {
 resource "packet_device" "lb" {
   depends_on = [packet_ssh_key.deployer]
 
-  hostname         = "${var.cluster_name}-lb"
+  hostname         = "${local.cluster_name}-lb"
   plan             = "t1.small.x86"
   facilities       = [var.facility]
   operating_system = var.lb_operating_system

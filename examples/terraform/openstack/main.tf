@@ -17,23 +17,32 @@ limitations under the License.
 provider "openstack" {
 }
 
+locals {
+  cluster_name = random_pet.cluster_name.id
+}
+
 data "openstack_networking_network_v2" "external_network" {
   name     = var.external_network_name
   external = true
 }
 
+resource "random_pet" "cluster_name" {
+  prefix = var.cluster_name
+  length = 1
+}
+
 resource "openstack_compute_keypair_v2" "deployer" {
-  name       = "${var.cluster_name}-deployer-key"
+  name       = "${local.cluster_name}-deployer-key"
   public_key = file(var.ssh_public_key_file)
 }
 
 resource "openstack_networking_network_v2" "network" {
-  name           = "${var.cluster_name}-cluster"
+  name           = "${local.cluster_name}-cluster"
   admin_state_up = "true"
 }
 
 resource "openstack_networking_subnet_v2" "subnet" {
-  name            = "${var.cluster_name}-cluster"
+  name            = "${local.cluster_name}-cluster"
   network_id      = openstack_networking_network_v2.network.id
   cidr            = var.subnet_cidr
   ip_version      = 4
@@ -41,7 +50,7 @@ resource "openstack_networking_subnet_v2" "subnet" {
 }
 
 resource "openstack_networking_router_v2" "router" {
-  name                = "${var.cluster_name}-cluster"
+  name                = "${local.cluster_name}-cluster"
   admin_state_up      = "true"
   external_network_id = data.openstack_networking_network_v2.external_network.id
 }
@@ -52,8 +61,8 @@ resource "openstack_networking_router_interface_v2" "router_subnet_link" {
 }
 
 resource "openstack_networking_secgroup_v2" "securitygroup" {
-  name        = "${var.cluster_name}-cluster"
-  description = "Security group for the Kubeone Kubernetes cluster ${var.cluster_name}"
+  name        = "${local.cluster_name}-cluster"
+  description = "Security group for the Kubeone Kubernetes cluster ${local.cluster_name}"
 }
 
 resource "openstack_networking_secgroup_rule_v2" "secgroup_allow_internal_ipv4" {
@@ -88,7 +97,7 @@ resource "openstack_networking_secgroup_rule_v2" "secgroup_apiserver" {
 
 resource "openstack_compute_instance_v2" "control_plane" {
   count = 3
-  name  = "${var.cluster_name}-cp-${count.index}"
+  name  = "${local.cluster_name}-cp-${count.index}"
 
   image_name      = var.image
   flavor_name     = var.control_plane_flavor
@@ -101,7 +110,7 @@ resource "openstack_compute_instance_v2" "control_plane" {
 }
 
 resource "openstack_compute_instance_v2" "lb" {
-  name       = "${var.cluster_name}-lb"
+  name       = "${local.cluster_name}-lb"
   image_name = var.image
 
   flavor_name     = var.lb_flavor
@@ -125,7 +134,7 @@ resource "openstack_compute_instance_v2" "lb" {
 
 resource "openstack_networking_port_v2" "control_plane" {
   count = 3
-  name  = "${var.cluster_name}-control_plane-${count.index}"
+  name  = "${local.cluster_name}-cp-${count.index}"
 
   admin_state_up     = "true"
   network_id         = openstack_networking_network_v2.network.id
@@ -137,7 +146,7 @@ resource "openstack_networking_port_v2" "control_plane" {
 }
 
 resource "openstack_networking_port_v2" "lb" {
-  name = "${var.cluster_name}-lb"
+  name = "${local.cluster_name}-lb"
 
   admin_state_up     = "true"
   network_id         = openstack_networking_network_v2.network.id

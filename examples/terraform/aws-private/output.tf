@@ -32,7 +32,7 @@ output "kubeone_hosts" {
 
   value = {
     control_plane = {
-      cluster_name         = var.cluster_name
+      cluster_name         = local.cluster_name
       cloud_provider       = "aws"
       private_address      = aws_instance.control_plane.*.private_ip
       hostnames            = aws_instance.control_plane.*.private_dns
@@ -62,7 +62,7 @@ output "kubeone_workers" {
   value = {
     # following outputs will be parsed by kubeone and automatically merged into
     # corresponding (by name) worker definition
-    "${var.cluster_name}-${local.zoneA}" = {
+    "${local.cluster_name}-${local.zoneA}" = {
       replicas = 1
       providerSpec = {
         sshPublicKeys   = [aws_key_pair.deployer.public_key]
@@ -88,12 +88,12 @@ output "kubeone_workers" {
           ## Only application if diskType = io1
           diskIops = 500
           tags = {
-            "${var.cluster_name}-workers" = "${local.zoneA}"
+            "${local.cluster_name}-workers" = "${local.zoneA}"
           }
         }
       }
     }
-    "${var.cluster_name}-${local.zoneB}" = {
+    "${local.cluster_name}-${local.zoneB}" = {
       replicas = 1
       providerSpec = {
         sshPublicKeys   = [aws_key_pair.deployer.public_key]
@@ -119,12 +119,12 @@ output "kubeone_workers" {
           ## Only application if diskType = io1
           diskIops = 500
           tags = {
-            "${var.cluster_name}-workers" = "${local.zoneB}"
+            "${local.cluster_name}-workers" = "${local.zoneB}"
           }
         }
       }
     }
-    "${var.cluster_name}-${local.zoneC}" = {
+    "${local.cluster_name}-${local.zoneC}" = {
       replicas = 1
       providerSpec = {
         sshPublicKeys   = [aws_key_pair.deployer.public_key]
@@ -150,7 +150,7 @@ output "kubeone_workers" {
           ## Only application if diskType = io1
           diskIops = 500
           tags = {
-            "${var.cluster_name}-workers" = "${local.zoneC}"
+            "${local.cluster_name}-workers" = "${local.zoneC}"
           }
         }
       }

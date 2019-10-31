@@ -17,18 +17,27 @@ limitations under the License.
 provider "azurerm" {
 }
 
+locals {
+  cluster_name = random_pet.cluster_name.id
+}
+
+resource "random_pet" "cluster_name" {
+  prefix = var.cluster_name
+  length = 1
+}
+
 resource "azurerm_resource_group" "rg" {
-  name     = "${var.cluster_name}-rg"
+  name     = "${local.cluster_name}-rg"
   location = var.location
 
   tags = {
     environment = "kubeone"
-    cluster     = var.cluster_name
+    cluster     = local.cluster_name
   }
 }
 
 resource "azurerm_availability_set" "avset" {
-  name                         = "${var.cluster_name}-avset"
+  name                         = "${local.cluster_name}-avset"
   location                     = var.location
   resource_group_name          = azurerm_resource_group.rg.name
   platform_fault_domain_count  = 2
@@ -37,31 +46,31 @@ resource "azurerm_availability_set" "avset" {
 
   tags = {
     environment = "kubeone"
-    cluster     = var.cluster_name
+    cluster     = local.cluster_name
   }
 }
 
 resource "azurerm_virtual_network" "vpc" {
-  name                = "${var.cluster_name}-vpc"
+  name                = "${local.cluster_name}-vpc"
   address_space       = ["172.16.0.0/12"]
   location            = var.location
   resource_group_name = azurerm_resource_group.rg.name
 
   tags = {
     environment = "kubeone"
-    cluster     = var.cluster_name
+    cluster     = local.cluster_name
   }
 }
 
 resource "azurerm_subnet" "subnet" {
-  name                 = "${var.cluster_name}-subnet"
+  name                 = "${local.cluster_name}-subnet"
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vpc.name
   address_prefix       = "172.16.1.0/24"
 }
 
 resource "azurerm_network_security_group" "sg" {
-  name                = "${var.cluster_name}-sg"
+  name                = "${local.cluster_name}-sg"
   location            = var.location
   resource_group_name = azurerm_resource_group.rg.name
 
@@ -79,33 +88,33 @@ resource "azurerm_network_security_group" "sg" {
 
   tags = {
     environment = "kubeone"
-    cluster     = var.cluster_name
+    cluster     = local.cluster_name
   }
 }
 
 resource "azurerm_public_ip" "lbip" {
-  name                = "${var.cluster_name}-lbip"
+  name                = "${local.cluster_name}-lbip"
   location            = var.location
   resource_group_name = azurerm_resource_group.rg.name
   allocation_method   = "Dynamic"
 
   tags = {
     environment = "kubeone"
-    cluster     = var.cluster_name
+    cluster     = local.cluster_name
   }
 }
 
 resource "azurerm_public_ip" "control_plane" {
   count = 3
 
-  name                = "${var.cluster_name}-cp-${count.index}"
+  name                = "${local.cluster_name}-cp-${count.index}"
   location            = var.location
   resource_group_name = azurerm_resource_group.rg.name
   allocation_method   = "Dynamic"
 
   tags = {
     environment = "kubeone"
-    cluster     = var.cluster_name
+    cluster     = local.cluster_name
   }
 }
 
@@ -121,7 +130,7 @@ resource "azurerm_lb" "lb" {
 
   tags = {
     environment = "kubeone"
-    cluster     = var.cluster_name
+    cluster     = local.cluster_name
   }
 }
 
@@ -159,12 +168,12 @@ resource "azurerm_lb_probe" "lb_probe" {
 resource "azurerm_network_interface" "control_plane" {
   count = 3
 
-  name                = "${var.cluster_name}-cp-${count.index}"
+  name                = "${local.cluster_name}-cp-${count.index}"
   location            = var.location
   resource_group_name = azurerm_resource_group.rg.name
 
   ip_configuration {
-    name                          = "${var.cluster_name}-cp-${count.index}"
+    name                          = "${local.cluster_name}-cp-${count.index}"
     subnet_id                     = azurerm_subnet.subnet.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = element(azurerm_public_ip.control_plane.*.id, count.index)
@@ -174,7 +183,7 @@ resource "azurerm_network_interface" "control_plane" {
 resource "azurerm_network_interface_backend_address_pool_association" "control_plane" {
   count = 3
 
-  ip_configuration_name   = "${var.cluster_name}-cp-${count.index}"
+  ip_configuration_name   = "${local.cluster_name}-cp-${count.index}"
   network_interface_id    = element(azurerm_network_interface.control_plane.*.id, count.index)
   backend_address_pool_id = azurerm_lb_backend_address_pool.backend_pool.id
 }
@@ -182,7 +191,7 @@ resource "azurerm_network_interface_backend_address_pool_association" "control_p
 resource "azurerm_virtual_machine" "control_plane" {
   count = 3
 
-  name                             = "${var.cluster_name}-cp-${count.index}"
+  name                             = "${local.cluster_name}-cp-${count.index}"
   location                         = var.location
   resource_group_name              = azurerm_resource_group.rg.name
   availability_set_id              = azurerm_availability_set.avset.id
@@ -199,14 +208,14 @@ resource "azurerm_virtual_machine" "control_plane" {
   }
 
   storage_os_disk {
-    name              = "${var.cluster_name}-cp-${count.index}"
+    name              = "${local.cluster_name}-cp-${count.index}"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
   }
 
   os_profile {
-    computer_name  = "${var.cluster_name}-cp-${count.index}"
+    computer_name  = "${local.cluster_name}-cp-${count.index}"
     admin_username = var.ssh_username
   }
 
@@ -221,7 +230,7 @@ resource "azurerm_virtual_machine" "control_plane" {
 
   tags = {
     environment = "kubeone"
-    cluster     = var.cluster_name
+    cluster     = local.cluster_name
   }
 }
 

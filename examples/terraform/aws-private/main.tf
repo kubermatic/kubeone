@@ -22,7 +22,8 @@ resource "aws_default_vpc" "default" {
 }
 
 locals {
-  kube_cluster_tag = "kubernetes.io/cluster/${var.cluster_name}"
+  cluster_name     = random_pet.cluster_name.id
+  kube_cluster_tag = "kubernetes.io/cluster/${local.cluster_name}"
   ami              = var.ami == "" ? data.aws_ami.ubuntu.id : var.ami
   zoneA            = data.aws_availability_zones.available.names[0]
   zoneB            = data.aws_availability_zones.available.names[1]
@@ -72,6 +73,11 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
+resource "random_pet" "cluster_name" {
+  prefix = var.cluster_name
+  length = 1
+}
+
 ############################### NETWORKING SETUP ###############################
 
 resource "aws_eip" "nat" {
@@ -91,8 +97,8 @@ resource "aws_subnet" "public" {
   vpc_id                  = data.aws_vpc.selected.id
 
   tags = map(
-    "Name", "${var.cluster_name}_public_${data.aws_availability_zones.available.names[count.index]}",
-    "Cluster", var.cluster_name,
+    "Name", "${local.cluster_name}_public_${data.aws_availability_zones.available.names[count.index]}",
+    "Cluster", local.cluster_name,
     local.kube_cluster_tag, "shared",
   )
 }
@@ -109,8 +115,8 @@ resource "aws_subnet" "private" {
   vpc_id                  = data.aws_vpc.selected.id
 
   tags = map(
-    "Name", "${var.cluster_name}_private_${data.aws_availability_zones.available.names[count.index]}",
-    "Cluster", var.cluster_name,
+    "Name", "${local.cluster_name}_private_${data.aws_availability_zones.available.names[count.index]}",
+    "Cluster", local.cluster_name,
     local.kube_cluster_tag, "shared",
   )
 }
@@ -159,20 +165,20 @@ resource "aws_route_table_association" "private" {
 ################################ LOAD BALLANCER ################################
 
 resource "aws_lb" "control_plane" {
-  name               = "${var.cluster_name}-api-lb"
+  name               = "${local.cluster_name}-api-lb"
   internal           = true
   load_balancer_type = "network"
   subnets            = aws_subnet.private.*.id
 
   tags = map(
-    "Name", "${var.cluster_name}-control_plane",
-    "Cluster", var.cluster_name,
+    "Name", "${local.cluster_name}-cp",
+    "Cluster", local.cluster_name,
     local.kube_cluster_tag, "shared",
   )
 }
 
 resource "aws_lb_target_group" "control_plane_api" {
-  name        = "${var.cluster_name}-api"
+  name        = "${local.cluster_name}-api"
   port        = 6443
   protocol    = "TCP"
   vpc_id      = data.aws_vpc.selected.id
@@ -199,12 +205,12 @@ resource "aws_lb_target_group_attachment" "control_plane_api" {
 
 ############################### SECURITY GROUPS ################################
 resource "aws_security_group" "common" {
-  name        = "${var.cluster_name}-common"
+  name        = "${local.cluster_name}-common"
   description = "cluster common rules"
   vpc_id      = data.aws_vpc.selected.id
 
   tags = map(
-    "Name", "${var.cluster_name}-common",
+    "Name", "${local.cluster_name}-common",
     "Cluster", local.kube_cluster_tag,
     local.kube_cluster_tag, "shared",
   )
@@ -232,13 +238,13 @@ resource "aws_security_group" "common" {
 }
 
 resource "aws_security_group" "control_plane" {
-  name        = "${var.cluster_name}-control_planes"
+  name        = "${local.cluster_name}-cp"
   description = "cluster control_planes"
   vpc_id      = data.aws_vpc.selected.id
 
   tags = map(
-    "Name", "${var.cluster_name}-control_plane",
-    "Cluster", var.cluster_name,
+    "Name", "${local.cluster_name}-control_plane",
+    "Cluster", local.cluster_name,
     local.kube_cluster_tag, "shared",
   )
 
@@ -252,7 +258,7 @@ resource "aws_security_group" "control_plane" {
 
 ##################################### IAM ######################################
 resource "aws_iam_role" "control_plane" {
-  name = "${var.cluster_name}-host"
+  name = "${local.cluster_name}-host"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -268,12 +274,12 @@ resource "aws_iam_role" "control_plane" {
 }
 
 resource "aws_iam_instance_profile" "control_plane" {
-  name = "${var.cluster_name}-control-plane"
+  name = "${local.cluster_name}-cp"
   role = aws_iam_role.control_plane.name
 }
 
 resource "aws_iam_role_policy" "control_plane" {
-  name = "${var.cluster_name}-control-plane"
+  name = "${local.cluster_name}-cp"
   role = aws_iam_role.control_plane.id
   policy = jsonencode({
     Version = "2012-10-17"
@@ -293,7 +299,7 @@ resource "aws_iam_role_policy" "control_plane" {
 }
 
 resource "aws_iam_role" "workers" {
-  name = "${var.cluster_name}-workers"
+  name = "${local.cluster_name}-workers"
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -309,12 +315,12 @@ resource "aws_iam_role" "workers" {
 }
 
 resource "aws_iam_instance_profile" "workers" {
-  name = "${var.cluster_name}-workers"
+  name = "${local.cluster_name}-workers"
   role = aws_iam_role.workers.name
 }
 
 resource "aws_iam_role_policy" "workers" {
-  name = "${var.cluster_name}-workers"
+  name = "${local.cluster_name}-workers"
   role = aws_iam_role.workers.id
   policy = jsonencode({
     Version = "2012-10-17",
@@ -333,7 +339,7 @@ resource "aws_iam_role_policy" "workers" {
 ################################## SSH ACCESS ##################################
 
 resource "aws_key_pair" "deployer" {
-  key_name   = "${var.cluster_name}-deployer-key"
+  key_name   = "${local.cluster_name}-deployer-key"
   public_key = file(var.ssh_public_key_file)
 }
 
@@ -343,8 +349,8 @@ resource "aws_instance" "control_plane" {
   count = 3
 
   tags = map(
-    "Cluster", var.cluster_name,
-    "Name", "${var.cluster_name}-control_plane-${count.index + 1}",
+    "Cluster", local.cluster_name,
+    "Name", "${local.cluster_name}-cp-${count.index + 1}",
     local.kube_cluster_tag, "shared",
   )
 
@@ -366,8 +372,8 @@ resource "aws_instance" "control_plane" {
 
 resource "aws_instance" "bastion" {
   tags = map(
-    "Cluster", var.cluster_name,
-    "Name", "${var.cluster_name}-bastion",
+    "Cluster", local.cluster_name,
+    "Name", "${local.cluster_name}-bastion",
     local.kube_cluster_tag, "shared",
   )
 

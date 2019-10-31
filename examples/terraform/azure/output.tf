@@ -27,11 +27,11 @@ output "kubeone_hosts" {
 
   value = {
     control_plane = {
-      cluster_name         = var.cluster_name
+      cluster_name         = local.cluster_name
       cloud_provider       = "azure"
       private_address      = azurerm_network_interface.control_plane.*.private_ip_address
       public_address       = azurerm_public_ip.control_plane.*.ip_address
-      hostnames            = formatlist("${var.cluster_name}-cp-%d", [0, 1, 2])
+      hostnames            = formatlist("${local.cluster_name}-cp-%d", [0, 1, 2])
       ssh_agent_socket     = var.ssh_agent_socket
       ssh_port             = var.ssh_port
       ssh_private_key_file = var.ssh_private_key_file
@@ -46,7 +46,7 @@ output "kubeone_workers" {
   value = {
     # following outputs will be parsed by kubeone and automatically merged into
     # corresponding (by name) worker definition
-    "${var.cluster_name}-pool1" = {
+    "${local.cluster_name}-pool1" = {
       replicas = 1
       providerSpec = {
         sshPublicKeys   = [file(var.ssh_public_key_file)]
@@ -68,7 +68,7 @@ output "kubeone_workers" {
           vmSize            = var.worker_vm_size
           vnetName          = azurerm_virtual_network.vpc.name
           tags = {
-            "${var.cluster_name}-workers" = "pool1"
+            "${local.cluster_name}-workers" = "pool1"
           }
         }
       }

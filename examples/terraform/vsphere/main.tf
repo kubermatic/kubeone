@@ -45,9 +45,14 @@ data "vsphere_virtual_machine" "template" {
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
+resource "random_pet" "cluster_name" {
+  prefix = var.cluster_name
+  length = 1
+}
+
 resource "vsphere_virtual_machine" "control_plane" {
   count            = 3
-  name             = "${var.cluster_name}-cp-${count.index + 1}"
+  name             = "${local.cluster_name}-cp-${count.index + 1}"
   resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
   datastore_id     = data.vsphere_datastore.datastore.id
   num_cpus         = 2
@@ -77,7 +82,7 @@ resource "vsphere_virtual_machine" "control_plane" {
 
   vapp {
     properties = {
-      hostname    = "${var.cluster_name}-cp-${count.index + 1}"
+      hostname    = "${local.cluster_name}-cp-${count.index + 1}"
       public-keys = file(var.ssh_public_key_file)
     }
   }
@@ -92,7 +97,7 @@ resource "vsphere_virtual_machine" "control_plane" {
 
 resource "vsphere_virtual_machine" "lb" {
   count            = 1
-  name             = "${var.cluster_name}-lb-${count.index + 1}"
+  name             = "${local.cluster_name}-lb-${count.index + 1}"
   resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
   datastore_id     = data.vsphere_datastore.datastore.id
   num_cpus         = 1
@@ -122,7 +127,7 @@ resource "vsphere_virtual_machine" "lb" {
 
   vapp {
     properties = {
-      hostname    = "${var.cluster_name}-lb-${count.index + 1}"
+      hostname    = "${local.cluster_name}-lb-${count.index + 1}"
       public-keys = file(var.ssh_public_key_file)
     }
   }

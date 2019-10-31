@@ -66,8 +66,8 @@ resource "random_pet" "cluster_name" {
 resource "aws_default_vpc" "default" {}
 
 resource "aws_subnet" "public" {
-  count             = 3
-  availability_zone = data.aws_availability_zones.available.names[count.index]
+  count                   = 3
+  availability_zone       = data.aws_availability_zones.available.names[count.index]
   map_public_ip_on_launch = true
   vpc_id                  = data.aws_vpc.selected.id
 

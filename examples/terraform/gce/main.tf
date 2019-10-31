@@ -20,7 +20,8 @@ provider "google" {
 }
 
 locals {
-  zones_count = length(data.google_compute_zones.available.names)
+  zones_count  = length(data.google_compute_zones.available.names)
+  cluster_name = random_pet.cluster_name.id
 }
 
 data "google_compute_zones" "available" {
@@ -31,20 +32,25 @@ data "google_compute_image" "control_plane_image" {
   project = var.control_plane_image_project
 }
 
+resource "random_pet" "cluster_name" {
+  prefix = var.cluster_name
+  length = 1
+}
+
 resource "google_compute_network" "network" {
-  name                    = var.cluster_name
+  name                    = local.cluster_name
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "subnet" {
-  name          = "${var.cluster_name}-subnet"
+  name          = "${local.cluster_name}-subnet"
   network       = google_compute_network.network.self_link
   region        = var.region
   ip_cidr_range = var.cluster_network_cidr
 }
 
 resource "google_compute_firewall" "common" {
-  name    = "${var.cluster_name}-common"
+  name    = "${local.cluster_name}-common"
   network = google_compute_network.network.self_link
 
   allow {
@@ -58,7 +64,7 @@ resource "google_compute_firewall" "common" {
 }
 
 resource "google_compute_firewall" "control_plane" {
-  name    = "${var.cluster_name}-control-plane"
+  name    = "${local.cluster_name}-cp"
   network = google_compute_network.network.self_link
 
   allow {
@@ -72,7 +78,7 @@ resource "google_compute_firewall" "control_plane" {
 }
 
 resource "google_compute_firewall" "internal" {
-  name    = "${var.cluster_name}-internal"
+  name    = "${local.cluster_name}-internal"
   network = google_compute_network.network.self_link
 
   allow {
@@ -95,11 +101,11 @@ resource "google_compute_firewall" "internal" {
 }
 
 resource "google_compute_address" "lb_ip" {
-  name = "${var.cluster_name}-lb-ip"
+  name = "${local.cluster_name}-lb-ip"
 }
 
 resource "google_compute_http_health_check" "control_plane" {
-  name = "${var.cluster_name}-control-plane-health"
+  name = "${local.cluster_name}-cp-health"
 
   port         = 10256
   request_path = "/healthz"
@@ -109,7 +115,7 @@ resource "google_compute_http_health_check" "control_plane" {
 }
 
 resource "google_compute_target_pool" "control_plane_pool" {
-  name = "${var.cluster_name}-control-plane"
+  name = "${local.cluster_name}-cp"
 
   instances = slice(
     google_compute_instance.control_plane.*.self_link,
@@ -123,7 +129,7 @@ resource "google_compute_target_pool" "control_plane_pool" {
 }
 
 resource "google_compute_forwarding_rule" "control_plane" {
-  name       = "${var.cluster_name}-apiserver"
+  name       = "${local.cluster_name}-apiserver"
   target     = google_compute_target_pool.control_plane_pool.self_link
   port_range = "6443-6443"
   ip_address = google_compute_address.lb_ip.address
@@ -132,7 +138,7 @@ resource "google_compute_forwarding_rule" "control_plane" {
 resource "google_compute_instance" "control_plane" {
   count = 3
 
-  name         = "${var.cluster_name}-control-plane-${count.index + 1}"
+  name         = "${local.cluster_name}-cp-${count.index + 1}"
   machine_type = var.control_plane_type
   zone         = data.google_compute_zones.available.names[count.index % local.zones_count]
 

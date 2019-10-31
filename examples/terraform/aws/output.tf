@@ -27,7 +27,7 @@ output "kubeone_hosts" {
 
   value = {
     control_plane = {
-      cluster_name         = var.cluster_name
+      cluster_name         = local.cluster_name
       cloud_provider       = "aws"
       private_address      = aws_instance.control_plane.*.private_ip
       public_address       = aws_instance.control_plane.*.public_ip

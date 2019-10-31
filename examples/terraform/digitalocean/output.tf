@@ -27,7 +27,7 @@ output "kubeone_hosts" {
 
   value = {
     control_plane = {
-      cluster_name         = var.cluster_name
+      cluster_name         = local.cluster_name
       cloud_provider       = "digitalocean"
       private_address      = digitalocean_droplet.control_plane.*.ipv4_address_private
       public_address       = digitalocean_droplet.control_plane.*.ipv4_address
@@ -45,7 +45,7 @@ output "kubeone_workers" {
   value = {
     # following outputs will be parsed by kubeone and automatically merged into
     # corresponding (by name) worker definition
-    "${var.cluster_name}-pool1" = {
+    "${local.cluster_name}-pool1" = {
       replicas = 1
       providerSpec = {
         sshPublicKeys   = [digitalocean_ssh_key.deployer.public_key]
@@ -65,7 +65,7 @@ output "kubeone_workers" {
           monitoring         = false
           tags = [
             local.kube_cluster_tag,
-            "${var.cluster_name}-workers-pool1"
+            "${local.cluster_name}-workers-pool1"
           ]
         }
       }
