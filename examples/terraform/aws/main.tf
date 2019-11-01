@@ -212,7 +212,7 @@ resource "aws_elb" "control_plane" {
     unhealthy_threshold = 2
     timeout             = 3
     target              = "HTTPS:6443/healthz"
-    interval            = 10
+    interval            = 30
   }
 
   tags = map(
