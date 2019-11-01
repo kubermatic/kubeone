@@ -95,14 +95,12 @@ variable "ami" {
   description = "AMI ID, use it to fixate control-plane AMI in order to avoid force-recreation it at later times"
 }
 
-# subnet_mask = 8 bits, subnet_total = 255 settings ASSUMES /16 VPC CIDR block
-
 variable "subnet_mask" {
-  default     = 8
+  default     = 11
   description = "amount of CIDR bits per subnet"
 }
 
 variable "subnet_total" {
-  default     = 255
+  default     = 2048
   description = "total number of subnets (with length subnet_mask) in VPC CIDR block"
 }
