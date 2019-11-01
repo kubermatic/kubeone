@@ -56,6 +56,14 @@ func init() {
 	flag.Parse()
 }
 
+// This is a workaround for a change in the testing framework
+// affecting Go 1.13 and newer.
+// More details: https://github.com/golang/go/issues/31859#issuecomment-489889428
+var _ = func() bool {
+	testing.Init()
+	return true
+}()
+
 func setupTearDown(p provisioner.Provisioner, k Kubeone) func(t *testing.T) {
 	return func(t *testing.T) {
 		t.Log("cleanup ....")
