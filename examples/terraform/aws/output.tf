@@ -18,7 +18,7 @@ output "kubeone_api" {
   description = "kube-apiserver LB endpoint"
 
   value = {
-    endpoint = aws_lb.control_plane.dns_name
+    endpoint = aws_elb.control_plane.dns_name
   }
 }
 
@@ -30,12 +30,14 @@ output "kubeone_hosts" {
       cluster_name         = var.cluster_name
       cloud_provider       = "aws"
       private_address      = aws_instance.control_plane.*.private_ip
-      public_address       = aws_instance.control_plane.*.public_ip
       hostnames            = aws_instance.control_plane.*.private_dns
       ssh_agent_socket     = var.ssh_agent_socket
       ssh_port             = var.ssh_port
       ssh_private_key_file = var.ssh_private_key_file
       ssh_user             = var.ssh_username
+      bastion              = aws_instance.bastion.public_ip
+      bastion_port         = var.bastion_port
+      bastion_user         = var.bastion_user
     }
   }
 }
@@ -46,7 +48,7 @@ output "kubeone_workers" {
   value = {
     # following outputs will be parsed by kubeone and automatically merged into
     # corresponding (by name) worker definition
-    "${var.cluster_name}-pool1" = {
+    "${var.cluster_name}-${local.zoneA}" = {
       replicas = 1
       providerSpec = {
         sshPublicKeys   = [aws_key_pair.deployer.public_key]
@@ -60,18 +62,80 @@ output "kubeone_workers" {
           # https://github.com/kubermatic/machine-controller/blob/master/examples/aws-machinedeployment.yaml
           region           = var.aws_region
           ami              = local.ami
-          availabilityZone = local.az_a
+          availabilityZone = local.zoneA
           instanceProfile  = aws_iam_instance_profile.profile.name
-          securityGroupIDs = [aws_security_group.common.id, aws_security_group.nodeports.id]
-          vpcId            = local.vpc_id
-          subnetId         = data.aws_subnet.az_a.id
+          securityGroupIDs = [aws_security_group.common.id]
+          vpcId            = data.aws_vpc.selected.id
+          subnetId         = local.subnets[local.zoneA]
           instanceType     = var.worker_type
           diskSize         = 50
           diskType         = "gp2"
           ## Only applicable if diskType = io1
           diskIops = 500
           tags = {
-            "${var.cluster_name}-workers" = "pool1"
+            "${var.cluster_name}-workers" = ""
+          }
+        }
+      }
+    }
+
+    "${var.cluster_name}-${local.zoneB}" = {
+      replicas = 1
+      providerSpec = {
+        sshPublicKeys   = [aws_key_pair.deployer.public_key]
+        operatingSystem = var.worker_os
+        operatingSystemSpec = {
+          distUpgradeOnBoot = false
+        }
+        cloudProviderSpec = {
+          # provider specific fields:
+          # see example under `cloudProviderSpec` section at:
+          # https://github.com/kubermatic/machine-controller/blob/master/examples/aws-machinedeployment.yaml
+          region           = var.aws_region
+          ami              = local.ami
+          availabilityZone = local.zoneB
+          instanceProfile  = aws_iam_instance_profile.profile.name
+          securityGroupIDs = [aws_security_group.common.id]
+          vpcId            = data.aws_vpc.selected.id
+          subnetId         = local.subnets[local.zoneB]
+          instanceType     = var.worker_type
+          diskSize         = 50
+          diskType         = "gp2"
+          ## Only applicable if diskType = io1
+          diskIops = 500
+          tags = {
+            "${var.cluster_name}-workers" = ""
+          }
+        }
+      }
+    }
+
+    "${var.cluster_name}-${local.zoneC}" = {
+      replicas = 1
+      providerSpec = {
+        sshPublicKeys   = [aws_key_pair.deployer.public_key]
+        operatingSystem = var.worker_os
+        operatingSystemSpec = {
+          distUpgradeOnBoot = false
+        }
+        cloudProviderSpec = {
+          # provider specific fields:
+          # see example under `cloudProviderSpec` section at:
+          # https://github.com/kubermatic/machine-controller/blob/master/examples/aws-machinedeployment.yaml
+          region           = var.aws_region
+          ami              = local.ami
+          availabilityZone = local.zoneC
+          instanceProfile  = aws_iam_instance_profile.profile.name
+          securityGroupIDs = [aws_security_group.common.id]
+          vpcId            = data.aws_vpc.selected.id
+          subnetId         = local.subnets[local.zoneC]
+          instanceType     = var.worker_type
+          diskSize         = 50
+          diskType         = "gp2"
+          ## Only applicable if diskType = io1
+          diskIops = 500
+          tags = {
+            "${var.cluster_name}-workers" = ""
           }
         }
       }
