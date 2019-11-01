@@ -24,6 +24,10 @@ locals {
   zoneA            = data.aws_availability_zones.available.names[0]
   zoneB            = data.aws_availability_zones.available.names[1]
   zoneC            = data.aws_availability_zones.available.names[2]
+  vpc_mask         = parseint(split("/", data.aws_vpc.selected.cidr_block)[1], 10)
+  subnet_total     = pow(2, var.subnets_cidr - local.vpc_mask)
+  subnet_newbits   = var.subnets_cidr - (32 - local.vpc_mask)
+
   subnets = {
     "${local.zoneA}" = aws_subnet.public[0].id
     "${local.zoneB}" = aws_subnet.public[1].id
@@ -67,7 +71,7 @@ resource "aws_default_vpc" "default" {}
 
 resource "random_integer" "cidr_block" {
   min = 0
-  max = var.subnet_total - 1
+  max = local.subnet_total - 1
 }
 
 ############################### NETWORKING SETUP ###############################
@@ -80,8 +84,8 @@ resource "aws_subnet" "public" {
 
   cidr_block = cidrsubnet(
     data.aws_vpc.selected.cidr_block,
-    var.subnet_mask,
-    (random_integer.cidr_block.result + count.index) % var.subnet_total,
+    local.subnet_newbits,
+    (random_integer.cidr_block.result + count.index) % local.subnet_total,
   )
 
   tags = map(

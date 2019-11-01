@@ -95,12 +95,7 @@ variable "ami" {
   description = "AMI ID, use it to fixate control-plane AMI in order to avoid force-recreation it at later times"
 }
 
-variable "subnet_mask" {
-  default     = 11
-  description = "amount of CIDR bits per subnet"
-}
-
-variable "subnet_total" {
-  default     = 2048
-  description = "total number of subnets (with length subnet_mask) in VPC CIDR block"
+variable "subnets_cidr" {
+  default     = 27
+  description = "CIDR mask bits per subnet"
 }
