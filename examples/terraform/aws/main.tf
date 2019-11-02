@@ -95,27 +95,6 @@ resource "aws_subnet" "public" {
   )
 }
 
-resource "aws_route_table" "default" {
-  vpc_id = data.aws_vpc.selected.id
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = data.aws_internet_gateway.default.id
-  }
-
-  tags = map(
-    "Name", "${var.cluster_name}-rt",
-    "Cluster", var.cluster_name,
-    local.kube_cluster_tag, "shared",
-  )
-}
-
-resource "aws_route_table_association" "rta" {
-  count          = 3
-  subnet_id      = element(aws_subnet.public.*.id, count.index)
-  route_table_id = aws_route_table.default.id
-}
-
 ################################### FIREWALL ###################################
 
 resource "aws_security_group" "common" {
