@@ -177,7 +177,7 @@ resource "aws_security_group" "ssh" {
 
 resource "aws_elb" "control_plane" {
   name            = "${var.cluster_name}-api-lb"
-  internal        = false
+  internal        = var.internal_api_lb
   subnets         = aws_subnet.public.*.id
   security_groups = [aws_security_group.elb.id, aws_security_group.common.id]
   instances       = aws_instance.control_plane.*.id

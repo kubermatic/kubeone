@@ -99,3 +99,8 @@ variable "subnets_cidr" {
   default     = 27
   description = "CIDR mask bits per subnet"
 }
+
+variable "internal_api_lb" {
+  default     = false
+  description = "make kubernetes API loadbalancer internal (reachible only from inside the VPC)"
+}
