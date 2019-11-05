@@ -14,6 +14,13 @@
 
 FROM golang:1.13.4-alpine
 
+ARG version
+
+LABEL "io.kubeone"="Loodse GmbH"
+LABEL version=${version}
+LABEL description="Set of kubernetes binaries to conduct kubeone E2E tests"
+LABEL maintainer="https://github.com/kubermatic/kubeone/blob/master/OWNERS"
+
 RUN apk add --no-cache \
     bash \
     ca-certificates \
