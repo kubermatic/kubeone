@@ -22,5 +22,5 @@ ENV GO111MODULE=on
 RUN go get -v k8s.io/test-infra/kubetest@${KUBETEST_COMMIT} && \
     go clean -modcache -cache
 
-COPY install-kube-tests.sh /opt/install-kube-tests.sh
-RUN /opt/install-kube-tests.sh
+COPY install-kube-tests-binaries.sh /opt/install-kube-tests-binaries.sh
+RUN /opt/install-kube-tests-binaries.sh
