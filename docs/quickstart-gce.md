@@ -150,12 +150,12 @@ cloudProvider:
   name: 'gce'
   cloudConfig: |
     [global]
-    multizone = true
+    regional = true
 ```
 
 **Note:** If control plane nodes are created in multiple zones,
-you must configure `kube-controller-manager` to support multiple zones by
-setting `multizone` to `true`. Otherwise, `kube-controller-manager` will
+you must configure `kube-controller-manager` to support regional clusters by
+setting `regional` to `true`. Otherwise, `kube-controller-manager` will
 fail to create the needed routes and other cloud resources, without which
 the cluster can't function properly. The example Terraform configuration
 creates control plane nodes in multiple zones by default.
