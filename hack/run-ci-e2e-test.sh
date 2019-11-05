@@ -25,7 +25,6 @@ set -o monitor
 RUNNING_IN_CI=${JOB_NAME:-""}
 BUILD_ID=${BUILD_ID:-"${USER}-local"}
 PROVIDER=${PROVIDER:-"aws"}
-TERRAFORM_VERSION=${TERRAFORM_VERSION:-"0.12.5"}
 TEST_SET=${TEST_SET:-"conformance"}
 TEST_CLUSTER_TARGET_VERSION=${TEST_CLUSTER_TARGET_VERSION:-""}
 TEST_CLUSTER_INITIAL_VERSION=${TEST_CLUSTER_INITIAL_VERSION:-""}
@@ -34,30 +33,6 @@ TEST_OS_WORKERS=${TEST_OS_WORKERS:-""}
 export TF_VAR_cluster_name=k1-${BUILD_ID}
 
 PATH=$PATH:$(go env GOPATH)/bin
-
-# Install dependencies
-if ! [ -x "$(command -v terraform)" ]; then
-  echo "Installing unzip"
-  if ! [ -x "$(command -v unzip)" ]; then
-    apt update && apt install -y unzip
-  fi
-  echo "Installing terraform"
-  cd /tmp
-  curl https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -Lo terraform.zip
-  unzip -n terraform.zip terraform
-  chmod +x terraform
-  mv terraform /usr/local/bin
-  rm terraform.zip
-  cd -
-fi
-
-if ! [ -x "$(command -v kubetest)" ]; then
-  echo "Installing kubetest"
-  pushd .
-  cd /tmp
-  go get k8s.io/test-infra/kubetest
-  popd
-fi
 
 TERRAFORM_DIR=$PWD/examples/terraform
 function cleanup() {
