@@ -24,6 +24,7 @@ LABEL maintainer="https://github.com/kubermatic/kubeone/blob/master/OWNERS"
 RUN apk add --no-cache \
     bash \
     ca-certificates \
+    coreutils \
     curl \
     git \
     make \
