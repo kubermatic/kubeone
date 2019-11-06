@@ -59,7 +59,7 @@ func TestClusterUpgrade(t *testing.T) {
 			providerExternal:      false,
 			initialConfigPath:     "../../test/e2e/testdata/config_aws_initial.yaml",
 			targetConfigPath:      "../../test/e2e/testdata/config_aws_target.yaml",
-			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
+			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
 		},
 		{
 			name:                  "upgrade k8s cluster on DO",
@@ -67,7 +67,7 @@ func TestClusterUpgrade(t *testing.T) {
 			providerExternal:      true,
 			initialConfigPath:     "../../test/e2e/testdata/config_do_initial.yaml",
 			targetConfigPath:      "../../test/e2e/testdata/config_do_target.yaml",
-			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
+			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
 		},
 		{
 			name:                  "upgrade k8s cluster on Hetzner",
@@ -75,7 +75,7 @@ func TestClusterUpgrade(t *testing.T) {
 			providerExternal:      true,
 			initialConfigPath:     "../../test/e2e/testdata/config_hetzner_initial.yaml",
 			targetConfigPath:      "../../test/e2e/testdata/config_hetzner_target.yaml",
-			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
+			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
 		},
 		{
 			name:                  "upgrade k8s cluster on GCE",
@@ -83,7 +83,7 @@ func TestClusterUpgrade(t *testing.T) {
 			providerExternal:      false,
 			initialConfigPath:     "../../test/e2e/testdata/config_gce_initial.yaml",
 			targetConfigPath:      "../../test/e2e/testdata/config_gce_target.yaml",
-			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
+			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
 		},
 		{
 			name:                  "upgrade k8s cluster on Packet",
@@ -91,7 +91,7 @@ func TestClusterUpgrade(t *testing.T) {
 			providerExternal:      true,
 			initialConfigPath:     "../../test/e2e/testdata/config_packet_initial.yaml",
 			targetConfigPath:      "../../test/e2e/testdata/config_packet_target.yaml",
-			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
+			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
 		},
 		{
 			name:                  "upgrade k8s cluster on OpenStack",
@@ -99,7 +99,7 @@ func TestClusterUpgrade(t *testing.T) {
 			providerExternal:      false,
 			initialConfigPath:     "../../test/e2e/testdata/config_openstack_initial.yaml",
 			targetConfigPath:      "../../test/e2e/testdata/config_openstack_target.yaml",
-			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
+			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
 		},
 	}
 
