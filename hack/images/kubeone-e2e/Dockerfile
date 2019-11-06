@@ -28,6 +28,8 @@ RUN apk add --no-cache \
     curl \
     git \
     make \
+    openssh-client \
+    openssh-keygen \
     unzip \
     upx
 
