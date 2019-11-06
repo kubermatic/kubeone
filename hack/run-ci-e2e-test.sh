@@ -102,11 +102,7 @@ if [ -n "${RUNNING_IN_CI}" ]; then
     KUBEONE_BUILD_DIR=_build
     mkdir -p ${KUBEONE_BUILD_DIR}
     for dir in ${KUBE_TEST_DIR}/*; do
-      VERSION_REG_EXP="^(\d+\.\d+\.\d+[\w.\-+]*)$"
       KUBE_VERSION=$(basename $dir)
-      if ! [[ ${KUBE_VERSION} =~ ${VERSION_REG_EXP} ]]; then
-        KUBE_VERSION="${KUBE_VERSION}.0"
-      fi
       KUBE_TEST_DST_DIR="${KUBEONE_BUILD_DIR}/kubernetes-v${KUBE_VERSION}/kubernetes"
       mkdir -p "${KUBE_TEST_DST_DIR}"
       ln -s $dir/* "${KUBE_TEST_DST_DIR}"
