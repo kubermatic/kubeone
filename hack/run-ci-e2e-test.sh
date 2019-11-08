@@ -25,6 +25,7 @@ set -o monitor
 RUNNING_IN_CI=${JOB_NAME:-""}
 BUILD_ID=${BUILD_ID:-"${USER}-local"}
 PROVIDER=${PROVIDER:-"aws"}
+KUBETESTS_ROOT=${KUBETESTS_ROOT:-"/opt/kube-test"}
 TEST_SET=${TEST_SET:-"conformance"}
 TEST_CLUSTER_TARGET_VERSION=${TEST_CLUSTER_TARGET_VERSION:-""}
 TEST_CLUSTER_INITIAL_VERSION=${TEST_CLUSTER_INITIAL_VERSION:-""}
@@ -42,7 +43,6 @@ function cleanup() {
     echo "Cleaning up terraform state, attempt ${try}"
     # Upstream interpolation bug, but we dont care about the output
     # at destroy time anyways: https://github.com/hashicorp/terraform/issues/17691
-    rm -f output.tf
     terraform init --backend-config=key=${BUILD_ID}
     terraform destroy -auto-approve
     if [[ $? == 0 ]]; then break; fi
@@ -51,6 +51,11 @@ function cleanup() {
   done
 }
 trap cleanup EXIT
+
+function fail() {
+  echo $1
+  exit 1
+}
 
 # If the following variable is set then this script is running in CI
 # and the assumption is that the image contains kubernetes binaries
@@ -97,21 +102,16 @@ if [ -n "${RUNNING_IN_CI}" ]; then
     ;;
   esac
 
-  KUBE_TEST_DIR="/opt/kube-test"
-  if [ -d "${KUBE_TEST_DIR}" ]; then
-    KUBEONE_BUILD_DIR=_build
-    mkdir -p ${KUBEONE_BUILD_DIR}
-    for dir in ${KUBE_TEST_DIR}/*; do
-      KUBE_VERSION=$(basename $dir)
-      KUBE_TEST_DST_DIR="${KUBEONE_BUILD_DIR}/kubernetes-v${KUBE_VERSION}/kubernetes"
-      mkdir -p "${KUBE_TEST_DST_DIR}"
-      ln -s $dir/* "${KUBE_TEST_DST_DIR}"
+  if [ -d "${KUBETESTS_ROOT}" ]; then
+    kubeone_build_dir="_build"
+    for kubetest_dir in ${KUBETESTS_ROOT}/*; do
+      kube_test_dst_dir="${kubeone_build_dir}/kubernetes-v${TEST_CLUSTER_TARGET_VERSION}/kubernetes"
+      mkdir -p "${kube_test_dst_dir}"
+      ln -s $kubetest_dir/* "${kube_test_dst_dir}"
     done
   else
-    echo "The directory ${KUBE_TEST_DIR} does not exist, we need to download additional binaries for the tests. This might make the test to run longer."
+    fail "kubetests directory ${KUBETESTS_ROOT} in not found"
   fi
-else
-  echo "The script is not running in CI thus we need to download additional binaries for the tests. This might make the test to run longer."
 fi
 
 SSH_PRIVATE_KEY_FILE="${HOME}/.ssh/id_rsa_kubeone_e2e"
