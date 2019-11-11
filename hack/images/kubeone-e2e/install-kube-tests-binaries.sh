@@ -33,7 +33,6 @@ for version in "${!full_versions[@]}"; do
         cd -
 
         find ${directory} -name "*.tar.gz" -type f -delete
-        rm -r ${directory}/kubernetes/cluster
         rm ${directory}/kubernetes/platforms/linux/amd64/gendocs
         rm ${directory}/kubernetes/platforms/linux/amd64/genkubedocs
         rm ${directory}/kubernetes/platforms/linux/amd64/genman
