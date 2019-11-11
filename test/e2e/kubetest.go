@@ -45,7 +45,7 @@ type Kubetest struct {
 // NewKubetest creates and provisions the Kubetest structure
 func NewKubetest(k8sVersion, kubetestDir string, envVars map[string]string) Kubetest {
 	return Kubetest{
-		kubetestDir:       kubetestDir,
+		kubetestDir:       filepath.Clean(kubetestDir),
 		kubernetesVersion: k8sVersion,
 		envVars:           envVars,
 	}

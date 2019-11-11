@@ -25,7 +25,7 @@ set -o monitor
 RUNNING_IN_CI=${JOB_NAME:-""}
 BUILD_ID=${BUILD_ID:-"${USER}-local"}
 PROVIDER=${PROVIDER:-"aws"}
-KUBETESTS_ROOT=${KUBETESTS_ROOT:-"/opt/kube-test"}
+KUBETESTS_ROOT=$(realpath ${KUBETESTS_ROOT:-"/opt/kube-test"})
 TEST_SET=${TEST_SET:-"conformance"}
 TEST_CLUSTER_TARGET_VERSION=${TEST_CLUSTER_TARGET_VERSION:-""}
 TEST_CLUSTER_INITIAL_VERSION=${TEST_CLUSTER_INITIAL_VERSION:-""}
@@ -94,7 +94,7 @@ if [ -n "${RUNNING_IN_CI}" ]; then
     export OS_TENANT_NAME=${OS_TENANT_NAME}
     export OS_USERNAME=${OS_USERNAME}
     export OS_PASSWORD=${OS_PASSWORD}
-    echo ${k1_credentials} > /tmp/credentials.yaml
+    echo ${k1_credentials} >/tmp/credentials.yaml
     ;;
   *)
     echo "unknown provider ${PROVIDER}"
@@ -105,9 +105,10 @@ if [ -n "${RUNNING_IN_CI}" ]; then
   if [ -d "${KUBETESTS_ROOT}" ]; then
     kubeone_build_dir="_build"
     for kubetest_dir in ${KUBETESTS_ROOT}/*; do
-      kube_test_dst_dir="${kubeone_build_dir}/kubernetes-v${TEST_CLUSTER_TARGET_VERSION}/kubernetes"
-      mkdir -p "${kube_test_dst_dir}"
-      ln -s $kubetest_dir/* "${kube_test_dst_dir}"
+      basekubetest_name=$(basename ${kubetest_dir})
+      kubetest_dst_dir="${kubeone_build_dir}/${basekubetest_name}"
+      mkdir -p "${kubetest_dst_dir}"
+      ln -s $kubetest_dir/* "${kubetest_dst_dir}"
     done
   else
     fail "kubetests directory ${KUBETESTS_ROOT} in not found"
