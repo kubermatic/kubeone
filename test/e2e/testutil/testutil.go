@@ -44,60 +44,60 @@ func IsCommandAvailable(name string) bool {
 // ExecuteCommand executes the given command
 func ExecuteCommand(path, name string, arg []string, additionalEnv map[string]string) (string, error) {
 	var (
-		stdoutBuf, stderrBuf bytes.Buffer
-		errStdout, errStderr error
+		stdouterrBuf bytes.Buffer
 	)
 
-	cmd := exec.Command(name, arg...)
-	if len(path) > 0 {
-		cmd.Dir = path
+	stdout := io.MultiWriter(os.Stdout, &stdouterrBuf)
+	stderr := io.MultiWriter(os.Stderr, &stdouterrBuf)
+	exe := Exec{
+		Command: name,
+		Cwd:     path,
+		Args:    arg,
+		Stderr:  stderr,
+		Stdout:  stdout,
+		Env:     additionalEnv,
 	}
 
-	if additionalEnv != nil {
+	return stdouterrBuf.String(), exe.Run()
+}
+
+type Exec struct {
+	Args    []string
+	Command string
+	Cwd     string
+	Env     map[string]string
+	Stderr  io.Writer
+	Stdout  io.Writer
+}
+
+func (e Exec) Run() error {
+	var (
+		stdout io.Writer = os.Stdout
+		stderr io.Writer = os.Stderr
+	)
+
+	if e.Stdout != nil {
+		stdout = e.Stdout
+	}
+
+	if e.Stderr != nil {
+		stderr = e.Stderr
+	}
+
+	cmd := exec.Command(e.Command, e.Args...)
+	cmd.Dir = e.Cwd
+
+	if e.Env != nil {
 		cmd.Env = os.Environ()
-		for k, v := range additionalEnv {
+		for k, v := range e.Env {
 			cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", k, v))
 		}
 	}
 
-	doneStdout := make(chan struct{})
-	doneStderr := make(chan struct{})
+	cmd.Stdout = stdout
+	cmd.Stderr = stderr
 
-	stdoutIn, _ := cmd.StdoutPipe()
-	stderrIn, _ := cmd.StderrPipe()
-	stdout := io.MultiWriter(os.Stdout, &stdoutBuf)
-	stderr := io.MultiWriter(os.Stderr, &stderrBuf)
-
-	err := cmd.Start()
-	if err != nil {
-		return "", err
-	}
-
-	go func() {
-		_, errStdout = io.Copy(stdout, stdoutIn)
-		doneStdout <- struct{}{}
-	}()
-
-	go func() {
-		_, errStderr = io.Copy(stderr, stderrIn)
-		doneStderr <- struct{}{}
-	}()
-
-	<-doneStdout
-	<-doneStderr
-	err = cmd.Wait()
-	if err != nil {
-		return "", err
-	}
-	if errStdout != nil {
-		return "", errStdout
-	}
-	if errStderr != nil {
-		return "", errStderr
-	}
-
-	outStr := stdoutBuf.String()
-	return outStr, nil
+	return cmd.Run()
 }
 
 // CreateFile create file with given content
