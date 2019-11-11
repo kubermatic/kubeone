@@ -26,7 +26,9 @@ RUN apk add --no-cache \
     ca-certificates \
     coreutils \
     curl \
+    gcc \
     git \
+    libc-dev \
     make \
     openssh-client \
     openssh-keygen \
