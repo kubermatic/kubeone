@@ -5,7 +5,6 @@ go 1.13
 require (
 	github.com/Masterminds/semver v1.4.2
 	github.com/aws/aws-sdk-go v1.20.15
-	github.com/coreos/etcd v3.3.13+incompatible
 	github.com/ghodss/yaml v1.0.0
 	github.com/go-logr/zapr v0.1.1 // indirect
 	github.com/gogo/protobuf v1.2.1 // indirect
