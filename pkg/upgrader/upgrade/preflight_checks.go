@@ -25,9 +25,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
-	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/runner"
-	"github.com/kubermatic/kubeone/pkg/ssh"
+	"github.com/kubermatic/kubeone/pkg/clusterstatus/preflight"
 	"github.com/kubermatic/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
@@ -42,11 +40,6 @@ func runPreflightChecks(s *state.State) error {
 		return errors.New("kubernetes dynamic client is not initialized")
 	}
 
-	// Check are Docker, Kubelet and Kubeadm installed
-	if err := checkPrerequisites(s); err != nil {
-		return errors.Wrap(err, "unable to check are prerequisites installed")
-	}
-
 	nodes := corev1.NodeList{}
 	nodeListOpts := dynclient.ListOptions{
 		LabelSelector: labels.SelectorFromSet(map[string]string{labelControlPlaneNode: ""}),
@@ -57,30 +50,10 @@ func runPreflightChecks(s *state.State) error {
 		return errors.Wrap(err, "unable to list nodes")
 	}
 
-	if len(nodes.Items) != len(s.Cluster.Hosts) {
-		return errors.Errorf("expected %d cluster nodes but got %d", len(s.Cluster.Hosts), len(nodes.Items))
-	}
-
 	// Run preflight checks on nodes
 	s.Logger.Infoln("Running preflight checks…")
-
-	s.Logger.Infoln("Verifying are all nodes running…")
-	if err := verifyNodesRunning(&nodes, s.Verbose); err != nil {
-		return errors.Wrap(err, "unable to verify are nodes running")
-	}
-
-	s.Logger.Infoln("Verifying are correct labels set on nodes…")
-	if err := verifyLabels(&nodes, s.Verbose); err != nil {
-		if s.ForceUpgrade {
-			s.Logger.Warningf("unable to verify node labels: %v", err)
-		} else {
-			return errors.Wrap(err, "unable to verify node labels")
-		}
-	}
-
-	s.Logger.Infoln("Verifying do all node IP addresses match with our state…")
-	if err := verifyEndpoints(&nodes, s.Cluster.Hosts, s.Verbose); err != nil {
-		return errors.Wrap(err, "unable to verify node endpoints")
+	if err := preflight.RunPreflightChecks(s, nodes); err != nil {
+		return errors.Wrap(err, "unable to verify prerequisites")
 	}
 
 	s.Logger.Infoln("Verifying is it possible to upgrade to the desired version…")
@@ -93,102 +66,6 @@ func runPreflightChecks(s *state.State) error {
 			s.Logger.Warningf("version skew check failed: %v", err)
 		} else {
 			return errors.Wrap(err, "version skew check failed")
-		}
-	}
-
-	return nil
-}
-
-// checkPrerequisites checks are Docker, Kubelet, and Kubeadm installed on every machine in the cluster
-func checkPrerequisites(s *state.State) error {
-	return s.RunTaskOnAllNodes(func(s *state.State, _ *kubeoneapi.HostConfig, _ ssh.Connection) error {
-		s.Logger.Infoln("Checking are all prerequisites installed…")
-		_, _, err := s.Runner.Run(checkPrerequisitesCommand, runner.TemplateVariables{})
-		return err
-	}, true)
-}
-
-const checkPrerequisitesCommand = `
-# Check is Docker installed
-if ! type docker &>/dev/null; then exit 1; fi
-# Check is Kubelet installed
-if ! type kubelet &>/dev/null; then exit 1; fi
-# Check is Kubeadm installed
-if ! type kubeadm &>/dev/null; then exit 1; fi
-# Check do Kubernetes directories and files exist
-if [[ ! -d "/etc/kubernetes/manifests" ]]; then exit 1; fi
-if [[ ! -d "/etc/kubernetes/pki" ]]; then exit 1; fi
-if [[ ! -f "/etc/kubernetes/kubelet.conf" ]]; then exit 1; fi
-# Check are kubelet running
-if ! sudo systemctl is-active --quiet kubelet &>/dev/null; then exit 1; fi
-`
-
-// verifyControlPlaneRunning ensures all control plane nodes are running
-func verifyNodesRunning(nodes *corev1.NodeList, verbose bool) error {
-	for _, n := range nodes.Items {
-		found := false
-		for _, c := range n.Status.Conditions {
-			if c.Type == corev1.NodeReady {
-				if verbose {
-					fmt.Printf("[%s] %s (%v)\n", n.ObjectMeta.Name, c.Type, c.Status)
-				}
-				if c.Status == corev1.ConditionTrue {
-					found = true
-				}
-			}
-		}
-		if !found {
-			return errors.Errorf("node %s is not running", n.ObjectMeta.Name)
-		}
-	}
-	return nil
-}
-
-// verifyLabels ensures all control plane nodes don't have the lock label or upgrade is run with the force flag
-func verifyLabels(nodes *corev1.NodeList, verbose bool) error {
-	for _, n := range nodes.Items {
-		_, ok := n.ObjectMeta.Labels[labelUpgradeLock]
-		if ok {
-			return errors.Errorf("label %s is present on node %s", labelUpgradeLock, n.ObjectMeta.Name)
-		}
-		if verbose {
-			fmt.Printf("[%s] Label %s isn't present\n", n.ObjectMeta.Name, labelUpgradeLock)
-		}
-	}
-	return nil
-}
-
-// verifyEndpoints verifies are IP addresses defined in the KubeOne manifest same as IP addresses of nodes
-func verifyEndpoints(nodes *corev1.NodeList, hosts []kubeoneapi.HostConfig, verbose bool) error {
-	for _, node := range nodes.Items {
-		for _, addr := range node.Status.Addresses {
-			switch addr.Type {
-			case corev1.NodeInternalIP, corev1.NodeExternalIP:
-				if verbose {
-					fmt.Printf("[%s] %s Endpoint: %s\n", node.ObjectMeta.Name, addr.Type, addr.Address)
-				}
-			default:
-				// we don't care about other types of NodeAddress
-				continue
-			}
-
-			found := false
-			for _, host := range hosts {
-				switch addr.Type {
-				case corev1.NodeExternalIP:
-					if addr.Address == host.PublicAddress {
-						found = true
-					}
-				case corev1.NodeInternalIP:
-					if addr.Address == host.PrivateAddress {
-						found = true
-					}
-				}
-			}
-
-			if !found {
-				return errors.New("cannot match node by ip address")
-			}
 		}
 	}
 
