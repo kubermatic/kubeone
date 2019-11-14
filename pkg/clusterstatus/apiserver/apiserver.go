@@ -21,28 +21,26 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"time"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/ssh"
+	"github.com/kubermatic/kubeone/pkg/httptunnel"
+	"github.com/kubermatic/kubeone/pkg/state"
 )
 
 const (
-	defaultHTTPTimeout = 10 * time.Second
-	healthzEndpoint    = "https://%s:6443/healthz"
+	healthzEndpoint = "https://%s:6443/healthz"
 )
 
 type Status struct {
 	Health bool `json:"health,omitempty"`
 }
 
-type HTTPDoer interface {
-	Do(*http.Request) (*http.Response, error)
-}
-
 // CheckAPIServer uses the /healthz endpoint to check are all API server instances healthy
-func GetStatus(node kubeoneapi.HostConfig, tunneler ssh.Tunneler) (*Status, error) {
-	client := httpClient(tunneler)
+func GetStatus(s *state.State, node kubeoneapi.HostConfig) (*Status, error) {
+	client, err := httptunnel.NewHTTPTunnel(s, &tls.Config{InsecureSkipVerify: true})
+	if err != nil {
+		return nil, err
+	}
 	health, err := apiserverHealth(client, node.PrivateAddress)
 	if err != nil {
 		return nil, err
@@ -54,14 +52,14 @@ func GetStatus(node kubeoneapi.HostConfig, tunneler ssh.Tunneler) (*Status, erro
 }
 
 // apiserverHealth checks is API server healthy
-func apiserverHealth(c HTTPDoer, nodeAddress string) (bool, error) {
+func apiserverHealth(t *httptunnel.HTTPTunnel, nodeAddress string) (bool, error) {
 	endpoint := fmt.Sprintf(healthzEndpoint, nodeAddress)
 	request, err := http.NewRequest("GET", endpoint, nil)
 	if err != nil {
 		return false, err
 	}
 
-	resp, err := c.Do(request)
+	resp, err := t.Client.Do(request)
 	if err != nil {
 		return false, nil
 	}
@@ -73,19 +71,4 @@ func apiserverHealth(c HTTPDoer, nodeAddress string) (bool, error) {
 	}
 
 	return string(body) == "ok", nil
-}
-
-// httpClient builds an HTTP client used to access the API server
-func httpClient(tunneler ssh.Tunneler) HTTPDoer {
-	transport := &http.Transport{
-		DialContext: tunneler.TunnelTo,
-		TLSClientConfig: &tls.Config{
-			InsecureSkipVerify: true,
-		},
-	}
-
-	return &http.Client{
-		Timeout:   defaultHTTPTimeout,
-		Transport: transport,
-	}
 }

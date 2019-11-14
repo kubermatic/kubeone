@@ -24,17 +24,15 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
-	"time"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/ssh"
+	"github.com/kubermatic/kubeone/pkg/httptunnel"
 	"github.com/kubermatic/kubeone/pkg/state"
 )
 
 const (
-	defaultHTTPTimeout = 10 * time.Second
-	healthEndpoint     = "https://%s:2379/health"
-	membersEndpoint    = "https://127.0.0.1:2379/v2/members"
+	healthEndpoint  = "https://%s:2379/health"
+	membersEndpoint = "https://127.0.0.1:2379/v2/members"
 )
 
 // Status describes status of the etcd cluster
@@ -61,8 +59,12 @@ type HTTPDoer interface {
 }
 
 // EtcdStatus analyzes health of an etcd cluster
-func GetStatus(s *state.State, node kubeoneapi.HostConfig, tunneler ssh.Tunneler) (*Status, error) {
-	client, err := httpClient(s, tunneler)
+func GetStatus(s *state.State, node kubeoneapi.HostConfig) (*Status, error) {
+	tlsCfg, err := loadTLSConfig(s)
+	if err != nil {
+		return nil, err
+	}
+	client, err := httptunnel.NewHTTPTunnel(s, tlsCfg)
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +100,7 @@ func GetStatus(s *state.State, node kubeoneapi.HostConfig, tunneler ssh.Tunneler
 }
 
 // memberHealth returns health for a requested etcd member
-func memberHealth(c HTTPDoer, nodeAddress string) (*healthRaw, error) {
+func memberHealth(t *httptunnel.HTTPTunnel, nodeAddress string) (*healthRaw, error) {
 	endpoint := fmt.Sprintf(healthEndpoint, nodeAddress)
 	request, err := http.NewRequest("GET", endpoint, nil)
 	if err != nil {
@@ -106,7 +108,7 @@ func memberHealth(c HTTPDoer, nodeAddress string) (*healthRaw, error) {
 	}
 	request.Header.Set("Content-type", "application/json")
 
-	resp, err := c.Do(request)
+	resp, err := t.Client.Do(request)
 	if err != nil {
 		return &healthRaw{Health: "false"}, nil
 	}
@@ -125,14 +127,14 @@ func memberHealth(c HTTPDoer, nodeAddress string) (*healthRaw, error) {
 	return h, nil
 }
 
-func membersList(c HTTPDoer) (*membersListRaw, error) {
+func membersList(t *httptunnel.HTTPTunnel) (*membersListRaw, error) {
 	request, err := http.NewRequest("GET", membersEndpoint, nil)
 	if err != nil {
 		return nil, err
 	}
 	request.Header.Set("Content-type", "application/json")
 
-	resp, err := c.Do(request)
+	resp, err := t.Client.Do(request)
 	if err != nil {
 		return nil, err
 	}
@@ -149,24 +151,6 @@ func membersList(c HTTPDoer) (*membersListRaw, error) {
 	}
 
 	return m, nil
-}
-
-// httpClient builds an HTTP client used to access etcd
-func httpClient(s *state.State, tunneler ssh.Tunneler) (HTTPDoer, error) {
-	tlsConfig, err := loadTLSConfig(s)
-	if err != nil {
-		return nil, err
-	}
-
-	transport := &http.Transport{
-		DialContext:     tunneler.TunnelTo,
-		TLSClientConfig: tlsConfig,
-	}
-
-	return &http.Client{
-		Timeout:   defaultHTTPTimeout,
-		Transport: transport,
-	}, nil
 }
 
 // loadTLSConfig creates the tls.Config structure used in an http client to securely connect to etcd

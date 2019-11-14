@@ -105,19 +105,14 @@ func GetClusterStatus(s *state.State) ([]Status, error) {
 		return nil, preflightErr
 	}
 
-	tunn, err := s.Connector.Tunnel(s.Cluster.RandomHost())
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to get SSH tunnel")
-	}
-
 	status := []Status{}
 	errs := []error{}
 	for _, host := range s.Cluster.Hosts {
-		etcdStatus, err := etcd.GetStatus(s, host, tunn)
+		etcdStatus, err := etcd.GetStatus(s, host)
 		if err != nil {
 			errs = append(errs, err)
 		}
-		apiserverStatus, err := apiserver.GetStatus(host, tunn)
+		apiserverStatus, err := apiserver.GetStatus(s, host)
 		if err != nil {
 			errs = append(errs, err)
 		}
