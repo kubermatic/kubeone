@@ -56,3 +56,4 @@ issues:
   - "func SetDefaults_MachineController should be SetDefaultsMachineController"
   - "func SetDefaults_SystemPackages should be SetDefaultsSystemPackages"
   - "type name will be used as kubeone.KubeOneCluster by other packages"
+  - "G402: TLS InsecureSkipVerify set true"

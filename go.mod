@@ -5,6 +5,7 @@ go 1.13
 require (
 	github.com/Masterminds/semver v1.4.2
 	github.com/aws/aws-sdk-go v1.20.15
+	github.com/coreos/etcd v3.3.13+incompatible
 	github.com/ghodss/yaml v1.0.0
 	github.com/go-logr/zapr v0.1.1 // indirect
 	github.com/gogo/protobuf v1.2.1 // indirect
@@ -12,6 +13,7 @@ require (
 	github.com/json-iterator/go v1.1.7 // indirect
 	github.com/koron-go/prefixw v0.0.0-20181013140428-271b207a7572
 	github.com/kr/fs v0.1.0 // indirect
+	github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de
 	github.com/onsi/ginkgo v1.8.0 // indirect
 	github.com/onsi/gomega v1.5.0 // indirect
 	github.com/pkg/errors v0.8.1
