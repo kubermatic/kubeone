@@ -101,7 +101,7 @@ func GetClusterStatus(s *state.State) ([]Status, error) {
 	}
 
 	// Run preflight checks
-	if preflightErr := preflight.RunPreflightChecks(s, nodes); err != nil {
+	if preflightErr := preflight.RunPreflightChecks(s, nodes); preflightErr != nil {
 		return nil, preflightErr
 	}
 
