@@ -26,12 +26,8 @@ import (
 	"github.com/kubermatic/kubeone/pkg/state"
 )
 
-const (
-	defaultHTTPTimeout = 10 * time.Second
-)
-
 type HTTPTunnel struct {
-	Client HTTPDoer
+	*http.Client
 }
 
 type HTTPDoer interface {
@@ -45,13 +41,17 @@ func NewHTTPTunnel(s *state.State, tlsConfig *tls.Config) (*HTTPTunnel, error) {
 	}
 
 	transport := &http.Transport{
-		DialContext:     tunn.TunnelTo,
-		TLSClientConfig: tlsConfig,
+		DialContext:           tunn.TunnelTo,
+		TLSClientConfig:       tlsConfig,
+		MaxIdleConns:          100,
+		IdleConnTimeout:       90 * time.Second,
+		TLSHandshakeTimeout:   10 * time.Second,
+		ExpectContinueTimeout: 1 * time.Second,
 	}
 
 	return &HTTPTunnel{
 		Client: &http.Client{
-			Timeout:   defaultHTTPTimeout,
+			Timeout:   10 * time.Second,
 			Transport: transport,
 		},
 	}, nil

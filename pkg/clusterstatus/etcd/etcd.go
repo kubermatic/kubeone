@@ -64,18 +64,18 @@ func GetStatus(s *state.State, node kubeoneapi.HostConfig) (*Status, error) {
 	if err != nil {
 		return nil, err
 	}
-	client, err := httptunnel.NewHTTPTunnel(s, tlsCfg)
+	tunneler, err := httptunnel.NewHTTPTunnel(s, tlsCfg)
 	if err != nil {
 		return nil, err
 	}
 
-	m, err := membersList(client)
+	m, err := membersList(tunneler)
 	if err != nil {
 		return nil, err
 	}
 
 	// Check etcd member health
-	healthStr, err := memberHealth(client, node.PrivateAddress)
+	healthStr, err := memberHealth(tunneler, node.PrivateAddress)
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +100,7 @@ func GetStatus(s *state.State, node kubeoneapi.HostConfig) (*Status, error) {
 }
 
 // memberHealth returns health for a requested etcd member
-func memberHealth(t *httptunnel.HTTPTunnel, nodeAddress string) (*healthRaw, error) {
+func memberHealth(t httptunnel.HTTPDoer, nodeAddress string) (*healthRaw, error) {
 	endpoint := fmt.Sprintf(healthEndpoint, nodeAddress)
 	request, err := http.NewRequest("GET", endpoint, nil)
 	if err != nil {
@@ -108,7 +108,7 @@ func memberHealth(t *httptunnel.HTTPTunnel, nodeAddress string) (*healthRaw, err
 	}
 	request.Header.Set("Content-type", "application/json")
 
-	resp, err := t.Client.Do(request)
+	resp, err := t.Do(request)
 	if err != nil {
 		return &healthRaw{Health: "false"}, nil
 	}
@@ -127,14 +127,14 @@ func memberHealth(t *httptunnel.HTTPTunnel, nodeAddress string) (*healthRaw, err
 	return h, nil
 }
 
-func membersList(t *httptunnel.HTTPTunnel) (*membersListRaw, error) {
+func membersList(t httptunnel.HTTPDoer) (*membersListRaw, error) {
 	request, err := http.NewRequest("GET", membersEndpoint, nil)
 	if err != nil {
 		return nil, err
 	}
 	request.Header.Set("Content-type", "application/json")
 
-	resp, err := t.Client.Do(request)
+	resp, err := t.Do(request)
 	if err != nil {
 		return nil, err
 	}

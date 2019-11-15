@@ -37,11 +37,11 @@ type Status struct {
 
 // CheckAPIServer uses the /healthz endpoint to check are all API server instances healthy
 func GetStatus(s *state.State, node kubeoneapi.HostConfig) (*Status, error) {
-	client, err := httptunnel.NewHTTPTunnel(s, &tls.Config{InsecureSkipVerify: true})
+	tunneler, err := httptunnel.NewHTTPTunnel(s, &tls.Config{InsecureSkipVerify: true})
 	if err != nil {
 		return nil, err
 	}
-	health, err := apiserverHealth(client, node.PrivateAddress)
+	health, err := apiserverHealth(tunneler, node.PrivateAddress)
 	if err != nil {
 		return nil, err
 	}
@@ -52,14 +52,14 @@ func GetStatus(s *state.State, node kubeoneapi.HostConfig) (*Status, error) {
 }
 
 // apiserverHealth checks is API server healthy
-func apiserverHealth(t *httptunnel.HTTPTunnel, nodeAddress string) (bool, error) {
+func apiserverHealth(t httptunnel.HTTPDoer, nodeAddress string) (bool, error) {
 	endpoint := fmt.Sprintf(healthzEndpoint, nodeAddress)
 	request, err := http.NewRequest("GET", endpoint, nil)
 	if err != nil {
 		return false, err
 	}
 
-	resp, err := t.Client.Do(request)
+	resp, err := t.Do(request)
 	if err != nil {
 		return false, nil
 	}
