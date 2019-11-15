@@ -12,6 +12,7 @@ require (
 	github.com/json-iterator/go v1.1.7 // indirect
 	github.com/koron-go/prefixw v0.0.0-20181013140428-271b207a7572
 	github.com/kr/fs v0.1.0 // indirect
+	github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de
 	github.com/onsi/ginkgo v1.8.0 // indirect
 	github.com/onsi/gomega v1.5.0 // indirect
 	github.com/pkg/errors v0.8.1
