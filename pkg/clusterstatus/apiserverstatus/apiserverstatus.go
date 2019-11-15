@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package apiserver
+package apiserverstatus
 
 import (
 	"crypto/tls"
@@ -43,7 +43,9 @@ func GetStatus(s *state.State, node kubeoneapi.HostConfig) (*Status, error) {
 	}
 	health, err := apiserverHealth(tunneler, node.PrivateAddress)
 	if err != nil {
-		return nil, err
+		return &Status{
+			Health: false,
+		}, err
 	}
 
 	return &Status{
@@ -52,7 +54,7 @@ func GetStatus(s *state.State, node kubeoneapi.HostConfig) (*Status, error) {
 }
 
 // apiserverHealth checks is API server healthy
-func apiserverHealth(t httptunnel.HTTPDoer, nodeAddress string) (bool, error) {
+func apiserverHealth(t httptunnel.Doer, nodeAddress string) (bool, error) {
 	endpoint := fmt.Sprintf(healthzEndpoint, nodeAddress)
 	request, err := http.NewRequest("GET", endpoint, nil)
 	if err != nil {
@@ -61,7 +63,7 @@ func apiserverHealth(t httptunnel.HTTPDoer, nodeAddress string) (bool, error) {
 
 	resp, err := t.Do(request)
 	if err != nil {
-		return false, nil
+		return false, err
 	}
 	defer resp.Body.Close()
 

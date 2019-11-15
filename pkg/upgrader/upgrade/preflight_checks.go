@@ -25,7 +25,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
-	"github.com/kubermatic/kubeone/pkg/clusterstatus/preflight"
+	"github.com/kubermatic/kubeone/pkg/clusterstatus/preflightstatus"
 	"github.com/kubermatic/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
@@ -52,7 +52,7 @@ func runPreflightChecks(s *state.State) error {
 
 	// Run preflight checks on nodes
 	s.Logger.Infoln("Running preflight checks…")
-	if err := preflight.RunPreflightChecks(s, nodes); err != nil {
+	if err := preflightstatus.RunPreflightChecks(s, nodes); err != nil {
 		return errors.Wrap(err, "unable to verify prerequisites")
 	}
 

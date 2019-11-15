@@ -30,7 +30,7 @@ type HTTPTunnel struct {
 	*http.Client
 }
 
-type HTTPDoer interface {
+type Doer interface {
 	Do(*http.Request) (*http.Response, error)
 }
 
@@ -51,7 +51,6 @@ func NewHTTPTunnel(s *state.State, tlsConfig *tls.Config) (*HTTPTunnel, error) {
 
 	return &HTTPTunnel{
 		Client: &http.Client{
-			Timeout:   10 * time.Second,
 			Transport: transport,
 		},
 	}, nil

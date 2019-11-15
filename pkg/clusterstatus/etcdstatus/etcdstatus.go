@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package etcd
+package etcdstatus
 
 import (
 	"crypto/tls"
@@ -100,7 +100,7 @@ func GetStatus(s *state.State, node kubeoneapi.HostConfig) (*Status, error) {
 }
 
 // memberHealth returns health for a requested etcd member
-func memberHealth(t httptunnel.HTTPDoer, nodeAddress string) (*healthRaw, error) {
+func memberHealth(t httptunnel.Doer, nodeAddress string) (*healthRaw, error) {
 	endpoint := fmt.Sprintf(healthEndpoint, nodeAddress)
 	request, err := http.NewRequest("GET", endpoint, nil)
 	if err != nil {
@@ -110,7 +110,7 @@ func memberHealth(t httptunnel.HTTPDoer, nodeAddress string) (*healthRaw, error)
 
 	resp, err := t.Do(request)
 	if err != nil {
-		return &healthRaw{Health: "false"}, nil
+		return &healthRaw{Health: "false"}, err
 	}
 	defer resp.Body.Close()
 
@@ -127,7 +127,7 @@ func memberHealth(t httptunnel.HTTPDoer, nodeAddress string) (*healthRaw, error)
 	return h, nil
 }
 
-func membersList(t httptunnel.HTTPDoer) (*membersListRaw, error) {
+func membersList(t httptunnel.Doer) (*membersListRaw, error) {
 	request, err := http.NewRequest("GET", membersEndpoint, nil)
 	if err != nil {
 		return nil, err

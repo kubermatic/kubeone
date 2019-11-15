@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package preflight
+package preflightstatus
 
 import (
 	"github.com/pkg/errors"

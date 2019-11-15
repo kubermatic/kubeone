@@ -24,15 +24,14 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/clusterstatus/apiserver"
-	"github.com/kubermatic/kubeone/pkg/clusterstatus/etcd"
-	"github.com/kubermatic/kubeone/pkg/clusterstatus/preflight"
+	"github.com/kubermatic/kubeone/pkg/clusterstatus/apiserverstatus"
+	"github.com/kubermatic/kubeone/pkg/clusterstatus/etcdstatus"
+	"github.com/kubermatic/kubeone/pkg/clusterstatus/preflightstatus"
 	"github.com/kubermatic/kubeone/pkg/state"
 	"github.com/kubermatic/kubeone/pkg/tabwriter"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/labels"
-	utilerrors "k8s.io/apimachinery/pkg/util/errors"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -93,7 +92,7 @@ func GetClusterStatus(s *state.State) ([]Status, error) {
 	// Get node list
 	nodes := corev1.NodeList{}
 	nodeListOpts := dynclient.ListOptions{
-		LabelSelector: labels.SelectorFromSet(map[string]string{preflight.LabelControlPlaneNode: ""}),
+		LabelSelector: labels.SelectorFromSet(map[string]string{preflightstatus.LabelControlPlaneNode: ""}),
 	}
 	err := s.DynamicClient.List(context.Background(), &nodes, &nodeListOpts)
 	if err != nil {
@@ -101,18 +100,18 @@ func GetClusterStatus(s *state.State) ([]Status, error) {
 	}
 
 	// Run preflight checks
-	if preflightErr := preflight.RunPreflightChecks(s, nodes); preflightErr != nil {
+	if preflightErr := preflightstatus.RunPreflightChecks(s, nodes); preflightErr != nil {
 		return nil, preflightErr
 	}
 
 	status := []Status{}
 	errs := []error{}
 	for _, host := range s.Cluster.Hosts {
-		etcdStatus, err := etcd.GetStatus(s, host)
+		etcdStatus, err := etcdstatus.GetStatus(s, host)
 		if err != nil {
 			errs = append(errs, err)
 		}
-		apiserverStatus, err := apiserver.GetStatus(s, host)
+		apiserverStatus, err := apiserverstatus.GetStatus(s, host)
 		if err != nil {
 			errs = append(errs, err)
 		}
@@ -140,7 +139,9 @@ func GetClusterStatus(s *state.State) ([]Status, error) {
 		})
 	}
 	if len(errs) > 0 {
-		return nil, utilerrors.NewAggregate(errs)
+		for _, e := range errs {
+			s.Logger.Errorf("failed to obtain cluster status: %v", e)
+		}
 	}
 
 	return status, nil
