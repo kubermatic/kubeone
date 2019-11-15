@@ -21,19 +21,18 @@ full_versions["1.14"]="v1.14.8"
 full_versions["1.15"]="v1.15.5"
 full_versions["1.16"]="v1.16.2"
 
-root_dir=${KUBE_TEST_DIR:-"/opt/kube-test"}
+root_dir=${KUBETESTS_ROOT:-"/opt/kube-test"}
 
 for version in "${!full_versions[@]}"; do
+    full_version="${full_versions[${version}]}"
     directory="${root_dir}/kubernetes-${version}"
     if [[ ! -d "${directory}" ]]; then
-        full_version="${full_versions[${version}]}"
         mkdir -p ${directory}
         cd ${directory}
         kubetest --extract=${full_version}
         cd -
 
         find ${directory} -name "*.tar.gz" -type f -delete
-        rm -r ${directory}/kubernetes/cluster
         rm ${directory}/kubernetes/platforms/linux/amd64/gendocs
         rm ${directory}/kubernetes/platforms/linux/amd64/genkubedocs
         rm ${directory}/kubernetes/platforms/linux/amd64/genman

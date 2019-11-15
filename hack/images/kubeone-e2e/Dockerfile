@@ -26,7 +26,9 @@ RUN apk add --no-cache \
     ca-certificates \
     coreutils \
     curl \
+    gcc \
     git \
+    libc-dev \
     make \
     openssh-client \
     openssh-keygen \
@@ -39,7 +41,7 @@ RUN curl -fL https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terra
 RUN chmod +x /usr/local/bin/terraform
 
 ENV KUBETEST_COMMIT "eb1a87c9083a31f9a9dda7822cb674f9f8d99439"
-ENV TEST_ROOT_DIR "/opt/kube-test"
+ENV KUBETESTS_ROOT "/opt/kube-test"
 ENV GO111MODULE=on
 
 # Install the kubetest binary
