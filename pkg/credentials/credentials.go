@@ -137,13 +137,14 @@ func ProviderCredentials(p kubeone.CloudProviderName, credentialsFilePath string
 			return nil, errors.WithStack(err)
 		}
 
+		vcenterPrefix := vscreds[VSphereAddressMC]
+
 		// force scheme, as machine-controller requires it while terraform does not
 		vscreds[VSphereAddressMC] = "https://" + vscreds[VSphereAddressMC]
 
 		// Save credentials in Secret and configure vSphere cloud controller
 		// manager to read it, in replace of storing those in /etc/kubernates/cloud-config
 		// see more: https://vmware.github.io/vsphere-storage-for-kubernetes/documentation/k8s-secret.html
-		vcenterPrefix := vscreds[VSphereAddressMC]
 		vscreds[fmt.Sprintf("%s.username", vcenterPrefix)] = vscreds[VSphereUsernameMC]
 		vscreds[fmt.Sprintf("%s.password", vcenterPrefix)] = vscreds[VSpherePassword]
 		return vscreds, nil
