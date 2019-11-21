@@ -29,9 +29,9 @@ locals {
   subnet_newbits   = var.subnets_cidr - (32 - local.vpc_mask)
 
   subnets = {
-    "${local.zoneA}" = aws_subnet.public[0].id
-    "${local.zoneB}" = aws_subnet.public[1].id
-    "${local.zoneC}" = aws_subnet.public[2].id
+    "${local.zoneA}" = length(aws_subnet.public.*.id) > 0 ? aws_subnet.public[0].id : ""
+    "${local.zoneB}" = length(aws_subnet.public.*.id) > 0 ? aws_subnet.public[1].id : ""
+    "${local.zoneC}" = length(aws_subnet.public.*.id) > 0 ? aws_subnet.public[2].id : ""
   }
 }
 
