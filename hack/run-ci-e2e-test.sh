@@ -17,15 +17,15 @@
 # This script is mostly used in CI
 # It installs dependencies and starts the tests
 
-set -euo pipefail
-# Required for signal propagation to work so the cleanup trap
-# gets executed when the script receives a SIGINT
+set -o errexit
+set -o nounset
 set -o monitor
+set -o pipefail
 
 RUNNING_IN_CI=${JOB_NAME:-""}
 BUILD_ID=${BUILD_ID:-"${USER}-local"}
 PROVIDER=${PROVIDER:-"aws"}
-KUBETESTS_ROOT=$(realpath ${KUBETESTS_ROOT:-"/opt/kube-test"})
+KUBETESTS_ROOT=$(realpath "${KUBETESTS_ROOT:-"/opt/kube-test"}")
 TEST_SET=${TEST_SET:-"conformance"}
 TEST_CLUSTER_TARGET_VERSION=${TEST_CLUSTER_TARGET_VERSION:-""}
 TEST_CLUSTER_INITIAL_VERSION=${TEST_CLUSTER_INITIAL_VERSION:-""}
@@ -39,21 +39,20 @@ TERRAFORM_DIR=$PWD/examples/terraform
 function cleanup() {
   set +e
   for try in {1..20}; do
-    cd ${TERRAFORM_DIR}/${PROVIDER}
+    cd "${TERRAFORM_DIR}/${PROVIDER}"
     echo "Cleaning up terraform state, attempt ${try}"
     # Upstream interpolation bug, but we dont care about the output
     # at destroy time anyways: https://github.com/hashicorp/terraform/issues/17691
-    terraform init --backend-config=key=${BUILD_ID}
-    terraform destroy -auto-approve
-    if [[ $? == 0 ]]; then break; fi
+    terraform init --backend-config=key="${BUILD_ID}"
+    if terraform destroy -auto-approve; then break; fi
     echo "Sleeping for $try seconds"
-    sleep ${try}s
+    sleep "${try}"s
   done
 }
 trap cleanup EXIT
 
 function fail() {
-  echo $1
+  echo "$1"
   exit 1
 }
 
@@ -65,8 +64,8 @@ function fail() {
 # additionally the version must be in a very specific format.
 if [ -n "${RUNNING_IN_CI}" ]; then
   # set up terraform remote backend configuration
-  for dir in ${TERRAFORM_DIR}/*; do
-    ln -s $PWD/test/e2e/testdata/s3_backend.tf $dir/s3_backend.tf
+  for dir in "${TERRAFORM_DIR}"/*; do
+    ln -s "${PWD}"/test/e2e/testdata/s3_backend.tf "${dir}"/s3_backend.tf
   done
 
   case ${PROVIDER} in
@@ -85,7 +84,8 @@ if [ -n "${RUNNING_IN_CI}" ]; then
     export TF_VAR_project_id=${PACKET_PROJECT_ID}
     ;;
   "gce")
-    export GOOGLE_CREDENTIALS=$(echo ${KUBEONE_GOOGLE_SERVICE_ACCOUNT} | base64 -d)
+    GOOGLE_CREDENTIALS=$(base64 -d <<<"${KUBEONE_GOOGLE_SERVICE_ACCOUNT}")
+    export GOOGLE_CREDENTIALS
     ;;
   "openstack")
     export OS_AUTH_URL=${OS_AUTH_URL}
@@ -94,21 +94,21 @@ if [ -n "${RUNNING_IN_CI}" ]; then
     export OS_TENANT_NAME=${OS_TENANT_NAME}
     export OS_USERNAME=${OS_USERNAME}
     export OS_PASSWORD=${OS_PASSWORD}
-    echo ${k1_credentials} >/tmp/credentials.yaml
+    fail "openstack no implemented yet"
+    # echo ${k1_credentials} >/tmp/credentials.yaml
     ;;
   *)
-    echo "unknown provider ${PROVIDER}"
-    exit -1
+    fail "unknown provider ${PROVIDER}"
     ;;
   esac
 
   if [ -d "${KUBETESTS_ROOT}" ]; then
     kubeone_build_dir="_build"
-    for kubetest_dir in ${KUBETESTS_ROOT}/*; do
-      basekubetest_name=$(basename ${kubetest_dir})
+    for kubetest_dir in "${KUBETESTS_ROOT}"/*; do
+      basekubetest_name=$(basename "${kubetest_dir}")
       kubetest_dst_dir="${kubeone_build_dir}/${basekubetest_name}"
       mkdir -p "${kubetest_dst_dir}"
-      ln -s $kubetest_dir/* "${kubetest_dst_dir}"
+      ln -s "${kubetest_dir}"/* "${kubetest_dst_dir}"
     done
   else
     fail "kubetests directory ${KUBETESTS_ROOT} in not found"
@@ -121,11 +121,13 @@ export TF_VAR_ssh_public_key_file=${SSH_PUBLIC_KEY_FILE}
 
 if [ ! -f "${SSH_PRIVATE_KEY_FILE}" ]; then
   echo "Generating SSH key pair"
-  ssh-keygen -f ${SSH_PRIVATE_KEY_FILE} -N ''
-  chmod 400 ${SSH_PRIVATE_KEY_FILE}
-  eval $(ssh-agent)
-  ssh-add ${SSH_PRIVATE_KEY_FILE}
+  ssh-keygen -f "${SSH_PRIVATE_KEY_FILE}" -N ''
+  chmod 400 "${SSH_PRIVATE_KEY_FILE}"
 fi
+
+ssh-agent -k || true
+eval "$(ssh-agent)"
+ssh-add "${SSH_PRIVATE_KEY_FILE}"
 
 function runE2E() {
   local test_set=$1
@@ -135,15 +137,15 @@ function runE2E() {
   go test \
     -tags=e2e \
     -v \
-    -timeout=${timeout} \
-    -run=${test_set} \
-    ./test/e2e/... \
-    -identifier=${BUILD_ID} \
-    -provider=${PROVIDER} \
-    -os-control-plane=${TEST_OS_CONTROL_PLANE} \
-    -os-workers=${TEST_OS_WORKERS} \
-    -target-version=${TEST_CLUSTER_TARGET_VERSION} \
-    -initial-version=${TEST_CLUSTER_INITIAL_VERSION}
+    -timeout="${timeout}" \
+    -run="${test_set}" \
+    ./test/e2e \
+    -identifier="${BUILD_ID}" \
+    -provider="${PROVIDER}" \
+    -os-control-plane="${TEST_OS_CONTROL_PLANE}" \
+    -os-workers="${TEST_OS_WORKERS}" \
+    -target-version="${TEST_CLUSTER_TARGET_VERSION}" \
+    -initial-version="${TEST_CLUSTER_INITIAL_VERSION}"
 }
 
 # Start the tests
@@ -156,7 +158,6 @@ case ${TEST_SET} in
   runE2E "TestClusterUpgrade" "120m"
   ;;
 *)
-  echo "unknown TEST_SET: ${TEST_SET}"
-  exit -1
+  fail "unknown TEST_SET: ${TEST_SET}"
   ;;
 esac
