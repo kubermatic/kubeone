@@ -43,8 +43,8 @@ type Kubetest struct {
 }
 
 // NewKubetest creates and provisions the Kubetest structure
-func NewKubetest(k8sVersion, kubetestDir string, envVars map[string]string) Kubetest {
-	return Kubetest{
+func NewKubetest(k8sVersion, kubetestDir string, envVars map[string]string) *Kubetest {
+	return &Kubetest{
 		kubetestDir:       filepath.Clean(kubetestDir),
 		kubernetesVersion: k8sVersion,
 		envVars:           envVars,
@@ -55,7 +55,7 @@ func NewKubetest(k8sVersion, kubetestDir string, envVars map[string]string) Kube
 func (p *Kubetest) Verify(scenario string) error {
 	kubetestPath, err := findKubetest(p.kubetestDir, p.kubernetesVersion)
 	if err != nil {
-		return err
+		return fmt.Errorf("coudn't find kubetest scenarios: %w", err)
 	}
 
 	// Kubetest requires version to have the "v" prefix
@@ -63,20 +63,21 @@ func (p *Kubetest) Verify(scenario string) error {
 		p.kubernetesVersion = fmt.Sprintf("v%s", p.kubernetesVersion)
 	}
 
-	testsArgs := fmt.Sprintf("--test_args=--ginkgo.focus=%s --ginkgo.skip=%s -ginkgo.noColor=true -ginkgo.flakeAttempts=2", scenario, skip)
-	_, err = testutil.ExecuteCommand(kubetestPath,
-		"kubetest",
-		[]string{
+	err = testutil.NewExec("kubetest",
+		testutil.WithArgs(
 			"--provider=skeleton",
 			"--test",
-			"--ginkgo-parallel",
+			"--ginkgo-parallel=3",
 			"--check-version-skew=false",
-			testsArgs,
-		},
-		p.envVars,
-	)
+			"--test_args",
+			fmt.Sprintf("--ginkgo.flakeAttempts=2 --ginkgo.noColor=true --ginkgo.skip=%s --ginkgo.focus=%s", skip, scenario),
+		),
+		testutil.WithEnv(os.Environ()),
+		testutil.WithMapEnv(p.envVars),
+		testutil.InDir(kubetestPath),
+	).Run()
 	if err != nil {
-		return fmt.Errorf("k8s conformnce tests failed: %v", err)
+		return fmt.Errorf("k8s conformnce tests failed: %w", err)
 	}
 
 	return nil
@@ -110,7 +111,7 @@ func findKubetest(basedir, version string) (string, error) {
 		fileToCheck := filepath.Join(candidateKubetestDir, "kubernetes/version")
 
 		if _, err := os.Stat(fileToCheck); err == nil {
-			return filepath.Clean(candidateKubetestDir), nil
+			return filepath.Clean(filepath.Join(candidateKubetestDir, "kubernetes")), nil
 		}
 	}
 

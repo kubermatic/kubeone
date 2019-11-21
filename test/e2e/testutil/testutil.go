@@ -17,10 +17,8 @@ limitations under the License.
 package testutil
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -39,65 +37,6 @@ func IsCommandAvailable(name string) bool {
 	}
 
 	return false
-}
-
-// ExecuteCommand executes the given command
-func ExecuteCommand(path, name string, arg []string, additionalEnv map[string]string) (string, error) {
-	var (
-		stdouterrBuf bytes.Buffer
-	)
-
-	stdout := io.MultiWriter(os.Stdout, &stdouterrBuf)
-	stderr := io.MultiWriter(os.Stderr, &stdouterrBuf)
-	exe := Exec{
-		Command: name,
-		Cwd:     path,
-		Args:    arg,
-		Stderr:  stderr,
-		Stdout:  stdout,
-		Env:     additionalEnv,
-	}
-
-	return stdouterrBuf.String(), exe.Run()
-}
-
-type Exec struct {
-	Args    []string
-	Command string
-	Cwd     string
-	Env     map[string]string
-	Stderr  io.Writer
-	Stdout  io.Writer
-}
-
-func (e Exec) Run() error {
-	var (
-		stdout io.Writer = os.Stdout
-		stderr io.Writer = os.Stderr
-	)
-
-	if e.Stdout != nil {
-		stdout = e.Stdout
-	}
-
-	if e.Stderr != nil {
-		stderr = e.Stderr
-	}
-
-	cmd := exec.Command(e.Command, e.Args...)
-	cmd.Dir = e.Cwd
-
-	if e.Env != nil {
-		cmd.Env = os.Environ()
-		for k, v := range e.Env {
-			cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", k, v))
-		}
-	}
-
-	cmd.Stdout = stdout
-	cmd.Stderr = stderr
-
-	return cmd.Run()
 }
 
 // CreateFile create file with given content

@@ -64,7 +64,7 @@ var _ = func() bool {
 	return true
 }()
 
-func setupTearDown(p provisioner.Provisioner, k Kubeone) func(t *testing.T) {
+func setupTearDown(p provisioner.Provisioner, k *Kubeone) func(t *testing.T) {
 	return func(t *testing.T) {
 		t.Log("cleanup ....")
 
