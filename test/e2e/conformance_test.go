@@ -271,7 +271,7 @@ func TestClusterConformance(t *testing.T) {
 
 			clusterVerifier := NewKubetest(testTargetVersion, "../../_build", map[string]string{
 				"KUBERNETES_CONFORMANCE_TEST": "y",
-				"KUBE_MASTER_URL":             "https://" + restConfig.Host,
+				"KUBE_MASTER_URL":             restConfig.Host,
 			})
 
 			// Run NodeConformance tests
