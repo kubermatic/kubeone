@@ -63,6 +63,7 @@ func (p *Kubetest) Verify(scenario string) error {
 		p.kubernetesVersion = fmt.Sprintf("v%s", p.kubernetesVersion)
 	}
 
+	testArgs := fmt.Sprintf("--ginkgo.noColor=true --ginkgo.flakeAttempts=2 --ginkgo.skip=%s --ginkgo.focus=%s", skip, scenario)
 	err = testutil.NewExec("kubetest",
 		testutil.WithArgs(
 			"--provider=skeleton",
@@ -70,7 +71,7 @@ func (p *Kubetest) Verify(scenario string) error {
 			"--ginkgo-parallel=3",
 			"--check-version-skew=false",
 			"--test_args",
-			fmt.Sprintf("--ginkgo.noColor=true --ginkgo.flakeAttempts=2 --ginkgo.skip=%s --ginkgo.focus=%s", skip, scenario),
+			fmt.Sprintf("%q", testArgs),
 		),
 		testutil.WithEnv(os.Environ()),
 		testutil.WithMapEnv(p.envVars),
