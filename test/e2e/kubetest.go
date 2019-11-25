@@ -63,15 +63,13 @@ func (p *Kubetest) Verify(scenario string) error {
 		p.kubernetesVersion = fmt.Sprintf("v%s", p.kubernetesVersion)
 	}
 
-	testArgs := fmt.Sprintf("--ginkgo.noColor=true --ginkgo.flakeAttempts=2 --ginkgo.skip=%q --ginkgo.focus=%q", skip, scenario)
+	testsArgs := fmt.Sprintf("--test_args=--ginkgo.focus=%s --ginkgo.skip=%s -ginkgo.noColor=true -ginkgo.flakeAttempts=2", scenario, skip)
 	err = testutil.NewExec("kubetest",
 		testutil.WithArgs(
 			"--provider=skeleton",
 			"--test",
-			"--ginkgo-parallel=3",
 			"--check-version-skew=false",
-			"--test_args",
-			fmt.Sprintf("%q", testArgs),
+			testsArgs,
 		),
 		testutil.WithEnv(os.Environ()),
 		testutil.WithMapEnv(p.envVars),
