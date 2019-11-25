@@ -101,16 +101,16 @@ func TestClusterConformance(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			// Only run selected test suite.
 			// Test options are controlled using flags.
+			if testProvider != tc.provider {
+				t.SkipNow()
+			}
+
 			if len(testRunIdentifier) == 0 {
 				t.Fatal("-identifier must be set")
 			}
 
 			if len(testTargetVersion) == 0 {
 				t.Fatal("-target-version must be set")
-			}
-
-			if testProvider != tc.provider {
-				t.SkipNow()
 			}
 
 			if err := ValidateOperatingSystem(testOSControlPlane); err != nil {
@@ -135,9 +135,6 @@ func TestClusterConformance(t *testing.T) {
 
 			// Create KubeOne target and prepare kubetest
 			target := NewKubeone(testPath, tc.configFilePath)
-			clusterVerifier := NewKubetest(testTargetVersion, "../../_build", map[string]string{
-				"KUBERNETES_CONFORMANCE_TEST": "y",
-			})
 
 			// Ensure terraform, kubetest and all needed prerequisites are in place before running test
 			t.Log("Validating prerequisites…")
@@ -271,6 +268,11 @@ func TestClusterConformance(t *testing.T) {
 			if err = verifyVersion(client, metav1.NamespaceSystem, testTargetVersion); err != nil {
 				t.Fatalf("version mismatch: %v", err)
 			}
+
+			clusterVerifier := NewKubetest(testTargetVersion, "../../_build", map[string]string{
+				"KUBERNETES_CONFORMANCE_TEST": "y",
+				"KUBE_MASTER_URL":             "https://" + restConfig.Host,
+			})
 
 			// Run NodeConformance tests
 			t.Log("Running conformance tests (this can take up to 30 minutes)…")

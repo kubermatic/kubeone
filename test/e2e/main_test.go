@@ -74,6 +74,7 @@ func setupTearDown(p provisioner.Provisioner, k *Kubeone) func(t *testing.T) {
 		if errKubeone != nil {
 			t.Errorf("%v", errKubeone)
 		}
+
 		if errProvisioner != nil {
 			t.Errorf("%v", errProvisioner)
 		}

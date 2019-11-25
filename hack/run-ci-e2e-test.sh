@@ -31,11 +31,14 @@ TEST_CLUSTER_TARGET_VERSION=${TEST_CLUSTER_TARGET_VERSION:-""}
 TEST_CLUSTER_INITIAL_VERSION=${TEST_CLUSTER_INITIAL_VERSION:-""}
 TEST_OS_CONTROL_PLANE=${TEST_OS_CONTROL_PLANE:-""}
 TEST_OS_WORKERS=${TEST_OS_WORKERS:-""}
-export TF_VAR_cluster_name=k1-${BUILD_ID}
-
 PATH=$PATH:$(go env GOPATH)/bin
-
 TERRAFORM_DIR=$PWD/examples/terraform
+SSH_PRIVATE_KEY_FILE="${HOME}/.ssh/id_rsa_kubeone_e2e"
+
+export TF_VAR_cluster_name=k1-${BUILD_ID}
+export SSH_PUBLIC_KEY_FILE="${SSH_PRIVATE_KEY_FILE}.pub"
+export TF_VAR_ssh_public_key_file=${SSH_PUBLIC_KEY_FILE}
+
 function cleanup() {
   set +e
   for try in {1..20}; do
@@ -56,18 +59,20 @@ function fail() {
   exit 1
 }
 
-# If the following variable is set then this script is running in CI
-# and the assumption is that the image contains kubernetes binaries
-#
-# note:
-# kubetest assumes that the last part of that path contains "kubernetes", if not then it complains,
-# additionally the version must be in a very specific format.
-if [ -n "${RUNNING_IN_CI}" ]; then
+function link_s3_backend() {
   # set up terraform remote backend configuration
   for dir in "${TERRAFORM_DIR}"/*; do
     ln -s "${PWD}"/test/e2e/testdata/s3_backend.tf "${dir}"/s3_backend.tf
   done
+}
 
+function setup_ci_environment_vars() {
+  # If the following variable is set then this script is running in CI
+  # and the assumption is that the image contains kubernetes binaries
+  #
+  # note:
+  # kubetest assumes that the last part of that path contains "kubernetes", if not then it complains,
+  # additionally the version must be in a very specific format.
   case ${PROVIDER} in
   "aws")
     export AWS_ACCESS_KEY_ID=${AWS_E2E_TESTS_KEY_ID}
@@ -108,26 +113,30 @@ if [ -n "${RUNNING_IN_CI}" ]; then
       basekubetest_name=$(basename "${kubetest_dir}")
       kubetest_dst_dir="${kubeone_build_dir}/${basekubetest_name}"
       mkdir -p "${kubetest_dst_dir}"
-      ln -s "${kubetest_dir}"/* "${kubetest_dst_dir}"
+      ln -fs "${kubetest_dir}"/* "${kubetest_dst_dir}"
     done
   else
     fail "kubetests directory ${KUBETESTS_ROOT} in not found"
   fi
-fi
+}
 
-SSH_PRIVATE_KEY_FILE="${HOME}/.ssh/id_rsa_kubeone_e2e"
-export SSH_PUBLIC_KEY_FILE="${SSH_PRIVATE_KEY_FILE}.pub"
-export TF_VAR_ssh_public_key_file=${SSH_PUBLIC_KEY_FILE}
+function generate_ssh_key() {
+  local private_ssh_key_file=$1
 
-if [ ! -f "${SSH_PRIVATE_KEY_FILE}" ]; then
-  echo "Generating SSH key pair"
-  ssh-keygen -f "${SSH_PRIVATE_KEY_FILE}" -N ''
-  chmod 400 "${SSH_PRIVATE_KEY_FILE}"
-fi
+  if [ ! -f "${private_ssh_key_file}" ]; then
+    echo "Generating SSH key pair"
+    ssh-keygen -f "${private_ssh_key_file}" -N ''
+    chmod 400 "${private_ssh_key_file}"
+  fi
+}
 
-ssh-agent -k || true
-eval "$(ssh-agent)"
-ssh-add "${SSH_PRIVATE_KEY_FILE}"
+function ssh_agent() {
+  local private_ssh_key_file=$1
+
+  ssh-agent -k || true
+  eval "$(ssh-agent)"
+  ssh-add "${private_ssh_key_file}"
+}
 
 function runE2E() {
   local test_set=$1
@@ -147,6 +156,14 @@ function runE2E() {
     -target-version="${TEST_CLUSTER_TARGET_VERSION}" \
     -initial-version="${TEST_CLUSTER_INITIAL_VERSION}"
 }
+
+if [ -n "${RUNNING_IN_CI}" ]; then
+  setup_ci_environment_vars
+  link_s3_backend
+fi
+
+generate_ssh_key "${SSH_PRIVATE_KEY_FILE}"
+ssh_agent "${SSH_PRIVATE_KEY_FILE}"
 
 # Start the tests
 echo "Running E2E tests ..."
