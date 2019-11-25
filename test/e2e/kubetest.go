@@ -28,11 +28,11 @@ import (
 )
 
 const (
-	NodeConformance = `\[NodeConformance\]`
-	Conformance     = `\[Conformance\]`
+	NodeConformance = `'\[NodeConformance\]'`
+	Conformance     = `'\[Conformance\]'`
 )
 
-const skip = `Alpha|\[(Disruptive|Feature:[^\]]+|Flaky|Serial|Slow)\]`
+const skip = `'Alpha|\[(Disruptive|Feature:[^\]]+|Flaky|Serial|Slow)\]'`
 
 // Kubetest configures the Kubetest conformance tester
 type Kubetest struct {
