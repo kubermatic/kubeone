@@ -53,8 +53,23 @@ type Exec struct {
 }
 
 func (e *Exec) Run() error {
+	cmd := e.build()
+
+	if e.Logf != nil {
+		e.Logf("%v", cmd.Args)
+	}
+
+	return cmd.Run()
+}
+
+func (e *Exec) build() *exec.Cmd {
 	cmd := exec.Command(e.Command, e.Args...) //nolint:gosec
 	cmd.Dir = e.Cwd
+
+	if len(e.Env) != 0 {
+		cmd.Env = make([]string, len(e.Env))
+		copy(cmd.Env, e.Env)
+	}
 
 	if e.Stdout != nil {
 		cmd.Stdout = e.Stdout
@@ -64,11 +79,7 @@ func (e *Exec) Run() error {
 		cmd.Stderr = e.Stderr
 	}
 
-	if e.Logf != nil {
-		e.Logf("%v", cmd.Args)
-	}
-
-	return cmd.Run()
+	return cmd
 }
 
 func WithArgs(args ...string) ExecOpt {
