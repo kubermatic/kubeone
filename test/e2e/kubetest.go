@@ -28,11 +28,10 @@ import (
 )
 
 const (
-	NodeConformance = `'\[NodeConformance\]'`
-	Conformance     = `'\[Conformance\]'`
+	NodeConformance = `\[NodeConformance\]`
+	Conformance     = `\[Conformance\]`
+	Skip            = `Alpha|\[(Disruptive|Feature:[^\]]+|Flaky|Serial|Slow)\]`
 )
-
-const skip = `'Alpha|\[(Disruptive|Feature:[^\]]+|Flaky|Serial|Slow)\]'`
 
 // Kubetest configures the Kubetest conformance tester
 type Kubetest struct {
@@ -63,7 +62,7 @@ func (p *Kubetest) Verify(scenario string) error {
 		p.kubernetesVersion = fmt.Sprintf("v%s", p.kubernetesVersion)
 	}
 
-	testsArgs := fmt.Sprintf(`--test_args="-test.v -ginkgo.v -ginkgo.focus=%s -ginkgo.skip=%s -ginkgo.noColor=true -ginkgo.flakeAttempts=2"`, scenario, skip)
+	testsArgs := fmt.Sprintf(`--test_args="--ginkgo.focus=%s --ginkgo.skip=%s --ginkgo.noColor=true --ginkgo.flakeAttempts=2"`, scenario, Skip)
 	err = testutil.NewExec("kubetest",
 		testutil.WithArgs(
 			"--provider=skeleton",
