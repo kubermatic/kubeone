@@ -67,6 +67,7 @@ lint:
 	golangci-lint run ./pkg/... ./test/...
 
 .PHONY: verify-licence
+verify-licence: GOFLAGS = -mod=readonly
 verify-licence: vendor
 	wwhrd check
 
