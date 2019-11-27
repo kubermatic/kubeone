@@ -45,6 +45,7 @@ dist/kubeone: buildenv
 	go build -ldflags='$(GOLDFLAGS)' -v -o $@ .
 
 .PHONY: generate-internal-groups
+generate-internal-groups: GOFLAGS = -mod=readonly
 generate-internal-groups: vendor
 	./hack/update-codegen.sh
 
@@ -70,6 +71,7 @@ verify-licence: vendor
 	wwhrd check
 
 .PHONY: verify-codegen
+verify-codegen: GOFLAGS = -mod=readonly
 verify-codegen: vendor
 	./hack/verify-codegen.sh
 
