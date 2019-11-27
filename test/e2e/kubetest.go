@@ -68,9 +68,12 @@ func (p *Kubetest) Verify(scenario string) error {
 			fmt.Sprintf("--ginkgo.skip=%s", Skip),
 			"--ginkgo.noColor=true",
 			"--ginkgo.flakeAttempts=2",
-			"--ginkgo.parallel.node=3",
 		),
 		testutil.WithMapEnv(p.envVars),
+		testutil.WithEnv(os.Environ()),
+		testutil.WithEnvs(
+			"GINKGO_PARALLEL=y",
+		),
 		testutil.InDir(kubetestPath),
 	).Run()
 	if err != nil {
