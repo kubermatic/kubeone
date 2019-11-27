@@ -96,7 +96,7 @@ variable "ami" {
 }
 
 variable "subnets_cidr" {
-  default     = 27
+  default     = 24
   description = "CIDR mask bits per subnet"
 }
 

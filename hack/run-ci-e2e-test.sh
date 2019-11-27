@@ -36,6 +36,7 @@ TERRAFORM_DIR=$PWD/examples/terraform
 SSH_PRIVATE_KEY_FILE="${HOME}/.ssh/id_rsa_kubeone_e2e"
 
 export TF_VAR_cluster_name=k1-${BUILD_ID}
+export TF_VAR_subnets_cidr=28
 export SSH_PUBLIC_KEY_FILE="${SSH_PRIVATE_KEY_FILE}.pub"
 export TF_VAR_ssh_public_key_file=${SSH_PUBLIC_KEY_FILE}
 
