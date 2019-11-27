@@ -152,12 +152,11 @@ func TestClusterUpgrade(t *testing.T) {
 			)
 
 			if tc.provider == provisioner.OpenStack {
-				clusterNetworkPod = "192.168.0.0/16"
-				clusterNetworkService = "172.16.0.0/12"
+				clusterNetworkPod = clusterNetworkPodCIDR
+				clusterNetworkService = clusterNetworkServiceCIDR
 			}
 
-			err = target.CreateConfig(testInitialVersion, tc.provider,
-				tc.providerExternal, clusterNetworkPod, clusterNetworkService)
+			err = target.CreateConfig(testInitialVersion, tc.provider, tc.providerExternal, clusterNetworkPod, clusterNetworkService)
 			if err != nil {
 				t.Fatalf("failed to create KubeOneCluster manifest: %v", err)
 			}
@@ -191,6 +190,10 @@ func TestClusterUpgrade(t *testing.T) {
 			if tc.provider == provisioner.OpenStack {
 				installFlags = append(installFlags, "-c", "/tmp/credentials.yaml")
 			}
+
+			sleepTime := 2 * time.Minute
+			t.Logf("sleep %s", sleepTime)
+			time.Sleep(sleepTime)
 
 			err = target.Install(tf, installFlags)
 			if err != nil {
@@ -262,7 +265,7 @@ func TestClusterUpgrade(t *testing.T) {
 				t.Fatalf("failed to create KubeOneCluster manifest: %v", err)
 			}
 
-			// Run 'kubeone install'
+			// Run 'kubeone upgrade'
 			t.Log("Running 'kubeone upgrade'…")
 			var upgradeFlags []string
 
