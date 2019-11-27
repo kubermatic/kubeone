@@ -62,16 +62,14 @@ func (p *Kubetest) Verify(scenario string) error {
 		p.kubernetesVersion = fmt.Sprintf("v%s", p.kubernetesVersion)
 	}
 
-	testsArgs := fmt.Sprintf(`--test_args="--ginkgo.focus=%s --ginkgo.skip=%s --ginkgo.noColor=true --ginkgo.flakeAttempts=2"`, scenario, Skip)
-	err = testutil.NewExec("kubetest",
+	err = testutil.NewExec("./hack/ginkgo-e2e.sh",
 		testutil.WithArgs(
-			"--provider=skeleton",
-			"--test",
-			"--check-version-skew=false",
-			"--ginkgo-parallel",
-			testsArgs,
+			fmt.Sprintf("--ginkgo.focus=%s", scenario),
+			fmt.Sprintf("--ginkgo.skip=%s", Skip),
+			"--ginkgo.noColor=true",
+			"--ginkgo.flakeAttempts=2",
+			"--ginkgo.parallel.node=3",
 		),
-		testutil.WithEnv(os.Environ()),
 		testutil.WithMapEnv(p.envVars),
 		testutil.InDir(kubetestPath),
 	).Run()

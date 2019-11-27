@@ -131,6 +131,13 @@ func WithEnv(env []string) ExecOpt {
 	}
 }
 
+func WithEnvs(envs ...string) ExecOpt {
+	return func(e *Exec) *Exec {
+		e.Env = append(e.Env, envs...)
+		return e
+	}
+}
+
 func LogFunc(logf func(string, ...interface{})) ExecOpt {
 	return func(e *Exec) *Exec {
 		e.Logf = logf
