@@ -19,7 +19,10 @@ package e2e
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
+
+	"github.com/Masterminds/semver"
 
 	"github.com/kubermatic/kubeone/test/e2e/testutil"
 )
@@ -27,9 +30,8 @@ import (
 const (
 	NodeConformance = `\[NodeConformance\]`
 	Conformance     = `\[Conformance\]`
+	Skip            = `Alpha|\[(Disruptive|Feature:[^\]]+|Flaky|Serial|Slow)\]`
 )
-
-const skip = `Alpha|\[(Disruptive|Feature:[^\]]+|Flaky|Serial|Slow)\]`
 
 // Kubetest configures the Kubetest conformance tester
 type Kubetest struct {
@@ -40,9 +42,9 @@ type Kubetest struct {
 }
 
 // NewKubetest creates and provisions the Kubetest structure
-func NewKubetest(k8sVersion, kubetestDir string, envVars map[string]string) Kubetest {
-	return Kubetest{
-		kubetestDir:       kubetestDir,
+func NewKubetest(k8sVersion, kubetestDir string, envVars map[string]string) *Kubetest {
+	return &Kubetest{
+		kubetestDir:       filepath.Clean(kubetestDir),
 		kubernetesVersion: k8sVersion,
 		envVars:           envVars,
 	}
@@ -50,23 +52,68 @@ func NewKubetest(k8sVersion, kubetestDir string, envVars map[string]string) Kube
 
 // Verify verifies the cluster
 func (p *Kubetest) Verify(scenario string) error {
+	kubetestPath, err := findKubetest(p.kubetestDir, p.kubernetesVersion)
+	if err != nil {
+		return fmt.Errorf("coudn't find kubetest scenarios: %w", err)
+	}
+
 	// Kubetest requires version to have the "v" prefix
 	if !strings.HasPrefix(p.kubernetesVersion, "v") {
 		p.kubernetesVersion = fmt.Sprintf("v%s", p.kubernetesVersion)
 	}
 
-	k8sVersionPath := fmt.Sprintf("%s/kubernetes-%s/kubernetes/version", p.kubetestDir, p.kubernetesVersion)
-	if _, err := os.Stat(k8sVersionPath); err != nil {
-		return err
-	}
-
-	k8sPath := fmt.Sprintf("%s/kubernetes-%s/kubernetes", p.kubetestDir, p.kubernetesVersion)
-	testsArgs := fmt.Sprintf("--test_args=--ginkgo.focus=%s --ginkgo.skip=%s -ginkgo.noColor=true -ginkgo.flakeAttempts=2", scenario, skip)
-
-	_, err := testutil.ExecuteCommand(k8sPath, "kubetest", []string{"--provider=skeleton", "--test", "--ginkgo-parallel", "--check-version-skew=false", testsArgs}, p.envVars)
+	err = testutil.NewExec("./hack/ginkgo-e2e.sh",
+		testutil.WithArgs(
+			fmt.Sprintf("--ginkgo.focus=%s", scenario),
+			fmt.Sprintf("--ginkgo.skip=%s", Skip),
+			"--ginkgo.noColor=true",
+			"--ginkgo.flakeAttempts=2",
+		),
+		testutil.WithMapEnv(p.envVars),
+		testutil.WithEnv(os.Environ()),
+		testutil.WithEnvs(
+			"GINKGO_PARALLEL=y",
+		),
+		testutil.InDir(kubetestPath),
+	).Run()
 	if err != nil {
-		return fmt.Errorf("k8s conformnce tests failed: %v", err)
+		return fmt.Errorf("k8s conformnce tests failed: %w", err)
 	}
 
 	return nil
+}
+
+// findKubetest tries to locate existing path to kubetest with specified version
+// by trying to find "<basedir>/kubernetes-<version>/kubernetes/version" file,
+// gradually removing parts of sematic version (e.g. trying versions: [1.16.2,
+// 1.16, 1]).
+func findKubetest(basedir, version string) (string, error) {
+	sver, err := semver.NewVersion(version)
+	if err != nil {
+		return "", err
+	}
+
+	maj := sver.Major()
+	min := sver.Minor()
+	pat := sver.Patch()
+
+	kubetestVersionsToTry := []string{
+		fmt.Sprintf("%d.%d.%d", maj, min, pat),
+		fmt.Sprintf("v%d.%d.%d", maj, min, pat),
+		fmt.Sprintf("%d.%d", maj, min),
+		fmt.Sprintf("v%d.%d", maj, min),
+		fmt.Sprintf("%d", maj),
+		fmt.Sprintf("v%d", maj),
+	}
+
+	for _, kubetestVersion := range kubetestVersionsToTry {
+		candidateKubetestDir := fmt.Sprintf("%s/kubernetes-%s", basedir, kubetestVersion)
+		fileToCheck := filepath.Join(candidateKubetestDir, "kubernetes/version")
+
+		if _, err := os.Stat(fileToCheck); err == nil {
+			return filepath.Clean(filepath.Join(candidateKubetestDir, "kubernetes")), nil
+		}
+	}
+
+	return "", os.ErrNotExist
 }

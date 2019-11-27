@@ -170,6 +170,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 
 		clusterConfig.ControllerManager.ExtraArgs["cloud-provider"] = provider
 		clusterConfig.ControllerManager.ExtraArgs["cloud-config"] = renderedCloudConfig
+		clusterConfig.ControllerManager.ExtraArgs["cluster-name"] = s.Cluster.Name
 		clusterConfig.ControllerManager.ExtraVolumes = append(clusterConfig.ControllerManager.ExtraVolumes, cloudConfigVol)
 
 		nodeRegistration.KubeletExtraArgs["cloud-provider"] = provider

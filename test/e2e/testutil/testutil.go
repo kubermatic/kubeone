@@ -17,10 +17,8 @@ limitations under the License.
 package testutil
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -39,65 +37,6 @@ func IsCommandAvailable(name string) bool {
 	}
 
 	return false
-}
-
-// ExecuteCommand executes the given command
-func ExecuteCommand(path, name string, arg []string, additionalEnv map[string]string) (string, error) {
-	var (
-		stdoutBuf, stderrBuf bytes.Buffer
-		errStdout, errStderr error
-	)
-
-	cmd := exec.Command(name, arg...)
-	if len(path) > 0 {
-		cmd.Dir = path
-	}
-
-	if additionalEnv != nil {
-		cmd.Env = os.Environ()
-		for k, v := range additionalEnv {
-			cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", k, v))
-		}
-	}
-
-	doneStdout := make(chan struct{})
-	doneStderr := make(chan struct{})
-
-	stdoutIn, _ := cmd.StdoutPipe()
-	stderrIn, _ := cmd.StderrPipe()
-	stdout := io.MultiWriter(os.Stdout, &stdoutBuf)
-	stderr := io.MultiWriter(os.Stderr, &stderrBuf)
-
-	err := cmd.Start()
-	if err != nil {
-		return "", err
-	}
-
-	go func() {
-		_, errStdout = io.Copy(stdout, stdoutIn)
-		doneStdout <- struct{}{}
-	}()
-
-	go func() {
-		_, errStderr = io.Copy(stderr, stderrIn)
-		doneStderr <- struct{}{}
-	}()
-
-	<-doneStdout
-	<-doneStderr
-	err = cmd.Wait()
-	if err != nil {
-		return "", err
-	}
-	if errStdout != nil {
-		return "", errStdout
-	}
-	if errStderr != nil {
-		return "", errStderr
-	}
-
-	outStr := stdoutBuf.String()
-	return outStr, nil
 }
 
 // CreateFile create file with given content

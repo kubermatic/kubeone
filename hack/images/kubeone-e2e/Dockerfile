@@ -12,34 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM golang:1.13.4-alpine
+# building image
 
-ARG version
+FROM golang:1.13.4 as builder
 
-LABEL "io.kubeone"="Loodse GmbH"
-LABEL version=${version}
-LABEL description="Set of kubernetes binaries to conduct kubeone E2E tests"
-LABEL maintainer="https://github.com/kubermatic/kubeone/blob/master/OWNERS"
-
-RUN apk add --no-cache \
-    bash \
-    ca-certificates \
-    coreutils \
-    curl \
-    git \
-    make \
-    openssh-client \
-    openssh-keygen \
+RUN apt-get update && apt-get install -y \
     unzip \
-    upx
+    upx-ucl
 
-ENV TERRAFORM_VERSION "0.12.13"
-RUN curl -fL https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip | \
-    funzip > /usr/local/bin/terraform
+ENV TERRAFORM_VERSION "0.12.16"
+RUN curl -fL https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip | funzip >/usr/local/bin/terraform
 RUN chmod +x /usr/local/bin/terraform
 
 ENV KUBETEST_COMMIT "eb1a87c9083a31f9a9dda7822cb674f9f8d99439"
-ENV TEST_ROOT_DIR "/opt/kube-test"
+ENV KUBETESTS_ROOT "/opt/kube-test"
 ENV GO111MODULE=on
 
 # Install the kubetest binary
@@ -48,3 +34,22 @@ RUN go get -v k8s.io/test-infra/kubetest@${KUBETEST_COMMIT} && \
 
 COPY install-kube-tests-binaries.sh /opt/install-kube-tests-binaries.sh
 RUN /opt/install-kube-tests-binaries.sh
+
+# resulting image
+
+FROM golang:1.13.4
+
+ARG version
+
+LABEL "io.kubeone"="Loodse GmbH"
+LABEL version=${version}
+LABEL description="Set of kubernetes binaries to conduct kubeone E2E tests"
+LABEL maintainer="https://github.com/kubermatic/kubeone/blob/master/OWNERS"
+
+ENV KUBETESTS_ROOT "/opt/kube-test"
+ENV GO111MODULE on
+ENV USER root
+
+COPY --from=builder /usr/local/bin/terraform /usr/local/bin/terraform
+COPY --from=builder /go/bin/kubetest /usr/local/bin/kubetest
+COPY --from=builder ${KUBETESTS_ROOT} ${KUBETESTS_ROOT}

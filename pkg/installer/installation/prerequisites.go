@@ -108,8 +108,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--
 	curl \
 	htop \
 	lsb-release \
-	rsync \
-	tree
+	rsync
 
 {{ if .CONFIGURE_REPOSITORIES }}
 curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | \

@@ -64,10 +64,7 @@ func (p *DefaultProvisioner) Cleanup() error {
 		return err
 	}
 
-	_, err = testutil.ExecuteCommand("", "rm", []string{"-rf", p.testPath}, nil)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return testutil.NewExec("rm",
+		testutil.WithArgs("-rf", p.testPath),
+	).Run()
 }

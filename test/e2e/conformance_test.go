@@ -21,6 +21,7 @@ package e2e
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/kubermatic/kubeone/test/e2e/provisioner"
 	"github.com/kubermatic/kubeone/test/e2e/testutil"
@@ -36,8 +37,6 @@ const (
 )
 
 func TestClusterConformance(t *testing.T) {
-	t.Parallel()
-
 	testcases := []struct {
 		name                  string
 		provider              string
@@ -52,7 +51,7 @@ func TestClusterConformance(t *testing.T) {
 			providerExternal:      false,
 			scenario:              NodeConformance,
 			configFilePath:        "../../test/e2e/testdata/config_aws.yaml",
-			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
+			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
 		},
 		{
 			name:                  "verify k8s cluster deployment on DO",
@@ -102,27 +101,33 @@ func TestClusterConformance(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			// Only run selected test suite.
 			// Test options are controlled using flags.
-			if len(testRunIdentifier) == 0 {
-				t.Fatal("-identifier must be set")
-			}
-			if len(testTargetVersion) == 0 {
-				t.Fatal("-target-version must be set")
-			}
 			if testProvider != tc.provider {
 				t.SkipNow()
 			}
+
+			if len(testRunIdentifier) == 0 {
+				t.Fatal("-identifier must be set")
+			}
+
+			if len(testTargetVersion) == 0 {
+				t.Fatal("-target-version must be set")
+			}
+
 			if err := ValidateOperatingSystem(testOSControlPlane); err != nil {
 				t.Fatal(err)
 			}
+
 			if err := ValidateOperatingSystem(testOSWorkers); err != nil {
 				t.Fatal(err)
 			}
+
 			osControlPlane := OperatingSystem(testOSControlPlane)
 			osWorkers := OperatingSystem(testOSWorkers)
 			t.Logf("Running conformance tests for Kubernetes v%s…", testTargetVersion)
 
 			// Create provisioner
 			testPath := fmt.Sprintf("../../_build/%s", testRunIdentifier)
+
 			pr, err := provisioner.CreateProvisioner(testPath, testRunIdentifier, tc.provider)
 			if err != nil {
 				t.Fatalf("failed to create provisioner: %v", err)
@@ -130,12 +135,10 @@ func TestClusterConformance(t *testing.T) {
 
 			// Create KubeOne target and prepare kubetest
 			target := NewKubeone(testPath, tc.configFilePath)
-			clusterVerifier := NewKubetest(testTargetVersion, "../../_build", map[string]string{
-				"KUBERNETES_CONFORMANCE_TEST": "y",
-			})
 
 			// Ensure terraform, kubetest and all needed prerequisites are in place before running test
 			t.Log("Validating prerequisites…")
+
 			err = testutil.ValidateCommon()
 			if err != nil {
 				t.Fatalf("unable to validate prerequisites: %v", err)
@@ -143,16 +146,18 @@ func TestClusterConformance(t *testing.T) {
 
 			// Create configuration manifest
 			t.Log("Creating KubeOneCluster manifest…")
+
 			var (
 				clusterNetworkPod     string
 				clusterNetworkService string
 			)
+
 			if tc.provider == provisioner.OpenStack {
 				clusterNetworkPod = clusterNetworkPodCIDR
 				clusterNetworkService = clusterNetworkServiceCIDR
 			}
-			err = target.CreateConfig(testTargetVersion, tc.provider,
-				tc.providerExternal, clusterNetworkPod, clusterNetworkService)
+
+			err = target.CreateConfig(testTargetVersion, tc.provider, tc.providerExternal, clusterNetworkPod, clusterNetworkService)
 			if err != nil {
 				t.Fatalf("failed to create KubeOneCluster manifest: %v", err)
 			}
@@ -164,16 +169,20 @@ func TestClusterConformance(t *testing.T) {
 			// Create infrastructure
 			t.Log("Provisioning infrastructure using Terraform…")
 			args := []string{}
+
 			if osControlPlane != OperatingSystemDefault {
 				tfFlags, errFlags := ControlPlaneImageFlags(tc.provider, osControlPlane)
 				if errFlags != nil {
 					t.Fatalf("failed to discover control plane os image: %v", errFlags)
 				}
+
 				args = append(args, tfFlags...)
 			}
+
 			if osWorkers != OperatingSystemDefault {
 				args = append(args, "-var", fmt.Sprintf("worker_os=%s", osWorkers))
 			}
+
 			switch tc.provider {
 			case provisioner.GCE:
 				args = append(args, "-var", "control_plane_target_pool_members_count=1")
@@ -182,6 +191,7 @@ func TestClusterConformance(t *testing.T) {
 				args = append(args, "-var", "subnet_cidr='10.0.42.0/24'")
 				args = append(args, "-var", "image='Ubuntu Bionic 18.04 (2019-05-02)'")
 			}
+
 			tf, err := pr.Provision(args...)
 			if err != nil {
 				t.Fatalf("failed to provision the infrastructure: %v", err)
@@ -189,10 +199,16 @@ func TestClusterConformance(t *testing.T) {
 
 			// Run 'kubeone install'
 			t.Log("Running 'kubeone install'…")
+
 			var installFlags []string
 			if tc.provider == provisioner.OpenStack {
 				installFlags = append(installFlags, "-c", "/tmp/credentials.yaml")
 			}
+
+			sleepTime := 2 * time.Minute
+			t.Logf("sleep %s", sleepTime)
+			time.Sleep(sleepTime)
+
 			err = target.Install(tf, installFlags)
 			if err != nil {
 				t.Fatalf("failed to install cluster ('kubeone install'): %v", err)
@@ -200,6 +216,7 @@ func TestClusterConformance(t *testing.T) {
 
 			// Run 'kubeone kubeconfig'
 			t.Log("Downloading kubeconfig…")
+
 			kubeconfig, err := target.Kubeconfig()
 			if err != nil {
 				t.Fatalf("failed to download kubeconfig failed ('kubeone kubeconfig'): %v", err)
@@ -209,6 +226,7 @@ func TestClusterConformance(t *testing.T) {
 			if tc.provider == provisioner.GCE {
 				t.Log("Adding other control plane nodes to the load balancer…")
 				args = []string{}
+
 				if osControlPlane != OperatingSystemDefault {
 					tfFlags, errFlags := ControlPlaneImageFlags(tc.provider, osControlPlane)
 					if errFlags != nil {
@@ -216,9 +234,11 @@ func TestClusterConformance(t *testing.T) {
 					}
 					args = append(args, tfFlags...)
 				}
+
 				if osWorkers != OperatingSystemDefault {
 					args = append(args, "-var", fmt.Sprintf("worker_os=%s", osWorkers))
 				}
+
 				_, err = pr.Provision(args...)
 				if err != nil {
 					t.Fatalf("failed to provision the infrastructure: %v", err)
@@ -227,10 +247,12 @@ func TestClusterConformance(t *testing.T) {
 
 			// Build clientset
 			t.Log("Building Kubernetes clientset…")
+
 			restConfig, err := clientcmd.RESTConfigFromKubeConfig(kubeconfig)
 			if err != nil {
 				t.Errorf("unable to build clientset from kubeconfig bytes: %v", err)
 			}
+
 			client, err := dynclient.New(restConfig, dynclient.Options{})
 			if err != nil {
 				t.Fatalf("failed to init dynamic client: %s", err)
@@ -238,20 +260,22 @@ func TestClusterConformance(t *testing.T) {
 
 			// Ensure nodes are ready and version is matching desired
 			t.Log("Waiting for all nodes to become ready…")
-			err = waitForNodesReady(client, tc.expectedNumberOfNodes)
-			if err != nil {
+			if err = waitForNodesReady(client, tc.expectedNumberOfNodes); err != nil {
 				t.Fatalf("failed to bring up all nodes up: %v", err)
 			}
+
 			t.Log("Verifying cluster version…")
-			err = verifyVersion(client, metav1.NamespaceSystem, testTargetVersion)
-			if err != nil {
+			if err = verifyVersion(client, metav1.NamespaceSystem, testTargetVersion); err != nil {
 				t.Fatalf("version mismatch: %v", err)
 			}
 
+			clusterVerifier := NewKubetest(testTargetVersion, "../../_build", map[string]string{
+				"KUBERNETES_CONFORMANCE_TEST": "y",
+			})
+
 			// Run NodeConformance tests
 			t.Log("Running conformance tests (this can take up to 30 minutes)…")
-			err = clusterVerifier.Verify(tc.scenario)
-			if err != nil {
+			if err = clusterVerifier.Verify(tc.scenario); err != nil {
 				t.Fatalf("e2e tests failed: %v", err)
 			}
 		})

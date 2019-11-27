@@ -53,6 +53,16 @@ variable "ssh_agent_socket" {
   default     = "env:SSH_AUTH_SOCK"
 }
 
+variable "bastion_port" {
+  description = "Bastion SSH port"
+  default     = 22
+}
+
+variable "bastion_user" {
+  description = "Bastion SSH username"
+  default     = "ubuntu"
+}
+
 # Provider specific settings
 
 variable "aws_region" {
@@ -85,3 +95,12 @@ variable "ami" {
   description = "AMI ID, use it to fixate control-plane AMI in order to avoid force-recreation it at later times"
 }
 
+variable "subnets_cidr" {
+  default     = 24
+  description = "CIDR mask bits per subnet"
+}
+
+variable "internal_api_lb" {
+  default     = false
+  description = "make kubernetes API loadbalancer internal (reachible only from inside the VPC)"
+}

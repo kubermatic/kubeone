@@ -17,7 +17,9 @@ limitations under the License.
 package provisioner
 
 import (
+	"bytes"
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/kubermatic/kubeone/test/e2e/testutil"
@@ -43,7 +45,7 @@ func (p *terraform) initAndApply(applyArgs ...string) (string, error) {
 		initCmd = append(initCmd, fmt.Sprintf("--backend-config=key=%s", p.identifier))
 	}
 
-	_, err := testutil.ExecuteCommand(p.terraformDir, "terraform", initCmd, nil)
+	err := p.run(initCmd...)
 	if err != nil {
 		return "", fmt.Errorf("terraform init command failed: %v", err)
 	}
@@ -52,16 +54,18 @@ func (p *terraform) initAndApply(applyArgs ...string) (string, error) {
 	if applyArgs != nil {
 		args = append(args, applyArgs...)
 	}
+
 	var applyErr error
 	for i := 0; i < applyRetryNumber; i++ {
-		_, applyErr = testutil.ExecuteCommand(p.terraformDir, "terraform", args, nil)
+		applyErr = p.run(args...)
 		if applyErr == nil {
 			break
 		}
 		time.Sleep(applyRetryTimeout)
 	}
+
 	if applyErr != nil {
-		return "", fmt.Errorf("terraform apply command failed: %v", err)
+		return "", fmt.Errorf("terraform apply command failed: %v", applyErr)
 	}
 
 	return p.getTFJson()
@@ -69,19 +73,36 @@ func (p *terraform) initAndApply(applyArgs ...string) (string, error) {
 
 // destroy destories the infrastructure
 func (p *terraform) destroy() error {
-	_, err := testutil.ExecuteCommand(p.terraformDir, "terraform", []string{"destroy", "-auto-approve"}, nil)
+	err := p.run("destroy", "-auto-approve")
 	if err != nil {
-		return fmt.Errorf("terraform destroy command failed: %v", err)
+		return fmt.Errorf("terraform destroy command failed: %w", err)
 	}
+
 	return nil
 }
 
 // getTFJson reads an output from a state file
 func (p *terraform) getTFJson() (string, error) {
-	tf, err := testutil.ExecuteCommand(p.terraformDir, "terraform", []string{"output", fmt.Sprintf("-state=%v", tfStateFileName), "-json"}, nil)
-	if err != nil {
-		return "", fmt.Errorf("generating tf json failed: %v", err)
+	var jsonBuf bytes.Buffer
+
+	tfcmd := p.build("output", fmt.Sprintf("-state=%v", tfStateFileName), "-json")
+	testutil.StdoutTo(&jsonBuf)(tfcmd)
+
+	if err := tfcmd.Run(); err != nil {
+		return "", fmt.Errorf("generating tf json failed: %w", err)
 	}
 
-	return tf, nil
+	return jsonBuf.String(), nil
+}
+
+func (p *terraform) build(args ...string) *testutil.Exec {
+	return testutil.NewExec("terraform",
+		testutil.WithArgs(args...),
+		testutil.WithEnv(os.Environ()),
+		testutil.InDir(p.terraformDir),
+	)
+}
+
+func (p *terraform) run(args ...string) error {
+	return p.build(args...).Run()
 }

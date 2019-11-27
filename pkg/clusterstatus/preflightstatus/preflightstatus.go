@@ -103,75 +103,79 @@ func verifyMatchNodes(hosts []kubeoneapi.HostConfig, nodes corev1.NodeList, logg
 		return []error{errors.Errorf("expected %d cluster nodes but got %d", len(nodes.Items), len(hosts))}
 	}
 
-	var errs []error
+	nodesFound := map[string]bool{}
+
 	for _, node := range nodes.Items {
-		for _, addr := range node.Status.Addresses {
-			switch addr.Type {
-			case corev1.NodeInternalIP, corev1.NodeExternalIP:
-				if verbose {
-					logger.Infof("Found endpoint %s (type %s) for the node \"%s\".", addr.Address, addr.Type, node.ObjectMeta.Name)
-				}
-			default:
-				// we don't care about other types of NodeAddress
-				continue
-			}
+		nodesFound[node.Name] = false
 
-			found := false
-			for _, host := range hosts {
+		for _, host := range hosts {
+			for _, addr := range node.Status.Addresses {
 				switch addr.Type {
-				case corev1.NodeExternalIP:
-					if addr.Address == host.PublicAddress {
-						found = true
-					}
-				case corev1.NodeInternalIP:
-					if addr.Address == host.PrivateAddress {
-						found = true
+				case corev1.NodeInternalIP, corev1.NodeExternalIP:
+					switch addr.Address {
+					case host.PrivateAddress, host.PublicAddress:
+						nodesFound[node.Name] = true
+						if verbose {
+							logger.Infof("Found endpoint %q (type %s) for the node %q.", addr.Address, addr.Type, node.ObjectMeta.Name)
+						}
 					}
 				}
-			}
-
-			if !found {
-				errs = append(errs, errors.Errorf("unable to match node \"%s\" to machines defined in the manifest", node.ObjectMeta.Name))
 			}
 		}
 	}
+
+	var errs []error
+
+	for nodeName, found := range nodesFound {
+		if !found {
+			errs = append(errs, errors.Errorf("unable to match node %q to machines defined in the manifest", nodeName))
+		}
+	}
+
 	return errs
 }
 
 // verifyNodesReady ensures all nodes in the cluster are ready
 func verifyNodesReady(nodes corev1.NodeList, logger logrus.FieldLogger, verbose bool) []error {
 	var errs []error
+
 	for _, n := range nodes.Items {
 		found := false
+
 		for _, c := range n.Status.Conditions {
 			if c.Type == corev1.NodeReady {
 				if verbose {
-					logger.Infof("Node \"%s\" reporting %s=%s.", n.ObjectMeta.Name, c.Type, c.Status)
+					logger.Infof("Node %q reporting %s=%s.", n.ObjectMeta.Name, c.Type, c.Status)
 				}
 				if c.Status == corev1.ConditionTrue {
 					found = true
 				}
 			}
 		}
+
 		if !found {
-			errs = append(errs, errors.Errorf("node \"%s\" is not ready", n.ObjectMeta.Name))
+			errs = append(errs, errors.Errorf("node %q is not ready", n.ObjectMeta.Name))
 		}
 	}
+
 	return errs
 }
 
 // verifyNoUpgradeLabels check labels on nodes to ensure there is no upgrade in progress
 func verifyNoUpgradeLabels(nodes corev1.NodeList, logger logrus.FieldLogger, verbose bool) []error {
 	var errs []error
+
 	for _, n := range nodes.Items {
 		_, ok := n.ObjectMeta.Labels[LabelUpgradeLock]
 		if ok {
-			logger.Errorf("Upgrade is in progress on the node \"%s\" (label \"%s\" is present).", n.ObjectMeta.Name, LabelUpgradeLock)
-			errs = append(errs, errors.Errorf("label \"%s\" is present on node \"%s\"", LabelUpgradeLock, n.ObjectMeta.Name))
+			logger.Errorf("Upgrade is in progress on the node %q (label %q is present).", n.ObjectMeta.Name, LabelUpgradeLock)
+			errs = append(errs, errors.Errorf("label %q is present on node %q", LabelUpgradeLock, n.ObjectMeta.Name))
 		}
+
 		if verbose && !ok {
-			logger.Infof("Label \"%s\" isn't present on the node \"%s\".", LabelUpgradeLock, n.ObjectMeta.Name)
+			logger.Infof("Label %q isn't present on the node %q.", LabelUpgradeLock, n.ObjectMeta.Name)
 		}
 	}
+
 	return errs
 }
