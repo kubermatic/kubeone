@@ -51,7 +51,7 @@ func TestClusterConformance(t *testing.T) {
 			providerExternal:      false,
 			scenario:              NodeConformance,
 			configFilePath:        "../../test/e2e/testdata/config_aws.yaml",
-			expectedNumberOfNodes: 6, // 3 control planes + 3 worker
+			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
 		},
 		{
 			name:                  "verify k8s cluster deployment on DO",
@@ -59,7 +59,7 @@ func TestClusterConformance(t *testing.T) {
 			providerExternal:      true,
 			scenario:              NodeConformance,
 			configFilePath:        "../../test/e2e/testdata/config_do.yaml",
-			expectedNumberOfNodes: 6, // 3 control planes + 3 worker
+			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
 		},
 		{
 			name:                  "verify k8s cluster deployment on Hetzner",
@@ -67,7 +67,7 @@ func TestClusterConformance(t *testing.T) {
 			providerExternal:      true,
 			scenario:              NodeConformance,
 			configFilePath:        "../../test/e2e/testdata/config_hetzner.yaml",
-			expectedNumberOfNodes: 6, // 3 control planes + 3 worker
+			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
 		},
 		{
 			name:                  "verify k8s cluster deployment on GCE",
@@ -75,7 +75,7 @@ func TestClusterConformance(t *testing.T) {
 			providerExternal:      false,
 			scenario:              NodeConformance,
 			configFilePath:        "../../test/e2e/testdata/config_gce.yaml",
-			expectedNumberOfNodes: 6, // 3 control planes + 3 worker
+			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
 		},
 		{
 			name:                  "verify k8s cluster deployment on Packet",
@@ -83,7 +83,7 @@ func TestClusterConformance(t *testing.T) {
 			providerExternal:      true,
 			scenario:              NodeConformance,
 			configFilePath:        "../../test/e2e/testdata/config_packet.yaml",
-			expectedNumberOfNodes: 6, // 3 control planes + 3 worker
+			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
 		},
 		{
 			name:                  "verify k8s cluster deployment on OpenStack",
@@ -91,7 +91,7 @@ func TestClusterConformance(t *testing.T) {
 			providerExternal:      false,
 			scenario:              NodeConformance,
 			configFilePath:        "../../test/e2e/testdata/config_os.yaml",
-			expectedNumberOfNodes: 6, // 3 control planes + 3 worker
+			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
 		},
 	}
 
