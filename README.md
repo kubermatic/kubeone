@@ -78,7 +78,7 @@ sudo mv kubeone /usr/local/bin
 The alternative way to install KubeOne is using `go get`.
 
 ```bash
-GO111MODULE=on go get -u github.com/kubermatic/kubeone
+GO111MODULE=on go get github.com/kubermatic/kubeone
 ```
 
 While running of the master branch is a great way to peak at and test
