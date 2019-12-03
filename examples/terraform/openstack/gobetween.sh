@@ -41,7 +41,6 @@ Type=simple
 ExecStart=/opt/bin/gobetween -c /etc/gobetween.toml
 PrivateTmp=true
 User=nobody
-Group=nogroup
 
 [Install]
 WantedBy=multi-user.target
