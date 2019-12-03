@@ -101,6 +101,17 @@ cat <<EOF | sudo tee /etc/docker/daemon.json
 }
 EOF
 
+sudo mkdir -p /etc/apt/apt.conf.d
+cat <<EOF | sudo tee /etc/apt/apt.conf.d/proxy.conf
+{{- if .HTTPS_PROXY -}}
+Acquire::https::Proxy = "{{ .HTTPS_PROXY }}";
+{{ end }}
+
+{{- if .HTTP_PROXY -}}
+Acquire::http::Proxy = "{{ .HTTP_PROXY }}";
+{{ end }}
+EOF
+
 sudo apt-get update
 sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--force-confold" -y --no-install-recommends \
 	apt-transport-https \
@@ -149,7 +160,7 @@ sudo systemctl enable --now kubelet
 sudo swapoff -a
 sudo sed -i '/.*swap.*/d' /etc/fstab
 sudo setenforce 0 || true
-sudo sed -i s/SELINUX=enforcing/SELINUX=permissive/g /etc/sysconfig/selinux
+sudo sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/sysconfig/selinux
 
 . /etc/kubeone/proxy-env
 
@@ -161,6 +172,14 @@ net.bridge.bridge-nf-call-ip6tables = 1
 net.bridge.bridge-nf-call-iptables = 1
 EOF
 sudo sysctl --system
+
+yum_proxy=""
+{{ if .PROXY }}
+yum_proxy="proxy={{ .PROXY }} #kubeone"
+{{ end }}
+grep -v '#kubeone' /etc/yum.conf > /tmp/yum.conf || true
+echo -n "${yum_proxy}" >> /tmp/yum.conf
+mv /tmp/yum.conf /etc/yum.conf
 
 {{ if .CONFIGURE_REPOSITORIES }}
 cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
@@ -350,18 +369,27 @@ func installKubeadmDebian(s *state.State) error {
 		"DOCKER_VERSION":         dockerVersion,
 		"CNI_VERSION":            s.Cluster.Versions.KubernetesCNIVersion(),
 		"CONFIGURE_REPOSITORIES": s.Cluster.SystemPackages.ConfigureRepositories,
+		"HTTP_PROXY":             s.Cluster.Proxy.HTTP,
+		"HTTPS_PROXY":            s.Cluster.Proxy.HTTPS,
 	})
 
 	return errors.WithStack(err)
 }
 
 func installKubeadmCentOS(s *state.State) error {
+	proxy := s.Cluster.Proxy.HTTPS
+	if proxy == "" {
+		proxy = s.Cluster.Proxy.HTTP
+	}
+
 	_, _, err := s.Runner.Run(kubeadmCentOSScript, runner.TemplateVariables{
 		"KUBERNETES_VERSION":     s.Cluster.Versions.Kubernetes,
 		"CNI_VERSION":            s.Cluster.Versions.KubernetesCNIVersion(),
 		"CONFIGURE_REPOSITORIES": s.Cluster.SystemPackages.ConfigureRepositories,
+		"PROXY":                  proxy,
 	})
-	return err
+
+	return errors.WithStack(err)
 }
 
 func installKubeadmCoreOS(s *state.State) error {
@@ -370,7 +398,7 @@ func installKubeadmCoreOS(s *state.State) error {
 		"CNI_VERSION":        s.Cluster.Versions.KubernetesCNIVersion(),
 	})
 
-	return err
+	return errors.WithStack(err)
 }
 
 func deployConfigurationFiles(s *state.State) error {
