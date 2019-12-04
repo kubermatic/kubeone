@@ -98,27 +98,9 @@ resource "aws_subnet" "public" {
 ################################### FIREWALL ###################################
 
 resource "aws_security_group" "common" {
-  name                   = "${var.cluster_name}-common"
-  description            = "cluster common rules"
-  vpc_id                 = data.aws_vpc.selected.id
-  revoke_rules_on_delete = true
-
-  ingress {
-    description = "allow all incomming traffic from members of this group"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    self        = true
-  }
-
-  # allow all outgoing traffic
-  egress {
-    description = "allow all outgoing traffic"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+  name        = "${var.cluster_name}-common"
+  description = "cluster common rules"
+  vpc_id      = data.aws_vpc.selected.id
 
   tags = map(
     "Cluster", var.cluster_name,
@@ -126,12 +108,44 @@ resource "aws_security_group" "common" {
   )
 }
 
+resource "aws_security_group_rule" "ingress_self_allow_all" {
+  type              = "ingress"
+  security_group_id = aws_security_group.common.id
+
+  description = "allow all incomming traffic from members of this group"
+  from_port   = 0
+  to_port     = 0
+  protocol    = "-1"
+  self        = true
+}
+
+resource "aws_security_group_rule" "egress_allow_all" {
+  type              = "egress"
+  security_group_id = aws_security_group.common.id
+
+  description = "allow all outgoing traffic"
+  from_port   = 0
+  to_port     = 0
+  protocol    = "-1"
+  cidr_blocks = ["0.0.0.0/0"]
+}
+
+resource "aws_security_group_rule" "nodeports" {
+  count             = var.open_nodeports ? 1 : 0
+  type              = "ingress"
+  security_group_id = aws_security_group.common.id
+
+  description = "open nodeports"
+  from_port   = 30000
+  to_port     = 32767
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+}
 
 resource "aws_security_group" "elb" {
-  name                   = "${var.cluster_name}-api-lb"
-  description            = "kube-api firewall"
-  vpc_id                 = data.aws_vpc.selected.id
-  revoke_rules_on_delete = true
+  name        = "${var.cluster_name}-api-lb"
+  description = "kube-api firewall"
+  vpc_id      = data.aws_vpc.selected.id
 
   egress {
     description = "allow all outgoing traffic"
@@ -155,13 +169,12 @@ resource "aws_security_group" "elb" {
 }
 
 resource "aws_security_group" "ssh" {
-  name                   = "${var.cluster_name}-ssh"
-  description            = "ssh access"
-  vpc_id                 = data.aws_vpc.selected.id
-  revoke_rules_on_delete = true
+  name        = "${var.cluster_name}-ssh"
+  description = "ssh access"
+  vpc_id      = data.aws_vpc.selected.id
 
-  # allow incomming SSH
   ingress {
+    description = "allow incomming SSH"
     from_port   = var.ssh_port
     to_port     = var.ssh_port
     protocol    = "tcp"

@@ -104,3 +104,8 @@ variable "internal_api_lb" {
   default     = false
   description = "make kubernetes API loadbalancer internal (reachible only from inside the VPC)"
 }
+
+variable "open_nodeports" {
+  default     = false
+  description = "open NodePorts flag"
+}
