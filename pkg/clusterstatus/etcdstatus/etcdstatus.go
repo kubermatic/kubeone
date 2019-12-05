@@ -64,12 +64,13 @@ func GetStatus(s *state.State, node kubeoneapi.HostConfig) (*Status, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	tunneler, err := httptunnel.NewHTTPTunnel(s, tlsCfg)
 	if err != nil {
 		return nil, err
 	}
 
-	m, err := membersList(tunneler)
+	etcdRing, err := membersList(tunneler)
 	if err != nil {
 		return nil, err
 	}
@@ -79,24 +80,25 @@ func GetStatus(s *state.State, node kubeoneapi.HostConfig) (*Status, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	health, err := strconv.ParseBool(healthStr.Health)
 	if err != nil {
 		return nil, err
 	}
 
 	// Check etcd membership
-	var member bool
-	for _, mem := range m.Members {
+	status := &Status{
+		Health: health,
+	}
+
+	for _, mem := range etcdRing.Members {
 		if mem.Name == node.Hostname {
-			member = true
+			status.Member = true
 			break
 		}
 	}
 
-	return &Status{
-		Health: health,
-		Member: member,
-	}, nil
+	return status, nil
 }
 
 // memberHealth returns health for a requested etcd member
@@ -146,7 +148,7 @@ func membersList(t httptunnel.Doer) (*membersListRaw, error) {
 	}
 
 	m := &membersListRaw{}
-	if err = json.Unmarshal(body, &m); err != nil {
+	if err = json.Unmarshal(body, m); err != nil {
 		return nil, err
 	}
 

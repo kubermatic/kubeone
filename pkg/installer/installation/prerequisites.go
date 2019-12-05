@@ -21,6 +21,7 @@ import (
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/runner"
+	"github.com/kubermatic/kubeone/pkg/scripts"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/state"
 )
@@ -46,12 +47,6 @@ EOF
 sudo systemctl daemon-reload
 if sudo systemctl status docker &>/dev/null; then sudo systemctl restart docker; fi
 if sudo systemctl status kubelet &>/dev/null; then sudo systemctl restart kubelet; fi
-`
-
-	hostnameScript = `
-fqdn=$(hostname -f)
-[ "$fqdn" = localhost ] && fqdn=$(hostname)
-echo "$fqdn"
 `
 
 	environmentFileScript = `
@@ -282,8 +277,8 @@ func installPrerequisitesOnNode(s *state.State, node *kubeoneapi.HostConfig, con
 
 	node.SetOperatingSystem(os)
 
-	s.Logger.Infoln("Determine hostname…")
 	if node.Hostname == "" {
+		s.Logger.Infoln("Determine hostname…")
 		hostname, hostnameErr := determineHostname(s, *node)
 		if hostnameErr != nil {
 			return errors.Wrap(hostnameErr, "failed to determine hostname")
@@ -325,13 +320,13 @@ func determineOS(s *state.State) (string, error) {
 }
 
 func determineHostname(s *state.State, _ kubeoneapi.HostConfig) (string, error) {
-	hostcmd := hostnameScript
+	hostnameCmd := scripts.GetHostname()
 
 	// on azure the name of the Node should == name of the VM
 	if s.Cluster.CloudProvider.Name == kubeoneapi.CloudProviderNameAzure {
-		hostcmd = `hostname`
+		hostnameCmd = `hostname`
 	}
-	stdout, _, err := s.Runner.Run(hostcmd, nil)
+	stdout, _, err := s.Runner.Run(hostnameCmd, nil)
 
 	return stdout, err
 }
