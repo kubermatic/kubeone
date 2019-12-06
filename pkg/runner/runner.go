@@ -17,16 +17,15 @@ limitations under the License.
 package runner
 
 import (
-	"bytes"
 	"fmt"
 	"os"
 	"strings"
-	"text/template"
 	"time"
 
 	"github.com/koron-go/prefixw"
 	"github.com/pkg/errors"
 
+	"github.com/kubermatic/kubeone/pkg/scripts"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 )
 
@@ -49,12 +48,10 @@ func (r *Runner) Run(cmd string, variables TemplateVariables) (string, string, e
 		return "", "", errors.New("runner is not tied to an opened SSH connection")
 	}
 
-	cmd, err := MakeShellCommand(cmd, variables)
+	cmd, err := scripts.Render(cmd, variables)
 	if err != nil {
 		return "", "", err
 	}
-
-	cmd = r.prepareShell(cmd)
 
 	if !r.Verbose {
 		var stdout, stderr string
@@ -110,30 +107,4 @@ func (r *Runner) WaitForCondition(cmd string, timeout time.Duration, validator v
 	}
 
 	return false
-}
-
-// prepareShell sets up the shell depending on the OS it's running on.
-func (r *Runner) prepareShell(cmd string) string {
-	// ensure we fail early
-	cmd = fmt.Sprintf("set -xeu pipefail\n\n%s", cmd)
-
-	// ensure sudo works on exotic distros
-	cmd = fmt.Sprintf("export \"PATH=$PATH:/sbin:/usr/local/bin:/opt/bin\"\n\n%s", cmd)
-
-	return cmd
-}
-
-// MakeShellCommand render text template with given `variables` render-context
-func MakeShellCommand(cmd string, variables TemplateVariables) (string, error) {
-	tpl, err := template.New("base").Parse(cmd)
-	if err != nil {
-		return "", errors.Wrap(err, "failed to parse shell script")
-	}
-
-	buf := bytes.Buffer{}
-	if err := tpl.Execute(&buf, variables); err != nil {
-		return "", errors.Wrap(err, "failed to render shell script")
-	}
-
-	return buf.String(), nil
 }

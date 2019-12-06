@@ -22,6 +22,7 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/scripts"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/state"
 
@@ -32,14 +33,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
 
-const (
-	hostnameScript = `
-fqdn=$(hostname -f)
-[ "$fqdn" = localhost ] && fqdn=$(hostname)
-echo "$fqdn"
-`
-)
-
 func determineHostname(s *state.State) error {
 	s.Logger.Infoln("Determine hostname…")
 	return s.RunTaskOnAllNodes(func(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
@@ -47,13 +40,13 @@ func determineHostname(s *state.State) error {
 			return nil
 		}
 
-		hostcmd := hostnameScript
+		hostnameCmd := scripts.GetHostname()
 
 		// on azure the name of the Node should == name of the VM
 		if s.Cluster.CloudProvider.Name == kubeoneapi.CloudProviderNameAzure {
-			hostcmd = `hostname`
+			hostnameCmd = `hostname`
 		}
-		stdout, _, err := s.Runner.Run(hostcmd, nil)
+		stdout, _, err := s.Runner.Run(hostnameCmd, nil)
 		if err != nil {
 			return err
 		}

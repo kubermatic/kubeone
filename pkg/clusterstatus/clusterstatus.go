@@ -24,9 +24,12 @@ import (
 
 	"github.com/pkg/errors"
 
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/clusterstatus/apiserverstatus"
 	"github.com/kubermatic/kubeone/pkg/clusterstatus/etcdstatus"
 	"github.com/kubermatic/kubeone/pkg/clusterstatus/preflightstatus"
+	"github.com/kubermatic/kubeone/pkg/scripts"
+	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/state"
 	"github.com/kubermatic/kubeone/pkg/tabwriter"
 
@@ -42,7 +45,35 @@ type Status struct {
 	Etcd      bool   `json:"etcd,omitempty"`
 }
 
+func determineHostname(s *state.State) error {
+	return s.RunTaskOnAllNodes(func(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+		if node.Hostname != "" {
+			return nil
+		}
+		s.Logger.Infoln("Determine hostname…")
+
+		hostnameCmd := scripts.GetHostname()
+
+		// on azure the name of the Node should == name of the VM
+		if s.Cluster.CloudProvider.Name == kubeoneapi.CloudProviderNameAzure {
+			hostnameCmd = `hostname`
+		}
+
+		stdout, _, err := s.Runner.Run(hostnameCmd, nil)
+		if err != nil {
+			return err
+		}
+
+		node.SetHostname(stdout)
+		return nil
+	}, true)
+}
+
 func PrintClusterStatus(s *state.State) error {
+	if err := determineHostname(s); err != nil {
+		return errors.Wrap(err, "failed to get hostname")
+	}
+
 	status, err := GetClusterStatus(s)
 	if err != nil {
 		return errors.Wrap(err, "unable to get cluster status")
@@ -55,20 +86,24 @@ func PrintClusterStatus(s *state.State) error {
 	for _, h := range headers {
 		fmt.Fprintf(printer, "%s\t", strings.ToUpper(h))
 	}
+
 	fmt.Fprintln(printer, "")
 	for _, s := range status {
 		fmt.Fprintf(printer, "%s\t", s.NodeName)
 		fmt.Fprintf(printer, "%s\t", s.Version)
+
 		if s.APIServer {
 			fmt.Fprintf(printer, "healthy\t")
 		} else {
 			fmt.Fprintf(printer, "unhealthy\t")
 		}
+
 		if s.Etcd {
 			fmt.Fprintf(printer, "healthy\t")
 		} else {
 			fmt.Fprintf(printer, "unhealthy\t")
 		}
+
 		fmt.Fprintln(printer, "")
 	}
 
@@ -94,6 +129,7 @@ func GetClusterStatus(s *state.State) ([]Status, error) {
 	nodeListOpts := dynclient.ListOptions{
 		LabelSelector: labels.SelectorFromSet(map[string]string{preflightstatus.LabelControlPlaneNode: ""}),
 	}
+
 	err := s.DynamicClient.List(context.Background(), &nodes, &nodeListOpts)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to list nodes")
@@ -106,19 +142,22 @@ func GetClusterStatus(s *state.State) ([]Status, error) {
 
 	status := []Status{}
 	errs := []error{}
+
 	for _, host := range s.Cluster.Hosts {
 		etcdStatus, err := etcdstatus.GetStatus(s, host)
 		if err != nil {
 			errs = append(errs, err)
 		}
+
 		apiserverStatus, err := apiserverstatus.GetStatus(s, host)
 		if err != nil {
 			errs = append(errs, err)
 		}
-		var version string
+
+		var kubeletVersion string
 		for _, node := range nodes.Items {
 			if node.ObjectMeta.Name == host.Hostname {
-				version = node.Status.NodeInfo.KubeletVersion
+				kubeletVersion = node.Status.NodeInfo.KubeletVersion
 			}
 		}
 
@@ -126,6 +165,7 @@ func GetClusterStatus(s *state.State) ([]Status, error) {
 		if etcdStatus != nil && etcdStatus.Health && etcdStatus.Member {
 			eStatus = true
 		}
+
 		aStatus := false
 		if apiserverStatus != nil && apiserverStatus.Health {
 			aStatus = true
@@ -133,11 +173,12 @@ func GetClusterStatus(s *state.State) ([]Status, error) {
 
 		status = append(status, Status{
 			NodeName:  host.Hostname,
-			Version:   version,
+			Version:   kubeletVersion,
 			Etcd:      eStatus,
 			APIServer: aStatus,
 		})
 	}
+
 	if len(errs) > 0 {
 		for _, e := range errs {
 			s.Logger.Errorf("failed to obtain cluster status: %v", e)
