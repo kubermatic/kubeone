@@ -41,22 +41,13 @@ type Runner struct {
 // TemplateVariables is a render context for templates
 type TemplateVariables map[string]interface{}
 
-// Run executes a given command/script, optionally printing its output to
-// stdout/stderr.
-func (r *Runner) Run(cmd string, variables TemplateVariables) (string, string, error) {
+func (r *Runner) RunRaw(cmd string) (string, string, error) {
 	if r.Conn == nil {
 		return "", "", errors.New("runner is not tied to an opened SSH connection")
 	}
 
-	cmd, err := scripts.Render(cmd, variables)
-	if err != nil {
-		return "", "", err
-	}
-
 	if !r.Verbose {
-		var stdout, stderr string
-
-		stdout, stderr, _, err = r.Conn.Exec(cmd)
+		stdout, stderr, _, err := r.Conn.Exec(cmd)
 		if err != nil {
 			err = errors.Wrap(err, stderr)
 		}
@@ -65,15 +56,26 @@ func (r *Runner) Run(cmd string, variables TemplateVariables) (string, string, e
 	}
 
 	stdout := NewTee(prefixw.New(os.Stdout, r.Prefix))
+	defer stdout.Close()
+
 	stderr := NewTee(prefixw.New(os.Stderr, r.Prefix))
+	defer stderr.Close()
 
 	// run the command
-	_, err = r.Conn.Stream(cmd, stdout, stderr)
-
-	stdout.Close()
-	stderr.Close()
+	_, err := r.Conn.Stream(cmd, stdout, stderr)
 
 	return stdout.String(), stderr.String(), err
+}
+
+// Run executes a given command/script, optionally printing its output to
+// stdout/stderr.
+func (r *Runner) Run(cmd string, variables TemplateVariables) (string, string, error) {
+	cmd, err := scripts.Render(cmd, variables)
+	if err != nil {
+		return "", "", err
+	}
+
+	return r.RunRaw(cmd)
 }
 
 // WaitForPod waits for the availability of the given Kubernetes element.

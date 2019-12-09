@@ -20,7 +20,7 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/runner"
+	"github.com/kubermatic/kubeone/pkg/scripts"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/state"
 )
@@ -30,21 +30,12 @@ func DownloadCA(s *state.State) error {
 	s.Logger.Info("Downloading PKI…")
 
 	return s.RunTaskOnLeader(func(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
-		_, _, err := s.Runner.Run(`
-mkdir -p ./{{ .WORK_DIR }}/pki/etcd
-sudo cp /etc/kubernetes/pki/ca.crt ./{{ .WORK_DIR }}/pki/
-sudo cp /etc/kubernetes/pki/ca.key ./{{ .WORK_DIR }}/pki/
-sudo cp /etc/kubernetes/pki/sa.key ./{{ .WORK_DIR }}/pki/
-sudo cp /etc/kubernetes/pki/sa.pub ./{{ .WORK_DIR }}/pki/
-sudo cp /etc/kubernetes/pki/front-proxy-ca.crt ./{{ .WORK_DIR }}/pki/
-sudo cp /etc/kubernetes/pki/front-proxy-ca.key ./{{ .WORK_DIR }}/pki/
-sudo cp /etc/kubernetes/pki/etcd/ca.{crt,key} ./{{ .WORK_DIR }}/pki/etcd/
-
-sudo chown -R "$(id -u):$(id -g)" ./{{ .WORK_DIR }}
-`, runner.TemplateVariables{
-			"WORK_DIR": s.WorkDir,
-		})
+		cmd, err := scripts.CopyPKIHome(s.WorkDir)
 		if err != nil {
+			return err
+		}
+
+		if _, _, err = s.Runner.RunRaw(cmd); err != nil {
 			return err
 		}
 

@@ -17,30 +17,10 @@ limitations under the License.
 package installation
 
 import (
-	"strconv"
-
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/runner"
+	"github.com/kubermatic/kubeone/pkg/scripts"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/state"
-)
-
-const (
-	kubeadmCertCommand = `
-if [[ -d ./{{ .WORK_DIR }}/pki ]]; then
-   sudo rsync -av ./{{ .WORK_DIR }}/pki/ /etc/kubernetes/pki/
-   sudo chown -R root:root /etc/kubernetes
-   rm -rf ./{{ .WORK_DIR }}/pki
-fi
-sudo kubeadm {{ .VERBOSE }} init phase certs all --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
-`
-	kubeadmInitCommand = `
-if [[ -f /etc/kubernetes/admin.conf ]]; then
-	sudo kubeadm {{ .VERBOSE }} token create {{ .TOKEN }} --ttl {{ .TOKEN_DURATION }}
-	exit 0;
-fi
-sudo kubeadm {{ .VERBOSE }} init --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
-`
 )
 
 func kubeadmCertsOnLeader(s *state.State) error {
@@ -55,11 +35,13 @@ func kubeadmCertsOnFollower(s *state.State) error {
 
 func kubeadmCertsExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	s.Logger.Infoln("Ensuring Certificates…")
-	_, _, err := s.Runner.Run(kubeadmCertCommand, runner.TemplateVariables{
-		"WORK_DIR": s.WorkDir,
-		"NODE_ID":  strconv.Itoa(node.ID),
-		"VERBOSE":  s.KubeadmVerboseFlag(),
-	})
+	cmd, err := scripts.KubeadmCert(s.WorkDir, node.ID, s.KubeadmVerboseFlag())
+	if err != nil {
+		return err
+	}
+
+	_, _, err = s.Runner.RunRaw(cmd)
+
 	return err
 }
 
@@ -68,13 +50,12 @@ func initKubernetesLeader(s *state.State) error {
 	return s.RunTaskOnLeader(func(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 		s.Logger.Infoln("Running kubeadm…")
 
-		_, _, err := s.Runner.Run(kubeadmInitCommand, runner.TemplateVariables{
-			"WORK_DIR":       s.WorkDir,
-			"NODE_ID":        strconv.Itoa(node.ID),
-			"VERBOSE":        s.KubeadmVerboseFlag(),
-			"TOKEN":          s.JoinToken,
-			"TOKEN_DURATION": "1h",
-		})
+		cmd, err := scripts.KubeadmInit(s.WorkDir, node.ID, s.KubeadmVerboseFlag(), s.JoinCommand, "1h")
+		if err != nil {
+			return err
+		}
+
+		_, _, err = s.Runner.RunRaw(cmd)
 
 		return err
 	})

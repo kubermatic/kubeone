@@ -52,7 +52,7 @@ func determineHostname(s *state.State) error {
 		}
 		s.Logger.Infoln("Determine hostname…")
 
-		hostnameCmd := scripts.GetHostname()
+		hostnameCmd := scripts.Hostname()
 
 		// on azure the name of the Node should == name of the VM
 		if s.Cluster.CloudProvider.Name == kubeoneapi.CloudProviderNameAzure {
