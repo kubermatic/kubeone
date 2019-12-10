@@ -182,19 +182,6 @@ func daemonSet(ifacePatch bool) *appsv1.DaemonSet {
 								},
 							},
 						},
-						{
-							// Adds a Flex Volume Driver that creates a per-pod
-							// Unix Domain Socket to allow Dikastes to communicate
-							// with Felix over the Policy Sync API
-							Name:  "flexvol-driver",
-							Image: flexVolDriverImage,
-							VolumeMounts: []corev1.VolumeMount{
-								{
-									Name:      "flexvol-driver-host",
-									MountPath: "/host/driver",
-								},
-							},
-						},
 					},
 					Containers: []corev1.Container{
 						{
@@ -428,15 +415,6 @@ func daemonSet(ifacePatch bool) *appsv1.DaemonSet {
 							VolumeSource: corev1.VolumeSource{
 								HostPath: &corev1.HostPathVolumeSource{
 									Path: "/var/run/nodeagent",
-									Type: &directoryOrCreate,
-								},
-							},
-						},
-						{
-							Name: "flexvol-driver-host",
-							VolumeSource: corev1.VolumeSource{
-								HostPath: &corev1.HostPathVolumeSource{
-									Path: "/usr/libexec/kubernetes/kubelet-plugins/volume/exec/nodeagent~uds",
 									Type: &directoryOrCreate,
 								},
 							},
