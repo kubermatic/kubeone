@@ -31,10 +31,9 @@ import (
 )
 
 const (
-	installCNIImage    = "calico/cni:v3.10.0"
-	flexVolDriverImage = "calico/pod2daemon-flexvol:v3.10.0"
-	calicoImage        = "calico/node:v3.10.0"
-	flannelImage       = "quay.io/coreos/flannel:v0.11.0"
+	installCNIImage = "calico/cni:v3.10.0"
+	calicoImage     = "calico/node:v3.10.0"
+	flannelImage    = "quay.io/coreos/flannel:v0.11.0"
 
 	// cniNetworkConfig configures installation on the each node. The special values in this config will be
 	// automatically populated
