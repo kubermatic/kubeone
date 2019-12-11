@@ -40,7 +40,7 @@ func determineHostname(s *state.State) error {
 			return nil
 		}
 
-		hostnameCmd := scripts.GetHostname()
+		hostnameCmd := scripts.Hostname()
 
 		// on azure the name of the Node should == name of the VM
 		if s.Cluster.CloudProvider.Name == kubeoneapi.CloudProviderNameAzure {
@@ -59,7 +59,7 @@ func determineHostname(s *state.State) error {
 func determineOS(s *state.State) error {
 	s.Logger.Infoln("Determine operating system…")
 	return s.RunTaskOnAllNodes(func(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
-		osID, _, err := s.Runner.Run("source /etc/os-release && echo -n $ID", nil)
+		osID, _, err := s.Runner.Run(scripts.OSID(), nil)
 		if err != nil {
 			return err
 		}

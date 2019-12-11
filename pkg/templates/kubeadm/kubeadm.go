@@ -47,17 +47,17 @@ func New(ver string) (Kubedm, error) {
 
 	switch {
 	case v13x.Check(sver):
-		return &kubeadmv1beta1{}, nil
+		return &kubeadmv1beta1{version: ver}, nil
 	case v14x.Check(sver):
-		return &kubeadmv1beta1{}, nil
+		return &kubeadmv1beta1{version: ver}, nil
 	case v15x.Check(sver):
-		return &kubeadmv1beta2{}, nil
+		return &kubeadmv1beta2{version: ver}, nil
 	case v16x.Check(sver):
-		return &kubeadmv1beta2{}, nil
+		return &kubeadmv1beta2{version: ver}, nil
 	}
 
 	// By default use latest known kubeadm API version
-	return &kubeadmv1beta2{}, nil
+	return &kubeadmv1beta2{version: ver}, nil
 }
 
 func mustParseConstraint(constraint string) *semver.Constraints {

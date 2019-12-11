@@ -21,7 +21,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/runner"
+	"github.com/kubermatic/kubeone/pkg/scripts"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/state"
 
@@ -30,21 +30,6 @@ import (
 )
 
 const (
-	checkPrerequisitesCommand = `
-# Check is Docker installed
-if ! type docker &>/dev/null; then exit 1; fi
-# Check is Kubelet installed
-if ! type kubelet &>/dev/null; then exit 1; fi
-# Check is Kubeadm installed
-if ! type kubeadm &>/dev/null; then exit 1; fi
-# Check do Kubernetes directories and files exist
-if [[ ! -d "/etc/kubernetes/manifests" ]]; then exit 1; fi
-if [[ ! -d "/etc/kubernetes/pki" ]]; then exit 1; fi
-if [[ ! -f "/etc/kubernetes/kubelet.conf" ]]; then exit 1; fi
-# Check are kubelet running
-if ! sudo systemctl is-active --quiet kubelet &>/dev/null; then exit 1; fi
-`
-
 	LabelControlPlaneNode = "node-role.kubernetes.io/master"
 	LabelUpgradeLock      = "kubeone.io/upgrade-in-progress"
 )
@@ -87,7 +72,12 @@ func RunPreflightChecks(s *state.State, nodes corev1.NodeList) error {
 // verifyBinaries verifies that Docker, Kubelet, and Kubeadm are installed on every machine in the cluster
 func verifyBinaries(s *state.State) error {
 	return s.RunTaskOnAllNodes(func(s *state.State, host *kubeoneapi.HostConfig, _ ssh.Connection) error {
-		_, _, err := s.Runner.Run(checkPrerequisitesCommand, runner.TemplateVariables{})
+		cmd, err := scripts.VerifyPrerequisites()
+		if err != nil {
+			return err
+		}
+
+		_, _, err = s.Runner.RunRaw(cmd)
 		if err != nil {
 			s.Logger.Errorf("Unable to verify binaries on node %s.", host.Hostname)
 			return err

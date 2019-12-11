@@ -17,13 +17,36 @@ limitations under the License.
 package scripts
 
 const (
-	hostnameCmd = `
+	hostnameScript = `
 fqdn=$(hostname -f)
 [ "$fqdn" = localhost ] && fqdn=$(hostname)
 echo "$fqdn"
 `
+
+	verifyPrerequisitesScript = `
+# Check is Docker installed
+if ! type docker &>/dev/null; then exit 1; fi
+# Check is Kubelet installed
+if ! type kubelet &>/dev/null; then exit 1; fi
+# Check is Kubeadm installed
+if ! type kubeadm &>/dev/null; then exit 1; fi
+# Check do Kubernetes directories and files exist
+if [[ ! -d "/etc/kubernetes/manifests" ]]; then exit 1; fi
+if [[ ! -d "/etc/kubernetes/pki" ]]; then exit 1; fi
+if [[ ! -f "/etc/kubernetes/kubelet.conf" ]]; then exit 1; fi
+# Check are kubelet running
+if ! sudo systemctl is-active --quiet kubelet &>/dev/null; then exit 1; fi
+`
 )
 
-func GetHostname() string {
-	return hostnameCmd
+func Hostname() string {
+	return hostnameScript
+}
+
+func OSID() string {
+	return "source /etc/os-release && echo -n $ID"
+}
+
+func VerifyPrerequisites() (string, error) {
+	return Render(verifyPrerequisitesScript, nil)
 }

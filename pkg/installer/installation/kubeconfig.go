@@ -24,7 +24,7 @@ import (
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/kubeconfig"
-	"github.com/kubermatic/kubeone/pkg/runner"
+	"github.com/kubermatic/kubeone/pkg/scripts"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/state"
 )
@@ -32,17 +32,13 @@ import (
 func copyKubeconfig(s *state.State) error {
 	return s.RunTaskOnAllNodes(func(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
 		s.Logger.Infoln("Copying Kubeconfig to home directory…")
-
-		_, _, err := s.Runner.Run(`
-mkdir -p $HOME/.kube/
-sudo cp /etc/kubernetes/admin.conf $HOME/.kube/config
-sudo chown $(id -u):$(id -g) $HOME/.kube/config
-`, runner.TemplateVariables{})
+		cmd, err := scripts.KubernetesAdminConfig()
 		if err != nil {
 			return err
 		}
 
-		return nil
+		_, _, err = s.Runner.RunRaw(cmd)
+		return err
 	}, true)
 }
 

@@ -17,11 +17,10 @@ limitations under the License.
 package installation
 
 import (
-	"strconv"
 	"time"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/runner"
+	"github.com/kubermatic/kubeone/pkg/scripts"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/state"
 )
@@ -32,22 +31,18 @@ func joinControlplaneNode(s *state.State) error {
 }
 
 func joinControlPlaneNodeInternal(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
-	sleepTime := 30 * time.Second
-
 	logger := s.Logger.WithField("node", node.PublicAddress)
+
+	sleepTime := 30 * time.Second
 	logger.Infof("Waiting %s to ensure main control plane components are up…", sleepTime)
 	time.Sleep(sleepTime)
+
 	logger.Info("Joining control plane node")
+	cmd, err := scripts.KubeadmJoin(s.WorkDir, node.ID, s.KubeadmVerboseFlag())
+	if err != nil {
+		return err
+	}
 
-	_, _, err := s.Runner.Run(`
-if [[ -f /etc/kubernetes/admin.conf ]]; then exit 0; fi
-
-sudo kubeadm join {{ .VERBOSE }} \
-	--config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
-`, runner.TemplateVariables{
-		"WORK_DIR": s.WorkDir,
-		"NODE_ID":  strconv.Itoa(node.ID),
-		"VERBOSE":  s.KubeadmVerboseFlag(),
-	})
+	_, _, err = s.Runner.RunRaw(cmd)
 	return err
 }

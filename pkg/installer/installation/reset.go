@@ -23,7 +23,7 @@ import (
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/kubeconfig"
-	"github.com/kubermatic/kubeone/pkg/runner"
+	"github.com/kubermatic/kubeone/pkg/scripts"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/state"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
@@ -114,11 +114,12 @@ func destroyWorkers(s *state.State) error {
 func resetNode(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	s.Logger.Infoln("Resetting node…")
 
-	_, _, err := s.Runner.Run(resetScript, runner.TemplateVariables{
-		"WORK_DIR": s.WorkDir,
-		"VERBOSE":  s.KubeadmVerboseFlag(),
-	})
+	cmd, err := scripts.KubeadmReset(s.KubeadmVerboseFlag(), s.WorkDir)
+	if err != nil {
+		return err
+	}
 
+	_, _, err = s.Runner.RunRaw(cmd)
 	return err
 }
 
@@ -148,61 +149,34 @@ func removeBinaries(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connec
 }
 
 func removeBinariesDebian(s *state.State) error {
-	_, _, err := s.Runner.Run(removeBinariesDebianCommand, runner.TemplateVariables{
-		"KUBERNETES_VERSION": s.Cluster.Versions.Kubernetes,
-		"CNI_VERSION":        s.Cluster.Versions.KubernetesCNIVersion(),
-	})
+	cmd, err := scripts.RemoveBinariesDebian(s.Cluster.Versions.Kubernetes, s.Cluster.Versions.KubernetesCNIVersion())
+	if err != nil {
+		return err
+	}
 
+	_, _, err = s.Runner.RunRaw(cmd)
 	return errors.WithStack(err)
 }
 
 func removeBinariesCentOS(s *state.State) error {
-	_, _, err := s.Runner.Run(removeBinariesCentOSCommand, runner.TemplateVariables{
-		"KUBERNETES_VERSION": s.Cluster.Versions.Kubernetes,
-		"CNI_VERSION":        s.Cluster.Versions.KubernetesCNIVersion(),
-	})
+	cmd, err := scripts.RemoveBinariesCentOS(s.Cluster.Versions.Kubernetes, s.Cluster.Versions.KubernetesCNIVersion())
+	if err != nil {
+		return err
+	}
 
+	_, _, err = s.Runner.RunRaw(cmd)
 	return errors.WithStack(err)
 }
 
 func removeBinariesCoreOS(s *state.State) error {
-	_, _, err := s.Runner.Run(removeBinariesCoreOSCommand, runner.TemplateVariables{})
+	cmd, err := scripts.RemoveBinariesCoreOS()
+	if err != nil {
+		return err
+	}
 
+	_, _, err = s.Runner.RunRaw(cmd)
 	return errors.WithStack(err)
 }
-
-const (
-	removeBinariesDebianCommand = `
-kube_ver=$(apt-cache madison kubelet | grep "{{ .KUBERNETES_VERSION }}" | head -1 | awk '{print $3}')
-cni_ver=$(apt-cache madison kubernetes-cni | grep "{{ .CNI_VERSION }}" | head -1 | awk '{print $3}')
-
-sudo apt-mark unhold kubelet kubeadm kubectl kubernetes-cni
-sudo apt-get remove --purge -y \
-	kubeadm=${kube_ver} \
-	kubectl=${kube_ver} \
-	kubelet=${kube_ver} \
-	kubernetes-cni=${cni_ver}
-`
-	removeBinariesCentOSCommand = `
-sudo yum remove -y \
-	kubelet-{{ .KUBERNETES_VERSION }}-0\
-	kubeadm-{{ .KUBERNETES_VERSION }}-0 \
-	kubectl-{{ .KUBERNETES_VERSION }}-0 \
-	kubernetes-cni-{{ .CNI_VERSION }}-0
-`
-	removeBinariesCoreOSCommand = `
-# Remove CNI and binaries
-sudo rm -rf /opt/cni /opt/bin/kubeadm /opt/bin/kubectl /opt/bin/kubelet
-# Remove systemd unit files
-sudo rm /etc/systemd/system/kubelet.service /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-`
-	resetScript = `
-sudo kubeadm {{ .VERBOSE }} reset --force || true
-sudo rm -f /etc/kubernetes/cloud-config
-sudo rm -rf /var/lib/etcd/
-rm -rf "{{ .WORK_DIR }}"
-`
-)
 
 func defaultRetryBackoff(retries int) wait.Backoff {
 	if retries == 0 {
