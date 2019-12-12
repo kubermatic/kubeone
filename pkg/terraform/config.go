@@ -19,6 +19,7 @@ package terraform
 import (
 	"encoding/json"
 
+	"github.com/imdario/mergo"
 	"github.com/pkg/errors"
 
 	kubeonev1alpha1 "github.com/kubermatic/kubeone/pkg/apis/kubeone/v1alpha1"
@@ -126,7 +127,9 @@ func (c *Config) Apply(cluster *kubeonev1alpha1.KubeOneCluster) error {
 		cluster.Hosts = hosts
 	}
 
-	cluster.Proxy = c.Proxy.Value
+	if err = mergo.Merge(&cluster.Proxy, &c.Proxy.Value); err != nil {
+		return errors.Wrap(err, "failed to merge proxy settings")
+	}
 
 	if len(cp.NetworkID) > 0 {
 		cluster.ClusterNetwork.NetworkID = cp.NetworkID
