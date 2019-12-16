@@ -57,6 +57,14 @@ func (p *terraform) initAndApply(applyArgs ...string) (string, error) {
 
 	var applyErr error
 	for i := 0; i < applyRetryNumber; i++ {
+		// In case when apply fails due to the CIDR conflict error, we need to destroy resources and start over
+		// or otherwise apply will always fail.
+		// This is because the random_integer resource used for the CIDR creation is not recreated on the subsequent
+		// runs of terraform apply, so terraform always tries to create the same CIDR.
+		destroyErr := p.destroy()
+		if destroyErr != nil {
+			return "", fmt.Errorf("terraform destroy command failed: %v", destroyErr)
+		}
 		applyErr = p.run(args...)
 		if applyErr == nil {
 			break
