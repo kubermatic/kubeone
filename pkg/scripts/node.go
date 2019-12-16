@@ -22,7 +22,7 @@ kubectl drain {{ .NODE_NAME }} --ignore-daemonsets
 `
 
 	cordonNodeScriptTemplate = `
-kubectl cordon {{ .NODE_NAME }}
+kubectl uncordon {{ .NODE_NAME }}
 `
 )
 
@@ -32,7 +32,7 @@ func DrainNode(nodeName string) (string, error) {
 	})
 }
 
-func CordonNode(nodeName string) (string, error) {
+func UncordonNode(nodeName string) (string, error) {
 	return Render(cordonNodeScriptTemplate, Data{
 		"NODE_NAME": nodeName,
 	})

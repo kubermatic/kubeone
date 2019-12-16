@@ -33,8 +33,8 @@ func drainNode(s *state.State, node kubeoneapi.HostConfig) error {
 	return err
 }
 
-func cordonNode(s *state.State, node kubeoneapi.HostConfig) error {
-	cmd, err := scripts.CordonNode(node.Hostname)
+func uncordonNode(s *state.State, node kubeoneapi.HostConfig) error {
+	cmd, err := scripts.UncordonNode(node.Hostname)
 	if err != nil {
 		return err
 	}

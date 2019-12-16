@@ -69,9 +69,9 @@ func upgradeLeaderExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh
 	logger.Infof("Waiting %v seconds to ensure all components are up…", timeoutNodeUpgrade.String())
 	time.Sleep(timeoutNodeUpgrade)
 
-	logger.Infoln("Cordoning leader control plane…")
-	if err := cordonNode(s, *node); err != nil {
-		return errors.Wrap(err, "failed to cordon leader control plane node")
+	logger.Infoln("Uncordoning leader control plane…")
+	if err := uncordonNode(s, *node); err != nil {
+		return errors.Wrap(err, "failed to uncordon leader control plane node")
 	}
 
 	logger.Infoln("Unlabeling leader control plane…")

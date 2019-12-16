@@ -40,7 +40,8 @@ func upgradeFollowerExecutor(s *state.State, node *kubeoneapi.HostConfig, conn s
 	}
 
 	logger.Infoln("Draining follower control plane…")
-	if err := drainNode(s, *node); err != nil {
+	err = drainNode(s, *node)
+	if err != nil {
 		return errors.Wrap(err, "failed to drain leader control plane node")
 	}
 
@@ -62,9 +63,10 @@ func upgradeFollowerExecutor(s *state.State, node *kubeoneapi.HostConfig, conn s
 	logger.Infof("Waiting %v seconds to ensure all components are up…", timeoutNodeUpgrade.String())
 	time.Sleep(timeoutNodeUpgrade)
 
-	logger.Infoln("Cordoning follower control plane…")
-	if err := cordonNode(s, *node); err != nil {
-		return errors.Wrap(err, "failed to cordon follower control plane node")
+	logger.Infoln("Uncordoning follower control plane…")
+	err = uncordonNode(s, *node)
+	if err != nil {
+		return errors.Wrap(err, "failed to uncordon follower control plane node")
 	}
 
 	logger.Infoln("Unlabeling follower control plane…")
