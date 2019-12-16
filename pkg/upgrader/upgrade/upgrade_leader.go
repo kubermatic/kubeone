@@ -38,6 +38,11 @@ func upgradeLeaderExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh
 		return errors.Wrap(err, "failed to label leader control plane node")
 	}
 
+	logger.Infoln("Draining leader control plane…")
+	if err := drainNode(s, *node); err != nil {
+		return errors.Wrap(err, "failed to drain leader control plane node")
+	}
+
 	logger.Infoln("Upgrading Kubernetes binaries on leader control plane…")
 	if err := upgradeKubernetesBinaries(s, *node); err != nil {
 		return errors.Wrap(err, "failed to upgrade kubernetes binaries on leader control plane")
@@ -63,6 +68,11 @@ func upgradeLeaderExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh
 
 	logger.Infof("Waiting %v seconds to ensure all components are up…", timeoutNodeUpgrade.String())
 	time.Sleep(timeoutNodeUpgrade)
+
+	logger.Infoln("Cordoning leader control plane…")
+	if err := cordonNode(s, *node); err != nil {
+		return errors.Wrap(err, "failed to cordon leader control plane node")
+	}
 
 	logger.Infoln("Unlabeling leader control plane…")
 	if err := unlabelNode(s.DynamicClient, node); err != nil {

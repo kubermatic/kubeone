@@ -207,34 +207,30 @@ sudo rm -rf /opt/cni /opt/bin/kubeadm /opt/bin/kubectl /opt/bin/kubelet
 sudo rm /etc/systemd/system/kubelet.service /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
 `
 
-	upgradeKubeBinariesDebianScriptTemplate = `
+	upgradeKubeadmAndCNIDebianScriptTemplate = `
 source /etc/os-release
 source /etc/kubeone/proxy-env
 
 sudo apt-get update
 
-kube_ver=$(apt-cache madison kubelet | grep "{{ .KUBERNETES_VERSION }}" | head -1 | awk '{print $3}')
+kube_ver=$(apt-cache madison kubeadm | grep "{{ .KUBERNETES_VERSION }}" | head -1 | awk '{print $3}')
 cni_ver=$(apt-cache madison kubernetes-cni | grep "{{ .CNI_VERSION }}" | head -1 | awk '{print $3}')
 
-sudo apt-mark unhold kubeadm kubelet kubectl kubernetes-cni
+sudo apt-mark unhold kubeadm kubernetes-cni
 sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--force-confold" -y --no-install-recommends \
 	kubeadm=${kube_ver} \
-	kubectl=${kube_ver} \
-	kubelet=${kube_ver} \
 	kubernetes-cni=${cni_ver}
-sudo apt-mark hold kubeadm kubelet kubectl kubernetes-cni
+sudo apt-mark hold kubeadm kubernetes-cni
 `
 
-	upgradeKubeBinariesCentOSScriptTemplate = `
+	upgradeKubeadmAndCNICentOSScriptTemplate = `
 source /etc/kubeone/proxy-env
 
 sudo yum install -y --disableexcludes=kubernetes \
-	kubelet-{{ .KUBERNETES_VERSION }}-0 \
 	kubeadm-{{ .KUBERNETES_VERSION }}-0 \
-	kubectl-{{ .KUBERNETES_VERSION }}-0 \
 	kubernetes-cni-{{ .CNI_VERSION }}-0
 `
-	upgradeKubeBinariesCoreOSScriptTemplate = `
+	upgradeKubeadmAndCNICoreOSScriptTemplate = `
 source /etc/kubeone/proxy-env
 
 sudo mkdir -p /opt/cni/bin
@@ -246,22 +242,65 @@ RELEASE="v{{ .KUBERNETES_VERSION }}"
 sudo mkdir -p /var/tmp/kube-binaries
 cd /var/tmp/kube-binaries
 sudo curl -L --remote-name-all \
-	https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/amd64/{kubeadm,kubelet,kubectl}
+	https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/amd64/kubeadm
 
 sudo mkdir -p /opt/bin
 cd /opt/bin
 sudo systemctl stop kubelet
-sudo mv /var/tmp/kube-binaries/{kubeadm,kubelet,kubectl} .
-sudo chmod +x {kubeadm,kubelet,kubectl}
-
-curl -sSL "https://raw.githubusercontent.com/kubernetes/kubernetes/${RELEASE}/build/debs/kubelet.service" |
-	sed "s:/usr/bin:/opt/bin:g" |
-	sudo tee /etc/systemd/system/kubelet.service
+sudo mv /var/tmp/kube-binaries/kubeadm .
+sudo chmod +x kubeadm
 
 sudo mkdir -p /etc/systemd/system/kubelet.service.d
 curl -sSL "https://raw.githubusercontent.com/kubernetes/kubernetes/${RELEASE}/build/debs/10-kubeadm.conf" |
 	sed "s:/usr/bin:/opt/bin:g" |
 	sudo tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+
+sudo systemctl daemon-reload
+sudo systemctl start kubelet
+`
+
+	upgradeKubeletAndKubectlDebianScriptTemplate = `
+source /etc/os-release
+source /etc/kubeone/proxy-env
+
+sudo apt-get update
+
+kube_ver=$(apt-cache madison kubelet | grep "{{ .KUBERNETES_VERSION }}" | head -1 | awk '{print $3}')
+
+sudo apt-mark unhold kubelet kubectl
+sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--force-confold" -y --no-install-recommends \
+	kubelet=${kube_ver} \
+	kubectl=${kube_ver}
+sudo apt-mark hold kubelet kubectl
+`
+
+	upgradeKubeletAndKubectlCentOSScriptTemplate = `
+source /etc/kubeone/proxy-env
+
+sudo yum install -y --disableexcludes=kubernetes \
+	kubelet-{{ .KUBERNETES_VERSION }}-0 \
+	kubectl-{{ .KUBERNETES_VERSION }}-0
+`
+
+	upgradeKubeletAndKubectlCoreOSScriptTemplate = `
+source /etc/kubeone/proxy-env
+
+RELEASE="v{{ .KUBERNETES_VERSION }}"
+
+sudo mkdir -p /var/tmp/kube-binaries
+cd /var/tmp/kube-binaries
+sudo curl -L --remote-name-all \
+	https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/amd64/{kubelet,kubectl}
+
+sudo mkdir -p /opt/bin
+cd /opt/bin
+sudo systemctl stop kubelet
+sudo mv /var/tmp/kube-binaries/{kubelet,kubectl} .
+sudo chmod +x {kubelet,kubectl}
+
+curl -sSL "https://raw.githubusercontent.com/kubernetes/kubernetes/${RELEASE}/build/debs/kubelet.service" |
+	sed "s:/usr/bin:/opt/bin:g" |
+	sudo tee /etc/systemd/system/kubelet.service
 	 
 sudo systemctl daemon-reload
 sudo systemctl start kubelet
@@ -313,23 +352,41 @@ func RemoveBinariesCoreOS() (string, error) {
 	return Render(removeBinariesCoreOSScriptTemplate, nil)
 }
 
-func UpgradeKubeBinariesDebian(k8sVersion, cniVersion string) (string, error) {
-	return Render(upgradeKubeBinariesDebianScriptTemplate, Data{
+func UpgradeKubeadmAndCNIDebian(k8sVersion, cniVersion string) (string, error) {
+	return Render(upgradeKubeadmAndCNIDebianScriptTemplate, Data{
 		"KUBERNETES_VERSION": k8sVersion,
 		"CNI_VERSION":        cniVersion,
 	})
 }
 
-func UpgradeKubeBinariesCentOS(k8sVersion, cniVersion string) (string, error) {
-	return Render(upgradeKubeBinariesCentOSScriptTemplate, Data{
+func UpgradeKubeadmAndCNICentOS(k8sVersion, cniVersion string) (string, error) {
+	return Render(upgradeKubeadmAndCNICentOSScriptTemplate, Data{
 		"KUBERNETES_VERSION": k8sVersion,
 		"CNI_VERSION":        cniVersion,
 	})
 }
 
-func UpgradeKubeBinariesCoreOS(k8sVersion, cniVersion string) (string, error) {
-	return Render(upgradeKubeBinariesCoreOSScriptTemplate, Data{
+func UpgradeKubeadmAndCNICoreOS(k8sVersion, cniVersion string) (string, error) {
+	return Render(upgradeKubeadmAndCNICoreOSScriptTemplate, Data{
 		"KUBERNETES_VERSION": k8sVersion,
 		"CNI_VERSION":        cniVersion,
+	})
+}
+
+func UpgradeKubeletAndKubectlDebian(k8sVersion string) (string, error) {
+	return Render(upgradeKubeletAndKubectlDebianScriptTemplate, Data{
+		"KUBERNETES_VERSION": k8sVersion,
+	})
+}
+
+func UpgradeKubeletAndKubectlCentOS(k8sVersion string) (string, error) {
+	return Render(upgradeKubeletAndKubectlCentOSScriptTemplate, Data{
+		"KUBERNETES_VERSION": k8sVersion,
+	})
+}
+
+func UpgradeKubeletAndKubectlCoreOS(k8sVersion string) (string, error) {
+	return Render(upgradeKubeletAndKubectlCoreOSScriptTemplate, Data{
+		"KUBERNETES_VERSION": k8sVersion,
 	})
 }

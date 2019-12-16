@@ -21,19 +21,35 @@ import (
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/scripts"
+	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/state"
 )
 
-func upgradeKubernetesBinaries(s *state.State, node kubeoneapi.HostConfig) error {
+func upgradeKubernetesNodeBinaries(s *state.State) error {
+	return s.RunTaskOnAllNodes(upgradeKubernetesNodeBinariesExecutor, false)
+}
+
+func upgradeKubernetesNodeBinariesExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+	logger := s.Logger.WithField("node", node.PublicAddress)
+
+	logger.Infoln("Upgrading Kubernetes node binaries on control planes…")
+	if err := upgradeKubernetesNodeBinariesScript(s, *node); err != nil {
+		return errors.Wrap(err, "failed to upgrade kubernetes binaries on leader control plane")
+	}
+
+	return nil
+}
+
+func upgradeKubernetesNodeBinariesScript(s *state.State, node kubeoneapi.HostConfig) error {
 	var err error
 
 	switch node.OperatingSystem {
 	case "ubuntu", "debian":
-		err = upgradeKubernetesBinariesDebian(s)
+		err = upgradeKubernetesNodeBinariesDebian(s)
 	case "coreos":
-		err = upgradeKubernetesBinariesCoreOS(s)
+		err = upgradeKubernetesNodeBinariesCoreOS(s)
 	case "centos":
-		err = upgradeKubernetesBinariesCentOS(s)
+		err = upgradeKubernetesNodeBinariesCentOS(s)
 	default:
 		err = errors.Errorf("'%s' is not a supported operating system", node.OperatingSystem)
 	}
@@ -41,8 +57,8 @@ func upgradeKubernetesBinaries(s *state.State, node kubeoneapi.HostConfig) error
 	return err
 }
 
-func upgradeKubernetesBinariesDebian(s *state.State) error {
-	cmd, err := scripts.UpgradeKubeadmAndCNIDebian(s.Cluster.Versions.Kubernetes, s.Cluster.Versions.KubernetesCNIVersion())
+func upgradeKubernetesNodeBinariesDebian(s *state.State) error {
+	cmd, err := scripts.UpgradeKubeletAndKubectlDebian(s.Cluster.Versions.Kubernetes)
 	if err != nil {
 		return err
 	}
@@ -52,8 +68,8 @@ func upgradeKubernetesBinariesDebian(s *state.State) error {
 	return errors.WithStack(err)
 }
 
-func upgradeKubernetesBinariesCentOS(s *state.State) error {
-	cmd, err := scripts.UpgradeKubeadmAndCNICentOS(s.Cluster.Versions.Kubernetes, s.Cluster.Versions.KubernetesCNIVersion())
+func upgradeKubernetesNodeBinariesCentOS(s *state.State) error {
+	cmd, err := scripts.UpgradeKubeletAndKubectlCentOS(s.Cluster.Versions.Kubernetes)
 	if err != nil {
 		return err
 	}
@@ -63,8 +79,8 @@ func upgradeKubernetesBinariesCentOS(s *state.State) error {
 	return errors.WithStack(err)
 }
 
-func upgradeKubernetesBinariesCoreOS(s *state.State) error {
-	cmd, err := scripts.UpgradeKubeadmAndCNICoreOS(s.Cluster.Versions.Kubernetes, s.Cluster.Versions.KubernetesCNIVersion())
+func upgradeKubernetesNodeBinariesCoreOS(s *state.State) error {
+	cmd, err := scripts.UpgradeKubeletAndKubectlCentOS(s.Cluster.Versions.Kubernetes)
 	if err != nil {
 		return err
 	}
