@@ -18,7 +18,7 @@ package scripts
 
 const (
 	drainNodeScriptTemplate = `
-kubectl drain {{ .NODE_NAME }} --ignore-daemonsets
+kubectl drain {{ .NODE_NAME }} --ignore-daemonsets --delete-local-data
 `
 
 	uncordonNodeScriptTemplate = `
