@@ -80,7 +80,7 @@ func upgradeKubernetesNodeBinariesCentOS(s *state.State) error {
 }
 
 func upgradeKubernetesNodeBinariesCoreOS(s *state.State) error {
-	cmd, err := scripts.UpgradeKubeletAndKubectlCentOS(s.Cluster.Versions.Kubernetes)
+	cmd, err := scripts.UpgradeKubeletAndKubectlCoreOS(s.Cluster.Versions.Kubernetes)
 	if err != nil {
 		return err
 	}
