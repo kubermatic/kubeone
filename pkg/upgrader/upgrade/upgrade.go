@@ -40,7 +40,7 @@ const (
 	timeoutKubeletUpgrade = 1 * time.Minute
 	// timeoutNodeUpgrade is time for how long kubeone will wait after finishing the upgrade
 	// process on the node
-	timeoutNodeUpgrade = 15 * time.Second
+	timeoutNodeUpgrade = 30 * time.Second
 )
 
 // Upgrade performs all the steps required to upgrade Kubernetes on
@@ -54,6 +54,7 @@ func Upgrade(s *state.State) error {
 		{Fn: runPreflightChecks, ErrMsg: "preflight checks failed"},
 		{Fn: upgradeLeader, ErrMsg: "unable to upgrade leader control plane", Retries: 3},
 		{Fn: upgradeFollower, ErrMsg: "unable to upgrade follower control plane", Retries: 3},
+		{Fn: upgradeKubernetesNodeBinaries, ErrMsg: "unable to upgrade kubernetes node binaries", Retries: 3},
 		{Fn: nodelocaldns.Deploy, ErrMsg: "unable to deploy nodelocaldns", Retries: 3},
 		{Fn: features.Activate, ErrMsg: "unable to activate features"},
 		{Fn: certificate.DownloadCA, ErrMsg: "unable to download ca from leader", Retries: 3},

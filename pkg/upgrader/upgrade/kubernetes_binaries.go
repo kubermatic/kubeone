@@ -42,7 +42,7 @@ func upgradeKubernetesBinaries(s *state.State, node kubeoneapi.HostConfig) error
 }
 
 func upgradeKubernetesBinariesDebian(s *state.State) error {
-	cmd, err := scripts.UpgradeKubeBinariesDebian(s.Cluster.Versions.Kubernetes, s.Cluster.Versions.KubernetesCNIVersion())
+	cmd, err := scripts.UpgradeKubeadmAndCNIDebian(s.Cluster.Versions.Kubernetes, s.Cluster.Versions.KubernetesCNIVersion())
 	if err != nil {
 		return err
 	}
@@ -53,7 +53,7 @@ func upgradeKubernetesBinariesDebian(s *state.State) error {
 }
 
 func upgradeKubernetesBinariesCentOS(s *state.State) error {
-	cmd, err := scripts.UpgradeKubeBinariesCentOS(s.Cluster.Versions.Kubernetes, s.Cluster.Versions.KubernetesCNIVersion())
+	cmd, err := scripts.UpgradeKubeadmAndCNICentOS(s.Cluster.Versions.Kubernetes, s.Cluster.Versions.KubernetesCNIVersion())
 	if err != nil {
 		return err
 	}
@@ -64,7 +64,7 @@ func upgradeKubernetesBinariesCentOS(s *state.State) error {
 }
 
 func upgradeKubernetesBinariesCoreOS(s *state.State) error {
-	cmd, err := scripts.UpgradeKubeBinariesCoreOS(s.Cluster.Versions.Kubernetes, s.Cluster.Versions.KubernetesCNIVersion())
+	cmd, err := scripts.UpgradeKubeadmAndCNICoreOS(s.Cluster.Versions.Kubernetes, s.Cluster.Versions.KubernetesCNIVersion())
 	if err != nil {
 		return err
 	}

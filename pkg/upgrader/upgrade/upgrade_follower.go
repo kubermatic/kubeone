@@ -39,14 +39,17 @@ func upgradeFollowerExecutor(s *state.State, node *kubeoneapi.HostConfig, conn s
 		return errors.Wrap(err, "failed to label leader control plane node")
 	}
 
+	logger.Infoln("Draining follower control plane…")
+	err = drainNode(s, *node)
+	if err != nil {
+		return errors.Wrap(err, "failed to drain leader control plane node")
+	}
+
 	logger.Infoln("Upgrading Kubernetes binaries on follower control plane…")
 	err = upgradeKubernetesBinaries(s, *node)
 	if err != nil {
 		return errors.Wrap(err, "failed to upgrade kubernetes binaries on follower control plane")
 	}
-
-	logger.Infof("Waiting %v seconds to ensure kubelet is up…", timeoutKubeletUpgrade.String())
-	time.Sleep(timeoutKubeletUpgrade)
 
 	logger.Infoln("Running 'kubeadm upgrade' on the follower control plane node…")
 	err = upgradeFollowerControlPlane(s)
@@ -54,7 +57,13 @@ func upgradeFollowerExecutor(s *state.State, node *kubeoneapi.HostConfig, conn s
 		return errors.Wrap(err, "failed to upgrade follower control plane")
 	}
 
-	logger.Infof("Waiting %v seconds to ensure all components are up…", timeoutNodeUpgrade.String())
+	logger.Infoln("Uncordoning follower control plane…")
+	err = uncordonNode(s, *node)
+	if err != nil {
+		return errors.Wrap(err, "failed to uncordon follower control plane node")
+	}
+
+	logger.Infof("Waiting %v to ensure all components are up…", timeoutNodeUpgrade)
 	time.Sleep(timeoutNodeUpgrade)
 
 	logger.Infoln("Unlabeling follower control plane…")
