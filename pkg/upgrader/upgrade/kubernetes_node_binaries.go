@@ -17,6 +17,8 @@ limitations under the License.
 package upgrade
 
 import (
+	"time"
+
 	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
@@ -36,6 +38,9 @@ func upgradeKubernetesNodeBinariesExecutor(s *state.State, node *kubeoneapi.Host
 	if err := upgradeKubernetesNodeBinariesScript(s, *node); err != nil {
 		return errors.Wrap(err, "failed to upgrade kubernetes binaries on leader control plane")
 	}
+
+	logger.Infof("Waiting %v seconds to ensure kubelet is up…", timeoutKubeletUpgrade.String())
+	time.Sleep(timeoutKubeletUpgrade)
 
 	return nil
 }

@@ -51,23 +51,20 @@ func upgradeFollowerExecutor(s *state.State, node *kubeoneapi.HostConfig, conn s
 		return errors.Wrap(err, "failed to upgrade kubernetes binaries on follower control plane")
 	}
 
-	logger.Infof("Waiting %v seconds to ensure kubelet is up…", timeoutKubeletUpgrade.String())
-	time.Sleep(timeoutKubeletUpgrade)
-
 	logger.Infoln("Running 'kubeadm upgrade' on the follower control plane node…")
 	err = upgradeFollowerControlPlane(s)
 	if err != nil {
 		return errors.Wrap(err, "failed to upgrade follower control plane")
 	}
 
-	logger.Infof("Waiting %v seconds to ensure all components are up…", timeoutNodeUpgrade.String())
-	time.Sleep(timeoutNodeUpgrade)
-
 	logger.Infoln("Uncordoning follower control plane…")
 	err = uncordonNode(s, *node)
 	if err != nil {
 		return errors.Wrap(err, "failed to uncordon follower control plane node")
 	}
+
+	logger.Infof("Waiting %v seconds to ensure all components are up…", timeoutNodeUpgrade.String())
+	time.Sleep(timeoutNodeUpgrade)
 
 	logger.Infoln("Unlabeling follower control plane…")
 	err = unlabelNode(s.DynamicClient, node)

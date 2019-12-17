@@ -48,9 +48,6 @@ func upgradeLeaderExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh
 		return errors.Wrap(err, "failed to upgrade kubernetes binaries on leader control plane")
 	}
 
-	logger.Infof("Waiting %v seconds to ensure kubelet is up…", timeoutKubeletUpgrade.String())
-	time.Sleep(timeoutKubeletUpgrade)
-
 	logger.Infoln("Generating kubeadm config …")
 	if err := generateKubeadmConfig(s, *node); err != nil {
 		return errors.Wrap(err, "failed to generate kubeadm config")
@@ -66,13 +63,13 @@ func upgradeLeaderExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh
 		return errors.Wrap(err, "failed to run 'kubeadm upgrade' on leader control plane")
 	}
 
-	logger.Infof("Waiting %v seconds to ensure all components are up…", timeoutNodeUpgrade.String())
-	time.Sleep(timeoutNodeUpgrade)
-
 	logger.Infoln("Uncordoning leader control plane…")
 	if err := uncordonNode(s, *node); err != nil {
 		return errors.Wrap(err, "failed to uncordon leader control plane node")
 	}
+
+	logger.Infof("Waiting %v seconds to ensure all components are up…", timeoutNodeUpgrade.String())
+	time.Sleep(timeoutNodeUpgrade)
 
 	logger.Infoln("Unlabeling leader control plane…")
 	if err := unlabelNode(s.DynamicClient, node); err != nil {

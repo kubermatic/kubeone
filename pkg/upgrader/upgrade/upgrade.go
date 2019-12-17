@@ -40,7 +40,7 @@ const (
 	timeoutKubeletUpgrade = 1 * time.Minute
 	// timeoutNodeUpgrade is time for how long kubeone will wait after finishing the upgrade
 	// process on the node
-	timeoutNodeUpgrade = 15 * time.Second
+	timeoutNodeUpgrade = 30 * time.Second
 )
 
 // Upgrade performs all the steps required to upgrade Kubernetes on
