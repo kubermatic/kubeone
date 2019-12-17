@@ -63,7 +63,7 @@ func upgradeFollowerExecutor(s *state.State, node *kubeoneapi.HostConfig, conn s
 		return errors.Wrap(err, "failed to uncordon follower control plane node")
 	}
 
-	logger.Infof("Waiting %v seconds to ensure all components are up…", timeoutNodeUpgrade)
+	logger.Infof("Waiting %v to ensure all components are up…", timeoutNodeUpgrade)
 	time.Sleep(timeoutNodeUpgrade)
 
 	logger.Infoln("Unlabeling follower control plane…")
