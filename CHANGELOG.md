@@ -5,7 +5,7 @@
 ## Attention Needed
 
 * Kubernetes 1.14 clusters are not supported as of this release because 1.14 isn't supported by the upstream anymore
-  * It remains possible to upgrade 1.14 clusters to 1.15 and is strongly advised
+  * It remains possible and is advisable to upgrade 1.14 clusters to 1.15
   * Currently, it also remains possible to provision 1.14 clusters, but that can be dropped at any time and it'll not be fixed if it stops working
 * As of this release, it is not possible to upgrade 1.13 clusters to 1.14
   * Please use an older version of KubeOne in the case you need to upgrade 1.13 clusters
