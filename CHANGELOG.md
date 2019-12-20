@@ -1,5 +1,48 @@
 # Changelog
 
+# [v0.11.0-beta.3](https://github.com/kubermatic/kubeone/releases/tag/v0.11.0-beta.0) - 2019-12-20
+
+## Attention Needed
+
+* Kubernetes 1.14 clusters are not supported as of this release because 1.14 isn't supported by the upstream anymore
+  * It remains possible to upgrade 1.14 clusters to 1.15 and is strongly advised
+  * Currently, it also remains possible to provision 1.14 clusters, but that can be dropped at any time and it'll not be fixed if it stops working
+* As of this release, it is not possible to upgrade 1.13 clusters to 1.14
+  * Please use an older version of KubeOne in the case you need to upgrade 1.13 clusters
+
+## Added
+
+* Add support for Kubernetes 1.17
+  * Fix cluster upgrade failures when upgrading from 1.16 to 1.17 ([#764](https://github.com/kubermatic/kubeone/pull/764))
+
+## Removed
+
+* Remove ability to upgrade 1.13 clusters to 1.14 ([#764](https://github.com/kubermatic/kubeone/pull/764))
+
+# [v0.11.0-beta.2](https://github.com/kubermatic/kubeone/releases/tag/v0.11.0-beta.0) - 2019-12-12
+
+## Changed
+
+### Bug Fixes
+
+* Proxy settings defined in the config have precedence over those defined in Terraform ([#760](https://github.com/kubermatic/kubeone/pull/760))
+
+# [v0.11.0-beta.1](https://github.com/kubermatic/kubeone/releases/tag/v0.11.0-beta.0) - 2019-12-10
+
+## Added
+
+* Persist configured proxy in the system package managers ([#749](https://github.com/kubermatic/kubeone/pull/749))
+
+## Changed
+
+### Bug fixes
+
+* Fix `kubeone status` reporting wrong `etcd` status when the hostname is not provided by Terraform or config ([#753](https://github.com/kubermatic/kubeone/pull/753))
+
+## Removed
+
+* Removed FlexVolume support from the Canal CNI ([#756](https://github.com/kubermatic/kubeone/pull/756))
+
 # [v0.11.0-beta.0](https://github.com/kubermatic/kubeone/releases/tag/v0.11.0-beta.0) - 2019-11-28
 
 ## Attention Needed
