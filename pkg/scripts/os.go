@@ -111,7 +111,7 @@ yum_proxy="proxy={{ .PROXY }} #kubeone"
 {{ end }}
 grep -v '#kubeone' /etc/yum.conf > /tmp/yum.conf || true
 echo -n "${yum_proxy}" >> /tmp/yum.conf
-mv /tmp/yum.conf /etc/yum.conf
+sudo mv /tmp/yum.conf /etc/yum.conf
 
 {{ if .CONFIGURE_REPOSITORIES }}
 cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
