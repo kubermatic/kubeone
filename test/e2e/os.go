@@ -50,6 +50,7 @@ func ControlPlaneImageFlags(provider string, osName OperatingSystem) ([]string, 
 		return []string{
 			"-var", fmt.Sprintf("ami=%s", img),
 			"-var", fmt.Sprintf("ssh_username=%s", user),
+			"-var", fmt.Sprintf("bastion_user=%s", user),
 		}, nil
 	}
 	return nil, errors.New("custom operating system is not supported for selected provider")
