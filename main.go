@@ -17,9 +17,14 @@ limitations under the License.
 package main
 
 import (
+	"os"
+
 	"github.com/kubermatic/kubeone/pkg/cmd"
 )
 
 func main() {
-	cmd.Execute()
+	err := cmd.Execute()
+	if err != nil {
+		os.Exit(-1)
+	}
 }

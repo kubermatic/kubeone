@@ -22,6 +22,7 @@ BUILD_DATE=$(shell if hash gdate 2>/dev/null; then gdate --rfc-3339=seconds | se
 GITCOMMIT=$(shell git log -1 --pretty=format:"%H")
 GITTAG=$(shell git describe --tags --always)
 GOLDFLAGS?=-extldflags=-zrelro -extldflags=-znow -s -w -X github.com/kubermatic/kubeone/pkg/cmd.version=$(GITTAG) -X github.com/kubermatic/kubeone/pkg/cmd.commit=$(GITCOMMIT) -X github.com/kubermatic/kubeone/pkg/cmd.date=$(BUILD_DATE)
+IMAGE=quay.io/kubermatic/kubeone
 
 .PHONY: all
 all: install
@@ -31,7 +32,7 @@ install: buildenv
 	go install -ldflags='$(GOLDFLAGS)' -v .
 
 .PHONY: build
-build: dist/kubeone
+build: dist/kubeone dist/kubeoneink8s
 
 .PHONY: vendor
 vendor: buildenv download-dependencies
@@ -43,6 +44,9 @@ download-dependencies: buildenv
 
 dist/kubeone: buildenv
 	go build -ldflags='$(GOLDFLAGS)' -v -o $@ .
+
+dist/kubeoneink8s: buildenv
+	go build -ldflags='$(GOLDFLAGS)' -v -o $@ ./build/kubeoneink8s
 
 .PHONY: generate-internal-groups
 generate-internal-groups: GOFLAGS = -mod=readonly
@@ -79,3 +83,11 @@ verify-codegen: vendor
 .PHONY: verify-boilerplate
 verify-boilerplate:
 	./hack/verify-boilerplate.sh
+
+.PHONY: image
+image:
+	docker build -f build/Dockerfile -t "$(IMAGE):$(GITTAG)" .
+
+.PHONY: image-push
+image-push:
+	docker push "$(IMAGE):$(GITTAG)"

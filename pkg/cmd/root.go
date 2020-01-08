@@ -18,7 +18,6 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/spf13/cobra"
 
@@ -31,7 +30,7 @@ import (
 // rootCmd is the KubeOne base command
 
 // Execute is the root command entry function
-func Execute() {
+func Execute() error {
 	// quite unlikely to happen errors here, but in case if errors present:
 	// let's panic
 	if err := clusterscheme.AddToScheme(scheme.Scheme); err != nil {
@@ -55,8 +54,9 @@ func Execute() {
 		} else {
 			fmt.Println(err)
 		}
-		os.Exit(-1)
+		return err
 	}
+	return nil
 }
 
 func newRoot() *cobra.Command {
