@@ -20,17 +20,15 @@ require (
 	go.uber.org/atomic v1.4.0 // indirect
 	go.uber.org/zap v1.10.0 // indirect
 	golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4
-	golang.org/x/sys v0.0.0-20190626221950-04f50cda93cb // indirect
-	golang.org/x/tools v0.0.0-20190703212419-2214986f1668 // indirect
-	gopkg.in/yaml.v2 v2.2.2
-	k8s.io/api v0.0.0-20190918195907-bd6ac527cfd2
-	k8s.io/apiextensions-apiserver v0.0.0-20190918161926-8f644eb6e783
-	k8s.io/apimachinery v0.0.0-20190913080033-27d36303b655
-	k8s.io/client-go v0.0.0-20190918200256-06eb1244587a
-	k8s.io/cluster-bootstrap v0.0.0-20190918202959-c340507a5d48
-	k8s.io/code-generator v0.0.0-20190912054826-cd179ad6a269
+	gopkg.in/yaml.v2 v2.2.4
+	k8s.io/api v0.15.7
+	k8s.io/apiextensions-apiserver v0.15.7
+	k8s.io/apimachinery v0.15.7
+	k8s.io/client-go v0.15.7
+	k8s.io/cluster-bootstrap v0.15.7
+	k8s.io/code-generator v0.15.7
 	k8s.io/gengo v0.0.0-20191010091904-7fa3014cb28f // indirect
-	k8s.io/kube-aggregator v0.0.0-20190918201136-c3a845f1fbb2
+	k8s.io/kube-aggregator v0.15.7
 	sigs.k8s.io/cluster-api v0.0.0-20190603191137-2ec456177c0e
 	sigs.k8s.io/controller-runtime v0.4.0
 	sigs.k8s.io/yaml v1.1.0
