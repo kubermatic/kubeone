@@ -169,6 +169,11 @@ func metricsServerDeployment() *appsv1.Deployment {
 					Labels: k8sAppLabels,
 				},
 				Spec: corev1.PodSpec{
+					Tolerations: []corev1.Toleration{
+						{
+							Operator: corev1.TolerationOpExists,
+						},
+					},
 					ServiceAccountName: "metrics-server",
 					Volumes: []corev1.Volume{
 						{
