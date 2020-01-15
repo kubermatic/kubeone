@@ -344,6 +344,10 @@ func TestValidateWorkerConfig(t *testing.T) {
 					Name:     "test-2",
 					Replicas: intPtr(5),
 				},
+				{
+					Name:     "test-3",
+					Replicas: intPtr(0),
+				},
 			},
 			expectedError: false,
 		},
@@ -351,20 +355,6 @@ func TestValidateWorkerConfig(t *testing.T) {
 			name:          "valid worker config (no worker defined)",
 			workerConfig:  []kubeone.WorkerConfig{},
 			expectedError: false,
-		},
-		{
-			name: "invalid worker config (zero replicas)",
-			workerConfig: []kubeone.WorkerConfig{
-				{
-					Name:     "test-1",
-					Replicas: intPtr(0),
-				},
-				{
-					Name:     "test-2",
-					Replicas: intPtr(5),
-				},
-			},
-			expectedError: true,
 		},
 		{
 			name: "invalid worker config (replicas not provided)",

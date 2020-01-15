@@ -151,8 +151,8 @@ func ValidateWorkerConfig(workerset []kubeone.WorkerConfig, fldPath *field.Path)
 		if w.Name == "" {
 			allErrs = append(allErrs, field.Invalid(fldPath, w.Name, "no name given"))
 		}
-		if w.Replicas == nil || *w.Replicas < 1 {
-			allErrs = append(allErrs, field.Invalid(fldPath, w.Replicas, "replicas must be specified and >= 1"))
+		if w.Replicas == nil || *w.Replicas < 0 {
+			allErrs = append(allErrs, field.Invalid(fldPath, w.Replicas, "replicas must be specified and >= 0"))
 		}
 	}
 
