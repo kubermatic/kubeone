@@ -73,6 +73,7 @@ type printOptions struct {
 	EnableStaticAuditLog    bool
 	EnableDynamicAuditLog   bool
 	EnableMetricsServer     bool
+	EnableBackups           bool
 	EnableOpenIDConnect     bool
 
 	DeployMachineController bool
@@ -143,6 +144,7 @@ For the full reference of the configuration manifest, run the print command with
 	cmd.Flags().BoolVarP(&pOpts.EnableStaticAuditLog, "enable-static-audit-log", "", false, "enable StaticAuditLog")
 	cmd.Flags().BoolVarP(&pOpts.EnableDynamicAuditLog, "enable-dynamic-audit-log", "", false, "enable DynamicAuditLog")
 	cmd.Flags().BoolVarP(&pOpts.EnableMetricsServer, "enable-metrics-server", "", true, "enable metrics-server")
+	cmd.Flags().BoolVarP(&pOpts.EnableBackups, "enable-backups", "", false, "enable backups")
 	cmd.Flags().BoolVarP(&pOpts.EnableOpenIDConnect, "enable-openid-connect", "", false, "enable OpenID Connect authentication")
 
 	// MachineController
@@ -479,6 +481,30 @@ features:
     enable: {{ .EnableMetricsServer }}
   # Enable OpenID-Connect support in API server
   # More info: https://kubernetes.io/docs/reference/access-authn-authz/authentication/#openid-connect-tokens
+  backup:
+    enable: {{ .EnableBackups }}
+    config:
+      # The S3 repository to store backups
+      resticRepository: "s3:https://s3.amazonaws.com/restic-demo"
+      # Password used to encrypt the data.
+      # If the password is not provided, a random one will be generated.
+      # The password is saved in the cluster, to the "kube-system/restic-config" Secret
+      resticPassword: ""
+      # Optional: Additional non-secret environment variables to be put into the container's "env" directly
+      env:
+        AWS_DEFAULT_REGION: "us-east-1"
+      # Credentials used to authenticate with the bucket.
+      # It is expected that the operator will create the secret **manually**
+      repositoryCredentials:
+      - secretKeyRef: 
+          name: s3-credentials
+          key: ACCESS_KEY_ID
+        envName: AWS_ACCESS_KEY_ID
+      - secretKeyRef:
+          name: s3-credentials
+          key: SECRET_ACCESS_KEY
+        envName: AWS_SECRET_ACCESS_KEY
+      
   openidConnect:
     enable: {{ .EnableOpenIDConnect }}
     config:
