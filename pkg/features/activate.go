@@ -37,6 +37,10 @@ func Activate(s *state.State) error {
 		return errors.Wrap(err, "failed to install metrics-server")
 	}
 
+	if err := installBackupRestic(s); err != nil {
+		return errors.Wrap(err, "failed to install restic and configure backups")
+	}
+
 	return nil
 }
 
