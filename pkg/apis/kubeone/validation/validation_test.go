@@ -19,6 +19,8 @@ package validation
 import (
 	"testing"
 
+	corev1 "k8s.io/api/core/v1"
+
 	"github.com/kubermatic/kubeone/pkg/apis/kubeone"
 )
 
@@ -542,6 +544,105 @@ func TestValidateOIDCConfig(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			errs := ValidateOIDCConfig(tc.oidcConfig, nil)
+			if (len(errs) == 0) == tc.expectedError {
+				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
+			}
+		})
+	}
+}
+
+func TestValidateBackupConfig(t *testing.T) {
+	tests := []struct {
+		name          string
+		backupConfig  kubeone.BackupConfig
+		expectedError bool
+	}{
+		{
+			name: "valid backup config (password, env and credentials provided)",
+			backupConfig: kubeone.BackupConfig{
+				ResticRepository: "s3:https://s3.amazonaws.com/restic-demo",
+				ResticPassword:   "test",
+				Env: map[string]string{
+					"AWS_DEFAULT_REGION": "us-east-1",
+				},
+				RepositoryCredentials: []corev1.EnvVar{
+					{
+						Name:  "AWS_ACCESS_KEY_ID",
+						Value: "",
+						ValueFrom: &corev1.EnvVarSource{
+							SecretKeyRef: &corev1.SecretKeySelector{
+								LocalObjectReference: corev1.LocalObjectReference{
+									Name: "s3-credentials",
+								},
+								Key: "ACCESS_KEY_ID",
+							},
+						},
+					},
+					{
+						Name:  "AWS_SECRET_ACCESS_KEY",
+						Value: "",
+						ValueFrom: &corev1.EnvVarSource{
+							SecretKeyRef: &corev1.SecretKeySelector{
+								LocalObjectReference: corev1.LocalObjectReference{
+									Name: "s3-credentials",
+								},
+								Key: "AWS_SECRET_ACCESS_KEY",
+							},
+						},
+					},
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "valid backup config (password and env not provided)",
+			backupConfig: kubeone.BackupConfig{
+				ResticRepository: "s3:https://s3.amazonaws.com/restic-demo",
+				RepositoryCredentials: []corev1.EnvVar{
+					{
+						Name:  "AWS_ACCESS_KEY_ID",
+						Value: "",
+						ValueFrom: &corev1.EnvVarSource{
+							SecretKeyRef: &corev1.SecretKeySelector{
+								LocalObjectReference: corev1.LocalObjectReference{
+									Name: "s3-credentials",
+								},
+								Key: "ACCESS_KEY_ID",
+							},
+						},
+					},
+					{
+						Name:  "AWS_SECRET_ACCESS_KEY",
+						Value: "",
+						ValueFrom: &corev1.EnvVarSource{
+							SecretKeyRef: &corev1.SecretKeySelector{
+								LocalObjectReference: corev1.LocalObjectReference{
+									Name: "s3-credentials",
+								},
+								Key: "AWS_SECRET_ACCESS_KEY",
+							},
+						},
+					},
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "invalid backup config (no repository provided)",
+			backupConfig: kubeone.BackupConfig{
+				ResticPassword: "test",
+				Env: map[string]string{
+					"AWS_DEFAULT_REGION": "us-east-1",
+				},
+			},
+			expectedError: true,
+		},
+	}
+
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			errs := ValidateBackupConfig(tc.backupConfig, nil)
 			if (len(errs) == 0) == tc.expectedError {
 				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
 			}

@@ -18,6 +18,7 @@ package v1alpha1
 
 import (
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/util/rand"
 )
 
 const (
@@ -123,6 +124,9 @@ func SetDefaults_Features(obj *KubeOneCluster) {
 	if obj.Features.StaticAuditLog != nil && obj.Features.StaticAuditLog.Enable {
 		defaultStaticAuditLogConfig(&obj.Features.StaticAuditLog.Config)
 	}
+	if obj.Features.Backup != nil && obj.Features.Backup.Enable {
+		defaultBackupConfig(&obj.Features.Backup.Config)
+	}
 }
 
 func defaultStaticAuditLogConfig(obj *StaticAuditLogConfig) {
@@ -137,6 +141,12 @@ func defaultStaticAuditLogConfig(obj *StaticAuditLogConfig) {
 	}
 	if obj.LogMaxSize == 0 {
 		obj.LogMaxSize = 100
+	}
+}
+
+func defaultBackupConfig(obj *BackupConfig) {
+	if len(obj.ResticPassword) == 0 {
+		obj.ResticPassword = rand.String(10)
 	}
 }
 

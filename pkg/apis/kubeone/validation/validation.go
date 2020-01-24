@@ -209,6 +209,9 @@ func ValidateFeatures(f kubeone.Features, fldPath *field.Path) field.ErrorList {
 	if f.OpenIDConnect != nil && f.OpenIDConnect.Enable {
 		allErrs = append(allErrs, ValidateOIDCConfig(f.OpenIDConnect.Config, fldPath.Child("openidConnect"))...)
 	}
+	if f.Backup != nil && f.Backup.Enable {
+		allErrs = append(allErrs, ValidateBackupConfig(f.Backup.Config, fldPath.Child("backup"))...)
+	}
 	return allErrs
 }
 
@@ -244,6 +247,17 @@ func ValidateOIDCConfig(o kubeone.OpenIDConnectConfig, fldPath *field.Path) fiel
 	if o.ClientID == "" {
 		allErrs = append(allErrs, field.Invalid(fldPath, o.ClientID, "openidConnect.config.client_id can't be empty"))
 	}
+
+	return allErrs
+}
+
+func ValidateBackupConfig(o kubeone.BackupConfig, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	if o.ResticRepository == "" {
+		allErrs = append(allErrs, field.Invalid(fldPath, o.ResticRepository, "backup.config.resticRepository can't be empty"))
+	}
+	// TODO: do we need to validate other fields?
 
 	return allErrs
 }

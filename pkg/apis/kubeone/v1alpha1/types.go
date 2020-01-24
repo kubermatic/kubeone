@@ -210,6 +210,7 @@ type Features struct {
 	DynamicAuditLog   *DynamicAuditLog   `json:"dynamicAuditLog"`
 	MetricsServer     *MetricsServer     `json:"metricsServer"`
 	OpenIDConnect     *OpenIDConnect     `json:"openidConnect"`
+	Backup            *Backup            `json:"backup"`
 }
 
 // SystemPackages controls configurations of APT/YUM
@@ -278,4 +279,18 @@ type OpenIDConnectConfig struct {
 	RequiredClaim  string `json:"requiredClaim"`
 	SigningAlgs    string `json:"signingAlgs"`
 	CAFile         string `json:"caFile"`
+}
+
+// Backup feature flag
+type Backup struct {
+	Enable bool         `json:"enable"`
+	Config BackupConfig `json:"config"`
+}
+
+// Backup config
+type BackupConfig struct {
+	ResticRepository      string            `json:"resticRepository"`
+	ResticPassword        string            `json:"resticPassword"`
+	Env                   map[string]string `json:"env"`
+	RepositoryCredentials []corev1.EnvVar   `json:"repositoryCredentials"`
 }
