@@ -496,14 +496,16 @@ features:
       # Credentials used to authenticate with the bucket.
       # It is expected that the operator will create the secret **manually**
       repositoryCredentials:
-      - secretKeyRef: 
-          name: s3-credentials
-          key: ACCESS_KEY_ID
-        envName: AWS_ACCESS_KEY_ID
-      - secretKeyRef:
-          name: s3-credentials
-          key: SECRET_ACCESS_KEY
-        envName: AWS_SECRET_ACCESS_KEY
+      - valueFrom:
+          secretKeyRef: 
+            name: s3-credentials
+            key: ACCESS_KEY_ID
+        name: AWS_ACCESS_KEY_ID
+      - valueFrom:
+          secretKeyRef:
+            name: s3-credentials
+            key: SECRET_ACCESS_KEY
+        name: AWS_SECRET_ACCESS_KEY
       
   openidConnect:
     enable: {{ .EnableOpenIDConnect }}

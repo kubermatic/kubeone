@@ -41,6 +41,12 @@ const (
 	resticConfigSecretName        = "restic-config"
 	resticConfigSecretNamespace   = "kube-system"
 	resticConfigSecretPasswordKey = "password"
+
+	resticUploadScript = `set -euf
+restic snapshots -q || restic init -q
+restic backup --tag=etcd --host=${ETCD_HOSTNAME} /backup
+restic forget --prune --keep-last 48
+`
 )
 
 func Deploy(s *state.State) error {
@@ -165,7 +171,7 @@ func cronJob(backupConfig kubeone.BackupConfig) *batchv1beta1.CronJob {
 										},
 										{
 											Name:  "ETCDCTL_ENDPOINTS",
-											Value: "127.0.0.1",
+											Value: "127.0.0.1:2379",
 										},
 										{
 											Name:  "ETCDCTL_CACERT",
@@ -209,11 +215,7 @@ func cronJob(backupConfig kubeone.BackupConfig) *batchv1beta1.CronJob {
 									Command: []string{
 										"/bin/sh",
 										"-c",
-										"|-",
-										"set -euf",
-										"restic snapshots -q || restic init -q",
-										"restic backup --tag=etcd --host=${ETCD_HOSTNAME} /backup",
-										"restic forget --prune --keep-last 48",
+										resticUploadScript,
 									},
 									Env: uploaderEnv,
 									VolumeMounts: []corev1.VolumeMount{
