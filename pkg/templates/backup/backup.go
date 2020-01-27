@@ -38,7 +38,7 @@ const (
 	snapshoterEtcdImage = "gcr.io/etcd-development/etcd:v3.4.3"
 	uploaderResticImage = "docker.io/restic/restic:0.9.6"
 
-	resticConfigSecretName        = "restic-config"
+	resticConfigSecretName        = "restic-config" //nolint:gosec
 	resticConfigSecretNamespace   = "kube-system"
 	resticConfigSecretPasswordKey = "password"
 
