@@ -159,6 +159,7 @@ func migrateCmd(_ *pflag.FlagSet) *cobra.Command {
 		Short: "Migrate the pre-v0.6.0 configuration manifest to the KubeOneCluster manifest",
 		Long: `
 Migrate the pre-v0.6.0 KubeOne configuration manifest to the KubeOneCluster manifest used as of v0.6.0.
+
 The new manifest is printed on the standard output.
 `,
 		Args:    cobra.ExactArgs(1),
@@ -403,6 +404,7 @@ const exampleManifest = `
 apiVersion: kubeone.io/v1alpha1
 kind: KubeOneCluster
 name: {{ .ClusterName }}
+
 
 versions:
   kubernetes: "{{ .KubernetesVersion }}"
