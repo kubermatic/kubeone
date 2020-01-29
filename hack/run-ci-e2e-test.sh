@@ -53,7 +53,7 @@ function cleanup() {
     sleep "${try}"s
   done
 }
-trap cleanup EXIT
+trap cleanup EXIT SIGTERM
 
 function fail() {
   echo "$1"
