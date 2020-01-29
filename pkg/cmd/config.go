@@ -104,6 +104,7 @@ func printCmd(_ *pflag.FlagSet) *cobra.Command {
 		Short: "Print an example configuration manifest",
 		Long: `
 Print an example configuration manifest. Using the appropriate flags you can customize the configuration manifest.
+
 For the full reference of the configuration manifest, run the print command with --full flag.
 `,
 		Args:    cobra.ExactArgs(0),
