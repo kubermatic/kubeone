@@ -17,6 +17,8 @@ limitations under the License.
 package installation
 
 import (
+	"time"
+
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/scripts"
 	"github.com/kubermatic/kubeone/pkg/ssh"
@@ -50,7 +52,7 @@ func initKubernetesLeader(s *state.State) error {
 	return s.RunTaskOnLeader(func(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 		s.Logger.Infoln("Running kubeadm…")
 
-		cmd, err := scripts.KubeadmInit(s.WorkDir, node.ID, s.KubeadmVerboseFlag(), s.JoinCommand, "1h")
+		cmd, err := scripts.KubeadmInit(s.WorkDir, node.ID, s.KubeadmVerboseFlag(), s.JoinToken, time.Hour.String())
 		if err != nil {
 			return err
 		}
