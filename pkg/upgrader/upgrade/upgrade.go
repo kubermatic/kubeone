@@ -21,6 +21,7 @@ import (
 
 	"github.com/pkg/errors"
 
+	"github.com/kubermatic/kubeone/pkg/addons"
 	"github.com/kubermatic/kubeone/pkg/certificate"
 	"github.com/kubermatic/kubeone/pkg/credentials"
 	"github.com/kubermatic/kubeone/pkg/features"
@@ -63,6 +64,7 @@ func Upgrade(s *state.State) error {
 		{Fn: machinecontroller.Ensure, ErrMsg: "failed to update machine-controller", Retries: 3},
 		{Fn: machinecontroller.WaitReady, ErrMsg: "failed to wait for machine-controller", Retries: 3},
 		{Fn: upgradeMachineDeployments, ErrMsg: "unable to upgrade MachineDeployments", Retries: 3},
+		{Fn: addons.Ensure, ErrMsg: "failed to apply addons", Retries: 3},
 	}
 
 	for _, step := range commonSteps {

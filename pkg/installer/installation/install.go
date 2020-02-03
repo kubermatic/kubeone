@@ -19,6 +19,7 @@ package installation
 import (
 	"github.com/pkg/errors"
 
+	"github.com/kubermatic/kubeone/pkg/addons"
 	"github.com/kubermatic/kubeone/pkg/certificate"
 	"github.com/kubermatic/kubeone/pkg/credentials"
 	"github.com/kubermatic/kubeone/pkg/features"
@@ -55,6 +56,7 @@ func Install(s *state.State) error {
 		{Fn: machinecontroller.Ensure, ErrMsg: "failed to install machine-controller", Retries: 3},
 		{Fn: machinecontroller.WaitReady, ErrMsg: "failed to wait for machine-controller", Retries: 3},
 		{Fn: createWorkerMachines, ErrMsg: "failed to create worker machines", Retries: 3},
+		{Fn: addons.Ensure, ErrMsg: "failed to apply addons", Retries: 1},
 	}
 
 	for _, step := range installSteps {
