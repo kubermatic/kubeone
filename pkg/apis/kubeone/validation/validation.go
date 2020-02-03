@@ -51,6 +51,7 @@ func ValidateKubeOneCluster(c kubeone.KubeOneCluster) field.ErrorList {
 	allErrs = append(allErrs, ValidateVersionConfig(c.Versions, field.NewPath("versions"))...)
 	allErrs = append(allErrs, ValidateClusterNetworkConfig(c.ClusterNetwork, field.NewPath("clusterNetwork"))...)
 	allErrs = append(allErrs, ValidateFeatures(c.Features, field.NewPath("features"))...)
+	allErrs = append(allErrs, ValidateAddons(c.Addons, field.NewPath("addons"))...)
 
 	return allErrs
 }
@@ -243,6 +244,21 @@ func ValidateOIDCConfig(o kubeone.OpenIDConnectConfig, fldPath *field.Path) fiel
 	}
 	if o.ClientID == "" {
 		allErrs = append(allErrs, field.Invalid(fldPath, o.ClientID, "openidConnect.config.client_id can't be empty"))
+	}
+
+	return allErrs
+}
+
+// ValidateAddons validates the Addons configuration
+func ValidateAddons(o *kubeone.Addons, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	if o == nil || !o.Enable {
+		return allErrs
+	}
+
+	if o.Enable && o.Path == "" {
+		allErrs = append(allErrs, field.Invalid(fldPath, o.Path, "addons.path can't be empty"))
 	}
 
 	return allErrs

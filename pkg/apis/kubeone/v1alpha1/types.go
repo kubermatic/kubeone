@@ -49,6 +49,8 @@ type KubeOneCluster struct {
 	MachineController *MachineControllerConfig `json:"machineController,omitempty"`
 	// Features enables and configures additional cluster features
 	Features Features `json:"features,omitempty"`
+	// Addons are used to deploy additional manifests
+	Addons *Addons `json:"addons,omitempty"`
 	// SystemPackages configure kubeone behaviour regarding OS packages
 	SystemPackages *SystemPackages `json:"systemPackages,omitempty"`
 	// Credentials used for machine-controller and external CCM
@@ -278,4 +280,11 @@ type OpenIDConnectConfig struct {
 	RequiredClaim  string `json:"requiredClaim"`
 	SigningAlgs    string `json:"signingAlgs"`
 	CAFile         string `json:"caFile"`
+}
+
+// Addons config
+type Addons struct {
+	Enable bool `json:"enable"`
+	// Path on the local file system to the directory with addons manifests.
+	Path string `json:"path"`
 }

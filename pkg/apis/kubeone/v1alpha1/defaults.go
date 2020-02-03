@@ -125,6 +125,14 @@ func SetDefaults_Features(obj *KubeOneCluster) {
 	}
 }
 
+func SetDefaults_Addons(obj *KubeOneCluster) {
+	if obj.Addons != nil && obj.Addons.Enable {
+		if len(obj.Addons.Path) == 0 {
+			obj.Addons.Path = "./addons"
+		}
+	}
+}
+
 func defaultStaticAuditLogConfig(obj *StaticAuditLogConfig) {
 	if obj.LogPath == "" {
 		obj.LogPath = "/var/log/kubernetes/audit.log"

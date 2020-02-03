@@ -549,6 +549,57 @@ func TestValidateOIDCConfig(t *testing.T) {
 	}
 }
 
+func TestValidateAddons(t *testing.T) {
+	tests := []struct {
+		name          string
+		addons        *kubeone.Addons
+		expectedError bool
+	}{
+		{
+			name: "valid addons config (enabled)",
+			addons: &kubeone.Addons{
+				Enable: true,
+				Path:   "./addons",
+			},
+			expectedError: false,
+		},
+		{
+			name: "valid addons config (disabled)",
+			addons: &kubeone.Addons{
+				Enable: false,
+			},
+			expectedError: false,
+		},
+		{
+			name:          "valid addons config (empty)",
+			addons:        &kubeone.Addons{},
+			expectedError: false,
+		},
+		{
+			name:          "valid addons config (nil)",
+			addons:        nil,
+			expectedError: false,
+		},
+		{
+			name: "invalid addons config (enabled without path)",
+			addons: &kubeone.Addons{
+				Enable: true,
+			},
+			expectedError: true,
+		},
+	}
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			errs := ValidateAddons(tc.addons, nil)
+			if (len(errs) == 0) == tc.expectedError {
+				t.Log(errs[0])
+				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
+			}
+		})
+	}
+}
+
 func intPtr(i int) *int {
 	return &i
 }
