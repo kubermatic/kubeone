@@ -1,55 +1,64 @@
 # Manual cluster repair
-When one of the control-plane nodes fails, it's necessary to restore it back as
-fast as possible to avoid loosing ETCD quorum and blocking all kubeapi-server
-operations.
+When one of the control-plane VM instances fails (i.e. lost at cloud-provider),
+it's necessary to replace it, as fast as possible to avoid losing etcd quorum
+and blocking all `kube-apiserver` operations.
 
-This is a guide on how to restore you cluster back to the normal state.
+This guide will demonstrate how to restore your cluster to the normal state
+(i.e. have 3 healthy etcd instances running).
+
+Note: **lost at cloud-provider**: means that VM is ether malfunctions or
+terminated forever. In ether case the VM instance should be deleted and
+recreated, for later use by KubeOne.
 
 ## One dead control-plane instance
-If you are running KubeOne cluster with machine-controller enabled, it will
-automatically recreate your failed worker nodes. But it can happen that
-cloud-instance with control-plane node fails.
+It can happen that cloud-provider VM instance, that hosts control-plane node,
+will fail and lost forever.
 
 In this document we will cover the case when 1 (out of 3 in total) control-plane
-node is lost.
+instances is lost.
 
-### Remove dead ETCD member
-Even when one ETCD member is physically (and abruptly) removed, ETCD-ring still
+### Remove dead etcd member
+Even when one etcd member is physically (and abruptly) removed, etcd-ring still
 hopes it might return back online. Unfortunately this is not our case and we
-need to let ETCD-ring know that dead ETCD member is dead forever.
+need to let etcd-ring know that dead etcd member is gone forever (i.e. remove
+dead etcd member from the known peers).
 
-Exec into the shell of the alive ETCD container:
+Exec into the shell of the alive etcd container:
 ```bash
-kubectl -n kube-system exec -it ETCD-<ALIVE-HOSTNAME> sh
+kubectl -n kube-system exec -it etcd-<ALIVE-HOSTNAME> sh
 ```
 
 Setup client TLS authentication:
 ```bash
 export ETCDCTL_API=3
-export ETCDCTL_CACERT=/etc/kubernetes/pki/ETCD/ca.crt
-export ETCDCTL_CERT=/etc/kubernetes/pki/ETCD/healthcheck-client.crt
-export ETCDCTL_KEY=/etc/kubernetes/pki/ETCD/healthcheck-client.key
+export ETCDCTL_CACERT=/etc/kubernetes/pki/etcd/ca.crt
+export ETCDCTL_CERT=/etc/kubernetes/pki/etcd/healthcheck-client.crt
+export ETCDCTL_KEY=/etc/kubernetes/pki/etcd/healthcheck-client.key
 ```
 
 Retrieve currently known members list (example output):
 ```bash
 etcdctl member list
+```
+
+Example output:
+```bash
 2ce40012b4b4e4e6, started, ip-172-31-153-216.eu-west-3.compute.internal, https://172.31.153.216:2380, https://172.31.153.216:2379, false
 2e39cf93b81fb7ed, started, ip-172-31-153-246.eu-west-3.compute.internal, https://172.31.153.246:2380, https://172.31.153.246:2379, false
 6713c8f2e74fb553, started, ip-172-31-153-235.eu-west-3.compute.internal, https://172.31.153.235:2380, https://172.31.153.235:2379, false
 ```
 
-We are going to need an ID of the dead ETCD member. To locate it, please check
+We are going to need an ID of the dead etcd member. To locate it, please check
 (by IP for example, or hostnames) your online instances list and find one from
 the list above, that is not online anymore.
 
-Locate and delete dead ETCD member:
+Locate and delete dead etcd member:
 ```bash
 etcdctl member remove 6713c8f2e74fb553
 Member 6713c8f2e74fb553 removed from cluster 4ec111e0dee094c3
 ```
 
-Exit the ETCD pod shell.
+Exit the etcd pod shell.
 
 ### Recreate failed instance
 Assuming you've used Terraform to provision your cloud infrastructure, use
@@ -93,8 +102,8 @@ jq '.kubeone_hosts.value.control_plane.private_address' < tfout.json
 ]
 ```
 
-In case when first instance from those lists has failed, edit JSON file directy,
-and reorder it.
+In case when the first instance from those lists has failed, edit JSON file
+directly, and reorder it.
 
 Example how to reorder:
 ```bash
@@ -121,5 +130,5 @@ instance and join it back to the cluster as one of the control plane nodes.
 kubeone install -v config.yaml -t tfout.json
 ```
 
-## Mulpiple dead control-plane instances
-In this case, you'd need to recreate cluster from the backup of ETCD.
+## Multiple dead control-plane instances
+In this case, you'd need to recreate cluster from the backup of etcd.
