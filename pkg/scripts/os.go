@@ -28,6 +28,20 @@ sudo sed -i '/.*swap.*/d' /etc/fstab
 . /etc/os-release
 . /etc/kubeone/proxy-env
 
+HOST_ARCH=""
+case $(uname -m) in
+x86_64)
+    HOST_ARCH="amd64"
+    ;;
+aarch64)
+    HOST_ARCH="arm64"
+    ;;
+*)
+    echo "unsupported CPU architecture, exiting"
+    exit 1
+    ;;
+esac
+
 # Short-Circuit the installation if it was already executed
 if type docker &>/dev/null && type kubelet &>/dev/null; then exit 0; fi
 
@@ -63,7 +77,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--
 curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 curl -fsSL https://download.docker.com/linux/${ID}/gpg | sudo apt-key add -
 
-echo "deb [arch=amd64] https://download.docker.com/linux/${ID} $(lsb_release -sc) stable" |
+echo "deb https://download.docker.com/linux/${ID} $(lsb_release -sc) stable" |
 	sudo tee /etc/apt/sources.list.d/docker.list
 
 # You'd think that kubernetes-$(lsb_release -sc) belongs there instead, but the debian repo
@@ -151,7 +165,7 @@ EOF
 sudo systemctl restart docker
 
 sudo mkdir -p /opt/cni/bin /etc/kubernetes/pki /etc/kubernetes/manifests
-curl -L "https://github.com/containernetworking/plugins/releases/download/v{{ .CNI_VERSION }}/cni-plugins-amd64-v{{ .CNI_VERSION }}.tgz" |
+curl -L "https://github.com/containernetworking/plugins/releases/download/v{{ .CNI_VERSION }}/cni-plugins-${HOST_ARCH}-v{{ .CNI_VERSION }}.tgz" |
 	sudo tar -C /opt/cni/bin -xz
 
 RELEASE="v{{ .KUBERNETES_VERSION }}"
@@ -161,7 +175,7 @@ cd /opt/bin
 k8s_rel_baseurl=https://storage.googleapis.com/kubernetes-release/release
 for binary in kubeadm kubelet kubectl; do
 	curl -L --output /tmp/$binary \
-		$k8s_rel_baseurl/${RELEASE}/bin/linux/amd64/$binary
+		$k8s_rel_baseurl/${RELEASE}/bin/linux/${HOST_ARCH}/$binary
 	sudo install --owner=0 --group=0 --mode=0755 /tmp/$binary /opt/bin/$binary
 	rm /tmp/$binary
 done
@@ -234,7 +248,7 @@ sudo yum install -y --disableexcludes=kubernetes \
 source /etc/kubeone/proxy-env
 
 sudo mkdir -p /opt/cni/bin
-curl -L "https://github.com/containernetworking/plugins/releases/download/v{{ .CNI_VERSION }}/cni-plugins-amd64-v{{ .CNI_VERSION }}.tgz" |
+curl -L "https://github.com/containernetworking/plugins/releases/download/v{{ .CNI_VERSION }}/cni-plugins-${HOST_ARCH}-v{{ .CNI_VERSION }}.tgz" |
 	sudo tar -C /opt/cni/bin -xz
 
 RELEASE="v{{ .KUBERNETES_VERSION }}"
@@ -242,7 +256,7 @@ RELEASE="v{{ .KUBERNETES_VERSION }}"
 sudo mkdir -p /var/tmp/kube-binaries
 cd /var/tmp/kube-binaries
 sudo curl -L --remote-name-all \
-	https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/amd64/kubeadm
+	https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/${HOST_ARCH}/kubeadm
 
 sudo mkdir -p /opt/bin
 cd /opt/bin
@@ -282,7 +296,7 @@ RELEASE="v{{ .KUBERNETES_VERSION }}"
 sudo mkdir -p /var/tmp/kube-binaries
 cd /var/tmp/kube-binaries
 sudo curl -L --remote-name-all \
-	https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/amd64/{kubelet,kubectl}
+	https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/${HOST_ARCH}/{kubelet,kubectl}
 
 sudo mkdir -p /opt/bin
 cd /opt/bin

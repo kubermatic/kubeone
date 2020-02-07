@@ -33,6 +33,10 @@ import (
 	apiregv1 "k8s.io/kube-aggregator/pkg/apis/apiregistration/v1"
 )
 
+const (
+	metricsServerImage = `quay.io/kubermatic/metrics-server-mirror:v0.3.6@sha256:129897020bc4b0dcf9783b5e0f15c1fa6ad95cde33f8c0b233325304c5fab4ec`
+)
+
 // Deploy generate and POST all objects to apiserver
 func Deploy(s *state.State) error {
 	if s.DynamicClient == nil {
@@ -186,7 +190,7 @@ func metricsServerDeployment() *appsv1.Deployment {
 					Containers: []corev1.Container{
 						{
 							Name:            "metrics-server",
-							Image:           "k8s.gcr.io/metrics-server-amd64:v0.3.6",
+							Image:           metricsServerImage,
 							ImagePullPolicy: corev1.PullIfNotPresent,
 							Args: []string{
 								"--kubelet-insecure-tls",
