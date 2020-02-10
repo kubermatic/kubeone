@@ -34,7 +34,7 @@ import (
 )
 
 const (
-	metricsServerImage = `quay.io/kubermatic/metrics-server-mirror:v0.3.6@sha256:129897020bc4b0dcf9783b5e0f15c1fa6ad95cde33f8c0b233325304c5fab4ec`
+	metricsServerImage = `k8s.gcr.io/metrics-server:v0.3.6`
 )
 
 // Deploy generate and POST all objects to apiserver
