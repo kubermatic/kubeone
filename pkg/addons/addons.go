@@ -41,7 +41,7 @@ func Ensure(s *state.State) error {
 	s.Logger.Infoln("Applying addons…")
 
 	if err := getManifests(s); err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	if err := applyAddons(s); err != nil {

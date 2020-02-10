@@ -19,7 +19,6 @@ package addons
 import (
 	"bufio"
 	"bytes"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"path/filepath"
@@ -28,6 +27,7 @@ import (
 
 	"github.com/ghodss/yaml"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 
 	"github.com/kubermatic/kubeone/pkg/state"
 
@@ -40,7 +40,7 @@ func getManifests(s *state.State) error {
 	vars := map[string]interface{}{
 		"KubeOne": s.Cluster,
 	}
-	manifests, err := loadAddonsManifests(s.Cluster.Addons.Path, s.Verbose, vars)
+	manifests, err := loadAddonsManifests(s.Cluster.Addons.Path, s.Logger, s.Verbose, vars)
 	if err != nil {
 		return err
 	}
@@ -57,7 +57,7 @@ func getManifests(s *state.State) error {
 }
 
 // loadAddonsManifests loads all YAML files from a given directory and runs the templating logic
-func loadAddonsManifests(addonsPath string, verbose bool, vars map[string]interface{}) ([]runtime.RawExtension, error) {
+func loadAddonsManifests(addonsPath string, logger logrus.FieldLogger, verbose bool, vars map[string]interface{}) ([]runtime.RawExtension, error) {
 	manifests := []runtime.RawExtension{}
 
 	files, err := ioutil.ReadDir(addonsPath)
@@ -68,11 +68,11 @@ func loadAddonsManifests(addonsPath string, verbose bool, vars map[string]interf
 	for _, file := range files {
 		filePath := filepath.Join(addonsPath, file.Name())
 		if file.IsDir() {
-			fmt.Printf("Found directory '%s' in the addons path. Ignoring.\n", file.Name())
+			logger.Infof("Found directory '%s' in the addons path. Ignoring.\n", file.Name())
 			continue
 		}
 		if verbose {
-			fmt.Printf("Parsing addons manifest '%s'\n", file.Name())
+			logger.Infof("Parsing addons manifest '%s'\n", file.Name())
 		}
 
 		manifestBytes, err := ioutil.ReadFile(filePath)
@@ -91,7 +91,7 @@ func loadAddonsManifests(addonsPath string, verbose bool, vars map[string]interf
 
 		trim := strings.TrimSpace(buf.String())
 		if len(trim) == 0 {
-			fmt.Printf("Addons manifest '%s' is empty after parsing. Skipping.\n", file.Name())
+			logger.Infof("Addons manifest '%s' is empty after parsing. Skipping.\n", file.Name())
 		}
 
 		reader := kyaml.NewYAMLReader(bufio.NewReader(buf))
@@ -142,7 +142,7 @@ func ensureAddonsLabelsOnResources(manifests []runtime.RawExtension) ([]*bytes.B
 
 		jsonBuffer := &bytes.Buffer{}
 		if err := metav1unstructured.UnstructuredJSONScheme.Encode(parsedUnstructuredObj, jsonBuffer); err != nil {
-			return nil, fmt.Errorf("encoding json failed: %v", err)
+			return nil, errors.Wrap(err, "encoding json failed")
 		}
 
 		// Must be encoded back to YAML, otherwise kubectl fails to apply because it tries to parse the whole
