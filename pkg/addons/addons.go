@@ -67,14 +67,10 @@ func Ensure(s *state.State) error {
 }
 
 func applyAddons(s *state.State) error {
-	err := s.RunTaskOnLeader(runKubectl)
-	if err != nil {
-		return err
-	}
-	return nil
+	return errors.Wrap(s.RunTaskOnLeader(runKubectl), "failed to apply addons")
 }
 
-func runKubectl(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func runKubectl(s *state.State, _ *kubeoneapi.HostConfig, _ ssh.Connection) error {
 	if err := s.Configuration.UploadTo(s.Runner.Conn, s.WorkDir); err != nil {
 		return errors.Wrap(err, "failed to upload manifests")
 	}
