@@ -3,14 +3,18 @@ module github.com/kubermatic/kubeone
 go 1.13
 
 require (
+	github.com/Masterminds/goutils v1.1.0 // indirect
 	github.com/Masterminds/semver v1.4.2
+	github.com/Masterminds/sprig v2.22.0+incompatible
 	github.com/aws/aws-sdk-go v1.20.15
 	github.com/ghodss/yaml v1.0.0
 	github.com/go-logr/zapr v0.1.1 // indirect
+	github.com/huandu/xstrings v1.3.0 // indirect
 	github.com/imdario/mergo v0.3.7
 	github.com/koron-go/prefixw v0.0.0-20181013140428-271b207a7572
 	github.com/kr/fs v0.1.0 // indirect
 	github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de
+	github.com/mitchellh/copystructure v1.0.0 // indirect
 	github.com/pkg/errors v0.8.1
 	github.com/pkg/sftp v1.10.0
 	github.com/pmezard/go-difflib v1.0.0

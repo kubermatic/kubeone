@@ -25,6 +25,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/Masterminds/sprig"
 	"github.com/ghodss/yaml"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -36,11 +37,8 @@ import (
 	kyaml "k8s.io/apimachinery/pkg/util/yaml"
 )
 
-func getManifests(s *state.State) error {
-	vars := map[string]interface{}{
-		"KubeOne": s.Cluster,
-	}
-	manifests, err := loadAddonsManifests(s.Cluster.Addons.Path, s.Logger, s.Verbose, vars)
+func getManifests(s *state.State, templateData TemplateData) error {
+	manifests, err := loadAddonsManifests(s.Cluster.Addons.Path, s.Logger, s.Verbose, templateData)
 	if err != nil {
 		return err
 	}
@@ -57,7 +55,7 @@ func getManifests(s *state.State) error {
 }
 
 // loadAddonsManifests loads all YAML files from a given directory and runs the templating logic
-func loadAddonsManifests(addonsPath string, logger logrus.FieldLogger, verbose bool, vars map[string]interface{}) ([]runtime.RawExtension, error) {
+func loadAddonsManifests(addonsPath string, logger logrus.FieldLogger, verbose bool, templateData TemplateData) ([]runtime.RawExtension, error) {
 	manifests := []runtime.RawExtension{}
 
 	files, err := ioutil.ReadDir(addonsPath)
@@ -80,12 +78,12 @@ func loadAddonsManifests(addonsPath string, logger logrus.FieldLogger, verbose b
 			return nil, errors.Wrapf(err, "failed to load addon %s", file.Name())
 		}
 
-		tpl, err := template.New("addons-base").Parse(string(manifestBytes))
+		tpl, err := template.New("addons-base").Funcs(sprig.TxtFuncMap()).Parse(string(manifestBytes))
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to template addons manifest %s", file.Name())
 		}
 		buf := bytes.NewBuffer([]byte{})
-		if err := tpl.Execute(buf, vars); err != nil {
+		if err := tpl.Execute(buf, templateData); err != nil {
 			return nil, errors.Wrapf(err, "failed to template addons manifest %s", file.Name())
 		}
 

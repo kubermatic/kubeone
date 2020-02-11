@@ -22,6 +22,7 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/credentials"
 	"github.com/kubermatic/kubeone/pkg/runner"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/state"
@@ -33,6 +34,12 @@ const (
 	kubectlApplyScript = `kubectl apply -f {{.FILE_NAME}} --prune -l "%s"`
 )
 
+// TemplateData is data available in the addons render template
+type TemplateData struct {
+	Config      *kubeoneapi.KubeOneCluster
+	Credentials map[string]string
+}
+
 func Ensure(s *state.State) error {
 	if s.Cluster.Addons == nil || !s.Cluster.Addons.Enable {
 		s.Logger.Infoln("Skipping applying addons because addons are not enabled…")
@@ -40,7 +47,15 @@ func Ensure(s *state.State) error {
 	}
 	s.Logger.Infoln("Applying addons…")
 
-	if err := getManifests(s); err != nil {
+	creds, err := credentials.ProviderCredentials(s.Cluster.CloudProvider.Name, s.CredentialsFilePath)
+	if err != nil {
+		return errors.Wrap(err, "unable to fetch credentials")
+	}
+	templateData := TemplateData{
+		Config:      s.Cluster,
+		Credentials: creds,
+	}
+	if err := getManifests(s, templateData); err != nil {
 		return errors.WithStack(err)
 	}
 
