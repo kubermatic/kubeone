@@ -84,6 +84,7 @@ func runReset(logger *logrus.Logger, resetOptions *resetOptions) error {
 	options := &installer.Options{
 		Verbose:         resetOptions.Verbose,
 		CredentialsFile: resetOptions.CredentialsFilePath,
+		Manifest:        resetOptions.Manifest,
 		DestroyWorkers:  resetOptions.DestroyWorkers,
 		RemoveBinaries:  resetOptions.RemoveBinaries,
 	}

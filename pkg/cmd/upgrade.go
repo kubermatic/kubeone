@@ -89,6 +89,7 @@ func runUpgrade(logger *logrus.Logger, upgradeOptions *upgradeOptions) error {
 
 func createUpgradeOptions(options *upgradeOptions) *upgrader.Options {
 	return &upgrader.Options{
+		Manifest:                  options.Manifest,
 		CredentialsFile:           options.CredentialsFilePath,
 		ForceUpgrade:              options.ForceUpgrade,
 		Verbose:                   options.Verbose,

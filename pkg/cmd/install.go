@@ -122,6 +122,7 @@ func createInstallerOptions(clusterFile string, cluster *kubeoneapi.KubeOneClust
 	defer f.Close()
 
 	return &installer.Options{
+		Manifest:        options.Manifest,
 		CredentialsFile: options.CredentialsFilePath,
 		BackupFile:      options.BackupFile,
 		Verbose:         options.Verbose,

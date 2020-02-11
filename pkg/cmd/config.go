@@ -522,6 +522,13 @@ systemPackages:
   # will add Docker and Kubernetes repositories to OS package manager
   configureRepositories: true # it's true by default
 
+# Addons are Kubernetes manifests to be deployed after provisioning the cluster
+addons:
+  enable: false
+  # In case when the relative path is provided, the path is relative
+  # to the KubeOne configuration file.
+  path: "./addons"
+
 # The list of nodes can be overwritten by providing Terraform output.
 # You are strongly encouraged to provide an odd number of nodes and
 # have at least three of them.

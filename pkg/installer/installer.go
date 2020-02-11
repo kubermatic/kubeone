@@ -30,6 +30,7 @@ import (
 // the Kubernetes installation.
 type Options struct {
 	Verbose         bool
+	Manifest        string
 	CredentialsFile string
 	BackupFile      string
 	DestroyWorkers  bool
@@ -87,6 +88,7 @@ func (i *Installer) createState(options *Options) (*state.State, error) {
 	s.WorkDir = "kubeone"
 	s.Logger = i.logger
 	s.Verbose = options.Verbose
+	s.ManifestFilePath = options.Manifest
 	s.CredentialsFilePath = options.CredentialsFile
 	s.BackupFile = options.BackupFile
 	s.DestroyWorkers = options.DestroyWorkers

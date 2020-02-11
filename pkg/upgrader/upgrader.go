@@ -28,6 +28,7 @@ import (
 
 // Options groups the various possible options for running KubeOne upgrade
 type Options struct {
+	Manifest                  string
 	CredentialsFile           string
 	ForceUpgrade              bool
 	UpgradeMachineDeployments bool
@@ -73,6 +74,7 @@ func (u *Upgrader) createState(options *Options) (*state.State, error) {
 	s.Verbose = options.Verbose
 	s.ForceUpgrade = options.ForceUpgrade
 	s.UpgradeMachineDeployments = options.UpgradeMachineDeployments
+	s.ManifestFilePath = options.Manifest
 	s.CredentialsFilePath = options.CredentialsFile
 	return s, nil
 }
