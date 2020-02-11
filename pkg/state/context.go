@@ -57,6 +57,7 @@ type State struct {
 	UpgradeMachineDeployments bool
 	PatchCNI                  bool
 	CredentialsFilePath       string
+	ManifestFilePath          string
 }
 
 func (s *State) KubeadmVerboseFlag() string {

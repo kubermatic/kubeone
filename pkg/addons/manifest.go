@@ -38,7 +38,16 @@ import (
 )
 
 func getManifests(s *state.State, templateData TemplateData) error {
-	manifests, err := loadAddonsManifests(s.Cluster.Addons.Path, s.Logger, s.Verbose, templateData)
+	addonsPath := s.Cluster.Addons.Path
+	if s.ManifestFilePath != "" {
+		manifestAbsPath, err := filepath.Abs(filepath.Dir(s.ManifestFilePath))
+		if err != nil {
+			return errors.Wrap(err, "unable to get absolute path to the cluster manifest")
+		}
+		addonsPath = filepath.Join(manifestAbsPath, addonsPath)
+	}
+
+	manifests, err := loadAddonsManifests(addonsPath, s.Logger, s.Verbose, templateData)
 	if err != nil {
 		return err
 	}
