@@ -31,6 +31,7 @@ output "kubeone_hosts" {
       cloud_provider       = "digitalocean"
       private_address      = digitalocean_droplet.control_plane.*.ipv4_address_private
       public_address       = digitalocean_droplet.control_plane.*.ipv4_address
+      leader_ip            = digitalocean_droplet.control_plane.0.ipv4_address_private
       ssh_agent_socket     = var.ssh_agent_socket
       ssh_port             = var.ssh_port
       ssh_private_key_file = var.ssh_private_key_file

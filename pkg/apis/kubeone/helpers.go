@@ -42,7 +42,13 @@ func (c KubeOneCluster) RandomHost() HostConfig {
 // Followers returns all but the first configured host. Only call
 // this after validating the cluster config to ensure hosts exist.
 func (c KubeOneCluster) Followers() []HostConfig {
-	return c.Hosts[1:]
+	followers := []HostConfig{}
+	for _, h := range c.Hosts {
+		if !h.IsLeader {
+			followers = append(followers, h)
+		}
+	}
+	return followers
 }
 
 // SetHostname sets the hostname for the given host

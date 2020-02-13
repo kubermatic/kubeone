@@ -31,6 +31,7 @@ output "kubeone_hosts" {
       cloud_provider       = "aws"
       private_address      = aws_instance.control_plane.*.private_ip
       hostnames            = aws_instance.control_plane.*.private_dns
+      leader_ip            = aws_instance.control_plane.0.private_ip
       ssh_agent_socket     = var.ssh_agent_socket
       ssh_port             = var.ssh_port
       ssh_private_key_file = var.ssh_private_key_file

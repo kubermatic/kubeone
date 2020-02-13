@@ -31,6 +31,7 @@ output "kubeone_hosts" {
       cloud_provider       = "vsphere"
       private_address      = []
       public_address       = vsphere_virtual_machine.control_plane.*.default_ip_address
+      leader_ip            = vsphere_virtual_machine.control_plane.0.default_ip_address
       ssh_agent_socket     = var.ssh_agent_socket
       ssh_port             = var.ssh_port
       ssh_private_key_file = var.ssh_private_key_file

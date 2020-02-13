@@ -31,6 +31,7 @@ output "kubeone_hosts" {
       cloud_provider       = "azure"
       private_address      = azurerm_network_interface.control_plane.*.private_ip_address
       public_address       = azurerm_public_ip.control_plane.*.ip_address
+      leader_ip            = azurerm_network_interface.control_plane.0.private_ip_address
       hostnames            = formatlist("${var.cluster_name}-cp-%d", [0, 1, 2])
       ssh_agent_socket     = var.ssh_agent_socket
       ssh_port             = var.ssh_port
