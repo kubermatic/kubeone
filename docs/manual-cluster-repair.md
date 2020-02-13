@@ -1,28 +1,32 @@
 # Manual cluster repair
-When one of the control-plane VM instances fails (i.e. lost at cloud-provider),
-it's necessary to replace it, as fast as possible to avoid losing etcd quorum
-and blocking all `kube-apiserver` operations.
+When one of the control-plane VM instances fails (i.e. is lost at
+cloud-provider), it's necessary to replace the instance with the new once, as
+fast as possible to avoid losing etcd quorum and blocking all `kube-apiserver`
+operations.
 
 This guide will demonstrate how to restore your cluster to the normal state
-(i.e. have 3 healthy etcd instances running).
+(i.e. to have 3 healthy kube-apiservers with etcd instances running).
 
 Note: **lost at cloud-provider**: means that VM is ether malfunctions or
-terminated forever. In ether case the VM instance should be deleted and
-recreated, for later use by KubeOne.
-
-## One dead control-plane instance
-It can happen that cloud-provider VM instance, that hosts control-plane node,
-will fail and lost forever.
-
-In this document we will cover the case when 1 (out of 3 in total) control-plane
-instances is lost.
+terminated forever. In ether case the VM instance should be deleted (manually)
+and recreated (e.g. with terraform apply), for later use by KubeOne.
 
 ### Remove dead etcd member
-Even when one etcd member is physically (and abruptly) removed, etcd-ring still
-hopes it might return back online. Unfortunately this is not our case and we
-need to let etcd-ring know that dead etcd member is gone forever (i.e. remove
-dead etcd member from the known peers).
+Even when one etcd member is physically (and abruptly) removed, etcd ring still
+hopes it might come back online at later time. Unfortunately this is not our
+case and we need to let etcd ring know that dead etcd member is gone forever
+(i.e. remove dead etcd member from the known peers).
 
+#### Nodes
+First of all, check your Nodes
+```bash
+kubectl get node -owide
+```
+
+Failed control-plane node will be displyed as NotReady or even absent from the
+output.
+
+#### etcd
 Exec into the shell of the alive etcd container:
 ```bash
 kubectl -n kube-system exec -it etcd-<ALIVE-HOSTNAME> sh
@@ -49,10 +53,10 @@ Example output:
 ```
 
 We are going to need an ID of the dead etcd member. To locate it, please check
-(by IP for example, or hostnames) your online instances list and find one from
-the list above, that is not online anymore.
+(by IP for example, or hostnames) your Nodes (`kubectl get node -owide`) in and
+find one from the list above, that is not online anymore.
 
-Locate and delete dead etcd member:
+Delete dead etcd member:
 ```bash
 etcdctl member remove 6713c8f2e74fb553
 Member 6713c8f2e74fb553 removed from cluster 4ec111e0dee094c3
@@ -80,47 +84,10 @@ In KubeOne the Leader instance is the first instance from the `Hosts` (or
 `kubeone_hosts` in Terraform output) list. This instance will be used to "init"
 the cluster.
 
-If Leader instance has failed, we can reorder `Hosts` list (or `kubeone_hosts`
-in Terraform output), and place a healthy instance as first one. 
+If Leader instance has failed, we can assign other Host to be a Leader.
 
 Let's review Terraform case.
-
-Locate the `Leader` node.
-```bash
-jq '.kubeone_hosts.value.control_plane.hostnames' < tfout.json
-[
-  "ip-172-31-153-222.eu-west-3.compute.internal",
-  "ip-172-31-153-228.eu-west-3.compute.internal",
-  "ip-172-31-153-246.eu-west-3.compute.internal"
-]
-
-jq '.kubeone_hosts.value.control_plane.private_address' < tfout.json
-[
-  "172.31.153.222",
-  "172.31.153.228",
-  "172.31.153.246"
-]
-```
-
-In case when the first instance from those lists has failed, edit JSON file
-directly, and reorder it.
-
-Example how to reorder:
-```bash
-jq '.kubeone_hosts.value.control_plane.hostnames' < tfout.json
-[
-  "ip-172-31-153-228.eu-west-3.compute.internal",
-  "ip-172-31-153-222.eu-west-3.compute.internal",
-  "ip-172-31-153-246.eu-west-3.compute.internal"
-]
-
-jq '.kubeone_hosts.value.control_plane.private_address' < tfout.json
-[
-  "172.31.153.228",
-  "172.31.153.222",
-  "172.31.153.246"
-]
-```
+---- XXX TODO XXX -----
 
 ### Join new control-plane node back to the cluster
 `kubeone install` will install kubernetes dependencies to the freshly created
