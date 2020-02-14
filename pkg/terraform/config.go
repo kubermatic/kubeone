@@ -31,6 +31,7 @@ type controlPlane struct {
 	CloudProvider     *string  `json:"cloud_provider"`
 	PublicAddress     []string `json:"public_address"`
 	PrivateAddress    []string `json:"private_address"`
+	LeaderIP          string   `json:"leader_ip"`
 	Hostnames         []string `json:"hostnames"`
 	SSHUser           string   `json:"ssh_user"`
 	SSHPort           int      `json:"ssh_port"`
@@ -202,6 +203,7 @@ func newHostConfig(id int, publicIP, privateIP, hostname string, cp controlPlane
 		Bastion:           cp.Bastion,
 		BastionPort:       cp.BastionPort,
 		BastionUser:       cp.BastionUser,
+		IsLeader:          cp.LeaderIP == publicIP || cp.LeaderIP == privateIP,
 	}
 }
 

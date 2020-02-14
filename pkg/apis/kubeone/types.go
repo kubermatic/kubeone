@@ -70,10 +70,10 @@ type HostConfig struct {
 	BastionPort       int    `json:"bastionPort"`
 	BastionUser       string `json:"bastionUser"`
 	Hostname          string `json:"hostname"`
+	IsLeader          bool   `json:"isLeader"`
 
 	// Information populated at the runtime
 	OperatingSystem string `json:"-"`
-	IsLeader        bool   `json:"-"`
 }
 
 // APIEndpoint is the endpoint used to communicate with the Kubernetes API
