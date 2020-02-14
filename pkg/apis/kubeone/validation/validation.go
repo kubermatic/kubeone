@@ -90,7 +90,14 @@ func ValidateCloudProviderSpec(p kubeone.CloudProviderSpec, fldPath *field.Path)
 func ValidateHostConfig(hosts []kubeone.HostConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
+	leaderFound := false
 	for _, h := range hosts {
+		if leaderFound && h.IsLeader {
+			allErrs = append(allErrs, field.Invalid(fldPath, h.IsLeader, "only 1 leader is allowed"))
+		}
+		if h.IsLeader {
+			leaderFound = true
+		}
 		if len(h.PublicAddress) == 0 {
 			allErrs = append(allErrs, field.Invalid(fldPath, h.PublicAddress, "no public IP/address given"))
 		}
