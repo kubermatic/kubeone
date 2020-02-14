@@ -56,21 +56,25 @@ releases page, find the binary for your operating system
 and architecture and download it or grab the URL and use
 `wget` or `curl` to download the binary.
 
+**Version:** version of KubeOne  
+**Operating system:** `linux` or `darwin` for macOS
+
 ```bash
-curl -LO https://github.com/kubermatic/kubeone/releases/download/v<version>/kubeone_<version>_linux_amd64.zip
+curl -LO https://github.com/kubermatic/kubeone/releases/download/v<version>/kubeone_<version>_<operating_system>_amd64.zip
 ```
 
-Extract the binary. On Linux and macOS, you can use `unzip`.
+Extract the binary to the KubeOne directory. On Linux and macOS, you can use `unzip`.
 
 ```bash
-unzip kubeone_0.8.0_linux_amd64.zip
+unzip kubeone_<version>_<operating_system>_amd64.zip -d kubeone_<version>_<operating_system>_amd64
 ```
 
 Move the `kubeone` binary to your path, so you can easily
 invoke it from your terminal.
 
 ```bash
-sudo mv kubeone /usr/local/bin
+sudo mv kubeone_<version>_<operating_system>_amd64/kubeone /usr/local/bin
+
 ```
 
 ### Building KubeOne
