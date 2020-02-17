@@ -55,12 +55,12 @@ EOF
 
 sudo mkdir -p /etc/apt/apt.conf.d
 cat <<EOF | sudo tee /etc/apt/apt.conf.d/proxy.conf
-{{- if .HTTPS_PROXY }}
+{{ if .HTTPS_PROXY -}}
 Acquire::https::Proxy "{{ .HTTPS_PROXY }}";
 {{ end -}}
 {{- if .HTTP_PROXY -}}
 Acquire::http::Proxy "{{ .HTTP_PROXY }}";
-{{ end -}}
+{{ end }}
 EOF
 
 sudo apt-get update
