@@ -69,6 +69,8 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 			"read-only-port":      "0",
 			"rotate-certificates": "true",
 			"cluster-dns":         nodelocaldns.VirtualIP,
+			// default path is not writable on coreos
+			"volume-plugin-dir": "/etc/kubernetes/kubelet-plugins",
 		},
 	}
 
@@ -147,7 +149,9 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 			CertSANs: []string{strings.ToLower(cluster.APIEndpoint.Host)},
 		},
 		ControllerManager: kubeadmv1beta2.ControlPlaneComponent{
-			ExtraArgs:    map[string]string{},
+			ExtraArgs: map[string]string{
+				"flex-volume-plugin-dir": "/etc/kubernetes/kubelet-plugins/volume/exec",
+			},
 			ExtraVolumes: []kubeadmv1beta2.HostPathMount{},
 		},
 		ClusterName: cluster.Name,

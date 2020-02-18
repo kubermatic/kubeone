@@ -151,6 +151,20 @@ sudo systemctl enable --now kubelet
 	kubeadmCoreOSTemplate = `
 . /etc/kubeone/proxy-env
 
+HOST_ARCH=""
+case $(uname -m) in
+x86_64)
+    HOST_ARCH="amd64"
+    ;;
+aarch64)
+    HOST_ARCH="arm64"
+    ;;
+*)
+    echo "unsupported CPU architecture, exiting"
+    exit 1
+    ;;
+esac
+
 # Short-Circuit the installation if it was already executed
 if type docker &>/dev/null && type kubelet &>/dev/null; then exit 0; fi
 
