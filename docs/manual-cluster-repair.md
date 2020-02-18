@@ -16,7 +16,7 @@ This guide will demonstrate how to restore your cluster to the normal state
 * _leader instance_: a VM instance, where cluster PKI get generated and first
   control-plane components are launched at cluster initialization time.
 
-## Non Goals (Out of the Scope)
+## Non-goals (Out of the Scope)
 * General cluster troubleshooting
 * Cluster recovery from the backup
 * Cluster migration
@@ -40,13 +40,13 @@ This guide will demonstrate how to restore your cluster to the normal state
 
 ## Remove the malfunctioning VM instance
 If the VM instance is not in the appropriate healthy state (i.e. underlying
-hardware issues), and/or is unresponsive (for myriad of reasons), it's often
+hardware issues), and/or is unresponsive (for a myriad of reasons), it's often
 easier to replace it when trying to fix. So please go on and delete (in cloud
 console) the malfunctioning instance if there is still one in the running state.
 
 ## Remove the former etcd member from the known etcd peers
 Even when one etcd member is physically (and abruptly) removed, etcd ring still
-hopes it might come back online at later time. Unfortunately this is not our
+hopes it might come back online at a later time. Unfortunately this is not our
 case and we need to let etcd ring know that dead etcd member is gone forever
 (i.e. remove dead etcd member from the known peers list).
 
@@ -60,9 +60,9 @@ Failed control-plane node will be displayed as NotReady or even absent from the
 output (running Cloud Controller Manager will remove Node object eventually).
 
 ### etcd
-Even that some control-plane node is absent, there are still alive nodes, that
-contain healthy etcd ring members. Exec into the shell of one of those alive
-etcd containers:
+Even when a control-plane node is absent, there are still other alive nodes,
+that contain healthy etcd ring members. Exec into the shell of one of those
+alive etcd containers:
 ```bash
 kubectl -n kube-system exec -it etcd-<ALIVE-HOSTNAME> sh
 ```
@@ -130,6 +130,10 @@ replacement for failed VM.
 
 ## Join new VM to the cluster as control-plane node
 
+### WARNING: It is super important to appoint one of the existing and healthy control-plane nodes as a Leader.
+Otherwise, new PKI will be generated and spread across your control-plane
+instances, effectively disrupting control-plane kubernetes components.
+
 ### What is Leader instance
 In KubeOne the Leader instance is the first instance from the `Hosts` in KubeOne
 config file (or `kubeone_hosts` in Terraform output) list. This instance will be
@@ -141,10 +145,6 @@ By default, the first `Host` instance defined in KubeOne config (or
 
 It's possible to choose which instance will be a Leader using config or
 Terraform output. Please keep in mind, there can be only 1 Leader Host.
-
-#### WARNING: It is super important to appoint one of the existing and healthy control-plane nodes as a Leader.
-Otherwise new PKI will be generated and spread across your control-plane
-instances, effectively disrupting control-plane kubernetes components.
 
 #### No Terraform
 Example config
