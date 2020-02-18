@@ -162,7 +162,7 @@ func webhookDeployment(cluster *kubeoneapi.KubeOneCluster, credentialsFilePath s
 				},
 			},
 			Strategy: appsv1.DeploymentStrategy{
-				Type: appsv1.RollingUpdateStatefulSetStrategyType,
+				Type: appsv1.RollingUpdateDeploymentStrategyType,
 				RollingUpdate: &appsv1.RollingUpdateDeployment{
 					MaxSurge: &intstr.IntOrString{
 						Type:   intstr.Int,
