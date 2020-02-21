@@ -179,24 +179,34 @@ kubectl --kubeconfig=<cluster_name>-kubeconfig
 ```
 
 or export the `KUBECONFIG` variable environment variable:
+
 ```bash
 export KUBECONFIG=$PWD/<cluster_name>-kubeconfig
 ```
 
 ## Scaling Worker Nodes
 
-As worker nodes are managed by machine-controller, they can be scaled up and down
-(including to 0) using Kubernetes API.
+As worker nodes are managed by machine-controller. It creates initially one per
+availability zone. Those can be scaled up and down (including to 0) using Kubernetes API.
+To do so you first got to retrieve the `machinedeployments` by
 
 ```bash
-kubectl --namespace kube-system scale machinedeployment/<CLUSTER-NAME>-pool1 --replicas=3
+kubectl get machinedeployments -n kube-system
+```
+
+The name is generated out of the cluster name and the zone. Now you can scale
+the workers here.
+
+```bash
+kubectl --namespace kube-system scale machinedeployment/<MACHINE-DEPLOYMENT-NAME> --replicas=3
 ```
 
 **Note:** The `kubectl scale` command is not working as expected with `kubectl` 1.15,
 returning an error such as:
+
 ```
 The machinedeployments "pool1" is invalid: metadata.resourceVersion: Invalid value: 0x0: must be specified for an update
-```
+o```
 For a workaround, please follow the steps described in the [issue 593][scale_issue] or upgrade to `kubectl` 1.16 or newer.
 
 ## Deleting The Cluster
