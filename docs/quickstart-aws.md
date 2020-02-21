@@ -116,6 +116,7 @@ kubeone install config.yaml --tfjson <DIR-WITH-tfstate-FILE>
 **Note:** `--tfjson` accepts a file as well as a directory containing the
 terraform state file. To pass a file, generate the JSON output by running the
 following and use it as the value for the `--tfjson` flag:
+
 ```bash
 terraform output -json > tf.json
 ```
@@ -179,24 +180,34 @@ kubectl --kubeconfig=<cluster_name>-kubeconfig
 ```
 
 or export the `KUBECONFIG` variable environment variable:
+
 ```bash
 export KUBECONFIG=$PWD/<cluster_name>-kubeconfig
 ```
 
 ## Scaling Worker Nodes
 
-As worker nodes are managed by machine-controller, they can be scaled up and down
-(including to 0) using Kubernetes API.
+Worker nodes are managed by the machine-controller. It creates initially one per
+availability zone. Those can be scaled up and down (including to 0) using the Kubernetes API.
+To do so you first got to retrieve the `machinedeployments` by
 
 ```bash
-kubectl --namespace kube-system scale machinedeployment/pool1-deployment --replicas=3
+kubectl get machinedeployments -n kube-system
+```
+
+The names of the `machinedeployments` are generated. You can scale the workers in those via
+
+```bash
+kubectl --namespace kube-system scale machinedeployment/<MACHINE-DEPLOYMENT-NAME> --replicas=3
 ```
 
 **Note:** The `kubectl scale` command is not working as expected with `kubectl` 1.15,
 returning an error such as:
+
 ```
-The machinedeployments "pool1" is invalid: metadata.resourceVersion: Invalid value: 0x0: must be specified for an update
+The machinedeployments "<MACHINE-DEPLOYMENT-NAME>" is invalid: metadata.resourceVersion: Invalid value: 0x0: must be specified for an update
 ```
+
 For a workaround, please follow the steps described in the [issue 593][scale_issue] or upgrade to `kubectl` 1.16 or newer.
 
 ## Deleting The Cluster
