@@ -20,7 +20,11 @@ To follow this quick start, you'll need:
 In order for Terraform to successfully create the infrastructure and for KubeOne
 to install Kubernetes and create worker nodes you need an [Service
 Account](https://cloud.google.com/iam/docs/creating-managing-service-accounts)
-with the appropriate permissions.
+with the appropriate permissions. These are
+
+* `Compute Admin`,
+* `Service Account User`, and
+* `Viewer`.
 
 Once you have the service account you need to set `GOOGLE_CREDENTIALS`
 environment variable:
@@ -28,6 +32,9 @@ environment variable:
 ```bash
 export GOOGLE_CREDENTIALS=$(cat path/to/your_service_account.json)
 ```
+
+Also the Compute Engine API has to be enabled for the project in the
+[Google APIs Console](https://console.developers.google.com/apis/dashboard).
 
 **Note:** The credentials are also deployed to the cluster to be used by
 `machine-controller` for creating worker nodes.
@@ -241,7 +248,7 @@ As worker nodes are managed by machine-controller, they can be scaled up and dow
 (including to 0) using Kubernetes API.
 
 ```bash
-kubectl --namespace kube-system scale machinedeployment/pool1-deployment --replicas=3
+kubectl --namespace kube-system scale machinedeployment/<CLUSTER-NAME>-pool1 --replicas=3
 ```
 
 **Note:** The `kubectl scale` command is not working as expected with `kubectl` 1.15,

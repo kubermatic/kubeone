@@ -249,7 +249,7 @@ As worker nodes are managed by machine-controller, they can be scaled up and dow
 (including to 0) using Kubernetes API.
 
 ```bash
-kubectl --namespace kube-system scale machinedeployment/pool1-deployment --replicas=3
+kubectl --namespace kube-system scale machinedeployment/<CLUSTER-NAME>-pool1 --replicas=3
 ```
 
 **Note:** The `kubectl scale` command is not working as expected with `kubectl` 1.15,
