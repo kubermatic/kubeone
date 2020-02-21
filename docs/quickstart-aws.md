@@ -187,7 +187,7 @@ export KUBECONFIG=$PWD/<cluster_name>-kubeconfig
 
 ## Scaling Worker Nodes
 
-Wrker nodes are managed by the machine-controller. It creates initially one per
+Worker nodes are managed by the machine-controller. It creates initially one per
 availability zone. Those can be scaled up and down (including to 0) using the Kubernetes API.
 To do so you first got to retrieve the `machinedeployments` by
 
