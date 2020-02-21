@@ -51,6 +51,7 @@ issues:
   - "func SetDefaults_Addons should be SetDefaultsAddons"
   - "func SetDefaults_APIEndpoints should be SetDefaultsAPIEndpoints"
   - "func SetDefaults_ClusterNetwork should be SetDefaultsClusterNetwork"
+  - "func SetDefaults_Proxy should be SetDefaultsProxy"
   - "func SetDefaults_Features should be SetDefaultsFeatures"
   - "func SetDefaults_Hosts should be SetDefaultsHosts"
   - "func SetDefaults_KubeOneCluster should be SetDefaultsKubeOneCluster"

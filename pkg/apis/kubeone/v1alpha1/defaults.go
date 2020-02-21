@@ -17,6 +17,8 @@ limitations under the License.
 package v1alpha1
 
 import (
+	"strings"
+
 	"k8s.io/apimachinery/pkg/runtime"
 )
 
@@ -29,6 +31,8 @@ const (
 	DefaultServiceDNS = "cluster.local"
 	// DefaultNodePortRange defines the default NodePort range
 	DefaultNodePortRange = "30000-32767"
+	// DefaultStaticNoProxy defined static NoProxy
+	DefaultStaticNoProxy = "127.0.0.1/8,localhost"
 )
 
 func addDefaultingFuncs(scheme *runtime.Scheme) error {
@@ -39,6 +43,7 @@ func SetDefaults_KubeOneCluster(obj *KubeOneCluster) {
 	SetDefaults_Hosts(obj)
 	SetDefaults_APIEndpoints(obj)
 	SetDefaults_ClusterNetwork(obj)
+	SetDefaults_Proxy(obj)
 	SetDefaults_MachineController(obj)
 	SetDefaults_SystemPackages(obj)
 	SetDefaults_Features(obj)
@@ -102,6 +107,22 @@ func SetDefaults_ClusterNetwork(obj *KubeOneCluster) {
 			Provider: CNIProviderCanal,
 		}
 	}
+}
+
+func SetDefaults_Proxy(obj *KubeOneCluster) {
+	if obj.Proxy.HTTP == "" && obj.Proxy.HTTPS == "" {
+		return
+	}
+	noproxy := []string{
+		DefaultStaticNoProxy,
+		obj.ClusterNetwork.ServiceDomainName,
+		obj.ClusterNetwork.PodSubnet,
+		obj.ClusterNetwork.ServiceSubnet,
+	}
+	if obj.Proxy.NoProxy != "" {
+		noproxy = append(noproxy, obj.Proxy.NoProxy)
+	}
+	obj.Proxy.NoProxy = strings.Join(noproxy, ",")
 }
 
 func SetDefaults_MachineController(obj *KubeOneCluster) {
