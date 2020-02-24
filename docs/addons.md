@@ -94,8 +94,8 @@ in the addons directory and correct addons configuration before running `kubeone
 The addons are applied in the alphabetical order. This means that you can control in which order addons
 will be applied by setting the appropriate file name.
 
-[design-proposal]: (proposals/20200205-addons.md)
-[go-templates]: (https://golang.org/pkg/text/template/)
-[sprig]: (https://github.com/Masterminds/sprig)
-[sprig-docs]: (http://masterminds.github.io/sprig/)
-[sprig-b64enc]: (http://masterminds.github.io/sprig/encoding.html)
+[design-proposal]: ./proposals/20200205-addons.md
+[go-templates]: https://golang.org/pkg/text/template/
+[sprig]: https://github.com/Masterminds/sprig
+[sprig-docs]: http://masterminds.github.io/sprig/
+[sprig-b64enc]: http://masterminds.github.io/sprig/encoding.html
