@@ -2,7 +2,7 @@
 
 In this quick start we're going to show how to get started with KubeOne on AWS. We'll cover how to create the needed infrastructure using our example Terraform scripts and then install Kubernetes. Finally, we're going to show how to destroy the cluster along with the infrastructure.
 
-As a result, you'll get Kubernetes 1.16.1 High-Available (HA) clusters with three control plane nodes and two worker nodes.
+As a result, you'll get Kubernetes 1.16.1 High-Available (HA) clusters with three control plane nodes and three worker nodes.
 
 ### Prerequisites
 
@@ -94,7 +94,7 @@ Before you start you'll need a configuration file that defines how Kubernetes
 will be installed, e.g. what version will be used and what features will be
 enabled. For the configuration file reference run `kubeone config print --full`.
 
-To get started you can use the following configuration. It'll install Kubernetes 1.16.1 and create one worker node. KubeOne automatically populates all needed information about worker nodes from the [Terraform output](https://github.com/kubermatic/kubeone/blob/ec8bf305446ac22529e9683fd4ce3c9abf753d1e/examples/terraform/aws/output.tf#L38-L87). Alternatively, you can set those information manually. As KubeOne is using [Kubermatic `machine-controller`](https://github.com/kubermatic/machine-controller) for creating worker nodes, see [AWS example manifest](https://github.com/kubermatic/machine-controller/blob/master/examples/aws-machinedeployment.yaml) for available options.
+To get started you can use the following configuration. It'll install Kubernetes 1.16.1 and create three worker nodes. KubeOne automatically populates all needed information about worker nodes from the [Terraform output](https://github.com/kubermatic/kubeone/blob/258ec7a06b39fe27d741edc24ed77796829249cd/examples/terraform/aws/output.tf#L46-L146). Alternatively, you can set those information manually. As KubeOne is using [Kubermatic `machine-controller`](https://github.com/kubermatic/machine-controller) for creating worker nodes, see [AWS example manifest](https://github.com/kubermatic/machine-controller/blob/master/examples/aws-machinedeployment.yaml) for available options.
 
 For example, to create a cluster with Kubernetes `1.16.1`, save the following to
 `config.yaml`:
