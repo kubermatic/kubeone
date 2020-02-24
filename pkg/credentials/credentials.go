@@ -196,29 +196,42 @@ func (f *fetcher) parseAWSCredentials() (map[string]string, error) {
 
 	creds := make(map[string]string)
 	envCredsProvider := credentials.NewEnvCredentials()
+
+	// will error out in case when ether ID or KEY are missing from ENV
 	envCreds, err := envCredsProvider.Get()
-	if err != nil {
-		return nil, err
-	}
-	if envCreds.AccessKeyID != "" && envCreds.SecretAccessKey != "" {
+
+	switch err {
+	case nil:
 		creds[AWSAccessKeyID] = envCreds.AccessKeyID
 		creds[AWSSecretAccessKey] = envCreds.SecretAccessKey
 		return creds, nil
+	case credentials.ErrSecretAccessKeyNotFound, credentials.ErrAccessKeyIDNotFound:
+		// ignore above errors to continue to shared credentials method
+	default:
+		return nil, errors.WithStack(err)
+	}
+
+	if os.Getenv("AWS_PROFILE") == "" {
+		// no profile is specified, we refuse to totally implicitly use shared
+		// credentials. This is needed as a precaution, to avoid accidental
+		// exposure of credentials not meant for sharing with cluster.
+		return nil, errors.New("no ENV credentials found, AWS_PROFILE is empty")
 	}
 
 	// If env fails resort to config file
 	configCredsProvider := credentials.NewSharedCredentials("", "")
+
+	// will error out in case when ether ID or KEY are missing from shared file
 	configCreds, err := configCredsProvider.Get()
 	if err != nil {
-		return nil, err
-	}
-	if configCreds.AccessKeyID != "" && configCreds.SecretAccessKey != "" {
-		creds[AWSAccessKeyID] = configCreds.AccessKeyID
-		creds[AWSSecretAccessKey] = configCreds.SecretAccessKey
-		return creds, nil
+		return nil, errors.WithStack(err)
 	}
 
-	return nil, errors.New("error parsing aws credentials")
+	// safe to assume credentials were found
+	creds[AWSAccessKeyID] = configCreds.AccessKeyID
+	creds[AWSSecretAccessKey] = configCreds.SecretAccessKey
+
+	return creds, nil
 }
 
 func (f fetcher) parseCredentialVariables(envVars []ProviderEnvironmentVariable, validationFunc func(map[string]string) error) (map[string]string, error) {
