@@ -15,7 +15,7 @@
 
 ## Using KubeOne
 
-* [SSH requirements](manual-cluster-repair.md)
+* [SSH requirements](ssh.md)
 * [Upgrading Kubernetes Clusters Using KubeOne](upgrading_cluster.md)
 * [Using Addons](adding_provider_support.md)
 * [Proxy support](proxy.md)
