@@ -191,6 +191,12 @@ func (c *Config) Apply(cluster *kubeonev1alpha1.KubeOneCluster) error {
 }
 
 func newHostConfig(id int, publicIP, privateIP, hostname string, cp controlPlane) kubeonev1alpha1.HostConfig {
+	var isLeader bool
+
+	if cp.LeaderIP != "" {
+		isLeader = cp.LeaderIP == publicIP || cp.LeaderIP == privateIP
+	}
+
 	return kubeonev1alpha1.HostConfig{
 		ID:                id,
 		PublicAddress:     publicIP,
@@ -203,7 +209,7 @@ func newHostConfig(id int, publicIP, privateIP, hostname string, cp controlPlane
 		Bastion:           cp.Bastion,
 		BastionPort:       cp.BastionPort,
 		BastionUser:       cp.BastionUser,
-		IsLeader:          cp.LeaderIP == publicIP || cp.LeaderIP == privateIP,
+		IsLeader:          isLeader,
 	}
 }
 
