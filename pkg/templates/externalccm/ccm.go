@@ -26,6 +26,8 @@ import (
 	"github.com/kubermatic/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
+	rbacv1 "k8s.io/api/rbac/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
@@ -51,6 +53,8 @@ func Ensure(s *state.State) error {
 		err = ensureDigitalOcean(s)
 	case kubeoneapi.CloudProviderNamePacket:
 		err = ensurePacket(s)
+	case kubeoneapi.CloudProviderNameOpenStack:
+		err = ensureOpenStack(s)
 	default:
 		s.Logger.Infof("External CCM for %q not yet supported, skipping", s.Cluster.CloudProvider.Name)
 		return nil
@@ -86,4 +90,24 @@ func waitForInitializedNodes(s *state.State) error {
 
 		return true, nil
 	})
+}
+
+func genClusterRoleBinding(name string, crole *rbacv1.ClusterRole, subj *corev1.ServiceAccount) *rbacv1.ClusterRoleBinding {
+	return &rbacv1.ClusterRoleBinding{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: name,
+		},
+		RoleRef: rbacv1.RoleRef{
+			APIGroup: rbacv1.GroupName,
+			Kind:     "ClusterRole",
+			Name:     crole.GetName(),
+		},
+		Subjects: []rbacv1.Subject{
+			{
+				Kind:      "ServiceAccount",
+				Name:      subj.GetName(),
+				Namespace: subj.GetNamespace(),
+			},
+		},
+	}
 }
