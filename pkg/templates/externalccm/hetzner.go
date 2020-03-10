@@ -35,7 +35,7 @@ import (
 )
 
 const (
-	hetznerCCMVersion     = "v1.5.0"
+	hetznerImage          = "hetznercloud/hcloud-cloud-controller-manager:v1.5.1"
 	hetznerSAName         = "cloud-controller-manager"
 	hetznerDeploymentName = "hcloud-cloud-controller-manager"
 )
@@ -152,7 +152,7 @@ func hetznerDeployment(networkID, podSubnet string) *appsv1.Deployment {
 					Containers: []corev1.Container{
 						{
 							Name:    "hcloud-cloud-controller-manager",
-							Image:   "hetznercloud/hcloud-cloud-controller-manager:" + hetznerCCMVersion,
+							Image:   hetznerImage,
 							Command: cmd,
 							Env: []corev1.EnvVar{
 								{
