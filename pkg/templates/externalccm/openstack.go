@@ -35,7 +35,7 @@ import (
 const (
 	openstackSAName           = "cloud-controller-manager"
 	openstackDeploymentName   = "openstack-cloud-controller-manager"
-	openstackConfigSecretName = "cloud-config"
+	openstackConfigSecretName = "cloud-config" //nolint:gosec
 	openstackImage            = "k8scloudprovider/openstack-cloud-controller-manager:v1.17.0"
 )
 

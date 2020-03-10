@@ -175,7 +175,6 @@ func loadTLSConfig(s *state.State) (*tls.Config, error) {
 	caCertPool := x509.NewCertPool()
 	caCertPool.AppendCertsFromPEM(caBytes)
 	tlsConfig.RootCAs = caCertPool
-	tlsConfig.BuildNameToCertificate()
 
 	return tlsConfig, nil
 }
