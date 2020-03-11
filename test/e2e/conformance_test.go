@@ -183,14 +183,8 @@ func TestClusterConformance(t *testing.T) {
 				args = append(args, "-var", fmt.Sprintf("worker_os=%s", osWorkers))
 			}
 
-			switch tc.provider {
-			case provisioner.GCE:
+			if tc.provider == provisioner.GCE {
 				args = append(args, "-var", "control_plane_target_pool_members_count=1")
-			case provisioner.OpenStack:
-				args = append(args, "-var", "external_network_name=ext-net")
-				args = append(args, "-var", "subnet_cidr='10.0.42.0/24'")
-				args = append(args, "-var", "image='Ubuntu Bionic 18.04 (2020-03-10)'")
-				args = append(args, "-var", "lb_flavor='m1.tiny'")
 			}
 
 			tf, err := pr.Provision(args...)
