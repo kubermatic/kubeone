@@ -95,13 +95,11 @@ function setup_ci_environment_vars() {
     ;;
   "openstack")
     export OS_AUTH_URL=${OS_AUTH_URL}
-    export OS_DOMAIN_NAME=${OS_DOMAIN_NAME}
-    export OS_REGION_NAME=${OS_REGION_NAME}
+    export OS_DOMAIN_NAME=${OS_DOMAIN}
+    export OS_REGION_NAME=${OS_REGION}
     export OS_TENANT_NAME=${OS_TENANT_NAME}
     export OS_USERNAME=${OS_USERNAME}
     export OS_PASSWORD=${OS_PASSWORD}
-    fail "openstack no implemented yet"
-    # echo ${k1_credentials} >/tmp/credentials.yaml
     ;;
   *)
     fail "unknown provider ${PROVIDER}"
