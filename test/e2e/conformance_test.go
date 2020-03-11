@@ -88,7 +88,7 @@ func TestClusterConformance(t *testing.T) {
 		{
 			name:                  "verify k8s cluster deployment on OpenStack",
 			provider:              provisioner.OpenStack,
-			providerExternal:      false,
+			providerExternal:      true,
 			scenario:              NodeConformance,
 			configFilePath:        "../../test/e2e/testdata/config_os.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
@@ -157,7 +157,7 @@ func TestClusterConformance(t *testing.T) {
 				clusterNetworkService = clusterNetworkServiceCIDR
 			}
 
-			err = target.CreateConfig(testTargetVersion, tc.provider, tc.providerExternal, clusterNetworkPod, clusterNetworkService)
+			err = target.CreateConfig(testTargetVersion, tc.provider, tc.providerExternal, clusterNetworkPod, clusterNetworkService, testCredentialsFile)
 			if err != nil {
 				t.Fatalf("failed to create KubeOneCluster manifest: %v", err)
 			}

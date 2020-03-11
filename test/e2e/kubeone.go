@@ -24,6 +24,7 @@ import (
 	"text/template"
 
 	"github.com/pkg/errors"
+	"gopkg.in/yaml.v2"
 
 	"github.com/kubermatic/kubeone/test/e2e/testutil"
 )
@@ -36,6 +37,10 @@ versions:
 cloudProvider:
   name: {{ .CLOUD_PROVIDER_NAME }}
   external: {{ .CLOUD_PROVIDER_EXTERNAL }}
+{{ with .CLOUD_CONFIG }}
+  cloudConfig: |
+{{ . }}
+{{ end }}
 {{ if .CLUSTER_NETWORK_POD }}
 clusterNetwork:
   podSubnet: "{{ .CLUSTER_NETWORK_POD }}"
@@ -60,14 +65,35 @@ func NewKubeone(kubeoneDir, configurationFilePath string) *Kubeone {
 }
 
 // CreateConfig creates a KubeOneCluster manifest
-func (k1 *Kubeone) CreateConfig(kubernetesVersion, providerName string,
-	providerExternal bool, clusterNetworkPod string, clusterNetworkService string) error {
-	variables := map[string]interface{}{
+func (k1 *Kubeone) CreateConfig(
+	kubernetesVersion string,
+	providerName string,
+	providerExternal bool,
+	clusterNetworkPod string,
+	clusterNetworkService string,
+	credentialsFile string,
+) error {
+	data := map[string]interface{}{
 		"KUBERNETES_VERSION":      kubernetesVersion,
 		"CLOUD_PROVIDER_NAME":     providerName,
 		"CLOUD_PROVIDER_EXTERNAL": providerExternal,
 		"CLUSTER_NETWORK_POD":     clusterNetworkPod,
 		"CLUSTER_NETWORK_SERVICE": clusterNetworkService,
+		"CLOUD_CONFIG":            "",
+	}
+
+	if credentialsFile != "" {
+		ymlbuf, err := ioutil.ReadFile(credentialsFile)
+		if err != nil {
+			return errors.Wrap(err, "unable to read credentials file")
+		}
+
+		credentials := make(map[string]string)
+		if err = yaml.Unmarshal(ymlbuf, &credentials); err != nil {
+			return errors.Wrap(err, "unable to unmarshal credentials file from yaml")
+		}
+
+		data["CLOUD_CONFIG"] = credentials["cloudConfig"]
 	}
 
 	tpl, err := template.New("base").Parse(configurationTpl)
@@ -77,7 +103,7 @@ func (k1 *Kubeone) CreateConfig(kubernetesVersion, providerName string,
 
 	var buf bytes.Buffer
 
-	if tplErr := tpl.Execute(&buf, variables); tplErr != nil {
+	if tplErr := tpl.Execute(&buf, data); tplErr != nil {
 		return errors.Wrap(tplErr, "failed to render KubeOne configuration template")
 	}
 

@@ -39,6 +39,7 @@ export TF_VAR_cluster_name=k1-${BUILD_ID}
 export TF_VAR_subnets_cidr=28
 export SSH_PUBLIC_KEY_FILE="${SSH_PRIVATE_KEY_FILE}.pub"
 export TF_VAR_ssh_public_key_file=${SSH_PUBLIC_KEY_FILE}
+CREDENTIALS_FILE_PATH=""
 
 function cleanup() {
   set +e
@@ -105,6 +106,7 @@ function setup_ci_environment_vars() {
     export TF_VAR_image="Ubuntu Bionic 18.04 (2020-03-10)"
     export TF_VAR_lb_flavor="m1.tiny"
     echo "${OS_K1_CREDENTIALS}" >/tmp/credentials.yaml
+    CREDENTIALS_FILE_PATH=/tmp/credentials.yaml
     ;;
   *)
     fail "unknown provider ${PROVIDER}"
@@ -153,6 +155,7 @@ function runE2E() {
     -timeout="${timeout}" \
     -run="${test_set}" \
     ./test/e2e \
+    -credentials="${CREDENTIALS_FILE_PATH}" \
     -identifier="${BUILD_ID}" \
     -provider="${PROVIDER}" \
     -os-control-plane="${TEST_OS_CONTROL_PLANE}" \
