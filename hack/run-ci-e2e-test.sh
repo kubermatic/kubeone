@@ -103,7 +103,7 @@ function setup_ci_environment_vars() {
     export OS_PASSWORD=${OS_PASSWORD}
     export TF_VAR_external_network_name="ext-net"
     export TF_VAR_subnet_cidr="10.0.42.0/24"
-    export TF_VAR_image="Ubuntu Bionic 18.04 (2020-03-10)"
+    export TF_VAR_image="Ubuntu Bionic 18.04 (2020-03-12)"
     export TF_VAR_lb_flavor="m1.tiny"
     echo "${OS_K1_CREDENTIALS}" >/tmp/credentials.yaml
     CREDENTIALS_FILE_PATH=/tmp/credentials.yaml
