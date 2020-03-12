@@ -23,6 +23,7 @@ import (
 	"testing"
 	"time"
 
+	k1api "github.com/kubermatic/kubeone/pkg/apis/kubeone/v1alpha1"
 	"github.com/kubermatic/kubeone/test/e2e/provisioner"
 	"github.com/kubermatic/kubeone/test/e2e/testutil"
 
@@ -39,7 +40,7 @@ const (
 func TestClusterConformance(t *testing.T) {
 	testcases := []struct {
 		name                  string
-		provider              string
+		provider              k1api.CloudProviderName
 		providerExternal      bool
 		scenario              string
 		configFilePath        string
@@ -101,7 +102,7 @@ func TestClusterConformance(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			// Only run selected test suite.
 			// Test options are controlled using flags.
-			if testProvider != tc.provider {
+			if testProvider != string(tc.provider) {
 				t.SkipNow()
 			}
 
@@ -128,7 +129,7 @@ func TestClusterConformance(t *testing.T) {
 			// Create provisioner
 			testPath := fmt.Sprintf("../../_build/%s", testRunIdentifier)
 
-			pr, err := provisioner.CreateProvisioner(testPath, testRunIdentifier, tc.provider)
+			pr, err := provisioner.CreateProvisioner(testPath, testRunIdentifier, string(tc.provider))
 			if err != nil {
 				t.Fatalf("failed to create provisioner: %v", err)
 			}
@@ -171,7 +172,7 @@ func TestClusterConformance(t *testing.T) {
 			args := []string{}
 
 			if osControlPlane != OperatingSystemDefault {
-				tfFlags, errFlags := ControlPlaneImageFlags(tc.provider, osControlPlane)
+				tfFlags, errFlags := ControlPlaneImageFlags(string(tc.provider), osControlPlane)
 				if errFlags != nil {
 					t.Fatalf("failed to discover control plane os image: %v", errFlags)
 				}
@@ -223,7 +224,7 @@ func TestClusterConformance(t *testing.T) {
 				args = []string{}
 
 				if osControlPlane != OperatingSystemDefault {
-					tfFlags, errFlags := ControlPlaneImageFlags(tc.provider, osControlPlane)
+					tfFlags, errFlags := ControlPlaneImageFlags(string(tc.provider), osControlPlane)
 					if errFlags != nil {
 						t.Fatalf("failed to discover control plane os image: %v", errFlags)
 					}
