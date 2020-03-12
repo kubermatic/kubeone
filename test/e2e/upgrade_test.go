@@ -95,7 +95,7 @@ func TestClusterUpgrade(t *testing.T) {
 		{
 			name:                  "upgrade k8s cluster on OpenStack",
 			provider:              provisioner.OpenStack,
-			providerExternal:      false,
+			providerExternal:      true,
 			initialConfigPath:     "../../test/e2e/testdata/config_openstack_initial.yaml",
 			targetConfigPath:      "../../test/e2e/testdata/config_openstack_target.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 3 workers
@@ -170,13 +170,8 @@ func TestClusterUpgrade(t *testing.T) {
 			t.Log("Provisioning infrastructure using Terraform…")
 			args := []string{}
 
-			switch tc.provider {
-			case provisioner.GCE:
+			if tc.provider == provisioner.GCE {
 				args = append(args, "-var", "control_plane_target_pool_members_count=1")
-			case provisioner.OpenStack:
-				args = append(args, "-var", "external_network_name=ext-net")
-				args = append(args, "-var", "subnet_cidr='10.0.42.0/24'")
-				args = append(args, "-var", "image='Ubuntu Bionic 18.04 (2019-05-02)'")
 			}
 
 			tf, err := pr.Provision(args...)
