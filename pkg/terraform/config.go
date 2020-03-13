@@ -33,6 +33,7 @@ type controlPlane struct {
 	PrivateAddress    []string `json:"private_address"`
 	LeaderIP          string   `json:"leader_ip"`
 	Hostnames         []string `json:"hostnames"`
+	Untaint           bool     `json:"untaint"`
 	SSHUser           string   `json:"ssh_user"`
 	SSHPort           int      `json:"ssh_port"`
 	SSHPrivateKeyFile string   `json:"ssh_private_key_file"`
@@ -210,6 +211,7 @@ func newHostConfig(id int, publicIP, privateIP, hostname string, cp controlPlane
 		BastionPort:       cp.BastionPort,
 		BastionUser:       cp.BastionUser,
 		IsLeader:          isLeader,
+		Untaint:           cp.Untaint,
 	}
 }
 

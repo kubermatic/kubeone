@@ -71,6 +71,7 @@ type HostConfig struct {
 	BastionUser       string `json:"bastionUser"`
 	Hostname          string `json:"hostname"`
 	IsLeader          bool   `json:"isLeader"`
+	Untaint           bool   `json:"untaint"`
 
 	// Information populated at the runtime
 	OperatingSystem string `json:"-"`
