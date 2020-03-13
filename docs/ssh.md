@@ -5,6 +5,14 @@ private SSH keys but instead rely on `ssh-agent`. In most cases we recommend
 using `ssh-agent` as the easiest way to have your SSH keys *encrypted* at rest
 and still useful for KubeOne.
 
+## sshd requirements
+KubeOne actively uses tunneling features of the SSH protocol, following list
+demonstrates what options of the sshd are expected on control-plane instances \/
+bastion host:
+* `AllowTcpForwarding` is either not present or set to `yes`
+* `PermitOpen` is either not present or set to `any`
+* `PermitTunnel` is either not present or set to `yes`
+
 ## ssh-agent
 If your operating system of choice doesn't do this for you automatically, you
 can use something like
