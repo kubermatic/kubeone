@@ -53,6 +53,16 @@ variable "ssh_agent_socket" {
   default     = "env:SSH_AUTH_SOCK"
 }
 
+variable "bastion_port" {
+  description = "Bastion SSH port"
+  default     = 22
+}
+
+variable "bastion_user" {
+  description = "Bastion SSH username"
+  default     = "ubuntu"
+}
+
 # Provider specific settings
 
 variable "control_plane_flavor" {

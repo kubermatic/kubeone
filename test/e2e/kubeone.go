@@ -21,27 +21,16 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"text/template"
 
 	"github.com/pkg/errors"
+	"gopkg.in/yaml.v2"
 
+	k1api "github.com/kubermatic/kubeone/pkg/apis/kubeone/v1alpha1"
 	"github.com/kubermatic/kubeone/test/e2e/testutil"
-)
 
-const configurationTpl = `
-apiVersion: kubeone.io/v1alpha1
-kind: KubeOneCluster
-versions:
-  kubernetes: {{ .KUBERNETES_VERSION }}
-cloudProvider:
-  name: {{ .CLOUD_PROVIDER_NAME }}
-  external: {{ .CLOUD_PROVIDER_EXTERNAL }}
-{{ if .CLUSTER_NETWORK_POD }}
-clusterNetwork:
-  podSubnet: "{{ .CLUSTER_NETWORK_POD }}"
-  serviceSubnet: "{{ .CLUSTER_NETWORK_SERVICE }}"
-{{ end }}
-`
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	kyaml "sigs.k8s.io/yaml"
+)
 
 // Kubeone is wrapper around KubeOne CLI
 type Kubeone struct {
@@ -60,33 +49,58 @@ func NewKubeone(kubeoneDir, configurationFilePath string) *Kubeone {
 }
 
 // CreateConfig creates a KubeOneCluster manifest
-func (k1 *Kubeone) CreateConfig(kubernetesVersion, providerName string,
-	providerExternal bool, clusterNetworkPod string, clusterNetworkService string) error {
-	variables := map[string]interface{}{
-		"KUBERNETES_VERSION":      kubernetesVersion,
-		"CLOUD_PROVIDER_NAME":     providerName,
-		"CLOUD_PROVIDER_EXTERNAL": providerExternal,
-		"CLUSTER_NETWORK_POD":     clusterNetworkPod,
-		"CLUSTER_NETWORK_SERVICE": clusterNetworkService,
+func (k1 *Kubeone) CreateConfig(
+	kubernetesVersion string,
+	providerName k1api.CloudProviderName,
+	providerExternal bool,
+	clusterNetworkPod string,
+	clusterNetworkService string,
+	credentialsFile string,
+) error {
+	k1Cluster := k1api.KubeOneCluster{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "kubeone.io/v1alpha1",
+			Kind:       "KubeOneCluster",
+		},
 	}
 
-	tpl, err := template.New("base").Parse(configurationTpl)
+	k1api.SetObjectDefaults_KubeOneCluster(&k1Cluster)
+
+	k1Cluster.CloudProvider = k1api.CloudProviderSpec{
+		Name:     providerName,
+		External: providerExternal,
+	}
+
+	k1Cluster.Versions = k1api.VersionConfig{
+		Kubernetes: kubernetesVersion,
+	}
+
+	k1Cluster.ClusterNetwork = k1api.ClusterNetworkConfig{
+		PodSubnet:     clusterNetworkPod,
+		ServiceSubnet: clusterNetworkService,
+	}
+
+	if credentialsFile != "" {
+		ymlbuf, err := ioutil.ReadFile(credentialsFile)
+		if err != nil {
+			return errors.Wrap(err, "unable to read credentials file")
+		}
+
+		credentials := map[string]string{}
+		if err = yaml.Unmarshal(ymlbuf, &credentials); err != nil {
+			return errors.Wrap(err, "unable to unmarshal credentials file from yaml")
+		}
+
+		k1Cluster.CloudProvider.CloudConfig = credentials["cloudConfig"]
+	}
+
+	k1Config, err := kyaml.Marshal(&k1Cluster)
 	if err != nil {
-		return errors.Wrap(err, "failed to parse KubeOne configuration template")
+		return errors.Wrap(err, "unable to marshal kubeone KubeOneCluster")
 	}
 
-	var buf bytes.Buffer
-
-	if tplErr := tpl.Execute(&buf, variables); tplErr != nil {
-		return errors.Wrap(tplErr, "failed to render KubeOne configuration template")
-	}
-
-	err = ioutil.WriteFile(k1.ConfigurationFilePath, buf.Bytes(), 0644)
-	if err != nil {
-		return errors.Wrap(err, "failed to write KubeOne configuration manifest")
-	}
-
-	return nil
+	err = ioutil.WriteFile(k1.ConfigurationFilePath, k1Config, 0644)
+	return errors.Wrap(err, "failed to write KubeOne configuration manifest")
 }
 
 // Install runs 'kubeone install' command to provision the cluster

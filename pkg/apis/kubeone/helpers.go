@@ -70,13 +70,13 @@ func (h *HostConfig) SetLeader(leader bool) {
 // List of in-tree provider can be found here: https://github.com/kubernetes/kubernetes/tree/master/pkg/cloudprovider
 func (p CloudProviderSpec) CloudProviderInTree() bool { //nolint:stylecheck
 	switch p.Name {
-	case CloudProviderNameAWS, CloudProviderNameGCE, CloudProviderNameOpenStack:
+	case CloudProviderNameOpenStack:
+		return !p.External
+	case CloudProviderNameAWS, CloudProviderNameGCE, CloudProviderNameVSphere, CloudProviderNameAzure:
 		return true
-	case CloudProviderNameVSphere, CloudProviderNameAzure:
-		return true
-	default:
-		return false
 	}
+
+	return false
 }
 
 // KubernetesCNIVersion returns kubernetes-cni package version

@@ -34,7 +34,7 @@ import (
 )
 
 const (
-	packetCCMVersion     = "v0.0.4"
+	packetImage          = "packethost/packet-ccm:v0.0.4"
 	packetSAName         = "cloud-controller-manager"
 	packetDeploymentName = "packet-cloud-controller-manager"
 )
@@ -45,10 +45,12 @@ func ensurePacket(s *state.State) error {
 	}
 
 	ctx := context.Background()
+	sa := packetServiceAccount()
+	crole := packetClusterRole()
 	k8sobjects := []runtime.Object{
-		packetServiceAccount(),
-		packetClusterRole(),
-		packetClusterRoleBinding(),
+		sa,
+		crole,
+		genClusterRoleBinding("system:cloud-controller-manager", crole, sa),
 	}
 
 	for _, obj := range k8sobjects {
@@ -122,26 +124,6 @@ func packetClusterRole() *rbacv1.ClusterRole {
 	}
 }
 
-func packetClusterRoleBinding() *rbacv1.ClusterRoleBinding {
-	return &rbacv1.ClusterRoleBinding{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: "system:cloud-controller-manager",
-		},
-		RoleRef: rbacv1.RoleRef{
-			APIGroup: rbacv1.GroupName,
-			Name:     "system:cloud-controller-manager",
-			Kind:     "ClusterRole",
-		},
-		Subjects: []rbacv1.Subject{
-			{
-				Kind:      "ServiceAccount",
-				Name:      packetSAName,
-				Namespace: metav1.NamespaceSystem,
-			},
-		},
-	}
-}
-
 func packetDeployment() *appsv1.Deployment {
 	var (
 		replicas int32 = 1
@@ -192,7 +174,7 @@ func packetDeployment() *appsv1.Deployment {
 					Containers: []corev1.Container{
 						{
 							Name:  "packet-cloud-controller-manager",
-							Image: "packethost/packet-ccm:" + packetCCMVersion,
+							Image: packetImage,
 							Command: []string{
 								"./packet-cloud-controller-manager",
 								"--cloud-provider=packet",

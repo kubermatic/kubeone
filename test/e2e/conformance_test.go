@@ -23,6 +23,7 @@ import (
 	"testing"
 	"time"
 
+	k1api "github.com/kubermatic/kubeone/pkg/apis/kubeone/v1alpha1"
 	"github.com/kubermatic/kubeone/test/e2e/provisioner"
 	"github.com/kubermatic/kubeone/test/e2e/testutil"
 
@@ -39,7 +40,7 @@ const (
 func TestClusterConformance(t *testing.T) {
 	testcases := []struct {
 		name                  string
-		provider              string
+		provider              k1api.CloudProviderName
 		providerExternal      bool
 		scenario              string
 		configFilePath        string
@@ -88,7 +89,7 @@ func TestClusterConformance(t *testing.T) {
 		{
 			name:                  "verify k8s cluster deployment on OpenStack",
 			provider:              provisioner.OpenStack,
-			providerExternal:      false,
+			providerExternal:      true,
 			scenario:              NodeConformance,
 			configFilePath:        "../../test/e2e/testdata/config_os.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
@@ -101,7 +102,7 @@ func TestClusterConformance(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			// Only run selected test suite.
 			// Test options are controlled using flags.
-			if testProvider != tc.provider {
+			if testProvider != string(tc.provider) {
 				t.SkipNow()
 			}
 
@@ -128,7 +129,7 @@ func TestClusterConformance(t *testing.T) {
 			// Create provisioner
 			testPath := fmt.Sprintf("../../_build/%s", testRunIdentifier)
 
-			pr, err := provisioner.CreateProvisioner(testPath, testRunIdentifier, tc.provider)
+			pr, err := provisioner.CreateProvisioner(testPath, testRunIdentifier, string(tc.provider))
 			if err != nil {
 				t.Fatalf("failed to create provisioner: %v", err)
 			}
@@ -157,7 +158,7 @@ func TestClusterConformance(t *testing.T) {
 				clusterNetworkService = clusterNetworkServiceCIDR
 			}
 
-			err = target.CreateConfig(testTargetVersion, tc.provider, tc.providerExternal, clusterNetworkPod, clusterNetworkService)
+			err = target.CreateConfig(testTargetVersion, tc.provider, tc.providerExternal, clusterNetworkPod, clusterNetworkService, testCredentialsFile)
 			if err != nil {
 				t.Fatalf("failed to create KubeOneCluster manifest: %v", err)
 			}
@@ -171,7 +172,7 @@ func TestClusterConformance(t *testing.T) {
 			args := []string{}
 
 			if osControlPlane != OperatingSystemDefault {
-				tfFlags, errFlags := ControlPlaneImageFlags(tc.provider, osControlPlane)
+				tfFlags, errFlags := ControlPlaneImageFlags(string(tc.provider), osControlPlane)
 				if errFlags != nil {
 					t.Fatalf("failed to discover control plane os image: %v", errFlags)
 				}
@@ -183,13 +184,8 @@ func TestClusterConformance(t *testing.T) {
 				args = append(args, "-var", fmt.Sprintf("worker_os=%s", osWorkers))
 			}
 
-			switch tc.provider {
-			case provisioner.GCE:
+			if tc.provider == provisioner.GCE {
 				args = append(args, "-var", "control_plane_target_pool_members_count=1")
-			case provisioner.OpenStack:
-				args = append(args, "-var", "external_network_name=ext-net")
-				args = append(args, "-var", "subnet_cidr='10.0.42.0/24'")
-				args = append(args, "-var", "image='Ubuntu Bionic 18.04 (2019-05-02)'")
 			}
 
 			tf, err := pr.Provision(args...)
@@ -228,7 +224,7 @@ func TestClusterConformance(t *testing.T) {
 				args = []string{}
 
 				if osControlPlane != OperatingSystemDefault {
-					tfFlags, errFlags := ControlPlaneImageFlags(tc.provider, osControlPlane)
+					tfFlags, errFlags := ControlPlaneImageFlags(string(tc.provider), osControlPlane)
 					if errFlags != nil {
 						t.Fatalf("failed to discover control plane os image: %v", errFlags)
 					}

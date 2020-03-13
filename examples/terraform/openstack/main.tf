@@ -148,23 +148,8 @@ resource "openstack_networking_port_v2" "lb" {
   }
 }
 
-resource "openstack_networking_floatingip_v2" "control_plane" {
-  count = 3
-  pool  = var.external_network_name
-}
-
 resource "openstack_networking_floatingip_v2" "lb" {
   pool = var.external_network_name
-}
-
-resource "openstack_networking_floatingip_associate_v2" "control_plane" {
-  count = 3
-
-  floating_ip = element(
-    openstack_networking_floatingip_v2.control_plane.*.address,
-    count.index,
-  )
-  port_id = element(openstack_networking_port_v2.control_plane.*.id, count.index)
 }
 
 resource "openstack_networking_floatingip_associate_v2" "lb" {
@@ -183,6 +168,10 @@ resource "null_resource" "lb_config" {
     cluster_instance_ids = join(",", openstack_compute_instance_v2.control_plane.*.id)
     config               = local.rendered_lb_config
   }
+
+  depends_on = [
+    openstack_compute_instance_v2.lb
+  ]
 
   connection {
     host = openstack_networking_floatingip_v2.lb.address

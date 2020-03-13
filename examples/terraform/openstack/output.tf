@@ -30,11 +30,14 @@ output "kubeone_hosts" {
       cluster_name         = var.cluster_name
       cloud_provider       = "openstack"
       private_address      = openstack_compute_instance_v2.control_plane.*.access_ip_v4
-      public_address       = openstack_networking_floatingip_v2.control_plane.*.address
+      hostnames            = openstack_compute_instance_v2.control_plane.*.name
       ssh_agent_socket     = var.ssh_agent_socket
       ssh_port             = var.ssh_port
       ssh_private_key_file = var.ssh_private_key_file
       ssh_user             = var.ssh_username
+      bastion              = openstack_networking_floatingip_v2.lb.address
+      bastion_port         = var.bastion_port
+      bastion_user         = var.bastion_user
     }
   }
 }
@@ -60,7 +63,6 @@ output "kubeone_workers" {
           image          = var.image
           flavor         = var.worker_flavor
           securityGroups = [openstack_networking_secgroup_v2.securitygroup.name]
-          floatingIPPool = var.external_network_name
           network        = openstack_networking_network_v2.network.name
           subnet         = openstack_networking_subnet_v2.subnet.name
           # Optional: If set, the rootDisk will be a volume. 

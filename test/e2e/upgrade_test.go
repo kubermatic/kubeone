@@ -27,6 +27,7 @@ import (
 	"github.com/Masterminds/semver"
 	"github.com/pkg/errors"
 
+	k1api "github.com/kubermatic/kubeone/pkg/apis/kubeone/v1alpha1"
 	"github.com/kubermatic/kubeone/test/e2e/provisioner"
 	"github.com/kubermatic/kubeone/test/e2e/testutil"
 
@@ -45,7 +46,7 @@ const (
 func TestClusterUpgrade(t *testing.T) {
 	testcases := []struct {
 		name                  string
-		provider              string
+		provider              k1api.CloudProviderName
 		providerExternal      bool
 		initialConfigPath     string
 		targetConfigPath      string
@@ -94,7 +95,7 @@ func TestClusterUpgrade(t *testing.T) {
 		{
 			name:                  "upgrade k8s cluster on OpenStack",
 			provider:              provisioner.OpenStack,
-			providerExternal:      false,
+			providerExternal:      true,
 			initialConfigPath:     "../../test/e2e/testdata/config_openstack_initial.yaml",
 			targetConfigPath:      "../../test/e2e/testdata/config_openstack_target.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 3 workers
@@ -119,7 +120,7 @@ func TestClusterUpgrade(t *testing.T) {
 				t.Fatal("-target-version must be set")
 			}
 
-			if testProvider != tc.provider {
+			if testProvider != string(tc.provider) {
 				t.SkipNow()
 			}
 
@@ -128,7 +129,7 @@ func TestClusterUpgrade(t *testing.T) {
 			// Create provisioner
 			testPath := fmt.Sprintf("../../_build/%s", testRunIdentifier)
 
-			pr, err := provisioner.CreateProvisioner(testPath, testRunIdentifier, tc.provider)
+			pr, err := provisioner.CreateProvisioner(testPath, testRunIdentifier, string(tc.provider))
 			if err != nil {
 				t.Fatalf("failed to create provisioner: %v", err)
 			}
@@ -156,7 +157,7 @@ func TestClusterUpgrade(t *testing.T) {
 				clusterNetworkService = clusterNetworkServiceCIDR
 			}
 
-			err = target.CreateConfig(testInitialVersion, tc.provider, tc.providerExternal, clusterNetworkPod, clusterNetworkService)
+			err = target.CreateConfig(testInitialVersion, tc.provider, tc.providerExternal, clusterNetworkPod, clusterNetworkService, testCredentialsFile)
 			if err != nil {
 				t.Fatalf("failed to create KubeOneCluster manifest: %v", err)
 			}
@@ -169,13 +170,8 @@ func TestClusterUpgrade(t *testing.T) {
 			t.Log("Provisioning infrastructure using Terraform…")
 			args := []string{}
 
-			switch tc.provider {
-			case provisioner.GCE:
+			if tc.provider == provisioner.GCE {
 				args = append(args, "-var", "control_plane_target_pool_members_count=1")
-			case provisioner.OpenStack:
-				args = append(args, "-var", "external_network_name=ext-net")
-				args = append(args, "-var", "subnet_cidr='10.0.42.0/24'")
-				args = append(args, "-var", "image='Ubuntu Bionic 18.04 (2019-05-02)'")
 			}
 
 			tf, err := pr.Provision(args...)
@@ -259,8 +255,7 @@ func TestClusterUpgrade(t *testing.T) {
 				clusterNetworkService = "172.16.0.0/12"
 			}
 
-			err = target.CreateConfig(testTargetVersion, tc.provider,
-				tc.providerExternal, clusterNetworkPod, clusterNetworkService)
+			err = target.CreateConfig(testTargetVersion, tc.provider, tc.providerExternal, clusterNetworkPod, clusterNetworkService, testCredentialsFile)
 			if err != nil {
 				t.Fatalf("failed to create KubeOneCluster manifest: %v", err)
 			}

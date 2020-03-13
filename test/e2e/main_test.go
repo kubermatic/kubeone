@@ -36,17 +36,18 @@ import (
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-// testRunIdentifier aka. the build number, a unique identifier for the test run.
 var (
-	testRunIdentifier  string
-	testInitialVersion string
-	testTargetVersion  string
-	testProvider       string
-	testOSControlPlane string
-	testOSWorkers      string
+	testCredentialsFile string
+	testRunIdentifier   string
+	testInitialVersion  string
+	testTargetVersion   string
+	testProvider        string
+	testOSControlPlane  string
+	testOSWorkers       string
 )
 
 func init() {
+	flag.StringVar(&testCredentialsFile, "credentials", "", "path to the credentials file")
 	flag.StringVar(&testRunIdentifier, "identifier", "", "The unique identifier for this test run")
 	flag.StringVar(&testProvider, "provider", "", "Provider to run tests on")
 	flag.StringVar(&testInitialVersion, "initial-version", "", "Cluster version to provision for tests")

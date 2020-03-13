@@ -34,7 +34,7 @@ import (
 )
 
 const (
-	digitaloceanCCMVersion     = "v0.1.21"
+	digitaloceanImage          = "digitalocean/digitalocean-cloud-controller-manager:v0.1.23"
 	digitaloceanSAName         = "cloud-controller-manager"
 	digitaloceanDeploymentName = "digitalocean-cloud-controller-manager"
 )
@@ -45,10 +45,12 @@ func ensureDigitalOcean(s *state.State) error {
 	}
 
 	ctx := context.Background()
+	sa := doServiceAccount()
+	crole := doClusterRole()
 	k8sobject := []runtime.Object{
-		doServiceAccount(),
-		doClusterRole(),
-		doClusterRoleBinding(),
+		sa,
+		crole,
+		genClusterRoleBinding("system:cloud-controller-manager", crole, sa),
 	}
 
 	for _, obj := range k8sobject {
@@ -122,26 +124,6 @@ func doClusterRole() *rbacv1.ClusterRole {
 	}
 }
 
-func doClusterRoleBinding() *rbacv1.ClusterRoleBinding {
-	return &rbacv1.ClusterRoleBinding{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: "system:cloud-controller-manager",
-		},
-		RoleRef: rbacv1.RoleRef{
-			APIGroup: rbacv1.GroupName,
-			Name:     "system:cloud-controller-manager",
-			Kind:     "ClusterRole",
-		},
-		Subjects: []rbacv1.Subject{
-			{
-				Kind:      "ServiceAccount",
-				Name:      digitaloceanSAName,
-				Namespace: metav1.NamespaceSystem,
-			},
-		},
-	}
-}
-
 func doDeployment() *appsv1.Deployment {
 	var (
 		replicas  int32 = 1
@@ -195,7 +177,7 @@ func doDeployment() *appsv1.Deployment {
 					Containers: []corev1.Container{
 						{
 							Name:  "digitalocean-cloud-controller-manager",
-							Image: "digitalocean/digitalocean-cloud-controller-manager:" + digitaloceanCCMVersion,
+							Image: digitaloceanImage,
 							Command: []string{
 								"/bin/digitalocean-cloud-controller-manager",
 								"--leader-elect=false",
