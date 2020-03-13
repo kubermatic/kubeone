@@ -256,7 +256,7 @@ func TestClusterConformance(t *testing.T) {
 
 			// Ensure nodes are ready and version is matching desired
 			t.Log("Waiting for all nodes to become ready…")
-			if err = waitForNodesReady(client, tc.expectedNumberOfNodes); err != nil {
+			if err = waitForNodesReady(t, client, tc.expectedNumberOfNodes); err != nil {
 				t.Fatalf("failed to bring up all nodes up: %v", err)
 			}
 

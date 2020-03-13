@@ -230,7 +230,7 @@ func TestClusterUpgrade(t *testing.T) {
 			// Ensure nodes are ready and version is matching desired
 			t.Log("Waiting for all nodes to become ready…")
 
-			err = waitForNodesReady(client, tc.expectedNumberOfNodes)
+			err = waitForNodesReady(t, client, tc.expectedNumberOfNodes)
 			if err != nil {
 				t.Fatalf("nodes are not ready: %v", err)
 			}
@@ -276,7 +276,7 @@ func TestClusterUpgrade(t *testing.T) {
 			// Ensure nodes are ready and version is matching desired
 			t.Log("Waiting for all nodes to become ready…")
 
-			err = waitForNodesReady(client, tc.expectedNumberOfNodes)
+			err = waitForNodesReady(t, client, tc.expectedNumberOfNodes)
 			if err != nil {
 				t.Fatalf("nodes are not ready: %v", err)
 			}
