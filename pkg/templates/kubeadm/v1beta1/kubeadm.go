@@ -55,14 +55,19 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		nodeIP = host.PublicAddress
 	}
 
-	nodeRegistration := kubeadmv1beta1.NodeRegistrationOptions{
-		Name: host.Hostname,
-		Taints: []corev1.Taint{
-			{
-				Effect: corev1.TaintEffectNoSchedule,
-				Key:    "node-role.kubernetes.io/master",
-			},
+	taints := []corev1.Taint{
+		{
+			Effect: corev1.TaintEffectNoSchedule,
+			Key:    "node-role.kubernetes.io/master",
 		},
+	}
+	if host.Untaint {
+		taints = nil
+	}
+
+	nodeRegistration := kubeadmv1beta1.NodeRegistrationOptions{
+		Name:   host.Hostname,
+		Taints: taints,
 		KubeletExtraArgs: map[string]string{
 			"anonymous-auth":      "false",
 			"node-ip":             nodeIP,

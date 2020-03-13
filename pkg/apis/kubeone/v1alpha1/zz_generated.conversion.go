@@ -471,6 +471,7 @@ func autoConvert_v1alpha1_HostConfig_To_kubeone_HostConfig(in *HostConfig, out *
 	out.BastionUser = in.BastionUser
 	out.Hostname = in.Hostname
 	out.IsLeader = in.IsLeader
+	out.Untaint = in.Untaint
 	out.OperatingSystem = in.OperatingSystem
 	return nil
 }
@@ -493,6 +494,7 @@ func autoConvert_kubeone_HostConfig_To_v1alpha1_HostConfig(in *kubeone.HostConfi
 	out.BastionUser = in.BastionUser
 	out.Hostname = in.Hostname
 	out.IsLeader = in.IsLeader
+	out.Untaint = in.Untaint
 	out.OperatingSystem = in.OperatingSystem
 	return nil
 }

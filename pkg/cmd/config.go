@@ -546,6 +546,9 @@ addons:
 #   # prefixed with "env:" to refer to an environment variable.
 #   sshPrivateKeyFile: '/home/me/.ssh/id_rsa'
 #   sshAgentSocket: 'env:SSH_AUTH_SOCK'
+#   # setting this to true will skip node-role.kubernetes.io/master taint from
+#   # Node object on this host
+#   untaint: false
 
 # The API server can also be overwritten by Terraform. Provide the
 # external address of your load balancer or the public addresses of
