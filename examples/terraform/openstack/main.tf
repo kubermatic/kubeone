@@ -22,6 +22,12 @@ data "openstack_networking_network_v2" "external_network" {
   external = true
 }
 
+data "openstack_images_image_v2" "image" {
+  name        = var.image
+  most_recent = true
+  properties  = var.image_properties_query
+}
+
 resource "openstack_compute_keypair_v2" "deployer" {
   name       = "${var.cluster_name}-deployer-key"
   public_key = file(var.ssh_public_key_file)
@@ -90,7 +96,7 @@ resource "openstack_compute_instance_v2" "control_plane" {
   count = 3
   name  = "${var.cluster_name}-cp-${count.index}"
 
-  image_name      = var.image
+  image_name      = data.openstack_images_image_v2.image.name
   flavor_name     = var.control_plane_flavor
   key_pair        = openstack_compute_keypair_v2.deployer.name
   security_groups = [openstack_networking_secgroup_v2.securitygroup.name]
@@ -102,7 +108,7 @@ resource "openstack_compute_instance_v2" "control_plane" {
 
 resource "openstack_compute_instance_v2" "lb" {
   name       = "${var.cluster_name}-lb"
-  image_name = var.image
+  image_name = data.openstack_images_image_v2.image.name
 
   flavor_name     = var.lb_flavor
   key_pair        = openstack_compute_keypair_v2.deployer.name

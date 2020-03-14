@@ -82,12 +82,13 @@ func setupTearDown(p provisioner.Provisioner, k *Kubeone) func(t *testing.T) {
 	}
 }
 
-func waitForNodesReady(client dynclient.Client, expectedNumberOfNodes int) error {
+func waitForNodesReady(t *testing.T, client dynclient.Client, expectedNumberOfNodes int) error {
 	return wait.Poll(5*time.Second, 10*time.Minute, func() (bool, error) {
 		nodes := corev1.NodeList{}
 
 		if err := client.List(context.Background(), &nodes); err != nil {
-			return false, errors.Wrap(err, "unable to list nodes")
+			t.Logf("error: %v", err)
+			return false, nil
 		}
 
 		if len(nodes.Items) != expectedNumberOfNodes {

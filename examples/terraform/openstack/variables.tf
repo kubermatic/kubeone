@@ -76,13 +76,21 @@ variable "worker_flavor" {
 }
 
 variable "lb_flavor" {
-  default     = "m1.micro"
+  default     = "m1.tiny"
   description = "OpenStack instance flavor for the LoadBalancer node"
 }
 
 variable "image" {
-  default     = "Ubuntu 18.04"
+  default     = ""
   description = "image name to use"
+}
+
+variable "image_properties_query" {
+  default = {
+    os_distro  = "ubuntu"
+    os_version = "18.04"
+  }
+  description = "in absense of var.image, this will be used to query API for the image"
 }
 
 variable "subnet_cidr" {
