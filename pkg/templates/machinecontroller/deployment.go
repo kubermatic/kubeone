@@ -804,6 +804,9 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster, credentials
 					},
 				},
 				Spec: corev1.PodSpec{
+					NodeSelector: map[string]string{
+						"node-role.kubernetes.io/master": "",
+					},
 					ServiceAccountName: "machine-controller",
 					Tolerations: []corev1.Toleration{
 						{
