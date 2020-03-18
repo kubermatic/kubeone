@@ -29,8 +29,8 @@ type kubeadmv1beta1 struct {
 	version string
 }
 
-func (*kubeadmv1beta1) Config(s *state.State, instance kubeoneapi.HostConfig) (string, error) {
-	config, err := v1beta1.NewConfig(s, instance)
+func (*kubeadmv1beta1) Config(s *state.State, instance kubeoneapi.HostConfig, isWorker bool) (string, error) {
+	config, err := v1beta1.NewConfig(s, instance, isWorker)
 	if err != nil {
 		return "", err
 	}

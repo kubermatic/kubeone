@@ -43,7 +43,7 @@ const (
 )
 
 // NewConfig returns all required configs to init a cluster via a set of v1beta1 configs
-func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, error) {
+func NewConfig(s *state.State, host kubeoneapi.HostConfig, isWorker bool) ([]runtime.Object, error) {
 	cluster := s.Cluster
 	kubeSemVer, err := semver.NewVersion(cluster.Versions.Kubernetes)
 	if err != nil {
@@ -61,7 +61,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 			Key:    "node-role.kubernetes.io/master",
 		},
 	}
-	if host.Untaint {
+	if host.Untaint || isWorker {
 		taints = nil
 	}
 
@@ -222,6 +222,9 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 
 	initConfig.NodeRegistration = nodeRegistration
 	joinConfig.NodeRegistration = nodeRegistration
-
+	if isWorker {
+		joinConfig.ControlPlane = nil
+		return []runtime.Object{joinConfig}, nil
+	}
 	return []runtime.Object{initConfig, joinConfig, clusterConfig}, nil
 }

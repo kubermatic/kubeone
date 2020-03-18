@@ -25,20 +25,20 @@ import (
 	"github.com/kubermatic/kubeone/pkg/state"
 )
 
-func joinControlplaneNode(s *state.State) error {
-	s.Logger.Infoln("Joining controlplane node…")
-	return s.RunTaskOnFollowers(joinControlPlaneNodeInternal, false)
+func joinStaticWorkerNode(s *state.State) error {
+	s.Logger.Infoln("Joining static worker node…")
+	return s.RunTaskOnWorkerHosts(joinStaticWorkerInternal, false)
 }
 
-func joinControlPlaneNodeInternal(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func joinStaticWorkerInternal(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	logger := s.Logger.WithField("node", node.PublicAddress)
 
 	sleepTime := 30 * time.Second
-	logger.Infof("Waiting %s to ensure main control plane components are up…", sleepTime)
+	logger.Infof("Waiting %s to ensure worker plane components are up…", sleepTime)
 	time.Sleep(sleepTime)
 
-	logger.Info("Joining control plane node")
-	cmd, err := scripts.KubeadmJoin(s.WorkDir, node.ID, s.KubeadmVerboseFlag(), false)
+	logger.Info("Joining worker node")
+	cmd, err := scripts.KubeadmJoin(s.WorkDir, node.ID, s.KubeadmVerboseFlag(), true)
 	if err != nil {
 		return err
 	}

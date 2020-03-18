@@ -550,6 +550,22 @@ addons:
 #   # Node object on this host
 #   untaint: false
 
+# A list of static workers, not managed by MachineController.
+# The list of nodes can be overwritten by providing Terraform output.
+# workerHosts:
+# - publicAddress: '1.2.3.5'
+#   privateAddress: '172.18.0.2'
+#   bastion: '4.3.2.1'
+#   bastionPort: 22  # can be left out if using the default (22)
+#   bastionUser: 'root'  # can be left out if using the default ('root')
+#   sshPort: 22 # can be left out if using the default (22)
+#   sshUsername: ubuntu
+#   # You usually want to configure either a private key OR an
+#   # agent socket, but never both. The socket value can be
+#   # prefixed with "env:" to refer to an environment variable.
+#   sshPrivateKeyFile: '/home/me/.ssh/id_rsa'
+#   sshAgentSocket: 'env:SSH_AUTH_SOCK'
+
 # The API server can also be overwritten by Terraform. Provide the
 # external address of your load balancer or the public addresses of
 # the first control plane nodes.

@@ -51,6 +51,10 @@ func (c KubeOneCluster) Followers() []HostConfig {
 	return followers
 }
 
+func (c KubeOneCluster) StaticWorkers() []HostConfig {
+	return c.WorkerHosts
+}
+
 // SetHostname sets the hostname for the given host
 func (h *HostConfig) SetHostname(hostname string) {
 	h.Hostname = hostname

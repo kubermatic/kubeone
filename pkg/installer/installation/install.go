@@ -43,6 +43,7 @@ func Install(s *state.State) error {
 		{Fn: kubeadmCertsOnFollower, ErrMsg: "failed to provision certs and etcd on followers", Retries: 3},
 		{Fn: initKubernetesLeader, ErrMsg: "failed to init kubernetes on leader", Retries: 3},
 		{Fn: joinControlplaneNode, ErrMsg: "unable to join other masters a cluster", Retries: 3},
+		{Fn: joinStaticWorkerNode, ErrMsg: "unable to join worker nodes to  the cluster", Retries: 3},
 		{Fn: copyKubeconfig, ErrMsg: "unable to copy kubeconfig to home directory", Retries: 3},
 		{Fn: saveKubeconfig, ErrMsg: "unable to save kubeconfig to the local machine", Retries: 3},
 		{Fn: kubeconfig.BuildKubernetesClientset, ErrMsg: "unable to build kubernetes clientset", Retries: 3},

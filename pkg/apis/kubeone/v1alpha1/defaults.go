@@ -67,11 +67,16 @@ func SetDefaults_Hosts(obj *KubeOneCluster) {
 		obj.Hosts[idx].ID = idx
 		defaultHostConfig(&obj.Hosts[idx])
 	}
-
 	if setDefaultLeader {
 		// In absence of explicitly defined leader set the first host to be the
 		// default leader
 		obj.Hosts[0].IsLeader = true
+	}
+
+	for idx := range obj.WorkerHosts {
+		obj.WorkerHosts[idx].ID = idx
+		defaultHostConfig(&obj.WorkerHosts[idx])
+
 	}
 }
 

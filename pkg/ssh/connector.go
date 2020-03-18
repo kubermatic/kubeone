@@ -28,13 +28,13 @@ import (
 // Connector holds a map of Connections
 type Connector struct {
 	lock        sync.Mutex
-	connections map[int]Connection
+	connections map[string]Connection
 }
 
 // NewConnector constructor
 func NewConnector() *Connector {
 	return &Connector{
-		connections: make(map[int]Connection),
+		connections: make(map[string]Connection),
 	}
 }
 
@@ -60,7 +60,7 @@ func (c *Connector) Connect(host kubeoneapi.HostConfig) (Connection, error) {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 
-	conn, found := c.connections[host.ID]
+	conn, found := c.connections[host.PublicAddress]
 	if !found {
 		opts := Opts{
 			Username:    host.SSHUsername,
@@ -78,8 +78,8 @@ func (c *Connector) Connect(host kubeoneapi.HostConfig) (Connection, error) {
 		if err != nil {
 			return nil, err
 		}
-
-		c.connections[host.ID] = conn
+		// Initially, this was indexed using the host index in the host list. This breaks if you have more than one list, which is the case after adding WorkerHosts. PublicAddress is better unique index for this case.
+		c.connections[host.PublicAddress] = conn
 	}
 
 	return conn, nil

@@ -98,7 +98,11 @@ func (s *State) RunTaskOnNodes(nodes []kubeoneapi.HostConfig, task NodeTask, par
 
 // RunTaskOnAllNodes runs the given task on all hosts.
 func (s *State) RunTaskOnAllNodes(task NodeTask, parallel bool) error {
-	return s.RunTaskOnNodes(s.Cluster.Hosts, task, parallel)
+	allNodes := s.Cluster.Hosts
+	if s.Cluster.WorkerHosts != nil {
+		allNodes = append(allNodes, s.Cluster.WorkerHosts...)
+	}
+	return s.RunTaskOnNodes(allNodes, task, parallel)
 }
 
 // RunTaskOnLeader runs the given task on the leader host.
@@ -118,4 +122,8 @@ func (s *State) RunTaskOnLeader(task NodeTask) error {
 // RunTaskOnFollowers runs the given task on the follower hosts.
 func (s *State) RunTaskOnFollowers(task NodeTask, parallel bool) error {
 	return s.RunTaskOnNodes(s.Cluster.Followers(), task, parallel)
+}
+
+func (s *State) RunTaskOnWorkerHosts(task NodeTask, parallel bool) error {
+	return s.RunTaskOnNodes(s.Cluster.StaticWorkers(), task, parallel)
 }
