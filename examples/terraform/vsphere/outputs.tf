@@ -64,8 +64,8 @@ output "kubeone_workers" {
           datastore     = var.datastore_name
           # Optional: Resize the root disk to this size. Must be bigger than the existing size
           # Default is to leave the disk at the same size as the template
-          diskSizeGB     = 10
-          memoryMB       = 2048
+          diskSizeGB     = var.worker_disk
+          memoryMB       = var.worker_memory
           templateVMName = var.template_name
           vmNetName      = var.network_name
         }
