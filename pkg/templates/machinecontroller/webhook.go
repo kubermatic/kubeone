@@ -181,6 +181,9 @@ func webhookDeployment(cluster *kubeoneapi.KubeOneCluster, credentialsFilePath s
 					},
 				},
 				Spec: corev1.PodSpec{
+					NodeSelector: map[string]string{
+						"node-role.kubernetes.io/master": "",
+					},
 					Volumes: []corev1.Volume{
 						getServingCertVolume(),
 					},
