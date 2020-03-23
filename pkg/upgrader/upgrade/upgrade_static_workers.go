@@ -26,50 +26,50 @@ import (
 	"github.com/kubermatic/kubeone/pkg/state"
 )
 
-func upgradeFollower(s *state.State) error {
-	return s.RunTaskOnFollowers(upgradeFollowerExecutor, false)
+func upgradeWorkers(s *state.State) error {
+	return s.RunTaskOnWorkerHosts(upgradeWorkerHostsExecutor, false)
 }
 
-func upgradeFollowerExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func upgradeWorkerHostsExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	logger := s.Logger.WithField("node", node.PublicAddress)
 
-	logger.Infoln("Labeling follower control plane…")
+	logger.Infoln("Labeling static worker node…")
 	err := labelNode(s.DynamicClient, node)
 	if err != nil {
-		return errors.Wrap(err, "failed to label follower control plane node")
+		return errors.Wrap(err, "failed to label static worker node")
 	}
 
-	logger.Infoln("Draining follower control plane…")
-	err = drainNode(s, *node)
+	logger.Infoln("Draining static worker node…")
+	err = drainWorkerNode(s, *node)
 	if err != nil {
-		return errors.Wrap(err, "failed to drain follower control plane node")
+		return errors.Wrap(err, "failed to drain static worker node")
 	}
 
-	logger.Infoln("Upgrading Kubernetes binaries on follower control plane…")
+	logger.Infoln("Upgrading Kubernetes binaries on static worker node…")
 	err = upgradeKubernetesBinaries(s, *node)
 	if err != nil {
-		return errors.Wrap(err, "failed to upgrade kubernetes binaries on follower control plane")
+		return errors.Wrap(err, "failed to upgrade kubernetes binaries on static worker node")
 	}
 
-	logger.Infoln("Running 'kubeadm upgrade' on the follower control plane node…")
+	logger.Infoln("Running 'kubeadm upgrade' on the static worker node…")
 	err = upgradeFollowerControlPlane(s)
 	if err != nil {
-		return errors.Wrap(err, "failed to upgrade follower control plane")
+		return errors.Wrap(err, "failed to upgrade static worker node")
 	}
 
-	logger.Infoln("Uncordoning follower control plane…")
-	err = uncordonNode(s, *node)
+	logger.Infoln("Uncordoning static worker node…")
+	err = uncordonWorkerNode(s, *node)
 	if err != nil {
-		return errors.Wrap(err, "failed to uncordon follower control plane node")
+		return errors.Wrap(err, "failed to uncordon static worker node")
 	}
 
 	logger.Infof("Waiting %v to ensure all components are up…", timeoutNodeUpgrade)
 	time.Sleep(timeoutNodeUpgrade)
 
-	logger.Infoln("Unlabeling follower control plane…")
+	logger.Infoln("Unlabeling static worker node…")
 	err = unlabelNode(s.DynamicClient, node)
 	if err != nil {
-		return errors.Wrap(err, "failed to unlabel follower control plane node")
+		return errors.Wrap(err, "failed to unlabel static worker node node")
 	}
 
 	return nil

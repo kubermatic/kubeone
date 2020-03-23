@@ -19,6 +19,7 @@ package upgrade
 import (
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/scripts"
+	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/state"
 )
 
@@ -42,4 +43,32 @@ func uncordonNode(s *state.State, node kubeoneapi.HostConfig) error {
 	_, _, err = s.Runner.RunRaw(cmd)
 
 	return err
+}
+
+// Static worker nodes don't have an api running, so we can't run cordon/drain
+// commands directly on them. Instead we run the commands on the leader.
+func drainWorkerNode(s *state.State, node kubeoneapi.HostConfig) error {
+	cmd, err := scripts.DrainNode(node.Hostname)
+	if err != nil {
+		return err
+	}
+
+	return s.RunTaskOnLeader(func(s *state.State, _ *kubeoneapi.HostConfig, _ ssh.Connection) error {
+		_, _, err := s.Runner.RunRaw(cmd)
+
+		return err
+	})
+}
+
+func uncordonWorkerNode(s *state.State, node kubeoneapi.HostConfig) error {
+	cmd, err := scripts.UncordonNode(node.Hostname)
+	if err != nil {
+		return err
+	}
+
+	return s.RunTaskOnLeader(func(s *state.State, _ *kubeoneapi.HostConfig, _ ssh.Connection) error {
+		_, _, err := s.Runner.RunRaw(cmd)
+
+		return err
+	})
 }

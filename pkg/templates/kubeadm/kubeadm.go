@@ -36,6 +36,7 @@ type Kubedm interface {
 	Config(s *state.State, instance kubeoneapi.HostConfig, isWorker bool) (string, error)
 	UpgradeLeaderCommand() string
 	UpgradeFollowerCommand() string
+	UpgradeWorkerHostCommand() string
 }
 
 // New constructor

@@ -45,3 +45,7 @@ func (k *kubeadmv1beta1) UpgradeLeaderCommand() string {
 func (*kubeadmv1beta1) UpgradeFollowerCommand() string {
 	return "kubeadm upgrade node experimental-control-plane"
 }
+
+func (*kubeadmv1beta1) UpgradeWorkerHostCommand() string {
+	return "kubeadm upgrade node"
+}

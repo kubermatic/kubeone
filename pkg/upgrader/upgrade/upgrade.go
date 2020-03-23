@@ -55,6 +55,7 @@ func Upgrade(s *state.State) error {
 		{Fn: runPreflightChecks, ErrMsg: "preflight checks failed"},
 		{Fn: upgradeLeader, ErrMsg: "unable to upgrade leader control plane", Retries: 3},
 		{Fn: upgradeFollower, ErrMsg: "unable to upgrade follower control plane", Retries: 3},
+		{Fn: upgradeWorkers, ErrMsg: "unable to upgrade static worker nodes", Retries: 3},
 		{Fn: upgradeKubernetesNodeBinaries, ErrMsg: "unable to upgrade kubernetes node binaries", Retries: 3},
 		{Fn: nodelocaldns.Deploy, ErrMsg: "unable to deploy nodelocaldns", Retries: 3},
 		{Fn: features.Activate, ErrMsg: "unable to activate features"},

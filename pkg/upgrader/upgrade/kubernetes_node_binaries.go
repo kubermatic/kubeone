@@ -34,9 +34,9 @@ func upgradeKubernetesNodeBinaries(s *state.State) error {
 func upgradeKubernetesNodeBinariesExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	logger := s.Logger.WithField("node", node.PublicAddress)
 
-	logger.Infoln("Upgrading Kubernetes node binaries on control planes…")
+	logger.Infoln("Upgrading Kubernetes node binaries…")
 	if err := upgradeKubernetesNodeBinariesScript(s, *node); err != nil {
-		return errors.Wrap(err, "failed to upgrade kubernetes binaries on leader control plane")
+		return errors.Wrap(err, "failed to upgrade kubernetes binaries")
 	}
 
 	logger.Infof("Waiting %v to ensure kubelet is up…", timeoutKubeletUpgrade)
