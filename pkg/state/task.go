@@ -98,11 +98,15 @@ func (s *State) RunTaskOnNodes(nodes []kubeoneapi.HostConfig, task NodeTask, par
 
 // RunTaskOnAllNodes runs the given task on all hosts.
 func (s *State) RunTaskOnAllNodes(task NodeTask, parallel bool) error {
-	allNodes := s.Cluster.Hosts
-	if s.Cluster.WorkerHosts != nil {
-		allNodes = append(allNodes, s.Cluster.WorkerHosts...)
+	// It's not possible to concatenate host lists in this function.
+	// Some of the tasks(determineOS, determineHostname) write to the state and sending a copy would break that.
+	if err := s.RunTaskOnNodes(s.Cluster.Hosts, task, parallel); err != nil {
+		return err
 	}
-	return s.RunTaskOnNodes(allNodes, task, parallel)
+	if s.Cluster.WorkerHosts != nil {
+		return s.RunTaskOnNodes(s.Cluster.WorkerHosts, task, parallel)
+	}
+	return nil
 }
 
 // RunTaskOnLeader runs the given task on the leader host.
