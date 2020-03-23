@@ -24,6 +24,10 @@ import (
 	"github.com/kubermatic/kubeone/pkg/state"
 )
 
+const (
+	kubeadmUpgradeNodeCommand = "kubeadm upgrade node"
+)
+
 var (
 	v13x = mustParseConstraint("1.13.x")
 	v14x = mustParseConstraint("1.14.x")
