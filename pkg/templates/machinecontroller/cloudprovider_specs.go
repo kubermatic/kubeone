@@ -18,20 +18,22 @@ package machinecontroller
 
 // AWSSpec holds cloudprovider spec for AWS
 type AWSSpec struct {
-	AMI              string            `json:"ami"`
-	AssignPublicIP   *bool             `json:"assignPublicIP"`
-	AvailabilityZone string            `json:"availabilityZone"`
-	DiskIops         *int              `json:"diskIops,omitempty"`
-	DiskSize         *int              `json:"diskSize"`
-	DiskType         string            `json:"diskType"`
-	InstanceProfile  string            `json:"instanceProfile"`
-	InstanceType     *string           `json:"instanceType"`
-	Region           string            `json:"region"`
-	SecurityGroupIDs []string          `json:"securityGroupIDs"`
-	SubnetID         string            `json:"subnetId"`
-	Tags             map[string]string `json:"tags"`
-	VPCID            string            `json:"vpcId"`
-	IsSpotInstance   *bool             `json:"isSpotInstance,omitempty"`
+	AMI                string            `json:"ami"`
+	AssignPublicIP     *bool             `json:"assignPublicIP"`
+	AvailabilityZone   string            `json:"availabilityZone"`
+	DiskIops           *int              `json:"diskIops,omitempty"`
+	DiskSize           *int              `json:"diskSize"`
+	DiskType           string            `json:"diskType"`
+	EBSVolumeEncrypted bool              `json:"ebsVolumeEncrypted"`
+	InstanceProfile    string            `json:"instanceProfile"`
+	InstanceType       *string           `json:"instanceType"`
+	IsSpotInstance     *bool             `json:"isSpotInstance,omitempty"`
+	Region             string            `json:"region"`
+	SecurityGroupIDs   []string          `json:"securityGroupIDs"`
+	SubnetID           string            `json:"subnetId"`
+	Tags               map[string]string `json:"tags"`
+	VPCID              string            `json:"vpcId"`
+	RHSMOfflineToken   string            `json:"rhsmOfflineToken,omitempty"`
 }
 
 // DigitalOceanSpec holds cloudprovider spec for DigitalOcean
@@ -58,6 +60,7 @@ type OpenStackSpec struct {
 	NodeVolumeAttachLimit *uint             `json:"nodeVolumeAttachLimit,omitempty"`
 	TrustDevicePath       bool              `json:"trustDevicePath"`
 	Tags                  map[string]string `json:"tags"`
+	RHSMOfflineToken      string            `json:"rhsmOfflineToken,omitempty"`
 }
 
 // GCESpec holds cloudprovider spec for GCE
@@ -74,6 +77,8 @@ type GCESpec struct {
 	Tags                  []string          `json:"tags"`
 	MultiZone             *bool             `json:"multizone"`
 	Regional              *bool             `json:"regional"`
+	CustomImage           string            `json:"customImage,omitempty"`
+	RHSMOfflineToken      string            `json:"rhsmOfflineToken,omitempty"`
 }
 
 // HetznerSpec holds cloudprovider spec for Hetzner
@@ -96,16 +101,18 @@ type PacketSpec struct {
 
 // VSphereSpec holds cloudprovider spec for vSphere
 type VSphereSpec struct {
-	AllowInsecure  bool   `json:"allowInsecure"`
-	Cluster        string `json:"cluster"`
-	CPUs           int    `json:"cpus"`
-	Datacenter     string `json:"datacenter"`
-	Datastore      string `json:"datastore"`
-	DiskSizeGB     *int   `json:"diskSizeGB,omitempty"`
-	Folder         string `json:"folder"`
-	MemoryMB       int    `json:"memoryMB"`
-	TemplateVMName string `json:"templateVMName"`
-	VMNetName      string `json:"vmNetName,omitempty"`
+	AllowInsecure    bool   `json:"allowInsecure"`
+	Cluster          string `json:"cluster"`
+	CPUs             int    `json:"cpus"`
+	Datacenter       string `json:"datacenter"`
+	Datastore        string `json:"datastore"`
+	DatastoreCluster string `json:"datastoreCluster"`
+	DiskSizeGB       *int   `json:"diskSizeGB,omitempty"`
+	Folder           string `json:"folder"`
+	MemoryMB         int    `json:"memoryMB"`
+	TemplateVMName   string `json:"templateVMName"`
+	VMNetName        string `json:"vmNetName,omitempty"`
+	RHSMOfflineToken string `json:"rhsmOfflineToken,omitempty"`
 }
 
 // AzureSpec holds cloudprovider spec for Azure
@@ -120,4 +127,8 @@ type AzureSpec struct {
 	Tags              map[string]string `json:"tags"`
 	VMSize            string            `json:"vmSize"`
 	VNetName          string            `json:"vnetName"`
+	ImageID           string            `json:"imageID"`
+	OSDiskSize        int               `json:"osDiskSize"`
+	DataDiskSize      int               `json:"dataDiskSize"`
+	RHSMOfflineToken  string            `json:"rhsmOfflineToken,omitempty"`
 }
