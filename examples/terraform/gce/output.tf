@@ -67,12 +67,16 @@ output "kubeone_workers" {
           preemptible           = false
           assignPublicIPAddress = true
           # Enable support for multizone clusters
-          multizone             = true
+          multizone = true
           labels = {
             "${var.cluster_name}-workers" = "pool1"
           }
           tags     = ["firewall", "targets", "${var.cluster_name}-pool1"]
           regional = false
+          # Use custom image (optional)
+          # customImage = ""
+          # Red Hat subscription manager offline token (only to be used for RHEL)
+          # rhsmOfflineToken = ""
         }
       }
     }

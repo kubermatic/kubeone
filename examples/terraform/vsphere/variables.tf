@@ -65,6 +65,11 @@ variable "datastore_name" {
   description = "datastore name"
 }
 
+variable "datastore_cluster_name" {
+  default     = ""
+  description = "datastore cluster name"
+}
+
 variable "network_name" {
   default     = "public"
   description = "network name"

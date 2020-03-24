@@ -60,6 +60,9 @@ output "kubeone_workers" {
           projectID    = var.project_id
           facilities   = [var.facility]
           instanceType = var.device_type
+          tags = [
+            "${var.cluster_name}-workers-pool1"
+          ]
         }
       }
     }

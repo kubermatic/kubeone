@@ -63,6 +63,8 @@ output "kubeone_workers" {
           networks = [
             hcloud_network.net.id
           ]
+          # Datacenter (optional)
+          # datacenter = ""
           labels = {
             "${var.cluster_name}-workers" = "pool1"
           }

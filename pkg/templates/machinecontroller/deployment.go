@@ -46,7 +46,7 @@ const (
 	MachineControllerNamespace     = metav1.NamespaceSystem
 	MachineControllerAppLabelKey   = "app"
 	MachineControllerAppLabelValue = "machine-controller"
-	MachineControllerTag           = "v1.9.0"
+	MachineControllerTag           = "v1.11.1"
 )
 
 // Deploy deploys MachineController deployment with RBAC on the cluster
@@ -203,6 +203,21 @@ func machineControllerClusterRole() *rbacv1.ClusterRole {
 					"machinesets/status",
 				},
 				Verbs: []string{"*"},
+			},
+			{
+				APIGroups: []string{"certificates.k8s.io"},
+				Resources: []string{"certificatesigningrequests"},
+				Verbs:     []string{"get", "list", "watch"},
+			},
+			{
+				APIGroups: []string{"certificates.k8s.io"},
+				Resources: []string{"certificatesigningrequests/approval"},
+				Verbs:     []string{"update"},
+			},
+			{
+				APIGroups: []string{"certificates.k8s.io"},
+				Resources: []string{"certificatesigningrequests/status"},
+				Verbs:     []string{"edit", "update"},
 			},
 		},
 	}
@@ -735,6 +750,7 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster, credentials
 		"-v", "4",
 		"-internal-listen-address", "0.0.0.0:8085",
 		"-cluster-dns", nodelocaldns.VirtualIP,
+		"-node-csr-approver",
 	}
 
 	if cluster.Proxy.HTTP != "" {
