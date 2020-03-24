@@ -23,9 +23,10 @@ import (
 
 	"github.com/kubermatic/kubeone/pkg/state"
 
+	clusterv1alpha1 "github.com/kubermatic/machine-controller/pkg/apis/cluster/v1alpha1"
+
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/util/retry"
-	clusterv1alpha1 "sigs.k8s.io/cluster-api/pkg/apis/cluster/v1alpha1"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
