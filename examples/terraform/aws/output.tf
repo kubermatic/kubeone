@@ -68,13 +68,18 @@ output "kubeone_workers" {
           vpcId            = data.aws_vpc.selected.id
           subnetId         = local.subnets[local.zoneA]
           instanceType     = var.worker_type
+          assignPublicIP   = true
           diskSize         = 50
           diskType         = "gp2"
           ## Only applicable if diskType = io1
-          diskIops = 500
+          diskIops           = 500
+          isSpotInstance     = false
+          ebsVolumeEncrypted = false
           tags = {
             "${var.cluster_name}-workers" = ""
           }
+          # Red Hat subscription manager offline token (only to be used for RHEL)
+          # rhsmOfflineToken = ""
         }
       }
     }
@@ -99,13 +104,18 @@ output "kubeone_workers" {
           vpcId            = data.aws_vpc.selected.id
           subnetId         = local.subnets[local.zoneB]
           instanceType     = var.worker_type
+          assignPublicIP   = true
           diskSize         = 50
           diskType         = "gp2"
           ## Only applicable if diskType = io1
-          diskIops = 500
+          diskIops           = 500
+          isSpotInstance     = false
+          ebsVolumeEncrypted = false
           tags = {
             "${var.cluster_name}-workers" = ""
           }
+          # Red Hat subscription manager offline token (only to be used for RHEL)
+          # rhsmOfflineToken = ""
         }
       }
     }
@@ -130,13 +140,18 @@ output "kubeone_workers" {
           vpcId            = data.aws_vpc.selected.id
           subnetId         = local.subnets[local.zoneC]
           instanceType     = var.worker_type
+          assignPublicIP   = true
           diskSize         = 50
           diskType         = "gp2"
           ## Only applicable if diskType = io1
-          diskIops = 500
+          diskIops           = 500
+          isSpotInstance     = false
+          ebsVolumeEncrypted = false
           tags = {
             "${var.cluster_name}-workers" = ""
           }
+          # Red Hat subscription manager offline token (only to be used for RHEL)
+          # rhsmOfflineToken = ""
         }
       }
     }
