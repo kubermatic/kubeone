@@ -47,4 +47,5 @@ func UpdateKubeadmClusterConfiguration(featuresCfg kubeoneapi.Features, args *ku
 	activateKubeadmStaticAuditLogs(featuresCfg.StaticAuditLog, args)
 	activateKubeadmDynamicAuditLogs(featuresCfg.DynamicAuditLog, args)
 	activateKubeadmOIDC(featuresCfg.OpenIDConnect, args)
+	activatePodPresets(featuresCfg.PodPresets, args)
 }

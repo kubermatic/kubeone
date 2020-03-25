@@ -208,6 +208,7 @@ type MachineControllerConfig struct {
 
 // Features controls what features will be enabled on the cluster
 type Features struct {
+	PodPresets        *PodPresets        `json:"podPresets"`
 	PodSecurityPolicy *PodSecurityPolicy `json:"podSecurityPolicy"`
 	StaticAuditLog    *StaticAuditLog    `json:"staticAuditLog"`
 	DynamicAuditLog   *DynamicAuditLog   `json:"dynamicAuditLog"`
@@ -220,6 +221,11 @@ type SystemPackages struct {
 	// ConfigureRepositories (true by default) is a flag to control automatic
 	// configuration of kubeadm / docker repositories.
 	ConfigureRepositories bool `json:"configureRepositories"`
+}
+
+// PodPresets feature flag
+type PodPresets struct {
+	Enable bool `json:"enable"`
 }
 
 // PodSecurityPolicy feature flag
