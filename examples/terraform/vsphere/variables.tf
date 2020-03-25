@@ -90,3 +90,18 @@ variable "disk_size" {
   description = "disk size"
 }
 
+variable "control_plane_memory" {
+  default = 2048
+  description = "memory size of each control plane node in MB"
+}
+
+variable "worker_memory" {
+  default = 2048
+  description = "memory size of each worker node in MB"
+}
+
+variable "worker_disk" {
+  default = 10
+  description = "disk size of each worker node in GB"
+}
+
