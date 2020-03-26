@@ -78,7 +78,7 @@ func (c *Connector) Connect(host kubeoneapi.HostConfig) (Connection, error) {
 		if err != nil {
 			return nil, err
 		}
-		// Initially, this was indexed using the host index in the host list. This breaks if you have more than one list, which is the case after adding WorkerHosts. PublicAddress is better unique index for this case.
+		// Initially, this was indexed using the host index in the host list. This breaks if you have more than one list, which is the case after adding StaticWorkers. PublicAddress is better unique index for this case.
 		c.connections[host.PublicAddress] = conn
 	}
 

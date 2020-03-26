@@ -32,9 +32,9 @@ type KubeOneCluster struct {
 	// Name is the name of the cluster
 	Name string `json:"name"`
 	// Hosts describes the control plane nodes and how to access them
-	Hosts       []HostConfig `json:"hosts,omitempty"`
-	WorkerHosts []HostConfig `json:"workerHosts,omitempty"`
-
+	Hosts []HostConfig `json:"hosts,omitempty"`
+	// StaticWorkers allows the user to define a list of nodes as workers that are not managed by MachineController
+	StaticWorkers []HostConfig `json:"staticWorkers,omitempty"`
 	// APIEndpoint are pairs of address and port used to communicate with the Kubernetes API
 	APIEndpoint APIEndpoint `json:"apiEndpoint,omitempty"`
 	// CloudProvider configures the cloud provider specific features

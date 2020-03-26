@@ -215,8 +215,8 @@ func (in *KubeOneCluster) DeepCopyInto(out *KubeOneCluster) {
 		*out = make([]HostConfig, len(*in))
 		copy(*out, *in)
 	}
-	if in.WorkerHosts != nil {
-		in, out := &in.WorkerHosts, &out.WorkerHosts
+	if in.StaticWorkers != nil {
+		in, out := &in.StaticWorkers, &out.StaticWorkers
 		*out = make([]HostConfig, len(*in))
 		copy(*out, *in)
 	}

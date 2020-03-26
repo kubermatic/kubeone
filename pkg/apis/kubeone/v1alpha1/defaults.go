@@ -73,9 +73,9 @@ func SetDefaults_Hosts(obj *KubeOneCluster) {
 		obj.Hosts[0].IsLeader = true
 	}
 
-	for idx := range obj.WorkerHosts {
-		obj.WorkerHosts[idx].ID = idx
-		defaultHostConfig(&obj.WorkerHosts[idx])
+	for idx := range obj.StaticWorkers {
+		obj.StaticWorkers[idx].ID = idx
+		defaultHostConfig(&obj.StaticWorkers[idx])
 	}
 }
 

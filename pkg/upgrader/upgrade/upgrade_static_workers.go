@@ -27,10 +27,10 @@ import (
 )
 
 func upgradeWorkers(s *state.State) error {
-	return s.RunTaskOnWorkerHosts(upgradeWorkerHostsExecutor, false)
+	return s.RunTaskOnStaticWorkers(upgradeStaticWorkersExecutor, false)
 }
 
-func upgradeWorkerHostsExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func upgradeStaticWorkersExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	logger := s.Logger.WithField("node", node.PublicAddress)
 
 	logger.Infoln("Labeling static worker node…")
@@ -40,7 +40,7 @@ func upgradeWorkerHostsExecutor(s *state.State, node *kubeoneapi.HostConfig, con
 	}
 
 	logger.Infoln("Draining static worker node…")
-	err = drainWorkerNode(s, *node)
+	err = drainNode(s, *node)
 	if err != nil {
 		return errors.Wrap(err, "failed to drain static worker node")
 	}
@@ -51,14 +51,8 @@ func upgradeWorkerHostsExecutor(s *state.State, node *kubeoneapi.HostConfig, con
 		return errors.Wrap(err, "failed to upgrade kubernetes binaries on static worker node")
 	}
 
-	logger.Infoln("Running 'kubeadm upgrade' on the static worker node…")
-	err = upgradeFollowerControlPlane(s)
-	if err != nil {
-		return errors.Wrap(err, "failed to upgrade static worker node")
-	}
-
 	logger.Infoln("Uncordoning static worker node…")
-	err = uncordonWorkerNode(s, *node)
+	err = uncordonNode(s, *node)
 	if err != nil {
 		return errors.Wrap(err, "failed to uncordon static worker node")
 	}

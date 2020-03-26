@@ -59,15 +59,16 @@ rm -rf "{{ .WORK_DIR }}"
 sudo {{ .KUBEADM_UPGRADE }} --config=./{{ .WORK_DIR }}/cfg/master_0.yaml`
 )
 
-func KubeadmJoin(workdir string, nodeID int, verboseFlag string, isWorker bool) (string, error) {
-	if isWorker {
-		return Render(kubeadmWorkerJoinScriptTemplate, Data{
-			"WORK_DIR": workdir,
-			"NODE_ID":  nodeID,
-			"VERBOSE":  verboseFlag,
-		})
-	}
+func KubeadmJoin(workdir string, nodeID int, verboseFlag string) (string, error) {
 	return Render(kubeadmJoinScriptTemplate, Data{
+		"WORK_DIR": workdir,
+		"NODE_ID":  nodeID,
+		"VERBOSE":  verboseFlag,
+	})
+}
+
+func KubeadmJoinWorker(workdir string, nodeID int, verboseFlag string) (string, error) {
+	return Render(kubeadmWorkerJoinScriptTemplate, Data{
 		"WORK_DIR": workdir,
 		"NODE_ID":  nodeID,
 		"VERBOSE":  verboseFlag,

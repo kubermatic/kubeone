@@ -17,8 +17,6 @@ limitations under the License.
 package installation
 
 import (
-	"time"
-
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/scripts"
 	"github.com/kubermatic/kubeone/pkg/ssh"
@@ -27,18 +25,14 @@ import (
 
 func joinStaticWorkerNode(s *state.State) error {
 	s.Logger.Infoln("Joining static worker node…")
-	return s.RunTaskOnWorkerHosts(joinStaticWorkerInternal, false)
+	return s.RunTaskOnStaticWorkers(joinStaticWorkerInternal, true)
 }
 
 func joinStaticWorkerInternal(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	logger := s.Logger.WithField("node", node.PublicAddress)
 
-	sleepTime := 30 * time.Second
-	logger.Infof("Waiting %s to ensure worker plane components are up…", sleepTime)
-	time.Sleep(sleepTime)
-
 	logger.Info("Joining worker node")
-	cmd, err := scripts.KubeadmJoin(s.WorkDir, node.ID, s.KubeadmVerboseFlag(), true)
+	cmd, err := scripts.KubeadmJoinWorker(s.WorkDir, node.ID, s.KubeadmVerboseFlag())
 	if err != nil {
 		return err
 	}

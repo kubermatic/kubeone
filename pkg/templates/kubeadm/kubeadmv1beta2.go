@@ -29,8 +29,17 @@ type kubeadmv1beta2 struct {
 	version string
 }
 
-func (*kubeadmv1beta2) Config(s *state.State, instance kubeoneapi.HostConfig, isWorker bool) (string, error) {
-	config, err := v1beta2.NewConfig(s, instance, isWorker)
+func (*kubeadmv1beta2) Config(s *state.State, instance kubeoneapi.HostConfig) (string, error) {
+	config, err := v1beta2.NewConfig(s, instance)
+	if err != nil {
+		return "", err
+	}
+
+	return templates.KubernetesToYAML(config)
+}
+
+func (*kubeadmv1beta2) ConfigWorker(s *state.State, instance kubeoneapi.HostConfig) (string, error) {
+	config, err := v1beta2.NewConfigWorker(s, instance)
 	if err != nil {
 		return "", err
 	}
@@ -46,6 +55,6 @@ func (*kubeadmv1beta2) UpgradeFollowerCommand() string {
 	return kubeadmUpgradeNodeCommand
 }
 
-func (*kubeadmv1beta2) UpgradeWorkerHostCommand() string {
+func (*kubeadmv1beta2) UpgradeStaticWorkerCommand() string {
 	return kubeadmUpgradeNodeCommand
 }

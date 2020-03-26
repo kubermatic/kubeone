@@ -37,10 +37,11 @@ var (
 
 // Kubedm interface abstract differences between different kubeadm versions
 type Kubedm interface {
-	Config(s *state.State, instance kubeoneapi.HostConfig, isWorker bool) (string, error)
+	Config(s *state.State, instance kubeoneapi.HostConfig) (string, error)
+	ConfigWorker(s *state.State, instance kubeoneapi.HostConfig) (string, error)
 	UpgradeLeaderCommand() string
 	UpgradeFollowerCommand() string
-	UpgradeWorkerHostCommand() string
+	UpgradeStaticWorkerCommand() string
 }
 
 // New constructor

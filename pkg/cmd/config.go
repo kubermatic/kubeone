@@ -552,7 +552,7 @@ addons:
 
 # A list of static workers, not managed by MachineController.
 # The list of nodes can be overwritten by providing Terraform output.
-# workerHosts:
+# staticWorkers:
 # - publicAddress: '1.2.3.5'
 #   privateAddress: '172.18.0.2'
 #   bastion: '4.3.2.1'

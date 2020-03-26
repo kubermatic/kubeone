@@ -31,7 +31,7 @@ func generateKubeadmConfig(s *state.State, node kubeoneapi.HostConfig) error {
 		return errors.Wrap(err, "failed to init kubeadm")
 	}
 
-	kubeadmConf, err := kadm.Config(s, node, false)
+	kubeadmConf, err := kadm.Config(s, node)
 	if err != nil {
 		return errors.Wrap(err, "failed to create kubeadm configuration")
 	}

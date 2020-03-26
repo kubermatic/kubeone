@@ -103,8 +103,8 @@ func (s *State) RunTaskOnAllNodes(task NodeTask, parallel bool) error {
 	if err := s.RunTaskOnNodes(s.Cluster.Hosts, task, parallel); err != nil {
 		return err
 	}
-	if s.Cluster.WorkerHosts != nil {
-		return s.RunTaskOnNodes(s.Cluster.WorkerHosts, task, parallel)
+	if s.Cluster.StaticWorkers != nil {
+		return s.RunTaskOnNodes(s.Cluster.StaticWorkers, task, parallel)
 	}
 	return nil
 }
@@ -128,6 +128,6 @@ func (s *State) RunTaskOnFollowers(task NodeTask, parallel bool) error {
 	return s.RunTaskOnNodes(s.Cluster.Followers(), task, parallel)
 }
 
-func (s *State) RunTaskOnWorkerHosts(task NodeTask, parallel bool) error {
-	return s.RunTaskOnNodes(s.Cluster.StaticWorkers(), task, parallel)
+func (s *State) RunTaskOnStaticWorkers(task NodeTask, parallel bool) error {
+	return s.RunTaskOnNodes(s.Cluster.StaticWorkers, task, parallel)
 }

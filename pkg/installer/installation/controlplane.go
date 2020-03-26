@@ -38,7 +38,7 @@ func joinControlPlaneNodeInternal(s *state.State, node *kubeoneapi.HostConfig, c
 	time.Sleep(sleepTime)
 
 	logger.Info("Joining control plane node")
-	cmd, err := scripts.KubeadmJoin(s.WorkDir, node.ID, s.KubeadmVerboseFlag(), false)
+	cmd, err := scripts.KubeadmJoin(s.WorkDir, node.ID, s.KubeadmVerboseFlag())
 	if err != nil {
 		return err
 	}
