@@ -215,9 +215,10 @@ func machineControllerClusterRole() *rbacv1.ClusterRole {
 				Verbs:     []string{"update"},
 			},
 			{
-				APIGroups: []string{"certificates.k8s.io"},
-				Resources: []string{"certificatesigningrequests/status"},
-				Verbs:     []string{"edit", "update"},
+				APIGroups:     []string{"certificates.k8s.io"},
+				Resources:     []string{"signers"},
+				ResourceNames: []string{"kubernetes.io/kubelet-serving"},
+				Verbs:         []string{"approve"},
 			},
 		},
 	}
