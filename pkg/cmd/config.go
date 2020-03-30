@@ -70,6 +70,7 @@ type printOptions struct {
 	NoProxy    string
 
 	EnablePodSecurityPolicy bool
+	EnablePodPresets        bool
 	EnableStaticAuditLog    bool
 	EnableDynamicAuditLog   bool
 	EnableMetricsServer     bool
@@ -140,6 +141,7 @@ For the full reference of the configuration manifest, run the print command with
 
 	// Features
 	cmd.Flags().BoolVarP(&pOpts.EnablePodSecurityPolicy, "enable-pod-security-policy", "", false, "enable PodSecurityPolicy")
+	cmd.Flags().BoolVarP(&pOpts.EnablePodPresets, "enable-pod-presets", "", false, "enable PodPresets")
 	cmd.Flags().BoolVarP(&pOpts.EnableStaticAuditLog, "enable-static-audit-log", "", false, "enable StaticAuditLog")
 	cmd.Flags().BoolVarP(&pOpts.EnableDynamicAuditLog, "enable-dynamic-audit-log", "", false, "enable DynamicAuditLog")
 	cmd.Flags().BoolVarP(&pOpts.EnableMetricsServer, "enable-metrics-server", "", true, "enable metrics-server")
@@ -291,6 +293,9 @@ func createAndPrintManifest(printOptions *printOptions) error {
 	// Features
 	if printOptions.EnablePodSecurityPolicy {
 		cfg.Set(yamled.Path{"features", "podSecurityPolicy", "enable"}, printOptions.EnablePodSecurityPolicy)
+	}
+	if printOptions.EnablePodPresets {
+		cfg.Set(yamled.Path{"features", "podPresets", "enable"}, printOptions.EnablePodPresets)
 	}
 	if printOptions.EnableDynamicAuditLog {
 		cfg.Set(yamled.Path{"features", "dynamicAuditLog", "enable"}, printOptions.EnableDynamicAuditLog)
@@ -448,6 +453,9 @@ features:
   # 'kube-system' namespace pods to 'use' it.
   podSecurityPolicy:
     enable: {{ .EnablePodSecurityPolicy }}
+  # Enables PodPresets admission plugin in API server.
+  podPresets:
+    enable: {{ .EnablePodPresets }}
   # Enables and configures audit log backend.
   # More info: https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#log-backend
   staticAuditLog:
