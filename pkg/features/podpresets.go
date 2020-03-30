@@ -32,22 +32,6 @@ func activatePodPresets(feature *kubeoneapi.PodPresets, args *kubeadmargs.Args) 
 	if feature == nil || !feature.Enable {
 		return
 	}
-
-	currentPlugins, hasPlugins := args.APIServer.ExtraArgs[pluginFlag]
-	var newPlugins string
-	if hasPlugins {
-		newPlugins = currentPlugins + "," + podPresetPluginName
-	} else {
-		newPlugins = podPresetPluginName
-	}
-	args.APIServer.ExtraArgs[pluginFlag] = newPlugins
-
-	currentConfig, hasConfig := args.APIServer.ExtraArgs[runtimeConfigFlag]
-	var newConfig string
-	if hasConfig {
-		newConfig = currentConfig + "," + podPresetEnableValue
-	} else {
-		newConfig = podPresetEnableValue
-	}
-	args.APIServer.ExtraArgs[runtimeConfigFlag] = newConfig
+	args.APIServer.AppendMapStringStringExtraArg(pluginFlag, podPresetPluginName)
+	args.APIServer.AppendMapStringStringExtraArg(runtimeConfigFlag, podPresetEnableValue)
 }

@@ -452,10 +452,10 @@ features:
   # default 'privileged' PodSecurityPolicy, plus RBAC rules to authorize
   # 'kube-system' namespace pods to 'use' it.
   podSecurityPolicy:
-	enable: {{ .EnablePodSecurityPolicy }}
+    enable: {{ .EnablePodSecurityPolicy }}
   # Enables PodPresets admission plugin in API server.
   podPresets:
-	enable: {{ .EnablePodPresets }}
+    enable: {{ .EnablePodPresets }}
   # Enables and configures audit log backend.
   # More info: https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#log-backend
   staticAuditLog:
