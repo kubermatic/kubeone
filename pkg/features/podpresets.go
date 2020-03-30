@@ -26,7 +26,6 @@ const (
 	podPresetEnableValue = podPresetAPIName + "=true"
 	podPresetPluginName  = "PodPreset"
 	pluginFlag           = "enable-admission-plugins"
-	extraConfigFlag      = "extra-config"
 )
 
 func activatePodPresets(feature *kubeoneapi.PodPresets, args *kubeadmargs.Args) {
@@ -43,12 +42,12 @@ func activatePodPresets(feature *kubeoneapi.PodPresets, args *kubeadmargs.Args) 
 	}
 	args.APIServer.ExtraArgs[pluginFlag] = newPlugins
 
-	currentConfig, hasConfig := args.APIServer.ExtraArgs[extraConfigFlag]
+	currentConfig, hasConfig := args.APIServer.ExtraArgs[runtimeConfigFlag]
 	var newConfig string
 	if hasConfig {
 		newConfig = currentConfig + "," + podPresetEnableValue
 	} else {
 		newConfig = podPresetEnableValue
 	}
-	args.APIServer.ExtraArgs[extraConfigFlag] = newConfig
+	args.APIServer.ExtraArgs[runtimeConfigFlag] = newConfig
 }
