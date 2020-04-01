@@ -22,17 +22,29 @@ full_versions["1.17"]="v1.17.4"
 full_versions["1.18"]="v1.18.0"
 
 root_dir=${KUBETESTS_ROOT:-"/opt/kube-test"}
+tmp_root=${TMP_ROOT:-"/tmp/get-kube"}
 
 for version in "${!full_versions[@]}"; do
     full_version="${full_versions[${version}]}"
     directory="${root_dir}/kubernetes-${version}"
+    tmp_dir="${tmp_root}/kubernetes-${version}"
     if [[ ! -d "${directory}" ]]; then
+        mkdir -p "${tmp_dir}"
         mkdir -p "${directory}"
-        cd "${directory}"
-        kubetest --extract="${full_version}"
+        
+        curl -L https://gcsweb.k8s.io/gcs/kubernetes-release/release/"${full_version}"/kubernetes.tar.gz -o "${tmp_dir}"/kubernetes.tar.gz
+        tar -zxvf "${tmp_dir}"/kubernetes.tar.gz -C "${tmp_dir}"
+        mv "${tmp_dir}"/* "${directory}"/
+
+        cd ${directory}/kubernetes
+        KUBERNETES_SERVER_ARCH=amd64 KUBE_VERSION="${full_version}" KUBERNETES_DOWNLOAD_TESTS=true KUBERNETES_SKIP_CONFIRM=true ./cluster/get-kube-binaries.sh
         cd -
 
         find "${directory}" -name "*.tar.gz" -type f -delete
+        rm -rf "${directory}"/kubernetes/platforms/linux/arm
+        rm -rf "${directory}"/kubernetes/platforms/linux/arm64
+        rm -rf "${directory}"/kubernetes/platforms/linux/ppc64le
+        rm -rf "${directory}"/kubernetes/platforms/linux/s390x
         rm "${directory}"/kubernetes/platforms/linux/amd64/gendocs
         rm "${directory}"/kubernetes/platforms/linux/amd64/genkubedocs
         rm "${directory}"/kubernetes/platforms/linux/amd64/genman
