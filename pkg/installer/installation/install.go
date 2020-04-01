@@ -53,7 +53,7 @@ func Install(s *state.State) error {
 		{Fn: credentials.Ensure, ErrMsg: "unable to ensure credentials secret", Retries: 3},
 		{Fn: externalccm.Ensure, ErrMsg: "failed to install external CCM", Retries: 3},
 		{Fn: patchCNI, ErrMsg: "failed to patch CNI", Retries: 3},
-		{Fn: joinStaticWorkerNode, ErrMsg: "unable to join worker nodes to the cluster", Retries: 3},
+		{Fn: joinStaticWorkerNodes, ErrMsg: "unable to join worker nodes to the cluster", Retries: 3},
 		{Fn: machinecontroller.Ensure, ErrMsg: "failed to install machine-controller", Retries: 3},
 		{Fn: machinecontroller.WaitReady, ErrMsg: "failed to wait for machine-controller", Retries: 3},
 		{Fn: createWorkerMachines, ErrMsg: "failed to create worker machines", Retries: 3},
