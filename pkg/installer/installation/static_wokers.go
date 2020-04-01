@@ -23,7 +23,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/state"
 )
 
-func joinStaticWorkerNode(s *state.State) error {
+func joinStaticWorkerNodes(s *state.State) error {
 	s.Logger.Infoln("Joining static worker node…")
 	return s.RunTaskOnStaticWorkers(joinStaticWorkerInternal, true)
 }
