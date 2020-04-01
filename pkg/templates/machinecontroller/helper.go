@@ -71,7 +71,21 @@ func WaitReady(s *state.State) error {
 	if err := WaitForMachineController(s.DynamicClient); err != nil {
 		return errors.Wrap(err, "machine-controller did not come up")
 	}
+
+	if err := WaitForCRDs(s); err != nil {
+		return errors.Wrap(err, "machine-controller CRDs did not come up")
+	}
 	return nil
+}
+
+// WaitForCRDs waits for machine-controller CRDs to be created and become established
+func WaitForCRDs(s *state.State) error {
+	var lastErr error
+	_ = wait.Poll(5*time.Second, 3*time.Minute, func() (bool, error) {
+		lastErr = VerifyCRDs(s)
+		return lastErr == nil, nil
+	})
+	return errors.Wrap(lastErr, "failed waiting for CRDs to become ready and established")
 }
 
 // VerifyCRDs verifies are Cluster-API CRDs deployed
@@ -84,11 +98,17 @@ func VerifyCRDs(s *state.State) error {
 	if err := s.DynamicClient.Get(bgCtx, key, crd); err != nil {
 		return errors.Wrap(err, "MachineDeployments CRD is not deployed")
 	}
+	if err := verifyCRDEstablished(crd); err != nil {
+		return errors.Wrap(err, "failed checking MachineDeployments CRD status")
+	}
 
 	// Verify MachineSet CRD
 	key = dynclient.ObjectKey{Name: "machinesets.cluster.k8s.io"}
 	if err := s.DynamicClient.Get(bgCtx, key, crd); err != nil {
 		return errors.Wrap(err, "MachineSet CRD is not deployed")
+	}
+	if err := verifyCRDEstablished(crd); err != nil {
+		return errors.Wrap(err, "failed checking MachineSets CRD status")
 	}
 
 	// Verify Machine CRD
@@ -96,8 +116,20 @@ func VerifyCRDs(s *state.State) error {
 	if err := s.DynamicClient.Get(bgCtx, key, crd); err != nil {
 		return errors.Wrap(err, "MachineSet CRD is not deployed")
 	}
+	if err := verifyCRDEstablished(crd); err != nil {
+		return errors.Wrap(err, "failed checking Machines CRD status")
+	}
 
 	return nil
+}
+
+func verifyCRDEstablished(crd *apiextensions.CustomResourceDefinition) error {
+	for _, cond := range crd.Status.Conditions {
+		if cond.Type == apiextensions.Established && cond.Status == apiextensions.ConditionTrue {
+			return nil
+		}
+	}
+	return errors.New("crd is not established")
 }
 
 // DestroyWorkers destroys all MachineDeployment, MachineSet and Machine objects
