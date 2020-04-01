@@ -67,9 +67,17 @@ output "kubeone_workers" {
           subnetName        = azurerm_subnet.subnet.name
           vmSize            = var.worker_vm_size
           vnetName          = azurerm_virtual_network.vpc.name
+          # Custom Image ID (optional)
+          # imageID = ""
+          # Size of the operating system disk (optional)
+          # osDiskSize = 100
+          # Size of the data disk (optional)
+          # dataDiskSize = 100
           tags = {
             "${var.cluster_name}-workers" = "pool1"
           }
+          # Red Hat subscription manager offline token (only to be used for RHEL)
+          # rhsmOfflineToken = ""
         }
       }
     }

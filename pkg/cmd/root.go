@@ -22,10 +22,11 @@ import (
 
 	"github.com/spf13/cobra"
 
+	clusterv1alpha1 "github.com/kubermatic/machine-controller/pkg/apis/cluster/v1alpha1"
+
 	apiextensionsscheme "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/scheme"
 	"k8s.io/client-go/kubernetes/scheme"
 	apiregscheme "k8s.io/kube-aggregator/pkg/client/clientset_generated/clientset/scheme"
-	clusterscheme "sigs.k8s.io/cluster-api/pkg/client/clientset_generated/clientset/scheme"
 )
 
 // rootCmd is the KubeOne base command
@@ -34,7 +35,7 @@ import (
 func Execute() {
 	// quite unlikely to happen errors here, but in case if errors present:
 	// let's panic
-	if err := clusterscheme.AddToScheme(scheme.Scheme); err != nil {
+	if err := clusterv1alpha1.AddToScheme(scheme.Scheme); err != nil {
 		panic(err)
 	}
 
