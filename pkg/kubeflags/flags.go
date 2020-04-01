@@ -23,28 +23,28 @@ import (
 )
 
 var (
-	constrainv1130v1132 = mustConstraint(">= 1.13.0, < 1.13.3")
-	constrainv1133v114x = mustConstraint(">= 1.13.3, < 1.15.0")
+	constrainv114x      = mustConstraint(">= 1.14.0, < 1.15.0")
 	constrainv115x      = mustConstraint("1.15.x")
-	constrainv116x      = mustConstraint("1.16.x")
+	constrainv116xv117x = mustConstraint(">= 1.16.0, < 1.18.0")
+	constrainv118x      = mustConstraint("1.18.x")
 )
 
 // DefaultAdmissionControllers return list of default admission controllers for
 // given kubernetes version
 func DefaultAdmissionControllers(kubeVersion *semver.Version) string {
 	switch {
-	case constrainv1130v1132.Check(kubeVersion):
-		return strings.Join(defaultAdmissionControllersv1130v1132, ",")
-	case constrainv1133v114x.Check(kubeVersion):
-		return strings.Join(defaultAdmissionControllersv1133v114x, ",")
+	case constrainv114x.Check(kubeVersion):
+		return strings.Join(defaultAdmissionControllersv114x, ",")
 	case constrainv115x.Check(kubeVersion):
 		return strings.Join(defaultAdmissionControllersv115x, ",")
-	case constrainv116x.Check(kubeVersion):
-		return strings.Join(defaultAdmissionControllersv116x, ",")
+	case constrainv116xv117x.Check(kubeVersion):
+		return strings.Join(defaultAdmissionControllersv116xv117x, ",")
+	case constrainv118x.Check(kubeVersion):
+		return strings.Join(defaultAdmissionControllersv118x, ",")
 	}
 
 	// return same as for last known release
-	return strings.Join(defaultAdmissionControllersv116x, ",")
+	return strings.Join(defaultAdmissionControllersv118x, ",")
 }
 
 func mustConstraint(c string) *semver.Constraints {

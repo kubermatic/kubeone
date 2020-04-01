@@ -17,20 +17,7 @@ limitations under the License.
 package kubeflags
 
 var (
-	defaultAdmissionControllersv1130v1132 = []string{
-		"NamespaceLifecycle",
-		"LimitRanger",
-		"ServiceAccount",
-		"Priority",
-		"DefaultTolerationSeconds",
-		"DefaultStorageClass",
-		"PersistentVolumeClaimResize",
-		"MutatingAdmissionWebhook",
-		"ValidatingAdmissionWebhook",
-		"ResourceQuota",
-	}
-
-	defaultAdmissionControllersv1133v114x = []string{
+	defaultAdmissionControllersv114x = []string{
 		"NamespaceLifecycle",
 		"LimitRanger",
 		"ServiceAccount",
@@ -59,7 +46,7 @@ var (
 		"ResourceQuota",
 	}
 
-	defaultAdmissionControllersv116x = []string{
+	defaultAdmissionControllersv116xv117x = []string{
 		"NamespaceLifecycle",
 		"LimitRanger",
 		"ServiceAccount",
@@ -72,6 +59,26 @@ var (
 		"MutatingAdmissionWebhook",
 		"ValidatingAdmissionWebhook",
 		"RuntimeClass",
+		"ResourceQuota",
+	}
+
+	defaultAdmissionControllersv118x = []string{
+		"NamespaceLifecycle",
+		"LimitRanger",
+		"ServiceAccount",
+		"TaintNodesByCondition",
+		"Priority",
+		"DefaultTolerationSeconds",
+		"DefaultStorageClass",
+		"StorageObjectInUseProtection",
+		"PersistentVolumeClaimResize",
+		"RuntimeClass",
+		"CertificateApproval",
+		"CertificateSigning",
+		"CertificateSubjectRestriction",
+		"DefaultIngressClass",
+		"MutatingAdmissionWebhook",
+		"ValidatingAdmissionWebhook",
 		"ResourceQuota",
 	}
 )
