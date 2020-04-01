@@ -32,7 +32,7 @@ for version in "${!full_versions[@]}"; do
         mkdir -p "${tmp_dir}"
         mkdir -p "${directory}"
         
-        curl -L http://gcsweb.k8s.io/gcs/kubernetes-release/release/"${full_version}"/kubernetes.tar.gz -o "${tmp_dir}"/kubernetes.tar.gz
+        curl -L https://gcsweb.k8s.io/gcs/kubernetes-release/release/"${full_version}"/kubernetes.tar.gz -o "${tmp_dir}"/kubernetes.tar.gz
         tar -zxvf "${tmp_dir}"/kubernetes.tar.gz -C "${tmp_dir}"
         mv "${tmp_dir}"/* "${directory}"/
 
