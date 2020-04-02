@@ -24,14 +24,17 @@ GITTAG=$(shell git describe --tags --always)
 GOLDFLAGS?=-extldflags=-zrelro -extldflags=-znow -s -w -X github.com/kubermatic/kubeone/pkg/cmd.version=$(GITTAG) -X github.com/kubermatic/kubeone/pkg/cmd.commit=$(GITCOMMIT) -X github.com/kubermatic/kubeone/pkg/cmd.date=$(BUILD_DATE)
 
 .PHONY: all
-all: install
-
-.PHONY: install
-install: buildenv
-	go install -ldflags='$(GOLDFLAGS)' -v .
+all: build
 
 .PHONY: build
 build: dist/kubeone
+
+dist/kubeone: buildenv
+	go build -ldflags='$(GOLDFLAGS)' -v -o $@ .
+
+.PHONY: install
+install: build
+	go install -ldflags='$(GOLDFLAGS)' -v .
 
 .PHONY: vendor
 vendor: buildenv download-dependencies
@@ -40,9 +43,6 @@ vendor: buildenv download-dependencies
 .PHONY: download-dependencies
 download-dependencies: buildenv
 	go mod download
-
-dist/kubeone: buildenv
-	go build -ldflags='$(GOLDFLAGS)' -v -o $@ .
 
 .PHONY: generate-internal-groups
 generate-internal-groups: GOFLAGS = -mod=readonly
