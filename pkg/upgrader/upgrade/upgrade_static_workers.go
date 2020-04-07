@@ -27,6 +27,7 @@ import (
 )
 
 func upgradeWorkers(s *state.State) error {
+	// we upgrade seqentially to minimize cluster disruption
 	return s.RunTaskOnStaticWorkers(upgradeStaticWorkersExecutor, false)
 }
 

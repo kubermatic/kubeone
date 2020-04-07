@@ -74,7 +74,8 @@ func SetDefaults_Hosts(obj *KubeOneCluster) {
 	}
 
 	for idx := range obj.StaticWorkers {
-		obj.StaticWorkers[idx].ID = idx
+		// continue assinging IDs after control plane hosts. This way every node gets a unique ID regardless of the different host slices
+		obj.StaticWorkers[idx].ID = idx + len(obj.Hosts)
 		defaultHostConfig(&obj.StaticWorkers[idx])
 	}
 }

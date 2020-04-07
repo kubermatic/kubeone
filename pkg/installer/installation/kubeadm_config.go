@@ -41,7 +41,7 @@ func generateKubeadm(s *state.State) error {
 			return errors.Wrap(err, "failed to create kubeadm configuration")
 		}
 
-		s.Configuration.AddFile(fmt.Sprintf("cfg/master_%d.yaml", idx), kubeadm)
+		s.Configuration.AddFile(fmt.Sprintf("cfg/master_%d.yaml", s.Cluster.Hosts[idx].ID), kubeadm)
 	}
 
 	for idx := range s.Cluster.StaticWorkers {
@@ -49,7 +49,7 @@ func generateKubeadm(s *state.State) error {
 		if err != nil {
 			return errors.Wrap(err, "failed to create kubeadm configuration")
 		}
-		s.Configuration.AddFile(fmt.Sprintf("cfg/worker_%d.yaml", idx), kubeadm)
+		s.Configuration.AddFile(fmt.Sprintf("cfg/worker_%d.yaml", s.Cluster.StaticWorkers[idx].ID), kubeadm)
 	}
 	return s.RunTaskOnAllNodes(generateKubeadmOnNode, true)
 }
