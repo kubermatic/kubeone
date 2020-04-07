@@ -1,5 +1,25 @@
 # Changelog
 
+# [v0.11.1](https://github.com/kubermatic/kubeone/releases/tag/v0.11.1) - 2020-04-07
+
+## Added
+
+* Add support for Kubernetes 1.18 ([#841](https://github.com/kubermatic/kubeone/pull/841))
+
+## Changed
+
+### Bug Fixes
+
+* Ensure machine-controller CRDs are Established before deploying MachineDeployments ([#824](https://github.com/kubermatic/kubeone/pull/824))
+* Fix `leader_ip` parsing from Terraform ([#819](https://github.com/kubermatic/kubeone/pull/819))
+
+### Updated
+
+* Update machine-controller to v1.11.1 ([#808](https://github.com/kubermatic/kubeone/pull/808))
+  * NodeCSRApprover controller is enabled by default to automatically approve CSRs for kubelet serving certificates
+  * machine-controller types are updated to include recently added fields
+  * Terraform example scripts are updated with the new fields
+
 # [v0.11.0](https://github.com/kubermatic/kubeone/releases/tag/v0.11.0) - 2020-03-05
 
 **Changelog since v0.10.0. For changelog since v0.11.0-beta.3, please check the [release notes](https://github.com/kubermatic/kubeone/releases/tag/v0.11.0)**
