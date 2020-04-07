@@ -49,3 +49,13 @@ func upgradeFollowerControlPlane(s *state.State) error {
 	_, _, err = s.Runner.Run(`sudo `+kadm.UpgradeFollowerCommand(), nil)
 	return err
 }
+
+func upgradeStaticWorker(s *state.State) error {
+	kadm, err := kubeadm.New(s.Cluster.Versions.Kubernetes)
+	if err != nil {
+		return errors.Wrap(err, "failed to init kubadm")
+	}
+
+	_, _, err = s.Runner.Run(`sudo `+kadm.UpgradeStaticWorkerCommand(), nil)
+	return err
+}

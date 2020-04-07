@@ -51,6 +51,12 @@ func upgradeStaticWorkersExecutor(s *state.State, node *kubeoneapi.HostConfig, c
 		return errors.Wrap(err, "failed to upgrade kubernetes binaries on static worker node")
 	}
 
+	logger.Infoln("Running 'kubeadm upgrade' on the static worker node…")
+	err = upgradeStaticWorker(s)
+	if err != nil {
+		return errors.Wrap(err, "failed to upgrade static worker node")
+	}
+
 	logger.Infoln("Uncordoning static worker node…")
 	err = uncordonNode(s, *node)
 	if err != nil {

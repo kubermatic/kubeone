@@ -27,8 +27,12 @@ import (
 	"github.com/kubermatic/kubeone/pkg/state"
 )
 
-func upgradeKubernetesNodeBinaries(s *state.State) error {
-	return s.RunTaskOnAllNodes(upgradeKubernetesNodeBinariesExecutor, false)
+func upgradeControlPlaneNodeBinaries(s *state.State) error {
+	return s.RunTaskOnNodes(s.Cluster.Hosts, upgradeKubernetesNodeBinariesExecutor, false)
+}
+
+func upgradeStaticWorkerNodeBinaries(s *state.State) error {
+	return s.RunTaskOnStaticWorkers(upgradeKubernetesNodeBinariesExecutor, false)
 }
 
 func upgradeKubernetesNodeBinariesExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
