@@ -1,6 +1,6 @@
 # Changelog
 
-# [v0.11.1](https://github.com/kubermatic/kubeone/releases/tag/v0.11.1) - 2020-04-07
+# [v0.11.1](https://github.com/kubermatic/kubeone/releases/tag/v0.11.1) - 2020-04-08
 
 ## Added
 
