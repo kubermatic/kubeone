@@ -225,3 +225,53 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 
 	return []runtime.Object{initConfig, joinConfig, clusterConfig}, nil
 }
+
+// NewConfig returns all required configs to init a cluster via a set of v1beta2 configs
+func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, error) {
+	cluster := s.Cluster
+	nodeIP := host.PrivateAddress
+	if nodeIP == "" {
+		nodeIP = host.PublicAddress
+	}
+
+	nodeRegistration := kubeadmv1beta2.NodeRegistrationOptions{
+		Name: host.Hostname,
+		KubeletExtraArgs: map[string]string{
+			"anonymous-auth":      "false",
+			"node-ip":             nodeIP,
+			"read-only-port":      "0",
+			"rotate-certificates": "true",
+			"cluster-dns":         nodelocaldns.VirtualIP,
+		},
+	}
+
+	controlPlaneEndpoint := fmt.Sprintf("%s:%d", cluster.APIEndpoint.Host, cluster.APIEndpoint.Port)
+
+	joinConfig := &kubeadmv1beta2.JoinConfiguration{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "kubeadm.k8s.io/v1beta2",
+			Kind:       "JoinConfiguration",
+		},
+		Discovery: kubeadmv1beta2.Discovery{
+			BootstrapToken: &kubeadmv1beta2.BootstrapTokenDiscovery{
+				Token:                    s.JoinToken,
+				APIServerEndpoint:        controlPlaneEndpoint,
+				UnsafeSkipCAVerification: true,
+			},
+		},
+	}
+
+	if cluster.CloudProvider.CloudProviderInTree() {
+		renderedCloudConfig := "/etc/kubernetes/cloud-config"
+		provider := string(cluster.CloudProvider.Name)
+
+		nodeRegistration.KubeletExtraArgs["cloud-provider"] = provider
+		nodeRegistration.KubeletExtraArgs["cloud-config"] = renderedCloudConfig
+	}
+
+	if cluster.CloudProvider.External {
+		nodeRegistration.KubeletExtraArgs["cloud-provider"] = "external"
+	}
+
+	return []runtime.Object{joinConfig}, nil
+}

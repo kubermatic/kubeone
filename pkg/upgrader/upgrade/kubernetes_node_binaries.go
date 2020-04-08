@@ -27,16 +27,20 @@ import (
 	"github.com/kubermatic/kubeone/pkg/state"
 )
 
-func upgradeKubernetesNodeBinaries(s *state.State) error {
-	return s.RunTaskOnAllNodes(upgradeKubernetesNodeBinariesExecutor, false)
+func upgradeControlPlaneNodeBinaries(s *state.State) error {
+	return s.RunTaskOnNodes(s.Cluster.Hosts, upgradeKubernetesNodeBinariesExecutor, false)
+}
+
+func upgradeStaticWorkerNodeBinaries(s *state.State) error {
+	return s.RunTaskOnStaticWorkers(upgradeKubernetesNodeBinariesExecutor, false)
 }
 
 func upgradeKubernetesNodeBinariesExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	logger := s.Logger.WithField("node", node.PublicAddress)
 
-	logger.Infoln("Upgrading Kubernetes node binaries on control planes…")
+	logger.Infoln("Upgrading Kubernetes node binaries…")
 	if err := upgradeKubernetesNodeBinariesScript(s, *node); err != nil {
-		return errors.Wrap(err, "failed to upgrade kubernetes binaries on leader control plane")
+		return errors.Wrap(err, "failed to upgrade kubernetes binaries")
 	}
 
 	logger.Infof("Waiting %v to ensure kubelet is up…", timeoutKubeletUpgrade)

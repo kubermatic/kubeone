@@ -38,10 +38,22 @@ func (*kubeadmv1beta1) Config(s *state.State, instance kubeoneapi.HostConfig) (s
 	return templates.KubernetesToYAML(config)
 }
 
+func (*kubeadmv1beta1) ConfigWorker(s *state.State, instance kubeoneapi.HostConfig) (string, error) {
+	config, err := v1beta1.NewConfigWorker(s, instance)
+	if err != nil {
+		return "", err
+	}
+
+	return templates.KubernetesToYAML(config)
+}
 func (k *kubeadmv1beta1) UpgradeLeaderCommand() string {
 	return fmt.Sprintf("kubeadm upgrade apply -y %s", k.version)
 }
 
 func (*kubeadmv1beta1) UpgradeFollowerCommand() string {
 	return "kubeadm upgrade node experimental-control-plane"
+}
+
+func (*kubeadmv1beta1) UpgradeStaticWorkerCommand() string {
+	return kubeadmUpgradeNodeCommand
 }

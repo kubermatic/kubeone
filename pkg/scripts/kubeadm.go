@@ -24,6 +24,13 @@ sudo kubeadm join {{ .VERBOSE }} \
 	--config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
 `
 
+	kubeadmWorkerJoinScriptTemplate = `
+if [[ -f /etc/kubernetes/kubelet.conf ]]; then exit 0; fi
+
+sudo kubeadm join {{ .VERBOSE }} \
+--config=./{{ .WORK_DIR }}/cfg/worker_{{ .NODE_ID }}.yaml
+`
+
 	kubeadmCertScriptTemplate = `
 if [[ -d ./{{ .WORK_DIR }}/pki ]]; then
    sudo rsync -av ./{{ .WORK_DIR }}/pki/ /etc/kubernetes/pki/
@@ -54,6 +61,14 @@ sudo {{ .KUBEADM_UPGRADE }} --config=./{{ .WORK_DIR }}/cfg/master_0.yaml`
 
 func KubeadmJoin(workdir string, nodeID int, verboseFlag string) (string, error) {
 	return Render(kubeadmJoinScriptTemplate, Data{
+		"WORK_DIR": workdir,
+		"NODE_ID":  nodeID,
+		"VERBOSE":  verboseFlag,
+	})
+}
+
+func KubeadmJoinWorker(workdir string, nodeID int, verboseFlag string) (string, error) {
+	return Render(kubeadmWorkerJoinScriptTemplate, Data{
 		"WORK_DIR": workdir,
 		"NODE_ID":  nodeID,
 		"VERBOSE":  verboseFlag,

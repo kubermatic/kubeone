@@ -30,7 +30,7 @@ import (
 )
 
 func copyKubeconfig(s *state.State) error {
-	return s.RunTaskOnAllNodes(func(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
+	return s.RunTaskOnNodes(s.Cluster.Hosts, func(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
 		s.Logger.Infoln("Copying Kubeconfig to home directory…")
 		cmd, err := scripts.KubernetesAdminConfig()
 		if err != nil {
