@@ -21,6 +21,10 @@ import (
 )
 
 const (
+	centosDockerVersion = "18.09.9-3.el7"
+)
+
+const (
 	kubeadmDebianTemplate = `
 sudo swapoff -a
 sudo sed -i '/.*swap.*/d' /etc/fstab
@@ -159,7 +163,7 @@ sudo yum install -y yum-utils
 sudo yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
 
 sudo yum install -y --disableexcludes=kubernetes \
-	docker-ce-18.09.9-3.el7 \
+	docker-ce-{{ .DOCKER_VERSION }} \
 	kubelet-{{ .KUBERNETES_VERSION }}-0 \
 	kubeadm-{{ .KUBERNETES_VERSION }}-0 \
 	kubectl-{{ .KUBERNETES_VERSION }}-0 \
@@ -356,6 +360,7 @@ func KubeadmDebian(cluster *kubeone.KubeOneCluster, dockerVersion string) (strin
 
 func KubeadmCentOS(cluster *kubeone.KubeOneCluster, proxy string) (string, error) {
 	return Render(kubeadmCentOSTemplate, Data{
+		"DOCKER_VERSION":         centosDockerVersion,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"CNI_VERSION":            cluster.Versions.KubernetesCNIVersion(),
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
