@@ -70,7 +70,7 @@ Move the `kubeone` binary to your path, so you can easily invoke it from your te
 ```bash
 OS=$(uname)
 VERSION=$(curl -w '%{url_effective}' -I -L -s -S https://github.com/kubermatic/kubeone/releases/latest -o /dev/null | sed -e 's|.*/v||')
-curl -LO https://github.com/kubermatic/kubeone/releases/download/v<version>/kubeone_<version>_<operating_system>_amd64.zip
+curl -LO "https://github.com/kubermatic/kubeone/releases/download/v${VERSION}/kubeone_${VERSION}_${OS}_amd64.zip"
 unzip kubeone_${VERSION}_${OS}_amd64.zip -d kubeone_${VERSION}_${OS}_amd64
 sudo mv kubeone_${VERSION}_${OS}_amd64/kubeone /usr/local/bin
 ```
