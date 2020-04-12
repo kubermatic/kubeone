@@ -425,8 +425,8 @@ clusterNetwork:
   cni:
     # possible values:
     # * canal
-	# * weave-net
-	# * external - The CNI plugin can be installed as Addon or manually
+    # * weave-net
+    # * external - The CNI plugin can be installed as Addon or manually
     provider: canal
     # when selected CNI provider support encryption and encrypted: true is
     # set, secret will be automatically generated and referenced in appropriate

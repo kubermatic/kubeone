@@ -149,7 +149,7 @@ const (
 	// More info: https://www.weave.works/docs/net/latest/kubernetes/kube-addon/
 	CNIProviderWeaveNet CNIProvider = "weave-net"
 
-	// CNIProviderExternal is an external CNI plugin .
+	// CNIProviderExternal is an external CNI plugin.
 	// The CNI plugin can be installed as Addon or manually
 	// More info: https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#pod-network
 	CNIProviderExternal CNIProvider = "external"
