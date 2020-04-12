@@ -31,6 +31,8 @@ func ensureCNI(s *state.State) error {
 		return ensureCNICanal(s)
 	case kubeone.CNIProviderWeaveNet:
 		return ensureCNIWeaveNet(s)
+	case kubeone.CNIProviderExternal:
+		return ensureCNIExternal(s)
 	}
 
 	return errors.Errorf("unknown CNI provider: %s", s.Cluster.ClusterNetwork.CNI.Provider)
@@ -44,6 +46,11 @@ func ensureCNIWeaveNet(s *state.State) error {
 func ensureCNICanal(s *state.State) error {
 	s.Logger.Infoln("Applying canal CNI plugin…")
 	return canal.Deploy(s)
+}
+
+func ensureCNIExternal(s *state.State) error {
+	s.Logger.Infoln("External CNI plugin will be used")
+	return nil
 }
 
 func patchCNI(s *state.State) error {

@@ -197,6 +197,7 @@ func ValidateCNI(c *kubeone.CNI, fldPath *field.Path) field.ErrorList {
 	switch c.Provider {
 	case kubeone.CNIProviderCanal:
 	case kubeone.CNIProviderWeaveNet:
+	case kubeone.CNIProviderExternal:
 	default:
 		allErrs = append(allErrs, field.Invalid(fldPath, c.Provider, "unknown CNI provider"))
 	}
