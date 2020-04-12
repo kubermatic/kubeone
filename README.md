@@ -50,31 +50,29 @@ upgrade to the v0.6.0 or newer as soon as possible.
 
 ### Downloading a binary from GitHub Releases
 
-The recommended way to obtain KubeOne is to grab the
-binary from the [GitHub Releases][9] page. On the
-releases page, find the binary for your operating system
-and architecture and download it or grab the URL and use
-`wget` or `curl` to download the binary.
-
-**Version:** version of KubeOne  
-**Operating system:** `linux` or `darwin` for macOS
-
+The fastest way to get KubeOne:
 ```bash
-curl -LO https://github.com/kubermatic/kubeone/releases/download/v<version>/kubeone_<version>_<operating_system>_amd64.zip
+curl https://raw.githubusercontent.com/kubermatic/kubeone/master/intsallsh | sh
 ```
+
+If you want to have more control over how KubeOne is installed, download the
+binary from the [GitHub Releases][9] page. 
+
+On the releases page, you find the binary for your operating system
+and architecture 
+
+Download it or grab the URL and use `wget` or `curl` to download the binary.
 
 Extract the binary to the KubeOne directory. On Linux and macOS, you can use `unzip`.
 
-```bash
-unzip kubeone_<version>_<operating_system>_amd64.zip -d kubeone_<version>_<operating_system>_amd64
-```
-
-Move the `kubeone` binary to your path, so you can easily
-invoke it from your terminal.
+Move the `kubeone` binary to your path, so you can easily invoke it from your terminal.
 
 ```bash
-sudo mv kubeone_<version>_<operating_system>_amd64/kubeone /usr/local/bin
-
+OS=$(uname)
+VERSION=$(curl -w '%{url_effective}' -I -L -s -S https://github.com/kubermatic/kubeone/releases/latest -o /dev/null | sed -e 's|.*/v||')
+curl -LO https://github.com/kubermatic/kubeone/releases/download/v<version>/kubeone_<version>_<operating_system>_amd64.zip
+unzip kubeone_${VERSION}_${OS}_amd64.zip -d kubeone_${VERSION}_${OS}amd64
+sudo mv kubeone_${VERSION}_${OS}amd64/kubeone /usr/local/bin
 ```
 
 ### Building KubeOne
