@@ -34,8 +34,16 @@ import (
 // Install performs all the steps required to install Kubernetes on
 // an empty, pristine machine.
 func Install(s *state.State) error {
+	initTask := &task.Task{Fn: installPrerequisites, ErrMsg: "failed to install prerequisites"}
+	if err := initTask.Run(s); err != nil {
+		return errors.Wrap(err, initTask.ErrMsg)
+	}
+	if s.NoInit {
+		s.Logger.Infoln("Skipping cluster provisioning because --no-init flag was provided.")
+		return nil
+	}
+
 	installSteps := []task.Task{
-		{Fn: installPrerequisites, ErrMsg: "failed to install prerequisites"},
 		{Fn: generateKubeadm, ErrMsg: "failed to generate kubeadm config files"},
 		{Fn: kubeadmCertsOnLeader, ErrMsg: "failed to provision certs and etcd on leader", Retries: 3},
 		{Fn: certificate.DownloadCA, ErrMsg: "unable to download ca from leader", Retries: 3},

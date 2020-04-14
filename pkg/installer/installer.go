@@ -33,6 +33,7 @@ type Options struct {
 	Manifest        string
 	CredentialsFile string
 	BackupFile      string
+	NoInit          bool
 	DestroyWorkers  bool
 	RemoveBinaries  bool
 }
@@ -91,6 +92,7 @@ func (i *Installer) createState(options *Options) (*state.State, error) {
 	s.ManifestFilePath = options.Manifest
 	s.CredentialsFilePath = options.CredentialsFile
 	s.BackupFile = options.BackupFile
+	s.NoInit = options.NoInit
 	s.DestroyWorkers = options.DestroyWorkers
 	s.RemoveBinaries = options.RemoveBinaries
 	return s, nil
