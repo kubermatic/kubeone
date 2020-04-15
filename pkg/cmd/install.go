@@ -35,6 +35,7 @@ type installOptions struct {
 	globalOptions
 	Manifest   string
 	BackupFile string
+	NoInit     bool
 }
 
 // installCmd setups install command
@@ -72,6 +73,7 @@ It's possible to source information about hosts from Terraform output, using the
 	}
 
 	cmd.Flags().StringVarP(&iopts.BackupFile, "backup", "b", "", "path to where the PKI backup .tar.gz file should be placed (default: location of cluster config file)")
+	cmd.Flags().BoolVarP(&iopts.NoInit, "no-init", "", false, "don't initialize the cluster (only install binaries)")
 
 	return cmd
 }
@@ -125,6 +127,7 @@ func createInstallerOptions(clusterFile string, cluster *kubeoneapi.KubeOneClust
 		Manifest:        options.Manifest,
 		CredentialsFile: options.CredentialsFilePath,
 		BackupFile:      options.BackupFile,
+		NoInit:          options.NoInit,
 		Verbose:         options.Verbose,
 	}, nil
 }

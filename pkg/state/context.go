@@ -51,6 +51,7 @@ type State struct {
 	DynamicClient             dynclient.Client
 	Verbose                   bool
 	BackupFile                string
+	NoInit                    bool
 	DestroyWorkers            bool
 	RemoveBinaries            bool
 	ForceUpgrade              bool
