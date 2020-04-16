@@ -32,7 +32,10 @@ import (
 func New() (*State, error) {
 	joinToken, err := bootstraputil.GenerateBootstrapToken()
 	return &State{
-		JoinToken: joinToken,
+		JoinToken:     joinToken,
+		Connector:     ssh.NewConnector(),
+		Configuration: configupload.NewConfiguration(),
+		WorkDir:       "kubeone",
 	}, err
 }
 
@@ -51,7 +54,6 @@ type State struct {
 	DynamicClient             dynclient.Client
 	Verbose                   bool
 	BackupFile                string
-	NoInit                    bool
 	DestroyWorkers            bool
 	RemoveBinaries            bool
 	ForceUpgrade              bool
