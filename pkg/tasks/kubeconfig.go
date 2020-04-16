@@ -14,35 +14,43 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package installation
+package tasks
 
 import (
-	"time"
+	"fmt"
+	"io/ioutil"
+
+	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/kubeconfig"
 	"github.com/kubermatic/kubeone/pkg/scripts"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/state"
 )
 
-func joinControlplaneNode(s *state.State) error {
-	s.Logger.Infoln("Joining controlplane node…")
-	return s.RunTaskOnFollowers(joinControlPlaneNodeInternal, false)
+func copyKubeconfig(s *state.State) error {
+	return s.RunTaskOnNodes(s.Cluster.Hosts, func(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
+		s.Logger.Infoln("Copying Kubeconfig to home directory…")
+		cmd, err := scripts.KubernetesAdminConfig()
+		if err != nil {
+			return err
+		}
+
+		_, _, err = s.Runner.RunRaw(cmd)
+		return err
+	}, true)
 }
 
-func joinControlPlaneNodeInternal(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
-	logger := s.Logger.WithField("node", node.PublicAddress)
+func saveKubeconfig(s *state.State) error {
+	s.Logger.Info("Downloading kubeconfig…")
 
-	sleepTime := 30 * time.Second
-	logger.Infof("Waiting %s to ensure main control plane components are up…", sleepTime)
-	time.Sleep(sleepTime)
-
-	logger.Info("Joining control plane node")
-	cmd, err := scripts.KubeadmJoin(s.WorkDir, node.ID, s.KubeadmVerboseFlag())
+	kc, err := kubeconfig.Download(s)
 	if err != nil {
 		return err
 	}
 
-	_, _, err = s.Runner.RunRaw(cmd)
-	return err
+	fileName := fmt.Sprintf("%s-kubeconfig", s.Cluster.Name)
+	err = ioutil.WriteFile(fileName, kc, 0644)
+	return errors.Wrap(err, "error saving kubeconfig file to the local machine")
 }

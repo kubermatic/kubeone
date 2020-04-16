@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package task
+package tasks
 
 import (
 	"time"
@@ -43,8 +43,9 @@ type Task struct {
 // Run runs a task
 func (t *Task) Run(ctx *state.State) error {
 	if t.Retries == 0 {
-		t.Retries = 1
+		t.Retries = 3
 	}
+
 	backoff := defaultRetryBackoff(t.Retries)
 
 	var lastError error

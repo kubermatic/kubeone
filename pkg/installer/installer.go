@@ -16,16 +16,6 @@ limitations under the License.
 
 package installer
 
-import (
-	"github.com/sirupsen/logrus"
-
-	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/configupload"
-	"github.com/kubermatic/kubeone/pkg/installer/installation"
-	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/kubermatic/kubeone/pkg/state"
-)
-
 // Options groups the various possible options for running
 // the Kubernetes installation.
 type Options struct {
@@ -39,61 +29,59 @@ type Options struct {
 }
 
 // Installer is entrypoint for installation process
-type Installer struct {
-	cluster *kubeoneapi.KubeOneCluster
-	logger  *logrus.Logger
-}
+// type Installer struct {
+// 	cluster *kubeoneapi.KubeOneCluster
+// 	logger  *logrus.Logger
+// }
 
 // NewInstaller returns a new installer, responsible for dispatching
 // between the different supported Kubernetes versions and running the
-func NewInstaller(cluster *kubeoneapi.KubeOneCluster, logger *logrus.Logger) *Installer {
-	return &Installer{
-		cluster: cluster,
-		logger:  logger,
-	}
-}
+// func NewInstaller(cluster *kubeoneapi.KubeOneCluster, logger *logrus.Logger) *Installer {
+// 	return &Installer{
+// 		cluster: cluster,
+// 		logger:  logger,
+// 	}
+// }
 
-// Install run the installation process
-func (i *Installer) Install(options *Options) error {
-	s, err := i.createState(options)
-	if err != nil {
-		return err
-	}
-	return installation.Install(s)
-}
+// // Install run the installation process
+// func (i *Installer) Install(options *Options) error {
+// 	s, err := i.createState(options)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	return installation.Install(s)
+// }
 
 // Reset resets cluster:
 // * destroys all the worker machines
 // * kubeadm reset masters
-func (i *Installer) Reset(options *Options) error {
-	s, err := i.createState(options)
-	if err != nil {
-		return err
-	}
-	return installation.Reset(s)
-}
+// func (i *Installer) Reset(options *Options) error {
+// 	s, err := i.createState(options)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	return installation.Reset(s)
+// }
 
 // createState creates a basic, non-host bound state with
 // all relevant information, but *no* Runner yet. The various
 // task helper functions will take care of setting up Runner
 // structs for each task individually.
-func (i *Installer) createState(options *Options) (*state.State, error) {
-	s, err := state.New()
-	if err != nil {
-		return nil, err
-	}
+// func (i *Installer) createState(options *Options) (*state.State, error) {
+// 	s, err := state.New()
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	s.Cluster = i.cluster
-	s.Connector = ssh.NewConnector()
-	s.Configuration = configupload.NewConfiguration()
-	s.WorkDir = "kubeone"
-	s.Logger = i.logger
-	s.Verbose = options.Verbose
-	s.ManifestFilePath = options.Manifest
-	s.CredentialsFilePath = options.CredentialsFile
-	s.BackupFile = options.BackupFile
-	s.NoInit = options.NoInit
-	s.DestroyWorkers = options.DestroyWorkers
-	s.RemoveBinaries = options.RemoveBinaries
-	return s, nil
-}
+// 	s.Cluster = i.cluster
+// 	s.Logger = i.logger
+//
+// 	s.Verbose = options.Verbose
+// 	s.ManifestFilePath = options.Manifest
+// 	s.CredentialsFilePath = options.CredentialsFile
+// 	s.BackupFile = options.BackupFile
+// 	s.DestroyWorkers = options.DestroyWorkers
+// 	s.RemoveBinaries = options.RemoveBinaries
+//
+// 	return s, nil
+// }

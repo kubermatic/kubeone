@@ -14,11 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package installation
+package tasks
 
 import (
-	"time"
-
 	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
@@ -176,16 +174,4 @@ func removeBinariesCoreOS(s *state.State) error {
 
 	_, _, err = s.Runner.RunRaw(cmd)
 	return errors.WithStack(err)
-}
-
-func defaultRetryBackoff(retries int) wait.Backoff {
-	if retries == 0 {
-		retries = 1
-	}
-
-	return wait.Backoff{
-		Steps:    retries,
-		Duration: 5 * time.Second,
-		Factor:   2.0,
-	}
 }

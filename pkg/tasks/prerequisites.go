@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package installation
+package tasks
 
 import (
 	"github.com/pkg/errors"
@@ -77,17 +77,17 @@ func installPrerequisitesOnNode(s *state.State, node *kubeoneapi.HostConfig, con
 		return errors.Wrap(err, "failed to create environment file")
 	}
 
+	err = configureProxy(s)
+	if err != nil {
+		return errors.Wrap(err, "failed to configure proxy for docker daemon")
+	}
+
 	logger := s.Logger.WithField("os", os)
 
 	logger.Infoln("Installing kubeadm…")
 	err = installKubeadm(s, *node)
 	if err != nil {
 		return errors.Wrap(err, "failed to install kubeadm")
-	}
-
-	err = configureProxy(s)
-	if err != nil {
-		return errors.Wrap(err, "failed to configure proxy for docker daemon")
 	}
 
 	logger.Infoln("Deploying configuration files…")
