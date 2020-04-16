@@ -39,7 +39,7 @@ const VirtualIP = "169.254.20.10"
 
 const (
 	image                    = "k8s.gcr.io/k8s-dns-node-cache"
-	tag                      = "1.15.7"
+	tag                      = "1.15.12"
 	dnscacheCorefileTemplate = `
 __PILLAR__DNS__DOMAIN__:53 {
 	errors
@@ -235,10 +235,6 @@ func dnscacheDaemonSet() *appsv1.DaemonSet {
 								Requests: corev1.ResourceList{
 									corev1.ResourceCPU:    resource.MustParse("25m"),
 									corev1.ResourceMemory: resource.MustParse("5Mi"),
-								},
-								Limits: corev1.ResourceList{
-									corev1.ResourceCPU:    resource.MustParse("25m"),
-									corev1.ResourceMemory: resource.MustParse("30Mi"),
 								},
 							},
 							SecurityContext: &corev1.SecurityContext{
