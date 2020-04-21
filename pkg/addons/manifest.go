@@ -79,10 +79,12 @@ func loadAddonsManifests(addonsPath string, logger logrus.FieldLogger, verbose b
 			continue
 		}
 		ext := strings.ToLower(filepath.Ext(filePath))
-		// Only YAML/YML and JSON manifests are supported
-		if ext != ".yaml" && ext != ".yml" && ext != ".json" {
+		// Only YAML, YML and JSON manifests are supported
+		switch ext {
+		case ".yaml", ".yml", ".json":
+		default:
 			if verbose {
-				logger.Infof("Skipping file '%s' because it's not .yaml/.yml/.json file\n", file.Name())
+				logger.Infof("Skipping file %q because it's not .yaml/.yml/.json file\n", file.Name())
 			}
 			continue
 		}
