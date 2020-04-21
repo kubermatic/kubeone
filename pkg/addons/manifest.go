@@ -78,6 +78,14 @@ func loadAddonsManifests(addonsPath string, logger logrus.FieldLogger, verbose b
 			logger.Infof("Found directory '%s' in the addons path. Ignoring.\n", file.Name())
 			continue
 		}
+		ext := strings.ToLower(filepath.Ext(filePath))
+		// Only YAML/YML and JSON manifests are supported
+		if ext != ".yaml" && ext != ".yml" && ext != ".json" {
+			if verbose {
+				logger.Infof("Skipping file '%s' because it's not .yaml/.yml/.json file\n", file.Name())
+			}
+			continue
+		}
 		if verbose {
 			logger.Infof("Parsing addons manifest '%s'\n", file.Name())
 		}
