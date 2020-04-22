@@ -30,8 +30,6 @@ import (
 	"github.com/kubermatic/kubeone/pkg/templates/nodelocaldns"
 )
 
-type Opts func(Tasks) Tasks
-
 type Tasks []Task
 
 func (t Tasks) Run(s *state.State) error {
@@ -44,48 +42,98 @@ func (t Tasks) Run(s *state.State) error {
 	return nil
 }
 
+func (t Tasks) append(newtasks ...Task) Tasks {
+	return append(t, newtasks...)
+}
+
+func (t Tasks) prepend(newtasks ...Task) Tasks {
+	return append(newtasks, t...)
+}
+
+// WithBinariesOnly will prepend passed tasks with tasks WithHostnameOS() and
+// append install prerequisite binaries (docker, kubeadm, kubelet, etc...) on
+// all hosts
 func WithBinariesOnly(t Tasks) Tasks {
-	return append(t,
-		Task{Fn: installPrerequisites, ErrMsg: "failed to install prerequisites"},
+	return WithHostnameOS(t).
+		append(Task{Fn: installPrerequisites, ErrMsg: "failed to install prerequisites"})
+}
+
+// WithHostnameOS will prepend passed tasks with 2 basic tasks:
+//  * detect OS on all cluster hosts
+//  * detect hostnames  on all cluster hosts
+func WithHostnameOS(t Tasks) Tasks {
+	return t.prepend(
+		Task{Fn: determineHostname, ErrMsg: "failed to detect hostname"},
+		Task{Fn: determineOS, ErrMsg: "failed to detect OS"},
 	)
 }
 
+// WithFullInstall with install binaries (using WithBinariesOnly) and
+// orchestrate complete cluster init
 func WithFullInstall(t Tasks) Tasks {
-	return append(t, Tasks{
-		{Fn: installPrerequisites, ErrMsg: "failed to install prerequisites"},
-		{Fn: generateKubeadm, ErrMsg: "failed to generate kubeadm config files"},
-		{Fn: kubeadmCertsOnLeader, ErrMsg: "failed to provision certs and etcd on leader"},
-		{Fn: certificate.DownloadCA, ErrMsg: "unable to download ca from leader"},
-		{Fn: deployCA, ErrMsg: "unable to deploy ca on nodes"},
-		{Fn: kubeadmCertsOnFollower, ErrMsg: "failed to provision certs and etcd on followers"},
-		{Fn: initKubernetesLeader, ErrMsg: "failed to init kubernetes on leader"},
-		{Fn: joinControlplaneNode, ErrMsg: "unable to join other masters a cluster"},
-		{Fn: copyKubeconfig, ErrMsg: "unable to copy kubeconfig to home directory"},
-		{Fn: saveKubeconfig, ErrMsg: "unable to save kubeconfig to the local machine"},
-		{Fn: kubeconfig.BuildKubernetesClientset, ErrMsg: "unable to build kubernetes clientset"},
-		{Fn: nodelocaldns.Deploy, ErrMsg: "unable to deploy nodelocaldns"},
-		{Fn: features.Activate, ErrMsg: "unable to activate features"},
-		{Fn: ensureCNI, ErrMsg: "failed to install cni plugin"},
-		{Fn: patchCoreDNS, ErrMsg: "failed to patch CoreDNS"},
-		{Fn: credentials.Ensure, ErrMsg: "unable to ensure credentials secret"},
-		{Fn: externalccm.Ensure, ErrMsg: "failed to install external CCM"},
-		{Fn: patchCNI, ErrMsg: "failed to patch CNI"},
-		{Fn: joinStaticWorkerNodes, ErrMsg: "unable to join worker nodes to the cluster"},
-		{Fn: machinecontroller.Ensure, ErrMsg: "failed to install machine-controller"},
-		{Fn: machinecontroller.WaitReady, ErrMsg: "failed to wait for machine-controller"},
-		{Fn: createWorkerMachines, ErrMsg: "failed to create worker machines"},
-		{Fn: addons.Ensure, ErrMsg: "failed to apply addons"},
-	}...)
+	return WithBinariesOnly(t).
+		append(kubernetesConfigFiles()...).
+		append(Tasks{
+			{Fn: kubeadmCertsOnLeader, ErrMsg: "failed to provision certs and etcd on leader"},
+			{Fn: certificate.DownloadCA, ErrMsg: "failed to download ca from leader"},
+			{Fn: deployPKIToFollowers, ErrMsg: "failed to upload PKI"},
+			{Fn: kubeadmCertsOnFollower, ErrMsg: "failed to provision certs and etcd on followers"},
+			{Fn: initKubernetesLeader, ErrMsg: "failed to init kubernetes on leader"},
+			{Fn: joinControlplaneNode, ErrMsg: "failed to join other masters a cluster"},
+			{Fn: copyKubeconfig, ErrMsg: "failed to copy kubeconfig to home directory"},
+			{Fn: saveKubeconfig, ErrMsg: "failed to save kubeconfig to the local machine"},
+			{Fn: kubeconfig.BuildKubernetesClientset, ErrMsg: "failed to build kubernetes clientset"},
+		}...).
+		append(kubernetesResources()...).
+		append(
+			Task{Fn: createMachineDeployments, ErrMsg: "failed to create worker machines"},
+		)
 }
 
 func WithUpgrade(t Tasks) Tasks {
-	return t
+	return WithHostnameOS(t).
+		append(kubernetesConfigFiles()...).
+		append(Tasks{
+			{Fn: kubeconfig.BuildKubernetesClientset, ErrMsg: "failed to build kubernetes clientset"},
+			{Fn: runPreflightChecks, ErrMsg: "preflight checks failed"},
+			{Fn: upgradeLeader, ErrMsg: "failed to upgrade leader control plane"},
+			{Fn: upgradeFollower, ErrMsg: "failed to upgrade follower control plane"},
+		}...).
+		append(kubernetesResources()...).
+		append(
+			Task{Fn: upgradeStaticWorkers, ErrMsg: "unable to upgrade static worker nodes"},
+			Task{Fn: upgradeMachineDeployments, ErrMsg: "failed to upgrade MachineDeployments"},
+		)
 }
 
 func WithReset(t Tasks) Tasks {
-	return t
+	return t.append(Tasks{
+		{Fn: destroyWorkers, ErrMsg: "failed to destroy workers"},
+		{Fn: resetAllNodes, ErrMsg: "failed to reset nodes"},
+		{Fn: removeBinariesAllNodes, ErrMsg: "failed to remove binaries from nodes"},
+	}...)
 }
 
-func New(opts ...Opts) Tasks {
-	return nil
+func kubernetesConfigFiles() Tasks {
+	return Tasks{
+		{Fn: generateKubeadm, ErrMsg: "failed to generate kubeadm config files"},
+		{Fn: generateConfigurationFiles, ErrMsg: "failed to generate config files"},
+		{Fn: uploadConfigurationFiles, ErrMsg: "failed to upload config files"},
+	}
+}
+
+func kubernetesResources() Tasks {
+	return Tasks{
+		{Fn: nodelocaldns.Deploy, ErrMsg: "failed to deploy nodelocaldns"},
+		{Fn: features.Activate, ErrMsg: "failed to activate features"},
+		{Fn: ensureCNI, ErrMsg: "failed to install cni plugin"},
+		{Fn: addons.Ensure, ErrMsg: "failed to apply addons"},
+		{Fn: patchCoreDNS, ErrMsg: "failed to patch CoreDNS"},
+		{Fn: credentials.Ensure, ErrMsg: "failed to ensure credentials secret"},
+		{Fn: externalccm.Ensure, ErrMsg: "failed to ensure external CCM"},
+		{Fn: patchCNI, ErrMsg: "failed to patch CNI"},
+		{Fn: joinStaticWorkerNodes, ErrMsg: "failed to join worker nodes to the cluster"},
+		{Fn: machinecontroller.Ensure, ErrMsg: "failed to install machine-controller"},
+		{Fn: machinecontroller.WaitReady, ErrMsg: "failed to wait for machine-controller"},
+	}
 }

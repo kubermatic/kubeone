@@ -26,7 +26,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/state"
 )
 
-func upgradeWorkers(s *state.State) error {
+func upgradeStaticWorkers(s *state.State) error {
 	// we upgrade seqentially to minimize cluster disruption
 	return s.RunTaskOnStaticWorkers(upgradeStaticWorkersExecutor, state.RunSequentially)
 }

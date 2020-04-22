@@ -54,13 +54,13 @@ func (opts *installOpts) BuildState() (*state.State, error) {
 	// inadvertently create a zero byte file even if the first step
 	// of the installer fails; for this reason it's okay to find an
 	// existing, zero byte backup)
-	stat, err := os.Stat(opts.BackupFile)
+	stat, err := os.Stat(s.BackupFile)
 	if err != nil && stat != nil && stat.Size() > 0 {
 		return nil, errors.Errorf("backup %s already exists, refusing to overwrite", opts.BackupFile)
 	}
 
 	// try to write to the file before doing anything else
-	f, err := os.OpenFile(opts.BackupFile, os.O_RDWR|os.O_CREATE, 0600)
+	f, err := os.OpenFile(s.BackupFile, os.O_RDWR|os.O_CREATE, 0600)
 	if err != nil {
 		return nil, errors.Wrapf(err, "cannot open %q for writing", opts.BackupFile)
 	}

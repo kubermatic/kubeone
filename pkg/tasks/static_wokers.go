@@ -24,8 +24,7 @@ import (
 )
 
 func joinStaticWorkerNodes(s *state.State) error {
-	s.Logger.Infoln("Joining static worker node…")
-	return s.RunTaskOnStaticWorkers(joinStaticWorkerInternal, true)
+	return s.RunTaskOnStaticWorkers(joinStaticWorkerInternal, state.RunParallel)
 }
 
 func joinStaticWorkerInternal(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {

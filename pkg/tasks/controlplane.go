@@ -27,7 +27,7 @@ import (
 
 func joinControlplaneNode(s *state.State) error {
 	s.Logger.Infoln("Joining controlplane node…")
-	return s.RunTaskOnFollowers(joinControlPlaneNodeInternal, false)
+	return s.RunTaskOnFollowers(joinControlPlaneNodeInternal, state.RunSequentially)
 }
 
 func joinControlPlaneNodeInternal(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
@@ -45,4 +45,42 @@ func joinControlPlaneNodeInternal(s *state.State, node *kubeoneapi.HostConfig, c
 
 	_, _, err = s.Runner.RunRaw(cmd)
 	return err
+}
+
+func kubeadmCertsOnLeader(s *state.State) error {
+	s.Logger.Infoln("Configuring certs and etcd on first controller…")
+	return s.RunTaskOnLeader(kubeadmCertsExecutor)
+}
+
+func kubeadmCertsOnFollower(s *state.State) error {
+	s.Logger.Infoln("Configuring certs and etcd on consecutive controller…")
+	return s.RunTaskOnFollowers(kubeadmCertsExecutor, state.RunParallel)
+}
+
+func kubeadmCertsExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+	s.Logger.Infoln("Ensuring Certificates…")
+	cmd, err := scripts.KubeadmCert(s.WorkDir, node.ID, s.KubeadmVerboseFlag())
+	if err != nil {
+		return err
+	}
+
+	_, _, err = s.Runner.RunRaw(cmd)
+
+	return err
+}
+
+func initKubernetesLeader(s *state.State) error {
+	s.Logger.Infoln("Initializing Kubernetes on leader…")
+	return s.RunTaskOnLeader(func(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+		s.Logger.Infoln("Running kubeadm…")
+
+		cmd, err := scripts.KubeadmInit(s.WorkDir, node.ID, s.KubeadmVerboseFlag(), s.JoinToken, time.Hour.String())
+		if err != nil {
+			return err
+		}
+
+		_, _, err = s.Runner.RunRaw(cmd)
+
+		return err
+	})
 }

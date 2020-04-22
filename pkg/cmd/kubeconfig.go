@@ -26,10 +26,6 @@ import (
 	"github.com/kubermatic/kubeone/pkg/kubeconfig"
 )
 
-type kubeconfigOpts struct {
-	globalOptions
-}
-
 // KubeconfigCommand returns the structure for declaring the "install" subcommand.
 func kubeconfigCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 	cmd := &cobra.Command{

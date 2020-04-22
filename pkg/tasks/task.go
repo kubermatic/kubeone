@@ -41,7 +41,7 @@ type Task struct {
 }
 
 // Run runs a task
-func (t *Task) Run(ctx *state.State) error {
+func (t *Task) Run(s *state.State) error {
 	if t.Retries == 0 {
 		t.Retries = 3
 	}
@@ -51,13 +51,13 @@ func (t *Task) Run(ctx *state.State) error {
 	var lastError error
 	err := wait.ExponentialBackoff(backoff, func() (bool, error) {
 		if lastError != nil {
-			ctx.Logger.Warn("Retrying task…")
+			s.Logger.Warn("Retrying task…")
 		}
-		lastError = t.Fn(ctx)
+		lastError = t.Fn(s)
 		if lastError != nil {
-			ctx.Logger.Warn("Task failed…")
-			if ctx.Verbose {
-				ctx.Logger.Warnf("error was: %s", lastError)
+			s.Logger.Warn("Task failed…")
+			if s.Verbose {
+				s.Logger.Warnf("error was: %s", lastError)
 			}
 			return false, nil
 		}

@@ -39,7 +39,7 @@ func copyKubeconfig(s *state.State) error {
 
 		_, _, err = s.Runner.RunRaw(cmd)
 		return err
-	}, true)
+	}, state.RunParallel)
 }
 
 func saveKubeconfig(s *state.State) error {

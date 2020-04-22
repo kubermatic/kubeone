@@ -24,18 +24,25 @@ import (
 	"github.com/kubermatic/kubeone/pkg/state"
 )
 
+const (
+	osNameDebian = "debian"
+	osNameUbuntu = "ubuntu"
+	osNameCoreos = "coreos"
+	osNameCentos = "centos"
+)
+
 func upgradeKubernetesBinaries(s *state.State, node kubeoneapi.HostConfig) error {
 	var err error
 
 	switch node.OperatingSystem {
-	case "ubuntu", "debian":
+	case osNameDebian, osNameUbuntu:
 		err = upgradeKubernetesBinariesDebian(s)
-	case "coreos":
+	case osNameCoreos:
 		err = upgradeKubernetesBinariesCoreOS(s)
-	case "centos":
+	case osNameCentos:
 		err = upgradeKubernetesBinariesCentOS(s)
 	default:
-		err = errors.Errorf("'%s' is not a supported operating system", node.OperatingSystem)
+		err = errors.Errorf("%q is not a supported operating system", node.OperatingSystem)
 	}
 
 	return err
