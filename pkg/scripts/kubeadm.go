@@ -21,7 +21,8 @@ const (
 if [[ -f /etc/kubernetes/admin.conf ]]; then exit 0; fi
 
 sudo kubeadm join {{ .VERBOSE }} \
-	--config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+	--config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml \
+	--ignore-preflight-errors=DirAvailable--var-lib-etcd
 `
 
 	kubeadmWorkerJoinScriptTemplate = `
@@ -45,7 +46,9 @@ if [[ -f /etc/kubernetes/admin.conf ]]; then
 	sudo kubeadm {{ .VERBOSE }} token create {{ .TOKEN }} --ttl {{ .TOKEN_DURATION }}
 	exit 0;
 fi
-sudo kubeadm {{ .VERBOSE }} init --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+sudo kubeadm {{ .VERBOSE }} \
+	init --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml \
+	--ignore-preflight-errors=DirAvailable--var-lib-etcd
 `
 
 	kubeadmResetScriptTemplate = `
