@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package upgrade
+package tasks
 
 import (
 	"time"
@@ -28,11 +28,11 @@ import (
 )
 
 func upgradeControlPlaneNodeBinaries(s *state.State) error {
-	return s.RunTaskOnNodes(s.Cluster.Hosts, upgradeKubernetesNodeBinariesExecutor, false)
+	return s.RunTaskOnNodes(s.Cluster.Hosts, upgradeKubernetesNodeBinariesExecutor, state.RunSequentially)
 }
 
 func upgradeStaticWorkerNodeBinaries(s *state.State) error {
-	return s.RunTaskOnStaticWorkers(upgradeKubernetesNodeBinariesExecutor, false)
+	return s.RunTaskOnStaticWorkers(upgradeKubernetesNodeBinariesExecutor, state.RunSequentially)
 }
 
 func upgradeKubernetesNodeBinariesExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {

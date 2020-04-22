@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package upgrade
+package tasks
 
 import (
 	"time"
@@ -28,7 +28,7 @@ import (
 
 func upgradeWorkers(s *state.State) error {
 	// we upgrade seqentially to minimize cluster disruption
-	return s.RunTaskOnStaticWorkers(upgradeStaticWorkersExecutor, false)
+	return s.RunTaskOnStaticWorkers(upgradeStaticWorkersExecutor, state.RunSequentially)
 }
 
 func upgradeStaticWorkersExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {

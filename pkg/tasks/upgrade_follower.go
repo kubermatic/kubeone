@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package upgrade
+package tasks
 
 import (
 	"time"
@@ -27,7 +27,7 @@ import (
 )
 
 func upgradeFollower(s *state.State) error {
-	return s.RunTaskOnFollowers(upgradeFollowerExecutor, false)
+	return s.RunTaskOnFollowers(upgradeFollowerExecutor, state.RunSequentially)
 }
 
 func upgradeFollowerExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {

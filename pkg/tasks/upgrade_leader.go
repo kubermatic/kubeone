@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package upgrade
+package tasks
 
 import (
 	"time"
@@ -46,16 +46,6 @@ func upgradeLeaderExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh
 	logger.Infoln("Upgrading Kubernetes binaries on leader control plane…")
 	if err := upgradeKubernetesBinaries(s, *node); err != nil {
 		return errors.Wrap(err, "failed to upgrade kubernetes binaries on leader control plane")
-	}
-
-	logger.Infoln("Generating kubeadm config …")
-	if err := generateKubeadmConfig(s, *node); err != nil {
-		return errors.Wrap(err, "failed to generate kubeadm config")
-	}
-
-	logger.Infoln("Uploading kubeadm config to leader control plane node…")
-	if err := uploadKubeadmConfig(s, conn); err != nil {
-		return errors.Wrap(err, "failed to upload kubeadm config")
 	}
 
 	logger.Infoln("Running 'kubeadm upgrade' on leader control plane node…")

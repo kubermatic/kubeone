@@ -14,32 +14,48 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package upgrade
+package tasks
 
 import (
 	"github.com/pkg/errors"
 
-	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/ssh"
+	"github.com/kubermatic/kubeone/pkg/scripts"
 	"github.com/kubermatic/kubeone/pkg/state"
 	"github.com/kubermatic/kubeone/pkg/templates/kubeadm"
 )
 
-func generateKubeadmConfig(s *state.State, node kubeoneapi.HostConfig) error {
+func upgradeLeaderControlPlane(s *state.State) error {
 	kadm, err := kubeadm.New(s.Cluster.Versions.Kubernetes)
 	if err != nil {
 		return errors.Wrap(err, "failed to init kubeadm")
 	}
 
-	kubeadmConf, err := kadm.Config(s, node)
+	cmd, err := scripts.KubeadmUpgradeLeader(kadm.UpgradeLeaderCommand(), s.WorkDir)
 	if err != nil {
-		return errors.Wrap(err, "failed to create kubeadm configuration")
+		return err
 	}
 
-	s.Configuration.AddFile("cfg/master_0.yaml", kubeadmConf)
-	return nil
+	_, _, err = s.Runner.RunRaw(cmd)
+
+	return err
 }
 
-func uploadKubeadmConfig(s *state.State, sshConn ssh.Connection) error {
-	return errors.Wrap(s.Configuration.UploadTo(sshConn, s.WorkDir), "failed to upload")
+func upgradeFollowerControlPlane(s *state.State) error {
+	kadm, err := kubeadm.New(s.Cluster.Versions.Kubernetes)
+	if err != nil {
+		return errors.Wrap(err, "failed to init kubadm")
+	}
+
+	_, _, err = s.Runner.Run(`sudo `+kadm.UpgradeFollowerCommand(), nil)
+	return err
+}
+
+func upgradeStaticWorker(s *state.State) error {
+	kadm, err := kubeadm.New(s.Cluster.Versions.Kubernetes)
+	if err != nil {
+		return errors.Wrap(err, "failed to init kubadm")
+	}
+
+	_, _, err = s.Runner.Run(`sudo `+kadm.UpgradeStaticWorkerCommand(), nil)
+	return err
 }
