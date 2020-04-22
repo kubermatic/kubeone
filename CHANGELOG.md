@@ -1,5 +1,31 @@
 # Changelog
 
+# [v1.0.0-alpha.0](https://github.com/kubermatic/kubeone/releases/tag/v1.0.0-alpha.0) - 2020-04-22
+
+## Added
+
+* Add support for OpenStack external cloud controller manager (CCM) ([#820](https://github.com/kubermatic/kubeone/pull/820))
+* Add `Untaint` API field to remove default taints from the control plane nodes ([#823](https://github.com/kubermatic/kubeone/pull/823))
+* Add the `PodPresets` feature ([#837](https://github.com/kubermatic/kubeone/pull/837))
+* Add ability to provision static worker nodes ([#834](https://github.com/kubermatic/kubeone/pull/834))
+* Add ability to use an external CNI plugin ([#862](https://github.com/kubermatic/kubeone/pull/862))
+* Add ability to skip cluster provisioning when running the `install` command using the `--no-init` flag ([#871](https://github.com/kubermatic/kubeone/pull/871))
+
+## Changed
+
+### General
+
+* machine-controller and machine-controller-webhook are bound to the control plane nodes ([#832](https://github.com/kubermatic/kubeone/pull/832))
+
+### Bug Fixes
+
+* Apply only addons with `.yaml`, `.yml` and `.json` extensions ([#873](https://github.com/kubermatic/kubeone/pull/873))
+
+### Updated
+
+* Update machine-controller to v1.11.2 ([#861](https://github.com/kubermatic/kubeone/pull/861))
+* Update NodeLocalDNSCache to v1.15.12 ([#872](https://github.com/kubermatic/kubeone/pull/872))
+
 # [v0.11.1](https://github.com/kubermatic/kubeone/releases/tag/v0.11.1) - 2020-04-08
 
 ## Added
