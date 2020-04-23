@@ -49,7 +49,7 @@ output "kubeone_workers" {
     # following outputs will be parsed by kubeone and automatically merged into
     # corresponding (by name) worker definition
     "${var.cluster_name}-${local.zoneA}" = {
-      replicas = 1
+      replicas = var.initial_machinedeployment_replicas
       providerSpec = {
         sshPublicKeys   = [aws_key_pair.deployer.public_key]
         operatingSystem = var.worker_os
@@ -85,7 +85,7 @@ output "kubeone_workers" {
     }
 
     "${var.cluster_name}-${local.zoneB}" = {
-      replicas = 1
+      replicas = var.initial_machinedeployment_replicas
       providerSpec = {
         sshPublicKeys   = [aws_key_pair.deployer.public_key]
         operatingSystem = var.worker_os
@@ -121,7 +121,7 @@ output "kubeone_workers" {
     }
 
     "${var.cluster_name}-${local.zoneC}" = {
-      replicas = 1
+      replicas = var.initial_machinedeployment_replicas
       providerSpec = {
         sshPublicKeys   = [aws_key_pair.deployer.public_key]
         operatingSystem = var.worker_os
