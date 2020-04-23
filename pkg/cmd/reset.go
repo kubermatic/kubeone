@@ -21,6 +21,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
+	"github.com/kubermatic/kubeone/pkg/state"
 	"github.com/kubermatic/kubeone/pkg/tasks"
 )
 
@@ -28,6 +29,17 @@ type resetOpts struct {
 	globalOptions
 	DestroyWorkers bool `longflag:"destroy-workers"`
 	RemoveBinaries bool `longflag:"remove-binaries"`
+}
+
+func (opts *resetOpts) BuildState() (*state.State, error) {
+	s, err := opts.globalOptions.BuildState()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to build State")
+	}
+
+	s.DestroyWorkers = opts.DestroyWorkers
+	s.RemoveBinaries = opts.RemoveBinaries
+	return s, nil
 }
 
 // resetCmd setups reset command
