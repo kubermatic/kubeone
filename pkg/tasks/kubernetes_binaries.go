@@ -31,16 +31,16 @@ const (
 	osNameCentos = "centos"
 )
 
-func upgradeKubernetesBinaries(s *state.State, node kubeoneapi.HostConfig) error {
+func upgradeKubeletAndKubectlBinaries(s *state.State, node kubeoneapi.HostConfig) error {
 	var err error
 
 	switch node.OperatingSystem {
 	case osNameDebian, osNameUbuntu:
-		err = upgradeKubernetesBinariesDebian(s)
+		err = upgradeKubeletAndKubectlBinariesDebian(s)
 	case osNameCoreos:
-		err = upgradeKubernetesBinariesCoreOS(s)
+		err = upgradeKubeletAndKubectlBinariesCoreOS(s)
 	case osNameCentos:
-		err = upgradeKubernetesBinariesCentOS(s)
+		err = upgradeKubeletAndKubectlBinariesCentOS(s)
 	default:
 		err = errors.Errorf("%q is not a supported operating system", node.OperatingSystem)
 	}
@@ -48,7 +48,57 @@ func upgradeKubernetesBinaries(s *state.State, node kubeoneapi.HostConfig) error
 	return err
 }
 
-func upgradeKubernetesBinariesDebian(s *state.State) error {
+func upgradeKubeadmAndCNIBinaries(s *state.State, node kubeoneapi.HostConfig) error {
+	var err error
+
+	switch node.OperatingSystem {
+	case osNameDebian, osNameUbuntu:
+		err = upgradeKubeadmAndCNIBinariesDebian(s)
+	case osNameCoreos:
+		err = upgradeKubeadmAndCNIBinariesCoreOS(s)
+	case osNameCentos:
+		err = upgradeKubeadmAndCNIBinariesCentOS(s)
+	default:
+		err = errors.Errorf("%q is not a supported operating system", node.OperatingSystem)
+	}
+
+	return err
+}
+
+func upgradeKubeletAndKubectlBinariesDebian(s *state.State) error {
+	cmd, err := scripts.UpgradeKubeletAndKubectlDebian(s.Cluster.Versions.Kubernetes)
+	if err != nil {
+		return err
+	}
+
+	_, _, err = s.Runner.RunRaw(cmd)
+
+	return errors.WithStack(err)
+}
+
+func upgradeKubeletAndKubectlBinariesCoreOS(s *state.State) error {
+	cmd, err := scripts.UpgradeKubeletAndKubectlCoreOS(s.Cluster.Versions.Kubernetes)
+	if err != nil {
+		return err
+	}
+
+	_, _, err = s.Runner.RunRaw(cmd)
+
+	return errors.WithStack(err)
+}
+
+func upgradeKubeletAndKubectlBinariesCentOS(s *state.State) error {
+	cmd, err := scripts.UpgradeKubeletAndKubectlCentOS(s.Cluster.Versions.Kubernetes)
+	if err != nil {
+		return err
+	}
+
+	_, _, err = s.Runner.RunRaw(cmd)
+
+	return errors.WithStack(err)
+}
+
+func upgradeKubeadmAndCNIBinariesDebian(s *state.State) error {
 	cmd, err := scripts.UpgradeKubeadmAndCNIDebian(s.Cluster.Versions.Kubernetes, s.Cluster.Versions.KubernetesCNIVersion())
 	if err != nil {
 		return err
@@ -59,7 +109,7 @@ func upgradeKubernetesBinariesDebian(s *state.State) error {
 	return errors.WithStack(err)
 }
 
-func upgradeKubernetesBinariesCentOS(s *state.State) error {
+func upgradeKubeadmAndCNIBinariesCentOS(s *state.State) error {
 	cmd, err := scripts.UpgradeKubeadmAndCNICentOS(s.Cluster.Versions.Kubernetes, s.Cluster.Versions.KubernetesCNIVersion())
 	if err != nil {
 		return err
@@ -70,7 +120,7 @@ func upgradeKubernetesBinariesCentOS(s *state.State) error {
 	return errors.WithStack(err)
 }
 
-func upgradeKubernetesBinariesCoreOS(s *state.State) error {
+func upgradeKubeadmAndCNIBinariesCoreOS(s *state.State) error {
 	cmd, err := scripts.UpgradeKubeadmAndCNICoreOS(s.Cluster.Versions.Kubernetes, s.Cluster.Versions.KubernetesCNIVersion())
 	if err != nil {
 		return err

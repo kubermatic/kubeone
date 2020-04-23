@@ -95,9 +95,10 @@ func WithUpgrade(t Tasks) Tasks {
 		append(kubernetesConfigFiles()...).
 		append(Tasks{
 			{Fn: kubeconfig.BuildKubernetesClientset, ErrMsg: "failed to build kubernetes clientset"},
-			{Fn: runPreflightChecks, ErrMsg: "preflight checks failed"},
+			{Fn: runPreflightChecks, ErrMsg: "preflight checks failed", Retries: 1},
 			{Fn: upgradeLeader, ErrMsg: "failed to upgrade leader control plane"},
 			{Fn: upgradeFollower, ErrMsg: "failed to upgrade follower control plane"},
+			{Fn: certificate.DownloadCA, ErrMsg: "failed to download ca from leader"},
 		}...).
 		append(kubernetesResources()...).
 		append(

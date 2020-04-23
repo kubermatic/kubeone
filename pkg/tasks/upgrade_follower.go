@@ -34,32 +34,32 @@ func upgradeFollowerExecutor(s *state.State, node *kubeoneapi.HostConfig, conn s
 	logger := s.Logger.WithField("node", node.PublicAddress)
 
 	logger.Infoln("Labeling follower control plane…")
-	err := labelNode(s.DynamicClient, node)
-	if err != nil {
+	if err := labelNode(s.DynamicClient, node); err != nil {
 		return errors.Wrap(err, "failed to label follower control plane node")
 	}
 
 	logger.Infoln("Draining follower control plane…")
-	err = drainNode(s, *node)
-	if err != nil {
+	if err := drainNode(s, *node); err != nil {
 		return errors.Wrap(err, "failed to drain follower control plane node")
 	}
 
 	logger.Infoln("Upgrading Kubernetes binaries on follower control plane…")
-	err = upgradeKubernetesBinaries(s, *node)
-	if err != nil {
+	if err := upgradeKubeadmAndCNIBinaries(s, *node); err != nil {
 		return errors.Wrap(err, "failed to upgrade kubernetes binaries on follower control plane")
 	}
 
 	logger.Infoln("Running 'kubeadm upgrade' on the follower control plane node…")
-	err = upgradeFollowerControlPlane(s)
-	if err != nil {
+	if err := upgradeFollowerControlPlane(s); err != nil {
 		return errors.Wrap(err, "failed to upgrade follower control plane")
 	}
 
+	logger.Infoln("Upgrading kubernetes system binaries on the follower control plane…")
+	if err := upgradeKubeletAndKubectlBinaries(s, *node); err != nil {
+		return errors.Wrap(err, "failed to upgrade kubernetes system binaries on follower control plane")
+	}
+
 	logger.Infoln("Uncordoning follower control plane…")
-	err = uncordonNode(s, *node)
-	if err != nil {
+	if err := uncordonNode(s, *node); err != nil {
 		return errors.Wrap(err, "failed to uncordon follower control plane node")
 	}
 
@@ -67,8 +67,7 @@ func upgradeFollowerExecutor(s *state.State, node *kubeoneapi.HostConfig, conn s
 	time.Sleep(timeoutNodeUpgrade)
 
 	logger.Infoln("Unlabeling follower control plane…")
-	err = unlabelNode(s.DynamicClient, node)
-	if err != nil {
+	if err := unlabelNode(s.DynamicClient, node); err != nil {
 		return errors.Wrap(err, "failed to unlabel follower control plane node")
 	}
 
