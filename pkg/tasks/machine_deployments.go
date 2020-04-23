@@ -19,14 +19,15 @@ package tasks
 import (
 	"context"
 
-	clusterv1alpha1 "github.com/kubermatic/machine-controller/pkg/apis/cluster/v1alpha1"
 	"github.com/pkg/errors"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/util/retry"
-	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 
 	"github.com/kubermatic/kubeone/pkg/state"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
+
+	clusterv1alpha1 "github.com/kubermatic/machine-controller/pkg/apis/cluster/v1alpha1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/util/retry"
+	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 func createMachineDeployments(s *state.State) error {
