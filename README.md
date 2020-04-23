@@ -52,7 +52,7 @@ upgrade to the v0.6.0 or newer as soon as possible.
 
 The fastest way to get KubeOne:
 ```bash
-curl https://raw.githubusercontent.com/kubermatic/kubeone/master/install.sh | sh
+curl -sfL get.kubeone.io | sh
 ```
 
 If you want to have more control over how KubeOne is installed, download the
