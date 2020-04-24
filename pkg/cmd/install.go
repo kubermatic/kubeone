@@ -73,7 +73,7 @@ func installCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 	opts := &installOpts{}
 
 	cmd := &cobra.Command{
-		Use:   "install <manifest>",
+		Use:   "install",
 		Short: "Install Kubernetes",
 		Long: `
 Install Kubernetes on pre-existing machines
@@ -82,8 +82,7 @@ This command takes KubeOne manifest which contains information about hosts and
 how the cluster should be provisioned. It's possible to source information about
 hosts from Terraform output, using the '--tfjson' flag.
 `,
-		Args:    cobra.ExactArgs(1),
-		Example: `kubeone install mycluster.yaml -t terraformoutput.json`,
+		Example: `kubeone install -m mycluster.yaml -t terraformoutput.json`,
 		RunE: func(_ *cobra.Command, args []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
@@ -91,8 +90,6 @@ hosts from Terraform output, using the '--tfjson' flag.
 			}
 
 			opts.globalOptions = *gopts
-			opts.ManifestFile = args[0]
-
 			return runInstall(opts)
 		},
 	}

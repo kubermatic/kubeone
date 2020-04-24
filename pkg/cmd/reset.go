@@ -47,7 +47,7 @@ func resetCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 	opts := &resetOpts{}
 
 	cmd := &cobra.Command{
-		Use:   "reset <manifest>",
+		Use:   "reset",
 		Short: "Revert changes",
 		Long: `
 Undo all changes done by KubeOne to the configured machines.
@@ -56,8 +56,7 @@ This command takes KubeOne manifest which contains information about hosts.
 It's possible to source information about hosts from Terraform output, using the
 '--tfjson' flag.
 `,
-		Args:    cobra.ExactArgs(1),
-		Example: `kubeone reset mycluster.yaml -t terraformoutput.json`,
+		Example: `kubeone reset -m mycluster.yaml -t terraformoutput.json`,
 		RunE: func(_ *cobra.Command, args []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
@@ -65,8 +64,6 @@ It's possible to source information about hosts from Terraform output, using the
 			}
 
 			opts.globalOptions = *gopts
-			opts.ManifestFile = args[0]
-
 			return runReset(opts)
 		},
 	}

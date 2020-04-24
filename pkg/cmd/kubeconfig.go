@@ -29,7 +29,7 @@ import (
 // KubeconfigCommand returns the structure for declaring the "install" subcommand.
 func kubeconfigCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "kubeconfig <manifest>",
+		Use:   "kubeconfig",
 		Short: "Download the kubeconfig file from master",
 		Long: `
 Download the kubeconfig file from master.
@@ -38,14 +38,12 @@ This command takes KubeOne manifest which contains information about hosts.
 It's possible to source information about hosts from Terraform output, using the
 '--tfjson' flag.
 `,
-		Args:    cobra.ExactArgs(1),
-		Example: `kubeone kubeconfig mycluster.yaml -t terraformoutput.json`,
+		Example: `kubeone kubeconfig -m mycluster.yaml -t terraformoutput.json`,
 		RunE: func(_ *cobra.Command, args []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
 				return errors.Wrap(err, "unable to get global flags")
 			}
-			gopts.ManifestFile = args[0]
 
 			return runKubeconfig(gopts)
 		},
