@@ -77,20 +77,13 @@ func createEnvironmentFile(s *state.State) error {
 }
 
 func installKubeadm(s *state.State, node kubeoneapi.HostConfig) error {
-	var err error
-
-	switch node.OperatingSystem {
-	case osNameDebian, osNameUbuntu:
-		err = installKubeadmDebian(s)
-	case osNameCoreos:
-		err = installKubeadmCoreOS(s)
-	case osNameCentos:
-		err = installKubeadmCentOS(s)
-	default:
-		err = errors.Errorf("%q is not a supported operating system", node.OperatingSystem)
-	}
-
-	return err
+	return runOnOS(s, osNameEnum(node.OperatingSystem), map[osNameEnum]runOnOSFn{
+		osNameDebian:  installKubeadmDebian,
+		osNameUbuntu:  installKubeadmDebian,
+		osNameCoreos:  installKubeadmCoreOS,
+		osNameFlatcar: installKubeadmCoreOS,
+		osNameCentos:  installKubeadmCentOS,
+	})
 }
 
 func installKubeadmDebian(s *state.State) error {

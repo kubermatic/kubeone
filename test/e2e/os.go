@@ -29,12 +29,14 @@ const (
 	OperatingSystemUbuntu  OperatingSystem = "ubuntu"
 	OperatingSystemCentOS  OperatingSystem = "centos"
 	OperatingSystemCoreOS  OperatingSystem = "coreos"
+	OperatingSystemFlatcar OperatingSystem = "flatcar"
 	OperatingSystemDefault OperatingSystem = ""
 )
 
 func ValidateOperatingSystem(osName string) error {
 	switch OperatingSystem(osName) {
-	case OperatingSystemUbuntu, OperatingSystemCentOS, OperatingSystemCoreOS, OperatingSystemDefault:
+	case OperatingSystemUbuntu, OperatingSystemCoreOS, OperatingSystemFlatcar,
+		OperatingSystemCentOS, OperatingSystemDefault:
 		return nil
 	}
 	return errors.New("failed to validate operating system")
@@ -64,6 +66,9 @@ func discoverAWSImage(osName OperatingSystem) (string, string, error) {
 		return "ami-0e1ab783dc9489f34", "centos", nil
 	case OperatingSystemCoreOS:
 		return "ami-04de4c2943ebaa320", "core", nil
+	case OperatingSystemFlatcar:
+		return "ami-083e4a190c9b050b1", "core", nil
 	}
+
 	return "", "", errors.New("operating system not matched")
 }
