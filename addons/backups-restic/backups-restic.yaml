@@ -65,7 +65,7 @@ spec:
               cp -a /etc/kubernetes/pki/front-proxy-ca.key /backup/pki/kubernetes
               cp -a /etc/kubernetes/pki/sa.key /backup/pki/kubernetes
               cp -a /etc/kubernetes/pki/sa.pub /backup/pki/kubernetes
-              etcdctl snapshot save /backup/${ETCD_HOSTNAME}-snapshot.db
+              etcdctl snapshot save /backup/etcd-snapshot.db
             env:
             - name: ETCDCTL_API
               value: "3"
