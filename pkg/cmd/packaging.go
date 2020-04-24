@@ -27,7 +27,8 @@ func completionCmd(rootCmd *cobra.Command) *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "completion <bash|zsh>",
 		Short: "Generates completion scripts for bash and zsh",
-		Long: `To load completion run into your current shell run
+		Long: `
+To load completion run into your current shell run
 
 . <(kubeone completion <shell>)
 `,
@@ -50,9 +51,12 @@ func completionCmd(rootCmd *cobra.Command) *cobra.Command {
 func documentCmd(rootCmd *cobra.Command) *cobra.Command {
 	var path string
 	var cmd = &cobra.Command{
-		Use:       "document <man|md|rest|yaml>",
-		Short:     "Generates documentation",
-		Long:      "Documentation can be generated as man pages, markdown, restructured text docs or yaml",
+		Use:   "document <man|md|rest|yaml>",
+		Short: "Generates documentation",
+		Long: `
+Documentation can be generated as man pages, markdown, restructured text docs or
+yaml
+`,
 		Example:   "kubeone document man",
 		ValidArgs: []string{"man", "md", "rest", "yaml"},
 		Args:      cobra.ExactValidArgs(1),

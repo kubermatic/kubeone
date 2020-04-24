@@ -20,30 +20,24 @@ import (
 	"fmt"
 
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
 	"github.com/kubermatic/kubeone/pkg/kubeconfig"
-	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/kubermatic/kubeone/pkg/state"
 )
-
-type kubeconfigOptions struct {
-	globalOptions
-	Manifest string
-}
 
 // KubeconfigCommand returns the structure for declaring the "install" subcommand.
 func kubeconfigCmd(rootFlags *pflag.FlagSet) *cobra.Command {
-	kopts := &kubeconfigOptions{}
 	cmd := &cobra.Command{
 		Use:   "kubeconfig <manifest>",
 		Short: "Download the kubeconfig file from master",
-		Long: `Download the kubeconfig file from master.
+		Long: `
+Download the kubeconfig file from master.
 
 This command takes KubeOne manifest which contains information about hosts.
-It's possible to source information about hosts from Terraform output, using the '--tfjson' flag.`,
+It's possible to source information about hosts from Terraform output, using the
+'--tfjson' flag.
+`,
 		Args:    cobra.ExactArgs(1),
 		Example: `kubeone kubeconfig mycluster.yaml -t terraformoutput.json`,
 		RunE: func(_ *cobra.Command, args []string) error {
@@ -51,18 +45,9 @@ It's possible to source information about hosts from Terraform output, using the
 			if err != nil {
 				return errors.Wrap(err, "unable to get global flags")
 			}
+			gopts.ManifestFile = args[0]
 
-			logger := initLogger(gopts.Verbose)
-			kopts.TerraformState = gopts.TerraformState
-			kopts.Verbose = gopts.Verbose
-			kopts.CredentialsFilePath = gopts.CredentialsFilePath
-
-			kopts.Manifest = args[0]
-			if kopts.Manifest == "" {
-				return errors.New("no cluster config file given")
-			}
-
-			return runKubeconfig(logger, kopts)
+			return runKubeconfig(gopts)
 		},
 	}
 
@@ -70,23 +55,11 @@ It's possible to source information about hosts from Terraform output, using the
 }
 
 // runKubeconfig downloads kubeconfig file
-func runKubeconfig(logger *logrus.Logger, kubeconfigOptions *kubeconfigOptions) error {
-	if kubeconfigOptions.Manifest == "" {
-		return errors.New("no cluster config file given")
-	}
-
-	cluster, err := loadClusterConfig(kubeconfigOptions.Manifest, kubeconfigOptions.TerraformState, kubeconfigOptions.CredentialsFilePath, logger)
+func runKubeconfig(opts *globalOptions) error {
+	s, err := opts.BuildState()
 	if err != nil {
-		return errors.Wrap(err, "failed to load cluster")
+		return errors.Wrap(err, "failed to initialize State")
 	}
-
-	s, err := state.New()
-	if err != nil {
-		return err
-	}
-
-	s.Cluster = cluster
-	s.Connector = ssh.NewConnector()
 
 	konfig, err := kubeconfig.Download(s)
 	if err != nil {

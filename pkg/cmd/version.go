@@ -25,7 +25,6 @@ import (
 
 	"github.com/Masterminds/semver"
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
 
@@ -44,12 +43,14 @@ type kubeoneVersions struct {
 }
 
 // versionCmd setups version command
-func versionCmd(_ *pflag.FlagSet) *cobra.Command {
+func versionCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "version",
 		Short: "Display KubeOne version",
-		Long:  `Prints the exact version number, as embedded by the build system.`,
-		Args:  cobra.ExactArgs(0),
+		Long: `
+Prints the exact version number, as embedded by the build system.
+`,
+		Args: cobra.ExactArgs(0),
 		RunE: func(_ *cobra.Command, _ []string) error {
 			ownver := k8sversion.Info{
 				GitVersion: version,

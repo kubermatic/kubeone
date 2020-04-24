@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package upgrade
+package tasks
 
 import (
 	"time"
@@ -26,41 +26,42 @@ import (
 	"github.com/kubermatic/kubeone/pkg/state"
 )
 
-func upgradeWorkers(s *state.State) error {
+func upgradeStaticWorkers(s *state.State) error {
 	// we upgrade seqentially to minimize cluster disruption
-	return s.RunTaskOnStaticWorkers(upgradeStaticWorkersExecutor, false)
+	return s.RunTaskOnStaticWorkers(upgradeStaticWorkersExecutor, state.RunSequentially)
 }
 
 func upgradeStaticWorkersExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	logger := s.Logger.WithField("node", node.PublicAddress)
 
 	logger.Infoln("Labeling static worker node…")
-	err := labelNode(s.DynamicClient, node)
-	if err != nil {
+
+	if err := labelNode(s.DynamicClient, node); err != nil {
 		return errors.Wrap(err, "failed to label static worker node")
 	}
 
 	logger.Infoln("Draining static worker node…")
-	err = drainNode(s, *node)
-	if err != nil {
+	if err := drainNode(s, *node); err != nil {
 		return errors.Wrap(err, "failed to drain static worker node")
 	}
 
 	logger.Infoln("Upgrading Kubernetes binaries on static worker node…")
-	err = upgradeKubernetesBinaries(s, *node)
-	if err != nil {
+	if err := upgradeKubeadmAndCNIBinaries(s, *node); err != nil {
 		return errors.Wrap(err, "failed to upgrade kubernetes binaries on static worker node")
 	}
 
 	logger.Infoln("Running 'kubeadm upgrade' on the static worker node…")
-	err = upgradeStaticWorker(s)
-	if err != nil {
+	if err := upgradeStaticWorker(s); err != nil {
 		return errors.Wrap(err, "failed to upgrade static worker node")
 	}
 
+	logger.Infoln("Upgrading kubernetes system binaries on the static worker node…")
+	if err := upgradeKubeletAndKubectlBinaries(s, *node); err != nil {
+		return errors.Wrap(err, "failed to upgrade kubernetes system binaries on the static worker node")
+	}
+
 	logger.Infoln("Uncordoning static worker node…")
-	err = uncordonNode(s, *node)
-	if err != nil {
+	if err := uncordonNode(s, *node); err != nil {
 		return errors.Wrap(err, "failed to uncordon static worker node")
 	}
 
@@ -68,8 +69,7 @@ func upgradeStaticWorkersExecutor(s *state.State, node *kubeoneapi.HostConfig, c
 	time.Sleep(timeoutNodeUpgrade)
 
 	logger.Infoln("Unlabeling static worker node…")
-	err = unlabelNode(s.DynamicClient, node)
-	if err != nil {
+	if err := unlabelNode(s.DynamicClient, node); err != nil {
 		return errors.Wrap(err, "failed to unlabel static worker node node")
 	}
 

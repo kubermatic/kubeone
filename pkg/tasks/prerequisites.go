@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package installation
+package tasks
 
 import (
 	"github.com/pkg/errors"
@@ -32,12 +32,7 @@ const (
 func installPrerequisites(s *state.State) error {
 	s.Logger.Infoln("Installing prerequisites…")
 
-	err := generateConfigurationFiles(s)
-	if err != nil {
-		return errors.Wrap(err, "unable to generate configuration files")
-	}
-
-	return s.RunTaskOnAllNodes(installPrerequisitesOnNode, true)
+	return s.RunTaskOnAllNodes(installPrerequisitesOnNode, state.RunParallel)
 }
 
 func generateConfigurationFiles(s *state.State) error {
@@ -54,66 +49,20 @@ func generateConfigurationFiles(s *state.State) error {
 }
 
 func installPrerequisitesOnNode(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
-	s.Logger.Infoln("Determine operating system…")
-	os, err := determineOS(s)
-	if err != nil {
-		return errors.Wrap(err, "failed to determine operating system")
-	}
+	logger := s.Logger.WithField("os", node.OperatingSystem)
 
-	node.SetOperatingSystem(os)
-
-	if node.Hostname == "" {
-		s.Logger.Infoln("Determine hostname…")
-		hostname, hostnameErr := determineHostname(s, *node)
-		if hostnameErr != nil {
-			return errors.Wrap(hostnameErr, "failed to determine hostname")
-		}
-		node.SetHostname(hostname)
-	}
-
-	s.Logger.Infoln("Creating environment file…")
-	err = createEnvironmentFile(s)
-	if err != nil {
+	logger.Infoln("Creating environment file…")
+	if err := createEnvironmentFile(s); err != nil {
 		return errors.Wrap(err, "failed to create environment file")
 	}
 
-	logger := s.Logger.WithField("os", os)
-
-	logger.Infoln("Installing kubeadm…")
-	err = installKubeadm(s, *node)
-	if err != nil {
-		return errors.Wrap(err, "failed to install kubeadm")
-	}
-
-	err = configureProxy(s)
-	if err != nil {
+	logger.Infoln("Configuring proxy…")
+	if err := configureProxy(s); err != nil {
 		return errors.Wrap(err, "failed to configure proxy for docker daemon")
 	}
 
-	logger.Infoln("Deploying configuration files…")
-	err = deployConfigurationFiles(s)
-	if err != nil {
-		return errors.Wrap(err, "failed to upload configuration files")
-	}
-
-	return nil
-}
-
-func determineOS(s *state.State) (string, error) {
-	osID, _, err := s.Runner.Run(scripts.OSID(), nil)
-	return osID, err
-}
-
-func determineHostname(s *state.State, _ kubeoneapi.HostConfig) (string, error) {
-	hostnameCmd := scripts.Hostname()
-
-	// on azure the name of the Node should == name of the VM
-	if s.Cluster.CloudProvider.Name == kubeoneapi.CloudProviderNameAzure {
-		hostnameCmd = `hostname`
-	}
-	stdout, _, err := s.Runner.Run(hostnameCmd, nil)
-
-	return stdout, err
+	logger.Infoln("Installing kubeadm…")
+	return errors.Wrap(installKubeadm(s, *node), "failed to install kubeadm")
 }
 
 func createEnvironmentFile(s *state.State) error {
@@ -131,11 +80,11 @@ func installKubeadm(s *state.State, node kubeoneapi.HostConfig) error {
 	var err error
 
 	switch node.OperatingSystem {
-	case "ubuntu", "debian":
+	case osNameDebian, osNameUbuntu:
 		err = installKubeadmDebian(s)
-	case "coreos":
+	case osNameCoreos:
 		err = installKubeadmCoreOS(s)
-	case "centos":
+	case osNameCentos:
 		err = installKubeadmCentOS(s)
 	default:
 		err = errors.Errorf("%q is not a supported operating system", node.OperatingSystem)
@@ -182,9 +131,14 @@ func installKubeadmCoreOS(s *state.State) error {
 	return errors.WithStack(err)
 }
 
-func deployConfigurationFiles(s *state.State) error {
-	err := s.Configuration.UploadTo(s.Runner.Conn, s.WorkDir)
-	if err != nil {
+func uploadConfigurationFiles(s *state.State) error {
+	return s.RunTaskOnAllNodes(uploadConfigurationFilesToNode, state.RunParallel)
+}
+
+func uploadConfigurationFilesToNode(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+	s.Logger.Infoln("Uploading config files…")
+
+	if err := s.Configuration.UploadTo(conn, s.WorkDir); err != nil {
 		return errors.Wrap(err, "failed to upload")
 	}
 

@@ -36,8 +36,9 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
-// DeployMachineDeployments deploys MachineDeployments that create appropriate machines
-func DeployMachineDeployments(s *state.State) error {
+// CreateMachineDeployments creates MachineDeployments that create appropriate
+// worker machines
+func CreateMachineDeployments(s *state.State) error {
 	if s.DynamicClient == nil {
 		return errors.New("kubernetes dynamic client in not initialized")
 	}

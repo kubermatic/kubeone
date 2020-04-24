@@ -18,14 +18,11 @@ package cmd
 
 import (
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
 	"github.com/kubermatic/kubeone/pkg/clusterstatus"
 	"github.com/kubermatic/kubeone/pkg/kubeconfig"
-	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/kubermatic/kubeone/pkg/state"
 )
 
 type statusOptions struct {
@@ -35,7 +32,7 @@ type statusOptions struct {
 
 // statusCmd returns the structure for declaring the "status" subcommand.
 func statusCmd(rootFlags *pflag.FlagSet) *cobra.Command {
-	sopts := &statusOptions{}
+	opts := &statusOptions{}
 	cmd := &cobra.Command{
 		Use:   "status <manifest>",
 		Short: "Status of the cluster",
@@ -51,13 +48,10 @@ It's possible to source information about hosts from Terraform output, using the
 				return errors.Wrap(err, "unable to get global flags")
 			}
 
-			logger := initLogger(gopts.Verbose)
-			sopts.TerraformState = gopts.TerraformState
-			sopts.Verbose = gopts.Verbose
-			sopts.CredentialsFilePath = gopts.CredentialsFilePath
-			sopts.Manifest = args[0]
+			opts.globalOptions = *gopts
+			opts.Manifest = args[0]
 
-			return runStatus(logger, sopts)
+			return runStatus(opts)
 		},
 	}
 
@@ -65,24 +59,11 @@ It's possible to source information about hosts from Terraform output, using the
 }
 
 // runStatus gets cluster status
-func runStatus(logger *logrus.Logger, sOptions *statusOptions) error {
-	if sOptions.Manifest == "" {
-		return errors.New("no cluster config file given")
-	}
-
-	cluster, err := loadClusterConfig(sOptions.Manifest, sOptions.TerraformState, sOptions.CredentialsFilePath, logger)
+func runStatus(opts *statusOptions) error {
+	s, err := opts.BuildState()
 	if err != nil {
-		return errors.Wrap(err, "failed to load cluster")
+		return errors.Wrap(err, "failed to initialize State")
 	}
-
-	s, err := state.New()
-	if err != nil {
-		return err
-	}
-	s.Cluster = cluster
-	s.Logger = logger
-	s.Verbose = sOptions.Verbose
-	s.Connector = ssh.NewConnector()
 
 	if err = kubeconfig.BuildKubernetesClientset(s); err != nil {
 		return err

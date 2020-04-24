@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package upgrade
+package tasks
 
 import (
 	"context"
@@ -22,13 +22,22 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/state"
+	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
 
 	clusterv1alpha1 "github.com/kubermatic/machine-controller/pkg/apis/cluster/v1alpha1"
-
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/util/retry"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
+
+func createMachineDeployments(s *state.State) error {
+	if len(s.Cluster.Workers) == 0 {
+		return nil
+	}
+
+	s.Logger.Infoln("Creating worker machines…")
+	return errors.Wrap(machinecontroller.CreateMachineDeployments(s), "failed to deploy Machines")
+}
 
 func upgradeMachineDeployments(s *state.State) error {
 	if !s.UpgradeMachineDeployments {

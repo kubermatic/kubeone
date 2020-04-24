@@ -30,7 +30,7 @@ import (
 // NodeTask is a task that is specifically tailored to run on a single node.
 type NodeTask func(ctx *State, node *kubeoneapi.HostConfig, conn ssh.Connection) error
 
-func (s *State) runTask(node *kubeoneapi.HostConfig, task NodeTask, prefixed bool) error {
+func (s *State) runTask(node *kubeoneapi.HostConfig, task NodeTask) error {
 	var (
 		err  error
 		conn ssh.Connection
@@ -43,23 +43,18 @@ func (s *State) runTask(node *kubeoneapi.HostConfig, task NodeTask, prefixed boo
 		return errors.Wrapf(err, "failed to connect to %s", node.PublicAddress)
 	}
 
-	prefix := ""
-	if prefixed {
-		prefix = fmt.Sprintf("[%s] ", node.PublicAddress)
-	}
-
 	s.Runner = &runner.Runner{
 		Conn:    conn,
 		Verbose: s.Verbose,
 		OS:      node.OperatingSystem,
-		Prefix:  prefix,
+		Prefix:  fmt.Sprintf("[%s] ", node.PublicAddress),
 	}
 
 	return task(s, node, conn)
 }
 
 // RunTaskOnNodes runs the given task on the given selection of hosts.
-func (s *State) RunTaskOnNodes(nodes []kubeoneapi.HostConfig, task NodeTask, parallel bool) error {
+func (s *State) RunTaskOnNodes(nodes []kubeoneapi.HostConfig, task NodeTask, parallel RunModeEnum) error {
 	var err error
 
 	wg := sync.WaitGroup{}
@@ -69,10 +64,10 @@ func (s *State) RunTaskOnNodes(nodes []kubeoneapi.HostConfig, task NodeTask, par
 		ctx := s.Clone()
 		ctx.Logger = ctx.Logger.WithField("node", nodes[i].PublicAddress)
 
-		if parallel {
+		if parallel == RunParallel {
 			wg.Add(1)
 			go func(ctx *State, node *kubeoneapi.HostConfig) {
-				err = ctx.runTask(node, task, parallel)
+				err = ctx.runTask(node, task)
 				if err != nil {
 					ctx.Logger.Error(err)
 					hasErrors = true
@@ -80,7 +75,7 @@ func (s *State) RunTaskOnNodes(nodes []kubeoneapi.HostConfig, task NodeTask, par
 				wg.Done()
 			}(ctx, &nodes[i])
 		} else {
-			err = ctx.runTask(&nodes[i], task, parallel)
+			err = ctx.runTask(&nodes[i], task)
 			if err != nil {
 				break
 			}
@@ -96,17 +91,22 @@ func (s *State) RunTaskOnNodes(nodes []kubeoneapi.HostConfig, task NodeTask, par
 	return err
 }
 
+type RunModeEnum bool
+
+const (
+	RunSequentially RunModeEnum = false
+	RunParallel     RunModeEnum = true
+)
+
 // RunTaskOnAllNodes runs the given task on all hosts.
-func (s *State) RunTaskOnAllNodes(task NodeTask, parallel bool) error {
+func (s *State) RunTaskOnAllNodes(task NodeTask, parallel RunModeEnum) error {
 	// It's not possible to concatenate host lists in this function.
 	// Some of the tasks(determineOS, determineHostname) write to the state and sending a copy would break that.
-	if err := s.RunTaskOnNodes(s.Cluster.Hosts, task, parallel); err != nil {
+	if err := s.RunTaskOnControlPlane(task, parallel); err != nil {
 		return err
 	}
-	if s.Cluster.StaticWorkers != nil {
-		return s.RunTaskOnNodes(s.Cluster.StaticWorkers, task, parallel)
-	}
-	return nil
+
+	return s.RunTaskOnStaticWorkers(task, parallel)
 }
 
 // RunTaskOnLeader runs the given task on the leader host.
@@ -124,10 +124,14 @@ func (s *State) RunTaskOnLeader(task NodeTask) error {
 }
 
 // RunTaskOnFollowers runs the given task on the follower hosts.
-func (s *State) RunTaskOnFollowers(task NodeTask, parallel bool) error {
+func (s *State) RunTaskOnFollowers(task NodeTask, parallel RunModeEnum) error {
 	return s.RunTaskOnNodes(s.Cluster.Followers(), task, parallel)
 }
 
-func (s *State) RunTaskOnStaticWorkers(task NodeTask, parallel bool) error {
+func (s *State) RunTaskOnControlPlane(task NodeTask, parallel RunModeEnum) error {
+	return s.RunTaskOnNodes(s.Cluster.Hosts, task, parallel)
+}
+
+func (s *State) RunTaskOnStaticWorkers(task NodeTask, parallel RunModeEnum) error {
 	return s.RunTaskOnNodes(s.Cluster.StaticWorkers, task, parallel)
 }

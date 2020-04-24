@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package installation
+package tasks
 
 import (
 	"fmt"
@@ -30,30 +30,34 @@ import (
 func generateKubeadm(s *state.State) error {
 	s.Logger.Infoln("Generating kubeadm config file…")
 
-	kadm, err := kubeadm.New(s.Cluster.Versions.Kubernetes)
+	kubeadmProvider, err := kubeadm.New(s.Cluster.Versions.Kubernetes)
 	if err != nil {
 		return errors.Wrap(err, "failed to init kubeadm")
 	}
 
 	for idx := range s.Cluster.Hosts {
-		kubeadm, err := kadm.Config(s, s.Cluster.Hosts[idx])
+		node := s.Cluster.Hosts[idx]
+		kubeadmConf, err := kubeadmProvider.Config(s, node)
 		if err != nil {
 			return errors.Wrap(err, "failed to create kubeadm configuration")
 		}
 
-		s.Configuration.AddFile(fmt.Sprintf("cfg/master_%d.yaml", s.Cluster.Hosts[idx].ID), kubeadm)
+		s.Configuration.AddFile(fmt.Sprintf("cfg/master_%d.yaml", node.ID), kubeadmConf)
 	}
 
 	for idx := range s.Cluster.StaticWorkers {
-		kubeadm, err := kadm.ConfigWorker(s, s.Cluster.StaticWorkers[idx])
+		node := s.Cluster.StaticWorkers[idx]
+		kubeadmConf, err := kubeadmProvider.ConfigWorker(s, node)
 		if err != nil {
 			return errors.Wrap(err, "failed to create kubeadm configuration")
 		}
-		s.Configuration.AddFile(fmt.Sprintf("cfg/worker_%d.yaml", s.Cluster.StaticWorkers[idx].ID), kubeadm)
+
+		s.Configuration.AddFile(fmt.Sprintf("cfg/worker_%d.yaml", node.ID), kubeadmConf)
 	}
-	return s.RunTaskOnAllNodes(generateKubeadmOnNode, true)
+
+	return s.RunTaskOnAllNodes(uploadKubeadmToNode, state.RunParallel)
 }
 
-func generateKubeadmOnNode(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func uploadKubeadmToNode(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	return errors.Wrap(s.Configuration.UploadTo(conn, s.WorkDir), "failed to upload")
 }

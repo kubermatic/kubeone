@@ -14,20 +14,28 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package installation
+package tasks
 
 import (
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/scripts"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/state"
 )
 
-func deployCA(s *state.State) error {
-	s.Logger.Infoln("Deploying PKI…")
-	return s.RunTaskOnFollowers(deployCAOnNode, true)
+func joinStaticWorkerNodes(s *state.State) error {
+	return s.RunTaskOnStaticWorkers(joinStaticWorkerInternal, state.RunParallel)
 }
 
-func deployCAOnNode(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
-	s.Logger.Infoln("Uploading files…")
-	return s.Configuration.UploadTo(conn, s.WorkDir)
+func joinStaticWorkerInternal(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+	logger := s.Logger.WithField("node", node.PublicAddress)
+
+	logger.Info("Joining worker node")
+	cmd, err := scripts.KubeadmJoinWorker(s.WorkDir, node.ID, s.KubeadmVerboseFlag())
+	if err != nil {
+		return err
+	}
+
+	_, _, err = s.Runner.RunRaw(cmd)
+	return err
 }

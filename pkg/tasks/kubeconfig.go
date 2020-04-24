@@ -14,37 +14,43 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package upgrade
+package tasks
 
 import (
+	"fmt"
+	"io/ioutil"
+
+	"github.com/pkg/errors"
+
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/kubeconfig"
 	"github.com/kubermatic/kubeone/pkg/scripts"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/state"
 )
 
-func drainNode(s *state.State, node kubeoneapi.HostConfig) error {
-	cmd, err := scripts.DrainNode(node.Hostname)
-	if err != nil {
-		return err
-	}
+func copyKubeconfig(s *state.State) error {
+	return s.RunTaskOnNodes(s.Cluster.Hosts, func(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
+		s.Logger.Infoln("Copying Kubeconfig to home directory…")
+		cmd, err := scripts.KubernetesAdminConfig()
+		if err != nil {
+			return err
+		}
 
-	return s.RunTaskOnLeader(func(s *state.State, _ *kubeoneapi.HostConfig, _ ssh.Connection) error {
-		_, _, err := s.Runner.RunRaw(cmd)
-
+		_, _, err = s.Runner.RunRaw(cmd)
 		return err
-	})
+	}, state.RunParallel)
 }
 
-func uncordonNode(s *state.State, node kubeoneapi.HostConfig) error {
-	cmd, err := scripts.UncordonNode(node.Hostname)
+func saveKubeconfig(s *state.State) error {
+	s.Logger.Info("Downloading kubeconfig…")
+
+	kc, err := kubeconfig.Download(s)
 	if err != nil {
 		return err
 	}
 
-	return s.RunTaskOnLeader(func(s *state.State, _ *kubeoneapi.HostConfig, _ ssh.Connection) error {
-		_, _, err := s.Runner.RunRaw(cmd)
-
-		return err
-	})
+	fileName := fmt.Sprintf("%s-kubeconfig", s.Cluster.Name)
+	err = ioutil.WriteFile(fileName, kc, 0644)
+	return errors.Wrap(err, "error saving kubeconfig file to the local machine")
 }

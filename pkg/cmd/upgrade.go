@@ -18,24 +18,33 @@ package cmd
 
 import (
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
 	"github.com/kubermatic/kubeone/pkg/credentials"
-	"github.com/kubermatic/kubeone/pkg/upgrader"
+	"github.com/kubermatic/kubeone/pkg/state"
+	"github.com/kubermatic/kubeone/pkg/tasks"
 )
 
-type upgradeOptions struct {
+type upgradeOpts struct {
 	globalOptions
+	ForceUpgrade              bool `longflag:"force" shortflag:"f"`
+	UpgradeMachineDeployments bool `longflag:"upgrade-machine-deployments"`
+}
 
-	ForceUpgrade              bool
-	Manifest                  string
-	UpgradeMachineDeployments bool
+func (opts *upgradeOpts) BuildState() (*state.State, error) {
+	s, err := opts.globalOptions.BuildState()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to build state")
+	}
+
+	s.ForceUpgrade = opts.ForceUpgrade
+	s.UpgradeMachineDeployments = opts.UpgradeMachineDeployments
+	return s, nil
 }
 
 func upgradeCmd(rootFlags *pflag.FlagSet) *cobra.Command {
-	uopts := &upgradeOptions{}
+	opts := &upgradeOpts{}
 	cmd := &cobra.Command{
 		Use:   "upgrade <manifest>",
 		Short: "Upgrade Kubernetes",
@@ -51,48 +60,41 @@ It's possible to source information about hosts from Terraform output, using the
 				return errors.Wrap(err, "unable to get global flags")
 			}
 
-			logger := initLogger(gopts.Verbose)
-			uopts.TerraformState = gopts.TerraformState
-			uopts.Verbose = gopts.Verbose
+			opts.globalOptions = *gopts
+			opts.ManifestFile = args[0]
 
-			uopts.Manifest = args[0]
-			if uopts.Manifest == "" {
-				return errors.New("no cluster config file given")
-			}
-
-			return runUpgrade(logger, uopts)
+			return runUpgrade(opts)
 		},
 	}
 
-	cmd.Flags().BoolVarP(&uopts.ForceUpgrade, "force", "f", false, "force start upgrade process")
-	cmd.Flags().BoolVarP(&uopts.UpgradeMachineDeployments, "upgrade-machine-deployments", "", false, "upgrade MachineDeployments objects")
+	cmd.Flags().BoolVarP(
+		&opts.ForceUpgrade,
+		longFlagName(opts, "ForceUpgrade"),
+		shortFlagName(opts, "ForceUpgrade"),
+		false,
+		"force start upgrade process")
+
+	cmd.Flags().BoolVar(
+		&opts.UpgradeMachineDeployments,
+		longFlagName(opts, "UpgradeMachineDeployments"),
+		false,
+		"upgrade MachineDeployments objects")
 
 	return cmd
 }
 
 // runUpgrade upgrades Kubernetes on the provided machines
-func runUpgrade(logger *logrus.Logger, upgradeOptions *upgradeOptions) error {
-	cluster, err := loadClusterConfig(upgradeOptions.Manifest, upgradeOptions.TerraformState, upgradeOptions.CredentialsFilePath, logger)
+func runUpgrade(opts *upgradeOpts) error {
+	s, err := opts.BuildState()
 	if err != nil {
-		return errors.Wrap(err, "failed to load cluster")
+		return errors.Wrap(err, "failed to initialize State")
 	}
 
 	// Validate credentials
-	_, err = credentials.ProviderCredentials(cluster.CloudProvider.Name, upgradeOptions.CredentialsFilePath)
+	_, err = credentials.ProviderCredentials(s.Cluster.CloudProvider.Name, opts.CredentialsFile)
 	if err != nil {
 		return errors.Wrap(err, "failed to validate credentials")
 	}
 
-	options := createUpgradeOptions(upgradeOptions)
-	return upgrader.NewUpgrader(cluster, logger).Upgrade(options)
-}
-
-func createUpgradeOptions(options *upgradeOptions) *upgrader.Options {
-	return &upgrader.Options{
-		Manifest:                  options.Manifest,
-		CredentialsFile:           options.CredentialsFilePath,
-		ForceUpgrade:              options.ForceUpgrade,
-		Verbose:                   options.Verbose,
-		UpgradeMachineDeployments: options.UpgradeMachineDeployments,
-	}
+	return errors.Wrap(tasks.WithUpgrade(nil).Run(s), "failed to upgrade cluster")
 }

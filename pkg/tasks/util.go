@@ -14,10 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package upgrade
+package tasks
 
 import (
 	"context"
+	"time"
 
 	"github.com/pkg/errors"
 
@@ -31,6 +32,14 @@ import (
 	"k8s.io/client-go/util/retry"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
+)
+
+const (
+	labelUpgradeLock      = "kubeone.io/upgrade-in-progress"
+	labelControlPlaneNode = "node-role.kubernetes.io/master"
+	// timeoutNodeUpgrade is time for how long kubeone will wait after finishing the upgrade
+	// process on the node
+	timeoutNodeUpgrade = 30 * time.Second
 )
 
 func determineHostname(s *state.State) error {
@@ -53,7 +62,7 @@ func determineHostname(s *state.State) error {
 
 		node.SetHostname(stdout)
 		return nil
-	}, true)
+	}, state.RunParallel)
 }
 
 func determineOS(s *state.State) error {
@@ -66,7 +75,7 @@ func determineOS(s *state.State) error {
 
 		node.SetOperatingSystem(osID)
 		return nil
-	}, true)
+	}, state.RunParallel)
 }
 
 func labelNode(client dynclient.Client, host *kubeoneapi.HostConfig) error {

@@ -14,11 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package installation
+package tasks
 
 import (
-	"time"
-
 	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
@@ -31,30 +29,11 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
-// Reset undos all changes made by KubeOne to the configured machines.
-func Reset(s *state.State) error {
-	s.Logger.Infoln("Resetting cluster…")
-
-	if s.DestroyWorkers {
-		if err := destroyWorkers(s); err != nil {
-			return err
-		}
-	}
-
-	if err := s.RunTaskOnAllNodes(resetNode, false); err != nil {
-		return err
-	}
-
-	if s.RemoveBinaries {
-		if err := s.RunTaskOnAllNodes(removeBinaries, true); err != nil {
-			return errors.Wrap(err, "unable to remove kubernetes binaries")
-		}
-	}
-
-	return nil
-}
-
 func destroyWorkers(s *state.State) error {
+	if !s.DestroyWorkers {
+		return nil
+	}
+
 	var lastErr error
 	s.Logger.Infoln("Destroying worker nodes…")
 
@@ -111,6 +90,12 @@ func destroyWorkers(s *state.State) error {
 	return nil
 }
 
+func resetAllNodes(s *state.State) error {
+	s.Logger.Infoln("Resettings all the nodes…")
+
+	return s.RunTaskOnAllNodes(resetNode, state.RunSequentially)
+}
+
 func resetNode(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	s.Logger.Infoln("Resetting node…")
 
@@ -123,26 +108,34 @@ func resetNode(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) er
 	return err
 }
 
+func removeBinariesAllNodes(s *state.State) error {
+	if !s.RemoveBinaries {
+		return nil
+	}
+
+	s.Logger.Infoln("Removing binaries from nodes…")
+	return s.RunTaskOnAllNodes(removeBinaries, state.RunParallel)
+}
+
 func removeBinaries(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	s.Logger.Infoln("Removing Kubernetes binaries")
+	var err error
 
 	// Determine operating system
-	os, err := determineOS(s)
-	if err != nil {
+	if err = determineOS(s); err != nil {
 		return errors.Wrap(err, "failed to determine operating system")
 	}
-	node.SetOperatingSystem(os)
 
 	// Remove Kubernetes binaries
 	switch node.OperatingSystem {
-	case "ubuntu", "debian":
+	case osNameDebian, osNameUbuntu:
 		err = removeBinariesDebian(s)
-	case "centos":
+	case osNameCentos:
 		err = removeBinariesCentOS(s)
-	case "coreos":
+	case osNameCoreos:
 		err = removeBinariesCoreOS(s)
 	default:
-		err = errors.Errorf("'%s' is not a supported operating system", node.OperatingSystem)
+		err = errors.Errorf("%q is not a supported operating system", node.OperatingSystem)
 	}
 
 	return err
@@ -176,16 +169,4 @@ func removeBinariesCoreOS(s *state.State) error {
 
 	_, _, err = s.Runner.RunRaw(cmd)
 	return errors.WithStack(err)
-}
-
-func defaultRetryBackoff(retries int) wait.Backoff {
-	if retries == 0 {
-		retries = 1
-	}
-
-	return wait.Backoff{
-		Steps:    retries,
-		Duration: 5 * time.Second,
-		Factor:   2.0,
-	}
 }

@@ -14,20 +14,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package installation
+package tasks
 
 import (
-	"github.com/pkg/errors"
-
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/state"
-	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
 )
 
-func createWorkerMachines(s *state.State) error {
-	if len(s.Cluster.Workers) == 0 {
-		return nil
-	}
+func deployPKIToFollowers(s *state.State) error {
+	s.Logger.Infoln("Deploying PKI…")
+	return s.RunTaskOnFollowers(deployCAOnNode, state.RunParallel)
+}
 
-	s.Logger.Infoln("Creating worker machines…")
-	return errors.Wrap(machinecontroller.DeployMachineDeployments(s), "failed to deploy Machines")
+func deployCAOnNode(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+	s.Logger.Infoln("Uploading PKI files…")
+	return s.Configuration.UploadTo(conn, s.WorkDir)
 }

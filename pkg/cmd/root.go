@@ -50,18 +50,21 @@ func Execute() {
 	rootCmd := newRoot()
 
 	if err := rootCmd.Execute(); err != nil {
-		debug, _ := rootCmd.PersistentFlags().GetBool(globalDebugFlagName)
+		debug, _ := rootCmd.PersistentFlags().GetBool(longFlagName(&globalOptions{}, "Debug"))
+
 		if debug {
 			fmt.Printf("%+v\n", err)
 		} else {
 			fmt.Println(err)
 		}
+
 		os.Exit(-1)
 	}
 }
 
 func newRoot() *cobra.Command {
 	opts := &globalOptions{}
+
 	rootCmd := &cobra.Command{
 		Use:          "kubeone",
 		Short:        "Kubernetes Cluster provisioning and maintaining tool",
@@ -74,19 +77,37 @@ func newRoot() *cobra.Command {
 
 	fs := rootCmd.PersistentFlags()
 
-	fs.StringVarP(&opts.TerraformState, globalTerraformFlagName, "t", "",
+	fs.StringVarP(&opts.TerraformState,
+		longFlagName(opts, "TerraformState"),
+		shortFlagName(opts, "TerraformState"),
+		"",
 		"Source for terraform output in JSON - to read from stdin. If path is a file, contents will be used. If path is a dictionary, `terraform output -json` is executed in this path")
-	fs.StringVarP(&opts.CredentialsFilePath, globalCredentialsFlagName, "c", "", "File to source credentials and secrets from")
-	fs.BoolVarP(&opts.Verbose, globalVerboseFlagName, "v", false, "verbose")
-	fs.BoolVarP(&opts.Debug, globalDebugFlagName, "d", false, "debug")
+
+	fs.StringVarP(&opts.CredentialsFile,
+		longFlagName(opts, "CredentialsFile"),
+		shortFlagName(opts, "CredentialsFile"),
+		"",
+		"File to source credentials and secrets from")
+
+	fs.BoolVarP(&opts.Verbose,
+		longFlagName(opts, "Verbose"),
+		shortFlagName(opts, "Verbose"),
+		false,
+		"verbose output")
+
+	fs.BoolVarP(&opts.Debug,
+		longFlagName(opts, "Debug"),
+		shortFlagName(opts, "Debug"),
+		false,
+		"debug output with stacktrace")
 
 	rootCmd.AddCommand(
 		installCmd(fs),
 		upgradeCmd(fs),
 		resetCmd(fs),
 		kubeconfigCmd(fs),
-		configCmd(fs),
-		versionCmd(fs),
+		configCmd(),
+		versionCmd(),
 		statusCmd(fs),
 		completionCmd(rootCmd),
 		documentCmd(rootCmd),

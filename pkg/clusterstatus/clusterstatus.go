@@ -66,7 +66,7 @@ func determineHostname(s *state.State) error {
 
 		node.SetHostname(stdout)
 		return nil
-	}, true)
+	}, state.RunParallel)
 }
 
 func PrintClusterStatus(s *state.State) error {

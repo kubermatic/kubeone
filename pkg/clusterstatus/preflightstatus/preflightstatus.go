@@ -83,7 +83,7 @@ func verifyBinaries(s *state.State) error {
 			return err
 		}
 		return nil
-	}, true)
+	}, state.RunParallel)
 }
 
 // verifyMatchNodes ensures match between nodes in the cluster and machines defined in the manifest

@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package installation
+package tasks
 
 import (
 	"time"
@@ -25,6 +25,28 @@ import (
 	"github.com/kubermatic/kubeone/pkg/state"
 )
 
+func joinControlplaneNode(s *state.State) error {
+	s.Logger.Infoln("Joining controlplane node…")
+	return s.RunTaskOnFollowers(joinControlPlaneNodeInternal, state.RunSequentially)
+}
+
+func joinControlPlaneNodeInternal(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+	logger := s.Logger.WithField("node", node.PublicAddress)
+
+	sleepTime := 120 * time.Second
+	logger.Infof("Waiting %s to ensure main control plane components are up…", sleepTime)
+	time.Sleep(sleepTime)
+
+	logger.Info("Joining control plane node")
+	cmd, err := scripts.KubeadmJoin(s.WorkDir, node.ID, s.KubeadmVerboseFlag())
+	if err != nil {
+		return err
+	}
+
+	_, _, err = s.Runner.RunRaw(cmd)
+	return err
+}
+
 func kubeadmCertsOnLeader(s *state.State) error {
 	s.Logger.Infoln("Configuring certs and etcd on first controller…")
 	return s.RunTaskOnLeader(kubeadmCertsExecutor)
@@ -32,7 +54,7 @@ func kubeadmCertsOnLeader(s *state.State) error {
 
 func kubeadmCertsOnFollower(s *state.State) error {
 	s.Logger.Infoln("Configuring certs and etcd on consecutive controller…")
-	return s.RunTaskOnFollowers(kubeadmCertsExecutor, true)
+	return s.RunTaskOnFollowers(kubeadmCertsExecutor, state.RunParallel)
 }
 
 func kubeadmCertsExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
