@@ -24,45 +24,24 @@ import (
 	"github.com/kubermatic/kubeone/pkg/state"
 )
 
-const (
-	osNameDebian = "debian"
-	osNameUbuntu = "ubuntu"
-	osNameCoreos = "coreos"
-	osNameCentos = "centos"
-)
-
 func upgradeKubeletAndKubectlBinaries(s *state.State, node kubeoneapi.HostConfig) error {
-	var err error
-
-	switch node.OperatingSystem {
-	case osNameDebian, osNameUbuntu:
-		err = upgradeKubeletAndKubectlBinariesDebian(s)
-	case osNameCoreos:
-		err = upgradeKubeletAndKubectlBinariesCoreOS(s)
-	case osNameCentos:
-		err = upgradeKubeletAndKubectlBinariesCentOS(s)
-	default:
-		err = errors.Errorf("%q is not a supported operating system", node.OperatingSystem)
-	}
-
-	return err
+	return runOnOS(s, osNameEnum(node.OperatingSystem), map[osNameEnum]runOnOSFn{
+		osNameDebian:  upgradeKubeletAndKubectlBinariesDebian,
+		osNameUbuntu:  upgradeKubeletAndKubectlBinariesDebian,
+		osNameCoreos:  upgradeKubeletAndKubectlBinariesCoreOS,
+		osNameFlatcar: upgradeKubeletAndKubectlBinariesCoreOS,
+		osNameCentos:  upgradeKubeletAndKubectlBinariesCentOS,
+	})
 }
 
 func upgradeKubeadmAndCNIBinaries(s *state.State, node kubeoneapi.HostConfig) error {
-	var err error
-
-	switch node.OperatingSystem {
-	case osNameDebian, osNameUbuntu:
-		err = upgradeKubeadmAndCNIBinariesDebian(s)
-	case osNameCoreos:
-		err = upgradeKubeadmAndCNIBinariesCoreOS(s)
-	case osNameCentos:
-		err = upgradeKubeadmAndCNIBinariesCentOS(s)
-	default:
-		err = errors.Errorf("%q is not a supported operating system", node.OperatingSystem)
-	}
-
-	return err
+	return runOnOS(s, osNameEnum(node.OperatingSystem), map[osNameEnum]runOnOSFn{
+		osNameDebian:  upgradeKubeadmAndCNIBinariesDebian,
+		osNameUbuntu:  upgradeKubeadmAndCNIBinariesDebian,
+		osNameCoreos:  upgradeKubeadmAndCNIBinariesCoreOS,
+		osNameFlatcar: upgradeKubeadmAndCNIBinariesCoreOS,
+		osNameCentos:  upgradeKubeadmAndCNIBinariesCentOS,
+	})
 }
 
 func upgradeKubeletAndKubectlBinariesDebian(s *state.State) error {

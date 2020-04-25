@@ -115,3 +115,24 @@ func unlabelNode(client dynclient.Client, host *kubeoneapi.HostConfig) error {
 
 	return errors.Wrapf(retErr, "failed to remove label %s from node %s", labelUpgradeLock, host.Hostname)
 }
+
+type osNameEnum string
+
+type runOnOSFn func(*state.State) error
+
+const (
+	osNameDebian  osNameEnum = "debian"
+	osNameUbuntu  osNameEnum = "ubuntu"
+	osNameCoreos  osNameEnum = "coreos"
+	osNameFlatcar osNameEnum = "flatcar"
+	osNameCentos  osNameEnum = "centos"
+)
+
+func runOnOS(s *state.State, osname osNameEnum, fnMap map[osNameEnum]runOnOSFn) error {
+	fn, ok := fnMap[osname]
+	if !ok {
+		return errors.Errorf("%q is not a supported operating system", osname)
+	}
+
+	return errors.WithStack(fn(s))
+}

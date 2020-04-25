@@ -126,19 +126,13 @@ func removeBinaries(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connec
 		return errors.Wrap(err, "failed to determine operating system")
 	}
 
-	// Remove Kubernetes binaries
-	switch node.OperatingSystem {
-	case osNameDebian, osNameUbuntu:
-		err = removeBinariesDebian(s)
-	case osNameCentos:
-		err = removeBinariesCentOS(s)
-	case osNameCoreos:
-		err = removeBinariesCoreOS(s)
-	default:
-		err = errors.Errorf("%q is not a supported operating system", node.OperatingSystem)
-	}
-
-	return err
+	return runOnOS(s, osNameEnum(node.OperatingSystem), map[osNameEnum]runOnOSFn{
+		osNameDebian:  removeBinariesDebian,
+		osNameUbuntu:  removeBinariesDebian,
+		osNameCoreos:  removeBinariesCoreOS,
+		osNameFlatcar: removeBinariesCoreOS,
+		osNameCentos:  removeBinariesCentOS,
+	})
 }
 
 func removeBinariesDebian(s *state.State) error {

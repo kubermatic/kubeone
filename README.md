@@ -38,7 +38,7 @@ upgrade to the v0.6.0 or newer as soon as possible.
 * Supports Kubernetes 1.13+ High-Available (HA) clusters
 * Uses `kubeadm` to provision clusters
 * Comes with a straightforward and easy to use CLI
-* Choice of Linux distributions between Ubuntu, CentOS and CoreOS
+* Choice of Linux distributions between Ubuntu, CentOS and CoreOS/Flatcar
 * Integrates with [Cluster-API][7] and [Kubermatic machine-controller][8] to
   manage worker nodes
 * Integrates with Terraform for sourcing data about infrastructure and control

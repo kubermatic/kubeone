@@ -25,6 +25,7 @@ variable "worker_os" {
   # * ubuntu
   # * centos
   # * coreos
+  # * flatcar
   default = "ubuntu"
 }
 

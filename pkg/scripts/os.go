@@ -272,6 +272,7 @@ sudo yum install -y --disableexcludes=kubernetes \
 	kubeadm-{{ .KUBERNETES_VERSION }}-0 \
 	kubernetes-cni-{{ .CNI_VERSION }}-0
 `
+
 	upgradeKubeadmAndCNICoreOSScriptTemplate = `
 source /etc/kubeone/proxy-env
 
