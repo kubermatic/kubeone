@@ -52,17 +52,14 @@ func upgradeCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 
 This command takes KubeOne manifest which contains information about hosts and how the cluster should be provisioned.
 It's possible to source information about hosts from Terraform output, using the '--tfjson' flag.`,
-		Args:    cobra.ExactArgs(1),
-		Example: `kubeone upgrade mycluster.yaml -t terraformoutput.json`,
-		RunE: func(_ *cobra.Command, args []string) error {
+		Example: `kubeone upgrade -m mycluster.yaml -t terraformoutput.json`,
+		RunE: func(_ *cobra.Command, _ []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
 				return errors.Wrap(err, "unable to get global flags")
 			}
 
 			opts.globalOptions = *gopts
-			opts.ManifestFile = args[0]
-
 			return runUpgrade(opts)
 		},
 	}

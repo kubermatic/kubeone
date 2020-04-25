@@ -30,7 +30,7 @@ import (
 )
 
 type globalOptions struct {
-	ManifestFile    string
+	ManifestFile    string `longflag:"manifest" shortflag:"m"`
 	TerraformState  string `longflag:"tfjson" shortflag:"t"`
 	CredentialsFile string `longflag:"credentials" shortflag:"c"`
 	Verbose         bool   `longflag:"verbose" shortflag:"v"`
@@ -75,6 +75,12 @@ func shortFlagName(obj interface{}, fieldName string) string {
 
 func persistentGlobalOptions(fs *pflag.FlagSet) (*globalOptions, error) {
 	gf := &globalOptions{}
+
+	manifestFile, err := fs.GetString(longFlagName(gf, "ManifestFile"))
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	gf.ManifestFile = manifestFile
 
 	verbose, err := fs.GetBool(longFlagName(gf, "Verbose"))
 	if err != nil {

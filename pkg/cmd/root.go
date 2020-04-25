@@ -77,6 +77,12 @@ func newRoot() *cobra.Command {
 
 	fs := rootCmd.PersistentFlags()
 
+	fs.StringVarP(&opts.ManifestFile,
+		longFlagName(opts, "ManifestFile"),
+		shortFlagName(opts, "ManifestFile"),
+		"./kubeone.yaml",
+		"Path to the KubeOne config")
+
 	fs.StringVarP(&opts.TerraformState,
 		longFlagName(opts, "TerraformState"),
 		shortFlagName(opts, "TerraformState"),

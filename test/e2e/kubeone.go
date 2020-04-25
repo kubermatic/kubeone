@@ -110,7 +110,9 @@ func (k1 *Kubeone) Install(tfJSON string, installFlags []string) error {
 		return err
 	}
 
-	flags := []string{"install", "--tfjson", "tf.json", k1.ConfigurationFilePath}
+	flags := []string{"install",
+		"--tfjson", "tf.json",
+		"--manifest", k1.ConfigurationFilePath}
 	if len(installFlags) != 0 {
 		flags = append(flags, installFlags...)
 	}
@@ -125,7 +127,10 @@ func (k1 *Kubeone) Install(tfJSON string, installFlags []string) error {
 
 // Upgrade runs 'kubeone upgrade' command to upgrade the cluster
 func (k1 *Kubeone) Upgrade(upgradeFlags []string) error {
-	flags := []string{"upgrade", "--tfjson", "tf.json", "--upgrade-machine-deployments", k1.ConfigurationFilePath}
+	flags := []string{"upgrade",
+		"--tfjson", "tf.json",
+		"--upgrade-machine-deployments",
+		"--manifest", k1.ConfigurationFilePath}
 	if len(upgradeFlags) != 0 {
 		flags = append(flags, upgradeFlags...)
 	}
@@ -142,7 +147,9 @@ func (k1 *Kubeone) Upgrade(upgradeFlags []string) error {
 func (k1 *Kubeone) Kubeconfig() ([]byte, error) {
 	var kubeconfigBuf bytes.Buffer
 
-	exe := k1.build("kubeconfig", "--tfjson", "tf.json", k1.ConfigurationFilePath)
+	exe := k1.build("kubeconfig",
+		"--tfjson", "tf.json",
+		"--manifest", k1.ConfigurationFilePath)
 	testutil.StdoutTo(&kubeconfigBuf)(exe)
 
 	if err := exe.Run(); err != nil {
@@ -163,7 +170,11 @@ func (k1 *Kubeone) Kubeconfig() ([]byte, error) {
 
 // Reset runs 'kubeone reset' command to destroy worker nodes and unprovision the cluster
 func (k1 *Kubeone) Reset() error {
-	err := k1.run("-v", "reset", "--tfjson", "tf.json", "--destroy-workers", k1.ConfigurationFilePath)
+	err := k1.run("reset",
+		"-v",
+		"--tfjson", "tf.json",
+		"--destroy-workers",
+		"--manifest", k1.ConfigurationFilePath)
 	if err != nil {
 		return fmt.Errorf("destroing workers failed: %w", err)
 	}
