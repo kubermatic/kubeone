@@ -147,7 +147,9 @@ func (k1 *Kubeone) Upgrade(upgradeFlags []string) error {
 func (k1 *Kubeone) Kubeconfig() ([]byte, error) {
 	var kubeconfigBuf bytes.Buffer
 
-	exe := k1.build("kubeconfig", "--tfjson", "tf.json", k1.ConfigurationFilePath)
+	exe := k1.build("kubeconfig",
+		"--tfjson", "tf.json",
+		"--manifest", k1.ConfigurationFilePath)
 	testutil.StdoutTo(&kubeconfigBuf)(exe)
 
 	if err := exe.Run(); err != nil {
@@ -168,7 +170,11 @@ func (k1 *Kubeone) Kubeconfig() ([]byte, error) {
 
 // Reset runs 'kubeone reset' command to destroy worker nodes and unprovision the cluster
 func (k1 *Kubeone) Reset() error {
-	err := k1.run("-v", "reset", "--tfjson", "tf.json", "--destroy-workers", k1.ConfigurationFilePath)
+	err := k1.run("reset",
+		"-v",
+		"--tfjson", "tf.json",
+		"--destroy-workers",
+		"--manifest", k1.ConfigurationFilePath)
 	if err != nil {
 		return fmt.Errorf("destroing workers failed: %w", err)
 	}
