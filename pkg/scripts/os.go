@@ -29,22 +29,10 @@ const (
 sudo swapoff -a
 sudo sed -i '/.*swap.*/d' /etc/fstab
 
-. /etc/os-release
-. /etc/kubeone/proxy-env
+source /etc/os-release
+source /etc/kubeone/proxy-env
 
-HOST_ARCH=""
-case $(uname -m) in
-x86_64)
-    HOST_ARCH="amd64"
-    ;;
-aarch64)
-    HOST_ARCH="arm64"
-    ;;
-*)
-    echo "unsupported CPU architecture, exiting"
-    exit 1
-    ;;
-esac
+{{ detectHostArch }}
 
 # Short-Circuit the installation if it was already executed
 if type docker &>/dev/null && type kubelet &>/dev/null; then exit 0; fi
@@ -115,7 +103,7 @@ sudo sed -i '/.*swap.*/d' /etc/fstab
 sudo setenforce 0 || true
 sudo sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/sysconfig/selinux
 
-. /etc/kubeone/proxy-env
+source /etc/kubeone/proxy-env
 
 sudo mkdir -p /etc/docker
 cat <<EOF | sudo tee /etc/docker/daemon.json
@@ -174,7 +162,9 @@ sudo systemctl enable --now kubelet
 `
 
 	kubeadmCoreOSTemplate = `
-. /etc/kubeone/proxy-env
+source /etc/kubeone/proxy-env
+
+{{ detectHostArch }}
 
 # Short-Circuit the installation if it was already executed
 if type docker &>/dev/null && type kubelet &>/dev/null; then exit 0; fi
@@ -276,6 +266,8 @@ sudo yum install -y --disableexcludes=kubernetes \
 	upgradeKubeadmAndCNICoreOSScriptTemplate = `
 source /etc/kubeone/proxy-env
 
+{{ detectHostArch }}
+
 sudo mkdir -p /opt/cni/bin
 curl -L "https://github.com/containernetworking/plugins/releases/download/v{{ .CNI_VERSION }}/cni-plugins-${HOST_ARCH}-v{{ .CNI_VERSION }}.tgz" |
 	sudo tar -C /opt/cni/bin -xz
@@ -315,6 +307,9 @@ sudo yum install -y --disableexcludes=kubernetes \
 
 	upgradeKubeletAndKubectlCoreOSScriptTemplate = `
 source /etc/kubeone/proxy-env
+
+{{ detectHostArch }}
+
 RELEASE="v{{ .KUBERNETES_VERSION }}"
 sudo mkdir -p /var/tmp/kube-binaries
 cd /var/tmp/kube-binaries
