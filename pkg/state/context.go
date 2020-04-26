@@ -35,7 +35,7 @@ func New() (*State, error) {
 		JoinToken:     joinToken,
 		Connector:     ssh.NewConnector(),
 		Configuration: configupload.NewConfiguration(),
-		WorkDir:       "kubeone",
+		WorkDir:       "./kubeone",
 	}, err
 }
 

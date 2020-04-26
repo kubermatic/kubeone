@@ -1,0 +1,12 @@
+set -xeu pipefail
+export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
+
+source /etc/os-release
+source /etc/kubeone/proxy-env
+sudo apt-get update
+kube_ver=$(apt-cache madison kubelet | grep "v1.17.4" | head -1 | awk '{print $3}')
+sudo apt-mark unhold kubelet kubectl
+sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--force-confold" -y --no-install-recommends \
+	kubelet=${kube_ver} \
+	kubectl=${kube_ver}
+sudo apt-mark hold kubelet kubectl

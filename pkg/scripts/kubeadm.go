@@ -21,7 +21,7 @@ const (
 if [[ -f /etc/kubernetes/admin.conf ]]; then exit 0; fi
 
 sudo kubeadm join {{ .VERBOSE }} \
-	--config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml \
+	--config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml \
 	--ignore-preflight-errors=DirAvailable--var-lib-etcd
 `
 
@@ -29,16 +29,18 @@ sudo kubeadm join {{ .VERBOSE }} \
 if [[ -f /etc/kubernetes/kubelet.conf ]]; then exit 0; fi
 
 sudo kubeadm join {{ .VERBOSE }} \
---config=./{{ .WORK_DIR }}/cfg/worker_{{ .NODE_ID }}.yaml
+	--config={{ .WORK_DIR }}/cfg/worker_{{ .NODE_ID }}.yaml
 `
 
 	kubeadmCertScriptTemplate = `
-if [[ -d ./{{ .WORK_DIR }}/pki ]]; then
-   sudo rsync -av ./{{ .WORK_DIR }}/pki/ /etc/kubernetes/pki/
-   sudo chown -R root:root /etc/kubernetes
-   rm -rf ./{{ .WORK_DIR }}/pki
+if [[ -d {{ .WORK_DIR }}/pki ]]; then
+	sudo rsync -av {{ .WORK_DIR }}/pki/ /etc/kubernetes/pki/
+	sudo chown -R root:root /etc/kubernetes
+	rm -rf {{ .WORK_DIR }}/pki
 fi
-sudo kubeadm {{ .VERBOSE }} init phase certs all --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+sudo kubeadm {{ .VERBOSE }} \
+	init phase certs all \
+	--config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
 `
 
 	kubeadmInitScriptTemplate = `
@@ -47,7 +49,7 @@ if [[ -f /etc/kubernetes/admin.conf ]]; then
 	exit 0;
 fi
 sudo kubeadm {{ .VERBOSE }} \
-	init --config=./{{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml \
+	init --config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml \
 	--ignore-preflight-errors=DirAvailable--var-lib-etcd
 `
 
@@ -59,7 +61,7 @@ rm -rf "{{ .WORK_DIR }}"
 `
 
 	kubeadmUpgradeLeaderScriptTemplate = `
-sudo {{ .KUBEADM_UPGRADE }} --config=./{{ .WORK_DIR }}/cfg/master_0.yaml`
+sudo {{ .KUBEADM_UPGRADE }} --config={{ .WORK_DIR }}/cfg/master_0.yaml`
 )
 
 func KubeadmJoin(workdir string, nodeID int, verboseFlag string) (string, error) {

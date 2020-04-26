@@ -1,0 +1,4 @@
+set -xeu pipefail
+export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
+
+sudo kubeadm upgrade node --config=test-wd/cfg/master_0.yaml

@@ -1,0 +1,7 @@
+set -xeu pipefail
+export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
+
+if [[ -f /etc/kubernetes/kubelet.conf ]]; then exit 0; fi
+
+sudo kubeadm join  \
+	--config=test-wd/cfg/worker_0.yaml

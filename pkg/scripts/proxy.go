@@ -42,23 +42,22 @@ if sudo systemctl status kubelet &>/dev/null; then sudo systemctl restart kubele
 	environmentFileCmd = `
 sudo mkdir -p /etc/kubeone
 cat <<EOF | sudo tee /etc/kubeone/proxy-env
-{{ if .HTTP_PROXY -}}
-HTTP_PROXY="{{ .HTTP_PROXY }}"
-http_proxy="{{ .HTTP_PROXY }}"
+{{ with .HTTP_PROXY -}}
+HTTP_PROXY="{{ . }}"
+http_proxy="{{ . }}"
 export HTTP_PROXY http_proxy
-
 {{ end }}
-{{- if .HTTPS_PROXY -}}
-HTTPS_PROXY="{{ .HTTPS_PROXY }}"
-https_proxy="{{ .HTTPS_PROXY }}"
+
+{{- with .HTTPS_PROXY -}}
+HTTPS_PROXY="{{ . }}"
+https_proxy="{{ . }}"
 export HTTPS_PROXY https_proxy
-
 {{ end }}
-{{- if .NO_PROXY -}}
-NO_PROXY="{{ .NO_PROXY }}"
-no_proxy="{{ .NO_PROXY }}"
-export NO_PROXY no_proxy
 
+{{- with .NO_PROXY -}}
+NO_PROXY="{{ . }}"
+no_proxy="{{ . }}"
+export NO_PROXY no_proxy
 {{ end }}
 EOF
 

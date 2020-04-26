@@ -127,7 +127,7 @@ EOF
 sudo sysctl --system
 
 yum_proxy=""
-{{ if .PROXY }}
+{{- if .PROXY }}
 yum_proxy="proxy={{ .PROXY }} #kubeone"
 {{ end }}
 grep -v '#kubeone' /etc/yum.conf > /tmp/yum.conf || true
