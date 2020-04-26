@@ -64,7 +64,7 @@ func TestSaveAuditPolicyConfig(t *testing.T) {
 	tests := []struct {
 		name    string
 		workdir string
-		wantErr error
+		err     error
 	}{
 		{name: "kubeone1", workdir: "test-dir1"},
 		{name: "kubeone2", workdir: "./subdir/test"},
@@ -73,8 +73,8 @@ func TestSaveAuditPolicyConfig(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := SaveAuditPolicyConfig(tt.workdir)
-			if err != tt.wantErr {
-				t.Errorf("SaveAuditPolicyConfig() error = %v, wantErr %v", err, tt.wantErr)
+			if err != tt.err {
+				t.Errorf("SaveAuditPolicyConfig() error = %v, wantErr %v", err, tt.err)
 				return
 			}
 

@@ -28,7 +28,7 @@ func TestCopyPKIHome(t *testing.T) {
 	tests := []struct {
 		name    string
 		workdir string
-		wantErr error
+		err     error
 	}{
 		{name: "kubeone1", workdir: "test-dir1"},
 		{name: "kubeone2", workdir: "./subdir/test"},
@@ -37,8 +37,8 @@ func TestCopyPKIHome(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.workdir, func(t *testing.T) {
 			got, err := CopyPKIHome(tt.workdir)
-			if err != tt.wantErr {
-				t.Fatalf("CopyPKIHome() error = %v, wantErr %v", err, tt.wantErr)
+			if err != tt.err {
+				t.Fatalf("CopyPKIHome() error = %v, wantErr %v", err, tt.err)
 			}
 
 			testhelper.DiffOutput(t, testhelper.FSGoldenName(t), got, *updateFlag)

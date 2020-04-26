@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Machine Controller Authors.
+Copyright 2019 The KubeOne Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+// originally copied from https://github.com/kubermatic/machine-controller/blob/master/pkg/test/helper.go
 package testhelper
 
 import (
@@ -36,8 +37,8 @@ func DiffOutput(t *testing.T, name, output string, update bool) {
 	}
 
 	if update {
-		if err := ioutil.WriteFile(golden, []byte(output), 0644); err != nil {
-			t.Fatalf("failed to write updated fixture: %v", err)
+		if errw := ioutil.WriteFile(golden, []byte(output), 0644); errw != nil {
+			t.Fatalf("failed to write updated fixture: %v", errw)
 		}
 	}
 
