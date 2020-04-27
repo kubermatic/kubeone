@@ -75,8 +75,6 @@ output "kubeone_workers" {
           regional = false
           # Use custom image (optional)
           # customImage = ""
-          # Red Hat subscription manager offline token (only to be used for RHEL)
-          # rhsmOfflineToken = ""
         }
       }
     }

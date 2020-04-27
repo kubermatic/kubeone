@@ -70,8 +70,13 @@ output "kubeone_workers" {
           memoryMB       = var.worker_memory
           templateVMName = var.template_name
           vmNetName      = var.network_name
-          # Red Hat subscription manager offline token (only to be used for RHEL)
-          # rhsmOfflineToken = ""
+          # Folder (optional)
+          # folder = ""
+          # Resource pool (optional)
+          # Force VMs to be provisoned to the specified resourcePool
+          # Default is to use the resourcePool of the template VM
+          # example: kubeone or /DC/host/Cluster01/Resources/kubeone
+          resourcePool = var.resource_pool
         }
       }
     }
