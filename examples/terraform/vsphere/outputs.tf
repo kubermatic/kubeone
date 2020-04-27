@@ -72,11 +72,6 @@ output "kubeone_workers" {
           vmNetName      = var.network_name
           # Folder (optional)
           # folder = ""
-          # Resource pool (optional)
-          # Force VMs to be provisoned to the specified resourcePool
-          # Default is to use the resourcePool of the template VM
-          # example: kubeone or /DC/host/Cluster01/Resources/kubeone
-          resourcePool = var.resource_pool
         }
       }
     }
