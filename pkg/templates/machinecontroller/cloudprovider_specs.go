@@ -106,6 +106,7 @@ type VSphereSpec struct {
 	DatastoreCluster string `json:"datastoreCluster"`
 	DiskSizeGB       *int   `json:"diskSizeGB,omitempty"`
 	Folder           string `json:"folder"`
+	ResourcePool     string `json:"resourcePool"`
 	MemoryMB         int    `json:"memoryMB"`
 	TemplateVMName   string `json:"templateVMName"`
 	VMNetName        string `json:"vmNetName,omitempty"`

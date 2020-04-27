@@ -434,6 +434,7 @@ func (c *Config) updateVSphereWorkerset(existingWorkerSet *kubeonev1alpha1.Worke
 		{key: "datastoreCluster", value: vsphereConfig.DatastoreCluster},
 		{key: "diskSizeGB", value: vsphereConfig.DiskSizeGB},
 		{key: "folder", value: vsphereConfig.Folder},
+		{key: "resourcePool", value: vsphereConfig.ResourcePool},
 		{key: "memoryMB", value: vsphereConfig.MemoryMB},
 		{key: "templateVMName", value: vsphereConfig.TemplateVMName},
 		{key: "vmNetName", value: vsphereConfig.VMNetName},
