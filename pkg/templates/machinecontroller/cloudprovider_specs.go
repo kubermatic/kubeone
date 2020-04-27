@@ -33,7 +33,6 @@ type AWSSpec struct {
 	SubnetID           string            `json:"subnetId"`
 	Tags               map[string]string `json:"tags"`
 	VPCID              string            `json:"vpcId"`
-	RHSMOfflineToken   string            `json:"rhsmOfflineToken,omitempty"`
 }
 
 // DigitalOceanSpec holds cloudprovider spec for DigitalOcean
@@ -60,7 +59,6 @@ type OpenStackSpec struct {
 	NodeVolumeAttachLimit *uint             `json:"nodeVolumeAttachLimit,omitempty"`
 	TrustDevicePath       bool              `json:"trustDevicePath"`
 	Tags                  map[string]string `json:"tags"`
-	RHSMOfflineToken      string            `json:"rhsmOfflineToken,omitempty"`
 }
 
 // GCESpec holds cloudprovider spec for GCE
@@ -78,7 +76,6 @@ type GCESpec struct {
 	MultiZone             *bool             `json:"multizone"`
 	Regional              *bool             `json:"regional"`
 	CustomImage           string            `json:"customImage,omitempty"`
-	RHSMOfflineToken      string            `json:"rhsmOfflineToken,omitempty"`
 }
 
 // HetznerSpec holds cloudprovider spec for Hetzner
@@ -112,7 +109,6 @@ type VSphereSpec struct {
 	MemoryMB         int    `json:"memoryMB"`
 	TemplateVMName   string `json:"templateVMName"`
 	VMNetName        string `json:"vmNetName,omitempty"`
-	RHSMOfflineToken string `json:"rhsmOfflineToken,omitempty"`
 }
 
 // AzureSpec holds cloudprovider spec for Azure
@@ -130,5 +126,4 @@ type AzureSpec struct {
 	ImageID           string            `json:"imageID"`
 	OSDiskSize        int               `json:"osDiskSize"`
 	DataDiskSize      int               `json:"dataDiskSize"`
-	RHSMOfflineToken  string            `json:"rhsmOfflineToken,omitempty"`
 }

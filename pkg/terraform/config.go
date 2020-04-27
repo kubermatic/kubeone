@@ -238,7 +238,6 @@ func (c *Config) updateAWSWorkerset(existingWorkerSet *kubeonev1alpha1.WorkerCon
 		{key: "subnetId", value: awsCloudConfig.SubnetID},
 		{key: "tags", value: awsCloudConfig.Tags},
 		{key: "vpcId", value: awsCloudConfig.VPCID},
-		{key: "rhsmOfflineToken", value: awsCloudConfig.RHSMOfflineToken},
 	}
 
 	for _, flag := range flags {
@@ -271,7 +270,6 @@ func (c *Config) updateAzureWorkerset(existingWorkerSet *kubeonev1alpha1.WorkerC
 		{key: "imageID", value: azureCloudConfig.ImageID},
 		{key: "osDiskSize", value: azureCloudConfig.OSDiskSize},
 		{key: "dataDiskSize", value: azureCloudConfig.DataDiskSize},
-		{key: "rhsmOfflineToken", value: azureCloudConfig.RHSMOfflineToken},
 	}
 
 	for _, flag := range flags {
@@ -304,7 +302,6 @@ func (c *Config) updateGCEWorkerset(existingWorkerSet *kubeonev1alpha1.WorkerCon
 		{key: "multizone", value: gceCloudConfig.MultiZone},
 		{key: "regional", value: gceCloudConfig.Regional},
 		{key: "customImage", value: gceCloudConfig.CustomImage},
-		{key: "rhsmOfflineToken", value: gceCloudConfig.RHSMOfflineToken},
 	}
 
 	for _, flag := range flags {
@@ -385,7 +382,6 @@ func (c *Config) updateOpenStackWorkerset(existingWorkerSet *kubeonev1alpha1.Wor
 		{key: "nodeVolumeAttachLimit", value: openstackConfig.NodeVolumeAttachLimit},
 		{key: "tags", value: openstackConfig.Tags},
 		{key: "trustDevicePath", value: openstackConfig.TrustDevicePath},
-		{key: "rhsmOfflineToken", value: openstackConfig.RHSMOfflineToken},
 	}
 
 	for _, flag := range flags {
@@ -440,7 +436,6 @@ func (c *Config) updateVSphereWorkerset(existingWorkerSet *kubeonev1alpha1.Worke
 		{key: "memoryMB", value: vsphereConfig.MemoryMB},
 		{key: "templateVMName", value: vsphereConfig.TemplateVMName},
 		{key: "vmNetName", value: vsphereConfig.VMNetName},
-		{key: "rhsmOfflineToken", value: vsphereConfig.RHSMOfflineToken},
 	}
 
 	for _, flag := range flags {
