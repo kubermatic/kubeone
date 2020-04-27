@@ -17,9 +17,8 @@ limitations under the License.
 package externalccm
 
 import (
-	"bytes"
 	"context"
-	"html/template"
+	"encoding/json"
 
 	"github.com/pkg/errors"
 
@@ -35,19 +34,16 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 )
 
-const (
-	packetImage          = "packethost/packet-ccm:v1.0.0"
-	packetSAName         = "cloud-controller-manager"
-	packetDeploymentName = "packet-cloud-controller-manager"
-
-	packetCloudSASecretName = "packet-cloud-config"
-	//nolint:gosec
-	packetCloudSASecretData = `
-{
-	"apiKey": "{{ .PACKET_API_KEY }}",
-	"projectID": "{{ .PACKET_PROJECT_ID }}"
+type packetCloudSA struct {
+	APIKey    string `json:"apiKey"`
+	ProjectID string `json:"projectID"`
 }
-`
+
+const (
+	packetImage             = "packethost/packet-ccm:v1.0.0"
+	packetSAName            = "cloud-controller-manager"
+	packetDeploymentName    = "packet-cloud-controller-manager"
+	packetCloudSASecretName = "packet-cloud-config"
 )
 
 func ensurePacket(s *state.State) error {
@@ -93,14 +89,14 @@ func packetServiceAccount() *corev1.ServiceAccount {
 	}
 }
 
-func packetCloudSASecret(credentials map[string]string) (*corev1.Secret, error) {
-	tpl, err := template.New("packet-cloud-sa").Parse(packetCloudSASecretData)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to template packet cloud-sa secret")
+func packetCloudSASecret(creds map[string]string) (*corev1.Secret, error) {
+	cloudSA := &packetCloudSA{
+		APIKey:    creds[credentials.PacketAPIKeyMC],
+		ProjectID: creds[credentials.PacketProjectID],
 	}
-	buf := bytes.NewBuffer([]byte{})
-	if err := tpl.Execute(buf, credentials); err != nil {
-		return nil, errors.Wrapf(err, "failed to template packet cloud-sa secret")
+	b, err := json.Marshal(cloudSA)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to marshal cloud-sa to json")
 	}
 
 	return &corev1.Secret{
@@ -109,7 +105,7 @@ func packetCloudSASecret(credentials map[string]string) (*corev1.Secret, error) 
 			Namespace: metav1.NamespaceSystem,
 		},
 		Data: map[string][]byte{
-			"cloud-sa.json": buf.Bytes(),
+			"cloud-sa.json": b,
 		},
 	}, nil
 }
