@@ -74,6 +74,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 			"read-only-port":      "0",
 			"rotate-certificates": "true",
 			"cluster-dns":         nodelocaldns.VirtualIP,
+			"volume-plugin-dir":   "/var/lib/kubelet/volumeplugins",
 		},
 	}
 
@@ -152,7 +153,9 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 			CertSANs: []string{strings.ToLower(cluster.APIEndpoint.Host)},
 		},
 		ControllerManager: kubeadmv1beta2.ControlPlaneComponent{
-			ExtraArgs:    map[string]string{},
+			ExtraArgs: map[string]string{
+				"flex-volume-plugin-dir": "/var/lib/kubelet/volumeplugins",
+			},
 			ExtraVolumes: []kubeadmv1beta2.HostPathMount{},
 		},
 		ClusterName: cluster.Name,
@@ -242,6 +245,7 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Obje
 			"read-only-port":      "0",
 			"rotate-certificates": "true",
 			"cluster-dns":         nodelocaldns.VirtualIP,
+			"volume-plugin-dir":   "/var/lib/kubelet/volumeplugins",
 		},
 	}
 
