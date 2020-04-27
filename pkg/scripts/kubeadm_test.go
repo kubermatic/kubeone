@@ -53,6 +53,7 @@ func TestKubeadmJoin(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := KubeadmJoin(tt.args.workdir, tt.args.nodeID, tt.args.verboseFlag)
 			if err != tt.err {
@@ -96,6 +97,7 @@ func TestKubeadmJoinWorker(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := KubeadmJoinWorker(tt.args.workdir, tt.args.nodeID, tt.args.verboseFlag)
 			if err != tt.err {
@@ -139,6 +141,7 @@ func TestKubeadmCert(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := KubeadmCert(tt.args.workdir, tt.args.nodeID, tt.args.verboseFlag)
 			if err != tt.err {
@@ -188,6 +191,7 @@ func TestKubeadmInit(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := KubeadmInit(tt.args.workdir, tt.args.nodeID, tt.args.verboseFlag, tt.args.token, tt.args.tokenTTL)
 			if err != tt.err {
@@ -228,6 +232,7 @@ func TestKubeadmReset(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := KubeadmReset(tt.args.verboseFlag, tt.args.workdir)
 			if err != tt.err {
@@ -262,6 +267,7 @@ func TestKubeadmUpgradeLeader(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := KubeadmUpgradeLeader(tt.args.kubeadmCmd, tt.args.workdir)
 			if err != tt.err {

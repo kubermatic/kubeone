@@ -61,6 +61,7 @@ func TestKubeadmDebian(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := KubeadmDebian(&tt.args.cluster, tt.args.dockerVersion)
 			if err != tt.err {
@@ -95,6 +96,7 @@ func TestKubeadmCentOS(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := KubeadmCentOS(&tt.args.cluster, tt.args.proxy)
 			if err != tt.err {
@@ -127,6 +129,7 @@ func TestKubeadmCoreOS(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := KubeadmCoreOS(&tt.args.cluster)
 			if err != tt.err {

@@ -35,6 +35,7 @@ func TestCopyPKIHome(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.workdir, func(t *testing.T) {
 			got, err := CopyPKIHome(tt.workdir)
 			if err != tt.err {
