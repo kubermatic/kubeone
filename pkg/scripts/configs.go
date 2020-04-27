@@ -25,15 +25,15 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 	cloudConfigScriptTemplate = `
 sudo mkdir -p /etc/systemd/system/kubelet.service.d/ /etc/kubernetes
-sudo mv ./{{ .WORK_DIR }}/cfg/cloud-config /etc/kubernetes/cloud-config
+sudo mv {{ .WORK_DIR }}/cfg/cloud-config /etc/kubernetes/cloud-config
 sudo chown root:root /etc/kubernetes/cloud-config
 sudo chmod 600 /etc/kubernetes/cloud-config
 `
 
 	auditPolicyScriptTemplate = `
-if [[ -f "./{{ .WORK_DIR }}/cfg/audit-policy.yaml" ]]; then
+if [[ -f "{{ .WORK_DIR }}/cfg/audit-policy.yaml" ]]; then
 	sudo mkdir -p /etc/kubernetes/audit
-	sudo mv ./{{ .WORK_DIR }}/cfg/audit-policy.yaml /etc/kubernetes/audit/policy.yaml
+	sudo mv {{ .WORK_DIR }}/cfg/audit-policy.yaml /etc/kubernetes/audit/policy.yaml
 	sudo chown root:root /etc/kubernetes/audit/policy.yaml
 fi
 `

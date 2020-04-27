@@ -1,0 +1,7 @@
+set -xeu pipefail
+export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
+
+source /etc/kubeone/proxy-env
+sudo yum install -y --disableexcludes=kubernetes \
+	kubelet-v1.17.4-0 \
+	kubectl-v1.17.4-0

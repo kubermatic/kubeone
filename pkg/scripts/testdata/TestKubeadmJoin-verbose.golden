@@ -1,0 +1,8 @@
+set -xeu pipefail
+export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
+
+if [[ -f /etc/kubernetes/admin.conf ]]; then exit 0; fi
+
+sudo kubeadm join --v=6 \
+	--config=test-wd/cfg/master_0.yaml \
+	--ignore-preflight-errors=DirAvailable--var-lib-etcd

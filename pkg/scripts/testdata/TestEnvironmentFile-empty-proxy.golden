@@ -1,0 +1,13 @@
+set -xeu pipefail
+export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
+
+sudo mkdir -p /etc/kubeone
+cat <<EOF | sudo tee /etc/kubeone/proxy-env
+
+EOF
+
+envtmp=/tmp/k1-etc-environment
+grep -v '#kubeone$' /etc/environment > $envtmp || true
+set +o pipefail # grep exits non-zero without match
+grep = /etc/kubeone/proxy-env | sed 's/$/#kubeone/' >> $envtmp
+sudo tee /etc/environment < $envtmp

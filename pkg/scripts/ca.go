@@ -18,16 +18,15 @@ package scripts
 
 const (
 	copyPKIHomeScriptTemplate = `
-mkdir -p ./{{ .WORK_DIR }}/pki/etcd
-sudo cp /etc/kubernetes/pki/ca.crt ./{{ .WORK_DIR }}/pki/
-sudo cp /etc/kubernetes/pki/ca.key ./{{ .WORK_DIR }}/pki/
-sudo cp /etc/kubernetes/pki/sa.key ./{{ .WORK_DIR }}/pki/
-sudo cp /etc/kubernetes/pki/sa.pub ./{{ .WORK_DIR }}/pki/
-sudo cp /etc/kubernetes/pki/front-proxy-ca.crt ./{{ .WORK_DIR }}/pki/
-sudo cp /etc/kubernetes/pki/front-proxy-ca.key ./{{ .WORK_DIR }}/pki/
-sudo cp /etc/kubernetes/pki/etcd/ca.{crt,key} ./{{ .WORK_DIR }}/pki/etcd/
-
-sudo chown -R "$(id -u):$(id -g)" ./{{ .WORK_DIR }}
+mkdir -p {{ .WORK_DIR }}/pki/etcd
+sudo cp /etc/kubernetes/pki/ca.crt {{ .WORK_DIR }}/pki/
+sudo cp /etc/kubernetes/pki/ca.key {{ .WORK_DIR }}/pki/
+sudo cp /etc/kubernetes/pki/sa.key {{ .WORK_DIR }}/pki/
+sudo cp /etc/kubernetes/pki/sa.pub {{ .WORK_DIR }}/pki/
+sudo cp /etc/kubernetes/pki/front-proxy-ca.crt {{ .WORK_DIR }}/pki/
+sudo cp /etc/kubernetes/pki/front-proxy-ca.key {{ .WORK_DIR }}/pki/
+sudo cp /etc/kubernetes/pki/etcd/ca.{crt,key} {{ .WORK_DIR }}/pki/etcd/
+sudo chown -R "$(id -u):$(id -g)" {{ .WORK_DIR }}
 `
 )
 
