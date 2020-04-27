@@ -78,8 +78,6 @@ output "kubeone_workers" {
           tags = {
             "${var.cluster_name}-workers" = ""
           }
-          # Red Hat subscription manager offline token (only to be used for RHEL)
-          # rhsmOfflineToken = ""
         }
       }
     }
@@ -114,8 +112,6 @@ output "kubeone_workers" {
           tags = {
             "${var.cluster_name}-workers" = ""
           }
-          # Red Hat subscription manager offline token (only to be used for RHEL)
-          # rhsmOfflineToken = ""
         }
       }
     }
@@ -150,8 +146,6 @@ output "kubeone_workers" {
           tags = {
             "${var.cluster_name}-workers" = ""
           }
-          # Red Hat subscription manager offline token (only to be used for RHEL)
-          # rhsmOfflineToken = ""
         }
       }
     }

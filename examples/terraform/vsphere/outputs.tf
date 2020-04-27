@@ -70,8 +70,8 @@ output "kubeone_workers" {
           memoryMB       = var.worker_memory
           templateVMName = var.template_name
           vmNetName      = var.network_name
-          # Red Hat subscription manager offline token (only to be used for RHEL)
-          # rhsmOfflineToken = ""
+          # Folder (optional)
+          # folder = ""
         }
       }
     }
