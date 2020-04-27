@@ -263,6 +263,7 @@ func (c *Config) updateAzureWorkerset(existingWorkerSet *kubeonev1alpha1.WorkerC
 		{key: "resourceGroup", value: azureCloudConfig.ResourceGroup},
 		{key: "routeTableName", value: azureCloudConfig.RouteTableName},
 		{key: "securityGroupName", value: azureCloudConfig.SecurityGroupName},
+		{key: "zones", value: azureCloudConfig.Zones},
 		{key: "subnetName", value: azureCloudConfig.SubnetName},
 		{key: "tags", value: azureCloudConfig.Tags},
 		{key: "vmSize", value: azureCloudConfig.VMSize},

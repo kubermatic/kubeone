@@ -119,6 +119,7 @@ type AzureSpec struct {
 	ResourceGroup     string            `json:"resourceGroup"`
 	RouteTableName    string            `json:"routeTableName"`
 	SecurityGroupName string            `json:"securityGroupName"`
+	Zones             []string          `json:"zones"`
 	SubnetName        string            `json:"subnetName"`
 	Tags              map[string]string `json:"tags"`
 	VMSize            string            `json:"vmSize"`
