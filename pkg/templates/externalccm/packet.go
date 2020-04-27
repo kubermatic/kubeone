@@ -41,6 +41,7 @@ const (
 	packetDeploymentName = "packet-cloud-controller-manager"
 
 	packetCloudSASecretName = "packet-cloud-config"
+	//nolint:gosec
 	packetCloudSASecretData = `
 {
 	"apiKey": "{{ .PACKET_API_KEY }}",
