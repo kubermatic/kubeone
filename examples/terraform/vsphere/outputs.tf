@@ -70,6 +70,7 @@ output "kubeone_workers" {
           memoryMB       = var.worker_memory
           templateVMName = var.template_name
           vmNetName      = var.network_name
+          resourcePool   = var.resource_pool_name
           # Folder (optional)
           # folder = ""
         }
