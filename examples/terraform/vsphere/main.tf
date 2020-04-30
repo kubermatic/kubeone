@@ -21,6 +21,14 @@ provider "vsphere" {
   */
 }
 
+locals {
+  resource_pool_id = var.resource_pool_name == "" ? data.vsphere_compute_cluster.cluster.resource_pool_id : data.vsphere_resource_pool.pool[0].id
+
+  rendered_lb_config = templatefile("./etc_gobetween.tpl", {
+    lb_targets = vsphere_virtual_machine.control_plane.*.default_ip_address,
+  })
+}
+
 data "vsphere_datacenter" "dc" {
   name = var.dc_name
 }
@@ -32,6 +40,12 @@ data "vsphere_datastore" "datastore" {
 
 data "vsphere_compute_cluster" "cluster" {
   name          = var.compute_cluster_name
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+data "vsphere_resource_pool" "pool" {
+  count         = var.resource_pool_name == "" ? 0 : 1
+  name          = var.resource_pool_name
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
@@ -48,7 +62,7 @@ data "vsphere_virtual_machine" "template" {
 resource "vsphere_virtual_machine" "control_plane" {
   count            = 3
   name             = "${var.cluster_name}-cp-${count.index + 1}"
-  resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
+  resource_pool_id = local.resource_pool_id
   datastore_id     = data.vsphere_datastore.datastore.id
   num_cpus         = 2
   memory           = var.control_plane_memory
@@ -93,7 +107,7 @@ resource "vsphere_virtual_machine" "control_plane" {
 resource "vsphere_virtual_machine" "lb" {
   count            = 1
   name             = "${var.cluster_name}-lb-${count.index + 1}"
-  resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
+  resource_pool_id = local.resource_pool_id
   datastore_id     = data.vsphere_datastore.datastore.id
   num_cpus         = 1
   memory           = 1024
@@ -143,12 +157,6 @@ resource "vsphere_virtual_machine" "lb" {
   provisioner "remote-exec" {
     script = "gobetween.sh"
   }
-}
-
-locals {
-  rendered_lb_config = templatefile("./etc_gobetween.tpl", {
-    lb_targets = vsphere_virtual_machine.control_plane.*.default_ip_address,
-  })
 }
 
 resource "null_resource" "lb_config" {

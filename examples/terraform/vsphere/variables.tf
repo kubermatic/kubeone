@@ -70,9 +70,9 @@ variable "datastore_cluster_name" {
   description = "datastore cluster name"
 }
 
-variable "resource_pool" {
+variable "resource_pool_name" {
   default     = ""
-  description = "cluster resource pool"
+  description = "cluster resource pool name"
 }
 
 variable "network_name" {
