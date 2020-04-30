@@ -17,6 +17,7 @@ limitations under the License.
 package ssh
 
 import (
+	"context"
 	"sync"
 	"time"
 
@@ -29,12 +30,14 @@ import (
 type Connector struct {
 	lock        sync.Mutex
 	connections map[int]Connection
+	ctx         context.Context
 }
 
 // NewConnector constructor
-func NewConnector() *Connector {
+func NewConnector(ctx context.Context) *Connector {
 	return &Connector{
 		connections: make(map[int]Connection),
+		ctx:         ctx,
 	}
 }
 
@@ -62,7 +65,9 @@ func (c *Connector) Connect(host kubeoneapi.HostConfig) (Connection, error) {
 
 	conn, found := c.connections[host.ID]
 	if !found {
-		conn, err = NewConnection(c, sshOpts(host))
+		opts := sshOpts(host)
+		opts.Context = c.ctx
+		conn, err = NewConnection(c, opts)
 		if err != nil {
 			return nil, err
 		}

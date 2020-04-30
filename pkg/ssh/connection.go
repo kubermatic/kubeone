@@ -59,6 +59,7 @@ type Tunneler interface {
 // Opts represents all the possible options for connecting to
 // a remote server via SSH.
 type Opts struct {
+	Context     context.Context
 	Username    string
 	Password    string
 	Hostname    string
@@ -197,7 +198,7 @@ func NewConnection(connector *Connector, o Opts) (Connection, error) {
 		return nil, errors.Wrapf(err, "could not establish connection to %s", endpoint)
 	}
 
-	ctx, cancelFn := context.WithCancel(context.Background())
+	ctx, cancelFn := context.WithCancel(connector.ctx)
 	sshConn := &connection{
 		connector: connector,
 		ctx:       ctx,
@@ -243,6 +244,9 @@ func (c *connection) File(filename string, flags int) (io.ReadWriteCloser, error
 }
 
 func (c *connection) TunnelTo(_ context.Context, network, addr string) (net.Conn, error) {
+	// the voided context.Context is voided as a workaround of always Done
+	// context that being passed. Please don't try to <-ctx.Done(), it will
+	// always return immediately
 	netconn, err := c.sshclient.Dial(network, addr)
 	if err == nil {
 		go func() {
