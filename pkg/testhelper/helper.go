@@ -37,7 +37,7 @@ func DiffOutput(t *testing.T, name, output string, update bool) {
 	}
 
 	if update {
-		if errw := ioutil.WriteFile(golden, []byte(output), 0644); errw != nil {
+		if errw := ioutil.WriteFile(golden, []byte(output), 0600); errw != nil {
 			t.Fatalf("failed to write updated fixture: %v", errw)
 		}
 	}
