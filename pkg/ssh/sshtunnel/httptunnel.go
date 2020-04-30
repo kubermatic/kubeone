@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package httptunnel
+package sshtunnel
 
 import (
 	"crypto/tls"
@@ -23,10 +23,11 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/state"
+	"github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/ssh"
 )
 
-type HTTPTunnel struct {
+type httpTunnel struct {
 	*http.Client
 }
 
@@ -34,8 +35,8 @@ type Doer interface {
 	Do(*http.Request) (*http.Response, error)
 }
 
-func NewHTTPTunnel(s *state.State, tlsConfig *tls.Config) (*HTTPTunnel, error) {
-	tunn, err := s.Connector.Tunnel(s.Cluster.RandomHost())
+func NewHTTPTunnel(connector *ssh.Connector, target kubeone.HostConfig, tlsConfig *tls.Config) (Doer, error) {
+	tunn, err := connector.Tunnel(target)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get SSH tunnel")
 	}
@@ -49,7 +50,7 @@ func NewHTTPTunnel(s *state.State, tlsConfig *tls.Config) (*HTTPTunnel, error) {
 		ExpectContinueTimeout: 1 * time.Second,
 	}
 
-	return &HTTPTunnel{
+	return &httpTunnel{
 		Client: &http.Client{
 			Transport: transport,
 		},

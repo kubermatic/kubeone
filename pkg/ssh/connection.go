@@ -118,13 +118,14 @@ type connection struct {
 	mu         sync.Mutex
 	sftpclient *sftp.Client
 	sshclient  *ssh.Client
+	connector  *Connector
 	ctx        context.Context
 	cancel     context.CancelFunc
 }
 
 // NewConnection attempts to create a new SSH connection to the host
 // specified via the given options.
-func NewConnection(o Opts) (Connection, error) {
+func NewConnection(connector *Connector, o Opts) (Connection, error) {
 	o, err := validateOptions(o)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to validate ssh connection options")
@@ -198,8 +199,9 @@ func NewConnection(o Opts) (Connection, error) {
 
 	ctx, cancelFn := context.WithCancel(context.Background())
 	sshConn := &connection{
-		ctx:    ctx,
-		cancel: cancelFn,
+		connector: connector,
+		ctx:       ctx,
+		cancel:    cancelFn,
 	}
 
 	if o.Bastion == "" {
@@ -262,6 +264,7 @@ func (c *connection) Close() error {
 
 	defer func() { c.sshclient = nil }()
 	defer func() { c.sftpclient = nil }()
+	defer c.connector.forgetConnection(c)
 
 	return c.sshclient.Close()
 }
