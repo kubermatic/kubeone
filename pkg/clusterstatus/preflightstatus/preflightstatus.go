@@ -34,9 +34,9 @@ const (
 	LabelUpgradeLock      = "kubeone.io/upgrade-in-progress"
 )
 
-// RunPreflightChecks ensures that all prerequisites are satisfied
+// Run ensures that all prerequisites are satisfied
 // TODO(xmudrii): Implement mechanism for skipping checks.
-func RunPreflightChecks(s *state.State, nodes corev1.NodeList) error {
+func Run(s *state.State, nodes corev1.NodeList) error {
 	var errs []error
 
 	// Verify that binaries are present

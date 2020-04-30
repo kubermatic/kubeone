@@ -23,7 +23,7 @@ import (
 	"net/http"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/httptunnel"
+	"github.com/kubermatic/kubeone/pkg/ssh/sshtunnel"
 	"github.com/kubermatic/kubeone/pkg/state"
 )
 
@@ -31,30 +31,31 @@ const (
 	healthzEndpoint = "https://%s:6443/healthz"
 )
 
-type Status struct {
+type Report struct {
 	Health bool `json:"health,omitempty"`
 }
 
-// CheckAPIServer uses the /healthz endpoint to check are all API server instances healthy
-func GetStatus(s *state.State, node kubeoneapi.HostConfig) (*Status, error) {
-	tunneler, err := httptunnel.NewHTTPTunnel(s, &tls.Config{InsecureSkipVerify: true})
+// Get uses the /healthz endpoint to check are all API server instances healthy
+func Get(s *state.State, node kubeoneapi.HostConfig) (*Report, error) {
+	tunneler, err := sshtunnel.NewHTTPTunnel(s.Connector, node, &tls.Config{InsecureSkipVerify: true})
 	if err != nil {
 		return nil, err
 	}
+
 	health, err := apiserverHealth(tunneler, node.PrivateAddress)
 	if err != nil {
-		return &Status{
+		return &Report{
 			Health: false,
 		}, err
 	}
 
-	return &Status{
+	return &Report{
 		Health: health,
 	}, nil
 }
 
 // apiserverHealth checks is API server healthy
-func apiserverHealth(t httptunnel.Doer, nodeAddress string) (bool, error) {
+func apiserverHealth(t sshtunnel.Doer, nodeAddress string) (bool, error) {
 	endpoint := fmt.Sprintf(healthzEndpoint, nodeAddress)
 	request, err := http.NewRequest("GET", endpoint, nil)
 	if err != nil {

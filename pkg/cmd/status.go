@@ -21,8 +21,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
-	"github.com/kubermatic/kubeone/pkg/clusterstatus"
-	"github.com/kubermatic/kubeone/pkg/kubeconfig"
+	"github.com/kubermatic/kubeone/pkg/tasks"
 )
 
 // statusCmd returns the structure for declaring the "status" subcommand.
@@ -55,9 +54,5 @@ func runStatus(opts *globalOptions) error {
 		return errors.Wrap(err, "failed to initialize State")
 	}
 
-	if err = kubeconfig.BuildKubernetesClientset(s); err != nil {
-		return err
-	}
-
-	return clusterstatus.PrintClusterStatus(s)
+	return errors.Wrap(tasks.WithClusterStatus(nil).Run(s), "failed to get cluster status")
 }

@@ -21,6 +21,7 @@ import (
 
 	"github.com/kubermatic/kubeone/pkg/addons"
 	"github.com/kubermatic/kubeone/pkg/certificate"
+	"github.com/kubermatic/kubeone/pkg/clusterstatus"
 	"github.com/kubermatic/kubeone/pkg/credentials"
 	"github.com/kubermatic/kubeone/pkg/features"
 	"github.com/kubermatic/kubeone/pkg/kubeconfig"
@@ -113,6 +114,14 @@ func WithReset(t Tasks) Tasks {
 		{Fn: resetAllNodes, ErrMsg: "failed to reset nodes"},
 		{Fn: removeBinariesAllNodes, ErrMsg: "failed to remove binaries from nodes"},
 	}...)
+}
+
+func WithClusterStatus(t Tasks) Tasks {
+	return WithHostnameOS(t).
+		append(Tasks{
+			{Fn: kubeconfig.BuildKubernetesClientset, ErrMsg: "failed to build kubernetes clientset"},
+			{Fn: clusterstatus.Print, ErrMsg: "failed to get cluster status"},
+		}...)
 }
 
 func kubernetesConfigFiles() Tasks {
