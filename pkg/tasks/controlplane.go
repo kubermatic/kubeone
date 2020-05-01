@@ -33,7 +33,7 @@ func joinControlplaneNode(s *state.State) error {
 func joinControlPlaneNodeInternal(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	logger := s.Logger.WithField("node", node.PublicAddress)
 
-	sleepTime := 120 * time.Second
+	sleepTime := 15 * time.Second
 	logger.Infof("Waiting %s to ensure main control plane components are up…", sleepTime)
 	time.Sleep(sleepTime)
 
