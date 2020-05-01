@@ -17,6 +17,7 @@ limitations under the License.
 package ssh
 
 import (
+	"context"
 	"sync"
 	"time"
 
@@ -29,12 +30,14 @@ import (
 type Connector struct {
 	lock        sync.Mutex
 	connections map[int]Connection
+	ctx         context.Context
 }
 
 // NewConnector constructor
-func NewConnector() *Connector {
+func NewConnector(ctx context.Context) *Connector {
 	return &Connector{
 		connections: make(map[int]Connection),
+		ctx:         ctx,
 	}
 }
 
@@ -62,19 +65,9 @@ func (c *Connector) Connect(host kubeoneapi.HostConfig) (Connection, error) {
 
 	conn, found := c.connections[host.ID]
 	if !found {
-		opts := Opts{
-			Username:    host.SSHUsername,
-			Port:        host.SSHPort,
-			Hostname:    host.PublicAddress,
-			KeyFile:     host.SSHPrivateKeyFile,
-			AgentSocket: host.SSHAgentSocket,
-			Timeout:     10 * time.Second,
-			Bastion:     host.Bastion,
-			BastionPort: host.BastionPort,
-			BastionUser: host.BastionUser,
-		}
-
-		conn, err = NewConnection(opts)
+		opts := sshOpts(host)
+		opts.Context = c.ctx
+		conn, err = NewConnection(c, opts)
 		if err != nil {
 			return nil, err
 		}
@@ -83,4 +76,29 @@ func (c *Connector) Connect(host kubeoneapi.HostConfig) (Connection, error) {
 	}
 
 	return conn, nil
+}
+
+func (c *Connector) forgetConnection(conn *connection) {
+	c.lock.Lock()
+	defer c.lock.Unlock()
+
+	for k := range c.connections {
+		if c.connections[k] == conn {
+			delete(c.connections, k)
+		}
+	}
+}
+
+func sshOpts(host kubeoneapi.HostConfig) Opts {
+	return Opts{
+		Username:    host.SSHUsername,
+		Port:        host.SSHPort,
+		Hostname:    host.PublicAddress,
+		KeyFile:     host.SSHPrivateKeyFile,
+		AgentSocket: host.SSHAgentSocket,
+		Timeout:     10 * time.Second,
+		Bastion:     host.Bastion,
+		BastionPort: host.BastionPort,
+		BastionUser: host.BastionUser,
+	}
 }

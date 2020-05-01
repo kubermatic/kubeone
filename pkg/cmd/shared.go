@@ -17,6 +17,7 @@ limitations under the License.
 package cmd
 
 import (
+	"context"
 	"reflect"
 	"strings"
 
@@ -38,7 +39,8 @@ type globalOptions struct {
 }
 
 func (opts *globalOptions) BuildState() (*state.State, error) {
-	s, err := state.New()
+	rootContext := context.Background()
+	s, err := state.New(rootContext)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to initialize State")
 	}

@@ -44,6 +44,10 @@ download-dependencies: buildenv
 dist/kubeone: buildenv
 	go build -ldflags='$(GOLDFLAGS)' -v -o $@ .
 
+dist/kubeone-debug: buildenv
+	export GOFLAGS=-mod=readonly; \
+	go build -gcflags='all=-N -l' -v -o $@ .
+
 .PHONY: generate-internal-groups
 generate-internal-groups: GOFLAGS = -mod=readonly
 generate-internal-groups: vendor

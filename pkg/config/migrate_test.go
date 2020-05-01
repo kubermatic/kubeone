@@ -105,7 +105,7 @@ func compareOutput(t *testing.T, name string, output []byte, update bool) {
 		t.Fatalf("failed to get absolute path to goldan file: %v", err)
 	}
 	if update {
-		if writeErr := ioutil.WriteFile(golden, output, 0644); writeErr != nil {
+		if writeErr := ioutil.WriteFile(golden, output, 0600); writeErr != nil {
 			t.Fatalf("failed to write updated fixture: %v", err)
 		}
 	}

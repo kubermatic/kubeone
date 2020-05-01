@@ -17,19 +17,15 @@ limitations under the License.
 package clusterstatus
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"strings"
 
 	"github.com/pkg/errors"
 
-	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/clusterstatus/apiserverstatus"
 	"github.com/kubermatic/kubeone/pkg/clusterstatus/etcdstatus"
 	"github.com/kubermatic/kubeone/pkg/clusterstatus/preflightstatus"
-	"github.com/kubermatic/kubeone/pkg/scripts"
-	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/state"
 	"github.com/kubermatic/kubeone/pkg/tabwriter"
 
@@ -38,43 +34,15 @@ import (
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-type Status struct {
+type nodeStatus struct {
 	NodeName  string `json:"nodeName,omitempty"`
 	Version   string `json:"version,omitempty"`
 	APIServer bool   `json:"apiServer,omitempty"`
 	Etcd      bool   `json:"etcd,omitempty"`
 }
 
-func determineHostname(s *state.State) error {
-	return s.RunTaskOnAllNodes(func(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
-		if node.Hostname != "" {
-			return nil
-		}
-		s.Logger.Infoln("Determine hostname…")
-
-		hostnameCmd := scripts.Hostname()
-
-		// on azure the name of the Node should == name of the VM
-		if s.Cluster.CloudProvider.Name == kubeoneapi.CloudProviderNameAzure {
-			hostnameCmd = `hostname`
-		}
-
-		stdout, _, err := s.Runner.Run(hostnameCmd, nil)
-		if err != nil {
-			return err
-		}
-
-		node.SetHostname(stdout)
-		return nil
-	}, state.RunParallel)
-}
-
-func PrintClusterStatus(s *state.State) error {
-	if err := determineHostname(s); err != nil {
-		return errors.Wrap(err, "failed to get hostname")
-	}
-
-	status, err := GetClusterStatus(s)
+func Print(s *state.State) error {
+	status, err := getClusterStatus(s)
 	if err != nil {
 		return errors.Wrap(err, "unable to get cluster status")
 	}
@@ -119,7 +87,7 @@ func clusterStatusHeader() []string {
 	}
 }
 
-func GetClusterStatus(s *state.State) ([]Status, error) {
+func getClusterStatus(s *state.State) ([]nodeStatus, error) {
 	if s.DynamicClient == nil {
 		return nil, errors.New("kubernetes client not initialized")
 	}
@@ -130,26 +98,30 @@ func GetClusterStatus(s *state.State) ([]Status, error) {
 		LabelSelector: labels.SelectorFromSet(map[string]string{preflightstatus.LabelControlPlaneNode: ""}),
 	}
 
-	err := s.DynamicClient.List(context.Background(), &nodes, &nodeListOpts)
-	if err != nil {
+	if err := s.DynamicClient.List(s.Context, &nodes, &nodeListOpts); err != nil {
 		return nil, errors.Wrap(err, "unable to list nodes")
 	}
 
 	// Run preflight checks
-	if preflightErr := preflightstatus.RunPreflightChecks(s, nodes); preflightErr != nil {
-		return nil, preflightErr
+	if err := preflightstatus.Run(s, nodes); err != nil {
+		return nil, err
 	}
 
-	status := []Status{}
+	status := []nodeStatus{}
 	errs := []error{}
 
+	etcdRing, err := etcdstatus.MemberList(s)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get etcd ring")
+	}
+
 	for _, host := range s.Cluster.Hosts {
-		etcdStatus, err := etcdstatus.GetStatus(s, host)
+		etcdStatus, err := etcdstatus.Get(s, host, etcdRing)
 		if err != nil {
 			errs = append(errs, err)
 		}
 
-		apiserverStatus, err := apiserverstatus.GetStatus(s, host)
+		apiserverStatus, err := apiserverstatus.Get(s, host)
 		if err != nil {
 			errs = append(errs, err)
 		}
@@ -171,7 +143,7 @@ func GetClusterStatus(s *state.State) ([]Status, error) {
 			aStatus = true
 		}
 
-		status = append(status, Status{
+		status = append(status, nodeStatus{
 			NodeName:  host.Hostname,
 			Version:   kubeletVersion,
 			Etcd:      eStatus,

@@ -99,7 +99,7 @@ func (k1 *Kubeone) CreateConfig(
 		return errors.Wrap(err, "unable to marshal kubeone KubeOneCluster")
 	}
 
-	err = ioutil.WriteFile(k1.ConfigurationFilePath, k1Config, 0644)
+	err = ioutil.WriteFile(k1.ConfigurationFilePath, k1Config, 0600)
 	return errors.Wrap(err, "failed to write KubeOne configuration manifest")
 }
 

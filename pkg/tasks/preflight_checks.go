@@ -52,7 +52,7 @@ func runPreflightChecks(s *state.State) error {
 
 	// Run preflight checks on nodes
 	s.Logger.Infoln("Running preflight checks…")
-	if err := preflightstatus.RunPreflightChecks(s, nodes); err != nil {
+	if err := preflightstatus.Run(s, nodes); err != nil {
 		return errors.Wrap(err, "unable to verify prerequisites")
 	}
 

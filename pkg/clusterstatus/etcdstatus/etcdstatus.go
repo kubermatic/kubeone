@@ -17,77 +17,93 @@ limitations under the License.
 package etcdstatus
 
 import (
+	"context"
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"net"
 	"net/http"
 	"strconv"
+	"time"
+
+	"github.com/pkg/errors"
+	"go.etcd.io/etcd/clientv3"
+	"google.golang.org/grpc"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/httptunnel"
+	"github.com/kubermatic/kubeone/pkg/ssh/sshtunnel"
 	"github.com/kubermatic/kubeone/pkg/state"
 )
 
 const (
-	healthEndpoint  = "https://%s:2379/health"
-	membersEndpoint = "https://127.0.0.1:2379/v2/members"
+	healthEndpointFmt = "https://%s:2379/health"
+	clientEndpointFmt = "%s:2379"
 )
 
-// Status describes status of the etcd cluster
-type Status struct {
+// Report describes status of the etcd cluster
+type Report struct {
 	Health bool `json:"health,omitempty"`
 	Member bool `json:"member,omitempty"`
 }
 
-type healthRaw struct {
-	Health string `json:"health"`
-}
-
-type membersListRaw struct {
-	Members []struct {
-		ID         string   `json:"id,omitempty"`
-		Name       string   `json:"name,omitempty"`
-		PeerURLs   []string `json:"peerURLs,omitempty"`
-		ClientURLs []string `json:"clientURLs,omitempty"`
-	} `json:"members"`
-}
-
-type HTTPDoer interface {
-	Do(*http.Request) (*http.Response, error)
-}
-
-// EtcdStatus analyzes health of an etcd cluster
-func GetStatus(s *state.State, node kubeoneapi.HostConfig) (*Status, error) {
-	tlsCfg, err := loadTLSConfig(s)
+func MemberList(s *state.State) (*clientv3.MemberListResponse, error) {
+	tunnel, err := s.Connector.Tunnel(s.Cluster.RandomHost())
 	if err != nil {
 		return nil, err
 	}
 
-	tunneler, err := httptunnel.NewHTTPTunnel(s, tlsCfg)
+	tlsConfig, err := loadTLSConfig(s)
 	if err != nil {
 		return nil, err
 	}
 
-	etcdRing, err := membersList(tunneler)
+	etcdEndpoints := []string{}
+	for _, node := range s.Cluster.Hosts {
+		etcdEndpoints = append(etcdEndpoints, fmt.Sprintf(clientEndpointFmt, node.PrivateAddress))
+	}
+
+	etcdcli, err := clientv3.New(clientv3.Config{
+		Endpoints:   etcdEndpoints,
+		TLS:         tlsConfig,
+		Context:     s.Context,
+		DialTimeout: 5 * time.Second,
+		DialOptions: []grpc.DialOption{
+			grpc.WithBlock(),
+			grpc.WithContextDialer(func(ctx context.Context, addr string) (net.Conn, error) {
+				return tunnel.TunnelTo(ctx, "tcp4", addr)
+			}),
+		},
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to connect to etcd cluster")
+	}
+	defer etcdcli.Close()
+
+	etcdRing, err := etcdcli.MemberList(s.Context)
+	return etcdRing, errors.Wrap(err, "failed etcd/clientv3.MemberList")
+}
+
+// Get analyzes health of an etcd cluster member
+func Get(s *state.State, node kubeoneapi.HostConfig, etcdRing *clientv3.MemberListResponse) (*Report, error) {
+	tlsConfig, err := loadTLSConfig(s)
+	if err != nil {
+		return nil, err
+	}
+
+	tunneler, err := sshtunnel.NewHTTPTunnel(s.Connector, node, tlsConfig)
 	if err != nil {
 		return nil, err
 	}
 
 	// Check etcd member health
-	healthStr, err := memberHealth(tunneler, node.PrivateAddress)
+	health, err := memberHealth(tunneler, node.PrivateAddress)
 	if err != nil {
 		return nil, err
 	}
 
-	health, err := strconv.ParseBool(healthStr.Health)
-	if err != nil {
-		return nil, err
-	}
-
-	// Check etcd membership
-	status := &Status{
+	status := &Report{
 		Health: health,
 	}
 
@@ -102,57 +118,35 @@ func GetStatus(s *state.State, node kubeoneapi.HostConfig) (*Status, error) {
 }
 
 // memberHealth returns health for a requested etcd member
-func memberHealth(t httptunnel.Doer, nodeAddress string) (*healthRaw, error) {
-	endpoint := fmt.Sprintf(healthEndpoint, nodeAddress)
+func memberHealth(t sshtunnel.Doer, nodeAddress string) (bool, error) {
+	endpoint := fmt.Sprintf(healthEndpointFmt, nodeAddress)
+
 	request, err := http.NewRequest("GET", endpoint, nil)
 	if err != nil {
-		return nil, err
+		return false, err
 	}
-	request.Header.Set("Content-type", "application/json")
 
+	request.Header.Set("Content-type", "application/json")
 	resp, err := t.Do(request)
 	if err != nil {
-		return &healthRaw{Health: "false"}, err
+		return false, err
 	}
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return false, err
 	}
 
-	h := &healthRaw{}
+	h := &struct {
+		Health string `json:"health"`
+	}{}
+
 	if err = json.Unmarshal(body, &h); err != nil {
-		return nil, err
+		return false, err
 	}
 
-	return h, nil
-}
-
-func membersList(t httptunnel.Doer) (*membersListRaw, error) {
-	request, err := http.NewRequest("GET", membersEndpoint, nil)
-	if err != nil {
-		return nil, err
-	}
-	request.Header.Set("Content-type", "application/json")
-
-	resp, err := t.Do(request)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	m := &membersListRaw{}
-	if err = json.Unmarshal(body, m); err != nil {
-		return nil, err
-	}
-
-	return m, nil
+	return strconv.ParseBool(h.Health)
 }
 
 // loadTLSConfig creates the tls.Config structure used in an http client to securely connect to etcd
@@ -162,21 +156,20 @@ func loadTLSConfig(s *state.State) (*tls.Config, error) {
 		return nil, err
 	}
 
-	tlsConfig := &tls.Config{}
-
 	// Add certificate and key to the TLS config
 	cert, err := tls.X509KeyPair(certBytes, keyBytes)
 	if err != nil {
 		return nil, err
 	}
-	tlsConfig.Certificates = []tls.Certificate{cert}
 
 	// Add CA certificate to the TLS config
 	caCertPool := x509.NewCertPool()
 	caCertPool.AppendCertsFromPEM(caBytes)
-	tlsConfig.RootCAs = caCertPool
 
-	return tlsConfig, nil
+	return &tls.Config{
+		RootCAs:      caCertPool,
+		Certificates: []tls.Certificate{cert},
+	}, nil
 }
 
 // downloadEtcdCerts returns CA certificate, certificate, and key used to securely access etcd
@@ -186,6 +179,7 @@ func downloadEtcdCerts(s *state.State) ([]byte, []byte, []byte, error) {
 	if err != nil {
 		return nil, nil, nil, err
 	}
+
 	conn, err := s.Connector.Connect(host)
 	if err != nil {
 		return nil, nil, nil, err
