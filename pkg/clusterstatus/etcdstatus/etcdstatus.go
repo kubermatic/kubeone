@@ -17,13 +17,11 @@ limitations under the License.
 package etcdstatus
 
 import (
-	"context"
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"net"
 	"net/http"
 	"strconv"
 	"time"
@@ -49,11 +47,6 @@ type Report struct {
 }
 
 func MemberList(s *state.State) (*clientv3.MemberListResponse, error) {
-	tunnel, err := s.Connector.Tunnel(s.Cluster.RandomHost())
-	if err != nil {
-		return nil, err
-	}
-
 	tlsConfig, err := loadTLSConfig(s)
 	if err != nil {
 		return nil, err
@@ -64,6 +57,11 @@ func MemberList(s *state.State) (*clientv3.MemberListResponse, error) {
 		etcdEndpoints = append(etcdEndpoints, fmt.Sprintf(clientEndpointFmt, node.PrivateAddress))
 	}
 
+	grpcDialer, err := sshtunnel.NewGRPCDialer(s.Connector, s.Cluster.RandomHost())
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to create grpc tunnel dialer")
+	}
+
 	etcdcli, err := clientv3.New(clientv3.Config{
 		Endpoints:   etcdEndpoints,
 		TLS:         tlsConfig,
@@ -71,9 +69,7 @@ func MemberList(s *state.State) (*clientv3.MemberListResponse, error) {
 		DialTimeout: 5 * time.Second,
 		DialOptions: []grpc.DialOption{
 			grpc.WithBlock(),
-			grpc.WithContextDialer(func(ctx context.Context, addr string) (net.Conn, error) {
-				return tunnel.TunnelTo(ctx, "tcp4", addr)
-			}),
+			grpcDialer,
 		},
 	})
 	if err != nil {
