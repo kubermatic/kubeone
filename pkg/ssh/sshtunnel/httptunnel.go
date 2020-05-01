@@ -27,32 +27,20 @@ import (
 	"github.com/kubermatic/kubeone/pkg/ssh"
 )
 
-type httpTunnel struct {
-	*http.Client
-}
-
-type Doer interface {
-	Do(*http.Request) (*http.Response, error)
-}
-
-func NewHTTPTunnel(connector *ssh.Connector, target kubeone.HostConfig, tlsConfig *tls.Config) (Doer, error) {
+// NewHTTPTransport initialize net/http Transport that will use SSH tunnel as
+// transport
+func NewHTTPTransport(connector *ssh.Connector, target kubeone.HostConfig, tlsConfig *tls.Config) (http.RoundTripper, error) {
 	tunn, err := connector.Tunnel(target)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get SSH tunnel")
 	}
 
-	transport := &http.Transport{
+	return &http.Transport{
 		DialContext:           tunn.TunnelTo,
 		TLSClientConfig:       tlsConfig,
 		MaxIdleConns:          100,
 		IdleConnTimeout:       90 * time.Second,
 		TLSHandshakeTimeout:   10 * time.Second,
 		ExpectContinueTimeout: 1 * time.Second,
-	}
-
-	return &httpTunnel{
-		Client: &http.Client{
-			Transport: transport,
-		},
 	}, nil
 }

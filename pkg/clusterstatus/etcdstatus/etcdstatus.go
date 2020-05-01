@@ -92,13 +92,13 @@ func Get(s *state.State, node kubeoneapi.HostConfig, etcdRing *clientv3.MemberLi
 		return nil, err
 	}
 
-	tunneler, err := sshtunnel.NewHTTPTunnel(s.Connector, node, tlsConfig)
+	roundTripper, err := sshtunnel.NewHTTPTransport(s.Connector, node, tlsConfig)
 	if err != nil {
 		return nil, err
 	}
 
 	// Check etcd member health
-	health, err := memberHealth(tunneler, node.PrivateAddress)
+	health, err := memberHealth(roundTripper, node.PrivateAddress)
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +118,7 @@ func Get(s *state.State, node kubeoneapi.HostConfig, etcdRing *clientv3.MemberLi
 }
 
 // memberHealth returns health for a requested etcd member
-func memberHealth(t sshtunnel.Doer, nodeAddress string) (bool, error) {
+func memberHealth(t http.RoundTripper, nodeAddress string) (bool, error) {
 	endpoint := fmt.Sprintf(healthEndpointFmt, nodeAddress)
 
 	request, err := http.NewRequest("GET", endpoint, nil)
@@ -127,7 +127,9 @@ func memberHealth(t sshtunnel.Doer, nodeAddress string) (bool, error) {
 	}
 
 	request.Header.Set("Content-type", "application/json")
-	resp, err := t.Do(request)
+
+	httpClient := http.Client{Transport: t}
+	resp, err := httpClient.Do(request)
 	if err != nil {
 		return false, err
 	}
