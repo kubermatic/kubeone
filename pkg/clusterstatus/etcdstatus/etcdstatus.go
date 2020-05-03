@@ -17,22 +17,17 @@ limitations under the License.
 package etcdstatus
 
 import (
-	"context"
-	"crypto/tls"
-	"crypto/x509"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"net"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/pkg/errors"
 	"go.etcd.io/etcd/clientv3"
-	"google.golang.org/grpc"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/etcdutil"
 	"github.com/kubermatic/kubeone/pkg/ssh/sshtunnel"
 	"github.com/kubermatic/kubeone/pkg/state"
 )
@@ -49,33 +44,23 @@ type Report struct {
 }
 
 func MemberList(s *state.State) (*clientv3.MemberListResponse, error) {
-	tunnel, err := s.Connector.Tunnel(s.Cluster.RandomHost())
-	if err != nil {
-		return nil, err
-	}
-
-	tlsConfig, err := loadTLSConfig(s)
-	if err != nil {
-		return nil, err
-	}
-
 	etcdEndpoints := []string{}
 	for _, node := range s.Cluster.Hosts {
 		etcdEndpoints = append(etcdEndpoints, fmt.Sprintf(clientEndpointFmt, node.PrivateAddress))
 	}
 
-	etcdcli, err := clientv3.New(clientv3.Config{
-		Endpoints:   etcdEndpoints,
-		TLS:         tlsConfig,
-		Context:     s.Context,
-		DialTimeout: 5 * time.Second,
-		DialOptions: []grpc.DialOption{
-			grpc.WithBlock(),
-			grpc.WithContextDialer(func(ctx context.Context, addr string) (net.Conn, error) {
-				return tunnel.TunnelTo(ctx, "tcp4", addr)
-			}),
-		},
-	})
+	leader, err := s.Cluster.Leader()
+	if err != nil {
+		return nil, err
+	}
+
+	etcdcfg, err := etcdutil.NewClientConfig(s, leader)
+	if err != nil {
+		return nil, err
+	}
+
+	etcdcfg.Endpoints = etcdEndpoints
+	etcdcli, err := clientv3.New(*etcdcfg)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to connect to etcd cluster")
 	}
@@ -87,18 +72,23 @@ func MemberList(s *state.State) (*clientv3.MemberListResponse, error) {
 
 // Get analyzes health of an etcd cluster member
 func Get(s *state.State, node kubeoneapi.HostConfig, etcdRing *clientv3.MemberListResponse) (*Report, error) {
-	tlsConfig, err := loadTLSConfig(s)
+	sshconn, err := s.Connector.Connect(node)
 	if err != nil {
 		return nil, err
 	}
 
-	tunneler, err := sshtunnel.NewHTTPTunnel(s.Connector, node, tlsConfig)
+	etcdTLSConfig, err := etcdutil.LoadTLSConfig(sshconn)
+	if err != nil {
+		return nil, err
+	}
+
+	roundTripper, err := sshtunnel.NewHTTPTransport(s.Connector, node, etcdTLSConfig)
 	if err != nil {
 		return nil, err
 	}
 
 	// Check etcd member health
-	health, err := memberHealth(tunneler, node.PrivateAddress)
+	health, err := memberHealth(roundTripper, node.PrivateAddress)
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +108,7 @@ func Get(s *state.State, node kubeoneapi.HostConfig, etcdRing *clientv3.MemberLi
 }
 
 // memberHealth returns health for a requested etcd member
-func memberHealth(t sshtunnel.Doer, nodeAddress string) (bool, error) {
+func memberHealth(t http.RoundTripper, nodeAddress string) (bool, error) {
 	endpoint := fmt.Sprintf(healthEndpointFmt, nodeAddress)
 
 	request, err := http.NewRequest("GET", endpoint, nil)
@@ -127,7 +117,9 @@ func memberHealth(t sshtunnel.Doer, nodeAddress string) (bool, error) {
 	}
 
 	request.Header.Set("Content-type", "application/json")
-	resp, err := t.Do(request)
+
+	httpClient := http.Client{Transport: t}
+	resp, err := httpClient.Do(request)
 	if err != nil {
 		return false, err
 	}
@@ -147,61 +139,4 @@ func memberHealth(t sshtunnel.Doer, nodeAddress string) (bool, error) {
 	}
 
 	return strconv.ParseBool(h.Health)
-}
-
-// loadTLSConfig creates the tls.Config structure used in an http client to securely connect to etcd
-func loadTLSConfig(s *state.State) (*tls.Config, error) {
-	caBytes, certBytes, keyBytes, err := downloadEtcdCerts(s)
-	if err != nil {
-		return nil, err
-	}
-
-	// Add certificate and key to the TLS config
-	cert, err := tls.X509KeyPair(certBytes, keyBytes)
-	if err != nil {
-		return nil, err
-	}
-
-	// Add CA certificate to the TLS config
-	caCertPool := x509.NewCertPool()
-	caCertPool.AppendCertsFromPEM(caBytes)
-
-	return &tls.Config{
-		RootCAs:      caCertPool,
-		Certificates: []tls.Certificate{cert},
-	}, nil
-}
-
-// downloadEtcdCerts returns CA certificate, certificate, and key used to securely access etcd
-func downloadEtcdCerts(s *state.State) ([]byte, []byte, []byte, error) {
-	// Connect to the host
-	host, err := s.Cluster.Leader()
-	if err != nil {
-		return nil, nil, nil, err
-	}
-
-	conn, err := s.Connector.Connect(host)
-	if err != nil {
-		return nil, nil, nil, err
-	}
-
-	// Download CA
-	caCert, _, _, err := conn.Exec("sudo cat /etc/kubernetes/pki/etcd/ca.crt")
-	if err != nil {
-		return nil, nil, nil, err
-	}
-
-	// Download cert
-	cert, _, _, err := conn.Exec("sudo cat /etc/kubernetes/pki/etcd/server.crt")
-	if err != nil {
-		return nil, nil, nil, err
-	}
-
-	// Download key
-	key, _, _, err := conn.Exec("sudo cat /etc/kubernetes/pki/etcd/server.key")
-	if err != nil {
-		return nil, nil, nil, err
-	}
-
-	return []byte(caCert), []byte(cert), []byte(key), nil
 }

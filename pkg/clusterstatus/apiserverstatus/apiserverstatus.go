@@ -37,32 +37,31 @@ type Report struct {
 
 // Get uses the /healthz endpoint to check are all API server instances healthy
 func Get(s *state.State, node kubeoneapi.HostConfig) (*Report, error) {
-	tunneler, err := sshtunnel.NewHTTPTunnel(s.Connector, node, &tls.Config{InsecureSkipVerify: true})
+	roundTripper, err := sshtunnel.NewHTTPTransport(s.Connector, node, &tls.Config{InsecureSkipVerify: true})
 	if err != nil {
 		return nil, err
 	}
 
-	health, err := apiserverHealth(tunneler, node.PrivateAddress)
+	health, err := apiserverHealth(roundTripper, node.PrivateAddress)
 	if err != nil {
 		return &Report{
 			Health: false,
 		}, err
 	}
 
-	return &Report{
-		Health: health,
-	}, nil
+	return &Report{Health: health}, nil
 }
 
 // apiserverHealth checks is API server healthy
-func apiserverHealth(t sshtunnel.Doer, nodeAddress string) (bool, error) {
+func apiserverHealth(t http.RoundTripper, nodeAddress string) (bool, error) {
 	endpoint := fmt.Sprintf(healthzEndpoint, nodeAddress)
 	request, err := http.NewRequest("GET", endpoint, nil)
 	if err != nil {
 		return false, err
 	}
 
-	resp, err := t.Do(request)
+	httpClient := http.Client{Transport: t}
+	resp, err := httpClient.Do(request)
 	if err != nil {
 		return false, err
 	}

@@ -80,10 +80,11 @@ func WithFullInstall(t Tasks) Tasks {
 			{Fn: deployPKIToFollowers, ErrMsg: "failed to upload PKI"},
 			{Fn: kubeadmCertsOnFollower, ErrMsg: "failed to provision certs and etcd on followers"},
 			{Fn: initKubernetesLeader, ErrMsg: "failed to init kubernetes on leader"},
+			{Fn: kubeconfig.BuildKubernetesClientset, ErrMsg: "failed to build kubernetes clientset"},
+			{Fn: repairClusterIfNeeded, ErrMsg: "failed to repair cluster"},
 			{Fn: joinControlplaneNode, ErrMsg: "failed to join other masters a cluster"},
 			{Fn: copyKubeconfig, ErrMsg: "failed to copy kubeconfig to home directory"},
 			{Fn: saveKubeconfig, ErrMsg: "failed to save kubeconfig to the local machine"},
-			{Fn: kubeconfig.BuildKubernetesClientset, ErrMsg: "failed to build kubernetes clientset"},
 		}...).
 		append(kubernetesResources()...).
 		append(
