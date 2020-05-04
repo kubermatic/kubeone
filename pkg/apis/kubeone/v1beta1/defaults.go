@@ -136,10 +136,6 @@ func SetDefaults_MachineController(obj *KubeOneCluster) {
 			Deploy: true,
 		}
 	}
-
-	if obj.MachineController.Provider == "" {
-		obj.MachineController.Provider = obj.CloudProvider.Name
-	}
 }
 
 func SetDefaults_SystemPackages(obj *KubeOneCluster) {
