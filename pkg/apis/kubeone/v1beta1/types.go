@@ -88,28 +88,48 @@ type APIEndpoint struct {
 	Port int `json:"port"`
 }
 
-// CloudProviderName represents the name of a provider
-type CloudProviderName string
-
-// CloudProviderName values
-const (
-	CloudProviderNameAWS          CloudProviderName = "aws"
-	CloudProviderNameAzure        CloudProviderName = "azure"
-	CloudProviderNameOpenStack    CloudProviderName = "openstack"
-	CloudProviderNameHetzner      CloudProviderName = "hetzner"
-	CloudProviderNameDigitalOcean CloudProviderName = "digitalocean"
-	CloudProviderNamePacket       CloudProviderName = "packet"
-	CloudProviderNameVSphere      CloudProviderName = "vsphere"
-	CloudProviderNameGCE          CloudProviderName = "gce"
-	CloudProviderNameNone         CloudProviderName = "none"
-)
-
-// CloudProviderSpec describes the cloud provider that is running the machines
+// CloudProviderSpec describes the cloud provider that is running the machines.
+// Only one cloud provider must be defined at the single time.
 type CloudProviderSpec struct {
-	Name        CloudProviderName `json:"name"`
-	External    bool              `json:"external"`
-	CloudConfig string            `json:"cloudConfig"`
+	External     bool              `json:"external"`
+	CloudConfig  string            `json:"cloudConfig"`
+	AWS          *AWSSpec          `json:"aws"`
+	Azure        *AzureSpec        `json:"azure"`
+	DigitalOcean *DigitalOceanSpec `json:"digitalocean"`
+	GCE          *GCESpec          `json:"gce"`
+	Hetzner      *HetznerSpec      `json:"hetzner"`
+	Openstack    *OpenstackSpec    `json:"openstack"`
+	Packet       *PacketSpec       `json:"packet"`
+	Vsphere      *VsphereSpec      `json:"vsphere"`
+	None         *NoneSpec         `json:"none"`
 }
+
+// AWSSpec defines the AWS cloud provider
+type AWSSpec struct{}
+
+// AzureSpec defines the Azure cloud provider
+type AzureSpec struct{}
+
+// DigitalOceanSpec defines the DigitalOcean cloud provider
+type DigitalOceanSpec struct{}
+
+// GCESpec defines the GCE cloud provider
+type GCESpec struct{}
+
+// HetznerSpec defines the Hetzner cloud provider
+type HetznerSpec struct{}
+
+// OpenstackSpec defines the Openstack provider
+type OpenstackSpec struct{}
+
+// PacketSepc defines the Packet cloud provider
+type PacketSpec struct{}
+
+// VsphereSpec defines the vSphere provider
+type VsphereSpec struct{}
+
+// NoneSpec defines a none provider
+type NoneSpec struct{}
 
 // VersionConfig describes the versions of components that are installed on the machines
 type VersionConfig struct {
