@@ -82,8 +82,19 @@ type HostConfig struct {
 	Taints []corev1.Taint `json:"taints,omitempty"`
 
 	// Information populated at the runtime
-	OperatingSystem string `json:"-"`
+	OperatingSystem OperatingSystemName `json:"-"`
 }
+
+// OperatingSystemName defines the operating system used on instances
+type OperatingSystemName string
+
+var (
+	OperatingSystemNameUbuntu  OperatingSystemName = "ubuntu"
+	OperatingSystemNameCentOS  OperatingSystemName = "centos"
+	OperatingSystemNameCoreOS  OperatingSystemName = "coreos"
+	OperatingSystemNameFlatcar OperatingSystemName = "flatcar"
+	OperatingSystemNameUnknown OperatingSystemName = ""
+)
 
 // APIEndpoint is the endpoint used to communicate with the Kubernetes API
 type APIEndpoint struct {
