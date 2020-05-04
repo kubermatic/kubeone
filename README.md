@@ -29,6 +29,10 @@ component.
 Versions earlier than v0.6.0 are considered alpha and it's strongly advised to
 upgrade to the v0.6.0 or newer as soon as possible.
 
+## Documentation / User Guides
+
+All user documentation is available at the [KubeOne docs website](https://docs.loodse.com/kubeone/master/).
+
 ## KubeOne in Action
 
 [![KubeOne Demo asciicast](https://asciinema.org/a/244104.svg)](https://asciinema.org/a/244104)
