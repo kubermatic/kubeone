@@ -109,7 +109,7 @@ func SetDefaults_ClusterNetwork(obj *KubeOneCluster) {
 	}
 	if obj.ClusterNetwork.CNI == nil {
 		obj.ClusterNetwork.CNI = &CNI{
-			Provider: CNIProviderCanal,
+			Canal: &CanalSpec{},
 		}
 	}
 }
