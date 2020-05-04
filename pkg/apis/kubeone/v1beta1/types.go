@@ -73,7 +73,13 @@ type HostConfig struct {
 	BastionUser       string `json:"bastionUser"`
 	Hostname          string `json:"hostname"`
 	IsLeader          bool   `json:"isLeader"`
-	Untaint           bool   `json:"untaint"`
+
+	// If not provided (i.e. nil) defaults to TaintEffectNoSchedule, with key
+	// node-role.kubernetes.io/master for control plane nodes.
+	//
+	// Explicitly empty (i.e. []corev1.Taint{}) means no taints will be applied
+	// (this is default for worker nodes).
+	Taints []corev1.Taint `json:"taints,omitempty"`
 
 	// Information populated at the runtime
 	OperatingSystem string `json:"-"`

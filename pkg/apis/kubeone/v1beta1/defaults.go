@@ -19,6 +19,7 @@ package v1beta1
 import (
 	"strings"
 
+	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 )
 
@@ -66,6 +67,14 @@ func SetDefaults_Hosts(obj *KubeOneCluster) {
 		}
 		obj.Hosts[idx].ID = idx
 		defaultHostConfig(&obj.Hosts[idx])
+		if obj.Hosts[idx].Taints == nil {
+			obj.Hosts[idx].Taints = []corev1.Taint{
+				{
+					Effect: corev1.TaintEffectNoSchedule,
+					Key:    "node-role.kubernetes.io/master",
+				},
+			}
+		}
 	}
 	if setDefaultLeader {
 		// In absence of explicitly defined leader set the first host to be the
@@ -77,6 +86,9 @@ func SetDefaults_Hosts(obj *KubeOneCluster) {
 		// continue assinging IDs after control plane hosts. This way every node gets a unique ID regardless of the different host slices
 		obj.StaticWorkers[idx].ID = idx + len(obj.Hosts)
 		defaultHostConfig(&obj.StaticWorkers[idx])
+		if obj.StaticWorkers[idx].Taints == nil {
+			obj.StaticWorkers[idx].Taints = []corev1.Taint{}
+		}
 	}
 }
 
