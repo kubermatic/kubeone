@@ -75,6 +75,11 @@ variable "resource_pool_name" {
   description = "cluster resource pool name"
 }
 
+variable "folder_name" {
+  default     = "kubeone"
+  description = "folder name"
+}
+
 variable "network_name" {
   default     = "public"
   description = "network name"

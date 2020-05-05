@@ -63,6 +63,7 @@ resource "vsphere_virtual_machine" "control_plane" {
   count            = 3
   name             = "${var.cluster_name}-cp-${count.index + 1}"
   resource_pool_id = local.resource_pool_id
+  folder           = var.folder_name
   datastore_id     = data.vsphere_datastore.datastore.id
   num_cpus         = 2
   memory           = var.control_plane_memory
@@ -108,6 +109,7 @@ resource "vsphere_virtual_machine" "lb" {
   count            = 1
   name             = "${var.cluster_name}-lb-${count.index + 1}"
   resource_pool_id = local.resource_pool_id
+  folder           = var.folder_name
   datastore_id     = data.vsphere_datastore.datastore.id
   num_cpus         = 1
   memory           = 1024
