@@ -31,10 +31,8 @@ type KubeOneCluster struct {
 
 	// Name is the name of the cluster
 	Name string `json:"name"`
-	// Hosts describes the control plane nodes and how to access them
-	Hosts []HostConfig `json:"hosts,omitempty"`
-	// StaticWorkers allows the user to define a list of nodes as workers that are not managed by MachineController
-	StaticWorkers []HostConfig `json:"staticWorkers,omitempty"`
+	// ControlPlane describes the control plane nodes and how to access them
+	ControlPlane []HostConfig `json:"controlPlane,omitempty"`
 	// APIEndpoint are pairs of address and port used to communicate with the Kubernetes API
 	APIEndpoint APIEndpoint `json:"apiEndpoint,omitempty"`
 	// CloudProvider configures the cloud provider specific features
@@ -45,8 +43,11 @@ type KubeOneCluster struct {
 	ClusterNetwork ClusterNetworkConfig `json:"clusterNetwork,omitempty"`
 	// Proxy configures proxy used while installing Kubernetes and by the Docker daemon
 	Proxy ProxyConfig `json:"proxy,omitempty"`
-	// Workers is used to create worker nodes using the Kubermatic machine-controller
-	Workers []WorkerConfig `json:"workers,omitempty"`
+	// StaticWorkers describes the worker nodes that are managed by KubeOne/kubeadm
+	StaticWorkers []HostConfig `json:"staticWorkers,omitempty"`
+	// DynamicWorkers descirbes the worker nodes that are managed by
+	// Kubermatic machine-controller/Cluster-API
+	DynamicWorkers []DynamicWorkerConfig `json:"dynamicWorkers,omitempty"`
 	// MachineController configures the Kubermatic machine-controller component
 	MachineController *MachineControllerConfig `json:"machineController,omitempty"`
 	// Features enables and configures additional cluster features
@@ -189,8 +190,8 @@ type ProxyConfig struct {
 	NoProxy string `json:"noProxy"`
 }
 
-// WorkerConfig describes a set of worker machines
-type WorkerConfig struct {
+// DynamicWorkerConfig describes a set of worker machines
+type DynamicWorkerConfig struct {
 	Name     string       `json:"name"`
 	Replicas *int         `json:"replicas"`
 	Config   ProviderSpec `json:"providerSpec"`
