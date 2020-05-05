@@ -138,7 +138,7 @@ type HetznerSpec struct{}
 // OpenstackSpec defines the Openstack provider
 type OpenstackSpec struct{}
 
-// PacketSepc defines the Packet cloud provider
+// PacketSpec defines the Packet cloud provider
 type PacketSpec struct{}
 
 // VsphereSpec defines the vSphere provider
