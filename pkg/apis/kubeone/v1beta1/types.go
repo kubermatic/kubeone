@@ -55,8 +55,6 @@ type KubeOneCluster struct {
 	Addons *Addons `json:"addons,omitempty"`
 	// SystemPackages configure kubeone behaviour regarding OS packages
 	SystemPackages *SystemPackages `json:"systemPackages,omitempty"`
-	// Credentials used for machine-controller and external CCM
-	Credentials map[string]string `json:"credentials,omitempty"`
 }
 
 // HostConfig describes a single control plane node.
