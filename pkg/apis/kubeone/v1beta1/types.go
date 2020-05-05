@@ -148,7 +148,6 @@ type NoneSpec struct{}
 
 // VersionConfig describes the versions of components that are installed on the machines
 type VersionConfig struct {
-	// TODO(xmudrii): switch to semver
 	Kubernetes string `json:"kubernetes"`
 }
 
