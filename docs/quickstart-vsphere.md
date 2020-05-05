@@ -92,6 +92,7 @@ For the list of available settings along with their names please see the
 * `datastore_name` (optional, default = "datastore1") - vSphere datastore name
 * `network_name` (optional, default = "public") - vSphere network name
 * `template_name` (optional, default = "ubuntu-18.04") - vSphere template name to clone VMs from
+* `folder_name` (optional, default = "kubeone") - vSphere VM folder name
 
 The `terraform.tfvars` file can look like:
 
@@ -161,8 +162,9 @@ cloudProvider:
     [Workspace]
     server = "1.1.1.1"
     datacenter = "dc-1"
-    default-datastore="exsi-nas"
-    resourcepool-path="kubeone"
+    default-datastore = "exsi-nas"
+    resourcepool-path = "kubeone"
+    folder = "kubeone"
 
     [Disk]
     scsicontrollertype = pvscsi
