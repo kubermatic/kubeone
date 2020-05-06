@@ -52,23 +52,23 @@ func SetDefaults_KubeOneCluster(obj *KubeOneCluster) {
 
 func SetDefaults_Hosts(obj *KubeOneCluster) {
 	// No hosts, so skip defaulting
-	if len(obj.Hosts) == 0 {
+	if len(obj.ControlPlane) == 0 {
 		return
 	}
 
 	setDefaultLeader := true
 
 	// Define a unique ID for each host
-	for idx := range obj.Hosts {
-		if setDefaultLeader && obj.Hosts[idx].IsLeader {
+	for idx := range obj.ControlPlane {
+		if setDefaultLeader && obj.ControlPlane[idx].IsLeader {
 			// override setting default leader, as explicit leader already
 			// defined
 			setDefaultLeader = false
 		}
-		obj.Hosts[idx].ID = idx
-		defaultHostConfig(&obj.Hosts[idx])
-		if obj.Hosts[idx].Taints == nil {
-			obj.Hosts[idx].Taints = []corev1.Taint{
+		obj.ControlPlane[idx].ID = idx
+		defaultHostConfig(&obj.ControlPlane[idx])
+		if obj.ControlPlane[idx].Taints == nil {
+			obj.ControlPlane[idx].Taints = []corev1.Taint{
 				{
 					Effect: corev1.TaintEffectNoSchedule,
 					Key:    "node-role.kubernetes.io/master",
@@ -79,12 +79,12 @@ func SetDefaults_Hosts(obj *KubeOneCluster) {
 	if setDefaultLeader {
 		// In absence of explicitly defined leader set the first host to be the
 		// default leader
-		obj.Hosts[0].IsLeader = true
+		obj.ControlPlane[0].IsLeader = true
 	}
 
 	for idx := range obj.StaticWorkers {
 		// continue assinging IDs after control plane hosts. This way every node gets a unique ID regardless of the different host slices
-		obj.StaticWorkers[idx].ID = idx + len(obj.Hosts)
+		obj.StaticWorkers[idx].ID = idx + len(obj.ControlPlane)
 		defaultHostConfig(&obj.StaticWorkers[idx])
 		if obj.StaticWorkers[idx].Taints == nil {
 			obj.StaticWorkers[idx].Taints = []corev1.Taint{}
@@ -95,11 +95,11 @@ func SetDefaults_Hosts(obj *KubeOneCluster) {
 func SetDefaults_APIEndpoints(obj *KubeOneCluster) {
 	// If no API endpoint is provided, assume the public address is an endpoint
 	if len(obj.APIEndpoint.Host) == 0 {
-		if len(obj.Hosts) == 0 {
+		if len(obj.ControlPlane) == 0 {
 			// No hosts, so can't default to the first one
 			return
 		}
-		obj.APIEndpoint.Host = obj.Hosts[0].PublicAddress
+		obj.APIEndpoint.Host = obj.ControlPlane[0].PublicAddress
 	}
 	if obj.APIEndpoint.Port == 0 {
 		obj.APIEndpoint.Port = 6443
