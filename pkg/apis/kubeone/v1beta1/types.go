@@ -32,7 +32,7 @@ type KubeOneCluster struct {
 	// Name is the name of the cluster
 	Name string `json:"name"`
 	// ControlPlane describes the control plane nodes and how to access them
-	ControlPlane []HostConfig `json:"controlPlane,omitempty"`
+	ControlPlane ControlPlaneConfig `json:"controlPlane,omitempty"`
 	// APIEndpoint are pairs of address and port used to communicate with the Kubernetes API
 	APIEndpoint APIEndpoint `json:"apiEndpoint,omitempty"`
 	// CloudProvider configures the cloud provider specific features
@@ -44,7 +44,7 @@ type KubeOneCluster struct {
 	// Proxy configures proxy used while installing Kubernetes and by the Docker daemon
 	Proxy ProxyConfig `json:"proxy,omitempty"`
 	// StaticWorkers describes the worker nodes that are managed by KubeOne/kubeadm
-	StaticWorkers []HostConfig `json:"staticWorkers,omitempty"`
+	StaticWorkers StaticWorkersConfig `json:"staticWorkers,omitempty"`
 	// DynamicWorkers descirbes the worker nodes that are managed by
 	// Kubermatic machine-controller/Cluster-API
 	DynamicWorkers []DynamicWorkerConfig `json:"dynamicWorkers,omitempty"`
@@ -57,6 +57,17 @@ type KubeOneCluster struct {
 	// SystemPackages configure kubeone behaviour regarding OS packages
 	SystemPackages *SystemPackages `json:"systemPackages,omitempty"`
 }
+
+// OperatingSystemName defines the operating system used on instances
+type OperatingSystemName string
+
+var (
+	OperatingSystemNameUbuntu  OperatingSystemName = "ubuntu"
+	OperatingSystemNameCentOS  OperatingSystemName = "centos"
+	OperatingSystemNameCoreOS  OperatingSystemName = "coreos"
+	OperatingSystemNameFlatcar OperatingSystemName = "flatcar"
+	OperatingSystemNameUnknown OperatingSystemName = ""
+)
 
 // HostConfig describes a single control plane node.
 type HostConfig struct {
@@ -84,16 +95,15 @@ type HostConfig struct {
 	OperatingSystem OperatingSystemName `json:"-"`
 }
 
-// OperatingSystemName defines the operating system used on instances
-type OperatingSystemName string
+// ControlPlaneConfig defines control plane nodes
+type ControlPlaneConfig struct {
+	Hosts []HostConfig `json:"hosts"`
+}
 
-var (
-	OperatingSystemNameUbuntu  OperatingSystemName = "ubuntu"
-	OperatingSystemNameCentOS  OperatingSystemName = "centos"
-	OperatingSystemNameCoreOS  OperatingSystemName = "coreos"
-	OperatingSystemNameFlatcar OperatingSystemName = "flatcar"
-	OperatingSystemNameUnknown OperatingSystemName = ""
-)
+// StaticWorkersConfig defines static worker nodes provisioned by KubeOne and kubeadm
+type StaticWorkersConfig struct {
+	Hosts []HostConfig `json:"hosts"`
+}
 
 // APIEndpoint is the endpoint used to communicate with the Kubernetes API
 type APIEndpoint struct {
