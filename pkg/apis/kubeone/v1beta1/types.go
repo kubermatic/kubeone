@@ -45,7 +45,7 @@ type KubeOneCluster struct {
 	Proxy ProxyConfig `json:"proxy,omitempty"`
 	// StaticWorkers describes the worker nodes that are managed by KubeOne/kubeadm
 	StaticWorkers StaticWorkersConfig `json:"staticWorkers,omitempty"`
-	// DynamicWorkers descirbes the worker nodes that are managed by
+	// DynamicWorkers describes the worker nodes that are managed by
 	// Kubermatic machine-controller/Cluster-API
 	DynamicWorkers []DynamicWorkerConfig `json:"dynamicWorkers,omitempty"`
 	// MachineController configures the Kubermatic machine-controller component
