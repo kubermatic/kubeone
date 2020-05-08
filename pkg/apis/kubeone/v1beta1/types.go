@@ -216,7 +216,7 @@ type ProviderSpec struct {
 	OperatingSystemSpec json.RawMessage   `json:"operatingSystemSpec"`
 
 	// +optional
-	Network *NetworkConfig `json:"network,omitempty"`
+	Network *ProviderStaticNetworkConfig `json:"network,omitempty"`
 
 	// +optional
 	OverwriteCloudConfig *string `json:"overwriteCloudConfig,omitempty"`
@@ -227,8 +227,8 @@ type DNSConfig struct {
 	Servers []string `json:"servers"`
 }
 
-// NetworkConfig contains a machine's static network configuration
-type NetworkConfig struct {
+// ProviderStaticNetworkConfig contains a machine's static network configuration
+type ProviderStaticNetworkConfig struct {
 	CIDR    string    `json:"cidr"`
 	Gateway string    `json:"gateway"`
 	DNS     DNSConfig `json:"dns"`
