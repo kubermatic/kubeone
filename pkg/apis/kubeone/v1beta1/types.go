@@ -143,7 +143,9 @@ type DigitalOceanSpec struct{}
 type GCESpec struct{}
 
 // HetznerSpec defines the Hetzner cloud provider
-type HetznerSpec struct{}
+type HetznerSpec struct {
+	NetworkID string `json:"networkID"`
+}
 
 // OpenstackSpec defines the Openstack provider
 type OpenstackSpec struct{}
@@ -169,9 +171,6 @@ type ClusterNetworkConfig struct {
 	ServiceDomainName string `json:"serviceDomainName"`
 	NodePortRange     string `json:"nodePortRange"`
 	CNI               *CNI   `json:"cni,omitempty"`
-
-	// +optional
-	NetworkID string `json:"networkID,omitempty"`
 }
 
 // CNI config. Only one CNI provider must be used at the single time.
