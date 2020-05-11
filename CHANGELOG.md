@@ -1,5 +1,47 @@
 # Changelog
 
+# [v1.0.0-alpha.1](https://github.com/kubermatic/kubeone/releases/tag/v1.0.0-alpha.1) - 2020-05-11
+
+## Attention Needed
+
+* The KubeOneCluster manifest (config file) is now provided using the `--manifest` flag, such as `kubeone install --manifest config.yaml`. Providing it as an argument will result in an error
+* RHSMOfflineToken has been removed from the CloudProviderSpec. This and other relevant fields are now located in the OperatingSystemSpec
+* Packet Cloud Controller Manager (CCM) has been updated to v1.0.0. This update fixes the issue preventing users to provision new Packet clusters
+
+## Added
+
+* Initial support for Flatcar Linux ([#879](https://github.com/kubermatic/kubeone/pull/879))
+  * Currently, Flatcar Linux is supported only on AWS worker nodes
+* Support for vSphere resource pools ([#883](https://github.com/kubermatic/kubeone/pull/883))
+* Support for Azure AZs ([#883](https://github.com/kubermatic/kubeone/pull/883))
+* Support for Flexvolumes on CoreOS and Flatcar ([#885](https://github.com/kubermatic/kubeone/pull/885))
+* Automatic cluster repairs ([#888](https://github.com/kubermatic/kubeone/pull/888))
+  * Detect and delete broken etcd members
+  * Detect and delete outdated corev1.Node objects
+
+## Changed
+
+### General
+
+* [Breaking] Replace positional argument for the config file with the global `--manifest` flag ([#880](https://github.com/kubermatic/kubeone/pull/880))
+  * The default value for the `--manifest` flag is `kubeone.yaml`
+* Ignore etcd data if it is present on the control plane nodes ([#874](https://github.com/kubermatic/kubeone/pull/874))
+  * This allows clusters to be restored from a backup
+
+### Bug Fixes
+
+* Fix CoreOS host architecture detection ([#882](https://github.com/kubermatic/kubeone/pull/882))
+
+### Updated
+
+* Update machine-controller to v1.13.1 ([#885](https://github.com/kubermatic/kubeone/pull/885))
+* Update Packet Cloud Controller Manager (CCM) to v1.0.0 ([#884](https://github.com/kubermatic/kubeone/pull/884))
+
+## Removed
+
+* Remove RHSMOfflineToken from the CloudProviderSpec ([#883](https://github.com/kubermatic/kubeone/pull/883))
+  * RHSM settings are now located in the OperatingSystemSpec
+
 # [v1.0.0-alpha.0](https://github.com/kubermatic/kubeone/releases/tag/v1.0.0-alpha.0) - 2020-04-22
 
 ## Added
