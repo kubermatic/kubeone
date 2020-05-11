@@ -157,16 +157,6 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*NetworkConfig)(nil), (*kubeone.NetworkConfig)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_NetworkConfig_To_kubeone_NetworkConfig(a.(*NetworkConfig), b.(*kubeone.NetworkConfig), scope)
-	}); err != nil {
-		return err
-	}
-	if err := s.AddGeneratedConversionFunc((*kubeone.NetworkConfig)(nil), (*NetworkConfig)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_kubeone_NetworkConfig_To_v1alpha1_NetworkConfig(a.(*kubeone.NetworkConfig), b.(*NetworkConfig), scope)
-	}); err != nil {
-		return err
-	}
 	if err := s.AddGeneratedConversionFunc((*OpenIDConnect)(nil), (*kubeone.OpenIDConnect)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_v1alpha1_OpenIDConnect_To_kubeone_OpenIDConnect(a.(*OpenIDConnect), b.(*kubeone.OpenIDConnect), scope)
 	}); err != nil {
@@ -267,13 +257,53 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*WorkerConfig)(nil), (*kubeone.WorkerConfig)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_WorkerConfig_To_kubeone_WorkerConfig(a.(*WorkerConfig), b.(*kubeone.WorkerConfig), scope)
+	if err := s.AddConversionFunc((*kubeone.CNI)(nil), (*CNI)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_kubeone_CNI_To_v1alpha1_CNI(a.(*kubeone.CNI), b.(*CNI), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*kubeone.WorkerConfig)(nil), (*WorkerConfig)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_kubeone_WorkerConfig_To_v1alpha1_WorkerConfig(a.(*kubeone.WorkerConfig), b.(*WorkerConfig), scope)
+	if err := s.AddConversionFunc((*kubeone.CloudProviderSpec)(nil), (*CloudProviderSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_kubeone_CloudProviderSpec_To_v1alpha1_CloudProviderSpec(a.(*kubeone.CloudProviderSpec), b.(*CloudProviderSpec), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddConversionFunc((*kubeone.HostConfig)(nil), (*HostConfig)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_kubeone_HostConfig_To_v1alpha1_HostConfig(a.(*kubeone.HostConfig), b.(*HostConfig), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddConversionFunc((*kubeone.KubeOneCluster)(nil), (*KubeOneCluster)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_kubeone_KubeOneCluster_To_v1alpha1_KubeOneCluster(a.(*kubeone.KubeOneCluster), b.(*KubeOneCluster), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddConversionFunc((*CNI)(nil), (*kubeone.CNI)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_CNI_To_kubeone_CNI(a.(*CNI), b.(*kubeone.CNI), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddConversionFunc((*CloudProviderSpec)(nil), (*kubeone.CloudProviderSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_CloudProviderSpec_To_kubeone_CloudProviderSpec(a.(*CloudProviderSpec), b.(*kubeone.CloudProviderSpec), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddConversionFunc((*ClusterNetworkConfig)(nil), (*kubeone.ClusterNetworkConfig)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_ClusterNetworkConfig_To_kubeone_ClusterNetworkConfig(a.(*ClusterNetworkConfig), b.(*kubeone.ClusterNetworkConfig), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddConversionFunc((*HostConfig)(nil), (*kubeone.HostConfig)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_HostConfig_To_kubeone_HostConfig(a.(*HostConfig), b.(*kubeone.HostConfig), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddConversionFunc((*KubeOneCluster)(nil), (*kubeone.KubeOneCluster)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_KubeOneCluster_To_kubeone_KubeOneCluster(a.(*KubeOneCluster), b.(*kubeone.KubeOneCluster), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddConversionFunc((*MachineControllerConfig)(nil), (*kubeone.MachineControllerConfig)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_MachineControllerConfig_To_kubeone_MachineControllerConfig(a.(*MachineControllerConfig), b.(*kubeone.MachineControllerConfig), scope)
 	}); err != nil {
 		return err
 	}
@@ -325,49 +355,38 @@ func Convert_kubeone_Addons_To_v1alpha1_Addons(in *kubeone.Addons, out *Addons, 
 }
 
 func autoConvert_v1alpha1_CNI_To_kubeone_CNI(in *CNI, out *kubeone.CNI, s conversion.Scope) error {
-	out.Provider = kubeone.CNIProvider(in.Provider)
-	out.Encrypted = in.Encrypted
+	// WARNING: in.Provider requires manual conversion: does not exist in peer-type
+	// WARNING: in.Encrypted requires manual conversion: does not exist in peer-type
 	return nil
-}
-
-// Convert_v1alpha1_CNI_To_kubeone_CNI is an autogenerated conversion function.
-func Convert_v1alpha1_CNI_To_kubeone_CNI(in *CNI, out *kubeone.CNI, s conversion.Scope) error {
-	return autoConvert_v1alpha1_CNI_To_kubeone_CNI(in, out, s)
 }
 
 func autoConvert_kubeone_CNI_To_v1alpha1_CNI(in *kubeone.CNI, out *CNI, s conversion.Scope) error {
-	out.Provider = CNIProvider(in.Provider)
-	out.Encrypted = in.Encrypted
+	// WARNING: in.Canal requires manual conversion: does not exist in peer-type
+	// WARNING: in.WeaveNet requires manual conversion: does not exist in peer-type
+	// WARNING: in.External requires manual conversion: does not exist in peer-type
 	return nil
-}
-
-// Convert_kubeone_CNI_To_v1alpha1_CNI is an autogenerated conversion function.
-func Convert_kubeone_CNI_To_v1alpha1_CNI(in *kubeone.CNI, out *CNI, s conversion.Scope) error {
-	return autoConvert_kubeone_CNI_To_v1alpha1_CNI(in, out, s)
 }
 
 func autoConvert_v1alpha1_CloudProviderSpec_To_kubeone_CloudProviderSpec(in *CloudProviderSpec, out *kubeone.CloudProviderSpec, s conversion.Scope) error {
-	out.Name = kubeone.CloudProviderName(in.Name)
+	// WARNING: in.Name requires manual conversion: does not exist in peer-type
 	out.External = in.External
 	out.CloudConfig = in.CloudConfig
 	return nil
-}
-
-// Convert_v1alpha1_CloudProviderSpec_To_kubeone_CloudProviderSpec is an autogenerated conversion function.
-func Convert_v1alpha1_CloudProviderSpec_To_kubeone_CloudProviderSpec(in *CloudProviderSpec, out *kubeone.CloudProviderSpec, s conversion.Scope) error {
-	return autoConvert_v1alpha1_CloudProviderSpec_To_kubeone_CloudProviderSpec(in, out, s)
 }
 
 func autoConvert_kubeone_CloudProviderSpec_To_v1alpha1_CloudProviderSpec(in *kubeone.CloudProviderSpec, out *CloudProviderSpec, s conversion.Scope) error {
-	out.Name = CloudProviderName(in.Name)
 	out.External = in.External
 	out.CloudConfig = in.CloudConfig
+	// WARNING: in.AWS requires manual conversion: does not exist in peer-type
+	// WARNING: in.Azure requires manual conversion: does not exist in peer-type
+	// WARNING: in.DigitalOcean requires manual conversion: does not exist in peer-type
+	// WARNING: in.GCE requires manual conversion: does not exist in peer-type
+	// WARNING: in.Hetzner requires manual conversion: does not exist in peer-type
+	// WARNING: in.Openstack requires manual conversion: does not exist in peer-type
+	// WARNING: in.Packet requires manual conversion: does not exist in peer-type
+	// WARNING: in.Vsphere requires manual conversion: does not exist in peer-type
+	// WARNING: in.None requires manual conversion: does not exist in peer-type
 	return nil
-}
-
-// Convert_kubeone_CloudProviderSpec_To_v1alpha1_CloudProviderSpec is an autogenerated conversion function.
-func Convert_kubeone_CloudProviderSpec_To_v1alpha1_CloudProviderSpec(in *kubeone.CloudProviderSpec, out *CloudProviderSpec, s conversion.Scope) error {
-	return autoConvert_kubeone_CloudProviderSpec_To_v1alpha1_CloudProviderSpec(in, out, s)
 }
 
 func autoConvert_v1alpha1_ClusterNetworkConfig_To_kubeone_ClusterNetworkConfig(in *ClusterNetworkConfig, out *kubeone.ClusterNetworkConfig, s conversion.Scope) error {
@@ -375,14 +394,17 @@ func autoConvert_v1alpha1_ClusterNetworkConfig_To_kubeone_ClusterNetworkConfig(i
 	out.ServiceSubnet = in.ServiceSubnet
 	out.ServiceDomainName = in.ServiceDomainName
 	out.NodePortRange = in.NodePortRange
-	out.CNI = (*kubeone.CNI)(unsafe.Pointer(in.CNI))
-	out.NetworkID = in.NetworkID
+	if in.CNI != nil {
+		in, out := &in.CNI, &out.CNI
+		*out = new(kubeone.CNI)
+		if err := Convert_v1alpha1_CNI_To_kubeone_CNI(*in, *out, s); err != nil {
+			return err
+		}
+	} else {
+		out.CNI = nil
+	}
+	// WARNING: in.NetworkID requires manual conversion: does not exist in peer-type
 	return nil
-}
-
-// Convert_v1alpha1_ClusterNetworkConfig_To_kubeone_ClusterNetworkConfig is an autogenerated conversion function.
-func Convert_v1alpha1_ClusterNetworkConfig_To_kubeone_ClusterNetworkConfig(in *ClusterNetworkConfig, out *kubeone.ClusterNetworkConfig, s conversion.Scope) error {
-	return autoConvert_v1alpha1_ClusterNetworkConfig_To_kubeone_ClusterNetworkConfig(in, out, s)
 }
 
 func autoConvert_kubeone_ClusterNetworkConfig_To_v1alpha1_ClusterNetworkConfig(in *kubeone.ClusterNetworkConfig, out *ClusterNetworkConfig, s conversion.Scope) error {
@@ -390,8 +412,15 @@ func autoConvert_kubeone_ClusterNetworkConfig_To_v1alpha1_ClusterNetworkConfig(i
 	out.ServiceSubnet = in.ServiceSubnet
 	out.ServiceDomainName = in.ServiceDomainName
 	out.NodePortRange = in.NodePortRange
-	out.CNI = (*CNI)(unsafe.Pointer(in.CNI))
-	out.NetworkID = in.NetworkID
+	if in.CNI != nil {
+		in, out := &in.CNI, &out.CNI
+		*out = new(CNI)
+		if err := Convert_kubeone_CNI_To_v1alpha1_CNI(*in, *out, s); err != nil {
+			return err
+		}
+	} else {
+		out.CNI = nil
+	}
 	return nil
 }
 
@@ -483,14 +512,9 @@ func autoConvert_v1alpha1_HostConfig_To_kubeone_HostConfig(in *HostConfig, out *
 	out.BastionUser = in.BastionUser
 	out.Hostname = in.Hostname
 	out.IsLeader = in.IsLeader
-	out.Untaint = in.Untaint
-	out.OperatingSystem = in.OperatingSystem
+	// WARNING: in.Untaint requires manual conversion: does not exist in peer-type
+	out.OperatingSystem = kubeone.OperatingSystemName(in.OperatingSystem)
 	return nil
-}
-
-// Convert_v1alpha1_HostConfig_To_kubeone_HostConfig is an autogenerated conversion function.
-func Convert_v1alpha1_HostConfig_To_kubeone_HostConfig(in *HostConfig, out *kubeone.HostConfig, s conversion.Scope) error {
-	return autoConvert_v1alpha1_HostConfig_To_kubeone_HostConfig(in, out, s)
 }
 
 func autoConvert_kubeone_HostConfig_To_v1alpha1_HostConfig(in *kubeone.HostConfig, out *HostConfig, s conversion.Scope) error {
@@ -506,20 +530,15 @@ func autoConvert_kubeone_HostConfig_To_v1alpha1_HostConfig(in *kubeone.HostConfi
 	out.BastionUser = in.BastionUser
 	out.Hostname = in.Hostname
 	out.IsLeader = in.IsLeader
-	out.Untaint = in.Untaint
-	out.OperatingSystem = in.OperatingSystem
+	// WARNING: in.Taints requires manual conversion: does not exist in peer-type
+	out.OperatingSystem = string(in.OperatingSystem)
 	return nil
-}
-
-// Convert_kubeone_HostConfig_To_v1alpha1_HostConfig is an autogenerated conversion function.
-func Convert_kubeone_HostConfig_To_v1alpha1_HostConfig(in *kubeone.HostConfig, out *HostConfig, s conversion.Scope) error {
-	return autoConvert_kubeone_HostConfig_To_v1alpha1_HostConfig(in, out, s)
 }
 
 func autoConvert_v1alpha1_KubeOneCluster_To_kubeone_KubeOneCluster(in *KubeOneCluster, out *kubeone.KubeOneCluster, s conversion.Scope) error {
 	out.Name = in.Name
-	out.Hosts = *(*[]kubeone.HostConfig)(unsafe.Pointer(&in.Hosts))
-	out.StaticWorkers = *(*[]kubeone.HostConfig)(unsafe.Pointer(&in.StaticWorkers))
+	// WARNING: in.Hosts requires manual conversion: does not exist in peer-type
+	// WARNING: in.StaticWorkers requires manual conversion: inconvertible types ([]github.com/kubermatic/kubeone/pkg/apis/kubeone/v1alpha1.HostConfig vs github.com/kubermatic/kubeone/pkg/apis/kubeone.StaticWorkersConfig)
 	if err := Convert_v1alpha1_APIEndpoint_To_kubeone_APIEndpoint(&in.APIEndpoint, &out.APIEndpoint, s); err != nil {
 		return err
 	}
@@ -535,26 +554,28 @@ func autoConvert_v1alpha1_KubeOneCluster_To_kubeone_KubeOneCluster(in *KubeOneCl
 	if err := Convert_v1alpha1_ProxyConfig_To_kubeone_ProxyConfig(&in.Proxy, &out.Proxy, s); err != nil {
 		return err
 	}
-	out.Workers = *(*[]kubeone.WorkerConfig)(unsafe.Pointer(&in.Workers))
-	out.MachineController = (*kubeone.MachineControllerConfig)(unsafe.Pointer(in.MachineController))
+	// WARNING: in.Workers requires manual conversion: does not exist in peer-type
+	if in.MachineController != nil {
+		in, out := &in.MachineController, &out.MachineController
+		*out = new(kubeone.MachineControllerConfig)
+		if err := Convert_v1alpha1_MachineControllerConfig_To_kubeone_MachineControllerConfig(*in, *out, s); err != nil {
+			return err
+		}
+	} else {
+		out.MachineController = nil
+	}
 	if err := Convert_v1alpha1_Features_To_kubeone_Features(&in.Features, &out.Features, s); err != nil {
 		return err
 	}
 	out.Addons = (*kubeone.Addons)(unsafe.Pointer(in.Addons))
 	out.SystemPackages = (*kubeone.SystemPackages)(unsafe.Pointer(in.SystemPackages))
-	out.Credentials = *(*map[string]string)(unsafe.Pointer(&in.Credentials))
+	// WARNING: in.Credentials requires manual conversion: does not exist in peer-type
 	return nil
-}
-
-// Convert_v1alpha1_KubeOneCluster_To_kubeone_KubeOneCluster is an autogenerated conversion function.
-func Convert_v1alpha1_KubeOneCluster_To_kubeone_KubeOneCluster(in *KubeOneCluster, out *kubeone.KubeOneCluster, s conversion.Scope) error {
-	return autoConvert_v1alpha1_KubeOneCluster_To_kubeone_KubeOneCluster(in, out, s)
 }
 
 func autoConvert_kubeone_KubeOneCluster_To_v1alpha1_KubeOneCluster(in *kubeone.KubeOneCluster, out *KubeOneCluster, s conversion.Scope) error {
 	out.Name = in.Name
-	out.Hosts = *(*[]HostConfig)(unsafe.Pointer(&in.Hosts))
-	out.StaticWorkers = *(*[]HostConfig)(unsafe.Pointer(&in.StaticWorkers))
+	// WARNING: in.ControlPlane requires manual conversion: does not exist in peer-type
 	if err := Convert_kubeone_APIEndpoint_To_v1alpha1_APIEndpoint(&in.APIEndpoint, &out.APIEndpoint, s); err != nil {
 		return err
 	}
@@ -570,36 +591,33 @@ func autoConvert_kubeone_KubeOneCluster_To_v1alpha1_KubeOneCluster(in *kubeone.K
 	if err := Convert_kubeone_ProxyConfig_To_v1alpha1_ProxyConfig(&in.Proxy, &out.Proxy, s); err != nil {
 		return err
 	}
-	out.Workers = *(*[]WorkerConfig)(unsafe.Pointer(&in.Workers))
-	out.MachineController = (*MachineControllerConfig)(unsafe.Pointer(in.MachineController))
+	// WARNING: in.StaticWorkers requires manual conversion: inconvertible types (github.com/kubermatic/kubeone/pkg/apis/kubeone.StaticWorkersConfig vs []github.com/kubermatic/kubeone/pkg/apis/kubeone/v1alpha1.HostConfig)
+	// WARNING: in.DynamicWorkers requires manual conversion: does not exist in peer-type
+	if in.MachineController != nil {
+		in, out := &in.MachineController, &out.MachineController
+		*out = new(MachineControllerConfig)
+		if err := Convert_kubeone_MachineControllerConfig_To_v1alpha1_MachineControllerConfig(*in, *out, s); err != nil {
+			return err
+		}
+	} else {
+		out.MachineController = nil
+	}
 	if err := Convert_kubeone_Features_To_v1alpha1_Features(&in.Features, &out.Features, s); err != nil {
 		return err
 	}
 	out.Addons = (*Addons)(unsafe.Pointer(in.Addons))
 	out.SystemPackages = (*SystemPackages)(unsafe.Pointer(in.SystemPackages))
-	out.Credentials = *(*map[string]string)(unsafe.Pointer(&in.Credentials))
 	return nil
-}
-
-// Convert_kubeone_KubeOneCluster_To_v1alpha1_KubeOneCluster is an autogenerated conversion function.
-func Convert_kubeone_KubeOneCluster_To_v1alpha1_KubeOneCluster(in *kubeone.KubeOneCluster, out *KubeOneCluster, s conversion.Scope) error {
-	return autoConvert_kubeone_KubeOneCluster_To_v1alpha1_KubeOneCluster(in, out, s)
 }
 
 func autoConvert_v1alpha1_MachineControllerConfig_To_kubeone_MachineControllerConfig(in *MachineControllerConfig, out *kubeone.MachineControllerConfig, s conversion.Scope) error {
 	out.Deploy = in.Deploy
-	out.Provider = kubeone.CloudProviderName(in.Provider)
+	// WARNING: in.Provider requires manual conversion: does not exist in peer-type
 	return nil
-}
-
-// Convert_v1alpha1_MachineControllerConfig_To_kubeone_MachineControllerConfig is an autogenerated conversion function.
-func Convert_v1alpha1_MachineControllerConfig_To_kubeone_MachineControllerConfig(in *MachineControllerConfig, out *kubeone.MachineControllerConfig, s conversion.Scope) error {
-	return autoConvert_v1alpha1_MachineControllerConfig_To_kubeone_MachineControllerConfig(in, out, s)
 }
 
 func autoConvert_kubeone_MachineControllerConfig_To_v1alpha1_MachineControllerConfig(in *kubeone.MachineControllerConfig, out *MachineControllerConfig, s conversion.Scope) error {
 	out.Deploy = in.Deploy
-	out.Provider = CloudProviderName(in.Provider)
 	return nil
 }
 
@@ -626,34 +644,6 @@ func autoConvert_kubeone_MetricsServer_To_v1alpha1_MetricsServer(in *kubeone.Met
 // Convert_kubeone_MetricsServer_To_v1alpha1_MetricsServer is an autogenerated conversion function.
 func Convert_kubeone_MetricsServer_To_v1alpha1_MetricsServer(in *kubeone.MetricsServer, out *MetricsServer, s conversion.Scope) error {
 	return autoConvert_kubeone_MetricsServer_To_v1alpha1_MetricsServer(in, out, s)
-}
-
-func autoConvert_v1alpha1_NetworkConfig_To_kubeone_NetworkConfig(in *NetworkConfig, out *kubeone.NetworkConfig, s conversion.Scope) error {
-	out.CIDR = in.CIDR
-	out.Gateway = in.Gateway
-	if err := Convert_v1alpha1_DNSConfig_To_kubeone_DNSConfig(&in.DNS, &out.DNS, s); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Convert_v1alpha1_NetworkConfig_To_kubeone_NetworkConfig is an autogenerated conversion function.
-func Convert_v1alpha1_NetworkConfig_To_kubeone_NetworkConfig(in *NetworkConfig, out *kubeone.NetworkConfig, s conversion.Scope) error {
-	return autoConvert_v1alpha1_NetworkConfig_To_kubeone_NetworkConfig(in, out, s)
-}
-
-func autoConvert_kubeone_NetworkConfig_To_v1alpha1_NetworkConfig(in *kubeone.NetworkConfig, out *NetworkConfig, s conversion.Scope) error {
-	out.CIDR = in.CIDR
-	out.Gateway = in.Gateway
-	if err := Convert_kubeone_DNSConfig_To_v1alpha1_DNSConfig(&in.DNS, &out.DNS, s); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Convert_kubeone_NetworkConfig_To_v1alpha1_NetworkConfig is an autogenerated conversion function.
-func Convert_kubeone_NetworkConfig_To_v1alpha1_NetworkConfig(in *kubeone.NetworkConfig, out *NetworkConfig, s conversion.Scope) error {
-	return autoConvert_kubeone_NetworkConfig_To_v1alpha1_NetworkConfig(in, out, s)
 }
 
 func autoConvert_v1alpha1_OpenIDConnect_To_kubeone_OpenIDConnect(in *OpenIDConnect, out *kubeone.OpenIDConnect, s conversion.Scope) error {
@@ -765,7 +755,7 @@ func autoConvert_v1alpha1_ProviderSpec_To_kubeone_ProviderSpec(in *ProviderSpec,
 	out.SSHPublicKeys = *(*[]string)(unsafe.Pointer(&in.SSHPublicKeys))
 	out.OperatingSystem = in.OperatingSystem
 	out.OperatingSystemSpec = *(*json.RawMessage)(unsafe.Pointer(&in.OperatingSystemSpec))
-	out.Network = (*kubeone.NetworkConfig)(unsafe.Pointer(in.Network))
+	out.Network = (*kubeone.ProviderStaticNetworkConfig)(unsafe.Pointer(in.Network))
 	out.OverwriteCloudConfig = (*string)(unsafe.Pointer(in.OverwriteCloudConfig))
 	return nil
 }
@@ -908,32 +898,4 @@ func autoConvert_kubeone_VersionConfig_To_v1alpha1_VersionConfig(in *kubeone.Ver
 // Convert_kubeone_VersionConfig_To_v1alpha1_VersionConfig is an autogenerated conversion function.
 func Convert_kubeone_VersionConfig_To_v1alpha1_VersionConfig(in *kubeone.VersionConfig, out *VersionConfig, s conversion.Scope) error {
 	return autoConvert_kubeone_VersionConfig_To_v1alpha1_VersionConfig(in, out, s)
-}
-
-func autoConvert_v1alpha1_WorkerConfig_To_kubeone_WorkerConfig(in *WorkerConfig, out *kubeone.WorkerConfig, s conversion.Scope) error {
-	out.Name = in.Name
-	out.Replicas = (*int)(unsafe.Pointer(in.Replicas))
-	if err := Convert_v1alpha1_ProviderSpec_To_kubeone_ProviderSpec(&in.Config, &out.Config, s); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Convert_v1alpha1_WorkerConfig_To_kubeone_WorkerConfig is an autogenerated conversion function.
-func Convert_v1alpha1_WorkerConfig_To_kubeone_WorkerConfig(in *WorkerConfig, out *kubeone.WorkerConfig, s conversion.Scope) error {
-	return autoConvert_v1alpha1_WorkerConfig_To_kubeone_WorkerConfig(in, out, s)
-}
-
-func autoConvert_kubeone_WorkerConfig_To_v1alpha1_WorkerConfig(in *kubeone.WorkerConfig, out *WorkerConfig, s conversion.Scope) error {
-	out.Name = in.Name
-	out.Replicas = (*int)(unsafe.Pointer(in.Replicas))
-	if err := Convert_kubeone_ProviderSpec_To_v1alpha1_ProviderSpec(&in.Config, &out.Config, s); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Convert_kubeone_WorkerConfig_To_v1alpha1_WorkerConfig is an autogenerated conversion function.
-func Convert_kubeone_WorkerConfig_To_v1alpha1_WorkerConfig(in *kubeone.WorkerConfig, out *WorkerConfig, s conversion.Scope) error {
-	return autoConvert_kubeone_WorkerConfig_To_v1alpha1_WorkerConfig(in, out, s)
 }

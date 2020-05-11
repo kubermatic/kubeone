@@ -26,10 +26,6 @@ set -eu -o pipefail
 cd $(dirname ${BASH_SOURCE})/..
 bash vendor/k8s.io/code-generator/generate-internal-groups.sh \
   "deepcopy,conversion,defaulter" "" ./pkg/apis ./pkg/apis \
-  "kubeone:v1alpha1" \
+  "kubeone:v1alpha1,v1beta1" \
   --go-header-file hack/boilerplate/boilerplate.generatego.txt
 
-bash vendor/k8s.io/code-generator/generate-internal-groups.sh \
-  "deepcopy,defaulter" "" ./pkg/apis ./pkg/apis \
-  "kubeone:v1beta1" \
-  --go-header-file hack/boilerplate/boilerplate.generatego.txt
