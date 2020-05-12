@@ -45,7 +45,7 @@ type Report struct {
 
 func MemberList(s *state.State) (*clientv3.MemberListResponse, error) {
 	etcdEndpoints := []string{}
-	for _, node := range s.Cluster.Hosts {
+	for _, node := range s.Cluster.ControlPlane.Hosts {
 		etcdEndpoints = append(etcdEndpoints, fmt.Sprintf(clientEndpointFmt, node.PrivateAddress))
 	}
 

@@ -47,7 +47,7 @@ func Ensure(s *state.State) error {
 	}
 	s.Logger.Infoln("Applying addons…")
 
-	creds, err := credentials.ProviderCredentials(s.Cluster.CloudProvider.Name, s.CredentialsFilePath)
+	creds, err := credentials.ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath)
 	if err != nil {
 		return errors.Wrap(err, "unable to fetch credentials")
 	}

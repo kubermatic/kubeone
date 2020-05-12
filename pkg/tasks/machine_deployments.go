@@ -31,7 +31,7 @@ import (
 )
 
 func createMachineDeployments(s *state.State) error {
-	if len(s.Cluster.Workers) == 0 {
+	if len(s.Cluster.DynamicWorkers) == 0 {
 		return nil
 	}
 

@@ -66,6 +66,32 @@ func (h *HostConfig) SetLeader(leader bool) {
 	h.IsLeader = leader
 }
 
+// CloudProviderName returns name of the cloud provider
+func (p CloudProviderSpec) CloudProivderName() string { //nolint:stylecheck
+	switch {
+	case p.AWS != nil:
+		return "aws"
+	case p.Azure != nil:
+		return "azure"
+	case p.DigitalOcean != nil:
+		return "digitalocean"
+	case p.GCE != nil:
+		return "gce"
+	case p.Hetzner != nil:
+		return "hetzner"
+	case p.Openstack != nil:
+		return "openstack"
+	case p.Packet != nil:
+		return "packet"
+	case p.Vsphere != nil:
+		return "vsphere"
+	case p.None != nil:
+		return "none"
+	}
+
+	return ""
+}
+
 // CloudProviderInTree detects is there in-tree cloud provider implementation for specified provider.
 // List of in-tree provider can be found here: https://github.com/kubernetes/kubernetes/tree/master/pkg/cloudprovider
 func (p CloudProviderSpec) CloudProviderInTree() bool { //nolint:stylecheck

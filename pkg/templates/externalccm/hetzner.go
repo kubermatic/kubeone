@@ -57,7 +57,7 @@ func ensureHetzner(s *state.State) error {
 		}
 	}
 
-	dep := hetznerDeployment(s.Cluster.ClusterNetwork.NetworkID, s.Cluster.ClusterNetwork.PodSubnet)
+	dep := hetznerDeployment(s.Cluster.CloudProvider.Hetzner.NetworkID, s.Cluster.ClusterNetwork.PodSubnet)
 	return clientutil.CreateOrUpdate(ctx, s.DynamicClient, dep)
 }
 

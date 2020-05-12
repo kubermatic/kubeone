@@ -55,7 +55,7 @@ func ensurePacket(s *state.State) error {
 	sa := packetServiceAccount()
 	crole := packetClusterRole()
 
-	creds, err := credentials.ProviderCredentials(s.Cluster.CloudProvider.Name, s.CredentialsFilePath)
+	creds, err := credentials.ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath)
 	if err != nil {
 		return errors.Wrap(err, "failed to fetch credentials")
 	}

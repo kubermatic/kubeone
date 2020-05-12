@@ -199,11 +199,10 @@ manifest used as of v0.6.0. The new manifest is printed on the standard output.
 // runPrint prints an example configuration file
 func runPrint(printOptions *printOpts) error {
 	if printOptions.FullConfig {
-		p := kubeoneapi.CloudProviderName(printOptions.CloudProviderName)
-		switch p {
-		case kubeoneapi.CloudProviderNameDigitalOcean, kubeoneapi.CloudProviderNamePacket, kubeoneapi.CloudProviderNameHetzner:
+		switch printOptions.CloudProviderName {
+		case "digitalocean", "packet", "hetzner":
 			printOptions.CloudProviderExternal = true
-		case kubeoneapi.CloudProviderNameOpenStack:
+		case "openstack":
 			printOptions.CloudProviderCloudCfg = "<< cloudConfig is required for OpenStack >>"
 		}
 
@@ -259,13 +258,29 @@ func createAndPrintManifest(printOptions *printOpts) error {
 	cfg.Set(yamled.Path{"versions", "kubernetes"}, printOptions.KubernetesVersion)
 
 	// Provider
-	p := kubeoneapi.CloudProviderName(printOptions.CloudProviderName)
-	cfg.Set(yamled.Path{"cloudProvider", "name"}, p)
-	switch p {
-	case kubeoneapi.CloudProviderNameDigitalOcean, kubeoneapi.CloudProviderNamePacket, kubeoneapi.CloudProviderNameHetzner:
+	switch printOptions.CloudProviderName {
+	case "aws":
+		cfg.Set(yamled.Path{"cloudProvider", "aws"}, "")
+	case "azure":
+		cfg.Set(yamled.Path{"cloudProvider", "azure"}, "")
+	case "digitalocean":
+		cfg.Set(yamled.Path{"cloudProvider", "digitalocean"}, "")
 		cfg.Set(yamled.Path{"cloudProvider", "external"}, true)
-	case kubeoneapi.CloudProviderNameOpenStack:
+	case "gce":
+		cfg.Set(yamled.Path{"cloudProvider", "gce"}, "")
+	case "hetzner":
+		cfg.Set(yamled.Path{"cloudProvider", "hetzner"}, "")
+		cfg.Set(yamled.Path{"cloudProvider", "external"}, true)
+	case "openstack":
+		cfg.Set(yamled.Path{"cloudProvider", "openstack"}, "")
 		cfg.Set(yamled.Path{"cloudProvider", "cloudConfig"}, "<< cloudConfig is required for OpenStack >>")
+	case "packet":
+		cfg.Set(yamled.Path{"cloudProvider", "packet"}, "")
+		cfg.Set(yamled.Path{"cloudProvider", "external"}, true)
+	case "vsphere":
+		cfg.Set(yamled.Path{"cloudProvider", "vsphere"}, "")
+	case "none":
+		cfg.Set(yamled.Path{"cloudProvider", "none"}, "")
 	}
 
 	// Hosts

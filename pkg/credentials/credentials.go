@@ -77,41 +77,27 @@ type ProviderEnvironmentVariable struct {
 }
 
 // ProviderCredentials implements fetching credentials for each supported provider
-func ProviderCredentials(p kubeone.CloudProviderName, credentialsFilePath string) (map[string]string, error) {
+func ProviderCredentials(p kubeone.CloudProviderSpec, credentialsFilePath string) (map[string]string, error) {
 	f, err := newFetcher(credentialsFilePath)
 	if err != nil {
 		return nil, err
 	}
 
-	switch p {
-	case kubeone.CloudProviderNameAWS:
+	switch {
+	case p.AWS != nil:
 		return f.parseAWSCredentials()
-	case kubeone.CloudProviderNameAzure:
+	case p.Azure != nil:
 		return f.parseCredentialVariables([]ProviderEnvironmentVariable{
 			{Name: AzureClientID, MachineControllerName: AzureClientIDMC},
 			{Name: AzureClientSecret, MachineControllerName: AzureClientSecretMC},
 			{Name: AzureTenantID, MachineControllerName: AzureTenantIDMC},
 			{Name: AzureSubscribtionID, MachineControllerName: AzureSubscribtionIDMC},
 		}, defaultValidationFunc)
-	case kubeone.CloudProviderNameOpenStack:
-		return f.parseCredentialVariables([]ProviderEnvironmentVariable{
-			{Name: OpenStackAuthURL},
-			{Name: OpenStackUserName, MachineControllerName: OpenStackUserNameMC},
-			{Name: OpenStackPassword},
-			{Name: OpenStackDomainName},
-			{Name: OpenStackRegionName},
-			{Name: OpenStackTenantID},
-			{Name: OpenStackTenantName},
-		}, openstackValidationFunc)
-	case kubeone.CloudProviderNameHetzner:
-		return f.parseCredentialVariables([]ProviderEnvironmentVariable{
-			{Name: HetznerTokenKey, MachineControllerName: HetznerTokenKeyMC},
-		}, defaultValidationFunc)
-	case kubeone.CloudProviderNameDigitalOcean:
+	case p.DigitalOcean != nil:
 		return f.parseCredentialVariables([]ProviderEnvironmentVariable{
 			{Name: DigitalOceanTokenKey, MachineControllerName: DigitalOceanTokenKeyMC},
 		}, defaultValidationFunc)
-	case kubeone.CloudProviderNameGCE:
+	case p.GCE != nil:
 		gsa, err := f.parseCredentialVariables([]ProviderEnvironmentVariable{
 			{Name: GoogleServiceAccountKey, MachineControllerName: GoogleServiceAccountKeyMC},
 		}, defaultValidationFunc)
@@ -122,12 +108,26 @@ func ProviderCredentials(p kubeone.CloudProviderName, credentialsFilePath string
 		// machine-controller, as machine-controller assumes it will be double encoded
 		gsa[GoogleServiceAccountKeyMC] = base64.StdEncoding.EncodeToString([]byte(gsa[GoogleServiceAccountKeyMC]))
 		return gsa, nil
-	case kubeone.CloudProviderNamePacket:
+	case p.Hetzner != nil:
+		return f.parseCredentialVariables([]ProviderEnvironmentVariable{
+			{Name: HetznerTokenKey, MachineControllerName: HetznerTokenKeyMC},
+		}, defaultValidationFunc)
+	case p.Openstack != nil:
+		return f.parseCredentialVariables([]ProviderEnvironmentVariable{
+			{Name: OpenStackAuthURL},
+			{Name: OpenStackUserName, MachineControllerName: OpenStackUserNameMC},
+			{Name: OpenStackPassword},
+			{Name: OpenStackDomainName},
+			{Name: OpenStackRegionName},
+			{Name: OpenStackTenantID},
+			{Name: OpenStackTenantName},
+		}, openstackValidationFunc)
+	case p.Packet != nil:
 		return f.parseCredentialVariables([]ProviderEnvironmentVariable{
 			{Name: PacketAPIKey, MachineControllerName: PacketAPIKeyMC},
 			{Name: PacketProjectID},
 		}, defaultValidationFunc)
-	case kubeone.CloudProviderNameVSphere:
+	case p.Vsphere != nil:
 		vscreds, err := f.parseCredentialVariables([]ProviderEnvironmentVariable{
 			{Name: VSphereAddress, MachineControllerName: VSphereAddressMC},
 			{Name: VSphereUsername, MachineControllerName: VSphereUsernameMC},
@@ -148,7 +148,7 @@ func ProviderCredentials(p kubeone.CloudProviderName, credentialsFilePath string
 		vscreds[fmt.Sprintf("%s.username", vcenterPrefix)] = vscreds[VSphereUsernameMC]
 		vscreds[fmt.Sprintf("%s.password", vcenterPrefix)] = vscreds[VSpherePassword]
 		return vscreds, nil
-	case kubeone.CloudProviderNameNone:
+	case p.None != nil:
 		return map[string]string{}, nil
 	}
 

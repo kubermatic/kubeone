@@ -47,7 +47,7 @@ func Run(s *state.State, nodes corev1.NodeList) error {
 
 	// Verify that list of nodes match with the provided manifest
 	s.Logger.Infoln("Verifying that nodes in the cluster match nodes defined in the manifest…")
-	if err := verifyMatchNodes(s.Cluster.Hosts, nodes, s.Logger, s.Verbose); err != nil {
+	if err := verifyMatchNodes(s.Cluster.ControlPlane.Hosts, nodes, s.Logger, s.Verbose); err != nil {
 		s.Logger.Errorln("Unable to match all control plane nodes in the cluster and all nodes defined in the manifest.")
 		errs = append(errs, err...)
 	}

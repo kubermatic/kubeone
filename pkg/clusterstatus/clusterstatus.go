@@ -115,7 +115,7 @@ func getClusterStatus(s *state.State) ([]nodeStatus, error) {
 		return nil, errors.Wrap(err, "failed to get etcd ring")
 	}
 
-	for _, host := range s.Cluster.Hosts {
+	for _, host := range s.Cluster.ControlPlane.Hosts {
 		etcdStatus, err := etcdstatus.Get(s, host, etcdRing)
 		if err != nil {
 			errs = append(errs, err)
