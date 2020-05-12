@@ -34,12 +34,8 @@ install: buildenv
 build: dist/kubeone
 
 .PHONY: vendor
-vendor: buildenv download-dependencies
+vendor: buildenv
 	go mod vendor
-
-.PHONY: download-dependencies
-download-dependencies: buildenv
-	go mod download
 
 dist/kubeone: buildenv
 	go build -ldflags='$(GOLDFLAGS)' -v -o $@ .

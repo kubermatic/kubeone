@@ -21,6 +21,15 @@ set -euf -o pipefail
 
 GOBETWEEN_VERSION=0.7.0
 
+noop() { : "didn't detected package manager, noop"; }
+
+PKG_MANAGER="noop"
+
+[ "$(command -v yum)" ] && PKG_MANAGER=yum
+[ "$(command -v apt-get)" ] && PKG_MANAGER=apt-get
+
+$PKG_MANAGER install tar -y
+
 mkdir -p /tmp/gobetween
 cd /tmp/gobetween
 curl -L -o gobetween_${GOBETWEEN_VERSION}_linux_amd64.tar.gz \
