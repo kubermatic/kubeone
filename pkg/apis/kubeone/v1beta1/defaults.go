@@ -48,6 +48,7 @@ func SetDefaults_KubeOneCluster(obj *KubeOneCluster) {
 	SetDefaults_MachineController(obj)
 	SetDefaults_SystemPackages(obj)
 	SetDefaults_Features(obj)
+	SetDefaults_Addons(obj)
 }
 
 func SetDefaults_Hosts(obj *KubeOneCluster) {
