@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package terraform
+package v1beta1
 
 import (
 	"encoding/json"
@@ -22,7 +22,7 @@ import (
 	"github.com/imdario/mergo"
 	"github.com/pkg/errors"
 
-	kubeonev1alpha1 "github.com/kubermatic/kubeone/pkg/apis/kubeone/v1alpha1"
+	kubeonev1beta1 "github.com/kubermatic/kubeone/pkg/apis/kubeone/v1beta1"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
 )
 
@@ -59,11 +59,11 @@ type Config struct {
 	} `json:"kubeone_hosts"`
 
 	KubeOneWorkers struct {
-		Value map[string]kubeonev1alpha1.WorkerConfig `json:"value"`
+		Value map[string]kubeonev1beta1.DynamicWorkerConfig `json:"value"`
 	} `json:"kubeone_workers"`
 
 	Proxy struct {
-		Value kubeonev1alpha1.ProxyConfig `json:"value"`
+		Value kubeonev1beta1.ProxyConfig `json:"value"`
 	} `json:"proxy"`
 }
 
@@ -80,9 +80,9 @@ func NewConfigFromJSON(j []byte) (c *Config, err error) {
 
 // Apply adds the terraform configuration options to the given
 // cluster config.
-func (c *Config) Apply(cluster *kubeonev1alpha1.KubeOneCluster) error {
+func (c *Config) Apply(cluster *kubeonev1beta1.KubeOneCluster) error {
 	if c.KubeOneAPI.Value.Endpoint != "" {
-		cluster.APIEndpoint = kubeonev1alpha1.APIEndpoint{
+		cluster.APIEndpoint = kubeonev1beta1.APIEndpoint{
 			Host: c.KubeOneAPI.Value.Endpoint,
 		}
 	}
@@ -90,7 +90,9 @@ func (c *Config) Apply(cluster *kubeonev1alpha1.KubeOneCluster) error {
 	cp := c.KubeOneHosts.Value.ControlPlane
 
 	if cp.CloudProvider != nil {
-		cluster.CloudProvider.Name = kubeonev1alpha1.CloudProviderName(*cp.CloudProvider)
+		if err := setCloudProvider(&cluster.CloudProvider, *cp.CloudProvider); err != nil {
+			return errors.Wrap(err, "failed to set cloud provider")
+		}
 	}
 
 	var err error
@@ -98,7 +100,7 @@ func (c *Config) Apply(cluster *kubeonev1alpha1.KubeOneCluster) error {
 	cluster.Name = cp.ClusterName
 
 	// build up a list of master nodes
-	hosts := make([]kubeonev1alpha1.HostConfig, 0)
+	hosts := make([]kubeonev1beta1.HostConfig, 0)
 	for i, publicIP := range cp.PublicAddress {
 		privateIP := publicIP
 		if i < len(cp.PrivateAddress) {
@@ -126,27 +128,28 @@ func (c *Config) Apply(cluster *kubeonev1alpha1.KubeOneCluster) error {
 	}
 
 	if len(hosts) > 0 {
-		cluster.Hosts = hosts
+		cluster.ControlPlane.Hosts = hosts
 	}
 
 	if err = mergo.Merge(&cluster.Proxy, &c.Proxy.Value); err != nil {
 		return errors.Wrap(err, "failed to merge proxy settings")
 	}
 
-	if len(cp.NetworkID) > 0 {
-		cluster.ClusterNetwork.NetworkID = cp.NetworkID
+	if len(cp.NetworkID) > 0 && cluster.CloudProvider.Hetzner != nil {
+		// NetworkID is used only for Hetzner
+		cluster.CloudProvider.Hetzner.NetworkID = cp.NetworkID
 	}
 
 	// Walk through all configued workersets from terraform and apply their config
 	// by either merging it into an existing workerSet or creating a new one
 	for workersetName, workersetValue := range c.KubeOneWorkers.Value {
-		var existingWorkerSet *kubeonev1alpha1.WorkerConfig
+		var existingWorkerSet *kubeonev1beta1.DynamicWorkerConfig
 
 		// Check do we have a workerset with the same name defined
 		// in the KubeOneCluster object
-		for idx, workerset := range cluster.Workers {
+		for idx, workerset := range cluster.DynamicWorkers {
 			if workerset.Name == workersetName {
-				existingWorkerSet = &cluster.Workers[idx]
+				existingWorkerSet = &cluster.DynamicWorkers[idx]
 				break
 			}
 		}
@@ -156,31 +159,31 @@ func (c *Config) Apply(cluster *kubeonev1alpha1.KubeOneCluster) error {
 		if existingWorkerSet == nil {
 			// no existing workerset found, use what we have from terraform
 			workersetValue.Name = workersetName
-			cluster.Workers = append(cluster.Workers, workersetValue)
+			cluster.DynamicWorkers = append(cluster.DynamicWorkers, workersetValue)
 			continue
 		}
 
 		// If we found a workerset defined in the cluster object,
 		// merge values from the object and the terraform output
-		switch cluster.CloudProvider.Name {
-		case kubeonev1alpha1.CloudProviderNameAWS:
+		switch {
+		case cluster.CloudProvider.AWS != nil:
 			err = c.updateAWSWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
-		case kubeonev1alpha1.CloudProviderNameAzure:
+		case cluster.CloudProvider.Azure != nil:
 			err = c.updateAzureWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
-		case kubeonev1alpha1.CloudProviderNameGCE:
-			err = c.updateGCEWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
-		case kubeonev1alpha1.CloudProviderNameDigitalOcean:
+		case cluster.CloudProvider.DigitalOcean != nil:
 			err = c.updateDigitalOceanWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
-		case kubeonev1alpha1.CloudProviderNameHetzner:
+		case cluster.CloudProvider.GCE != nil:
+			err = c.updateGCEWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
+		case cluster.CloudProvider.Hetzner != nil:
 			err = c.updateHetznerWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
-		case kubeonev1alpha1.CloudProviderNameOpenStack:
+		case cluster.CloudProvider.Openstack != nil:
 			err = c.updateOpenStackWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
-		case kubeonev1alpha1.CloudProviderNameVSphere:
-			err = c.updateVSphereWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
-		case kubeonev1alpha1.CloudProviderNamePacket:
+		case cluster.CloudProvider.Packet != nil:
 			err = c.updatePacketWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
+		case cluster.CloudProvider.Vsphere != nil:
+			err = c.updateVSphereWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
 		default:
-			return errors.Errorf("unknown provider %v", cluster.CloudProvider.Name)
+			return errors.Errorf("unknown provider")
 		}
 
 		if err != nil {
@@ -191,14 +194,15 @@ func (c *Config) Apply(cluster *kubeonev1alpha1.KubeOneCluster) error {
 	return nil
 }
 
-func newHostConfig(id int, publicIP, privateIP, hostname string, cp controlPlane) kubeonev1alpha1.HostConfig {
+func newHostConfig(id int, publicIP, privateIP, hostname string, cp controlPlane) kubeonev1beta1.HostConfig {
 	var isLeader bool
 
 	if cp.LeaderIP != "" {
 		isLeader = cp.LeaderIP == publicIP || cp.LeaderIP == privateIP
 	}
 
-	return kubeonev1alpha1.HostConfig{
+	// TODO(xmudrii): Taints
+	return kubeonev1beta1.HostConfig{
 		ID:                id,
 		PublicAddress:     publicIP,
 		PrivateAddress:    privateIP,
@@ -211,11 +215,11 @@ func newHostConfig(id int, publicIP, privateIP, hostname string, cp controlPlane
 		BastionPort:       cp.BastionPort,
 		BastionUser:       cp.BastionUser,
 		IsLeader:          isLeader,
-		Untaint:           cp.Untaint,
+		//Untaint:           cp.Untaint,
 	}
 }
 
-func (c *Config) updateAWSWorkerset(existingWorkerSet *kubeonev1alpha1.WorkerConfig, cfg json.RawMessage) error {
+func (c *Config) updateAWSWorkerset(existingWorkerSet *kubeonev1beta1.DynamicWorkerConfig, cfg json.RawMessage) error {
 	var awsCloudConfig machinecontroller.AWSSpec
 
 	if err := json.Unmarshal(cfg, &awsCloudConfig); err != nil {
@@ -249,7 +253,7 @@ func (c *Config) updateAWSWorkerset(existingWorkerSet *kubeonev1alpha1.WorkerCon
 	return nil
 }
 
-func (c *Config) updateAzureWorkerset(existingWorkerSet *kubeonev1alpha1.WorkerConfig, cfg json.RawMessage) error {
+func (c *Config) updateAzureWorkerset(existingWorkerSet *kubeonev1beta1.DynamicWorkerConfig, cfg json.RawMessage) error {
 	var azureCloudConfig machinecontroller.AzureSpec
 
 	if err := json.Unmarshal(cfg, &azureCloudConfig); err != nil {
@@ -282,7 +286,7 @@ func (c *Config) updateAzureWorkerset(existingWorkerSet *kubeonev1alpha1.WorkerC
 	return nil
 }
 
-func (c *Config) updateGCEWorkerset(existingWorkerSet *kubeonev1alpha1.WorkerConfig, cfg json.RawMessage) error {
+func (c *Config) updateGCEWorkerset(existingWorkerSet *kubeonev1beta1.DynamicWorkerConfig, cfg json.RawMessage) error {
 	var gceCloudConfig machinecontroller.GCESpec
 
 	if err := json.Unmarshal(cfg, &gceCloudConfig); err != nil {
@@ -314,7 +318,7 @@ func (c *Config) updateGCEWorkerset(existingWorkerSet *kubeonev1alpha1.WorkerCon
 	return nil
 }
 
-func (c *Config) updateDigitalOceanWorkerset(existingWorkerSet *kubeonev1alpha1.WorkerConfig, cfg json.RawMessage) error {
+func (c *Config) updateDigitalOceanWorkerset(existingWorkerSet *kubeonev1beta1.DynamicWorkerConfig, cfg json.RawMessage) error {
 	var doCloudConfig machinecontroller.DigitalOceanSpec
 
 	if err := json.Unmarshal(cfg, &doCloudConfig); err != nil {
@@ -340,7 +344,7 @@ func (c *Config) updateDigitalOceanWorkerset(existingWorkerSet *kubeonev1alpha1.
 	return nil
 }
 
-func (c *Config) updateHetznerWorkerset(existingWorkerSet *kubeonev1alpha1.WorkerConfig, cfg json.RawMessage) error {
+func (c *Config) updateHetznerWorkerset(existingWorkerSet *kubeonev1beta1.DynamicWorkerConfig, cfg json.RawMessage) error {
 	var hetznerConfig machinecontroller.HetznerSpec
 
 	if err := json.Unmarshal(cfg, &hetznerConfig); err != nil {
@@ -364,7 +368,7 @@ func (c *Config) updateHetznerWorkerset(existingWorkerSet *kubeonev1alpha1.Worke
 	return nil
 }
 
-func (c *Config) updateOpenStackWorkerset(existingWorkerSet *kubeonev1alpha1.WorkerConfig, cfg json.RawMessage) error {
+func (c *Config) updateOpenStackWorkerset(existingWorkerSet *kubeonev1beta1.DynamicWorkerConfig, cfg json.RawMessage) error {
 	var openstackConfig machinecontroller.OpenStackSpec
 
 	if err := json.Unmarshal(cfg, &openstackConfig); err != nil {
@@ -394,7 +398,7 @@ func (c *Config) updateOpenStackWorkerset(existingWorkerSet *kubeonev1alpha1.Wor
 	return nil
 }
 
-func (c *Config) updatePacketWorkerset(existingWorkerSet *kubeonev1alpha1.WorkerConfig, cfg json.RawMessage) error {
+func (c *Config) updatePacketWorkerset(existingWorkerSet *kubeonev1beta1.DynamicWorkerConfig, cfg json.RawMessage) error {
 	var packetConfig machinecontroller.PacketSpec
 
 	if err := json.Unmarshal(cfg, &packetConfig); err != nil {
@@ -418,7 +422,7 @@ func (c *Config) updatePacketWorkerset(existingWorkerSet *kubeonev1alpha1.Worker
 	return nil
 }
 
-func (c *Config) updateVSphereWorkerset(existingWorkerSet *kubeonev1alpha1.WorkerConfig, cfg json.RawMessage) error {
+func (c *Config) updateVSphereWorkerset(existingWorkerSet *kubeonev1beta1.DynamicWorkerConfig, cfg json.RawMessage) error {
 	var vsphereConfig machinecontroller.VSphereSpec
 
 	if err := json.Unmarshal(cfg, &vsphereConfig); err != nil {
@@ -449,7 +453,34 @@ func (c *Config) updateVSphereWorkerset(existingWorkerSet *kubeonev1alpha1.Worke
 	return nil
 }
 
-func setWorkersetFlag(w *kubeonev1alpha1.WorkerConfig, name string, value interface{}) error {
+func setCloudProvider(cp *kubeonev1beta1.CloudProviderSpec, name string) error {
+	switch name {
+	case "aws":
+		cp.AWS = &kubeonev1beta1.AWSSpec{}
+	case "azure":
+		cp.Azure = &kubeonev1beta1.AzureSpec{}
+	case "digitalocean":
+		cp.DigitalOcean = &kubeonev1beta1.DigitalOceanSpec{}
+	case "gce":
+		cp.GCE = &kubeonev1beta1.GCESpec{}
+	case "hetzner":
+		cp.Hetzner = &kubeonev1beta1.HetznerSpec{}
+	case "openstack":
+		cp.Openstack = &kubeonev1beta1.OpenstackSpec{}
+	case "packet":
+		cp.Packet = &kubeonev1beta1.PacketSpec{}
+	case "vsphere":
+		cp.Vsphere = &kubeonev1beta1.VsphereSpec{}
+	case "none":
+		cp.None = &kubeonev1beta1.NoneSpec{}
+	default:
+		return errors.Errorf("provider %q is not supported", name)
+	}
+
+	return nil
+}
+
+func setWorkersetFlag(w *kubeonev1beta1.DynamicWorkerConfig, name string, value interface{}) error {
 	// ignore empty values (i.e. not set in terraform output)
 	switch s := value.(type) {
 	case int:

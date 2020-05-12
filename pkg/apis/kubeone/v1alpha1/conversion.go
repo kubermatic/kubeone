@@ -132,7 +132,7 @@ func Convert_v1alpha1_ClusterNetworkConfig_To_kubeone_ClusterNetworkConfig(in *C
 	}
 
 	// TODO(xmudrii): Hetzner network ID conversion
-	return errors.New("not yet implemented")
+	return nil
 }
 
 func Convert_v1alpha1_HostConfig_To_kubeone_HostConfig(in *HostConfig, out *kubeoneapi.HostConfig, s conversion.Scope) error {

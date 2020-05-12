@@ -17,10 +17,10 @@ limitations under the License.
 package kubeone
 
 import (
-	"errors"
 	"math/rand"
 
 	"github.com/Masterminds/semver"
+	"github.com/pkg/errors"
 )
 
 // Leader returns the first configured host. Only call this after
