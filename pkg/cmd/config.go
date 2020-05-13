@@ -53,7 +53,7 @@ type printOpts struct {
 	CloudProviderExternal bool
 	CloudProviderCloudCfg string
 
-	Hosts string `longflag:"hosts"`
+	ControlPlaneHosts string `longflag:"control-plane-hosts"`
 
 	APIEndpointHost string `longflag:"api-endpoint-host"`
 	APIEndpointPort int    `longflag:"api-endpoint-port"`
@@ -143,7 +143,7 @@ configuration manifest, run the print command with --full flag.
 		"cloud provider name (aws, digitalocean, gce, hetzner, packet, openstack, vsphere, none)")
 
 	// Hosts
-	cmd.Flags().StringVar(&opts.Hosts, longFlagName(opts, "Hosts"), "", "hosts in format of comma-separated key:value list, example: publicAddress:192.168.0.100,privateAddress:192.168.1.100,sshUsername:ubuntu,sshPort:22. Use quoted string of space separated values for multiple hosts")
+	cmd.Flags().StringVar(&opts.ControlPlaneHosts, longFlagName(opts, "ControlPlaneHosts"), "", "control plane hosts in format of comma-separated key:value list, example: publicAddress:192.168.0.100,privateAddress:192.168.1.100,sshUsername:ubuntu,sshPort:22. Use quoted string of space separated values for multiple hosts")
 
 	// API endpoint
 	cmd.Flags().StringVar(&opts.APIEndpointHost, longFlagName(opts, "APIEndpointHost"), "", "API endpoint hostname or address")
@@ -246,7 +246,7 @@ func createAndPrintManifest(printOptions *printOpts) error {
 	cfg := &yamled.Document{}
 
 	// API data
-	cfg.Set(yamled.Path{"apiVersion"}, "kubeone.io/v1alpha1")
+	cfg.Set(yamled.Path{"apiVersion"}, "kubeone.io/v1beta1")
 	cfg.Set(yamled.Path{"kind"}, "KubeOneCluster")
 
 	// Cluster name
@@ -258,34 +258,35 @@ func createAndPrintManifest(printOptions *printOpts) error {
 	cfg.Set(yamled.Path{"versions", "kubernetes"}, printOptions.KubernetesVersion)
 
 	// Provider
+	var providerVal struct{}
 	switch printOptions.CloudProviderName {
 	case "aws":
-		cfg.Set(yamled.Path{"cloudProvider", "aws"}, "")
+		cfg.Set(yamled.Path{"cloudProvider", "aws"}, providerVal)
 	case "azure":
-		cfg.Set(yamled.Path{"cloudProvider", "azure"}, "")
+		cfg.Set(yamled.Path{"cloudProvider", "azure"}, providerVal)
 	case "digitalocean":
-		cfg.Set(yamled.Path{"cloudProvider", "digitalocean"}, "")
+		cfg.Set(yamled.Path{"cloudProvider", "digitalocean"}, providerVal)
 		cfg.Set(yamled.Path{"cloudProvider", "external"}, true)
 	case "gce":
-		cfg.Set(yamled.Path{"cloudProvider", "gce"}, "")
+		cfg.Set(yamled.Path{"cloudProvider", "gce"}, providerVal)
 	case "hetzner":
-		cfg.Set(yamled.Path{"cloudProvider", "hetzner"}, "")
+		cfg.Set(yamled.Path{"cloudProvider", "hetzner"}, providerVal)
 		cfg.Set(yamled.Path{"cloudProvider", "external"}, true)
 	case "openstack":
-		cfg.Set(yamled.Path{"cloudProvider", "openstack"}, "")
+		cfg.Set(yamled.Path{"cloudProvider", "openstack"}, providerVal)
 		cfg.Set(yamled.Path{"cloudProvider", "cloudConfig"}, "<< cloudConfig is required for OpenStack >>")
 	case "packet":
-		cfg.Set(yamled.Path{"cloudProvider", "packet"}, "")
+		cfg.Set(yamled.Path{"cloudProvider", "packet"}, providerVal)
 		cfg.Set(yamled.Path{"cloudProvider", "external"}, true)
 	case "vsphere":
-		cfg.Set(yamled.Path{"cloudProvider", "vsphere"}, "")
+		cfg.Set(yamled.Path{"cloudProvider", "vsphere"}, providerVal)
 	case "none":
-		cfg.Set(yamled.Path{"cloudProvider", "none"}, "")
+		cfg.Set(yamled.Path{"cloudProvider", "none"}, providerVal)
 	}
 
 	// Hosts
-	if len(printOptions.Hosts) != 0 {
-		if err := parseHosts(cfg, printOptions.Hosts); err != nil {
+	if len(printOptions.ControlPlaneHosts) != 0 {
+		if err := parseControlPlaneHosts(cfg, printOptions.ControlPlaneHosts); err != nil {
 			return errors.Wrap(err, "unable to parse provided hosts")
 		}
 	}
@@ -363,7 +364,7 @@ func createAndPrintManifest(printOptions *printOpts) error {
 	return nil
 }
 
-func parseHosts(cfg *yamled.Document, hostList string) error {
+func parseControlPlaneHosts(cfg *yamled.Document, hostList string) error {
 	hosts := strings.Split(hostList, " ")
 	for i, host := range hosts {
 		fields := strings.Split(host, ",")
@@ -386,7 +387,7 @@ func parseHosts(cfg *yamled.Document, hostList string) error {
 			h[val[0]] = val[1]
 		}
 
-		cfg.Set(yamled.Path{"hosts", i}, h)
+		cfg.Set(yamled.Path{"controlPlane", "hosts", i}, h)
 	}
 
 	return nil
@@ -438,7 +439,7 @@ func validateAndPrintConfig(cfgYaml interface{}) error {
 }
 
 const exampleManifest = `
-apiVersion: kubeone.io/v1alpha1
+apiVersion: kubeone.io/v1beta1
 kind: KubeOneCluster
 name: {{ .ClusterName }}
 
@@ -456,26 +457,33 @@ clusterNetwork:
   nodePortRange: "{{ .NodePortRange }}"
   # CNI plugin of choice. CNI can not be changed later at upgrade time.
   cni:
-    # possible values:
+    # Only one CNI plugin can be defined at the same time
+    # Supported CNI plugins:
     # * canal
     # * weave-net
-    # * external - The CNI plugin can be installed as Addon or manually
-    provider: canal
-    # when selected CNI provider support encryption and encrypted: true is
-    # set, secret will be automatically generated and referenced in appropriate
-    # manifests. Currently only weave-net supports encryption.
-    encrypted: false
+    # * external - The CNI plugin can be installed as an addon or manually
+    canal: {}
+    # weaveNet:
+    #   # When true is set, secret will be automatically generated and
+    #   # referenced in appropriate manifests. Currently only weave-net
+    #   # supports encryption.
+    #   encrypted: true
+    # external: {}
 
 cloudProvider:
-  # Supported cloud provider names:
-  # * aws
-  # * digitalocean
-  # * hetzner
-  # * none
-  # * openstack
-  # * packet
-  # * vsphere
-  name: "{{ .CloudProviderName }}"
+  # Only one cloud provider can be defined at the same time.
+  # Possible values:
+  # aws: {}
+  # azure: {}
+  # digitalocean: {}
+  # gce: {}
+  # hetzner:
+  #   networkID: ""
+  # openstack: {}
+  # packet: {}
+  # vsphere: {}
+  # none: {}
+  {{ .CloudProviderName }}: {}
   # Set the kubelet flag '--cloud-provider=external' and deploy the external CCM for supported providers
   external: {{ .CloudProviderExternal }}
   # Path to file that will be uploaded and used as custom '--cloud-config' file.
@@ -575,38 +583,49 @@ addons:
 # You are strongly encouraged to provide an odd number of nodes and
 # have at least three of them.
 # Remember to only specify your *master* nodes.
-# hosts:
-# - publicAddress: '1.2.3.4'
-#   privateAddress: '172.18.0.1'
-#   bastion: '4.3.2.1'
-#   bastionPort: 22  # can be left out if using the default (22)
-#   bastionUser: 'root'  # can be left out if using the default ('root')
-#   sshPort: 22 # can be left out if using the default (22)
-#   sshUsername: ubuntu
-#   # You usually want to configure either a private key OR an
-#   # agent socket, but never both. The socket value can be
-#   # prefixed with "env:" to refer to an environment variable.
-#   sshPrivateKeyFile: '/home/me/.ssh/id_rsa'
-#   sshAgentSocket: 'env:SSH_AUTH_SOCK'
-#   # setting this to true will skip node-role.kubernetes.io/master taint from
-#   # Node object on this host
-#   untaint: false
+# controlPlane:
+#   hosts:
+#   - publicAddress: '1.2.3.4'
+#     privateAddress: '172.18.0.1'
+#     bastion: '4.3.2.1'
+#     bastionPort: 22  # can be left out if using the default (22)
+#     bastionUser: 'root'  # can be left out if using the default ('root')
+#     sshPort: 22 # can be left out if using the default (22)
+#     sshUsername: ubuntu
+#     # You usually want to configure either a private key OR an
+#     # agent socket, but never both. The socket value can be
+#     # prefixed with "env:" to refer to an environment variable.
+#     sshPrivateKeyFile: '/home/me/.ssh/id_rsa'
+#     sshAgentSocket: 'env:SSH_AUTH_SOCK'
+#     # Taints is used to apply taints to the node.
+#     # If not provided defaults to TaintEffectNoSchedule, with key
+#     # node-role.kubernetes.io/master for control plane nodes.
+#     # Explicitly empty (i.e. taints: {}) means no taints will be applied.
+#     taints:
+#     - key: "node-role.kubernetes.io/master"
+#       effect: "NoSchedule"
 
 # A list of static workers, not managed by MachineController.
 # The list of nodes can be overwritten by providing Terraform output.
 # staticWorkers:
-# - publicAddress: '1.2.3.5'
-#   privateAddress: '172.18.0.2'
-#   bastion: '4.3.2.1'
-#   bastionPort: 22  # can be left out if using the default (22)
-#   bastionUser: 'root'  # can be left out if using the default ('root')
-#   sshPort: 22 # can be left out if using the default (22)
-#   sshUsername: ubuntu
-#   # You usually want to configure either a private key OR an
-#   # agent socket, but never both. The socket value can be
-#   # prefixed with "env:" to refer to an environment variable.
-#   sshPrivateKeyFile: '/home/me/.ssh/id_rsa'
-#   sshAgentSocket: 'env:SSH_AUTH_SOCK'
+#   hosts:
+#   - publicAddress: '1.2.3.5'
+#     privateAddress: '172.18.0.2'
+#     bastion: '4.3.2.1'
+#     bastionPort: 22  # can be left out if using the default (22)
+#     bastionUser: 'root'  # can be left out if using the default ('root')
+#     sshPort: 22 # can be left out if using the default (22)
+#     sshUsername: ubuntu
+#     # You usually want to configure either a private key OR an
+#     # agent socket, but never both. The socket value can be
+#     # prefixed with "env:" to refer to an environment variable.
+#     sshPrivateKeyFile: '/home/me/.ssh/id_rsa'
+#     sshAgentSocket: 'env:SSH_AUTH_SOCK'
+#     # Taints is used to apply taints to the node.
+#     # Explicitly empty (i.e. taints: {}) means no taints will be applied.
+#     # taints:
+#     # - key: ""
+#     #   effect: ""
 
 # The API server can also be overwritten by Terraform. Provide the
 # external address of your load balancer or the public addresses of
@@ -620,8 +639,6 @@ addons:
 # case, anything you configure in your "workers" sections is ignored.
 machineController:
   deploy: {{ .DeployMachineController }}
-  # Defines for what provider the machine-controller will be configured (defaults to cloudProvider.Name)
-  # provider: ""
 
 # Proxy is used to configure HTTP_PROXY, HTTPS_PROXY and NO_PROXY
 # for Docker daemon and kubelet, and to be used when provisioning cluster
@@ -637,7 +654,7 @@ machineController:
 # KubeOne can automatically create MachineDeployments to create
 # worker nodes in your cluster. Each element in this "workers"
 # list is a single deployment and must have a unique name.
-# workers:
+# dynamicWorkers:
 # - name: fra1-a
 #   replicas: 1
 #   providerSpec:
