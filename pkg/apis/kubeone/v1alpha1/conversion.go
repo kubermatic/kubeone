@@ -70,7 +70,6 @@ func Convert_v1alpha1_CloudProviderSpec_To_kubeone_CloudProviderSpec(in *CloudPr
 		return err
 	}
 
-	// TODO(xmudrii): Hetzner network ID conversion
 	switch in.Name {
 	case CloudProviderNameAWS:
 		out.AWS = &kubeoneapi.AWSSpec{}
@@ -81,7 +80,11 @@ func Convert_v1alpha1_CloudProviderSpec_To_kubeone_CloudProviderSpec(in *CloudPr
 	case CloudProviderNameGCE:
 		out.GCE = &kubeoneapi.GCESpec{}
 	case CloudProviderNameHetzner:
-		out.Hetzner = &kubeoneapi.HetznerSpec{}
+		// We can also set Hetzner cloud provider in the KubeOneCluster conversion function
+		// We don't want to override it if it has been already set
+		if out.Hetzner == nil {
+			out.Hetzner = &kubeoneapi.HetznerSpec{}
+		}
 	case CloudProviderNameNone:
 		out.None = &kubeoneapi.NoneSpec{}
 	case CloudProviderNameOpenStack:
@@ -131,7 +134,6 @@ func Convert_v1alpha1_ClusterNetworkConfig_To_kubeone_ClusterNetworkConfig(in *C
 		return err
 	}
 
-	// TODO(xmudrii): Hetzner network ID conversion
 	return nil
 }
 
@@ -212,6 +214,14 @@ func Convert_v1alpha1_KubeOneCluster_To_kubeone_KubeOneCluster(in *KubeOneCluste
 		out.DynamicWorkers = append(out.DynamicWorkers, outWorker)
 	}
 
+	// The NetworkID field has been moved from .ClusterNetwork.NetworkID to .CloudProvider.Hetzner.NetworkID
+	if len(in.ClusterNetwork.NetworkID) != 0 && in.CloudProvider.Name == CloudProviderNameHetzner {
+		if out.CloudProvider.Hetzner == nil {
+			out.CloudProvider.Hetzner = &kubeoneapi.HetznerSpec{}
+		}
+		out.CloudProvider.Hetzner.NetworkID = in.ClusterNetwork.NetworkID
+	}
+
 	// The Credentials field has been dropped from v1beta1 API.
 
 	return nil
@@ -253,6 +263,11 @@ func Convert_kubeone_KubeOneCluster_To_v1alpha1_KubeOneCluster(in *kubeoneapi.Ku
 		outWorker.Config = outProviderSpec
 
 		out.Workers = append(out.Workers, outWorker)
+	}
+
+	// NetworkID
+	if in.CloudProvider.Hetzner != nil {
+		out.ClusterNetwork.NetworkID = in.CloudProvider.Hetzner.NetworkID
 	}
 
 	return nil
