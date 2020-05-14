@@ -24,6 +24,8 @@ import (
 
 	kubeonev1beta1 "github.com/kubermatic/kubeone/pkg/apis/kubeone/v1beta1"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
+
+	corev1 "k8s.io/api/core/v1"
 )
 
 type controlPlane struct {
@@ -201,8 +203,7 @@ func newHostConfig(id int, publicIP, privateIP, hostname string, cp controlPlane
 		isLeader = cp.LeaderIP == publicIP || cp.LeaderIP == privateIP
 	}
 
-	// TODO(xmudrii): Taints
-	return kubeonev1beta1.HostConfig{
+	hostConfig := kubeonev1beta1.HostConfig{
 		ID:                id,
 		PublicAddress:     publicIP,
 		PrivateAddress:    privateIP,
@@ -215,8 +216,13 @@ func newHostConfig(id int, publicIP, privateIP, hostname string, cp controlPlane
 		BastionPort:       cp.BastionPort,
 		BastionUser:       cp.BastionUser,
 		IsLeader:          isLeader,
-		//Untaint:           cp.Untaint,
 	}
+
+	if cp.Untaint {
+		hostConfig.Taints = []corev1.Taint{}
+	}
+
+	return hostConfig
 }
 
 func (c *Config) updateAWSWorkerset(existingWorkerSet *kubeonev1beta1.DynamicWorkerConfig, cfg json.RawMessage) error {
