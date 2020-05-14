@@ -42,6 +42,7 @@ func addDefaultingFuncs(scheme *runtime.Scheme) error {
 func SetDefaults_KubeOneCluster(obj *KubeOneCluster) {
 	SetDefaults_Hosts(obj)
 	SetDefaults_APIEndpoints(obj)
+	SetDefaults_Versions(obj)
 	SetDefaults_ClusterNetwork(obj)
 	SetDefaults_Proxy(obj)
 	SetDefaults_MachineController(obj)
@@ -92,6 +93,11 @@ func SetDefaults_APIEndpoints(obj *KubeOneCluster) {
 	if obj.APIEndpoint.Port == 0 {
 		obj.APIEndpoint.Port = 6443
 	}
+}
+
+func SetDefaults_Versions(obj *KubeOneCluster) {
+	// The cluster provisioning fails if there is a leading "v" in the version
+	obj.Versions.Kubernetes = strings.TrimPrefix(obj.Versions.Kubernetes, "v")
 }
 
 func SetDefaults_ClusterNetwork(obj *KubeOneCluster) {

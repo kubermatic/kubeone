@@ -50,6 +50,7 @@ issues:
   - "`defaultRetryBackoff` - `retries` always receives `3`"
   - "func SetDefaults_Addons should be SetDefaultsAddons"
   - "func SetDefaults_APIEndpoints should be SetDefaultsAPIEndpoints"
+  - "func SetDefaults_Versions should be SetDefaultsVersions"
   - "func SetDefaults_ClusterNetwork should be SetDefaultsClusterNetwork"
   - "func SetDefaults_Proxy should be SetDefaultsProxy"
   - "func SetDefaults_Features should be SetDefaultsFeatures"
