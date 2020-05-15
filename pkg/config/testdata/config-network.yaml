@@ -1,9 +1,0 @@
-name: demo
-versions:
-  kubernetes: '1.14.1'
-provider:
-  name: 'aws'
-network:
-  pod_subnet: '1.1.1.1/24'
-  service_subnet: '1.1.1.1/24'
-  node_port_range: '30000-32767'

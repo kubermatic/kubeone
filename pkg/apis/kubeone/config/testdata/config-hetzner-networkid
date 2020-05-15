@@ -1,0 +1,9 @@
+apiVersion: kubeone.io/v1beta1
+kind: KubeOneCluster
+name: test
+versions:
+  kubernetes: 1.18.2
+cloudProvider:
+  hetzner:
+    networkID: test-network
+clusterNetwork: {}

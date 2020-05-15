@@ -39,22 +39,18 @@ import (
 const (
 	// KubeOneClusterKind is kind of the KubeOneCluster object
 	KubeOneClusterKind = "KubeOneCluster"
-	// KubeOneV1Alpha1API is apiVersion for v1alpha1 API
-	KubeOneV1Alpha1API = "kubeone.io/v1alpha1"
-	// KubeOneV1Beta1API is apiVersion for v1beta1 API
-	KubeOneV1Beta1API = "kubeone.io/v1beta1"
 )
 
 var (
 	// AllowedAPIs contains APIs which are allowed to be used
 	AllowedAPIs = map[string]string{
-		KubeOneV1Beta1API:  "",
-		KubeOneV1Alpha1API: "",
+		kubeonev1alpha1.SchemeGroupVersion.String(): "",
+		kubeonev1beta1.SchemeGroupVersion.String():  "",
 	}
 
 	// DeprecatedAPIs contains APIs which are deprecated
 	DeprecatedAPIs = map[string]string{
-		KubeOneV1Alpha1API: "",
+		kubeonev1alpha1.SchemeGroupVersion.String(): "",
 	}
 )
 
@@ -122,13 +118,13 @@ func BytesToKubeOneCluster(cluster, tfOutput, credentialsFile []byte, logger log
 
 	// Parse the cluster bytes depending on the GVK
 	switch typeMeta.APIVersion {
-	case KubeOneV1Alpha1API:
+	case kubeonev1alpha1.SchemeGroupVersion.String():
 		v1alpha1Cluster := &kubeonev1alpha1.KubeOneCluster{}
 		if err := runtime.DecodeInto(kubeonescheme.Codecs.UniversalDecoder(), cluster, v1alpha1Cluster); err != nil {
 			return nil, err
 		}
 		return DefaultedV1Alpha1KubeOneCluster(v1alpha1Cluster, tfOutput, credentialsFile)
-	case KubeOneV1Beta1API:
+	case kubeonev1beta1.SchemeGroupVersion.String():
 		v1beta1Cluster := &kubeonev1beta1.KubeOneCluster{}
 		if err := runtime.DecodeInto(kubeonescheme.Codecs.UniversalDecoder(), cluster, v1beta1Cluster); err != nil {
 			return nil, err

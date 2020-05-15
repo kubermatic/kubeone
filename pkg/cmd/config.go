@@ -26,11 +26,11 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 	yaml "gopkg.in/yaml.v2"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	kubeonevalidation "github.com/kubermatic/kubeone/pkg/apis/kubeone/validation"
-	"github.com/kubermatic/kubeone/pkg/config"
+	"github.com/kubermatic/kubeone/pkg/apis/kubeone/config"
 	"github.com/kubermatic/kubeone/pkg/yamled"
 
 	kyaml "sigs.k8s.io/yaml"
@@ -77,20 +77,15 @@ type printOpts struct {
 	DeployMachineController bool `longflag:"deploy-machine-controller"`
 }
 
-type migrateOptions struct {
-	globalOptions
-	Manifest string
-}
-
 // configCmd setups the config command
-func configCmd() *cobra.Command {
+func configCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "config",
 		Short: "Commands for working with the KubeOneCluster configuration manifests",
 	}
 
 	cmd.AddCommand(printCmd())
-	cmd.AddCommand(migrateCmd())
+	cmd.AddCommand(migrateCmd(rootFlags))
 
 	return cmd
 }
@@ -175,21 +170,25 @@ configuration manifest, run the print command with --full flag.
 }
 
 // migrateCmd setups the migrate command
-func migrateCmd() *cobra.Command {
-	opts := &migrateOptions{}
+func migrateCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "migrate <cluster-manifest>",
-		Short: "Migrate the pre-v0.6.0 configuration manifest to the KubeOneCluster manifest",
+		Use:   "migrate",
+		Short: "Migrate the v1alpha1 KubeOneCluster manifest to the v1beta1 version",
 		Long: `
-Migrate the pre-v0.6.0 KubeOne configuration manifest to the KubeOneCluster
-manifest used as of v0.6.0. The new manifest is printed on the standard output.
+Migrate the v1alpha1 KubeOneCluster manifest to the v1beta1 version.
+The v1alpha1 version of the KubeOneCluster manifest is deprecated and will be
+removed in one of the next versions.
+The new manifest is printed on the standard output.
 `,
-		Args:    cobra.ExactArgs(1),
-		Example: `kubeone config migrate mycluster.yaml`,
+		Args:    cobra.ExactArgs(0),
+		Example: `kubeone config migrate --manifest mycluster.yaml`,
 		RunE: func(_ *cobra.Command, args []string) error {
-			opts.Manifest = args[0]
+			gopts, err := persistentGlobalOptions(rootFlags)
+			if err != nil {
+				return errors.Wrap(err, "unable to get global flags")
+			}
 
-			return runMigrate(opts)
+			return runMigrate(gopts)
 		},
 	}
 
@@ -221,12 +220,6 @@ func runPrint(printOptions *printOpts) error {
 		err = kyaml.UnmarshalStrict(buffer.Bytes(), &cfg)
 		if err != nil {
 			return errors.Wrap(err, "failed to decode new config")
-		}
-
-		// CloudProvider validation
-		errs := kubeonevalidation.ValidateCloudProviderSpec(cfg.CloudProvider, nil)
-		if len(errs) != 0 {
-			return errors.Errorf("unable to validate cloud provider spec: %s", errs.ToAggregate().Error())
 		}
 
 		fmt.Println(buffer.String())
@@ -394,9 +387,9 @@ func parseControlPlaneHosts(cfg *yamled.Document, hostList string) error {
 }
 
 // runMigrate migrates the pre-v0.6.0 KubeOne API manifest to the KubeOneCluster manifest used as of v0.6.0
-func runMigrate(migrateOptions *migrateOptions) error {
+func runMigrate(opts *globalOptions) error {
 	// Convert old config yaml to new config yaml
-	newConfigYAML, err := config.MigrateToKubeOneClusterAPI(migrateOptions.Manifest)
+	newConfigYAML, err := config.MigrateOldConfig(opts.ManifestFile)
 	if err != nil {
 		return errors.Wrap(err, "unable to migrate the provided configuration")
 	}
@@ -421,12 +414,6 @@ func validateAndPrintConfig(cfgYaml interface{}) error {
 	err = kyaml.UnmarshalStrict(buffer.Bytes(), &cfg)
 	if err != nil {
 		return errors.Wrap(err, "failed to decode new config")
-	}
-
-	// CloudProvider validation
-	errs := kubeonevalidation.ValidateCloudProviderSpec(cfg.CloudProvider, nil)
-	if len(errs) != 0 {
-		return errors.Errorf("unable to validate cloud provider spec: %s", errs.ToAggregate().Error())
 	}
 
 	// Print new config yaml

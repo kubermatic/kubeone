@@ -1,9 +1,0 @@
-name: demo
-versions:
-  kubernetes: '1.14.1'
-provider:
-  name: 'openstack'
-  external: false
-  cloud_config: |-
-    [test]
-    test_env = true
