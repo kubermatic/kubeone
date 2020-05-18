@@ -1,6 +1,0 @@
-name: demo
-versions:
-  kubernetes: '1.14.1'
-provider:
-  name: 'digitalocean'
-  external: true

@@ -1,9 +1,0 @@
-name: demo
-versions:
-  kubernetes: '1.14.1'
-provider:
-  name: 'aws'
-proxy:
-  http_proxy: 'http://1.1.1.1'
-  https_proxy: 'https://1.1.1.1'
-  no_proxy: '1.1.1.1'

@@ -118,7 +118,7 @@ func runInstall(opts *installOpts) error {
 	}
 
 	// Validate credentials
-	_, err = credentials.ProviderCredentials(s.Cluster.CloudProvider.Name, opts.CredentialsFile)
+	_, err = credentials.ProviderCredentials(s.Cluster.CloudProvider, opts.CredentialsFile)
 	if err != nil {
 		return errors.Wrap(err, "failed to validate credentials")
 	}

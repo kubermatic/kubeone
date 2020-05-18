@@ -17,16 +17,16 @@ limitations under the License.
 package kubeone
 
 import (
-	"errors"
 	"math/rand"
 
 	"github.com/Masterminds/semver"
+	"github.com/pkg/errors"
 )
 
 // Leader returns the first configured host. Only call this after
 // validating the cluster config to ensure a leader exists.
 func (c KubeOneCluster) Leader() (HostConfig, error) {
-	for _, host := range c.Hosts {
+	for _, host := range c.ControlPlane.Hosts {
 		if host.IsLeader {
 			return host, nil
 		}
@@ -35,15 +35,15 @@ func (c KubeOneCluster) Leader() (HostConfig, error) {
 }
 
 func (c KubeOneCluster) RandomHost() HostConfig {
-	n := rand.Int31n(int32(len(c.Hosts)))
-	return c.Hosts[n]
+	n := rand.Int31n(int32(len(c.ControlPlane.Hosts)))
+	return c.ControlPlane.Hosts[n]
 }
 
 // Followers returns all but the first configured host. Only call
 // this after validating the cluster config to ensure hosts exist.
 func (c KubeOneCluster) Followers() []HostConfig {
 	followers := []HostConfig{}
-	for _, h := range c.Hosts {
+	for _, h := range c.ControlPlane.Hosts {
 		if !h.IsLeader {
 			followers = append(followers, h)
 		}
@@ -57,7 +57,7 @@ func (h *HostConfig) SetHostname(hostname string) {
 }
 
 // SetOperatingSystem sets the operating system for the given host
-func (h *HostConfig) SetOperatingSystem(os string) {
+func (h *HostConfig) SetOperatingSystem(os OperatingSystemName) {
 	h.OperatingSystem = os
 }
 
@@ -66,13 +66,38 @@ func (h *HostConfig) SetLeader(leader bool) {
 	h.IsLeader = leader
 }
 
+// CloudProviderName returns name of the cloud provider
+func (p CloudProviderSpec) CloudProivderName() string { //nolint:stylecheck
+	switch {
+	case p.AWS != nil:
+		return "aws"
+	case p.Azure != nil:
+		return "azure"
+	case p.DigitalOcean != nil:
+		return "digitalocean"
+	case p.GCE != nil:
+		return "gce"
+	case p.Hetzner != nil:
+		return "hetzner"
+	case p.Openstack != nil:
+		return "openstack"
+	case p.Packet != nil:
+		return "packet"
+	case p.Vsphere != nil:
+		return "vsphere"
+	case p.None != nil:
+		return "none"
+	}
+
+	return ""
+}
+
 // CloudProviderInTree detects is there in-tree cloud provider implementation for specified provider.
 // List of in-tree provider can be found here: https://github.com/kubernetes/kubernetes/tree/master/pkg/cloudprovider
 func (p CloudProviderSpec) CloudProviderInTree() bool { //nolint:stylecheck
-	switch p.Name {
-	case CloudProviderNameOpenStack:
+	if p.Openstack != nil {
 		return !p.External
-	case CloudProviderNameAWS, CloudProviderNameGCE, CloudProviderNameVSphere, CloudProviderNameAzure:
+	} else if p.AWS != nil || p.GCE != nil || p.Vsphere != nil || p.Azure != nil {
 		return true
 	}
 

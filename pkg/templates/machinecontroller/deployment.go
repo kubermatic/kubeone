@@ -766,7 +766,7 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster, credentials
 		args = append(args, "-external-cloud-provider")
 	}
 
-	envVar, err := credentials.EnvVarBindings(cluster.CloudProvider.Name, credentialsFilePath)
+	envVar, err := credentials.EnvVarBindings(cluster.CloudProvider, credentialsFilePath)
 	envVar = append(envVar,
 		corev1.EnvVar{
 			Name:  "HTTPS_PROXY",

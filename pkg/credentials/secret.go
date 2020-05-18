@@ -38,7 +38,7 @@ const (
 
 // Ensure creates/updates the credentials secret
 func Ensure(s *state.State) error {
-	if s.Cluster.CloudProvider.Name == kubeoneapi.CloudProviderNameNone {
+	if s.Cluster.CloudProvider.None != nil {
 		s.Logger.Info("Skipping creating credentials secret because cloud provider is none.")
 		return nil
 	}
@@ -49,7 +49,7 @@ func Ensure(s *state.State) error {
 
 	s.Logger.Infoln("Creating credentials secret…")
 
-	creds, err := ProviderCredentials(s.Cluster.CloudProvider.Name, s.CredentialsFilePath)
+	creds, err := ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath)
 	if err != nil {
 		return errors.Wrap(err, "unable to fetch cloud provider credentials")
 	}
@@ -62,8 +62,8 @@ func Ensure(s *state.State) error {
 	return nil
 }
 
-func EnvVarBindings(cloudProviderName kubeoneapi.CloudProviderName, credentialsFilePath string) ([]corev1.EnvVar, error) {
-	creds, err := ProviderCredentials(cloudProviderName, credentialsFilePath)
+func EnvVarBindings(cloudProviderSpec kubeoneapi.CloudProviderSpec, credentialsFilePath string) ([]corev1.EnvVar, error) {
+	creds, err := ProviderCredentials(cloudProviderSpec, credentialsFilePath)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to fetch cloud provider credentials")
 	}

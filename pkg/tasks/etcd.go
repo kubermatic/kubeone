@@ -61,7 +61,7 @@ func repairClusterIfNeeded(s *state.State) error {
 	knownHostsIdentities := sets.NewString()
 	knownEtcdMembersIdentities := sets.NewString()
 
-	for _, host := range s.Cluster.Hosts {
+	for _, host := range s.Cluster.ControlPlane.Hosts {
 		knownHostsIdentities.Insert(host.Hostname, host.PublicAddress, host.PrivateAddress)
 	}
 

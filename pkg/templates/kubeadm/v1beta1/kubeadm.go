@@ -55,19 +55,9 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		nodeIP = host.PublicAddress
 	}
 
-	taints := []corev1.Taint{
-		{
-			Effect: corev1.TaintEffectNoSchedule,
-			Key:    "node-role.kubernetes.io/master",
-		},
-	}
-	if host.Untaint {
-		taints = nil
-	}
-
 	nodeRegistration := kubeadmv1beta1.NodeRegistrationOptions{
 		Name:   host.Hostname,
-		Taints: taints,
+		Taints: host.Taints,
 		KubeletExtraArgs: map[string]string{
 			"anonymous-auth":      "false",
 			"node-ip":             nodeIP,
@@ -170,7 +160,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 			ReadOnly:  true,
 			PathType:  corev1.HostPathFile,
 		}
-		provider := string(cluster.CloudProvider.Name)
+		provider := cluster.CloudProvider.CloudProivderName()
 
 		clusterConfig.APIServer.ExtraArgs["cloud-provider"] = provider
 		clusterConfig.APIServer.ExtraArgs["cloud-config"] = renderedCloudConfig
@@ -184,10 +174,10 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		nodeRegistration.KubeletExtraArgs["cloud-provider"] = provider
 		nodeRegistration.KubeletExtraArgs["cloud-config"] = renderedCloudConfig
 
-		switch cluster.CloudProvider.Name {
-		case kubeoneapi.CloudProviderNameAzure:
+		switch {
+		case cluster.CloudProvider.Azure != nil:
 			clusterConfig.ControllerManager.ExtraArgs["configure-cloud-routes"] = "false"
-		case kubeoneapi.CloudProviderNameAWS:
+		case cluster.CloudProvider.AWS != nil:
 			clusterConfig.ControllerManager.ExtraArgs["configure-cloud-routes"] = "false"
 		}
 	}
@@ -267,9 +257,8 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Obje
 
 	if cluster.CloudProvider.CloudProviderInTree() {
 		renderedCloudConfig := "/etc/kubernetes/cloud-config"
-		provider := string(cluster.CloudProvider.Name)
 
-		nodeRegistration.KubeletExtraArgs["cloud-provider"] = provider
+		nodeRegistration.KubeletExtraArgs["cloud-provider"] = cluster.CloudProvider.CloudProivderName()
 		nodeRegistration.KubeletExtraArgs["cloud-config"] = renderedCloudConfig
 	}
 

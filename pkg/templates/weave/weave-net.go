@@ -66,7 +66,7 @@ func Deploy(s *state.State) error {
 		}
 	}
 
-	if s.Cluster.ClusterNetwork.CNI.Encrypted {
+	if s.Cluster.ClusterNetwork.CNI.WeaveNet.Encrypted {
 		pass, err := genPassword()
 		if err != nil {
 			return errors.Wrap(err, "failed to generate random password")
@@ -93,11 +93,11 @@ func Deploy(s *state.State) error {
 	}
 
 	var peers []string
-	for _, h := range s.Cluster.Hosts {
+	for _, h := range s.Cluster.ControlPlane.Hosts {
 		peers = append(peers, h.PrivateAddress)
 	}
 
-	ds := daemonSet(s.Cluster.ClusterNetwork.CNI.Encrypted, strings.Join(peers, " "), s.Cluster.ClusterNetwork.PodSubnet)
+	ds := daemonSet(s.Cluster.ClusterNetwork.CNI.WeaveNet.Encrypted, strings.Join(peers, " "), s.Cluster.ClusterNetwork.PodSubnet)
 	if err := clientutil.CreateOrUpdate(ctx, s.DynamicClient, ds); err != nil {
 		return errors.Wrap(err, "failed to ensure weave DaemonSet")
 	}

@@ -35,8 +35,8 @@ func generateKubeadm(s *state.State) error {
 		return errors.Wrap(err, "failed to init kubeadm")
 	}
 
-	for idx := range s.Cluster.Hosts {
-		node := s.Cluster.Hosts[idx]
+	for idx := range s.Cluster.ControlPlane.Hosts {
+		node := s.Cluster.ControlPlane.Hosts[idx]
 		kubeadmConf, err := kubeadmProvider.Config(s, node)
 		if err != nil {
 			return errors.Wrap(err, "failed to create kubeadm configuration")
@@ -45,8 +45,8 @@ func generateKubeadm(s *state.State) error {
 		s.Configuration.AddFile(fmt.Sprintf("cfg/master_%d.yaml", node.ID), kubeadmConf)
 	}
 
-	for idx := range s.Cluster.StaticWorkers {
-		node := s.Cluster.StaticWorkers[idx]
+	for idx := range s.Cluster.StaticWorkers.Hosts {
+		node := s.Cluster.StaticWorkers.Hosts[idx]
 		kubeadmConf, err := kubeadmProvider.ConfigWorker(s, node)
 		if err != nil {
 			return errors.Wrap(err, "failed to create kubeadm configuration")

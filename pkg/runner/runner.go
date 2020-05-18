@@ -25,6 +25,7 @@ import (
 	"github.com/koron-go/prefixw"
 	"github.com/pkg/errors"
 
+	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/scripts"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 )
@@ -34,7 +35,7 @@ import (
 type Runner struct {
 	Conn    ssh.Connection
 	Prefix  string
-	OS      string
+	OS      kubeoneapi.OperatingSystemName
 	Verbose bool
 }
 

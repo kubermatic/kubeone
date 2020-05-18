@@ -44,8 +44,9 @@ func (opts *globalOptions) BuildState() (*state.State, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to initialize State")
 	}
+	s.Logger = newLogger(opts.Verbose)
 
-	cluster, err := loadClusterConfig(opts.ManifestFile, opts.TerraformState, opts.CredentialsFile)
+	cluster, err := loadClusterConfig(opts.ManifestFile, opts.TerraformState, opts.CredentialsFile, s.Logger)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load cluster")
 	}
@@ -54,7 +55,6 @@ func (opts *globalOptions) BuildState() (*state.State, error) {
 	s.ManifestFilePath = opts.ManifestFile
 	s.CredentialsFilePath = opts.CredentialsFile
 	s.Verbose = opts.Verbose
-	s.Logger = newLogger(opts.Verbose)
 
 	return s, nil
 }
@@ -119,8 +119,8 @@ func newLogger(verbose bool) *logrus.Logger {
 	return logger
 }
 
-func loadClusterConfig(filename, terraformOutputPath, credentialsFilePath string) (*kubeoneapi.KubeOneCluster, error) {
-	a, err := config.LoadKubeOneCluster(filename, terraformOutputPath, credentialsFilePath)
+func loadClusterConfig(filename, terraformOutputPath, credentialsFilePath string, logger logrus.FieldLogger) (*kubeoneapi.KubeOneCluster, error) {
+	a, err := config.LoadKubeOneCluster(filename, terraformOutputPath, credentialsFilePath, logger)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to load a given KubeOneCluster object")
 	}

@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The KubeOne Authors.
+Copyright 2020 The KubeOne Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -31,10 +31,8 @@ type KubeOneCluster struct {
 
 	// Name is the name of the cluster
 	Name string `json:"name"`
-	// Hosts describes the control plane nodes and how to access them
-	Hosts []HostConfig `json:"hosts,omitempty"`
-	// StaticWorkers allows the user to define a list of nodes as workers that are not managed by MachineController
-	StaticWorkers []HostConfig `json:"staticWorkers,omitempty"`
+	// ControlPlane describes the control plane nodes and how to access them
+	ControlPlane ControlPlaneConfig `json:"controlPlane,omitempty"`
 	// APIEndpoint are pairs of address and port used to communicate with the Kubernetes API
 	APIEndpoint APIEndpoint `json:"apiEndpoint,omitempty"`
 	// CloudProvider configures the cloud provider specific features
@@ -45,8 +43,11 @@ type KubeOneCluster struct {
 	ClusterNetwork ClusterNetworkConfig `json:"clusterNetwork,omitempty"`
 	// Proxy configures proxy used while installing Kubernetes and by the Docker daemon
 	Proxy ProxyConfig `json:"proxy,omitempty"`
-	// Workers is used to create worker nodes using the Kubermatic machine-controller
-	Workers []WorkerConfig `json:"workers,omitempty"`
+	// StaticWorkers describes the worker nodes that are managed by KubeOne/kubeadm
+	StaticWorkers StaticWorkersConfig `json:"staticWorkers,omitempty"`
+	// DynamicWorkers describes the worker nodes that are managed by
+	// Kubermatic machine-controller/Cluster-API
+	DynamicWorkers []DynamicWorkerConfig `json:"dynamicWorkers,omitempty"`
 	// MachineController configures the Kubermatic machine-controller component
 	MachineController *MachineControllerConfig `json:"machineController,omitempty"`
 	// Features enables and configures additional cluster features
@@ -55,9 +56,18 @@ type KubeOneCluster struct {
 	Addons *Addons `json:"addons,omitempty"`
 	// SystemPackages configure kubeone behaviour regarding OS packages
 	SystemPackages *SystemPackages `json:"systemPackages,omitempty"`
-	// Credentials used for machine-controller and external CCM
-	Credentials map[string]string `json:"credentials,omitempty"`
 }
+
+// OperatingSystemName defines the operating system used on instances
+type OperatingSystemName string
+
+var (
+	OperatingSystemNameUbuntu  OperatingSystemName = "ubuntu"
+	OperatingSystemNameCentOS  OperatingSystemName = "centos"
+	OperatingSystemNameCoreOS  OperatingSystemName = "coreos"
+	OperatingSystemNameFlatcar OperatingSystemName = "flatcar"
+	OperatingSystemNameUnknown OperatingSystemName = ""
+)
 
 // HostConfig describes a single control plane node.
 type HostConfig struct {
@@ -73,10 +83,26 @@ type HostConfig struct {
 	BastionUser       string `json:"bastionUser"`
 	Hostname          string `json:"hostname"`
 	IsLeader          bool   `json:"isLeader"`
-	Untaint           bool   `json:"untaint"`
+
+	// If not provided (i.e. nil) defaults to TaintEffectNoSchedule, with key
+	// node-role.kubernetes.io/master for control plane nodes.
+	//
+	// Explicitly empty (i.e. []corev1.Taint{}) means no taints will be applied
+	// (this is default for worker nodes).
+	Taints []corev1.Taint `json:"taints,omitempty"`
 
 	// Information populated at the runtime
-	OperatingSystem string `json:"-"`
+	OperatingSystem OperatingSystemName `json:"-"`
+}
+
+// ControlPlaneConfig defines control plane nodes
+type ControlPlaneConfig struct {
+	Hosts []HostConfig `json:"hosts"`
+}
+
+// StaticWorkersConfig defines static worker nodes provisioned by KubeOne and kubeadm
+type StaticWorkersConfig struct {
+	Hosts []HostConfig `json:"hosts"`
 }
 
 // APIEndpoint is the endpoint used to communicate with the Kubernetes API
@@ -88,32 +114,53 @@ type APIEndpoint struct {
 	Port int `json:"port"`
 }
 
-// CloudProviderName represents the name of a provider
-type CloudProviderName string
-
-// CloudProviderName values
-const (
-	CloudProviderNameAWS          CloudProviderName = "aws"
-	CloudProviderNameAzure        CloudProviderName = "azure"
-	CloudProviderNameOpenStack    CloudProviderName = "openstack"
-	CloudProviderNameHetzner      CloudProviderName = "hetzner"
-	CloudProviderNameDigitalOcean CloudProviderName = "digitalocean"
-	CloudProviderNamePacket       CloudProviderName = "packet"
-	CloudProviderNameVSphere      CloudProviderName = "vsphere"
-	CloudProviderNameGCE          CloudProviderName = "gce"
-	CloudProviderNameNone         CloudProviderName = "none"
-)
-
-// CloudProviderSpec describes the cloud provider that is running the machines
+// CloudProviderSpec describes the cloud provider that is running the machines.
+// Only one cloud provider must be defined at the single time.
 type CloudProviderSpec struct {
-	Name        CloudProviderName `json:"name"`
-	External    bool              `json:"external"`
-	CloudConfig string            `json:"cloudConfig"`
+	External     bool              `json:"external"`
+	CloudConfig  string            `json:"cloudConfig"`
+	AWS          *AWSSpec          `json:"aws"`
+	Azure        *AzureSpec        `json:"azure"`
+	DigitalOcean *DigitalOceanSpec `json:"digitalocean"`
+	GCE          *GCESpec          `json:"gce"`
+	Hetzner      *HetznerSpec      `json:"hetzner"`
+	Openstack    *OpenstackSpec    `json:"openstack"`
+	Packet       *PacketSpec       `json:"packet"`
+	Vsphere      *VsphereSpec      `json:"vsphere"`
+	None         *NoneSpec         `json:"none"`
 }
+
+// AWSSpec defines the AWS cloud provider
+type AWSSpec struct{}
+
+// AzureSpec defines the Azure cloud provider
+type AzureSpec struct{}
+
+// DigitalOceanSpec defines the DigitalOcean cloud provider
+type DigitalOceanSpec struct{}
+
+// GCESpec defines the GCE cloud provider
+type GCESpec struct{}
+
+// HetznerSpec defines the Hetzner cloud provider
+type HetznerSpec struct {
+	NetworkID string `json:"networkID"`
+}
+
+// OpenstackSpec defines the Openstack provider
+type OpenstackSpec struct{}
+
+// PacketSpec defines the Packet cloud provider
+type PacketSpec struct{}
+
+// VsphereSpec defines the vSphere provider
+type VsphereSpec struct{}
+
+// NoneSpec defines a none provider
+type NoneSpec struct{}
 
 // VersionConfig describes the versions of components that are installed on the machines
 type VersionConfig struct {
-	// TODO(xmudrii): switch to semver
 	Kubernetes string `json:"kubernetes"`
 }
 
@@ -124,44 +171,26 @@ type ClusterNetworkConfig struct {
 	ServiceDomainName string `json:"serviceDomainName"`
 	NodePortRange     string `json:"nodePortRange"`
 	CNI               *CNI   `json:"cni,omitempty"`
-
-	// +optional
-	NetworkID string `json:"networkID,omitempty"`
 }
 
-// CNIProvider type
-type CNIProvider string
-
-// List of CNI Providers
-const (
-	// CNIProviderCanal is a Canal CNI plugin (Flannel + Calico).
-	// Highlights:
-	// * Support Network Policies
-	// * Does not support traffic encryption
-	// More info: https://docs.projectcalico.org/v3.7/getting-started/kubernetes/installation/flannel
-	CNIProviderCanal CNIProvider = "canal"
-
-	// CNIProviderWeaveNet is a WeaveNet CNI plugin.
-	// Highlights:
-	// * Support Network Policies
-	// * Support optional traffic encryption
-	// * In case when encryption is enabled, strong secret will be autogenerated
-	// More info: https://www.weave.works/docs/net/latest/kubernetes/kube-addon/
-	CNIProviderWeaveNet CNIProvider = "weave-net"
-
-	// CNIProviderExternal is an external CNI plugin.
-	// The CNI plugin can be installed as Addon or manually
-	// More info: https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#pod-network
-	CNIProviderExternal CNIProvider = "external"
-)
-
-// CNI config
+// CNI config. Only one CNI provider must be used at the single time.
 type CNI struct {
-	// Provider choice
-	Provider CNIProvider `json:"provider"`
-	// Encrypted enables encryption for supported CNI plugins
+	Canal    *CanalSpec       `json:"canal"`
+	WeaveNet *WeaveNetSpec    `json:"weaveNet"`
+	External *ExternalCNISpec `json:"external"`
+}
+
+// CanalSpec defines the Canal CNI plugin
+type CanalSpec struct{}
+
+// WeaveNetSpec defines the WeaveNet CNI plugin
+type WeaveNetSpec struct {
 	Encrypted bool `json:"encrypted"`
 }
+
+// ExternalCNISpec defines the external CNI plugin.
+// It's up to the user's responsibility to deploy the external CNI plugin manually or as an addon
+type ExternalCNISpec struct{}
 
 // ProxyConfig configures proxy for the Docker daemon and is used by KubeOne scripts
 type ProxyConfig struct {
@@ -170,8 +199,8 @@ type ProxyConfig struct {
 	NoProxy string `json:"noProxy"`
 }
 
-// WorkerConfig describes a set of worker machines
-type WorkerConfig struct {
+// DynamicWorkerConfig describes a set of worker machines
+type DynamicWorkerConfig struct {
 	Name     string       `json:"name"`
 	Replicas *int         `json:"replicas"`
 	Config   ProviderSpec `json:"providerSpec"`
@@ -187,7 +216,7 @@ type ProviderSpec struct {
 	OperatingSystemSpec json.RawMessage   `json:"operatingSystemSpec"`
 
 	// +optional
-	Network *NetworkConfig `json:"network,omitempty"`
+	Network *ProviderStaticNetworkConfig `json:"network,omitempty"`
 
 	// +optional
 	OverwriteCloudConfig *string `json:"overwriteCloudConfig,omitempty"`
@@ -198,8 +227,8 @@ type DNSConfig struct {
 	Servers []string `json:"servers"`
 }
 
-// NetworkConfig contains a machine's static network configuration
-type NetworkConfig struct {
+// ProviderStaticNetworkConfig contains a machine's static network configuration
+type ProviderStaticNetworkConfig struct {
 	CIDR    string    `json:"cidr"`
 	Gateway string    `json:"gateway"`
 	DNS     DNSConfig `json:"dns"`
@@ -208,9 +237,6 @@ type NetworkConfig struct {
 // MachineControllerConfig configures kubermatic machine-controller deployment
 type MachineControllerConfig struct {
 	Deploy bool `json:"deploy"`
-	// Provider is provider to be used for machine-controller
-	// Defaults and must be same as chosen cloud provider, unless cloud provider is set to None
-	Provider CloudProviderName `json:"provider"`
 }
 
 // Features controls what features will be enabled on the cluster

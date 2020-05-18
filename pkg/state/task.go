@@ -129,9 +129,9 @@ func (s *State) RunTaskOnFollowers(task NodeTask, parallel RunModeEnum) error {
 }
 
 func (s *State) RunTaskOnControlPlane(task NodeTask, parallel RunModeEnum) error {
-	return s.RunTaskOnNodes(s.Cluster.Hosts, task, parallel)
+	return s.RunTaskOnNodes(s.Cluster.ControlPlane.Hosts, task, parallel)
 }
 
 func (s *State) RunTaskOnStaticWorkers(task NodeTask, parallel RunModeEnum) error {
-	return s.RunTaskOnNodes(s.Cluster.StaticWorkers, task, parallel)
+	return s.RunTaskOnNodes(s.Cluster.StaticWorkers.Hosts, task, parallel)
 }

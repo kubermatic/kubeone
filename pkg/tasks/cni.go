@@ -19,23 +19,22 @@ package tasks
 import (
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/state"
 	"github.com/kubermatic/kubeone/pkg/templates/canal"
 	"github.com/kubermatic/kubeone/pkg/templates/weave"
 )
 
 func ensureCNI(s *state.State) error {
-	switch s.Cluster.ClusterNetwork.CNI.Provider {
-	case kubeone.CNIProviderCanal:
+	switch {
+	case s.Cluster.ClusterNetwork.CNI.Canal != nil:
 		return ensureCNICanal(s)
-	case kubeone.CNIProviderWeaveNet:
+	case s.Cluster.ClusterNetwork.CNI.WeaveNet != nil:
 		return ensureCNIWeaveNet(s)
-	case kubeone.CNIProviderExternal:
+	case s.Cluster.ClusterNetwork.CNI.External != nil:
 		return ensureCNIExternal(s)
 	}
 
-	return errors.Errorf("unknown CNI provider: %s", s.Cluster.ClusterNetwork.CNI.Provider)
+	return errors.Errorf("unknown CNI provider")
 }
 
 func ensureCNIWeaveNet(s *state.State) error {

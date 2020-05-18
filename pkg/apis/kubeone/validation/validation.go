@@ -18,6 +18,7 @@ package validation
 
 import (
 	"net"
+	"strings"
 
 	"github.com/Masterminds/semver"
 
@@ -30,87 +31,128 @@ import (
 func ValidateKubeOneCluster(c kubeone.KubeOneCluster) field.ErrorList {
 	allErrs := field.ErrorList{}
 
+	if len(c.Name) == 0 {
+		allErrs = append(allErrs, field.Required(field.NewPath("name"), "cluster name `.name` is a required field."))
+	}
+	allErrs = append(allErrs, ValidateControlPlaneConfig(c.ControlPlane, field.NewPath("controlPlane"))...)
+	allErrs = append(allErrs, ValidateAPIEndpoint(c.APIEndpoint, field.NewPath("apiEndpoint"))...)
 	allErrs = append(allErrs, ValidateCloudProviderSpec(c.CloudProvider, field.NewPath("provider"))...)
-
-	if c.Name == "" {
-		allErrs = append(allErrs, field.Invalid(field.NewPath("name"), c.Name, "no cluster name specified"))
-	}
-	if len(c.Hosts) > 0 {
-		allErrs = append(allErrs, ValidateHostConfig(c.Hosts, field.NewPath("hosts"))...)
-	} else {
-		allErrs = append(allErrs, field.Invalid(field.NewPath("hosts"), c.Hosts, "no host specified"))
-	}
-
-	if c.MachineController != nil && c.MachineController.Deploy {
-		allErrs = append(allErrs, ValidateMachineControllerConfig(c.MachineController, c.CloudProvider.Name, field.NewPath("machineController"))...)
-		allErrs = append(allErrs, ValidateWorkerConfig(c.Workers, field.NewPath("workers"))...)
-	} else if len(c.Workers) > 0 {
-		allErrs = append(allErrs, field.Forbidden(field.NewPath("workers"), "machine-controller deployment is disabled, but configuration still contains worker definitions"))
-	}
-
 	allErrs = append(allErrs, ValidateVersionConfig(c.Versions, field.NewPath("versions"))...)
 	allErrs = append(allErrs, ValidateClusterNetworkConfig(c.ClusterNetwork, field.NewPath("clusterNetwork"))...)
+	allErrs = append(allErrs, ValidateStaticWorkersConfig(c.StaticWorkers, field.NewPath("staticWorkers"))...)
+
+	if c.MachineController != nil && c.MachineController.Deploy {
+		allErrs = append(allErrs, ValidateDynamicWorkerConfig(c.DynamicWorkers, field.NewPath("dynamicWorkers"))...)
+	} else if len(c.DynamicWorkers) > 0 {
+		allErrs = append(allErrs, field.Forbidden(field.NewPath("dynamicWorkers"),
+			"machine-controller deployment is disabled, but the configuration still contains dynamic workers"))
+	}
+
 	allErrs = append(allErrs, ValidateFeatures(c.Features, field.NewPath("features"))...)
 	allErrs = append(allErrs, ValidateAddons(c.Addons, field.NewPath("addons"))...)
 
 	return allErrs
 }
 
-// ValidateCloudProviderSpec checks the CloudProviderSpec structure for errors
-func ValidateCloudProviderSpec(p kubeone.CloudProviderSpec, fldPath *field.Path) field.ErrorList {
+// ValidateControlPlaneConfig validates the ControlPlaneConfig structure
+func ValidateControlPlaneConfig(c kubeone.ControlPlaneConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
-	switch p.Name {
-	case kubeone.CloudProviderNameAWS:
-	case kubeone.CloudProviderNameAzure:
-		if p.CloudConfig == "" {
-			allErrs = append(allErrs, field.Invalid(fldPath, p.CloudConfig, "`cloudProvider.cloudConfig` is required for azure provider"))
-		}
-	case kubeone.CloudProviderNameOpenStack:
-		if p.CloudConfig == "" {
-			allErrs = append(allErrs, field.Invalid(fldPath, p.CloudConfig, "`cloudProvider.cloudConfig` is required for openstack provider"))
-		}
-	case kubeone.CloudProviderNameHetzner:
-	case kubeone.CloudProviderNameDigitalOcean:
-	case kubeone.CloudProviderNamePacket:
-	case kubeone.CloudProviderNameVSphere:
-		if p.CloudConfig == "" {
-			allErrs = append(allErrs, field.Invalid(fldPath, p.CloudConfig, "`cloudProvider.cloudConfig` is required for vsphere provider"))
-		}
-	case kubeone.CloudProviderNameGCE:
-	case kubeone.CloudProviderNameNone:
-	default:
-		allErrs = append(allErrs, field.Invalid(fldPath, p.Name, "unknown provider name"))
+	if len(c.Hosts) > 0 {
+		allErrs = append(allErrs, ValidateHostConfig(c.Hosts, fldPath.Child("hosts"))...)
+	} else {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("hosts"), "",
+			".controlPlane.Hosts is a required field. There must be at least one control plane instance in the cluster."))
 	}
 
 	return allErrs
 }
 
-// ValidateHostConfig validates the HostConfig structure
-func ValidateHostConfig(hosts []kubeone.HostConfig, fldPath *field.Path) field.ErrorList {
+// ValidateAPIEndpoint validates the APIEndpoint structure
+func ValidateAPIEndpoint(a kubeone.APIEndpoint, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
-	leaderFound := false
-	for _, h := range hosts {
-		if leaderFound && h.IsLeader {
-			allErrs = append(allErrs, field.Invalid(fldPath, h.IsLeader, "only 1 leader is allowed"))
+	if len(a.Host) == 0 {
+		allErrs = append(allErrs, field.Required(fldPath.Child("host"), ".apiEndpoint.host is a required field"))
+	}
+	if a.Port <= 0 {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("port"), a.Port, "apiEndpoint.port must be greater than 0"))
+	}
+	if a.Port > 65535 {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("port"), a.Port, "apiEndpoint.Port must be lower than 65535"))
+	}
+
+	return allErrs
+}
+
+// ValidateCloudProviderSpec validates the CloudProviderSpec structure
+func ValidateCloudProviderSpec(p kubeone.CloudProviderSpec, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	providerFound := false
+	if p.AWS != nil {
+		providerFound = true
+	}
+	if p.Azure != nil {
+		if providerFound {
+			allErrs = append(allErrs, field.Forbidden(fldPath.Child("azure"), "only one provider can be used at the same time"))
 		}
-		if h.IsLeader {
-			leaderFound = true
+		if len(p.CloudConfig) == 0 {
+			allErrs = append(allErrs, field.Required(fldPath.Child("cloudConfig"), ".cloudProvider.cloudConfig is required for azure provider"))
 		}
-		if len(h.PublicAddress) == 0 {
-			allErrs = append(allErrs, field.Invalid(fldPath, h.PublicAddress, "no public IP/address given"))
+		providerFound = true
+	}
+	if p.DigitalOcean != nil {
+		if providerFound {
+			allErrs = append(allErrs, field.Forbidden(fldPath.Child("digitalocean"), "only one provider can be used at the same time"))
 		}
-		if len(h.PrivateAddress) == 0 {
-			allErrs = append(allErrs, field.Invalid(fldPath, h.PrivateAddress, "no private IP/address givevn"))
+		providerFound = true
+	}
+	if p.GCE != nil {
+		if providerFound {
+			allErrs = append(allErrs, field.Forbidden(fldPath.Child("gce"), "only one provider can be used at the same time"))
 		}
-		if len(h.SSHPrivateKeyFile) == 0 && len(h.SSHAgentSocket) == 0 {
-			allErrs = append(allErrs, field.Invalid(fldPath, h.SSHPrivateKeyFile, "neither SSH private key nor agent socket given, don't know how to authenticate"))
-			allErrs = append(allErrs, field.Invalid(fldPath, h.SSHAgentSocket, "neither SSH private key nor agent socket given, don't know how to authenticate"))
+		providerFound = true
+	}
+	if p.Hetzner != nil {
+		if providerFound {
+			allErrs = append(allErrs, field.Forbidden(fldPath.Child("hetzner"), "only one provider can be used at the same time"))
 		}
-		if len(h.SSHUsername) == 0 {
-			allErrs = append(allErrs, field.Invalid(fldPath, h.SSHUsername, "no SSH username given"))
+		providerFound = true
+	}
+	if p.Openstack != nil {
+		if providerFound {
+			allErrs = append(allErrs, field.Forbidden(fldPath.Child("openstack"), "only one provider can be used at the same time"))
 		}
+		if len(p.CloudConfig) == 0 {
+			allErrs = append(allErrs, field.Required(fldPath.Child("cloudConfig"), ".cloudProvider.cloudConfig is required for azure provider"))
+		}
+		providerFound = true
+	}
+	if p.Packet != nil {
+		if providerFound {
+			allErrs = append(allErrs, field.Forbidden(fldPath.Child("packet"), "only one provider can be used at the same time"))
+		}
+		providerFound = true
+	}
+	if p.Vsphere != nil {
+		if providerFound {
+			allErrs = append(allErrs, field.Forbidden(fldPath.Child("vsphere"), "only one provider can be used at the same time"))
+		}
+		if len(p.CloudConfig) == 0 {
+			allErrs = append(allErrs, field.Required(fldPath.Child("cloudConfig"), ".cloudProvider.cloudConfig is required for azure provider"))
+		}
+		providerFound = true
+	}
+	if p.None != nil {
+		if providerFound {
+			allErrs = append(allErrs, field.Forbidden(fldPath.Child("none"), "only one provider can be used at the same time"))
+		}
+		providerFound = true
+	}
+
+	if !providerFound {
+		allErrs = append(allErrs, field.Invalid(fldPath, "", "provider must be specified"))
 	}
 
 	return allErrs
@@ -122,46 +164,14 @@ func ValidateVersionConfig(version kubeone.VersionConfig, fldPath *field.Path) f
 
 	v, err := semver.NewVersion(version.Kubernetes)
 	if err != nil {
-		allErrs = append(allErrs, field.Invalid(fldPath, version, "failed to parse kubernetes version"))
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("kubernetes"), version, ".versions.kubernetes is not a semver string"))
 		return allErrs
 	}
-
-	if v.Major() != 1 || v.Minor() < 13 {
-		allErrs = append(allErrs, field.Invalid(fldPath, version, "kubernetes versions lower than 1.13 are not supported"))
+	if v.Major() != 1 || v.Minor() < 14 {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("kubernetes"), version, "kubernetes versions lower than 1.14 are not supported"))
 	}
-
-	return allErrs
-}
-
-// ValidateMachineControllerConfig validates the MachineControllerConfig structure
-func ValidateMachineControllerConfig(m *kubeone.MachineControllerConfig, cloudProviderName kubeone.CloudProviderName, fldPath *field.Path) field.ErrorList {
-	allErrs := field.ErrorList{}
-
-	// If ProviderName is not None default to cloud provider and ensure user have not
-	// manually provided machine-controller provider different than cloud provider.
-	// If ProviderName is None, take user input or default to None.
-	if cloudProviderName != kubeone.CloudProviderNameNone {
-		if m.Provider != cloudProviderName {
-			allErrs = append(allErrs, field.Invalid(fldPath, m.Provider, "cloud provider must be same as machine-controller provider"))
-		}
-	} else if cloudProviderName == kubeone.CloudProviderNameNone && m.Provider == "" {
-		allErrs = append(allErrs, field.Invalid(fldPath, m.Provider, "machine-controller deployed but no provider selected"))
-	}
-
-	return allErrs
-}
-
-// ValidateWorkerConfig validates the WorkerConfig structure
-func ValidateWorkerConfig(workerset []kubeone.WorkerConfig, fldPath *field.Path) field.ErrorList {
-	allErrs := field.ErrorList{}
-
-	for _, w := range workerset {
-		if w.Name == "" {
-			allErrs = append(allErrs, field.Invalid(fldPath, w.Name, "no name given"))
-		}
-		if w.Replicas == nil || *w.Replicas < 0 {
-			allErrs = append(allErrs, field.Invalid(fldPath, w.Replicas, "replicas must be specified and >= 0"))
-		}
+	if strings.HasPrefix(version.Kubernetes, "v") {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("kubernetes"), version, ".versions.kubernetes can't start with a leading 'v'"))
 	}
 
 	return allErrs
@@ -171,18 +181,16 @@ func ValidateWorkerConfig(workerset []kubeone.WorkerConfig, fldPath *field.Path)
 func ValidateClusterNetworkConfig(c kubeone.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
-	if c.PodSubnet != "" {
+	if len(c.PodSubnet) > 0 {
 		if _, _, err := net.ParseCIDR(c.PodSubnet); err != nil {
-			allErrs = append(allErrs, field.Invalid(fldPath, c.PodSubnet, "invalid pod subnet specified"))
+			allErrs = append(allErrs, field.Invalid(fldPath.Child("podSubnet"), c.PodSubnet, ".clusterNetwork.podSubnet must be a valid CIDR string"))
 		}
 	}
-
-	if c.ServiceSubnet != "" {
+	if len(c.ServiceSubnet) > 0 {
 		if _, _, err := net.ParseCIDR(c.ServiceSubnet); err != nil {
-			allErrs = append(allErrs, field.Invalid(fldPath, c.ServiceSubnet, "invalid service subnet specified"))
+			allErrs = append(allErrs, field.Invalid(fldPath.Child("serviceSubnet"), c.ServiceSubnet, ".clusterNetwork.serviceSubnet must be a valid CIDR string"))
 		}
 	}
-
 	if c.CNI != nil {
 		allErrs = append(allErrs, ValidateCNI(c.CNI, fldPath.Child("cni"))...)
 	}
@@ -190,20 +198,56 @@ func ValidateClusterNetworkConfig(c kubeone.ClusterNetworkConfig, fldPath *field
 	return allErrs
 }
 
-// ValidateCNI validates CNI structure
+// ValidateCNI validates the CNI structure
 func ValidateCNI(c *kubeone.CNI, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
-	switch c.Provider {
-	case kubeone.CNIProviderCanal:
-	case kubeone.CNIProviderWeaveNet:
-	case kubeone.CNIProviderExternal:
-	default:
-		allErrs = append(allErrs, field.Invalid(fldPath, c.Provider, "unknown CNI provider"))
+	cniFound := false
+	if c.Canal != nil {
+		cniFound = true
+	}
+	if c.WeaveNet != nil {
+		if cniFound {
+			allErrs = append(allErrs, field.Forbidden(fldPath.Child("weaveNet"), "only one cni plugin can be used at the same time"))
+		}
+		cniFound = true
+	}
+	if c.External != nil {
+		if cniFound {
+			allErrs = append(allErrs, field.Forbidden(fldPath.Child("external"), "only one cni plugin can be used at the same time"))
+		}
+		cniFound = true
 	}
 
-	if c.Encrypted && c.Provider != kubeone.CNIProviderWeaveNet {
-		allErrs = append(allErrs, field.Invalid(fldPath, c, "only `weave-net` cni provider support `encrypted: true`"))
+	if !cniFound {
+		allErrs = append(allErrs, field.Invalid(fldPath, "", "cni plugin must be specified"))
+	}
+
+	return allErrs
+}
+
+// ValidateStaticWorkersConfig validates the StaticWorkersConfig structure
+func ValidateStaticWorkersConfig(staticWorkers kubeone.StaticWorkersConfig, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	if len(staticWorkers.Hosts) > 0 {
+		allErrs = append(allErrs, ValidateHostConfig(staticWorkers.Hosts, fldPath.Child("hosts"))...)
+	}
+
+	return allErrs
+}
+
+// ValidateDynamicWorkerConfig validates the DynamicWorkerConfig structure
+func ValidateDynamicWorkerConfig(workerset []kubeone.DynamicWorkerConfig, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	for _, w := range workerset {
+		if w.Name == "" {
+			allErrs = append(allErrs, field.Required(fldPath.Child("name"), ".dynamicWorkers.name is a required field"))
+		}
+		if w.Replicas == nil || *w.Replicas < 0 {
+			allErrs = append(allErrs, field.Invalid(fldPath.Child("replicas"), w.Replicas, ".dynamicWorkers.replicas must be specified and >= 0"))
+		}
 	}
 
 	return allErrs
@@ -212,46 +256,49 @@ func ValidateCNI(c *kubeone.CNI, fldPath *field.Path) field.ErrorList {
 // ValidateFeatures validates the Features structure
 func ValidateFeatures(f kubeone.Features, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
+
 	if f.StaticAuditLog != nil && f.StaticAuditLog.Enable {
 		allErrs = append(allErrs, ValidateStaticAuditLogConfig(f.StaticAuditLog.Config, fldPath.Child("staticAuditLog"))...)
 	}
 	if f.OpenIDConnect != nil && f.OpenIDConnect.Enable {
 		allErrs = append(allErrs, ValidateOIDCConfig(f.OpenIDConnect.Config, fldPath.Child("openidConnect"))...)
 	}
+
 	return allErrs
 }
 
+// ValidateFeatures validates the StaticAuditLogConfig structure
 func ValidateStaticAuditLogConfig(s kubeone.StaticAuditLogConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
-	if s.PolicyFilePath == "" {
-		allErrs = append(allErrs, field.Invalid(fldPath, s.PolicyFilePath, "staticAuditLog.config.policyFilePath can't be empty"))
+	if len(s.PolicyFilePath) == 0 {
+		allErrs = append(allErrs, field.Required(fldPath.Child("policyFilePath"), ".staticAuditLog.config.policyFilePath is a required field"))
 	}
-	if s.LogPath == "" {
-		allErrs = append(allErrs, field.Invalid(fldPath, s.LogPath, "staticAuditLog.config.logPath can't be empty"))
+	if len(s.LogPath) == 0 {
+		allErrs = append(allErrs, field.Required(fldPath.Child("logPath"), ".staticAuditLog.config.logPath is a required field"))
 	}
 	if s.LogMaxAge <= 0 {
-		allErrs = append(allErrs, field.Invalid(fldPath, s.LogMaxAge, "staticAuditLog.config.logMaxAge must be greater than 0"))
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("logMaxAge"), s.LogMaxAge, ".staticAuditLog.config.logMaxAge must be greater than 0"))
 	}
 	if s.LogMaxBackup <= 0 {
-		allErrs = append(allErrs, field.Invalid(fldPath, s.LogMaxBackup, "staticAuditLog.config.logMaxBackup must be greater than 0"))
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("logMaxBackup"), s.LogMaxBackup, ".staticAuditLog.config.logMaxBackup must be greater than 0"))
 	}
 	if s.LogMaxSize <= 0 {
-		allErrs = append(allErrs, field.Invalid(fldPath, s.LogMaxSize, "staticAuditLog.config.logMaxSize must be greater than 0"))
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("logMaxSize"), s.LogMaxSize, ".staticAuditLog.config.logMaxSize must be greater than 0"))
 	}
 
 	return allErrs
 }
 
-// ValidateOIDCConfig validates the OpenID Connect configuration
+// ValidateOIDCConfig validates the OpenIDConnectConfig structure
 func ValidateOIDCConfig(o kubeone.OpenIDConnectConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
-	if o.IssuerURL == "" {
-		allErrs = append(allErrs, field.Invalid(fldPath, o.IssuerURL, "openidConnect.config.issuer_url can't be empty"))
+	if len(o.IssuerURL) == 0 {
+		allErrs = append(allErrs, field.Required(fldPath.Child("issuerURL"), ".openidConnect.config.issuerURL is a required field"))
 	}
-	if o.ClientID == "" {
-		allErrs = append(allErrs, field.Invalid(fldPath, o.ClientID, "openidConnect.config.client_id can't be empty"))
+	if len(o.ClientID) == 0 {
+		allErrs = append(allErrs, field.Required(fldPath.Child("clientID"), ".openidConnect.config.clientID is a required field"))
 	}
 
 	return allErrs
@@ -264,9 +311,38 @@ func ValidateAddons(o *kubeone.Addons, fldPath *field.Path) field.ErrorList {
 	if o == nil || !o.Enable {
 		return allErrs
 	}
+	if o.Enable && len(o.Path) == 0 {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("path"), "", ".addons.path must be specified"))
+	}
 
-	if o.Enable && o.Path == "" {
-		allErrs = append(allErrs, field.Invalid(fldPath, o.Path, "addons.path can't be empty"))
+	return allErrs
+}
+
+// ValidateHostConfig validates the HostConfig structure
+func ValidateHostConfig(hosts []kubeone.HostConfig, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	leaderFound := false
+	for _, h := range hosts {
+		if leaderFound && h.IsLeader {
+			allErrs = append(allErrs, field.Invalid(fldPath, h.IsLeader, "only one leader is allowed"))
+		}
+		if h.IsLeader {
+			leaderFound = true
+		}
+		if len(h.PublicAddress) == 0 {
+			allErrs = append(allErrs, field.Required(fldPath, "no public IP/address given"))
+		}
+		if len(h.PrivateAddress) == 0 {
+			allErrs = append(allErrs, field.Required(fldPath, "no private IP/address givevn"))
+		}
+		if len(h.SSHPrivateKeyFile) == 0 && len(h.SSHAgentSocket) == 0 {
+			allErrs = append(allErrs, field.Invalid(fldPath, h.SSHPrivateKeyFile, "neither SSH private key nor agent socket given, don't know how to authenticate"))
+			allErrs = append(allErrs, field.Invalid(fldPath, h.SSHAgentSocket, "neither SSH private key nor agent socket given, don't know how to authenticate"))
+		}
+		if len(h.SSHUsername) == 0 {
+			allErrs = append(allErrs, field.Required(fldPath, "no SSH username given"))
+		}
 	}
 
 	return allErrs

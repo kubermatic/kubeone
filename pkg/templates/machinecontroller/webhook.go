@@ -131,7 +131,7 @@ func WaitForWebhook(client dynclient.Client) error {
 func webhookDeployment(cluster *kubeoneapi.KubeOneCluster, credentialsFilePath string) (*appsv1.Deployment, error) {
 	var replicas int32 = 1
 
-	envVar, err := credentials.EnvVarBindings(cluster.CloudProvider.Name, credentialsFilePath)
+	envVar, err := credentials.EnvVarBindings(cluster.CloudProvider, credentialsFilePath)
 	envVar = append(envVar,
 		corev1.EnvVar{
 			Name:  "HTTPS_PROXY",
