@@ -91,7 +91,7 @@ func TestMigrateOldConfig(t *testing.T) {
 	for _, tc := range testcases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			newConfigYAML, err := MigrateOldConfig(filepath.Join("testdata", tc.name+".yaml"))
+			newConfigYAML, err := MigrateOldConfig(filepath.Join("testdata", tc.name+"-v1alpha1.yaml"))
 			if err != nil {
 				t.Errorf("error converting old config: %v", err)
 			}
@@ -110,7 +110,7 @@ func TestMigrateOldConfig(t *testing.T) {
 				t.Errorf("failed to decode new config: %v", err)
 			}
 
-			testhelper.DiffOutput(t, tc.name, buffer.String(), *update)
+			testhelper.DiffOutput(t, tc.name+"-v1beta1.golden", buffer.String(), *update)
 		})
 	}
 }
