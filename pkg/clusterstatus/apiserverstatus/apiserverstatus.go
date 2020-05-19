@@ -37,7 +37,8 @@ type Report struct {
 
 // Get uses the /healthz endpoint to check are all API server instances healthy
 func Get(s *state.State, node kubeoneapi.HostConfig) (*Report, error) {
-	roundTripper, err := sshtunnel.NewHTTPTransport(s.Connector, node, &tls.Config{InsecureSkipVerify: true})
+	insecureTLSConfig := &tls.Config{InsecureSkipVerify: true} //nolint:gosec
+	roundTripper, err := sshtunnel.NewHTTPTransport(s.Connector, node, insecureTLSConfig)
 	if err != nil {
 		return nil, err
 	}
