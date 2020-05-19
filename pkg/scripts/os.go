@@ -88,6 +88,7 @@ cni_ver=$(apt-cache madison kubernetes-cni | grep "{{ .CNI_VERSION }}" | head -1
 sudo apt-mark unhold docker-ce kubelet kubeadm kubectl kubernetes-cni
 sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--force-confold" -y --no-install-recommends \
 	docker-ce=${docker_ver} \
+	docker-ce-cli=${docker_ver} \
 	kubeadm=${kube_ver} \
 	kubectl=${kube_ver} \
 	kubelet=${kube_ver} \
@@ -152,6 +153,7 @@ sudo yum-config-manager --add-repo=https://download.docker.com/linux/centos/dock
 
 sudo yum install -y --disableexcludes=kubernetes \
 	docker-ce-{{ .DOCKER_VERSION }} \
+	docker-ce-cli-{{ .DOCKER_VERSION }} \
 	kubelet-{{ .KUBERNETES_VERSION }}-0 \
 	kubeadm-{{ .KUBERNETES_VERSION }}-0 \
 	kubectl-{{ .KUBERNETES_VERSION }}-0 \
