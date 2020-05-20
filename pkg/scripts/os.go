@@ -93,7 +93,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--
 	kubectl=${kube_ver} \
 	kubelet=${kube_ver} \
 	kubernetes-cni=${cni_ver}
-sudo apt-mark hold docker-ce kubelet kubeadm kubectl kubernetes-cni
+sudo apt-mark hold docker-ce docker-ce-cli kubelet kubeadm kubectl kubernetes-cni
 sudo systemctl enable --now docker
 sudo systemctl enable --now kubelet
 `
@@ -144,20 +144,20 @@ enabled=1
 gpgcheck=1
 repo_gpgcheck=1
 gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-exclude=kube*
 EOF
 {{ end }}
 
-sudo yum install -y yum-utils
+sudo yum install -y yum-utils yum-plugin-versionlock
 sudo yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
 
-sudo yum install -y --disableexcludes=kubernetes \
+sudo yum install -y \
 	docker-ce-{{ .DOCKER_VERSION }} \
 	docker-ce-cli-{{ .DOCKER_VERSION }} \
 	kubelet-{{ .KUBERNETES_VERSION }}-0 \
 	kubeadm-{{ .KUBERNETES_VERSION }}-0 \
 	kubectl-{{ .KUBERNETES_VERSION }}-0 \
 	kubernetes-cni-{{ .CNI_VERSION }}-0
+sudo yum versionlock docker-ce docker-ce-cli kubelet kubeadm kubectl kubernetes-cni
 
 sudo systemctl enable --now docker
 sudo systemctl enable --now kubelet
@@ -247,6 +247,7 @@ sudo apt-get remove --purge -y \
 `
 
 	removeBinariesCentOSScriptTemplate = `
+sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni || true
 sudo yum remove -y \
 	kubelet-{{ .KUBERNETES_VERSION }}-0\
 	kubeadm-{{ .KUBERNETES_VERSION }}-0 \
@@ -280,9 +281,11 @@ sudo apt-mark hold kubeadm kubernetes-cni
 	upgradeKubeadmAndCNICentOSScriptTemplate = `
 source /etc/kubeone/proxy-env
 
-sudo yum install -y --disableexcludes=kubernetes \
+sudo yum versionlock delete kubeadm kubernetes-cni || true
+sudo yum install -y \
 	kubeadm-{{ .KUBERNETES_VERSION }}-0 \
 	kubernetes-cni-{{ .CNI_VERSION }}-0
+sudo yum versionlock kubeadm kubernetes-cni || true
 `
 
 	upgradeKubeadmAndCNICoreOSScriptTemplate = `
@@ -322,9 +325,11 @@ sudo apt-mark hold kubelet kubectl
 
 	upgradeKubeletAndKubectlCentOSScriptTemplate = `
 source /etc/kubeone/proxy-env
+sudo yum versionlock delete kubelet kubectl || true
 sudo yum install -y --disableexcludes=kubernetes \
 	kubelet-{{ .KUBERNETES_VERSION }}-0 \
 	kubectl-{{ .KUBERNETES_VERSION }}-0
+sudo yum versionlock kubelet kubectl || true
 `
 
 	upgradeKubeletAndKubectlCoreOSScriptTemplate = `

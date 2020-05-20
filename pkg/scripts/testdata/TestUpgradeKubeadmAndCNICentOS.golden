@@ -3,6 +3,8 @@ export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
 
 source /etc/kubeone/proxy-env
 
-sudo yum install -y --disableexcludes=kubernetes \
+sudo yum versionlock delete kubeadm kubernetes-cni || true
+sudo yum install -y \
 	kubeadm-v1.17.4-0 \
 	kubernetes-cni-v0.7.5-0
+sudo yum versionlock kubeadm kubernetes-cni || true

@@ -1,6 +1,7 @@
 set -xeu pipefail
 export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
 
+sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni || true
 sudo yum remove -y \
 	kubelet-v1.17.4-0\
 	kubeadm-v1.17.4-0 \
