@@ -78,6 +78,6 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--
 	kubectl=${kube_ver} \
 	kubelet=${kube_ver} \
 	kubernetes-cni=${cni_ver}
-sudo apt-mark hold docker-ce kubelet kubeadm kubectl kubernetes-cni
+sudo apt-mark hold docker-ce docker-ce-cli kubelet kubeadm kubectl kubernetes-cni
 sudo systemctl enable --now docker
 sudo systemctl enable --now kubelet
