@@ -89,7 +89,7 @@ func upgradeKubeadmAndCNIBinariesDebian(s *state.State) error {
 }
 
 func upgradeKubeadmAndCNIBinariesCentOS(s *state.State) error {
-	cmd, err := scripts.UpgradeKubeadmAndCNICentOS(s.Cluster.Versions.Kubernetes, s.Cluster.Versions.KubernetesCNIVersion())
+	cmd, err := scripts.UpgradeKubeadmAndCNICentOS(s.Cluster.Versions.Kubernetes, s.Cluster.Versions.KubernetesCNIVersion(), s.Cluster.SystemPackages.ConfigureRepositories)
 	if err != nil {
 		return err
 	}

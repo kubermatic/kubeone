@@ -281,11 +281,28 @@ sudo apt-mark hold kubeadm kubernetes-cni
 	upgradeKubeadmAndCNICentOSScriptTemplate = `
 source /etc/kubeone/proxy-env
 
-sudo yum versionlock delete kubeadm kubernetes-cni || true
+# Kubeadm and CNI is are the first packages that we upgrade
+# Before upgrading them, override the repo configs with the latest ones
+# and then install and configure the yum-plugin-versionlock package
+{{ if .CONFIGURE_REPOSITORIES }}
+cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+EOF
+{{ end }}
+sudo yum install -y yum-plugin-versionlock
+sudo yum versionlock docker-ce docker-ce-cli kubelet kubeadm kubectl kubernetes-cni
+
+sudo yum versionlock delete kubeadm kubernetes-cni
 sudo yum install -y \
 	kubeadm-{{ .KUBERNETES_VERSION }}-0 \
 	kubernetes-cni-{{ .CNI_VERSION }}-0
-sudo yum versionlock kubeadm kubernetes-cni || true
+sudo yum versionlock kubeadm kubernetes-cni
 `
 
 	upgradeKubeadmAndCNICoreOSScriptTemplate = `
@@ -325,11 +342,11 @@ sudo apt-mark hold kubelet kubectl
 
 	upgradeKubeletAndKubectlCentOSScriptTemplate = `
 source /etc/kubeone/proxy-env
-sudo yum versionlock delete kubelet kubectl || true
-sudo yum install -y --disableexcludes=kubernetes \
+sudo yum versionlock delete kubelet kubectl
+sudo yum install -y \
 	kubelet-{{ .KUBERNETES_VERSION }}-0 \
 	kubectl-{{ .KUBERNETES_VERSION }}-0
-sudo yum versionlock kubelet kubectl || true
+sudo yum versionlock kubelet kubectl
 `
 
 	upgradeKubeletAndKubectlCoreOSScriptTemplate = `
@@ -413,10 +430,11 @@ func UpgradeKubeadmAndCNIDebian(k8sVersion, cniVersion string) (string, error) {
 	})
 }
 
-func UpgradeKubeadmAndCNICentOS(k8sVersion, cniVersion string) (string, error) {
+func UpgradeKubeadmAndCNICentOS(k8sVersion, cniVersion string, configureRepositories bool) (string, error) {
 	return Render(upgradeKubeadmAndCNICentOSScriptTemplate, Data{
-		"KUBERNETES_VERSION": k8sVersion,
-		"CNI_VERSION":        cniVersion,
+		"KUBERNETES_VERSION":     k8sVersion,
+		"CNI_VERSION":            cniVersion,
+		"CONFIGURE_REPOSITORIES": configureRepositories,
 	})
 }
 

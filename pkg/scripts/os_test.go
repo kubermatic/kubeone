@@ -193,7 +193,7 @@ func TestUpgradeKubeadmAndCNIDebian(t *testing.T) {
 func TestUpgradeKubeadmAndCNICentOS(t *testing.T) {
 	t.Parallel()
 
-	got, err := UpgradeKubeadmAndCNICentOS("v1.17.4", "v0.7.5")
+	got, err := UpgradeKubeadmAndCNICentOS("v1.17.4", "v0.7.5", true)
 	if err != nil {
 		t.Errorf("UpgradeKubeadmAndCNICentOS() error = %v", err)
 		return
