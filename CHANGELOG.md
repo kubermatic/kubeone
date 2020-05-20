@@ -1,5 +1,39 @@
 # Changelog
 
+# [v1.0.0-alpha.2](https://github.com/kubermatic/kubeone/releases/tag/v1.0.0-alpha.2) - 2020-05-20
+
+## Attention Needed
+
+* This alpha version fixes the provisioning failures caused by `docker-ce-cli` version mismatch. The older alpha release are not working anymore ([#896](https://github.com/kubermatic/kubeone/pull/896))
+* `machine-controller` must be updated to v1.14.0 or newer on existing clusters or otherwise newly created worker nodes will not work properly. The `machine-controller` can be updated on one of the following ways:
+  * (Recommended) Run `kubeone upgrade -f` with the exact same config that's currently running 
+  * Run `kubeone install` with the exact same config that's currently running
+  * Update the `machine-controller` and `machine-controller-webhook` deployments manually
+* This release introduces the new KubeOneCluster v1beta1 API. The v1alpha1 API has been deprecated.
+  * It remains possible to use both APIs with all `kubeone` commands
+  * The v1alpha1 manifest can be converted to the v1beta1 manifest using the `kubeone config migrate` command
+  * All example configurations have been updated to the v1beta1 API
+
+## Added
+
+* Add the KubeOneCluster v1beta1 API ([#894](https://github.com/kubermatic/kubeone/pull/894))
+  * Implemented automated conversion between v1alpha1 and v1beta1 APIs. It remains possible to use all `kubeone` commands with both v1alpha1 and v1beta1 manifests, however, migration to the v1beta1 manifest is recommended
+  * Implement the Terraform integration for the v1beta1 API. Currently, the Terraform integration output format is the same for both APIs, but that might change in the future
+  * The kubeone config migrate command has been refactored to migrate v1alpha1 to v1beta1 manifests. The manifest is now provided using the --manifest flag instead of providing it as an argument. It's not possible to convert pre-v0.6.0 manifest to v1alpha1 anymore
+  * The example configurations are updated to the v1beta1 API
+  * Drop the leading 'v' in the Kubernetes version if it's provided. This fixes a bug causing provisioning to fail if the Kubernetes version starts with 'v'
+
+## Changed
+
+### General
+
+* Fix the cluster provisioning issues caused by `docker-ce-cli` version mismatch ([#896](https://github.com/kubermatic/kubeone/pull/896))
+* Fix CoreOS/Flatcar provisioning issues for Kubernetes 1.18 ([#895](https://github.com/kubermatic/kubeone/pull/895))
+
+### Updated
+
+* Update machine-controller to v1.14.0 ([#899](https://github.com/kubermatic/kubeone/pull/899))
+
 # [v1.0.0-alpha.1](https://github.com/kubermatic/kubeone/releases/tag/v1.0.0-alpha.1) - 2020-05-11
 
 ## Attention Needed
