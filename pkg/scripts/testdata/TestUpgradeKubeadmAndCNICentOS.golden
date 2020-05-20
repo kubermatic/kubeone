@@ -3,8 +3,25 @@ export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
 
 source /etc/kubeone/proxy-env
 
-sudo yum versionlock delete kubeadm kubernetes-cni || true
+# Kubeadm and CNI is are the first packages that we upgrade
+# Before upgrading them, override the repo configs with the latest ones
+# and then install and configure the yum-plugin-versionlock package
+
+cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+EOF
+
+sudo yum install -y yum-plugin-versionlock
+sudo yum versionlock docker-ce docker-ce-cli kubelet kubeadm kubectl kubernetes-cni
+
+sudo yum versionlock delete kubeadm kubernetes-cni
 sudo yum install -y \
 	kubeadm-v1.17.4-0 \
 	kubernetes-cni-v0.7.5-0
-sudo yum versionlock kubeadm kubernetes-cni || true
+sudo yum versionlock kubeadm kubernetes-cni
