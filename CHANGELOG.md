@@ -1,5 +1,22 @@
 # Changelog
 
+# [v1.0.0-alpha.3](https://github.com/kubermatic/kubeone/releases/tag/v1.0.0-alpha.3) - 2020-05-21
+
+## Attention Needed
+
+* In the v1.0.0-alpha.2 release, we didn't explicitly hold the `docker-ce-cli` package, which means it can be upgraded to a newer version. Upgrading the `docker-ce-cli` package would render the Kubernetes cluster unusable because of the version mismatch between Docker daemon and CLI.
+* If you already provisioned a cluster using the v1.0.0-alpha.2 release, please hold the `docker-ce-cli` package to prevent it from being upgraded:
+  * Ubuntu: run the following command over SSH on all control plane instances: `sudo apt-mark hold docker-ce-cli`
+  * CentOS: we've started using `yum versionlock` to handle package locks. The best way to set it up on your control plane instances is to run `kubeone upgrade -f` with the exact same config that's currently running.
+
+## Changed
+
+### General
+
+* Hold the `docker-ce-cli` package on Ubuntu ([#902](https://github.com/kubermatic/kubeone/pull/902))
+* Hold the `docker-ce`, `docker-ce-cli`, and all Kubernetes packages on CentOS ([#902](https://github.com/kubermatic/kubeone/pull/902))
+* Fix the CoreOS install and upgrade scripts ([#904](https://github.com/kubermatic/kubeone/pull/904))
+
 # [v1.0.0-alpha.2](https://github.com/kubermatic/kubeone/releases/tag/v1.0.0-alpha.2) - 2020-05-20
 
 ## Attention Needed
@@ -13,6 +30,13 @@
   * It remains possible to use both APIs with all `kubeone` commands
   * The v1alpha1 manifest can be converted to the v1beta1 manifest using the `kubeone config migrate` command
   * All example configurations have been updated to the v1beta1 API
+
+## Known Issues
+
+* The `docker-ce-cli` package is not put on hold after it's installed. Upgrading the `docker-ce-cli` package would render the Kubernetes cluster unusable because of the version mismatch between Docker daemon and CLI. It's highly recommended to upgrade to KubeOne v1.0.0-alpha.3.
+* If you already provisioned a cluster using the v1.0.0-alpha.2 release, please hold the `docker-ce-cli` package to prevent it from being upgraded:
+  * Ubuntu: run the following command over SSH on all control plane instances: `sudo apt-mark hold docker-ce-cli`
+  * CentOS: we've started using `yum versionlock` to handle package locks. The best way to set it up on your control plane instances is to run `kubeone upgrade -f` with the exact same config that's currently running.
 
 ## Added
 
