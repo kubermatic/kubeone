@@ -92,11 +92,12 @@ cni_ver=$(apt-cache madison kubernetes-cni | grep "{{ .CNI_VERSION }}" | head -1
 sudo apt-mark unhold docker-ce kubelet kubeadm kubectl kubernetes-cni
 sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--force-confold" -y --no-install-recommends \
 	docker-ce=${docker_ver} \
+	docker-ce-cli=${docker_ver} \
 	kubeadm=${kube_ver} \
 	kubectl=${kube_ver} \
 	kubelet=${kube_ver} \
 	kubernetes-cni=${cni_ver}
-sudo apt-mark hold docker-ce kubelet kubeadm kubectl kubernetes-cni
+sudo apt-mark hold docker-ce docker-ce-cli kubelet kubeadm kubectl kubernetes-cni
 sudo systemctl enable --now docker
 sudo systemctl enable --now kubelet
 `
