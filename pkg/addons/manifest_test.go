@@ -99,7 +99,7 @@ func TestEnsureAddonsLabelsOnResources(t *testing.T) {
 	}
 	defer os.RemoveAll(addonsDir)
 
-	if writeErr := ioutil.WriteFile(path.Join(addonsDir, "testManifest.yaml"), []byte(testManifest1WithoutLabel), 0644); writeErr != nil {
+	if writeErr := ioutil.WriteFile(path.Join(addonsDir, "testManifest.yaml"), []byte(testManifest1WithoutLabel), 0600); writeErr != nil {
 		t.Fatalf("unable to create temporary addon manifest: %v", err)
 	}
 

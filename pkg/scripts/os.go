@@ -92,11 +92,12 @@ cni_ver=$(apt-cache madison kubernetes-cni | grep "{{ .CNI_VERSION }}" | head -1
 sudo apt-mark unhold docker-ce kubelet kubeadm kubectl kubernetes-cni
 sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--force-confold" -y --no-install-recommends \
 	docker-ce=${docker_ver} \
+	docker-ce-cli=${docker_ver} \
 	kubeadm=${kube_ver} \
 	kubectl=${kube_ver} \
 	kubelet=${kube_ver} \
 	kubernetes-cni=${cni_ver}
-sudo apt-mark hold docker-ce kubelet kubeadm kubectl kubernetes-cni
+sudo apt-mark hold docker-ce docker-ce-cli kubelet kubeadm kubectl kubernetes-cni
 sudo systemctl enable --now docker
 sudo systemctl enable --now kubelet
 `
@@ -149,7 +150,21 @@ sudo systemctl enable --now kubelet
 `
 
 	kubeadmCoreOSTemplate = `
-. /etc/kubeone/proxy-env
+source /etc/kubeone/proxy-env
+
+HOST_ARCH=""
+case $(uname -m) in
+x86_64)
+    HOST_ARCH="amd64"
+    ;;
+aarch64)
+    HOST_ARCH="arm64"
+    ;;
+*)
+    echo "unsupported CPU architecture, exiting"
+    exit 1
+    ;;
+esac
 
 # Short-Circuit the installation if it was already executed
 if type docker &>/dev/null && type kubelet &>/dev/null; then exit 0; fi
@@ -179,14 +194,36 @@ for binary in kubeadm kubelet kubectl; do
 	rm /tmp/$binary
 done
 
-curl -sSL "https://raw.githubusercontent.com/kubernetes/kubernetes/${RELEASE}/build/debs/kubelet.service" |
-	sed "s:/usr/bin:/opt/bin:g" |
-	sudo tee /etc/systemd/system/kubelet.service
+cat <<EOF | sudo tee /etc/systemd/system/kubelet.service
+[Unit]
+Description=kubelet: The Kubernetes Node Agent
+Documentation=https://kubernetes.io/docs/home/
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart=/opt/bin/kubelet
+Restart=always
+StartLimitInterval=0
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+EOF
 
 sudo mkdir -p /etc/systemd/system/kubelet.service.d
-curl -sSL "https://raw.githubusercontent.com/kubernetes/kubernetes/${RELEASE}/build/debs/10-kubeadm.conf" |
-	sed "s:/usr/bin:/opt/bin:g" |
-	sudo tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+cat <<EOF | sudo tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+[Service]
+Environment="KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf"
+Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml"
+# This is a file that "kubeadm init" and "kubeadm join" generates at runtime, populating the KUBELET_KUBEADM_ARGS variable dynamically
+EnvironmentFile=-/var/lib/kubelet/kubeadm-flags.env
+# This is a file that the user can use for overrides of the kubelet args as a last resort. Preferably, the user should use
+# the .NodeRegistration.KubeletExtraArgs object in the configuration files instead. KUBELET_EXTRA_ARGS should be sourced from this file.
+EnvironmentFile=-/etc/default/kubelet
+ExecStart=
+ExecStart=/opt/bin/kubelet \$KUBELET_KUBECONFIG_ARGS \$KUBELET_CONFIG_ARGS \$KUBELET_KUBEADM_ARGS \$KUBELET_EXTRA_ARGS
+EOF
 
 sudo systemctl daemon-reload
 sudo systemctl enable docker.service kubelet.service
@@ -246,6 +283,20 @@ sudo yum install -y --disableexcludes=kubernetes \
 	upgradeKubeadmAndCNICoreOSScriptTemplate = `
 source /etc/kubeone/proxy-env
 
+HOST_ARCH=""
+case $(uname -m) in
+x86_64)
+    HOST_ARCH="amd64"
+    ;;
+aarch64)
+    HOST_ARCH="arm64"
+    ;;
+*)
+    echo "unsupported CPU architecture, exiting"
+    exit 1
+    ;;
+esac
+
 sudo mkdir -p /opt/cni/bin
 curl -L "https://github.com/containernetworking/plugins/releases/download/v{{ .CNI_VERSION }}/cni-plugins-${HOST_ARCH}-v{{ .CNI_VERSION }}.tgz" |
 	sudo tar -C /opt/cni/bin -xz
@@ -290,6 +341,20 @@ sudo yum install -y --disableexcludes=kubernetes \
 	upgradeKubeletAndKubectlCoreOSScriptTemplate = `
 source /etc/kubeone/proxy-env
 
+HOST_ARCH=""
+case $(uname -m) in
+x86_64)
+    HOST_ARCH="amd64"
+    ;;
+aarch64)
+    HOST_ARCH="arm64"
+    ;;
+*)
+    echo "unsupported CPU architecture, exiting"
+    exit 1
+    ;;
+esac
+
 RELEASE="v{{ .KUBERNETES_VERSION }}"
 
 sudo mkdir -p /var/tmp/kube-binaries
@@ -303,15 +368,36 @@ sudo systemctl stop kubelet
 sudo mv /var/tmp/kube-binaries/{kubelet,kubectl} .
 sudo chmod +x {kubelet,kubectl}
 
-curl -sSL "https://raw.githubusercontent.com/kubernetes/kubernetes/${RELEASE}/build/debs/kubelet.service" |
-	sed "s:/usr/bin:/opt/bin:g" |
-	sudo tee /etc/systemd/system/kubelet.service
+cat <<EOF | sudo tee /etc/systemd/system/kubelet.service
+[Unit]
+Description=kubelet: The Kubernetes Node Agent
+Documentation=https://kubernetes.io/docs/home/
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart=/opt/bin/kubelet
+Restart=always
+StartLimitInterval=0
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+EOF
 
 sudo mkdir -p /etc/systemd/system/kubelet.service.d
-curl -sSL "https://raw.githubusercontent.com/kubernetes/kubernetes/${RELEASE}/build/debs/10-kubeadm.conf" |
-	sed "s:/usr/bin:/opt/bin:g" |
-	sudo tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-
+cat <<EOF | sudo tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+[Service]
+Environment="KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf"
+Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml"
+# This is a file that "kubeadm init" and "kubeadm join" generates at runtime, populating the KUBELET_KUBEADM_ARGS variable dynamically
+EnvironmentFile=-/var/lib/kubelet/kubeadm-flags.env
+# This is a file that the user can use for overrides of the kubelet args as a last resort. Preferably, the user should use
+# the .NodeRegistration.KubeletExtraArgs object in the configuration files instead. KUBELET_EXTRA_ARGS should be sourced from this file.
+EnvironmentFile=-/etc/default/kubelet
+ExecStart=
+ExecStart=/opt/bin/kubelet \$KUBELET_KUBECONFIG_ARGS \$KUBELET_CONFIG_ARGS \$KUBELET_KUBEADM_ARGS \$KUBELET_EXTRA_ARGS
+EOF
 	 
 sudo systemctl daemon-reload
 sudo systemctl start kubelet
