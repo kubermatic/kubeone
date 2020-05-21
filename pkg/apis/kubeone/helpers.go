@@ -67,7 +67,7 @@ func (h *HostConfig) SetLeader(leader bool) {
 }
 
 // CloudProviderName returns name of the cloud provider
-func (p CloudProviderSpec) CloudProivderName() string { //nolint:stylecheck
+func (p CloudProviderSpec) CloudProivderName() string {
 	switch {
 	case p.AWS != nil:
 		return "aws"
@@ -94,7 +94,7 @@ func (p CloudProviderSpec) CloudProivderName() string { //nolint:stylecheck
 
 // CloudProviderInTree detects is there in-tree cloud provider implementation for specified provider.
 // List of in-tree provider can be found here: https://github.com/kubernetes/kubernetes/tree/master/pkg/cloudprovider
-func (p CloudProviderSpec) CloudProviderInTree() bool { //nolint:stylecheck
+func (p CloudProviderSpec) CloudProviderInTree() bool {
 	if p.Openstack != nil {
 		return !p.External
 	} else if p.AWS != nil || p.GCE != nil || p.Vsphere != nil || p.Azure != nil {

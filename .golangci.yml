@@ -46,27 +46,12 @@ linters-settings:
     local-prefixes: github.com/kubermatic/kubeone
 
 issues:
-  exclude:
-  - "`defaultRetryBackoff` - `retries` always receives `3`"
-  - "func SetDefaults_Addons should be SetDefaultsAddons"
-  - "func SetDefaults_APIEndpoints should be SetDefaultsAPIEndpoints"
-  - "func SetDefaults_Versions should be SetDefaultsVersions"
-  - "func SetDefaults_ClusterNetwork should be SetDefaultsClusterNetwork"
-  - "func SetDefaults_Proxy should be SetDefaultsProxy"
-  - "func SetDefaults_Features should be SetDefaultsFeatures"
-  - "func SetDefaults_Hosts should be SetDefaultsHosts"
-  - "func SetDefaults_KubeOneCluster should be SetDefaultsKubeOneCluster"
-  - "func SetDefaults_MachineController should be SetDefaultsMachineController"
-  - "func SetDefaults_SystemPackages should be SetDefaultsSystemPackages"
-  - "func Convert_v1alpha1_CNI_To_kubeone_CNI should be ConvertV1alpha1CNIToKubeoneCNI"
-  - "func Convert_kubeone_CNI_To_v1alpha1_CNI should be ConvertKubeoneCNIToV1alpha1CNI"
-  - "func Convert_v1alpha1_CloudProviderSpec_To_kubeone_CloudProviderSpec should be ConvertV1alpha1CloudProviderSpecToKubeoneCloudProviderSpec"
-  - "func Convert_kubeone_CloudProviderSpec_To_v1alpha1_CloudProviderSpec should be ConvertKubeoneCloudProviderSpecToV1alpha1CloudProviderSpec"
-  - "func Convert_v1alpha1_ClusterNetworkConfig_To_kubeone_ClusterNetworkConfig should be ConvertV1alpha1ClusterNetworkConfigToKubeoneClusterNetworkConfig"
-  - "func Convert_v1alpha1_HostConfig_To_kubeone_HostConfig should be ConvertV1alpha1HostConfigToKubeoneHostConfig"
-  - "func Convert_kubeone_HostConfig_To_v1alpha1_HostConfig should be ConvertKubeoneHostConfigToV1alpha1HostConfig"
-  - "func Convert_v1alpha1_KubeOneCluster_To_kubeone_KubeOneCluster should be ConvertV1alpha1KubeOneClusterToKubeoneKubeOneCluster"
-  - "func Convert_kubeone_KubeOneCluster_To_v1alpha1_KubeOneCluster should be ConvertKubeoneKubeOneClusterToV1alpha1KubeOneCluster"
-  - "func Convert_v1alpha1_MachineControllerConfig_To_kubeone_MachineControllerConfig should be ConvertV1alpha1MachineControllerConfigToKubeoneMachineControllerConfig"
-  - "type name will be used as kubeone.KubeOneCluster by other packages"
-  - "G402: TLS InsecureSkipVerify set true"
+  exclude-rules:
+  - path: pkg/apis/kubeone
+    text: "func SetDefaults_"
+
+  - path: pkg/apis/kubeone
+    text: "func Convert_"
+
+  - path: pkg/apis/kubeone
+    text: "type name will be used as kubeone.KubeOneCluster by other packages"
