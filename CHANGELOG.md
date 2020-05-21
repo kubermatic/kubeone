@@ -1,5 +1,27 @@
 # Changelog
 
+# [v0.11.2](https://github.com/kubermatic/kubeone/releases/tag/v0.11.2) - 2020-05-21
+
+## Attention Needed
+
+* This version fixes the provisioning failures caused by `docker-ce-cli` version mismatch. The older releases are not working anymore ([#907](https://github.com/kubermatic/kubeone/pull/907))
+* `machine-controller` must be updated to v1.11.3 on existing clusters or otherwise newly created worker nodes will not work properly. The `machine-controller` can be updated on one of the following ways:
+  * (Recommended) Run `kubeone upgrade -f` with the exact same config that's currently running 
+  * Run `kubeone install` with the exact same config that's currently running
+  * Update the `machine-controller` and `machine-controller-webhook` deployments manually
+
+
+## Changed
+
+### General
+
+* Bind `docker-ce-cli` to the same version as `docker-ce` ([#907](https://github.com/kubermatic/kubeone/pull/907))
+* Fix CoreOS install and upgrade scripts ([#907](https://github.com/kubermatic/kubeone/pull/907))
+
+### Updated
+
+* Update machine-controller to v1.11.3 ([#907](https://github.com/kubermatic/kubeone/pull/907))
+
 # [v0.11.1](https://github.com/kubermatic/kubeone/releases/tag/v0.11.1) - 2020-04-08
 
 ## Added
