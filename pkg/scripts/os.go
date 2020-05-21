@@ -150,7 +150,21 @@ sudo systemctl enable --now kubelet
 `
 
 	kubeadmCoreOSTemplate = `
-. /etc/kubeone/proxy-env
+source /etc/kubeone/proxy-env
+
+HOST_ARCH=""
+case $(uname -m) in
+x86_64)
+    HOST_ARCH="amd64"
+    ;;
+aarch64)
+    HOST_ARCH="arm64"
+    ;;
+*)
+    echo "unsupported CPU architecture, exiting"
+    exit 1
+    ;;
+esac
 
 # Short-Circuit the installation if it was already executed
 if type docker &>/dev/null && type kubelet &>/dev/null; then exit 0; fi
@@ -208,7 +222,7 @@ EnvironmentFile=-/var/lib/kubelet/kubeadm-flags.env
 # the .NodeRegistration.KubeletExtraArgs object in the configuration files instead. KUBELET_EXTRA_ARGS should be sourced from this file.
 EnvironmentFile=-/etc/default/kubelet
 ExecStart=
-ExecStart=/opt/bin/kubelet $$KUBELET_KUBECONFIG_ARGS $$KUBELET_CONFIG_ARGS $$KUBELET_KUBEADM_ARGS $$KUBELET_EXTRA_ARGS
+ExecStart=/opt/bin/kubelet \$KUBELET_KUBECONFIG_ARGS \$KUBELET_CONFIG_ARGS \$KUBELET_KUBEADM_ARGS \$KUBELET_EXTRA_ARGS
 EOF
 
 sudo systemctl daemon-reload
@@ -269,6 +283,20 @@ sudo yum install -y --disableexcludes=kubernetes \
 	upgradeKubeadmAndCNICoreOSScriptTemplate = `
 source /etc/kubeone/proxy-env
 
+HOST_ARCH=""
+case $(uname -m) in
+x86_64)
+    HOST_ARCH="amd64"
+    ;;
+aarch64)
+    HOST_ARCH="arm64"
+    ;;
+*)
+    echo "unsupported CPU architecture, exiting"
+    exit 1
+    ;;
+esac
+
 sudo mkdir -p /opt/cni/bin
 curl -L "https://github.com/containernetworking/plugins/releases/download/v{{ .CNI_VERSION }}/cni-plugins-${HOST_ARCH}-v{{ .CNI_VERSION }}.tgz" |
 	sudo tar -C /opt/cni/bin -xz
@@ -313,6 +341,20 @@ sudo yum install -y --disableexcludes=kubernetes \
 	upgradeKubeletAndKubectlCoreOSScriptTemplate = `
 source /etc/kubeone/proxy-env
 
+HOST_ARCH=""
+case $(uname -m) in
+x86_64)
+    HOST_ARCH="amd64"
+    ;;
+aarch64)
+    HOST_ARCH="arm64"
+    ;;
+*)
+    echo "unsupported CPU architecture, exiting"
+    exit 1
+    ;;
+esac
+
 RELEASE="v{{ .KUBERNETES_VERSION }}"
 
 sudo mkdir -p /var/tmp/kube-binaries
@@ -354,7 +396,7 @@ EnvironmentFile=-/var/lib/kubelet/kubeadm-flags.env
 # the .NodeRegistration.KubeletExtraArgs object in the configuration files instead. KUBELET_EXTRA_ARGS should be sourced from this file.
 EnvironmentFile=-/etc/default/kubelet
 ExecStart=
-ExecStart=/opt/bin/kubelet $$KUBELET_KUBECONFIG_ARGS $$KUBELET_CONFIG_ARGS $$KUBELET_KUBEADM_ARGS $$KUBELET_EXTRA_ARGS
+ExecStart=/opt/bin/kubelet \$KUBELET_KUBECONFIG_ARGS \$KUBELET_CONFIG_ARGS \$KUBELET_KUBEADM_ARGS \$KUBELET_EXTRA_ARGS
 EOF
 	 
 sudo systemctl daemon-reload
