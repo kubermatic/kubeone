@@ -1,5 +1,13 @@
 # Changelog
 
+# [v1.0.0-alpha.4](https://github.com/kubermatic/kubeone/releases/tag/v1.0.0-alpha.4) - 2020-05-21
+
+## Changed
+
+### General
+
+* Fix the Kubelet service unit for CoreOS/Flatcar ([#908](https://github.com/kubermatic/kubeone/pull/908), [#909](https://github.com/kubermatic/kubeone/pull/909))
+
 # [v1.0.0-alpha.3](https://github.com/kubermatic/kubeone/releases/tag/v1.0.0-alpha.3) - 2020-05-21
 
 ## Attention Needed
@@ -8,7 +16,10 @@
 * If you already provisioned a cluster using the v1.0.0-alpha.2 release, please hold the `docker-ce-cli` package to prevent it from being upgraded:
   * Ubuntu: run the following command over SSH on all control plane instances: `sudo apt-mark hold docker-ce-cli`
   * CentOS: we've started using `yum versionlock` to handle package locks. The best way to set it up on your control plane instances is to run `kubeone upgrade -f` with the exact same config that's currently running.
-* This release includes a fix for the incorrect formatted Kubelet service file on CoreOS. If you've tried to provision a CoreOS cluster using the v1.0.0-alpha.2 release and it failed, you will have to remove the Kubelet binary, so KubeOne can install it with the correct service file. This can be done using the command such as: `kubeone reset --manifest config.yaml --destroy-workers=false --remove-binaries=true`.
+
+## Known Issues
+
+* The CoreOS cluster provisioning has been broken in this release due to the incorrect formatted Kubelet service file. This issue has been fixed in the v1.0.0-alpha.4 release.
 
 ## Changed
 
@@ -38,7 +49,7 @@
 * If you already provisioned a cluster using the v1.0.0-alpha.2 release, please hold the `docker-ce-cli` package to prevent it from being upgraded:
   * Ubuntu: run the following command over SSH on all control plane instances: `sudo apt-mark hold docker-ce-cli`
   * CentOS: we've started using `yum versionlock` to handle package locks. The best way to set it up on your control plane instances is to run `kubeone upgrade -f` with the exact same config that's currently running.
-* The CoreOS cluster provisioning has been broken in this release due to the incorrect formatted Kubelet service file. This issue has been fixed in the v1.0.0-alpha.3 release.
+* The CoreOS cluster provisioning has been broken in this release due to the incorrect formatted Kubelet service file. This issue has been fixed in the v1.0.0-alpha.4 release.
 
 ## Added
 
