@@ -81,7 +81,7 @@ func (k1 *Kubeone) CreateConfig(kubernetesVersion, providerName string,
 		return errors.Wrap(tplErr, "failed to render KubeOne configuration template")
 	}
 
-	err = ioutil.WriteFile(k1.ConfigurationFilePath, buf.Bytes(), 0644)
+	err = ioutil.WriteFile(k1.ConfigurationFilePath, buf.Bytes(), 0600)
 	if err != nil {
 		return errors.Wrap(err, "failed to write KubeOne configuration manifest")
 	}
