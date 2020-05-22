@@ -159,10 +159,10 @@ In the following table you can find what are supported Kubernetes and Terraform
 versions for each KubeOne version. KubeOne versions that are crossed out are not
 supported. It's highly recommended to use the latest version whenever possible.
 
-| KubeOne version | 1.17 | 1.16 | 1.15 | 1.14 | 1.13 | Terraform | Supported providers                                                |
-|-----------------|------|------|------|------|------|-----------|--------------------------------------------------------------------|
-| v0.11.0+        | +    | +    | +    | -    | -    | v0.12+    | AWS, DigitalOcean, GCE, Hetzner, Packet, OpenStack, vSphere, Azure |
-| v0.10.0+        | -    | +    | +    | +    | -    | v0.12+    | AWS, DigitalOcean, GCE, Hetzner, Packet, OpenStack, vSphere, Azure |
+| KubeOne version | 1.18 | 1.17 | 1.16 | 1.15 | 1.14 | Terraform | Supported providers                                                |
+| --------------- | ---- | ---- | ---- | ---- | ---- | --------- | ------------------------------------------------------------------ |
+| v0.11.0+        | +    | +    | +    | +    | -    | v0.12+    | AWS, DigitalOcean, GCE, Hetzner, Packet, OpenStack, vSphere, Azure |
+| v0.10.0+        | -    | -    | +    | +    | +    | v0.12+    | AWS, DigitalOcean, GCE, Hetzner, Packet, OpenStack, vSphere, Azure |
 
 ## Getting Started
 
