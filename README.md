@@ -1,19 +1,8 @@
 # KubeOne
 
 <p align="center"><img src="docs/img/kubeone-logo-text.png" width="700px" /></p>
-<p align="center">
-  <a href="https://godoc.org/github.com/kubermatic/kubeone">
-    <img src="https://godoc.org/github.com/kubermatic/kubeone?status.svg" alt="GoDoc" />
-  </a>
-  <a href="https://goreportcard.com/report/github.com/kubermatic/kubeone">
-    <img src="https://goreportcard.com/badge/github.com/kubermatic/kubeone" alt="Go Report Card" />
-  </a>
-  <a href="https://bestpractices.coreinfrastructure.org/projects/2934"><img src="https://bestpractices.coreinfrastructure.org/projects/2934/badge">
-  </a>
-  <a href="https://aur.archlinux.org/packages/kubeone">
-    <img src="https://img.shields.io/aur/version/kubeone.svg" alt="AUR version" />
-  </a>
-</p>
+
+[![KubeOne Report Card](https://goreportcard.com/badge/github.com/kubermatic/kubeone)](https://goreportcard.com/report/github.com/kubermatic/kubeone)
 
 `kubeone` is a CLI tool and a Go library for installing, managing, and upgrading
 Kubernetes High-Available (HA) clusters. It can be used on any cloud provider,
@@ -31,7 +20,7 @@ upgrade to the v0.6.0 or newer as soon as possible.
 
 ## Documentation / User Guides
 
-All user documentation is available at the [KubeOne docs website](https://docs.loodse.com/kubeone/master/).
+All user documentation is available at the [KubeOne docs website](https://docs.kubermatic.com/kubeone/master/).
 
 ## KubeOne in Action
 

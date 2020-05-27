@@ -2,12 +2,11 @@
 
 ## User Documentation
 
-KubeOne user documentation can be found here: https://docs.loodse.com/kubeone/
+KubeOne user documentation can be found at [KubeOne docs website](https://docs.kubermatic.com/kubeone/master/)
 
 ## Development Documentation
 
 * [Adding support for a provider](adding_provider_support.md)
-* [Project Structure](project_structure.md)
 * [Backwards Compatibility Policy](backwards_compatibility_policy.md)
 * [Release Process](release_process.md)
 
