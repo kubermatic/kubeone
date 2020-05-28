@@ -77,12 +77,12 @@ func createEnvironmentFile(s *state.State) error {
 }
 
 func installKubeadm(s *state.State, node kubeoneapi.HostConfig) error {
-	return runOnOS(s, osNameEnum(node.OperatingSystem), map[osNameEnum]runOnOSFn{
-		osNameDebian:  installKubeadmDebian,
-		osNameUbuntu:  installKubeadmDebian,
-		osNameCoreos:  installKubeadmCoreOS,
-		osNameFlatcar: installKubeadmCoreOS,
-		osNameCentos:  installKubeadmCentOS,
+	return runOnOS(s, node.OperatingSystem, map[kubeoneapi.OperatingSystemName]runOnOSFn{
+		kubeoneapi.OperatingSystemNameUbuntu:  installKubeadmDebian,
+		kubeoneapi.OperatingSystemNameCoreOS:  installKubeadmCoreOS,
+		kubeoneapi.OperatingSystemNameFlatcar: installKubeadmCoreOS,
+		kubeoneapi.OperatingSystemNameCentOS:  installKubeadmCentOS,
+		kubeoneapi.OperatingSystemNameRHEL:    installKubeadmCentOS,
 	})
 }
 

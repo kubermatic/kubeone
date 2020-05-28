@@ -25,22 +25,22 @@ import (
 )
 
 func upgradeKubeletAndKubectlBinaries(s *state.State, node kubeoneapi.HostConfig) error {
-	return runOnOS(s, osNameEnum(node.OperatingSystem), map[osNameEnum]runOnOSFn{
-		osNameDebian:  upgradeKubeletAndKubectlBinariesDebian,
-		osNameUbuntu:  upgradeKubeletAndKubectlBinariesDebian,
-		osNameCoreos:  upgradeKubeletAndKubectlBinariesCoreOS,
-		osNameFlatcar: upgradeKubeletAndKubectlBinariesCoreOS,
-		osNameCentos:  upgradeKubeletAndKubectlBinariesCentOS,
+	return runOnOS(s, node.OperatingSystem, map[kubeoneapi.OperatingSystemName]runOnOSFn{
+		kubeoneapi.OperatingSystemNameUbuntu:  upgradeKubeletAndKubectlBinariesDebian,
+		kubeoneapi.OperatingSystemNameCoreOS:  upgradeKubeletAndKubectlBinariesCoreOS,
+		kubeoneapi.OperatingSystemNameFlatcar: upgradeKubeletAndKubectlBinariesCoreOS,
+		kubeoneapi.OperatingSystemNameCentOS:  upgradeKubeletAndKubectlBinariesCentOS,
+		kubeoneapi.OperatingSystemNameRHEL:    upgradeKubeletAndKubectlBinariesCentOS,
 	})
 }
 
 func upgradeKubeadmAndCNIBinaries(s *state.State, node kubeoneapi.HostConfig) error {
-	return runOnOS(s, osNameEnum(node.OperatingSystem), map[osNameEnum]runOnOSFn{
-		osNameDebian:  upgradeKubeadmAndCNIBinariesDebian,
-		osNameUbuntu:  upgradeKubeadmAndCNIBinariesDebian,
-		osNameCoreos:  upgradeKubeadmAndCNIBinariesCoreOS,
-		osNameFlatcar: upgradeKubeadmAndCNIBinariesCoreOS,
-		osNameCentos:  upgradeKubeadmAndCNIBinariesCentOS,
+	return runOnOS(s, node.OperatingSystem, map[kubeoneapi.OperatingSystemName]runOnOSFn{
+		kubeoneapi.OperatingSystemNameUbuntu:  upgradeKubeadmAndCNIBinariesDebian,
+		kubeoneapi.OperatingSystemNameCoreOS:  upgradeKubeadmAndCNIBinariesCoreOS,
+		kubeoneapi.OperatingSystemNameFlatcar: upgradeKubeadmAndCNIBinariesCoreOS,
+		kubeoneapi.OperatingSystemNameCentOS:  upgradeKubeadmAndCNIBinariesCentOS,
+		kubeoneapi.OperatingSystemNameRHEL:    upgradeKubeadmAndCNIBinariesCentOS,
 	})
 }
 

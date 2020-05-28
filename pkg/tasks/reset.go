@@ -126,12 +126,12 @@ func removeBinaries(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connec
 		return errors.Wrap(err, "failed to determine operating system")
 	}
 
-	return runOnOS(s, osNameEnum(node.OperatingSystem), map[osNameEnum]runOnOSFn{
-		osNameDebian:  removeBinariesDebian,
-		osNameUbuntu:  removeBinariesDebian,
-		osNameCoreos:  removeBinariesCoreOS,
-		osNameFlatcar: removeBinariesCoreOS,
-		osNameCentos:  removeBinariesCentOS,
+	return runOnOS(s, node.OperatingSystem, map[kubeoneapi.OperatingSystemName]runOnOSFn{
+		kubeoneapi.OperatingSystemNameUbuntu:  removeBinariesDebian,
+		kubeoneapi.OperatingSystemNameCoreOS:  removeBinariesCoreOS,
+		kubeoneapi.OperatingSystemNameFlatcar: removeBinariesCoreOS,
+		kubeoneapi.OperatingSystemNameCentOS:  removeBinariesCentOS,
+		kubeoneapi.OperatingSystemNameRHEL:    removeBinariesCentOS,
 	})
 }
 

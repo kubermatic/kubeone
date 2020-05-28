@@ -43,10 +43,6 @@ func Hostname() string {
 	return hostnameScript
 }
 
-func OSID() string {
-	return "source /etc/os-release && echo -n $ID"
-}
-
 func VerifyPrerequisites() (string, error) {
 	return Render(verifyPrerequisitesScript, nil)
 }
