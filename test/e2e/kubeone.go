@@ -25,7 +25,7 @@ import (
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
 
-	k1api "github.com/kubermatic/kubeone/pkg/apis/kubeone/v1alpha1"
+	k1api "github.com/kubermatic/kubeone/pkg/apis/kubeone/v1beta1"
 	"github.com/kubermatic/kubeone/test/e2e/testutil"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -51,7 +51,7 @@ func NewKubeone(kubeoneDir, configurationFilePath string) *Kubeone {
 // CreateConfig creates a KubeOneCluster manifest
 func (k1 *Kubeone) CreateConfig(
 	kubernetesVersion string,
-	providerName k1api.CloudProviderName,
+	providerName string,
 	providerExternal bool,
 	clusterNetworkPod string,
 	clusterNetworkService string,
@@ -59,7 +59,7 @@ func (k1 *Kubeone) CreateConfig(
 ) error {
 	k1Cluster := k1api.KubeOneCluster{
 		TypeMeta: metav1.TypeMeta{
-			APIVersion: "kubeone.io/v1alpha1",
+			APIVersion: k1api.SchemeGroupVersion.String(),
 			Kind:       "KubeOneCluster",
 		},
 	}
@@ -67,8 +67,10 @@ func (k1 *Kubeone) CreateConfig(
 	k1api.SetObjectDefaults_KubeOneCluster(&k1Cluster)
 
 	k1Cluster.CloudProvider = k1api.CloudProviderSpec{
-		Name:     providerName,
 		External: providerExternal,
+	}
+	if err := k1api.SetCloudProvider(&k1Cluster.CloudProvider, providerName); err != nil {
+		return errors.Wrap(err, "failed to set cloud provider")
 	}
 
 	k1Cluster.Versions = k1api.VersionConfig{
