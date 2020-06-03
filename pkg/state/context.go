@@ -61,6 +61,7 @@ type State struct {
 	DestroyWorkers            bool
 	RemoveBinaries            bool
 	ForceUpgrade              bool
+	ForceInstall              bool
 	UpgradeMachineDeployments bool
 	PatchCNI                  bool
 	CredentialsFilePath       string
