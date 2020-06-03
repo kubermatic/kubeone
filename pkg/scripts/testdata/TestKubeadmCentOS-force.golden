@@ -71,6 +71,7 @@ sudo yum install -y \
 	yum-plugin-versionlock \
 	device-mapper-persistent-data \
 	lvm2
+sudo yum versionlock delete docker-ce docker-ce-cli kubelet kubeadm kubectl kubernetes-cni || true
 
 sudo yum install -y \
 	kubelet-v1.17.4-0 \
