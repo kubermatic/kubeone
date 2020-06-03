@@ -19,7 +19,6 @@ package kubeone
 import (
 	"math/rand"
 
-	"github.com/Masterminds/semver"
 	"github.com/pkg/errors"
 )
 
@@ -102,20 +101,4 @@ func (p CloudProviderSpec) CloudProviderInTree() bool {
 	}
 
 	return false
-}
-
-// KubernetesCNIVersion returns kubernetes-cni package version
-func (m VersionConfig) KubernetesCNIVersion() string {
-	s := semver.MustParse(m.Kubernetes)
-	c, _ := semver.NewConstraint(">= 1.13.0, <= 1.13.4")
-
-	switch {
-	// Validation ensures that the oldest cluster version is 1.13.0.
-	// Versions 1.13.0-1.13.4 uses 0.6.0, so it's safe to return 0.6.0
-	// if >= 1.13.0, <= 1.13.4 constraint check successes.
-	case c.Check(s):
-		return "0.6.0"
-	default:
-		return "0.7.5"
-	}
 }

@@ -25,10 +25,6 @@ import (
 	"github.com/kubermatic/kubeone/pkg/state"
 )
 
-const (
-	dockerVersion = "18.09.7"
-)
-
 func installPrerequisites(s *state.State) error {
 	s.Logger.Infoln("Installing prerequisites…")
 
@@ -87,7 +83,7 @@ func installKubeadm(s *state.State, node kubeoneapi.HostConfig) error {
 }
 
 func installKubeadmDebian(s *state.State) error {
-	cmd, err := scripts.KubeadmDebian(s.Cluster, dockerVersion)
+	cmd, err := scripts.KubeadmDebian(s.Cluster, s.ForceInstall)
 	if err != nil {
 		return err
 	}
@@ -103,7 +99,7 @@ func installKubeadmCentOS(s *state.State) error {
 		proxy = s.Cluster.Proxy.HTTP
 	}
 
-	cmd, err := scripts.KubeadmCentOS(s.Cluster, proxy)
+	cmd, err := scripts.KubeadmCentOS(s.Cluster, s.ForceInstall)
 	if err != nil {
 		return err
 	}

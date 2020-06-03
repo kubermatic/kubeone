@@ -23,8 +23,23 @@ import (
 	"github.com/kubermatic/kubeone/pkg/testhelper"
 )
 
-func genCluster() kubeone.KubeOneCluster {
-	return kubeone.KubeOneCluster{
+type genClusterOpts func(*kubeone.KubeOneCluster)
+
+func withKubeVersion(ver string) genClusterOpts {
+	return func(cls *kubeone.KubeOneCluster) {
+		cls.Versions.Kubernetes = ver
+	}
+}
+
+func withProxy(proxy string) genClusterOpts {
+	return func(cls *kubeone.KubeOneCluster) {
+		cls.Proxy.HTTPS = proxy
+		cls.Proxy.HTTP = proxy
+	}
+}
+
+func genCluster(opts ...genClusterOpts) kubeone.KubeOneCluster {
+	c := &kubeone.KubeOneCluster{
 		Versions: kubeone.VersionConfig{
 			Kubernetes: "v1.17.4",
 		},
@@ -37,6 +52,12 @@ func genCluster() kubeone.KubeOneCluster {
 			NoProxy: ".local",
 		},
 	}
+
+	for _, fn := range opts {
+		fn(c)
+	}
+
+	return *c
 }
 
 func TestKubeadmDebian(t *testing.T) {
@@ -63,7 +84,7 @@ func TestKubeadmDebian(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := KubeadmDebian(&tt.args.cluster, tt.args.dockerVersion)
+			got, err := KubeadmDebian(&tt.args.cluster, false)
 			if err != tt.err {
 				t.Errorf("KubeadmDebian() error = %v, wantErr %v", err, tt.err)
 				return
@@ -79,7 +100,7 @@ func TestKubeadmCentOS(t *testing.T) {
 
 	type args struct {
 		cluster kubeone.KubeOneCluster
-		proxy   string
+		force   bool
 	}
 	tests := []struct {
 		name string
@@ -90,7 +111,25 @@ func TestKubeadmCentOS(t *testing.T) {
 			name: "simple",
 			args: args{
 				cluster: genCluster(),
-				proxy:   "http://http.proxy",
+			},
+		},
+		{
+			name: "proxy",
+			args: args{
+				cluster: genCluster(withProxy("http://my-proxy.tld")),
+			},
+		},
+		{
+			name: "force",
+			args: args{
+				cluster: genCluster(),
+				force:   true,
+			},
+		},
+		{
+			name: "v1.16.1",
+			args: args{
+				cluster: genCluster(withKubeVersion("v1.16.1")),
 			},
 		},
 	}
@@ -98,7 +137,7 @@ func TestKubeadmCentOS(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := KubeadmCentOS(&tt.args.cluster, tt.args.proxy)
+			got, err := KubeadmCentOS(&tt.args.cluster, tt.args.force)
 			if err != tt.err {
 				t.Errorf("KubeadmCentOS() error = %v, wantErr %v", err, tt.err)
 				return
@@ -126,6 +165,12 @@ func TestKubeadmCoreOS(t *testing.T) {
 				cluster: genCluster(),
 			},
 		},
+		{
+			name: "force",
+			args: args{
+				cluster: genCluster(),
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -145,7 +190,7 @@ func TestKubeadmCoreOS(t *testing.T) {
 func TestRemoveBinariesDebian(t *testing.T) {
 	t.Parallel()
 
-	got, err := RemoveBinariesDebian("v1.17.4", "v0.7.5")
+	got, err := RemoveBinariesDebian()
 	if err != nil {
 		t.Errorf("RemoveBinariesDebian() error = %v", err)
 		return
@@ -157,7 +202,7 @@ func TestRemoveBinariesDebian(t *testing.T) {
 func TestRemoveBinariesCentOS(t *testing.T) {
 	t.Parallel()
 
-	got, err := RemoveBinariesCentOS("v1.17.4", "v0.7.5")
+	got, err := RemoveBinariesCentOS()
 	if err != nil {
 		t.Errorf("RemoveBinariesCentOS() error = %v", err)
 		return
@@ -181,7 +226,8 @@ func TestRemoveBinariesCoreOS(t *testing.T) {
 func TestUpgradeKubeadmAndCNIDebian(t *testing.T) {
 	t.Parallel()
 
-	got, err := UpgradeKubeadmAndCNIDebian("v1.17.4", "v0.7.5")
+	cls := genCluster()
+	got, err := UpgradeKubeadmAndCNIDebian(&cls)
 	if err != nil {
 		t.Errorf("UpgradeKubeadmAndCNIDebian() error = %v", err)
 		return
@@ -193,7 +239,8 @@ func TestUpgradeKubeadmAndCNIDebian(t *testing.T) {
 func TestUpgradeKubeadmAndCNICentOS(t *testing.T) {
 	t.Parallel()
 
-	got, err := UpgradeKubeadmAndCNICentOS("v1.17.4", "v0.7.5", true)
+	cls := genCluster()
+	got, err := UpgradeKubeadmAndCNICentOS(&cls)
 	if err != nil {
 		t.Errorf("UpgradeKubeadmAndCNICentOS() error = %v", err)
 		return
@@ -205,7 +252,7 @@ func TestUpgradeKubeadmAndCNICentOS(t *testing.T) {
 func TestUpgradeKubeadmAndCNICoreOS(t *testing.T) {
 	t.Parallel()
 
-	got, err := UpgradeKubeadmAndCNICoreOS("v1.17.4", "v0.7.5")
+	got, err := UpgradeKubeadmAndCNICoreOS("v1.17.4")
 	if err != nil {
 		t.Errorf("UpgradeKubeadmAndCNICoreOS() error = %v", err)
 		return
@@ -217,7 +264,8 @@ func TestUpgradeKubeadmAndCNICoreOS(t *testing.T) {
 func TestUpgradeKubeletAndKubectlDebian(t *testing.T) {
 	t.Parallel()
 
-	got, err := UpgradeKubeletAndKubectlDebian("v1.17.4")
+	cls := genCluster()
+	got, err := UpgradeKubeletAndKubectlDebian(&cls)
 	if err != nil {
 		t.Errorf("UpgradeKubeletAndKubectlDebian() error = %v", err)
 		return
@@ -229,7 +277,8 @@ func TestUpgradeKubeletAndKubectlDebian(t *testing.T) {
 func TestUpgradeKubeletAndKubectlCentOS(t *testing.T) {
 	t.Parallel()
 
-	got, err := UpgradeKubeletAndKubectlCentOS("v1.17.4")
+	cls := genCluster()
+	got, err := UpgradeKubeletAndKubectlCentOS(&cls)
 	if err != nil {
 		t.Errorf("UpgradeKubeletAndKubectlCentOS() error = %v", err)
 		return
