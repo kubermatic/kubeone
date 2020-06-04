@@ -19,14 +19,14 @@ variable "cluster_name" {
 }
 
 variable "worker_os" {
-  description = "OS to run on worker machines"
+  description = "OS to run on worker machines, default to var.os"
 
   # valid choices are:
   # * ubuntu
   # * centos
-  # * coreos
   # * flatcar
-  default = "ubuntu"
+  # * rhel
+  default = ""
 }
 
 variable "ssh_public_key_file" {
@@ -91,9 +91,50 @@ variable "worker_type" {
   description = "instance type for workers"
 }
 
+variable "bastion_type" {
+  default     = "t3.nano"
+  description = "instance type for bastion"
+}
+
+variable "os" {
+  description = "Operating System to use in AMI filtering and MachineDeployment"
+
+  # valid choices are:
+  # * ubuntu
+  # * centos
+  # * rhel
+  # * flatcar
+  default = "ubuntu"
+}
+
 variable "ami" {
-  default     = ""
   description = "AMI ID, use it to fixate control-plane AMI in order to avoid force-recreation it at later times"
+  default     = ""
+}
+
+variable "ami_filters" {
+  description = "map with AMI filters"
+  default = {
+    ubuntu = {
+      owners     = ["099720109477"] # Canonical
+      image_name = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
+    }
+
+    centos = {
+      owners     = ["679593333241"] # CentOS
+      image_name = ["CentOS Linux 7 x86_64 HVM EBS*"]
+    }
+
+    flatcar = {
+      owners     = ["075585003325"] # Kinvolk
+      image_name = ["Flatcar-stable-*-hvm"]
+    }
+
+    rhel = {
+      owners     = ["309956199498"] # Red Hat
+      image_name = ["RHEL-8*_HVM-*-x86_64-*"]
+    }
+  }
 }
 
 variable "subnets_cidr" {

@@ -52,7 +52,7 @@ output "kubeone_workers" {
       replicas = var.initial_machinedeployment_replicas
       providerSpec = {
         sshPublicKeys   = [aws_key_pair.deployer.public_key]
-        operatingSystem = var.worker_os
+        operatingSystem = local.worker_os
         operatingSystemSpec = {
           distUpgradeOnBoot = false
         }
@@ -61,7 +61,7 @@ output "kubeone_workers" {
           # see example under `cloudProviderSpec` section at:
           # https://github.com/kubermatic/machine-controller/blob/master/examples/aws-machinedeployment.yaml
           region           = var.aws_region
-          ami              = local.ami
+          ami              = var.ami
           availabilityZone = local.zoneA
           instanceProfile  = aws_iam_instance_profile.profile.name
           securityGroupIDs = [aws_security_group.common.id]
@@ -86,7 +86,7 @@ output "kubeone_workers" {
       replicas = var.initial_machinedeployment_replicas
       providerSpec = {
         sshPublicKeys   = [aws_key_pair.deployer.public_key]
-        operatingSystem = var.worker_os
+        operatingSystem = local.worker_os
         operatingSystemSpec = {
           distUpgradeOnBoot = false
         }
@@ -95,7 +95,7 @@ output "kubeone_workers" {
           # see example under `cloudProviderSpec` section at:
           # https://github.com/kubermatic/machine-controller/blob/master/examples/aws-machinedeployment.yaml
           region           = var.aws_region
-          ami              = local.ami
+          ami              = var.ami
           availabilityZone = local.zoneB
           instanceProfile  = aws_iam_instance_profile.profile.name
           securityGroupIDs = [aws_security_group.common.id]
@@ -120,7 +120,7 @@ output "kubeone_workers" {
       replicas = var.initial_machinedeployment_replicas
       providerSpec = {
         sshPublicKeys   = [aws_key_pair.deployer.public_key]
-        operatingSystem = var.worker_os
+        operatingSystem = local.worker_os
         operatingSystemSpec = {
           distUpgradeOnBoot = false
         }
@@ -129,7 +129,7 @@ output "kubeone_workers" {
           # see example under `cloudProviderSpec` section at:
           # https://github.com/kubermatic/machine-controller/blob/master/examples/aws-machinedeployment.yaml
           region           = var.aws_region
-          ami              = local.ami
+          ami              = var.ami
           availabilityZone = local.zoneC
           instanceProfile  = aws_iam_instance_profile.profile.name
           securityGroupIDs = [aws_security_group.common.id]
@@ -151,4 +151,3 @@ output "kubeone_workers" {
     }
   }
 }
-

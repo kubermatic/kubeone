@@ -20,13 +20,14 @@ provider "aws" {
 
 locals {
   kube_cluster_tag = "kubernetes.io/cluster/${var.cluster_name}"
-  ami              = var.ami == "" ? data.aws_ami.ubuntu.id : var.ami
+  ami              = var.ami == "" ? data.aws_ami.ami.id : var.ami
   zoneA            = data.aws_availability_zones.available.names[0]
   zoneB            = data.aws_availability_zones.available.names[1]
   zoneC            = data.aws_availability_zones.available.names[2]
   vpc_mask         = parseint(split("/", data.aws_vpc.selected.cidr_block)[1], 10)
   subnet_total     = pow(2, var.subnets_cidr - local.vpc_mask)
   subnet_newbits   = var.subnets_cidr - (32 - local.vpc_mask)
+  worker_os        = var.worker_os == "" ? var.os : var.worker_os
 
   subnets = {
     "${local.zoneA}" = length(aws_subnet.public.*.id) > 0 ? aws_subnet.public[0].id : ""
@@ -41,13 +42,13 @@ data "aws_availability_zones" "available" {
   state = "available"
 }
 
-data "aws_ami" "ubuntu" {
+data "aws_ami" "ami" {
   most_recent = true
-  owners      = ["099720109477"] # Canonical
+  owners      = var.ami_filters[var.os].owners
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
+    values = var.ami_filters[var.os].image_name
   }
 
   filter {
@@ -294,7 +295,7 @@ resource "aws_instance" "control_plane" {
 #################################### BASTION ###################################
 
 resource "aws_instance" "bastion" {
-  instance_type               = "t3.nano"
+  instance_type               = var.bastion_type
   ami                         = local.ami
   key_name                    = aws_key_pair.deployer.key_name
   vpc_security_group_ids      = [aws_security_group.common.id, aws_security_group.ssh.id]
