@@ -101,6 +101,7 @@ sudo swapoff -a
 sudo sed -i '/.*swap.*/d' /etc/fstab
 sudo setenforce 0 || true
 sudo sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/sysconfig/selinux
+sudo sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/selinux/config
 sudo systemctl disable --now firewalld || true
 
 source /etc/kubeone/proxy-env
