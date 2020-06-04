@@ -94,11 +94,6 @@ func installKubeadmDebian(s *state.State) error {
 }
 
 func installKubeadmCentOS(s *state.State) error {
-	proxy := s.Cluster.Proxy.HTTPS
-	if proxy == "" {
-		proxy = s.Cluster.Proxy.HTTP
-	}
-
 	cmd, err := scripts.KubeadmCentOS(s.Cluster, s.ForceInstall)
 	if err != nil {
 		return err
