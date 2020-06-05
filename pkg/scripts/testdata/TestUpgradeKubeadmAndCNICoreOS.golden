@@ -1,8 +1,6 @@
 set -xeu pipefail
 export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
 
-source /etc/kubeone/proxy-env
-
 
 HOST_ARCH=""
 case $(uname -m) in
@@ -19,8 +17,10 @@ aarch64)
 esac
 
 
+source /etc/kubeone/proxy-env
+
 sudo mkdir -p /opt/cni/bin
-curl -L "https://github.com/containernetworking/plugins/releases/download/vv0.7.5/cni-plugins-${HOST_ARCH}-vv0.7.5.tgz" |
+curl -L "https://github.com/containernetworking/plugins/releases/download/v0.7.5/cni-plugins-${HOST_ARCH}-v0.7.5.tgz" |
 	sudo tar -C /opt/cni/bin -xz
 
 RELEASE="vv1.17.4"

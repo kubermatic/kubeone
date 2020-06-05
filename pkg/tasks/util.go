@@ -18,8 +18,11 @@ package tasks
 
 import (
 	"context"
+	"io/ioutil"
+	"os"
 	"time"
 
+	osrelease "github.com/dominodatalab/os-release"
 	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
@@ -68,12 +71,19 @@ func determineHostname(s *state.State) error {
 func determineOS(s *state.State) error {
 	s.Logger.Infoln("Determine operating system…")
 	return s.RunTaskOnAllNodes(func(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
-		osID, _, err := s.Runner.Run(scripts.OSID(), nil)
+		f, err := conn.File("/etc/os-release", os.O_RDONLY)
+		if err != nil {
+			return err
+		}
+		defer f.Close()
+
+		buf, err := ioutil.ReadAll(f)
 		if err != nil {
 			return err
 		}
 
-		node.SetOperatingSystem(kubeoneapi.OperatingSystemName(osID))
+		osrData := osrelease.Parse(string(buf))
+		node.SetOperatingSystem(kubeoneapi.OperatingSystemName(osrData.ID))
 		return nil
 	}, state.RunParallel)
 }
@@ -116,19 +126,9 @@ func unlabelNode(client dynclient.Client, host *kubeoneapi.HostConfig) error {
 	return errors.Wrapf(retErr, "failed to remove label %s from node %s", labelUpgradeLock, host.Hostname)
 }
 
-type osNameEnum string
-
 type runOnOSFn func(*state.State) error
 
-const (
-	osNameDebian  osNameEnum = "debian"
-	osNameUbuntu  osNameEnum = "ubuntu"
-	osNameCoreos  osNameEnum = "coreos"
-	osNameFlatcar osNameEnum = "flatcar"
-	osNameCentos  osNameEnum = "centos"
-)
-
-func runOnOS(s *state.State, osname osNameEnum, fnMap map[osNameEnum]runOnOSFn) error {
+func runOnOS(s *state.State, osname kubeoneapi.OperatingSystemName, fnMap map[kubeoneapi.OperatingSystemName]runOnOSFn) error {
 	fn, ok := fnMap[osname]
 	if !ok {
 		return errors.Errorf("%q is not a supported operating system", osname)

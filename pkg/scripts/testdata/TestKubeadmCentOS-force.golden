@@ -76,6 +76,7 @@ sudo yum versionlock delete docker-ce docker-ce-cli kubelet kubeadm kubectl kube
 
 sudo yum install -y \
 	kubelet-v1.17.4-0 \
+	kubeadm-v1.17.4-0 \
 	kubectl-v1.17.4-0 \
 	kubernetes-cni-0.7.5-0 \
 	docker-ce-19.03.9-3.el7 docker-ce-cli-19.03.9-3.el7

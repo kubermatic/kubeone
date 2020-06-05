@@ -46,7 +46,7 @@ sudo systemctl force-reload systemd-journald
 
 
 yum_proxy=""
-yum_proxy="proxy=http://https.proxy #kubeone"
+yum_proxy="proxy=http://my-proxy.tld #kubeone"
 
 grep -v '#kubeone' /etc/yum.conf > /tmp/yum.conf || true
 echo -n "${yum_proxy}" >> /tmp/yum.conf
@@ -72,10 +72,10 @@ sudo yum install -y \
 	yum-plugin-versionlock \
 	device-mapper-persistent-data \
 	lvm2
-sudo yum versionlock delete docker-ce docker-ce-cli kubelet kubeadm kubectl kubernetes-cni || true
 
 sudo yum install -y \
 	kubelet-v1.17.4-0 \
+	kubeadm-v1.17.4-0 \
 	kubectl-v1.17.4-0 \
 	kubernetes-cni-0.7.5-0 \
 	docker-ce-19.03.9-3.el7 docker-ce-cli-19.03.9-3.el7

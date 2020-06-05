@@ -28,12 +28,17 @@ type Data map[string]interface{}
 // Render text template with given `variables` Render-context
 func Render(cmd string, variables map[string]interface{}) (string, error) {
 	tpl := template.New("base").Funcs(template.FuncMap{
-		"detectHostArch": detectHostArch,
+		"yumDocker":  yumDockerFunc,
+		"aptDocker":  aptDockerFunc,
+		"cniVersion": cniVersionFunc,
 	})
 
-	var err error
+	_, err := tpl.New("library").Parse(libraryTemplate)
+	if err != nil {
+		return "", err
+	}
 
-	tpl, err = tpl.Parse(cmd)
+	_, err = tpl.Parse(cmd)
 	if err != nil {
 		return "", errors.Wrap(err, "failed to parse script template")
 	}

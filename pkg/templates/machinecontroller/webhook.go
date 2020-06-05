@@ -50,6 +50,7 @@ const (
 	WebhookAppLabelValue = WebhookName
 	WebhookTag           = MachineControllerTag
 	WebhookNamespace     = metav1.NamespaceSystem
+	WebhookPort          = 9876
 )
 
 // DeployWebhookConfiguration deploys MachineController webhook deployment on the cluster
@@ -212,7 +213,7 @@ func webhookDeployment(cluster *kubeoneapi.KubeOneCluster, credentialsFilePath s
 							Args: []string{
 								"-logtostderr",
 								"-v", "4",
-								"-listen-address", "0.0.0.0:9876",
+								"-listen-address", fmt.Sprintf("0.0.0.0:%d", WebhookPort),
 							},
 							Env:                      envVar,
 							TerminationMessagePath:   corev1.TerminationMessagePathDefault,
@@ -221,7 +222,7 @@ func webhookDeployment(cluster *kubeoneapi.KubeOneCluster, credentialsFilePath s
 								Handler: corev1.Handler{
 									HTTPGet: &corev1.HTTPGetAction{
 										Path:   "/healthz",
-										Port:   intstr.FromInt(9876),
+										Port:   intstr.FromInt(WebhookPort),
 										Scheme: corev1.URISchemeHTTPS,
 									},
 								},
@@ -235,7 +236,7 @@ func webhookDeployment(cluster *kubeoneapi.KubeOneCluster, credentialsFilePath s
 								Handler: corev1.Handler{
 									HTTPGet: &corev1.HTTPGetAction{
 										Path:   "/healthz",
-										Port:   intstr.FromInt(9876),
+										Port:   intstr.FromInt(WebhookPort),
 										Scheme: corev1.URISchemeHTTPS,
 									},
 								},

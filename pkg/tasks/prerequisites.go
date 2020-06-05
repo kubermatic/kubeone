@@ -25,10 +25,6 @@ import (
 	"github.com/kubermatic/kubeone/pkg/state"
 )
 
-const (
-	dockerVersion = "18.09.7"
-)
-
 func installPrerequisites(s *state.State) error {
 	s.Logger.Infoln("Installing prerequisites…")
 
@@ -77,17 +73,17 @@ func createEnvironmentFile(s *state.State) error {
 }
 
 func installKubeadm(s *state.State, node kubeoneapi.HostConfig) error {
-	return runOnOS(s, osNameEnum(node.OperatingSystem), map[osNameEnum]runOnOSFn{
-		osNameDebian:  installKubeadmDebian,
-		osNameUbuntu:  installKubeadmDebian,
-		osNameCoreos:  installKubeadmCoreOS,
-		osNameFlatcar: installKubeadmCoreOS,
-		osNameCentos:  installKubeadmCentOS,
+	return runOnOS(s, node.OperatingSystem, map[kubeoneapi.OperatingSystemName]runOnOSFn{
+		kubeoneapi.OperatingSystemNameUbuntu:  installKubeadmDebian,
+		kubeoneapi.OperatingSystemNameCoreOS:  installKubeadmCoreOS,
+		kubeoneapi.OperatingSystemNameFlatcar: installKubeadmCoreOS,
+		kubeoneapi.OperatingSystemNameCentOS:  installKubeadmCentOS,
+		kubeoneapi.OperatingSystemNameRHEL:    installKubeadmCentOS,
 	})
 }
 
 func installKubeadmDebian(s *state.State) error {
-	cmd, err := scripts.KubeadmDebian(s.Cluster, dockerVersion)
+	cmd, err := scripts.KubeadmDebian(s.Cluster, s.ForceInstall)
 	if err != nil {
 		return err
 	}
@@ -98,12 +94,7 @@ func installKubeadmDebian(s *state.State) error {
 }
 
 func installKubeadmCentOS(s *state.State) error {
-	proxy := s.Cluster.Proxy.HTTPS
-	if proxy == "" {
-		proxy = s.Cluster.Proxy.HTTP
-	}
-
-	cmd, err := scripts.KubeadmCentOS(s.Cluster, proxy)
+	cmd, err := scripts.KubeadmCentOS(s.Cluster, s.ForceInstall)
 	if err != nil {
 		return err
 	}

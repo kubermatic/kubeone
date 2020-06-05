@@ -34,6 +34,7 @@ type installOpts struct {
 	globalOptions
 	BackupFile string `longflag:"backup" shortflag:"b"`
 	NoInit     bool   `longflag:"no-init"`
+	Force      bool   `longflag:"force"`
 }
 
 func (opts *installOpts) BuildState() (*state.State, error) {
@@ -42,6 +43,7 @@ func (opts *installOpts) BuildState() (*state.State, error) {
 		return nil, errors.Wrap(err, "failed to build state")
 	}
 
+	s.ForceInstall = opts.Force
 	s.BackupFile = opts.BackupFile
 	if s.BackupFile == "" {
 		fullPath, _ := filepath.Abs(opts.ManifestFile)
@@ -106,6 +108,12 @@ hosts from Terraform output, using the '--tfjson' flag.
 		longFlagName(opts, "NoInit"),
 		false,
 		"don't initialize the cluster (only install binaries)")
+
+	cmd.Flags().BoolVar(
+		&opts.Force,
+		longFlagName(opts, "Force"),
+		false,
+		"use force to install new binary versions (!dangerous!)")
 
 	return cmd
 }

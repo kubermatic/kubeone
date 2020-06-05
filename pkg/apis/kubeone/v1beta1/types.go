@@ -64,6 +64,7 @@ type OperatingSystemName string
 var (
 	OperatingSystemNameUbuntu  OperatingSystemName = "ubuntu"
 	OperatingSystemNameCentOS  OperatingSystemName = "centos"
+	OperatingSystemNameRHEL    OperatingSystemName = "rhel"
 	OperatingSystemNameCoreOS  OperatingSystemName = "coreos"
 	OperatingSystemNameFlatcar OperatingSystemName = "flatcar"
 	OperatingSystemNameUnknown OperatingSystemName = ""

@@ -21,33 +21,17 @@ import (
 )
 
 const (
-	centosDockerVersion = "18.09.9-3.el7"
-)
-
-const (
 	kubeadmDebianTemplate = `
 sudo swapoff -a
 sudo sed -i '/.*swap.*/d' /etc/fstab
+sudo systemctl disable --now ufw || true
 
 source /etc/os-release
 source /etc/kubeone/proxy-env
 
-{{ detectHostArch }}
-
-# Short-Circuit the installation if it was already executed
-if type docker &>/dev/null && type kubelet &>/dev/null; then exit 0; fi
-
-sudo mkdir -p /etc/docker
-cat <<EOF | sudo tee /etc/docker/daemon.json
-{
-	"exec-opts": ["native.cgroupdriver=systemd"],
-	"storage-driver": "overlay2",
-	"log-driver": "json-file",
-	"log-opts": {
-		"max-size": "100m"
-	}
-}
-EOF
+{{ template "docker-daemon-config" }}
+{{ template "sysctl-k8s" }}
+{{ template "journald-config" }}
 
 sudo mkdir -p /etc/apt/apt.conf.d
 cat <<EOF | sudo tee /etc/apt/apt.conf.d/proxy.conf
@@ -59,16 +43,7 @@ Acquire::http::Proxy "{{ .HTTP_PROXY }}";
 {{- end }}
 EOF
 
-sudo apt-get update
-sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--force-confold" -y --no-install-recommends \
-	apt-transport-https \
-	ca-certificates \
-	curl \
-	htop \
-	lsb-release \
-	rsync
-
-{{ if .CONFIGURE_REPOSITORIES }}
+{{- if .CONFIGURE_REPOSITORIES }}
 curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 curl -fsSL https://download.docker.com/linux/${ID}/gpg | sudo apt-key add -
 
@@ -78,22 +53,45 @@ echo "deb https://download.docker.com/linux/${ID} $(lsb_release -sc) stable" |
 # You'd think that kubernetes-$(lsb_release -sc) belongs there instead, but the debian repo
 # contains neither kubeadm nor kubelet, and the docs themselves suggest using xenial repo.
 echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+{{- end }}
+
 sudo apt-get update
-{{ end }}
-
-docker_ver=$(apt-cache madison docker-ce | grep "{{ .DOCKER_VERSION }}" | head -1 | awk '{print $3}')
-kube_ver=$(apt-cache madison kubelet | grep "{{ .KUBERNETES_VERSION }}" | head -1 | awk '{print $3}')
-cni_ver=$(apt-cache madison kubernetes-cni | grep "{{ .CNI_VERSION }}" | head -1 | awk '{print $3}')
-
-sudo apt-mark unhold docker-ce kubelet kubeadm kubectl kubernetes-cni
 sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--force-confold" -y --no-install-recommends \
-	docker-ce=${docker_ver} \
-	docker-ce-cli=${docker_ver} \
-	kubeadm=${kube_ver} \
-	kubectl=${kube_ver} \
+	apt-transport-https \
+	ca-certificates \
+	curl \
+	lsb-release \
+	rsync
+
+kube_ver=$(apt-cache madison kubelet | grep "{{ .KUBERNETES_VERSION }}" | head -1 | awk '{print $3}')
+cni_ver=$(apt-cache madison kubernetes-cni | grep "{{ cniVersion .KUBERNETES_VERSION }}" | head -1 | awk '{print $3}')
+
+{{- if or .FORCE .UPGRADE }}
+sudo apt-mark unhold docker-ce kubelet kubeadm kubectl kubernetes-cni
+{{- end }}
+
+sudo DEBIAN_FRONTEND=noninteractive apt-get install \
+	--option "Dpkg::Options::=--force-confold" \
+	--no-install-recommends \
+	{{- if .FORCE }}
+	--allow-downgrades \
+	{{- end }}
+	-y \
+{{- if .KUBELET }}
 	kubelet=${kube_ver} \
-	kubernetes-cni=${cni_ver}
+{{- end }}
+{{- if .KUBEADM }}
+	kubeadm=${kube_ver} \
+{{- end }}
+{{- if .KUBECTL }}
+	kubectl=${kube_ver} \
+{{- end }}
+	kubernetes-cni=${cni_ver} \
+	{{ aptDocker .KUBERNETES_VERSION }}
+
 sudo apt-mark hold docker-ce docker-ce-cli kubelet kubeadm kubectl kubernetes-cni
+
+sudo systemctl daemon-reload
 sudo systemctl enable --now docker
 sudo systemctl enable --now kubelet
 `
@@ -103,29 +101,14 @@ sudo swapoff -a
 sudo sed -i '/.*swap.*/d' /etc/fstab
 sudo setenforce 0 || true
 sudo sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/sysconfig/selinux
+sudo sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/selinux/config
+sudo systemctl disable --now firewalld || true
 
 source /etc/kubeone/proxy-env
 
-sudo mkdir -p /etc/docker
-cat <<EOF | sudo tee /etc/docker/daemon.json
-{
-	"exec-opts": ["native.cgroupdriver=systemd"],
-	"storage-driver": "overlay2",
-	"log-driver": "json-file",
-	"log-opts": {
-		"max-size": "100m"
-	}
-}
-EOF
-
-# Short-Circuit the installation if it was already executed
-if type docker &>/dev/null && type kubelet &>/dev/null; then exit 0; fi
-
-cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
-net.bridge.bridge-nf-call-ip6tables = 1
-net.bridge.bridge-nf-call-iptables = 1
-EOF
-sudo sysctl --system
+{{ template "docker-daemon-config" }}
+{{ template "sysctl-k8s" }}
+{{ template "journald-config" }}
 
 yum_proxy=""
 {{- if .PROXY }}
@@ -145,20 +128,36 @@ gpgcheck=1
 repo_gpgcheck=1
 gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
 EOF
+
+sudo yum install -y yum-utils
+sudo yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+sudo yum-config-manager --save --setopt=docker-ce-stable.module_hotfixes=true >/dev/null
 {{ end }}
 
-sudo yum install -y yum-utils yum-plugin-versionlock
-sudo yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+sudo yum install -y \
+	yum-plugin-versionlock \
+	device-mapper-persistent-data \
+	lvm2
+
+{{- if or .FORCE .UPGRADE }}
+sudo yum versionlock delete docker-ce docker-ce-cli kubelet kubeadm kubectl kubernetes-cni || true
+{{- end }}
 
 sudo yum install -y \
-	docker-ce-{{ .DOCKER_VERSION }} \
-	docker-ce-cli-{{ .DOCKER_VERSION }} \
+{{- if .KUBELET }}
 	kubelet-{{ .KUBERNETES_VERSION }}-0 \
+{{- end }}
+{{- if .KUBEADM }}
 	kubeadm-{{ .KUBERNETES_VERSION }}-0 \
+{{- end }}
+{{- if .KUBECTL }}
 	kubectl-{{ .KUBERNETES_VERSION }}-0 \
-	kubernetes-cni-{{ .CNI_VERSION }}-0
-sudo yum versionlock docker-ce docker-ce-cli kubelet kubeadm kubectl kubernetes-cni
+{{- end }}
+	kubernetes-cni-{{ cniVersion .KUBERNETES_VERSION }}-0 \
+	{{ yumDocker .KUBERNETES_VERSION }}
+sudo yum versionlock add docker-ce docker-ce-cli kubelet kubeadm kubectl kubernetes-cni
 
+sudo systemctl daemon-reload
 sudo systemctl enable --now docker
 sudo systemctl enable --now kubelet
 `
@@ -166,26 +165,15 @@ sudo systemctl enable --now kubelet
 	kubeadmCoreOSTemplate = `
 source /etc/kubeone/proxy-env
 
-{{ detectHostArch }}
+{{ template "detect-host-cpu-architecture" }}
+{{ template "docker-daemon-config" }}
+{{ template "sysctl-k8s" }}
+{{ template "journald-config" }}
 
-# Short-Circuit the installation if it was already executed
-if type docker &>/dev/null && type kubelet &>/dev/null; then exit 0; fi
-
-sudo mkdir -p /etc/docker
-cat <<EOF | sudo tee /etc/docker/daemon.json
-{
-	"exec-opts": ["native.cgroupdriver=systemd"],
-	"storage-driver": "overlay2",
-	"log-driver": "json-file",
-	"log-opts": {
-		"max-size": "100m"
-	}
-}
-EOF
 sudo systemctl restart docker
 
 sudo mkdir -p /opt/cni/bin /etc/kubernetes/pki /etc/kubernetes/manifests
-curl -L "https://github.com/containernetworking/plugins/releases/download/v{{ .CNI_VERSION }}/cni-plugins-${HOST_ARCH}-v{{ .CNI_VERSION }}.tgz" |
+curl -L "https://github.com/containernetworking/plugins/releases/download/v{{ cniVersion .KUBERNETES_VERSION }}/cni-plugins-${HOST_ARCH}-v{{ cniVersion .KUBERNETES_VERSION }}.tgz" |
 	sudo tar -C /opt/cni/bin -xz
 
 RELEASE="v{{ .KUBERNETES_VERSION }}"
@@ -232,29 +220,26 @@ ExecStart=/opt/bin/kubelet \$KUBELET_KUBECONFIG_ARGS \$KUBELET_CONFIG_ARGS \$KUB
 EOF
 
 sudo systemctl daemon-reload
-sudo systemctl enable docker.service kubelet.service
-sudo systemctl start docker.service kubelet.service
+sudo systemctl enable --now docker
+sudo systemctl enable --now kubelet
 `
 
 	removeBinariesDebianScriptTemplate = `
-kube_ver=$(apt-cache madison kubelet | grep "{{ .KUBERNETES_VERSION }}" | head -1 | awk '{print $3}')
-cni_ver=$(apt-cache madison kubernetes-cni | grep "{{ .CNI_VERSION }}" | head -1 | awk '{print $3}')
-
 sudo apt-mark unhold kubelet kubeadm kubectl kubernetes-cni
 sudo apt-get remove --purge -y \
-	kubeadm=${kube_ver} \
-	kubectl=${kube_ver} \
-	kubelet=${kube_ver} \
-	kubernetes-cni=${cni_ver}
+	kubeadm \
+	kubectl \
+	kubelet \
+	kubernetes-cni
 `
 
 	removeBinariesCentOSScriptTemplate = `
 sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni || true
 sudo yum remove -y \
-	kubelet-{{ .KUBERNETES_VERSION }}-0\
-	kubeadm-{{ .KUBERNETES_VERSION }}-0 \
-	kubectl-{{ .KUBERNETES_VERSION }}-0 \
-	kubernetes-cni-{{ .CNI_VERSION }}-0
+	kubelet \
+	kubeadm \
+	kubectl \
+	kubernetes-cni
 `
 
 	removeBinariesCoreOSScriptTemplate = `
@@ -264,56 +249,13 @@ sudo rm -rf /opt/cni /opt/bin/kubeadm /opt/bin/kubectl /opt/bin/kubelet
 sudo rm /etc/systemd/system/kubelet.service /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
 `
 
-	upgradeKubeadmAndCNIDebianScriptTemplate = `
-source /etc/os-release
-source /etc/kubeone/proxy-env
-
-sudo apt-get update
-
-kube_ver=$(apt-cache madison kubeadm | grep "{{ .KUBERNETES_VERSION }}" | head -1 | awk '{print $3}')
-cni_ver=$(apt-cache madison kubernetes-cni | grep "{{ .CNI_VERSION }}" | head -1 | awk '{print $3}')
-
-sudo apt-mark unhold kubeadm kubernetes-cni
-sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--force-confold" -y --no-install-recommends \
-	kubeadm=${kube_ver} \
-	kubernetes-cni=${cni_ver}
-sudo apt-mark hold kubeadm kubernetes-cni
-`
-
-	upgradeKubeadmAndCNICentOSScriptTemplate = `
-source /etc/kubeone/proxy-env
-
-# Kubeadm and CNI is are the first packages that we upgrade
-# Before upgrading them, override the repo configs with the latest ones
-# and then install and configure the yum-plugin-versionlock package
-{{ if .CONFIGURE_REPOSITORIES }}
-cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
-[kubernetes]
-name=Kubernetes
-baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
-enabled=1
-gpgcheck=1
-repo_gpgcheck=1
-gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-EOF
-{{ end }}
-sudo yum install -y yum-plugin-versionlock
-sudo yum versionlock docker-ce docker-ce-cli kubelet kubeadm kubectl kubernetes-cni
-
-sudo yum versionlock delete kubeadm kubernetes-cni
-sudo yum install -y \
-	kubeadm-{{ .KUBERNETES_VERSION }}-0 \
-	kubernetes-cni-{{ .CNI_VERSION }}-0
-sudo yum versionlock kubeadm kubernetes-cni
-`
-
 	upgradeKubeadmAndCNICoreOSScriptTemplate = `
-source /etc/kubeone/proxy-env
+{{ template "detect-host-cpu-architecture" }}
 
-{{ detectHostArch }}
+source /etc/kubeone/proxy-env
 
 sudo mkdir -p /opt/cni/bin
-curl -L "https://github.com/containernetworking/plugins/releases/download/v{{ .CNI_VERSION }}/cni-plugins-${HOST_ARCH}-v{{ .CNI_VERSION }}.tgz" |
+curl -L "https://github.com/containernetworking/plugins/releases/download/v{{ cniVersion .KUBERNETES_VERSION }}/cni-plugins-${HOST_ARCH}-v{{ cniVersion .KUBERNETES_VERSION }}.tgz" |
 	sudo tar -C /opt/cni/bin -xz
 
 RELEASE="v{{ .KUBERNETES_VERSION }}"
@@ -330,31 +272,10 @@ sudo mv /var/tmp/kube-binaries/kubeadm .
 sudo chmod +x kubeadm
 `
 
-	upgradeKubeletAndKubectlDebianScriptTemplate = `
-source /etc/os-release
-source /etc/kubeone/proxy-env
-sudo apt-get update
-kube_ver=$(apt-cache madison kubelet | grep "{{ .KUBERNETES_VERSION }}" | head -1 | awk '{print $3}')
-sudo apt-mark unhold kubelet kubectl
-sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--force-confold" -y --no-install-recommends \
-	kubelet=${kube_ver} \
-	kubectl=${kube_ver}
-sudo apt-mark hold kubelet kubectl
-`
-
-	upgradeKubeletAndKubectlCentOSScriptTemplate = `
-source /etc/kubeone/proxy-env
-sudo yum versionlock delete kubelet kubectl
-sudo yum install -y \
-	kubelet-{{ .KUBERNETES_VERSION }}-0 \
-	kubectl-{{ .KUBERNETES_VERSION }}-0
-sudo yum versionlock kubelet kubectl
-`
-
 	upgradeKubeletAndKubectlCoreOSScriptTemplate = `
 source /etc/kubeone/proxy-env
 
-{{ detectHostArch }}
+{{ template "detect-host-cpu-architecture" }}
 
 RELEASE="v{{ .KUBERNETES_VERSION }}"
 sudo mkdir -p /var/tmp/kube-binaries
@@ -403,83 +324,111 @@ sudo systemctl start kubelet
 `
 )
 
-func KubeadmDebian(cluster *kubeone.KubeOneCluster, dockerVersion string) (string, error) {
+func KubeadmDebian(cluster *kubeone.KubeOneCluster, force bool) (string, error) {
 	return Render(kubeadmDebianTemplate, Data{
-		"DOCKER_VERSION":         dockerVersion,
+		"KUBELET":                true,
+		"KUBEADM":                true,
+		"KUBECTL":                true,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
-		"CNI_VERSION":            cluster.Versions.KubernetesCNIVersion(),
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"HTTP_PROXY":             cluster.Proxy.HTTP,
 		"HTTPS_PROXY":            cluster.Proxy.HTTPS,
+		"FORCE":                  force,
 	})
 }
 
-func KubeadmCentOS(cluster *kubeone.KubeOneCluster, proxy string) (string, error) {
+func KubeadmCentOS(cluster *kubeone.KubeOneCluster, force bool) (string, error) {
+	proxy := cluster.Proxy.HTTPS
+	if proxy == "" {
+		proxy = cluster.Proxy.HTTP
+	}
+
 	return Render(kubeadmCentOSTemplate, Data{
-		"DOCKER_VERSION":         centosDockerVersion,
+		"KUBELET":                true,
+		"KUBEADM":                true,
+		"KUBECTL":                true,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
-		"CNI_VERSION":            cluster.Versions.KubernetesCNIVersion(),
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"PROXY":                  proxy,
+		"FORCE":                  force,
 	})
 }
 
 func KubeadmCoreOS(cluster *kubeone.KubeOneCluster) (string, error) {
 	return Render(kubeadmCoreOSTemplate, Data{
 		"KUBERNETES_VERSION": cluster.Versions.Kubernetes,
-		"CNI_VERSION":        cluster.Versions.KubernetesCNIVersion(),
 	})
 }
 
-func RemoveBinariesDebian(k8sVersion, cniVersion string) (string, error) {
-	return Render(removeBinariesDebianScriptTemplate, Data{
-		"KUBERNETES_VERSION": k8sVersion,
-		"CNI_VERSION":        cniVersion,
-	})
+func RemoveBinariesDebian() (string, error) {
+	return Render(removeBinariesDebianScriptTemplate, Data{})
 }
 
-func RemoveBinariesCentOS(k8sVersion, cniVersion string) (string, error) {
-	return Render(removeBinariesCentOSScriptTemplate, Data{
-		"KUBERNETES_VERSION": k8sVersion,
-		"CNI_VERSION":        cniVersion,
-	})
+func RemoveBinariesCentOS() (string, error) {
+	return Render(removeBinariesCentOSScriptTemplate, Data{})
 }
 
 func RemoveBinariesCoreOS() (string, error) {
 	return Render(removeBinariesCoreOSScriptTemplate, nil)
 }
 
-func UpgradeKubeadmAndCNIDebian(k8sVersion, cniVersion string) (string, error) {
-	return Render(upgradeKubeadmAndCNIDebianScriptTemplate, Data{
-		"KUBERNETES_VERSION": k8sVersion,
-		"CNI_VERSION":        cniVersion,
+func UpgradeKubeadmAndCNIDebian(cluster *kubeone.KubeOneCluster) (string, error) {
+	return Render(kubeadmDebianTemplate, Data{
+		"UPGRADE":                true,
+		"KUBEADM":                true,
+		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
+		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
+		"HTTP_PROXY":             cluster.Proxy.HTTP,
+		"HTTPS_PROXY":            cluster.Proxy.HTTPS,
 	})
 }
 
-func UpgradeKubeadmAndCNICentOS(k8sVersion, cniVersion string, configureRepositories bool) (string, error) {
-	return Render(upgradeKubeadmAndCNICentOSScriptTemplate, Data{
-		"KUBERNETES_VERSION":     k8sVersion,
-		"CNI_VERSION":            cniVersion,
-		"CONFIGURE_REPOSITORIES": configureRepositories,
+func UpgradeKubeadmAndCNICentOS(cluster *kubeone.KubeOneCluster) (string, error) {
+	proxy := cluster.Proxy.HTTPS
+	if proxy == "" {
+		proxy = cluster.Proxy.HTTP
+	}
+
+	return Render(kubeadmCentOSTemplate, Data{
+		"UPGRADE":                true,
+		"KUBEADM":                true,
+		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
+		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
+		"PROXY":                  proxy,
 	})
 }
 
-func UpgradeKubeadmAndCNICoreOS(k8sVersion, cniVersion string) (string, error) {
+func UpgradeKubeadmAndCNICoreOS(k8sVersion string) (string, error) {
 	return Render(upgradeKubeadmAndCNICoreOSScriptTemplate, Data{
 		"KUBERNETES_VERSION": k8sVersion,
-		"CNI_VERSION":        cniVersion,
 	})
 }
 
-func UpgradeKubeletAndKubectlDebian(k8sVersion string) (string, error) {
-	return Render(upgradeKubeletAndKubectlDebianScriptTemplate, Data{
-		"KUBERNETES_VERSION": k8sVersion,
+func UpgradeKubeletAndKubectlDebian(cluster *kubeone.KubeOneCluster) (string, error) {
+	return Render(kubeadmDebianTemplate, Data{
+		"UPGRADE":                true,
+		"KUBELET":                true,
+		"KUBECTL":                true,
+		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
+		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
+		"HTTP_PROXY":             cluster.Proxy.HTTP,
+		"HTTPS_PROXY":            cluster.Proxy.HTTPS,
 	})
 }
 
-func UpgradeKubeletAndKubectlCentOS(k8sVersion string) (string, error) {
-	return Render(upgradeKubeletAndKubectlCentOSScriptTemplate, Data{
-		"KUBERNETES_VERSION": k8sVersion,
+func UpgradeKubeletAndKubectlCentOS(cluster *kubeone.KubeOneCluster) (string, error) {
+	proxy := cluster.Proxy.HTTPS
+	if proxy == "" {
+		proxy = cluster.Proxy.HTTP
+	}
+
+	return Render(kubeadmCentOSTemplate, Data{
+		"UPGRADE":                true,
+		"KUBELET":                true,
+		"KUBECTL":                true,
+		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
+		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
+		"PROXY":                  proxy,
 	})
 }
 

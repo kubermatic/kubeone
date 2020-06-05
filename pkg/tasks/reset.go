@@ -126,17 +126,17 @@ func removeBinaries(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connec
 		return errors.Wrap(err, "failed to determine operating system")
 	}
 
-	return runOnOS(s, osNameEnum(node.OperatingSystem), map[osNameEnum]runOnOSFn{
-		osNameDebian:  removeBinariesDebian,
-		osNameUbuntu:  removeBinariesDebian,
-		osNameCoreos:  removeBinariesCoreOS,
-		osNameFlatcar: removeBinariesCoreOS,
-		osNameCentos:  removeBinariesCentOS,
+	return runOnOS(s, node.OperatingSystem, map[kubeoneapi.OperatingSystemName]runOnOSFn{
+		kubeoneapi.OperatingSystemNameUbuntu:  removeBinariesDebian,
+		kubeoneapi.OperatingSystemNameCoreOS:  removeBinariesCoreOS,
+		kubeoneapi.OperatingSystemNameFlatcar: removeBinariesCoreOS,
+		kubeoneapi.OperatingSystemNameCentOS:  removeBinariesCentOS,
+		kubeoneapi.OperatingSystemNameRHEL:    removeBinariesCentOS,
 	})
 }
 
 func removeBinariesDebian(s *state.State) error {
-	cmd, err := scripts.RemoveBinariesDebian(s.Cluster.Versions.Kubernetes, s.Cluster.Versions.KubernetesCNIVersion())
+	cmd, err := scripts.RemoveBinariesDebian()
 	if err != nil {
 		return err
 	}
@@ -146,7 +146,7 @@ func removeBinariesDebian(s *state.State) error {
 }
 
 func removeBinariesCentOS(s *state.State) error {
-	cmd, err := scripts.RemoveBinariesCentOS(s.Cluster.Versions.Kubernetes, s.Cluster.Versions.KubernetesCNIVersion())
+	cmd, err := scripts.RemoveBinariesCentOS()
 	if err != nil {
 		return err
 	}

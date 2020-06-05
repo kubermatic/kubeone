@@ -1,12 +1,9 @@
 set -xeu pipefail
 export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
 
-kube_ver=$(apt-cache madison kubelet | grep "v1.17.4" | head -1 | awk '{print $3}')
-cni_ver=$(apt-cache madison kubernetes-cni | grep "v0.7.5" | head -1 | awk '{print $3}')
-
 sudo apt-mark unhold kubelet kubeadm kubectl kubernetes-cni
 sudo apt-get remove --purge -y \
-	kubeadm=${kube_ver} \
-	kubectl=${kube_ver} \
-	kubelet=${kube_ver} \
-	kubernetes-cni=${cni_ver}
+	kubeadm \
+	kubectl \
+	kubelet \
+	kubernetes-cni
