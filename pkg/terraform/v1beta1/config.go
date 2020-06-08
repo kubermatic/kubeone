@@ -92,7 +92,7 @@ func (c *Config) Apply(cluster *kubeonev1beta1.KubeOneCluster) error {
 	cp := c.KubeOneHosts.Value.ControlPlane
 
 	if cp.CloudProvider != nil {
-		if err := setCloudProvider(&cluster.CloudProvider, *cp.CloudProvider); err != nil {
+		if err := kubeonev1beta1.SetCloudProvider(&cluster.CloudProvider, *cp.CloudProvider); err != nil {
 			return errors.Wrap(err, "failed to set cloud provider")
 		}
 	}
@@ -454,33 +454,6 @@ func (c *Config) updateVSphereWorkerset(existingWorkerSet *kubeonev1beta1.Dynami
 		if err := setWorkersetFlag(existingWorkerSet, flag.key, flag.value); err != nil {
 			return errors.WithStack(err)
 		}
-	}
-
-	return nil
-}
-
-func setCloudProvider(cp *kubeonev1beta1.CloudProviderSpec, name string) error {
-	switch name {
-	case "aws":
-		cp.AWS = &kubeonev1beta1.AWSSpec{}
-	case "azure":
-		cp.Azure = &kubeonev1beta1.AzureSpec{}
-	case "digitalocean":
-		cp.DigitalOcean = &kubeonev1beta1.DigitalOceanSpec{}
-	case "gce":
-		cp.GCE = &kubeonev1beta1.GCESpec{}
-	case "hetzner":
-		cp.Hetzner = &kubeonev1beta1.HetznerSpec{}
-	case "openstack":
-		cp.Openstack = &kubeonev1beta1.OpenstackSpec{}
-	case "packet":
-		cp.Packet = &kubeonev1beta1.PacketSpec{}
-	case "vsphere":
-		cp.Vsphere = &kubeonev1beta1.VsphereSpec{}
-	case "none":
-		cp.None = &kubeonev1beta1.NoneSpec{}
-	default:
-		return errors.Errorf("provider %q is not supported", name)
 	}
 
 	return nil
