@@ -852,3 +852,32 @@ presubmits:
               value: "1.18.0"
             - name: TEST_SET
               value: "upgrades"
+
+postsubmits:
+  - name: ci-push-kubeone-e2e-image
+    run_if_changed: "(hack/images/kubeone-e2e)"
+    clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
+    decorate: true
+    branches:
+      - ^master$
+    labels:
+      preset-docker-push: "true"
+    spec:
+      containers:
+        - image: quay.io/kubermatic/go-docker:13.3-1806-2
+          command:
+            - /bin/bash
+            - -c
+            - >-
+              set -euo pipefail &&
+              /usr/local/bin/entrypoint.sh &&
+              docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD &&
+              cd ./hack/images/kubeone-e2e &&
+              ./release.sh
+          # docker-in-docker needs privileged mode
+          securityContext:
+            privileged: true
+          resources:
+            requests:
+              cpu: 100m
+              memory: 1Gi
