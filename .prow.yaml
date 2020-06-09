@@ -123,7 +123,7 @@ presubmits:
         - name: PROVIDER
           value: "aws"
         - name: TEST_CLUSTER_TARGET_VERSION
-          value: "1.16.8"
+          value: "1.16.10"
         - name: TEST_SET
           value: "conformance"
         resources:
@@ -148,7 +148,7 @@ presubmits:
             - name: PROVIDER
               value: "aws"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.17.4"
+              value: "1.17.6"
             - name: TEST_SET
               value: "conformance"
           resources:
@@ -198,7 +198,7 @@ presubmits:
         - name: PROVIDER
           value: "digitalocean"
         - name: TEST_CLUSTER_TARGET_VERSION
-          value: "1.16.8"
+          value: "1.16.10"
         - name: TEST_SET
           value: "conformance"
         resources:
@@ -223,7 +223,7 @@ presubmits:
             - name: PROVIDER
               value: "digitalocean"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.17.4"
+              value: "1.17.6"
             - name: TEST_SET
               value: "conformance"
           resources:
@@ -273,7 +273,7 @@ presubmits:
         - name: PROVIDER
           value: "hetzner"
         - name: TEST_CLUSTER_TARGET_VERSION
-          value: "1.16.8"
+          value: "1.16.10"
         - name: TEST_SET
           value: "conformance"
         resources:
@@ -298,7 +298,7 @@ presubmits:
             - name: PROVIDER
               value: "hetzner"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.17.4"
+              value: "1.17.6"
             - name: TEST_SET
               value: "conformance"
           resources:
@@ -348,7 +348,7 @@ presubmits:
         - name: PROVIDER
           value: "gce"
         - name: TEST_CLUSTER_TARGET_VERSION
-          value: "1.16.8"
+          value: "1.16.10"
         - name: TEST_SET
           value: "conformance"
         - name: TF_VAR_project
@@ -375,7 +375,7 @@ presubmits:
             - name: PROVIDER
               value: "gce"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.17.4"
+              value: "1.17.6"
             - name: TEST_SET
               value: "conformance"
             - name: TF_VAR_project
@@ -429,7 +429,7 @@ presubmits:
         - name: PROVIDER
           value: "packet"
         - name: TEST_CLUSTER_TARGET_VERSION
-          value: "1.16.8"
+          value: "1.16.10"
         - name: TEST_SET
           value: "conformance"
         resources:
@@ -454,7 +454,7 @@ presubmits:
             - name: PROVIDER
               value: "packet"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.17.4"
+              value: "1.17.6"
             - name: TEST_SET
               value: "conformance"
           resources:
@@ -504,7 +504,7 @@ presubmits:
             - name: PROVIDER
               value: "openstack"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.16.8"
+              value: "1.16.10"
             - name: TEST_SET
               value: "conformance"
           resources:
@@ -529,7 +529,7 @@ presubmits:
             - name: PROVIDER
               value: "openstack"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.17.4"
+              value: "1.17.6"
             - name: TEST_SET
               value: "conformance"
           resources:
@@ -579,9 +579,9 @@ presubmits:
         - name: PROVIDER
           value: "aws"
         - name: TEST_CLUSTER_INITIAL_VERSION
-          value: "1.16.8"
+          value: "1.16.10"
         - name: TEST_CLUSTER_TARGET_VERSION
-          value: "1.17.4"
+          value: "1.17.6"
         - name: TEST_SET
           value: "upgrades"
 
@@ -603,7 +603,7 @@ presubmits:
         - name: PROVIDER
           value: "aws"
         - name: TEST_CLUSTER_INITIAL_VERSION
-          value: "1.17.4"
+          value: "1.17.6"
         - name: TEST_CLUSTER_TARGET_VERSION
           value: "1.18.0"
         - name: TEST_SET
@@ -627,9 +627,9 @@ presubmits:
         - name: PROVIDER
           value: "digitalocean"
         - name: TEST_CLUSTER_INITIAL_VERSION
-          value: "1.16.8"
+          value: "1.16.10"
         - name: TEST_CLUSTER_TARGET_VERSION
-          value: "1.17.4"
+          value: "1.17.6"
         - name: TEST_SET
           value: "upgrades"
 
@@ -651,7 +651,7 @@ presubmits:
         - name: PROVIDER
           value: "digitalocean"
         - name: TEST_CLUSTER_INITIAL_VERSION
-          value: "1.17.4"
+          value: "1.17.6"
         - name: TEST_CLUSTER_TARGET_VERSION
           value: "1.18.0"
         - name: TEST_SET
@@ -675,9 +675,9 @@ presubmits:
         - name: PROVIDER
           value: "hetzner"
         - name: TEST_CLUSTER_INITIAL_VERSION
-          value: "1.16.8"
+          value: "1.16.10"
         - name: TEST_CLUSTER_TARGET_VERSION
-          value: "1.17.4"
+          value: "1.17.6"
         - name: TEST_SET
           value: "upgrades"
 
@@ -699,7 +699,7 @@ presubmits:
         - name: PROVIDER
           value: "hetzner"
         - name: TEST_CLUSTER_INITIAL_VERSION
-          value: "1.17.4"
+          value: "1.17.6"
         - name: TEST_CLUSTER_TARGET_VERSION
           value: "1.18.0"
         - name: TEST_SET
@@ -723,9 +723,9 @@ presubmits:
         - name: PROVIDER
           value: "gce"
         - name: TEST_CLUSTER_INITIAL_VERSION
-          value: "1.16.8"
+          value: "1.16.10"
         - name: TEST_CLUSTER_TARGET_VERSION
-          value: "1.17.4"
+          value: "1.17.6"
         - name: TEST_SET
           value: "upgrades"
         - name: TF_VAR_project
@@ -749,7 +749,7 @@ presubmits:
         - name: PROVIDER
           value: "gce"
         - name: TEST_CLUSTER_INITIAL_VERSION
-          value: "1.17.4"
+          value: "1.17.6"
         - name: TEST_CLUSTER_TARGET_VERSION
           value: "1.18.0"
         - name: TEST_SET
@@ -775,9 +775,9 @@ presubmits:
         - name: PROVIDER
           value: "packet"
         - name: TEST_CLUSTER_INITIAL_VERSION
-          value: "1.16.8"
+          value: "1.16.10"
         - name: TEST_CLUSTER_TARGET_VERSION
-          value: "1.17.4"
+          value: "1.17.6"
         - name: TEST_SET
           value: "upgrades"
 
@@ -799,7 +799,7 @@ presubmits:
         - name: PROVIDER
           value: "packet"
         - name: TEST_CLUSTER_INITIAL_VERSION
-          value: "1.17.4"
+          value: "1.17.6"
         - name: TEST_CLUSTER_TARGET_VERSION
           value: "1.18.0"
         - name: TEST_SET
@@ -823,9 +823,9 @@ presubmits:
             - name: PROVIDER
               value: "openstack"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.16.8"
+              value: "1.16.10"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.17.4"
+              value: "1.17.6"
             - name: TEST_SET
               value: "upgrades"
 
@@ -847,7 +847,7 @@ presubmits:
             - name: PROVIDER
               value: "openstack"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.17.4"
+              value: "1.17.6"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.18.0"
             - name: TEST_SET
