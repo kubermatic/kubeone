@@ -257,6 +257,9 @@ func ValidateDynamicWorkerConfig(workerset []kubeone.DynamicWorkerConfig, fldPat
 func ValidateFeatures(f kubeone.Features, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
+	if f.PodNodeSelector != nil && f.PodNodeSelector.Enable {
+		allErrs = append(allErrs, ValidatePodNodeSelectorConfig(f.PodNodeSelector.Config, fldPath.Child("podNodeSelector"))...)
+	}
 	if f.StaticAuditLog != nil && f.StaticAuditLog.Enable {
 		allErrs = append(allErrs, ValidateStaticAuditLogConfig(f.StaticAuditLog.Config, fldPath.Child("staticAuditLog"))...)
 	}
@@ -267,7 +270,18 @@ func ValidateFeatures(f kubeone.Features, fldPath *field.Path) field.ErrorList {
 	return allErrs
 }
 
-// ValidateFeatures validates the StaticAuditLogConfig structure
+// ValidatePodNodeSelectorConfig validates the PodNodeSelectorConfig structure
+func ValidatePodNodeSelectorConfig(n kubeone.PodNodeSelectorConfig, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	if len(n.ConfigFilePath) == 0 {
+		allErrs = append(allErrs, field.Required(fldPath.Child("configFilePath"), ".podNodeSelector.config.configFilePath is a required field"))
+	}
+
+	return allErrs
+}
+
+// ValidateStaticAuditLogConfig validates the StaticAuditLogConfig structure
 func ValidateStaticAuditLogConfig(s kubeone.StaticAuditLogConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
