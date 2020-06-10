@@ -54,8 +54,7 @@ func documentCmd(rootCmd *cobra.Command) *cobra.Command {
 		Use:   "document <man|md|rest|yaml>",
 		Short: "Generates documentation",
 		Long: `
-Documentation can be generated as man pages, markdown, restructured text docs or
-yaml
+Documentation can be generated as man pages, markdown, restructured text docs or yaml
 `,
 		Example:   "kubeone document man",
 		ValidArgs: []string{"man", "md", "rest", "yaml"},

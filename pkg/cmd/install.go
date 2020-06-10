@@ -80,9 +80,8 @@ func installCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		Long: `
 Install Kubernetes on pre-existing machines
 
-This command takes KubeOne manifest which contains information about hosts and
-how the cluster should be provisioned. It's possible to source information about
-hosts from Terraform output, using the '--tfjson' flag.
+This command takes KubeOne manifest which contains information about hosts and how the cluster should be provisioned.
+It's possible to source information about hosts from Terraform output, using the '--tfjson' flag.
 `,
 		Example: `kubeone install -m mycluster.yaml -t terraformoutput.json`,
 		RunE: func(_ *cobra.Command, args []string) error {
