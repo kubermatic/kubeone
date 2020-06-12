@@ -5,9 +5,9 @@ Check out the following [Hetzner getting started walkthrough][hetzner-quickstart
 scripts and how to provision a Kubernetes cluster using KubeOne.
 
 ## Kubernetes APIserver LoadBalancing
-See https://github.com/kubermatic/kubeone/blob/master/docs/example-loadbalancer.md
+See https://docs.kubermatic.com/kubeone/master/using_kubeone/example_loadbalancer/
 
-[hetzner-quickstart]: https://github.com/kubermatic/kubeone/blob/master/docs/quickstart-hetzner.md
+[hetzner-quickstart]: https://docs.kubermatic.com/kubeone/master/getting_started/hetzner/
 
 ## Inputs
 
