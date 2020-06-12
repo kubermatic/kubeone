@@ -156,6 +156,8 @@ skipped_dirs = [
     '.git',
     'vendor',
     'hack/boilerplate/test',
+    'pkg/apis/apiserver/v1',
+    'pkg/apis/apiserver/v1alpha1',
     'pkg/apis/kubeadm/v1beta1',
     'pkg/apis/kubeadm/v1beta2',
 ]
