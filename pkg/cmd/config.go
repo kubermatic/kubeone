@@ -67,6 +67,7 @@ type printOpts struct {
 	HTTPSProxy string `longflag:"proxy-https"`
 	NoProxy    string `longflag:"proxy-no-proxy"`
 
+	EnablePodNodeSelector   bool `longflag:"enable-pod-node-selector"`
 	EnablePodSecurityPolicy bool `longflag:"enable-pod-security-policy"`
 	EnablePodPresets        bool `longflag:"enable-pod-presets"`
 	EnableStaticAuditLog    bool `longflag:"enable-static-audit-log"`
@@ -156,6 +157,7 @@ configuration manifest, run the print command with --full flag.
 	cmd.Flags().StringVar(&opts.NoProxy, longFlagName(opts, "NoProxy"), "", "No Proxy to be used for provisioning and Docker")
 
 	// Features
+	cmd.Flags().BoolVar(&opts.EnablePodNodeSelector, longFlagName(opts, "EnablePodNodeSelector"), false, "enable PodNodeSelector admission plugin")
 	cmd.Flags().BoolVar(&opts.EnablePodSecurityPolicy, longFlagName(opts, "EnablePodSecurityPolicy"), false, "enable PodSecurityPolicy")
 	cmd.Flags().BoolVar(&opts.EnablePodPresets, longFlagName(opts, "EnablePodPresets"), false, "enable PodPresets")
 	cmd.Flags().BoolVar(&opts.EnableStaticAuditLog, longFlagName(opts, "EnableStaticAuditLog"), false, "enable StaticAuditLog")
@@ -318,6 +320,10 @@ func createAndPrintManifest(printOptions *printOpts) error {
 	}
 
 	// Features
+	if printOptions.EnablePodNodeSelector {
+		cfg.Set(yamled.Path{"features", "podNodeSelector", "enable"}, printOptions.EnablePodSecurityPolicy)
+		cfg.Set(yamled.Path{"features", "podNodeSelector", "config", "configFilePath"}, "")
+	}
 	if printOptions.EnablePodSecurityPolicy {
 		cfg.Set(yamled.Path{"features", "podSecurityPolicy", "enable"}, printOptions.EnablePodSecurityPolicy)
 	}
@@ -477,6 +483,16 @@ cloudProvider:
   cloudConfig: "{{ .CloudProviderCloudCfg }}"
 
 features:
+  # Enable the PodNodeSelector admission plugin in API server.
+  # More info: https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#podnodeselector
+  podNodeSelector:
+    enable: {{ .EnablePodNodeSelector }}
+    config:
+      # configFilePath is a path on a local file system to the podNodeSelector
+      # plugin config, which defines default and allowed node selectors.
+      # configFilePath is is a required field.
+      # More info: https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#configuration-file-format-1
+      configFilePath: ""
   # Enables PodSecurityPolicy admission plugin in API server, as well as creates
   # default 'privileged' PodSecurityPolicy, plus RBAC rules to authorize
   # 'kube-system' namespace pods to 'use' it.
