@@ -36,7 +36,7 @@ func generateConfigurationFiles(s *state.State) error {
 	s.Configuration.AddFile("cfg/cloud-config", s.Cluster.CloudProvider.CloudConfig)
 
 	if s.Cluster.Features.StaticAuditLog != nil && s.Cluster.Features.StaticAuditLog.Enable {
-		if err := s.Configuration.AddFilePath("cfg/audit-policy.yaml", s.Cluster.Features.StaticAuditLog.Config.PolicyFilePath); err != nil {
+		if err := s.Configuration.AddFilePath("cfg/audit-policy.yaml", s.Cluster.Features.StaticAuditLog.Config.PolicyFilePath, s.ManifestFilePath); err != nil {
 			return errors.Wrap(err, "unable to add policy file")
 		}
 	}
@@ -47,7 +47,7 @@ func generateConfigurationFiles(s *state.State) error {
 		}
 		s.Configuration.AddFile("cfg/admission-config.yaml", admissionCfg)
 
-		if err := s.Configuration.AddFilePath("cfg/podnodeselector.yaml", s.Cluster.Features.PodNodeSelector.Config.ConfigFilePath); err != nil {
+		if err := s.Configuration.AddFilePath("cfg/podnodeselector.yaml", s.Cluster.Features.PodNodeSelector.Config.ConfigFilePath, s.ManifestFilePath); err != nil {
 			return errors.Wrap(err, "failed to add podnodeselector config file")
 		}
 	}
