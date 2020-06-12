@@ -34,9 +34,8 @@ import (
 )
 
 const (
-	pspAdmissionPlugin            = "PodSecurityPolicy"
-	apiServerAdmissionPluginsFlag = "enable-admission-plugins"
-	pspRoleNamespace              = metav1.NamespaceSystem
+	pspAdmissionPlugin = "PodSecurityPolicy"
+	pspRoleNamespace   = metav1.NamespaceSystem
 )
 
 func activateKubeadmPSP(feature *kubeoneapi.PodSecurityPolicy, args *kubeadmargs.Args) {

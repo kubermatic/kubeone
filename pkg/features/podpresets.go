@@ -28,7 +28,7 @@ const (
 	pluginFlag           = "enable-admission-plugins"
 )
 
-func activatePodPresets(feature *kubeoneapi.PodPresets, args *kubeadmargs.Args) {
+func activateKubeadmPodPresets(feature *kubeoneapi.PodPresets, args *kubeadmargs.Args) {
 	if feature == nil || !feature.Enable {
 		return
 	}

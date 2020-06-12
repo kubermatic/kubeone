@@ -37,6 +37,16 @@ if [[ -f "{{ .WORK_DIR }}/cfg/audit-policy.yaml" ]]; then
 	sudo chown root:root /etc/kubernetes/audit/policy.yaml
 fi
 `
+
+	podNodeSelectorConfigTemplate = `
+if [[ -f "{{ .WORK_DIR }}/cfg/podnodeselector.yaml" ]]; then
+	sudo mkdir -p /etc/kubernetes/admission
+	sudo mv {{ .WORK_DIR }}/cfg/podnodeselector.yaml /etc/kubernetes/admission/podnodeselector.yaml
+	sudo mv {{ .WORK_DIR }}/cfg/admission-config.yaml /etc/kubernetes/admission/admission-config.yaml
+	sudo chown root:root /etc/kubernetes/admission/podnodeselector.yaml
+	sudo chown root:root /etc/kubernetes/admission/admission-config.yaml
+fi
+`
 )
 
 func KubernetesAdminConfig() (string, error) {
@@ -51,6 +61,12 @@ func SaveCloudConfig(workdir string) (string, error) {
 
 func SaveAuditPolicyConfig(workdir string) (string, error) {
 	return Render(auditPolicyScriptTemplate, Data{
+		"WORK_DIR": workdir,
+	})
+}
+
+func SavePodNodeSelectorConfig(workdir string) (string, error) {
+	return Render(podNodeSelectorConfigTemplate, Data{
 		"WORK_DIR": workdir,
 	})
 }
