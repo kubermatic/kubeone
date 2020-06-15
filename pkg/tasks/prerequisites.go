@@ -23,6 +23,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/scripts"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/state"
+	"github.com/kubermatic/kubeone/pkg/templates/admissionconfig"
 )
 
 func installPrerequisites(s *state.State) error {
@@ -35,9 +36,19 @@ func generateConfigurationFiles(s *state.State) error {
 	s.Configuration.AddFile("cfg/cloud-config", s.Cluster.CloudProvider.CloudConfig)
 
 	if s.Cluster.Features.StaticAuditLog != nil && s.Cluster.Features.StaticAuditLog.Enable {
-		err := s.Configuration.AddFilePath("cfg/audit-policy.yaml", s.Cluster.Features.StaticAuditLog.Config.PolicyFilePath)
-		if err != nil {
+		if err := s.Configuration.AddFilePath("cfg/audit-policy.yaml", s.Cluster.Features.StaticAuditLog.Config.PolicyFilePath, s.ManifestFilePath); err != nil {
 			return errors.Wrap(err, "unable to add policy file")
+		}
+	}
+	if s.Cluster.Features.PodNodeSelector != nil && s.Cluster.Features.PodNodeSelector.Enable {
+		admissionCfg, err := admissionconfig.NewAdmissionConfig(s.Cluster.Versions.Kubernetes, s.Cluster.Features.PodNodeSelector)
+		if err != nil {
+			return errors.Wrap(err, "failed to generate admissionconfiguration manifest")
+		}
+		s.Configuration.AddFile("cfg/admission-config.yaml", admissionCfg)
+
+		if err := s.Configuration.AddFilePath("cfg/podnodeselector.yaml", s.Cluster.Features.PodNodeSelector.Config.ConfigFilePath, s.ManifestFilePath); err != nil {
+			return errors.Wrap(err, "failed to add podnodeselector config file")
 		}
 	}
 
@@ -138,6 +149,15 @@ func uploadConfigurationFilesToNode(s *state.State, node *kubeoneapi.HostConfig,
 	}
 
 	cmd, err = scripts.SaveAuditPolicyConfig(s.WorkDir)
+	if err != nil {
+		return err
+	}
+	_, _, err = s.Runner.RunRaw(cmd)
+	if err != nil {
+		return err
+	}
+
+	cmd, err = scripts.SavePodNodeSelectorConfig(s.WorkDir)
 	if err != nil {
 		return err
 	}

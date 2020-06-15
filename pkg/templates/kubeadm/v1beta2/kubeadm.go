@@ -207,6 +207,17 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		clusterConfig.APIServer.ExtraVolumes = append(clusterConfig.APIServer.ExtraVolumes, logVol)
 	}
 
+	if cluster.Features.PodNodeSelector != nil && cluster.Features.PodNodeSelector.Enable {
+		admissionVol := kubeadmv1beta2.HostPathMount{
+			Name:      "admission-conf",
+			HostPath:  "/etc/kubernetes/admission",
+			MountPath: "/etc/kubernetes/admission",
+			ReadOnly:  true,
+			PathType:  corev1.HostPathDirectoryOrCreate,
+		}
+		clusterConfig.APIServer.ExtraVolumes = append(clusterConfig.APIServer.ExtraVolumes, admissionVol)
+	}
+
 	args := kubeadmargs.NewFrom(clusterConfig.APIServer.ExtraArgs)
 	features.UpdateKubeadmClusterConfiguration(cluster.Features, args)
 

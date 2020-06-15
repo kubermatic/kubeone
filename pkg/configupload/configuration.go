@@ -49,7 +49,17 @@ func (c *Configuration) AddFile(filename string, content string) {
 }
 
 // AddFilePath saves file contents from a file on filesystem for future references
-func (c *Configuration) AddFilePath(filename, filePath string) error {
+func (c *Configuration) AddFilePath(filename, filePath, manifestFilePath string) error {
+	// Normalize the file path. In the case when the relative path is provided,
+	// the path is relative to the KubeOne configuration file.
+	if !filepath.IsAbs(filePath) && manifestFilePath != "" {
+		manifestAbsPath, err := filepath.Abs(filepath.Dir(manifestFilePath))
+		if err != nil {
+			return errors.Wrap(err, "unable to get absolute path to the cluster manifest")
+		}
+		filePath = filepath.Join(manifestAbsPath, filePath)
+	}
+
 	b, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		return errors.Wrap(err, "unable to open given file")

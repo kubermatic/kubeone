@@ -978,11 +978,51 @@ func TestValidateFeatures(t *testing.T) {
 			},
 			expectedError: true,
 		},
+		{
+			name: "invalid podNodeSelector config",
+			features: kubeone.Features{
+				PodNodeSelector: &kubeone.PodNodeSelector{
+					Enable: true,
+					Config: kubeone.PodNodeSelectorConfig{},
+				},
+			},
+			expectedError: true,
+		},
 	}
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			errs := ValidateFeatures(tc.features, nil)
+			if (len(errs) == 0) == tc.expectedError {
+				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
+			}
+		})
+	}
+}
+
+func TestValidatePodNodeSelectorConfig(t *testing.T) {
+	tests := []struct {
+		name                  string
+		podNodeSelectorConfig kubeone.PodNodeSelectorConfig
+		expectedError         bool
+	}{
+		{
+			name: "valid podNodeSelector config",
+			podNodeSelectorConfig: kubeone.PodNodeSelectorConfig{
+				ConfigFilePath: "./podnodeselector.yaml",
+			},
+			expectedError: false,
+		},
+		{
+			name:                  "invalid podNodeSelector config",
+			podNodeSelectorConfig: kubeone.PodNodeSelectorConfig{},
+			expectedError:         true,
+		},
+	}
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			errs := ValidatePodNodeSelectorConfig(tc.podNodeSelectorConfig, nil)
 			if (len(errs) == 0) == tc.expectedError {
 				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
 			}
