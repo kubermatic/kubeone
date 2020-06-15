@@ -56,6 +56,7 @@ sudo kubeadm {{ .VERBOSE }} \
 	kubeadmResetScriptTemplate = `
 sudo kubeadm {{ .VERBOSE }} reset --force || true
 sudo rm -f /etc/kubernetes/cloud-config
+sudo rm -rf /etc/kubernetes/admission
 sudo rm -rf /var/lib/etcd/
 rm -rf "{{ .WORK_DIR }}"
 `
