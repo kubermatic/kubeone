@@ -1,12 +1,13 @@
-# KubeOne
+# Kubermatic KubeOne
 
 <p align="center"><img src="docs/img/kubeone-logo-text.png" width="700px" /></p>
 
 [![KubeOne Report Card](https://goreportcard.com/badge/github.com/kubermatic/kubeone)](https://goreportcard.com/report/github.com/kubermatic/kubeone)
 
 `kubeone` is a CLI tool and a Go library for installing, managing, and upgrading
-Kubernetes High-Available (HA) clusters. It can be used on any cloud provider,
-on-prem or bare-metal cluster.
+Kubernetes clusters. It can be used on on all your cloud, on-prem, edge, and IoT environments.  
+
+KubeOne can install high-available (HA) master cluster as well single master cluster.
 
 ## Project Status
 
