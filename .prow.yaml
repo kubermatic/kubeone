@@ -20,7 +20,7 @@ presubmits:
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     spec:
       containers:
-      - image: golang:1.13.3
+      - image: golang:1.14.4
         command:
         - make
         args:
@@ -58,7 +58,7 @@ presubmits:
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     spec:
       containers:
-      - image: golang:1.13.3
+      - image: golang:1.14.4
         command:
         - make
         args:
@@ -77,7 +77,7 @@ presubmits:
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     spec:
       containers:
-      - image: golang:1.13.3
+      - image: golang:1.14.4
         command:
         - make
         args:
@@ -120,7 +120,7 @@ presubmits:
       preset-aws: "true"
     spec:
       containers:
-      - image: kubermatic/kubeone-e2e:v0.1.7
+      - image: kubermatic/kubeone-e2e:v0.1.8
         imagePullPolicy: Always
         command:
         - make
@@ -130,7 +130,7 @@ presubmits:
         - name: PROVIDER
           value: "aws"
         - name: TEST_CLUSTER_TARGET_VERSION
-          value: "1.16.10"
+          value: "1.16.11"
         - name: TEST_SET
           value: "conformance"
         resources:
@@ -145,7 +145,7 @@ presubmits:
       preset-aws: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.7
+        - image: kubermatic/kubeone-e2e:v0.1.8
           imagePullPolicy: Always
           command:
             - make
@@ -155,7 +155,7 @@ presubmits:
             - name: PROVIDER
               value: "aws"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.17.6"
+              value: "1.17.7"
             - name: TEST_SET
               value: "conformance"
           resources:
@@ -170,7 +170,7 @@ presubmits:
       preset-aws: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.7
+        - image: kubermatic/kubeone-e2e:v0.1.8
           imagePullPolicy: Always
           command:
             - make
@@ -180,7 +180,7 @@ presubmits:
             - name: PROVIDER
               value: "aws"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.18.0"
+              value: "1.18.4"
             - name: TEST_SET
               value: "conformance"
           resources:
@@ -199,7 +199,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-      - image: kubermatic/kubeone-e2e:v0.1.7
+      - image: kubermatic/kubeone-e2e:v0.1.8
         imagePullPolicy: Always
         command:
         - make
@@ -209,7 +209,7 @@ presubmits:
         - name: PROVIDER
           value: "digitalocean"
         - name: TEST_CLUSTER_TARGET_VERSION
-          value: "1.16.10"
+          value: "1.16.11"
         - name: TEST_SET
           value: "conformance"
         resources:
@@ -224,7 +224,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.7
+        - image: kubermatic/kubeone-e2e:v0.1.8
           imagePullPolicy: Always
           command:
             - make
@@ -234,7 +234,7 @@ presubmits:
             - name: PROVIDER
               value: "digitalocean"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.17.6"
+              value: "1.17.7"
             - name: TEST_SET
               value: "conformance"
           resources:
@@ -249,7 +249,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.7
+        - image: kubermatic/kubeone-e2e:v0.1.8
           imagePullPolicy: Always
           command:
             - make
@@ -259,7 +259,7 @@ presubmits:
             - name: PROVIDER
               value: "digitalocean"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.18.0"
+              value: "1.18.4"
             - name: TEST_SET
               value: "conformance"
           resources:
@@ -278,7 +278,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-      - image: kubermatic/kubeone-e2e:v0.1.7
+      - image: kubermatic/kubeone-e2e:v0.1.8
         imagePullPolicy: Always
         command:
         - make
@@ -288,7 +288,7 @@ presubmits:
         - name: PROVIDER
           value: "hetzner"
         - name: TEST_CLUSTER_TARGET_VERSION
-          value: "1.16.10"
+          value: "1.16.11"
         - name: TEST_SET
           value: "conformance"
         resources:
@@ -303,7 +303,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.7
+        - image: kubermatic/kubeone-e2e:v0.1.8
           imagePullPolicy: Always
           command:
             - make
@@ -313,7 +313,7 @@ presubmits:
             - name: PROVIDER
               value: "hetzner"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.17.6"
+              value: "1.17.7"
             - name: TEST_SET
               value: "conformance"
           resources:
@@ -328,7 +328,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.7
+        - image: kubermatic/kubeone-e2e:v0.1.8
           imagePullPolicy: Always
           command:
             - make
@@ -338,7 +338,7 @@ presubmits:
             - name: PROVIDER
               value: "hetzner"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.18.0"
+              value: "1.18.4"
             - name: TEST_SET
               value: "conformance"
           resources:
@@ -357,7 +357,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-      - image: kubermatic/kubeone-e2e:v0.1.7
+      - image: kubermatic/kubeone-e2e:v0.1.8
         imagePullPolicy: Always
         command:
         - make
@@ -367,7 +367,7 @@ presubmits:
         - name: PROVIDER
           value: "gce"
         - name: TEST_CLUSTER_TARGET_VERSION
-          value: "1.16.10"
+          value: "1.16.11"
         - name: TEST_SET
           value: "conformance"
         - name: TF_VAR_project
@@ -384,7 +384,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.7
+        - image: kubermatic/kubeone-e2e:v0.1.8
           imagePullPolicy: Always
           command:
             - make
@@ -394,7 +394,7 @@ presubmits:
             - name: PROVIDER
               value: "gce"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.17.6"
+              value: "1.17.7"
             - name: TEST_SET
               value: "conformance"
             - name: TF_VAR_project
@@ -411,7 +411,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.7
+        - image: kubermatic/kubeone-e2e:v0.1.8
           imagePullPolicy: Always
           command:
             - make
@@ -421,7 +421,7 @@ presubmits:
             - name: PROVIDER
               value: "gce"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.18.0"
+              value: "1.18.4"
             - name: TEST_SET
               value: "conformance"
             - name: TF_VAR_project
@@ -442,7 +442,7 @@ presubmits:
       preset-packet: "true"
     spec:
       containers:
-      - image: kubermatic/kubeone-e2e:v0.1.7
+      - image: kubermatic/kubeone-e2e:v0.1.8
         imagePullPolicy: Always
         command:
         - make
@@ -452,7 +452,7 @@ presubmits:
         - name: PROVIDER
           value: "packet"
         - name: TEST_CLUSTER_TARGET_VERSION
-          value: "1.16.10"
+          value: "1.16.11"
         - name: TEST_SET
           value: "conformance"
         resources:
@@ -467,7 +467,7 @@ presubmits:
       preset-packet: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.7
+        - image: kubermatic/kubeone-e2e:v0.1.8
           imagePullPolicy: Always
           command:
             - make
@@ -477,7 +477,7 @@ presubmits:
             - name: PROVIDER
               value: "packet"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.17.6"
+              value: "1.17.7"
             - name: TEST_SET
               value: "conformance"
           resources:
@@ -492,7 +492,7 @@ presubmits:
       preset-packet: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.7
+        - image: kubermatic/kubeone-e2e:v0.1.8
           imagePullPolicy: Always
           command:
             - make
@@ -502,7 +502,7 @@ presubmits:
             - name: PROVIDER
               value: "packet"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.18.0"
+              value: "1.18.4"
             - name: TEST_SET
               value: "conformance"
           resources:
@@ -521,7 +521,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.7
+        - image: kubermatic/kubeone-e2e:v0.1.8
           imagePullPolicy: Always
           command:
             - make
@@ -531,7 +531,7 @@ presubmits:
             - name: PROVIDER
               value: "openstack"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.16.10"
+              value: "1.16.11"
             - name: TEST_SET
               value: "conformance"
           resources:
@@ -546,7 +546,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.7
+        - image: kubermatic/kubeone-e2e:v0.1.8
           imagePullPolicy: Always
           command:
             - make
@@ -556,7 +556,7 @@ presubmits:
             - name: PROVIDER
               value: "openstack"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.17.6"
+              value: "1.17.7"
             - name: TEST_SET
               value: "conformance"
           resources:
@@ -571,7 +571,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.7
+        - image: kubermatic/kubeone-e2e:v0.1.8
           imagePullPolicy: Always
           command:
             - make
@@ -581,7 +581,7 @@ presubmits:
             - name: PROVIDER
               value: "openstack"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.18.0"
+              value: "1.18.4"
             - name: TEST_SET
               value: "conformance"
           resources:
@@ -600,7 +600,7 @@ presubmits:
       preset-aws: "true"
     spec:
       containers:
-      - image: kubermatic/kubeone-e2e:v0.1.7
+      - image: kubermatic/kubeone-e2e:v0.1.8
         imagePullPolicy: Always
         command:
         - make
@@ -610,9 +610,9 @@ presubmits:
         - name: PROVIDER
           value: "aws"
         - name: TEST_CLUSTER_INITIAL_VERSION
-          value: "1.16.10"
+          value: "1.16.11"
         - name: TEST_CLUSTER_TARGET_VERSION
-          value: "1.17.6"
+          value: "1.17.7"
         - name: TEST_SET
           value: "upgrades"
 
@@ -624,7 +624,7 @@ presubmits:
       preset-aws: "true"
     spec:
       containers:
-      - image: kubermatic/kubeone-e2e:v0.1.7
+      - image: kubermatic/kubeone-e2e:v0.1.8
         imagePullPolicy: Always
         command:
         - make
@@ -634,9 +634,9 @@ presubmits:
         - name: PROVIDER
           value: "aws"
         - name: TEST_CLUSTER_INITIAL_VERSION
-          value: "1.17.6"
+          value: "1.17.7"
         - name: TEST_CLUSTER_TARGET_VERSION
-          value: "1.18.0"
+          value: "1.18.4"
         - name: TEST_SET
           value: "upgrades"
 
@@ -652,7 +652,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-      - image: kubermatic/kubeone-e2e:v0.1.7
+      - image: kubermatic/kubeone-e2e:v0.1.8
         imagePullPolicy: Always
         command:
         - make
@@ -662,9 +662,9 @@ presubmits:
         - name: PROVIDER
           value: "digitalocean"
         - name: TEST_CLUSTER_INITIAL_VERSION
-          value: "1.16.10"
+          value: "1.16.11"
         - name: TEST_CLUSTER_TARGET_VERSION
-          value: "1.17.6"
+          value: "1.17.7"
         - name: TEST_SET
           value: "upgrades"
 
@@ -676,7 +676,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-      - image: kubermatic/kubeone-e2e:v0.1.7
+      - image: kubermatic/kubeone-e2e:v0.1.8
         imagePullPolicy: Always
         command:
         - make
@@ -686,9 +686,9 @@ presubmits:
         - name: PROVIDER
           value: "digitalocean"
         - name: TEST_CLUSTER_INITIAL_VERSION
-          value: "1.17.6"
+          value: "1.17.7"
         - name: TEST_CLUSTER_TARGET_VERSION
-          value: "1.18.0"
+          value: "1.18.4"
         - name: TEST_SET
           value: "upgrades"
 
@@ -704,7 +704,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-      - image: kubermatic/kubeone-e2e:v0.1.7
+      - image: kubermatic/kubeone-e2e:v0.1.8
         imagePullPolicy: Always
         command:
         - make
@@ -714,9 +714,9 @@ presubmits:
         - name: PROVIDER
           value: "hetzner"
         - name: TEST_CLUSTER_INITIAL_VERSION
-          value: "1.16.10"
+          value: "1.16.11"
         - name: TEST_CLUSTER_TARGET_VERSION
-          value: "1.17.6"
+          value: "1.17.7"
         - name: TEST_SET
           value: "upgrades"
 
@@ -728,7 +728,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-      - image: kubermatic/kubeone-e2e:v0.1.7
+      - image: kubermatic/kubeone-e2e:v0.1.8
         imagePullPolicy: Always
         command:
         - make
@@ -738,9 +738,9 @@ presubmits:
         - name: PROVIDER
           value: "hetzner"
         - name: TEST_CLUSTER_INITIAL_VERSION
-          value: "1.17.6"
+          value: "1.17.7"
         - name: TEST_CLUSTER_TARGET_VERSION
-          value: "1.18.0"
+          value: "1.18.4"
         - name: TEST_SET
           value: "upgrades"
 
@@ -756,7 +756,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-      - image: kubermatic/kubeone-e2e:v0.1.7
+      - image: kubermatic/kubeone-e2e:v0.1.8
         imagePullPolicy: Always
         command:
         - make
@@ -766,9 +766,9 @@ presubmits:
         - name: PROVIDER
           value: "gce"
         - name: TEST_CLUSTER_INITIAL_VERSION
-          value: "1.16.10"
+          value: "1.16.11"
         - name: TEST_CLUSTER_TARGET_VERSION
-          value: "1.17.6"
+          value: "1.17.7"
         - name: TEST_SET
           value: "upgrades"
         - name: TF_VAR_project
@@ -782,7 +782,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-      - image: kubermatic/kubeone-e2e:v0.1.7
+      - image: kubermatic/kubeone-e2e:v0.1.8
         imagePullPolicy: Always
         command:
         - make
@@ -792,9 +792,9 @@ presubmits:
         - name: PROVIDER
           value: "gce"
         - name: TEST_CLUSTER_INITIAL_VERSION
-          value: "1.17.6"
+          value: "1.17.7"
         - name: TEST_CLUSTER_TARGET_VERSION
-          value: "1.18.0"
+          value: "1.18.4"
         - name: TEST_SET
           value: "upgrades"
         - name: TF_VAR_project
@@ -812,7 +812,7 @@ presubmits:
       preset-packet: "true"
     spec:
       containers:
-      - image: kubermatic/kubeone-e2e:v0.1.7
+      - image: kubermatic/kubeone-e2e:v0.1.8
         imagePullPolicy: Always
         command:
         - make
@@ -822,9 +822,9 @@ presubmits:
         - name: PROVIDER
           value: "packet"
         - name: TEST_CLUSTER_INITIAL_VERSION
-          value: "1.16.10"
+          value: "1.16.11"
         - name: TEST_CLUSTER_TARGET_VERSION
-          value: "1.17.6"
+          value: "1.17.7"
         - name: TEST_SET
           value: "upgrades"
 
@@ -836,7 +836,7 @@ presubmits:
       preset-packet: "true"
     spec:
       containers:
-      - image: kubermatic/kubeone-e2e:v0.1.7
+      - image: kubermatic/kubeone-e2e:v0.1.8
         imagePullPolicy: Always
         command:
         - make
@@ -846,9 +846,9 @@ presubmits:
         - name: PROVIDER
           value: "packet"
         - name: TEST_CLUSTER_INITIAL_VERSION
-          value: "1.17.6"
+          value: "1.17.7"
         - name: TEST_CLUSTER_TARGET_VERSION
-          value: "1.18.0"
+          value: "1.18.4"
         - name: TEST_SET
           value: "upgrades"
 
@@ -864,7 +864,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.7
+        - image: kubermatic/kubeone-e2e:v0.1.8
           imagePullPolicy: Always
           command:
             - make
@@ -874,9 +874,9 @@ presubmits:
             - name: PROVIDER
               value: "openstack"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.16.10"
+              value: "1.16.11"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.17.6"
+              value: "1.17.7"
             - name: TEST_SET
               value: "upgrades"
 
@@ -888,7 +888,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.7
+        - image: kubermatic/kubeone-e2e:v0.1.8
           imagePullPolicy: Always
           command:
             - make
@@ -898,9 +898,9 @@ presubmits:
             - name: PROVIDER
               value: "openstack"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.17.6"
+              value: "1.17.7"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.18.0"
+              value: "1.18.4"
             - name: TEST_SET
               value: "upgrades"
 
