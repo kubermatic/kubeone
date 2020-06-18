@@ -64,7 +64,6 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--
 	rsync
 
 kube_ver=$(apt-cache madison kubelet | grep "{{ .KUBERNETES_VERSION }}" | head -1 | awk '{print $3}')
-cni_ver=$(apt-cache madison kubernetes-cni | grep "{{ cniVersion .KUBERNETES_VERSION }}" | head -1 | awk '{print $3}')
 
 {{- if or .FORCE .UPGRADE }}
 sudo apt-mark unhold docker-ce kubelet kubeadm kubectl kubernetes-cni
@@ -86,10 +85,9 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install \
 {{- if .KUBECTL }}
 	kubectl=${kube_ver} \
 {{- end }}
-	kubernetes-cni=${cni_ver} \
 	{{ aptDocker .KUBERNETES_VERSION }}
 
-sudo apt-mark hold docker-ce docker-ce-cli kubelet kubeadm kubectl kubernetes-cni
+sudo apt-mark hold docker-ce docker-ce-cli kubelet kubeadm kubectl
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now docker
@@ -153,9 +151,8 @@ sudo yum install -y \
 {{- if .KUBECTL }}
 	kubectl-{{ .KUBERNETES_VERSION }}-0 \
 {{- end }}
-	kubernetes-cni-{{ cniVersion .KUBERNETES_VERSION }}-0 \
 	{{ yumDocker .KUBERNETES_VERSION }}
-sudo yum versionlock add docker-ce docker-ce-cli kubelet kubeadm kubectl kubernetes-cni
+sudo yum versionlock add docker-ce docker-ce-cli kubelet kubeadm kubectl
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now docker
@@ -229,8 +226,8 @@ sudo apt-mark unhold kubelet kubeadm kubectl kubernetes-cni
 sudo apt-get remove --purge -y \
 	kubeadm \
 	kubectl \
-	kubelet \
-	kubernetes-cni
+	kubelet
+sudo apt-get remove --purge -y kubernetes-cni || true
 `
 
 	removeBinariesCentOSScriptTemplate = `
@@ -238,8 +235,8 @@ sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni || true
 sudo yum remove -y \
 	kubelet \
 	kubeadm \
-	kubectl \
-	kubernetes-cni
+	kubectl
+sudo yum remove -y kubernetes-cni || true
 `
 
 	removeBinariesCoreOSScriptTemplate = `
