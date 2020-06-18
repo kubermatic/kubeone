@@ -16,7 +16,9 @@ limitations under the License.
 
 package scripts
 
-import "github.com/Masterminds/semver"
+import (
+	"github.com/Masterminds/semver"
+)
 
 const (
 	libraryTemplate = `
@@ -113,15 +115,19 @@ func cniVersionFunc(kubernetesVersion string) (string, error) {
 		return "", err
 	}
 
-	c, _ := semver.NewConstraint(">= 1.13.0, <= 1.13.4")
+	lessThen1134, _ := semver.NewConstraint(">= 1.13.0, <= 1.13.4")
+	lessThen116, _ := semver.NewConstraint("< 1.16.0")
 
-	// Validation ensures that the oldest cluster version is 1.13.0.
 	// Versions 1.13.0-1.13.4 uses 0.6.0, so it's safe to return 0.6.0
 	// if >= 1.13.0, <= 1.13.4 constraint check successes.
-	if c.Check(s) {
+	// Versions lower than 1.16.0 use 0.7.5, and greater than 1.16.0 use 0.8.6.
+	switch {
+	case lessThen1134.Check(s):
 		return "0.6.0", nil
+	case lessThen116.Check(s):
+		return "0.7.5", nil
 	}
 
 	// return default
-	return "0.7.5", nil
+	return "0.8.6", nil
 }

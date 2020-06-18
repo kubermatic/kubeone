@@ -5,5 +5,5 @@ sudo apt-mark unhold kubelet kubeadm kubectl kubernetes-cni
 sudo apt-get remove --purge -y \
 	kubeadm \
 	kubectl \
-	kubelet \
-	kubernetes-cni
+	kubelet
+sudo apt-get remove --purge -y kubernetes-cni || true

@@ -67,7 +67,6 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--
 	rsync
 
 kube_ver=$(apt-cache madison kubelet | grep "v1.17.4" | head -1 | awk '{print $3}')
-cni_ver=$(apt-cache madison kubernetes-cni | grep "0.7.5" | head -1 | awk '{print $3}')
 sudo apt-mark unhold docker-ce kubelet kubeadm kubectl kubernetes-cni
 
 sudo DEBIAN_FRONTEND=noninteractive apt-get install \
@@ -75,10 +74,9 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install \
 	--no-install-recommends \
 	-y \
 	kubeadm=${kube_ver} \
-	kubernetes-cni=${cni_ver} \
 	docker-ce=5:19.03.9~3-0~ubuntu-$(lsb_release -cs) docker-ce-cli=5:19.03.9~3-0~ubuntu-$(lsb_release -cs)
 
-sudo apt-mark hold docker-ce docker-ce-cli kubelet kubeadm kubectl kubernetes-cni
+sudo apt-mark hold docker-ce docker-ce-cli kubelet kubeadm kubectl
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now docker

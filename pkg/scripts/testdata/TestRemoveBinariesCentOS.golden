@@ -5,5 +5,5 @@ sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni || true
 sudo yum remove -y \
 	kubelet \
 	kubeadm \
-	kubectl \
-	kubernetes-cni
+	kubectl
+sudo yum remove -y kubernetes-cni || true
