@@ -1,5 +1,40 @@
 # Changelog
 
+# [v1.0.0-alpha.5](https://github.com/kubermatic/kubeone/releases/tag/v1.0.0-alpha.5) - 2020-06-18
+
+## Attention Needed
+
+* This release includes support for Kubernetes releases 1.16.11, 1.17.7, and 1.18.4. Those releases use the CNI v0.8.6,
+which includes a fix for the CVE-2020-10749. It's **strongly advised** to upgrade your clusters and rotate worker nodes
+as soon as possible.
+* The path to the config file for PodNodeSelector feature (`.features.config.configFilePath`) and StaticAuditLog
+feature (`.features.staticAuditLog.policyFilePath`) are now relative to the manifest path instead of to the working
+directory. This change might be breaking for some users.
+
+## Known Issues
+
+* Currently it's impossible to install Kubernetes versions older than 1.16.11/1.17.7/1.18.4 on CentOS/RHEL, due
+to an issue with packages.
+* Currently it's impossible to install Kubernetes on CentOS 7. The 1.16.11 release is not working due to an [upstream
+issue](https://github.com/kubernetes/kubernetes/issues/92250) with the kube-proxy component, while newer releases are
+having DNS problems which we are investigating.
+
+## Added
+
+* Add RHEL support ([#918](https://github.com/kubermatic/kubeone/pull/918))
+* Add support for the PodNodeSelector admission controller ([#920](https://github.com/kubermatic/kubeone/pull/920))
+* Add support for Kubernetes 1.16.11, 1.17.7, 1.18.4 releases ([#925](https://github.com/kubermatic/kubeone/pull/925))
+
+## Changed
+
+### General
+
+* BREAKING: Make paths to the config file for PodNodeSelector and StaticAuditLog features relative to the manifest path ([#920](https://github.com/kubermatic/kubeone/pull/920))
+
+### Updated
+
+* Update machine-controller to v1.14.2 ([#918](https://github.com/kubermatic/kubeone/pull/918))
+
 # [v1.0.0-alpha.4](https://github.com/kubermatic/kubeone/releases/tag/v1.0.0-alpha.4) - 2020-05-21
 
 ## Changed
