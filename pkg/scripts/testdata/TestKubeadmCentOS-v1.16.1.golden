@@ -77,9 +77,8 @@ sudo yum install -y \
 	kubelet-v1.16.1-0 \
 	kubeadm-v1.16.1-0 \
 	kubectl-v1.16.1-0 \
-	kubernetes-cni-0.7.5-0 \
 	docker-ce-18.03.1.ce-1.el7.centos
-sudo yum versionlock add docker-ce docker-ce-cli kubelet kubeadm kubectl kubernetes-cni
+sudo yum versionlock add docker-ce docker-ce-cli kubelet kubeadm kubectl
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now docker
