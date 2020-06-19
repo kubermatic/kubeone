@@ -18,6 +18,8 @@ to an issue with packages.
 * Currently it's impossible to install Kubernetes on CentOS 7. The 1.16.11 release is not working due to an [upstream
 issue](https://github.com/kubernetes/kubernetes/issues/92250) with the kube-proxy component, while newer releases are
 having DNS problems which we are investigating.
+* Currently it's impossible to install Kubernetes on CoreOS/Flatcar due to an incorrect URL
+to the CNI plugin. The fix has been already merged and will be included in the upcoming release.
 
 ## Added
 

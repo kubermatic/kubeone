@@ -170,7 +170,7 @@ source /etc/kubeone/proxy-env
 sudo systemctl restart docker
 
 sudo mkdir -p /opt/cni/bin /etc/kubernetes/pki /etc/kubernetes/manifests
-curl -L "https://github.com/containernetworking/plugins/releases/download/v{{ cniVersion .KUBERNETES_VERSION }}/cni-plugins-${HOST_ARCH}-v{{ cniVersion .KUBERNETES_VERSION }}.tgz" |
+curl -L "https://github.com/containernetworking/plugins/releases/download/v0.8.6/cni-plugins-linux-${HOST_ARCH}-v0.8.6.tgz" |
 	sudo tar -C /opt/cni/bin -xz
 
 RELEASE="v{{ .KUBERNETES_VERSION }}"
@@ -252,7 +252,7 @@ sudo rm /etc/systemd/system/kubelet.service /etc/systemd/system/kubelet.service.
 source /etc/kubeone/proxy-env
 
 sudo mkdir -p /opt/cni/bin
-curl -L "https://github.com/containernetworking/plugins/releases/download/v{{ cniVersion .KUBERNETES_VERSION }}/cni-plugins-${HOST_ARCH}-v{{ cniVersion .KUBERNETES_VERSION }}.tgz" |
+curl -L "https://github.com/containernetworking/plugins/releases/download/v0.8.6/cni-plugins-linux-${HOST_ARCH}-v0.8.6.tgz" |
 	sudo tar -C /opt/cni/bin -xz
 
 RELEASE="v{{ .KUBERNETES_VERSION }}"

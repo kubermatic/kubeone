@@ -108,26 +108,3 @@ func yumDockerFunc(v string) (string, error) {
 	// return default
 	return "docker-ce-19.03.9-3.el7 docker-ce-cli-19.03.9-3.el7", nil
 }
-
-func cniVersionFunc(kubernetesVersion string) (string, error) {
-	s, err := semver.NewVersion(kubernetesVersion)
-	if err != nil {
-		return "", err
-	}
-
-	lessThen1134, _ := semver.NewConstraint(">= 1.13.0, <= 1.13.4")
-	lessThen116, _ := semver.NewConstraint("< 1.16.0")
-
-	// Versions 1.13.0-1.13.4 uses 0.6.0, so it's safe to return 0.6.0
-	// if >= 1.13.0, <= 1.13.4 constraint check successes.
-	// Versions lower than 1.16.0 use 0.7.5, and greater than 1.16.0 use 0.8.6.
-	switch {
-	case lessThen1134.Check(s):
-		return "0.6.0", nil
-	case lessThen116.Check(s):
-		return "0.7.5", nil
-	}
-
-	// return default
-	return "0.8.6", nil
-}
