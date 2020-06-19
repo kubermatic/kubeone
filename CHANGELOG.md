@@ -1,5 +1,13 @@
 # Changelog
 
+# [v1.0.0-alpha.6](https://github.com/kubermatic/kubeone/releases/tag/v1.0.0-alpha.6) - 2020-06-19
+
+## Changed
+
+### General
+
+* Fix CoreOS/Flatcar cluster provisioning/upgrading: use the correct URL for the CNI plugins ([#929](https://github.com/kubermatic/kubeone/pull/929))
+
 # [v1.0.0-alpha.5](https://github.com/kubermatic/kubeone/releases/tag/v1.0.0-alpha.5) - 2020-06-18
 
 ## Attention Needed
