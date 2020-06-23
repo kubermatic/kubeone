@@ -217,7 +217,7 @@ See [the list of releases][3] to find out about feature changes.
 [9]: https://github.com/kubermatic/kubeone/releases
 [10]: ./docs
 [12]: https://github.com/kubermatic/kubeone/tree/master/examples/ansible
-[11]: ./docs/quickstart-aws.md
+[11]: https://docs.kubermatic.com/kubeone/master/getting_started/aws/
 [13]: https://github.com/kubermatic/kubeone#features
 [14]: https://groups.google.com/forum/#!forum/loodse-dev
 [15]: http://slack.k8s.io/
