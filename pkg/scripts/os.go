@@ -143,13 +143,13 @@ sudo yum versionlock delete docker-ce docker-ce-cli kubelet kubeadm kubectl kube
 
 sudo yum install -y \
 {{- if .KUBELET }}
-	kubelet-{{ .KUBERNETES_VERSION }}-0 \
+	kubelet-{{ .KUBERNETES_VERSION }} \
 {{- end }}
 {{- if .KUBEADM }}
-	kubeadm-{{ .KUBERNETES_VERSION }}-0 \
+	kubeadm-{{ .KUBERNETES_VERSION }} \
 {{- end }}
 {{- if .KUBECTL }}
-	kubectl-{{ .KUBERNETES_VERSION }}-0 \
+	kubectl-{{ .KUBERNETES_VERSION }} \
 {{- end }}
 	{{ yumDocker .KUBERNETES_VERSION }}
 sudo yum versionlock add docker-ce docker-ce-cli kubelet kubeadm kubectl
