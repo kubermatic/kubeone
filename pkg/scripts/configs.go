@@ -17,12 +17,6 @@ limitations under the License.
 package scripts
 
 const (
-	kubernetesAdminConfigScript = `
-mkdir -p $HOME/.kube/
-sudo cp /etc/kubernetes/admin.conf $HOME/.kube/config
-sudo chown $(id -u):$(id -g) $HOME/.kube/config
-`
-
 	cloudConfigScriptTemplate = `
 sudo mkdir -p /etc/systemd/system/kubelet.service.d/ /etc/kubernetes
 sudo mv {{ .WORK_DIR }}/cfg/cloud-config /etc/kubernetes/cloud-config
@@ -48,10 +42,6 @@ if [[ -f "{{ .WORK_DIR }}/cfg/podnodeselector.yaml" ]]; then
 fi
 `
 )
-
-func KubernetesAdminConfig() (string, error) {
-	return Render(kubernetesAdminConfigScript, nil)
-}
 
 func SaveCloudConfig(workdir string) (string, error) {
 	return Render(cloudConfigScriptTemplate, Data{
