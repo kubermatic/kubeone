@@ -21,6 +21,10 @@ import (
 )
 
 const (
+	defaultKubernetesCNIVersion = "0.8.6"
+)
+
+const (
 	kubeadmDebianTemplate = `
 sudo swapoff -a
 sudo sed -i '/.*swap.*/d' /etc/fstab
@@ -64,6 +68,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--
 	rsync
 
 kube_ver=$(apt-cache madison kubelet | grep "{{ .KUBERNETES_VERSION }}" | head -1 | awk '{print $3}')
+cni_ver=$(apt-cache madison kubernetes-cni | grep "{{ .KUBERNETES_CNI_VERSION }}" | head -1 | awk '{print $3}')
 
 {{- if or .FORCE .UPGRADE }}
 sudo apt-mark unhold docker-ce kubelet kubeadm kubectl kubernetes-cni
@@ -85,9 +90,10 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install \
 {{- if .KUBECTL }}
 	kubectl=${kube_ver} \
 {{- end }}
+	kubernetes-cni=${cni_ver} \
 	{{ aptDocker .KUBERNETES_VERSION }}
 
-sudo apt-mark hold docker-ce docker-ce-cli kubelet kubeadm kubectl
+sudo apt-mark hold docker-ce docker-ce-cli kubelet kubeadm kubectl kubernetes-cni
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now docker
@@ -143,16 +149,17 @@ sudo yum versionlock delete docker-ce docker-ce-cli kubelet kubeadm kubectl kube
 
 sudo yum install -y \
 {{- if .KUBELET }}
-	kubelet-{{ .KUBERNETES_VERSION }}-0 \
+	kubelet-{{ .KUBERNETES_VERSION }} \
 {{- end }}
 {{- if .KUBEADM }}
-	kubeadm-{{ .KUBERNETES_VERSION }}-0 \
+	kubeadm-{{ .KUBERNETES_VERSION }} \
 {{- end }}
 {{- if .KUBECTL }}
-	kubectl-{{ .KUBERNETES_VERSION }}-0 \
+	kubectl-{{ .KUBERNETES_VERSION }} \
 {{- end }}
+	kubernetes-cni-{{ .KUBERNETES_CNI_VERSION }} \
 	{{ yumDocker .KUBERNETES_VERSION }}
-sudo yum versionlock add docker-ce docker-ce-cli kubelet kubeadm kubectl
+sudo yum versionlock add docker-ce docker-ce-cli kubelet kubeadm kubectl kubernetes-cni
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now docker
@@ -170,7 +177,7 @@ source /etc/kubeone/proxy-env
 sudo systemctl restart docker
 
 sudo mkdir -p /opt/cni/bin /etc/kubernetes/pki /etc/kubernetes/manifests
-curl -L "https://github.com/containernetworking/plugins/releases/download/v0.8.6/cni-plugins-linux-${HOST_ARCH}-v0.8.6.tgz" |
+curl -L "https://github.com/containernetworking/plugins/releases/download/v{{ .KUBERNETES_CNI_VERSION }}/cni-plugins-linux-${HOST_ARCH}-v{{ .KUBERNETES_CNI_VERSION }}.tgz" |
 	sudo tar -C /opt/cni/bin -xz
 
 RELEASE="v{{ .KUBERNETES_VERSION }}"
@@ -252,7 +259,7 @@ sudo rm /etc/systemd/system/kubelet.service /etc/systemd/system/kubelet.service.
 source /etc/kubeone/proxy-env
 
 sudo mkdir -p /opt/cni/bin
-curl -L "https://github.com/containernetworking/plugins/releases/download/v0.8.6/cni-plugins-linux-${HOST_ARCH}-v0.8.6.tgz" |
+curl -L "https://github.com/containernetworking/plugins/releases/download/v{{ .KUBERNETES_CNI_VERSION }}/cni-plugins-linux-${HOST_ARCH}-v{{ .KUBERNETES_CNI_VERSION }}.tgz" |
 	sudo tar -C /opt/cni/bin -xz
 
 RELEASE="v{{ .KUBERNETES_VERSION }}"
@@ -327,6 +334,7 @@ func KubeadmDebian(cluster *kubeone.KubeOneCluster, force bool) (string, error) 
 		"KUBEADM":                true,
 		"KUBECTL":                true,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
+		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"HTTP_PROXY":             cluster.Proxy.HTTP,
 		"HTTPS_PROXY":            cluster.Proxy.HTTPS,
@@ -345,6 +353,7 @@ func KubeadmCentOS(cluster *kubeone.KubeOneCluster, force bool) (string, error) 
 		"KUBEADM":                true,
 		"KUBECTL":                true,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
+		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"PROXY":                  proxy,
 		"FORCE":                  force,
@@ -353,7 +362,8 @@ func KubeadmCentOS(cluster *kubeone.KubeOneCluster, force bool) (string, error) 
 
 func KubeadmCoreOS(cluster *kubeone.KubeOneCluster) (string, error) {
 	return Render(kubeadmCoreOSTemplate, Data{
-		"KUBERNETES_VERSION": cluster.Versions.Kubernetes,
+		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
+		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
 	})
 }
 
@@ -374,6 +384,7 @@ func UpgradeKubeadmAndCNIDebian(cluster *kubeone.KubeOneCluster) (string, error)
 		"UPGRADE":                true,
 		"KUBEADM":                true,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
+		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"HTTP_PROXY":             cluster.Proxy.HTTP,
 		"HTTPS_PROXY":            cluster.Proxy.HTTPS,
@@ -390,6 +401,7 @@ func UpgradeKubeadmAndCNICentOS(cluster *kubeone.KubeOneCluster) (string, error)
 		"UPGRADE":                true,
 		"KUBEADM":                true,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
+		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"PROXY":                  proxy,
 	})
@@ -397,7 +409,8 @@ func UpgradeKubeadmAndCNICentOS(cluster *kubeone.KubeOneCluster) (string, error)
 
 func UpgradeKubeadmAndCNICoreOS(k8sVersion string) (string, error) {
 	return Render(upgradeKubeadmAndCNICoreOSScriptTemplate, Data{
-		"KUBERNETES_VERSION": k8sVersion,
+		"KUBERNETES_VERSION":     k8sVersion,
+		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
 	})
 }
 
@@ -407,6 +420,7 @@ func UpgradeKubeletAndKubectlDebian(cluster *kubeone.KubeOneCluster) (string, er
 		"KUBELET":                true,
 		"KUBECTL":                true,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
+		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"HTTP_PROXY":             cluster.Proxy.HTTP,
 		"HTTPS_PROXY":            cluster.Proxy.HTTPS,
@@ -424,6 +438,7 @@ func UpgradeKubeletAndKubectlCentOS(cluster *kubeone.KubeOneCluster) (string, er
 		"KUBELET":                true,
 		"KUBECTL":                true,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
+		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"PROXY":                  proxy,
 	})
