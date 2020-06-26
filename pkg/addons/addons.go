@@ -30,7 +30,10 @@ import (
 
 const (
 	addonLabel         = "kubeone.io/addon"
-	kubectlApplyScript = `sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf apply -f {{.FILE_NAME}} --prune -l "%s"`
+	kubectlApplyScript = `
+sudo KUBECONFIG=/etc/kubernetes/admin.conf \
+    kubectl apply -f {{.FILE_NAME}} --prune -l "%s"
+`
 )
 
 // TemplateData is data available in the addons render template
