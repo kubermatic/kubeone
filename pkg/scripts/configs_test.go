@@ -22,17 +22,6 @@ import (
 	"github.com/kubermatic/kubeone/pkg/testhelper"
 )
 
-func TestKubernetesAdminConfig(t *testing.T) {
-	t.Parallel()
-
-	got, err := KubernetesAdminConfig()
-	if err != nil {
-		t.Fatalf("KubernetesAdminConfig() error = %v", err)
-	}
-
-	testhelper.DiffOutput(t, testhelper.FSGoldenName(t), got, *updateFlag)
-}
-
 func TestSaveCloudConfig(t *testing.T) {
 	t.Parallel()
 

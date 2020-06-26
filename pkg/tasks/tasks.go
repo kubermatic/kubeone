@@ -83,7 +83,6 @@ func WithFullInstall(t Tasks) Tasks {
 			{Fn: kubeconfig.BuildKubernetesClientset, ErrMsg: "failed to build kubernetes clientset"},
 			{Fn: repairClusterIfNeeded, ErrMsg: "failed to repair cluster"},
 			{Fn: joinControlplaneNode, ErrMsg: "failed to join other masters a cluster"},
-			{Fn: copyKubeconfig, ErrMsg: "failed to copy kubeconfig to home directory"},
 			{Fn: saveKubeconfig, ErrMsg: "failed to save kubeconfig to the local machine"},
 		}...).
 		append(kubernetesResources()...).

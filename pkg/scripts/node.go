@@ -18,13 +18,13 @@ package scripts
 
 const (
 	drainNodeScriptTemplate = `
-export KUBECONFIG=/etc/kubernetes/admin.conf
-sudo kubectl drain {{ .NODE_NAME }} --ignore-daemonsets --delete-local-data
+sudo KUBECONFIG=/etc/kubernetes/admin.conf \
+    kubectl drain {{ .NODE_NAME }} --ignore-daemonsets --delete-local-data
 `
 
 	uncordonNodeScriptTemplate = `
-export KUBECONFIG=/etc/kubernetes/admin.conf
-sudo kubectl uncordon {{ .NODE_NAME }}
+sudo KUBECONFIG=/etc/kubernetes/admin.conf \
+    kubectl uncordon {{ .NODE_NAME }}
 `
 )
 

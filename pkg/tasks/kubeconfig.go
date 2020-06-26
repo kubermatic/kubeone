@@ -22,25 +22,9 @@ import (
 
 	"github.com/pkg/errors"
 
-	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/kubeconfig"
-	"github.com/kubermatic/kubeone/pkg/scripts"
-	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/state"
 )
-
-func copyKubeconfig(s *state.State) error {
-	return s.RunTaskOnNodes(s.Cluster.ControlPlane.Hosts, func(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
-		s.Logger.Infoln("Copying Kubeconfig to home directory…")
-		cmd, err := scripts.KubernetesAdminConfig()
-		if err != nil {
-			return err
-		}
-
-		_, _, err = s.Runner.RunRaw(cmd)
-		return err
-	}, state.RunParallel)
-}
 
 func saveKubeconfig(s *state.State) error {
 	s.Logger.Info("Downloading kubeconfig…")
