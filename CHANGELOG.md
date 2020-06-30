@@ -1,5 +1,28 @@
 # Changelog
 
+# [v1.0.0-alpha.7](https://github.com/kubermatic/kubeone/releases/tag/v1.0.0-alpha.7) - 2020-06-30
+
+## Known Issues
+
+* machine-controller is failing to sign Kubelet CertificateSingingRequests (CSRs) for worker nodes due to [missing hostname in the Machine object](https://github.com/kubermatic/machine-controller/issues/781). We are currently working on a fix. In meanwhile, you can sign the CSRs manually by following [instructions](https://kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster/#approving-certificate-signing-requests) from the Kubernetes docs.
+* It remains impossible to provision Kubernetes 1.16.10+ clusters on CentOS 7. CentOS 8 and RHEL are unaffected. We are investigating the root cause of the issue.
+
+## Changed
+
+### General
+
+* Re-introduce the support for the kubernetes-cni package and use the proper revision for Kubernetes packages ([#933](https://github.com/kubermatic/kubeone/pull/933))
+  * This change allows operators to use KubeOne to install Kubernetes versions older than 1.16.11/1.17.7/1.18.4 on CentOS/RHEL
+
+### Bug Fixes
+
+* Stop copying kubeconfig to the home directory on control plane instances ([#936](https://github.com/kubermatic/kubeone/pull/936))
+  * This fixes the issue with upgrading CoreOS/Flatcar clusters
+
+### Updated
+
+* Update machine-controller to v1.14.3 ([#937](https://github.com/kubermatic/kubeone/pull/937))
+
 # [v1.0.0-alpha.6](https://github.com/kubermatic/kubeone/releases/tag/v1.0.0-alpha.6) - 2020-06-19
 
 ## Changed
