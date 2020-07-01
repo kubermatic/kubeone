@@ -1,6 +1,10 @@
 # Changelog
 
-# [v1.0.0-alpha.7](https://github.com/kubermatic/kubeone/releases/tag/v1.0.0-alpha.7) - 2020-06-30
+# [v1.0.0-beta.0](https://github.com/kubermatic/kubeone/releases/tag/v1.0.0-beta.0) - 2020-07-01
+
+## Attention Needed
+
+* It's recommended to use this release instead of v0.11, as v0.11 doesn't support the latest Kubernetes patch releases. Older Kubernetes releases are affected by two CVEs and therefore it's strongly advised to use 1.16.11/1.17.7/1.18.4 or newer.
 
 ## Known Issues
 
@@ -12,7 +16,7 @@
 ### General
 
 * Re-introduce the support for the kubernetes-cni package and use the proper revision for Kubernetes packages ([#933](https://github.com/kubermatic/kubeone/pull/933))
-  * This change allows operators to use KubeOne to install Kubernetes versions older than 1.16.11/1.17.7/1.18.4 on CentOS/RHEL
+  * This change ensures operators can use KubeOne to install the latest Kubernetes releases on CentOS/RHEL
 
 ### Bug Fixes
 
