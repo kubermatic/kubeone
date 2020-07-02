@@ -103,10 +103,10 @@ presubmits:
         - lint
         resources:
           requests:
-            memory: 512Mi
+            memory: 1Gi
             cpu: 4
           limits:
-            memory: 1Gi
+            memory: 2Gi
 
   #########################################################
   # E2E/Conformance tests (AWS, 1.16-1.18)
