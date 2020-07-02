@@ -121,6 +121,7 @@ type AzureSpec struct {
 	RouteTableName    string            `json:"routeTableName"`
 	SecurityGroupName string            `json:"securityGroupName"`
 	Zones             []string          `json:"zones"`
+	ImagePlan         *AzureImagePlan   `json:"imagePlan"`
 	SubnetName        string            `json:"subnetName"`
 	Tags              map[string]string `json:"tags"`
 	VMSize            string            `json:"vmSize"`
@@ -128,4 +129,10 @@ type AzureSpec struct {
 	ImageID           string            `json:"imageID"`
 	OSDiskSize        int               `json:"osDiskSize"`
 	DataDiskSize      int               `json:"dataDiskSize"`
+}
+
+type AzureImagePlan struct {
+	Name      string `json:"name,omitempty"`
+	Publisher string `json:"publisher,omitempty"`
+	Product   string `json:"product,omitempty"`
 }
