@@ -22,67 +22,64 @@ import (
 	"github.com/spf13/pflag"
 
 	"github.com/kubermatic/kubeone/pkg/credentials"
-	"github.com/kubermatic/kubeone/pkg/state"
 	"github.com/kubermatic/kubeone/pkg/tasks"
 )
 
-type upgradeOpts struct {
+type applyOpts struct {
 	globalOptions
-	ForceUpgrade              bool `longflag:"force" shortflag:"f"`
-	UpgradeMachineDeployments bool `longflag:"upgrade-machine-deployments"`
+	NoInit      bool `longflag:"no-init"`
+	Force       bool `longflag:"force"`
+	AutoApprove bool `longflag:"auto-approve"`
 }
 
-func (opts *upgradeOpts) BuildState() (*state.State, error) {
-	s, err := opts.globalOptions.BuildState()
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to build state")
-	}
+func applyCmd(rootFlags *pflag.FlagSet) *cobra.Command {
+	opts := &applyOpts{}
 
-	s.ForceUpgrade = opts.ForceUpgrade
-	s.UpgradeMachineDeployments = opts.UpgradeMachineDeployments
-	return s, nil
-}
-
-func upgradeCmd(rootFlags *pflag.FlagSet) *cobra.Command {
-	opts := &upgradeOpts{}
 	cmd := &cobra.Command{
-		Use:   "upgrade <manifest>",
-		Short: "Upgrade Kubernetes",
-		Long: `Upgrade Kubernetes
+		Hidden: true, // for now
+		Use:    "apply",
+		Short:  "apply reconcile the cluster",
+		Long: `
+Reconcile (Install/Upgrade/Repair/Restore) Kubernetes cluster on pre-existing machines
 
 This command takes KubeOne manifest which contains information about hosts and how the cluster should be provisioned.
 It's possible to source information about hosts from Terraform output, using the '--tfjson' flag.
 `,
-		Example: `kubeone upgrade -m mycluster.yaml -t terraformoutput.json`,
-		RunE: func(_ *cobra.Command, _ []string) error {
+		Example: `kubeone apply -m mycluster.yaml -t terraformoutput.json`,
+		RunE: func(_ *cobra.Command, args []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
 				return errors.Wrap(err, "unable to get global flags")
 			}
 
 			opts.globalOptions = *gopts
-			return runUpgrade(opts)
+
+			return runApply(opts)
 		},
 	}
 
-	cmd.Flags().BoolVarP(
-		&opts.ForceUpgrade,
-		longFlagName(opts, "ForceUpgrade"),
-		shortFlagName(opts, "ForceUpgrade"),
+	cmd.Flags().BoolVar(
+		&opts.NoInit,
+		longFlagName(opts, "NoInit"),
 		false,
-		"force start upgrade process")
+		"don't initialize the cluster (only install binaries)")
 
 	cmd.Flags().BoolVar(
-		&opts.UpgradeMachineDeployments,
-		longFlagName(opts, "UpgradeMachineDeployments"),
+		&opts.AutoApprove,
+		longFlagName(opts, "AutoApprove"),
 		false,
-		"upgrade MachineDeployments objects")
+		"auto approve plan")
+
+	cmd.Flags().BoolVar(
+		&opts.Force,
+		longFlagName(opts, "Force"),
+		false,
+		"use force to install new binary versions (!dangerous!)")
 
 	return cmd
 }
 
-// runUpgrade upgrades Kubernetes on the provided machines
-func runUpgrade(opts *upgradeOpts) error {
+func runApply(opts *applyOpts) error {
 	s, err := opts.BuildState()
 	if err != nil {
 		return errors.Wrap(err, "failed to initialize State")
@@ -94,5 +91,15 @@ func runUpgrade(opts *upgradeOpts) error {
 		return errors.Wrap(err, "failed to validate credentials")
 	}
 
-	return errors.Wrap(tasks.WithUpgrade(nil).Run(s), "failed to upgrade cluster")
+	probbing := tasks.WithHostnameOS(nil)
+	probbing = tasks.WithProbes(probbing)
+
+	if err = probbing.Run(s); err != nil {
+		return err
+	}
+
+	// later in this point we going to make decision and run different tasks, should we run install or upgrade based on
+	// the state we accumulated in s.LiveCluster
+
+	return nil
 }
