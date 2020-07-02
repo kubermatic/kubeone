@@ -1,5 +1,19 @@
 # Changelog
 
+# [v1.0.0-beta.1](https://github.com/kubermatic/kubeone/releases/tag/v1.0.0-beta.1) - 2020-07-02
+
+## Known Issues
+
+* machine-controller is failing to sign Kubelet CertificateSingingRequests (CSRs) for worker nodes on GCP due to [missing hostname in the Machine object](https://github.com/kubermatic/machine-controller/issues/781). We are currently working on a fix. In meanwhile, you can sign the CSRs manually by following [instructions](https://kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster/#approving-certificate-signing-requests) from the Kubernetes docs.
+* It remains impossible to provision Kubernetes 1.16.10+ clusters on CentOS 7. CentOS 8 and RHEL are unaffected. We are investigating the root cause of the issue.
+
+## Changed
+
+### Bug Fixes
+
+* Remove hold from the docker-ce-cli package on upgrade ([#941](https://github.com/kubermatic/kubeone/pull/941))
+  * This ensures clusters created with KubeOne v0.11 can be upgraded using KubeOne v1.0.0-beta.1 release
+
 # [v1.0.0-beta.0](https://github.com/kubermatic/kubeone/releases/tag/v1.0.0-beta.0) - 2020-07-01
 
 ## Attention Needed
@@ -8,8 +22,9 @@
 
 ## Known Issues
 
-* machine-controller is failing to sign Kubelet CertificateSingingRequests (CSRs) for worker nodes due to [missing hostname in the Machine object](https://github.com/kubermatic/machine-controller/issues/781). We are currently working on a fix. In meanwhile, you can sign the CSRs manually by following [instructions](https://kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster/#approving-certificate-signing-requests) from the Kubernetes docs.
+* machine-controller is failing to sign Kubelet CertificateSingingRequests (CSRs) for worker nodes on GCP due to [missing hostname in the Machine object](https://github.com/kubermatic/machine-controller/issues/781). We are currently working on a fix. In meanwhile, you can sign the CSRs manually by following [instructions](https://kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster/#approving-certificate-signing-requests) from the Kubernetes docs.
 * It remains impossible to provision Kubernetes 1.16.10+ clusters on CentOS 7. CentOS 8 and RHEL are unaffected. We are investigating the root cause of the issue.
+* Trying to upgrade cluster created with KubeOne v0.11.2 or older results in an error due to KubeOne failing to upgrade the `docker-ce-cli` package. This issue has been fixed in the v1.0.0-beta.1 release.
 
 ## Changed
 
