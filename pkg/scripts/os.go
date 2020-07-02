@@ -47,6 +47,14 @@ Acquire::http::Proxy "{{ .HTTP_PROXY }}";
 {{- end }}
 EOF
 
+sudo apt-get update
+sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--force-confold" -y --no-install-recommends \
+	apt-transport-https \
+	ca-certificates \
+	curl \
+	lsb-release \
+	rsync
+
 {{- if .CONFIGURE_REPOSITORIES }}
 curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 curl -fsSL https://download.docker.com/linux/${ID}/gpg | sudo apt-key add -
@@ -57,15 +65,9 @@ echo "deb https://download.docker.com/linux/${ID} $(lsb_release -sc) stable" |
 # You'd think that kubernetes-$(lsb_release -sc) belongs there instead, but the debian repo
 # contains neither kubeadm nor kubelet, and the docs themselves suggest using xenial repo.
 echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
-{{- end }}
 
 sudo apt-get update
-sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--force-confold" -y --no-install-recommends \
-	apt-transport-https \
-	ca-certificates \
-	curl \
-	lsb-release \
-	rsync
+{{- end }}
 
 kube_ver=$(apt-cache madison kubelet | grep "{{ .KUBERNETES_VERSION }}" | head -1 | awk '{print $3}')
 cni_ver=$(apt-cache madison kubernetes-cni | grep "{{ .KUBERNETES_CNI_VERSION }}" | head -1 | awk '{print $3}')
