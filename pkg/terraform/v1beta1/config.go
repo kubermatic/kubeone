@@ -274,6 +274,7 @@ func (c *Config) updateAzureWorkerset(existingWorkerSet *kubeonev1beta1.DynamicW
 		{key: "routeTableName", value: azureCloudConfig.RouteTableName},
 		{key: "securityGroupName", value: azureCloudConfig.SecurityGroupName},
 		{key: "zones", value: azureCloudConfig.Zones},
+		{key: "imagePlan", value: azureCloudConfig.ImagePlan},
 		{key: "subnetName", value: azureCloudConfig.SubnetName},
 		{key: "tags", value: azureCloudConfig.Tags},
 		{key: "vmSize", value: azureCloudConfig.VMSize},
@@ -492,6 +493,11 @@ func setWorkersetFlag(w *kubeonev1beta1.DynamicWorkerConfig, name string, value 
 		}
 	case bool:
 	case *bool:
+		if s == nil {
+			return nil
+		}
+	case machinecontroller.AzureImagePlan:
+	case *machinecontroller.AzureImagePlan:
 		if s == nil {
 			return nil
 		}
