@@ -68,7 +68,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--
 
 kube_ver=$(apt-cache madison kubelet | grep "v1.17.4" | head -1 | awk '{print $3}')
 cni_ver=$(apt-cache madison kubernetes-cni | grep "0.8.6" | head -1 | awk '{print $3}')
-sudo apt-mark unhold docker-ce kubelet kubeadm kubectl kubernetes-cni
+sudo apt-mark unhold docker-ce docker-ce-cli kubelet kubeadm kubectl kubernetes-cni
 
 sudo DEBIAN_FRONTEND=noninteractive apt-get install \
 	--option "Dpkg::Options::=--force-confold" \
