@@ -71,7 +71,7 @@ kube_ver=$(apt-cache madison kubelet | grep "{{ .KUBERNETES_VERSION }}" | head -
 cni_ver=$(apt-cache madison kubernetes-cni | grep "{{ .KUBERNETES_CNI_VERSION }}" | head -1 | awk '{print $3}')
 
 {{- if or .FORCE .UPGRADE }}
-sudo apt-mark unhold docker-ce kubelet kubeadm kubectl kubernetes-cni
+sudo apt-mark unhold docker-ce docker-ce-cli kubelet kubeadm kubectl kubernetes-cni
 {{- end }}
 
 sudo DEBIAN_FRONTEND=noninteractive apt-get install \
