@@ -69,6 +69,13 @@ func WithHostnameOS(t Tasks) Tasks {
 	)
 }
 
+// WithProbes will run different probes over the defined cluster
+func WithProbes(t Tasks) Tasks {
+	return t.append(
+		Task{Fn: runProbes, ErrMsg: "probes failed"},
+	)
+}
+
 // WithFullInstall with install binaries (using WithBinariesOnly) and
 // orchestrate complete cluster init
 func WithFullInstall(t Tasks) Tasks {

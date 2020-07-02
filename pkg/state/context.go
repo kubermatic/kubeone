@@ -46,6 +46,7 @@ func New(ctx context.Context) (*State, error) {
 // utilities like logger
 type State struct {
 	Cluster                   *kubeoneapi.KubeOneCluster
+	LiveCluster               *Cluster
 	Logger                    logrus.FieldLogger
 	Connector                 *ssh.Connector
 	Configuration             *configupload.Configuration

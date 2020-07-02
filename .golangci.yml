@@ -19,9 +19,9 @@ linters:
   - goconst
   - gocritic
   - gocyclo
-  - golint
   - gofmt
   - goimports
+  - golint
   - gosec
   - gosimple
   - govet

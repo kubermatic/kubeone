@@ -19,10 +19,11 @@ package kubeconfig
 import (
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/state"
-
 	"k8s.io/client-go/tools/clientcmd"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+
+	"github.com/kubermatic/kubeone/pkg/ssh"
+	"github.com/kubermatic/kubeone/pkg/state"
 )
 
 // Download downloads Kubeconfig over SSH
@@ -38,7 +39,10 @@ func Download(s *state.State) ([]byte, error) {
 		return nil, err
 	}
 
-	// get the kubeconfig
+	return CatKubernetesAdminConf(conn)
+}
+
+func CatKubernetesAdminConf(conn ssh.Connection) ([]byte, error) {
 	konfig, _, _, err := conn.Exec("sudo cat /etc/kubernetes/admin.conf")
 	if err != nil {
 		return nil, err

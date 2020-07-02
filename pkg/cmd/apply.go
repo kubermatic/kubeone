@@ -1,10 +1,28 @@
+/*
+Copyright 2019 The KubeOne Authors.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package cmd
 
 import (
-	"github.com/kubermatic/kubeone/pkg/credentials"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+
+	"github.com/kubermatic/kubeone/pkg/credentials"
+	"github.com/kubermatic/kubeone/pkg/tasks"
 )
 
 type applyOpts struct {
@@ -72,6 +90,16 @@ func runApply(opts *applyOpts) error {
 	if err != nil {
 		return errors.Wrap(err, "failed to validate credentials")
 	}
+
+	probbing := tasks.WithHostnameOS(nil)
+	probbing = tasks.WithProbes(probbing)
+
+	if err = probbing.Run(s); err != nil {
+		return err
+	}
+
+	// later in this point we going to make decision and run different tasks, should we run install or upgrade based on
+	// the state we accumulated in s.LiveCluster
 
 	return nil
 }

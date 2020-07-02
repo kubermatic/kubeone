@@ -17,7 +17,6 @@ limitations under the License.
 package ssh
 
 import (
-	"bytes"
 	"context"
 	"io"
 	"io/ioutil"
@@ -37,8 +36,7 @@ import (
 const socketEnvPrefix = "env:"
 
 var (
-	_ Connection = &connection{}
-	_ Tunneler   = &connection{}
+	_ Tunneler = &connection{}
 )
 
 // Connection represents an established connection to an SSH server.
@@ -273,31 +271,39 @@ func (c *connection) Close() error {
 	return c.sshclient.Close()
 }
 
-func (c *connection) Stream(cmd string, stdout io.Writer, stderr io.Writer) (int, error) {
+func (c *connection) POpen(cmd string, stdin io.Reader, stdout io.Writer, stderr io.Writer) (int, error) {
 	sess, err := c.session()
 	if err != nil {
 		return 0, errors.Wrap(err, "failed to get SSH session")
 	}
 	defer sess.Close()
 
+	sess.Stdin = stdin
 	sess.Stdout = stdout
 	sess.Stderr = stderr
 
 	exitCode := 0
-	err = sess.Run(strings.TrimSpace(cmd))
-	if err != nil {
-		exitCode = 1
+	if err = sess.Run(cmd); err != nil {
+		exitCode = -1
+		if exitErr, ok := err.(*ssh.ExitError); ok {
+			exitCode = exitErr.ExitStatus()
+		}
 	}
 
-	return exitCode, errors.Wrapf(err, "failed to exec command: %s", cmd)
+	// preserve original error
+	return exitCode, err
+}
+
+func (c *connection) Stream(cmd string, stdout io.Writer, stderr io.Writer) (int, error) {
+	return c.POpen(cmd, nil, stdout, stderr)
 }
 
 func (c *connection) Exec(cmd string) (string, string, int, error) {
-	var stdoutBuf, stderrBuf bytes.Buffer
+	var stdoutBuf, stderrBuf strings.Builder
 
-	exitCode, err := c.Stream(cmd, &stdoutBuf, &stderrBuf)
+	exitCode, err := c.POpen(cmd, nil, &stdoutBuf, &stderrBuf)
 
-	return strings.TrimSpace(stdoutBuf.String()), strings.TrimSpace(stderrBuf.String()), exitCode, err
+	return strings.TrimSpace(stdoutBuf.String()), stderrBuf.String(), exitCode, err
 }
 
 func (c *connection) session() (*ssh.Session, error) {
