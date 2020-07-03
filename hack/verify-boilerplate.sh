@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 # Copyright 2019 The KubeOne Authors.
 #
@@ -14,22 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -o errexit
-set -o nounset
-set -o pipefail
+set -eu
 
-REPO_ROOT=$(dirname "${BASH_SOURCE}")/..
+cd $(dirname $0)/..
 
-boilerDir="${REPO_ROOT}/hack/boilerplate"
-boiler="${boilerDir}/boilerplate.py"
-
-files_need_boilerplate=($(${boiler} "$@"))
-
-# Run boilerplate check
-if [[ ${#files_need_boilerplate[@]} -gt 0 ]]; then
-  for file in "${files_need_boilerplate[@]}"; do
-    echo "Boilerplate header is wrong for: ${file}" >&2
-  done
-
-  exit 1
-fi
+boilerplate \
+  -boilerplates hack/boilerplate/ \
+  -exclude pkg/apis/apiserver \
+  -exclude pkg/apis/kubeadm

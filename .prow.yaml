@@ -8,7 +8,7 @@ presubmits:
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     spec:
       containers:
-      - image: python:2.7
+      - image: quay.io/kubermatic-labs/boilerplate:v0.1.1
         command:
         - make
         args:
