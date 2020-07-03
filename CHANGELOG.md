@@ -1,6 +1,35 @@
 # Changelog
 
+# [v1.0.0-beta.2](https://github.com/kubermatic/kubeone/releases/tag/v1.0.0-beta.2) - 2020-07-03
+
+## Attention Needed
+
+* It's recommended to use this release instead of v0.11, as v0.11 doesn't support the latest Kubernetes patch releases. Older Kubernetes releases are affected by two CVEs and therefore it's strongly advised to use 1.16.11/1.17.7/1.18.4 or newer.
+
+## Known Issues
+
+* See known issues for the [v1.0.0-beta.1 release](https://github.com/kubermatic/kubeone/blob/master/CHANGELOG.md#known-issues) for more details.
+
+## Added
+
+* Add the `ImagePlan` field to Azure Terraform integration ([#947](https://github.com/kubermatic/kubeone/pull/947))
+
+## Changed
+
+### Bug Fixes
+
+* Install `curl` before configuring repositories on Ubuntu instances ([#945](https://github.com/kubermatic/kubeone/pull/945))
+  * Fixes the cluster provisioning for instances that don't have `curl` installed
+
+### Updated
+
+* Update machine-controller to v1.15.1 ([#947](https://github.com/kubermatic/kubeone/pull/947))
+
 # [v1.0.0-beta.1](https://github.com/kubermatic/kubeone/releases/tag/v1.0.0-beta.1) - 2020-07-02
+
+## Attention Needed
+
+* It's recommended to use this release instead of v0.11, as v0.11 doesn't support the latest Kubernetes patch releases. Older Kubernetes releases are affected by two CVEs and therefore it's strongly advised to use 1.16.11/1.17.7/1.18.4 or newer.
 
 ## Known Issues
 
