@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The KubeOne Authors.
+Copyright 2020 The KubeOne Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ type Host struct {
 
 type ComponentStatus struct {
 	Version *semver.Version
-	Status  int64
+	Status  uint64
 }
 
 const (
@@ -55,7 +55,18 @@ const (
 	ComponentInstalled                  // installed (package, or direct download)
 	SystemDStatusActive                 // systemd unit is activated
 	SystemDStatusRunning                // systemd unit is running
+	KubeletInitialized                  // kubelet config found (means node is initialized)
 )
+
+func (c *Cluster) IsProvisioned() bool {
+	for i := range c.ControlPlane {
+		if c.ControlPlane[i].Initialized() {
+			return true
+		}
+	}
+
+	return false
+}
 
 func (c *Cluster) Healthy() bool {
 	for i := range c.ControlPlane {
@@ -77,12 +88,24 @@ func (h *Host) RestConfig() (*rest.Config, error) {
 	return clientcmd.RESTConfigFromKubeConfig(h.Kubeconfig)
 }
 
+func (h *Host) Initialized() bool {
+	return h.IsProvisioned() && h.Kubernetes.Status&KubeletInitialized != 0
+}
+
 func (h *Host) Ready() bool {
 	return h.IsInCluster && h.Healthy()
 }
 
+func (h *Host) IsProvisioned() bool {
+	return h.ContainerRuntime.IsProvisioned() && h.Kubernetes.IsProvisioned()
+}
+
 func (h *Host) Healthy() bool {
 	return h.ContainerRuntime.Healthy() && h.Kubernetes.Healthy()
+}
+
+func (cs *ComponentStatus) IsProvisioned() bool {
+	return cs.Status&(SystemDStatusRunning|ComponentInstalled|SystemDStatusActive) != 0
 }
 
 func (cs *ComponentStatus) Healthy() bool {
