@@ -32,8 +32,12 @@ import (
 const (
 	systemdShowStatusCMD = `systemctl show %s -p LoadState,ActiveState,SubState`
 
-	dockerVersionCMD  = `sudo docker version -f "{{ .Server.Version }}"`
-	kubeletVersionCMD = `kubelet --version | cut -d' ' -f2`
+	dockerVersionDPKG = `dpkg-query --show --showformat='${Version}' docker-ce | cut -d: -f2 | cut -d~ -f1`
+	dockerVersionRPM  = `rpm -qa --queryformat '%{RPMTAG_VERSION}' docker-ce`
+
+	kubeletVersionDPKG = `dpkg-query --show --showformat='${Version}' kubelet | cut -d- -f1`
+	kubeletVersionRPM  = `rpm -qa --queryformat '%{RPMTAG_VERSION}' kubelet`
+	kubeletVersionCLI  = `kubelet --version | cut -d' ' -f2`
 
 	kubeletInitializedCMD = `test -f /etc/kubernetes/kubelet.conf`
 )
@@ -121,7 +125,22 @@ func detectDockerStatusVersion(host *state.Host, conn ssh.Connection) error {
 		return nil
 	}
 
-	out, _, _, err := conn.Exec(dockerVersionCMD)
+	var dockerVersionCmd string
+
+	switch host.OS {
+	case kubeoneapi.OperatingSystemNameCentOS, kubeoneapi.OperatingSystemNameRHEL:
+		dockerVersionCmd = dockerVersionRPM
+	case kubeoneapi.OperatingSystemNameUbuntu:
+		dockerVersionCmd = dockerVersionDPKG
+	case kubeoneapi.OperatingSystemNameFlatcar, kubeoneapi.OperatingSystemNameCoreOS:
+		// we don't care about version because on container linux we don't manage docker
+		host.ContainerRuntime.Version = &semver.Version{}
+		return nil
+	default:
+		return nil
+	}
+
+	out, _, _, err := conn.Exec(dockerVersionCmd)
 	if err != nil {
 		return err
 	}
@@ -147,7 +166,20 @@ func detectKubeletStatusVersion(host *state.Host, conn ssh.Connection) error {
 		return nil
 	}
 
-	out, _, _, err := conn.Exec(kubeletVersionCMD)
+	var kubeletVersionCmd string
+
+	switch host.OS {
+	case kubeoneapi.OperatingSystemNameCentOS, kubeoneapi.OperatingSystemNameRHEL:
+		kubeletVersionCmd = kubeletVersionRPM
+	case kubeoneapi.OperatingSystemNameUbuntu:
+		kubeletVersionCmd = kubeletVersionDPKG
+	case kubeoneapi.OperatingSystemNameFlatcar, kubeoneapi.OperatingSystemNameCoreOS:
+		kubeletVersionCmd = kubeletVersionCLI
+	default:
+		return nil
+	}
+
+	out, _, _, err := conn.Exec(kubeletVersionCmd)
 	if err != nil {
 		return err
 	}
