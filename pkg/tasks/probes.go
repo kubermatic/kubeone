@@ -187,7 +187,7 @@ func detectKubeletStatusVersion(host *state.Host, conn ssh.Connection) error {
 	return nil
 }
 
-func systemdStatus(conn ssh.Connection, service string) (int64, error) {
+func systemdStatus(conn ssh.Connection, service string) (uint64, error) {
 	out, _, _, err := conn.Exec(fmt.Sprintf(systemdShowStatusCMD, service))
 	if err != nil {
 		return 0, err
@@ -199,7 +199,7 @@ func systemdStatus(conn ssh.Connection, service string) (int64, error) {
 		return 0, err
 	}
 
-	var status int64
+	var status uint64
 
 	if m["LoadState"] == "loaded" {
 		status |= state.ComponentInstalled
