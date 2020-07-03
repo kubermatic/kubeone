@@ -34,6 +34,8 @@ const (
 
 	dockerVersionCMD  = `sudo docker version -f "{{ .Server.Version }}"`
 	kubeletVersionCMD = `kubelet --version | cut -d' ' -f2`
+
+	kubeletInitializedCMD = `test -f /etc/kubernetes/kubelet.conf`
 )
 
 func runProbes(s *state.State) error {
@@ -80,6 +82,10 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Conne
 		return err
 	}
 
+	if err := detectKubeletInitialized(h, conn); err != nil {
+		return err
+	}
+
 	fmt.Println("---------------")
 	fmt.Printf("host: %q\n", h.Hostname)
 	fmt.Printf("docker version: %q\n", h.ContainerRuntime.Version)
@@ -94,6 +100,7 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Conne
 	fmt.Printf("kubelet is running?: %t\n", h.Kubernetes.Status&state.SystemDStatusRunning != 0)
 	fmt.Printf("kubelet is active?: %t\n", h.Kubernetes.Status&state.SystemDStatusActive != 0)
 	fmt.Printf("kubelet is restarting?: %t\n", h.Kubernetes.Status&state.SystemDStatusRestarting != 0)
+	fmt.Printf("kubelet is initialized?: %t\n", h.Kubernetes.Status&state.KubeletInitialized != 0)
 	fmt.Println()
 
 	s.LiveCluster.Lock.Lock()
@@ -150,6 +157,21 @@ func detectKubeletStatusVersion(host *state.Host, conn ssh.Connection) error {
 		return err
 	}
 	host.Kubernetes.Version = ver
+
+	return nil
+}
+
+func detectKubeletInitialized(host *state.Host, conn ssh.Connection) error {
+	_, _, exitcode, err := conn.Exec(kubeletInitializedCMD)
+	if err != nil && exitcode <= 0 {
+		// If there's an error and exit code is 0, there's mostly like a connection
+		// error. If exit code is -1, there might be a session problem.
+		return err
+	}
+
+	if exitcode == 0 {
+		host.Kubernetes.Status |= state.KubeletInitialized
+	}
 
 	return nil
 }
