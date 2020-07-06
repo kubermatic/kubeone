@@ -42,7 +42,6 @@ type Host struct {
 
 	// Applicable only for CP nodes
 	APIServer ContainerStatus
-	Etcd      ContainerStatus
 
 	IsInCluster bool
 	Kubeconfig  []byte
@@ -54,8 +53,7 @@ type ComponentStatus struct {
 }
 
 type ContainerStatus struct {
-	Version *semver.Version
-	Status  uint64
+	Status uint64
 }
 
 const (
@@ -74,7 +72,7 @@ const (
 */
 
 // IsProvisioned returns is the target cluster provisioned.
-// The cluster is consider provisioned if there is at least one initialized host.
+// The cluster is consider provisioned if there is at least one initialized host
 func (c *Cluster) IsProvisioned() bool {
 	for i := range c.ControlPlane {
 		if c.ControlPlane[i].Initialized() {
@@ -85,15 +83,25 @@ func (c *Cluster) IsProvisioned() bool {
 	return false
 }
 
-// IsDegraded returns is the target cluster in a degraded mode.
-// The cluster is consider degraded if there is at least one degraded host.
+// IsDegraded checks is there a non-healthy host in a cluster
 func (c *Cluster) IsDegraded() bool {
 	for i := range c.ControlPlane {
-		if c.ControlPlane[i].IsDegraded() {
+		if !c.ControlPlane[i].ControlPlaneHealthy() {
 			return true
 		}
 	}
+	return false
+}
 
+// IsBroken checks is there a broken node in a cluster.
+// If there's a broken node, IsDegraded will also return true, but
+// there is manual intervention required (i.e. remove the instance)
+func (c *Cluster) IsBroken() bool {
+	for i := range c.ControlPlane {
+		if c.ControlPlane[i].IsInCluster && !c.ControlPlane[i].APIServer.Healthy() {
+			return true
+		}
+	}
 	return false
 }
 
@@ -110,7 +118,7 @@ func (c *Cluster) Healthy() bool {
 	}
 
 	for i := range c.Workers {
-		if !c.Workers[i].Healthy() {
+		if !c.Workers[i].WorkerHealthy() {
 			return false
 		}
 	}
@@ -125,7 +133,7 @@ func (c *Cluster) QuorumSatisfied() bool {
 	tolerance := len(c.ControlPlane) - quorum
 
 	for i := range c.ControlPlane {
-		if c.ControlPlane[i].Healthy() {
+		if c.ControlPlane[i].ControlPlaneHealthy() {
 			healthyNodes++
 		}
 	}
@@ -152,7 +160,7 @@ func (c *Cluster) UpgradeNeeded() bool {
 	return false
 }
 
-// UpgradeMachinesNeeded compares actual and expected Kubernetes version for MachineDeployments
+// UpgradeMachinesNeeded compares actual and expected Kubernetes version for Machines
 // TODO: Implement UpgradeMachinesNeeded (always returns false)
 func (c *Cluster) UpgradeMachinesNeeded() bool {
 	return false
@@ -167,34 +175,28 @@ func (h *Host) RestConfig() (*rest.Config, error) {
 	return clientcmd.RESTConfigFromKubeConfig(h.Kubeconfig)
 }
 
-// Initialized checks is a host Initialized: provisioned and kubelet is initialized
+// Initialized checks is a host provisioned and is kubelet initialized
 func (h *Host) Initialized() bool {
 	return h.IsProvisioned() && h.Kubelet.Status&KubeletInitialized != 0
 }
 
-// Ready checks is a host Ready: is in the cluster and is healthy
-func (h *Host) Ready() bool {
-	return h.IsInCluster && h.Healthy()
-}
-
-// IsProvisioned checks is a host Provisioned: CRI and Kubelet are provisioned
+// IsProvisioned checks are CRI and Kubelet provisioned on a host
 func (h *Host) IsProvisioned() bool {
 	return h.ContainerRuntime.IsProvisioned() && h.Kubelet.IsProvisioned()
 }
 
-// Healthy checks is a host Healthy: CRI and Kubelet are healthy
-func (h *Host) Healthy() bool {
-	return h.ContainerRuntime.Healthy() && h.Kubelet.Healthy()
-}
-
-// ControlPlaneHealthy checks is a control-plane host Healthy: host Healthy and Etcd and API Server healthy
+// ControlPlaneHealthy checks is a control-plane host part of the cluster and are CRI, Kubelet, and API server healthy
 func (h *Host) ControlPlaneHealthy() bool {
-	return h.Healthy() && h.Etcd.Healthy() && h.APIServer.Healthy()
+	return h.healthy() && h.APIServer.Healthy()
 }
 
-// IsDegreaded checks is a host Degraded: is not in a cluster or API server is not running
-func (h *Host) IsDegraded() bool {
-	return !h.IsInCluster || h.APIServer.Status&PodRunning == 0
+// WorkerHealthy checks is a worker host part of the cluster and are CRI and Kubelet healthy
+func (h *Host) WorkerHealthy() bool {
+	return h.healthy()
+}
+
+func (h *Host) healthy() bool {
+	return h.IsInCluster && h.ContainerRuntime.Healthy() && h.Kubelet.Healthy()
 }
 
 /*
