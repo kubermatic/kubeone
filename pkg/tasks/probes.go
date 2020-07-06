@@ -62,8 +62,7 @@ func runProbes(s *state.State) error {
 
 	for i := range s.Cluster.ControlPlane.Hosts {
 		s.LiveCluster.ControlPlane = append(s.LiveCluster.ControlPlane, state.Host{
-			Hostname: s.Cluster.ControlPlane.Hosts[i].Hostname,
-			Host:     &s.Cluster.ControlPlane.Hosts[i],
+			Host: &s.Cluster.ControlPlane.Hosts[i],
 		})
 	}
 
@@ -71,7 +70,11 @@ func runProbes(s *state.State) error {
 		return err
 	}
 
-	return investigateCluster(s)
+	if s.LiveCluster.IsProvisioned() {
+		return investigateCluster(s)
+	}
+
+	return nil
 }
 
 func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
@@ -83,7 +86,7 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Conne
 	s.LiveCluster.Lock.Lock()
 	for i := range s.LiveCluster.ControlPlane {
 		host := s.LiveCluster.ControlPlane[i]
-		if host.Hostname == node.Hostname {
+		if host.Host.Hostname == node.Hostname {
 			h = &host
 			idx = i
 			break
@@ -108,7 +111,7 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Conne
 	}
 
 	fmt.Println("---------------")
-	fmt.Printf("host: %q\n", h.Hostname)
+	fmt.Printf("host: %q\n", h.Host.Hostname)
 	fmt.Printf("docker version: %q\n", h.ContainerRuntime.Version)
 	fmt.Printf("docker is installed?: %t\n", h.ContainerRuntime.Status&state.ComponentInstalled != 0)
 	fmt.Printf("docker is running?: %t\n", h.ContainerRuntime.Status&state.SystemDStatusRunning != 0)
@@ -135,14 +138,13 @@ func investigateCluster(s *state.State) error {
 		return errors.New("unable to investigate non-provisioned cluster")
 	}
 	if s.DynamicClient == nil {
-		// HACK: This func needs to be modified to work with apply
+		// TODO: BuildKubernetesClientset should be able to take custom kubeconfig file to work properly with apply
 		if err := kubeconfig.BuildKubernetesClientset(s); err != nil {
 			return err
 		}
-		//return errors.New("clientset not initialized")
 	}
 
-	// Get node list
+	// Get the node list
 	nodes := corev1.NodeList{}
 	nodeListOpts := dynclient.ListOptions{
 		LabelSelector: labels.SelectorFromSet(map[string]string{preflightstatus.LabelControlPlaneNode: ""}),
@@ -151,47 +153,54 @@ func investigateCluster(s *state.State) error {
 		return errors.Wrap(err, "unable to list nodes")
 	}
 
-	// host -> node => okay
-	// host -> / => provision the host
-	// / -> node => delete the node
-
-	// Parse node list
+	// Parse the node list
 	knownHostsIdentities := sets.NewString()
 	knownNodesIdentities := sets.NewString()
 
 	for _, host := range s.LiveCluster.ControlPlane {
 		knownHostsIdentities.Insert(host.Host.Hostname)
 	}
+
+	s.LiveCluster.Lock.Lock()
 	for _, node := range nodes.Items {
 		knownNodesIdentities.Insert(node.Name)
 		if knownHostsIdentities.Has(node.Name) {
-			// host.IsInCluster = true
 			for i := range s.LiveCluster.ControlPlane {
-				if node.Name == s.LiveCluster.ControlPlane[i].Hostname {
+				if node.Name == s.LiveCluster.ControlPlane[i].Host.Hostname {
 					s.LiveCluster.ControlPlane[i].IsInCluster = true
 				}
 			}
 		}
 	}
+	s.LiveCluster.Lock.Unlock()
 
-	// Compare sets
-	unprovisionedHosts := knownHostsIdentities.Difference(knownNodesIdentities)
-	nodesToRemove := knownNodesIdentities.Difference(knownHostsIdentities)
+	// Compare sets.
+	// We can safely assume that the node object name is going to be same as the hostname,
+	// because we explicitly set that in the kubeadm config file
+	hostsToBeProvisioned := knownHostsIdentities.Difference(knownNodesIdentities)
+	nodesToBeRemoved := knownNodesIdentities.Difference(knownHostsIdentities)
 
+	s.LiveCluster.Lock.Lock()
 	for i := range s.LiveCluster.ControlPlane {
 		apiserverStatus, _ := apiserverstatus.Get(s, *s.LiveCluster.ControlPlane[i].Host)
 		if apiserverStatus.Health {
 			s.LiveCluster.ControlPlane[i].APIServer.Status |= state.PodRunning
 		}
 	}
+	s.LiveCluster.Lock.Unlock()
 
+	fmt.Println()
+	fmt.Println("---------------")
+	fmt.Printf("Unprovisioned hosts: %q\n", hostsToBeProvisioned)
+	fmt.Printf("Nodes to be removed: %q\n", nodesToBeRemoved)
+	fmt.Printf("Is cluster degraded: %t\n", s.LiveCluster.IsDegraded())
+	fmt.Println()
+
+	fmt.Println("---------------")
 	for _, host := range s.LiveCluster.ControlPlane {
-		fmt.Printf("Host %q API server %t\n", host.Host.Hostname, host.APIServer.Status&state.PodRunning != 0)
+		fmt.Printf("API server running on %q: %t\n", host.Host.Hostname, host.APIServer.Status&state.PodRunning != 0)
 	}
-
-	fmt.Printf("Unprovisioned hosts: %q\n", unprovisionedHosts)
-	fmt.Printf("Nodes to be removed: %q\n", nodesToRemove)
-	fmt.Printf("Cluster degraded: %t\n", s.LiveCluster.IsDegraded())
+	fmt.Println()
 
 	return nil
 }

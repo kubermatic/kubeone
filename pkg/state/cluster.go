@@ -34,8 +34,8 @@ type Cluster struct {
 }
 
 type Host struct {
-	Hostname string
-	Host     *kubeone.HostConfig
+	// TODO: Consider renaming Host.Host as it's repetitive
+	Host *kubeone.HostConfig
 
 	ContainerRuntime ComponentStatus
 	Kubelet          ComponentStatus
@@ -69,6 +69,12 @@ const (
 	PodRunning                          // pod is running
 )
 
+/*
+	Cluster level checks
+*/
+
+// IsProvisioned returns is the target cluster provisioned.
+// The cluster is consider provisioned if there is at least one initialized host.
 func (c *Cluster) IsProvisioned() bool {
 	for i := range c.ControlPlane {
 		if c.ControlPlane[i].Initialized() {
@@ -79,6 +85,8 @@ func (c *Cluster) IsProvisioned() bool {
 	return false
 }
 
+// IsDegraded returns is the target cluster in a degraded mode.
+// The cluster is consider degraded if there is at least one degraded host.
 func (c *Cluster) IsDegraded() bool {
 	for i := range c.ControlPlane {
 		if c.ControlPlane[i].IsDegraded() {
@@ -89,6 +97,7 @@ func (c *Cluster) IsDegraded() bool {
 	return false
 }
 
+// Healthy checks the cluster overall healthiness
 func (c *Cluster) Healthy() bool {
 	if !c.QuorumSatisfied() {
 		return false
@@ -109,6 +118,7 @@ func (c *Cluster) Healthy() bool {
 	return true
 }
 
+// QuorumSatisfied checks is number of healthy nodes satisfying the quorum
 func (c *Cluster) QuorumSatisfied() bool {
 	var healthyNodes int
 	quorum := int(float64(((len(c.ControlPlane) / 2) + 1)))
@@ -123,6 +133,7 @@ func (c *Cluster) QuorumSatisfied() bool {
 	return healthyNodes >= tolerance
 }
 
+// UpgradeNeeded compares actual and expected Kubernetes versions for control plane and static worker nodes
 func (c *Cluster) UpgradeNeeded() bool {
 	for i := range c.ControlPlane {
 		// TODO: We should eventually error if expected version is lower than
@@ -141,47 +152,71 @@ func (c *Cluster) UpgradeNeeded() bool {
 	return false
 }
 
+// UpgradeMachinesNeeded compares actual and expected Kubernetes version for MachineDeployments
+// TODO: Implement UpgradeMachinesNeeded (always returns false)
 func (c *Cluster) UpgradeMachinesNeeded() bool {
-	// TODO: implement
 	return false
 }
 
+/*
+	Host level checks
+*/
+
+// RestConfig grabs Kubeconfig from a node
 func (h *Host) RestConfig() (*rest.Config, error) {
 	return clientcmd.RESTConfigFromKubeConfig(h.Kubeconfig)
 }
 
+// Initialized checks is a host Initialized: provisioned and kubelet is initialized
 func (h *Host) Initialized() bool {
 	return h.IsProvisioned() && h.Kubelet.Status&KubeletInitialized != 0
 }
 
+// Ready checks is a host Ready: is in the cluster and is healthy
 func (h *Host) Ready() bool {
 	return h.IsInCluster && h.Healthy()
 }
 
+// IsProvisioned checks is a host Provisioned: CRI and Kubelet are provisioned
 func (h *Host) IsProvisioned() bool {
 	return h.ContainerRuntime.IsProvisioned() && h.Kubelet.IsProvisioned()
 }
 
+// Healthy checks is a host Healthy: CRI and Kubelet are healthy
 func (h *Host) Healthy() bool {
 	return h.ContainerRuntime.Healthy() && h.Kubelet.Healthy()
 }
 
+// ControlPlaneHealthy checks is a control-plane host Healthy: host Healthy and Etcd and API Server healthy
 func (h *Host) ControlPlaneHealthy() bool {
 	return h.Healthy() && h.Etcd.Healthy() && h.APIServer.Healthy()
 }
 
+// IsDegreaded checks is a host Degraded: is not in a cluster or API server is not running
 func (h *Host) IsDegraded() bool {
 	return !h.IsInCluster || h.APIServer.Status&PodRunning == 0
 }
 
+/*
+	Component status level checks
+*/
+
+// IsProvisioned checks is a component running, installed and active
+// TODO: IsProvisioned should just check is component installed
 func (cs *ComponentStatus) IsProvisioned() bool {
 	return cs.Status&(SystemDStatusRunning|ComponentInstalled|SystemDStatusActive) != 0
 }
 
+// Healthy checks is a component running and not restarting
 func (cs *ComponentStatus) Healthy() bool {
 	return cs.Status&SystemDStatusRunning != 0 && cs.Status&SystemDStatusRestarting == 0
 }
 
+/*
+	Container status level checks
+*/
+
+// Healthy checks is a pod running
 func (cs *ContainerStatus) Healthy() bool {
 	return cs.Status&PodRunning != 0
 }
