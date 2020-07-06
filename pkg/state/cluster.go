@@ -27,23 +27,33 @@ import (
 )
 
 type Cluster struct {
-	ControlPlane []Host
-	Workers      []Host
-	Lock         sync.Mutex
+	ControlPlane    []Host
+	Workers         []Host
+	ExpectedVersion *semver.Version
+	Lock            sync.Mutex
 }
 
 type Host struct {
+	Hostname string
+	Host     *kubeone.HostConfig
+
 	ContainerRuntime ComponentStatus
-	Hostname         string
-	IsInCluster      bool
-	Kubeconfig       []byte
-	Kubernetes       ComponentStatus
-	OS               kubeone.OperatingSystemName
-	PrivateAddress   string
-	PublicAddress    string
+	Kubelet          ComponentStatus
+
+	// Applicable only for CP nodes
+	APIServer ContainerStatus
+	Etcd      ContainerStatus
+
+	IsInCluster bool
+	Kubeconfig  []byte
 }
 
 type ComponentStatus struct {
+	Version *semver.Version
+	Status  uint64
+}
+
+type ContainerStatus struct {
 	Version *semver.Version
 	Status  uint64
 }
@@ -56,6 +66,8 @@ const (
 	SystemDStatusActive                 // systemd unit is activated
 	SystemDStatusRunning                // systemd unit is running
 	KubeletInitialized                  // kubelet config found (means node is initialized)
+	PodRunning                          // pod is running
+	PodHealthy                          // all containers in a pod are healthy
 )
 
 func (c *Cluster) IsProvisioned() bool {
@@ -69,8 +81,12 @@ func (c *Cluster) IsProvisioned() bool {
 }
 
 func (c *Cluster) Healthy() bool {
+	if !c.QuorumSatisfied() {
+		return false
+	}
+
 	for i := range c.ControlPlane {
-		if !c.ControlPlane[i].Healthy() {
+		if !c.ControlPlane[i].ControlPlaneHealthy() {
 			return false
 		}
 	}
@@ -84,12 +100,49 @@ func (c *Cluster) Healthy() bool {
 	return true
 }
 
+func (c *Cluster) QuorumSatisfied() bool {
+	var healthyNodes int
+	quorum := int(float64(((len(c.ControlPlane) / 2) + 1)))
+	tolerance := len(c.ControlPlane) - quorum
+
+	for i := range c.ControlPlane {
+		if c.ControlPlane[i].Healthy() {
+			healthyNodes++
+		}
+	}
+
+	return healthyNodes >= tolerance
+}
+
+func (c *Cluster) UpgradeNeeded() bool {
+	for i := range c.ControlPlane {
+		// TODO: We should eventually error if expected version is lower than
+		// current, since downgrades aren't allowed
+		if c.ExpectedVersion.GreaterThan(c.ControlPlane[i].Kubelet.Version) {
+			return true
+		}
+	}
+
+	for i := range c.Workers {
+		if c.ExpectedVersion.GreaterThan(c.Workers[i].Kubelet.Version) {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (c *Cluster) UpgradeMachinesNeeded() bool {
+	// TODO: implement
+	return false
+}
+
 func (h *Host) RestConfig() (*rest.Config, error) {
 	return clientcmd.RESTConfigFromKubeConfig(h.Kubeconfig)
 }
 
 func (h *Host) Initialized() bool {
-	return h.IsProvisioned() && h.Kubernetes.Status&KubeletInitialized != 0
+	return h.IsProvisioned() && h.Kubelet.Status&KubeletInitialized != 0
 }
 
 func (h *Host) Ready() bool {
@@ -97,11 +150,15 @@ func (h *Host) Ready() bool {
 }
 
 func (h *Host) IsProvisioned() bool {
-	return h.ContainerRuntime.IsProvisioned() && h.Kubernetes.IsProvisioned()
+	return h.ContainerRuntime.IsProvisioned() && h.Kubelet.IsProvisioned()
 }
 
 func (h *Host) Healthy() bool {
-	return h.ContainerRuntime.Healthy() && h.Kubernetes.Healthy()
+	return h.ContainerRuntime.Healthy() && h.Kubelet.Healthy()
+}
+
+func (h *Host) ControlPlaneHealthy() bool {
+	return h.Healthy() && h.Etcd.Healthy() && h.APIServer.Healthy()
 }
 
 func (cs *ComponentStatus) IsProvisioned() bool {
@@ -110,4 +167,9 @@ func (cs *ComponentStatus) IsProvisioned() bool {
 
 func (cs *ComponentStatus) Healthy() bool {
 	return cs.Status&SystemDStatusRunning != 0 && cs.Status&SystemDStatusRestarting == 0
+}
+
+func (cs *ContainerStatus) Healthy() bool {
+	// TODO(xmudrii): This needs to be actually set
+	return cs.Status&PodRunning != 0 && cs.Status&PodHealthy != 0
 }
