@@ -110,6 +110,8 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Conne
 		return err
 	}
 
+	s.LiveCluster.Lock.Lock()
+
 	fmt.Println("---------------")
 	fmt.Printf("host: %q\n", h.Config.Hostname)
 	fmt.Printf("docker version: %q\n", h.ContainerRuntime.Version)
@@ -127,7 +129,6 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Conne
 	fmt.Printf("kubelet is initialized?: %t\n", h.Kubelet.Status&state.KubeletInitialized != 0)
 	fmt.Println()
 
-	s.LiveCluster.Lock.Lock()
 	s.LiveCluster.ControlPlane[idx] = *h
 	s.LiveCluster.Lock.Unlock()
 	return nil
