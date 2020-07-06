@@ -34,8 +34,8 @@ type Cluster struct {
 }
 
 type Host struct {
-	// TODO: Consider renaming Host.Host as it's repetitive
-	Host *kubeone.HostConfig
+	// TODO: Consider renaming Config.Config as it's repetitive
+	Config *kubeone.HostConfig
 
 	ContainerRuntime ComponentStatus
 	Kubelet          ComponentStatus
