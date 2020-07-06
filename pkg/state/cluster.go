@@ -102,8 +102,8 @@ func (c *Cluster) Healthy() bool {
 
 func (c *Cluster) QuorumSatisfied() bool {
 	var healthyNodes int
-	totalNodes := len(c.ControlPlane)
-	tolerance := totalNodes - ((totalNodes / 2) + 1)
+	quorum := int(float64(((len(c.ControlPlane) / 2) + 1)))
+	tolerance := len(c.ControlPlane) - quorum
 
 	for i := range c.ControlPlane {
 		if c.ControlPlane[i].Healthy() {
