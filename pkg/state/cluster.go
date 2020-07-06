@@ -67,12 +67,21 @@ const (
 	SystemDStatusRunning                // systemd unit is running
 	KubeletInitialized                  // kubelet config found (means node is initialized)
 	PodRunning                          // pod is running
-	PodHealthy                          // all containers in a pod are healthy
 )
 
 func (c *Cluster) IsProvisioned() bool {
 	for i := range c.ControlPlane {
 		if c.ControlPlane[i].Initialized() {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (c *Cluster) IsDegraded() bool {
+	for i := range c.ControlPlane {
+		if c.ControlPlane[i].IsDegraded() {
 			return true
 		}
 	}
@@ -161,6 +170,10 @@ func (h *Host) ControlPlaneHealthy() bool {
 	return h.Healthy() && h.Etcd.Healthy() && h.APIServer.Healthy()
 }
 
+func (h *Host) IsDegraded() bool {
+	return !h.IsInCluster || h.APIServer.Status&PodRunning == 0
+}
+
 func (cs *ComponentStatus) IsProvisioned() bool {
 	return cs.Status&(SystemDStatusRunning|ComponentInstalled|SystemDStatusActive) != 0
 }
@@ -170,6 +183,5 @@ func (cs *ComponentStatus) Healthy() bool {
 }
 
 func (cs *ContainerStatus) Healthy() bool {
-	// TODO(xmudrii): This needs to be actually set
-	return cs.Status&PodRunning != 0 && cs.Status&PodHealthy != 0
+	return cs.Status&PodRunning != 0
 }

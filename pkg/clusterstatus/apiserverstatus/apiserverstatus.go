@@ -40,7 +40,9 @@ func Get(s *state.State, node kubeoneapi.HostConfig) (*Report, error) {
 	insecureTLSConfig := &tls.Config{InsecureSkipVerify: true} //nolint:gosec
 	roundTripper, err := sshtunnel.NewHTTPTransport(s.Connector, node, insecureTLSConfig)
 	if err != nil {
-		return nil, err
+		return &Report{
+			Health: false,
+		}, err
 	}
 
 	health, err := apiserverHealth(roundTripper, node.PrivateAddress)
