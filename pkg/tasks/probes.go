@@ -43,14 +43,19 @@ const (
 )
 
 func runProbes(s *state.State) error {
-	s.LiveCluster = &state.Cluster{}
+	expectedVersion, err := semver.NewVersion(s.Cluster.Versions.Kubernetes)
+	if err != nil {
+		return err
+	}
 
-	for _, host := range s.Cluster.ControlPlane.Hosts {
+	s.LiveCluster = &state.Cluster{
+		ExpectedVersion: expectedVersion,
+	}
+
+	for i := range s.Cluster.ControlPlane.Hosts {
 		s.LiveCluster.ControlPlane = append(s.LiveCluster.ControlPlane, state.Host{
-			Hostname:       host.Hostname,
-			PublicAddress:  host.PublicAddress,
-			PrivateAddress: host.PrivateAddress,
-			OS:             host.OperatingSystem,
+			Hostname: s.Cluster.ControlPlane.Hosts[i].Hostname,
+			Host:     &s.Cluster.ControlPlane.Hosts[i],
 		})
 	}
 
@@ -99,12 +104,12 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Conne
 	fmt.Printf("docker is restarting?: %t\n", h.ContainerRuntime.Status&state.SystemDStatusRestarting != 0)
 	fmt.Println()
 
-	fmt.Printf("kubelet version: %q\n", h.Kubernetes.Version)
-	fmt.Printf("kubelet is installed?: %t\n", h.Kubernetes.Status&state.ComponentInstalled != 0)
-	fmt.Printf("kubelet is running?: %t\n", h.Kubernetes.Status&state.SystemDStatusRunning != 0)
-	fmt.Printf("kubelet is active?: %t\n", h.Kubernetes.Status&state.SystemDStatusActive != 0)
-	fmt.Printf("kubelet is restarting?: %t\n", h.Kubernetes.Status&state.SystemDStatusRestarting != 0)
-	fmt.Printf("kubelet is initialized?: %t\n", h.Kubernetes.Status&state.KubeletInitialized != 0)
+	fmt.Printf("kubelet version: %q\n", h.Kubelet.Version)
+	fmt.Printf("kubelet is installed?: %t\n", h.Kubelet.Status&state.ComponentInstalled != 0)
+	fmt.Printf("kubelet is running?: %t\n", h.Kubelet.Status&state.SystemDStatusRunning != 0)
+	fmt.Printf("kubelet is active?: %t\n", h.Kubelet.Status&state.SystemDStatusActive != 0)
+	fmt.Printf("kubelet is restarting?: %t\n", h.Kubelet.Status&state.SystemDStatusRestarting != 0)
+	fmt.Printf("kubelet is initialized?: %t\n", h.Kubelet.Status&state.KubeletInitialized != 0)
 	fmt.Println()
 
 	s.LiveCluster.Lock.Lock()
@@ -127,7 +132,7 @@ func detectDockerStatusVersion(host *state.Host, conn ssh.Connection) error {
 
 	var dockerVersionCmd string
 
-	switch host.OS {
+	switch host.Host.OperatingSystem {
 	case kubeoneapi.OperatingSystemNameCentOS, kubeoneapi.OperatingSystemNameRHEL:
 		dockerVersionCmd = dockerVersionRPM
 	case kubeoneapi.OperatingSystemNameUbuntu:
@@ -156,19 +161,19 @@ func detectDockerStatusVersion(host *state.Host, conn ssh.Connection) error {
 
 func detectKubeletStatusVersion(host *state.Host, conn ssh.Connection) error {
 	var err error
-	host.Kubernetes.Status, err = systemdStatus(conn, "kubelet")
+	host.Kubelet.Status, err = systemdStatus(conn, "kubelet")
 	if err != nil {
 		return err
 	}
 
-	if host.Kubernetes.Status&state.ComponentInstalled == 0 {
+	if host.Kubelet.Status&state.ComponentInstalled == 0 {
 		// kubelet is not installed
 		return nil
 	}
 
 	var kubeletVersionCmd string
 
-	switch host.OS {
+	switch host.Host.OperatingSystem {
 	case kubeoneapi.OperatingSystemNameCentOS, kubeoneapi.OperatingSystemNameRHEL:
 		kubeletVersionCmd = kubeletVersionRPM
 	case kubeoneapi.OperatingSystemNameUbuntu:
@@ -188,7 +193,7 @@ func detectKubeletStatusVersion(host *state.Host, conn ssh.Connection) error {
 	if err != nil {
 		return err
 	}
-	host.Kubernetes.Version = ver
+	host.Kubelet.Version = ver
 
 	return nil
 }
@@ -202,7 +207,7 @@ func detectKubeletInitialized(host *state.Host, conn ssh.Connection) error {
 	}
 
 	if exitcode == 0 {
-		host.Kubernetes.Status |= state.KubeletInitialized
+		host.Kubelet.Status |= state.KubeletInitialized
 	}
 
 	return nil
