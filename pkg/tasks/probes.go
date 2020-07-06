@@ -25,8 +25,16 @@ import (
 	"gopkg.in/yaml.v2"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/clusterstatus/apiserverstatus"
+	"github.com/kubermatic/kubeone/pkg/clusterstatus/preflightstatus"
+	"github.com/kubermatic/kubeone/pkg/kubeconfig"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/state"
+
+	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/apimachinery/pkg/util/sets"
+	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 const (
@@ -59,7 +67,11 @@ func runProbes(s *state.State) error {
 		})
 	}
 
-	return s.RunTaskOnControlPlane(investigateHost, state.RunParallel)
+	if err := s.RunTaskOnControlPlane(investigateHost, state.RunParallel); err != nil {
+		return err
+	}
+
+	return investigateCluster(s)
 }
 
 func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
@@ -115,6 +127,72 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Conne
 	s.LiveCluster.Lock.Lock()
 	s.LiveCluster.ControlPlane[idx] = *h
 	s.LiveCluster.Lock.Unlock()
+	return nil
+}
+
+func investigateCluster(s *state.State) error {
+	if !s.LiveCluster.IsProvisioned() {
+		return errors.New("unable to investigate non-provisioned cluster")
+	}
+	if s.DynamicClient == nil {
+		// HACK: This func needs to be modified to work with apply
+		if err := kubeconfig.BuildKubernetesClientset(s); err != nil {
+			return err
+		}
+		//return errors.New("clientset not initialized")
+	}
+
+	// Get node list
+	nodes := corev1.NodeList{}
+	nodeListOpts := dynclient.ListOptions{
+		LabelSelector: labels.SelectorFromSet(map[string]string{preflightstatus.LabelControlPlaneNode: ""}),
+	}
+	if err := s.DynamicClient.List(s.Context, &nodes, &nodeListOpts); err != nil {
+		return errors.Wrap(err, "unable to list nodes")
+	}
+
+	// host -> node => okay
+	// host -> / => provision the host
+	// / -> node => delete the node
+
+	// Parse node list
+	knownHostsIdentities := sets.NewString()
+	knownNodesIdentities := sets.NewString()
+
+	for _, host := range s.LiveCluster.ControlPlane {
+		knownHostsIdentities.Insert(host.Host.Hostname)
+	}
+	for _, node := range nodes.Items {
+		knownNodesIdentities.Insert(node.Name)
+		if knownHostsIdentities.Has(node.Name) {
+			// host.IsInCluster = true
+			for i := range s.LiveCluster.ControlPlane {
+				if node.Name == s.LiveCluster.ControlPlane[i].Hostname {
+					s.LiveCluster.ControlPlane[i].IsInCluster = true
+				}
+			}
+		}
+	}
+
+	// Compare sets
+	unprovisionedHosts := knownHostsIdentities.Difference(knownNodesIdentities)
+	nodesToRemove := knownNodesIdentities.Difference(knownHostsIdentities)
+
+	for i := range s.LiveCluster.ControlPlane {
+		apiserverStatus, _ := apiserverstatus.Get(s, *s.LiveCluster.ControlPlane[i].Host)
+		if apiserverStatus.Health {
+			s.LiveCluster.ControlPlane[i].APIServer.Status |= state.PodRunning
+		}
+	}
+
+	for _, host := range s.LiveCluster.ControlPlane {
+		fmt.Printf("Host %q API server %t\n", host.Host.Hostname, host.APIServer.Status&state.PodRunning != 0)
+	}
+
+	fmt.Printf("Unprovisioned hosts: %q\n", unprovisionedHosts)
+	fmt.Printf("Nodes to be removed: %q\n", nodesToRemove)
+	fmt.Printf("Cluster degraded: %t\n", s.LiveCluster.IsDegraded())
+
 	return nil
 }
 
