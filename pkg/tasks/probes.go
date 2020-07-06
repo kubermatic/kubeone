@@ -62,7 +62,7 @@ func runProbes(s *state.State) error {
 
 	for i := range s.Cluster.ControlPlane.Hosts {
 		s.LiveCluster.ControlPlane = append(s.LiveCluster.ControlPlane, state.Host{
-			Host: &s.Cluster.ControlPlane.Hosts[i],
+			Config: &s.Cluster.ControlPlane.Hosts[i],
 		})
 	}
 
@@ -86,7 +86,7 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Conne
 	s.LiveCluster.Lock.Lock()
 	for i := range s.LiveCluster.ControlPlane {
 		host := s.LiveCluster.ControlPlane[i]
-		if host.Host.Hostname == node.Hostname {
+		if host.Config.Hostname == node.Hostname {
 			h = &host
 			idx = i
 			break
@@ -110,8 +110,10 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Conne
 		return err
 	}
 
+	s.LiveCluster.Lock.Lock()
+
 	fmt.Println("---------------")
-	fmt.Printf("host: %q\n", h.Host.Hostname)
+	fmt.Printf("host: %q\n", h.Config.Hostname)
 	fmt.Printf("docker version: %q\n", h.ContainerRuntime.Version)
 	fmt.Printf("docker is installed?: %t\n", h.ContainerRuntime.Status&state.ComponentInstalled != 0)
 	fmt.Printf("docker is running?: %t\n", h.ContainerRuntime.Status&state.SystemDStatusRunning != 0)
@@ -127,7 +129,6 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Conne
 	fmt.Printf("kubelet is initialized?: %t\n", h.Kubelet.Status&state.KubeletInitialized != 0)
 	fmt.Println()
 
-	s.LiveCluster.Lock.Lock()
 	s.LiveCluster.ControlPlane[idx] = *h
 	s.LiveCluster.Lock.Unlock()
 	return nil
@@ -158,7 +159,7 @@ func investigateCluster(s *state.State) error {
 	knownNodesIdentities := sets.NewString()
 
 	for _, host := range s.LiveCluster.ControlPlane {
-		knownHostsIdentities.Insert(host.Host.Hostname)
+		knownHostsIdentities.Insert(host.Config.Hostname)
 	}
 
 	s.LiveCluster.Lock.Lock()
@@ -166,7 +167,7 @@ func investigateCluster(s *state.State) error {
 		knownNodesIdentities.Insert(node.Name)
 		if knownHostsIdentities.Has(node.Name) {
 			for i := range s.LiveCluster.ControlPlane {
-				if node.Name == s.LiveCluster.ControlPlane[i].Host.Hostname {
+				if node.Name == s.LiveCluster.ControlPlane[i].Config.Hostname {
 					s.LiveCluster.ControlPlane[i].IsInCluster = true
 				}
 			}
@@ -182,7 +183,7 @@ func investigateCluster(s *state.State) error {
 
 	s.LiveCluster.Lock.Lock()
 	for i := range s.LiveCluster.ControlPlane {
-		apiserverStatus, _ := apiserverstatus.Get(s, *s.LiveCluster.ControlPlane[i].Host)
+		apiserverStatus, _ := apiserverstatus.Get(s, *s.LiveCluster.ControlPlane[i].Config)
 		if apiserverStatus.Health {
 			s.LiveCluster.ControlPlane[i].APIServer.Status |= state.PodRunning
 		}
@@ -199,7 +200,7 @@ func investigateCluster(s *state.State) error {
 
 	fmt.Println("---------------")
 	for _, host := range s.LiveCluster.ControlPlane {
-		fmt.Printf("API server running on %q: %t\n", host.Host.Hostname, host.APIServer.Status&state.PodRunning != 0)
+		fmt.Printf("API server running on %q: %t\n", host.Config.Hostname, host.APIServer.Status&state.PodRunning != 0)
 	}
 	fmt.Println()
 
@@ -220,7 +221,7 @@ func detectDockerStatusVersion(host *state.Host, conn ssh.Connection) error {
 
 	var dockerVersionCmd string
 
-	switch host.Host.OperatingSystem {
+	switch host.Config.OperatingSystem {
 	case kubeoneapi.OperatingSystemNameCentOS, kubeoneapi.OperatingSystemNameRHEL:
 		dockerVersionCmd = dockerVersionRPM
 	case kubeoneapi.OperatingSystemNameUbuntu:
@@ -261,7 +262,7 @@ func detectKubeletStatusVersion(host *state.Host, conn ssh.Connection) error {
 
 	var kubeletVersionCmd string
 
-	switch host.Host.OperatingSystem {
+	switch host.Config.OperatingSystem {
 	case kubeoneapi.OperatingSystemNameCentOS, kubeoneapi.OperatingSystemNameRHEL:
 		kubeletVersionCmd = kubeletVersionRPM
 	case kubeoneapi.OperatingSystemNameUbuntu:
