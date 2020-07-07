@@ -83,27 +83,15 @@ func (c *Cluster) IsProvisioned() bool {
 	return false
 }
 
-// IsDegraded checks is there a non-healthy host in a cluster
-func (c *Cluster) IsDegraded() bool {
-	for i := range c.ControlPlane {
-		if !c.ControlPlane[i].ControlPlaneHealthy() {
-			return true
-		}
-	}
-	return false
-}
-
-// IsBroken checks is there a broken node in a cluster.
-// If there's a broken node, IsDegraded will also return true, but
-// there is manual intervention required (i.e. remove the instance)
-func (c *Cluster) IsBroken() (bool, []string) {
+// BrokenHosts returns a list of broken hosts that needs to be removed manually
+func (c *Cluster) BrokenHosts() []string {
 	brokenNodes := []string{}
 	for i := range c.ControlPlane {
 		if c.ControlPlane[i].IsInCluster && !c.ControlPlane[i].APIServer.Healthy() {
 			brokenNodes = append(brokenNodes, c.ControlPlane[i].Config.Hostname)
 		}
 	}
-	return len(brokenNodes) > 0, brokenNodes
+	return brokenNodes
 }
 
 // Healthy checks the cluster overall healthiness
@@ -215,7 +203,6 @@ func (h *Host) healthy() bool {
 */
 
 // IsProvisioned checks is a component running, installed and active
-// TODO: IsProvisioned should just check is component installed
 func (cs *ComponentStatus) IsProvisioned() bool {
 	return cs.Status&(SystemDStatusRunning|ComponentInstalled|SystemDStatusActive) != 0
 }
