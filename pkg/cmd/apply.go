@@ -167,19 +167,24 @@ func runApply(opts *applyOpts) error {
 	}
 
 	// Reconcile the cluster based on the probe status
-	s.LiveCluster.Lock.Lock()
 	if !s.LiveCluster.IsProvisioned() {
 		return runApplyInstall(s, opts)
 	}
 	if !s.LiveCluster.Healthy() {
 		if broken, nodes := s.LiveCluster.IsBroken(); broken {
 			for _, node := range nodes {
-				s.Logger.Errorf("unable to continue because node %q is broken and the instance needs to be manually removed\n", node)
+				s.Logger.Errorf("host %q is broken and needs to be manually removed\n", node)
 			}
-			return nil
+			s.Logger.Warnf("You can remove %d hosts at the same or otherwise quorum be lost!!!\n", s.LiveCluster.EtcdToleranceRemain())
+			s.Logger.Warnf("After removing host(s), run kubeone apply again\n")
 		}
 		// TODO: Should we return at the beginning after install?
-		return runApplyInstall(s, opts)
+		for _, node := range s.LiveCluster.ControlPlane {
+			if !node.IsInCluster {
+				return runApplyInstall(s, opts)
+			}
+		}
+		return nil
 	}
 
 	return runApplyUpgradeIfNeeded(s, opts)
@@ -194,7 +199,6 @@ func runApplyInstall(s *state.State, opts *applyOpts) error { // Print the expec
 			fmt.Printf("+ provision host %q (%s)\n", node.Config.Hostname, node.Config.PrivateAddress)
 		}
 	}
-	s.LiveCluster.Lock.Unlock()
 
 	if opts.NoInit {
 		fmt.Println("+ NoInit option provided: only binaries will be installed")
@@ -232,7 +236,6 @@ func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
 				fmt.Printf("~ upgrade node %q (%s) to Kubernetes %s\n", node.Hostname, node.PrivateAddress, s.Cluster.Versions.Kubernetes)
 			}
 		}
-		s.LiveCluster.Lock.Unlock()
 
 		if s.UpgradeMachineDeployments {
 			fmt.Printf("~ replace all worker machines with %s\n", s.Cluster.Versions.Kubernetes)
