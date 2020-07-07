@@ -171,11 +171,12 @@ func runApply(opts *applyOpts) error {
 		return runApplyInstall(s, opts)
 	}
 	if !s.LiveCluster.Healthy() {
-		if broken, nodes := s.LiveCluster.IsBroken(); broken {
-			for _, node := range nodes {
-				s.Logger.Errorf("host %q is broken and needs to be manually removed\n", node)
+		brokenHosts := s.LiveCluster.BrokenHosts()
+		if len(brokenHosts) > 0 {
+			for _, node := range brokenHosts {
+				s.Logger.Errorf("Host %q is broken and needs to be manually removed\n", node)
 			}
-			s.Logger.Warnf("You can remove %d hosts at the same or otherwise quorum be lost!!!\n", s.LiveCluster.EtcdToleranceRemain())
+			s.Logger.Warnf("You can remove %d host(s) at the same or otherwise quorum will be lost!!!\n", s.LiveCluster.EtcdToleranceRemain())
 			s.Logger.Warnf("After removing host(s), run kubeone apply again\n")
 		}
 		// TODO: Should we return at the beginning after install?
@@ -183,6 +184,10 @@ func runApply(opts *applyOpts) error {
 			if !node.IsInCluster {
 				return runApplyInstall(s, opts)
 			}
+		}
+
+		if len(brokenHosts) > 0 {
+			return errors.New("broken host(s) found, remove it manually")
 		}
 		return nil
 	}

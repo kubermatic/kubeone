@@ -226,7 +226,7 @@ func investigateCluster(s *state.State) error {
 	fmt.Println("---------------")
 	fmt.Printf("Unprovisioned hosts: %q\n", hostsToBeProvisioned)
 	fmt.Printf("Nodes to be removed: %q\n", nodesToBeRemoved)
-	fmt.Printf("Is cluster degraded: %t\n", s.LiveCluster.IsDegraded())
+	// fmt.Printf("Is cluster degraded: %t\n", s.LiveCluster.IsDegraded())
 	//fmt.Printf("Is cluster broken: %t\n", s.LiveCluster.IsBroken())
 	fmt.Println()
 
