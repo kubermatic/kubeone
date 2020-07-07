@@ -165,7 +165,6 @@ func investigateCluster(s *state.State) error {
 		return errors.New("leader not elected, quorum mostly like lost")
 	}
 
-	// TODO: this doesn't work properly if the first node is broken
 	etcdMembers, err := etcdstatus.MemberList(s)
 	if err != nil {
 		return err

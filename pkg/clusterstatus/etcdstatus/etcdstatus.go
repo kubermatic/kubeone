@@ -44,15 +44,11 @@ type Report struct {
 }
 
 func MemberList(s *state.State) (*clientv3.MemberListResponse, error) {
-	etcdEndpoints := []string{}
-	for _, node := range s.Cluster.ControlPlane.Hosts {
-		etcdEndpoints = append(etcdEndpoints, fmt.Sprintf(clientEndpointFmt, node.PrivateAddress))
-	}
-
 	leader, err := s.Cluster.Leader()
 	if err != nil {
 		return nil, err
 	}
+	etcdEndpoints := []string{fmt.Sprintf(clientEndpointFmt, leader.PrivateAddress)}
 
 	etcdcfg, err := etcdutil.NewClientConfig(s, leader)
 	if err != nil {
