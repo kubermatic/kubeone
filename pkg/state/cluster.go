@@ -96,13 +96,14 @@ func (c *Cluster) IsDegraded() bool {
 // IsBroken checks is there a broken node in a cluster.
 // If there's a broken node, IsDegraded will also return true, but
 // there is manual intervention required (i.e. remove the instance)
-func (c *Cluster) IsBroken() bool {
+func (c *Cluster) IsBroken() (bool, []string) {
+	brokenNodes := []string{}
 	for i := range c.ControlPlane {
 		if c.ControlPlane[i].IsInCluster && !c.ControlPlane[i].APIServer.Healthy() {
-			return true
+			brokenNodes = append(brokenNodes, c.ControlPlane[i].Config.Hostname)
 		}
 	}
-	return false
+	return len(brokenNodes) > 0, brokenNodes
 }
 
 // Healthy checks the cluster overall healthiness
