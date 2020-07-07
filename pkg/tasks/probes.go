@@ -26,6 +26,7 @@ import (
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/clusterstatus/apiserverstatus"
+	"github.com/kubermatic/kubeone/pkg/clusterstatus/etcdstatus"
 	"github.com/kubermatic/kubeone/pkg/clusterstatus/preflightstatus"
 	"github.com/kubermatic/kubeone/pkg/kubeconfig"
 	"github.com/kubermatic/kubeone/pkg/ssh"
@@ -138,8 +139,49 @@ func investigateCluster(s *state.State) error {
 	if !s.LiveCluster.IsProvisioned() {
 		return errors.New("unable to investigate non-provisioned cluster")
 	}
+
+	s.LiveCluster.Lock.Lock()
+
+	for i := range s.LiveCluster.ControlPlane {
+		s.LiveCluster.ControlPlane[i].Config.IsLeader = false
+	}
+
+	leaderElected := false
+	for i := range s.LiveCluster.ControlPlane {
+		// TODO: Proper error handling
+		apiserverStatus, _ := apiserverstatus.Get(s, *s.LiveCluster.ControlPlane[i].Config)
+		if apiserverStatus.Health {
+			s.LiveCluster.ControlPlane[i].APIServer.Status |= state.PodRunning
+			if !leaderElected {
+				s.LiveCluster.ControlPlane[i].Config.IsLeader = true
+				leaderElected = true
+			}
+		}
+	}
+	if !leaderElected {
+		s.Logger.Errorln("Failed to elect leader.")
+		s.Logger.Errorln("Quorum is mostly like lost, manual cluster repair might be needed.")
+		s.Logger.Errorln("Consider the KubeOne documentation for further steps.")
+		return errors.New("leader not elected, quorum mostly like lost")
+	}
+
+	// TODO: this doesn't work properly if the first node is broken
+	etcdMembers, err := etcdstatus.MemberList(s)
+	if err != nil {
+		return err
+	}
+	for i := range s.LiveCluster.ControlPlane {
+		// TODO: Proper error handling
+		etcdStatus, _ := etcdstatus.Get(s, *s.LiveCluster.ControlPlane[i].Config, etcdMembers)
+		if etcdStatus != nil {
+			if etcdStatus.Member && etcdStatus.Health {
+				s.LiveCluster.ControlPlane[i].Etcd.Status |= state.PodRunning
+			}
+		}
+	}
+	s.LiveCluster.Lock.Unlock()
+
 	if s.DynamicClient == nil {
-		// TODO: BuildKubernetesClientset should be able to take custom kubeconfig file to work properly with apply
 		if err := kubeconfig.BuildKubernetesClientset(s); err != nil {
 			return err
 		}
@@ -181,15 +223,6 @@ func investigateCluster(s *state.State) error {
 	hostsToBeProvisioned := knownHostsIdentities.Difference(knownNodesIdentities)
 	nodesToBeRemoved := knownNodesIdentities.Difference(knownHostsIdentities)
 
-	s.LiveCluster.Lock.Lock()
-	for i := range s.LiveCluster.ControlPlane {
-		apiserverStatus, _ := apiserverstatus.Get(s, *s.LiveCluster.ControlPlane[i].Config)
-		if apiserverStatus.Health {
-			s.LiveCluster.ControlPlane[i].APIServer.Status |= state.PodRunning
-		}
-	}
-	s.LiveCluster.Lock.Unlock()
-
 	fmt.Println()
 	fmt.Println("---------------")
 	fmt.Printf("Unprovisioned hosts: %q\n", hostsToBeProvisioned)
@@ -201,6 +234,7 @@ func investigateCluster(s *state.State) error {
 	fmt.Println("---------------")
 	for _, host := range s.LiveCluster.ControlPlane {
 		fmt.Printf("API server running on %q: %t\n", host.Config.Hostname, host.APIServer.Status&state.PodRunning != 0)
+		fmt.Printf("Etcd running on %q: %t\n", host.Config.Hostname, host.Etcd.Status&state.PodRunning != 0)
 	}
 	fmt.Println()
 

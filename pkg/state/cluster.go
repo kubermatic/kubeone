@@ -34,7 +34,6 @@ type Cluster struct {
 }
 
 type Host struct {
-	// TODO: Consider renaming Config.Config as it's repetitive
 	Config *kubeone.HostConfig
 
 	ContainerRuntime ComponentStatus
@@ -42,6 +41,7 @@ type Host struct {
 
 	// Applicable only for CP nodes
 	APIServer ContainerStatus
+	Etcd      ContainerStatus
 
 	IsInCluster bool
 	Kubeconfig  []byte
@@ -127,6 +127,16 @@ func (c *Cluster) Healthy() bool {
 	return true
 }
 
+// EtcdToleranceRemain returns how many non-working nodes can be removed at the same time.
+// TODO: We should instruct user which node exactly to remove. For instance, if there are two broken nodes
+// one with broken API server and one with broken etcd, the node with broken etcd must be removed first.
+func (c *Cluster) EtcdToleranceRemain() int {
+	quorum := int(float64((len(c.ControlPlane) / 2) + 1))
+	tolerance := len(c.ControlPlane) - quorum
+
+	return tolerance
+}
+
 // QuorumSatisfied checks is number of healthy nodes satisfying the quorum
 func (c *Cluster) QuorumSatisfied() bool {
 	var healthyNodes int
@@ -139,7 +149,7 @@ func (c *Cluster) QuorumSatisfied() bool {
 		}
 	}
 
-	return healthyNodes >= tolerance
+	return healthyNodes >= len(c.ControlPlane)-tolerance
 }
 
 // UpgradeNeeded compares actual and expected Kubernetes versions for control plane and static worker nodes
