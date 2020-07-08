@@ -237,7 +237,12 @@ func runApplyInstall(s *state.State, opts *applyOpts) error { // Print the expec
 }
 
 func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
-	if s.LiveCluster.UpgradeNeeded() || opts.ForceUpgrade {
+	upgradeNeeded, err := s.LiveCluster.UpgradeNeeded()
+	if err != nil {
+		s.Logger.Errorf("Upgrade not allowed: %v\n", err)
+		return err
+	}
+	if upgradeNeeded || opts.ForceUpgrade {
 		fmt.Println("The following actions will be taken: ")
 		fmt.Println()
 
