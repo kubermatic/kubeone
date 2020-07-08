@@ -17,6 +17,7 @@ limitations under the License.
 package state
 
 import (
+	"errors"
 	"sync"
 
 	"github.com/Masterminds/semver"
@@ -150,22 +151,26 @@ func (c *Cluster) EtcdToleranceRemain() int {
 }
 
 // UpgradeNeeded compares actual and expected Kubernetes versions for control plane and static worker nodes
-func (c *Cluster) UpgradeNeeded() bool {
+func (c *Cluster) UpgradeNeeded() (bool, error) {
 	for i := range c.ControlPlane {
-		// TODO: We should eventually error if expected version is lower than
-		// current, since downgrades aren't allowed
-		if c.ExpectedVersion.GreaterThan(c.ControlPlane[i].Kubelet.Version) {
-			return true
+		verDiff := c.ExpectedVersion.Compare(c.ControlPlane[i].Kubelet.Version)
+		if verDiff > 0 {
+			return true, nil
+		} else if verDiff < 0 {
+			return false, errors.New("cluster downgrades are disallowed")
 		}
 	}
 
 	for i := range c.Workers {
-		if c.ExpectedVersion.GreaterThan(c.Workers[i].Kubelet.Version) {
-			return true
+		verDiff := c.ExpectedVersion.Compare(c.Workers[i].Kubelet.Version)
+		if verDiff > 0 {
+			return true, nil
+		} else if verDiff < 0 {
+			return false, errors.New("cluster downgrades are disallowed")
 		}
 	}
 
-	return false
+	return false, nil
 }
 
 // UpgradeMachinesNeeded compares actual and expected Kubernetes version for Machines
