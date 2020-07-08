@@ -176,8 +176,16 @@ func runApply(opts *applyOpts) error {
 			for _, node := range brokenHosts {
 				s.Logger.Errorf("Host %q is broken and needs to be manually removed\n", node)
 			}
-			s.Logger.Warnf("You can remove %d host(s) at the same or otherwise quorum will be lost!!!\n", s.LiveCluster.EtcdToleranceRemain())
-			s.Logger.Warnf("After removing host(s), run kubeone apply again\n")
+
+			s.Logger.Warnf("Hosts must be removed in a correct order to preserve the Etcd quorum.")
+			s.Logger.Warnf("Loss of the Etcd quorum can cause loss of all data!!!")
+			s.Logger.Warnf("After removing recommended hosts, run 'kubeone apply' before removing any other host.")
+			s.Logger.Warnf("The recommended removal order:")
+
+			safeToDelete := s.LiveCluster.SafeToDeleteHosts()
+			for _, safe := range safeToDelete {
+				s.Logger.Warnf("- %q", safe)
+			}
 		}
 		// TODO: Should we return at the beginning after install?
 		for _, node := range s.LiveCluster.ControlPlane {

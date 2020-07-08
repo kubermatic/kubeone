@@ -83,23 +83,8 @@ func (c *Cluster) IsProvisioned() bool {
 	return false
 }
 
-// BrokenHosts returns a list of broken hosts that needs to be removed manually
-func (c *Cluster) BrokenHosts() []string {
-	brokenNodes := []string{}
-	for i := range c.ControlPlane {
-		if c.ControlPlane[i].IsInCluster && !c.ControlPlane[i].APIServer.Healthy() {
-			brokenNodes = append(brokenNodes, c.ControlPlane[i].Config.Hostname)
-		}
-	}
-	return brokenNodes
-}
-
 // Healthy checks the cluster overall healthiness
 func (c *Cluster) Healthy() bool {
-	if !c.QuorumSatisfied() {
-		return false
-	}
-
 	for i := range c.ControlPlane {
 		if !c.ControlPlane[i].ControlPlaneHealthy() {
 			return false
@@ -115,29 +100,53 @@ func (c *Cluster) Healthy() bool {
 	return true
 }
 
-// EtcdToleranceRemain returns how many non-working nodes can be removed at the same time.
-// TODO: We should instruct user which node exactly to remove. For instance, if there are two broken nodes
-// one with broken API server and one with broken etcd, the node with broken etcd must be removed first.
-func (c *Cluster) EtcdToleranceRemain() int {
-	quorum := int(float64((len(c.ControlPlane) / 2) + 1))
-	tolerance := len(c.ControlPlane) - quorum
-
-	return tolerance
+// BrokenHosts returns a list of broken hosts that needs to be removed manually
+func (c *Cluster) BrokenHosts() []string {
+	brokenNodes := []string{}
+	for i := range c.ControlPlane {
+		if c.ControlPlane[i].IsInCluster && !c.ControlPlane[i].APIServer.Healthy() {
+			brokenNodes = append(brokenNodes, c.ControlPlane[i].Config.Hostname)
+		}
+	}
+	return brokenNodes
 }
 
-// QuorumSatisfied checks is number of healthy nodes satisfying the quorum
-func (c *Cluster) QuorumSatisfied() bool {
-	var healthyNodes int
-	quorum := int(float64(((len(c.ControlPlane) / 2) + 1)))
-	tolerance := len(c.ControlPlane) - quorum
+func (c *Cluster) SafeToDeleteHosts() []string {
+	safeToDelete := []string{}
+	deleteCandidate := []string{}
+	tolerance := c.EtcdToleranceRemain()
 
 	for i := range c.ControlPlane {
-		if c.ControlPlane[i].ControlPlaneHealthy() {
-			healthyNodes++
+		if !c.ControlPlane[i].IsInCluster {
+			continue
+		}
+		if !c.ControlPlane[i].Etcd.Healthy() {
+			safeToDelete = append(safeToDelete, c.ControlPlane[i].Config.Hostname)
+		} else if !c.ControlPlane[i].APIServer.Healthy() {
+			deleteCandidate = append(deleteCandidate, c.ControlPlane[i].Config.Hostname)
+		}
+	}
+	tolerance -= len(safeToDelete)
+	if tolerance > 0 {
+		safeToDelete = append(safeToDelete, deleteCandidate[:tolerance]...)
+	}
+
+	return safeToDelete
+}
+
+// EtcdToleranceRemain returns how many non-working nodes can be removed at the same time.
+func (c *Cluster) EtcdToleranceRemain() int {
+	var healthyEtcd int
+	for i := range c.ControlPlane {
+		if c.ControlPlane[i].IsInCluster && c.ControlPlane[i].Etcd.Healthy() {
+			healthyEtcd++
 		}
 	}
 
-	return healthyNodes >= len(c.ControlPlane)-tolerance
+	quorum := int(float64((healthyEtcd / 2) + 1))
+	tolerance := healthyEtcd - quorum
+
+	return tolerance
 }
 
 // UpgradeNeeded compares actual and expected Kubernetes versions for control plane and static worker nodes
