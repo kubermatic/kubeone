@@ -28,7 +28,7 @@ PKG_MANAGER="noop"
 [ "$(command -v yum)" ] && PKG_MANAGER=yum
 [ "$(command -v apt-get)" ] && PKG_MANAGER=apt-get
 
-$PKG_MANAGER install tar -y
+sudo ${PKG_MANAGER} install tar -y
 
 mkdir -p /tmp/gobetween
 cd /tmp/gobetween
