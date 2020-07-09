@@ -29,8 +29,9 @@ import (
 
 type Cluster struct {
 	ControlPlane    []Host
-	Workers         []Host
+	StaticWorkers   []Host
 	ExpectedVersion *semver.Version
+	DynamicWorkers  []DynamicWorker
 	Lock            sync.Mutex
 }
 
@@ -46,6 +47,12 @@ type Host struct {
 
 	IsInCluster bool
 	Kubeconfig  []byte
+}
+
+type DynamicWorker struct {
+	Name      string
+	Namespace string
+	Status    uint64
 }
 
 type ComponentStatus struct {
@@ -66,6 +73,9 @@ const (
 	SystemDStatusRunning                // systemd unit is running
 	KubeletInitialized                  // kubelet config found (means node is initialized)
 	PodRunning                          // pod is running
+	DynamicWorkerCreate                 // annotates that dynamic worker should be created
+	DynamicWorkerDelete                 // annotates that dynamic worker should be deleted
+	DynamicWorkerMatch                  // dynamic worker exists and no action is needed
 )
 
 /*
@@ -92,8 +102,8 @@ func (c *Cluster) Healthy() bool {
 		}
 	}
 
-	for i := range c.Workers {
-		if !c.Workers[i].WorkerHealthy() {
+	for i := range c.StaticWorkers {
+		if !c.StaticWorkers[i].WorkerHealthy() {
 			return false
 		}
 	}
@@ -161,8 +171,8 @@ func (c *Cluster) UpgradeNeeded() (bool, error) {
 		}
 	}
 
-	for i := range c.Workers {
-		verDiff := c.ExpectedVersion.Compare(c.Workers[i].Kubelet.Version)
+	for i := range c.StaticWorkers {
+		verDiff := c.ExpectedVersion.Compare(c.StaticWorkers[i].Kubelet.Version)
 		if verDiff > 0 {
 			return true, nil
 		} else if verDiff < 0 {
@@ -173,10 +183,15 @@ func (c *Cluster) UpgradeNeeded() (bool, error) {
 	return false, nil
 }
 
-// UpgradeMachinesNeeded compares actual and expected Kubernetes version for Machines
-// TODO: Implement UpgradeMachinesNeeded (always returns false)
-func (c *Cluster) UpgradeMachinesNeeded() bool {
-	return false
+// DynamicWorkersChanged compares actual and expected dynamic worker nodes
+func (c *Cluster) DynamicWorkersChanged() map[string]uint64 {
+	changes := map[string]uint64{}
+	for i := range c.DynamicWorkers {
+		if c.DynamicWorkers[i].Status != DynamicWorkerMatch {
+			changes[c.DynamicWorkers[i].Name] = c.DynamicWorkers[i].Status
+		}
+	}
+	return changes
 }
 
 /*

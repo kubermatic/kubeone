@@ -30,6 +30,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/credentials"
 	"github.com/kubermatic/kubeone/pkg/state"
 	"github.com/kubermatic/kubeone/pkg/tasks"
+	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
 )
 
 type applyOpts struct {
@@ -200,7 +201,21 @@ func runApply(opts *applyOpts) error {
 		return nil
 	}
 
-	return runApplyUpgradeIfNeeded(s, opts)
+	upgradeNeeded, err := s.LiveCluster.UpgradeNeeded()
+	if err != nil {
+		s.Logger.Errorf("Upgrade not allowed: %v\n", err)
+		return err
+	}
+	if upgradeNeeded || opts.ForceUpgrade {
+		return runApplyUpgrade(s, opts)
+	}
+
+	dynamicWorkersChanged := s.LiveCluster.DynamicWorkersChanged()
+	if len(dynamicWorkersChanged) != 0 {
+		return runApplyReconcileDynamicWorkers(s, opts, dynamicWorkersChanged)
+	}
+
+	return nil
 }
 
 func runApplyInstall(s *state.State, opts *applyOpts) error { // Print the expected changes
@@ -236,42 +251,77 @@ func runApplyInstall(s *state.State, opts *applyOpts) error { // Print the expec
 	return errors.Wrap(tasks.WithFullInstall(nil).Run(s), "failed to install the cluster")
 }
 
-func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
-	upgradeNeeded, err := s.LiveCluster.UpgradeNeeded()
+func runApplyUpgrade(s *state.State, opts *applyOpts) error {
+	fmt.Println("The following actions will be taken: ")
+	fmt.Println()
+
+	// TODO: Maybe it's not needed to upgrade each node, check version
+	for _, node := range s.Cluster.ControlPlane.Hosts {
+		if opts.ForceUpgrade {
+			fmt.Printf("~ force upgrade node %q (%s) to Kubernetes %s\n", node.Hostname, node.PrivateAddress, s.Cluster.Versions.Kubernetes)
+		} else {
+			fmt.Printf("~ upgrade node %q (%s) to Kubernetes %s\n", node.Hostname, node.PrivateAddress, s.Cluster.Versions.Kubernetes)
+		}
+	}
+
+	if s.UpgradeMachineDeployments {
+		fmt.Printf("~ replace all worker machines with %s\n", s.Cluster.Versions.Kubernetes)
+	}
+
+	fmt.Println()
+	confirm, err := confirmApply(opts.AutoApprove)
 	if err != nil {
-		s.Logger.Errorf("Upgrade not allowed: %v\n", err)
 		return err
 	}
-	if upgradeNeeded || opts.ForceUpgrade {
-		fmt.Println("The following actions will be taken: ")
-		fmt.Println()
+	if !confirm {
+		s.Logger.Println("Operation canceled.")
+		return nil
+	}
 
-		// TODO: Maybe it's not needed to upgrade each node, check version
-		for _, node := range s.Cluster.ControlPlane.Hosts {
-			if opts.ForceUpgrade {
-				fmt.Printf("~ force upgrade node %q (%s) to Kubernetes %s\n", node.Hostname, node.PrivateAddress, s.Cluster.Versions.Kubernetes)
-			} else {
-				fmt.Printf("~ upgrade node %q (%s) to Kubernetes %s\n", node.Hostname, node.PrivateAddress, s.Cluster.Versions.Kubernetes)
-			}
+	return errors.Wrap(tasks.WithUpgrade(nil).Run(s), "failed to upgrade cluster")
+}
+
+func runApplyReconcileDynamicWorkers(s *state.State, opts *applyOpts, changes map[string]uint64) error {
+	if len(changes) == 0 {
+		return nil
+	}
+
+	fmt.Println("The following actions will be taken: ")
+	fmt.Println()
+
+	for machine, change := range changes {
+		if change == state.DynamicWorkerCreate {
+			fmt.Printf("+ create machine deployment %q\n", machine)
+		} else if change == state.DynamicWorkerDelete {
+			fmt.Printf("- delete machine deployment %q\n", machine)
 		}
+	}
 
-		if s.UpgradeMachineDeployments {
-			fmt.Printf("~ replace all worker machines with %s\n", s.Cluster.Versions.Kubernetes)
-		}
+	fmt.Println()
+	confirm, err := confirmApply(opts.AutoApprove)
+	if err != nil {
+		return err
+	}
+	if !confirm {
+		s.Logger.Println("Operation canceled.")
+		return nil
+	}
 
-		fmt.Println()
-		confirm, err := confirmApply(opts.AutoApprove)
-		if err != nil {
+	if len(s.Cluster.DynamicWorkers) != 0 {
+		s.Logger.Infoln("Creating worker machines…")
+		if err := machinecontroller.CreateMachineDeployments(s); err != nil {
 			return err
 		}
-		if !confirm {
-			s.Logger.Println("Operation canceled.")
-			return nil
-		}
-
-		return errors.Wrap(tasks.WithUpgrade(nil).Run(s), "failed to upgrade cluster")
 	}
-	s.Logger.Println("The expected state matches actual, no action needed.")
+	for machine, change := range changes {
+		if change == state.DynamicWorkerDelete {
+			s.Logger.Infof("Deleting worker machines: %q…\n", machine)
+			if err := machinecontroller.DestroyMachineDeployment(s, machine); err != nil {
+				return err
+			}
+		}
+	}
+
 	return nil
 }
 

@@ -31,6 +31,9 @@ import (
 	"github.com/kubermatic/kubeone/pkg/kubeconfig"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/state"
+	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
+
+	clusterv1alpha1 "github.com/kubermatic/machine-controller/pkg/apis/cluster/v1alpha1"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/labels"
@@ -71,11 +74,15 @@ func runProbes(s *state.State) error {
 		return err
 	}
 
-	if s.LiveCluster.IsProvisioned() {
-		return investigateCluster(s)
+	if !s.LiveCluster.IsProvisioned() {
+		return nil
 	}
 
-	return nil
+	if err := investigateCluster(s); err != nil {
+		return err
+	}
+
+	return investigateDynamicWorkers(s)
 }
 
 func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
@@ -236,6 +243,59 @@ func investigateCluster(s *state.State) error {
 		fmt.Printf("Etcd running on %q: %t\n", host.Config.Hostname, host.Etcd.Status&state.PodRunning != 0)
 	}
 	fmt.Println()
+
+	return nil
+}
+
+func investigateDynamicWorkers(s *state.State) error {
+	if !s.LiveCluster.IsProvisioned() {
+		return errors.New("unable to investigate non-provisioned cluster")
+	}
+	if s.DynamicClient == nil {
+		if err := kubeconfig.BuildKubernetesClientset(s); err != nil {
+			return err
+		}
+	}
+
+	mdList := &clusterv1alpha1.MachineDeploymentList{}
+	if err := s.DynamicClient.List(s.Context, mdList, dynclient.InNamespace(machinecontroller.MachineControllerNamespace)); err != nil {
+		return err
+	}
+
+	actualMD := sets.NewString()
+	expectedMD := sets.NewString()
+
+	for _, md := range mdList.Items {
+		actualMD.Insert(md.Name)
+	}
+	for _, md := range s.Cluster.DynamicWorkers {
+		expectedMD.Insert(md.Name)
+	}
+
+	matchedMachines := expectedMD.Intersection(actualMD)
+	createMachines := expectedMD.Difference(actualMD)
+	deleteMachines := actualMD.Difference(expectedMD)
+
+	s.LiveCluster.Lock.Lock()
+	for _, matched := range matchedMachines.List() {
+		s.LiveCluster.DynamicWorkers = append(s.LiveCluster.DynamicWorkers, state.DynamicWorker{
+			Name:   matched,
+			Status: state.DynamicWorkerMatch,
+		})
+	}
+	for _, create := range createMachines.List() {
+		s.LiveCluster.DynamicWorkers = append(s.LiveCluster.DynamicWorkers, state.DynamicWorker{
+			Name:   create,
+			Status: state.DynamicWorkerCreate,
+		})
+	}
+	for _, delete := range deleteMachines.List() {
+		s.LiveCluster.DynamicWorkers = append(s.LiveCluster.DynamicWorkers, state.DynamicWorker{
+			Name:   delete,
+			Status: state.DynamicWorkerDelete,
+		})
+	}
+	s.LiveCluster.Lock.Unlock()
 
 	return nil
 }

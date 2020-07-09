@@ -221,6 +221,30 @@ func DestroyWorkers(s *state.State) error {
 	return nil
 }
 
+func DestroyMachineDeployment(s *state.State, machineDeploymentName string) error {
+	if !s.Cluster.MachineController.Deploy {
+		s.Logger.Info("Skipping deleting workers because machine-controller is disabled in configuration.")
+		return nil
+	}
+	if s.DynamicClient == nil {
+		return errors.New("kubernetes client not initialized")
+	}
+
+	ctx := context.Background()
+
+	// Delete all MachineDeployment objects
+	md := &clusterv1alpha1.MachineDeployment{}
+	key := dynclient.ObjectKey{Name: machineDeploymentName, Namespace: MachineControllerNamespace}
+	if err := s.DynamicClient.Get(ctx, key, md); err != nil {
+		return err
+	}
+	if err := s.DynamicClient.Delete(ctx, md); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // WaitDestroy waits for all Machines to be deleted
 func WaitDestroy(s *state.State) error {
 	s.Logger.Info("Waiting for all machines to get deleted…")
