@@ -1,13 +1,12 @@
 # OpenStack Quickstart Terraform scripts
 
 The OpenStack Quickstart Terraform scripts can be used to create the needed infrastructure for a Kubernetes HA cluster.
-Check out the following [OpenStack getting started walkthrough][os-quickstart] to learn more about how to use the
+Check out the following [OpenStack getting started walkthrough](https://docs.kubermatic.com/kubeone/master/getting_started/openstack) to learn more about how to use the
 scripts and how to provision a Kubernetes cluster using KubeOne.
 
 ## Kubernetes APIserver LoadBalancing
-See https://github.com/kubermatic/kubeone/blob/master/docs/example-loadbalancer.md
 
-[os-quickstart]: https://github.com/kubermatic/kubeone/blob/master/docs/quickstart-openstack.md
+See [example-loadbalancer](https://docs.kubermatic.com/kubeone/master/using_kubeone/example_loadbalancer)
 
 ## Inputs
 
@@ -35,4 +34,3 @@ See https://github.com/kubermatic/kubeone/blob/master/docs/example-loadbalancer.
 | kubeone\_api | kube-apiserver LB endpoint |
 | kubeone\_hosts | Control plane endpoints to SSH to |
 | kubeone\_workers | Workers definitions, that will be transformed into MachineDeployment object |
-
