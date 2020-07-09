@@ -26,6 +26,7 @@ import (
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/clientutil"
 	"github.com/kubermatic/kubeone/pkg/state"
+	"github.com/kubermatic/kubeone/pkg/templates"
 
 	clustercommon "github.com/kubermatic/machine-controller/pkg/apis/cluster/common"
 	clusterv1alpha1 "github.com/kubermatic/machine-controller/pkg/apis/cluster/v1alpha1"
@@ -59,6 +60,30 @@ func CreateMachineDeployments(s *state.State) error {
 	}
 
 	return nil
+}
+
+// GenerateMachineDeploymentsManifest generates YAML manifests containing
+// all MachineDeployments present in the state.
+func GenerateMachineDeploymentsManifest(s *state.State) (string, error) {
+	if len(s.Cluster.DynamicWorkers) == 0 {
+		return "", nil
+	}
+
+	objs := []runtime.Object{}
+	for _, workerset := range s.Cluster.DynamicWorkers {
+		machinedeployment, err := createMachineDeployment(s.Cluster, workerset)
+		if err != nil {
+			return "", errors.Wrap(err, "failed to generate MachineDeployment")
+		}
+		machinedeployment.TypeMeta = metav1.TypeMeta{
+			APIVersion: clusterv1alpha1.SchemeGroupVersion.String(),
+			Kind:       "MachineDeployment",
+		}
+
+		objs = append(objs, machinedeployment)
+	}
+
+	return templates.KubernetesToYAML(objs)
 }
 
 func createMachineDeployment(cluster *kubeoneapi.KubeOneCluster, workerset kubeoneapi.DynamicWorkerConfig) (*clusterv1alpha1.MachineDeployment, error) {

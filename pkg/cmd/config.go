@@ -31,6 +31,7 @@ import (
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/apis/kubeone/config"
+	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
 	"github.com/kubermatic/kubeone/pkg/yamled"
 
 	kyaml "sigs.k8s.io/yaml"
@@ -87,6 +88,7 @@ func configCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 
 	cmd.AddCommand(printCmd())
 	cmd.AddCommand(migrateCmd(rootFlags))
+	cmd.AddCommand(machinedeploymentsCmd(rootFlags))
 
 	return cmd
 }
@@ -191,6 +193,33 @@ The new manifest is printed on the standard output.
 			}
 
 			return runMigrate(gopts)
+		},
+	}
+
+	return cmd
+}
+
+// machinedeploymentsCmd setups the machinedeployments command
+func machinedeploymentsCmd(rootFlags *pflag.FlagSet) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "machinedeployments",
+		Short: "Print the manifest for creating MachineDeployments",
+		Long: `
+Print the manifest for creating MachineDeployment objects.
+
+The manifest contains all MachineDeployments defined in the API/config.
+Note that manifest may include already created MachineDeplyoments.
+The manifest is printed on the standard output.
+`,
+		Args:    cobra.ExactArgs(0),
+		Example: `kubeone config machinedeplyoments --manifest mycluster.yaml`,
+		RunE: func(_ *cobra.Command, args []string) error {
+			gopts, err := persistentGlobalOptions(rootFlags)
+			if err != nil {
+				return errors.Wrap(err, "unable to get global flags")
+			}
+
+			return runGenerateMachineDeployments(gopts)
 		},
 	}
 
@@ -392,7 +421,7 @@ func parseControlPlaneHosts(cfg *yamled.Document, hostList string) error {
 	return nil
 }
 
-// runMigrate migrates the pre-v0.6.0 KubeOne API manifest to the KubeOneCluster manifest used as of v0.6.0
+// runMigrate migrates the KubeOneCluster manifest from v1alpha1 to v1beta1
 func runMigrate(opts *globalOptions) error {
 	// Convert old config yaml to new config yaml
 	newConfigYAML, err := config.MigrateOldConfig(opts.ManifestFile)
@@ -404,6 +433,23 @@ func runMigrate(opts *globalOptions) error {
 	if err != nil {
 		return errors.Wrap(err, "unable to validate and print config")
 	}
+
+	return nil
+}
+
+// runGenerateMachineDeployments generates the MachineDeployments manifest
+func runGenerateMachineDeployments(opts *globalOptions) error {
+	s, err := opts.BuildState()
+	if err != nil {
+		return errors.Wrap(err, "failed to initialize State")
+	}
+
+	manifest, err := machinecontroller.GenerateMachineDeploymentsManifest(s)
+	if err != nil {
+		return errors.Wrap(err, "failed to generate machinedeployments manifest")
+	}
+
+	fmt.Println(manifest)
 
 	return nil
 }
