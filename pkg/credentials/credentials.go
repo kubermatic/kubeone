@@ -27,6 +27,7 @@ import (
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
 
+	"github.com/gophercloud/utils/openstack/clientconfig"
 	"github.com/kubermatic/kubeone/pkg/apis/kubeone"
 )
 
@@ -235,6 +236,11 @@ func (f *fetcher) parseAWSCredentials() (map[string]string, error) {
 }
 
 func (f fetcher) parseCredentialVariables(envVars []ProviderEnvironmentVariable, validationFunc func(map[string]string) error) (map[string]string, error) {
+	// Load variables from clouds.yaml
+	if err := f.parseOpenstackCloudCredentials(); err != nil {
+		return nil, errors.Wrap(err, "error reading clouds.yaml")
+	}
+
 	// Validate credentials using given validation function
 	creds := make(map[string]string)
 	for _, env := range envVars {
@@ -266,11 +272,50 @@ func defaultValidationFunc(creds map[string]string) error {
 	return nil
 }
 
+func (f *fetcher) parseOpenstackCloudCredentials() error {
+	cloudName, ok := os.LookupEnv("OS_CLOUD")
+
+	if !ok {
+		return nil
+	}
+
+	clouds, err := clientconfig.LoadCloudsYAML()
+	if err != nil {
+		return err
+	}
+
+	cloud, ok := clouds[cloudName]
+	if !ok {
+		return fmt.Errorf("expected to find %s in clouds.yaml", cloudName)
+	}
+
+	f.Source = map[string]string{
+		OpenStackAuthURL:    cloud.AuthInfo.AuthURL,
+		OpenStackUserName:   cloud.AuthInfo.Username,
+		OpenStackPassword:   cloud.AuthInfo.Password,
+		OpenStackRegionName: cloud.RegionName,
+		OpenStackTenantID:   cloud.AuthInfo.ProjectID,
+		OpenStackTenantName: cloud.AuthInfo.ProjectName,
+		OpenStackDomainName: cloud.AuthInfo.DomainName,
+	}
+
+	if cloud.AuthInfo.DomainName != "" {
+		f.Source[OpenStackDomainName] = cloud.AuthInfo.DomainName
+	}
+
+	f.F = func(name string) string {
+		return f.Source[name]
+	}
+
+	return nil
+}
+
 func openstackValidationFunc(creds map[string]string) error {
 	for k, v := range creds {
 		if k == OpenStackTenantID || k == OpenStackTenantName {
 			continue
 		}
+
 		if len(v) == 0 {
 			return errors.Errorf("key %v is required but isn't present", k)
 		}
