@@ -180,9 +180,9 @@ type WorkerConfig struct {
 // ProviderSpec describes a worker node
 type ProviderSpec struct {
 	CloudProviderSpec   json.RawMessage   `json:"cloudProviderSpec"`
-	Labels              map[string]string `json:"labels"`
+	Labels              map[string]string `json:"labels,omitempty"`
 	Taints              []corev1.Taint    `json:"taints,omitempty"`
-	SSHPublicKeys       []string          `json:"sshPublicKeys"`
+	SSHPublicKeys       []string          `json:"sshPublicKeys,omitempty"`
 	OperatingSystem     string            `json:"operatingSystem"`
 	OperatingSystemSpec json.RawMessage   `json:"operatingSystemSpec"`
 
