@@ -67,7 +67,7 @@ func runProbes(s *state.State) error {
 		})
 	}
 	for i := range s.Cluster.StaticWorkers.Hosts {
-		s.LiveCluster.Workers = append(s.LiveCluster.Workers, state.Host{
+		s.LiveCluster.StaticWorkers = append(s.LiveCluster.StaticWorkers, state.Host{
 			Config: &s.Cluster.StaticWorkers.Hosts[i],
 		})
 	}
@@ -99,8 +99,8 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Conne
 		}
 	}
 	if h == nil {
-		for i := range s.LiveCluster.Workers {
-			host := s.LiveCluster.Workers[i]
+		for i := range s.LiveCluster.StaticWorkers {
+			host := s.LiveCluster.StaticWorkers[i]
 			if host.Config.Hostname == node.Hostname {
 				h = &host
 				idx = i

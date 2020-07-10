@@ -29,7 +29,7 @@ import (
 
 type Cluster struct {
 	ControlPlane    []Host
-	Workers         []Host
+	StaticWorkers   []Host
 	ExpectedVersion *semver.Version
 	Lock            sync.Mutex
 }
@@ -92,8 +92,8 @@ func (c *Cluster) Healthy() bool {
 		}
 	}
 
-	for i := range c.Workers {
-		if !c.Workers[i].WorkerHealthy() {
+	for i := range c.StaticWorkers {
+		if !c.StaticWorkers[i].WorkerHealthy() {
 			return false
 		}
 	}
@@ -161,8 +161,8 @@ func (c *Cluster) UpgradeNeeded() (bool, error) {
 		}
 	}
 
-	for i := range c.Workers {
-		verDiff := c.ExpectedVersion.Compare(c.Workers[i].Kubelet.Version)
+	for i := range c.StaticWorkers {
+		verDiff := c.ExpectedVersion.Compare(c.StaticWorkers[i].Kubelet.Version)
 		if verDiff > 0 {
 			return true, nil
 		} else if verDiff < 0 {

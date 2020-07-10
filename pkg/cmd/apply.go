@@ -212,7 +212,7 @@ func runApplyInstall(s *state.State, opts *applyOpts) error { // Print the expec
 			fmt.Printf("+ provision control plane host %q (%s)\n", node.Config.Hostname, node.Config.PrivateAddress)
 		}
 	}
-	for _, node := range s.LiveCluster.Workers {
+	for _, node := range s.LiveCluster.StaticWorkers {
 		if !node.IsInCluster {
 			fmt.Printf("+ provision worker host %q (%s)\n", node.Config.Hostname, node.Config.PrivateAddress)
 		}
