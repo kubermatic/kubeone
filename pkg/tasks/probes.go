@@ -66,8 +66,13 @@ func runProbes(s *state.State) error {
 			Config: &s.Cluster.ControlPlane.Hosts[i],
 		})
 	}
+	for i := range s.Cluster.StaticWorkers.Hosts {
+		s.LiveCluster.StaticWorkers = append(s.LiveCluster.StaticWorkers, state.Host{
+			Config: &s.Cluster.StaticWorkers.Hosts[i],
+		})
+	}
 
-	if err := s.RunTaskOnControlPlane(investigateHost, state.RunParallel); err != nil {
+	if err := s.RunTaskOnAllNodes(investigateHost, state.RunParallel); err != nil {
 		return err
 	}
 
@@ -80,8 +85,9 @@ func runProbes(s *state.State) error {
 
 func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	var (
-		idx int
-		h   *state.Host
+		idx          int
+		h            *state.Host
+		controlPlane bool
 	)
 
 	s.LiveCluster.Lock.Lock()
@@ -90,7 +96,18 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Conne
 		if host.Config.Hostname == node.Hostname {
 			h = &host
 			idx = i
+			controlPlane = true
 			break
+		}
+	}
+	if h == nil {
+		for i := range s.LiveCluster.StaticWorkers {
+			host := s.LiveCluster.StaticWorkers[i]
+			if host.Config.Hostname == node.Hostname {
+				h = &host
+				idx = i
+				break
+			}
 		}
 	}
 	s.LiveCluster.Lock.Unlock()
@@ -130,11 +147,16 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Conne
 	fmt.Printf("kubelet is initialized?: %t\n", h.Kubelet.Status&state.KubeletInitialized != 0)
 	fmt.Println()
 
-	s.LiveCluster.ControlPlane[idx] = *h
+	if controlPlane {
+		s.LiveCluster.ControlPlane[idx] = *h
+	} else {
+		s.LiveCluster.StaticWorkers[idx] = *h
+	}
 	s.LiveCluster.Lock.Unlock()
 	return nil
 }
 
+// TODO: add proper support for static workers
 func investigateCluster(s *state.State) error {
 	if !s.LiveCluster.IsProvisioned() {
 		return errors.New("unable to investigate non-provisioned cluster")

@@ -209,7 +209,12 @@ func runApplyInstall(s *state.State, opts *applyOpts) error { // Print the expec
 
 	for _, node := range s.LiveCluster.ControlPlane {
 		if !node.IsInCluster {
-			fmt.Printf("+ provision host %q (%s)\n", node.Config.Hostname, node.Config.PrivateAddress)
+			fmt.Printf("+ provision control plane host %q (%s)\n", node.Config.Hostname, node.Config.PrivateAddress)
+		}
+	}
+	for _, node := range s.LiveCluster.StaticWorkers {
+		if !node.IsInCluster {
+			fmt.Printf("+ provision worker host %q (%s)\n", node.Config.Hostname, node.Config.PrivateAddress)
 		}
 	}
 
@@ -249,14 +254,21 @@ func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
 		// TODO: Maybe it's not needed to upgrade each node, check version
 		for _, node := range s.Cluster.ControlPlane.Hosts {
 			if opts.ForceUpgrade {
-				fmt.Printf("~ force upgrade node %q (%s) to Kubernetes %s\n", node.Hostname, node.PrivateAddress, s.Cluster.Versions.Kubernetes)
+				fmt.Printf("~ force upgrade control plane node %q (%s) to Kubernetes %s\n", node.Hostname, node.PrivateAddress, s.Cluster.Versions.Kubernetes)
 			} else {
-				fmt.Printf("~ upgrade node %q (%s) to Kubernetes %s\n", node.Hostname, node.PrivateAddress, s.Cluster.Versions.Kubernetes)
+				fmt.Printf("~ upgrade control plane node %q (%s) to Kubernetes %s\n", node.Hostname, node.PrivateAddress, s.Cluster.Versions.Kubernetes)
+			}
+		}
+		for _, node := range s.Cluster.StaticWorkers.Hosts {
+			if opts.ForceUpgrade {
+				fmt.Printf("~ force upgrade worker node %q (%s) to Kubernetes %s\n", node.Hostname, node.PrivateAddress, s.Cluster.Versions.Kubernetes)
+			} else {
+				fmt.Printf("~ upgrade worker node %q (%s) to Kubernetes %s\n", node.Hostname, node.PrivateAddress, s.Cluster.Versions.Kubernetes)
 			}
 		}
 
 		if s.UpgradeMachineDeployments {
-			fmt.Printf("~ replace all worker machines with %s\n", s.Cluster.Versions.Kubernetes)
+			fmt.Printf("~ upgrade all machinedeployment objects to %s\n", s.Cluster.Versions.Kubernetes)
 		}
 
 		fmt.Println()
