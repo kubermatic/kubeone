@@ -103,11 +103,14 @@ progress follow the [issue #471][17]
 
 #### Arch Linux
 
-We have a package in the AUR [here](https://aur.archlinux.org/packages/kubeone).
-Use your favorite method to build it on your system, for example by using
-`aurutils`:
+`kubeone` can be found in the official Arch Linux repositories:
+
+[https://www.archlinux.org/packages/community/x86_64/kubeone/](https://www.archlinux.org/packages/community/x86_64/kubeone/)
+
+Install it via:
+
 ```bash
-aur sync kubeone && pacman -S kubeone
+pacman -S kubeone
 ```
 
 ### Shell completion and generating documentation
