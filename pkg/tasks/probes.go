@@ -23,6 +23,7 @@ import (
 	"github.com/Masterminds/semver"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
+	"k8s.io/apimachinery/pkg/labels"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/clusterstatus/apiserverstatus"
@@ -33,7 +34,6 @@ import (
 	"github.com/kubermatic/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/util/sets"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -66,8 +66,13 @@ func runProbes(s *state.State) error {
 			Config: &s.Cluster.ControlPlane.Hosts[i],
 		})
 	}
+	for i := range s.Cluster.StaticWorkers.Hosts {
+		s.LiveCluster.Workers = append(s.LiveCluster.Workers, state.Host{
+			Config: &s.Cluster.StaticWorkers.Hosts[i],
+		})
+	}
 
-	if err := s.RunTaskOnControlPlane(investigateHost, state.RunParallel); err != nil {
+	if err := s.RunTaskOnAllNodes(investigateHost, state.RunParallel); err != nil {
 		return err
 	}
 
@@ -91,6 +96,16 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Conne
 			h = &host
 			idx = i
 			break
+		}
+	}
+	if h == nil {
+		for i := range s.LiveCluster.Workers {
+			host := s.LiveCluster.Workers[i]
+			if host.Config.Hostname == node.Hostname {
+				h = &host
+				idx = i
+				break
+			}
 		}
 	}
 	s.LiveCluster.Lock.Unlock()
@@ -135,6 +150,7 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Conne
 	return nil
 }
 
+// TODO: add proper support for static workers
 func investigateCluster(s *state.State) error {
 	if !s.LiveCluster.IsProvisioned() {
 		return errors.New("unable to investigate non-provisioned cluster")
