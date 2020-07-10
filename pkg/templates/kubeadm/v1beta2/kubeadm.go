@@ -277,5 +277,7 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Obje
 		nodeRegistration.KubeletExtraArgs["cloud-provider"] = "external"
 	}
 
+	joinConfig.NodeRegistration = nodeRegistration
+
 	return []runtime.Object{joinConfig}, nil
 }
