@@ -23,7 +23,6 @@ import (
 	"github.com/Masterminds/semver"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
-	"k8s.io/apimachinery/pkg/labels"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/clusterstatus/apiserverstatus"
@@ -34,6 +33,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/util/sets"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -85,8 +85,9 @@ func runProbes(s *state.State) error {
 
 func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	var (
-		idx int
-		h   *state.Host
+		idx          int
+		h            *state.Host
+		controlPlane bool
 	)
 
 	s.LiveCluster.Lock.Lock()
@@ -95,6 +96,7 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Conne
 		if host.Config.Hostname == node.Hostname {
 			h = &host
 			idx = i
+			controlPlane = true
 			break
 		}
 	}
@@ -145,7 +147,11 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Conne
 	fmt.Printf("kubelet is initialized?: %t\n", h.Kubelet.Status&state.KubeletInitialized != 0)
 	fmt.Println()
 
-	s.LiveCluster.ControlPlane[idx] = *h
+	if controlPlane {
+		s.LiveCluster.ControlPlane[idx] = *h
+	} else {
+		s.LiveCluster.StaticWorkers[idx] = *h
+	}
 	s.LiveCluster.Lock.Unlock()
 	return nil
 }
