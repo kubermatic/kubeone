@@ -19,9 +19,16 @@ component.
 Versions earlier than v0.6.0 are considered alpha and it's strongly advised to
 upgrade to the v0.6.0 or newer as soon as possible.
 
-## Documentation / User Guides
+## Getting Started
 
 All user documentation is available at the [KubeOne docs website](https://docs.kubermatic.com/kubeone/master/).
+
+We have a getting started tutorial for each provider we support in the
+[Getting Started section][10]. For example, the following document shows
+[how to get started with KubeOne on AWS][11].
+
+For advanced use cases and other features, check out the
+[Using KubeOne section][13].
 
 ## KubeOne in Action
 
@@ -158,23 +165,6 @@ supported. It's highly recommended to use the latest version whenever possible.
 | v0.11.0+        | +    | +    | +    | +    | -    | v0.12+    | AWS, DigitalOcean, GCE, Hetzner, Packet, OpenStack, vSphere, Azure |
 | v0.10.0+        | -    | -    | +    | +    | +    | v0.12+    | AWS, DigitalOcean, GCE, Hetzner, Packet, OpenStack, vSphere, Azure |
 
-## Getting Started
-
-We have a getting started tutorial for each cloud provider we support in our
-[documentation][10]. For example, the following document shows
-[how to get started with KubeOne on AWS][11].
-
-A cluster is created using the `kubeone install` command. It takes a KubeOne configuration file and optionally Terraform state used to source information about the infrastructure. You may also use our [Ansible roles][12] to create the configuration file.
-
-```bash
-kubeone install config.yaml --tfjson tf.json
-```
-
-To learn more about KubeOne configuration, please run `kubeone config print --full`.
-
-For advanced use cases and other features, check the [KubeOne features][13]
-document.
-
 ## Getting Involved
 
 We very appreciate contributions! If you want to contribute or have an idea for
@@ -215,10 +205,9 @@ See [the list of releases][3] to find out about feature changes.
 [7]: https://github.com/kubernetes-sigs/cluster-api
 [8]: https://github.com/kubermatic/machine-controller
 [9]: https://github.com/kubermatic/kubeone/releases
-[10]: ./docs
-[12]: https://github.com/kubermatic/kubeone/tree/master/examples/ansible
+[10]: https://docs.kubermatic.com/kubeone/master/getting_started/
 [11]: https://docs.kubermatic.com/kubeone/master/getting_started/aws/
-[13]: https://github.com/kubermatic/kubeone#features
+[13]: https://docs.kubermatic.com/kubeone/master/using_kubeone/
 [14]: https://groups.google.com/forum/#!forum/loodse-dev
 [15]: http://slack.k8s.io/
 [16]: https://github.com/kubermatic/kubeone/blob/master/CONTRIBUTING.md#reporting-a-security-vulnerability
