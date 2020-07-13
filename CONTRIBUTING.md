@@ -1,26 +1,26 @@
-# KubeOne Contributing Guide
+# KubeOne Contributing Guide <!-- omit in toc -->
 
 This documents explains how to contribute to KubeOne, how to find what to work on, and what practices are we following along the way. Loodse projects are [Apache 2.0 licensed](LICENSE) and accept contributions via GitHub Pull Requests.
 
-## Table of Contents
+## Table of Contents <!-- omit in toc -->
 
-* [Getting Started](#getting-started)
-  * [Setting Up The Environment](#setting-up-the-environment)
-  * [Code of Conduct](#code-of-conduct)
-  * [Project Structure and Frequently Asked Questions](#project-structure-and-frequently-asked-questions)
-  * [Certificate of Origin](#certificate-of-origin)
-* [Contributing Process](#contributing-process)
-  * [Finding What To Work On](#finding-what-to-work-on)
-  * [Submitting Feature Requests](#submitting-feature-requests)
-  * [Creating a New Pull Request](#creating-a-new-pull-request)
-  * [Prow](#prow)
-  * [Release Notes Block](#release-notes-block)
-* [Code Style Guide](#code-style-guide)
-  * [Linting](#linting)
-  * [Guidelines](#guidelines)
-  * [Import Order](#import-order)
-* [Contact](#contact)
-  * [Reporting a Security Vulnerability](#reporting-a-security-vulnerability)
+- [Getting Started](#getting-started)
+  - [Setting Up The Environment](#setting-up-the-environment)
+  - [Code of Conduct](#code-of-conduct)
+  - [Project Structure and Frequently Asked Questions](#project-structure-and-frequently-asked-questions)
+  - [Certificate of Origin](#certificate-of-origin)
+- [Contributing Process](#contributing-process)
+  - [Finding What To Work On](#finding-what-to-work-on)
+  - [Submitting Feature Requests](#submitting-feature-requests)
+  - [Creating a New Pull Request](#creating-a-new-pull-request)
+  - [Prow](#prow)
+  - [Release Notes Block](#release-notes-block)
+- [Code Style Guide](#code-style-guide)
+  - [Linting](#linting)
+  - [Guidelines](#guidelines)
+  - [Import Order](#import-order)
+- [Contact](#contact)
+  - [Reporting a Security Vulnerability](#reporting-a-security-vulnerability)
 
 ## Getting Started
 
@@ -69,7 +69,7 @@ This part of the document explains how to get started with contributing, includi
 
 One of the most challenging part of contributing to the open source projects is finding what to work on. To make it easier, we're trying to label all issues that may be good for first time contributors using the [`good first issue`](https://github.com/kubermatic/kubeone/labels/good%20first%20issue) label. Another label you can take a look at is the [`help wanted`](https://github.com/kubermatic/kubeone/labels/help%20wanted) label, however there may be issue that can be harder to solve if you're not experienced with the code base.
 
-If you have any questions or need assistance, please feel free to comment on the appropriate issue, create a new issue or ping us on [`#kubeone` channel on Kubernetes Slack](http://slack.k8s.io/) or [`loodse-dev` mailing list](https://groups.google.com/forum/#!forum/loodse-dev)!
+If you have any questions or need assistance, please feel free to comment on the appropriate issue, create a new issue or ping us on [`#kubeone` channel on Kubernetes Slack](http://slack.k8s.io/) or [Kubermatic forums](http://forum.kubermatic.com/)!
 
 ### Submitting Feature Requests
 
@@ -193,7 +193,7 @@ import (
 
 ## Contact
 
-The KubeOne project currently uses the general [Loodse (`loodse-dev`) mailing list](https://groups.google.com/forum/#!forum/loodse-dev) and [`#kubeone` Slack channel](https://kubernetes.slack.com/messages/CNEV2UMT7) on [Kubernetes Slack](http://slack.k8s.io/). You can also ask questions by creating a new issue on GitHub, but using mailing list or Slack is preferred.
+The KubeOne project currently uses the [Kubermatic forums](http://forum.kubermatic.com/) and [`#kubeone` Slack channel](https://kubernetes.slack.com/messages/CNEV2UMT7) on [Kubernetes Slack](http://slack.k8s.io/). You can also ask questions by creating a new issue on GitHub, but using mailing list or Slack is preferred.
 
 Please avoid emailing maintainers found in the MAINTAINERS file directly. They are very busy, but they often read the mailing list and the Slack channel.
 
