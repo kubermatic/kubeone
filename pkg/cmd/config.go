@@ -640,7 +640,7 @@ addons:
 #     bastionPort: 22  # can be left out if using the default (22)
 #     bastionUser: 'root'  # can be left out if using the default ('root')
 #     sshPort: 22 # can be left out if using the default (22)
-#     sshUsername: ubuntu
+#     sshUsername: root
 #     # You usually want to configure either a private key OR an
 #     # agent socket, but never both. The socket value can be
 #     # prefixed with "env:" to refer to an environment variable.
@@ -664,7 +664,7 @@ addons:
 #     bastionPort: 22  # can be left out if using the default (22)
 #     bastionUser: 'root'  # can be left out if using the default ('root')
 #     sshPort: 22 # can be left out if using the default (22)
-#     sshUsername: ubuntu
+#     sshUsername: root
 #     # You usually want to configure either a private key OR an
 #     # agent socket, but never both. The socket value can be
 #     # prefixed with "env:" to refer to an environment variable.
