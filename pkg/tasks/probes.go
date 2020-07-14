@@ -27,13 +27,11 @@ import (
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
 	"github.com/kubermatic/kubeone/pkg/clusterstatus/apiserverstatus"
 	"github.com/kubermatic/kubeone/pkg/clusterstatus/etcdstatus"
-	"github.com/kubermatic/kubeone/pkg/clusterstatus/preflightstatus"
 	"github.com/kubermatic/kubeone/pkg/kubeconfig"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/util/sets"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -196,10 +194,7 @@ func investigateCluster(s *state.State) error {
 
 	// Get the node list
 	nodes := corev1.NodeList{}
-	nodeListOpts := dynclient.ListOptions{
-		LabelSelector: labels.SelectorFromSet(map[string]string{preflightstatus.LabelControlPlaneNode: ""}),
-	}
-	if err := s.DynamicClient.List(s.Context, &nodes, &nodeListOpts); err != nil {
+	if err := s.DynamicClient.List(s.Context, &nodes, &dynclient.ListOptions{}); err != nil {
 		return errors.Wrap(err, "unable to list nodes")
 	}
 
@@ -210,14 +205,29 @@ func investigateCluster(s *state.State) error {
 	for _, host := range s.LiveCluster.ControlPlane {
 		knownHostsIdentities.Insert(host.Config.Hostname)
 	}
+	for _, host := range s.LiveCluster.StaticWorkers {
+		knownHostsIdentities.Insert(host.Config.Hostname)
+	}
 
 	s.LiveCluster.Lock.Lock()
 	for _, node := range nodes.Items {
 		knownNodesIdentities.Insert(node.Name)
 		if knownHostsIdentities.Has(node.Name) {
+			found := false
 			for i := range s.LiveCluster.ControlPlane {
 				if node.Name == s.LiveCluster.ControlPlane[i].Config.Hostname {
 					s.LiveCluster.ControlPlane[i].IsInCluster = true
+					found = true
+					break
+				}
+			}
+			if found {
+				continue
+			}
+			for i := range s.LiveCluster.StaticWorkers {
+				if node.Name == s.LiveCluster.StaticWorkers[i].Config.Hostname {
+					s.LiveCluster.StaticWorkers[i].IsInCluster = true
+					break
 				}
 			}
 		}

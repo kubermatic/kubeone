@@ -207,6 +207,11 @@ func runApply(opts *applyOpts) error {
 				return runApplyInstall(s, opts)
 			}
 		}
+		for _, node := range s.LiveCluster.StaticWorkers {
+			if !node.IsInCluster {
+				return runApplyInstall(s, opts)
+			}
+		}
 
 		if len(brokenHosts) > 0 {
 			return errors.New("broken host(s) found, remove it manually")

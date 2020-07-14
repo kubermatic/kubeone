@@ -105,8 +105,13 @@ func (c *Cluster) Healthy() bool {
 func (c *Cluster) BrokenHosts() []string {
 	brokenNodes := []string{}
 	for i := range c.ControlPlane {
-		if c.ControlPlane[i].IsInCluster && !c.ControlPlane[i].APIServer.Healthy() {
+		if c.ControlPlane[i].IsInCluster && !c.ControlPlane[i].ControlPlaneHealthy() {
 			brokenNodes = append(brokenNodes, c.ControlPlane[i].Config.Hostname)
+		}
+	}
+	for i := range c.StaticWorkers {
+		if c.StaticWorkers[i].IsInCluster && !c.StaticWorkers[i].WorkerHealthy() {
+			brokenNodes = append(brokenNodes, c.StaticWorkers[i].Config.Hostname)
 		}
 	}
 	return brokenNodes
@@ -128,8 +133,19 @@ func (c *Cluster) SafeToDeleteHosts() []string {
 		}
 	}
 	tolerance -= len(safeToDelete)
-	if tolerance > 0 {
-		safeToDelete = append(safeToDelete, deleteCandidate[:tolerance]...)
+	if tolerance > 0 && len(deleteCandidate) > 0 {
+		if tolerance >= len(deleteCandidate) {
+			safeToDelete = append(safeToDelete, deleteCandidate...)
+		} else {
+			safeToDelete = append(safeToDelete, deleteCandidate[:tolerance]...)
+		}
+	}
+
+	// Worker nodes are always safe to delete as quorum is not affected
+	for i := range c.StaticWorkers {
+		if c.StaticWorkers[i].IsInCluster && !c.StaticWorkers[i].WorkerHealthy() {
+			safeToDelete = append(safeToDelete, c.StaticWorkers[i].Config.Hostname)
+		}
 	}
 
 	return safeToDelete
