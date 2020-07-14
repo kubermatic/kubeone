@@ -23,6 +23,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/Masterminds/semver"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -166,6 +167,19 @@ func runApply(opts *applyOpts) error {
 		return err
 	}
 
+	if s.Verbose {
+		// Print information about hosts collected by probes
+		for _, host := range s.LiveCluster.ControlPlane {
+			printHostInformation(host)
+		}
+		for _, host := range s.LiveCluster.StaticWorkers {
+			printHostInformation(host)
+		}
+	}
+
+	fmt.Println("The following actions will be taken: ")
+	fmt.Println("Run with --verbose flag for more information.")
+
 	// Reconcile the cluster based on the probe status
 	if !s.LiveCluster.IsProvisioned() {
 		return runApplyInstall(s, opts)
@@ -204,25 +218,31 @@ func runApply(opts *applyOpts) error {
 }
 
 func runApplyInstall(s *state.State, opts *applyOpts) error { // Print the expected changes
-	fmt.Println("The following actions will be taken: ")
-	fmt.Println()
-
 	for _, node := range s.LiveCluster.ControlPlane {
 		if !node.IsInCluster {
-			fmt.Printf("+ provision control plane host %q (%s)\n", node.Config.Hostname, node.Config.PrivateAddress)
+			if node.Config.IsLeader {
+				fmt.Printf("\t+ initialize control plane node %q (%s)\n", node.Config.Hostname, node.Config.PrivateAddress)
+			} else {
+				fmt.Printf("\t+ join control plane node %q (%s)\n", node.Config.Hostname, node.Config.PrivateAddress)
+			}
 		}
 	}
 	for _, node := range s.LiveCluster.StaticWorkers {
 		if !node.IsInCluster {
-			fmt.Printf("+ provision worker host %q (%s)\n", node.Config.Hostname, node.Config.PrivateAddress)
+			fmt.Printf("\t+ join worker node %q (%s)\n", node.Config.Hostname, node.Config.PrivateAddress)
 		}
 	}
-
 	if opts.NoInit {
-		fmt.Println("+ NoInit option provided: only binaries will be installed")
+		fmt.Println("\t! NoInit option provided: only binaries will be installed")
 	}
 	if opts.ForceInstall {
-		fmt.Println("! force-install option provided: force install new binary versions (!dangerous!)")
+		fmt.Println("\t! force-install option provided: force install new binary versions (!dangerous!)")
+	}
+	for _, node := range s.Cluster.DynamicWorkers {
+		fmt.Printf("\t+ ensure machinedeployment %q with %d replica(s) exists\n", node.Name, resolveInt(node.Replicas))
+	}
+	if s.Cluster.Addons != nil && s.Cluster.Addons.Enable {
+		fmt.Printf("\t+ apply addons defined in %q\n", s.Cluster.Addons.Path)
 	}
 
 	fmt.Println()
@@ -248,27 +268,25 @@ func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
 		return err
 	}
 	if upgradeNeeded || opts.ForceUpgrade {
-		fmt.Println("The following actions will be taken: ")
-		fmt.Println()
-
-		// TODO: Maybe it's not needed to upgrade each node, check version
 		for _, node := range s.Cluster.ControlPlane.Hosts {
 			if opts.ForceUpgrade {
-				fmt.Printf("~ force upgrade control plane node %q (%s) to Kubernetes %s\n", node.Hostname, node.PrivateAddress, s.Cluster.Versions.Kubernetes)
+				fmt.Printf("\t~ force upgrade control plane node %q (%s) to %s\n", node.Hostname, node.PrivateAddress, s.Cluster.Versions.Kubernetes)
 			} else {
-				fmt.Printf("~ upgrade control plane node %q (%s) to Kubernetes %s\n", node.Hostname, node.PrivateAddress, s.Cluster.Versions.Kubernetes)
+				fmt.Printf("\t~ upgrade control plane node %q (%s) to %s\n", node.Hostname, node.PrivateAddress, s.Cluster.Versions.Kubernetes)
 			}
 		}
 		for _, node := range s.Cluster.StaticWorkers.Hosts {
 			if opts.ForceUpgrade {
-				fmt.Printf("~ force upgrade worker node %q (%s) to Kubernetes %s\n", node.Hostname, node.PrivateAddress, s.Cluster.Versions.Kubernetes)
+				fmt.Printf("\t~ force upgrade worker node %q (%s) to %s\n", node.Hostname, node.PrivateAddress, s.Cluster.Versions.Kubernetes)
 			} else {
-				fmt.Printf("~ upgrade worker node %q (%s) to Kubernetes %s\n", node.Hostname, node.PrivateAddress, s.Cluster.Versions.Kubernetes)
+				fmt.Printf("\t~ upgrade worker node %q (%s) to %s\n", node.Hostname, node.PrivateAddress, s.Cluster.Versions.Kubernetes)
 			}
 		}
-
 		if s.UpgradeMachineDeployments {
-			fmt.Printf("~ upgrade all machinedeployment objects to %s\n", s.Cluster.Versions.Kubernetes)
+			fmt.Printf("~ upgrade all machinedeployments to %s\n", s.Cluster.Versions.Kubernetes)
+		}
+		if s.Cluster.Addons != nil && s.Cluster.Addons.Enable {
+			fmt.Printf("\t+ apply addons defined in %q\n", s.Cluster.Addons.Path)
 		}
 
 		fmt.Println()
@@ -283,7 +301,7 @@ func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
 
 		return errors.Wrap(tasks.WithUpgrade(nil).Run(s), "failed to upgrade cluster")
 	}
-	s.Logger.Println("The expected state matches actual, no action needed.")
+	fmt.Printf("\tThe expected state matches actual, no action needed.\n")
 	return nil
 }
 
@@ -303,4 +321,45 @@ func confirmApply(autoApprove bool) (bool, error) {
 	fmt.Println()
 
 	return strings.Trim(confirmation, "\n") == "yes", nil
+}
+
+func printHostInformation(host state.Host) {
+	fmt.Printf("Host: %q\n", host.Config.Hostname)
+	fmt.Printf("\tHost initialized: %s\n", boolStr(host.Initialized()))
+	fmt.Printf("\tDocker healthy: %s (%s)\n", boolStr(host.ContainerRuntime.Healthy()), printVersion(host.ContainerRuntime.Version))
+	fmt.Printf("\tKubelet healthy: %s (%s)\n", boolStr(host.Kubelet.Healthy()), printVersion(host.Kubelet.Version))
+
+	fmt.Println()
+	fmt.Printf("\tDocker is installed: %s\n", boolStr(host.ContainerRuntime.Status&state.ComponentInstalled != 0))
+	fmt.Printf("\tDocker is running: %s\n", boolStr(host.ContainerRuntime.Status&state.SystemDStatusRunning != 0))
+	fmt.Printf("\tDocker is active: %s\n", boolStr(host.ContainerRuntime.Status&state.SystemDStatusActive != 0))
+	fmt.Printf("\tDocker is restarting: %s\n", boolStr(host.ContainerRuntime.Status&state.SystemDStatusRestarting != 0))
+
+	fmt.Println()
+	fmt.Printf("\tKubelet is installed: %s\n", boolStr(host.Kubelet.Status&state.ComponentInstalled != 0))
+	fmt.Printf("\tKubelet is running: %s\n", boolStr(host.Kubelet.Status&state.SystemDStatusRunning != 0))
+	fmt.Printf("\tKubelet is active: %s\n", boolStr(host.Kubelet.Status&state.SystemDStatusActive != 0))
+	fmt.Printf("\tKubelet is restarting: %s\n", boolStr(host.Kubelet.Status&state.SystemDStatusRestarting != 0))
+	fmt.Println()
+}
+
+func boolStr(b bool) string {
+	if b {
+		return "yes"
+	}
+	return "no"
+}
+
+func resolveInt(i *int) int {
+	if i == nil {
+		return 0
+	}
+	return *i
+}
+
+func printVersion(version *semver.Version) string {
+	if version == nil {
+		return "not installed"
+	}
+	return version.String()
 }

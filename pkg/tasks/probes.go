@@ -129,24 +129,6 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Conne
 	}
 
 	s.LiveCluster.Lock.Lock()
-
-	fmt.Println("---------------")
-	fmt.Printf("host: %q\n", h.Config.Hostname)
-	fmt.Printf("docker version: %q\n", h.ContainerRuntime.Version)
-	fmt.Printf("docker is installed?: %t\n", h.ContainerRuntime.Status&state.ComponentInstalled != 0)
-	fmt.Printf("docker is running?: %t\n", h.ContainerRuntime.Status&state.SystemDStatusRunning != 0)
-	fmt.Printf("docker is active?: %t\n", h.ContainerRuntime.Status&state.SystemDStatusActive != 0)
-	fmt.Printf("docker is restarting?: %t\n", h.ContainerRuntime.Status&state.SystemDStatusRestarting != 0)
-	fmt.Println()
-
-	fmt.Printf("kubelet version: %q\n", h.Kubelet.Version)
-	fmt.Printf("kubelet is installed?: %t\n", h.Kubelet.Status&state.ComponentInstalled != 0)
-	fmt.Printf("kubelet is running?: %t\n", h.Kubelet.Status&state.SystemDStatusRunning != 0)
-	fmt.Printf("kubelet is active?: %t\n", h.Kubelet.Status&state.SystemDStatusActive != 0)
-	fmt.Printf("kubelet is restarting?: %t\n", h.Kubelet.Status&state.SystemDStatusRestarting != 0)
-	fmt.Printf("kubelet is initialized?: %t\n", h.Kubelet.Status&state.KubeletInitialized != 0)
-	fmt.Println()
-
 	if controlPlane {
 		s.LiveCluster.ControlPlane[idx] = *h
 	} else {
@@ -237,27 +219,6 @@ func investigateCluster(s *state.State) error {
 		}
 	}
 	s.LiveCluster.Lock.Unlock()
-
-	// Compare sets.
-	// We can safely assume that the node object name is going to be same as the hostname,
-	// because we explicitly set that in the kubeadm config file
-	hostsToBeProvisioned := knownHostsIdentities.Difference(knownNodesIdentities)
-	nodesToBeRemoved := knownNodesIdentities.Difference(knownHostsIdentities)
-
-	fmt.Println()
-	fmt.Println("---------------")
-	fmt.Printf("Unprovisioned hosts: %q\n", hostsToBeProvisioned)
-	fmt.Printf("Nodes to be removed: %q\n", nodesToBeRemoved)
-	// fmt.Printf("Is cluster degraded: %t\n", s.LiveCluster.IsDegraded())
-	//fmt.Printf("Is cluster broken: %t\n", s.LiveCluster.IsBroken())
-	fmt.Println()
-
-	fmt.Println("---------------")
-	for _, host := range s.LiveCluster.ControlPlane {
-		fmt.Printf("API server running on %q: %t\n", host.Config.Hostname, host.APIServer.Status&state.PodRunning != 0)
-		fmt.Printf("Etcd running on %q: %t\n", host.Config.Hostname, host.Etcd.Status&state.PodRunning != 0)
-	}
-	fmt.Println()
 
 	return nil
 }
