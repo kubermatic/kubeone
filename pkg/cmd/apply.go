@@ -177,9 +177,6 @@ func runApply(opts *applyOpts) error {
 		}
 	}
 
-	fmt.Println("The following actions will be taken: ")
-	fmt.Println("Run with --verbose flag for more information.")
-
 	// Reconcile the cluster based on the probe status
 	if !s.LiveCluster.IsProvisioned() {
 		return runApplyInstall(s, opts)
@@ -193,15 +190,18 @@ func runApply(opts *applyOpts) error {
 
 			s.Logger.Warnf("Hosts must be removed in a correct order to preserve the Etcd quorum.")
 			s.Logger.Warnf("Loss of the Etcd quorum can cause loss of all data!!!")
-			s.Logger.Warnf("After removing recommended hosts, run 'kubeone apply' before removing any other host.")
-			s.Logger.Warnf("The recommended removal order:")
+			s.Logger.Warnf("After removing the recommended hosts, run 'kubeone apply' before removing any other host.")
 
 			safeToDelete := s.LiveCluster.SafeToDeleteHosts()
-			for _, safe := range safeToDelete {
-				s.Logger.Warnf("- %q", safe)
+			if len(safeToDelete) > 0 {
+				s.Logger.Warnf("The recommended removal order:")
+				for _, safe := range safeToDelete {
+					s.Logger.Warnf("- %q", safe)
+				}
+			} else {
+				s.Logger.Warnf("No other broken node can be removed without losing quorum.")
 			}
 		}
-		// TODO: Should we return at the beginning after install?
 		for _, node := range s.LiveCluster.ControlPlane {
 			if !node.IsInCluster {
 				return runApplyInstall(s, opts)
@@ -218,6 +218,9 @@ func runApply(opts *applyOpts) error {
 }
 
 func runApplyInstall(s *state.State, opts *applyOpts) error { // Print the expected changes
+	fmt.Println("The following actions will be taken: ")
+	fmt.Println("Run with --verbose flag for more information.")
+
 	for _, node := range s.LiveCluster.ControlPlane {
 		if !node.IsInCluster {
 			if node.Config.IsLeader {
@@ -262,6 +265,9 @@ func runApplyInstall(s *state.State, opts *applyOpts) error { // Print the expec
 }
 
 func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
+	fmt.Println("The following actions will be taken: ")
+	fmt.Println("Run with --verbose flag for more information.")
+
 	upgradeNeeded, err := s.LiveCluster.UpgradeNeeded()
 	if err != nil {
 		s.Logger.Errorf("Upgrade not allowed: %v\n", err)
