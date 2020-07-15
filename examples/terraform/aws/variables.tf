@@ -121,8 +121,8 @@ variable "ami_filters" {
     }
 
     centos = {
-      owners     = ["679593333241"] # CentOS
-      image_name = ["CentOS Linux 7 x86_64 HVM EBS*"]
+      owners     = ["125523088429"] # CentOS
+      image_name = ["CentOS 8.2.* x86_64"]
     }
 
     flatcar = {

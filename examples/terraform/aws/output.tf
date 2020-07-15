@@ -61,7 +61,7 @@ output "kubeone_workers" {
           # see example under `cloudProviderSpec` section at:
           # https://github.com/kubermatic/machine-controller/blob/master/examples/aws-machinedeployment.yaml
           region           = var.aws_region
-          ami              = var.ami
+          ami              = local.ami
           availabilityZone = local.zoneA
           instanceProfile  = aws_iam_instance_profile.profile.name
           securityGroupIDs = [aws_security_group.common.id]
@@ -95,7 +95,7 @@ output "kubeone_workers" {
           # see example under `cloudProviderSpec` section at:
           # https://github.com/kubermatic/machine-controller/blob/master/examples/aws-machinedeployment.yaml
           region           = var.aws_region
-          ami              = var.ami
+          ami              = local.ami
           availabilityZone = local.zoneB
           instanceProfile  = aws_iam_instance_profile.profile.name
           securityGroupIDs = [aws_security_group.common.id]
@@ -129,7 +129,7 @@ output "kubeone_workers" {
           # see example under `cloudProviderSpec` section at:
           # https://github.com/kubermatic/machine-controller/blob/master/examples/aws-machinedeployment.yaml
           region           = var.aws_region
-          ami              = var.ami
+          ami              = local.ami
           availabilityZone = local.zoneC
           instanceProfile  = aws_iam_instance_profile.profile.name
           securityGroupIDs = [aws_security_group.common.id]
