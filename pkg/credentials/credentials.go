@@ -24,11 +24,12 @@ import (
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/pkg/errors"
-	"gopkg.in/yaml.v2"
-
+	"github.com/gophercloud/gophercloud"
+	"github.com/gophercloud/gophercloud/openstack"
 	"github.com/gophercloud/utils/openstack/clientconfig"
 	"github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/pkg/errors"
+	"gopkg.in/yaml.v2"
 )
 
 // The environment variable names with credential in them
@@ -114,15 +115,7 @@ func ProviderCredentials(p kubeone.CloudProviderSpec, credentialsFilePath string
 			{Name: HetznerTokenKey, MachineControllerName: HetznerTokenKeyMC},
 		}, defaultValidationFunc)
 	case p.Openstack != nil:
-		return f.parseCredentialVariables([]ProviderEnvironmentVariable{
-			{Name: OpenStackAuthURL},
-			{Name: OpenStackUserName, MachineControllerName: OpenStackUserNameMC},
-			{Name: OpenStackPassword},
-			{Name: OpenStackDomainName},
-			{Name: OpenStackRegionName},
-			{Name: OpenStackTenantID},
-			{Name: OpenStackTenantName},
-		}, openstackValidationFunc)
+		return f.parseOpenStackCredentials()
 	case p.Packet != nil:
 		return f.parseCredentialVariables([]ProviderEnvironmentVariable{
 			{Name: PacketAPIKey, MachineControllerName: PacketAPIKeyMC},
@@ -235,12 +228,74 @@ func (f *fetcher) parseAWSCredentials() (map[string]string, error) {
 	return creds, nil
 }
 
-func (f fetcher) parseCredentialVariables(envVars []ProviderEnvironmentVariable, validationFunc func(map[string]string) error) (map[string]string, error) {
-	// Load variables from clouds.yaml
-	if err := f.parseOpenstackCloudCredentials(); err != nil {
-		return nil, errors.Wrap(err, "error reading clouds.yaml")
+func openstackAuthOptionsToCreds(opts *gophercloud.AuthOptions, region string) (map[string]string, error) {
+	creds := make(map[string]string)
+	// We could implement some fallbacks here to support e.g. application credentials / domain ID
+	creds[OpenStackAuthURL] = opts.IdentityEndpoint
+	creds[OpenStackUserNameMC] = opts.Username
+	creds[OpenStackPassword] = opts.Password
+	creds[OpenStackDomainName] = opts.DomainName
+	creds[OpenStackRegionName] = region
+
+	if opts.TenantID != "" {
+		creds[OpenStackTenantID] = opts.TenantID
 	}
 
+	if v, ok := creds[OpenStackTenantID]; !ok || len(v) == 0 {
+		creds[OpenStackTenantName] = opts.TenantName
+	}
+
+	return creds, nil
+}
+
+func (f *fetcher) parseOpenStackCredentials() (map[string]string, error) {
+	// 1.) Credentials file loaded
+	if f.Source != nil {
+		return map[string]string{
+			OpenStackAuthURL:    f.F(OpenStackAuthURL),
+			OpenStackPassword:   f.F(OpenStackPassword),
+			OpenStackDomainName: f.F(OpenStackDomainName),
+			OpenStackRegionName: f.F(OpenStackRegionName),
+			OpenStackTenantID:   f.F(OpenStackTenantID),
+			OpenStackTenantName: f.F(OpenStackTenantName),
+			OpenStackUserNameMC: f.F(OpenStackUserName),
+		}, nil
+	}
+
+	// 2.) Check environment variables only use them if all required parameters are set
+	opts, err := openstack.AuthOptionsFromEnv()
+	if err == nil {
+		return openstackAuthOptionsToCreds(&opts, os.Getenv("OS_REGION_NAME"))
+	}
+
+	// 3.) Check clouds.yml only use them if all required parameters are set
+	cloudName, ok := os.LookupEnv("OS_CLOUD")
+	if !ok || cloudName == "" {
+		return nil, fmt.Errorf("cloud not read credentials from clouds.yml with cloud %s and not from environment variables: %s", cloudName, err.Error())
+	}
+
+	cloudOpts, err := clientconfig.AuthOptions(&clientconfig.ClientOpts{
+		Cloud: cloudName,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Since there is no way to convert a cloud into authOptions we need to reread the file
+	// otherwise we can't get the region
+	cloud, err := clientconfig.GetCloudFromYAML(&clientconfig.ClientOpts{
+		Cloud: cloudName,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return openstackAuthOptionsToCreds(cloudOpts, cloud.RegionName)
+}
+
+func (f fetcher) parseCredentialVariables(envVars []ProviderEnvironmentVariable, validationFunc func(map[string]string) error) (map[string]string, error) {
 	// Validate credentials using given validation function
 	creds := make(map[string]string)
 	for _, env := range envVars {
@@ -269,63 +324,5 @@ func defaultValidationFunc(creds map[string]string) error {
 			return errors.Errorf("key %v is required but isn't present", k)
 		}
 	}
-	return nil
-}
-
-func (f *fetcher) parseOpenstackCloudCredentials() error {
-	cloudName, ok := os.LookupEnv("OS_CLOUD")
-
-	if !ok {
-		return nil
-	}
-
-	clouds, err := clientconfig.LoadCloudsYAML()
-	if err != nil {
-		return err
-	}
-
-	cloud, ok := clouds[cloudName]
-	if !ok {
-		return fmt.Errorf("expected to find %s in clouds.yaml", cloudName)
-	}
-
-	f.Source = map[string]string{
-		OpenStackAuthURL:    cloud.AuthInfo.AuthURL,
-		OpenStackUserName:   cloud.AuthInfo.Username,
-		OpenStackPassword:   cloud.AuthInfo.Password,
-		OpenStackRegionName: cloud.RegionName,
-		OpenStackTenantID:   cloud.AuthInfo.ProjectID,
-		OpenStackTenantName: cloud.AuthInfo.ProjectName,
-		OpenStackDomainName: cloud.AuthInfo.DomainName,
-	}
-
-	if cloud.AuthInfo.DomainName != "" {
-		f.Source[OpenStackDomainName] = cloud.AuthInfo.DomainName
-	}
-
-	f.F = func(name string) string {
-		return f.Source[name]
-	}
-
-	return nil
-}
-
-func openstackValidationFunc(creds map[string]string) error {
-	for k, v := range creds {
-		if k == OpenStackTenantID || k == OpenStackTenantName {
-			continue
-		}
-
-		if len(v) == 0 {
-			return errors.Errorf("key %v is required but isn't present", k)
-		}
-	}
-
-	if v, ok := creds[OpenStackTenantID]; !ok || len(v) == 0 {
-		if v, ok := creds[OpenStackTenantName]; !ok || len(v) == 0 {
-			return errors.Errorf("key %v or %v is required but isn't present", OpenStackTenantID, OpenStackTenantName)
-		}
-	}
-
 	return nil
 }
