@@ -11,9 +11,9 @@ a new version of KubeOne.
   * On your computer run `go version` to find out what
   Go version you're using
   * If you're not using the latest Go version, go to
-  [the official Go website][1] to grab the latest binaries
-* Install [GoReleaser][2]
-* [Generate GitHub Token][3] with the `repo` permissions
+  [the official Go website][go] to grab the latest binaries
+* Install [GoReleaser][goreleaser]
+* [Generate GitHub Token][github-token] with the `repo` permissions
 and export the token as the `GITHUB_TOKEN` environment variable
   * The GitHub Token is needed to create a GitHub Release and
   upload KubeOne binaries
@@ -27,15 +27,17 @@ to reference to the upcoming version and generate a changelog.
 
 You need to update the following documents to point to the new release:
 
-* The [Kubernetes versions compatibility][5] section of the
-`README.md` file should be updated if there are changes in supported
-Kubernetes versions, Terraform versions and/or providers
-* [Optional] Update [the quickstart guides][6] to require/recommend
-the latest version
+* The Kubernetes versions compatibility matrix should be updated if there
+  are changes in supported Kubernetes versions, Terraform versions and/or
+  providers. The compatibility matrix is located in two places, in the
+  repo [`README.md` file][matrix-readme] and at the 
+  [docs website][matrix-docs]
+* Update [the quickstart guides][quickstart] to require/recommend
+  the latest version if needed
 
 ### Generating the changelog
 
-Add a new entry for the upcoming release to the [CHANGELOG.md][7] file.
+Add a new entry for the upcoming release to the [CHANGELOG.md][changelog] file.
 
 The changelog file only lists changes that are directly affecting
 the end-users, such as a new feature, a bug or a security fix, a new
@@ -53,7 +55,7 @@ https://github.com/kubermatic/kubeone/compare/<commit>...master
 
 ## Releasing KubeOne
 
-### Pushing a Git tag
+### Preparing the release
 
 Before pushing a new Git tag, ensure your `master` branch is up-to-date:
 
@@ -62,6 +64,24 @@ git checkout master
 git fetch origin
 git reset --hard origin/master
 ```
+
+**Warning:** Before cutting the release, it's **strictly** required to reset
+the `examples` directory to prevent secrets from leaking and being released.
+GoReleaser ships all content from the `examples` directory including Terraform
+state files and credentials if present.
+
+The `examples` directory can be reset by moving the existing directory
+**outside** of the repository and then resetting the branch:
+
+```
+mv examples ~/kubeone-examples
+git reset --hard origin/master
+```
+
+After the release process is done, you can move back the old `examples`
+directory.
+
+### Creating a branch (only for RC and stable releases)
 
 In case you are releasing a stable or RC release, create a release
 branch and push it:
@@ -78,10 +98,12 @@ cherry-pick each PR to the release branch.
 **Note:** Currently there's a bug with branch-protector that
 requires a new protection rule to be created for each release branch.
 
+### Pushing a new tag
+
 Create a tag for the new version and push it:
 
 ```
-git tag -a v0.x.y -m "KubeOne version 0.x.y"
+git tag -a v1.x.y -m "KubeOne version 1.x.y"
 git push origin --tags
 ```
 
@@ -89,19 +111,7 @@ Now that we have a Git tag, we can proceed to releasing KubeOne binaries.
 
 ### Releasing binaries
 
-We're using [GoReleaser][8] to build and release binaries.
-
-As of v0.10.0-alpha.0, we're shipping the `examples` directory along with
-the binary. It is **strictly** required to reset the `examples` directory
-to prevent secrets from leaking and being released. You can do that such as:
-
-```
-mv examples ~/kubeone-examples
-git reset --hard origin/master
-```
-
-After the release process is done, you can move back the old `examples` directory
-back.
+We're using [GoReleaser][goreleaser] to build and release binaries.
 
 Next, create a release notes file somewhere outside of the repo and
 fill it with the changelog for the release. The release notes file will be
@@ -110,13 +120,13 @@ used to load custom release notes instead of using the list of commits.
 The release notes should look like:
 
 ```
-Check out the [documentation](https://github.com/kubermatic/kubeone/tree/v0.x.y/docs) for this release to find out how to get started with KubeOne.
+Check out the [documentation](https://docs.kubermatic.com/kubeone/v1.x/) for this release to find out how to get started with KubeOne.
 
 <changelog>
 
 ### Checksums
 
-SHA256 checksums can be found in the `kubeone_0.x.y_checksums.txt` file.
+SHA256 checksums can be found in the `kubeone_1.x.y_checksums.txt` file.
 ```
 
 Once this is done, create a snapshot of the release and ensure that everything
@@ -124,21 +134,26 @@ is in the place as intended. Pay attention that there are no any leftover files,
 especially in the `examples` directory.
 
 ```
-goreleaser release --rm-dist --release-notes=~/notes.md --snapshot
+goreleaser release --rm-dist --release-notes=$HOME/notes.md --snapshot
 ```
 
 If you're sure that everything is as intended, you can proceed to releasing
 a new version:
 
 ```
-goreleaser release --rm-dist --release-notes=~/notes.md
+goreleaser release --rm-dist --release-notes=$HOME/notes.md
 ```
 
-[1]: https://golang.org/dl/
-[2]: https://goreleaser.com/install/
-[3]: https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line
-[4]: https://github.com/kubermatic/kubeone#installing-kubeone
-[5]: https://github.com/kubermatic/kubeone#kubernetes-versions-compatibility
-[6]: https://github.com/kubermatic/kubeone/tree/master/docs
-[7]: https://github.com/kubermatic/kubeone/blob/master/CHANGELOG.md
-[8]: https://goreleaser.com
+This command builds KubeOne, creates the archive, and uploads it to GitHub.
+It's recommended to try to download to the release from GitHub after it's
+available and compare the checksums, as well as, confirm that `kubeone version`
+shows the correct version.
+
+[go]: https://golang.org/dl/
+[goreleaser]: https://goreleaser.com
+[goreleaser-install]: https://goreleaser.com/install/
+[github-token]: https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line
+[matrix-readme]: https://github.com/kubermatic/kubeone#kubernetes-versions-compatibility
+[matrix-docs]: https://docs.kubermatic.com/kubeone/master/#kubernetes-versions-compatibility
+[quickstart]: https://docs.kubermatic.com/kubeone/master/getting_started/
+[changelog]: https://github.com/kubermatic/kubeone/blob/master/CHANGELOG.md
