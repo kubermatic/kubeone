@@ -82,13 +82,12 @@ func Deploy(s *state.State) error {
 		err = s.DynamicClient.Get(ctx, key, secCopy)
 		switch {
 		case k8serrors.IsNotFound(err):
+			err = s.DynamicClient.Create(ctx, sec)
+			if err != nil {
+				return errors.Wrap(err, "failed to create weave-net Secret")
+			}
 		case err != nil:
 			return errors.Wrap(err, "failed to get weave-net Secret")
-		}
-
-		err = s.DynamicClient.Create(ctx, sec)
-		if err != nil {
-			return errors.Wrap(err, "failed to create weave-net Secret")
 		}
 	}
 
