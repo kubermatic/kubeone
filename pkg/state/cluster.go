@@ -203,6 +203,9 @@ func (c *Cluster) SafeToRepair(targetVersion string) (bool, string) {
 
 	var highestVer *semver.Version
 	for _, host := range c.ControlPlane {
+		if !host.IsInCluster {
+			continue
+		}
 		if highestVer == nil || host.Kubelet.Version.GreaterThan(highestVer) {
 			highestVer = host.Kubelet.Version
 		}
