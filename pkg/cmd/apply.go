@@ -202,20 +202,36 @@ func runApply(opts *applyOpts) error {
 				s.Logger.Warnf("No other broken node can be removed without losing quorum.")
 			}
 		}
+		runRepair := false
 		for _, node := range s.LiveCluster.ControlPlane {
 			if !node.IsInCluster {
-				return runApplyInstall(s, opts)
+				runRepair = true
+				break
 			}
 		}
-		for _, node := range s.LiveCluster.StaticWorkers {
-			if !node.IsInCluster {
-				return runApplyInstall(s, opts)
+		if !runRepair {
+			for _, node := range s.LiveCluster.StaticWorkers {
+				if !node.IsInCluster {
+					runRepair = true
+					break
+				}
 			}
 		}
 
+		if safeRepair, higherVer := s.LiveCluster.SafeToRepair(s.Cluster.Versions.Kubernetes); !safeRepair {
+			s.Logger.Errorln("Repair and upgrade are not supported at the same time!")
+			s.Logger.Warnf("Requested version: %s\n", s.Cluster.Versions.Kubernetes)
+			s.Logger.Warnf("Highest version: %s\n", higherVer)
+			s.Logger.Warnf("Use version %s to repair the cluster, then run apply with the new version\n", higherVer)
+			return errors.New("repair and upgrade are not supported at the same time")
+		}
+		if runRepair {
+			return runApplyInstall(s, opts)
+		}
 		if len(brokenHosts) > 0 {
 			return errors.New("broken host(s) found, remove it manually")
 		}
+
 		return nil
 	}
 
@@ -229,9 +245,9 @@ func runApplyInstall(s *state.State, opts *applyOpts) error { // Print the expec
 	for _, node := range s.LiveCluster.ControlPlane {
 		if !node.IsInCluster {
 			if node.Config.IsLeader {
-				fmt.Printf("\t+ initialize control plane node %q (%s)\n", node.Config.Hostname, node.Config.PrivateAddress)
+				fmt.Printf("\t+ initialize control plane node %q (%s) using %s\n", node.Config.Hostname, node.Config.PrivateAddress, s.Cluster.Versions.Kubernetes)
 			} else {
-				fmt.Printf("\t+ join control plane node %q (%s)\n", node.Config.Hostname, node.Config.PrivateAddress)
+				fmt.Printf("\t+ join control plane node %q (%s) using %s\n", node.Config.Hostname, node.Config.PrivateAddress, s.Cluster.Versions.Kubernetes)
 			}
 		}
 	}
@@ -279,22 +295,22 @@ func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
 		return err
 	}
 	if upgradeNeeded || opts.ForceUpgrade {
-		for _, node := range s.Cluster.ControlPlane.Hosts {
+		for _, node := range s.LiveCluster.ControlPlane {
 			if opts.ForceUpgrade {
-				fmt.Printf("\t~ force upgrade control plane node %q (%s) to %s\n", node.Hostname, node.PrivateAddress, s.Cluster.Versions.Kubernetes)
+				fmt.Printf("\t~ force upgrade control plane node %q (%s): %s -> %s\n", node.Config.Hostname, node.Config.PrivateAddress, node.Kubelet.Version, s.Cluster.Versions.Kubernetes)
 			} else {
-				fmt.Printf("\t~ upgrade control plane node %q (%s) to %s\n", node.Hostname, node.PrivateAddress, s.Cluster.Versions.Kubernetes)
+				fmt.Printf("\t~ upgrade control plane node %q (%s): %s -> %s\n", node.Config.Hostname, node.Config.PrivateAddress, node.Kubelet.Version, s.Cluster.Versions.Kubernetes)
 			}
 		}
-		for _, node := range s.Cluster.StaticWorkers.Hosts {
+		for _, node := range s.LiveCluster.StaticWorkers {
 			if opts.ForceUpgrade {
-				fmt.Printf("\t~ force upgrade worker node %q (%s) to %s\n", node.Hostname, node.PrivateAddress, s.Cluster.Versions.Kubernetes)
+				fmt.Printf("\t~ force upgrade worker node %q (%s): %s -> %s\n", node.Config.Hostname, node.Config.PrivateAddress, node.Kubelet.Version, s.Cluster.Versions.Kubernetes)
 			} else {
-				fmt.Printf("\t~ upgrade worker node %q (%s) to %s\n", node.Hostname, node.PrivateAddress, s.Cluster.Versions.Kubernetes)
+				fmt.Printf("\t~ upgrade worker node %q (%s): %s -> %s\n", node.Config.Hostname, node.Config.PrivateAddress, node.Kubelet.Version, s.Cluster.Versions.Kubernetes)
 			}
 		}
 		if s.UpgradeMachineDeployments {
-			fmt.Printf("~ upgrade all machinedeployments to %s\n", s.Cluster.Versions.Kubernetes)
+			fmt.Printf("\t~ upgrade all machinedeployments to %s\n", s.Cluster.Versions.Kubernetes)
 		}
 		if s.Cluster.Addons != nil && s.Cluster.Addons.Enable {
 			fmt.Printf("\t+ apply addons defined in %q\n", s.Cluster.Addons.Path)
