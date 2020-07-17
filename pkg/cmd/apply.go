@@ -229,9 +229,9 @@ func runApplyInstall(s *state.State, opts *applyOpts) error { // Print the expec
 	for _, node := range s.LiveCluster.ControlPlane {
 		if !node.IsInCluster {
 			if node.Config.IsLeader {
-				fmt.Printf("\t+ initialize control plane node %q (%s)\n", node.Config.Hostname, node.Config.PrivateAddress)
+				fmt.Printf("\t+ initialize control plane node %q (%s) using %s\n", node.Config.Hostname, node.Config.PrivateAddress, s.Cluster.Versions.Kubernetes)
 			} else {
-				fmt.Printf("\t+ join control plane node %q (%s)\n", node.Config.Hostname, node.Config.PrivateAddress)
+				fmt.Printf("\t+ join control plane node %q (%s) using %s\n", node.Config.Hostname, node.Config.PrivateAddress, s.Cluster.Versions.Kubernetes)
 			}
 		}
 	}
@@ -279,22 +279,22 @@ func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
 		return err
 	}
 	if upgradeNeeded || opts.ForceUpgrade {
-		for _, node := range s.Cluster.ControlPlane.Hosts {
+		for _, node := range s.LiveCluster.ControlPlane {
 			if opts.ForceUpgrade {
-				fmt.Printf("\t~ force upgrade control plane node %q (%s) to %s\n", node.Hostname, node.PrivateAddress, s.Cluster.Versions.Kubernetes)
+				fmt.Printf("\t~ force upgrade control plane node %q (%s): %s -> %s\n", node.Config.Hostname, node.Config.PrivateAddress, node.Kubelet.Version, s.Cluster.Versions.Kubernetes)
 			} else {
-				fmt.Printf("\t~ upgrade control plane node %q (%s) to %s\n", node.Hostname, node.PrivateAddress, s.Cluster.Versions.Kubernetes)
+				fmt.Printf("\t~ upgrade control plane node %q (%s): %s -> %s\n", node.Config.Hostname, node.Config.PrivateAddress, node.Kubelet.Version, s.Cluster.Versions.Kubernetes)
 			}
 		}
-		for _, node := range s.Cluster.StaticWorkers.Hosts {
+		for _, node := range s.LiveCluster.StaticWorkers {
 			if opts.ForceUpgrade {
-				fmt.Printf("\t~ force upgrade worker node %q (%s) to %s\n", node.Hostname, node.PrivateAddress, s.Cluster.Versions.Kubernetes)
+				fmt.Printf("\t~ force upgrade worker node %q (%s): %s -> %s\n", node.Config.Hostname, node.Config.PrivateAddress, node.Kubelet.Version, s.Cluster.Versions.Kubernetes)
 			} else {
-				fmt.Printf("\t~ upgrade worker node %q (%s) to %s\n", node.Hostname, node.PrivateAddress, s.Cluster.Versions.Kubernetes)
+				fmt.Printf("\t~ upgrade worker node %q (%s): %s -> %s\n", node.Config.Hostname, node.Config.PrivateAddress, node.Kubelet.Version, s.Cluster.Versions.Kubernetes)
 			}
 		}
 		if s.UpgradeMachineDeployments {
-			fmt.Printf("~ upgrade all machinedeployments to %s\n", s.Cluster.Versions.Kubernetes)
+			fmt.Printf("\t~ upgrade all machinedeployments to %s\n", s.Cluster.Versions.Kubernetes)
 		}
 		if s.Cluster.Addons != nil && s.Cluster.Addons.Enable {
 			fmt.Printf("\t+ apply addons defined in %q\n", s.Cluster.Addons.Path)
