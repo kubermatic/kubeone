@@ -261,7 +261,7 @@ func TestKubeadmUpgradeLeader(t *testing.T) {
 			name: "v1beta2",
 			args: args{
 				workdir:    "test-wd",
-				kubeadmCmd: "kubeadm upgrade node",
+				kubeadmCmd: "kubeadm upgrade node --certificate-renewal=true",
 			},
 		},
 	}
