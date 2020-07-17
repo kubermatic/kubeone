@@ -202,20 +202,36 @@ func runApply(opts *applyOpts) error {
 				s.Logger.Warnf("No other broken node can be removed without losing quorum.")
 			}
 		}
+		runRepair := false
 		for _, node := range s.LiveCluster.ControlPlane {
 			if !node.IsInCluster {
-				return runApplyInstall(s, opts)
+				runRepair = true
+				break
 			}
 		}
-		for _, node := range s.LiveCluster.StaticWorkers {
-			if !node.IsInCluster {
-				return runApplyInstall(s, opts)
+		if !runRepair {
+			for _, node := range s.LiveCluster.StaticWorkers {
+				if !node.IsInCluster {
+					runRepair = true
+					break
+				}
 			}
 		}
 
+		if safeRepair, higherVer := s.LiveCluster.SafeToRepair(s.Cluster.Versions.Kubernetes); !safeRepair {
+			s.Logger.Errorln("Repair and upgrade are not supported at the same time!")
+			s.Logger.Warnf("Requested version: %s\n", s.Cluster.Versions.Kubernetes)
+			s.Logger.Warnf("Highest version: %s\n", higherVer)
+			s.Logger.Warnf("Use version %s to repair the cluster, then run apply with the new version\n", higherVer)
+			return errors.New("repair and upgrade are not supported at the same time")
+		}
+		if runRepair {
+			return runApplyInstall(s, opts)
+		}
 		if len(brokenHosts) > 0 {
 			return errors.New("broken host(s) found, remove it manually")
 		}
+
 		return nil
 	}
 

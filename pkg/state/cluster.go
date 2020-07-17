@@ -195,6 +195,26 @@ func (c *Cluster) UpgradeMachinesNeeded() bool {
 	return false
 }
 
+func (c *Cluster) SafeToRepair(targetVersion string) (bool, string) {
+	targetVer, err := semver.NewVersion(targetVersion)
+	if err != nil {
+		return false, ""
+	}
+
+	var highestVer *semver.Version
+	for _, host := range c.ControlPlane {
+		if highestVer == nil || host.Kubelet.Version.GreaterThan(highestVer) {
+			highestVer = host.Kubelet.Version
+		}
+	}
+
+	if highestVer != nil && targetVer.GreaterThan(highestVer) {
+		return false, highestVer.String()
+	}
+
+	return true, targetVer.String()
+}
+
 /*
 	Host level checks
 */
