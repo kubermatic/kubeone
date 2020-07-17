@@ -25,7 +25,7 @@ import (
 )
 
 const (
-	kubeadmUpgradeNodeCommand = "kubeadm upgrade node"
+	kubeadmUpgradeNodeCommand = "kubeadm upgrade node --certificate-renewal=true"
 )
 
 var (
