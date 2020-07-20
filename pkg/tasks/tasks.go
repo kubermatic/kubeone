@@ -35,12 +35,30 @@ type Tasks []Task
 
 func (t Tasks) Run(s *state.State) error {
 	for _, step := range t {
+		if step.Predicate != nil && !step.Predicate(s) {
+			continue
+		}
 		if err := step.Run(s); err != nil {
 			return errors.Wrap(err, step.ErrMsg)
 		}
 	}
 
 	return nil
+}
+
+func (t Tasks) Descriptions(s *state.State) []string {
+	var descriptions []string
+
+	for _, step := range t {
+		if step.Predicate != nil && !step.Predicate(s) {
+			continue
+		}
+		if step.Desciption != "" {
+			descriptions = append(descriptions, step.Desciption)
+		}
+	}
+
+	return descriptions
 }
 
 func (t Tasks) append(newtasks ...Task) Tasks {
