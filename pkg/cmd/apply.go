@@ -27,6 +27,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+	"golang.org/x/crypto/ssh/terminal"
 
 	"github.com/kubermatic/kubeone/pkg/credentials"
 	"github.com/kubermatic/kubeone/pkg/state"
@@ -336,6 +337,10 @@ func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
 func confirmApply(autoApprove bool) (bool, error) {
 	if autoApprove {
 		return true, nil
+	}
+
+	if !terminal.IsTerminal(int(os.Stdin.Fd())) || !terminal.IsTerminal(int(os.Stdout.Fd())) {
+		return false, errors.New("not running in the terminal")
 	}
 
 	reader := bufio.NewReader(os.Stdin)
