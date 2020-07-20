@@ -35,7 +35,7 @@ import (
 
 type applyOpts struct {
 	globalOptions
-	AutoApprove bool `longflag:"auto-approve"`
+	AutoApprove bool `longflag:"auto-approve" shortflag:"y"`
 	// Install flags
 	BackupFile   string `longflag:"backup" shortflag:"b"`
 	NoInit       bool   `longflag:"no-init"`
@@ -107,9 +107,10 @@ It's possible to source information about hosts from Terraform output, using the
 		},
 	}
 
-	cmd.Flags().BoolVar(
+	cmd.Flags().BoolVarP(
 		&opts.AutoApprove,
 		longFlagName(opts, "AutoApprove"),
+		shortFlagName(opts, "AutoApprove"),
 		false,
 		"auto approve plan")
 
