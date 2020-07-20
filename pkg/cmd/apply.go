@@ -174,6 +174,7 @@ func runApply(opts *applyOpts) error {
 		for _, host := range s.LiveCluster.ControlPlane {
 			printHostInformation(host)
 		}
+
 		for _, host := range s.LiveCluster.StaticWorkers {
 			printHostInformation(host)
 		}
@@ -183,6 +184,7 @@ func runApply(opts *applyOpts) error {
 	if !s.LiveCluster.IsProvisioned() {
 		return runApplyInstall(s, opts)
 	}
+
 	if !s.LiveCluster.Healthy() {
 		brokenHosts := s.LiveCluster.BrokenHosts()
 		if len(brokenHosts) > 0 {
@@ -204,6 +206,7 @@ func runApply(opts *applyOpts) error {
 				s.Logger.Warnf("No other broken node can be removed without losing quorum.")
 			}
 		}
+
 		runRepair := false
 		for _, node := range s.LiveCluster.ControlPlane {
 			if !node.IsInCluster {
@@ -211,6 +214,7 @@ func runApply(opts *applyOpts) error {
 				break
 			}
 		}
+
 		if !runRepair {
 			for _, node := range s.LiveCluster.StaticWorkers {
 				if !node.IsInCluster {
@@ -227,9 +231,11 @@ func runApply(opts *applyOpts) error {
 			s.Logger.Warnf("Use version %s to repair the cluster, then run apply with the new version\n", higherVer)
 			return errors.New("repair and upgrade are not supported at the same time")
 		}
+
 		if runRepair {
 			return runApplyInstall(s, opts)
 		}
+
 		if len(brokenHosts) > 0 {
 			return errors.New("broken host(s) found, remove it manually")
 		}
@@ -253,20 +259,25 @@ func runApplyInstall(s *state.State, opts *applyOpts) error { // Print the expec
 			}
 		}
 	}
+
 	for _, node := range s.LiveCluster.StaticWorkers {
 		if !node.IsInCluster {
 			fmt.Printf("\t+ join worker node %q (%s)\n", node.Config.Hostname, node.Config.PrivateAddress)
 		}
 	}
+
 	if opts.NoInit {
 		fmt.Println("\t! NoInit option provided: only binaries will be installed")
 	}
+
 	if opts.ForceInstall {
 		fmt.Println("\t! force-install option provided: force install new binary versions (!dangerous!)")
 	}
+
 	for _, node := range s.Cluster.DynamicWorkers {
 		fmt.Printf("\t+ ensure machinedeployment %q with %d replica(s) exists\n", node.Name, resolveInt(node.Replicas))
 	}
+
 	if s.Cluster.Addons != nil && s.Cluster.Addons.Enable {
 		fmt.Printf("\t+ apply addons defined in %q\n", s.Cluster.Addons.Path)
 	}
@@ -276,6 +287,7 @@ func runApplyInstall(s *state.State, opts *applyOpts) error { // Print the expec
 	if err != nil {
 		return err
 	}
+
 	if !confirm {
 		s.Logger.Println("Operation canceled.")
 		return nil
@@ -284,6 +296,7 @@ func runApplyInstall(s *state.State, opts *applyOpts) error { // Print the expec
 	if opts.NoInit {
 		return errors.Wrap(tasks.WithBinariesOnly(nil).Run(s), "failed to install kubernetes binaries")
 	}
+
 	return errors.Wrap(tasks.WithFullInstall(nil).Run(s), "failed to install the cluster")
 }
 
@@ -291,47 +304,73 @@ func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
 	fmt.Println("The following actions will be taken: ")
 	fmt.Println("Run with --verbose flag for more information.")
 
+	var tasksToRun tasks.Tasks
+
 	upgradeNeeded, err := s.LiveCluster.UpgradeNeeded()
 	if err != nil {
 		s.Logger.Errorf("Upgrade not allowed: %v\n", err)
 		return err
 	}
+
+	operations := []string{}
+
 	if upgradeNeeded || opts.ForceUpgrade {
+		tasksToRun = tasks.WithUpgrade(nil)
+
 		for _, node := range s.LiveCluster.ControlPlane {
+			forceFlag := ""
 			if opts.ForceUpgrade {
-				fmt.Printf("\t~ force upgrade control plane node %q (%s): %s -> %s\n", node.Config.Hostname, node.Config.PrivateAddress, node.Kubelet.Version, s.Cluster.Versions.Kubernetes)
-			} else {
-				fmt.Printf("\t~ upgrade control plane node %q (%s): %s -> %s\n", node.Config.Hostname, node.Config.PrivateAddress, node.Kubelet.Version, s.Cluster.Versions.Kubernetes)
+				forceFlag = "force "
 			}
+
+			operations = append(operations,
+				fmt.Sprintf("%supgrade control plane node %q (%s): %s -> %s",
+					forceFlag,
+					node.Config.Hostname,
+					node.Config.PrivateAddress,
+					node.Kubelet.Version,
+					s.Cluster.Versions.Kubernetes))
+
 		}
+
 		for _, node := range s.LiveCluster.StaticWorkers {
+			forceFlag := ""
 			if opts.ForceUpgrade {
-				fmt.Printf("\t~ force upgrade worker node %q (%s): %s -> %s\n", node.Config.Hostname, node.Config.PrivateAddress, node.Kubelet.Version, s.Cluster.Versions.Kubernetes)
-			} else {
-				fmt.Printf("\t~ upgrade worker node %q (%s): %s -> %s\n", node.Config.Hostname, node.Config.PrivateAddress, node.Kubelet.Version, s.Cluster.Versions.Kubernetes)
+				forceFlag = "force "
 			}
+			operations = append(operations,
+				fmt.Sprintf("%supgrade worker node %q (%s): %s -> %s",
+					forceFlag,
+					node.Config.Hostname,
+					node.Config.PrivateAddress,
+					node.Kubelet.Version,
+					s.Cluster.Versions.Kubernetes))
 		}
-		if s.UpgradeMachineDeployments {
-			fmt.Printf("\t~ upgrade all machinedeployments to %s\n", s.Cluster.Versions.Kubernetes)
-		}
-		if s.Cluster.Addons != nil && s.Cluster.Addons.Enable {
-			fmt.Printf("\t+ apply addons defined in %q\n", s.Cluster.Addons.Path)
-		}
-
-		fmt.Println()
-		confirm, err := confirmApply(opts.AutoApprove)
-		if err != nil {
-			return err
-		}
-		if !confirm {
-			s.Logger.Println("Operation canceled.")
-			return nil
-		}
-
-		return errors.Wrap(tasks.WithUpgrade(nil).Run(s), "failed to upgrade cluster")
+	} else {
+		tasksToRun = tasks.WithRefreshResources(nil)
 	}
-	fmt.Printf("\tThe expected state matches actual, no action needed.\n")
-	return nil
+
+	fmt.Println()
+	for _, op := range operations {
+		fmt.Printf("\t~ %s\n", op)
+	}
+
+	for _, op := range tasksToRun.Descriptions(s) {
+		fmt.Printf("\t~ %s\n", op)
+	}
+
+	fmt.Println()
+	confirm, err := confirmApply(opts.AutoApprove)
+	if err != nil {
+		return err
+	}
+
+	if !confirm {
+		s.Logger.Println("Operation canceled.")
+		return nil
+	}
+
+	return errors.Wrap(tasksToRun.Run(s), "failed to reconcile the cluster")
 }
 
 func confirmApply(autoApprove bool) (bool, error) {

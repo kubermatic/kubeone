@@ -116,6 +116,57 @@ func WithFullInstall(t Tasks) Tasks {
 		)
 }
 
+func WithRefreshResources(t Tasks) Tasks {
+	return t.append(
+		Tasks{
+			{
+				Fn:         nodelocaldns.Deploy,
+				ErrMsg:     "failed to deploy nodelocaldns",
+				Desciption: "ensure nodelocaldns",
+			},
+			{
+				Fn:         ensureCNI,
+				ErrMsg:     "failed to install cni plugin",
+				Desciption: "ensure CNI",
+				Predicate:  func(s *state.State) bool { return s.Cluster.ClusterNetwork.CNI.External == nil },
+			},
+			{
+				Fn:         addons.Ensure,
+				ErrMsg:     "failed to apply addons",
+				Desciption: "ensure addons",
+				Predicate:  func(s *state.State) bool { return s.Cluster.Addons != nil && s.Cluster.Addons.Enable },
+			},
+			{
+				Fn:         credentials.Ensure,
+				ErrMsg:     "failed to ensure credentials secret",
+				Desciption: "ensure credential",
+			},
+			{
+				Fn:         externalccm.Ensure,
+				ErrMsg:     "failed to ensure external CCM",
+				Desciption: "ensure external CCM",
+				Predicate:  func(s *state.State) bool { return s.Cluster.CloudProvider.External },
+			},
+			{
+				Fn:     certificate.DownloadCA,
+				ErrMsg: "failed to download ca from leader",
+			},
+			{
+				Fn:         machinecontroller.Ensure,
+				ErrMsg:     "failed to ensure machine-controller",
+				Desciption: "ensure machine-controller",
+				Predicate:  func(s *state.State) bool { return s.Cluster.MachineController.Deploy },
+			},
+			{
+				Fn:         upgradeMachineDeployments,
+				ErrMsg:     "failed to upgrade MachineDeployments",
+				Desciption: "upgrade MachineDeployments",
+				Predicate:  func(s *state.State) bool { return s.UpgradeMachineDeployments },
+			},
+		}...,
+	)
+}
+
 func WithUpgrade(t Tasks) Tasks {
 	return WithHostnameOS(t).
 		append(kubernetesConfigFiles()...).
@@ -129,7 +180,12 @@ func WithUpgrade(t Tasks) Tasks {
 		append(kubernetesResources()...).
 		append(
 			Task{Fn: upgradeStaticWorkers, ErrMsg: "unable to upgrade static worker nodes"},
-			Task{Fn: upgradeMachineDeployments, ErrMsg: "failed to upgrade MachineDeployments"},
+			Task{
+				Fn:         upgradeMachineDeployments,
+				ErrMsg:     "failed to upgrade MachineDeployments",
+				Desciption: "upgrade MachineDeployments",
+				Predicate:  func(s *state.State) bool { return s.UpgradeMachineDeployments },
+			},
 		)
 }
 
@@ -159,16 +215,44 @@ func kubernetesConfigFiles() Tasks {
 
 func kubernetesResources() Tasks {
 	return Tasks{
-		{Fn: nodelocaldns.Deploy, ErrMsg: "failed to deploy nodelocaldns"},
+		{
+			Fn:         nodelocaldns.Deploy,
+			ErrMsg:     "failed to deploy nodelocaldns",
+			Desciption: "ensure nodelocaldns",
+		},
 		{Fn: features.Activate, ErrMsg: "failed to activate features"},
-		{Fn: ensureCNI, ErrMsg: "failed to install cni plugin"},
-		{Fn: addons.Ensure, ErrMsg: "failed to apply addons"},
+		{
+			Fn:         ensureCNI,
+			ErrMsg:     "failed to install cni plugin",
+			Desciption: "ensure CNI",
+			Predicate:  func(s *state.State) bool { return s.Cluster.ClusterNetwork.CNI.External == nil },
+		},
+		{
+			Fn:         addons.Ensure,
+			ErrMsg:     "failed to apply addons",
+			Desciption: "ensure addons",
+			Predicate:  func(s *state.State) bool { return s.Cluster.Addons != nil && s.Cluster.Addons.Enable },
+		},
 		{Fn: patchCoreDNS, ErrMsg: "failed to patch CoreDNS"},
-		{Fn: credentials.Ensure, ErrMsg: "failed to ensure credentials secret"},
-		{Fn: externalccm.Ensure, ErrMsg: "failed to ensure external CCM"},
+		{
+			Fn:         credentials.Ensure,
+			ErrMsg:     "failed to ensure credentials secret",
+			Desciption: "ensure credential",
+		},
+		{
+			Fn:         externalccm.Ensure,
+			ErrMsg:     "failed to ensure external CCM",
+			Desciption: "ensure external CCM",
+			Predicate:  func(s *state.State) bool { return s.Cluster.CloudProvider.External },
+		},
 		{Fn: patchCNI, ErrMsg: "failed to patch CNI"},
 		{Fn: joinStaticWorkerNodes, ErrMsg: "failed to join worker nodes to the cluster"},
-		{Fn: machinecontroller.Ensure, ErrMsg: "failed to install machine-controller"},
+		{
+			Fn:         machinecontroller.Ensure,
+			ErrMsg:     "failed to ensure machine-controller",
+			Desciption: "ensure machine-controller",
+			Predicate:  func(s *state.State) bool { return s.Cluster.MachineController.Deploy },
+		},
 		{Fn: machinecontroller.WaitReady, ErrMsg: "failed to wait for machine-controller"},
 	}
 }
