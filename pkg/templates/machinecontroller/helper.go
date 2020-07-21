@@ -20,11 +20,11 @@ import (
 	"context"
 	"time"
 
+	clusterv1alpha1 "github.com/kubermatic/machine-controller/pkg/apis/cluster/v1alpha1"
 	"github.com/pkg/errors"
 
+	"github.com/kubermatic/kubeone/pkg/clientutil"
 	"github.com/kubermatic/kubeone/pkg/state"
-
-	clusterv1alpha1 "github.com/kubermatic/machine-controller/pkg/apis/cluster/v1alpha1"
 
 	corev1 "k8s.io/api/core/v1"
 	apiextensions "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
@@ -62,63 +62,46 @@ func WaitReady(s *state.State) error {
 
 	s.Logger.Infoln("Waiting for machine-controller to come up…")
 
-	// Wait a bit to let scheduler to react
-	time.Sleep(10 * time.Second)
-
-	if err := WaitForWebhook(s.DynamicClient); err != nil {
+	if err := waitForWebhook(s.Context, s.DynamicClient); err != nil {
 		return errors.Wrap(err, "machine-controller-webhook did not come up")
 	}
 
-	if err := WaitForMachineController(s.DynamicClient); err != nil {
+	if err := waitForMachineController(s.Context, s.DynamicClient); err != nil {
 		return errors.Wrap(err, "machine-controller did not come up")
 	}
 
-	if err := WaitForCRDs(s); err != nil {
+	if err := waitForCRDs(s); err != nil {
 		return errors.Wrap(err, "machine-controller CRDs did not come up")
 	}
+
 	return nil
 }
 
 // WaitForCRDs waits for machine-controller CRDs to be created and become established
-func WaitForCRDs(s *state.State) error {
+func waitForCRDs(s *state.State) error {
 	var lastErr error
 	_ = wait.Poll(5*time.Second, 3*time.Minute, func() (bool, error) {
 		lastErr = VerifyCRDs(s)
 		return lastErr == nil, nil
 	})
+
 	return errors.Wrap(lastErr, "failed waiting for CRDs to become ready and established")
 }
 
 // VerifyCRDs verifies are Cluster-API CRDs deployed
 func VerifyCRDs(s *state.State) error {
-	bgCtx := context.Background()
-	crd := &apiextensions.CustomResourceDefinition{}
+	ctx := s.Context
+	resources := []string{"machinedeployments.cluster.k8s.io", "machinesets.cluster.k8s.io", "machines.cluster.k8s.io"}
 
-	// Verify MachineDeployment CRD
-	key := dynclient.ObjectKey{Name: "machinedeployments.cluster.k8s.io"}
-	if err := s.DynamicClient.Get(bgCtx, key, crd); err != nil {
-		return errors.Wrap(err, "MachineDeployments CRD is not deployed")
-	}
-	if err := verifyCRDEstablished(crd); err != nil {
-		return errors.Wrap(err, "failed checking MachineDeployments CRD status")
-	}
+	for _, res := range resources {
+		ok, err := clientutil.VerifyCRD(ctx, s.DynamicClient, res)
+		if err != nil {
+			return err
+		}
 
-	// Verify MachineSet CRD
-	key = dynclient.ObjectKey{Name: "machinesets.cluster.k8s.io"}
-	if err := s.DynamicClient.Get(bgCtx, key, crd); err != nil {
-		return errors.Wrap(err, "MachineSet CRD is not deployed")
-	}
-	if err := verifyCRDEstablished(crd); err != nil {
-		return errors.Wrap(err, "failed checking MachineSets CRD status")
-	}
-
-	// Verify Machine CRD
-	key = dynclient.ObjectKey{Name: "machines.cluster.k8s.io"}
-	if err := s.DynamicClient.Get(bgCtx, key, crd); err != nil {
-		return errors.Wrap(err, "MachineSet CRD is not deployed")
-	}
-	if err := verifyCRDEstablished(crd); err != nil {
-		return errors.Wrap(err, "failed checking Machines CRD status")
+		if !ok {
+			return clientutil.CRDNotEstablishedErr
+		}
 	}
 
 	return nil

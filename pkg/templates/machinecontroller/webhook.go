@@ -95,37 +95,15 @@ func DeployWebhookConfiguration(s *state.State) error {
 }
 
 // WaitForWebhook waits for machine-controller-webhook to become running
-func WaitForWebhook(client dynclient.Client) error {
-	listOpts := dynclient.ListOptions{
+func waitForWebhook(ctx context.Context, client dynclient.Client) error {
+	waitFn := clientutil.PodsReady(ctx, client, dynclient.ListOptions{
 		Namespace: WebhookNamespace,
 		LabelSelector: labels.SelectorFromSet(map[string]string{
 			WebhookAppLabelKey: WebhookAppLabelValue,
 		}),
-	}
-
-	return wait.Poll(5*time.Second, 3*time.Minute, func() (bool, error) {
-		webhookPods := corev1.PodList{}
-		err := client.List(context.Background(), &webhookPods, &listOpts)
-		if err != nil {
-			return false, errors.Wrap(err, "failed to list machine-controller's webhook pods")
-		}
-
-		if len(webhookPods.Items) == 0 {
-			return false, nil
-		}
-
-		whpod := webhookPods.Items[0]
-
-		if whpod.Status.Phase == corev1.PodRunning {
-			for _, podcond := range whpod.Status.Conditions {
-				if podcond.Type == corev1.PodReady && podcond.Status == corev1.ConditionTrue {
-					return true, nil
-				}
-			}
-		}
-
-		return false, nil
 	})
+
+	return wait.Poll(5*time.Second, 3*time.Minute, waitFn)
 }
 
 // webhookDeployment returns the deployment for the machine-controllers MutatignAdmissionWebhook

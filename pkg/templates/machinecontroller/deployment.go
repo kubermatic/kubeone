@@ -96,37 +96,15 @@ func Deploy(s *state.State) error {
 
 // WaitForMachineController waits for machine-controller-webhook to become running
 // func WaitForMachineController(corev1Client corev1types.CoreV1Interface) error {
-func WaitForMachineController(client dynclient.Client) error {
-	listOpts := dynclient.ListOptions{
+func waitForMachineController(ctx context.Context, client dynclient.Client) error {
+	waitFn := clientutil.PodsReady(ctx, client, dynclient.ListOptions{
 		Namespace: WebhookNamespace,
 		LabelSelector: labels.SelectorFromSet(map[string]string{
 			MachineControllerAppLabelKey: MachineControllerAppLabelValue,
 		}),
-	}
-
-	return wait.Poll(5*time.Second, 3*time.Minute, func() (bool, error) {
-		machineControllerPods := corev1.PodList{}
-		err := client.List(context.Background(), &machineControllerPods, &listOpts)
-		if err != nil {
-			return false, errors.Wrap(err, "failed to list machine-controller pod")
-		}
-
-		if len(machineControllerPods.Items) == 0 {
-			return false, nil
-		}
-
-		mcpod := machineControllerPods.Items[0]
-
-		if mcpod.Status.Phase == corev1.PodRunning {
-			for _, podcond := range mcpod.Status.Conditions {
-				if podcond.Type == corev1.PodReady && podcond.Status == corev1.ConditionTrue {
-					return true, nil
-				}
-			}
-		}
-
-		return false, nil
 	})
+
+	return wait.Poll(5*time.Second, 3*time.Minute, waitFn)
 }
 
 func machineControllerServiceAccount() *corev1.ServiceAccount {

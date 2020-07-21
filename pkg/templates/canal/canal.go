@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"context"
 	"text/template"
+	"time"
 
 	"github.com/pkg/errors"
 
@@ -28,6 +29,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/state"
 
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/util/wait"
 )
 
 const (
@@ -103,17 +105,6 @@ func Deploy(s *state.State) error {
 	ctx := context.Background()
 
 	k8sobjects := []runtime.Object{
-		configMap(buf),
-		daemonSet(s.PatchCNI),
-		serviceAccount(),
-
-		// RBAC
-		calicoClusterRole(),
-		flannelClusterRole(),
-		calicoClusterRoleBinding(),
-		flannelClusterRoleBinding(),
-		canalClusterRoleBinding(),
-
 		// CRDs
 		felixConfigurationCRD(),
 		ipamBlockCRD(),
@@ -129,6 +120,18 @@ func Deploy(s *state.State) error {
 		globalNetworksetCRD(),
 		networkPolicyCRD(),
 		networkSetCRD(),
+
+		// RBAC
+		calicoClusterRole(),
+		flannelClusterRole(),
+		calicoClusterRoleBinding(),
+		flannelClusterRoleBinding(),
+		canalClusterRoleBinding(),
+
+		// workloads
+		configMap(buf),
+		daemonSet(s.PatchCNI),
+		serviceAccount(),
 	}
 
 	for _, obj := range k8sobjects {
@@ -137,7 +140,33 @@ func Deploy(s *state.State) error {
 		}
 	}
 
+	gkResources := []string{}
+	for _, obj := range k8sobjects {
+		if gvk := obj.GetObjectKind().GroupVersionKind(); gvk.Group == "crd.projectcalico.org" {
+			gkResources = append(gkResources, gvk.GroupKind().String())
+		}
+	}
+
+	var waitErr error
+
+	for _, res := range gkResources {
+		waitErr = wait.Poll(5*time.Second, 1*time.Minute, func() (bool, error) {
+			ok, crdErr := clientutil.VerifyCRD(ctx, s.DynamicClient, res)
+			if crdErr != nil {
+				return false, nil
+			}
+			if !ok {
+				return ok, nil
+			}
+			return true, nil
+		})
+	}
+	if waitErr != nil {
+		return errors.Wrap(waitErr, "failed to establish calico CRDs")
+	}
+
 	// HACK: re-init dynamic client in order to re-init RestMapper, to drop caches
 	err = kubeconfig.HackIssue321InitDynamicClient(s)
+
 	return errors.Wrap(err, "failed to re-init dynamic client")
 }
