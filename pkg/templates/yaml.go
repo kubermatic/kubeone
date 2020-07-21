@@ -19,10 +19,10 @@ package templates
 import (
 	"bytes"
 
-	"github.com/ghodss/yaml"
 	"github.com/pkg/errors"
 
 	"k8s.io/apimachinery/pkg/runtime"
+	"sigs.k8s.io/yaml"
 )
 
 // KubernetesToYAML properly encodes a list of resources as YAML.
