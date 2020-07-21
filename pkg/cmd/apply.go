@@ -330,7 +330,6 @@ func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
 					node.Config.PrivateAddress,
 					node.Kubelet.Version,
 					s.Cluster.Versions.Kubernetes))
-
 		}
 
 		for _, node := range s.LiveCluster.StaticWorkers {
