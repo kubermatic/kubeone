@@ -25,7 +25,7 @@ import (
 )
 
 var (
-	CRDNotEstablishedErr = errors.New("crd is not established")
+	ErrCRDNotEstablished = errors.New("crd is not established")
 )
 
 func VerifyCRD(ctx context.Context, client dynclient.Client, crdName string) (bool, error) {
@@ -41,5 +41,5 @@ func VerifyCRD(ctx context.Context, client dynclient.Client, crdName string) (bo
 		}
 	}
 
-	return false, CRDNotEstablishedErr
+	return false, ErrCRDNotEstablished
 }

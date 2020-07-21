@@ -27,7 +27,6 @@ import (
 	"github.com/kubermatic/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
-	apiextensions "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
 	errorsutil "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/util/retry"
@@ -100,20 +99,11 @@ func VerifyCRDs(s *state.State) error {
 		}
 
 		if !ok {
-			return clientutil.CRDNotEstablishedErr
+			return clientutil.ErrCRDNotEstablished
 		}
 	}
 
 	return nil
-}
-
-func verifyCRDEstablished(crd *apiextensions.CustomResourceDefinition) error {
-	for _, cond := range crd.Status.Conditions {
-		if cond.Type == apiextensions.Established && cond.Status == apiextensions.ConditionTrue {
-			return nil
-		}
-	}
-	return errors.New("crd is not established")
 }
 
 // DestroyWorkers destroys all MachineDeployment, MachineSet and Machine objects

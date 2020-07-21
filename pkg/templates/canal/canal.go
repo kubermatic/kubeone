@@ -150,6 +150,7 @@ func Deploy(s *state.State) error {
 	var waitErr error
 
 	for _, res := range gkResources {
+		res := res
 		waitErr = wait.Poll(5*time.Second, 1*time.Minute, func() (bool, error) {
 			ok, crdErr := clientutil.VerifyCRD(ctx, s.DynamicClient, res)
 			if crdErr != nil {
