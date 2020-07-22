@@ -1,5 +1,45 @@
 # Changelog
 
+# [v1.0.0-beta.3](https://github.com/kubermatic/kubeone/releases/tag/v1.0.0-beta.3) - 2020-07-22
+
+## Attention Needed
+
+* It's recommended to use this release instead of v0.11, as v0.11 doesn't support the latest Kubernetes patch releases. Older Kubernetes releases are affected by two CVEs and therefore it's strongly advised to use 1.16.11/1.17.7/1.18.4 or newer.
+* It's now possible to install Kubernetes 1.18.6/1.17.9/1.16.13 on CentOS 7, however, only Canal CNI is known to work properly. We are aware that the DNS and networking problems may still be present even with the latest versions. It remains impossible to install older versions of Kubernetes on CentOS 7.
+* The `kubeone` AUR package has been moved to the official Arch Linux repositories. The AUR package has been removed in the favor of the official one ([#971](https://github.com/kubermatic/kubeone/pull/971)).
+
+## Added
+
+* Implement the `kubeone apply` command
+  * The apply command is used to reconcile (install, upgrade, and repair) clusters
+  * The apply command is currently in beta, but we're encouraging everyone to test it and report any issues and bugs
+  * More details about how to use the apply command can be found in the [Cluster reconciliation (apply) document](https://docs.kubermatic.com/kubeone/master/using_kubeone/cluster_reconciliation/)
+* Implement the `kubeone config machinedeployments` command ([#966](https://github.com/kubermatic/kubeone/pull/966))
+  * The new command is used to generate a YAML manifest containing all MachineDeployment objects defined in the KubeOne configuration manifest and Terraform output
+  * The generated manifest can be used with kubectl if you want to create and modify MachineDeployments once the cluster is created
+* Add support for CentOS 8 ([#981](https://github.com/kubermatic/kubeone/pull/981))
+* Add the Calico VXLAN addon ([#972](https://github.com/kubermatic/kubeone/pull/972))
+  * More information about how to use this addon can be found on the [docs website](https://docs.kubermatic.com/kubeone/master/using_kubeone/calico-vxlan-addon/)
+
+## Changed
+
+### General
+
+* The `kubeone` AUR package has been moved to the official Arch Linux repositories. The AUR package has been removed in the favor of the official one ([#971](https://github.com/kubermatic/kubeone/pull/971))
+
+### Bug Fixes
+
+* Add NodeRegistration object to the kubeadm v1beta2 JoinConfiguration for static worker nodes. Fix the issue with nodes not joining a cluster on AWS ([#969](https://github.com/kubermatic/kubeone/pull/969))
+* Unconditionally renew certificates when upgrading the cluster. Due to an upstream bug, kubeadm wasn't automatically renewing for clusters running Kubernetes versions older than v1.17 ([#990](https://github.com/kubermatic/kubeone/pull/990))
+* * Force restart Kubelet on CentOS on upgrade ([#988](https://github.com/kubermatic/kubeone/pull/988))
+* Fix the gobetween script failing to install the `tar` package ([#963](https://github.com/kubermatic/kubeone/pull/963))
+
+### Updated
+
+* Update machine-controller to v1.15.3 ([#995](https://github.com/kubermatic/kubeone/pull/995))
+  * This release includes a fix for the machine-controller's NodeCSRApprover controller refusing to approve certificates for the GCP worker nodes
+  * This release includes support for CentOS 8 and RHEL 7 worker nodes
+
 # [v1.0.0-beta.2](https://github.com/kubermatic/kubeone/releases/tag/v1.0.0-beta.2) - 2020-07-03
 
 ## Attention Needed
