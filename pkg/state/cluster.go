@@ -189,12 +189,6 @@ func (c *Cluster) UpgradeNeeded() (bool, error) {
 	return false, nil
 }
 
-// UpgradeMachinesNeeded compares actual and expected Kubernetes version for Machines
-// TODO: Implement UpgradeMachinesNeeded (always returns false)
-func (c *Cluster) UpgradeMachinesNeeded() bool {
-	return false
-}
-
 func (c *Cluster) SafeToRepair(targetVersion string) (bool, string) {
 	targetVer, err := semver.NewVersion(targetVersion)
 	if err != nil {
