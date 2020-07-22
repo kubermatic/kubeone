@@ -137,7 +137,6 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Conne
 	return nil
 }
 
-// TODO: add proper support for static workers
 func investigateCluster(s *state.State) error {
 	if !s.LiveCluster.IsProvisioned() {
 		return errors.New("unable to investigate non-provisioned cluster")
@@ -151,9 +150,8 @@ func investigateCluster(s *state.State) error {
 
 	leaderElected := false
 	for i := range s.LiveCluster.ControlPlane {
-		// TODO: Proper error handling
 		apiserverStatus, _ := apiserverstatus.Get(s, *s.LiveCluster.ControlPlane[i].Config)
-		if apiserverStatus.Health {
+		if apiserverStatus != nil && apiserverStatus.Health {
 			s.LiveCluster.ControlPlane[i].APIServer.Status |= state.PodRunning
 			if !leaderElected {
 				s.LiveCluster.ControlPlane[i].Config.IsLeader = true
@@ -174,7 +172,6 @@ func investigateCluster(s *state.State) error {
 		return err
 	}
 	for i := range s.LiveCluster.ControlPlane {
-		// TODO: Proper error handling
 		etcdStatus, _ := etcdstatus.Get(s, *s.LiveCluster.ControlPlane[i].Config, etcdMembers)
 		if etcdStatus != nil {
 			if etcdStatus.Member && etcdStatus.Health {
