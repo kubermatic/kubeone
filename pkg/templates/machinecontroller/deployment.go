@@ -49,14 +49,14 @@ const (
 	MachineControllerTag           = "v1.15.3"
 )
 
-var (
-	CRDs = []runtime.Object{
+func CRDs() []runtime.Object {
+	return []runtime.Object{
 		machineControllerMachineCRD(),
 		machineControllerClusterCRD(),
 		machineControllerMachineSetCRD(),
 		machineControllerMachineDeploymentCRD(),
 	}
-)
+}
 
 // Deploy deploys MachineController deployment with RBAC on the cluster
 func Deploy(s *state.State) error {
@@ -71,7 +71,7 @@ func Deploy(s *state.State) error {
 		return errors.Wrap(err, "failed to generate machine-controller deployment")
 	}
 
-	k8sobject := append(CRDs,
+	k8sobject := append(CRDs(),
 		machineControllerServiceAccount(),
 		machineControllerClusterRole(),
 		nodeSignerClusterRoleBinding(),

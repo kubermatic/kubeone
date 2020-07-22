@@ -27,6 +27,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/state"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
 
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
@@ -53,8 +54,8 @@ func destroyWorkers(s *state.State) error {
 	}
 
 	mcCRDs := []string{}
-	for _, crd := range machinecontroller.CRDs {
-		mcCRDs = append(mcCRDs, crd.GetObjectKind().GroupVersionKind().GroupKind().String())
+	for _, crd := range machinecontroller.CRDs() {
+		mcCRDs = append(mcCRDs, crd.(metav1.Object).GetName())
 	}
 
 	condFn := clientutil.CRDsReadyCondition(s.Context, s.DynamicClient, mcCRDs)

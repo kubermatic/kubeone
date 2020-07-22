@@ -28,6 +28,7 @@ import (
 	"github.com/kubermatic/kubeone/pkg/kubeconfig"
 	"github.com/kubermatic/kubeone/pkg/state"
 
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/wait"
 )
@@ -81,6 +82,25 @@ const (
 `
 )
 
+func canalCRDs() []runtime.Object {
+	return []runtime.Object{
+		felixConfigurationCRD(),
+		ipamBlockCRD(),
+		blockAffinityCRD(),
+		ipamHandleCRD(),
+		ipamConfigCRD(),
+		bgpPeerCRD(),
+		bgpConfigurationCRD(),
+		ipPoolCRD(),
+		hostEndpointCRD(),
+		clusterInformationCRD(),
+		globalNetworkPolicyCRD(),
+		globalNetworksetCRD(),
+		networkPolicyCRD(),
+		networkSetCRD(),
+	}
+}
+
 // Deploy deploys Canal (Calico + Flannel) CNI on the cluster
 func Deploy(s *state.State) error {
 	if s.DynamicClient == nil {
@@ -104,23 +124,8 @@ func Deploy(s *state.State) error {
 
 	ctx := context.Background()
 
-	k8sobjects := []runtime.Object{
-		// CRDs
-		felixConfigurationCRD(),
-		ipamBlockCRD(),
-		blockAffinityCRD(),
-		ipamHandleCRD(),
-		ipamConfigCRD(),
-		bgpPeerCRD(),
-		bgpConfigurationCRD(),
-		ipPoolCRD(),
-		hostEndpointCRD(),
-		clusterInformationCRD(),
-		globalNetworkPolicyCRD(),
-		globalNetworksetCRD(),
-		networkPolicyCRD(),
-		networkSetCRD(),
-
+	crds := canalCRDs()
+	k8sobjects := append(crds,
 		// RBAC
 		calicoClusterRole(),
 		flannelClusterRole(),
@@ -132,7 +137,7 @@ func Deploy(s *state.State) error {
 		configMap(buf),
 		daemonSet(s.PatchCNI),
 		serviceAccount(),
-	}
+	)
 
 	for _, obj := range k8sobjects {
 		if err = clientutil.CreateOrUpdate(ctx, s.DynamicClient, obj); err != nil {
@@ -141,10 +146,8 @@ func Deploy(s *state.State) error {
 	}
 
 	gkResources := []string{}
-	for _, obj := range k8sobjects {
-		if gvk := obj.GetObjectKind().GroupVersionKind(); gvk.Group == "crd.projectcalico.org" {
-			gkResources = append(gkResources, gvk.GroupKind().String())
-		}
+	for _, crd := range crds {
+		gkResources = append(gkResources, crd.(metav1.Object).GetName())
 	}
 
 	condFn := clientutil.CRDsReadyCondition(ctx, s.DynamicClient, gkResources)

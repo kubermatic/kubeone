@@ -19,7 +19,7 @@ package clientutil
 import (
 	"context"
 
-	"k8s.io/apiextensions-apiserver/pkg/apis/apiextensions"
+	apiextensions "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
