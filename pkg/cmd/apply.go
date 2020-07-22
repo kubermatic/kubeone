@@ -86,9 +86,8 @@ func applyCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 	opts := &applyOpts{}
 
 	cmd := &cobra.Command{
-		Hidden: true, // for now
-		Use:    "apply",
-		Short:  "apply reconcile the cluster",
+		Use:   "apply",
+		Short: "Reconcile the cluster",
 		Long: `
 Reconcile (Install/Upgrade/Repair/Restore) Kubernetes cluster on pre-existing machines
 
