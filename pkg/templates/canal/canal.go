@@ -147,27 +147,14 @@ func Deploy(s *state.State) error {
 		}
 	}
 
-	var waitErr error
+	condFn := clientutil.CRDsReadyCondition(ctx, s.DynamicClient, gkResources)
 
-	for _, res := range gkResources {
-		res := res
-		waitErr = wait.Poll(5*time.Second, 1*time.Minute, func() (bool, error) {
-			ok, crdErr := clientutil.VerifyCRD(ctx, s.DynamicClient, res)
-			if crdErr != nil {
-				return false, nil
-			}
-			if !ok {
-				return ok, nil
-			}
-			return true, nil
-		})
-	}
-	if waitErr != nil {
-		return errors.Wrap(waitErr, "failed to establish calico CRDs")
+	err = wait.Poll(5*time.Second, 1*time.Minute, condFn)
+	if err != nil {
+		return errors.Wrap(err, "failed to establish calico CRDs")
 	}
 
 	// HACK: re-init dynamic client in order to re-init RestMapper, to drop caches
 	err = kubeconfig.HackIssue321InitDynamicClient(s)
-
 	return errors.Wrap(err, "failed to re-init dynamic client")
 }

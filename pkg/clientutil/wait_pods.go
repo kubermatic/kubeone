@@ -20,11 +20,15 @@ import (
 	"context"
 
 	"github.com/pkg/errors"
+
 	corev1 "k8s.io/api/core/v1"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-func PodsReady(ctx context.Context, c dynclient.Client, listOpts dynclient.ListOptions) func() (bool, error) {
+// PodsReadyCondition generate a k8s.io/apimachinery/pkg/util/wait.ConditionFunc function to be used in
+// k8s.io/apimachinery/pkg/util/wait.Poll* family of functions. It will check all selected pods to have PodReady
+// condition and phase PodRunning.
+func PodsReadyCondition(ctx context.Context, c dynclient.Client, listOpts dynclient.ListOptions) func() (bool, error) {
 	return func() (bool, error) {
 		podsList := corev1.PodList{}
 
@@ -32,20 +36,26 @@ func PodsReady(ctx context.Context, c dynclient.Client, listOpts dynclient.ListO
 			return false, errors.Wrapf(err, "failed to list %s pods", listOpts.FieldSelector.String())
 		}
 
-		if len(podsList.Items) == 0 {
-			return false, nil
+		return allPodsAreRunningAndReady(&podsList), nil
+	}
+}
+
+func allPodsAreRunningAndReady(podsList *corev1.PodList) bool {
+	if len(podsList.Items) == 0 {
+		return false
+	}
+
+	for _, pod := range podsList.Items {
+		if pod.Status.Phase != corev1.PodRunning {
+			return false
 		}
 
-		for _, pod := range podsList.Items {
-			if pod.Status.Phase == corev1.PodRunning {
-				for _, podcond := range pod.Status.Conditions {
-					if podcond.Type == corev1.PodReady && podcond.Status == corev1.ConditionTrue {
-						return true, nil
-					}
-				}
+		for _, podcond := range pod.Status.Conditions {
+			if podcond.Type == corev1.PodReady && podcond.Status != corev1.ConditionTrue {
+				return false
 			}
 		}
-
-		return false, nil
 	}
+
+	return true
 }

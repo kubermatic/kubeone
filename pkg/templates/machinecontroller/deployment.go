@@ -49,6 +49,15 @@ const (
 	MachineControllerTag           = "v1.15.3"
 )
 
+var (
+	CRDs = []runtime.Object{
+		machineControllerMachineCRD(),
+		machineControllerClusterCRD(),
+		machineControllerMachineSetCRD(),
+		machineControllerMachineDeploymentCRD(),
+	}
+)
+
 // Deploy deploys MachineController deployment with RBAC on the cluster
 func Deploy(s *state.State) error {
 	if s.DynamicClient == nil {
@@ -62,7 +71,7 @@ func Deploy(s *state.State) error {
 		return errors.Wrap(err, "failed to generate machine-controller deployment")
 	}
 
-	k8sobject := []runtime.Object{
+	k8sobject := append(CRDs,
 		machineControllerServiceAccount(),
 		machineControllerClusterRole(),
 		nodeSignerClusterRoleBinding(),
@@ -76,12 +85,8 @@ func Deploy(s *state.State) error {
 		machineControllerKubePublicRoleBinding(),
 		machineControllerDefaultRoleBinding(),
 		machineControllerClusterInfoRoleBinding(),
-		machineControllerMachineCRD(),
-		machineControllerClusterCRD(),
-		machineControllerMachineSetCRD(),
-		machineControllerMachineDeploymentCRD(),
 		deployment,
-	}
+	)
 
 	for _, obj := range k8sobject {
 		if err = clientutil.CreateOrUpdate(ctx, s.DynamicClient, obj); err != nil {
@@ -97,14 +102,14 @@ func Deploy(s *state.State) error {
 // WaitForMachineController waits for machine-controller-webhook to become running
 // func WaitForMachineController(corev1Client corev1types.CoreV1Interface) error {
 func waitForMachineController(ctx context.Context, client dynclient.Client) error {
-	waitFn := clientutil.PodsReady(ctx, client, dynclient.ListOptions{
+	condFn := clientutil.PodsReadyCondition(ctx, client, dynclient.ListOptions{
 		Namespace: WebhookNamespace,
 		LabelSelector: labels.SelectorFromSet(map[string]string{
 			MachineControllerAppLabelKey: MachineControllerAppLabelValue,
 		}),
 	})
 
-	return wait.Poll(5*time.Second, 3*time.Minute, waitFn)
+	return wait.Poll(5*time.Second, 3*time.Minute, condFn)
 }
 
 func machineControllerServiceAccount() *corev1.ServiceAccount {

@@ -20,11 +20,11 @@ import (
 	"context"
 	"time"
 
-	clusterv1alpha1 "github.com/kubermatic/machine-controller/pkg/apis/cluster/v1alpha1"
 	"github.com/pkg/errors"
 
 	"github.com/kubermatic/kubeone/pkg/clientutil"
 	"github.com/kubermatic/kubeone/pkg/state"
+	clusterv1alpha1 "github.com/kubermatic/machine-controller/pkg/apis/cluster/v1alpha1"
 
 	corev1 "k8s.io/api/core/v1"
 	errorsutil "k8s.io/apimachinery/pkg/api/errors"
@@ -78,32 +78,12 @@ func WaitReady(s *state.State) error {
 
 // WaitForCRDs waits for machine-controller CRDs to be created and become established
 func waitForCRDs(s *state.State) error {
-	var lastErr error
-	_ = wait.Poll(5*time.Second, 3*time.Minute, func() (bool, error) {
-		lastErr = VerifyCRDs(s)
-		return lastErr == nil, nil
-	})
+	crdGKs := []string{}
 
-	return errors.Wrap(lastErr, "failed waiting for CRDs to become ready and established")
-}
+	condFn := clientutil.CRDsReadyCondition(s.Context, s.DynamicClient, crdGKs)
+	err := wait.Poll(5*time.Second, 3*time.Minute, condFn)
 
-// VerifyCRDs verifies are Cluster-API CRDs deployed
-func VerifyCRDs(s *state.State) error {
-	ctx := s.Context
-	resources := []string{"machinedeployments.cluster.k8s.io", "machinesets.cluster.k8s.io", "machines.cluster.k8s.io"}
-
-	for _, res := range resources {
-		ok, err := clientutil.VerifyCRD(ctx, s.DynamicClient, res)
-		if err != nil {
-			return err
-		}
-
-		if !ok {
-			return clientutil.ErrCRDNotEstablished
-		}
-	}
-
-	return nil
+	return errors.Wrap(err, "failed waiting for CRDs to become ready and established")
 }
 
 // DestroyWorkers destroys all MachineDeployment, MachineSet and Machine objects
@@ -124,6 +104,7 @@ func DestroyWorkers(s *state.State) error {
 	if err := s.DynamicClient.List(ctx, nodes); err != nil {
 		return errors.Wrap(err, "unable to list nodes")
 	}
+
 	for _, node := range nodes.Items {
 		nodeKey := dynclient.ObjectKey{Name: node.Name}
 
@@ -153,6 +134,7 @@ func DestroyWorkers(s *state.State) error {
 			return errors.Wrap(err, "unable to list machinedeployment objects")
 		}
 	}
+
 	for i := range mdList.Items {
 		if err := s.DynamicClient.Delete(ctx, &mdList.Items[i]); err != nil {
 			return errors.Wrapf(err, "unable to delete machinedeployment object %s", mdList.Items[i].Name)
@@ -167,6 +149,7 @@ func DestroyWorkers(s *state.State) error {
 			return errors.Wrap(err, "unable to list machineset objects")
 		}
 	}
+
 	for i := range msList.Items {
 		if err := s.DynamicClient.Delete(ctx, &msList.Items[i]); err != nil {
 			if !errorsutil.IsNotFound(err) {
@@ -183,6 +166,7 @@ func DestroyWorkers(s *state.State) error {
 			return errors.Wrap(err, "unable to list machine objects")
 		}
 	}
+
 	for i := range mList.Items {
 		if err := s.DynamicClient.Delete(ctx, &mList.Items[i]); err != nil {
 			if !errorsutil.IsNotFound(err) {

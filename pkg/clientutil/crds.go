@@ -19,27 +19,30 @@ package clientutil
 import (
 	"context"
 
-	"github.com/pkg/errors"
 	"k8s.io/apiextensions-apiserver/pkg/apis/apiextensions"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-var (
-	ErrCRDNotEstablished = errors.New("crd is not established")
-)
+// CRDsReadyCondition generate a k8s.io/apimachinery/pkg/util/wait.ConditionFunc function to be used in
+// k8s.io/apimachinery/pkg/util/wait.Poll* family of functions. It will check all provided GKs (GroupKinds) to exists
+// and have Established status
+func CRDsReadyCondition(ctx context.Context, client dynclient.Client, groupKinds []string) func() (bool, error) {
+	return func() (bool, error) {
+		for _, gk := range groupKinds {
+			crd := apiextensions.CustomResourceDefinition{}
+			key := dynclient.ObjectKey{Name: gk}
 
-func VerifyCRD(ctx context.Context, client dynclient.Client, crdName string) (bool, error) {
-	crd := &apiextensions.CustomResourceDefinition{}
-	key := dynclient.ObjectKey{Name: crdName}
-	if err := client.Get(ctx, key, crd); err != nil {
-		return false, err
-	}
+			if err := client.Get(ctx, key, &crd); err != nil {
+				return false, err
+			}
 
-	for _, cond := range crd.Status.Conditions {
-		if cond.Type == apiextensions.Established && cond.Status == apiextensions.ConditionTrue {
-			return true, nil
+			for _, cond := range crd.Status.Conditions {
+				if cond.Type == apiextensions.Established && cond.Status != apiextensions.ConditionTrue {
+					return false, nil
+				}
+			}
 		}
-	}
 
-	return false, ErrCRDNotEstablished
+		return true, nil
+	}
 }

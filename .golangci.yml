@@ -43,7 +43,7 @@ linters-settings:
   govet:
     check-shadowing: true
   goimports:
-    local-prefixes: github.com/kubermatic/kubeone
+    local-prefixes: github.com/kubermatic
 
 issues:
   exclude-rules:
