@@ -28,6 +28,8 @@ import (
 // and have Established status
 func CRDsReadyCondition(ctx context.Context, client dynclient.Client, groupKinds []string) func() (bool, error) {
 	return func() (bool, error) {
+		var establishedNum int
+
 		for _, gk := range groupKinds {
 			crd := apiextensions.CustomResourceDefinition{}
 			key := dynclient.ObjectKey{Name: gk}
@@ -37,12 +39,12 @@ func CRDsReadyCondition(ctx context.Context, client dynclient.Client, groupKinds
 			}
 
 			for _, cond := range crd.Status.Conditions {
-				if cond.Type == apiextensions.Established && cond.Status != apiextensions.ConditionTrue {
-					return false, nil
+				if cond.Type == apiextensions.Established && cond.Status == apiextensions.ConditionTrue {
+					establishedNum++
 				}
 			}
 		}
 
-		return true, nil
+		return establishedNum == len(groupKinds), nil
 	}
 }

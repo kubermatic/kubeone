@@ -45,17 +45,19 @@ func allPodsAreRunningAndReady(podsList *corev1.PodList) bool {
 		return false
 	}
 
+	var readyNum int
+
 	for _, pod := range podsList.Items {
 		if pod.Status.Phase != corev1.PodRunning {
 			return false
 		}
 
 		for _, podcond := range pod.Status.Conditions {
-			if podcond.Type == corev1.PodReady && podcond.Status != corev1.ConditionTrue {
-				return false
+			if podcond.Type == corev1.PodReady && podcond.Status == corev1.ConditionTrue {
+				readyNum++
 			}
 		}
 	}
 
-	return true
+	return readyNum == len(podsList.Items)
 }
