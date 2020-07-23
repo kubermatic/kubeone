@@ -20,12 +20,14 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"github.com/kubermatic/kubeone/pkg/clientutil"
 	"github.com/kubermatic/kubeone/pkg/kubeconfig"
 	"github.com/kubermatic/kubeone/pkg/scripts"
 	"github.com/kubermatic/kubeone/pkg/ssh"
 	"github.com/kubermatic/kubeone/pkg/state"
 	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
 
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
@@ -51,13 +53,13 @@ func destroyWorkers(s *state.State) error {
 		return errors.Wrap(lastErr, "unable to build kubernetes clientset")
 	}
 
-	_ = wait.ExponentialBackoff(defaultRetryBackoff(3), func() (bool, error) {
-		lastErr = machinecontroller.VerifyCRDs(s)
-		if lastErr != nil {
-			return false, nil
-		}
-		return true, nil
-	})
+	mcCRDs := []string{}
+	for _, crd := range machinecontroller.CRDs() {
+		mcCRDs = append(mcCRDs, crd.(metav1.Object).GetName())
+	}
+
+	condFn := clientutil.CRDsReadyCondition(s.Context, s.DynamicClient, mcCRDs)
+	lastErr = wait.ExponentialBackoff(defaultRetryBackoff(3), condFn)
 	if lastErr != nil {
 		s.Logger.Info("Skipping deleting worker nodes because machine-controller CRDs are not deployed")
 		return nil

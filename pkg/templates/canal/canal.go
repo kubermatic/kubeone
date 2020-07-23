@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"context"
 	"text/template"
+	"time"
 
 	"github.com/pkg/errors"
 
@@ -27,7 +28,9 @@ import (
 	"github.com/kubermatic/kubeone/pkg/kubeconfig"
 	"github.com/kubermatic/kubeone/pkg/state"
 
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/util/wait"
 )
 
 const (
@@ -79,6 +82,25 @@ const (
 `
 )
 
+func canalCRDs() []runtime.Object {
+	return []runtime.Object{
+		felixConfigurationCRD(),
+		ipamBlockCRD(),
+		blockAffinityCRD(),
+		ipamHandleCRD(),
+		ipamConfigCRD(),
+		bgpPeerCRD(),
+		bgpConfigurationCRD(),
+		ipPoolCRD(),
+		hostEndpointCRD(),
+		clusterInformationCRD(),
+		globalNetworkPolicyCRD(),
+		globalNetworksetCRD(),
+		networkPolicyCRD(),
+		networkSetCRD(),
+	}
+}
+
 // Deploy deploys Canal (Calico + Flannel) CNI on the cluster
 func Deploy(s *state.State) error {
 	if s.DynamicClient == nil {
@@ -102,11 +124,8 @@ func Deploy(s *state.State) error {
 
 	ctx := context.Background()
 
-	k8sobjects := []runtime.Object{
-		configMap(buf),
-		daemonSet(s.PatchCNI),
-		serviceAccount(),
-
+	crds := canalCRDs()
+	k8sobjects := append(crds,
 		// RBAC
 		calicoClusterRole(),
 		flannelClusterRole(),
@@ -114,27 +133,28 @@ func Deploy(s *state.State) error {
 		flannelClusterRoleBinding(),
 		canalClusterRoleBinding(),
 
-		// CRDs
-		felixConfigurationCRD(),
-		ipamBlockCRD(),
-		blockAffinityCRD(),
-		ipamHandleCRD(),
-		ipamConfigCRD(),
-		bgpPeerCRD(),
-		bgpConfigurationCRD(),
-		ipPoolCRD(),
-		hostEndpointCRD(),
-		clusterInformationCRD(),
-		globalNetworkPolicyCRD(),
-		globalNetworksetCRD(),
-		networkPolicyCRD(),
-		networkSetCRD(),
-	}
+		// workloads
+		configMap(buf),
+		daemonSet(s.PatchCNI),
+		serviceAccount(),
+	)
 
 	for _, obj := range k8sobjects {
 		if err = clientutil.CreateOrUpdate(ctx, s.DynamicClient, obj); err != nil {
 			return errors.WithStack(err)
 		}
+	}
+
+	gkResources := []string{}
+	for _, crd := range crds {
+		gkResources = append(gkResources, crd.(metav1.Object).GetName())
+	}
+
+	condFn := clientutil.CRDsReadyCondition(ctx, s.DynamicClient, gkResources)
+
+	err = wait.Poll(5*time.Second, 1*time.Minute, condFn)
+	if err != nil {
+		return errors.Wrap(err, "failed to establish calico CRDs")
 	}
 
 	// HACK: re-init dynamic client in order to re-init RestMapper, to drop caches
