@@ -86,11 +86,11 @@ func aptDockerFunc(v string) (string, error) {
 	lessThen117, _ := semver.NewConstraint("< 1.17")
 
 	if lessThen117.Check(sver) {
-		return "docker-ce=18.03.1~ce~3-0~ubuntu", nil
+		return "docker-ce=5:18.09.9~3-0~ubuntu-$(lsb_release -cs) docker-ce-cli=5:18.09.9~3-0~ubuntu-$(lsb_release -cs)", nil
 	}
 
 	// return default
-	return "docker-ce=5:19.03.9~3-0~ubuntu-$(lsb_release -cs) docker-ce-cli=5:19.03.9~3-0~ubuntu-$(lsb_release -cs)", nil
+	return "docker-ce=5:19.03.12~3-0~ubuntu-$(lsb_release -cs) docker-ce-cli=5:19.03.12~3-0~ubuntu-$(lsb_release -cs)", nil
 }
 
 func yumDockerFunc(v string) (string, error) {
@@ -102,9 +102,9 @@ func yumDockerFunc(v string) (string, error) {
 	lessThen117, _ := semver.NewConstraint("< 1.17")
 
 	if lessThen117.Check(sver) {
-		return "docker-ce-18.03.1.ce-1.el7.centos", nil
+		return "docker-ce-18.09.9-3.el7 docker-ce-cli-18.09.9-3.el7", nil
 	}
 
 	// return default
-	return "docker-ce-19.03.9-3.el7 docker-ce-cli-19.03.9-3.el7", nil
+	return "docker-ce-19.03.12-3.el7 docker-ce-cli-19.03.12-3.el7", nil
 }
