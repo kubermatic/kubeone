@@ -117,7 +117,7 @@ variable "ami_filters" {
   default = {
     ubuntu = {
       owners     = ["099720109477"] # Canonical
-      image_name = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
+      image_name = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
     }
 
     centos = {
