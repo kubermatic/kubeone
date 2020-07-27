@@ -1,5 +1,23 @@
 # Changelog
 
+# [v1.0.0-rc.0](https://github.com/kubermatic/kubeone/releases/tag/v1.0.0-rc.0) - 2020-07-27
+
+## Attention Needed
+
+* This is the first release candidate for the KubeOne v1.0.0 release! We encourage everyone to test it and let us know if you have any questions or if you find any issues or bugs. You can [create an issue on GitHub](https://github.com/kubermatic/kubeone/issues/new/choose), reach out to us on [our forums](http://forum.kubermatic.com/), or on [`#kubeone` channel](https://kubernetes.slack.com/messages/CNEV2UMT7) on [Kubernetes Slack](http://slack.k8s.io/).
+* It's recommended to use this release instead of v0.11, as v0.11 doesn't support the latest Kubernetes patch releases. Older Kubernetes releases are affected by two CVEs and therefore it's strongly advised to use 1.16.11/1.17.7/1.18.4 or newer.
+
+## Changed
+
+### Bug Fixes
+
+* Verify that `crd.projectcalico.org` CRDs are established before proceeding with the Canal CNI installation ([#994](https://github.com/kubermatic/kubeone/pull/994))
+
+### Updated
+
+* Update Docker versions. Minimal Docker version is 18.09.9 for clusters older than v1.17 and 19.03.12 for clusters running v1.17 and newer ([#1002](https://github.com/kubermatic/kubeone/pull/1002/files))
+  * This fixes the issue preventing users to upgrade Kubernetes clusters created with KubeOne v0.11 or earlier
+
 # [v1.0.0-beta.3](https://github.com/kubermatic/kubeone/releases/tag/v1.0.0-beta.3) - 2020-07-22
 
 ## Attention Needed
