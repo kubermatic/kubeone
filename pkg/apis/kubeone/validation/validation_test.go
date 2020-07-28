@@ -653,7 +653,7 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 				PodSubnet:     "192.168.1.0/24",
 				ServiceSubnet: "192.168.0.0/24",
 				CNI: &kubeone.CNI{
-					Canal: &kubeone.CanalSpec{MTU: "1500"},
+					Canal: &kubeone.CanalSpec{MTU: 1500},
 				},
 			},
 			expectedError: false,
@@ -710,7 +710,7 @@ func TestValidateCNIConfig(t *testing.T) {
 		{
 			name: "valid Canal CNI config",
 			cniConfig: &kubeone.CNI{
-				Canal: &kubeone.CanalSpec{MTU: "1500"},
+				Canal: &kubeone.CanalSpec{MTU: 1500},
 			},
 			expectedError: false,
 		},

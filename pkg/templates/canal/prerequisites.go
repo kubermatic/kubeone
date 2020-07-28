@@ -18,6 +18,7 @@ package canal
 
 import (
 	"bytes"
+	"strconv"
 
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
@@ -25,7 +26,7 @@ import (
 )
 
 // configMap creates a ConfigMap used to configure a self-hosted Canal installation
-func configMap(netConf bytes.Buffer, mtu string) *corev1.ConfigMap {
+func configMap(netConf bytes.Buffer, mtu int) *corev1.ConfigMap {
 	return &corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "canal-config",
@@ -49,7 +50,7 @@ func configMap(netConf bytes.Buffer, mtu string) *corev1.ConfigMap {
 			// - Otherwise, if VXLAN or BPF mode is enabled, set to your network MTU - 50
 			// - Otherwise, if IPIP is enabled, set to your network MTU - 20
 			// - Otherwise, if not using any encapsulation, set to your network MTU.
-			"veth_mtu": mtu,
+			"veth_mtu": strconv.Itoa(mtu),
 
 			// The CNI network configuration to install on each node.  The special
 			// values in this config will be automatically populated.

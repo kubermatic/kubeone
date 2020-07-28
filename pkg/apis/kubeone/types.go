@@ -183,7 +183,7 @@ type CNI struct {
 
 // CanalSpec defines the Canal CNI plugin
 type CanalSpec struct {
-	MTU string `json:"mtu"`
+	MTU int `json:"mtu"`
 }
 
 // WeaveNetSpec defines the WeaveNet CNI plugin
