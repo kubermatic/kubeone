@@ -26,12 +26,15 @@ import (
 
 // daemonSet installs the calico/node container, as well as the Calico CNI plugins and network config on each
 // master and worker node in a Kubernetes cluster
-func daemonSet(ifacePatch bool) *appsv1.DaemonSet {
+func daemonSet(ifacePatch bool, clusterCIDR string) *appsv1.DaemonSet {
 	maxUnavailable := intstr.FromInt(1)
 	terminationGracePeriodSeconds := int64(0)
 	privileged := true
 	fileOrCreate := corev1.HostPathFileOrCreate
 	directoryOrCreate := corev1.HostPathDirectoryOrCreate
+	commonLabels := map[string]string{
+		"k8s-app": "canal",
+	}
 
 	flannelEnv := []corev1.EnvVar{
 		{
@@ -78,15 +81,11 @@ func daemonSet(ifacePatch bool) *appsv1.DaemonSet {
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "canal",
 			Namespace: metav1.NamespaceSystem,
-			Labels: map[string]string{
-				"k8s-app": "canal",
-			},
+			Labels:    commonLabels,
 		},
 		Spec: appsv1.DaemonSetSpec{
 			Selector: &metav1.LabelSelector{
-				MatchLabels: map[string]string{
-					"k8s-app": "canal",
-				},
+				MatchLabels: commonLabels,
 			},
 			UpdateStrategy: appsv1.DaemonSetUpdateStrategy{
 				Type: appsv1.RollingUpdateDaemonSetStrategyType,
@@ -96,9 +95,7 @@ func daemonSet(ifacePatch bool) *appsv1.DaemonSet {
 			},
 			Template: corev1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
-					Labels: map[string]string{
-						"k8s-app": "canal",
-					},
+					Labels: commonLabels,
 					Annotations: map[string]string{
 						// This, along with the CriticalAddonsOnly toleration below,
 						// marks the pod as a critical add-on, ensuring it gets
@@ -132,6 +129,7 @@ func daemonSet(ifacePatch bool) *appsv1.DaemonSet {
 					// Minimize downtime during a rolling upgrade or deletion; tell Kubernetes to do a "force
 					// deletion": https://kubernetes.io/docs/concepts/workloads/pods/pod/#termination-of-pods
 					TerminationGracePeriodSeconds: &terminationGracePeriodSeconds,
+					PriorityClassName:             "system-node-critical",
 					InitContainers: []corev1.Container{
 						{
 							// This container installs the Calico CNI binaries
@@ -162,6 +160,18 @@ func daemonSet(ifacePatch bool) *appsv1.DaemonSet {
 									ValueFrom: &corev1.EnvVarSource{
 										FieldRef: &corev1.ObjectFieldSelector{
 											FieldPath: "spec.nodeName",
+										},
+									},
+								},
+								{
+									// CNI MTU Config variable
+									Name: "CNI_MTU",
+									ValueFrom: &corev1.EnvVarSource{
+										ConfigMapKeyRef: &corev1.ConfigMapKeySelector{
+											LocalObjectReference: corev1.LocalObjectReference{
+												Name: "canal-config",
+											},
+											Key: "veth_mtu",
 										},
 									},
 								},
@@ -237,7 +247,7 @@ func daemonSet(ifacePatch bool) *appsv1.DaemonSet {
 									// chosen from this range. Changing this value after installation will have
 									// no effect. This should fall within --cluster-cidr
 									Name:  "CALICO_IPV4POOL_CIDR",
-									Value: "192.168.0.0/16",
+									Value: clusterCIDR,
 								},
 								{
 									// Disable file logging so kubectl logs works.

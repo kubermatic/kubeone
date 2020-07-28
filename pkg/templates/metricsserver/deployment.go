@@ -35,6 +35,7 @@ import (
 
 const (
 	metricsServerImage = `k8s.gcr.io/metrics-server:v0.3.6`
+	componentLabel     = "metrics-server"
 )
 
 // Deploy generate and POST all objects to apiserver
@@ -55,9 +56,10 @@ func Deploy(s *state.State) error {
 		metricServerClusterRoleBinding(),
 	}
 
+	withLabel := clientutil.WithComponentLabel(componentLabel)
 	ctx := context.Background()
 	for _, obj := range k8sobjects {
-		if err := clientutil.CreateOrUpdate(ctx, s.DynamicClient, obj); err != nil {
+		if err := clientutil.CreateOrUpdate(ctx, s.DynamicClient, obj, withLabel); err != nil {
 			return errors.WithStack(err)
 		}
 	}

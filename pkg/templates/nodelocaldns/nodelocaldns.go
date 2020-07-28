@@ -40,6 +40,7 @@ const VirtualIP = "169.254.20.10"
 const (
 	image                    = "k8s.gcr.io/k8s-dns-node-cache"
 	tag                      = "1.15.12"
+	componentLabel           = "nodelocaldns"
 	dnscacheCorefileTemplate = `
 __PILLAR__DNS__DOMAIN__:53 {
 	errors
@@ -108,8 +109,9 @@ func Deploy(s *state.State) error {
 	}
 
 	ctx := context.Background()
+	withLabel := clientutil.WithComponentLabel(componentLabel)
 	for _, o := range objs {
-		if err := clientutil.CreateOrUpdate(ctx, s.DynamicClient, o); err != nil {
+		if err := clientutil.CreateOrUpdate(ctx, s.DynamicClient, o, withLabel); err != nil {
 			return errors.WithStack(err)
 		}
 	}

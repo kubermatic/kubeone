@@ -42,6 +42,7 @@ const (
 	version        = ":2.5.2"
 	weaveKubeImage = "docker.io/weaveworks/weave-kube"
 	weaveNPCImage  = "docker.io/weaveworks/weave-npc"
+	componentLabel = "weave-net"
 )
 
 // Deploy ensure weave-net resources exists in the cluster
@@ -51,20 +52,6 @@ func Deploy(s *state.State) error {
 	}
 
 	ctx := context.Background()
-
-	k8sobjects := []runtime.Object{
-		serviceAccount(),
-		clusterRole(),
-		clusterRoleBinding(),
-		role(),
-		roleBinding(),
-	}
-
-	for _, obj := range k8sobjects {
-		if err := clientutil.CreateOrUpdate(ctx, s.DynamicClient, obj); err != nil {
-			return errors.Wrapf(err, "failed to ensure weave %s", obj.GetObjectKind().GroupVersionKind().Kind)
-		}
-	}
 
 	if s.Cluster.ClusterNetwork.CNI.WeaveNet.Encrypted {
 		pass, err := genPassword()
@@ -97,8 +84,21 @@ func Deploy(s *state.State) error {
 	}
 
 	ds := daemonSet(s.Cluster.ClusterNetwork.CNI.WeaveNet.Encrypted, strings.Join(peers, " "), s.Cluster.ClusterNetwork.PodSubnet)
-	if err := clientutil.CreateOrUpdate(ctx, s.DynamicClient, ds); err != nil {
-		return errors.Wrap(err, "failed to ensure weave DaemonSet")
+
+	k8sobjects := []runtime.Object{
+		serviceAccount(),
+		clusterRole(),
+		clusterRoleBinding(),
+		role(),
+		roleBinding(),
+		ds,
+	}
+
+	withLabel := clientutil.WithComponentLabel(componentLabel)
+	for _, obj := range k8sobjects {
+		if err := clientutil.CreateOrUpdate(ctx, s.DynamicClient, obj, withLabel); err != nil {
+			return errors.Wrapf(err, "failed to ensure weave %s", obj.GetObjectKind().GroupVersionKind().Kind)
+		}
 	}
 
 	return nil

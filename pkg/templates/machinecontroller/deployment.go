@@ -88,8 +88,9 @@ func Deploy(s *state.State) error {
 		deployment,
 	)
 
+	withLabel := clientutil.WithComponentLabel(MachineControllerAppLabelValue)
 	for _, obj := range k8sobject {
-		if err = clientutil.CreateOrUpdate(ctx, s.DynamicClient, obj); err != nil {
+		if err = clientutil.CreateOrUpdate(ctx, s.DynamicClient, obj, withLabel); err != nil {
 			return errors.Wrapf(err, "failed to ensure machine-controller %T", obj)
 		}
 	}
