@@ -17,7 +17,9 @@ limitations under the License.
 package validation
 
 import (
+	"fmt"
 	"net"
+	"strconv"
 	"strings"
 
 	"github.com/Masterminds/semver"
@@ -205,6 +207,10 @@ func ValidateCNI(c *kubeone.CNI, fldPath *field.Path) field.ErrorList {
 	cniFound := false
 	if c.Canal != nil {
 		cniFound = true
+		if _, err := strconv.Atoi(c.Canal.MTU); err != nil {
+			allErrs = append(allErrs,
+				field.Invalid(fldPath.Child("canal").Child("mtu"), c.Canal.MTU, fmt.Sprintf("invalid value: %v", err)))
+		}
 	}
 	if c.WeaveNet != nil {
 		if cniFound {

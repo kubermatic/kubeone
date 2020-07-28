@@ -25,7 +25,7 @@ import (
 )
 
 // configMap creates a ConfigMap used to configure a self-hosted Canal installation
-func configMap(netConf bytes.Buffer) *corev1.ConfigMap {
+func configMap(netConf bytes.Buffer, mtu string) *corev1.ConfigMap {
 	return &corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "canal-config",
@@ -44,6 +44,13 @@ func configMap(netConf bytes.Buffer) *corev1.ConfigMap {
 			// the pod network
 			"masquerade": "true",
 
+			// Configure the MTU to use for workload interfaces and tunnels.
+			// - If Wireguard is enabled, set to your network MTU - 60
+			// - Otherwise, if VXLAN or BPF mode is enabled, set to your network MTU - 50
+			// - Otherwise, if IPIP is enabled, set to your network MTU - 20
+			// - Otherwise, if not using any encapsulation, set to your network MTU.
+			"veth_mtu": mtu,
+
 			// The CNI network configuration to install on each node.  The special
 			// values in this config will be automatically populated.
 			"cni_network_config": cniNetworkConfig,
@@ -54,8 +61,8 @@ func configMap(netConf bytes.Buffer) *corev1.ConfigMap {
 	}
 }
 
-// serviceAccount creates the canal ServiceAccount
-func serviceAccount() *corev1.ServiceAccount {
+// daemonsetServiceAccount creates the canal ServiceAccount
+func daemonsetServiceAccount() *corev1.ServiceAccount {
 	return &corev1.ServiceAccount{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "canal",
@@ -64,8 +71,135 @@ func serviceAccount() *corev1.ServiceAccount {
 	}
 }
 
-// clusterRole creates a ClusterRole for the calico-node DaemonSet
-func calicoClusterRole() *rbacv1.ClusterRole {
+// serviceAccount creates the canal ServiceAccount
+func deploymentServiceAccount() *corev1.ServiceAccount {
+	return &corev1.ServiceAccount{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "calico-kube-controllers",
+			Namespace: metav1.NamespaceSystem,
+		},
+	}
+}
+
+func calicoKubeControllersClusterRoleBinding() *rbacv1.ClusterRoleBinding {
+	return &rbacv1.ClusterRoleBinding{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "calico-kube-controllers",
+		},
+		RoleRef: rbacv1.RoleRef{
+			APIGroup: rbacv1.GroupName,
+			Kind:     "ClusterRole",
+			Name:     "calico-kube-controllers",
+		},
+		Subjects: []rbacv1.Subject{
+			{
+				Kind:      "ServiceAccount",
+				Name:      "calico-kube-controllers",
+				Namespace: metav1.NamespaceSystem,
+			},
+		},
+	}
+}
+
+func calicoKubeControllersClusterRole() *rbacv1.ClusterRole {
+	return &rbacv1.ClusterRole{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "calico-kube-controllers",
+		},
+		Rules: []rbacv1.PolicyRule{
+			{
+				// Nodes are watched to monitor for deletions.
+				APIGroups: []string{""},
+				Resources: []string{
+					"nodes",
+				},
+				Verbs: []string{
+					"watch",
+					"list",
+					"get",
+				},
+			},
+			{
+				// Pods are queried to check for existence.
+				APIGroups: []string{""},
+				Resources: []string{
+					"pods",
+				},
+				Verbs: []string{
+					"get",
+				},
+			},
+			{
+				// IPAM resources are manipulated when nodes are deleted.
+				APIGroups: []string{"crd.projectcalico.org"},
+				Resources: []string{
+					"ippools",
+				},
+				Verbs: []string{
+					"list",
+				},
+			},
+			{
+				//
+				APIGroups: []string{"crd.projectcalico.org"},
+				Resources: []string{
+					"blockaffinities",
+					"ipamblocks",
+					"ipamhandles",
+				},
+				Verbs: []string{
+					"get",
+					"list",
+					"create",
+					"update",
+					"delete",
+				},
+			},
+			{
+				// kube-controllers manages hostendpoints.
+				APIGroups: []string{"crd.projectcalico.org"},
+				Resources: []string{
+					"hostendpoints",
+				},
+				Verbs: []string{
+					"get",
+					"list",
+					"create",
+					"update",
+					"delete",
+				},
+			},
+			{
+				// Needs access to update clusterinformations.
+				APIGroups: []string{"crd.projectcalico.org"},
+				Resources: []string{
+					"clusterinformations",
+				},
+				Verbs: []string{
+					"get",
+					"create",
+					"update",
+				},
+			},
+			{
+				// KubeControllersConfiguration is where it gets its config
+				APIGroups: []string{"crd.projectcalico.org"},
+				Resources: []string{
+					"kubecontrollersconfigurations",
+				},
+				Verbs: []string{
+					"get",
+					"create",
+					"update",
+					"watch",
+				},
+			},
+		},
+	}
+}
+
+// calicoNodeClusterRole creates a ClusterRole for the calico-node DaemonSet
+func calicoNodeClusterRole() *rbacv1.ClusterRole {
 	return &rbacv1.ClusterRole{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "calico-node",
@@ -94,6 +228,15 @@ func calicoClusterRole() *rbacv1.ClusterRole {
 					"watch",
 					"list",
 					// Used to discover Typhas
+					"get",
+				},
+			},
+			{
+				APIGroups: []string{""},
+				Resources: []string{
+					"configmaps",
+				},
+				Verbs: []string{
 					"get",
 				},
 			},
@@ -147,9 +290,7 @@ func calicoClusterRole() *rbacv1.ClusterRole {
 			},
 			{
 				// Calico monitors various CRDs for config
-				APIGroups: []string{
-					"crd.projectcalico.org",
-				},
+				APIGroups: []string{"crd.projectcalico.org"},
 				Resources: []string{
 					"globalfelixconfigs",
 					"felixconfigurations",
@@ -174,12 +315,10 @@ func calicoClusterRole() *rbacv1.ClusterRole {
 			},
 			{
 				// Calico must create and update some CRDs on startup
-				APIGroups: []string{
-					"crd.projectcalico.org",
-				},
+				APIGroups: []string{"crd.projectcalico.org"},
 				Resources: []string{
-					"felixconfigurations",
 					"ippools",
+					"felixconfigurations",
 					"clusterinformations",
 				},
 				Verbs: []string{
@@ -211,28 +350,6 @@ func calicoClusterRole() *rbacv1.ClusterRole {
 					"create",
 					"update",
 				},
-			},
-		},
-	}
-}
-
-// TODO(xmudrii): This doesn't exist anymore in the original manifest.
-// calicoClusterRoleBinding creates a ClusterRoleBinding to bind the Calico ClusterRole to the Canal ServiceAccount
-func calicoClusterRoleBinding() *rbacv1.ClusterRoleBinding {
-	return &rbacv1.ClusterRoleBinding{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: "calico-node",
-		},
-		RoleRef: rbacv1.RoleRef{
-			APIGroup: rbacv1.GroupName,
-			Kind:     "ClusterRole",
-			Name:     "calico-node",
-		},
-		Subjects: []rbacv1.Subject{
-			{
-				Kind:      "ServiceAccount",
-				Name:      "calico-node",
-				Namespace: metav1.NamespaceSystem,
 			},
 		},
 	}
