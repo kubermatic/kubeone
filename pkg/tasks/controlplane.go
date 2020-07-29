@@ -19,10 +19,10 @@ package tasks
 import (
 	"time"
 
-	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/scripts"
-	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/kubermatic/kubeone/pkg/state"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/scripts"
+	"k8c.io/kubeone/pkg/ssh"
+	"k8c.io/kubeone/pkg/state"
 )
 
 func joinControlplaneNode(s *state.State) error {

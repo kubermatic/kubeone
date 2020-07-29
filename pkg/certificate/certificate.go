@@ -22,7 +22,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/configupload"
+	"k8c.io/kubeone/pkg/configupload"
 
 	"k8s.io/client-go/util/cert"
 	"k8s.io/client-go/util/keyutil"

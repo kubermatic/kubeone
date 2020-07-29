@@ -21,7 +21,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/test/e2e/testutil"
+	"k8c.io/kubeone/test/e2e/testutil"
 )
 
 // DefaultProvisioner contains default implementation of provisioner interface

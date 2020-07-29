@@ -20,8 +20,8 @@ import (
 	"github.com/Masterminds/semver"
 	"github.com/pkg/errors"
 
-	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/state"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/state"
 )
 
 const (

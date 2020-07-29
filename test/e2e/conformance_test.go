@@ -23,8 +23,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/kubermatic/kubeone/test/e2e/provisioner"
-	"github.com/kubermatic/kubeone/test/e2e/testutil"
+	"k8c.io/kubeone/test/e2e/provisioner"
+	"k8c.io/kubeone/test/e2e/testutil"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/tools/clientcmd"

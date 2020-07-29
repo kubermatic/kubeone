@@ -17,7 +17,7 @@ limitations under the License.
 package scripts
 
 import (
-	"github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/apis/kubeone"
 )
 
 const (

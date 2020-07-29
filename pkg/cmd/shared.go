@@ -25,9 +25,9 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
 
-	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/apis/kubeone/config"
-	"github.com/kubermatic/kubeone/pkg/state"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/apis/kubeone/config"
+	"k8c.io/kubeone/pkg/state"
 )
 
 type globalOptions struct {

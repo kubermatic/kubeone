@@ -1,6 +1,6 @@
-module github.com/kubermatic/kubeone
+module k8c.io/kubeone
 
-go 1.13
+go 1.14
 
 require (
 	github.com/Masterminds/goutils v1.1.0 // indirect

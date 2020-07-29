@@ -21,10 +21,10 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/configupload"
-	"github.com/kubermatic/kubeone/pkg/runner"
-	"github.com/kubermatic/kubeone/pkg/ssh"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/configupload"
+	"k8c.io/kubeone/pkg/runner"
+	"k8c.io/kubeone/pkg/ssh"
 
 	"k8s.io/client-go/rest"
 	bootstraputil "k8s.io/cluster-bootstrap/token/util"

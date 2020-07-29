@@ -19,7 +19,7 @@ package validation
 import (
 	"testing"
 
-	"github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/apis/kubeone"
 )
 
 func TestValidateKubeOneCluster(t *testing.T) {

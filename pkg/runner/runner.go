@@ -22,9 +22,9 @@ import (
 	"github.com/koron-go/prefixw"
 	"github.com/pkg/errors"
 
-	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/scripts"
-	"github.com/kubermatic/kubeone/pkg/ssh"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/scripts"
+	"k8c.io/kubeone/pkg/ssh"
 )
 
 // Runner bundles a connection to a host with the verbosity and

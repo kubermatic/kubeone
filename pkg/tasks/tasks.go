@@ -19,16 +19,16 @@ package tasks
 import (
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/addons"
-	"github.com/kubermatic/kubeone/pkg/certificate"
-	"github.com/kubermatic/kubeone/pkg/clusterstatus"
-	"github.com/kubermatic/kubeone/pkg/credentials"
-	"github.com/kubermatic/kubeone/pkg/features"
-	"github.com/kubermatic/kubeone/pkg/kubeconfig"
-	"github.com/kubermatic/kubeone/pkg/state"
-	"github.com/kubermatic/kubeone/pkg/templates/externalccm"
-	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
-	"github.com/kubermatic/kubeone/pkg/templates/nodelocaldns"
+	"k8c.io/kubeone/pkg/addons"
+	"k8c.io/kubeone/pkg/certificate"
+	"k8c.io/kubeone/pkg/clusterstatus"
+	"k8c.io/kubeone/pkg/credentials"
+	"k8c.io/kubeone/pkg/features"
+	"k8c.io/kubeone/pkg/kubeconfig"
+	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/templates/externalccm"
+	"k8c.io/kubeone/pkg/templates/machinecontroller"
+	"k8c.io/kubeone/pkg/templates/nodelocaldns"
 )
 
 type Tasks []Task

@@ -17,9 +17,9 @@ limitations under the License.
 package scheme
 
 import (
-	"github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/apis/kubeone/v1alpha1"
-	"github.com/kubermatic/kubeone/pkg/apis/kubeone/v1beta1"
+	"k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/apis/kubeone/v1alpha1"
+	"k8c.io/kubeone/pkg/apis/kubeone/v1beta1"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"

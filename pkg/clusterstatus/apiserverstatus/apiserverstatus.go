@@ -22,9 +22,9 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/ssh/sshtunnel"
-	"github.com/kubermatic/kubeone/pkg/state"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/ssh/sshtunnel"
+	"k8c.io/kubeone/pkg/state"
 )
 
 const (

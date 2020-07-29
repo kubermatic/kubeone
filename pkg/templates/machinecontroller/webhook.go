@@ -25,11 +25,11 @@ import (
 
 	"github.com/pkg/errors"
 
-	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/certificate"
-	"github.com/kubermatic/kubeone/pkg/clientutil"
-	"github.com/kubermatic/kubeone/pkg/credentials"
-	"github.com/kubermatic/kubeone/pkg/state"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/certificate"
+	"k8c.io/kubeone/pkg/clientutil"
+	"k8c.io/kubeone/pkg/credentials"
+	"k8c.io/kubeone/pkg/state"
 
 	admissionregistrationv1beta1 "k8s.io/api/admissionregistration/v1beta1"
 	appsv1 "k8s.io/api/apps/v1"

@@ -24,7 +24,7 @@ import (
 	json "encoding/json"
 	unsafe "unsafe"
 
-	kubeone "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	kubeone "k8c.io/kubeone/pkg/apis/kubeone"
 	v1 "k8s.io/api/core/v1"
 	conversion "k8s.io/apimachinery/pkg/conversion"
 	runtime "k8s.io/apimachinery/pkg/runtime"
