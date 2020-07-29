@@ -29,24 +29,23 @@ URL="https://github.com/kubermatic/kubeone/releases/download/v${VERSION}/kubeone
 DEST=/usr/local/bin
 
 # Download the latest version for the OS and save it as zip
-curl -LO $URL
 
-if [ $? -eq 0 ]
+if curl -LO "$URL"
 then 
     echo "Copying kubeone binary into $DEST"
     # unpack:
-    unzip kubeone_${VERSION}_${OS}_amd64.zip -d kubeone_${VERSION}_${OS}_amd64
+    
 
-    if [ $? -eq 0 ]
+    if unzip "kubeone_${VERSION}_${OS}_amd64.zip" -d "kubeone_${VERSION}_${OS}_amd64"
     then
-        sudo mv kubeone_${VERSION}_${OS}_amd64/kubeone $DEST
-        rm kubeone_${VERSION}_${OS}_amd64.zip
-        rm -rf kubeone_${VERSION}_${OS}_amd64
+        sudo mv "kubeone_${VERSION}_${OS}_amd64/kubeone" "$DEST"
+        rm "kubeone_${VERSION}_${OS}_amd64.zip"
+        rm -rf "kubeone_${VERSION}_${OS}_amd64"
         echo "kubeone has been installed into $DEST/kubeone"
         exit 0
     fi
 else
-    echo "Failed to determine your platform.\n Try downloading from https://github.com/kubermatic/kubeone/releases"
+    printf "Failed to determine your platform.\n Try downloading from https://github.com/kubermatic/kubeone/releases"
 fi
 
 exit 1

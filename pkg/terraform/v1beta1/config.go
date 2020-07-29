@@ -22,8 +22,8 @@ import (
 	"github.com/imdario/mergo"
 	"github.com/pkg/errors"
 
-	kubeonev1beta1 "github.com/kubermatic/kubeone/pkg/apis/kubeone/v1beta1"
-	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
+	kubeonev1beta1 "k8c.io/kubeone/pkg/apis/kubeone/v1beta1"
+	"k8c.io/kubeone/pkg/templates/machinecontroller"
 
 	corev1 "k8s.io/api/core/v1"
 )

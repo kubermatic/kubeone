@@ -19,8 +19,8 @@ package scripts
 import (
 	"testing"
 
-	"github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/testhelper"
+	"k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/testhelper"
 )
 
 func TestEnvironmentFile(t *testing.T) {

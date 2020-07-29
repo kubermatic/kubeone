@@ -27,8 +27,8 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/archive"
-	"github.com/kubermatic/kubeone/pkg/ssh"
+	"k8c.io/kubeone/pkg/archive"
+	"k8c.io/kubeone/pkg/ssh"
 )
 
 // Configuration holds a map of generated files

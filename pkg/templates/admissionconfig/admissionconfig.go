@@ -20,10 +20,10 @@ import (
 	"github.com/Masterminds/semver"
 	"github.com/pkg/errors"
 
-	apiserverv1 "github.com/kubermatic/kubeone/pkg/apis/apiserver/v1"
-	apiserverv1alpha1 "github.com/kubermatic/kubeone/pkg/apis/apiserver/v1alpha1"
-	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/templates"
+	apiserverv1 "k8c.io/kubeone/pkg/apis/apiserver/v1"
+	apiserverv1alpha1 "k8c.io/kubeone/pkg/apis/apiserver/v1alpha1"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/templates"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"

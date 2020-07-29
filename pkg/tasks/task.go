@@ -19,7 +19,7 @@ package tasks
 import (
 	"time"
 
-	"github.com/kubermatic/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/state"
 
 	"k8s.io/apimachinery/pkg/util/wait"
 )

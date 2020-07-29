@@ -23,10 +23,10 @@ import (
 
 	"github.com/pkg/errors"
 
-	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/clientutil"
-	"github.com/kubermatic/kubeone/pkg/state"
-	"github.com/kubermatic/kubeone/pkg/templates"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/clientutil"
+	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/templates"
 
 	clustercommon "github.com/kubermatic/machine-controller/pkg/apis/cluster/common"
 	clusterv1alpha1 "github.com/kubermatic/machine-controller/pkg/apis/cluster/v1alpha1"

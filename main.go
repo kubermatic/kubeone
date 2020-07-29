@@ -17,7 +17,7 @@ limitations under the License.
 package main
 
 import (
-	"github.com/kubermatic/kubeone/pkg/cmd"
+	"k8c.io/kubeone/pkg/cmd"
 )
 
 func main() {

@@ -25,13 +25,13 @@ import (
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 
-	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	kubeonescheme "github.com/kubermatic/kubeone/pkg/apis/kubeone/scheme"
-	kubeonev1alpha1 "github.com/kubermatic/kubeone/pkg/apis/kubeone/v1alpha1"
-	kubeonev1beta1 "github.com/kubermatic/kubeone/pkg/apis/kubeone/v1beta1"
-	"github.com/kubermatic/kubeone/pkg/apis/kubeone/validation"
-	terraformv1alpha1 "github.com/kubermatic/kubeone/pkg/terraform/v1alpha1"
-	terraformv1beta1 "github.com/kubermatic/kubeone/pkg/terraform/v1beta1"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	kubeonescheme "k8c.io/kubeone/pkg/apis/kubeone/scheme"
+	kubeonev1alpha1 "k8c.io/kubeone/pkg/apis/kubeone/v1alpha1"
+	kubeonev1beta1 "k8c.io/kubeone/pkg/apis/kubeone/v1beta1"
+	"k8c.io/kubeone/pkg/apis/kubeone/validation"
+	terraformv1alpha1 "k8c.io/kubeone/pkg/terraform/v1alpha1"
+	terraformv1beta1 "k8c.io/kubeone/pkg/terraform/v1beta1"
 
 	"k8s.io/apimachinery/pkg/runtime"
 )

@@ -20,7 +20,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/kubermatic/kubeone/test/e2e/provisioner"
+	"k8c.io/kubeone/test/e2e/provisioner"
 )
 
 type OperatingSystem string

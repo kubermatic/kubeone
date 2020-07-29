@@ -22,9 +22,9 @@ BUILD_DATE=$(shell if hash gdate 2>/dev/null; then gdate --rfc-3339=seconds | se
 GITCOMMIT=$(shell git log -1 --pretty=format:"%H")
 GITTAG=$(shell git describe --tags --always)
 GOLDFLAGS?=-s -w -extldflags=-zrelro -extldflags=-znow \
-	-X github.com/kubermatic/kubeone/pkg/cmd.version=$(GITTAG) \
-	-X github.com/kubermatic/kubeone/pkg/cmd.commit=$(GITCOMMIT) \
-	-X github.com/kubermatic/kubeone/pkg/cmd.date=$(BUILD_DATE)
+	-X k8c.io/kubeone/pkg/cmd.version=$(GITTAG) \
+	-X k8c.io/kubeone/pkg/cmd.commit=$(GITCOMMIT) \
+	-X k8c.io/kubeone/pkg/cmd.date=$(BUILD_DATE)
 
 .PHONY: all
 all: install

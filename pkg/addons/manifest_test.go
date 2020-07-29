@@ -24,7 +24,7 @@ import (
 	"path"
 	"testing"
 
-	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 )
 
 var testManifests = []string{

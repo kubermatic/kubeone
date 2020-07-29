@@ -24,7 +24,7 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 
-	"github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/apis/kubeone"
 )
 
 type Cluster struct {
