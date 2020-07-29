@@ -34,9 +34,11 @@ import (
 )
 
 const (
-	installCNIImage = "calico/cni:v3.10.0"
-	calicoImage     = "calico/node:v3.10.0"
-	flannelImage    = "quay.io/kubermatic/coreos_flannel:v0.11.0@sha256:3de983d62621898fe58ffd9537a4845c7112961a775efb205cab56e089e163b6"
+	installCNIImage     = "calico/cni:v3.15.1"
+	calicoImage         = "calico/node:v3.15.1"
+	controllerImage     = "calico/kube-controllers:v3.15.1"
+	flannelImage        = "quay.io/kubermatic/coreos_flannel:v0.11.0@sha256:3de983d62621898fe58ffd9537a4845c7112961a775efb205cab56e089e163b6"
+	canalComponentLabel = "canal"
 
 	// cniNetworkConfig configures installation on the each node. The special values in this config will be
 	// automatically populated
@@ -50,6 +52,7 @@ const (
       "log_level": "info",
       "datastore_type": "kubernetes",
       "nodename": "__KUBERNETES_NODE_NAME__",
+      "mtu": __CNI_MTU__,
       "ipam": {
         "type": "host-local",
         "subnet": "usePodCidr"
@@ -66,6 +69,12 @@ const (
       "snat": true,
       "capabilities": {
         "portMappings": true
+      }
+    },
+    {
+      "type": "bandwidth",
+      "capabilities": {
+        "bandwidth": true
       }
     }
   ]
@@ -92,6 +101,7 @@ func canalCRDs() []runtime.Object {
 		bgpPeerCRD(),
 		bgpConfigurationCRD(),
 		ipPoolCRD(),
+		kubeControllersConfigurationCRD(),
 		hostEndpointCRD(),
 		clusterInformationCRD(),
 		globalNetworkPolicyCRD(),
@@ -127,20 +137,24 @@ func Deploy(s *state.State) error {
 	crds := canalCRDs()
 	k8sobjects := append(crds,
 		// RBAC
-		calicoClusterRole(),
+		calicoKubeControllersClusterRole(),
+		calicoNodeClusterRole(),
 		flannelClusterRole(),
-		calicoClusterRoleBinding(),
+		calicoKubeControllersClusterRoleBinding(),
 		flannelClusterRoleBinding(),
 		canalClusterRoleBinding(),
 
 		// workloads
-		configMap(buf),
-		daemonSet(s.PatchCNI),
-		serviceAccount(),
+		configMap(buf, s.Cluster.ClusterNetwork.CNI.Canal.MTU),
+		daemonsetServiceAccount(),
+		deploymentServiceAccount(),
+		daemonSet(s.PatchCNI, s.Cluster.ClusterNetwork.PodSubnet),
+		controllerDeployment(),
 	)
 
+	withLabel := clientutil.WithComponentLabel(canalComponentLabel)
 	for _, obj := range k8sobjects {
-		if err = clientutil.CreateOrUpdate(ctx, s.DynamicClient, obj); err != nil {
+		if err = clientutil.CreateOrUpdate(ctx, s.DynamicClient, obj, withLabel); err != nil {
 			return errors.WithStack(err)
 		}
 	}

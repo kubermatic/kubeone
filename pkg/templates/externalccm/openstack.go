@@ -61,8 +61,9 @@ func ensureOpenStack(s *state.State) error {
 		osDaemonSet(),
 	}
 
+	withLabel := clientutil.WithComponentLabel(ccmComponentLabel)
 	for _, obj := range k8sobjects {
-		if err := clientutil.CreateOrUpdate(ctx, s.DynamicClient, obj); err != nil {
+		if err := clientutil.CreateOrUpdate(ctx, s.DynamicClient, obj, withLabel); err != nil {
 			return errors.Wrapf(err, "failed to ensure OpenStack CCM %T", obj)
 		}
 	}

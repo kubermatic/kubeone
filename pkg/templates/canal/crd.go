@@ -39,6 +39,7 @@ func felixConfigurationCRD() *apiextensions.CustomResourceDefinition {
 			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Kind:     "FelixConfiguration",
+				ListKind: "FelixConfigurationList",
 				Plural:   "felixconfigurations",
 				Singular: "felixconfiguration",
 			},
@@ -64,6 +65,7 @@ func ipamBlockCRD() *apiextensions.CustomResourceDefinition {
 			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Kind:     "IPAMBlock",
+				ListKind: "IPAMBlockList",
 				Plural:   "ipamblocks",
 				Singular: "ipamblock",
 			},
@@ -89,6 +91,7 @@ func blockAffinityCRD() *apiextensions.CustomResourceDefinition {
 			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Kind:     "BlockAffinity",
+				ListKind: "BlockAffinityList",
 				Plural:   "blockaffinities",
 				Singular: "blockaffinity",
 			},
@@ -114,6 +117,7 @@ func ipamHandleCRD() *apiextensions.CustomResourceDefinition {
 			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Kind:     "IPAMHandle",
+				ListKind: "IPAMHandleList",
 				Plural:   "ipamhandles",
 				Singular: "ipamhandle",
 			},
@@ -139,6 +143,7 @@ func ipamConfigCRD() *apiextensions.CustomResourceDefinition {
 			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Kind:     "IPAMConfig",
+				ListKind: "IPAMConfigList",
 				Plural:   "ipamconfigs",
 				Singular: "ipamconfig",
 			},
@@ -164,6 +169,7 @@ func bgpPeerCRD() *apiextensions.CustomResourceDefinition {
 			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Kind:     "BGPPeer",
+				ListKind: "BGPPeerList",
 				Plural:   "bgppeers",
 				Singular: "bgppeer",
 			},
@@ -189,6 +195,7 @@ func bgpConfigurationCRD() *apiextensions.CustomResourceDefinition {
 			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Kind:     "BGPConfiguration",
+				ListKind: "BGPConfigurationList",
 				Plural:   "bgpconfigurations",
 				Singular: "bgpconfiguration",
 			},
@@ -214,8 +221,35 @@ func ipPoolCRD() *apiextensions.CustomResourceDefinition {
 			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Kind:     "IPPool",
+				ListKind: "IPPoolList",
 				Plural:   "ippools",
 				Singular: "ippool",
+			},
+		},
+	}
+}
+
+// kubeControllersConfigurationCRD creates the KubeControllersConfiguration CRD
+func kubeControllersConfigurationCRD() *apiextensions.CustomResourceDefinition {
+	return &apiextensions.CustomResourceDefinition{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "kubecontrollersconfigurations.crd.projectcalico.org",
+		},
+		Spec: apiextensions.CustomResourceDefinitionSpec{
+			Scope: apiextensions.ClusterScoped,
+			Group: "crd.projectcalico.org",
+			Versions: []apiextensions.CustomResourceDefinitionVersion{
+				{
+					Name:    "v1",
+					Served:  true,
+					Storage: true,
+				},
+			},
+			Names: apiextensions.CustomResourceDefinitionNames{
+				Kind:     "KubeControllersConfiguration",
+				ListKind: "KubeControllersConfigurationList",
+				Plural:   "kubecontrollersconfigurations",
+				Singular: "kubecontrollersconfiguration",
 			},
 		},
 	}
@@ -239,6 +273,7 @@ func hostEndpointCRD() *apiextensions.CustomResourceDefinition {
 			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Kind:     "HostEndpoint",
+				ListKind: "HostEndpointList",
 				Plural:   "hostendpoints",
 				Singular: "hostendpoint",
 			},
@@ -264,6 +299,7 @@ func clusterInformationCRD() *apiextensions.CustomResourceDefinition {
 			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Kind:     "ClusterInformation",
+				ListKind: "ClusterInformationList",
 				Plural:   "clusterinformations",
 				Singular: "clusterinformation",
 			},
@@ -289,6 +325,7 @@ func globalNetworkPolicyCRD() *apiextensions.CustomResourceDefinition {
 			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Kind:     "GlobalNetworkPolicy",
+				ListKind: "GlobalNetworkPolicyList",
 				Plural:   "globalnetworkpolicies",
 				Singular: "globalnetworkpolicy",
 			},
@@ -314,6 +351,7 @@ func globalNetworksetCRD() *apiextensions.CustomResourceDefinition {
 			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Kind:     "GlobalNetworkSet",
+				ListKind: "GlobalNetworkSetList",
 				Plural:   "globalnetworksets",
 				Singular: "globalnetworkset",
 			},
@@ -339,6 +377,7 @@ func networkPolicyCRD() *apiextensions.CustomResourceDefinition {
 			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Kind:     "NetworkPolicy",
+				ListKind: "NetworkPolicyList",
 				Plural:   "networkpolicies",
 				Singular: "networkpolicy",
 			},
@@ -364,6 +403,7 @@ func networkSetCRD() *apiextensions.CustomResourceDefinition {
 			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Kind:     "NetworkSet",
+				ListKind: "NetworkSetList",
 				Plural:   "networksets",
 				Singular: "networkset",
 			},

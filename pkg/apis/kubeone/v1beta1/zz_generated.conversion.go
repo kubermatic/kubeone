@@ -545,6 +545,7 @@ func Convert_kubeone_CNI_To_v1beta1_CNI(in *kubeone.CNI, out *CNI, s conversion.
 }
 
 func autoConvert_v1beta1_CanalSpec_To_kubeone_CanalSpec(in *CanalSpec, out *kubeone.CanalSpec, s conversion.Scope) error {
+	out.MTU = in.MTU
 	return nil
 }
 
@@ -554,6 +555,7 @@ func Convert_v1beta1_CanalSpec_To_kubeone_CanalSpec(in *CanalSpec, out *kubeone.
 }
 
 func autoConvert_kubeone_CanalSpec_To_v1beta1_CanalSpec(in *kubeone.CanalSpec, out *CanalSpec, s conversion.Scope) error {
+	out.MTU = in.MTU
 	return nil
 }
 
