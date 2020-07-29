@@ -19,10 +19,10 @@ package kubeadm
 import (
 	"fmt"
 
-	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/state"
-	"github.com/kubermatic/kubeone/pkg/templates"
-	"github.com/kubermatic/kubeone/pkg/templates/kubeadm/v1beta2"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/templates"
+	"k8c.io/kubeone/pkg/templates/kubeadm/v1beta2"
 )
 
 type kubeadmv1beta2 struct {

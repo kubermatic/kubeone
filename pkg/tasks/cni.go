@@ -19,9 +19,9 @@ package tasks
 import (
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/state"
-	"github.com/kubermatic/kubeone/pkg/templates/canal"
-	"github.com/kubermatic/kubeone/pkg/templates/weave"
+	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/templates/canal"
+	"k8c.io/kubeone/pkg/templates/weave"
 )
 
 func ensureCNI(s *state.State) error {

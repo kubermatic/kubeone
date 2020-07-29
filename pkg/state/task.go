@@ -22,9 +22,9 @@ import (
 
 	"github.com/pkg/errors"
 
-	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/runner"
-	"github.com/kubermatic/kubeone/pkg/ssh"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/runner"
+	"k8c.io/kubeone/pkg/ssh"
 )
 
 // NodeTask is a task that is specifically tailored to run on a single node.

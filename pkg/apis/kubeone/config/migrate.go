@@ -21,9 +21,9 @@ import (
 
 	"github.com/pkg/errors"
 
-	kubeonev1alpha1 "github.com/kubermatic/kubeone/pkg/apis/kubeone/v1alpha1"
-	kubeonev1beta1 "github.com/kubermatic/kubeone/pkg/apis/kubeone/v1beta1"
-	"github.com/kubermatic/kubeone/pkg/yamled"
+	kubeonev1alpha1 "k8c.io/kubeone/pkg/apis/kubeone/v1alpha1"
+	kubeonev1beta1 "k8c.io/kubeone/pkg/apis/kubeone/v1beta1"
+	"k8c.io/kubeone/pkg/yamled"
 )
 
 // MigrateOldConfig migrates KubeOneCluster v1alpha1 object to v1beta1

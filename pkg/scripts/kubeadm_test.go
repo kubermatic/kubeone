@@ -19,7 +19,7 @@ package scripts
 import (
 	"testing"
 
-	"github.com/kubermatic/kubeone/pkg/testhelper"
+	"k8c.io/kubeone/pkg/testhelper"
 )
 
 func TestKubeadmJoin(t *testing.T) {

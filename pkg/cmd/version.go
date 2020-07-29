@@ -26,7 +26,7 @@ import (
 	"github.com/Masterminds/semver"
 	"github.com/spf13/cobra"
 
-	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
+	"k8c.io/kubeone/pkg/templates/machinecontroller"
 
 	k8sversion "k8s.io/apimachinery/pkg/version"
 )

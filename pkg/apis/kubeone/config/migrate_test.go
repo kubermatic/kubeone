@@ -25,8 +25,8 @@ import (
 	yaml "gopkg.in/yaml.v2"
 	kyaml "sigs.k8s.io/yaml"
 
-	kubeonev1beta1 "github.com/kubermatic/kubeone/pkg/apis/kubeone/v1beta1"
-	"github.com/kubermatic/kubeone/pkg/testhelper"
+	kubeonev1beta1 "k8c.io/kubeone/pkg/apis/kubeone/v1beta1"
+	"k8c.io/kubeone/pkg/testhelper"
 )
 
 var update = flag.Bool("update", false, "update .golden files")
