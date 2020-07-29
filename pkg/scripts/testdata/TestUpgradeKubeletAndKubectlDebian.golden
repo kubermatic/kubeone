@@ -5,7 +5,6 @@ sudo swapoff -a
 sudo sed -i '/.*swap.*/d' /etc/fstab
 sudo systemctl disable --now ufw || true
 
-source /etc/os-release
 source /etc/kubeone/proxy-env
 
 
@@ -57,9 +56,8 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--
 	lsb-release \
 	rsync
 curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-curl -fsSL https://download.docker.com/linux/${ID}/gpg | sudo apt-key add -
-
-echo "deb https://download.docker.com/linux/${ID} $(lsb_release -sc) stable" |
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+echo "deb https://download.docker.com/linux/ubuntu bionic stable" |
 	sudo tee /etc/apt/sources.list.d/docker.list
 
 # You'd think that kubernetes-$(lsb_release -sc) belongs there instead, but the debian repo
@@ -79,7 +77,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install \
 	kubelet=${kube_ver} \
 	kubectl=${kube_ver} \
 	kubernetes-cni=${cni_ver} \
-	docker-ce=5:19.03.12~3-0~ubuntu-$(lsb_release -cs) docker-ce-cli=5:19.03.12~3-0~ubuntu-$(lsb_release -cs)
+	docker-ce=5:19.03.12~3-0~ubuntu-bionic docker-ce-cli=5:19.03.12~3-0~ubuntu-bionic
 
 sudo apt-mark hold docker-ce docker-ce-cli kubelet kubeadm kubectl kubernetes-cni
 
