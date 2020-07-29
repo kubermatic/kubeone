@@ -18,6 +18,7 @@ presubmits:
     always_run: true
     decorate: true
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
+    path_alias: k8c.io/kubeone
     spec:
       containers:
       - image: golang:1.14.4
