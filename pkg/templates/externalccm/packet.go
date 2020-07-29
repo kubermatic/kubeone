@@ -69,15 +69,17 @@ func ensurePacket(s *state.State) error {
 		crole,
 		genClusterRoleBinding("system:cloud-controller-manager", crole, sa),
 		secret,
+		packetDeployment(),
 	}
 
+	withLabel := clientutil.WithComponentLabel(ccmComponentLabel)
 	for _, obj := range k8sobjects {
-		if err := clientutil.CreateOrUpdate(ctx, s.DynamicClient, obj); err != nil {
+		if err := clientutil.CreateOrUpdate(ctx, s.DynamicClient, obj, withLabel); err != nil {
 			return errors.Wrapf(err, "failed to ensure packet CCM %T", obj)
 		}
 	}
 
-	return clientutil.CreateOrUpdate(ctx, s.DynamicClient, packetDeployment())
+	return nil
 }
 
 func packetServiceAccount() *corev1.ServiceAccount {

@@ -32,6 +32,7 @@ import (
 
 const (
 	uninitializedTaint = "node.cloudprovider.kubernetes.io/uninitialized"
+	ccmComponentLabel  = "ccm"
 )
 
 // Ensure external CCM deployen if Provider.External

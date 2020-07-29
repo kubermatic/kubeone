@@ -28,8 +28,20 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
+type Updater func(client.Client, runtime.Object)
+
+func WithComponentLabel(componentname string) Updater {
+	return func(c client.Client, obj runtime.Object) {
+		LabelComponent(componentname, obj)
+	}
+}
+
 // CreateOrUpdate makes it easy to "apply" objects to kubernetes API server
-func CreateOrUpdate(ctx context.Context, c client.Client, obj runtime.Object) error {
+func CreateOrUpdate(ctx context.Context, c client.Client, obj runtime.Object, updaters ...Updater) error {
+	for _, update := range updaters {
+		update(c, obj)
+	}
+
 	existing := obj.DeepCopyObject()
 	existingMetaObj, ok := existing.(metav1.Object)
 	if !ok {

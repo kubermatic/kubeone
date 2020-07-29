@@ -34,6 +34,8 @@ const (
 	DefaultNodePortRange = "30000-32767"
 	// DefaultStaticNoProxy defined static NoProxy
 	DefaultStaticNoProxy = "127.0.0.1/8,localhost"
+	// DefaultVXLanMTU defines default VXLAN MTU for Canal CNI
+	DefaultCanalMTU = 1450
 )
 
 func addDefaultingFuncs(scheme *runtime.Scheme) error {
@@ -126,10 +128,26 @@ func SetDefaults_ClusterNetwork(obj *KubeOneCluster) {
 	if len(obj.ClusterNetwork.NodePortRange) == 0 {
 		obj.ClusterNetwork.NodePortRange = DefaultNodePortRange
 	}
+
+	defaultCanal := &CanalSpec{MTU: DefaultCanalMTU}
+	switch {
+	case obj.CloudProvider.AWS != nil:
+		defaultCanal.MTU = 8951 // 9001 AWS Jumbo Frame - 50 VXLAN bytes
+	case obj.CloudProvider.GCE != nil:
+		defaultCanal.MTU = 1410 // GCE specific 1460 bytes - 50 VXLAN bytes
+	case obj.CloudProvider.Hetzner != nil:
+		defaultCanal.MTU = 1400 // Hetzner specific 1450 bytes - 50 VXLAN bytes
+	case obj.CloudProvider.Openstack != nil:
+		defaultCanal.MTU = 1400 // Openstack specific 1450 bytes - 50 VXLAN bytes
+	}
+
 	if obj.ClusterNetwork.CNI == nil {
 		obj.ClusterNetwork.CNI = &CNI{
-			Canal: &CanalSpec{},
+			Canal: defaultCanal,
 		}
+	}
+	if obj.ClusterNetwork.CNI.Canal != nil && obj.ClusterNetwork.CNI.Canal.MTU == 0 {
+		obj.ClusterNetwork.CNI.Canal.MTU = defaultCanal.MTU
 	}
 }
 
