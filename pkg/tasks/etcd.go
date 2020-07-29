@@ -22,9 +22,9 @@ import (
 	"github.com/pkg/errors"
 	"go.etcd.io/etcd/clientv3"
 
-	"github.com/kubermatic/kubeone/pkg/clusterstatus/preflightstatus"
-	"github.com/kubermatic/kubeone/pkg/etcdutil"
-	"github.com/kubermatic/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/clusterstatus/preflightstatus"
+	"k8c.io/kubeone/pkg/etcdutil"
+	"k8c.io/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/labels"

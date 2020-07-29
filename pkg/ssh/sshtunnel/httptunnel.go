@@ -23,8 +23,8 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/ssh"
+	"k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/ssh"
 )
 
 // NewHTTPTransport initialize net/http Transport that will use SSH tunnel as

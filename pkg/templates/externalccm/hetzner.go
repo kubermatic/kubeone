@@ -22,9 +22,9 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/clientutil"
-	"github.com/kubermatic/kubeone/pkg/credentials"
-	"github.com/kubermatic/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/clientutil"
+	"k8c.io/kubeone/pkg/credentials"
+	"k8c.io/kubeone/pkg/state"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"

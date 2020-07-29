@@ -22,7 +22,7 @@ import (
 
 	"github.com/Masterminds/semver"
 
-	"github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/apis/kubeone"
 
 	"k8s.io/apimachinery/pkg/util/validation/field"
 )

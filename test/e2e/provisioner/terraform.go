@@ -22,7 +22,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/kubermatic/kubeone/test/e2e/testutil"
+	"k8c.io/kubeone/test/e2e/testutil"
 )
 
 const (

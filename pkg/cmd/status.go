@@ -21,7 +21,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
-	"github.com/kubermatic/kubeone/pkg/tasks"
+	"k8c.io/kubeone/pkg/tasks"
 )
 
 // statusCmd returns the structure for declaring the "status" subcommand.

@@ -25,8 +25,8 @@ import (
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
 
-	k1api "github.com/kubermatic/kubeone/pkg/apis/kubeone/v1beta1"
-	"github.com/kubermatic/kubeone/test/e2e/testutil"
+	k1api "k8c.io/kubeone/pkg/apis/kubeone/v1beta1"
+	"k8c.io/kubeone/test/e2e/testutil"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	kyaml "sigs.k8s.io/yaml"

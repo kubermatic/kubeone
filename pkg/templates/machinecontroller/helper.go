@@ -22,8 +22,9 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/clientutil"
-	"github.com/kubermatic/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/clientutil"
+	"k8c.io/kubeone/pkg/state"
+
 	clusterv1alpha1 "github.com/kubermatic/machine-controller/pkg/apis/cluster/v1alpha1"
 
 	corev1 "k8s.io/api/core/v1"

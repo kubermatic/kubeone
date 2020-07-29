@@ -23,8 +23,8 @@ import (
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 
-	"github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/ssh"
+	"k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/ssh"
 )
 
 // NewGRPCDialer initialize gRPC dialer that will use ssh tunnel as

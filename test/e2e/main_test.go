@@ -28,7 +28,7 @@ import (
 	"github.com/Masterminds/semver"
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/test/e2e/provisioner"
+	"k8c.io/kubeone/test/e2e/provisioner"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/labels"

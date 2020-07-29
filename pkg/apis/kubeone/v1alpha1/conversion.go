@@ -19,7 +19,7 @@ package v1alpha1
 import (
 	"errors"
 
-	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/conversion"

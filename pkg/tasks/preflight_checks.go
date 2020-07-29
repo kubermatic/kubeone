@@ -25,8 +25,8 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
-	"github.com/kubermatic/kubeone/pkg/clusterstatus/preflightstatus"
-	"github.com/kubermatic/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/clusterstatus/preflightstatus"
+	"k8c.io/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"

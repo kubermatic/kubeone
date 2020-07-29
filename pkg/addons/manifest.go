@@ -29,7 +29,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
-	"github.com/kubermatic/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/state"
 
 	metav1unstructured "k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"

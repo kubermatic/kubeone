@@ -24,9 +24,9 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/clientutil"
-	"github.com/kubermatic/kubeone/pkg/kubeconfig"
-	"github.com/kubermatic/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/clientutil"
+	"k8c.io/kubeone/pkg/kubeconfig"
+	"k8c.io/kubeone/pkg/state"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"

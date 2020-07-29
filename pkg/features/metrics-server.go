@@ -17,8 +17,8 @@ limitations under the License.
 package features
 
 import (
-	"github.com/kubermatic/kubeone/pkg/state"
-	"github.com/kubermatic/kubeone/pkg/templates/metricsserver"
+	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/templates/metricsserver"
 )
 
 func installMetricsServer(activate bool, s *state.State) error {

@@ -27,7 +27,7 @@ import (
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
 
-	"github.com/kubermatic/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/apis/kubeone"
 )
 
 // The environment variable names with credential in them

@@ -24,12 +24,12 @@ import (
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
 
-	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/clusterstatus/apiserverstatus"
-	"github.com/kubermatic/kubeone/pkg/clusterstatus/etcdstatus"
-	"github.com/kubermatic/kubeone/pkg/kubeconfig"
-	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/kubermatic/kubeone/pkg/state"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/clusterstatus/apiserverstatus"
+	"k8c.io/kubeone/pkg/clusterstatus/etcdstatus"
+	"k8c.io/kubeone/pkg/kubeconfig"
+	"k8c.io/kubeone/pkg/ssh"
+	"k8c.io/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/util/sets"

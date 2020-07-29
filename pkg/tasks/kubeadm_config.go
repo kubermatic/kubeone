@@ -21,10 +21,10 @@ import (
 
 	"github.com/pkg/errors"
 
-	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/ssh"
-	"github.com/kubermatic/kubeone/pkg/state"
-	"github.com/kubermatic/kubeone/pkg/templates/kubeadm"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/ssh"
+	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/templates/kubeadm"
 )
 
 func generateKubeadm(s *state.State) error {

@@ -22,8 +22,8 @@ import (
 	"github.com/imdario/mergo"
 	"github.com/pkg/errors"
 
-	kubeonev1alpha1 "github.com/kubermatic/kubeone/pkg/apis/kubeone/v1alpha1"
-	"github.com/kubermatic/kubeone/pkg/templates/machinecontroller"
+	kubeonev1alpha1 "k8c.io/kubeone/pkg/apis/kubeone/v1alpha1"
+	"k8c.io/kubeone/pkg/templates/machinecontroller"
 )
 
 type controlPlane struct {

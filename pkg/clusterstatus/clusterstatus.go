@@ -23,11 +23,11 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/kubermatic/kubeone/pkg/clusterstatus/apiserverstatus"
-	"github.com/kubermatic/kubeone/pkg/clusterstatus/etcdstatus"
-	"github.com/kubermatic/kubeone/pkg/clusterstatus/preflightstatus"
-	"github.com/kubermatic/kubeone/pkg/state"
-	"github.com/kubermatic/kubeone/pkg/tabwriter"
+	"k8c.io/kubeone/pkg/clusterstatus/apiserverstatus"
+	"k8c.io/kubeone/pkg/clusterstatus/etcdstatus"
+	"k8c.io/kubeone/pkg/clusterstatus/preflightstatus"
+	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/tabwriter"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/labels"
