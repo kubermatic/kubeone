@@ -28,7 +28,7 @@ This part of the document explains what you need to do in order to get started w
 
 ### Setting Up The Environment
 
-Before you start contributing, you need to fork the KubeOne repository. To make KubeOne work properly, you should clone the repository in the `$(go env GOPATH)/src/github.com/kubermatic/kubeone` directory and then set up the repository to sync with your fork.
+Before you start contributing, you need to fork the KubeOne repository. To make KubeOne work properly, you should clone the repository in the `$(go env GOPATH)/src/k8c.io/kubeone` directory and then set up the repository to sync with your fork.
 
 ### Code of Conduct
 
@@ -157,9 +157,9 @@ import (
 	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/ssh"
 
-	kubeoneapi "github.com/kubermatic/kubeone/pkg/apis/kubeone"
-	"github.com/kubermatic/kubeone/pkg/installer/util"
-	"github.com/kubermatic/kubeone/pkg/ssh"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/installer/util"
+	"k8c.io/kubeone/pkg/ssh"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/sets"
