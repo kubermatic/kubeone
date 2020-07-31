@@ -66,7 +66,7 @@ func (h *HostConfig) SetLeader(leader bool) {
 }
 
 // CloudProviderName returns name of the cloud provider
-func (p CloudProviderSpec) CloudProivderName() string {
+func (p CloudProviderSpec) CloudProviderName() string {
 	switch {
 	case p.AWS != nil:
 		return "aws"
