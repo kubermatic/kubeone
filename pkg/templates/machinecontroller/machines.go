@@ -104,7 +104,7 @@ func createMachineDeployment(cluster *kubeoneapi.KubeOneCluster, workerset kubeo
 		CloudProvider string `json:"cloudProvider"`
 	}{
 		ProviderSpec:  workerset.Config,
-		CloudProvider: cluster.CloudProvider.CloudProivderName(),
+		CloudProvider: cluster.CloudProvider.CloudProviderName(),
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to JSON marshal providerSpec")

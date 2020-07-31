@@ -160,7 +160,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 			ReadOnly:  true,
 			PathType:  corev1.HostPathFile,
 		}
-		provider := cluster.CloudProvider.CloudProivderName()
+		provider := cluster.CloudProvider.CloudProviderName()
 
 		clusterConfig.APIServer.ExtraArgs["cloud-provider"] = provider
 		clusterConfig.APIServer.ExtraArgs["cloud-config"] = renderedCloudConfig
@@ -269,7 +269,7 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Obje
 	if cluster.CloudProvider.CloudProviderInTree() {
 		renderedCloudConfig := "/etc/kubernetes/cloud-config"
 
-		nodeRegistration.KubeletExtraArgs["cloud-provider"] = cluster.CloudProvider.CloudProivderName()
+		nodeRegistration.KubeletExtraArgs["cloud-provider"] = cluster.CloudProvider.CloudProviderName()
 		nodeRegistration.KubeletExtraArgs["cloud-config"] = renderedCloudConfig
 	}
 

@@ -56,7 +56,7 @@ func Ensure(s *state.State) error {
 	case s.Cluster.CloudProvider.Openstack != nil:
 		err = ensureOpenStack(s)
 	default:
-		s.Logger.Infof("External CCM for %q not yet supported, skipping", s.Cluster.CloudProvider.CloudProivderName())
+		s.Logger.Infof("External CCM for %q not yet supported, skipping", s.Cluster.CloudProvider.CloudProviderName())
 		return nil
 	}
 
