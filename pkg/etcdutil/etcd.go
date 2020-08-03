@@ -95,6 +95,7 @@ func LoadTLSConfig(conn ssh.Connection) (*tls.Config, error) {
 	caCertPool.AppendCertsFromPEM([]byte(caCertPem))
 
 	return &tls.Config{
+		MinVersion:   tls.VersionTLS12,
 		RootCAs:      caCertPool,
 		Certificates: []tls.Certificate{cert},
 	}, nil
