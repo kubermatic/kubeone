@@ -67,7 +67,7 @@ buildenv:
 .PHONY: lint
 lint:
 	@golangci-lint --version
-	golangci-lint run ./pkg/... ./test/...
+	golangci-lint run -v ./pkg/... ./test/...
 
 .PHONY: verify-licence
 verify-licence: GOFLAGS = -mod=readonly
