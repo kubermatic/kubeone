@@ -33,7 +33,9 @@ func Convert_v1alpha1_CNI_To_kubeone_CNI(in *CNI, out *kubeoneapi.CNI, s convers
 
 	switch in.Provider {
 	case CNIProviderCanal:
-		out.Canal = &kubeoneapi.CanalSpec{}
+		out.Canal = &kubeoneapi.CanalSpec{
+			MTU: 1450,
+		}
 	case CNIProviderWeaveNet:
 		out.WeaveNet = &kubeoneapi.WeaveNetSpec{
 			Encrypted: in.Encrypted,
