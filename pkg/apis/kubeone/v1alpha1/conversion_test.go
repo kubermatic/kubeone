@@ -37,7 +37,9 @@ func TestCNIRoundTripConversion(t *testing.T) {
 				Provider: CNIProviderCanal,
 			},
 			expectedInternalCNI: &kubeoneapi.CNI{
-				Canal: &kubeoneapi.CanalSpec{},
+				Canal: &kubeoneapi.CanalSpec{
+					MTU: 1450,
+				},
 			},
 		},
 		{
@@ -111,7 +113,9 @@ func TestCNIWithEncryptionRoundTripConversion(t *testing.T) {
 				Encrypted: true,
 			},
 			expectedInternalCNI: &kubeoneapi.CNI{
-				Canal: &kubeoneapi.CanalSpec{},
+				Canal: &kubeoneapi.CanalSpec{
+					MTU: 1450,
+				},
 			},
 			expectedVersionedCNI: &CNI{
 				Provider: CNIProviderCanal,
@@ -415,7 +419,9 @@ func TestClusterNetworkRoundTripConversion(t *testing.T) {
 				ServiceSubnet:     "192.168.1.0/24",
 				ServiceDomainName: "cluster.local",
 				CNI: &kubeoneapi.CNI{
-					Canal: &kubeoneapi.CanalSpec{},
+					Canal: &kubeoneapi.CanalSpec{
+						MTU: 1450,
+					},
 				},
 			},
 		},
