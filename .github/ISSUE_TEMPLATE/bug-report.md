@@ -1,7 +1,9 @@
 ---
 name: Bug Report
 about: Report a bug related to KubeOne
+title: ''
 labels: kind/bug
+assignees: ''
 
 ---
 

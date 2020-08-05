@@ -1,7 +1,9 @@
 ---
 name: Feature Request
 about: Request a new KubeOne feature
+title: ''
 labels: kind/feature
+assignees: ''
 
 ---
 
