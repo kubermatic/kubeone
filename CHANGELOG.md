@@ -1,5 +1,44 @@
 # Changelog
 
+# [v1.0.0-rc.1](https://github.com/kubermatic/kubeone/releases/tag/v1.0.0-rc.1) - 2020-08-06
+
+## Attention Needed
+
+* KubeOne now uses vanity domain `k8c.io/kubeone` ([#1008](https://github.com/kubermatic/kubeone/pull/1008))
+  * The `go get` command to get KubeOne is now `GO111MODULE=on go get k8c.io/kubeone`.
+  * You may be required to specify a tag/branch name until v1.0.0 is not released, such as: `GO111MODULE=on go get k8c.io/kubeone@v1.0.0-rc.1`.
+* [**Breaking**] Use Ubuntu 20.04 (Focal) in the example Terraform scripts for AWS ([#1001](https://github.com/kubermatic/kubeone/pull/1001))
+  * It's **highly recommended** to bind the AMI by setting `var.ami` to the AMI you're currently using to prevent the instances from being recreated the next time you run Terraform!
+
+## Added
+
+* Add ability to change MTU for the Canal CNI using `.clusterNetwork.cni.canal.mtu` field (requires KubeOneCluster v1beta1 API) ([#1005](https://github.com/kubermatic/kubeone/pull/1005))
+* Add support for Ubuntu 20.04 (Focal) ([#1005](https://github.com/kubermatic/kubeone/pull/1005))
+
+## Changed
+
+### General
+
+* KubeOne now uses vanity domain `k8c.io/kubeone` ([#1008](https://github.com/kubermatic/kubeone/pull/1008))
+  * The `go get` command to get KubeOne is now `GO111MODULE=on go get k8c.io/kubeone`.
+  * You may be required to specify a tag/branch name until v1.0.0 is not released, such as: `GO111MODULE=on go get k8c.io/kubeone@v1.0.0-rc.1`.
+* Default MTU for the Canal CNI depending on the provider ([#1005](https://github.com/kubermatic/kubeone/pull/1005))
+  * AWS - 8951 (9001 AWS Jumbo Frame - 50 VXLAN bytes)
+  * GCE - 1410 (GCE specific 1460 bytes - 50 VXLAN bytes)
+  * Hetzner - 1400 (Hetzner specific 1450 bytes - 50 VXLAN bytes)
+  * OpenStack - 1400 (OpenStack specific 1450 bytes - 50 VXLAN bytes)
+  * Default - 1450
+  * If you're using KubeOneCluster v1alpha1 API, the default MTU is 1450 regardless of the provider ([#1016](https://github.com/kubermatic/kubeone/pull/1016))
+* Label all components deployed by KubeOne with the `kubeone.io/component: <component-name>` label ([#1005](https://github.com/kubermatic/kubeone/pull/1005))
+* Increase default number of task retries to 10 ([#1020](https://github.com/kubermatic/kubeone/pull/1020))
+
+### Updated
+
+* Update machine-controller to v1.16.0 ([#1017](https://github.com/kubermatic/kubeone/pull/1017))
+* Update Canal CNI to v3.15.1 ([#1005](https://github.com/kubermatic/kubeone/pull/1005))
+* [**Breaking**] Use Ubuntu 20.04 (Focal) in the example Terraform scripts for AWS ([#1001](https://github.com/kubermatic/kubeone/pull/1001))
+  * It's **highly recommended** to bind the AMI by setting `var.ami` to the AMI you're currently using to prevent the instances from being recreated the next time you run Terraform!
+
 # [v1.0.0-rc.0](https://github.com/kubermatic/kubeone/releases/tag/v1.0.0-rc.0) - 2020-07-27
 
 ## Attention Needed
