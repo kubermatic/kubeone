@@ -45,7 +45,7 @@ type Task struct {
 // Run runs a task
 func (t *Task) Run(s *state.State) error {
 	if t.Retries == 0 {
-		t.Retries = 3
+		t.Retries = 10
 	}
 
 	backoff := defaultRetryBackoff(t.Retries)
