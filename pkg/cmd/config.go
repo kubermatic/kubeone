@@ -507,7 +507,7 @@ clusterNetwork:
       # * AWS - 8951 (9001 AWS Jumbo Frame - 50 VXLAN bytes)
       # * GCE - 1410 (GCE specific 1460 bytes - 50 VXLAN bytes)
       # * Hetzner - 1400 (Hetzner specific 1450 bytes - 50 VXLAN bytes)
-      # * OpenStack - 1400 (Hetzner specific 1450 bytes - 50 VXLAN bytes)
+      # * OpenStack - 1400 (OpenStack specific 1450 bytes - 50 VXLAN bytes)
       # * Default - 1450
       mtu: 1450
     # weaveNet:
