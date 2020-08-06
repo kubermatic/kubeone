@@ -501,15 +501,15 @@ clusterNetwork:
     # * canal
     # * weave-net
     # * external - The CNI plugin can be installed as an addon or manually
-	canal:
-	  # MTU represents the maximum transmission unit.
-	  # Default MTU value depends on the specified provider:
-	  # * AWS - 8951 (9001 AWS Jumbo Frame - 50 VXLAN bytes)
-	  # * GCE - 1410 (GCE specific 1460 bytes - 50 VXLAN bytes)
-	  # * Hetzner - 1400 (Hetzner specific 1450 bytes - 50 VXLAN bytes)
-	  # * OpenStack - 1400 (Hetzner specific 1450 bytes - 50 VXLAN bytes)
-	  # * Default - 1450
-	  mtu: 1450
+    canal:
+      # MTU represents the maximum transmission unit.
+      # Default MTU value depends on the specified provider:
+      # * AWS - 8951 (9001 AWS Jumbo Frame - 50 VXLAN bytes)
+      # * GCE - 1410 (GCE specific 1460 bytes - 50 VXLAN bytes)
+      # * Hetzner - 1400 (Hetzner specific 1450 bytes - 50 VXLAN bytes)
+      # * OpenStack - 1400 (Hetzner specific 1450 bytes - 50 VXLAN bytes)
+      # * Default - 1450
+      mtu: 1450
     # weaveNet:
     #   # When true is set, secret will be automatically generated and
     #   # referenced in appropriate manifests. Currently only weave-net
