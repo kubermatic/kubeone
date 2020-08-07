@@ -20,5 +20,6 @@ cd $(dirname $0)/..
 
 boilerplate \
   -boilerplates hack/boilerplate/ \
+  -exclude hack/apidoc-gen \
   -exclude pkg/apis/apiserver \
   -exclude pkg/apis/kubeadm
