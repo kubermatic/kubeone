@@ -44,7 +44,7 @@ const (
 
 	kubeletVersionDPKG = `dpkg-query --show --showformat='${Version}' kubelet | cut -d- -f1`
 	kubeletVersionRPM  = `rpm -qa --queryformat '%{RPMTAG_VERSION}' kubelet`
-	kubeletVersionCLI  = `kubelet --version | cut -d' ' -f2`
+	kubeletVersionCLI  = `/opt/bin/kubelet --version | cut -d' ' -f2`
 
 	kubeletInitializedCMD = `test -f /etc/kubernetes/kubelet.conf`
 )
