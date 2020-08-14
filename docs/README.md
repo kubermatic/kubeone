@@ -7,7 +7,6 @@ KubeOne user documentation can be found at [KubeOne docs website](https://docs.k
 ## Development Documentation
 
 * [Adding support for a provider](adding_provider_support.md)
-* [Backwards Compatibility Policy](backwards_compatibility_policy.md)
 * [Release Process](release_process.md)
 
 ### [Proposals](./proposals)
@@ -16,3 +15,7 @@ KubeOne user documentation can be found at [KubeOne docs website](https://docs.k
 * [KubeOneCluster API (implemented)](./proposals/20190409-kubeonecluster-api.md)
 * [KubeOne Addons (implemented)](./proposals/20200205-addons.md)
 * [KubeOne Reconciliation process (implemented)](./proposals/20200224-apply.md)
+
+### [API reference](./api_reference/)
+
+* [v1beta1 API reference](api_reference/v1beta1.en.md)
