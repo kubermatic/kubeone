@@ -52,6 +52,7 @@ type Connection interface {
 type Tunneler interface {
 	// `network` can be tcp, tcp4, tcp6, unix
 	TunnelTo(ctx context.Context, network, addr string) (net.Conn, error)
+	io.Closer
 }
 
 // Opts represents all the possible options for connecting to

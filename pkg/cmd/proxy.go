@@ -109,6 +109,7 @@ func handleTunneling(w http.ResponseWriter, r *http.Request, s *state.State) err
 
 	destConn, err := tunn.TunnelTo(s.Context, "tcp4", r.Host)
 	if err != nil {
+		tunn.Close()
 		return &httpError{err: err, code: http.StatusServiceUnavailable}
 	}
 
