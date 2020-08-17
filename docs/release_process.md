@@ -147,5 +147,5 @@ shows the correct version.
 [goreleaser]: https://goreleaser.com
 [goreleaser-install]: https://goreleaser.com/install/
 [github-token]: https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line
-[docs-compatibility]: https://docs.kubermatic.com/kubeone/master/compatibility_info/
+[docs-compatibility]: https://docs.kubermatic.com/kubeone/v1.0/compatibility_info/
 [changelog]: https://github.com/kubermatic/kubeone/blob/master/CHANGELOG.md
