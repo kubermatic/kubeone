@@ -16,6 +16,7 @@
 
 set -eu -o pipefail
 
+export GOFLAGS=-mod=vendor
 
 # The code generation script takes the following arguments:
 # * generators (we use only deepcopy, conversion and defaulter)
