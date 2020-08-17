@@ -1,10 +1,11 @@
-# DigitalOcean Quickstart Terraform scripts
+# DigitalOcean Quickstart Terraform configs
 
-The DigitalOcean Quickstart Terraform scripts can be used to create the needed infrastructure for a Kubernetes HA cluster.
-Check out the following [DigitalOcean getting started walkthrough][do-quickstart] to learn more about how to use the
-scripts and how to provision a Kubernetes cluster using KubeOne.
+The DigitalOcean Quickstart Terraform configs can be used to create the needed
+infrastructure for a Kubernetes HA cluster. Check out the following
+[Creating Infrastructure guide][docs-infrastructure] to learn more about how to
+use the configs and how to provision a Kubernetes cluster using KubeOne.
 
-[do-quickstart]: https://github.com/kubermatic/kubeone/blob/master/docs/quickstart-digitalocean.md
+[docs-infrastructure]: https://docs.kubermatic.com/kubeone/master/infrastructure/terraform_configs/
 
 ## Inputs
 
