@@ -1,13 +1,16 @@
-# Hetzner Quickstart Terraform scripts
+# Hetzner Quickstart Terraform configs
 
-The Hetzner Quickstart Terraform scripts can be used to create the needed infrastructure for a Kubernetes HA cluster.
-Check out the following [Hetzner getting started walkthrough][hetzner-quickstart] to learn more about how to use the
-scripts and how to provision a Kubernetes cluster using KubeOne.
+The Hetzner Quickstart Terraform configs can be used to create the needed
+infrastructure for a Kubernetes HA cluster. Check out the following
+[Creating Infrastructure guide][docs-infrastructure] to learn more about how to
+use the configs and how to provision a Kubernetes cluster using KubeOne.
 
-## Kubernetes APIserver LoadBalancing
-See https://docs.kubermatic.com/kubeone/master/using_kubeone/example_loadbalancer/
+## Kubernetes API Server Load Balancing
 
-[hetzner-quickstart]: https://docs.kubermatic.com/kubeone/master/getting_started/hetzner/
+See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
+
+[docs-infrastructure]: https://docs.kubermatic.com/kubeone/master/infrastructure/terraform_configs/
+[docs-tf-loadbalancer]: https://docs.kubermatic.com/kubeone/master/advanced/example_loadbalancer/
 
 ## Inputs
 
