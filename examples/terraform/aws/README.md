@@ -1,10 +1,11 @@
-# AWS Quickstart Terraform scripts
+# AWS Quickstart Terraform configs
 
-The AWS Quickstart Terraform scripts can be used to create the needed infrastructure for a Kubernetes HA cluster.
-Check out the following [AWS getting started walkthrough][aws-quickstart] to learn more about how to use the
-scripts and how to provision a Kubernetes cluster using KubeOne.
+The AWS Quickstart Terraform configs can be used to create the needed
+infrastructure for a Kubernetes HA cluster. Check out the
+[Creating Infrastructure guide][docs-infrastructure] to learn more about how to
+use the configs and how to provision a Kubernetes cluster using KubeOne.
 
-[aws-quickstart]: https://docs.kubermatic.com/kubeone/master/getting_started/aws/
+[docs-infrastructure]: https://docs.kubermatic.com/kubeone/master/infrastructure/terraform_configs/
 
 ## Requirements
 

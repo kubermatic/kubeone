@@ -1,13 +1,16 @@
-# Packet Quickstart Terraform scripts
+# Packet Quickstart Terraform configs
 
-The Packet Quickstart Terraform scripts can be used to create the needed infrastructure for a Kubernetes HA cluster.
-Check out the following [Packet getting started walkthrough][packet-quickstart] to learn more about how to use the
-scripts and how to provision a Kubernetes cluster using KubeOne.
+The Packet Quickstart Terraform configs can be used to create the needed
+infrastructure for a Kubernetes HA cluster. Check out the following
+[Creating Infrastructure guide][docs-infrastructure] to learn more about how to
+use the configs and how to provision a Kubernetes cluster using KubeOne.
 
-## Kubernetes APIserver LoadBalancing
-See https://github.com/kubermatic/kubeone/blob/master/docs/example-loadbalancer.md
+## Kubernetes API Server Load Balancing
 
-[packet-quickstart]: https://github.com/kubermatic/kubeone/blob/master/docs/quickstart-packet.md
+See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
+
+[docs-infrastructure]: https://docs.kubermatic.com/kubeone/master/infrastructure/terraform_configs/
+[docs-tf-loadbalancer]: https://docs.kubermatic.com/kubeone/master/advanced/example_loadbalancer/
 
 ## Inputs
 
