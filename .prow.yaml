@@ -21,7 +21,7 @@ presubmits:
     path_alias: k8c.io/kubeone
     spec:
       containers:
-      - image: golang:1.14.4
+      - image: golang:1.15.0
         command:
         - make
         args:
@@ -59,7 +59,7 @@ presubmits:
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     spec:
       containers:
-      - image: golang:1.14.4
+      - image: golang:1.15.0
         command:
         - make
         args:
@@ -78,7 +78,7 @@ presubmits:
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     spec:
       containers:
-      - image: golang:1.14.4
+      - image: golang:1.15.0
         command:
         - make
         args:
