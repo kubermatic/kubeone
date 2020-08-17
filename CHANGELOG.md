@@ -1,5 +1,149 @@
 # Changelog
 
+# [v1.0.0](https://github.com/kubermatic/kubeone/releases/tag/v1.0.0) - 2020-08-18
+
+**Changelog since v0.11.2. For changelog since v1.0.0-rc.1, please check the [release notes](https://github.com/kubermatic/kubeone/releases/tag/v1.0.0)**
+
+## Attention Needed
+
+* Upgrading to this release is **highly recommended** as v0.11 release doesn't support Kubernetes versions 1.16.11/1.17.7/1.18.4 and newer. Kubernetes versions older than 1.16.11/1.17.7/1.18.4 are affected by two CVEs and therefore it's strongly advised to use 1.16.11/1.17.7/1.18.4 or newer.
+
+* KubeOne now uses vanity domain `k8c.io/kubeone`.
+  * The `go get` command to get KubeOne is now `GO111MODULE=on go get k8c.io/kubeone`.
+* The `kubeone` AUR package has been moved to the official Arch Linux repositories. The AUR package has been removed in the favor of the official one.
+
+* This release introduces the new KubeOneCluster v1beta1 API. The v1alpha1 API has been deprecated.
+  * It remains possible to use both APIs with all `kubeone` commands
+  * The v1alpha1 manifest can be converted to the v1beta1 manifest using the `kubeone config migrate` command
+  * All example configurations have been updated to the v1beta1 API
+  * More information about migrating to the new API and what has been changed can be found in the [API migration document](https://docs.kubermatic.com/kubeone/master/advanced/api_migration/)
+* Default MTU for the Canal CNI depending on the provider
+  * AWS - 8951 (9001 AWS Jumbo Frame - 50 VXLAN bytes)
+  * GCE - 1410 (GCE specific 1460 bytes - 50 VXLAN bytes)
+  * Hetzner - 1400 (Hetzner specific 1450 bytes - 50 VXLAN bytes)
+  * OpenStack - 1400 (OpenStack specific 1450 bytes - 50 VXLAN bytes)
+  * Default - 1450
+  * If you're using KubeOneCluster v1alpha1 API, the default MTU is 1450 regardless of the provider
+* RHSMOfflineToken has been removed from the CloudProviderSpec. This and other relevant fields are now located in the OperatingSystemSpec
+
+* The KubeOneCluster manifest (config file) is now provided using the `--manifest` flag, such as `kubeone install --manifest config.yaml`. Providing it as an argument will result in an error
+* The paths to the config files for PodNodeSelector feature (`.features.config.configFilePath`) and StaticAuditLog
+feature (`.features.staticAuditLog.policyFilePath`) are now relative to the manifest path instead of to the working
+directory. This change might be breaking for some users.
+
+* It's now possible to install Kubernetes 1.18.6 and 1.17.9 on CentOS 7, however, only Canal CNI is known to work properly. We are aware that the DNS and networking problems may still be present even with the latest versions. It remains impossible to install older versions of Kubernetes on CentOS 7.
+
+* Example Terraform configs for AWS now Use Ubuntu 20.04 (Focal) instead of Ubuntu 18.04
+  * It's **highly recommended** to bind the AMI by setting `var.ami` to the AMI you're currently using to prevent the instances from being recreated the next time you run Terraform!
+
+## Known Issues
+
+* It remains impossible to provision Kubernetes older than 1.18.6/1.17.9 on CentOS 7. CentOS 8 and RHEL are unaffected.
+
+## Added
+
+* Implement the `kubeone apply` command
+  * The apply command is used to reconcile (install, upgrade, and repair) clusters
+  * More details about how to use the apply command can be found in the [Cluster reconciliation (apply) document](https://docs.kubermatic.com/kubeone/master/advanced/cluster_reconciliation/)
+* Implement the `kubeone config machinedeployments` command ([#966](https://github.com/kubermatic/kubeone/pull/966))
+  * The new command is used to generate a YAML manifest containing all MachineDeployment objects defined in the KubeOne configuration manifest and Terraform output
+  * The generated manifest can be used with kubectl if you want to create and modify MachineDeployments once the cluster is created
+* Add the `kubeone proxy` command ([#1035](https://github.com/kubermatic/kubeone/pull/1035))
+  * The `kubeone proxy` command launches a local HTTPS capable proxy (CONNECT method) to tunnel HTTPS request via SSH. This is especially useful in cases when the Kubernetes API endpoint is not accessible from the public internets.
+* Add the KubeOneCluster v1beta1 API ([#894](https://github.com/kubermatic/kubeone/pull/894))
+  * Implemented automated conversion between v1alpha1 and v1beta1 APIs. It remains possible to use all `kubeone` commands with both v1alpha1 and v1beta1 manifests, however, migration to the v1beta1 manifest is recommended
+  * Implement the Terraform integration for the v1beta1 API. Currently, the Terraform integration output format is the same for both APIs, but that might change in the future
+  * The kubeone config migrate command has been refactored to migrate v1alpha1 to v1beta1 manifests. The manifest is now provided using the --manifest flag instead of providing it as an argument. It's not possible to convert pre-v0.6.0 manifest to v1alpha1 anymore
+  * The example configurations are updated to the v1beta1 API
+  * Drop the leading 'v' in the Kubernetes version if it's provided. This fixes a bug causing provisioning to fail if the Kubernetes version starts with 'v'
+* Automatic cluster repairs ([#888](https://github.com/kubermatic/kubeone/pull/888))
+  * Detect and delete broken etcd members
+  * Detect and delete outdated corev1.Node objects
+* Add ability to provision static worker nodes ([#834](https://github.com/kubermatic/kubeone/pull/834))
+  * Check out [the documentation](https://docs.kubermatic.com/kubeone/master/workers/static_workers/) to learn more about static worker nodes
+* Add ability to skip cluster provisioning when running the `install` command using the `--no-init` flag ([#871](https://github.com/kubermatic/kubeone/pull/871))
+* Add support for Kubernetes 1.16.11, 1.17.7, 1.18.4 releases ([#925](https://github.com/kubermatic/kubeone/pull/925))
+* Add support for Ubuntu 20.04 (Focal) ([#1005](https://github.com/kubermatic/kubeone/pull/1005))
+* Add support for CentOS 8 ([#981](https://github.com/kubermatic/kubeone/pull/981))
+* Add RHEL support ([#918](https://github.com/kubermatic/kubeone/pull/918))
+* Add support for Flatcar Linux ([#879](https://github.com/kubermatic/kubeone/pull/879))
+* Support for vSphere resource pools ([#883](https://github.com/kubermatic/kubeone/pull/883))
+* Support for Azure AZs ([#883](https://github.com/kubermatic/kubeone/pull/883))
+* Support for Flexvolumes on CoreOS and Flatcar ([#885](https://github.com/kubermatic/kubeone/pull/885))
+* Add the `ImagePlan` field to Azure Terraform integration ([#947](https://github.com/kubermatic/kubeone/pull/947))
+* Add support for the PodNodeSelector admission controller ([#920](https://github.com/kubermatic/kubeone/pull/920))
+* Add the `PodPresets` feature ([#837](https://github.com/kubermatic/kubeone/pull/837))
+* Add support for OpenStack external cloud controller manager (CCM) ([#820](https://github.com/kubermatic/kubeone/pull/820))
+* Add ability to change MTU for the Canal CNI using `.clusterNetwork.cni.canal.mtu` field (requires KubeOneCluster v1beta1 API) ([#1005](https://github.com/kubermatic/kubeone/pull/1005))
+* Add the Calico VXLAN addon ([#972](https://github.com/kubermatic/kubeone/pull/972))
+  * More information about how to use this addon can be found on the [docs website](https://docs.kubermatic.com/kubeone/master/using_kubeone/calico-vxlan-addon/)
+* Add ability to use an external CNI plugin ([#862](https://github.com/kubermatic/kubeone/pull/862))
+
+## Changed
+
+### General
+
+* [**Breaking**] Replace positional argument for the config file with the global `--manifest` flag ([#880](https://github.com/kubermatic/kubeone/pull/880))
+* [**Breaking**] Make paths to the config file for PodNodeSelector and StaticAuditLog features relative to the manifest path ([#920](https://github.com/kubermatic/kubeone/pull/920))
+  * The default value for the `--manifest` flag is `kubeone.yaml`
+* KubeOne now uses vanity domain `k8c.io/kubeone` ([#1008](https://github.com/kubermatic/kubeone/pull/1008))
+  * The `go get` command to get KubeOne is now `GO111MODULE=on go get k8c.io/kubeone`.
+* The `kubeone` AUR package has been moved to the official Arch Linux repositories. The AUR package has been removed in the favor of the official one ([#971](https://github.com/kubermatic/kubeone/pull/971))
+* Default MTU for the Canal CNI depending on the provider ([#1005](https://github.com/kubermatic/kubeone/pull/1005))
+  * AWS - 8951 (9001 AWS Jumbo Frame - 50 VXLAN bytes)
+  * GCE - 1410 (GCE specific 1460 bytes - 50 VXLAN bytes)
+  * Hetzner - 1400 (Hetzner specific 1450 bytes - 50 VXLAN bytes)
+  * OpenStack - 1400 (OpenStack specific 1450 bytes - 50 VXLAN bytes)
+  * Default - 1450
+  * If you're using KubeOneCluster v1alpha1 API, the default MTU is 1450 regardless of the provider ([#1016](https://github.com/kubermatic/kubeone/pull/1016))
+* Label all components deployed by KubeOne with the `kubeone.io/component: <component-name>` label ([#1005](https://github.com/kubermatic/kubeone/pull/1005))
+* Increase default number of task retries to 10 ([#1020](https://github.com/kubermatic/kubeone/pull/1020))
+* Use the proper package revision for Kubernetes packages ([#933](https://github.com/kubermatic/kubeone/pull/933))
+* Hold the `docker-ce-cli` package on Ubuntu ([#902](https://github.com/kubermatic/kubeone/pull/902))
+* Hold the `docker-ce`, `docker-ce-cli`, and all Kubernetes packages on CentOS ([#902](https://github.com/kubermatic/kubeone/pull/902))
+* Ignore etcd data if it is present on the control plane nodes ([#874](https://github.com/kubermatic/kubeone/pull/874))
+  * This allows clusters to be restored from a backup
+* machine-controller and machine-controller-webhook are bound to the control plane nodes ([#832](https://github.com/kubermatic/kubeone/pull/832))
+* KubeOne is now built using Go 1.15 ([#1048](https://github.com/kubermatic/kubeone/pull/1048))
+
+### Bug Fixes
+
+* Verify that `crd.projectcalico.org` CRDs are established before proceeding with the Canal CNI installation ([#994](https://github.com/kubermatic/kubeone/pull/994))
+* Add NodeRegistration object to the kubeadm v1beta2 JoinConfiguration for static worker nodes. Fix the issue with nodes not joining a cluster on AWS ([#969](https://github.com/kubermatic/kubeone/pull/969))
+* Unconditionally renew certificates when upgrading the cluster. Due to an upstream bug, kubeadm wasn't automatically renewing certificates for clusters running Kubernetes versions older than v1.17 ([#990](https://github.com/kubermatic/kubeone/pull/990))
+* Apply only addons with `.yaml`, `.yml` and `.json` extensions ([#873](https://github.com/kubermatic/kubeone/pull/873))
+* Install `curl` before configuring repositories on Ubuntu instances ([#945](https://github.com/kubermatic/kubeone/pull/945))
+* Stop copying kubeconfig to the home directory on control plane instances ([#936](https://github.com/kubermatic/kubeone/pull/936))
+* Fix the cluster provisioning issues caused by `docker-ce-cli` version mismatch ([#896](https://github.com/kubermatic/kubeone/pull/896))
+* Remove hold from the docker-ce-cli package on upgrade ([#941](https://github.com/kubermatic/kubeone/pull/941))
+  * This ensures clusters created with KubeOne v0.11 can be upgraded using KubeOne v1.0.0
+  * This fixes the issue with upgrading CoreOS/Flatcar clusters
+* Force restart Kubelet on CentOS on upgrade ([#988](https://github.com/kubermatic/kubeone/pull/988))
+  * Fixes the cluster provisioning for instances that don't have `curl` installed
+* Fix CoreOS host architecture detection ([#882](https://github.com/kubermatic/kubeone/pull/882))
+* Fix CoreOS/Flatcar cluster provisioning/upgrading: use the correct URL for the CNI plugins ([#929](https://github.com/kubermatic/kubeone/pull/929))
+* Fix the Kubelet service unit for CoreOS/Flatcar ([#908](https://github.com/kubermatic/kubeone/pull/908), [#909](https://github.com/kubermatic/kubeone/pull/909))
+* Fix the CoreOS install and upgrade scripts ([#904](https://github.com/kubermatic/kubeone/pull/904))
+* Fix CoreOS/Flatcar provisioning issues for Kubernetes 1.18 ([#895](https://github.com/kubermatic/kubeone/pull/895))
+* Fix Kubelet version detection on Flatcar ([#1032](https://github.com/kubermatic/kubeone/pull/1032))
+* Fix the gobetween script failing to install the `tar` package ([#963](https://github.com/kubermatic/kubeone/pull/963))
+
+### Updated
+
+* Update machine-controller to v1.16.1 ([#1043](https://github.com/kubermatic/kubeone/pull/1043))
+* Update Canal CNI to v3.15.1 ([#1005](https://github.com/kubermatic/kubeone/pull/1005))
+* Update NodeLocalDNSCache to v1.15.12 ([#872](https://github.com/kubermatic/kubeone/pull/872))
+* Update Docker versions. Minimal Docker version is 18.09.9 for clusters older than v1.17 and 19.03.12 for clusters running v1.17 and newer ([#1002](https://github.com/kubermatic/kubeone/pull/1002/files))
+  * This fixes the issue preventing users to upgrade Kubernetes clusters created with KubeOne v0.11 or earlier
+* Update Packet Cloud Controller Manager (CCM) to v1.0.0 ([#884](https://github.com/kubermatic/kubeone/pull/884))
+* [**Breaking**] Use Ubuntu 20.04 (Focal) in the example Terraform scripts for AWS ([#1001](https://github.com/kubermatic/kubeone/pull/1001))
+  * It's **highly recommended** to bind the AMI by setting `var.ami` to the AMI you're currently using to prevent the instances from being recreated the next time you run Terraform!
+
+## Removed
+
+* Remove RHSMOfflineToken from the CloudProviderSpec ([#883](https://github.com/kubermatic/kubeone/pull/883))
+  * RHSM settings are now located in the OperatingSystemSpec
+
 # [v1.0.0-rc.1](https://github.com/kubermatic/kubeone/releases/tag/v1.0.0-rc.1) - 2020-08-06
 
 ## Attention Needed
