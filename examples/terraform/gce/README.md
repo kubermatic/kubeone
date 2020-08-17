@@ -1,10 +1,11 @@
-# GCE Quickstart Terraform scripts
+# GCE Quickstart Terraform configs
 
-The GCE Quickstart Terraform scripts can be used to create the needed infrastructure for a Kubernetes HA cluster.
-Check out the following [GCE getting started walkthrough][gce-quickstart] to learn more about how to use the
-scripts and how to provision a Kubernetes cluster using KubeOne.
+The GCE Quickstart Terraform configs can be used to create the needed
+infrastructure for a Kubernetes HA cluster. Check out the following
+[Creating Infrastructure guide][docs-infrastructure] to learn more about how to
+use the configs and how to provision a Kubernetes cluster using KubeOne.
 
-[gce-quickstart]: https://github.com/kubermatic/kubeone/blob/master/docs/quickstart-gce.md
+[docs-infrastructure]: https://docs.kubermatic.com/kubeone/v1.0/infrastructure/terraform_configs/
 
 ## GCE Provider configuration
 

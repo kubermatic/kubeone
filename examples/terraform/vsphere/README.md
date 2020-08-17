@@ -1,3 +1,10 @@
+# vSphere Quickstart Terraform configs
+
+The vSphere Quickstart Terraform configs can be used to create the needed
+infrastructure for a Kubernetes HA cluster. Check out the following
+[Creating Infrastructure guide][docs-infrastructure] to learn more about how to
+use the configs and how to provision a Kubernetes cluster using KubeOne.
+
 ## Required environment variables
 
 * `VSPHERE_USER`
@@ -6,10 +13,15 @@
 * `VSPHERE_ALLOW_UNVERIFIED_SSL`
 
 ## How to prepare a template
+
 See https://github.com/kubermatic/machine-controller/blob/master/docs/vsphere.md
 
-## Kubernetes APIserver LoadBalancing
-See https://github.com/kubermatic/kubeone/blob/master/docs/example-loadbalancer.md
+## Kubernetes API Server Load Balancing
+
+See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
+
+[docs-infrastructure]: https://docs.kubermatic.com/kubeone/v1.0/infrastructure/terraform_configs/
+[docs-tf-loadbalancer]: https://docs.kubermatic.com/kubeone/v1.0/advanced/example_loadbalancer/
 
 ## Inputs
 

@@ -1,11 +1,11 @@
-# Azure Quickstart Terraform scripts
+# Azure Quickstart Terraform configs
 
-The Azure Quickstart Terraform scripts can be used to create the needed
-infrastructure for a Kubernetes HA cluster. Check out the following 
-[Azure getting started walkthrough][1] to learn more about how to use the
-scripts and how to provision a Kubernetes cluster using KubeOne.
+The Azure Quickstart Terraform configs can be used to create the needed
+infrastructure for a Kubernetes HA cluster. Check out the
+[Creating Infrastructure guide][docs-infrastructure] to learn more about how to
+use the configs and how to provision a Kubernetes cluster using KubeOne.
 
-[1]: https://github.com/kubermatic/kubeone/blob/master/docs/quickstart-azure.md
+[docs-infrastructure]: https://docs.kubermatic.com/kubeone/v1.0/infrastructure/terraform_configs/
 
 ## Inputs
 

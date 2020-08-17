@@ -25,15 +25,9 @@ to reference to the upcoming version and generate a changelog.
 
 ### Updating documentation
 
-You need to update the following documents to point to the new release:
-
-* The Kubernetes versions compatibility matrix should be updated if there
-  are changes in supported Kubernetes versions, Terraform versions and/or
-  providers. The compatibility matrix is located in two places, in the
-  repo [`README.md` file][matrix-readme] and at the 
-  [docs website][matrix-docs]
-* Update [the quickstart guides][quickstart] to require/recommend
-  the latest version if needed
+The [Compatibility document][docs-compatibility] should be updated if there
+are changes in supported Kubernetes versions, Terraform versions, operating
+systems, and/or providers.
 
 ### Generating the changelog
 
@@ -153,7 +147,5 @@ shows the correct version.
 [goreleaser]: https://goreleaser.com
 [goreleaser-install]: https://goreleaser.com/install/
 [github-token]: https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line
-[matrix-readme]: https://github.com/kubermatic/kubeone#kubernetes-versions-compatibility
-[matrix-docs]: https://docs.kubermatic.com/kubeone/master/#kubernetes-versions-compatibility
-[quickstart]: https://docs.kubermatic.com/kubeone/master/getting_started/
+[docs-compatibility]: https://docs.kubermatic.com/kubeone/v1.0/compatibility_info/
 [changelog]: https://github.com/kubermatic/kubeone/blob/master/CHANGELOG.md
