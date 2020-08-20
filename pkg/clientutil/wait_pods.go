@@ -33,7 +33,7 @@ func PodsReadyCondition(ctx context.Context, c dynclient.Client, listOpts dyncli
 		podsList := corev1.PodList{}
 
 		if err := c.List(ctx, &podsList, &listOpts); err != nil {
-			return false, errors.Wrapf(err, "failed to list %s pods", listOpts.FieldSelector.String())
+			return false, errors.Wrapf(err, "failed to list pods")
 		}
 
 		return allPodsAreRunningAndReady(&podsList), nil
