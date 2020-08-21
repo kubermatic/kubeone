@@ -234,6 +234,10 @@ func runPrint(printOptions *printOpts) error {
 			printOptions.CloudProviderExternal = true
 		case "openstack":
 			printOptions.CloudProviderCloudCfg = "<< cloudConfig is required for OpenStack >>"
+		case "vsphere":
+			printOptions.CloudProviderCloudCfg = "<< cloudConfig is required for vSphere >>"
+		case "azure":
+			printOptions.CloudProviderCloudCfg = "<< cloudConfig is required for Azure >>"
 		}
 
 		tmpl, err := template.New("example-manifest").Parse(exampleManifest)
@@ -288,6 +292,7 @@ func createAndPrintManifest(printOptions *printOpts) error {
 		cfg.Set(yamled.Path{"cloudProvider", "aws"}, providerVal)
 	case "azure":
 		cfg.Set(yamled.Path{"cloudProvider", "azure"}, providerVal)
+		cfg.Set(yamled.Path{"cloudProvider", "cloudConfig"}, "<< cloudConfig is required for Azure >>\n")
 	case "digitalocean":
 		cfg.Set(yamled.Path{"cloudProvider", "digitalocean"}, providerVal)
 		cfg.Set(yamled.Path{"cloudProvider", "external"}, true)
@@ -298,12 +303,13 @@ func createAndPrintManifest(printOptions *printOpts) error {
 		cfg.Set(yamled.Path{"cloudProvider", "external"}, true)
 	case "openstack":
 		cfg.Set(yamled.Path{"cloudProvider", "openstack"}, providerVal)
-		cfg.Set(yamled.Path{"cloudProvider", "cloudConfig"}, "<< cloudConfig is required for OpenStack >>")
+		cfg.Set(yamled.Path{"cloudProvider", "cloudConfig"}, "<< cloudConfig is required for OpenStack >>\n")
 	case "packet":
 		cfg.Set(yamled.Path{"cloudProvider", "packet"}, providerVal)
 		cfg.Set(yamled.Path{"cloudProvider", "external"}, true)
 	case "vsphere":
 		cfg.Set(yamled.Path{"cloudProvider", "vsphere"}, providerVal)
+		cfg.Set(yamled.Path{"cloudProvider", "cloudConfig"}, "<< cloudConfig is required for vSphere >>\n")
 	case "none":
 		cfg.Set(yamled.Path{"cloudProvider", "none"}, providerVal)
 	}
