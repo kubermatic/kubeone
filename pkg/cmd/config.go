@@ -233,11 +233,11 @@ func runPrint(printOptions *printOpts) error {
 		case "digitalocean", "packet", "hetzner":
 			printOptions.CloudProviderExternal = true
 		case "openstack":
-			printOptions.CloudProviderCloudCfg = "<< cloudConfig is required for OpenStack >>\n"
+			printOptions.CloudProviderCloudCfg = "<< cloudConfig is required for OpenStack >>"
 		case "vsphere":
-			printOptions.CloudProviderCloudCfg = "<< cloudConfig is required for vSphere >>\n"
+			printOptions.CloudProviderCloudCfg = "<< cloudConfig is required for vSphere >>"
 		case "azure":
-			printOptions.CloudProviderCloudCfg = "<< cloudConfig is required for Azure >>\n"
+			printOptions.CloudProviderCloudCfg = "<< cloudConfig is required for Azure >>"
 		}
 
 		tmpl, err := template.New("example-manifest").Parse(exampleManifest)
