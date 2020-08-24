@@ -31,15 +31,16 @@ DEST=/usr/local/bin
 # Download the latest version for the OS and save it as zip
 
 if curl -LO "$URL"
-then 
+then
     echo "Copying kubeone binary into $DEST"
     # unpack:
-    
+
 
     if unzip "kubeone_${VERSION}_${OS}_amd64.zip" -d "kubeone_${VERSION}_${OS}_amd64"
     then
         sudo mv "kubeone_${VERSION}_${OS}_amd64/kubeone" "$DEST"
         rm "kubeone_${VERSION}_${OS}_amd64.zip"
+        cp -a "kubeone_${VERSION}_${OS}_amd64/examples/terraform/." "./"
         rm -rf "kubeone_${VERSION}_${OS}_amd64"
         echo "kubeone has been installed into $DEST/kubeone"
         exit 0
