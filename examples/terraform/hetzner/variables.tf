@@ -64,7 +64,7 @@ variable "worker_type" {
 }
 
 variable "lb_type" {
-  default = "cx11"
+  default = "lb11"
 }
 
 variable "datacenter" {
