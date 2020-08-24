@@ -35,7 +35,7 @@ import (
 )
 
 const (
-	hetznerImage          = "hetznercloud/hcloud-cloud-controller-manager:v1.5.1"
+	hetznerImage          = "hetznercloud/hcloud-cloud-controller-manager:v1.7.0"
 	hetznerSAName         = "cloud-controller-manager"
 	hetznerDeploymentName = "hcloud-cloud-controller-manager"
 )
