@@ -32,9 +32,9 @@ resource "hcloud_network_subnet" "kubeone" {
 }
 
 resource "hcloud_server_network" "control_plane" {
-  count       = 3
-  server_id  = element(hcloud_server.control_plane.*.id, count.index)
-  network_id = hcloud_network.net.id
+  count     = 3
+  server_id = element(hcloud_server.control_plane.*.id, count.index)
+  subnet_id = hcloud_network_subnet.kubeone.id
 }
 
 resource "hcloud_server" "control_plane" {
@@ -54,61 +54,37 @@ resource "hcloud_server" "control_plane" {
   }
 }
 
-resource "hcloud_server_network" "lb" {
-  server_id  = hcloud_server.lb.id
-  network_id = hcloud_network.net.id
+resource "hcloud_load_balancer_network" "load_balancer" {
+  load_balancer_id = hcloud_load_balancer.load_balancer.id
+  subnet_id        = hcloud_network_subnet.kubeone.id
 }
 
-resource "hcloud_server" "lb" {
-  name        = "${var.cluster_name}-lb"
-  server_type = var.lb_type
-  image       = var.image
-  location    = var.datacenter
-
-  ssh_keys = [
-    hcloud_ssh_key.kubeone.id,
-  ]
+resource "hcloud_load_balancer" "load_balancer" {
+  name               = "${var.cluster_name}-lb"
+  load_balancer_type = var.lb_type
+  location           = var.datacenter
 
   labels = {
     "kubeone_cluster_name" = var.cluster_name
     "role"                 = "lb"
   }
-
-  connection {
-    type = "ssh"
-    host = self.ipv4_address
-  }
-
-  provisioner "remote-exec" {
-    script = "gobetween.sh"
-  }
 }
 
-locals {
-  rendered_lb_config = templatefile("./etc_gobetween.tpl", {
-    lb_targets = hcloud_server_network.control_plane.*.ip,
-  })
+resource "hcloud_load_balancer_target" "load_balancer_target" {
+  type             = "server"
+  load_balancer_id = hcloud_load_balancer.load_balancer.id
+  count            = 3
+  server_id        = element(hcloud_server.control_plane.*.id, count.index)
+  use_private_ip   = true
+  depends_on = [
+    hcloud_server_network.control_plane,
+    hcloud_load_balancer_network.load_balancer
+  ]
 }
 
-resource "null_resource" "lb_config" {
-  triggers = {
-    cluster_instance_ids = join(",", hcloud_server_network.control_plane.*.ip)
-    config               = local.rendered_lb_config
-  }
-
-  connection {
-    host = hcloud_server.lb.ipv4_address
-  }
-
-  provisioner "file" {
-    content     = local.rendered_lb_config
-    destination = "/etc/gobetween.toml"
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "systemctl restart gobetween",
-    ]
-  }
+resource "hcloud_load_balancer_service" "load_balancer_service" {
+  load_balancer_id = hcloud_load_balancer.load_balancer.id
+  protocol         = "tcp"
+  listen_port      = 6443
+  destination_port = 6443
 }
-
