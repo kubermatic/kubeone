@@ -8,6 +8,13 @@ Kubermatic KubeOne automates cluster operations on all your cloud, on-prem,
 edge, and IoT environments. KubeOne can install high-available (HA) master
 clusters as well single master clusters.
 
+## KubeOne User Survey
+
+**We're organizing the [KubeOne User Survey][survey]!**
+This survey is intended to shape the future roadmap of KubeOne. Your answers
+will help us determine future features and schedules. We’re raffling one 10€
+Amazon gift card among the respondents of our KubeOne Survey.
+
 ## Getting Started
 
 All user documentation is available at the
@@ -124,3 +131,4 @@ See [the list of releases][changelog] to find out about feature changes.
 [github-issue]: https://github.com/kubermatic/KubeOne/issues
 [security-vulnerability]: https://github.com/kubermatic/kubeone/blob/master/CONTRIBUTING.md#reporting-a-security-vulnerability
 [changelog]: https://github.com/kubermatic/KubeOne/releases
+[survey]: https://docs.google.com/forms/d/e/1FAIpQLSfzKQPvG0gkLJ-87fg9TrM-UCsBi_cwAuTiaRsR8H0_okNLsw/viewform?hss_channel=tw-3614488228
