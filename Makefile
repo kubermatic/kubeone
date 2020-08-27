@@ -14,7 +14,7 @@
 
 export GOPATH?=$(shell go env GOPATH)
 export CGO_ENABLED=0
-export GOPROXY=https://proxy.golang.org
+export GOPROXY?=https://proxy.golang.org
 export GO111MODULE=on
 export GOFLAGS?=-mod=readonly -trimpath
 
@@ -57,7 +57,7 @@ test:
 	go test ./pkg/... ./test/...
 
 .PHONY: e2e-test
-e2e-test: install
+e2e-test: download-gocache install
 	./hack/run-ci-e2e-test.sh
 
 .PHONY: buildenv
@@ -82,3 +82,11 @@ verify-codegen: vendor
 .PHONY: verify-boilerplate
 verify-boilerplate:
 	./hack/verify-boilerplate.sh
+
+.PHONY: download-gocache
+download-gocache:
+	./hack/download-gocache.sh
+
+.PHONY: upload-gocache
+upload-gocache:
+	./hack/upload-gocache.sh
