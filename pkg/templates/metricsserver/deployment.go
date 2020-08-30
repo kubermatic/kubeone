@@ -17,8 +17,6 @@ limitations under the License.
 package metricsserver
 
 import (
-	"context"
-
 	"github.com/pkg/errors"
 
 	"k8c.io/kubeone/pkg/clientutil"
@@ -57,9 +55,8 @@ func Deploy(s *state.State) error {
 	}
 
 	withLabel := clientutil.WithComponentLabel(componentLabel)
-	ctx := context.Background()
 	for _, obj := range k8sobjects {
-		if err := clientutil.CreateOrUpdate(ctx, s.DynamicClient, obj, withLabel); err != nil {
+		if err := clientutil.CreateOrUpdate(s.Context, s.DynamicClient, obj, withLabel); err != nil {
 			return errors.WithStack(err)
 		}
 	}

@@ -29,14 +29,17 @@ func AddLabels(labels map[string]string, objects ...runtime.Object) []runtime.Ob
 	for i := range objects {
 		metaobj := objects[i].(metav1.Object)
 		existingLabels := metaobj.GetLabels()
-		if existingLabels == nil {
-			existingLabels = map[string]string{}
+		copyLabels := map[string]string{}
+
+		for k, v := range existingLabels {
+			copyLabels[k] = v
 		}
 
 		for k, v := range labels {
-			existingLabels[k] = v
+			copyLabels[k] = v
 		}
-		metaobj.SetLabels(existingLabels)
+
+		metaobj.SetLabels(copyLabels)
 		objects[i] = metaobj.(runtime.Object)
 	}
 
