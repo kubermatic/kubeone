@@ -1,5 +1,18 @@
 # Changelog
 
+# [v1.0.1](https://github.com/kubermatic/kubeone/releases/tag/v1.0.1) - 2020-08-31
+
+## Changed
+
+### General
+
+* Include cloud-config in the generated KubeOne configuration manifest when it's required by validation ([#1062](https://github.com/kubermatic/kubeone/pull/1062))
+
+### Bug Fixes
+
+* Properly apply labels when upgrading components. This fixes the issue with upgrade failures on clusters created with KubeOne v1.0.0-rc.0 and earlier ([#1078](https://github.com/kubermatic/kubeone/pull/1078))
+* Fix race condition between kube-proxy and node-local-dns ([#1058](https://github.com/kubermatic/kubeone/pull/1058))
+
 # [v1.0.0](https://github.com/kubermatic/kubeone/releases/tag/v1.0.0) - 2020-08-18
 
 **Changelog since v0.11.2. For changelog since v1.0.0-rc.1, please check the [release notes](https://github.com/kubermatic/kubeone/releases/tag/v1.0.0)**
@@ -39,6 +52,7 @@ directory. This change might be breaking for some users.
 ## Known Issues
 
 * It remains impossible to provision Kubernetes older than 1.18.6/1.17.9 on CentOS 7. CentOS 8 and RHEL are unaffected.
+* Upgrading a cluster created with KubeOne v1.0.0-rc.0 or earlier fails to update components deployed by KubeOne (e.g. CNI, machine-controller). Please upgrade to KubeOne v1.0.1 or newer if you have clusters created with v1.0.0-rc.0 or earlier.
 
 ## Added
 
