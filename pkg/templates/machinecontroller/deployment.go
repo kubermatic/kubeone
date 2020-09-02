@@ -46,7 +46,7 @@ const (
 	MachineControllerNamespace     = metav1.NamespaceSystem
 	MachineControllerAppLabelKey   = "app"
 	MachineControllerAppLabelValue = "machine-controller"
-	MachineControllerTag           = "v1.16.1"
+	MachineControllerTag           = "v1.17.1"
 )
 
 func CRDs() []runtime.Object {
