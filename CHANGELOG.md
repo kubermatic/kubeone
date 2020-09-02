@@ -2,6 +2,10 @@
 
 # [v1.0.2](https://github.com/kubermatic/kubeone/releases/tag/v1.0.2) - 2020-09-02
 
+## Known Issues
+
+* We do **not** recommend upgrading to Kubernetes 1.19.0 due to an [upstream bug in kubeadm affecting Highly-Available clusters](https://github.com/kubernetes/kubeadm/issues/2271). The bug will be fixed in 1.19.1, which is scheduled for Wednesday, September 9th. Until 1.19.1 is not released, we highly recommend staying on 1.18.
+
 ## Changed
 
 ### Updated
@@ -12,6 +16,10 @@
   * If you experience any issues with pod metrics on worker nodes running Kubernetes 1.19, provisioned with an earlier machine-controller version, you might have to update machine-controller to v1.17.1 and then rotate the affected worker nodes.
 
 # [v1.0.1](https://github.com/kubermatic/kubeone/releases/tag/v1.0.1) - 2020-08-31
+
+## Known Issues
+
+* We do **not** recommend upgrading to Kubernetes 1.19.0 due to an [upstream bug in kubeadm affecting Highly-Available clusters](https://github.com/kubernetes/kubeadm/issues/2271). The bug will be fixed in 1.19.1, which is scheduled for Wednesday, September 9th. Until 1.19.1 is not released, we highly recommend staying on 1.18.
 
 ## Changed
 
@@ -62,6 +70,7 @@ directory. This change might be breaking for some users.
 
 ## Known Issues
 
+* We do **not** recommend upgrading to Kubernetes 1.19.0 due to an [upstream bug in kubeadm affecting Highly-Available clusters](https://github.com/kubernetes/kubeadm/issues/2271). The bug will be fixed in 1.19.1, which is scheduled for Wednesday, September 9th. Until 1.19.1 is not released, we highly recommend staying on 1.18.
 * It remains impossible to provision Kubernetes older than 1.18.6/1.17.9 on CentOS 7. CentOS 8 and RHEL are unaffected.
 * Upgrading a cluster created with KubeOne v1.0.0-rc.0 or earlier fails to update components deployed by KubeOne (e.g. CNI, machine-controller). Please upgrade to KubeOne v1.0.1 or newer if you have clusters created with v1.0.0-rc.0 or earlier.
 
