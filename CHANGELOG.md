@@ -1,5 +1,16 @@
 # Changelog
 
+# [v1.0.2](https://github.com/kubermatic/kubeone/releases/tag/v1.0.2) - 2020-09-02
+
+## Changed
+
+### Updated
+
+* Update machine-controller to v1.17.1 ([#1086](https://github.com/kubermatic/kubeone/pull/1086))
+  * This machine-controller release uses Docker 19.03.12 instead of Docker 18.06 for worker nodes running Kubernetes 1.17 and newer.
+  * Due to an [upstream issue](https://github.com/kubernetes/kubernetes/issues/94281), pod metrics are not available on worker nodes running Kubernetes 1.19 with Docker 18.06.
+  * If you experience any issues with pod metrics on worker nodes running Kubernetes 1.19, provisioned with an earlier machine-controller version, you might have to update machine-controller to v1.17.1 and then rotate the affected worker nodes.
+
 # [v1.0.1](https://github.com/kubermatic/kubeone/releases/tag/v1.0.1) - 2020-08-31
 
 ## Changed
