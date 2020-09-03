@@ -32,7 +32,7 @@ import (
 // This function takes a slice of items to support creating a
 // multi-document YAML string (separated with "---" between each
 // item).
-func KubernetesToYAML(data []runtime.Object) (string, error) {
+func KubernetesToYAML(data []runtime.Object, auxiliaries ...string) (string, error) {
 	var buffer bytes.Buffer
 
 	for _, item := range data {
@@ -51,6 +51,12 @@ func KubernetesToYAML(data []runtime.Object) (string, error) {
 		}
 
 		if _, err := buffer.WriteString("\n---\n"); err != nil {
+			return "", errors.Wrap(err, "failed to write into buffer")
+		}
+	}
+
+	for _, item := range auxiliaries {
+		if _, err := buffer.WriteString(item + "\n---\n"); err != nil {
 			return "", errors.Wrap(err, "failed to write into buffer")
 		}
 	}

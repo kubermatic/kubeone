@@ -35,7 +35,7 @@ func (*kubeadmv1beta1) Config(s *state.State, instance kubeoneapi.HostConfig) (s
 		return "", err
 	}
 
-	return templates.KubernetesToYAML(config)
+	return templates.KubernetesToYAML(config, kubeletConf)
 }
 
 func (*kubeadmv1beta1) ConfigWorker(s *state.State, instance kubeoneapi.HostConfig) (string, error) {
@@ -44,8 +44,9 @@ func (*kubeadmv1beta1) ConfigWorker(s *state.State, instance kubeoneapi.HostConf
 		return "", err
 	}
 
-	return templates.KubernetesToYAML(config)
+	return templates.KubernetesToYAML(config, kubeletConf)
 }
+
 func (k *kubeadmv1beta1) UpgradeLeaderCommand() string {
 	return fmt.Sprintf("kubeadm upgrade apply -y %s", k.version)
 }
