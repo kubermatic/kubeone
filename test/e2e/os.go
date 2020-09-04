@@ -63,11 +63,11 @@ func discoverAWSImage(osName OperatingSystem) (string, string, error) {
 	case OperatingSystemUbuntu:
 		return "ami-0119667e27598718e", "ubuntu", nil
 	case OperatingSystemCentOS:
-		return "ami-0e1ab783dc9489f34", "centos", nil
+		return "ami-05786aa5add3ca7c8", "centos", nil // CentOS 8
 	case OperatingSystemCoreOS:
 		return "ami-04de4c2943ebaa320", "core", nil
 	case OperatingSystemFlatcar:
-		return "ami-083e4a190c9b050b1", "core", nil
+		return "ami-0a57fa57da71dabf9", "core", nil // Flatcar Beta 2605.2.0 (required for 1.19)
 	}
 
 	return "", "", errors.New("operating system not matched")
