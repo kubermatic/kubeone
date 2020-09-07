@@ -55,3 +55,7 @@ issues:
 
   - path: pkg/apis/kubeone
     text: "type name will be used as kubeone.KubeOneCluster by other packages"
+
+  - path: test/e2e
+    text: "cyclomatic complexity 33 of func `TestClusterConformance` is high"
+

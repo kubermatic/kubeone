@@ -27,16 +27,21 @@ type OperatingSystem string
 
 const (
 	OperatingSystemUbuntu  OperatingSystem = "ubuntu"
-	OperatingSystemCentOS  OperatingSystem = "centos"
+	OperatingSystemCentOS7 OperatingSystem = "centos7"
+	OperatingSystemCentOS8 OperatingSystem = "centos"
 	OperatingSystemCoreOS  OperatingSystem = "coreos"
 	OperatingSystemFlatcar OperatingSystem = "flatcar"
 	OperatingSystemDefault OperatingSystem = ""
 )
 
+const (
+	AWSCentOS7AMI = "ami-04552009264cbe9f4"
+)
+
 func ValidateOperatingSystem(osName string) error {
 	switch OperatingSystem(osName) {
 	case OperatingSystemUbuntu, OperatingSystemCoreOS, OperatingSystemFlatcar,
-		OperatingSystemCentOS, OperatingSystemDefault:
+		OperatingSystemCentOS7, OperatingSystemCentOS8, OperatingSystemDefault:
 		return nil
 	}
 	return errors.New("failed to validate operating system")
@@ -45,30 +50,38 @@ func ValidateOperatingSystem(osName string) error {
 // ControlPlaneImageFlags returns Terraform flags for control plane image and SSH username
 func ControlPlaneImageFlags(provider string, osName OperatingSystem) ([]string, error) {
 	if provider == provisioner.AWS {
-		img, user, err := discoverAWSImage(osName)
+		user, err := sshUsername(osName)
 		if err != nil {
 			return nil, err
 		}
-		return []string{
-			"-var", fmt.Sprintf("ami=%s", img),
-			"-var", fmt.Sprintf("ssh_username=%s", user),
-			"-var", fmt.Sprintf("bastion_user=%s", user),
-		}, nil
+
+		switch {
+		case osName == OperatingSystemCentOS7:
+			return []string{
+				"-var", fmt.Sprintf("ami=%s", AWSCentOS7AMI),
+				"-var", fmt.Sprintf("ssh_username=%s", user),
+				"-var", fmt.Sprintf("bastion_user=%s", user),
+			}, nil
+		default:
+			return []string{
+				"-var", fmt.Sprintf("os=%s", osName),
+				"-var", fmt.Sprintf("ssh_username=%s", user),
+				"-var", fmt.Sprintf("bastion_user=%s", user),
+			}, nil
+		}
 	}
 	return nil, errors.New("custom operating system is not supported for selected provider")
 }
 
-func discoverAWSImage(osName OperatingSystem) (string, string, error) {
+func sshUsername(osName OperatingSystem) (string, error) {
 	switch osName {
 	case OperatingSystemUbuntu:
-		return "ami-0119667e27598718e", "ubuntu", nil
-	case OperatingSystemCentOS:
-		return "ami-05786aa5add3ca7c8", "centos", nil // CentOS 8
-	case OperatingSystemCoreOS:
-		return "ami-04de4c2943ebaa320", "core", nil
-	case OperatingSystemFlatcar:
-		return "ami-0a57fa57da71dabf9", "core", nil // Flatcar Beta 2605.2.0 (required for 1.19)
+		return "ubuntu", nil
+	case OperatingSystemCentOS7, OperatingSystemCentOS8:
+		return "centos", nil
+	case OperatingSystemCoreOS, OperatingSystemFlatcar:
+		return "core", nil
 	}
 
-	return "", "", errors.New("operating system not matched")
+	return "", errors.New("operating system not matched")
 }
