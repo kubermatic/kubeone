@@ -63,16 +63,20 @@ variable "worker_type" {
   default = "cx21"
 }
 
+variable "workers_replicas" {
+  default = 1
+}
+
 variable "lb_type" {
   default = "lb11"
 }
 
 variable "datacenter" {
-  default = "fsn1"
+  default = "nbg1"
 }
 
 variable "image" {
-  default = "ubuntu-18.04"
+  default = "ubuntu-20.04"
 }
 
 variable "ip_range" {
