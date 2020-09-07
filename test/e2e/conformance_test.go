@@ -180,7 +180,13 @@ func TestClusterConformance(t *testing.T) {
 			}
 
 			if osWorkers != OperatingSystemDefault {
-				args = append(args, "-var", fmt.Sprintf("worker_os=%s", osWorkers))
+				switch {
+				case osWorkers == OperatingSystemCentOS7:
+					args = append(args, "-var", fmt.Sprintf("worker_os=%s", "centos"))
+					args = append(args, "-var", fmt.Sprintf("ami=%s", AWSCentOS7AMI))
+				default:
+					args = append(args, "-var", fmt.Sprintf("worker_os=%s", osWorkers))
+				}
 			}
 
 			if tc.provider == provisioner.GCE {
@@ -231,7 +237,13 @@ func TestClusterConformance(t *testing.T) {
 				}
 
 				if osWorkers != OperatingSystemDefault {
-					args = append(args, "-var", fmt.Sprintf("worker_os=%s", osWorkers))
+					switch {
+					case osWorkers == OperatingSystemCentOS7:
+						args = append(args, "-var", fmt.Sprintf("worker_os=%s", "centos"))
+						args = append(args, "-var", fmt.Sprintf("ami=%s", AWSCentOS7AMI))
+					default:
+						args = append(args, "-var", fmt.Sprintf("worker_os=%s", osWorkers))
+					}
 				}
 
 				_, err = pr.Provision(args...)
