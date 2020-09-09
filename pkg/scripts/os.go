@@ -100,6 +100,10 @@ sudo apt-mark hold docker-ce docker-ce-cli kubelet kubeadm kubectl kubernetes-cn
 sudo systemctl daemon-reload
 sudo systemctl enable --now docker
 sudo systemctl enable --now kubelet
+
+{{- if or .FORCE .KUBELET }}
+sudo systemctl restart kubelet
+{{- end }}
 `
 
 	kubeadmCentOSTemplate = `
