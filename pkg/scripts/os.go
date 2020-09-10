@@ -281,7 +281,6 @@ sudo curl -L --remote-name-all \
 
 sudo mkdir -p /opt/bin
 cd /opt/bin
-sudo systemctl stop kubelet
 sudo mv /var/tmp/kube-binaries/kubeadm .
 sudo chmod +x kubeadm
 `
