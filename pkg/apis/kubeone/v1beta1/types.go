@@ -39,6 +39,8 @@ type KubeOneCluster struct {
 	CloudProvider CloudProviderSpec `json:"cloudProvider"`
 	// Versions defines which Kubernetes version will be installed.
 	Versions VersionConfig `json:"versions"`
+	// ContainerRuntime defines which container runtime will be installed
+	ContainerRuntime ContainerRuntimeConfig `json:"containerRuntime,omitempty"`
 	// ClusterNetwork configures the in-cluster networking.
 	ClusterNetwork ClusterNetworkConfig `json:"clusterNetwork,omitempty"`
 	// Proxy configures proxy used while installing Kubernetes and by the Docker daemon.
@@ -56,6 +58,18 @@ type KubeOneCluster struct {
 	// SystemPackages configure kubeone behaviour regarding OS packages.
 	SystemPackages *SystemPackages `json:"systemPackages,omitempty"`
 }
+
+// ContainerRuntimeConfig
+type ContainerRuntimeConfig struct {
+	Docker     *ContainerRuntimeDocker     `json:"docker,omitempty"`
+	Containerd *ContainerRuntimeContainerd `json:"containerd,omitempty"`
+}
+
+// ContainerRuntimeDocker defines docker container runtime
+type ContainerRuntimeDocker struct{}
+
+// ContainerRuntimeContainerd defines docker container runtime
+type ContainerRuntimeContainerd struct{}
 
 // OperatingSystemName defines the operating system used on instances
 type OperatingSystemName string

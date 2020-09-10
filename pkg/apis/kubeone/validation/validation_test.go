@@ -633,6 +633,47 @@ func TestValidateVersionConfig(t *testing.T) {
 	}
 }
 
+func TestValidateContainerRuntimeConfig(t *testing.T) {
+	tests := []struct {
+		name             string
+		containerRuntime kubeone.ContainerRuntimeConfig
+		expectedError    bool
+	}{
+		{
+			name: "only docker defined",
+			containerRuntime: kubeone.ContainerRuntimeConfig{
+				Docker: &kubeone.ContainerRuntimeDocker{},
+			},
+			expectedError: false,
+		},
+		{
+			name: "only containerd defined",
+			containerRuntime: kubeone.ContainerRuntimeConfig{
+				Containerd: &kubeone.ContainerRuntimeContainerd{},
+			},
+			expectedError: false,
+		},
+		{
+			name: "both defined",
+			containerRuntime: kubeone.ContainerRuntimeConfig{
+				Docker:     &kubeone.ContainerRuntimeDocker{},
+				Containerd: &kubeone.ContainerRuntimeContainerd{},
+			},
+			expectedError: true,
+		},
+	}
+
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			errs := ValidateContainerRuntimeConfig(tc.containerRuntime, nil)
+			if (len(errs) == 0) == tc.expectedError {
+				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
+			}
+		})
+	}
+}
+
 func TestValidateClusterNetworkConfig(t *testing.T) {
 	tests := []struct {
 		name                 string

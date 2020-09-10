@@ -18,6 +18,7 @@ package validation
 
 import (
 	"net"
+	"reflect"
 	"strings"
 
 	"github.com/Masterminds/semver"
@@ -38,6 +39,7 @@ func ValidateKubeOneCluster(c kubeone.KubeOneCluster) field.ErrorList {
 	allErrs = append(allErrs, ValidateAPIEndpoint(c.APIEndpoint, field.NewPath("apiEndpoint"))...)
 	allErrs = append(allErrs, ValidateCloudProviderSpec(c.CloudProvider, field.NewPath("provider"))...)
 	allErrs = append(allErrs, ValidateVersionConfig(c.Versions, field.NewPath("versions"))...)
+	allErrs = append(allErrs, ValidateContainerRuntimeConfig(c.ContainerRuntime, field.NewPath("containerRuntime"))...)
 	allErrs = append(allErrs, ValidateClusterNetworkConfig(c.ClusterNetwork, field.NewPath("clusterNetwork"))...)
 	allErrs = append(allErrs, ValidateStaticWorkersConfig(c.StaticWorkers, field.NewPath("staticWorkers"))...)
 
@@ -172,6 +174,27 @@ func ValidateVersionConfig(version kubeone.VersionConfig, fldPath *field.Path) f
 	}
 	if strings.HasPrefix(version.Kubernetes, "v") {
 		allErrs = append(allErrs, field.Invalid(fldPath.Child("kubernetes"), version, ".versions.kubernetes can't start with a leading 'v'"))
+	}
+
+	return allErrs
+}
+
+func ValidateContainerRuntimeConfig(cr kubeone.ContainerRuntimeConfig, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	allCRs := []interface{}{
+		cr.Docker,
+		cr.Containerd,
+	}
+
+	var found bool
+	for _, x := range allCRs {
+		if !reflect.ValueOf(x).IsNil() {
+			if found {
+				allErrs = append(allErrs, field.Invalid(fldPath, x, "only 1 container runtime can be activated"))
+			}
+			found = true
+		}
 	}
 
 	return allErrs
