@@ -557,6 +557,7 @@ func autoConvert_kubeone_KubeOneCluster_To_v1alpha1_KubeOneCluster(in *kubeone.K
 	if err := Convert_kubeone_VersionConfig_To_v1alpha1_VersionConfig(&in.Versions, &out.Versions, s); err != nil {
 		return err
 	}
+	// WARNING: in.ContainerRuntime requires manual conversion: does not exist in peer-type
 	if err := Convert_kubeone_ClusterNetworkConfig_To_v1alpha1_ClusterNetworkConfig(&in.ClusterNetwork, &out.ClusterNetwork, s); err != nil {
 		return err
 	}
