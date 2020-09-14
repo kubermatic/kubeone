@@ -146,12 +146,26 @@ spec:
         app: cluster-autoscaler
     spec:
       containers:
-      - image: ${AUTOSCALER_IMAGE}
+      - image: k8s.gcr.io/autoscaling/cluster-autoscaler:${AUTOSCALER_VERSION}
         name: cluster-autoscaler
         command:
         - /cluster-autoscaler
         args:
         - --cloud-provider=clusterapi
+        - --namespace=kube-system
+        - --logtostderr=true
+        - --stderrthreshold=info
+        - --v=4
+        env:
+        - name: CAPI_GROUP
+          value: "cluster.k8s.io"
+        resources:
+          limits:
+            cpu: 100m
+            memory: 300Mi
+          requests:
+            cpu: 100m
+            memory: 300Mi
       serviceAccountName: cluster-autoscaler
       terminationGracePeriodSeconds: 10
       tolerations:
