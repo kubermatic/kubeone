@@ -72,12 +72,12 @@ rules:
     verbs: ["delete", "get", "update", "watch"]
 ---
 kind: ClusterRole
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: cluster-autoscaler-management
 rules:
   - apiGroups:
-    - cluster.x-k8s.io
+    - cluster.k8s.io
     resources:
     - machinedeployments
     - machines
@@ -116,7 +116,7 @@ subjects:
     namespace: kube-system
 ---
 kind: ClusterRoleBinding
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: cluster-autoscaler-management
 roleRef:
