@@ -74,7 +74,7 @@ of replicas per MachineDeployment:
 * `cluster.k8s.io/cluster-api-autoscaler-node-group-max-size` - the maximum
   number of replicas
 
-**Note:** You don't need to apply those labels to all MachineDeployment
+**Note:** You don't need to apply those annotations to all MachineDeployment
 objects. They should be applied only on MachineDeployments that should be
 considered by Cluster Autoscaler.
 
