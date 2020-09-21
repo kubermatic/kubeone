@@ -14,13 +14,13 @@
 
 # building image
 
-FROM golang:1.15.0 as builder
+FROM golang:1.15.2 as builder
 
 RUN apt-get update && apt-get install -y \
     unzip \
     upx-ucl
 
-ENV TERRAFORM_VERSION "0.12.16"
+ENV TERRAFORM_VERSION "0.12.29"
 RUN curl -fL https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip | funzip >/usr/local/bin/terraform
 RUN chmod +x /usr/local/bin/terraform
 
@@ -37,7 +37,7 @@ RUN /opt/install-kube-tests-binaries.sh
 
 # resulting image
 
-FROM golang:1.15.0
+FROM golang:1.15.2
 
 ARG version
 
