@@ -493,6 +493,8 @@ func Convert_kubeone_APIEndpoint_To_v1beta1_APIEndpoint(in *kubeone.APIEndpoint,
 }
 
 func autoConvert_v1beta1_AWSSpec_To_kubeone_AWSSpec(in *AWSSpec, out *kubeone.AWSSpec, s conversion.Scope) error {
+	out.CSIMigration = in.CSIMigration
+	out.CSIMigrationComplete = in.CSIMigrationComplete
 	return nil
 }
 
@@ -502,6 +504,8 @@ func Convert_v1beta1_AWSSpec_To_kubeone_AWSSpec(in *AWSSpec, out *kubeone.AWSSpe
 }
 
 func autoConvert_kubeone_AWSSpec_To_v1beta1_AWSSpec(in *kubeone.AWSSpec, out *AWSSpec, s conversion.Scope) error {
+	out.CSIMigration = in.CSIMigration
+	out.CSIMigrationComplete = in.CSIMigrationComplete
 	return nil
 }
 
@@ -533,6 +537,10 @@ func Convert_kubeone_Addons_To_v1beta1_Addons(in *kubeone.Addons, out *Addons, s
 }
 
 func autoConvert_v1beta1_AzureSpec_To_kubeone_AzureSpec(in *AzureSpec, out *kubeone.AzureSpec, s conversion.Scope) error {
+	out.CSIMigrationFile = in.CSIMigrationFile
+	out.CSIMigrationDisk = in.CSIMigrationDisk
+	out.CSIMigrationFileComplete = in.CSIMigrationFileComplete
+	out.CSIMigrationDiskComplete = in.CSIMigrationDiskComplete
 	return nil
 }
 
@@ -542,6 +550,10 @@ func Convert_v1beta1_AzureSpec_To_kubeone_AzureSpec(in *AzureSpec, out *kubeone.
 }
 
 func autoConvert_kubeone_AzureSpec_To_v1beta1_AzureSpec(in *kubeone.AzureSpec, out *AzureSpec, s conversion.Scope) error {
+	out.CSIMigrationFile = in.CSIMigrationFile
+	out.CSIMigrationDisk = in.CSIMigrationDisk
+	out.CSIMigrationFileComplete = in.CSIMigrationFileComplete
+	out.CSIMigrationDiskComplete = in.CSIMigrationDiskComplete
 	return nil
 }
 
@@ -877,6 +889,8 @@ func Convert_kubeone_Features_To_v1beta1_Features(in *kubeone.Features, out *Fea
 }
 
 func autoConvert_v1beta1_GCESpec_To_kubeone_GCESpec(in *GCESpec, out *kubeone.GCESpec, s conversion.Scope) error {
+	out.CSIMigration = in.CSIMigration
+	out.CSIMigrationComplete = in.CSIMigrationComplete
 	return nil
 }
 
@@ -886,6 +900,8 @@ func Convert_v1beta1_GCESpec_To_kubeone_GCESpec(in *GCESpec, out *kubeone.GCESpe
 }
 
 func autoConvert_kubeone_GCESpec_To_v1beta1_GCESpec(in *kubeone.GCESpec, out *GCESpec, s conversion.Scope) error {
+	out.CSIMigration = in.CSIMigration
+	out.CSIMigrationComplete = in.CSIMigrationComplete
 	return nil
 }
 
@@ -1163,6 +1179,8 @@ func Convert_kubeone_OpenIDConnectConfig_To_v1beta1_OpenIDConnectConfig(in *kube
 }
 
 func autoConvert_v1beta1_OpenstackSpec_To_kubeone_OpenstackSpec(in *OpenstackSpec, out *kubeone.OpenstackSpec, s conversion.Scope) error {
+	out.CSIMigration = in.CSIMigration
+	out.CSIMigrationComplete = in.CSIMigrationComplete
 	return nil
 }
 
@@ -1172,6 +1190,8 @@ func Convert_v1beta1_OpenstackSpec_To_kubeone_OpenstackSpec(in *OpenstackSpec, o
 }
 
 func autoConvert_kubeone_OpenstackSpec_To_v1beta1_OpenstackSpec(in *kubeone.OpenstackSpec, out *OpenstackSpec, s conversion.Scope) error {
+	out.CSIMigration = in.CSIMigration
+	out.CSIMigrationComplete = in.CSIMigrationComplete
 	return nil
 }
 
@@ -1485,6 +1505,8 @@ func Convert_kubeone_VersionConfig_To_v1beta1_VersionConfig(in *kubeone.VersionC
 }
 
 func autoConvert_v1beta1_VsphereSpec_To_kubeone_VsphereSpec(in *VsphereSpec, out *kubeone.VsphereSpec, s conversion.Scope) error {
+	out.CSIMigration = in.CSIMigration
+	out.CSIMigrationComplete = in.CSIMigrationComplete
 	return nil
 }
 
@@ -1494,6 +1516,8 @@ func Convert_v1beta1_VsphereSpec_To_kubeone_VsphereSpec(in *VsphereSpec, out *ku
 }
 
 func autoConvert_kubeone_VsphereSpec_To_v1beta1_VsphereSpec(in *kubeone.VsphereSpec, out *VsphereSpec, s conversion.Scope) error {
+	out.CSIMigration = in.CSIMigration
+	out.CSIMigrationComplete = in.CSIMigrationComplete
 	return nil
 }
 

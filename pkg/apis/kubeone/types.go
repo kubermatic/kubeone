@@ -175,16 +175,27 @@ type CloudProviderSpec struct {
 }
 
 // AWSSpec defines the AWS cloud provider
-type AWSSpec struct{}
+type AWSSpec struct {
+	CSIMigration         bool `json:"csiMigration,omitempty"`
+	CSIMigrationComplete bool `json:"csiMigrationComplete,omitempty"`
+}
 
 // AzureSpec defines the Azure cloud provider
-type AzureSpec struct{}
+type AzureSpec struct {
+	CSIMigrationFile         bool `json:"csiMigrationFile,omitempty"`
+	CSIMigrationDisk         bool `json:"csiMigrationDisk,omitempty"`
+	CSIMigrationFileComplete bool `json:"csiMigrationFileComplete,omitempty"`
+	CSIMigrationDiskComplete bool `json:"csiMigrationDiskComplete,omitempty"`
+}
 
 // DigitalOceanSpec defines the DigitalOcean cloud provider
 type DigitalOceanSpec struct{}
 
 // GCESpec defines the GCE cloud provider
-type GCESpec struct{}
+type GCESpec struct {
+	CSIMigration         bool `json:"csiMigration,omitempty"`
+	CSIMigrationComplete bool `json:"csiMigrationComplete,omitempty"`
+}
 
 // HetznerSpec defines the Hetzner cloud provider
 type HetznerSpec struct {
@@ -193,13 +204,19 @@ type HetznerSpec struct {
 }
 
 // OpenstackSpec defines the Openstack provider
-type OpenstackSpec struct{}
+type OpenstackSpec struct {
+	CSIMigration         bool `json:"csiMigration,omitempty"`
+	CSIMigrationComplete bool `json:"csiMigrationComplete,omitempty"`
+}
 
 // PacketSpec defines the Packet cloud provider
 type PacketSpec struct{}
 
 // VsphereSpec defines the vSphere provider
-type VsphereSpec struct{}
+type VsphereSpec struct {
+	CSIMigration         bool `json:"csiMigration,omitempty"`
+	CSIMigrationComplete bool `json:"csiMigrationComplete,omitempty"`
+}
 
 // NoneSpec defines a none provider
 type NoneSpec struct{}

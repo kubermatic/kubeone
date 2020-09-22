@@ -104,3 +104,59 @@ func (p CloudProviderSpec) CloudProviderInTree() bool {
 
 	return false
 }
+
+func (p CloudProviderSpec) CSIMigrationFeatureGates() map[string]bool {
+	featureGates := map[string]bool{}
+
+	switch {
+	case p.AWS != nil:
+		if p.AWS.CSIMigration {
+			featureGates["CSIMigration"] = true
+			featureGates["CSIMigrationAWS"] = true
+		}
+		if p.AWS.CSIMigrationComplete {
+			featureGates["CSIMigrationAWSComplete"] = true
+		}
+	case p.Azure != nil:
+		if p.Azure.CSIMigrationDisk {
+			featureGates["CSIMigration"] = true
+			featureGates["CSIMigrationAzureDisk"] = true
+		}
+		if p.Azure.CSIMigrationDiskComplete {
+			featureGates["CSIMigrationAzureDiskComplete"] = true
+		}
+		if p.Azure.CSIMigrationFile {
+			featureGates["CSIMigration"] = true
+			featureGates["CSIMigrationAzureFile"] = true
+		}
+		if p.Azure.CSIMigrationFileComplete {
+			featureGates["CSIMigrationAzureFileComplete"] = true
+		}
+	case p.GCE != nil:
+		if p.GCE.CSIMigration {
+			featureGates["CSIMigration"] = true
+			featureGates["CSIMigrationGCE"] = true
+		}
+		if p.GCE.CSIMigrationComplete {
+			featureGates["CSIMigrationGCEComplete"] = true
+		}
+	case p.Openstack != nil:
+		if p.Openstack.CSIMigration {
+			featureGates["CSIMigration"] = true
+			featureGates["CSIMigrationOpenStack"] = true
+		}
+		if p.Openstack.CSIMigrationComplete {
+			featureGates["CSIMigrationOpenStackComplete"] = true
+		}
+	case p.Vsphere != nil:
+		if p.Vsphere.CSIMigration {
+			featureGates["CSIMigration"] = true
+			featureGates["CSIMigrationvSphere"] = true
+		}
+		if p.Vsphere.CSIMigrationComplete {
+			featureGates["CSIMigrationvSphereComplete"] = true
+		}
+	}
+
+	return featureGates
+}
