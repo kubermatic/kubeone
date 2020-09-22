@@ -92,8 +92,12 @@ func (c *Config) Apply(cluster *kubeonev1beta1.KubeOneCluster) error {
 	cp := c.KubeOneHosts.Value.ControlPlane
 
 	if cp.CloudProvider != nil {
-		if err := kubeonev1beta1.SetCloudProvider(&cluster.CloudProvider, *cp.CloudProvider); err != nil {
+		cloudProvider := &kubeonev1beta1.CloudProviderSpec{}
+		if err := kubeonev1beta1.SetCloudProvider(cloudProvider, *cp.CloudProvider); err != nil {
 			return errors.Wrap(err, "failed to set cloud provider")
+		}
+		if err := mergo.Merge(&cluster.CloudProvider, cloudProvider); err != nil {
+			return errors.Wrap(err, "failed to merge cloud provider structs")
 		}
 	}
 
