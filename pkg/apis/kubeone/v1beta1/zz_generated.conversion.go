@@ -596,6 +596,8 @@ func Convert_kubeone_CanalSpec_To_v1beta1_CanalSpec(in *kubeone.CanalSpec, out *
 
 func autoConvert_v1beta1_CloudProviderSpec_To_kubeone_CloudProviderSpec(in *CloudProviderSpec, out *kubeone.CloudProviderSpec, s conversion.Scope) error {
 	out.External = in.External
+	out.CSIMigration = in.CSIMigration
+	out.CSIMigrationComplete = in.CSIMigrationComplete
 	out.CloudConfig = in.CloudConfig
 	out.AWS = (*kubeone.AWSSpec)(unsafe.Pointer(in.AWS))
 	out.Azure = (*kubeone.AzureSpec)(unsafe.Pointer(in.Azure))
@@ -616,6 +618,8 @@ func Convert_v1beta1_CloudProviderSpec_To_kubeone_CloudProviderSpec(in *CloudPro
 
 func autoConvert_kubeone_CloudProviderSpec_To_v1beta1_CloudProviderSpec(in *kubeone.CloudProviderSpec, out *CloudProviderSpec, s conversion.Scope) error {
 	out.External = in.External
+	out.CSIMigration = in.CSIMigration
+	out.CSIMigrationComplete = in.CSIMigrationComplete
 	out.CloudConfig = in.CloudConfig
 	out.AWS = (*AWSSpec)(unsafe.Pointer(in.AWS))
 	out.Azure = (*AzureSpec)(unsafe.Pointer(in.Azure))
