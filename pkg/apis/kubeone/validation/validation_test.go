@@ -512,6 +512,225 @@ func TestValidateCloudProviderSpec(t *testing.T) {
 			providerConfig: kubeone.CloudProviderSpec{},
 			expectedError:  true,
 		},
+		{
+			name: "AWS with CSIMigration enabled",
+			providerConfig: kubeone.CloudProviderSpec{
+				AWS: &kubeone.AWSSpec{
+					CSIMigration: true,
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "AWS with CSIMigration and CSIMigrationComplete enabled",
+			providerConfig: kubeone.CloudProviderSpec{
+				AWS: &kubeone.AWSSpec{
+					CSIMigration:         true,
+					CSIMigrationComplete: true,
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "Azure with CSIMigrationFile enabled",
+			providerConfig: kubeone.CloudProviderSpec{
+				Azure: &kubeone.AzureSpec{
+					CSIMigrationFile: true,
+				},
+				CloudConfig: "cloud-config",
+			},
+			expectedError: false,
+		},
+		{
+			name: "Azure with CSIMigrationFile and CSIMigrationFileComplete enabled",
+			providerConfig: kubeone.CloudProviderSpec{
+				Azure: &kubeone.AzureSpec{
+					CSIMigrationFile:         true,
+					CSIMigrationFileComplete: true,
+				},
+				CloudConfig: "cloud-config",
+			},
+			expectedError: false,
+		},
+		{
+			name: "Azure with CSIMigrationFile and CSIMigrationDisk enabled",
+			providerConfig: kubeone.CloudProviderSpec{
+				Azure: &kubeone.AzureSpec{
+					CSIMigrationFile: true,
+					CSIMigrationDisk: true,
+				},
+				CloudConfig: "cloud-config",
+			},
+			expectedError: false,
+		},
+		{
+			name: "Azure with CSIMigrationFile, CSIMigrationFileComplete, and CSIMigrationDisk enabled",
+			providerConfig: kubeone.CloudProviderSpec{
+				Azure: &kubeone.AzureSpec{
+					CSIMigrationFile:         true,
+					CSIMigrationFileComplete: true,
+					CSIMigrationDisk:         true,
+				},
+				CloudConfig: "cloud-config",
+			},
+			expectedError: false,
+		},
+		{
+			name: "Azure with all CSIMigration flags enabled",
+			providerConfig: kubeone.CloudProviderSpec{
+				Azure: &kubeone.AzureSpec{
+					CSIMigrationFile:         true,
+					CSIMigrationFileComplete: true,
+					CSIMigrationDisk:         true,
+					CSIMigrationDiskComplete: true,
+				},
+				CloudConfig: "cloud-config",
+			},
+			expectedError: false,
+		},
+		{
+			name: "GCE with CSIMigration enabled",
+			providerConfig: kubeone.CloudProviderSpec{
+				GCE: &kubeone.GCESpec{
+					CSIMigration: true,
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "GCE with CSIMigration and CSIMigrationComplete enabled",
+			providerConfig: kubeone.CloudProviderSpec{
+				GCE: &kubeone.GCESpec{
+					CSIMigration:         true,
+					CSIMigrationComplete: true,
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "OpenStack with CSIMigration enabled",
+			providerConfig: kubeone.CloudProviderSpec{
+				Openstack: &kubeone.OpenstackSpec{
+					CSIMigration: true,
+				},
+				CloudConfig: "cloud-config",
+			},
+			expectedError: false,
+		},
+		{
+			name: "OpenStack with CSIMigration and CSIMigrationComplete enabled",
+			providerConfig: kubeone.CloudProviderSpec{
+				Openstack: &kubeone.OpenstackSpec{
+					CSIMigration:         true,
+					CSIMigrationComplete: true,
+				},
+				CloudConfig: "cloud-config",
+			},
+			expectedError: false,
+		},
+		{
+			name: "vSphere with CSIMigration enabled",
+			providerConfig: kubeone.CloudProviderSpec{
+				Vsphere: &kubeone.VsphereSpec{
+					CSIMigration: true,
+				},
+				CloudConfig: "cloud-config",
+			},
+			expectedError: false,
+		},
+		{
+			name: "vSphere with CSIMigration and CSIMigrationComplete enabled",
+			providerConfig: kubeone.CloudProviderSpec{
+				Vsphere: &kubeone.VsphereSpec{
+					CSIMigration:         true,
+					CSIMigrationComplete: true,
+				},
+				CloudConfig: "cloud-config",
+			},
+			expectedError: false,
+		},
+		{
+			name: "AWS with CSIMigration disabled, but with CSIMigrationComplete enabled",
+			providerConfig: kubeone.CloudProviderSpec{
+				AWS: &kubeone.AWSSpec{
+					CSIMigration:         false,
+					CSIMigrationComplete: true,
+				},
+			},
+			expectedError: true,
+		},
+		{
+			name: "Azure with CSIMigrationFile disabled, but with CSIMigrationFileComplete enabled",
+			providerConfig: kubeone.CloudProviderSpec{
+				Azure: &kubeone.AzureSpec{
+					CSIMigrationFile:         false,
+					CSIMigrationFileComplete: true,
+				},
+			},
+			expectedError: true,
+		},
+		{
+			name: "Azure with CSIMigrationDisk disabled, but with CSIMigrationDiskComplete enabled",
+			providerConfig: kubeone.CloudProviderSpec{
+				Azure: &kubeone.AzureSpec{
+					CSIMigrationDisk:         false,
+					CSIMigrationDiskComplete: true,
+				},
+			},
+			expectedError: true,
+		},
+		{
+			name: "Azure with CSIMigrationFile enabled, but with CSIMigrationDiskComplete enabled",
+			providerConfig: kubeone.CloudProviderSpec{
+				Azure: &kubeone.AzureSpec{
+					CSIMigrationFile:         true,
+					CSIMigrationDiskComplete: true,
+				},
+			},
+			expectedError: true,
+		},
+		{
+			name: "Azure with CSIMigrationDisk enabled, but with CSIMigrationFileComplete enabled",
+			providerConfig: kubeone.CloudProviderSpec{
+				Azure: &kubeone.AzureSpec{
+					CSIMigrationDisk:         true,
+					CSIMigrationFileComplete: true,
+				},
+			},
+			expectedError: true,
+		},
+		{
+			name: "GCE with CSIMigration disabled, but with CSIMigrationComplete enabled",
+			providerConfig: kubeone.CloudProviderSpec{
+				GCE: &kubeone.GCESpec{
+					CSIMigration:         false,
+					CSIMigrationComplete: true,
+				},
+			},
+			expectedError: true,
+		},
+		{
+			name: "OpenStack with CSIMigration disabled, but with CSIMigrationComplete enabled",
+			providerConfig: kubeone.CloudProviderSpec{
+				Openstack: &kubeone.OpenstackSpec{
+					CSIMigration:         false,
+					CSIMigrationComplete: true,
+				},
+				CloudConfig: "cloud-config",
+			},
+			expectedError: true,
+		},
+		{
+			name: "vSphere with CSIMigration disabled, but with CSIMigrationComplete enabled",
+			providerConfig: kubeone.CloudProviderSpec{
+				Vsphere: &kubeone.VsphereSpec{
+					CSIMigration:         false,
+					CSIMigrationComplete: true,
+				},
+				CloudConfig: "cloud-config",
+			},
+			expectedError: true,
+		},
 	}
 	for _, tc := range tests {
 		tc := tc

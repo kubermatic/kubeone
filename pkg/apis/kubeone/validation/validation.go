@@ -94,6 +94,9 @@ func ValidateCloudProviderSpec(p kubeone.CloudProviderSpec, fldPath *field.Path)
 	providerFound := false
 	if p.AWS != nil {
 		providerFound = true
+		if p.AWS.CSIMigrationComplete && !p.AWS.CSIMigration {
+			allErrs = append(allErrs, field.Forbidden(fldPath.Child("aws").Child("csiMigrationComplete"), "csiMigrationComplete requires csiMigration to be enabled"))
+		}
 	}
 	if p.Azure != nil {
 		if providerFound {
@@ -101,6 +104,12 @@ func ValidateCloudProviderSpec(p kubeone.CloudProviderSpec, fldPath *field.Path)
 		}
 		if len(p.CloudConfig) == 0 {
 			allErrs = append(allErrs, field.Required(fldPath.Child("cloudConfig"), ".cloudProvider.cloudConfig is required for azure provider"))
+		}
+		if p.Azure.CSIMigrationFileComplete && !p.Azure.CSIMigrationFile {
+			allErrs = append(allErrs, field.Forbidden(fldPath.Child("azure").Child("csiMigrationFileComplete"), "csiMigrationFileComplete requires csiMigrationFile to be enabled"))
+		}
+		if p.Azure.CSIMigrationDiskComplete && !p.Azure.CSIMigrationDisk {
+			allErrs = append(allErrs, field.Forbidden(fldPath.Child("azure").Child("csiMigrationDiskComplete"), "csiMigrationDiskComplete requires csiMigrationDisk to be enabled"))
 		}
 		providerFound = true
 	}
@@ -113,6 +122,9 @@ func ValidateCloudProviderSpec(p kubeone.CloudProviderSpec, fldPath *field.Path)
 	if p.GCE != nil {
 		if providerFound {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("gce"), "only one provider can be used at the same time"))
+		}
+		if p.GCE.CSIMigrationComplete && !p.GCE.CSIMigration {
+			allErrs = append(allErrs, field.Forbidden(fldPath.Child("gce").Child("csiMigrationComplete"), "csiMigrationComplete requires csiMigration to be enabled"))
 		}
 		providerFound = true
 	}
@@ -129,6 +141,9 @@ func ValidateCloudProviderSpec(p kubeone.CloudProviderSpec, fldPath *field.Path)
 		if len(p.CloudConfig) == 0 {
 			allErrs = append(allErrs, field.Required(fldPath.Child("cloudConfig"), ".cloudProvider.cloudConfig is required for openstack provider"))
 		}
+		if p.Openstack.CSIMigrationComplete && !p.Openstack.CSIMigration {
+			allErrs = append(allErrs, field.Forbidden(fldPath.Child("openstack").Child("csiMigrationComplete"), "csiMigrationComplete requires csiMigration to be enabled"))
+		}
 		providerFound = true
 	}
 	if p.Packet != nil {
@@ -143,6 +158,9 @@ func ValidateCloudProviderSpec(p kubeone.CloudProviderSpec, fldPath *field.Path)
 		}
 		if len(p.CloudConfig) == 0 {
 			allErrs = append(allErrs, field.Required(fldPath.Child("cloudConfig"), ".cloudProvider.cloudConfig is required for vSphere provider"))
+		}
+		if p.Vsphere.CSIMigrationComplete && !p.Vsphere.CSIMigration {
+			allErrs = append(allErrs, field.Forbidden(fldPath.Child("vsphere").Child("csiMigrationComplete"), "csiMigrationComplete requires csiMigration to be enabled"))
 		}
 		providerFound = true
 	}

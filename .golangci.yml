@@ -59,3 +59,6 @@ issues:
   - path: test/e2e
     text: "cyclomatic complexity 33 of func `TestClusterConformance` is high"
 
+  - path: pkg/apis/kubeone/validation
+    text: "cyclomatic complexity 34 of func `ValidateCloudProviderSpec` is high"
+
