@@ -346,6 +346,8 @@ func autoConvert_v1alpha1_CloudProviderSpec_To_kubeone_CloudProviderSpec(in *Clo
 
 func autoConvert_kubeone_CloudProviderSpec_To_v1alpha1_CloudProviderSpec(in *kubeone.CloudProviderSpec, out *CloudProviderSpec, s conversion.Scope) error {
 	out.External = in.External
+	// WARNING: in.CSIMigration requires manual conversion: does not exist in peer-type
+	// WARNING: in.CSIMigrationComplete requires manual conversion: does not exist in peer-type
 	out.CloudConfig = in.CloudConfig
 	// WARNING: in.AWS requires manual conversion: does not exist in peer-type
 	// WARNING: in.Azure requires manual conversion: does not exist in peer-type
