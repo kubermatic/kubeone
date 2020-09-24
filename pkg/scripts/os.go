@@ -142,6 +142,10 @@ EOF
 sudo yum install -y yum-utils
 sudo yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
 sudo yum-config-manager --save --setopt=docker-ce-stable.module_hotfixes=true >/dev/null
+# CentOS has two different Docker repos for CentOS7 and CentOS8. The CentOS8 repo currently
+# contains only Docker 19.03.13, which is not validated for all Kubernetes version.
+# Therefore, we use CentOS7 repo which has all Docker versions.
+sudo sed -i 's/\$releasever/7/g' /etc/yum.repos.d/docker-ce.repo
 {{ end }}
 
 sudo yum install -y \
