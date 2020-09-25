@@ -21,7 +21,7 @@ import (
 )
 
 const (
-	defaultKubernetesCNIVersion = "0.8.6"
+	defaultKubernetesCNIVersion = "0.8.7"
 )
 
 const (
