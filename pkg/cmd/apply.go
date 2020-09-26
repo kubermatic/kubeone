@@ -89,7 +89,8 @@ func applyCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		Use:   "apply",
 		Short: "Reconcile the cluster",
 		Long: `
-Reconcile (Install/Upgrade/Repair/Restore) Kubernetes cluster on pre-existing machines
+Reconcile (Install/Upgrade/Repair/Restore) Kubernetes cluster on pre-existing machines. MachineDeployments get 
+initialized but won't get modified by default, see '--upgrade-machine-deployments'.
 
 This command takes KubeOne manifest which contains information about hosts and how the cluster should be provisioned.
 It's possible to source information about hosts from Terraform output, using the '--tfjson' flag.
