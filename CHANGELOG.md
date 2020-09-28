@@ -1,5 +1,27 @@
 # Changelog
 
+# [v1.0.3](https://github.com/kubermatic/kubeone/releases/tag/v1.0.3) - 2020-09-28
+
+## Attention Needed
+
+* This release includes a fix for Kubernetes 1.18.9 clusters failing to provision due to the unmet kubernetes-cni dependency.
+* This release includes a fix for CentOS and RHEL clusters failing to provision due to missing Docker versions from the CentOS/RHEL 8 Docker repo.
+
+## Added
+
+* Add the `image` field for the Hetzner worker nodes ([#1105](https://github.com/kubermatic/kubeone/pull/1105))
+
+## Changed
+
+### General
+
+* Use CentOS 7 Docker repo for both CentOS/RHEL 7 and 8 clusters ([#1111](https://github.com/kubermatic/kubeone/pull/1111))
+
+### Updated
+
+* Update machine-controller to v1.18.0 ([#1114](https://github.com/kubermatic/kubeone/pull/1114))
+* Update kubernetes-cni to v0.8.7 ([#1100](https://github.com/kubermatic/kubeone/pull/1100))
+
 # [v1.0.2](https://github.com/kubermatic/kubeone/releases/tag/v1.0.2) - 2020-09-02
 
 ## Known Issues
