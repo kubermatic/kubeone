@@ -362,6 +362,7 @@ func (c *Config) updateHetznerWorkerset(existingWorkerSet *kubeonev1beta1.Dynami
 		{key: "serverType", value: hetznerConfig.ServerType},
 		{key: "datacenter", value: hetznerConfig.Datacenter},
 		{key: "location", value: hetznerConfig.Location},
+		{key: "image", value: hetznerConfig.Image},
 		{key: "networks", value: hetznerConfig.Networks},
 		{key: "labels", value: hetznerConfig.Labels},
 	}

@@ -60,6 +60,7 @@ output "kubeone_workers" {
           # https://github.com/kubermatic/machine-controller/blob/master/examples/hetzner-machinedeployment.yaml
           serverType = var.worker_type
           location   = var.datacenter
+          image      = var.image
           networks = [
             hcloud_network.net.id
           ]
