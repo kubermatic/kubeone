@@ -30,6 +30,7 @@ output "kubeone_hosts" {
       cluster_name         = var.cluster_name
       cloud_provider       = "vsphere"
       private_address      = []
+      hostnames            = formatlist("${var.cluster_name}-cp-%d", [0, 1, 2])
       public_address       = vsphere_virtual_machine.control_plane.*.default_ip_address
       ssh_agent_socket     = var.ssh_agent_socket
       ssh_port             = var.ssh_port
