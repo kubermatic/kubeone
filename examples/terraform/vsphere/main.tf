@@ -27,6 +27,8 @@ locals {
   rendered_lb_config = templatefile("./etc_gobetween.tpl", {
     lb_targets = vsphere_virtual_machine.control_plane.*.default_ip_address,
   })
+
+  hostnames = formatlist("${var.cluster_name}-cp-%d", [1, 2, 3])
 }
 
 data "vsphere_datacenter" "dc" {
@@ -92,7 +94,7 @@ resource "vsphere_virtual_machine" "control_plane" {
 
   vapp {
     properties = {
-      hostname    = "${var.cluster_name}-cp-${count.index + 1}"
+      hostname    = local.hostnames[count.index]
       public-keys = file(var.ssh_public_key_file)
     }
   }
