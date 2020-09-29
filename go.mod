@@ -13,7 +13,7 @@ require (
 	github.com/huandu/xstrings v1.3.0 // indirect
 	github.com/imdario/mergo v0.3.9
 	github.com/koron-go/prefixw v0.0.0-20181013140428-271b207a7572
-	github.com/kubermatic/machine-controller v1.11.1
+	github.com/kubermatic/machine-controller v1.18.0
 	github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de
 	github.com/mitchellh/copystructure v1.0.0 // indirect
 	github.com/pkg/errors v0.9.1
@@ -30,10 +30,12 @@ require (
 	k8s.io/api v0.18.6
 	k8s.io/apiextensions-apiserver v0.18.6
 	k8s.io/apimachinery v0.18.6
-	k8s.io/client-go v0.18.6
+	k8s.io/client-go v12.0.0+incompatible
 	k8s.io/cluster-bootstrap v0.18.6
 	k8s.io/code-generator v0.18.6
 	k8s.io/kube-aggregator v0.18.6
 	sigs.k8s.io/controller-runtime v0.6.2
 	sigs.k8s.io/yaml v1.2.0
 )
+
+replace k8s.io/client-go => k8s.io/client-go v0.18.6
