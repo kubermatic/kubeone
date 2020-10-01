@@ -60,9 +60,9 @@ func Run(s *state.State, nodes corev1.NodeList) error {
 	}
 
 	// Verify that upgrade is not in progress
-	s.Logger.Infoln("Verifying that there is no upgrade in the progress…")
+	s.Logger.Infoln("Verifying that there is no upgrade in progress…")
 	if err := verifyNoUpgradeLabels(nodes, s.Logger, s.Verbose); err != nil {
-		s.Logger.Errorf("Unable to verify is there upgrade in the progress.")
+		s.Logger.Errorf("Unable to verify that there is no upgrade in progress.")
 		errs = append(errs, err...)
 	}
 
