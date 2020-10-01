@@ -165,7 +165,7 @@ func dnscacheService() *corev1.Service {
 }
 
 func dnscacheConfigMap(pillarDNSDomain string) *corev1.ConfigMap {
-	corefile := strings.Replace(dnscacheCorefileTemplate, "__PILLAR__DNS__DOMAIN__", pillarDNSDomain, -1)
+	corefile := strings.ReplaceAll(dnscacheCorefileTemplate, "__PILLAR__DNS__DOMAIN__", pillarDNSDomain)
 
 	return &corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
