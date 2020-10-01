@@ -14,7 +14,7 @@
 
 export GOPATH?=$(shell go env GOPATH)
 export CGO_ENABLED=0
-export GOPROXY=https://proxy.golang.org
+export GOPROXY?=https://proxy.golang.org
 export GO111MODULE=on
 export GOFLAGS?=-mod=readonly -trimpath
 
