@@ -37,12 +37,12 @@ func destroyWorkers(s *state.State) error {
 	}
 
 	var lastErr error
-	s.Logger.Infoln("Destroying worker nodes…")
+	s.Logger.Infoln("Destroying worker nodes...")
 
 	_ = wait.ExponentialBackoff(defaultRetryBackoff(3), func() (bool, error) {
 		lastErr = kubeconfig.BuildKubernetesClientset(s)
 		if lastErr != nil {
-			s.Logger.Warn("Unable to connect to the control plane API. Retrying…")
+			s.Logger.Warn("Unable to connect to the control plane API. Retrying...")
 			return false, nil
 		}
 		return true, nil
@@ -68,7 +68,7 @@ func destroyWorkers(s *state.State) error {
 	_ = wait.ExponentialBackoff(defaultRetryBackoff(3), func() (bool, error) {
 		lastErr = machinecontroller.DestroyWorkers(s)
 		if lastErr != nil {
-			s.Logger.Warn("Unable to destroy worker nodes. Retrying…")
+			s.Logger.Warn("Unable to destroy worker nodes. Retrying...")
 			return false, nil
 		}
 		return true, nil
@@ -80,7 +80,7 @@ func destroyWorkers(s *state.State) error {
 	_ = wait.ExponentialBackoff(defaultRetryBackoff(3), func() (bool, error) {
 		lastErr = machinecontroller.WaitDestroy(s)
 		if lastErr != nil {
-			s.Logger.Warn("Waiting for all machines to be deleted…")
+			s.Logger.Warn("Waiting for all machines to be deleted...")
 			return false, nil
 		}
 		return true, nil
@@ -93,13 +93,13 @@ func destroyWorkers(s *state.State) error {
 }
 
 func resetAllNodes(s *state.State) error {
-	s.Logger.Infoln("Resettings all the nodes…")
+	s.Logger.Infoln("Resettings all the nodes...")
 
 	return s.RunTaskOnAllNodes(resetNode, state.RunSequentially)
 }
 
 func resetNode(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
-	s.Logger.Infoln("Resetting node…")
+	s.Logger.Infoln("Resetting node...")
 
 	cmd, err := scripts.KubeadmReset(s.KubeadmVerboseFlag(), s.WorkDir)
 	if err != nil {
@@ -115,7 +115,7 @@ func removeBinariesAllNodes(s *state.State) error {
 		return nil
 	}
 
-	s.Logger.Infoln("Removing binaries from nodes…")
+	s.Logger.Infoln("Removing binaries from nodes...")
 	return s.RunTaskOnAllNodes(removeBinaries, state.RunParallel)
 }
 

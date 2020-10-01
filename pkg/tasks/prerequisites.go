@@ -27,7 +27,7 @@ import (
 )
 
 func installPrerequisites(s *state.State) error {
-	s.Logger.Infoln("Installing prerequisites…")
+	s.Logger.Infoln("Installing prerequisites...")
 
 	return s.RunTaskOnAllNodes(installPrerequisitesOnNode, state.RunParallel)
 }
@@ -58,17 +58,17 @@ func generateConfigurationFiles(s *state.State) error {
 func installPrerequisitesOnNode(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	logger := s.Logger.WithField("os", node.OperatingSystem)
 
-	logger.Infoln("Creating environment file…")
+	logger.Infoln("Creating environment file...")
 	if err := createEnvironmentFile(s); err != nil {
 		return errors.Wrap(err, "failed to create environment file")
 	}
 
-	logger.Infoln("Configuring proxy…")
+	logger.Infoln("Configuring proxy...")
 	if err := configureProxy(s); err != nil {
 		return errors.Wrap(err, "failed to configure proxy for docker daemon")
 	}
 
-	logger.Infoln("Installing kubeadm…")
+	logger.Infoln("Installing kubeadm...")
 	return errors.Wrap(installKubeadm(s, *node), "failed to install kubeadm")
 }
 
@@ -131,7 +131,7 @@ func uploadConfigurationFiles(s *state.State) error {
 }
 
 func uploadConfigurationFilesToNode(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
-	s.Logger.Infoln("Uploading config files…")
+	s.Logger.Infoln("Uploading config files...")
 
 	if err := s.Configuration.UploadTo(conn, s.WorkDir); err != nil {
 		return errors.Wrap(err, "failed to upload")
@@ -171,7 +171,7 @@ func configureProxy(s *state.State) error {
 		return nil
 	}
 
-	s.Logger.Infoln("Configuring docker/kubelet proxy…")
+	s.Logger.Infoln("Configuring docker/kubelet proxy...")
 	cmd, err := scripts.DaemonsProxy()
 	if err != nil {
 		return err

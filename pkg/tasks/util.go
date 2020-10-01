@@ -46,7 +46,7 @@ const (
 )
 
 func determineHostname(s *state.State) error {
-	s.Logger.Infoln("Determine hostname…")
+	s.Logger.Infoln("Determine hostname...")
 	return s.RunTaskOnAllNodes(func(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 		if node.Hostname != "" {
 			return nil
@@ -69,7 +69,7 @@ func determineHostname(s *state.State) error {
 }
 
 func determineOS(s *state.State) error {
-	s.Logger.Infoln("Determine operating system…")
+	s.Logger.Infoln("Determine operating system...")
 	return s.RunTaskOnAllNodes(func(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 		f, err := conn.File("/etc/os-release", os.O_RDONLY)
 		if err != nil {

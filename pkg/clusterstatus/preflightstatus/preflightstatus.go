@@ -40,29 +40,29 @@ func Run(s *state.State, nodes corev1.NodeList) error {
 	var errs []error
 
 	// Verify that binaries are present
-	s.Logger.Infoln("Verifying that Docker, Kubelet and Kubeadm are installed…")
+	s.Logger.Infoln("Verifying that Docker, Kubelet and Kubeadm are installed...")
 	if err := verifyBinaries(s); err != nil {
 		errs = append(errs, err)
 	}
 
 	// Verify that list of nodes match with the provided manifest
-	s.Logger.Infoln("Verifying that nodes in the cluster match nodes defined in the manifest…")
+	s.Logger.Infoln("Verifying that nodes in the cluster match nodes defined in the manifest...")
 	if err := verifyMatchNodes(s.Cluster.ControlPlane.Hosts, nodes, s.Logger, s.Verbose); err != nil {
 		s.Logger.Errorln("Unable to match all control plane nodes in the cluster and all nodes defined in the manifest.")
 		errs = append(errs, err...)
 	}
 
 	// Verify that all nodes in the cluster are ready
-	s.Logger.Infoln("Verifying that all nodes in the cluster are ready…")
+	s.Logger.Infoln("Verifying that all nodes in the cluster are ready...")
 	if err := verifyNodesReady(nodes, s.Logger, s.Verbose); err != nil {
 		s.Logger.Errorln("Unable to match all control plane nodes in the cluster and all nodes defined in the manifest.")
 		errs = append(errs, err...)
 	}
 
 	// Verify that upgrade is not in progress
-	s.Logger.Infoln("Verifying that there is no upgrade in the progress…")
+	s.Logger.Infoln("Verifying that there is no upgrade in progress...")
 	if err := verifyNoUpgradeLabels(nodes, s.Logger, s.Verbose); err != nil {
-		s.Logger.Errorf("Unable to verify is there upgrade in the progress.")
+		s.Logger.Errorf("Unable to verify that there is no upgrade in progress.")
 		errs = append(errs, err...)
 	}
 

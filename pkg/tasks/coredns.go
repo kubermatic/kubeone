@@ -34,7 +34,7 @@ func patchCoreDNS(s *state.State) error {
 		return nil
 	}
 
-	s.Logger.Infoln("Patching coreDNS with uninitialized toleration…")
+	s.Logger.Infoln("Patching coreDNS with uninitialized toleration...")
 
 	if s.DynamicClient == nil {
 		return errors.New("kubernetes client not initialized")

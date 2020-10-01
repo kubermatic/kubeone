@@ -41,7 +41,7 @@ func Ensure(s *state.State) error {
 		return nil
 	}
 
-	s.Logger.Info("Ensure external CCM is up to date…")
+	s.Logger.Info("Ensure external CCM is up to date...")
 	var err error
 
 	s.PatchCNI = true
@@ -71,7 +71,7 @@ func Ensure(s *state.State) error {
 func waitForInitializedNodes(s *state.State) error {
 	ctx := context.Background()
 
-	s.Logger.Info("Waiting for nodes to initialize by CCM…")
+	s.Logger.Info("Waiting for nodes to initialize by CCM...")
 
 	return wait.Poll(5*time.Second, 10*time.Minute, func() (bool, error) {
 		nodes := corev1.NodeList{}

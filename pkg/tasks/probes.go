@@ -59,7 +59,7 @@ func runProbes(s *state.State) error {
 		ExpectedVersion: expectedVersion,
 	}
 
-	s.Logger.Info("Running host probes…")
+	s.Logger.Info("Running host probes...")
 	for i := range s.Cluster.ControlPlane.Hosts {
 		s.LiveCluster.ControlPlane = append(s.LiveCluster.ControlPlane, state.Host{
 			Config: &s.Cluster.ControlPlane.Hosts[i],
@@ -142,7 +142,7 @@ func investigateCluster(s *state.State) error {
 		return errors.New("unable to investigate non-provisioned cluster")
 	}
 
-	s.Logger.Info("Electing cluster leader…")
+	s.Logger.Info("Electing cluster leader...")
 	s.LiveCluster.Lock.Lock()
 	for i := range s.LiveCluster.ControlPlane {
 		s.LiveCluster.ControlPlane[i].Config.IsLeader = false
@@ -156,7 +156,7 @@ func investigateCluster(s *state.State) error {
 			if !leaderElected {
 				s.LiveCluster.ControlPlane[i].Config.IsLeader = true
 				leaderElected = true
-				s.Logger.Infof("Elected leader %q…\n", s.LiveCluster.ControlPlane[i].Config.Hostname)
+				s.Logger.Infof("Elected leader %q...\n", s.LiveCluster.ControlPlane[i].Config.Hostname)
 			}
 		}
 	}
@@ -187,7 +187,7 @@ func investigateCluster(s *state.State) error {
 		}
 	}
 
-	s.Logger.Info("Running cluster probes…")
+	s.Logger.Info("Running cluster probes...")
 
 	// Get the node list
 	nodes := corev1.NodeList{}

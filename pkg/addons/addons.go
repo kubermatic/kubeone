@@ -44,10 +44,10 @@ type TemplateData struct {
 
 func Ensure(s *state.State) error {
 	if s.Cluster.Addons == nil || !s.Cluster.Addons.Enable {
-		s.Logger.Infoln("Skipping applying addons because addons are not enabled…")
+		s.Logger.Infoln("Skipping applying addons because addons are not enabled...")
 		return nil
 	}
-	s.Logger.Infoln("Applying addons…")
+	s.Logger.Infoln("Applying addons...")
 
 	creds, err := credentials.ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath)
 	if err != nil {

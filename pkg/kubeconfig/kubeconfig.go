@@ -53,7 +53,7 @@ func CatKubernetesAdminConf(conn ssh.Connection) ([]byte, error) {
 
 // BuildKubernetesClientset builds core kubernetes and apiextensions clientsets
 func BuildKubernetesClientset(s *state.State) error {
-	s.Logger.Infoln("Building Kubernetes clientset…")
+	s.Logger.Infoln("Building Kubernetes clientset...")
 
 	kubeconfig, err := Download(s)
 	if err != nil {

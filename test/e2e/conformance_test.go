@@ -123,7 +123,7 @@ func TestClusterConformance(t *testing.T) {
 
 			osControlPlane := OperatingSystem(testOSControlPlane)
 			osWorkers := OperatingSystem(testOSWorkers)
-			t.Logf("Running conformance tests for Kubernetes v%s…", testTargetVersion)
+			t.Logf("Running conformance tests for Kubernetes v%s...", testTargetVersion)
 
 			// Create provisioner
 			testPath := fmt.Sprintf("../../_build/%s", testRunIdentifier)
@@ -137,7 +137,7 @@ func TestClusterConformance(t *testing.T) {
 			target := NewKubeone(testPath, tc.configFilePath)
 
 			// Ensure terraform, kubetest and all needed prerequisites are in place before running test
-			t.Log("Validating prerequisites…")
+			t.Log("Validating prerequisites...")
 
 			err = testutil.ValidateCommon()
 			if err != nil {
@@ -145,7 +145,7 @@ func TestClusterConformance(t *testing.T) {
 			}
 
 			// Create configuration manifest
-			t.Log("Creating KubeOneCluster manifest…")
+			t.Log("Creating KubeOneCluster manifest...")
 
 			var (
 				clusterNetworkPod     string
@@ -167,7 +167,7 @@ func TestClusterConformance(t *testing.T) {
 			defer teardown(t)
 
 			// Create infrastructure
-			t.Log("Provisioning infrastructure using Terraform…")
+			t.Log("Provisioning infrastructure using Terraform...")
 			args := []string{}
 
 			if osControlPlane != OperatingSystemDefault {
@@ -199,7 +199,7 @@ func TestClusterConformance(t *testing.T) {
 			}
 
 			// Run 'kubeone install'
-			t.Log("Running 'kubeone install'…")
+			t.Log("Running 'kubeone install'...")
 
 			var installFlags []string
 			if tc.provider == provisioner.OpenStack {
@@ -216,7 +216,7 @@ func TestClusterConformance(t *testing.T) {
 			}
 
 			// Run 'kubeone kubeconfig'
-			t.Log("Downloading kubeconfig…")
+			t.Log("Downloading kubeconfig...")
 
 			kubeconfig, err := target.Kubeconfig()
 			if err != nil {
@@ -225,7 +225,7 @@ func TestClusterConformance(t *testing.T) {
 
 			// Run Terraform again for GCE to add nodes to the load balancer
 			if tc.provider == provisioner.GCE {
-				t.Log("Adding other control plane nodes to the load balancer…")
+				t.Log("Adding other control plane nodes to the load balancer...")
 				args = []string{}
 
 				if osControlPlane != OperatingSystemDefault {
@@ -253,7 +253,7 @@ func TestClusterConformance(t *testing.T) {
 			}
 
 			// Build clientset
-			t.Log("Building Kubernetes clientset…")
+			t.Log("Building Kubernetes clientset...")
 
 			restConfig, err := clientcmd.RESTConfigFromKubeConfig(kubeconfig)
 			if err != nil {
@@ -266,12 +266,12 @@ func TestClusterConformance(t *testing.T) {
 			}
 
 			// Ensure nodes are ready and version is matching desired
-			t.Log("Waiting for all nodes to become ready…")
+			t.Log("Waiting for all nodes to become ready...")
 			if err = waitForNodesReady(t, client, tc.expectedNumberOfNodes); err != nil {
 				t.Fatalf("failed to bring up all nodes up: %v", err)
 			}
 
-			t.Log("Verifying cluster version…")
+			t.Log("Verifying cluster version...")
 			if err = verifyVersion(client, metav1.NamespaceSystem, testTargetVersion); err != nil {
 				t.Fatalf("version mismatch: %v", err)
 			}
@@ -281,7 +281,7 @@ func TestClusterConformance(t *testing.T) {
 			})
 
 			// Run NodeConformance tests
-			t.Log("Running conformance tests (this can take up to 30 minutes)…")
+			t.Log("Running conformance tests (this can take up to 30 minutes)...")
 			if err = clusterVerifier.Verify(tc.scenario); err != nil {
 				t.Fatalf("e2e tests failed: %v", err)
 			}

@@ -23,11 +23,11 @@ import (
 )
 
 func deployPKIToFollowers(s *state.State) error {
-	s.Logger.Infoln("Deploying PKI…")
+	s.Logger.Infoln("Deploying PKI...")
 	return s.RunTaskOnFollowers(deployCAOnNode, state.RunParallel)
 }
 
 func deployCAOnNode(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
-	s.Logger.Infoln("Uploading PKI files…")
+	s.Logger.Infoln("Uploading PKI files...")
 	return s.Configuration.UploadTo(conn, s.WorkDir)
 }

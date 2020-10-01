@@ -123,7 +123,7 @@ func TestClusterUpgrade(t *testing.T) {
 				t.SkipNow()
 			}
 
-			t.Logf("Running upgrade tests from Kubernetes v%s to v%s…", testInitialVersion, testTargetVersion)
+			t.Logf("Running upgrade tests from Kubernetes v%s to v%s...", testInitialVersion, testTargetVersion)
 
 			// Create provisioner
 			testPath := fmt.Sprintf("../../_build/%s", testRunIdentifier)
@@ -137,7 +137,7 @@ func TestClusterUpgrade(t *testing.T) {
 			target := NewKubeone(testPath, tc.initialConfigPath)
 
 			// Ensure terraform, kubetest and all needed prerequisites are in place before running test
-			t.Log("Validating prerequisites…")
+			t.Log("Validating prerequisites...")
 
 			err = testutil.ValidateCommon()
 			if err != nil {
@@ -145,7 +145,7 @@ func TestClusterUpgrade(t *testing.T) {
 			}
 
 			// Create configuration manifest
-			t.Log("Creating KubeOneCluster manifest…")
+			t.Log("Creating KubeOneCluster manifest...")
 			var (
 				clusterNetworkPod     string
 				clusterNetworkService string
@@ -166,7 +166,7 @@ func TestClusterUpgrade(t *testing.T) {
 			defer teardown(t)
 
 			// Create infrastructure
-			t.Log("Provisioning infrastructure using Terraform…")
+			t.Log("Provisioning infrastructure using Terraform...")
 			args := []string{}
 
 			if tc.provider == provisioner.GCE {
@@ -179,7 +179,7 @@ func TestClusterUpgrade(t *testing.T) {
 			}
 
 			// Run 'kubeone install'
-			t.Log("Running 'kubeone install'…")
+			t.Log("Running 'kubeone install'...")
 			var installFlags []string
 
 			if tc.provider == provisioner.OpenStack {
@@ -196,7 +196,7 @@ func TestClusterUpgrade(t *testing.T) {
 			}
 
 			// Run 'kubeone kubeconfig'
-			t.Log("Downloading kubeconfig…")
+			t.Log("Downloading kubeconfig...")
 
 			kubeconfig, err := target.Kubeconfig()
 			if err != nil {
@@ -205,7 +205,7 @@ func TestClusterUpgrade(t *testing.T) {
 
 			// Run Terraform again for GCE to add nodes to the load balancer
 			if tc.provider == provisioner.GCE {
-				t.Log("Adding other control plane nodes to the load balancer…")
+				t.Log("Adding other control plane nodes to the load balancer...")
 
 				_, err = pr.Provision()
 				if err != nil {
@@ -214,7 +214,7 @@ func TestClusterUpgrade(t *testing.T) {
 			}
 
 			// Build clientset
-			t.Log("Building Kubernetes clientset…")
+			t.Log("Building Kubernetes clientset...")
 
 			restConfig, err := clientcmd.RESTConfigFromKubeConfig(kubeconfig)
 			if err != nil {
@@ -227,13 +227,13 @@ func TestClusterUpgrade(t *testing.T) {
 			}
 
 			// Ensure nodes are ready and version is matching desired
-			t.Log("Waiting for all nodes to become ready…")
+			t.Log("Waiting for all nodes to become ready...")
 
 			err = waitForNodesReady(t, client, tc.expectedNumberOfNodes)
 			if err != nil {
 				t.Fatalf("nodes are not ready: %v", err)
 			}
-			t.Log("Verifying cluster version before running upgrade…")
+			t.Log("Verifying cluster version before running upgrade...")
 
 			err = verifyVersion(client, metav1.NamespaceSystem, testInitialVersion)
 			if err != nil {
@@ -241,14 +241,14 @@ func TestClusterUpgrade(t *testing.T) {
 			}
 
 			// Delay running upgrade to leave some time for all components to become ready
-			t.Logf("Waiting %s for nodes to settle down…", delayUpgrade.String())
+			t.Logf("Waiting %s for nodes to settle down...", delayUpgrade.String())
 			time.Sleep(delayUpgrade)
 
 			// Create a new KubeOne provisioner pointing to the new configuration file
 			target = NewKubeone(testPath, tc.targetConfigPath)
 
 			// Create new configuration manifest
-			t.Log("Creating KubeOneCluster manifest…")
+			t.Log("Creating KubeOneCluster manifest...")
 			if tc.provider == provisioner.OpenStack {
 				clusterNetworkPod = "192.168.0.0/16"
 				clusterNetworkService = "172.16.0.0/12"
@@ -260,7 +260,7 @@ func TestClusterUpgrade(t *testing.T) {
 			}
 
 			// Run 'kubeone upgrade'
-			t.Log("Running 'kubeone upgrade'…")
+			t.Log("Running 'kubeone upgrade'...")
 			var upgradeFlags []string
 
 			if tc.provider == provisioner.OpenStack {
@@ -273,21 +273,21 @@ func TestClusterUpgrade(t *testing.T) {
 			}
 
 			// Ensure nodes are ready and version is matching desired
-			t.Log("Waiting for all nodes to become ready…")
+			t.Log("Waiting for all nodes to become ready...")
 
 			err = waitForNodesReady(t, client, tc.expectedNumberOfNodes)
 			if err != nil {
 				t.Fatalf("nodes are not ready: %v", err)
 			}
 
-			t.Log("Verifying cluster version after running upgrade…")
+			t.Log("Verifying cluster version after running upgrade...")
 
 			err = verifyVersion(client, metav1.NamespaceSystem, testTargetVersion)
 			if err != nil {
 				t.Fatalf("version mismatch before running upgrade: %v", err)
 			}
 
-			t.Log("Polling nodes to verify are all workers upgraded…")
+			t.Log("Polling nodes to verify are all workers upgraded...")
 
 			err = waitForNodesUpgraded(client, testTargetVersion)
 			if err != nil {

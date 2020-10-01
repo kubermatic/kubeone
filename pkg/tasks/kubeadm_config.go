@@ -28,7 +28,7 @@ import (
 )
 
 func generateKubeadm(s *state.State) error {
-	s.Logger.Infoln("Generating kubeadm config file…")
+	s.Logger.Infoln("Generating kubeadm config file...")
 
 	kubeadmProvider, err := kubeadm.New(s.Cluster.Versions.Kubernetes)
 	if err != nil {

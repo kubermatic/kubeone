@@ -27,7 +27,7 @@ import (
 
 // DownloadCA grabs CA certs/keys from leader host
 func DownloadCA(s *state.State) error {
-	s.Logger.Info("Downloading PKI…")
+	s.Logger.Info("Downloading PKI...")
 
 	return s.RunTaskOnLeader(func(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
 		cmd, err := scripts.CopyPKIHome(s.WorkDir)
@@ -39,7 +39,7 @@ func DownloadCA(s *state.State) error {
 			return err
 		}
 
-		s.Logger.Infoln("Downloading PKI files…")
+		s.Logger.Infoln("Downloading PKI files...")
 
 		err = s.Configuration.Download(conn, s.WorkDir+"/pki", "pki")
 		if err != nil {
@@ -47,7 +47,7 @@ func DownloadCA(s *state.State) error {
 		}
 
 		if s.BackupFile != "" {
-			s.Logger.Infoln("Creating local backup…")
+			s.Logger.Infoln("Creating local backup...")
 
 			err = s.Configuration.Backup(s.BackupFile)
 			if err != nil {

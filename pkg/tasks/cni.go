@@ -38,12 +38,12 @@ func ensureCNI(s *state.State) error {
 }
 
 func ensureCNIWeaveNet(s *state.State) error {
-	s.Logger.Infoln("Applying weave-net CNI plugin…")
+	s.Logger.Infoln("Applying weave-net CNI plugin...")
 	return weave.Deploy(s)
 }
 
 func ensureCNICanal(s *state.State) error {
-	s.Logger.Infoln("Applying canal CNI plugin…")
+	s.Logger.Infoln("Applying canal CNI plugin...")
 	return canal.Deploy(s)
 }
 
@@ -57,6 +57,6 @@ func patchCNI(s *state.State) error {
 		return nil
 	}
 
-	s.Logger.Info("Patching CNI…")
+	s.Logger.Info("Patching CNI...")
 	return ensureCNI(s)
 }
