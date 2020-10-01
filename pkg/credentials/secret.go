@@ -18,6 +18,8 @@ package credentials
 
 import (
 	"context"
+	"fmt"
+	"strings"
 
 	"github.com/pkg/errors"
 
@@ -34,6 +36,11 @@ const (
 	SecretName = "cloud-provider-credentials"
 	// SecretNamespace is namespace of the credentials secret
 	SecretNamespace = "kube-system"
+	// VsphereSecretName is name of the secret which contains the vSphere credentials
+	// used by the cloud provider integrations (CCM, CSI)
+	VsphereSecretName = "vsphere-ccm-credentials" //nolint:gosec
+	// VsphereSecretNamespace is namespace of the vSphere credentials secret
+	VsphereSecretNamespace = "kube-system"
 )
 
 // Ensure creates/updates the credentials secret
@@ -57,6 +64,13 @@ func Ensure(s *state.State) error {
 	secret := credentialsSecret(creds)
 	if err := clientutil.CreateOrUpdate(context.Background(), s.DynamicClient, secret); err != nil {
 		return errors.Wrap(err, "failed to ensure credentials secret")
+	}
+
+	if s.Cluster.CloudProvider.Vsphere != nil {
+		vsecret := vsphereSecret(creds)
+		if err := clientutil.CreateOrUpdate(context.Background(), s.DynamicClient, vsecret); err != nil {
+			return errors.Wrap(err, "failed to ensure vsphere credentials secret")
+		}
 	}
 
 	return nil
@@ -95,5 +109,25 @@ func credentialsSecret(credentials map[string]string) *corev1.Secret {
 		},
 		Type:       corev1.SecretTypeOpaque,
 		StringData: credentials,
+	}
+}
+
+func vsphereSecret(credentials map[string]string) *corev1.Secret {
+	vscreds := map[string]string{}
+
+	vcenterPrefix := strings.ReplaceAll(credentials[VSphereAddressMC], "https://", "")
+	// Save credentials in Secret and configure vSphere cloud controller
+	// manager to read it, in replace of storing those in /etc/kubernates/cloud-config
+	// see more: https://vmware.github.io/vsphere-storage-for-kubernetes/documentation/k8s-secret.html
+	vscreds[fmt.Sprintf("%s.username", vcenterPrefix)] = credentials[VSphereUsernameMC]
+	vscreds[fmt.Sprintf("%s.password", vcenterPrefix)] = credentials[VSpherePassword]
+
+	return &corev1.Secret{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      VsphereSecretName,
+			Namespace: VsphereSecretNamespace,
+		},
+		Type:       corev1.SecretTypeOpaque,
+		StringData: vscreds,
 	}
 }
