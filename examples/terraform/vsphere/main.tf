@@ -90,6 +90,10 @@ resource "vsphere_virtual_machine" "control_plane" {
     template_uuid = data.vsphere_virtual_machine.template.id
   }
 
+  extra_config = {
+    "disk.enableUUID" = "TRUE"
+  }
+
   vapp {
     properties = {
       hostname    = "${var.cluster_name}-cp-${count.index + 1}"
