@@ -33,7 +33,7 @@ const (
 // Activate configured features.
 // Installing CRDs, creating policies and so on
 func Activate(s *state.State) error {
-	s.Logger.Info("Activating additional features…")
+	s.Logger.Info("Activating additional features...")
 
 	if err := installKubeSystemPSP(s.Cluster.Features.PodSecurityPolicy, s); err != nil {
 		return errors.Wrap(err, "failed to install PodSecurityPolicy")

@@ -41,12 +41,12 @@ func Ensure(s *state.State) error {
 		return nil
 	}
 
-	s.Logger.Infoln("Installing machine-controller…")
+	s.Logger.Infoln("Installing machine-controller...")
 	if err := Deploy(s); err != nil {
 		return errors.Wrap(err, "failed to deploy machine-controller")
 	}
 
-	s.Logger.Infoln("Installing machine-controller webhooks…")
+	s.Logger.Infoln("Installing machine-controller webhooks...")
 	if err := DeployWebhookConfiguration(s); err != nil {
 		return errors.Wrap(err, "failed to deploy machine-controller webhook configuration")
 	}
@@ -60,7 +60,7 @@ func WaitReady(s *state.State) error {
 		return nil
 	}
 
-	s.Logger.Infoln("Waiting for machine-controller to come up…")
+	s.Logger.Infoln("Waiting for machine-controller to come up...")
 
 	if err := waitForWebhook(s.Context, s.DynamicClient); err != nil {
 		return errors.Wrap(err, "machine-controller-webhook did not come up")
@@ -100,7 +100,7 @@ func DestroyWorkers(s *state.State) error {
 	ctx := context.Background()
 
 	// Annotate nodes with kubermatic.io/skip-eviction=true to skip eviction
-	s.Logger.Info("Annotating nodes to skip eviction…")
+	s.Logger.Info("Annotating nodes to skip eviction...")
 	nodes := &corev1.NodeList{}
 	if err := s.DynamicClient.List(ctx, nodes); err != nil {
 		return errors.Wrap(err, "unable to list nodes")
@@ -128,7 +128,7 @@ func DestroyWorkers(s *state.State) error {
 	}
 
 	// Delete all MachineDeployment objects
-	s.Logger.Info("Deleting MachineDeployment objects…")
+	s.Logger.Info("Deleting MachineDeployment objects...")
 	mdList := &clusterv1alpha1.MachineDeploymentList{}
 	if err := s.DynamicClient.List(ctx, mdList, dynclient.InNamespace(MachineControllerNamespace)); err != nil {
 		if !errorsutil.IsNotFound(err) {
@@ -143,7 +143,7 @@ func DestroyWorkers(s *state.State) error {
 	}
 
 	// Delete all MachineSet objects
-	s.Logger.Info("Deleting MachineSet objects…")
+	s.Logger.Info("Deleting MachineSet objects...")
 	msList := &clusterv1alpha1.MachineSetList{}
 	if err := s.DynamicClient.List(ctx, msList, dynclient.InNamespace(MachineControllerNamespace)); err != nil {
 		if !errorsutil.IsNotFound(err) {
@@ -160,7 +160,7 @@ func DestroyWorkers(s *state.State) error {
 	}
 
 	// Delete all Machine objects
-	s.Logger.Info("Deleting Machine objects…")
+	s.Logger.Info("Deleting Machine objects...")
 	mList := &clusterv1alpha1.MachineList{}
 	if err := s.DynamicClient.List(ctx, mList, dynclient.InNamespace(MachineControllerNamespace)); err != nil {
 		if !errorsutil.IsNotFound(err) {
@@ -181,7 +181,7 @@ func DestroyWorkers(s *state.State) error {
 
 // WaitDestroy waits for all Machines to be deleted
 func WaitDestroy(s *state.State) error {
-	s.Logger.Info("Waiting for all machines to get deleted…")
+	s.Logger.Info("Waiting for all machines to get deleted...")
 
 	ctx := context.Background()
 	return wait.Poll(5*time.Second, 5*time.Minute, func() (bool, error) {

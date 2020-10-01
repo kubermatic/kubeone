@@ -47,7 +47,7 @@ func Ensure(s *state.State) error {
 		return nil
 	}
 
-	s.Logger.Infoln("Creating credentials secret…")
+	s.Logger.Infoln("Creating credentials secret...")
 
 	creds, err := ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath)
 	if err != nil {

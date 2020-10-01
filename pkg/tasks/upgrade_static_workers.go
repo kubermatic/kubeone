@@ -34,41 +34,41 @@ func upgradeStaticWorkers(s *state.State) error {
 func upgradeStaticWorkersExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	logger := s.Logger.WithField("node", node.PublicAddress)
 
-	logger.Infoln("Labeling static worker node…")
+	logger.Infoln("Labeling static worker node...")
 
 	if err := labelNode(s.DynamicClient, node); err != nil {
 		return errors.Wrap(err, "failed to label static worker node")
 	}
 
-	logger.Infoln("Draining static worker node…")
+	logger.Infoln("Draining static worker node...")
 	if err := drainNode(s, *node); err != nil {
 		return errors.Wrap(err, "failed to drain static worker node")
 	}
 
-	logger.Infoln("Upgrading Kubernetes binaries on static worker node…")
+	logger.Infoln("Upgrading Kubernetes binaries on static worker node...")
 	if err := upgradeKubeadmAndCNIBinaries(s, *node); err != nil {
 		return errors.Wrap(err, "failed to upgrade kubernetes binaries on static worker node")
 	}
 
-	logger.Infoln("Running 'kubeadm upgrade' on the static worker node…")
+	logger.Infoln("Running 'kubeadm upgrade' on the static worker node...")
 	if err := upgradeStaticWorker(s); err != nil {
 		return errors.Wrap(err, "failed to upgrade static worker node")
 	}
 
-	logger.Infoln("Upgrading kubernetes system binaries on the static worker node…")
+	logger.Infoln("Upgrading kubernetes system binaries on the static worker node...")
 	if err := upgradeKubeletAndKubectlBinaries(s, *node); err != nil {
 		return errors.Wrap(err, "failed to upgrade kubernetes system binaries on the static worker node")
 	}
 
-	logger.Infoln("Uncordoning static worker node…")
+	logger.Infoln("Uncordoning static worker node...")
 	if err := uncordonNode(s, *node); err != nil {
 		return errors.Wrap(err, "failed to uncordon static worker node")
 	}
 
-	logger.Infof("Waiting %v to ensure all components are up…", timeoutNodeUpgrade)
+	logger.Infof("Waiting %v to ensure all components are up...", timeoutNodeUpgrade)
 	time.Sleep(timeoutNodeUpgrade)
 
-	logger.Infoln("Unlabeling static worker node…")
+	logger.Infoln("Unlabeling static worker node...")
 	if err := unlabelNode(s.DynamicClient, node); err != nil {
 		return errors.Wrap(err, "failed to unlabel static worker node node")
 	}

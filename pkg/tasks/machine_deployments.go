@@ -36,17 +36,17 @@ func createMachineDeployments(s *state.State) error {
 		return nil
 	}
 
-	s.Logger.Infoln("Creating worker machines…")
+	s.Logger.Infoln("Creating worker machines...")
 	return errors.Wrap(machinecontroller.CreateMachineDeployments(s), "failed to deploy Machines")
 }
 
 func upgradeMachineDeployments(s *state.State) error {
 	if !s.UpgradeMachineDeployments {
-		s.Logger.Info("Upgrade MachineDeployments skip per lack of flag…")
+		s.Logger.Info("Upgrade MachineDeployments skip per lack of flag...")
 		return nil
 	}
 
-	s.Logger.Info("Upgrade MachineDeployments…")
+	s.Logger.Info("Upgrade MachineDeployments...")
 
 	ctx := context.Background()
 

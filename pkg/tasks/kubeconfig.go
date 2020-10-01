@@ -27,7 +27,7 @@ import (
 )
 
 func saveKubeconfig(s *state.State) error {
-	s.Logger.Info("Downloading kubeconfig…")
+	s.Logger.Info("Downloading kubeconfig...")
 
 	kc, err := kubeconfig.Download(s)
 	if err != nil {

@@ -53,7 +53,7 @@ func (t *Task) Run(s *state.State) error {
 	var lastError error
 	err := wait.ExponentialBackoff(backoff, func() (bool, error) {
 		if lastError != nil {
-			s.Logger.Warn("Retrying task…")
+			s.Logger.Warn("Retrying task...")
 		}
 
 		lastError = t.Fn(s)

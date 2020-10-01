@@ -33,40 +33,40 @@ func upgradeFollower(s *state.State) error {
 func upgradeFollowerExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	logger := s.Logger.WithField("node", node.PublicAddress)
 
-	logger.Infoln("Labeling follower control plane…")
+	logger.Infoln("Labeling follower control plane...")
 	if err := labelNode(s.DynamicClient, node); err != nil {
 		return errors.Wrap(err, "failed to label follower control plane node")
 	}
 
-	logger.Infoln("Draining follower control plane…")
+	logger.Infoln("Draining follower control plane...")
 	if err := drainNode(s, *node); err != nil {
 		return errors.Wrap(err, "failed to drain follower control plane node")
 	}
 
-	logger.Infoln("Upgrading Kubernetes binaries on follower control plane…")
+	logger.Infoln("Upgrading Kubernetes binaries on follower control plane...")
 	if err := upgradeKubeadmAndCNIBinaries(s, *node); err != nil {
 		return errors.Wrap(err, "failed to upgrade kubernetes binaries on follower control plane")
 	}
 
-	logger.Infoln("Running 'kubeadm upgrade' on the follower control plane node…")
+	logger.Infoln("Running 'kubeadm upgrade' on the follower control plane node...")
 	if err := upgradeFollowerControlPlane(s); err != nil {
 		return errors.Wrap(err, "failed to upgrade follower control plane")
 	}
 
-	logger.Infoln("Upgrading kubernetes system binaries on the follower control plane…")
+	logger.Infoln("Upgrading kubernetes system binaries on the follower control plane...")
 	if err := upgradeKubeletAndKubectlBinaries(s, *node); err != nil {
 		return errors.Wrap(err, "failed to upgrade kubernetes system binaries on follower control plane")
 	}
 
-	logger.Infoln("Uncordoning follower control plane…")
+	logger.Infoln("Uncordoning follower control plane...")
 	if err := uncordonNode(s, *node); err != nil {
 		return errors.Wrap(err, "failed to uncordon follower control plane node")
 	}
 
-	logger.Infof("Waiting %v to ensure all components are up…", timeoutNodeUpgrade)
+	logger.Infof("Waiting %v to ensure all components are up...", timeoutNodeUpgrade)
 	time.Sleep(timeoutNodeUpgrade)
 
-	logger.Infoln("Unlabeling follower control plane…")
+	logger.Infoln("Unlabeling follower control plane...")
 	if err := unlabelNode(s.DynamicClient, node); err != nil {
 		return errors.Wrap(err, "failed to unlabel follower control plane node")
 	}

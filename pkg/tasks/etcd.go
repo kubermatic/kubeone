@@ -33,7 +33,7 @@ import (
 )
 
 func repairClusterIfNeeded(s *state.State) error {
-	s.Logger.Info("Check if cluster needs any repairs…")
+	s.Logger.Info("Check if cluster needs any repairs...")
 
 	leader, err := s.Cluster.Leader()
 	if err != nil {

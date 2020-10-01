@@ -51,12 +51,12 @@ func runPreflightChecks(s *state.State) error {
 	}
 
 	// Run preflight checks on nodes
-	s.Logger.Infoln("Running preflight checks…")
+	s.Logger.Infoln("Running preflight checks...")
 	if err := preflightstatus.Run(s, nodes); err != nil {
 		return errors.Wrap(err, "unable to verify prerequisites")
 	}
 
-	s.Logger.Infoln("Verifying is it possible to upgrade to the desired version…")
+	s.Logger.Infoln("Verifying is it possible to upgrade to the desired version...")
 	if err := verifyVersion(s.Logger, s.Cluster.Versions.Kubernetes, &nodes, s.Verbose, s.ForceUpgrade); err != nil {
 		return errors.Wrap(err, "unable to verify components version")
 	}
