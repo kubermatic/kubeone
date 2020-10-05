@@ -31,6 +31,7 @@ const (
 	NodeConformance = `\[NodeConformance\]`
 	Conformance     = `\[Conformance\]`
 	Skip            = `Alpha|\[(Disruptive|Feature:[^\]]+|Flaky|Serial|Slow)\]`
+	SkipFlatcar     = `Alpha|\[(Disruptive|Feature:[^\]]+|Flaky|Serial|Slow)\]|should support subPath`
 )
 
 // Kubetest configures the Kubetest conformance tester
@@ -51,7 +52,7 @@ func NewKubetest(k8sVersion, kubetestDir string, envVars map[string]string) *Kub
 }
 
 // Verify verifies the cluster
-func (p *Kubetest) Verify(scenario string) error {
+func (p *Kubetest) Verify(scenario, skip string) error {
 	kubetestPath, err := findKubetest(p.kubetestDir, p.kubernetesVersion)
 	if err != nil {
 		return fmt.Errorf("coudn't find kubetest scenarios: %w", err)
@@ -65,7 +66,7 @@ func (p *Kubetest) Verify(scenario string) error {
 	err = testutil.NewExec("./hack/ginkgo-e2e.sh",
 		testutil.WithArgs(
 			fmt.Sprintf("--ginkgo.focus=%s", scenario),
-			fmt.Sprintf("--ginkgo.skip=%s", Skip),
+			fmt.Sprintf("--ginkgo.skip=%s", skip),
 			"--ginkgo.noColor=true",
 			"--ginkgo.flakeAttempts=2",
 		),
