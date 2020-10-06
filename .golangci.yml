@@ -57,5 +57,5 @@ issues:
     text: "type name will be used as kubeone.KubeOneCluster by other packages"
 
   - path: test/e2e
-    text: "cyclomatic complexity 33 of func `TestClusterConformance` is high"
+    text: "cyclomatic complexity 35 of func `TestClusterConformance` is high"
 

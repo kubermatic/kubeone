@@ -282,7 +282,11 @@ func TestClusterConformance(t *testing.T) {
 
 			// Run NodeConformance tests
 			t.Log("Running conformance tests (this can take up to 30 minutes)...")
-			if err = clusterVerifier.Verify(tc.scenario); err != nil {
+			skipTests := Skip
+			if osControlPlane == OperatingSystemFlatcar || osWorkers == OperatingSystemFlatcar {
+				skipTests = SkipFlatcar
+			}
+			if err = clusterVerifier.Verify(tc.scenario, skipTests); err != nil {
 				t.Fatalf("e2e tests failed: %v", err)
 			}
 		})
