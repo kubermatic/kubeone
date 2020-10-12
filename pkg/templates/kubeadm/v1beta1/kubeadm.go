@@ -26,6 +26,7 @@ import (
 	"github.com/pkg/errors"
 
 	kubeadmv1beta1 "k8c.io/kubeone/pkg/apis/kubeadm/v1beta1"
+	kubeletconfigv1beta1 "k8c.io/kubeone/pkg/apis/kubelet/config/v1beta1"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/features"
 	"k8c.io/kubeone/pkg/kubeflags"
@@ -151,6 +152,14 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		ClusterName: cluster.Name,
 	}
 
+	kubeletConfig := &kubeletconfigv1beta1.KubeletConfiguration{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "kubelet.config.k8s.io/v1beta1",
+			Kind:       "KubeletConfiguration",
+		},
+		CgroupDriver: "systemd",
+	}
+
 	if cluster.CloudProvider.CloudProviderInTree() {
 		renderedCloudConfig := "/etc/kubernetes/cloud-config"
 		cloudConfigVol := kubeadmv1beta1.HostPathMount{
@@ -227,7 +236,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 	initConfig.NodeRegistration = nodeRegistration
 	joinConfig.NodeRegistration = nodeRegistration
 
-	return []runtime.Object{initConfig, joinConfig, clusterConfig}, nil
+	return []runtime.Object{initConfig, joinConfig, clusterConfig, kubeletConfig}, nil
 }
 
 // NewConfig returns all required configs to init a cluster via a set of v1beta1 configs
@@ -266,6 +275,14 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Obje
 		},
 	}
 
+	kubeletConfig := &kubeletconfigv1beta1.KubeletConfiguration{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "kubelet.config.k8s.io/v1beta1",
+			Kind:       "KubeletConfiguration",
+		},
+		CgroupDriver: "systemd",
+	}
+
 	if cluster.CloudProvider.CloudProviderInTree() {
 		renderedCloudConfig := "/etc/kubernetes/cloud-config"
 
@@ -279,5 +296,5 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Obje
 
 	joinConfig.NodeRegistration = nodeRegistration
 
-	return []runtime.Object{joinConfig}, nil
+	return []runtime.Object{joinConfig, kubeletConfig}, nil
 }
