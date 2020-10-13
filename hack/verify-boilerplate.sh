@@ -22,5 +22,4 @@ boilerplate \
   -boilerplates hack/boilerplate/ \
   -exclude hack/apidoc-gen \
   -exclude pkg/apis/apiserver \
-  -exclude pkg/apis/kubeadm \
-  -exclude pkg/apis/kubelet
+  -exclude pkg/apis/kubeadm

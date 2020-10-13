@@ -34,6 +34,7 @@ require (
 	k8s.io/cluster-bootstrap v0.18.6
 	k8s.io/code-generator v0.18.6
 	k8s.io/kube-aggregator v0.18.6
+	k8s.io/kubelet v0.18.6
 	sigs.k8s.io/controller-runtime v0.6.2
 	sigs.k8s.io/yaml v1.2.0
 )

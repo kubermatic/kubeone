@@ -26,7 +26,6 @@ import (
 	"github.com/pkg/errors"
 
 	kubeadmv1beta2 "k8c.io/kubeone/pkg/apis/kubeadm/v1beta2"
-	kubeletconfigv1beta1 "k8c.io/kubeone/pkg/apis/kubelet/config/v1beta1"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/features"
 	"k8c.io/kubeone/pkg/kubeflags"
@@ -37,6 +36,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	kubeletconfigv1beta1 "k8s.io/kubelet/config/v1beta1"
 )
 
 const (
