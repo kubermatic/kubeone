@@ -37,7 +37,7 @@ const (
 	installCNIImage     = "calico/cni:v3.15.1"
 	calicoImage         = "calico/node:v3.15.1"
 	controllerImage     = "calico/kube-controllers:v3.15.1"
-	flannelImage        = "quay.io/kubermatic/coreos_flannel:v0.11.0@sha256:3de983d62621898fe58ffd9537a4845c7112961a775efb205cab56e089e163b6"
+	flannelImage        = "quay.io/coreos/flannel:v0.13.0"
 	canalComponentLabel = "canal"
 
 	// cniNetworkConfig configures installation on the each node. The special values in this config will be
