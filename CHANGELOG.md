@@ -1,5 +1,28 @@
 # Changelog
 
+# [v1.0.4](https://github.com/kubermatic/kubeone/releases/tag/v1.0.4) - 2020-10-16
+
+## Attention Needed
+
+* KubeOne now creates a dedicated secret with vSphere credentials for kube-controller-manager and vSphere Cloud Controller Manager (CCM). This is required because those components require the secret to adhere to the expected format.
+  * The new secret is called `vsphere-ccm-credentials` and is deployed in the `kube-system` namespace.
+  * This fix ensures that you can use all vSphere provider features, for example, volumes and having cloud provider metadata/labels applied on each node.
+  * If you're upgrading an existing vSphere cluster, you should take the following steps:
+    * Upgrade the cluster without changing the cloud-config. Upgrading the cluster creates a new Secret for kube-controller-manager and vSphere CCM.
+    * Change the cloud-config in your KubeOne Configuration Manifest to refer to the new secret.
+    * Upgrade the cluster again to apply the new cloud-config, or change it manually on each control plane node and restart kube-controller-manager and vSphere CCM (if deployed).
+    * **Note: the cluster can be force-upgrade without changing the Kubernetes version. To do that, you can use the `--force-upgrade` flag with `kubeone apply`, or the `--force` flag with `kubeone upgrade`.**
+* The example Terraform config for vSphere now has `disk.enableUUID` option enabled. This change ensures that you can mount volumes on the control plane nodes.
+  * **WARNING: If you're applying the latest Terraform configs on an existing infrastructure/cluster, an in-place upgrade of control plane nodes is required. This means that all control plane nodes will be restarted, which causes a downtime until all instances doesn't come up again.**
+
+## Changed
+
+### Bug Fixes
+
+* Don't stop Kubelet when upgrading Kubeadm on Flatcar ([#1099](https://github.com/kubermatic/kubeone/pull/1099))
+* Create a dedicated secret with vSphere credentials for kube-controller-manager and vSphere Cloud Controller Manager (CCM) ([#1128](https://github.com/kubermatic/kubeone/pull/1128))
+* Enable `disk.enableUUID` option in Terraform example configs for vSphere ([#1130](https://github.com/kubermatic/kubeone/pull/1130))
+
 # [v1.0.3](https://github.com/kubermatic/kubeone/releases/tag/v1.0.3) - 2020-09-28
 
 ## Attention Needed
