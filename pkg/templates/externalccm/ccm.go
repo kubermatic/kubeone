@@ -55,6 +55,8 @@ func Ensure(s *state.State) error {
 		err = ensurePacket(s)
 	case s.Cluster.CloudProvider.Openstack != nil:
 		err = ensureOpenStack(s)
+	case s.Cluster.CloudProvider.Vsphere != nil:
+		err = ensurevSphere(s)
 	default:
 		s.Logger.Infof("External CCM for %q not yet supported, skipping", s.Cluster.CloudProvider.CloudProviderName())
 		return nil
