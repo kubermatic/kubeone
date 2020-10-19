@@ -1,5 +1,14 @@
 # Changelog
 
+# [v1.0.5](https://github.com/kubermatic/kubeone/releases/tag/v1.0.5) - 2020-10-19
+
+## Changed
+
+### Updated
+
+* Update machine-controller to v1.19.0 ([#1141](https://github.com/kubermatic/kubeone/pull/1141))
+  * This machine-controller release uses the Hyperkube Kubelet image for Flatcar worker nodes running Kubernetes 1.18, as the Poseidon Kubelet image repository doesn't publish 1.18 images any longer. This change ensures that you can provision or upgrade to Kubernetes 1.18.8+ on Flatcar.
+
 # [v1.0.4](https://github.com/kubermatic/kubeone/releases/tag/v1.0.4) - 2020-10-16
 
 ## Attention Needed
