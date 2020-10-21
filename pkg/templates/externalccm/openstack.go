@@ -36,7 +36,8 @@ const (
 	openstackSAName           = "cloud-controller-manager"
 	openstackDeploymentName   = "openstack-cloud-controller-manager"
 	openstackConfigSecretName = "cloud-config" //nolint:gosec
-	openstackImage            = "k8scloudprovider/openstack-cloud-controller-manager:v1.17.0"
+	openstackImageRegistry    = "docker.io"
+	openstackImage            = "/k8scloudprovider/openstack-cloud-controller-manager:v1.17.0"
 )
 
 func ensureOpenStack(s *state.State) error {
@@ -53,12 +54,14 @@ func ensureOpenStack(s *state.State) error {
 	sa := osServiceAccount()
 	ccmRole := osCCMClusterRole()
 
+	image := s.Cluster.RegistryConfiguration.ImageRegistry(openstackImageRegistry) + openstackImage
+
 	k8sobjects := []runtime.Object{
 		sa,
 		osSecret(s.Cluster.CloudProvider.CloudConfig),
 		ccmRole,
 		genClusterRoleBinding("system:cloud-controller-manager", ccmRole, sa),
-		osDaemonSet(),
+		osDaemonSet(image),
 	}
 
 	withLabel := clientutil.WithComponentLabel(ccmComponentLabel)
@@ -155,7 +158,7 @@ func osCCMClusterRole() *rbacv1.ClusterRole {
 	}
 }
 
-func osDaemonSet() *appsv1.DaemonSet {
+func osDaemonSet(image string) *appsv1.DaemonSet {
 	var (
 		osLabels                        = map[string]string{"k8s-app": openstackDeploymentName}
 		runAsUser                 int64 = 1001
@@ -207,7 +210,7 @@ func osDaemonSet() *appsv1.DaemonSet {
 					Containers: []corev1.Container{
 						{
 							Name:  "openstack-cloud-controller-manager",
-							Image: openstackImage,
+							Image: image,
 							Command: []string{
 								"/bin/openstack-cloud-controller-manager",
 								"--v=1",

@@ -46,6 +46,8 @@ const (
 	MachineControllerNamespace     = metav1.NamespaceSystem
 	MachineControllerAppLabelKey   = "app"
 	MachineControllerAppLabelValue = "machine-controller"
+	MachineControllerImageRegistry = "docker.io"
+	MachineControllerImage         = "/kubermatic/machine-controller:"
 	MachineControllerTag           = "v1.19.0"
 )
 
@@ -66,7 +68,9 @@ func Deploy(s *state.State) error {
 
 	ctx := context.Background()
 
-	deployment, err := machineControllerDeployment(s.Cluster, s.CredentialsFilePath)
+	image := s.Cluster.RegistryConfiguration.ImageRegistry(MachineControllerImageRegistry) + MachineControllerImage + MachineControllerTag
+
+	deployment, err := machineControllerDeployment(s.Cluster, s.CredentialsFilePath, image)
 	if err != nil {
 		return errors.Wrap(err, "failed to generate machine-controller deployment")
 	}
@@ -727,7 +731,7 @@ func machineControllerMachineDeploymentCRD() *apiextensions.CustomResourceDefini
 	}
 }
 
-func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster, credentialsFilePath string) (*appsv1.Deployment, error) {
+func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster, credentialsFilePath, image string) (*appsv1.Deployment, error) {
 	var replicas int32 = 1
 
 	args := []string{
@@ -828,7 +832,7 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster, credentials
 					Containers: []corev1.Container{
 						{
 							Name:                     "machine-controller",
-							Image:                    "docker.io/kubermatic/machine-controller:" + MachineControllerTag,
+							Image:                    image,
 							ImagePullPolicy:          corev1.PullIfNotPresent,
 							Command:                  []string{"/usr/local/bin/machine-controller"},
 							Args:                     args,

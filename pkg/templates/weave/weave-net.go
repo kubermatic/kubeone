@@ -39,10 +39,11 @@ import (
 )
 
 const (
-	version        = ":2.5.2"
-	weaveKubeImage = "docker.io/weaveworks/weave-kube"
-	weaveNPCImage  = "docker.io/weaveworks/weave-npc"
-	componentLabel = "weave-net"
+	version            = ":2.5.2"
+	weaveImageRegistry = "docker.io"
+	weaveKubeImage     = "/weaveworks/weave-kube"
+	weaveNPCImage      = "/weaveworks/weave-npc"
+	componentLabel     = "weave-net"
 )
 
 // Deploy ensure weave-net resources exists in the cluster
@@ -83,7 +84,10 @@ func Deploy(s *state.State) error {
 		peers = append(peers, h.PrivateAddress)
 	}
 
-	ds := daemonSet(s.Cluster.ClusterNetwork.CNI.WeaveNet.Encrypted, strings.Join(peers, " "), s.Cluster.ClusterNetwork.PodSubnet)
+	kubeImage := s.Cluster.RegistryConfiguration.ImageRegistry(weaveImageRegistry) + weaveKubeImage + version
+	npcImage := s.Cluster.RegistryConfiguration.ImageRegistry(weaveImageRegistry) + weaveNPCImage + version
+
+	ds := daemonSet(s.Cluster.ClusterNetwork.CNI.WeaveNet.Encrypted, strings.Join(peers, " "), s.Cluster.ClusterNetwork.PodSubnet, kubeImage, npcImage)
 
 	k8sobjects := []runtime.Object{
 		serviceAccount(),
@@ -286,7 +290,7 @@ func dsEnv(passwordRef bool, peers string, podsubnet string) []corev1.EnvVar {
 	return env
 }
 
-func daemonSet(passwordRef bool, peers string, podsubnet string) *appsv1.DaemonSet {
+func daemonSet(passwordRef bool, peers, podsubnet, kubeImage, npcImage string) *appsv1.DaemonSet {
 	var (
 		priviledged  = true
 		fileOrCreate = corev1.HostPathFileOrCreate
@@ -322,7 +326,7 @@ func daemonSet(passwordRef bool, peers string, podsubnet string) *appsv1.DaemonS
 							Name:    "weave",
 							Command: []string{"/home/weave/launch.sh"},
 							Env:     dsEnv(passwordRef, peers, podsubnet),
-							Image:   weaveKubeImage + version,
+							Image:   kubeImage,
 							ReadinessProbe: &corev1.Probe{
 								Handler: corev1.Handler{
 									HTTPGet: &corev1.HTTPGetAction{
@@ -384,7 +388,7 @@ func daemonSet(passwordRef bool, peers string, podsubnet string) *appsv1.DaemonS
 									},
 								},
 							},
-							Image: weaveNPCImage + version,
+							Image: npcImage,
 							Resources: corev1.ResourceRequirements{
 								Requests: corev1.ResourceList{
 									corev1.ResourceCPU: resource.MustParse("10m"),

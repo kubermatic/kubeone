@@ -34,10 +34,12 @@ import (
 )
 
 const (
-	installCNIImage     = "calico/cni:v3.15.1"
-	calicoImage         = "calico/node:v3.15.1"
-	controllerImage     = "calico/kube-controllers:v3.15.1"
-	flannelImage        = "quay.io/coreos/flannel:v0.13.0"
+	calicoImageRegistry = "docker.io"
+	installCNIImageName = "/calico/cni:v3.15.1"
+	calicoImageName     = "/calico/node:v3.15.1"
+	controllerImageName = "/calico/kube-controllers:v3.15.1"
+	flannelImageRegisty = "quay.io"
+	flannelImageName    = "/coreos/flannel:v0.13.0"
 	canalComponentLabel = "canal"
 
 	// cniNetworkConfig configures installation on the each node. The special values in this config will be
@@ -134,6 +136,11 @@ func Deploy(s *state.State) error {
 
 	ctx := context.Background()
 
+	installCNIImage := s.Cluster.RegistryConfiguration.ImageRegistry(calicoImageRegistry) + installCNIImageName
+	calicoImage := s.Cluster.RegistryConfiguration.ImageRegistry(calicoImageRegistry) + calicoImageName
+	controllerImage := s.Cluster.RegistryConfiguration.ImageRegistry(calicoImageRegistry) + controllerImageName
+	flannelImage := s.Cluster.RegistryConfiguration.ImageRegistry(flannelImageRegisty) + flannelImageName
+
 	crds := canalCRDs()
 	k8sobjects := append(crds,
 		// RBAC
@@ -148,8 +155,8 @@ func Deploy(s *state.State) error {
 		configMap(buf, s.Cluster.ClusterNetwork.CNI.Canal.MTU),
 		daemonsetServiceAccount(),
 		deploymentServiceAccount(),
-		daemonSet(s.PatchCNI, s.Cluster.ClusterNetwork.PodSubnet),
-		controllerDeployment(),
+		daemonSet(s.PatchCNI, s.Cluster.ClusterNetwork.PodSubnet, installCNIImage, calicoImage, flannelImage),
+		controllerDeployment(controllerImage),
 	)
 
 	withLabel := clientutil.WithComponentLabel(canalComponentLabel)

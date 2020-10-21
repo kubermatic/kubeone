@@ -22,7 +22,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func controllerDeployment() *appsv1.Deployment {
+func controllerDeployment(controllerImage string) *appsv1.Deployment {
 	commonLabels := map[string]string{
 		"k8s-app": "calico-kube-controllers",
 	}
