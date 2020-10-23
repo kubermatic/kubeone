@@ -87,6 +87,50 @@ metadata:
 `
 )
 
+const (
+	testManifest1WithImage = `apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: test
+    cluster: kubeone-test
+    kubeone.io/addon: ""
+  name: test1
+  namespace: kube-system
+spec:
+  containers:
+  - image: {{ Registry "k8s.gcr.io" }}/kube-apiserver:v1.19.3
+`
+
+	testManifest1WithImageParsed = `apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: test
+    cluster: kubeone-test
+    kubeone.io/addon: ""
+  name: test1
+  namespace: kube-system
+spec:
+  containers:
+  - image: k8s.gcr.io/kube-apiserver:v1.19.3
+`
+
+	testManifest1WithCustomImageParsed = `apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: test
+    cluster: kubeone-test
+    kubeone.io/addon: ""
+  name: test1
+  namespace: kube-system
+spec:
+  containers:
+  - image: 127.0.0.1:5000/kube-apiserver:v1.19.3
+`
+)
+
 var (
 	// testManifest1 & testManifest3 have a linebreak at the end, testManifest2 not
 	combinedTestManifest = fmt.Sprintf("%s---\n%s\n---\n%s", testManifests[0], testManifests[1], testManifests[2])
@@ -137,5 +181,74 @@ func TestCombineManifests(t *testing.T) {
 
 	if manifest.String() != combinedTestManifest {
 		t.Fatalf("invalid combined manifest returned. expected \n%s, got \n%s", combinedTestManifest, manifest.String())
+	}
+}
+
+func TestImageRegistryParsing(t *testing.T) {
+	testCases := []struct {
+		name                 string
+		registryConfigurtion *kubeoneapi.RegistryConfiguration
+		inputManifest        string
+		expectedManifest     string
+	}{
+		{
+			name:                 "default registry configuration",
+			registryConfigurtion: nil,
+			inputManifest:        testManifest1WithImage,
+			expectedManifest:     testManifest1WithImageParsed,
+		},
+		{
+			name: "custom registry",
+			registryConfigurtion: &kubeoneapi.RegistryConfiguration{
+				OverwriteRegistry: "127.0.0.1:5000",
+			},
+			inputManifest:    testManifest1WithImage,
+			expectedManifest: testManifest1WithCustomImageParsed,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			addonsDir, err := ioutil.TempDir("/tmp", "kubeone")
+			if err != nil {
+				t.Fatalf("unable to create temporary addons directory: %v", err)
+			}
+			defer os.RemoveAll(addonsDir)
+
+			if writeErr := ioutil.WriteFile(path.Join(addonsDir, "testManifest.yaml"), []byte(tc.inputManifest), 0600); writeErr != nil {
+				t.Fatalf("unable to create temporary addon manifest: %v", err)
+			}
+
+			templateData := TemplateData{
+				Config: &kubeoneapi.KubeOneCluster{
+					Name:                  "kubeone-test",
+					RegistryConfiguration: tc.registryConfigurtion,
+				},
+			}
+
+			overwriteRegistry := ""
+			if tc.registryConfigurtion != nil && tc.registryConfigurtion.OverwriteRegistry != "" {
+				overwriteRegistry = tc.registryConfigurtion.OverwriteRegistry
+			}
+
+			manifests, err := loadAddonsManifests(addonsDir, nil, false, templateData, overwriteRegistry)
+			if err != nil {
+				t.Fatalf("unable to load manifests: %v", err)
+			}
+			if len(manifests) != 1 {
+				t.Fatalf("expected to load 1 manifest, got %d", len(manifests))
+			}
+
+			b, err := ensureAddonsLabelsOnResources(manifests)
+			if err != nil {
+				t.Fatalf("unable to ensure labels: %v", err)
+			}
+			manifest := b[0].String()
+
+			if manifest != tc.expectedManifest {
+				t.Fatalf("invalid manifest returned. expected \n%s, got \n%s", tc.expectedManifest, manifest)
+			}
+		})
 	}
 }
