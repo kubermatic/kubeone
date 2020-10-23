@@ -47,7 +47,12 @@ func getManifests(s *state.State, templateData TemplateData) error {
 		addonsPath = filepath.Join(manifestAbsPath, addonsPath)
 	}
 
-	manifests, err := loadAddonsManifests(addonsPath, s.Logger, s.Verbose, templateData)
+	overwriteRegistry := ""
+	if s.Cluster.RegistryConfiguration != nil && s.Cluster.RegistryConfiguration.OverwriteRegistry != "" {
+		overwriteRegistry = s.Cluster.RegistryConfiguration.OverwriteRegistry
+	}
+
+	manifests, err := loadAddonsManifests(addonsPath, s.Logger, s.Verbose, templateData, overwriteRegistry)
 	if err != nil {
 		return err
 	}
@@ -64,7 +69,7 @@ func getManifests(s *state.State, templateData TemplateData) error {
 }
 
 // loadAddonsManifests loads all YAML files from a given directory and runs the templating logic
-func loadAddonsManifests(addonsPath string, logger logrus.FieldLogger, verbose bool, templateData TemplateData) ([]runtime.RawExtension, error) {
+func loadAddonsManifests(addonsPath string, logger logrus.FieldLogger, verbose bool, templateData TemplateData, overwriteRegistry string) ([]runtime.RawExtension, error) {
 	manifests := []runtime.RawExtension{}
 
 	files, err := ioutil.ReadDir(addonsPath)
@@ -97,7 +102,7 @@ func loadAddonsManifests(addonsPath string, logger logrus.FieldLogger, verbose b
 			return nil, errors.Wrapf(err, "failed to load addon %s", file.Name())
 		}
 
-		tpl, err := template.New("addons-base").Funcs(sprig.TxtFuncMap()).Parse(string(manifestBytes))
+		tpl, err := template.New("addons-base").Funcs(txtFuncMap(overwriteRegistry)).Parse(string(manifestBytes))
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to template addons manifest %s", file.Name())
 		}
@@ -187,4 +192,16 @@ func combineManifests(manifests []*bytes.Buffer) *bytes.Buffer {
 	}
 
 	return bytes.NewBufferString(strings.Join(parts, "\n---\n") + "\n")
+}
+
+func txtFuncMap(overwriteRegistry string) template.FuncMap {
+	funcs := sprig.TxtFuncMap()
+	funcs["Registry"] = func(registry string) string {
+		if overwriteRegistry != "" {
+			return overwriteRegistry
+		}
+		return registry
+	}
+
+	return funcs
 }

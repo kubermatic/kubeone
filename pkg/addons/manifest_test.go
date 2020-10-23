@@ -108,7 +108,7 @@ func TestEnsureAddonsLabelsOnResources(t *testing.T) {
 			Name: "kubeone-test",
 		},
 	}
-	manifests, err := loadAddonsManifests(addonsDir, nil, false, templateData)
+	manifests, err := loadAddonsManifests(addonsDir, nil, false, templateData, "")
 	if err != nil {
 		t.Fatalf("unable to load manifests: %v", err)
 	}
