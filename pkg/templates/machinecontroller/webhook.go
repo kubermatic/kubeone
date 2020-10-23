@@ -71,7 +71,9 @@ func DeployWebhookConfiguration(s *state.State) error {
 		return errors.Wrap(err, "failed to generate machine-controller webhook TLS secret")
 	}
 
-	deployment, err := webhookDeployment(s.Cluster, s.CredentialsFilePath)
+	image := s.Cluster.RegistryConfiguration.ImageRegistry(MachineControllerImageRegistry) + MachineControllerImage + WebhookTag
+
+	deployment, err := webhookDeployment(s.Cluster, s.CredentialsFilePath, image)
 	if err != nil {
 		return errors.Wrap(err, "failed to generate machine-controller webhook deployment")
 	}
@@ -107,7 +109,7 @@ func waitForWebhook(ctx context.Context, client dynclient.Client) error {
 }
 
 // webhookDeployment returns the deployment for the machine-controllers MutatignAdmissionWebhook
-func webhookDeployment(cluster *kubeoneapi.KubeOneCluster, credentialsFilePath string) (*appsv1.Deployment, error) {
+func webhookDeployment(cluster *kubeoneapi.KubeOneCluster, credentialsFilePath, image string) (*appsv1.Deployment, error) {
 	var replicas int32 = 1
 
 	envVar, err := credentials.EnvVarBindings(cluster.CloudProvider, credentialsFilePath)
@@ -185,7 +187,7 @@ func webhookDeployment(cluster *kubeoneapi.KubeOneCluster, credentialsFilePath s
 					Containers: []corev1.Container{
 						{
 							Name:            "machine-controller-webhook",
-							Image:           "kubermatic/machine-controller:" + WebhookTag,
+							Image:           image,
 							ImagePullPolicy: corev1.PullIfNotPresent,
 							Command:         []string{"/usr/local/bin/webhook"},
 							Args: []string{

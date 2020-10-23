@@ -104,3 +104,12 @@ func (p CloudProviderSpec) CloudProviderInTree() bool {
 
 	return false
 }
+
+// ImageRegistry returns the image registry to use or the passed in
+// default if no override is specified
+func (r *RegistryConfiguration) ImageRegistry(defaultRegistry string) string {
+	if r != nil && r.OverwriteRegistry != "" {
+		return r.OverwriteRegistry
+	}
+	return defaultRegistry
+}

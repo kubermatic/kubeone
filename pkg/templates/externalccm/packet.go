@@ -40,7 +40,8 @@ type packetCloudSA struct {
 }
 
 const (
-	packetImage             = "packethost/packet-ccm:v1.0.0"
+	packetImageRegistry     = "docker.io"
+	packetImage             = "/packethost/packet-ccm:v1.0.0"
 	packetSAName            = "cloud-controller-manager"
 	packetDeploymentName    = "packet-cloud-controller-manager"
 	packetCloudSASecretName = "packet-cloud-config"
@@ -64,12 +65,14 @@ func ensurePacket(s *state.State) error {
 		return errors.Wrap(err, "failed to generate packet cloud config secret")
 	}
 
+	image := s.Cluster.RegistryConfiguration.ImageRegistry(packetImageRegistry) + packetImage
+
 	k8sobjects := []runtime.Object{
 		sa,
 		crole,
 		genClusterRoleBinding("system:cloud-controller-manager", crole, sa),
 		secret,
-		packetDeployment(),
+		packetDeployment(image),
 	}
 
 	withLabel := clientutil.WithComponentLabel(ccmComponentLabel)
@@ -165,7 +168,7 @@ func packetClusterRole() *rbacv1.ClusterRole {
 	}
 }
 
-func packetDeployment() *appsv1.Deployment {
+func packetDeployment(image string) *appsv1.Deployment {
 	var (
 		replicas int32 = 1
 	)
@@ -215,7 +218,7 @@ func packetDeployment() *appsv1.Deployment {
 					Containers: []corev1.Container{
 						{
 							Name:  "packet-cloud-controller-manager",
-							Image: packetImage,
+							Image: image,
 							Command: []string{
 								"./packet-cloud-controller-manager",
 								"--cloud-provider=packet",

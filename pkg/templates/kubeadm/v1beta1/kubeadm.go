@@ -149,7 +149,8 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 			},
 			ExtraVolumes: []kubeadmv1beta1.HostPathMount{},
 		},
-		ClusterName: cluster.Name,
+		ClusterName:     cluster.Name,
+		ImageRepository: cluster.RegistryConfiguration.ImageRegistry("k8s.gcr.io"),
 	}
 
 	kubeletConfig := &kubeletconfigv1beta1.KubeletConfiguration{

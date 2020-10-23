@@ -32,8 +32,9 @@ import (
 )
 
 const (
-	metricsServerImage = `k8s.gcr.io/metrics-server:v0.3.6`
-	componentLabel     = "metrics-server"
+	metricsServerImageRegistry = "k8s.gcr.io"
+	metricsServerImageName     = `/metrics-server:v0.3.6`
+	componentLabel             = "metrics-server"
 )
 
 // Deploy generate and POST all objects to apiserver
@@ -42,13 +43,15 @@ func Deploy(s *state.State) error {
 		return errors.New("kubernetes client not initialized")
 	}
 
+	image := s.Cluster.RegistryConfiguration.ImageRegistry(metricsServerImageRegistry) + metricsServerImageName
+
 	k8sobjects := []runtime.Object{
 		aggregatedMetricsReaderClusterRole(),
 		authDelegatorClusterRoleBinding(),
 		metricsServerKubeSystemRoleBinding(),
 		metricsServerAPIService(),
 		metricsServerServiceAccount(),
-		metricsServerDeployment(),
+		metricsServerDeployment(image),
 		metricsServerService(),
 		metricServerClusterRole(),
 		metricServerClusterRoleBinding(),
@@ -153,7 +156,7 @@ func metricsServerServiceAccount() *corev1.ServiceAccount {
 	}
 }
 
-func metricsServerDeployment() *appsv1.Deployment {
+func metricsServerDeployment(image string) *appsv1.Deployment {
 	k8sAppLabels := map[string]string{"k8s-app": "metrics-server"}
 
 	return &appsv1.Deployment{
@@ -189,7 +192,7 @@ func metricsServerDeployment() *appsv1.Deployment {
 					Containers: []corev1.Container{
 						{
 							Name:            "metrics-server",
-							Image:           metricsServerImage,
+							Image:           image,
 							ImagePullPolicy: corev1.PullIfNotPresent,
 							Args: []string{
 								"--kubelet-insecure-tls",

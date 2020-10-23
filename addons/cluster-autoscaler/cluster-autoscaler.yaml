@@ -146,7 +146,7 @@ spec:
         app: cluster-autoscaler
     spec:
       containers:
-      - image: k8s.gcr.io/autoscaling/cluster-autoscaler:${AUTOSCALER_VERSION}
+      - image: {{ Registry "k8s.gcr.io" }}/autoscaling/cluster-autoscaler:${AUTOSCALER_VERSION}
         name: cluster-autoscaler
         command:
         - /cluster-autoscaler

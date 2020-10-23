@@ -57,6 +57,8 @@ type KubeOneCluster struct {
 	Addons *Addons `json:"addons,omitempty"`
 	// SystemPackages configure kubeone behaviour regarding OS packages.
 	SystemPackages *SystemPackages `json:"systemPackages,omitempty"`
+	// RegistryConfiguration configures how Docker images are pulled from an image registry
+	RegistryConfiguration *RegistryConfiguration `json:"registryConfiguration,omitempty"`
 }
 
 // ContainerRuntimeConfig
@@ -362,6 +364,19 @@ type SystemPackages struct {
 	// ConfigureRepositories (true by default) is a flag to control automatic
 	// configuration of kubeadm / docker repositories.
 	ConfigureRepositories bool `json:"configureRepositories,omitempty"`
+}
+
+// RegistryConfiguration controls how images used for components deployed by
+// KubeOne and kubeadm are pulled from an image registry
+type RegistryConfiguration struct {
+	// OverwriteRegistry specifies a custom Docker registry which will be used
+	// for all images required for KubeOne and kubeadm. This also applies to
+	// addons deployed by KubeOne.
+	// This field doesn't modify the user/organization part of the image. For example,
+	// if OverwriteRegistry is set to 127.0.0.1:5000/example, image called
+	// calico/cni would translate to 127.0.0.1:5000/example/calico/cni.
+	// Default: ""
+	OverwriteRegistry string `json:"overwriteRegistry,omitempty"`
 }
 
 // PodNodeSelector feature flag

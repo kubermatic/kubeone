@@ -35,7 +35,8 @@ import (
 )
 
 const (
-	hetznerImage          = "hetznercloud/hcloud-cloud-controller-manager:v1.7.0"
+	hetznerImageRegistry  = "docker.io"
+	hetznerImage          = "/hetznercloud/hcloud-cloud-controller-manager:v1.7.0"
 	hetznerSAName         = "cloud-controller-manager"
 	hetznerDeploymentName = "hcloud-cloud-controller-manager"
 )
@@ -46,10 +47,11 @@ func ensureHetzner(s *state.State) error {
 	}
 
 	ctx := context.Background()
+	image := s.Cluster.RegistryConfiguration.ImageRegistry(hetznerImageRegistry) + hetznerImage
 	k8sobject := []runtime.Object{
 		hetznerServiceAccount(),
 		hetznerClusterRoleBinding(),
-		hetznerDeployment(s.Cluster.CloudProvider.Hetzner.NetworkID, s.Cluster.ClusterNetwork.PodSubnet),
+		hetznerDeployment(s.Cluster.CloudProvider.Hetzner.NetworkID, s.Cluster.ClusterNetwork.PodSubnet, image),
 	}
 
 	withLabel := clientutil.WithComponentLabel(ccmComponentLabel)
@@ -91,7 +93,7 @@ func hetznerClusterRoleBinding() *rbacv1.ClusterRoleBinding {
 	}
 }
 
-func hetznerDeployment(networkID, podSubnet string) *appsv1.Deployment {
+func hetznerDeployment(networkID, podSubnet, image string) *appsv1.Deployment {
 	var (
 		replicas  int32 = 1
 		revisions int32 = 2
@@ -153,7 +155,7 @@ func hetznerDeployment(networkID, podSubnet string) *appsv1.Deployment {
 					Containers: []corev1.Container{
 						{
 							Name:    "hcloud-cloud-controller-manager",
-							Image:   hetznerImage,
+							Image:   image,
 							Command: cmd,
 							Env: []corev1.EnvVar{
 								{

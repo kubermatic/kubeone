@@ -38,7 +38,8 @@ import (
 const VirtualIP = "169.254.20.10"
 
 const (
-	image                    = "k8s.gcr.io/k8s-dns-node-cache"
+	imageRegistry            = "k8s.gcr.io"
+	image                    = "/k8s-dns-node-cache:"
 	tag                      = "1.15.13"
 	componentLabel           = "nodelocaldns"
 	dnscacheCorefileTemplate = `
@@ -101,11 +102,13 @@ func Deploy(s *state.State) error {
 
 	s.Logger.Infoln("Ensure node local DNS cache...")
 
+	image := s.Cluster.RegistryConfiguration.ImageRegistry(imageRegistry) + image + tag
+
 	objs := []runtime.Object{
 		dnscacheServiceAccount(),
 		dnscacheService(),
 		dnscacheConfigMap(s.Cluster.ClusterNetwork.ServiceDomainName),
-		dnscacheDaemonSet(),
+		dnscacheDaemonSet(image),
 	}
 
 	ctx := context.Background()
@@ -181,7 +184,7 @@ func dnscacheConfigMap(pillarDNSDomain string) *corev1.ConfigMap {
 	}
 }
 
-func dnscacheDaemonSet() *appsv1.DaemonSet {
+func dnscacheDaemonSet(image string) *appsv1.DaemonSet {
 	maxUnavailable := intstr.FromString("10%")
 	k8sAppLabels := map[string]string{"k8s-app": "node-local-dns"}
 	trueBool := true
@@ -232,7 +235,7 @@ exec /node-cache -localip %s -conf /etc/Corefile -upstreamsvc kube-dns-upstream`
 					Containers: []corev1.Container{
 						{
 							Name:  "node-cache",
-							Image: fmt.Sprintf("%s:%s", image, tag),
+							Image: image,
 							Command: []string{
 								"/bin/sh",
 								"-c",

@@ -34,7 +34,8 @@ import (
 )
 
 const (
-	digitaloceanImage          = "digitalocean/digitalocean-cloud-controller-manager:v0.1.23"
+	digitaloceanImageRegistry  = "docker.io"
+	digitaloceanImage          = "/digitalocean/digitalocean-cloud-controller-manager:v0.1.23"
 	digitaloceanSAName         = "cloud-controller-manager"
 	digitaloceanDeploymentName = "digitalocean-cloud-controller-manager"
 )
@@ -47,11 +48,12 @@ func ensureDigitalOcean(s *state.State) error {
 	ctx := context.Background()
 	sa := doServiceAccount()
 	crole := doClusterRole()
+	image := s.Cluster.RegistryConfiguration.ImageRegistry(digitaloceanImageRegistry) + digitaloceanImage
 	k8sobject := []runtime.Object{
 		sa,
 		crole,
 		genClusterRoleBinding("system:cloud-controller-manager", crole, sa),
-		doDeployment(),
+		doDeployment(image),
 	}
 
 	withLabel := clientutil.WithComponentLabel(ccmComponentLabel)
@@ -126,7 +128,7 @@ func doClusterRole() *rbacv1.ClusterRole {
 	}
 }
 
-func doDeployment() *appsv1.Deployment {
+func doDeployment(image string) *appsv1.Deployment {
 	var (
 		replicas  int32 = 1
 		revisions int32 = 2
@@ -179,7 +181,7 @@ func doDeployment() *appsv1.Deployment {
 					Containers: []corev1.Container{
 						{
 							Name:  "digitalocean-cloud-controller-manager",
-							Image: digitaloceanImage,
+							Image: image,
 							Command: []string{
 								"/bin/digitalocean-cloud-controller-manager",
 								"--leader-elect=false",

@@ -657,6 +657,17 @@ systemPackages:
   # will add Docker and Kubernetes repositories to OS package manager
   configureRepositories: true # it's true by default
 
+# registryConfiguration controls how images used for components deployed by
+# KubeOne and kubeadm are pulled from an image registry
+registryConfiguration:
+  # overwriteRegistry specifies a custom Docker registry which will be used
+  # for all images required for KubeOne and kubeadm. This also applies to
+  # addons deployed by KubeOne.
+  # This field doesn't modify the user/organization part of the image. For example,
+  # if overwriteRegistry is set to 127.0.0.1:5000/example, image called
+  # calico/cni would translate to 127.0.0.1:5000/example/calico/cni.
+  overwriteRegistry: ""
+
 # Addons are Kubernetes manifests to be deployed after provisioning the cluster
 addons:
   enable: false
