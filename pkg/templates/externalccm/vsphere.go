@@ -34,7 +34,8 @@ const (
 	vSphereSAName           = "cloud-controller-manager"
 	vSphereDeploymentName   = "vsphere-cloud-controller-manager"
 	vSphereConfigSecretName = "cloud-config" //nolint:gosec
-	vSphereImage            = "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.2.1"
+	vSphereImageRegistry    = "gcr.io"
+	vSphereImage            = "/cloud-provider-vsphere/cpi/release/manager:v1.2.1"
 )
 
 func ensurevSphere(s *state.State) error {
@@ -51,13 +52,15 @@ func ensurevSphere(s *state.State) error {
 	sa := vSphereServiceAccount()
 	cr := vSphereClusterRole()
 
+	image := s.Cluster.RegistryConfiguration.ImageRegistry(vSphereImageRegistry) + vSphereImage
+
 	k8sobjects := []runtime.Object{
 		sa,
 		vSphereConfigMap(s.Cluster.CloudProvider.CloudConfig),
 		cr,
 		vSphereClusterRoleBinding(),
 		vSphereRoleBinding(),
-		vSphereDaemonSet(),
+		vSphereDaemonSet(image),
 		vSphereService(),
 	}
 
@@ -230,7 +233,7 @@ func vSphereService() *corev1.Service {
 	}
 }
 
-func vSphereDaemonSet() *appsv1.DaemonSet {
+func vSphereDaemonSet(image string) *appsv1.DaemonSet {
 	var (
 		runAsUser int64 = 1001
 		vslabels        = map[string]string{"k8s-app": vSphereDeploymentName}
@@ -283,7 +286,7 @@ func vSphereDaemonSet() *appsv1.DaemonSet {
 					Containers: []corev1.Container{
 						{
 							Name:  "vsphere-cloud-controller-manager",
-							Image: vSphereImage,
+							Image: image,
 							Args: []string{
 								"--v=2",
 								"--cloud-provider=vsphere",
