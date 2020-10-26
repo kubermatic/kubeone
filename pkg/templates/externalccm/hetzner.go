@@ -36,7 +36,7 @@ import (
 
 const (
 	hetznerImageRegistry  = "docker.io"
-	hetznerImage          = "/hetznercloud/hcloud-cloud-controller-manager:v1.7.0"
+	hetznerImage          = "/hetznercloud/hcloud-cloud-controller-manager:v1.8.1"
 	hetznerSAName         = "cloud-controller-manager"
 	hetznerDeploymentName = "hcloud-cloud-controller-manager"
 )
