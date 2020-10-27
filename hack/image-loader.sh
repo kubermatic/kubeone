@@ -15,14 +15,14 @@
 # limitations under the License.
 
 # The image-loader script is used to pull all Docker images used by KubeOne,
-# Kubeadm, and Kubernetes, and push them to the the specified private registry.
+# Kubeadm, and Kubernetes, and push them to the specified private registry.
 
 # WARNING: This script heavily depends on KubeOne and Kubernetes versions.
 # You must use the script coming the KubeOne release you've downloaded.
 
 set -euo pipefail
 
-KUBERNETES_VERSION=${KUBERNETES_VERSION}
+KUBERNETES_VERSION=${KUBERNETES_VERSION:-}
 
 TARGET_REGISTRY=${TARGET_REGISTRY:-127.0.0.1:5000}
 PULL_OPTIONAL_IMAGES=${PULL_OPTIONAL_IMAGES:-true}
@@ -33,26 +33,28 @@ function echodate() {
   echo "[$(date +%Y-%m-%dT%H:%M:%S%:z)]" "$@"
 }
 
+function fail() {
+  echodate "$@"
+  exit 1
+}
+
 function retag() {
   local image="$1"
 
   # Trim registry
-  local local_image="$(echo ${image} | cut -d/ -f1 --complement)"
+  local local_image
+  local name
+  local tag
 
+  local_image="$(echo "${image}" | cut -d/ -f1 --complement)"
   # Split into name and tag
-  local name="$(echo ${local_image} | cut -d: -f1)"
-  local tag="$(echo ${local_image} | cut -d: -f2)"
+  name="$(echo "${local_image}" | cut -d: -f1)"
+  tag="$(echo "${local_image}" | cut -d: -f2)"
 
   # Build target image name
   local target_image="${TARGET_REGISTRY}/${name}:${tag}"
 
   echodate "Retagging \"${image}\" => \"${target_image}\"..."
-
-  # Check does image already exists in the target registry
-  if curl -s --fail "http://${TARGET_REGISTRY}/v2/${name}/tags/list" | jq -e ".tags | index(\"${tag}\")" >/dev/null; then
-    echodate "Skipping \"${image}\", already exists"
-    return
-  fi
 
   docker pull "${image}"
   docker tag "${image}" "${target_image}"
@@ -65,8 +67,11 @@ function retag() {
 # You can run this script in a Docker container.
 if [[ "$OSTYPE" != "linux-gnu"* ]]; then
   echodate "This script works only on Linux because it depends on Kubeadm."
-  echodate "As a workaround, you can run the script in a Docker container."
-  exit 1
+  fail "As a workaround, you can run the script in a Docker container."
+fi
+
+if [[ -z "$KUBERNETES_VERSION" ]]; then
+  fail "\$KUBERNETES_VERSION is required"
 fi
 
 kubeadm=kubeadm
@@ -75,7 +80,7 @@ if ! [ -x "$(command -v $kubeadm)" ]; then
   kubeadm=/tmp/kubeadm-v${KUBERNETES_VERSION}
 
   echodate "Downloading kubeadm v$KUBERNETES_VERSION..."
-  wget -O "$kubeadm" "$url"
+  curl --location --output "$kubeadm" "$url"
   chmod +x "$kubeadm"
   echodate "Done!"
 fi
