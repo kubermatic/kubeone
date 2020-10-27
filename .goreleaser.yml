@@ -24,3 +24,4 @@ archives:
       - CHANGELOG.md
       - LICENSE
       - examples/**/*
+      - hack/image-loader.sh
