@@ -25,3 +25,4 @@ archives:
       - LICENSE
       - examples/**/*
       - hack/image-loader.sh
+      - addons/**/*
