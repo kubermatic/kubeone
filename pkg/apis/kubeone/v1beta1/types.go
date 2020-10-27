@@ -118,7 +118,7 @@ type HostConfig struct {
 	// Default value is populated at the runtime via running `hostname -f` command over ssh.
 	Hostname string `json:"hostname,omitempty"`
 	// IsLeader indicates this host as a session leader.
-	// Default vaule is populated at the runtime.
+	// Default value is populated at the runtime.
 	IsLeader bool `json:"isLeader,omitempty"`
 	// Taints if not provided (i.e. nil) defaults to TaintEffectNoSchedule, with key node-role.kubernetes.io/master for
 	// control plane nodes.
