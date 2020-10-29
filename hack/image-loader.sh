@@ -105,8 +105,8 @@ k1images=(
 optionalimages=(
   # Optional images - only deployed on user request
   # WeaveNet
-  "docker.io/weaveworks/weave-kube:2.5.2"
-  "docker.io/weaveworks/weave-npc:2.5.2"
+  "docker.io/weaveworks/weave-kube:2.7.0"
+  "docker.io/weaveworks/weave-npc:2.7.0"
   # DigitalOcean CCM
   "docker.io/digitalocean/digitalocean-cloud-controller-manager:v0.1.23"
   # Hetzner CCM
