@@ -38,6 +38,23 @@ func withProxy(proxy string) genClusterOpts {
 	}
 }
 
+func withRegistry(registry string) genClusterOpts {
+	return func(cls *kubeone.KubeOneCluster) {
+		cls.RegistryConfiguration = &kubeone.RegistryConfiguration{
+			OverwriteRegistry: registry,
+		}
+	}
+}
+
+func withInsecureRegistry(registry string) genClusterOpts {
+	return func(cls *kubeone.KubeOneCluster) {
+		cls.RegistryConfiguration = &kubeone.RegistryConfiguration{
+			OverwriteRegistry: registry,
+			InsecureRegistry:  true,
+		}
+	}
+}
+
 func genCluster(opts ...genClusterOpts) kubeone.KubeOneCluster {
 	c := &kubeone.KubeOneCluster{
 		Versions: kubeone.VersionConfig{
@@ -77,6 +94,20 @@ func TestKubeadmDebian(t *testing.T) {
 			args: args{
 				dockerVersion: "18.0.6",
 				cluster:       genCluster(),
+			},
+		},
+		{
+			name: "overwrite registry",
+			args: args{
+				dockerVersion: "18.0.6",
+				cluster:       genCluster(withRegistry("127.0.0.1:5000")),
+			},
+		},
+		{
+			name: "overwrite registry insecure",
+			args: args{
+				dockerVersion: "18.0.6",
+				cluster:       genCluster(withInsecureRegistry("127.0.0.1:5000")),
 			},
 		},
 	}
@@ -132,6 +163,18 @@ func TestKubeadmCentOS(t *testing.T) {
 				cluster: genCluster(withKubeVersion("v1.16.1")),
 			},
 		},
+		{
+			name: "overwrite registry",
+			args: args{
+				cluster: genCluster(withRegistry("127.0.0.1:5000")),
+			},
+		},
+		{
+			name: "overwrite registry insecure",
+			args: args{
+				cluster: genCluster(withInsecureRegistry("127.0.0.1:5000")),
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -169,6 +212,18 @@ func TestKubeadmCoreOS(t *testing.T) {
 			name: "force",
 			args: args{
 				cluster: genCluster(),
+			},
+		},
+		{
+			name: "overwrite registry",
+			args: args{
+				cluster: genCluster(withRegistry("127.0.0.1:5000")),
+			},
+		},
+		{
+			name: "overwrite registry insecure",
+			args: args{
+				cluster: genCluster(withInsecureRegistry("127.0.0.1:5000")),
 			},
 		},
 	}
