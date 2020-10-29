@@ -17,7 +17,6 @@ limitations under the License.
 package weave
 
 import (
-	"context"
 	"crypto/rand"
 	"encoding/base64"
 	"strings"
@@ -39,7 +38,7 @@ import (
 )
 
 const (
-	version            = ":2.5.2"
+	version            = ":2.7.0"
 	weaveImageRegistry = "docker.io"
 	weaveKubeImage     = "/weaveworks/weave-kube"
 	weaveNPCImage      = "/weaveworks/weave-npc"
@@ -52,7 +51,7 @@ func Deploy(s *state.State) error {
 		return errors.New("kubernetes dynamic client is not initialized")
 	}
 
-	ctx := context.Background()
+	ctx := s.Context
 
 	if s.Cluster.ClusterNetwork.CNI.WeaveNet.Encrypted {
 		pass, err := genPassword()
