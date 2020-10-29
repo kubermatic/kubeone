@@ -377,6 +377,10 @@ type RegistryConfiguration struct {
 	// calico/cni would translate to 127.0.0.1:5000/example/calico/cni.
 	// Default: ""
 	OverwriteRegistry string `json:"overwriteRegistry,omitempty"`
+	// InsecureRegistry configures Docker to threat the registry specified
+	// in OverwriteRegistry as an insecure registry. This is also propagated
+	// to the worker nodes managed by machine-controller and/or KubeOne.
+	InsecureRegistry bool `json:"insecureRegistry,omitempty"`
 }
 
 // PodNodeSelector feature flag
