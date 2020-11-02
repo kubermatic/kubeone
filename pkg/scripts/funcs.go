@@ -17,6 +17,8 @@ limitations under the License.
 package scripts
 
 import (
+	"encoding/json"
+
 	"github.com/Masterminds/semver"
 )
 
@@ -41,14 +43,7 @@ esac
 {{ define "docker-daemon-config" }}
 sudo mkdir -p /etc/docker
 cat <<EOF | sudo tee /etc/docker/daemon.json
-{
-	"exec-opts": ["native.cgroupdriver=systemd"],
-	"storage-driver": "overlay2",
-	"log-driver": "json-file",
-	"log-opts": {
-		"max-size": "100m"
-	}
-}
+{{ dockerCfg }}
 EOF
 {{ end }}
 
@@ -76,6 +71,31 @@ sudo systemctl force-reload systemd-journald
 {{ end }}
 `
 )
+
+type dockerConfig struct {
+	ExecOpts      []string          `json:"exec-opts,omitempty"`
+	StorageDriver string            `json:"storage-driver,omitempty"`
+	LogDriver     string            `json:"log-driver,omitempty"`
+	LogOpts       map[string]string `json:"log-opts,omitempty"`
+}
+
+func dockerCfg() (string, error) {
+	cfg := dockerConfig{
+		ExecOpts:      []string{"native.cgroupdriver=systemd"},
+		StorageDriver: "overlay2",
+		LogDriver:     "json-file",
+		LogOpts: map[string]string{
+			"max-size": "100m",
+		},
+	}
+
+	b, err := json.MarshalIndent(cfg, "", "	")
+	if err != nil {
+		return "", err
+	}
+
+	return string(b), nil
+}
 
 func aptDockerFunc(v string) (string, error) {
 	sver, err := semver.NewVersion(v)
