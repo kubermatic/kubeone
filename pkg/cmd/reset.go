@@ -17,6 +17,7 @@ limitations under the License.
 package cmd
 
 import (
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -49,12 +50,12 @@ func resetCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "reset",
 		Short: "Revert changes",
-		Long: `
-Undo all changes done by KubeOne to the configured machines.
+		Long: heredoc.Doc(`
+			Undo all changes done by KubeOne to the configured machines.
 
-This command takes KubeOne manifest which contains information about hosts. It's possible to source information about
-hosts from Terraform output, using the '--tfjson' flag.
-`,
+			This command takes KubeOne manifest which contains information about hosts. It's possible to source information about
+			hosts from Terraform output, using the '--tfjson' flag.
+		`),
 		Example: `kubeone reset -m mycluster.yaml -t terraformoutput.json`,
 		RunE: func(_ *cobra.Command, args []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)

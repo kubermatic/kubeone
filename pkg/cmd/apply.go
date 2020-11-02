@@ -23,6 +23,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/Masterminds/semver"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -88,13 +89,13 @@ func applyCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "apply",
 		Short: "Reconcile the cluster",
-		Long: `
-Reconcile (Install/Upgrade/Repair/Restore) Kubernetes cluster on pre-existing machines. MachineDeployments get 
-initialized but won't get modified by default, see '--upgrade-machine-deployments'.
+		Long: heredoc.Doc(`
+			Reconcile (Install/Upgrade/Repair/Restore) Kubernetes cluster on pre-existing machines. MachineDeployments get
+			initialized but won't get modified by default, see '--upgrade-machine-deployments'.
 
-This command takes KubeOne manifest which contains information about hosts and how the cluster should be provisioned.
-It's possible to source information about hosts from Terraform output, using the '--tfjson' flag.
-`,
+			This command takes KubeOne manifest which contains information about hosts and how the cluster should be provisioned.
+			It's possible to source information about hosts from Terraform output, using the '--tfjson' flag.
+		`),
 		Example: `kubeone apply -m mycluster.yaml -t terraformoutput.json`,
 		RunE: func(_ *cobra.Command, args []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)

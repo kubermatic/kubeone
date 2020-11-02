@@ -17,6 +17,7 @@ limitations under the License.
 package cmd
 
 import (
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -48,11 +49,12 @@ func upgradeCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "upgrade <manifest>",
 		Short: "Upgrade Kubernetes",
-		Long: `Upgrade Kubernetes
+		Long: heredoc.Doc(`
+			Upgrade Kubernetes
 
-This command takes KubeOne manifest which contains information about hosts and how the cluster should be provisioned.
-It's possible to source information about hosts from Terraform output, using the '--tfjson' flag.
-`,
+			This command takes KubeOne manifest which contains information about hosts and how the cluster should be provisioned.
+			It's possible to source information about hosts from Terraform output, using the '--tfjson' flag.
+		`),
 		Example: `kubeone upgrade -m mycluster.yaml -t terraformoutput.json`,
 		RunE: func(_ *cobra.Command, _ []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
