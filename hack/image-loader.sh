@@ -110,7 +110,7 @@ optionalimages=(
   # DigitalOcean CCM
   "docker.io/digitalocean/digitalocean-cloud-controller-manager:v0.1.23"
   # Hetzner CCM
-  "docker.io/hetznercloud/hcloud-cloud-controller-manager:v1.7.0"
+  "docker.io/hetznercloud/hcloud-cloud-controller-manager:v1.8.1"
   # OpenStack CCM
   "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.17.0"
   # Packet CCM
