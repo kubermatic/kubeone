@@ -20,6 +20,21 @@
 # WARNING: This script heavily depends on KubeOne and Kubernetes versions.
 # You must use the script coming the KubeOne release you've downloaded.
 
+# Example: KUBERNETES_VERSION=1.19.3 TARGET_REGISTRY=127.0.0.1:5000 ./image-loader.sh
+#
+# Available variables:
+#
+#   KUBERNETES_VERSION
+#     pull images for a specified Kubernetes version
+#     the version is specified without 'v' prefix
+#
+#   TARGET_REGISTRY [default=127.0.0.1:5000]
+#     the address of the registry where images will be stored
+#
+#   PULL_OPTIONAL_IMAGES [default=true]
+#     pull images that are deployed on the user's request
+#     such as external CCM images, and WeaveNet CNI
+
 set -euo pipefail
 
 KUBERNETES_VERSION=${KUBERNETES_VERSION:-}
@@ -124,6 +139,14 @@ done
 for IMAGE in "${k1images[@]}"; do
   retag "${IMAGE}"
 done
+
+# Pull images needed for machine-controller
+minorVersion=$(cut -d '.' -f 2 <<< "${KUBERNETES_VERSION}")
+if [ "${minorVersion}" -le "18" ]; then
+  retag "k8s.gcr.io/hyperkube-amd64:${KUBERNETES_VERSION}"
+else
+  retag "quay.io/poseidon/kubelet:${KUBERNETES_VERSION}"
+fi
 
 if [ "$PULL_OPTIONAL_IMAGES" == "false" ]; then
   echodate "Skipping pulling optional images because PULL_OPTIONAL_IMAGES is set to false."
