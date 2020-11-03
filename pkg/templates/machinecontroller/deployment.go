@@ -759,6 +759,14 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster, credentials
 		args = append(args, "-node-insecure-registries", insecureRegistry)
 	}
 
+	if cluster.RegistryConfiguration != nil && cluster.RegistryConfiguration.OverwriteRegistry != "" {
+		hyperkubeImage := cluster.RegistryConfiguration.ImageRegistry("k8s.gcr.io") + "/hyperkube-amd64"
+		poseidonKubeletImage := cluster.RegistryConfiguration.ImageRegistry("quay.io") + "/poseidon/kubelet"
+
+		args = append(args, "-node-hyperkube-image", hyperkubeImage)
+		args = append(args, "-node-kubelet-repository", poseidonKubeletImage)
+	}
+
 	envVar, err := credentials.EnvVarBindings(cluster.CloudProvider, credentialsFilePath)
 	envVar = append(envVar,
 		corev1.EnvVar{
