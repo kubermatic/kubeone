@@ -52,6 +52,7 @@ func ValidateKubeOneCluster(c kubeone.KubeOneCluster) field.ErrorList {
 
 	allErrs = append(allErrs, ValidateFeatures(c.Features, field.NewPath("features"))...)
 	allErrs = append(allErrs, ValidateAddons(c.Addons, field.NewPath("addons"))...)
+	allErrs = append(allErrs, ValidateRegistryConfiguration(c.RegistryConfiguration, field.NewPath("registryConfiguration"))...)
 
 	return allErrs
 }
@@ -388,6 +389,20 @@ func ValidateHostConfig(hosts []kubeone.HostConfig, fldPath *field.Path) field.E
 		if len(h.SSHUsername) == 0 {
 			allErrs = append(allErrs, field.Required(fldPath, "no SSH username given"))
 		}
+	}
+
+	return allErrs
+}
+
+func ValidateRegistryConfiguration(r *kubeone.RegistryConfiguration, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	if r == nil {
+		return allErrs
+	}
+
+	if r.InsecureRegistry && r.OverwriteRegistry == "" {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("insecureRegistry"), r.InsecureRegistry, "insecureRegistry requires overwriteRegistry to be configured"))
 	}
 
 	return allErrs
