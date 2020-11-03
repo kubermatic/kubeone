@@ -342,11 +342,6 @@ sudo systemctl start kubelet
 )
 
 func KubeadmDebian(cluster *kubeone.KubeOneCluster, force bool) (string, error) {
-	dockerInsecureRegistry := ""
-	if cluster.RegistryConfiguration != nil && cluster.RegistryConfiguration.InsecureRegistry {
-		dockerInsecureRegistry = cluster.RegistryConfiguration.OverwriteRegistry
-	}
-
 	return Render(kubeadmDebianTemplate, Data{
 		"KUBELET":                  true,
 		"KUBEADM":                  true,
@@ -354,7 +349,7 @@ func KubeadmDebian(cluster *kubeone.KubeOneCluster, force bool) (string, error) 
 		"KUBERNETES_VERSION":       cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION":   defaultKubernetesCNIVersion,
 		"CONFIGURE_REPOSITORIES":   cluster.SystemPackages.ConfigureRepositories,
-		"DOCKER_INSECURE_REGISTRY": dockerInsecureRegistry,
+		"DOCKER_INSECURE_REGISTRY": cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"HTTP_PROXY":               cluster.Proxy.HTTP,
 		"HTTPS_PROXY":              cluster.Proxy.HTTPS,
 		"FORCE":                    force,
@@ -366,10 +361,6 @@ func KubeadmCentOS(cluster *kubeone.KubeOneCluster, force bool) (string, error) 
 	if proxy == "" {
 		proxy = cluster.Proxy.HTTP
 	}
-	dockerInsecureRegistry := ""
-	if cluster.RegistryConfiguration != nil && cluster.RegistryConfiguration.InsecureRegistry {
-		dockerInsecureRegistry = cluster.RegistryConfiguration.OverwriteRegistry
-	}
 
 	return Render(kubeadmCentOSTemplate, Data{
 		"KUBELET":                  true,
@@ -378,22 +369,17 @@ func KubeadmCentOS(cluster *kubeone.KubeOneCluster, force bool) (string, error) 
 		"KUBERNETES_VERSION":       cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION":   defaultKubernetesCNIVersion,
 		"CONFIGURE_REPOSITORIES":   cluster.SystemPackages.ConfigureRepositories,
-		"DOCKER_INSECURE_REGISTRY": dockerInsecureRegistry,
+		"DOCKER_INSECURE_REGISTRY": cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"PROXY":                    proxy,
 		"FORCE":                    force,
 	})
 }
 
 func KubeadmCoreOS(cluster *kubeone.KubeOneCluster) (string, error) {
-	dockerInsecureRegistry := ""
-	if cluster.RegistryConfiguration != nil && cluster.RegistryConfiguration.InsecureRegistry {
-		dockerInsecureRegistry = cluster.RegistryConfiguration.OverwriteRegistry
-	}
-
 	return Render(kubeadmCoreOSTemplate, Data{
 		"KUBERNETES_VERSION":       cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION":   defaultKubernetesCNIVersion,
-		"DOCKER_INSECURE_REGISTRY": dockerInsecureRegistry,
+		"DOCKER_INSECURE_REGISTRY": cluster.RegistryConfiguration.InsecureRegistryAddress(),
 	})
 }
 
@@ -410,18 +396,13 @@ func RemoveBinariesCoreOS() (string, error) {
 }
 
 func UpgradeKubeadmAndCNIDebian(cluster *kubeone.KubeOneCluster) (string, error) {
-	dockerInsecureRegistry := ""
-	if cluster.RegistryConfiguration != nil && cluster.RegistryConfiguration.InsecureRegistry {
-		dockerInsecureRegistry = cluster.RegistryConfiguration.OverwriteRegistry
-	}
-
 	return Render(kubeadmDebianTemplate, Data{
 		"UPGRADE":                  true,
 		"KUBEADM":                  true,
 		"KUBERNETES_VERSION":       cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION":   defaultKubernetesCNIVersion,
 		"CONFIGURE_REPOSITORIES":   cluster.SystemPackages.ConfigureRepositories,
-		"DOCKER_INSECURE_REGISTRY": dockerInsecureRegistry,
+		"DOCKER_INSECURE_REGISTRY": cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"HTTP_PROXY":               cluster.Proxy.HTTP,
 		"HTTPS_PROXY":              cluster.Proxy.HTTPS,
 	})
@@ -432,10 +413,6 @@ func UpgradeKubeadmAndCNICentOS(cluster *kubeone.KubeOneCluster) (string, error)
 	if proxy == "" {
 		proxy = cluster.Proxy.HTTP
 	}
-	dockerInsecureRegistry := ""
-	if cluster.RegistryConfiguration != nil && cluster.RegistryConfiguration.InsecureRegistry {
-		dockerInsecureRegistry = cluster.RegistryConfiguration.OverwriteRegistry
-	}
 
 	return Render(kubeadmCentOSTemplate, Data{
 		"UPGRADE":                  true,
@@ -443,7 +420,7 @@ func UpgradeKubeadmAndCNICentOS(cluster *kubeone.KubeOneCluster) (string, error)
 		"KUBERNETES_VERSION":       cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION":   defaultKubernetesCNIVersion,
 		"CONFIGURE_REPOSITORIES":   cluster.SystemPackages.ConfigureRepositories,
-		"DOCKER_INSECURE_REGISTRY": dockerInsecureRegistry,
+		"DOCKER_INSECURE_REGISTRY": cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"PROXY":                    proxy,
 	})
 }
@@ -456,11 +433,6 @@ func UpgradeKubeadmAndCNICoreOS(k8sVersion string) (string, error) {
 }
 
 func UpgradeKubeletAndKubectlDebian(cluster *kubeone.KubeOneCluster) (string, error) {
-	dockerInsecureRegistry := ""
-	if cluster.RegistryConfiguration != nil && cluster.RegistryConfiguration.InsecureRegistry {
-		dockerInsecureRegistry = cluster.RegistryConfiguration.OverwriteRegistry
-	}
-
 	return Render(kubeadmDebianTemplate, Data{
 		"UPGRADE":                  true,
 		"KUBELET":                  true,
@@ -468,7 +440,7 @@ func UpgradeKubeletAndKubectlDebian(cluster *kubeone.KubeOneCluster) (string, er
 		"KUBERNETES_VERSION":       cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION":   defaultKubernetesCNIVersion,
 		"CONFIGURE_REPOSITORIES":   cluster.SystemPackages.ConfigureRepositories,
-		"DOCKER_INSECURE_REGISTRY": dockerInsecureRegistry,
+		"DOCKER_INSECURE_REGISTRY": cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"HTTP_PROXY":               cluster.Proxy.HTTP,
 		"HTTPS_PROXY":              cluster.Proxy.HTTPS,
 	})
@@ -479,10 +451,6 @@ func UpgradeKubeletAndKubectlCentOS(cluster *kubeone.KubeOneCluster) (string, er
 	if proxy == "" {
 		proxy = cluster.Proxy.HTTP
 	}
-	dockerInsecureRegistry := ""
-	if cluster.RegistryConfiguration != nil && cluster.RegistryConfiguration.InsecureRegistry {
-		dockerInsecureRegistry = cluster.RegistryConfiguration.OverwriteRegistry
-	}
 
 	return Render(kubeadmCentOSTemplate, Data{
 		"UPGRADE":                  true,
@@ -491,7 +459,7 @@ func UpgradeKubeletAndKubectlCentOS(cluster *kubeone.KubeOneCluster) (string, er
 		"KUBERNETES_VERSION":       cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION":   defaultKubernetesCNIVersion,
 		"CONFIGURE_REPOSITORIES":   cluster.SystemPackages.ConfigureRepositories,
-		"DOCKER_INSECURE_REGISTRY": dockerInsecureRegistry,
+		"DOCKER_INSECURE_REGISTRY": cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"PROXY":                    proxy,
 	})
 }
