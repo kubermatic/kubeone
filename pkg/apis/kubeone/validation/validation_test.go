@@ -1426,19 +1426,19 @@ func TestValidateRegistryConfiguration(t *testing.T) {
 			name: "valid registry config (overwrite registry and insecure)",
 			registryConfiguration: &kubeone.RegistryConfiguration{
 				OverwriteRegistry: "127.0.0.1:5000",
-				InsecureRegistry: true,
+				InsecureRegistry:  true,
 			},
 			expectedError: false,
 		},
 		{
-			name: "valid registry config (empty)",
+			name:                  "valid registry config (empty)",
 			registryConfiguration: &kubeone.RegistryConfiguration{},
-			expectedError: false,
+			expectedError:         false,
 		},
 		{
-			name: "valid registry config (nil)",
+			name:                  "valid registry config (nil)",
 			registryConfiguration: nil,
-			expectedError: false,
+			expectedError:         false,
 		},
 		{
 			name: "invalid registry config (insecure registry without overwrite registry)",
