@@ -19,6 +19,7 @@ package cmd
 import (
 	"os"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
 )
@@ -27,11 +28,11 @@ func completionCmd(rootCmd *cobra.Command) *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "completion <bash|zsh>",
 		Short: "Generates completion scripts for bash and zsh",
-		Long: `
-To load completion run into your current shell run
+		Long: heredoc.Doc(`
+			To load completion run into your current shell run
 
-. <(kubeone completion <shell>)
-`,
+			. <(kubeone completion <shell>)
+		`),
 		Example:   "kubeone completion bash",
 		ValidArgs: []string{"bash", "zsh"},
 		Args:      cobra.ExactValidArgs(1),
@@ -53,9 +54,9 @@ func documentCmd(rootCmd *cobra.Command) *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "document <man|md|rest|yaml>",
 		Short: "Generates documentation",
-		Long: `
-Documentation can be generated as man pages, markdown, restructured text docs or yaml
-`,
+		Long: heredoc.Doc(`
+			Documentation can be generated as man pages, markdown, restructured text docs or yaml
+		`),
 		Example:   "kubeone document man",
 		ValidArgs: []string{"man", "md", "rest", "yaml"},
 		Args:      cobra.ExactValidArgs(1),

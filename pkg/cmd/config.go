@@ -24,6 +24,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -99,11 +100,11 @@ func printCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "print",
 		Short: "Print an example configuration manifest",
-		Long: `
-Print an example configuration manifest. Using the appropriate flags you can
-customize the configuration manifest. For the full reference of the
-configuration manifest, run the print command with --full flag.
-`,
+		Long: heredoc.Doc(`
+			Print an example configuration manifest. Using the appropriate flags you can
+			customize the configuration manifest. For the full reference of the
+			configuration manifest, run the print command with --full flag.
+		`),
 		Args:    cobra.ExactArgs(0),
 		Example: fmt.Sprintf("kubeone config print --provider digitalocean --kubernetes-version %s --cluster-name example", defaultKubernetesVersion),
 		RunE: func(_ *cobra.Command, args []string) error {
@@ -560,7 +561,7 @@ cloudProvider:
   # and AzureDisk CSI drivers deployed, as enabling this feature disables the fallback
   # to the in-tree volume plugins. See description for the CSIMigration field for
   # more details.
-  csiMigrationComplete: false 
+  csiMigrationComplete: false
   # Path to file that will be uploaded and used as custom '--cloud-config' file.
   cloudConfig: "{{ .CloudProviderCloudCfg }}"
 

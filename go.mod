@@ -3,6 +3,7 @@ module k8c.io/kubeone
 go 1.14
 
 require (
+	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/Masterminds/goutils v1.1.0 // indirect
 	github.com/Masterminds/semver v1.4.2
 	github.com/Masterminds/sprig v2.22.0+incompatible

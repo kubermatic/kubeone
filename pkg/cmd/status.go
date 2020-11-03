@@ -17,6 +17,7 @@ limitations under the License.
 package cmd
 
 import (
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -29,11 +30,12 @@ func statusCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "status",
 		Short: "Status of the cluster",
-		Long: `Status of the cluster.
+		Long: heredoc.Doc(`
+			Status of the cluster.
 
-This command takes KubeOne manifest which contains information about hosts. It's possible to source information about
-hosts from Terraform output, using the '--tfjson' flag.
-`,
+			This command takes KubeOne manifest which contains information about hosts. It's possible to source information about
+			hosts from Terraform output, using the '--tfjson' flag.
+		`),
 		Example: `kubeone status -m mycluster.yaml -t terraformoutput.json`,
 		RunE: func(_ *cobra.Command, _ []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)

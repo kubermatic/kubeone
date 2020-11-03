@@ -23,6 +23,7 @@ import (
 	"runtime"
 	"strconv"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/Masterminds/semver"
 	"github.com/spf13/cobra"
 
@@ -47,9 +48,9 @@ func versionCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "version",
 		Short: "Display KubeOne version",
-		Long: `
-Prints the exact version number, as embedded by the build system.
-`,
+		Long: heredoc.Doc(`
+			Prints the exact version number, as embedded by the build system.
+		`),
 		Args: cobra.ExactArgs(0),
 		RunE: func(_ *cobra.Command, _ []string) error {
 			ownver := k8sversion.Info{

@@ -21,6 +21,7 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -39,13 +40,13 @@ func proxyCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "proxy",
 		Short: "Proxy to the kube-apiserver using SSH tunnel",
-		Long: `
-HTTPS Proxy (CONNECT method) SSH tunnel.
+		Long: heredoc.Doc(`
+			HTTPS Proxy (CONNECT method) SSH tunnel.
 
-This command helps to reach kubeapi endpoint with local kubectl in case when private/firewalled endpoint is used (e.g.
-internal loadbalancer). It creates SSH tunnel to one of the control-plane nodes and then proxies incomming requests
-through it.
-`,
+			This command helps to reach kubeapi endpoint with local kubectl in case when private/firewalled endpoint is used (e.g.
+			internal loadbalancer). It creates SSH tunnel to one of the control-plane nodes and then proxies incomming requests
+			through it.
+		`),
 		Example: `kubeone proxy -m mycluster.yaml -t terraformoutput.json`,
 		RunE: func(*cobra.Command, []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
