@@ -43,7 +43,7 @@ esac
 {{ define "docker-daemon-config" }}
 sudo mkdir -p /etc/docker
 cat <<EOF | sudo tee /etc/docker/daemon.json
-{{ dockerCfg }}
+{{ dockerCfg .DOCKER_INSECURE_REGISTRY }}
 EOF
 {{ end }}
 
@@ -73,13 +73,14 @@ sudo systemctl force-reload systemd-journald
 )
 
 type dockerConfig struct {
-	ExecOpts      []string          `json:"exec-opts,omitempty"`
-	StorageDriver string            `json:"storage-driver,omitempty"`
-	LogDriver     string            `json:"log-driver,omitempty"`
-	LogOpts       map[string]string `json:"log-opts,omitempty"`
+	ExecOpts           []string          `json:"exec-opts,omitempty"`
+	StorageDriver      string            `json:"storage-driver,omitempty"`
+	LogDriver          string            `json:"log-driver,omitempty"`
+	LogOpts            map[string]string `json:"log-opts,omitempty"`
+	InsecureRegistries []string          `json:"insecure-registries,omitempty"`
 }
 
-func dockerCfg() (string, error) {
+func dockerCfg(insecureRegistry string) (string, error) {
 	cfg := dockerConfig{
 		ExecOpts:      []string{"native.cgroupdriver=systemd"},
 		StorageDriver: "overlay2",
@@ -87,6 +88,9 @@ func dockerCfg() (string, error) {
 		LogOpts: map[string]string{
 			"max-size": "100m",
 		},
+	}
+	if insecureRegistry != "" {
+		cfg.InsecureRegistries = []string{insecureRegistry}
 	}
 
 	b, err := json.MarshalIndent(cfg, "", "	")

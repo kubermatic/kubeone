@@ -754,6 +754,11 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster, credentials
 		args = append(args, "-external-cloud-provider")
 	}
 
+	insecureRegistry := cluster.RegistryConfiguration.InsecureRegistryAddress()
+	if insecureRegistry != "" {
+		args = append(args, "-node-insecure-registries", insecureRegistry)
+	}
+
 	envVar, err := credentials.EnvVarBindings(cluster.CloudProvider, credentialsFilePath)
 	envVar = append(envVar,
 		corev1.EnvVar{

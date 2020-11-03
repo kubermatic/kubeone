@@ -113,3 +113,13 @@ func (r *RegistryConfiguration) ImageRegistry(defaultRegistry string) string {
 	}
 	return defaultRegistry
 }
+
+// InsecureRegistryAddress returns the registry that should be configured
+// as insecure if InsecureRegistry is enabled
+func (r *RegistryConfiguration) InsecureRegistryAddress() string {
+	insecureRegistry := ""
+	if r != nil && r.InsecureRegistry {
+		insecureRegistry = r.OverwriteRegistry
+	}
+	return insecureRegistry
+}

@@ -1409,6 +1409,57 @@ func TestValidateHostConfig(t *testing.T) {
 	}
 }
 
+func TestValidateRegistryConfiguration(t *testing.T) {
+	tests := []struct {
+		name                  string
+		registryConfiguration *kubeone.RegistryConfiguration
+		expectedError         bool
+	}{
+		{
+			name: "valid registry config (overwrite registry)",
+			registryConfiguration: &kubeone.RegistryConfiguration{
+				OverwriteRegistry: "127.0.0.1:5000",
+			},
+			expectedError: false,
+		},
+		{
+			name: "valid registry config (overwrite registry and insecure)",
+			registryConfiguration: &kubeone.RegistryConfiguration{
+				OverwriteRegistry: "127.0.0.1:5000",
+				InsecureRegistry:  true,
+			},
+			expectedError: false,
+		},
+		{
+			name:                  "valid registry config (empty)",
+			registryConfiguration: &kubeone.RegistryConfiguration{},
+			expectedError:         false,
+		},
+		{
+			name:                  "valid registry config (nil)",
+			registryConfiguration: nil,
+			expectedError:         false,
+		},
+		{
+			name: "invalid registry config (insecure registry without overwrite registry)",
+			registryConfiguration: &kubeone.RegistryConfiguration{
+				InsecureRegistry: true,
+			},
+			expectedError: true,
+		},
+	}
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			errs := ValidateRegistryConfiguration(tc.registryConfiguration, nil)
+			if (len(errs) == 0) == tc.expectedError {
+				t.Log(errs[0])
+				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
+			}
+		})
+	}
+}
+
 func intPtr(i int) *int {
 	return &i
 }

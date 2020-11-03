@@ -1388,6 +1388,7 @@ func Convert_kubeone_ProxyConfig_To_v1beta1_ProxyConfig(in *kubeone.ProxyConfig,
 
 func autoConvert_v1beta1_RegistryConfiguration_To_kubeone_RegistryConfiguration(in *RegistryConfiguration, out *kubeone.RegistryConfiguration, s conversion.Scope) error {
 	out.OverwriteRegistry = in.OverwriteRegistry
+	out.InsecureRegistry = in.InsecureRegistry
 	return nil
 }
 
@@ -1398,6 +1399,7 @@ func Convert_v1beta1_RegistryConfiguration_To_kubeone_RegistryConfiguration(in *
 
 func autoConvert_kubeone_RegistryConfiguration_To_v1beta1_RegistryConfiguration(in *kubeone.RegistryConfiguration, out *RegistryConfiguration, s conversion.Scope) error {
 	out.OverwriteRegistry = in.OverwriteRegistry
+	out.InsecureRegistry = in.InsecureRegistry
 	return nil
 }
 

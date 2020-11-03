@@ -668,6 +668,10 @@ registryConfiguration:
   # if overwriteRegistry is set to 127.0.0.1:5000/example, image called
   # calico/cni would translate to 127.0.0.1:5000/example/calico/cni.
   overwriteRegistry: ""
+  # InsecureRegistry configures Docker to threat the registry specified
+  # in OverwriteRegistry as an insecure registry. This is also propagated
+  # to the worker nodes managed by machine-controller and/or KubeOne.
+  insecureRegistry: false
 
 # Addons are Kubernetes manifests to be deployed after provisioning the cluster
 addons:
