@@ -1,9 +1,12 @@
 /*
 Copyright 2019 The KubeOne Authors.
+
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
+
     http://www.apache.org/licenses/LICENSE-2.0
+
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -79,18 +82,6 @@ func vSphereServiceAccount() *corev1.ServiceAccount {
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      vSphereSAName,
 			Namespace: metav1.NamespaceSystem,
-		},
-	}
-}
-
-func vSphereSecret(cloudConfig string) *corev1.Secret {
-	return &corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      vSphereConfigSecretName,
-			Namespace: metav1.NamespaceSystem,
-		},
-		StringData: map[string]string{
-			"vsphere.conf": cloudConfig,
 		},
 	}
 }
