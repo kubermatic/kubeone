@@ -143,9 +143,9 @@ done
 # Pull images needed for machine-controller
 minorVersion=$(cut -d '.' -f 2 <<< "${KUBERNETES_VERSION}")
 if [ "${minorVersion}" -le "18" ]; then
-  retag "k8s.gcr.io/hyperkube-amd64:${KUBERNETES_VERSION}"
+  retag "k8s.gcr.io/hyperkube-amd64:v${KUBERNETES_VERSION}"
 else
-  retag "quay.io/poseidon/kubelet:${KUBERNETES_VERSION}"
+  retag "quay.io/poseidon/kubelet:v${KUBERNETES_VERSION}"
 fi
 
 if [ "$PULL_OPTIONAL_IMAGES" == "false" ]; then

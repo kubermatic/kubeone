@@ -67,6 +67,7 @@ type State struct {
 	PatchCNI                  bool
 	CredentialsFilePath       string
 	ManifestFilePath          string
+	PauseImage                string
 }
 
 func (s *State) KubeadmVerboseFlag() string {
