@@ -22,13 +22,44 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/kubeadm"
 )
 
+func determinePauseImage(s *state.State) error {
+	if s.Cluster.RegistryConfiguration == nil || s.Cluster.RegistryConfiguration.OverwriteRegistry == "" {
+		return nil
+	}
+
+	s.Logger.Infoln("Determining Kubernetes pause image...")
+
+	return s.RunTaskOnLeader(determinePauseImageExecutor)
+}
+
+func determinePauseImageExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+	cmd, err := scripts.KubeadmPauseImageVersion(s.Cluster.Versions.Kubernetes)
+	if err != nil {
+		return err
+	}
+
+	out, _, err := s.Runner.RunRaw(cmd)
+	if err != nil {
+		return err
+	}
+
+	s.PauseImage = s.Cluster.RegistryConfiguration.ImageRegistry("k8s.gcr.io") + "/pause:" + out
+
+	return err
+}
+
 func generateKubeadm(s *state.State) error {
 	s.Logger.Infoln("Generating kubeadm config file...")
+
+	if err := determinePauseImage(s); err != nil {
+		return errors.Wrap(err, "failed to determine pause image")
+	}
 
 	kubeadmProvider, err := kubeadm.New(s.Cluster.Versions.Kubernetes)
 	if err != nil {

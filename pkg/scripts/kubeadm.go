@@ -63,6 +63,12 @@ rm -rf "{{ .WORK_DIR }}"
 
 	kubeadmUpgradeLeaderScriptTemplate = `
 sudo {{ .KUBEADM_UPGRADE }} --config={{ .WORK_DIR }}/cfg/master_0.yaml`
+
+	kubeadmPauseImageVersionScriptTemplate = `
+sudo kubeadm config images list --kubernetes-version={{ .KUBERNETES_VERSION }} |
+  grep "k8s.gcr.io/pause" |
+  cut -d ":" -f2
+`
 )
 
 func KubeadmJoin(workdir string, nodeID int, verboseFlag string) (string, error) {
@@ -110,5 +116,11 @@ func KubeadmUpgradeLeader(kubeadmCmd, workdir string) (string, error) {
 	return Render(kubeadmUpgradeLeaderScriptTemplate, map[string]interface{}{
 		"KUBEADM_UPGRADE": kubeadmCmd,
 		"WORK_DIR":        workdir,
+	})
+}
+
+func KubeadmPauseImageVersion(kubernetesVersion string) (string, error) {
+	return Render(kubeadmPauseImageVersionScriptTemplate, map[string]interface{}{
+		"KUBERNETES_VERSION": kubernetesVersion,
 	})
 }

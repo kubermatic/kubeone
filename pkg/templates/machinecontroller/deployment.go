@@ -70,7 +70,7 @@ func Deploy(s *state.State) error {
 
 	image := s.Cluster.RegistryConfiguration.ImageRegistry(MachineControllerImageRegistry) + MachineControllerImage + MachineControllerTag
 
-	deployment, err := machineControllerDeployment(s.Cluster, s.CredentialsFilePath, image)
+	deployment, err := machineControllerDeployment(s.Cluster, s.CredentialsFilePath, image, s.PauseImage)
 	if err != nil {
 		return errors.Wrap(err, "failed to generate machine-controller deployment")
 	}
@@ -731,7 +731,7 @@ func machineControllerMachineDeploymentCRD() *apiextensions.CustomResourceDefini
 	}
 }
 
-func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster, credentialsFilePath, image string) (*appsv1.Deployment, error) {
+func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster, credentialsFilePath, image, pauseImage string) (*appsv1.Deployment, error) {
 	var replicas int32 = 1
 
 	args := []string{
@@ -765,6 +765,8 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster, credentials
 
 		args = append(args, "-node-hyperkube-image", hyperkubeImage)
 		args = append(args, "-node-kubelet-repository", poseidonKubeletImage)
+
+		args = append(args, "-node-pause-image", pauseImage)
 	}
 
 	envVar, err := credentials.EnvVarBindings(cluster.CloudProvider, credentialsFilePath)
