@@ -17,8 +17,6 @@ limitations under the License.
 package externalccm
 
 import (
-	"context"
-
 	"github.com/pkg/errors"
 
 	"k8c.io/kubeone/pkg/clientutil"
@@ -41,26 +39,17 @@ const (
 	vSphereImage            = "/cloud-provider-vsphere/cpi/release/manager:v1.2.1"
 )
 
-func ensurevSphere(s *state.State) error {
+func ensureVsphere(s *state.State) error {
 	if s.DynamicClient == nil {
 		return errors.New("kubernetes client not initialized")
 	}
 
-	if s.Cluster.CloudProvider.CloudConfig == "" {
-		return errors.New("cloudConfig not defined")
-	}
-
-	ctx := context.Background()
-
-	sa := vSphereServiceAccount()
-	cr := vSphereClusterRole()
-
 	image := s.Cluster.RegistryConfiguration.ImageRegistry(vSphereImageRegistry) + vSphereImage
 
 	k8sobjects := []runtime.Object{
-		sa,
-		vSphereConfigMap(s.Cluster.CloudProvider.CloudConfig),
-		cr,
+		vSphereServiceAccount(),
+		vSphereSecret(s.Cluster.CloudProvider.CloudConfig),
+		vSphereClusterRole(),
 		vSphereClusterRoleBinding(),
 		vSphereRoleBinding(),
 		vSphereDaemonSet(image),
@@ -69,7 +58,7 @@ func ensurevSphere(s *state.State) error {
 
 	withLabel := clientutil.WithComponentLabel(ccmComponentLabel)
 	for _, obj := range k8sobjects {
-		if err := clientutil.CreateOrUpdate(ctx, s.DynamicClient, obj, withLabel); err != nil {
+		if err := clientutil.CreateOrUpdate(s.Context, s.DynamicClient, obj, withLabel); err != nil {
 			return errors.Wrapf(err, "failed to ensure vSphere CCM %T", obj)
 		}
 	}
@@ -86,13 +75,13 @@ func vSphereServiceAccount() *corev1.ServiceAccount {
 	}
 }
 
-func vSphereConfigMap(cloudConfig string) *corev1.ConfigMap {
-	return &corev1.ConfigMap{
+func vSphereSecret(cloudConfig string) *corev1.Secret {
+	return &corev1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      vSphereConfigSecretName,
 			Namespace: metav1.NamespaceSystem,
 		},
-		Data: map[string]string{
+		StringData: map[string]string{
 			"vsphere.conf": cloudConfig,
 		},
 	}
@@ -166,15 +155,13 @@ func vSphereRoleBinding() *rbacv1.RoleBinding {
 		},
 		Subjects: []rbacv1.Subject{
 			{
-				APIGroup:  corev1.GroupName,
 				Kind:      "ServiceAccount",
 				Name:      vSphereSAName,
 				Namespace: metav1.NamespaceSystem,
 			},
 			{
-				APIGroup: corev1.GroupName,
-				Kind:     "User",
-				Name:     vSphereSAName,
+				Kind: "User",
+				Name: vSphereSAName,
 			},
 		},
 	}
@@ -302,10 +289,8 @@ func vSphereDaemonSet(image string) *appsv1.DaemonSet {
 						{
 							Name: "vsphere-config-volume",
 							VolumeSource: corev1.VolumeSource{
-								ConfigMap: &corev1.ConfigMapVolumeSource{
-									LocalObjectReference: corev1.LocalObjectReference{
-										Name: "cloud-config",
-									},
+								Secret: &corev1.SecretVolumeSource{
+									SecretName: vSphereConfigSecretName,
 								},
 							},
 						},
