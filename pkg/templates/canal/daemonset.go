@@ -30,8 +30,11 @@ func daemonSet(ifacePatch bool, clusterCIDR, installCNIImage, calicoImage, flann
 	maxUnavailable := intstr.FromInt(1)
 	terminationGracePeriodSeconds := int64(0)
 	privileged := true
+	optional := true
 	fileOrCreate := corev1.HostPathFileOrCreate
 	directoryOrCreate := corev1.HostPathDirectoryOrCreate
+	bidirectionalMountPropagation := corev1.MountPropagationBidirectional
+
 	commonLabels := map[string]string{
 		"k8s-app": "canal",
 	}
@@ -137,7 +140,18 @@ func daemonSet(ifacePatch bool, clusterCIDR, installCNIImage, calicoImage, flann
 							Name:  "install-cni",
 							Image: installCNIImage,
 							Command: []string{
-								"/install-cni.sh",
+								"/opt/cni/bin/install",
+							},
+							EnvFrom: []corev1.EnvFromSource{
+								{
+									// Allow KUBERNETES_SERVICE_HOST and KUBERNETES_SERVICE_PORT to be overridden for eBPF mode.
+									ConfigMapRef: &corev1.ConfigMapEnvSource{
+										LocalObjectReference: corev1.LocalObjectReference{
+											Name: "kubernetes-services-endpoint",
+										},
+										Optional: &optional,
+									},
+								},
 							},
 							Env: []corev1.EnvVar{
 								{
@@ -197,6 +211,17 @@ func daemonSet(ifacePatch bool, clusterCIDR, installCNIImage, calicoImage, flann
 						{
 							Name:  "calico-node",
 							Image: calicoImage,
+							EnvFrom: []corev1.EnvFromSource{
+								{
+									// Allow KUBERNETES_SERVICE_HOST and KUBERNETES_SERVICE_PORT to be overridden for eBPF mode.
+									ConfigMapRef: &corev1.ConfigMapEnvSource{
+										LocalObjectReference: corev1.LocalObjectReference{
+											Name: "kubernetes-services-endpoint",
+										},
+										Optional: &optional,
+									},
+								},
+							},
 							Env: []corev1.EnvVar{
 								{
 									// Use Kubernetes API as the backing datastore
@@ -330,6 +355,11 @@ func daemonSet(ifacePatch bool, clusterCIDR, installCNIImage, calicoImage, flann
 									MountPath: "/var/run/nodeagent",
 									Name:      "policysync",
 								},
+								{
+									MountPath:        "/sys/fs/",
+									Name:             "sysfs",
+									MountPropagation: &bidirectionalMountPropagation,
+								},
 							},
 						},
 						{
@@ -391,6 +421,15 @@ func daemonSet(ifacePatch bool, clusterCIDR, installCNIImage, calicoImage, flann
 								HostPath: &corev1.HostPathVolumeSource{
 									Path: "/run/xtables.lock",
 									Type: &fileOrCreate,
+								},
+							},
+						},
+						{
+							Name: "sysfs",
+							VolumeSource: corev1.VolumeSource{
+								HostPath: &corev1.HostPathVolumeSource{
+									Path: "/sys/fs/",
+									Type: &directoryOrCreate,
 								},
 							},
 						},
