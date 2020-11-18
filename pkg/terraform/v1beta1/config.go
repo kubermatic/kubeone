@@ -18,6 +18,7 @@ package v1beta1
 
 import (
 	"encoding/json"
+	"sort"
 
 	"github.com/imdario/mergo"
 	"github.com/pkg/errors"
@@ -27,24 +28,6 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 )
-
-type controlPlane struct {
-	ClusterName       string   `json:"cluster_name"`
-	CloudProvider     *string  `json:"cloud_provider"`
-	PublicAddress     []string `json:"public_address"`
-	PrivateAddress    []string `json:"private_address"`
-	LeaderIP          string   `json:"leader_ip"`
-	Hostnames         []string `json:"hostnames"`
-	Untaint           bool     `json:"untaint"`
-	SSHUser           string   `json:"ssh_user"`
-	SSHPort           int      `json:"ssh_port"`
-	SSHPrivateKeyFile string   `json:"ssh_private_key_file"`
-	SSHAgentSocket    string   `json:"ssh_agent_socket"`
-	Bastion           string   `json:"bastion"`
-	BastionPort       int      `json:"bastion_port"`
-	BastionUser       string   `json:"bastion_user"`
-	NetworkID         string   `json:"network_id"`
-}
 
 // Config represents configuration in the terraform output format
 type Config struct {
@@ -64,9 +47,106 @@ type Config struct {
 		Value map[string]kubeonev1beta1.DynamicWorkerConfig `json:"value"`
 	} `json:"kubeone_workers"`
 
+	KubeOneStaticWorkers struct {
+		Value map[string]hostsSpec `json:"value"`
+	} `json:"kubeone_static_workers"`
+
 	Proxy struct {
 		Value kubeonev1beta1.ProxyConfig `json:"value"`
 	} `json:"proxy"`
+}
+
+type controlPlane struct {
+	ClusterName   string  `json:"cluster_name"`
+	CloudProvider *string `json:"cloud_provider"`
+	LeaderIP      string  `json:"leader_ip"`
+	Untaint       bool    `json:"untaint"`
+	NetworkID     string  `json:"network_id"`
+	hostsSpec
+}
+
+type hostsSpec struct {
+	PublicAddress     []string `json:"public_address"`
+	PrivateAddress    []string `json:"private_address"`
+	Hostnames         []string `json:"hostnames"`
+	SSHUser           string   `json:"ssh_user"`
+	SSHPort           int      `json:"ssh_port"`
+	SSHPrivateKeyFile string   `json:"ssh_private_key_file"`
+	SSHAgentSocket    string   `json:"ssh_agent_socket"`
+	Bastion           string   `json:"bastion"`
+	BastionPort       int      `json:"bastion_port"`
+	BastionUser       string   `json:"bastion_user"`
+}
+
+type hostConfigsOpts func([]kubeonev1beta1.HostConfig)
+
+func isLeaderHostConfigsOpts(leaderIP string) hostConfigsOpts {
+	return func(hosts []kubeonev1beta1.HostConfig) {
+		if leaderIP == "" {
+			return
+		}
+
+		for i := range hosts {
+			hosts[i].IsLeader = leaderIP == hosts[i].PublicAddress || leaderIP == hosts[i].PrivateAddress
+		}
+	}
+}
+
+func untainerHostConfigsOpts(untaint bool) hostConfigsOpts {
+	return func(hosts []kubeonev1beta1.HostConfig) {
+		if !untaint {
+			return
+		}
+
+		for i := range hosts {
+			hosts[i].Taints = []corev1.Taint{}
+		}
+	}
+}
+
+func idIncrementerHostConfigsOpts(currentHostID int) hostConfigsOpts {
+	return func(hosts []kubeonev1beta1.HostConfig) {
+		for i := range hosts {
+			hosts[i].ID = currentHostID
+			currentHostID++
+		}
+	}
+}
+
+func (hs *hostsSpec) toHostConfigs(opts ...hostConfigsOpts) []kubeonev1beta1.HostConfig {
+	hosts := []kubeonev1beta1.HostConfig{}
+
+	for i, publicIP := range hs.PublicAddress {
+		privateIP := publicIP
+		if i < len(hs.PrivateAddress) {
+			privateIP = hs.PrivateAddress[i]
+		}
+
+		hostname := ""
+		if i < len(hs.Hostnames) {
+			hostname = hs.Hostnames[i]
+		}
+
+		hosts = append(hosts, newHostConfig(publicIP, privateIP, hostname, hs))
+	}
+
+	if len(hosts) == 0 {
+		// there was no public IPs available
+		for i, privateIP := range hs.PrivateAddress {
+			hostname := ""
+			if i < len(hs.Hostnames) {
+				hostname = hs.Hostnames[i]
+			}
+
+			hosts = append(hosts, newHostConfig("", privateIP, hostname, hs))
+		}
+	}
+
+	for _, mutatorFn := range opts {
+		mutatorFn(hosts)
+	}
+
+	return hosts
 }
 
 type cloudProviderFlags struct {
@@ -101,43 +181,33 @@ func (c *Config) Apply(cluster *kubeonev1beta1.KubeOneCluster) error {
 		}
 	}
 
-	var err error
-
 	cluster.Name = cp.ClusterName
 
+	idIncrementer := idIncrementerHostConfigsOpts(0)
+	isLeader := isLeaderHostConfigsOpts(cp.LeaderIP)
+	untainer := untainerHostConfigsOpts(cp.Untaint)
+
 	// build up a list of master nodes
-	hosts := make([]kubeonev1beta1.HostConfig, 0)
-	for i, publicIP := range cp.PublicAddress {
-		privateIP := publicIP
-		if i < len(cp.PrivateAddress) {
-			privateIP = cp.PrivateAddress[i]
-		}
+	cpHosts := cp.hostsSpec.toHostConfigs(idIncrementer, isLeader, untainer)
 
-		hostname := ""
-		if i < len(cp.Hostnames) {
-			hostname = cp.Hostnames[i]
-		}
-
-		hosts = append(hosts, newHostConfig(i, publicIP, privateIP, hostname, cp))
+	if len(cpHosts) > 0 {
+		cluster.ControlPlane.Hosts = cpHosts
 	}
 
-	if len(hosts) == 0 {
-		// there was no public IPs available
-		for i, privateIP := range cp.PrivateAddress {
-			hostname := ""
-			if i < len(cp.Hostnames) {
-				hostname = cp.Hostnames[i]
-			}
-
-			hosts = append(hosts, newHostConfig(i, "", privateIP, hostname, cp))
-		}
+	var staticWorkerGroupNames []string
+	for key := range c.KubeOneStaticWorkers.Value {
+		staticWorkerGroupNames = append(staticWorkerGroupNames, key)
 	}
 
-	if len(hosts) > 0 {
-		cluster.ControlPlane.Hosts = hosts
+	// avoid randomized access to the map
+	sort.Strings(staticWorkerGroupNames)
+	for _, groupName := range staticWorkerGroupNames {
+		staticWorkersGroup := c.KubeOneStaticWorkers.Value[groupName]
+		staticWorkers := staticWorkersGroup.toHostConfigs(idIncrementer)
+		cluster.StaticWorkers.Hosts = append(cluster.StaticWorkers.Hosts, staticWorkers...)
 	}
 
-	if err = mergo.Merge(&cluster.Proxy, &c.Proxy.Value); err != nil {
+	if err := mergo.Merge(&cluster.Proxy, &c.Proxy.Value); err != nil {
 		return errors.Wrap(err, "failed to merge proxy settings")
 	}
 
@@ -168,6 +238,8 @@ func (c *Config) Apply(cluster *kubeonev1beta1.KubeOneCluster) error {
 			cluster.DynamicWorkers = append(cluster.DynamicWorkers, workersetValue)
 			continue
 		}
+
+		var err error
 
 		// If we found a workerset defined in the cluster object,
 		// merge values from the object and the terraform output
@@ -200,33 +272,19 @@ func (c *Config) Apply(cluster *kubeonev1beta1.KubeOneCluster) error {
 	return nil
 }
 
-func newHostConfig(id int, publicIP, privateIP, hostname string, cp controlPlane) kubeonev1beta1.HostConfig {
-	var isLeader bool
-
-	if cp.LeaderIP != "" {
-		isLeader = cp.LeaderIP == publicIP || cp.LeaderIP == privateIP
-	}
-
-	hostConfig := kubeonev1beta1.HostConfig{
-		ID:                id,
-		PublicAddress:     publicIP,
-		PrivateAddress:    privateIP,
+func newHostConfig(publicIP, privateIP, hostname string, hs *hostsSpec) kubeonev1beta1.HostConfig {
+	return kubeonev1beta1.HostConfig{
+		Bastion:           hs.Bastion,
+		BastionPort:       hs.BastionPort,
+		BastionUser:       hs.BastionUser,
 		Hostname:          hostname,
-		SSHUsername:       cp.SSHUser,
-		SSHPort:           cp.SSHPort,
-		SSHPrivateKeyFile: cp.SSHPrivateKeyFile,
-		SSHAgentSocket:    cp.SSHAgentSocket,
-		Bastion:           cp.Bastion,
-		BastionPort:       cp.BastionPort,
-		BastionUser:       cp.BastionUser,
-		IsLeader:          isLeader,
+		PrivateAddress:    privateIP,
+		PublicAddress:     publicIP,
+		SSHAgentSocket:    hs.SSHAgentSocket,
+		SSHPrivateKeyFile: hs.SSHPrivateKeyFile,
+		SSHUsername:       hs.SSHUser,
+		SSHPort:           hs.SSHPort,
 	}
-
-	if cp.Untaint {
-		hostConfig.Taints = []corev1.Taint{}
-	}
-
-	return hostConfig
 }
 
 func (c *Config) updateAWSWorkerset(existingWorkerSet *kubeonev1beta1.DynamicWorkerConfig, cfg json.RawMessage) error {

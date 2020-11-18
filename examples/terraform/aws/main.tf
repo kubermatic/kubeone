@@ -292,6 +292,28 @@ resource "aws_instance" "control_plane" {
   )
 }
 
+resource "aws_instance" "static_workers1" {
+  count                  = var.static_workers_count
+  instance_type          = var.worker_type
+  iam_instance_profile   = aws_iam_instance_profile.profile.name
+  ami                    = local.ami
+  key_name               = aws_key_pair.deployer.key_name
+  vpc_security_group_ids = [aws_security_group.common.id]
+  availability_zone      = data.aws_availability_zones.available.names[count.index % length(data.aws_availability_zones.available.names)]
+  subnet_id              = local.subnets[data.aws_availability_zones.available.names[count.index % length(data.aws_availability_zones.available.names)]]
+  ebs_optimized          = true
+
+  root_block_device {
+    volume_type = "gp2"
+    volume_size = 50
+  }
+
+  tags = map(
+    "Name", "${var.cluster_name}-workers1-${count.index + 1}",
+    local.kube_cluster_tag, "shared",
+  )
+}
+
 #################################### BASTION ###################################
 
 resource "aws_instance" "bastion" {

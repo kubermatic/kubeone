@@ -156,3 +156,8 @@ variable "initial_machinedeployment_replicas" {
   default     = 1
   description = "number of replicas per MachineDeployment"
 }
+
+variable "static_workers_count" {
+  description = "number of static workers"
+  default     = 0
+}
