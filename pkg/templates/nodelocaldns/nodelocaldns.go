@@ -107,6 +107,7 @@ func Deploy(s *state.State) error {
 	objs := []runtime.Object{
 		dnscacheServiceAccount(),
 		dnscacheService(),
+		dnscachePrometheusService(),
 		dnscacheConfigMap(s.Cluster.ClusterNetwork.ServiceDomainName),
 		dnscacheDaemonSet(image),
 	}
@@ -130,6 +131,35 @@ func dnscacheServiceAccount() *corev1.ServiceAccount {
 			Labels: map[string]string{
 				"kubernetes.io/cluster-service":   "true",
 				"addonmanager.kubernetes.io/mode": "Reconcile",
+			},
+		},
+	}
+}
+
+func dnscachePrometheusService() *corev1.Service {
+	return &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "node-local-dns",
+			Namespace: metav1.NamespaceSystem,
+			Labels: map[string]string{
+				"k8s-app": "node-local-dns",
+			},
+			Annotations: map[string]string{
+				"prometheus.io/port":   "9253",
+				"prometheus.io/scrape": "true",
+			},
+		},
+		Spec: corev1.ServiceSpec{
+			ClusterIP: "None",
+			Selector: map[string]string{
+				"k8s-app": "node-local-dns",
+			},
+			Ports: []corev1.ServicePort{
+				{
+					Name:       "metrics",
+					Port:       9253,
+					TargetPort: intstr.FromInt(9253),
+				},
 			},
 		},
 	}
