@@ -109,7 +109,7 @@ func daemonSet(ifacePatch bool, clusterCIDR, installCNIImage, calicoImage, flann
 				},
 				Spec: corev1.PodSpec{
 					NodeSelector: map[string]string{
-						"beta.kubernetes.io/os": "linux",
+						"kubernetes.io/os": "linux",
 					},
 					HostNetwork: true,
 					Tolerations: []corev1.Toleration{
