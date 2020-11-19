@@ -42,6 +42,24 @@ output "kubeone_hosts" {
   }
 }
 
+output "kubeone_static_workers" {
+  description = "Static worker config"
+
+  value = {
+    workers1 = {
+      private_address      = aws_instance.static_workers1.*.private_ip
+      hostnames            = aws_instance.static_workers1.*.private_dns
+      ssh_agent_socket     = var.ssh_agent_socket
+      ssh_port             = var.ssh_port
+      ssh_private_key_file = var.ssh_private_key_file
+      ssh_user             = var.ssh_username
+      bastion              = aws_instance.bastion.public_ip
+      bastion_port         = var.bastion_port
+      bastion_user         = var.bastion_user
+    }
+  }
+}
+
 output "kubeone_workers" {
   description = "Workers definitions, that will be transformed into MachineDeployment object"
 
