@@ -582,7 +582,7 @@ func autoConvert_kubeone_KubeOneCluster_To_v1alpha1_KubeOneCluster(in *kubeone.K
 	}
 	out.Addons = (*Addons)(unsafe.Pointer(in.Addons))
 	out.SystemPackages = (*SystemPackages)(unsafe.Pointer(in.SystemPackages))
-	// WARNING: in.ImageConfiguration requires manual conversion: does not exist in peer-type
+	// WARNING: in.AssetConfiguration requires manual conversion: does not exist in peer-type
 	// WARNING: in.RegistryConfiguration requires manual conversion: does not exist in peer-type
 	return nil
 }

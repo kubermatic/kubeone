@@ -44,11 +44,11 @@ func Deploy(s *state.State) error {
 	}
 
 	imageTag := metricsServerImageTag
-	if s.Cluster.ImageConfiguration.MetricsServer.ImageTag != "" {
-		imageTag = s.Cluster.ImageConfiguration.MetricsServer.ImageTag
+	if s.Cluster.AssetConfiguration.MetricsServer.ImageTag != "" {
+		imageTag = s.Cluster.AssetConfiguration.MetricsServer.ImageTag
 	}
 
-	image := s.Cluster.ImageConfiguration.MetricsServer.ImageRepository + metricsServerImageName + imageTag
+	image := s.Cluster.AssetConfiguration.MetricsServer.ImageRepository + metricsServerImageName + imageTag
 
 	k8sobjects := []runtime.Object{
 		aggregatedMetricsReaderClusterRole(),
