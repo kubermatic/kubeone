@@ -134,6 +134,11 @@ variable "ami_filters" {
       owners     = ["309956199498"] # Red Hat
       image_name = ["RHEL-8*_HVM-*-x86_64-*"]
     }
+
+    amazon_linux2 = {
+      owners     = ["137112412989"] # Amazon
+      image_name = ["amzn2-ami-hvm-2.0.*-x86_64-gp2"]
+    }
   }
 }
 
