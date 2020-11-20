@@ -658,6 +658,36 @@ systemPackages:
   # will add Docker and Kubernetes repositories to OS package manager
   configureRepositories: true # it's true by default
 
+# imageConfiguration configures which images are used for the core components
+# If imageTag is not specified, it'll be defaulted automatically by kubeadm
+# If registryConfiguration.overwriteRegistry is configured and imageRepository
+# is empty, registryConfiguration.overwriteRegistry will be used
+imageConfiguration:
+  kubeadm:
+    # imageRepository customizes the registry/repository part of the image
+    imageRepository: "k8s.gcr.io"
+  # Overwriting the pause image works only in the special cases
+  pause:
+    # imageRepository customizes the registry/repository part of the image
+    imageRepository: "k8s.gcr.io"
+    # imageTag customizes the image tag
+    imageTag: ""
+  coreDNS:
+    # imageRepository customizes the registry/repository part of the image
+    imageRepository: "k8s.gcr.io"
+    # imageTag customizes the image tag
+    imageTag: ""
+  etcd:
+    # imageRepository customizes the registry/repository part of the image
+    imageRepository: "k8s.gcr.io"
+    # imageTag customizes the image tag
+    imageTag: ""
+  metricsServer:
+    # imageRepository customizes the registry/repository part of the image
+    imageRepository: "k8s.gcr.io"
+    # imageTag customizes the image tag
+    imageTag: ""
+
 # registryConfiguration controls how images used for components deployed by
 # KubeOne and kubeadm are pulled from an image registry
 registryConfiguration:
