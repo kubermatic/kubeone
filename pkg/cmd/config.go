@@ -658,11 +658,11 @@ systemPackages:
   # will add Docker and Kubernetes repositories to OS package manager
   configureRepositories: true # it's true by default
 
-# imageConfiguration configures which images are used for the core components
+# assetConfiguration configures which images are used for the core components
 # If imageTag is not specified, it'll be defaulted automatically by kubeadm
 # If registryConfiguration.overwriteRegistry is configured and imageRepository
 # is empty, registryConfiguration.overwriteRegistry will be used
-imageConfiguration:
+assetConfiguration:
   # kubernetes configures the image repository for kube-apiserver, kube-controller-manager,
   # kube-scheduler, and kube-proxy
   kubernetes:

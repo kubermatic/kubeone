@@ -202,20 +202,20 @@ func SetDefaults_ImageConfiguration(obj *KubeOneCluster) {
 		registryK8SGCR = obj.RegistryConfiguration.OverwriteRegistry
 	}
 
-	if obj.ImageConfiguration.Kubernetes.ImageRepository == "" {
-		obj.ImageConfiguration.Kubernetes.ImageRepository = registryK8SGCR
+	if obj.AssetConfiguration.Kubernetes.ImageRepository == "" {
+		obj.AssetConfiguration.Kubernetes.ImageRepository = registryK8SGCR
 	}
-	if obj.ImageConfiguration.Pause.ImageRepository == "" {
-		obj.ImageConfiguration.Pause.ImageRepository = registryK8SGCR
+	if obj.AssetConfiguration.Pause.ImageRepository == "" {
+		obj.AssetConfiguration.Pause.ImageRepository = registryK8SGCR
 	}
-	if obj.ImageConfiguration.CoreDNS.ImageRepository == "" {
-		obj.ImageConfiguration.CoreDNS.ImageRepository = registryK8SGCR
+	if obj.AssetConfiguration.CoreDNS.ImageRepository == "" {
+		obj.AssetConfiguration.CoreDNS.ImageRepository = registryK8SGCR
 	}
-	if obj.ImageConfiguration.Etcd.ImageRepository == "" {
-		obj.ImageConfiguration.Etcd.ImageRepository = registryK8SGCR
+	if obj.AssetConfiguration.Etcd.ImageRepository == "" {
+		obj.AssetConfiguration.Etcd.ImageRepository = registryK8SGCR
 	}
-	if obj.ImageConfiguration.MetricsServer.ImageRepository == "" {
-		obj.ImageConfiguration.MetricsServer.ImageRepository = registryK8SGCR
+	if obj.AssetConfiguration.MetricsServer.ImageRepository == "" {
+		obj.AssetConfiguration.MetricsServer.ImageRepository = registryK8SGCR
 	}
 }
 

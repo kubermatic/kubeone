@@ -58,7 +58,7 @@ type KubeOneCluster struct {
 	// SystemPackages configure kubeone behaviour regarding OS packages.
 	SystemPackages *SystemPackages `json:"systemPackages,omitempty"`
 	// ImageConfiguration configures which images are used for the core components
-	ImageConfiguration ImageConfiguration `json:"imageConfiguration,omitempty"`
+	AssetConfiguration AssetConfiguration `json:"assetConfiguration,omitempty"`
 	// RegistryConfiguration configures how Docker images are pulled from an image registry
 	RegistryConfiguration *RegistryConfiguration `json:"registryConfiguration,omitempty"`
 }
@@ -82,6 +82,7 @@ var (
 	OperatingSystemNameUbuntu  OperatingSystemName = "ubuntu"
 	OperatingSystemNameCentOS  OperatingSystemName = "centos"
 	OperatingSystemNameRHEL    OperatingSystemName = "rhel"
+	OperatingSystemNameAmazon  OperatingSystemName = "amzn"
 	OperatingSystemNameCoreOS  OperatingSystemName = "coreos"
 	OperatingSystemNameFlatcar OperatingSystemName = "flatcar"
 	OperatingSystemNameUnknown OperatingSystemName = ""
@@ -369,7 +370,7 @@ type SystemPackages struct {
 }
 
 // ImageConfiguration controls which images are used for the core components
-type ImageConfiguration struct {
+type AssetConfiguration struct {
 	// Kubernetes image configuration (affect kube-apiserver, kube-controller-manager,
 	// kube-scheduler, and kube-proxy)
 	// Only ImageRepository is respected, ImageTag is ignored
