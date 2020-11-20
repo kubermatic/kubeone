@@ -150,7 +150,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 			ExtraVolumes: []kubeadmv1beta1.HostPathMount{},
 		},
 		ClusterName:     cluster.Name,
-		ImageRepository: cluster.ImageConfiguration.Kubeadm.ImageRepository,
+		ImageRepository: cluster.ImageConfiguration.Kubernetes.ImageRepository,
 		Etcd: kubeadmv1beta1.Etcd{
 			Local: &kubeadmv1beta1.LocalEtcd{
 				ImageMeta: kubeadmv1beta1.ImageMeta{

@@ -202,8 +202,8 @@ func SetDefaults_ImageConfiguration(obj *KubeOneCluster) {
 		registryK8SGCR = obj.RegistryConfiguration.OverwriteRegistry
 	}
 
-	if obj.ImageConfiguration.Kubeadm.ImageRepository == "" {
-		obj.ImageConfiguration.Kubeadm.ImageRepository = registryK8SGCR
+	if obj.ImageConfiguration.Kubernetes.ImageRepository == "" {
+		obj.ImageConfiguration.Kubernetes.ImageRepository = registryK8SGCR
 	}
 	if obj.ImageConfiguration.Pause.ImageRepository == "" {
 		obj.ImageConfiguration.Pause.ImageRepository = registryK8SGCR

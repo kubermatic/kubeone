@@ -663,7 +663,9 @@ systemPackages:
 # If registryConfiguration.overwriteRegistry is configured and imageRepository
 # is empty, registryConfiguration.overwriteRegistry will be used
 imageConfiguration:
-  kubeadm:
+  # kubernetes configures the image repository for kube-apiserver, kube-controller-manager,
+  # kube-scheduler, and kube-proxy
+  kubernetes:
     # imageRepository customizes the registry/repository part of the image
     imageRepository: "k8s.gcr.io"
   # Overwriting the pause image works only in the special cases

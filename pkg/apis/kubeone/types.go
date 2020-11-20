@@ -370,9 +370,10 @@ type SystemPackages struct {
 
 // ImageConfiguration controls which images are used for the core components
 type ImageConfiguration struct {
-	// Kubeadm image configuration
+	// Kubernetes image configuration (affect kube-apiserver, kube-controller-manager,
+	// kube-scheduler, and kube-proxy)
 	// Only ImageRepository is respected, ImageTag is ignored
-	Kubeadm ImageMeta `json:"kubeadm,omitempty"`
+	Kubernetes ImageMeta `json:"kubernetes,omitempty"`
 	// Pause image configuration
 	// Respected only is special cases
 	Pause ImageMeta `json:"pause,omitempty"`

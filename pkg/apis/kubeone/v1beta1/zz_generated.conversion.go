@@ -995,7 +995,7 @@ func Convert_kubeone_HostConfig_To_v1beta1_HostConfig(in *kubeone.HostConfig, ou
 }
 
 func autoConvert_v1beta1_ImageConfiguration_To_kubeone_ImageConfiguration(in *ImageConfiguration, out *kubeone.ImageConfiguration, s conversion.Scope) error {
-	if err := Convert_v1beta1_ImageMeta_To_kubeone_ImageMeta(&in.Kubeadm, &out.Kubeadm, s); err != nil {
+	if err := Convert_v1beta1_ImageMeta_To_kubeone_ImageMeta(&in.Kubernetes, &out.Kubernetes, s); err != nil {
 		return err
 	}
 	if err := Convert_v1beta1_ImageMeta_To_kubeone_ImageMeta(&in.Pause, &out.Pause, s); err != nil {
@@ -1019,7 +1019,7 @@ func Convert_v1beta1_ImageConfiguration_To_kubeone_ImageConfiguration(in *ImageC
 }
 
 func autoConvert_kubeone_ImageConfiguration_To_v1beta1_ImageConfiguration(in *kubeone.ImageConfiguration, out *ImageConfiguration, s conversion.Scope) error {
-	if err := Convert_kubeone_ImageMeta_To_v1beta1_ImageMeta(&in.Kubeadm, &out.Kubeadm, s); err != nil {
+	if err := Convert_kubeone_ImageMeta_To_v1beta1_ImageMeta(&in.Kubernetes, &out.Kubernetes, s); err != nil {
 		return err
 	}
 	if err := Convert_kubeone_ImageMeta_To_v1beta1_ImageMeta(&in.Pause, &out.Pause, s); err != nil {
