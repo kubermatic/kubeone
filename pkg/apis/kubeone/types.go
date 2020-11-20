@@ -57,6 +57,8 @@ type KubeOneCluster struct {
 	Addons *Addons `json:"addons,omitempty"`
 	// SystemPackages configure kubeone behaviour regarding OS packages.
 	SystemPackages *SystemPackages `json:"systemPackages,omitempty"`
+	// ImageConfiguration configures which images are used for the core components
+	ImageConfiguration ImageConfiguration `json:"imageConfiguration,omitempty"`
 	// RegistryConfiguration configures how Docker images are pulled from an image registry
 	RegistryConfiguration *RegistryConfiguration `json:"registryConfiguration,omitempty"`
 }
@@ -364,6 +366,31 @@ type SystemPackages struct {
 	// ConfigureRepositories (true by default) is a flag to control automatic
 	// configuration of kubeadm / docker repositories.
 	ConfigureRepositories bool `json:"configureRepositories,omitempty"`
+}
+
+// ImageConfiguration controls which images are used for the core components
+type ImageConfiguration struct {
+	// Kubernetes image configuration (affect kube-apiserver, kube-controller-manager,
+	// kube-scheduler, and kube-proxy)
+	// Only ImageRepository is respected, ImageTag is ignored
+	Kubernetes ImageMeta `json:"kubernetes,omitempty"`
+	// Pause image configuration
+	// Respected only is special cases
+	Pause ImageMeta `json:"pause,omitempty"`
+	// CoreDNS image configuration
+	CoreDNS ImageMeta `json:"coreDNS,omitempty"`
+	// Etcd image configuration
+	Etcd ImageMeta `json:"etcd,omitempty"`
+	// metrics-server image configuration
+	MetricsServer ImageMeta `json:"metricsServer,omitempty"`
+}
+
+// ImageMeta is used to customize the image registry and the image tag
+type ImageMeta struct {
+	// ImageRepository customizes the registry/repository part of the image
+	ImageRepository string `json:"imageRepository,omitempty"`
+	// ImageTag customizes the image tag
+	ImageTag string `json:"imageTag,omitempty"`
 }
 
 // RegistryConfiguration controls how images used for components deployed by

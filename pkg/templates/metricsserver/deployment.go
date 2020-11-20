@@ -32,9 +32,9 @@ import (
 )
 
 const (
-	metricsServerImageRegistry = "k8s.gcr.io"
-	metricsServerImageName     = `/metrics-server:v0.3.6`
-	componentLabel             = "metrics-server"
+	metricsServerImageName = `/metrics-server:`
+	metricsServerImageTag  = "v0.3.6"
+	componentLabel         = "metrics-server"
 )
 
 // Deploy generate and POST all objects to apiserver
@@ -43,7 +43,12 @@ func Deploy(s *state.State) error {
 		return errors.New("kubernetes client not initialized")
 	}
 
-	image := s.Cluster.RegistryConfiguration.ImageRegistry(metricsServerImageRegistry) + metricsServerImageName
+	imageTag := metricsServerImageTag
+	if s.Cluster.ImageConfiguration.MetricsServer.ImageTag != "" {
+		imageTag = s.Cluster.ImageConfiguration.MetricsServer.ImageTag
+	}
+
+	image := s.Cluster.ImageConfiguration.MetricsServer.ImageRepository + metricsServerImageName + imageTag
 
 	k8sobjects := []runtime.Object{
 		aggregatedMetricsReaderClusterRole(),

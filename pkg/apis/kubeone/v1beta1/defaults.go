@@ -51,6 +51,7 @@ func SetDefaults_KubeOneCluster(obj *KubeOneCluster) {
 	SetDefaults_Proxy(obj)
 	SetDefaults_MachineController(obj)
 	SetDefaults_SystemPackages(obj)
+	SetDefaults_ImageConfiguration(obj)
 	SetDefaults_Features(obj)
 	SetDefaults_Addons(obj)
 }
@@ -192,6 +193,29 @@ func SetDefaults_SystemPackages(obj *KubeOneCluster) {
 		obj.SystemPackages = &SystemPackages{
 			ConfigureRepositories: true,
 		}
+	}
+}
+
+func SetDefaults_ImageConfiguration(obj *KubeOneCluster) {
+	registryK8SGCR := "k8s.gcr.io"
+	if obj.RegistryConfiguration != nil && obj.RegistryConfiguration.OverwriteRegistry != "" {
+		registryK8SGCR = obj.RegistryConfiguration.OverwriteRegistry
+	}
+
+	if obj.ImageConfiguration.Kubernetes.ImageRepository == "" {
+		obj.ImageConfiguration.Kubernetes.ImageRepository = registryK8SGCR
+	}
+	if obj.ImageConfiguration.Pause.ImageRepository == "" {
+		obj.ImageConfiguration.Pause.ImageRepository = registryK8SGCR
+	}
+	if obj.ImageConfiguration.CoreDNS.ImageRepository == "" {
+		obj.ImageConfiguration.CoreDNS.ImageRepository = registryK8SGCR
+	}
+	if obj.ImageConfiguration.Etcd.ImageRepository == "" {
+		obj.ImageConfiguration.Etcd.ImageRepository = registryK8SGCR
+	}
+	if obj.ImageConfiguration.MetricsServer.ImageRepository == "" {
+		obj.ImageConfiguration.MetricsServer.ImageRepository = registryK8SGCR
 	}
 }
 
