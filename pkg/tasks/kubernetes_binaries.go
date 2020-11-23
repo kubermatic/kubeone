@@ -30,6 +30,7 @@ func upgradeKubeletAndKubectlBinaries(s *state.State, node kubeoneapi.HostConfig
 		kubeoneapi.OperatingSystemNameCoreOS:  upgradeKubeletAndKubectlBinariesCoreOS,
 		kubeoneapi.OperatingSystemNameFlatcar: upgradeKubeletAndKubectlBinariesCoreOS,
 		kubeoneapi.OperatingSystemNameCentOS:  upgradeKubeletAndKubectlBinariesCentOS,
+		kubeoneapi.OperatingSystemNameAmazon:  upgradeKubeletAndKubectlBinariesAmazonLinux,
 		kubeoneapi.OperatingSystemNameRHEL:    upgradeKubeletAndKubectlBinariesCentOS,
 	})
 }
@@ -40,6 +41,7 @@ func upgradeKubeadmAndCNIBinaries(s *state.State, node kubeoneapi.HostConfig) er
 		kubeoneapi.OperatingSystemNameCoreOS:  upgradeKubeadmAndCNIBinariesCoreOS,
 		kubeoneapi.OperatingSystemNameFlatcar: upgradeKubeadmAndCNIBinariesCoreOS,
 		kubeoneapi.OperatingSystemNameCentOS:  upgradeKubeadmAndCNIBinariesCentOS,
+		kubeoneapi.OperatingSystemNameAmazon:  upgradeKubeadmAndCNIBinariesAmazonLinux,
 		kubeoneapi.OperatingSystemNameRHEL:    upgradeKubeadmAndCNIBinariesCentOS,
 	})
 }
@@ -77,6 +79,17 @@ func upgradeKubeletAndKubectlBinariesCentOS(s *state.State) error {
 	return errors.WithStack(err)
 }
 
+func upgradeKubeletAndKubectlBinariesAmazonLinux(s *state.State) error {
+	cmd, err := scripts.UpgradeKubeletAndKubectlAmazonLinux(s.Cluster)
+	if err != nil {
+		return err
+	}
+
+	_, _, err = s.Runner.RunRaw(cmd)
+
+	return errors.WithStack(err)
+}
+
 func upgradeKubeadmAndCNIBinariesDebian(s *state.State) error {
 	cmd, err := scripts.UpgradeKubeadmAndCNIDebian(s.Cluster)
 	if err != nil {
@@ -90,6 +103,17 @@ func upgradeKubeadmAndCNIBinariesDebian(s *state.State) error {
 
 func upgradeKubeadmAndCNIBinariesCentOS(s *state.State) error {
 	cmd, err := scripts.UpgradeKubeadmAndCNICentOS(s.Cluster)
+	if err != nil {
+		return err
+	}
+
+	_, _, err = s.Runner.RunRaw(cmd)
+
+	return errors.WithStack(err)
+}
+
+func upgradeKubeadmAndCNIBinariesAmazonLinux(s *state.State) error {
+	cmd, err := scripts.UpgradeKubeadmAndCNIAmazonLinux(s.Cluster)
 	if err != nil {
 		return err
 	}

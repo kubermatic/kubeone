@@ -132,3 +132,19 @@ func yumDockerFunc(v string) (string, error) {
 	// return default
 	return "docker-ce-19.03.12-3.el7 docker-ce-cli-19.03.12-3.el7", nil
 }
+
+func amznYumDockerFunc(v string) (string, error) {
+	sver, err := semver.NewVersion(v)
+	if err != nil {
+		return "", err
+	}
+
+	lessThen117, _ := semver.NewConstraint("< 1.17")
+
+	if lessThen117.Check(sver) {
+		return "docker-18.09.9ce-2.amzn2", nil
+	}
+
+	// return default
+	return "docker-19.03.13ce-1.amzn2", nil
+}
