@@ -35,9 +35,9 @@ import (
 
 const (
 	calicoImageRegistry = "docker.io"
-	installCNIImageName = "/calico/cni:v3.15.1"
-	calicoImageName     = "/calico/node:v3.15.1"
-	controllerImageName = "/calico/kube-controllers:v3.15.1"
+	installCNIImageName = "/calico/cni:v3.16.5"
+	calicoImageName     = "/calico/node:v3.16.5"
+	controllerImageName = "/calico/kube-controllers:v3.16.5"
 	flannelImageRegisty = "quay.io"
 	flannelImageName    = "/coreos/flannel:v0.13.0"
 	canalComponentLabel = "canal"
@@ -51,7 +51,8 @@ const (
   "plugins": [
     {
       "type": "calico",
-      "log_level": "info",
+	  "log_level": "info",
+	  "log_file_path": "/var/log/calico/cni/cni.log",
       "datastore_type": "kubernetes",
       "nodename": "__KUBERNETES_NODE_NAME__",
       "mtu": __CNI_MTU__,
