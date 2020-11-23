@@ -180,6 +180,131 @@ sudo systemctl restart kubelet
 {{- end }}
 `
 
+	kubeadmAmazonLinuxTemplate = `
+sudo swapoff -a
+sudo sed -i '/.*swap.*/d' /etc/fstab
+sudo setenforce 0 || true
+sudo sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/sysconfig/selinux
+sudo sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/selinux/config
+sudo systemctl disable --now firewalld || true
+
+source /etc/kubeone/proxy-env
+
+{{ template "docker-daemon-config" . }}
+{{ template "sysctl-k8s" }}
+{{ template "journald-config" }}
+
+yum_proxy=""
+{{- if .PROXY }}
+yum_proxy="proxy={{ .PROXY }} #kubeone"
+{{ end }}
+grep -v '#kubeone' /etc/yum.conf > /tmp/yum.conf || true
+echo -n "${yum_proxy}" >> /tmp/yum.conf
+sudo mv /tmp/yum.conf /etc/yum.conf
+
+{{ if .CONFIGURE_REPOSITORIES }}
+cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+EOF
+{{ end }}
+
+sudo yum install -y \
+	yum-plugin-versionlock \
+	device-mapper-persistent-data \
+	lvm2 \
+	conntrack \
+	ebtables \
+	socat \
+	tc
+
+{{- if or .FORCE .UPGRADE }}
+sudo yum versionlock delete docker || true
+{{- end }}
+
+sudo yum install -y \
+	{{ amznYumDocker .KUBERNETES_VERSION }}
+sudo yum versionlock add docker
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now docker
+
+sudo mkdir -p /tmp/k8s-binaries /etc/kubernetes/pki /etc/kubernetes/manifests
+
+sudo rm -rf /tmp/k8s-binaries
+sudo mkdir /tmp/k8s-binaries
+cd /tmp/k8s-binaries
+
+{{- if .CNI_URL }}
+sudo mkdir -p /usr/cni/bin
+curl -L "{{ .CNI_URL }}" | sudo tar -C /usr/cni/bin -xz
+{{- end }}
+
+{{- if .NODE_BINARIES_URL }}
+sudo curl -L --output /tmp/k8s-binaries/node.tar.gz {{ .NODE_BINARIES_URL }}
+sudo tar xvf node.tar.gz
+{{- end }}
+
+{{- if and .KUBELET .NODE_BINARIES_URL }}
+sudo install --owner=0 --group=0 --mode=0755 /tmp/k8s-binaries/kubernetes/node/bin/kubelet /usr/bin/kubelet
+sudo rm /tmp/k8s-binaries/kubernetes/node/bin/kubelet
+
+cat <<EOF | sudo tee /etc/systemd/system/kubelet.service
+[Unit]
+Description=kubelet: The Kubernetes Node Agent
+Documentation=https://kubernetes.io/docs/home/
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart=/usr/bin/kubelet
+Restart=always
+StartLimitInterval=0
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo mkdir -p /etc/systemd/system/kubelet.service.d
+cat <<EOF | sudo tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+[Service]
+Environment="KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf"
+Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml"
+# This is a file that "kubeadm init" and "kubeadm join" generates at runtime, populating the KUBELET_KUBEADM_ARGS variable dynamically
+EnvironmentFile=-/var/lib/kubelet/kubeadm-flags.env
+# This is a file that the user can use for overrides of the kubelet args as a last resort. Preferably, the user should use
+# the .NodeRegistration.KubeletExtraArgs object in the configuration files instead. KUBELET_EXTRA_ARGS should be sourced from this file.
+EnvironmentFile=-/etc/default/kubelet
+ExecStart=
+ExecStart=/usr/bin/kubelet \$KUBELET_KUBECONFIG_ARGS \$KUBELET_CONFIG_ARGS \$KUBELET_KUBEADM_ARGS \$KUBELET_EXTRA_ARGS
+EOF
+{{- end }}
+
+{{- if and .KUBEADM .NODE_BINARIES_URL }}
+sudo install --owner=0 --group=0 --mode=0755 /tmp/k8s-binaries/kubernetes/node/bin/kubeadm /usr/bin/kubeadm
+sudo rm /tmp/k8s-binaries/kubernetes/node/bin/kubeadm
+{{- end }}
+
+{{- if and .KUBECTL .KUBECTL_URL }}
+sudo curl -L --output /tmp/k8s-binaries/kubectl {{ .KUBECTL_URL }}
+sudo install --owner=0 --group=0 --mode=0755 /tmp/k8s-binaries/kubectl /usr/bin/kubectl
+sudo rm /tmp/k8s-binaries/kubectl
+{{- end }}
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now kubelet
+
+{{- if or .FORCE .KUBELET }}
+sudo systemctl restart kubelet
+{{- end }}
+`
+
 	kubeadmCoreOSTemplate = `
 source /etc/kubeone/proxy-env
 
@@ -375,6 +500,28 @@ func KubeadmCentOS(cluster *kubeone.KubeOneCluster, force bool) (string, error) 
 	})
 }
 
+func KubeadmAmazonLinux(cluster *kubeone.KubeOneCluster, force bool) (string, error) {
+	proxy := cluster.Proxy.HTTPS
+	if proxy == "" {
+		proxy = cluster.Proxy.HTTP
+	}
+
+	return Render(kubeadmAmazonLinuxTemplate, Data{
+		"KUBELET":                  true,
+		"KUBEADM":                  true,
+		"KUBECTL":                  true,
+		"NODE_BINARIES_URL":        cluster.AssetConfiguration.NodeBinaries.URL,
+		"CNI_URL":                  cluster.AssetConfiguration.CNI.URL,
+		"KUBECTL_URL":              cluster.AssetConfiguration.Kubectl.URL,
+		"KUBERNETES_VERSION":       cluster.Versions.Kubernetes,
+		"KUBERNETES_CNI_VERSION":   defaultKubernetesCNIVersion,
+		"CONFIGURE_REPOSITORIES":   cluster.SystemPackages.ConfigureRepositories,
+		"DOCKER_INSECURE_REGISTRY": cluster.RegistryConfiguration.InsecureRegistryAddress(),
+		"PROXY":                    proxy,
+		"FORCE":                    force,
+	})
+}
+
 func KubeadmCoreOS(cluster *kubeone.KubeOneCluster) (string, error) {
 	return Render(kubeadmCoreOSTemplate, Data{
 		"KUBERNETES_VERSION":       cluster.Versions.Kubernetes,
@@ -425,6 +572,25 @@ func UpgradeKubeadmAndCNICentOS(cluster *kubeone.KubeOneCluster) (string, error)
 	})
 }
 
+func UpgradeKubeadmAndCNIAmazonLinux(cluster *kubeone.KubeOneCluster) (string, error) {
+	proxy := cluster.Proxy.HTTPS
+	if proxy == "" {
+		proxy = cluster.Proxy.HTTP
+	}
+
+	return Render(kubeadmAmazonLinuxTemplate, Data{
+		"UPGRADE":                  true,
+		"KUBEADM":                  true,
+		"NODE_BINARIES_URL":        cluster.AssetConfiguration.NodeBinaries.URL,
+		"CNI_URL":                  cluster.AssetConfiguration.CNI.URL,
+		"KUBERNETES_VERSION":       cluster.Versions.Kubernetes,
+		"KUBERNETES_CNI_VERSION":   defaultKubernetesCNIVersion,
+		"CONFIGURE_REPOSITORIES":   cluster.SystemPackages.ConfigureRepositories,
+		"DOCKER_INSECURE_REGISTRY": cluster.RegistryConfiguration.InsecureRegistryAddress(),
+		"PROXY":                    proxy,
+	})
+}
+
 func UpgradeKubeadmAndCNICoreOS(k8sVersion string) (string, error) {
 	return Render(upgradeKubeadmAndCNICoreOSScriptTemplate, Data{
 		"KUBERNETES_VERSION":     k8sVersion,
@@ -456,6 +622,26 @@ func UpgradeKubeletAndKubectlCentOS(cluster *kubeone.KubeOneCluster) (string, er
 		"UPGRADE":                  true,
 		"KUBELET":                  true,
 		"KUBECTL":                  true,
+		"KUBERNETES_VERSION":       cluster.Versions.Kubernetes,
+		"KUBERNETES_CNI_VERSION":   defaultKubernetesCNIVersion,
+		"CONFIGURE_REPOSITORIES":   cluster.SystemPackages.ConfigureRepositories,
+		"DOCKER_INSECURE_REGISTRY": cluster.RegistryConfiguration.InsecureRegistryAddress(),
+		"PROXY":                    proxy,
+	})
+}
+
+func UpgradeKubeletAndKubectlAmazonLinux(cluster *kubeone.KubeOneCluster) (string, error) {
+	proxy := cluster.Proxy.HTTPS
+	if proxy == "" {
+		proxy = cluster.Proxy.HTTP
+	}
+
+	return Render(kubeadmAmazonLinuxTemplate, Data{
+		"UPGRADE":                  true,
+		"KUBELET":                  true,
+		"KUBECTL":                  true,
+		"NODE_BINARIES_URL":        cluster.AssetConfiguration.NodeBinaries.URL,
+		"KUBECTL_URL":              cluster.AssetConfiguration.Kubectl.URL,
 		"KUBERNETES_VERSION":       cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION":   defaultKubernetesCNIVersion,
 		"CONFIGURE_REPOSITORIES":   cluster.SystemPackages.ConfigureRepositories,

@@ -51,7 +51,7 @@ func SetDefaults_KubeOneCluster(obj *KubeOneCluster) {
 	SetDefaults_Proxy(obj)
 	SetDefaults_MachineController(obj)
 	SetDefaults_SystemPackages(obj)
-	SetDefaults_ImageConfiguration(obj)
+	SetDefaults_AssetConfiguration(obj)
 	SetDefaults_Features(obj)
 	SetDefaults_Addons(obj)
 }
@@ -196,26 +196,24 @@ func SetDefaults_SystemPackages(obj *KubeOneCluster) {
 	}
 }
 
-func SetDefaults_ImageConfiguration(obj *KubeOneCluster) {
-	registryK8SGCR := "k8s.gcr.io"
-	if obj.RegistryConfiguration != nil && obj.RegistryConfiguration.OverwriteRegistry != "" {
-		registryK8SGCR = obj.RegistryConfiguration.OverwriteRegistry
+func SetDefaults_AssetConfiguration(obj *KubeOneCluster) {
+	if obj.RegistryConfiguration == nil || obj.RegistryConfiguration.OverwriteRegistry == "" {
+		// We default AssetConfiguration only if RegistryConfiguration.OverwriteRegistry
+		// is used
+		return
 	}
 
 	if obj.AssetConfiguration.Kubernetes.ImageRepository == "" {
-		obj.AssetConfiguration.Kubernetes.ImageRepository = registryK8SGCR
-	}
-	if obj.AssetConfiguration.Pause.ImageRepository == "" {
-		obj.AssetConfiguration.Pause.ImageRepository = registryK8SGCR
+		obj.AssetConfiguration.Kubernetes.ImageRepository = obj.RegistryConfiguration.OverwriteRegistry
 	}
 	if obj.AssetConfiguration.CoreDNS.ImageRepository == "" {
-		obj.AssetConfiguration.CoreDNS.ImageRepository = registryK8SGCR
+		obj.AssetConfiguration.CoreDNS.ImageRepository = obj.RegistryConfiguration.OverwriteRegistry
 	}
 	if obj.AssetConfiguration.Etcd.ImageRepository == "" {
-		obj.AssetConfiguration.Etcd.ImageRepository = registryK8SGCR
+		obj.AssetConfiguration.Etcd.ImageRepository = obj.RegistryConfiguration.OverwriteRegistry
 	}
 	if obj.AssetConfiguration.MetricsServer.ImageRepository == "" {
-		obj.AssetConfiguration.MetricsServer.ImageRepository = registryK8SGCR
+		obj.AssetConfiguration.MetricsServer.ImageRepository = obj.RegistryConfiguration.OverwriteRegistry
 	}
 }
 

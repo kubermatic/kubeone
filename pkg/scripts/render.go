@@ -28,9 +28,10 @@ type Data map[string]interface{}
 // Render text template with given `variables` Render-context
 func Render(cmd string, variables map[string]interface{}) (string, error) {
 	tpl := template.New("base").Funcs(template.FuncMap{
-		"yumDocker": yumDockerFunc,
-		"aptDocker": aptDockerFunc,
-		"dockerCfg": dockerCfg,
+		"yumDocker":     yumDockerFunc,
+		"amznYumDocker": amznYumDockerFunc,
+		"aptDocker":     aptDockerFunc,
+		"dockerCfg":     dockerCfg,
 	})
 
 	_, err := tpl.New("library").Parse(libraryTemplate)

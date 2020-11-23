@@ -175,6 +175,10 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		CgroupDriver: "systemd",
 	}
 
+	if cluster.AssetConfiguration.Pause.ImageRepository != "" {
+		nodeRegistration.KubeletExtraArgs["pod-infra-container-image"] = cluster.AssetConfiguration.Pause.ImageRepository + "/pause:" + cluster.AssetConfiguration.Pause.ImageTag
+	}
+
 	if cluster.CloudProvider.CloudProviderInTree() {
 		renderedCloudConfig := "/etc/kubernetes/cloud-config"
 		cloudConfigVol := kubeadmv1beta2.HostPathMount{
@@ -296,6 +300,10 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Obje
 			Kind:       "KubeletConfiguration",
 		},
 		CgroupDriver: "systemd",
+	}
+
+	if cluster.AssetConfiguration.Pause.ImageRepository != "" {
+		nodeRegistration.KubeletExtraArgs["pod-infra-container-image"] = cluster.AssetConfiguration.Pause.ImageRepository + "/pause:" + cluster.AssetConfiguration.Pause.ImageTag
 	}
 
 	if cluster.CloudProvider.CloudProviderInTree() {
