@@ -156,7 +156,7 @@ func investigateCluster(s *state.State) error {
 			if !leaderElected {
 				s.LiveCluster.ControlPlane[i].Config.IsLeader = true
 				leaderElected = true
-				s.Logger.Infof("Elected leader %q...\n", s.LiveCluster.ControlPlane[i].Config.Hostname)
+				s.Logger.Infof("Elected leader %q...", s.LiveCluster.ControlPlane[i].Config.Hostname)
 			}
 		}
 	}
