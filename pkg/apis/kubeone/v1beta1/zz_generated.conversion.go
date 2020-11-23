@@ -87,6 +87,16 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}); err != nil {
 		return err
 	}
+	if err := s.AddGeneratedConversionFunc((*BinaryAsset)(nil), (*kubeone.BinaryAsset)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1beta1_BinaryAsset_To_kubeone_BinaryAsset(a.(*BinaryAsset), b.(*kubeone.BinaryAsset), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*kubeone.BinaryAsset)(nil), (*BinaryAsset)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_kubeone_BinaryAsset_To_v1beta1_BinaryAsset(a.(*kubeone.BinaryAsset), b.(*BinaryAsset), scope)
+	}); err != nil {
+		return err
+	}
 	if err := s.AddGeneratedConversionFunc((*CNI)(nil), (*kubeone.CNI)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_v1beta1_CNI_To_kubeone_CNI(a.(*CNI), b.(*kubeone.CNI), scope)
 	}); err != nil {
@@ -257,13 +267,13 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*ImageMeta)(nil), (*kubeone.ImageMeta)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1beta1_ImageMeta_To_kubeone_ImageMeta(a.(*ImageMeta), b.(*kubeone.ImageMeta), scope)
+	if err := s.AddGeneratedConversionFunc((*ImageAsset)(nil), (*kubeone.ImageAsset)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1beta1_ImageAsset_To_kubeone_ImageAsset(a.(*ImageAsset), b.(*kubeone.ImageAsset), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*kubeone.ImageMeta)(nil), (*ImageMeta)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_kubeone_ImageMeta_To_v1beta1_ImageMeta(a.(*kubeone.ImageMeta), b.(*ImageMeta), scope)
+	if err := s.AddGeneratedConversionFunc((*kubeone.ImageAsset)(nil), (*ImageAsset)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_kubeone_ImageAsset_To_v1beta1_ImageAsset(a.(*kubeone.ImageAsset), b.(*ImageAsset), scope)
 	}); err != nil {
 		return err
 	}
@@ -563,19 +573,28 @@ func Convert_kubeone_Addons_To_v1beta1_Addons(in *kubeone.Addons, out *Addons, s
 }
 
 func autoConvert_v1beta1_AssetConfiguration_To_kubeone_AssetConfiguration(in *AssetConfiguration, out *kubeone.AssetConfiguration, s conversion.Scope) error {
-	if err := Convert_v1beta1_ImageMeta_To_kubeone_ImageMeta(&in.Kubernetes, &out.Kubernetes, s); err != nil {
+	if err := Convert_v1beta1_ImageAsset_To_kubeone_ImageAsset(&in.Kubernetes, &out.Kubernetes, s); err != nil {
 		return err
 	}
-	if err := Convert_v1beta1_ImageMeta_To_kubeone_ImageMeta(&in.Pause, &out.Pause, s); err != nil {
+	if err := Convert_v1beta1_ImageAsset_To_kubeone_ImageAsset(&in.Pause, &out.Pause, s); err != nil {
 		return err
 	}
-	if err := Convert_v1beta1_ImageMeta_To_kubeone_ImageMeta(&in.CoreDNS, &out.CoreDNS, s); err != nil {
+	if err := Convert_v1beta1_ImageAsset_To_kubeone_ImageAsset(&in.CoreDNS, &out.CoreDNS, s); err != nil {
 		return err
 	}
-	if err := Convert_v1beta1_ImageMeta_To_kubeone_ImageMeta(&in.Etcd, &out.Etcd, s); err != nil {
+	if err := Convert_v1beta1_ImageAsset_To_kubeone_ImageAsset(&in.Etcd, &out.Etcd, s); err != nil {
 		return err
 	}
-	if err := Convert_v1beta1_ImageMeta_To_kubeone_ImageMeta(&in.MetricsServer, &out.MetricsServer, s); err != nil {
+	if err := Convert_v1beta1_ImageAsset_To_kubeone_ImageAsset(&in.MetricsServer, &out.MetricsServer, s); err != nil {
+		return err
+	}
+	if err := Convert_v1beta1_BinaryAsset_To_kubeone_BinaryAsset(&in.CNI, &out.CNI, s); err != nil {
+		return err
+	}
+	if err := Convert_v1beta1_BinaryAsset_To_kubeone_BinaryAsset(&in.NodeBinaries, &out.NodeBinaries, s); err != nil {
+		return err
+	}
+	if err := Convert_v1beta1_BinaryAsset_To_kubeone_BinaryAsset(&in.Kubectl, &out.Kubectl, s); err != nil {
 		return err
 	}
 	return nil
@@ -587,19 +606,28 @@ func Convert_v1beta1_AssetConfiguration_To_kubeone_AssetConfiguration(in *AssetC
 }
 
 func autoConvert_kubeone_AssetConfiguration_To_v1beta1_AssetConfiguration(in *kubeone.AssetConfiguration, out *AssetConfiguration, s conversion.Scope) error {
-	if err := Convert_kubeone_ImageMeta_To_v1beta1_ImageMeta(&in.Kubernetes, &out.Kubernetes, s); err != nil {
+	if err := Convert_kubeone_ImageAsset_To_v1beta1_ImageAsset(&in.Kubernetes, &out.Kubernetes, s); err != nil {
 		return err
 	}
-	if err := Convert_kubeone_ImageMeta_To_v1beta1_ImageMeta(&in.Pause, &out.Pause, s); err != nil {
+	if err := Convert_kubeone_ImageAsset_To_v1beta1_ImageAsset(&in.Pause, &out.Pause, s); err != nil {
 		return err
 	}
-	if err := Convert_kubeone_ImageMeta_To_v1beta1_ImageMeta(&in.CoreDNS, &out.CoreDNS, s); err != nil {
+	if err := Convert_kubeone_ImageAsset_To_v1beta1_ImageAsset(&in.CoreDNS, &out.CoreDNS, s); err != nil {
 		return err
 	}
-	if err := Convert_kubeone_ImageMeta_To_v1beta1_ImageMeta(&in.Etcd, &out.Etcd, s); err != nil {
+	if err := Convert_kubeone_ImageAsset_To_v1beta1_ImageAsset(&in.Etcd, &out.Etcd, s); err != nil {
 		return err
 	}
-	if err := Convert_kubeone_ImageMeta_To_v1beta1_ImageMeta(&in.MetricsServer, &out.MetricsServer, s); err != nil {
+	if err := Convert_kubeone_ImageAsset_To_v1beta1_ImageAsset(&in.MetricsServer, &out.MetricsServer, s); err != nil {
+		return err
+	}
+	if err := Convert_kubeone_BinaryAsset_To_v1beta1_BinaryAsset(&in.CNI, &out.CNI, s); err != nil {
+		return err
+	}
+	if err := Convert_kubeone_BinaryAsset_To_v1beta1_BinaryAsset(&in.NodeBinaries, &out.NodeBinaries, s); err != nil {
+		return err
+	}
+	if err := Convert_kubeone_BinaryAsset_To_v1beta1_BinaryAsset(&in.Kubectl, &out.Kubectl, s); err != nil {
 		return err
 	}
 	return nil
@@ -626,6 +654,26 @@ func autoConvert_kubeone_AzureSpec_To_v1beta1_AzureSpec(in *kubeone.AzureSpec, o
 // Convert_kubeone_AzureSpec_To_v1beta1_AzureSpec is an autogenerated conversion function.
 func Convert_kubeone_AzureSpec_To_v1beta1_AzureSpec(in *kubeone.AzureSpec, out *AzureSpec, s conversion.Scope) error {
 	return autoConvert_kubeone_AzureSpec_To_v1beta1_AzureSpec(in, out, s)
+}
+
+func autoConvert_v1beta1_BinaryAsset_To_kubeone_BinaryAsset(in *BinaryAsset, out *kubeone.BinaryAsset, s conversion.Scope) error {
+	out.URL = in.URL
+	return nil
+}
+
+// Convert_v1beta1_BinaryAsset_To_kubeone_BinaryAsset is an autogenerated conversion function.
+func Convert_v1beta1_BinaryAsset_To_kubeone_BinaryAsset(in *BinaryAsset, out *kubeone.BinaryAsset, s conversion.Scope) error {
+	return autoConvert_v1beta1_BinaryAsset_To_kubeone_BinaryAsset(in, out, s)
+}
+
+func autoConvert_kubeone_BinaryAsset_To_v1beta1_BinaryAsset(in *kubeone.BinaryAsset, out *BinaryAsset, s conversion.Scope) error {
+	out.URL = in.URL
+	return nil
+}
+
+// Convert_kubeone_BinaryAsset_To_v1beta1_BinaryAsset is an autogenerated conversion function.
+func Convert_kubeone_BinaryAsset_To_v1beta1_BinaryAsset(in *kubeone.BinaryAsset, out *BinaryAsset, s conversion.Scope) error {
+	return autoConvert_kubeone_BinaryAsset_To_v1beta1_BinaryAsset(in, out, s)
 }
 
 func autoConvert_v1beta1_CNI_To_kubeone_CNI(in *CNI, out *kubeone.CNI, s conversion.Scope) error {
@@ -1042,26 +1090,26 @@ func Convert_kubeone_HostConfig_To_v1beta1_HostConfig(in *kubeone.HostConfig, ou
 	return autoConvert_kubeone_HostConfig_To_v1beta1_HostConfig(in, out, s)
 }
 
-func autoConvert_v1beta1_ImageMeta_To_kubeone_ImageMeta(in *ImageMeta, out *kubeone.ImageMeta, s conversion.Scope) error {
+func autoConvert_v1beta1_ImageAsset_To_kubeone_ImageAsset(in *ImageAsset, out *kubeone.ImageAsset, s conversion.Scope) error {
 	out.ImageRepository = in.ImageRepository
 	out.ImageTag = in.ImageTag
 	return nil
 }
 
-// Convert_v1beta1_ImageMeta_To_kubeone_ImageMeta is an autogenerated conversion function.
-func Convert_v1beta1_ImageMeta_To_kubeone_ImageMeta(in *ImageMeta, out *kubeone.ImageMeta, s conversion.Scope) error {
-	return autoConvert_v1beta1_ImageMeta_To_kubeone_ImageMeta(in, out, s)
+// Convert_v1beta1_ImageAsset_To_kubeone_ImageAsset is an autogenerated conversion function.
+func Convert_v1beta1_ImageAsset_To_kubeone_ImageAsset(in *ImageAsset, out *kubeone.ImageAsset, s conversion.Scope) error {
+	return autoConvert_v1beta1_ImageAsset_To_kubeone_ImageAsset(in, out, s)
 }
 
-func autoConvert_kubeone_ImageMeta_To_v1beta1_ImageMeta(in *kubeone.ImageMeta, out *ImageMeta, s conversion.Scope) error {
+func autoConvert_kubeone_ImageAsset_To_v1beta1_ImageAsset(in *kubeone.ImageAsset, out *ImageAsset, s conversion.Scope) error {
 	out.ImageRepository = in.ImageRepository
 	out.ImageTag = in.ImageTag
 	return nil
 }
 
-// Convert_kubeone_ImageMeta_To_v1beta1_ImageMeta is an autogenerated conversion function.
-func Convert_kubeone_ImageMeta_To_v1beta1_ImageMeta(in *kubeone.ImageMeta, out *ImageMeta, s conversion.Scope) error {
-	return autoConvert_kubeone_ImageMeta_To_v1beta1_ImageMeta(in, out, s)
+// Convert_kubeone_ImageAsset_To_v1beta1_ImageAsset is an autogenerated conversion function.
+func Convert_kubeone_ImageAsset_To_v1beta1_ImageAsset(in *kubeone.ImageAsset, out *ImageAsset, s conversion.Scope) error {
+	return autoConvert_kubeone_ImageAsset_To_v1beta1_ImageAsset(in, out, s)
 }
 
 func autoConvert_v1beta1_KubeOneCluster_To_kubeone_KubeOneCluster(in *KubeOneCluster, out *kubeone.KubeOneCluster, s conversion.Scope) error {

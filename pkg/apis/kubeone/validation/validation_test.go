@@ -1460,6 +1460,197 @@ func TestValidateRegistryConfiguration(t *testing.T) {
 	}
 }
 
+func TestValidateAssetConfiguration(t *testing.T) {
+	tests := []struct {
+		name               string
+		assetConfiguration *kubeone.AssetConfiguration
+		expectedError      bool
+	}{
+		{
+			name:               "empty asset configuration",
+			assetConfiguration: &kubeone.AssetConfiguration{},
+			expectedError:      false,
+		},
+		{
+			name: "kubernetes image configured",
+			assetConfiguration: &kubeone.AssetConfiguration{
+				Kubernetes: kubeone.ImageAsset{
+					ImageRepository: "127.0.0.1:5000",
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "kubernetes image and tag configured",
+			assetConfiguration: &kubeone.AssetConfiguration{
+				Kubernetes: kubeone.ImageAsset{
+					ImageRepository: "127.0.0.1:5000",
+					ImageTag:        "test",
+				},
+			},
+			expectedError: true,
+		},
+		{
+			name: "kubernetes tag configured",
+			assetConfiguration: &kubeone.AssetConfiguration{
+				Kubernetes: kubeone.ImageAsset{
+					ImageTag: "test",
+				},
+			},
+			expectedError: true,
+		},
+		{
+			name: "pause image configured",
+			assetConfiguration: &kubeone.AssetConfiguration{
+				Pause: kubeone.ImageAsset{
+					ImageRepository: "127.0.0.1:5000",
+					ImageTag:        "3.2",
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "pause image configured (repository missing)",
+			assetConfiguration: &kubeone.AssetConfiguration{
+				Pause: kubeone.ImageAsset{
+					ImageTag: "3.2",
+				},
+			},
+			expectedError: true,
+		},
+		{
+			name: "pause image configured (tag missing)",
+			assetConfiguration: &kubeone.AssetConfiguration{
+				Pause: kubeone.ImageAsset{
+					ImageRepository: "127.0.0.1:5000",
+				},
+			},
+			expectedError: true,
+		},
+		{
+			name: "coredns image and tag configured",
+			assetConfiguration: &kubeone.AssetConfiguration{
+				CoreDNS: kubeone.ImageAsset{
+					ImageRepository: "127.0.0.1:5000",
+					ImageTag:        "test",
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "coredns image configured",
+			assetConfiguration: &kubeone.AssetConfiguration{
+				CoreDNS: kubeone.ImageAsset{
+					ImageRepository: "127.0.0.1:5000",
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "coredns tag configured",
+			assetConfiguration: &kubeone.AssetConfiguration{
+				CoreDNS: kubeone.ImageAsset{
+					ImageTag: "test",
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "etcd image and tag configured",
+			assetConfiguration: &kubeone.AssetConfiguration{
+				Etcd: kubeone.ImageAsset{
+					ImageRepository: "127.0.0.1:5000",
+					ImageTag:        "test",
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "etcd image configured",
+			assetConfiguration: &kubeone.AssetConfiguration{
+				Etcd: kubeone.ImageAsset{
+					ImageRepository: "127.0.0.1:5000",
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "etcd tag configured",
+			assetConfiguration: &kubeone.AssetConfiguration{
+				Etcd: kubeone.ImageAsset{
+					ImageTag: "test",
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "metrics-server image and tag configured",
+			assetConfiguration: &kubeone.AssetConfiguration{
+				MetricsServer: kubeone.ImageAsset{
+					ImageRepository: "127.0.0.1:5000",
+					ImageTag:        "test",
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "metrics-server image configured",
+			assetConfiguration: &kubeone.AssetConfiguration{
+				MetricsServer: kubeone.ImageAsset{
+					ImageRepository: "127.0.0.1:5000",
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "metrics-server tag configured",
+			assetConfiguration: &kubeone.AssetConfiguration{
+				MetricsServer: kubeone.ImageAsset{
+					ImageTag: "test",
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "cni, node binaries, and kubectl configured",
+			assetConfiguration: &kubeone.AssetConfiguration{
+				CNI: kubeone.BinaryAsset{
+					URL: "https://127.0.0.1/cni",
+				},
+				NodeBinaries: kubeone.BinaryAsset{
+					URL: "https://127.0.0.1/kubernetes-node-linux-amd64.tar.gz",
+				},
+				Kubectl: kubeone.BinaryAsset{
+					URL: "https://127.0.0.1/kubectl",
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "binary assets configured (node binaries missing)",
+			assetConfiguration: &kubeone.AssetConfiguration{
+				CNI: kubeone.BinaryAsset{
+					URL: "https://127.0.0.1/cni",
+				},
+				Kubectl: kubeone.BinaryAsset{
+					URL: "https://127.0.0.1/kubectl",
+				},
+			},
+			expectedError: true,
+		},
+	}
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			errs := ValidateAssetConfiguration(tc.assetConfiguration, nil)
+			if (len(errs) == 0) == tc.expectedError {
+				t.Log(errs[0])
+				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
+			}
+		})
+	}
+}
+
 func intPtr(i int) *int {
 	return &i
 }

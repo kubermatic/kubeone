@@ -407,3 +407,34 @@ func ValidateRegistryConfiguration(r *kubeone.RegistryConfiguration, fldPath *fi
 
 	return allErrs
 }
+
+func ValidateAssetConfiguration(a *kubeone.AssetConfiguration, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	if a.Kubernetes.ImageTag != "" {
+		allErrs = append(allErrs, field.Forbidden(fldPath.Child("imageTag"), "imageTag is forbidden for Kubernetes images"))
+	}
+
+	if a.Pause.ImageRepository != "" && a.Pause.ImageTag == "" {
+		allErrs = append(allErrs, field.Required(fldPath.Child("imageTag"), "imageTag for sandbox (pause) image is required"))
+	}
+	if a.Pause.ImageRepository == "" && a.Pause.ImageTag != "" {
+		allErrs = append(allErrs, field.Required(fldPath.Child("imageRepository"), "imageRepository for sandbox (pause) image is required"))
+	}
+
+	found := 0
+	if a.CNI.URL != "" {
+		found++
+	}
+	if a.NodeBinaries.URL != "" {
+		found++
+	}
+	if a.Kubectl.URL != "" {
+		found++
+	}
+	if found != 0 && found != 3 {
+		allErrs = append(allErrs, field.Invalid(fldPath, "", "all binary assets must be specified (cni, nodeBinaries, kubectl)"))
+	}
+
+	return allErrs
+}
