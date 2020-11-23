@@ -43,12 +43,16 @@ func Deploy(s *state.State) error {
 		return errors.New("kubernetes client not initialized")
 	}
 
+	imageRepository := "k8s.gcr.io"
+	if s.Cluster.AssetConfiguration.MetricsServer.ImageRepository != "" {
+		imageRepository = s.Cluster.AssetConfiguration.MetricsServer.ImageRepository
+	}
 	imageTag := metricsServerImageTag
 	if s.Cluster.AssetConfiguration.MetricsServer.ImageTag != "" {
 		imageTag = s.Cluster.AssetConfiguration.MetricsServer.ImageTag
 	}
 
-	image := s.Cluster.AssetConfiguration.MetricsServer.ImageRepository + metricsServerImageName + imageTag
+	image := imageRepository + metricsServerImageName + imageTag
 
 	k8sobjects := []runtime.Object{
 		aggregatedMetricsReaderClusterRole(),
