@@ -658,37 +658,77 @@ systemPackages:
   # will add Docker and Kubernetes repositories to OS package manager
   configureRepositories: true # it's true by default
 
-# assetConfiguration configures which images are used for the core components
-# If imageTag is not specified, it'll be defaulted automatically by kubeadm
-# If registryConfiguration.overwriteRegistry is configured and imageRepository
-# is empty, registryConfiguration.overwriteRegistry will be used
+# assetConfiguration controls how assets (e.g. CNI, Kubelet, kube-apiserver, and more) are pulled.
+# The AssetConfiguration API is an alpha API currently working only on Amazon Linux 2.
 assetConfiguration:
-  # kubernetes configures the image repository for kube-apiserver, kube-controller-manager,
-  # kube-scheduler, and kube-proxy
+  # kubernetes configures the image registry and repository for the core Kubernetes
+  # images (kube-apiserver, kube-controller-manager, kube-scheduler, and kube-proxy).
+  # kubernetes respects only ImageRepository (ImageTag is ignored).
+  # Default image repository and tag: defaulted dynamically by Kubeadm.
+  # Defaults to RegistryConfiguration.OverwriteRegistry if left empty
+  # and RegistryConfiguration.OverwriteRegistry is specified.
   kubernetes:
-    # imageRepository customizes the registry/repository part of the image
-    imageRepository: "k8s.gcr.io"
-  # Overwriting the pause image works only in the special cases
+    # imageRepository customizes the registry/repository
+    imageRepository: ""
+  # pause configures the sandbox (pause) image to be used by Kubelet.
+  # Default image repository and tag: defaulted dynamically by Kubeadm.
+  # Defaults to RegistryConfiguration.OverwriteRegistry if left empty
+  # and RegistryConfiguration.OverwriteRegistry is specified.
   pause:
-    # imageRepository customizes the registry/repository part of the image
-    imageRepository: "k8s.gcr.io"
+    # imageRepository customizes the registry/repository
+    imageRepository: ""
     # imageTag customizes the image tag
     imageTag: ""
+  # coreDNS configures the image registry and tag to be used for deploying
+  # the CoreDNS component.
+  # Default image repository and tag: defaulted dynamically by Kubeadm.
+  # Defaults to RegistryConfiguration.OverwriteRegistry if left empty
+  # and RegistryConfiguration.OverwriteRegistry is specified.
   coreDNS:
-    # imageRepository customizes the registry/repository part of the image
-    imageRepository: "k8s.gcr.io"
+    # imageRepository customizes the registry/repository
+    imageRepository: ""
     # imageTag customizes the image tag
     imageTag: ""
+  # etcd configures the image registry and tag to be used for deploying
+  # the Etcd component.
+  # Default image repository and tag: defaulted dynamically by Kubeadm.
+  # Defaults to RegistryConfiguration.OverwriteRegistry if left empty
+  # and RegistryConfiguration.OverwriteRegistry is specified.
   etcd:
-    # imageRepository customizes the registry/repository part of the image
-    imageRepository: "k8s.gcr.io"
+    # imageRepository customizes the registry/repository
+    imageRepository: ""
     # imageTag customizes the image tag
     imageTag: ""
+  # metricsServer configures the image registry and tag to be used for deploying
+  # the metrics-server component.
+  # Default image repository and tag: defaulted dynamically by Kubeadm.
+  # Defaults to RegistryConfiguration.OverwriteRegistry if left empty
+  # and RegistryConfiguration.OverwriteRegistry is specified.
   metricsServer:
-    # imageRepository customizes the registry/repository part of the image
-    imageRepository: "k8s.gcr.io"
+    # imageRepository customizes the registry/repository
+    imageRepository: ""
     # imageTag customizes the image tag
     imageTag: ""
+  # cni configures the source for downloading the CNI binaries.
+  # If not specified, kubernetes-cni package will be installed.
+  # Default: none
+  cni:
+    url: ""
+  # nodeBinaries configures the source for downloading the
+  # Kubernetes Node Binaries tarball (e.g. kubernetes-node-linux-amd64.tar.gz).
+  # The tarball must have .tar.gz as the extension and must contain the
+  # following files:
+  # - kubernetes/node/bin/kubelet
+  # - kubernetes/node/bin/kubeadm
+  # If not specified, kubelet and kubeadm packages will be installed.
+  # Default: none
+  nodeBinaries:
+    url: ""
+  # kubectl configures the source for downloading the Kubectl binary.
+  # If not specified, kubelet package will be installed.
+  # Default: none
+  kubectl:
+    url: ""
 
 # registryConfiguration controls how images used for components deployed by
 # KubeOne and kubeadm are pulled from an image registry
