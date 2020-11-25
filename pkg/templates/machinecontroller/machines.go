@@ -126,8 +126,9 @@ func createMachineDeployment(cluster *kubeoneapi.KubeOneCluster, workerset kubeo
 
 	return &clusterv1alpha1.MachineDeployment{
 		ObjectMeta: metav1.ObjectMeta{
-			Namespace: metav1.NamespaceSystem,
-			Name:      workerset.Name,
+			Annotations: workerset.Config.Annotations,
+			Namespace:   metav1.NamespaceSystem,
+			Name:        workerset.Name,
 		},
 		Spec: clusterv1alpha1.MachineDeploymentSpec{
 			Paused:   false,
