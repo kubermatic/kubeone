@@ -178,6 +178,16 @@ func Convert_kubeone_HostConfig_To_v1alpha1_HostConfig(in *kubeoneapi.HostConfig
 	return nil
 }
 
+func Convert_kubeone_ProviderSpec_To_v1alpha1_ProviderSpec(in *kubeoneapi.ProviderSpec, out *ProviderSpec, s conversion.Scope) error {
+	if err := autoConvert_kubeone_ProviderSpec_To_v1alpha1_ProviderSpec(in, out, s); err != nil {
+		return err
+	}
+
+	// The Annotations field is not available in the v1alpha1 API.
+
+	return nil
+}
+
 func Convert_v1alpha1_KubeOneCluster_To_kubeone_KubeOneCluster(in *KubeOneCluster, out *kubeoneapi.KubeOneCluster, s conversion.Scope) error {
 	if err := autoConvert_v1alpha1_KubeOneCluster_To_kubeone_KubeOneCluster(in, out, s); err != nil {
 		return err
