@@ -306,6 +306,8 @@ type DynamicWorkerConfig struct {
 type ProviderSpec struct {
 	// CloudProviderSpec
 	CloudProviderSpec json.RawMessage `json:"cloudProviderSpec"`
+	// Annotations
+	Annotations map[string]string `json:"annotations,omitempty"`
 	// Labels
 	Labels map[string]string `json:"labels,omitempty"`
 	// Taints
