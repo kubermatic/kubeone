@@ -387,19 +387,27 @@ sudo yum remove -y kubernetes-cni || true
 `
 
 	removeBinariesAmazonLinuxScriptTemplate = `
+# Stop kubelet
+sudo systemctl stop kubelet || true
 # Remove CNI and binaries
 sudo rm -rf /opt/cni /opt/bin/kubeadm /opt/bin/kubectl /opt/bin/kubelet
 # Remove symlinks
 sudo rm -rf /usr/bin/kubeadm /usr/bin/kubectl /usr/bin/kubelet
 # Remove systemd unit files
-sudo rm /etc/systemd/system/kubelet.service /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+sudo rm -f /etc/systemd/system/kubelet.service /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+# Reload systemd
+sudo systemctl daemon-reload
 `
 
 	removeBinariesCoreOSScriptTemplate = `
+# Stop kubelet
+sudo systemctl stop kubelet || true
 # Remove CNI and binaries
 sudo rm -rf /opt/cni /opt/bin/kubeadm /opt/bin/kubectl /opt/bin/kubelet
 # Remove systemd unit files
-sudo rm /etc/systemd/system/kubelet.service /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+sudo rm -f /etc/systemd/system/kubelet.service /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+# Reload systemd
+sudo systemctl daemon-reload
 `
 
 	upgradeKubeadmAndCNICoreOSScriptTemplate = `
