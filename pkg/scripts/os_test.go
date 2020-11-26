@@ -55,6 +55,25 @@ func withInsecureRegistry(registry string) genClusterOpts {
 	}
 }
 
+func withDefaultAssetConfiguration() genClusterOpts {
+	return func(cls *kubeone.KubeOneCluster) {
+		cls.AssetConfiguration = kubeone.AssetConfiguration{
+			Kubernetes: kubeone.ImageAsset{
+				ImageRepository: "k8s.gcr.io",
+			},
+			CNI: kubeone.BinaryAsset{
+				URL: "http://127.0.0.1/cni.tar.gz",
+			},
+			NodeBinaries: kubeone.BinaryAsset{
+				URL: "http://127.0.0.1/node.tar.gz",
+			},
+			Kubectl: kubeone.BinaryAsset{
+				URL: "http://127.0.0.1/kubectl.tar.gz",
+			},
+		}
+	}
+}
+
 func genCluster(opts ...genClusterOpts) kubeone.KubeOneCluster {
 	c := &kubeone.KubeOneCluster{
 		Versions: kubeone.VersionConfig{
@@ -191,6 +210,83 @@ func TestKubeadmCentOS(t *testing.T) {
 	}
 }
 
+func TestKubeadmAmazonLinux(t *testing.T) {
+	t.Parallel()
+
+	type args struct {
+		cluster kubeone.KubeOneCluster
+		force   bool
+	}
+	tests := []struct {
+		name string
+		args args
+		err  error
+	}{
+		{
+			name: "simple",
+			args: args{
+				cluster: genCluster(withDefaultAssetConfiguration()),
+			},
+		},
+		{
+			name: "proxy",
+			args: args{
+				cluster: genCluster(
+					withProxy("http://my-proxy.tld"),
+					withDefaultAssetConfiguration(),
+				),
+			},
+		},
+		{
+			name: "force",
+			args: args{
+				cluster: genCluster(withDefaultAssetConfiguration()),
+				force:   true,
+			},
+		},
+		{
+			name: "v1.16.1",
+			args: args{
+				cluster: genCluster(
+					withKubeVersion("v1.16.1"),
+					withDefaultAssetConfiguration(),
+				),
+			},
+		},
+		{
+			name: "overwrite registry",
+			args: args{
+				cluster: genCluster(
+					withRegistry("127.0.0.1:5000"),
+					withDefaultAssetConfiguration(),
+				),
+			},
+		},
+		{
+			name: "overwrite registry insecure",
+			args: args{
+				cluster: genCluster(
+					withInsecureRegistry("127.0.0.1:5000"),
+					withDefaultAssetConfiguration(),
+				),
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := KubeadmAmazonLinux(&tt.args.cluster, tt.args.force)
+			if err != tt.err {
+				t.Errorf("KubeadmAmazonLinux() error = %v, wantErr %v", err, tt.err)
+				return
+			}
+
+			testhelper.DiffOutput(t, testhelper.FSGoldenName(t), got, *updateFlag)
+		})
+	}
+}
+
 func TestKubeadmCoreOS(t *testing.T) {
 	t.Parallel()
 
@@ -266,6 +362,18 @@ func TestRemoveBinariesCentOS(t *testing.T) {
 	testhelper.DiffOutput(t, testhelper.FSGoldenName(t), got, *updateFlag)
 }
 
+func TestRemoveBinariesAmazonLinux(t *testing.T) {
+	t.Parallel()
+
+	got, err := RemoveBinariesAmazonLinux()
+	if err != nil {
+		t.Errorf("RemoveBinariesAmazonLinux() error = %v", err)
+		return
+	}
+
+	testhelper.DiffOutput(t, testhelper.FSGoldenName(t), got, *updateFlag)
+}
+
 func TestRemoveBinariesCoreOS(t *testing.T) {
 	t.Parallel()
 
@@ -304,6 +412,19 @@ func TestUpgradeKubeadmAndCNICentOS(t *testing.T) {
 	testhelper.DiffOutput(t, testhelper.FSGoldenName(t), got, *updateFlag)
 }
 
+func TestUpgradeKubeadmAndCNIAmazonLinux(t *testing.T) {
+	t.Parallel()
+
+	cls := genCluster(withDefaultAssetConfiguration())
+	got, err := UpgradeKubeadmAndCNIAmazonLinux(&cls)
+	if err != nil {
+		t.Errorf("UpgradeKubeadmAndCNIAmazonLinux() error = %v", err)
+		return
+	}
+
+	testhelper.DiffOutput(t, testhelper.FSGoldenName(t), got, *updateFlag)
+}
+
 func TestUpgradeKubeadmAndCNICoreOS(t *testing.T) {
 	t.Parallel()
 
@@ -336,6 +457,19 @@ func TestUpgradeKubeletAndKubectlCentOS(t *testing.T) {
 	got, err := UpgradeKubeletAndKubectlCentOS(&cls)
 	if err != nil {
 		t.Errorf("UpgradeKubeletAndKubectlCentOS() error = %v", err)
+		return
+	}
+
+	testhelper.DiffOutput(t, testhelper.FSGoldenName(t), got, *updateFlag)
+}
+
+func TestUpgradeKubeletAndKubectlAmazonLinux(t *testing.T) {
+	t.Parallel()
+
+	cls := genCluster(withDefaultAssetConfiguration())
+	got, err := UpgradeKubeletAndKubectlAmazonLinux(&cls)
+	if err != nil {
+		t.Errorf("UpgradeKubeletAndKubectlAmazonLinux() error = %v", err)
 		return
 	}
 

@@ -218,10 +218,10 @@ sudo yum install -y \
 	yum-plugin-versionlock \
 	device-mapper-persistent-data \
 	lvm2 \
-	conntrack \
+	conntrack-tools \
 	ebtables \
 	socat \
-	tc
+	iproute-tc
 
 {{- if or .FORCE .UPGRADE }}
 sudo yum versionlock delete docker || true
@@ -231,28 +231,26 @@ sudo yum install -y \
 	{{ amznYumDocker .KUBERNETES_VERSION }}
 sudo yum versionlock add docker
 
-sudo systemctl daemon-reload
-sudo systemctl enable --now docker
+sudo mkdir -p /opt/bin /etc/kubernetes/pki /etc/kubernetes/manifests
 
-sudo mkdir -p /tmp/k8s-binaries /etc/kubernetes/pki /etc/kubernetes/manifests
-
-sudo rm -rf /tmp/k8s-binaries
-sudo mkdir /tmp/k8s-binaries
+rm -rf /tmp/k8s-binaries
+mkdir -p /tmp/k8s-binaries
 cd /tmp/k8s-binaries
 
 {{- if .CNI_URL }}
-sudo mkdir -p /usr/cni/bin
-curl -L "{{ .CNI_URL }}" | sudo tar -C /usr/cni/bin -xz
+sudo mkdir -p /opt/cni/bin
+curl -L "{{ .CNI_URL }}" | sudo tar -C /opt/cni/bin -xz
 {{- end }}
 
 {{- if .NODE_BINARIES_URL }}
-sudo curl -L --output /tmp/k8s-binaries/node.tar.gz {{ .NODE_BINARIES_URL }}
-sudo tar xvf node.tar.gz
+curl -L --output /tmp/k8s-binaries/node.tar.gz {{ .NODE_BINARIES_URL }}
+tar xvf node.tar.gz
 {{- end }}
 
 {{- if and .KUBELET .NODE_BINARIES_URL }}
-sudo install --owner=0 --group=0 --mode=0755 /tmp/k8s-binaries/kubernetes/node/bin/kubelet /usr/bin/kubelet
-sudo rm /tmp/k8s-binaries/kubernetes/node/bin/kubelet
+sudo install --owner=0 --group=0 --mode=0755 /tmp/k8s-binaries/kubernetes/node/bin/kubelet /opt/bin/kubelet
+sudo ln -sf /opt/bin/kubelet /usr/bin/
+rm /tmp/k8s-binaries/kubernetes/node/bin/kubelet
 
 cat <<EOF | sudo tee /etc/systemd/system/kubelet.service
 [Unit]
@@ -262,7 +260,7 @@ Wants=network-online.target
 After=network-online.target
 
 [Service]
-ExecStart=/usr/bin/kubelet
+ExecStart=/opt/bin/kubelet
 Restart=always
 StartLimitInterval=0
 RestartSec=10
@@ -282,22 +280,25 @@ EnvironmentFile=-/var/lib/kubelet/kubeadm-flags.env
 # the .NodeRegistration.KubeletExtraArgs object in the configuration files instead. KUBELET_EXTRA_ARGS should be sourced from this file.
 EnvironmentFile=-/etc/default/kubelet
 ExecStart=
-ExecStart=/usr/bin/kubelet \$KUBELET_KUBECONFIG_ARGS \$KUBELET_CONFIG_ARGS \$KUBELET_KUBEADM_ARGS \$KUBELET_EXTRA_ARGS
+ExecStart=/opt/bin/kubelet \$KUBELET_KUBECONFIG_ARGS \$KUBELET_CONFIG_ARGS \$KUBELET_KUBEADM_ARGS \$KUBELET_EXTRA_ARGS
 EOF
 {{- end }}
 
 {{- if and .KUBEADM .NODE_BINARIES_URL }}
-sudo install --owner=0 --group=0 --mode=0755 /tmp/k8s-binaries/kubernetes/node/bin/kubeadm /usr/bin/kubeadm
-sudo rm /tmp/k8s-binaries/kubernetes/node/bin/kubeadm
+sudo install --owner=0 --group=0 --mode=0755 /tmp/k8s-binaries/kubernetes/node/bin/kubeadm /opt/bin/kubeadm
+sudo ln -sf /opt/bin/kubeadm /usr/bin/
+rm /tmp/k8s-binaries/kubernetes/node/bin/kubeadm
 {{- end }}
 
 {{- if and .KUBECTL .KUBECTL_URL }}
-sudo curl -L --output /tmp/k8s-binaries/kubectl {{ .KUBECTL_URL }}
-sudo install --owner=0 --group=0 --mode=0755 /tmp/k8s-binaries/kubectl /usr/bin/kubectl
-sudo rm /tmp/k8s-binaries/kubectl
+curl -L --output /tmp/k8s-binaries/kubectl {{ .KUBECTL_URL }}
+sudo install --owner=0 --group=0 --mode=0755 /tmp/k8s-binaries/kubectl /opt/bin/kubectl
+sudo ln -sf /opt/bin/kubectl /usr/bin/
+rm /tmp/k8s-binaries/kubectl
 {{- end }}
 
 sudo systemctl daemon-reload
+sudo systemctl enable --now docker
 sudo systemctl enable --now kubelet
 
 {{- if or .FORCE .KUBELET }}
@@ -383,6 +384,15 @@ sudo yum remove -y \
 	kubeadm \
 	kubectl
 sudo yum remove -y kubernetes-cni || true
+`
+
+	removeBinariesAmazonLinuxScriptTemplate = `
+# Remove CNI and binaries
+sudo rm -rf /opt/cni /opt/bin/kubeadm /opt/bin/kubectl /opt/bin/kubelet
+# Remove symlinks
+sudo rm -rf /usr/bin/kubeadm /usr/bin/kubectl /usr/bin/kubelet
+# Remove systemd unit files
+sudo rm /etc/systemd/system/kubelet.service /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
 `
 
 	removeBinariesCoreOSScriptTemplate = `
@@ -536,6 +546,10 @@ func RemoveBinariesDebian() (string, error) {
 
 func RemoveBinariesCentOS() (string, error) {
 	return Render(removeBinariesCentOSScriptTemplate, Data{})
+}
+
+func RemoveBinariesAmazonLinux() (string, error) {
+	return Render(removeBinariesAmazonLinuxScriptTemplate, Data{})
 }
 
 func RemoveBinariesCoreOS() (string, error) {

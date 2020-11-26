@@ -39,8 +39,9 @@ import (
 const (
 	systemdShowStatusCMD = `systemctl show %s -p LoadState,ActiveState,SubState`
 
-	dockerVersionDPKG = `dpkg-query --show --showformat='${Version}' docker-ce | cut -d: -f2 | cut -d~ -f1`
-	dockerVersionRPM  = `rpm -qa --queryformat '%{RPMTAG_VERSION}' docker-ce`
+	dockerVersionDPKG   = `dpkg-query --show --showformat='${Version}' docker-ce | cut -d: -f2 | cut -d~ -f1`
+	dockerVersionRPM    = `rpm -qa --queryformat '%{RPMTAG_VERSION}' docker-ce`
+	dockerVersionAmazon = `rpm -qa --queryformat '%{RPMTAG_VERSION}' docker`
 
 	kubeletVersionDPKG = `dpkg-query --show --showformat='${Version}' kubelet | cut -d- -f1`
 	kubeletVersionRPM  = `rpm -qa --queryformat '%{RPMTAG_VERSION}' kubelet`
@@ -249,6 +250,8 @@ func detectDockerStatusVersion(host *state.Host, conn ssh.Connection) error {
 	var dockerVersionCmd string
 
 	switch host.Config.OperatingSystem {
+	case kubeoneapi.OperatingSystemNameAmazon:
+		dockerVersionCmd = dockerVersionAmazon
 	case kubeoneapi.OperatingSystemNameCentOS, kubeoneapi.OperatingSystemNameRHEL:
 		dockerVersionCmd = dockerVersionRPM
 	case kubeoneapi.OperatingSystemNameUbuntu:
@@ -266,9 +269,12 @@ func detectDockerStatusVersion(host *state.Host, conn ssh.Connection) error {
 		return err
 	}
 
-	ver, err := semver.NewVersion(strings.TrimSpace(out))
+	// Amazon Linux 2 appends "ce" to Docker version, which is not valid semver.
+	v := strings.TrimSpace(strings.ReplaceAll(out, "ce", ""))
+
+	ver, err := semver.NewVersion(v)
 	if err != nil {
-		return errors.Wrapf(err, "version was: %q", out)
+		return errors.Wrapf(err, "docker version was: %q", out)
 	}
 	host.ContainerRuntime.Version = ver
 
@@ -290,6 +296,8 @@ func detectKubeletStatusVersion(host *state.Host, conn ssh.Connection) error {
 	var kubeletVersionCmd string
 
 	switch host.Config.OperatingSystem {
+	case kubeoneapi.OperatingSystemNameAmazon:
+		kubeletVersionCmd = kubeletVersionCLI
 	case kubeoneapi.OperatingSystemNameCentOS, kubeoneapi.OperatingSystemNameRHEL:
 		kubeletVersionCmd = kubeletVersionRPM
 	case kubeoneapi.OperatingSystemNameUbuntu:
