@@ -1,5 +1,31 @@
 # Changelog
 
+# [v1.2.0-alpha.0](https://github.com/kubermatic/kubeone/releases/tag/v1.2.0-alpha.0) - 2020-11-27
+
+## Added
+
+* Add support for Amazon Linux 2 ([#1167](https://github.com/kubermatic/kubeone/pull/1167), [#1173](https://github.com/kubermatic/kubeone/pull/1173), [#1175](https://github.com/kubermatic/kubeone/pull/1175), [#1176](https://github.com/kubermatic/kubeone/pull/1176))
+  * Support for Amazon Linux 2 is currently in alpha.
+  * Currently, all Kubernetes packages are installed by downloading binaries instead of using packages. Therefore, users are required to provide URLs using the new AssetConfiguration API to the CNI tarball, the Kubernetes Node binaries tarball (can be found in the Kubernetes CHANGELOG), and to the kubectl binary. Support for packages is planned for the future.
+* Add the AssetConfiguration API ([#1170](https://github.com/kubermatic/kubeone/pull/1170), [#1171](https://github.com/kubermatic/kubeone/pull/1171))
+  * The AssetConfiguration API controls how assets are pulled.
+  * You can use it to specify custom images for containers or custom URLs for binaries.
+  * Currently-supported assets are CNI, Kubelet and Kubeadm (by providing a node binaries tarball), Kubectl, the control plane images, and the metrics-server image.
+  * Changing the binary assets (CNI, Kubelet, Kubeadm and Kubectl) currently works only on Amazon Linux 2. Changing the image assets works on all supported operating systems.
+* Add `Annotations` field to the `ProviderSpec` API used to add annotations to MachineDeployment objects ([#1174](https://github.com/kubermatic/kubeone/pull/1174))
+* Support for defining Static Worker nodes in Terraform ([#1166](https://github.com/kubermatic/kubeone/pull/1166))
+* Add scrape Prometheus headless service for NodeLocalDNS ([#1165](https://github.com/kubermatic/kubeone/pull/1165))
+
+## Changed
+
+### General
+
+* Stop Kubelet and reload systemd when removing binaries on CoreOS/Flatcar ([#1176](https://github.com/kubermatic/kubeone/pull/1176))
+
+### Updated
+
+* Update Calico CNI to v3.16.5 ([#1163](https://github.com/kubermatic/kubeone/pull/1163))
+
 # [v1.1.0](https://github.com/kubermatic/kubeone/releases/tag/v1.1.0) - 2020-11-13
 
 **Changelog since v1.0.5.**
