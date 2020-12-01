@@ -33,6 +33,7 @@ spec:
       template:
         spec:
           hostNetwork: true
+          dnsPolicy: ClusterFirstWithHostNet
           nodeSelector:
             node-role.kubernetes.io/master: ""
           tolerations:
