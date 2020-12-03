@@ -1,0 +1,154 @@
+set -xeu pipefail
+export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
+
+sudo swapoff -a
+sudo sed -i '/.*swap.*/d' /etc/fstab
+sudo setenforce 0 || true
+sudo sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/sysconfig/selinux
+sudo sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/selinux/config
+sudo systemctl disable --now firewalld || true
+
+source /etc/kubeone/proxy-env
+
+
+cat <<EOF | sudo tee /etc/modules-load.d/containerd.conf
+overlay
+br_netfilter
+EOF
+sudo modprobe overlay
+sudo modprobe br_netfilter
+sudo mkdir -p /etc/sysctl.d
+cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+fs.inotify.max_user_watches         = 1048576
+kernel.panic                        = 10
+kernel.panic_on_oops                = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables  = 1
+net.ipv4.ip_forward                 = 1
+net.netfilter.nf_conntrack_max      = 1000000
+vm.overcommit_memory                = 1
+EOF
+sudo sysctl --system
+
+
+sudo mkdir -p /etc/systemd/journald.conf.d
+cat <<EOF | sudo tee /etc/systemd/journald.conf.d/max_disk_use.conf
+[Journal]
+SystemMaxUse=5G
+EOF
+sudo systemctl force-reload systemd-journald
+
+
+yum_proxy=""
+yum_proxy="proxy=http://https.proxy #kubeone"
+
+grep -v '#kubeone' /etc/yum.conf > /tmp/yum.conf || true
+echo -n "${yum_proxy}" >> /tmp/yum.conf
+sudo mv /tmp/yum.conf /etc/yum.conf
+
+
+cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+EOF
+
+
+sudo yum install -y \
+	yum-plugin-versionlock \
+	device-mapper-persistent-data \
+	lvm2 \
+	conntrack-tools \
+	ebtables \
+	socat \
+	iproute-tc
+
+
+
+
+sudo yum install runc -y
+
+mkdir -p /tmp/containerd-1.4.3
+pushd /tmp/containerd-1.4.3
+curl --location --continue-at - \
+	--output containerd-1.4.3-linux-amd64.tar.gz.sha256sum \
+	https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz.sha256sum \
+	--output containerd-1.4.3-linux-amd64.tar.gz \
+	https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz
+sha256sum -c containerd-1.4.3-linux-amd64.tar.gz.sha256sum
+tar xvf containerd-1.4.3-linux-amd64.tar.gz
+sudo install --group=0 --owner=0 --preserve-timestamps ./bin/* --target-directory=/usr/local/bin/
+sudo mkdir -p /etc/containerd /etc/cni/net.d /opt/cni/bin
+
+cat <<EOF | sudo tee /etc/containerd/config.toml
+version = 2
+
+[metrics]
+  # metrics available at http://127.0.0.1:1338/v1/metrics
+  address = "127.0.0.1:1338"
+
+[plugins]
+[plugins."io.containerd.grpc.v1.cri"]
+[plugins."io.containerd.grpc.v1.cri".containerd]
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+    runtime_type = "io.containerd.runc.v2"
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+    SystemdCgroup = true
+EOF
+
+cat <<EOF | sudo tee /etc/crictl.yaml
+runtime-endpoint: unix:///run/containerd/containerd.sock
+EOF
+
+cat <<EOF | sudo tee /etc/systemd/system/containerd.service
+[Unit]
+Description=containerd container runtime
+Documentation=https://containerd.io
+After=network.target local-fs.target
+
+[Service]
+ExecStartPre=-/sbin/modprobe overlay
+ExecStart=/usr/local/bin/containerd
+
+Type=notify
+Delegate=yes
+KillMode=process
+Restart=always
+RestartSec=5
+# Having non-zero Limit*s causes performance problems due to accounting overhead
+# in the kernel. We recommend using cgroups to do container-local accounting.
+LimitNPROC=infinity
+LimitCORE=infinity
+LimitNOFILE=1048576
+# Comment TasksMax if your systemd version does not supports it.
+# Only systemd 226 and above support this version.
+TasksMax=infinity
+OOMScoreAdjust=-999
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now containerd
+sudo systemctl restart containerd
+popd
+
+
+
+sudo yum install -y \
+	kubelet-1.17.4 \
+	kubeadm-1.17.4 \
+	kubectl-1.17.4 \
+	kubernetes-cni-0.8.7
+sudo yum versionlock add kubelet kubeadm kubectl kubernetes-cni
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now kubelet
+sudo systemctl restart kubelet
+
