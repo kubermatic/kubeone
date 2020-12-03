@@ -32,7 +32,6 @@ sudo systemctl disable --now ufw || true
 
 source /etc/kubeone/proxy-env
 
-{{ template "docker-daemon-config" . }}
 {{ template "sysctl-k8s" }}
 {{ template "journald-config" }}
 
@@ -56,11 +55,6 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--
 
 {{- if .CONFIGURE_REPOSITORIES }}
 curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-
-{{- /* TODO(kron4eg): replace bionic with focal someday */}}
-echo "deb https://download.docker.com/linux/ubuntu bionic stable" |
-	sudo tee /etc/apt/sources.list.d/docker.list
 
 # You'd think that kubernetes-$(lsb_release -sc) belongs there instead, but the debian repo
 # contains neither kubeadm nor kubelet, and the docs themselves suggest using xenial repo.
@@ -69,12 +63,26 @@ echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/
 sudo apt-get update
 {{- end }}
 
-kube_ver=$(apt-cache madison kubelet | grep "{{ .KUBERNETES_VERSION }}" | head -1 | awk '{print $3}')
-cni_ver=$(apt-cache madison kubernetes-cni | grep "{{ .KUBERNETES_CNI_VERSION }}" | head -1 | awk '{print $3}')
+kube_ver="{{ .KUBERNETES_VERSION }}*"
+cni_ver="{{ .KUBERNETES_CNI_VERSION }}*"
 
 {{- if or .FORCE .UPGRADE }}
-sudo apt-mark unhold docker-ce docker-ce-cli kubelet kubeadm kubectl kubernetes-cni
+sudo apt-mark unhold kubelet kubeadm kubectl kubernetes-cni
 {{- end }}
+
+{{ if .INSTALL_DOCKER }}
+{{ template "docker-daemon-config" . }}
+{{ template "apt-docker-ce" . }}
+{{ end }}
+
+{{ if .INSTALL_CONTAINERD }}
+sudo DEBIAN_FRONTEND=noninteractive apt-get install \
+	--option "Dpkg::Options::=--force-confold" \
+	--no-install-recommends \
+	-y \
+	runc
+{{ template "containerd-github" . }}
+{{ end }}
 
 sudo DEBIAN_FRONTEND=noninteractive apt-get install \
 	--option "Dpkg::Options::=--force-confold" \
@@ -92,13 +100,11 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install \
 {{- if .KUBECTL }}
 	kubectl=${kube_ver} \
 {{- end }}
-	kubernetes-cni=${cni_ver} \
-	{{ aptDocker .KUBERNETES_VERSION }}
+	kubernetes-cni=${cni_ver}
 
-sudo apt-mark hold docker-ce docker-ce-cli kubelet kubeadm kubectl kubernetes-cni
+sudo apt-mark hold kubelet kubeadm kubectl kubernetes-cni
 
 sudo systemctl daemon-reload
-sudo systemctl enable --now docker
 sudo systemctl enable --now kubelet
 
 {{- if or .FORCE .KUBELET }}
@@ -116,81 +122,6 @@ sudo systemctl disable --now firewalld || true
 
 source /etc/kubeone/proxy-env
 
-{{ template "docker-daemon-config" . }}
-{{ template "sysctl-k8s" }}
-{{ template "journald-config" }}
-
-yum_proxy=""
-{{- if .PROXY }}
-yum_proxy="proxy={{ .PROXY }} #kubeone"
-{{ end }}
-grep -v '#kubeone' /etc/yum.conf > /tmp/yum.conf || true
-echo -n "${yum_proxy}" >> /tmp/yum.conf
-sudo mv /tmp/yum.conf /etc/yum.conf
-
-{{ if .CONFIGURE_REPOSITORIES }}
-cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
-[kubernetes]
-name=Kubernetes
-baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
-enabled=1
-gpgcheck=1
-repo_gpgcheck=1
-gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-EOF
-
-sudo yum install -y yum-utils
-sudo yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
-sudo yum-config-manager --save --setopt=docker-ce-stable.module_hotfixes=true >/dev/null
-# CentOS has two different Docker repos for CentOS7 and CentOS8. The CentOS8 repo currently
-# contains only Docker 19.03.13, which is not validated for all Kubernetes version.
-# Therefore, we use CentOS7 repo which has all Docker versions.
-sudo sed -i 's/\$releasever/7/g' /etc/yum.repos.d/docker-ce.repo
-{{ end }}
-
-sudo yum install -y \
-	yum-plugin-versionlock \
-	device-mapper-persistent-data \
-	lvm2
-
-{{- if or .FORCE .UPGRADE }}
-sudo yum versionlock delete docker-ce docker-ce-cli kubelet kubeadm kubectl kubernetes-cni || true
-{{- end }}
-
-sudo yum install -y \
-{{- if .KUBELET }}
-	kubelet-{{ .KUBERNETES_VERSION }} \
-{{- end }}
-{{- if .KUBEADM }}
-	kubeadm-{{ .KUBERNETES_VERSION }} \
-{{- end }}
-{{- if .KUBECTL }}
-	kubectl-{{ .KUBERNETES_VERSION }} \
-{{- end }}
-	kubernetes-cni-{{ .KUBERNETES_CNI_VERSION }} \
-	{{ yumDocker .KUBERNETES_VERSION }}
-sudo yum versionlock add docker-ce docker-ce-cli kubelet kubeadm kubectl kubernetes-cni
-
-sudo systemctl daemon-reload
-sudo systemctl enable --now docker
-sudo systemctl enable --now kubelet
-
-{{- if or .FORCE .KUBELET }}
-sudo systemctl restart kubelet
-{{- end }}
-`
-
-	kubeadmAmazonLinuxTemplate = `
-sudo swapoff -a
-sudo sed -i '/.*swap.*/d' /etc/fstab
-sudo setenforce 0 || true
-sudo sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/sysconfig/selinux
-sudo sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/selinux/config
-sudo systemctl disable --now firewalld || true
-
-source /etc/kubeone/proxy-env
-
-{{ template "docker-daemon-config" . }}
 {{ template "sysctl-k8s" }}
 {{ template "journald-config" }}
 
@@ -223,13 +154,91 @@ sudo yum install -y \
 	socat \
 	iproute-tc
 
+{{ if .INSTALL_DOCKER }}
+{{ template "docker-daemon-config" . }}
+{{ template "yum-docker-ce" . }}
+{{ end }}
+
+{{ if .INSTALL_CONTAINERD }}
+sudo yum install runc -y
+{{ template "containerd-github" . }}
+{{ end }}
+
 {{- if or .FORCE .UPGRADE }}
-sudo yum versionlock delete docker || true
+sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni || true
 {{- end }}
 
 sudo yum install -y \
-	{{ amznYumDocker .KUBERNETES_VERSION }}
-sudo yum versionlock add docker
+{{- if .KUBELET }}
+	kubelet-{{ .KUBERNETES_VERSION }} \
+{{- end }}
+{{- if .KUBEADM }}
+	kubeadm-{{ .KUBERNETES_VERSION }} \
+{{- end }}
+{{- if .KUBECTL }}
+	kubectl-{{ .KUBERNETES_VERSION }} \
+{{- end }}
+	kubernetes-cni-{{ .KUBERNETES_CNI_VERSION }}
+sudo yum versionlock add kubelet kubeadm kubectl kubernetes-cni
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now kubelet
+{{- if or .FORCE .KUBELET }}
+sudo systemctl restart kubelet
+{{ end }}
+`
+
+	kubeadmAmazonLinuxTemplate = `
+sudo swapoff -a
+sudo sed -i '/.*swap.*/d' /etc/fstab
+sudo setenforce 0 || true
+sudo sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/sysconfig/selinux
+sudo sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/selinux/config
+sudo systemctl disable --now firewalld || true
+
+source /etc/kubeone/proxy-env
+
+{{ template "sysctl-k8s" }}
+{{ template "journald-config" }}
+
+yum_proxy=""
+{{- if .PROXY }}
+yum_proxy="proxy={{ .PROXY }} #kubeone"
+{{ end }}
+grep -v '#kubeone' /etc/yum.conf > /tmp/yum.conf || true
+echo -n "${yum_proxy}" >> /tmp/yum.conf
+sudo mv /tmp/yum.conf /etc/yum.conf
+
+{{ if .CONFIGURE_REPOSITORIES }}
+cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+EOF
+{{ end }}
+
+sudo yum install -y \
+	yum-plugin-versionlock \
+	device-mapper-persistent-data \
+	lvm2 \
+	conntrack-tools \
+	ebtables \
+	socat \
+	iproute-tc
+
+{{ if .INSTALL_DOCKER }}
+{{ template "docker-daemon-config" . }}
+{{ template "yum-docker-ce-amzn" . }}
+{{ end }}
+
+{{ if .INSTALL_CONTAINERD }}
+sudo yum install runc -y
+{{ template "containerd-github" . }}
+{{ end }}
 
 sudo mkdir -p /opt/bin /etc/kubernetes/pki /etc/kubernetes/manifests
 
@@ -298,7 +307,6 @@ rm /tmp/k8s-binaries/kubectl
 {{- end }}
 
 sudo systemctl daemon-reload
-sudo systemctl enable --now docker
 sudo systemctl enable --now kubelet
 
 {{- if or .FORCE .KUBELET }}
@@ -478,7 +486,7 @@ EnvironmentFile=-/etc/default/kubelet
 ExecStart=
 ExecStart=/opt/bin/kubelet \$KUBELET_KUBECONFIG_ARGS \$KUBELET_CONFIG_ARGS \$KUBELET_KUBEADM_ARGS \$KUBELET_EXTRA_ARGS
 EOF
-	 
+
 sudo systemctl daemon-reload
 sudo systemctl start kubelet
 `
@@ -496,6 +504,8 @@ func KubeadmDebian(cluster *kubeone.KubeOneCluster, force bool) (string, error) 
 		"HTTP_PROXY":               cluster.Proxy.HTTP,
 		"HTTPS_PROXY":              cluster.Proxy.HTTPS,
 		"FORCE":                    force,
+		"INSTALL_DOCKER":           cluster.ContainerRuntime.Docker,
+		"INSTALL_CONTAINERD":       cluster.ContainerRuntime.Containerd,
 	})
 }
 
@@ -515,6 +525,8 @@ func KubeadmCentOS(cluster *kubeone.KubeOneCluster, force bool) (string, error) 
 		"DOCKER_INSECURE_REGISTRY": cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"PROXY":                    proxy,
 		"FORCE":                    force,
+		"INSTALL_DOCKER":           cluster.ContainerRuntime.Docker,
+		"INSTALL_CONTAINERD":       cluster.ContainerRuntime.Containerd,
 	})
 }
 
@@ -537,6 +549,8 @@ func KubeadmAmazonLinux(cluster *kubeone.KubeOneCluster, force bool) (string, er
 		"DOCKER_INSECURE_REGISTRY": cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"PROXY":                    proxy,
 		"FORCE":                    force,
+		"INSTALL_DOCKER":           cluster.ContainerRuntime.Docker,
+		"INSTALL_CONTAINERD":       cluster.ContainerRuntime.Containerd,
 	})
 }
 
@@ -574,6 +588,8 @@ func UpgradeKubeadmAndCNIDebian(cluster *kubeone.KubeOneCluster) (string, error)
 		"DOCKER_INSECURE_REGISTRY": cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"HTTP_PROXY":               cluster.Proxy.HTTP,
 		"HTTPS_PROXY":              cluster.Proxy.HTTPS,
+		"INSTALL_DOCKER":           cluster.ContainerRuntime.Docker,
+		"INSTALL_CONTAINERD":       cluster.ContainerRuntime.Containerd,
 	})
 }
 
@@ -591,6 +607,8 @@ func UpgradeKubeadmAndCNICentOS(cluster *kubeone.KubeOneCluster) (string, error)
 		"CONFIGURE_REPOSITORIES":   cluster.SystemPackages.ConfigureRepositories,
 		"DOCKER_INSECURE_REGISTRY": cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"PROXY":                    proxy,
+		"INSTALL_DOCKER":           cluster.ContainerRuntime.Docker,
+		"INSTALL_CONTAINERD":       cluster.ContainerRuntime.Containerd,
 	})
 }
 
@@ -610,6 +628,8 @@ func UpgradeKubeadmAndCNIAmazonLinux(cluster *kubeone.KubeOneCluster) (string, e
 		"CONFIGURE_REPOSITORIES":   cluster.SystemPackages.ConfigureRepositories,
 		"DOCKER_INSECURE_REGISTRY": cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"PROXY":                    proxy,
+		"INSTALL_DOCKER":           cluster.ContainerRuntime.Docker,
+		"INSTALL_CONTAINERD":       cluster.ContainerRuntime.Containerd,
 	})
 }
 
@@ -631,6 +651,8 @@ func UpgradeKubeletAndKubectlDebian(cluster *kubeone.KubeOneCluster) (string, er
 		"DOCKER_INSECURE_REGISTRY": cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"HTTP_PROXY":               cluster.Proxy.HTTP,
 		"HTTPS_PROXY":              cluster.Proxy.HTTPS,
+		"INSTALL_DOCKER":           cluster.ContainerRuntime.Docker,
+		"INSTALL_CONTAINERD":       cluster.ContainerRuntime.Containerd,
 	})
 }
 
@@ -649,6 +671,8 @@ func UpgradeKubeletAndKubectlCentOS(cluster *kubeone.KubeOneCluster) (string, er
 		"CONFIGURE_REPOSITORIES":   cluster.SystemPackages.ConfigureRepositories,
 		"DOCKER_INSECURE_REGISTRY": cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"PROXY":                    proxy,
+		"INSTALL_DOCKER":           cluster.ContainerRuntime.Docker,
+		"INSTALL_CONTAINERD":       cluster.ContainerRuntime.Containerd,
 	})
 }
 
@@ -669,6 +693,8 @@ func UpgradeKubeletAndKubectlAmazonLinux(cluster *kubeone.KubeOneCluster) (strin
 		"CONFIGURE_REPOSITORIES":   cluster.SystemPackages.ConfigureRepositories,
 		"DOCKER_INSECURE_REGISTRY": cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"PROXY":                    proxy,
+		"INSTALL_DOCKER":           cluster.ContainerRuntime.Docker,
+		"INSTALL_CONTAINERD":       cluster.ContainerRuntime.Containerd,
 	})
 }
 

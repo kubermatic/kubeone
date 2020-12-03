@@ -43,6 +43,8 @@ const (
 	dockerVersionRPM    = `rpm -qa --queryformat '%{RPMTAG_VERSION}' docker-ce`
 	dockerVersionAmazon = `rpm -qa --queryformat '%{RPMTAG_VERSION}' docker`
 
+	containerdVersion = `containerd --version | awk '{print $3}'`
+
 	kubeletVersionDPKG = `dpkg-query --show --showformat='${Version}' kubelet | cut -d- -f1`
 	kubeletVersionRPM  = `rpm -qa --queryformat '%{RPMTAG_VERSION}' kubelet`
 	kubeletVersionCLI  = `/opt/bin/kubelet --version | cut -d' ' -f2`
@@ -116,7 +118,7 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Conne
 		return errors.New("didn't matched live cluster against provided")
 	}
 
-	if err := detectDockerStatusVersion(h, conn); err != nil {
+	if err := detectContainerRuntimeStatusVersion(s, h, conn); err != nil {
 		return err
 	}
 
@@ -235,27 +237,45 @@ func investigateCluster(s *state.State) error {
 	return nil
 }
 
-func detectDockerStatusVersion(host *state.Host, conn ssh.Connection) error {
-	var err error
-	host.ContainerRuntime.Status, err = systemdStatus(conn, "docker")
+func detectContainerRuntimeStatusVersion(s *state.State, host *state.Host, conn ssh.Connection) error {
+	var (
+		err          error
+		isContainerd = s.Cluster.ContainerRuntime.Containerd != nil
+	)
+
+	systemdServiceName := "docker"
+	if isContainerd {
+		systemdServiceName = "containerd"
+	}
+
+	host.ContainerRuntime.Status, err = systemdStatus(conn, systemdServiceName)
 	if err != nil {
 		return err
 	}
 
 	if host.ContainerRuntime.Status&state.ComponentInstalled == 0 {
-		// docker is not installed
+		// container runtime is not installed
 		return nil
 	}
 
-	var dockerVersionCmd string
+	var versionCmd string
 
 	switch host.Config.OperatingSystem {
 	case kubeoneapi.OperatingSystemNameAmazon:
-		dockerVersionCmd = dockerVersionAmazon
+		versionCmd = dockerVersionAmazon
+		if isContainerd {
+			versionCmd = containerdVersion
+		}
 	case kubeoneapi.OperatingSystemNameCentOS, kubeoneapi.OperatingSystemNameRHEL:
-		dockerVersionCmd = dockerVersionRPM
+		versionCmd = dockerVersionRPM
+		if isContainerd {
+			versionCmd = containerdVersion
+		}
 	case kubeoneapi.OperatingSystemNameUbuntu:
-		dockerVersionCmd = dockerVersionDPKG
+		versionCmd = dockerVersionDPKG
+		if isContainerd {
+			versionCmd = containerdVersion
+		}
 	case kubeoneapi.OperatingSystemNameFlatcar, kubeoneapi.OperatingSystemNameCoreOS:
 		// we don't care about version because on container linux we don't manage docker
 		host.ContainerRuntime.Version = &semver.Version{}
@@ -264,7 +284,7 @@ func detectDockerStatusVersion(host *state.Host, conn ssh.Connection) error {
 		return nil
 	}
 
-	out, _, _, err := conn.Exec(dockerVersionCmd)
+	out, _, _, err := conn.Exec(versionCmd)
 	if err != nil {
 		return err
 	}
@@ -274,7 +294,7 @@ func detectDockerStatusVersion(host *state.Host, conn ssh.Connection) error {
 
 	ver, err := semver.NewVersion(v)
 	if err != nil {
-		return errors.Wrapf(err, "docker version was: %q", out)
+		return errors.Wrapf(err, "%s version was: %q", systemdServiceName, out)
 	}
 	host.ContainerRuntime.Version = ver
 

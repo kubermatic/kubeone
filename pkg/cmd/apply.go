@@ -398,14 +398,14 @@ func confirmApply(autoApprove bool) (bool, error) {
 func printHostInformation(host state.Host) {
 	fmt.Printf("Host: %q\n", host.Config.Hostname)
 	fmt.Printf("\tHost initialized: %s\n", boolStr(host.Initialized()))
-	fmt.Printf("\tDocker healthy: %s (%s)\n", boolStr(host.ContainerRuntime.Healthy()), printVersion(host.ContainerRuntime.Version))
+	fmt.Printf("\tContainer runtime healthy: %s (%s)\n", boolStr(host.ContainerRuntime.Healthy()), printVersion(host.ContainerRuntime.Version))
 	fmt.Printf("\tKubelet healthy: %s (%s)\n", boolStr(host.Kubelet.Healthy()), printVersion(host.Kubelet.Version))
 
 	fmt.Println()
-	fmt.Printf("\tDocker is installed: %s\n", boolStr(host.ContainerRuntime.Status&state.ComponentInstalled != 0))
-	fmt.Printf("\tDocker is running: %s\n", boolStr(host.ContainerRuntime.Status&state.SystemDStatusRunning != 0))
-	fmt.Printf("\tDocker is active: %s\n", boolStr(host.ContainerRuntime.Status&state.SystemDStatusActive != 0))
-	fmt.Printf("\tDocker is restarting: %s\n", boolStr(host.ContainerRuntime.Status&state.SystemDStatusRestarting != 0))
+	fmt.Printf("\tContainer runtime is installed: %s\n", boolStr(host.ContainerRuntime.Status&state.ComponentInstalled != 0))
+	fmt.Printf("\tContainer runtime is running: %s\n", boolStr(host.ContainerRuntime.Status&state.SystemDStatusRunning != 0))
+	fmt.Printf("\tContainer runtime is active: %s\n", boolStr(host.ContainerRuntime.Status&state.SystemDStatusActive != 0))
+	fmt.Printf("\tContainer runtime is restarting: %s\n", boolStr(host.ContainerRuntime.Status&state.SystemDStatusRestarting != 0))
 
 	fmt.Println()
 	fmt.Printf("\tKubelet is installed: %s\n", boolStr(host.Kubelet.Status&state.ComponentInstalled != 0))
