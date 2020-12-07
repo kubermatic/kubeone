@@ -60,12 +60,8 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		Name:   host.Hostname,
 		Taints: host.Taints,
 		KubeletExtraArgs: map[string]string{
-			"anonymous-auth":      "false",
-			"node-ip":             nodeIP,
-			"read-only-port":      "0",
-			"rotate-certificates": "true",
-			"cluster-dns":         nodelocaldns.VirtualIP,
-			"volume-plugin-dir":   "/var/lib/kubelet/volumeplugins",
+			"node-ip":           nodeIP,
+			"volume-plugin-dir": "/var/lib/kubelet/volumeplugins",
 		},
 	}
 
@@ -167,12 +163,21 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		},
 	}
 
+	bfalse := false
 	kubeletConfig := &kubeletconfigv1beta1.KubeletConfiguration{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "kubelet.config.k8s.io/v1beta1",
 			Kind:       "KubeletConfiguration",
 		},
-		CgroupDriver: "systemd",
+		CgroupDriver:       "systemd",
+		ReadOnlyPort:       0,
+		RotateCertificates: true,
+		ClusterDNS:         []string{nodelocaldns.VirtualIP},
+		Authentication: kubeletconfigv1beta1.KubeletAuthentication{
+			Anonymous: kubeletconfigv1beta1.KubeletAnonymousAuthentication{
+				Enabled: &bfalse,
+			},
+		},
 	}
 
 	if cluster.AssetConfiguration.Pause.ImageRepository != "" {
@@ -269,12 +274,8 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Obje
 	nodeRegistration := kubeadmv1beta2.NodeRegistrationOptions{
 		Name: host.Hostname,
 		KubeletExtraArgs: map[string]string{
-			"anonymous-auth":      "false",
-			"node-ip":             nodeIP,
-			"read-only-port":      "0",
-			"rotate-certificates": "true",
-			"cluster-dns":         nodelocaldns.VirtualIP,
-			"volume-plugin-dir":   "/var/lib/kubelet/volumeplugins",
+			"node-ip":           nodeIP,
+			"volume-plugin-dir": "/var/lib/kubelet/volumeplugins",
 		},
 	}
 
@@ -294,12 +295,21 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Obje
 		},
 	}
 
+	bfalse := false
 	kubeletConfig := &kubeletconfigv1beta1.KubeletConfiguration{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "kubelet.config.k8s.io/v1beta1",
 			Kind:       "KubeletConfiguration",
 		},
-		CgroupDriver: "systemd",
+		CgroupDriver:       "systemd",
+		ReadOnlyPort:       0,
+		RotateCertificates: true,
+		ClusterDNS:         []string{nodelocaldns.VirtualIP},
+		Authentication: kubeletconfigv1beta1.KubeletAuthentication{
+			Anonymous: kubeletconfigv1beta1.KubeletAnonymousAuthentication{
+				Enabled: &bfalse,
+			},
+		},
 	}
 
 	if cluster.AssetConfiguration.Pause.ImageRepository != "" {

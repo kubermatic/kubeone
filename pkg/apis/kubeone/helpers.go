@@ -67,6 +67,17 @@ func (h *HostConfig) SetLeader(leader bool) {
 	h.IsLeader = leader
 }
 
+func (crc ContainerRuntimeConfig) String() string {
+	switch {
+	case crc.Containerd != nil:
+		return "containerd"
+	case crc.Docker != nil:
+		return "docker"
+	}
+
+	return "unknown"
+}
+
 // CloudProviderName returns name of the cloud provider
 func (p CloudProviderSpec) CloudProviderName() string {
 	switch {

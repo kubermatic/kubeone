@@ -8,33 +8,22 @@ sudo systemctl disable --now ufw || true
 source /etc/kubeone/proxy-env
 
 
-sudo mkdir -p /etc/docker
-cat <<EOF | sudo tee /etc/docker/daemon.json
-{
-	"exec-opts": [
-		"native.cgroupdriver=systemd"
-	],
-	"storage-driver": "overlay2",
-	"log-driver": "json-file",
-	"log-opts": {
-		"max-size": "100m"
-	},
-	"insecure-registries": [
-		"127.0.0.1:5000"
-	]
-}
+cat <<EOF | sudo tee /etc/modules-load.d/containerd.conf
+overlay
+br_netfilter
 EOF
-
-
+sudo modprobe overlay
+sudo modprobe br_netfilter
 sudo mkdir -p /etc/sysctl.d
 cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+fs.inotify.max_user_watches         = 1048576
+kernel.panic                        = 10
+kernel.panic_on_oops                = 1
 net.bridge.bridge-nf-call-ip6tables = 1
-net.bridge.bridge-nf-call-iptables = 1
-kernel.panic_on_oops = 1
-kernel.panic = 10
-net.ipv4.ip_forward = 1
-vm.overcommit_memory = 1
-fs.inotify.max_user_watches = 1048576
+net.bridge.bridge-nf-call-iptables  = 1
+net.ipv4.ip_forward                 = 1
+net.netfilter.nf_conntrack_max      = 1000000
+vm.overcommit_memory                = 1
 EOF
 sudo sysctl --system
 
@@ -61,9 +50,6 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--
 	lsb-release \
 	rsync
 curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-echo "deb https://download.docker.com/linux/ubuntu bionic stable" |
-	sudo tee /etc/apt/sources.list.d/docker.list
 
 # You'd think that kubernetes-$(lsb_release -sc) belongs there instead, but the debian repo
 # contains neither kubeadm nor kubelet, and the docs themselves suggest using xenial repo.
@@ -71,8 +57,53 @@ echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/
 
 sudo apt-get update
 
-kube_ver=$(apt-cache madison kubelet | grep "v1.17.4" | head -1 | awk '{print $3}')
-cni_ver=$(apt-cache madison kubernetes-cni | grep "0.8.7" | head -1 | awk '{print $3}')
+kube_ver="1.17.4*"
+cni_ver="0.8.7*"
+
+
+
+sudo mkdir -p /etc/docker
+cat <<EOF | sudo tee /etc/docker/daemon.json
+{
+	"exec-opts": [
+		"native.cgroupdriver=systemd"
+	],
+	"storage-driver": "overlay2",
+	"log-driver": "json-file",
+	"log-opts": {
+		"max-size": "100m"
+	},
+	"insecure-registries": [
+		"127.0.0.1:5000"
+	]
+}
+EOF
+
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+# Docker provides two different apt repos for ubuntu, bionic and focal. The focal repo currently
+# contains only Docker 19.03.14, which is not validated for all Kubernetes version.
+# Therefore, we use bionic repo which has all Docker versions.
+echo "deb https://download.docker.com/linux/ubuntu bionic stable" |
+	sudo tee /etc/apt/sources.list.d/docker.list
+sudo apt-get update
+
+
+
+
+
+sudo DEBIAN_FRONTEND=noninteractive apt-get install \
+	--option "Dpkg::Options::=--force-confold" \
+	--no-install-recommends \
+	-y \
+	docker-ce=5:19.03.14* docker-ce-cli=5:19.03.14*
+sudo apt-mark hold docker-ce docker-ce-cli
+sudo systemctl daemon-reload
+sudo systemctl enable --now docker
+
+
+
+
 
 sudo DEBIAN_FRONTEND=noninteractive apt-get install \
 	--option "Dpkg::Options::=--force-confold" \
@@ -81,12 +112,10 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install \
 	kubelet=${kube_ver} \
 	kubeadm=${kube_ver} \
 	kubectl=${kube_ver} \
-	kubernetes-cni=${cni_ver} \
-	docker-ce=5:19.03.12~3-0~ubuntu-bionic docker-ce-cli=5:19.03.12~3-0~ubuntu-bionic
+	kubernetes-cni=${cni_ver}
 
-sudo apt-mark hold docker-ce docker-ce-cli kubelet kubeadm kubectl kubernetes-cni
+sudo apt-mark hold kubelet kubeadm kubectl kubernetes-cni
 
 sudo systemctl daemon-reload
-sudo systemctl enable --now docker
 sudo systemctl enable --now kubelet
 sudo systemctl restart kubelet

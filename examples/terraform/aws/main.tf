@@ -30,9 +30,9 @@ locals {
   worker_os        = var.worker_os == "" ? var.os : var.worker_os
 
   subnets = {
-    "${local.zoneA}" = length(aws_subnet.public.*.id) > 0 ? aws_subnet.public[0].id : ""
-    "${local.zoneB}" = length(aws_subnet.public.*.id) > 0 ? aws_subnet.public[1].id : ""
-    "${local.zoneC}" = length(aws_subnet.public.*.id) > 0 ? aws_subnet.public[2].id : ""
+    (local.zoneA) = length(aws_subnet.public.*.id) > 0 ? aws_subnet.public[0].id : ""
+    (local.zoneB) = length(aws_subnet.public.*.id) > 0 ? aws_subnet.public[1].id : ""
+    (local.zoneC) = length(aws_subnet.public.*.id) > 0 ? aws_subnet.public[2].id : ""
   }
 }
 

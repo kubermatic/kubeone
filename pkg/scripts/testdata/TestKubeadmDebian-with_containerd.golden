@@ -59,34 +59,6 @@ sudo apt-get update
 
 kube_ver="1.17.4*"
 cni_ver="0.8.7*"
-sudo apt-mark unhold kubelet kubeadm kubectl kubernetes-cni
-
-
-
-sudo mkdir -p /etc/docker
-cat <<EOF | sudo tee /etc/docker/daemon.json
-{
-	"exec-opts": [
-		"native.cgroupdriver=systemd"
-	],
-	"storage-driver": "overlay2",
-	"log-driver": "json-file",
-	"log-opts": {
-		"max-size": "100m"
-	}
-}
-EOF
-
-
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-# Docker provides two different apt repos for ubuntu, bionic and focal. The focal repo currently
-# contains only Docker 19.03.14, which is not validated for all Kubernetes version.
-# Therefore, we use bionic repo which has all Docker versions.
-echo "deb https://download.docker.com/linux/ubuntu bionic stable" |
-	sudo tee /etc/apt/sources.list.d/docker.list
-sudo apt-get update
-
-sudo apt-mark unhold docker-ce docker-ce-cli
 
 
 
@@ -95,12 +67,74 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install \
 	--option "Dpkg::Options::=--force-confold" \
 	--no-install-recommends \
 	-y \
-	docker-ce=5:19.03.14* docker-ce-cli=5:19.03.14*
-sudo apt-mark hold docker-ce docker-ce-cli
+	runc
+
+mkdir -p /tmp/containerd-1.4.3
+pushd /tmp/containerd-1.4.3
+curl --location --continue-at - \
+	--output containerd-1.4.3-linux-amd64.tar.gz.sha256sum \
+	https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz.sha256sum \
+	--output containerd-1.4.3-linux-amd64.tar.gz \
+	https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz
+sha256sum -c containerd-1.4.3-linux-amd64.tar.gz.sha256sum
+tar xvf containerd-1.4.3-linux-amd64.tar.gz
+sudo install --group=0 --owner=0 --preserve-timestamps ./bin/* --target-directory=/usr/local/bin/
+sudo mkdir -p /etc/containerd /etc/cni/net.d /opt/cni/bin
+
+cat <<EOF | sudo tee /etc/containerd/config.toml
+version = 2
+
+[metrics]
+  # metrics available at http://127.0.0.1:1338/v1/metrics
+  address = "127.0.0.1:1338"
+
+[plugins]
+[plugins."io.containerd.grpc.v1.cri"]
+[plugins."io.containerd.grpc.v1.cri".containerd]
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+    runtime_type = "io.containerd.runc.v2"
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+    SystemdCgroup = true
+EOF
+
+cat <<EOF | sudo tee /etc/crictl.yaml
+runtime-endpoint: unix:///run/containerd/containerd.sock
+EOF
+
+cat <<EOF | sudo tee /etc/systemd/system/containerd.service
+[Unit]
+Description=containerd container runtime
+Documentation=https://containerd.io
+After=network.target local-fs.target
+
+[Service]
+ExecStartPre=-/sbin/modprobe overlay
+ExecStart=/usr/local/bin/containerd
+
+Type=notify
+Delegate=yes
+KillMode=process
+Restart=always
+RestartSec=5
+# Having non-zero Limit*s causes performance problems due to accounting overhead
+# in the kernel. We recommend using cgroups to do container-local accounting.
+LimitNPROC=infinity
+LimitCORE=infinity
+LimitNOFILE=1048576
+# Comment TasksMax if your systemd version does not supports it.
+# Only systemd 226 and above support this version.
+TasksMax=infinity
+OOMScoreAdjust=-999
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
 sudo systemctl daemon-reload
-sudo systemctl enable --now docker
-
-
+sudo systemctl enable --now containerd
+sudo systemctl restart containerd
+popd
 
 
 
@@ -109,6 +143,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install \
 	--no-install-recommends \
 	-y \
 	kubelet=${kube_ver} \
+	kubeadm=${kube_ver} \
 	kubectl=${kube_ver} \
 	kubernetes-cni=${cni_ver}
 

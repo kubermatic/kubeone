@@ -25,6 +25,10 @@ import (
 
 type genClusterOpts func(*kubeone.KubeOneCluster)
 
+func withContainerd(cls *kubeone.KubeOneCluster) {
+	cls.ContainerRuntime.Containerd = &kubeone.ContainerRuntimeContainerd{}
+}
+
 func withKubeVersion(ver string) genClusterOpts {
 	return func(cls *kubeone.KubeOneCluster) {
 		cls.Versions.Kubernetes = ver
@@ -77,7 +81,7 @@ func withDefaultAssetConfiguration() genClusterOpts {
 func genCluster(opts ...genClusterOpts) kubeone.KubeOneCluster {
 	c := &kubeone.KubeOneCluster{
 		Versions: kubeone.VersionConfig{
-			Kubernetes: "v1.17.4",
+			Kubernetes: "1.17.4",
 		},
 		SystemPackages: &kubeone.SystemPackages{
 			ConfigureRepositories: true,
@@ -91,6 +95,10 @@ func genCluster(opts ...genClusterOpts) kubeone.KubeOneCluster {
 
 	for _, fn := range opts {
 		fn(c)
+	}
+
+	if c.ContainerRuntime.Containerd == nil {
+		c.ContainerRuntime.Docker = &kubeone.ContainerRuntimeDocker{}
 	}
 
 	return *c
@@ -127,6 +135,12 @@ func TestKubeadmDebian(t *testing.T) {
 			args: args{
 				dockerVersion: "18.0.6",
 				cluster:       genCluster(withInsecureRegistry("127.0.0.1:5000")),
+			},
+		},
+		{
+			name: "with containerd",
+			args: args{
+				cluster: genCluster(withContainerd),
 			},
 		},
 	}
@@ -192,6 +206,12 @@ func TestKubeadmCentOS(t *testing.T) {
 			name: "overwrite registry insecure",
 			args: args{
 				cluster: genCluster(withInsecureRegistry("127.0.0.1:5000")),
+			},
+		},
+		{
+			name: "with containerd",
+			args: args{
+				cluster: genCluster(withContainerd),
 			},
 		},
 	}
@@ -269,6 +289,12 @@ func TestKubeadmAmazonLinux(t *testing.T) {
 					withInsecureRegistry("127.0.0.1:5000"),
 					withDefaultAssetConfiguration(),
 				),
+			},
+		},
+		{
+			name: "with containerd",
+			args: args{
+				cluster: genCluster(withContainerd),
 			},
 		},
 	}
