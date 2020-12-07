@@ -170,14 +170,15 @@ func runApply(opts *applyOpts) error {
 		return err
 	}
 
+	containerRuntimeString := s.Cluster.ContainerRuntime.String()
 	if s.Verbose {
 		// Print information about hosts collected by probes
 		for _, host := range s.LiveCluster.ControlPlane {
-			printHostInformation(host)
+			printHostInformation(host, containerRuntimeString)
 		}
 
 		for _, host := range s.LiveCluster.StaticWorkers {
-			printHostInformation(host)
+			printHostInformation(host, containerRuntimeString)
 		}
 	}
 
@@ -395,17 +396,17 @@ func confirmApply(autoApprove bool) (bool, error) {
 	return strings.Trim(confirmation, "\n") == "yes", nil
 }
 
-func printHostInformation(host state.Host) {
+func printHostInformation(host state.Host, containerRuntime string) {
 	fmt.Printf("Host: %q\n", host.Config.Hostname)
 	fmt.Printf("\tHost initialized: %s\n", boolStr(host.Initialized()))
-	fmt.Printf("\tContainer runtime healthy: %s (%s)\n", boolStr(host.ContainerRuntime.Healthy()), printVersion(host.ContainerRuntime.Version))
+	fmt.Printf("\t%s healthy: %s (%s)\n", containerRuntime, boolStr(host.ContainerRuntime.Healthy()), printVersion(host.ContainerRuntime.Version))
 	fmt.Printf("\tKubelet healthy: %s (%s)\n", boolStr(host.Kubelet.Healthy()), printVersion(host.Kubelet.Version))
 
 	fmt.Println()
-	fmt.Printf("\tContainer runtime is installed: %s\n", boolStr(host.ContainerRuntime.Status&state.ComponentInstalled != 0))
-	fmt.Printf("\tContainer runtime is running: %s\n", boolStr(host.ContainerRuntime.Status&state.SystemDStatusRunning != 0))
-	fmt.Printf("\tContainer runtime is active: %s\n", boolStr(host.ContainerRuntime.Status&state.SystemDStatusActive != 0))
-	fmt.Printf("\tContainer runtime is restarting: %s\n", boolStr(host.ContainerRuntime.Status&state.SystemDStatusRestarting != 0))
+	fmt.Printf("\t%s is installed: %s\n", containerRuntime, boolStr(host.ContainerRuntime.Status&state.ComponentInstalled != 0))
+	fmt.Printf("\t%s is running: %s\n", containerRuntime, boolStr(host.ContainerRuntime.Status&state.SystemDStatusRunning != 0))
+	fmt.Printf("\t%s is active: %s\n", containerRuntime, boolStr(host.ContainerRuntime.Status&state.SystemDStatusActive != 0))
+	fmt.Printf("\t%s is restarting: %s\n", containerRuntime, boolStr(host.ContainerRuntime.Status&state.SystemDStatusRestarting != 0))
 
 	fmt.Println()
 	fmt.Printf("\tKubelet is installed: %s\n", boolStr(host.Kubelet.Status&state.ComponentInstalled != 0))
