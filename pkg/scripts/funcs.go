@@ -18,7 +18,10 @@ package scripts
 
 import (
 	"encoding/json"
+	"fmt"
+	"strings"
 
+	"github.com/BurntSushi/toml"
 	"github.com/MakeNowJust/heredoc/v2"
 )
 
@@ -43,7 +46,7 @@ var (
 		{{ define "docker-daemon-config" }}
 		sudo mkdir -p /etc/docker
 		cat <<EOF | sudo tee /etc/docker/daemon.json
-		{{ dockerCfg .DOCKER_INSECURE_REGISTRY }}
+		{{ dockerCfg .INSECURE_REGISTRY }}
 		EOF
 		{{ end }}
 
@@ -113,4 +116,87 @@ func dockerCfg(insecureRegistry string) (string, error) {
 	}
 
 	return string(b), nil
+}
+
+type containerdConfig struct {
+	Version int                    `toml:"version"`
+	Metrics *containerdMetrics     `toml:"metrics"`
+	Plugins map[string]interface{} `toml:"plugins"`
+}
+
+type containerdMetrics struct {
+	Address string `toml:"address"`
+}
+
+type containerdCRIPlugin struct {
+	Containerd *containerdCRISettings `toml:"containerd"`
+	Registry   *containerdCRIRegistry `toml:"registry"`
+}
+
+type containerdCRISettings struct {
+	Runtimes map[string]containerdCRIRuntime `toml:"runtimes"`
+}
+
+type containerdCRIRuntime struct {
+	RuntimeType string      `toml:"runtime_type"`
+	Options     interface{} `toml:"options"`
+}
+
+type containerdCRIRuncOptions struct {
+	SystemdCgroup bool
+}
+
+type containerdCRIRegistry struct {
+	Mirrors map[string]containerdMirror `toml:"mirrors"`
+}
+
+type containerdMirror struct {
+	Endpoint []string `toml:"endpoint"`
+}
+
+func containerdCfg(insecureRegistry string) (string, error) {
+	criPlugin := containerdCRIPlugin{
+		Containerd: &containerdCRISettings{
+			Runtimes: map[string]containerdCRIRuntime{
+				"runc": containerdCRIRuntime{
+					RuntimeType: "io.containerd.runc.v2",
+					Options: containerdCRIRuncOptions{
+						SystemdCgroup: true,
+					},
+				},
+			},
+		},
+		Registry: &containerdCRIRegistry{
+			Mirrors: map[string]containerdMirror{
+				"docker.io": containerdMirror{
+					Endpoint: []string{"https://registry-1.docker.io"},
+				},
+			},
+		},
+	}
+
+	if insecureRegistry != "" {
+		criPlugin.Registry.Mirrors[insecureRegistry] = containerdMirror{
+			Endpoint: []string{fmt.Sprintf("http://%s", insecureRegistry)},
+		}
+	}
+
+	cfg := containerdConfig{
+		Version: 2,
+		Metrics: &containerdMetrics{
+			// metrics available at http://127.0.0.1:1338/v1/metrics
+			Address: "127.0.0.1:1338",
+		},
+
+		Plugins: map[string]interface{}{
+			"io.containerd.grpc.v1.cri": criPlugin,
+		},
+	}
+
+	var buf strings.Builder
+	enc := toml.NewEncoder(&buf)
+	enc.Indent = ""
+	err := enc.Encode(cfg)
+
+	return buf.String(), err
 }

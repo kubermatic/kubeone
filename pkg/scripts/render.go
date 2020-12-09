@@ -127,20 +127,7 @@ var (
 			sudo mkdir -p /etc/containerd /etc/cni/net.d /opt/cni/bin
 
 			cat <<EOF | sudo tee /etc/containerd/config.toml
-			version = 2
-
-			[metrics]
-			  # metrics available at http://127.0.0.1:1338/v1/metrics
-			  address = "127.0.0.1:1338"
-
-			[plugins]
-			[plugins."io.containerd.grpc.v1.cri"]
-			[plugins."io.containerd.grpc.v1.cri".containerd]
-			[plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
-			[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
-			    runtime_type = "io.containerd.runc.v2"
-			[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
-			    SystemdCgroup = true
+			{{ containerdCfg .INSECURE_REGISTRY -}}
 			EOF
 
 			cat <<EOF | sudo tee /etc/crictl.yaml
@@ -193,7 +180,8 @@ func Render(cmd string, variables map[string]interface{}) (string, error) {
 	tpl := template.New("base").
 		Funcs(sprig.TxtFuncMap()).
 		Funcs(template.FuncMap{
-			"dockerCfg": dockerCfg,
+			"dockerCfg":     dockerCfg,
+			"containerdCfg": containerdCfg,
 		})
 
 	_, err := tpl.New("library").Parse(libraryTemplate)

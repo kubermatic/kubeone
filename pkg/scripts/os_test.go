@@ -143,6 +143,12 @@ func TestKubeadmDebian(t *testing.T) {
 				cluster: genCluster(withContainerd),
 			},
 		},
+		{
+			name: "with containerd with insecure registry",
+			args: args{
+				cluster: genCluster(withContainerd, withInsecureRegistry("127.0.0.1:5000")),
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -212,6 +218,12 @@ func TestKubeadmCentOS(t *testing.T) {
 			name: "with containerd",
 			args: args{
 				cluster: genCluster(withContainerd),
+			},
+		},
+		{
+			name: "with containerd with insecure registry",
+			args: args{
+				cluster: genCluster(withContainerd, withInsecureRegistry("127.0.0.1:5000")),
 			},
 		},
 	}
@@ -295,6 +307,12 @@ func TestKubeadmAmazonLinux(t *testing.T) {
 			name: "with containerd",
 			args: args{
 				cluster: genCluster(withContainerd),
+			},
+		},
+		{
+			name: "with containerd with insecure registry",
+			args: args{
+				cluster: genCluster(withContainerd, withInsecureRegistry("127.0.0.1:5000")),
 			},
 		},
 	}

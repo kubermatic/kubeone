@@ -1,6 +1,6 @@
 +++
 title = "v1beta1 API Reference"
-date = 2020-10-27T15:03:07+02:00
+date = 2020-12-08T12:31:41+02:00
 weight = 11
 +++
 ## v1beta1
@@ -8,11 +8,16 @@ weight = 11
 * [APIEndpoint](#apiendpoint)
 * [AWSSpec](#awsspec)
 * [Addons](#addons)
+* [AssetConfiguration](#assetconfiguration)
 * [AzureSpec](#azurespec)
+* [BinaryAsset](#binaryasset)
 * [CNI](#cni)
 * [CanalSpec](#canalspec)
 * [CloudProviderSpec](#cloudproviderspec)
 * [ClusterNetworkConfig](#clusternetworkconfig)
+* [ContainerRuntimeConfig](#containerruntimeconfig)
+* [ContainerRuntimeContainerd](#containerruntimecontainerd)
+* [ContainerRuntimeDocker](#containerruntimedocker)
 * [ControlPlaneConfig](#controlplaneconfig)
 * [DNSConfig](#dnsconfig)
 * [DigitalOceanSpec](#digitaloceanspec)
@@ -23,6 +28,7 @@ weight = 11
 * [GCESpec](#gcespec)
 * [HetznerSpec](#hetznerspec)
 * [HostConfig](#hostconfig)
+* [ImageAsset](#imageasset)
 * [KubeOneCluster](#kubeonecluster)
 * [MachineControllerConfig](#machinecontrollerconfig)
 * [MetricsServer](#metricsserver)
@@ -78,12 +84,41 @@ Addons config
 
 [Back to Group](#v1beta1)
 
+### AssetConfiguration
+
+AssetConfiguration controls how assets (e.g. CNI, Kubelet, kube-apiserver, and more)
+are pulled.
+The AssetConfiguration API is an alpha API currently working only on Amazon Linux 2.
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| kubernetes | Kubernetes configures the image registry and repository for the core Kubernetes images (kube-apiserver, kube-controller-manager, kube-scheduler, and kube-proxy). Kubernetes respects only ImageRepository (ImageTag is ignored). Default image repository and tag: defaulted dynamically by Kubeadm. Defaults to RegistryConfiguration.OverwriteRegistry if left empty and RegistryConfiguration.OverwriteRegistry is specified. | [ImageAsset](#imageasset) | false |
+| pause | Pause configures the sandbox (pause) image to be used by Kubelet. Default image repository and tag: defaulted dynamically by Kubeadm. Defaults to RegistryConfiguration.OverwriteRegistry if left empty and RegistryConfiguration.OverwriteRegistry is specified. | [ImageAsset](#imageasset) | false |
+| coreDNS | CoreDNS configures the image registry and tag to be used for deploying the CoreDNS component. Default image repository and tag: defaulted dynamically by Kubeadm. Defaults to RegistryConfiguration.OverwriteRegistry if left empty and RegistryConfiguration.OverwriteRegistry is specified. | [ImageAsset](#imageasset) | false |
+| etcd | Etcd configures the image registry and tag to be used for deploying the Etcd component. Default image repository and tag: defaulted dynamically by Kubeadm. Defaults to RegistryConfiguration.OverwriteRegistry if left empty and RegistryConfiguration.OverwriteRegistry is specified. | [ImageAsset](#imageasset) | false |
+| metricsServer | MetricsServer configures the image registry and tag to be used for deploying the metrics-server component. Default image repository and tag: defaulted dynamically by KubeOne. Defaults to RegistryConfiguration.OverwriteRegistry if left empty and RegistryConfiguration.OverwriteRegistry is specified. | [ImageAsset](#imageasset) | false |
+| cni | CNI configures the source for downloading the CNI binaries. If not specified, kubernetes-cni package will be installed. Default: none | [BinaryAsset](#binaryasset) | false |
+| nodeBinaries | NodeBinaries configures the source for downloading the Kubernetes Node Binaries tarball (e.g. kubernetes-node-linux-amd64.tar.gz). The tarball must have .tar.gz as the extension and must contain the following files: - kubernetes/node/bin/kubelet - kubernetes/node/bin/kubeadm If not specified, kubelet and kubeadm packages will be installed. Default: none | [BinaryAsset](#binaryasset) | false |
+| kubectl | Kubectl configures the source for downloading the Kubectl binary. If not specified, kubelet package will be installed. Default: none | [BinaryAsset](#binaryasset) | false |
+
+[Back to Group](#v1beta1)
+
 ### AzureSpec
 
 AzureSpec defines the Azure cloud provider
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
+
+[Back to Group](#v1beta1)
+
+### BinaryAsset
+
+BinaryAsset is used to customize the URL of the binary asset
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| url | URL from where to download the binary | string | false |
 
 [Back to Group](#v1beta1)
 
@@ -143,6 +178,35 @@ ClusterNetworkConfig describes the cluster network
 | serviceDomainName | ServiceDomainName default value is \"cluster.local\" | string | false |
 | nodePortRange | NodePortRange default value is \"30000-32767\" | string | false |
 | cni | CNI default value is {canal: {mtu: 1450}} | *[CNI](#cni) | false |
+
+[Back to Group](#v1beta1)
+
+### ContainerRuntimeConfig
+
+ContainerRuntimeConfig
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| docker |  | *[ContainerRuntimeDocker](#containerruntimedocker) | false |
+| containerd |  | *[ContainerRuntimeContainerd](#containerruntimecontainerd) | false |
+
+[Back to Group](#v1beta1)
+
+### ContainerRuntimeContainerd
+
+ContainerRuntimeContainerd defines docker container runtime
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+
+[Back to Group](#v1beta1)
+
+### ContainerRuntimeDocker
+
+ContainerRuntimeDocker defines docker container runtime
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
 
 [Back to Group](#v1beta1)
 
@@ -263,6 +327,17 @@ HostConfig describes a single control plane node.
 
 [Back to Group](#v1beta1)
 
+### ImageAsset
+
+ImageAsset is used to customize the image repository and the image tag
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| imageRepository | ImageRepository customizes the registry/repository | string | false |
+| imageTag | ImageTag customizes the image tag | string | false |
+
+[Back to Group](#v1beta1)
+
 ### KubeOneCluster
 
 KubeOneCluster is KubeOne Cluster API Schema
@@ -274,6 +349,7 @@ KubeOneCluster is KubeOne Cluster API Schema
 | apiEndpoint | APIEndpoint are pairs of address and port used to communicate with the Kubernetes API. | [APIEndpoint](#apiendpoint) | true |
 | cloudProvider | CloudProvider configures the cloud provider specific features. | [CloudProviderSpec](#cloudproviderspec) | true |
 | versions | Versions defines which Kubernetes version will be installed. | [VersionConfig](#versionconfig) | true |
+| containerRuntime | ContainerRuntime defines which container runtime will be installed | [ContainerRuntimeConfig](#containerruntimeconfig) | false |
 | clusterNetwork | ClusterNetwork configures the in-cluster networking. | [ClusterNetworkConfig](#clusternetworkconfig) | false |
 | proxy | Proxy configures proxy used while installing Kubernetes and by the Docker daemon. | [ProxyConfig](#proxyconfig) | false |
 | staticWorkers | StaticWorkers describes the worker nodes that are managed by KubeOne/kubeadm. | [StaticWorkersConfig](#staticworkersconfig) | false |
@@ -282,6 +358,7 @@ KubeOneCluster is KubeOne Cluster API Schema
 | features | Features enables and configures additional cluster features. | [Features](#features) | false |
 | addons | Addons are used to deploy additional manifests. | *[Addons](#addons) | false |
 | systemPackages | SystemPackages configure kubeone behaviour regarding OS packages. | *[SystemPackages](#systempackages) | false |
+| assetConfiguration | AssetConfiguration configures how are binaries and container images downloaded | [AssetConfiguration](#assetconfiguration) | false |
 | registryConfiguration | RegistryConfiguration configures how Docker images are pulled from an image registry | *[RegistryConfiguration](#registryconfiguration) | false |
 
 [Back to Group](#v1beta1)
@@ -410,6 +487,7 @@ ProviderSpec describes a worker node
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | cloudProviderSpec | CloudProviderSpec | [json.RawMessage](https://golang.org/pkg/encoding/json/#RawMessage) | true |
+| annotations | Annotations | map[string]string | false |
 | labels | Labels | map[string]string | false |
 | taints | Taints | [][corev1.Taint](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#taint-v1-core) | false |
 | sshPublicKeys | SSHPublicKeys | []string | false |
@@ -452,6 +530,7 @@ KubeOne and kubeadm are pulled from an image registry
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | overwriteRegistry | OverwriteRegistry specifies a custom Docker registry which will be used for all images required for KubeOne and kubeadm. This also applies to addons deployed by KubeOne. This field doesn't modify the user/organization part of the image. For example, if OverwriteRegistry is set to 127.0.0.1:5000/example, image called calico/cni would translate to 127.0.0.1:5000/example/calico/cni. Default: \"\" | string | false |
+| insecureRegistry | InsecureRegistry configures Docker to threat the registry specified in OverwriteRegistry as an insecure registry. This is also propagated to the worker nodes managed by machine-controller and/or KubeOne. | bool | false |
 
 [Back to Group](#v1beta1)
 
