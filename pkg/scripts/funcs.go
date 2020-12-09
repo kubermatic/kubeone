@@ -158,7 +158,7 @@ func containerdCfg(insecureRegistry string) (string, error) {
 	criPlugin := containerdCRIPlugin{
 		Containerd: &containerdCRISettings{
 			Runtimes: map[string]containerdCRIRuntime{
-				"runc": containerdCRIRuntime{
+				"runc": {
 					RuntimeType: "io.containerd.runc.v2",
 					Options: containerdCRIRuncOptions{
 						SystemdCgroup: true,
@@ -168,7 +168,7 @@ func containerdCfg(insecureRegistry string) (string, error) {
 		},
 		Registry: &containerdCRIRegistry{
 			Mirrors: map[string]containerdMirror{
-				"docker.io": containerdMirror{
+				"docker.io": {
 					Endpoint: []string{"https://registry-1.docker.io"},
 				},
 			},
