@@ -100,6 +100,8 @@ runtime_type = "io.containerd.runc.v2"
 SystemdCgroup = true
 [plugins."io.containerd.grpc.v1.cri".registry]
 [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
+[plugins."io.containerd.grpc.v1.cri".registry.mirrors."127.0.0.1:5000"]
+endpoint = ["http://127.0.0.1:5000"]
 [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
 endpoint = ["https://registry-1.docker.io"]
 EOF

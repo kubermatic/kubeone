@@ -100,6 +100,8 @@ runtime_type = "io.containerd.runc.v2"
 SystemdCgroup = true
 [plugins."io.containerd.grpc.v1.cri".registry]
 [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
+[plugins."io.containerd.grpc.v1.cri".registry.mirrors."127.0.0.1:5000"]
+endpoint = ["http://127.0.0.1:5000"]
 [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
 endpoint = ["https://registry-1.docker.io"]
 EOF
@@ -144,12 +146,14 @@ popd
 
 
 
-sudo mkdir -p /opt/bin /etc/kubernetes/pki /etc/kubernetes/manifests
-
-rm -rf /tmp/k8s-binaries
-mkdir -p /tmp/k8s-binaries
-cd /tmp/k8s-binaries
+sudo yum install -y \
+	kubelet-1.17.4 \
+	kubeadm-1.17.4 \
+	kubectl-1.17.4 \
+	kubernetes-cni-0.8.7
+sudo yum versionlock add kubelet kubeadm kubectl kubernetes-cni
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now kubelet
 sudo systemctl restart kubelet
+

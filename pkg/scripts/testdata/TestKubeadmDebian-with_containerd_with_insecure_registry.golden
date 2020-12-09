@@ -3,10 +3,7 @@ export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
 
 sudo swapoff -a
 sudo sed -i '/.*swap.*/d' /etc/fstab
-sudo setenforce 0 || true
-sudo sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/sysconfig/selinux
-sudo sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/selinux/config
-sudo systemctl disable --now firewalld || true
+sudo systemctl disable --now ufw || true
 
 source /etc/kubeone/proxy-env
 
@@ -39,38 +36,38 @@ EOF
 sudo systemctl force-reload systemd-journald
 
 
-yum_proxy=""
-yum_proxy="proxy=http://https.proxy #kubeone"
-
-grep -v '#kubeone' /etc/yum.conf > /tmp/yum.conf || true
-echo -n "${yum_proxy}" >> /tmp/yum.conf
-sudo mv /tmp/yum.conf /etc/yum.conf
-
-
-cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
-[kubernetes]
-name=Kubernetes
-baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
-enabled=1
-gpgcheck=1
-repo_gpgcheck=1
-gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+sudo mkdir -p /etc/apt/apt.conf.d
+cat <<EOF | sudo tee /etc/apt/apt.conf.d/proxy.conf
+Acquire::https::Proxy "http://https.proxy";
+Acquire::http::Proxy "http://http.proxy";
 EOF
 
+sudo apt-get update
+sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--force-confold" -y --no-install-recommends \
+	apt-transport-https \
+	ca-certificates \
+	curl \
+	lsb-release \
+	rsync
+curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 
-sudo yum install -y \
-	yum-plugin-versionlock \
-	device-mapper-persistent-data \
-	lvm2 \
-	conntrack-tools \
-	ebtables \
-	socat \
-	iproute-tc
+# You'd think that kubernetes-$(lsb_release -sc) belongs there instead, but the debian repo
+# contains neither kubeadm nor kubelet, and the docs themselves suggest using xenial repo.
+echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+sudo apt-get update
+
+kube_ver="1.17.4*"
+cni_ver="0.8.7*"
 
 
 
 
-sudo yum install runc -y
+sudo DEBIAN_FRONTEND=noninteractive apt-get install \
+	--option "Dpkg::Options::=--force-confold" \
+	--no-install-recommends \
+	-y \
+	runc
 
 mkdir -p /tmp/containerd-1.4.3
 pushd /tmp/containerd-1.4.3
@@ -100,6 +97,8 @@ runtime_type = "io.containerd.runc.v2"
 SystemdCgroup = true
 [plugins."io.containerd.grpc.v1.cri".registry]
 [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
+[plugins."io.containerd.grpc.v1.cri".registry.mirrors."127.0.0.1:5000"]
+endpoint = ["http://127.0.0.1:5000"]
 [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
 endpoint = ["https://registry-1.docker.io"]
 EOF
@@ -144,11 +143,16 @@ popd
 
 
 
-sudo mkdir -p /opt/bin /etc/kubernetes/pki /etc/kubernetes/manifests
+sudo DEBIAN_FRONTEND=noninteractive apt-get install \
+	--option "Dpkg::Options::=--force-confold" \
+	--no-install-recommends \
+	-y \
+	kubelet=${kube_ver} \
+	kubeadm=${kube_ver} \
+	kubectl=${kube_ver} \
+	kubernetes-cni=${cni_ver}
 
-rm -rf /tmp/k8s-binaries
-mkdir -p /tmp/k8s-binaries
-cd /tmp/k8s-binaries
+sudo apt-mark hold kubelet kubeadm kubectl kubernetes-cni
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now kubelet

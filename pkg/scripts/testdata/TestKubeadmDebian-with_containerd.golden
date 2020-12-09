@@ -85,17 +85,20 @@ cat <<EOF | sudo tee /etc/containerd/config.toml
 version = 2
 
 [metrics]
-  # metrics available at http://127.0.0.1:1338/v1/metrics
-  address = "127.0.0.1:1338"
+address = "127.0.0.1:1338"
 
 [plugins]
 [plugins."io.containerd.grpc.v1.cri"]
 [plugins."io.containerd.grpc.v1.cri".containerd]
 [plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
 [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
-    runtime_type = "io.containerd.runc.v2"
+runtime_type = "io.containerd.runc.v2"
 [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
-    SystemdCgroup = true
+SystemdCgroup = true
+[plugins."io.containerd.grpc.v1.cri".registry]
+[plugins."io.containerd.grpc.v1.cri".registry.mirrors]
+[plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
+endpoint = ["https://registry-1.docker.io"]
 EOF
 
 cat <<EOF | sudo tee /etc/crictl.yaml
