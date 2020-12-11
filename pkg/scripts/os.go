@@ -494,18 +494,18 @@ sudo systemctl start kubelet
 
 func KubeadmDebian(cluster *kubeone.KubeOneCluster, force bool) (string, error) {
 	return Render(kubeadmDebianTemplate, Data{
-		"KUBELET":                  true,
-		"KUBEADM":                  true,
-		"KUBECTL":                  true,
-		"KUBERNETES_VERSION":       cluster.Versions.Kubernetes,
-		"KUBERNETES_CNI_VERSION":   defaultKubernetesCNIVersion,
-		"CONFIGURE_REPOSITORIES":   cluster.SystemPackages.ConfigureRepositories,
-		"DOCKER_INSECURE_REGISTRY": cluster.RegistryConfiguration.InsecureRegistryAddress(),
-		"HTTP_PROXY":               cluster.Proxy.HTTP,
-		"HTTPS_PROXY":              cluster.Proxy.HTTPS,
-		"FORCE":                    force,
-		"INSTALL_DOCKER":           cluster.ContainerRuntime.Docker,
-		"INSTALL_CONTAINERD":       cluster.ContainerRuntime.Containerd,
+		"KUBELET":                true,
+		"KUBEADM":                true,
+		"KUBECTL":                true,
+		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
+		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
+		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
+		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
+		"HTTP_PROXY":             cluster.Proxy.HTTP,
+		"HTTPS_PROXY":            cluster.Proxy.HTTPS,
+		"FORCE":                  force,
+		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
+		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 	})
 }
 
@@ -516,17 +516,17 @@ func KubeadmCentOS(cluster *kubeone.KubeOneCluster, force bool) (string, error) 
 	}
 
 	return Render(kubeadmCentOSTemplate, Data{
-		"KUBELET":                  true,
-		"KUBEADM":                  true,
-		"KUBECTL":                  true,
-		"KUBERNETES_VERSION":       cluster.Versions.Kubernetes,
-		"KUBERNETES_CNI_VERSION":   defaultKubernetesCNIVersion,
-		"CONFIGURE_REPOSITORIES":   cluster.SystemPackages.ConfigureRepositories,
-		"DOCKER_INSECURE_REGISTRY": cluster.RegistryConfiguration.InsecureRegistryAddress(),
-		"PROXY":                    proxy,
-		"FORCE":                    force,
-		"INSTALL_DOCKER":           cluster.ContainerRuntime.Docker,
-		"INSTALL_CONTAINERD":       cluster.ContainerRuntime.Containerd,
+		"KUBELET":                true,
+		"KUBEADM":                true,
+		"KUBECTL":                true,
+		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
+		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
+		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
+		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
+		"PROXY":                  proxy,
+		"FORCE":                  force,
+		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
+		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 	})
 }
 
@@ -537,28 +537,28 @@ func KubeadmAmazonLinux(cluster *kubeone.KubeOneCluster, force bool) (string, er
 	}
 
 	return Render(kubeadmAmazonLinuxTemplate, Data{
-		"KUBELET":                  true,
-		"KUBEADM":                  true,
-		"KUBECTL":                  true,
-		"NODE_BINARIES_URL":        cluster.AssetConfiguration.NodeBinaries.URL,
-		"CNI_URL":                  cluster.AssetConfiguration.CNI.URL,
-		"KUBECTL_URL":              cluster.AssetConfiguration.Kubectl.URL,
-		"KUBERNETES_VERSION":       cluster.Versions.Kubernetes,
-		"KUBERNETES_CNI_VERSION":   defaultKubernetesCNIVersion,
-		"CONFIGURE_REPOSITORIES":   cluster.SystemPackages.ConfigureRepositories,
-		"DOCKER_INSECURE_REGISTRY": cluster.RegistryConfiguration.InsecureRegistryAddress(),
-		"PROXY":                    proxy,
-		"FORCE":                    force,
-		"INSTALL_DOCKER":           cluster.ContainerRuntime.Docker,
-		"INSTALL_CONTAINERD":       cluster.ContainerRuntime.Containerd,
+		"KUBELET":                true,
+		"KUBEADM":                true,
+		"KUBECTL":                true,
+		"NODE_BINARIES_URL":      cluster.AssetConfiguration.NodeBinaries.URL,
+		"CNI_URL":                cluster.AssetConfiguration.CNI.URL,
+		"KUBECTL_URL":            cluster.AssetConfiguration.Kubectl.URL,
+		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
+		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
+		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
+		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
+		"PROXY":                  proxy,
+		"FORCE":                  force,
+		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
+		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 	})
 }
 
 func KubeadmCoreOS(cluster *kubeone.KubeOneCluster) (string, error) {
 	return Render(kubeadmCoreOSTemplate, Data{
-		"KUBERNETES_VERSION":       cluster.Versions.Kubernetes,
-		"KUBERNETES_CNI_VERSION":   defaultKubernetesCNIVersion,
-		"DOCKER_INSECURE_REGISTRY": cluster.RegistryConfiguration.InsecureRegistryAddress(),
+		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
+		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
+		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
 	})
 }
 
@@ -580,16 +580,16 @@ func RemoveBinariesCoreOS() (string, error) {
 
 func UpgradeKubeadmAndCNIDebian(cluster *kubeone.KubeOneCluster) (string, error) {
 	return Render(kubeadmDebianTemplate, Data{
-		"UPGRADE":                  true,
-		"KUBEADM":                  true,
-		"KUBERNETES_VERSION":       cluster.Versions.Kubernetes,
-		"KUBERNETES_CNI_VERSION":   defaultKubernetesCNIVersion,
-		"CONFIGURE_REPOSITORIES":   cluster.SystemPackages.ConfigureRepositories,
-		"DOCKER_INSECURE_REGISTRY": cluster.RegistryConfiguration.InsecureRegistryAddress(),
-		"HTTP_PROXY":               cluster.Proxy.HTTP,
-		"HTTPS_PROXY":              cluster.Proxy.HTTPS,
-		"INSTALL_DOCKER":           cluster.ContainerRuntime.Docker,
-		"INSTALL_CONTAINERD":       cluster.ContainerRuntime.Containerd,
+		"UPGRADE":                true,
+		"KUBEADM":                true,
+		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
+		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
+		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
+		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
+		"HTTP_PROXY":             cluster.Proxy.HTTP,
+		"HTTPS_PROXY":            cluster.Proxy.HTTPS,
+		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
+		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 	})
 }
 
@@ -600,15 +600,15 @@ func UpgradeKubeadmAndCNICentOS(cluster *kubeone.KubeOneCluster) (string, error)
 	}
 
 	return Render(kubeadmCentOSTemplate, Data{
-		"UPGRADE":                  true,
-		"KUBEADM":                  true,
-		"KUBERNETES_VERSION":       cluster.Versions.Kubernetes,
-		"KUBERNETES_CNI_VERSION":   defaultKubernetesCNIVersion,
-		"CONFIGURE_REPOSITORIES":   cluster.SystemPackages.ConfigureRepositories,
-		"DOCKER_INSECURE_REGISTRY": cluster.RegistryConfiguration.InsecureRegistryAddress(),
-		"PROXY":                    proxy,
-		"INSTALL_DOCKER":           cluster.ContainerRuntime.Docker,
-		"INSTALL_CONTAINERD":       cluster.ContainerRuntime.Containerd,
+		"UPGRADE":                true,
+		"KUBEADM":                true,
+		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
+		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
+		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
+		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
+		"PROXY":                  proxy,
+		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
+		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 	})
 }
 
@@ -619,17 +619,17 @@ func UpgradeKubeadmAndCNIAmazonLinux(cluster *kubeone.KubeOneCluster) (string, e
 	}
 
 	return Render(kubeadmAmazonLinuxTemplate, Data{
-		"UPGRADE":                  true,
-		"KUBEADM":                  true,
-		"NODE_BINARIES_URL":        cluster.AssetConfiguration.NodeBinaries.URL,
-		"CNI_URL":                  cluster.AssetConfiguration.CNI.URL,
-		"KUBERNETES_VERSION":       cluster.Versions.Kubernetes,
-		"KUBERNETES_CNI_VERSION":   defaultKubernetesCNIVersion,
-		"CONFIGURE_REPOSITORIES":   cluster.SystemPackages.ConfigureRepositories,
-		"DOCKER_INSECURE_REGISTRY": cluster.RegistryConfiguration.InsecureRegistryAddress(),
-		"PROXY":                    proxy,
-		"INSTALL_DOCKER":           cluster.ContainerRuntime.Docker,
-		"INSTALL_CONTAINERD":       cluster.ContainerRuntime.Containerd,
+		"UPGRADE":                true,
+		"KUBEADM":                true,
+		"NODE_BINARIES_URL":      cluster.AssetConfiguration.NodeBinaries.URL,
+		"CNI_URL":                cluster.AssetConfiguration.CNI.URL,
+		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
+		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
+		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
+		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
+		"PROXY":                  proxy,
+		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
+		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 	})
 }
 
@@ -642,17 +642,17 @@ func UpgradeKubeadmAndCNICoreOS(k8sVersion string) (string, error) {
 
 func UpgradeKubeletAndKubectlDebian(cluster *kubeone.KubeOneCluster) (string, error) {
 	return Render(kubeadmDebianTemplate, Data{
-		"UPGRADE":                  true,
-		"KUBELET":                  true,
-		"KUBECTL":                  true,
-		"KUBERNETES_VERSION":       cluster.Versions.Kubernetes,
-		"KUBERNETES_CNI_VERSION":   defaultKubernetesCNIVersion,
-		"CONFIGURE_REPOSITORIES":   cluster.SystemPackages.ConfigureRepositories,
-		"DOCKER_INSECURE_REGISTRY": cluster.RegistryConfiguration.InsecureRegistryAddress(),
-		"HTTP_PROXY":               cluster.Proxy.HTTP,
-		"HTTPS_PROXY":              cluster.Proxy.HTTPS,
-		"INSTALL_DOCKER":           cluster.ContainerRuntime.Docker,
-		"INSTALL_CONTAINERD":       cluster.ContainerRuntime.Containerd,
+		"UPGRADE":                true,
+		"KUBELET":                true,
+		"KUBECTL":                true,
+		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
+		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
+		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
+		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
+		"HTTP_PROXY":             cluster.Proxy.HTTP,
+		"HTTPS_PROXY":            cluster.Proxy.HTTPS,
+		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
+		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 	})
 }
 
@@ -663,16 +663,16 @@ func UpgradeKubeletAndKubectlCentOS(cluster *kubeone.KubeOneCluster) (string, er
 	}
 
 	return Render(kubeadmCentOSTemplate, Data{
-		"UPGRADE":                  true,
-		"KUBELET":                  true,
-		"KUBECTL":                  true,
-		"KUBERNETES_VERSION":       cluster.Versions.Kubernetes,
-		"KUBERNETES_CNI_VERSION":   defaultKubernetesCNIVersion,
-		"CONFIGURE_REPOSITORIES":   cluster.SystemPackages.ConfigureRepositories,
-		"DOCKER_INSECURE_REGISTRY": cluster.RegistryConfiguration.InsecureRegistryAddress(),
-		"PROXY":                    proxy,
-		"INSTALL_DOCKER":           cluster.ContainerRuntime.Docker,
-		"INSTALL_CONTAINERD":       cluster.ContainerRuntime.Containerd,
+		"UPGRADE":                true,
+		"KUBELET":                true,
+		"KUBECTL":                true,
+		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
+		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
+		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
+		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
+		"PROXY":                  proxy,
+		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
+		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 	})
 }
 
@@ -683,18 +683,18 @@ func UpgradeKubeletAndKubectlAmazonLinux(cluster *kubeone.KubeOneCluster) (strin
 	}
 
 	return Render(kubeadmAmazonLinuxTemplate, Data{
-		"UPGRADE":                  true,
-		"KUBELET":                  true,
-		"KUBECTL":                  true,
-		"NODE_BINARIES_URL":        cluster.AssetConfiguration.NodeBinaries.URL,
-		"KUBECTL_URL":              cluster.AssetConfiguration.Kubectl.URL,
-		"KUBERNETES_VERSION":       cluster.Versions.Kubernetes,
-		"KUBERNETES_CNI_VERSION":   defaultKubernetesCNIVersion,
-		"CONFIGURE_REPOSITORIES":   cluster.SystemPackages.ConfigureRepositories,
-		"DOCKER_INSECURE_REGISTRY": cluster.RegistryConfiguration.InsecureRegistryAddress(),
-		"PROXY":                    proxy,
-		"INSTALL_DOCKER":           cluster.ContainerRuntime.Docker,
-		"INSTALL_CONTAINERD":       cluster.ContainerRuntime.Containerd,
+		"UPGRADE":                true,
+		"KUBELET":                true,
+		"KUBECTL":                true,
+		"NODE_BINARIES_URL":      cluster.AssetConfiguration.NodeBinaries.URL,
+		"KUBECTL_URL":            cluster.AssetConfiguration.Kubectl.URL,
+		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
+		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
+		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
+		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
+		"PROXY":                  proxy,
+		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
+		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 	})
 }
 
