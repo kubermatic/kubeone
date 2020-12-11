@@ -170,15 +170,14 @@ func runApply(opts *applyOpts) error {
 		return err
 	}
 
-	containerRuntimeString := s.Cluster.ContainerRuntime.String()
 	if s.Verbose {
 		// Print information about hosts collected by probes
 		for _, host := range s.LiveCluster.ControlPlane {
-			printHostInformation(host, containerRuntimeString)
+			printHostInformation(host)
 		}
 
 		for _, host := range s.LiveCluster.StaticWorkers {
-			printHostInformation(host, containerRuntimeString)
+			printHostInformation(host)
 		}
 	}
 
@@ -396,24 +395,38 @@ func confirmApply(autoApprove bool) (bool, error) {
 	return strings.Trim(confirmation, "\n") == "yes", nil
 }
 
-func printHostInformation(host state.Host, containerRuntime string) {
+func printHostInformation(host state.Host) {
+	containerdCR := host.ContainerRuntimeContainerd
+	dockerCR := host.ContainerRuntimeDocker
+
 	fmt.Printf("Host: %q\n", host.Config.Hostname)
 	fmt.Printf("\tHost initialized: %s\n", boolStr(host.Initialized()))
-	fmt.Printf("\t%s healthy: %s (%s)\n", containerRuntime, boolStr(host.ContainerRuntime.Healthy()), printVersion(host.ContainerRuntime.Version))
+
+	fmt.Printf("\t%s healthy: %s (%s)\n", containerdCR.Name, boolStr(containerdCR.Healthy()), printVersion(containerdCR.Version))
+	if dockerCR.IsProvisioned() {
+		fmt.Printf("\t%s healthy: %s (%s)\n", dockerCR.Name, boolStr(dockerCR.Healthy()), printVersion(dockerCR.Version))
+	}
+
 	fmt.Printf("\tKubelet healthy: %s (%s)\n", boolStr(host.Kubelet.Healthy()), printVersion(host.Kubelet.Version))
+	fmt.Println()
+
+	componentStatusReport(containerdCR)
+
+	if dockerCR.IsProvisioned() {
+		fmt.Println()
+		componentStatusReport(dockerCR)
+	}
 
 	fmt.Println()
-	fmt.Printf("\t%s is installed: %s\n", containerRuntime, boolStr(host.ContainerRuntime.Status&state.ComponentInstalled != 0))
-	fmt.Printf("\t%s is running: %s\n", containerRuntime, boolStr(host.ContainerRuntime.Status&state.SystemDStatusRunning != 0))
-	fmt.Printf("\t%s is active: %s\n", containerRuntime, boolStr(host.ContainerRuntime.Status&state.SystemDStatusActive != 0))
-	fmt.Printf("\t%s is restarting: %s\n", containerRuntime, boolStr(host.ContainerRuntime.Status&state.SystemDStatusRestarting != 0))
+	componentStatusReport(host.Kubelet)
+	fmt.Println()
+}
 
-	fmt.Println()
-	fmt.Printf("\tKubelet is installed: %s\n", boolStr(host.Kubelet.Status&state.ComponentInstalled != 0))
-	fmt.Printf("\tKubelet is running: %s\n", boolStr(host.Kubelet.Status&state.SystemDStatusRunning != 0))
-	fmt.Printf("\tKubelet is active: %s\n", boolStr(host.Kubelet.Status&state.SystemDStatusActive != 0))
-	fmt.Printf("\tKubelet is restarting: %s\n", boolStr(host.Kubelet.Status&state.SystemDStatusRestarting != 0))
-	fmt.Println()
+func componentStatusReport(component state.ComponentStatus) {
+	fmt.Printf("\t%s is installed: %s\n", component.Name, boolStr(component.Status&state.ComponentInstalled != 0))
+	fmt.Printf("\t%s is running: %s\n", component.Name, boolStr(component.Status&state.SystemDStatusRunning != 0))
+	fmt.Printf("\t%s is active: %s\n", component.Name, boolStr(component.Status&state.SystemDStatusActive != 0))
+	fmt.Printf("\t%s is restarting: %s\n", component.Name, boolStr(component.Status&state.SystemDStatusRestarting != 0))
 }
 
 func boolStr(b bool) string {
@@ -432,7 +445,7 @@ func resolveInt(i *int) int {
 
 func printVersion(version *semver.Version) string {
 	if version == nil {
-		return "not installed"
+		return "unknown"
 	}
 	return version.String()
 }

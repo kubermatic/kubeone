@@ -37,8 +37,9 @@ type Cluster struct {
 type Host struct {
 	Config *kubeone.HostConfig
 
-	ContainerRuntime ComponentStatus
-	Kubelet          ComponentStatus
+	ContainerRuntimeDocker     ComponentStatus
+	ContainerRuntimeContainerd ComponentStatus
+	Kubelet                    ComponentStatus
 
 	// Applicable only for CP nodes
 	APIServer ContainerStatus
@@ -51,6 +52,7 @@ type Host struct {
 type ComponentStatus struct {
 	Version *semver.Version
 	Status  uint64
+	Name    string
 }
 
 type ContainerStatus struct {
@@ -228,7 +230,7 @@ func (h *Host) Initialized() bool {
 
 // IsProvisioned checks are CRI and Kubelet provisioned on a host
 func (h *Host) IsProvisioned() bool {
-	return h.ContainerRuntime.IsProvisioned() && h.Kubelet.IsProvisioned()
+	return (h.ContainerRuntimeDocker.IsProvisioned() || h.ContainerRuntimeContainerd.IsProvisioned()) && h.Kubelet.IsProvisioned()
 }
 
 // ControlPlaneHealthy checks is a control-plane host part of the cluster and are CRI, Kubelet, and API server healthy
@@ -242,7 +244,17 @@ func (h *Host) WorkerHealthy() bool {
 }
 
 func (h *Host) healthy() bool {
-	return h.IsInCluster && h.ContainerRuntime.Healthy() && h.Kubelet.Healthy()
+	var crStatus bool
+
+	if h.ContainerRuntimeContainerd.IsProvisioned() {
+		// docker + containerd are installed
+		crStatus = h.ContainerRuntimeDocker.Healthy() && h.ContainerRuntimeContainerd.Healthy()
+	} else {
+		// only containerd is installed
+		crStatus = h.ContainerRuntimeContainerd.Healthy()
+	}
+
+	return h.IsInCluster && crStatus && h.Kubelet.Healthy()
 }
 
 /*
