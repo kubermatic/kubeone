@@ -101,7 +101,7 @@ sudo sed -i 's/\$releasever/7/g' /etc/yum.repos.d/docker-ce.repo
 
 
 
-sudo yum install -y docker-ce-18.09.9* docker-ce-cli-18.09.9*
+sudo yum install -y docker-ce-19.03.14* docker-ce-cli-19.03.14*
 sudo yum versionlock add docker-ce docker-ce-cli
 sudo systemctl daemon-reload
 sudo systemctl enable --now docker
