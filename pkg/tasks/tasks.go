@@ -76,7 +76,7 @@ func WithBinariesOnly(t Tasks) Tasks {
 	return WithHostnameOS(t).
 		append(
 			Task{Fn: runProbes, ErrMsg: "probes failed"},
-			Task{Fn: probesSafeguard, ErrMsg: "probes analysis failed"},
+			Task{Fn: safeguard, ErrMsg: "probes analysis failed"},
 			Task{Fn: installPrerequisites, ErrMsg: "failed to install prerequisites"},
 		)
 }
@@ -175,7 +175,7 @@ func WithUpgrade(t Tasks) Tasks {
 	return WithHostnameOS(t).
 		append(
 			Task{Fn: runProbes, ErrMsg: "probes failed"},
-			Task{Fn: probesSafeguard, ErrMsg: "probes analysis failed"},
+			Task{Fn: safeguard, ErrMsg: "probes analysis failed"},
 		).
 		append(kubernetesConfigFiles()...).
 		append(Tasks{

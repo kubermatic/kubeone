@@ -43,7 +43,31 @@ const (
 	kubeletInitializedCMD = `test -f /etc/kubernetes/kubelet.conf`
 )
 
-func probesSafeguard(s *state.State) error {
+func safeguard(s *state.State) error {
+	if !s.LiveCluster.IsProvisioned() {
+		return nil
+	}
+
+	var nodes corev1.NodeList
+	if err := s.DynamicClient.List(s.Context, &nodes); err != nil {
+		return err
+	}
+
+	configuredClusterContainerRuntime := s.Cluster.ContainerRuntime.String()
+
+	for _, node := range nodes.Items {
+		nodesContainerRuntime := strings.Split(node.Status.NodeInfo.ContainerRuntimeVersion, ":")[0]
+
+		if nodesContainerRuntime != configuredClusterContainerRuntime {
+			return errors.Errorf(
+				"Container runtime on node %q is %q, but %q is configured. Migration is not supported yet.",
+				node.Name,
+				nodesContainerRuntime,
+				configuredClusterContainerRuntime,
+			)
+		}
+	}
+
 	return nil
 }
 
