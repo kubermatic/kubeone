@@ -108,8 +108,8 @@ var (
 			sudo systemctl daemon-reload
 			sudo systemctl enable --now docker
 			`,
-			defaultLegacyDockerVersion,
 			defaultDockerVersion,
+			defaultLegacyDockerVersion,
 		),
 
 		"containerd-github": heredoc.Docf(`
