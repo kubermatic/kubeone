@@ -95,6 +95,7 @@ func WithHostnameOS(t Tasks) Tasks {
 func WithProbes(t Tasks) Tasks {
 	return t.append(
 		Task{Fn: runProbes, ErrMsg: "probes failed"},
+		Task{Fn: safeguard, ErrMsg: "probes analysis failed"},
 	)
 }
 

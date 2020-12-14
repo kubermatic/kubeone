@@ -56,7 +56,7 @@ func safeguard(s *state.State) error {
 	configuredClusterContainerRuntime := s.Cluster.ContainerRuntime.String()
 
 	for _, node := range nodes.Items {
-		if !s.Cluster.OwnNode(node.Name) {
+		if !s.Cluster.IsManagedNode(node.Name) {
 			// skip nodes unknown to the current configuration (most likely, machine-controller nodes)
 			continue
 		}

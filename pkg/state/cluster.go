@@ -246,7 +246,7 @@ func (h *Host) WorkerHealthy() bool {
 func (h *Host) healthy() bool {
 	var crStatus bool
 
-	if h.ContainerRuntimeContainerd.IsProvisioned() {
+	if h.ContainerRuntimeDocker.IsProvisioned() {
 		// docker + containerd are installed
 		crStatus = h.ContainerRuntimeDocker.Healthy() && h.ContainerRuntimeContainerd.Healthy()
 	} else {

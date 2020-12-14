@@ -52,9 +52,10 @@ func (c KubeOneCluster) Followers() []HostConfig {
 	return followers
 }
 
-func (c *KubeOneCluster) OwnNode(name string) bool {
+// IsManagedNode reports whether given node name is known to the KubeOne configuration
+func (c *KubeOneCluster) IsManagedNode(nodename string) bool {
 	for _, host := range append(c.ControlPlane.Hosts, c.StaticWorkers.Hosts...) {
-		if host.Hostname == name {
+		if host.Hostname == nodename {
 			return true
 		}
 	}
