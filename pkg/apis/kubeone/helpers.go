@@ -52,6 +52,16 @@ func (c KubeOneCluster) Followers() []HostConfig {
 	return followers
 }
 
+func (c *KubeOneCluster) OwnNode(name string) bool {
+	for _, host := range append(c.ControlPlane.Hosts, c.StaticWorkers.Hosts...) {
+		if host.Hostname == name {
+			return true
+		}
+	}
+
+	return false
+}
+
 // SetHostname sets the hostname for the given host
 func (h *HostConfig) SetHostname(hostname string) {
 	h.Hostname = hostname
