@@ -37,20 +37,44 @@ import (
 )
 
 const (
-	systemdShowStatusCMD = `systemctl show %s -p LoadState,ActiveState,SubState`
-
-	dockerVersionDPKG   = `dpkg-query --show --showformat='${Version}' docker-ce | cut -d: -f2 | cut -d~ -f1`
-	dockerVersionRPM    = `rpm -qa --queryformat '%{RPMTAG_VERSION}' docker-ce`
-	dockerVersionAmazon = `rpm -qa --queryformat '%{RPMTAG_VERSION}' docker`
-
-	containerdVersion = `containerd --version | awk '{print $3}'`
-
-	kubeletVersionDPKG = `dpkg-query --show --showformat='${Version}' kubelet | cut -d- -f1`
-	kubeletVersionRPM  = `rpm -qa --queryformat '%{RPMTAG_VERSION}' kubelet`
-	kubeletVersionCLI  = `/opt/bin/kubelet --version | cut -d' ' -f2`
+	systemdShowStatusCMD    = `systemctl show %s -p LoadState,ActiveState,SubState`
+	systemdShowExecStartCMD = `systemctl show %s -p ExecStart`
 
 	kubeletInitializedCMD = `test -f /etc/kubernetes/kubelet.conf`
 )
+
+func safeguard(s *state.State) error {
+	if !s.LiveCluster.IsProvisioned() {
+		return nil
+	}
+
+	var nodes corev1.NodeList
+	if err := s.DynamicClient.List(s.Context, &nodes); err != nil {
+		return err
+	}
+
+	configuredClusterContainerRuntime := s.Cluster.ContainerRuntime.String()
+
+	for _, node := range nodes.Items {
+		if !s.Cluster.IsManagedNode(node.Name) {
+			// skip nodes unknown to the current configuration (most likely, machine-controller nodes)
+			continue
+		}
+
+		nodesContainerRuntime := strings.Split(node.Status.NodeInfo.ContainerRuntimeVersion, ":")[0]
+
+		if nodesContainerRuntime != configuredClusterContainerRuntime {
+			return errors.Errorf(
+				"Container runtime on node %q is %q, but %q is configured. Migration is not supported yet.",
+				node.Name,
+				nodesContainerRuntime,
+				configuredClusterContainerRuntime,
+			)
+		}
+	}
+
+	return nil
+}
 
 func runProbes(s *state.State) error {
 	expectedVersion, err := semver.NewVersion(s.Cluster.Versions.Kubernetes)
@@ -83,6 +107,14 @@ func runProbes(s *state.State) error {
 	}
 
 	return nil
+}
+
+func versionCmdGenerator(execPath string) string {
+	return fmt.Sprintf("%s --version | awk '{print $3}' | awk -F - '{print $1}'  | awk -F , '{print $1}'", execPath)
+}
+
+func kubeletVersionCmdGenerator(execPath string) string {
+	return fmt.Sprintf("%s --version | awk '{print $2}'", execPath)
 }
 
 func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
@@ -118,11 +150,28 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Conne
 		return errors.New("didn't matched live cluster against provided")
 	}
 
-	if err := detectContainerRuntimeStatusVersion(s, h, conn); err != nil {
+	var err error
+
+	containerRuntimeOpts := []systemdUnitInfoOpt{withComponentVersion(versionCmdGenerator)}
+
+	switch h.Config.OperatingSystem {
+	case kubeoneapi.OperatingSystemNameCoreOS, kubeoneapi.OperatingSystemNameFlatcar:
+		// Flatcar is special
+		containerRuntimeOpts = []systemdUnitInfoOpt{withFlatcarContainerRuntimeVersion}
+	}
+
+	h.ContainerRuntimeContainerd, err = systemdUnitInfo("containerd", conn, containerRuntimeOpts...)
+	if err != nil {
 		return err
 	}
 
-	if err := detectKubeletStatusVersion(h, conn); err != nil {
+	h.ContainerRuntimeDocker, err = systemdUnitInfo("docker", conn, containerRuntimeOpts...)
+	if err != nil {
+		return err
+	}
+
+	h.Kubelet, err = systemdUnitInfo("kubelet", conn, withComponentVersion(kubeletVersionCmdGenerator))
+	if err != nil {
 		return err
 	}
 
@@ -237,109 +286,72 @@ func investigateCluster(s *state.State) error {
 	return nil
 }
 
-func detectContainerRuntimeStatusVersion(s *state.State, host *state.Host, conn ssh.Connection) error {
+type systemdUnitInfoOpt func(component *state.ComponentStatus, conn ssh.Connection) error
+
+func systemdUnitInfo(name string, conn ssh.Connection, opts ...systemdUnitInfoOpt) (state.ComponentStatus, error) {
 	var (
-		err          error
-		isContainerd = s.Cluster.ContainerRuntime.Containerd != nil
+		compStatus = state.ComponentStatus{Name: name}
+		err        error
 	)
 
-	systemdServiceName := "docker"
-	if isContainerd {
-		systemdServiceName = "containerd"
-	}
-
-	host.ContainerRuntime.Status, err = systemdStatus(conn, systemdServiceName)
+	compStatus.Status, err = systemdStatus(conn, name)
 	if err != nil {
-		return err
+		return compStatus, err
 	}
 
-	if host.ContainerRuntime.Status&state.ComponentInstalled == 0 {
-		// container runtime is not installed
-		return nil
+	if compStatus.Status&state.ComponentInstalled == 0 {
+		// provided containerRuntime is not known to systemd, we consider this as not installed
+		return compStatus, nil
 	}
 
-	var versionCmd string
-
-	switch host.Config.OperatingSystem {
-	case kubeoneapi.OperatingSystemNameAmazon:
-		versionCmd = dockerVersionAmazon
-		if isContainerd {
-			versionCmd = containerdVersion
+	for _, fn := range opts {
+		if err := fn(&compStatus, conn); err != nil {
+			return compStatus, err
 		}
-	case kubeoneapi.OperatingSystemNameCentOS, kubeoneapi.OperatingSystemNameRHEL:
-		versionCmd = dockerVersionRPM
-		if isContainerd {
-			versionCmd = containerdVersion
-		}
-	case kubeoneapi.OperatingSystemNameUbuntu:
-		versionCmd = dockerVersionDPKG
-		if isContainerd {
-			versionCmd = containerdVersion
-		}
-	case kubeoneapi.OperatingSystemNameFlatcar, kubeoneapi.OperatingSystemNameCoreOS:
-		// we don't care about version because on container linux we don't manage docker
-		host.ContainerRuntime.Version = &semver.Version{}
-		return nil
-	default:
-		return nil
 	}
 
-	out, _, _, err := conn.Exec(versionCmd)
-	if err != nil {
-		return err
-	}
-
-	// Amazon Linux 2 appends "ce" to Docker version, which is not valid semver.
-	v := strings.TrimSpace(strings.ReplaceAll(out, "ce", ""))
-
-	ver, err := semver.NewVersion(v)
-	if err != nil {
-		return errors.Wrapf(err, "%s version was: %q", systemdServiceName, out)
-	}
-	host.ContainerRuntime.Version = ver
-
-	return nil
+	return compStatus, nil
 }
 
-func detectKubeletStatusVersion(host *state.Host, conn ssh.Connection) error {
-	var err error
-	host.Kubelet.Status, err = systemdStatus(conn, "kubelet")
-	if err != nil {
-		return err
-	}
+func withFlatcarContainerRuntimeVersion(component *state.ComponentStatus, conn ssh.Connection) error {
+	cmd := versionCmdGenerator(fmt.Sprintf("/run/torcx/bin/%s", component.Name))
 
-	if host.Kubelet.Status&state.ComponentInstalled == 0 {
-		// kubelet is not installed
-		return nil
-	}
-
-	var kubeletVersionCmd string
-
-	switch host.Config.OperatingSystem {
-	case kubeoneapi.OperatingSystemNameAmazon:
-		kubeletVersionCmd = kubeletVersionCLI
-	case kubeoneapi.OperatingSystemNameCentOS, kubeoneapi.OperatingSystemNameRHEL:
-		kubeletVersionCmd = kubeletVersionRPM
-	case kubeoneapi.OperatingSystemNameUbuntu:
-		kubeletVersionCmd = kubeletVersionDPKG
-	case kubeoneapi.OperatingSystemNameFlatcar, kubeoneapi.OperatingSystemNameCoreOS:
-		kubeletVersionCmd = kubeletVersionCLI
-	default:
-		return nil
-	}
-
-	out, _, _, err := conn.Exec(kubeletVersionCmd)
+	out, _, _, err := conn.Exec(cmd)
 	if err != nil {
 		return err
 	}
 
 	ver, err := semver.NewVersion(strings.TrimSpace(out))
 	if err != nil {
-		return err
+		return errors.Wrapf(err, "%s version was: %q", component.Name, out)
 	}
-	host.Kubelet.Version = ver
+
+	component.Version = ver
 
 	return nil
+}
+
+func withComponentVersion(versionCmdGenerator func(string) string) systemdUnitInfoOpt {
+	return func(component *state.ComponentStatus, conn ssh.Connection) error {
+		execPath, err := systemdUnitExecStartPath(conn, component.Name)
+		if err != nil {
+			return err
+		}
+
+		out, _, _, err := conn.Exec(versionCmdGenerator(execPath))
+		if err != nil {
+			return err
+		}
+
+		ver, err := semver.NewVersion(strings.TrimSpace(out))
+		if err != nil {
+			return errors.Wrapf(err, "%s version was: %q", component.Name, out)
+		}
+
+		component.Version = ver
+
+		return nil
+	}
 }
 
 func detectKubeletInitialized(host *state.Host, conn ssh.Connection) error {
@@ -355,6 +367,25 @@ func detectKubeletInitialized(host *state.Host, conn ssh.Connection) error {
 	}
 
 	return nil
+}
+
+func systemdUnitExecStartPath(conn ssh.Connection, unitName string) (string, error) {
+	out, _, _, err := conn.Exec(fmt.Sprintf(systemdShowExecStartCMD, unitName))
+	if err != nil {
+		return "", err
+	}
+
+	lines := strings.Split(out, " ")
+	for _, line := range lines {
+		if strings.HasPrefix(line, "path=") {
+			pathSplit := strings.Split(line, "=")
+			if len(pathSplit) == 2 {
+				return pathSplit[1], nil
+			}
+		}
+	}
+
+	return "", errors.Errorf("ExecStart not found in %q systemd unit", unitName)
 }
 
 func systemdStatus(conn ssh.Connection, service string) (uint64, error) {

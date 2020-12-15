@@ -74,7 +74,11 @@ func (t Tasks) prepend(newtasks ...Task) Tasks {
 // all hosts
 func WithBinariesOnly(t Tasks) Tasks {
 	return WithHostnameOS(t).
-		append(Task{Fn: installPrerequisites, ErrMsg: "failed to install prerequisites"})
+		append(
+			Task{Fn: runProbes, ErrMsg: "probes failed"},
+			Task{Fn: safeguard, ErrMsg: "probes analysis failed"},
+			Task{Fn: installPrerequisites, ErrMsg: "failed to install prerequisites"},
+		)
 }
 
 // WithHostnameOS will prepend passed tasks with 2 basic tasks:
@@ -91,6 +95,7 @@ func WithHostnameOS(t Tasks) Tasks {
 func WithProbes(t Tasks) Tasks {
 	return t.append(
 		Task{Fn: runProbes, ErrMsg: "probes failed"},
+		Task{Fn: safeguard, ErrMsg: "probes analysis failed"},
 	)
 }
 
@@ -169,6 +174,10 @@ func WithRefreshResources(t Tasks) Tasks {
 
 func WithUpgrade(t Tasks) Tasks {
 	return WithHostnameOS(t).
+		append(
+			Task{Fn: runProbes, ErrMsg: "probes failed"},
+			Task{Fn: safeguard, ErrMsg: "probes analysis failed"},
+		).
 		append(kubernetesConfigFiles()...).
 		append(Tasks{
 			{Fn: kubeconfig.BuildKubernetesClientset, ErrMsg: "failed to build kubernetes clientset"},
