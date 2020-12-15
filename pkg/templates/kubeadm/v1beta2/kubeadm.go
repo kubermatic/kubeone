@@ -274,6 +274,7 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Obje
 
 	nodeRegistration := kubeadmv1beta2.NodeRegistrationOptions{
 		Name:      host.Hostname,
+		Taints:    host.Taints,
 		CRISocket: s.ContainerRuntimeConfig().CRISocket(),
 		KubeletExtraArgs: map[string]string{
 			"node-ip":           nodeIP,
