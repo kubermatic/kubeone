@@ -57,8 +57,9 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 	}
 
 	nodeRegistration := kubeadmv1beta2.NodeRegistrationOptions{
-		Name:   host.Hostname,
-		Taints: host.Taints,
+		Name:      host.Hostname,
+		Taints:    host.Taints,
+		CRISocket: s.ContainerRuntimeConfig().CRISocket(),
 		KubeletExtraArgs: map[string]string{
 			"node-ip":           nodeIP,
 			"volume-plugin-dir": "/var/lib/kubelet/volumeplugins",
@@ -272,7 +273,8 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Obje
 	}
 
 	nodeRegistration := kubeadmv1beta2.NodeRegistrationOptions{
-		Name: host.Hostname,
+		Name:      host.Hostname,
+		CRISocket: s.ContainerRuntimeConfig().CRISocket(),
 		KubeletExtraArgs: map[string]string{
 			"node-ip":           nodeIP,
 			"volume-plugin-dir": "/var/lib/kubelet/volumeplugins",

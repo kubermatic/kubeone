@@ -89,6 +89,28 @@ func (crc ContainerRuntimeConfig) String() string {
 	return "unknown"
 }
 
+func (crc ContainerRuntimeConfig) Default() ContainerRuntimeConfig {
+	switch {
+	case crc.Docker != nil:
+	case crc.Containerd != nil:
+	default:
+		crc.Containerd = &ContainerRuntimeContainerd{}
+	}
+
+	return crc
+}
+
+func (crc ContainerRuntimeConfig) CRISocket() string {
+	switch {
+	case crc.Containerd != nil:
+		return "/run/containerd/containerd.sock"
+	case crc.Docker != nil:
+		return "/var/run/dockershim.sock"
+	}
+
+	return ""
+}
+
 // CloudProviderName returns name of the cloud provider
 func (p CloudProviderSpec) CloudProviderName() string {
 	switch {

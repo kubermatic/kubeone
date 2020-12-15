@@ -70,6 +70,30 @@ type State struct {
 	PauseImage                string
 }
 
+// ContainerRuntimeConfig return API object that is product of KubeOne manifest and live cluster probing
+func (s *State) ContainerRuntimeConfig() kubeoneapi.ContainerRuntimeConfig {
+	crCfg := s.Cluster.ContainerRuntime.DeepCopy().Default()
+
+	if crCfg.Docker != nil {
+		return crCfg
+	}
+
+	if !s.LiveCluster.IsProvisioned() {
+		return crCfg
+	}
+
+	for _, host := range append(s.LiveCluster.ControlPlane, s.LiveCluster.StaticWorkers...) {
+		if host.ContainerRuntimeDocker.IsProvisioned() {
+			// we have existing docker based cluster
+			// override the config
+			crCfg.Docker = &kubeoneapi.ContainerRuntimeDocker{}
+			crCfg.Containerd = nil
+		}
+	}
+
+	return crCfg
+}
+
 func (s *State) KubeadmVerboseFlag() string {
 	if s.Verbose {
 		return "--v=6"
