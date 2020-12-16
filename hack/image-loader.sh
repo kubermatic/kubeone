@@ -105,9 +105,9 @@ k8simages=$("$kubeadm" config images list --kubernetes-version="$KUBERNETES_VERS
 k1images=(
   # Core images deployed by default
   # Canal
-  "docker.io/calico/cni:v3.15.1"
-  "docker.io/calico/node:v3.15.1"
-  "docker.io/calico/kube-controllers:v3.15.1"
+  "docker.io/calico/cni:v3.16.5"
+  "docker.io/calico/node:v3.16.5"
+  "docker.io/calico/kube-controllers:v3.16.5"
   "quay.io/coreos/flannel:v0.13.0"
   # machine-controller
   "docker.io/kubermatic/machine-controller:v1.19.0"
