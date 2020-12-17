@@ -27,6 +27,7 @@ require (
 	go.etcd.io/etcd/v3 v3.3.0-rc.0.0.20200728214110-6c81b20ec8de
 	go.uber.org/zap v1.15.0 // indirect
 	golang.org/x/crypto v0.0.0-20200220183623-bac4c82f6975
+	golang.org/x/term v0.0.0-20201210144234-2321bbc49cbf
 	google.golang.org/grpc v1.27.1
 	gopkg.in/yaml.v2 v2.3.0
 	k8s.io/api v0.18.6
