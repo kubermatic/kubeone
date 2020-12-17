@@ -22,7 +22,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Masterminds/semver"
+	"github.com/Masterminds/semver/v3"
 	"github.com/pkg/errors"
 
 	kubeadmv1beta1 "k8c.io/kubeone/pkg/apis/kubeadm/v1beta1"

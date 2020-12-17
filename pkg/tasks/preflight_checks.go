@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/Masterminds/semver"
+	"github.com/Masterminds/semver/v3"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
@@ -176,7 +176,7 @@ func parseContainerImageVersion(image string) (*semver.Version, error) {
 	return semver.NewVersion(ver[1])
 }
 
-func checkVersionSkew(reqVer, currVer *semver.Version, diff int64) error {
+func checkVersionSkew(reqVer, currVer *semver.Version, diff uint64) error {
 	// Check is requested version different than current and ensure version skew policy
 	if currVer.Equal(reqVer) {
 		return errors.New("requested version is same as current")
@@ -186,6 +186,7 @@ func checkVersionSkew(reqVer, currVer *semver.Version, diff int64) error {
 		(reqVer.Minor() == currVer.Minor() && reqVer.Patch() < currVer.Patch()) {
 		return errors.New("requested version can't be lower than current")
 	}
+
 	// Ensure the version skew policy
 	// https://kubernetes.io/docs/setup/version-skew-policy/#supported-version-skew
 	if reqVer.Minor()-currVer.Minor() > diff {
