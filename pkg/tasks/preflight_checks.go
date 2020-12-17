@@ -181,8 +181,9 @@ func checkVersionSkew(reqVer, currVer *semver.Version, diff uint64) error {
 	if currVer.Equal(reqVer) {
 		return errors.New("requested version is same as current")
 	}
+
 	// Check are we upgrading to newer minor or patch release
-	if reqVer.Minor()-currVer.Minor() < 0 ||
+	if int64(reqVer.Minor())-int64(currVer.Minor()) < 0 ||
 		(reqVer.Minor() == currVer.Minor() && reqVer.Patch() < currVer.Patch()) {
 		return errors.New("requested version can't be lower than current")
 	}

@@ -21,7 +21,7 @@ import (
 	"text/template"
 
 	"github.com/MakeNowJust/heredoc/v2"
-	"github.com/Masterminds/sprig"
+	"github.com/Masterminds/sprig/v3"
 	"github.com/pkg/errors"
 )
 

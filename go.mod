@@ -5,19 +5,16 @@ go 1.14
 require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
-	github.com/Masterminds/goutils v1.1.0 // indirect
 	github.com/Masterminds/semver/v3 v3.1.1
-	github.com/Masterminds/sprig v2.22.0+incompatible
+	github.com/Masterminds/sprig/v3 v3.2.0
 	github.com/aws/aws-sdk-go v1.20.15
 	github.com/dominodatalab/os-release v0.0.0-20190522011736-bcdb4a3e3c2f
 	github.com/go-logr/zapr v0.1.1 // indirect
 	github.com/google/go-cmp v0.4.0
-	github.com/huandu/xstrings v1.3.0 // indirect
 	github.com/imdario/mergo v0.3.11
 	github.com/koron-go/prefixw v0.0.0-20181013140428-271b207a7572
 	github.com/kubermatic/machine-controller v1.18.0
 	github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de
-	github.com/mitchellh/copystructure v1.0.0 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/pkg/sftp v1.12.0
 	github.com/pmezard/go-difflib v1.0.0
