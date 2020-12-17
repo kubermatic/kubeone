@@ -234,13 +234,6 @@ func Convert_v1alpha1_KubeOneCluster_To_kubeone_KubeOneCluster(in *KubeOneCluste
 		out.CloudProvider.Hetzner.NetworkID = in.ClusterNetwork.NetworkID
 	}
 
-	// Default to docker
-	out.ContainerRuntime = kubeoneapi.ContainerRuntimeConfig{
-		Docker: &kubeoneapi.ContainerRuntimeDocker{},
-	}
-
-	// The Credentials field has been dropped from v1beta1 API.
-
 	return nil
 }
 

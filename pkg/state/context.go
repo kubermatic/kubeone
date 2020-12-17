@@ -19,6 +19,7 @@ package state
 import (
 	"context"
 
+	"github.com/Masterminds/semver"
 	"github.com/sirupsen/logrus"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
@@ -68,6 +69,28 @@ type State struct {
 	CredentialsFilePath       string
 	ManifestFilePath          string
 	PauseImage                string
+}
+
+// ContainerRuntimeConfig return API object that is product of KubeOne manifest and live cluster probing
+func (s *State) ContainerRuntimeConfig() kubeoneapi.ContainerRuntimeConfig {
+	crCfg := *s.Cluster.ContainerRuntime.DeepCopy()
+	condition, _ := semver.NewConstraint(">= 1.23")
+
+	if condition.Check(s.LiveCluster.ExpectedVersion) {
+		// forced containerd for clusters version >= 1.23
+		crCfg.Docker = nil
+		crCfg.Containerd = &kubeoneapi.ContainerRuntimeContainerd{}
+		return crCfg
+	}
+
+	switch {
+	case crCfg.Docker != nil:
+	case crCfg.Containerd != nil:
+	default:
+		crCfg.Docker = &kubeoneapi.ContainerRuntimeDocker{}
+	}
+
+	return crCfg
 }
 
 func (s *State) KubeadmVerboseFlag() string {
