@@ -31,13 +31,3 @@ func TestDrainNode(t *testing.T) {
 
 	testhelper.DiffOutput(t, testhelper.FSGoldenName(t), got, *updateFlag)
 }
-
-func TestUncordonNode(t *testing.T) {
-	got, err := UncordonNode("testNode2")
-	if err != nil {
-		t.Errorf("UncordonNode() error = %v", err)
-		return
-	}
-
-	testhelper.DiffOutput(t, testhelper.FSGoldenName(t), got, *updateFlag)
-}
