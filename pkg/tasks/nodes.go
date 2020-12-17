@@ -17,10 +17,16 @@ limitations under the License.
 package tasks
 
 import (
+	"github.com/pkg/errors"
+
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
+
+	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/client-go/util/retry"
 )
 
 func drainNode(s *state.State, node kubeoneapi.HostConfig) error {
@@ -36,15 +42,17 @@ func drainNode(s *state.State, node kubeoneapi.HostConfig) error {
 	})
 }
 
-func uncordonNode(s *state.State, node kubeoneapi.HostConfig) error {
-	cmd, err := scripts.UncordonNode(node.Hostname)
-	if err != nil {
-		return err
-	}
+func uncordonNode(s *state.State, host kubeoneapi.HostConfig) error {
+	updateErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
+		var node corev1.Node
 
-	return s.RunTaskOnLeader(func(s *state.State, _ *kubeoneapi.HostConfig, _ ssh.Connection) error {
-		_, _, err := s.Runner.RunRaw(cmd)
+		if err := s.DynamicClient.Get(s.Context, types.NamespacedName{Name: host.Hostname}, &node); err != nil {
+			return err
+		}
 
-		return err
+		node.Spec.Unschedulable = false
+		return s.DynamicClient.Update(s.Context, &node)
 	})
+
+	return errors.WithStack(updateErr)
 }
