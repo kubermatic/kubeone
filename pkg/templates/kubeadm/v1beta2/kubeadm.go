@@ -51,19 +51,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		return nil, errors.Wrapf(err, "failed to parse generate config, wrong kubernetes version %s", cluster.Versions.Kubernetes)
 	}
 
-	nodeIP := host.PrivateAddress
-	if nodeIP == "" {
-		nodeIP = host.PublicAddress
-	}
-
-	nodeRegistration := kubeadmv1beta2.NodeRegistrationOptions{
-		Name:   host.Hostname,
-		Taints: host.Taints,
-		KubeletExtraArgs: map[string]string{
-			"node-ip":           nodeIP,
-			"volume-plugin-dir": "/var/lib/kubelet/volumeplugins",
-		},
-	}
+	nodeRegistration := newNodeRegistration(s, host)
 
 	bootstrapToken, err := kubeadmv1beta2.NewBootstrapTokenString(s.JoinToken)
 	if err != nil {
@@ -93,7 +81,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 			},
 		},
 		LocalAPIEndpoint: kubeadmv1beta2.APIEndpoint{
-			AdvertiseAddress: nodeIP,
+			AdvertiseAddress: newNodeIP(host),
 		},
 	}
 
@@ -104,7 +92,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		},
 		ControlPlane: &kubeadmv1beta2.JoinControlPlane{
 			LocalAPIEndpoint: kubeadmv1beta2.APIEndpoint{
-				AdvertiseAddress: nodeIP,
+				AdvertiseAddress: newNodeIP(host),
 			},
 		},
 		Discovery: kubeadmv1beta2.Discovery{
@@ -266,19 +254,8 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 // NewConfig returns all required configs to init a cluster via a set of v1beta2 configs
 func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, error) {
 	cluster := s.Cluster
-	nodeIP := host.PrivateAddress
-	if nodeIP == "" {
-		nodeIP = host.PublicAddress
-	}
 
-	nodeRegistration := kubeadmv1beta2.NodeRegistrationOptions{
-		Name: host.Hostname,
-		KubeletExtraArgs: map[string]string{
-			"node-ip":           nodeIP,
-			"volume-plugin-dir": "/var/lib/kubelet/volumeplugins",
-		},
-	}
-
+	nodeRegistration := newNodeRegistration(s, host)
 	controlPlaneEndpoint := fmt.Sprintf("%s:%d", cluster.APIEndpoint.Host, cluster.APIEndpoint.Port)
 
 	joinConfig := &kubeadmv1beta2.JoinConfiguration{
@@ -330,4 +307,25 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Obje
 	joinConfig.NodeRegistration = nodeRegistration
 
 	return []runtime.Object{joinConfig, kubeletConfig}, nil
+}
+
+func newNodeIP(host kubeoneapi.HostConfig) string {
+	nodeIP := host.PrivateAddress
+	if nodeIP == "" {
+		nodeIP = host.PublicAddress
+	}
+
+	return nodeIP
+}
+
+func newNodeRegistration(s *state.State, host kubeoneapi.HostConfig) kubeadmv1beta2.NodeRegistrationOptions {
+	return kubeadmv1beta2.NodeRegistrationOptions{
+		Name:      host.Hostname,
+		Taints:    host.Taints,
+		CRISocket: s.ContainerRuntimeConfig().CRISocket(),
+		KubeletExtraArgs: map[string]string{
+			"node-ip":           newNodeIP(host),
+			"volume-plugin-dir": "/var/lib/kubelet/volumeplugins",
+		},
+	}
 }
