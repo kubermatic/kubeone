@@ -801,9 +801,6 @@ func TestKubeOneClusterRoundTripConversion(t *testing.T) {
 				Versions: kubeoneapi.VersionConfig{
 					Kubernetes: "1.18.2",
 				},
-				ContainerRuntime: kubeoneapi.ContainerRuntimeConfig{
-					Docker: &kubeoneapi.ContainerRuntimeDocker{},
-				},
 				CloudProvider: kubeoneapi.CloudProviderSpec{
 					AWS: &kubeoneapi.AWSSpec{},
 				},
@@ -927,9 +924,6 @@ func TestKubeOneClusterRoundTripConversion(t *testing.T) {
 			expectedInternalKubeOneCluster: &kubeoneapi.KubeOneCluster{
 				Versions: kubeoneapi.VersionConfig{
 					Kubernetes: "1.18.2",
-				},
-				ContainerRuntime: kubeoneapi.ContainerRuntimeConfig{
-					Docker: &kubeoneapi.ContainerRuntimeDocker{},
 				},
 				CloudProvider: kubeoneapi.CloudProviderSpec{
 					Hetzner: &kubeoneapi.HetznerSpec{
