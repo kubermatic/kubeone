@@ -37,19 +37,21 @@ import (
 )
 
 var (
-	testCredentialsFile string
-	testRunIdentifier   string
-	testInitialVersion  string
-	testTargetVersion   string
-	testProvider        string
-	testOSControlPlane  string
-	testOSWorkers       string
+	testCredentialsFile  string
+	testRunIdentifier    string
+	testInitialVersion   string
+	testTargetVersion    string
+	testProvider         string
+	testContainerRuntime containerRuntimeFlag
+	testOSControlPlane   string
+	testOSWorkers        string
 )
 
 func init() {
 	flag.StringVar(&testCredentialsFile, "credentials", "", "path to the credentials file")
 	flag.StringVar(&testRunIdentifier, "identifier", "", "The unique identifier for this test run")
 	flag.StringVar(&testProvider, "provider", "", "Provider to run tests on")
+	flag.Var(&testContainerRuntime, "container-runtime", `Container runtime to deploy, can be "docker" or "containerd"`)
 	flag.StringVar(&testInitialVersion, "initial-version", "", "Cluster version to provision for tests")
 	flag.StringVar(&testTargetVersion, "target-version", "", "Cluster version to provision for tests")
 	flag.StringVar(&testOSControlPlane, "os-control-plane", "", "Operating system to use for control plane nodes")
