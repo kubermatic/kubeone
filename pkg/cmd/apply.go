@@ -24,11 +24,11 @@ import (
 	"strings"
 
 	"github.com/MakeNowJust/heredoc/v2"
-	"github.com/Masterminds/semver"
+	"github.com/Masterminds/semver/v3"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"golang.org/x/crypto/ssh/terminal"
+	"golang.org/x/term"
 
 	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/state"
@@ -378,7 +378,7 @@ func confirmApply(autoApprove bool) (bool, error) {
 		return true, nil
 	}
 
-	if !terminal.IsTerminal(int(os.Stdin.Fd())) || !terminal.IsTerminal(int(os.Stdout.Fd())) {
+	if !term.IsTerminal(int(os.Stdin.Fd())) || !term.IsTerminal(int(os.Stdout.Fd())) {
 		return false, errors.New("not running in the terminal")
 	}
 

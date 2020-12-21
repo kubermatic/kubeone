@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/Masterminds/semver"
+	"github.com/Masterminds/semver/v3"
 )
 
 func TestParseContainerImageVersionValid(t *testing.T) {
@@ -113,7 +113,7 @@ func TestCheckVersionSkewValid(t *testing.T) {
 		name           string
 		currentVersion *semver.Version
 		desiredVersion *semver.Version
-		diff           int64
+		diff           uint64
 	}{
 		{
 			name:           "upgrade 1.13.3 to 1.14.0 with diff of 1",
@@ -188,7 +188,7 @@ func TestCheckVersionSkewInvalid(t *testing.T) {
 		name           string
 		currentVersion *semver.Version
 		desiredVersion *semver.Version
-		diff           int64
+		diff           uint64
 	}{
 		{
 			name:           "upgrade 1.13.3 to 1.15.0 with diff of 1",

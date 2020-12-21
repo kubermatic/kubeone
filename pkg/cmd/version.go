@@ -24,7 +24,7 @@ import (
 	"strconv"
 
 	"github.com/MakeNowJust/heredoc/v2"
-	"github.com/Masterminds/semver"
+	"github.com/Masterminds/semver/v3"
 	"github.com/spf13/cobra"
 
 	"k8c.io/kubeone/pkg/templates/machinecontroller"

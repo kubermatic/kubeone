@@ -17,7 +17,7 @@ limitations under the License.
 package admissionconfig
 
 import (
-	"github.com/Masterminds/semver"
+	"github.com/Masterminds/semver/v3"
 	"github.com/pkg/errors"
 
 	apiserverv1 "k8c.io/kubeone/pkg/apis/apiserver/v1"

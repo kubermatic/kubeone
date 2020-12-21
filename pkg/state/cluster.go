@@ -20,7 +20,7 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/Masterminds/semver"
+	"github.com/Masterminds/semver/v3"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 
