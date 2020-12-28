@@ -72,7 +72,7 @@ sudo yum install -y \
 
 
 
-sudo yum install -y containerd-1.4.3*
+sudo yum install -y containerd-1.4.1*
 sudo yum versionlock add containerd
 
 cat <<EOF | sudo tee /etc/containerd/config.toml

@@ -219,7 +219,7 @@ var (
 			sudo systemctl enable --now containerd
 			sudo systemctl restart containerd
 			`,
-			defaultContainerdVersion,
+			defaultAmazonContainerdVersion,
 		),
 	}
 )
