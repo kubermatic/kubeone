@@ -20,7 +20,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/Masterminds/semver"
+	"github.com/Masterminds/semver/v3"
+
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 )
 
