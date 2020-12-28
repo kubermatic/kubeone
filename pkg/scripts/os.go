@@ -76,12 +76,7 @@ sudo apt-mark unhold kubelet kubeadm kubectl kubernetes-cni
 {{ end }}
 
 {{ if .INSTALL_CONTAINERD }}
-sudo DEBIAN_FRONTEND=noninteractive apt-get install \
-	--option "Dpkg::Options::=--force-confold" \
-	--no-install-recommends \
-	-y \
-	runc
-{{ template "containerd-github" . }}
+{{ template "apt-containerd" . }}
 {{ end }}
 
 sudo DEBIAN_FRONTEND=noninteractive apt-get install \
@@ -160,8 +155,7 @@ sudo yum install -y \
 {{ end }}
 
 {{ if .INSTALL_CONTAINERD }}
-sudo yum install runc -y
-{{ template "containerd-github" . }}
+{{ template "yum-containerd" . }}
 {{ end }}
 
 {{- if or .FORCE .UPGRADE }}
@@ -236,8 +230,7 @@ sudo yum install -y \
 {{ end }}
 
 {{ if .INSTALL_CONTAINERD }}
-sudo yum install runc -y
-{{ template "containerd-github" . }}
+{{ template "yum-containerd-amzn" . }}
 {{ end }}
 
 sudo mkdir -p /opt/bin /etc/kubernetes/pki /etc/kubernetes/manifests

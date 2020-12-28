@@ -70,19 +70,10 @@ sudo yum install -y \
 
 
 
-sudo yum install runc -y
 
-mkdir -p /tmp/containerd-1.4.3
-pushd /tmp/containerd-1.4.3
-curl --location --continue-at - \
-	--output containerd-1.4.3-linux-amd64.tar.gz.sha256sum \
-	https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz.sha256sum \
-	--output containerd-1.4.3-linux-amd64.tar.gz \
-	https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz
-sha256sum -c containerd-1.4.3-linux-amd64.tar.gz.sha256sum
-tar xvf containerd-1.4.3-linux-amd64.tar.gz
-sudo install --group=0 --owner=0 --preserve-timestamps ./bin/* --target-directory=/usr/local/bin/
-sudo mkdir -p /etc/containerd /etc/cni/net.d /opt/cni/bin
+
+sudo yum install -y containerd-1.4.3*
+sudo yum versionlock add containerd
 
 cat <<EOF | sudo tee /etc/containerd/config.toml
 version = 2
@@ -110,39 +101,16 @@ cat <<EOF | sudo tee /etc/crictl.yaml
 runtime-endpoint: unix:///run/containerd/containerd.sock
 EOF
 
-cat <<EOF | sudo tee /etc/systemd/system/containerd.service
-[Unit]
-Description=containerd container runtime
-Documentation=https://containerd.io
-After=network.target local-fs.target
-
+sudo mkdir -p /etc/systemd/system/containerd.service.d
+cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/environment.conf
 [Service]
-ExecStartPre=-/sbin/modprobe overlay
-ExecStart=/usr/local/bin/containerd
-
-Type=notify
-Delegate=yes
-KillMode=process
 Restart=always
-RestartSec=5
-# Having non-zero Limit*s causes performance problems due to accounting overhead
-# in the kernel. We recommend using cgroups to do container-local accounting.
-LimitNPROC=infinity
-LimitCORE=infinity
-LimitNOFILE=1048576
-# Comment TasksMax if your systemd version does not supports it.
-# Only systemd 226 and above support this version.
-TasksMax=infinity
-OOMScoreAdjust=-999
-
-[Install]
-WantedBy=multi-user.target
+EnvironmentFile=-/etc/environment
 EOF
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now containerd
 sudo systemctl restart containerd
-popd
 
 
 
