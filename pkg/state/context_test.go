@@ -33,8 +33,8 @@ func TestState_ContainerRuntimeConfig(t *testing.T) {
 		want    kubeoneapi.ContainerRuntimeConfig
 	}{
 		{
-			name:    "docker kubernetes 1.22.0",
-			version: "1.22.0",
+			name:    "docker kubernetes 1.20.0",
+			version: "1.20.0",
 			input: kubeoneapi.ContainerRuntimeConfig{
 				Docker: &kubeoneapi.ContainerRuntimeDocker{},
 			},
@@ -43,8 +43,8 @@ func TestState_ContainerRuntimeConfig(t *testing.T) {
 			},
 		},
 		{
-			name:    "docker kubernetes 1.23.0",
-			version: "1.23.0",
+			name:    "docker kubernetes 1.21.0",
+			version: "1.21.0",
 			input: kubeoneapi.ContainerRuntimeConfig{
 				Docker: &kubeoneapi.ContainerRuntimeDocker{},
 			},
@@ -53,8 +53,8 @@ func TestState_ContainerRuntimeConfig(t *testing.T) {
 			},
 		},
 		{
-			name:    "containerd kubernetes 1.22.0",
-			version: "1.22.0",
+			name:    "containerd kubernetes 1.20.0",
+			version: "1.20.0",
 			input: kubeoneapi.ContainerRuntimeConfig{
 				Containerd: &kubeoneapi.ContainerRuntimeContainerd{},
 			},
@@ -63,8 +63,8 @@ func TestState_ContainerRuntimeConfig(t *testing.T) {
 			},
 		},
 		{
-			name:    "containerd kubernetes 1.23.0",
-			version: "1.23.0",
+			name:    "containerd kubernetes 1.21.0",
+			version: "1.21.0",
 			input: kubeoneapi.ContainerRuntimeConfig{
 				Containerd: &kubeoneapi.ContainerRuntimeContainerd{},
 			},
@@ -73,15 +73,15 @@ func TestState_ContainerRuntimeConfig(t *testing.T) {
 			},
 		},
 		{
-			name:    "default kubernetes 1.22.0",
-			version: "1.22.0",
+			name:    "default kubernetes 1.20.0",
+			version: "1.20.0",
 			want: kubeoneapi.ContainerRuntimeConfig{
 				Docker: &kubeoneapi.ContainerRuntimeDocker{},
 			},
 		},
 		{
-			name:    "default kubernetes 1.23.0",
-			version: "1.23.0",
+			name:    "default kubernetes 1.21.0",
+			version: "1.21.0",
 			want: kubeoneapi.ContainerRuntimeConfig{
 				Containerd: &kubeoneapi.ContainerRuntimeContainerd{},
 			},

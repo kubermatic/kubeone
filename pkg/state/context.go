@@ -74,10 +74,10 @@ type State struct {
 // ContainerRuntimeConfig return API object that is product of KubeOne manifest and live cluster probing
 func (s *State) ContainerRuntimeConfig() kubeoneapi.ContainerRuntimeConfig {
 	crCfg := *s.Cluster.ContainerRuntime.DeepCopy()
-	condition, _ := semver.NewConstraint(">= 1.23")
+	condition, _ := semver.NewConstraint(">= 1.21")
 
 	if condition.Check(s.LiveCluster.ExpectedVersion) {
-		// forced containerd for clusters version >= 1.23
+		// forced containerd for clusters version >= 1.21
 		crCfg.Docker = nil
 		crCfg.Containerd = &kubeoneapi.ContainerRuntimeContainerd{}
 		return crCfg
