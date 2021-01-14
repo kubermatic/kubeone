@@ -48,7 +48,7 @@ const (
 	MachineControllerAppLabelValue = "machine-controller"
 	MachineControllerImageRegistry = "docker.io"
 	MachineControllerImage         = "/kubermatic/machine-controller:"
-	MachineControllerTag           = "v1.19.0"
+	MachineControllerTag           = "v1.23.1"
 )
 
 func CRDs() []runtime.Object {
@@ -299,6 +299,23 @@ func machineControllerKubeSystemRole() *rbacv1.Role {
 					"list",
 					"update",
 					"watch",
+				},
+			},
+			{
+				APIGroups: []string{""},
+				Resources: []string{"configmaps"},
+				Verbs: []string{
+					"create",
+					"list",
+					"update",
+					"watch",
+				},
+			},
+			{
+				APIGroups: []string{"coordination.k8s.io"},
+				Resources: []string{"leases"},
+				Verbs: []string{
+					"*",
 				},
 			},
 			{
@@ -737,7 +754,8 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster, credentials
 	args := []string{
 		"-logtostderr",
 		"-v", "4",
-		"-internal-listen-address", "0.0.0.0:8085",
+		"-health-probe-address", "0.0.0.0:8085",
+		"-metrics-address", "0.0.0.0:8080",
 		"-cluster-dns", nodelocaldns.VirtualIP,
 		"-node-csr-approver",
 	}
@@ -817,7 +835,7 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster, credentials
 					Annotations: map[string]string{
 						"prometheus.io/scrape": "true",
 						"prometheus.io/path":   "/metrics",
-						"prometheus.io/port":   "8085",
+						"prometheus.io/port":   "8080",
 					},
 					Labels: map[string]string{
 						MachineControllerAppLabelKey: MachineControllerAppLabelValue,
@@ -857,7 +875,7 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster, credentials
 							ReadinessProbe: &corev1.Probe{
 								Handler: corev1.Handler{
 									HTTPGet: &corev1.HTTPGetAction{
-										Path: "/ready",
+										Path: "/readyz",
 										Port: intstr.FromInt(8085),
 									},
 								},
@@ -870,7 +888,7 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster, credentials
 								FailureThreshold: 8,
 								Handler: corev1.Handler{
 									HTTPGet: &corev1.HTTPGetAction{
-										Path: "/live",
+										Path: "/healthz",
 										Port: intstr.FromInt(8085),
 									},
 								},
