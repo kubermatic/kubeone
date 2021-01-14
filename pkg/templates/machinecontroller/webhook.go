@@ -323,6 +323,8 @@ func tlsServingCertificate(caKey crypto.Signer, caCert *x509.Certificate) (*core
 
 // mutatingwebhookConfiguration returns the MutatingwebhookConfiguration for the machine controler
 func mutatingwebhookConfiguration(caCert *x509.Certificate) *admissionregistrationv1beta1.MutatingWebhookConfiguration {
+	sideEffectsNone := admissionregistrationv1beta1.SideEffectClassNone
+
 	return &admissionregistrationv1beta1.MutatingWebhookConfiguration{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller.kubermatic.io",
@@ -330,9 +332,11 @@ func mutatingwebhookConfiguration(caCert *x509.Certificate) *admissionregistrati
 		},
 		Webhooks: []admissionregistrationv1beta1.MutatingWebhook{
 			{
-				Name:              "machine-controller.kubermatic.io-machinedeployments",
-				NamespaceSelector: &metav1.LabelSelector{},
-				FailurePolicy:     failurePolicyPtr(admissionregistrationv1beta1.Fail),
+				Name:                    "machine-controller.kubermatic.io-machinedeployments",
+				NamespaceSelector:       &metav1.LabelSelector{},
+				FailurePolicy:           failurePolicyPtr(admissionregistrationv1beta1.Fail),
+				SideEffects:             &sideEffectsNone,
+				AdmissionReviewVersions: []string{"v1", "v1beta1"},
 				Rules: []admissionregistrationv1beta1.RuleWithOperations{
 					{
 						Operations: []admissionregistrationv1beta1.OperationType{
@@ -356,9 +360,11 @@ func mutatingwebhookConfiguration(caCert *x509.Certificate) *admissionregistrati
 				},
 			},
 			{
-				Name:              "machine-controller.kubermatic.io-machines",
-				NamespaceSelector: &metav1.LabelSelector{},
-				FailurePolicy:     failurePolicyPtr(admissionregistrationv1beta1.Fail),
+				Name:                    "machine-controller.kubermatic.io-machines",
+				NamespaceSelector:       &metav1.LabelSelector{},
+				FailurePolicy:           failurePolicyPtr(admissionregistrationv1beta1.Fail),
+				SideEffects:             &sideEffectsNone,
+				AdmissionReviewVersions: []string{"v1", "v1beta1"},
 				Rules: []admissionregistrationv1beta1.RuleWithOperations{
 					{
 						Operations: []admissionregistrationv1beta1.OperationType{
