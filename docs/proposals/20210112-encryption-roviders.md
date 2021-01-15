@@ -18,12 +18,10 @@ KubeOne needs to support this feature natively. Meaning the user should be able 
 * Provide a safe path to enable/disable Encryption Providers.
 * Support atomic(?) rotation for existing keys.
 * Rewriting all secret resources (no just secrets) after enable/disable/rotate operations.
-* Support using custom EncryptionProviders configuration file to allow the use of external KMS.
 
 ## Non-Goals
 
-* Deploy External KMS.
-* Safely manage (disable/enable/rotate) configuration when a custom configuration file is used. 
+* Support external KMS providers.
 
 ## Challenges
 
@@ -31,7 +29,7 @@ The feature has a lot of moving parts; as it requires performing a specific sequ
 
 ## Implementation
 
-Unfortunately, it's not possible to simply update the KubeAPI configuration and expect the configuration to reconcile. KubeOne will have to _read_ the _current_ configuration on the custer, _mutate_ it based on the _required_ state and then apply it. Additionally, KubeOne will have to be able to revert changes on any errors and recover safely if the process is interrupted at any point.
+Unfortunately, it's not possible to simply update the KubeAPI configuration and expect the configuration to reconcile. KubeOne will have to _read_ the _current_ configuration on the cluster, _mutate_ it based on the _required_ state and then apply it. Additionally, KubeOne will have to be able to revert changes on any errors and recover safely if the process is interrupted at any point.
 
 The configuration for this will be added under `features` in the KubeOneCluster spec:
 
@@ -42,36 +40,22 @@ features:
   encryptionProviders:
     # enable/disable 
     enabled: true
-    # set to true to automatically rotate keys on apply command. doesn't work with `customProviderFile` set.
-    rotate: true
-    # setting this value will disable automated rotation.
-    customProviderFile: |
-      apiVersion: apiserver.config.k8s.io/v1
-      kind: EncryptionConfiguration
-      resources:
-      - resources:
-        - secrets
-        providers:
-        - identity: {}
-        - aescbc:
-            keys:
-            - name: key1
-            secret: <BASE 64 ENCODED SECRET>
 ```
 
 ### pre-flight checks
+
  * Cluster is healthy.
  * Current Encryption Providers state/configuration is valid and identical on all control plane nodes.
- * Ensure Custom Encryption Providers configuration file is valid (if any). 
 
 ### Enable Encryption Providers for new cluster
+
 * Generate a valid configuration file with the `identity` provider set last.
 * Sync the configuration file to all Control Plane nodes. 
 * Set the required KubeAPI configuration and deploy KubeAPI.
 
 ### Enable Encryption Providers for existing cluster
 
-* Ensure there is no Encryption Provider Config (manually added by the user, broken previos enable process, etc..) present.
+* Ensure there is no Encryption Provider Config (manually added by the user, broken previous enable process, etc..) present.
 * Generate a valid configuration file with the `identity` provider set last.
 * Sync the configuration file to all Control Plane nodes. 
 * Update and restart KubeAPI on all nodes.
@@ -97,14 +81,8 @@ features:
 * Mutate the configuration file again to remove the old key.
 * Sync the updated configuration file to all control plane nodes and restart KubeAPI.
 
-### Apply Custom Encryption Provider file
-This use case is useful for users who would like to utilize an external KMS provider or specify resources other than secrets for encryption. In this case, KubeOne will not manage the content of the file, it will only validate it to make sure it's syntactically valid. Additionally, KubeOne will not rewrite the resources in this case. 
-
-* Ensure the configuration file is valid. 
-* Sync the configuration file to all control plane nodes.
-* Restart KubeAPI on all nodes. 
-
 ## Tasks & effort
+
 * Implement the needed pre-flight checks.
 * Implement validation for Encryption Provider configuration files. 
 * Implement the workflow for each use case. 
