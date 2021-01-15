@@ -38,8 +38,13 @@ apiVersion: kubeone.io/v1beta1
 kind: KubeOneCluster
 features:
   encryptionProviders:
-    # enable/disable 
     enabled: true
+```
+
+To allow users to rotate the keys, a new flag will be added to the `apply` command:
+
+```bash
+--rotate-encryption-key      automatically rotate encryption provider key
 ```
 
 ### pre-flight checks
