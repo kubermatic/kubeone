@@ -18,7 +18,7 @@ output "kubeone_api" {
   description = "kube-apiserver LB endpoint"
 
   value = {
-    endpoint = vsphere_virtual_machine.lb[0].default_ip_address
+    endpoint = var.api_vip != "" ? var.api_vip : vsphere_virtual_machine.control_plane[0].default_ip_address
   }
 }
 

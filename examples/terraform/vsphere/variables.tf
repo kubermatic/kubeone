@@ -115,3 +115,17 @@ variable "worker_disk" {
   description = "disk size of each worker node in GB"
 }
 
+variable "api_vip" {
+  default     = ""
+  description = "virtual IP address for Kubernetes API"
+}
+
+variable "vrrp_interface" {
+  default = "ens192"
+  description = "network interface for API virtual IP"
+}
+
+variable "vrrp_router_id" {
+  default = 42
+  description = "vrrp router id for API virtual IP. Must be unique in used subnet"
+}

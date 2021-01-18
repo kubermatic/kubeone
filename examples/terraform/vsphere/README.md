@@ -40,12 +40,15 @@ See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
 | ssh\_username | SSH user, used only in output | string | `"root"` | no |
 | template\_name | template name | string | `"ubuntu-18.04"` | no |
 | worker\_os | OS to run on worker machines | string | `"ubuntu"` | no |
+| api_vip | Virtual IP address for Kubernetes API, established by keepalived" | string | `""` | no |
+| vrrp_interface | NIC to establish API IP address | string | `"ens192"` | no |
+| vrrp_router_id | Unique router id for VRRP protocol | int | 43 | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| kubeone\_api | kube-apiserver LB endpoint |
+| kubeone\_api | kube-apiserver endpoint. Either configured virtual IP or first node |
 | kubeone\_hosts | Control plane endpoints to SSH to |
 | kubeone\_workers | Workers definitions, that will be transformed into MachineDeployment object |
 

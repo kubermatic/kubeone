@@ -23,11 +23,6 @@ provider "vsphere" {
 
 locals {
   resource_pool_id = var.resource_pool_name == "" ? data.vsphere_compute_cluster.cluster.resource_pool_id : data.vsphere_resource_pool.pool[0].id
-
-  rendered_lb_config = templatefile("./etc_gobetween.tpl", {
-    lb_targets = vsphere_virtual_machine.control_plane.*.default_ip_address,
-  })
-
   hostnames = formatlist("${var.cluster_name}-cp-%d", [1, 2, 3])
 }
 
@@ -109,52 +104,6 @@ resource "vsphere_virtual_machine" "control_plane" {
       tags,
     ]
   }
-}
-
-resource "vsphere_virtual_machine" "lb" {
-  count            = 1
-  name             = "${var.cluster_name}-lb-${count.index + 1}"
-  resource_pool_id = local.resource_pool_id
-  folder           = var.folder_name
-  datastore_id     = data.vsphere_datastore.datastore.id
-  num_cpus         = 1
-  memory           = 1024
-  guest_id         = data.vsphere_virtual_machine.template.guest_id
-  scsi_type        = data.vsphere_virtual_machine.template.scsi_type
-
-  network_interface {
-    network_id   = data.vsphere_network.network.id
-    adapter_type = data.vsphere_virtual_machine.template.network_interface_types[0]
-  }
-
-  disk {
-    label            = "disk0"
-    size             = var.disk_size
-    thin_provisioned = data.vsphere_virtual_machine.template.disks[0].thin_provisioned
-    eagerly_scrub    = data.vsphere_virtual_machine.template.disks[0].eagerly_scrub
-  }
-
-  cdrom {
-    client_device = true
-  }
-
-  clone {
-    template_uuid = data.vsphere_virtual_machine.template.id
-  }
-
-  vapp {
-    properties = {
-      hostname    = "${var.cluster_name}-lb-${count.index + 1}"
-      public-keys = file(var.ssh_public_key_file)
-    }
-  }
-
-  lifecycle {
-    ignore_changes = [
-      vapp[0].properties,
-      tags,
-    ]
-  }
 
   connection {
     type = "ssh"
@@ -163,30 +112,53 @@ resource "vsphere_virtual_machine" "lb" {
   }
 
   provisioner "remote-exec" {
-    script = "gobetween.sh"
+    script = "keepalived.sh"
   }
 }
 
-resource "null_resource" "lb_config" {
+resource "random_string" "keepalived_auth_pass" {
+  length  = 8
+  special = false
+}
+
+resource "null_resource" "keepalived_config" {
+  count = var.api_vip != "" ? 3 : 0
+
   triggers = {
     cluster_instance_ids = join(",", vsphere_virtual_machine.control_plane.*.id)
-    config               = local.rendered_lb_config
   }
 
   connection {
     user = var.ssh_username
-    host = vsphere_virtual_machine.lb[0].default_ip_address
+    host = vsphere_virtual_machine.control_plane[count.index].default_ip_address
   }
 
   provisioner "file" {
-    content     = local.rendered_lb_config
-    destination = "/tmp/gobetween.toml"
+    content = templatefile("./etc_keepalived_keepalived_conf.tpl", {
+      STATE         = count.index == 0 ? "MASTER" : "BACKUP",
+      APISERVER_VIP = var.api_vip,
+      INTERFACE     = var.vrrp_interface,
+      ROUTER_ID     = var.vrrp_router_id,
+      PRIORITY      = count.index == 0 ? "101" : "100",
+      AUTH_PASS     = random_string.keepalived_auth_pass.result
+    })
+    destination = "/tmp/keepalived.conf"
+  }
+
+  provisioner "file" {
+    content = templatefile("./etc_keepalived_check_apiserver_sh.tpl", {
+      APISERVER_VIP = var.api_vip
+    })
+    destination = "/tmp/check_apiserver.sh"
   }
 
   provisioner "remote-exec" {
     inline = [
-      "sudo mv /tmp/gobetween.toml /etc/gobetween.toml",
-      "sudo systemctl restart gobetween",
+      "sudo mkdir -p /etc/keepalived",
+      "sudo mv /tmp/keepalived.conf /etc/keepalived/keepalived.conf",
+      "sudo mv /tmp/check_apiserver.sh /etc/keepalived/check_apiserver.sh",
+      "sudo chmod +x /etc/keepalived/check_apiserver.sh",
+      "sudo systemctl restart keepalived",
     ]
   }
 }
