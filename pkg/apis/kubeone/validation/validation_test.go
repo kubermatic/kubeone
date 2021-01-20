@@ -675,9 +675,9 @@ func TestValidateContainerRuntimeConfig(t *testing.T) {
 			expectedError:    false,
 		},
 		{
-			name:             "docker with kubernetes 1.21+",
+			name:             "docker with kubernetes 1.22+",
 			containerRuntime: kubeone.ContainerRuntimeConfig{Docker: &kubeone.ContainerRuntimeDocker{}},
-			versions:         kubeone.VersionConfig{Kubernetes: "1.21"},
+			versions:         kubeone.VersionConfig{Kubernetes: "1.22"},
 			expectedError:    true,
 		},
 		{
@@ -694,6 +694,18 @@ func TestValidateContainerRuntimeConfig(t *testing.T) {
 			},
 			versions:      kubeone.VersionConfig{Kubernetes: "1.20"},
 			expectedError: true,
+		},
+		{
+			name:             "non defined",
+			containerRuntime: kubeone.ContainerRuntimeConfig{},
+			versions:         kubeone.VersionConfig{Kubernetes: "1.20"},
+			expectedError:    false,
+		},
+		{
+			name:             "non defined, 1.21+",
+			containerRuntime: kubeone.ContainerRuntimeConfig{},
+			versions:         kubeone.VersionConfig{Kubernetes: "1.21"},
+			expectedError:    false,
 		},
 	}
 
