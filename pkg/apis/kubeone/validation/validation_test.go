@@ -20,6 +20,8 @@ import (
 	"testing"
 
 	"k8c.io/kubeone/pkg/apis/kubeone"
+
+	"k8s.io/apimachinery/pkg/util/validation/field"
 )
 
 func TestValidateKubeOneCluster(t *testing.T) {
@@ -663,21 +665,26 @@ func TestValidateContainerRuntimeConfig(t *testing.T) {
 	tests := []struct {
 		name             string
 		containerRuntime kubeone.ContainerRuntimeConfig
+		versions         kubeone.VersionConfig
 		expectedError    bool
 	}{
 		{
-			name: "only docker defined",
-			containerRuntime: kubeone.ContainerRuntimeConfig{
-				Docker: &kubeone.ContainerRuntimeDocker{},
-			},
-			expectedError: false,
+			name:             "only docker defined",
+			containerRuntime: kubeone.ContainerRuntimeConfig{Docker: &kubeone.ContainerRuntimeDocker{}},
+			versions:         kubeone.VersionConfig{Kubernetes: "1.20"},
+			expectedError:    false,
 		},
 		{
-			name: "only containerd defined",
-			containerRuntime: kubeone.ContainerRuntimeConfig{
-				Containerd: &kubeone.ContainerRuntimeContainerd{},
-			},
-			expectedError: false,
+			name:             "docker with kubernetes 1.21+",
+			containerRuntime: kubeone.ContainerRuntimeConfig{Docker: &kubeone.ContainerRuntimeDocker{}},
+			versions:         kubeone.VersionConfig{Kubernetes: "1.21"},
+			expectedError:    true,
+		},
+		{
+			name:             "only containerd defined",
+			containerRuntime: kubeone.ContainerRuntimeConfig{Containerd: &kubeone.ContainerRuntimeContainerd{}},
+			versions:         kubeone.VersionConfig{Kubernetes: "1.20"},
+			expectedError:    false,
 		},
 		{
 			name: "both defined",
@@ -685,6 +692,7 @@ func TestValidateContainerRuntimeConfig(t *testing.T) {
 				Docker:     &kubeone.ContainerRuntimeDocker{},
 				Containerd: &kubeone.ContainerRuntimeContainerd{},
 			},
+			versions:      kubeone.VersionConfig{Kubernetes: "1.20"},
 			expectedError: true,
 		},
 	}
@@ -692,7 +700,7 @@ func TestValidateContainerRuntimeConfig(t *testing.T) {
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			errs := ValidateContainerRuntimeConfig(tc.containerRuntime, nil)
+			errs := ValidateContainerRuntimeConfig(tc.containerRuntime, tc.versions, &field.Path{})
 			if (len(errs) == 0) == tc.expectedError {
 				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
 			}

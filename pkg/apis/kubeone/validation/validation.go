@@ -39,7 +39,7 @@ func ValidateKubeOneCluster(c kubeone.KubeOneCluster) field.ErrorList {
 	allErrs = append(allErrs, ValidateAPIEndpoint(c.APIEndpoint, field.NewPath("apiEndpoint"))...)
 	allErrs = append(allErrs, ValidateCloudProviderSpec(c.CloudProvider, field.NewPath("provider"))...)
 	allErrs = append(allErrs, ValidateVersionConfig(c.Versions, field.NewPath("versions"))...)
-	allErrs = append(allErrs, ValidateContainerRuntimeConfig(c.ContainerRuntime, field.NewPath("containerRuntime"))...)
+	allErrs = append(allErrs, ValidateContainerRuntimeConfig(c.ContainerRuntime, c.Versions, field.NewPath("containerRuntime"))...)
 	allErrs = append(allErrs, ValidateClusterNetworkConfig(c.ClusterNetwork, field.NewPath("clusterNetwork"))...)
 	allErrs = append(allErrs, ValidateStaticWorkersConfig(c.StaticWorkers, field.NewPath("staticWorkers"))...)
 
@@ -184,7 +184,7 @@ func ValidateVersionConfig(version kubeone.VersionConfig, fldPath *field.Path) f
 	return allErrs
 }
 
-func ValidateContainerRuntimeConfig(cr kubeone.ContainerRuntimeConfig, fldPath *field.Path) field.ErrorList {
+func ValidateContainerRuntimeConfig(cr kubeone.ContainerRuntimeConfig, versions kubeone.VersionConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	allCRs := []interface{}{
@@ -200,6 +200,13 @@ func ValidateContainerRuntimeConfig(cr kubeone.ContainerRuntimeConfig, fldPath *
 			}
 			found = true
 		}
+	}
+
+	condition, _ := semver.NewConstraint(">= 1.21")
+	kubeVer, _ := semver.NewVersion(versions.Kubernetes)
+
+	if condition.Check(kubeVer) && cr.Docker != nil {
+		allErrs = append(allErrs, field.Invalid(fldPath, cr.Docker, "kubernetes v1.21+ require containerd container runtime"))
 	}
 
 	return allErrs
