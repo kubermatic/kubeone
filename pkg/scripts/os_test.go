@@ -150,7 +150,7 @@ func TestKubeadmDebian(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := KubeadmDebian(&tt.args.cluster, tt.args.cluster.ContainerRuntime, false)
+			got, err := KubeadmDebian(&tt.args.cluster, false)
 			if err != tt.err {
 				t.Errorf("KubeadmDebian() error = %v, wantErr %v", err, tt.err)
 				return
@@ -227,7 +227,7 @@ func TestKubeadmCentOS(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := KubeadmCentOS(&tt.args.cluster, tt.args.cluster.ContainerRuntime, tt.args.force)
+			got, err := KubeadmCentOS(&tt.args.cluster, tt.args.force)
 			if err != tt.err {
 				t.Errorf("KubeadmCentOS() error = %v, wantErr %v", err, tt.err)
 				return
@@ -326,7 +326,7 @@ func TestKubeadmAmazonLinux(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := KubeadmAmazonLinux(&tt.args.cluster, tt.args.cluster.ContainerRuntime, tt.args.force)
+			got, err := KubeadmAmazonLinux(&tt.args.cluster, tt.args.force)
 			if err != tt.err {
 				t.Errorf("KubeadmAmazonLinux() error = %v, wantErr %v", err, tt.err)
 				return
@@ -440,7 +440,7 @@ func TestUpgradeKubeadmAndCNIDebian(t *testing.T) {
 	t.Parallel()
 
 	cls := genCluster(withDocker)
-	got, err := UpgradeKubeadmAndCNIDebian(&cls, cls.ContainerRuntime)
+	got, err := UpgradeKubeadmAndCNIDebian(&cls)
 	if err != nil {
 		t.Errorf("UpgradeKubeadmAndCNIDebian() error = %v", err)
 		return
@@ -453,7 +453,7 @@ func TestUpgradeKubeadmAndCNICentOS(t *testing.T) {
 	t.Parallel()
 
 	cls := genCluster(withDocker)
-	got, err := UpgradeKubeadmAndCNICentOS(&cls, cls.ContainerRuntime)
+	got, err := UpgradeKubeadmAndCNICentOS(&cls)
 	if err != nil {
 		t.Errorf("UpgradeKubeadmAndCNICentOS() error = %v", err)
 		return
@@ -466,7 +466,7 @@ func TestUpgradeKubeadmAndCNIAmazonLinux(t *testing.T) {
 	t.Parallel()
 
 	cls := genCluster(withDocker, withDefaultAssetConfiguration)
-	got, err := UpgradeKubeadmAndCNIAmazonLinux(&cls, cls.ContainerRuntime)
+	got, err := UpgradeKubeadmAndCNIAmazonLinux(&cls)
 	if err != nil {
 		t.Errorf("UpgradeKubeadmAndCNIAmazonLinux() error = %v", err)
 		return
@@ -491,7 +491,7 @@ func TestUpgradeKubeletAndKubectlDebian(t *testing.T) {
 	t.Parallel()
 
 	cls := genCluster(withDocker)
-	got, err := UpgradeKubeletAndKubectlDebian(&cls, cls.ContainerRuntime)
+	got, err := UpgradeKubeletAndKubectlDebian(&cls)
 	if err != nil {
 		t.Errorf("UpgradeKubeletAndKubectlDebian() error = %v", err)
 		return
@@ -504,7 +504,7 @@ func TestUpgradeKubeletAndKubectlCentOS(t *testing.T) {
 	t.Parallel()
 
 	cls := genCluster(withDocker)
-	got, err := UpgradeKubeletAndKubectlCentOS(&cls, cls.ContainerRuntime)
+	got, err := UpgradeKubeletAndKubectlCentOS(&cls)
 	if err != nil {
 		t.Errorf("UpgradeKubeletAndKubectlCentOS() error = %v", err)
 		return
@@ -517,7 +517,7 @@ func TestUpgradeKubeletAndKubectlAmazonLinux(t *testing.T) {
 	t.Parallel()
 
 	cls := genCluster(withDocker, withDefaultAssetConfiguration)
-	got, err := UpgradeKubeletAndKubectlAmazonLinux(&cls, cls.ContainerRuntime)
+	got, err := UpgradeKubeletAndKubectlAmazonLinux(&cls)
 	if err != nil {
 		t.Errorf("UpgradeKubeletAndKubectlAmazonLinux() error = %v", err)
 		return

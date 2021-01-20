@@ -322,7 +322,7 @@ func newNodeRegistration(s *state.State, host kubeoneapi.HostConfig) kubeadmv1be
 	return kubeadmv1beta2.NodeRegistrationOptions{
 		Name:      host.Hostname,
 		Taints:    host.Taints,
-		CRISocket: s.ContainerRuntimeConfig().CRISocket(),
+		CRISocket: s.Cluster.ContainerRuntime.CRISocket(),
 		KubeletExtraArgs: map[string]string{
 			"node-ip":           newNodeIP(host),
 			"volume-plugin-dir": "/var/lib/kubelet/volumeplugins",

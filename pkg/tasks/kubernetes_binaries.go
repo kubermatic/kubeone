@@ -47,7 +47,7 @@ func upgradeKubeadmAndCNIBinaries(s *state.State, node kubeoneapi.HostConfig) er
 }
 
 func upgradeKubeletAndKubectlBinariesDebian(s *state.State) error {
-	cmd, err := scripts.UpgradeKubeletAndKubectlDebian(s.Cluster, s.ContainerRuntimeConfig())
+	cmd, err := scripts.UpgradeKubeletAndKubectlDebian(s.Cluster)
 	if err != nil {
 		return err
 	}
@@ -69,7 +69,7 @@ func upgradeKubeletAndKubectlBinariesCoreOS(s *state.State) error {
 }
 
 func upgradeKubeletAndKubectlBinariesCentOS(s *state.State) error {
-	cmd, err := scripts.UpgradeKubeletAndKubectlCentOS(s.Cluster, s.ContainerRuntimeConfig())
+	cmd, err := scripts.UpgradeKubeletAndKubectlCentOS(s.Cluster)
 	if err != nil {
 		return err
 	}
@@ -80,7 +80,7 @@ func upgradeKubeletAndKubectlBinariesCentOS(s *state.State) error {
 }
 
 func upgradeKubeletAndKubectlBinariesAmazonLinux(s *state.State) error {
-	cmd, err := scripts.UpgradeKubeletAndKubectlAmazonLinux(s.Cluster, s.ContainerRuntimeConfig())
+	cmd, err := scripts.UpgradeKubeletAndKubectlAmazonLinux(s.Cluster)
 	if err != nil {
 		return err
 	}
@@ -91,7 +91,7 @@ func upgradeKubeletAndKubectlBinariesAmazonLinux(s *state.State) error {
 }
 
 func upgradeKubeadmAndCNIBinariesDebian(s *state.State) error {
-	cmd, err := scripts.UpgradeKubeadmAndCNIDebian(s.Cluster, s.ContainerRuntimeConfig())
+	cmd, err := scripts.UpgradeKubeadmAndCNIDebian(s.Cluster)
 	if err != nil {
 		return err
 	}
@@ -102,7 +102,7 @@ func upgradeKubeadmAndCNIBinariesDebian(s *state.State) error {
 }
 
 func upgradeKubeadmAndCNIBinariesCentOS(s *state.State) error {
-	cmd, err := scripts.UpgradeKubeadmAndCNICentOS(s.Cluster, s.ContainerRuntimeConfig())
+	cmd, err := scripts.UpgradeKubeadmAndCNICentOS(s.Cluster)
 	if err != nil {
 		return err
 	}
@@ -113,7 +113,7 @@ func upgradeKubeadmAndCNIBinariesCentOS(s *state.State) error {
 }
 
 func upgradeKubeadmAndCNIBinariesAmazonLinux(s *state.State) error {
-	cmd, err := scripts.UpgradeKubeadmAndCNIAmazonLinux(s.Cluster, s.ContainerRuntimeConfig())
+	cmd, err := scripts.UpgradeKubeadmAndCNIAmazonLinux(s.Cluster)
 	if err != nil {
 		return err
 	}

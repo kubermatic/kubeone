@@ -485,7 +485,7 @@ sudo systemctl start kubelet
 `
 )
 
-func KubeadmDebian(cluster *kubeone.KubeOneCluster, crConfig kubeone.ContainerRuntimeConfig, force bool) (string, error) {
+func KubeadmDebian(cluster *kubeone.KubeOneCluster, force bool) (string, error) {
 	return Render(kubeadmDebianTemplate, Data{
 		"KUBELET":                true,
 		"KUBEADM":                true,
@@ -497,12 +497,12 @@ func KubeadmDebian(cluster *kubeone.KubeOneCluster, crConfig kubeone.ContainerRu
 		"HTTP_PROXY":             cluster.Proxy.HTTP,
 		"HTTPS_PROXY":            cluster.Proxy.HTTPS,
 		"FORCE":                  force,
-		"INSTALL_DOCKER":         crConfig.Docker,
-		"INSTALL_CONTAINERD":     crConfig.Containerd,
+		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
+		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 	})
 }
 
-func KubeadmCentOS(cluster *kubeone.KubeOneCluster, crConfig kubeone.ContainerRuntimeConfig, force bool) (string, error) {
+func KubeadmCentOS(cluster *kubeone.KubeOneCluster, force bool) (string, error) {
 	proxy := cluster.Proxy.HTTPS
 	if proxy == "" {
 		proxy = cluster.Proxy.HTTP
@@ -518,12 +518,12 @@ func KubeadmCentOS(cluster *kubeone.KubeOneCluster, crConfig kubeone.ContainerRu
 		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"PROXY":                  proxy,
 		"FORCE":                  force,
-		"INSTALL_DOCKER":         crConfig.Docker,
-		"INSTALL_CONTAINERD":     crConfig.Containerd,
+		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
+		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 	})
 }
 
-func KubeadmAmazonLinux(cluster *kubeone.KubeOneCluster, crConfig kubeone.ContainerRuntimeConfig, force bool) (string, error) {
+func KubeadmAmazonLinux(cluster *kubeone.KubeOneCluster, force bool) (string, error) {
 	proxy := cluster.Proxy.HTTPS
 	if proxy == "" {
 		proxy = cluster.Proxy.HTTP
@@ -542,8 +542,8 @@ func KubeadmAmazonLinux(cluster *kubeone.KubeOneCluster, crConfig kubeone.Contai
 		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"PROXY":                  proxy,
 		"FORCE":                  force,
-		"INSTALL_DOCKER":         crConfig.Docker,
-		"INSTALL_CONTAINERD":     crConfig.Containerd,
+		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
+		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 	})
 }
 
@@ -571,7 +571,7 @@ func RemoveBinariesCoreOS() (string, error) {
 	return Render(removeBinariesCoreOSScriptTemplate, nil)
 }
 
-func UpgradeKubeadmAndCNIDebian(cluster *kubeone.KubeOneCluster, crConfig kubeone.ContainerRuntimeConfig) (string, error) {
+func UpgradeKubeadmAndCNIDebian(cluster *kubeone.KubeOneCluster) (string, error) {
 	return Render(kubeadmDebianTemplate, Data{
 		"UPGRADE":                true,
 		"KUBEADM":                true,
@@ -581,12 +581,12 @@ func UpgradeKubeadmAndCNIDebian(cluster *kubeone.KubeOneCluster, crConfig kubeon
 		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"HTTP_PROXY":             cluster.Proxy.HTTP,
 		"HTTPS_PROXY":            cluster.Proxy.HTTPS,
-		"INSTALL_DOCKER":         crConfig.Docker,
-		"INSTALL_CONTAINERD":     crConfig.Containerd,
+		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
+		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 	})
 }
 
-func UpgradeKubeadmAndCNICentOS(cluster *kubeone.KubeOneCluster, crConfig kubeone.ContainerRuntimeConfig) (string, error) {
+func UpgradeKubeadmAndCNICentOS(cluster *kubeone.KubeOneCluster) (string, error) {
 	proxy := cluster.Proxy.HTTPS
 	if proxy == "" {
 		proxy = cluster.Proxy.HTTP
@@ -600,12 +600,12 @@ func UpgradeKubeadmAndCNICentOS(cluster *kubeone.KubeOneCluster, crConfig kubeon
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"PROXY":                  proxy,
-		"INSTALL_DOCKER":         crConfig.Docker,
-		"INSTALL_CONTAINERD":     crConfig.Containerd,
+		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
+		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 	})
 }
 
-func UpgradeKubeadmAndCNIAmazonLinux(cluster *kubeone.KubeOneCluster, crConfig kubeone.ContainerRuntimeConfig) (string, error) {
+func UpgradeKubeadmAndCNIAmazonLinux(cluster *kubeone.KubeOneCluster) (string, error) {
 	proxy := cluster.Proxy.HTTPS
 	if proxy == "" {
 		proxy = cluster.Proxy.HTTP
@@ -621,8 +621,8 @@ func UpgradeKubeadmAndCNIAmazonLinux(cluster *kubeone.KubeOneCluster, crConfig k
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"PROXY":                  proxy,
-		"INSTALL_DOCKER":         crConfig.Docker,
-		"INSTALL_CONTAINERD":     crConfig.Containerd,
+		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
+		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 	})
 }
 
@@ -633,7 +633,7 @@ func UpgradeKubeadmAndCNICoreOS(k8sVersion string) (string, error) {
 	})
 }
 
-func UpgradeKubeletAndKubectlDebian(cluster *kubeone.KubeOneCluster, crConfig kubeone.ContainerRuntimeConfig) (string, error) {
+func UpgradeKubeletAndKubectlDebian(cluster *kubeone.KubeOneCluster) (string, error) {
 	return Render(kubeadmDebianTemplate, Data{
 		"UPGRADE":                true,
 		"KUBELET":                true,
@@ -644,12 +644,12 @@ func UpgradeKubeletAndKubectlDebian(cluster *kubeone.KubeOneCluster, crConfig ku
 		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"HTTP_PROXY":             cluster.Proxy.HTTP,
 		"HTTPS_PROXY":            cluster.Proxy.HTTPS,
-		"INSTALL_DOCKER":         crConfig.Docker,
-		"INSTALL_CONTAINERD":     crConfig.Containerd,
+		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
+		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 	})
 }
 
-func UpgradeKubeletAndKubectlCentOS(cluster *kubeone.KubeOneCluster, crConfig kubeone.ContainerRuntimeConfig) (string, error) {
+func UpgradeKubeletAndKubectlCentOS(cluster *kubeone.KubeOneCluster) (string, error) {
 	proxy := cluster.Proxy.HTTPS
 	if proxy == "" {
 		proxy = cluster.Proxy.HTTP
@@ -664,12 +664,12 @@ func UpgradeKubeletAndKubectlCentOS(cluster *kubeone.KubeOneCluster, crConfig ku
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"PROXY":                  proxy,
-		"INSTALL_DOCKER":         crConfig.Docker,
-		"INSTALL_CONTAINERD":     crConfig.Containerd,
+		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
+		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 	})
 }
 
-func UpgradeKubeletAndKubectlAmazonLinux(cluster *kubeone.KubeOneCluster, crConfig kubeone.ContainerRuntimeConfig) (string, error) {
+func UpgradeKubeletAndKubectlAmazonLinux(cluster *kubeone.KubeOneCluster) (string, error) {
 	proxy := cluster.Proxy.HTTPS
 	if proxy == "" {
 		proxy = cluster.Proxy.HTTP
@@ -686,8 +686,8 @@ func UpgradeKubeletAndKubectlAmazonLinux(cluster *kubeone.KubeOneCluster, crConf
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"PROXY":                  proxy,
-		"INSTALL_DOCKER":         crConfig.Docker,
-		"INSTALL_CONTAINERD":     crConfig.Containerd,
+		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
+		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 	})
 }
 

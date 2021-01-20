@@ -53,7 +53,7 @@ func safeguard(s *state.State) error {
 		return err
 	}
 
-	configuredClusterContainerRuntime := s.ContainerRuntimeConfig().String()
+	configuredClusterContainerRuntime := s.Cluster.ContainerRuntime.String()
 
 	for _, node := range nodes.Items {
 		if !s.Cluster.IsManagedNode(node.Name) {

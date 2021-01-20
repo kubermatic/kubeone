@@ -95,7 +95,7 @@ func installKubeadm(s *state.State, node kubeoneapi.HostConfig) error {
 }
 
 func installKubeadmDebian(s *state.State) error {
-	cmd, err := scripts.KubeadmDebian(s.Cluster, s.ContainerRuntimeConfig(), s.ForceInstall)
+	cmd, err := scripts.KubeadmDebian(s.Cluster, s.ForceInstall)
 	if err != nil {
 		return err
 	}
@@ -106,7 +106,7 @@ func installKubeadmDebian(s *state.State) error {
 }
 
 func installKubeadmCentOS(s *state.State) error {
-	cmd, err := scripts.KubeadmCentOS(s.Cluster, s.ContainerRuntimeConfig(), s.ForceInstall)
+	cmd, err := scripts.KubeadmCentOS(s.Cluster, s.ForceInstall)
 	if err != nil {
 		return err
 	}
@@ -117,7 +117,7 @@ func installKubeadmCentOS(s *state.State) error {
 }
 
 func installKubeadmAmazonLinux(s *state.State) error {
-	cmd, err := scripts.KubeadmAmazonLinux(s.Cluster, s.ContainerRuntimeConfig(), s.ForceInstall)
+	cmd, err := scripts.KubeadmAmazonLinux(s.Cluster, s.ForceInstall)
 	if err != nil {
 		return err
 	}
