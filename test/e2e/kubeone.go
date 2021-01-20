@@ -25,7 +25,7 @@ import (
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
 
-	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	kubeoneinternal "k8c.io/kubeone/pkg/apis/kubeone"
 	kubeonev1beta1 "k8c.io/kubeone/pkg/apis/kubeone/v1beta1"
 	"k8c.io/kubeone/test/e2e/testutil"
 
@@ -57,7 +57,7 @@ func (k1 *Kubeone) CreateConfig(
 	clusterNetworkPod string,
 	clusterNetworkService string,
 	credentialsFile string,
-	containerRuntime kubeoneapi.ContainerRuntimeConfig,
+	containerRuntime kubeoneinternal.ContainerRuntimeConfig,
 ) error {
 	k1Cluster := kubeonev1beta1.KubeOneCluster{
 		TypeMeta: metav1.TypeMeta{
@@ -88,7 +88,9 @@ func (k1 *Kubeone) CreateConfig(
 	switch {
 	case containerRuntime.Containerd != nil:
 		k1Cluster.ContainerRuntime.Containerd = &kubeonev1beta1.ContainerRuntimeContainerd{}
+		k1Cluster.ContainerRuntime.Docker = nil
 	case containerRuntime.Docker != nil:
+		k1Cluster.ContainerRuntime.Containerd = nil
 		k1Cluster.ContainerRuntime.Docker = &kubeonev1beta1.ContainerRuntimeDocker{}
 	}
 
