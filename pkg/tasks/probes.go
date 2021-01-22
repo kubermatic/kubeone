@@ -126,8 +126,17 @@ func runProbes(s *state.State) error {
 	gteKube121Condition, _ := semver.NewConstraint(">= 1.21")
 
 	switch {
-	case gteKube121Condition.Check(s.LiveCluster.ExpectedVersion) && !s.LiveCluster.IsProvisioned():
+	case gteKube121Condition.Check(s.LiveCluster.ExpectedVersion):
 		s.Cluster.ContainerRuntime.Containerd = &kubeoneapi.ContainerRuntimeContainerd{}
+
+		if s.LiveCluster.IsProvisioned() {
+			for _, host := range s.LiveCluster.ControlPlane {
+				if host.ContainerRuntimeDocker.IsProvisioned() {
+					s.Cluster.ContainerRuntime.Docker = &kubeoneapi.ContainerRuntimeDocker{}
+					s.Cluster.ContainerRuntime.Containerd = nil
+				}
+			}
+		}
 	default:
 		s.Cluster.ContainerRuntime.Docker = &kubeoneapi.ContainerRuntimeDocker{}
 	}
