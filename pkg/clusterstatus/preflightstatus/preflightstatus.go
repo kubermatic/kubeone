@@ -21,8 +21,6 @@ import (
 	"github.com/sirupsen/logrus"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
-	"k8c.io/kubeone/pkg/scripts"
-	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
@@ -38,12 +36,6 @@ const (
 // TODO(xmudrii): Implement mechanism for skipping checks.
 func Run(s *state.State, nodes corev1.NodeList) error {
 	var errs []error
-
-	// Verify that binaries are present
-	s.Logger.Infoln("Verifying that Docker, Kubelet and Kubeadm are installed...")
-	if err := verifyBinaries(s); err != nil {
-		errs = append(errs, err)
-	}
 
 	// Verify that list of nodes match with the provided manifest
 	s.Logger.Infoln("Verifying that nodes in the cluster match nodes defined in the manifest...")
@@ -67,23 +59,6 @@ func Run(s *state.State, nodes corev1.NodeList) error {
 	}
 
 	return utilerrors.NewAggregate(errs)
-}
-
-// verifyBinaries verifies that Docker, Kubelet, and Kubeadm are installed on every machine in the cluster
-func verifyBinaries(s *state.State) error {
-	return s.RunTaskOnAllNodes(func(s *state.State, host *kubeoneapi.HostConfig, _ ssh.Connection) error {
-		cmd, err := scripts.VerifyPrerequisites()
-		if err != nil {
-			return err
-		}
-
-		_, _, err = s.Runner.RunRaw(cmd)
-		if err != nil {
-			s.Logger.Errorf("Unable to verify binaries on node %s.", host.Hostname)
-			return err
-		}
-		return nil
-	}, state.RunParallel)
 }
 
 // verifyMatchNodes ensures match between nodes in the cluster and machines defined in the manifest

@@ -25,7 +25,8 @@ import (
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
 
-	k1api "k8c.io/kubeone/pkg/apis/kubeone/v1beta1"
+	kubeoneinternal "k8c.io/kubeone/pkg/apis/kubeone"
+	kubeonev1beta1 "k8c.io/kubeone/pkg/apis/kubeone/v1beta1"
 	"k8c.io/kubeone/test/e2e/testutil"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -56,30 +57,41 @@ func (k1 *Kubeone) CreateConfig(
 	clusterNetworkPod string,
 	clusterNetworkService string,
 	credentialsFile string,
+	containerRuntime kubeoneinternal.ContainerRuntimeConfig,
 ) error {
-	k1Cluster := k1api.KubeOneCluster{
+	k1Cluster := kubeonev1beta1.KubeOneCluster{
 		TypeMeta: metav1.TypeMeta{
-			APIVersion: k1api.SchemeGroupVersion.String(),
+			APIVersion: kubeonev1beta1.SchemeGroupVersion.String(),
 			Kind:       "KubeOneCluster",
 		},
 	}
 
-	k1api.SetObjectDefaults_KubeOneCluster(&k1Cluster)
+	kubeonev1beta1.SetObjectDefaults_KubeOneCluster(&k1Cluster)
 
-	k1Cluster.CloudProvider = k1api.CloudProviderSpec{
+	k1Cluster.CloudProvider = kubeonev1beta1.CloudProviderSpec{
 		External: providerExternal,
 	}
-	if err := k1api.SetCloudProvider(&k1Cluster.CloudProvider, providerName); err != nil {
+
+	if err := kubeonev1beta1.SetCloudProvider(&k1Cluster.CloudProvider, providerName); err != nil {
 		return errors.Wrap(err, "failed to set cloud provider")
 	}
 
-	k1Cluster.Versions = k1api.VersionConfig{
+	k1Cluster.Versions = kubeonev1beta1.VersionConfig{
 		Kubernetes: kubernetesVersion,
 	}
 
-	k1Cluster.ClusterNetwork = k1api.ClusterNetworkConfig{
+	k1Cluster.ClusterNetwork = kubeonev1beta1.ClusterNetworkConfig{
 		PodSubnet:     clusterNetworkPod,
 		ServiceSubnet: clusterNetworkService,
+	}
+
+	switch {
+	case containerRuntime.Containerd != nil:
+		k1Cluster.ContainerRuntime.Containerd = &kubeonev1beta1.ContainerRuntimeContainerd{}
+		k1Cluster.ContainerRuntime.Docker = nil
+	case containerRuntime.Docker != nil:
+		k1Cluster.ContainerRuntime.Containerd = nil
+		k1Cluster.ContainerRuntime.Docker = &kubeonev1beta1.ContainerRuntimeDocker{}
 	}
 
 	if credentialsFile != "" {

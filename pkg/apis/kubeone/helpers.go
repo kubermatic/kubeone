@@ -17,6 +17,8 @@ limitations under the License.
 package kubeone
 
 import (
+	"bytes"
+	"fmt"
 	"math/rand"
 
 	"github.com/pkg/errors"
@@ -87,6 +89,30 @@ func (crc ContainerRuntimeConfig) String() string {
 	}
 
 	return "unknown"
+}
+
+func (crc *ContainerRuntimeConfig) UnmarshalText(text []byte) error {
+	switch {
+	case bytes.Equal(text, []byte("docker")):
+		*crc = ContainerRuntimeConfig{Docker: &ContainerRuntimeDocker{}}
+	case bytes.Equal(text, []byte("containerd")):
+		*crc = ContainerRuntimeConfig{Containerd: &ContainerRuntimeContainerd{}}
+	default:
+		return fmt.Errorf("unknown container runtime: %q", text)
+	}
+
+	return nil
+}
+
+func (crc ContainerRuntimeConfig) CRISocket() string {
+	switch {
+	case crc.Containerd != nil:
+		return "/run/containerd/containerd.sock"
+	case crc.Docker != nil:
+		return "/var/run/dockershim.sock"
+	}
+
+	return ""
 }
 
 // CloudProviderName returns name of the cloud provider

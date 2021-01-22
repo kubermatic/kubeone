@@ -239,8 +239,6 @@ func Convert_v1alpha1_KubeOneCluster_To_kubeone_KubeOneCluster(in *KubeOneCluste
 		Docker: &kubeoneapi.ContainerRuntimeDocker{},
 	}
 
-	// The Credentials field has been dropped from v1beta1 API.
-
 	return nil
 }
 

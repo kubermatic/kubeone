@@ -83,10 +83,11 @@ var (
 )
 
 const (
-	defaultDockerVersion       = "19.03.14"
-	defaultAmazonDockerVersion = "19.03.13"
-	defaultLegacyDockerVersion = "18.09.9"
-	defaultContainerdVersion   = "1.4.3"
+	defaultDockerVersion           = "19.03.14"
+	defaultAmazonDockerVersion     = "19.03.13"
+	defaultLegacyDockerVersion     = "18.09.9"
+	defaultContainerdVersion       = "1.4.3"
+	defaultAmazonContainerdVersion = "1.4.1"
 )
 
 type dockerConfig struct {

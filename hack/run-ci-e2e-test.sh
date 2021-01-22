@@ -25,6 +25,7 @@ set -o pipefail
 RUNNING_IN_CI=${JOB_NAME:-""}
 BUILD_ID=${BUILD_ID:-"${USER}-local"}
 PROVIDER=${PROVIDER:-"aws"}
+CONTAINER_RUNTIME=${CONTAINER_RUNTIME:-"docker"}
 KUBETESTS_ROOT=$(realpath "${KUBETESTS_ROOT:-"/opt/kube-test"}")
 TEST_SET=${TEST_SET:-"conformance"}
 TEST_CLUSTER_TARGET_VERSION=${TEST_CLUSTER_TARGET_VERSION:-""}
@@ -156,6 +157,7 @@ function runE2E() {
     -credentials="${CREDENTIALS_FILE_PATH}" \
     -identifier="${BUILD_ID}" \
     -provider="${PROVIDER}" \
+    -container-runtime="${CONTAINER_RUNTIME}" \
     -os-control-plane="${TEST_OS_CONTROL_PLANE}" \
     -os-workers="${TEST_OS_WORKERS}" \
     -target-version="${TEST_CLUSTER_TARGET_VERSION}" \

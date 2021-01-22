@@ -92,6 +92,7 @@ func runProbes(s *state.State) error {
 			Config: &s.Cluster.ControlPlane.Hosts[i],
 		})
 	}
+
 	for i := range s.Cluster.StaticWorkers.Hosts {
 		s.LiveCluster.StaticWorkers = append(s.LiveCluster.StaticWorkers, state.Host{
 			Config: &s.Cluster.StaticWorkers.Hosts[i],
@@ -103,7 +104,41 @@ func runProbes(s *state.State) error {
 	}
 
 	if s.LiveCluster.IsProvisioned() {
-		return investigateCluster(s)
+		if err := investigateCluster(s); err != nil {
+			return err
+		}
+	}
+
+	for _, host := range s.Cluster.ControlPlane.Hosts {
+		switch host.OperatingSystem {
+		case kubeoneapi.OperatingSystemNameFlatcar, kubeoneapi.OperatingSystemNameCoreOS:
+			s.Cluster.ContainerRuntime.Docker = &kubeoneapi.ContainerRuntimeDocker{}
+		}
+	}
+
+	switch {
+	case s.Cluster.ContainerRuntime.Containerd != nil:
+		return nil
+	case s.Cluster.ContainerRuntime.Docker != nil:
+		return nil
+	}
+
+	gteKube121Condition, _ := semver.NewConstraint(">= 1.21")
+
+	switch {
+	case gteKube121Condition.Check(s.LiveCluster.ExpectedVersion):
+		s.Cluster.ContainerRuntime.Containerd = &kubeoneapi.ContainerRuntimeContainerd{}
+
+		if s.LiveCluster.IsProvisioned() {
+			for _, host := range s.LiveCluster.ControlPlane {
+				if host.ContainerRuntimeDocker.IsProvisioned() {
+					s.Cluster.ContainerRuntime.Docker = &kubeoneapi.ContainerRuntimeDocker{}
+					s.Cluster.ContainerRuntime.Containerd = nil
+				}
+			}
+		}
+	default:
+		s.Cluster.ContainerRuntime.Docker = &kubeoneapi.ContainerRuntimeDocker{}
 	}
 
 	return nil

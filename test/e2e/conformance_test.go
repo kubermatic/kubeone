@@ -157,7 +157,14 @@ func TestClusterConformance(t *testing.T) {
 				clusterNetworkService = clusterNetworkServiceCIDR
 			}
 
-			err = target.CreateConfig(testTargetVersion, tc.provider, tc.providerExternal, clusterNetworkPod, clusterNetworkService, testCredentialsFile)
+			err = target.CreateConfig(testTargetVersion,
+				tc.provider,
+				tc.providerExternal,
+				clusterNetworkPod,
+				clusterNetworkService,
+				testCredentialsFile,
+				testContainerRuntime.ContainerRuntimeConfig(),
+			)
 			if err != nil {
 				t.Fatalf("failed to create KubeOneCluster manifest: %v", err)
 			}

@@ -112,19 +112,21 @@ var (
 			defaultLegacyDockerVersion,
 		),
 
-		"containerd-github": heredoc.Docf(`
-			{{ $CONTAINERD_VERSION := "%s" }}
-			mkdir -p /tmp/containerd-{{ $CONTAINERD_VERSION }}
-			pushd /tmp/containerd-{{ $CONTAINERD_VERSION }}
-			curl --location --continue-at - \
-				--output containerd-{{ $CONTAINERD_VERSION }}-linux-amd64.tar.gz.sha256sum \
-				https://github.com/containerd/containerd/releases/download/v{{ $CONTAINERD_VERSION }}/containerd-{{ $CONTAINERD_VERSION }}-linux-amd64.tar.gz.sha256sum \
-				--output containerd-{{ $CONTAINERD_VERSION }}-linux-amd64.tar.gz \
-				https://github.com/containerd/containerd/releases/download/v{{ $CONTAINERD_VERSION }}/containerd-{{ $CONTAINERD_VERSION }}-linux-amd64.tar.gz
-			sha256sum -c containerd-{{ $CONTAINERD_VERSION }}-linux-amd64.tar.gz.sha256sum
-			tar xvf containerd-{{ $CONTAINERD_VERSION }}-linux-amd64.tar.gz
-			sudo install --group=0 --owner=0 --preserve-timestamps ./bin/* --target-directory=/usr/local/bin/
-			sudo mkdir -p /etc/containerd /etc/cni/net.d /opt/cni/bin
+		"apt-containerd": heredoc.Docf(`
+			{{ if .CONFIGURE_REPOSITORIES }}
+			sudo apt-get update
+			sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common lsb-release
+			curl -fsSL https://download.docker.com/linux/ubuntu/gpg |
+				sudo apt-key add -
+			sudo add-apt-repository "deb https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+			{{ end }}
+
+			{{ if or .FORCE .UPGRADE }}
+			sudo apt-mark unhold containerd.io
+			{{ end }}
+
+			sudo apt-get install -y containerd.io=%s*
+			sudo apt-mark hold containerd.io
 
 			cat <<EOF | sudo tee /etc/containerd/config.toml
 			{{ containerdCfg .INSECURE_REGISTRY -}}
@@ -134,41 +136,90 @@ var (
 			runtime-endpoint: unix:///run/containerd/containerd.sock
 			EOF
 
-			cat <<EOF | sudo tee /etc/systemd/system/containerd.service
-			[Unit]
-			Description=containerd container runtime
-			Documentation=https://containerd.io
-			After=network.target local-fs.target
-
+			sudo mkdir -p /etc/systemd/system/containerd.service.d
+			cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/environment.conf
 			[Service]
-			ExecStartPre=-/sbin/modprobe overlay
-			ExecStart=/usr/local/bin/containerd
-
-			Type=notify
-			Delegate=yes
-			KillMode=process
 			Restart=always
-			RestartSec=5
-			# Having non-zero Limit*s causes performance problems due to accounting overhead
-			# in the kernel. We recommend using cgroups to do container-local accounting.
-			LimitNPROC=infinity
-			LimitCORE=infinity
-			LimitNOFILE=1048576
-			# Comment TasksMax if your systemd version does not supports it.
-			# Only systemd 226 and above support this version.
-			TasksMax=infinity
-			OOMScoreAdjust=-999
-
-			[Install]
-			WantedBy=multi-user.target
+			EnvironmentFile=-/etc/environment
 			EOF
 
 			sudo systemctl daemon-reload
 			sudo systemctl enable --now containerd
 			sudo systemctl restart containerd
-			popd
 			`,
 			defaultContainerdVersion,
+		),
+
+		"yum-containerd": heredoc.Docf(`
+			{{ if .CONFIGURE_REPOSITORIES }}
+			sudo yum install -y yum-utils
+			sudo yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+			{{- /*
+			Due to DNF modules we have to do this on docker-ce repo
+			More info at: https://bugzilla.redhat.com/show_bug.cgi?id=1756473
+			*/}}
+			sudo yum-config-manager --save --setopt=docker-ce-stable.module_hotfixes=true
+			{{ end }}
+
+			sudo yum install -y yum-plugin-versionlock
+
+			{{ if or .FORCE .UPGRADE }}
+			sudo yum versionlock delete containerd.io || true
+			{{- end }}
+
+			sudo yum install -y containerd.io-%s
+			sudo yum versionlock add containerd.io
+
+			cat <<EOF | sudo tee /etc/containerd/config.toml
+			{{ containerdCfg .INSECURE_REGISTRY -}}
+			EOF
+
+			cat <<EOF | sudo tee /etc/crictl.yaml
+			runtime-endpoint: unix:///run/containerd/containerd.sock
+			EOF
+
+			sudo mkdir -p /etc/systemd/system/containerd.service.d
+			cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/environment.conf
+			[Service]
+			Restart=always
+			EnvironmentFile=-/etc/environment
+			EOF
+
+			sudo systemctl daemon-reload
+			sudo systemctl enable --now containerd
+			sudo systemctl restart containerd
+			`,
+			defaultContainerdVersion,
+		),
+
+		"yum-containerd-amzn": heredoc.Docf(`
+			{{- if or .FORCE .UPGRADE }}
+			sudo yum versionlock delete containerd || true
+			{{- end }}
+
+			sudo yum install -y containerd-%s*
+			sudo yum versionlock add containerd
+
+			cat <<EOF | sudo tee /etc/containerd/config.toml
+			{{ containerdCfg .INSECURE_REGISTRY -}}
+			EOF
+
+			cat <<EOF | sudo tee /etc/crictl.yaml
+			runtime-endpoint: unix:///run/containerd/containerd.sock
+			EOF
+
+			sudo mkdir -p /etc/systemd/system/containerd.service.d
+			cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/environment.conf
+			[Service]
+			Restart=always
+			EnvironmentFile=-/etc/environment
+			EOF
+
+			sudo systemctl daemon-reload
+			sudo systemctl enable --now containerd
+			sudo systemctl restart containerd
+			`,
+			defaultAmazonContainerdVersion,
 		),
 	}
 )

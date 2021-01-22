@@ -19,6 +19,8 @@ package v1beta1
 import (
 	"strings"
 
+	"github.com/Masterminds/semver/v3"
+
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 )
@@ -120,11 +122,19 @@ func SetDefaults_Versions(obj *KubeOneCluster) {
 func SetDefaults_ContainerRuntime(obj *KubeOneCluster) {
 	switch {
 	case obj.ContainerRuntime.Docker != nil:
+		return
 	case obj.ContainerRuntime.Containerd != nil:
-	default:
-		obj.ContainerRuntime = ContainerRuntimeConfig{
-			Docker: &ContainerRuntimeDocker{},
-		}
+		return
+	}
+
+	actualVer, err := semver.NewVersion(obj.Versions.Kubernetes)
+	if err != nil {
+		return
+	}
+
+	gteKube122Condition, _ := semver.NewConstraint(">= 1.22")
+	if gteKube122Condition.Check(actualVer) {
+		obj.ContainerRuntime.Containerd = &ContainerRuntimeContainerd{}
 	}
 }
 

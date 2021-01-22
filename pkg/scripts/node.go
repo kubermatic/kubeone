@@ -16,16 +16,19 @@ limitations under the License.
 
 package scripts
 
-const (
-	drainNodeScriptTemplate = `
-sudo KUBECONFIG=/etc/kubernetes/admin.conf \
-    kubectl drain {{ .NODE_NAME }} --ignore-daemonsets --delete-local-data
-`
+import "github.com/MakeNowJust/heredoc/v2"
 
-	uncordonNodeScriptTemplate = `
-sudo KUBECONFIG=/etc/kubernetes/admin.conf \
-    kubectl uncordon {{ .NODE_NAME }}
-`
+var (
+	hostnameScript = heredoc.Doc(`
+		fqdn=$(hostname -f)
+		[ "$fqdn" = localhost ] && fqdn=$(hostname)
+		echo "$fqdn"
+	`)
+
+	drainNodeScriptTemplate = heredoc.Doc(`
+		sudo KUBECONFIG=/etc/kubernetes/admin.conf \
+		kubectl drain {{ .NODE_NAME }} --ignore-daemonsets --delete-local-data
+	`)
 )
 
 func DrainNode(nodeName string) (string, error) {
@@ -34,8 +37,6 @@ func DrainNode(nodeName string) (string, error) {
 	})
 }
 
-func UncordonNode(nodeName string) (string, error) {
-	return Render(uncordonNodeScriptTemplate, Data{
-		"NODE_NAME": nodeName,
-	})
+func Hostname() string {
+	return hostnameScript
 }
