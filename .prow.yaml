@@ -147,6 +147,8 @@ presubmits:
           value: "1.16.15"
         - name: TEST_SET
           value: "conformance"
+        - name: TF_VAR_ami
+          value: ami-08985edfecbbbcf52
         resources:
           requests:
             cpu: 1
@@ -833,6 +835,8 @@ presubmits:
           value: "1.17.12"
         - name: TEST_SET
           value: "upgrades"
+        - name: TF_VAR_ami
+          value: ami-08985edfecbbbcf52
 
   - name: pull-kubeone-e2e-aws-upgrade-containerd-1.16-1.17
     run_if_changed: "(pkg/|examples/terraform/aws|hack/|test/)"
