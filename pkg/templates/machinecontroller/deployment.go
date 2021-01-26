@@ -48,7 +48,7 @@ const (
 	MachineControllerAppLabelValue = "machine-controller"
 	MachineControllerImageRegistry = "docker.io"
 	MachineControllerImage         = "/kubermatic/machine-controller:"
-	MachineControllerTag           = "v1.23.1"
+	MachineControllerTag           = "v1.24.3"
 )
 
 func CRDs() []runtime.Object {
@@ -758,6 +758,13 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster, credentials
 		"-metrics-address", "0.0.0.0:8080",
 		"-cluster-dns", nodelocaldns.VirtualIP,
 		"-node-csr-approver",
+	}
+
+	switch {
+	case cluster.ContainerRuntime.Containerd != nil:
+		fallthrough
+	case cluster.ContainerRuntime.Docker != nil:
+		args = append(args, "-node-container-runtime", cluster.ContainerRuntime.String())
 	}
 
 	if cluster.Proxy.HTTP != "" {
