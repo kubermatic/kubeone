@@ -565,6 +565,27 @@ cloudProvider:
   # Path to file that will be uploaded and used as custom '--cloud-config' file.
   cloudConfig: "{{ .CloudProviderCloudCfg }}"
 
+# Controls which container runtime will be installed on instances.
+# By default:
+# * Docker will be installed for Kubernetes clusters up to 1.20
+# * containerd will be installed for Kubernetes clusters 1.21+
+# Currently, it's not possible to migrate existing clusters from one to another
+# container runtime, however, migration from Docker to containerd is planned
+# for one of the upcoming KubeOne releases.
+# Only one container runtime can be present at the time.
+#
+# Note: Kubernetes has announced deprecation of Docker (dockershim) support.
+# It's expected that the Docker support will be removed in Kubernetes 1.22.
+# It's highly advised to use containerd for all newly created clusters.
+containerRuntime:
+  # Installs containerd container runtime.
+  # Default for 1.21+ Kubernetes clusters.
+  # containerd: {}
+  # Installs Docker container runtime.
+  # Default for Kubernetes clusters up to 1.20.
+  # This option will be removed once Kubernetes 1.21 reaches EOL.
+  # docker: {}
+
 features:
   # Enable the PodNodeSelector admission plugin in API server.
   # More info: https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#podnodeselector
