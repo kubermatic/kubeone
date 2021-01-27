@@ -1,5 +1,65 @@
 # Changelog
 
+# [v1.2.0-beta.0](https://github.com/kubermatic/kubeone/releases/tag/v1.2.0-beta.0) - 2021-01-27
+
+## Attention Needed
+
+* Kubernetes has announced deprecation of the Docker (dockershim) support in
+  the Kubernetes 1.20 release. It's expected that Docker support will be
+  removed in Kubernetes 1.22
+  * All newly created clusters running Kubernetes 1.21+ will be provisioned
+    with containerd instead of Docker
+  * Automated migration from Docker to containerd is currently not available,
+    but is planned for one of the upcoming KubeOne releases
+  * We highly recommend using containerd instead of Docker for all newly
+    created clusters. You can opt-in to use containerd instead of Docker by
+    adding `containerRuntime` configuration to your KubeOne configuration
+    manifest:
+    ```yaml
+    containerRuntime:
+      containerd: {}
+    ```
+    For the configuration file reference, run `kubeone config print --full`.
+
+
+## Known Issues
+
+* Provisioning Kubernetes 1.20 clusters results with one of the control plane
+  nodes being unhealthy/broken for the first 5-10 minutes after provisioning
+  the cluster. This causes KubeOne to fail to create MachineDeployment objects
+  because the `machine-controller-webhook` service can't be found. Also, one of
+  the NodeLocalDNS pods might get stuck in the crash loop.
+  * KubeOne currently still doesn't support Kubernetes 1.20. We do **not**
+    recommend provisioning 1.20 clusters or upgrading existing clusters to
+    Kubernetes 1.20
+  * We're currently investigating the issue. You can follow the progress
+    in the issue [#1222](https://github.com/kubermatic/kubeone/issues/1222)
+
+## Added
+
+* Add support for containerd container runtime ([#1180](https://github.com/kubermatic/kubeone/pull/1180), [#1188](https://github.com/kubermatic/kubeone/pull/1188), [#1190](https://github.com/kubermatic/kubeone/pull/1190), [#1205](https://github.com/kubermatic/kubeone/pull/1205), [#1227](https://github.com/kubermatic/kubeone/pull/1227), [#1229](https://github.com/kubermatic/kubeone/pull/1229))
+  * Kubernetes has announced deprecation of the Docker (dockershim) support in
+    the Kubernetes 1.20 release. It's expected that Docker support will be
+    removed in Kubernetes 1.22
+  * All newly created clusters running Kubernetes 1.21+ will default to
+    containerd instead of Docker
+  * Automated migration from Docker to containerd is currently not available,
+    but is planned for one of the upcoming KubeOne releases
+
+## Changed
+
+### Bug Fixes
+
+* Fix wrong legacy Docker version on RPM systems ([#1191](https://github.com/kubermatic/kubeone/pull/1191))
+
+### Terraform Configs
+
+* Replace GoBetween load-balancer in vSphere Terraform example by keepalived ([#1217](https://github.com/kubermatic/kubeone/pull/1217))
+
+### Addons
+
+* Fix DNS resolution issues for the Backups addon ([#1179](https://github.com/kubermatic/kubeone/pull/1179))
+
 # [v1.2.0-alpha.0](https://github.com/kubermatic/kubeone/releases/tag/v1.2.0-alpha.0) - 2020-11-27
 
 ## Added
