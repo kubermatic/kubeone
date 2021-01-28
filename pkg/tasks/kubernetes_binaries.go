@@ -27,8 +27,7 @@ import (
 func upgradeKubeletAndKubectlBinaries(s *state.State, node kubeoneapi.HostConfig) error {
 	return runOnOS(s, node.OperatingSystem, map[kubeoneapi.OperatingSystemName]runOnOSFn{
 		kubeoneapi.OperatingSystemNameUbuntu:  upgradeKubeletAndKubectlBinariesDebian,
-		kubeoneapi.OperatingSystemNameCoreOS:  upgradeKubeletAndKubectlBinariesCoreOS,
-		kubeoneapi.OperatingSystemNameFlatcar: upgradeKubeletAndKubectlBinariesCoreOS,
+		kubeoneapi.OperatingSystemNameFlatcar: upgradeKubeletAndKubectlBinariesFlatcar,
 		kubeoneapi.OperatingSystemNameCentOS:  upgradeKubeletAndKubectlBinariesCentOS,
 		kubeoneapi.OperatingSystemNameAmazon:  upgradeKubeletAndKubectlBinariesAmazonLinux,
 		kubeoneapi.OperatingSystemNameRHEL:    upgradeKubeletAndKubectlBinariesCentOS,
@@ -38,8 +37,7 @@ func upgradeKubeletAndKubectlBinaries(s *state.State, node kubeoneapi.HostConfig
 func upgradeKubeadmAndCNIBinaries(s *state.State, node kubeoneapi.HostConfig) error {
 	return runOnOS(s, node.OperatingSystem, map[kubeoneapi.OperatingSystemName]runOnOSFn{
 		kubeoneapi.OperatingSystemNameUbuntu:  upgradeKubeadmAndCNIBinariesDebian,
-		kubeoneapi.OperatingSystemNameCoreOS:  upgradeKubeadmAndCNIBinariesCoreOS,
-		kubeoneapi.OperatingSystemNameFlatcar: upgradeKubeadmAndCNIBinariesCoreOS,
+		kubeoneapi.OperatingSystemNameFlatcar: upgradeKubeadmAndCNIBinariesFlatcar,
 		kubeoneapi.OperatingSystemNameCentOS:  upgradeKubeadmAndCNIBinariesCentOS,
 		kubeoneapi.OperatingSystemNameAmazon:  upgradeKubeadmAndCNIBinariesAmazonLinux,
 		kubeoneapi.OperatingSystemNameRHEL:    upgradeKubeadmAndCNIBinariesCentOS,
@@ -57,8 +55,8 @@ func upgradeKubeletAndKubectlBinariesDebian(s *state.State) error {
 	return errors.WithStack(err)
 }
 
-func upgradeKubeletAndKubectlBinariesCoreOS(s *state.State) error {
-	cmd, err := scripts.UpgradeKubeletAndKubectlCoreOS(s.Cluster.Versions.Kubernetes)
+func upgradeKubeletAndKubectlBinariesFlatcar(s *state.State) error {
+	cmd, err := scripts.UpgradeKubeletAndKubectlFlatcar(s.Cluster.Versions.Kubernetes)
 	if err != nil {
 		return err
 	}
@@ -123,8 +121,8 @@ func upgradeKubeadmAndCNIBinariesAmazonLinux(s *state.State) error {
 	return errors.WithStack(err)
 }
 
-func upgradeKubeadmAndCNIBinariesCoreOS(s *state.State) error {
-	cmd, err := scripts.UpgradeKubeadmAndCNICoreOS(s.Cluster.Versions.Kubernetes)
+func upgradeKubeadmAndCNIBinariesFlatcar(s *state.State) error {
+	cmd, err := scripts.UpgradeKubeadmAndCNIFlatcar(s.Cluster.Versions.Kubernetes)
 	if err != nil {
 		return err
 	}

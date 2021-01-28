@@ -337,7 +337,7 @@ func TestKubeadmAmazonLinux(t *testing.T) {
 	}
 }
 
-func TestKubeadmCoreOS(t *testing.T) {
+func TestKubeadmFlatcar(t *testing.T) {
 	t.Parallel()
 
 	type args struct {
@@ -377,9 +377,9 @@ func TestKubeadmCoreOS(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := KubeadmCoreOS(&tt.args.cluster)
+			got, err := KubeadmFlatcar(&tt.args.cluster)
 			if err != tt.err {
-				t.Errorf("KubeadmCoreOS() error = %v, wantErr %v", err, tt.err)
+				t.Errorf("KubeadmFlatcar() error = %v, wantErr %v", err, tt.err)
 				return
 			}
 
@@ -424,12 +424,12 @@ func TestRemoveBinariesAmazonLinux(t *testing.T) {
 	testhelper.DiffOutput(t, testhelper.FSGoldenName(t), got, *updateFlag)
 }
 
-func TestRemoveBinariesCoreOS(t *testing.T) {
+func TestRemoveBinariesFlatcar(t *testing.T) {
 	t.Parallel()
 
-	got, err := RemoveBinariesCoreOS()
+	got, err := RemoveBinariesFlatcar()
 	if err != nil {
-		t.Errorf("RemoveBinariesCoreOS() error = %v", err)
+		t.Errorf("RemoveBinariesFlatcar() error = %v", err)
 		return
 	}
 
@@ -475,12 +475,12 @@ func TestUpgradeKubeadmAndCNIAmazonLinux(t *testing.T) {
 	testhelper.DiffOutput(t, testhelper.FSGoldenName(t), got, *updateFlag)
 }
 
-func TestUpgradeKubeadmAndCNICoreOS(t *testing.T) {
+func TestUpgradeKubeadmAndCNIFlatcar(t *testing.T) {
 	t.Parallel()
 
-	got, err := UpgradeKubeadmAndCNICoreOS("v1.17.4")
+	got, err := UpgradeKubeadmAndCNIFlatcar("v1.17.4")
 	if err != nil {
-		t.Errorf("UpgradeKubeadmAndCNICoreOS() error = %v", err)
+		t.Errorf("UpgradeKubeadmAndCNIFlatcar() error = %v", err)
 		return
 	}
 
@@ -526,12 +526,12 @@ func TestUpgradeKubeletAndKubectlAmazonLinux(t *testing.T) {
 	testhelper.DiffOutput(t, testhelper.FSGoldenName(t), got, *updateFlag)
 }
 
-func TestUpgradeKubeletAndKubectlCoreOS(t *testing.T) {
+func TestUpgradeKubeletAndKubectlFlatcar(t *testing.T) {
 	t.Parallel()
 
-	got, err := UpgradeKubeletAndKubectlCoreOS("v1.17.4")
+	got, err := UpgradeKubeletAndKubectlFlatcar("v1.17.4")
 	if err != nil {
-		t.Errorf("UpgradeKubeletAndKubectlCoreOS() error = %v", err)
+		t.Errorf("UpgradeKubeletAndKubectlFlatcar() error = %v", err)
 		return
 	}
 

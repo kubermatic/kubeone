@@ -29,7 +29,6 @@ const (
 	OperatingSystemUbuntu  OperatingSystem = "ubuntu"
 	OperatingSystemCentOS7 OperatingSystem = "centos7"
 	OperatingSystemCentOS8 OperatingSystem = "centos"
-	OperatingSystemCoreOS  OperatingSystem = "coreos"
 	OperatingSystemFlatcar OperatingSystem = "flatcar"
 	OperatingSystemDefault OperatingSystem = ""
 )
@@ -40,8 +39,11 @@ const (
 
 func ValidateOperatingSystem(osName string) error {
 	switch OperatingSystem(osName) {
-	case OperatingSystemUbuntu, OperatingSystemCoreOS, OperatingSystemFlatcar,
-		OperatingSystemCentOS7, OperatingSystemCentOS8, OperatingSystemDefault:
+	case OperatingSystemUbuntu,
+		OperatingSystemFlatcar,
+		OperatingSystemCentOS7,
+		OperatingSystemCentOS8,
+		OperatingSystemDefault:
 		return nil
 	}
 	return errors.New("failed to validate operating system")
@@ -79,7 +81,7 @@ func sshUsername(osName OperatingSystem) (string, error) {
 		return "ubuntu", nil
 	case OperatingSystemCentOS7, OperatingSystemCentOS8:
 		return "centos", nil
-	case OperatingSystemCoreOS, OperatingSystemFlatcar:
+	case OperatingSystemFlatcar:
 		return "core", nil
 	}
 
