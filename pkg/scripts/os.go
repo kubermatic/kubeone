@@ -307,7 +307,7 @@ sudo systemctl restart kubelet
 {{- end }}
 `
 
-	kubeadmCoreOSTemplate = `
+	kubeadmFlatcarTemplate = `
 source /etc/kubeone/proxy-env
 
 {{ template "detect-host-cpu-architecture" }}
@@ -400,7 +400,7 @@ sudo rm -f /etc/systemd/system/kubelet.service /etc/systemd/system/kubelet.servi
 sudo systemctl daemon-reload
 `
 
-	removeBinariesCoreOSScriptTemplate = `
+	removeBinariesFlatcarScriptTemplate = `
 # Stop kubelet
 sudo systemctl stop kubelet || true
 # Remove CNI and binaries
@@ -411,7 +411,7 @@ sudo rm -f /etc/systemd/system/kubelet.service /etc/systemd/system/kubelet.servi
 sudo systemctl daemon-reload
 `
 
-	upgradeKubeadmAndCNICoreOSScriptTemplate = `
+	upgradeKubeadmAndCNIFlatcarScriptTemplate = `
 {{ template "detect-host-cpu-architecture" }}
 
 source /etc/kubeone/proxy-env
@@ -433,7 +433,7 @@ sudo mv /var/tmp/kube-binaries/kubeadm .
 sudo chmod +x kubeadm
 `
 
-	upgradeKubeletAndKubectlCoreOSScriptTemplate = `
+	upgradeKubeletAndKubectlFlatcarScriptTemplate = `
 source /etc/kubeone/proxy-env
 
 {{ template "detect-host-cpu-architecture" }}
@@ -547,8 +547,8 @@ func KubeadmAmazonLinux(cluster *kubeone.KubeOneCluster, force bool) (string, er
 	})
 }
 
-func KubeadmCoreOS(cluster *kubeone.KubeOneCluster) (string, error) {
-	return Render(kubeadmCoreOSTemplate, Data{
+func KubeadmFlatcar(cluster *kubeone.KubeOneCluster) (string, error) {
+	return Render(kubeadmFlatcarTemplate, Data{
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
 		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
@@ -567,8 +567,8 @@ func RemoveBinariesAmazonLinux() (string, error) {
 	return Render(removeBinariesAmazonLinuxScriptTemplate, Data{})
 }
 
-func RemoveBinariesCoreOS() (string, error) {
-	return Render(removeBinariesCoreOSScriptTemplate, nil)
+func RemoveBinariesFlatcar() (string, error) {
+	return Render(removeBinariesFlatcarScriptTemplate, nil)
 }
 
 func UpgradeKubeadmAndCNIDebian(cluster *kubeone.KubeOneCluster) (string, error) {
@@ -626,8 +626,8 @@ func UpgradeKubeadmAndCNIAmazonLinux(cluster *kubeone.KubeOneCluster) (string, e
 	})
 }
 
-func UpgradeKubeadmAndCNICoreOS(k8sVersion string) (string, error) {
-	return Render(upgradeKubeadmAndCNICoreOSScriptTemplate, Data{
+func UpgradeKubeadmAndCNIFlatcar(k8sVersion string) (string, error) {
+	return Render(upgradeKubeadmAndCNIFlatcarScriptTemplate, Data{
 		"KUBERNETES_VERSION":     k8sVersion,
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
 	})
@@ -691,8 +691,8 @@ func UpgradeKubeletAndKubectlAmazonLinux(cluster *kubeone.KubeOneCluster) (strin
 	})
 }
 
-func UpgradeKubeletAndKubectlCoreOS(k8sVersion string) (string, error) {
-	return Render(upgradeKubeletAndKubectlCoreOSScriptTemplate, Data{
+func UpgradeKubeletAndKubectlFlatcar(k8sVersion string) (string, error) {
+	return Render(upgradeKubeletAndKubectlFlatcarScriptTemplate, Data{
 		"KUBERNETES_VERSION": k8sVersion,
 	})
 }

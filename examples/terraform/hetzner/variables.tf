@@ -24,7 +24,6 @@ variable "worker_os" {
   # valid choices are:
   # * ubuntu
   # * centos
-  # * coreos
   default = "ubuntu"
 }
 

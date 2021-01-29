@@ -78,12 +78,11 @@ type ContainerRuntimeContainerd struct{}
 // OperatingSystemName defines the operating system used on instances
 type OperatingSystemName string
 
-var (
+const (
 	OperatingSystemNameUbuntu  OperatingSystemName = "ubuntu"
 	OperatingSystemNameCentOS  OperatingSystemName = "centos"
 	OperatingSystemNameRHEL    OperatingSystemName = "rhel"
 	OperatingSystemNameAmazon  OperatingSystemName = "amzn"
-	OperatingSystemNameCoreOS  OperatingSystemName = "coreos"
 	OperatingSystemNameFlatcar OperatingSystemName = "flatcar"
 	OperatingSystemNameUnknown OperatingSystemName = ""
 )

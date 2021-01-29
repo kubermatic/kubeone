@@ -110,8 +110,7 @@ func runProbes(s *state.State) error {
 	}
 
 	for _, host := range s.Cluster.ControlPlane.Hosts {
-		switch host.OperatingSystem {
-		case kubeoneapi.OperatingSystemNameFlatcar, kubeoneapi.OperatingSystemNameCoreOS:
+		if host.OperatingSystem == kubeoneapi.OperatingSystemNameFlatcar {
 			s.Cluster.ContainerRuntime.Docker = &kubeoneapi.ContainerRuntimeDocker{}
 		}
 	}
@@ -189,8 +188,7 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Conne
 
 	containerRuntimeOpts := []systemdUnitInfoOpt{withComponentVersion(versionCmdGenerator)}
 
-	switch h.Config.OperatingSystem {
-	case kubeoneapi.OperatingSystemNameCoreOS, kubeoneapi.OperatingSystemNameFlatcar:
+	if h.Config.OperatingSystem == kubeoneapi.OperatingSystemNameFlatcar {
 		// Flatcar is special
 		containerRuntimeOpts = []systemdUnitInfoOpt{withFlatcarContainerRuntimeVersion}
 	}
