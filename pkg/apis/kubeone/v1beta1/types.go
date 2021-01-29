@@ -80,6 +80,7 @@ type OperatingSystemName string
 
 const (
 	OperatingSystemNameUbuntu  OperatingSystemName = "ubuntu"
+	OperatingSystemNameDebian  OperatingSystemName = "debian"
 	OperatingSystemNameCentOS  OperatingSystemName = "centos"
 	OperatingSystemNameRHEL    OperatingSystemName = "rhel"
 	OperatingSystemNameAmazon  OperatingSystemName = "amzn"
