@@ -164,8 +164,7 @@ func osDaemonSet(image string) *appsv1.DaemonSet {
 		runAsUser                 int64 = 1001
 		hostPathDirectoryOrCreate       = corev1.HostPathDirectoryOrCreate
 
-		caCertsPath   = "/etc/ssl/certs"
-		flexvolumeDir = "/usr/libexec/kubernetes/kubelet-plugins/volume/exec"
+		caCertsPath = "/etc/ssl/certs"
 	)
 
 	return &appsv1.DaemonSet{
@@ -235,10 +234,6 @@ func osDaemonSet(image string) *appsv1.DaemonSet {
 									MountPath: "/etc/config",
 									ReadOnly:  true,
 								},
-								{
-									Name:      "flexvolume-dir",
-									MountPath: "/usr/libexec/kubernetes/kubelet-plugins/volume/exec",
-								},
 							},
 							Resources: corev1.ResourceRequirements{
 								Requests: corev1.ResourceList{
@@ -249,15 +244,6 @@ func osDaemonSet(image string) *appsv1.DaemonSet {
 					},
 					HostNetwork: true,
 					Volumes: []corev1.Volume{
-						{
-							Name: "flexvolume-dir",
-							VolumeSource: corev1.VolumeSource{
-								HostPath: &corev1.HostPathVolumeSource{
-									Path: flexvolumeDir,
-									Type: &hostPathDirectoryOrCreate,
-								},
-							},
-						},
 						{
 							Name: "k8s-certs",
 							VolumeSource: corev1.VolumeSource{
