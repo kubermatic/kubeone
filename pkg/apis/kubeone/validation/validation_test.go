@@ -1003,6 +1003,7 @@ func TestValidateFeatures(t *testing.T) {
 	tests := []struct {
 		name          string
 		features      kubeone.Features
+		versions      kubeone.VersionConfig
 		expectedError bool
 	}{
 		{
@@ -1015,6 +1016,9 @@ func TestValidateFeatures(t *testing.T) {
 					Enable: true,
 				},
 			},
+			versions: kubeone.VersionConfig{
+				Kubernetes: "1.20.2",
+			},
 			expectedError: false,
 		},
 		{
@@ -1024,11 +1028,17 @@ func TestValidateFeatures(t *testing.T) {
 					Enable: false,
 				},
 			},
+			versions: kubeone.VersionConfig{
+				Kubernetes: "1.20.2",
+			},
 			expectedError: false,
 		},
 		{
-			name:          "no feature configured",
-			features:      kubeone.Features{},
+			name:     "no feature configured",
+			features: kubeone.Features{},
+			versions: kubeone.VersionConfig{
+				Kubernetes: "1.20.2",
+			},
 			expectedError: false,
 		},
 		{
@@ -1043,6 +1053,9 @@ func TestValidateFeatures(t *testing.T) {
 					},
 				},
 			},
+			versions: kubeone.VersionConfig{
+				Kubernetes: "1.20.2",
+			},
 			expectedError: false,
 		},
 		{
@@ -1052,6 +1065,9 @@ func TestValidateFeatures(t *testing.T) {
 					Enable: true,
 					Config: kubeone.StaticAuditLogConfig{},
 				},
+			},
+			versions: kubeone.VersionConfig{
+				Kubernetes: "1.20.2",
 			},
 			expectedError: true,
 		},
@@ -1063,6 +1079,9 @@ func TestValidateFeatures(t *testing.T) {
 					Config: kubeone.OpenIDConnectConfig{},
 				},
 			},
+			versions: kubeone.VersionConfig{
+				Kubernetes: "1.20.2",
+			},
 			expectedError: true,
 		},
 		{
@@ -1073,13 +1092,52 @@ func TestValidateFeatures(t *testing.T) {
 					Config: kubeone.PodNodeSelectorConfig{},
 				},
 			},
+			versions: kubeone.VersionConfig{
+				Kubernetes: "1.20.2",
+			},
+			expectedError: true,
+		},
+		{
+			name: "podPresets enabled on 1.19 cluster",
+			features: kubeone.Features{
+				PodPresets: &kubeone.PodPresets{
+					Enable: true,
+				},
+			},
+			versions: kubeone.VersionConfig{
+				Kubernetes: "1.19.7",
+			},
+			expectedError: false,
+		},
+		{
+			name: "podPresets enabled on 1.20 cluster",
+			features: kubeone.Features{
+				PodPresets: &kubeone.PodPresets{
+					Enable: true,
+				},
+			},
+			versions: kubeone.VersionConfig{
+				Kubernetes: "1.20.2",
+			},
+			expectedError: true,
+		},
+		{
+			name: "podPresets enabled on 1.21 cluster",
+			features: kubeone.Features{
+				PodPresets: &kubeone.PodPresets{
+					Enable: true,
+				},
+			},
+			versions: kubeone.VersionConfig{
+				Kubernetes: "1.21.0",
+			},
 			expectedError: true,
 		},
 	}
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			errs := ValidateFeatures(tc.features, nil)
+			errs := ValidateFeatures(tc.features, tc.versions, nil)
 			if (len(errs) == 0) == tc.expectedError {
 				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
 			}

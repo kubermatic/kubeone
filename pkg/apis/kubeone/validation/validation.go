@@ -50,7 +50,7 @@ func ValidateKubeOneCluster(c kubeone.KubeOneCluster) field.ErrorList {
 			"machine-controller deployment is disabled, but the configuration still contains dynamic workers"))
 	}
 
-	allErrs = append(allErrs, ValidateFeatures(c.Features, field.NewPath("features"))...)
+	allErrs = append(allErrs, ValidateFeatures(c.Features, c.Versions, field.NewPath("features"))...)
 	allErrs = append(allErrs, ValidateAddons(c.Addons, field.NewPath("addons"))...)
 	allErrs = append(allErrs, ValidateRegistryConfiguration(c.RegistryConfiguration, field.NewPath("registryConfiguration"))...)
 
@@ -294,7 +294,7 @@ func ValidateDynamicWorkerConfig(workerset []kubeone.DynamicWorkerConfig, fldPat
 }
 
 // ValidateFeatures validates the Features structure
-func ValidateFeatures(f kubeone.Features, fldPath *field.Path) field.ErrorList {
+func ValidateFeatures(f kubeone.Features, versions kubeone.VersionConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	if f.PodNodeSelector != nil && f.PodNodeSelector.Enable {
@@ -305,6 +305,13 @@ func ValidateFeatures(f kubeone.Features, fldPath *field.Path) field.ErrorList {
 	}
 	if f.OpenIDConnect != nil && f.OpenIDConnect.Enable {
 		allErrs = append(allErrs, ValidateOIDCConfig(f.OpenIDConnect.Config, fldPath.Child("openidConnect"))...)
+	}
+	if f.PodPresets != nil && f.PodPresets.Enable {
+		kubeVer, _ := semver.NewVersion(versions.Kubernetes)
+		gteKube120Condition, _ := semver.NewConstraint(">= 1.20")
+		if gteKube120Condition.Check(kubeVer) {
+			allErrs = append(allErrs, field.Forbidden(fldPath.Child("podPresets"), "podPresets feature is removed in kubernetes 1.20+ and must be disabled"))
+		}
 	}
 
 	return allErrs
