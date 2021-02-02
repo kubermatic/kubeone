@@ -603,6 +603,11 @@ features:
   podSecurityPolicy:
     enable: {{ .EnablePodSecurityPolicy }}
   # Enables PodPresets admission plugin in API server.
+  # The PodPresets feature has been removed in Kubernetes 1.20.
+  # This feature is deprecated and will be removed from the API once
+  # Kubernetes 1.19 reaches EOL.
+  # Provisioning a Kubernetes 1.20 cluster or upgrading an existing cluster to
+  # the Kubernetes 1.20 requires this feature to be disabled.
   podPresets:
     enable: {{ .EnablePodPresets }}
   # Enables and configures audit log backend.
