@@ -21,7 +21,8 @@ KubeOne needs to support this feature natively. Meaning the user should be able 
 
 ## Non-Goals
 
-* Support external KMS providers.
+* Deploy External KMS.
+* Safely manage (disable/enable/rotate) configuration when a custom configuration file is used. 
 
 ## Challenges
 
@@ -39,6 +40,18 @@ kind: KubeOneCluster
 features:
   encryptionProviders:
     enabled: true
+    customProvidersFile: |
+      apiVersion: apiserver.config.k8s.io/v1
+      kind: EncryptionConfiguration
+      resources:
+      - resources:
+        - secrets
+        providers:
+        - identity: {}
+        - aescbc:
+            keys:
+            - name: key1
+            secret: <BASE 64 ENCODED SECRET>
 ```
 
 To allow users to rotate the keys, a new flag will be added to the `apply` command:
@@ -85,6 +98,13 @@ To allow users to rotate the keys, a new flag will be added to the `apply` comma
 * Rewrite all secrets to ensure they are encrypted with the new key.
 * Mutate the configuration file again to remove the old key.
 * Sync the updated configuration file to all control plane nodes and restart KubeAPI.
+
+### Apply Custom Encryption Provider file
+This use case is useful for users who would like to utilize an external KMS provider or specify resources other than secrets for encryption. In this case, KubeOne will not manage the content of the file, it will only validate it to make sure it's syntactically valid. Additionally, KubeOne will not rewrite the resources in this case. 
+
+* Ensure the configuration file is valid. 
+* Sync the configuration file to all control plane nodes.
+* Restart KubeAPI on all nodes. 
 
 ## Tasks & effort
 
