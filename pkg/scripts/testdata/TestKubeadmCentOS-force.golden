@@ -65,7 +65,8 @@ sudo yum install -y \
 	conntrack-tools \
 	ebtables \
 	socat \
-	iproute-tc
+	iproute-tc \
+	rsync
 
 
 

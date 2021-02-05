@@ -147,7 +147,8 @@ sudo yum install -y \
 	conntrack-tools \
 	ebtables \
 	socat \
-	iproute-tc
+	iproute-tc \
+	rsync
 
 {{ if .INSTALL_DOCKER }}
 {{ template "docker-daemon-config" . }}
@@ -222,7 +223,8 @@ sudo yum install -y \
 	conntrack-tools \
 	ebtables \
 	socat \
-	iproute-tc
+	iproute-tc \
+	rsync
 
 {{ if .INSTALL_DOCKER }}
 {{ template "docker-daemon-config" . }}
