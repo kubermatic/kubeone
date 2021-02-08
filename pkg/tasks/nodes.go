@@ -56,3 +56,15 @@ func uncordonNode(s *state.State, host kubeoneapi.HostConfig) error {
 
 	return errors.WithStack(updateErr)
 }
+
+func restartKubeAPIServer(s *state.State) error {
+	s.Logger.Infoln("Restarting unhealthy API servers if needed...")
+	return s.RunTaskOnControlPlane(func(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+		_, _, err := s.Runner.Run(scripts.RestartKubeAPIServer(), nil)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}, state.RunSequentially)
+}

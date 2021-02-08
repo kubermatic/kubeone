@@ -114,6 +114,7 @@ func WithFullInstall(t Tasks) Tasks {
 			{Fn: repairClusterIfNeeded, ErrMsg: "failed to repair cluster"},
 			{Fn: joinControlplaneNode, ErrMsg: "failed to join other masters a cluster"},
 			{Fn: saveKubeconfig, ErrMsg: "failed to save kubeconfig to the local machine"},
+			{Fn: restartKubeAPIServer, ErrMsg: "failed to restart unhealthy kube-apiserver"},
 		}...).
 		append(kubernetesResources()...).
 		append(
@@ -188,6 +189,7 @@ func WithUpgrade(t Tasks) Tasks {
 		}...).
 		append(kubernetesResources()...).
 		append(
+			Task{Fn: restartKubeAPIServer, ErrMsg: "failed to restart unhealthy kube-apiserver"},
 			Task{Fn: upgradeStaticWorkers, ErrMsg: "unable to upgrade static worker nodes"},
 			Task{
 				Fn:         upgradeMachineDeployments,

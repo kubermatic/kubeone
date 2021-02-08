@@ -29,6 +29,17 @@ var (
 		sudo KUBECONFIG=/etc/kubernetes/admin.conf \
 		kubectl drain {{ .NODE_NAME }} --ignore-daemonsets --delete-local-data
 	`)
+
+	restartKubeAPIServerTemplate = heredoc.Doc(`
+		apiserver_id=$(sudo crictl ps --name=kube-apiserver -q)
+		[ -z "$apiserver_id" ] && exit 1
+		
+		sudo crictl logs "$apiserver_id" > /tmp/kube-apiserver.log 2>&1
+		if sudo grep -q "etcdserver: no leader" /tmp/kube-apiserver.log; then
+			sudo crictl rm "$apiserver_id"
+			sleep 10
+		fi
+	`)
 )
 
 func DrainNode(nodeName string) (string, error) {
@@ -39,4 +50,8 @@ func DrainNode(nodeName string) (string, error) {
 
 func Hostname() string {
 	return hostnameScript
+}
+
+func RestartKubeAPIServer() string {
+	return restartKubeAPIServerTemplate
 }
