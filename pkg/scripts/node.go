@@ -30,13 +30,24 @@ var (
 		kubectl drain {{ .NODE_NAME }} --ignore-daemonsets --delete-local-data
 	`)
 
-	restartKubeAPIServerTemplate = heredoc.Doc(`
+	restartKubeAPIServerCrictlTemplate = heredoc.Doc(`
 		apiserver_id=$(sudo crictl ps --name=kube-apiserver -q)
 		[ -z "$apiserver_id" ] && exit 1
 		
 		sudo crictl logs "$apiserver_id" > /tmp/kube-apiserver.log 2>&1
 		if sudo grep -q "etcdserver: no leader" /tmp/kube-apiserver.log; then
 			sudo crictl rm "$apiserver_id"
+			sleep 10
+		fi
+	`)
+
+	restartKubeAPIServerDockerTemplate = heredoc.Doc(`
+		apiserver_id=$(sudo docker ps --filter="name=k8s_kube-apiserver" -q)
+		[ -z "$apiserver_id" ] && exit 1
+		
+		sudo docker logs "$apiserver_id" > /tmp/kube-apiserver.log 2>&1
+		if sudo grep -q "etcdserver: no leader" /tmp/kube-apiserver.log; then
+			sudo docker rm -f "$apiserver_id"
 			sleep 10
 		fi
 	`)
@@ -52,6 +63,10 @@ func Hostname() string {
 	return hostnameScript
 }
 
-func RestartKubeAPIServer() string {
-	return restartKubeAPIServerTemplate
+func RestartKubeAPIServerCrictl() string {
+	return restartKubeAPIServerCrictlTemplate
+}
+
+func RestartKubeAPIServerDocker() string {
+	return restartKubeAPIServerDockerTemplate
 }
