@@ -59,12 +59,31 @@ func uncordonNode(s *state.State, host kubeoneapi.HostConfig) error {
 
 func restartKubeAPIServer(s *state.State) error {
 	s.Logger.Infoln("Restarting unhealthy API servers if needed...")
-	return s.RunTaskOnControlPlane(func(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
-		_, _, err := s.Runner.Run(scripts.RestartKubeAPIServer(), nil)
-		if err != nil {
-			return err
-		}
 
-		return nil
+	return s.RunTaskOnControlPlane(func(s *state.State, node *kubeoneapi.HostConfig, _ ssh.Connection) error {
+		return restartKubeAPIServerOnOS(s, *node)
 	}, state.RunSequentially)
+}
+
+func restartKubeAPIServerOnOS(s *state.State, node kubeoneapi.HostConfig) error {
+	return runOnOS(s, node.OperatingSystem, map[kubeoneapi.OperatingSystemName]runOnOSFn{
+		kubeoneapi.OperatingSystemNameAmazon:  restartKubeAPIServerCrictl,
+		kubeoneapi.OperatingSystemNameCentOS:  restartKubeAPIServerCrictl,
+		kubeoneapi.OperatingSystemNameDebian:  restartKubeAPIServerCrictl,
+		kubeoneapi.OperatingSystemNameFlatcar: restartKubeAPIServerDocker,
+		kubeoneapi.OperatingSystemNameRHEL:    restartKubeAPIServerCrictl,
+		kubeoneapi.OperatingSystemNameUbuntu:  restartKubeAPIServerCrictl,
+	})
+}
+
+func restartKubeAPIServerCrictl(s *state.State) error {
+	_, _, err := s.Runner.RunRaw(scripts.RestartKubeAPIServerCrictl())
+
+	return errors.WithStack(err)
+}
+
+func restartKubeAPIServerDocker(s *state.State) error {
+	_, _, err := s.Runner.RunRaw(scripts.RestartKubeAPIServerDocker())
+
+	return errors.WithStack(err)
 }
