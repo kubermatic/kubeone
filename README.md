@@ -17,7 +17,7 @@ Amazon gift card among the respondents of our KubeOne Survey.
 
 ## Getting Started
 
-All user documentation is available at the
+All user documentation for the latest stable version is available at the
 [KubeOne docs website][docs].
 
 Information about the support policy (natively-supported providers, supported
@@ -118,12 +118,12 @@ See [the list of releases][changelog] to find out about feature changes.
 [upstream-supported-versions]: https://kubernetes.io/docs/setup/release/version-skew-policy/#supported-versions
 [cluster-api]: https://github.com/kubernetes-sigs/cluster-api
 [machine-controller]: https://github.com/kubermatic/machine-controller
-[docs]: https://docs.kubermatic.com/kubeone/master/
-[docs-compatibility]: https://docs.kubermatic.com/kubeone/master/compatibility_info/
-[docs-prerequisistes]: https://docs.kubermatic.com/kubeone/master/prerequisites/
-[docs-infrastructure]: https://docs.kubermatic.com/kubeone/master/infrastructure/
-[docs-provisioning]: https://docs.kubermatic.com/kubeone/master/provisioning/
-[docs-install]: https://docs.kubermatic.com/kubeone/master/getting_kubeone/
+[docs]: https://docs.kubermatic.com/kubeone/
+[docs-compatibility]: https://docs.kubermatic.com/kubeone/v1.2/compatibility_info/
+[docs-prerequisistes]: https://docs.kubermatic.com/kubeone/v1.2/prerequisites/
+[docs-infrastructure]: https://docs.kubermatic.com/kubeone/v1.2/infrastructure/
+[docs-provisioning]: https://docs.kubermatic.com/kubeone/v1.2/provisioning/
+[docs-install]: https://docs.kubermatic.com/kubeone/v1.2/getting_kubeone/
 [contributing-guide]: https://github.com/kubermatic/KubeOne/blob/master/CONTRIBUTING.md
 [k8s-slack-kubeone]: https://kubernetes.slack.com/messages/CNEV2UMT7
 [k8s-slack]: http://slack.k8s.io/
