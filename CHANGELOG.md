@@ -1,5 +1,64 @@
 # Changelog
 
+# [v1.2.0-beta.1](https://github.com/kubermatic/kubeone/releases/tag/v1.2.0-beta.1) - 2021-02-17
+
+## Attention Needed
+
+* [**Breaking**] Support for CoreOS has been removed from KubeOne and machine-controller
+  * CoreOS has reached End-of-Life on May 26, 2020
+  * As an alternative to CoreOS, KubeOne supports Flatcar Linux
+  * We recommend migrating your CoreOS clusters to the Flatcar Linux or other supported operating system
+* [**Breaking**] Default values for OpenIDConnect has been corrected to match what's advised by the example configuration
+  * Previously, there were no default values for the OpenIDConnect fields
+  * This might only affect users using the OpenIDConnect feature
+* [**Breaking**] Disallow and deprecate the PodPresets feature
+  * [**Action Required**] If you're upgrading a cluster that uses the PodPresets feature from Kubernetes 1.19 to 1.20, you have to disable the PodPresets feature in the KubeOne configuration manifest
+  * The PodPresets feature has been removed from Kubernetes 1.20 with no built-in replacement
+  * It's not possible to use the PodPresets feature starting with Kubernetes 1.20, however, it currently remains possible to use it for older Kubernetes versions
+  * The PodPresets feature will be removed from the KubeOneCluster API once Kubernetes 1.19 reaches End-of-Life (EOL)
+  * As an alternative to the PodPresets feature, Kubernetes recommends using the MutatingAdmissionWebhooks.
+
+## Added
+
+* Add support for Kubernetes 1.20
+  * Previously, we've shared that there is an issue affecting newly created clusters where the first control plane node is unhealthy/broken for the first 5-10 minutes. We've investigated the issue and found out that the issue can be successfully mitigated by restarting the first API server. We've implemented a task that automatically restarts the API server if it's affected by the issue ([#1243](https://github.com/kubermatic/kubeone/pull/1243), [#1245](https://github.com/kubermatic/kubeone/pull/1245))
+* Add support for Debian on control plane and static worker nodes ([#1233](https://github.com/kubermatic/kubeone/pull/1233))
+  * Debian is currently not supported by machine-controller, so it's not possible to use it on worker nodes managed by machine-controller
+
+## Changed
+
+### API Changes
+
+* [**Breaking**] Default values for OpenIDConnect has been corrected to match what's advised by the example configuration ([#1235](https://github.com/kubermatic/kubeone/pull/1235))
+  * Previously, there were no default values for the OpenIDConnect fields
+  * This might only affect users using the OpenIDConnect feature
+* [**Breaking**] Disallow and deprecate the PodPresets feature ([#1236](https://github.com/kubermatic/kubeone/pull/1236))
+  * [**Action Required**] If you're upgrading a cluster that uses the PodPresets feature from Kubernetes 1.19 to 1.20, you have to disable the PodPresets feature in the KubeOne configuration manifest
+  * The PodPresets feature has been removed from Kubernetes 1.20 with no built-in replacement
+  * It's not possible to use the PodPresets feature starting with Kubernetes 1.20, however, it currently remains possible to use it for older Kubernetes versions
+  * The PodPresets feature will be removed from the KubeOneCluster API once Kubernetes 1.19 reaches End-of-Life (EOL)
+  * As an alternative to the PodPresets feature, Kubernetes recommends using the MutatingAdmissionWebhooks.
+
+### General
+
+* Add rsync on CentOS and Amazon Linux ([#1240](https://github.com/kubermatic/kubeone/pull/1240))
+
+### Bug Fixes
+
+* Drop mounting Flexvolume plugins into the OpenStack CCM. This fixes the issue with deploying the OpenStack CCM on the clusters running Flatcar Linux ([#1234](https://github.com/kubermatic/kubeone/pull/1234))
+* Ensure all credentials are available to be used in addons. This fixes the issue with the Backups addon not working on non-AWS providers ([#1248](https://github.com/kubermatic/kubeone/pull/1248))
+
+### Updated
+
+* Update machine-controller to v1.25.0 ([#1238](https://github.com/kubermatic/kubeone/pull/1238))
+
+## Removed
+
+* [**Breaking**] Support for CoreOS has been removed from KubeOne and machine-controller ([#1232](https://github.com/kubermatic/kubeone/pull/1232))
+  * CoreOS has reached End-of-Life on May 26, 2020
+  * As an alternative to CoreOS, KubeOne supports Flatcar Linux
+  * We recommend migrating your CoreOS clusters to the Flatcar Linux or other supported operating system
+
 # [v1.2.0-beta.0](https://github.com/kubermatic/kubeone/releases/tag/v1.2.0-beta.0) - 2021-01-27
 
 ## Attention Needed
