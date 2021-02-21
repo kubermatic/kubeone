@@ -17,9 +17,14 @@ limitations under the License.
 package cmd
 
 import (
+	"bufio"
 	"context"
+	"fmt"
+	"os"
 	"reflect"
 	"strings"
+
+	"golang.org/x/term"
 
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -126,4 +131,26 @@ func loadClusterConfig(filename, terraformOutputPath, credentialsFilePath string
 	}
 
 	return a, nil
+}
+
+func confirmCommand(autoApprove bool) (bool, error) {
+	if autoApprove {
+		return true, nil
+	}
+
+	if !term.IsTerminal(int(os.Stdin.Fd())) || !term.IsTerminal(int(os.Stdout.Fd())) {
+		return false, errors.New("not running in the terminal")
+	}
+
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Print("Do you want to proceed (yes/no): ")
+
+	confirmation, err := reader.ReadString('\n')
+	if err != nil {
+		return false, err
+	}
+
+	fmt.Println()
+
+	return strings.Trim(confirmation, "\n") == "yes", nil
 }

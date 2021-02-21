@@ -312,7 +312,7 @@ func runApplyInstall(s *state.State, opts *applyOpts) error { // Print the expec
 	}
 
 	fmt.Println()
-	confirm, err := confirmApply(opts.AutoApprove)
+	confirm, err := confirmCommand(opts.AutoApprove)
 	if err != nil {
 		return err
 	}
@@ -416,7 +416,7 @@ func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
 	}
 
 	fmt.Println()
-	confirm, err := confirmApply(opts.AutoApprove)
+	confirm, err := confirmCommand(opts.AutoApprove)
 	if err != nil {
 		return err
 	}
