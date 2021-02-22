@@ -28,6 +28,7 @@ import (
 
 type resetOpts struct {
 	globalOptions
+	AutoApprove    bool `longflag:"auto-approve" shortflag:"y"`
 	DestroyWorkers bool `longflag:"destroy-workers"`
 	RemoveBinaries bool `longflag:"remove-binaries"`
 }
@@ -68,6 +69,13 @@ func resetCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		},
 	}
 
+	cmd.Flags().BoolVarP(
+		&opts.AutoApprove,
+		longFlagName(opts, "AutoApprove"),
+		shortFlagName(opts, "AutoApprove"),
+		false,
+		"auto approve reset (NO-OP/NOT YET ENABLED)")
+
 	cmd.Flags().BoolVar(
 		&opts.DestroyWorkers,
 		longFlagName(opts, "DestroyWorkers"),
@@ -89,6 +97,8 @@ func runReset(opts *resetOpts) error {
 	if err != nil {
 		return errors.Wrap(err, "failed to initialize State")
 	}
+
+	s.Logger.Warnln("this command will require an explicit confirmation starting with the next minor release (v1.3)")
 
 	return errors.Wrap(tasks.WithReset(nil).Run(s), "failed to reset the cluster")
 }

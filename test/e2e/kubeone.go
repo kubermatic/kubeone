@@ -186,6 +186,7 @@ func (k1 *Kubeone) Kubeconfig() ([]byte, error) {
 func (k1 *Kubeone) Reset() error {
 	err := k1.run("reset",
 		"-v",
+		"--auto-approve",
 		"--tfjson", "tf.json",
 		"--destroy-workers",
 		"--manifest", k1.ConfigurationFilePath)
