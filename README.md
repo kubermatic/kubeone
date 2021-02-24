@@ -33,8 +33,9 @@ curl -sfL get.kubeone.io | sh
 ```
 
 The installation script downloads the release archive from GitHub, installs the
-KubeOne binary in your `/usr/local/bin` directory and unpacks the example
-Terraform configs in your current working directory.
+KubeOne binary in your `/usr/local/bin` directory, and unpacks the example
+Terraform configs, addons, and helper scripts in your current working
+directory.
 
 For other installation methods, check the
 [Getting KubeOne guide][docs-install] on our documentation website.
