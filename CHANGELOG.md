@@ -1,5 +1,21 @@
 # Changelog
 
+# [v1.2.0-rc.0](https://github.com/kubermatic/kubeone/releases/tag/v1.2.0-rc.0) - 2021-03-08
+
+## Attention Needed
+
+* [**BREAKING/ACTION REQUIRED**] Starting with the KubeOne 1.3 release, the `kubeone reset` command will require an explicit confirmation like the `apply` command
+  * Running the `reset` command will require typing `yes` to confirm the intention to unprovision/reset the cluster
+  * The command can be automatically approved by using the `--auto-approve` flag
+  * The `--auto-approve` flag has been already implemented as a no-op flag in this release
+  * Starting with this release, running `kubeone reset` will show a warning about this change each time the `reset` command is used
+
+## Changed
+
+### General
+
+* Warn about `kubeone reset` requiring explicit confirmation starting with KubeOne 1.3 ([#1252](https://github.com/kubermatic/kubeone/pull/1252))
+
 # [v1.2.0-beta.1](https://github.com/kubermatic/kubeone/releases/tag/v1.2.0-beta.1) - 2021-02-17
 
 ## Attention Needed
