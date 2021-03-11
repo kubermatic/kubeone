@@ -25,7 +25,7 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-      - image: golang:1.15.7
+      - image: golang:1.16.1
         command:
         - make
         args:
@@ -46,7 +46,7 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-      - image: quay.io/kubermatic/wwhrd:0.2.1-1
+      - image: quay.io/kubermatic/wwhrd:0.4.0-1
         command:
         - make
         args:
@@ -67,7 +67,7 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-      - image: golang:1.15.7
+      - image: golang:1.16.1
         command:
         - make
         args:
@@ -88,7 +88,7 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-      - image: golang:1.15.7
+      - image: golang:1.16.1
         command:
         - make
         args:
