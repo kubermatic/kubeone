@@ -1,5 +1,13 @@
 # Changelog
 
+# [v1.2.0-rc.1](https://github.com/kubermatic/kubeone/releases/tag/v1.2.0-rc.1) - 2021-03-12
+
+## Changed
+
+### General
+
+* Build KubeOne using Go 1.16.1 ([#1268](https://github.com/kubermatic/kubeone/pull/1268), [#1267](https://github.com/kubermatic/kubeone/pull/1267))
+
 # [v1.2.0-rc.0](https://github.com/kubermatic/kubeone/releases/tag/v1.2.0-rc.0) - 2021-03-08
 
 ## Attention Needed
