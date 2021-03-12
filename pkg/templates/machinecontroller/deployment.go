@@ -48,7 +48,7 @@ const (
 	MachineControllerAppLabelValue = "machine-controller"
 	MachineControllerImageRegistry = "docker.io"
 	MachineControllerImage         = "/kubermatic/machine-controller:"
-	MachineControllerTag           = "v1.25.0"
+	MachineControllerTag           = "v1.27.0"
 )
 
 func CRDs() []runtime.Object {
@@ -775,10 +775,6 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster, credentials
 		args = append(args, "-node-no-proxy", cluster.Proxy.NoProxy)
 	}
 
-	if cluster.CloudProvider.External {
-		args = append(args, "-external-cloud-provider")
-	}
-
 	insecureRegistry := cluster.RegistryConfiguration.InsecureRegistryAddress()
 	if insecureRegistry != "" {
 		args = append(args, "-node-insecure-registries", insecureRegistry)
@@ -788,10 +784,11 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster, credentials
 		hyperkubeImage := cluster.RegistryConfiguration.ImageRegistry("k8s.gcr.io") + "/hyperkube-amd64"
 		poseidonKubeletImage := cluster.RegistryConfiguration.ImageRegistry("quay.io") + "/poseidon/kubelet"
 
-		args = append(args, "-node-hyperkube-image", hyperkubeImage)
-		args = append(args, "-node-kubelet-repository", poseidonKubeletImage)
-
-		args = append(args, "-node-pause-image", pauseImage)
+		args = append(args,
+			"-node-hyperkube-image", hyperkubeImage,
+			"-node-kubelet-repository", poseidonKubeletImage,
+			"-node-pause-image", pauseImage,
+		)
 	}
 
 	envVar, err := credentials.EnvVarBindings(cluster.CloudProvider, credentialsFilePath)
