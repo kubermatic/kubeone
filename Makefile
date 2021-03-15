@@ -82,3 +82,7 @@ verify-codegen: vendor
 .PHONY: verify-boilerplate
 verify-boilerplate:
 	./hack/verify-boilerplate.sh
+
+.PHONY: shfmt
+shfmt:
+	shfmt -w -sr -i 2 hack

@@ -17,19 +17,19 @@
 set -euo pipefail
 
 if [[ ${OSTYPE} == *"darwin"* ]]; then
-    jsondate=$(gdate --rfc-3339=seconds | sed 's/ /T/')
+  jsondate=$(gdate --rfc-3339=seconds | sed 's/ /T/')
 else
-    jsondate=$(date --rfc-3339=seconds | sed 's/ /T/')
+  jsondate=$(date --rfc-3339=seconds | sed 's/ /T/')
 fi
 
 basedir="./docs/api_reference"
 mkdir -p "${basedir}"
 
 genVersionedDoc() {
-    local version=$1
-    local docfile="${basedir}/${version}.en.md"
+  local version=$1
+  local docfile="${basedir}/${version}.en.md"
 
-    cat <<EOF >"${docfile}"
+  cat << EOF > "${docfile}"
 +++
 title = "${version} API Reference"
 date = ${jsondate}
@@ -37,14 +37,14 @@ weight = 11
 +++
 EOF
 
-    echo -e "${version} API"
-    cat <<EOF >>"${docfile}"
+  echo -e "${version} API"
+  cat << EOF >> "${docfile}"
 ## ${version}
 
 EOF
 
-    find ./pkg/apis/kubeone/"${version}" -name '*types.go' -print0 |
-        xargs go run ./hack/apidoc-gen/main.go -section-link="#${version}" >>"${docfile}"
+  find ./pkg/apis/kubeone/"${version}" -name '*types.go' -print0 |
+    xargs go run ./hack/apidoc-gen/main.go -section-link="#${version}" >> "${docfile}"
 }
 
 genVersionedDoc "v1beta1"
