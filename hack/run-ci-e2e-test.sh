@@ -92,7 +92,7 @@ function setup_ci_environment_vars() {
     export TF_VAR_project_id=${PACKET_PROJECT_ID}
     ;;
   "gce")
-    GOOGLE_CREDENTIALS=$(base64 -d <<<"${KUBEONE_GOOGLE_SERVICE_ACCOUNT}")
+    GOOGLE_CREDENTIALS=$(base64 -d <<< "${KUBEONE_GOOGLE_SERVICE_ACCOUNT}")
     export GOOGLE_CREDENTIALS
     ;;
   "openstack")
@@ -104,7 +104,7 @@ function setup_ci_environment_vars() {
     export OS_PASSWORD=${OS_PASSWORD}
     export TF_VAR_external_network_name="ext-net"
     export TF_VAR_subnet_cidr="10.0.42.0/24"
-    echo "${OS_K1_CREDENTIALS}" >/tmp/credentials.yaml
+    echo "${OS_K1_CREDENTIALS}" > /tmp/credentials.yaml
     CREDENTIALS_FILE_PATH=/tmp/credentials.yaml
     ;;
   *)
