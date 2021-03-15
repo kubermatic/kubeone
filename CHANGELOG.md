@@ -1,5 +1,117 @@
 # Changelog
 
+# [v1.2.0](https://github.com/kubermatic/kubeone/releases/tag/v1.2.0) - TBD
+
+## Attention Needed
+
+* [**BREAKING/ACTION REQUIRED**] Starting with the KubeOne 1.3 release, the `kubeone reset` command will require an explicit confirmation like the `apply` command
+  * Running the `reset` command will require typing `yes` to confirm the intention to unprovision/reset the cluster
+  * The command can be automatically approved by using the `--auto-approve` flag
+  * The `--auto-approve` flag has been already implemented as a no-op flag in this release
+  * Starting with this release, running `kubeone reset` will show a warning about this change each time the `reset` command is used
+* [**BREAKING/ACTION REQUIRED**] Disallow and deprecate the PodPresets feature
+  * If you're upgrading a cluster that uses the PodPresets feature from Kubernetes 1.19 to 1.20, you have to disable the PodPresets feature in the KubeOne configuration manifest
+  * The PodPresets feature has been removed from Kubernetes 1.20 with no built-in replacement
+  * It's not possible to use the PodPresets feature starting with Kubernetes 1.20, however, it currently remains possible to use it for older Kubernetes versions
+  * The PodPresets feature will be removed from the KubeOneCluster API once Kubernetes 1.19 reaches End-of-Life (EOL)
+  * As an alternative to the PodPresets feature, Kubernetes recommends using the MutatingAdmissionWebhooks.
+* [**BREAKING/ACTION REQUIRED**] Support for CoreOS has been removed from KubeOne and machine-controller
+  * CoreOS has reached End-of-Life on May 26, 2020
+  * As an alternative to CoreOS, KubeOne supports Flatcar Linux
+  * We recommend migrating your CoreOS clusters to the Flatcar Linux or other supported operating system
+* [**BREAKING/ACTION REQUIRED**] Default values for OpenIDConnect has been corrected to match what's advised by the example configuration
+  * Previously, there were no default values for the OpenIDConnect fields
+  * This might only affect users using the OpenIDConnect feature
+* Kubernetes has announced deprecation of the Docker (dockershim) support in
+  the Kubernetes 1.20 release. It's expected that Docker support will be
+  removed in Kubernetes 1.22
+  * All newly created clusters running Kubernetes 1.21+ will be provisioned
+    with containerd instead of Docker
+  * Automated migration from Docker to containerd is currently not available,
+    but is planned for one of the upcoming KubeOne releases
+  * We highly recommend using containerd instead of Docker for all newly
+    created clusters. You can opt-in to use containerd instead of Docker by
+    adding `containerRuntime` configuration to your KubeOne configuration
+    manifest:
+    ```yaml
+    containerRuntime:
+      containerd: {}
+    ```
+    For the configuration file reference, run `kubeone config print --full`.
+
+## Added
+
+* Add support for Kubernetes 1.20
+* Add support for containerd container runtime ([#1180](https://github.com/kubermatic/kubeone/pull/1180), [#1188](https://github.com/kubermatic/kubeone/pull/1188), [#1190](https://github.com/kubermatic/kubeone/pull/1190), [#1205](https://github.com/kubermatic/kubeone/pull/1205), [#1227](https://github.com/kubermatic/kubeone/pull/1227), [#1229](https://github.com/kubermatic/kubeone/pull/1229))
+  * Kubernetes has announced deprecation of the Docker (dockershim) support in
+    the Kubernetes 1.20 release. It's expected that Docker support will be
+    removed in Kubernetes 1.22 or 1.23
+  * All newly created clusters running Kubernetes 1.21+ will use
+    containerd instead of Docker by default
+  * Automated migration from Docker to containerd for existing clusters is
+    currently not available, but is planned for one of the upcoming KubeOne
+    releases
+* Add support for Debian on control plane and static worker nodes ([#1233](https://github.com/kubermatic/kubeone/pull/1233))
+  * Debian is currently not supported by machine-controller, so it's not
+    possible to use it on worker nodes managed by Kubermatic machine-controller
+* Add alpha-level support for Amazon Linux 2 ([#1167](https://github.com/kubermatic/kubeone/pull/1167), [#1173](https://github.com/kubermatic/kubeone/pull/1173), [#1175](https://github.com/kubermatic/kubeone/pull/1175), [#1176](https://github.com/kubermatic/kubeone/pull/1176))
+  * Currently, all Kubernetes packages are installed by downloading binaries instead of using packages. Therefore, users are required to provide URLs using the new AssetConfiguration API to the CNI tarball, the Kubernetes Node binaries tarball (can be found in the Kubernetes CHANGELOG), and to the kubectl binary. Support for package managers is planned for the future.
+* Add alpha-level AssetConfiguration API ([#1170](https://github.com/kubermatic/kubeone/pull/1170), [#1171](https://github.com/kubermatic/kubeone/pull/1171))
+  * The AssetConfiguration API controls how assets are pulled
+  * You can use it to specify custom images for containers or custom URLs for binaries
+  * Currently-supported assets are CNI, Kubelet and Kubeadm (by providing a node binaries tarball), Kubectl, the control plane images, and the metrics-server image
+  * Changing the binary assets (CNI, Kubelet, Kubeadm and Kubectl) currently works only on Amazon Linux 2. Changing the image assets works on all supported operating systems
+* Add `Annotations` field to the `ProviderSpec` API used to add annotations to MachineDeployment objects ([#1174](https://github.com/kubermatic/kubeone/pull/1174))
+* Add support for defining Static Worker nodes in Terraform ([#1166](https://github.com/kubermatic/kubeone/pull/1166))
+* Add scrape Prometheus headless service for NodeLocalDNS ([#1165](https://github.com/kubermatic/kubeone/pull/1165))
+
+## Changed
+
+### API Changes
+
+* [**BREAKING/ACTION REQUIRED**] Default values for OpenIDConnect has been corrected to match what's advised by the example configuration ([#1235](https://github.com/kubermatic/kubeone/pull/1235))
+  * Previously, there were no default values for the OpenIDConnect fields
+  * This might only affect users using the OpenIDConnect feature
+* [**BREAKING/ACTION REQUIRED**] Disallow and deprecate the PodPresets feature ([#1236](https://github.com/kubermatic/kubeone/pull/1236))
+  * If you're upgrading a cluster that uses the PodPresets feature from Kubernetes 1.19 to 1.20, you have to disable the PodPresets feature in the KubeOne configuration manifest
+  * The PodPresets feature has been removed from Kubernetes 1.20 with no built-in replacement
+  * It's not possible to use the PodPresets feature starting with Kubernetes 1.20, however, it currently remains possible to use it for older Kubernetes versions
+  * The PodPresets feature will be removed from the KubeOneCluster API once Kubernetes 1.19 reaches End-of-Life (EOL)
+  * As an alternative to the PodPresets feature, Kubernetes recommends using the MutatingAdmissionWebhooks.
+
+### General
+
+* Warn about `kubeone reset` requiring explicit confirmation starting with KubeOne 1.3 ([#1252](https://github.com/kubermatic/kubeone/pull/1252))
+* Build KubeOne using Go 1.16.1 ([#1268](https://github.com/kubermatic/kubeone/pull/1268), [#1267](https://github.com/kubermatic/kubeone/pull/1267))
+* Stop Kubelet and reload systemd when removing binaries on CoreOS/Flatcar ([#1176](https://github.com/kubermatic/kubeone/pull/1176))
+* Add rsync on CentOS and Amazon Linux ([#1240](https://github.com/kubermatic/kubeone/pull/1240))
+
+### Bug Fixes
+
+* Drop mounting Flexvolume plugins into the OpenStack CCM. This fixes the issue with deploying the OpenStack CCM on the clusters running Flatcar Linux ([#1234](https://github.com/kubermatic/kubeone/pull/1234))
+* Ensure all credentials are available to be used in addons. This fixes the issue with the Backups addon not working on non-AWS providers ([#1248](https://github.com/kubermatic/kubeone/pull/1248))
+* Fix wrong legacy Docker version on RPM systems ([#1191](https://github.com/kubermatic/kubeone/pull/1191))
+
+### Updated
+
+* Update machine-controller to v1.25.0 ([#1238](https://github.com/kubermatic/kubeone/pull/1238))
+* Update Calico CNI to v3.16.5 ([#1163](https://github.com/kubermatic/kubeone/pull/1163))
+
+### Terraform Configs
+
+* Replace GoBetween load-balancer in vSphere Terraform example by keepalived ([#1217](https://github.com/kubermatic/kubeone/pull/1217))
+
+### Addons
+
+* Fix DNS resolution issues for the Backups addon ([#1179](https://github.com/kubermatic/kubeone/pull/1179))
+
+## Removed
+
+* [**BREAKING/ACTION REQUIRED**] Support for CoreOS has been removed from KubeOne and machine-controller ([#1232](https://github.com/kubermatic/kubeone/pull/1232))
+  * CoreOS has reached End-of-Life on May 26, 2020
+  * As an alternative to CoreOS, KubeOne supports Flatcar Linux
+  * We recommend migrating your CoreOS clusters to the Flatcar Linux or other supported operating system
+
 # [v1.2.0-rc.1](https://github.com/kubermatic/kubeone/releases/tag/v1.2.0-rc.1) - 2021-03-12
 
 ## Changed
