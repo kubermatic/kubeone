@@ -1,6 +1,6 @@
 # Changelog
 
-# [v1.2.0](https://github.com/kubermatic/kubeone/releases/tag/v1.2.0) - TBD
+# [v1.2.0](https://github.com/kubermatic/kubeone/releases/tag/v1.2.0) - 2021-03-18
 
 ## Attention Needed
 
