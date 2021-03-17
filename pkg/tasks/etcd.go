@@ -127,7 +127,7 @@ func repairClusterIfNeeded(s *state.State) error {
 
 		if deleteThisNode {
 			s.Logger.Warnf("Removing kubernets Node object %q, for it's not alive", node.Name)
-			if err = s.DynamicClient.Delete(ctx, node.DeepCopyObject()); err != nil {
+			if err = s.DynamicClient.Delete(ctx, node.DeepCopyObject().(dynclient.Object)); err != nil {
 				return errors.WithStack(err)
 			}
 		}

@@ -36,7 +36,6 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
-	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/apimachinery/pkg/util/wait"
 	certutil "k8s.io/client-go/util/cert"
@@ -80,7 +79,7 @@ func DeployWebhookConfiguration(s *state.State) error {
 
 	ctx := context.Background()
 
-	k8sobjects := []runtime.Object{
+	k8sobjects := []dynclient.Object{
 		deployment,
 		service(),
 		servingCert,

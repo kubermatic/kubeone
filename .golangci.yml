@@ -26,7 +26,6 @@ linters:
   - gosimple
   - govet
   - ineffassign
-  - interfacer
   - misspell
   - nakedret
   - scopelint
@@ -58,6 +57,6 @@ issues:
 
   - path: test/e2e
     text: "cyclomatic complexity 35 of func `TestClusterConformance` is high"
-  
+
   - path: pkg/scripts
     text: "`registry` always receives `\"127.0.0.1:5000\"`"

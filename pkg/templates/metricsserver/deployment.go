@@ -26,9 +26,9 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	apiregv1 "k8s.io/kube-aggregator/pkg/apis/apiregistration/v1"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 const (
@@ -54,7 +54,7 @@ func Deploy(s *state.State) error {
 
 	image := imageRepository + metricsServerImageName + imageTag
 
-	k8sobjects := []runtime.Object{
+	k8sobjects := []client.Object{
 		aggregatedMetricsReaderClusterRole(),
 		authDelegatorClusterRoleBinding(),
 		metricsServerKubeSystemRoleBinding(),

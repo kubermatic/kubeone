@@ -31,7 +31,7 @@ import (
 	rbacv1 "k8s.io/api/rbac/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 const (
@@ -48,7 +48,7 @@ func ensureHetzner(s *state.State) error {
 
 	ctx := context.Background()
 	image := s.Cluster.RegistryConfiguration.ImageRegistry(hetznerImageRegistry) + hetznerImage
-	k8sobject := []runtime.Object{
+	k8sobject := []client.Object{
 		hetznerServiceAccount(),
 		hetznerClusterRoleBinding(),
 		hetznerDeployment(s.Cluster.CloudProvider.Hetzner.NetworkID, s.Cluster.ClusterNetwork.PodSubnet, image),

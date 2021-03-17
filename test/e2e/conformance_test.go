@@ -36,7 +36,7 @@ const (
 	clusterNetworkServiceCIDR = "172.16.0.0/12"
 )
 
-func TestClusterConformance(t *testing.T) {
+func TestClusterConformance(t *testing.T) { //nolint:gocyclo
 	testcases := []struct {
 		name                  string
 		provider              string
