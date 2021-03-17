@@ -37,7 +37,6 @@ import (
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/apimachinery/pkg/util/wait"
-	"sigs.k8s.io/controller-runtime/pkg/client"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -51,8 +50,8 @@ const (
 	MachineControllerTag           = "v1.27.1"
 )
 
-func CRDs() []client.Object {
-	return []client.Object{
+func CRDs() []dynclient.Object {
+	return []dynclient.Object{
 		machineControllerMachineCRD(),
 		machineControllerClusterCRD(),
 		machineControllerMachineSetCRD(),
