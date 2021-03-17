@@ -23,34 +23,27 @@ import (
 	"github.com/pkg/errors"
 
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-type Updater func(client.Client, runtime.Object)
+type Updater func(client.Client, client.Object)
 
 func WithComponentLabel(componentname string) Updater {
-	return func(c client.Client, obj runtime.Object) {
+	return func(c client.Client, obj client.Object) {
 		LabelComponent(componentname, obj)
 	}
 }
 
 // CreateOrUpdate makes it easy to "apply" objects to kubernetes API server
-func CreateOrUpdate(ctx context.Context, c client.Client, obj runtime.Object, updaters ...Updater) error {
+func CreateOrUpdate(ctx context.Context, c client.Client, obj client.Object, updaters ...Updater) error {
 	for _, update := range updaters {
 		update(c, obj)
 	}
 
-	existing := obj.DeepCopyObject()
-	existingMetaObj, ok := existing.(metav1.Object)
-	if !ok {
-		return errors.Errorf("%T does not implement metav1.Object interface", obj)
-	}
-
+	existing := obj.DeepCopyObject().(client.Object)
 	key := client.ObjectKey{
-		Name:      existingMetaObj.GetName(),
-		Namespace: existingMetaObj.GetNamespace(),
+		Name:      existing.GetName(),
+		Namespace: existing.GetNamespace(),
 	}
 
 	err := c.Get(ctx, key, existing)
