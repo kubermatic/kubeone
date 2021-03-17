@@ -29,8 +29,8 @@ import (
 	"k8c.io/kubeone/pkg/state"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/wait"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 const (
@@ -94,8 +94,8 @@ const (
 `
 )
 
-func canalCRDs() []runtime.Object {
-	return []runtime.Object{
+func canalCRDs() []client.Object {
+	return []client.Object{
 		felixConfigurationCRD(),
 		ipamBlockCRD(),
 		blockAffinityCRD(),

@@ -27,8 +27,8 @@ import (
 	rbacv1 "k8s.io/api/rbac/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/intstr"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 const (
@@ -46,7 +46,7 @@ func ensureVsphere(s *state.State) error {
 
 	image := s.Cluster.RegistryConfiguration.ImageRegistry(vSphereImageRegistry) + vSphereImage
 
-	k8sobjects := []runtime.Object{
+	k8sobjects := []client.Object{
 		vSphereServiceAccount(),
 		vSphereSecret(s.Cluster.CloudProvider.CloudConfig),
 		vSphereClusterRole(),

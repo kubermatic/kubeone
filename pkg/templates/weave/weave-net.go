@@ -32,7 +32,6 @@ import (
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -88,7 +87,7 @@ func Deploy(s *state.State) error {
 
 	ds := daemonSet(s.Cluster.ClusterNetwork.CNI.WeaveNet.Encrypted, strings.Join(peers, " "), s.Cluster.ClusterNetwork.PodSubnet, kubeImage, npcImage)
 
-	k8sobjects := []runtime.Object{
+	k8sobjects := []client.Object{
 		serviceAccount(),
 		clusterRole(),
 		clusterRoleBinding(),

@@ -30,7 +30,7 @@ import (
 	rbacv1 "k8s.io/api/rbac/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 const (
@@ -49,7 +49,7 @@ func ensureDigitalOcean(s *state.State) error {
 	sa := doServiceAccount()
 	crole := doClusterRole()
 	image := s.Cluster.RegistryConfiguration.ImageRegistry(digitaloceanImageRegistry) + digitaloceanImage
-	k8sobject := []runtime.Object{
+	k8sobject := []client.Object{
 		sa,
 		crole,
 		genClusterRoleBinding("system:cloud-controller-manager", crole, sa),

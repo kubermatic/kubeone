@@ -31,7 +31,7 @@ import (
 	rbacv1 "k8s.io/api/rbac/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 type packetCloudSA struct {
@@ -67,7 +67,7 @@ func ensurePacket(s *state.State) error {
 
 	image := s.Cluster.RegistryConfiguration.ImageRegistry(packetImageRegistry) + packetImage
 
-	k8sobjects := []runtime.Object{
+	k8sobjects := []client.Object{
 		sa,
 		crole,
 		genClusterRoleBinding("system:cloud-controller-manager", crole, sa),

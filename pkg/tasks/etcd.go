@@ -29,6 +29,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/util/sets"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -127,7 +128,7 @@ func repairClusterIfNeeded(s *state.State) error {
 
 		if deleteThisNode {
 			s.Logger.Warnf("Removing kubernets Node object %q, for it's not alive", node.Name)
-			if err = s.DynamicClient.Delete(ctx, node.DeepCopyObject()); err != nil {
+			if err = s.DynamicClient.Delete(ctx, node.DeepCopyObject().(client.Object)); err != nil {
 				return errors.WithStack(err)
 			}
 		}
