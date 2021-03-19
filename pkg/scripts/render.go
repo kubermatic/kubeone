@@ -65,20 +65,26 @@ var (
 
 		"yum-docker-ce-amzn": heredoc.Docf(`
 			{{- if or .FORCE .UPGRADE }}
-			sudo yum versionlock delete docker || true
+			sudo yum versionlock delete docker cri-tools || true
 			{{- end }}
 
+			{{ $CRICTL_VERSION_TO_INSTALL := "%s" }}
 			{{ $DOCKER_VERSION_TO_INSTALL := "%s" }}
 			{{ if semverCompare "< 1.17" .KUBERNETES_VERSION }}
 			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
 			{{ end }}
 
-			sudo yum install -y docker-{{ $DOCKER_VERSION_TO_INSTALL }}ce*
-			sudo yum versionlock add docker
+			sudo yum install -y docker-{{ $DOCKER_VERSION_TO_INSTALL }}ce* cri-tools-{{ $CRICTL_VERSION_TO_INSTALL }}*
+			sudo yum versionlock add docker cri-tools
+
+			cat <<EOF | sudo tee /etc/crictl.yaml
+			runtime-endpoint: unix:///var/run/dockershim.sock
+			EOF
 
 			sudo systemctl daemon-reload
 			sudo systemctl enable --now docker
 		`,
+			defaultAmazonCrictlVersion,
 			defaultAmazonDockerVersion,
 			defaultLegacyDockerVersion,
 		),
@@ -194,11 +200,11 @@ var (
 
 		"yum-containerd-amzn": heredoc.Docf(`
 			{{- if or .FORCE .UPGRADE }}
-			sudo yum versionlock delete containerd || true
+			sudo yum versionlock delete containerd cri-tools || true
 			{{- end }}
 
-			sudo yum install -y containerd-%s*
-			sudo yum versionlock add containerd
+			sudo yum install -y containerd-%s* cri-tools-%s*
+			sudo yum versionlock add containerd cri-tools
 
 			cat <<EOF | sudo tee /etc/containerd/config.toml
 			{{ containerdCfg .INSECURE_REGISTRY -}}
@@ -220,6 +226,7 @@ var (
 			sudo systemctl restart containerd
 			`,
 			defaultAmazonContainerdVersion,
+			defaultAmazonCrictlVersion,
 		),
 	}
 )
