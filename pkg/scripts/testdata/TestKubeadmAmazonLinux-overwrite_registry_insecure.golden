@@ -92,8 +92,13 @@ EOF
 
 
 
-sudo yum install -y docker-19.03.13ce*
-sudo yum versionlock add docker
+
+sudo yum install -y docker-19.03.13ce* cri-tools-1.13.0*
+sudo yum versionlock add docker cri-tools
+
+cat <<EOF | sudo tee /etc/crictl.yaml
+runtime-endpoint: unix:///var/run/dockershim.sock
+EOF
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now docker

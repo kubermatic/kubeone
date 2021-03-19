@@ -88,6 +88,7 @@ const (
 	defaultLegacyDockerVersion     = "18.09.9"
 	defaultContainerdVersion       = "1.4.3"
 	defaultAmazonContainerdVersion = "1.4.1"
+	defaultAmazonCrictlVersion     = "1.13.0"
 )
 
 type dockerConfig struct {
