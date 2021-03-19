@@ -73,8 +73,8 @@ sudo yum install -y \
 
 
 
-sudo yum install -y containerd-1.4.1*
-sudo yum versionlock add containerd
+sudo yum install -y containerd-1.4.1* cri-tools-1.13.0*
+sudo yum versionlock add containerd cri-tools
 
 cat <<EOF | sudo tee /etc/containerd/config.toml
 version = 2
