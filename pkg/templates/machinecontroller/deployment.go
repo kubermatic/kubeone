@@ -47,7 +47,7 @@ const (
 	MachineControllerAppLabelValue = "machine-controller"
 	MachineControllerImageRegistry = "docker.io"
 	MachineControllerImage         = "/kubermatic/machine-controller:"
-	MachineControllerTag           = "v1.27.1"
+	MachineControllerTag           = "v1.27.4"
 )
 
 func CRDs() []dynclient.Object {
@@ -502,6 +502,9 @@ func machineControllerMachineCRD() *apiextensions.CustomResourceDefinition {
 	return &apiextensions.CustomResourceDefinition{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "machines.cluster.k8s.io",
+			Annotations: map[string]string{
+				"api-approved.kubernetes.io": "unapproved, legacy API",
+			},
 		},
 		Spec: apiextensions.CustomResourceDefinitionSpec{
 			Group: "cluster.k8s.io",
@@ -574,6 +577,9 @@ func machineControllerClusterCRD() *apiextensions.CustomResourceDefinition {
 	return &apiextensions.CustomResourceDefinition{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "clusters.cluster.k8s.io",
+			Annotations: map[string]string{
+				"api-approved.kubernetes.io": "unapproved, legacy API",
+			},
 		},
 		Spec: apiextensions.CustomResourceDefinitionSpec{
 			Group: "cluster.k8s.io",
@@ -603,6 +609,9 @@ func machineControllerMachineSetCRD() *apiextensions.CustomResourceDefinition {
 	return &apiextensions.CustomResourceDefinition{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "machinesets.cluster.k8s.io",
+			Annotations: map[string]string{
+				"api-approved.kubernetes.io": "unapproved, legacy API",
+			},
 		},
 		Spec: apiextensions.CustomResourceDefinitionSpec{
 			Group: "cluster.k8s.io",
@@ -680,6 +689,9 @@ func machineControllerMachineDeploymentCRD() *apiextensions.CustomResourceDefini
 	return &apiextensions.CustomResourceDefinition{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "machinedeployments.cluster.k8s.io",
+			Annotations: map[string]string{
+				"api-approved.kubernetes.io": "unapproved, legacy API",
+			},
 		},
 		Spec: apiextensions.CustomResourceDefinitionSpec{
 			Group: "cluster.k8s.io",

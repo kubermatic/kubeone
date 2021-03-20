@@ -12,7 +12,7 @@ require (
 	github.com/google/go-cmp v0.5.4
 	github.com/imdario/mergo v0.3.11
 	github.com/koron-go/prefixw v0.0.0-20181013140428-271b207a7572
-	github.com/kubermatic/machine-controller v1.27.1
+	github.com/kubermatic/machine-controller v1.27.4
 	github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de
 	github.com/pkg/errors v0.9.1
 	github.com/pkg/sftp v1.12.0
