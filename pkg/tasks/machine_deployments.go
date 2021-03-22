@@ -17,8 +17,6 @@ limitations under the License.
 package tasks
 
 import (
-	"context"
-
 	"github.com/pkg/errors"
 
 	"k8c.io/kubeone/pkg/state"
@@ -48,11 +46,9 @@ func upgradeMachineDeployments(s *state.State) error {
 
 	s.Logger.Info("Upgrade MachineDeployments...")
 
-	ctx := context.Background()
-
 	machineDeployments := clusterv1alpha1.MachineDeploymentList{}
 	err := s.DynamicClient.List(
-		ctx,
+		s.Context,
 		&machineDeployments,
 		dynclient.InNamespace(metav1.NamespaceSystem),
 	)
@@ -65,12 +61,12 @@ func upgradeMachineDeployments(s *state.State) error {
 
 		retErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
 			machine := clusterv1alpha1.MachineDeployment{}
-			if err := s.DynamicClient.Get(ctx, machineKey, &machine); err != nil {
+			if err := s.DynamicClient.Get(s.Context, machineKey, &machine); err != nil {
 				return err
 			}
 
 			machine.Spec.Template.Spec.Versions.Kubelet = s.Cluster.Versions.Kubernetes
-			return s.DynamicClient.Update(ctx, &machine)
+			return s.DynamicClient.Update(s.Context, &machine)
 		})
 
 		if retErr != nil {
