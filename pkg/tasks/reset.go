@@ -27,7 +27,6 @@ import (
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/machinecontroller"
 
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
@@ -55,7 +54,7 @@ func destroyWorkers(s *state.State) error {
 
 	mcCRDs := []string{}
 	for _, crd := range machinecontroller.CRDs() {
-		mcCRDs = append(mcCRDs, crd.(metav1.Object).GetName())
+		mcCRDs = append(mcCRDs, crd.GetName())
 	}
 
 	condFn := clientutil.CRDsReadyCondition(s.Context, s.DynamicClient, mcCRDs)
