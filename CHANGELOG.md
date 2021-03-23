@@ -1,5 +1,15 @@
 # Changelog
 
+# [v1.2.1](https://github.com/kubermatic/kubeone/releases/tag/v1.2.1) - 2021-03-23
+
+**Check out the changelog for the [v1.2.0 release](https://github.com/kubermatic/kubeone/releases/tag/v1.2.0) for more information about what changes were introduced in the 1.2 release.**
+
+## Changed
+
+### Bug Fixes
+
+* Install `cri-tools` (`crictl`) on Amazon Linux 2. This fixes the issue with provisioning Kubernetes and Amazon EKS-D clusters on Amazon Linux 2 ([#1282](https://github.com/kubermatic/kubeone/pull/1282))
+
 # [v1.2.0](https://github.com/kubermatic/kubeone/releases/tag/v1.2.0) - 2021-03-18
 
 ## Attention Needed
@@ -38,6 +48,11 @@
       containerd: {}
     ```
     For the configuration file reference, run `kubeone config print --full`.
+
+## Known Issues
+
+* Provisioning a Kubernetes or Amazon EKS-D cluster on Amazon Linux 2 will fail due to missing `crictl` binary. This bug has been fixed in the [v1.2.1 release](https://github.com/kubermatic/kubeone/releases/tag/v1.2.1).
+* Upgrading an Amazon EKS-D cluster will fail due to kubeadm preflight checks failing. We're investigating the issue and you can follow the progress by checking the issue [#1284](https://github.com/kubermatic/kubeone/issues/1284).
 
 ## Added
 
