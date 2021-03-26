@@ -23,12 +23,14 @@ spec:
               - key: v1.machine-controller.kubermatic.io/operating-system
                 operator: In
                 values:
+                - amzn
                 - centos
                 - rhel
             - matchExpressions:
               - key: v1.kubeone.io/operating-system
                 operator: In
                 values:
+                - amzn
                 - centos
                 - rhel
       tolerations:
@@ -56,14 +58,14 @@ spec:
 
             source /etc/os-release
 
-            case $VERSION_ID in
-            7*)
+            case "$ID$VERSION_ID" in
+            amzn2 | centos7 | rhel7*)
               yum install -y yum-cron
               sed -i 's/apply_updates = no/apply_updates = yes/' /etc/yum/yum-cron.conf
               sed -i 's/update_cmd = default/update_cmd = security/' /etc/yum/yum-cron.conf
               systemctl enable --now yum-cron
               ;;
-            8*)
+            centos8 | rhel8*)
               dnf install -y dnf-automatic
               sed -i 's/apply_updates = no/apply_updates = yes/' /etc/dnf/automatic.conf
               sed -i 's/upgrade_type = default/upgrade_type = security/' /etc/dnf/automatic.conf
