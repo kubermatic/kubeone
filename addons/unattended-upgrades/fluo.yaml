@@ -1,0 +1,414 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: reboot-coordinator
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: flatcar-linux-update-operator
+  namespace: reboot-coordinator
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - create
+      - get
+      - update
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - create
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
+      - delete
+  - apiGroups:
+      - "apps"
+    resources:
+      - daemonsets
+    verbs:
+      - get
+  - apiGroups:
+      - policy
+    resourceNames:
+      - flatcar-linux-update-operator
+    resources:
+      - podsecuritypolicies
+    verbs:
+      - use
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: flatcar-linux-update-agent
+  namespace: reboot-coordinator
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - create
+      - get
+      - update
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - create
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
+      - delete
+  - apiGroups:
+      - "apps"
+    resources:
+      - daemonsets
+    verbs:
+      - get
+  - apiGroups:
+      - policy
+    resourceNames:
+      - flatcar-linux-update-agent
+    resources:
+      - podsecuritypolicies
+    verbs:
+      - use
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: flatcar-linux-update-operator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: flatcar-linux-update-operator
+subjects:
+  - kind: ServiceAccount
+    name: flatcar-linux-update-operator-sa
+    namespace: reboot-coordinator
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: flatcar-linux-update-agent
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: flatcar-linux-update-agent
+subjects:
+  - kind: ServiceAccount
+    name: flatcar-linux-update-agent
+    namespace: reboot-coordinator
+---
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: flatcar-linux-update-operator
+spec:
+  privileged: false
+  allowPrivilegeEscalation: false
+  requiredDropCapabilities:
+    - ALL
+  volumes:
+    - 'secret'
+  hostNetwork: false
+  hostIPC: false
+  hostPID: false
+  runAsUser:
+    rule: 'MustRunAs'
+    ranges:
+      - min: 1
+        max: 65535
+  seLinux:
+    rule: 'RunAsAny'
+  supplementalGroups:
+    rule: 'MustRunAs'
+    ranges:
+      - min: 1
+        max: 65535
+  fsGroup:
+    rule: 'MustRunAs'
+    ranges:
+      - min: 1
+        max: 65535
+  readOnlyRootFilesystem: true
+---
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: flatcar-linux-update-agent
+spec:
+  privileged: false
+  allowPrivilegeEscalation: false
+  requiredDropCapabilities:
+    - ALL
+  volumes:
+    - 'configMap'
+    - 'emptyDir'
+    - 'hostPath'
+    - 'secret'
+  allowedHostPaths:
+    - pathPrefix: "/etc/flatcar"
+      readOnly: true
+    - pathPrefix: "/etc/os-release"
+      readOnly: true
+    - pathPrefix: "/usr/share/flatcar"
+      readOnly: true
+    - pathPrefix: "/var/run/dbus"
+      readOnly: false
+  hostNetwork: false
+  hostIPC: false
+  hostPID: false
+  runAsUser:
+    rule: 'RunAsAny'
+  seLinux:
+    rule: 'RunAsAny'
+  supplementalGroups:
+    rule: 'MustRunAs'
+    ranges:
+      - min: 1
+        max: 65535
+  fsGroup:
+    rule: 'MustRunAs'
+    ranges:
+      - min: 1
+        max: 65535
+  readOnlyRootFilesystem: true
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: flatcar-linux-update-agent
+  namespace: reboot-coordinator
+spec:
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: flatcar-linux-update-agent
+  template:
+    metadata:
+      labels:
+        app: flatcar-linux-update-agent
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: v1.machine-controller.kubermatic.io/operating-system
+                operator: In
+                values:
+                - flatcar
+            - matchExpressions:
+              - key: v1.kubeone.io/operating-system
+                operator: In
+                values:
+                - flatcar
+      serviceAccountName: flatcar-linux-update-agent
+      containers:
+      - name: update-agent
+        image: quay.io/kinvolk/flatcar-linux-update-operator:v0.7.3
+        command:
+        - "/bin/update-agent"
+        volumeMounts:
+          - mountPath: /var/run/dbus
+            name: var-run-dbus
+            readOnly: false
+          - mountPath: /etc/flatcar
+            name: etc-flatcar
+            readOnly: true
+          - mountPath: /usr/share/flatcar
+            name: usr-share-flatcar
+            readOnly: true
+          - mountPath: /etc/os-release
+            name: etc-os-release
+            readOnly: true
+        env:
+        # read by update-agent as the node name to manage reboots for
+        - name: UPDATE_AGENT_NODE
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        # Update agent must run with a UID that is allowed to reboot nodes via logind using the D-Bus interface.
+        # FLUO Docker image runs as 65534 (nobody) by default, so we need to escalate the privileges here,
+        # as we cannot ensure, that host configuration of PolicyKit and D-Bus allows UID 65534 to execute that.
+        securityContext:
+          runAsUser: 0
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+      volumes:
+      - name: var-run-dbus
+        hostPath:
+          path: /var/run/dbus
+      - name: etc-flatcar
+        hostPath:
+          path: /etc/flatcar
+      - name: usr-share-flatcar
+        hostPath:
+          path: /usr/share/flatcar
+      - name: etc-os-release
+        hostPath:
+          path: /etc/os-release
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: flatcar-linux-update-operator-sa
+  namespace: reboot-coordinator
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flatcar-linux-update-operator
+  namespace: reboot-coordinator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flatcar-linux-update-operator
+  template:
+    metadata:
+      labels:
+        app: flatcar-linux-update-operator
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: v1.machine-controller.kubermatic.io/operating-system
+                operator: In
+                values:
+                - flatcar
+            - matchExpressions:
+              - key: v1.kubeone.io/operating-system
+                operator: In
+                values:
+                - flatcar
+      serviceAccountName: flatcar-linux-update-operator-sa
+      containers:
+      - name: update-operator
+        image: quay.io/kinvolk/flatcar-linux-update-operator:v0.7.3
+        command:
+        - "/bin/update-operator"
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: flatcar-linux-update-agent
+  namespace: reboot-coordinator
+
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: flatcar-updates-config
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      name: flatcar-updates-config
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        name: flatcar-updates-config
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: v1.machine-controller.kubermatic.io/operating-system
+                operator: In
+                values:
+                - flatcar
+            - matchExpressions:
+              - key: v1.kubeone.io/operating-system
+                operator: In
+                values:
+                - flatcar
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+      hostPID: true
+      containers:
+      - name: "flatcar-updates-config"
+        image: "alpine:3.12.4"
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          privileged: true
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -xeuo pipefail
+          apk add --no-cache bash util-linux
+          nsenter -t 1 -m -u -i -n -p -- bash -c "${STARTUP_SCRIPT}"
+          sleep inf
+        env:
+        - name: STARTUP_SCRIPT
+          value: |
+            set -xeuo pipefail
+            # per https://github.com/kinvolk/flatcar-linux-update-operator#requirements
+            systemctl mask locksmithd.service
+            systemctl enable --now update-engine.service

@@ -143,6 +143,10 @@ func WithRefreshResources(t Tasks) Tasks {
 				Predicate:  func(s *state.State) bool { return s.Cluster.Addons != nil && s.Cluster.Addons.Enable },
 			},
 			{
+				Fn:     labelNodeOSes,
+				ErrMsg: "failed to label nodes with their OS",
+			},
+			{
 				Fn:         credentials.Ensure,
 				ErrMsg:     "failed to ensure credentials secret",
 				Desciption: "ensure credential",
@@ -258,6 +262,10 @@ func kubernetesResources() Tasks {
 		},
 		{Fn: patchCNI, ErrMsg: "failed to patch CNI"},
 		{Fn: joinStaticWorkerNodes, ErrMsg: "failed to join worker nodes to the cluster"},
+		{
+			Fn:     labelNodeOSes,
+			ErrMsg: "failed to label nodes with their OS",
+		},
 		{
 			Fn:         machinecontroller.Ensure,
 			ErrMsg:     "failed to ensure machine-controller",
