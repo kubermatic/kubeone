@@ -92,17 +92,19 @@ spec:
               - key: v1.machine-controller.kubermatic.io/operating-system
                 operator: In
                 values:
-                - ubuntu
+                - amzn
                 - centos
                 - rhel
+                - ubuntu
             - matchExpressions:
               - key: v1.kubeone.io/operating-system
                 operator: In
                 values:
-                - ubuntu
-                - debian
+                - amzn
                 - centos
+                - debian
                 - rhel
+                - ubuntu
       serviceAccountName: kured
       tolerations:
         - key: node-role.kubernetes.io/master
