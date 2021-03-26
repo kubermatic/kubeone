@@ -2,18 +2,18 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: unnatended-upgrades-install
+  name: unattended-upgrades-install
   namespace: kube-system
 spec:
   selector:
     matchLabels:
-      name: unnatended-upgrades-install
+      name: unattended-upgrades-install
   updateStrategy:
     type: RollingUpdate
   template:
     metadata:
       labels:
-        name: unnatended-upgrades-install
+        name: unattended-upgrades-install
     spec:
       affinity:
         nodeAffinity:
@@ -35,7 +35,7 @@ spec:
         effect: NoSchedule
       hostPID: true
       containers:
-      - name: "unnatended-upgrades-install"
+      - name: "unattended-upgrades-install"
         image: "alpine:3.12.4"
         securityContext:
           privileged: true
