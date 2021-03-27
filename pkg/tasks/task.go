@@ -35,11 +35,11 @@ func defaultRetryBackoff(retries int) wait.Backoff {
 
 // Task is a runnable task
 type Task struct {
-	Fn         func(*state.State) error
-	Predicate  func(*state.State) bool
-	Desciption string
-	ErrMsg     string
-	Retries    int
+	Fn          func(*state.State) error
+	Predicate   func(*state.State) bool
+	Description string
+	ErrMsg      string
+	Retries     int
 }
 
 // Run runs a task

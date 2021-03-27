@@ -238,6 +238,17 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		}
 		clusterConfig.APIServer.ExtraVolumes = append(clusterConfig.APIServer.ExtraVolumes, admissionVol)
 	}
+	// this is not exactly as s.EncryptionEnabled(). We need this to be true during the enable/disable or disable/enable transition.
+	if (cluster.Features.EncryptionProviders != nil && cluster.Features.EncryptionProviders.Enable) || s.LiveCluster.EncryptionConfiguration.Enable {
+		encryptionProvidersVol := kubeadmv1beta1.HostPathMount{
+			Name:      "encryption-providers-conf",
+			HostPath:  "/etc/kubernetes/encryption-providers",
+			MountPath: "/etc/kubernetes/encryption-providers",
+			ReadOnly:  true,
+			PathType:  corev1.HostPathDirectoryOrCreate,
+		}
+		clusterConfig.APIServer.ExtraVolumes = append(clusterConfig.APIServer.ExtraVolumes, encryptionProvidersVol)
+	}
 
 	args := kubeadmargs.NewFrom(clusterConfig.APIServer.ExtraArgs)
 	features.UpdateKubeadmClusterConfiguration(cluster.Features, args)

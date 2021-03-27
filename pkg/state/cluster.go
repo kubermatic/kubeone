@@ -22,6 +22,8 @@ import (
 	"time"
 
 	"github.com/Masterminds/semver/v3"
+
+	apiserverconfigv1 "k8s.io/apiserver/pkg/apis/config/v1"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 
@@ -29,10 +31,17 @@ import (
 )
 
 type Cluster struct {
-	ControlPlane    []Host
-	StaticWorkers   []Host
-	ExpectedVersion *semver.Version
-	Lock            sync.Mutex
+	ControlPlane            []Host
+	StaticWorkers           []Host
+	ExpectedVersion         *semver.Version
+	EncryptionConfiguration *EncryptionConfiguration
+	Lock                    sync.Mutex
+}
+
+type EncryptionConfiguration struct {
+	Enable bool
+	Config *apiserverconfigv1.EncryptionConfiguration
+	Custom bool
 }
 
 type Host struct {

@@ -363,6 +363,9 @@ type Features struct {
 	MetricsServer *MetricsServer `json:"metricsServer,omitempty"`
 	// OpenIDConnect
 	OpenIDConnect *OpenIDConnect `json:"openidConnect,omitempty"`
+	// Encryption Providers
+	// +k8s:conversion-gen=false
+	EncryptionProviders *EncryptionProviders `json:"encryptionProviders,omitempty"`
 }
 
 // SystemPackages controls configurations of APT/YUM
@@ -567,4 +570,12 @@ type Addons struct {
 	Enable bool `json:"enable,omitempty"`
 	// Path on the local file system to the directory with addons manifests.
 	Path string `json:"path"`
+}
+
+// Encryption Providers feature flag
+type EncryptionProviders struct {
+	// Enable
+	Enable bool `json:"enable"`
+	// CustomEncryptionConfiguration
+	CustomEncryptionConfiguration string `json:"customEncryptionConfiguration"`
 }

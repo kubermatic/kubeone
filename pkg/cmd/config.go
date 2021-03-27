@@ -69,13 +69,14 @@ type printOpts struct {
 	HTTPSProxy string `longflag:"proxy-https"`
 	NoProxy    string `longflag:"proxy-no-proxy"`
 
-	EnablePodNodeSelector   bool `longflag:"enable-pod-node-selector"`
-	EnablePodSecurityPolicy bool `longflag:"enable-pod-security-policy"`
-	EnablePodPresets        bool `longflag:"enable-pod-presets"`
-	EnableStaticAuditLog    bool `longflag:"enable-static-audit-log"`
-	EnableDynamicAuditLog   bool `longflag:"enable-dynamic-audit-log"`
-	EnableMetricsServer     bool `longflag:"enable-metrics-server"`
-	EnableOpenIDConnect     bool `longflag:"enable-openid-connect"`
+	EnablePodNodeSelector     bool `longflag:"enable-pod-node-selector"`
+	EnablePodSecurityPolicy   bool `longflag:"enable-pod-security-policy"`
+	EnablePodPresets          bool `longflag:"enable-pod-presets"`
+	EnableStaticAuditLog      bool `longflag:"enable-static-audit-log"`
+	EnableDynamicAuditLog     bool `longflag:"enable-dynamic-audit-log"`
+	EnableMetricsServer       bool `longflag:"enable-metrics-server"`
+	EnableOpenIDConnect       bool `longflag:"enable-openid-connect"`
+	EnableEncryptionProviders bool `longflag:"enable-encryption-providers"`
 
 	DeployMachineController bool `longflag:"deploy-machine-controller"`
 }
@@ -167,6 +168,7 @@ func printCmd() *cobra.Command {
 	cmd.Flags().BoolVar(&opts.EnableDynamicAuditLog, longFlagName(opts, "EnableDynamicAuditLog"), false, "enable DynamicAuditLog")
 	cmd.Flags().BoolVar(&opts.EnableMetricsServer, longFlagName(opts, "EnableMetricsServer"), true, "enable metrics-server")
 	cmd.Flags().BoolVar(&opts.EnableOpenIDConnect, longFlagName(opts, "EnableOpenIDConnect"), false, "enable OpenID Connect authentication")
+	cmd.Flags().BoolVar(&opts.EnableEncryptionProviders, longFlagName(opts, "EnableEncryptionProviders"), false, "enable Encryption Providers")
 
 	// MachineController
 	cmd.Flags().BoolVar(&opts.DeployMachineController, longFlagName(opts, "DeployMachineController"), true, "deploy kubermatic machine-controller")
@@ -356,6 +358,23 @@ func createAndPrintManifest(printOptions *printOpts) error {
 	}
 
 	// Features
+	printFeatures(cfg, printOptions)
+
+	// machine-controller
+	if !printOptions.DeployMachineController {
+		cfg.Set(yamled.Path{"machineController", "deploy"}, printOptions.DeployMachineController)
+	}
+
+	// Print the manifest
+	err := validateAndPrintConfig(cfg)
+	if err != nil {
+		return errors.Wrap(err, "unable to validate and print config")
+	}
+
+	return nil
+}
+
+func printFeatures(cfg *yamled.Document, printOptions *printOpts) {
 	if printOptions.EnablePodNodeSelector {
 		cfg.Set(yamled.Path{"features", "podNodeSelector", "enable"}, printOptions.EnablePodSecurityPolicy)
 		cfg.Set(yamled.Path{"features", "podNodeSelector", "config", "configFilePath"}, "")
@@ -384,19 +403,9 @@ func createAndPrintManifest(printOptions *printOpts) error {
 		cfg.Set(yamled.Path{"features", "openidConnect", "config", "requiredClaim"}, "")
 		cfg.Set(yamled.Path{"features", "openidConnect", "config", "caFile"}, "")
 	}
-
-	// machine-controller
-	if !printOptions.DeployMachineController {
-		cfg.Set(yamled.Path{"machineController", "deploy"}, printOptions.DeployMachineController)
+	if printOptions.EnableEncryptionProviders {
+		cfg.Set(yamled.Path{"features", "encryptionProviders", "enable"}, printOptions.EnableEncryptionProviders)
 	}
-
-	// Print the manifest
-	err := validateAndPrintConfig(cfg)
-	if err != nil {
-		return errors.Wrap(err, "unable to validate and print config")
-	}
-
-	return nil
 }
 
 func parseControlPlaneHosts(cfg *yamled.Document, hostList string) error {
@@ -678,8 +687,13 @@ features:
       # If set, the OpenID server's certificate will be verified by one of the
       # authorities in the oidc-ca-file, otherwise the host's root CA set will
       # be used.
-      caFile: ""
-
+	  caFile: ""
+  # Enable Kubernetes Encryption Providers
+  # For more information: https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/
+  encryptionProviders:
+    # disabled by default
+    enable: {{ .EnableEncryptionProviders }}
+    customEncryptionConfiguration: # inline string
 systemPackages:
   # will add Docker and Kubernetes repositories to OS package manager
   configureRepositories: true # it's true by default
