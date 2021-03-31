@@ -46,10 +46,11 @@ func deployCAOnNode(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connec
 func renewCerts(s *state.State) error {
 	if !s.ForceUpgrade {
 		s.Logger.Warn("Your control-plane certificates are about to expire in less then 90 days")
+		s.Logger.Warn("To renew them without changing kubernetes version run `kubeone apply --force-upgrade`")
 		return nil
 	}
 	s.Logger.Warn("Your control-plane certificates are about to expire in less then 90 days")
-	s.Logger.Warn("Forced renew")
+	s.Logger.Warn("Force renewing Kubernetes certificates")
 
 	// /etc/kubernetes/admin.conf will be changed after certificates renew, so we have to initialize client again
 	s.Logger.Infoln("Resetting Kubernetes clientset...")

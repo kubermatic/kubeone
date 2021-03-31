@@ -78,7 +78,7 @@ const (
 */
 
 const (
-	x90Days = time.Minute * 24 * 90
+	x90Days = time.Hour * 24 * 90
 )
 
 // CertsToExpireInLessThen90Days will return true if any of the control plane certificates are to be expired soon (90
