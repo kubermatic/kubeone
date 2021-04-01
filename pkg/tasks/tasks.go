@@ -113,7 +113,6 @@ func WithFullInstall(t Tasks) Tasks {
 			{Fn: kubeconfig.BuildKubernetesClientset, ErrMsg: "failed to build kubernetes clientset"},
 			{Fn: repairClusterIfNeeded, ErrMsg: "failed to repair cluster"},
 			{Fn: joinControlplaneNode, ErrMsg: "failed to join other masters a cluster"},
-			{Fn: saveKubeconfig, ErrMsg: "failed to save kubeconfig to the local machine"},
 			{Fn: restartKubeAPIServer, ErrMsg: "failed to restart unhealthy kube-apiserver"},
 		}...).
 		append(WithResources(nil)...).
@@ -132,6 +131,10 @@ func WithResources(t Tasks) Tasks {
 				Predicate: func(s *state.State) bool {
 					return s.LiveCluster.CertsToExpireInLessThen90Days()
 				},
+			},
+			{
+				Fn:     saveKubeconfig,
+				ErrMsg: "failed to save kubeconfig to the local machine",
 			},
 			{
 				Fn:         nodelocaldns.Deploy,

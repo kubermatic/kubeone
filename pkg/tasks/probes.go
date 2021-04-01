@@ -212,7 +212,7 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Conne
 		return err
 	}
 
-	if foundHost.Initialized() {
+	if foundHost.Initialized() && controlPlane {
 		foundHost.EarliestCertExpiry, err = earliestCertExpiry(conn)
 		if err != nil {
 			return err
