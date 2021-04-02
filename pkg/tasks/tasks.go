@@ -113,22 +113,41 @@ func WithFullInstall(t Tasks) Tasks {
 			{Fn: kubeconfig.BuildKubernetesClientset, ErrMsg: "failed to build kubernetes clientset"},
 			{Fn: repairClusterIfNeeded, ErrMsg: "failed to repair cluster"},
 			{Fn: joinControlplaneNode, ErrMsg: "failed to join other masters a cluster"},
-			{Fn: saveKubeconfig, ErrMsg: "failed to save kubeconfig to the local machine"},
 			{Fn: restartKubeAPIServer, ErrMsg: "failed to restart unhealthy kube-apiserver"},
 		}...).
-		append(kubernetesResources()...).
+		append(WithResources(nil)...).
 		append(
 			Task{Fn: createMachineDeployments, ErrMsg: "failed to create worker machines"},
 		)
 }
 
-func WithRefreshResources(t Tasks) Tasks {
+func WithResources(t Tasks) Tasks {
 	return t.append(
 		Tasks{
+			{
+				Fn:         renewCerts,
+				ErrMsg:     "failed to renew certificates",
+				Desciption: "renew all certificates",
+				Predicate: func(s *state.State) bool {
+					return s.LiveCluster.CertsToExpireInLessThen90Days()
+				},
+			},
+			{
+				Fn:     saveKubeconfig,
+				ErrMsg: "failed to save kubeconfig to the local machine",
+			},
 			{
 				Fn:         nodelocaldns.Deploy,
 				ErrMsg:     "failed to deploy nodelocaldns",
 				Desciption: "ensure nodelocaldns",
+			},
+			{
+				Fn:     features.Activate,
+				ErrMsg: "failed to activate features",
+			},
+			{
+				Fn:     patchCoreDNS,
+				ErrMsg: "failed to patch CoreDNS",
 			},
 			{
 				Fn:         ensureCNI,
@@ -143,10 +162,6 @@ func WithRefreshResources(t Tasks) Tasks {
 				Predicate:  func(s *state.State) bool { return s.Cluster.Addons != nil && s.Cluster.Addons.Enable },
 			},
 			{
-				Fn:     labelNodeOSes,
-				ErrMsg: "failed to label nodes with their OS",
-			},
-			{
 				Fn:         credentials.Ensure,
 				ErrMsg:     "failed to ensure credentials secret",
 				Desciption: "ensure credential",
@@ -158,6 +173,18 @@ func WithRefreshResources(t Tasks) Tasks {
 				Predicate:  func(s *state.State) bool { return s.Cluster.CloudProvider.External },
 			},
 			{
+				Fn:     patchCNI,
+				ErrMsg: "failed to patch CNI",
+			},
+			{
+				Fn:     joinStaticWorkerNodes,
+				ErrMsg: "failed to join worker nodes to the cluster",
+			},
+			{
+				Fn:     labelNodeOSes,
+				ErrMsg: "failed to label nodes with their OS",
+			},
+			{
 				Fn:     certificate.DownloadCA,
 				ErrMsg: "failed to download ca from leader",
 			},
@@ -166,6 +193,10 @@ func WithRefreshResources(t Tasks) Tasks {
 				ErrMsg:     "failed to ensure machine-controller",
 				Desciption: "ensure machine-controller",
 				Predicate:  func(s *state.State) bool { return s.Cluster.MachineController.Deploy },
+			},
+			{
+				Fn:     machinecontroller.WaitReady,
+				ErrMsg: "failed to wait for machine-controller",
 			},
 			{
 				Fn:         upgradeMachineDeployments,
@@ -191,7 +222,7 @@ func WithUpgrade(t Tasks) Tasks {
 			{Fn: upgradeFollower, ErrMsg: "failed to upgrade follower control plane"},
 			{Fn: certificate.DownloadCA, ErrMsg: "failed to download ca from leader"},
 		}...).
-		append(kubernetesResources()...).
+		append(WithResources(nil)...).
 		append(
 			Task{Fn: restartKubeAPIServer, ErrMsg: "failed to restart unhealthy kube-apiserver"},
 			Task{Fn: upgradeStaticWorkers, ErrMsg: "unable to upgrade static worker nodes"},
@@ -225,53 +256,5 @@ func kubernetesConfigFiles() Tasks {
 		{Fn: generateKubeadm, ErrMsg: "failed to generate kubeadm config files"},
 		{Fn: generateConfigurationFiles, ErrMsg: "failed to generate config files"},
 		{Fn: uploadConfigurationFiles, ErrMsg: "failed to upload config files"},
-	}
-}
-
-func kubernetesResources() Tasks {
-	return Tasks{
-		{
-			Fn:         nodelocaldns.Deploy,
-			ErrMsg:     "failed to deploy nodelocaldns",
-			Desciption: "ensure nodelocaldns",
-		},
-		{Fn: features.Activate, ErrMsg: "failed to activate features"},
-		{
-			Fn:         ensureCNI,
-			ErrMsg:     "failed to install cni plugin",
-			Desciption: "ensure CNI",
-			Predicate:  func(s *state.State) bool { return s.Cluster.ClusterNetwork.CNI.External == nil },
-		},
-		{
-			Fn:         addons.Ensure,
-			ErrMsg:     "failed to apply addons",
-			Desciption: "ensure addons",
-			Predicate:  func(s *state.State) bool { return s.Cluster.Addons != nil && s.Cluster.Addons.Enable },
-		},
-		{Fn: patchCoreDNS, ErrMsg: "failed to patch CoreDNS"},
-		{
-			Fn:         credentials.Ensure,
-			ErrMsg:     "failed to ensure credentials secret",
-			Desciption: "ensure credential",
-		},
-		{
-			Fn:         externalccm.Ensure,
-			ErrMsg:     "failed to ensure external CCM",
-			Desciption: "ensure external CCM",
-			Predicate:  func(s *state.State) bool { return s.Cluster.CloudProvider.External },
-		},
-		{Fn: patchCNI, ErrMsg: "failed to patch CNI"},
-		{Fn: joinStaticWorkerNodes, ErrMsg: "failed to join worker nodes to the cluster"},
-		{
-			Fn:     labelNodeOSes,
-			ErrMsg: "failed to label nodes with their OS",
-		},
-		{
-			Fn:         machinecontroller.Ensure,
-			ErrMsg:     "failed to ensure machine-controller",
-			Desciption: "ensure machine-controller",
-			Predicate:  func(s *state.State) bool { return s.Cluster.MachineController.Deploy },
-		},
-		{Fn: machinecontroller.WaitReady, ErrMsg: "failed to wait for machine-controller"},
 	}
 }

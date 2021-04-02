@@ -17,7 +17,18 @@ limitations under the License.
 package tasks
 
 import (
+	"bytes"
+	"crypto/x509"
+	"encoding/pem"
+	"errors"
+	"fmt"
+	"io"
+	"time"
+
+	"github.com/Masterminds/semver/v3"
+
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/kubeconfig"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
 )
@@ -30,4 +41,101 @@ func deployPKIToFollowers(s *state.State) error {
 func deployCAOnNode(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	s.Logger.Infoln("Uploading PKI files...")
 	return s.Configuration.UploadTo(conn, s.WorkDir)
+}
+
+func renewCerts(s *state.State) error {
+	if !s.ForceUpgrade {
+		s.Logger.Warn("Your control-plane certificates are about to expire in less then 90 days")
+		s.Logger.Warn("To renew them without changing kubernetes version run `kubeone apply --force-upgrade`")
+		return nil
+	}
+	s.Logger.Warn("Your control-plane certificates are about to expire in less then 90 days")
+	s.Logger.Warn("Force renewing Kubernetes certificates")
+
+	// /etc/kubernetes/admin.conf will be changed after certificates renew, so we have to initialize client again
+	s.Logger.Infoln("Resetting Kubernetes clientset...")
+	s.DynamicClient = nil
+
+	renewCmd := "sudo kubeadm alpha certs renew all"
+	greaterThen120, _ := semver.NewConstraint(">=1.20")
+	if greaterThen120.Check(s.LiveCluster.ExpectedVersion) {
+		renewCmd = "sudo kubeadm certs renew all"
+	}
+
+	err := s.RunTaskOnControlPlane(
+		func(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+			_, _, _, err := conn.Exec(renewCmd)
+			return err
+		},
+		state.RunParallel,
+	)
+	if err != nil {
+		return err
+	}
+
+	return kubeconfig.BuildKubernetesClientset(s)
+}
+
+func fetchCert(conn ssh.Connection, filename string) (*x509.Certificate, error) {
+	var stdoutBuf bytes.Buffer
+
+	exitCode, err := conn.Stream(fmt.Sprintf("sudo cat %s", filename), &stdoutBuf, io.Discard)
+	if err != nil {
+		return nil, err
+	}
+	if exitCode != 0 {
+		return nil, errors.New("non zero exit code")
+	}
+
+	pemBlock, rest := pem.Decode(stdoutBuf.Bytes())
+	if len(rest) != 0 {
+		return nil, errors.New("returned non-zero rest")
+	}
+
+	cert, err := x509.ParseCertificate(pemBlock.Bytes)
+	if err != nil {
+		return nil, err
+	}
+
+	return cert, nil
+}
+
+func timeBefore(t1 time.Time, t2 time.Time) bool {
+	if t2.IsZero() {
+		return true
+	}
+
+	return t1.Before(t2)
+}
+
+func earliestCertExpiry(conn ssh.Connection) (time.Time, error) {
+	var (
+		earliestCertExpirationTime time.Time
+
+		certsToCheck = []string{
+			"/etc/kubernetes/pki/apiserver-etcd-client.crt",
+			"/etc/kubernetes/pki/apiserver-kubelet-client.crt",
+			"/etc/kubernetes/pki/apiserver.crt",
+			"/etc/kubernetes/pki/ca.crt",
+			"/etc/kubernetes/pki/etcd/ca.crt",
+			"/etc/kubernetes/pki/etcd/healthcheck-client.crt",
+			"/etc/kubernetes/pki/etcd/peer.crt",
+			"/etc/kubernetes/pki/etcd/server.crt",
+			"/etc/kubernetes/pki/front-proxy-ca.crt",
+			"/etc/kubernetes/pki/front-proxy-client.crt",
+		}
+	)
+
+	for _, certName := range certsToCheck {
+		cert, err := fetchCert(conn, certName)
+		if err != nil {
+			return earliestCertExpirationTime, err
+		}
+
+		if timeBefore(cert.NotAfter, earliestCertExpirationTime) {
+			earliestCertExpirationTime = cert.NotAfter
+		}
+	}
+
+	return earliestCertExpirationTime, nil
 }

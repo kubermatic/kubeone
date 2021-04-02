@@ -61,8 +61,8 @@ func runPreflightChecks(s *state.State) error {
 		return errors.Wrap(err, "unable to verify components version")
 	}
 
-	if err := verifyVersionSkew(s, &nodes, s.Verbose); err != nil {
-		if s.ForceUpgrade {
+	if canPass, err := verifyVersionSkew(s, &nodes, s.Verbose); err != nil {
+		if s.ForceUpgrade && canPass {
 			s.Logger.Warningf("version skew check failed: %v", err)
 		} else {
 			return errors.Wrap(err, "version skew check failed")
@@ -104,10 +104,10 @@ func verifyVersion(logger logrus.FieldLogger, version string, nodes *corev1.Node
 }
 
 // verifyVersionSkew ensures the requested version matches the version skew policy
-func verifyVersionSkew(s *state.State, nodes *corev1.NodeList, verbose bool) error {
+func verifyVersionSkew(s *state.State, nodes *corev1.NodeList, verbose bool) (bool, error) {
 	reqVer, err := semver.NewVersion(s.Cluster.Versions.Kubernetes)
 	if err != nil {
-		return errors.Wrap(err, "provided version is invalid")
+		return false, errors.Wrap(err, "provided version is invalid")
 	}
 
 	// Check API server version
@@ -121,14 +121,14 @@ func verifyVersionSkew(s *state.State, nodes *corev1.NodeList, verbose bool) err
 
 	err = s.DynamicClient.List(context.Background(), apiserverPods, apiserverListOpts)
 	if err != nil {
-		return errors.Wrap(err, "unable to list apiserver pods")
+		return false, errors.Wrap(err, "unable to list apiserver pods")
 	}
 
 	// This ensures all API server pods are running the same apiserver version
 	for _, p := range apiserverPods.Items {
 		ver, apiserverErr := parseContainerImageVersion(p.Spec.Containers[0].Image)
 		if apiserverErr != nil {
-			return errors.Wrap(apiserverErr, "unable to parse apiserver version")
+			return false, errors.Wrap(apiserverErr, "unable to parse apiserver version")
 		}
 		if verbose {
 			fmt.Printf("Pod %s is running apiserver version %s\n", p.ObjectMeta.Name, ver.String())
@@ -137,20 +137,20 @@ func verifyVersionSkew(s *state.State, nodes *corev1.NodeList, verbose bool) err
 			apiserverVersion = ver
 		}
 		if apiserverVersion.Compare(ver) != 0 {
-			return errors.New("all apiserver pods must be running same version before upgrade")
+			return true, errors.New("all apiserver pods must be running same version before upgrade")
 		}
 	}
 
 	err = checkVersionSkew(reqVer, apiserverVersion, 1)
 	if err != nil {
-		return errors.Wrap(err, "apiserver version check failed")
+		return true, errors.Wrap(err, "apiserver version check failed")
 	}
 
 	// Check Kubelet version
 	for _, n := range nodes.Items {
 		kubeletVer, kubeletErr := semver.NewVersion(n.Status.NodeInfo.KubeletVersion)
 		if kubeletErr != nil {
-			return errors.Wrap(err, "unable to parse kubelet version")
+			return false, errors.Wrap(err, "unable to parse kubelet version")
 		}
 		if verbose {
 			fmt.Printf("Node %s is running kubelet version %s\n", n.ObjectMeta.Name, kubeletVer.String())
@@ -158,14 +158,14 @@ func verifyVersionSkew(s *state.State, nodes *corev1.NodeList, verbose bool) err
 		// Check is requested version different than current and ensure version skew policy
 		err = checkVersionSkew(reqVer, kubeletVer, 2)
 		if err != nil {
-			return errors.Wrap(err, "kubelet version check failed")
+			return true, errors.Wrap(err, "kubelet version check failed")
 		}
 		if kubeletVer.Minor() > apiserverVersion.Minor() {
-			return errors.New("kubelet cannot be newer than apiserver")
+			return true, errors.New("kubelet cannot be newer than apiserver")
 		}
 	}
 
-	return nil
+	return false, nil
 }
 
 func parseContainerImageVersion(image string) (*semver.Version, error) {

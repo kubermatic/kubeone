@@ -154,7 +154,7 @@ func kubeletVersionCmdGenerator(execPath string) string {
 func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	var (
 		idx          int
-		h            *state.Host
+		foundHost    *state.Host
 		controlPlane bool
 	)
 
@@ -162,17 +162,17 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Conne
 	for i := range s.LiveCluster.ControlPlane {
 		host := s.LiveCluster.ControlPlane[i]
 		if host.Config.Hostname == node.Hostname {
-			h = &host
+			foundHost = &host
 			idx = i
 			controlPlane = true
 			break
 		}
 	}
-	if h == nil {
+	if foundHost == nil {
 		for i := range s.LiveCluster.StaticWorkers {
 			host := s.LiveCluster.StaticWorkers[i]
 			if host.Config.Hostname == node.Hostname {
-				h = &host
+				foundHost = &host
 				idx = i
 				break
 			}
@@ -180,7 +180,7 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Conne
 	}
 	s.LiveCluster.Lock.Unlock()
 
-	if h == nil {
+	if foundHost == nil {
 		return errors.New("didn't matched live cluster against provided")
 	}
 
@@ -188,35 +188,42 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Conne
 
 	containerRuntimeOpts := []systemdUnitInfoOpt{withComponentVersion(versionCmdGenerator)}
 
-	if h.Config.OperatingSystem == kubeoneapi.OperatingSystemNameFlatcar {
+	if foundHost.Config.OperatingSystem == kubeoneapi.OperatingSystemNameFlatcar {
 		// Flatcar is special
 		containerRuntimeOpts = []systemdUnitInfoOpt{withFlatcarContainerRuntimeVersion}
 	}
 
-	h.ContainerRuntimeContainerd, err = systemdUnitInfo("containerd", conn, containerRuntimeOpts...)
+	foundHost.ContainerRuntimeContainerd, err = systemdUnitInfo("containerd", conn, containerRuntimeOpts...)
 	if err != nil {
 		return err
 	}
 
-	h.ContainerRuntimeDocker, err = systemdUnitInfo("docker", conn, containerRuntimeOpts...)
+	foundHost.ContainerRuntimeDocker, err = systemdUnitInfo("docker", conn, containerRuntimeOpts...)
 	if err != nil {
 		return err
 	}
 
-	h.Kubelet, err = systemdUnitInfo("kubelet", conn, withComponentVersion(kubeletVersionCmdGenerator))
+	foundHost.Kubelet, err = systemdUnitInfo("kubelet", conn, withComponentVersion(kubeletVersionCmdGenerator))
 	if err != nil {
 		return err
 	}
 
-	if err := detectKubeletInitialized(h, conn); err != nil {
+	if err = detectKubeletInitialized(foundHost, conn); err != nil {
 		return err
+	}
+
+	if foundHost.Initialized() && controlPlane {
+		foundHost.EarliestCertExpiry, err = earliestCertExpiry(conn)
+		if err != nil {
+			return err
+		}
 	}
 
 	s.LiveCluster.Lock.Lock()
 	if controlPlane {
-		s.LiveCluster.ControlPlane[idx] = *h
+		s.LiveCluster.ControlPlane[idx] = *foundHost
 	} else {
-		s.LiveCluster.StaticWorkers[idx] = *h
+		s.LiveCluster.StaticWorkers[idx] = *foundHost
 	}
 	s.LiveCluster.Lock.Unlock()
 	return nil

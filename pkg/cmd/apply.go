@@ -303,9 +303,9 @@ func runApplyInstall(s *state.State, opts *applyOpts) error { // Print the expec
 
 func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
 	fmt.Println("The following actions will be taken: ")
-	fmt.Println("Run with --verbose flag for more information.")
-
-	var tasksToRun tasks.Tasks
+	if !opts.Verbose {
+		fmt.Println("Run with --verbose flag for more information.")
+	}
 
 	upgradeNeeded, err := s.LiveCluster.UpgradeNeeded()
 	if err != nil {
@@ -315,6 +315,7 @@ func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
 
 	operations := []string{}
 
+	tasksToRun := tasks.WithResources(nil)
 	if upgradeNeeded || opts.ForceUpgrade {
 		tasksToRun = tasks.WithUpgrade(nil)
 
@@ -346,8 +347,6 @@ func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
 					node.Kubelet.Version,
 					s.Cluster.Versions.Kubernetes))
 		}
-	} else {
-		tasksToRun = tasks.WithRefreshResources(nil)
 	}
 
 	fmt.Println()
