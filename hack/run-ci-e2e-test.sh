@@ -149,11 +149,11 @@ function runE2E() {
   set -x
 
   go test \
-    -tags=e2e \
+    ./test/e2e \
     -v \
     -timeout="${timeout}" \
     -run="${test_set}" \
-    ./test/e2e \
+    -args \
     -credentials="${CREDENTIALS_FILE_PATH}" \
     -identifier="${BUILD_ID}" \
     -provider="${PROVIDER}" \

@@ -1,5 +1,3 @@
-// +build e2e
-
 /*
 Copyright 2019 The KubeOne Authors.
 
@@ -21,6 +19,7 @@ package e2e
 import (
 	"context"
 	"fmt"
+	"os"
 	"testing"
 	"time"
 
@@ -105,6 +104,11 @@ func TestClusterUpgrade(t *testing.T) {
 		// to satisfy scope linter
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
+			_, runThisTest := os.LookupEnv("TEST_SET")
+			if !runThisTest {
+				t.Skip("set TEST_SET to run this test")
+			}
+
 			// Only run selected test suite.
 			// Test options are controlled using flags.
 			if len(testRunIdentifier) == 0 {
