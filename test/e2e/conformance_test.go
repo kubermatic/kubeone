@@ -18,7 +18,6 @@ package e2e
 
 import (
 	"fmt"
-	"os"
 	"testing"
 	"time"
 
@@ -98,10 +97,7 @@ func TestClusterConformance(t *testing.T) { //nolint:gocyclo
 		// to satisfy scope linter
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			_, runThisTest := os.LookupEnv("KUBEONE_TEST_SET")
-			if !runThisTest {
-				t.Skip("set KUBEONE_TEST_SET to run this test")
-			}
+			checkEnv(t)
 
 			// Only run selected test suite.
 			// Test options are controlled using flags.

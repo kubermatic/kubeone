@@ -19,6 +19,7 @@ package e2e
 import (
 	"context"
 	"flag"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -54,6 +55,13 @@ func init() {
 	flag.StringVar(&testTargetVersion, "target-version", "", "Cluster version to provision for tests")
 	flag.StringVar(&testOSControlPlane, "os-control-plane", "", "Operating system to use for control plane nodes")
 	flag.StringVar(&testOSWorkers, "os-workers", "", "Operating system to use for worker nodes")
+}
+
+func checkEnv(t *testing.T) {
+	_, runThisTest := os.LookupEnv("KUBEONE_TEST_RUN")
+	if !runThisTest {
+		t.Skip("set KUBEONE_TEST_RUN to run this test")
+	}
 }
 
 func setupTearDown(p provisioner.Provisioner, k *Kubeone) func(t *testing.T) {
