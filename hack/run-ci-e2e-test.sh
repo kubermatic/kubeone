@@ -24,14 +24,15 @@ set -o pipefail
 
 RUNNING_IN_CI=${JOB_NAME:-""}
 BUILD_ID=${BUILD_ID:-"${USER}-local"}
-PROVIDER=${PROVIDER:-"aws"}
-CONTAINER_RUNTIME=${CONTAINER_RUNTIME:-"docker"}
+PROVIDER=${PROVIDER:-"PROVIDER-MISSING"}
+CONTAINER_RUNTIME=${CONTAINER_RUNTIME:-}
 KUBETESTS_ROOT=$(realpath "${KUBETESTS_ROOT:-"/opt/kube-test"}")
-TEST_SET=${TEST_SET:-"conformance"}
-TEST_CLUSTER_TARGET_VERSION=${TEST_CLUSTER_TARGET_VERSION:-""}
-TEST_CLUSTER_INITIAL_VERSION=${TEST_CLUSTER_INITIAL_VERSION:-""}
-TEST_OS_CONTROL_PLANE=${TEST_OS_CONTROL_PLANE:-""}
-TEST_OS_WORKERS=${TEST_OS_WORKERS:-""}
+KUBEONE_TEST_RUN=${KUBEONE_TEST_RUN:-}
+TEST_CLUSTER_TARGET_VERSION=${TEST_CLUSTER_TARGET_VERSION:-}
+TEST_CLUSTER_INITIAL_VERSION=${TEST_CLUSTER_INITIAL_VERSION:-}
+TEST_OS_CONTROL_PLANE=${TEST_OS_CONTROL_PLANE:-}
+TEST_OS_WORKERS=${TEST_OS_WORKERS:-}
+TEST_TIMEOUT="60m"
 PATH=$PATH:$(go env GOPATH)/bin
 TERRAFORM_DIR=$PWD/examples/terraform
 SSH_PRIVATE_KEY_FILE="${HOME}/.ssh/id_rsa_kubeone_e2e"
@@ -44,7 +45,7 @@ CREDENTIALS_FILE_PATH=""
 
 function cleanup() {
   set +e
-  for try in {1..20}; do
+  for try in {1..3}; do
     cd "${TERRAFORM_DIR}/${PROVIDER}"
     echo "Cleaning up terraform state, attempt ${try}"
     # Upstream interpolation bug, but we dont care about the output
@@ -144,15 +145,26 @@ function ssh_agent() {
 }
 
 function runE2E() {
-  local test_set=$1
-  local timeout=$2
+  local run_filter=$1
   set -x
+
+  # split run_filter by / in case if filter contain nested subtests.
+  # nested subtests are valid for `go test -run`, but will not be reflected by `go test -list`.
+  local list_filter
+  IFS='/' read -ra list_filter <<< "${run_filter}"
+
+  numberOfTestsToRun=$(go test ./test/e2e -list "${list_filter[0]}" | wc -l)
+  numberOfTestsToRun=$(( "$numberOfTestsToRun"-1 ))
+
+  if [[ "$numberOfTestsToRun" == "0" ]]; then
+    fail "run_filter '${run_filter}' selects no tests to run"
+  fi
 
   go test \
     ./test/e2e \
     -v \
-    -timeout="${timeout}" \
-    -run="${test_set}" \
+    -timeout="${TEST_TIMEOUT}" \
+    -run="${run_filter}" \
     -args \
     -credentials="${CREDENTIALS_FILE_PATH}" \
     -identifier="${BUILD_ID}" \
@@ -167,21 +179,8 @@ function runE2E() {
 if [ -n "${RUNNING_IN_CI}" ]; then
   setup_ci_environment_vars
   link_s3_backend
+  generate_ssh_key "${SSH_PRIVATE_KEY_FILE}"
+  ssh_agent "${SSH_PRIVATE_KEY_FILE}"
 fi
 
-generate_ssh_key "${SSH_PRIVATE_KEY_FILE}"
-ssh_agent "${SSH_PRIVATE_KEY_FILE}"
-
-# Start the tests
-echo "Running E2E tests ..."
-case ${TEST_SET} in
-"conformance")
-  runE2E "TestClusterConformance" "60m"
-  ;;
-"upgrades")
-  runE2E "TestClusterUpgrade" "120m"
-  ;;
-*)
-  fail "unknown TEST_SET: ${TEST_SET}"
-  ;;
-esac
+runE2E "${KUBEONE_TEST_RUN}"

@@ -104,9 +104,9 @@ func TestClusterUpgrade(t *testing.T) {
 		// to satisfy scope linter
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			_, runThisTest := os.LookupEnv("TEST_SET")
+			_, runThisTest := os.LookupEnv("KUBEONE_TEST_SET")
 			if !runThisTest {
-				t.Skip("set TEST_SET to run this test")
+				t.Skip("set KUBEONE_TEST_SET to run this test")
 			}
 
 			// Only run selected test suite.
