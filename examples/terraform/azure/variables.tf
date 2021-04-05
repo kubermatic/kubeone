@@ -70,11 +70,11 @@ variable "worker_vm_size" {
 }
 
 variable "control_plane_vm_count" {
-  description = "VM Size for worker machines"
+  description = "Number of control plane instances"
   default     = 3
 }
 
-variable "worker_node_vm_count" {
-  description = "VM Size for worker machines"
-  default     = 3
+variable "initial_machinedeployment_replicas" {
+  description = "Number of replicas per MachineDeployment"
+  default     = 1
 }

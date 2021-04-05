@@ -130,8 +130,8 @@ resource "azurerm_lb" "lb" {
 }
 
 resource "azurerm_lb_backend_address_pool" "backend_pool" {
-  loadbalancer_id     = azurerm_lb.lb.id
-  name                = "ApiServers"
+  loadbalancer_id = azurerm_lb.lb.id
+  name            = "ApiServers"
 }
 
 resource "azurerm_lb_rule" "lb_rule" {
@@ -228,3 +228,17 @@ resource "azurerm_virtual_machine" "control_plane" {
   }
 }
 
+# Hack to ensure we get access to public ip in first attempt
+resource "time_sleep" "wait_30_seconds" {
+  depends_on      = [azurerm_virtual_machine.control_plane]
+  create_duration = "30s"
+}
+
+data "azurerm_public_ip" "control_plane" {
+  depends_on = [
+    time_sleep.wait_30_seconds
+  ]
+  count               = var.control_plane_vm_count
+  name                = "${var.cluster_name}-cp-${count.index}"
+  resource_group_name = azurerm_resource_group.rg.name
+}
