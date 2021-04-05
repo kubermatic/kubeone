@@ -1,5 +1,3 @@
-// +build e2e
-
 /*
 Copyright 2019 The KubeOne Authors.
 
@@ -99,6 +97,8 @@ func TestClusterConformance(t *testing.T) { //nolint:gocyclo
 		// to satisfy scope linter
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
+			checkEnv(t)
+
 			// Only run selected test suite.
 			// Test options are controlled using flags.
 			if testProvider != tc.provider {

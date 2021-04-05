@@ -1,5 +1,3 @@
-// +build e2e
-
 /*
 Copyright 2019 The KubeOne Authors.
 
@@ -21,6 +19,7 @@ package e2e
 import (
 	"context"
 	"flag"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -56,16 +55,14 @@ func init() {
 	flag.StringVar(&testTargetVersion, "target-version", "", "Cluster version to provision for tests")
 	flag.StringVar(&testOSControlPlane, "os-control-plane", "", "Operating system to use for control plane nodes")
 	flag.StringVar(&testOSWorkers, "os-workers", "", "Operating system to use for worker nodes")
-	flag.Parse()
 }
 
-// This is a workaround for a change in the testing framework
-// affecting Go 1.13 and newer.
-// More details: https://github.com/golang/go/issues/31859#issuecomment-489889428
-var _ = func() bool {
-	testing.Init()
-	return true
-}()
+func checkEnv(t *testing.T) {
+	_, runThisTest := os.LookupEnv("KUBEONE_TEST_RUN")
+	if !runThisTest {
+		t.Skip("set KUBEONE_TEST_RUN to run this test")
+	}
+}
 
 func setupTearDown(p provisioner.Provisioner, k *Kubeone) func(t *testing.T) {
 	return func(t *testing.T) {

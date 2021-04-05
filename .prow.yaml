@@ -147,8 +147,8 @@ presubmits:
           value: containerd
         - name: TEST_CLUSTER_TARGET_VERSION
           value: "1.18.15"
-        - name: TEST_SET
-          value: "conformance"
+        - name: KUBEONE_TEST_RUN
+          value: "TestClusterConformance"
         resources:
           requests:
             cpu: 1
@@ -173,8 +173,8 @@ presubmits:
               value: "aws"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.18.15"
-            - name: TEST_SET
-              value: "conformance"
+            - name: KUBEONE_TEST_RUN
+              value: "TestClusterConformance"
           resources:
             requests:
               cpu: 1
@@ -199,12 +199,12 @@ presubmits:
               value: "aws"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.19.7"
-            - name: TEST_SET
-              value: "conformance"
+            - name: KUBEONE_TEST_RUN
+              value: "TestClusterConformance"
           resources:
             requests:
               cpu: 1
-  
+
   - name: pull-kubeone-e2e-aws-conformance-1.20
     run_if_changed: "(pkg/|examples/terraform/aws|hack/|test/)"
     decorate: true
@@ -225,8 +225,8 @@ presubmits:
               value: "aws"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.20.2"
-            - name: TEST_SET
-              value: "conformance"
+            - name: KUBEONE_TEST_RUN
+              value: "TestClusterConformance"
           resources:
             requests:
               cpu: 1
@@ -255,8 +255,8 @@ presubmits:
               value: "digitalocean"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.18.15"
-            - name: TEST_SET
-              value: "conformance"
+            - name: KUBEONE_TEST_RUN
+              value: "TestClusterConformance"
           resources:
             requests:
               cpu: 1
@@ -281,8 +281,8 @@ presubmits:
               value: "digitalocean"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.19.7"
-            - name: TEST_SET
-              value: "conformance"
+            - name: KUBEONE_TEST_RUN
+              value: "TestClusterConformance"
           resources:
             requests:
               cpu: 1
@@ -307,8 +307,8 @@ presubmits:
               value: "digitalocean"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.20.2"
-            - name: TEST_SET
-              value: "conformance"
+            - name: KUBEONE_TEST_RUN
+              value: "TestClusterConformance"
           resources:
             requests:
               cpu: 1
@@ -337,8 +337,8 @@ presubmits:
               value: "hetzner"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.18.15"
-            - name: TEST_SET
-              value: "conformance"
+            - name: KUBEONE_TEST_RUN
+              value: "TestClusterConformance"
           resources:
             requests:
               cpu: 1
@@ -363,8 +363,8 @@ presubmits:
               value: "hetzner"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.19.7"
-            - name: TEST_SET
-              value: "conformance"
+            - name: KUBEONE_TEST_RUN
+              value: "TestClusterConformance"
           resources:
             requests:
               cpu: 1
@@ -389,8 +389,8 @@ presubmits:
               value: "hetzner"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.20.2"
-            - name: TEST_SET
-              value: "conformance"
+            - name: KUBEONE_TEST_RUN
+              value: "TestClusterConformance"
           resources:
             requests:
               cpu: 1
@@ -419,8 +419,8 @@ presubmits:
               value: "gce"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.18.15"
-            - name: TEST_SET
-              value: "conformance"
+            - name: KUBEONE_TEST_RUN
+              value: "TestClusterConformance"
             - name: TF_VAR_project
               value: "kubeone-terraform-test"
           resources:
@@ -447,8 +447,8 @@ presubmits:
               value: "gce"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.19.7"
-            - name: TEST_SET
-              value: "conformance"
+            - name: KUBEONE_TEST_RUN
+              value: "TestClusterConformance"
             - name: TF_VAR_project
               value: "kubeone-terraform-test"
           resources:
@@ -475,8 +475,8 @@ presubmits:
               value: "gce"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.20.2"
-            - name: TEST_SET
-              value: "conformance"
+            - name: KUBEONE_TEST_RUN
+              value: "TestClusterConformance"
             - name: TF_VAR_project
               value: "kubeone-terraform-test"
           resources:
@@ -507,8 +507,8 @@ presubmits:
               value: "packet"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.18.15"
-            - name: TEST_SET
-              value: "conformance"
+            - name: KUBEONE_TEST_RUN
+              value: "TestClusterConformance"
           resources:
             requests:
               cpu: 1
@@ -533,12 +533,12 @@ presubmits:
               value: "packet"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.19.7"
-            - name: TEST_SET
-              value: "conformance"
+            - name: KUBEONE_TEST_RUN
+              value: "TestClusterConformance"
           resources:
             requests:
               cpu: 1
-  
+
   - name: pull-kubeone-e2e-packet-conformance-1.20
     always_run: false
     decorate: true
@@ -559,8 +559,8 @@ presubmits:
               value: "packet"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.20.2"
-            - name: TEST_SET
-              value: "conformance"
+            - name: KUBEONE_TEST_RUN
+              value: "TestClusterConformance"
           resources:
             requests:
               cpu: 1
@@ -589,8 +589,8 @@ presubmits:
               value: "openstack"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.18.15"
-            - name: TEST_SET
-              value: "conformance"
+            - name: KUBEONE_TEST_RUN
+              value: "TestClusterConformance"
           resources:
             requests:
               cpu: 1
@@ -615,12 +615,12 @@ presubmits:
               value: "openstack"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.19.7"
-            - name: TEST_SET
-              value: "conformance"
+            - name: KUBEONE_TEST_RUN
+              value: "TestClusterConformance"
           resources:
             requests:
               cpu: 1
-  
+
   - name: pull-kubeone-e2e-openstack-conformance-1.20
     always_run: false
     decorate: true
@@ -641,8 +641,8 @@ presubmits:
               value: "openstack"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.20.2"
-            - name: TEST_SET
-              value: "conformance"
+            - name: KUBEONE_TEST_RUN
+              value: "TestClusterConformance"
           resources:
             requests:
               cpu: 1
@@ -675,8 +675,10 @@ presubmits:
           value: "1.17.17"
         - name: TEST_CLUSTER_TARGET_VERSION
           value: "1.18.15"
-        - name: TEST_SET
-          value: "upgrades"
+        - name: TEST_TIMEOUT
+          valut: "120m"
+        - name: KUBEONE_TEST_RUN
+          value: "TestClusterUpgrade"
 
   - name: pull-kubeone-e2e-aws-upgrade-1.17-1.18
     run_if_changed: "(pkg/|examples/terraform/aws|hack/|test/)"
@@ -700,8 +702,10 @@ presubmits:
           value: "1.17.17"
         - name: TEST_CLUSTER_TARGET_VERSION
           value: "1.18.15"
-        - name: TEST_SET
-          value: "upgrades"
+        - name: TEST_TIMEOUT
+          valut: "120m"
+        - name: KUBEONE_TEST_RUN
+          value: "TestClusterUpgrade"
 
   - name: pull-kubeone-e2e-aws-upgrade-1.18-1.19
     run_if_changed: "(pkg/|examples/terraform/aws|hack/|test/)"
@@ -725,9 +729,11 @@ presubmits:
           value: "1.18.15"
         - name: TEST_CLUSTER_TARGET_VERSION
           value: "1.19.7"
-        - name: TEST_SET
-          value: "upgrades"
-  
+        - name: TEST_TIMEOUT
+          valut: "120m"
+        - name: KUBEONE_TEST_RUN
+          value: "TestClusterUpgrade"
+
   - name: pull-kubeone-e2e-aws-upgrade-1.19-1.20
     run_if_changed: "(pkg/|examples/terraform/aws|hack/|test/)"
     decorate: true
@@ -750,8 +756,10 @@ presubmits:
           value: "1.19.7"
         - name: TEST_CLUSTER_TARGET_VERSION
           value: "1.20.2"
-        - name: TEST_SET
-          value: "upgrades"
+        - name: TEST_TIMEOUT
+          valut: "120m"
+        - name: KUBEONE_TEST_RUN
+          value: "TestClusterUpgrade"
 
   #########################################################
   # E2E/Upgrade tests (DigitalOcean)
@@ -779,8 +787,10 @@ presubmits:
           value: "1.17.17"
         - name: TEST_CLUSTER_TARGET_VERSION
           value: "1.18.15"
-        - name: TEST_SET
-          value: "upgrades"
+        - name: TEST_TIMEOUT
+          valut: "120m"
+        - name: KUBEONE_TEST_RUN
+          value: "TestClusterUpgrade"
 
   - name: pull-kubeone-e2e-digitalocean-upgrade-1.18-1.19
     always_run: false
@@ -804,9 +814,11 @@ presubmits:
           value: "1.18.15"
         - name: TEST_CLUSTER_TARGET_VERSION
           value: "1.19.7"
-        - name: TEST_SET
-          value: "upgrades"
-  
+        - name: TEST_TIMEOUT
+          valut: "120m"
+        - name: KUBEONE_TEST_RUN
+          value: "TestClusterUpgrade"
+
   - name: pull-kubeone-e2e-digitalocean-upgrade-1.19-1.20
     always_run: false
     decorate: true
@@ -829,8 +841,10 @@ presubmits:
           value: "1.19.7"
         - name: TEST_CLUSTER_TARGET_VERSION
           value: "1.20.2"
-        - name: TEST_SET
-          value: "upgrades"
+        - name: TEST_TIMEOUT
+          valut: "120m"
+        - name: KUBEONE_TEST_RUN
+          value: "TestClusterUpgrade"
 
   #########################################################
   # E2E/Upgrade tests (Hetzner)
@@ -858,8 +872,10 @@ presubmits:
           value: "1.17.17"
         - name: TEST_CLUSTER_TARGET_VERSION
           value: "1.18.15"
-        - name: TEST_SET
-          value: "upgrades"
+        - name: TEST_TIMEOUT
+          valut: "120m"
+        - name: KUBEONE_TEST_RUN
+          value: "TestClusterUpgrade"
 
   - name: pull-kubeone-e2e-hetzner-upgrade-1.18-1.19
     always_run: false
@@ -883,9 +899,11 @@ presubmits:
           value: "1.18.15"
         - name: TEST_CLUSTER_TARGET_VERSION
           value: "1.19.7"
-        - name: TEST_SET
-          value: "upgrades"
-  
+        - name: TEST_TIMEOUT
+          valut: "120m"
+        - name: KUBEONE_TEST_RUN
+          value: "TestClusterUpgrade"
+
   - name: pull-kubeone-e2e-hetzner-upgrade-1.19-1.20
     always_run: false
     decorate: true
@@ -908,8 +926,10 @@ presubmits:
           value: "1.19.7"
         - name: TEST_CLUSTER_TARGET_VERSION
           value: "1.20.2"
-        - name: TEST_SET
-          value: "upgrades"
+        - name: TEST_TIMEOUT
+          valut: "120m"
+        - name: KUBEONE_TEST_RUN
+          value: "TestClusterUpgrade"
 
   #########################################################
   # E2E/Upgrade tests (GCE)
@@ -937,8 +957,10 @@ presubmits:
           value: "1.17.17"
         - name: TEST_CLUSTER_TARGET_VERSION
           value: "1.18.15"
-        - name: TEST_SET
-          value: "upgrades"
+        - name: TEST_TIMEOUT
+          valut: "120m"
+        - name: KUBEONE_TEST_RUN
+          value: "TestClusterUpgrade"
         - name: TF_VAR_project
           value: "kubeone-terraform-test"
 
@@ -964,11 +986,13 @@ presubmits:
           value: "1.18.15"
         - name: TEST_CLUSTER_TARGET_VERSION
           value: "1.19.7"
-        - name: TEST_SET
-          value: "upgrades"
+        - name: TEST_TIMEOUT
+          valut: "120m"
+        - name: KUBEONE_TEST_RUN
+          value: "TestClusterUpgrade"
         - name: TF_VAR_project
           value: "kubeone-terraform-test"
-  
+
   - name: pull-kubeone-e2e-gce-upgrade-1.19-1.20
     always_run: false
     decorate: true
@@ -991,8 +1015,10 @@ presubmits:
           value: "1.19.7"
         - name: TEST_CLUSTER_TARGET_VERSION
           value: "1.20.2"
-        - name: TEST_SET
-          value: "upgrades"
+        - name: TEST_TIMEOUT
+          valut: "120m"
+        - name: KUBEONE_TEST_RUN
+          value: "TestClusterUpgrade"
         - name: TF_VAR_project
           value: "kubeone-terraform-test"
 
@@ -1022,8 +1048,10 @@ presubmits:
           value: "1.17.17"
         - name: TEST_CLUSTER_TARGET_VERSION
           value: "1.18.15"
-        - name: TEST_SET
-          value: "upgrades"
+        - name: TEST_TIMEOUT
+          valut: "120m"
+        - name: KUBEONE_TEST_RUN
+          value: "TestClusterUpgrade"
 
   - name: pull-kubeone-e2e-packet-upgrade-1.18-1.19
     always_run: false
@@ -1047,9 +1075,11 @@ presubmits:
           value: "1.18.15"
         - name: TEST_CLUSTER_TARGET_VERSION
           value: "1.19.7"
-        - name: TEST_SET
-          value: "upgrades"
-  
+        - name: TEST_TIMEOUT
+          valut: "120m"
+        - name: KUBEONE_TEST_RUN
+          value: "TestClusterUpgrade"
+
   - name: pull-kubeone-e2e-packet-upgrade-1.19-1.20
     always_run: false
     decorate: true
@@ -1072,8 +1102,10 @@ presubmits:
           value: "1.19.7"
         - name: TEST_CLUSTER_TARGET_VERSION
           value: "1.20.2"
-        - name: TEST_SET
-          value: "upgrades"
+        - name: TEST_TIMEOUT
+          valut: "120m"
+        - name: KUBEONE_TEST_RUN
+          value: "TestClusterUpgrade"
 
   #########################################################
   # E2E/Upgrade tests (OpenStack)
@@ -1101,8 +1133,10 @@ presubmits:
               value: "1.17.17"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.18.15"
-            - name: TEST_SET
-              value: "upgrades"
+            - name: TEST_TIMEOUT
+              valut: "120m"
+            - name: KUBEONE_TEST_RUN
+              value: "TestClusterUpgrade"
 
   - name: pull-kubeone-e2e-openstack-upgrade-1.18-1.19
     always_run: false
@@ -1126,9 +1160,11 @@ presubmits:
               value: "1.18.15"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.19.7"
-            - name: TEST_SET
-              value: "upgrades"
-  
+            - name: TEST_TIMEOUT
+              valut: "120m"
+            - name: KUBEONE_TEST_RUN
+              value: "TestClusterUpgrade"
+
   - name: pull-kubeone-e2e-openstack-upgrade-1.19-1.20
     always_run: false
     decorate: true
@@ -1151,8 +1187,10 @@ presubmits:
               value: "1.19.7"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.20.2"
-            - name: TEST_SET
-              value: "upgrades"
+            - name: TEST_TIMEOUT
+              valut: "120m"
+            - name: KUBEONE_TEST_RUN
+              value: "TestClusterUpgrade"
 
 postsubmits:
   - name: ci-push-kubeone-e2e-image
