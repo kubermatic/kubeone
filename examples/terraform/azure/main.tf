@@ -18,6 +18,9 @@ provider "azurerm" {
   features {}
 }
 
+provider "time" {
+}
+
 resource "azurerm_resource_group" "rg" {
   name     = "${var.cluster_name}-rg"
   location = var.location
@@ -97,7 +100,7 @@ resource "azurerm_public_ip" "lbip" {
 }
 
 resource "azurerm_public_ip" "control_plane" {
-  count = 3
+  count = var.control_plane_vm_count
 
   name                = "${var.cluster_name}-cp-${count.index}"
   location            = var.location
@@ -127,7 +130,6 @@ resource "azurerm_lb" "lb" {
 }
 
 resource "azurerm_lb_backend_address_pool" "backend_pool" {
-  resource_group_name = azurerm_resource_group.rg.name
   loadbalancer_id     = azurerm_lb.lb.id
   name                = "ApiServers"
 }
@@ -158,7 +160,7 @@ resource "azurerm_lb_probe" "lb_probe" {
 }
 
 resource "azurerm_network_interface" "control_plane" {
-  count = 3
+  count = var.control_plane_vm_count
 
   name                = "${var.cluster_name}-cp-${count.index}"
   location            = var.location
@@ -173,7 +175,7 @@ resource "azurerm_network_interface" "control_plane" {
 }
 
 resource "azurerm_network_interface_backend_address_pool_association" "control_plane" {
-  count = 3
+  count = var.control_plane_vm_count
 
   ip_configuration_name   = "${var.cluster_name}-cp-${count.index}"
   network_interface_id    = element(azurerm_network_interface.control_plane.*.id, count.index)
@@ -181,7 +183,7 @@ resource "azurerm_network_interface_backend_address_pool_association" "control_p
 }
 
 resource "azurerm_virtual_machine" "control_plane" {
-  count = 3
+  count = var.control_plane_vm_count
 
   name                             = "${var.cluster_name}-cp-${count.index}"
   location                         = var.location

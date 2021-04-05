@@ -22,6 +22,21 @@ output "kubeone_api" {
   }
 }
 
+# Hack to ensure we get access to public ip in first attempt
+resource "time_sleep" "wait_30_seconds" {
+  depends_on = [azurerm_virtual_machine.control_plane]
+  create_duration = "30s"
+}
+
+data "azurerm_public_ip" "control_plane" {
+  depends_on = [
+    time_sleep.wait_30_seconds
+  ]
+  count = var.control_plane_vm_count
+  name                = "${var.cluster_name}-cp-${count.index}"
+  resource_group_name = azurerm_resource_group.rg.name
+}
+
 output "kubeone_hosts" {
   description = "Control plane endpoints to SSH to"
 
@@ -30,7 +45,7 @@ output "kubeone_hosts" {
       cluster_name         = var.cluster_name
       cloud_provider       = "azure"
       private_address      = azurerm_network_interface.control_plane.*.private_ip_address
-      public_address       = azurerm_public_ip.control_plane.*.ip_address
+      public_address       = data.azurerm_public_ip.control_plane.*.ip_address
       hostnames            = formatlist("${var.cluster_name}-cp-%d", [0, 1, 2])
       ssh_agent_socket     = var.ssh_agent_socket
       ssh_port             = var.ssh_port
@@ -47,7 +62,7 @@ output "kubeone_workers" {
     # following outputs will be parsed by kubeone and automatically merged into
     # corresponding (by name) worker definition
     "${var.cluster_name}-pool1" = {
-      replicas = 1
+      replicas = var.worker_node_vm_count
       providerSpec = {
         sshPublicKeys   = [file(var.ssh_public_key_file)]
         operatingSystem = var.worker_os

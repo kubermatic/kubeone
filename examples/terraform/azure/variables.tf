@@ -69,3 +69,12 @@ variable "worker_vm_size" {
   default     = "Standard_B2s"
 }
 
+variable "control_plane_vm_count" {
+  description = "VM Size for worker machines"
+  default     = 3
+}
+
+variable "worker_node_vm_count" {
+  description = "VM Size for worker machines"
+  default     = 3
+}
