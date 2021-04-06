@@ -1,6 +1,6 @@
 +++
 title = "v1beta1 API Reference"
-date = 2020-12-08T12:31:41+02:00
+date = 2021-04-06T09:46:54+03:00
 weight = 11
 +++
 ## v1beta1
@@ -278,7 +278,7 @@ Features controls what features will be enabled on the cluster
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | podNodeSelector | PodNodeSelector | *[PodNodeSelector](#podnodeselector) | false |
-| podPresets | PodPresets | *[PodPresets](#podpresets) | false |
+| podPresets | PodPresets Deprecated: will be removed once Kubernetes 1.19 reaches EOL | *[PodPresets](#podpresets) | false |
 | podSecurityPolicy | PodSecurityPolicy | *[PodSecurityPolicy](#podsecuritypolicy) | false |
 | staticAuditLog | StaticAuditLog | *[StaticAuditLog](#staticauditlog) | false |
 | dynamicAuditLog | DynamicAuditLog | *[DynamicAuditLog](#dynamicauditlog) | false |
@@ -355,6 +355,7 @@ KubeOneCluster is KubeOne Cluster API Schema
 | staticWorkers | StaticWorkers describes the worker nodes that are managed by KubeOne/kubeadm. | [StaticWorkersConfig](#staticworkersconfig) | false |
 | dynamicWorkers | DynamicWorkers describes the worker nodes that are managed by Kubermatic machine-controller/Cluster-API. | [][DynamicWorkerConfig](#dynamicworkerconfig) | false |
 | machineController | MachineController configures the Kubermatic machine-controller component. | *[MachineControllerConfig](#machinecontrollerconfig) | false |
+| CABundle | CABundle PEM encoded global CA | string | false |
 | features | Features enables and configures additional cluster features. | [Features](#features) | false |
 | addons | Addons are used to deploy additional manifests. | *[Addons](#addons) | false |
 | systemPackages | SystemPackages configure kubeone behaviour regarding OS packages. | *[SystemPackages](#systempackages) | false |
@@ -463,6 +464,9 @@ PodNodeSelectorConfig config
 ### PodPresets
 
 PodPresets feature flag
+The PodPresets feature has been removed in Kubernetes 1.20.
+This feature is deprecated and will be removed from the API once
+Kubernetes 1.19 reaches EOL.
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |

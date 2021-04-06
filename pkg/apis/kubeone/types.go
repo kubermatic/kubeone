@@ -51,6 +51,8 @@ type KubeOneCluster struct {
 	DynamicWorkers []DynamicWorkerConfig `json:"dynamicWorkers,omitempty"`
 	// MachineController configures the Kubermatic machine-controller component.
 	MachineController *MachineControllerConfig `json:"machineController,omitempty"`
+	// CABundle PEM encoded global CA
+	CABundle string `json:"caBundle,omitempty"`
 	// Features enables and configures additional cluster features.
 	Features Features `json:"features,omitempty"`
 	// Addons are used to deploy additional manifests.
