@@ -573,6 +573,7 @@ func autoConvert_kubeone_KubeOneCluster_To_v1alpha1_KubeOneCluster(in *kubeone.K
 	} else {
 		out.MachineController = nil
 	}
+	// WARNING: in.CABundle requires manual conversion: does not exist in peer-type
 	if err := Convert_kubeone_Features_To_v1alpha1_Features(&in.Features, &out.Features, s); err != nil {
 		return err
 	}

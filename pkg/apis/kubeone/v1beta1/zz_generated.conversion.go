@@ -1174,6 +1174,7 @@ func autoConvert_v1beta1_KubeOneCluster_To_kubeone_KubeOneCluster(in *KubeOneClu
 	}
 	out.DynamicWorkers = *(*[]kubeone.DynamicWorkerConfig)(unsafe.Pointer(&in.DynamicWorkers))
 	out.MachineController = (*kubeone.MachineControllerConfig)(unsafe.Pointer(in.MachineController))
+	out.CABundle = in.CABundle
 	if err := Convert_v1beta1_Features_To_kubeone_Features(&in.Features, &out.Features, s); err != nil {
 		return err
 	}
@@ -1219,6 +1220,7 @@ func autoConvert_kubeone_KubeOneCluster_To_v1beta1_KubeOneCluster(in *kubeone.Ku
 	}
 	out.DynamicWorkers = *(*[]DynamicWorkerConfig)(unsafe.Pointer(&in.DynamicWorkers))
 	out.MachineController = (*MachineControllerConfig)(unsafe.Pointer(in.MachineController))
+	out.CABundle = in.CABundle
 	if err := Convert_kubeone_Features_To_v1beta1_Features(&in.Features, &out.Features, s); err != nil {
 		return err
 	}

@@ -672,6 +672,13 @@ features:
     # disabled by default
     enable: {{ .EnableEncryptionProviders }}
     customEncryptionConfiguration: # inline string
+      caFile: ""
+
+## Bundle of Root CA Certificates extracted from Mozilla
+## can be found here: https://curl.se/ca/cacert.pem
+## caBundle should be empty for default root CAs to be used
+caBundle: ""
+
 systemPackages:
   # will add Docker and Kubernetes repositories to OS package manager
   configureRepositories: true # it's true by default
