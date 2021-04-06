@@ -47,7 +47,7 @@ output "kubeone_workers" {
     # following outputs will be parsed by kubeone and automatically merged into
     # corresponding (by name) worker definition
     "${var.cluster_name}-pool1" = {
-      replicas = var.worker_node_vm_count
+      replicas = var.initial_machinedeployment_replicas
       providerSpec = {
         sshPublicKeys   = [file(var.ssh_public_key_file)]
         operatingSystem = var.worker_os
