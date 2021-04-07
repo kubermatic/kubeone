@@ -257,54 +257,6 @@ func kubernetesConfigFiles() Tasks {
 	}
 }
 
-func kubernetesResources() Tasks {
-	return Tasks{
-		{
-			Fn:          nodelocaldns.Deploy,
-			ErrMsg:      "failed to deploy nodelocaldns",
-			Description: "ensure nodelocaldns",
-		},
-		{Fn: features.Activate, ErrMsg: "failed to activate features"},
-		{
-			Fn:          ensureCNI,
-			ErrMsg:      "failed to install cni plugin",
-			Description: "ensure CNI",
-			Predicate:   func(s *state.State) bool { return s.Cluster.ClusterNetwork.CNI.External == nil },
-		},
-		{
-			Fn:          addons.Ensure,
-			ErrMsg:      "failed to apply addons",
-			Description: "ensure addons",
-			Predicate:   func(s *state.State) bool { return s.Cluster.Addons != nil && s.Cluster.Addons.Enable },
-		},
-		{Fn: patchCoreDNS, ErrMsg: "failed to patch CoreDNS"},
-		{
-			Fn:          credentials.Ensure,
-			ErrMsg:      "failed to ensure credentials secret",
-			Description: "ensure credential",
-		},
-		{
-			Fn:          externalccm.Ensure,
-			ErrMsg:      "failed to ensure external CCM",
-			Description: "ensure external CCM",
-			Predicate:   func(s *state.State) bool { return s.Cluster.CloudProvider.External },
-		},
-		{Fn: patchCNI, ErrMsg: "failed to patch CNI"},
-		{Fn: joinStaticWorkerNodes, ErrMsg: "failed to join worker nodes to the cluster"},
-		{
-			Fn:     labelNodeOSes,
-			ErrMsg: "failed to label nodes with their OS",
-		},
-		{
-			Fn:          machinecontroller.Ensure,
-			ErrMsg:      "failed to ensure machine-controller",
-			Description: "ensure machine-controller",
-			Predicate:   func(s *state.State) bool { return s.Cluster.MachineController.Deploy },
-		},
-		{Fn: machinecontroller.WaitReady, ErrMsg: "failed to wait for machine-controller"},
-	}
-}
-
 func WithDisableEncryptionProviders(t Tasks, customConfig bool) Tasks {
 	t = WithHostnameOSAndProbes(t)
 	if customConfig {

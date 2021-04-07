@@ -339,7 +339,8 @@ func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
 
 	operations := []string{}
 
-	tasksToRun := tasks.WithResources(nil)
+	var tasksToRun tasks.Tasks
+
 	if upgradeNeeded || opts.ForceUpgrade {
 		// disable case, we do this as early as possible.
 		if s.ShouldDisableEncryption() {
@@ -381,6 +382,8 @@ func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
 					node.Kubelet.Version,
 					s.Cluster.Versions.Kubernetes))
 		}
+	} else {
+		tasksToRun = tasks.WithResources(nil)
 	}
 
 	fmt.Println()
