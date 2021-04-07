@@ -81,8 +81,6 @@ func SaveEncryptionProvidersConfig(workdir, fileName string) (string, error) {
 	})
 }
 
-func DeleteEncryptionProvidersConfig(fileName string) (string, error) {
-	return Render(deleteEncryptionProvidersConfigTemplate, Data{
-		"FILE_NAME": fileName,
-	})
+func DeleteEncryptionProvidersConfig(fileName string) string {
+	return deleteEncryptionProvidersConfigTemplate
 }

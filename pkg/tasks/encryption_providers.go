@@ -166,11 +166,9 @@ func RewriteClusterSecrets(s *state.State) error {
 func RemoveEncryptionProviderFile(s *state.State) error {
 	s.Logger.Infof("Removing EncryptionProviders configuration file...")
 	return s.RunTaskOnControlPlane(func(s *state.State, _ *kubeoneapi.HostConfig, _ ssh.Connection) error {
-		cmd, err := scripts.DeleteEncryptionProvidersConfig(s.GetEncryptionProviderConfigName())
-		if err != nil {
-			return err
-		}
-		_, _, err = s.Runner.RunRaw(cmd)
+		cmd := scripts.DeleteEncryptionProvidersConfig(s.GetEncryptionProviderConfigName())
+
+		_, _, err := s.Runner.RunRaw(cmd)
 		return err
 	}, state.RunParallel)
 }
