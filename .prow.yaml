@@ -145,6 +145,8 @@ presubmits:
           value: "aws"
         - name: CONTAINER_RUNTIME
           value: containerd
+        - name: TF_VAR_initial_machinedeployment_spotinstances
+          value: "true"
         - name: TEST_CLUSTER_TARGET_VERSION
           value: "1.18.17"
         - name: KUBEONE_TEST_RUN
@@ -171,6 +173,8 @@ presubmits:
           env:
             - name: PROVIDER
               value: "aws"
+            - name: TF_VAR_initial_machinedeployment_spotinstances
+              value: "true"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.18.17"
             - name: KUBEONE_TEST_RUN
@@ -197,6 +201,8 @@ presubmits:
           env:
             - name: PROVIDER
               value: "aws"
+            - name: TF_VAR_initial_machinedeployment_spotinstances
+              value: "true"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.19.9"
             - name: KUBEONE_TEST_RUN
@@ -223,6 +229,8 @@ presubmits:
           env:
             - name: PROVIDER
               value: "aws"
+            - name: TF_VAR_initial_machinedeployment_spotinstances
+              value: "true"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.20.5"
             - name: KUBEONE_TEST_RUN
@@ -829,6 +837,8 @@ presubmits:
           value: "aws"
         - name: CONTAINER_RUNTIME
           value: containerd
+        - name: TF_VAR_initial_machinedeployment_spotinstances
+          value: "true"
         - name: TEST_CLUSTER_INITIAL_VERSION
           value: "1.17.17"
         - name: TEST_CLUSTER_TARGET_VERSION
@@ -856,6 +866,8 @@ presubmits:
         env:
         - name: PROVIDER
           value: "aws"
+        - name: TF_VAR_initial_machinedeployment_spotinstances
+          value: "true"
         - name: TEST_CLUSTER_INITIAL_VERSION
           value: "1.17.17"
         - name: TEST_CLUSTER_TARGET_VERSION
@@ -883,6 +895,8 @@ presubmits:
         env:
         - name: PROVIDER
           value: "aws"
+        - name: TF_VAR_initial_machinedeployment_spotinstances
+          value: "true"
         - name: TEST_CLUSTER_INITIAL_VERSION
           value: "1.18.17"
         - name: TEST_CLUSTER_TARGET_VERSION
@@ -937,6 +951,8 @@ presubmits:
         env:
         - name: PROVIDER
           value: "aws"
+        - name: TF_VAR_initial_machinedeployment_spotinstances
+          value: "true"
         - name: TEST_CLUSTER_INITIAL_VERSION
           value: "1.20.5"
         - name: TEST_CLUSTER_TARGET_VERSION
