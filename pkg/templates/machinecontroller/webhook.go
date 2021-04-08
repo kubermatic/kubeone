@@ -44,16 +44,15 @@ import (
 
 // MachineController Webhook related constants
 const (
-	WebhookName          = "machine-controller-webhook"
-	WebhookAppLabelKey   = "app"
-	WebhookAppLabelValue = WebhookName
-	WebhookTag           = MachineControllerTag
-	WebhookNamespace     = metav1.NamespaceSystem
-	WebhookPort          = 9876
+	mcWebhookName          = "machine-controller-webhook"
+	mcWebhookAppLabelKey   = "app"
+	mcWebhookAppLabelValue = mcWebhookName
+	mcWebhookNamespace     = metav1.NamespaceSystem
+	mcWebhookPort          = 9876
 )
 
-// DeployWebhookConfiguration deploys MachineController webhook deployment on the cluster
-func DeployWebhookConfiguration(s *state.State) error {
+// deployMachineControllerWebhook deploys MachineController webhook deployment on the cluster
+func deployMachineControllerWebhook(s *state.State) error {
 	if s.DynamicClient == nil {
 		return errors.New("kubernetes clientset not initialized")
 	}
@@ -70,7 +69,7 @@ func DeployWebhookConfiguration(s *state.State) error {
 		return errors.Wrap(err, "failed to generate machine-controller webhook TLS secret")
 	}
 
-	image := s.Cluster.RegistryConfiguration.ImageRegistry(MachineControllerImageRegistry) + MachineControllerImage + WebhookTag
+	image := s.Cluster.RegistryConfiguration.ImageRegistry(mcImageRegistry) + mcImage + Tag
 
 	deployment, err := webhookDeployment(s.Cluster, s.CredentialsFilePath, image)
 	if err != nil {
@@ -98,9 +97,9 @@ func DeployWebhookConfiguration(s *state.State) error {
 // WaitForWebhook waits for machine-controller-webhook to become running
 func waitForWebhook(ctx context.Context, client dynclient.Client) error {
 	condFn := clientutil.PodsReadyCondition(ctx, client, dynclient.ListOptions{
-		Namespace: WebhookNamespace,
+		Namespace: mcWebhookNamespace,
 		LabelSelector: labels.SelectorFromSet(map[string]string{
-			WebhookAppLabelKey: WebhookAppLabelValue,
+			mcWebhookAppLabelKey: mcWebhookAppLabelValue,
 		}),
 	})
 
@@ -129,7 +128,7 @@ func webhookDeployment(cluster *kubeoneapi.KubeOneCluster, credentialsFilePath, 
 	args := []string{
 		"-logtostderr",
 		"-v", "4",
-		"-listen-address", fmt.Sprintf("0.0.0.0:%d", WebhookPort),
+		"-listen-address", fmt.Sprintf("0.0.0.0:%d", mcWebhookPort),
 	}
 
 	if cluster.CloudProvider.External {
@@ -139,16 +138,16 @@ func webhookDeployment(cluster *kubeoneapi.KubeOneCluster, credentialsFilePath, 
 	return &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller-webhook",
-			Namespace: WebhookNamespace,
+			Namespace: mcWebhookNamespace,
 			Labels: map[string]string{
-				WebhookAppLabelKey: WebhookAppLabelValue,
+				mcWebhookAppLabelKey: mcWebhookAppLabelValue,
 			},
 		},
 		Spec: appsv1.DeploymentSpec{
 			Replicas: &replicas,
 			Selector: &metav1.LabelSelector{
 				MatchLabels: map[string]string{
-					WebhookAppLabelKey: WebhookAppLabelValue,
+					mcWebhookAppLabelKey: mcWebhookAppLabelValue,
 				},
 			},
 			Strategy: appsv1.DeploymentStrategy{
@@ -167,7 +166,7 @@ func webhookDeployment(cluster *kubeoneapi.KubeOneCluster, credentialsFilePath, 
 			Template: corev1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
 					Labels: map[string]string{
-						WebhookAppLabelKey: WebhookAppLabelValue,
+						mcWebhookAppLabelKey: mcWebhookAppLabelValue,
 					},
 				},
 				Spec: corev1.PodSpec{
@@ -207,7 +206,7 @@ func webhookDeployment(cluster *kubeoneapi.KubeOneCluster, credentialsFilePath, 
 								Handler: corev1.Handler{
 									HTTPGet: &corev1.HTTPGetAction{
 										Path:   "/healthz",
-										Port:   intstr.FromInt(WebhookPort),
+										Port:   intstr.FromInt(mcWebhookPort),
 										Scheme: corev1.URISchemeHTTPS,
 									},
 								},
@@ -221,7 +220,7 @@ func webhookDeployment(cluster *kubeoneapi.KubeOneCluster, credentialsFilePath, 
 								Handler: corev1.Handler{
 									HTTPGet: &corev1.HTTPGetAction{
 										Path:   "/healthz",
-										Port:   intstr.FromInt(WebhookPort),
+										Port:   intstr.FromInt(mcWebhookPort),
 										Scheme: corev1.URISchemeHTTPS,
 									},
 								},
@@ -250,15 +249,15 @@ func service() *corev1.Service {
 	return &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller-webhook",
-			Namespace: WebhookNamespace,
+			Namespace: mcWebhookNamespace,
 			Labels: map[string]string{
-				WebhookAppLabelKey: WebhookAppLabelValue,
+				mcWebhookAppLabelKey: mcWebhookAppLabelValue,
 			},
 		},
 		Spec: corev1.ServiceSpec{
 			Type: corev1.ServiceTypeClusterIP,
 			Selector: map[string]string{
-				WebhookAppLabelKey: WebhookAppLabelValue,
+				mcWebhookAppLabelKey: mcWebhookAppLabelValue,
 			},
 			Ports: []corev1.ServicePort{
 				{
@@ -289,10 +288,10 @@ func getServingCertVolume() corev1.Volume {
 // tlsServingCertificate returns a secret with the machine-controller-webhook tls certificate
 // func tlsServingCertificate(ca *triple.KeyPair) (*corev1.Secret, error) {
 func tlsServingCertificate(caKey crypto.Signer, caCert *x509.Certificate) (*corev1.Secret, error) {
-	commonName := fmt.Sprintf("%s.%s.svc.cluster.local.", WebhookName, WebhookNamespace)
+	commonName := fmt.Sprintf("%s.%s.svc.cluster.local.", mcWebhookName, mcWebhookNamespace)
 	altdnsNames := []string{
 		commonName,
-		fmt.Sprintf("%s.%s.svc", WebhookName, WebhookNamespace),
+		fmt.Sprintf("%s.%s.svc", mcWebhookName, mcWebhookNamespace),
 	}
 
 	newKPKey, err := certificate.NewPrivateKey()
@@ -316,7 +315,7 @@ func tlsServingCertificate(caKey crypto.Signer, caCert *x509.Certificate) (*core
 	return &corev1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machinecontroller-webhook-serving-cert",
-			Namespace: WebhookNamespace,
+			Namespace: mcWebhookNamespace,
 		},
 		Data: map[string][]byte{
 			"cert.pem": certificate.EncodeCertPEM(newKPCert),
@@ -333,7 +332,7 @@ func mutatingwebhookConfiguration(caCert *x509.Certificate) *admissionregistrati
 	return &admissionregistration.MutatingWebhookConfiguration{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller.kubermatic.io",
-			Namespace: WebhookNamespace,
+			Namespace: mcWebhookNamespace,
 		},
 		Webhooks: []admissionregistration.MutatingWebhook{
 			{
@@ -357,8 +356,8 @@ func mutatingwebhookConfiguration(caCert *x509.Certificate) *admissionregistrati
 				},
 				ClientConfig: admissionregistration.WebhookClientConfig{
 					Service: &admissionregistration.ServiceReference{
-						Name:      WebhookName,
-						Namespace: WebhookNamespace,
+						Name:      mcWebhookName,
+						Namespace: mcWebhookNamespace,
 						Path:      strPtr("/machinedeployments"),
 					},
 					CABundle: certificate.EncodeCertPEM(caCert),
@@ -385,8 +384,8 @@ func mutatingwebhookConfiguration(caCert *x509.Certificate) *admissionregistrati
 				},
 				ClientConfig: admissionregistration.WebhookClientConfig{
 					Service: &admissionregistration.ServiceReference{
-						Name:      WebhookName,
-						Namespace: WebhookNamespace,
+						Name:      mcWebhookName,
+						Namespace: mcWebhookNamespace,
 						Path:      strPtr("/machines"),
 					},
 					CABundle: certificate.EncodeCertPEM(caCert),

@@ -42,12 +42,15 @@ import (
 
 // MachineController related constants
 const (
-	MachineControllerNamespace     = metav1.NamespaceSystem
-	MachineControllerAppLabelKey   = "app"
-	MachineControllerAppLabelValue = "machine-controller"
-	MachineControllerImageRegistry = "docker.io"
-	MachineControllerImage         = "/kubermatic/machine-controller:"
-	MachineControllerTag           = "v1.27.4"
+	mcNamespace     = metav1.NamespaceSystem
+	mcImage         = "/kubermatic/machine-controller:"
+	mcAppLabelKey   = "app"
+	mcAppLabelValue = "machine-controller"
+	mcImageRegistry = "docker.io"
+)
+
+const (
+	Tag = "v1.27.4"
 )
 
 func CRDs() []dynclient.Object {
@@ -59,15 +62,15 @@ func CRDs() []dynclient.Object {
 	}
 }
 
-// Deploy deploys MachineController deployment with RBAC on the cluster
-func Deploy(s *state.State) error {
+// deployMachineController deploys MachineController deployment with RBAC on the cluster
+func deployMachineController(s *state.State) error {
 	if s.DynamicClient == nil {
 		return errors.New("kubernetes client not initialized")
 	}
 
 	ctx := context.Background()
 
-	image := s.Cluster.RegistryConfiguration.ImageRegistry(MachineControllerImageRegistry) + MachineControllerImage + MachineControllerTag
+	image := s.Cluster.RegistryConfiguration.ImageRegistry(mcImageRegistry) + mcImage + Tag
 
 	deployment, err := machineControllerDeployment(s.Cluster, s.CredentialsFilePath, image, s.PauseImage)
 	if err != nil {
@@ -91,7 +94,7 @@ func Deploy(s *state.State) error {
 		deployment,
 	)
 
-	withLabel := clientutil.WithComponentLabel(MachineControllerAppLabelValue)
+	withLabel := clientutil.WithComponentLabel(mcAppLabelValue)
 	for _, obj := range k8sobject {
 		if err = clientutil.CreateOrUpdate(ctx, s.DynamicClient, obj, withLabel); err != nil {
 			return errors.Wrapf(err, "failed to ensure machine-controller %T", obj)
@@ -107,9 +110,9 @@ func Deploy(s *state.State) error {
 // func WaitForMachineController(corev1Client corev1types.CoreV1Interface) error {
 func waitForMachineController(ctx context.Context, client dynclient.Client) error {
 	condFn := clientutil.PodsReadyCondition(ctx, client, dynclient.ListOptions{
-		Namespace: WebhookNamespace,
+		Namespace: mcWebhookNamespace,
 		LabelSelector: labels.SelectorFromSet(map[string]string{
-			MachineControllerAppLabelKey: MachineControllerAppLabelValue,
+			mcAppLabelKey: mcAppLabelValue,
 		}),
 	})
 
@@ -120,9 +123,9 @@ func machineControllerServiceAccount() *corev1.ServiceAccount {
 	return &corev1.ServiceAccount{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller",
-			Namespace: MachineControllerNamespace,
+			Namespace: mcNamespace,
 			Labels: map[string]string{
-				MachineControllerAppLabelKey: MachineControllerAppLabelValue,
+				mcAppLabelKey: mcAppLabelValue,
 			},
 		},
 	}
@@ -133,7 +136,7 @@ func machineControllerClusterRole() *rbacv1.ClusterRole {
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "machine-controller",
 			Labels: map[string]string{
-				MachineControllerAppLabelKey: MachineControllerAppLabelValue,
+				mcAppLabelKey: mcAppLabelValue,
 			},
 		},
 		Rules: []rbacv1.PolicyRule{
@@ -216,7 +219,7 @@ func machineControllerClusterRoleBinding() *rbacv1.ClusterRoleBinding {
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "machine-controller",
 			Labels: map[string]string{
-				MachineControllerAppLabelKey: MachineControllerAppLabelValue,
+				mcAppLabelKey: mcAppLabelValue,
 			},
 		},
 		RoleRef: rbacv1.RoleRef{
@@ -228,7 +231,7 @@ func machineControllerClusterRoleBinding() *rbacv1.ClusterRoleBinding {
 			{
 				Kind:      "ServiceAccount",
 				Name:      "machine-controller",
-				Namespace: MachineControllerNamespace,
+				Namespace: mcNamespace,
 			},
 		},
 	}
@@ -239,7 +242,7 @@ func nodeBootstrapperClusterRoleBinding() *rbacv1.ClusterRoleBinding {
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "machine-controller:kubelet-bootstrap",
 			Labels: map[string]string{
-				MachineControllerAppLabelKey: MachineControllerAppLabelValue,
+				mcAppLabelKey: mcAppLabelValue,
 			},
 		},
 		RoleRef: rbacv1.RoleRef{
@@ -262,7 +265,7 @@ func nodeSignerClusterRoleBinding() *rbacv1.ClusterRoleBinding {
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "machine-controller:node-signer",
 			Labels: map[string]string{
-				MachineControllerAppLabelKey: MachineControllerAppLabelValue,
+				mcAppLabelKey: mcAppLabelValue,
 			},
 		},
 		RoleRef: rbacv1.RoleRef{
@@ -284,9 +287,9 @@ func machineControllerKubeSystemRole() *rbacv1.Role {
 	return &rbacv1.Role{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller",
-			Namespace: MachineControllerNamespace,
+			Namespace: mcNamespace,
 			Labels: map[string]string{
-				MachineControllerAppLabelKey: MachineControllerAppLabelValue,
+				mcAppLabelKey: mcAppLabelValue,
 			},
 		},
 		Rules: []rbacv1.PolicyRule{
@@ -338,7 +341,7 @@ func machineControllerKubePublicRole() *rbacv1.Role {
 			Name:      "machine-controller",
 			Namespace: metav1.NamespacePublic,
 			Labels: map[string]string{
-				MachineControllerAppLabelKey: MachineControllerAppLabelValue,
+				mcAppLabelKey: mcAppLabelValue,
 			},
 		},
 		Rules: []rbacv1.PolicyRule{
@@ -361,7 +364,7 @@ func machineControllerEndpointReaderRole() *rbacv1.Role {
 			Name:      "machine-controller",
 			Namespace: metav1.NamespaceDefault,
 			Labels: map[string]string{
-				MachineControllerAppLabelKey: MachineControllerAppLabelValue,
+				mcAppLabelKey: mcAppLabelValue,
 			},
 		},
 		Rules: []rbacv1.PolicyRule{
@@ -384,7 +387,7 @@ func machineControllerClusterInfoReaderRole() *rbacv1.Role {
 			Name:      "cluster-info",
 			Namespace: metav1.NamespacePublic,
 			Labels: map[string]string{
-				MachineControllerAppLabelKey: MachineControllerAppLabelValue,
+				mcAppLabelKey: mcAppLabelValue,
 			},
 		},
 		Rules: []rbacv1.PolicyRule{
@@ -402,9 +405,9 @@ func machineControllerKubeSystemRoleBinding() *rbacv1.RoleBinding {
 	return &rbacv1.RoleBinding{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller",
-			Namespace: MachineControllerNamespace,
+			Namespace: mcNamespace,
 			Labels: map[string]string{
-				MachineControllerAppLabelKey: MachineControllerAppLabelValue,
+				mcAppLabelKey: mcAppLabelValue,
 			},
 		},
 		RoleRef: rbacv1.RoleRef{
@@ -416,7 +419,7 @@ func machineControllerKubeSystemRoleBinding() *rbacv1.RoleBinding {
 			{
 				Kind:      "ServiceAccount",
 				Name:      "machine-controller",
-				Namespace: MachineControllerNamespace,
+				Namespace: mcNamespace,
 			},
 		},
 	}
@@ -428,7 +431,7 @@ func machineControllerKubePublicRoleBinding() *rbacv1.RoleBinding {
 			Name:      "machine-controller",
 			Namespace: metav1.NamespacePublic,
 			Labels: map[string]string{
-				MachineControllerAppLabelKey: MachineControllerAppLabelValue,
+				mcAppLabelKey: mcAppLabelValue,
 			},
 		},
 		RoleRef: rbacv1.RoleRef{
@@ -440,7 +443,7 @@ func machineControllerKubePublicRoleBinding() *rbacv1.RoleBinding {
 			{
 				Kind:      "ServiceAccount",
 				Name:      "machine-controller",
-				Namespace: MachineControllerNamespace,
+				Namespace: mcNamespace,
 			},
 		},
 	}
@@ -452,7 +455,7 @@ func machineControllerDefaultRoleBinding() *rbacv1.RoleBinding {
 			Name:      "machine-controller",
 			Namespace: metav1.NamespaceDefault,
 			Labels: map[string]string{
-				MachineControllerAppLabelKey: MachineControllerAppLabelValue,
+				mcAppLabelKey: mcAppLabelValue,
 			},
 		},
 		RoleRef: rbacv1.RoleRef{
@@ -464,7 +467,7 @@ func machineControllerDefaultRoleBinding() *rbacv1.RoleBinding {
 			{
 				Kind:      "ServiceAccount",
 				Name:      "machine-controller",
-				Namespace: MachineControllerNamespace,
+				Namespace: mcNamespace,
 			},
 		},
 	}
@@ -476,7 +479,7 @@ func machineControllerClusterInfoRoleBinding() *rbacv1.RoleBinding {
 			Name:      "cluster-info",
 			Namespace: metav1.NamespacePublic,
 			Labels: map[string]string{
-				MachineControllerAppLabelKey: MachineControllerAppLabelValue,
+				mcAppLabelKey: mcAppLabelValue,
 			},
 		},
 		RoleRef: rbacv1.RoleRef{
@@ -488,7 +491,7 @@ func machineControllerClusterInfoRoleBinding() *rbacv1.RoleBinding {
 			{
 				Kind:      "ServiceAccount",
 				Name:      "machine-controller",
-				Namespace: MachineControllerNamespace,
+				Namespace: mcNamespace,
 			},
 		},
 	}
@@ -820,16 +823,16 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster, credentials
 	return &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller",
-			Namespace: MachineControllerNamespace,
+			Namespace: mcNamespace,
 			Labels: map[string]string{
-				MachineControllerAppLabelKey: MachineControllerAppLabelValue,
+				mcAppLabelKey: mcAppLabelValue,
 			},
 		},
 		Spec: appsv1.DeploymentSpec{
 			Replicas: &replicas,
 			Selector: &metav1.LabelSelector{
 				MatchLabels: map[string]string{
-					MachineControllerAppLabelKey: MachineControllerAppLabelValue,
+					mcAppLabelKey: mcAppLabelValue,
 				},
 			},
 			Strategy: appsv1.DeploymentStrategy{
@@ -853,7 +856,7 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster, credentials
 						"prometheus.io/port":   "8080",
 					},
 					Labels: map[string]string{
-						MachineControllerAppLabelKey: MachineControllerAppLabelValue,
+						mcAppLabelKey: mcAppLabelValue,
 					},
 				},
 				Spec: corev1.PodSpec{
