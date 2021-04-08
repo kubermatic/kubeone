@@ -78,6 +78,9 @@ output "kubeone_workers" {
         operatingSystemSpec = {
           distUpgradeOnBoot = false
         }
+        labels = {
+          isSpotInstance = format("%t", var.initial_machinedeployment_spotinstances)
+        }
         cloudProviderSpec = {
           # provider specific fields:
           # see example under `cloudProviderSpec` section at:
@@ -95,7 +98,7 @@ output "kubeone_workers" {
           diskType         = "gp2"
           ## Only applicable if diskType = io1
           diskIops           = 500
-          isSpotInstance     = false
+          isSpotInstance     = var.initial_machinedeployment_spotinstances
           ebsVolumeEncrypted = false
           tags = {
             "${var.cluster_name}-workers" = ""
@@ -111,6 +114,9 @@ output "kubeone_workers" {
         operatingSystem = local.worker_os
         operatingSystemSpec = {
           distUpgradeOnBoot = false
+        }
+        labels = {
+          isSpotInstance = format("%t", var.initial_machinedeployment_spotinstances)
         }
         cloudProviderSpec = {
           # provider specific fields:
@@ -129,7 +135,7 @@ output "kubeone_workers" {
           diskType         = "gp2"
           ## Only applicable if diskType = io1
           diskIops           = 500
-          isSpotInstance     = false
+          isSpotInstance     = var.initial_machinedeployment_spotinstances
           ebsVolumeEncrypted = false
           tags = {
             "${var.cluster_name}-workers" = ""
@@ -145,6 +151,9 @@ output "kubeone_workers" {
         operatingSystem = local.worker_os
         operatingSystemSpec = {
           distUpgradeOnBoot = false
+        }
+        labels = {
+          isSpotInstance = format("%t", var.initial_machinedeployment_spotinstances)
         }
         cloudProviderSpec = {
           # provider specific fields:
@@ -163,7 +172,7 @@ output "kubeone_workers" {
           diskType         = "gp2"
           ## Only applicable if diskType = io1
           diskIops           = 500
-          isSpotInstance     = false
+          isSpotInstance     = var.initial_machinedeployment_spotinstances
           ebsVolumeEncrypted = false
           tags = {
             "${var.cluster_name}-workers" = ""

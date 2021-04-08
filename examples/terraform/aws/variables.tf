@@ -166,3 +166,8 @@ variable "static_workers_count" {
   description = "number of static workers"
   default     = 0
 }
+
+variable "initial_machinedeployment_spotinstances" {
+  description = "use spot instances for initil machine-deployment"
+  default     = true
+}
