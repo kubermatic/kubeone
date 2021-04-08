@@ -1,5 +1,6 @@
 # Kubermatic KubeOne
 
+
 <p align="center"><img src="docs/img/kubeone-logo-text.png" width="700px" /></p>
 
 [![KubeOne Report Card](https://goreportcard.com/badge/github.com/kubermatic/kubeone)](https://goreportcard.com/report/github.com/kubermatic/kubeone)
