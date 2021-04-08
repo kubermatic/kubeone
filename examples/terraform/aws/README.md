@@ -64,7 +64,7 @@ No modules.
 | <a name="input_control_plane_type"></a> [control\_plane\_type](#input\_control\_plane\_type) | AWS instance type | `string` | `"t3.medium"` | no |
 | <a name="input_control_plane_volume_size"></a> [control\_plane\_volume\_size](#input\_control\_plane\_volume\_size) | Size of the EBS volume, in Gb | `number` | `100` | no |
 | <a name="input_initial_machinedeployment_replicas"></a> [initial\_machinedeployment\_replicas](#input\_initial\_machinedeployment\_replicas) | number of replicas per MachineDeployment | `number` | `1` | no |
-| <a name="input_initial_machinedeployment_spotinstances"></a> [initial\_machinedeployment\_spotinstances](#input\_initial\_machinedeployment\_spotinstances) | use spot instances for initial machine-deployment | `bool` | `true` | no |
+| <a name="input_initial_machinedeployment_spotinstances"></a> [initial\_machinedeployment\_spotinstances](#input\_initial\_machinedeployment\_spotinstances) | use spot instances for initial machine-deployment | `bool` | `false` | no |
 | <a name="input_internal_api_lb"></a> [internal\_api\_lb](#input\_internal\_api\_lb) | make kubernetes API loadbalancer internal (reachible only from inside the VPC) | `bool` | `false` | no |
 | <a name="input_open_nodeports"></a> [open\_nodeports](#input\_open\_nodeports) | open NodePorts flag | `bool` | `false` | no |
 | <a name="input_os"></a> [os](#input\_os) | Operating System to use in AMI filtering and MachineDeployment | `string` | `"ubuntu"` | no |
