@@ -86,3 +86,9 @@ verify-boilerplate:
 .PHONY: shfmt
 shfmt:
 	shfmt -w -sr -i 2 hack
+
+.PHONY: prowfmt
+prowfmt:
+	yq --inplace eval .prow.yaml
+
+fmt: shfmt prowfmt
