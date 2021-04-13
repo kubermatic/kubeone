@@ -364,7 +364,6 @@ type Features struct {
 	// OpenIDConnect
 	OpenIDConnect *OpenIDConnect `json:"openidConnect,omitempty"`
 	// Encryption Providers
-	// +k8s:conversion-gen=false
 	EncryptionProviders *EncryptionProviders `json:"encryptionProviders,omitempty"`
 }
 

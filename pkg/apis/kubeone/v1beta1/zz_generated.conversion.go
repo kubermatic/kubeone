@@ -1031,7 +1031,7 @@ func autoConvert_kubeone_Features_To_v1beta1_Features(in *kubeone.Features, out 
 	out.DynamicAuditLog = (*DynamicAuditLog)(unsafe.Pointer(in.DynamicAuditLog))
 	out.MetricsServer = (*MetricsServer)(unsafe.Pointer(in.MetricsServer))
 	out.OpenIDConnect = (*OpenIDConnect)(unsafe.Pointer(in.OpenIDConnect))
-	// INFO: in.EncryptionProviders opted out of conversion generation
+	out.EncryptionProviders = (*EncryptionProviders)(unsafe.Pointer(in.EncryptionProviders))
 	return nil
 }
 
