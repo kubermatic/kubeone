@@ -19,6 +19,7 @@ package externalccm
 import (
 	"github.com/pkg/errors"
 
+	"k8c.io/kubeone/pkg/certificate"
 	"k8c.io/kubeone/pkg/clientutil"
 	"k8c.io/kubeone/pkg/state"
 
@@ -45,6 +46,8 @@ func ensureVsphere(s *state.State) error {
 	}
 
 	image := s.Cluster.RegistryConfiguration.ImageRegistry(vSphereImageRegistry) + vSphereImage
+	ds := vSphereDaemonSet(image)
+	certificate.CABundleInjector(s.Cluster.CABundle, &ds.Spec.Template)
 
 	k8sobjects := []client.Object{
 		vSphereServiceAccount(),
@@ -52,7 +55,7 @@ func ensureVsphere(s *state.State) error {
 		vSphereClusterRole(),
 		vSphereClusterRoleBinding(),
 		vSphereRoleBinding(),
-		vSphereDaemonSet(image),
+		ds,
 		vSphereService(),
 	}
 
