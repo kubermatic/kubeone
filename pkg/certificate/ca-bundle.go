@@ -22,6 +22,7 @@ import (
 	"path/filepath"
 
 	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 const (
@@ -45,8 +46,40 @@ func CABundleInjector(caBundle string, podTpl *corev1.PodTemplateSpec) {
 	hsh := sha256.New()
 	hsh.Write([]byte(caBundle))
 	podTpl.Annotations["caBundle-hash"] = fmt.Sprintf("%x", hsh.Sum(nil))
+	podTpl.Spec.Volumes = append(podTpl.Spec.Volumes, CABundleVolume())
 
-	podTpl.Spec.Volumes = append(podTpl.Spec.Volumes, corev1.Volume{
+	for idx := range podTpl.Spec.Containers {
+		cont := podTpl.Spec.Containers[idx]
+		cont.VolumeMounts = append(cont.VolumeMounts, CABundleVolumeMount())
+		cont.Env = append(cont.Env, CABundleENV())
+		podTpl.Spec.Containers[idx] = cont
+	}
+}
+
+func CABundleConfigMap(caBundle string) *corev1.ConfigMap {
+	cm := corev1.ConfigMap{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      CABundleConfigMapName,
+			Namespace: metav1.NamespaceSystem,
+		},
+		Data: map[string]string{
+			CABundleFile: caBundle,
+		},
+	}
+
+	return &cm
+}
+
+func CABundleVolumeMount() corev1.VolumeMount {
+	return corev1.VolumeMount{
+		Name:      CABundleConfigMapName,
+		ReadOnly:  true,
+		MountPath: CACertsDir,
+	}
+}
+
+func CABundleVolume() corev1.Volume {
+	return corev1.Volume{
 		Name: CABundleConfigMapName,
 		VolumeSource: corev1.VolumeSource{
 			ConfigMap: &corev1.ConfigMapVolumeSource{
@@ -55,19 +88,12 @@ func CABundleInjector(caBundle string, podTpl *corev1.PodTemplateSpec) {
 				},
 			},
 		},
-	})
+	}
+}
 
-	for idx := range podTpl.Spec.Containers {
-		cont := podTpl.Spec.Containers[idx]
-		cont.VolumeMounts = append(cont.VolumeMounts, corev1.VolumeMount{
-			Name:      CABundleConfigMapName,
-			ReadOnly:  true,
-			MountPath: CACertsDir,
-		})
-		cont.Env = append(cont.Env, corev1.EnvVar{
-			Name:  SSLCertFileENV,
-			Value: filepath.Join(CACertsDir, CABundleFile),
-		})
-		podTpl.Spec.Containers[idx] = cont
+func CABundleENV() corev1.EnvVar {
+	return corev1.EnvVar{
+		Name:  SSLCertFileENV,
+		Value: filepath.Join(CACertsDir, CABundleFile),
 	}
 }
