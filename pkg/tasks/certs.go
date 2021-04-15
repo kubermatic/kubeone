@@ -43,7 +43,7 @@ func deployCAOnNode(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connec
 	return s.Configuration.UploadTo(conn, s.WorkDir)
 }
 
-func renewCerts(s *state.State) error {
+func renewControlPlaneCerts(s *state.State) error {
 	if !s.ForceUpgrade {
 		s.Logger.Warn("Your control-plane certificates are about to expire in less then 90 days")
 		s.Logger.Warn("To renew them without changing kubernetes version run `kubeone apply --force-upgrade`")
