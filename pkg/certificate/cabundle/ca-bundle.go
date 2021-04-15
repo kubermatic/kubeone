@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package certificate
+package cabundle
 
 import (
 	"crypto/sha256"
@@ -26,15 +26,15 @@ import (
 )
 
 const (
-	CACertsDir            = "/etc/kubeone/certs"
-	CABundleFile          = "ca-certificates.crt"
-	CABundlePath          = CACertsDir + "/" + CABundleFile
-	CABundleConfigMapName = "ca-bundle"
+	CertsDir        = "/etc/kubeone/certs"
+	FileName        = "ca-certificates.crt"
+	SSLCertFilePath = CertsDir + "/" + FileName
+	ConfigMapName   = "ca-bundle"
 
 	SSLCertFileENV = "SSL_CERT_FILE"
 )
 
-func CABundleInjector(caBundle string, podTpl *corev1.PodTemplateSpec) {
+func Inject(caBundle string, podTpl *corev1.PodTemplateSpec) {
 	if caBundle == "" {
 		return
 	}
@@ -46,54 +46,54 @@ func CABundleInjector(caBundle string, podTpl *corev1.PodTemplateSpec) {
 	hsh := sha256.New()
 	hsh.Write([]byte(caBundle))
 	podTpl.Annotations["caBundle-hash"] = fmt.Sprintf("%x", hsh.Sum(nil))
-	podTpl.Spec.Volumes = append(podTpl.Spec.Volumes, CABundleVolume())
+	podTpl.Spec.Volumes = append(podTpl.Spec.Volumes, Volume())
 
 	for idx := range podTpl.Spec.Containers {
 		cont := podTpl.Spec.Containers[idx]
-		cont.VolumeMounts = append(cont.VolumeMounts, CABundleVolumeMount())
-		cont.Env = append(cont.Env, CABundleENV())
+		cont.VolumeMounts = append(cont.VolumeMounts, VolumeMount())
+		cont.Env = append(cont.Env, EnvVar())
 		podTpl.Spec.Containers[idx] = cont
 	}
 }
 
-func CABundleConfigMap(caBundle string) *corev1.ConfigMap {
+func ConfigMap(caBundle string) *corev1.ConfigMap {
 	cm := corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      CABundleConfigMapName,
+			Name:      ConfigMapName,
 			Namespace: metav1.NamespaceSystem,
 		},
 		Data: map[string]string{
-			CABundleFile: caBundle,
+			FileName: caBundle,
 		},
 	}
 
 	return &cm
 }
 
-func CABundleVolumeMount() corev1.VolumeMount {
+func VolumeMount() corev1.VolumeMount {
 	return corev1.VolumeMount{
-		Name:      CABundleConfigMapName,
+		Name:      ConfigMapName,
 		ReadOnly:  true,
-		MountPath: CACertsDir,
+		MountPath: CertsDir,
 	}
 }
 
-func CABundleVolume() corev1.Volume {
+func Volume() corev1.Volume {
 	return corev1.Volume{
-		Name: CABundleConfigMapName,
+		Name: ConfigMapName,
 		VolumeSource: corev1.VolumeSource{
 			ConfigMap: &corev1.ConfigMapVolumeSource{
 				LocalObjectReference: corev1.LocalObjectReference{
-					Name: CABundleConfigMapName,
+					Name: ConfigMapName,
 				},
 			},
 		},
 	}
 }
 
-func CABundleENV() corev1.EnvVar {
+func EnvVar() corev1.EnvVar {
 	return corev1.EnvVar{
 		Name:  SSLCertFileENV,
-		Value: filepath.Join(CACertsDir, CABundleFile),
+		Value: filepath.Join(CertsDir, FileName),
 	}
 }

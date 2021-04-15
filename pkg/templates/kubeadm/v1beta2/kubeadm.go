@@ -27,7 +27,6 @@ import (
 
 	kubeadmv1beta2 "k8c.io/kubeone/pkg/apis/kubeadm/v1beta2"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
-	"k8c.io/kubeone/pkg/certificate"
 	"k8c.io/kubeone/pkg/features"
 	"k8c.io/kubeone/pkg/kubeflags"
 	"k8c.io/kubeone/pkg/state"
@@ -209,19 +208,19 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		}
 	}
 
-	if cluster.CABundle != "" {
-		clusterConfig.ControllerManager.ExtraVolumes = append(
-			clusterConfig.ControllerManager.ExtraVolumes, kubeadmv1beta2.HostPathMount{
-				Name:     "ca-bundle",
-				HostPath: certificate.CACertsDir,
-				// this is path that k8s.gcr.io/kube-* images use in ENV
-				// "SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt"
-				MountPath: "/etc/ssl/certs",
-				ReadOnly:  true,
-			},
-		)
-		clusterConfig.CertificatesDir = certificate.CACertsDir
-	}
+	// TODO: Fix double mounted /etc/ssl/certs
+	// if cluster.CABundle != "" {
+	// 	clusterConfig.ControllerManager.ExtraVolumes = append(
+	// 		clusterConfig.ControllerManager.ExtraVolumes, kubeadmv1beta2.HostPathMount{
+	// 			Name:     "ca-bundle",
+	// 			HostPath: cabundle.CertsDir,
+	// 			// this is path that k8s.gcr.io/kube-* images use in ENV
+	// 			// "SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt"
+	// 			MountPath: "/etc/ssl/certs",
+	// 			ReadOnly:  true,
+	// 		},
+	// 	)
+	// }
 
 	if cluster.CloudProvider.External {
 		delete(clusterConfig.APIServer.ExtraArgs, "cloud-provider")

@@ -22,6 +22,7 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/certificate/cabundle"
 	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
@@ -40,6 +41,7 @@ func installPrerequisites(s *state.State) error {
 
 func generateConfigurationFiles(s *state.State) error {
 	s.Configuration.AddFile("cfg/cloud-config", s.Cluster.CloudProvider.CloudConfig)
+	s.Configuration.AddFile("ca-certs/"+cabundle.FileName, s.Cluster.CABundle)
 
 	if s.Cluster.Features.StaticAuditLog != nil && s.Cluster.Features.StaticAuditLog.Enable {
 		if err := s.Configuration.AddFilePath("cfg/audit-policy.yaml", s.Cluster.Features.StaticAuditLog.Config.PolicyFilePath, s.ManifestFilePath); err != nil {
@@ -165,7 +167,7 @@ func installKubeadmFlatcar(s *state.State) error {
 }
 
 func uploadConfigurationFiles(s *state.State) error {
-	return s.RunTaskOnAllNodes(uploadConfigurationFilesToNode, state.RunParallel)
+	return s.RunTaskOnControlPlane(uploadConfigurationFilesToNode, state.RunParallel)
 }
 
 func uploadConfigurationFilesToNode(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
@@ -199,7 +201,6 @@ func uploadConfigurationFilesToNode(s *state.State, node *kubeoneapi.HostConfig,
 	if err != nil {
 		return err
 	}
-
 	_, _, err = s.Runner.RunRaw(cmd)
 	if err != nil {
 		return err
@@ -209,9 +210,23 @@ func uploadConfigurationFilesToNode(s *state.State, node *kubeoneapi.HostConfig,
 	if err != nil {
 		return err
 	}
-
 	_, _, err = s.Runner.RunRaw(cmd)
-	return err
+	if err != nil {
+		return err
+	}
+
+	if s.Cluster.CABundle != "" {
+		cmd, err = scripts.SaveCABundle(s.WorkDir)
+		if err != nil {
+			return err
+		}
+		_, _, err = s.Runner.RunRaw(cmd)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func configureProxy(s *state.State) error {

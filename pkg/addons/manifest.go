@@ -29,7 +29,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
-	"k8c.io/kubeone/pkg/certificate"
+	"k8c.io/kubeone/pkg/certificate/cabundle"
 	"k8c.io/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
@@ -206,18 +206,18 @@ func txtFuncMap(overwriteRegistry string) template.FuncMap {
 		return registry
 	}
 
-	funcs["caBundleENV"] = func() (string, error) {
-		buf, err := yaml.Marshal([]corev1.EnvVar{certificate.CABundleENV()})
+	funcs["caBundleEnvVar"] = func() (string, error) {
+		buf, err := yaml.Marshal([]corev1.EnvVar{cabundle.EnvVar()})
 		return string(buf), err
 	}
 
 	funcs["caBundleVolume"] = func() (string, error) {
-		buf, err := yaml.Marshal([]corev1.Volume{certificate.CABundleVolume()})
+		buf, err := yaml.Marshal([]corev1.Volume{cabundle.Volume()})
 		return string(buf), err
 	}
 
 	funcs["caBundleVolumeMount"] = func() (string, error) {
-		buf, err := yaml.Marshal([]corev1.VolumeMount{certificate.CABundleVolumeMount()})
+		buf, err := yaml.Marshal([]corev1.VolumeMount{cabundle.VolumeMount()})
 		return string(buf), err
 	}
 

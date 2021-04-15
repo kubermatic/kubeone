@@ -23,7 +23,7 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
-	"k8c.io/kubeone/pkg/certificate"
+	"k8c.io/kubeone/pkg/certificate/cabundle"
 	"k8c.io/kubeone/pkg/clientutil"
 	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/kubeconfig"
@@ -920,10 +920,10 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster, credentials
 		},
 	}
 
-	certificate.CABundleInjector(cluster.CABundle, &dep.Spec.Template)
+	cabundle.Inject(cluster.CABundle, &dep.Spec.Template)
 	if cluster.CABundle != "" {
 		dep.Spec.Template.Spec.Containers[0].Args = append(
-			dep.Spec.Template.Spec.Containers[0].Args, "-ca-bundle", certificate.CABundlePath,
+			dep.Spec.Template.Spec.Containers[0].Args, "-ca-bundle", cabundle.SSLCertFilePath,
 		)
 	}
 
