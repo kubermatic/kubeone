@@ -257,7 +257,7 @@ func TestImageRegistryParsing(t *testing.T) {
 
 func TestCABundleFuncs(t *testing.T) {
 	tests := []string{
-		"caBundleENV",
+		"caBundleEnvVar",
 		"caBundleVolume",
 		"caBundleVolumeMount",
 	}

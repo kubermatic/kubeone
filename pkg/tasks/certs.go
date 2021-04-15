@@ -28,6 +28,8 @@ import (
 	"github.com/Masterminds/semver/v3"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/certificate/cabundle"
+	"k8c.io/kubeone/pkg/clientutil"
 	"k8c.io/kubeone/pkg/kubeconfig"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
@@ -138,4 +140,11 @@ func earliestCertExpiry(conn ssh.Connection) (time.Time, error) {
 	}
 
 	return earliestCertExpirationTime, nil
+}
+
+func ensureConfigMap(s *state.State) error {
+	s.Logger.Infoln("Creating ca-bundle configMap...")
+
+	cm := cabundle.ConfigMap(s.Cluster.CABundle)
+	return clientutil.CreateOrUpdate(s.Context, s.DynamicClient, cm)
 }

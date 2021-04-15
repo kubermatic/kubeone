@@ -21,7 +21,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"k8c.io/kubeone/pkg/certificate"
+	"k8c.io/kubeone/pkg/certificate/cabundle"
 	"k8c.io/kubeone/pkg/clientutil"
 	"k8c.io/kubeone/pkg/state"
 
@@ -58,7 +58,7 @@ func ensureOpenStack(s *state.State) error {
 	image := s.Cluster.RegistryConfiguration.ImageRegistry(openstackImageRegistry) + openstackImage
 	ds := osDaemonSet(image)
 
-	certificate.CABundleInjector(s.Cluster.CABundle, &ds.Spec.Template)
+	cabundle.Inject(s.Cluster.CABundle, &ds.Spec.Template)
 
 	k8sobjects := []client.Object{
 		sa,

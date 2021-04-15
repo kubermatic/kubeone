@@ -156,6 +156,12 @@ func WithResources(t Tasks) Tasks {
 				Predicate:  func(s *state.State) bool { return s.Cluster.ClusterNetwork.CNI.External == nil },
 			},
 			{
+				Fn:         ensureConfigMap,
+				ErrMsg:     "failed to ensure caBundle configMap",
+				Desciption: "ensure caBundle configMap",
+				Predicate:  func(s *state.State) bool { return s.Cluster.CABundle != "" },
+			},
+			{
 				Fn:         addons.Ensure,
 				ErrMsg:     "failed to apply addons",
 				Desciption: "ensure addons",
