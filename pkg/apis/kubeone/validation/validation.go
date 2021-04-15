@@ -305,7 +305,7 @@ func ValidateCABundle(caBundle string, fldPath *field.Path) field.ErrorList {
 	}
 
 	pool := x509.NewCertPool()
-	if ok := pool.AppendCertsFromPEM([]byte(caPEM)); !ok {
+	if ok := pool.AppendCertsFromPEM(caPEM); !ok {
 		allErrs = append(allErrs, field.Invalid(fldPath, "", "can't parse caBundle"))
 	}
 
