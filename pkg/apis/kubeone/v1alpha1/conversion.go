@@ -297,3 +297,7 @@ func Convert_v1alpha1_MachineControllerConfig_To_kubeone_MachineControllerConfig
 
 	return nil
 }
+
+func Convert_kubeone_Features_To_v1alpha1_Features(in *kubeoneapi.Features, out *Features, s conversion.Scope) error {
+	return autoConvert_kubeone_Features_To_v1alpha1_Features(in, out, s)
+}

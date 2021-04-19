@@ -66,6 +66,14 @@ func restartKubeAPIServer(s *state.State) error {
 	}, state.RunSequentially)
 }
 
+func ensureRestartKubeAPIServer(s *state.State) error {
+	s.Logger.Infoln("Restarting API servers...")
+
+	return s.RunTaskOnControlPlane(func(s *state.State, node *kubeoneapi.HostConfig, _ ssh.Connection) error {
+		return ensureRestartKubeAPIServerOnOS(s, *node)
+	}, state.RunSequentially)
+}
+
 func restartKubeAPIServerOnOS(s *state.State, node kubeoneapi.HostConfig) error {
 	return runOnOS(s, node.OperatingSystem, map[kubeoneapi.OperatingSystemName]runOnOSFn{
 		kubeoneapi.OperatingSystemNameAmazon:  restartKubeAPIServerCrictl,
@@ -77,14 +85,53 @@ func restartKubeAPIServerOnOS(s *state.State, node kubeoneapi.HostConfig) error 
 	})
 }
 
+func ensureRestartKubeAPIServerOnOS(s *state.State, node kubeoneapi.HostConfig) error {
+	return runOnOS(s, node.OperatingSystem, map[kubeoneapi.OperatingSystemName]runOnOSFn{
+		kubeoneapi.OperatingSystemNameAmazon:  ensureRestartKubeAPIServerCrictl,
+		kubeoneapi.OperatingSystemNameCentOS:  ensureRestartKubeAPIServerCrictl,
+		kubeoneapi.OperatingSystemNameDebian:  ensureRestartKubeAPIServerCrictl,
+		kubeoneapi.OperatingSystemNameFlatcar: ensureRestartKubeAPIServerDocker,
+		kubeoneapi.OperatingSystemNameRHEL:    ensureRestartKubeAPIServerCrictl,
+		kubeoneapi.OperatingSystemNameUbuntu:  ensureRestartKubeAPIServerCrictl,
+	})
+}
+
 func restartKubeAPIServerCrictl(s *state.State) error {
-	_, _, err := s.Runner.RunRaw(scripts.RestartKubeAPIServerCrictl())
+	cmd, err := scripts.RestartKubeAPIServerCrictl(false)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	_, _, err = s.Runner.RunRaw(cmd)
 
 	return errors.WithStack(err)
 }
 
 func restartKubeAPIServerDocker(s *state.State) error {
-	_, _, err := s.Runner.RunRaw(scripts.RestartKubeAPIServerDocker())
+	cmd, err := scripts.RestartKubeAPIServerDocker(false)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	_, _, err = s.Runner.RunRaw(cmd)
+
+	return errors.WithStack(err)
+}
+
+func ensureRestartKubeAPIServerCrictl(s *state.State) error {
+	cmd, err := scripts.RestartKubeAPIServerCrictl(true)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	_, _, err = s.Runner.RunRaw(cmd)
+
+	return errors.WithStack(err)
+}
+
+func ensureRestartKubeAPIServerDocker(s *state.State) error {
+	cmd, err := scripts.RestartKubeAPIServerDocker(true)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	_, _, err = s.Runner.RunRaw(cmd)
 
 	return errors.WithStack(err)
 }

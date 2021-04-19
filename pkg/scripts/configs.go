@@ -41,6 +41,19 @@ if [[ -f "{{ .WORK_DIR }}/cfg/podnodeselector.yaml" ]]; then
 	sudo chown root:root /etc/kubernetes/admission/admission-config.yaml
 fi
 `
+
+	encryptionProvidersConfigTemplate = `
+if [[ -f "{{ .WORK_DIR }}/cfg/{{ .FILE_NAME }}" ]]; then
+	sudo mkdir -p /etc/kubernetes/encryption-providers/
+	sudo mv {{ .WORK_DIR }}/cfg/{{ .FILE_NAME }} /etc/kubernetes/encryption-providers/{{ .FILE_NAME }}
+	sudo chmod 600 /etc/kubernetes/encryption-providers/{{ .FILE_NAME }}
+	sudo chown root:root /etc/kubernetes/encryption-providers/{{ .FILE_NAME }}
+fi
+`
+
+	deleteEncryptionProvidersConfigTemplate = `
+	sudo rm -rf /etc/kubernetes/encryption-providers/*
+`
 )
 
 func SaveCloudConfig(workdir string) (string, error) {
@@ -59,4 +72,15 @@ func SavePodNodeSelectorConfig(workdir string) (string, error) {
 	return Render(podNodeSelectorConfigTemplate, Data{
 		"WORK_DIR": workdir,
 	})
+}
+
+func SaveEncryptionProvidersConfig(workdir, fileName string) (string, error) {
+	return Render(encryptionProvidersConfigTemplate, Data{
+		"WORK_DIR":  workdir,
+		"FILE_NAME": fileName,
+	})
+}
+
+func DeleteEncryptionProvidersConfig(fileName string) string {
+	return deleteEncryptionProvidersConfigTemplate
 }

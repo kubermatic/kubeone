@@ -32,6 +32,7 @@ import (
 	"k8c.io/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/util/sets"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -84,6 +85,9 @@ func runProbes(s *state.State) error {
 
 	s.LiveCluster = &state.Cluster{
 		ExpectedVersion: expectedVersion,
+		EncryptionConfiguration: &state.EncryptionConfiguration{
+			Enable: false,
+		},
 	}
 
 	s.Logger.Info("Running host probes...")
@@ -274,7 +278,7 @@ func investigateCluster(s *state.State) error {
 	s.LiveCluster.Lock.Unlock()
 
 	if s.DynamicClient == nil {
-		if err := kubeconfig.BuildKubernetesClientset(s); err != nil {
+		if err = kubeconfig.BuildKubernetesClientset(s); err != nil {
 			return err
 		}
 	}
@@ -283,7 +287,7 @@ func investigateCluster(s *state.State) error {
 
 	// Get the node list
 	nodes := corev1.NodeList{}
-	if err := s.DynamicClient.List(s.Context, &nodes, &dynclient.ListOptions{}); err != nil {
+	if err = s.DynamicClient.List(s.Context, &nodes, &dynclient.ListOptions{}); err != nil {
 		return errors.Wrap(err, "unable to list nodes")
 	}
 
@@ -322,7 +326,15 @@ func investigateCluster(s *state.State) error {
 		}
 	}
 	s.LiveCluster.Lock.Unlock()
-
+	encryptionEnabled, err := detectEncryptionProvidersEnabled(s)
+	if err != nil {
+		return errors.Wrap(err, "failed to check for EncryptionProviders")
+	}
+	if encryptionEnabled.Enabled {
+		s.LiveCluster.Lock.Lock()
+		s.LiveCluster.EncryptionConfiguration = &state.EncryptionConfiguration{Enable: true, Custom: encryptionEnabled.Custom}
+		s.LiveCluster.Lock.Unlock()
+	}
 	return nil
 }
 
@@ -463,4 +475,35 @@ func systemdStatus(conn ssh.Connection, service string) (uint64, error) {
 	}
 
 	return status, nil
+}
+
+type encryptionEnabledStatus struct {
+	Enabled bool
+	Custom  bool
+}
+
+func detectEncryptionProvidersEnabled(s *state.State) (ees encryptionEnabledStatus, err error) {
+	if s.DynamicClient == nil {
+		return ees, errors.New("kubernetes dynamic client is not initialized")
+	}
+	pods := corev1.PodList{}
+	err = s.DynamicClient.List(s.Context, &pods, &dynclient.ListOptions{
+		Namespace: "kube-system",
+		LabelSelector: labels.SelectorFromSet(map[string]string{
+			"component": "kube-apiserver"})})
+	if err != nil {
+		return ees, errors.Wrap(err, "unable to list pods")
+	}
+
+	for _, pod := range pods.Items {
+		for _, c := range pod.Spec.Containers[0].Command {
+			if strings.HasPrefix(c, "--encryption-provider") {
+				ees.Enabled = true
+			}
+			if strings.Contains(c, "encryption-providers/custom-encryption-providers.yaml") {
+				ees.Custom = true
+			}
+		}
+	}
+	return ees, nil
 }

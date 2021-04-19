@@ -1,6 +1,6 @@
 +++
 title = "v1beta1 API Reference"
-date = 2020-12-08T12:31:41+02:00
+date = 2021-01-17T17:46:19+01:00
 weight = 11
 +++
 ## v1beta1
@@ -23,6 +23,7 @@ weight = 11
 * [DigitalOceanSpec](#digitaloceanspec)
 * [DynamicAuditLog](#dynamicauditlog)
 * [DynamicWorkerConfig](#dynamicworkerconfig)
+* [EncryptionProviders](#encryptionproviders)
 * [ExternalCNISpec](#externalcnispec)
 * [Features](#features)
 * [GCESpec](#gcespec)
@@ -261,6 +262,16 @@ DynamicWorkerConfig describes a set of worker machines
 
 [Back to Group](#v1beta1)
 
+### EncryptionProviders
+
+Encryption Providers feature flag
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| enable | Enable | bool | true |
+
+[Back to Group](#v1beta1)
+
 ### ExternalCNISpec
 
 ExternalCNISpec defines the external CNI plugin.
@@ -284,6 +295,7 @@ Features controls what features will be enabled on the cluster
 | dynamicAuditLog | DynamicAuditLog | *[DynamicAuditLog](#dynamicauditlog) | false |
 | metricsServer | MetricsServer | *[MetricsServer](#metricsserver) | false |
 | openidConnect | OpenIDConnect | *[OpenIDConnect](#openidconnect) | false |
+| encryptionProviders | Encryption Providers | *[EncryptionProviders](#encryptionproviders) | false |
 
 [Back to Group](#v1beta1)
 

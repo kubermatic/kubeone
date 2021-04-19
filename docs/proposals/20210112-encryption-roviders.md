@@ -40,7 +40,7 @@ kind: KubeOneCluster
 features:
   encryptionProviders:
     enabled: true
-    customProvidersFile: |
+    customEncryptionConfiguration: |
       apiVersion: apiserver.config.k8s.io/v1
       kind: EncryptionConfiguration
       resources:

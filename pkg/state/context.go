@@ -31,6 +31,11 @@ import (
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
+const (
+	defaultEncryptionProvidersFile = "encryption-providers.yaml"
+	customEncryptionProvidersFile  = "custom-encryption-providers.yaml"
+)
+
 func New(ctx context.Context) (*State, error) {
 	joinToken, err := bootstraputil.GenerateBootstrapToken()
 	return &State{
@@ -81,4 +86,30 @@ func (s *State) KubeadmVerboseFlag() string {
 func (s *State) Clone() *State {
 	newState := *s
 	return &newState
+}
+
+func (s *State) ShouldDisableEncryption() bool {
+	return (s.Cluster.Features.EncryptionProviders == nil ||
+		!s.Cluster.Features.EncryptionProviders.Enable) &&
+		s.LiveCluster.EncryptionConfiguration.Enable
+}
+
+func (s *State) ShouldEnableEncryption() bool {
+	return s.Cluster.Features.EncryptionProviders != nil &&
+		s.Cluster.Features.EncryptionProviders.Enable &&
+		!s.LiveCluster.EncryptionConfiguration.Enable
+}
+
+func (s *State) EncryptionEnabled() bool {
+	return s.Cluster.Features.EncryptionProviders != nil &&
+		s.Cluster.Features.EncryptionProviders.Enable &&
+		s.LiveCluster.EncryptionConfiguration.Enable
+}
+
+func (s *State) GetEncryptionProviderConfigName() string {
+	if (s.ShouldEnableEncryption() && s.Cluster.Features.EncryptionProviders.CustomEncryptionConfiguration != "") ||
+		s.LiveCluster.EncryptionConfiguration.Custom {
+		return customEncryptionProvidersFile
+	}
+	return defaultEncryptionProvidersFile
 }
