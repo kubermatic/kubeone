@@ -154,7 +154,7 @@ function runE2E() {
   IFS='/' read -ra list_filter <<< "${run_filter}"
 
   numberOfTestsToRun=$(go test ./test/e2e -list "${list_filter[0]}" | wc -l)
-  numberOfTestsToRun=$(( "$numberOfTestsToRun"-1 ))
+  numberOfTestsToRun=$(("$numberOfTestsToRun" - 1))
 
   if [[ "$numberOfTestsToRun" == "0" ]]; then
     fail "run_filter '${run_filter}' selects no tests to run"
