@@ -130,17 +130,15 @@ func (s *State) GetKMSSocketPath() (string, error) {
 			return "", err
 		}
 	}
-	endpoint := ""
-Resources:
+
 	for _, r := range config.Resources {
 		for _, p := range r.Providers {
 			if p.KMS == nil {
 				continue
 			}
-			endpoint = p.KMS.Endpoint
-			break Resources
+			return path.Clean(strings.ReplaceAll(p.KMS.Endpoint, "unix:", "")), nil
 		}
 	}
 
-	return path.Clean(strings.ReplaceAll(endpoint, "unix:", "")), nil
+	return "", nil
 }
