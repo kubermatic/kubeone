@@ -1,7 +1,7 @@
 # Encryption Providers for encrypted secrets at rest
 
 **Auther**: Mohamed Elsayed (@moelsayed)
-**Status**: Draft
+**Status**: Implemented
 
 
 ## Abstract
@@ -17,12 +17,13 @@ KubeOne needs to support this feature natively. Meaning the user should be able 
 
 * Provide a safe path to enable/disable Encryption Providers.
 * Support atomic(?) rotation for existing keys.
+* Support custom configuration files and external KMS.
 * Rewriting all secret resources (no just secrets) after enable/disable/rotate operations.
 
 ## Non-Goals
 
 * Deploy External KMS.
-* Safely manage (disable/enable/rotate) configuration when a custom configuration file is used. 
+* Safely rotate configuration when a custom configuration file is used. 
 
 ## Challenges
 
@@ -106,6 +107,7 @@ This use case is useful for users who would like to utilize an external KMS prov
 * Sync the configuration file to all control plane nodes.
 * Restart KubeAPI on all nodes. 
 
+Additionally, if an external KMS is used, KubeOne will detect that and add a specific file mount for the KMS unix socket file in the KubeAPI static pod spec. This is necessary to allow KubeAPI to communicate with the external KMS service.
 ## Tasks & effort
 
 * Implement the needed pre-flight checks.
