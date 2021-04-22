@@ -18,6 +18,7 @@ package v1beta2
 
 import (
 	"fmt"
+	"path"
 	"path/filepath"
 	"strings"
 	"time"
@@ -36,7 +37,9 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	apiserverconfigv1 "k8s.io/apiserver/pkg/apis/config/v1"
 	kubeletconfigv1beta1 "k8s.io/kubelet/config/v1beta1"
+	kyaml "sigs.k8s.io/yaml"
 )
 
 const (
@@ -248,6 +251,22 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 			PathType:  corev1.HostPathDirectoryOrCreate,
 		}
 		clusterConfig.APIServer.ExtraVolumes = append(clusterConfig.APIServer.ExtraVolumes, encryptionProvidersVol)
+		if (s.LiveCluster.EncryptionConfiguration.Custom && s.LiveCluster.EncryptionConfiguration.Config != nil) ||
+			s.Cluster.Features.EncryptionProviders != nil && s.Cluster.Features.EncryptionProviders.CustomEncryptionConfiguration != "" {
+			kmsEndpoint, err := getKMSEndpoint(s)
+			if err != nil {
+				return nil, err
+			}
+			if kmsEndpoint != "" {
+				file := path.Clean(strings.ReplaceAll(kmsEndpoint, "unix:", ""))
+				clusterConfig.APIServer.ExtraVolumes = append(clusterConfig.APIServer.ExtraVolumes, kubeadmv1beta2.HostPathMount{
+					Name:      "kms-endpoint",
+					HostPath:  file,
+					MountPath: file,
+					PathType:  corev1.HostPathSocket,
+				})
+			}
+		}
 	}
 
 	args := kubeadmargs.NewFrom(clusterConfig.APIServer.ExtraArgs)
@@ -339,4 +358,25 @@ func newNodeRegistration(s *state.State, host kubeoneapi.HostConfig) kubeadmv1be
 			"volume-plugin-dir": "/var/lib/kubelet/volumeplugins",
 		},
 	}
+}
+
+func getKMSEndpoint(s *state.State) (string, error) {
+	config := &apiserverconfigv1.EncryptionConfiguration{}
+	if s.LiveCluster.EncryptionConfiguration != nil && s.LiveCluster.EncryptionConfiguration.Custom && s.LiveCluster.EncryptionConfiguration.Config != nil {
+		config = s.LiveCluster.EncryptionConfiguration.Config
+	} else {
+		err := kyaml.UnmarshalStrict([]byte(s.Cluster.Features.EncryptionProviders.CustomEncryptionConfiguration), config)
+		if err != nil {
+			return "", err
+		}
+	}
+	for _, r := range config.Resources {
+		for _, p := range r.Providers {
+			if p.KMS == nil {
+				continue
+			}
+			return p.KMS.Endpoint, nil
+		}
+	}
+	return "", nil
 }
