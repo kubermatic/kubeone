@@ -18,14 +18,12 @@ package v1beta1
 
 import (
 	"fmt"
-	"path"
 	"path/filepath"
 	"strings"
 	"time"
 
 	"github.com/Masterminds/semver/v3"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 
 	kubeadmv1beta1 "k8c.io/kubeone/pkg/apis/kubeadm/v1beta1"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
@@ -38,7 +36,6 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	apiserverconfigv1 "k8s.io/apiserver/pkg/apis/config/v1"
 	kubeletconfigv1beta1 "k8s.io/kubelet/config/v1beta1"
 )
 
@@ -241,10 +238,10 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		}
 		clusterConfig.APIServer.ExtraVolumes = append(clusterConfig.APIServer.ExtraVolumes, admissionVol)
 	}
-	logrus.Infof("melsayed---------------------- inbeta 1")
 
 	// this is not exactly as s.EncryptionEnabled(). We need this to be true during the enable/disable or disable/enable transition.
-	if (cluster.Features.EncryptionProviders != nil && cluster.Features.EncryptionProviders.Enable) || s.LiveCluster.EncryptionConfiguration.Enable {
+	if (cluster.Features.EncryptionProviders != nil && cluster.Features.EncryptionProviders.Enable) ||
+		s.LiveCluster.EncryptionConfiguration.Enable {
 		encryptionProvidersVol := kubeadmv1beta1.HostPathMount{
 			Name:      "encryption-providers-conf",
 			HostPath:  "/etc/kubernetes/encryption-providers",
@@ -253,14 +250,19 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 			PathType:  corev1.HostPathDirectoryOrCreate,
 		}
 		clusterConfig.APIServer.ExtraVolumes = append(clusterConfig.APIServer.ExtraVolumes, encryptionProvidersVol)
-		if s.LiveCluster.EncryptionConfiguration.Custom && s.LiveCluster.EncryptionConfiguration.Config != nil {
-			kmsEndpoint := getKMSEndpoint(s.LiveCluster.EncryptionConfiguration.Config)
-			if kmsEndpoint != "" {
-				file := path.Clean(strings.ReplaceAll(kmsEndpoint, "unix:", ""))
+
+		// Handle external KMS case.
+		if s.LiveCluster.CustomEncryptionEnabled() ||
+			s.Cluster.Features.EncryptionProviders != nil && s.Cluster.Features.EncryptionProviders.CustomEncryptionConfiguration != "" {
+			ksmSocket, err := s.GetKMSSocketPath()
+			if err != nil {
+				return nil, err
+			}
+			if ksmSocket != "" {
 				clusterConfig.APIServer.ExtraVolumes = append(clusterConfig.APIServer.ExtraVolumes, kubeadmv1beta1.HostPathMount{
 					Name:      "kms-endpoint",
-					HostPath:  file,
-					MountPath: file,
+					HostPath:  ksmSocket,
+					MountPath: ksmSocket,
 					PathType:  corev1.HostPathSocket,
 				})
 			}
@@ -355,16 +357,4 @@ func newNodeIP(host kubeoneapi.HostConfig) string {
 	}
 
 	return nodeIP
-}
-
-func getKMSEndpoint(config *apiserverconfigv1.EncryptionConfiguration) string {
-	for _, r := range config.Resources {
-		for _, p := range r.Providers {
-			if p.KMS == nil {
-				continue
-			}
-			return p.KMS.Endpoint
-		}
-	}
-	return ""
 }

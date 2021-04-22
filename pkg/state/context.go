@@ -18,6 +18,8 @@ package state
 
 import (
 	"context"
+	"path"
+	"strings"
 
 	"github.com/sirupsen/logrus"
 
@@ -26,9 +28,11 @@ import (
 	"k8c.io/kubeone/pkg/runner"
 	"k8c.io/kubeone/pkg/ssh"
 
+	apiserverconfigv1 "k8s.io/apiserver/pkg/apis/config/v1"
 	"k8s.io/client-go/rest"
 	bootstraputil "k8s.io/cluster-bootstrap/token/util"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
+	kyaml "sigs.k8s.io/yaml"
 )
 
 const (
@@ -112,4 +116,31 @@ func (s *State) GetEncryptionProviderConfigName() string {
 		return customEncryptionProvidersFile
 	}
 	return defaultEncryptionProvidersFile
+}
+
+func (s *State) GetKMSSocketPath() (string, error) {
+	config := &apiserverconfigv1.EncryptionConfiguration{}
+	// Custom configuration could be either on cluster side or the cluster configuration file
+	// or both, depending on the enabled, enable/disable situation. We prefer the local configuration.
+	if s.LiveCluster.CustomEncryptionEnabled() {
+		config = s.LiveCluster.EncryptionConfiguration.Config
+	} else {
+		err := kyaml.UnmarshalStrict([]byte(s.Cluster.Features.EncryptionProviders.CustomEncryptionConfiguration), config)
+		if err != nil {
+			return "", err
+		}
+	}
+	endpoint := ""
+Resources:
+	for _, r := range config.Resources {
+		for _, p := range r.Providers {
+			if p.KMS == nil {
+				continue
+			}
+			endpoint = p.KMS.Endpoint
+			break Resources
+		}
+	}
+
+	return path.Clean(strings.ReplaceAll(endpoint, "unix:", "")), nil
 }
