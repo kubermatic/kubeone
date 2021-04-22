@@ -20,14 +20,11 @@ import (
 	"github.com/pkg/errors"
 
 	"k8c.io/kubeone/pkg/addons"
-	"k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/certificate"
 	"k8c.io/kubeone/pkg/clusterstatus"
 	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/features"
 	"k8c.io/kubeone/pkg/kubeconfig"
-	"k8c.io/kubeone/pkg/scripts"
-	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/externalccm"
 	"k8c.io/kubeone/pkg/templates/machinecontroller"
@@ -131,14 +128,7 @@ func WithResources(t Tasks) Tasks {
 		Tasks{
 			{
 				Fn: func(s *state.State) error {
-					return s.RunTaskOnControlPlane(func(ctx *state.State, node *kubeone.HostConfig, conn ssh.Connection) error {
-						cmd, err := scripts.SaveCABundle(ctx.WorkDir)
-						if err != nil {
-							return err
-						}
-						_, _, err = ctx.Runner.RunRaw(cmd)
-						return err
-					}, state.RunParallel)
+					return s.RunTaskOnControlPlane(saveCABundle, state.RunParallel)
 				},
 				Predicate: func(s *state.State) bool {
 					return s.Cluster.CABundle != ""

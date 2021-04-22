@@ -29,6 +29,7 @@ import (
 	"k8c.io/kubeone/pkg/certificate/cabundle"
 	"k8c.io/kubeone/pkg/clientutil"
 	"k8c.io/kubeone/pkg/kubeconfig"
+	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/ssh/sshiofs"
 	"k8c.io/kubeone/pkg/state"
@@ -142,4 +143,14 @@ func ensureCABundleConfigMap(s *state.State) error {
 
 	cm := cabundle.ConfigMap(s.Cluster.CABundle)
 	return clientutil.CreateOrUpdate(s.Context, s.DynamicClient, cm)
+}
+
+func saveCABundle(ctx *state.State, _ *kubeoneapi.HostConfig, _ ssh.Connection) error {
+	cmd, err := scripts.SaveCABundle(ctx.WorkDir)
+	if err != nil {
+		return err
+	}
+
+	_, _, err = ctx.Runner.RunRaw(cmd)
+	return err
 }

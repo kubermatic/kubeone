@@ -244,7 +244,10 @@ func patchStaticPods(s *state.State) error {
 			return errors.Wrap(err, "failed to marshal kube-controller-manager.yaml")
 		}
 
-		mgrPodManifest.Truncate(0)
+		if err = mgrPodManifest.Truncate(0); err != nil {
+			return err
+		}
+
 		_, err = io.Copy(mgrPodManifest, bytes.NewBuffer(buf))
 
 		return errors.Wrap(err, "failed to write kube-controller-manager.yaml")
