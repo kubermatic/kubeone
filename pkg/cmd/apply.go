@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 
 	"github.com/MakeNowJust/heredoc/v2"
@@ -33,6 +34,9 @@ import (
 	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/tasks"
+
+	apiserverconfigv1 "k8s.io/apiserver/pkg/apis/config/v1"
+	kyaml "sigs.k8s.io/yaml"
 )
 
 type applyOpts struct {
@@ -352,6 +356,22 @@ func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
 		if s.ShouldEnableEncryption() {
 			operations = append(operations, "enable Encryption Provider support")
 			tasksToRun = tasks.WithRewriteSecrets(tasksToRun)
+		}
+
+		// custom encryption configuration was modified
+		if s.LiveCluster.CustomEncryptionEnabled() &&
+			s.Cluster.Features.EncryptionProviders != nil &&
+			s.Cluster.Features.EncryptionProviders.CustomEncryptionConfiguration != "" {
+			config := &apiserverconfigv1.EncryptionConfiguration{}
+			err = kyaml.UnmarshalStrict([]byte(s.Cluster.Features.EncryptionProviders.CustomEncryptionConfiguration), config)
+			if err != nil {
+				return err
+			}
+
+			if !reflect.DeepEqual(config, s.LiveCluster.EncryptionConfiguration.Config) {
+				operations = append(operations, []string{"update Encryption Provider configuration", "restart KubeAPI"}...)
+				tasksToRun = tasks.WithCustomEncryptionConfigUpdated(tasksToRun)
+			}
 		}
 
 		for _, node := range s.LiveCluster.ControlPlane {

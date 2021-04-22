@@ -315,6 +315,21 @@ func WithRewriteSecrets(t Tasks) Tasks {
 		})
 }
 
+func WithCustomEncryptionConfigUpdated(t Tasks) Tasks {
+	return t.append(Tasks{
+		{
+			Fn:          ensureRestartKubeAPIServer,
+			ErrMsg:      "failed to restart KubeAPI",
+			Description: "restart KubeAPI containers",
+		},
+		{
+			Fn:          RewriteClusterSecrets,
+			ErrMsg:      "failed to rewrite cluster secrets",
+			Description: "rewrite all cluster secrets",
+		},
+	}...)
+}
+
 func WithRotateKey(t Tasks) Tasks {
 	return WithHostnameOSAndProbes(t).
 		append(Tasks{
