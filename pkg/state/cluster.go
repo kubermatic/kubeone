@@ -247,6 +247,14 @@ func (c *Cluster) SafeToRepair(targetVersion string) (bool, string) {
 	return true, targetVer.String()
 }
 
+func (c *Cluster) EncryptionEnabled() bool {
+	return c.EncryptionConfiguration != nil && c.EncryptionConfiguration.Enable
+}
+
+func (c *Cluster) CustomEncryptionEnabled() bool {
+	return c.EncryptionEnabled() && c.EncryptionConfiguration.Custom && c.EncryptionConfiguration.Config != nil
+}
+
 /*
 	Host level checks
 */
