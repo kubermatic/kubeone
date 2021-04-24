@@ -15,11 +15,11 @@ require (
 	github.com/kubermatic/machine-controller v1.27.4
 	github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de
 	github.com/pkg/errors v0.9.1
-	github.com/pkg/sftp v1.12.0
 	github.com/pmezard/go-difflib v1.0.0
 	github.com/sirupsen/logrus v1.7.0
 	github.com/spf13/cobra v1.1.1
 	github.com/spf13/pflag v1.0.5
+	github.com/stretchr/testify v1.6.1 // indirect
 	go.etcd.io/etcd/v3 v3.3.0-rc.0.0.20200728214110-6c81b20ec8de
 	golang.org/x/crypto v0.0.0-20201217014255-9d1352758620
 	golang.org/x/term v0.0.0-20201117132131-f5c789dd3221

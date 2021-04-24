@@ -28,7 +28,6 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/pkg/sftp"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
 )
@@ -42,8 +41,7 @@ var (
 // Connection represents an established connection to an SSH server.
 type Connection interface {
 	Exec(cmd string) (stdout string, stderr string, exitCode int, err error)
-	File(filename string, flags int) (io.ReadWriteCloser, error)
-	Stream(cmd string, stdout io.Writer, stderr io.Writer) (exitCode int, err error)
+	POpen(cmd string, stdin io.Reader, stdout io.Writer, stderr io.Writer) (exitCode int, err error)
 	io.Closer
 }
 
@@ -115,12 +113,11 @@ func validateOptions(o Opts) (Opts, error) {
 }
 
 type connection struct {
-	mu         sync.Mutex
-	sftpclient *sftp.Client
-	sshclient  *ssh.Client
-	connector  *Connector
-	ctx        context.Context
-	cancel     context.CancelFunc
+	mu        sync.Mutex
+	sshclient *ssh.Client
+	connector *Connector
+	ctx       context.Context
+	cancel    context.CancelFunc
 }
 
 // NewConnection attempts to create a new SSH connection to the host
@@ -229,19 +226,6 @@ func NewConnection(connector *Connector, o Opts) (Connection, error) {
 	return sshConn, nil
 }
 
-// File return remote file (as an io.ReadWriteCloser).
-//
-// mode is os package file modes: https://golang.org/pkg/os/#pkg-constants
-// returned file optionally implement
-func (c *connection) File(filename string, flags int) (io.ReadWriteCloser, error) {
-	sftpClient, err := c.sftp()
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to open SFTP")
-	}
-
-	return sftpClient.OpenFile(filename, flags)
-}
-
 func (c *connection) TunnelTo(_ context.Context, network, addr string) (net.Conn, error) {
 	// the voided context.Context is voided as a workaround of always Done
 	// context that being passed. Please don't try to <-ctx.Done(), it will
@@ -266,7 +250,6 @@ func (c *connection) Close() error {
 	c.cancel()
 
 	defer func() { c.sshclient = nil }()
-	defer func() { c.sftpclient = nil }()
 	defer c.connector.forgetConnection(c)
 
 	return c.sshclient.Close()
@@ -295,10 +278,6 @@ func (c *connection) POpen(cmd string, stdin io.Reader, stdout io.Writer, stderr
 	return exitCode, err
 }
 
-func (c *connection) Stream(cmd string, stdout io.Writer, stderr io.Writer) (int, error) {
-	return c.POpen(cmd, nil, stdout, stderr)
-}
-
 func (c *connection) Exec(cmd string) (string, string, int, error) {
 	var stdoutBuf, stderrBuf strings.Builder
 
@@ -316,23 +295,4 @@ func (c *connection) session() (*ssh.Session, error) {
 	}
 
 	return c.sshclient.NewSession()
-}
-
-func (c *connection) sftp() (*sftp.Client, error) {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-
-	if c.sshclient == nil {
-		return nil, errors.New("connection closed")
-	}
-
-	if c.sftpclient == nil {
-		s, err := sftp.NewClient(c.sshclient)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to get sftp.Client")
-		}
-		c.sftpclient = s
-	}
-
-	return c.sftpclient, nil
 }

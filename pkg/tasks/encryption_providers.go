@@ -18,13 +18,15 @@ package tasks
 
 import (
 	"context"
-	"fmt"
+	"io/fs"
+	"path"
 
 	"github.com/pkg/errors"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/ssh"
+	"k8c.io/kubeone/pkg/ssh/sshiofs"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates"
 	encryptionproviders "k8c.io/kubeone/pkg/templates/encryptionproviders"
@@ -50,15 +52,20 @@ func FetchEncryptionProvidersFile(s *state.State) error {
 	if err != nil {
 		return err
 	}
+
+	sshfs := sshiofs.New(conn)
 	fileName := s.GetEncryptionProviderConfigName()
-	config, _, _, err := conn.Exec(fmt.Sprintf("sudo cat /etc/kubernetes/encryption-providers/%s", fileName))
+
+	config, err := fs.ReadFile(sshfs, path.Join("/etc/kubernetes/encryption-providers", fileName))
 	if err != nil {
 		return err
 	}
+
 	s.LiveCluster.Lock.Lock()
 	s.LiveCluster.EncryptionConfiguration.Config = &apiserverconfigv1.EncryptionConfiguration{}
-	err = kyaml.UnmarshalStrict([]byte(config), s.LiveCluster.EncryptionConfiguration.Config)
+	err = kyaml.UnmarshalStrict(config, s.LiveCluster.EncryptionConfiguration.Config)
 	s.LiveCluster.Lock.Unlock()
+
 	return err
 }
 

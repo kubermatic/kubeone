@@ -127,7 +127,7 @@ func WithResources(t Tasks) Tasks {
 	return t.append(
 		Tasks{
 			{
-				Fn:          renewCerts,
+				Fn:          renewControlPlaneCerts,
 				ErrMsg:      "failed to renew certificates",
 				Description: "renew all certificates",
 				Predicate: func(s *state.State) bool {
