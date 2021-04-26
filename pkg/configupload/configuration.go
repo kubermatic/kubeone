@@ -17,9 +17,7 @@ limitations under the License.
 package configupload
 
 import (
-	"fmt"
 	"io"
-	"io/fs"
 	"io/ioutil"
 	"path/filepath"
 	"strings"
@@ -33,13 +31,15 @@ import (
 
 // Configuration holds a map of generated files
 type Configuration struct {
-	files map[string]string
+	files         map[string]string
+	KubernetesPKI map[string][]byte
 }
 
 // NewConfiguration constructor
 func NewConfiguration() *Configuration {
 	return &Configuration{
-		files: make(map[string]string),
+		files:         make(map[string]string),
+		KubernetesPKI: make(map[string][]byte),
 	}
 }
 
@@ -111,36 +111,6 @@ func (c *Configuration) UploadTo(conn ssh.Connection, directory string) error {
 	return nil
 }
 
-// Download a files matching `source` pattern
-func (c *Configuration) Download(conn ssh.Connection, source string, prefix string) error {
-	// list files
-	stdout, stderr, _, err := conn.Exec(fmt.Sprintf(`cd -- "%s" && find * -type f`, source))
-	if err != nil {
-		return errors.Wrapf(err, "%s", stderr)
-	}
-
-	sshfs := sshiofs.New(conn)
-
-	filenames := strings.Split(stdout, "\n")
-	for _, filename := range filenames {
-		fullsource := source + "/" + filename
-
-		localfile := filename
-		if len(prefix) > 0 {
-			localfile = prefix + "/" + localfile
-		}
-
-		buf, err := fs.ReadFile(sshfs, fullsource)
-		if err != nil {
-			return err
-		}
-
-		c.files[localfile] = string(buf)
-	}
-
-	return nil
-}
-
 // Backup dumps the files into a .tar.gz archive.
 func (c *Configuration) Backup(target string) error {
 	archive, err := archive.NewTarGzip(target)
@@ -151,6 +121,13 @@ func (c *Configuration) Backup(target string) error {
 
 	for filename, content := range c.files {
 		err = archive.Add(filename, content)
+		if err != nil {
+			return errors.Wrapf(err, "failed to add %s to archive", filename)
+		}
+	}
+
+	for filename, content := range c.KubernetesPKI {
+		err = archive.Add(strings.TrimPrefix(filename, "/"), string(content))
 		if err != nil {
 			return errors.Wrapf(err, "failed to add %s to archive", filename)
 		}

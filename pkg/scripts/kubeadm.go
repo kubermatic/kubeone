@@ -34,12 +34,6 @@ var (
 	`)
 
 	kubeadmCertScriptTemplate = heredoc.Doc(`
-		if [[ -d {{ .WORK_DIR }}/pki ]]; then
-			sudo rsync -av {{ .WORK_DIR }}/pki/ /etc/kubernetes/pki/
-			sudo chown -R root:root /etc/kubernetes
-			sudo rm -rf {{ .WORK_DIR }}/pki
-		fi
-
 		sudo kubeadm {{ .VERBOSE }} init phase certs all \
 			--config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
 	`)

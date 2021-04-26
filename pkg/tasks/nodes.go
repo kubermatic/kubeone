@@ -235,6 +235,7 @@ func patchStaticPods(s *state.State) error {
 				foundEnvVar = true
 			}
 		}
+
 		if !foundEnvVar {
 			pod.Spec.Containers[0].Env = append(pod.Spec.Containers[0].Env, envVar)
 		}
@@ -245,6 +246,10 @@ func patchStaticPods(s *state.State) error {
 		}
 
 		if err = mgrPodManifest.Truncate(0); err != nil {
+			return err
+		}
+
+		if _, err = mgrPodManifest.Seek(0, io.SeekStart); err != nil {
 			return err
 		}
 

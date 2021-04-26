@@ -1,10 +1,4 @@
 set -xeu pipefail
 export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
-if [[ -d test-wd/pki ]]; then
-	sudo rsync -av test-wd/pki/ /etc/kubernetes/pki/
-	sudo chown -R root:root /etc/kubernetes
-	sudo rm -rf test-wd/pki
-fi
-
 sudo kubeadm  init phase certs all \
 	--config=test-wd/cfg/master_0.yaml
