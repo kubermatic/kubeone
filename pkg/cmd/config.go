@@ -666,13 +666,14 @@ features:
       # authorities in the oidc-ca-file, otherwise the host's root CA set will
       # be used.
       caFile: ""
+
   # Enable Kubernetes Encryption Providers
   # For more information: https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/
   encryptionProviders:
     # disabled by default
     enable: {{ .EnableEncryptionProviders }}
-    customEncryptionConfiguration: # inline string
-      caFile: ""
+    # inline string
+    customEncryptionConfiguration: ""
 
 ## Bundle of Root CA Certificates extracted from Mozilla
 ## can be found here: https://curl.se/ca/cacert.pem

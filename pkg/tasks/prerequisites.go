@@ -215,17 +215,6 @@ func uploadConfigurationFilesToNode(s *state.State, node *kubeoneapi.HostConfig,
 		return err
 	}
 
-	if s.Cluster.CABundle != "" {
-		cmd, err = scripts.SaveCABundle(s.WorkDir)
-		if err != nil {
-			return err
-		}
-		_, _, err = s.Runner.RunRaw(cmd)
-		if err != nil {
-			return err
-		}
-	}
-
 	return nil
 }
 

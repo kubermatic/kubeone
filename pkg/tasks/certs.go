@@ -137,7 +137,7 @@ func earliestCertExpiry(conn ssh.Connection) (time.Time, error) {
 	return earliestCertExpirationTime, nil
 }
 
-func ensureConfigMap(s *state.State) error {
+func ensureCABundleConfigMap(s *state.State) error {
 	s.Logger.Infoln("Creating ca-bundle configMap...")
 
 	cm := cabundle.ConfigMap(s.Cluster.CABundle)

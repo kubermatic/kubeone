@@ -208,20 +208,6 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		}
 	}
 
-	// TODO: Fix double mounted /etc/ssl/certs
-	// if cluster.CABundle != "" {
-	// 	clusterConfig.ControllerManager.ExtraVolumes = append(
-	// 		clusterConfig.ControllerManager.ExtraVolumes, kubeadmv1beta2.HostPathMount{
-	// 			Name:     "ca-bundle",
-	// 			HostPath: cabundle.CertsDir,
-	// 			// this is path that k8s.gcr.io/kube-* images use in ENV
-	// 			// "SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt"
-	// 			MountPath: "/etc/ssl/certs",
-	// 			ReadOnly:  true,
-	// 		},
-	// 	)
-	// }
-
 	if cluster.CloudProvider.External {
 		delete(clusterConfig.APIServer.ExtraArgs, "cloud-provider")
 		delete(clusterConfig.ControllerManager.ExtraArgs, "cloud-provider")

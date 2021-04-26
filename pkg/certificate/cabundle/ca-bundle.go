@@ -26,10 +26,11 @@ import (
 )
 
 const (
-	CertsDir        = "/etc/kubeone/certs"
-	FileName        = "ca-certificates.crt"
-	SSLCertFilePath = CertsDir + "/" + FileName
-	ConfigMapName   = "ca-bundle"
+	OriginalCertsDir = "/etc/ssl/certs"
+	CustomCertsDir   = "/etc/kubeone/certs"
+	FileName         = "ca-certificates.crt"
+	SSLCertFilePath  = CustomCertsDir + "/" + FileName
+	ConfigMapName    = "ca-bundle"
 
 	SSLCertFileENV = "SSL_CERT_FILE"
 )
@@ -74,7 +75,7 @@ func VolumeMount() corev1.VolumeMount {
 	return corev1.VolumeMount{
 		Name:      ConfigMapName,
 		ReadOnly:  true,
-		MountPath: CertsDir,
+		MountPath: CustomCertsDir,
 	}
 }
 
@@ -94,6 +95,6 @@ func Volume() corev1.Volume {
 func EnvVar() corev1.EnvVar {
 	return corev1.EnvVar{
 		Name:  SSLCertFileENV,
-		Value: filepath.Join(CertsDir, FileName),
+		Value: filepath.Join(CustomCertsDir, FileName),
 	}
 }

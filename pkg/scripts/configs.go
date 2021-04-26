@@ -100,7 +100,7 @@ func DeleteEncryptionProvidersConfig(fileName string) string {
 func SaveCABundle(workdir string) (string, error) {
 	return Render(caBundleTemplate, Data{
 		"CA_BUNDLE_FILENAME": cabundle.FileName,
-		"CA_CERTS_DIR":       cabundle.CertsDir,
+		"CA_CERTS_DIR":       cabundle.CustomCertsDir,
 		"WORK_DIR":           workdir,
 	})
 }
