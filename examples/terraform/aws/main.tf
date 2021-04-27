@@ -89,11 +89,11 @@ resource "aws_subnet" "public" {
     (random_integer.cidr_block.result + count.index) % local.subnet_total,
   )
 
-  tags = map(
-    "Name", "${var.cluster_name}-${data.aws_availability_zones.available.names[count.index]}",
-    "Cluster", var.cluster_name,
-    local.kube_cluster_tag, "shared",
-  )
+  tags = tomap({
+    "Name"                   = "${var.cluster_name}-${data.aws_availability_zones.available.names[count.index]}",
+    "Cluster"                = var.cluster_name,
+    (local.kube_cluster_tag) = "shared",
+  })
 }
 
 ################################### FIREWALL ###################################
@@ -103,10 +103,10 @@ resource "aws_security_group" "common" {
   description = "cluster common rules"
   vpc_id      = data.aws_vpc.selected.id
 
-  tags = map(
-    "Cluster", var.cluster_name,
-    local.kube_cluster_tag, "shared",
-  )
+  tags = tomap({
+    "Cluster"                = var.cluster_name,
+    (local.kube_cluster_tag) = "shared",
+  })
 }
 
 resource "aws_security_group_rule" "ingress_self_allow_all" {
@@ -164,9 +164,9 @@ resource "aws_security_group" "elb" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = map(
-    "Cluster", var.cluster_name,
-  )
+  tags = tomap({
+    "Cluster" = var.cluster_name,
+  })
 }
 
 resource "aws_security_group" "ssh" {
@@ -182,9 +182,9 @@ resource "aws_security_group" "ssh" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = map(
-    "Cluster", var.cluster_name,
-  )
+  tags = tomap({
+    "Cluster" = var.cluster_name,
+  })
 }
 
 ################################## KUBE-API LB #################################
@@ -212,10 +212,10 @@ resource "aws_elb" "control_plane" {
     interval            = 30
   }
 
-  tags = map(
-    "Cluster", var.cluster_name,
-    local.kube_cluster_tag, "shared",
-  )
+  tags = tomap({
+    "Cluster"                = var.cluster_name,
+    (local.kube_cluster_tag) = "shared",
+  })
 }
 
 #################################### SSH KEY ###################################
@@ -286,10 +286,10 @@ resource "aws_instance" "control_plane" {
     volume_size = var.control_plane_volume_size
   }
 
-  tags = map(
-    "Name", "${var.cluster_name}-cp-${count.index + 1}",
-    local.kube_cluster_tag, "shared",
-  )
+  tags = tomap({
+    "Name"                   = "${var.cluster_name}-cp-${count.index + 1}",
+    (local.kube_cluster_tag) = "shared",
+  })
 }
 
 resource "aws_instance" "static_workers1" {
@@ -308,10 +308,10 @@ resource "aws_instance" "static_workers1" {
     volume_size = 50
   }
 
-  tags = map(
-    "Name", "${var.cluster_name}-workers1-${count.index + 1}",
-    local.kube_cluster_tag, "shared",
-  )
+  tags = tomap({
+    "Name"                   = "${var.cluster_name}-workers1-${count.index + 1}",
+    (local.kube_cluster_tag) = "shared",
+  })
 }
 
 #################################### BASTION ###################################
@@ -330,9 +330,9 @@ resource "aws_instance" "bastion" {
     volume_size = 100
   }
 
-  tags = map(
-    "Cluster", var.cluster_name,
-    "Name", "${var.cluster_name}-bastion",
-    local.kube_cluster_tag, "shared",
-  )
+  tags = tomap({
+    "Cluster"                = var.cluster_name,
+    "Name"                   = "${var.cluster_name}-bastion",
+    (local.kube_cluster_tag) = "shared",
+  })
 }
