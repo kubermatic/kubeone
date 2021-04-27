@@ -41,7 +41,7 @@ import (
 )
 
 // download the configuration from leader
-func FetchEncryptionProvidersFile(s *state.State) error {
+func fetchEncryptionProvidersFile(s *state.State) error {
 	s.Logger.Infof("Downloading EncryptionProviders configuration file...")
 	host, err := s.Cluster.Leader()
 	if err != nil {
@@ -69,7 +69,7 @@ func FetchEncryptionProvidersFile(s *state.State) error {
 	return err
 }
 
-func UploadIdentityFirstEncryptionConfiguration(s *state.State) error {
+func uploadIdentityFirstEncryptionConfiguration(s *state.State) error {
 	s.Logger.Infof("Uploading EncryptionProviders configuration file...")
 
 	if s.LiveCluster.EncryptionConfiguration == nil ||
@@ -95,7 +95,7 @@ func UploadIdentityFirstEncryptionConfiguration(s *state.State) error {
 	return s.RunTaskOnControlPlane(pushEncryptionConfigurationOnNode, state.RunParallel)
 }
 
-func UploadEncryptionConfigurationWithNewKey(s *state.State) error {
+func uploadEncryptionConfigurationWithNewKey(s *state.State) error {
 	s.Logger.Infof("Uploading EncryptionProviders configuration file...")
 
 	if s.LiveCluster.EncryptionConfiguration == nil ||
@@ -116,7 +116,7 @@ func UploadEncryptionConfigurationWithNewKey(s *state.State) error {
 	return s.RunTaskOnControlPlane(pushEncryptionConfigurationOnNode, state.RunParallel)
 }
 
-func UploadEncryptionConfigurationWithoutOldKey(s *state.State) error {
+func uploadEncryptionConfigurationWithoutOldKey(s *state.State) error {
 	s.Logger.Infof("Uploading EncryptionProviders configuration file...")
 
 	if s.LiveCluster.EncryptionConfiguration == nil ||
@@ -148,7 +148,7 @@ func pushEncryptionConfigurationOnNode(s *state.State, node *kubeoneapi.HostConf
 	return err
 }
 
-func RewriteClusterSecrets(s *state.State) error {
+func rewriteClusterSecrets(s *state.State) error {
 	s.Logger.Infof("Rewriting cluster secrets...")
 	secrets := corev1.SecretList{}
 	err := s.DynamicClient.List(context.Background(), &secrets, &dynclient.ListOptions{})
@@ -170,7 +170,7 @@ func RewriteClusterSecrets(s *state.State) error {
 	return nil
 }
 
-func RemoveEncryptionProviderFile(s *state.State) error {
+func removeEncryptionProviderFile(s *state.State) error {
 	s.Logger.Infof("Removing EncryptionProviders configuration file...")
 	return s.RunTaskOnControlPlane(func(s *state.State, _ *kubeoneapi.HostConfig, _ ssh.Connection) error {
 		cmd := scripts.DeleteEncryptionProvidersConfig(s.GetEncryptionProviderConfigName())
