@@ -1,7 +1,7 @@
 set -xeu pipefail
 export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
 
-if [[ -f "test-dir1/cfg/audit-policy.yaml" ]]; then
+if sudo test -f "test-dir1/cfg/audit-policy.yaml"; then
 	sudo mkdir -p /etc/kubernetes/audit
 	sudo mv test-dir1/cfg/audit-policy.yaml /etc/kubernetes/audit/policy.yaml
 	sudo chown root:root /etc/kubernetes/audit/policy.yaml

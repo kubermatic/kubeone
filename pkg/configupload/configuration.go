@@ -17,11 +17,10 @@ limitations under the License.
 package configupload
 
 import (
-	"bytes"
 	"fmt"
 	"io"
+	"io/fs"
 	"io/ioutil"
-	"os"
 	"path/filepath"
 	"strings"
 
@@ -29,6 +28,7 @@ import (
 
 	"k8c.io/kubeone/pkg/archive"
 	"k8c.io/kubeone/pkg/ssh"
+	"k8c.io/kubeone/pkg/ssh/sshiofs"
 )
 
 // Configuration holds a map of generated files
@@ -71,31 +71,40 @@ func (c *Configuration) AddFilePath(filename, filePath, manifestFilePath string)
 
 // UploadTo directory all the files
 func (c *Configuration) UploadTo(conn ssh.Connection, directory string) error {
+	sshfs := sshiofs.New(conn).(sshiofs.MkdirFS)
+
 	for filename, content := range c.files {
 		target := filepath.Join(directory, filename)
 
 		// ensure the base dir exists
 		dir := filepath.Dir(target)
-		_, _, _, err := conn.Exec(fmt.Sprintf(`mkdir -p -- "%s"`, dir))
-		if err != nil {
-			return errors.Wrapf(err, "failed to create ./%s directory", dir)
+		if err := sshfs.MkdirAll(dir, 0700); err != nil {
+			return err
 		}
 
-		w, err := conn.File(target, os.O_RDWR|os.O_CREATE|os.O_TRUNC)
+		f, err := sshfs.Open(target)
 		if err != nil {
-			return errors.Wrapf(err, "failed to open remote file for write: %s", filename)
+			return err
 		}
-		defer w.Close()
+		defer f.Close()
 
-		_, err = io.Copy(w, strings.NewReader(content))
+		file := f.(sshiofs.ExtendedFile)
+		if err = file.Truncate(0); err != nil {
+			return err
+		}
+
+		_, err = file.Seek(0, io.SeekStart)
+		if err != nil {
+			return err
+		}
+
+		_, err = io.Copy(file, strings.NewReader(content))
 		if err != nil {
 			return errors.Wrapf(err, "failed to write remote file %s", filename)
 		}
 
-		if wchmod, ok := w.(interface{ Chmod(os.FileMode) error }); ok {
-			if err := wchmod.Chmod(0644); err != nil {
-				return errors.Wrapf(err, "failed to chmod %s", filename)
-			}
+		if err := file.Chmod(0600); err != nil {
+			return err
 		}
 	}
 
@@ -110,6 +119,8 @@ func (c *Configuration) Download(conn ssh.Connection, source string, prefix stri
 		return errors.Wrapf(err, "%s", stderr)
 	}
 
+	sshfs := sshiofs.New(conn)
+
 	filenames := strings.Split(stdout, "\n")
 	for _, filename := range filenames {
 		fullsource := source + "/" + filename
@@ -119,28 +130,15 @@ func (c *Configuration) Download(conn ssh.Connection, source string, prefix stri
 			localfile = prefix + "/" + localfile
 		}
 
-		var buf bytes.Buffer
-		r, err := conn.File(fullsource, os.O_RDONLY)
+		buf, err := fs.ReadFile(sshfs, fullsource)
 		if err != nil {
-			return errors.Wrapf(err, "failed to open remote file for read: %s", fullsource)
+			return err
 		}
 
-		_, err = io.Copy(&buf, r)
-		if err != nil {
-			return errors.Wrapf(err, "failed to read remote file: %s", fullsource)
-		}
-
-		c.files[localfile] = buf.String()
+		c.files[localfile] = string(buf)
 	}
 
 	return nil
-}
-
-// Debug list filenames and their size to the standard output
-func (c *Configuration) Debug() {
-	for filename, content := range c.files {
-		fmt.Printf("%s: %d bytes\n", filename, len(content))
-	}
 }
 
 // Backup dumps the files into a .tar.gz archive.

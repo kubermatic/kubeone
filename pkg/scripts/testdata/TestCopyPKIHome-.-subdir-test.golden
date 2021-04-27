@@ -1,7 +1,7 @@
 set -xeu pipefail
 export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
 
-mkdir -p ./subdir/test/pki/etcd
+sudo mkdir -p ./subdir/test/pki/etcd
 sudo cp /etc/kubernetes/pki/ca.crt ./subdir/test/pki/
 sudo cp /etc/kubernetes/pki/ca.key ./subdir/test/pki/
 sudo cp /etc/kubernetes/pki/sa.key ./subdir/test/pki/

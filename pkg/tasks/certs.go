@@ -17,12 +17,10 @@ limitations under the License.
 package tasks
 
 import (
-	"bytes"
 	"crypto/x509"
 	"encoding/pem"
 	"errors"
-	"fmt"
-	"io"
+	"io/fs"
 	"time"
 
 	"github.com/Masterminds/semver/v3"
@@ -30,6 +28,7 @@ import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/kubeconfig"
 	"k8c.io/kubeone/pkg/ssh"
+	"k8c.io/kubeone/pkg/ssh/sshiofs"
 	"k8c.io/kubeone/pkg/state"
 )
 
@@ -43,7 +42,7 @@ func deployCAOnNode(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connec
 	return s.Configuration.UploadTo(conn, s.WorkDir)
 }
 
-func renewCerts(s *state.State) error {
+func renewControlPlaneCerts(s *state.State) error {
 	if !s.ForceUpgrade {
 		s.Logger.Warn("Your control-plane certificates are about to expire in less then 90 days")
 		s.Logger.Warn("To renew them without changing kubernetes version run `kubeone apply --force-upgrade`")
@@ -64,7 +63,7 @@ func renewCerts(s *state.State) error {
 
 	err := s.RunTaskOnControlPlane(
 		func(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
-			_, _, _, err := conn.Exec(renewCmd)
+			_, _, err := s.Runner.RunRaw(renewCmd)
 			return err
 		},
 		state.RunParallel,
@@ -76,18 +75,13 @@ func renewCerts(s *state.State) error {
 	return kubeconfig.BuildKubernetesClientset(s)
 }
 
-func fetchCert(conn ssh.Connection, filename string) (*x509.Certificate, error) {
-	var stdoutBuf bytes.Buffer
-
-	exitCode, err := conn.Stream(fmt.Sprintf("sudo cat %s", filename), &stdoutBuf, io.Discard)
+func fetchCert(sshfs fs.FS, filename string) (*x509.Certificate, error) {
+	buf, err := fs.ReadFile(sshfs, filename)
 	if err != nil {
 		return nil, err
 	}
-	if exitCode != 0 {
-		return nil, errors.New("non zero exit code")
-	}
 
-	pemBlock, rest := pem.Decode(stdoutBuf.Bytes())
+	pemBlock, rest := pem.Decode(buf)
 	if len(rest) != 0 {
 		return nil, errors.New("returned non-zero rest")
 	}
@@ -126,8 +120,9 @@ func earliestCertExpiry(conn ssh.Connection) (time.Time, error) {
 		}
 	)
 
+	sshfs := sshiofs.New(conn)
 	for _, certName := range certsToCheck {
-		cert, err := fetchCert(conn, certName)
+		cert, err := fetchCert(sshfs, certName)
 		if err != nil {
 			return earliestCertExpirationTime, err
 		}

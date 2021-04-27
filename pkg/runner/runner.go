@@ -17,6 +17,7 @@ limitations under the License.
 package runner
 
 import (
+	"io/fs"
 	"os"
 
 	"github.com/koron-go/prefixw"
@@ -25,6 +26,7 @@ import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/ssh"
+	"k8c.io/kubeone/pkg/ssh/sshiofs"
 )
 
 // Runner bundles a connection to a host with the verbosity and
@@ -38,6 +40,10 @@ type Runner struct {
 
 // TemplateVariables is a render context for templates
 type TemplateVariables map[string]interface{}
+
+func (r *Runner) NewFS() fs.FS {
+	return sshiofs.New(r.Conn)
+}
 
 func (r *Runner) RunRaw(cmd string) (string, string, error) {
 	if r.Conn == nil {
@@ -60,7 +66,7 @@ func (r *Runner) RunRaw(cmd string) (string, string, error) {
 	defer stderr.Close()
 
 	// run the command
-	_, err := r.Conn.Stream(cmd, stdout, stderr)
+	_, err := r.Conn.POpen(cmd, nil, stdout, stderr)
 
 	return stdout.String(), stderr.String(), err
 }

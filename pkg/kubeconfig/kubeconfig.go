@@ -17,12 +17,15 @@ limitations under the License.
 package kubeconfig
 
 import (
+	"io/fs"
+
 	"github.com/pkg/errors"
 
 	"k8s.io/client-go/tools/clientcmd"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	"k8c.io/kubeone/pkg/ssh"
+	"k8c.io/kubeone/pkg/ssh/sshiofs"
 	"k8c.io/kubeone/pkg/state"
 )
 
@@ -43,12 +46,7 @@ func Download(s *state.State) ([]byte, error) {
 }
 
 func CatKubernetesAdminConf(conn ssh.Connection) ([]byte, error) {
-	konfig, _, _, err := conn.Exec("sudo cat /etc/kubernetes/admin.conf")
-	if err != nil {
-		return nil, err
-	}
-
-	return []byte(konfig), nil
+	return fs.ReadFile(sshiofs.New(conn), "/etc/kubernetes/admin.conf")
 }
 
 // BuildKubernetesClientset builds core kubernetes and apiextensions clientsets

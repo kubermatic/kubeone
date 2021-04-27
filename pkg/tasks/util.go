@@ -18,8 +18,7 @@ package tasks
 
 import (
 	"context"
-	"io/ioutil"
-	"os"
+	"io/fs"
 	"time"
 
 	osrelease "github.com/dominodatalab/os-release"
@@ -28,6 +27,7 @@ import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/ssh"
+	"k8c.io/kubeone/pkg/ssh/sshiofs"
 	"k8c.io/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
@@ -71,13 +71,7 @@ func determineHostname(s *state.State) error {
 func determineOS(s *state.State) error {
 	s.Logger.Infoln("Determine operating system...")
 	return s.RunTaskOnAllNodes(func(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
-		f, err := conn.File("/etc/os-release", os.O_RDONLY)
-		if err != nil {
-			return err
-		}
-		defer f.Close()
-
-		buf, err := ioutil.ReadAll(f)
+		buf, err := fs.ReadFile(sshiofs.New(conn), "/etc/os-release")
 		if err != nil {
 			return err
 		}

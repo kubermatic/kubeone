@@ -20,6 +20,7 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
+	"io/fs"
 	"time"
 
 	"github.com/pkg/errors"
@@ -28,6 +29,7 @@ import (
 
 	"k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/ssh"
+	"k8c.io/kubeone/pkg/ssh/sshiofs"
 	"k8c.io/kubeone/pkg/ssh/sshtunnel"
 	"k8c.io/kubeone/pkg/state"
 )
@@ -66,33 +68,34 @@ func NewClientConfig(s *state.State, host kubeone.HostConfig) (*clientv3.Config,
 // certificates and key are downloaded over SSH from the
 // /etc/kubernetes/pki/etcd/ directory.
 func LoadTLSConfig(conn ssh.Connection) (*tls.Config, error) {
+	sshfs := sshiofs.New(conn)
 	// Download CA
-	caCertPem, _, _, err := conn.Exec("sudo cat /etc/kubernetes/pki/etcd/ca.crt")
+	caCertPem, err := fs.ReadFile(sshfs, "/etc/kubernetes/pki/etcd/ca.crt")
 	if err != nil {
 		return nil, err
 	}
 
 	// Download cert
-	certPem, _, _, err := conn.Exec("sudo cat /etc/kubernetes/pki/etcd/server.crt")
+	certPem, err := fs.ReadFile(sshfs, "/etc/kubernetes/pki/etcd/server.crt")
 	if err != nil {
 		return nil, err
 	}
 
 	// Download key
-	keyPem, _, _, err := conn.Exec("sudo cat /etc/kubernetes/pki/etcd/server.key")
+	keyPem, err := fs.ReadFile(sshfs, "/etc/kubernetes/pki/etcd/server.key")
 	if err != nil {
 		return nil, err
 	}
 
 	// Add certificate and key to the TLS config
-	cert, err := tls.X509KeyPair([]byte(certPem), []byte(keyPem))
+	cert, err := tls.X509KeyPair(certPem, keyPem)
 	if err != nil {
 		return nil, err
 	}
 
 	// Add CA certificate to the TLS config
 	caCertPool := x509.NewCertPool()
-	caCertPool.AppendCertsFromPEM([]byte(caCertPem))
+	caCertPool.AppendCertsFromPEM(caCertPem)
 
 	return &tls.Config{
 		MinVersion:   tls.VersionTLS12,
