@@ -130,7 +130,7 @@ func DestroyWorkers(s *state.State) error {
 	// Delete all MachineDeployment objects
 	s.Logger.Info("Deleting MachineDeployment objects...")
 	mdList := &clusterv1alpha1.MachineDeploymentList{}
-	if err := s.DynamicClient.List(ctx, mdList, dynclient.InNamespace(MachineControllerNamespace)); err != nil {
+	if err := s.DynamicClient.List(ctx, mdList, dynclient.InNamespace(mcNamespace)); err != nil {
 		if !errorsutil.IsNotFound(err) {
 			return errors.Wrap(err, "unable to list machinedeployment objects")
 		}
@@ -145,7 +145,7 @@ func DestroyWorkers(s *state.State) error {
 	// Delete all MachineSet objects
 	s.Logger.Info("Deleting MachineSet objects...")
 	msList := &clusterv1alpha1.MachineSetList{}
-	if err := s.DynamicClient.List(ctx, msList, dynclient.InNamespace(MachineControllerNamespace)); err != nil {
+	if err := s.DynamicClient.List(ctx, msList, dynclient.InNamespace(mcNamespace)); err != nil {
 		if !errorsutil.IsNotFound(err) {
 			return errors.Wrap(err, "unable to list machineset objects")
 		}
@@ -162,7 +162,7 @@ func DestroyWorkers(s *state.State) error {
 	// Delete all Machine objects
 	s.Logger.Info("Deleting Machine objects...")
 	mList := &clusterv1alpha1.MachineList{}
-	if err := s.DynamicClient.List(ctx, mList, dynclient.InNamespace(MachineControllerNamespace)); err != nil {
+	if err := s.DynamicClient.List(ctx, mList, dynclient.InNamespace(mcNamespace)); err != nil {
 		if !errorsutil.IsNotFound(err) {
 			return errors.Wrap(err, "unable to list machine objects")
 		}
@@ -186,7 +186,7 @@ func WaitDestroy(s *state.State) error {
 	ctx := context.Background()
 	return wait.Poll(5*time.Second, 5*time.Minute, func() (bool, error) {
 		list := &clusterv1alpha1.MachineList{}
-		if err := s.DynamicClient.List(ctx, list, dynclient.InNamespace(MachineControllerNamespace)); err != nil {
+		if err := s.DynamicClient.List(ctx, list, dynclient.InNamespace(mcNamespace)); err != nil {
 			return false, errors.Wrap(err, "unable to list machine objects")
 		}
 		if len(list.Items) != 0 {

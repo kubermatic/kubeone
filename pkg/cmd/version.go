@@ -63,7 +63,7 @@ func versionCmd() *cobra.Command {
 			}
 
 			mcver := k8sversion.Info{
-				GitVersion: machinecontroller.MachineControllerTag,
+				GitVersion: machinecontroller.Tag,
 				Platform:   "linux/amd64",
 			}
 
@@ -73,7 +73,7 @@ func versionCmd() *cobra.Command {
 				ownver.Minor = strconv.Itoa(int(ownsver.Minor()))
 			}
 
-			mcsver, err := semver.NewVersion(machinecontroller.MachineControllerTag)
+			mcsver, err := semver.NewVersion(machinecontroller.Tag)
 			if err == nil {
 				mcver.Major = strconv.Itoa(int(mcsver.Major()))
 				mcver.Minor = strconv.Itoa(int(mcsver.Minor()))
