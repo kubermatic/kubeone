@@ -262,7 +262,7 @@ func WithDisableEncryptionProviders(t Tasks, customConfig bool) Tasks {
 	if customConfig {
 		return t.append(Tasks{
 			{
-				Fn:          RemoveEncryptionProviderFile,
+				Fn:          removeEncryptionProviderFile,
 				ErrMsg:      "failed to remove encryption providers configuration",
 				Description: "remove old Encryption Providers configuration file",
 			},
@@ -273,7 +273,7 @@ func WithDisableEncryptionProviders(t Tasks, customConfig bool) Tasks {
 			},
 
 			{
-				Fn:          RewriteClusterSecrets,
+				Fn:          rewriteClusterSecrets,
 				ErrMsg:      "failed to rewrite cluster secrets",
 				Description: "rewrite all cluster secrets",
 			},
@@ -281,11 +281,11 @@ func WithDisableEncryptionProviders(t Tasks, customConfig bool) Tasks {
 	}
 	return t.append(Tasks{
 		{
-			Fn:          FetchEncryptionProvidersFile,
+			Fn:          fetchEncryptionProvidersFile,
 			ErrMsg:      "failed to fetch EncryptionProviders config",
 			Description: "fetch current Encryption Providers configuration file "},
 		{
-			Fn:          UploadIdentityFirstEncryptionConfiguration,
+			Fn:          uploadIdentityFirstEncryptionConfiguration,
 			ErrMsg:      "failed to upload encryption providers configuration",
 			Description: "upload updated Encryption Providers configuration file"},
 		{
@@ -294,12 +294,12 @@ func WithDisableEncryptionProviders(t Tasks, customConfig bool) Tasks {
 			Description: "restart KubeAPI containers",
 		},
 		{
-			Fn:          RewriteClusterSecrets,
+			Fn:          rewriteClusterSecrets,
 			ErrMsg:      "failed to rewrite cluster secrets",
 			Description: "rewrite all cluster secrets",
 		},
 		{
-			Fn:          RemoveEncryptionProviderFile,
+			Fn:          removeEncryptionProviderFile,
 			ErrMsg:      "failed to remove encryption providers configuration",
 			Description: "remove old Encryption Providers configuration file",
 		},
@@ -309,7 +309,7 @@ func WithDisableEncryptionProviders(t Tasks, customConfig bool) Tasks {
 func WithRewriteSecrets(t Tasks) Tasks {
 	return t.append(
 		Task{
-			Fn:          RewriteClusterSecrets,
+			Fn:          rewriteClusterSecrets,
 			ErrMsg:      "failed to rewrite cluster secrets",
 			Description: "rewrite all cluster secrets",
 		})
@@ -323,7 +323,7 @@ func WithCustomEncryptionConfigUpdated(t Tasks) Tasks {
 			Description: "restart KubeAPI containers",
 		},
 		{
-			Fn:          RewriteClusterSecrets,
+			Fn:          rewriteClusterSecrets,
 			ErrMsg:      "failed to rewrite cluster secrets",
 			Description: "rewrite all cluster secrets",
 		},
@@ -334,12 +334,12 @@ func WithRotateKey(t Tasks) Tasks {
 	return WithHostnameOSAndProbes(t).
 		append(Tasks{
 			{
-				Fn:          FetchEncryptionProvidersFile,
+				Fn:          fetchEncryptionProvidersFile,
 				ErrMsg:      "failed to fetch EncryptionProviders config",
 				Description: "fetch current Encryption Providers configuration file ",
 			},
 			{
-				Fn:          UploadEncryptionConfigurationWithNewKey,
+				Fn:          uploadEncryptionConfigurationWithNewKey,
 				ErrMsg:      "failed to upload encryption providers configuration",
 				Description: "upload updated Encryption Providers configuration file",
 			},
@@ -349,12 +349,12 @@ func WithRotateKey(t Tasks) Tasks {
 				Description: "restart KubeAPI containers",
 			},
 			{
-				Fn:          RewriteClusterSecrets,
+				Fn:          rewriteClusterSecrets,
 				ErrMsg:      "failed to rewrite cluster secrets",
 				Description: "rewrite all cluster secrets",
 			},
 			{
-				Fn:          UploadEncryptionConfigurationWithoutOldKey,
+				Fn:          uploadEncryptionConfigurationWithoutOldKey,
 				ErrMsg:      "failed to upload encryption providers configuration",
 				Description: "upload updated Encryption Providers configuration file",
 			},

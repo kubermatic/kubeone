@@ -335,7 +335,7 @@ func investigateCluster(s *state.State) error {
 		s.LiveCluster.EncryptionConfiguration = &state.EncryptionConfiguration{Enable: true, Custom: encryptionEnabled.Custom}
 		s.LiveCluster.Lock.Unlock()
 		// no need to lock around FetchEncryptionProvidersFile because it handles locking internally.
-		if err := FetchEncryptionProvidersFile(s); err != nil {
+		if err := fetchEncryptionProvidersFile(s); err != nil {
 			return errors.Wrap(err, "failed to fetch EncryptionProviders configuration")
 		}
 	}
