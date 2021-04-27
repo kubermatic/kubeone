@@ -25,7 +25,7 @@ sudo chmod 600 /etc/kubernetes/cloud-config
 `
 
 	auditPolicyScriptTemplate = `
-if [[ -f "{{ .WORK_DIR }}/cfg/audit-policy.yaml" ]]; then
+if sudo test -f "{{ .WORK_DIR }}/cfg/audit-policy.yaml"; then
 	sudo mkdir -p /etc/kubernetes/audit
 	sudo mv {{ .WORK_DIR }}/cfg/audit-policy.yaml /etc/kubernetes/audit/policy.yaml
 	sudo chown root:root /etc/kubernetes/audit/policy.yaml
@@ -33,7 +33,7 @@ fi
 `
 
 	podNodeSelectorConfigTemplate = `
-if [[ -f "{{ .WORK_DIR }}/cfg/podnodeselector.yaml" ]]; then
+if sudo test -f "{{ .WORK_DIR }}/cfg/podnodeselector.yaml"; then
 	sudo mkdir -p /etc/kubernetes/admission
 	sudo mv {{ .WORK_DIR }}/cfg/podnodeselector.yaml /etc/kubernetes/admission/podnodeselector.yaml
 	sudo mv {{ .WORK_DIR }}/cfg/admission-config.yaml /etc/kubernetes/admission/admission-config.yaml
@@ -43,7 +43,7 @@ fi
 `
 
 	encryptionProvidersConfigTemplate = `
-if [[ -f "{{ .WORK_DIR }}/cfg/{{ .FILE_NAME }}" ]]; then
+if sudo test -f "{{ .WORK_DIR }}/cfg/{{ .FILE_NAME }}"; then
 	sudo mkdir -p /etc/kubernetes/encryption-providers/
 	sudo mv {{ .WORK_DIR }}/cfg/{{ .FILE_NAME }} /etc/kubernetes/encryption-providers/{{ .FILE_NAME }}
 	sudo chmod 600 /etc/kubernetes/encryption-providers/{{ .FILE_NAME }}
@@ -52,7 +52,7 @@ fi
 `
 
 	deleteEncryptionProvidersConfigTemplate = `
-	sudo rm -rf /etc/kubernetes/encryption-providers/*
+sudo rm -rf /etc/kubernetes/encryption-providers/*
 `
 )
 
