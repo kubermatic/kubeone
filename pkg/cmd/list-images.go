@@ -18,37 +18,63 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+	"sigs.k8s.io/yaml"
+
+	kubeonev1beta1 "k8c.io/kubeone/pkg/apis/kubeone/v1beta1"
+	"k8c.io/kubeone/pkg/templates/images"
 )
 
+type listImagesOpts struct {
+	ManifestFile string `longflag:"manifest" shortflag:"m"`
+}
+
 func listImagesCmd(rootFlags *pflag.FlagSet) *cobra.Command {
+	opts := &listImagesOpts{}
+
 	cmd := &cobra.Command{
 		Use:     "list-images",
 		Short:   "List images that will be used",
 		Example: `kubeone list-images -m mycluster.yaml -t terraformoutput.json`,
 		RunE: func(*cobra.Command, []string) error {
-			gopts, err := persistentGlobalOptions(rootFlags)
+			manifestFile, err := rootFlags.GetString(longFlagName(opts, "ManifestFile"))
 			if err != nil {
-				return errors.Wrap(err, "unable to get global flags")
+				return errors.WithStack(err)
 			}
+			opts.ManifestFile = manifestFile
 
-			return listImages(gopts)
+			return listImages(opts)
 		},
 	}
 
 	return cmd
 }
 
-func listImages(gopts *globalOptions) error {
-	st, err := gopts.BuildState()
-	if err != nil {
-		return err
+func listImages(opts *listImagesOpts) error {
+	var imgopts []images.Opt
+
+	configBuf, err := os.ReadFile(opts.ManifestFile)
+	if err == nil {
+		var conf kubeonev1beta1.KubeOneCluster
+		if err = yaml.Unmarshal(configBuf, &conf); err != nil {
+			return err
+		}
+
+		overRegGetter := images.WithOverwriteRegistryGetter(func() string {
+			if rc := conf.RegistryConfiguration; rc != nil {
+				return rc.OverwriteRegistry
+			}
+			return ""
+		})
+		imgopts = append(imgopts, overRegGetter)
 	}
 
-	for _, img := range st.Images.ListAll() {
+	imgResolver := images.NewResolver(imgopts...)
+	for _, img := range imgResolver.ListAll() {
 		fmt.Println(img)
 	}
 
