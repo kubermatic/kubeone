@@ -28,6 +28,7 @@ import (
 	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/kubeconfig"
 	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/templates/images"
 	"k8c.io/kubeone/pkg/templates/nodelocaldns"
 
 	appsv1 "k8s.io/api/apps/v1"
@@ -46,9 +47,6 @@ const (
 	mcNamespace     = metav1.NamespaceSystem
 	mcAppLabelKey   = "app"
 	mcAppLabelValue = "machine-controller"
-	mcImageRegistry = "docker.io"
-	mcImage         = "/kubermatic/machine-controller:"
-	Tag             = "v1.28.0"
 )
 
 func CRDs() []dynclient.Object {
@@ -67,10 +65,9 @@ func Deploy(s *state.State) error {
 	}
 
 	ctx := context.Background()
+	mcImage := s.Images.Get(images.MachineController)
 
-	image := s.Cluster.RegistryConfiguration.ImageRegistry(mcImageRegistry) + mcImage + Tag
-
-	deployment, err := machineControllerDeployment(s.Cluster, s.CredentialsFilePath, image, s.PauseImage)
+	deployment, err := machineControllerDeployment(s.Cluster, s.CredentialsFilePath, mcImage, s.PauseImage)
 	if err != nil {
 		return errors.Wrap(err, "failed to generate machine-controller deployment")
 	}

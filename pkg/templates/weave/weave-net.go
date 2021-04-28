@@ -25,6 +25,7 @@ import (
 
 	"k8c.io/kubeone/pkg/clientutil"
 	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/templates/images"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -37,11 +38,7 @@ import (
 )
 
 const (
-	version            = ":2.7.0"
-	weaveImageRegistry = "docker.io"
-	weaveKubeImage     = "/weaveworks/weave-kube"
-	weaveNPCImage      = "/weaveworks/weave-npc"
-	componentLabel     = "weave-net"
+	componentLabel = "weave-net"
 )
 
 // Deploy ensure weave-net resources exists in the cluster
@@ -82,8 +79,8 @@ func Deploy(s *state.State) error {
 		peers = append(peers, h.PrivateAddress)
 	}
 
-	kubeImage := s.Cluster.RegistryConfiguration.ImageRegistry(weaveImageRegistry) + weaveKubeImage + version
-	npcImage := s.Cluster.RegistryConfiguration.ImageRegistry(weaveImageRegistry) + weaveNPCImage + version
+	kubeImage := s.Images.Get(images.WeaveNetCNIKube)
+	npcImage := s.Images.Get(images.WeaveNetCNINPC)
 
 	ds := daemonSet(s.Cluster.ClusterNetwork.CNI.WeaveNet.Encrypted, strings.Join(peers, " "), s.Cluster.ClusterNetwork.PodSubnet, kubeImage, npcImage)
 

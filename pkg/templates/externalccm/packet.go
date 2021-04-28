@@ -25,6 +25,7 @@ import (
 	"k8c.io/kubeone/pkg/clientutil"
 	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/templates/images"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -40,8 +41,6 @@ type packetCloudSA struct {
 }
 
 const (
-	packetImageRegistry     = "docker.io"
-	packetImage             = "/packethost/packet-ccm:v1.0.0"
 	packetSAName            = "cloud-controller-manager"
 	packetDeploymentName    = "packet-cloud-controller-manager"
 	packetCloudSASecretName = "packet-cloud-config"
@@ -65,14 +64,13 @@ func ensurePacket(s *state.State) error {
 		return errors.Wrap(err, "failed to generate packet cloud config secret")
 	}
 
-	image := s.Cluster.RegistryConfiguration.ImageRegistry(packetImageRegistry) + packetImage
-
+	ccmImage := s.Images.Get(images.PacketCCM)
 	k8sobjects := []client.Object{
 		sa,
 		crole,
 		genClusterRoleBinding("system:cloud-controller-manager", crole, sa),
 		secret,
-		packetDeployment(image),
+		packetDeployment(ccmImage),
 	}
 
 	withLabel := clientutil.WithComponentLabel(ccmComponentLabel)

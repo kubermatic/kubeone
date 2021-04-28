@@ -55,7 +55,7 @@ func knownResources() map[Resource]string {
 		DNSNodeCache:      "k8s.gcr.io/k8s-dns-node-cache:1.15.13",
 		Flannel:           "quay.io/coreos/flannel:v0.13.0",
 		HetznerCCM:        "docker.io/hetznercloud/hcloud-cloud-controller-manager:v1.8.1",
-		MachineController: "docker.io/kubermatic/machine-controller:v1.27.4",
+		MachineController: "docker.io/kubermatic/machine-controller:v1.28.0",
 		MetricsServer:     "k8s.gcr.io/metrics-server:v0.3.6",
 		OpenstackCCM:      "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.17.0",
 		PacketCCM:         "docker.io/packethost/packet-ccm:v1.0.0",
@@ -95,7 +95,35 @@ func (r *Resolver) ListAll() []string {
 	return list
 }
 
-func (r *Resolver) Get(res Resource) string {
+func (r *Resolver) Tag(res Resource) string {
+	named := res.namedReference()
+	if tagged, ok := named.(reference.Tagged); ok {
+		return tagged.Tag()
+	}
+
+	return "latest"
+}
+
+type GetOpt func(ref string) string
+
+func WithDomain(domain string) GetOpt {
+	return func(ref string) string {
+		named, _ := reference.ParseNormalizedNamed(ref)
+		nt := named.(reference.NamedTagged)
+		path := reference.Path(named)
+
+		return domain + "/" + path + ":" + nt.Tag()
+	}
+}
+
+func WithTag(tag string) GetOpt {
+	return func(ref string) string {
+		named, _ := reference.ParseNormalizedNamed(ref)
+		return named.Name() + ":" + tag
+	}
+}
+
+func (r *Resolver) Get(res Resource, opts ...GetOpt) string {
 	named := res.namedReference()
 	domain := reference.Domain(named)
 	reminder := reference.Path(named)
@@ -112,5 +140,10 @@ func (r *Resolver) Get(res Resource) string {
 		}
 	}
 
-	return domain + "/" + reminder
+	ret := domain + "/" + reminder
+	for _, opt := range opts {
+		ret = opt(ret)
+	}
+
+	return ret
 }

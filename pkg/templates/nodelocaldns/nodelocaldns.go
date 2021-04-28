@@ -25,6 +25,7 @@ import (
 
 	"k8c.io/kubeone/pkg/clientutil"
 	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/templates/images"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -38,9 +39,6 @@ import (
 const VirtualIP = "169.254.20.10"
 
 const (
-	imageRegistry            = "k8s.gcr.io"
-	image                    = "/k8s-dns-node-cache:"
-	tag                      = "1.15.13"
 	componentLabel           = "nodelocaldns"
 	dnscacheCorefileTemplate = `
 __PILLAR__DNS__DOMAIN__:53 {
@@ -102,7 +100,7 @@ func Deploy(s *state.State) error {
 
 	s.Logger.Infoln("Ensure node local DNS cache...")
 
-	image := s.Cluster.RegistryConfiguration.ImageRegistry(imageRegistry) + image + tag
+	image := s.Images.Get(images.DNSNodeCache)
 
 	objs := []client.Object{
 		dnscacheServiceAccount(),

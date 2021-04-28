@@ -31,6 +31,7 @@ import (
 	"k8c.io/kubeone/pkg/clientutil"
 	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/templates/images"
 
 	admissionregistration "k8s.io/api/admissionregistration/v1"
 	appsv1 "k8s.io/api/apps/v1"
@@ -48,7 +49,6 @@ const (
 	whName          = "machine-controller-webhook"
 	whAppLabelKey   = mcAppLabelKey
 	whAppLabelValue = whName
-	whTag           = Tag
 	whNamespace     = mcNamespace
 	whPort          = 9876
 )
@@ -71,9 +71,9 @@ func DeployWebhookConfiguration(s *state.State) error {
 		return errors.Wrap(err, "failed to generate machine-controller webhook TLS secret")
 	}
 
-	image := s.Cluster.RegistryConfiguration.ImageRegistry(mcImageRegistry) + mcImage + whTag
+	whImage := s.Images.Get(images.MachineController)
 
-	deployment, err := webhookDeployment(s.Cluster, s.CredentialsFilePath, image)
+	deployment, err := webhookDeployment(s.Cluster, s.CredentialsFilePath, whImage)
 	if err != nil {
 		return errors.Wrap(err, "failed to generate machine-controller webhook deployment")
 	}

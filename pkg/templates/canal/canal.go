@@ -18,7 +18,6 @@ package canal
 
 import (
 	"bytes"
-	"context"
 	"text/template"
 	"time"
 
@@ -27,6 +26,7 @@ import (
 	"k8c.io/kubeone/pkg/clientutil"
 	"k8c.io/kubeone/pkg/kubeconfig"
 	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/templates/images"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
@@ -34,12 +34,6 @@ import (
 )
 
 const (
-	calicoImageRegistry = "docker.io"
-	installCNIImageName = "/calico/cni:v3.16.5"
-	calicoImageName     = "/calico/node:v3.16.5"
-	controllerImageName = "/calico/kube-controllers:v3.16.5"
-	flannelImageRegisty = "quay.io"
-	flannelImageName    = "/coreos/flannel:v0.13.0"
 	canalComponentLabel = "canal"
 
 	// cniNetworkConfig configures installation on the each node. The special values in this config will be
@@ -51,8 +45,8 @@ const (
   "plugins": [
     {
       "type": "calico",
-	  "log_level": "info",
-	  "log_file_path": "/var/log/calico/cni/cni.log",
+      "log_level": "info",
+      "log_file_path": "/var/log/calico/cni/cni.log",
       "datastore_type": "kubernetes",
       "nodename": "__KUBERNETES_NODE_NAME__",
       "mtu": __CNI_MTU__,
@@ -135,12 +129,12 @@ func Deploy(s *state.State) error {
 		return errors.Wrap(err, "failed to render canal config")
 	}
 
-	ctx := context.Background()
+	ctx := s.Context
 
-	installCNIImage := s.Cluster.RegistryConfiguration.ImageRegistry(calicoImageRegistry) + installCNIImageName
-	calicoImage := s.Cluster.RegistryConfiguration.ImageRegistry(calicoImageRegistry) + calicoImageName
-	controllerImage := s.Cluster.RegistryConfiguration.ImageRegistry(calicoImageRegistry) + controllerImageName
-	flannelImage := s.Cluster.RegistryConfiguration.ImageRegistry(flannelImageRegisty) + flannelImageName
+	calicoCNIImage := s.Images.Get(images.CalicoCNI)
+	calicoNodeImage := s.Images.Get(images.CalicoNode)
+	calicoControllerImage := s.Images.Get(images.CalicoController)
+	flannelImage := s.Images.Get(images.Flannel)
 
 	crds := canalCRDs()
 	k8sobjects := append(crds,
@@ -156,8 +150,8 @@ func Deploy(s *state.State) error {
 		configMap(buf, s.Cluster.ClusterNetwork.CNI.Canal.MTU),
 		daemonsetServiceAccount(),
 		deploymentServiceAccount(),
-		daemonSet(s.PatchCNI, s.Cluster.ClusterNetwork.PodSubnet, installCNIImage, calicoImage, flannelImage),
-		controllerDeployment(controllerImage),
+		daemonSet(s.PatchCNI, s.Cluster.ClusterNetwork.PodSubnet, calicoCNIImage, calicoNodeImage, flannelImage),
+		controllerDeployment(calicoControllerImage),
 	)
 
 	withLabel := clientutil.WithComponentLabel(canalComponentLabel)

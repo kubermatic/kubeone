@@ -25,6 +25,7 @@ import (
 	"k8c.io/kubeone/pkg/clientutil"
 	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/templates/images"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -35,8 +36,6 @@ import (
 )
 
 const (
-	hetznerImageRegistry  = "docker.io"
-	hetznerImage          = "/hetznercloud/hcloud-cloud-controller-manager:v1.8.1"
 	hetznerSAName         = "cloud-controller-manager"
 	hetznerDeploymentName = "hcloud-cloud-controller-manager"
 )
@@ -47,11 +46,11 @@ func ensureHetzner(s *state.State) error {
 	}
 
 	ctx := context.Background()
-	image := s.Cluster.RegistryConfiguration.ImageRegistry(hetznerImageRegistry) + hetznerImage
+	ccmImage := s.Images.Get(images.HetznerCCM)
 	k8sobject := []client.Object{
 		hetznerServiceAccount(),
 		hetznerClusterRoleBinding(),
-		hetznerDeployment(s.Cluster.CloudProvider.Hetzner.NetworkID, s.Cluster.ClusterNetwork.PodSubnet, image),
+		hetznerDeployment(s.Cluster.CloudProvider.Hetzner.NetworkID, s.Cluster.ClusterNetwork.PodSubnet, ccmImage),
 	}
 
 	withLabel := clientutil.WithComponentLabel(ccmComponentLabel)
