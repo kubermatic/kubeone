@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -37,9 +38,15 @@ func listImagesCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 	opts := &listImagesOpts{}
 
 	cmd := &cobra.Command{
-		Use:     "list-images",
-		Short:   "List images that will be used",
-		Example: `kubeone list-images -m mycluster.yaml -t terraformoutput.json`,
+		Use:   "list-images",
+		Short: "List images that will be used",
+		Example: heredoc.Doc(`
+			# To see images list
+			kubeone list-images
+
+			# To see images list affected by the registryConfiguration configuration (in case if any)
+			kubeone list-images -m mycluster.yaml
+		`),
 		RunE: func(*cobra.Command, []string) error {
 			manifestFile, err := rootFlags.GetString(longFlagName(opts, "ManifestFile"))
 			if err != nil {
@@ -57,8 +64,11 @@ func listImagesCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 func listImages(opts *listImagesOpts) error {
 	var imgopts []images.Opt
 
+	// FOR FUTURE READER: we only attempt to read the ManifestFile, but if it's not there, we don't care.
 	configBuf, err := os.ReadFile(opts.ManifestFile)
 	if err == nil {
+		// Custom loading of the config is needed to avoid "normal" validation process, but we here don't care about
+		// validity of the config, the only part that's needed is `.RegistryConfiguration`
 		var conf kubeonev1beta1.KubeOneCluster
 		if err = yaml.Unmarshal(configBuf, &conf); err != nil {
 			return err
