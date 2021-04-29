@@ -4,5 +4,4 @@ export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
 if [[ -f /etc/kubernetes/admin.conf ]]; then exit 0; fi
 
 sudo kubeadm join  \
-	--config=test-wd/cfg/master_0.yaml \
-	--ignore-preflight-errors=DirAvailable--var-lib-etcd,ImagePull
+	--config=test-wd/cfg/master_0.yaml

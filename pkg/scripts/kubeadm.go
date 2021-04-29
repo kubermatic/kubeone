@@ -21,8 +21,7 @@ const (
 if [[ -f /etc/kubernetes/admin.conf ]]; then exit 0; fi
 
 sudo kubeadm join {{ .VERBOSE }} \
-	--config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml \
-	--ignore-preflight-errors=DirAvailable--var-lib-etcd,ImagePull
+	--config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
 `
 
 	kubeadmWorkerJoinScriptTemplate = `
@@ -49,8 +48,7 @@ if [[ -f /etc/kubernetes/admin.conf ]]; then
 	exit 0;
 fi
 sudo kubeadm {{ .VERBOSE }} \
-	init --config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml \
-	--ignore-preflight-errors=DirAvailable--var-lib-etcd,ImagePull
+	init --config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
 `
 
 	kubeadmResetScriptTemplate = `
