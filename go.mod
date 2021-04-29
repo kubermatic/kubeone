@@ -1,6 +1,6 @@
 module k8c.io/kubeone
 
-go 1.14
+go 1.16
 
 require (
 	github.com/BurntSushi/toml v0.3.1
@@ -12,14 +12,13 @@ require (
 	github.com/google/go-cmp v0.5.4
 	github.com/imdario/mergo v0.3.11
 	github.com/koron-go/prefixw v0.0.0-20181013140428-271b207a7572
-	github.com/kubermatic/machine-controller v1.27.4
+	github.com/kubermatic/machine-controller v1.28.0
 	github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de
 	github.com/pkg/errors v0.9.1
 	github.com/pmezard/go-difflib v1.0.0
 	github.com/sirupsen/logrus v1.7.0
 	github.com/spf13/cobra v1.1.1
 	github.com/spf13/pflag v1.0.5
-	github.com/stretchr/testify v1.6.1 // indirect
 	go.etcd.io/etcd/v3 v3.3.0-rc.0.0.20200728214110-6c81b20ec8de
 	golang.org/x/crypto v0.0.0-20201217014255-9d1352758620
 	golang.org/x/term v0.0.0-20201117132131-f5c789dd3221

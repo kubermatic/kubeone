@@ -47,7 +47,7 @@ const (
 	MachineControllerAppLabelValue = "machine-controller"
 	MachineControllerImageRegistry = "docker.io"
 	MachineControllerImage         = "/kubermatic/machine-controller:"
-	MachineControllerTag           = "v1.27.4"
+	MachineControllerTag           = "v1.28.0"
 )
 
 func CRDs() []dynclient.Object {
