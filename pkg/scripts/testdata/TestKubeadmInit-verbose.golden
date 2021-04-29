@@ -6,5 +6,4 @@ if [[ -f /etc/kubernetes/admin.conf ]]; then
 	exit 0;
 fi
 sudo kubeadm --v=6 \
-	init --config=test-wd/cfg/master_0.yaml \
-	--ignore-preflight-errors=DirAvailable--var-lib-etcd,ImagePull
+	init --config=test-wd/cfg/master_0.yaml

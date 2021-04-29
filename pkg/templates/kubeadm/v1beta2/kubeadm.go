@@ -52,6 +52,11 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 	}
 
 	nodeRegistration := newNodeRegistration(s, host)
+	nodeRegistration.IgnorePreflightErrors = []string{
+		"DirAvailable--var-lib-etcd",
+		"DirAvailable--etc-kubernetes-manifests",
+		"ImagePull",
+	}
 
 	bootstrapToken, err := kubeadmv1beta2.NewBootstrapTokenString(s.JoinToken)
 	if err != nil {
@@ -285,6 +290,10 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Obje
 	cluster := s.Cluster
 
 	nodeRegistration := newNodeRegistration(s, host)
+	nodeRegistration.IgnorePreflightErrors = []string{
+		"DirAvailable--etc-kubernetes-manifests",
+	}
+
 	controlPlaneEndpoint := fmt.Sprintf("%s:%d", cluster.APIEndpoint.Host, cluster.APIEndpoint.Port)
 
 	joinConfig := &kubeadmv1beta2.JoinConfiguration{
