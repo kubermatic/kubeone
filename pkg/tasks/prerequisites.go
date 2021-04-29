@@ -167,7 +167,7 @@ func installKubeadmFlatcar(s *state.State) error {
 }
 
 func uploadConfigurationFiles(s *state.State) error {
-	return s.RunTaskOnControlPlane(uploadConfigurationFilesToNode, state.RunParallel)
+	return s.RunTaskOnAllNodes(uploadConfigurationFilesToNode, state.RunParallel)
 }
 
 func uploadConfigurationFilesToNode(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {

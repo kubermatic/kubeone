@@ -129,6 +129,10 @@ func earliestCertExpiry(conn ssh.Connection) (time.Time, error) {
 }
 
 func ensureCABundleConfigMap(s *state.State) error {
+	if s.DynamicClient == nil {
+		return errors.New("kubernetes client not initialized")
+	}
+
 	s.Logger.Infoln("Creating ca-bundle configMap...")
 
 	cm := cabundle.ConfigMap(s.Cluster.CABundle)

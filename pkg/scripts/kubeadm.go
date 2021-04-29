@@ -54,6 +54,7 @@ var (
 		sudo rm -rf /etc/kubernetes/encryption-providers
 		sudo rm -rf /var/lib/etcd/
 		sudo rm -rf "{{ .WORK_DIR }}"
+		sudo rm -rf /etc/kubeone
 	`)
 
 	kubeadmUpgradeLeaderScriptTemplate = heredoc.Doc(`

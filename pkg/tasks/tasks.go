@@ -109,7 +109,7 @@ func WithFullInstall(t Tasks) Tasks {
 		append(Tasks{
 			{
 				Fn: func(s *state.State) error {
-					s.Logger.Infoln("Configuring certs and etcd on first controller...")
+					s.Logger.Infoln("Configuring certs and etcd on control plane node...")
 					return s.RunTaskOnLeader(kubeadmCertsExecutor)
 				},
 				ErrMsg: "failed to provision certs and etcd on leader",
@@ -130,7 +130,7 @@ func WithFullInstall(t Tasks) Tasks {
 			},
 			{
 				Fn: func(s *state.State) error {
-					s.Logger.Infoln("Configuring certs and etcd on consecutive controller...")
+					s.Logger.Infoln("Configuring certs and etcd on consecutive control plane node...")
 					return s.RunTaskOnFollowers(kubeadmCertsExecutor, state.RunParallel)
 				},
 				ErrMsg: "failed to provision certs and etcd on followers",
