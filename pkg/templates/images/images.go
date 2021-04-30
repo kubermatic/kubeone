@@ -25,7 +25,7 @@ import (
 type Resource int
 
 func (res Resource) namedReference() reference.Named {
-	named, _ := reference.ParseNormalizedNamed(knownResources()[res])
+	named, _ := reference.ParseNormalizedNamed(allResources()[res])
 	return named
 }
 
@@ -46,23 +46,39 @@ const (
 	WeaveNetCNINPC
 )
 
-func knownResources() map[Resource]string {
+func baseResources() map[Resource]string {
 	return map[Resource]string{
 		CalicoCNI:         "docker.io/calico/cni:v3.16.5",
 		CalicoController:  "docker.io/calico/kube-controllers:v3.16.5",
 		CalicoNode:        "docker.io/calico/node:v3.16.5",
-		DigitaloceanCCM:   "docker.io/digitalocean/digitalocean-cloud-controller-manager:v0.1.23",
 		DNSNodeCache:      "k8s.gcr.io/k8s-dns-node-cache:1.15.13",
 		Flannel:           "quay.io/coreos/flannel:v0.13.0",
-		HetznerCCM:        "docker.io/hetznercloud/hcloud-cloud-controller-manager:v1.8.1",
 		MachineController: "docker.io/kubermatic/machine-controller:v1.28.0",
 		MetricsServer:     "k8s.gcr.io/metrics-server:v0.3.6",
-		OpenstackCCM:      "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.17.0",
-		PacketCCM:         "docker.io/packethost/packet-ccm:v1.0.0",
-		VsphereCCM:        "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.2.1",
-		WeaveNetCNIKube:   "docker.io/weaveworks/weave-kube:2.7.0",
-		WeaveNetCNINPC:    "docker.io/weaveworks/weave-npc:2.7.0",
 	}
+}
+
+func optionalResources() map[Resource]string {
+	return map[Resource]string{
+		DigitaloceanCCM: "docker.io/digitalocean/digitalocean-cloud-controller-manager:v0.1.23",
+		HetznerCCM:      "docker.io/hetznercloud/hcloud-cloud-controller-manager:v1.8.1",
+		OpenstackCCM:    "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.17.0",
+		PacketCCM:       "docker.io/packethost/packet-ccm:v1.0.0",
+		VsphereCCM:      "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.2.1",
+		WeaveNetCNIKube: "docker.io/weaveworks/weave-kube:2.7.0",
+		WeaveNetCNINPC:  "docker.io/weaveworks/weave-npc:2.7.0",
+	}
+}
+
+func allResources() map[Resource]string {
+	ret := map[Resource]string{}
+	for k, v := range baseResources() {
+		ret[k] = v
+	}
+	for k, v := range optionalResources() {
+		ret[k] = v
+	}
+	return ret
 }
 
 type Opt func(*Resolver)
@@ -85,9 +101,26 @@ type Resolver struct {
 	overwriteRegistryGetter func() string
 }
 
-func (r *Resolver) ListAll() []string {
+type ListFilter int
+
+const (
+	ListFilterNone ListFilter = iota
+	ListFilterBase
+	ListFilterOpional
+)
+
+func (r *Resolver) List(lf ListFilter) []string {
 	var list []string
-	for res := range knownResources() {
+
+	fn := allResources
+	switch lf {
+	case ListFilterBase:
+		fn = baseResources
+	case ListFilterOpional:
+		fn = optionalResources
+	}
+
+	for res := range fn() {
 		list = append(list, r.Get(res))
 	}
 

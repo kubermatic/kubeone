@@ -101,36 +101,8 @@ if ! [ -x "$(command -v $kubeadm)" ]; then
 fi
 
 k8simages=$("$kubeadm" config images list --kubernetes-version="$KUBERNETES_VERSION")
-
-k1images=(
-  # Core images deployed by default
-  # Canal
-  "docker.io/calico/cni:v3.16.5"
-  "docker.io/calico/node:v3.16.5"
-  "docker.io/calico/kube-controllers:v3.16.5"
-  "quay.io/coreos/flannel:v0.13.0"
-  # machine-controller
-  "docker.io/kubermatic/machine-controller:v1.28.0"
-  # metrics-server
-  "k8s.gcr.io/metrics-server:v0.3.6"
-  # NodeLocalDNSCache
-  "k8s.gcr.io/k8s-dns-node-cache:1.15.13"
-)
-
-optionalimages=(
-  # Optional images - only deployed on user request
-  # WeaveNet
-  "docker.io/weaveworks/weave-kube:2.7.0"
-  "docker.io/weaveworks/weave-npc:2.7.0"
-  # DigitalOcean CCM
-  "docker.io/digitalocean/digitalocean-cloud-controller-manager:v0.1.23"
-  # Hetzner CCM
-  "docker.io/hetznercloud/hcloud-cloud-controller-manager:v1.8.1"
-  # OpenStack CCM
-  "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.17.0"
-  # Packet CCM
-  "docker.io/packethost/packet-ccm:v1.0.0"
-)
+k1images=$(kubeone config images list --filter base)
+optionalimages=$(kubeone config images list --filter optional)
 
 for IMAGE in $k8simages; do
   retag "${IMAGE}"

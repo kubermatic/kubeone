@@ -32,20 +32,37 @@ import (
 
 type listImagesOpts struct {
 	ManifestFile string `longflag:"manifest" shortflag:"m"`
+	Filter       string `longflag:"filter"`
+}
+
+func imagesCmd(rootFlags *pflag.FlagSet) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "images",
+		Short: "images manipulations",
+	}
+
+	cmd.AddCommand(listImagesCmd(rootFlags))
+	return cmd
 }
 
 func listImagesCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 	opts := &listImagesOpts{}
 
 	cmd := &cobra.Command{
-		Use:   "list-images",
+		Use:   "list",
 		Short: "List images that will be used",
 		Example: heredoc.Doc(`
-			# To see images list
-			kubeone list-images
+			# To see all images list
+			kubeone config images list
+
+			# To see base images list
+			kubeone config images list --filter base
+
+			# To see optional images list
+			kubeone config images list --filter optional
 
 			# To see images list affected by the registryConfiguration configuration (in case if any)
-			kubeone list-images -m mycluster.yaml
+			kubeone config images list -m mycluster.yaml
 		`),
 		RunE: func(*cobra.Command, []string) error {
 			manifestFile, err := rootFlags.GetString(longFlagName(opts, "ManifestFile"))
@@ -58,11 +75,29 @@ func listImagesCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		},
 	}
 
+	cmd.Flags().StringVar(
+		&opts.Filter,
+		longFlagName(opts, "Filter"),
+		"none",
+		"images list filter, one of the [none|base|optional]")
+
 	return cmd
 }
 
 func listImages(opts *listImagesOpts) error {
-	var imgopts []images.Opt
+	listFilter := images.ListFilterNone
+
+	switch opts.Filter {
+	case "none":
+	case "base":
+		listFilter = images.ListFilterBase
+	case "optional":
+		listFilter = images.ListFilterOpional
+	default:
+		return fmt.Errorf("--filter can be only one of [none|base|optional]")
+	}
+
+	var resolveropts []images.Opt
 
 	// FOR FUTURE READER: we only attempt to read the ManifestFile, but if it's not there, we don't care.
 	configBuf, err := os.ReadFile(opts.ManifestFile)
@@ -80,14 +115,13 @@ func listImages(opts *listImagesOpts) error {
 			}
 			return ""
 		})
-		imgopts = append(imgopts, overRegGetter)
+		resolveropts = append(resolveropts, overRegGetter)
 	}
 
-	imgResolver := images.NewResolver(imgopts...)
-	for _, img := range imgResolver.ListAll() {
+	imgResolver := images.NewResolver(resolveropts...)
+	for _, img := range imgResolver.List(listFilter) {
 		fmt.Println(img)
 	}
 
-	// * render addons, extract images from Deployments/STS
 	return nil
 }

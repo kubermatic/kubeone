@@ -117,7 +117,6 @@ func newRoot() *cobra.Command {
 		versionCmd(),
 		statusCmd(fs),
 		proxyCmd(fs),
-		listImagesCmd(fs),
 		completionCmd(rootCmd),
 		documentCmd(rootCmd),
 	)
