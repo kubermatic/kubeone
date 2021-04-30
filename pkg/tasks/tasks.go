@@ -107,10 +107,34 @@ func WithFullInstall(t Tasks) Tasks {
 	return WithBinariesOnly(t).
 		append(kubernetesConfigFiles()...).
 		append(Tasks{
-			{Fn: kubeadmCertsOnLeader, ErrMsg: "failed to provision certs and etcd on leader"},
-			{Fn: certificate.DownloadCA, ErrMsg: "failed to download ca from leader"},
-			{Fn: deployPKIToFollowers, ErrMsg: "failed to upload PKI"},
-			{Fn: kubeadmCertsOnFollower, ErrMsg: "failed to provision certs and etcd on followers"},
+			{
+				Fn: func(s *state.State) error {
+					s.Logger.Infoln("Configuring certs and etcd on control plane node...")
+					return s.RunTaskOnLeader(kubeadmCertsExecutor)
+				},
+				ErrMsg: "failed to provision certs and etcd on leader",
+			},
+			{
+				Fn: func(s *state.State) error {
+					s.Logger.Info("Downloading PKI...")
+					return s.RunTaskOnLeader(certificate.DownloadKubePKI)
+				},
+				ErrMsg: "failed to download Kubernetes PKI from the leader",
+			},
+			{
+				Fn: func(s *state.State) error {
+					s.Logger.Info("Uploading PKI...")
+					return s.RunTaskOnFollowers(certificate.UploadKubePKI, state.RunParallel)
+				},
+				ErrMsg: "failed to upload Kubernetes PKI",
+			},
+			{
+				Fn: func(s *state.State) error {
+					s.Logger.Infoln("Configuring certs and etcd on consecutive control plane node...")
+					return s.RunTaskOnFollowers(kubeadmCertsExecutor, state.RunParallel)
+				},
+				ErrMsg: "failed to provision certs and etcd on followers",
+			},
 			{Fn: initKubernetesLeader, ErrMsg: "failed to init kubernetes on leader"},
 			{Fn: kubeconfig.BuildKubernetesClientset, ErrMsg: "failed to build kubernetes clientset"},
 			{Fn: repairClusterIfNeeded, ErrMsg: "failed to repair cluster"},
@@ -126,6 +150,18 @@ func WithFullInstall(t Tasks) Tasks {
 func WithResources(t Tasks) Tasks {
 	return t.append(
 		Tasks{
+			{
+				Fn: func(s *state.State) error {
+					return s.RunTaskOnControlPlane(saveCABundle, state.RunParallel)
+				},
+				Predicate: func(s *state.State) bool {
+					return s.Cluster.CABundle != ""
+				},
+			},
+			{
+				Fn:     patchStaticPods,
+				ErrMsg: "failed to patch static pods",
+			},
 			{
 				Fn:          renewControlPlaneCerts,
 				ErrMsg:      "failed to renew certificates",
@@ -158,6 +194,12 @@ func WithResources(t Tasks) Tasks {
 				Predicate:   func(s *state.State) bool { return s.Cluster.ClusterNetwork.CNI.External == nil },
 			},
 			{
+				Fn:          ensureCABundleConfigMap,
+				ErrMsg:      "failed to ensure caBundle configMap",
+				Description: "ensure caBundle configMap",
+				Predicate:   func(s *state.State) bool { return s.Cluster.CABundle != "" },
+			},
+			{
 				Fn:          addons.Ensure,
 				ErrMsg:      "failed to apply addons",
 				Description: "ensure addons",
@@ -187,8 +229,11 @@ func WithResources(t Tasks) Tasks {
 				ErrMsg: "failed to label nodes with their OS",
 			},
 			{
-				Fn:     certificate.DownloadCA,
-				ErrMsg: "failed to download ca from leader",
+				Fn: func(s *state.State) error {
+					s.Logger.Info("Downloading PKI...")
+					return s.RunTaskOnLeader(certificate.DownloadKubePKI)
+				},
+				ErrMsg: "failed to download Kubernetes PKI from the leader",
 			},
 			{
 				Fn:          machinecontroller.Ensure,
@@ -218,7 +263,13 @@ func WithUpgrade(t Tasks) Tasks {
 			{Fn: runPreflightChecks, ErrMsg: "preflight checks failed", Retries: 1},
 			{Fn: upgradeLeader, ErrMsg: "failed to upgrade leader control plane"},
 			{Fn: upgradeFollower, ErrMsg: "failed to upgrade follower control plane"},
-			{Fn: certificate.DownloadCA, ErrMsg: "failed to download ca from leader"},
+			{
+				Fn: func(s *state.State) error {
+					s.Logger.Info("Downloading PKI...")
+					return s.RunTaskOnLeader(certificate.DownloadKubePKI)
+				},
+				ErrMsg: "failed to download Kubernetes PKI from the leader",
+			},
 		}...).
 		append(WithResources(nil)...).
 		append(

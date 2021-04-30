@@ -69,7 +69,7 @@ func (tgz tarGzip) Add(file string, content string) error {
 	return nil
 }
 
-func (tgz tarGzip) Close() {
+func (tgz *tarGzip) Close() {
 	if tgz.arch != nil {
 		tgz.arch.Close()
 		tgz.arch = nil

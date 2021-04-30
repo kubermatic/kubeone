@@ -16,58 +16,56 @@ limitations under the License.
 
 package scripts
 
-const (
-	kubeadmJoinScriptTemplate = `
-if [[ -f /etc/kubernetes/admin.conf ]]; then exit 0; fi
+import "github.com/MakeNowJust/heredoc/v2"
 
-sudo kubeadm join {{ .VERBOSE }} \
-	--config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
-`
+var (
+	kubeadmJoinScriptTemplate = heredoc.Doc(`
+		[[ -f /etc/kubernetes/admin.conf ]] && exit 0
 
-	kubeadmWorkerJoinScriptTemplate = `
-if [[ -f /etc/kubernetes/kubelet.conf ]]; then exit 0; fi
+		sudo kubeadm {{ .VERBOSE }} join \
+			--config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+	`)
 
-sudo kubeadm join {{ .VERBOSE }} \
-	--config={{ .WORK_DIR }}/cfg/worker_{{ .NODE_ID }}.yaml
-`
+	kubeadmWorkerJoinScriptTemplate = heredoc.Doc(`
+		[[ -f /etc/kubernetes/admin.conf ]] && exit 0
 
-	kubeadmCertScriptTemplate = `
-if [[ -d {{ .WORK_DIR }}/pki ]]; then
-	sudo rsync -av {{ .WORK_DIR }}/pki/ /etc/kubernetes/pki/
-	sudo chown -R root:root /etc/kubernetes
-	sudo rm -rf {{ .WORK_DIR }}/pki
-fi
-sudo kubeadm {{ .VERBOSE }} \
-	init phase certs all \
-	--config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
-`
+		sudo kubeadm {{ .VERBOSE }} join \
+			--config={{ .WORK_DIR }}/cfg/worker_{{ .NODE_ID }}.yaml
+	`)
 
-	kubeadmInitScriptTemplate = `
-if [[ -f /etc/kubernetes/admin.conf ]]; then
-	sudo kubeadm {{ .VERBOSE }} token create {{ .TOKEN }} --ttl {{ .TOKEN_DURATION }}
-	exit 0;
-fi
-sudo kubeadm {{ .VERBOSE }} \
-	init --config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
-`
+	kubeadmCertScriptTemplate = heredoc.Doc(`
+		sudo kubeadm {{ .VERBOSE }} init phase certs all \
+			--config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+	`)
 
-	kubeadmResetScriptTemplate = `
-sudo kubeadm {{ .VERBOSE }} reset --force || true
-sudo rm -f /etc/kubernetes/cloud-config
-sudo rm -rf /etc/kubernetes/admission
-sudo rm -rf /etc/kubernetes/encryption-providers
-sudo rm -rf /var/lib/etcd/
-sudo rm -rf "{{ .WORK_DIR }}"
-`
+	kubeadmInitScriptTemplate = heredoc.Doc(`
+		if [[ -f /etc/kubernetes/admin.conf ]]; then
+			sudo kubeadm {{ .VERBOSE }} token create {{ .TOKEN }} --ttl {{ .TOKEN_DURATION }}
+			exit 0;
+		fi
 
-	kubeadmUpgradeLeaderScriptTemplate = `
-sudo {{ .KUBEADM_UPGRADE }} --config={{ .WORK_DIR }}/cfg/master_0.yaml`
+		sudo kubeadm {{ .VERBOSE }} init --config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+	`)
 
-	kubeadmPauseImageVersionScriptTemplate = `
-sudo kubeadm config images list --kubernetes-version={{ .KUBERNETES_VERSION }} |
-  grep "k8s.gcr.io/pause" |
-  cut -d ":" -f2
-`
+	kubeadmResetScriptTemplate = heredoc.Doc(`
+		sudo kubeadm {{ .VERBOSE }} reset --force || true
+		sudo rm -f /etc/kubernetes/cloud-config
+		sudo rm -rf /etc/kubernetes/admission
+		sudo rm -rf /etc/kubernetes/encryption-providers
+		sudo rm -rf /var/lib/etcd/
+		sudo rm -rf "{{ .WORK_DIR }}"
+		sudo rm -rf /etc/kubeone
+	`)
+
+	kubeadmUpgradeLeaderScriptTemplate = heredoc.Doc(`
+		sudo {{ .KUBEADM_UPGRADE }} --config={{ .WORK_DIR }}/cfg/master_0.yaml
+	`)
+
+	kubeadmPauseImageVersionScriptTemplate = heredoc.Doc(`
+		sudo kubeadm config images list --kubernetes-version={{ .KUBERNETES_VERSION }} |
+			grep "k8s.gcr.io/pause" |
+			cut -d ":" -f2
+	`)
 )
 
 func KubeadmJoin(workdir string, nodeID int, verboseFlag string) (string, error) {

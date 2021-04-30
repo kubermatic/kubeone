@@ -29,8 +29,10 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
+	"k8c.io/kubeone/pkg/certificate/cabundle"
 	"k8c.io/kubeone/pkg/state"
 
+	corev1 "k8s.io/api/core/v1"
 	metav1unstructured "k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	kyaml "k8s.io/apimachinery/pkg/util/yaml"
@@ -196,11 +198,27 @@ func combineManifests(manifests []*bytes.Buffer) *bytes.Buffer {
 
 func txtFuncMap(overwriteRegistry string) template.FuncMap {
 	funcs := sprig.TxtFuncMap()
+
 	funcs["Registry"] = func(registry string) string {
 		if overwriteRegistry != "" {
 			return overwriteRegistry
 		}
 		return registry
+	}
+
+	funcs["caBundleEnvVar"] = func() (string, error) {
+		buf, err := yaml.Marshal([]corev1.EnvVar{cabundle.EnvVar()})
+		return string(buf), err
+	}
+
+	funcs["caBundleVolume"] = func() (string, error) {
+		buf, err := yaml.Marshal([]corev1.Volume{cabundle.Volume()})
+		return string(buf), err
+	}
+
+	funcs["caBundleVolumeMount"] = func() (string, error) {
+		buf, err := yaml.Marshal([]corev1.VolumeMount{cabundle.VolumeMount()})
+		return string(buf), err
 	}
 
 	return funcs

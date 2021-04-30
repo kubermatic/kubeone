@@ -1,6 +1,5 @@
 set -xeu pipefail
 export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
-
 sudo mkdir -p /etc/systemd/system/kubelet.service.d/ /etc/kubernetes
 sudo mv ./subdir/test/cfg/cloud-config /etc/kubernetes/cloud-config
 sudo chown root:root /etc/kubernetes/cloud-config

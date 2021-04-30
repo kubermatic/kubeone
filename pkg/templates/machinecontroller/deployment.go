@@ -23,6 +23,7 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/certificate/cabundle"
 	"k8c.io/kubeone/pkg/clientutil"
 	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/kubeconfig"
@@ -817,7 +818,7 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster, credentials
 		return nil, errors.Wrap(err, "unable to get env var bindings for a secret")
 	}
 
-	return &appsv1.Deployment{
+	dep := &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller",
 			Namespace: MachineControllerNamespace,
@@ -917,5 +918,14 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster, credentials
 				},
 			},
 		},
-	}, nil
+	}
+
+	cabundle.Inject(cluster.CABundle, &dep.Spec.Template)
+	if cluster.CABundle != "" {
+		dep.Spec.Template.Spec.Containers[0].Args = append(
+			dep.Spec.Template.Spec.Containers[0].Args, "-ca-bundle", cabundle.SSLCertFilePath,
+		)
+	}
+
+	return dep, nil
 }

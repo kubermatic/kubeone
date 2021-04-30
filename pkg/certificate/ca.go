@@ -17,46 +17,92 @@ limitations under the License.
 package certificate
 
 import (
-	"github.com/pkg/errors"
+	"bytes"
+	"fmt"
+	"io"
+	"io/fs"
+	"path"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
-	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/ssh"
+	"k8c.io/kubeone/pkg/ssh/sshiofs"
 	"k8c.io/kubeone/pkg/state"
 )
 
-// DownloadCA grabs CA certs/keys from leader host
-func DownloadCA(s *state.State) error {
-	s.Logger.Info("Downloading PKI...")
+const (
+	KubernetesCACertPath = "/etc/kubernetes/pki/ca.crt"
+	KubernetesCAKeyPath  = "/etc/kubernetes/pki/ca.key"
+)
 
-	return s.RunTaskOnLeader(func(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
-		cmd, err := scripts.CopyPKIHome(s.WorkDir)
+func kubernetesPKIFiles() []string {
+	return []string{
+		KubernetesCACertPath,
+		KubernetesCAKeyPath,
+		"/etc/kubernetes/pki/sa.key",
+		"/etc/kubernetes/pki/sa.pub",
+		"/etc/kubernetes/pki/front-proxy-ca.crt",
+		"/etc/kubernetes/pki/front-proxy-ca.key",
+		"/etc/kubernetes/pki/etcd/ca.crt",
+		"/etc/kubernetes/pki/etcd/ca.key",
+	}
+}
+
+func DownloadKubePKI(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
+	sshfs := s.Runner.NewFS()
+
+	for _, fname := range kubernetesPKIFiles() {
+		buf, err := fs.ReadFile(sshfs, fname)
 		if err != nil {
 			return err
 		}
+		s.Configuration.KubernetesPKI[fname] = buf
+	}
 
-		if _, _, err = s.Runner.RunRaw(cmd); err != nil {
+	if s.BackupFile != "" {
+		s.Logger.Infoln("Creating local backup...")
+
+		err := s.Configuration.Backup(s.BackupFile)
+		if err != nil {
+			// do not stop in case of failed backups, the user can
+			// always create the backup themselves if needed
+			s.Logger.Warnf("Failed to create backup: %v", err)
+		}
+	}
+
+	return nil
+}
+
+func UploadKubePKI(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
+	sshfs := s.Runner.NewFS().(sshiofs.MkdirFS)
+
+	for _, fname := range kubernetesPKIFiles() {
+		buf, found := s.Configuration.KubernetesPKI[fname]
+		if !found {
+			return fmt.Errorf("file %q found found in PKI", fname)
+		}
+
+		if err := sshfs.MkdirAll(path.Dir(fname), 0700); err != nil {
 			return err
 		}
 
-		s.Logger.Infoln("Downloading PKI files...")
-
-		err = s.Configuration.Download(conn, s.WorkDir+"/pki", "pki")
+		f, err := sshfs.Open(fname)
 		if err != nil {
-			return errors.Wrap(err, "failed to download PKI files")
+			return err
+		}
+		defer f.Close()
+		fw := f.(sshiofs.ExtendedFile)
+
+		if err = fw.Truncate(0); err != nil {
+			return err
 		}
 
-		if s.BackupFile != "" {
-			s.Logger.Infoln("Creating local backup...")
-
-			err = s.Configuration.Backup(s.BackupFile)
-			if err != nil {
-				// do not stop in case of failed backups, the user can
-				// always create the backup themselves if needed
-				s.Logger.Warnf("Failed to create backup: %v", err)
-			}
+		if err = fw.Chmod(0600); err != nil {
+			return err
 		}
 
-		return nil
-	})
+		if _, err = io.Copy(fw, bytes.NewBuffer(buf)); err != nil {
+			return err
+		}
+	}
+	return nil
 }

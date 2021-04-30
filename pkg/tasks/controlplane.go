@@ -47,16 +47,6 @@ func joinControlPlaneNodeInternal(s *state.State, node *kubeoneapi.HostConfig, c
 	return err
 }
 
-func kubeadmCertsOnLeader(s *state.State) error {
-	s.Logger.Infoln("Configuring certs and etcd on first controller...")
-	return s.RunTaskOnLeader(kubeadmCertsExecutor)
-}
-
-func kubeadmCertsOnFollower(s *state.State) error {
-	s.Logger.Infoln("Configuring certs and etcd on consecutive controller...")
-	return s.RunTaskOnFollowers(kubeadmCertsExecutor, state.RunParallel)
-}
-
 func kubeadmCertsExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	s.Logger.Infoln("Ensuring Certificates...")
 	cmd, err := scripts.KubeadmCert(s.WorkDir, node.ID, s.KubeadmVerboseFlag())

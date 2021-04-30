@@ -1,9 +1,9 @@
 set -xeu pipefail
 export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
-
 sudo kubeadm --v=6 reset --force || true
 sudo rm -f /etc/kubernetes/cloud-config
 sudo rm -rf /etc/kubernetes/admission
 sudo rm -rf /etc/kubernetes/encryption-providers
 sudo rm -rf /var/lib/etcd/
 sudo rm -rf "test-wd"
+sudo rm -rf /etc/kubeone

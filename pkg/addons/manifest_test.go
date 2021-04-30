@@ -22,7 +22,9 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"strings"
 	"testing"
+	"text/template"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 )
@@ -249,6 +251,32 @@ func TestImageRegistryParsing(t *testing.T) {
 			if manifest != tc.expectedManifest {
 				t.Fatalf("invalid manifest returned. expected \n%s, got \n%s", tc.expectedManifest, manifest)
 			}
+		})
+	}
+}
+
+func TestCABundleFuncs(t *testing.T) {
+	tests := []string{
+		"caBundleEnvVar",
+		"caBundleVolume",
+		"caBundleVolumeMount",
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt, func(t *testing.T) {
+			tpl, err := template.New("addons-base").Funcs(txtFuncMap("")).Parse(fmt.Sprintf(`{{ %s }}`, tt))
+
+			if err != nil {
+				t.Errorf("failed to parse template: %v", err)
+				t.FailNow()
+			}
+
+			var out strings.Builder
+			if err := tpl.Execute(&out, nil); err != nil {
+				t.Errorf("failed to parse template: %v", err)
+			}
+			t.Logf("\n%s", out.String())
 		})
 	}
 }

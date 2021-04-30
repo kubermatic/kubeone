@@ -26,21 +26,14 @@ import (
 	"github.com/Masterminds/semver/v3"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/certificate/cabundle"
+	"k8c.io/kubeone/pkg/clientutil"
 	"k8c.io/kubeone/pkg/kubeconfig"
+	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/ssh/sshiofs"
 	"k8c.io/kubeone/pkg/state"
 )
-
-func deployPKIToFollowers(s *state.State) error {
-	s.Logger.Infoln("Deploying PKI...")
-	return s.RunTaskOnFollowers(deployCAOnNode, state.RunParallel)
-}
-
-func deployCAOnNode(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
-	s.Logger.Infoln("Uploading PKI files...")
-	return s.Configuration.UploadTo(conn, s.WorkDir)
-}
 
 func renewControlPlaneCerts(s *state.State) error {
 	if !s.ForceUpgrade {
@@ -133,4 +126,25 @@ func earliestCertExpiry(conn ssh.Connection) (time.Time, error) {
 	}
 
 	return earliestCertExpirationTime, nil
+}
+
+func ensureCABundleConfigMap(s *state.State) error {
+	if s.DynamicClient == nil {
+		return errors.New("kubernetes client not initialized")
+	}
+
+	s.Logger.Infoln("Creating ca-bundle configMap...")
+
+	cm := cabundle.ConfigMap(s.Cluster.CABundle)
+	return clientutil.CreateOrUpdate(s.Context, s.DynamicClient, cm)
+}
+
+func saveCABundle(ctx *state.State, _ *kubeoneapi.HostConfig, _ ssh.Connection) error {
+	cmd, err := scripts.SaveCABundle(ctx.WorkDir)
+	if err != nil {
+		return err
+	}
+
+	_, _, err = ctx.Runner.RunRaw(cmd)
+	return err
 }

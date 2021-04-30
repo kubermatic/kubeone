@@ -19,6 +19,7 @@ package certificate
 import (
 	"crypto/rsa"
 	"crypto/x509"
+	"fmt"
 
 	"github.com/pkg/errors"
 
@@ -30,17 +31,17 @@ import (
 
 // CAKeyPair parses generated PKI CA certificate and key
 func CAKeyPair(config *configupload.Configuration) (*rsa.PrivateKey, *x509.Certificate, error) {
-	caCert, err := config.Get("pki/ca.crt")
-	if err != nil {
-		return nil, nil, err
+	caCert, found := config.KubernetesPKI[KubernetesCACertPath]
+	if !found {
+		return nil, nil, fmt.Errorf("%q not found", KubernetesCACertPath)
 	}
 
-	caKey, err := config.Get("pki/ca.key")
-	if err != nil {
-		return nil, nil, err
+	caKey, found := config.KubernetesPKI[KubernetesCAKeyPath]
+	if !found {
+		return nil, nil, fmt.Errorf("%q not found", KubernetesCAKeyPath)
 	}
 
-	certs, err := cert.ParseCertsPEM([]byte(caCert))
+	certs, err := cert.ParseCertsPEM(caCert)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -49,7 +50,7 @@ func CAKeyPair(config *configupload.Configuration) (*rsa.PrivateKey, *x509.Certi
 		return nil, nil, errors.New("ca.crt does not contain at least one valid certificate")
 	}
 
-	possibleKey, err := keyutil.ParsePrivateKeyPEM([]byte(caKey))
+	possibleKey, err := keyutil.ParsePrivateKeyPEM(caKey)
 	if err != nil {
 		return nil, nil, err
 	}

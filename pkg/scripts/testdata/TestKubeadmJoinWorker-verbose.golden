@@ -1,7 +1,6 @@
 set -xeu pipefail
 export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
+[[ -f /etc/kubernetes/admin.conf ]] && exit 0
 
-if [[ -f /etc/kubernetes/kubelet.conf ]]; then exit 0; fi
-
-sudo kubeadm join --v=6 \
+sudo kubeadm --v=6 join \
 	--config=test-wd/cfg/worker_0.yaml

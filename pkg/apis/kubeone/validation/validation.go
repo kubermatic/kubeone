@@ -17,6 +17,8 @@ limitations under the License.
 package validation
 
 import (
+	"bytes"
+	"crypto/x509"
 	"net"
 	"reflect"
 	"strings"
@@ -50,6 +52,7 @@ func ValidateKubeOneCluster(c kubeone.KubeOneCluster) field.ErrorList {
 			"machine-controller deployment is disabled, but the configuration still contains dynamic workers"))
 	}
 
+	allErrs = append(allErrs, ValidateCABundle(c.CABundle, field.NewPath("caBundle"))...)
 	allErrs = append(allErrs, ValidateFeatures(c.Features, c.Versions, field.NewPath("features"))...)
 	allErrs = append(allErrs, ValidateAddons(c.Addons, field.NewPath("addons"))...)
 	allErrs = append(allErrs, ValidateRegistryConfiguration(c.RegistryConfiguration, field.NewPath("registryConfiguration"))...)
@@ -288,6 +291,22 @@ func ValidateDynamicWorkerConfig(workerset []kubeone.DynamicWorkerConfig, fldPat
 		if w.Replicas == nil || *w.Replicas < 0 {
 			allErrs = append(allErrs, field.Invalid(fldPath.Child("replicas"), w.Replicas, ".dynamicWorkers.replicas must be specified and >= 0"))
 		}
+	}
+
+	return allErrs
+}
+
+func ValidateCABundle(caBundle string, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	caPEM := bytes.TrimSpace([]byte(caBundle))
+	if len(caPEM) == 0 {
+		return allErrs
+	}
+
+	pool := x509.NewCertPool()
+	if ok := pool.AppendCertsFromPEM(caPEM); !ok {
+		allErrs = append(allErrs, field.Invalid(fldPath, "", "can't parse caBundle"))
 	}
 
 	return allErrs

@@ -27,6 +27,7 @@ import (
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/certificate"
+	"k8c.io/kubeone/pkg/certificate/cabundle"
 	"k8c.io/kubeone/pkg/clientutil"
 	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/state"
@@ -136,7 +137,7 @@ func webhookDeployment(cluster *kubeoneapi.KubeOneCluster, credentialsFilePath, 
 		args = append(args, "-node-external-cloud-provider")
 	}
 
-	return &appsv1.Deployment{
+	dep := &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller-webhook",
 			Namespace: WebhookNamespace,
@@ -242,7 +243,16 @@ func webhookDeployment(cluster *kubeoneapi.KubeOneCluster, credentialsFilePath, 
 				},
 			},
 		},
-	}, nil
+	}
+
+	cabundle.Inject(cluster.CABundle, &dep.Spec.Template)
+	if cluster.CABundle != "" {
+		dep.Spec.Template.Spec.Containers[0].Args = append(
+			dep.Spec.Template.Spec.Containers[0].Args, "-ca-bundle", cabundle.SSLCertFilePath,
+		)
+	}
+
+	return dep, nil
 }
 
 // service returns the internal service for the machine-controller webhook
