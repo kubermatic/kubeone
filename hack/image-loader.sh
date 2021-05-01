@@ -110,7 +110,7 @@ k1images=(
   "docker.io/calico/kube-controllers:v3.16.5"
   "quay.io/coreos/flannel:v0.13.0"
   # machine-controller
-  "docker.io/kubermatic/machine-controller:v1.27.4"
+  "docker.io/kubermatic/machine-controller:v1.28.0"
   # metrics-server
   "k8s.gcr.io/metrics-server:v0.3.6"
   # NodeLocalDNSCache
