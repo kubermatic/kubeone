@@ -114,10 +114,6 @@ func runReset(opts *resetOpts) error {
 		fmt.Printf("\t+ reset static worker nodes %q (%s)\n", node.Hostname, node.PrivateAddress)
 	}
 
-	if !s.Cluster.MachineController.Deploy {
-		s.Logger.Info("Skipping deleting workers because machine-controller is disabled in configuration.")
-	}
-
 	if s.DynamicClient == nil {
 		err = kubeconfig.BuildKubernetesClientset(s)
 		if err != nil {
