@@ -19,6 +19,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"k8c.io/kubeone/pkg/kubeconfig"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/pkg/errors"
@@ -118,7 +119,10 @@ func runReset(opts *resetOpts) error {
 	}
 
 	if s.DynamicClient == nil {
-		return errors.New("kubernetes client not initialized")
+		err = kubeconfig.BuildKubernetesClientset(s)
+		if err != nil {
+			return err
+		}
 	}
 
 	// Gather information about machine-controller managed nodes
