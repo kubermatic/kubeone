@@ -19,6 +19,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"github.com/kubermatic/machine-controller/pkg/apis/cluster/v1alpha1"
 	"k8c.io/kubeone/pkg/kubeconfig"
 
 	"github.com/MakeNowJust/heredoc/v2"
@@ -28,8 +29,6 @@ import (
 
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/tasks"
-
-	corev1 "k8s.io/api/core/v1"
 )
 
 type resetOpts struct {
@@ -123,13 +122,13 @@ func runReset(opts *resetOpts) error {
 
 	// Gather information about machine-controller managed nodes
 	ctx := context.Background()
-	nodes := &corev1.NodeList{}
-	if err := s.DynamicClient.List(ctx, nodes); err != nil {
-		return errors.Wrap(err, "unable to list nodes")
+	machines := v1alpha1.MachineList{}
+	if err := s.DynamicClient.List(ctx, &machines); err != nil {
+		s.Logger.Debugln("unable to list machines: ", err.Error())
 	}
 
-	for _, node := range nodes.Items {
-		fmt.Printf("\t+ reset machine-controller managed nodes %q\n", node.Name)
+	for _, machine := range machines.Items {
+		fmt.Printf("\t+ reset machine-controller managed machines %q\n", machine.Name)
 	}
 
 	confirm, err := confirmCommand(opts.AutoApprove)
