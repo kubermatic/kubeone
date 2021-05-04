@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The KubeOne Authors.
+Copyright 2021 The KubeOne Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -15,8 +15,3 @@ limitations under the License.
 */
 
 package scripts
-
-const (
-	defaultKubernetesCNIVersion = "0.8.7"
-	defaultCriToolsVersion      = "1.21.0"
-)
