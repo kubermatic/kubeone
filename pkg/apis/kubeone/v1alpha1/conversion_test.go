@@ -20,9 +20,10 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	corev1 "k8s.io/api/core/v1"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+
+	corev1 "k8s.io/api/core/v1"
 )
 
 func TestCNIRoundTripConversion(t *testing.T) {
