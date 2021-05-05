@@ -167,9 +167,14 @@ type fileInfo struct {
 	time time.Time
 }
 
-func (fi *fileInfo) Size() int64        { return fi.size }
-func (fi *fileInfo) Mode() fs.FileMode  { return fi.mode }
+func (fi *fileInfo) Size() int64 { return fi.size }
+
+func (fi *fileInfo) Mode() fs.FileMode { return fi.mode }
+
 func (fi *fileInfo) ModTime() time.Time { return fi.time }
-func (fi *fileInfo) Name() string       { return fi.name }
-func (fi *fileInfo) IsDir() bool        { return fi.mode.IsDir() }
-func (*fileInfo) Sys() interface{}      { return nil }
+
+func (fi *fileInfo) Name() string { return fi.name }
+
+func (fi *fileInfo) IsDir() bool { return fi.mode.IsDir() }
+
+func (*fileInfo) Sys() interface{} { return nil }

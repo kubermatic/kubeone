@@ -24,10 +24,11 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"sigs.k8s.io/yaml"
 
 	kubeonev1beta1 "k8c.io/kubeone/pkg/apis/kubeone/v1beta1"
 	"k8c.io/kubeone/pkg/templates/images"
+
+	"sigs.k8s.io/yaml"
 )
 
 type listImagesOpts struct {

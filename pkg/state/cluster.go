@@ -23,11 +23,11 @@ import (
 
 	"github.com/Masterminds/semver/v3"
 
+	"k8c.io/kubeone/pkg/apis/kubeone"
+
 	apiserverconfigv1 "k8s.io/apiserver/pkg/apis/config/v1"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
-
-	"k8c.io/kubeone/pkg/apis/kubeone"
 )
 
 type Cluster struct {

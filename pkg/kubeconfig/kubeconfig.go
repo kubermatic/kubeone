@@ -21,12 +21,12 @@ import (
 
 	"github.com/pkg/errors"
 
-	"k8s.io/client-go/tools/clientcmd"
-	"sigs.k8s.io/controller-runtime/pkg/client"
-
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/ssh/sshiofs"
 	"k8c.io/kubeone/pkg/state"
+
+	"k8s.io/client-go/tools/clientcmd"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 // Download downloads Kubeconfig over SSH
