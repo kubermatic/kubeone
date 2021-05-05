@@ -4,7 +4,6 @@ export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
 sudo swapoff -a
 sudo sed -i '/.*swap.*/d' /etc/fstab
 sudo setenforce 0 || true
-sudo sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/sysconfig/selinux
 sudo sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/selinux/config
 sudo systemctl disable --now firewalld || true
 
@@ -154,6 +153,8 @@ curl -L --output /tmp/k8s-binaries/kubectl http://127.0.0.1/kubectl.tar.gz
 sudo install --owner=0 --group=0 --mode=0755 /tmp/k8s-binaries/kubectl /opt/bin/kubectl
 sudo ln -sf /opt/bin/kubectl /usr/bin/
 rm /tmp/k8s-binaries/kubectl
+
+
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now kubelet

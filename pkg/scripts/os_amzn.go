@@ -136,6 +136,25 @@ sudo ln -sf /opt/bin/kubectl /usr/bin/
 rm /tmp/k8s-binaries/kubectl
 {{- end }}
 
+{{ if .USE_KUBERNETES_REPO }}
+{{- if or .FORCE .UPGRADE }}
+sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni || true
+{{- end }}
+
+sudo yum install -y \
+{{- if .KUBELET }}
+	kubelet-{{ .KUBERNETES_VERSION }} \
+{{- end }}
+{{- if .KUBEADM }}
+	kubeadm-{{ .KUBERNETES_VERSION }} \
+{{- end }}
+{{- if .KUBECTL }}
+	kubectl-{{ .KUBERNETES_VERSION }} \
+{{- end }}
+	kubernetes-cni-{{ .KUBERNETES_CNI_VERSION }}
+sudo yum versionlock add kubelet kubeadm kubectl kubernetes-cni
+{{- end }}
+
 sudo systemctl daemon-reload
 sudo systemctl enable --now kubelet
 
@@ -164,6 +183,8 @@ func KubeadmAmazonLinux(cluster *kubeone.KubeOneCluster, force bool) (string, er
 		proxy = cluster.Proxy.HTTP
 	}
 
+	useKubernetesRepo := cluster.AssetConfiguration.NodeBinaries.URL == ""
+
 	return Render(kubeadmAmazonLinuxTemplate, Data{
 		"KUBELET":                true,
 		"KUBEADM":                true,
@@ -179,6 +200,7 @@ func KubeadmAmazonLinux(cluster *kubeone.KubeOneCluster, force bool) (string, er
 		"FORCE":                  force,
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
+		"USE_KUBERNETES_REPO":    useKubernetesRepo,
 	})
 }
 
@@ -192,6 +214,8 @@ func UpgradeKubeadmAndCNIAmazonLinux(cluster *kubeone.KubeOneCluster) (string, e
 		proxy = cluster.Proxy.HTTP
 	}
 
+	useKubernetesRepo := cluster.AssetConfiguration.NodeBinaries.URL == ""
+
 	return Render(kubeadmAmazonLinuxTemplate, Data{
 		"UPGRADE":                true,
 		"KUBEADM":                true,
@@ -204,6 +228,7 @@ func UpgradeKubeadmAndCNIAmazonLinux(cluster *kubeone.KubeOneCluster) (string, e
 		"PROXY":                  proxy,
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
+		"USE_KUBERNETES_REPO":    useKubernetesRepo,
 	})
 }
 
@@ -212,6 +237,8 @@ func UpgradeKubeletAndKubectlAmazonLinux(cluster *kubeone.KubeOneCluster) (strin
 	if proxy == "" {
 		proxy = cluster.Proxy.HTTP
 	}
+
+	useKubernetesRepo := cluster.AssetConfiguration.NodeBinaries.URL == ""
 
 	return Render(kubeadmAmazonLinuxTemplate, Data{
 		"UPGRADE":                true,
@@ -226,5 +253,6 @@ func UpgradeKubeletAndKubectlAmazonLinux(cluster *kubeone.KubeOneCluster) (strin
 		"PROXY":                  proxy,
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
+		"USE_KUBERNETES_REPO":    useKubernetesRepo,
 	})
 }
