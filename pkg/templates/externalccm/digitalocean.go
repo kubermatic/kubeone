@@ -24,6 +24,7 @@ import (
 	"k8c.io/kubeone/pkg/clientutil"
 	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/templates/images"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -34,8 +35,6 @@ import (
 )
 
 const (
-	digitaloceanImageRegistry  = "docker.io"
-	digitaloceanImage          = "/digitalocean/digitalocean-cloud-controller-manager:v0.1.23"
 	digitaloceanSAName         = "cloud-controller-manager"
 	digitaloceanDeploymentName = "digitalocean-cloud-controller-manager"
 )
@@ -48,12 +47,13 @@ func ensureDigitalOcean(s *state.State) error {
 	ctx := context.Background()
 	sa := doServiceAccount()
 	crole := doClusterRole()
-	image := s.Cluster.RegistryConfiguration.ImageRegistry(digitaloceanImageRegistry) + digitaloceanImage
+	ccmImage := s.Images.Get(images.DigitaloceanCCM)
+
 	k8sobject := []client.Object{
 		sa,
 		crole,
 		genClusterRoleBinding("system:cloud-controller-manager", crole, sa),
-		doDeployment(image),
+		doDeployment(ccmImage),
 	}
 
 	withLabel := clientutil.WithComponentLabel(ccmComponentLabel)

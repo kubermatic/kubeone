@@ -24,6 +24,7 @@ import (
 	"k8c.io/kubeone/pkg/certificate/cabundle"
 	"k8c.io/kubeone/pkg/clientutil"
 	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/templates/images"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -37,8 +38,6 @@ const (
 	openstackSAName           = "cloud-controller-manager"
 	openstackDeploymentName   = "openstack-cloud-controller-manager"
 	openstackConfigSecretName = "cloud-config" //nolint:gosec
-	openstackImageRegistry    = "docker.io"
-	openstackImage            = "/k8scloudprovider/openstack-cloud-controller-manager:v1.17.0"
 )
 
 func ensureOpenStack(s *state.State) error {
@@ -54,10 +53,8 @@ func ensureOpenStack(s *state.State) error {
 
 	sa := osServiceAccount()
 	ccmRole := osCCMClusterRole()
-
-	image := s.Cluster.RegistryConfiguration.ImageRegistry(openstackImageRegistry) + openstackImage
-	ds := osDaemonSet(image)
-
+	ccmImage := s.Images.Get(images.OpenstackCCM)
+	ds := osDaemonSet(ccmImage)
 	cabundle.Inject(s.Cluster.CABundle, &ds.Spec.Template)
 
 	k8sobjects := []client.Object{

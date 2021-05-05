@@ -27,6 +27,7 @@ import (
 	"k8c.io/kubeone/pkg/configupload"
 	"k8c.io/kubeone/pkg/runner"
 	"k8c.io/kubeone/pkg/ssh"
+	"k8c.io/kubeone/pkg/templates/images"
 
 	apiserverconfigv1 "k8s.io/apiserver/pkg/apis/config/v1"
 	"k8s.io/client-go/rest"
@@ -42,13 +43,28 @@ const (
 
 func New(ctx context.Context) (*State, error) {
 	joinToken, err := bootstraputil.GenerateBootstrapToken()
-	return &State{
+	s := &State{
 		JoinToken:     joinToken,
 		Connector:     ssh.NewConnector(ctx),
 		Configuration: configupload.NewConfiguration(),
 		Context:       ctx,
 		WorkDir:       "./kubeone",
-	}, err
+	}
+
+	s.Images = images.NewResolver(
+		images.WithOverwriteRegistryGetter(func() string {
+			switch {
+			case s.Cluster == nil:
+				return ""
+			case s.Cluster.RegistryConfiguration == nil:
+				return ""
+			}
+
+			return s.Cluster.RegistryConfiguration.OverwriteRegistry
+		}),
+	)
+
+	return s, err
 }
 
 // State holds together currently test flags and parsed info, along with
@@ -59,6 +75,7 @@ type State struct {
 	Logger                    logrus.FieldLogger
 	Connector                 *ssh.Connector
 	Configuration             *configupload.Configuration
+	Images                    *images.Resolver
 	Runner                    *runner.Runner
 	Context                   context.Context
 	WorkDir                   string

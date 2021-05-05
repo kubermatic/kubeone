@@ -27,7 +27,7 @@ import (
 	"github.com/Masterminds/semver/v3"
 	"github.com/spf13/cobra"
 
-	"k8c.io/kubeone/pkg/templates/machinecontroller"
+	"k8c.io/kubeone/pkg/templates/images"
 
 	k8sversion "k8s.io/apimachinery/pkg/version"
 )
@@ -62,8 +62,11 @@ func versionCmd() *cobra.Command {
 				GoVersion:  runtime.Version(),
 			}
 
+			imgResolver := images.NewResolver()
+			mcTag := imgResolver.Tag(images.MachineController)
+
 			mcver := k8sversion.Info{
-				GitVersion: machinecontroller.MachineControllerTag,
+				GitVersion: mcTag,
 				Platform:   "linux/amd64",
 			}
 
@@ -73,7 +76,7 @@ func versionCmd() *cobra.Command {
 				ownver.Minor = strconv.Itoa(int(ownsver.Minor()))
 			}
 
-			mcsver, err := semver.NewVersion(machinecontroller.MachineControllerTag)
+			mcsver, err := semver.NewVersion(mcTag)
 			if err == nil {
 				mcver.Major = strconv.Itoa(int(mcsver.Major()))
 				mcver.Minor = strconv.Itoa(int(mcsver.Minor()))

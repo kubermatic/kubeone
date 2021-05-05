@@ -21,6 +21,7 @@ import (
 
 	"k8c.io/kubeone/pkg/clientutil"
 	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/templates/images"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -32,9 +33,7 @@ import (
 )
 
 const (
-	metricsServerImageName = `/metrics-server:`
-	metricsServerImageTag  = "v0.3.6"
-	componentLabel         = "metrics-server"
+	componentLabel = "metrics-server"
 )
 
 // Deploy generate and POST all objects to apiserver
@@ -43,17 +42,17 @@ func Deploy(s *state.State) error {
 		return errors.New("kubernetes client not initialized")
 	}
 
-	imageRepository := "k8s.gcr.io"
-	if s.Cluster.AssetConfiguration.MetricsServer.ImageRepository != "" {
-		imageRepository = s.Cluster.AssetConfiguration.MetricsServer.ImageRepository
-	}
-	imageTag := metricsServerImageTag
-	if s.Cluster.AssetConfiguration.MetricsServer.ImageTag != "" {
-		imageTag = s.Cluster.AssetConfiguration.MetricsServer.ImageTag
+	opts := []images.GetOpt{}
+
+	if domain := s.Cluster.AssetConfiguration.MetricsServer.ImageRepository; domain != "" {
+		opts = append(opts, images.WithDomain(domain))
 	}
 
-	image := imageRepository + metricsServerImageName + imageTag
+	if tag := s.Cluster.AssetConfiguration.MetricsServer.ImageTag; tag != "" {
+		opts = append(opts, images.WithTag(tag))
+	}
 
+	image := s.Images.Get(images.MetricsServer, opts...)
 	k8sobjects := []client.Object{
 		aggregatedMetricsReaderClusterRole(),
 		authDelegatorClusterRoleBinding(),
