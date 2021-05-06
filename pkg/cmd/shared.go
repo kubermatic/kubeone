@@ -24,11 +24,10 @@ import (
 	"reflect"
 	"strings"
 
-	"golang.org/x/term"
-
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
+	"golang.org/x/term"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/apis/kubeone/config"
