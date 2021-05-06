@@ -19,21 +19,6 @@ aarch64)
 esac
 
 
-sudo mkdir -p /etc/docker
-cat <<EOF | sudo tee /etc/docker/daemon.json
-{
-	"exec-opts": [
-		"native.cgroupdriver=systemd"
-	],
-	"storage-driver": "overlay2",
-	"log-driver": "json-file",
-	"log-opts": {
-		"max-size": "100m"
-	}
-}
-EOF
-
-
 cat <<EOF | sudo tee /etc/modules-load.d/containerd.conf
 overlay
 br_netfilter
@@ -62,13 +47,43 @@ EOF
 sudo systemctl force-reload systemd-journald
 
 
-sudo systemctl restart docker
-
 sudo mkdir -p /opt/cni/bin /etc/kubernetes/pki /etc/kubernetes/manifests
 curl -L "https://github.com/containernetworking/plugins/releases/download/v0.8.7/cni-plugins-linux-${HOST_ARCH}-v0.8.7.tgz" |
 	sudo tar -C /opt/cni/bin -xz
 
 RELEASE="v1.17.4"
+CRI_TOOLS_RELEASE="v1.21.0"
+
+curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRI_TOOLS_RELEASE}/crictl-${CRI_TOOLS_RELEASE}-linux-${HOST_ARCH}.tar.gz |
+	sudo tar -C /opt/bin -xz
+
+
+
+sudo mkdir -p /etc/docker
+cat <<EOF | sudo tee /etc/docker/daemon.json
+{
+	"exec-opts": [
+		"native.cgroupdriver=systemd"
+	],
+	"storage-driver": "overlay2",
+	"log-driver": "json-file",
+	"log-opts": {
+		"max-size": "100m"
+	}
+}
+EOF
+
+cat <<EOF | sudo tee /etc/crictl.yaml
+runtime-endpoint: unix:///var/run/dockershim.sock
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now docker
+sudo systemctl restart docker
+
+
+
+
 
 sudo mkdir -p /opt/bin
 cd /opt/bin
@@ -112,5 +127,4 @@ ExecStart=/opt/bin/kubelet \$KUBELET_KUBECONFIG_ARGS \$KUBELET_CONFIG_ARGS \$KUB
 EOF
 
 sudo systemctl daemon-reload
-sudo systemctl enable --now docker
 sudo systemctl enable --now kubelet

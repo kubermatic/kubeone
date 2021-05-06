@@ -86,7 +86,7 @@ func restartKubeAPIServerOnOS(s *state.State, node kubeoneapi.HostConfig) error 
 		kubeoneapi.OperatingSystemNameAmazon:  restartKubeAPIServerCrictl,
 		kubeoneapi.OperatingSystemNameCentOS:  restartKubeAPIServerCrictl,
 		kubeoneapi.OperatingSystemNameDebian:  restartKubeAPIServerCrictl,
-		kubeoneapi.OperatingSystemNameFlatcar: restartKubeAPIServerDocker,
+		kubeoneapi.OperatingSystemNameFlatcar: restartKubeAPIServerCrictl,
 		kubeoneapi.OperatingSystemNameRHEL:    restartKubeAPIServerCrictl,
 		kubeoneapi.OperatingSystemNameUbuntu:  restartKubeAPIServerCrictl,
 	})
@@ -97,7 +97,7 @@ func ensureRestartKubeAPIServerOnOS(s *state.State, node kubeoneapi.HostConfig) 
 		kubeoneapi.OperatingSystemNameAmazon:  ensureRestartKubeAPIServerCrictl,
 		kubeoneapi.OperatingSystemNameCentOS:  ensureRestartKubeAPIServerCrictl,
 		kubeoneapi.OperatingSystemNameDebian:  ensureRestartKubeAPIServerCrictl,
-		kubeoneapi.OperatingSystemNameFlatcar: ensureRestartKubeAPIServerDocker,
+		kubeoneapi.OperatingSystemNameFlatcar: ensureRestartKubeAPIServerCrictl,
 		kubeoneapi.OperatingSystemNameRHEL:    ensureRestartKubeAPIServerCrictl,
 		kubeoneapi.OperatingSystemNameUbuntu:  ensureRestartKubeAPIServerCrictl,
 	})
@@ -113,28 +113,8 @@ func restartKubeAPIServerCrictl(s *state.State) error {
 	return errors.WithStack(err)
 }
 
-func restartKubeAPIServerDocker(s *state.State) error {
-	cmd, err := scripts.RestartKubeAPIServerDocker(false)
-	if err != nil {
-		return errors.WithStack(err)
-	}
-	_, _, err = s.Runner.RunRaw(cmd)
-
-	return errors.WithStack(err)
-}
-
 func ensureRestartKubeAPIServerCrictl(s *state.State) error {
 	cmd, err := scripts.RestartKubeAPIServerCrictl(true)
-	if err != nil {
-		return errors.WithStack(err)
-	}
-	_, _, err = s.Runner.RunRaw(cmd)
-
-	return errors.WithStack(err)
-}
-
-func ensureRestartKubeAPIServerDocker(s *state.State) error {
-	cmd, err := scripts.RestartKubeAPIServerDocker(true)
 	if err != nil {
 		return errors.WithStack(err)
 	}

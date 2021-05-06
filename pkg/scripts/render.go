@@ -228,6 +228,34 @@ var (
 			defaultAmazonContainerdVersion,
 			defaultAmazonCrictlVersion,
 		),
+
+		"flatcar-docker": heredoc.Doc(`
+			cat <<EOF | sudo tee /etc/crictl.yaml
+			runtime-endpoint: unix:///var/run/dockershim.sock
+			EOF
+
+			sudo systemctl daemon-reload
+			sudo systemctl enable --now docker
+			sudo systemctl restart docker
+			`),
+
+		"flatcar-containerd": heredoc.Doc(`
+			cat <<EOF | sudo tee /etc/crictl.yaml
+			runtime-endpoint: unix:///run/containerd/containerd.sock
+			EOF
+
+			sudo mkdir -p /etc/systemd/system/containerd.service.d
+			cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/environment.conf
+			[Service]
+			Restart=always
+			EnvironmentFile=-/etc/environment
+			EOF
+
+			sudo systemctl daemon-reload
+			sudo systemctl enable --now containerd
+			sudo systemctl restart containerd
+			`,
+		),
 	}
 )
 

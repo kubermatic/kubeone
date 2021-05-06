@@ -39,23 +39,8 @@ var (
 	{{ else }}
 		sudo crictl logs "$apiserver_id" > /tmp/kube-apiserver.log 2>&1
 		if sudo grep -q "etcdserver: no leader" /tmp/kube-apiserver.log; then
+			sudo crictl stop "$apiserver_id"
 			sudo crictl rm "$apiserver_id"
-			sleep 10
-		fi
-	{{ end }}
-	`)
-
-	restartKubeAPIServerDockerTemplate = heredoc.Doc(`
-		apiserver_id=$(sudo docker ps --filter="name=k8s_kube-apiserver" -q)
-		[ -z "$apiserver_id" ] && exit 1
-		
-	{{ if .ENSURE -}}
-		sudo docker rm -f "$apiserver_id"
-		sleep 30
-	{{ else }}
-		sudo docker logs "$apiserver_id" > /tmp/kube-apiserver.log 2>&1
-		if sudo grep -q "etcdserver: no leader" /tmp/kube-apiserver.log; then
-			sudo docker rm -f "$apiserver_id"
 			sleep 10
 		fi
 	{{ end }}
@@ -74,12 +59,6 @@ func Hostname() string {
 
 func RestartKubeAPIServerCrictl(ensure bool) (string, error) {
 	return Render(restartKubeAPIServerCrictlTemplate, Data{
-		"ENSURE": ensure,
-	})
-}
-
-func RestartKubeAPIServerDocker(ensure bool) (string, error) {
-	return Render(restartKubeAPIServerDockerTemplate, Data{
 		"ENSURE": ensure,
 	})
 }
