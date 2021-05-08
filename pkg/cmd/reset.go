@@ -116,7 +116,7 @@ func runReset(opts *resetOpts) error {
 	if err == nil {
 		// Gather information about machine-controller managed nodes
 		machines := v1alpha1.MachineList{}
-		if err := s.DynamicClient.List(s.Context, &machines); err != nil {
+		if err = s.DynamicClient.List(s.Context, &machines); err != nil {
 			s.Logger.Warnln("Failed to list Machines. Worker nodes will not be deleted. If there are worker nodes in the cluster, you might have to delete them manually.")
 		}
 		for _, machine := range machines.Items {

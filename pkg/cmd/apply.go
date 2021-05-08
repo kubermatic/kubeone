@@ -39,6 +39,8 @@ import (
 	kyaml "sigs.k8s.io/yaml"
 )
 
+const yes = "yes"
+
 type applyOpts struct {
 	globalOptions
 	AutoApprove bool `longflag:"auto-approve" shortflag:"y"`
@@ -479,7 +481,7 @@ func confirmApply(autoApprove bool) (bool, error) {
 
 	fmt.Println()
 
-	return strings.Trim(confirmation, "\n") == "yes", nil
+	return strings.Trim(confirmation, "\n") == yes, nil
 }
 
 func printHostInformation(host state.Host) {
@@ -518,7 +520,7 @@ func componentStatusReport(component state.ComponentStatus) {
 
 func boolStr(b bool) string {
 	if b {
-		return "yes"
+		return yes
 	}
 	return "no"
 }
