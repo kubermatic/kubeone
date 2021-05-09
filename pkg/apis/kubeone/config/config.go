@@ -29,7 +29,7 @@ import (
 	kubeonescheme "k8c.io/kubeone/pkg/apis/kubeone/scheme"
 	kubeonev1alpha1 "k8c.io/kubeone/pkg/apis/kubeone/v1alpha1"
 	kubeonev1beta1 "k8c.io/kubeone/pkg/apis/kubeone/v1beta1"
-	"k8c.io/kubeone/pkg/apis/kubeone/validation"
+	kubeonevalidation "k8c.io/kubeone/pkg/apis/kubeone/validation"
 	terraformv1alpha1 "k8c.io/kubeone/pkg/terraform/v1alpha1"
 	terraformv1beta1 "k8c.io/kubeone/pkg/terraform/v1beta1"
 
@@ -163,7 +163,7 @@ func DefaultedV1Alpha1KubeOneCluster(versionedCluster *kubeonev1alpha1.KubeOneCl
 	}
 
 	// Validate the configuration
-	if err := validation.ValidateKubeOneCluster(*internalCluster).ToAggregate(); err != nil {
+	if err := kubeonevalidation.ValidateKubeOneCluster(*internalCluster).ToAggregate(); err != nil {
 		return nil, errors.Wrap(err, "unable to validate the given KubeOneCluster object")
 	}
 
@@ -198,7 +198,7 @@ func DefaultedV1Beta1KubeOneCluster(versionedCluster *kubeonev1beta1.KubeOneClus
 	}
 
 	// Validate the configuration
-	if err := validation.ValidateKubeOneCluster(*internalCluster).ToAggregate(); err != nil {
+	if err := kubeonevalidation.ValidateKubeOneCluster(*internalCluster).ToAggregate(); err != nil {
 		return nil, errors.Wrap(err, "unable to validate the given KubeOneCluster object")
 	}
 
