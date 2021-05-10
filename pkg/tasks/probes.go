@@ -113,12 +113,6 @@ func runProbes(s *state.State) error {
 		}
 	}
 
-	for _, host := range s.Cluster.ControlPlane.Hosts {
-		if host.OperatingSystem == kubeoneapi.OperatingSystemNameFlatcar {
-			s.Cluster.ContainerRuntime.Docker = &kubeoneapi.ContainerRuntimeDocker{}
-		}
-	}
-
 	switch {
 	case s.Cluster.ContainerRuntime.Containerd != nil:
 		return nil
