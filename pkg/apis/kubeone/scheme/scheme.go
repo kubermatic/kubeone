@@ -18,8 +18,8 @@ package scheme
 
 import (
 	"k8c.io/kubeone/pkg/apis/kubeone"
-	"k8c.io/kubeone/pkg/apis/kubeone/v1alpha1"
-	"k8c.io/kubeone/pkg/apis/kubeone/v1beta1"
+	kubeonev1alpha1 "k8c.io/kubeone/pkg/apis/kubeone/v1alpha1"
+	kubeonev1beta1 "k8c.io/kubeone/pkg/apis/kubeone/v1beta1"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -42,7 +42,7 @@ func init() {
 // AddToScheme builds the KubeOne scheme
 func AddToScheme(scheme *runtime.Scheme) {
 	utilruntime.Must(kubeone.AddToScheme(scheme))
-	utilruntime.Must(v1beta1.AddToScheme(scheme))
-	utilruntime.Must(v1alpha1.AddToScheme(scheme))
-	utilruntime.Must(scheme.SetVersionPriority(v1beta1.SchemeGroupVersion))
+	utilruntime.Must(kubeonev1beta1.AddToScheme(scheme))
+	utilruntime.Must(kubeonev1alpha1.AddToScheme(scheme))
+	utilruntime.Must(scheme.SetVersionPriority(kubeonev1beta1.SchemeGroupVersion))
 }

@@ -23,3 +23,22 @@ sets:
     patterns:
       - 'k8s.io/**'
       - '*.k8s.io/**'
+exclude:
+  - "pkg/apis/kubeadm/**"
+  - "vendor/**"
+  - ".git/**"
+  - "**/zz_generated.**"
+  - "**/zz_generated_**"
+  - "**/generated.pb.go"
+  - "**/generated.proto"
+  - "**/*_generated.go"
+aliasRules:
+  - name: k8sapi
+    expr: 'k8s.io/api/([a-z0-9-]+)/(v[a-z0-9-]+)'
+    alias: '$1$2'
+  - name: k8sapimachinery
+    expr: '^k8s.io/apimachinery/pkg/apis/([a-z0-9-]+)/(v[a-z0-9-]+)(/([a-z0-9-]+))?$'
+    alias: '$1$2$4'
+  - name: kubeoneapi
+    expr: '^k8c.io/kubeone/pkg/apis/([a-z0-9-]+)/(v[a-z0-9-]+)(/([a-z0-9-]+))?$'
+    alias: '$1$2$4'

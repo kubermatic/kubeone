@@ -33,7 +33,7 @@ import (
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/images"
 
-	admissionregistration "k8s.io/api/admissionregistration/v1"
+	admissionregistrationv1 "k8s.io/api/admissionregistration/v1"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -337,36 +337,36 @@ func tlsServingCertificate(caKey crypto.Signer, caCert *x509.Certificate) (*core
 }
 
 // mutatingwebhookConfiguration returns the MutatingwebhookConfiguration for the machine controler
-func mutatingwebhookConfiguration(caCert *x509.Certificate) *admissionregistration.MutatingWebhookConfiguration {
-	sideEffectsNone := admissionregistration.SideEffectClassNone
+func mutatingwebhookConfiguration(caCert *x509.Certificate) *admissionregistrationv1.MutatingWebhookConfiguration {
+	sideEffectsNone := admissionregistrationv1.SideEffectClassNone
 
-	return &admissionregistration.MutatingWebhookConfiguration{
+	return &admissionregistrationv1.MutatingWebhookConfiguration{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller.kubermatic.io",
 			Namespace: whNamespace,
 		},
-		Webhooks: []admissionregistration.MutatingWebhook{
+		Webhooks: []admissionregistrationv1.MutatingWebhook{
 			{
 				Name:                    "machine-controller.kubermatic.io-machinedeployments",
 				NamespaceSelector:       &metav1.LabelSelector{},
-				FailurePolicy:           failurePolicyPtr(admissionregistration.Fail),
+				FailurePolicy:           failurePolicyPtr(admissionregistrationv1.Fail),
 				SideEffects:             &sideEffectsNone,
 				AdmissionReviewVersions: []string{"v1", "v1beta1"},
-				Rules: []admissionregistration.RuleWithOperations{
+				Rules: []admissionregistrationv1.RuleWithOperations{
 					{
-						Operations: []admissionregistration.OperationType{
-							admissionregistration.Create,
-							admissionregistration.Update,
+						Operations: []admissionregistrationv1.OperationType{
+							admissionregistrationv1.Create,
+							admissionregistrationv1.Update,
 						},
-						Rule: admissionregistration.Rule{
+						Rule: admissionregistrationv1.Rule{
 							APIGroups:   []string{"cluster.k8s.io"},
 							APIVersions: []string{"v1alpha1"},
 							Resources:   []string{"machinedeployments"},
 						},
 					},
 				},
-				ClientConfig: admissionregistration.WebhookClientConfig{
-					Service: &admissionregistration.ServiceReference{
+				ClientConfig: admissionregistrationv1.WebhookClientConfig{
+					Service: &admissionregistrationv1.ServiceReference{
 						Name:      whName,
 						Namespace: whNamespace,
 						Path:      strPtr("/machinedeployments"),
@@ -377,24 +377,24 @@ func mutatingwebhookConfiguration(caCert *x509.Certificate) *admissionregistrati
 			{
 				Name:                    "machine-controller.kubermatic.io-machines",
 				NamespaceSelector:       &metav1.LabelSelector{},
-				FailurePolicy:           failurePolicyPtr(admissionregistration.Fail),
+				FailurePolicy:           failurePolicyPtr(admissionregistrationv1.Fail),
 				SideEffects:             &sideEffectsNone,
 				AdmissionReviewVersions: []string{"v1", "v1beta1"},
-				Rules: []admissionregistration.RuleWithOperations{
+				Rules: []admissionregistrationv1.RuleWithOperations{
 					{
-						Operations: []admissionregistration.OperationType{
-							admissionregistration.Create,
-							admissionregistration.Update,
+						Operations: []admissionregistrationv1.OperationType{
+							admissionregistrationv1.Create,
+							admissionregistrationv1.Update,
 						},
-						Rule: admissionregistration.Rule{
+						Rule: admissionregistrationv1.Rule{
 							APIGroups:   []string{"cluster.k8s.io"},
 							APIVersions: []string{"v1alpha1"},
 							Resources:   []string{"machines"},
 						},
 					},
 				},
-				ClientConfig: admissionregistration.WebhookClientConfig{
-					Service: &admissionregistration.ServiceReference{
+				ClientConfig: admissionregistrationv1.WebhookClientConfig{
+					Service: &admissionregistrationv1.ServiceReference{
 						Name:      whName,
 						Namespace: whNamespace,
 						Path:      strPtr("/machines"),
@@ -410,6 +410,6 @@ func strPtr(a string) *string {
 	return &a
 }
 
-func failurePolicyPtr(a admissionregistration.FailurePolicyType) *admissionregistration.FailurePolicyType {
+func failurePolicyPtr(a admissionregistrationv1.FailurePolicyType) *admissionregistrationv1.FailurePolicyType {
 	return &a
 }

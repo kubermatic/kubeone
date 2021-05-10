@@ -27,7 +27,7 @@ import (
 	"k8c.io/kubeone/pkg/templates/kubeadm/kubeadmargs"
 
 	corev1 "k8s.io/api/core/v1"
-	policybeta1 "k8s.io/api/policy/v1beta1"
+	policyv1beta1 "k8s.io/api/policy/v1beta1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -67,35 +67,35 @@ func installKubeSystemPSP(psp *kubeoneapi.PodSecurityPolicy, s *state.State) err
 	return nil
 }
 
-func privilegedPSP() *policybeta1.PodSecurityPolicy {
+func privilegedPSP() *policyv1beta1.PodSecurityPolicy {
 	t := true
 
-	return &policybeta1.PodSecurityPolicy{
+	return &policyv1beta1.PodSecurityPolicy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "privileged",
 		},
-		Spec: policybeta1.PodSecurityPolicySpec{
+		Spec: policyv1beta1.PodSecurityPolicySpec{
 			Privileged:               true,
 			HostNetwork:              true,
 			HostIPC:                  true,
 			HostPID:                  true,
 			AllowPrivilegeEscalation: &t,
 			AllowedCapabilities:      []corev1.Capability{"*"},
-			Volumes:                  []policybeta1.FSType{policybeta1.All},
-			HostPorts: []policybeta1.HostPortRange{
+			Volumes:                  []policyv1beta1.FSType{policyv1beta1.All},
+			HostPorts: []policyv1beta1.HostPortRange{
 				{Min: 0, Max: 65535},
 			},
-			RunAsUser: policybeta1.RunAsUserStrategyOptions{
-				Rule: policybeta1.RunAsUserStrategyRunAsAny,
+			RunAsUser: policyv1beta1.RunAsUserStrategyOptions{
+				Rule: policyv1beta1.RunAsUserStrategyRunAsAny,
 			},
-			SELinux: policybeta1.SELinuxStrategyOptions{
-				Rule: policybeta1.SELinuxStrategyRunAsAny,
+			SELinux: policyv1beta1.SELinuxStrategyOptions{
+				Rule: policyv1beta1.SELinuxStrategyRunAsAny,
 			},
-			SupplementalGroups: policybeta1.SupplementalGroupsStrategyOptions{
-				Rule: policybeta1.SupplementalGroupsStrategyRunAsAny,
+			SupplementalGroups: policyv1beta1.SupplementalGroupsStrategyOptions{
+				Rule: policyv1beta1.SupplementalGroupsStrategyRunAsAny,
 			},
-			FSGroup: policybeta1.FSGroupStrategyOptions{
-				Rule: policybeta1.FSGroupStrategyRunAsAny,
+			FSGroup: policyv1beta1.FSGroupStrategyOptions{
+				Rule: policyv1beta1.FSGroupStrategyRunAsAny,
 			},
 		},
 	}

@@ -18,7 +18,7 @@ package canal
 
 import (
 	appsv1 "k8s.io/api/apps/v1"
-	v1 "k8s.io/api/core/v1"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -42,33 +42,33 @@ func controllerDeployment(controllerImage string) *appsv1.Deployment {
 			Strategy: appsv1.DeploymentStrategy{
 				Type: appsv1.RecreateDeploymentStrategyType,
 			},
-			Template: v1.PodTemplateSpec{
+			Template: corev1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      "calico-kube-controllers",
 					Namespace: metav1.NamespaceSystem,
 					Labels:    commonLabels,
 				},
-				Spec: v1.PodSpec{
+				Spec: corev1.PodSpec{
 					NodeSelector: map[string]string{
 						"kubernetes.io/os": "linux",
 					},
-					Tolerations: []v1.Toleration{
+					Tolerations: []corev1.Toleration{
 						{
 							Key:      "CriticalAddonsOnly",
 							Operator: "Exists",
 						},
 						{
 							Key:    "node-role.kubernetes.io/master",
-							Effect: v1.TaintEffectNoSchedule,
+							Effect: corev1.TaintEffectNoSchedule,
 						},
 					},
 					ServiceAccountName: "calico-kube-controllers",
 					PriorityClassName:  "system-cluster-critical",
-					Containers: []v1.Container{
+					Containers: []corev1.Container{
 						{
 							Name:  "calico-kube-controllers",
 							Image: controllerImage,
-							Env: []v1.EnvVar{
+							Env: []corev1.EnvVar{
 								{
 									Name:  "ENABLED_CONTROLLERS",
 									Value: "node",
@@ -78,9 +78,9 @@ func controllerDeployment(controllerImage string) *appsv1.Deployment {
 									Value: "kubernetes",
 								},
 							},
-							ReadinessProbe: &v1.Probe{
-								Handler: v1.Handler{
-									Exec: &v1.ExecAction{
+							ReadinessProbe: &corev1.Probe{
+								Handler: corev1.Handler{
+									Exec: &corev1.ExecAction{
 										Command: []string{
 											"/usr/bin/check-status",
 											"-r",
