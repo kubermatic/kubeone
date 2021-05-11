@@ -163,6 +163,7 @@ func TestClusterUpgrade(t *testing.T) {
 				clusterNetworkService,
 				testCredentialsFile,
 				testContainerRuntime.ContainerRuntimeConfig(),
+				nil,
 			)
 			if err != nil {
 				t.Fatalf("failed to create KubeOneCluster manifest: %v", err)
@@ -268,6 +269,7 @@ func TestClusterUpgrade(t *testing.T) {
 				clusterNetworkService,
 				testCredentialsFile,
 				testContainerRuntime.ContainerRuntimeConfig(),
+				nil,
 			)
 			if err != nil {
 				t.Fatalf("failed to create KubeOneCluster manifest: %v", err)

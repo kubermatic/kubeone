@@ -58,6 +58,7 @@ func (k1 *Kubeone) CreateConfig(
 	clusterNetworkService string,
 	credentialsFile string,
 	containerRuntime kubeoneinternal.ContainerRuntimeConfig,
+	eksdVersions *eksdVersions,
 ) error {
 	k1Cluster := kubeonev1beta1.KubeOneCluster{
 		TypeMeta: metav1.TypeMeta{
@@ -106,6 +107,14 @@ func (k1 *Kubeone) CreateConfig(
 		}
 
 		k1Cluster.CloudProvider.CloudConfig = credentials["cloudConfig"]
+	}
+
+	if eksdVersions != nil {
+		assetConfig, err := genEKSDAssetConfig(eksdVersions)
+		if err != nil {
+			return errors.Wrap(err, "failed to generate asset configuration for eks-d cluster")
+		}
+		k1Cluster.AssetConfiguration = *assetConfig
 	}
 
 	k1Config, err := kyaml.Marshal(&k1Cluster)
