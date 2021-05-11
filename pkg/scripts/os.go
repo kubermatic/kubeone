@@ -22,6 +22,7 @@ import (
 
 const (
 	defaultKubernetesCNIVersion = "0.8.7"
+	defaultCriToolsVersion      = "1.21.0"
 )
 
 const (
@@ -313,17 +314,27 @@ sudo systemctl restart kubelet
 source /etc/kubeone/proxy-env
 
 {{ template "detect-host-cpu-architecture" }}
-{{ template "docker-daemon-config" . }}
 {{ template "sysctl-k8s" }}
 {{ template "journald-config" }}
-
-sudo systemctl restart docker
 
 sudo mkdir -p /opt/cni/bin /etc/kubernetes/pki /etc/kubernetes/manifests
 curl -L "https://github.com/containernetworking/plugins/releases/download/v{{ .KUBERNETES_CNI_VERSION }}/cni-plugins-linux-${HOST_ARCH}-v{{ .KUBERNETES_CNI_VERSION }}.tgz" |
 	sudo tar -C /opt/cni/bin -xz
 
 RELEASE="v{{ .KUBERNETES_VERSION }}"
+CRI_TOOLS_RELEASE="v{{ .CRITOOLS_VERSION }}"
+
+curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRI_TOOLS_RELEASE}/crictl-${CRI_TOOLS_RELEASE}-linux-${HOST_ARCH}.tar.gz |
+	sudo tar -C /opt/bin -xz
+
+{{ if .INSTALL_DOCKER }}
+{{ template "docker-daemon-config" . }}
+{{ template "flatcar-docker" }}
+{{ end }}
+
+{{ if .INSTALL_CONTAINERD }}
+{{ template "flatcar-containerd" }}
+{{ end }}
 
 sudo mkdir -p /opt/bin
 cd /opt/bin
@@ -367,7 +378,6 @@ ExecStart=/opt/bin/kubelet \$KUBELET_KUBECONFIG_ARGS \$KUBELET_CONFIG_ARGS \$KUB
 EOF
 
 sudo systemctl daemon-reload
-sudo systemctl enable --now docker
 sudo systemctl enable --now kubelet
 `
 
@@ -553,7 +563,10 @@ func KubeadmFlatcar(cluster *kubeone.KubeOneCluster) (string, error) {
 	return Render(kubeadmFlatcarTemplate, Data{
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
+		"CRITOOLS_VERSION":       defaultCriToolsVersion,
 		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
+		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
+		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 	})
 }
 

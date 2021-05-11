@@ -351,25 +351,37 @@ func TestKubeadmFlatcar(t *testing.T) {
 		{
 			name: "simple",
 			args: args{
-				cluster: genCluster(),
+				cluster: genCluster(withDocker),
 			},
 		},
 		{
 			name: "force",
 			args: args{
-				cluster: genCluster(),
+				cluster: genCluster(withDocker),
 			},
 		},
 		{
 			name: "overwrite registry",
 			args: args{
-				cluster: genCluster(withRegistry("127.0.0.1:5000")),
+				cluster: genCluster(
+					withDocker,
+					withRegistry("127.0.0.1:5000"),
+				),
 			},
 		},
 		{
 			name: "overwrite registry insecure",
 			args: args{
-				cluster: genCluster(withInsecureRegistry("127.0.0.1:5000")),
+				cluster: genCluster(
+					withDocker,
+					withInsecureRegistry("127.0.0.1:5000"),
+				),
+			},
+		},
+		{
+			name: "with containerd",
+			args: args{
+				cluster: genCluster(withContainerd),
 			},
 		},
 	}

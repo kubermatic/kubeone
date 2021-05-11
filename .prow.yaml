@@ -147,6 +147,41 @@ presubmits:
           resources:
             requests:
               cpu: 1
+  - name: pull-kubeone-e2e-aws-flatcar-containerd-conformance-1.18
+    run_if_changed: "(pkg/|examples/terraform/aws|hack/|test/)"
+    decorate: true
+    clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
+    labels:
+      preset-goproxy: "true"
+      preset-aws: "true"
+    spec:
+      containers:
+        - image: kubermatic/kubeone-e2e:v0.1.15
+          imagePullPolicy: Always
+          command:
+            - make
+          args:
+            - e2e-test
+          env:
+            - name: PROVIDER
+              value: "aws"
+            - name: CONTAINER_RUNTIME
+              value: containerd
+            - name: TEST_OS_CONTROL_PLANE
+              value: "flatcar"
+            - name: TEST_OS_WORKERS
+              value: "flatcar"
+            - name: TF_VAR_ssh_username
+              value: "core"
+            - name: TF_VAR_bastion_user
+              value: "core"
+            - name: TEST_CLUSTER_TARGET_VERSION
+              value: "1.18.17"
+            - name: KUBEONE_TEST_RUN
+              value: "TestClusterConformance"
+          resources:
+            requests:
+              cpu: 1
   - name: pull-kubeone-e2e-aws-conformance-1.18
     run_if_changed: "(pkg/|examples/terraform/aws|hack/|test/)"
     decorate: true
