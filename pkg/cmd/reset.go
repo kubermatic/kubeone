@@ -20,11 +20,11 @@ import (
 	"fmt"
 
 	"github.com/MakeNowJust/heredoc/v2"
-	"github.com/kubermatic/machine-controller/pkg/machines/v1alpha1"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
+	"github.com/kubermatic/machine-controller/pkg/machines/v1alpha1"
 	"k8c.io/kubeone/pkg/kubeconfig"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/tasks"
@@ -120,7 +120,7 @@ func runReset(opts *resetOpts) error {
 			s.Logger.Warnln("Failed to list Machines. Worker nodes will not be deleted. If there are worker nodes in the cluster, you might have to delete them manually.")
 		}
 		for _, machine := range machines.Items {
-			fmt.Printf("\t+ reset machine-controller managed machines %q\n", machine.Name)
+			fmt.Printf("\t- reset machine-controller managed machines %q\n", machine.Name)
 		}
 	} else {
 		s.Logger.Warnln("Failed to list Machines. Worker nodes will not be deleted. If there are worker nodes in the cluster, you might have to delete them manually.")

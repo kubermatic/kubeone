@@ -34,6 +34,8 @@ import (
 	"k8c.io/kubeone/pkg/state"
 )
 
+const yes = "yes"
+
 type globalOptions struct {
 	ManifestFile    string `longflag:"manifest" shortflag:"m"`
 	TerraformState  string `longflag:"tfjson" shortflag:"t"`
@@ -151,5 +153,5 @@ func confirmCommand(autoApprove bool) (bool, error) {
 
 	fmt.Println()
 
-	return strings.Trim(confirmation, "\n") == "yes", nil
+	return strings.Trim(confirmation, "\n") == yes, nil
 }
