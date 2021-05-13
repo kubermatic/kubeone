@@ -30,7 +30,7 @@ const (
 	OperatingSystemCentOS7 OperatingSystem = "centos7"
 	OperatingSystemCentOS8 OperatingSystem = "centos"
 	OperatingSystemFlatcar OperatingSystem = "flatcar"
-	OperatingSystemAmazon  OperatingSystem = "amazon_linux2"
+	OperatingSystemAmazon  OperatingSystem = "amzn2"
 	OperatingSystemDefault OperatingSystem = ""
 )
 

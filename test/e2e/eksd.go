@@ -88,13 +88,6 @@ func EksdTerraformFlags(provider string) ([]string, error) {
 		flags := []string{
 			"-var", "initial_machinedeployment_replicas=0",
 			"-var", "static_workers_count=3",
-			// Amazon Linux 2 is currently not supported by machine-controller.
-			// If we would try to create a MachineDeployment using Amazon Linux,
-			// the validation webhook (and therefore cluster provisioning)
-			// would fail.
-			// TODO: Remove this once machine-controller supports Amazon
-			// Linux 2.
-			"-var", "worker_os=ubuntu",
 		}
 		return flags, nil
 	}
