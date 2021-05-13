@@ -160,11 +160,13 @@ variable "open_nodeports" {
 variable "initial_machinedeployment_replicas" {
   default     = 1
   description = "number of replicas per MachineDeployment"
+  type        = number
 }
 
 variable "static_workers_count" {
   description = "number of static workers"
   default     = 0
+  type        = number
 }
 
 variable "initial_machinedeployment_spotinstances" {
