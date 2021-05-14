@@ -17,13 +17,18 @@ limitations under the License.
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
+	"k8c.io/kubeone/pkg/kubeconfig"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/tasks"
+
+	"github.com/kubermatic/machine-controller/pkg/machines/v1alpha1"
 )
 
 type resetOpts struct {
@@ -99,6 +104,38 @@ func runReset(opts *resetOpts) error {
 	}
 
 	s.Logger.Warnln("this command will require an explicit confirmation starting with the next minor release (v1.3)")
+
+	fmt.Println("The following nodes will be reset. The Kubernetes cluster running on those nodes will be permanently destroyed ")
+	for _, node := range s.Cluster.ControlPlane.Hosts {
+		fmt.Printf("\t- reset control plane node %q (%s)\n", node.Hostname, node.PrivateAddress)
+	}
+	for _, node := range s.Cluster.StaticWorkers.Hosts {
+		fmt.Printf("\t- reset static worker nodes %q (%s)\n", node.Hostname, node.PrivateAddress)
+	}
+
+	err = kubeconfig.BuildKubernetesClientset(s)
+	if err == nil {
+		// Gather information about machine-controller managed nodes
+		machines := v1alpha1.MachineList{}
+		if err = s.DynamicClient.List(s.Context, &machines); err != nil {
+			s.Logger.Warnln("Failed to list Machines. Worker nodes will not be deleted. If there are worker nodes in the cluster, you might have to delete them manually.")
+		}
+		for _, machine := range machines.Items {
+			fmt.Printf("\t- reset machine-controller managed machines %q\n", machine.Name)
+		}
+	} else {
+		s.Logger.Warnln("Failed to list Machines. Worker nodes will not be deleted. If there are worker nodes in the cluster, you might have to delete them manually.")
+	}
+
+	confirm, err := confirmCommand(opts.AutoApprove)
+	if err != nil {
+		return err
+	}
+
+	if !confirm {
+		s.Logger.Println("Operation canceled.")
+		return nil
+	}
 
 	return errors.Wrap(tasks.WithReset(nil).Run(s), "failed to reset the cluster")
 }

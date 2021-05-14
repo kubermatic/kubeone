@@ -17,18 +17,24 @@ limitations under the License.
 package cmd
 
 import (
+	"bufio"
 	"context"
+	"fmt"
+	"os"
 	"reflect"
 	"strings"
 
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
+	"golang.org/x/term"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/apis/kubeone/config"
 	"k8c.io/kubeone/pkg/state"
 )
+
+const yes = "yes"
 
 type globalOptions struct {
 	ManifestFile    string `longflag:"manifest" shortflag:"m"`
@@ -126,4 +132,26 @@ func loadClusterConfig(filename, terraformOutputPath, credentialsFilePath string
 	}
 
 	return a, nil
+}
+
+func confirmCommand(autoApprove bool) (bool, error) {
+	if autoApprove {
+		return true, nil
+	}
+
+	if !term.IsTerminal(int(os.Stdin.Fd())) || !term.IsTerminal(int(os.Stdout.Fd())) {
+		return false, errors.New("not running in the terminal")
+	}
+
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Print("Do you want to proceed (yes/no): ")
+
+	confirmation, err := reader.ReadString('\n')
+	if err != nil {
+		return false, err
+	}
+
+	fmt.Println()
+
+	return strings.Trim(confirmation, "\n") == yes, nil
 }
