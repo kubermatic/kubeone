@@ -26,6 +26,7 @@ variable "worker_os" {
   # * centos
   # * flatcar
   # * rhel
+  # * amzn2
   default = ""
 }
 
@@ -104,6 +105,7 @@ variable "os" {
   # * centos
   # * rhel
   # * flatcar
+  # * amzn2
   default = "ubuntu"
 }
 
@@ -135,7 +137,7 @@ variable "ami_filters" {
       image_name = ["RHEL-8*_HVM-*-x86_64-*"]
     }
 
-    amazon_linux2 = {
+    amzn2 = {
       owners     = ["137112412989"] # Amazon
       image_name = ["amzn2-ami-hvm-2.0.*-x86_64-gp2"]
     }

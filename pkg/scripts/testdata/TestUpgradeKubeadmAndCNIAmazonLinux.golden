@@ -4,7 +4,6 @@ export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
 sudo swapoff -a
 sudo sed -i '/.*swap.*/d' /etc/fstab
 sudo setenforce 0 || true
-sudo sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/sysconfig/selinux
 sudo sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/selinux/config
 sudo systemctl disable --now firewalld || true
 
@@ -117,6 +116,8 @@ tar xvf node.tar.gz
 sudo install --owner=0 --group=0 --mode=0755 /tmp/k8s-binaries/kubernetes/node/bin/kubeadm /opt/bin/kubeadm
 sudo ln -sf /opt/bin/kubeadm /usr/bin/
 rm /tmp/k8s-binaries/kubernetes/node/bin/kubeadm
+
+
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now kubelet

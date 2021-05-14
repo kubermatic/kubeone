@@ -1,13 +1,22 @@
 set -xeu pipefail
 export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
 
-# Stop kubelet
 sudo systemctl stop kubelet || true
+
+sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni
+sudo yum remove -y \
+	kubelet \
+	kubeadm \
+	kubectl \
+	kubernetes-cni
+
+# Stop kubelet
 # Remove CNI and binaries
 sudo rm -rf /opt/cni /opt/bin/kubeadm /opt/bin/kubectl /opt/bin/kubelet
 # Remove symlinks
 sudo rm -rf /usr/bin/kubeadm /usr/bin/kubectl /usr/bin/kubelet
 # Remove systemd unit files
 sudo rm -f /etc/systemd/system/kubelet.service /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+
 # Reload systemd
 sudo systemctl daemon-reload
