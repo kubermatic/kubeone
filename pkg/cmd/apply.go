@@ -18,6 +18,10 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
+	"reflect"
+
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/Masterminds/semver/v3"
 	"github.com/pkg/errors"
@@ -26,9 +30,6 @@ import (
 	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/tasks"
-	"os"
-	"path/filepath"
-	"reflect"
 
 	apiserverconfigv1 "k8s.io/apiserver/pkg/apis/config/v1"
 	kyaml "sigs.k8s.io/yaml"
