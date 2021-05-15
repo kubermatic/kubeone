@@ -12,7 +12,7 @@ use the configs and how to provision a Kubernetes cluster using KubeOne.
 ### Credentials
 
 Per https://www.terraform.io/docs/providers/google/provider_reference.html#configuration-reference
-ether of the following ENV variables should be accessible:
+either of the following ENV variables should be accessible:
 * `GOOGLE_CREDENTIALS`
 * `GOOGLE_CLOUD_KEYFILE_JSON`
 * `GCLOUD_KEYFILE_JSON`
