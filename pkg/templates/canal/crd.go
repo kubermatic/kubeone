@@ -17,7 +17,7 @@ limitations under the License.
 package canal
 
 import (
-	apiextensions "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
+	apiextensions "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -30,18 +30,23 @@ func felixConfigurationCRD() *apiextensions.CustomResourceDefinition {
 		Spec: apiextensions.CustomResourceDefinitionSpec{
 			Scope: apiextensions.ClusterScoped,
 			Group: "crd.projectcalico.org",
-			Versions: []apiextensions.CustomResourceDefinitionVersion{
-				{
-					Name:    "v1",
-					Served:  true,
-					Storage: true,
-				},
-			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Kind:     "FelixConfiguration",
 				ListKind: "FelixConfigurationList",
 				Plural:   "felixconfigurations",
 				Singular: "felixconfiguration",
+			},
+			Versions: []apiextensions.CustomResourceDefinitionVersion{
+				{
+					Name:    "v1",
+					Served:  true,
+					Storage: true,
+					Schema: &apiextensions.CustomResourceValidation{
+						OpenAPIV3Schema: &apiextensions.JSONSchemaProps{
+							Type: "object",
+						},
+					},
+				},
 			},
 		},
 	}
@@ -56,18 +61,23 @@ func ipamBlockCRD() *apiextensions.CustomResourceDefinition {
 		Spec: apiextensions.CustomResourceDefinitionSpec{
 			Scope: apiextensions.ClusterScoped,
 			Group: "crd.projectcalico.org",
-			Versions: []apiextensions.CustomResourceDefinitionVersion{
-				{
-					Name:    "v1",
-					Served:  true,
-					Storage: true,
-				},
-			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Kind:     "IPAMBlock",
 				ListKind: "IPAMBlockList",
 				Plural:   "ipamblocks",
 				Singular: "ipamblock",
+			},
+			Versions: []apiextensions.CustomResourceDefinitionVersion{
+				{
+					Name:    "v1",
+					Served:  true,
+					Storage: true,
+					Schema: &apiextensions.CustomResourceValidation{
+						OpenAPIV3Schema: &apiextensions.JSONSchemaProps{
+							Type: "object",
+						},
+					},
+				},
 			},
 		},
 	}
@@ -82,18 +92,23 @@ func blockAffinityCRD() *apiextensions.CustomResourceDefinition {
 		Spec: apiextensions.CustomResourceDefinitionSpec{
 			Scope: apiextensions.ClusterScoped,
 			Group: "crd.projectcalico.org",
-			Versions: []apiextensions.CustomResourceDefinitionVersion{
-				{
-					Name:    "v1",
-					Served:  true,
-					Storage: true,
-				},
-			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Kind:     "BlockAffinity",
 				ListKind: "BlockAffinityList",
 				Plural:   "blockaffinities",
 				Singular: "blockaffinity",
+			},
+			Versions: []apiextensions.CustomResourceDefinitionVersion{
+				{
+					Name:    "v1",
+					Served:  true,
+					Storage: true,
+					Schema: &apiextensions.CustomResourceValidation{
+						OpenAPIV3Schema: &apiextensions.JSONSchemaProps{
+							Type: "object",
+						},
+					},
+				},
 			},
 		},
 	}
@@ -108,18 +123,23 @@ func ipamHandleCRD() *apiextensions.CustomResourceDefinition {
 		Spec: apiextensions.CustomResourceDefinitionSpec{
 			Scope: apiextensions.ClusterScoped,
 			Group: "crd.projectcalico.org",
-			Versions: []apiextensions.CustomResourceDefinitionVersion{
-				{
-					Name:    "v1",
-					Served:  true,
-					Storage: true,
-				},
-			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Kind:     "IPAMHandle",
 				ListKind: "IPAMHandleList",
 				Plural:   "ipamhandles",
 				Singular: "ipamhandle",
+			},
+			Versions: []apiextensions.CustomResourceDefinitionVersion{
+				{
+					Name:    "v1",
+					Served:  true,
+					Storage: true,
+					Schema: &apiextensions.CustomResourceValidation{
+						OpenAPIV3Schema: &apiextensions.JSONSchemaProps{
+							Type: "object",
+						},
+					},
+				},
 			},
 		},
 	}
@@ -134,18 +154,23 @@ func ipamConfigCRD() *apiextensions.CustomResourceDefinition {
 		Spec: apiextensions.CustomResourceDefinitionSpec{
 			Scope: apiextensions.ClusterScoped,
 			Group: "crd.projectcalico.org",
-			Versions: []apiextensions.CustomResourceDefinitionVersion{
-				{
-					Name:    "v1",
-					Served:  true,
-					Storage: true,
-				},
-			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Kind:     "IPAMConfig",
 				ListKind: "IPAMConfigList",
 				Plural:   "ipamconfigs",
 				Singular: "ipamconfig",
+			},
+			Versions: []apiextensions.CustomResourceDefinitionVersion{
+				{
+					Name:    "v1",
+					Served:  true,
+					Storage: true,
+					Schema: &apiextensions.CustomResourceValidation{
+						OpenAPIV3Schema: &apiextensions.JSONSchemaProps{
+							Type: "object",
+						},
+					},
+				},
 			},
 		},
 	}
@@ -160,18 +185,23 @@ func bgpPeerCRD() *apiextensions.CustomResourceDefinition {
 		Spec: apiextensions.CustomResourceDefinitionSpec{
 			Scope: apiextensions.ClusterScoped,
 			Group: "crd.projectcalico.org",
-			Versions: []apiextensions.CustomResourceDefinitionVersion{
-				{
-					Name:    "v1",
-					Served:  true,
-					Storage: true,
-				},
-			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Kind:     "BGPPeer",
 				ListKind: "BGPPeerList",
 				Plural:   "bgppeers",
 				Singular: "bgppeer",
+			},
+			Versions: []apiextensions.CustomResourceDefinitionVersion{
+				{
+					Name:    "v1",
+					Served:  true,
+					Storage: true,
+					Schema: &apiextensions.CustomResourceValidation{
+						OpenAPIV3Schema: &apiextensions.JSONSchemaProps{
+							Type: "object",
+						},
+					},
+				},
 			},
 		},
 	}
@@ -186,18 +216,23 @@ func bgpConfigurationCRD() *apiextensions.CustomResourceDefinition {
 		Spec: apiextensions.CustomResourceDefinitionSpec{
 			Scope: apiextensions.ClusterScoped,
 			Group: "crd.projectcalico.org",
-			Versions: []apiextensions.CustomResourceDefinitionVersion{
-				{
-					Name:    "v1",
-					Served:  true,
-					Storage: true,
-				},
-			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Kind:     "BGPConfiguration",
 				ListKind: "BGPConfigurationList",
 				Plural:   "bgpconfigurations",
 				Singular: "bgpconfiguration",
+			},
+			Versions: []apiextensions.CustomResourceDefinitionVersion{
+				{
+					Name:    "v1",
+					Served:  true,
+					Storage: true,
+					Schema: &apiextensions.CustomResourceValidation{
+						OpenAPIV3Schema: &apiextensions.JSONSchemaProps{
+							Type: "object",
+						},
+					},
+				},
 			},
 		},
 	}
@@ -212,18 +247,23 @@ func ipPoolCRD() *apiextensions.CustomResourceDefinition {
 		Spec: apiextensions.CustomResourceDefinitionSpec{
 			Scope: apiextensions.ClusterScoped,
 			Group: "crd.projectcalico.org",
-			Versions: []apiextensions.CustomResourceDefinitionVersion{
-				{
-					Name:    "v1",
-					Served:  true,
-					Storage: true,
-				},
-			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Kind:     "IPPool",
 				ListKind: "IPPoolList",
 				Plural:   "ippools",
 				Singular: "ippool",
+			},
+			Versions: []apiextensions.CustomResourceDefinitionVersion{
+				{
+					Name:    "v1",
+					Served:  true,
+					Storage: true,
+					Schema: &apiextensions.CustomResourceValidation{
+						OpenAPIV3Schema: &apiextensions.JSONSchemaProps{
+							Type: "object",
+						},
+					},
+				},
 			},
 		},
 	}
@@ -238,18 +278,23 @@ func kubeControllersConfigurationCRD() *apiextensions.CustomResourceDefinition {
 		Spec: apiextensions.CustomResourceDefinitionSpec{
 			Scope: apiextensions.ClusterScoped,
 			Group: "crd.projectcalico.org",
-			Versions: []apiextensions.CustomResourceDefinitionVersion{
-				{
-					Name:    "v1",
-					Served:  true,
-					Storage: true,
-				},
-			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Kind:     "KubeControllersConfiguration",
 				ListKind: "KubeControllersConfigurationList",
 				Plural:   "kubecontrollersconfigurations",
 				Singular: "kubecontrollersconfiguration",
+			},
+			Versions: []apiextensions.CustomResourceDefinitionVersion{
+				{
+					Name:    "v1",
+					Served:  true,
+					Storage: true,
+					Schema: &apiextensions.CustomResourceValidation{
+						OpenAPIV3Schema: &apiextensions.JSONSchemaProps{
+							Type: "object",
+						},
+					},
+				},
 			},
 		},
 	}
@@ -264,18 +309,23 @@ func hostEndpointCRD() *apiextensions.CustomResourceDefinition {
 		Spec: apiextensions.CustomResourceDefinitionSpec{
 			Scope: apiextensions.ClusterScoped,
 			Group: "crd.projectcalico.org",
-			Versions: []apiextensions.CustomResourceDefinitionVersion{
-				{
-					Name:    "v1",
-					Served:  true,
-					Storage: true,
-				},
-			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Kind:     "HostEndpoint",
 				ListKind: "HostEndpointList",
 				Plural:   "hostendpoints",
 				Singular: "hostendpoint",
+			},
+			Versions: []apiextensions.CustomResourceDefinitionVersion{
+				{
+					Name:    "v1",
+					Served:  true,
+					Storage: true,
+					Schema: &apiextensions.CustomResourceValidation{
+						OpenAPIV3Schema: &apiextensions.JSONSchemaProps{
+							Type: "object",
+						},
+					},
+				},
 			},
 		},
 	}
@@ -290,18 +340,23 @@ func clusterInformationCRD() *apiextensions.CustomResourceDefinition {
 		Spec: apiextensions.CustomResourceDefinitionSpec{
 			Scope: apiextensions.ClusterScoped,
 			Group: "crd.projectcalico.org",
-			Versions: []apiextensions.CustomResourceDefinitionVersion{
-				{
-					Name:    "v1",
-					Served:  true,
-					Storage: true,
-				},
-			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Kind:     "ClusterInformation",
 				ListKind: "ClusterInformationList",
 				Plural:   "clusterinformations",
 				Singular: "clusterinformation",
+			},
+			Versions: []apiextensions.CustomResourceDefinitionVersion{
+				{
+					Name:    "v1",
+					Served:  true,
+					Storage: true,
+					Schema: &apiextensions.CustomResourceValidation{
+						OpenAPIV3Schema: &apiextensions.JSONSchemaProps{
+							Type: "object",
+						},
+					},
+				},
 			},
 		},
 	}
@@ -316,18 +371,23 @@ func globalNetworkPolicyCRD() *apiextensions.CustomResourceDefinition {
 		Spec: apiextensions.CustomResourceDefinitionSpec{
 			Scope: apiextensions.ClusterScoped,
 			Group: "crd.projectcalico.org",
-			Versions: []apiextensions.CustomResourceDefinitionVersion{
-				{
-					Name:    "v1",
-					Served:  true,
-					Storage: true,
-				},
-			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Kind:     "GlobalNetworkPolicy",
 				ListKind: "GlobalNetworkPolicyList",
 				Plural:   "globalnetworkpolicies",
 				Singular: "globalnetworkpolicy",
+			},
+			Versions: []apiextensions.CustomResourceDefinitionVersion{
+				{
+					Name:    "v1",
+					Served:  true,
+					Storage: true,
+					Schema: &apiextensions.CustomResourceValidation{
+						OpenAPIV3Schema: &apiextensions.JSONSchemaProps{
+							Type: "object",
+						},
+					},
+				},
 			},
 		},
 	}
@@ -342,18 +402,23 @@ func globalNetworksetCRD() *apiextensions.CustomResourceDefinition {
 		Spec: apiextensions.CustomResourceDefinitionSpec{
 			Scope: apiextensions.ClusterScoped,
 			Group: "crd.projectcalico.org",
-			Versions: []apiextensions.CustomResourceDefinitionVersion{
-				{
-					Name:    "v1",
-					Served:  true,
-					Storage: true,
-				},
-			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Kind:     "GlobalNetworkSet",
 				ListKind: "GlobalNetworkSetList",
 				Plural:   "globalnetworksets",
 				Singular: "globalnetworkset",
+			},
+			Versions: []apiextensions.CustomResourceDefinitionVersion{
+				{
+					Name:    "v1",
+					Served:  true,
+					Storage: true,
+					Schema: &apiextensions.CustomResourceValidation{
+						OpenAPIV3Schema: &apiextensions.JSONSchemaProps{
+							Type: "object",
+						},
+					},
+				},
 			},
 		},
 	}
@@ -368,18 +433,23 @@ func networkPolicyCRD() *apiextensions.CustomResourceDefinition {
 		Spec: apiextensions.CustomResourceDefinitionSpec{
 			Scope: apiextensions.NamespaceScoped,
 			Group: "crd.projectcalico.org",
-			Versions: []apiextensions.CustomResourceDefinitionVersion{
-				{
-					Name:    "v1",
-					Served:  true,
-					Storage: true,
-				},
-			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Kind:     "NetworkPolicy",
 				ListKind: "NetworkPolicyList",
 				Plural:   "networkpolicies",
 				Singular: "networkpolicy",
+			},
+			Versions: []apiextensions.CustomResourceDefinitionVersion{
+				{
+					Name:    "v1",
+					Served:  true,
+					Storage: true,
+					Schema: &apiextensions.CustomResourceValidation{
+						OpenAPIV3Schema: &apiextensions.JSONSchemaProps{
+							Type: "object",
+						},
+					},
+				},
 			},
 		},
 	}
@@ -394,18 +464,23 @@ func networkSetCRD() *apiextensions.CustomResourceDefinition {
 		Spec: apiextensions.CustomResourceDefinitionSpec{
 			Scope: apiextensions.NamespaceScoped,
 			Group: "crd.projectcalico.org",
-			Versions: []apiextensions.CustomResourceDefinitionVersion{
-				{
-					Name:    "v1",
-					Served:  true,
-					Storage: true,
-				},
-			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Kind:     "NetworkSet",
 				ListKind: "NetworkSetList",
 				Plural:   "networksets",
 				Singular: "networkset",
+			},
+			Versions: []apiextensions.CustomResourceDefinitionVersion{
+				{
+					Name:    "v1",
+					Served:  true,
+					Storage: true,
+					Schema: &apiextensions.CustomResourceValidation{
+						OpenAPIV3Schema: &apiextensions.JSONSchemaProps{
+							Type: "object",
+						},
+					},
+				},
 			},
 		},
 	}

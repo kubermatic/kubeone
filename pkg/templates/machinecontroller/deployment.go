@@ -34,7 +34,7 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
-	apiextensions "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
+	apiextensions "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/util/intstr"
@@ -507,13 +507,6 @@ func machineControllerMachineCRD() *apiextensions.CustomResourceDefinition {
 		Spec: apiextensions.CustomResourceDefinitionSpec{
 			Group: "cluster.k8s.io",
 			Scope: apiextensions.NamespaceScoped,
-			Versions: []apiextensions.CustomResourceDefinitionVersion{
-				{
-					Name:    "v1alpha1",
-					Served:  true,
-					Storage: true,
-				},
-			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Plural:     "machines",
 				Singular:   "machine",
@@ -521,50 +514,62 @@ func machineControllerMachineCRD() *apiextensions.CustomResourceDefinition {
 				ListKind:   "MachineList",
 				ShortNames: []string{"ma"},
 			},
-			AdditionalPrinterColumns: []apiextensions.CustomResourceColumnDefinition{
+			Versions: []apiextensions.CustomResourceDefinitionVersion{
 				{
-					Name:     "Provider",
-					Type:     "string",
-					JSONPath: ".spec.providerSpec.value.cloudProvider",
-				},
-				{
-					Name:     "OS",
-					Type:     "string",
-					JSONPath: ".spec.providerSpec.value.operatingSystem",
-				},
-				{
-					Name:     "MachineSet",
-					Type:     "string",
-					JSONPath: ".metadata.ownerReferences[0].name",
-					Priority: 1,
-				},
-				{
-					Name:     "Node",
-					Type:     "string",
-					JSONPath: ".status.nodeRef.name",
-					Priority: 1,
-				},
+					Name:    "v1alpha1",
+					Served:  true,
+					Storage: true,
+					Schema: &apiextensions.CustomResourceValidation{
+						OpenAPIV3Schema: &apiextensions.JSONSchemaProps{
+							Type: "object",
+						},
+					},
+					AdditionalPrinterColumns: []apiextensions.CustomResourceColumnDefinition{
+						{
+							Name:     "Provider",
+							Type:     "string",
+							JSONPath: ".spec.providerSpec.value.cloudProvider",
+						},
+						{
+							Name:     "OS",
+							Type:     "string",
+							JSONPath: ".spec.providerSpec.value.operatingSystem",
+						},
+						{
+							Name:     "MachineSet",
+							Type:     "string",
+							JSONPath: ".metadata.ownerReferences[0].name",
+							Priority: 1,
+						},
+						{
+							Name:     "Node",
+							Type:     "string",
+							JSONPath: ".status.nodeRef.name",
+							Priority: 1,
+						},
 
-				{
-					Name:     "Address",
-					Type:     "string",
-					JSONPath: ".status.addresses[0].address",
-				},
-				{
-					Name:     "Kubelet",
-					Type:     "string",
-					JSONPath: ".spec.versions.kubelet",
-				},
-				{
-					Name:     "Age",
-					Type:     "date",
-					JSONPath: ".metadata.creationTimestamp",
-				},
-				{
-					Name:     "Deleted",
-					Type:     "date",
-					JSONPath: ".metadata.deletionTimestamp",
-					Priority: 1,
+						{
+							Name:     "Address",
+							Type:     "string",
+							JSONPath: ".status.addresses[0].address",
+						},
+						{
+							Name:     "Kubelet",
+							Type:     "string",
+							JSONPath: ".spec.versions.kubelet",
+						},
+						{
+							Name:     "Age",
+							Type:     "date",
+							JSONPath: ".metadata.creationTimestamp",
+						},
+						{
+							Name:     "Deleted",
+							Type:     "date",
+							JSONPath: ".metadata.deletionTimestamp",
+							Priority: 1,
+						},
+					},
 				},
 			},
 		},
@@ -582,13 +587,6 @@ func machineControllerClusterCRD() *apiextensions.CustomResourceDefinition {
 		Spec: apiextensions.CustomResourceDefinitionSpec{
 			Group: "cluster.k8s.io",
 			Scope: apiextensions.NamespaceScoped,
-			Versions: []apiextensions.CustomResourceDefinitionVersion{
-				{
-					Name:    "v1alpha1",
-					Served:  true,
-					Storage: true,
-				},
-			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Plural:     "clusters",
 				Singular:   "cluster",
@@ -596,8 +594,20 @@ func machineControllerClusterCRD() *apiextensions.CustomResourceDefinition {
 				ListKind:   "ClusterList",
 				ShortNames: []string{"cl"},
 			},
-			Subresources: &apiextensions.CustomResourceSubresources{
-				Status: &apiextensions.CustomResourceSubresourceStatus{},
+			Versions: []apiextensions.CustomResourceDefinitionVersion{
+				{
+					Name:    "v1alpha1",
+					Served:  true,
+					Storage: true,
+					Schema: &apiextensions.CustomResourceValidation{
+						OpenAPIV3Schema: &apiextensions.JSONSchemaProps{
+							Type: "object",
+						},
+					},
+					Subresources: &apiextensions.CustomResourceSubresources{
+						Status: &apiextensions.CustomResourceSubresourceStatus{},
+					},
+				},
 			},
 		},
 	}
@@ -614,13 +624,6 @@ func machineControllerMachineSetCRD() *apiextensions.CustomResourceDefinition {
 		Spec: apiextensions.CustomResourceDefinitionSpec{
 			Group: "cluster.k8s.io",
 			Scope: apiextensions.NamespaceScoped,
-			Versions: []apiextensions.CustomResourceDefinitionVersion{
-				{
-					Name:    "v1alpha1",
-					Served:  true,
-					Storage: true,
-				},
-			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Plural:     "machinesets",
 				Singular:   "machineset",
@@ -628,55 +631,67 @@ func machineControllerMachineSetCRD() *apiextensions.CustomResourceDefinition {
 				ListKind:   "MachineSetList",
 				ShortNames: []string{"ms"},
 			},
-			Subresources: &apiextensions.CustomResourceSubresources{
-				Status: &apiextensions.CustomResourceSubresourceStatus{},
-				Scale: &apiextensions.CustomResourceSubresourceScale{
-					SpecReplicasPath:   ".spec.replicas",
-					StatusReplicasPath: ".status.replicas",
-				},
-			},
-			AdditionalPrinterColumns: []apiextensions.CustomResourceColumnDefinition{
+			Versions: []apiextensions.CustomResourceDefinitionVersion{
 				{
-					Name:     "Replicas",
-					Type:     "integer",
-					JSONPath: ".spec.replicas",
-				},
-				{
-					Name:     "Available-Replicas",
-					Type:     "integer",
-					JSONPath: ".status.availableReplicas",
-				},
-				{
-					Name:     "Provider",
-					Type:     "string",
-					JSONPath: ".spec.template.spec.providerSpec.value.cloudProvider",
-				},
-				{
-					Name:     "OS",
-					Type:     "string",
-					JSONPath: ".spec.template.spec.providerSpec.value.operatingSystem",
-				},
-				{
-					Name:     "MachineDeployment",
-					Type:     "string",
-					JSONPath: ".metadata.ownerReferences[0].name",
-					Priority: 1,
-				},
-				{
-					Name:     "Kubelet",
-					Type:     "string",
-					JSONPath: ".spec.template.spec.versions.kubelet",
-				},
-				{
-					Name:     "Age",
-					Type:     "date",
-					JSONPath: ".metadata.creationTimestamp",
-				},
-				{
-					Name:     "Deleted",
-					Type:     "date",
-					JSONPath: ".metadata.deletionTimestamp",
-					Priority: 1,
+					Name:    "v1alpha1",
+					Served:  true,
+					Storage: true,
+					Schema: &apiextensions.CustomResourceValidation{
+						OpenAPIV3Schema: &apiextensions.JSONSchemaProps{
+							Type: "object",
+						},
+					},
+					Subresources: &apiextensions.CustomResourceSubresources{
+						Status: &apiextensions.CustomResourceSubresourceStatus{},
+						Scale: &apiextensions.CustomResourceSubresourceScale{
+							SpecReplicasPath:   ".spec.replicas",
+							StatusReplicasPath: ".status.replicas",
+						},
+					},
+					AdditionalPrinterColumns: []apiextensions.CustomResourceColumnDefinition{
+						{
+							Name:     "Replicas",
+							Type:     "integer",
+							JSONPath: ".spec.replicas",
+						},
+						{
+							Name:     "Available-Replicas",
+							Type:     "integer",
+							JSONPath: ".status.availableReplicas",
+						},
+						{
+							Name:     "Provider",
+							Type:     "string",
+							JSONPath: ".spec.template.spec.providerSpec.value.cloudProvider",
+						},
+						{
+							Name:     "OS",
+							Type:     "string",
+							JSONPath: ".spec.template.spec.providerSpec.value.operatingSystem",
+						},
+						{
+							Name:     "MachineDeployment",
+							Type:     "string",
+							JSONPath: ".metadata.ownerReferences[0].name",
+							Priority: 1,
+						},
+						{
+							Name:     "Kubelet",
+							Type:     "string",
+							JSONPath: ".spec.template.spec.versions.kubelet",
+						},
+						{
+							Name:     "Age",
+							Type:     "date",
+							JSONPath: ".metadata.creationTimestamp",
+						},
+						{
+							Name:     "Deleted",
+							Type:     "date",
+							JSONPath: ".metadata.deletionTimestamp",
+							Priority: 1,
+						},
+					},
 				},
 			},
 		},
@@ -694,13 +709,6 @@ func machineControllerMachineDeploymentCRD() *apiextensions.CustomResourceDefini
 		Spec: apiextensions.CustomResourceDefinitionSpec{
 			Group: "cluster.k8s.io",
 			Scope: apiextensions.NamespaceScoped,
-			Versions: []apiextensions.CustomResourceDefinitionVersion{
-				{
-					Name:    "v1alpha1",
-					Served:  true,
-					Storage: true,
-				},
-			},
 			Names: apiextensions.CustomResourceDefinitionNames{
 				Plural:     "machinedeployments",
 				Singular:   "machinedeployment",
@@ -708,49 +716,61 @@ func machineControllerMachineDeploymentCRD() *apiextensions.CustomResourceDefini
 				ListKind:   "MachineDeploymentList",
 				ShortNames: []string{"md"},
 			},
-			Subresources: &apiextensions.CustomResourceSubresources{
-				Status: &apiextensions.CustomResourceSubresourceStatus{},
-				Scale: &apiextensions.CustomResourceSubresourceScale{
-					SpecReplicasPath:   ".spec.replicas",
-					StatusReplicasPath: ".status.replicas",
-				},
-			},
-			AdditionalPrinterColumns: []apiextensions.CustomResourceColumnDefinition{
+			Versions: []apiextensions.CustomResourceDefinitionVersion{
 				{
-					Name:     "Replicas",
-					Type:     "integer",
-					JSONPath: ".spec.replicas",
-				},
-				{
-					Name:     "Available-Replicas",
-					Type:     "integer",
-					JSONPath: ".status.availableReplicas",
-				},
-				{
-					Name:     "Provider",
-					Type:     "string",
-					JSONPath: ".spec.template.spec.providerSpec.value.cloudProvider",
-				},
-				{
-					Name:     "OS",
-					Type:     "string",
-					JSONPath: ".spec.template.spec.providerSpec.value.operatingSystem",
-				},
-				{
-					Name:     "Kubelet",
-					Type:     "string",
-					JSONPath: ".spec.template.spec.versions.kubelet",
-				},
-				{
-					Name:     "Age",
-					Type:     "date",
-					JSONPath: ".metadata.creationTimestamp",
-				},
-				{
-					Name:     "Deleted",
-					Type:     "date",
-					JSONPath: ".metadata.deletionTimestamp",
-					Priority: 1,
+					Name:    "v1alpha1",
+					Served:  true,
+					Storage: true,
+					Schema: &apiextensions.CustomResourceValidation{
+						OpenAPIV3Schema: &apiextensions.JSONSchemaProps{
+							Type: "object",
+						},
+					},
+					Subresources: &apiextensions.CustomResourceSubresources{
+						Status: &apiextensions.CustomResourceSubresourceStatus{},
+						Scale: &apiextensions.CustomResourceSubresourceScale{
+							SpecReplicasPath:   ".spec.replicas",
+							StatusReplicasPath: ".status.replicas",
+						},
+					},
+					AdditionalPrinterColumns: []apiextensions.CustomResourceColumnDefinition{
+						{
+							Name:     "Replicas",
+							Type:     "integer",
+							JSONPath: ".spec.replicas",
+						},
+						{
+							Name:     "Available-Replicas",
+							Type:     "integer",
+							JSONPath: ".status.availableReplicas",
+						},
+						{
+							Name:     "Provider",
+							Type:     "string",
+							JSONPath: ".spec.template.spec.providerSpec.value.cloudProvider",
+						},
+						{
+							Name:     "OS",
+							Type:     "string",
+							JSONPath: ".spec.template.spec.providerSpec.value.operatingSystem",
+						},
+						{
+							Name:     "Kubelet",
+							Type:     "string",
+							JSONPath: ".spec.template.spec.versions.kubelet",
+						},
+						{
+							Name:     "Age",
+							Type:     "date",
+							JSONPath: ".metadata.creationTimestamp",
+						},
+						{
+							Name:     "Deleted",
+							Type:     "date",
+							JSONPath: ".metadata.deletionTimestamp",
+							Priority: 1,
+						},
+					},
 				},
 			},
 		},
