@@ -81,7 +81,7 @@ sudo yum install -y yum-plugin-versionlock
 
 
 
-sudo yum install -y containerd.io-1.4.3
+sudo yum install -y containerd.io-1.4.*
 sudo yum versionlock add containerd.io
 
 cat <<EOF | sudo tee /etc/containerd/config.toml

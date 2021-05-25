@@ -89,14 +89,11 @@ echo "deb https://download.docker.com/linux/ubuntu bionic stable" |
 sudo apt-get update
 
 
-
-
-
 sudo DEBIAN_FRONTEND=noninteractive apt-get install \
 	--option "Dpkg::Options::=--force-confold" \
 	--no-install-recommends \
 	-y \
-	docker-ce=5:19.03.14* docker-ce-cli=5:19.03.14*
+	docker-ce=5:19.03.* docker-ce-cli=5:19.03.*
 sudo apt-mark hold docker-ce docker-ce-cli
 sudo systemctl daemon-reload
 sudo systemctl enable --now docker
