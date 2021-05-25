@@ -42,10 +42,14 @@ var (
 			sudo apt-mark unhold docker-ce docker-ce-cli
 			{{- end }}
 
-			{{ $DOCKER_VERSION_TO_INSTALL := "%s" }}
-			{{ if semverCompare "< 1.17" .KUBERNETES_VERSION }}
+			{{- $DOCKER_VERSION_TO_INSTALL := "%s" }}
+			{{- if semverCompare "< 1.17" .KUBERNETES_VERSION }}
 			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
-			{{ end }}
+			{{- end }}
+
+			{{- if semverCompare ">= 1.21" .KUBERNETES_VERSION }}
+			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
+			{{- end }}
 
 			sudo DEBIAN_FRONTEND=noninteractive apt-get install \
 				--option "Dpkg::Options::=--force-confold" \
@@ -61,6 +65,7 @@ var (
 			`,
 			defaultDockerVersion,
 			defaultLegacyDockerVersion,
+			latestDockerVersion,
 		),
 
 		"yum-docker-ce-amzn": heredoc.Docf(`
@@ -68,13 +73,17 @@ var (
 			sudo yum versionlock delete docker cri-tools || true
 			{{- end }}
 
-			{{ $CRICTL_VERSION_TO_INSTALL := "%s" }}
-			{{ $DOCKER_VERSION_TO_INSTALL := "%s" }}
-			{{ if semverCompare "< 1.17" .KUBERNETES_VERSION }}
+			{{- $CRICTL_VERSION_TO_INSTALL := "%s" }}
+			{{- $DOCKER_VERSION_TO_INSTALL := "%s" }}
+			{{- if semverCompare "< 1.17" .KUBERNETES_VERSION }}
 			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
-			{{ end }}
+			{{- end }}
 
-			sudo yum install -y docker-{{ $DOCKER_VERSION_TO_INSTALL }}ce* cri-tools-{{ $CRICTL_VERSION_TO_INSTALL }}
+			{{- if semverCompare ">= 1.21" .KUBERNETES_VERSION }}
+			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
+			{{- end }}
+
+			sudo yum install -y docker-{{ $DOCKER_VERSION_TO_INSTALL }} cri-tools-{{ $CRICTL_VERSION_TO_INSTALL }}
 			sudo yum versionlock add docker cri-tools
 
 			cat <<EOF | sudo tee /etc/crictl.yaml
@@ -87,21 +96,22 @@ var (
 			defaultAmazonCrictlVersion,
 			defaultDockerVersion,
 			defaultLegacyDockerVersion,
+			latestDockerVersion,
 		),
 
 		"yum-docker-ce": heredoc.Docf(`
-			{{ if .CONFIGURE_REPOSITORIES }}
+			{{- if .CONFIGURE_REPOSITORIES }}
 			sudo yum install -y yum-utils
 			sudo yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
 			sudo yum-config-manager --save --setopt=docker-ce-stable.module_hotfixes=true >/dev/null
-			{{ end }}
+			{{- end }}
 
-			{{ if or .FORCE .UPGRADE }}
+			{{- if or .FORCE .UPGRADE }}
 			sudo yum versionlock delete docker-ce docker-ce-cli || true
 			{{- end }}
 
-			{{ $DOCKER_VERSION_TO_INSTALL := "%s" }}
-			{{ if semverCompare "< 1.17" .KUBERNETES_VERSION }}
+			{{- $DOCKER_VERSION_TO_INSTALL := "%s" }}
+			{{- if semverCompare "< 1.17" .KUBERNETES_VERSION }}
 			{{- if .CONFIGURE_REPOSITORIES }}
 			# Docker provides two different apt repos for CentOS, 7 and 8. The 8 repo currently
 			# contains only Docker 19.03.14, which is not validated for all Kubernetes version.
@@ -109,7 +119,11 @@ var (
 			sudo sed -i 's/\$releasever/7/g' /etc/yum.repos.d/docker-ce.repo
 			{{- end }}
 			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
-			{{ end }}
+			{{- end }}
+
+			{{- if semverCompare ">= 1.21" .KUBERNETES_VERSION }}
+			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
+			{{- end }}
 
 			sudo yum install -y docker-ce-{{ $DOCKER_VERSION_TO_INSTALL }} docker-ce-cli-{{ $DOCKER_VERSION_TO_INSTALL }}
 			sudo yum versionlock add docker-ce docker-ce-cli
@@ -118,6 +132,7 @@ var (
 			`,
 			defaultDockerVersion,
 			defaultLegacyDockerVersion,
+			latestDockerVersion,
 		),
 
 		"apt-containerd": heredoc.Docf(`
@@ -239,7 +254,8 @@ var (
 			sudo systemctl daemon-reload
 			sudo systemctl enable --now docker
 			sudo systemctl restart docker
-			`),
+			`,
+		),
 
 		"flatcar-containerd": heredoc.Doc(`
 			cat <<EOF | sudo tee /etc/crictl.yaml
