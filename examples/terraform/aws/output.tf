@@ -73,7 +73,7 @@ output "kubeone_workers" {
     "${var.cluster_name}-${local.zoneA}" = {
       replicas = var.initial_machinedeployment_replicas
       providerSpec = {
-        sshPublicKeys   = [aws_key_pair.deployer.public_key]
+        sshPublicKeys   = local.worker_deploy_ssh_key
         operatingSystem = local.worker_os
         operatingSystemSpec = {
           distUpgradeOnBoot = false
@@ -110,7 +110,7 @@ output "kubeone_workers" {
     "${var.cluster_name}-${local.zoneB}" = {
       replicas = var.initial_machinedeployment_replicas
       providerSpec = {
-        sshPublicKeys   = [aws_key_pair.deployer.public_key]
+        sshPublicKeys   = local.worker_deploy_ssh_key
         operatingSystem = local.worker_os
         operatingSystemSpec = {
           distUpgradeOnBoot = false
@@ -147,7 +147,7 @@ output "kubeone_workers" {
     "${var.cluster_name}-${local.zoneC}" = {
       replicas = var.initial_machinedeployment_replicas
       providerSpec = {
-        sshPublicKeys   = [aws_key_pair.deployer.public_key]
+        sshPublicKeys   = local.worker_deploy_ssh_key
         operatingSystem = local.worker_os
         operatingSystemSpec = {
           distUpgradeOnBoot = false
