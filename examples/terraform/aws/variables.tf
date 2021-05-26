@@ -176,3 +176,9 @@ variable "initial_machinedeployment_spotinstances" {
   default     = false
   type        = bool
 }
+
+variable "worker_deploy_ssh_key" {
+  description = "add provided ssh public key to MachineDeployments"
+  default     = true
+  type        = bool
+}

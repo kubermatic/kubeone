@@ -19,15 +19,16 @@ provider "aws" {
 }
 
 locals {
-  kube_cluster_tag = "kubernetes.io/cluster/${var.cluster_name}"
-  ami              = var.ami == "" ? data.aws_ami.ami.id : var.ami
-  zoneA            = data.aws_availability_zones.available.names[0]
-  zoneB            = data.aws_availability_zones.available.names[1]
-  zoneC            = data.aws_availability_zones.available.names[2]
-  vpc_mask         = parseint(split("/", data.aws_vpc.selected.cidr_block)[1], 10)
-  subnet_total     = pow(2, var.subnets_cidr - local.vpc_mask)
-  subnet_newbits   = var.subnets_cidr - (32 - local.vpc_mask)
-  worker_os        = var.worker_os == "" ? var.os : var.worker_os
+  kube_cluster_tag      = "kubernetes.io/cluster/${var.cluster_name}"
+  ami                   = var.ami == "" ? data.aws_ami.ami.id : var.ami
+  zoneA                 = data.aws_availability_zones.available.names[0]
+  zoneB                 = data.aws_availability_zones.available.names[1]
+  zoneC                 = data.aws_availability_zones.available.names[2]
+  vpc_mask              = parseint(split("/", data.aws_vpc.selected.cidr_block)[1], 10)
+  subnet_total          = pow(2, var.subnets_cidr - local.vpc_mask)
+  subnet_newbits        = var.subnets_cidr - (32 - local.vpc_mask)
+  worker_os             = var.worker_os == "" ? var.os : var.worker_os
+  worker_deploy_ssh_key = var.worker_deploy_ssh_key ? [aws_key_pair.deployer.public_key] : []
 
   subnets = {
     (local.zoneA) = length(aws_subnet.public.*.id) > 0 ? aws_subnet.public[0].id : ""
