@@ -92,9 +92,14 @@ sudo yum install -y yum-utils
 sudo yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
 sudo yum-config-manager --save --setopt=docker-ce-stable.module_hotfixes=true >/dev/null
 
-sudo yum install -y docker-ce-19.03.* docker-ce-cli-19.03.*
-sudo yum versionlock add docker-ce docker-ce-cli
+sudo yum install -y \
+	docker-ce-19.03.* \
+	docker-ce-cli-19.03.* \
+	containerd.io-1.4.*
+sudo yum versionlock add docker-ce docker-ce-cli containerd.io
+
 sudo systemctl daemon-reload
+sudo systemctl enable --now containerd
 sudo systemctl enable --now docker
 
 
