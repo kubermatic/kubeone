@@ -36,7 +36,7 @@ type listImagesOpts struct {
 	Filter       string `longflag:"filter"`
 }
 
-func imagesCmd(rootFlags *pflag.FlagSet) *cobra.Command {
+func configImagesCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "images",
 		Short: "images manipulations",
