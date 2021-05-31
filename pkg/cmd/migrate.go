@@ -18,8 +18,11 @@ package cmd
 
 import (
 	"github.com/MakeNowJust/heredoc/v2"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+
+	"k8c.io/kubeone/pkg/tasks"
 )
 
 func migrateCmd(fs *pflag.FlagSet) *cobra.Command {
@@ -41,8 +44,22 @@ func migrateToContainerdCmd(fs *pflag.FlagSet) *cobra.Command {
 			Following the dockershim deprecation https://kubernetes.io/blog/2020/12/02/dockershim-faq/
 			this command helps to migrate Container Runtime to ContainerD.
 		`),
-		RunE: func(_ *cobra.Command, args []string) error {
-			return nil
+		RunE: func(_ *cobra.Command, _ []string) error {
+			gopts, err := persistentGlobalOptions(fs)
+			if err != nil {
+				return errors.Wrap(err, "unable to get global flags")
+			}
+
+			return runMigrateToContainerd(gopts)
 		},
 	}
+}
+
+func runMigrateToContainerd(opts *globalOptions) error {
+	s, err := opts.BuildState()
+	if err != nil {
+		return errors.Wrap(err, "failed to initialize State")
+	}
+
+	return errors.Wrap(tasks.WithContainerDMigration(nil).Run(s), "failed to get cluster status")
 }

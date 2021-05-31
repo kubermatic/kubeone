@@ -292,6 +292,13 @@ func WithReset(t Tasks) Tasks {
 	}...)
 }
 
+func WithContainerDMigration(t Tasks) Tasks {
+	return WithHostnameOS(t).
+		append(Tasks{
+			{Fn: kubeconfig.BuildKubernetesClientset, ErrMsg: "failed to build kubernetes clientset"},
+		}...)
+}
+
 func WithClusterStatus(t Tasks) Tasks {
 	return WithHostnameOS(t).
 		append(Tasks{
