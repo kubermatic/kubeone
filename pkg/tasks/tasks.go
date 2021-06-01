@@ -295,7 +295,22 @@ func WithReset(t Tasks) Tasks {
 func WithContainerDMigration(t Tasks) Tasks {
 	return WithHostnameOS(t).
 		append(Tasks{
+			{Fn: validateContainerdInConfig, ErrMsg: "failed to validate config", Retries: 1},
+			{Fn: runProbes, ErrMsg: "probes failed"},
 			{Fn: kubeconfig.BuildKubernetesClientset, ErrMsg: "failed to build kubernetes clientset"},
+			{Fn: migrateToContainerd, ErrMsg: "failed to migrate to containerd"},
+			{
+				Fn: func(s *state.State) error {
+					if err := machinecontroller.Ensure(s); err != nil {
+						return err
+					}
+
+					s.Logger.Warn("roll-over your machineDeployments to get containerd")
+					return nil
+				},
+				ErrMsg:    "failed to ensure machine-controller",
+				Predicate: func(s *state.State) bool { return s.Cluster.MachineController.Deploy },
+			},
 		}...)
 }
 

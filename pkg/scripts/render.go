@@ -27,6 +27,27 @@ import (
 
 var (
 	containerRuntimeTemplates = map[string]string{
+		"containerd-config": heredoc.Doc(`
+			cat <<EOF | sudo tee /etc/containerd/config.toml
+			{{ containerdCfg .INSECURE_REGISTRY -}}
+			EOF
+
+			cat <<EOF | sudo tee /etc/crictl.yaml
+			runtime-endpoint: unix:///run/containerd/containerd.sock
+			EOF
+
+			sudo mkdir -p /etc/systemd/system/containerd.service.d
+			cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/environment.conf
+			[Service]
+			Restart=always
+			EnvironmentFile=-/etc/environment
+			EOF
+
+			sudo systemctl daemon-reload
+			sudo systemctl enable --now containerd
+			sudo systemctl restart containerd
+		`),
+
 		"apt-docker-ce": heredoc.Docf(`
 			{{ if .CONFIGURE_REPOSITORIES }}
 			curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
@@ -178,24 +199,7 @@ var (
 			sudo apt-get install -y containerd.io=%s
 			sudo apt-mark hold containerd.io
 
-			cat <<EOF | sudo tee /etc/containerd/config.toml
-			{{ containerdCfg .INSECURE_REGISTRY -}}
-			EOF
-
-			cat <<EOF | sudo tee /etc/crictl.yaml
-			runtime-endpoint: unix:///run/containerd/containerd.sock
-			EOF
-
-			sudo mkdir -p /etc/systemd/system/containerd.service.d
-			cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/environment.conf
-			[Service]
-			Restart=always
-			EnvironmentFile=-/etc/environment
-			EOF
-
-			sudo systemctl daemon-reload
-			sudo systemctl enable --now containerd
-			sudo systemctl restart containerd
+			{{ template "containerd-config" . -}}
 			`,
 			defaultContainerdVersion,
 		),
@@ -218,24 +222,7 @@ var (
 			sudo yum install -y containerd.io-%s
 			sudo yum versionlock add containerd.io
 
-			cat <<EOF | sudo tee /etc/containerd/config.toml
-			{{ containerdCfg .INSECURE_REGISTRY -}}
-			EOF
-
-			cat <<EOF | sudo tee /etc/crictl.yaml
-			runtime-endpoint: unix:///run/containerd/containerd.sock
-			EOF
-
-			sudo mkdir -p /etc/systemd/system/containerd.service.d
-			cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/environment.conf
-			[Service]
-			Restart=always
-			EnvironmentFile=-/etc/environment
-			EOF
-
-			sudo systemctl daemon-reload
-			sudo systemctl enable --now containerd
-			sudo systemctl restart containerd
+			{{ template "containerd-config" . -}}
 			`,
 			defaultContainerdVersion,
 		),
@@ -248,24 +235,7 @@ var (
 			sudo yum install -y containerd-%s cri-tools-%s
 			sudo yum versionlock add containerd cri-tools
 
-			cat <<EOF | sudo tee /etc/containerd/config.toml
-			{{ containerdCfg .INSECURE_REGISTRY -}}
-			EOF
-
-			cat <<EOF | sudo tee /etc/crictl.yaml
-			runtime-endpoint: unix:///run/containerd/containerd.sock
-			EOF
-
-			sudo mkdir -p /etc/systemd/system/containerd.service.d
-			cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/environment.conf
-			[Service]
-			Restart=always
-			EnvironmentFile=-/etc/environment
-			EOF
-
-			sudo systemctl daemon-reload
-			sudo systemctl enable --now containerd
-			sudo systemctl restart containerd
+			{{ template "containerd-config" . -}}
 			`,
 			defaultAmazonContainerdVersion,
 			defaultAmazonCrictlVersion,

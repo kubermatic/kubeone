@@ -16,7 +16,35 @@ limitations under the License.
 
 package scripts
 
+import (
+	"github.com/MakeNowJust/heredoc/v2"
+)
+
 const (
 	defaultKubernetesCNIVersion = "0.8.7"
 	defaultCriToolsVersion      = "1.21.0"
 )
+
+var migrateToContainerdScriptTemplate = heredoc.Doc(`
+	sudo systemctl stop kubelet
+	sudo docker ps -q | xargs sudo docker stop
+	sudo docker ps -qa | xargs sudo docker rm
+	sudo systemctl disable --now docker
+
+	{{ template "containerd-config" . }}
+
+	source /var/lib/kubelet/kubeadm-flags.env
+	KUBELET_EXTRA_ARGS="$KUBELET_EXTRA_ARGS --container-runtime=remote --container-runtime-endpoint=unix:///run/containerd/containerd.sock"
+
+	cat <<EOF | sudo tee /var/lib/kubelet/kubeadm-flags.env
+	KUBELET_EXTRA_ARGS="$KUBELET_EXTRA_ARGS"
+	EOF
+
+	sudo systemctl restart kubelet
+`)
+
+func MigrateToContainerd(insecureRegistry string) (string, error) {
+	return Render(migrateToContainerdScriptTemplate, Data{
+		"INSECURE_REGISTRY": insecureRegistry,
+	})
+}
