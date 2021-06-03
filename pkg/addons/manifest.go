@@ -39,15 +39,40 @@ import (
 	"sigs.k8s.io/yaml"
 )
 
-func getManifests(s *state.State, templateData TemplateData) error {
+func traverseAddonsDirectory(s *state.State) (string, []string, error) {
 	addonsPath := s.Cluster.Addons.Path
 	if !filepath.IsAbs(addonsPath) && s.ManifestFilePath != "" {
 		manifestAbsPath, err := filepath.Abs(filepath.Dir(s.ManifestFilePath))
 		if err != nil {
-			return errors.Wrap(err, "unable to get absolute path to the cluster manifest")
+			return "", nil, errors.Wrap(err, "unable to get absolute path to the cluster manifest")
 		}
 		addonsPath = filepath.Join(manifestAbsPath, addonsPath)
 	}
+
+	dirInfo, err := ioutil.ReadDir(addonsPath)
+	if err != nil {
+		return "", nil, errors.Wrapf(err, "failed to read the addons directory %s", addonsPath)
+	}
+
+	var dirs []string
+	for _, d := range dirInfo {
+		if d.IsDir() {
+			dirs = append(dirs, d.Name())
+		}
+	}
+
+	// We're doing this to support legacy addons where all addons are in the
+	// root directory.
+	// The root directory is intentionally applied at the end in order to
+	// relabel manifests that are moved from the addons directory to a
+	// subdirectory.
+	dirs = append(dirs, "")
+
+	return addonsPath, dirs, nil
+}
+
+func getManifestsFromDirectory(s *state.State, templateData TemplateData, addonsPath, directory string) (string, error) {
+	addonsPath = filepath.Join(addonsPath, directory)
 
 	overwriteRegistry := ""
 	if s.Cluster.RegistryConfiguration != nil && s.Cluster.RegistryConfiguration.OverwriteRegistry != "" {
@@ -56,18 +81,17 @@ func getManifests(s *state.State, templateData TemplateData) error {
 
 	manifests, err := loadAddonsManifests(addonsPath, s.Logger, s.Verbose, templateData, overwriteRegistry)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	rawManifests, err := ensureAddonsLabelsOnResources(manifests)
+	rawManifests, err := ensureAddonsLabelsOnResources(manifests, directory)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	combinedManifests := combineManifests(rawManifests)
-	s.Configuration.AddFile("addons/addons.yaml", combinedManifests.String())
 
-	return nil
+	return combinedManifests.String(), nil
 }
 
 // loadAddonsManifests loads all YAML files from a given directory and runs the templating logic
@@ -82,7 +106,6 @@ func loadAddonsManifests(addonsPath string, logger logrus.FieldLogger, verbose b
 	for _, file := range files {
 		filePath := filepath.Join(addonsPath, file.Name())
 		if file.IsDir() {
-			logger.Infof("Found directory '%s' in the addons path. Ignoring.\n", file.Name())
 			continue
 		}
 		ext := strings.ToLower(filepath.Ext(filePath))
@@ -148,7 +171,7 @@ func loadAddonsManifests(addonsPath string, logger logrus.FieldLogger, verbose b
 }
 
 // ensureAddonsLabelsOnResources applies the addons label on all resources in the manifest
-func ensureAddonsLabelsOnResources(manifests []runtime.RawExtension) ([]*bytes.Buffer, error) {
+func ensureAddonsLabelsOnResources(manifests []runtime.RawExtension, addonName string) ([]*bytes.Buffer, error) {
 	var rawManifests []*bytes.Buffer
 
 	for _, m := range manifests {
@@ -161,7 +184,7 @@ func ensureAddonsLabelsOnResources(manifests []runtime.RawExtension) ([]*bytes.B
 		if existingLabels == nil {
 			existingLabels = map[string]string{}
 		}
-		existingLabels[addonLabel] = ""
+		existingLabels[addonLabel] = addonName
 		parsedUnstructuredObj.SetLabels(existingLabels)
 
 		jsonBuffer := &bytes.Buffer{}
