@@ -98,11 +98,11 @@ func applyAddons(s *state.State, manifest string, addonName string) error {
 	return s.RunTaskOnLeader(func(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
 		var (
 			cmd            = fmt.Sprintf(kubectlApplyScript, addonLabel, addonName)
-			r              = strings.NewReader(manifest)
+			stdin          = strings.NewReader(manifest)
 			stdout, stderr strings.Builder
 		)
 
-		_, err := conn.POpen(cmd, r, &stdout, &stderr)
+		_, err := conn.POpen(cmd, stdin, &stdout, &stderr)
 		if s.Verbose {
 			fmt.Printf("+ %s\n", cmd)
 			fmt.Printf("%s", stderr.String())
