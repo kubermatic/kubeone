@@ -75,7 +75,7 @@ metadata:
   namespace: kube-system
 `
 
-	testManifest1WithLabel = `apiVersion: v1
+	testManifest1WithEmptyLabel = `apiVersion: v1
 data:
   foo: bar
 kind: ConfigMap
@@ -84,6 +84,19 @@ metadata:
     app: test
     cluster: kubeone-test
     kubeone.io/addon: ""
+  name: test1
+  namespace: kube-system
+`
+
+	testManifest1WithNamedLabel = `apiVersion: v1
+data:
+  foo: bar
+kind: ConfigMap
+metadata:
+  labels:
+    app: test
+    cluster: kubeone-test
+    kubeone.io/addon: test-addon
   name: test1
   namespace: kube-system
 `
@@ -139,37 +152,64 @@ var (
 )
 
 func TestEnsureAddonsLabelsOnResources(t *testing.T) {
-	addonsDir, err := ioutil.TempDir("/tmp", "kubeone")
-	if err != nil {
-		t.Fatalf("unable to create temporary addons directory: %v", err)
-	}
-	defer os.RemoveAll(addonsDir)
+	t.Parallel()
 
-	if writeErr := ioutil.WriteFile(path.Join(addonsDir, "testManifest.yaml"), []byte(testManifest1WithoutLabel), 0600); writeErr != nil {
-		t.Fatalf("unable to create temporary addon manifest: %v", err)
-	}
-
-	templateData := TemplateData{
-		Config: &kubeoneapi.KubeOneCluster{
-			Name: "kubeone-test",
+	tests := []struct {
+		name             string
+		addonName        string
+		addonManifest    string
+		expectedManifest string
+	}{
+		{
+			name:             "addon with no name (root directory addons)",
+			addonName:        "",
+			addonManifest:    testManifest1WithoutLabel,
+			expectedManifest: testManifest1WithEmptyLabel,
+		},
+		{
+			name:             "addon with name",
+			addonName:        "test-addon",
+			addonManifest:    testManifest1WithoutLabel,
+			expectedManifest: testManifest1WithNamedLabel,
 		},
 	}
-	manifests, err := loadAddonsManifests(addonsDir, nil, false, templateData, "")
-	if err != nil {
-		t.Fatalf("unable to load manifests: %v", err)
-	}
-	if len(manifests) != 1 {
-		t.Fatalf("expected to load 1 manifest, got %d", len(manifests))
-	}
 
-	b, err := ensureAddonsLabelsOnResources(manifests)
-	if err != nil {
-		t.Fatalf("unable to ensure labels: %v", err)
-	}
-	manifest := b[0].String()
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			addonsDir, err := ioutil.TempDir("/tmp", "kubeone")
+			if err != nil {
+				t.Fatalf("unable to create temporary addons directory: %v", err)
+			}
+			defer os.RemoveAll(addonsDir)
 
-	if manifest != testManifest1WithLabel {
-		t.Fatalf("invalid manifest returned. expected \n%s, got \n%s", testManifest1WithLabel, manifest)
+			if writeErr := ioutil.WriteFile(path.Join(addonsDir, "testManifest.yaml"), []byte(tc.addonManifest), 0600); writeErr != nil {
+				t.Fatalf("unable to create temporary addon manifest: %v", err)
+			}
+
+			templateData := TemplateData{
+				Config: &kubeoneapi.KubeOneCluster{
+					Name: "kubeone-test",
+				},
+			}
+			manifests, err := loadAddonsManifests(addonsDir, nil, false, templateData, "")
+			if err != nil {
+				t.Fatalf("unable to load manifests: %v", err)
+			}
+			if len(manifests) != 1 {
+				t.Fatalf("expected to load 1 manifest, got %d", len(manifests))
+			}
+
+			b, err := ensureAddonsLabelsOnResources(manifests, tc.addonName)
+			if err != nil {
+				t.Fatalf("unable to ensure labels: %v", err)
+			}
+			manifest := b[0].String()
+
+			if manifest != tc.expectedManifest {
+				t.Fatalf("invalid manifest returned. expected \n%s, got \n%s", tc.expectedManifest, manifest)
+			}
+		})
 	}
 }
 
@@ -242,7 +282,7 @@ func TestImageRegistryParsing(t *testing.T) {
 				t.Fatalf("expected to load 1 manifest, got %d", len(manifests))
 			}
 
-			b, err := ensureAddonsLabelsOnResources(manifests)
+			b, err := ensureAddonsLabelsOnResources(manifests, "")
 			if err != nil {
 				t.Fatalf("unable to ensure labels: %v", err)
 			}
