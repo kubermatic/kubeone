@@ -161,6 +161,37 @@ func TestKubeadmDebian(t *testing.T) {
 	}
 }
 
+func TestMigrateToContainerd(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name             string
+		insecureRegistry string
+		err              error
+	}{
+		{
+			name: "simple",
+		},
+		{
+			name:             "insecureRegistry",
+			insecureRegistry: "some.registry",
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := MigrateToContainerd(tt.insecureRegistry)
+			if err != tt.err {
+				t.Errorf("MigrateToContainerd() error = %v, wantErr %v", err, tt.err)
+				return
+			}
+
+			testhelper.DiffOutput(t, testhelper.FSGoldenName(t), got, *updateFlag)
+		})
+	}
+}
+
 func TestKubeadmCentOS(t *testing.T) {
 	t.Parallel()
 

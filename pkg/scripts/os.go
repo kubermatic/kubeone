@@ -27,18 +27,18 @@ const (
 
 var migrateToContainerdScriptTemplate = heredoc.Doc(`
 	sudo systemctl stop kubelet
-	sudo docker ps -q | xargs sudo docker stop
-	sudo docker ps -qa | xargs sudo docker rm
+	sudo docker ps -q | xargs sudo docker stop || true
+	sudo docker ps -qa | xargs sudo docker rm || true
 	sudo systemctl disable --now docker
 
 	{{ template "containerd-config" . }}
 
-	source /var/lib/kubelet/kubeadm-flags.env
-	KUBELET_EXTRA_ARGS="$KUBELET_EXTRA_ARGS --container-runtime=remote --container-runtime-endpoint=unix:///run/containerd/containerd.sock"
-
-	cat <<EOF | sudo tee /var/lib/kubelet/kubeadm-flags.env
-	KUBELET_EXTRA_ARGS="$KUBELET_EXTRA_ARGS"
-	EOF
+	{{- /*
+		/var/lib/kubelet/kubeadm-flags.env should be modified by the caller of
+		this script, following flags should be added:
+		* --container-runtime=remote
+		* --container-runtime-endpoint=unix:///run/containerd/containerd.sock
+	*/ -}}
 
 	sudo systemctl restart kubelet
 `)
