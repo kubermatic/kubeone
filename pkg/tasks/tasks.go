@@ -296,10 +296,9 @@ func WithContainerDMigration(t Tasks) Tasks {
 	return WithHostnameOS(t).
 		append(Tasks{
 			{Fn: validateContainerdInConfig, ErrMsg: "failed to validate config", Retries: 1},
-			// {Fn: runProbes, ErrMsg: "probes failed"},
 			{Fn: kubeconfig.BuildKubernetesClientset, ErrMsg: "failed to build kubernetes clientset"},
 			{Fn: migrateToContainerd, ErrMsg: "failed to migrate to containerd"},
-			// {Fn: patchCRISocketAnnotation, ErrMsg: "failed to patch Node objects"},
+			{Fn: patchCRISocketAnnotation, ErrMsg: "failed to patch Node objects"},
 			{
 				Fn: func(s *state.State) error {
 					s.Logger.Info("Downloading PKI...")

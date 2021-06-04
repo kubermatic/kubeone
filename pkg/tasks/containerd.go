@@ -30,11 +30,17 @@ import (
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/ssh/sshiofs"
 	"k8c.io/kubeone/pkg/state"
+
+	corev1 "k8s.io/api/core/v1"
+)
+
+const (
+	kubeadmCRISocket      = "kubeadm.alpha.kubernetes.io/cri-socket"
+	kubeadmEnvFlagsFile   = "/var/lib/kubelet/kubeadm-flags.env"
+	kubeletKubeadmArgsEnv = "KUBELET_KUBEADM_ARGS"
 )
 
 var (
-	kubeadmEnvFlagsFile    = "/var/lib/kubelet/kubeadm-flags.env"
-	kubeletKubeadmArgsEnv  = `KUBELET_KUBEADM_ARGS`
 	containerdKubeletFlags = map[string]string{
 		"--container-runtime":          "remote",
 		"--container-runtime-endpoint": "unix:///run/containerd/containerd.sock",
@@ -44,6 +50,33 @@ var (
 func validateContainerdInConfig(s *state.State) error {
 	if s.Cluster.ContainerRuntime.Containerd == nil {
 		return errors.New("containerd must be enabled in config")
+	}
+
+	return nil
+}
+
+func patchCRISocketAnnotation(s *state.State) error {
+	var nodes corev1.NodeList
+
+	if err := s.DynamicClient.List(s.Context, &nodes); err != nil {
+		return err
+	}
+
+	for _, node := range nodes.Items {
+		if socketPath, found := node.Annotations[kubeadmCRISocket]; found {
+			if socketPath != "/var/run/dockershim.sock" {
+				continue
+			}
+
+			if node.Annotations == nil {
+				node.Annotations = map[string]string{}
+			}
+			node.Annotations[kubeadmCRISocket] = "unix:///run/containerd/containerd.sock"
+
+			if err := s.DynamicClient.Update(s.Context, &node); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil

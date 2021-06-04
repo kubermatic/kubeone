@@ -29,7 +29,6 @@ var migrateToContainerdScriptTemplate = heredoc.Doc(`
 	sudo systemctl stop kubelet
 	sudo docker ps -q | xargs sudo docker stop || true
 	sudo docker ps -qa | xargs sudo docker rm || true
-	sudo systemctl disable --now docker
 
 	{{ template "containerd-config" . }}
 
