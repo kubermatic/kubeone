@@ -137,7 +137,7 @@ func Deploy(s *state.State) error {
 	flannelImage := s.Images.Get(images.Flannel)
 
 	crds := canalCRDs()
-	k8sobjects := append(crds,
+	k8sobjects := append(crds, //nolint:gocritic
 		// RBAC
 		calicoKubeControllersClusterRole(),
 		calicoNodeClusterRole(),

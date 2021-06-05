@@ -42,6 +42,7 @@ func Test_marshalKubeletFlags(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			if got := marshalKubeletFlags(tt.args.kubeletflags); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("marshalKubeletFlags() = \n%s, want\n%s", got, tt.want)

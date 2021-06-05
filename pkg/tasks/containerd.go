@@ -63,6 +63,7 @@ func patchCRISocketAnnotation(s *state.State) error {
 	}
 
 	for _, node := range nodes.Items {
+		node := node
 		if socketPath, found := node.Annotations[kubeadmCRISocket]; found {
 			if socketPath != "/var/run/dockershim.sock" {
 				continue
@@ -153,7 +154,7 @@ func unmarshalKubeletFlags(buf []byte) (map[string]string, error) {
 	// throw away KUBELET_KUBEADM_ARGS=
 	s1 := strings.SplitN(string(buf), "=", 2)
 	if len(s1) != 2 {
-		return nil, errors.New("can't parse: wrong split lenght")
+		return nil, errors.New("can't parse: wrong split length")
 	}
 
 	envValue := strings.Trim(s1[1], `"`)
@@ -163,7 +164,7 @@ func unmarshalKubeletFlags(buf []byte) (map[string]string, error) {
 	for _, flg := range flagsvalues {
 		fl := strings.Split(flg, "=")
 		if len(fl) != 2 {
-			return nil, errors.New("wrong split lenght")
+			return nil, errors.New("wrong split length")
 		}
 		kubeletflagsMap[fl[0]] = fl[1]
 	}
