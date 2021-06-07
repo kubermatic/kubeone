@@ -30,7 +30,9 @@ var migrateToContainerdScriptTemplate = heredoc.Doc(`
 	sudo docker ps -q | xargs sudo docker stop || true
 	sudo docker ps -qa | xargs sudo docker rm || true
 
+	{{ if .GENERATE_CONTAINERD_CONFIG -}}
 	{{ template "containerd-config" . }}
+	{{- end }}
 
 	{{- /*
 		/var/lib/kubelet/kubeadm-flags.env should be modified by the caller of
@@ -42,8 +44,9 @@ var migrateToContainerdScriptTemplate = heredoc.Doc(`
 	sudo systemctl restart kubelet
 `)
 
-func MigrateToContainerd(insecureRegistry string) (string, error) {
+func MigrateToContainerd(insecureRegistry string, generateContainerdConfig bool) (string, error) {
 	return Render(migrateToContainerdScriptTemplate, Data{
-		"INSECURE_REGISTRY": insecureRegistry,
+		"INSECURE_REGISTRY":          insecureRegistry,
+		"GENERATE_CONTAINERD_CONFIG": generateContainerdConfig,
 	})
 }

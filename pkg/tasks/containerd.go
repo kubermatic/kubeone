@@ -32,6 +32,7 @@ import (
 	"k8c.io/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/util/wait"
 )
 
 const (
@@ -117,22 +118,20 @@ func migrateToContainerdTask(s *state.State, node *kubeone.HostConfig, conn ssh.
 		return errors.New("file is not writable")
 	}
 
-	err = fw.Truncate(0)
-	if err != nil {
+	if err = fw.Truncate(0); err != nil {
 		return err
 	}
 
-	_, err = fw.Seek(0, io.SeekStart)
-	if err != nil {
+	if _, err = fw.Seek(0, io.SeekStart); err != nil {
 		return err
 	}
 
-	_, err = io.Copy(fw, bytes.NewBuffer(buf))
-	if err != nil {
+	if _, err = io.Copy(fw, bytes.NewBuffer(buf)); err != nil {
 		return err
 	}
 
-	migrateScript, err := scripts.MigrateToContainerd(s.Cluster.RegistryConfiguration.InsecureRegistryAddress())
+	generateContainerdConfig := node.OperatingSystem != kubeone.OperatingSystemNameFlatcar
+	migrateScript, err := scripts.MigrateToContainerd(s.Cluster.RegistryConfiguration.InsecureRegistryAddress(), generateContainerdConfig)
 	if err != nil {
 		return err
 	}
@@ -142,12 +141,44 @@ func migrateToContainerdTask(s *state.State, node *kubeone.HostConfig, conn ssh.
 		return err
 	}
 
-	// TODO(kron4eg): replace with better waiting polling
-	sleepTime := 30 * time.Second
-	s.Logger.Infof("Waiting %s to ensure main control plane components are up...", sleepTime)
-	time.Sleep(sleepTime)
+	s.Logger.Infof("Waiting all pods on %q to became Ready...", node.Hostname)
+	err = wait.Poll(10*time.Second, 10*time.Minute, func() (bool, error) {
+		var podsList corev1.PodList
 
-	return nil
+		if perr := s.DynamicClient.List(s.Context, &podsList); perr != nil {
+			return false, err
+		}
+
+		for _, pod := range podsList.Items {
+			if pod.Spec.NodeName != node.Hostname {
+				continue
+			}
+
+			if pod.Status.Phase != corev1.PodRunning {
+				s.Logger.Debugf("Pod %s/%s is not running", pod.Namespace, pod.Name)
+				return false, nil
+			}
+
+			for _, podcond := range pod.Status.Conditions {
+				if podcond.Type == corev1.PodReady && podcond.Status != corev1.ConditionTrue {
+					s.Logger.Debugf("Pod %s/%s is not ready", pod.Namespace, pod.Name)
+					return false, nil
+				}
+			}
+
+			for _, condstatus := range pod.Status.ContainerStatuses {
+				if !condstatus.Ready {
+					s.Logger.Debugf("Container %s in pod %s/%s is not ready", condstatus.Name, pod.Namespace, pod.Name)
+					return false, nil
+				}
+			}
+		}
+
+		s.Logger.Debugf("All pods on %s Node are ready", node.Hostname)
+		return true, nil
+	})
+
+	return err
 }
 
 func unmarshalKubeletFlags(buf []byte) (map[string]string, error) {

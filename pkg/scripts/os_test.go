@@ -165,23 +165,30 @@ func TestMigrateToContainerd(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
-		name             string
-		insecureRegistry string
-		err              error
+		name                     string
+		insecureRegistry         string
+		generateContainerdConfig bool
+		err                      error
 	}{
 		{
-			name: "simple",
+			name:                     "simple",
+			generateContainerdConfig: true,
 		},
 		{
-			name:             "insecureRegistry",
-			insecureRegistry: "some.registry",
+			name:                     "flatcat",
+			generateContainerdConfig: false,
+		},
+		{
+			name:                     "insecureRegistry",
+			insecureRegistry:         "some.registry",
+			generateContainerdConfig: true,
 		},
 	}
 
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := MigrateToContainerd(tt.insecureRegistry)
+			got, err := MigrateToContainerd(tt.insecureRegistry, tt.generateContainerdConfig)
 			if err != tt.err {
 				t.Errorf("MigrateToContainerd() error = %v, wantErr %v", err, tt.err)
 				return

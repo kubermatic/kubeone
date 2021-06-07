@@ -313,7 +313,7 @@ func WithContainerDMigration(t Tasks) Tasks {
 					}
 
 					s.Logger.Warn("Now please rolling restart your machineDeployments to get containerd")
-					s.Logger.Warn("see more at: https://docs.kubermatic.com/kubeone/v1.3/tutorials/rollout_machinedeployment/")
+					s.Logger.Warn("see more at: https://docs.kubermatic.com/kubeone/v1.3/cheat_sheets/rollout_machinedeployment/")
 					return nil
 				},
 				ErrMsg:    "failed to ensure machine-controller",
