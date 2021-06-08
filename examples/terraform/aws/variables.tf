@@ -97,7 +97,7 @@ variable "control_plane_type" {
 variable "control_plane_volume_size" {
   default     = 100
   description = "Size of the EBS volume, in Gb"
-  type        = string
+  type        = number
 }
 
 variable "worker_type" {
