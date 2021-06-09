@@ -48,7 +48,7 @@ const (
 	MachineControllerAppLabelValue = "machine-controller"
 	MachineControllerImageRegistry = "docker.io"
 	MachineControllerImage         = "/kubermatic/machine-controller:"
-	MachineControllerTag           = "v1.25.0"
+	MachineControllerTag           = "v1.30.0"
 )
 
 func CRDs() []runtime.Object {
