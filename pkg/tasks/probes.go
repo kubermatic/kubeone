@@ -54,7 +54,8 @@ func safeguard(s *state.State) error {
 		return err
 	}
 
-	configuredClusterContainerRuntime := s.Cluster.ContainerRuntime.String()
+	cr := s.Cluster.ContainerRuntime
+	configuredClusterContainerRuntime := cr.String()
 
 	for _, node := range nodes.Items {
 		if !s.Cluster.IsManagedNode(node.Name) {
@@ -65,11 +66,17 @@ func safeguard(s *state.State) error {
 		nodesContainerRuntime := strings.Split(node.Status.NodeInfo.ContainerRuntimeVersion, ":")[0]
 
 		if nodesContainerRuntime != configuredClusterContainerRuntime {
+			errMsg := "Migration is not supported yet"
+			if cr.Containerd != nil {
+				errMsg = "Use `kubeone migrate to-containerd`"
+			}
+
 			return errors.Errorf(
-				"Container runtime on node %q is %q, but %q is configured. Migration is not supported yet.",
+				"Container runtime on node %q is %q, but %q is configured. %s.",
 				node.Name,
 				nodesContainerRuntime,
 				configuredClusterContainerRuntime,
+				errMsg,
 			)
 		}
 	}

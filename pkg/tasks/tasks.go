@@ -292,6 +292,36 @@ func WithReset(t Tasks) Tasks {
 	}...)
 }
 
+func WithContainerDMigration(t Tasks) Tasks {
+	return WithHostnameOS(t).
+		append(Tasks{
+			{Fn: validateContainerdInConfig, ErrMsg: "failed to validate config", Retries: 1},
+			{Fn: kubeconfig.BuildKubernetesClientset, ErrMsg: "failed to build kubernetes clientset"},
+			{Fn: migrateToContainerd, ErrMsg: "failed to migrate to containerd"},
+			{Fn: patchCRISocketAnnotation, ErrMsg: "failed to patch Node objects"},
+			{
+				Fn: func(s *state.State) error {
+					s.Logger.Info("Downloading PKI...")
+					return s.RunTaskOnLeader(certificate.DownloadKubePKI)
+				},
+				ErrMsg: "failed to download Kubernetes PKI from the leader",
+			},
+			{
+				Fn: func(s *state.State) error {
+					if err := machinecontroller.Ensure(s); err != nil {
+						return err
+					}
+
+					s.Logger.Warn("Now please rolling restart your machineDeployments to get containerd")
+					s.Logger.Warn("see more at: https://docs.kubermatic.com/kubeone/v1.3/cheat_sheets/rollout_machinedeployment/")
+					return nil
+				},
+				ErrMsg:    "failed to ensure machine-controller",
+				Predicate: func(s *state.State) bool { return s.Cluster.MachineController.Deploy },
+			},
+		}...)
+}
+
 func WithClusterStatus(t Tasks) Tasks {
 	return WithHostnameOS(t).
 		append(Tasks{

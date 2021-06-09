@@ -88,16 +88,16 @@ func configCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		Short: "Commands for working with the KubeOneCluster configuration manifests",
 	}
 
-	cmd.AddCommand(printCmd())
-	cmd.AddCommand(migrateCmd(rootFlags))
-	cmd.AddCommand(machinedeploymentsCmd(rootFlags))
-	cmd.AddCommand(imagesCmd(rootFlags))
+	cmd.AddCommand(configPrintCmd())
+	cmd.AddCommand(configMigrateCmd(rootFlags))
+	cmd.AddCommand(configMachinedeploymentsCmd(rootFlags))
+	cmd.AddCommand(configImagesCmd(rootFlags))
 
 	return cmd
 }
 
-// printCmd setups the print command
-func printCmd() *cobra.Command {
+// configPrintCmd setups the print command
+func configPrintCmd() *cobra.Command {
 	opts := &printOpts{}
 	cmd := &cobra.Command{
 		Use:   "print",
@@ -177,8 +177,8 @@ func printCmd() *cobra.Command {
 	return cmd
 }
 
-// migrateCmd setups the migrate command
-func migrateCmd(rootFlags *pflag.FlagSet) *cobra.Command {
+// configMigrateCmd setups the migrate command
+func configMigrateCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "migrate",
 		Short: "Migrate the v1alpha1 KubeOneCluster manifest to the v1beta1 version",
@@ -203,8 +203,8 @@ The new manifest is printed on the standard output.
 	return cmd
 }
 
-// machinedeploymentsCmd setups the machinedeployments command
-func machinedeploymentsCmd(rootFlags *pflag.FlagSet) *cobra.Command {
+// configMachinedeploymentsCmd setups the machinedeployments command
+func configMachinedeploymentsCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "machinedeployments",
 		Short: "Print the manifest for creating MachineDeployments",
