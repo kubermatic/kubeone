@@ -77,11 +77,9 @@ sudo yum-config-manager --add-repo=https://download.docker.com/linux/centos/dock
 sudo yum-config-manager --save --setopt=docker-ce-stable.module_hotfixes=true
 
 
-sudo yum install -y yum-plugin-versionlock
 
 
-
-sudo yum install -y containerd.io-1.4.3
+sudo yum install -y containerd.io-1.4.*
 sudo yum versionlock add containerd.io
 
 cat <<EOF | sudo tee /etc/containerd/config.toml
