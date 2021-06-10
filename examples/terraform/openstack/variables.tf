@@ -16,6 +16,7 @@ limitations under the License.
 
 variable "cluster_name" {
   description = "Name of the cluster"
+  type        = string
 }
 
 variable "worker_os" {
@@ -25,41 +26,49 @@ variable "worker_os" {
   # * ubuntu
   # * centos
   default = "ubuntu"
+  type    = string
 }
 
 variable "ssh_public_key_file" {
   description = "SSH public key file"
   default     = "~/.ssh/id_rsa.pub"
+  type        = string
 }
 
 variable "ssh_port" {
   description = "SSH port to be used to provision instances"
   default     = 22
+  type        = number
 }
 
 variable "ssh_username" {
   description = "SSH user, used only in output"
   default     = "ubuntu"
+  type        = string
 }
 
 variable "ssh_private_key_file" {
   description = "SSH private key file used to access instances"
   default     = ""
+  type        = string
 }
 
 variable "ssh_agent_socket" {
   description = "SSH Agent socket, default to grab from $SSH_AUTH_SOCK"
   default     = "env:SSH_AUTH_SOCK"
+  type        = string
 }
 
 variable "bastion_port" {
   description = "Bastion SSH port"
   default     = 22
+  type        = number
 }
 
 variable "bastion_user" {
   description = "Bastion SSH username"
   default     = "ubuntu"
+  type        = string
 }
 
 # Provider specific settings
@@ -67,21 +76,25 @@ variable "bastion_user" {
 variable "control_plane_flavor" {
   default     = "m1.small"
   description = "OpenStack instance flavor for the control plane nodes"
+  type        = string
 }
 
 variable "worker_flavor" {
   default     = "m1.small"
   description = "OpenStack instance flavor for the worker nodes"
+  type        = string
 }
 
 variable "lb_flavor" {
   default     = "m1.tiny"
   description = "OpenStack instance flavor for the LoadBalancer node"
+  type        = string
 }
 
 variable "image" {
   default     = ""
   description = "image name to use"
+  type        = string
 }
 
 variable "image_properties_query" {
@@ -90,15 +103,18 @@ variable "image_properties_query" {
     os_version = "18.04"
   }
   description = "in absense of var.image, this will be used to query API for the image"
+  type        = string
 }
 
 variable "subnet_cidr" {
   default     = "192.168.1.0/24"
   description = "OpenStack subnet cidr"
+  type        = string
 }
 
 variable "external_network_name" {
   description = "OpenStack external network name"
+  type        = string
 }
 
 variable "subnet_dns_servers" {
