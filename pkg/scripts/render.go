@@ -27,113 +27,7 @@ import (
 
 var (
 	containerRuntimeTemplates = map[string]string{
-		"apt-docker-ce": heredoc.Docf(`
-			{{ if .CONFIGURE_REPOSITORIES }}
-			curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-			# Docker provides two different apt repos for ubuntu, bionic and focal. The focal repo currently
-			# contains only Docker 19.03.14, which is not validated for all Kubernetes version.
-			# Therefore, we use bionic repo which has all Docker versions.
-			echo "deb https://download.docker.com/linux/ubuntu bionic stable" |
-				sudo tee /etc/apt/sources.list.d/docker.list
-			sudo apt-get update
-			{{ end }}
-
-			{{- if or .FORCE .UPGRADE }}
-			sudo apt-mark unhold docker-ce docker-ce-cli
-			{{- end }}
-
-			{{ $DOCKER_VERSION_TO_INSTALL := "%s" }}
-			{{ if semverCompare "< 1.17" .KUBERNETES_VERSION }}
-			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
-			{{ end }}
-
-			sudo DEBIAN_FRONTEND=noninteractive apt-get install \
-				--option "Dpkg::Options::=--force-confold" \
-				--no-install-recommends \
-				-y \
-				{{- if .FORCE }}
-				--allow-downgrades \
-				{{- end }}
-				docker-ce=5:{{ $DOCKER_VERSION_TO_INSTALL }}* docker-ce-cli=5:{{ $DOCKER_VERSION_TO_INSTALL }}*
-			sudo apt-mark hold docker-ce docker-ce-cli
-			sudo systemctl daemon-reload
-			sudo systemctl enable --now docker
-			`,
-			defaultDockerVersion,
-			defaultLegacyDockerVersion,
-		),
-
-		"yum-docker-ce-amzn": heredoc.Docf(`
-			{{- if or .FORCE .UPGRADE }}
-			sudo yum versionlock delete docker cri-tools || true
-			{{- end }}
-
-			{{ $CRICTL_VERSION_TO_INSTALL := "%s" }}
-			{{ $DOCKER_VERSION_TO_INSTALL := "%s" }}
-			{{ if semverCompare "< 1.17" .KUBERNETES_VERSION }}
-			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
-			{{ end }}
-
-			sudo yum install -y docker-{{ $DOCKER_VERSION_TO_INSTALL }}ce* cri-tools-{{ $CRICTL_VERSION_TO_INSTALL }}*
-			sudo yum versionlock add docker cri-tools
-
-			cat <<EOF | sudo tee /etc/crictl.yaml
-			runtime-endpoint: unix:///var/run/dockershim.sock
-			EOF
-
-			sudo systemctl daemon-reload
-			sudo systemctl enable --now docker
-		`,
-			defaultAmazonCrictlVersion,
-			defaultAmazonDockerVersion,
-			defaultLegacyDockerVersion,
-		),
-
-		"yum-docker-ce": heredoc.Docf(`
-			{{ if .CONFIGURE_REPOSITORIES }}
-			sudo yum install -y yum-utils
-			sudo yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
-			sudo yum-config-manager --save --setopt=docker-ce-stable.module_hotfixes=true >/dev/null
-			# Docker provides two different apt repos for CentOS, 7 and 8. The 8 repo currently
-			# contains only Docker 19.03.14, which is not validated for all Kubernetes version.
-			# Therefore, we use 7 repo which has all Docker versions.
-			sudo sed -i 's/\$releasever/7/g' /etc/yum.repos.d/docker-ce.repo
-			{{ end }}
-
-			{{ if or .FORCE .UPGRADE }}
-			sudo yum versionlock delete docker-ce docker-ce-cli || true
-			{{- end }}
-
-			{{ $DOCKER_VERSION_TO_INSTALL := "%s" }}
-			{{ if semverCompare "< 1.17" .KUBERNETES_VERSION }}
-			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
-			{{ end }}
-
-			sudo yum install -y docker-ce-{{ $DOCKER_VERSION_TO_INSTALL }}* docker-ce-cli-{{ $DOCKER_VERSION_TO_INSTALL }}*
-			sudo yum versionlock add docker-ce docker-ce-cli
-			sudo systemctl daemon-reload
-			sudo systemctl enable --now docker
-			`,
-			defaultDockerVersion,
-			defaultLegacyDockerVersion,
-		),
-
-		"apt-containerd": heredoc.Docf(`
-			{{ if .CONFIGURE_REPOSITORIES }}
-			sudo apt-get update
-			sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common lsb-release
-			curl -fsSL https://download.docker.com/linux/ubuntu/gpg |
-				sudo apt-key add -
-			sudo add-apt-repository "deb https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-			{{ end }}
-
-			{{ if or .FORCE .UPGRADE }}
-			sudo apt-mark unhold containerd.io
-			{{ end }}
-
-			sudo apt-get install -y containerd.io=%s*
-			sudo apt-mark hold containerd.io
-
+		"containerd-config": heredoc.Doc(`
 			cat <<EOF | sudo tee /etc/containerd/config.toml
 			{{ containerdCfg .INSECURE_REGISTRY -}}
 			EOF
@@ -152,6 +46,160 @@ var (
 			sudo systemctl daemon-reload
 			sudo systemctl enable --now containerd
 			sudo systemctl restart containerd
+		`),
+
+		"apt-docker-ce": heredoc.Docf(`
+			{{ if .CONFIGURE_REPOSITORIES }}
+			curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+			# Docker provides two different apt repos for ubuntu, bionic and focal. The focal repo currently
+			# contains only Docker 19.03.14, which is not validated for all Kubernetes version.
+			# Therefore, we use bionic repo which has all Docker versions.
+			echo "deb https://download.docker.com/linux/ubuntu bionic stable" |
+				sudo tee /etc/apt/sources.list.d/docker.list
+			sudo apt-get update
+			{{ end }}
+
+			{{- if or .FORCE .UPGRADE }}
+			sudo apt-mark unhold docker-ce docker-ce-cli containerd.io || true
+			{{- end }}
+
+			{{- $DOCKER_VERSION_TO_INSTALL := "%s" }}
+			{{- if semverCompare "< 1.17" .KUBERNETES_VERSION }}
+			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
+			{{- end }}
+
+			{{- if semverCompare ">= 1.21" .KUBERNETES_VERSION }}
+			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
+			{{- end }}
+
+			sudo DEBIAN_FRONTEND=noninteractive apt-get install \
+				--option "Dpkg::Options::=--force-confold" \
+				--no-install-recommends \
+				-y \
+				{{- if .FORCE }}
+				--allow-downgrades \
+				{{- end }}
+				docker-ce=5:{{ $DOCKER_VERSION_TO_INSTALL }} \
+				docker-ce-cli=5:{{ $DOCKER_VERSION_TO_INSTALL }} \
+				containerd.io=%s
+			sudo apt-mark hold docker-ce docker-ce-cli containerd.io
+
+			sudo systemctl daemon-reload
+			sudo systemctl enable --now containerd
+			sudo systemctl enable --now docker
+			`,
+			defaultDockerVersion,
+			defaultLegacyDockerVersion,
+			latestDockerVersion,
+			defaultContainerdVersion,
+		),
+
+		"yum-docker-ce-amzn": heredoc.Docf(`
+			{{- if or .FORCE .UPGRADE }}
+			sudo yum versionlock delete docker cri-tools containerd
+			{{- end }}
+
+			{{- $CRICTL_VERSION_TO_INSTALL := "%s" }}
+			{{- $DOCKER_VERSION_TO_INSTALL := "%s" }}
+			{{- if semverCompare "< 1.17" .KUBERNETES_VERSION }}
+			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
+			{{- end }}
+
+			{{- if semverCompare ">= 1.21" .KUBERNETES_VERSION }}
+			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
+			{{- end }}
+
+			sudo yum install -y \
+				docker-{{ $DOCKER_VERSION_TO_INSTALL }} \
+				containerd.io-%s \
+				cri-tools-{{ $CRICTL_VERSION_TO_INSTALL }}
+			sudo yum versionlock add docker cri-tools containerd
+
+			cat <<EOF | sudo tee /etc/crictl.yaml
+			runtime-endpoint: unix:///var/run/dockershim.sock
+			EOF
+
+			sudo systemctl daemon-reload
+			sudo systemctl enable --now containerd
+			sudo systemctl enable --now docker
+		`,
+			defaultAmazonCrictlVersion,
+			defaultDockerVersion,
+			defaultLegacyDockerVersion,
+			latestDockerVersion,
+			defaultContainerdVersion,
+		),
+
+		"yum-docker-ce": heredoc.Docf(`
+			{{- if .CONFIGURE_REPOSITORIES }}
+			sudo yum install -y yum-utils
+			sudo yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+			sudo yum-config-manager --save --setopt=docker-ce-stable.module_hotfixes=true >/dev/null
+			{{- end }}
+
+			{{- if or .FORCE .UPGRADE }}
+			sudo yum versionlock delete docker-ce docker-ce-cli containerd.io
+			{{- end }}
+
+			{{- $DOCKER_VERSION_TO_INSTALL := "%s" }}
+			{{- if semverCompare "< 1.17" .KUBERNETES_VERSION }}
+			{{- if .CONFIGURE_REPOSITORIES }}
+			# Docker provides two different apt repos for CentOS, 7 and 8. The 8 repo currently
+			# contains only Docker 19.03.14, which is not validated for all Kubernetes version.
+			# Therefore, we use 7 repo which has all Docker versions.
+			sudo sed -i 's/\$releasever/7/g' /etc/yum.repos.d/docker-ce.repo
+			{{- end }}
+			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
+			{{- end }}
+
+			{{- if semverCompare ">= 1.21" .KUBERNETES_VERSION }}
+			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
+			{{- end }}
+
+			sudo yum install -y \
+				docker-ce-{{ $DOCKER_VERSION_TO_INSTALL }} \
+				docker-ce-cli-{{ $DOCKER_VERSION_TO_INSTALL }} \
+				containerd.io-%s
+			sudo yum versionlock add docker-ce docker-ce-cli containerd.io
+
+			sudo systemctl daemon-reload
+			sudo systemctl enable --now containerd
+			sudo systemctl enable --now docker
+			`,
+			defaultDockerVersion,
+			defaultLegacyDockerVersion,
+			latestDockerVersion,
+			defaultContainerdVersion,
+		),
+
+		"flatcar-docker": heredoc.Doc(`
+			cat <<EOF | sudo tee /etc/crictl.yaml
+			runtime-endpoint: unix:///var/run/dockershim.sock
+			EOF
+
+			sudo systemctl daemon-reload
+			sudo systemctl enable --now docker
+			sudo systemctl restart docker
+			`,
+		),
+
+		"apt-containerd": heredoc.Docf(`
+			{{ if .CONFIGURE_REPOSITORIES }}
+			sudo apt-get update
+			sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common lsb-release
+			curl -fsSL https://download.docker.com/linux/ubuntu/gpg |
+				sudo apt-key add -
+			sudo add-apt-repository "deb https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+			{{ end }}
+
+			{{ if or .FORCE .UPGRADE }}
+			sudo apt-mark unhold containerd.io || true
+			{{ end }}
+
+			sudo apt-get install -y containerd.io=%s
+			sudo apt-mark hold containerd.io
+
+			{{ template "containerd-config" . -}}
 			`,
 			defaultContainerdVersion,
 		),
@@ -167,49 +215,33 @@ var (
 			sudo yum-config-manager --save --setopt=docker-ce-stable.module_hotfixes=true
 			{{ end }}
 
-			sudo yum install -y yum-plugin-versionlock
-
 			{{ if or .FORCE .UPGRADE }}
-			sudo yum versionlock delete containerd.io || true
+			sudo yum versionlock delete containerd.io
 			{{- end }}
 
 			sudo yum install -y containerd.io-%s
 			sudo yum versionlock add containerd.io
 
-			cat <<EOF | sudo tee /etc/containerd/config.toml
-			{{ containerdCfg .INSECURE_REGISTRY -}}
-			EOF
-
-			cat <<EOF | sudo tee /etc/crictl.yaml
-			runtime-endpoint: unix:///run/containerd/containerd.sock
-			EOF
-
-			sudo mkdir -p /etc/systemd/system/containerd.service.d
-			cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/environment.conf
-			[Service]
-			Restart=always
-			EnvironmentFile=-/etc/environment
-			EOF
-
-			sudo systemctl daemon-reload
-			sudo systemctl enable --now containerd
-			sudo systemctl restart containerd
+			{{ template "containerd-config" . -}}
 			`,
 			defaultContainerdVersion,
 		),
 
 		"yum-containerd-amzn": heredoc.Docf(`
 			{{- if or .FORCE .UPGRADE }}
-			sudo yum versionlock delete containerd cri-tools || true
+			sudo yum versionlock delete containerd cri-tools
 			{{- end }}
 
-			sudo yum install -y containerd-%s* cri-tools-%s*
+			sudo yum install -y containerd-%s cri-tools-%s
 			sudo yum versionlock add containerd cri-tools
 
-			cat <<EOF | sudo tee /etc/containerd/config.toml
-			{{ containerdCfg .INSECURE_REGISTRY -}}
-			EOF
+			{{ template "containerd-config" . -}}
+			`,
+			defaultAmazonContainerdVersion,
+			defaultAmazonCrictlVersion,
+		),
 
+		"flatcar-containerd": heredoc.Doc(`
 			cat <<EOF | sudo tee /etc/crictl.yaml
 			runtime-endpoint: unix:///run/containerd/containerd.sock
 			EOF
@@ -225,8 +257,6 @@ var (
 			sudo systemctl enable --now containerd
 			sudo systemctl restart containerd
 			`,
-			defaultAmazonContainerdVersion,
-			defaultAmazonCrictlVersion,
 		),
 	}
 )

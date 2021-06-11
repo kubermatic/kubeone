@@ -73,7 +73,7 @@ sudo add-apt-repository "deb https://download.docker.com/linux/ubuntu $(lsb_rele
 
 
 
-sudo apt-get install -y containerd.io=1.4.3*
+sudo apt-get install -y containerd.io=1.4.*
 sudo apt-mark hold containerd.io
 
 cat <<EOF | sudo tee /etc/containerd/config.toml
