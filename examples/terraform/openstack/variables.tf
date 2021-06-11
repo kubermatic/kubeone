@@ -103,7 +103,7 @@ variable "image_properties_query" {
     os_version = "18.04"
   }
   description = "in absense of var.image, this will be used to query API for the image"
-  type        = string
+  type        = map(any)
 }
 
 variable "subnet_cidr" {
