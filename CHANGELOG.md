@@ -1,8 +1,20 @@
 # Changelog
 
+# [v1.2.2](https://github.com/kubermatic/kubeone/releases/tag/v1.2.2) - 2021-06-11
+
+## Changed
+
+### Bug Fixes
+
+* Fix AWS config for terraform 0.15 ([#1372](https://github.com/kubermatic/kubeone/pull/1372))
+  * AWS terraform config now works under terraform 0.15+ (including 1.0)
+* Update machinecontroller to v1.30.0 ([#1370](https://github.com/kubermatic/kubeone/pull/1370))
+  * machinecontroller to v1.30.0 relaxes docker / containerd version constraints
+* Relax docker/containerd version constraints ([#1371](https://github.com/kubermatic/kubeone/pull/1371))
+
 # [v1.2.1](https://github.com/kubermatic/kubeone/releases/tag/v1.2.1) - 2021-03-23
 
-**Check out the changelog for the [v1.2.0 release](https://github.com/kubermatic/kubeone/releases/tag/v1.2.0) for more information about what changes were introduced in the 1.2 release.**
+**Check out the changelog for the [v1.2.1 release](https://github.com/kubermatic/kubeone/releases/tag/v1.2.1) for more information about what changes were introduced in the 1.2 release.**
 
 ## Changed
 
