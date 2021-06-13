@@ -127,6 +127,16 @@ func webhookDeployment(cluster *kubeoneapi.KubeOneCluster, credentialsFilePath, 
 		return nil, errors.Wrap(err, "unable to get env var bindings for a secret")
 	}
 
+	args := []string{
+		"-logtostderr",
+		"-v", "4",
+		"-listen-address", fmt.Sprintf("0.0.0.0:%d", WebhookPort),
+	}
+
+	if cluster.CloudProvider.External {
+		args = append(args, "-node-external-cloud-provider")
+	}
+
 	return &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "machine-controller-webhook",
@@ -186,15 +196,11 @@ func webhookDeployment(cluster *kubeoneapi.KubeOneCluster, credentialsFilePath, 
 					},
 					Containers: []corev1.Container{
 						{
-							Name:            "machine-controller-webhook",
-							Image:           image,
-							ImagePullPolicy: corev1.PullIfNotPresent,
-							Command:         []string{"/usr/local/bin/webhook"},
-							Args: []string{
-								"-logtostderr",
-								"-v", "4",
-								"-listen-address", fmt.Sprintf("0.0.0.0:%d", WebhookPort),
-							},
+							Name:                     "machine-controller-webhook",
+							Image:                    image,
+							ImagePullPolicy:          corev1.PullIfNotPresent,
+							Command:                  []string{"/usr/local/bin/webhook"},
+							Args:                     args,
 							Env:                      envVar,
 							TerminationMessagePath:   corev1.TerminationMessagePathDefault,
 							TerminationMessagePolicy: corev1.TerminationMessageReadFile,

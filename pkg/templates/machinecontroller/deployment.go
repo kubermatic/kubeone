@@ -775,10 +775,6 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster, credentials
 		args = append(args, "-node-no-proxy", cluster.Proxy.NoProxy)
 	}
 
-	if cluster.CloudProvider.External {
-		args = append(args, "-external-cloud-provider")
-	}
-
 	insecureRegistry := cluster.RegistryConfiguration.InsecureRegistryAddress()
 	if insecureRegistry != "" {
 		args = append(args, "-node-insecure-registries", insecureRegistry)
