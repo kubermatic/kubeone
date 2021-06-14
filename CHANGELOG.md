@@ -6,8 +6,8 @@
 
 ### Bug Fixes
 
-* Pass the `-node-external-cloud-provider` flag to the machine-controller-webhook. This fixes the issue with the worker nodes not using the external CCM on the clusters with the external CCM enabled.
-* Disable `repo_gpgcheck` for the Kubernetes yum repository. This fixes the cluster provisioning and upgrading failures for CentOS/RHEL caused by yum failing to install Kubernetes packages.
+* Pass the `-node-external-cloud-provider` flag to the machine-controller-webhook. This fixes the issue with the worker nodes not using the external CCM on the clusters with the external CCM enabled ([#1380](https://github.com/kubermatic/kubeone/pull/1380))
+* Disable `repo_gpgcheck` for the Kubernetes yum repository. This fixes the cluster provisioning and upgrading failures for CentOS/RHEL caused by yum failing to install Kubernetes packages ([#1304](https://github.com/kubermatic/kubeone/pull/1304))
 
 
 # [v1.2.2](https://github.com/kubermatic/kubeone/releases/tag/v1.2.2) - 2021-06-11
