@@ -150,7 +150,7 @@ func Deploy(s *state.State) error {
 		configMap(buf, s.Cluster.ClusterNetwork.CNI.Canal.MTU),
 		daemonsetServiceAccount(),
 		deploymentServiceAccount(),
-		daemonSet(s.PatchCNI, s.Cluster.ClusterNetwork.PodSubnet, calicoCNIImage, calicoNodeImage, flannelImage),
+		daemonSet(s.Cluster.ClusterNetwork.PodSubnet, calicoCNIImage, calicoNodeImage, flannelImage),
 		controllerDeployment(calicoControllerImage),
 	)
 

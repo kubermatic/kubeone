@@ -44,8 +44,6 @@ func Ensure(s *state.State) error {
 	s.Logger.Info("Ensure external CCM is up to date...")
 	var err error
 
-	s.PatchCNI = true
-
 	switch {
 	case s.Cluster.CloudProvider.Hetzner != nil:
 		err = ensureHetzner(s)
