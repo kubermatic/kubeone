@@ -39,19 +39,19 @@ var (
 )
 
 // Applier holds structure used to fetch, parse, and apply addons
-type Applier struct {
-	TemplateData TemplateData
+type applier struct {
+	TemplateData templateData
 	LocalFS      fs.FS
 	EmbededFS    embed.FS
 }
 
 // TemplateData is data available in the addons render template
-type TemplateData struct {
+type templateData struct {
 	Config      *kubeoneapi.KubeOneCluster
 	Credentials map[string]string
 }
 
-func NewAddonsApplier(s *state.State) (*Applier, error) {
+func newAddonsApplier(s *state.State) (*applier, error) {
 	var localFS fs.FS
 	if s.Cluster.Addons != nil && s.Cluster.Addons.Enable {
 		addonsPath := s.Cluster.Addons.Path
@@ -71,13 +71,13 @@ func NewAddonsApplier(s *state.State) (*Applier, error) {
 		return nil, errors.Wrap(err, "unable to fetch credentials")
 	}
 
-	templateData := TemplateData{
+	td := templateData{
 		Config:      s.Cluster,
 		Credentials: creds,
 	}
 
-	return &Applier{
-		TemplateData: templateData,
+	return &applier{
+		TemplateData: td,
 		LocalFS:      localFS,
 		EmbededFS:    addons.F,
 	}, nil

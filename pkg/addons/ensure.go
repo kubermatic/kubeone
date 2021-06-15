@@ -44,7 +44,7 @@ var (
 // EnsureUserAddons deploys addons that are provided by the user and that are
 // not embedded.
 func EnsureUserAddons(s *state.State) error {
-	applier, err := NewAddonsApplier(s)
+	applier, err := newAddonsApplier(s)
 	if err != nil {
 		return err
 	}
@@ -83,11 +83,11 @@ func EnsureUserAddons(s *state.State) error {
 	return nil
 }
 
-// EnsureAddonByName deploys an addon by its name. If the addon is not found
+// ensureAddonByName deploys an addon by its name. If the addon is not found
 // in the addons directory, or if the addons or not enabled, it will search
 // for the embedded addons.
-func EnsureAddonByName(s *state.State, addonName string) error {
-	applier, err := NewAddonsApplier(s)
+func ensureAddonByName(s *state.State, addonName string) error { //nolint:deadcode,unused
+	applier, err := newAddonsApplier(s)
 	if err != nil {
 		return err
 	}
@@ -132,7 +132,7 @@ func EnsureAddonByName(s *state.State, addonName string) error {
 }
 
 // loadAndApplyAddon parses the addons manifests and runs kubectl apply.
-func (a *Applier) loadAndApplyAddon(s *state.State, f fs.FS, addonName string) error {
+func (a *applier) loadAndApplyAddon(s *state.State, f fs.FS, addonName string) error {
 	manifest, err := a.getManifestsFromDirectory(s, f, addonName)
 	if err != nil {
 		return errors.WithStack(err)

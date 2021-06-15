@@ -187,14 +187,14 @@ func TestEnsureAddonsLabelsOnResources(t *testing.T) {
 				t.Fatalf("unable to create temporary addon manifest: %v", err)
 			}
 
-			templateData := TemplateData{
+			td := templateData{
 				Config: &kubeoneapi.KubeOneCluster{
 					Name: "kubeone-test",
 				},
 			}
 
-			applier := &Applier{
-				TemplateData: templateData,
+			applier := &applier{
+				TemplateData: td,
 				LocalFS:      os.DirFS(addonsDir),
 			}
 
@@ -268,7 +268,7 @@ func TestImageRegistryParsing(t *testing.T) {
 				t.Fatalf("unable to create temporary addon manifest: %v", err)
 			}
 
-			templateData := TemplateData{
+			td := templateData{
 				Config: &kubeoneapi.KubeOneCluster{
 					Name:                  "kubeone-test",
 					RegistryConfiguration: tc.registryConfigurtion,
@@ -280,8 +280,8 @@ func TestImageRegistryParsing(t *testing.T) {
 				overwriteRegistry = tc.registryConfigurtion.OverwriteRegistry
 			}
 
-			applier := &Applier{
-				TemplateData: templateData,
+			applier := &applier{
+				TemplateData: td,
 				LocalFS:      os.DirFS(addonsDir),
 			}
 

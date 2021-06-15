@@ -39,7 +39,7 @@ import (
 	"sigs.k8s.io/yaml"
 )
 
-func (a *Applier) getManifestsFromDirectory(s *state.State, f fs.FS, addonName string) (string, error) {
+func (a *applier) getManifestsFromDirectory(s *state.State, f fs.FS, addonName string) (string, error) {
 	overwriteRegistry := ""
 	if s.Cluster.RegistryConfiguration != nil && s.Cluster.RegistryConfiguration.OverwriteRegistry != "" {
 		overwriteRegistry = s.Cluster.RegistryConfiguration.OverwriteRegistry
@@ -61,7 +61,7 @@ func (a *Applier) getManifestsFromDirectory(s *state.State, f fs.FS, addonName s
 }
 
 // loadAddonsManifests loads all YAML files from a given directory and runs the templating logic
-func (a *Applier) loadAddonsManifests(f fs.FS, addonName string, logger logrus.FieldLogger, verbose bool, overwriteRegistry string) ([]runtime.RawExtension, error) {
+func (a *applier) loadAddonsManifests(f fs.FS, addonName string, logger logrus.FieldLogger, verbose bool, overwriteRegistry string) ([]runtime.RawExtension, error) {
 	manifests := []runtime.RawExtension{}
 
 	files, err := fs.ReadDir(f, filepath.Join(".", addonName))
