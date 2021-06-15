@@ -26,7 +26,7 @@ import (
 
 // daemonSet installs the calico/node container, as well as the Calico CNI plugins and network config on each
 // master and worker node in a Kubernetes cluster
-func daemonSet(ifacePatch bool, clusterCIDR, installCNIImage, calicoImage, flannelImage string) *appsv1.DaemonSet {
+func daemonSet(clusterCIDR, installCNIImage, calicoImage, flannelImage string) *appsv1.DaemonSet {
 	maxUnavailable := intstr.FromInt(1)
 	terminationGracePeriodSeconds := int64(0)
 	privileged := true
@@ -67,17 +67,14 @@ func daemonSet(ifacePatch bool, clusterCIDR, installCNIImage, calicoImage, flann
 				},
 			},
 		},
-	}
-
-	if ifacePatch {
-		flannelEnv = append(flannelEnv, corev1.EnvVar{
+		{
 			Name: "FLANNELD_IFACE",
 			ValueFrom: &corev1.EnvVarSource{
 				FieldRef: &corev1.ObjectFieldSelector{
 					FieldPath: "status.hostIP",
 				},
 			},
-		})
+		},
 	}
 
 	return &appsv1.DaemonSet{

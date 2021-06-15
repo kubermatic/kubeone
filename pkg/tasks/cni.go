@@ -51,12 +51,3 @@ func ensureCNIExternal(s *state.State) error {
 	s.Logger.Infoln("External CNI plugin will be used")
 	return nil
 }
-
-func patchCNI(s *state.State) error {
-	if !s.PatchCNI {
-		return nil
-	}
-
-	s.Logger.Info("Patching CNI...")
-	return ensureCNI(s)
-}

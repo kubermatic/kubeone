@@ -90,7 +90,6 @@ type State struct {
 	ForceUpgrade              bool
 	ForceInstall              bool
 	UpgradeMachineDeployments bool
-	PatchCNI                  bool
 	CredentialsFilePath       string
 	ManifestFilePath          string
 	PauseImage                string

@@ -217,10 +217,6 @@ func WithResources(t Tasks) Tasks {
 				Predicate:   func(s *state.State) bool { return s.Cluster.CloudProvider.External },
 			},
 			{
-				Fn:     patchCNI,
-				ErrMsg: "failed to patch CNI",
-			},
-			{
 				Fn:     joinStaticWorkerNodes,
 				ErrMsg: "failed to join worker nodes to the cluster",
 			},
