@@ -192,7 +192,13 @@ func TestEnsureAddonsLabelsOnResources(t *testing.T) {
 					Name: "kubeone-test",
 				},
 			}
-			manifests, err := loadAddonsManifests(addonsDir, nil, false, templateData, "")
+
+			applier := &Applier{
+				TemplateData: templateData,
+				LocalFS:      os.DirFS(addonsDir),
+			}
+
+			manifests, err := applier.loadAddonsManifests(applier.LocalFS, ".", nil, false, "")
 			if err != nil {
 				t.Fatalf("unable to load manifests: %v", err)
 			}
@@ -274,7 +280,12 @@ func TestImageRegistryParsing(t *testing.T) {
 				overwriteRegistry = tc.registryConfigurtion.OverwriteRegistry
 			}
 
-			manifests, err := loadAddonsManifests(addonsDir, nil, false, templateData, overwriteRegistry)
+			applier := &Applier{
+				TemplateData: templateData,
+				LocalFS:      os.DirFS(addonsDir),
+			}
+
+			manifests, err := applier.loadAddonsManifests(applier.LocalFS, ".", nil, false, overwriteRegistry)
 			if err != nil {
 				t.Fatalf("unable to load manifests: %v", err)
 			}

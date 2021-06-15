@@ -20,7 +20,7 @@ import (
 	"bufio"
 	"bytes"
 	"io"
-	"io/ioutil"
+	"io/fs"
 	"path/filepath"
 	"strings"
 	"text/template"
@@ -39,52 +39,18 @@ import (
 	"sigs.k8s.io/yaml"
 )
 
-func traverseAddonsDirectory(s *state.State) (string, []string, error) {
-	addonsPath := s.Cluster.Addons.Path
-	if !filepath.IsAbs(addonsPath) && s.ManifestFilePath != "" {
-		manifestAbsPath, err := filepath.Abs(filepath.Dir(s.ManifestFilePath))
-		if err != nil {
-			return "", nil, errors.Wrap(err, "unable to get absolute path to the cluster manifest")
-		}
-		addonsPath = filepath.Join(manifestAbsPath, addonsPath)
-	}
-
-	dirInfo, err := ioutil.ReadDir(addonsPath)
-	if err != nil {
-		return "", nil, errors.Wrapf(err, "failed to read the addons directory %s", addonsPath)
-	}
-
-	var dirs []string
-	for _, d := range dirInfo {
-		if d.IsDir() {
-			dirs = append(dirs, d.Name())
-		}
-	}
-
-	// We're doing this to support legacy addons where all addons are in the
-	// root directory.
-	// The root directory is intentionally applied at the end in order to
-	// relabel manifests that are moved from the addons directory to a
-	// subdirectory.
-	dirs = append(dirs, "")
-
-	return addonsPath, dirs, nil
-}
-
-func getManifestsFromDirectory(s *state.State, templateData TemplateData, addonsPath, directory string) (string, error) {
-	addonsPath = filepath.Join(addonsPath, directory)
-
+func (a *Applier) getManifestsFromDirectory(s *state.State, f fs.FS, addonName string) (string, error) {
 	overwriteRegistry := ""
 	if s.Cluster.RegistryConfiguration != nil && s.Cluster.RegistryConfiguration.OverwriteRegistry != "" {
 		overwriteRegistry = s.Cluster.RegistryConfiguration.OverwriteRegistry
 	}
 
-	manifests, err := loadAddonsManifests(addonsPath, s.Logger, s.Verbose, templateData, overwriteRegistry)
+	manifests, err := a.loadAddonsManifests(f, addonName, s.Logger, s.Verbose, overwriteRegistry)
 	if err != nil {
 		return "", err
 	}
 
-	rawManifests, err := ensureAddonsLabelsOnResources(manifests, directory)
+	rawManifests, err := ensureAddonsLabelsOnResources(manifests, addonName)
 	if err != nil {
 		return "", err
 	}
@@ -95,20 +61,20 @@ func getManifestsFromDirectory(s *state.State, templateData TemplateData, addons
 }
 
 // loadAddonsManifests loads all YAML files from a given directory and runs the templating logic
-func loadAddonsManifests(addonsPath string, logger logrus.FieldLogger, verbose bool, templateData TemplateData, overwriteRegistry string) ([]runtime.RawExtension, error) {
+func (a *Applier) loadAddonsManifests(f fs.FS, addonName string, logger logrus.FieldLogger, verbose bool, overwriteRegistry string) ([]runtime.RawExtension, error) {
 	manifests := []runtime.RawExtension{}
 
-	files, err := ioutil.ReadDir(addonsPath)
+	files, err := fs.ReadDir(f, filepath.Join(".", addonName))
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to read the addons directory %s", addonsPath)
+		return nil, errors.Wrapf(err, "failed to read the addons directory %s", addonName)
 	}
 
 	for _, file := range files {
-		filePath := filepath.Join(addonsPath, file.Name())
+		filePath := filepath.Join(addonName, file.Name())
 		if file.IsDir() {
 			continue
 		}
-		ext := strings.ToLower(filepath.Ext(filePath))
+		ext := strings.ToLower(filepath.Ext(file.Name()))
 		// Only YAML, YML and JSON manifests are supported
 		switch ext {
 		case ".yaml", ".yml", ".json":
@@ -122,7 +88,7 @@ func loadAddonsManifests(addonsPath string, logger logrus.FieldLogger, verbose b
 			logger.Infof("Parsing addons manifest '%s'\n", file.Name())
 		}
 
-		manifestBytes, err := ioutil.ReadFile(filePath)
+		manifestBytes, err := fs.ReadFile(f, filePath)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to load addon %s", file.Name())
 		}
@@ -132,7 +98,7 @@ func loadAddonsManifests(addonsPath string, logger logrus.FieldLogger, verbose b
 			return nil, errors.Wrapf(err, "failed to template addons manifest %s", file.Name())
 		}
 		buf := bytes.NewBuffer([]byte{})
-		if err := tpl.Execute(buf, templateData); err != nil {
+		if err := tpl.Execute(buf, a.TemplateData); err != nil {
 			return nil, errors.Wrapf(err, "failed to template addons manifest %s", file.Name())
 		}
 

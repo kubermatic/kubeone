@@ -200,7 +200,7 @@ func WithResources(t Tasks) Tasks {
 				Predicate:   func(s *state.State) bool { return s.Cluster.CABundle != "" },
 			},
 			{
-				Fn:          addons.Ensure,
+				Fn:          addons.EnsureUserAddons,
 				ErrMsg:      "failed to apply addons",
 				Description: "ensure addons",
 				Predicate:   func(s *state.State) bool { return s.Cluster.Addons != nil && s.Cluster.Addons.Enable },
