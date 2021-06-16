@@ -38,7 +38,7 @@ variable "ssh_public_key_file" {
 variable "ssh_port" {
   description = "SSH port to be used to provision instances"
   default     = 22
-  type        = string
+  type        = number
 }
 
 variable "ssh_username" {
