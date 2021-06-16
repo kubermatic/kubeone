@@ -20,7 +20,7 @@ import (
 	"net/url"
 
 	"github.com/pkg/errors"
-	"go.etcd.io/etcd/v3/clientv3"
+	clientv3 "go.etcd.io/etcd/client/v3"
 
 	"k8c.io/kubeone/pkg/clusterstatus/preflightstatus"
 	"k8c.io/kubeone/pkg/etcdutil"

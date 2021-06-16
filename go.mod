@@ -10,8 +10,7 @@ require (
 	github.com/aws/aws-sdk-go v1.36.2
 	github.com/docker/distribution v2.7.1+incompatible
 	github.com/dominodatalab/os-release v0.0.0-20190522011736-bcdb4a3e3c2f
-	github.com/gogo/protobuf v1.3.2 // indirect
-	github.com/google/go-cmp v0.5.4
+	github.com/google/go-cmp v0.5.5
 	github.com/imdario/mergo v0.3.11
 	github.com/koron-go/prefixw v0.0.0-20181013140428-271b207a7572
 	github.com/kubermatic/machine-controller v1.28.0
@@ -21,10 +20,10 @@ require (
 	github.com/sirupsen/logrus v1.7.0
 	github.com/spf13/cobra v1.1.1
 	github.com/spf13/pflag v1.0.5
-	go.etcd.io/etcd/v3 v3.3.0-rc.0.0.20200728214110-6c81b20ec8de
+	go.etcd.io/etcd/client/v3 v3.5.0
 	golang.org/x/crypto v0.0.0-20201217014255-9d1352758620
-	golang.org/x/term v0.0.0-20201117132131-f5c789dd3221
-	google.golang.org/grpc v1.33.2
+	golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1
+	google.golang.org/grpc v1.38.0
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/api v0.19.4
 	k8s.io/apiextensions-apiserver v0.19.4

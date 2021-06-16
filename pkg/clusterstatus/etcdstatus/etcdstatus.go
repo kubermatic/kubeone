@@ -24,7 +24,7 @@ import (
 	"strconv"
 
 	"github.com/pkg/errors"
-	"go.etcd.io/etcd/v3/clientv3"
+	clientv3 "go.etcd.io/etcd/client/v3"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/etcdutil"
