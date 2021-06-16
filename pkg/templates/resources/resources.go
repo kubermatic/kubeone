@@ -17,5 +17,11 @@ limitations under the License.
 package resources
 
 const (
-	VirtualIP = "169.254.20.10"
+	NodeLocalDNSVirtualIP = "169.254.20.10"
 )
+
+func All() map[string]string {
+	return map[string]string{
+		"NodeLocalDNSVirtualIP": NodeLocalDNSVirtualIP,
+	}
+}

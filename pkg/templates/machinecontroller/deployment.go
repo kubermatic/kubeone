@@ -765,7 +765,7 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster, credentials
 		"-v", "4",
 		"-health-probe-address", "0.0.0.0:8085",
 		"-metrics-address", "0.0.0.0:8080",
-		"-cluster-dns", resources.VirtualIP,
+		"-cluster-dns", resources.NodeLocalDNSVirtualIP,
 		"-node-csr-approver",
 	}
 

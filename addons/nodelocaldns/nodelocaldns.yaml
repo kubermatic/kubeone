@@ -127,7 +127,7 @@ spec:
         - -c
         - |-
           sleep 10;
-          exec /node-cache -localip 169.254.20.10 -conf /etc/Corefile -upstreamsvc kube-dns-upstream
+          exec /node-cache -localip {{ .Resources.NodeLocalDNSVirtualIP }} -conf /etc/Corefile -upstreamsvc kube-dns-upstream
         resources:
           requests:
             cpu: 25m
@@ -146,7 +146,7 @@ spec:
           protocol: TCP
         livenessProbe:
           httpGet:
-            host: "169.254.20.10"
+            host: "{{ .Resources.NodeLocalDNSVirtualIP }}"
             path: /health
             port: 8080
           initialDelaySeconds: 60
