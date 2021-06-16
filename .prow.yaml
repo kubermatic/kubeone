@@ -660,7 +660,7 @@ presubmits:
   #########################################################
   # E2E/Upgrade tests (AWS)
   #########################################################
-  - name: pull-kubeone-e2e-aws-upgrade-containerd-1.17-1.18
+  - name: pull-kubeone-e2e-aws-upgrade-containerd-1.18-1.19
     run_if_changed: "(pkg/|examples/terraform/aws|hack/|test/)"
     decorate: true
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
@@ -683,9 +683,9 @@ presubmits:
             - name: TF_VAR_initial_machinedeployment_spotinstances
               value: "true"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.17.17"
-            - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.18.20"
+            - name: TEST_CLUSTER_TARGET_VERSION
+              value: "1.19.12"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
