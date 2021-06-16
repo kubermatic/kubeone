@@ -31,7 +31,6 @@ import (
 	"k8c.io/kubeone/pkg/kubeflags"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/kubeadm/kubeadmargs"
-	"k8c.io/kubeone/pkg/templates/nodelocaldns"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -165,7 +164,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		CgroupDriver:       "systemd",
 		ReadOnlyPort:       0,
 		RotateCertificates: true,
-		ClusterDNS:         []string{nodelocaldns.VirtualIP},
+		ClusterDNS:         []string{"169.254.20.10"},
 		Authentication: kubeletconfigv1beta1.KubeletAuthentication{
 			Anonymous: kubeletconfigv1beta1.KubeletAnonymousAuthentication{
 				Enabled: &bfalse,
@@ -319,7 +318,7 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Obje
 		CgroupDriver:       "systemd",
 		ReadOnlyPort:       0,
 		RotateCertificates: true,
-		ClusterDNS:         []string{nodelocaldns.VirtualIP},
+		ClusterDNS:         []string{"169.254.20.10"},
 		Authentication: kubeletconfigv1beta1.KubeletAuthentication{
 			Anonymous: kubeletconfigv1beta1.KubeletAnonymousAuthentication{
 				Enabled: &bfalse,
