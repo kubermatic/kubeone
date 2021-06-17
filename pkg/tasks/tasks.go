@@ -28,7 +28,6 @@ import (
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/externalccm"
 	"k8c.io/kubeone/pkg/templates/machinecontroller"
-	"k8c.io/kubeone/pkg/templates/nodelocaldns"
 )
 
 type Tasks []Task
@@ -175,7 +174,10 @@ func WithResources(t Tasks) Tasks {
 				ErrMsg: "failed to save kubeconfig to the local machine",
 			},
 			{
-				Fn:          nodelocaldns.Deploy,
+				Fn: func(s *state.State) error {
+					s.Logger.Infoln("Ensure node local DNS cache...")
+					return addons.EnsureAddonByName(s, "nodelocaldns")
+				},
 				ErrMsg:      "failed to deploy nodelocaldns",
 				Description: "ensure nodelocaldns",
 			},

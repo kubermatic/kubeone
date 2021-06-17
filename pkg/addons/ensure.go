@@ -83,10 +83,10 @@ func EnsureUserAddons(s *state.State) error {
 	return nil
 }
 
-// ensureAddonByName deploys an addon by its name. If the addon is not found
+// EnsureAddonByName deploys an addon by its name. If the addon is not found
 // in the addons directory, or if the addons or not enabled, it will search
 // for the embedded addons.
-func ensureAddonByName(s *state.State, addonName string) error { //nolint:deadcode,unused
+func EnsureAddonByName(s *state.State, addonName string) error {
 	applier, err := newAddonsApplier(s)
 	if err != nil {
 		return err

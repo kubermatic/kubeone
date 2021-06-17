@@ -29,7 +29,7 @@ import (
 	"k8c.io/kubeone/pkg/kubeconfig"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/images"
-	"k8c.io/kubeone/pkg/templates/nodelocaldns"
+	"k8c.io/kubeone/pkg/templates/resources"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -765,7 +765,7 @@ func machineControllerDeployment(cluster *kubeoneapi.KubeOneCluster, credentials
 		"-v", "4",
 		"-health-probe-address", "0.0.0.0:8085",
 		"-metrics-address", "0.0.0.0:8080",
-		"-cluster-dns", nodelocaldns.VirtualIP,
+		"-cluster-dns", resources.NodeLocalDNSVirtualIP,
 		"-node-csr-approver",
 	}
 
