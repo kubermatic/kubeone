@@ -18,6 +18,7 @@ package kubeconfig
 
 import (
 	"io/fs"
+	"os"
 
 	"github.com/pkg/errors"
 
@@ -25,6 +26,7 @@ import (
 	"k8c.io/kubeone/pkg/ssh/sshiofs"
 	"k8c.io/kubeone/pkg/state"
 
+	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -62,6 +64,10 @@ func BuildKubernetesClientset(s *state.State) error {
 	if err != nil {
 		return errors.Wrap(err, "unable to build config from kubeconfig bytes")
 	}
+
+	s.RESTConfig.WarningHandler = rest.NewWarningWriter(os.Stderr, rest.WarningWriterOptions{
+		Deduplicate: true,
+	})
 
 	tunn, err := s.Connector.Tunnel(s.Cluster.RandomHost())
 	if err != nil {
