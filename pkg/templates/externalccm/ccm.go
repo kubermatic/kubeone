@@ -48,7 +48,7 @@ func Ensure(s *state.State) error {
 
 	switch {
 	case s.Cluster.CloudProvider.Hetzner != nil:
-		err = ensureHetzner(s)
+		err = addons.EnsureAddonByName(s, resources.AddonCCMHetzner)
 	case s.Cluster.CloudProvider.DigitalOcean != nil:
 		err = addons.EnsureAddonByName(s, resources.AddonCCMDigitalOcean)
 	case s.Cluster.CloudProvider.Packet != nil:
