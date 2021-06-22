@@ -39,6 +39,7 @@ var (
 	// binary. Those addons are skipped when applying the user-provided addons
 	embeddedAddons = map[string]string{
 		resources.AddonCCMDigitalOcean: "",
+		resources.AddonCCMHetzner:      "",
 		resources.AddonNodeLocalDNS:    "",
 	}
 )
