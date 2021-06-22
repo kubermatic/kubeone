@@ -106,7 +106,7 @@ func EnsureAddonByName(s *state.State, addonName string) error {
 			}
 			if a.Name() == addonName {
 				if err := applier.loadAndApplyAddon(s, applier.LocalFS, a.Name()); err != nil {
-					return errors.Wrap(err, "failed to load and apply addons from the root directory")
+					return errors.Wrap(err, "failed to load and apply addon")
 				}
 				return nil
 			}
@@ -115,7 +115,7 @@ func EnsureAddonByName(s *state.State, addonName string) error {
 
 	addons, eErr := fs.ReadDir(applier.EmbededFS, ".")
 	if eErr != nil {
-		return errors.Wrap(eErr, "failed to read addons directory")
+		return errors.Wrap(eErr, "failed to read embedded addons")
 	}
 
 	for _, a := range addons {
@@ -124,7 +124,7 @@ func EnsureAddonByName(s *state.State, addonName string) error {
 		}
 		if a.Name() == addonName {
 			if err := applier.loadAndApplyAddon(s, applier.EmbededFS, a.Name()); err != nil {
-				return errors.Wrap(err, "failed to load and apply addons from the root directory")
+				return errors.Wrap(err, "failed to load and apply embedded addon")
 			}
 			return nil
 		}
