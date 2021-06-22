@@ -17,6 +17,8 @@ limitations under the License.
 package resources
 
 const (
+	AddonCCMDigitalOcean = "ccm-digitalocean"
+
 	NodeLocalDNSVirtualIP = "169.254.20.10"
 )
 
