@@ -26,6 +26,7 @@ import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/templates/resources"
 )
 
 const (
@@ -37,7 +38,7 @@ var (
 	// embeddedAddons is a list of addons that are embedded in the KubeOne
 	// binary. Those addons are skipped when applying the user-provided addons
 	embeddedAddons = map[string]string{
-		"test-addon": "",
+		resources.AddonCCMDigitalOcean: "",
 	}
 )
 
