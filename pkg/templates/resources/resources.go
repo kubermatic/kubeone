@@ -18,6 +18,7 @@ package resources
 
 const (
 	AddonCCMDigitalOcean = "ccm-digitalocean"
+	AddonNodeLocalDNS    = "nodelocaldns"
 
 	NodeLocalDNSVirtualIP = "169.254.20.10"
 )
