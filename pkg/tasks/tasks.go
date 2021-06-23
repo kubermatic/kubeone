@@ -28,6 +28,7 @@ import (
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/externalccm"
 	"k8c.io/kubeone/pkg/templates/machinecontroller"
+	"k8c.io/kubeone/pkg/templates/resources"
 )
 
 type Tasks []Task
@@ -176,7 +177,7 @@ func WithResources(t Tasks) Tasks {
 			{
 				Fn: func(s *state.State) error {
 					s.Logger.Infoln("Ensure node local DNS cache...")
-					return addons.EnsureAddonByName(s, "nodelocaldns")
+					return addons.EnsureAddonByName(s, resources.AddonNodeLocalDNS)
 				},
 				ErrMsg:      "failed to deploy nodelocaldns",
 				Description: "ensure nodelocaldns",
