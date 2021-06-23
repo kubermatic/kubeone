@@ -22,7 +22,9 @@ import (
 
 	"github.com/pkg/errors"
 
+	"k8c.io/kubeone/pkg/addons"
 	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/templates/resources"
 
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
@@ -48,7 +50,7 @@ func Ensure(s *state.State) error {
 	case s.Cluster.CloudProvider.Hetzner != nil:
 		err = ensureHetzner(s)
 	case s.Cluster.CloudProvider.DigitalOcean != nil:
-		err = ensureDigitalOcean(s)
+		err = addons.EnsureAddonByName(s, resources.AddonCCMDigitalOcean)
 	case s.Cluster.CloudProvider.Packet != nil:
 		err = ensurePacket(s)
 	case s.Cluster.CloudProvider.Openstack != nil:
