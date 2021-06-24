@@ -78,5 +78,7 @@ spec:
                 secretKeyRef:
                   name: cloud-provider-credentials
                   key: HZ_TOKEN
+            {{ if .Config.CloudProvider.Hetzner.NetworkID -}}
             - name: HCLOUD_NETWORK
               value: "{{ .Config.CloudProvider.Hetzner.NetworkID }}"
+            {{- end }}
