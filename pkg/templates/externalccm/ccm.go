@@ -52,7 +52,7 @@ func Ensure(s *state.State) error {
 	case s.Cluster.CloudProvider.DigitalOcean != nil:
 		err = addons.EnsureAddonByName(s, resources.AddonCCMDigitalOcean)
 	case s.Cluster.CloudProvider.Packet != nil:
-		err = ensurePacket(s)
+		err = addons.EnsureAddonByName(s, resources.AddonCCMPacket)
 	case s.Cluster.CloudProvider.Openstack != nil:
 		err = ensureOpenStack(s)
 	case s.Cluster.CloudProvider.Vsphere != nil:
