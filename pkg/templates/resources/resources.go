@@ -19,6 +19,7 @@ package resources
 const (
 	AddonCCMDigitalOcean = "ccm-digitalocean"
 	AddonCCMHetzner      = "ccm-hetzner"
+	AddonCCMPacket       = "ccm-packet"
 	AddonNodeLocalDNS    = "nodelocaldns"
 
 	NodeLocalDNSVirtualIP = "169.254.20.10"
