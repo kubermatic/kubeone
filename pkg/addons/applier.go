@@ -51,7 +51,7 @@ type applier struct {
 type templateData struct {
 	Config         *kubeoneapi.KubeOneCluster
 	Credentials    map[string]string
-	InternalImages internalImages
+	InternalImages *internalImages
 	Resources      map[string]string
 }
 
@@ -78,7 +78,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 	td := templateData{
 		Config:      s.Cluster,
 		Credentials: creds,
-		InternalImages: internalImages{
+		InternalImages: &internalImages{
 			resolver: s.Images.Get,
 		},
 		Resources: resources.All(),
@@ -97,5 +97,9 @@ type internalImages struct {
 
 func (im *internalImages) Get(imgName string) (string, error) {
 	res, err := images.FindResource(imgName)
-	return res.String(), err
+	if err != nil {
+		return "", err
+	}
+
+	return im.resolver(res), nil
 }

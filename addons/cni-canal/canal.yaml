@@ -22,7 +22,7 @@ data:
   # Configure the MTU to use for workload interfaces and tunnels.
   # By default, MTU is auto-detected, and explicitly setting this field should not be required.
   # You can override auto-detection by providing a non-zero value.
-  veth_mtu: "{{ .Cluster.ClusterNetwork.CNI.Canal.MTU }}"
+  veth_mtu: "{{ .Config.ClusterNetwork.CNI.Canal.MTU }}"
 
   # The CNI network configuration to install on each node. The special
   # values in this config will be automatically populated.
@@ -64,7 +64,7 @@ data:
   # Flannel network configuration. Mounted into the flannel container.
   net-conf.json: |
     {
-      "Network": "{{ .Cluster.ClusterNetwork.PodSubnet }}",
+      "Network": "{{ .Config.ClusterNetwork.PodSubnet }}",
       "Backend": {
         "Type": "vxlan"
       }
@@ -3657,7 +3657,7 @@ spec:
             # chosen from this range. Changing this value after installation will have
             # no effect. This should fall within `--cluster-cidr`.
             - name: CALICO_IPV4POOL_CIDR
-              value: "{{ .Cluster.ClusterNetwork.PodSubnet }}"
+              value: "{{ .Config.ClusterNetwork.PodSubnet }}"
             # Disable file logging so `kubectl logs` works.
             - name: CALICO_DISABLE_FILE_LOGGING
               value: "true"
