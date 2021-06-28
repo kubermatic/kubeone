@@ -19,11 +19,11 @@ package tasks
 import (
 	"crypto/x509"
 	"encoding/pem"
-	"errors"
 	"io/fs"
 	"time"
 
 	"github.com/Masterminds/semver/v3"
+	"github.com/pkg/errors"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/certificate/cabundle"
@@ -139,12 +139,22 @@ func ensureCABundleConfigMap(s *state.State) error {
 	return clientutil.CreateOrUpdate(s.Context, s.DynamicClient, cm)
 }
 
-func saveCABundle(ctx *state.State, _ *kubeoneapi.HostConfig, _ ssh.Connection) error {
-	cmd, err := scripts.SaveCABundle(ctx.WorkDir)
+func saveCABundle(s *state.State) error {
+	s.Configuration.AddFile("ca-certs/"+cabundle.FileName, s.Cluster.CABundle)
+
+	return s.RunTaskOnControlPlane(saveCABundleOnControlPlane, state.RunParallel)
+}
+
+func saveCABundleOnControlPlane(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
+	if err := s.Configuration.UploadTo(conn, s.WorkDir); err != nil {
+		return errors.Wrap(err, "failed to upload")
+	}
+
+	cmd, err := scripts.SaveCABundle(s.WorkDir)
 	if err != nil {
 		return err
 	}
 
-	_, _, err = ctx.Runner.RunRaw(cmd)
+	_, _, err = s.Runner.RunRaw(cmd)
 	return err
 }
