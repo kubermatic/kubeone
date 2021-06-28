@@ -22,11 +22,16 @@ output "kubeone_api" {
   }
 }
 
+output "ssh_commands" {
+  value = formatlist("ssh ${var.ssh_username}@%s", hcloud_server.control_plane.*.ipv4_address)
+}
+
 output "kubeone_hosts" {
   description = "Control plane endpoints to SSH to"
 
   value = {
     control_plane = {
+      hostnames            = hcloud_server.control_plane.*.name
       cluster_name         = var.cluster_name
       cloud_provider       = "hetzner"
       private_address      = hcloud_server_network.control_plane.*.ip
@@ -74,4 +79,3 @@ output "kubeone_workers" {
     }
   }
 }
-
