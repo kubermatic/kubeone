@@ -151,9 +151,7 @@ func WithResources(t Tasks) Tasks {
 	return t.append(
 		Tasks{
 			{
-				Fn: func(s *state.State) error {
-					return s.RunTaskOnControlPlane(saveCABundle, state.RunParallel)
-				},
+				Fn: saveCABundle,
 				Predicate: func(s *state.State) bool {
 					return s.Cluster.CABundle != ""
 				},
