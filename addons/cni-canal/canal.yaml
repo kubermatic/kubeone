@@ -3568,7 +3568,7 @@ spec:
         # This container installs the CNI binaries
         # and CNI network config file on each node.
         - name: install-cni
-          image: {{ .InternalImages.CalicoCNI }}
+          image: {{ .InternalImages.Get "CalicoCNI" }}
           command: ["/opt/cni/bin/install"]
           envFrom:
           - configMapRef:
@@ -3620,7 +3620,7 @@ spec:
         # container programs network policy and routes on each
         # host.
         - name: calico-node
-          image: {{ .InternalImages.CalicoNode }}
+          image: {{ .InternalImages.Get "CalicoNode" }}
           envFrom:
           - configMapRef:
               # Allow KUBERNETES_SERVICE_HOST and KUBERNETES_SERVICE_PORT to be overridden for eBPF mode.
@@ -3716,7 +3716,7 @@ spec:
         # This container runs flannel using the kube-subnet-mgr backend
         # for allocating subnets.
         - name: kube-flannel
-          image: {{ .InternalImages.Flannel }}
+          image: {{ .InternalImages.Get "Flannel" }}
           command: [ "/opt/bin/flanneld", "--ip-masq", "--kube-subnet-mgr" ]
           securityContext:
             privileged: true
@@ -3833,7 +3833,7 @@ spec:
       priorityClassName: system-cluster-critical
       containers:
         - name: calico-kube-controllers
-          image: {{ .InternalImages.CalicoController }}
+          image: {{ .InternalImages.Get "CalicoController" }}
           env:
             # Choose which controllers to run.
             - name: ENABLED_CONTROLLERS

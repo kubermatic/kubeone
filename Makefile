@@ -92,3 +92,6 @@ prowfmt:
 	yq --inplace eval .prow.yaml
 
 fmt: shfmt prowfmt
+
+gogenerate:
+	go generate ./pkg/...

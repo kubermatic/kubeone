@@ -29,6 +29,7 @@ import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/templates/images"
 	"k8c.io/kubeone/pkg/templates/resources"
 )
 
@@ -48,9 +49,10 @@ type applier struct {
 
 // TemplateData is data available in the addons render template
 type templateData struct {
-	Config      *kubeoneapi.KubeOneCluster
-	Credentials map[string]string
-	Resources   map[string]string
+	Config         *kubeoneapi.KubeOneCluster
+	Credentials    map[string]string
+	InternalImages internalImages
+	Resources      map[string]string
 }
 
 func newAddonsApplier(s *state.State) (*applier, error) {
@@ -76,7 +78,10 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 	td := templateData{
 		Config:      s.Cluster,
 		Credentials: creds,
-		Resources:   resources.All(),
+		InternalImages: internalImages{
+			resolver: s.Images.Get,
+		},
+		Resources: resources.All(),
 	}
 
 	return &applier{
@@ -84,4 +89,13 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		LocalFS:      localFS,
 		EmbededFS:    addons.F,
 	}, nil
+}
+
+type internalImages struct {
+	resolver func(images.Resource, ...images.GetOpt) string
+}
+
+func (im *internalImages) Get(imgName string) (string, error) {
+	res, err := images.FindResource(imgName)
+	return res.String(), err
 }
