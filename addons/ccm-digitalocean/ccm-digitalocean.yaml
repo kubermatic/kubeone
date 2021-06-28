@@ -32,7 +32,7 @@ spec:
           operator: "Exists"
           effect: NoSchedule
       containers:
-      - image: {{ Registry "docker.io" }}/digitalocean/digitalocean-cloud-controller-manager:v0.1.23
+      - image: {{ .InternalImages.Get "DigitaloceanCCM" }}
         name: digitalocean-cloud-controller-manager
         command:
           - "/bin/digitalocean-cloud-controller-manager"

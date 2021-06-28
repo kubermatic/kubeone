@@ -53,7 +53,7 @@ spec:
           effect: NoSchedule
       hostNetwork: true
       containers:
-        - image: {{ Registry "docker.io" }}/hetznercloud/hcloud-cloud-controller-manager:v1.8.1
+        - image: {{ .InternalImages.Get "HetznerCCM" }}
           name: hcloud-cloud-controller-manager
           command:
             - "/bin/hcloud-cloud-controller-manager"
