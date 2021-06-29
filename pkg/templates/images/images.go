@@ -14,9 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+//go:generate go run golang.org/x/tools/cmd/stringer -type=Resource
+
 package images
 
 import (
+	"fmt"
 	"sort"
 
 	"github.com/docker/distribution/reference"
@@ -30,7 +33,8 @@ func (res Resource) namedReference() reference.Named {
 }
 
 const (
-	CalicoCNI Resource = iota
+	// default 0 index has no meaning
+	CalicoCNI Resource = iota + 1
 	CalicoController
 	CalicoNode
 	DigitaloceanCCM
@@ -46,11 +50,21 @@ const (
 	WeaveNetCNINPC
 )
 
+func FindResource(name string) (Resource, error) {
+	for res := range allResources() {
+		if res.String() == name {
+			return res, nil
+		}
+	}
+
+	return 0, fmt.Errorf("no such resource: %q", name)
+}
+
 func baseResources() map[Resource]string {
 	return map[Resource]string{
-		CalicoCNI:         "docker.io/calico/cni:v3.16.5",
-		CalicoController:  "docker.io/calico/kube-controllers:v3.16.5",
-		CalicoNode:        "docker.io/calico/node:v3.16.5",
+		CalicoCNI:         "docker.io/calico/cni:v3.19.1",
+		CalicoController:  "docker.io/calico/kube-controllers:v3.19.1",
+		CalicoNode:        "docker.io/calico/node:v3.19.1",
 		DNSNodeCache:      "k8s.gcr.io/k8s-dns-node-cache:1.15.13",
 		Flannel:           "quay.io/coreos/flannel:v0.13.0",
 		MachineController: "docker.io/kubermatic/machine-controller:v1.30.0",

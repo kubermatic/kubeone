@@ -16,12 +16,16 @@ limitations under the License.
 
 package resources
 
+// Names of the internal addons
 const (
+	AddonCNICanal        = "cni-canal"
 	AddonCCMDigitalOcean = "ccm-digitalocean"
 	AddonCCMHetzner      = "ccm-hetzner"
 	AddonCCMPacket       = "ccm-packet"
 	AddonNodeLocalDNS    = "nodelocaldns"
+)
 
+const (
 	NodeLocalDNSVirtualIP = "169.254.20.10"
 )
 
