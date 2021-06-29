@@ -79,8 +79,8 @@ func optionalResources() map[Resource]string {
 		OpenstackCCM:    "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.17.0",
 		PacketCCM:       "docker.io/packethost/packet-ccm:v1.0.0",
 		VsphereCCM:      "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.2.1",
-		WeaveNetCNIKube: "docker.io/weaveworks/weave-kube:2.7.0",
-		WeaveNetCNINPC:  "docker.io/weaveworks/weave-npc:2.7.0",
+		WeaveNetCNIKube: "docker.io/weaveworks/weave-kube:2.8.1",
+		WeaveNetCNINPC:  "docker.io/weaveworks/weave-npc:2.8.1",
 	}
 }
 

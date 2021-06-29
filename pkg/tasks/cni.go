@@ -33,22 +33,19 @@ func ensureCNI(s *state.State) error {
 			return err
 		}
 	case s.Cluster.ClusterNetwork.CNI.WeaveNet != nil:
-		return ensureCNIWeaveNet(s)
+		if s.Cluster.ClusterNetwork.CNI.WeaveNet.Encrypted {
+			if err := weave.EnsureSecret(s); err != nil {
+				return err
+			}
+		}
+		if err := addons.EnsureAddonByName(s, resources.AddonCNIWeavenet); err != nil {
+			return err
+		}
 	case s.Cluster.ClusterNetwork.CNI.External != nil:
-		return ensureCNIExternal(s)
+		s.Logger.Infoln("External CNI plugin will be used")
 	default:
 		return errors.Errorf("unknown CNI provider")
 	}
 
 	return kubeconfig.HackIssue321InitDynamicClient(s)
-}
-
-func ensureCNIWeaveNet(s *state.State) error {
-	s.Logger.Infoln("Applying weave-net CNI plugin...")
-	return weave.Deploy(s)
-}
-
-func ensureCNIExternal(s *state.State) error {
-	s.Logger.Infoln("External CNI plugin will be used")
-	return nil
 }
