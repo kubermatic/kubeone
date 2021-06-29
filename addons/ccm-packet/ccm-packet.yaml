@@ -32,7 +32,7 @@ spec:
           operator: "Exists"
           effect: NoSchedule
       containers:
-      - image: {{ Registry "docker.io" }}/packethost/packet-ccm:v1.0.0
+      - image: {{ .InternalImages.Get "PacketCCM" }}
         name: packet-cloud-controller-manager
         command:
           - "./packet-cloud-controller-manager"
