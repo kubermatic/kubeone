@@ -67,7 +67,7 @@ func baseResources() map[Resource]string {
 		CalicoNode:        "docker.io/calico/node:v3.19.1",
 		DNSNodeCache:      "k8s.gcr.io/k8s-dns-node-cache:1.15.13",
 		Flannel:           "quay.io/coreos/flannel:v0.13.0",
-		MachineController: "docker.io/kubermatic/machine-controller:v1.30.0",
+		MachineController: "docker.io/kubermatic/machine-controller:v1.33.0",
 		MetricsServer:     "k8s.gcr.io/metrics-server:v0.3.6",
 	}
 }

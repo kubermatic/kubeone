@@ -13,7 +13,7 @@ require (
 	github.com/google/go-cmp v0.5.5
 	github.com/imdario/mergo v0.3.11
 	github.com/koron-go/prefixw v0.0.0-20181013140428-271b207a7572
-	github.com/kubermatic/machine-controller v1.28.0
+	github.com/kubermatic/machine-controller v1.33.0
 	github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de
 	github.com/pkg/errors v0.9.1
 	github.com/pmezard/go-difflib v1.0.0
@@ -23,7 +23,7 @@ require (
 	go.etcd.io/etcd/client/v3 v3.5.0
 	golang.org/x/crypto v0.0.0-20201217014255-9d1352758620
 	golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1
-	golang.org/x/tools v0.1.4 // indirect
+	golang.org/x/tools v0.1.4
 	google.golang.org/grpc v1.38.0
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/api v0.19.4
