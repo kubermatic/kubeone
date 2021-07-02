@@ -18,10 +18,11 @@ package resources
 
 // Names of the internal addons
 const (
-	AddonCNICanal        = "cni-canal"
 	AddonCCMDigitalOcean = "ccm-digitalocean"
 	AddonCCMHetzner      = "ccm-hetzner"
 	AddonCCMPacket       = "ccm-packet"
+	AddonCNICanal        = "cni-canal"
+	AddonCNIWeavenet     = "cni-weavenet"
 	AddonNodeLocalDNS    = "nodelocaldns"
 )
 
