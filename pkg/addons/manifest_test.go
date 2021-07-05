@@ -198,7 +198,7 @@ func TestEnsureAddonsLabelsOnResources(t *testing.T) {
 				LocalFS:      os.DirFS(addonsDir),
 			}
 
-			manifests, err := applier.loadAddonsManifests(applier.LocalFS, ".", nil, false, "")
+			manifests, err := applier.loadAddonsManifests(applier.LocalFS, ".", nil, false, "", false)
 			if err != nil {
 				t.Fatalf("unable to load manifests: %v", err)
 			}
@@ -285,7 +285,7 @@ func TestImageRegistryParsing(t *testing.T) {
 				LocalFS:      os.DirFS(addonsDir),
 			}
 
-			manifests, err := applier.loadAddonsManifests(applier.LocalFS, ".", nil, false, overwriteRegistry)
+			manifests, err := applier.loadAddonsManifests(applier.LocalFS, ".", nil, false, overwriteRegistry, false)
 			if err != nil {
 				t.Fatalf("unable to load manifests: %v", err)
 			}
@@ -307,16 +307,53 @@ func TestImageRegistryParsing(t *testing.T) {
 }
 
 func TestCABundleFuncs(t *testing.T) {
-	tests := []string{
-		"caBundleEnvVar",
-		"caBundleVolume",
-		"caBundleVolumeMount",
+	testCases := []struct {
+		name           string
+		f              string
+		caBundle       bool
+		expectedOutput bool
+	}{
+		{
+			name:           "caBundleEnvVar without caBundle",
+			f:              "caBundleEnvVar",
+			caBundle:       false,
+			expectedOutput: false,
+		},
+		{
+			name:           "caBundleVolume without caBundle",
+			f:              "caBundleVolume",
+			caBundle:       false,
+			expectedOutput: false,
+		},
+		{
+			name:           "caBundleVolumeMount without caBundle",
+			f:              "caBundleVolumeMount",
+			caBundle:       false,
+			expectedOutput: false,
+		},
+		{
+			name:           "caBundleEnvVar with caBundle",
+			f:              "caBundleEnvVar",
+			caBundle:       true,
+			expectedOutput: true,
+		},
+		{
+			name:           "caBundleVolume with caBundle",
+			f:              "caBundleVolume",
+			caBundle:       true,
+			expectedOutput: true,
+		},
+		{
+			name:           "caBundleVolumeMount with caBundle",
+			f:              "caBundleVolumeMount",
+			caBundle:       true,
+			expectedOutput: true,
+		},
 	}
-
-	for _, tt := range tests {
+	for _, tt := range testCases {
 		tt := tt
-		t.Run(tt, func(t *testing.T) {
-			tpl, err := template.New("addons-base").Funcs(txtFuncMap("")).Parse(fmt.Sprintf(`{{ %s }}`, tt))
+		t.Run(tt.f, func(t *testing.T) {
+			tpl, err := template.New("addons-base").Funcs(txtFuncMap("", tt.caBundle)).Parse(fmt.Sprintf(`{{ %s }}`, tt.f))
 
 			if err != nil {
 				t.Errorf("failed to parse template: %v", err)
@@ -327,6 +364,13 @@ func TestCABundleFuncs(t *testing.T) {
 			if err := tpl.Execute(&out, nil); err != nil {
 				t.Errorf("failed to parse template: %v", err)
 			}
+
+			if tt.expectedOutput && len(out.String()) == 0 {
+				t.Errorf("expected no output but got:\n%s", out.String())
+			} else if !tt.expectedOutput && len(out.String()) > 0 {
+				t.Errorf("expected output but got nothing")
+			}
+
 			t.Logf("\n%s", out.String())
 		})
 	}
