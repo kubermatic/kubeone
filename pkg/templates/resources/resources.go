@@ -22,6 +22,7 @@ const (
 	AddonCCMHetzner      = "ccm-hetzner"
 	AddonCCMOpenStack    = "ccm-openstack"
 	AddonCCMPacket       = "ccm-packet"
+	AddonCCMVsphere      = "ccm-vsphere"
 	AddonCNICanal        = "cni-canal"
 	AddonCNIWeavenet     = "cni-weavenet"
 	AddonMetricsServer   = "metrics-server"
