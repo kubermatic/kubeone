@@ -27,8 +27,6 @@ import (
 	"k8c.io/kubeone/pkg/templates/resources"
 
 	corev1 "k8s.io/api/core/v1"
-	rbacv1 "k8s.io/api/rbac/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
@@ -54,7 +52,10 @@ func Ensure(s *state.State) error {
 	case s.Cluster.CloudProvider.Packet != nil:
 		err = addons.EnsureAddonByName(s, resources.AddonCCMPacket)
 	case s.Cluster.CloudProvider.Openstack != nil:
-		err = ensureOpenStack(s)
+		if s.Cluster.CloudProvider.CloudConfig == "" {
+			return errors.New("cloudConfig not defined")
+		}
+		err = addons.EnsureAddonByName(s, resources.AddonCCMOpenStack)
 	case s.Cluster.CloudProvider.Vsphere != nil:
 		err = ensureVsphere(s)
 	default:
@@ -92,24 +93,4 @@ func waitForInitializedNodes(s *state.State) error {
 
 		return true, nil
 	})
-}
-
-func genClusterRoleBinding(name string, crole *rbacv1.ClusterRole, subj *corev1.ServiceAccount) *rbacv1.ClusterRoleBinding {
-	return &rbacv1.ClusterRoleBinding{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: name,
-		},
-		RoleRef: rbacv1.RoleRef{
-			APIGroup: rbacv1.GroupName,
-			Kind:     "ClusterRole",
-			Name:     crole.GetName(),
-		},
-		Subjects: []rbacv1.Subject{
-			{
-				Kind:      "ServiceAccount",
-				Name:      subj.GetName(),
-				Namespace: subj.GetNamespace(),
-			},
-		},
-	}
 }

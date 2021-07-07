@@ -20,6 +20,7 @@ package resources
 const (
 	AddonCCMDigitalOcean = "ccm-digitalocean"
 	AddonCCMHetzner      = "ccm-hetzner"
+	AddonCCMOpenStack    = "ccm-openstack"
 	AddonCCMPacket       = "ccm-packet"
 	AddonCNICanal        = "cni-canal"
 	AddonCNIWeavenet     = "cni-weavenet"
