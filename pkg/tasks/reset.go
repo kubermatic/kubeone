@@ -52,12 +52,7 @@ func destroyWorkers(s *state.State) error {
 		return errors.Wrap(lastErr, "unable to build kubernetes clientset")
 	}
 
-	mcCRDs := []string{}
-	for _, crd := range machinecontroller.CRDs() {
-		mcCRDs = append(mcCRDs, crd.GetName())
-	}
-
-	condFn := clientutil.CRDsReadyCondition(s.Context, s.DynamicClient, mcCRDs)
+	condFn := clientutil.CRDsReadyCondition(s.Context, s.DynamicClient, machinecontroller.CRDNames())
 	lastErr = wait.ExponentialBackoff(defaultRetryBackoff(3), condFn)
 	if lastErr != nil {
 		s.Logger.Info("Skipping deleting worker nodes because machine-controller CRDs are not deployed")

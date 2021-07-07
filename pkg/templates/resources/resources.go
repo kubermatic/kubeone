@@ -16,25 +16,42 @@ limitations under the License.
 
 package resources
 
+import (
+	"k8c.io/kubeone/pkg/certificate/cabundle"
+
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+)
+
 // Names of the internal addons
 const (
-	AddonCCMDigitalOcean = "ccm-digitalocean"
-	AddonCCMHetzner      = "ccm-hetzner"
-	AddonCCMOpenStack    = "ccm-openstack"
-	AddonCCMPacket       = "ccm-packet"
-	AddonCCMVsphere      = "ccm-vsphere"
-	AddonCNICanal        = "cni-canal"
-	AddonCNIWeavenet     = "cni-weavenet"
-	AddonMetricsServer   = "metrics-server"
-	AddonNodeLocalDNS    = "nodelocaldns"
+	AddonCCMDigitalOcean   = "ccm-digitalocean"
+	AddonCCMHetzner        = "ccm-hetzner"
+	AddonCCMOpenStack      = "ccm-openstack"
+	AddonCCMPacket         = "ccm-packet"
+	AddonCCMVsphere        = "ccm-vsphere"
+	AddonCNICanal          = "cni-canal"
+	AddonCNIWeavenet       = "cni-weavenet"
+	AddonMachineController = "machinecontroller"
+	AddonMetricsServer     = "metrics-server"
+	AddonNodeLocalDNS      = "nodelocaldns"
 )
 
 const (
 	NodeLocalDNSVirtualIP = "169.254.20.10"
 )
 
+const (
+	MachineControllerWebhookName      = "machine-controller-webhook"
+	MachineControllerWebhookNameSpace = metav1.NamespaceSystem
+
+	MachineControllerWebhookCertName = "cert.pem"
+	MachineControllerWebhookKeyName  = "key.pem"
+	KubernetesCACertName             = "ca.pem"
+)
+
 func All() map[string]string {
 	return map[string]string{
-		"NodeLocalDNSVirtualIP": NodeLocalDNSVirtualIP,
+		"NodeLocalDNSVirtualIP":   NodeLocalDNSVirtualIP,
+		"CABundleSSLCertFilePath": cabundle.SSLCertFilePath,
 	}
 }

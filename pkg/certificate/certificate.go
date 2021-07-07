@@ -17,6 +17,7 @@ limitations under the License.
 package certificate
 
 import (
+	"crypto"
 	"crypto/rsa"
 	"crypto/x509"
 	"fmt"
@@ -24,8 +25,9 @@ import (
 	"github.com/pkg/errors"
 
 	"k8c.io/kubeone/pkg/configupload"
+	"k8c.io/kubeone/pkg/templates/resources"
 
-	"k8s.io/client-go/util/cert"
+	certutil "k8s.io/client-go/util/cert"
 	"k8s.io/client-go/util/keyutil"
 )
 
@@ -41,7 +43,7 @@ func CAKeyPair(config *configupload.Configuration) (*rsa.PrivateKey, *x509.Certi
 		return nil, nil, fmt.Errorf("%q not found", KubernetesCAKeyPath)
 	}
 
-	certs, err := cert.ParseCertsPEM(caCert)
+	certs, err := certutil.ParseCertsPEM(caCert)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -61,4 +63,38 @@ func CAKeyPair(config *configupload.Configuration) (*rsa.PrivateKey, *x509.Certi
 	}
 
 	return rsaKey, certs[0], nil
+}
+
+func NewSignedWebhookCert(name string, namespace string, caKey crypto.Signer, caCert *x509.Certificate) (map[string]string, error) {
+	serviceCommonName := fmt.Sprintf("%s.%s.svc", name, namespace)
+	serviceFQDNCommonName := fmt.Sprintf("%s.cluster.local.", serviceCommonName)
+
+	altdnsNames := []string{
+		serviceFQDNCommonName,
+		serviceCommonName,
+	}
+
+	newKPKey, err := newPrivateKey()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to generate private key")
+	}
+
+	certCfg := certutil.Config{
+		AltNames: certutil.AltNames{
+			DNSNames: altdnsNames,
+		},
+		CommonName: serviceCommonName,
+		Usages:     []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
+	}
+
+	newKPCert, err := newSignedCert(&certCfg, newKPKey, caCert, caKey)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to generate certificate")
+	}
+
+	return map[string]string{
+		resources.MachineControllerWebhookCertName: string(encodeCertPEM(newKPCert)),
+		resources.MachineControllerWebhookKeyName:  string(encodePrivateKeyPEM(newKPKey)),
+		resources.KubernetesCACertName:             string(encodeCertPEM(caCert)),
+	}, nil
 }
