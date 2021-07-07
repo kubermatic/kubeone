@@ -45,9 +45,7 @@ func (a *applier) getManifestsFromDirectory(s *state.State, f fs.FS, addonName s
 		overwriteRegistry = s.Cluster.RegistryConfiguration.OverwriteRegistry
 	}
 
-	caBundle := s.Cluster.CABundle != ""
-
-	manifests, err := a.loadAddonsManifests(f, addonName, s.Logger, s.Verbose, overwriteRegistry, caBundle)
+	manifests, err := a.loadAddonsManifests(f, addonName, s.Logger, s.Verbose, overwriteRegistry)
 	if err != nil {
 		return "", err
 	}
@@ -63,7 +61,7 @@ func (a *applier) getManifestsFromDirectory(s *state.State, f fs.FS, addonName s
 }
 
 // loadAddonsManifests loads all YAML files from a given directory and runs the templating logic
-func (a *applier) loadAddonsManifests(f fs.FS, addonName string, logger logrus.FieldLogger, verbose bool, overwriteRegistry string, caBundle bool) ([]runtime.RawExtension, error) {
+func (a *applier) loadAddonsManifests(f fs.FS, addonName string, logger logrus.FieldLogger, verbose bool, overwriteRegistry string) ([]runtime.RawExtension, error) {
 	manifests := []runtime.RawExtension{}
 
 	files, err := fs.ReadDir(f, filepath.Join(".", addonName))
@@ -95,7 +93,7 @@ func (a *applier) loadAddonsManifests(f fs.FS, addonName string, logger logrus.F
 			return nil, errors.Wrapf(err, "failed to load addon %s", file.Name())
 		}
 
-		tpl, err := template.New("addons-base").Funcs(txtFuncMap(overwriteRegistry, caBundle)).Parse(string(manifestBytes))
+		tpl, err := template.New("addons-base").Funcs(txtFuncMap(overwriteRegistry)).Parse(string(manifestBytes))
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to template addons manifest %s", file.Name())
 		}
@@ -187,7 +185,7 @@ func combineManifests(manifests []*bytes.Buffer) *bytes.Buffer {
 	return bytes.NewBufferString(strings.Join(parts, "\n---\n") + "\n")
 }
 
-func txtFuncMap(overwriteRegistry string, caBundle bool) template.FuncMap {
+func txtFuncMap(overwriteRegistry string) template.FuncMap {
 	funcs := sprig.TxtFuncMap()
 
 	funcs["Registry"] = func(registry string) string {
@@ -198,28 +196,16 @@ func txtFuncMap(overwriteRegistry string, caBundle bool) template.FuncMap {
 	}
 
 	funcs["caBundleEnvVar"] = func() (string, error) {
-		if !caBundle {
-			return "", nil
-		}
-
 		buf, err := yaml.Marshal([]corev1.EnvVar{cabundle.EnvVar()})
 		return string(buf), err
 	}
 
 	funcs["caBundleVolume"] = func() (string, error) {
-		if !caBundle {
-			return "", nil
-		}
-
 		buf, err := yaml.Marshal([]corev1.Volume{cabundle.Volume()})
 		return string(buf), err
 	}
 
 	funcs["caBundleVolumeMount"] = func() (string, error) {
-		if !caBundle {
-			return "", nil
-		}
-
 		buf, err := yaml.Marshal([]corev1.VolumeMount{cabundle.VolumeMount()})
 		return string(buf), err
 	}
