@@ -17,8 +17,9 @@ limitations under the License.
 package features
 
 import (
+	"k8c.io/kubeone/pkg/addons"
 	"k8c.io/kubeone/pkg/state"
-	"k8c.io/kubeone/pkg/templates/metricsserver"
+	"k8c.io/kubeone/pkg/templates/resources"
 )
 
 func installMetricsServer(activate bool, s *state.State) error {
@@ -26,5 +27,5 @@ func installMetricsServer(activate bool, s *state.State) error {
 		return nil
 	}
 
-	return metricsserver.Deploy(s)
+	return addons.EnsureAddonByName(s, resources.AddonMetricsServer)
 }

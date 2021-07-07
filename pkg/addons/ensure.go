@@ -44,6 +44,7 @@ var (
 		resources.AddonCCMPacket:       "",
 		resources.AddonCNICanal:        "",
 		resources.AddonCNIWeavenet:     "",
+		resources.AddonMetricsServer:   "",
 		resources.AddonNodeLocalDNS:    "",
 	}
 )
