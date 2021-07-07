@@ -52,6 +52,9 @@ func Ensure(s *state.State) error {
 	case s.Cluster.CloudProvider.Packet != nil:
 		err = addons.EnsureAddonByName(s, resources.AddonCCMPacket)
 	case s.Cluster.CloudProvider.Openstack != nil:
+		if s.Cluster.CloudProvider.CloudConfig == "" {
+			return errors.New("cloudConfig not defined")
+		}
 		err = addons.EnsureAddonByName(s, resources.AddonCCMOpenStack)
 	case s.Cluster.CloudProvider.Vsphere != nil:
 		err = ensureVsphere(s)

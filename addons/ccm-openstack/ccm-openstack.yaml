@@ -144,7 +144,7 @@ spec:
       serviceAccountName: cloud-controller-manager
       containers:
         - name: openstack-cloud-controller-manager
-          image: {{ Registry "docker.io" }}/k8scloudprovider/openstack-cloud-controller-manager:v1.17.0
+          image: {{ .InternalImages.Get "OpenstackCCM" }}
           command:
             - /bin/openstack-cloud-controller-manager
             - --v=1
