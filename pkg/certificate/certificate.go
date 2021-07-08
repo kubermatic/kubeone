@@ -21,6 +21,7 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"fmt"
+	"strings"
 
 	"github.com/pkg/errors"
 
@@ -65,9 +66,9 @@ func CAKeyPair(config *configupload.Configuration) (*rsa.PrivateKey, *x509.Certi
 	return rsaKey, certs[0], nil
 }
 
-func NewSignedWebhookCert(name string, namespace string, caKey crypto.Signer, caCert *x509.Certificate) (map[string]string, error) {
-	serviceCommonName := fmt.Sprintf("%s.%s.svc", name, namespace)
-	serviceFQDNCommonName := fmt.Sprintf("%s.cluster.local.", serviceCommonName)
+func NewSignedWebhookCert(name, namespace, domain string, caKey crypto.Signer, caCert *x509.Certificate) (map[string]string, error) {
+	serviceCommonName := strings.Join([]string{name, namespace, "svc"}, ".")
+	serviceFQDNCommonName := strings.Join([]string{serviceCommonName, domain, ""}, ".")
 
 	altdnsNames := []string{
 		serviceFQDNCommonName,

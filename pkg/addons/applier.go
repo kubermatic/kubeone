@@ -84,7 +84,8 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 
 	certsMap, err := certificate.NewSignedWebhookCert(
 		resources.MachineControllerWebhookName,
-		resources.MachineControllerWebhookNameSpace,
+		resources.MachineControllerNameSpace,
+		s.Cluster.ClusterNetwork.ServiceDomainName,
 		kubeCAPrivateKey,
 		kubeCACert,
 	)
