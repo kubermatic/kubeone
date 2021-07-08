@@ -494,6 +494,7 @@ spec:
             - -ca-bundle={{ .Resources.CABundleSSLCertFilePath }}
             {{ end }}
             - -node-kubelet-repository={{ .Resources.KubeletImageRepository }}
+            - -node-pause-image={{ .InternalImages.Get "PauseImage" }}
           env:
             - name: HTTPS_PROXY
               value: "{{ .Config.Proxy.HTTPS }}"

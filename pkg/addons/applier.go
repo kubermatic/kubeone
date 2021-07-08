@@ -102,7 +102,8 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		},
 		Credentials: creds,
 		InternalImages: &internalImages{
-			resolver: s.Images.Get,
+			pauseImage: s.PauseImage,
+			resolver:   s.Images.Get,
 		},
 		Resources: resources.All(),
 	}
@@ -115,10 +116,16 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 }
 
 type internalImages struct {
-	resolver func(images.Resource, ...images.GetOpt) string
+	pauseImage string
+	resolver   func(images.Resource, ...images.GetOpt) string
 }
 
 func (im *internalImages) Get(imgName string) (string, error) {
+	// TODO: somehow handle this the other way around
+	if imgName == "PauseImage" {
+		return im.pauseImage, nil
+	}
+
 	res, err := images.FindResource(imgName)
 	if err != nil {
 		return "", err
