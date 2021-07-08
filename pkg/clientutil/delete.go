@@ -14,27 +14,27 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package resources
+package clientutil
 
-// Names of the internal addons
-const (
-	AddonCCMDigitalOcean = "ccm-digitalocean"
-	AddonCCMHetzner      = "ccm-hetzner"
-	AddonCCMOpenStack    = "ccm-openstack"
-	AddonCCMPacket       = "ccm-packet"
-	AddonCCMVsphere      = "ccm-vsphere"
-	AddonCNICanal        = "cni-canal"
-	AddonCNIWeavenet     = "cni-weavenet"
-	AddonMetricsServer   = "metrics-server"
-	AddonNodeLocalDNS    = "nodelocaldns"
+import (
+	"context"
+
+	"github.com/pkg/errors"
+
+	k8serrors "k8s.io/apimachinery/pkg/api/errors"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-const (
-	NodeLocalDNSVirtualIP = "169.254.20.10"
-)
+// DeleteIfExists makes it easy to "delete" Kubernetes objects if they exist
+func DeleteIfExists(ctx context.Context, c client.Client, obj client.Object) error {
+	err := c.Delete(ctx, obj)
 
-func All() map[string]string {
-	return map[string]string{
-		"NodeLocalDNSVirtualIP": NodeLocalDNSVirtualIP,
+	switch {
+	case k8serrors.IsNotFound(err):
+		return nil
+	case err != nil:
+		return errors.Wrapf(err, "failed to delete %T object", obj)
+	default:
+		return nil
 	}
 }

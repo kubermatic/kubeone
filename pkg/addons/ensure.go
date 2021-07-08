@@ -42,6 +42,7 @@ var (
 		resources.AddonCCMHetzner:      "",
 		resources.AddonCCMOpenStack:    "",
 		resources.AddonCCMPacket:       "",
+		resources.AddonCCMVsphere:      "",
 		resources.AddonCNICanal:        "",
 		resources.AddonCNIWeavenet:     "",
 		resources.AddonMetricsServer:   "",
