@@ -24,6 +24,7 @@ const (
 	AddonCCMPacket       = "ccm-packet"
 	AddonCNICanal        = "cni-canal"
 	AddonCNIWeavenet     = "cni-weavenet"
+	AddonMetricsServer   = "metrics-server"
 	AddonNodeLocalDNS    = "nodelocaldns"
 )
 
