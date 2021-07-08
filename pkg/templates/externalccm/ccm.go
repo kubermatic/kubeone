@@ -56,6 +56,9 @@ func Ensure(s *state.State) error {
 		}
 		err = addons.EnsureAddonByName(s, resources.AddonCCMOpenStack)
 	case s.Cluster.CloudProvider.Vsphere != nil:
+		if mErr := migrateVsphereAddon(s); mErr != nil {
+			return errors.Wrap(err, "failed to migrate to vsphere addon")
+		}
 		err = addons.EnsureAddonByName(s, resources.AddonCCMVsphere)
 	default:
 		s.Logger.Infof("External CCM for %q not yet supported, skipping", s.Cluster.CloudProvider.CloudProviderName())
