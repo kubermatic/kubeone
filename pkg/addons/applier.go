@@ -27,6 +27,7 @@ import (
 
 	"k8c.io/kubeone/addons"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/certificate"
 	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/images"
@@ -50,6 +51,7 @@ type applier struct {
 // TemplateData is data available in the addons render template
 type templateData struct {
 	Config         *kubeoneapi.KubeOneCluster
+	Certificates   map[string]string
 	Credentials    map[string]string
 	InternalImages *internalImages
 	Resources      map[string]string
@@ -75,11 +77,33 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		return nil, errors.Wrap(err, "unable to fetch credentials")
 	}
 
+	kubeCAPrivateKey, kubeCACert, err := certificate.CAKeyPair(s.Configuration)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to load CA keypair")
+	}
+
+	certsMap, err := certificate.NewSignedWebhookCert(
+		resources.MachineControllerWebhookName,
+		resources.MachineControllerNameSpace,
+		s.Cluster.ClusterNetwork.ServiceDomainName,
+		kubeCAPrivateKey,
+		kubeCACert,
+	)
+	if err != nil {
+		return nil, err
+	}
+
 	td := templateData{
-		Config:      s.Cluster,
+		Config: s.Cluster,
+		Certificates: map[string]string{
+			"MachineControllerWebhookCert": certsMap[resources.MachineControllerWebhookCertName],
+			"MachineControllerWebhookKey":  certsMap[resources.MachineControllerWebhookKeyName],
+			"KubernetesCA":                 certsMap[resources.KubernetesCACertName],
+		},
 		Credentials: creds,
 		InternalImages: &internalImages{
-			resolver: s.Images.Get,
+			pauseImage: s.PauseImage,
+			resolver:   s.Images.Get,
 		},
 		Resources: resources.All(),
 	}
@@ -92,10 +116,16 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 }
 
 type internalImages struct {
-	resolver func(images.Resource, ...images.GetOpt) string
+	pauseImage string
+	resolver   func(images.Resource, ...images.GetOpt) string
 }
 
 func (im *internalImages) Get(imgName string) (string, error) {
+	// TODO: somehow handle this the other way around
+	if imgName == "PauseImage" {
+		return im.pauseImage, nil
+	}
+
 	res, err := images.FindResource(imgName)
 	if err != nil {
 		return "", err

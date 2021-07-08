@@ -174,6 +174,13 @@ func WithResources(t Tasks) Tasks {
 			},
 			{
 				Fn: func(s *state.State) error {
+					s.Logger.Info("Downloading PKI...")
+					return s.RunTaskOnLeader(certificate.DownloadKubePKI)
+				},
+				ErrMsg: "failed to download Kubernetes PKI from the leader",
+			},
+			{
+				Fn: func(s *state.State) error {
 					s.Logger.Infoln("Ensure node local DNS cache...")
 					return addons.EnsureAddonByName(s, resources.AddonNodeLocalDNS)
 				},
@@ -224,13 +231,6 @@ func WithResources(t Tasks) Tasks {
 			{
 				Fn:     labelNodeOSes,
 				ErrMsg: "failed to label nodes with their OS",
-			},
-			{
-				Fn: func(s *state.State) error {
-					s.Logger.Info("Downloading PKI...")
-					return s.RunTaskOnLeader(certificate.DownloadKubePKI)
-				},
-				ErrMsg: "failed to download Kubernetes PKI from the leader",
 			},
 			{
 				Fn:          machinecontroller.Ensure,

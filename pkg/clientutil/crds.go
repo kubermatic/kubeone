@@ -26,11 +26,11 @@ import (
 // CRDsReadyCondition generate a k8s.io/apimachinery/pkg/util/wait.ConditionFunc function to be used in
 // k8s.io/apimachinery/pkg/util/wait.Poll* family of functions. It will check all provided GKs (GroupKinds) to exists
 // and have Established status
-func CRDsReadyCondition(ctx context.Context, client dynclient.Client, groupKinds []string) func() (bool, error) {
+func CRDsReadyCondition(ctx context.Context, client dynclient.Client, names []string) func() (bool, error) {
 	return func() (bool, error) {
 		var establishedNum int
 
-		for _, gk := range groupKinds {
+		for _, gk := range names {
 			crd := apiextensions.CustomResourceDefinition{}
 			key := dynclient.ObjectKey{Name: gk}
 
@@ -45,6 +45,6 @@ func CRDsReadyCondition(ctx context.Context, client dynclient.Client, groupKinds
 			}
 		}
 
-		return establishedNum == len(groupKinds), nil
+		return establishedNum == len(names), nil
 	}
 }

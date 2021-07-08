@@ -22,36 +22,29 @@ import (
 
 	"github.com/pkg/errors"
 
+	"k8c.io/kubeone/pkg/addons"
 	"k8c.io/kubeone/pkg/clientutil"
 	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/templates/resources"
 
 	clusterv1alpha1 "github.com/kubermatic/machine-controller/pkg/apis/cluster/v1alpha1"
 
 	corev1 "k8s.io/api/core/v1"
 	errorsutil "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/util/retry"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
+const appLabelKey = "app"
+
 // Ensure install/update machine-controller
 func Ensure(s *state.State) error {
-	if !s.Cluster.MachineController.Deploy {
-		s.Logger.Info("Skipping machine-controller deployment because it was disabled in configuration.")
-		return nil
-	}
-
 	s.Logger.Infoln("Installing machine-controller...")
-	if err := Deploy(s); err != nil {
-		return errors.Wrap(err, "failed to deploy machine-controller")
-	}
 
-	s.Logger.Infoln("Installing machine-controller webhooks...")
-	if err := DeployWebhookConfiguration(s); err != nil {
-		return errors.Wrap(err, "failed to deploy machine-controller webhook configuration")
-	}
-
-	return nil
+	err := addons.EnsureAddonByName(s, resources.AddonMachineController)
+	return errors.Wrap(err, "failed to deploy machine-controller")
 }
 
 // WaitReady waits for machine-controller and its webhook to became ready
@@ -77,11 +70,9 @@ func WaitReady(s *state.State) error {
 	return nil
 }
 
-// WaitForCRDs waits for machine-controller CRDs to be created and become established
+// waitForCRDs waits for machine-controller CRDs to be created and become established
 func waitForCRDs(s *state.State) error {
-	crdGKs := []string{}
-
-	condFn := clientutil.CRDsReadyCondition(s.Context, s.DynamicClient, crdGKs)
+	condFn := clientutil.CRDsReadyCondition(s.Context, s.DynamicClient, CRDNames())
 	err := wait.Poll(5*time.Second, 3*time.Minute, condFn)
 
 	return errors.Wrap(err, "failed waiting for CRDs to become ready and established")
@@ -130,7 +121,7 @@ func DestroyWorkers(s *state.State) error {
 	// Delete all MachineDeployment objects
 	s.Logger.Info("Deleting MachineDeployment objects...")
 	mdList := &clusterv1alpha1.MachineDeploymentList{}
-	if err := s.DynamicClient.List(ctx, mdList, dynclient.InNamespace(mcNamespace)); err != nil {
+	if err := s.DynamicClient.List(ctx, mdList, dynclient.InNamespace(resources.MachineControllerNameSpace)); err != nil {
 		if !errorsutil.IsNotFound(err) {
 			return errors.Wrap(err, "unable to list machinedeployment objects")
 		}
@@ -145,7 +136,7 @@ func DestroyWorkers(s *state.State) error {
 	// Delete all MachineSet objects
 	s.Logger.Info("Deleting MachineSet objects...")
 	msList := &clusterv1alpha1.MachineSetList{}
-	if err := s.DynamicClient.List(ctx, msList, dynclient.InNamespace(mcNamespace)); err != nil {
+	if err := s.DynamicClient.List(ctx, msList, dynclient.InNamespace(resources.MachineControllerNameSpace)); err != nil {
 		if !errorsutil.IsNotFound(err) {
 			return errors.Wrap(err, "unable to list machineset objects")
 		}
@@ -162,7 +153,7 @@ func DestroyWorkers(s *state.State) error {
 	// Delete all Machine objects
 	s.Logger.Info("Deleting Machine objects...")
 	mList := &clusterv1alpha1.MachineList{}
-	if err := s.DynamicClient.List(ctx, mList, dynclient.InNamespace(mcNamespace)); err != nil {
+	if err := s.DynamicClient.List(ctx, mList, dynclient.InNamespace(resources.MachineControllerNameSpace)); err != nil {
 		if !errorsutil.IsNotFound(err) {
 			return errors.Wrap(err, "unable to list machine objects")
 		}
@@ -186,7 +177,7 @@ func WaitDestroy(s *state.State) error {
 	ctx := context.Background()
 	return wait.Poll(5*time.Second, 5*time.Minute, func() (bool, error) {
 		list := &clusterv1alpha1.MachineList{}
-		if err := s.DynamicClient.List(ctx, list, dynclient.InNamespace(mcNamespace)); err != nil {
+		if err := s.DynamicClient.List(ctx, list, dynclient.InNamespace(resources.MachineControllerNameSpace)); err != nil {
 			return false, errors.Wrap(err, "unable to list machine objects")
 		}
 		if len(list.Items) != 0 {
@@ -194,4 +185,37 @@ func WaitDestroy(s *state.State) error {
 		}
 		return true, nil
 	})
+}
+
+// waitForMachineController waits for machine-controller-webhook to become running
+func waitForMachineController(ctx context.Context, client dynclient.Client) error {
+	condFn := clientutil.PodsReadyCondition(ctx, client, dynclient.ListOptions{
+		Namespace: resources.MachineControllerNameSpace,
+		LabelSelector: labels.SelectorFromSet(map[string]string{
+			appLabelKey: resources.MachineControllerName,
+		}),
+	})
+
+	return wait.Poll(5*time.Second, 3*time.Minute, condFn)
+}
+
+// waitForWebhook waits for machine-controller-webhook to become running
+func waitForWebhook(ctx context.Context, client dynclient.Client) error {
+	condFn := clientutil.PodsReadyCondition(ctx, client, dynclient.ListOptions{
+		Namespace: resources.MachineControllerNameSpace,
+		LabelSelector: labels.SelectorFromSet(map[string]string{
+			appLabelKey: resources.MachineControllerWebhookName,
+		}),
+	})
+
+	return wait.Poll(5*time.Second, 3*time.Minute, condFn)
+}
+
+func CRDNames() []string {
+	return []string{
+		"clusters.cluster.k8s.io",
+		"machinedeployments.cluster.k8s.io",
+		"machines.cluster.k8s.io",
+		"machinesets.cluster.k8s.io",
+	}
 }
