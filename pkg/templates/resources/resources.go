@@ -41,17 +41,29 @@ const (
 )
 
 const (
-	MachineControllerWebhookName      = "machine-controller-webhook"
-	MachineControllerWebhookNameSpace = metav1.NamespaceSystem
+	// names used for deployments/labels/etc
+	MachineControllerName        = "machine-controller"
+	MachineControllerNameSpace   = metav1.NamespaceSystem
+	MachineControllerWebhookName = "machine-controller-webhook"
+)
 
+const (
 	MachineControllerWebhookCertName = "cert.pem"
 	MachineControllerWebhookKeyName  = "key.pem"
 	KubernetesCACertName             = "ca.pem"
 )
 
+const (
+	KubeletImageRepository = "quay.io/kubermatic/kubelet"
+)
+
 func All() map[string]string {
 	return map[string]string{
-		"NodeLocalDNSVirtualIP":   NodeLocalDNSVirtualIP,
-		"CABundleSSLCertFilePath": cabundle.SSLCertFilePath,
+		"MachineControllerName":        MachineControllerName,
+		"MachineControllerNameSpace":   MachineControllerNameSpace,
+		"MachineControllerWebhookName": MachineControllerWebhookName,
+		"KubeletImageRepository":       KubeletImageRepository,
+		"NodeLocalDNSVirtualIP":        NodeLocalDNSVirtualIP,
+		"CABundleSSLCertFilePath":      cabundle.SSLCertFilePath,
 	}
 }

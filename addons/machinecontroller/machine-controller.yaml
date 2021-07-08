@@ -14,7 +14,7 @@ spec:
     plural: machines
     singular: machine
     listKind: MachineList
-    shortNames: [ma]
+    shortNames: ["ma"]
   additionalPrinterColumns:
     - name: Provider
       type: string
@@ -55,7 +55,7 @@ spec:
     plural: machinesets
     singular: machineset
     listKind: MachineSetList
-    shortNames: [ms]
+    shortNames: ["ms"]
   subresources:
     status: {}
   additionalPrinterColumns:
@@ -101,7 +101,7 @@ spec:
     plural: machinedeployments
     singular: machinedeployment
     listKind: MachineDeploymentList
-    shortNames: [md]
+    shortNames: ["md"]
   subresources:
     scale:
       specReplicasPath: .spec.replicas
@@ -493,8 +493,7 @@ spec:
             {{ if .Config.CABundle }}
             - -ca-bundle={{ .Resources.CABundleSSLCertFilePath }}
             {{ end }}
-            # TODO: handle dynamic pause-image
-            # - -node-pause-image=
+            - -node-kubelet-repository={{ .Resources.KubeletImageRepository }}
           env:
             - name: HTTPS_PROXY
               value: "{{ .Config.Proxy.HTTPS }}"

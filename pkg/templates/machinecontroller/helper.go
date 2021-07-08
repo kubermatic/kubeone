@@ -31,27 +31,13 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	errorsutil "k8s.io/apimachinery/pkg/api/errors"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/util/retry"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-// machineController related constants
-const (
-	mcNamespace     = metav1.NamespaceSystem
-	mcAppLabelKey   = "app"
-	mcAppLabelValue = "machine-controller"
-)
-
-// machineControllerWebhook related constants
-const (
-	whName          = "machine-controller-webhook"
-	whAppLabelKey   = mcAppLabelKey
-	whAppLabelValue = whName
-	whNamespace     = mcNamespace
-)
+const appLabelKey = "app"
 
 // Ensure install/update machine-controller
 func Ensure(s *state.State) error {
@@ -135,7 +121,7 @@ func DestroyWorkers(s *state.State) error {
 	// Delete all MachineDeployment objects
 	s.Logger.Info("Deleting MachineDeployment objects...")
 	mdList := &clusterv1alpha1.MachineDeploymentList{}
-	if err := s.DynamicClient.List(ctx, mdList, dynclient.InNamespace(mcNamespace)); err != nil {
+	if err := s.DynamicClient.List(ctx, mdList, dynclient.InNamespace(resources.MachineControllerNameSpace)); err != nil {
 		if !errorsutil.IsNotFound(err) {
 			return errors.Wrap(err, "unable to list machinedeployment objects")
 		}
@@ -150,7 +136,7 @@ func DestroyWorkers(s *state.State) error {
 	// Delete all MachineSet objects
 	s.Logger.Info("Deleting MachineSet objects...")
 	msList := &clusterv1alpha1.MachineSetList{}
-	if err := s.DynamicClient.List(ctx, msList, dynclient.InNamespace(mcNamespace)); err != nil {
+	if err := s.DynamicClient.List(ctx, msList, dynclient.InNamespace(resources.MachineControllerNameSpace)); err != nil {
 		if !errorsutil.IsNotFound(err) {
 			return errors.Wrap(err, "unable to list machineset objects")
 		}
@@ -167,7 +153,7 @@ func DestroyWorkers(s *state.State) error {
 	// Delete all Machine objects
 	s.Logger.Info("Deleting Machine objects...")
 	mList := &clusterv1alpha1.MachineList{}
-	if err := s.DynamicClient.List(ctx, mList, dynclient.InNamespace(mcNamespace)); err != nil {
+	if err := s.DynamicClient.List(ctx, mList, dynclient.InNamespace(resources.MachineControllerNameSpace)); err != nil {
 		if !errorsutil.IsNotFound(err) {
 			return errors.Wrap(err, "unable to list machine objects")
 		}
@@ -191,7 +177,7 @@ func WaitDestroy(s *state.State) error {
 	ctx := context.Background()
 	return wait.Poll(5*time.Second, 5*time.Minute, func() (bool, error) {
 		list := &clusterv1alpha1.MachineList{}
-		if err := s.DynamicClient.List(ctx, list, dynclient.InNamespace(mcNamespace)); err != nil {
+		if err := s.DynamicClient.List(ctx, list, dynclient.InNamespace(resources.MachineControllerNameSpace)); err != nil {
 			return false, errors.Wrap(err, "unable to list machine objects")
 		}
 		if len(list.Items) != 0 {
@@ -204,9 +190,9 @@ func WaitDestroy(s *state.State) error {
 // waitForMachineController waits for machine-controller-webhook to become running
 func waitForMachineController(ctx context.Context, client dynclient.Client) error {
 	condFn := clientutil.PodsReadyCondition(ctx, client, dynclient.ListOptions{
-		Namespace: mcNamespace,
+		Namespace: resources.MachineControllerNameSpace,
 		LabelSelector: labels.SelectorFromSet(map[string]string{
-			mcAppLabelKey: mcAppLabelValue,
+			appLabelKey: resources.MachineControllerName,
 		}),
 	})
 
@@ -216,9 +202,9 @@ func waitForMachineController(ctx context.Context, client dynclient.Client) erro
 // waitForWebhook waits for machine-controller-webhook to become running
 func waitForWebhook(ctx context.Context, client dynclient.Client) error {
 	condFn := clientutil.PodsReadyCondition(ctx, client, dynclient.ListOptions{
-		Namespace: whNamespace,
+		Namespace: resources.MachineControllerNameSpace,
 		LabelSelector: labels.SelectorFromSet(map[string]string{
-			whAppLabelKey: whAppLabelValue,
+			appLabelKey: resources.MachineControllerWebhookName,
 		}),
 	})
 
