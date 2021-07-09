@@ -28,7 +28,7 @@ import (
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/tasks"
 
-	"github.com/kubermatic/machine-controller/pkg/machines/v1alpha1"
+	clusterv1alpha1 "github.com/kubermatic/machine-controller/pkg/apis/cluster/v1alpha1"
 )
 
 type resetOpts struct {
@@ -116,12 +116,12 @@ func runReset(opts *resetOpts) error {
 	err = kubeconfig.BuildKubernetesClientset(s)
 	if err == nil {
 		// Gather information about machine-controller managed nodes
-		machines := v1alpha1.MachineList{}
+		machines := clusterv1alpha1.MachineList{}
 		if err = s.DynamicClient.List(s.Context, &machines); err != nil {
 			s.Logger.Warnln("Failed to list Machines. Worker nodes will not be deleted. If there are worker nodes in the cluster, you might have to delete them manually.")
 		}
 		for _, machine := range machines.Items {
-			fmt.Printf("\t- reset machine-controller managed machines %q\n", machine.Name)
+			fmt.Printf("\t- reset machine-controller managed machine %q\n", machine.Name)
 		}
 	} else {
 		s.Logger.Warnln("Failed to list Machines. Worker nodes will not be deleted. If there are worker nodes in the cluster, you might have to delete them manually.")
