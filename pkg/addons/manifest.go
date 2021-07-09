@@ -19,6 +19,7 @@ package addons
 import (
 	"bufio"
 	"bytes"
+	"encoding/json"
 	"io"
 	"io/fs"
 	"path/filepath"
@@ -207,6 +208,19 @@ func txtFuncMap(overwriteRegistry string) template.FuncMap {
 
 	funcs["caBundleVolumeMount"] = func() (string, error) {
 		buf, err := yaml.Marshal([]corev1.VolumeMount{cabundle.VolumeMount()})
+		return string(buf), err
+	}
+
+	funcs["PacketSecret"] = func(apiKey, projectID string) (string, error) {
+		packetSecret := struct {
+			APIKey    string `json:"apiKey"`
+			ProjectID string `json:"projectID"`
+		}{
+			APIKey:    apiKey,
+			ProjectID: projectID,
+		}
+
+		buf, err := json.Marshal(packetSecret)
 		return string(buf), err
 	}
 
