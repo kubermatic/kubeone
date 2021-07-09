@@ -176,6 +176,7 @@ spec:
       annotations:
         "scheduler.alpha.kubernetes.io/critical-pod": ""
         "caBundle-hash": "{{ .Config.CABundle | sha256sum }}"
+        "cloudConfig-hash": "{{ .Config.CloudProvider.CloudConfig | sha256sum }}"
     spec:
       nodeSelector:
         node-role.kubernetes.io/master: ""
