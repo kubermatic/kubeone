@@ -10,9 +10,9 @@ apiVersion: v1
 metadata:
   name: cloud-config
   namespace: kube-system
-stringData:
+data:
   cloud.conf: |
-{{ .Config.CloudProvider.CloudConfig | indent 4 }}
+{{ .Config.CloudProvider.CloudConfig | b64enc | indent 4 }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole

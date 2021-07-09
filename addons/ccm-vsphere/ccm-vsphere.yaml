@@ -16,9 +16,9 @@ metadata:
     vsphere-cpi-infra: config
     component: cloud-controller-manager
   namespace: kube-system
-stringData:
+data:
   vsphere.conf: |
-{{ .Config.CloudProvider.CloudConfig | indent 4 }}
+{{ .Config.CloudProvider.CloudConfig | b64enc | indent 4 }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
