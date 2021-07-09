@@ -602,13 +602,13 @@ kind: Secret
 metadata:
   name: machinecontroller-webhook-serving-cert
   namespace: kube-system
-stringData:
+data:
   "cert.pem": |
-{{ .Certificates.MachineControllerWebhookCert | indent 4 }}
+{{ .Certificates.MachineControllerWebhookCert | b64enc | indent 4 }}
   "key.pem": |
-{{ .Certificates.MachineControllerWebhookKey | indent 4 }}
+{{ .Certificates.MachineControllerWebhookKey | b64enc | indent 4 }}
   "ca.crt": |
-{{ .Certificates.KubernetesCA | indent 4 }}
+{{ .Certificates.KubernetesCA | b64enc | indent 4 }}
 
 ---
 apiVersion: admissionregistration.k8s.io/v1
