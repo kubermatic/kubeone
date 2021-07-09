@@ -32,6 +32,8 @@ import (
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/images"
 	"k8c.io/kubeone/pkg/templates/resources"
+
+	"sigs.k8s.io/yaml"
 )
 
 var (
@@ -50,11 +52,12 @@ type applier struct {
 
 // TemplateData is data available in the addons render template
 type templateData struct {
-	Config         *kubeoneapi.KubeOneCluster
-	Certificates   map[string]string
-	Credentials    map[string]string
-	InternalImages *internalImages
-	Resources      map[string]string
+	Config                              *kubeoneapi.KubeOneCluster
+	Certificates                        map[string]string
+	Credentials                         map[string]string
+	MachineControllerCredentialsEnvVars string
+	InternalImages                      *internalImages
+	Resources                           map[string]string
 }
 
 func newAddonsApplier(s *state.State) (*applier, error) {
@@ -75,6 +78,15 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 	creds, err := credentials.Any(s.CredentialsFilePath)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to fetch credentials")
+	}
+
+	envVars, err := credentials.EnvVarBindings(s.Cluster.CloudProvider, s.CredentialsFilePath)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to fetch env var bindings for credentials")
+	}
+	credsEnvVars, err := yaml.Marshal(envVars)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to convert env var bindings for credentials to yaml")
 	}
 
 	kubeCAPrivateKey, kubeCACert, err := certificate.CAKeyPair(s.Configuration)
@@ -100,7 +112,8 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 			"MachineControllerWebhookKey":  certsMap[resources.MachineControllerWebhookKeyName],
 			"KubernetesCA":                 certsMap[resources.KubernetesCACertName],
 		},
-		Credentials: creds,
+		Credentials:                         creds,
+		MachineControllerCredentialsEnvVars: string(credsEnvVars),
 		InternalImages: &internalImages{
 			pauseImage: s.PauseImage,
 			resolver:   s.Images.Get,
