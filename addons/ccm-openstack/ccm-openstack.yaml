@@ -127,7 +127,8 @@ spec:
   template:
     metadata:
       annotations:
-         scheduler.alpha.kubernetes.io/critical-pod: ""
+         "scheduler.alpha.kubernetes.io/critical-pod": ""
+         "caBundle-hash": "{{ .Config.CABundle | sha256sum }}"
       labels:
         k8s-app: "openstack-cloud-controller-manager"
     spec:
