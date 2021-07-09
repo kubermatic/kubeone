@@ -500,13 +500,7 @@ spec:
               value: "{{ .Config.Proxy.HTTPS }}"
             - name: NO_PROXY
               value: "{{ .Config.Proxy.NoProxy }}"
-            {{ range $key, $val := .Credentials }}
-            - name: {{ $key }}
-              valueFrom:
-                secretKeyRef:
-                  name: "cloud-provider-credentials"
-                  key: {{ $key }}
-            {{ end }}
+{{ .MachineControllerCredentialsEnvVars | indent 12 }}
 {{ if .Config.CABundle }}
 {{ caBundleEnvVar | indent 12 }}
 {{ end }}
@@ -575,13 +569,7 @@ spec:
               value: "{{ .Config.Proxy.HTTPS }}"
             - name: NO_PROXY
               value: "{{ .Config.Proxy.NoProxy }}"
-            {{ range $key, $val := .Credentials }}
-            - name: {{ $key }}
-              valueFrom:
-                secretKeyRef:
-                  name: "cloud-provider-credentials"
-                  key: {{ $key }}
-            {{ end }}
+{{ .MachineControllerCredentialsEnvVars | indent 12 }}
 {{ if .Config.CABundle }}
 {{ caBundleEnvVar | indent 12 }}
 {{ end }}
