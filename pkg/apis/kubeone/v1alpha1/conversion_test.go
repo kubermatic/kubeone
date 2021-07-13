@@ -442,7 +442,7 @@ func TestClusterNetworkRoundTripConversion(t *testing.T) {
 			// Converted internal back to versioned and compare
 			convertedVersionedClusterNetwork := &ClusterNetworkConfig{}
 			if err := Convert_kubeone_ClusterNetworkConfig_To_v1alpha1_ClusterNetworkConfig(convertedInternalClusterNetwork, convertedVersionedClusterNetwork, nil); err != nil {
-				t.Errorf("error converting from internal to to versioned: %v", err)
+				t.Errorf("error converting from internal to versioned: %v", err)
 			}
 			if !cmp.Equal(tc.versionedClusterNetwork, convertedVersionedClusterNetwork) {
 				t.Errorf("invalid conversion between internal and versioned: %v", cmp.Diff(tc.versionedClusterNetwork, convertedVersionedClusterNetwork))

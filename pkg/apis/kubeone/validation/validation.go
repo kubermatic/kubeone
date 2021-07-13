@@ -247,10 +247,11 @@ func ValidateKubeProxy(kbPrxConf *kubeone.KubeProxyConfig, fldPath *field.Path) 
 		configFound bool
 	)
 
-	switch {
-	case kbPrxConf.IPTables != nil:
+	if kbPrxConf.IPTables != nil {
 		configFound = true
-	case kbPrxConf.IPVS != nil:
+	}
+
+	if kbPrxConf.IPVS != nil {
 		if configFound {
 			allErrs = append(allErrs, field.Invalid(fldPath, "", "should have only 1, ether iptables or ipvs or none"))
 		}

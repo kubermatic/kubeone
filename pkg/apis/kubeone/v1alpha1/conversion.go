@@ -132,6 +132,9 @@ func Convert_kubeone_CloudProviderSpec_To_v1alpha1_CloudProviderSpec(in *kubeone
 }
 
 func Convert_kubeone_ClusterNetworkConfig_To_v1alpha1_ClusterNetworkConfig(in *kubeoneapi.ClusterNetworkConfig, out *ClusterNetworkConfig, s conversion.Scope) error {
+	if err := autoConvert_kubeone_ClusterNetworkConfig_To_v1alpha1_ClusterNetworkConfig(in, out, s); err != nil {
+		return err
+	}
 	return nil
 }
 
