@@ -33,7 +33,9 @@ require (
 	k8s.io/client-go v12.0.0+incompatible
 	k8s.io/cluster-bootstrap v0.19.4
 	k8s.io/code-generator v0.19.4
+	k8s.io/component-base v0.19.4
 	k8s.io/kube-aggregator v0.19.4
+	k8s.io/kube-proxy v0.19.4
 	k8s.io/kubelet v0.19.4
 	sigs.k8s.io/controller-runtime v0.7.2
 	sigs.k8s.io/yaml v1.2.0

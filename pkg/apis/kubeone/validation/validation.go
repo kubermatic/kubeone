@@ -233,6 +233,28 @@ func ValidateClusterNetworkConfig(c kubeone.ClusterNetworkConfig, fldPath *field
 	if c.CNI != nil {
 		allErrs = append(allErrs, ValidateCNI(c.CNI, fldPath.Child("cni"))...)
 	}
+	// allErrs = append(allErrs, ValidateClusterNetworkConfig(c.ClusterNetwork, field.NewPath("clusterNetwork"))...)
+	if c.KubeProxy != nil {
+		allErrs = append(allErrs, ValidateKubeProxy(c.KubeProxy, fldPath.Child("kubeProxy"))...)
+	}
+
+	return allErrs
+}
+
+func ValidateKubeProxy(kbPrxConf *kubeone.KubeProxyConfig, fldPath *field.Path) field.ErrorList {
+	var (
+		allErrs     field.ErrorList
+		configFound bool
+	)
+
+	switch {
+	case kbPrxConf.IPTables != nil:
+		configFound = true
+	case kbPrxConf.IPVS != nil:
+		if configFound {
+			allErrs = append(allErrs, field.Invalid(fldPath, "", "should have only 1, ether iptables or ipvs or none"))
+		}
+	}
 
 	return allErrs
 }
