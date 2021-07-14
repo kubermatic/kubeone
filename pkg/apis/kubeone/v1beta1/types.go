@@ -255,35 +255,53 @@ type ClusterNetworkConfig struct {
 	// CNI
 	// default value is {canal: {mtu: 1450}}
 	CNI *CNI `json:"cni,omitempty"`
-	// KubeProxy
+	// KubeProxy config
 	KubeProxy *KubeProxyConfig `json:"kubeProxy,omitempty"`
 }
 
+// KubeProxyConfig defines configured kube-proxy mode, default is iptables mode
 type KubeProxyConfig struct {
-	IPVS     *IPVSConfig `json:"ipvs"`
-	IPTables *IPTables   `json:"iptables"`
+	// IPVS config
+	IPVS *IPVSConfig `json:"ipvs"`
+
+	// IPTables config
+	IPTables *IPTables `json:"iptables"`
 }
 
+// IPVSConfig contains different options to configure IPVS kube-proxy mode
 type IPVSConfig struct {
-	// ipvs scheduler
+	// ipvs scheduler, if it’s not configured, then round-robin (rr) is the default value.
+	// Can be one of:
+	// * rr: round-robin
+	// * lc: least connection (smallest number of open connections)
+	// * dh: destination hashing
+	// * sh: source hashing
+	// * sed: shortest expected delay
+	// * nq: never queue
 	Scheduler string `json:"scheduler"`
+
 	// excludeCIDRs is a list of CIDR's which the ipvs proxier should not touch
 	// when cleaning up ipvs services.
 	ExcludeCIDRs []string `json:"excludeCIDRs"`
+
 	// strict ARP configure arp_ignore and arp_announce to avoid answering ARP queries
 	// from kube-ipvs0 interface
 	StrictARP bool `json:"strictARP"`
+
 	// tcpTimeout is the timeout value used for idle IPVS TCP sessions.
 	// The default value is 0, which preserves the current timeout value on the system.
 	TCPTimeout metav1.Duration `json:"tcpTimeout"`
+
 	// tcpFinTimeout is the timeout value used for IPVS TCP sessions after receiving a FIN.
 	// The default value is 0, which preserves the current timeout value on the system.
 	TCPFinTimeout metav1.Duration `json:"tcpFinTimeout"`
+
 	// udpTimeout is the timeout value used for IPVS UDP packets.
 	// The default value is 0, which preserves the current timeout value on the system.
 	UDPTimeout metav1.Duration `json:"udpTimeout"`
 }
 
+// IPTables
 type IPTables struct{}
 
 // CNI config. Only one CNI provider must be used at the single time.

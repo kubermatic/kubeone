@@ -381,7 +381,6 @@ func kubeProxyConfiguration(s *state.State) *kubeproxyv1alpha1.KubeProxyConfigur
 			APIVersion: "kubeproxy.config.k8s.io/v1alpha1",
 		},
 		ClusterCIDR: s.Cluster.ClusterNetwork.PodSubnet,
-		BindAddress: "0.0.0.0",
 		ClientConnection: componentbasev1alpha1.ClientConnectionConfiguration{
 			Kubeconfig: "/var/lib/kube-proxy/kubeconfig.conf",
 		},
