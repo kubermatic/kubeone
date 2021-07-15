@@ -511,6 +511,25 @@ clusterNetwork:
   serviceDomainName: "{{ .ServiceDNS }}"
   # a nodePort range to reserve for services (default: 30000-32767)
   nodePortRange: "{{ .NodePortRange }}"
+  # kube-proxy configurations
+  kubeProxy:
+    # if this set, kube-proxy mode will be set to ipvs
+    ipvs:
+      # different schedulers can be configured:
+      # * rr: round-robin
+      # * lc: least connection (smallest number of open connections)
+      # * dh: destination hashing
+      # * sh: source hashing
+      # * sed: shortest expected delay
+      # * nq: never queue
+      scheduler: rr
+      strictArp: false
+      tcpTimeout: "0"
+      tcpFinTimeout: "0"
+      udpTimeout: "0"
+      excludeCIDRs: []
+    # if mode is by default
+    iptables: {}
   # CNI plugin of choice. CNI can not be changed later at upgrade time.
   cni:
     # Only one CNI plugin can be defined at the same time
