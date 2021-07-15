@@ -1344,6 +1344,8 @@ k8s.io/kube-openapi v0.0.0-20190816220812-743ec37842bf/go.mod h1:1TqjTSzOxsLGIKf
 k8s.io/kube-openapi v0.0.0-20191107075043-30be4d16710a/go.mod h1:1TqjTSzOxsLGIKfj0lK8EeCP7K1iUG65v09OM0/WG5E=
 k8s.io/kube-openapi v0.0.0-20200805222855-6aeccd4b50c6 h1:+WnxoVtG8TMiudHBSEtrVL1egv36TkkJm+bA8AxicmQ=
 k8s.io/kube-openapi v0.0.0-20200805222855-6aeccd4b50c6/go.mod h1:UuqjUnNftUyPE5H64/qeyjQoUZhGpeFDVdxjTeEVN2o=
+k8s.io/kube-proxy v0.19.4 h1:BjP4Wv288fbV15UBKPbhUdlVu9i+HKTZ2t+XTW4fFOk=
+k8s.io/kube-proxy v0.19.4/go.mod h1:HqXWMgFOJQB0geLBXeMn2e5k9864NM/t3wrHxJjqqrk=
 k8s.io/kubelet v0.19.4 h1:X5xd2BAJYz7i+arNgMlQSJl7r2xzpfducf4BYqn/Loo=
 k8s.io/kubelet v0.19.4/go.mod h1:zJnPeb7nJCRvtAwxJhe9fFCtMLXL3cXbQiczPmpDrLU=
 k8s.io/utils v0.0.0-20190801114015-581e00157fb1/go.mod h1:sZAwmy6armz5eXlNoLmJcl4F1QuKu7sr+mFQ0byX7Ew=

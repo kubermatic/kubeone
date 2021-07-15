@@ -1,6 +1,6 @@
 +++
 title = "v1beta1 API Reference"
-date = 2021-04-19T12:12:05+03:00
+date = 2021-07-14T15:48:55+03:00
 weight = 11
 +++
 ## v1beta1
@@ -29,8 +29,11 @@ weight = 11
 * [GCESpec](#gcespec)
 * [HetznerSpec](#hetznerspec)
 * [HostConfig](#hostconfig)
+* [IPTables](#iptables)
+* [IPVSConfig](#ipvsconfig)
 * [ImageAsset](#imageasset)
 * [KubeOneCluster](#kubeonecluster)
+* [KubeProxyConfig](#kubeproxyconfig)
 * [MachineControllerConfig](#machinecontrollerconfig)
 * [MetricsServer](#metricsserver)
 * [NoneSpec](#nonespec)
@@ -179,6 +182,7 @@ ClusterNetworkConfig describes the cluster network
 | serviceDomainName | ServiceDomainName default value is \"cluster.local\" | string | false |
 | nodePortRange | NodePortRange default value is \"30000-32767\" | string | false |
 | cni | CNI default value is {canal: {mtu: 1450}} | *[CNI](#cni) | false |
+| kubeProxy | KubeProxy config | *[KubeProxyConfig](#kubeproxyconfig) | false |
 
 [Back to Group](#v1beta1)
 
@@ -340,6 +344,30 @@ HostConfig describes a single control plane node.
 
 [Back to Group](#v1beta1)
 
+### IPTables
+
+IPTables
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+
+[Back to Group](#v1beta1)
+
+### IPVSConfig
+
+IPVSConfig contains different options to configure IPVS kube-proxy mode
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| scheduler | ipvs scheduler, if it’s not configured, then round-robin (rr) is the default value. Can be one of: * rr: round-robin * lc: least connection (smallest number of open connections) * dh: destination hashing * sh: source hashing * sed: shortest expected delay * nq: never queue | string | true |
+| excludeCIDRs | excludeCIDRs is a list of CIDR's which the ipvs proxier should not touch when cleaning up ipvs services. | []string | true |
+| strictARP | strict ARP configure arp_ignore and arp_announce to avoid answering ARP queries from kube-ipvs0 interface | bool | true |
+| tcpTimeout | tcpTimeout is the timeout value used for idle IPVS TCP sessions. The default value is 0, which preserves the current timeout value on the system. | metav1.Duration | true |
+| tcpFinTimeout | tcpFinTimeout is the timeout value used for IPVS TCP sessions after receiving a FIN. The default value is 0, which preserves the current timeout value on the system. | metav1.Duration | true |
+| udpTimeout | udpTimeout is the timeout value used for IPVS UDP packets. The default value is 0, which preserves the current timeout value on the system. | metav1.Duration | true |
+
+[Back to Group](#v1beta1)
+
 ### ImageAsset
 
 ImageAsset is used to customize the image repository and the image tag
@@ -374,6 +402,17 @@ KubeOneCluster is KubeOne Cluster API Schema
 | systemPackages | SystemPackages configure kubeone behaviour regarding OS packages. | *[SystemPackages](#systempackages) | false |
 | assetConfiguration | AssetConfiguration configures how are binaries and container images downloaded | [AssetConfiguration](#assetconfiguration) | false |
 | registryConfiguration | RegistryConfiguration configures how Docker images are pulled from an image registry | *[RegistryConfiguration](#registryconfiguration) | false |
+
+[Back to Group](#v1beta1)
+
+### KubeProxyConfig
+
+KubeProxyConfig defines configured kube-proxy mode, default is iptables mode
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| ipvs | IPVS config | *[IPVSConfig](#ipvsconfig) | true |
+| iptables | IPTables config | *[IPTables](#iptables) | true |
 
 [Back to Group](#v1beta1)
 
