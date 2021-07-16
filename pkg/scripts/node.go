@@ -25,11 +25,6 @@ var (
 		echo "$fqdn"
 	`)
 
-	drainNodeScriptTemplate = heredoc.Doc(`
-		sudo KUBECONFIG=/etc/kubernetes/admin.conf \
-		kubectl drain {{ .NODE_NAME }} --ignore-daemonsets --delete-local-data
-	`)
-
 	restartKubeAPIServerCrictlTemplate = heredoc.Doc(`
 		apiserver_id=$(sudo crictl ps --name=kube-apiserver -q)
 		[ -z "$apiserver_id" ] && exit 1
@@ -46,12 +41,6 @@ var (
 	{{ end }}
 	`)
 )
-
-func DrainNode(nodeName string) (string, error) {
-	return Render(drainNodeScriptTemplate, Data{
-		"NODE_NAME": nodeName,
-	})
-}
 
 func Hostname() string {
 	return hostnameScript

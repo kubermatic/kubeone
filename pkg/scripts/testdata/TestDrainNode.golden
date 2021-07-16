@@ -1,4 +1,0 @@
-set -xeu pipefail
-export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
-sudo KUBECONFIG=/etc/kubernetes/admin.conf \
-kubectl drain testNode1 --ignore-daemonsets --delete-local-data

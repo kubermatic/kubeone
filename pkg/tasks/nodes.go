@@ -37,34 +37,6 @@ import (
 	"sigs.k8s.io/yaml"
 )
 
-func drainNode(s *state.State, node kubeoneapi.HostConfig) error {
-	cmd, err := scripts.DrainNode(node.Hostname)
-	if err != nil {
-		return err
-	}
-
-	return s.RunTaskOnLeader(func(s *state.State, _ *kubeoneapi.HostConfig, _ ssh.Connection) error {
-		_, _, err := s.Runner.RunRaw(cmd)
-
-		return err
-	})
-}
-
-func uncordonNode(s *state.State, host kubeoneapi.HostConfig) error {
-	updateErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
-		var node corev1.Node
-
-		if err := s.DynamicClient.Get(s.Context, types.NamespacedName{Name: host.Hostname}, &node); err != nil {
-			return err
-		}
-
-		node.Spec.Unschedulable = false
-		return s.DynamicClient.Update(s.Context, &node)
-	})
-
-	return errors.WithStack(updateErr)
-}
-
 func restartKubeAPIServer(s *state.State) error {
 	s.Logger.Infoln("Restarting unhealthy API servers if needed...")
 

@@ -22,6 +22,7 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/nodeutils"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
 )
@@ -40,9 +41,16 @@ func upgradeStaticWorkersExecutor(s *state.State, node *kubeoneapi.HostConfig, c
 		return errors.Wrap(err, "failed to label static worker node")
 	}
 
+	drainer := nodeutils.NewDrainer(s.RESTConfig, logger)
+
+	logger.Infoln("Cordoning static worker node...")
+	if err := drainer.Cordon(s.Context, node.Hostname, true); err != nil {
+		return errors.Wrap(err, "failed to cordon follower control plane node")
+	}
+
 	logger.Infoln("Draining static worker node...")
-	if err := drainNode(s, *node); err != nil {
-		return errors.Wrap(err, "failed to drain static worker node")
+	if err := drainer.Drain(s.Context, node.Hostname); err != nil {
+		return errors.Wrap(err, "failed to drain follower control plane node")
 	}
 
 	logger.Infoln("Upgrading Kubernetes binaries on static worker node...")
@@ -61,8 +69,8 @@ func upgradeStaticWorkersExecutor(s *state.State, node *kubeoneapi.HostConfig, c
 	}
 
 	logger.Infoln("Uncordoning static worker node...")
-	if err := uncordonNode(s, *node); err != nil {
-		return errors.Wrap(err, "failed to uncordon static worker node")
+	if err := drainer.Cordon(s.Context, node.Hostname, false); err != nil {
+		return errors.Wrap(err, "failed to uncordon follower control plane node")
 	}
 
 	logger.Infof("Waiting %v to ensure all components are up...", timeoutNodeUpgrade)
