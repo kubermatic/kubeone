@@ -22,6 +22,7 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/nodeutils"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
 )
@@ -38,8 +39,15 @@ func upgradeFollowerExecutor(s *state.State, node *kubeoneapi.HostConfig, conn s
 		return errors.Wrap(err, "failed to label follower control plane node")
 	}
 
-	logger.Infoln("Draining follower control plane...")
-	if err := drainNode(s, *node); err != nil {
+	drainer := nodeutils.NewDrainer(s.RESTConfig, logger)
+
+	logger.Infoln("Cordon the follower control plane node...")
+	if err := drainer.Cordon(s.Context, node.Hostname, true); err != nil {
+		return errors.Wrap(err, "failed to cordon follower control plane node")
+	}
+
+	logger.Infoln("Drain the follower control plane node...")
+	if err := drainer.Drain(s.Context, node.Hostname); err != nil {
 		return errors.Wrap(err, "failed to drain follower control plane node")
 	}
 
@@ -59,7 +67,7 @@ func upgradeFollowerExecutor(s *state.State, node *kubeoneapi.HostConfig, conn s
 	}
 
 	logger.Infoln("Uncordoning follower control plane...")
-	if err := uncordonNode(s, *node); err != nil {
+	if err := drainer.Cordon(s.Context, node.Hostname, false); err != nil {
 		return errors.Wrap(err, "failed to uncordon follower control plane node")
 	}
 

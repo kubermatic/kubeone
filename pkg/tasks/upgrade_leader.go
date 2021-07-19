@@ -22,6 +22,7 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/nodeutils"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
 )
@@ -38,9 +39,16 @@ func upgradeLeaderExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh
 		return errors.Wrap(err, "failed to label leader control plane node")
 	}
 
+	drainer := nodeutils.NewDrainer(s.RESTConfig, logger)
+
+	logger.Infoln("Cordoning leader control plane...")
+	if err := drainer.Cordon(s.Context, node.Hostname, true); err != nil {
+		return errors.Wrap(err, "failed to cordon follower control plane node")
+	}
+
 	logger.Infoln("Draining leader control plane...")
-	if err := drainNode(s, *node); err != nil {
-		return errors.Wrap(err, "failed to drain leader control plane node")
+	if err := drainer.Drain(s.Context, node.Hostname); err != nil {
+		return errors.Wrap(err, "failed to drain follower control plane node")
 	}
 
 	logger.Infoln("Upgrading kubeadm binary on the leader control plane...")
@@ -59,8 +67,8 @@ func upgradeLeaderExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh
 	}
 
 	logger.Infoln("Uncordoning leader control plane...")
-	if err := uncordonNode(s, *node); err != nil {
-		return errors.Wrap(err, "failed to uncordon leader control plane node")
+	if err := drainer.Cordon(s.Context, node.Hostname, false); err != nil {
+		return errors.Wrap(err, "failed to uncordon follower control plane node")
 	}
 
 	logger.Infof("Waiting %v to ensure all components are up...", timeoutNodeUpgrade)
