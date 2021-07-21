@@ -4,54 +4,77 @@
 
 ## Attention Needed
 
-* [**BREAKING/ACTION REQUIRED**] Use AdmissionRegistration v1 API for machine-controller-webhook ([#1290](https://github.com/kubermatic/kubeone/pull/1290))
-  Since AdmissionRegistartion v1 got introduced in Kubernetes 1.16, the minimum Kubernetes version that can be managed by KubeOne is now 1.16. If you're running the Kubernetes clusters running 1.15 or older, please use the older release of KubeOne to upgrade those clusters
+* [**BREAKING/ACTION REQUIRED**] The `kubeone reset` command requires an explicit confirmation like the `apply` command starting with this release
+  * Running the `reset` command requires typing `yes` to confirm the intention to unprovision/reset the cluster
+  * The command can be automatically approved by using the `--auto-approve` flag
+* [**BREAKING/ACTION REQUIRED**] Upgrade Terraform to 1.0.0. The minimum Terraform version as of this KubeOne release is v1.0.0. ([#1368](https://github.com/kubermatic/kubeone/pull/1368))
+* [**BREAKING/ACTION REQUIRED**] Use AdmissionRegistration v1 API for machine-controller-webhook. The minimum supported Kubernetes version is now 1.16. ([#1290](https://github.com/kubermatic/kubeone/pull/1290))
+  * Since AdmissionRegistartion v1 got introduced in Kubernetes 1.16, the minimum Kubernetes version that can be managed by KubeOne is now 1.16. If you're running the Kubernetes clusters running 1.15 or older, please use the older release of KubeOne to upgrade those clusters
+* KubeOne Addons can now be organized into subdirectories. It currently remains possible to put addons in the root of the addons directory, however, this is option is considered as deprecated as of this release. We highly recommend all users to reorganize their addons into subdirectories, where each subdirectory is for YAML manifests related to one addon.
 
 ## Added
-* Add a new KubeOne addon for handling unattended upgrades of the operating system ([#1291](https://github.com/kubermatic/kubeone/pull/1291))
-* Automatically renew Kubernetes certificates when running `kubeone apply` if they're supposed to expire in less than 90 days ([#1300](https://github.com/kubermatic/kubeone/pull/1300))
-* Add support for Encryption Providers ([#1241](https://github.com/kubermatic/kubeone/pull/1241))
-* Add support for KMS mounts in kubeapi ([#1320](https://github.com/kubermatic/kubeone/pull/1320))
-* Ignore preexisting static manifests kubeadm preflight error ([#1335](https://github.com/kubermatic/kubeone/pull/1335))
+
+### API
+
+* Add new kube-proxy configuration API ([#1420](https://github.com/kubermatic/kubeone/pull/1420))
+  * This API allows users to switch kube-proxy to IPVS mode, and configure IPVS properties such as strict ARP and scheduler
+  * The default kube-proxy mode remains iptables
+* Add support for Encryption Providers ([#1241](https://github.com/kubermatic/kubeone/pull/1241), [#1320](https://github.com/kubermatic/kubeone/pull/1320))
 * Add support for specifying a custom Root CA bundle ([#1316](https://github.com/kubermatic/kubeone/pull/1316))
-* Add a new `kubeone config images list` subcommand to list images used by KubeOne and kubeadm. This command replaces the image loader script ([#1334](https://github.com/kubermatic/kubeone/pull/1334))
-* Containerd support for flatcar ([#1340](https://github.com/kubermatic/kubeone/pull/1340))
-* Add support for running Kubernetes clusters on Amazon Linux 2 ([#1339](https://github.com/kubermatic/kubeone/pull/1339))
-* Support organizing addons into subdirectories ([#1364](https://github.com/kubermatic/kubeone/pull/1364))
+
+### Features
+
 * Docker to containerd automated migration ([#1362](https://github.com/kubermatic/kubeone/pull/1362))
+* Automatically renew Kubernetes certificates when running `kubeone apply` if they're supposed to expire in less than 90 days ([#1300](https://github.com/kubermatic/kubeone/pull/1300))
+* Ignore preexisting static manifests kubeadm preflight error ([#1335](https://github.com/kubermatic/kubeone/pull/1335))
+* Add a new `kubeone config images list` subcommand to list images used by KubeOne and kubeadm. This command replaces the image loader script ([#1334](https://github.com/kubermatic/kubeone/pull/1334))
+* Add containerd support for Flatcar clusters ([#1340](https://github.com/kubermatic/kubeone/pull/1340))
+* Add support for running Kubernetes clusters on Amazon Linux 2 ([#1339](https://github.com/kubermatic/kubeone/pull/1339))
+
+### Addons
+
 * Implement a mechanism for embedding YAML addons into KubeOne binary ([#1387](https://github.com/kubermatic/kubeone/pull/1387))
+* Support organizing addons into subdirectories ([#1364](https://github.com/kubermatic/kubeone/pull/1364))
+* Add a new KubeOne addon for handling unattended upgrades of the operating system ([#1291](https://github.com/kubermatic/kubeone/pull/1291))
 * Add a new KubeOne addon for deploying the Hetzner CSI plugin ([#1418](https://github.com/kubermatic/kubeone/pull/1418))
-* New kube-proxy configuration API ([#1420](https://github.com/kubermatic/kubeone/pull/1420))
 
 ## Changed
 
-### General
-* Replace the NodeLocalDNS template with an addon ([#1392](https://github.com/kubermatic/kubeone/pull/1392))
-* Replace the DigitalOcean CCM Go template with an embedded addon ([#1396](https://github.com/kubermatic/kubeone/pull/1396))
-* Replace the Hetzner CCM Go template with an embedded addon ([#1397](https://github.com/kubermatic/kubeone/pull/1397))
-* Replace the Packet CCM Go template with an embedded addon ([#1401](https://github.com/kubermatic/kubeone/pull/1401))
-* Replace the OpenStack CCM Go template with an embedded addon ([#1402](https://github.com/kubermatic/kubeone/pull/1402))
-* Convert canal CNI to an addon ([#1405](https://github.com/kubermatic/kubeone/pull/1405))
-* Migrate WeaveNet to YAML addons ([#1407](https://github.com/kubermatic/kubeone/pull/1407))
-* Replace the metrics-server CCM Go template with an embedded addon ([#1411](https://github.com/kubermatic/kubeone/pull/1411))
-* Replace the vSphere CCM Go template with an embedded addon ([#1410](https://github.com/kubermatic/kubeone/pull/1410))
-* Migrate machine-controller to new addons mechanism ([#1412](https://github.com/kubermatic/kubeone/pull/1412))
+### CLI
 
-### Updated
-* Update Go to 1.16.1 ([#1267](https://github.com/kubermatic/kubeone/pull/1267))
-* Use latest available (wildcard) docker and containerd version ([#1358](https://github.com/kubermatic/kubeone/pull/1358))
-* Upgrade terraform to 1.0.0 ([#1368](https://github.com/kubermatic/kubeone/pull/1368))
-* Terraform configs aligned to terraform 1.0.0 ([#1376](https://github.com/kubermatic/kubeone/pull/1376))
-* Upgrade machinecontroller to v1.33.0 ([#1391](https://github.com/kubermatic/kubeone/pull/1391))
-* Upgrade calico-vxlan CNI plugin addon to v3.19.1 ([#1403](https://github.com/kubermatic/kubeone/pull/1403))
-* Upgrade machinecontroller addon apiextensions to v1 API ([#1423](https://github.com/kubermatic/kubeone/pull/1423))
+* [**BREAKING/ACTION REQUIRED**] The `kubeone reset` command requires an explicit confirmation like the `apply` command starting with this release
+  * Running the `reset` command requires typing `yes` to confirm the intention to unprovision/reset the cluster
+  * The command can be automatically approved by using the `--auto-approve` flag
 
 ### Bug Fixes
+
 * Fix missing ClusterRole rule for cluster autoscaler ([#1331](https://github.com/kubermatic/kubeone/pull/1331))
 * Fix missing confirmation for reset ([#1251](https://github.com/kubermatic/kubeone/pull/1251))
 * Remove CNI patching ([#1386](https://github.com/kubermatic/kubeone/pull/1386))
 * Fix subsequent apply failures if CABundle is enabled ([#1404](https://github.com/kubermatic/kubeone/pull/1404))
 * Fix kubeone reset error when trying to list Machines ([#1416](https://github.com/kubermatic/kubeone/pull/1416))
+
+### Updated
+
+* [**BREAKING/ACTION REQUIRED**] Upgrade Terraform to 1.0.0. The minimum Terraform version as of this KubeOne release is v1.0.0. ([#1368](https://github.com/kubermatic/kubeone/pull/1368), [#1376](https://github.com/kubermatic/kubeone/pull/1376))
+* Use latest available (wildcard) docker and containerd version ([#1358](https://github.com/kubermatic/kubeone/pull/1358))
+* Upgrade machinecontroller to v1.33.0 ([#1391](https://github.com/kubermatic/kubeone/pull/1391))
+* Upgrade machine-controller addon apiextensions to v1 API ([#1423](https://github.com/kubermatic/kubeone/pull/1423))
+* Upgrade calico-vxlan CNI plugin addon to v3.19.1 ([#1403](https://github.com/kubermatic/kubeone/pull/1403))
+* Update Go to 1.16.1 ([#1267](https://github.com/kubermatic/kubeone/pull/1267))
+
+### Addons
+
+* Replace the Canal CNI Go template with an embedded addon ([#1405](https://github.com/kubermatic/kubeone/pull/1405))
+* Replace the WeaveNet Go template with an embedded addon ([#1407](https://github.com/kubermatic/kubeone/pull/1407))
+* Replace the NodeLocalDNS template with an addon ([#1392](https://github.com/kubermatic/kubeone/pull/1392))
+* Replace the metrics-server CCM Go template with an embedded addon ([#1411](https://github.com/kubermatic/kubeone/pull/1411))
+* Replace the machine-controller Go template with an embedded addon ([#1412](https://github.com/kubermatic/kubeone/pull/1412))
+* Replace the DigitalOcean CCM Go template with an embedded addon ([#1396](https://github.com/kubermatic/kubeone/pull/1396))
+* Replace the Hetzner CCM Go template with an embedded addon ([#1397](https://github.com/kubermatic/kubeone/pull/1397))
+* Replace the Packet CCM Go template with an embedded addon ([#1401](https://github.com/kubermatic/kubeone/pull/1401))
+* Replace the OpenStack CCM Go template with an embedded addon ([#1402](https://github.com/kubermatic/kubeone/pull/1402))
+* Replace the vSphere CCM Go template with an embedded addon ([#1410](https://github.com/kubermatic/kubeone/pull/1410))
 
 # [v1.2.3](https://github.com/kubermatic/kubeone/releases/tag/v1.2.3) - 2021-06-14
 
