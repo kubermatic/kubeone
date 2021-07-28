@@ -29,8 +29,11 @@ spec:
           operator: "Exists"
         # cloud controller manages should be able to run on masters
         - key: "node-role.kubernetes.io/master"
-          operator: "Exists"
-          effect: NoSchedule
+          effect: "NoSchedule"
+        - key: "node-role.kubernetes.io/control-plane"
+          effect: "NoSchedule"
+        - key: "node.kubernetes.io/not-ready"
+          effect: "NoSchedule"
       containers:
       - image: {{ .InternalImages.Get "DigitaloceanCCM" }}
         name: digitalocean-cloud-controller-manager
@@ -62,6 +65,21 @@ metadata:
     rbac.authorization.kubernetes.io/autoupdate: "true"
   name: system:cloud-controller-manager
 rules:
+# The following is necessary to support leader election when running DO-CCM on
+# a multi-master cluster. We leave it commented out on the assumption that the
+# typical user is not running a multi-master cluster and therefore does not
+# need the additional permissions.
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - get
+  - watch
+  - list
+  - create
+  - update
+  - delete
 - apiGroups:
   - ""
   resources:
