@@ -8,7 +8,6 @@ spec:
   podInfoOnMount: true
   volumeLifecycleModes:
     - Persistent
-
 ---
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
@@ -20,14 +19,12 @@ metadata:
 provisioner: csi.hetzner.cloud
 volumeBindingMode: WaitForFirstConsumer
 allowVolumeExpansion: true
-
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: hcloud-csi
   namespace: kube-system
-
 ---
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
@@ -76,7 +73,6 @@ rules:
   - apiGroups: [""]
     resources: ["events"]
     verbs: ["get", "list", "watch", "create", "update", "patch"]
-
 ---
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
@@ -90,7 +86,6 @@ roleRef:
   kind: ClusterRole
   name: hcloud-csi
   apiGroup: rbac.authorization.k8s.io
-
 ---
 kind: StatefulSet
 apiVersion: apps/v1
@@ -109,6 +104,13 @@ spec:
         app: hcloud-csi-controller
     spec:
       serviceAccount: hcloud-csi
+      tolerations:
+        - key: "CriticalAddonsOnly"
+          operator: "Exists"
+        - key: "node-role.kubernetes.io/master"
+          effect: NoSchedule
+        - key: "node-role.kubernetes.io/control-plane"
+          effect: NoSchedule
       containers:
         - name: csi-attacher
           image: quay.io/k8scsi/csi-attacher:v2.2.0
@@ -202,7 +204,6 @@ spec:
       volumes:
         - name: socket-dir
           emptyDir: {}
-
 ---
 kind: DaemonSet
 apiVersion: apps/v1
@@ -315,7 +316,6 @@ spec:
           hostPath:
             path: /dev
             type: Directory
-
 ---
 apiVersion: v1
 kind: Service
