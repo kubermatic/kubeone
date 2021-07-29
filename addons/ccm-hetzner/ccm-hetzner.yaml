@@ -29,8 +29,6 @@ spec:
   selector:
     matchLabels:
       app: hcloud-cloud-controller-manager
-  strategy:
-    type: Recreate
   template:
     metadata:
       labels:
@@ -39,6 +37,7 @@ spec:
         scheduler.alpha.kubernetes.io/critical-pod: ''
     spec:
       serviceAccountName: cloud-controller-manager
+      dnsPolicy: Default
       tolerations:
         # this taint is set by all kubelets running `--cloud-provider=external`
         # so we should tolerate it to schedule the cloud controller manager
@@ -49,9 +48,11 @@ spec:
           operator: "Exists"
         # cloud controller manages should be able to run on masters
         - key: "node-role.kubernetes.io/master"
-          operator: "Exists"
           effect: NoSchedule
-      hostNetwork: true
+        - key: "node-role.kubernetes.io/control-plane"
+          effect: NoSchedule
+        - key: "node.kubernetes.io/not-ready"
+          effect: "NoSchedule"
       containers:
         - image: {{ .InternalImages.Get "HetznerCCM" }}
           name: hcloud-cloud-controller-manager
@@ -79,6 +80,8 @@ spec:
                   name: cloud-provider-credentials
                   key: HZ_TOKEN
             {{ if .Config.CloudProvider.Hetzner.NetworkID -}}
+            - name: HCLOUD_LOAD_BALANCERS_USE_PRIVATE_IP
+              value: "true"
             - name: HCLOUD_NETWORK
               value: "{{ .Config.CloudProvider.Hetzner.NetworkID }}"
             {{- end }}
