@@ -74,7 +74,7 @@ func baseResources() map[Resource]string {
 
 func optionalResources() map[Resource]string {
 	return map[Resource]string{
-		DigitaloceanCCM: "docker.io/digitalocean/digitalocean-cloud-controller-manager:v0.1.23",
+		DigitaloceanCCM: "docker.io/digitalocean/digitalocean-cloud-controller-manager:v0.1.33",
 		HetznerCCM:      "docker.io/hetznercloud/hcloud-cloud-controller-manager:v1.9.1",
 		OpenstackCCM:    "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.17.0",
 		PacketCCM:       "docker.io/packethost/packet-ccm:v1.0.0",
