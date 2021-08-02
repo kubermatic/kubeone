@@ -583,7 +583,7 @@ spec:
       containers:
         - image: "{{ .InternalImages.Get "MachineController" }}"
           imagePullPolicy: IfNotPresent
-          name: webhook
+          name: machine-controller-webhook
           command:
             - /usr/local/bin/webhook
             - -logtostderr
