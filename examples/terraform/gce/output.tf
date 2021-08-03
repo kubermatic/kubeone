@@ -63,7 +63,7 @@ output "kubeone_workers" {
           machineType           = var.workers_type
           network               = google_compute_network.network.self_link
           subnetwork            = google_compute_subnetwork.subnet.self_link
-          zone                  = "${var.region}-a"
+          zone                  = data.google_compute_zones.available.names[0]
           preemptible           = false
           assignPublicIPAddress = true
           # Enable support for multizone clusters

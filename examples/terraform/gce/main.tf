@@ -173,4 +173,3 @@ resource "google_compute_instance" "control_plane" {
     ]
   }
 }
-
