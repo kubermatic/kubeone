@@ -72,6 +72,10 @@ output "kubeone_workers" {
           # rootDiskSizeGB = 50
           # Optional: limit how many volumes can be attached to a node
           # nodeVolumeAttachLimit = 25
+          # Optional: Some OpenStack installations are rather slow to
+          # spawn VMs. Adjust the instanceReadyCheck's accordingly
+          instanceReadyCheckPeriod: 10s
+          instanceReadyCheckTimeout: 5m
           tags = {
             "${var.cluster_name}-workers" = "pool1"
           }
