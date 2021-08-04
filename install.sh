@@ -28,6 +28,11 @@ URL="https://github.com/kubermatic/kubeone/releases/download/v${VERSION}/kubeone
 # 'kubeone' will be installed into this dir
 DEST=/usr/local/bin
 
+if [ ! -x "$(command -v unzip)" ]; then
+  echo "Your system is missing 'unzip'. Please install it and try again."
+  exit 2
+fi
+
 # Download the latest version for the OS and save it as zip
 if curl -LO "$URL"
 then
