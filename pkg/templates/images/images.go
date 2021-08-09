@@ -34,7 +34,9 @@ func (res Resource) namedReference() reference.Named {
 
 const (
 	// default 0 index has no meaning
-	CalicoCNI Resource = iota + 1
+	AzureCCM Resource = iota + 1
+	AzureCNM
+	CalicoCNI
 	CalicoController
 	CalicoNode
 	DigitaloceanCCM
@@ -74,6 +76,8 @@ func baseResources() map[Resource]string {
 
 func optionalResources() map[Resource]string {
 	return map[Resource]string{
+		AzureCCM:        "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.0.1",
+		AzureCNM:        "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.0.1",
 		DigitaloceanCCM: "docker.io/digitalocean/digitalocean-cloud-controller-manager:v0.1.33",
 		HetznerCCM:      "docker.io/hetznercloud/hcloud-cloud-controller-manager:v1.9.1",
 		OpenstackCCM:    "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.17.0",
