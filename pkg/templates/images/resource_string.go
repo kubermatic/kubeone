@@ -8,25 +8,27 @@ func _() {
 	// An "invalid array index" compiler error signifies that the constant values have changed.
 	// Re-run the stringer command to generate them again.
 	var x [1]struct{}
-	_ = x[CalicoCNI-1]
-	_ = x[CalicoController-2]
-	_ = x[CalicoNode-3]
-	_ = x[DigitaloceanCCM-4]
-	_ = x[DNSNodeCache-5]
-	_ = x[Flannel-6]
-	_ = x[HetznerCCM-7]
-	_ = x[MachineController-8]
-	_ = x[MetricsServer-9]
-	_ = x[OpenstackCCM-10]
-	_ = x[PacketCCM-11]
-	_ = x[VsphereCCM-12]
-	_ = x[WeaveNetCNIKube-13]
-	_ = x[WeaveNetCNINPC-14]
+	_ = x[AzureCCM-1]
+	_ = x[AzureCNM-2]
+	_ = x[CalicoCNI-3]
+	_ = x[CalicoController-4]
+	_ = x[CalicoNode-5]
+	_ = x[DigitaloceanCCM-6]
+	_ = x[DNSNodeCache-7]
+	_ = x[Flannel-8]
+	_ = x[HetznerCCM-9]
+	_ = x[MachineController-10]
+	_ = x[MetricsServer-11]
+	_ = x[OpenstackCCM-12]
+	_ = x[PacketCCM-13]
+	_ = x[VsphereCCM-14]
+	_ = x[WeaveNetCNIKube-15]
+	_ = x[WeaveNetCNINPC-16]
 }
 
-const _Resource_name = "CalicoCNICalicoControllerCalicoNodeDigitaloceanCCMDNSNodeCacheFlannelHetznerCCMMachineControllerMetricsServerOpenstackCCMPacketCCMVsphereCCMWeaveNetCNIKubeWeaveNetCNINPC"
+const _Resource_name = "AzureCCMAzureCNMCalicoCNICalicoControllerCalicoNodeDigitaloceanCCMDNSNodeCacheFlannelHetznerCCMMachineControllerMetricsServerOpenstackCCMPacketCCMVsphereCCMWeaveNetCNIKubeWeaveNetCNINPC"
 
-var _Resource_index = [...]uint8{0, 9, 25, 35, 50, 62, 69, 79, 96, 109, 121, 130, 140, 155, 169}
+var _Resource_index = [...]uint8{0, 8, 16, 25, 41, 51, 66, 78, 85, 95, 112, 125, 137, 146, 156, 171, 185}
 
 func (i Resource) String() string {
 	i -= 1
