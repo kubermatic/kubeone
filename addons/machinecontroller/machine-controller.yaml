@@ -589,6 +589,7 @@ spec:
             - -logtostderr
             - -v=4
             - -listen-address=0.0.0.0:9876
+            - -node-kubelet-feature-gates={{ .Config.KubeletFeatureGates }}
             {{ if .Config.CloudProvider.External }}
             - -node-external-cloud-provider
             {{ end }}

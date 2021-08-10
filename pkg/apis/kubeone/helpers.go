@@ -20,9 +20,24 @@ import (
 	"bytes"
 	"fmt"
 	"math/rand"
+	"strings"
 
+	"github.com/Masterminds/semver/v3"
 	"github.com/pkg/errors"
 )
+
+var (
+	v122plus = mustParseConstraint(">= 1.22")
+)
+
+func mustParseConstraint(constraint string) *semver.Constraints {
+	c, err := semver.NewConstraint(constraint)
+	if err != nil {
+		panic(err)
+	}
+
+	return c
+}
 
 // Leader returns the first configured host. Only call this after
 // validating the cluster config to ensure a leader exists.
@@ -33,6 +48,25 @@ func (c KubeOneCluster) Leader() (HostConfig, error) {
 		}
 	}
 	return HostConfig{}, errors.New("leader not found")
+}
+
+const (
+	defaultFeatureGates  = "RotateKubeletServerCertificate=true"
+	dynamicKubeletConfig = "DynamicKubeletConfig=true"
+)
+
+// KubeletFeatureGates calculates feature flags, and depending on the kubernetes version can give different output
+func (c *KubeOneCluster) KubeletFeatureGates() string {
+	ver, err := semver.NewVersion(c.Versions.Kubernetes)
+	if err != nil {
+		return defaultFeatureGates
+	}
+
+	if v122plus.Check(ver) {
+		return strings.Join([]string{defaultFeatureGates, dynamicKubeletConfig}, ",")
+	}
+
+	return c.Versions.Kubernetes
 }
 
 func (c KubeOneCluster) RandomHost() HostConfig {
