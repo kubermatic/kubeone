@@ -16,19 +16,19 @@ linters:
   - bodyclose
   - deadcode
   - errcheck
+  - exportloopref
   - goconst
   - gocritic
   - gocyclo
   - gofmt
   - goimports
-  - golint
   - gosec
   - gosimple
   - govet
   - ineffassign
   - misspell
   - nakedret
-  - scopelint
+  - revive
   - staticcheck
   - structcheck
   - stylecheck

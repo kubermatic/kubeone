@@ -24,7 +24,7 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-        - image: golang:1.16.1
+        - image: golang:1.16.7
           command:
             - make
           args:
@@ -44,7 +44,7 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/wwhrd:0.4.0-1
+        - image: quay.io/kubermatic/wwhrd:0.4.0-2
           command:
             - make
           args:
@@ -64,7 +64,7 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-        - image: golang:1.16.1
+        - image: golang:1.16.7
           command:
             - make
           args:
@@ -84,7 +84,7 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-        - image: golang:1.16.1
+        - image: golang:1.16.7
           command:
             - make
           args:
@@ -104,7 +104,7 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-        - image: golangci/golangci-lint:v1.38.0
+        - image: golangci/golangci-lint:v1.41.1
           command:
             - make
           args:
@@ -1184,7 +1184,7 @@ presubmits:
             - name: KUBEONE_TEST_RUN
               value: "TestClusterUpgrade"
 postsubmits:
-  - name: ci-push-kubeone-e2e-image
+  - name: post-kubeone-push-e2e-image
     run_if_changed: "(hack/images/kubeone-e2e)"
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     decorate: true
@@ -1194,16 +1194,15 @@ postsubmits:
       preset-docker-push: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/go-docker:16.1-1903-0
+        - image: quay.io/kubermatic/build:go-1.16-node-14-kind-0.11-1
           command:
             - /bin/bash
             - -c
             - |
               set -euo pipefail
-
-              /usr/local/bin/entrypoint.sh && \
-              docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD && \
-              cd ./hack/images/kubeone-e2e && \
+              start-docker.sh
+              docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+              cd ./hack/images/kubeone-e2e
               ./release.sh
           # docker-in-docker needs privileged mode
           securityContext:

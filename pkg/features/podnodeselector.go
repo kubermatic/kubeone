@@ -53,11 +53,8 @@ func installPodNodeSelector(ctx context.Context, c client.Client, feature *kubeo
 	if err := annotateKubeSystemNamespace(ctx, c); err != nil {
 		return err
 	}
-	if err := deletePendingPods(ctx, c); err != nil {
-		return err
-	}
 
-	return nil
+	return deletePendingPods(ctx, c)
 }
 
 // annotateKubeSystemNamespace adds the scheduler.alpha.kubernetes.io/node-selector: ""
