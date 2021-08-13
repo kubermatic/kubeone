@@ -17,8 +17,7 @@
 FROM golang:1.16.7 as builder
 
 RUN apt-get update && apt-get install -y \
-    unzip \
-    upx-ucl
+    unzip
 
 ENV TERRAFORM_VERSION "1.0.4"
 RUN curl -fL https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip | funzip >/usr/local/bin/terraform

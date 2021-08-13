@@ -53,9 +53,6 @@ for version in "${!full_versions[@]}"; do
     rm "${directory}"/kubernetes/platforms/linux/amd64/genyaml
     rm "${directory}"/kubernetes/platforms/linux/amd64/kubemark
     rm "${directory}"/kubernetes/platforms/linux/amd64/linkcheck
-    if [ "$(command -v upx)" ]; then
-      upx "${directory}"/kubernetes/platforms/linux/amd64/*
-    fi
   fi
 done
 
