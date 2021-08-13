@@ -1188,6 +1188,9 @@ postsubmits:
     run_if_changed: "(hack/images/kubeone-e2e)"
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     decorate: true
+    reporter_config:
+      slack:
+        channel: dev-kubeone
     branches:
       - ^master$
     labels:
