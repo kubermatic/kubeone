@@ -279,6 +279,8 @@ presubmits:
           env:
             - name: PROVIDER
               value: "aws"
+            - name: CONTAINER_RUNTIME
+              value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.22.0"
             - name: KUBEONE_TEST_RUN
@@ -382,6 +384,8 @@ presubmits:
           env:
             - name: PROVIDER
               value: "digitalocean"
+            - name: CONTAINER_RUNTIME
+              value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.22.0"
             - name: KUBEONE_TEST_RUN
@@ -485,6 +489,8 @@ presubmits:
           env:
             - name: PROVIDER
               value: "hetzner"
+            - name: CONTAINER_RUNTIME
+              value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.22.0"
             - name: KUBEONE_TEST_RUN
@@ -594,6 +600,8 @@ presubmits:
           env:
             - name: PROVIDER
               value: "gce"
+            - name: CONTAINER_RUNTIME
+              value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.22.0"
             - name: KUBEONE_TEST_RUN
@@ -699,6 +707,8 @@ presubmits:
           env:
             - name: PROVIDER
               value: "packet"
+            - name: CONTAINER_RUNTIME
+              value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.22.0"
             - name: KUBEONE_TEST_RUN
@@ -802,6 +812,8 @@ presubmits:
           env:
             - name: PROVIDER
               value: "openstack"
+            - name: CONTAINER_RUNTIME
+              value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.22.0"
             - name: KUBEONE_TEST_RUN
@@ -914,6 +926,8 @@ presubmits:
           env:
             - name: PROVIDER
               value: "aws"
+            - name: CONTAINER_RUNTIME
+              value: containerd
             - name: TF_VAR_initial_machinedeployment_spotinstances
               value: "true"
             - name: TEST_CLUSTER_INITIAL_VERSION
@@ -997,6 +1011,8 @@ presubmits:
           env:
             - name: PROVIDER
               value: "digitalocean"
+            - name: CONTAINER_RUNTIME
+              value: containerd
             - name: TEST_CLUSTER_INITIAL_VERSION
               value: "1.21.4"
             - name: TEST_CLUSTER_TARGET_VERSION
@@ -1078,6 +1094,8 @@ presubmits:
           env:
             - name: PROVIDER
               value: "hetzner"
+            - name: CONTAINER_RUNTIME
+              value: containerd
             - name: TEST_CLUSTER_INITIAL_VERSION
               value: "1.21.4"
             - name: TEST_CLUSTER_TARGET_VERSION
@@ -1163,6 +1181,8 @@ presubmits:
           env:
             - name: PROVIDER
               value: "gce"
+            - name: CONTAINER_RUNTIME
+              value: containerd
             - name: TEST_CLUSTER_INITIAL_VERSION
               value: "1.21.4"
             - name: TEST_CLUSTER_TARGET_VERSION
@@ -1246,6 +1266,8 @@ presubmits:
           env:
             - name: PROVIDER
               value: "packet"
+            - name: CONTAINER_RUNTIME
+              value: containerd
             - name: TEST_CLUSTER_INITIAL_VERSION
               value: "1.21.4"
             - name: TEST_CLUSTER_TARGET_VERSION
@@ -1327,6 +1349,8 @@ presubmits:
           env:
             - name: PROVIDER
               value: "openstack"
+            - name: CONTAINER_RUNTIME
+              value: containerd
             - name: TEST_CLUSTER_INITIAL_VERSION
               value: "1.21.4"
             - name: TEST_CLUSTER_TARGET_VERSION
