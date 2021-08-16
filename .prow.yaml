@@ -167,6 +167,8 @@ presubmits:
               value: "aws"
             - name: CONTAINER_RUNTIME
               value: containerd
+            - name: TF_VAR_worker_deploy_ssh_key
+              value: "false"
             - name: TEST_OS_CONTROL_PLANE
               value: "flatcar"
             - name: TEST_OS_WORKERS
