@@ -203,7 +203,7 @@ presubmits:
             - name: TF_VAR_initial_machinedeployment_spotinstances
               value: "true"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.19.12"
+              value: "1.19.14"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -230,7 +230,7 @@ presubmits:
             - name: TF_VAR_initial_machinedeployment_spotinstances
               value: "true"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.8"
+              value: "1.20.10"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -255,7 +255,7 @@ presubmits:
             - name: PROVIDER
               value: "aws"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.2"
+              value: "1.21.4"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -308,7 +308,7 @@ presubmits:
             - name: PROVIDER
               value: "digitalocean"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.19.12"
+              value: "1.19.14"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -333,7 +333,7 @@ presubmits:
             - name: PROVIDER
               value: "digitalocean"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.8"
+              value: "1.20.10"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -358,7 +358,7 @@ presubmits:
             - name: PROVIDER
               value: "digitalocean"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.2"
+              value: "1.21.4"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -411,7 +411,7 @@ presubmits:
             - name: PROVIDER
               value: "hetzner"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.19.12"
+              value: "1.19.14"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -436,7 +436,7 @@ presubmits:
             - name: PROVIDER
               value: "hetzner"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.8"
+              value: "1.20.10"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -461,7 +461,7 @@ presubmits:
             - name: PROVIDER
               value: "hetzner"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.2"
+              value: "1.21.4"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -514,7 +514,7 @@ presubmits:
             - name: PROVIDER
               value: "gce"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.19.12"
+              value: "1.19.14"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
             - name: TF_VAR_project
@@ -541,7 +541,7 @@ presubmits:
             - name: PROVIDER
               value: "gce"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.8"
+              value: "1.20.10"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
             - name: TF_VAR_project
@@ -568,7 +568,7 @@ presubmits:
             - name: PROVIDER
               value: "gce"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.2"
+              value: "1.21.4"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
             - name: TF_VAR_project
@@ -625,7 +625,7 @@ presubmits:
             - name: PROVIDER
               value: "packet"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.19.12"
+              value: "1.19.14"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -650,7 +650,7 @@ presubmits:
             - name: PROVIDER
               value: "packet"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.8"
+              value: "1.20.10"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -675,7 +675,7 @@ presubmits:
             - name: PROVIDER
               value: "packet"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.2"
+              value: "1.21.4"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -728,7 +728,7 @@ presubmits:
             - name: PROVIDER
               value: "openstack"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.19.12"
+              value: "1.19.14"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -753,7 +753,7 @@ presubmits:
             - name: PROVIDER
               value: "openstack"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.8"
+              value: "1.20.10"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -778,7 +778,7 @@ presubmits:
             - name: PROVIDER
               value: "openstack"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.2"
+              value: "1.21.4"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -837,7 +837,7 @@ presubmits:
             - name: TEST_CLUSTER_INITIAL_VERSION
               value: "1.18.20"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.19.12"
+              value: "1.19.14"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -865,7 +865,7 @@ presubmits:
             - name: TEST_CLUSTER_INITIAL_VERSION
               value: "1.18.20"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.19.12"
+              value: "1.19.14"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -889,9 +889,9 @@ presubmits:
             - name: PROVIDER
               value: "aws"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.19.12"
+              value: "1.19.14"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.8"
+              value: "1.20.10"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -917,9 +917,9 @@ presubmits:
             - name: TF_VAR_initial_machinedeployment_spotinstances
               value: "true"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.20.8"
+              value: "1.20.10"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.2"
+              value: "1.21.4"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -945,7 +945,7 @@ presubmits:
             - name: TF_VAR_initial_machinedeployment_spotinstances
               value: "true"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.21.2"
+              value: "1.21.4"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.22.0"
             - name: TEST_TIMEOUT
@@ -976,7 +976,7 @@ presubmits:
             - name: TEST_CLUSTER_INITIAL_VERSION
               value: "1.18.20"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.19.12"
+              value: "1.19.14"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1000,9 +1000,9 @@ presubmits:
             - name: PROVIDER
               value: "digitalocean"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.19.12"
+              value: "1.19.14"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.8"
+              value: "1.20.10"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1026,9 +1026,9 @@ presubmits:
             - name: PROVIDER
               value: "digitalocean"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.20.8"
+              value: "1.20.10"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.2"
+              value: "1.21.4"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1052,7 +1052,7 @@ presubmits:
             - name: PROVIDER
               value: "digitalocean"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.21.2"
+              value: "1.21.4"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.22.0"
             - name: TEST_TIMEOUT
@@ -1083,7 +1083,7 @@ presubmits:
             - name: TEST_CLUSTER_INITIAL_VERSION
               value: "1.18.20"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.19.12"
+              value: "1.19.14"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1107,9 +1107,9 @@ presubmits:
             - name: PROVIDER
               value: "hetzner"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.19.12"
+              value: "1.19.14"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.8"
+              value: "1.20.10"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1133,9 +1133,9 @@ presubmits:
             - name: PROVIDER
               value: "hetzner"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.20.8"
+              value: "1.20.10"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.2"
+              value: "1.21.4"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1159,7 +1159,7 @@ presubmits:
             - name: PROVIDER
               value: "hetzner"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.21.2"
+              value: "1.21.4"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.22.0"
             - name: TEST_TIMEOUT
@@ -1190,7 +1190,7 @@ presubmits:
             - name: TEST_CLUSTER_INITIAL_VERSION
               value: "1.18.20"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.19.12"
+              value: "1.19.14"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1216,9 +1216,9 @@ presubmits:
             - name: PROVIDER
               value: "gce"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.19.12"
+              value: "1.19.14"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.8"
+              value: "1.20.10"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1244,9 +1244,9 @@ presubmits:
             - name: PROVIDER
               value: "gce"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.20.8"
+              value: "1.20.10"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.2"
+              value: "1.21.4"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1272,7 +1272,7 @@ presubmits:
             - name: PROVIDER
               value: "gce"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.21.2"
+              value: "1.21.4"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.22.0"
             - name: TEST_TIMEOUT
@@ -1305,7 +1305,7 @@ presubmits:
             - name: TEST_CLUSTER_INITIAL_VERSION
               value: "1.18.20"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.19.12"
+              value: "1.19.14"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1329,9 +1329,9 @@ presubmits:
             - name: PROVIDER
               value: "packet"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.19.12"
+              value: "1.19.14"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.8"
+              value: "1.20.10"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1355,9 +1355,9 @@ presubmits:
             - name: PROVIDER
               value: "packet"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.20.8"
+              value: "1.20.10"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.2"
+              value: "1.21.4"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1381,7 +1381,7 @@ presubmits:
             - name: PROVIDER
               value: "packet"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.21.2"
+              value: "1.21.4"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.22.0"
             - name: TEST_TIMEOUT
@@ -1412,7 +1412,7 @@ presubmits:
             - name: TEST_CLUSTER_INITIAL_VERSION
               value: "1.18.20"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.19.12"
+              value: "1.19.14"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1436,9 +1436,9 @@ presubmits:
             - name: PROVIDER
               value: "openstack"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.19.12"
+              value: "1.19.14"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.8"
+              value: "1.20.10"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1462,9 +1462,9 @@ presubmits:
             - name: PROVIDER
               value: "openstack"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.20.8"
+              value: "1.20.10"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.2"
+              value: "1.21.4"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1488,7 +1488,7 @@ presubmits:
             - name: PROVIDER
               value: "openstack"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.21.2"
+              value: "1.21.4"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.22.0"
             - name: TEST_TIMEOUT
