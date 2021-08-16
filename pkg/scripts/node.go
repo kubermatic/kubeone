@@ -26,6 +26,13 @@ var (
 	`)
 
 	restartKubeAPIServerCrictlTemplate = heredoc.Doc(`
+		# Disable exit immediately if a command in a pipeline fails.
+		# crictl logs can fail if kubelet fails to set up symlink for the API
+		# server container logs. This usually happens on subsequent script run,
+		# for example when upgrading the cluster.
+		# This is a known issue and it's described here:
+		# https://github.com/kubernetes/kubernetes/issues/52172
+		set +e
 		apiserver_id=$(sudo crictl ps --name=kube-apiserver -q)
 		[ -z "$apiserver_id" ] && exit 1
 	{{ if .ENSURE }}
@@ -33,7 +40,7 @@ var (
 		sleep 30
 	{{ else }}
 		sudo crictl logs "$apiserver_id" > /tmp/kube-apiserver.log 2>&1
-		if sudo grep -q "etcdserver: no leader" /tmp/kube-apiserver.log; then
+		if sudo grep -q "etcdserver: no leader\|failed to open log file" /tmp/kube-apiserver.log; then
 			sudo crictl stop "$apiserver_id"
 			sudo crictl rm "$apiserver_id"
 			sleep 10
