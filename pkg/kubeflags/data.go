@@ -62,11 +62,32 @@ var (
 		"ResourceQuota",
 	}
 
-	defaultAdmissionControllersv118x = []string{
+	defaultAdmissionControllersv118xv121x = []string{
 		"NamespaceLifecycle",
 		"LimitRanger",
 		"ServiceAccount",
 		"TaintNodesByCondition",
+		"Priority",
+		"DefaultTolerationSeconds",
+		"DefaultStorageClass",
+		"StorageObjectInUseProtection",
+		"PersistentVolumeClaimResize",
+		"RuntimeClass",
+		"CertificateApproval",
+		"CertificateSigning",
+		"CertificateSubjectRestriction",
+		"DefaultIngressClass",
+		"MutatingAdmissionWebhook",
+		"ValidatingAdmissionWebhook",
+		"ResourceQuota",
+	}
+
+	defaultAdmissionControllersv122x = []string{
+		"NamespaceLifecycle",
+		"LimitRanger",
+		"ServiceAccount",
+		"TaintNodesByCondition",
+		"PodSecurity",
 		"Priority",
 		"DefaultTolerationSeconds",
 		"DefaultStorageClass",
