@@ -29,10 +29,8 @@ const (
 )
 
 var (
-	v13x = mustParseConstraint("1.13.x")
-	v14x = mustParseConstraint("1.14.x")
-	v15x = mustParseConstraint("1.15.x")
-	v16x = mustParseConstraint("1.16.x")
+	lessThanv15x = mustParseConstraint("< 1.15.0")
+	lessThanv22x = mustParseConstraint(">= 1.15.0, < 1.22.0")
 )
 
 // Kubedm interface abstract differences between different kubeadm versions
@@ -52,18 +50,13 @@ func New(ver string) (Kubedm, error) {
 	}
 
 	switch {
-	case v13x.Check(sver):
+	case lessThanv15x.Check(sver):
 		return &kubeadmv1beta1{version: ver}, nil
-	case v14x.Check(sver):
-		return &kubeadmv1beta1{version: ver}, nil
-	case v15x.Check(sver):
+	case lessThanv22x.Check(sver):
 		return &kubeadmv1beta2{version: ver}, nil
-	case v16x.Check(sver):
-		return &kubeadmv1beta2{version: ver}, nil
+	default:
+		return &kubeadmv1beta3{version: ver}, nil
 	}
-
-	// By default use latest known kubeadm API version
-	return &kubeadmv1beta2{version: ver}, nil
 }
 
 func mustParseConstraint(constraint string) *semver.Constraints {
