@@ -25,7 +25,7 @@ import (
 	"github.com/Masterminds/semver/v3"
 	"github.com/pkg/errors"
 
-	bootstraptokenv1 "k8c.io/kubeone/pkg/apis/bootstraptoken/v1"
+	bootstraptokenv1 "k8c.io/kubeone/pkg/apis/kubeadm/bootstraptoken/v1"
 	kubeadmv1beta3 "k8c.io/kubeone/pkg/apis/kubeadm/v1beta3"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/features"
