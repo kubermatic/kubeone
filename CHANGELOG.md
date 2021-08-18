@@ -1,5 +1,33 @@
 # Changelog
 
+# [v1.3.0-alpha.1](https://github.com/kubermatic/kubeone/releases/tag/v1.3.0-alpha.1) - 2021-08-18
+
+## Added
+
+* Add support for Kubernetes 1.22 ([#1447](https://github.com/kubermatic/kubeone/pull/1447), [#1456](https://github.com/kubermatic/kubeone/pull/1456))
+* Add support for the kubeadm v1beta3 API. The kubeadm v1beta3 API is used for all Kubernetes 1.22+ clusters. ([#1457](https://github.com/kubermatic/kubeone/pull/1457))
+* Add support for the external CCM for Azure ([#1438](https://github.com/kubermatic/kubeone/pull/1438))
+  * Currently the external CCM can be used only for newly-created Azure cluster by enabling the `.cloudProvider.external` option. We're working on implementing the CCM/CSI migration mechanism that would allow migrating existing clusters to the external CCM.
+
+## Changed
+
+### Fixed
+
+* Fix adding second container to the machine-controller-webhook Deployment ([#1433](https://github.com/kubermatic/kubeone/pull/1433))
+* Extend restart API server script to handle failing `crictl logs` due to missing symlink. This fixes the issue with `kubeone apply` failing to restart the API server containers when provisioning or upgrading the cluster ([#1448](https://github.com/kubermatic/kubeone/pull/1448))
+
+### Updated
+
+* Update Go to 1.16.7 ([#1441](https://github.com/kubermatic/kubeone/pull/1441))
+* Update machine-controller to v1.35.1 ([#1440](https://github.com/kubermatic/kubeone/pull/1440))
+* Update Hetzner CCM to v1.9.1 ([#1428](https://github.com/kubermatic/kubeone/pull/1428))
+  * Add `HCLOUD_LOAD_BALANCERS_USE_PRIVATE_IP=true` to the environment if the network is configured
+* Update DigitalOcean CCM to v0.1.33 ([#1429](https://github.com/kubermatic/kubeone/pull/1429))
+
+### Terraform Configs
+
+* Inherit the firmware settings from the template VM in the Terraform configs for vSphere ([#1445](https://github.com/kubermatic/kubeone/pull/1445))
+
 # [v1.3.0-alpha.0](https://github.com/kubermatic/kubeone/releases/tag/v1.3.0-alpha.0) - 2021-07-21
 
 ## Attention Needed
