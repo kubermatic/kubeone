@@ -592,12 +592,31 @@ type OpenIDConnectConfig struct {
 	CAFile string `json:"caFile"`
 }
 
+// Addon config
+type Addon struct {
+	// Name of the addon to configure
+	Name string `json:"name"`
+
+	// Params to the addon, to render the addon using text/template, this will override globalParams
+	Params map[string]string `json:"params,omitempty"`
+
+	// Delete flag to ensure the named addon with all its contents to be deleted
+	Delete bool `json:"deleted,omitempty"`
+}
+
 // Addons config
 type Addons struct {
 	// Enable
 	Enable bool `json:"enable,omitempty"`
+
 	// Path on the local file system to the directory with addons manifests.
-	Path string `json:"path"`
+	Path string `json:"path,omitempty"`
+
+	// GlobalParams to the addon, to render all addons using text/template
+	GlobalParams map[string]string `json:"globalParams,omitempty"`
+
+	// Addons is a list of config options for named addon
+	Addons []Addon `json:"addons,omitempty"`
 }
 
 // Encryption Providers feature flag
