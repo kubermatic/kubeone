@@ -62,6 +62,13 @@ func New(ctx context.Context) (*State, error) {
 
 			return s.Cluster.RegistryConfiguration.OverwriteRegistry
 		}),
+		images.WithKubernetesVersionGetter(func() string {
+			if s.Cluster == nil {
+				return "0.0.0"
+			}
+
+			return s.Cluster.Versions.Kubernetes
+		}),
 	)
 
 	return s, err
