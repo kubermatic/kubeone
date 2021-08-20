@@ -116,7 +116,10 @@ func listImages(opts *listImagesOpts) error {
 			}
 			return ""
 		})
-		resolveropts = append(resolveropts, overRegGetter)
+		kubeVerGetter := images.WithKubernetesVersionGetter(func() string {
+			return conf.Versions.Kubernetes
+		})
+		resolveropts = append(resolveropts, overRegGetter, kubeVerGetter)
 	}
 
 	imgResolver := images.NewResolver(resolveropts...)
