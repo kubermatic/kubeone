@@ -49,6 +49,12 @@ const (
 	CalicoCNI
 	CalicoController
 	CalicoNode
+	CSIAttacher
+	CSINodeDriverRegistar
+	CSIProvisioner
+	CSISnapshotter
+	CSIResizer
+	CSILivenessProbe
 	DigitaloceanCCM
 	DNSNodeCache
 	Flannel
@@ -56,6 +62,7 @@ const (
 	MachineController
 	MetricsServer
 	OpenstackCCM
+	OpenstackCSI
 	PacketCCM
 	VsphereCCM
 	WeaveNetCNIKube
@@ -86,13 +93,53 @@ func baseResources() map[Resource]map[string]string {
 
 func optionalResources() map[Resource]map[string]string {
 	return map[Resource]map[string]string{
-		AzureCCM:        {"*": "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.0.1"},
-		AzureCNM:        {"*": "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.0.1"},
+		// General CSI images (could be used for all providers)
+		CSIAttacher:           {">= 1.17.0": "k8s.gcr.io/sig-storage/csi-attacher:v3.3.0"},
+		CSINodeDriverRegistar: {"*": "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.3.0"},
+		CSIProvisioner:        {">= 1.17.0": "k8s.gcr.io/sig-storage/csi-provisioner:v2.2.2"},
+		CSISnapshotter: {
+			">= 1.17.0, < 1.20.0": "k8s.gcr.io/sig-storage/csi-snapshotter:v3.0.3",
+			">= 1.20.0":           "k8s.gcr.io/sig-storage/csi-snapshotter:v4.2.0",
+		},
+		CSIResizer:       {">= 1.16.0": "k8s.gcr.io/sig-storage/csi-resizer:v1.3.0"},
+		CSILivenessProbe: {"*": "k8s.gcr.io/sig-storage/livenessprobe:v2.4.0"},
+
+		// Azure CCM
+		AzureCCM: {"*": "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.0.1"},
+		AzureCNM: {"*": "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.0.1"},
+
+		// DigitalOcean CCM
 		DigitaloceanCCM: {"*": "docker.io/digitalocean/digitalocean-cloud-controller-manager:v0.1.33"},
 		HetznerCCM:      {"*": "docker.io/hetznercloud/hcloud-cloud-controller-manager:v1.9.1"},
-		OpenstackCCM:    {"*": "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.17.0"},
-		PacketCCM:       {"*": "docker.io/packethost/packet-ccm:v1.0.0"},
-		VsphereCCM:      {"*": "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.2.1"},
+
+		// OpenStack CCM
+		OpenstackCCM: {
+			">= 1.16.0, < 1.18.0": "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.17.0",
+			"1.18.x":              "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.18.2",
+			"1.19.x":              "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.19.2",
+			"1.20.x":              "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.20.2",
+			"1.21.x":              "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.21.0",
+			"1.22.x":              "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.22.0",
+		},
+
+		// OpenStack CSI
+		OpenstackCSI: {
+			"1.16.x": "docker.io/k8scloudprovider/cinder-csi-plugin:v1.16.0",
+			"1.17.x": "docker.io/k8scloudprovider/cinder-csi-plugin:v1.17.0",
+			"1.18.x": "docker.io/k8scloudprovider/cinder-csi-plugin:v1.18.0",
+			"1.19.x": "docker.io/k8scloudprovider/cinder-csi-plugin:v1.19.0",
+			"1.20.x": "docker.io/k8scloudprovider/cinder-csi-plugin:v1.20.3",
+			"1.21.x": "docker.io/k8scloudprovider/cinder-csi-plugin:v1.21.0",
+			"1.22.x": "docker.io/k8scloudprovider/cinder-csi-plugin:v1.22.0",
+		},
+
+		// Packet CCM
+		PacketCCM: {"*": "docker.io/packethost/packet-ccm:v1.0.0"},
+
+		// vSphere CCM
+		VsphereCCM: {"*": "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.2.1"},
+
+		// WeaveNet CNI plugin
 		WeaveNetCNIKube: {"*": "docker.io/weaveworks/weave-kube:2.8.1"},
 		WeaveNetCNINPC:  {"*": "docker.io/weaveworks/weave-npc:2.8.1"},
 	}
