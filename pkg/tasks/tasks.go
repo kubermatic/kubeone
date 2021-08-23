@@ -26,6 +26,7 @@ import (
 	"k8c.io/kubeone/pkg/features"
 	"k8c.io/kubeone/pkg/kubeconfig"
 	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/templates/csi"
 	"k8c.io/kubeone/pkg/templates/externalccm"
 	"k8c.io/kubeone/pkg/templates/machinecontroller"
 	"k8c.io/kubeone/pkg/templates/resources"
@@ -222,6 +223,12 @@ func WithResources(t Tasks) Tasks {
 				Fn:          externalccm.Ensure,
 				ErrMsg:      "failed to ensure external CCM",
 				Description: "ensure external CCM",
+				Predicate:   func(s *state.State) bool { return s.Cluster.CloudProvider.External },
+			},
+			{
+				Fn:          csi.Ensure,
+				ErrMsg:      "failed to ensure CSI driver",
+				Description: "ensure CSI driver",
 				Predicate:   func(s *state.State) bool { return s.Cluster.CloudProvider.External },
 			},
 			{
