@@ -24,16 +24,18 @@ import (
 
 // Names of the internal addons
 const (
-	AddonCCMDigitalOcean   = "ccm-digitalocean"
-	AddonCCMHetzner        = "ccm-hetzner"
-	AddonCCMOpenStack      = "ccm-openstack"
-	AddonCCMPacket         = "ccm-packet"
-	AddonCCMVsphere        = "ccm-vsphere"
-	AddonCNICanal          = "cni-canal"
-	AddonCNIWeavenet       = "cni-weavenet"
-	AddonMachineController = "machinecontroller"
-	AddonMetricsServer     = "metrics-server"
-	AddonNodeLocalDNS      = "nodelocaldns"
+	AddonCCMDigitalOcean    = "ccm-digitalocean"
+	AddonCCMHetzner         = "ccm-hetzner"
+	AddonCCMOpenStack       = "ccm-openstack"
+	AddonCCMPacket          = "ccm-packet"
+	AddonCCMVsphere         = "ccm-vsphere"
+	AddonCSIHetnzer         = "csi-hetzner"
+	AddonCSIOpenStackCinder = "csi-openstack-cinder"
+	AddonCNICanal           = "cni-canal"
+	AddonCNIWeavenet        = "cni-weavenet"
+	AddonMachineController  = "machinecontroller"
+	AddonMetricsServer      = "metrics-server"
+	AddonNodeLocalDNS       = "nodelocaldns"
 )
 
 const (
