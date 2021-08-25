@@ -1,9 +1,4 @@
-{{ $version := semver .Config.Versions.Kubernetes }}
-{{ if lt $version.Minor 19 }}
 apiVersion: storage.k8s.io/v1beta1
-{{ else }}
-apiVersion: storage.k8s.io/v1 # the v1 API was introduced in 1.19
-{{ end }}
 kind: CSIDriver
 metadata:
   name: cinder.csi.openstack.org

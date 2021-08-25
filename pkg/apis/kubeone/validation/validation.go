@@ -177,8 +177,8 @@ func ValidateVersionConfig(version kubeone.VersionConfig, fldPath *field.Path) f
 		allErrs = append(allErrs, field.Invalid(fldPath.Child("kubernetes"), version, ".versions.kubernetes is not a semver string"))
 		return allErrs
 	}
-	if v.Major() != 1 || v.Minor() < 14 {
-		allErrs = append(allErrs, field.Invalid(fldPath.Child("kubernetes"), version, "kubernetes versions lower than 1.14 are not supported"))
+	if v.Major() != 1 || v.Minor() < 19 {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("kubernetes"), version, "kubernetes versions lower than 1.19 are not supported. You need to use an older KubeOne version to upgrade your cluster to v1.19. Please refer to the Compatibility section of docs for more details."))
 	}
 	if strings.HasPrefix(version.Kubernetes, "v") {
 		allErrs = append(allErrs, field.Invalid(fldPath.Child("kubernetes"), version, ".versions.kubernetes can't start with a leading 'v'"))
