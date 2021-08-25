@@ -27,29 +27,29 @@ data "google_compute_zones" "available" {
 }
 
 data "google_compute_image" "control_plane_image" {
-  family  = var.control_plane_image_family
-  project = var.control_plane_image_project
+  family  = var.control_plane_specs.image_family
+  project = var.control_plane_specs.image_project
 }
 
 resource "google_compute_network" "network" {
-  name                    = var.cluster_name
+  name                    = var.cluster_specs.name
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "subnet" {
-  name          = "${var.cluster_name}-subnet"
+  name          = "${var.cluster_specs.name}-subnet"
   network       = google_compute_network.network.self_link
   region        = var.region
-  ip_cidr_range = var.cluster_network_cidr
+  ip_cidr_range = var.cluster_specs.network_cidr
 }
 
 resource "google_compute_firewall" "common" {
-  name    = "${var.cluster_name}-common"
+  name    = "${var.cluster_specs.name}-common"
   network = google_compute_network.network.self_link
 
   allow {
     protocol = "tcp"
-    ports    = [var.ssh_port]
+    ports    = [22]
   }
 
   source_ranges = [
@@ -58,7 +58,7 @@ resource "google_compute_firewall" "common" {
 }
 
 resource "google_compute_firewall" "control_plane" {
-  name    = "${var.cluster_name}-control-plane"
+  name    = "${var.cluster_specs.name}-control-plane"
   network = google_compute_network.network.self_link
 
   allow {
@@ -72,7 +72,7 @@ resource "google_compute_firewall" "control_plane" {
 }
 
 resource "google_compute_firewall" "internal" {
-  name    = "${var.cluster_name}-internal"
+  name    = "${var.cluster_specs.name}-internal"
   network = google_compute_network.network.self_link
 
   allow {
@@ -90,16 +90,16 @@ resource "google_compute_firewall" "internal" {
   }
 
   source_ranges = [
-    var.cluster_network_cidr,
+    var.cluster_specs.network_cidr,
   ]
 }
 
 resource "google_compute_address" "lb_ip" {
-  name = "${var.cluster_name}-lb-ip"
+  name = "${var.cluster_specs.name}-lb-ip"
 }
 
 resource "google_compute_http_health_check" "control_plane" {
-  name = "${var.cluster_name}-control-plane-health"
+  name = "${var.cluster_specs.name}-control-plane-health"
 
   port         = 10256
   request_path = "/healthz"
@@ -109,12 +109,12 @@ resource "google_compute_http_health_check" "control_plane" {
 }
 
 resource "google_compute_target_pool" "control_plane_pool" {
-  name = "${var.cluster_name}-control-plane"
+  name = "${var.cluster_specs.name}-control-plane"
 
   instances = slice(
     google_compute_instance.control_plane.*.self_link,
     0,
-    var.control_plane_target_pool_members_count,
+    var.control_plane_specs.instance_count,
   )
 
   health_checks = [
@@ -123,17 +123,17 @@ resource "google_compute_target_pool" "control_plane_pool" {
 }
 
 resource "google_compute_forwarding_rule" "control_plane" {
-  name       = "${var.cluster_name}-apiserver"
+  name       = "${var.cluster_specs.name}-apiserver"
   target     = google_compute_target_pool.control_plane_pool.self_link
   port_range = "6443-6443"
   ip_address = google_compute_address.lb_ip.address
 }
 
 resource "google_compute_instance" "control_plane" {
-  count = 3
+  count = var.control_plane_specs.instance_count
 
-  name         = "${var.cluster_name}-control-plane-${count.index + 1}"
-  machine_type = var.control_plane_type
+  name         = "${var.cluster_specs.name}-control-plane-${count.index + 1}"
+  machine_type = var.control_plane_specs.instance_type
   zone         = data.google_compute_zones.available.names[count.index % local.zones_count]
 
   # Changing the machine_type, min_cpu_platform, or service_account on an
@@ -143,7 +143,7 @@ resource "google_compute_instance" "control_plane" {
 
   boot_disk {
     initialize_params {
-      size  = var.control_plane_volume_size
+      size  = var.control_plane_specs.volume_size
       image = data.google_compute_image.control_plane_image.self_link
     }
   }
@@ -157,7 +157,60 @@ resource "google_compute_instance" "control_plane" {
   }
 
   metadata = {
-    sshKeys = "${var.ssh_username}:${file(var.ssh_public_key_file)}"
+    sshKeys = "root:${file(var.ssh_key_files.public)}"
+  }
+
+  # https://cloud.google.com/sdk/gcloud/reference/alpha/compute/instances/set-scopes#--scopes
+  # listing of possible scopes
+  service_account {
+    scopes = [
+      "compute-rw",
+      "logging-write",
+      "monitoring-write",
+      "service-control",
+      "service-management",
+      "storage-ro",
+    ]
+  }
+}
+
+
+
+## Static workers
+data "google_compute_image" "static_workers_image" {
+  family  = var.static_workers_specs.image_family
+  project = var.static_workers_specs.image_project
+}
+
+resource "google_compute_instance" "static_workers" {
+  count = var.static_workers_specs.instance_count
+
+  name         = "${var.cluster_specs.name}-worker-${count.index + 1}"
+  machine_type = var.static_workers_specs.instance_type
+  zone         = data.google_compute_zones.available.names[count.index % local.zones_count]
+
+  # Changing the machine_type, min_cpu_platform, or service_account on an
+  # instance requires stopping it. To acknowledge this, 
+  # allow_stopping_for_update = true is required
+  allow_stopping_for_update = true
+
+  boot_disk {
+    initialize_params {
+      size  = var.static_workers_specs.volume_size
+      image = data.google_compute_image.static_workers_image.self_link
+    }
+  }
+
+  network_interface {
+    subnetwork = google_compute_subnetwork.subnet.self_link
+
+    access_config {
+      nat_ip = ""
+    }
+  }
+
+  metadata = {
+    sshKeys = "root:${file(var.ssh_key_files.public)}"
   }
 
   # https://cloud.google.com/sdk/gcloud/reference/alpha/compute/instances/set-scopes#--scopes
