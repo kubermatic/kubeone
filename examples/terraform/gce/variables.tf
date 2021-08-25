@@ -43,7 +43,7 @@ variable "control_plane_specs" {
   })
 
   default = {
-    instance_count: 3
+    instance_count: 1
     instance_type : "n1-standard-2"
     volume_size : 100
     image_family : "ubuntu-1804-lts"
