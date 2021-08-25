@@ -60,7 +60,7 @@ func TestValidateKubeOneCluster(t *testing.T) {
 					AWS: &kubeone.AWSSpec{},
 				},
 				Versions: kubeone.VersionConfig{
-					Kubernetes: "1.18.2",
+					Kubernetes: "1.22.1",
 				},
 				MachineController: &kubeone.MachineControllerConfig{
 					Deploy: true,
@@ -110,7 +110,7 @@ func TestValidateKubeOneCluster(t *testing.T) {
 					AWS: &kubeone.AWSSpec{},
 				},
 				Versions: kubeone.VersionConfig{
-					Kubernetes: "1.18.2",
+					Kubernetes: "1.22.1",
 				},
 				MachineController: &kubeone.MachineControllerConfig{
 					Deploy: false,
@@ -160,7 +160,7 @@ func TestValidateKubeOneCluster(t *testing.T) {
 					AWS: &kubeone.AWSSpec{},
 				},
 				Versions: kubeone.VersionConfig{
-					Kubernetes: "1.18.2",
+					Kubernetes: "1.22.1",
 				},
 				MachineController: &kubeone.MachineControllerConfig{
 					Deploy: true,
@@ -561,72 +561,72 @@ func TestValidateVersionConfig(t *testing.T) {
 		expectedError bool
 	}{
 		{
-			name: "valid version config (1.18.2)",
+			name: "valid version config (1.22.1)",
 			versionConfig: kubeone.VersionConfig{
-				Kubernetes: "1.18.2",
+				Kubernetes: "1.22.1",
 			},
 			expectedError: false,
 		},
 		{
-			name: "valid version config (1.18.0)",
+			name: "valid version config (1.22.0)",
+			versionConfig: kubeone.VersionConfig{
+				Kubernetes: "1.22.2",
+			},
+			expectedError: false,
+		},
+		{
+			name: "valid version config (1.21.4)",
+			versionConfig: kubeone.VersionConfig{
+				Kubernetes: "1.21.4",
+			},
+			expectedError: false,
+		},
+		{
+			name: "valid version config (1.21.0)",
+			versionConfig: kubeone.VersionConfig{
+				Kubernetes: "1.21.0",
+			},
+			expectedError: false,
+		},
+		{
+			name: "valid version config (1.20.10)",
+			versionConfig: kubeone.VersionConfig{
+				Kubernetes: "1.20.10",
+			},
+			expectedError: false,
+		},
+		{
+			name: "valid version config (1.20.0)",
+			versionConfig: kubeone.VersionConfig{
+				Kubernetes: "1.20.0",
+			},
+			expectedError: false,
+		},
+		{
+			name: "valid version config (1.19.0)",
+			versionConfig: kubeone.VersionConfig{
+				Kubernetes: "1.19.0",
+			},
+			expectedError: false,
+		},
+		{
+			name: "not supported kubernetes version (1.18.19)",
+			versionConfig: kubeone.VersionConfig{
+				Kubernetes: "1.18.19",
+			},
+			expectedError: true,
+		},
+		{
+			name: "not supported kubernetes version (1.18.0)",
 			versionConfig: kubeone.VersionConfig{
 				Kubernetes: "1.18.0",
 			},
-			expectedError: false,
+			expectedError: true,
 		},
 		{
-			name: "valid version config (1.17.5)",
-			versionConfig: kubeone.VersionConfig{
-				Kubernetes: "1.17.5",
-			},
-			expectedError: false,
-		},
-		{
-			name: "valid version config (1.17.0)",
+			name: "not supported kubernetes version (1.17.0)",
 			versionConfig: kubeone.VersionConfig{
 				Kubernetes: "1.17.0",
-			},
-			expectedError: false,
-		},
-		{
-			name: "valid version config (1.16.9)",
-			versionConfig: kubeone.VersionConfig{
-				Kubernetes: "1.16.9",
-			},
-			expectedError: false,
-		},
-		{
-			name: "valid version config (1.16.0)",
-			versionConfig: kubeone.VersionConfig{
-				Kubernetes: "1.16.0",
-			},
-			expectedError: false,
-		},
-		{
-			name: "valid version config (1.14.0)",
-			versionConfig: kubeone.VersionConfig{
-				Kubernetes: "1.14.0",
-			},
-			expectedError: false,
-		},
-		{
-			name: "not supported kubernetes version (1.13.5)",
-			versionConfig: kubeone.VersionConfig{
-				Kubernetes: "1.13.5",
-			},
-			expectedError: true,
-		},
-		{
-			name: "not supported kubernetes version (1.13.0)",
-			versionConfig: kubeone.VersionConfig{
-				Kubernetes: "1.13.0",
-			},
-			expectedError: true,
-		},
-		{
-			name: "not supported kubernetes version (1.12.0)",
-			versionConfig: kubeone.VersionConfig{
-				Kubernetes: "1.12.0",
 			},
 			expectedError: true,
 		},
@@ -640,7 +640,7 @@ func TestValidateVersionConfig(t *testing.T) {
 		{
 			name: "kubernetes version with a leading 'v'",
 			versionConfig: kubeone.VersionConfig{
-				Kubernetes: "v1.18.2",
+				Kubernetes: "v1.22.1",
 			},
 			expectedError: true,
 		},
