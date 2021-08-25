@@ -41,7 +41,7 @@ output "kubeone" {
       ]
     }
     cloudProvider : {
-      gcp : {}
+      gce : {}
     }
 
   })
