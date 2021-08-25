@@ -40,6 +40,10 @@ output "kubeone" {
         }
       ]
     }
+    apiEndpoint: {
+      host: google_compute_address.lb_ip.address
+      port: 6443
+    }
     cloudProvider : {
       gce : {}
     }
