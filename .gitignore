@@ -11,3 +11,5 @@ terraform.tfvars
 *kubeconfig
 !*kubeconfig/
 /vendor
+.terraform.lock.hcl
+tfplan
