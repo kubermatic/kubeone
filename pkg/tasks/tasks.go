@@ -94,12 +94,18 @@ func WithHostnameOS(t Tasks) Tasks {
 func WithProbes(t Tasks) Tasks {
 	return t.append(
 		Task{Fn: runProbes, ErrMsg: "probes failed"},
+	)
+}
+
+func WithProbesAndSafeguard(t Tasks) Tasks {
+	return t.append(
+		Task{Fn: runProbes, ErrMsg: "probes failed"},
 		Task{Fn: safeguard, ErrMsg: "probes analysis failed"},
 	)
 }
 
 func WithHostnameOSAndProbes(t Tasks) Tasks {
-	return WithProbes(WithHostnameOS(t))
+	return WithProbesAndSafeguard(WithHostnameOS(t))
 }
 
 // WithFullInstall with install binaries (using WithBinariesOnly) and
@@ -449,4 +455,28 @@ func WithRotateKey(t Tasks) Tasks {
 				Description: "restart KubeAPI containers",
 			},
 		}...)
+}
+
+func WithCCMCSIMigration(t Tasks) Tasks {
+	return t.append(Tasks{
+		{Fn: validateExternalCloudProviderConfig, ErrMsg: "failed to validate config", Retries: 1},
+	}...).
+		append(kubernetesConfigFiles()...).
+		append(Tasks{
+			{Fn: upgradeLeader, ErrMsg: "failed to upgrade leader control plane"},
+			{Fn: upgradeFollower, ErrMsg: "failed to upgrade follower control plane"},
+			{
+				Fn: func(s *state.State) error {
+					s.Logger.Info("Downloading PKI...")
+					return s.RunTaskOnLeader(certificate.DownloadKubePKI)
+				},
+				ErrMsg: "failed to download Kubernetes PKI from the leader",
+			},
+		}...).
+		append(WithResources(nil)...).
+		append(
+			Task{Fn: restartKubeAPIServer, ErrMsg: "failed to restart unhealthy kube-apiserver"},
+			// TODO: Support CCM/CSI migration for worker nodes
+			Task{Fn: upgradeStaticWorkers, ErrMsg: "unable to upgrade static worker nodes"},
+		)
 }

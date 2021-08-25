@@ -32,6 +32,7 @@ import (
 	"k8c.io/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/util/sets"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
@@ -79,6 +80,20 @@ func safeguard(s *state.State) error {
 				errMsg,
 			)
 		}
+	}
+
+	// Block kubeone apply if .cloudProvider.external is enabled on cluster with
+	// in-tree cloud provider, but with no external CCM
+	if s.Cluster.CloudProvider.External &&
+		s.LiveCluster.CCMMigration != nil &&
+		s.LiveCluster.CCMMigration.InTreeCloudProviderEnabled &&
+		!s.LiveCluster.CCMMigration.ExternalCCMDeployed {
+		return errors.New(".cloudProvider.external enabled, but cluster is using in-tree provider. run ccm/csi migration by running 'kubeone migrate to-ccm-csi'")
+	} else if !s.Cluster.CloudProvider.External &&
+		s.LiveCluster.CCMMigration != nil &&
+		s.LiveCluster.CCMMigration.ExternalCCMDeployed {
+		// Block disabling .cloudProvider.external
+		return errors.New(".cloudProvider.external is disabled, but external ccm is deployed")
 	}
 
 	return nil
@@ -336,10 +351,24 @@ func investigateCluster(s *state.State) error {
 		s.LiveCluster.EncryptionConfiguration = &state.EncryptionConfiguration{Enable: true, Custom: encryptionEnabled.Custom}
 		s.LiveCluster.Lock.Unlock()
 		// no need to lock around FetchEncryptionProvidersFile because it handles locking internally.
-		if err := fetchEncryptionProvidersFile(s); err != nil {
-			return errors.Wrap(err, "failed to fetch EncryptionProviders configuration")
+		if fErr := fetchEncryptionProvidersFile(s); fErr != nil {
+			return errors.Wrap(fErr, "failed to fetch EncryptionProviders configuration")
 		}
 	}
+
+	ccmMigration, err := detectCCMMigrationStatus(s)
+	if err != nil {
+		return errors.Wrap(err, "failed to check is in-tree cloud provider enabled")
+	}
+	if ccmMigration != nil {
+		s.LiveCluster.Lock.Lock()
+		s.LiveCluster.CCMMigration = &state.CCMMigration{
+			InTreeCloudProviderEnabled: ccmMigration.InTreeCloudProviderEnabled,
+			ExternalCCMDeployed:        ccmMigration.ExternalCCMDeployed,
+		}
+		s.LiveCluster.Lock.Unlock()
+	}
+
 	return nil
 }
 
@@ -511,4 +540,62 @@ func detectEncryptionProvidersEnabled(s *state.State) (ees encryptionEnabledStat
 		}
 	}
 	return ees, nil
+}
+
+type ccmMigrationStatus struct {
+	InTreeCloudProviderEnabled bool
+	ExternalCCMDeployed        bool
+}
+
+func detectCCMMigrationStatus(s *state.State) (*ccmMigrationStatus, error) {
+	if s.DynamicClient == nil {
+		return nil, errors.New("kubernetes dynamic client is not initialized")
+	}
+
+	pods := corev1.PodList{}
+	err := s.DynamicClient.List(s.Context, &pods, &dynclient.ListOptions{
+		Namespace: metav1.NamespaceSystem,
+		LabelSelector: labels.SelectorFromSet(map[string]string{
+			"component": "kube-controller-manager",
+		}),
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to list kube-controller-manager pods")
+	}
+
+	status := &ccmMigrationStatus{}
+	for _, pod := range pods.Items {
+		for _, c := range pod.Spec.Containers[0].Command {
+			if strings.HasPrefix(c, "--cloud-provider") && !strings.Contains(c, "external") {
+				status.InTreeCloudProviderEnabled = true
+			}
+		}
+	}
+
+	ccmLabel := ""
+	ccmLabelValue := ""
+	switch {
+	case s.Cluster.CloudProvider.Openstack != nil:
+		ccmLabel = "k8s-app"
+		ccmLabelValue = "openstack-cloud-controller-manager"
+	default:
+		status.ExternalCCMDeployed = false
+		return status, nil
+	}
+
+	pods = corev1.PodList{}
+	err = s.DynamicClient.List(s.Context, &pods, &dynclient.ListOptions{
+		Namespace: metav1.NamespaceSystem,
+		LabelSelector: labels.SelectorFromSet(map[string]string{
+			ccmLabel: ccmLabelValue,
+		}),
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to list kube-controller-manager pods")
+	}
+	if len(pods.Items) > 0 {
+		status.ExternalCCMDeployed = true
+	}
+
+	return status, nil
 }

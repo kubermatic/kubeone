@@ -22,6 +22,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
+	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/tasks"
 )
 
@@ -32,6 +33,7 @@ func migrateCmd(fs *pflag.FlagSet) *cobra.Command {
 	}
 
 	cmd.AddCommand(migrateToContainerdCmd(fs))
+	cmd.AddCommand(migrateToCCMCSICmd(fs))
 	return cmd
 }
 
@@ -55,6 +57,30 @@ func migrateToContainerdCmd(fs *pflag.FlagSet) *cobra.Command {
 	}
 }
 
+func migrateToCCMCSICmd(fs *pflag.FlagSet) *cobra.Command {
+	return &cobra.Command{
+		Use:   "to-ccm-csi",
+		Short: "Migrate live cluster from the in-tree cloud provider to external CCM and CSI plugin",
+		// TODO(xmudrii): Add which providers are supported in the long description.
+		Long: heredoc.Doc(`
+			Following the in-tree cloud provider deprecation http://kep.k8s.io/2395
+			this command helps to migrate from the in-tree cloud provider to external CCM and CSI plugin.
+			This command is currently only available for some providers. We'll extend it for all providers with
+			in-tree cloud provider implementation in the future.
+		`),
+		// TODO: Remove hidden once complete
+		Hidden: true,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			gopts, err := persistentGlobalOptions(fs)
+			if err != nil {
+				return errors.Wrap(err, "unable to get global flags")
+			}
+
+			return runMigrateToCCMCSI(gopts)
+		},
+	}
+}
+
 func runMigrateToContainerd(opts *globalOptions) error {
 	s, err := opts.BuildState()
 	if err != nil {
@@ -62,4 +88,34 @@ func runMigrateToContainerd(opts *globalOptions) error {
 	}
 
 	return errors.Wrap(tasks.WithContainerDMigration(nil).Run(s), "failed to get cluster status")
+}
+
+func runMigrateToCCMCSI(opts *globalOptions) error {
+	s, err := opts.BuildState()
+	if err != nil {
+		return errors.Wrap(err, "failed to initialize State")
+	}
+
+	// Validate credentials
+	_, err = credentials.ProviderCredentials(s.Cluster.CloudProvider, opts.CredentialsFile)
+	if err != nil {
+		return errors.Wrap(err, "failed to validate credentials")
+	}
+
+	// Probe the cluster for the actual state and the needed tasks.
+	probbing := tasks.WithHostnameOS(nil)
+	probbing = tasks.WithProbes(probbing)
+
+	if err = probbing.Run(s); err != nil {
+		return err
+	}
+
+	if !s.LiveCluster.IsProvisioned() {
+		return errors.New("the target cluster is not provisioned")
+	}
+	if !s.LiveCluster.Healthy() {
+		return errors.New("the target cluster is not healthy, please run 'kubeone apply' first")
+	}
+
+	return errors.Wrap(tasks.WithCCMCSIMigration(nil).Run(s), "failed to migrate to ccm/csi")
 }

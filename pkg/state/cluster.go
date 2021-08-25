@@ -35,6 +35,7 @@ type Cluster struct {
 	StaticWorkers           []Host
 	ExpectedVersion         *semver.Version
 	EncryptionConfiguration *EncryptionConfiguration
+	CCMMigration            *CCMMigration
 	Lock                    sync.Mutex
 }
 
@@ -42,6 +43,11 @@ type EncryptionConfiguration struct {
 	Enable bool
 	Config *apiserverconfigv1.EncryptionConfiguration
 	Custom bool
+}
+
+type CCMMigration struct {
+	InTreeCloudProviderEnabled bool
+	ExternalCCMDeployed        bool
 }
 
 type Host struct {
