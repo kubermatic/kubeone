@@ -68,20 +68,3 @@ variable "static_workers_specs" {
     image_project : "ubuntu-os-cloud"
   }
 }
-
-variable "master_machine_deployment_specs" {
-  type = object({
-    annotations: list(string)
-    labels: list(string)
-    replicas: number
-    instance: object({
-      assignPublicIPAddress: bool
-      diskSize: number
-      diskType: string
-      machineType: string
-      network: string
-      subnetwork: string
-      operatingSystem: string
-    })
-  })
-}
