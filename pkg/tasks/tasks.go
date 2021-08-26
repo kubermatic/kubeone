@@ -457,26 +457,12 @@ func WithRotateKey(t Tasks) Tasks {
 		}...)
 }
 
+// TODO: Support CCM/CSI migration for worker nodes
 func WithCCMCSIMigration(t Tasks) Tasks {
 	return t.append(Tasks{
 		{Fn: validateExternalCloudProviderConfig, ErrMsg: "failed to validate config", Retries: 1},
 	}...).
 		append(kubernetesConfigFiles()...).
-		append(Tasks{
-			{Fn: upgradeLeader, ErrMsg: "failed to upgrade leader control plane"},
-			{Fn: upgradeFollower, ErrMsg: "failed to upgrade follower control plane"},
-			{
-				Fn: func(s *state.State) error {
-					s.Logger.Info("Downloading PKI...")
-					return s.RunTaskOnLeader(certificate.DownloadKubePKI)
-				},
-				ErrMsg: "failed to download Kubernetes PKI from the leader",
-			},
-		}...).
-		append(WithResources(nil)...).
-		append(
-			Task{Fn: restartKubeAPIServer, ErrMsg: "failed to restart unhealthy kube-apiserver"},
-			// TODO: Support CCM/CSI migration for worker nodes
-			Task{Fn: upgradeStaticWorkers, ErrMsg: "unable to upgrade static worker nodes"},
-		)
+		append(Task{Fn: regenerateStaticPodManifests, ErrMsg: "failed to regenerate static pod manifests"}).
+		append(WithResources(nil)...)
 }

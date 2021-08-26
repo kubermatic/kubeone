@@ -17,8 +17,13 @@ limitations under the License.
 package tasks
 
 import (
+	"time"
+
 	"github.com/pkg/errors"
 
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/scripts"
+	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
 )
 
@@ -33,6 +38,30 @@ func validateExternalCloudProviderConfig(s *state.State) error {
 	if !s.Cluster.CloudProvider.External {
 		return errors.New(".cloudProvider.external must be enabled to start the migration")
 	}
+
+	return nil
+}
+
+func regenerateStaticPodManifests(s *state.State) error {
+	return s.RunTaskOnControlPlane(regenerateStaticPodManifestsInternal, state.RunSequentially)
+}
+
+func regenerateStaticPodManifestsInternal(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+	logger := s.Logger.WithField("node", node.PublicAddress)
+
+	logger.Info("Regenerating Kubernetes API server and controller-manager manifests...")
+	cmd, err := scripts.CCMMigrationRegenerateStaticPodManifests(s.WorkDir, node.ID, s.KubeadmVerboseFlag())
+	if err != nil {
+		return err
+	}
+	_, _, err = s.Runner.RunRaw(cmd)
+	if err != nil {
+		return err
+	}
+
+	sleepTime := 30 * time.Second
+	logger.Infof("Waiting %s to ensure main control plane components are up...", sleepTime)
+	time.Sleep(sleepTime)
 
 	return nil
 }

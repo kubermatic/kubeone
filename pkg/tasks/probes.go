@@ -84,16 +84,18 @@ func safeguard(s *state.State) error {
 
 	// Block kubeone apply if .cloudProvider.external is enabled on cluster with
 	// in-tree cloud provider, but with no external CCM
-	if s.Cluster.CloudProvider.External &&
-		s.LiveCluster.CCMStatus != nil &&
-		s.LiveCluster.CCMStatus.InTreeCloudProviderEnabled &&
-		!s.LiveCluster.CCMStatus.ExternalCCMDeployed {
-		return errors.New(".cloudProvider.external enabled, but cluster is using in-tree provider. run ccm/csi migration by running 'kubeone migrate to-ccm-csi'")
-	} else if !s.Cluster.CloudProvider.External &&
-		s.LiveCluster.CCMStatus != nil &&
-		s.LiveCluster.CCMStatus.ExternalCCMDeployed {
-		// Block disabling .cloudProvider.external
-		return errors.New(".cloudProvider.external is disabled, but external ccm is deployed")
+	st := s.LiveCluster.CCMStatus
+	if st != nil {
+		if s.Cluster.CloudProvider.External {
+			if st.InTreeCloudProviderEnabled && !st.ExternalCCMDeployed {
+				return errors.New(".cloudProvider.external enabled, but cluster is using in-tree provider. run ccm/csi migration by running 'kubeone migrate to-ccm-csi'")
+			}
+		} else {
+			if st.ExternalCCMDeployed {
+				// Block disabling .cloudProvider.external
+				return errors.New(".cloudProvider.external is disabled, but external ccm is deployed")
+			}
+		}
 	}
 
 	return nil
