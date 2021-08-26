@@ -23,8 +23,8 @@ import (
 )
 
 func validateExternalCloudProviderConfig(s *state.State) error {
-	if s.LiveCluster.CCMMigration != nil && s.LiveCluster.CCMMigration.ExternalCCMDeployed &&
-		!s.LiveCluster.CCMMigration.InTreeCloudProviderEnabled {
+	if s.LiveCluster.CCMStatus != nil && s.LiveCluster.CCMStatus.ExternalCCMDeployed &&
+		!s.LiveCluster.CCMStatus.InTreeCloudProviderEnabled {
 		return errors.New("the cluster is already running external ccm")
 	}
 	if s.Cluster.CloudProvider.Openstack == nil {

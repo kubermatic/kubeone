@@ -118,24 +118,10 @@ func (s *State) Clone() *State {
 }
 
 func (s *State) ShouldEnableInTreeCloudProvider() bool {
-	if s.LiveCluster.CCMMigration == nil {
-		return false
+	if s.LiveCluster.CCMStatus == nil {
+		return s.Cluster.CloudProvider.CloudProviderInTree()
 	}
-	return s.LiveCluster.CCMMigration.InTreeCloudProviderEnabled && !s.CCMMigrationComplete
-}
-
-func (s *State) ShouldRemoveCloudProviderFlags() bool {
-	if s.LiveCluster.CCMMigration == nil {
-		return s.Cluster.CloudProvider.External
-	}
-	return s.Cluster.CloudProvider.External && s.LiveCluster.CCMMigration.ExternalCCMDeployed && (s.CCMMigrationComplete || !s.LiveCluster.CCMMigration.InTreeCloudProviderEnabled)
-}
-
-func (s *State) CCMMigrationInProgress() bool {
-	if s.LiveCluster.CCMMigration == nil {
-		return false
-	}
-	return s.LiveCluster.CCMMigration.InTreeCloudProviderEnabled && s.LiveCluster.CCMMigration.ExternalCCMDeployed
+	return s.LiveCluster.CCMStatus.InTreeCloudProviderEnabled && !s.CCMMigrationComplete
 }
 
 func (s *State) ShouldDisableEncryption() bool {

@@ -85,13 +85,13 @@ func safeguard(s *state.State) error {
 	// Block kubeone apply if .cloudProvider.external is enabled on cluster with
 	// in-tree cloud provider, but with no external CCM
 	if s.Cluster.CloudProvider.External &&
-		s.LiveCluster.CCMMigration != nil &&
-		s.LiveCluster.CCMMigration.InTreeCloudProviderEnabled &&
-		!s.LiveCluster.CCMMigration.ExternalCCMDeployed {
+		s.LiveCluster.CCMStatus != nil &&
+		s.LiveCluster.CCMStatus.InTreeCloudProviderEnabled &&
+		!s.LiveCluster.CCMStatus.ExternalCCMDeployed {
 		return errors.New(".cloudProvider.external enabled, but cluster is using in-tree provider. run ccm/csi migration by running 'kubeone migrate to-ccm-csi'")
 	} else if !s.Cluster.CloudProvider.External &&
-		s.LiveCluster.CCMMigration != nil &&
-		s.LiveCluster.CCMMigration.ExternalCCMDeployed {
+		s.LiveCluster.CCMStatus != nil &&
+		s.LiveCluster.CCMStatus.ExternalCCMDeployed {
 		// Block disabling .cloudProvider.external
 		return errors.New(".cloudProvider.external is disabled, but external ccm is deployed")
 	}
@@ -356,16 +356,13 @@ func investigateCluster(s *state.State) error {
 		}
 	}
 
-	ccmMigration, err := detectCCMMigrationStatus(s)
+	ccmStatus, err := detectCCMMigrationStatus(s)
 	if err != nil {
 		return errors.Wrap(err, "failed to check is in-tree cloud provider enabled")
 	}
-	if ccmMigration != nil {
+	if ccmStatus != nil {
 		s.LiveCluster.Lock.Lock()
-		s.LiveCluster.CCMMigration = &state.CCMMigration{
-			InTreeCloudProviderEnabled: ccmMigration.InTreeCloudProviderEnabled,
-			ExternalCCMDeployed:        ccmMigration.ExternalCCMDeployed,
-		}
+		s.LiveCluster.CCMStatus = ccmStatus
 		s.LiveCluster.Lock.Unlock()
 	}
 
@@ -542,12 +539,7 @@ func detectEncryptionProvidersEnabled(s *state.State) (ees encryptionEnabledStat
 	return ees, nil
 }
 
-type ccmMigrationStatus struct {
-	InTreeCloudProviderEnabled bool
-	ExternalCCMDeployed        bool
-}
-
-func detectCCMMigrationStatus(s *state.State) (*ccmMigrationStatus, error) {
+func detectCCMMigrationStatus(s *state.State) (*state.CCMStatus, error) {
 	if s.DynamicClient == nil {
 		return nil, errors.New("kubernetes dynamic client is not initialized")
 	}
@@ -563,7 +555,7 @@ func detectCCMMigrationStatus(s *state.State) (*ccmMigrationStatus, error) {
 		return nil, errors.Wrap(err, "unable to list kube-controller-manager pods")
 	}
 
-	status := &ccmMigrationStatus{}
+	status := &state.CCMStatus{}
 	for _, pod := range pods.Items {
 		for _, c := range pod.Spec.Containers[0].Command {
 			if strings.HasPrefix(c, "--cloud-provider") && !strings.Contains(c, "external") {
@@ -583,6 +575,7 @@ func detectCCMMigrationStatus(s *state.State) (*ccmMigrationStatus, error) {
 		return status, nil
 	}
 
+	// TODO(xmudrii): Consider checking does Deployment exists instead
 	pods = corev1.PodList{}
 	err = s.DynamicClient.List(s.Context, &pods, &dynclient.ListOptions{
 		Namespace: metav1.NamespaceSystem,
