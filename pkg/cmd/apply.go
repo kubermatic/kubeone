@@ -172,7 +172,7 @@ func runApply(opts *applyOpts) error {
 
 	// Probe the cluster for the actual state and the needed tasks.
 	probbing := tasks.WithHostnameOS(nil)
-	probbing = tasks.WithProbes(probbing)
+	probbing = tasks.WithProbesAndSafeguard(probbing)
 
 	if err = probbing.Run(s); err != nil {
 		return err

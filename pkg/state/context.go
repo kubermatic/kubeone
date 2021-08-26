@@ -97,9 +97,11 @@ type State struct {
 	ForceUpgrade              bool
 	ForceInstall              bool
 	UpgradeMachineDeployments bool
-	CredentialsFilePath       string
-	ManifestFilePath          string
-	PauseImage                string
+	// TODO: Currently unset, will be provided via --complete flag
+	CCMMigrationComplete bool
+	CredentialsFilePath  string
+	ManifestFilePath     string
+	PauseImage           string
 }
 
 func (s *State) KubeadmVerboseFlag() string {
@@ -113,6 +115,13 @@ func (s *State) KubeadmVerboseFlag() string {
 func (s *State) Clone() *State {
 	newState := *s
 	return &newState
+}
+
+func (s *State) ShouldEnableInTreeCloudProvider() bool {
+	if s.LiveCluster.CCMStatus == nil {
+		return s.Cluster.CloudProvider.CloudProviderInTree()
+	}
+	return s.LiveCluster.CCMStatus.InTreeCloudProviderEnabled && !s.CCMMigrationComplete
 }
 
 func (s *State) ShouldDisableEncryption() bool {

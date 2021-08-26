@@ -180,7 +180,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		nodeRegistration.KubeletExtraArgs["pod-infra-container-image"] = cluster.AssetConfiguration.Pause.ImageRepository + "/pause:" + cluster.AssetConfiguration.Pause.ImageTag
 	}
 
-	if cluster.CloudProvider.CloudProviderInTree() {
+	if s.ShouldEnableInTreeCloudProvider() {
 		renderedCloudConfig := "/etc/kubernetes/cloud-config"
 		cloudConfigVol := kubeadmv1beta3.HostPathMount{
 			Name:      "cloud-config",
@@ -212,9 +212,13 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 	}
 
 	if cluster.CloudProvider.External {
-		delete(clusterConfig.APIServer.ExtraArgs, "cloud-provider")
-		delete(clusterConfig.ControllerManager.ExtraArgs, "cloud-provider")
-		nodeRegistration.KubeletExtraArgs["cloud-provider"] = "external"
+		if !s.ShouldEnableInTreeCloudProvider() {
+			delete(clusterConfig.APIServer.ExtraArgs, "cloud-provider")
+			delete(clusterConfig.ControllerManager.ExtraArgs, "cloud-provider")
+			nodeRegistration.KubeletExtraArgs["cloud-provider"] = "external"
+		} else {
+			clusterConfig.ControllerManager.ExtraArgs["controllers"] = "*,bootstrapsigner,tokencleaner,-cloud-node-lifecycle,-route,-service"
+		}
 	}
 
 	if cluster.Features.StaticAuditLog != nil && cluster.Features.StaticAuditLog.Enable {
