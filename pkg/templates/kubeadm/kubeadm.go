@@ -29,7 +29,6 @@ const (
 )
 
 var (
-	lessThanv15x = mustParseConstraint("< 1.15.0")
 	lessThanv22x = mustParseConstraint(">= 1.15.0, < 1.22.0")
 )
 
@@ -50,8 +49,6 @@ func New(ver string) (Kubedm, error) {
 	}
 
 	switch {
-	case lessThanv15x.Check(sver):
-		return &kubeadmv1beta1{version: ver}, nil
 	case lessThanv22x.Check(sver):
 		return &kubeadmv1beta2{version: ver}, nil
 	default:
