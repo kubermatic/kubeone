@@ -22,7 +22,7 @@ import (
 	"k8c.io/kubeone/pkg/testhelper"
 )
 
-func TestCCMMigrationRegenerateStaticPodManifests(t *testing.T) {
+func TestCCMMigrationRegenerateControlPlaneManifests(t *testing.T) {
 	t.Parallel()
 
 	type args struct {
@@ -57,7 +57,51 @@ func TestCCMMigrationRegenerateStaticPodManifests(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := CCMMigrationRegenerateControlPlaneManifests(tt.args.workdir, tt.args.nodeID, tt.args.verboseFlag)
 			if err != tt.err {
-				t.Errorf("KubeadmJoin() error = %v, wantErr %v", err, tt.err)
+				t.Errorf("TestCCMMigrationRegenerateControlPlaneManifests() error = %v, wantErr %v", err, tt.err)
+				return
+			}
+
+			testhelper.DiffOutput(t, testhelper.FSGoldenName(t), got, *updateFlag)
+		})
+	}
+}
+
+func TestCCMMigrationUpdateKubeletConfig(t *testing.T) {
+	t.Parallel()
+
+	type args struct {
+		workdir     string
+		nodeID      int
+		verboseFlag string
+	}
+
+	tests := []struct {
+		name string
+		args args
+		err  error
+	}{
+		{
+			name: "verbose",
+			args: args{
+				workdir:     "test-wd",
+				nodeID:      0,
+				verboseFlag: "--v=6",
+			},
+		},
+		{
+			name: "not-verbose",
+			args: args{
+				workdir: "test-wd",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := CCMMigrationUpdateKubeletConfig(tt.args.workdir, tt.args.nodeID, tt.args.verboseFlag)
+			if err != tt.err {
+				t.Errorf("CCMMigrationUpdateKubeletConfig() error = %v, wantErr %v", err, tt.err)
 				return
 			}
 
