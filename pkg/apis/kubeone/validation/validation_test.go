@@ -516,32 +516,6 @@ func TestValidateCloudProviderSpec(t *testing.T) {
 			providerConfig: kubeone.CloudProviderSpec{},
 			expectedError:  true,
 		},
-		{
-			name: "CSIMigration enabled",
-			providerConfig: kubeone.CloudProviderSpec{
-				CSIMigration: true,
-				AWS:          &kubeone.AWSSpec{},
-			},
-			expectedError: false,
-		},
-		{
-			name: "CSIMigration and CSIMigrationComplete enabled",
-			providerConfig: kubeone.CloudProviderSpec{
-				CSIMigration:         true,
-				CSIMigrationComplete: true,
-				AWS:                  &kubeone.AWSSpec{},
-			},
-			expectedError: false,
-		},
-		{
-			name: "CSIMigrationComplete enabled without CSIMigration",
-			providerConfig: kubeone.CloudProviderSpec{
-				CSIMigration:         false,
-				CSIMigrationComplete: true,
-				AWS:                  &kubeone.AWSSpec{},
-			},
-			expectedError: true,
-		},
 	}
 	for _, tc := range tests {
 		tc := tc

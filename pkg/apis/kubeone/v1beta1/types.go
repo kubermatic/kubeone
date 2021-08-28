@@ -159,28 +159,6 @@ type APIEndpoint struct {
 type CloudProviderSpec struct {
 	// External
 	External bool `json:"external,omitempty"`
-	// CSIMigration enables the CSIMigration and CSIMigration{Provider} feature gates
-	// for providers that support the CSI migration.
-	// The CSI migration stability depends on the provider.
-	// More details about stability can be found in the Feature Gates document:
-	// https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/
-	//
-	// Note: Azure has two type of CSI drivers (AzureFile and AzureDisk) and two different
-	// feature gates (CSIMigrationAzureDisk and CSIMigrationAzureFile). Enabling CSI migration
-	// enables both feature gates. If one CSI driver is not deployed, the volume operations
-	// for volumes with missing CSI driver will fallback to the in-tree volume plugin.
-	CSIMigration bool `json:"csiMigration,omitempty"`
-	// CSIMigrationComplete enables the CSIMigration{Provider}Complete feature gate
-	// for providers that support the CSI migration.
-	// This feature gate disables fallback to the in-tree volume plugins, therefore,
-	// it should be enabled only if the CSI driver is deploy on all nodes, and after
-	// ensuring that the CSI driver works properly.
-	//
-	// Note: If you're running on Azure, make sure that you have both AzureFile
-	// and AzureDisk CSI drivers deployed, as enabling this feature disables the fallback
-	// to the in-tree volume plugins. See description for the CSIMigration field for
-	// more details.
-	CSIMigrationComplete bool `json:"csiMigrationComplete,omitempty"`
 	// CloudConfig
 	CloudConfig string `json:"cloudConfig,omitempty"`
 	// AWS
