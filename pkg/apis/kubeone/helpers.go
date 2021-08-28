@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"math/rand"
 
+	"github.com/Masterminds/semver/v3"
 	"github.com/pkg/errors"
 )
 
@@ -151,6 +152,60 @@ func (p CloudProviderSpec) CloudProviderInTree() bool {
 	}
 
 	return false
+}
+
+// CSIMigrationSupported returns if CSI migration is supported for the specified provider.
+// NB: The CSI migration can be supported only if KubeOne supports CSI plugin and driver
+// for the provider
+func (p CloudProviderSpec) CSIMigrationSupported() bool {
+	if !p.External {
+		return false
+	}
+	return p.Openstack != nil
+}
+
+// CSIMigrationFeatureGates returns CSI migration feature gates in form of a map
+// (to be used with Kubelet config) and string (to be used with kube-apiserver
+// and kube-controller-manager)
+// NB: We're intentionally not enabling CSIMigration feature gate because it's
+// enabled by default since Kubernetes 1.18
+// (https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/)
+// This is a KubeOneCluster function because feature gates are Kubernetes-version dependent.
+func (c KubeOneCluster) CSIMigrationFeatureGates(complete bool) (map[string]bool, string, error) {
+	if c.CloudProvider.Openstack != nil {
+		featureGates := map[string]bool{
+			"CSIMigrationOpenStack": true,
+			"ExpandCSIVolumes":      true,
+		}
+		featureGatesString := "CSIMigrationOpenStack=true,ExpandCSIVolumes=true"
+
+		if complete {
+			unregister := c.InTreePluginUnregisterFeatureGate()
+			featureGates[unregister] = true
+			featureGatesString += "," + unregister + "=true"
+		}
+
+		return featureGates, featureGatesString, nil
+	}
+
+	return nil, "", errors.New("csi migration is not supported for selected provider")
+}
+
+// CSIMigrationFeatureGates returns the name of the feature gate that's supposed to
+// unregister the in-tree cloud provider.
+// NB: This is a KubeOneCluster function because feature gates are Kubernetes-version dependent.
+func (c KubeOneCluster) InTreePluginUnregisterFeatureGate() string {
+	if c.CloudProvider.Openstack != nil {
+		lessThan21, _ := semver.NewConstraint("< 1.21.0")
+		ver, _ := semver.NewVersion(c.Versions.Kubernetes)
+
+		if lessThan21.Check(ver) {
+			return "CSIMigrationOpenStackComplete"
+		}
+		return "InTreePluginOpenStackUnregister"
+	}
+
+	return ""
 }
 
 // ImageRegistry returns the image registry to use or the passed in

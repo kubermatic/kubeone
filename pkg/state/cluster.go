@@ -46,8 +46,10 @@ type EncryptionConfiguration struct {
 }
 
 type CCMStatus struct {
-	InTreeCloudProviderEnabled bool
-	ExternalCCMDeployed        bool
+	InTreeCloudProviderEnabled      bool
+	InTreeCloudProviderUnregistered bool
+	ExternalCCMDeployed             bool
+	CSIMigrationEnabled             bool
 }
 
 type Host struct {

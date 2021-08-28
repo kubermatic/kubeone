@@ -457,12 +457,31 @@ func WithRotateKey(t Tasks) Tasks {
 		}...)
 }
 
-// TODO: Support CCM/CSI migration for worker nodes
 func WithCCMCSIMigration(t Tasks) Tasks {
 	return t.append(Tasks{
 		{Fn: validateExternalCloudProviderConfig, ErrMsg: "failed to validate config", Retries: 1},
+		{
+			Fn:     readyToCompleteMigration,
+			ErrMsg: "failed to validate readiness to complete migration",
+			Predicate: func(s *state.State) bool {
+				return s.CCMMigrationComplete
+			},
+		},
 	}...).
 		append(kubernetesConfigFiles()...).
-		append(Task{Fn: regenerateStaticPodManifests, ErrMsg: "failed to regenerate static pod manifests"}).
-		append(WithResources(nil)...)
+		append(
+			Task{Fn: regenerateControlPlaneManifests, ErrMsg: "failed to regenerate static pod manifests"},
+			Task{Fn: updateKubeletConfig, ErrMsg: "failed to update kubelet config"},
+		).
+		append(WithResources(nil)...).
+		append(Task{
+			Fn: func(s *state.State) error {
+				s.Logger.Warn("Now please rolling restart your machineDeployments to migrate to ccm/csi")
+				s.Logger.Warn("see more at: https://docs.kubermatic.com/kubeone/v1.3/cheat_sheets/rollout_machinedeployment/")
+				s.Logger.Warn("Once you're done, please run this command again with the '--complete' flag to finish migration")
+				return nil
+			},
+			ErrMsg:    "failed to show next steps",
+			Predicate: func(s *state.State) bool { return s.Cluster.MachineController.Deploy && !s.CCMMigrationComplete },
+		})
 }

@@ -592,6 +592,9 @@ spec:
             {{ if .Config.CloudProvider.External }}
             - -node-external-cloud-provider
             {{ end }}
+            {{ if .CSIMigrationFeatureGates }}
+            - -node-kubelet-feature-gates={{ .CSIMigrationFeatureGates }}
+            {{ end }}
           env:
             - name: HTTPS_PROXY
               value: "{{ .Config.Proxy.HTTPS }}"

@@ -17,6 +17,8 @@ limitations under the License.
 package tasks
 
 import (
+	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/pkg/errors"
@@ -25,32 +27,72 @@ import (
 	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
+
+	"github.com/kubermatic/machine-controller/pkg/apis/cluster/common"
+	clusterv1alpha1 "github.com/kubermatic/machine-controller/pkg/apis/cluster/v1alpha1"
+
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/wait"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 func validateExternalCloudProviderConfig(s *state.State) error {
-	if s.LiveCluster.CCMStatus != nil && s.LiveCluster.CCMStatus.ExternalCCMDeployed &&
-		!s.LiveCluster.CCMStatus.InTreeCloudProviderEnabled {
-		return errors.New("the cluster is already running external ccm")
-	}
-	if s.Cluster.CloudProvider.Openstack == nil {
-		return errors.New("ccm/csi migration is currently supported only for openstack")
-	}
 	if !s.Cluster.CloudProvider.External {
 		return errors.New(".cloudProvider.external must be enabled to start the migration")
+	}
+	if !s.Cluster.CloudProvider.CSIMigrationSupported() {
+		return errors.New("ccm/csi migration is not supported for the specified provider")
+	}
+	if !s.LiveCluster.CCMStatus.InTreeCloudProviderEnabled {
+		return errors.New("the cluster is already running external ccm")
+	} else if s.LiveCluster.CCMStatus.ExternalCCMDeployed && !s.CCMMigrationComplete {
+		return errors.New("the ccm/csi migration is currently in progress, run command with --complete to finish it")
 	}
 
 	return nil
 }
 
-func regenerateStaticPodManifests(s *state.State) error {
-	return s.RunTaskOnControlPlane(regenerateStaticPodManifestsInternal, state.RunSequentially)
+func readyToCompleteMigration(s *state.State) error {
+	if s.DynamicClient == nil {
+		return errors.New("clientset not initialized")
+	}
+
+	machines := clusterv1alpha1.MachineList{}
+	if err := s.DynamicClient.List(s.Context, &machines); err != nil {
+		return errors.Wrap(err, "failed to list machines")
+	}
+
+	migrated := true
+	for i := range machines.Items {
+		flag := common.GetKubeletFlags(&machines.Items[i])[common.ExternalCloudProviderKubeletFlag]
+		if boolFlag, err := strconv.ParseBool(flag); !boolFlag || err != nil {
+			migrated = false
+			break
+		}
+	}
+
+	if !migrated {
+		return errors.New("not all machines are rolled-out or migration not started yet")
+	}
+
+	return nil
 }
 
-func regenerateStaticPodManifestsInternal(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
-	logger := s.Logger.WithField("node", node.PublicAddress)
+func regenerateControlPlaneManifests(s *state.State) error {
+	return s.RunTaskOnControlPlane(regenerateControlPlaneManifestsInternal, state.RunSequentially)
+}
 
-	logger.Info("Regenerating Kubernetes API server and controller-manager manifests...")
-	cmd, err := scripts.CCMMigrationRegenerateStaticPodManifests(s.WorkDir, node.ID, s.KubeadmVerboseFlag())
+func regenerateControlPlaneManifestsInternal(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+	logger := s.Logger.WithField("node", node.PublicAddress)
+	logger.Info("Regenerating Kubernetes API server and kube-controller-manager manifests...")
+
+	var (
+		apiserverPodName         = fmt.Sprintf("kube-apiserver-%s", node.Hostname)
+		controllerManagerPodName = fmt.Sprintf("kube-controller-manager-%s", node.Hostname)
+	)
+
+	cmd, err := scripts.CCMMigrationRegenerateControlPlaneManifests(s.WorkDir, node.ID, s.KubeadmVerboseFlag())
 	if err != nil {
 		return err
 	}
@@ -59,9 +101,112 @@ func regenerateStaticPodManifestsInternal(s *state.State, node *kubeoneapi.HostC
 		return err
 	}
 
-	sleepTime := 30 * time.Second
-	logger.Infof("Waiting %s to ensure main control plane components are up...", sleepTime)
-	time.Sleep(sleepTime)
+	timeout := 30 * time.Second
+	logger.Infof("Waiting %s for Kubelet to roll-out static pods...", timeout)
+	time.Sleep(timeout)
+
+	timeout = 2 * time.Minute
+	logger.Infof("Waiting up to %s for API server to become healthy...", timeout)
+	err = waitForStaticPodReady(s, timeout, apiserverPodName, metav1.NamespaceSystem)
+	if err != nil {
+		return errors.Wrapf(err, "API server failed to come up for %s", timeout)
+	}
+
+	logger.Infof("Waiting up to %s for kube-controller-manager roll-out...", timeout)
+	err = waitForStaticPodReady(s, timeout, controllerManagerPodName, metav1.NamespaceSystem)
+	if err != nil {
+		return errors.Wrapf(err, "API server failed to come up for %s", timeout)
+	}
 
 	return nil
+}
+
+func updateKubeletConfig(s *state.State) error {
+	return s.RunTaskOnAllNodes(updateKubeletConfigInternal, state.RunSequentially)
+}
+
+func updateKubeletConfigInternal(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+	logger := s.Logger.WithField("node", node.PublicAddress)
+	logger.Info("Updating config and restarting Kubelet...")
+
+	cmd, err := scripts.CCMMigrationUpdateKubeletConfig(s.WorkDir, node.ID, s.KubeadmVerboseFlag())
+	if err != nil {
+		return err
+	}
+	_, _, err = s.Runner.RunRaw(cmd)
+	if err != nil {
+		return err
+	}
+
+	return wait.PollImmediate(5*time.Second, 2*time.Minute, func() (bool, error) {
+		if s.Verbose {
+			logger.Debug("Waiting for Kubelet to become running...")
+		}
+
+		kubeletStatus, err := systemdStatus(conn, "kubelet")
+		if err != nil {
+			return false, err
+		}
+
+		if kubeletStatus&state.SystemDStatusRunning != 0 && kubeletStatus&state.SystemDStatusRestarting == 0 {
+			return true, nil
+		}
+
+		return false, nil
+	})
+}
+
+func waitForStaticPodReady(s *state.State, timeout time.Duration, staticPodName, staticPodNamespace string) error {
+	if s.DynamicClient == nil {
+		return errors.New("clientset not initialized")
+	}
+	if staticPodName == "" || staticPodNamespace == "" {
+		return errors.New("static pod name and namespace are required")
+	}
+
+	return wait.PollImmediate(5*time.Second, timeout, func() (bool, error) {
+		if s.Verbose {
+			s.Logger.Debugf("Waiting for pod %q to become healthy...", staticPodName)
+		}
+
+		pod := corev1.Pod{}
+		key := client.ObjectKey{
+			Name:      staticPodName,
+			Namespace: staticPodNamespace,
+		}
+		err := s.DynamicClient.Get(s.Context, key, &pod)
+		if err != nil {
+			// NB: We're intentionally ignoring error here to prevent failures while
+			// Kubelet is rolling-out the static pod.
+			if s.Verbose {
+				s.Logger.Debugf("Failed to get pod %q: %v", staticPodName, err)
+			}
+			return false, nil
+		}
+
+		// Ensure pod is running
+		if pod.Status.Phase != corev1.PodRunning {
+			if s.Verbose {
+				s.Logger.Debugf("Pod %q is not yet running", staticPodName)
+			}
+			return false, nil
+		}
+
+		// Ensure pod and all containers are ready
+		for _, cond := range pod.Status.Conditions {
+			if cond.Type == corev1.PodReady && cond.Status != corev1.ConditionTrue {
+				if s.Verbose {
+					s.Logger.Debugf("Pod %q is not yet ready", staticPodName)
+				}
+				return false, nil
+			} else if cond.Type == corev1.ContainersReady && cond.Status != corev1.ConditionTrue {
+				if s.Verbose {
+					s.Logger.Debugf("Containers for pod %q are not yet ready", staticPodName)
+				}
+				return false, nil
+			}
+		}
+
+		return true, nil
+	})
 }

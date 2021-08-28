@@ -55,7 +55,7 @@ func TestCCMMigrationRegenerateStaticPodManifests(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := CCMMigrationRegenerateStaticPodManifests(tt.args.workdir, tt.args.nodeID, tt.args.verboseFlag)
+			got, err := CCMMigrationRegenerateControlPlaneManifests(tt.args.workdir, tt.args.nodeID, tt.args.verboseFlag)
 			if err != tt.err {
 				t.Errorf("KubeadmJoin() error = %v, wantErr %v", err, tt.err)
 				return

@@ -173,6 +173,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 				Enabled: &bfalse,
 			},
 		},
+		FeatureGates: map[string]bool{},
 	}
 
 	if cluster.AssetConfiguration.Pause.ImageRepository != "" {
@@ -216,7 +217,37 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 			delete(clusterConfig.ControllerManager.ExtraArgs, "cloud-provider")
 			nodeRegistration.KubeletExtraArgs["cloud-provider"] = "external"
 		} else {
+			// .cloudProvider.external enabled, but in-tree cloud provider should be enabled
+			// means that we're in the CCM migration process.
+			// In that case, we should leave cloud-provider flags in place, but explicitly
+			// disable CCM-related controllers.
 			clusterConfig.ControllerManager.ExtraArgs["controllers"] = "*,bootstrapsigner,tokencleaner,-cloud-node-lifecycle,-route,-service"
+		}
+
+		if s.ShouldEnableCSIMigration() {
+			featureGates, featureGatesFlag, err := s.Cluster.CSIMigrationFeatureGates(s.ShouldUnregisterInTreeCloudProvider())
+			if err != nil {
+				return nil, err
+			}
+
+			// Kubernetes API server
+			if fg, ok := clusterConfig.APIServer.ExtraArgs["feature-gates"]; ok && len(fg) > 0 {
+				clusterConfig.APIServer.ExtraArgs["feature-gates"] = fmt.Sprintf("%s,%s", clusterConfig.APIServer.ExtraArgs["feature-gates"], featureGatesFlag)
+			} else {
+				clusterConfig.APIServer.ExtraArgs["feature-gates"] = featureGatesFlag
+			}
+
+			// Kubernetes Controller Manager
+			if fg, ok := clusterConfig.ControllerManager.ExtraArgs["feature-gates"]; ok && len(fg) > 0 {
+				clusterConfig.ControllerManager.ExtraArgs["feature-gates"] = fmt.Sprintf("%s,%s", clusterConfig.ControllerManager.ExtraArgs["feature-gates"], featureGatesFlag)
+			} else {
+				clusterConfig.ControllerManager.ExtraArgs["feature-gates"] = featureGatesFlag
+			}
+
+			// Kubelet
+			for k, v := range featureGates {
+				kubeletConfig.FeatureGates[k] = v
+			}
 		}
 	}
 
@@ -333,13 +364,14 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Obje
 				Enabled: &bfalse,
 			},
 		},
+		FeatureGates: map[string]bool{},
 	}
 
 	if cluster.AssetConfiguration.Pause.ImageRepository != "" {
 		nodeRegistration.KubeletExtraArgs["pod-infra-container-image"] = cluster.AssetConfiguration.Pause.ImageRepository + "/pause:" + cluster.AssetConfiguration.Pause.ImageTag
 	}
 
-	if cluster.CloudProvider.CloudProviderInTree() {
+	if s.ShouldEnableInTreeCloudProvider() {
 		renderedCloudConfig := "/etc/kubernetes/cloud-config"
 
 		nodeRegistration.KubeletExtraArgs["cloud-provider"] = cluster.CloudProvider.CloudProviderName()
@@ -347,7 +379,18 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Obje
 	}
 
 	if cluster.CloudProvider.External {
-		nodeRegistration.KubeletExtraArgs["cloud-provider"] = "external"
+		if !s.ShouldEnableInTreeCloudProvider() {
+			nodeRegistration.KubeletExtraArgs["cloud-provider"] = "external"
+		}
+		if s.ShouldEnableCSIMigration() {
+			featureGates, _, err := s.Cluster.CSIMigrationFeatureGates(s.ShouldUnregisterInTreeCloudProvider())
+			if err != nil {
+				return nil, err
+			}
+			for k, v := range featureGates {
+				kubeletConfig.FeatureGates[k] = v
+			}
+		}
 	}
 
 	joinConfig.NodeRegistration = nodeRegistration

@@ -560,8 +560,17 @@ func detectCCMMigrationStatus(s *state.State) (*state.CCMStatus, error) {
 	status := &state.CCMStatus{}
 	for _, pod := range pods.Items {
 		for _, c := range pod.Spec.Containers[0].Command {
-			if strings.HasPrefix(c, "--cloud-provider") && !strings.Contains(c, "external") {
+			switch {
+			case strings.HasPrefix(c, "--cloud-provider") && !strings.Contains(c, "external"):
 				status.InTreeCloudProviderEnabled = true
+			case strings.HasPrefix(c, "--feature-gates"):
+				if strings.Contains(c, "CSIMigration=true") {
+					status.CSIMigrationEnabled = true
+				}
+				unregister := s.Cluster.InTreePluginUnregisterFeatureGate()
+				if unregister != "" && strings.Contains(c, fmt.Sprintf("%s=true", unregister)) {
+					status.InTreeCloudProviderUnregistered = true
+				}
 			}
 		}
 	}
@@ -577,7 +586,6 @@ func detectCCMMigrationStatus(s *state.State) (*state.CCMStatus, error) {
 		return status, nil
 	}
 
-	// TODO(xmudrii): Consider checking does Deployment exists instead
 	pods = corev1.PodList{}
 	err = s.DynamicClient.List(s.Context, &pods, &dynclient.ListOptions{
 		Namespace: metav1.NamespaceSystem,

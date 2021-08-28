@@ -19,20 +19,30 @@ package scripts
 import "github.com/MakeNowJust/heredoc/v2"
 
 var (
-	ccmMigrationRegenerateStaticPodManifests = heredoc.Doc(`
+	ccmMigrationRegenerateControlPlaneManifests = heredoc.Doc(`
 		sudo kubeadm {{ .VERBOSE }} init phase control-plane apiserver \
 			--config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
 
 		sudo kubeadm {{ .VERBOSE }} init phase control-plane controller-manager \
 			--config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+	`)
 
+	ccmMigrationUpdateKubeletConfig = heredoc.Doc(`
 		sudo kubeadm {{ .VERBOSE }} init phase kubelet-start \
 			--config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
 	`)
 )
 
-func CCMMigrationRegenerateStaticPodManifests(workdir string, nodeID int, verboseFlag string) (string, error) {
-	return Render(ccmMigrationRegenerateStaticPodManifests, Data{
+func CCMMigrationRegenerateControlPlaneManifests(workdir string, nodeID int, verboseFlag string) (string, error) {
+	return Render(ccmMigrationRegenerateControlPlaneManifests, Data{
+		"WORK_DIR": workdir,
+		"NODE_ID":  nodeID,
+		"VERBOSE":  verboseFlag,
+	})
+}
+
+func CCMMigrationUpdateKubeletConfig(workdir string, nodeID int, verboseFlag string) (string, error) {
+	return Render(ccmMigrationUpdateKubeletConfig, Data{
 		"WORK_DIR": workdir,
 		"NODE_ID":  nodeID,
 		"VERBOSE":  verboseFlag,
