@@ -39,6 +39,10 @@ func destroyWorkers(s *state.State) error {
 	s.Logger.Infoln("Destroying worker nodes...")
 
 	_ = wait.ExponentialBackoff(defaultRetryBackoff(3), func() (bool, error) {
+		if s.DynamicClient != nil {
+			return true, nil
+		}
+
 		lastErr = kubeconfig.BuildKubernetesClientset(s)
 		if lastErr != nil {
 			s.Logger.Warn("Unable to connect to the control plane API. Retrying...")
