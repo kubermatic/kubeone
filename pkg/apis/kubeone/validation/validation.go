@@ -161,10 +161,6 @@ func ValidateCloudProviderSpec(p kubeone.CloudProviderSpec, fldPath *field.Path)
 		allErrs = append(allErrs, field.Invalid(fldPath, "", "provider must be specified"))
 	}
 
-	if p.CSIMigrationComplete && !p.CSIMigration {
-		allErrs = append(allErrs, field.Forbidden(fldPath.Child("csiMigrationComplete"), "csiMigrationComplete requires csiMigration to be enabled"))
-	}
-
 	return allErrs
 }
 
