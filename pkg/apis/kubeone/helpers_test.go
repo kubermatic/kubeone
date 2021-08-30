@@ -37,7 +37,7 @@ func TestFeatureGatesString(t *testing.T) {
 				"TestFeatureGate":  true,
 				"TestDisabledGate": false,
 			},
-			expected: "TestFeatureGate=true,TestDisabledGate=false",
+			expected: "TestDisabledGate=false,TestFeatureGate=true",
 		},
 		{
 			name: "three feature gates",
@@ -46,7 +46,7 @@ func TestFeatureGatesString(t *testing.T) {
 				"TestDisabledGate": false,
 				"TestThirdGate":    true,
 			},
-			expected: "TestFeatureGate=true,TestDisabledGate=false,TestThirdGate=true",
+			expected: "TestDisabledGate=false,TestFeatureGate=true,TestThirdGate=true",
 		},
 		{
 			name:         "no feature gates",
@@ -63,7 +63,7 @@ func TestFeatureGatesString(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			got := featureGatesString(tc.featureGates)
+			got := marshalFeatureGates(tc.featureGates)
 			if got != tc.expected {
 				t.Errorf("TestFeatureGatesString() got = %v, expected %v", got, tc.expected)
 			}
