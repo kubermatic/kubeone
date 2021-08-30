@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"fmt"
 	"math/rand"
+	"strconv"
 
 	"github.com/Masterminds/semver/v3"
 	"github.com/pkg/errors"
@@ -177,15 +178,13 @@ func (c KubeOneCluster) CSIMigrationFeatureGates(complete bool) (map[string]bool
 			"CSIMigrationOpenStack": true,
 			"ExpandCSIVolumes":      true,
 		}
-		featureGatesString := "CSIMigrationOpenStack=true,ExpandCSIVolumes=true"
 
-		if complete {
-			unregister := c.InTreePluginUnregisterFeatureGate()
+		unregister := c.InTreePluginUnregisterFeatureGate()
+		if complete && unregister != "" {
 			featureGates[unregister] = true
-			featureGatesString += "," + unregister + "=true"
 		}
 
-		return featureGates, featureGatesString, nil
+		return featureGates, featureGatesString(featureGates), nil
 	}
 
 	return nil, "", errors.New("csi migration is not supported for selected provider")
@@ -206,6 +205,24 @@ func (c KubeOneCluster) InTreePluginUnregisterFeatureGate() string {
 	}
 
 	return ""
+}
+
+func featureGatesString(featureGates map[string]bool) string {
+	var (
+		featureGatesStr = ""
+		first           = true
+	)
+
+	for k, v := range featureGates {
+		if !first {
+			featureGatesStr += ","
+		} else {
+			first = false
+		}
+		featureGatesStr += k + "=" + strconv.FormatBool(v)
+	}
+
+	return featureGatesStr
 }
 
 // ImageRegistry returns the image registry to use or the passed in
