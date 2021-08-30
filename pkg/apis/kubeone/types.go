@@ -601,7 +601,7 @@ type Addon struct {
 	Params map[string]string `json:"params,omitempty"`
 
 	// Delete flag to ensure the named addon with all its contents to be deleted
-	Delete bool `json:"deleted,omitempty"`
+	Delete bool `json:"delete,omitempty"`
 }
 
 // Addons config
