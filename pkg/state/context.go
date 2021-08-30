@@ -97,11 +97,11 @@ type State struct {
 	ForceUpgrade              bool
 	ForceInstall              bool
 	UpgradeMachineDeployments bool
-	// TODO: Currently unset, will be provided via --complete flag
-	CCMMigrationComplete bool
-	CredentialsFilePath  string
-	ManifestFilePath     string
-	PauseImage           string
+	CCMMigration              bool
+	CCMMigrationComplete      bool
+	CredentialsFilePath       string
+	ManifestFilePath          string
+	PauseImage                string
 }
 
 func (s *State) KubeadmVerboseFlag() string {
@@ -117,11 +117,48 @@ func (s *State) Clone() *State {
 	return &newState
 }
 
+// ShouldEnableInTreeCloudProvider returns if in-tree cloud provider should be enabled.
+// This function ensures we'll keep in-tree cloud provider enabled for existing clusters
+// if it's already enabled, or disable it if we're completing the CCM/CSI migration
+// process
 func (s *State) ShouldEnableInTreeCloudProvider() bool {
 	if s.LiveCluster.CCMStatus == nil {
+		// We are enabling the in-tree cloud provider for new clusters only if
+		// .cloudProvider.external is disabled or we don't support the external
+		// CCM for the specified provider yet
 		return s.Cluster.CloudProvider.CloudProviderInTree()
 	}
 	return s.LiveCluster.CCMStatus.InTreeCloudProviderEnabled && !s.CCMMigrationComplete
+}
+
+// ShouldEnableCSIMigration returns if CSI migration feature gates should be enabled.
+// This function ensures we'll keep CSI migration feature gates enabled for existing
+// clusters if they're already enabled or if we're starting the CCM/CSI migration
+// process
+func (s *State) ShouldEnableCSIMigration() bool {
+	if s.LiveCluster.CCMStatus == nil {
+		// We are enabling CSI migration for new clusters by default if:
+		// 	* .cloudProvider.external is true
+		//  * provider supports CSI migration
+		//  * KubeOne supports CSI plugin for specified provider
+		return s.Cluster.CloudProvider.CSIMigrationSupported() && s.Cluster.CloudProvider.External
+	}
+	return s.LiveCluster.CCMStatus.CSIMigrationEnabled || s.CCMMigration
+}
+
+// ShouldUnregisterInTreeCloudProvider returns if the in-tree cloud provider should be unregistered.
+// This function ensures we'll keep the in-tree cloud provider registered for existing
+// clusters if it's already registered, or unregister it if we're completing the CCM/CSI
+// migration process
+// NB: We're intentionally using a dedicated function instead of reusing ShouldEnableInTreeCloudProvider
+// because the provider should be unregistered only if we support and completed CSI migration.
+func (s *State) ShouldUnregisterInTreeCloudProvider() bool {
+	if s.LiveCluster.CCMStatus == nil {
+		// We'll fully-disable in-tree provider for newly created clusters that
+		// support CSI migration.
+		return s.ShouldEnableCSIMigration()
+	}
+	return s.LiveCluster.CCMStatus.InTreeCloudProviderUnregistered || s.CCMMigrationComplete
 }
 
 func (s *State) ShouldDisableEncryption() bool {

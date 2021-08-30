@@ -5,6 +5,3 @@ sudo kubeadm --v=6 init phase control-plane apiserver \
 
 sudo kubeadm --v=6 init phase control-plane controller-manager \
 	--config=test-wd/cfg/master_0.yaml
-
-sudo kubeadm --v=6 init phase kubelet-start \
-	--config=test-wd/cfg/master_0.yaml

@@ -23,6 +23,7 @@ import (
 	"github.com/spf13/pflag"
 
 	"k8c.io/kubeone/pkg/credentials"
+	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/tasks"
 )
 
@@ -57,30 +58,6 @@ func migrateToContainerdCmd(fs *pflag.FlagSet) *cobra.Command {
 	}
 }
 
-func migrateToCCMCSICmd(fs *pflag.FlagSet) *cobra.Command {
-	return &cobra.Command{
-		Use:   "to-ccm-csi",
-		Short: "Migrate live cluster from the in-tree cloud provider to external CCM and CSI plugin",
-		// TODO(xmudrii): Add which providers are supported in the long description.
-		Long: heredoc.Doc(`
-			Following the in-tree cloud provider deprecation http://kep.k8s.io/2395
-			this command helps to migrate from the in-tree cloud provider to external CCM and CSI plugin.
-			This command is currently only available for some providers. We'll extend it for all providers with
-			in-tree cloud provider implementation in the future.
-		`),
-		// TODO: Remove hidden once complete
-		Hidden: true,
-		RunE: func(_ *cobra.Command, _ []string) error {
-			gopts, err := persistentGlobalOptions(fs)
-			if err != nil {
-				return errors.Wrap(err, "unable to get global flags")
-			}
-
-			return runMigrateToCCMCSI(gopts)
-		},
-	}
-}
-
 func runMigrateToContainerd(opts *globalOptions) error {
 	s, err := opts.BuildState()
 	if err != nil {
@@ -90,8 +67,88 @@ func runMigrateToContainerd(opts *globalOptions) error {
 	return errors.Wrap(tasks.WithContainerDMigration(nil).Run(s), "failed to get cluster status")
 }
 
-func runMigrateToCCMCSI(opts *globalOptions) error {
-	s, err := opts.BuildState()
+type migrateCCMOptions struct {
+	globalOptions
+	AutoApprove       bool `longflag:"auto-approve" shortflag:"y"`
+	CompleteMigration bool `longflag:"complete"`
+}
+
+func (opts *migrateCCMOptions) buildCCMMigrationState() (*state.State, error) {
+	s, err := opts.globalOptions.BuildState()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to build state")
+	}
+
+	s.CCMMigration = true
+	s.CCMMigrationComplete = opts.CompleteMigration
+
+	return s, nil
+}
+
+func migrateToCCMCSICmd(fs *pflag.FlagSet) *cobra.Command {
+	opts := &migrateCCMOptions{}
+
+	cmd := &cobra.Command{
+		Use:   "to-ccm-csi",
+		Short: "Migrate live cluster from the in-tree cloud provider to external cloud-controller-manager (CCM) and CSI plugin",
+		// TODO(xmudrii): insert link to docs once it's available.
+		Long: heredoc.Doc(`
+			Following the in-tree cloud provider deprecation (http://kep.k8s.io/2395),
+			this command helps to migrate existing clusters from the in-tree cloud provider to external
+			cloud-controller-manager (CCM) and CSI plugin.
+
+			Note: if your cluster was created with .cloudProvider.external enabled, the CCM/CSI migration is not needed
+			because the cluster is already using external CCM.
+
+			Migration is currently available for OpenStack. Other providers will be added in future KubeOne releases.
+
+			The migration is done in two phases:
+
+			  * Phase 1: deploy external CCM and CSI plugin, while leaving in-tree provider enabled.
+			    Kubernetes API server and kube-controller-manager are configured to:
+				  - use controllers integrated in external CCM instead of in-tree cloud provider
+				    for all cloud-related operations
+				  - redirect all volumes-related operations to the CSI plugin
+				The existing worker nodes will continue to use in-tree provider (that's why it's still left enabled),
+				so therefore, all worker nodes managed by machine-controller must be rolled out after phase 1 is complete.
+
+			  * Phase 2: complete the CCM/CSI migration by fully-disabling in-tree provider. To trigger the phase 2,
+			    users need to run "kubeone migrate to-ccm-csi" command with the "--complete" flag. This should be
+			    done after all worker nodes managed by machine-controller are rolled-out.
+
+			More information about the CCM/CSI migration can be found in the following document: TBD
+		`),
+		RunE: func(_ *cobra.Command, _ []string) error {
+			gopts, err := persistentGlobalOptions(fs)
+			if err != nil {
+				return errors.Wrap(err, "unable to get global flags")
+			}
+
+			opts.globalOptions = *gopts
+
+			return runMigrateToCCMCSI(opts)
+		},
+	}
+
+	cmd.Flags().BoolVarP(
+		&opts.AutoApprove,
+		longFlagName(opts, "AutoApprove"),
+		shortFlagName(opts, "AutoApprove"),
+		false,
+		"auto approve plan")
+
+	cmd.Flags().BoolVarP(
+		&opts.CompleteMigration,
+		longFlagName(opts, "CompleteMigration"),
+		shortFlagName(opts, "CompleteMigration"),
+		false,
+		"complete ccm/csi migration")
+
+	return cmd
+}
+
+func runMigrateToCCMCSI(opts *migrateCCMOptions) error {
+	s, err := opts.buildCCMMigrationState()
 	if err != nil {
 		return errors.Wrap(err, "failed to initialize State")
 	}

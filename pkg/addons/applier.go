@@ -55,6 +55,7 @@ type templateData struct {
 	Config                              *kubeoneapi.KubeOneCluster
 	Certificates                        map[string]string
 	Credentials                         map[string]string
+	CSIMigrationFeatureGates            string
 	MachineControllerCredentialsEnvVars string
 	InternalImages                      *internalImages
 	Resources                           map[string]string
@@ -94,6 +95,14 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		return nil, errors.Wrap(err, "failed to load CA keypair")
 	}
 
+	// We're intentionally ignoring the error here. If the provider is not supported
+	// the function will return an empty string (""), which we can easily detect in
+	// the templates
+	csiMigrationFeatureGates := ""
+	if s.ShouldEnableCSIMigration() {
+		_, csiMigrationFeatureGates, _ = s.Cluster.CSIMigrationFeatureGates(s.ShouldUnregisterInTreeCloudProvider())
+	}
+
 	certsMap, err := certificate.NewSignedWebhookCert(
 		resources.MachineControllerWebhookName,
 		resources.MachineControllerNameSpace,
@@ -113,6 +122,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 			"KubernetesCA":                 certsMap[resources.KubernetesCACertName],
 		},
 		Credentials:                         creds,
+		CSIMigrationFeatureGates:            csiMigrationFeatureGates,
 		MachineControllerCredentialsEnvVars: string(credsEnvVars),
 		InternalImages: &internalImages{
 			pauseImage: s.PauseImage,
