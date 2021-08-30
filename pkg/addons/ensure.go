@@ -62,6 +62,7 @@ func EnsureUserAddons(s *state.State) error {
 	if err != nil {
 		return err
 	}
+
 	if applier.LocalFS == nil {
 		s.Logger.Infoln("Skipping applying addons because addons are not enabled...")
 		return nil
@@ -74,18 +75,18 @@ func EnsureUserAddons(s *state.State) error {
 		return errors.Wrap(err, "failed to read addons directory")
 	}
 
-	for _, a := range addons {
-		if !a.IsDir() {
+	for _, useraddon := range addons {
+		if !useraddon.IsDir() {
 			continue
 		}
-		if _, ok := embeddedAddons[a.Name()]; ok {
+		if _, ok := embeddedAddons[useraddon.Name()]; ok {
 			continue
 		}
 
-		s.Logger.Infof("Applying addon %q...", a.Name())
+		s.Logger.Infof("Applying addon %q...", useraddon.Name())
 
-		if err := applier.loadAndApplyAddon(s, applier.LocalFS, a.Name()); err != nil {
-			return errors.Wrapf(err, "failed to load and apply the addon %q", a.Name())
+		if err := applier.loadAndApplyAddon(s, applier.LocalFS, useraddon.Name()); err != nil {
+			return errors.Wrapf(err, "failed to load and apply the addon %q", useraddon.Name())
 		}
 	}
 
@@ -146,23 +147,24 @@ func EnsureAddonByName(s *state.State, addonName string) error {
 }
 
 // loadAndApplyAddon parses the addons manifests and runs kubectl apply.
-func (a *applier) loadAndApplyAddon(s *state.State, f fs.FS, addonName string) error {
-	manifest, err := a.getManifestsFromDirectory(s, f, addonName)
+func (a *applier) loadAndApplyAddon(s *state.State, fsys fs.FS, addonName string) error {
+	manifest, err := a.getManifestsFromDirectory(s, fsys, addonName)
 	if err != nil {
 		return errors.WithStack(err)
 	}
+
 	if len(strings.TrimSpace(manifest)) == 0 {
 		if len(addonName) != 0 {
 			s.Logger.Warnf("Addon directory %q is empty, skipping...", addonName)
 		}
+
 		return nil
 	}
 
-	if err := runKubectlApply(s, manifest, addonName); err != nil {
-		return errors.Wrap(err, "failed to apply addons")
-	}
-
-	return nil
+	return errors.Wrap(
+		runKubectlApply(s, manifest, addonName),
+		"failed to apply addons",
+	)
 }
 
 // runKubectlApply runs kubectl apply command

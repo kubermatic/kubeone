@@ -17,7 +17,6 @@ limitations under the License.
 package addons
 
 import (
-	"embed"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -25,7 +24,7 @@ import (
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/pkg/errors"
 
-	"k8c.io/kubeone/addons"
+	embeddedaddons "k8c.io/kubeone/addons"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/certificate"
 	"k8c.io/kubeone/pkg/credentials"
@@ -47,7 +46,7 @@ var (
 type applier struct {
 	TemplateData templateData
 	LocalFS      fs.FS
-	EmbededFS    embed.FS
+	EmbededFS    fs.FS
 }
 
 // TemplateData is data available in the addons render template
@@ -59,10 +58,12 @@ type templateData struct {
 	MachineControllerCredentialsEnvVars string
 	InternalImages                      *internalImages
 	Resources                           map[string]string
+	Params                              map[string]string
 }
 
 func newAddonsApplier(s *state.State) (*applier, error) {
 	var localFS fs.FS
+
 	if s.Cluster.Addons != nil && s.Cluster.Addons.Enable {
 		addonsPath := s.Cluster.Addons.Path
 		if !filepath.IsAbs(addonsPath) && s.ManifestFilePath != "" {
@@ -85,6 +86,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to fetch env var bindings for credentials")
 	}
+
 	credsEnvVars, err := yaml.Marshal(envVars)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to convert env var bindings for credentials to yaml")
@@ -127,7 +129,14 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		return nil, err
 	}
 
-	td := templateData{
+	params := map[string]string{}
+	if s.Cluster.Addons.Enabled() {
+		for k, v := range s.Cluster.Addons.GlobalParams {
+			params[k] = v
+		}
+	}
+
+	data := templateData{
 		Config: s.Cluster,
 		Certificates: map[string]string{
 			"MachineControllerWebhookCert": mcCertsMap[resources.TLSCertName],
@@ -144,12 +153,13 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 			resolver:   s.Images.Get,
 		},
 		Resources: resources.All(),
+		Params:    params,
 	}
 
 	return &applier{
-		TemplateData: td,
+		TemplateData: data,
 		LocalFS:      localFS,
-		EmbededFS:    addons.F,
+		EmbededFS:    embeddedaddons.F,
 	}, nil
 }
 

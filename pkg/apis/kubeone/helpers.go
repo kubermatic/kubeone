@@ -236,3 +236,7 @@ func (r *RegistryConfiguration) InsecureRegistryAddress() string {
 	}
 	return insecureRegistry
 }
+
+func (ads *Addons) Enabled() bool {
+	return ads != nil && ads.Enable
+}
