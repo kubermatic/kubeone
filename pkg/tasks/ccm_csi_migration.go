@@ -37,6 +37,12 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
+const (
+	provisionedByAnnotation            = "pv.kubernetes.io/provisioned-by"
+	provisionedByOpenStackInTreeCinder = "kubernetes.io/cinder"
+	provisionedByOpenStackCSICinder    = "cinder.csi.openstack.org"
+)
+
 func validateExternalCloudProviderConfig(s *state.State) error {
 	if !s.Cluster.CloudProvider.External {
 		return errors.New(".cloudProvider.external must be enabled to start the migration")
@@ -209,4 +215,34 @@ func waitForStaticPodReady(s *state.State, timeout time.Duration, staticPodName,
 
 		return true, nil
 	})
+}
+
+func migrateOpenStackPVs(s *state.State) error {
+	if s.DynamicClient == nil {
+		return errors.New("dynamic client is not initialized")
+	}
+
+	s.Logger.Infof("Patching OpenStack PersistentVolumes with annotation \"%s=%s\"...", provisionedByAnnotation, provisionedByOpenStackCSICinder)
+
+	pvList := corev1.PersistentVolumeList{}
+	if err := s.DynamicClient.List(s.Context, &pvList, &client.ListOptions{}); err != nil {
+		return errors.Wrap(err, "failed to list persistentvolumes")
+	}
+
+	for i, pv := range pvList.Items {
+		if pv.Annotations[provisionedByAnnotation] == provisionedByOpenStackInTreeCinder {
+			if s.Verbose {
+				s.Logger.Debugf("Patching PersistentVolume \"%s/%s\"...", pv.Namespace, pv.Name)
+			}
+
+			oldPv := pv.DeepCopy()
+			pv.Annotations[provisionedByAnnotation] = provisionedByOpenStackCSICinder
+
+			if err := s.DynamicClient.Patch(s.Context, &pvList.Items[i], client.MergeFrom(oldPv)); err != nil {
+				return errors.Wrapf(err, "failed to patch persistnetvolume %q with annotation \"%s=%s\"", pv.Name, provisionedByAnnotation, provisionedByOpenStackCSICinder)
+			}
+		}
+	}
+
+	return nil
 }

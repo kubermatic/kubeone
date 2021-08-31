@@ -474,14 +474,21 @@ func WithCCMCSIMigration(t Tasks) Tasks {
 			Task{Fn: updateKubeletConfig, ErrMsg: "failed to update kubelet config"},
 		).
 		append(WithResources(nil)...).
-		append(Task{
-			Fn: func(s *state.State) error {
-				s.Logger.Warn("Now please rolling restart your machineDeployments to migrate to ccm/csi")
-				s.Logger.Warn("see more at: https://docs.kubermatic.com/kubeone/v1.3/cheat_sheets/rollout_machinedeployment/")
-				s.Logger.Warn("Once you're done, please run this command again with the '--complete' flag to finish migration")
-				return nil
+		append(
+			Task{
+				Fn:        migrateOpenStackPVs,
+				ErrMsg:    "failed to migrate openstack persistentvolumes",
+				Predicate: func(s *state.State) bool { return s.Cluster.CloudProvider.Openstack != nil },
 			},
-			ErrMsg:    "failed to show next steps",
-			Predicate: func(s *state.State) bool { return s.Cluster.MachineController.Deploy && !s.CCMMigrationComplete },
-		})
+			Task{
+				Fn: func(s *state.State) error {
+					s.Logger.Warn("Now please rolling restart your machineDeployments to migrate to ccm/csi")
+					s.Logger.Warn("see more at: https://docs.kubermatic.com/kubeone/v1.3/cheat_sheets/rollout_machinedeployment/")
+					s.Logger.Warn("Once you're done, please run this command again with the '--complete' flag to finish migration")
+					return nil
+				},
+				ErrMsg:    "failed to show next steps",
+				Predicate: func(s *state.State) bool { return s.Cluster.MachineController.Deploy && !s.CCMMigrationComplete },
+			},
+		)
 }
