@@ -47,12 +47,15 @@ const (
 	MachineControllerName        = "machine-controller"
 	MachineControllerNameSpace   = metav1.NamespaceSystem
 	MachineControllerWebhookName = "machine-controller-webhook"
+
+	MetricsServerName      = "metrics-server"
+	MetricsServerNamespace = metav1.NamespaceSystem
 )
 
 const (
-	MachineControllerWebhookCertName = "cert.pem"
-	MachineControllerWebhookKeyName  = "key.pem"
-	KubernetesCACertName             = "ca.pem"
+	TLSCertName          = "cert.pem"
+	TLSKeyName           = "key.pem"
+	KubernetesCACertName = "ca.pem"
 )
 
 const (

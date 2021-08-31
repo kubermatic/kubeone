@@ -57,6 +57,7 @@ rules:
       - nodes
       - nodes/stats
       - namespaces
+      - configmaps
     verbs:
       - get
       - list
@@ -89,6 +90,17 @@ spec:
   groupPriorityMinimum: 100
   versionPriority: 100
 ---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: metrics-server-serving-cert
+  namespace: kube-system
+data:
+  "cert.pem": |
+{{ .Certificates.MetricsServerCert | b64enc | indent 4 }}
+  "key.pem": |
+{{ .Certificates.MetricsServerKey | b64enc | indent 4 }}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -100,6 +112,9 @@ spec:
   selector:
     matchLabels:
       k8s-app: metrics-server
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0
   template:
     metadata:
       name: metrics-server
@@ -113,6 +128,10 @@ spec:
       # mount in tmp so we can safely use from-scratch images and/or read-only containers
       - name: tmp-dir
         emptyDir: {}
+      - name: metrics-server-serving-cert
+        secret:
+          secretName: metrics-server-serving-cert
+      priorityClassName: system-cluster-critical
       containers:
       - name: metrics-server
         image: {{ .InternalImages.Get "MetricsServer" }}
@@ -120,9 +139,46 @@ spec:
         args:
           - --kubelet-insecure-tls
           - --kubelet-preferred-address-types=InternalIP,InternalDNS,ExternalDNS,ExternalIP
+          - --kubelet-use-node-status-port
+          - --metric-resolution=15s
+          - --tls-cert-file=/etc/serving-cert/cert.pem
+          - --tls-private-key-file=/etc/serving-cert/key.pem
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+          limits:
+            cpu: 1
+            memory: 512Mi
+        ports:
+        - name: https
+          containerPort: 443
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: https
+            scheme: HTTPS
+          periodSeconds: 10
+          failureThreshold: 3
+          initialDelaySeconds: 20
+        livenessProbe:
+          httpGet:
+            path: /livez
+            port: https
+            scheme: HTTPS
+          periodSeconds: 10
+          failureThreshold: 3
+        securityContext:
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1000
         volumeMounts:
         - name: tmp-dir
           mountPath: /tmp
+        - name: metrics-server-serving-cert
+          mountPath: /etc/serving-cert
+          readOnly: true
 ---
 apiVersion: v1
 kind: Service

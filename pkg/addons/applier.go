@@ -103,9 +103,22 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		_, csiMigrationFeatureGates, _ = s.Cluster.CSIMigrationFeatureGates(s.ShouldUnregisterInTreeCloudProvider())
 	}
 
-	certsMap, err := certificate.NewSignedWebhookCert(
+	// Certs for machine-controller-webhook
+	mcCertsMap, err := certificate.NewSignedTLSCert(
 		resources.MachineControllerWebhookName,
 		resources.MachineControllerNameSpace,
+		s.Cluster.ClusterNetwork.ServiceDomainName,
+		kubeCAPrivateKey,
+		kubeCACert,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	// Certs for metrics-server
+	msCertsMap, err := certificate.NewSignedTLSCert(
+		resources.MetricsServerName,
+		resources.MetricsServerNamespace,
 		s.Cluster.ClusterNetwork.ServiceDomainName,
 		kubeCAPrivateKey,
 		kubeCACert,
@@ -117,9 +130,11 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 	td := templateData{
 		Config: s.Cluster,
 		Certificates: map[string]string{
-			"MachineControllerWebhookCert": certsMap[resources.MachineControllerWebhookCertName],
-			"MachineControllerWebhookKey":  certsMap[resources.MachineControllerWebhookKeyName],
-			"KubernetesCA":                 certsMap[resources.KubernetesCACertName],
+			"MachineControllerWebhookCert": mcCertsMap[resources.TLSCertName],
+			"MachineControllerWebhookKey":  mcCertsMap[resources.TLSKeyName],
+			"MetricsServerCert":            msCertsMap[resources.TLSCertName],
+			"MetricsServerKey":             msCertsMap[resources.TLSKeyName],
+			"KubernetesCA":                 mcCertsMap[resources.KubernetesCACertName],
 		},
 		Credentials:                         creds,
 		CSIMigrationFeatureGates:            csiMigrationFeatureGates,

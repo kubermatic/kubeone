@@ -66,7 +66,7 @@ func CAKeyPair(config *configupload.Configuration) (*rsa.PrivateKey, *x509.Certi
 	return rsaKey, certs[0], nil
 }
 
-func NewSignedWebhookCert(name, namespace, domain string, caKey crypto.Signer, caCert *x509.Certificate) (map[string]string, error) {
+func NewSignedTLSCert(name, namespace, domain string, caKey crypto.Signer, caCert *x509.Certificate) (map[string]string, error) {
 	serviceCommonName := strings.Join([]string{name, namespace, "svc"}, ".")
 	serviceFQDNCommonName := strings.Join([]string{serviceCommonName, domain, ""}, ".")
 
@@ -94,8 +94,8 @@ func NewSignedWebhookCert(name, namespace, domain string, caKey crypto.Signer, c
 	}
 
 	return map[string]string{
-		resources.MachineControllerWebhookCertName: string(encodeCertPEM(newKPCert)),
-		resources.MachineControllerWebhookKeyName:  string(encodePrivateKeyPEM(newKPKey)),
-		resources.KubernetesCACertName:             string(encodeCertPEM(caCert)),
+		resources.TLSCertName:          string(encodeCertPEM(newKPCert)),
+		resources.TLSKeyName:           string(encodePrivateKeyPEM(newKPKey)),
+		resources.KubernetesCACertName: string(encodeCertPEM(caCert)),
 	}, nil
 }
