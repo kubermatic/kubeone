@@ -571,6 +571,9 @@ cloudProvider:
   external: {{ .CloudProviderExternal }}
   # Path to file that will be uploaded and used as custom '--cloud-config' file.
   cloudConfig: "{{ .CloudProviderCloudCfg }}"
+  # CSIConfig is configuration passed to the CSI driver.
+  # This is currently used only for vSphere clusters.
+  csiConfig: ""
 
 # Controls which container runtime will be installed on instances.
 # By default:
