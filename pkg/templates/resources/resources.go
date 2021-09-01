@@ -24,6 +24,7 @@ import (
 
 // Names of the internal addons
 const (
+	AddonCCMAzure           = "ccm-azure"
 	AddonCCMDigitalOcean    = "ccm-digitalocean"
 	AddonCCMHetzner         = "ccm-hetzner"
 	AddonCCMOpenStack       = "ccm-openstack"
@@ -31,6 +32,7 @@ const (
 	AddonCCMVsphere         = "ccm-vsphere"
 	AddonCSIHetnzer         = "csi-hetzner"
 	AddonCSIOpenStackCinder = "csi-openstack-cinder"
+	AddonCSIVsphere         = "csi-vsphere"
 	AddonCNICanal           = "cni-canal"
 	AddonCNIWeavenet        = "cni-weavenet"
 	AddonMachineController  = "machinecontroller"

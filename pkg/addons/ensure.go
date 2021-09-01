@@ -38,16 +38,20 @@ var (
 	// embeddedAddons is a list of addons that are embedded in the KubeOne
 	// binary. Those addons are skipped when applying the user-provided addons
 	embeddedAddons = map[string]string{
-		resources.AddonCCMDigitalOcean:   "",
-		resources.AddonCCMHetzner:        "",
-		resources.AddonCCMOpenStack:      "",
-		resources.AddonCCMPacket:         "",
-		resources.AddonCCMVsphere:        "",
-		resources.AddonCNICanal:          "",
-		resources.AddonCNIWeavenet:       "",
-		resources.AddonMachineController: "",
-		resources.AddonMetricsServer:     "",
-		resources.AddonNodeLocalDNS:      "",
+		resources.AddonCCMAzure:           "",
+		resources.AddonCCMDigitalOcean:    "",
+		resources.AddonCCMHetzner:         "",
+		resources.AddonCCMOpenStack:       "",
+		resources.AddonCCMPacket:          "",
+		resources.AddonCCMVsphere:         "",
+		resources.AddonCNICanal:           "",
+		resources.AddonCNIWeavenet:        "",
+		resources.AddonCSIHetnzer:         "",
+		resources.AddonCSIOpenStackCinder: "",
+		resources.AddonCSIVsphere:         "",
+		resources.AddonMachineController:  "",
+		resources.AddonMetricsServer:      "",
+		resources.AddonNodeLocalDNS:       "",
 	}
 )
 
