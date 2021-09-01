@@ -52,6 +52,12 @@ func Ensure(s *state.State) error {
 		}
 
 		err = addons.EnsureAddonByName(s, resources.AddonCSIOpenStackCinder)
+	case s.Cluster.CloudProvider.Vsphere != nil:
+		if s.Cluster.CloudProvider.CSIConfig == "" {
+			s.Logger.Warnln("vSphere CSI driver requires CSI config to be provided via .cloudProvider.csiConfig. Skipping...")
+			return nil
+		}
+		err = addons.EnsureAddonByName(s, resources.AddonCSIVsphere)
 	default:
 		s.Logger.Infof("CSI driver for %q not yet supported, skipping", s.Cluster.CloudProvider.CloudProviderName())
 		return nil

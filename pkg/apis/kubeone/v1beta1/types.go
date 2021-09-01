@@ -161,6 +161,8 @@ type CloudProviderSpec struct {
 	External bool `json:"external,omitempty"`
 	// CloudConfig
 	CloudConfig string `json:"cloudConfig,omitempty"`
+	// CSIConfig
+	CSIConfig string `json:"csiConfig,omitempty"`
 	// AWS
 	AWS *AWSSpec `json:"aws,omitempty"`
 	// Azure
