@@ -29,13 +29,15 @@ func _() {
 	_ = x[OpenstackCSI-19]
 	_ = x[PacketCCM-20]
 	_ = x[VsphereCCM-21]
-	_ = x[WeaveNetCNIKube-22]
-	_ = x[WeaveNetCNINPC-23]
+	_ = x[VsphereCSIDriver-22]
+	_ = x[VsphereCSISyncer-23]
+	_ = x[WeaveNetCNIKube-24]
+	_ = x[WeaveNetCNINPC-25]
 }
 
-const _Resource_name = "AzureCCMAzureCNMCalicoCNICalicoControllerCalicoNodeCSIAttacherCSINodeDriverRegistarCSIProvisionerCSISnapshotterCSIResizerCSILivenessProbeDigitaloceanCCMDNSNodeCacheFlannelHetznerCCMMachineControllerMetricsServerOpenstackCCMOpenstackCSIPacketCCMVsphereCCMWeaveNetCNIKubeWeaveNetCNINPC"
+const _Resource_name = "AzureCCMAzureCNMCalicoCNICalicoControllerCalicoNodeCSIAttacherCSINodeDriverRegistarCSIProvisionerCSISnapshotterCSIResizerCSILivenessProbeDigitaloceanCCMDNSNodeCacheFlannelHetznerCCMMachineControllerMetricsServerOpenstackCCMOpenstackCSIPacketCCMVsphereCCMVsphereCSIDriverVsphereCSISyncerWeaveNetCNIKubeWeaveNetCNINPC"
 
-var _Resource_index = [...]uint16{0, 8, 16, 25, 41, 51, 62, 83, 97, 111, 121, 137, 152, 164, 171, 181, 198, 211, 223, 235, 244, 254, 269, 283}
+var _Resource_index = [...]uint16{0, 8, 16, 25, 41, 51, 62, 83, 97, 111, 121, 137, 152, 164, 171, 181, 198, 211, 223, 235, 244, 254, 270, 286, 301, 315}
 
 func (i Resource) String() string {
 	i -= 1

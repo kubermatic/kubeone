@@ -65,6 +65,8 @@ const (
 	OpenstackCSI
 	PacketCCM
 	VsphereCCM
+	VsphereCSIDriver
+	VsphereCSISyncer
 	WeaveNetCNIKube
 	WeaveNetCNINPC
 )
@@ -133,6 +135,10 @@ func optionalResources() map[Resource]map[string]string {
 
 		// vSphere CCM
 		VsphereCCM: {"*": "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.2.1"},
+
+		// vSphere CSI
+		VsphereCSIDriver: {"*": "gcr.io/cloud-provider-vsphere/csi/release/driver:v2.3.0"},
+		VsphereCSISyncer: {"*": "gcr.io/cloud-provider-vsphere/csi/release/syncer:v2.3.0"},
 
 		// WeaveNet CNI plugin
 		WeaveNetCNIKube: {"*": "docker.io/weaveworks/weave-kube:2.8.1"},
