@@ -182,6 +182,56 @@ func TestValidateKubeOneCluster(t *testing.T) {
 			},
 			expectedError: true,
 		},
+		{
+			name: "vSphere 1.22.0 cluster",
+			cluster: kubeone.KubeOneCluster{
+				Name: "test",
+				ControlPlane: kubeone.ControlPlaneConfig{
+					Hosts: []kubeone.HostConfig{
+						{
+							PublicAddress:  "1.1.1.1",
+							PrivateAddress: "10.0.0.1",
+							SSHAgentSocket: "env:SSH_AUTH_SOCK",
+							SSHUsername:    "ubuntu",
+						},
+						{
+							PublicAddress:  "1.1.1.2",
+							PrivateAddress: "10.0.0.2",
+							SSHAgentSocket: "env:SSH_AUTH_SOCK",
+							SSHUsername:    "ubuntu",
+						},
+					},
+				},
+				APIEndpoint: kubeone.APIEndpoint{
+					Host: "localhost",
+					Port: 6443,
+				},
+				CloudProvider: kubeone.CloudProviderSpec{
+					Vsphere: &kubeone.VsphereSpec{},
+				},
+				Versions: kubeone.VersionConfig{
+					Kubernetes: "1.22.1",
+				},
+				MachineController: &kubeone.MachineControllerConfig{
+					Deploy: true,
+				},
+				DynamicWorkers: []kubeone.DynamicWorkerConfig{
+					{
+						Name:     "test-1",
+						Replicas: intPtr(3),
+					},
+					{
+						Name:     "test-2",
+						Replicas: intPtr(5),
+					},
+					{
+						Name:     "test-3",
+						Replicas: intPtr(0),
+					},
+				},
+			},
+			expectedError: true,
+		},
 	}
 	for _, tc := range tests {
 		tc := tc
@@ -512,6 +562,40 @@ func TestValidateCloudProviderSpec(t *testing.T) {
 			expectedError: true,
 		},
 		{
+			name: "vSphere provider config without csiConfig",
+			providerConfig: kubeone.CloudProviderSpec{
+				Vsphere:     &kubeone.VsphereSpec{},
+				CloudConfig: "test",
+			},
+			expectedError: false,
+		},
+		{
+			name: "vSphere provider config with csiConfig",
+			providerConfig: kubeone.CloudProviderSpec{
+				Vsphere:     &kubeone.VsphereSpec{},
+				CloudConfig: "test",
+				CSIConfig:   "test",
+			},
+			expectedError: false,
+		},
+		{
+			name: "OpenStack provider config without csiConfig",
+			providerConfig: kubeone.CloudProviderSpec{
+				Openstack:   &kubeone.OpenstackSpec{},
+				CloudConfig: "test",
+			},
+			expectedError: false,
+		},
+		{
+			name: "OpenStack provider config with csiConfig",
+			providerConfig: kubeone.CloudProviderSpec{
+				Openstack:   &kubeone.OpenstackSpec{},
+				CloudConfig: "test",
+				CSIConfig:   "test",
+			},
+			expectedError: true,
+		},
+		{
 			name:           "no provider specified",
 			providerConfig: kubeone.CloudProviderSpec{},
 			expectedError:  true,
@@ -630,6 +714,70 @@ func TestValidateVersionConfig(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			errs := ValidateVersionConfig(tc.versionConfig, nil)
+			if (len(errs) == 0) == tc.expectedError {
+				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
+			}
+		})
+	}
+}
+
+func TestValidateCloudProviderSupportsKubernetes(t *testing.T) {
+	tests := []struct {
+		name           string
+		providerConfig kubeone.CloudProviderSpec
+		versionConfig  kubeone.VersionConfig
+		expectedError  bool
+	}{
+		{
+			name: "AWS 1.21.4 cluster",
+			providerConfig: kubeone.CloudProviderSpec{
+				AWS: &kubeone.AWSSpec{},
+			},
+			versionConfig: kubeone.VersionConfig{
+				Kubernetes: "1.21.4",
+			},
+			expectedError: false,
+		},
+		{
+			name: "AWS 1.22.1 cluster",
+			providerConfig: kubeone.CloudProviderSpec{
+				AWS: &kubeone.AWSSpec{},
+			},
+			versionConfig: kubeone.VersionConfig{
+				Kubernetes: "1.22.1",
+			},
+			expectedError: false,
+		},
+		{
+			name: "vSphere 1.21.4 cluster",
+			providerConfig: kubeone.CloudProviderSpec{
+				Vsphere: &kubeone.VsphereSpec{},
+			},
+			versionConfig: kubeone.VersionConfig{
+				Kubernetes: "1.21.4",
+			},
+			expectedError: false,
+		},
+		{
+			name: "vSphere 1.22.1 cluster",
+			providerConfig: kubeone.CloudProviderSpec{
+				Vsphere: &kubeone.VsphereSpec{},
+			},
+			versionConfig: kubeone.VersionConfig{
+				Kubernetes: "1.22.1",
+			},
+			expectedError: true,
+		},
+	}
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			c := kubeone.KubeOneCluster{
+				CloudProvider: tc.providerConfig,
+				Versions:      tc.versionConfig,
+			}
+
+			errs := ValidateCloudProviderSupportsKubernetes(c, nil)
 			if (len(errs) == 0) == tc.expectedError {
 				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
 			}
