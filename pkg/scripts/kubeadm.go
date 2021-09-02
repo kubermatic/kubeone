@@ -27,7 +27,7 @@ var (
 	`)
 
 	kubeadmWorkerJoinScriptTemplate = heredoc.Doc(`
-		[[ -f /etc/kubernetes/admin.conf ]] && exit 0
+		[[ -f /etc/kubernetes/kubelet.conf ]] && exit 0
 
 		sudo kubeadm {{ .VERBOSE }} join \
 			--config={{ .WORK_DIR }}/cfg/worker_{{ .NODE_ID }}.yaml
