@@ -36,7 +36,7 @@ const (
 
 var (
 	// embeddedAddons is a list of addons that are embedded in the KubeOne
-	// binary. Those addons are skipped when applying the user-provided addons
+	// binary. Those addons are skipped when applying a user-provided addon with the same name.
 	embeddedAddons = map[string]string{
 		resources.AddonCCMAzure:           "",
 		resources.AddonCCMDigitalOcean:    "",
@@ -70,23 +70,48 @@ func EnsureUserAddons(s *state.State) error {
 
 	s.Logger.Infof("Applying user provided addons...")
 
-	addons, err := fs.ReadDir(applier.LocalFS, ".")
+	customAddons, err := fs.ReadDir(applier.LocalFS, ".")
 	if err != nil {
 		return errors.Wrap(err, "failed to read addons directory")
 	}
 
-	for _, useraddon := range addons {
+	combinedAddons := map[string]string{}
+	for _, useraddon := range customAddons {
 		if !useraddon.IsDir() {
 			continue
 		}
+
 		if _, ok := embeddedAddons[useraddon.Name()]; ok {
 			continue
 		}
 
-		s.Logger.Infof("Applying addon %q...", useraddon.Name())
+		if _, ok := combinedAddons[useraddon.Name()]; !ok {
+			combinedAddons[useraddon.Name()] = ""
+		}
 
-		if err := applier.loadAndApplyAddon(s, applier.LocalFS, useraddon.Name()); err != nil {
-			return errors.Wrapf(err, "failed to load and apply the addon %q", useraddon.Name())
+	}
+
+	for _, embeddedAddon := range s.Cluster.Addons.Addons {
+		if _, ok := embeddedAddons[embeddedAddon.Name]; ok {
+			continue
+		}
+
+		if embeddedAddon.Delete {
+			//Todo: delete
+			continue
+		}
+
+		if _, ok := combinedAddons[embeddedAddon.Name]; !ok {
+			combinedAddons[embeddedAddon.Name] = ""
+		}
+
+	}
+
+	for addonName, _ := range combinedAddons {
+		s.Logger.Infof("Applying addon %q...", addonName)
+
+		if err := EnsureAddonByName(s, addonName); err != nil {
+			return errors.Wrapf(err, "failed to load and apply the addon %q", addonName)
 		}
 	}
 
@@ -99,7 +124,7 @@ func EnsureUserAddons(s *state.State) error {
 }
 
 // EnsureAddonByName deploys an addon by its name. If the addon is not found
-// in the addons directory, or if the addons or not enabled, it will search
+// in the addons directory, or if the addons are not enabled, it will search
 // for the embedded addons.
 func EnsureAddonByName(s *state.State, addonName string) error {
 	applier, err := newAddonsApplier(s)
