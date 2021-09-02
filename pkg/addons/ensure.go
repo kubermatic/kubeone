@@ -97,7 +97,10 @@ func EnsureUserAddons(s *state.State) error {
 		}
 
 		if embeddedAddon.Delete {
-			//Todo: delete
+			s.Logger.Infof("Deleting addon %q...", embeddedAddon.Name)
+			if err := applier.loadAndDeleteAddon(s, applier.EmbededFS, embeddedAddon.Name); err != nil {
+				return errors.Wrapf(err, "failed to load and delete the addon %q", embeddedAddon.Name)
+			}
 			continue
 		}
 
@@ -192,11 +195,52 @@ func (a *applier) loadAndApplyAddon(s *state.State, fsys fs.FS, addonName string
 	)
 }
 
+// loadAndApplyAddon parses the addons manifests and runs kubectl apply.
+func (a *applier) loadAndDeleteAddon(s *state.State, fsys fs.FS, addonName string) error {
+	manifest, err := a.getManifestsFromDirectory(s, fsys, addonName)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	if len(strings.TrimSpace(manifest)) == 0 {
+		if len(addonName) != 0 {
+			s.Logger.Warnf("Addon directory %q is empty, skipping...", addonName)
+		}
+
+		return nil
+	}
+
+	return errors.Wrap(
+		runKubectlDelete(s, manifest, addonName),
+		"failed to apply addons",
+	)
+}
+
 // runKubectlApply runs kubectl apply command
 func runKubectlApply(s *state.State, manifest string, addonName string) error {
 	return s.RunTaskOnLeader(func(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
 		var (
 			cmd            = fmt.Sprintf(kubectlApplyScript, addonLabel, addonName)
+			stdin          = strings.NewReader(manifest)
+			stdout, stderr strings.Builder
+		)
+
+		_, err := conn.POpen(cmd, stdin, &stdout, &stderr)
+		if s.Verbose {
+			fmt.Printf("+ %s\n", cmd)
+			fmt.Printf("%s", stderr.String())
+			fmt.Printf("%s", stdout.String())
+		}
+
+		return err
+	})
+}
+
+// runKubectlDelete runs kubectl delete command
+func runKubectlDelete(s *state.State, manifest string, addonName string) error {
+	return s.RunTaskOnLeader(func(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
+		var (
+			cmd            = fmt.Sprintf(kubectlDeleteScript, addonLabel, addonName)
 			stdin          = strings.NewReader(manifest)
 			stdout, stderr strings.Builder
 		)

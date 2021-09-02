@@ -40,6 +40,11 @@ var (
 		sudo KUBECONFIG=/etc/kubernetes/admin.conf \
 		kubectl apply -f - --prune -l "%s=%s"
 	`)
+
+	kubectlDeleteScript = heredoc.Doc(`
+		sudo KUBECONFIG=/etc/kubernetes/admin.conf \
+		kubectl delete -f - -l "%s=%s"
+	`)
 )
 
 // Applier holds structure used to fetch, parse, and apply addons
