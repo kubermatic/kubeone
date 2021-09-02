@@ -198,7 +198,7 @@ func TestEnsureAddonsLabelsOnResources(t *testing.T) {
 				LocalFS:      os.DirFS(addonsDir),
 			}
 
-			manifests, err := applier.loadAddonsManifests(applier.LocalFS, ".", nil, false, "")
+			manifests, err := applier.loadAddonsManifests(applier.LocalFS, ".", nil, nil, false, "")
 			if err != nil {
 				t.Fatalf("unable to load manifests: %v", err)
 			}
@@ -285,7 +285,7 @@ func TestImageRegistryParsing(t *testing.T) {
 				LocalFS:      os.DirFS(addonsDir),
 			}
 
-			manifests, err := applier.loadAddonsManifests(applier.LocalFS, ".", nil, false, overwriteRegistry)
+			manifests, err := applier.loadAddonsManifests(applier.LocalFS, ".", nil, nil, false, overwriteRegistry)
 			if err != nil {
 				t.Fatalf("unable to load manifests: %v", err)
 			}

@@ -1,12 +1,13 @@
 +++
 title = "v1beta1 API Reference"
-date = 2021-07-14T15:48:55+03:00
+date = 2021-08-19T15:54:42+03:00
 weight = 11
 +++
 ## v1beta1
 
 * [APIEndpoint](#apiendpoint)
 * [AWSSpec](#awsspec)
+* [Addon](#addon)
 * [Addons](#addons)
 * [AssetConfiguration](#assetconfiguration)
 * [AzureSpec](#azurespec)
@@ -77,6 +78,18 @@ AWSSpec defines the AWS cloud provider
 
 [Back to Group](#v1beta1)
 
+### Addon
+
+Addon config
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| name | Name of the addon to configure | string | true |
+| params | Params to the addon, to render the addon using text/template, this will override globalParams | map[string]string | false |
+| deleted | Delete flag to ensure the named addon with all its contents to be deleted | bool | false |
+
+[Back to Group](#v1beta1)
+
 ### Addons
 
 Addons config
@@ -84,7 +97,9 @@ Addons config
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | enable | Enable | bool | false |
-| path | Path on the local file system to the directory with addons manifests. | string | true |
+| path | Path on the local file system to the directory with addons manifests. | string | false |
+| globalParams | GlobalParams to the addon, to render all addons using text/template | map[string]string | false |
+| addons | Addons is a list of config options for named addon | [][Addon](#addon) | false |
 
 [Back to Group](#v1beta1)
 

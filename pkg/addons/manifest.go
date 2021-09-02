@@ -40,13 +40,23 @@ import (
 	"sigs.k8s.io/yaml"
 )
 
-func (a *applier) getManifestsFromDirectory(s *state.State, f fs.FS, addonName string) (string, error) {
+func (a *applier) getManifestsFromDirectory(s *state.State, fsys fs.FS, addonName string) (string, error) {
 	overwriteRegistry := ""
 	if s.Cluster.RegistryConfiguration != nil && s.Cluster.RegistryConfiguration.OverwriteRegistry != "" {
 		overwriteRegistry = s.Cluster.RegistryConfiguration.OverwriteRegistry
 	}
 
-	manifests, err := a.loadAddonsManifests(f, addonName, s.Logger, s.Verbose, overwriteRegistry)
+	var addonParams map[string]string
+	if s.Cluster.Addons.Enabled() {
+		for _, addon := range s.Cluster.Addons.Addons {
+			if addon.Name == addonName {
+				addonParams = addon.Params
+				break
+			}
+		}
+	}
+
+	manifests, err := a.loadAddonsManifests(fsys, addonName, addonParams, s.Logger, s.Verbose, overwriteRegistry)
 	if err != nil {
 		return "", err
 	}
@@ -62,10 +72,17 @@ func (a *applier) getManifestsFromDirectory(s *state.State, f fs.FS, addonName s
 }
 
 // loadAddonsManifests loads all YAML files from a given directory and runs the templating logic
-func (a *applier) loadAddonsManifests(f fs.FS, addonName string, logger logrus.FieldLogger, verbose bool, overwriteRegistry string) ([]runtime.RawExtension, error) {
-	manifests := []runtime.RawExtension{}
+func (a *applier) loadAddonsManifests(
+	fsys fs.FS,
+	addonName string,
+	addonParams map[string]string,
+	logger logrus.FieldLogger,
+	verbose bool,
+	overwriteRegistry string,
+) ([]runtime.RawExtension, error) {
+	var manifests []runtime.RawExtension
 
-	files, err := fs.ReadDir(f, filepath.Join(".", addonName))
+	files, err := fs.ReadDir(fsys, filepath.Join(".", addonName))
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to read the addons directory %s", addonName)
 	}
@@ -75,6 +92,7 @@ func (a *applier) loadAddonsManifests(f fs.FS, addonName string, logger logrus.F
 		if file.IsDir() {
 			continue
 		}
+
 		ext := strings.ToLower(filepath.Ext(file.Name()))
 		// Only YAML, YML and JSON manifests are supported
 		switch ext {
@@ -85,11 +103,12 @@ func (a *applier) loadAddonsManifests(f fs.FS, addonName string, logger logrus.F
 			}
 			continue
 		}
+
 		if verbose {
 			logger.Infof("Parsing addons manifest '%s'\n", file.Name())
 		}
 
-		manifestBytes, err := fs.ReadFile(f, filePath)
+		manifestBytes, err := fs.ReadFile(fsys, filePath)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to load addon %s", file.Name())
 		}
@@ -98,8 +117,21 @@ func (a *applier) loadAddonsManifests(f fs.FS, addonName string, logger logrus.F
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to template addons manifest %s", file.Name())
 		}
+
+		// Make a copy and merge Params
+		tplDataParams := map[string]string{}
+		for k, v := range a.TemplateData.Params {
+			tplDataParams[k] = v
+		}
+		for k, v := range addonParams {
+			tplDataParams[k] = v
+		}
+
+		tplData := a.TemplateData
+		tplData.Params = tplDataParams
+
 		buf := bytes.NewBuffer([]byte{})
-		if err := tpl.Execute(buf, a.TemplateData); err != nil {
+		if err := tpl.Execute(buf, tplData); err != nil {
 			return nil, errors.Wrapf(err, "failed to template addons manifest %s", file.Name())
 		}
 
@@ -117,19 +149,23 @@ func (a *applier) loadAddonsManifests(f fs.FS, addonName string, logger logrus.F
 				}
 				return nil, errors.Wrapf(err, "failed reading from YAML reader for manifest %s", file.Name())
 			}
+
 			b = bytes.TrimSpace(b)
 			if len(b) == 0 {
 				continue
 			}
+
 			decoder := kyaml.NewYAMLToJSONDecoder(bytes.NewBuffer(b))
 			raw := runtime.RawExtension{}
 			if err := decoder.Decode(&raw); err != nil {
 				return nil, errors.Wrapf(err, "failed to decode manifest %s", file.Name())
 			}
+
 			if len(raw.Raw) == 0 {
 				// This can happen if the manifest contains only comments
 				continue
 			}
+
 			manifests = append(manifests, raw)
 		}
 	}
