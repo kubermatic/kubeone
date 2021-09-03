@@ -59,6 +59,7 @@ type templateData struct {
 	Config                              *kubeoneapi.KubeOneCluster
 	Certificates                        map[string]string
 	Credentials                         map[string]string
+	CSIMigration                        bool
 	CSIMigrationFeatureGates            string
 	MachineControllerCredentialsEnvVars string
 	InternalImages                      *internalImages
@@ -100,6 +101,14 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 	kubeCAPrivateKey, kubeCACert, err := certificate.CAKeyPair(s.Configuration)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load CA keypair")
+	}
+
+	// We want to be true in two cases:
+	// 	* if the CSI migration is already enabled
+	//	* if we are starting the CCM/CSI migration process
+	csiMigration := s.CCMMigration
+	if !csiMigration && s.LiveCluster.CCMStatus != nil {
+		csiMigration = s.LiveCluster.CCMStatus.CSIMigrationEnabled
 	}
 
 	// We're intentionally ignoring the error here. If the provider is not supported
@@ -151,6 +160,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 			"KubernetesCA":                 mcCertsMap[resources.KubernetesCACertName],
 		},
 		Credentials:                         creds,
+		CSIMigration:                        csiMigration,
 		CSIMigrationFeatureGates:            csiMigrationFeatureGates,
 		MachineControllerCredentialsEnvVars: string(credsEnvVars),
 		InternalImages: &internalImages{
@@ -159,6 +169,22 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		},
 		Resources: resources.All(),
 		Params:    params,
+	}
+
+	// Certs for vsphere-csi-webhook (deployed only if CSIMigration is enabled)
+	if csiMigration && s.Cluster.CloudProvider.Vsphere != nil {
+		vsphereCSICertsMap, err := certificate.NewSignedTLSCert(
+			resources.VsphereCSIWebhookName,
+			resources.VsphereCSIWebhookNamespace,
+			s.Cluster.ClusterNetwork.ServiceDomainName,
+			kubeCAPrivateKey,
+			kubeCACert,
+		)
+		if err != nil {
+			return nil, err
+		}
+		data.Certificates["vSphereCSIWebhookCert"] = vsphereCSICertsMap[resources.TLSCertName]
+		data.Certificates["vSphereCSIWebhookKey"] = vsphereCSICertsMap[resources.TLSKeyName]
 	}
 
 	return &applier{

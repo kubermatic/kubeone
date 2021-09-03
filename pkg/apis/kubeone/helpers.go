@@ -160,10 +160,7 @@ func (p CloudProviderSpec) CloudProviderInTree() bool {
 // NB: The CSI migration can be supported only if KubeOne supports CSI plugin and driver
 // for the provider
 func (p CloudProviderSpec) CSIMigrationSupported() bool {
-	if !p.External {
-		return false
-	}
-	return p.Openstack != nil
+	return p.External && (p.Openstack != nil || p.Vsphere != nil)
 }
 
 // CSIMigrationFeatureGates returns CSI migration feature gates in form of a map
@@ -174,10 +171,22 @@ func (p CloudProviderSpec) CSIMigrationSupported() bool {
 // (https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/)
 // This is a KubeOneCluster function because feature gates are Kubernetes-version dependent.
 func (c KubeOneCluster) CSIMigrationFeatureGates(complete bool) (map[string]bool, string, error) {
-	if c.CloudProvider.Openstack != nil {
+	switch {
+	case c.CloudProvider.Openstack != nil:
 		featureGates := map[string]bool{
 			"CSIMigrationOpenStack": true,
 			"ExpandCSIVolumes":      true,
+		}
+
+		unregister := c.InTreePluginUnregisterFeatureGate()
+		if complete && unregister != "" {
+			featureGates[unregister] = true
+		}
+
+		return featureGates, marshalFeatureGates(featureGates), nil
+	case c.CloudProvider.Vsphere != nil:
+		featureGates := map[string]bool{
+			"CSIMigrationvSphere": true,
 		}
 
 		unregister := c.InTreePluginUnregisterFeatureGate()
@@ -195,14 +204,20 @@ func (c KubeOneCluster) CSIMigrationFeatureGates(complete bool) (map[string]bool
 // unregister the in-tree cloud provider.
 // NB: This is a KubeOneCluster function because feature gates are Kubernetes-version dependent.
 func (c KubeOneCluster) InTreePluginUnregisterFeatureGate() string {
-	if c.CloudProvider.Openstack != nil {
-		lessThan21, _ := semver.NewConstraint("< 1.21.0")
-		ver, _ := semver.NewVersion(c.Versions.Kubernetes)
+	lessThan21, _ := semver.NewConstraint("< 1.21.0")
+	ver, _ := semver.NewVersion(c.Versions.Kubernetes)
 
+	switch {
+	case c.CloudProvider.Openstack != nil:
 		if lessThan21.Check(ver) {
 			return "CSIMigrationOpenStackComplete"
 		}
 		return "InTreePluginOpenStackUnregister"
+	case c.CloudProvider.Vsphere != nil:
+		if lessThan21.Check(ver) {
+			return "CSIMigrationvSphereComplete"
+		}
+		return "InTreePluginvSphereUnregister"
 	}
 
 	return ""

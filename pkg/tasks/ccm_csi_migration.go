@@ -55,6 +55,12 @@ func validateExternalCloudProviderConfig(s *state.State) error {
 	} else if s.LiveCluster.CCMStatus.ExternalCCMDeployed && !s.CCMMigrationComplete {
 		return errors.New("the ccm/csi migration is currently in progress, run command with --complete to finish it")
 	}
+	if s.Cluster.CloudProvider.Vsphere != nil && s.Cluster.CloudProvider.CSIConfig == "" {
+		return errors.New("the ccm/csi migration for vsphere requires providing csi configuration using .cloudProvider.csiConfig field")
+	}
+	if len(s.Cluster.StaticWorkers.Hosts) > 0 {
+		return errors.New("the ccm/csi migration for cluster with static worker nodes is currently unsupported")
+	}
 
 	return nil
 }
@@ -128,7 +134,7 @@ func regenerateControlPlaneManifestsInternal(s *state.State, node *kubeoneapi.Ho
 }
 
 func updateKubeletConfig(s *state.State) error {
-	return s.RunTaskOnAllNodes(updateKubeletConfigInternal, state.RunSequentially)
+	return s.RunTaskOnControlPlane(updateKubeletConfigInternal, state.RunSequentially)
 }
 
 func updateKubeletConfigInternal(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
