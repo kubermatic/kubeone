@@ -1,0 +1,107 @@
+{{ if eq .Config.CloudProvider.CloudProviderName "azure" }}
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  annotations:
+    storageclass.beta.kubernetes.io/is-default-class: "true"
+  labels:
+    kubernetes.io/cluster-service: "true"
+  name: standard
+provisioner: kubernetes.io/azure-disk
+parameters:
+  kind: Managed
+  storageaccounttype: Standard_LRS
+{{ end }}
+
+{{ if eq .Config.CloudProvider.CloudProviderName "aws" }}
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  annotations:
+    storageclass.beta.kubernetes.io/is-default-class: "true"
+  labels:
+    kubernetes.io/cluster-service: "true"
+  name: standard-v2
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: gp2
+volumeBindingMode: WaitForFirstConsumer
+{{ end }}
+
+{{ if eq .Config.CloudProvider.CloudProviderName "vsphere" }}
+{{ if .Config.CloudProvider.External }}
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  annotations:
+    storageclass.beta.kubernetes.io/is-default-class: "true"
+  labels:
+    kubernetes.io/cluster-service: "true"
+  name: vsphere-csi
+provisioner: csi.vsphere.vmware.com
+{{ else }}
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  annotations:
+    storageclass.beta.kubernetes.io/is-default-class: "true"
+  labels:
+    kubernetes.io/cluster-service: "true"
+  name: standard
+provisioner: kubernetes.io/vsphere-volume
+parameters:
+  diskformat: thin
+{{ end }}
+{{ end }}
+
+{{ if eq .Config.CloudProvider.CloudProviderName "openstack" }}
+{{ if .Config.CloudProvider.External }}
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  annotations:
+    storageclass.beta.kubernetes.io/is-default-class: "true"
+  labels:
+    kubernetes.io/cluster-service: "true"
+  name: cinder-csi
+provisioner: cinder.csi.openstack.org
+volumeBindingMode: WaitForFirstConsumer
+{{ else }}
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  annotations:
+    storageclass.beta.kubernetes.io/is-default-class: "true"
+  labels:
+    kubernetes.io/cluster-service: "true"
+  name: standard
+provisioner: kubernetes.io/cinder
+{{ end }}
+{{ end }}
+
+{{ if eq .Config.CloudProvider.CloudProviderName "gcp" }}
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  annotations:
+    storageclass.beta.kubernetes.io/is-default-class: "true"
+  labels:
+    kubernetes.io/cluster-service: "true"
+  name: standard
+provisioner: kubernetes.io/gce-pd
+parameters:
+  type: pd-ssd
+{{ end }}
+
+{{ if eq .Config.CloudProvider.CloudProviderName "hetzner" }}
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  namespace: kube-system
+  name: hcloud-volumes
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+provisioner: csi.hetzner.cloud
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
+{{ end }}
