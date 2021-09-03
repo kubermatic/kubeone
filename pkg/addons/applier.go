@@ -103,7 +103,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		return nil, errors.Wrap(err, "failed to load CA keypair")
 	}
 
-	// We want to be true in two cases:
+	// We want this to be true in two cases:
 	// 	* if the CSI migration is already enabled
 	//	* if we are starting the CCM/CSI migration process
 	csiMigration := s.CCMMigration

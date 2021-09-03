@@ -134,7 +134,11 @@ func optionalResources() map[Resource]map[string]string {
 		PacketCCM: {"*": "docker.io/packethost/packet-ccm:v1.0.0"},
 
 		// vSphere CCM
-		VsphereCCM: {"*": "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.2.1"},
+		VsphereCCM: {
+			"1.19.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.19.0",
+			"1.20.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.20.0",
+			">= 1.21.0": "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.21.0",
+		},
 
 		// vSphere CSI
 		VsphereCSIDriver: {"*": "gcr.io/cloud-provider-vsphere/csi/release/driver:v2.3.0"},
