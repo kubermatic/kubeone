@@ -8,7 +8,7 @@ data:
   csi-vsphere.conf: |
 {{ .Config.CloudProvider.CSIConfig | b64enc | indent 4 }}
 ---
-apiVersion: storage.k8s.io/v1 # For k8s 1.17 use storage.k8s.io/v1beta1
+apiVersion: storage.k8s.io/v1
 kind: CSIDriver
 metadata:
   name: csi.vsphere.vmware.com
@@ -106,7 +106,7 @@ roleRef:
 ---
 apiVersion: v1
 data:
-  "csi-migration": "false" # TODO(xmudrii)
+  "csi-migration": "{{ .CSIMigration }}"
   "csi-auth-check": "true"
   "online-volume-extend": "true"
   "trigger-csi-fullsync": "false"
@@ -133,6 +133,9 @@ spec:
       labels:
         app: vsphere-csi-controller
         role: vsphere-csi
+      annotations:
+        "caBundle-hash": "{{ .Config.CABundle | sha256sum }}"
+        "csiConfig-hash": "{{ .Config.CloudProvider.CSIConfig | sha256sum }}"
     spec:
       serviceAccountName: vsphere-csi-controller
       nodeSelector:
@@ -211,12 +214,18 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
+{{ if .Config.CABundle }}
+{{ caBundleEnvVar | indent 12 }}
+{{ end }}
           volumeMounts:
             - mountPath: /etc/cloud
               name: vsphere-config-volume
               readOnly: true
             - mountPath: /csi
               name: socket-dir
+{{ if .Config.CABundle }}
+{{ caBundleVolumeMount | indent 12 }}
+{{ end }}
           ports:
             - name: healthz
               containerPort: 9808
@@ -266,10 +275,16 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
+{{ if .Config.CABundle }}
+{{ caBundleEnvVar | indent 12 }}
+{{ end }}
           volumeMounts:
             - mountPath: /etc/cloud
               name: vsphere-config-volume
               readOnly: true
+{{ if .Config.CABundle }}
+{{ caBundleVolumeMount | indent 12 }}
+{{ end }}
         - name: csi-provisioner
           image: {{ .InternalImages.Get "CSIProvisioner" }}
           args:
@@ -295,6 +310,9 @@ spec:
             secretName: vsphere-csi-config-secret
         - name: socket-dir
           emptyDir: {}
+{{ if .Config.CABundle }}
+{{ caBundleVolume | indent 8 }}
+{{ end }}
 ---
 kind: DaemonSet
 apiVersion: apps/v1
@@ -314,6 +332,9 @@ spec:
       labels:
         app: vsphere-csi-node
         role: vsphere-csi
+      annotations:
+        "caBundle-hash": "{{ .Config.CABundle | sha256sum }}"
+        "csiConfig-hash": "{{ .Config.CloudProvider.CSIConfig | sha256sum }}"
     spec:
       serviceAccountName: vsphere-csi-node
       hostNetwork: true
@@ -375,6 +396,9 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
+{{ if .Config.CABundle }}
+{{ caBundleEnvVar | indent 12 }}
+{{ end }}
           securityContext:
             privileged: true
             capabilities:
@@ -398,6 +422,9 @@ spec:
               mountPath: /sys/block
             - name: sys-devices-dir
               mountPath: /sys/devices
+{{ if .Config.CABundle }}
+{{ caBundleVolumeMount | indent 12 }}
+{{ end }}
           ports:
             - name: healthz
               containerPort: 9808
@@ -446,6 +473,9 @@ spec:
           hostPath:
             path: /sys/devices
             type: Directory
+{{ if .Config.CABundle }}
+{{ caBundleVolume | indent 8 }}
+{{ end }}
       tolerations:
         - effect: NoExecute
           operator: Exists
