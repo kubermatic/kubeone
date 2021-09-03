@@ -1,13 +1,107 @@
 # Changelog
 
+# [v1.3.0-rc.0](https://github.com/kubermatic/kubeone/releases/tag/v1.3.0-rc.0) - 2021-09-03
+
+## Attention Needed
+
+* [**BREAKING/ACTION REQUIRED**] Increase the minimum Kubernetes version to v1.19.0 ([#1466](https://github.com/kubermatic/kubeone/pull/1466))
+  * If you have Kubernetes clusters running v1.18 or older, you need to use an older KubeOne release to upgrade them to v1.19, and then upgrade to KubeOne 1.3.
+  * Check out the [Compatibility guide](https://docs.kubermatic.com/kubeone/master/architecture/compatibility/) for more information about supported Kubernetes versions for each KubeOne release.
+* [**BREAKING/ACTION REQUIRED**] Add support for CSI plugins for clusters using external cloud provider (i.e. `.cloudProvider.external` is enabled)
+  * The Cinder CSI plugin is deployed by default for OpenStack clusters ([#1465](https://github.com/kubermatic/kubeone/pull/1465))
+  * The Hetzner CSI plugin is deployed by default for Hetzner clusters
+  * The vSphere CSI plugin is deployed by default if the CSI plugin configuration is provided via newly-added  `cloudProvider.csiConfig` field
+    * More information about the CSI plugin configuration can be found in the vSphere CSI docs: https://vsphere-csi-driver.sigs.k8s.io/driver-deployment/installation.html#create_csi_vsphereconf
+    * Note: the vSphere CSI plugin requires vSphere version 6.7U3.
+  * The default StorageClass is **not** deployed by default. It can be deployed via new Addons API by enabling the `default-storage-class` addon, or manually.
+  * **ACTION REQUIRED**: If you already have the CSI plugin deployed, you need to make sure that your CSI plugin deployment is compatible with the KubeOne CSI plugin addon.
+    * You can find the CSI addons in the `addons` directory: https://github.com/kubermatic/kubeone/tree/master/addons
+    * If your CSI plugin deployment is incompatible with the KubeOne CSI addon, you can resolve it in one of the following ways:
+      * Delete your CSI deployment and let KubeOne install the CSI driver for you. **Note**: you'll **not** be able to mount volumes until you don't install the CSI driver again.
+      * Override the appropriate CSI addon with your deployment manifest. With this way, KubeOne will install the CSI plugin using your manifests. To do this, you need to:
+        * Enable addons in the KubeOneCluster manifest (`.addons.enable`) and provide the path to addons directory (`.addons.path`, for example: `./addons`)
+        * Create a subdirectory in the addons directory named same as the CSI addon used by KubeOne, for example `./addons/csi-openstack-cinder` or `./addons/csi-vsphere` (see https://github.com/kubermatic/kubeone/tree/master/addons for addon names)
+        * Put your CSI deployment manifests in the newly created subdirectory
+
+## Known Issues
+
+* It's currently **not** possible to provision or upgrade to Kubernetes 1.22 for clusters running on vSphere. This is because vSphere CCM and CSI don't support Kubernetes 1.22. We'll introduce Kubernetes 1.22 support for vSphere as soon as new CCM and CSI releases with support for Kubernetes 1.22 are out.
+* Clusters provisioned with Kubernetes 1.22 or upgraded from 1.21 to 1.22 using KubeOne 1.3.0-alpha.1 use a metrics-server version incompatible with Kubernetes 1.22. This might cause issues with deleting Namespaces that manifests by the Namespace being stuck in the Terminating state. This can be fixed by upgrading the metrics-server by running `kubeone apply`.
+* The new Addons API requires the addons directory path (`.addons.path`) to be provided and the directory must exist (it can be empty), even if only embedded addons are used. If the path is not provided, it'll default to `./addons`.
+* The CSI migration for vSphere is currently experimental and not tested.
+
+## Added
+
+### Features
+
+* Implement the Addons API used to manage addons deployed by KubeOne ([#1462](https://github.com/kubermatic/kubeone/pull/1462), [#1486](https://github.com/kubermatic/kubeone/pull/1486))
+  * The new Addons API can be used to deploy the addons embedded in the KubeOne binary.
+  * Currently available addons are: `backups-restic`, `default-storage-class`, and `unattended-upgrades`.
+  * More information about the new API can be found by running `kubeone config print --full`.
+* [**BREAKING/ACTION REQUIRED**] Add support for the Cinder CSI plugin ([#1465](https://github.com/kubermatic/kubeone/pull/1465))
+  * The plugin is deployed by default for OpenStack clusters using the external cloud provider.
+  * Check out the Attention Needed section of the changelog for more information.
+* Add support for the vSphere CSI plugin ([#1484](https://github.com/kubermatic/kubeone/pull/1484))
+  * Deploying the CSI plugin requires providing the CSI configuration using a newly added `.cloudProvider.csiConfig` field
+    * More information about the CSI plugin configuration can be found in the vSphere CSI docs: https://vsphere-csi-driver.sigs.k8s.io/driver-deployment/installation.html#create_csi_vsphereconf
+  * The CSI plugin is deployed automatically if `.cloudProvider.csiConfig` is provided and `.cloudProvider.external` is enabled
+  * Check out the Attention Needed section of the changelog for more information.
+* Implement the CCM/CSI migration for OpenStack and vSphere ([#1468](https://github.com/kubermatic/kubeone/pull/1468), [#1469](https://github.com/kubermatic/kubeone/pull/1469), [#1472](https://github.com/kubermatic/kubeone/pull/1472), [#1482](https://github.com/kubermatic/kubeone/pull/1482), [#1487](https://github.com/kubermatic/kubeone/pull/1487))
+  * The CCM/CSI migration is used to migrate clusters running in-tree cloud provider (i.e. with `.cloudProvider.external` set to `false`) to the external CCM (cloud-controller-manager) and CSI plugin.
+  * The migration is implemented with the `kubeone migrate to-ccm-csi` command.
+  * The CCM/CSI migration for vSphere is currently experimental and not tested.
+  * More information about how the CCM/CSI migration works can be found by running `kubeone migrate to-ccm-csi --help`.
+
+### Addons
+
+* Add a new optional embedded addon `default-storage-class` used to deploy default StorageClass for AWS, Azure, GCP, OpenStack, vSphere, or Hetzner clusters ([#1488](https://github.com/kubermatic/kubeone/pull/1488))
+
+## Changed
+
+### General
+
+* [**BREAKING/ACTION REQUIRED**] Increase the minimum Kubernetes version to v1.19.0 ([#1466](https://github.com/kubermatic/kubeone/pull/1466))
+  * If you have Kubernetes clusters running v1.18 or older, you need to use an older KubeOne release to upgrade them to v1.19, and then upgrade to KubeOne 1.3.
+  * Check out the [Compatibility guide](https://docs.kubermatic.com/kubeone/master/architecture/compatibility/) for more information about supported Kubernetes versions for each KubeOne release.
+* Improve the `kubeone reset` output to include more information about the target cluster ([#1474](https://github.com/kubermatic/kubeone/pull/1474))
+
+### Fixed
+
+* Make `kubeone apply` skip already provisioned static worker nodes ([#1485](https://github.com/kubermatic/kubeone/pull/1485))
+
+### Updated
+
+* OpenStack CCM version now depends on the Kubernetes version ([#1465](https://github.com/kubermatic/kubeone/pull/1465))
+  * Kubernetes 1.19 clusters use OpenStack CCM v1.19.2
+  * Kubernetes 1.20 clusters use OpenStack CCM v1.20.2
+  * Kubernetes 1.21 clusters use OpenStack CCM v1.21.0
+  * Kubernetes 1.22+ clusters use OpenStack CCM v1.22.0
+* vSphere CCM (CPI) version now depends on the Kubernetes version ([#1489](https://github.com/kubermatic/kubeone/pull/1489))
+  * Kubernetes 1.19 clusters use vSphere CPI v1.19.0
+  * Kubernetes 1.20 clusters use vSphere CPI v1.20.0
+  * Kubernetes 1.21 clusters use vSphere CPI v1.21.0
+  * Kubernetes 1.22+ clusters are currently unsupported on vSphere (see Known Issues for more details)
+* Update metrics-server to v0.5.0 ([#1483](https://github.com/kubermatic/kubeone/pull/1483))
+  * This fixes support for Kubernetes 1.22 clusters.
+  * The metrics-server now uses serving certificates signed by the Kubernetes CA instead of the self-signed certificates.
+* Update machine-controller to v1.35.2 ([#1489](https://github.com/kubermatic/kubeone/pull/1489))
+
+## Removed
+
+* Remove CSIMigration and CSIMigrationComplete fields from the API ([#1473](https://github.com/kubermatic/kubeone/pull/1473))
+  * Those two fields were non-functional since they were added, so this change shouldn't affect users.
+  * If you have any of those those two fields set in the KubeOneCluster manifest, make sure to remove them or otherwise the validation will fail.
+
 # [v1.3.0-alpha.1](https://github.com/kubermatic/kubeone/releases/tag/v1.3.0-alpha.1) - 2021-08-18
+
+## Known Issues
+
+* Clusters provisioned with Kubernetes 1.22 or upgraded from 1.21 to 1.22 using KubeOne 1.3.0-alpha.1 use a metrics-server version incompatible with Kubernetes 1.22. This might cause issues with deleting Namespaces that manifests by the Namespace being stuck in the Terminating state. This can be fixed by upgrading to KubeOne 1.3.0-rc.0 and running `kubeone apply`.
 
 ## Added
 
 * Add support for Kubernetes 1.22 ([#1447](https://github.com/kubermatic/kubeone/pull/1447), [#1456](https://github.com/kubermatic/kubeone/pull/1456))
 * Add support for the kubeadm v1beta3 API. The kubeadm v1beta3 API is used for all Kubernetes 1.22+ clusters. ([#1457](https://github.com/kubermatic/kubeone/pull/1457))
-* Add support for the external CCM for Azure ([#1438](https://github.com/kubermatic/kubeone/pull/1438))
-  * Currently the external CCM can be used only for newly-created Azure cluster by enabling the `.cloudProvider.external` option. We're working on implementing the CCM/CSI migration mechanism that would allow migrating existing clusters to the external CCM.
 
 ## Changed
 
