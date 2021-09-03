@@ -79,7 +79,7 @@ func resetCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		longFlagName(opts, "AutoApprove"),
 		shortFlagName(opts, "AutoApprove"),
 		false,
-		"auto approve reset (NO-OP/NOT YET ENABLED)")
+		"auto approve reset")
 
 	cmd.Flags().BoolVar(
 		&opts.DestroyWorkers,

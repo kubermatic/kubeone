@@ -26,6 +26,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/BurntSushi/toml"
 	"github.com/Masterminds/sprig/v3"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -222,6 +223,16 @@ func combineManifests(manifests []*bytes.Buffer) *bytes.Buffer {
 	return bytes.NewBufferString(strings.Join(parts, "\n---\n") + "\n")
 }
 
+type vsphereCSIWebhookConfig struct {
+	Port     string `toml:"port"`
+	CertFile string `toml:"cert-file"`
+	KeyFile  string `toml:"key-file"`
+}
+
+type vsphereCSIWebhookConfigWrapper struct {
+	WebHookConfig vsphereCSIWebhookConfig `toml:"WebHookConfig"`
+}
+
 func txtFuncMap(overwriteRegistry string) template.FuncMap {
 	funcs := sprig.TxtFuncMap()
 
@@ -258,6 +269,23 @@ func txtFuncMap(overwriteRegistry string) template.FuncMap {
 
 		buf, err := json.Marshal(packetSecret)
 		return string(buf), err
+	}
+
+	funcs["vSphereCSIWebhookConfig"] = func() (string, error) {
+		cfg := vsphereCSIWebhookConfigWrapper{
+			WebHookConfig: vsphereCSIWebhookConfig{
+				Port:     "8443",
+				CertFile: "/etc/webhook/cert.pem",
+				KeyFile:  "/etc/webhook/key.pem",
+			},
+		}
+
+		var buf strings.Builder
+		enc := toml.NewEncoder(&buf)
+		enc.Indent = ""
+		err := enc.Encode(cfg)
+
+		return buf.String(), err
 	}
 
 	return funcs

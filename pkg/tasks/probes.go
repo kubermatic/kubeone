@@ -18,6 +18,7 @@ package tasks
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/Masterminds/semver/v3"
@@ -557,6 +558,9 @@ func detectCCMMigrationStatus(s *state.State) (*state.CCMStatus, error) {
 		return nil, errors.Wrap(err, "unable to list kube-controller-manager pods")
 	}
 
+	// This uses regex so we can easily match any CSIMigration feature gate
+	// and confirm it's enabled.
+	csiFlagRegex := regexp.MustCompile(`CSIMigration[a-zA-Z]+=true`)
 	status := &state.CCMStatus{}
 	for _, pod := range pods.Items {
 		for _, c := range pod.Spec.Containers[0].Command {
@@ -564,7 +568,7 @@ func detectCCMMigrationStatus(s *state.State) (*state.CCMStatus, error) {
 			case strings.HasPrefix(c, "--cloud-provider") && !strings.Contains(c, "external"):
 				status.InTreeCloudProviderEnabled = true
 			case strings.HasPrefix(c, "--feature-gates"):
-				if strings.Contains(c, "CSIMigration=true") {
+				if csiFlagRegex.MatchString(c) {
 					status.CSIMigrationEnabled = true
 				}
 				unregister := s.Cluster.InTreePluginUnregisterFeatureGate()
@@ -581,6 +585,9 @@ func detectCCMMigrationStatus(s *state.State) (*state.CCMStatus, error) {
 	case s.Cluster.CloudProvider.Openstack != nil:
 		ccmLabel = "k8s-app"
 		ccmLabelValue = "openstack-cloud-controller-manager"
+	case s.Cluster.CloudProvider.Vsphere != nil:
+		ccmLabel = "k8s-app"
+		ccmLabelValue = "vsphere-cloud-controller-manager"
 	default:
 		status.ExternalCCMDeployed = false
 		return status, nil

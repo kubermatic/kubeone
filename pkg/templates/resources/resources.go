@@ -52,6 +52,9 @@ const (
 
 	MetricsServerName      = "metrics-server"
 	MetricsServerNamespace = metav1.NamespaceSystem
+
+	VsphereCSIWebhookName      = "vsphere-webhook-svc"
+	VsphereCSIWebhookNamespace = metav1.NamespaceSystem
 )
 
 const (

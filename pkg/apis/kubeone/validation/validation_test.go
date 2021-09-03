@@ -573,10 +573,21 @@ func TestValidateCloudProviderSpec(t *testing.T) {
 			name: "vSphere provider config with csiConfig",
 			providerConfig: kubeone.CloudProviderSpec{
 				Vsphere:     &kubeone.VsphereSpec{},
+				External:    true,
 				CloudConfig: "test",
 				CSIConfig:   "test",
 			},
 			expectedError: false,
+		},
+		{
+			name: "vSphere provider config with csiConfig (external disabled)",
+			providerConfig: kubeone.CloudProviderSpec{
+				Vsphere:     &kubeone.VsphereSpec{},
+				External:    false,
+				CloudConfig: "test",
+				CSIConfig:   "test",
+			},
+			expectedError: true,
 		},
 		{
 			name: "OpenStack provider config without csiConfig",

@@ -471,7 +471,7 @@ func WithCCMCSIMigration(t Tasks) Tasks {
 		append(kubernetesConfigFiles()...).
 		append(
 			Task{Fn: regenerateControlPlaneManifests, ErrMsg: "failed to regenerate static pod manifests"},
-			Task{Fn: updateKubeletConfig, ErrMsg: "failed to update kubelet config"},
+			Task{Fn: updateKubeletConfig, ErrMsg: "failed to update kubelet config on control plane nodes"},
 		).
 		append(WithResources(nil)...).
 		append(
