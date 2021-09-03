@@ -800,6 +800,23 @@ addons:
   # In case when the relative path is provided, the path is relative
   # to the KubeOne configuration file.
   path: "./addons"
+  # globalParams is a key-value map of values passed to the addons templating engine,
+  # to be used in the addons' manifests. The values defined here are passed to all
+  # addons.
+  globalParams:
+    key: value
+  # addons is used to enable addons embedded in the KubeOne binary.
+  # Currently backups-restic and unattended-upgrades are available addons.
+  addons:
+    # name of the addon to be enabled/deployed (e.g. backups-restic)
+    - name: ""
+      # delete triggers deletion of the deployed addon
+      delete: false
+      # params is a key-value map of values passed to the addons templating engine,
+      # to be used in the addon's manifests. Values defined here override the values
+      # defined in globalParams.
+      params:
+        key: value
 
 # The list of nodes can be overwritten by providing Terraform output.
 # You are strongly encouraged to provide an odd number of nodes and

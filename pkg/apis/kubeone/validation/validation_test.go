@@ -1502,6 +1502,14 @@ func TestValidateAddons(t *testing.T) {
 			expectedError: false,
 		},
 		{
+			name: "addons enabled, no path set",
+			addons: &kubeone.Addons{
+				Enable: true,
+				Path:   "",
+			},
+			expectedError: true,
+		},
+		{
 			name: "valid addons config (disabled)",
 			addons: &kubeone.Addons{
 				Enable: false,

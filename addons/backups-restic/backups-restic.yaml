@@ -15,7 +15,7 @@ metadata:
   namespace: kube-system
 type: Opaque
 data:
-  password: {{ "<<RESTIC_PASSWORD>>" | b64enc }}
+  password: {{ .Params.resticPassword | b64enc }}
 ---
 apiVersion: batch/v1beta1
 kind: CronJob
@@ -106,14 +106,14 @@ spec:
                 fieldRef:
                   fieldPath: spec.nodeName
             - name: RESTIC_REPOSITORY
-              value: "s3:s3.amazonaws.com/<<S3_BUCKET>>"
+              value: "{{ .Params.s3Bucket }}"
             - name: RESTIC_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: restic-config
                   key: password
             - name: AWS_DEFAULT_REGION
-              value: "<<AWS_DEFAULT_REGION>>"
+              value: "{{ .Params.awsDefaultRegion }}"
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
