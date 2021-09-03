@@ -88,7 +88,6 @@ func EnsureUserAddons(s *state.State) error {
 		if _, ok := combinedAddons[useraddon.Name()]; !ok {
 			combinedAddons[useraddon.Name()] = ""
 		}
-
 	}
 
 	for _, embeddedAddon := range s.Cluster.Addons.Addons {
@@ -107,10 +106,9 @@ func EnsureUserAddons(s *state.State) error {
 		if _, ok := combinedAddons[embeddedAddon.Name]; !ok {
 			combinedAddons[embeddedAddon.Name] = ""
 		}
-
 	}
 
-	for addonName, _ := range combinedAddons {
+	for addonName := range combinedAddons {
 		s.Logger.Infof("Applying addon %q...", addonName)
 
 		if err := EnsureAddonByName(s, addonName); err != nil {
