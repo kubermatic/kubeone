@@ -100,7 +100,8 @@ func migrateToCCMCSICmd(fs *pflag.FlagSet) *cobra.Command {
 			Note: if your cluster was created with .cloudProvider.external enabled, the CCM/CSI migration is not needed
 			because the cluster is already using external CCM.
 
-			Migration is currently available for OpenStack. Other providers will be added in future KubeOne releases.
+			Migration is currently available for OpenStack and vSphere. Other providers will be added in future KubeOne releases.
+			Note: vSphere support is currently experimental!
 
 			The migration is done in two phases:
 
@@ -116,7 +117,7 @@ func migrateToCCMCSICmd(fs *pflag.FlagSet) *cobra.Command {
 			    users need to run "kubeone migrate to-ccm-csi" command with the "--complete" flag. This should be
 			    done after all worker nodes managed by machine-controller are rolled-out.
 
-			More information about the CCM/CSI migration can be found in the following document: TBD
+			Make sure to familiarize yourself with the CCM/CSI migration requirements by checking the following document: TBD
 		`),
 		RunE: func(_ *cobra.Command, _ []string) error {
 			gopts, err := persistentGlobalOptions(fs)
@@ -172,6 +173,20 @@ func runMigrateToCCMCSI(opts *migrateCCMOptions) error {
 	}
 	if !s.LiveCluster.Healthy() {
 		return errors.New("the target cluster is not healthy, please run 'kubeone apply' first")
+	}
+
+	s.Logger.Warnln("This command will migrate your cluster from in-tree cloud provider to the external CCM and CSI plugin.")
+	s.Logger.Warnln("Make sure to familiarize yourself with the process by checking the following document:")
+	s.Logger.Warnln("TBD")
+
+	confirm, err := confirmCommand(opts.AutoApprove)
+	if err != nil {
+		return err
+	}
+
+	if !confirm {
+		s.Logger.Println("Operation canceled.")
+		return nil
 	}
 
 	return errors.Wrap(tasks.WithCCMCSIMigration(nil).Run(s), "failed to migrate to ccm/csi")
