@@ -88,7 +88,7 @@ func baseResources() map[Resource]map[string]string {
 		CalicoNode:        {"*": "docker.io/calico/node:v3.19.1"},
 		DNSNodeCache:      {"*": "k8s.gcr.io/k8s-dns-node-cache:1.15.13"},
 		Flannel:           {"*": "quay.io/coreos/flannel:v0.13.0"},
-		MachineController: {"*": "docker.io/kubermatic/machine-controller:v1.35.1"},
+		MachineController: {"*": "docker.io/kubermatic/machine-controller:v1.35.2"},
 		MetricsServer:     {"*": "k8s.gcr.io/metrics-server/metrics-server:v0.5.0"},
 	}
 }
@@ -134,7 +134,11 @@ func optionalResources() map[Resource]map[string]string {
 		PacketCCM: {"*": "docker.io/packethost/packet-ccm:v1.0.0"},
 
 		// vSphere CCM
-		VsphereCCM: {"*": "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.2.1"},
+		VsphereCCM: {
+			"1.19.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.19.0",
+			"1.20.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.20.0",
+			">= 1.21.0": "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.21.0",
+		},
 
 		// vSphere CSI
 		VsphereCSIDriver: {"*": "gcr.io/cloud-provider-vsphere/csi/release/driver:v2.3.0"},
