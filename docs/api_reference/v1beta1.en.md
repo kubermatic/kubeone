@@ -1,6 +1,6 @@
 +++
 title = "v1beta1 API Reference"
-date = 2021-08-19T15:54:42+03:00
+date = 2021-09-03T17:25:30+03:00
 weight = 11
 +++
 ## v1beta1
@@ -86,7 +86,7 @@ Addon config
 | ----- | ----------- | ------ | -------- |
 | name | Name of the addon to configure | string | true |
 | params | Params to the addon, to render the addon using text/template, this will override globalParams | map[string]string | false |
-| deleted | Delete flag to ensure the named addon with all its contents to be deleted | bool | false |
+| delete | Delete flag to ensure the named addon with all its contents to be deleted | bool | false |
 
 [Back to Group](#v1beta1)
 
@@ -171,9 +171,8 @@ Only one cloud provider must be defined at the single time.
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | external | External | bool | false |
-| csiMigration | CSIMigration enables the CSIMigration and CSIMigration{Provider} feature gates for providers that support the CSI migration. The CSI migration stability depends on the provider. More details about stability can be found in the Feature Gates document: https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/\n\nNote: Azure has two type of CSI drivers (AzureFile and AzureDisk) and two different feature gates (CSIMigrationAzureDisk and CSIMigrationAzureFile). Enabling CSI migration enables both feature gates. If one CSI driver is not deployed, the volume operations for volumes with missing CSI driver will fallback to the in-tree volume plugin. | bool | false |
-| csiMigrationComplete | CSIMigrationComplete enables the CSIMigration{Provider}Complete feature gate for providers that support the CSI migration. This feature gate disables fallback to the in-tree volume plugins, therefore, it should be enabled only if the CSI driver is deploy on all nodes, and after ensuring that the CSI driver works properly.\n\nNote: If you're running on Azure, make sure that you have both AzureFile and AzureDisk CSI drivers deployed, as enabling this feature disables the fallback to the in-tree volume plugins. See description for the CSIMigration field for more details. | bool | false |
 | cloudConfig | CloudConfig | string | false |
+| csiConfig | CSIConfig | string | false |
 | aws | AWS | *[AWSSpec](#awsspec) | false |
 | azure | Azure | *[AzureSpec](#azurespec) | false |
 | digitalocean | DigitalOcean | *[DigitalOceanSpec](#digitaloceanspec) | false |
