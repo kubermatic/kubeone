@@ -53,6 +53,7 @@ spec:
           effect: NoSchedule
         - key: "node.kubernetes.io/not-ready"
           effect: "NoSchedule"
+      hostNetwork: true
       containers:
         - image: {{ .InternalImages.Get "HetznerCCM" }}
           name: hcloud-cloud-controller-manager

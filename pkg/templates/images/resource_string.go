@@ -23,21 +23,22 @@ func _() {
 	_ = x[DNSNodeCache-13]
 	_ = x[Flannel-14]
 	_ = x[HetznerCCM-15]
-	_ = x[MachineController-16]
-	_ = x[MetricsServer-17]
-	_ = x[OpenstackCCM-18]
-	_ = x[OpenstackCSI-19]
-	_ = x[PacketCCM-20]
-	_ = x[VsphereCCM-21]
-	_ = x[VsphereCSIDriver-22]
-	_ = x[VsphereCSISyncer-23]
-	_ = x[WeaveNetCNIKube-24]
-	_ = x[WeaveNetCNINPC-25]
+	_ = x[HetznerCSI-16]
+	_ = x[MachineController-17]
+	_ = x[MetricsServer-18]
+	_ = x[OpenstackCCM-19]
+	_ = x[OpenstackCSI-20]
+	_ = x[PacketCCM-21]
+	_ = x[VsphereCCM-22]
+	_ = x[VsphereCSIDriver-23]
+	_ = x[VsphereCSISyncer-24]
+	_ = x[WeaveNetCNIKube-25]
+	_ = x[WeaveNetCNINPC-26]
 }
 
-const _Resource_name = "AzureCCMAzureCNMCalicoCNICalicoControllerCalicoNodeCSIAttacherCSINodeDriverRegistarCSIProvisionerCSISnapshotterCSIResizerCSILivenessProbeDigitaloceanCCMDNSNodeCacheFlannelHetznerCCMMachineControllerMetricsServerOpenstackCCMOpenstackCSIPacketCCMVsphereCCMVsphereCSIDriverVsphereCSISyncerWeaveNetCNIKubeWeaveNetCNINPC"
+const _Resource_name = "AzureCCMAzureCNMCalicoCNICalicoControllerCalicoNodeCSIAttacherCSINodeDriverRegistarCSIProvisionerCSISnapshotterCSIResizerCSILivenessProbeDigitaloceanCCMDNSNodeCacheFlannelHetznerCCMHetznerCSIMachineControllerMetricsServerOpenstackCCMOpenstackCSIPacketCCMVsphereCCMVsphereCSIDriverVsphereCSISyncerWeaveNetCNIKubeWeaveNetCNINPC"
 
-var _Resource_index = [...]uint16{0, 8, 16, 25, 41, 51, 62, 83, 97, 111, 121, 137, 152, 164, 171, 181, 198, 211, 223, 235, 244, 254, 270, 286, 301, 315}
+var _Resource_index = [...]uint16{0, 8, 16, 25, 41, 51, 62, 83, 97, 111, 121, 137, 152, 164, 171, 181, 191, 208, 221, 233, 245, 254, 264, 280, 296, 311, 325}
 
 func (i Resource) String() string {
 	i -= 1
