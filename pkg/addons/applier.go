@@ -43,7 +43,7 @@ var (
 
 	kubectlDeleteScript = heredoc.Doc(`
 		sudo KUBECONFIG=/etc/kubernetes/admin.conf \
-		kubectl delete -f - -l "%s=%s"
+		kubectl delete -f - -l "%s=%s" --ignore-not-found=true
 	`)
 )
 
