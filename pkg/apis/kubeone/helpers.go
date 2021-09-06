@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"fmt"
 	"math/rand"
+	"path/filepath"
 	"sort"
 	"strings"
 
@@ -254,4 +255,19 @@ func (r *RegistryConfiguration) InsecureRegistryAddress() string {
 
 func (ads *Addons) Enabled() bool {
 	return ads != nil && ads.Enable
+}
+
+// RelativePath returns addons path relative to the KubeOneCluster manifest file
+// path
+func (ads *Addons) RelativePath(manifestFilePath string) (string, error) {
+	addonsPath := ads.Path
+	if !filepath.IsAbs(addonsPath) && manifestFilePath != "" {
+		manifestAbsPath, err := filepath.Abs(filepath.Dir(manifestFilePath))
+		if err != nil {
+			return "", errors.Wrap(err, "unable to get absolute path to the cluster manifest")
+		}
+		addonsPath = filepath.Join(manifestAbsPath, addonsPath)
+	}
+
+	return addonsPath, nil
 }

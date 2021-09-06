@@ -62,6 +62,17 @@ func (opts *globalOptions) BuildState() (*state.State, error) {
 	s.CredentialsFilePath = opts.CredentialsFile
 	s.Verbose = opts.Verbose
 
+	// Validate Addons path if provided
+	if s.Cluster.Addons.Enabled() {
+		addonsPath, err := s.Cluster.Addons.RelativePath(s.ManifestFilePath)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get addons path")
+		}
+		if _, err := os.Stat(addonsPath); os.IsNotExist(err) {
+			return nil, errors.Wrapf(err, "failed to validate addons path, make sure that directory %q exists", s.Cluster.Addons.Path)
+		}
+	}
+
 	return s, nil
 }
 
