@@ -102,7 +102,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 	// 	* if the CSI migration is already enabled
 	//	* if we are starting the CCM/CSI migration process
 	csiMigration := s.CCMMigration
-	if !csiMigration && s.LiveCluster.CCMStatus != nil {
+	if !csiMigration && s.LiveCluster != nil && s.LiveCluster.CCMStatus != nil {
 		csiMigration = s.LiveCluster.CCMStatus.CSIMigrationEnabled
 	}
 
