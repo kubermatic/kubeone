@@ -91,7 +91,6 @@ func migrateToCCMCSICmd(fs *pflag.FlagSet) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "to-ccm-csi",
 		Short: "Migrate live cluster from the in-tree cloud provider to external cloud-controller-manager (CCM) and CSI plugin",
-		// TODO(xmudrii): insert link to docs once it's available.
 		Long: heredoc.Doc(`
 			Following the in-tree cloud provider deprecation (http://kep.k8s.io/2395),
 			this command helps to migrate existing clusters from the in-tree cloud provider to external
@@ -117,7 +116,8 @@ func migrateToCCMCSICmd(fs *pflag.FlagSet) *cobra.Command {
 			    users need to run "kubeone migrate to-ccm-csi" command with the "--complete" flag. This should be
 			    done after all worker nodes managed by machine-controller are rolled-out.
 
-			Make sure to familiarize yourself with the CCM/CSI migration requirements by checking the following document: TBD
+			Make sure to familiarize yourself with the CCM/CSI migration requirements by checking the following document:
+			https://docs.kubermatic.com/kubeone/v1.3/guides/ccm_csi_migration/
 		`),
 		RunE: func(_ *cobra.Command, _ []string) error {
 			gopts, err := persistentGlobalOptions(fs)
@@ -177,7 +177,7 @@ func runMigrateToCCMCSI(opts *migrateCCMOptions) error {
 
 	s.Logger.Warnln("This command will migrate your cluster from in-tree cloud provider to the external CCM and CSI plugin.")
 	s.Logger.Warnln("Make sure to familiarize yourself with the process by checking the following document:")
-	s.Logger.Warnln("TBD")
+	s.Logger.Warnln("https://docs.kubermatic.com/kubeone/v1.3/guides/ccm_csi_migration/")
 
 	confirm, err := confirmCommand(opts.AutoApprove)
 	if err != nil {
