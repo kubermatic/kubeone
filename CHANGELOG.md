@@ -1,6 +1,6 @@
 # Changelog
 
-# [v1.3.0-rc.0](https://github.com/kubermatic/kubeone/releases/tag/v1.3.0-rc.0) - 2021-09-03
+# [v1.3.0-rc.0](https://github.com/kubermatic/kubeone/releases/tag/v1.3.0-rc.0) - 2021-09-06
 
 ## Attention Needed
 
@@ -85,6 +85,7 @@
   * This fixes support for Kubernetes 1.22 clusters.
   * The metrics-server now uses serving certificates signed by the Kubernetes CA instead of the self-signed certificates.
 * Update machine-controller to v1.35.2 ([#1489](https://github.com/kubermatic/kubeone/pull/1489))
+* Update Hetzner CSI driver to v1.6.0 ([#1491](https://github.com/kubermatic/kubeone/pull/1491))
 
 ## Removed
 
