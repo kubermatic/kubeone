@@ -24,6 +24,7 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/nodeutils"
 	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
@@ -141,6 +142,18 @@ func updateKubeletConfigInternal(s *state.State, node *kubeoneapi.HostConfig, co
 	logger := s.Logger.WithField("node", node.PublicAddress)
 	logger.Info("Updating config and restarting Kubelet...")
 
+	drainer := nodeutils.NewDrainer(s.RESTConfig, logger)
+
+	logger.Infoln("Cordoning node...")
+	if err := drainer.Cordon(s.Context, node.Hostname, true); err != nil {
+		return errors.Wrap(err, "failed to cordon follower control plane node")
+	}
+
+	logger.Infoln("Draining node...")
+	if err := drainer.Drain(s.Context, node.Hostname); err != nil {
+		return errors.Wrap(err, "failed to drain follower control plane node")
+	}
+
 	cmd, err := scripts.CCMMigrationUpdateKubeletConfig(s.WorkDir, node.ID, s.KubeadmVerboseFlag())
 	if err != nil {
 		return err
@@ -150,14 +163,12 @@ func updateKubeletConfigInternal(s *state.State, node *kubeoneapi.HostConfig, co
 		return err
 	}
 
-	return wait.PollImmediate(5*time.Second, 2*time.Minute, func() (bool, error) {
-		if s.Verbose {
-			logger.Debug("Waiting for Kubelet to become running...")
-		}
-
-		kubeletStatus, err := systemdStatus(conn, "kubelet")
-		if err != nil {
-			return false, err
+	timeout := 2 * time.Minute
+	logger.Debugf("Waiting up to %s for Kubelet to become running...", timeout)
+	err = wait.PollImmediate(5*time.Second, 2*time.Minute, func() (bool, error) {
+		kubeletStatus, sErr := systemdStatus(conn, "kubelet")
+		if sErr != nil {
+			return false, sErr
 		}
 
 		if kubeletStatus&state.SystemDStatusRunning != 0 && kubeletStatus&state.SystemDStatusRestarting == 0 {
@@ -166,6 +177,16 @@ func updateKubeletConfigInternal(s *state.State, node *kubeoneapi.HostConfig, co
 
 		return false, nil
 	})
+	if err != nil {
+		return err
+	}
+
+	logger.Infoln("Uncordoning node...")
+	if err := drainer.Cordon(s.Context, node.Hostname, false); err != nil {
+		return errors.Wrap(err, "failed to uncordon follower control plane node")
+	}
+
+	return nil
 }
 
 func waitForStaticPodReady(s *state.State, timeout time.Duration, staticPodName, staticPodNamespace string) error {

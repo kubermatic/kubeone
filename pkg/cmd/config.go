@@ -799,6 +799,8 @@ addons:
   enable: false
   # In case when the relative path is provided, the path is relative
   # to the KubeOne configuration file.
+  # This path must be always provided and the directory must exist, even if
+  # using only embedded addons.
   path: "./addons"
   # globalParams is a key-value map of values passed to the addons templating engine,
   # to be used in the addons' manifests. The values defined here are passed to all
@@ -806,7 +808,11 @@ addons:
   globalParams:
     key: value
   # addons is used to enable addons embedded in the KubeOne binary.
-  # Currently backups-restic and unattended-upgrades are available addons.
+  # Currently backups-restic, default-storage-class, and unattended-upgrades are
+  # available addons.
+  # Check out the documentation to find more information about what are embedded
+  # addons and how to use them:
+  # https://docs.kubermatic.com/kubeone/v1.3/guides/addons/
   addons:
     # name of the addon to be enabled/deployed (e.g. backups-restic)
     - name: ""

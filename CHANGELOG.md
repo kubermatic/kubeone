@@ -46,7 +46,7 @@
     * More information about the CSI plugin configuration can be found in the vSphere CSI docs: https://vsphere-csi-driver.sigs.k8s.io/driver-deployment/installation.html#create_csi_vsphereconf
   * The CSI plugin is deployed automatically if `.cloudProvider.csiConfig` is provided and `.cloudProvider.external` is enabled
   * Check out the Attention Needed section of the changelog for more information.
-* Implement the CCM/CSI migration for OpenStack and vSphere ([#1468](https://github.com/kubermatic/kubeone/pull/1468), [#1469](https://github.com/kubermatic/kubeone/pull/1469), [#1472](https://github.com/kubermatic/kubeone/pull/1472), [#1482](https://github.com/kubermatic/kubeone/pull/1482), [#1487](https://github.com/kubermatic/kubeone/pull/1487))
+* Implement the CCM/CSI migration for OpenStack and vSphere ([#1468](https://github.com/kubermatic/kubeone/pull/1468), [#1469](https://github.com/kubermatic/kubeone/pull/1469), [#1472](https://github.com/kubermatic/kubeone/pull/1472), [#1482](https://github.com/kubermatic/kubeone/pull/1482), [#1487](https://github.com/kubermatic/kubeone/pull/1487), [#1494](https://github.com/kubermatic/kubeone/pull/1494))
   * The CCM/CSI migration is used to migrate clusters running in-tree cloud provider (i.e. with `.cloudProvider.external` set to `false`) to the external CCM (cloud-controller-manager) and CSI plugin.
   * The migration is implemented with the `kubeone migrate to-ccm-csi` command.
   * The CCM/CSI migration for vSphere is currently experimental and not tested.
