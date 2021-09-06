@@ -19,7 +19,6 @@ package addons
 import (
 	"io/fs"
 	"os"
-	"path/filepath"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/pkg/errors"
@@ -70,14 +69,10 @@ type templateData struct {
 func newAddonsApplier(s *state.State) (*applier, error) {
 	var localFS fs.FS
 
-	if s.Cluster.Addons != nil && s.Cluster.Addons.Enable {
-		addonsPath := s.Cluster.Addons.Path
-		if !filepath.IsAbs(addonsPath) && s.ManifestFilePath != "" {
-			manifestAbsPath, err := filepath.Abs(filepath.Dir(s.ManifestFilePath))
-			if err != nil {
-				return nil, errors.Wrap(err, "unable to get absolute path to the cluster manifest")
-			}
-			addonsPath = filepath.Join(manifestAbsPath, addonsPath)
+	if s.Cluster.Addons.Enabled() {
+		addonsPath, err := s.Cluster.Addons.RelativePath(s.ManifestFilePath)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get addons path")
 		}
 
 		localFS = os.DirFS(addonsPath)
