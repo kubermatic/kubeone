@@ -28,7 +28,6 @@
 * It's currently **not** possible to provision or upgrade to Kubernetes 1.22 for clusters running on vSphere. This is because vSphere CCM and CSI don't support Kubernetes 1.22. We'll introduce Kubernetes 1.22 support for vSphere as soon as new CCM and CSI releases with support for Kubernetes 1.22 are out.
 * Clusters provisioned with Kubernetes 1.22 or upgraded from 1.21 to 1.22 using KubeOne 1.3.0-alpha.1 use a metrics-server version incompatible with Kubernetes 1.22. This might cause issues with deleting Namespaces that manifests by the Namespace being stuck in the Terminating state. This can be fixed by upgrading the metrics-server by running `kubeone apply`.
 * The new Addons API requires the addons directory path (`.addons.path`) to be provided and the directory must exist (it can be empty), even if only embedded addons are used. If the path is not provided, it'll default to `./addons`.
-* The CSI migration for vSphere is currently experimental and not tested.
 
 ## Added
 
@@ -68,6 +67,7 @@
 ### Fixed
 
 * Make `kubeone apply` skip already provisioned static worker nodes ([#1485](https://github.com/kubermatic/kubeone/pull/1485))
+* Fix NPE when migrating to containerd ([#1499](https://github.com/kubermatic/kubeone/pull/1499))
 
 ### Updated
 
