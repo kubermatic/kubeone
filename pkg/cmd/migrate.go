@@ -115,7 +115,6 @@ func migrateToCCMCSICmd(fs *pflag.FlagSet) *cobra.Command {
 			because the cluster is already using external CCM.
 
 			Migration is currently available for OpenStack and vSphere. Other providers will be added in future KubeOne releases.
-			Note: vSphere support is currently experimental!
 
 			The migration is done in two phases:
 
