@@ -64,6 +64,21 @@ func runMigrateToContainerd(opts *globalOptions) error {
 		return errors.Wrap(err, "failed to initialize State")
 	}
 
+	// Probe the cluster for the actual state and the needed tasks.
+	probbing := tasks.WithHostnameOS(nil)
+	probbing = tasks.WithProbes(probbing)
+
+	if err = probbing.Run(s); err != nil {
+		return err
+	}
+
+	if !s.LiveCluster.IsProvisioned() {
+		return errors.New("the target cluster is not provisioned")
+	}
+	if !s.LiveCluster.Healthy() {
+		return errors.New("the target cluster is not healthy, please run 'kubeone apply' first")
+	}
+
 	return errors.Wrap(tasks.WithContainerDMigration(nil).Run(s), "failed to get cluster status")
 }
 

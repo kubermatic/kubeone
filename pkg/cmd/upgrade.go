@@ -96,5 +96,13 @@ func runUpgrade(opts *upgradeOpts) error {
 		return errors.Wrap(err, "failed to validate credentials")
 	}
 
+	// Probe the cluster for the actual state and the needed tasks.
+	probbing := tasks.WithHostnameOS(nil)
+	probbing = tasks.WithProbes(probbing)
+
+	if err = probbing.Run(s); err != nil {
+		return err
+	}
+
 	return errors.Wrap(tasks.WithUpgrade(nil).Run(s), "failed to upgrade cluster")
 }
