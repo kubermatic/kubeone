@@ -135,5 +135,13 @@ func runInstall(opts *installOpts) error {
 		return errors.Wrap(tasks.WithBinariesOnly(nil).Run(s), "failed to install kubernetes binaries")
 	}
 
+	// Probe the cluster for the actual state and the needed tasks.
+	probbing := tasks.WithHostnameOS(nil)
+	probbing = tasks.WithProbes(probbing)
+
+	if err = probbing.Run(s); err != nil {
+		return err
+	}
+
 	return errors.Wrap(tasks.WithFullInstall(nil).Run(s), "failed to install the cluster")
 }
