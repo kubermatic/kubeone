@@ -1,7 +1,7 @@
 ---
 name: Feature Request
 about: Request a new KubeOne feature
-labels: kind/feature
+labels: sig/cluster-management, kind/feature
 
 ---
 

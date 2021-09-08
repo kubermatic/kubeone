@@ -1,7 +1,7 @@
 ---
 name: Support Request
 about: Use this template if you have questions about KubeOne
-labels: triage/support
+labels: sig/cluster-management, triage/support
 
 ---
 

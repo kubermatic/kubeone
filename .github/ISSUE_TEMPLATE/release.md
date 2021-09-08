@@ -24,6 +24,7 @@ labels: sig/cluster-management, kind/documentation, priority/high
 * [ ] Update the Prow config
   * [ ] Update the `branchprotector` rules
   * [ ] Update the `milestone_applier` rules
+  * [ ] Enable the Code Freeze
 * [ ] Create docs for the release based on docs for the master branch (copy 
   `content/kubeone/master` to `content/kubeone/v1.x` in the
   [docs repo](https://github.com/kubermatic/docs)) (link to the docs PR)
@@ -39,10 +40,16 @@ labels: sig/cluster-management, kind/documentation, priority/high
 
 * [ ] Update the release's description on the GitHub Releases page to replace
   the automatically generated description with the changelog
+* [ ] Download the binaries from GitHub and make sure that:
+  * [ ] Checksums are matching
+  * [ ] `kubeone version` returns the expected version
 <!-- UNCOMMENT FOR RELEASE CANDIDATES (RCs)
 * [ ] Run manual tests
 -->
 <!-- UNCOMMENT FOR FINAL RELEASES
+* [ ] Disable the Code Freeze
+-->
+<!-- UNCOMMENT IF RELEASE INTRODUCES SUPPORT FOR A NEW KUBERNETES VERSION
 * [ ] If the release introduces support for a new Kubernetes version, submit
   conformance results to https://github.com/cncf/k8s-conformance/
 -->

@@ -1,7 +1,7 @@
 ---
 name: Bug Report
 about: Report a bug related to KubeOne
-labels: kind/bug
+labels: sig/cluster-management, kind/bug
 
 ---
 
