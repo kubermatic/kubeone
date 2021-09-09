@@ -47,6 +47,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--
 	apt-transport-https \
 	ca-certificates \
 	curl \
+	gnupg \
 	lsb-release \
 	rsync
 curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -

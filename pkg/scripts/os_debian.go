@@ -44,6 +44,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--
 	apt-transport-https \
 	ca-certificates \
 	curl \
+	gnupg \
 	lsb-release \
 	rsync
 
