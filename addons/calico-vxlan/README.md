@@ -2,27 +2,17 @@
 
 ## Setup
 
-```shell
-mkdir addons
-curl https://raw.githubusercontent.com/kubermatic/kubeone/master/addons/calico-vxlan/calico-vxlan.yaml > addons/calico-vxlan.yaml
-```
+Since this addon is now shipped together with KubeOne, it's possible to simply
+configure it in kubeone.yaml.
 
-## MTU
-
-Please edit the `addons/calico-vxlan.yaml` and change `veth_mtu: "1450"` to appropriate MTU size. Please see more
-documentation how to find MTU size for your cluster https://docs.projectcalico.org/networking/mtu#determine-mtu-size.
-
-Example AWS kubeone config to use Calico addon.
+Example kubeone config:
 
 ```yaml
 apiVersion: kubeone.io/v1beta1
 kind: KubeOneCluster
 
 versions:
-  kubernetes: 1.18.5
-
-cloudProvider:
-  aws: {}
+  kubernetes: 1.20.4
 
 clusterNetwork:
   cni:
@@ -30,5 +20,32 @@ clusterNetwork:
 
 addons:
   enable: true
-  path: "./addons"
+  addons:
+  - name: calico-vxlan
 ```
+
+## Custom MTU
+
+MTU is set to 0 by default and is autodetected by the calico itself, but in case
+when you'd like to set own custom MTU it's possible to use [addon params mechanism][addon_params]:
+
+```yaml
+apiVersion: kubeone.io/v1beta1
+kind: KubeOneCluster
+
+versions:
+  kubernetes: 1.20.4
+
+clusterNetwork:
+  cni:
+    external: {}
+
+addons:
+  enable: true
+  addons:
+  - name: calico-vxlan
+    params:
+      MTU: 1400 # custom MTU
+```
+
+[addon_params]: https://docs.kubermatic.com/kubeone/v1.3/guides/addons/#parameters
