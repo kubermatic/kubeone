@@ -548,8 +548,8 @@ spec:
 {{ if .Config.CABundle }}
           volumeMounts:
 {{ caBundleVolumeMount | indent 12 }}
-        volumes:
-{{ caBundleVolume | indent 10 }}
+      volumes:
+{{ caBundleVolume | indent 8 }}
 {{ end }}
 
 ---
