@@ -17,7 +17,7 @@ data:
   # - Otherwise, if VXLAN or BPF mode is enabled, set to your network MTU - 50
   # - Otherwise, if IPIP is enabled, set to your network MTU - 20
   # - Otherwise, if not using any encapsulation, set to your network MTU.
-  veth_mtu: ""
+  veth_mtu: "{{ default 0 .Params.MTU }}"
   # veth_mtu: "" # auto-detect MTU
   # veth_mtu: "8951" # use this if provider is AWS
   # veth_mtu: "1400" # use this if provider is OpenStack
