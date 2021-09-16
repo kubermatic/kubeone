@@ -69,13 +69,13 @@ variable "location" {
 
 variable "control_plane_vm_size" {
   description = "VM Size for control plane machines"
-  default     = "Standard_B2s"
+  default     = "Standard_F2"
   type        = string
 }
 
 variable "worker_vm_size" {
   description = "VM Size for worker machines"
-  default     = "Standard_B2s"
+  default     = "Standard_F2"
   type        = string
 }
 
