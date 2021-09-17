@@ -35,6 +35,11 @@ spec:
         app: csi-cinder-controllerplugin
     spec:
       serviceAccount: csi-cinder-controller-sa
+      tolerations:
+        - key: "node-role.kubernetes.io/master"
+          effect: NoSchedule
+        - key: "node-role.kubernetes.io/control-plane"
+          effect: NoSchedule
       containers:
         - name: csi-attacher
           image: {{ .InternalImages.Get "CSIAttacher" }}
