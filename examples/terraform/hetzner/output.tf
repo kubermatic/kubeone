@@ -72,6 +72,7 @@ output "kubeone_workers" {
           # Datacenter (optional)
           # datacenter = ""
           labels = {
+            "kubeone_cluster_name"        = var.cluster_name
             "${var.cluster_name}-workers" = "pool1"
           }
         }
