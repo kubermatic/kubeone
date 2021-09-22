@@ -66,6 +66,11 @@ variable "control_plane_type" {
   type    = string
 }
 
+variable "control_plane_replicas" {
+  default = 3
+  type    = number
+}
+
 variable "worker_type" {
   default = "cx21"
   type    = string
