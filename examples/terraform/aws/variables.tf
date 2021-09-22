@@ -177,12 +177,6 @@ variable "internal_api_lb" {
   type        = bool
 }
 
-variable "open_nodeports" {
-  default     = false
-  description = "open NodePorts flag"
-  type        = bool
-}
-
 variable "initial_machinedeployment_replicas" {
   default     = 1
   description = "number of replicas per MachineDeployment"
