@@ -94,6 +94,21 @@ resource "google_compute_firewall" "internal" {
   ]
 }
 
+resource "google_compute_firewall" "nodeports" {
+  name    = "${var.cluster_name}-nodeports"
+  network = google_compute_network.network.self_link
+
+  allow {
+    protocol = "tcp"
+    ports    = ["30000-32767"]
+  }
+
+  source_ranges = [
+    "0.0.0.0/0",
+  ]
+}
+
+
 resource "google_compute_address" "lb_ip" {
   name = "${var.cluster_name}-lb-ip"
 }
@@ -137,7 +152,7 @@ resource "google_compute_instance" "control_plane" {
   zone         = data.google_compute_zones.available.names[count.index % local.zones_count]
 
   # Changing the machine_type, min_cpu_platform, or service_account on an
-  # instance requires stopping it. To acknowledge this, 
+  # instance requires stopping it. To acknowledge this,
   # allow_stopping_for_update = true is required
   allow_stopping_for_update = true
 
