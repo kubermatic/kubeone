@@ -65,10 +65,11 @@ output "kubeone_workers" {
           securityGroups = [openstack_networking_secgroup_v2.securitygroup.name]
           network        = openstack_networking_network_v2.network.name
           subnet         = openstack_networking_subnet_v2.subnet.name
-          # Optional: If set, the rootDisk will be a volume. 
+          floatingIpPool = var.external_network_name
+          # Optional: If set, the rootDisk will be a volume.
           # Otherwise, the rootDisk will be on ephemeral storage and its size will
           # be derived from the flavor
-          rootDiskSizeGB = 50
+          # rootDiskSizeGB = 50
           # Optional: limit how many volumes can be attached to a node
           # nodeVolumeAttachLimit = 25
           tags = {
