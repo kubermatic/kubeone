@@ -133,7 +133,6 @@ resource "aws_security_group_rule" "egress_allow_all" {
 }
 
 resource "aws_security_group_rule" "nodeports" {
-  count             = var.open_nodeports ? 1 : 0
   type              = "ingress"
   security_group_id = aws_security_group.common.id
 
