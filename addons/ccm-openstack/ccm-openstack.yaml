@@ -188,6 +188,8 @@ spec:
           effect: "NoSchedule"
         - key: "node-role.kubernetes.io/master"
           effect: NoSchedule
+        - key: "node-role.kubernetes.io/control-plane"
+          effect: NoSchedule
       serviceAccountName: cloud-controller-manager
       containers:
         - name: openstack-cloud-controller-manager
@@ -198,7 +200,7 @@ spec:
             - --cloud-config=/etc/config/cloud.conf
             - --cloud-provider=openstack
             - --use-service-account-credentials=true
-            - --address=127.0.0.1
+            - --bind-address=127.0.0.1
 {{ if .Config.CABundle }}
           env:
 {{ caBundleEnvVar | indent 12 }}
@@ -221,14 +223,14 @@ spec:
               cpu: 200m
       hostNetwork: true
       volumes:
-      - hostPath:
+      - name: k8s-certs
+        hostPath:
           path: /etc/kubernetes/pki
           type: DirectoryOrCreate
-        name: k8s-certs
-      - hostPath:
+      - name: ca-certs
+        hostPath:
           path: /etc/ssl/certs
           type: DirectoryOrCreate
-        name: ca-certs
       - name: cloud-config-volume
         secret:
           secretName: cloud-config
