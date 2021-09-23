@@ -71,12 +71,26 @@ resource "azurerm_network_security_group" "sg" {
 
   security_rule {
     name                       = "SSH"
+    description                = "Allow inbound SSH"
     priority                   = 1001
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "22"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+  security_rule {
+    name                       = "NodePorts"
+    description                = "Allow inbound NodePorts"
+    priority                   = 1010
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "30000-32767"
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
