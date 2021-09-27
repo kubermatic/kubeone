@@ -10,7 +10,7 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic-labs/boilerplate:v0.1.1
+        - image: quay.io/kubermatic-labs/boilerplate:v0.2.0
           command:
             - make
           args:
@@ -127,7 +127,7 @@ presubmits:
       preset-aws: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -156,7 +156,7 @@ presubmits:
       preset-aws: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -193,7 +193,7 @@ presubmits:
       preset-aws: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -220,7 +220,7 @@ presubmits:
       preset-aws: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -247,7 +247,7 @@ presubmits:
       preset-aws: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -272,7 +272,7 @@ presubmits:
       preset-aws: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -302,7 +302,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -327,7 +327,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -352,7 +352,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -377,7 +377,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -407,7 +407,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -432,7 +432,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -457,7 +457,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -482,7 +482,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -512,7 +512,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -539,7 +539,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -566,7 +566,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -593,7 +593,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -625,7 +625,7 @@ presubmits:
       preset-packet: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -650,7 +650,7 @@ presubmits:
       preset-packet: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -675,7 +675,7 @@ presubmits:
       preset-packet: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -700,7 +700,7 @@ presubmits:
       preset-packet: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -730,7 +730,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -755,7 +755,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -780,7 +780,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -805,7 +805,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -835,7 +835,7 @@ presubmits:
       preset-aws: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -865,7 +865,7 @@ presubmits:
       preset-aws: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -891,7 +891,7 @@ presubmits:
       preset-aws: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -919,7 +919,7 @@ presubmits:
       preset-aws: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -952,7 +952,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -978,7 +978,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1004,7 +1004,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1035,7 +1035,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1061,7 +1061,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1087,7 +1087,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1118,7 +1118,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1146,7 +1146,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1174,7 +1174,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1207,7 +1207,7 @@ presubmits:
       preset-packet: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1233,7 +1233,7 @@ presubmits:
       preset-packet: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1259,7 +1259,7 @@ presubmits:
       preset-packet: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1290,7 +1290,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1316,7 +1316,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1342,7 +1342,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.17
+        - image: kubermatic/kubeone-e2e:v0.1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1375,7 +1375,7 @@ postsubmits:
       preset-docker-push: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/build:go-1.16-node-14-kind-0.11-1
+        - image: quay.io/kubermatic/build:go-1.17-node-14-kind-0.11-0
           command:
             - /bin/bash
             - -c
