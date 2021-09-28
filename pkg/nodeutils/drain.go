@@ -79,7 +79,7 @@ func (dr *drainer) drainHelper(ctx context.Context) (*drain.Helper, error) {
 		Client:              kubeClinet,
 		GracePeriodSeconds:  -1,
 		IgnoreAllDaemonSets: true,
-		DeleteLocalData:     true,
+		DeleteEmptyDirData:  true,
 		Out:                 loggerIoWriter(dr.logger.Infof),
 		ErrOut:              loggerIoWriter(dr.logger.Errorf),
 		OnPodDeletedOrEvicted: func(pod *corev1.Pod, usingEviction bool) {
