@@ -17,9 +17,7 @@ limitations under the License.
 package tasks
 
 import (
-	"bytes"
 	"fmt"
-	"io"
 	"strconv"
 	"time"
 
@@ -29,7 +27,6 @@ import (
 	"k8c.io/kubeone/pkg/nodeutils"
 	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/ssh"
-	"k8c.io/kubeone/pkg/ssh/sshiofs"
 	"k8c.io/kubeone/pkg/state"
 
 	"github.com/kubermatic/machine-controller/pkg/apis/cluster/common"
@@ -234,104 +231,43 @@ func ccmMigrationUpdateStaticWorkersKubeletConfigInternal(s *state.State, node *
 }
 
 func ccmMigrationUpdateKubeletConfigFile(s *state.State) error {
-	// Grab the Kubelet configuration file from the node
-	sshfs := s.Runner.NewFS()
-	f, err := sshfs.Open(kubeletConfigFile)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	buf, err := io.ReadAll(f)
-	if err != nil {
-		return err
-	}
-
-	// Unmarshal and update the config
-	kubeletConfig, err := unmarshalKubeletConfig(buf)
-	if err != nil {
-		return err
-	}
-
-	if kubeletConfig.FeatureGates == nil {
-		kubeletConfig.FeatureGates = map[string]bool{}
-	}
-	if s.ShouldEnableCSIMigration() {
-		featureGates, _, fgErr := s.Cluster.CSIMigrationFeatureGates(s.ShouldUnregisterInTreeCloudProvider())
-		if fgErr != nil {
-			return fgErr
+	return updateRemoteFile(s, kubeletConfigFile, func(content []byte) ([]byte, error) {
+		// Unmarshal and update the config
+		kubeletConfig, err := unmarshalKubeletConfig(content)
+		if err != nil {
+			return nil, err
 		}
-		for k, v := range featureGates {
-			kubeletConfig.FeatureGates[k] = v
+
+		if kubeletConfig.FeatureGates == nil {
+			kubeletConfig.FeatureGates = map[string]bool{}
 		}
-	}
+		if s.ShouldEnableCSIMigration() {
+			featureGates, _, fgErr := s.Cluster.CSIMigrationFeatureGates(s.ShouldUnregisterInTreeCloudProvider())
+			if fgErr != nil {
+				return nil, fgErr
+			}
+			for k, v := range featureGates {
+				kubeletConfig.FeatureGates[k] = v
+			}
+		}
 
-	// Update the config on the node
-	buf, err = marshalKubeletConfig(kubeletConfig)
-	if err != nil {
-		return err
-	}
-
-	fw, ok := f.(sshiofs.ExtendedFile)
-	if !ok {
-		return errors.New("file is not writable")
-	}
-
-	if err = fw.Truncate(0); err != nil {
-		return err
-	}
-
-	if _, err = fw.Seek(0, io.SeekStart); err != nil {
-		return err
-	}
-
-	if _, err = io.Copy(fw, bytes.NewBuffer(buf)); err != nil {
-		return err
-	}
-
-	return nil
+		return marshalKubeletConfig(kubeletConfig)
+	})
 }
 
 func ccmMigrationUpdateKubeletFlags(s *state.State) error {
-	sshfs := s.Runner.NewFS()
-	f, err := sshfs.Open(kubeadmEnvFlagsFile)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
+	return updateRemoteFile(s, kubeadmEnvFlagsFile, func(content []byte) ([]byte, error) {
+		kubeletFlags, err := unmarshalKubeletFlags(content)
+		if err != nil {
+			return nil, err
+		}
 
-	buf, err := io.ReadAll(f)
-	if err != nil {
-		return err
-	}
+		kubeletFlags["--cloud-provider"] = "external"
+		delete(kubeletFlags, "--cloud-config")
 
-	kubeletFlags, err := unmarshalKubeletFlags(buf)
-	if err != nil {
-		return err
-	}
-
-	kubeletFlags["--cloud-provider"] = "external"
-	delete(kubeletFlags, "--cloud-config")
-
-	buf = marshalKubeletFlags(kubeletFlags)
-	fw, ok := f.(sshiofs.ExtendedFile)
-	if !ok {
-		return errors.New("file is not writable")
-	}
-
-	if err = fw.Truncate(0); err != nil {
-		return err
-	}
-
-	if _, err = fw.Seek(0, io.SeekStart); err != nil {
-		return err
-	}
-
-	if _, err = io.Copy(fw, bytes.NewBuffer(buf)); err != nil {
-		return err
-	}
-
-	return nil
+		buf := marshalKubeletFlags(kubeletFlags)
+		return buf, nil
+	})
 }
 
 func waitForStaticPodReady(s *state.State, timeout time.Duration, staticPodName, staticPodNamespace string) error {

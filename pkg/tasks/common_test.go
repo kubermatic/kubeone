@@ -68,6 +68,15 @@ func Test_unmarshalKubeletFlags(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "key-values in a flag",
+			buf:  []byte(`KUBELET_KUBEADM_ARGS="--key1=val1=test1,val2=test2 --key2=val2"`),
+			want: map[string]string{
+				"--key1": "val1=test1,val2=test2",
+				"--key2": "val2",
+			},
+			wantErr: false,
+		},
+		{
 			name:    "error1",
 			buf:     []byte{},
 			wantErr: true,

@@ -17,15 +17,12 @@ limitations under the License.
 package tasks
 
 import (
-	"bytes"
 	"errors"
-	"io"
 	"time"
 
 	"k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/ssh"
-	"k8c.io/kubeone/pkg/ssh/sshiofs"
 	"k8c.io/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
@@ -86,42 +83,20 @@ func migrateToContainerd(s *state.State) error {
 func migrateToContainerdTask(s *state.State, node *kubeone.HostConfig, conn ssh.Connection) error {
 	s.Logger.Info("Migrating container runtime to containerd")
 
-	sshfs := s.Runner.NewFS()
-	f, err := sshfs.Open(kubeadmEnvFlagsFile)
+	err := updateRemoteFile(s, kubeadmEnvFlagsFile, func(content []byte) ([]byte, error) {
+		kubeletFlags, err := unmarshalKubeletFlags(content)
+		if err != nil {
+			return nil, err
+		}
+
+		for k, v := range containerdKubeletFlags {
+			kubeletFlags[k] = v
+		}
+
+		buf := marshalKubeletFlags(kubeletFlags)
+		return buf, nil
+	})
 	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	buf, err := io.ReadAll(f)
-	if err != nil {
-		return err
-	}
-
-	kubeletFlags, err := unmarshalKubeletFlags(buf)
-	if err != nil {
-		return err
-	}
-
-	for k, v := range containerdKubeletFlags {
-		kubeletFlags[k] = v
-	}
-
-	buf = marshalKubeletFlags(kubeletFlags)
-	fw, ok := f.(sshiofs.ExtendedFile)
-	if !ok {
-		return errors.New("file is not writable")
-	}
-
-	if err = fw.Truncate(0); err != nil {
-		return err
-	}
-
-	if _, err = fw.Seek(0, io.SeekStart); err != nil {
-		return err
-	}
-
-	if _, err = io.Copy(fw, bytes.NewBuffer(buf)); err != nil {
 		return err
 	}
 

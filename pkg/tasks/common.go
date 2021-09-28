@@ -19,10 +19,14 @@ package tasks
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"sort"
 	"strings"
 
 	"github.com/pkg/errors"
+
+	"k8c.io/kubeone/pkg/ssh/sshiofs"
+	"k8c.io/kubeone/pkg/state"
 
 	kubeletconfigv1beta1 "k8s.io/kubelet/config/v1beta1"
 	"sigs.k8s.io/yaml"
@@ -33,6 +37,44 @@ const (
 	kubeletKubeadmArgsEnv = "KUBELET_KUBEADM_ARGS"
 	kubeletConfigFile     = "/var/lib/kubelet/config.yaml"
 )
+
+func updateRemoteFile(s *state.State, filePath string, modifier func(content []byte) ([]byte, error)) error {
+	sshfs := s.Runner.NewFS()
+	f, err := sshfs.Open(filePath)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	buf, err := io.ReadAll(f)
+	if err != nil {
+		return err
+	}
+
+	buf, err = modifier(buf)
+	if err != nil {
+		return err
+	}
+
+	fw, ok := f.(sshiofs.ExtendedFile)
+	if !ok {
+		return errors.New("file is not writable")
+	}
+
+	if err = fw.Truncate(0); err != nil {
+		return err
+	}
+
+	if _, err = fw.Seek(0, io.SeekStart); err != nil {
+		return err
+	}
+
+	if _, err = io.Copy(fw, bytes.NewBuffer(buf)); err != nil {
+		return err
+	}
+
+	return nil
+}
 
 func unmarshalKubeletFlags(buf []byte) (map[string]string, error) {
 	// throw away KUBELET_KUBEADM_ARGS=
@@ -46,7 +88,7 @@ func unmarshalKubeletFlags(buf []byte) (map[string]string, error) {
 	kubeletflagsMap := map[string]string{}
 
 	for _, flg := range flagsvalues {
-		fl := strings.Split(flg, "=")
+		fl := strings.SplitN(flg, "=", 2)
 		if len(fl) != 2 {
 			return nil, errors.New("wrong split length")
 		}
@@ -64,20 +106,7 @@ func marshalKubeletFlags(kubeletflags map[string]string) []byte {
 
 	sort.Strings(kvpairs)
 
-	var buf bytes.Buffer
-	fmt.Fprintf(&buf, `%s="`, kubeletKubeadmArgsEnv)
-
-	for i, val := range kvpairs {
-		format := "%s "
-		if i == len(kvpairs)-1 {
-			format = "%s"
-		}
-		fmt.Fprintf(&buf, format, val)
-	}
-
-	buf.WriteString(`"`)
-
-	return buf.Bytes()
+	return []byte(fmt.Sprintf(`%s="%s"`, kubeletKubeadmArgsEnv, strings.Join(kvpairs, " ")))
 }
 
 func unmarshalKubeletConfig(configBytes []byte) (*kubeletconfigv1beta1.KubeletConfiguration, error) {
