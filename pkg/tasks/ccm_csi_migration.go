@@ -17,7 +17,9 @@ limitations under the License.
 package tasks
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 	"strconv"
 	"time"
 
@@ -27,6 +29,7 @@ import (
 	"k8c.io/kubeone/pkg/nodeutils"
 	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/ssh"
+	"k8c.io/kubeone/pkg/ssh/sshiofs"
 	"k8c.io/kubeone/pkg/state"
 
 	"github.com/kubermatic/machine-controller/pkg/apis/cluster/common"
@@ -44,7 +47,7 @@ const (
 	provisionedByOpenStackCSICinder    = "cinder.csi.openstack.org"
 )
 
-func validateExternalCloudProviderConfig(s *state.State) error {
+func ccmMigrationValidateConfig(s *state.State) error {
 	if !s.Cluster.CloudProvider.External {
 		return errors.New(".cloudProvider.external must be enabled to start the migration")
 	}
@@ -59,14 +62,11 @@ func validateExternalCloudProviderConfig(s *state.State) error {
 	if s.Cluster.CloudProvider.Vsphere != nil && s.Cluster.CloudProvider.CSIConfig == "" {
 		return errors.New("the ccm/csi migration for vsphere requires providing csi configuration using .cloudProvider.csiConfig field")
 	}
-	if len(s.Cluster.StaticWorkers.Hosts) > 0 {
-		return errors.New("the ccm/csi migration for cluster with static worker nodes is currently unsupported")
-	}
 
 	return nil
 }
 
-func readyToCompleteMigration(s *state.State) error {
+func readyToCompleteCCMMigration(s *state.State) error {
 	if s.DynamicClient == nil {
 		return errors.New("clientset not initialized")
 	}
@@ -92,11 +92,11 @@ func readyToCompleteMigration(s *state.State) error {
 	return nil
 }
 
-func regenerateControlPlaneManifests(s *state.State) error {
-	return s.RunTaskOnControlPlane(regenerateControlPlaneManifestsInternal, state.RunSequentially)
+func ccmMigrationRegenerateControlPlaneManifests(s *state.State) error {
+	return s.RunTaskOnControlPlane(ccmMigrationRegenerateControlPlaneManifestsInternal, state.RunSequentially)
 }
 
-func regenerateControlPlaneManifestsInternal(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func ccmMigrationRegenerateControlPlaneManifestsInternal(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	logger := s.Logger.WithField("node", node.PublicAddress)
 	logger.Info("Regenerating Kubernetes API server and kube-controller-manager manifests...")
 
@@ -134,11 +134,11 @@ func regenerateControlPlaneManifestsInternal(s *state.State, node *kubeoneapi.Ho
 	return nil
 }
 
-func updateKubeletConfig(s *state.State) error {
-	return s.RunTaskOnControlPlane(updateKubeletConfigInternal, state.RunSequentially)
+func ccmMigrationUpdateControlPlaneKubeletConfig(s *state.State) error {
+	return s.RunTaskOnControlPlane(ccmMigrationUpdateControlPlaneKubeletConfigInternal, state.RunSequentially)
 }
 
-func updateKubeletConfigInternal(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func ccmMigrationUpdateControlPlaneKubeletConfigInternal(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	logger := s.Logger.WithField("node", node.PublicAddress)
 	logger.Info("Updating config and restarting Kubelet...")
 
@@ -154,6 +154,7 @@ func updateKubeletConfigInternal(s *state.State, node *kubeoneapi.HostConfig, co
 		return errors.Wrap(err, "failed to drain follower control plane node")
 	}
 
+	logger.Info("Updating Kubelet config...")
 	cmd, err := scripts.CCMMigrationUpdateKubeletConfig(s.WorkDir, node.ID, s.KubeadmVerboseFlag())
 	if err != nil {
 		return err
@@ -165,25 +166,169 @@ func updateKubeletConfigInternal(s *state.State, node *kubeoneapi.HostConfig, co
 
 	timeout := 2 * time.Minute
 	logger.Debugf("Waiting up to %s for Kubelet to become running...", timeout)
-	err = wait.PollImmediate(5*time.Second, 2*time.Minute, func() (bool, error) {
-		kubeletStatus, sErr := systemdStatus(conn, "kubelet")
-		if sErr != nil {
-			return false, sErr
-		}
-
-		if kubeletStatus&state.SystemDStatusRunning != 0 && kubeletStatus&state.SystemDStatusRestarting == 0 {
-			return true, nil
-		}
-
-		return false, nil
-	})
-	if err != nil {
-		return err
+	if err := waitForKubeletReady(conn, timeout); err != nil {
+		return errors.Wrapf(err, "kubelet failed to start for %s", timeout)
 	}
 
 	logger.Infoln("Uncordoning node...")
 	if err := drainer.Cordon(s.Context, node.Hostname, false); err != nil {
 		return errors.Wrap(err, "failed to uncordon follower control plane node")
+	}
+
+	return nil
+}
+
+func ccmMigrationUpdateStaticWorkersKubeletConfig(s *state.State) error {
+	return s.RunTaskOnStaticWorkers(ccmMigrationUpdateStaticWorkersKubeletConfigInternal, state.RunSequentially)
+}
+
+func ccmMigrationUpdateStaticWorkersKubeletConfigInternal(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+	logger := s.Logger.WithField("node", node.PublicAddress)
+	logger.Info("Updating config and restarting Kubelet...")
+
+	drainer := nodeutils.NewDrainer(s.RESTConfig, logger)
+
+	logger.Infoln("Cordoning node...")
+	if err := drainer.Cordon(s.Context, node.Hostname, true); err != nil {
+		return errors.Wrap(err, "failed to cordon follower control plane node")
+	}
+
+	logger.Infoln("Draining node...")
+	if err := drainer.Drain(s.Context, node.Hostname); err != nil {
+		return errors.Wrap(err, "failed to drain follower control plane node")
+	}
+
+	// Update kubelet config and flags
+	logger.Info("Updating Kubelet config...")
+	if err := ccmMigrationUpdateKubeletConfigFile(s); err != nil {
+		return err
+	}
+	if err := ccmMigrationUpdateKubeletFlags(s); err != nil {
+		return err
+	}
+
+	// Restart Kubelet
+	logger.Info("Restarting Kubelet...")
+	script, err := scripts.CCMMigrationRestartKubelet()
+	if err != nil {
+		return err
+	}
+
+	_, _, err = s.Runner.RunRaw(script)
+	if err != nil {
+		return err
+	}
+
+	timeout := 2 * time.Minute
+	logger.Debugf("Waiting up to %s for Kubelet to become running...", timeout)
+	if err := waitForKubeletReady(conn, timeout); err != nil {
+		return errors.Wrapf(err, "kubelet failed to start for %s", timeout)
+	}
+
+	logger.Infoln("Uncordoning node...")
+	if err := drainer.Cordon(s.Context, node.Hostname, false); err != nil {
+		return errors.Wrap(err, "failed to uncordon follower control plane node")
+	}
+
+	return nil
+}
+
+func ccmMigrationUpdateKubeletConfigFile(s *state.State) error {
+	// Grab the Kubelet configuration file from the node
+	sshfs := s.Runner.NewFS()
+	f, err := sshfs.Open(kubeletConfigFile)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	buf, err := io.ReadAll(f)
+	if err != nil {
+		return err
+	}
+
+	// Unmarshal and update the config
+	kubeletConfig, err := unmarshalKubeletConfig(buf)
+	if err != nil {
+		return err
+	}
+
+	if kubeletConfig.FeatureGates == nil {
+		kubeletConfig.FeatureGates = map[string]bool{}
+	}
+	if s.ShouldEnableCSIMigration() {
+		featureGates, _, fgErr := s.Cluster.CSIMigrationFeatureGates(s.ShouldUnregisterInTreeCloudProvider())
+		if fgErr != nil {
+			return fgErr
+		}
+		for k, v := range featureGates {
+			kubeletConfig.FeatureGates[k] = v
+		}
+	}
+
+	// Update the config on the node
+	buf, err = marshalKubeletConfig(kubeletConfig)
+	if err != nil {
+		return err
+	}
+
+	fw, ok := f.(sshiofs.ExtendedFile)
+	if !ok {
+		return errors.New("file is not writable")
+	}
+
+	if err = fw.Truncate(0); err != nil {
+		return err
+	}
+
+	if _, err = fw.Seek(0, io.SeekStart); err != nil {
+		return err
+	}
+
+	if _, err = io.Copy(fw, bytes.NewBuffer(buf)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func ccmMigrationUpdateKubeletFlags(s *state.State) error {
+	sshfs := s.Runner.NewFS()
+	f, err := sshfs.Open(kubeadmEnvFlagsFile)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	buf, err := io.ReadAll(f)
+	if err != nil {
+		return err
+	}
+
+	kubeletFlags, err := unmarshalKubeletFlags(buf)
+	if err != nil {
+		return err
+	}
+
+	kubeletFlags["--cloud-provider"] = "external"
+	delete(kubeletFlags, "--cloud-config")
+
+	buf = marshalKubeletFlags(kubeletFlags)
+	fw, ok := f.(sshiofs.ExtendedFile)
+	if !ok {
+		return errors.New("file is not writable")
+	}
+
+	if err = fw.Truncate(0); err != nil {
+		return err
+	}
+
+	if _, err = fw.Seek(0, io.SeekStart); err != nil {
+		return err
+	}
+
+	if _, err = io.Copy(fw, bytes.NewBuffer(buf)); err != nil {
+		return err
 	}
 
 	return nil
@@ -241,6 +386,21 @@ func waitForStaticPodReady(s *state.State, timeout time.Duration, staticPodName,
 		}
 
 		return true, nil
+	})
+}
+
+func waitForKubeletReady(conn ssh.Connection, timeout time.Duration) error {
+	return wait.PollImmediate(5*time.Second, timeout, func() (bool, error) {
+		kubeletStatus, sErr := systemdStatus(conn, "kubelet")
+		if sErr != nil {
+			return false, sErr
+		}
+
+		if kubeletStatus&state.SystemDStatusRunning != 0 && kubeletStatus&state.SystemDStatusRestarting == 0 {
+			return true, nil
+		}
+
+		return false, nil
 	})
 }
 

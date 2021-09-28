@@ -19,10 +19,7 @@ package tasks
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"io"
-	"sort"
-	"strings"
 	"time"
 
 	"k8c.io/kubeone/pkg/apis/kubeone"
@@ -36,9 +33,7 @@ import (
 )
 
 const (
-	kubeadmCRISocket      = "kubeadm.alpha.kubernetes.io/cri-socket"
-	kubeadmEnvFlagsFile   = "/var/lib/kubelet/kubeadm-flags.env"
-	kubeletKubeadmArgsEnv = "KUBELET_KUBEADM_ARGS"
+	kubeadmCRISocket = "kubeadm.alpha.kubernetes.io/cri-socket"
 )
 
 var (
@@ -179,50 +174,4 @@ func migrateToContainerdTask(s *state.State, node *kubeone.HostConfig, conn ssh.
 	})
 
 	return err
-}
-
-func unmarshalKubeletFlags(buf []byte) (map[string]string, error) {
-	// throw away KUBELET_KUBEADM_ARGS=
-	s1 := strings.SplitN(string(buf), "=", 2)
-	if len(s1) != 2 {
-		return nil, errors.New("can't parse: wrong split length")
-	}
-
-	envValue := strings.Trim(s1[1], `"`)
-	flagsvalues := strings.Split(envValue, " ")
-	kubeletflagsMap := map[string]string{}
-
-	for _, flg := range flagsvalues {
-		fl := strings.Split(flg, "=")
-		if len(fl) != 2 {
-			return nil, errors.New("wrong split length")
-		}
-		kubeletflagsMap[fl[0]] = fl[1]
-	}
-
-	return kubeletflagsMap, nil
-}
-
-func marshalKubeletFlags(kubeletflags map[string]string) []byte {
-	kvpairs := []string{}
-	for k, v := range kubeletflags {
-		kvpairs = append(kvpairs, fmt.Sprintf("%s=%s", k, v))
-	}
-
-	sort.Strings(kvpairs)
-
-	var buf bytes.Buffer
-	fmt.Fprintf(&buf, `%s="`, kubeletKubeadmArgsEnv)
-
-	for i, val := range kvpairs {
-		format := "%s "
-		if i == len(kvpairs)-1 {
-			format = "%s"
-		}
-		fmt.Fprintf(&buf, format, val)
-	}
-
-	buf.WriteString(`"`)
-
-	return buf.Bytes()
 }

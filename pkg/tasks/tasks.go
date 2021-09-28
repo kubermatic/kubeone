@@ -459,9 +459,9 @@ func WithRotateKey(t Tasks) Tasks {
 
 func WithCCMCSIMigration(t Tasks) Tasks {
 	return t.append(Tasks{
-		{Fn: validateExternalCloudProviderConfig, ErrMsg: "failed to validate config", Retries: 1},
+		{Fn: ccmMigrationValidateConfig, ErrMsg: "failed to validate config", Retries: 1},
 		{
-			Fn:     readyToCompleteMigration,
+			Fn:     readyToCompleteCCMMigration,
 			ErrMsg: "failed to validate readiness to complete migration",
 			Predicate: func(s *state.State) bool {
 				return s.CCMMigrationComplete
@@ -470,8 +470,15 @@ func WithCCMCSIMigration(t Tasks) Tasks {
 	}...).
 		append(kubernetesConfigFiles()...).
 		append(
-			Task{Fn: regenerateControlPlaneManifests, ErrMsg: "failed to regenerate static pod manifests"},
-			Task{Fn: updateKubeletConfig, ErrMsg: "failed to update kubelet config on control plane nodes"},
+			Task{Fn: ccmMigrationRegenerateControlPlaneManifests, ErrMsg: "failed to regenerate static pod manifests"},
+			Task{Fn: ccmMigrationUpdateControlPlaneKubeletConfig, ErrMsg: "failed to update kubelet config on control plane nodes"},
+			Task{
+				Fn:     ccmMigrationUpdateStaticWorkersKubeletConfig,
+				ErrMsg: "failed to update kubelet config on static worker nodes",
+				Predicate: func(s *state.State) bool {
+					return len(s.Cluster.StaticWorkers.Hosts) > 0
+				},
+			},
 		).
 		append(WithResources(nil)...).
 		append(
