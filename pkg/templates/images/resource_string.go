@@ -13,32 +13,33 @@ func _() {
 	_ = x[CalicoCNI-3]
 	_ = x[CalicoController-4]
 	_ = x[CalicoNode-5]
-	_ = x[CSIAttacher-6]
-	_ = x[CSINodeDriverRegistar-7]
-	_ = x[CSIProvisioner-8]
-	_ = x[CSISnapshotter-9]
-	_ = x[CSIResizer-10]
-	_ = x[CSILivenessProbe-11]
-	_ = x[DigitaloceanCCM-12]
-	_ = x[DNSNodeCache-13]
-	_ = x[Flannel-14]
-	_ = x[HetznerCCM-15]
-	_ = x[HetznerCSI-16]
-	_ = x[MachineController-17]
-	_ = x[MetricsServer-18]
-	_ = x[OpenstackCCM-19]
-	_ = x[OpenstackCSI-20]
-	_ = x[PacketCCM-21]
-	_ = x[VsphereCCM-22]
-	_ = x[VsphereCSIDriver-23]
-	_ = x[VsphereCSISyncer-24]
-	_ = x[WeaveNetCNIKube-25]
-	_ = x[WeaveNetCNINPC-26]
+	_ = x[ClusterAutoscaler-6]
+	_ = x[CSIAttacher-7]
+	_ = x[CSINodeDriverRegistar-8]
+	_ = x[CSIProvisioner-9]
+	_ = x[CSISnapshotter-10]
+	_ = x[CSIResizer-11]
+	_ = x[CSILivenessProbe-12]
+	_ = x[DigitaloceanCCM-13]
+	_ = x[DNSNodeCache-14]
+	_ = x[Flannel-15]
+	_ = x[HetznerCCM-16]
+	_ = x[HetznerCSI-17]
+	_ = x[MachineController-18]
+	_ = x[MetricsServer-19]
+	_ = x[OpenstackCCM-20]
+	_ = x[OpenstackCSI-21]
+	_ = x[PacketCCM-22]
+	_ = x[VsphereCCM-23]
+	_ = x[VsphereCSIDriver-24]
+	_ = x[VsphereCSISyncer-25]
+	_ = x[WeaveNetCNIKube-26]
+	_ = x[WeaveNetCNINPC-27]
 }
 
-const _Resource_name = "AzureCCMAzureCNMCalicoCNICalicoControllerCalicoNodeCSIAttacherCSINodeDriverRegistarCSIProvisionerCSISnapshotterCSIResizerCSILivenessProbeDigitaloceanCCMDNSNodeCacheFlannelHetznerCCMHetznerCSIMachineControllerMetricsServerOpenstackCCMOpenstackCSIPacketCCMVsphereCCMVsphereCSIDriverVsphereCSISyncerWeaveNetCNIKubeWeaveNetCNINPC"
+const _Resource_name = "AzureCCMAzureCNMCalicoCNICalicoControllerCalicoNodeClusterAutoscalerCSIAttacherCSINodeDriverRegistarCSIProvisionerCSISnapshotterCSIResizerCSILivenessProbeDigitaloceanCCMDNSNodeCacheFlannelHetznerCCMHetznerCSIMachineControllerMetricsServerOpenstackCCMOpenstackCSIPacketCCMVsphereCCMVsphereCSIDriverVsphereCSISyncerWeaveNetCNIKubeWeaveNetCNINPC"
 
-var _Resource_index = [...]uint16{0, 8, 16, 25, 41, 51, 62, 83, 97, 111, 121, 137, 152, 164, 171, 181, 191, 208, 221, 233, 245, 254, 264, 280, 296, 311, 325}
+var _Resource_index = [...]uint16{0, 8, 16, 25, 41, 51, 68, 79, 100, 114, 128, 138, 154, 169, 181, 188, 198, 208, 225, 238, 250, 262, 271, 281, 297, 313, 328, 342}
 
 func (i Resource) String() string {
 	i -= 1
