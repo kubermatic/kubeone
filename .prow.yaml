@@ -1,4 +1,13 @@
 presubmits:
+  - name: pull-kubeone-test-ci
+    always_run: true
+    decorate: true
+    clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
+    spec:
+      containers:
+        - image: kubermatic/kubeone-e2e:v0.1.18
+          command:
+            - ./test-ci/test.sh
   #########################################################
   # verify, build, and unit tests
   #########################################################
