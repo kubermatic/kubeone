@@ -49,6 +49,7 @@ const (
 	CalicoCNI
 	CalicoController
 	CalicoNode
+	ClusterAutoscaler
 	CSIAttacher
 	CSINodeDriverRegistar
 	CSIProvisioner
@@ -153,6 +154,14 @@ func optionalResources() map[Resource]map[string]string {
 		// WeaveNet CNI plugin
 		WeaveNetCNIKube: {"*": "docker.io/weaveworks/weave-kube:2.8.1"},
 		WeaveNetCNINPC:  {"*": "docker.io/weaveworks/weave-npc:2.8.1"},
+
+		// Cluster-autoscaler addon
+		ClusterAutoscaler: {
+			"1.19.x":    "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.19.0",
+			"1.20.x":    "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.20.0",
+			"1.21.x":    "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.21.0",
+			">= 1.22.0": "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.22.0",
+		},
 	}
 }
 
