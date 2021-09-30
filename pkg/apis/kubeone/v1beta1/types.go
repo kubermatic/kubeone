@@ -288,6 +288,8 @@ type IPTables struct{}
 type CNI struct {
 	// Canal
 	Canal *CanalSpec `json:"canal,omitempty"`
+	// Cilium
+	Cilium *CiliumSpec `json:"cilium,omitempty"`
 	// WeaveNet
 	WeaveNet *WeaveNetSpec `json:"weaveNet,omitempty"`
 	// External
@@ -299,6 +301,13 @@ type CanalSpec struct {
 	// MTU automatically detected based on the cloudProvider
 	// default value is 1450
 	MTU int `json:"mtu,omitempty"`
+}
+
+// CiliumSpec defines the Cilium CNI plugin
+type CiliumSpec struct {
+	// Disable kube-proxy to use Cilium eBPF replacement
+	// default value is false
+	DisableKubeProxy bool `json:"disableKubeProxy,omitempty"`
 }
 
 // WeaveNetSpec defines the WeaveNet CNI plugin
