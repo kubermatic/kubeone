@@ -293,6 +293,12 @@ func ValidateCNI(c *kubeone.CNI, fldPath *field.Path) field.ErrorList {
 				field.Invalid(fldPath.Child("canal").Child("mtu"), c.Canal.MTU, "invalid value"))
 		}
 	}
+	if c.Cilium != nil {
+		if cniFound {
+			allErrs = append(allErrs, field.Forbidden(fldPath.Child("cilium"), "only one cni plugin can be used at the same time"))
+		}
+		cniFound = true
+	}
 	if c.WeaveNet != nil {
 		if cniFound {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("weaveNet"), "only one cni plugin can be used at the same time"))

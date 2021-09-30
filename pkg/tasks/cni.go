@@ -32,6 +32,10 @@ func ensureCNI(s *state.State) error {
 		if err := addons.EnsureAddonByName(s, resources.AddonCNICanal); err != nil {
 			return err
 		}
+	case s.Cluster.ClusterNetwork.CNI.Cilium != nil:
+		if err := addons.EnsureAddonByName(s, resources.AddonCNICilium); err != nil {
+			return err
+		}
 	case s.Cluster.ClusterNetwork.CNI.WeaveNet != nil:
 		if s.Cluster.ClusterNetwork.CNI.WeaveNet.Encrypted {
 			if err := weave.EnsureSecret(s); err != nil {

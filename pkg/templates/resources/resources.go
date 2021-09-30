@@ -34,6 +34,7 @@ const (
 	AddonCSIOpenStackCinder = "csi-openstack-cinder"
 	AddonCSIVsphere         = "csi-vsphere"
 	AddonCNICanal           = "cni-canal"
+	AddonCNICilium          = "cni-cilium"
 	AddonCNIWeavenet        = "cni-weavenet"
 	AddonMachineController  = "machinecontroller"
 	AddonMetricsServer      = "metrics-server"

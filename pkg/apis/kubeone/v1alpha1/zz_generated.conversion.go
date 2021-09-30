@@ -330,6 +330,7 @@ func autoConvert_v1alpha1_CNI_To_kubeone_CNI(in *CNI, out *kubeone.CNI, s conver
 
 func autoConvert_kubeone_CNI_To_v1alpha1_CNI(in *kubeone.CNI, out *CNI, s conversion.Scope) error {
 	// WARNING: in.Canal requires manual conversion: does not exist in peer-type
+	// WARNING: in.Cilium requires manual conversion: does not exist in peer-type
 	// WARNING: in.WeaveNet requires manual conversion: does not exist in peer-type
 	// WARNING: in.External requires manual conversion: does not exist in peer-type
 	return nil
