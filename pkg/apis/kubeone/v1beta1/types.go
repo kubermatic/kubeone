@@ -308,6 +308,8 @@ type CiliumSpec struct {
 	// Disable kube-proxy to use Cilium eBPF replacement
 	// default value is false
 	DisableKubeProxy bool `json:"disableKubeProxy,omitempty"`
+	//Weather to deploy Hubble relay and UI
+	EnableHubble bool `json:"enableHubble,omitempty"`
 }
 
 // WeaveNetSpec defines the WeaveNet CNI plugin
