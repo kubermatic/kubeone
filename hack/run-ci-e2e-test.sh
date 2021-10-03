@@ -42,6 +42,8 @@ PATH=$PATH:$(go env GOPATH)/bin
 TERRAFORM_DIR=$PWD/examples/terraform
 SSH_PRIVATE_KEY_FILE="${HOME}/.ssh/id_rsa_kubeone_e2e"
 
+export TF_IN_AUTOMATION=true
+export TF_CLI_ARGS="-no-color"
 export TF_VAR_cluster_name=k1-${BUILD_ID}
 export TF_VAR_subnets_cidr=28
 export SSH_PUBLIC_KEY_FILE="${SSH_PRIVATE_KEY_FILE}.pub"
