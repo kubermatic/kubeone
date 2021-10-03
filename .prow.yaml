@@ -1392,3 +1392,22 @@ postsubmits:
             requests:
               cpu: 100m
               memory: 1Gi
+  - name: post-kubeone-upload-gocache
+    decorate: true
+    clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
+    branches:
+      - ^master$
+    spec:
+      containers:
+        # This must match the go version used for building, else go will rightfully
+        # not use the cache
+        - image: quay.io/kubermatic/build:go-1.17-node-14-kind-0.11-1
+          command:
+            - ./hack/ci/upload-gocache.sh
+          resources:
+            requests:
+              # Make sure we get a node exclusively so this is fast and we do not disturb others
+              cpu: 3500m
+              memory: 6Gi
+            limits:
+              cpu: 4

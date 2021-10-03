@@ -11,3 +11,4 @@ terraform.tfvars
 *kubeconfig
 !*kubeconfig/
 /vendor
+download-gocache
