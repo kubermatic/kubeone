@@ -58,11 +58,11 @@ generate-internal-groups: vendor
 	./hack/update-codegen.sh
 
 .PHONY: test
-test:
+test: download-gocache
 	go test ./pkg/... ./test/...
 
 .PHONY: e2e-test
-e2e-test: install
+e2e-test: download-gocache install
 	./hack/run-ci-e2e-test.sh
 
 .PHONY: buildenv
