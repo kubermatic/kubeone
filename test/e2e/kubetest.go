@@ -67,13 +67,13 @@ func (p *Kubetest) Verify(scenario, skip string) error {
 		testutil.WithArgs(
 			fmt.Sprintf("--ginkgo.focus=%s", scenario),
 			fmt.Sprintf("--ginkgo.skip=%s", skip),
-			"--ginkgo.noColor=true",
 			"--ginkgo.flakeAttempts=2",
 		),
 		testutil.WithMapEnv(p.envVars),
 		testutil.WithEnv(os.Environ()),
 		testutil.WithEnvs(
 			"GINKGO_PARALLEL=y",
+			"GINKGO_NO_COLOR=y",
 		),
 		testutil.InDir(kubetestPath),
 	).Run()
