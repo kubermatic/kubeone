@@ -40,12 +40,17 @@ build: dist/kubeone
 vendor: buildenv
 	go mod vendor
 
-dist/kubeone: buildenv
+dist/kubeone: buildenv download-gocache
 	go build -ldflags='$(GOLDFLAGS)' -v -o $@ .
 
 dist/kubeone-debug: buildenv
 	export GOFLAGS=-mod=readonly; \
 	go build -gcflags='all=-N -l' -v -o $@ .
+
+download-gocache:
+	@./hack/ci/download-gocache.sh
+	@# Prevent this from getting executed multiple times
+	@touch download-gocache
 
 .PHONY: generate-internal-groups
 generate-internal-groups: GOFLAGS = -mod=readonly
