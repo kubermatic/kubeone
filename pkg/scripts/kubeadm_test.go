@@ -193,7 +193,7 @@ func TestKubeadmInit(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := KubeadmInit(tt.args.workdir, tt.args.nodeID, tt.args.verboseFlag, tt.args.token, tt.args.tokenTTL)
+			got, err := KubeadmInit(tt.args.workdir, tt.args.nodeID, tt.args.verboseFlag, tt.args.token, tt.args.tokenTTL, "")
 			if err != tt.err {
 				t.Errorf("KubeadmInit() error = %v, wantErr %v", err, tt.err)
 				return
