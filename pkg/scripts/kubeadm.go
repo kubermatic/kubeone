@@ -44,7 +44,7 @@ var (
 			exit 0;
 		fi
 
-		sudo kubeadm {{ .VERBOSE }} init --config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+		sudo kubeadm {{ .VERBOSE }} init --skip-phases={{ .SKIP_PHASE }} --config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
 	`)
 
 	kubeadmResetScriptTemplate = heredoc.Doc(`
@@ -92,13 +92,14 @@ func KubeadmCert(workdir string, nodeID int, verboseFlag string) (string, error)
 	})
 }
 
-func KubeadmInit(workdir string, nodeID int, verboseFlag, token, tokenTTL string) (string, error) {
+func KubeadmInit(workdir string, nodeID int, verboseFlag, token, tokenTTL string, skipPhases string) (string, error) {
 	return Render(kubeadmInitScriptTemplate, Data{
 		"WORK_DIR":       workdir,
 		"NODE_ID":        nodeID,
 		"VERBOSE":        verboseFlag,
 		"TOKEN":          token,
 		"TOKEN_DURATION": tokenTTL,
+		"SKIP_PHASE":     skipPhases,
 	})
 }
 
