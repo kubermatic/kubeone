@@ -62,7 +62,7 @@ output "kubeone_workers" {
           availabilitySet   = azurerm_availability_set.avset_workers.name
           location          = var.location
           resourceGroup     = azurerm_resource_group.rg.name
-          routeTableName    = ""
+          routeTableName    = azurerm_route_table.rt.name
           securityGroupName = azurerm_network_security_group.sg.name
           subnetName        = azurerm_subnet.subnet.name
           vmSize            = var.worker_vm_size

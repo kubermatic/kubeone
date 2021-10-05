@@ -109,8 +109,18 @@ func optionalResources() map[Resource]map[string]string {
 		},
 
 		// Azure CCM
-		AzureCCM: {"*": "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.0.1"},
-		AzureCNM: {"*": "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.0.1"},
+		AzureCCM: {
+			"1.19.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v0.6.0",
+			"1.20.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v0.7.8",
+			"1.21.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.0.5",
+			">= 1.22.0": "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.1.1",
+		},
+		AzureCNM: {
+			"1.19.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v0.6.0",
+			"1.20.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v0.7.8",
+			"1.21.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.0.5",
+			">= 1.22.0": "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.1.1",
+		},
 
 		// DigitalOcean CCM
 		DigitaloceanCCM: {"*": "docker.io/digitalocean/digitalocean-cloud-controller-manager:v0.1.33"},
