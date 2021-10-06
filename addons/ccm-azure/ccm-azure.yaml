@@ -1,3 +1,4 @@
+{{ $version := semver .Config.Versions.Kubernetes }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -147,6 +148,8 @@ spec:
     - key: "node.cloudprovider.kubernetes.io/uninitialized"
       value: "true"
       effect: "NoSchedule"
+  nodeSelector:
+    node-role.kubernetes.io/master: ""
   containers:
     - name: cloud-controller-manager
       image: "{{ .InternalImages.Get "AzureCCM" }}"
@@ -154,10 +157,10 @@ spec:
       command: ["cloud-controller-manager"]
       args:
         - "--allocate-node-cidrs=true"
-        - "--cloud-config=/etc/kubernetes/azure.json"
+        - "--cloud-config=/etc/kubernetes/cloud-config"
         - "--cloud-provider=azure"
-        - "--cluster-cidr=10.244.0.0/16"
-        - "--cluster-name=k8s"
+        - "--cluster-cidr={{.Config.ClusterNetwork.PodSubnet }}"
+        - "--cluster-name={{ .Config.Name }}"
         - "--controllers=*,-cloud-node" # disable cloud-node controller
         - "--configure-cloud-routes=true" # "false" for Azure CNI and "true" for other network plugins
         - "--leader-elect=true"
@@ -284,7 +287,9 @@ spec:
           command:
             - cloud-node-manager
             - --node-name=$(NODE_NAME)
+            {{ if ge $version.Minor 20 }}
             - --wait-routes=true # only set to true when --configure-cloud-routes=true in cloud-controller-manager.
+            {{ end }}
           env:
             - name: NODE_NAME
               valueFrom:

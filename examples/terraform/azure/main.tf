@@ -59,6 +59,18 @@ resource "azurerm_availability_set" "avset_workers" {
   }
 }
 
+resource "azurerm_route_table" "rt" {
+  name                          = "${var.cluster_name}-rt"
+  location                      = azurerm_resource_group.rg.location
+  resource_group_name           = azurerm_resource_group.rg.name
+  disable_bgp_route_propagation = false
+
+  tags = {
+    environment = "kubeone"
+    cluster     = var.cluster_name
+  }
+}
+
 resource "azurerm_virtual_network" "vpc" {
   name                = "${var.cluster_name}-vpc"
   address_space       = ["172.16.0.0/12"]
