@@ -241,6 +241,11 @@ type ClusterNetworkConfig struct {
 
 // KubeProxyConfig defines configured kube-proxy mode, default is iptables mode
 type KubeProxyConfig struct {
+
+	// Disable will skip the installation of kube-proxy
+	// default value is false
+	Disable bool `json:"disable,omitempty"`
+
 	// IPVS config
 	IPVS *IPVSConfig `json:"ipvs"`
 
@@ -305,11 +310,14 @@ type CanalSpec struct {
 
 // CiliumSpec defines the Cilium CNI plugin
 type CiliumSpec struct {
-	// Disable kube-proxy to use Cilium eBPF replacement
+	// KubeProxyReplacement defines weather cilium relies on underlying Kernel support to replace kube-proxy functionality by eBPF (strict),
+	// or disables a subset of those features so cilium does not bail out if the kernel support is missing (disabled).
+	// default ist "disabled"
+	KubeProxyReplacement string `json:"kubeProxyReplacement"`
+
+	// EnableHubble to deploy Hubble relay and UI
 	// default value is false
-	DisableKubeProxy bool `json:"disableKubeProxy,omitempty"`
-	// Weather to deploy Hubble relay and UI
-	EnableHubble bool `json:"enableHubble,omitempty"`
+	EnableHubble bool `json:"enableHubble"`
 }
 
 // WeaveNetSpec defines the WeaveNet CNI plugin

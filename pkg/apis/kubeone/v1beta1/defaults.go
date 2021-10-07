@@ -36,7 +36,7 @@ const (
 	DefaultNodePortRange = "30000-32767"
 	// DefaultStaticNoProxy defined static NoProxy
 	DefaultStaticNoProxy = "127.0.0.1/8,localhost"
-	// DefaultVXLanMTU defines default VXLAN MTU for Canal CNI
+	// DefaultCanalMTU defines default VXLAN MTU for Canal CNI
 	DefaultCanalMTU = 1450
 )
 
@@ -162,6 +162,11 @@ func SetDefaults_ClusterNetwork(obj *KubeOneCluster) {
 	if obj.ClusterNetwork.CNI.Canal != nil && obj.ClusterNetwork.CNI.Canal.MTU == 0 {
 		obj.ClusterNetwork.CNI.Canal.MTU = defaultCanal.MTU
 	}
+
+	if obj.ClusterNetwork.CNI.Cilium != nil && obj.ClusterNetwork.CNI.Cilium.KubeProxyReplacement == "" {
+		obj.ClusterNetwork.CNI.Cilium.KubeProxyReplacement = "disabled"
+	}
+
 }
 
 func SetDefaults_Proxy(obj *KubeOneCluster) {

@@ -812,7 +812,7 @@ func Convert_kubeone_CanalSpec_To_v1beta1_CanalSpec(in *kubeone.CanalSpec, out *
 }
 
 func autoConvert_v1beta1_CiliumSpec_To_kubeone_CiliumSpec(in *CiliumSpec, out *kubeone.CiliumSpec, s conversion.Scope) error {
-	out.DisableKubeProxy = in.DisableKubeProxy
+	out.KubeProxyReplacement = in.KubeProxyReplacement
 	out.EnableHubble = in.EnableHubble
 	return nil
 }
@@ -823,7 +823,7 @@ func Convert_v1beta1_CiliumSpec_To_kubeone_CiliumSpec(in *CiliumSpec, out *kubeo
 }
 
 func autoConvert_kubeone_CiliumSpec_To_v1beta1_CiliumSpec(in *kubeone.CiliumSpec, out *CiliumSpec, s conversion.Scope) error {
-	out.DisableKubeProxy = in.DisableKubeProxy
+	out.KubeProxyReplacement = in.KubeProxyReplacement
 	out.EnableHubble = in.EnableHubble
 	return nil
 }
@@ -1390,6 +1390,7 @@ func Convert_kubeone_KubeOneCluster_To_v1beta1_KubeOneCluster(in *kubeone.KubeOn
 }
 
 func autoConvert_v1beta1_KubeProxyConfig_To_kubeone_KubeProxyConfig(in *KubeProxyConfig, out *kubeone.KubeProxyConfig, s conversion.Scope) error {
+	out.Disable = in.Disable
 	out.IPVS = (*kubeone.IPVSConfig)(unsafe.Pointer(in.IPVS))
 	out.IPTables = (*kubeone.IPTables)(unsafe.Pointer(in.IPTables))
 	return nil
@@ -1401,6 +1402,7 @@ func Convert_v1beta1_KubeProxyConfig_To_kubeone_KubeProxyConfig(in *KubeProxyCon
 }
 
 func autoConvert_kubeone_KubeProxyConfig_To_v1beta1_KubeProxyConfig(in *kubeone.KubeProxyConfig, out *KubeProxyConfig, s conversion.Scope) error {
+	out.Disable = in.Disable
 	out.IPVS = (*IPVSConfig)(unsafe.Pointer(in.IPVS))
 	out.IPTables = (*IPTables)(unsafe.Pointer(in.IPTables))
 	return nil
