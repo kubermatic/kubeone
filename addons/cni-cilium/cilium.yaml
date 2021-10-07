@@ -15,8 +15,7 @@ metadata:
 
 {{ if .Config.ClusterNetwork.CNI.Cilium.EnableHubble }}
 {{- $ca := genCA "hubble-ca.cilium.io" 1095 -}}
-{{- $cn := list "*" ( .Config.Name | replace "." "-") "hubble-grpc.cilium.io" | join "." }}
-{{- $serverCert := genSignedCert $cn nil (list $cn) 1095 $ca -}}
+{{- $serverCert := genSignedCert "*.default.hubble-grpc.cilium.io" nil (list "*.default.hubble-grpc.cilium.io") 1095 $ca -}}
 {{- $cert := genSignedCert "*.hubble-relay.cilium.io" nil (list "*.hubble-relay.cilium.io") 1095 $ca -}}
 
 # Source: cilium/templates/hubble-relay-serviceaccount.yaml
@@ -188,12 +187,10 @@ data:
   auto-direct-node-routes: "false"
   enable-bandwidth-manager: "false"
   enable-local-redirect-policy: "false"
-{{ if .Config.ClusterNetwork.CNI.Cilium.DisableKubeProxy }}
-  kube-proxy-replacement:  "strict"
+  kube-proxy-replacement: {{ .Config.ClusterNetwork.CNI.Cilium.KubeProxyReplacement | quote }}
+{{ if ne .Config.ClusterNetwork.CNI.Cilium.KubeProxyReplacement "disabled" }}
   kube-proxy-replacement-healthz-bind-address: ""
-{{ else }}
-  kube-proxy-replacement:  "disabled"
-{{ end }}
+{{- end }}
   enable-health-check-nodeport: "true"
   node-port-bind-protection: "true"
   enable-auto-protect-node-port-range: "true"
@@ -204,7 +201,11 @@ data:
   enable-remote-node-identity: "true"
   operator-api-serve-addr: "127.0.0.1:9234"
   # Enable Hubble gRPC service.
+{{ if .Config.ClusterNetwork.CNI.Cilium.EnableHubble }}
   enable-hubble: "true"
+{{ else }}
+  enable-hubble: "false"
+{{ end }}
   # UNIX domain socket for Hubble server to listen to.
   hubble-socket-path:  "/var/run/cilium/hubble.sock"
   # An additional address for Hubble server to listen to (e.g. ":4244").
@@ -214,7 +215,7 @@ data:
   hubble-tls-key-file: /var/lib/cilium/tls/hubble/server.key
   hubble-tls-client-ca-files: /var/lib/cilium/tls/hubble/client-ca.crt
   ipam: "cluster-pool"
-  cluster-pool-ipv4-cidr: "10.0.0.0/8"
+  cluster-pool-ipv4-cidr: "{{.Config.ClusterNetwork.PodSubnet }}"
   cluster-pool-ipv4-mask-size: "24"
   disable-cnp-status-updates: "true"
   cgroup-root: "/run/cilium/cgroupv2"
@@ -766,12 +767,10 @@ spec:
               key: custom-cni-conf
               name: cilium-config
               optional: true
-    {{ if .Config.ClusterNetwork.CNI.Cilium.DisableKubeProxy }}
         - name: KUBERNETES_SERVICE_HOST
           value: "{{ .Config.APIEndpoint.Host }}"
         - name: KUBERNETES_SERVICE_PORT
           value: "{{ .Config.APIEndpoint.Port }}"
-    {{ end }}
         image: "quay.io/cilium/cilium:v1.10.4@sha256:7d354052ccf2a7445101d78cebd14444c7c40129ce7889f2f04b89374dbf8a1d"
         imagePullPolicy: IfNotPresent
         lifecycle:
@@ -859,13 +858,10 @@ spec:
               key: clean-cilium-bpf-state
               name: cilium-config
               optional: true
-
-    {{ if .Config.ClusterNetwork.CNI.Cilium.DisableKubeProxy }}
         - name: KUBERNETES_SERVICE_HOST
           value: "{{ .Config.APIEndpoint.Host }}"
         - name: KUBERNETES_SERVICE_PORT
           value: "{{ .Config.APIEndpoint.Port }}"
-    {{ end }}
         image: "quay.io/cilium/cilium:v1.10.4@sha256:7d354052ccf2a7445101d78cebd14444c7c40129ce7889f2f04b89374dbf8a1d"
         imagePullPolicy: IfNotPresent
         name: clean-cilium-state
@@ -1022,12 +1018,10 @@ spec:
               key: debug
               name: cilium-config
               optional: true
-{{ if .Config.ClusterNetwork.CNI.Cilium.DisableKubeProxy }}
         - name: KUBERNETES_SERVICE_HOST
           value: "{{ .Config.APIEndpoint.Host }}"
         - name: KUBERNETES_SERVICE_PORT
           value: "{{ .Config.APIEndpoint.Port }}"
-{{ end }}
         image: "quay.io/cilium/operator-generic:v1.10.4@sha256:c49a14e34634ff1a494c84b718641f27267fb3a0291ce3d74352b44f8a8d2f93"
         imagePullPolicy: IfNotPresent
         name: cilium-operator
