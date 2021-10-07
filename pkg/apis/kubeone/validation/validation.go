@@ -253,13 +253,13 @@ func ValidateClusterNetworkConfig(c kubeone.ClusterNetworkConfig, fldPath *field
 		}
 	}
 
-	//validated cilium kube-proxy replacement
-	if c.CNI.Cilium != nil && c.CNI.Cilium.KubeProxyReplacement != "disabled" && (c.KubeProxy == nil || !c.KubeProxy.Disable) {
-		allErrs = append(allErrs, field.Invalid(fldPath.Child("cni"), c.CNI.Cilium.KubeProxyReplacement, ".cilium.kubeProxyReplacement cannot be set with kube-proxy enabled"))
-	}
-
 	if c.CNI != nil {
 		allErrs = append(allErrs, ValidateCNI(c.CNI, fldPath.Child("cni"))...)
+
+		// validated cilium kube-proxy replacement
+		if c.CNI.Cilium != nil && c.CNI.Cilium.KubeProxyReplacement != "disabled" && (c.KubeProxy == nil || !c.KubeProxy.Disable) {
+			allErrs = append(allErrs, field.Invalid(fldPath.Child("cni"), c.CNI.Cilium.KubeProxyReplacement, ".cilium.kubeProxyReplacement cannot be set with kube-proxy enabled"))
+		}
 	}
 	if c.KubeProxy != nil {
 		allErrs = append(allErrs, ValidateKubeProxy(c.KubeProxy, fldPath.Child("kubeProxy"))...)

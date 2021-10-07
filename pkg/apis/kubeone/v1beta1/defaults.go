@@ -166,7 +166,6 @@ func SetDefaults_ClusterNetwork(obj *KubeOneCluster) {
 	if obj.ClusterNetwork.CNI.Cilium != nil && obj.ClusterNetwork.CNI.Cilium.KubeProxyReplacement == "" {
 		obj.ClusterNetwork.CNI.Cilium.KubeProxyReplacement = "disabled"
 	}
-
 }
 
 func SetDefaults_Proxy(obj *KubeOneCluster) {

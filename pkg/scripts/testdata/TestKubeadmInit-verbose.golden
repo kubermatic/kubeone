@@ -5,4 +5,4 @@ if [[ -f /etc/kubernetes/admin.conf ]]; then
 	exit 0;
 fi
 
-sudo kubeadm --v=6 init --skip-phases= --config=test-wd/cfg/master_0.yaml
+sudo kubeadm --v=6 init --config=test-wd/cfg/master_0.yaml
