@@ -771,7 +771,7 @@ spec:
           value: "{{ .Config.APIEndpoint.Host }}"
         - name: KUBERNETES_SERVICE_PORT
           value: "{{ .Config.APIEndpoint.Port }}"
-        image: "quay.io/cilium/cilium:v1.10.4@sha256:7d354052ccf2a7445101d78cebd14444c7c40129ce7889f2f04b89374dbf8a1d"
+        image: {{ .InternalImages.Get "Cilium" }}
         imagePullPolicy: IfNotPresent
         lifecycle:
           postStart:
@@ -834,7 +834,7 @@ spec:
           # same directory where we install cilium cni plugin so that exec permissions
           # are available.
           - 'cp /usr/bin/cilium-mount /hostbin/cilium-mount && nsenter --cgroup=/hostproc/1/ns/cgroup --mount=/hostproc/1/ns/mnt "${BIN_PATH}/cilium-mount" $CGROUP_ROOT; rm /hostbin/cilium-mount'
-        image: "quay.io/cilium/cilium:v1.10.4@sha256:7d354052ccf2a7445101d78cebd14444c7c40129ce7889f2f04b89374dbf8a1d"
+        image: {{ .InternalImages.Get "Cilium" }}
         imagePullPolicy: IfNotPresent
         volumeMounts:
           - mountPath: /hostproc
@@ -862,7 +862,7 @@ spec:
           value: "{{ .Config.APIEndpoint.Host }}"
         - name: KUBERNETES_SERVICE_PORT
           value: "{{ .Config.APIEndpoint.Port }}"
-        image: "quay.io/cilium/cilium:v1.10.4@sha256:7d354052ccf2a7445101d78cebd14444c7c40129ce7889f2f04b89374dbf8a1d"
+        image: {{ .InternalImages.Get "Cilium" }}
         imagePullPolicy: IfNotPresent
         name: clean-cilium-state
         securityContext:
@@ -1022,7 +1022,7 @@ spec:
           value: "{{ .Config.APIEndpoint.Host }}"
         - name: KUBERNETES_SERVICE_PORT
           value: "{{ .Config.APIEndpoint.Port }}"
-        image: "quay.io/cilium/operator-generic:v1.10.4@sha256:c49a14e34634ff1a494c84b718641f27267fb3a0291ce3d74352b44f8a8d2f93"
+        image: {{ .InternalImages.Get "CiliumOperator" }}
         imagePullPolicy: IfNotPresent
         name: cilium-operator
         livenessProbe:
@@ -1090,7 +1090,7 @@ spec:
             topologyKey: "kubernetes.io/hostname"
       containers:
         - name: hubble-relay
-          image: "quay.io/cilium/hubble-relay:v1.10.4@sha256:be17169d2b68a974e9e27bc194e0c899dbec8caee9dd95011654b75d775d413d"
+          image: {{ .InternalImages.Get "HubbleRelay" }}
           imagePullPolicy: IfNotPresent
           command:
             - hubble-relay
@@ -1169,7 +1169,7 @@ spec:
       serviceAccountName: "hubble-ui"
       containers:
         - name: frontend
-          image: "quay.io/cilium/hubble-ui:v0.7.9@sha256:e0e461c680ccd083ac24fe4f9e19e675422485f04d8720635ec41f2ba9e5562c"
+          image: {{ .InternalImages.Get "HubbleUI" }}
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
@@ -1177,7 +1177,7 @@ spec:
           resources:
             {}
         - name: backend
-          image: "quay.io/cilium/hubble-ui-backend:v0.7.9@sha256:632c938ef6ff30e3a080c59b734afb1fb7493689275443faa1435f7141aabe76"
+          image: {{ .InternalImages.Get "HubbleUiBackend" }}
           imagePullPolicy: IfNotPresent
           env:
             - name: EVENTS_SERVER_PORT
@@ -1190,7 +1190,7 @@ spec:
           resources:
             {}
         - name: proxy
-          image: "docker.io/envoyproxy/envoy:v1.18.2@sha256:e8b37c1d75787dd1e712ff389b0d37337dc8a174a63bed9c34ba73359dc67da7"
+          image: {{ .InternalImages.Get "HubbleProxy" }}
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8081

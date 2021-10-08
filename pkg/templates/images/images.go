@@ -49,6 +49,8 @@ const (
 	CalicoCNI
 	CalicoController
 	CalicoNode
+	Cilium
+	CiliumOperator
 	ClusterAutoscaler
 	CSIAttacher
 	CSINodeDriverRegistar
@@ -61,6 +63,10 @@ const (
 	Flannel
 	HetznerCCM
 	HetznerCSI
+	HubbleUi
+	HubbleUiBackend
+	HubbleRelay
+	HubbleProxy
 	MachineController
 	MetricsServer
 	OpenstackCCM
@@ -154,6 +160,16 @@ func optionalResources() map[Resource]map[string]string {
 		// WeaveNet CNI plugin
 		WeaveNetCNIKube: {"*": "docker.io/weaveworks/weave-kube:2.8.1"},
 		WeaveNetCNINPC:  {"*": "docker.io/weaveworks/weave-npc:2.8.1"},
+
+		//Cilium
+		Cilium:         {"*": "quay.io/cilium/cilium:v1.10.4"},
+		CiliumOperator: {"*": "quay.io/cilium/operator-generic:v1.10.4"},
+
+		//Hubble
+		HubbleRelay:     {"*": "quay.io/cilium/hubble-relay:v1.10.4"},
+		HubbleUi:        {"*": "quay.io/cilium/hubble-ui:v0.7.9"},
+		HubbleUiBackend: {"*": "quay.io/cilium/hubble-ui-backend:v0.7.9"},
+		HubbleProxy:     {"*": "docker.io/envoyproxy/envoy:v1.18.2"},
 
 		// Cluster-autoscaler addon
 		ClusterAutoscaler: {
