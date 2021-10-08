@@ -513,8 +513,8 @@ clusterNetwork:
   nodePortRange: "{{ .NodePortRange }}"
   # kube-proxy configurations
   kubeProxy:
-   # SkipInstallation will skip the installation of kube-proxy
-   # disable: true
+    # skipInstallation will skip the installation of kube-proxy
+    # skipInstallation: true
     # if this set, kube-proxy mode will be set to ipvs
     ipvs:
       # different schedulers can be configured:
@@ -550,9 +550,9 @@ clusterNetwork:
       # * Default - 1450
       mtu: 1450
     # cilium:
-    #   # EnableHubble to deploy Hubble relay and UI
+    #   # enableHubble to deploy Hubble relay and UI
     #   enableHubble: true
-    #   # KubeProxyReplacement defines weather cilium relies on underlying Kernel support to replace kube-proxy functionality by eBPF (strict),
+    #   # kubeProxyReplacement defines weather cilium relies on underlying Kernel support to replace kube-proxy functionality by eBPF (strict),
     #   # or disables a subset of those features so cilium does not bail out if the kernel support is missing (disabled).
     #   kubeProxyReplacement: "disabled"
     # weaveNet:
