@@ -63,8 +63,8 @@ const (
 	Flannel
 	HetznerCCM
 	HetznerCSI
-	HubbleUi
-	HubbleUiBackend
+	HubbleUI
+	HubbleUIBackend
 	HubbleRelay
 	HubbleProxy
 	MachineController
@@ -161,14 +161,14 @@ func optionalResources() map[Resource]map[string]string {
 		WeaveNetCNIKube: {"*": "docker.io/weaveworks/weave-kube:2.8.1"},
 		WeaveNetCNINPC:  {"*": "docker.io/weaveworks/weave-npc:2.8.1"},
 
-		//Cilium
+		// Cilium
 		Cilium:         {"*": "quay.io/cilium/cilium:v1.10.4"},
 		CiliumOperator: {"*": "quay.io/cilium/operator-generic:v1.10.4"},
 
-		//Hubble
+		// Hubble
 		HubbleRelay:     {"*": "quay.io/cilium/hubble-relay:v1.10.4"},
-		HubbleUi:        {"*": "quay.io/cilium/hubble-ui:v0.7.9"},
-		HubbleUiBackend: {"*": "quay.io/cilium/hubble-ui-backend:v0.7.9"},
+		HubbleUI:        {"*": "quay.io/cilium/hubble-ui:v0.7.9"},
+		HubbleUIBackend: {"*": "quay.io/cilium/hubble-ui-backend:v0.7.9"},
 		HubbleProxy:     {"*": "docker.io/envoyproxy/envoy:v1.18.2"},
 
 		// Cluster-autoscaler addon

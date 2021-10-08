@@ -58,12 +58,14 @@ func safeguard(s *state.State) error {
 		return nil
 	}
 
-	if s.Cluster.ClusterNetwork.KubeProxy != nil && s.Cluster.ClusterNetwork.KubeProxy.SkipInstallation == true {
+	if s.Cluster.ClusterNetwork.KubeProxy != nil && s.Cluster.ClusterNetwork.KubeProxy.SkipInstallation {
 		var kubeProxyDs appsv1.DaemonSet
-		if err := s.DynamicClient.Get(s.Context, KubeProxyObjectKey, &kubeProxyDs); err != nil && !k8serrors.IsNotFound(err) {
-			return err
+		if err := s.DynamicClient.Get(s.Context, KubeProxyObjectKey, &kubeProxyDs); err != nil {
+			if !k8serrors.IsNotFound(err) {
+				return err
+			}
 		} else {
-			return errors.New(".clusterNetwork.kubeProxy.skipInstallation is enabled, but kube-proxy was already installed and requires manual deletion.")
+			return errors.New(".clusterNetwork.kubeProxy.skipInstallation is enabled, but kube-proxy was already installed and requires manual deletion")
 		}
 	}
 

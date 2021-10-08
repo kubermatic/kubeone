@@ -1177,7 +1177,7 @@ spec:
           resources:
             {}
         - name: backend
-          image: {{ .InternalImages.Get "HubbleUiBackend" }}
+          image: {{ .InternalImages.Get "HubbleUIBackend" }}
           imagePullPolicy: IfNotPresent
           env:
             - name: EVENTS_SERVER_PORT
