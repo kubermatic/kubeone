@@ -65,7 +65,7 @@ func initKubernetesLeader(s *state.State) error {
 	s.Logger.Infoln("Initializing Kubernetes on leader...")
 	return s.RunTaskOnLeader(func(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 		var skipPhase string
-		if s.Cluster.ClusterNetwork.KubeProxy != nil && s.Cluster.ClusterNetwork.KubeProxy.Disable {
+		if s.Cluster.ClusterNetwork.KubeProxy != nil && s.Cluster.ClusterNetwork.KubeProxy.SkipInstallation {
 			skipPhase = SkipKubeProxy
 		}
 

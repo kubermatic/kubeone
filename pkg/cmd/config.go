@@ -513,7 +513,7 @@ clusterNetwork:
   nodePortRange: "{{ .NodePortRange }}"
   # kube-proxy configurations
   kubeProxy:
-   # Disable will skip the installation of kube-proxy
+   # SkipInstallation will skip the installation of kube-proxy
    # disable: true
     # if this set, kube-proxy mode will be set to ipvs
     ipvs:

@@ -88,6 +88,9 @@ const (
 	OperatingSystemNameAmazon  OperatingSystemName = "amzn"
 	OperatingSystemNameFlatcar OperatingSystemName = "flatcar"
 	OperatingSystemNameUnknown OperatingSystemName = ""
+
+	Strict   KubeProxyReplacement = "strict"
+	Disabled KubeProxyReplacement = "disabled"
 )
 
 // HostConfig describes a single control plane node.
@@ -242,9 +245,9 @@ type ClusterNetworkConfig struct {
 // KubeProxyConfig defines configured kube-proxy mode, default is iptables mode
 type KubeProxyConfig struct {
 
-	// Disable will skip the installation of kube-proxy
+	// SkipInstallation will skip the installation of kube-proxy
 	// default value is false
-	Disable bool `json:"disable,omitempty"`
+	SkipInstallation bool `json:"skipInstallation"`
 
 	// IPVS config
 	IPVS *IPVSConfig `json:"ipvs"`
@@ -319,6 +322,8 @@ type CiliumSpec struct {
 	// default value is false
 	EnableHubble bool `json:"enableHubble"`
 }
+
+type KubeProxyReplacement string
 
 // WeaveNetSpec defines the WeaveNet CNI plugin
 type WeaveNetSpec struct {
