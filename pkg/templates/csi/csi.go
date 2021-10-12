@@ -17,7 +17,6 @@ limitations under the License.
 package csi
 
 import (
-	"github.com/Masterminds/semver/v3"
 	"github.com/pkg/errors"
 
 	"k8c.io/kubeone/pkg/addons"
@@ -35,22 +34,17 @@ func Ensure(s *state.State) error {
 	var err error
 
 	switch {
+	case s.Cluster.CloudProvider.Azure != nil:
+		if s.Cluster.CloudProvider.CloudConfig == "" {
+			return errors.New("cloudConfig not defined")
+		}
+		err = addons.EnsureAddonByName(s, resources.AddonCSIAzureFile)
 	case s.Cluster.CloudProvider.Hetzner != nil:
 		err = addons.EnsureAddonByName(s, resources.AddonCSIHetnzer)
 	case s.Cluster.CloudProvider.Openstack != nil:
 		if s.Cluster.CloudProvider.CloudConfig == "" {
 			return errors.New("cloudConfig not defined")
 		}
-		v, sErr := semver.NewVersion(s.Cluster.Versions.Kubernetes)
-		if sErr != nil {
-			return errors.Wrap(err, "failed to parse kubernetes version")
-		}
-		lessThan17, _ := semver.NewConstraint("< 1.17.0")
-		if lessThan17.Check(v) {
-			s.Logger.Infoln("CSI driver is not supported for OpenStack clusters running Kubernetes 1.16 or older, skipping")
-			return nil
-		}
-
 		err = addons.EnsureAddonByName(s, resources.AddonCSIOpenStackCinder)
 	case s.Cluster.CloudProvider.Vsphere != nil:
 		if s.Cluster.CloudProvider.CSIConfig == "" {
