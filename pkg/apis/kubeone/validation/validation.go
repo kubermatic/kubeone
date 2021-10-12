@@ -252,8 +252,14 @@ func ValidateClusterNetworkConfig(c kubeone.ClusterNetworkConfig, fldPath *field
 			allErrs = append(allErrs, field.Invalid(fldPath.Child("serviceSubnet"), c.ServiceSubnet, ".clusterNetwork.serviceSubnet must be a valid CIDR string"))
 		}
 	}
+
 	if c.CNI != nil {
 		allErrs = append(allErrs, ValidateCNI(c.CNI, fldPath.Child("cni"))...)
+
+		// validated cilium kube-proxy replacement
+		if c.CNI.Cilium != nil && c.CNI.Cilium.KubeProxyReplacement != kubeone.KubeProxyReplacementDisabled && (c.KubeProxy == nil || !c.KubeProxy.SkipInstallation) {
+			allErrs = append(allErrs, field.Invalid(fldPath.Child("cni"), c.CNI.Cilium.KubeProxyReplacement, ".cilium.kubeProxyReplacement cannot be set with kube-proxy enabled"))
+		}
 	}
 	if c.KubeProxy != nil {
 		allErrs = append(allErrs, ValidateKubeProxy(c.KubeProxy, fldPath.Child("kubeProxy"))...)
@@ -292,6 +298,12 @@ func ValidateCNI(c *kubeone.CNI, fldPath *field.Path) field.ErrorList {
 			allErrs = append(allErrs,
 				field.Invalid(fldPath.Child("canal").Child("mtu"), c.Canal.MTU, "invalid value"))
 		}
+	}
+	if c.Cilium != nil {
+		if cniFound {
+			allErrs = append(allErrs, field.Forbidden(fldPath.Child("cilium"), "only one cni plugin can be used at the same time"))
+		}
+		cniFound = true
 	}
 	if c.WeaveNet != nil {
 		if cniFound {

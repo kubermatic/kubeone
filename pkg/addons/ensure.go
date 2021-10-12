@@ -45,6 +45,7 @@ var (
 		resources.AddonCCMPacket:          "",
 		resources.AddonCCMVsphere:         "",
 		resources.AddonCNICanal:           "",
+		resources.AddonCNICilium:          "",
 		resources.AddonCNIWeavenet:        "",
 		resources.AddonCSIHetnzer:         "",
 		resources.AddonCSIOpenStackCinder: "",

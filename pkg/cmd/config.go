@@ -513,6 +513,8 @@ clusterNetwork:
   nodePortRange: "{{ .NodePortRange }}"
   # kube-proxy configurations
   kubeProxy:
+    # skipInstallation will skip the installation of kube-proxy
+    # skipInstallation: true
     # if this set, kube-proxy mode will be set to ipvs
     ipvs:
       # different schedulers can be configured:
@@ -536,6 +538,7 @@ clusterNetwork:
     # Supported CNI plugins:
     # * canal
     # * weave-net
+    # * cilium
     # * external - The CNI plugin can be installed as an addon or manually
     canal:
       # MTU represents the maximum transmission unit.
@@ -546,6 +549,12 @@ clusterNetwork:
       # * OpenStack - 1400 (OpenStack specific 1450 bytes - 50 VXLAN bytes)
       # * Default - 1450
       mtu: 1450
+    # cilium:
+    #   # enableHubble to deploy Hubble relay and UI
+    #   enableHubble: true
+    #   # kubeProxyReplacement defines weather cilium relies on underlying Kernel support to replace kube-proxy functionality by eBPF (strict),
+    #   # or disables a subset of those features so cilium does not bail out if the kernel support is missing (disabled).
+    #   kubeProxyReplacement: "disabled"
     # weaveNet:
     #   # When true is set, secret will be automatically generated and
     #   # referenced in appropriate manifests. Currently only weave-net

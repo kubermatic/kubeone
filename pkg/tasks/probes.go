@@ -24,6 +24,7 @@ import (
 	"github.com/Masterminds/semver/v3"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
+	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/clusterstatus/apiserverstatus"
@@ -32,6 +33,7 @@ import (
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
 
+	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
@@ -46,9 +48,25 @@ const (
 	kubeletInitializedCMD = `test -f /etc/kubernetes/kubelet.conf`
 )
 
+var KubeProxyObjectKey = dynclient.ObjectKey{
+	Namespace: "kube-system",
+	Name:      "kube-proxy",
+}
+
 func safeguard(s *state.State) error {
 	if !s.LiveCluster.IsProvisioned() {
 		return nil
+	}
+
+	if s.Cluster.ClusterNetwork.KubeProxy != nil && s.Cluster.ClusterNetwork.KubeProxy.SkipInstallation {
+		var kubeProxyDs appsv1.DaemonSet
+		if err := s.DynamicClient.Get(s.Context, KubeProxyObjectKey, &kubeProxyDs); err != nil {
+			if !k8serrors.IsNotFound(err) {
+				return err
+			}
+		} else {
+			return errors.New(".clusterNetwork.kubeProxy.skipInstallation is enabled, but kube-proxy was already installed and requires manual deletion")
+		}
 	}
 
 	var nodes corev1.NodeList

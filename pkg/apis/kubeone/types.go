@@ -241,6 +241,10 @@ type ClusterNetworkConfig struct {
 
 // KubeProxyConfig defines configured kube-proxy mode, default is iptables mode
 type KubeProxyConfig struct {
+	// SkipInstallation will skip the installation of kube-proxy
+	// default value is false
+	SkipInstallation bool `json:"skipInstallation"`
+
 	// IPVS config
 	IPVS *IPVSConfig `json:"ipvs"`
 
@@ -288,6 +292,8 @@ type IPTables struct{}
 type CNI struct {
 	// Canal
 	Canal *CanalSpec `json:"canal,omitempty"`
+	// Cilium
+	Cilium *CiliumSpec `json:"cilium,omitempty"`
 	// WeaveNet
 	WeaveNet *WeaveNetSpec `json:"weaveNet,omitempty"`
 	// External
@@ -299,6 +305,26 @@ type CanalSpec struct {
 	// MTU automatically detected based on the cloudProvider
 	// default value is 1450
 	MTU int `json:"mtu,omitempty"`
+}
+
+type KubeProxyReplacementType string
+
+const (
+	KubeProxyReplacementStrict   KubeProxyReplacementType = "strict"
+	KubeProxyReplacementDisabled KubeProxyReplacementType = "disabled"
+)
+
+// CiliumSpec defines the Cilium CNI plugin
+type CiliumSpec struct {
+	// KubeProxyReplacement defines weather cilium relies on underlying Kernel support
+	// to replace kube-proxy functionality by eBPF (strict), or disables a subset of those
+	// features so cilium does not bail out if the kernel support is missing (disabled).
+	// default is "disabled"
+	KubeProxyReplacement KubeProxyReplacementType `json:"kubeProxyReplacement"`
+
+	// EnableHubble to deploy Hubble relay and UI
+	// default value is false
+	EnableHubble bool `json:"enableHubble"`
 }
 
 // WeaveNetSpec defines the WeaveNet CNI plugin
