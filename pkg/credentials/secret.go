@@ -41,6 +41,10 @@ const (
 	VsphereSecretName = "vsphere-ccm-credentials" //nolint:gosec
 	// VsphereSecretNamespace is namespace of the vSphere credentials secret
 	VsphereSecretNamespace = "kube-system"
+	// CloudConfigSecretName is name of the secret which contains the cloud-config file
+	CloudConfigSecretName = "cloud-config" //nolint:gosec
+	// CloudConfigSecretNamespace is namespace of the cloud-config secret
+	CloudConfigSecretNamespace = "kube-system"
 )
 
 // Ensure creates/updates the credentials secret
@@ -64,6 +68,13 @@ func Ensure(s *state.State) error {
 	secret := credentialsSecret(creds)
 	if err := clientutil.CreateOrUpdate(context.Background(), s.DynamicClient, secret); err != nil {
 		return errors.Wrap(err, "failed to ensure credentials secret")
+	}
+
+	if s.Cluster.CloudProvider.CloudConfig != "" {
+		cloudCfgSecret := cloudConfigSecret(s.Cluster.CloudProvider.CloudConfig)
+		if err := clientutil.CreateOrUpdate(context.Background(), s.DynamicClient, cloudCfgSecret); err != nil {
+			return errors.Wrap(err, "failed to ensure cloud-config secret")
+		}
 	}
 
 	if s.Cluster.CloudProvider.Vsphere != nil {
@@ -129,5 +140,18 @@ func vsphereSecret(credentials map[string]string) *corev1.Secret {
 		},
 		Type:       corev1.SecretTypeOpaque,
 		StringData: vscreds,
+	}
+}
+
+func cloudConfigSecret(cloudConfig string) *corev1.Secret {
+	return &corev1.Secret{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      CloudConfigSecretName,
+			Namespace: CloudConfigSecretNamespace,
+		},
+		Type: corev1.SecretTypeOpaque,
+		StringData: map[string]string{
+			"cloud-config": cloudConfig,
+		},
 	}
 }

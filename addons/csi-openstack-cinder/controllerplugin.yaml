@@ -135,7 +135,7 @@ spec:
             - name: CSI_ENDPOINT
               value: unix://csi/csi.sock
             - name: CLOUD_CONFIG
-              value: /etc/config/cloud.conf
+              value: /etc/config/cloud-config
             - name: CLUSTER_NAME
               value: {{ .Config.Name }}
 {{ if .Config.CABundle }}

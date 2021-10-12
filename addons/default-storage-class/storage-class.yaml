@@ -1,4 +1,19 @@
 {{ if eq .Config.CloudProvider.CloudProviderName "azure" }}
+{{ if .Config.CloudProvider.External }}
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  annotations:
+    storageclass.beta.kubernetes.io/is-default-class: "true"
+  labels:
+    kubernetes.io/cluster-service: "true"
+  name: azurefile-csi
+provisioner: file.csi.azure.com
+parameters:
+  skuName: Standard_LRS
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+{{ else }}
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
@@ -11,6 +26,7 @@ provisioner: kubernetes.io/azure-disk
 parameters:
   kind: Managed
   storageaccounttype: Standard_LRS
+{{ end }}
 {{ end }}
 
 {{ if eq .Config.CloudProvider.CloudProviderName "aws" }}

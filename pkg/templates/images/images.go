@@ -44,39 +44,64 @@ func (res Resource) namedReference(kubernetesVersionGetter func() string) refere
 
 const (
 	// default 0 index has no meaning
-	AzureCCM Resource = iota + 1
-	AzureCNM
-	CalicoCNI
+	// Canal CNI
+	CalicoCNI Resource = iota + 1
 	CalicoController
 	CalicoNode
+	Flannel
+
+	// Cilium CNI
 	Cilium
 	CiliumOperator
+	HubbleRelay
+	HubbleUI
+	HubbleUIBackend
+	HubbleProxy
+
+	// WeaveNet CNI
+	WeaveNetCNIKube
+	WeaveNetCNINPC
+
+	// Core components (MC, metrics-server...)
+	DNSNodeCache
+	MachineController
+	MetricsServer
+
+	// Addons
 	ClusterAutoscaler
+
+	// General CSI images (to be removed)
 	CSIAttacher
 	CSINodeDriverRegistar
 	CSIProvisioner
 	CSISnapshotter
 	CSIResizer
 	CSILivenessProbe
+
+	// Azure CCM
+	AzureCCM
+	AzureCNM
+
+	// AzureFile CSI
+	AzureFileCSI
+	AzureFileCSIAttacher
+	AzureFileCSILivenessProbe
+	AzureFileCSINodeDriverRegistar
+	AzureFileCSIProvisioner
+	AzureFileCSIResizer
+	AzureFileCSISnapshotter
+	AzureFileCSISnapshotterController
+
+	// CCMs and CSI plugins
 	DigitaloceanCCM
-	DNSNodeCache
-	Flannel
 	HetznerCCM
 	HetznerCSI
-	HubbleUI
-	HubbleUIBackend
-	HubbleRelay
-	HubbleProxy
-	MachineController
-	MetricsServer
 	OpenstackCCM
 	OpenstackCSI
 	PacketCCM
 	VsphereCCM
 	VsphereCSIDriver
 	VsphereCSISyncer
-	WeaveNetCNIKube
-	WeaveNetCNINPC
 )
 
 func FindResource(name string) (Resource, error) {
@@ -127,6 +152,16 @@ func optionalResources() map[Resource]map[string]string {
 			"1.21.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.0.5",
 			">= 1.22.0": "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.1.1",
 		},
+
+		// AzureFile CSI driver
+		AzureFileCSI:                      {"*": "mcr.microsoft.com/k8s/csi/azurefile-csi:v1.6.0"},
+		AzureFileCSIAttacher:              {"*": "k8s.gcr.io/sig-storage/csi-attacher:v3.3.0"},
+		AzureFileCSILivenessProbe:         {"*": "k8s.gcr.io/sig-storage/livenessprobe:v2.4.0"},
+		AzureFileCSINodeDriverRegistar:    {"*": "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.3.0"},
+		AzureFileCSIProvisioner:           {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-provisioner:v2.2.2"},
+		AzureFileCSIResizer:               {"*": "k8s.gcr.io/sig-storage/csi-resizer:v1.3.0"},
+		AzureFileCSISnapshotter:           {"*": "k8s.gcr.io/sig-storage/csi-snapshotter:v3.0.3"},
+		AzureFileCSISnapshotterController: {"*": "mcr.microsoft.com/oss/kubernetes-csi/snapshot-controller:v3.0.3"},
 
 		// DigitalOcean CCM
 		DigitaloceanCCM: {"*": "docker.io/digitalocean/digitalocean-cloud-controller-manager:v0.1.33"},

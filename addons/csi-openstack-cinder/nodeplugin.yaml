@@ -81,7 +81,7 @@ spec:
             - name: CSI_ENDPOINT
               value: unix://csi/csi.sock
             - name: CLOUD_CONFIG
-              value: /etc/config/cloud.conf
+              value: /etc/config/cloud-config
 {{ if .Config.CABundle }}
 {{ caBundleEnvVar | indent 12 }}
 {{ end }}
