@@ -5,15 +5,6 @@ metadata:
   name: cloud-controller-manager
   namespace: kube-system
 ---
-kind: Secret
-apiVersion: v1
-metadata:
-  name: cloud-config
-  namespace: kube-system
-data:
-  cloud.conf: |
-{{ .Config.CloudProvider.CloudConfig | b64enc | indent 4 }}
----
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -197,7 +188,7 @@ spec:
           command:
             - /bin/openstack-cloud-controller-manager
             - --v=1
-            - --cloud-config=/etc/config/cloud.conf
+            - --cloud-config=/etc/config/cloud-config
             - --cloud-provider=openstack
             - --use-service-account-credentials=true
             - --bind-address=127.0.0.1

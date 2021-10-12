@@ -8,18 +8,6 @@ metadata:
     component: cloud-controller-manager
   namespace: kube-system
 ---
-apiVersion: v1
-kind: Secret
-metadata:
-  name: cloud-config
-  labels:
-    vsphere-cpi-infra: config
-    component: cloud-controller-manager
-  namespace: kube-system
-data:
-  vsphere.conf: |
-{{ .Config.CloudProvider.CloudConfig | b64enc | indent 4 }}
----
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -198,7 +186,7 @@ spec:
           args:
             - --v=2
             - --cloud-provider=vsphere
-            - --cloud-config=/etc/cloud/vsphere.conf
+            - --cloud-config=/etc/cloud/cloud-config
 {{ if .Config.CABundle }}
           env:
 {{ caBundleEnvVar | indent 12 }}

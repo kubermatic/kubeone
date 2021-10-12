@@ -47,6 +47,7 @@ var (
 		resources.AddonCNICanal:           "",
 		resources.AddonCNICilium:          "",
 		resources.AddonCNIWeavenet:        "",
+		resources.AddonCSIAzureFile:       "",
 		resources.AddonCSIHetnzer:         "",
 		resources.AddonCSIOpenStackCinder: "",
 		resources.AddonCSIVsphere:         "",
