@@ -43,7 +43,7 @@ func _() {
 	_ = x[WeaveNetCNINPC-33]
 }
 
-const _Resource_name = "AzureCCMAzureCNMCalicoCNICalicoControllerCalicoNodeCiliumCiliumOperatorClusterAutoscalerCSIAttacherCSINodeDriverRegistarCSIProvisionerCSISnapshotterCSIResizerCSILivenessProbeDigitaloceanCCMDNSNodeCacheFlannelHetznerCCMHetznerCSIHubbleUiHubbleUiBackendHubbleRelayHubbleProxyMachineControllerMetricsServerOpenstackCCMOpenstackCSIPacketCCMVsphereCCMVsphereCSIDriverVsphereCSISyncerWeaveNetCNIKubeWeaveNetCNINPC"
+const _Resource_name = "AzureCCMAzureCNMCalicoCNICalicoControllerCalicoNodeCiliumCiliumOperatorClusterAutoscalerCSIAttacherCSINodeDriverRegistarCSIProvisionerCSISnapshotterCSIResizerCSILivenessProbeDigitaloceanCCMDNSNodeCacheFlannelHetznerCCMHetznerCSIHubbleUIHubbleUIBackendHubbleRelayHubbleProxyMachineControllerMetricsServerOpenstackCCMOpenstackCSIPacketCCMVsphereCCMVsphereCSIDriverVsphereCSISyncerWeaveNetCNIKubeWeaveNetCNINPC"
 
 var _Resource_index = [...]uint16{0, 8, 16, 25, 41, 51, 57, 71, 88, 99, 120, 134, 148, 158, 174, 189, 201, 208, 218, 228, 236, 251, 262, 273, 290, 303, 315, 327, 336, 346, 362, 378, 393, 407}
 
