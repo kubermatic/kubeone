@@ -89,7 +89,7 @@ spec:
             - "--metrics-address=0.0.0.0:29615"
             - "--user-agent-suffix=OSS-kubectl"
             - "--cloud-config-secret-name=cloud-config"
-            - "-cloud-config-secret-namespace=kube-system"
+            - "--cloud-config-secret-namespace=kube-system"
           ports:
             - containerPort: 29613
               name: healthz
