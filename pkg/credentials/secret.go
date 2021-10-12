@@ -42,7 +42,7 @@ const (
 	// VsphereSecretNamespace is namespace of the vSphere credentials secret
 	VsphereSecretNamespace = "kube-system"
 	// CloudConfigSecretName is name of the secret which contains the cloud-config file
-	CloudConfigSecretName = "cloud-config"
+	CloudConfigSecretName = "cloud-config" //nolint:gosec
 	// CloudConfigSecretNamespace is namespace of the cloud-config secret
 	CloudConfigSecretNamespace = "kube-system"
 )
