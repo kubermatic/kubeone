@@ -44,7 +44,7 @@ var (
 			exit 0;
 		fi
 
-		sudo kubeadm {{ .VERBOSE }} init {{ if ne .SKIP_PHASE "" }}--skip-phases={{ .SKIP_PHASE }} {{ end}}--config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+		sudo kubeadm {{ .VERBOSE }} init {{ if .SKIP_PHASE }}--skip-phases={{ .SKIP_PHASE }} {{ end}}--config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
 	`)
 
 	kubeadmResetScriptTemplate = heredoc.Doc(`

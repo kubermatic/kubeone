@@ -25,7 +25,7 @@ import (
 	"k8c.io/kubeone/pkg/state"
 )
 
-const SkipKubeProxy = "addon/kube-proxy"
+const kubeadmPhaseKubeProxy = "addon/kube-proxy"
 
 func joinControlplaneNode(s *state.State) error {
 	s.Logger.Infoln("Joining controlplane node...")
@@ -66,7 +66,7 @@ func initKubernetesLeader(s *state.State) error {
 	return s.RunTaskOnLeader(func(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 		var skipPhase string
 		if s.Cluster.ClusterNetwork.KubeProxy != nil && s.Cluster.ClusterNetwork.KubeProxy.SkipInstallation {
-			skipPhase = SkipKubeProxy
+			skipPhase = kubeadmPhaseKubeProxy
 		}
 
 		s.Logger.Infoln("Running kubeadm...")

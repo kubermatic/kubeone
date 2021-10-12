@@ -88,9 +88,6 @@ const (
 	OperatingSystemNameAmazon  OperatingSystemName = "amzn"
 	OperatingSystemNameFlatcar OperatingSystemName = "flatcar"
 	OperatingSystemNameUnknown OperatingSystemName = ""
-
-	Strict   KubeProxyReplacement = "strict"
-	Disabled KubeProxyReplacement = "disabled"
 )
 
 // HostConfig describes a single control plane node.
@@ -244,7 +241,6 @@ type ClusterNetworkConfig struct {
 
 // KubeProxyConfig defines configured kube-proxy mode, default is iptables mode
 type KubeProxyConfig struct {
-
 	// SkipInstallation will skip the installation of kube-proxy
 	// default value is false
 	SkipInstallation bool `json:"skipInstallation"`
@@ -311,19 +307,25 @@ type CanalSpec struct {
 	MTU int `json:"mtu,omitempty"`
 }
 
+type KubeProxyReplacementType string
+
+const (
+	KubeProxyReplacementStrict   KubeProxyReplacementType = "strict"
+	KubeProxyReplacementDisabled KubeProxyReplacementType = "disabled"
+)
+
 // CiliumSpec defines the Cilium CNI plugin
 type CiliumSpec struct {
-	// KubeProxyReplacement defines weather cilium relies on underlying Kernel support to replace kube-proxy functionality by eBPF (strict),
-	// or disables a subset of those features so cilium does not bail out if the kernel support is missing (disabled).
-	// default ist "disabled"
-	KubeProxyReplacement string `json:"kubeProxyReplacement"`
+	// KubeProxyReplacement defines weather cilium relies on underlying Kernel support
+	// to replace kube-proxy functionality by eBPF (strict), or disables a subset of those
+	// features so cilium does not bail out if the kernel support is missing (disabled).
+	// default is "disabled"
+	KubeProxyReplacement KubeProxyReplacementType `json:"kubeProxyReplacement"`
 
 	// EnableHubble to deploy Hubble relay and UI
 	// default value is false
 	EnableHubble bool `json:"enableHubble"`
 }
-
-type KubeProxyReplacement string
 
 // WeaveNetSpec defines the WeaveNet CNI plugin
 type WeaveNetSpec struct {

@@ -812,7 +812,7 @@ func Convert_kubeone_CanalSpec_To_v1beta1_CanalSpec(in *kubeone.CanalSpec, out *
 }
 
 func autoConvert_v1beta1_CiliumSpec_To_kubeone_CiliumSpec(in *CiliumSpec, out *kubeone.CiliumSpec, s conversion.Scope) error {
-	out.KubeProxyReplacement = kubeone.KubeProxyReplacement(in.KubeProxyReplacement)
+	out.KubeProxyReplacement = kubeone.KubeProxyReplacementType(in.KubeProxyReplacement)
 	out.EnableHubble = in.EnableHubble
 	return nil
 }
@@ -823,7 +823,7 @@ func Convert_v1beta1_CiliumSpec_To_kubeone_CiliumSpec(in *CiliumSpec, out *kubeo
 }
 
 func autoConvert_kubeone_CiliumSpec_To_v1beta1_CiliumSpec(in *kubeone.CiliumSpec, out *CiliumSpec, s conversion.Scope) error {
-	out.KubeProxyReplacement = string(in.KubeProxyReplacement)
+	out.KubeProxyReplacement = KubeProxyReplacementType(in.KubeProxyReplacement)
 	out.EnableHubble = in.EnableHubble
 	return nil
 }
