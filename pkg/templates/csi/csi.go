@@ -38,7 +38,15 @@ func Ensure(s *state.State) error {
 		if s.Cluster.CloudProvider.CloudConfig == "" {
 			return errors.New("cloudConfig not defined")
 		}
+
+		// Deploy AzureDisk CSI driver
+		if err = addons.EnsureAddonByName(s, resources.AddonCSIAzureDisk); err != nil {
+			return errors.Wrap(err, "failed to deploy azuredisk CSI driver")
+		}
+
+		// Deploy AzureFile CSI driver
 		err = addons.EnsureAddonByName(s, resources.AddonCSIAzureFile)
+		return errors.Wrap(err, "failed to deploy azurefile CSI driver")
 	case s.Cluster.CloudProvider.Hetzner != nil:
 		err = addons.EnsureAddonByName(s, resources.AddonCSIHetnzer)
 	case s.Cluster.CloudProvider.Openstack != nil:
