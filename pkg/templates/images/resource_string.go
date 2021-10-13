@@ -40,20 +40,28 @@ func _() {
 	_ = x[AzureFileCSIResizer-30]
 	_ = x[AzureFileCSISnapshotter-31]
 	_ = x[AzureFileCSISnapshotterController-32]
-	_ = x[DigitaloceanCCM-33]
-	_ = x[HetznerCCM-34]
-	_ = x[HetznerCSI-35]
-	_ = x[OpenstackCCM-36]
-	_ = x[OpenstackCSI-37]
-	_ = x[PacketCCM-38]
-	_ = x[VsphereCCM-39]
-	_ = x[VsphereCSIDriver-40]
-	_ = x[VsphereCSISyncer-41]
+	_ = x[AzureDiskCSI-33]
+	_ = x[AzureDiskCSIAttacher-34]
+	_ = x[AzureDiskCSILivenessProbe-35]
+	_ = x[AzureDiskCSINodeDriverRegistar-36]
+	_ = x[AzureDiskCSIProvisioner-37]
+	_ = x[AzureDiskCSIResizer-38]
+	_ = x[AzureDiskCSISnapshotter-39]
+	_ = x[AzureDiskCSISnapshotterController-40]
+	_ = x[DigitaloceanCCM-41]
+	_ = x[HetznerCCM-42]
+	_ = x[HetznerCSI-43]
+	_ = x[OpenstackCCM-44]
+	_ = x[OpenstackCSI-45]
+	_ = x[PacketCCM-46]
+	_ = x[VsphereCCM-47]
+	_ = x[VsphereCSIDriver-48]
+	_ = x[VsphereCSISyncer-49]
 }
 
-const _Resource_name = "CalicoCNICalicoControllerCalicoNodeFlannelCiliumCiliumOperatorHubbleRelayHubbleUIHubbleUIBackendHubbleProxyWeaveNetCNIKubeWeaveNetCNINPCDNSNodeCacheMachineControllerMetricsServerClusterAutoscalerCSIAttacherCSINodeDriverRegistarCSIProvisionerCSISnapshotterCSIResizerCSILivenessProbeAzureCCMAzureCNMAzureFileCSIAzureFileCSIAttacherAzureFileCSILivenessProbeAzureFileCSINodeDriverRegistarAzureFileCSIProvisionerAzureFileCSIResizerAzureFileCSISnapshotterAzureFileCSISnapshotterControllerDigitaloceanCCMHetznerCCMHetznerCSIOpenstackCCMOpenstackCSIPacketCCMVsphereCCMVsphereCSIDriverVsphereCSISyncer"
+const _Resource_name = "CalicoCNICalicoControllerCalicoNodeFlannelCiliumCiliumOperatorHubbleRelayHubbleUIHubbleUIBackendHubbleProxyWeaveNetCNIKubeWeaveNetCNINPCDNSNodeCacheMachineControllerMetricsServerClusterAutoscalerCSIAttacherCSINodeDriverRegistarCSIProvisionerCSISnapshotterCSIResizerCSILivenessProbeAzureCCMAzureCNMAzureFileCSIAzureFileCSIAttacherAzureFileCSILivenessProbeAzureFileCSINodeDriverRegistarAzureFileCSIProvisionerAzureFileCSIResizerAzureFileCSISnapshotterAzureFileCSISnapshotterControllerAzureDiskCSIAzureDiskCSIAttacherAzureDiskCSILivenessProbeAzureDiskCSINodeDriverRegistarAzureDiskCSIProvisionerAzureDiskCSIResizerAzureDiskCSISnapshotterAzureDiskCSISnapshotterControllerDigitaloceanCCMHetznerCCMHetznerCSIOpenstackCCMOpenstackCSIPacketCCMVsphereCCMVsphereCSIDriverVsphereCSISyncer"
 
-var _Resource_index = [...]uint16{0, 9, 25, 35, 42, 48, 62, 73, 81, 96, 107, 122, 136, 148, 165, 178, 195, 206, 227, 241, 255, 265, 281, 289, 297, 309, 329, 354, 384, 407, 426, 449, 482, 497, 507, 517, 529, 541, 550, 560, 576, 592}
+var _Resource_index = [...]uint16{0, 9, 25, 35, 42, 48, 62, 73, 81, 96, 107, 122, 136, 148, 165, 178, 195, 206, 227, 241, 255, 265, 281, 289, 297, 309, 329, 354, 384, 407, 426, 449, 482, 494, 514, 539, 569, 592, 611, 634, 667, 682, 692, 702, 714, 726, 735, 745, 761, 777}
 
 func (i Resource) String() string {
 	i -= 1
