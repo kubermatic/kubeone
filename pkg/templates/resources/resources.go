@@ -24,6 +24,7 @@ import (
 
 // Names of the internal addons
 const (
+	AddonCCMAws             = "ccm-aws"
 	AddonCCMAzure           = "ccm-azure"
 	AddonCCMDigitalOcean    = "ccm-digitalocean"
 	AddonCCMHetzner         = "ccm-hetzner"

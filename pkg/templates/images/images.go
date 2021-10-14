@@ -78,6 +78,8 @@ const (
 	CSIResizer
 	CSILivenessProbe
 
+	AwsCCM
+
 	// Azure CCM
 	AzureCCM
 	AzureCNM
@@ -147,6 +149,13 @@ func optionalResources() map[Resource]map[string]string {
 		CSISnapshotter: {
 			">= 1.19.0, < 1.20.0": "k8s.gcr.io/sig-storage/csi-snapshotter:v3.0.3",
 			">= 1.20.0":           "k8s.gcr.io/sig-storage/csi-snapshotter:v4.2.0",
+		},
+
+		AwsCCM: {
+			"1.19.x": "us.gcr.io/k8s-artifacts-prod/provider-aws/cloud-controller-manager:v1.19.0-alpha.1",
+			"1.20.x": "us.gcr.io/k8s-artifacts-prod/provider-aws/cloud-controller-manager:v1.20.0-alpha.0",
+			"1.21.x": "us.gcr.io/k8s-artifacts-prod/provider-aws/cloud-controller-manager:v1.21.0-alpha.0",
+			"1.22.0": "us.gcr.io/k8s-artifacts-prod/provider-aws/cloud-controller-manager:v1.22.0-alpha.0",
 		},
 
 		// Azure CCM
