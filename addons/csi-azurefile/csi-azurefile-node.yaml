@@ -62,6 +62,14 @@ spec:
             preStop:
               exec:
                 command: ["/bin/sh", "-c", "rm -rf /registration/file.csi.azure.com-reg.sock /csi/csi.sock"]
+          livenessProbe:
+            exec:
+              command:
+                - /csi-node-driver-registrar
+                - --kubelet-registration-path=$(DRIVER_REG_SOCK_PATH)
+                - --mode=kubelet-registration-probe
+            initialDelaySeconds: 30
+            timeoutSeconds: 15
           env:
             - name: ADDRESS
               value: /csi/csi.sock
@@ -87,7 +95,6 @@ spec:
             - "--endpoint=$(CSI_ENDPOINT)"
             - "--nodeid=$(KUBE_NODE_NAME)"
             - "--metrics-address=0.0.0.0:29615"
-            - "--user-agent-suffix=OSS-kubectl"
             - "--cloud-config-secret-name=cloud-config"
             - "--cloud-config-secret-namespace=kube-system"
           ports:
@@ -118,9 +125,6 @@ spec:
             - mountPath: /var/lib/kubelet/
               mountPropagation: Bidirectional
               name: mountpoint-dir
-            - mountPath: /var/lib/waagent/ManagedIdentity-Settings
-              readOnly: true
-              name: msi
             - mountPath: /dev
               name: device-dir
           resources:
@@ -144,9 +148,7 @@ spec:
             type: DirectoryOrCreate
           name: registration-dir
         - hostPath:
-            path: /var/lib/waagent/ManagedIdentity-Settings
-          name: msi
-        - hostPath:
             path: /dev
             type: Directory
           name: device-dir
+---
