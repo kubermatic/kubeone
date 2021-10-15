@@ -17,7 +17,7 @@ spec:
       hostNetwork: true  # only required for MSI enabled cluster
       serviceAccountName: csi-azurefile-controller-sa
       nodeSelector:
-        node-role.kubernetes.io/master: ""
+        kubernetes.io/os: linux  # add "kubernetes.io/role: master" to run controller on master node
       priorityClassName: system-cluster-critical
       tolerations:
         - key: "node-role.kubernetes.io/master"
@@ -155,9 +155,6 @@ spec:
           volumeMounts:
             - mountPath: /csi
               name: socket-dir
-            - mountPath: /var/lib/waagent/ManagedIdentity-Settings
-              readOnly: true
-              name: msi
           resources:
             limits:
               cpu: 200m
@@ -168,6 +165,3 @@ spec:
       volumes:
         - name: socket-dir
           emptyDir: {}
-        - name: msi
-          hostPath:
-            path: /var/lib/waagent/ManagedIdentity-Settings
