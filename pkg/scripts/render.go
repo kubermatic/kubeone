@@ -29,7 +29,8 @@ var (
 	containerRuntimeTemplates = map[string]string{
 		"containerd-config": heredoc.Doc(`
 			cat <<EOF | sudo tee /etc/containerd/config.toml
-			{{ containerdCfg .INSECURE_REGISTRY -}}
+
+			{{ containerdCfg .INSECURE_REGISTRY .REGISTRY_CONFIG -}}
 			EOF
 
 			cat <<EOF | sudo tee /etc/crictl.yaml

@@ -153,10 +153,18 @@ type containerdCRIRegistry struct {
 }
 
 type containerdMirror struct {
-	Endpoint []string `toml:"endpoint"`
+	Endpoint []string            `toml:"endpoint"`
+	Auth     containerMirrorAuth `toml:"auth"`
 }
 
-func containerdCfg(insecureRegistry string) (string, error) {
+type containerMirrorAuth struct {
+	Username      string `toml:"username,omitempty"`
+	Password      string `toml:"password,omitempty"`
+	Auth          string `toml:"auth,omitempty"`
+	Identitytoken string `toml:"identitytoken,omitempty"`
+}
+
+func containerdCfg(insecureRegistry string, registryConfigs []map[string]interface{}) (string, error) {
 	criPlugin := containerdCRIPlugin{
 		Containerd: &containerdCRISettings{
 			Runtimes: map[string]containerdCRIRuntime{
@@ -180,6 +188,61 @@ func containerdCfg(insecureRegistry string) (string, error) {
 	if insecureRegistry != "" {
 		criPlugin.Registry.Mirrors[insecureRegistry] = containerdMirror{
 			Endpoint: []string{fmt.Sprintf("http://%s", insecureRegistry)},
+		}
+	}
+
+	if len(registryConfigs) > 0 {
+		for _, registryConfig := range registryConfigs {
+			registryName, ok := registryConfig["name"].(string)
+			if !ok {
+				fmt.Printf("Name of the Registry is not a string\n")
+				continue
+			}
+
+			registryURL, ok := registryConfig["url"].([]string)
+			if !ok {
+				fmt.Printf("URLs for this Registry is not a list of strings\n")
+				continue
+			}
+
+			registryUsername, ok := registryConfig["username"].(string)
+			if !ok {
+				fmt.Printf("Username for this Registry is not a string\n")
+				continue
+			}
+
+			registryPassword, ok := registryConfig["password"].(string)
+			if !ok {
+				fmt.Printf("Password for this Registry is not a string\n")
+				continue
+			}
+
+			registryAuth, ok := registryConfig["auth"].(string)
+			if !ok {
+				fmt.Printf("Auth for this Registry is not a string\n")
+				continue
+			}
+
+			registryIdentitytoken, ok := registryConfig["identitytoken"].(string)
+			if !ok {
+				fmt.Printf("Identitytoken for this Registry is not a string\n")
+				continue
+			}
+
+			urls := make([]string, len(registryURL))
+			for idx, url := range registryURL {
+				urls[idx] = fmt.Sprintf("http://%s", url)
+			}
+
+			criPlugin.Registry.Mirrors[registryName] = containerdMirror{
+				Endpoint: urls,
+				Auth: containerMirrorAuth{
+					Username:      registryUsername,
+					Password:      registryPassword,
+					Auth:          registryAuth,
+					Identitytoken: registryIdentitytoken,
+				},
+			}
 		}
 	}
 

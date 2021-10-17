@@ -12,3 +12,5 @@ terraform.tfvars
 !*kubeconfig/
 /vendor
 download-gocache
+.vscode/**/*
+!.vscode/launch.json

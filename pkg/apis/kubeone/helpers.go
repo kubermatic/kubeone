@@ -253,6 +253,27 @@ func (r *RegistryConfiguration) InsecureRegistryAddress() string {
 	return insecureRegistry
 }
 
+// ContainerRegistryConfig returns a array of dictionalry that should be configured
+// as registry mirror configuration in the container runtime
+func (r *RegistryConfiguration) ContainerRegistryConfig() []map[string]interface{} {
+	if r == nil {
+		return make([]map[string]interface{}, 0)
+	}
+
+	containerRegistryConfig := make([]map[string]interface{}, len(r.RegistryConfig))
+	for idx, reg := range r.RegistryConfig {
+		containerRegistryConfig[idx] = map[string]interface{}{
+			"name":          reg.Name,
+			"url":           reg.URL,
+			"username":      reg.Username,
+			"password":      reg.Password,
+			"auth":          reg.Auth,
+			"identitytoken": reg.Identitytoken,
+		}
+	}
+	return containerRegistryConfig
+}
+
 func (ads *Addons) Enabled() bool {
 	return ads != nil && ads.Enable
 }

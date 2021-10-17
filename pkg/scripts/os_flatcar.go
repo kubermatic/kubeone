@@ -181,6 +181,7 @@ func KubeadmFlatcar(cluster *kubeone.KubeOneCluster) (string, error) {
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
 		"CRITOOLS_VERSION":       defaultCriToolsVersion,
 		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
+		"REGISTRY_CONFIG":        cluster.RegistryConfiguration.ContainerRegistryConfig(),
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 	})

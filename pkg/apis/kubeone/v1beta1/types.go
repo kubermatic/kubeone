@@ -511,6 +511,18 @@ type RegistryConfiguration struct {
 	// in OverwriteRegistry as an insecure registry. This is also propagated
 	// to the worker nodes managed by machine-controller and/or KubeOne.
 	InsecureRegistry bool `json:"insecureRegistry,omitempty"`
+	// RegistryConfig configures ContainerD Registries. This is
+	// used for configuring image pull secrets for a registry
+	RegistryConfig []ContainerRegistryConfig `json:"registryConfig,omitempty"`
+}
+
+type ContainerRegistryConfig struct {
+	Name          string   `json:"name,omitempty"`
+	URL           []string `json:"url,omitempty"`
+	Username      string   `json:"username,omitempty"`
+	Password      string   `json:"password,omitempty"`
+	Auth          string   `json:"auth,omitempty"`
+	Identitytoken string   `json:"identitytoken,omitempty"`
 }
 
 // PodNodeSelector feature flag

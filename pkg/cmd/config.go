@@ -802,6 +802,17 @@ registryConfiguration:
   # in OverwriteRegistry as an insecure registry. This is also propagated
   # to the worker nodes managed by machine-controller and/or KubeOne.
   insecureRegistry: false
+  # registryConfig configures ContainerD Registries. This is
+  # used for configuring image pull secrets for a given registry
+  # registryConfig:
+  #   - name: "docker.io"
+  #     url:
+  #       - "https://registry-1.docker.io"
+  #       - "https://registry-2.docker.io"
+  #     username: "username"
+  #     password: "password"
+  #     auth: "foo"
+  #     identitytoken: "bar"
 
 # Addons are Kubernetes manifests to be deployed after provisioning the cluster
 addons:
