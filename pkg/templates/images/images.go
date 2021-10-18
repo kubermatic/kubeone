@@ -187,7 +187,7 @@ func optionalResources() map[Resource]map[string]string {
 		DigitaloceanCCM: {"*": "docker.io/digitalocean/digitalocean-cloud-controller-manager:v0.1.33"},
 
 		// Hetzner CCM
-		HetznerCCM: {"*": "docker.io/hetznercloud/hcloud-cloud-controller-manager:v1.9.1"},
+		HetznerCCM: {"*": "docker.io/hetznercloud/hcloud-cloud-controller-manager:v1.12.0"},
 
 		// Hetzner CSI
 		HetznerCSI: {"*": "docker.io/hetznercloud/hcloud-csi-driver:1.6.0"},
