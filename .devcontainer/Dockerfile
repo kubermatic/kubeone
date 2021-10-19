@@ -2,4 +2,4 @@
 FROM qmcgaw/godevcontainer
 
 RUN apk add make curl bash
-RUN export GO111MODULE=on
+ENV GO111MODULE=on

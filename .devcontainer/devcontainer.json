@@ -1,7 +1,7 @@
 // For format details, see https://aka.ms/vscode-remote/devcontainer.json or this file's README at:
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.137.0/containers/go
 {
-	"name": "kubeone-devcontainer",
+	"name": "kubermatic-devcontainer",
 	"build": {
 		"dockerfile": "Dockerfile",
 	},
@@ -21,18 +21,12 @@
 		"go.vetOnSave": "package",
 		"go.formatTool": "goimports",
 		"go.useLanguageServer": true,
-		"go.gotoSymbol.includeImports": true,
-		"go.gotoSymbol.includeGoroot": true,
-		"codeQL.telemetry.enableTelemetry": false,
-		"codeQL.runningQueries.memory": 2048,
-		"codeQL.runningQueries.debug": true,
 		"git.autofetch": true,
 		"editor.renderFinalNewline": true,
 		"editor.codeLens": true,
 		"editor.insertSpaces": true,
 		"editor.formatOnSave": true,
 		"editor.formatOnPaste": true,
-		"editor.snippetSuggestions": "none",
 		"editor.codeActionsOnSave": {
 			"source.organizeImports": true,
 			"source.fixAll": true,
@@ -45,8 +39,6 @@
 		"golang.Go",
 		"ms-azuretools.vscode-docker",
 		// Linters, Formaters, Highlighters, ...
-		"davidanson.vscode-markdownlint",
-		"shardulm94.trailing-spaces",
 		"redhat.vscode-yaml",
 		// Working with the Repository
 		"github.vscode-pull-request-github",
