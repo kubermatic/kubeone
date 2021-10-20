@@ -324,7 +324,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 	return []runtime.Object{initConfig, joinConfig, clusterConfig, kubeletConfig, kubeproxyConfig}, nil
 }
 
-// NewConfig returns all required configs to init a cluster via a set of v1beta2 configs
+// NewConfigWorker returns all required configs to init a cluster via a set of v1beta2 configs
 func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, error) {
 	cluster := s.Cluster
 
