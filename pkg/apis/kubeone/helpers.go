@@ -148,7 +148,7 @@ func (p CloudProviderSpec) CloudProviderName() string {
 // CloudProviderInTree detects is there in-tree cloud provider implementation for specified provider.
 // List of in-tree provider can be found here: https://github.com/kubernetes/kubernetes/tree/master/pkg/cloudprovider
 func (p CloudProviderSpec) CloudProviderInTree() bool {
-	if p.Azure != nil || p.Openstack != nil || p.Vsphere != nil || p.AWS != nil {
+	if p.AWS != nil || p.Azure != nil || p.Openstack != nil || p.Vsphere != nil {
 		return !p.External
 	} else if p.GCE != nil {
 		return true

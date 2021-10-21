@@ -152,10 +152,10 @@ func optionalResources() map[Resource]map[string]string {
 		},
 
 		AwsCCM: {
-			"1.19.x": "us.gcr.io/k8s-artifacts-prod/provider-aws/cloud-controller-manager:v1.19.0-alpha.1",
-			"1.20.x": "us.gcr.io/k8s-artifacts-prod/provider-aws/cloud-controller-manager:v1.20.0-alpha.0",
-			"1.21.x": "us.gcr.io/k8s-artifacts-prod/provider-aws/cloud-controller-manager:v1.21.0-alpha.0",
-			"1.22.x": "us.gcr.io/k8s-artifacts-prod/provider-aws/cloud-controller-manager:v1.22.0-alpha.0",
+			"1.19.x":    "us.gcr.io/k8s-artifacts-prod/provider-aws/cloud-controller-manager:v1.19.0-alpha.1",
+			"1.20.x":    "us.gcr.io/k8s-artifacts-prod/provider-aws/cloud-controller-manager:v1.20.0-alpha.0",
+			"1.21.x":    "us.gcr.io/k8s-artifacts-prod/provider-aws/cloud-controller-manager:v1.21.0-alpha.0",
+			">= 1.22.0": "us.gcr.io/k8s-artifacts-prod/provider-aws/cloud-controller-manager:v1.22.0-alpha.0",
 		},
 
 		// Azure CCM

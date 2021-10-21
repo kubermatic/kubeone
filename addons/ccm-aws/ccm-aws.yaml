@@ -133,10 +133,11 @@ spec:
     spec:
       containers:
         - args:
-            - --v=2
+            - --cluster-name={{ .Config.Name }}
             - --cloud-provider=aws
             - --use-service-account-credentials=false
             - --configure-cloud-routes=false
+            - --v=2
           image: "{{ .InternalImages.Get "AwsCCM" }}"
           name: aws-cloud-controller-manager
           resources:

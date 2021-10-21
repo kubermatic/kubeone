@@ -38,6 +38,7 @@ var (
 	// embeddedAddons is a list of addons that are embedded in the KubeOne
 	// binary. Those addons are skipped when applying a user-provided addon with the same name.
 	embeddedAddons = map[string]string{
+		resources.AddonCCMAws:             "",
 		resources.AddonCCMAzure:           "",
 		resources.AddonCCMDigitalOcean:    "",
 		resources.AddonCCMHetzner:         "",
