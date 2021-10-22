@@ -44,6 +44,8 @@ func Ensure(s *state.State) error {
 	var err error
 
 	switch {
+	case s.Cluster.CloudProvider.AWS != nil:
+		err = addons.EnsureAddonByName(s, resources.AddonCCMAws)
 	case s.Cluster.CloudProvider.Azure != nil:
 		if s.Cluster.CloudProvider.CloudConfig == "" {
 			return errors.New("cloudConfig not defined")
