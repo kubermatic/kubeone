@@ -83,7 +83,7 @@ cat <<EOF | sudo tee /etc/docker/daemon.json
 }
 EOF
 
-
+sudo yum versionlock delete docker cri-tools containerd
 
 sudo yum install -y \
 	docker-19.03.* \
