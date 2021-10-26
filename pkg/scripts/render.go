@@ -59,10 +59,7 @@ var (
 			sudo apt-get update
 			{{ end }}
 
-			{{- if or .FORCE .UPGRADE }}
 			sudo apt-mark unhold docker-ce docker-ce-cli containerd.io || true
-			{{- end }}
-
 			{{- $DOCKER_VERSION_TO_INSTALL := "%s" }}
 			{{- if semverCompare "< 1.17" .KUBERNETES_VERSION }}
 			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
@@ -95,9 +92,7 @@ var (
 		),
 
 		"yum-docker-ce-amzn": heredoc.Docf(`
-			{{- if or .FORCE .UPGRADE }}
 			sudo yum versionlock delete docker cri-tools containerd
-			{{- end }}
 
 			{{- $CRICTL_VERSION_TO_INSTALL := "%s" }}
 			{{- $DOCKER_VERSION_TO_INSTALL := "%s" }}
@@ -137,9 +132,7 @@ var (
 			sudo yum-config-manager --save --setopt=docker-ce-stable.module_hotfixes=true >/dev/null
 			{{- end }}
 
-			{{- if or .FORCE .UPGRADE }}
 			sudo yum versionlock delete docker-ce docker-ce-cli containerd.io
-			{{- end }}
 
 			{{- $DOCKER_VERSION_TO_INSTALL := "%s" }}
 			{{- if semverCompare "< 1.17" .KUBERNETES_VERSION }}
@@ -192,10 +185,7 @@ var (
 			sudo add-apt-repository "deb https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 			{{ end }}
 
-			{{ if or .FORCE .UPGRADE }}
 			sudo apt-mark unhold containerd.io || true
-			{{ end }}
-
 			sudo apt-get install -y containerd.io=%s
 			sudo apt-mark hold containerd.io
 
@@ -215,10 +205,7 @@ var (
 			sudo yum-config-manager --save --setopt=docker-ce-stable.module_hotfixes=true
 			{{ end }}
 
-			{{ if or .FORCE .UPGRADE }}
 			sudo yum versionlock delete containerd.io
-			{{- end }}
-
 			sudo yum install -y containerd.io-%s
 			sudo yum versionlock add containerd.io
 
@@ -228,10 +215,7 @@ var (
 		),
 
 		"yum-containerd-amzn": heredoc.Docf(`
-			{{- if or .FORCE .UPGRADE }}
 			sudo yum versionlock delete containerd cri-tools
-			{{- end }}
-
 			sudo yum install -y containerd-%s cri-tools-%s
 			sudo yum versionlock add containerd cri-tools
 
