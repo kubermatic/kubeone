@@ -70,8 +70,7 @@ sudo yum install -y \
 
 
 
-
-
+sudo yum versionlock delete containerd cri-tools
 sudo yum install -y containerd-1.4.* cri-tools-1.13.0
 sudo yum versionlock add containerd cri-tools
 
