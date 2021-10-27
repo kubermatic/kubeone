@@ -1298,6 +1298,18 @@ func TestValidateFeatures(t *testing.T) {
 			},
 			expectedError: true,
 		},
+		{
+			name: "invalid features configuration; podPresets enabled",
+			features: kubeone.Features{
+				PodPresets: &kubeone.PodPresets{
+					Enable: true,
+				},
+			},
+			versions: kubeone.VersionConfig{
+				Kubernetes: "1.22.2",
+			},
+			expectedError: true,
+		},
 	}
 	for _, tc := range tests {
 		tc := tc
