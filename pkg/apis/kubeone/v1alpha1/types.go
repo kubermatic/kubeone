@@ -215,7 +215,7 @@ type MachineControllerConfig struct {
 
 // Features controls what features will be enabled on the cluster
 type Features struct {
-	PodNodeSelector *PodNodeSelector `json:"podNodeSelector"`
+	PodNodeSelector   *PodNodeSelector   `json:"podNodeSelector"`
 	PodSecurityPolicy *PodSecurityPolicy `json:"podSecurityPolicy"`
 	StaticAuditLog    *StaticAuditLog    `json:"staticAuditLog"`
 	DynamicAuditLog   *DynamicAuditLog   `json:"dynamicAuditLog"`
