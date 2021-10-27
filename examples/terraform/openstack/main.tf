@@ -81,6 +81,17 @@ resource "openstack_networking_secgroup_rule_v2" "secgroup_ssh" {
   security_group_id = openstack_networking_secgroup_v2.securitygroup.id
 }
 
+resource "openstack_networking_secgroup_rule_v2" "nodeports" {
+  description       = "Allow NodePorts"
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 30000
+  port_range_max    = 32767
+  remote_ip_prefix  = "0.0.0.0/0"
+  security_group_id = openstack_networking_secgroup_v2.securitygroup.id
+}
+
 resource "openstack_networking_secgroup_rule_v2" "secgroup_apiserver" {
   description       = "Allow kube-apiserver"
   direction         = "ingress"
