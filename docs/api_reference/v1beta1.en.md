@@ -1,6 +1,6 @@
 +++
 title = "v1beta1 API Reference"
-date = 2021-09-03T17:25:30+03:00
+date = 2021-10-27T21:03:54+05:00
 weight = 11
 +++
 ## v1beta1
@@ -14,6 +14,7 @@ weight = 11
 * [BinaryAsset](#binaryasset)
 * [CNI](#cni)
 * [CanalSpec](#canalspec)
+* [CiliumSpec](#ciliumspec)
 * [CloudProviderSpec](#cloudproviderspec)
 * [ClusterNetworkConfig](#clusternetworkconfig)
 * [ContainerRuntimeConfig](#containerruntimeconfig)
@@ -148,6 +149,7 @@ CNI config. Only one CNI provider must be used at the single time.
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | canal | Canal | *[CanalSpec](#canalspec) | false |
+| cilium | Cilium | *[CiliumSpec](#ciliumspec) | false |
 | weaveNet | WeaveNet | *[WeaveNetSpec](#weavenetspec) | false |
 | external | External | *[ExternalCNISpec](#externalcnispec) | false |
 
@@ -160,6 +162,17 @@ CanalSpec defines the Canal CNI plugin
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | mtu | MTU automatically detected based on the cloudProvider default value is 1450 | int | false |
+
+[Back to Group](#v1beta1)
+
+### CiliumSpec
+
+CiliumSpec defines the Cilium CNI plugin
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| kubeProxyReplacement | KubeProxyReplacement defines weather cilium relies on underlying Kernel support to replace kube-proxy functionality by eBPF (strict), or disables a subset of those features so cilium does not bail out if the kernel support is missing (disabled). default is \"disabled\" | KubeProxyReplacementType | true |
+| enableHubble | EnableHubble to deploy Hubble relay and UI default value is false | bool | true |
 
 [Back to Group](#v1beta1)
 
@@ -425,6 +438,7 @@ KubeProxyConfig defines configured kube-proxy mode, default is iptables mode
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
+| skipInstallation | SkipInstallation will skip the installation of kube-proxy default value is false | bool | true |
 | ipvs | IPVS config | *[IPVSConfig](#ipvsconfig) | true |
 | iptables | IPTables config | *[IPTables](#iptables) | true |
 

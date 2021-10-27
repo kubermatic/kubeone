@@ -24,6 +24,7 @@ import (
 	"strings"
 
 	"github.com/Masterminds/semver/v3"
+	"github.com/sirupsen/logrus"
 
 	"k8c.io/kubeone/pkg/apis/kubeone"
 
@@ -31,7 +32,7 @@ import (
 )
 
 // ValidateKubeOneCluster validates the KubeOneCluster object
-func ValidateKubeOneCluster(c kubeone.KubeOneCluster) field.ErrorList {
+func ValidateKubeOneCluster(c kubeone.KubeOneCluster, logger logrus.FieldLogger) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	if len(c.Name) == 0 {
@@ -54,7 +55,7 @@ func ValidateKubeOneCluster(c kubeone.KubeOneCluster) field.ErrorList {
 	}
 
 	allErrs = append(allErrs, ValidateCABundle(c.CABundle, field.NewPath("caBundle"))...)
-	allErrs = append(allErrs, ValidateFeatures(c.Features, c.Versions, field.NewPath("features"))...)
+	allErrs = append(allErrs, ValidateFeatures(c.Features, c.Versions, field.NewPath("features"), logger)...)
 	allErrs = append(allErrs, ValidateAddons(c.Addons, field.NewPath("addons"))...)
 	allErrs = append(allErrs, ValidateRegistryConfiguration(c.RegistryConfiguration, field.NewPath("registryConfiguration"))...)
 
@@ -369,7 +370,7 @@ func ValidateCABundle(caBundle string, fldPath *field.Path) field.ErrorList {
 }
 
 // ValidateFeatures validates the Features structure
-func ValidateFeatures(f kubeone.Features, versions kubeone.VersionConfig, fldPath *field.Path) field.ErrorList {
+func ValidateFeatures(f kubeone.Features, versions kubeone.VersionConfig, fldPath *field.Path, logger logrus.FieldLogger) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	if f.PodNodeSelector != nil && f.PodNodeSelector.Enable {
@@ -387,6 +388,10 @@ func ValidateFeatures(f kubeone.Features, versions kubeone.VersionConfig, fldPat
 		if gteKube120Condition.Check(kubeVer) {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("podPresets"), "podPresets feature is removed in kubernetes 1.20+ and must be disabled"))
 		}
+	}
+
+	if f.PodSecurityPolicy != nil && f.PodSecurityPolicy.Enable {
+		logger.Warnf("PodSecurityPolicy is deprecated and will be removed with Kubernetes 1.25 release")
 	}
 
 	return allErrs

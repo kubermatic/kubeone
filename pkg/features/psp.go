@@ -51,8 +51,6 @@ func installKubeSystemPSP(psp *kubeoneapi.PodSecurityPolicy, s *state.State) err
 		return nil
 	}
 
-	s.Logger.Warnf("PodSecurityPolicy is deprecated and will be removed with Kubernetes 1.25 release")
-
 	ctx := context.Background()
 	k8sobjects := []client.Object{
 		privilegedPSP(),

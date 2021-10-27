@@ -123,13 +123,13 @@ func BytesToKubeOneCluster(cluster, tfOutput, credentialsFile []byte, logger log
 		if err := runtime.DecodeInto(kubeonescheme.Codecs.UniversalDecoder(), cluster, v1alpha1Cluster); err != nil {
 			return nil, err
 		}
-		return DefaultedV1Alpha1KubeOneCluster(v1alpha1Cluster, tfOutput, credentialsFile)
+		return DefaultedV1Alpha1KubeOneCluster(v1alpha1Cluster, tfOutput, credentialsFile, logger)
 	case kubeonev1beta1.SchemeGroupVersion.String():
 		v1beta1Cluster := &kubeonev1beta1.KubeOneCluster{}
 		if err := runtime.DecodeInto(kubeonescheme.Codecs.UniversalDecoder(), cluster, v1beta1Cluster); err != nil {
 			return nil, err
 		}
-		return DefaultedV1Beta1KubeOneCluster(v1beta1Cluster, tfOutput, credentialsFile)
+		return DefaultedV1Beta1KubeOneCluster(v1beta1Cluster, tfOutput, credentialsFile, logger)
 	default:
 		return nil, errors.Errorf("invalid api version %q", typeMeta.APIVersion)
 	}
@@ -138,7 +138,7 @@ func BytesToKubeOneCluster(cluster, tfOutput, credentialsFile []byte, logger log
 // DefaultedV1Alpha1KubeOneCluster converts a v1alpha1 KubeOneCluster object to an internal representation of KubeOneCluster
 // object while sourcing information from Terraform output, applying default values and validating the KubeOneCluster
 // object
-func DefaultedV1Alpha1KubeOneCluster(versionedCluster *kubeonev1alpha1.KubeOneCluster, tfOutput, credentialsFile []byte) (*kubeoneapi.KubeOneCluster, error) {
+func DefaultedV1Alpha1KubeOneCluster(versionedCluster *kubeonev1alpha1.KubeOneCluster, tfOutput, credentialsFile []byte, logger logrus.FieldLogger) (*kubeoneapi.KubeOneCluster, error) {
 	if tfOutput != nil {
 		tfConfig, err := terraformv1alpha1.NewConfigFromJSON(tfOutput)
 		if err != nil {
@@ -163,7 +163,7 @@ func DefaultedV1Alpha1KubeOneCluster(versionedCluster *kubeonev1alpha1.KubeOneCl
 	}
 
 	// Validate the configuration
-	if err := kubeonevalidation.ValidateKubeOneCluster(*internalCluster).ToAggregate(); err != nil {
+	if err := kubeonevalidation.ValidateKubeOneCluster(*internalCluster, logger).ToAggregate(); err != nil {
 		return nil, errors.Wrap(err, "unable to validate the given KubeOneCluster object")
 	}
 
@@ -173,7 +173,7 @@ func DefaultedV1Alpha1KubeOneCluster(versionedCluster *kubeonev1alpha1.KubeOneCl
 // DefaultedV1Beta1KubeOneCluster converts a v1beta1 KubeOneCluster object to an internal representation of KubeOneCluster
 // object while sourcing information from Terraform output, applying default values and validating the KubeOneCluster
 // object
-func DefaultedV1Beta1KubeOneCluster(versionedCluster *kubeonev1beta1.KubeOneCluster, tfOutput, credentialsFile []byte) (*kubeoneapi.KubeOneCluster, error) {
+func DefaultedV1Beta1KubeOneCluster(versionedCluster *kubeonev1beta1.KubeOneCluster, tfOutput, credentialsFile []byte, logger logrus.FieldLogger) (*kubeoneapi.KubeOneCluster, error) {
 	if tfOutput != nil {
 		tfConfig, err := terraformv1beta1.NewConfigFromJSON(tfOutput)
 		if err != nil {
@@ -198,7 +198,7 @@ func DefaultedV1Beta1KubeOneCluster(versionedCluster *kubeonev1beta1.KubeOneClus
 	}
 
 	// Validate the configuration
-	if err := kubeonevalidation.ValidateKubeOneCluster(*internalCluster).ToAggregate(); err != nil {
+	if err := kubeonevalidation.ValidateKubeOneCluster(*internalCluster, logger).ToAggregate(); err != nil {
 		return nil, errors.Wrap(err, "unable to validate the given KubeOneCluster object")
 	}
 
