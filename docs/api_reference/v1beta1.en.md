@@ -1,6 +1,6 @@
 +++
 title = "v1beta1 API Reference"
-date = 2021-09-03T17:25:30+03:00
+date = 2021-10-27T16:03:03+05:00
 weight = 11
 +++
 ## v1beta1
@@ -14,6 +14,7 @@ weight = 11
 * [BinaryAsset](#binaryasset)
 * [CNI](#cni)
 * [CanalSpec](#canalspec)
+* [CiliumSpec](#ciliumspec)
 * [CloudProviderSpec](#cloudproviderspec)
 * [ClusterNetworkConfig](#clusternetworkconfig)
 * [ContainerRuntimeConfig](#containerruntimeconfig)
@@ -44,7 +45,6 @@ weight = 11
 * [PacketSpec](#packetspec)
 * [PodNodeSelector](#podnodeselector)
 * [PodNodeSelectorConfig](#podnodeselectorconfig)
-* [PodPresets](#podpresets)
 * [PodSecurityPolicy](#podsecuritypolicy)
 * [ProviderSpec](#providerspec)
 * [ProviderStaticNetworkConfig](#providerstaticnetworkconfig)
@@ -148,6 +148,7 @@ CNI config. Only one CNI provider must be used at the single time.
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | canal | Canal | *[CanalSpec](#canalspec) | false |
+| cilium | Cilium | *[CiliumSpec](#ciliumspec) | false |
 | weaveNet | WeaveNet | *[WeaveNetSpec](#weavenetspec) | false |
 | external | External | *[ExternalCNISpec](#externalcnispec) | false |
 
@@ -160,6 +161,17 @@ CanalSpec defines the Canal CNI plugin
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | mtu | MTU automatically detected based on the cloudProvider default value is 1450 | int | false |
+
+[Back to Group](#v1beta1)
+
+### CiliumSpec
+
+CiliumSpec defines the Cilium CNI plugin
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| kubeProxyReplacement | KubeProxyReplacement defines weather cilium relies on underlying Kernel support to replace kube-proxy functionality by eBPF (strict), or disables a subset of those features so cilium does not bail out if the kernel support is missing (disabled). default is \"disabled\" | KubeProxyReplacementType | true |
+| enableHubble | EnableHubble to deploy Hubble relay and UI default value is false | bool | true |
 
 [Back to Group](#v1beta1)
 
@@ -308,7 +320,6 @@ Features controls what features will be enabled on the cluster
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | podNodeSelector | PodNodeSelector | *[PodNodeSelector](#podnodeselector) | false |
-| podPresets | PodPresets Deprecated: will be removed once Kubernetes 1.19 reaches EOL | *[PodPresets](#podpresets) | false |
 | podSecurityPolicy | PodSecurityPolicy | *[PodSecurityPolicy](#podsecuritypolicy) | false |
 | staticAuditLog | StaticAuditLog | *[StaticAuditLog](#staticauditlog) | false |
 | dynamicAuditLog | DynamicAuditLog | *[DynamicAuditLog](#dynamicauditlog) | false |
@@ -348,7 +359,7 @@ HostConfig describes a single control plane node.
 | sshPort | SSHPort is port to connect ssh to. Default value is 22. | int | false |
 | sshUsername | SSHUsername is system login name. Default value is \"root\". | string | false |
 | sshPrivateKeyFile | SSHPrivateKeyFile is path to the file with PRIVATE AND CLEANTEXT ssh key. Default value is \"\". | string | false |
-| sshAgentSocket | SSHAgentSocket path (or reference to the environment) to the SSH agent unix domain socket. Default vaulue is \"env:SSH_AUTH_SOCK\". | string | false |
+| sshAgentSocket | SSHAgentSocket path (or reference to the environment) to the SSH agent unix domain socket. Default value is \"env:SSH_AUTH_SOCK\". | string | false |
 | bastion | Bastion is an IP or hostname of the bastion (or jump) host to connect to. Default value is \"\". | string | false |
 | bastionPort | BastionPort is SSH port to use when connecting to the bastion if it's configured in .Bastion. Default value is 22. | int | false |
 | bastionUser | BastionUser is system login name to use when connecting to bastion host. Default value is \"root\". | string | false |
@@ -425,6 +436,7 @@ KubeProxyConfig defines configured kube-proxy mode, default is iptables mode
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
+| skipInstallation | SkipInstallation will skip the installation of kube-proxy default value is false | bool | true |
 | ipvs | IPVS config | *[IPVSConfig](#ipvsconfig) | true |
 | iptables | IPTables config | *[IPTables](#iptables) | true |
 
@@ -524,19 +536,6 @@ PodNodeSelectorConfig config
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | configFilePath | ConfigFilePath is a path on the local file system to the PodNodeSelector configuration file. ConfigFilePath is a required field. More info: https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#podnodeselector | string | true |
-
-[Back to Group](#v1beta1)
-
-### PodPresets
-
-PodPresets feature flag
-The PodPresets feature has been removed in Kubernetes 1.20.
-This feature is deprecated and will be removed from the API once
-Kubernetes 1.19 reaches EOL.
-
-| Field | Description | Scheme | Required |
-| ----- | ----------- | ------ | -------- |
-| enable | Enable | bool | false |
 
 [Back to Group](#v1beta1)
 

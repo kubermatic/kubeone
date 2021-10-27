@@ -1298,42 +1298,6 @@ func TestValidateFeatures(t *testing.T) {
 			},
 			expectedError: true,
 		},
-		{
-			name: "podPresets enabled on 1.19 cluster",
-			features: kubeone.Features{
-				PodPresets: &kubeone.PodPresets{
-					Enable: true,
-				},
-			},
-			versions: kubeone.VersionConfig{
-				Kubernetes: "1.19.7",
-			},
-			expectedError: false,
-		},
-		{
-			name: "podPresets enabled on 1.20 cluster",
-			features: kubeone.Features{
-				PodPresets: &kubeone.PodPresets{
-					Enable: true,
-				},
-			},
-			versions: kubeone.VersionConfig{
-				Kubernetes: "1.20.2",
-			},
-			expectedError: true,
-		},
-		{
-			name: "podPresets enabled on 1.21 cluster",
-			features: kubeone.Features{
-				PodPresets: &kubeone.PodPresets{
-					Enable: true,
-				},
-			},
-			versions: kubeone.VersionConfig{
-				Kubernetes: "1.21.0",
-			},
-			expectedError: true,
-		},
 	}
 	for _, tc := range tests {
 		tc := tc

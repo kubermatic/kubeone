@@ -216,8 +216,6 @@ type MachineControllerConfig struct {
 // Features controls what features will be enabled on the cluster
 type Features struct {
 	PodNodeSelector *PodNodeSelector `json:"podNodeSelector"`
-	// Deprecated: will be removed once Kubernetes 1.19 reaches EOL
-	PodPresets        *PodPresets        `json:"podPresets"`
 	PodSecurityPolicy *PodSecurityPolicy `json:"podSecurityPolicy"`
 	StaticAuditLog    *StaticAuditLog    `json:"staticAuditLog"`
 	DynamicAuditLog   *DynamicAuditLog   `json:"dynamicAuditLog"`
@@ -245,14 +243,6 @@ type PodNodeSelectorConfig struct {
 	// ConfigFilePath is a required field.
 	// More info: https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#podnodeselector
 	ConfigFilePath string `json:"configFilePath"`
-}
-
-// PodPresets feature flag
-// The PodPresets feature has been removed in Kubernetes 1.20.
-// This feature is deprecated and will be removed from the API once
-// Kubernetes 1.19 reaches EOL.
-type PodPresets struct {
-	Enable bool `json:"enable"`
 }
 
 // PodSecurityPolicy feature flag

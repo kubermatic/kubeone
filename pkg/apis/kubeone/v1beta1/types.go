@@ -108,7 +108,7 @@ type HostConfig struct {
 	// Default value is "".
 	SSHPrivateKeyFile string `json:"sshPrivateKeyFile,omitempty"`
 	// SSHAgentSocket path (or reference to the environment) to the SSH agent unix domain socket.
-	// Default vaulue is "env:SSH_AUTH_SOCK".
+	// Default value is "env:SSH_AUTH_SOCK".
 	SSHAgentSocket string `json:"sshAgentSocket,omitempty"`
 	// Bastion is an IP or hostname of the bastion (or jump) host to connect to.
 	// Default value is "".
@@ -405,9 +405,6 @@ type MachineControllerConfig struct {
 type Features struct {
 	// PodNodeSelector
 	PodNodeSelector *PodNodeSelector `json:"podNodeSelector,omitempty"`
-	// PodPresets
-	// Deprecated: will be removed once Kubernetes 1.19 reaches EOL
-	PodPresets *PodPresets `json:"podPresets,omitempty"`
 	// PodSecurityPolicy
 	PodSecurityPolicy *PodSecurityPolicy `json:"podSecurityPolicy,omitempty"`
 	// StaticAuditLog
@@ -528,15 +525,6 @@ type PodNodeSelectorConfig struct {
 	// ConfigFilePath is a required field.
 	// More info: https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#podnodeselector
 	ConfigFilePath string `json:"configFilePath"`
-}
-
-// PodPresets feature flag
-// The PodPresets feature has been removed in Kubernetes 1.20.
-// This feature is deprecated and will be removed from the API once
-// Kubernetes 1.19 reaches EOL.
-type PodPresets struct {
-	// Enable
-	Enable bool `json:"enable,omitempty"`
 }
 
 // PodSecurityPolicy feature flag
