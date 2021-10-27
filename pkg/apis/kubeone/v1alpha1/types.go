@@ -215,12 +215,22 @@ type MachineControllerConfig struct {
 
 // Features controls what features will be enabled on the cluster
 type Features struct {
-	PodNodeSelector   *PodNodeSelector   `json:"podNodeSelector"`
+	PodNodeSelector *PodNodeSelector `json:"podNodeSelector"`
+	// PodPresets
+	// Obsolete: this feature was removed with Kubernetes 1.20
+	PodPresets        *PodPresets        `json:"podPresets,omitempty"`
 	PodSecurityPolicy *PodSecurityPolicy `json:"podSecurityPolicy"`
 	StaticAuditLog    *StaticAuditLog    `json:"staticAuditLog"`
 	DynamicAuditLog   *DynamicAuditLog   `json:"dynamicAuditLog"`
 	MetricsServer     *MetricsServer     `json:"metricsServer"`
 	OpenIDConnect     *OpenIDConnect     `json:"openidConnect"`
+}
+
+// PodPresets feature flag
+// The PodPresets feature is obsolete and has been removed
+type PodPresets struct {
+	// Enable
+	Enable bool `json:"enable,omitempty"`
 }
 
 // SystemPackages controls configurations of APT/YUM

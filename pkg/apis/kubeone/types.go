@@ -405,6 +405,9 @@ type MachineControllerConfig struct {
 type Features struct {
 	// PodNodeSelector
 	PodNodeSelector *PodNodeSelector `json:"podNodeSelector,omitempty"`
+	// PodPresets
+	// Obsolete: this feature was removed with Kubernetes 1.20
+	PodPresets *PodPresets `json:"podPresets,omitempty"`
 	// PodSecurityPolicy
 	PodSecurityPolicy *PodSecurityPolicy `json:"podSecurityPolicy,omitempty"`
 	// StaticAuditLog
@@ -417,6 +420,13 @@ type Features struct {
 	OpenIDConnect *OpenIDConnect `json:"openidConnect,omitempty"`
 	// Encryption Providers
 	EncryptionProviders *EncryptionProviders `json:"encryptionProviders,omitempty"`
+}
+
+// PodPresets feature flag
+// The PodPresets feature is obsolete and has been removed
+type PodPresets struct {
+	// Enable
+	Enable bool `json:"enable,omitempty"`
 }
 
 // SystemPackages controls configurations of APT/YUM
