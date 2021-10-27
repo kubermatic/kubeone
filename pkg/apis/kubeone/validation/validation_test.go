@@ -20,6 +20,7 @@ import (
 	"testing"
 
 	"github.com/MakeNowJust/heredoc/v2"
+	"github.com/sirupsen/logrus"
 
 	"k8c.io/kubeone/pkg/apis/kubeone"
 
@@ -233,10 +234,12 @@ func TestValidateKubeOneCluster(t *testing.T) {
 			expectedError: true,
 		},
 	}
+
+	logger := logrus.New()
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			errs := ValidateKubeOneCluster(tc.cluster)
+			errs := ValidateKubeOneCluster(tc.cluster, logger)
 			if (len(errs) == 0) == tc.expectedError {
 				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
 			}
@@ -1335,10 +1338,12 @@ func TestValidateFeatures(t *testing.T) {
 			expectedError: true,
 		},
 	}
+
+	logger := logrus.New()
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			errs := ValidateFeatures(tc.features, tc.versions, nil)
+			errs := ValidateFeatures(tc.features, tc.versions, nil, logger)
 			if (len(errs) == 0) == tc.expectedError {
 				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
 			}
