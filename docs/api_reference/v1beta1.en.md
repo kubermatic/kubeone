@@ -5,58 +5,59 @@ weight = 11
 +++
 ## v1beta1
 
-* [APIEndpoint](#apiendpoint)
-* [AWSSpec](#awsspec)
-* [Addon](#addon)
-* [Addons](#addons)
-* [AssetConfiguration](#assetconfiguration)
-* [AzureSpec](#azurespec)
-* [BinaryAsset](#binaryasset)
-* [CNI](#cni)
-* [CanalSpec](#canalspec)
-* [CloudProviderSpec](#cloudproviderspec)
-* [ClusterNetworkConfig](#clusternetworkconfig)
-* [ContainerRuntimeConfig](#containerruntimeconfig)
-* [ContainerRuntimeContainerd](#containerruntimecontainerd)
-* [ContainerRuntimeDocker](#containerruntimedocker)
-* [ControlPlaneConfig](#controlplaneconfig)
-* [DNSConfig](#dnsconfig)
-* [DigitalOceanSpec](#digitaloceanspec)
-* [DynamicAuditLog](#dynamicauditlog)
-* [DynamicWorkerConfig](#dynamicworkerconfig)
-* [EncryptionProviders](#encryptionproviders)
-* [ExternalCNISpec](#externalcnispec)
-* [Features](#features)
-* [GCESpec](#gcespec)
-* [HetznerSpec](#hetznerspec)
-* [HostConfig](#hostconfig)
-* [IPTables](#iptables)
-* [IPVSConfig](#ipvsconfig)
-* [ImageAsset](#imageasset)
-* [KubeOneCluster](#kubeonecluster)
-* [KubeProxyConfig](#kubeproxyconfig)
-* [MachineControllerConfig](#machinecontrollerconfig)
-* [MetricsServer](#metricsserver)
-* [NoneSpec](#nonespec)
-* [OpenIDConnect](#openidconnect)
-* [OpenIDConnectConfig](#openidconnectconfig)
-* [OpenstackSpec](#openstackspec)
-* [PacketSpec](#packetspec)
-* [PodNodeSelector](#podnodeselector)
-* [PodNodeSelectorConfig](#podnodeselectorconfig)
-* [PodPresets](#podpresets)
-* [PodSecurityPolicy](#podsecuritypolicy)
-* [ProviderSpec](#providerspec)
-* [ProviderStaticNetworkConfig](#providerstaticnetworkconfig)
-* [ProxyConfig](#proxyconfig)
-* [RegistryConfiguration](#registryconfiguration)
-* [StaticAuditLog](#staticauditlog)
-* [StaticAuditLogConfig](#staticauditlogconfig)
-* [StaticWorkersConfig](#staticworkersconfig)
-* [SystemPackages](#systempackages)
-* [VersionConfig](#versionconfig)
-* [VsphereSpec](#vspherespec)
-* [WeaveNetSpec](#weavenetspec)
+- [v1beta1](#v1beta1)
+  - [APIEndpoint](#apiendpoint)
+  - [AWSSpec](#awsspec)
+  - [Addon](#addon)
+  - [Addons](#addons)
+  - [AssetConfiguration](#assetconfiguration)
+  - [AzureSpec](#azurespec)
+  - [BinaryAsset](#binaryasset)
+  - [CNI](#cni)
+  - [CanalSpec](#canalspec)
+  - [CloudProviderSpec](#cloudproviderspec)
+  - [ClusterNetworkConfig](#clusternetworkconfig)
+  - [ContainerRuntimeConfig](#containerruntimeconfig)
+  - [ContainerRuntimeContainerd](#containerruntimecontainerd)
+  - [ContainerRuntimeDocker](#containerruntimedocker)
+  - [ControlPlaneConfig](#controlplaneconfig)
+  - [DNSConfig](#dnsconfig)
+  - [DigitalOceanSpec](#digitaloceanspec)
+  - [DynamicAuditLog](#dynamicauditlog)
+  - [DynamicWorkerConfig](#dynamicworkerconfig)
+  - [EncryptionProviders](#encryptionproviders)
+  - [ExternalCNISpec](#externalcnispec)
+  - [Features](#features)
+  - [GCESpec](#gcespec)
+  - [HetznerSpec](#hetznerspec)
+  - [HostConfig](#hostconfig)
+  - [IPTables](#iptables)
+  - [IPVSConfig](#ipvsconfig)
+  - [ImageAsset](#imageasset)
+  - [KubeOneCluster](#kubeonecluster)
+  - [KubeProxyConfig](#kubeproxyconfig)
+  - [MachineControllerConfig](#machinecontrollerconfig)
+  - [MetricsServer](#metricsserver)
+  - [NoneSpec](#nonespec)
+  - [OpenIDConnect](#openidconnect)
+  - [OpenIDConnectConfig](#openidconnectconfig)
+  - [OpenstackSpec](#openstackspec)
+  - [PacketSpec](#packetspec)
+  - [PodNodeSelector](#podnodeselector)
+  - [PodNodeSelectorConfig](#podnodeselectorconfig)
+  - [PodPresets](#podpresets)
+  - [PodSecurityPolicy](#podsecuritypolicy)
+  - [ProviderSpec](#providerspec)
+  - [ProviderStaticNetworkConfig](#providerstaticnetworkconfig)
+  - [ProxyConfig](#proxyconfig)
+  - [RegistryConfiguration](#registryconfiguration)
+  - [StaticAuditLog](#staticauditlog)
+  - [StaticAuditLogConfig](#staticauditlogconfig)
+  - [StaticWorkersConfig](#staticworkersconfig)
+  - [SystemPackages](#systempackages)
+  - [VersionConfig](#versionconfig)
+  - [VsphereSpec](#vspherespec)
+  - [WeaveNetSpec](#weavenetspec)
 
 ### APIEndpoint
 
@@ -309,7 +310,7 @@ Features controls what features will be enabled on the cluster
 | ----- | ----------- | ------ | -------- |
 | podNodeSelector | PodNodeSelector | *[PodNodeSelector](#podnodeselector) | false |
 | podPresets | PodPresets Deprecated: will be removed once Kubernetes 1.19 reaches EOL | *[PodPresets](#podpresets) | false |
-| podSecurityPolicy | PodSecurityPolicy | *[PodSecurityPolicy](#podsecuritypolicy) | false |
+| podSecurityPolicy | PodSecurityPolicy Deprecated: will be removed once Kubernetes 1.24 reaches EOL | *[PodSecurityPolicy](#podsecuritypolicy) | false |
 | staticAuditLog | StaticAuditLog | *[StaticAuditLog](#staticauditlog) | false |
 | dynamicAuditLog | DynamicAuditLog | *[DynamicAuditLog](#dynamicauditlog) | false |
 | metricsServer | MetricsServer | *[MetricsServer](#metricsserver) | false |
@@ -542,7 +543,10 @@ Kubernetes 1.19 reaches EOL.
 
 ### PodSecurityPolicy
 
-PodSecurityPolicy feature flag
+PodPresets feature flag
+The PodPresets feature has been removed in Kubernetes 1.25.
+This feature is deprecated and will be removed from the API once
+Kubernetes 1.24 reaches EOL.
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
