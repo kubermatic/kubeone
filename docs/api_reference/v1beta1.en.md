@@ -542,8 +542,7 @@ Kubernetes 1.19 reaches EOL.
 
 ### PodSecurityPolicy
 
-PodPresets feature flag
-The PodPresets feature has been removed in Kubernetes 1.25.
+PodSecurityPolicy feature flag
 This feature is deprecated and will be removed from the API once
 Kubernetes 1.24 reaches EOL.
 
