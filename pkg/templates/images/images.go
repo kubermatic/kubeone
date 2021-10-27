@@ -84,6 +84,15 @@ const (
 	AzureCCM
 	AzureCNM
 
+	// AWS EBS CSI
+	AwsEbsCSI
+	AwsEbsCSIAttacher
+	AwsEbsCSILivenessProbe
+	AwsEbsCSINodeDriverRegistrar
+	AwsEbsCSIProvisioner
+	AwsEbsCSIResizer
+	AwsEbsCSISnapshotter
+
 	// AzureFile CSI
 	AzureFileCSI
 	AzureFileCSIAttacher
@@ -171,6 +180,15 @@ func optionalResources() map[Resource]map[string]string {
 			"1.21.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.0.5",
 			">= 1.22.0": "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.1.1",
 		},
+
+		// AWS EBS CSI driver
+		AwsEbsCSI:                    {"*": "k8s.gcr.io/provider-aws/aws-ebs-csi-driver:v1.4.0"},
+		AwsEbsCSIAttacher:            {"*": "k8s.gcr.io/sig-storage/csi-attacher:v3.1.0"},
+		AwsEbsCSILivenessProbe:       {"*": "k8s.gcr.io/sig-storage/livenessprobe:v2.2.0"},
+		AwsEbsCSINodeDriverRegistrar: {"*": "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.1.0"},
+		AwsEbsCSIProvisioner:         {"*": "k8s.gcr.io/sig-storage/csi-provisioner:v2.1.1"},
+		AwsEbsCSIResizer:             {"*": "k8s.gcr.io/sig-storage/csi-resizer:v1.1.0"},
+		AwsEbsCSISnapshotter:         {"*": "k8s.gcr.io/sig-storage/csi-snapshotter:v3.0.3"},
 
 		// AzureFile CSI driver
 		AzureFileCSI:                      {"*": "mcr.microsoft.com/k8s/csi/azurefile-csi:v1.7.0"},
