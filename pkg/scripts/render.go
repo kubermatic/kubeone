@@ -92,7 +92,7 @@ var (
 		),
 
 		"yum-docker-ce-amzn": heredoc.Docf(`
-			sudo yum versionlock delete docker cri-tools containerd
+			sudo yum versionlock delete docker cri-tools containerd || true
 
 			{{- $CRICTL_VERSION_TO_INSTALL := "%s" }}
 			{{- $DOCKER_VERSION_TO_INSTALL := "%s" }}
@@ -132,7 +132,7 @@ var (
 			sudo yum-config-manager --save --setopt=docker-ce-stable.module_hotfixes=true >/dev/null
 			{{- end }}
 
-			sudo yum versionlock delete docker-ce docker-ce-cli containerd.io
+			sudo yum versionlock delete docker-ce docker-ce-cli containerd.io || true
 
 			{{- $DOCKER_VERSION_TO_INSTALL := "%s" }}
 			{{- if semverCompare "< 1.17" .KUBERNETES_VERSION }}
@@ -205,7 +205,7 @@ var (
 			sudo yum-config-manager --save --setopt=docker-ce-stable.module_hotfixes=true
 			{{ end }}
 
-			sudo yum versionlock delete containerd.io
+			sudo yum versionlock delete containerd.io || true
 			sudo yum install -y containerd.io-%s
 			sudo yum versionlock add containerd.io
 
@@ -215,7 +215,7 @@ var (
 		),
 
 		"yum-containerd-amzn": heredoc.Docf(`
-			sudo yum versionlock delete containerd cri-tools
+			sudo yum versionlock delete containerd cri-tools || true
 			sudo yum install -y containerd-%s cri-tools-%s
 			sudo yum versionlock add containerd cri-tools
 
