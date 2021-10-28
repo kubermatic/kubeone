@@ -163,9 +163,12 @@ func DefaultedV1Alpha1KubeOneCluster(versionedCluster *kubeonev1alpha1.KubeOneCl
 	}
 
 	// Validate the configuration
-	if err := kubeonevalidation.ValidateKubeOneCluster(*internalCluster, logger).ToAggregate(); err != nil {
+	if err := kubeonevalidation.ValidateKubeOneCluster(*internalCluster).ToAggregate(); err != nil {
 		return nil, errors.Wrap(err, "unable to validate the given KubeOneCluster object")
 	}
+
+	// Check for deprecated fields/features for a cluster
+	checkClusterForDeprecations(*internalCluster, logger)
 
 	return internalCluster, nil
 }
@@ -198,9 +201,12 @@ func DefaultedV1Beta1KubeOneCluster(versionedCluster *kubeonev1beta1.KubeOneClus
 	}
 
 	// Validate the configuration
-	if err := kubeonevalidation.ValidateKubeOneCluster(*internalCluster, logger).ToAggregate(); err != nil {
+	if err := kubeonevalidation.ValidateKubeOneCluster(*internalCluster).ToAggregate(); err != nil {
 		return nil, errors.Wrap(err, "unable to validate the given KubeOneCluster object")
 	}
+
+	// Check for deprecated fields/features for a cluster
+	checkClusterForDeprecations(*internalCluster, logger)
 
 	return internalCluster, nil
 }
@@ -225,4 +231,11 @@ func SetKubeOneClusterDynamicDefaults(cfg *kubeoneapi.KubeOneCluster, credential
 func isDir(dirname string) bool {
 	stat, statErr := os.Stat(dirname)
 	return statErr == nil && stat.Mode().IsDir()
+}
+
+// checkClusterForDeprecations with check clusters for usage of deprecated fields, flags etc. and print a warning if any are found
+func checkClusterForDeprecations(c kubeoneapi.KubeOneCluster, logger logrus.FieldLogger) {
+	if c.Features.PodSecurityPolicy != nil && c.Features.PodSecurityPolicy.Enable {
+		logger.Warnf("PodSecurityPolicy is deprecated and will be removed with Kubernetes 1.25 release")
+	}
 }
