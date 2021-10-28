@@ -88,7 +88,7 @@ sudo yum install -y yum-utils
 sudo yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
 sudo yum-config-manager --save --setopt=docker-ce-stable.module_hotfixes=true >/dev/null
 
-sudo yum versionlock delete docker-ce docker-ce-cli containerd.io
+sudo yum versionlock delete docker-ce docker-ce-cli containerd.io || true
 # Docker provides two different apt repos for CentOS, 7 and 8. The 8 repo currently
 # contains only Docker 19.03.14, which is not validated for all Kubernetes version.
 # Therefore, we use 7 repo which has all Docker versions.
