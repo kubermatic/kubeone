@@ -33,7 +33,8 @@ import (
 type Config struct {
 	KubeOneAPI struct {
 		Value struct {
-			Endpoint string `json:"endpoint"`
+			Endpoint        string   `json:"endpoint"`
+			AdditionalNames []string `json:"additional_names"`
 		} `json:"value"`
 	} `json:"kubeone_api"`
 
@@ -167,6 +168,10 @@ func (c *Config) Apply(cluster *kubeonev1beta1.KubeOneCluster) error {
 		cluster.APIEndpoint = kubeonev1beta1.APIEndpoint{
 			Host: c.KubeOneAPI.Value.Endpoint,
 		}
+	}
+
+	if len(c.KubeOneAPI.Value.AdditionalNames) > 0 {
+		cluster.AlternativeNames = c.KubeOneAPI.Value.AdditionalNames
 	}
 
 	cp := c.KubeOneHosts.Value.ControlPlane
