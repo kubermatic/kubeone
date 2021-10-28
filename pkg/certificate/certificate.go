@@ -99,3 +99,12 @@ func NewSignedTLSCert(name, namespace, domain string, caKey crypto.Signer, caCer
 		resources.KubernetesCACertName: string(encodeCertPEM(caCert)),
 	}, nil
 }
+
+// GetCertificateSANs combines host name and subject alternative names into a list of SANs after transformation
+func GetCertificateSANs(host string, alternativeNames []string) []string {
+	certSANS := []string{strings.ToLower(host)}
+	for _, name := range alternativeNames {
+		certSANS = append(certSANS, strings.ToLower(name))
+	}
+	return certSANS
+}

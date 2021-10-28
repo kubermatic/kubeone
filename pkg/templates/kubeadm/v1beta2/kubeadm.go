@@ -26,10 +26,10 @@ import (
 
 	kubeadmv1beta2 "k8c.io/kubeone/pkg/apis/kubeadm/v1beta2"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/certificate"
 	"k8c.io/kubeone/pkg/features"
 	"k8c.io/kubeone/pkg/kubeflags"
 	"k8c.io/kubeone/pkg/state"
-	"k8c.io/kubeone/pkg/templates"
 	"k8c.io/kubeone/pkg/templates/kubeadm/kubeadmargs"
 	"k8c.io/kubeone/pkg/templates/resources"
 
@@ -111,7 +111,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		},
 	}
 
-	certSANS := templates.GetCertificateSANs(cluster.APIEndpoint.Host, cluster.AlternativeNames)
+	certSANS := certificate.GetCertificateSANs(cluster.APIEndpoint.Host, cluster.AlternativeNames)
 
 	clusterConfig := &kubeadmv1beta2.ClusterConfiguration{
 		TypeMeta: metav1.TypeMeta{
