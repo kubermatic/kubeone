@@ -43,9 +43,6 @@ features:
   # 'kube-system' namespace pods to 'use' it.
   podSecurityPolicy:
     enable: false
-  # Enables PodPresets admission plugin in API server.
-  podPresets:
-    enable: false
   # Enables and configures audit log backend.
   # More info: https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#log-backend
   staticAuditLog:

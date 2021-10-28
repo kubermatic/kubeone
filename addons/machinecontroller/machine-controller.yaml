@@ -501,6 +501,7 @@ spec:
           imagePullPolicy: IfNotPresent
           command:
             - /usr/local/bin/machine-controller
+          args:
             - -logtostderr
             - -v=4
             - -health-probe-address=0.0.0.0:8085
@@ -586,6 +587,7 @@ spec:
           name: machine-controller-webhook
           command:
             - /usr/local/bin/webhook
+          args:
             - -logtostderr
             - -v=4
             - -listen-address=0.0.0.0:9876

@@ -17,8 +17,6 @@ cloudProvider:
 features:
   podSecurityPolicy:
     enable: false
-  podPresets:
-    enable: false
   staticAuditLog:
     enable: false
     config:

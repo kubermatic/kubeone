@@ -1,6 +1,6 @@
 +++
 title = "v1beta1 API Reference"
-date = 2021-10-27T21:03:54+05:00
+date = 2021-10-28T12:33:26+05:00
 weight = 11
 +++
 ## v1beta1
@@ -321,7 +321,7 @@ Features controls what features will be enabled on the cluster
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | podNodeSelector | PodNodeSelector | *[PodNodeSelector](#podnodeselector) | false |
-| podPresets | PodPresets Deprecated: will be removed once Kubernetes 1.19 reaches EOL | *[PodPresets](#podpresets) | false |
+| podPresets | PodPresets Obsolete: this feature was removed with Kubernetes 1.20 | *[PodPresets](#podpresets) | false |
 | podSecurityPolicy | PodSecurityPolicy Deprecated: will be removed once Kubernetes 1.24 reaches EOL | *[PodSecurityPolicy](#podsecuritypolicy) | false |
 | staticAuditLog | StaticAuditLog | *[StaticAuditLog](#staticauditlog) | false |
 | dynamicAuditLog | DynamicAuditLog | *[DynamicAuditLog](#dynamicauditlog) | false |
@@ -361,7 +361,7 @@ HostConfig describes a single control plane node.
 | sshPort | SSHPort is port to connect ssh to. Default value is 22. | int | false |
 | sshUsername | SSHUsername is system login name. Default value is \"root\". | string | false |
 | sshPrivateKeyFile | SSHPrivateKeyFile is path to the file with PRIVATE AND CLEANTEXT ssh key. Default value is \"\". | string | false |
-| sshAgentSocket | SSHAgentSocket path (or reference to the environment) to the SSH agent unix domain socket. Default vaulue is \"env:SSH_AUTH_SOCK\". | string | false |
+| sshAgentSocket | SSHAgentSocket path (or reference to the environment) to the SSH agent unix domain socket. Default value is \"env:SSH_AUTH_SOCK\". | string | false |
 | bastion | Bastion is an IP or hostname of the bastion (or jump) host to connect to. Default value is \"\". | string | false |
 | bastionPort | BastionPort is SSH port to use when connecting to the bastion if it's configured in .Bastion. Default value is 22. | int | false |
 | bastionUser | BastionUser is system login name to use when connecting to bastion host. Default value is \"root\". | string | false |
@@ -544,9 +544,7 @@ PodNodeSelectorConfig config
 ### PodPresets
 
 PodPresets feature flag
-The PodPresets feature has been removed in Kubernetes 1.20.
-This feature is deprecated and will be removed from the API once
-Kubernetes 1.19 reaches EOL.
+The PodPresets feature is obsolete and has been removed
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
