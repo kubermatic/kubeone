@@ -218,7 +218,8 @@ type Features struct {
 	PodNodeSelector *PodNodeSelector `json:"podNodeSelector"`
 	// PodPresets
 	// Obsolete: this feature was removed with Kubernetes 1.20
-	PodPresets        *PodPresets        `json:"podPresets,omitempty"`
+	PodPresets *PodPresets `json:"podPresets,omitempty"`
+	// Deprecated: will be removed once Kubernetes 1.24 reaches EOL
 	PodSecurityPolicy *PodSecurityPolicy `json:"podSecurityPolicy"`
 	StaticAuditLog    *StaticAuditLog    `json:"staticAuditLog"`
 	DynamicAuditLog   *DynamicAuditLog   `json:"dynamicAuditLog"`
@@ -256,6 +257,8 @@ type PodNodeSelectorConfig struct {
 }
 
 // PodSecurityPolicy feature flag
+// This feature is deprecated and will be removed from the API once
+// Kubernetes 1.24 reaches EOL.
 type PodSecurityPolicy struct {
 	Enable bool `json:"enable"`
 }
