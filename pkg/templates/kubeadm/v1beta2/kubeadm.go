@@ -19,7 +19,6 @@ package v1beta2
 import (
 	"fmt"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/Masterminds/semver/v3"
@@ -30,6 +29,7 @@ import (
 	"k8c.io/kubeone/pkg/features"
 	"k8c.io/kubeone/pkg/kubeflags"
 	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/templates"
 	"k8c.io/kubeone/pkg/templates/kubeadm/kubeadmargs"
 	"k8c.io/kubeone/pkg/templates/resources"
 
@@ -111,6 +111,8 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		},
 	}
 
+	certSANS := templates.GetCertificateSANs(cluster.APIEndpoint.Host, cluster.AlternativeNames)
+
 	clusterConfig := &kubeadmv1beta2.ClusterConfiguration{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "kubeadm.k8s.io/v1beta2",
@@ -132,7 +134,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 				},
 				ExtraVolumes: []kubeadmv1beta2.HostPathMount{},
 			},
-			CertSANs: []string{strings.ToLower(cluster.APIEndpoint.Host)},
+			CertSANs: certSANS,
 		},
 		ControllerManager: kubeadmv1beta2.ControlPlaneComponent{
 			ExtraArgs: map[string]string{
