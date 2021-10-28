@@ -1658,6 +1658,7 @@ func Convert_kubeone_PodSecurityPolicy_To_v1beta1_PodSecurityPolicy(in *kubeone.
 func autoConvert_v1beta1_ProviderSpec_To_kubeone_ProviderSpec(in *ProviderSpec, out *kubeone.ProviderSpec, s conversion.Scope) error {
 	out.CloudProviderSpec = *(*json.RawMessage)(unsafe.Pointer(&in.CloudProviderSpec))
 	out.Annotations = *(*map[string]string)(unsafe.Pointer(&in.Annotations))
+	out.MachineAnnotations = *(*map[string]string)(unsafe.Pointer(&in.MachineAnnotations))
 	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
 	out.Taints = *(*[]v1.Taint)(unsafe.Pointer(&in.Taints))
 	out.SSHPublicKeys = *(*[]string)(unsafe.Pointer(&in.SSHPublicKeys))
@@ -1676,6 +1677,7 @@ func Convert_v1beta1_ProviderSpec_To_kubeone_ProviderSpec(in *ProviderSpec, out 
 func autoConvert_kubeone_ProviderSpec_To_v1beta1_ProviderSpec(in *kubeone.ProviderSpec, out *ProviderSpec, s conversion.Scope) error {
 	out.CloudProviderSpec = *(*json.RawMessage)(unsafe.Pointer(&in.CloudProviderSpec))
 	out.Annotations = *(*map[string]string)(unsafe.Pointer(&in.Annotations))
+	out.MachineAnnotations = *(*map[string]string)(unsafe.Pointer(&in.MachineAnnotations))
 	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
 	out.Taints = *(*[]v1.Taint)(unsafe.Pointer(&in.Taints))
 	out.SSHPublicKeys = *(*[]string)(unsafe.Pointer(&in.SSHPublicKeys))

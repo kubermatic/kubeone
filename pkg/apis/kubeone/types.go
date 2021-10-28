@@ -361,8 +361,11 @@ type DynamicWorkerConfig struct {
 type ProviderSpec struct {
 	// CloudProviderSpec
 	CloudProviderSpec json.RawMessage `json:"cloudProviderSpec"`
-	// Annotations
+	// Annotations set MachineDeployment.ObjectMeta.Annotations
 	Annotations map[string]string `json:"annotations,omitempty"`
+	// MachineAnnotations set MachineDeployment.Spec.Template.Spec.ObjectMeta.Annotations
+	// a way to annotate resulted Nodes
+	MachineAnnotations map[string]string `json:"machineAnnotations,omitempty"`
 	// Labels
 	Labels map[string]string `json:"labels,omitempty"`
 	// Taints
