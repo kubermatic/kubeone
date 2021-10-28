@@ -1,6 +1,6 @@
 +++
 title = "v1beta1 API Reference"
-date = 2021-10-27T20:19:09+05:00
+date = 2021-10-28T12:33:26+05:00
 weight = 11
 +++
 ## v1beta1
@@ -322,7 +322,7 @@ Features controls what features will be enabled on the cluster
 | ----- | ----------- | ------ | -------- |
 | podNodeSelector | PodNodeSelector | *[PodNodeSelector](#podnodeselector) | false |
 | podPresets | PodPresets Obsolete: this feature was removed with Kubernetes 1.20 | *[PodPresets](#podpresets) | false |
-| podSecurityPolicy | PodSecurityPolicy | *[PodSecurityPolicy](#podsecuritypolicy) | false |
+| podSecurityPolicy | PodSecurityPolicy Deprecated: will be removed once Kubernetes 1.24 reaches EOL | *[PodSecurityPolicy](#podsecuritypolicy) | false |
 | staticAuditLog | StaticAuditLog | *[StaticAuditLog](#staticauditlog) | false |
 | dynamicAuditLog | DynamicAuditLog | *[DynamicAuditLog](#dynamicauditlog) | false |
 | metricsServer | MetricsServer | *[MetricsServer](#metricsserver) | false |
@@ -555,6 +555,8 @@ The PodPresets feature is obsolete and has been removed
 ### PodSecurityPolicy
 
 PodSecurityPolicy feature flag
+This feature is deprecated and will be removed from the API once
+Kubernetes 1.24 reaches EOL.
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |

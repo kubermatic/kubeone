@@ -233,6 +233,7 @@ func TestValidateKubeOneCluster(t *testing.T) {
 			expectedError: true,
 		},
 	}
+
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
@@ -1311,6 +1312,7 @@ func TestValidateFeatures(t *testing.T) {
 			expectedError: true,
 		},
 	}
+
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
