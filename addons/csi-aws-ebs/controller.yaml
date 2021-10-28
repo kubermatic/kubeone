@@ -22,6 +22,7 @@ spec:
     spec:
       nodeSelector:
         kubernetes.io/os: linux
+        node-role.kubernetes.io/master: ""
       serviceAccountName: ebs-csi-controller-sa
       priorityClassName: system-cluster-critical
       tolerations:
@@ -52,18 +53,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
-            - name: AWS_ACCESS_KEY_ID
-              valueFrom:
-                secretKeyRef:
-                  name: cloud-provider-credentials
-                  key: AWS_ACCESS_KEY_ID
-                  optional: false
-            - name: AWS_SECRET_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: cloud-provider-credentials
-                  key: AWS_SECRET_ACCESS_KEY
-                  optional: false
           volumeMounts:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
