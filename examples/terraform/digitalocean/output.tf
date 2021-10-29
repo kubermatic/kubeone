@@ -19,6 +19,7 @@ output "kubeone_api" {
 
   value = {
     endpoint = digitalocean_loadbalancer.control_plane.ip
+    additional_names = var.additional_names
   }
 }
 
