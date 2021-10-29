@@ -305,3 +305,7 @@ func Convert_kubeone_Features_To_v1alpha1_Features(in *kubeoneapi.Features, out 
 func Convert_kubeone_Addons_To_v1alpha1_Addons(in *kubeoneapi.Addons, out *Addons, conv conversion.Scope) error {
 	return autoConvert_kubeone_Addons_To_v1alpha1_Addons(in, out, conv)
 }
+
+func Convert_kubeone_APIEndpoint_To_v1alpha1_APIEndpoint(in *kubeoneapi.APIEndpoint, out *APIEndpoint, s conversion.Scope) error {
+	return autoConvert_kubeone_APIEndpoint_To_v1alpha1_APIEndpoint(in, out, s)
+}
