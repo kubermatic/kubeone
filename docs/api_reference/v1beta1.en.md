@@ -1,6 +1,6 @@
 +++
 title = "v1beta1 API Reference"
-date = 2021-10-28T12:33:26+05:00
+date = 2021-10-29T14:08:40+05:00
 weight = 11
 +++
 ## v1beta1
@@ -67,6 +67,7 @@ APIEndpoint is the endpoint used to communicate with the Kubernetes API
 | ----- | ----------- | ------ | -------- |
 | host | Host is the hostname or IP on which API is running. | string | true |
 | port | Port is the port used to reach to the API. Default value is 6443. | int | false |
+| alternativeNames | AlternativeNames is a list of Subject Alternative Names for the API Server signing cert. | []string | false |
 
 [Back to Group](#v1beta1)
 
@@ -414,7 +415,6 @@ KubeOneCluster is KubeOne Cluster API Schema
 | ----- | ----------- | ------ | -------- |
 | name | Name is the name of the cluster. | string | true |
 | controlPlane | ControlPlane describes the control plane nodes and how to access them. | [ControlPlaneConfig](#controlplaneconfig) | true |
-| alternativeNames | AlternativeNames is a list of Subject Alternative Names for the API Server signing cert. | []string | false |
 | apiEndpoint | APIEndpoint are pairs of address and port used to communicate with the Kubernetes API. | [APIEndpoint](#apiendpoint) | true |
 | cloudProvider | CloudProvider configures the cloud provider specific features. | [CloudProviderSpec](#cloudproviderspec) | true |
 | versions | Versions defines which Kubernetes version will be installed. | [VersionConfig](#versionconfig) | true |
