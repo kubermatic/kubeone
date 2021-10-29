@@ -39,7 +39,6 @@ func ValidateKubeOneCluster(c kubeone.KubeOneCluster) field.ErrorList {
 	}
 	allErrs = append(allErrs, ValidateControlPlaneConfig(c.ControlPlane, field.NewPath("controlPlane"))...)
 	allErrs = append(allErrs, ValidateAPIEndpoint(c.APIEndpoint, field.NewPath("apiEndpoint"))...)
-	allErrs = append(allErrs, ValidateAlternativeNames(c.AlternativeNames, field.NewPath("alternativeNames"))...)
 	allErrs = append(allErrs, ValidateCloudProviderSpec(c.CloudProvider, field.NewPath("provider"))...)
 	allErrs = append(allErrs, ValidateVersionConfig(c.Versions, field.NewPath("versions"))...)
 	allErrs = append(allErrs, ValidateCloudProviderSupportsKubernetes(c, field.NewPath(""))...)
@@ -90,15 +89,8 @@ func ValidateAPIEndpoint(a kubeone.APIEndpoint, fldPath *field.Path) field.Error
 		allErrs = append(allErrs, field.Invalid(fldPath.Child("port"), a.Port, "apiEndpoint.Port must be lower than 65535"))
 	}
 
-	return allErrs
-}
-
-// ValidateAlternativeNames validates provided AlternativeNames
-func ValidateAlternativeNames(altNames []string, fldPath *field.Path) field.ErrorList {
-	allErrs := field.ErrorList{}
-
 	visited := make(map[string]bool)
-	for _, altName := range altNames {
+	for _, altName := range a.AlternativeNames {
 		if visited[altName] {
 			allErrs = append(allErrs, field.Invalid(fldPath, altName, "duplicates are not allowed in alternative names"))
 			break
@@ -106,6 +98,7 @@ func ValidateAlternativeNames(altNames []string, fldPath *field.Path) field.Erro
 			visited[altName] = true
 		}
 	}
+
 	return allErrs
 }
 

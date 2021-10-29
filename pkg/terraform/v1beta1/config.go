@@ -171,7 +171,7 @@ func (c *Config) Apply(cluster *kubeonev1beta1.KubeOneCluster) error {
 	}
 
 	if len(c.KubeOneAPI.Value.AdditionalNames) > 0 {
-		cluster.AlternativeNames = c.KubeOneAPI.Value.AdditionalNames
+		cluster.APIEndpoint.AlternativeNames = c.KubeOneAPI.Value.AdditionalNames
 	}
 
 	cp := c.KubeOneHosts.Value.ControlPlane

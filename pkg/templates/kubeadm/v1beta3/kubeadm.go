@@ -112,7 +112,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		},
 	}
 
-	certSANS := certificate.GetCertificateSANs(cluster.APIEndpoint.Host, cluster.AlternativeNames)
+	certSANS := certificate.GetCertificateSANs(cluster.APIEndpoint.Host, cluster.APIEndpoint.AlternativeNames)
 	clusterConfig := &kubeadmv1beta3.ClusterConfiguration{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "kubeadm.k8s.io/v1beta3",

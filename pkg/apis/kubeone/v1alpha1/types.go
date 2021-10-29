@@ -86,6 +86,9 @@ type APIEndpoint struct {
 
 	// Port is the port used to reach to the API
 	Port int `json:"port"`
+
+	// AlternativeNames is a list of Subject Alternative Names for the API Server signing cert.
+	AlternativeNames []string `json:"alternativeNames,omitempty"`
 }
 
 // CloudProviderName represents the name of a provider

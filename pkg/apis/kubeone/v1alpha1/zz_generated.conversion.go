@@ -284,6 +284,7 @@ func RegisterConversions(s *runtime.Scheme) error {
 func autoConvert_v1alpha1_APIEndpoint_To_kubeone_APIEndpoint(in *APIEndpoint, out *kubeone.APIEndpoint, s conversion.Scope) error {
 	out.Host = in.Host
 	out.Port = in.Port
+	out.AlternativeNames = *(*[]string)(unsafe.Pointer(&in.AlternativeNames))
 	return nil
 }
 
@@ -295,6 +296,7 @@ func Convert_v1alpha1_APIEndpoint_To_kubeone_APIEndpoint(in *APIEndpoint, out *k
 func autoConvert_kubeone_APIEndpoint_To_v1alpha1_APIEndpoint(in *kubeone.APIEndpoint, out *APIEndpoint, s conversion.Scope) error {
 	out.Host = in.Host
 	out.Port = in.Port
+	out.AlternativeNames = *(*[]string)(unsafe.Pointer(&in.AlternativeNames))
 	return nil
 }
 
@@ -548,7 +550,6 @@ func autoConvert_v1alpha1_KubeOneCluster_To_kubeone_KubeOneCluster(in *KubeOneCl
 func autoConvert_kubeone_KubeOneCluster_To_v1alpha1_KubeOneCluster(in *kubeone.KubeOneCluster, out *KubeOneCluster, s conversion.Scope) error {
 	out.Name = in.Name
 	// WARNING: in.ControlPlane requires manual conversion: does not exist in peer-type
-	// WARNING: in.AlternativeNames requires manual conversion: does not exist in peer-type
 	if err := Convert_kubeone_APIEndpoint_To_v1alpha1_APIEndpoint(&in.APIEndpoint, &out.APIEndpoint, s); err != nil {
 		return err
 	}
