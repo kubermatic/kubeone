@@ -684,6 +684,11 @@ func (in *KubeOneCluster) DeepCopyInto(out *KubeOneCluster) {
 	*out = *in
 	out.TypeMeta = in.TypeMeta
 	in.ControlPlane.DeepCopyInto(&out.ControlPlane)
+	if in.AlternativeNames != nil {
+		in, out := &in.AlternativeNames, &out.AlternativeNames
+		*out = make([]string, len(*in))
+		copy(*out, *in)
+	}
 	out.APIEndpoint = in.APIEndpoint
 	in.CloudProvider.DeepCopyInto(&out.CloudProvider)
 	out.Versions = in.Versions

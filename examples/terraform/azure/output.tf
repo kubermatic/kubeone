@@ -19,6 +19,7 @@ output "kubeone_api" {
 
   value = {
     endpoint = azurerm_public_ip.lbip.ip_address
+    additional_names = var.additional_names
   }
 }
 

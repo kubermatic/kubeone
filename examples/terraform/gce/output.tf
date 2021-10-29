@@ -19,6 +19,7 @@ output "kubeone_api" {
 
   value = {
     endpoint = google_compute_address.lb_ip.address
+    additional_names = var.additional_names
   }
 }
 

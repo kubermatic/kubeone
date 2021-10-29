@@ -414,6 +414,7 @@ KubeOneCluster is KubeOne Cluster API Schema
 | ----- | ----------- | ------ | -------- |
 | name | Name is the name of the cluster. | string | true |
 | controlPlane | ControlPlane describes the control plane nodes and how to access them. | [ControlPlaneConfig](#controlplaneconfig) | true |
+| alternativeNames | AlternativeNames is a list of Subject Alternative Names for the API Server signing cert. | []string | false |
 | apiEndpoint | APIEndpoint are pairs of address and port used to communicate with the Kubernetes API. | [APIEndpoint](#apiendpoint) | true |
 | cloudProvider | CloudProvider configures the cloud provider specific features. | [CloudProviderSpec](#cloudproviderspec) | true |
 | versions | Versions defines which Kubernetes version will be installed. | [VersionConfig](#versionconfig) | true |

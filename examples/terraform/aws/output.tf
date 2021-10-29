@@ -19,6 +19,7 @@ output "kubeone_api" {
 
   value = {
     endpoint = aws_elb.control_plane.dns_name
+    additional_names = var.additional_names
   }
 }
 

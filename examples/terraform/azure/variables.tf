@@ -19,6 +19,12 @@ variable "cluster_name" {
   type        = string
 }
 
+variable "additional_names" {
+  description = "subject alternative names for the API Server signing cert."
+  default     = []
+  type        = list(string)
+}
+
 variable "worker_os" {
   description = "OS to run on worker machines"
 

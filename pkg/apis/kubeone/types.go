@@ -33,6 +33,8 @@ type KubeOneCluster struct {
 	Name string `json:"name"`
 	// ControlPlane describes the control plane nodes and how to access them.
 	ControlPlane ControlPlaneConfig `json:"controlPlane"`
+	// AlternativeNames is a list of Subject Alternative Names for the API Server signing cert.
+	AlternativeNames []string `json:"alternativeNames,omitempty"`
 	// APIEndpoint are pairs of address and port used to communicate with the Kubernetes API.
 	APIEndpoint APIEndpoint `json:"apiEndpoint"`
 	// CloudProvider configures the cloud provider specific features.
