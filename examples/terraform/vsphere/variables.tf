@@ -19,7 +19,7 @@ variable "cluster_name" {
   type        = string
 }
 
-variable "additional_names" {
+variable "apiserver_alternative_names" {
   description = "subject alternative names for the API Server signing cert."
   default     = []
   type        = list(string)

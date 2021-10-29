@@ -19,7 +19,7 @@ output "kubeone_api" {
 
   value = {
     endpoint = hcloud_load_balancer.load_balancer.ipv4
-    additional_names = var.additional_names
+    apiserver_alternative_names = var.apiserver_alternative_names
   }
 }
 
