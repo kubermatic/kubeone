@@ -146,12 +146,13 @@ func createMachineDeployment(cluster *kubeoneapi.KubeOneCluster, workerset kubeo
 			MinReadySeconds: &minReadySeconds,
 			Template: clusterv1alpha1.MachineTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
-					Namespace: metav1.NamespaceSystem,
 					Labels:    labels.Merge(workerset.Config.Labels, workersetNameLabels),
+					Namespace: metav1.NamespaceSystem,
 				},
 				Spec: clusterv1alpha1.MachineSpec{
 					ObjectMeta: metav1.ObjectMeta{
-						Labels: labels.Merge(workerset.Config.Labels, workersetNameLabels),
+						Annotations: workerset.Config.MachineAnnotations,
+						Labels:      labels.Merge(workerset.Config.Labels, workersetNameLabels),
 					},
 					Versions: clusterv1alpha1.MachineVersionInfo{
 						Kubelet: cluster.Versions.Kubernetes,

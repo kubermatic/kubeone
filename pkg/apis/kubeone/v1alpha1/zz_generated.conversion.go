@@ -799,6 +799,7 @@ func Convert_v1alpha1_ProviderSpec_To_kubeone_ProviderSpec(in *ProviderSpec, out
 func autoConvert_kubeone_ProviderSpec_To_v1alpha1_ProviderSpec(in *kubeone.ProviderSpec, out *ProviderSpec, s conversion.Scope) error {
 	out.CloudProviderSpec = *(*json.RawMessage)(unsafe.Pointer(&in.CloudProviderSpec))
 	// WARNING: in.Annotations requires manual conversion: does not exist in peer-type
+	// WARNING: in.MachineAnnotations requires manual conversion: does not exist in peer-type
 	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
 	out.Taints = *(*[]v1.Taint)(unsafe.Pointer(&in.Taints))
 	out.SSHPublicKeys = *(*[]string)(unsafe.Pointer(&in.SSHPublicKeys))
