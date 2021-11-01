@@ -59,6 +59,7 @@ type printOpts struct {
 
 	APIEndpointHost string `longflag:"api-endpoint-host"`
 	APIEndpointPort int    `longflag:"api-endpoint-port"`
+	APIEndpointAlternativeNames string    `longflag:"api-endpoint-alternative-names"`
 
 	PodSubnet     string `longflag:"pod-subnet"`
 	ServiceSubnet string `longflag:"service-subnet"`
@@ -148,6 +149,7 @@ func configPrintCmd() *cobra.Command {
 	// API endpoint
 	cmd.Flags().StringVar(&opts.APIEndpointHost, longFlagName(opts, "APIEndpointHost"), "", "API endpoint hostname or address")
 	cmd.Flags().IntVar(&opts.APIEndpointPort, longFlagName(opts, "APIEndpointPort"), 6443, "API endpoint port")
+	cmd.Flags().StringVar(&opts.APIEndpointAlternativeNames, longFlagName(opts, "APIEndpointAlternativeNames"), "", "API endpoint alternative names, comma separated list of names, example: host,host.com,192.16.0.100")
 
 	// Cluster networking
 	cmd.Flags().StringVar(&opts.PodSubnet, longFlagName(opts, "PodSubnet"), "", "Subnet to be used for pods networking")
@@ -331,6 +333,12 @@ func createAndPrintManifest(printOptions *printOpts) error {
 		cfg.Set(yamled.Path{"apiEndpoint", "port"}, printOptions.APIEndpointPort)
 	}
 
+	if len(printOptions.APIEndpointAlternativeNames) > 0 {
+		if err := parseAPIEndpointAlternativeNames(cfg, printOptions.APIEndpointAlternativeNames); err != nil {
+			return errors.Wrap(err, "unable to parse API endpoint alternative names")
+		}
+	}
+
 	// Cluster networking
 	if len(printOptions.PodSubnet) != 0 {
 		cfg.Set(yamled.Path{"clusterNetwork", "podSubnet"}, printOptions.PodSubnet)
@@ -404,6 +412,16 @@ func printFeatures(cfg *yamled.Document, printOptions *printOpts) {
 	}
 }
 
+func parseAPIEndpointAlternativeNames(cfg *yamled.Document, alternativeNames string) error {
+	var value string
+	alternativeNameList := strings.Split(alternativeNames, ",")
+	for _, name := range alternativeNameList {
+		value += "- " + name + "\n"
+	}
+	cfg.Set(yamled.Path{"apiEndpoint", "alternativeNames"}, value)
+	return nil
+}
+
 func parseControlPlaneHosts(cfg *yamled.Document, hostList string) error {
 	hosts := strings.Split(hostList, " ")
 	for i, host := range hosts {
@@ -432,6 +450,7 @@ func parseControlPlaneHosts(cfg *yamled.Document, hostList string) error {
 
 	return nil
 }
+
 
 // runMigrate migrates the KubeOneCluster manifest from v1alpha1 to v1beta1
 func runMigrate(opts *globalOptions) error {
@@ -871,7 +890,8 @@ addons:
 # The API server can also be overwritten by Terraform. Provide the
 # external address of your load balancer or the public addresses of
 # the first control plane nodes.
-# apiEndpoint:
+apiEndpoint:
+  alternativeNames: '{{ .APIEndpointAlternativeNames }}'
 #   host: '{{ .APIEndpointHost }}'
 #   port: {{ .APIEndpointPort }}
 
