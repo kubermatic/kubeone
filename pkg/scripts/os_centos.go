@@ -186,9 +186,5 @@ func DisableNMCloudSetup() (string, error) {
 }
 
 func isAWSCloudProvider(spec *kubeone.CloudProviderSpec) bool {
-	if spec.AWS != nil {
-		return true
-	}
-
-	return false
+	return spec.AWS != nil
 }
