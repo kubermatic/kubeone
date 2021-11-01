@@ -20,6 +20,9 @@ import "k8c.io/kubeone/pkg/apis/kubeone"
 
 const (
 	kubeadmCentOSTemplate = `
+{{ if .LOAD_IP_TABLES }}
+{{ template "load-iptables-modules" }}
+{{ end }}
 sudo swapoff -a
 sudo sed -i '/.*swap.*/d' /etc/fstab
 sudo setenforce 0 || true
@@ -102,6 +105,14 @@ sudo yum remove -y \
 	kubectl
 sudo yum remove -y kubernetes-cni || true
 `
+	disableNMCloudSetup = `
+if systemctl status 'nm-cloud-setup.timer' 2> /dev/null | grep -Fq "Active:"; then
+systemctl stop nm-cloud-setup.timer
+systemctl disable nm-cloud-setup.service
+systemctl disable nm-cloud-setup.timer
+reboot
+fi
+`
 )
 
 func KubeadmCentOS(cluster *kubeone.KubeOneCluster, force bool) (string, error) {
@@ -111,6 +122,7 @@ func KubeadmCentOS(cluster *kubeone.KubeOneCluster, force bool) (string, error) 
 	}
 
 	return Render(kubeadmCentOSTemplate, Data{
+		"LOAD_IP_TABLES":         isAWSCloudProvider(&cluster.CloudProvider),
 		"KUBELET":                true,
 		"KUBEADM":                true,
 		"KUBECTL":                true,
@@ -136,6 +148,7 @@ func UpgradeKubeadmAndCNICentOS(cluster *kubeone.KubeOneCluster) (string, error)
 	}
 
 	return Render(kubeadmCentOSTemplate, Data{
+		"LOAD_IP_TABLES":         isAWSCloudProvider(&cluster.CloudProvider),
 		"UPGRADE":                true,
 		"KUBEADM":                true,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
@@ -155,6 +168,7 @@ func UpgradeKubeletAndKubectlCentOS(cluster *kubeone.KubeOneCluster) (string, er
 	}
 
 	return Render(kubeadmCentOSTemplate, Data{
+		"LOAD_IP_TABLES":         isAWSCloudProvider(&cluster.CloudProvider),
 		"UPGRADE":                true,
 		"KUBELET":                true,
 		"KUBECTL":                true,
@@ -166,4 +180,16 @@ func UpgradeKubeletAndKubectlCentOS(cluster *kubeone.KubeOneCluster) (string, er
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 	})
+}
+
+func DisableNMCloudSetup() (string, error) {
+	return Render(disableNMCloudSetup, nil)
+}
+
+func isAWSCloudProvider(spec *kubeone.CloudProviderSpec) bool {
+	if spec.AWS != nil {
+		return true
+	}
+
+	return false
 }
