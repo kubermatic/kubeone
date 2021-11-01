@@ -880,7 +880,7 @@ addons:
 # apiEndpoint:
 #   host: '{{ .APIEndpointHost }}'
 #   port: {{ .APIEndpointPort }}
-#	alternativeNames: {{ .APIEndpointAlternativeNames }}
+#   alternativeNames: {{ .APIEndpointAlternativeNames }}
 
 # If the cluster runs on bare metal or an unsupported cloud provider,
 # you can disable the machine-controller deployment entirely. In this
