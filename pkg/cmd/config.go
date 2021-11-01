@@ -57,9 +57,9 @@ type printOpts struct {
 
 	ControlPlaneHosts string `longflag:"control-plane-hosts"`
 
-	APIEndpointHost string `longflag:"api-endpoint-host"`
-	APIEndpointPort int    `longflag:"api-endpoint-port"`
-	APIEndpointAlternativeNames string    `longflag:"api-endpoint-alternative-names"`
+	APIEndpointHost             string `longflag:"api-endpoint-host"`
+	APIEndpointPort             int    `longflag:"api-endpoint-port"`
+	APIEndpointAlternativeNames string `longflag:"api-endpoint-alternative-names"`
 
 	PodSubnet     string `longflag:"pod-subnet"`
 	ServiceSubnet string `longflag:"service-subnet"`
@@ -450,7 +450,6 @@ func parseControlPlaneHosts(cfg *yamled.Document, hostList string) error {
 
 	return nil
 }
-
 
 // runMigrate migrates the KubeOneCluster manifest from v1alpha1 to v1beta1
 func runMigrate(opts *globalOptions) error {
