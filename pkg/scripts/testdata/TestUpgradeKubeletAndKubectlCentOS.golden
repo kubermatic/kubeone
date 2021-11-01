@@ -1,6 +1,7 @@
 set -xeu pipefail
 export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
 
+
 sudo swapoff -a
 sudo sed -i '/.*swap.*/d' /etc/fstab
 sudo setenforce 0 || true
