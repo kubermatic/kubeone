@@ -877,10 +877,10 @@ addons:
 # The API server can also be overwritten by Terraform. Provide the
 # external address of your load balancer or the public addresses of
 # the first control plane nodes.
-apiEndpoint:
-  alternativeNames: {{ .APIEndpointAlternativeNames }}
+# apiEndpoint:
 #   host: '{{ .APIEndpointHost }}'
 #   port: {{ .APIEndpointPort }}
+#	alternativeNames: {{ .APIEndpointAlternativeNames }}
 
 # If the cluster runs on bare metal or an unsupported cloud provider,
 # you can disable the machine-controller deployment entirely. In this
