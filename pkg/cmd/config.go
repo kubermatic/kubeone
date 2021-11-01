@@ -57,8 +57,9 @@ type printOpts struct {
 
 	ControlPlaneHosts string `longflag:"control-plane-hosts"`
 
-	APIEndpointHost string `longflag:"api-endpoint-host"`
-	APIEndpointPort int    `longflag:"api-endpoint-port"`
+	APIEndpointHost             string   `longflag:"api-endpoint-host"`
+	APIEndpointPort             int      `longflag:"api-endpoint-port"`
+	APIEndpointAlternativeNames []string `longflag:"api-endpoint-alternative-names"`
 
 	PodSubnet     string `longflag:"pod-subnet"`
 	ServiceSubnet string `longflag:"service-subnet"`
@@ -148,6 +149,7 @@ func configPrintCmd() *cobra.Command {
 	// API endpoint
 	cmd.Flags().StringVar(&opts.APIEndpointHost, longFlagName(opts, "APIEndpointHost"), "", "API endpoint hostname or address")
 	cmd.Flags().IntVar(&opts.APIEndpointPort, longFlagName(opts, "APIEndpointPort"), 6443, "API endpoint port")
+	cmd.Flags().StringSliceVar(&opts.APIEndpointAlternativeNames, longFlagName(opts, "APIEndpointAlternativeNames"), []string{}, "Comma separated list of API endpoint alternative names, example: host.com,192.16.0.100")
 
 	// Cluster networking
 	cmd.Flags().StringVar(&opts.PodSubnet, longFlagName(opts, "PodSubnet"), "", "Subnet to be used for pods networking")
@@ -329,6 +331,10 @@ func createAndPrintManifest(printOptions *printOpts) error {
 	}
 	if printOptions.APIEndpointPort != 0 {
 		cfg.Set(yamled.Path{"apiEndpoint", "port"}, printOptions.APIEndpointPort)
+	}
+
+	if len(printOptions.APIEndpointAlternativeNames) > 0 {
+		cfg.Set(yamled.Path{"apiEndpoint", "alternativeNames"}, printOptions.APIEndpointAlternativeNames)
 	}
 
 	// Cluster networking
@@ -874,6 +880,7 @@ addons:
 # apiEndpoint:
 #   host: '{{ .APIEndpointHost }}'
 #   port: {{ .APIEndpointPort }}
+#   alternativeNames: {{ .APIEndpointAlternativeNames }}
 
 # If the cluster runs on bare metal or an unsupported cloud provider,
 # you can disable the machine-controller deployment entirely. In this
