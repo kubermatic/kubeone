@@ -878,7 +878,7 @@ addons:
 # external address of your load balancer or the public addresses of
 # the first control plane nodes.
 apiEndpoint:
-  alternativeNames: '{{ .APIEndpointAlternativeNames }}'
+  alternativeNames: {{ .APIEndpointAlternativeNames }}
 #   host: '{{ .APIEndpointHost }}'
 #   port: {{ .APIEndpointPort }}
 
