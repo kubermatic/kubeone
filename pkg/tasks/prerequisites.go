@@ -81,7 +81,7 @@ func generateConfigurationFiles(s *state.State) error {
 	return nil
 }
 
-func installPrerequisitesOnNode(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func installPrerequisitesOnNode(s *state.State, node *kubeoneapi.HostConfig, _ ssh.Connection) error {
 	logger := s.Logger.WithField("os", node.OperatingSystem)
 
 	logger.Infoln("Creating environment file...")
@@ -107,6 +107,28 @@ func createEnvironmentFile(s *state.State) error {
 	_, _, err = s.Runner.RunRaw(cmd)
 
 	return err
+}
+
+func disableNMCloudSetup(s *state.State, node *kubeoneapi.HostConfig, _ ssh.Connection) error {
+	if node.OperatingSystem == kubeoneapi.OperatingSystemNameRHEL &&
+		s.Cluster.CloudProvider.AWS != nil {
+		var allHosts = s.LiveCluster.ControlPlane
+		allHosts = append(allHosts, s.LiveCluster.StaticWorkers...)
+		for _, node := range allHosts {
+			if !node.Initialized() {
+				cmd, err := scripts.DisableNMCloudSetup()
+				if err != nil {
+					return err
+				}
+
+				_, _, err = s.Runner.RunRaw(cmd)
+
+				return err
+			}
+		}
+	}
+
+	return nil
 }
 
 func installKubeadm(s *state.State, node kubeoneapi.HostConfig) error {
@@ -168,7 +190,7 @@ func uploadConfigurationFiles(s *state.State) error {
 	return s.RunTaskOnAllNodes(uploadConfigurationFilesToNode, state.RunParallel)
 }
 
-func uploadConfigurationFilesToNode(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func uploadConfigurationFilesToNode(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	s.Logger.Infoln("Uploading config files...")
 
 	if err := s.Configuration.UploadTo(conn, s.WorkDir); err != nil {

@@ -79,6 +79,10 @@ var (
 		EOF
 		sudo systemctl force-reload systemd-journald
 		{{ end }}
+
+        {{ define "load-iptables-modules" }}
+        modprobe ip_tables
+        {{ end }}
 	`)
 )
 
