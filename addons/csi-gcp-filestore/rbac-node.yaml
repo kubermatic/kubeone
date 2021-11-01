@@ -1,0 +1,29 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: gcp-filestore-csi-node-sa
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: gcp-filestore-csi-node-deploy
+rules:
+- apiGroups: ["policy"]
+  resourceNames: ["gcp-filestore-csi-node-psp"]
+  resources: ["podsecuritypolicies"]
+  verbs: ["use"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: gcp-filestore-csi-node-deploy-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: gcp-filestore-csi-node-deploy
+subjects:
+- kind: ServiceAccount
+  name: gcp-filestore-csi-node-sa
+  namespace: kube-system

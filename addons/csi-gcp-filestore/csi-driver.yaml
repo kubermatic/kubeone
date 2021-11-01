@@ -1,0 +1,8 @@
+apiVersion: storage.k8s.io/v1
+kind: CSIDriver
+metadata:
+  name: filestore.csi.storage.gke.io
+spec:
+  attachRequired: false
+  fsGroupPolicy: File
+  podInfoOnMount: true

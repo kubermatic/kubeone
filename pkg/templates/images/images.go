@@ -104,6 +104,15 @@ const (
 	AzureDiskCSISnapshotter
 	AzureDiskCSISnapshotterController
 
+	// GCPFilestore CSI
+	GCPFilestoreCSI
+	GCPFilestoreCSINodeDriver
+	GCPFilestoreCSINodeNFSServices
+	GCPFilestoreCSINodeDriverRegistrar
+	GCPFilestoreCSIProvisioner
+	GCPFilestoreCSIResizer
+	GCPFilestoreCSISnapshotter
+
 	// CCMs and CSI plugins
 	DigitaloceanCCM
 	HetznerCCM
@@ -194,6 +203,15 @@ func optionalResources() map[Resource]map[string]string {
 
 		// DigitalOcean CCM
 		DigitaloceanCCM: {"*": "docker.io/digitalocean/digitalocean-cloud-controller-manager:v0.1.33"},
+
+		// GCP Filestore CSI driver
+		GCPFilestoreCSI:                    {"*": "k8s.gcr.io/cloud-provider-gcp/gcp-filestore-csi-driver:v1.0.0"},
+		GCPFilestoreCSINodeDriver:          {"*": "k8s.gcr.io/cloud-provider-gcp/gcp-filestore-csi-driver:v1.0.0"},
+		GCPFilestoreCSINodeNFSServices:     {"*": "k8s.gcr.io/cloud-provider-gcp/gcp-filestore-csi-driver:v1.0.0"},
+		GCPFilestoreCSINodeDriverRegistrar: {"*": "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.2.0"},
+		GCPFilestoreCSIProvisioner:         {"*": "k8s.gcr.io/sig-storage/csi-provisioner:v2.2.2"},
+		GCPFilestoreCSIResizer:             {"*": "k8s.gcr.io/sig-storage/csi-resizer:v1.2.0"},
+		GCPFilestoreCSISnapshotter:         {"*": "k8s.gcr.io/sig-storage/csi-snapshotter:v4.0.0"},
 
 		// Hetzner CCM
 		HetznerCCM: {"*": "docker.io/hetznercloud/hcloud-cloud-controller-manager:v1.12.0"},

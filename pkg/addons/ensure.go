@@ -50,6 +50,7 @@ var (
 		resources.AddonCNIWeavenet:        "",
 		resources.AddonCSIAzureDisk:       "",
 		resources.AddonCSIAzureFile:       "",
+		resources.AddonCSIGCPFilestore:    "",
 		resources.AddonCSIHetnzer:         "",
 		resources.AddonCSIOpenStackCinder: "",
 		resources.AddonCSIVsphere:         "",

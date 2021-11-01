@@ -1,0 +1,76 @@
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: gcp-filestore-csi-node
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      app: gcp-filestore-csi-driver
+  template:
+    metadata:
+      labels:
+        app: gcp-filestore-csi-driver
+    spec:
+      containers:
+      - args:
+        - --v=5
+        - --csi-address=/csi/csi.sock
+        - --kubelet-registration-path=/var/lib/kubelet/plugins/filestore.csi.storage.gke.io/csi.sock
+        env:
+        - name: KUBE_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        image: "{{ .InternalImages.Get "GCPFilestoreCSINodeDriverRegistrar" }}" 
+        name: csi-driver-registrar
+        volumeMounts:
+        - mountPath: /csi
+          name: plugin-dir
+        - mountPath: /registration
+          name: registration-dir
+      - args:
+        - --v=5
+        - --endpoint=unix:/csi/csi.sock
+        - --nodeid=$(KUBE_NODE_NAME)
+        - --node=true
+        env:
+        - name: KUBE_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        image: "{{ .InternalImages.Get "GCPFilestoreCSINodeDriver" }}"
+        name: gcp-filestore-driver
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - mountPath: /var/lib/kubelet
+          mountPropagation: Bidirectional
+          name: kubelet-dir
+        - mountPath: /csi
+          name: plugin-dir
+      - command:
+        - /nfs_services_start.sh
+        image: "{{ .InternalImages.Get "GCPFilestoreCSINodeNFSServices" }}"
+        name: nfs-services
+      hostNetwork: true
+      nodeSelector:
+        kubernetes.io/os: linux
+      priorityClassName: system-node-critical
+      serviceAccount: gcp-filestore-csi-node-sa
+      volumes:
+      - hostPath:
+          path: /var/lib/kubelet/plugins_registry/
+          type: Directory
+        name: registration-dir
+      - hostPath:
+          path: /var/lib/kubelet
+          type: Directory
+        name: kubelet-dir
+      - hostPath:
+          path: /var/lib/kubelet/plugins/filestore.csi.storage.gke.io/
+          type: DirectoryOrCreate
+        name: plugin-dir
+  updateStrategy:
+    type: RollingUpdate

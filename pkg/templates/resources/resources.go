@@ -33,6 +33,7 @@ const (
 	AddonCCMVsphere         = "ccm-vsphere"
 	AddonCSIAzureDisk       = "csi-azuredisk"
 	AddonCSIAzureFile       = "csi-azurefile"
+	AddonCSIGCPFilestore    = "csi-gcp-filestore"
 	AddonCSIHetnzer         = "csi-hetzner"
 	AddonCSIOpenStackCinder = "csi-openstack-cinder"
 	AddonCSIVsphere         = "csi-vsphere"

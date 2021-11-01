@@ -1,0 +1,128 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gcp-filestore-csi-controller
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gcp-filestore-csi-driver
+  template:
+    metadata:
+      labels:
+        app: gcp-filestore-csi-driver
+    spec:
+      containers:
+      - args:
+        - --v=5
+        - --csi-address=/csi/csi.sock
+        - --timeout=250s
+        - --feature-gates=Topology=true
+        - --extra-create-metadata
+        - --http-endpoint=:22021
+        - --leader-election-namespace=$(FILESTORECSI_NAMESPACE)
+        - --leader-election
+        env:
+        - name: FILESTORECSI_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        image: "{{ .InternalImages.Get "GCPFilestoreCSIProvisioner" }}" 
+        livenessProbe:
+          failureThreshold: 1
+          httpGet:
+            path: /healthz/leader-election
+            port: http-endpoint
+          initialDelaySeconds: 10
+          periodSeconds: 20
+          timeoutSeconds: 10
+        name: csi-external-provisioner
+        ports:
+        - containerPort: 22021
+          name: http-endpoint
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /csi
+          name: socket-dir
+      - args:
+        - --v=5
+        - --csi-address=/csi/csi.sock
+        - --timeout=120s
+        - --http-endpoint=:22022
+        - --leader-election
+        - --leader-election-namespace=$(FILESTORECSI_NAMESPACE)
+        env:
+        - name: FILESTORECSI_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        image: "{{ .InternalImages.Get "GCPFilestoreCSIResizer" }}"
+        livenessProbe:
+          failureThreshold: 1
+          httpGet:
+            path: /healthz/leader-election
+            port: http-endpoint
+          initialDelaySeconds: 10
+          periodSeconds: 20
+          timeoutSeconds: 10
+        name: csi-external-resizer
+        ports:
+        - containerPort: 22022
+          name: http-endpoint
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /csi
+          name: socket-dir
+      - args:
+        - --v=5
+        - --csi-address=/csi/csi.sock
+        - --timeout=300s
+        - --metrics-address=:22023
+        - --leader-election
+        - --leader-election-namespace=$(FILESTORECSI_NAMESPACE)
+        env:
+        - name: FILESTORECSI_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        image: "{{ .InternalImages.Get "GCPFilestoreCSISnapshotter" }}"
+        name: csi-external-snapshotter
+        ports:
+        - containerPort: 22023
+          name: metrics
+        volumeMounts:
+        - mountPath: /csi
+          name: socket-dir
+      - args:
+        - --v=4
+        - --endpoint=unix:/csi/csi.sock
+        - --nodeid=$(KUBE_NODE_NAME)
+        - --controller=true
+        env:
+        - name: KUBE_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /etc/cloud_sa/gcp_filestore_csi_driver_sa.json
+        image: "{{ .InternalImages.Get "GCPFilestoreCSI" }}" 
+        name: gcp-filestore-driver
+        volumeMounts:
+        - mountPath: /csi
+          name: socket-dir
+        - mountPath: /etc/cloud_sa
+          name: cloud-sa-volume
+          readOnly: true
+      hostNetwork: true
+      nodeSelector:
+        kubernetes.io/os: linux
+      priorityClassName: system-cluster-critical
+      serviceAccount: gcp-filestore-csi-controller-sa
+      volumes:
+      - emptyDir: {}
+        name: socket-dir
+      - name: cloud-sa-volume
+        secret:
+          secretName: gcp-filestore-csi-driver-sa

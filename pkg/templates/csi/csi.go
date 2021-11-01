@@ -47,6 +47,13 @@ func Ensure(s *state.State) error {
 		// Deploy AzureFile CSI driver
 		err = addons.EnsureAddonByName(s, resources.AddonCSIAzureFile)
 		return errors.Wrap(err, "failed to deploy azurefile CSI driver")
+
+	case s.Cluster.CloudProvider.GCE != nil:
+		// Deploy GCP Filestore driver
+		if err = addons.EnsureAddonByName(s, resources.AddonCSIGCPFilestore); err != nil {
+			return errors.Wrap(err, "failed to deploy GCP filestore CSI driver")
+		}
+
 	case s.Cluster.CloudProvider.Hetzner != nil:
 		err = addons.EnsureAddonByName(s, resources.AddonCSIHetnzer)
 	case s.Cluster.CloudProvider.Openstack != nil:
