@@ -519,9 +519,11 @@ spec:
             {{ with .Config.RegistryConfiguration.InsecureRegistryAddress }}
             - -node-insecure-registries={{ . }}
             {{ end }}
-            {{ with .Config.RegistryConfiguration.Mirrors }}
+            {{- with .Config.RegistryConfiguration }}
+            {{- with .RegistryMirrors }}
             - -node-registry-mirrors={{ join "," . }}
-            {{ end }}
+            {{- end }}
+            {{- end }}
             {{ if .Config.CABundle }}
             - -ca-bundle={{ .Resources.CABundleSSLCertFilePath }}
             {{ end }}
