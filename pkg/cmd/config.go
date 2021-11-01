@@ -40,7 +40,7 @@ import (
 
 const (
 	// defaultKubernetesVersion is default Kubernetes version for the example configuration file
-	defaultKubernetesVersion = "1.18.2"
+	defaultKubernetesVersion = "1.22.3"
 	// defaultCloudProviderName is cloud provider to build the example configuration file for
 	defaultCloudProviderName = "aws"
 )

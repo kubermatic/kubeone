@@ -1,6 +1,6 @@
 +++
 title = "v1beta1 API Reference"
-date = 2021-10-28T12:33:26+05:00
+date = 2021-10-28T16:38:45+03:00
 weight = 11
 +++
 ## v1beta1
@@ -572,7 +572,8 @@ ProviderSpec describes a worker node
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | cloudProviderSpec | CloudProviderSpec | [json.RawMessage](https://golang.org/pkg/encoding/json/#RawMessage) | true |
-| annotations | Annotations | map[string]string | false |
+| annotations | Annotations set MachineDeployment.ObjectMeta.Annotations | map[string]string | false |
+| machineAnnotations | MachineAnnotations set MachineDeployment.Spec.Template.Spec.ObjectMeta.Annotations a way to annotate resulted Nodes | map[string]string | false |
 | labels | Labels | map[string]string | false |
 | taints | Taints | [][corev1.Taint](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#taint-v1-core) | false |
 | sshPublicKeys | SSHPublicKeys | []string | false |
