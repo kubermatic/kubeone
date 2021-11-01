@@ -524,6 +524,8 @@ type RegistryConfiguration struct {
 	// in OverwriteRegistry as an insecure registry. This is also propagated
 	// to the worker nodes managed by machine-controller and/or KubeOne.
 	InsecureRegistry bool `json:"insecureRegistry,omitempty"`
+	// Mirrors sets registry-mirrors
+	Mirrors []string `json:"mirrors"`
 }
 
 // PodNodeSelector feature flag
