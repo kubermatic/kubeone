@@ -57,9 +57,9 @@ type printOpts struct {
 
 	ControlPlaneHosts string `longflag:"control-plane-hosts"`
 
-	APIEndpointHost             string `longflag:"api-endpoint-host"`
-	APIEndpointPort             int    `longflag:"api-endpoint-port"`
-	APIEndpointAlternativeNames string `longflag:"api-endpoint-alternative-names"`
+	APIEndpointHost             string   `longflag:"api-endpoint-host"`
+	APIEndpointPort             int      `longflag:"api-endpoint-port"`
+	APIEndpointAlternativeNames []string `longflag:"api-endpoint-alternative-names"`
 
 	PodSubnet     string `longflag:"pod-subnet"`
 	ServiceSubnet string `longflag:"service-subnet"`
@@ -149,7 +149,7 @@ func configPrintCmd() *cobra.Command {
 	// API endpoint
 	cmd.Flags().StringVar(&opts.APIEndpointHost, longFlagName(opts, "APIEndpointHost"), "", "API endpoint hostname or address")
 	cmd.Flags().IntVar(&opts.APIEndpointPort, longFlagName(opts, "APIEndpointPort"), 6443, "API endpoint port")
-	cmd.Flags().StringVar(&opts.APIEndpointAlternativeNames, longFlagName(opts, "APIEndpointAlternativeNames"), "", "API endpoint alternative names, comma separated list of names, example: host,host.com,192.16.0.100")
+	cmd.Flags().StringSliceVar(&opts.APIEndpointAlternativeNames, longFlagName(opts, "APIEndpointAlternativeNames"), []string{}, "Comma separated list of API endpoint alternative names, example: host.com,192.16.0.100")
 
 	// Cluster networking
 	cmd.Flags().StringVar(&opts.PodSubnet, longFlagName(opts, "PodSubnet"), "", "Subnet to be used for pods networking")
@@ -334,9 +334,7 @@ func createAndPrintManifest(printOptions *printOpts) error {
 	}
 
 	if len(printOptions.APIEndpointAlternativeNames) > 0 {
-		if err := parseAPIEndpointAlternativeNames(cfg, printOptions.APIEndpointAlternativeNames); err != nil {
-			return errors.Wrap(err, "unable to parse API endpoint alternative names")
-		}
+		cfg.Set(yamled.Path{"apiEndpoint", "alternativeNames"}, printOptions.APIEndpointAlternativeNames)
 	}
 
 	// Cluster networking
@@ -410,16 +408,6 @@ func printFeatures(cfg *yamled.Document, printOptions *printOpts) {
 	if printOptions.EnableEncryptionProviders {
 		cfg.Set(yamled.Path{"features", "encryptionProviders", "enable"}, printOptions.EnableEncryptionProviders)
 	}
-}
-
-func parseAPIEndpointAlternativeNames(cfg *yamled.Document, alternativeNames string) error {
-	var value string
-	alternativeNameList := strings.Split(alternativeNames, ",")
-	for _, name := range alternativeNameList {
-		value += "- " + name + "\n"
-	}
-	cfg.Set(yamled.Path{"apiEndpoint", "alternativeNames"}, value)
-	return nil
 }
 
 func parseControlPlaneHosts(cfg *yamled.Document, hostList string) error {
