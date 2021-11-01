@@ -19,7 +19,7 @@ output "kubeone_api" {
 
   value = {
     endpoint = var.api_vip != "" ? var.api_vip : vsphere_virtual_machine.control_plane[0].default_ip_address
-    additional_names = var.additional_names
+    apiserver_alternative_names = var.apiserver_alternative_names
   }
 }
 

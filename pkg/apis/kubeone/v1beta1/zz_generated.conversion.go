@@ -574,6 +574,7 @@ func RegisterConversions(s *runtime.Scheme) error {
 func autoConvert_v1beta1_APIEndpoint_To_kubeone_APIEndpoint(in *APIEndpoint, out *kubeone.APIEndpoint, s conversion.Scope) error {
 	out.Host = in.Host
 	out.Port = in.Port
+	out.AlternativeNames = *(*[]string)(unsafe.Pointer(&in.AlternativeNames))
 	return nil
 }
 
@@ -585,6 +586,7 @@ func Convert_v1beta1_APIEndpoint_To_kubeone_APIEndpoint(in *APIEndpoint, out *ku
 func autoConvert_kubeone_APIEndpoint_To_v1beta1_APIEndpoint(in *kubeone.APIEndpoint, out *APIEndpoint, s conversion.Scope) error {
 	out.Host = in.Host
 	out.Port = in.Port
+	out.AlternativeNames = *(*[]string)(unsafe.Pointer(&in.AlternativeNames))
 	return nil
 }
 
@@ -1302,7 +1304,6 @@ func autoConvert_v1beta1_KubeOneCluster_To_kubeone_KubeOneCluster(in *KubeOneClu
 	if err := Convert_v1beta1_ControlPlaneConfig_To_kubeone_ControlPlaneConfig(&in.ControlPlane, &out.ControlPlane, s); err != nil {
 		return err
 	}
-	out.AlternativeNames = *(*[]string)(unsafe.Pointer(&in.AlternativeNames))
 	if err := Convert_v1beta1_APIEndpoint_To_kubeone_APIEndpoint(&in.APIEndpoint, &out.APIEndpoint, s); err != nil {
 		return err
 	}
@@ -1349,7 +1350,6 @@ func autoConvert_kubeone_KubeOneCluster_To_v1beta1_KubeOneCluster(in *kubeone.Ku
 	if err := Convert_kubeone_ControlPlaneConfig_To_v1beta1_ControlPlaneConfig(&in.ControlPlane, &out.ControlPlane, s); err != nil {
 		return err
 	}
-	out.AlternativeNames = *(*[]string)(unsafe.Pointer(&in.AlternativeNames))
 	if err := Convert_kubeone_APIEndpoint_To_v1beta1_APIEndpoint(&in.APIEndpoint, &out.APIEndpoint, s); err != nil {
 		return err
 	}
