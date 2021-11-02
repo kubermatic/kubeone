@@ -92,6 +92,7 @@ const (
 	AwsEbsCSIProvisioner
 	AwsEbsCSIResizer
 	AwsEbsCSISnapshotter
+	AwsEbsCSISnapshotController
 
 	// AzureFile CSI
 	AzureFileCSI
@@ -188,7 +189,14 @@ func optionalResources() map[Resource]map[string]string {
 		AwsEbsCSINodeDriverRegistrar: {"*": "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.1.0"},
 		AwsEbsCSIProvisioner:         {"*": "k8s.gcr.io/sig-storage/csi-provisioner:v2.1.1"},
 		AwsEbsCSIResizer:             {"*": "k8s.gcr.io/sig-storage/csi-resizer:v1.1.0"},
-		AwsEbsCSISnapshotter:         {"*": "k8s.gcr.io/sig-storage/csi-snapshotter:v3.0.3"},
+		AwsEbsCSISnapshotter: {
+			">= 1.19.0, < 1.20.0": "k8s.gcr.io/sig-storage/csi-snapshotter:v3.0.3",
+			">= 1.20.0":           "k8s.gcr.io/sig-storage/csi-snapshotter:v4.2.1",
+		},
+		AwsEbsCSISnapshotController: {
+			">= 1.19.0, < 1.20.0": "k8s.gcr.io/sig-storage/snapshot-controller:v3.0.3",
+			">= 1.20.0":           "k8s.gcr.io/sig-storage/snapshot-controller:v4.2.1",
+		},
 
 		// AzureFile CSI driver
 		AzureFileCSI:                      {"*": "mcr.microsoft.com/k8s/csi/azurefile-csi:v1.7.0"},
