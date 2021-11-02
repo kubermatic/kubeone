@@ -1,0 +1,20 @@
+{{ $version := semver .Config.Versions.Kubernetes }}
+---
+# Source: aws-ebs-csi-driver/templates/poddisruptionbudget-controller.yaml
+{{- if ge $version.Minor 21 }}
+apiVersion: policy/v1
+{{- else }}
+apiVersion: policy/v1beta1
+{{- end }}
+kind: PodDisruptionBudget
+metadata:
+  name: ebs-csi-controller
+  namespace: kube-system
+  labels:
+    app.kubernetes.io/name: aws-ebs-csi-driver
+spec:
+  selector:
+    matchLabels:
+      app: ebs-csi-controller
+      app.kubernetes.io/name: aws-ebs-csi-driver
+  maxUnavailable: 1

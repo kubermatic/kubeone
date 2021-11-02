@@ -34,6 +34,10 @@ func Ensure(s *state.State) error {
 	var err error
 
 	switch {
+	case s.Cluster.CloudProvider.AWS != nil:
+		if err = addons.EnsureAddonByName(s, resources.AddonCSIAwsEBS); err != nil {
+			return errors.Wrap(err, "failed to deploy AWS EBS CSI driver")
+		}
 	case s.Cluster.CloudProvider.Azure != nil:
 		if s.Cluster.CloudProvider.CloudConfig == "" {
 			return errors.New("cloudConfig not defined")

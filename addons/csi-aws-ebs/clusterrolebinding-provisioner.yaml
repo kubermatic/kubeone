@@ -1,0 +1,16 @@
+---
+# Source: aws-ebs-csi-driver/templates/clusterrolebinding-provisioner.yaml
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: ebs-csi-provisioner-binding
+  labels:
+    app.kubernetes.io/name: aws-ebs-csi-driver
+subjects:
+  - kind: ServiceAccount
+    name: ebs-csi-controller-sa
+    namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: ebs-external-provisioner-role
+  apiGroup: rbac.authorization.k8s.io
