@@ -46,6 +46,8 @@ const (
 	systemdShowExecStartCMD = `systemctl show %s -p ExecStart`
 
 	kubeletInitializedCMD = `test -f /etc/kubernetes/kubelet.conf`
+
+	k8sAppLabel = "k8s-app"
 )
 
 var KubeProxyObjectKey = dynclient.ObjectKey{
@@ -590,21 +592,28 @@ func detectCCMMigrationStatus(s *state.State) (*state.CCMStatus, error) {
 					status.CSIMigrationEnabled = true
 				}
 				unregister := s.Cluster.InTreePluginUnregisterFeatureGate()
-				if unregister != "" && strings.Contains(c, fmt.Sprintf("%s=true", unregister)) {
+
+				foundUnregister := 0
+				for _, u := range unregister {
+					if strings.Contains(c, fmt.Sprintf("%s=true", u)) {
+						foundUnregister++
+					}
+				}
+				if len(unregister) > 0 && foundUnregister == len(unregister) {
 					status.InTreeCloudProviderUnregistered = true
 				}
 			}
 		}
 	}
 
-	ccmLabel := ""
+	ccmLabel := k8sAppLabel
 	ccmLabelValue := ""
 	switch {
+	case s.Cluster.CloudProvider.Azure != nil:
+		ccmLabelValue = "azure-cloud-controller-manager"
 	case s.Cluster.CloudProvider.Openstack != nil:
-		ccmLabel = "k8s-app"
 		ccmLabelValue = "openstack-cloud-controller-manager"
 	case s.Cluster.CloudProvider.Vsphere != nil:
-		ccmLabel = "k8s-app"
 		ccmLabelValue = "vsphere-cloud-controller-manager"
 	default:
 		status.ExternalCCMDeployed = false
