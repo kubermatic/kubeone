@@ -114,7 +114,7 @@ func WithFullInstall(t Tasks) Tasks {
 	return Tasks{
 		{
 			Fn: func(s *state.State) error {
-				s.Logger.Infoln("Disable nm-cloud-setup on aws rhel nodes...")
+				s.Logger.Infoln("Disable nm-cloud-setup nodes...")
 				return s.RunTaskOnLeader(disableNMCloudSetup)
 			},
 			ErrMsg: "failed to disable nm-cloud-setup",
@@ -122,13 +122,6 @@ func WithFullInstall(t Tasks) Tasks {
 	}.append(WithBinariesOnly(t)...).
 		append(kubernetesConfigFiles()...).
 		append(Tasks{
-			{
-				Fn: func(s *state.State) error {
-					s.Logger.Infoln("Disable nm-cloud-setup on aws rhel nodes...")
-					return s.RunTaskOnLeader(disableNMCloudSetup)
-				},
-				ErrMsg: "failed to disable nm-cloud-setup",
-			},
 			{
 				Fn: func(s *state.State) error {
 					s.Logger.Infoln("Configuring certs and etcd on control plane node...")
