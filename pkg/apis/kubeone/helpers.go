@@ -161,7 +161,7 @@ func (p CloudProviderSpec) CloudProviderInTree() bool {
 // NB: The CSI migration can be supported only if KubeOne supports CSI plugin and driver
 // for the provider
 func (p CloudProviderSpec) CSIMigrationSupported() bool {
-	return p.External && (p.Openstack != nil || p.Vsphere != nil)
+	return p.External && (p.Azure != nil || p.Openstack != nil || p.Vsphere != nil)
 }
 
 // CSIMigrationFeatureGates returns CSI migration feature gates in form of a map
@@ -172,56 +172,62 @@ func (p CloudProviderSpec) CSIMigrationSupported() bool {
 // (https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/)
 // This is a KubeOneCluster function because feature gates are Kubernetes-version dependent.
 func (c KubeOneCluster) CSIMigrationFeatureGates(complete bool) (map[string]bool, string, error) {
+	var featureGates map[string]bool
+
 	switch {
+	case c.CloudProvider.Azure != nil:
+		featureGates = map[string]bool{
+			"CSIMigrationAzureDisk": true,
+			"CSIMigrationAzureFile": true,
+		}
 	case c.CloudProvider.Openstack != nil:
-		featureGates := map[string]bool{
+		featureGates = map[string]bool{
 			"CSIMigrationOpenStack": true,
 			"ExpandCSIVolumes":      true,
 		}
-
-		unregister := c.InTreePluginUnregisterFeatureGate()
-		if complete && unregister != "" {
-			featureGates[unregister] = true
-		}
-
-		return featureGates, marshalFeatureGates(featureGates), nil
 	case c.CloudProvider.Vsphere != nil:
-		featureGates := map[string]bool{
+		featureGates = map[string]bool{
 			"CSIMigrationvSphere": true,
 		}
-
-		unregister := c.InTreePluginUnregisterFeatureGate()
-		if complete && unregister != "" {
-			featureGates[unregister] = true
-		}
-
-		return featureGates, marshalFeatureGates(featureGates), nil
+	default:
+		return nil, "", errors.New("csi migration is not supported for selected provider")
 	}
 
-	return nil, "", errors.New("csi migration is not supported for selected provider")
+	if complete {
+		for _, u := range c.InTreePluginUnregisterFeatureGate() {
+			featureGates[u] = true
+		}
+	}
+
+	return featureGates, marshalFeatureGates(featureGates), nil
 }
 
 // CSIMigrationFeatureGates returns the name of the feature gate that's supposed to
 // unregister the in-tree cloud provider.
 // NB: This is a KubeOneCluster function because feature gates are Kubernetes-version dependent.
-func (c KubeOneCluster) InTreePluginUnregisterFeatureGate() string {
+func (c KubeOneCluster) InTreePluginUnregisterFeatureGate() []string {
 	lessThan21, _ := semver.NewConstraint("< 1.21.0")
 	ver, _ := semver.NewVersion(c.Versions.Kubernetes)
 
 	switch {
+	case c.CloudProvider.Azure != nil:
+		if lessThan21.Check(ver) {
+			return []string{"CSIMigrationAzureDiskComplete", "CSIMigrationAzureFileComplete"}
+		}
+		return []string{"InTreePluginAzureDiskUnregister", "InTreePluginAzureFileUnregister"}
 	case c.CloudProvider.Openstack != nil:
 		if lessThan21.Check(ver) {
-			return "CSIMigrationOpenStackComplete"
+			return []string{"CSIMigrationOpenStackComplete"}
 		}
-		return "InTreePluginOpenStackUnregister"
+		return []string{"InTreePluginOpenStackUnregister"}
 	case c.CloudProvider.Vsphere != nil:
 		if lessThan21.Check(ver) {
-			return "CSIMigrationvSphereComplete"
+			return []string{"CSIMigrationvSphereComplete"}
 		}
-		return "InTreePluginvSphereUnregister"
+		return []string{"InTreePluginvSphereUnregister"}
 	}
 
-	return ""
+	return nil
 }
 
 func marshalFeatureGates(fgm map[string]bool) string {
