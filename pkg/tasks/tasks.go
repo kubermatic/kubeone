@@ -111,7 +111,15 @@ func WithHostnameOSAndProbes(t Tasks) Tasks {
 // WithFullInstall with install binaries (using WithBinariesOnly) and
 // orchestrate complete cluster init
 func WithFullInstall(t Tasks) Tasks {
-	return WithBinariesOnly(t).
+	return Tasks{
+		{
+			Fn: func(s *state.State) error {
+				s.Logger.Infoln("Disable nm-cloud-setup on aws rhel nodes...")
+				return s.RunTaskOnLeader(disableNMCloudSetup)
+			},
+			ErrMsg: "failed to disable nm-cloud-setup",
+		},
+	}.append(WithBinariesOnly(t)...).
 		append(kubernetesConfigFiles()...).
 		append(Tasks{
 			{
