@@ -107,8 +107,7 @@ func WithFullInstall(t Tasks) Tasks {
 	return Tasks{
 		{
 			Fn: func(s *state.State) error {
-				s.Logger.Infoln("Disable nm-cloud-setup nodes...")
-				return s.RunTaskOnLeader(disableNMCloudSetup)
+				return s.RunTaskOnAllNodes(disableNMCloudSetup, state.RunParallel)
 			},
 			ErrMsg: "failed to disable nm-cloud-setup",
 		},
