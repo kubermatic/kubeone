@@ -1,9 +1,6 @@
 set -xeu pipefail
 export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
 
-
-sudo modprobe ip_tables
-
 sudo swapoff -a
 sudo sed -i '/.*swap.*/d' /etc/fstab
 sudo setenforce 0 || true
@@ -16,9 +13,11 @@ source /etc/kubeone/proxy-env
 cat <<EOF | sudo tee /etc/modules-load.d/containerd.conf
 overlay
 br_netfilter
+ip_tables
 EOF
 sudo modprobe overlay
 sudo modprobe br_netfilter
+sudo modprobe ip_tables
 sudo mkdir -p /etc/sysctl.d
 cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
 fs.inotify.max_user_watches         = 1048576
