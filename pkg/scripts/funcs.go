@@ -57,6 +57,7 @@ var (
 		EOF
 		sudo modprobe overlay
 		sudo modprobe br_netfilter
+        sudo modprobe ip_tables
 		sudo mkdir -p /etc/sysctl.d
 		cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
 		fs.inotify.max_user_watches         = 1048576
@@ -78,10 +79,6 @@ var (
 		SystemMaxUse=5G
 		EOF
 		sudo systemctl force-reload systemd-journald
-		{{ end }}
-
-		{{ define "load-iptables-modules" }}
-		sudo modprobe ip_tables
 		{{ end }}
 	`)
 )
