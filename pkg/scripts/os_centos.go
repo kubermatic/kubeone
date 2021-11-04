@@ -20,7 +20,6 @@ import "k8c.io/kubeone/pkg/apis/kubeone"
 
 const (
 	kubeadmCentOSTemplate = `
-{{ template "load-iptables-modules" }}
 sudo swapoff -a
 sudo sed -i '/.*swap.*/d' /etc/fstab
 sudo setenforce 0 || true
