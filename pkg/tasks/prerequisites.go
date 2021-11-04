@@ -110,20 +110,23 @@ func createEnvironmentFile(s *state.State) error {
 }
 
 func disableNMCloudSetup(s *state.State, node *kubeoneapi.HostConfig, _ ssh.Connection) error {
-	if node.OperatingSystem == kubeoneapi.OperatingSystemNameRHEL {
-		var allHosts = s.LiveCluster.ControlPlane
-		allHosts = append(allHosts, s.LiveCluster.StaticWorkers...)
-		for _, host := range allHosts {
-			if node.ID == host.Config.ID && !host.Initialized() {
-				cmd, err := scripts.DisableNMCloudSetup()
-				if err != nil {
-					return err
-				}
+	if node.OperatingSystem != kubeoneapi.OperatingSystemNameRHEL {
+		return nil
+	}
 
-				_, _, err = s.Runner.RunRaw(cmd)
-
+	var allHosts = s.LiveCluster.ControlPlane
+	allHosts = append(allHosts, s.LiveCluster.StaticWorkers...)
+	for _, host := range allHosts {
+		if node.ID == host.Config.ID && !host.Initialized() {
+			cmd, err := scripts.DisableNMCloudSetup()
+			if err != nil {
 				return err
 			}
+
+			s.Logger.Infoln("Disable nm-cloud-setup...the node will be rebooted…")
+			_, _, err = s.Runner.RunRaw(cmd)
+
+			return err
 		}
 	}
 
