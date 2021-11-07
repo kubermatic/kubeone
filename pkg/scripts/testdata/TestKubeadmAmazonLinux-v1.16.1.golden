@@ -71,7 +71,7 @@ sudo yum install -y \
 
 
 
-sudo mkdir -p /etc/docker
+sudo mkdir -p $(dirname /etc/docker/daemon.json)
 cat <<EOF | sudo tee /etc/docker/daemon.json
 {
 	"exec-opts": [
@@ -84,6 +84,9 @@ cat <<EOF | sudo tee /etc/docker/daemon.json
 	}
 }
 EOF
+cat <<EOF | sudo tee /etc/crictl.yaml
+runtime-endpoint: unix:///var/run/dockershim.sock
+EOF
 
 sudo yum versionlock delete docker cri-tools containerd || true
 
@@ -93,11 +96,6 @@ sudo yum install -y \
 	containerd.io-1.4.* \
 	cri-tools-1.13.0
 sudo yum versionlock add docker cri-tools containerd
-
-cat <<EOF | sudo tee /etc/crictl.yaml
-runtime-endpoint: unix:///var/run/dockershim.sock
-EOF
-
 sudo systemctl daemon-reload
 sudo systemctl enable --now containerd
 sudo systemctl enable --now docker

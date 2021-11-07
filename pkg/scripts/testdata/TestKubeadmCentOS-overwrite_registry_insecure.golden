@@ -71,7 +71,7 @@ sudo yum install -y \
 
 
 
-sudo mkdir -p /etc/docker
+sudo mkdir -p $(dirname /etc/docker/daemon.json)
 cat <<EOF | sudo tee /etc/docker/daemon.json
 {
 	"exec-opts": [
@@ -87,7 +87,9 @@ cat <<EOF | sudo tee /etc/docker/daemon.json
 	]
 }
 EOF
-
+cat <<EOF | sudo tee /etc/crictl.yaml
+runtime-endpoint: unix:///var/run/dockershim.sock
+EOF
 
 sudo yum install -y yum-utils
 sudo yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
