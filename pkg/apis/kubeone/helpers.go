@@ -108,6 +108,17 @@ func (crc *ContainerRuntimeConfig) UnmarshalText(text []byte) error {
 	return nil
 }
 
+func (crc ContainerRuntimeConfig) ConfigPath() string {
+	switch {
+	case crc.Containerd != nil:
+		return "/etc/containerd/config.toml"
+	case crc.Docker != nil:
+		return "/etc/docker/daemon.json"
+	}
+
+	return ""
+}
+
 func (crc ContainerRuntimeConfig) CRISocket() string {
 	switch {
 	case crc.Containerd != nil:

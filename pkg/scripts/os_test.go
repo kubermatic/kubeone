@@ -188,7 +188,8 @@ func TestMigrateToContainerd(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := MigrateToContainerd(tt.insecureRegistry, tt.generateContainerdConfig)
+			cls := genCluster(withInsecureRegistry(tt.insecureRegistry))
+			got, err := MigrateToContainerd(&cls, tt.generateContainerdConfig)
 			if err != tt.err {
 				t.Errorf("MigrateToContainerd() error = %v, wantErr %v", err, tt.err)
 				return

@@ -101,7 +101,7 @@ func migrateToContainerdTask(s *state.State, node *kubeone.HostConfig, conn ssh.
 	}
 
 	generateContainerdConfig := node.OperatingSystem != kubeone.OperatingSystemNameFlatcar
-	migrateScript, err := scripts.MigrateToContainerd(s.Cluster.RegistryConfiguration.InsecureRegistryAddress(), generateContainerdConfig)
+	migrateScript, err := scripts.MigrateToContainerd(s.Cluster, generateContainerdConfig)
 	if err != nil {
 		return err
 	}

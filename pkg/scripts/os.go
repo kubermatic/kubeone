@@ -18,6 +18,9 @@ package scripts
 
 import (
 	"github.com/MakeNowJust/heredoc/v2"
+
+	"k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/containerruntime"
 )
 
 const (
@@ -31,7 +34,7 @@ var migrateToContainerdScriptTemplate = heredoc.Doc(`
 	sudo docker ps -qa | xargs sudo docker rm || true
 
 	{{ if .GENERATE_CONTAINERD_CONFIG -}}
-	{{ template "containerd-config" . }}
+	{{ template "containerd-systemd-setup" . }}
 	{{- end }}
 
 	{{- /*
@@ -44,9 +47,14 @@ var migrateToContainerdScriptTemplate = heredoc.Doc(`
 	sudo systemctl restart kubelet
 `)
 
-func MigrateToContainerd(insecureRegistry string, generateContainerdConfig bool) (string, error) {
-	return Render(migrateToContainerdScriptTemplate, Data{
-		"INSECURE_REGISTRY":          insecureRegistry,
+func MigrateToContainerd(cluster *kubeone.KubeOneCluster, generateContainerdConfig bool) (string, error) {
+	data := Data{
 		"GENERATE_CONTAINERD_CONFIG": generateContainerdConfig,
-	})
+	}
+
+	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
+		return "", err
+	}
+
+	return Render(migrateToContainerdScriptTemplate, data)
 }
