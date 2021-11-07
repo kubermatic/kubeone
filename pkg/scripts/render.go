@@ -28,15 +28,22 @@ import (
 
 var (
 	containerRuntimeTemplates = map[string]string{
-		"containerd-config": heredoc.Doc(`
-			cat <<EOF | sudo tee /etc/containerd/config.toml
-			{{ containerdCfg .INSECURE_REGISTRY -}}
+		"container-runtime-daemon-config": heredoc.Doc(`
+			{{- if .CONTAINER_RUNTIME_CONFIG_PATH }}
+			sudo mkdir -p $(dirname {{ .CONTAINER_RUNTIME_CONFIG_PATH }})
+			cat <<EOF | sudo tee {{ .CONTAINER_RUNTIME_CONFIG_PATH }}
+			{{ .CONTAINER_RUNTIME_CONFIG }}
 			EOF
+			{{- end }}
 
+			{{- if .CONTAINER_RUNTIME_SOCKET }}
 			cat <<EOF | sudo tee /etc/crictl.yaml
-			runtime-endpoint: unix:///run/containerd/containerd.sock
+			runtime-endpoint: unix://{{ .CONTAINER_RUNTIME_SOCKET }}
 			EOF
+			{{- end }}
+		`),
 
+		"containerd-systemd-setup": heredoc.Doc(`
 			sudo mkdir -p /etc/systemd/system/containerd.service.d
 			cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/environment.conf
 			[Service]
@@ -50,6 +57,7 @@ var (
 		`),
 
 		"apt-docker-ce": heredoc.Docf(`
+			{{ template "container-runtime-daemon-config" . }}
 			{{ if .CONFIGURE_REPOSITORIES }}
 			curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 			# Docker provides two different apt repos for ubuntu, bionic and focal. The focal repo currently
@@ -93,6 +101,7 @@ var (
 		),
 
 		"yum-docker-ce-amzn": heredoc.Docf(`
+			{{ template "container-runtime-daemon-config" . }}
 			sudo yum versionlock delete docker cri-tools containerd || true
 
 			{{- $CRICTL_VERSION_TO_INSTALL := "%s" }}
@@ -110,11 +119,6 @@ var (
 				containerd.io-%s \
 				cri-tools-{{ $CRICTL_VERSION_TO_INSTALL }}
 			sudo yum versionlock add docker cri-tools containerd
-
-			cat <<EOF | sudo tee /etc/crictl.yaml
-			runtime-endpoint: unix:///var/run/dockershim.sock
-			EOF
-
 			sudo systemctl daemon-reload
 			sudo systemctl enable --now containerd
 			sudo systemctl enable --now docker
@@ -127,6 +131,7 @@ var (
 		),
 
 		"yum-docker-ce": heredoc.Docf(`
+			{{ template "container-runtime-daemon-config" . }}
 			{{- if .CONFIGURE_REPOSITORIES }}
 			sudo yum install -y yum-utils
 			sudo yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
@@ -167,10 +172,7 @@ var (
 		),
 
 		"flatcar-docker": heredoc.Doc(`
-			cat <<EOF | sudo tee /etc/crictl.yaml
-			runtime-endpoint: unix:///var/run/dockershim.sock
-			EOF
-
+			{{ template "container-runtime-daemon-config" . }}
 			sudo systemctl daemon-reload
 			sudo systemctl enable --now docker
 			sudo systemctl restart docker
@@ -178,6 +180,7 @@ var (
 		),
 
 		"apt-containerd": heredoc.Docf(`
+			{{ template "container-runtime-daemon-config" . }}
 			{{ if .CONFIGURE_REPOSITORIES }}
 			sudo apt-get update
 			sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common lsb-release
@@ -189,13 +192,12 @@ var (
 			sudo apt-mark unhold containerd.io || true
 			sudo apt-get install -y containerd.io=%s
 			sudo apt-mark hold containerd.io
-
-			{{ template "containerd-config" . -}}
 			`,
 			defaultContainerdVersion,
 		),
 
 		"yum-containerd": heredoc.Docf(`
+			{{ template "container-runtime-daemon-config" . }}
 			{{ if .CONFIGURE_REPOSITORIES }}
 			sudo yum install -y yum-utils
 			sudo yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
@@ -210,34 +212,25 @@ var (
 			sudo yum install -y containerd.io-%s
 			sudo yum versionlock add containerd.io
 
-			{{ template "containerd-config" . -}}
+			{{ template "containerd-systemd-setup" . -}}
 			`,
 			defaultContainerdVersion,
 		),
 
 		"yum-containerd-amzn": heredoc.Docf(`
+			{{ template "container-runtime-daemon-config" . }}
 			sudo yum versionlock delete containerd cri-tools || true
 			sudo yum install -y containerd-%s cri-tools-%s
 			sudo yum versionlock add containerd cri-tools
 
-			{{ template "containerd-config" . -}}
+			{{ template "containerd-systemd-setup" . -}}
 			`,
 			defaultAmazonContainerdVersion,
 			defaultAmazonCrictlVersion,
 		),
 
 		"flatcar-containerd": heredoc.Doc(`
-			cat <<EOF | sudo tee /etc/crictl.yaml
-			runtime-endpoint: unix:///run/containerd/containerd.sock
-			EOF
-
-			sudo mkdir -p /etc/systemd/system/containerd.service.d
-			cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/environment.conf
-			[Service]
-			Restart=always
-			EnvironmentFile=-/etc/environment
-			EOF
-
+			{{ template "container-runtime-daemon-config" . }}
 			sudo systemctl daemon-reload
 			sudo systemctl enable --now containerd
 			sudo systemctl restart containerd
@@ -253,10 +246,9 @@ func Render(cmd string, variables map[string]interface{}) (string, error) {
 	tpl := template.New("base").
 		Funcs(sprig.TxtFuncMap()).
 		Funcs(template.FuncMap{
-			"required":      requiredTemplateFunc,
-			"dockerCfg":     dockerCfg,
-			"containerdCfg": containerdCfg,
-		})
+			"required": requiredTemplateFunc,
+		}).
+		Funcs(sprig.TxtFuncMap())
 
 	_, err := tpl.New("library").Parse(libraryTemplate)
 	if err != nil {
