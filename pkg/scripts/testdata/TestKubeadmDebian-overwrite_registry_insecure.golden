@@ -65,7 +65,7 @@ cni_ver="0.8.7*"
 
 
 
-sudo mkdir -p /etc/docker
+sudo mkdir -p $(dirname /etc/docker/daemon.json)
 cat <<EOF | sudo tee /etc/docker/daemon.json
 {
 	"exec-opts": [
@@ -80,6 +80,9 @@ cat <<EOF | sudo tee /etc/docker/daemon.json
 		"127.0.0.1:5000"
 	]
 }
+EOF
+cat <<EOF | sudo tee /etc/crictl.yaml
+runtime-endpoint: unix:///var/run/dockershim.sock
 EOF
 
 
