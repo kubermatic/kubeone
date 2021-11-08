@@ -192,6 +192,7 @@ spec:
             - --cloud-provider=openstack
             - --use-service-account-credentials=true
             - --bind-address=127.0.0.1
+            - --cluster-name={{ .Config.Name }}
 {{ if .Config.CABundle }}
           env:
 {{ caBundleEnvVar | indent 12 }}
