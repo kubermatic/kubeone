@@ -1,6 +1,6 @@
 +++
 title = "v1beta1 API Reference"
-date = 2021-11-09T15:08:05+02:00
+date = 2021-11-09T18:48:59+02:00
 weight = 11
 +++
 ## v1beta1
@@ -617,7 +617,7 @@ KubeOne and kubeadm are pulled from an image registry
 | ----- | ----------- | ------ | -------- |
 | overwriteRegistry | OverwriteRegistry specifies a custom Docker registry which will be used for all images required for KubeOne and kubeadm. This also applies to addons deployed by KubeOne. This field doesn't modify the user/organization part of the image. For example, if OverwriteRegistry is set to 127.0.0.1:5000/example, image called calico/cni would translate to 127.0.0.1:5000/example/calico/cni. Default: \"\" | string | false |
 | insecureRegistry | InsecureRegistry configures container runtime to handle the registry specified in OverwriteRegistry as an insecure registry. This is also propagated to the worker nodes managed by machine-controller and/or KubeOne. | bool | false |
-| mirrors | Mirrors configures container runtime to use specified registries as a mirrors of docker.io | []string | true |
+| mirrors | Mirrors configures container runtime to use specified registries as a mirrors of docker.io | []string | false |
 
 [Back to Group](#v1beta1)
 
