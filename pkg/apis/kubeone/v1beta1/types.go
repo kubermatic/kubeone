@@ -525,7 +525,7 @@ type RegistryConfiguration struct {
 	// to the worker nodes managed by machine-controller and/or KubeOne.
 	InsecureRegistry bool `json:"insecureRegistry,omitempty"`
 	// Mirrors configures container runtime to use specified registries as a mirrors of docker.io
-	Mirrors []string `json:"mirrors"`
+	Mirrors []string `json:"mirrors,omitempty"`
 }
 
 // PodNodeSelector feature flag

@@ -220,17 +220,17 @@ var (
 			defaultAmazonCrictlVersion,
 		),
 
+		"flatcar-containerd": heredoc.Doc(`
+			{{ template "container-runtime-daemon-config" . }}
+			{{ template "containerd-systemd-setup" . }}
+			`,
+		),
+
 		"flatcar-docker": heredoc.Doc(`
 			{{ template "container-runtime-daemon-config" . }}
 			sudo systemctl daemon-reload
 			sudo systemctl enable --now docker
 			sudo systemctl restart docker
-		`,
-		),
-
-		"flatcar-containerd": heredoc.Doc(`
-			{{ template "container-runtime-daemon-config" . }}
-			{{ template "containerd-systemd-setup" . }}
 			`,
 		),
 	}
