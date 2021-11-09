@@ -520,11 +520,11 @@ type RegistryConfiguration struct {
 	// calico/cni would translate to 127.0.0.1:5000/example/calico/cni.
 	// Default: ""
 	OverwriteRegistry string `json:"overwriteRegistry,omitempty"`
-	// InsecureRegistry configures Docker to threat the registry specified
+	// InsecureRegistry configures container runtime to handle the registry specified
 	// in OverwriteRegistry as an insecure registry. This is also propagated
 	// to the worker nodes managed by machine-controller and/or KubeOne.
 	InsecureRegistry bool `json:"insecureRegistry,omitempty"`
-	// Mirrors sets registry-mirrors
+	// Mirrors configures container runtime to use specified registries as a mirrors of docker.io
 	Mirrors []string `json:"mirrors"`
 }
 
