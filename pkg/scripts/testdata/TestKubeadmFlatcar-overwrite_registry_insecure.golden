@@ -61,6 +61,25 @@ curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRI_TOO
 
 
 
+sudo mkdir -p $(dirname /etc/docker/daemon.json)
+cat <<EOF | sudo tee /etc/docker/daemon.json
+{
+	"exec-opts": [
+		"native.cgroupdriver=systemd"
+	],
+	"storage-driver": "overlay2",
+	"log-driver": "json-file",
+	"log-opts": {
+		"max-size": "100m"
+	},
+	"insecure-registries": [
+		"127.0.0.1:5000"
+	]
+}
+EOF
+cat <<EOF | sudo tee /etc/crictl.yaml
+runtime-endpoint: unix:///var/run/dockershim.sock
+EOF
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now docker
