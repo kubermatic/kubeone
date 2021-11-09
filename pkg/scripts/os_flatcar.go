@@ -40,11 +40,11 @@ curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRI_TOO
 	sudo tar -C /opt/bin -xz
 
 {{ if .INSTALL_DOCKER }}
-{{ template "flatcar-docker" }}
+{{ template "flatcar-docker" . }}
 {{ end }}
 
 {{ if .INSTALL_CONTAINERD }}
-{{ template "flatcar-containerd" }}
+{{ template "flatcar-containerd" . }}
 {{ end }}
 
 sudo mkdir -p /opt/bin

@@ -171,14 +171,6 @@ var (
 			defaultContainerdVersion,
 		),
 
-		"flatcar-docker": heredoc.Doc(`
-			{{ template "container-runtime-daemon-config" . }}
-			sudo systemctl daemon-reload
-			sudo systemctl enable --now docker
-			sudo systemctl restart docker
-			`,
-		),
-
 		"apt-containerd": heredoc.Docf(`
 			{{ template "container-runtime-daemon-config" . }}
 			{{ if .CONFIGURE_REPOSITORIES }}
@@ -227,6 +219,14 @@ var (
 			`,
 			defaultAmazonContainerdVersion,
 			defaultAmazonCrictlVersion,
+		),
+
+		"flatcar-docker": heredoc.Doc(`
+			{{ template "container-runtime-daemon-config" . }}
+			sudo systemctl daemon-reload
+			sudo systemctl enable --now docker
+			sudo systemctl restart docker
+		`,
 		),
 
 		"flatcar-containerd": heredoc.Doc(`
