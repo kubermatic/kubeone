@@ -33,9 +33,7 @@ var migrateToContainerdScriptTemplate = heredoc.Doc(`
 	sudo docker ps -q | xargs sudo docker stop || true
 	sudo docker ps -qa | xargs sudo docker rm || true
 
-	{{ if .GENERATE_CONTAINERD_CONFIG -}}
-	{{ template "containerd-systemd-setup" . }}
-	{{- end }}
+	{{ template "flatcar-containerd" . }}
 
 	{{- /*
 		/var/lib/kubelet/kubeadm-flags.env should be modified by the caller of
@@ -47,10 +45,8 @@ var migrateToContainerdScriptTemplate = heredoc.Doc(`
 	sudo systemctl restart kubelet
 `)
 
-func MigrateToContainerd(cluster *kubeone.KubeOneCluster, generateContainerdConfig bool) (string, error) {
-	data := Data{
-		"GENERATE_CONTAINERD_CONFIG": generateContainerdConfig,
-	}
+func MigrateToContainerd(cluster *kubeone.KubeOneCluster) (string, error) {
+	data := Data{}
 
 	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
 		return "", err
