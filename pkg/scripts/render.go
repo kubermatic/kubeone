@@ -230,9 +230,7 @@ var (
 
 		"flatcar-containerd": heredoc.Doc(`
 			{{ template "container-runtime-daemon-config" . }}
-			sudo systemctl daemon-reload
-			sudo systemctl enable --now containerd
-			sudo systemctl restart containerd
+			{{ template "containerd-systemd-setup" . }}
 			`,
 		),
 	}
