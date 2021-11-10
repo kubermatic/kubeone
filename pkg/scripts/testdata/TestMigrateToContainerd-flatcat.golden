@@ -37,8 +37,16 @@ Restart=always
 EnvironmentFile=-/etc/environment
 EOF
 
+
+cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/10-kubeone.conf
+[Service]
+Restart=always
+Environment=CONTAINERD_CONFIG=/etc/containerd/config.toml
+ExecStart=
+ExecStart=/usr/bin/env PATH=${TORCX_BINDIR}:${PATH} ${TORCX_BINDIR}/containerd --config ${CONTAINERD_CONFIG}
+EOF
+
 sudo systemctl daemon-reload
 sudo systemctl enable --now containerd
 sudo systemctl restart containerd
-
 sudo systemctl restart kubelet
