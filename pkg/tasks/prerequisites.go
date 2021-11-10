@@ -125,7 +125,7 @@ func disableNMCloudSetup(s *state.State, node *kubeoneapi.HostConfig, _ ssh.Conn
 				return err
 			}
 
-			s.Logger.Infoln("Disable nm-cloud-setup...the node will be rebooted…")
+			s.Logger.Infoln("Disable nm-cloud-setup...the node will be rebooted...")
 			_, _, err = s.Runner.RunRaw(cmd)
 
 			return err
