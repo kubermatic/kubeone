@@ -34,6 +34,11 @@ func createMachineDeployments(s *state.State) error {
 		return nil
 	}
 
+	if !s.CreateMachineDeployments {
+		s.Logger.Info("skip creating MachineDeployments...")
+		return nil
+	}
+
 	s.Logger.Infoln("Creating worker machines...")
 	return errors.Wrap(machinecontroller.CreateMachineDeployments(s), "failed to deploy Machines")
 }

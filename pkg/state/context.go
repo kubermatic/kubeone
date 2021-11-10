@@ -97,6 +97,7 @@ type State struct {
 	ForceUpgrade              bool
 	ForceInstall              bool
 	UpgradeMachineDeployments bool
+	CreateMachineDeployments  bool
 	CCMMigration              bool
 	CCMMigrationComplete      bool
 	CredentialsFilePath       string
