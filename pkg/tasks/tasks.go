@@ -111,7 +111,18 @@ func WithHostnameOSAndProbes(t Tasks) Tasks {
 // WithFullInstall with install binaries (using WithBinariesOnly) and
 // orchestrate complete cluster init
 func WithFullInstall(t Tasks) Tasks {
-	return WithBinariesOnly(t).
+	return WithHostnameOSAndProbes(t).append(Tasks{
+		{
+			Fn: func(s *state.State) error {
+				return s.RunTaskOnAllNodes(disableNMCloudSetup, state.RunParallel)
+			},
+			ErrMsg: "failed to disable nm-cloud-setup",
+		},
+		{
+			Fn:     installPrerequisites,
+			ErrMsg: "failed to install prerequisites",
+		},
+	}...).
 		append(kubernetesConfigFiles()...).
 		append(Tasks{
 			{
