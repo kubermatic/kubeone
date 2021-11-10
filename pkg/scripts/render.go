@@ -42,14 +42,17 @@ var (
 			{{- end }}
 		`),
 
-		"containerd-systemd-setup": heredoc.Doc(`
+		"containerd-systemd-environment": heredoc.Doc(`
 			sudo mkdir -p /etc/systemd/system/containerd.service.d
 			cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/environment.conf
 			[Service]
 			Restart=always
 			EnvironmentFile=-/etc/environment
 			EOF
+		`),
 
+		"containerd-systemd-setup": heredoc.Doc(`
+			{{ template "containerd-systemd-environment" . }}
 			sudo systemctl daemon-reload
 			sudo systemctl enable --now containerd
 			sudo systemctl restart containerd
@@ -222,12 +225,25 @@ var (
 
 		"flatcar-containerd": heredoc.Doc(`
 			{{ template "container-runtime-daemon-config" . }}
-			{{ template "containerd-systemd-setup" . }}
+			{{ template "containerd-systemd-environment" . }}
+
+			cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/10-kubeone.conf
+			[Service]
+			Restart=always
+			Environment=CONTAINERD_CONFIG=/etc/containerd/config.toml
+			ExecStart=
+			ExecStart=/usr/bin/env PATH=${TORCX_BINDIR}:${PATH} ${TORCX_BINDIR}/containerd --config ${CONTAINERD_CONFIG}
+			EOF
+
+			sudo systemctl daemon-reload
+			sudo systemctl enable --now containerd
+			sudo systemctl restart containerd
 			`,
 		),
 
 		"flatcar-docker": heredoc.Doc(`
 			{{ template "container-runtime-daemon-config" . }}
+			{{ template "containerd-systemd-environment" . }}
 			sudo systemctl daemon-reload
 			sudo systemctl enable --now docker
 			sudo systemctl restart docker
