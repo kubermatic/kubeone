@@ -101,6 +101,14 @@ sudo yum remove -y \
 	kubectl
 sudo yum remove -y kubernetes-cni || true
 `
+	disableNMCloudSetup = `
+if systemctl status 'nm-cloud-setup.timer' 2> /dev/null | grep -Fq "Active:"; then
+systemctl stop nm-cloud-setup.timer
+systemctl disable nm-cloud-setup.service
+systemctl disable nm-cloud-setup.timer
+reboot
+fi
+`
 )
 
 func KubeadmCentOS(cluster *kubeone.KubeOneCluster, force bool) (string, error) {
@@ -165,4 +173,8 @@ func UpgradeKubeletAndKubectlCentOS(cluster *kubeone.KubeOneCluster) (string, er
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 	})
+}
+
+func DisableNMCloudSetup() (string, error) {
+	return Render(disableNMCloudSetup, nil)
 }
