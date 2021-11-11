@@ -5,8 +5,8 @@ metadata:
   namespace: kube-system
 type: Opaque
 data:
-  AWS_ACCESS_KEY_ID: {{ .Credentials.AWS_ACCESS_KEY_ID | b64enc }}
-  AWS_SECRET_ACCESS_KEY: {{ .Credentials.AWS_SECRET_ACCESS_KEY | b64enc }}
+  AWS_ACCESS_KEY_ID: {{ required "Please provide AWS_ACCESS_KEY_ID" .Credentials.AWS_ACCESS_KEY_ID | b64enc }}
+  AWS_SECRET_ACCESS_KEY: {{ required "Please provide AWS_SECRET_ACCESS_KEY" .Credentials.AWS_SECRET_ACCESS_KEY | b64enc }}
 ---
 apiVersion: v1
 kind: Secret
@@ -15,7 +15,7 @@ metadata:
   namespace: kube-system
 type: Opaque
 data:
-  password: {{ .Params.resticPassword | b64enc }}
+  password: {{ required "Please provide resticPassword" .Params.resticPassword | b64enc }}
 ---
 apiVersion: batch/v1beta1
 kind: CronJob
@@ -106,14 +106,14 @@ spec:
                 fieldRef:
                   fieldPath: spec.nodeName
             - name: RESTIC_REPOSITORY
-              value: "{{ .Params.s3Bucket }}"
+              value: "{{ required "Please provide s3Bucket" .Params.s3Bucket }}"
             - name: RESTIC_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: restic-config
                   key: password
             - name: AWS_DEFAULT_REGION
-              value: "{{ .Params.awsDefaultRegion }}"
+              value: "{{ required "Please provide awsDefaultRegion" .Params.awsDefaultRegion }}"
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
