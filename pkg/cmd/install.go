@@ -33,9 +33,10 @@ import (
 
 type installOpts struct {
 	globalOptions
-	BackupFile string `longflag:"backup" shortflag:"b"`
-	NoInit     bool   `longflag:"no-init"`
-	Force      bool   `longflag:"force"`
+	BackupFile               string `longflag:"backup" shortflag:"b"`
+	NoInit                   bool   `longflag:"no-init"`
+	Force                    bool   `longflag:"force"`
+	CreateMachineDeployments bool   `longflag:"create-machine-deployments"`
 }
 
 func (opts *installOpts) BuildState() (*state.State, error) {
@@ -46,6 +47,8 @@ func (opts *installOpts) BuildState() (*state.State, error) {
 
 	s.ForceInstall = opts.Force
 	s.BackupFile = opts.BackupFile
+	s.CreateMachineDeployments = opts.CreateMachineDeployments
+
 	if s.BackupFile == "" {
 		fullPath, _ := filepath.Abs(opts.ManifestFile)
 		clusterName := s.Cluster.Name
@@ -108,6 +111,12 @@ func installCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		longFlagName(opts, "NoInit"),
 		false,
 		"don't initialize the cluster (only install binaries)")
+
+	cmd.Flags().BoolVar(
+		&opts.CreateMachineDeployments,
+		longFlagName(opts, "CreateMachineDeployments"),
+		true,
+		"create MachineDeployments objects")
 
 	cmd.Flags().BoolVar(
 		&opts.Force,
