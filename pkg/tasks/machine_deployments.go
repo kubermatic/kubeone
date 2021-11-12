@@ -35,7 +35,7 @@ func createMachineDeployments(s *state.State) error {
 	}
 
 	if !s.CreateMachineDeployments {
-		s.Logger.Info("skip creating MachineDeployments...")
+		s.Logger.Info("Skipped creating MachineDeployments...")
 		return nil
 	}
 
