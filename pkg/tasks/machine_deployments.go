@@ -40,6 +40,7 @@ func createMachineDeployments(s *state.State) error {
 	}
 
 	s.Logger.Infoln("Creating worker machines...")
+	s.Logger.Warnln("KubeOne will not manage MachineDeployments objects besides creating one time...")
 	return errors.Wrap(machinecontroller.CreateMachineDeployments(s), "failed to deploy Machines")
 }
 
