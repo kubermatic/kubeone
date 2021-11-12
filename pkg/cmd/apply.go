@@ -46,6 +46,7 @@ type applyOpts struct {
 	// Upgrade flags
 	ForceUpgrade              bool `longflag:"force-upgrade"`
 	UpgradeMachineDeployments bool `longflag:"upgrade-machine-deployments"`
+	CreateMachineDeployments  bool `longflag:"create-machine-deployments"`
 	RotateEncryptionKey       bool `longflag:"rotate-encryption-key"`
 }
 
@@ -59,6 +60,7 @@ func (opts *applyOpts) BuildState() (*state.State, error) {
 	s.ForceInstall = opts.ForceInstall
 	s.ForceUpgrade = opts.ForceUpgrade
 	s.UpgradeMachineDeployments = opts.UpgradeMachineDeployments
+	s.CreateMachineDeployments = opts.CreateMachineDeployments
 
 	if s.BackupFile == "" {
 		fullPath, _ := filepath.Abs(opts.ManifestFile)
@@ -148,6 +150,12 @@ func applyCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		longFlagName(opts, "UpgradeMachineDeployments"),
 		false,
 		"upgrade MachineDeployments objects")
+
+	cmd.Flags().BoolVar(
+		&opts.CreateMachineDeployments,
+		longFlagName(opts, "CreateMachineDeployments"),
+		true,
+		"create MachineDeployments objects")
 
 	cmd.Flags().BoolVar(
 		&opts.RotateEncryptionKey,
