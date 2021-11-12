@@ -35,6 +35,7 @@ type Cluster struct {
 	StaticWorkers           []Host
 	ExpectedVersion         *semver.Version
 	EncryptionConfiguration *EncryptionConfiguration
+	CCMClusterName          string
 	CCMStatus               *CCMStatus
 	Lock                    sync.Mutex
 }
