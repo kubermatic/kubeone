@@ -58,6 +58,7 @@ type templateData struct {
 	Config                              *kubeoneapi.KubeOneCluster
 	Certificates                        map[string]string
 	Credentials                         map[string]string
+	CCMClusterName                      string
 	CSIMigration                        bool
 	CSIMigrationFeatureGates            string
 	MachineControllerCredentialsEnvVars string
@@ -155,6 +156,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 			"KubernetesCA":                 mcCertsMap[resources.KubernetesCACertName],
 		},
 		Credentials:                         creds,
+		CCMClusterName:                      s.LiveCluster.CCMClusterName,
 		CSIMigration:                        csiMigration,
 		CSIMigrationFeatureGates:            csiMigrationFeatureGates,
 		MachineControllerCredentialsEnvVars: string(credsEnvVars),
