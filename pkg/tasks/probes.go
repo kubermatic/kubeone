@@ -44,6 +44,9 @@ const (
 	systemdShowExecStartCMD = `systemctl show %s -p ExecStart`
 
 	kubeletInitializedCMD = `test -f /etc/kubernetes/kubelet.conf`
+
+	k8sAppLabel               = "k8s-app"
+	openstackCCMAppLabelValue = "openstack-cloud-controller-manager"
 )
 
 func safeguard(s *state.State) error {
@@ -137,6 +140,14 @@ func runProbes(s *state.State) error {
 			return err
 		}
 	}
+
+	clusterName, cnErr := detectClusterName(s)
+	if cnErr != nil {
+		return errors.Wrap(cnErr, "failed to detect the ccm --cluster-name flag value")
+	}
+	s.LiveCluster.Lock.Lock()
+	s.LiveCluster.CCMClusterName = clusterName
+	s.LiveCluster.Lock.Unlock()
 
 	switch {
 	case s.Cluster.ContainerRuntime.Containerd != nil:
@@ -579,14 +590,12 @@ func detectCCMMigrationStatus(s *state.State) (*state.CCMStatus, error) {
 		}
 	}
 
-	ccmLabel := ""
+	ccmLabel := k8sAppLabel
 	ccmLabelValue := ""
 	switch {
 	case s.Cluster.CloudProvider.Openstack != nil:
-		ccmLabel = "k8s-app"
-		ccmLabelValue = "openstack-cloud-controller-manager"
+		ccmLabelValue = openstackCCMAppLabelValue
 	case s.Cluster.CloudProvider.Vsphere != nil:
-		ccmLabel = "k8s-app"
 		ccmLabelValue = "vsphere-cloud-controller-manager"
 	default:
 		status.ExternalCCMDeployed = false
@@ -608,4 +617,75 @@ func detectCCMMigrationStatus(s *state.State) (*state.CCMStatus, error) {
 	}
 
 	return status, nil
+}
+
+// detectClusterName is used to detect the value that should be passed to the
+// external CCM via the --cluster-name flag.
+//
+// This function is currently used for OpenStack clusters, because we initially
+// didn't set this flag, in which case it defaults to `kubernetes`.
+//
+// Not setting the flag can cause issues if there are multiple clusters in the
+// same tenant. For example, Load Balancers with the same name in different
+// clusters will share the same Octavia LB.
+//
+// Changing the --cluster-name causes the CCM to lose all references to the
+// Load Balancers on OpenStack, because the cluster name is used as part of
+// the reference to the LB. Therefore, we need this function to ensure the
+// backwards compatibility.
+//
+// The function works in the following way:
+//   * if the cluster is not provisioned, or if the cluster is not an OpenStack
+//     cluster, return the KubeOne cluster name
+//   * if it's an existing OpenStack cluster:
+//      * if cluster is running in-tree cloud provider: return the KubeOne
+//        cluster name because the in-tree provider already has the
+//        --cluster-name flag set
+//      * if cluster is running external cloud provider: check if there is
+//        `--cluster-name` flag on the OpenStack CCM. If there is, read the
+//        value and return it, otherwise don't set the OpenStack cluster name,
+//        in which case it defaults to `kubernetes`
+//   * if cluster is migrated to external CCM, return the KubeOne cluster name
+//
+// If an operator wants to change the --cluster-name flag on OpenStack external
+// CCM, they need to edit the CCM DaemonSet manually. KubeOne will
+// automatically pick up the provided value when reconciling the cluster.
+func detectClusterName(s *state.State) (string, error) {
+	if !s.LiveCluster.IsProvisioned() ||
+		s.LiveCluster.CCMStatus == nil ||
+		s.Cluster.CloudProvider.Openstack == nil {
+		return s.Cluster.Name, nil
+	}
+
+	if s.LiveCluster.CCMStatus.InTreeCloudProviderEnabled && !s.LiveCluster.CCMStatus.ExternalCCMDeployed {
+		return s.Cluster.Name, nil
+	}
+
+	pods := corev1.PodList{}
+	err := s.DynamicClient.List(s.Context, &pods, &dynclient.ListOptions{
+		Namespace: metav1.NamespaceSystem,
+		LabelSelector: labels.SelectorFromSet(map[string]string{
+			k8sAppLabel: openstackCCMAppLabelValue,
+		}),
+	})
+	if err != nil {
+		return "", err
+	}
+	if len(pods.Items) == 0 || len(pods.Items[0].Spec.Containers) == 0 {
+		return "", errors.New("unable to detect ccm pod/container")
+	}
+	for _, container := range pods.Items[0].Spec.Containers {
+		if container.Name != openstackCCMAppLabelValue {
+			continue
+		}
+		for _, flag := range container.Command {
+			if strings.HasPrefix(flag, "--cluster-name") {
+				return strings.Split(flag, "=")[1], nil
+			}
+		}
+	}
+
+	// If we got here, the cluster is running external CCM, but we didn't
+	// find the --cluster-name flag, therefore assume default value.
+	return "", nil
 }
