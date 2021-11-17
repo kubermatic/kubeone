@@ -14,9 +14,8 @@ spec:
     metadata:
       labels:
         app: digitalocean-cloud-controller-manager
-      annotations:
-        scheduler.alpha.kubernetes.io/critical-pod: ''
     spec:
+      priorityClassName: system-cluster-critical
       dnsPolicy: Default
       serviceAccountName: cloud-controller-manager
       tolerations:
