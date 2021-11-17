@@ -75,8 +75,11 @@ func (dr *drainer) drainHelper(ctx context.Context) (*drain.Helper, error) {
 	}
 
 	return &drain.Helper{
-		Ctx:                 ctx,
-		Client:              kubeClinet,
+		Ctx:    ctx,
+		Client: kubeClinet,
+		// Force is used to force deleting standalone pods (i.e. not managed by
+		// ReplicaSet)
+		Force:               true,
 		GracePeriodSeconds:  -1,
 		IgnoreAllDaemonSets: true,
 		DeleteEmptyDirData:  true,

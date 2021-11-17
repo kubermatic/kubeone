@@ -28,10 +28,6 @@ const (
 	kubeadmUpgradeNodeCommand = "kubeadm upgrade node --certificate-renewal=true"
 )
 
-var (
-	lessThanv22x = mustParseConstraint(">= 1.15.0, < 1.22.0")
-)
-
 // Kubedm interface abstract differences between different kubeadm versions
 type Kubedm interface {
 	Config(s *state.State, instance kubeoneapi.HostConfig) (string, error)
@@ -49,18 +45,9 @@ func New(ver string) (Kubedm, error) {
 	}
 
 	switch {
-	case lessThanv22x.Check(sver):
+	case sver.Minor() < 22:
 		return &kubeadmv1beta2{version: ver}, nil
 	default:
 		return &kubeadmv1beta3{version: ver}, nil
 	}
-}
-
-func mustParseConstraint(constraint string) *semver.Constraints {
-	c, err := semver.NewConstraint(constraint)
-	if err != nil {
-		panic(err)
-	}
-
-	return c
 }
