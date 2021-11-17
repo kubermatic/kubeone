@@ -161,7 +161,11 @@ func WithFullInstall(t Tasks) Tasks {
 		}...).
 		append(WithResources(nil)...).
 		append(
-			Task{Fn: createMachineDeployments, ErrMsg: "failed to create worker machines"},
+			Task{
+				Fn:        createMachineDeployments,
+				ErrMsg:    "failed to create worker machines",
+				Predicate: func(s *state.State) bool { return !s.LiveCluster.IsProvisioned() },
+			},
 		)
 }
 
