@@ -163,12 +163,12 @@ spec:
   template:
     metadata:
       annotations:
-         "scheduler.alpha.kubernetes.io/critical-pod": ""
          "caBundle-hash": "{{ .Config.CABundle | sha256sum }}"
          "cloudConfig-hash": "{{ .Config.CloudProvider.CloudConfig | sha256sum }}"
       labels:
         k8s-app: "openstack-cloud-controller-manager"
     spec:
+      priorityClassName: system-cluster-critical
       nodeSelector:
         node-role.kubernetes.io/master: ""
       securityContext:
