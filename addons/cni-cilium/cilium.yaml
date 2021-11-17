@@ -670,7 +670,6 @@ spec:
       labels:
         k8s-app: cilium
     spec:
-      priorityClassName: system-cluster-critical
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
