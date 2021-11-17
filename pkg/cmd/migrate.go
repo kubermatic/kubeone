@@ -192,6 +192,11 @@ func runMigrateToCCMCSI(opts *migrateCCMOptions) error {
 	s.Logger.Warnln("This command will migrate your cluster from in-tree cloud provider to the external CCM and CSI plugin.")
 	s.Logger.Warnln("Make sure to familiarize yourself with the process by checking the following document:")
 	s.Logger.Warnln("https://docs.kubermatic.com/kubeone/v1.3/guides/ccm_csi_migration/")
+	if s.Cluster.CloudProvider.Openstack != nil {
+		s.Logger.Warnln("The OpenStack external CCM uses Octavia Load Balancers by default.")
+		s.Logger.Warnln("If you currently use Neutron Load Balancers, migrating to the external CCM/CSI will cause *ALL* Load Balancers to be recreated!")
+		s.Logger.Warnln("Make sure to check documentation for more details.")
+	}
 
 	confirm, err := confirmCommand(opts.AutoApprove)
 	if err != nil {
