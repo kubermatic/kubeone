@@ -1,6 +1,6 @@
 # Changelog
 
-# [v1.3.1](https://github.com/kubermatic/kubeone/releases/tag/v1.3.1) - 2021-11-18
+# [v1.3.2](https://github.com/kubermatic/kubeone/releases/tag/v1.3.2) - 2021-11-18
 
 ## Changed
 
@@ -39,6 +39,14 @@
 * Add additional Availability Set used for worker nodes to Terraform configs for Azure ([#1562](https://github.com/kubermatic/kubeone/pull/1562))
   * Make sure to check the [production recommendations for Azure clusters](https://docs.kubermatic.com/kubeone/v1.3/cheat_sheets/production_recommendations/#azure) for more information about how this additional availability set is used
 * Fix keepalived script in Terraform configs for vSphere to assume yes when updating repos ([#1538](https://github.com/kubermatic/kubeone/pull/1538))
+
+## Removed
+
+* Remove Ansible examples ([#1634](https://github.com/kubermatic/kubeone/pull/1634))
+
+# [v1.3.1](https://github.com/kubermatic/kubeone/releases/tag/v1.3.1) - unreleased
+
+**The v1.3.1 release has never been released due to an issue with the release process. Please check the [v1.3.2 release](https://github.com/kubermatic/kubeone/releases/tag/v1.3.2) instead.**
 
 # [v1.3.0](https://github.com/kubermatic/kubeone/releases/tag/v1.3.0) - 2021-09-15
 
