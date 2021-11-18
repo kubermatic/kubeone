@@ -1,5 +1,45 @@
 # Changelog
 
+# [v1.3.1](https://github.com/kubermatic/kubeone/releases/tag/v1.3.1) - 2021-11-18
+
+## Changed
+
+### General
+
+* Create MachineDeployments only for newly-provisioned clusters ([#1628](https://github.com/kubermatic/kubeone/pull/1628))
+* Show warning about LBs on CCM migration for OpenStack clusters ([#1628](https://github.com/kubermatic/kubeone/pull/1628))
+
+### Fixed
+
+* Force drain nodes to remove standalone pods ([#1628](https://github.com/kubermatic/kubeone/pull/1628))
+* Check for minor version when choosing kubeadm API version ([#1628](https://github.com/kubermatic/kubeone/pull/1628))
+* Provide --cluster-name flag to the OpenStack external CCM (read PR description for more details) ([#1632](https://github.com/kubermatic/kubeone/pull/1623))
+* Enable ip_tables related kernel modules and disable nm-cloud-setup tool on AWS for RHEL machines ([#1616](https://github.com/kubermatic/kubeone/pull/1616))
+* Properly pass machine-controllers args ([#1596](https://github.com/kubermatic/kubeone/pull/1596))
+  * This fixes the issue causing machine-controller and machine-controller-webhook deployments to run with incorrect flags
+  * If you created your cluster with KubeOne 1.2 or older, and already upgraded to KubeOne 1.3, we recommend running kubeone apply again to properly reconcile machine-controller deployments
+* Edit SELinux config file only if file exists ([#1592](https://github.com/kubermatic/kubeone/pull/1592))
+* Fix `yum versionlock delete containerd.io` error ([#1602](https://github.com/kubermatic/kubeone/pull/1602))
+* Ensure containerd/docker be upgraded automatically when running kubeone apply ([#1590](https://github.com/kubermatic/kubeone/pull/1590))
+
+### Addons
+
+* Add new "required" addons template function ([#1624](https://github.com/kubermatic/kubeone/pull/1624))
+* Replace critical-pod annotation with priorityClassName ([#1628](https://github.com/kubermatic/kubeone/pull/1628))
+* Update Hetzner Cloud Controller Manager to v1.12.0 ([#1592](https://github.com/kubermatic/kubeone/pull/1592))
+* Default image in the cluster-autoscaler addon and allow the image to be overridden using addon parameters ([#1553](https://github.com/kubermatic/kubeone/pull/1553))
+* Minor improvements to OpenStack CCM and CSI addons. OpenStack CSI controller can now be scheduled on control plane nodes ([#1536](https://github.com/kubermatic/kubeone/pull/1536))
+
+### Terraform Configs
+
+* OpenStack: Open NodePorts by default ([#1592](https://github.com/kubermatic/kubeone/pull/1592))
+* GCE: Open NodePorts by default ([#1592](https://github.com/kubermatic/kubeone/pull/1592))
+* Azure: Open NodePorts by default ([#1592](https://github.com/kubermatic/kubeone/pull/1592))
+* Azure: Default VM type is changed to Standard_F2 ([#1592](https://github.com/kubermatic/kubeone/pull/1592))
+* Add additional Availability Set used for worker nodes to Terraform configs for Azure ([#1562](https://github.com/kubermatic/kubeone/pull/1562))
+  * Make sure to check the [production recommendations for Azure clusters](https://docs.kubermatic.com/kubeone/v1.3/cheat_sheets/production_recommendations/#azure) for more information about how this additional availability set is used
+* Fix keepalived script in Terraform configs for vSphere to assume yes when updating repos ([#1538](https://github.com/kubermatic/kubeone/pull/1538))
+
 # [v1.3.0](https://github.com/kubermatic/kubeone/releases/tag/v1.3.0) - 2021-09-15
 
 ## Attention Needed
