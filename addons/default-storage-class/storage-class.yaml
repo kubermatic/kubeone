@@ -79,7 +79,7 @@ provisioner: kubernetes.io/cinder
 {{ end }}
 {{ end }}
 
-{{ if eq .Config.CloudProvider.CloudProviderName "gcp" }}
+{{ if eq .Config.CloudProvider.CloudProviderName "gce" }}
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
