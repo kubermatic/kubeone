@@ -21,6 +21,7 @@ import (
 	"crypto/x509"
 	"net"
 	"reflect"
+	"regexp"
 	"strings"
 
 	"github.com/Masterminds/semver/v3"
@@ -34,9 +35,7 @@ import (
 func ValidateKubeOneCluster(c kubeone.KubeOneCluster) field.ErrorList {
 	allErrs := field.ErrorList{}
 
-	if len(c.Name) == 0 {
-		allErrs = append(allErrs, field.Required(field.NewPath("name"), "cluster name `.name` is a required field."))
-	}
+	allErrs = append(allErrs, ValidateName(c.Name, field.NewPath("name"))...)
 	allErrs = append(allErrs, ValidateControlPlaneConfig(c.ControlPlane, field.NewPath("controlPlane"))...)
 	allErrs = append(allErrs, ValidateAPIEndpoint(c.APIEndpoint, field.NewPath("apiEndpoint"))...)
 	allErrs = append(allErrs, ValidateCloudProviderSpec(c.CloudProvider, field.NewPath("provider"))...)
@@ -58,6 +57,21 @@ func ValidateKubeOneCluster(c kubeone.KubeOneCluster) field.ErrorList {
 	allErrs = append(allErrs, ValidateAddons(c.Addons, field.NewPath("addons"))...)
 	allErrs = append(allErrs, ValidateRegistryConfiguration(c.RegistryConfiguration, field.NewPath("registryConfiguration"))...)
 
+	return allErrs
+}
+
+// ValidateName validates the Name of cluster
+func ValidateName(name string, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	if len(name) == 0 {
+		allErrs = append(allErrs, field.Required(fldPath, "cluster name `.name` is a required field."))
+	}
+	clusterNameRegex := regexp.MustCompile(`^[0-9a-z-]+$`)
+	if !clusterNameRegex.MatchString(name) {
+		allErrs = append(allErrs, field.Invalid(fldPath, "",
+			".name should be lowercase and can only contain alphanumeric characters and hyphens(-)"))
+	}
 	return allErrs
 }
 

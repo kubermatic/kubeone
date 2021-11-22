@@ -17,6 +17,11 @@ limitations under the License.
 variable "cluster_name" {
   description = "Name of the cluster"
   type        = string
+
+  validation {
+    condition     = can(regex("^[0-9a-z-]+$", var.cluster_name))
+    error_message = "Value of cluster_name should be lowercase and can only contain alphanumeric characters and hyphens(-)."
+  }
 }
 
 variable "apiserver_alternative_names" {
@@ -127,4 +132,3 @@ variable "subnet_dns_servers" {
   type    = list(string)
   default = ["8.8.8.8", "8.8.4.4"]
 }
-
