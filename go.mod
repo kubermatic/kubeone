@@ -11,6 +11,7 @@ require (
 	github.com/docker/distribution v2.7.1+incompatible
 	github.com/dominodatalab/os-release v0.0.0-20190522011736-bcdb4a3e3c2f
 	github.com/google/go-cmp v0.5.5
+	github.com/iancoleman/orderedmap v0.2.0
 	github.com/imdario/mergo v0.3.12
 	github.com/koron-go/prefixw v0.0.0-20181013140428-271b207a7572
 	github.com/kubermatic/machine-controller v1.33.0

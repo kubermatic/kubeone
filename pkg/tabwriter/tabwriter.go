@@ -30,7 +30,7 @@ const (
 	tabwriterFlags    = tabwriter.RememberWidths
 )
 
-// GetNewTabWriter returns a tabwriter that translates tabbed columns in input into properly aligned text.
-func GetNewTabWriter(output io.Writer) *tabwriter.Writer {
+// New returns a tabwriter that translates tabbed columns in input into properly aligned text.
+func New(output io.Writer) *tabwriter.Writer {
 	return tabwriter.NewWriter(output, tabwriterMinWidth, tabwriterWidth, tabwriterPadding, tabwriterPadChar, tabwriterFlags)
 }
