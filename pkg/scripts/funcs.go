@@ -151,11 +151,20 @@ type containerdCRIRuncOptions struct {
 }
 
 type containerdCRIRegistry struct {
-	Mirrors map[string]containerdMirror `toml:"mirrors"`
+	Mirrors map[string]containerdRegistryMirror `toml:"mirrors"`
+	Configs map[string]containerdRegistryConfig `toml:"configs"`
 }
 
-type containerdMirror struct {
+type containerdRegistryMirror struct {
 	Endpoint []string `toml:"endpoint"`
+}
+
+type containerdRegistryConfig struct {
+	TLS containerdRegistryTLSConfig `toml:"tls"`
+}
+
+type containerdRegistryTLSConfig struct {
+	InsecureSkipVerify bool `toml:"insecure_skip_verify"`
 }
 
 func containerdCfg(insecureRegistry string) (string, error) {
@@ -171,7 +180,7 @@ func containerdCfg(insecureRegistry string) (string, error) {
 			},
 		},
 		Registry: &containerdCRIRegistry{
-			Mirrors: map[string]containerdMirror{
+			Mirrors: map[string]containerdRegistryMirror{
 				"docker.io": {
 					Endpoint: []string{"https://registry-1.docker.io"},
 				},
@@ -180,8 +189,15 @@ func containerdCfg(insecureRegistry string) (string, error) {
 	}
 
 	if insecureRegistry != "" {
-		criPlugin.Registry.Mirrors[insecureRegistry] = containerdMirror{
+		criPlugin.Registry.Mirrors[insecureRegistry] = containerdRegistryMirror{
 			Endpoint: []string{fmt.Sprintf("http://%s", insecureRegistry)},
+		}
+		criPlugin.Registry.Configs = map[string]containerdRegistryConfig{
+			insecureRegistry: {
+				TLS: containerdRegistryTLSConfig{
+					InsecureSkipVerify: true,
+				},
+			},
 		}
 	}
 
