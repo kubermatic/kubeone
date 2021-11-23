@@ -103,6 +103,7 @@ type State struct {
 	CredentialsFilePath       string
 	ManifestFilePath          string
 	PauseImage                string
+	ContainerLogsMaxSize      string
 }
 
 func (s *State) KubeadmVerboseFlag() string {

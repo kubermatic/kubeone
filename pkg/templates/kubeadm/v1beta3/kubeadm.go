@@ -166,10 +166,11 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 			APIVersion: "kubelet.config.k8s.io/v1beta1",
 			Kind:       "KubeletConfiguration",
 		},
-		CgroupDriver:       "systemd",
-		ReadOnlyPort:       0,
-		RotateCertificates: true,
-		ClusterDNS:         []string{resources.NodeLocalDNSVirtualIP},
+		CgroupDriver:        "systemd",
+		ReadOnlyPort:        0,
+		RotateCertificates:  true,
+		ClusterDNS:          []string{resources.NodeLocalDNSVirtualIP},
+		ContainerLogMaxSize: s.ContainerLogsMaxSize,
 		Authentication: kubeletconfigv1beta1.KubeletAuthentication{
 			Anonymous: kubeletconfigv1beta1.KubeletAnonymousAuthentication{
 				Enabled: &bfalse,
@@ -357,10 +358,11 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Obje
 			APIVersion: "kubelet.config.k8s.io/v1beta1",
 			Kind:       "KubeletConfiguration",
 		},
-		CgroupDriver:       "systemd",
-		ReadOnlyPort:       0,
-		RotateCertificates: true,
-		ClusterDNS:         []string{resources.NodeLocalDNSVirtualIP},
+		CgroupDriver:        "systemd",
+		ReadOnlyPort:        0,
+		RotateCertificates:  true,
+		ClusterDNS:          []string{resources.NodeLocalDNSVirtualIP},
+		ContainerLogMaxSize: s.ContainerLogsMaxSize,
 		Authentication: kubeletconfigv1beta1.KubeletAuthentication{
 			Anonymous: kubeletconfigv1beta1.KubeletAnonymousAuthentication{
 				Enabled: &bfalse,
