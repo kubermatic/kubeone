@@ -69,7 +69,7 @@ func ValidateName(name string, fldPath *field.Path) field.ErrorList {
 	}
 	clusterNameRegex := regexp.MustCompile(`^[0-9a-z-]+$`)
 	if !clusterNameRegex.MatchString(name) {
-		allErrs = append(allErrs, field.Invalid(fldPath, "",
+		allErrs = append(allErrs, field.Invalid(fldPath, name,
 			".name should be lowercase and can only contain alphanumeric characters and hyphens(-)"))
 	}
 	return allErrs
