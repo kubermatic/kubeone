@@ -288,6 +288,8 @@ func createAndPrintManifest(printOptions *printOpts) error {
 
 	// Version
 	cfg.Set(yamled.Path{"versions", "kubernetes"}, printOptions.KubernetesVersion)
+	// Container Logs Max Size
+	cfg.Set(yamled.Path{"containerLogsMaxSize"}, "10Mi")
 
 	// Provider
 	var providerVal struct{}
@@ -500,8 +502,11 @@ apiVersion: kubeone.io/v1beta1
 kind: KubeOneCluster
 name: {{ .ClusterName }}
 
+
 versions:
   kubernetes: "{{ .KubernetesVersion }}"
+
+containerLogsMaxSize: "10Mi"
 
 clusterNetwork:
   # the subnet used for pods (default: 10.244.0.0/16)

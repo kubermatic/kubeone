@@ -40,10 +40,9 @@ type applyOpts struct {
 	globalOptions
 	AutoApprove bool `longflag:"auto-approve" shortflag:"y"`
 	// Install flags
-	BackupFile           string `longflag:"backup" shortflag:"b"`
-	NoInit               bool   `longflag:"no-init"`
-	ForceInstall         bool   `longflag:"force-install"`
-	ContainerLogsMaxSize string `longflag:"container-logs-max-size"`
+	BackupFile   string `longflag:"backup" shortflag:"b"`
+	NoInit       bool   `longflag:"no-init"`
+	ForceInstall bool   `longflag:"force-install"`
 	// Upgrade flags
 	ForceUpgrade              bool `longflag:"force-upgrade"`
 	UpgradeMachineDeployments bool `longflag:"upgrade-machine-deployments"`
@@ -58,7 +57,6 @@ func (opts *applyOpts) BuildState() (*state.State, error) {
 	}
 
 	s.BackupFile = opts.BackupFile
-	s.ContainerLogsMaxSize = opts.ContainerLogsMaxSize
 	s.ForceInstall = opts.ForceInstall
 	s.ForceUpgrade = opts.ForceUpgrade
 	s.UpgradeMachineDeployments = opts.UpgradeMachineDeployments
@@ -164,12 +162,6 @@ func applyCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		longFlagName(opts, "RotateEncryptionKey"),
 		false,
 		"rotate Encryption Provider encryption key")
-
-	cmd.Flags().StringVar(
-		&opts.ContainerLogsMaxSize,
-		longFlagName(opts, "ContainerLogsMaxSize"),
-		"10Mi",
-		"set the max size of container logs (e.g. 50Mi)")
 
 	return cmd
 }

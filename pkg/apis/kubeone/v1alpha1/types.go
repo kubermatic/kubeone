@@ -57,6 +57,8 @@ type KubeOneCluster struct {
 	SystemPackages *SystemPackages `json:"systemPackages,omitempty"`
 	// Credentials used for machine-controller and external CCM
 	Credentials map[string]string `json:"credentials,omitempty"`
+	// ContainerLogsMaxSize is the maximum size of container logs in bytes. Defaults to 10MB.
+	ContainerLogsMaxSize string `json:"containerLogsMaxSize,omitempty" default:"10Mi"`
 }
 
 // HostConfig describes a single control plane node.
