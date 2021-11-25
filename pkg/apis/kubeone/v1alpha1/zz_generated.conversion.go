@@ -497,7 +497,7 @@ func autoConvert_kubeone_HostConfig_To_v1alpha1_HostConfig(in *kubeone.HostConfi
 func autoConvert_v1alpha1_KubeOneCluster_To_kubeone_KubeOneCluster(in *KubeOneCluster, out *kubeone.KubeOneCluster, s conversion.Scope) error {
 	out.Name = in.Name
 	// WARNING: in.Hosts requires manual conversion: does not exist in peer-type
-	// WARNING: in.StaticWorkers requires manual conversion: inconvertible types ([]github.com/nerdeveloper/kubeone/pkg/apis/kubeone/v1alpha1.HostConfig vs k8c.io/kubeone/pkg/apis/kubeone.StaticWorkersConfig)
+	// WARNING: in.StaticWorkers requires manual conversion: inconvertible types ([]k8c.io/kubeone/pkg/apis/kubeone/v1alpha1.HostConfig vs k8c.io/kubeone/pkg/apis/kubeone.StaticWorkersConfig)
 	if err := Convert_v1alpha1_APIEndpoint_To_kubeone_APIEndpoint(&in.APIEndpoint, &out.APIEndpoint, s); err != nil {
 		return err
 	}
@@ -559,7 +559,7 @@ func autoConvert_kubeone_KubeOneCluster_To_v1alpha1_KubeOneCluster(in *kubeone.K
 	if err := Convert_kubeone_ProxyConfig_To_v1alpha1_ProxyConfig(&in.Proxy, &out.Proxy, s); err != nil {
 		return err
 	}
-	// WARNING: in.StaticWorkers requires manual conversion: inconvertible types (k8c.io/kubeone/pkg/apis/kubeone.StaticWorkersConfig vs []github.com/nerdeveloper/kubeone/pkg/apis/kubeone/v1alpha1.HostConfig)
+	// WARNING: in.StaticWorkers requires manual conversion: inconvertible types (k8c.io/kubeone/pkg/apis/kubeone.StaticWorkersConfig vs []k8c.io/kubeone/pkg/apis/kubeone/v1alpha1.HostConfig)
 	// WARNING: in.DynamicWorkers requires manual conversion: does not exist in peer-type
 	if in.MachineController != nil {
 		in, out := &in.MachineController, &out.MachineController
