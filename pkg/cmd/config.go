@@ -55,7 +55,8 @@ type printOpts struct {
 	CloudProviderExternal bool
 	CloudProviderCloudCfg string
 
-	ControlPlaneHosts string `longflag:"control-plane-hosts"`
+	ContainerLogMaxSize string `longflag:"container-log-max-size"`
+	ControlPlaneHosts   string `longflag:"control-plane-hosts"`
 
 	APIEndpointHost             string   `longflag:"api-endpoint-host"`
 	APIEndpointPort             int      `longflag:"api-endpoint-port"`
@@ -174,6 +175,9 @@ func configPrintCmd() *cobra.Command {
 	// MachineController
 	cmd.Flags().BoolVar(&opts.DeployMachineController, longFlagName(opts, "DeployMachineController"), true, "deploy kubermatic machine-controller")
 
+	// Kubelet Configuration
+	cmd.Flags().StringVar(&opts.ContainerLogMaxSize, longFlagName(opts, "ContainerLogMaxSize"), "100Mi", "Container Log Max Size")
+
 	return cmd
 }
 
@@ -288,8 +292,6 @@ func createAndPrintManifest(printOptions *printOpts) error {
 
 	// Version
 	cfg.Set(yamled.Path{"versions", "kubernetes"}, printOptions.KubernetesVersion)
-	// Container Logs Max Size
-	cfg.Set(yamled.Path{"containerLogsMaxSize"}, "10Mi")
 
 	// Provider
 	var providerVal struct{}
@@ -364,6 +366,10 @@ func createAndPrintManifest(printOptions *printOpts) error {
 		cfg.Set(yamled.Path{"proxy", "noProxy"}, printOptions.NoProxy)
 	}
 
+	// Kubelet Configuration
+	if printOptions.ContainerLogMaxSize == "" {
+		cfg.Set(yamled.Path{"kubeletConfiguration", "containerLogMaxSize"}, printOptions.ContainerLogMaxSize)
+	}
 	// Features
 	printFeatures(cfg, printOptions)
 
@@ -502,11 +508,11 @@ apiVersion: kubeone.io/v1beta1
 kind: KubeOneCluster
 name: {{ .ClusterName }}
 
-
 versions:
-  kubernetes: "{{ .KubernetesVersion }}"
+ kubernetes: "{{ .KubernetesVersion }}"
 
-containerLogsMaxSize: "10Mi"
+kubeletConfiguration:
+ containerLogMaxSize: "{{ .ContainerLogMaxSize }}"
 
 clusterNetwork:
   # the subnet used for pods (default: 10.244.0.0/16)

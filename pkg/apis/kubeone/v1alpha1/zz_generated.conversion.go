@@ -537,7 +537,6 @@ func autoConvert_v1alpha1_KubeOneCluster_To_kubeone_KubeOneCluster(in *KubeOneCl
 	}
 	out.SystemPackages = (*kubeone.SystemPackages)(unsafe.Pointer(in.SystemPackages))
 	// WARNING: in.Credentials requires manual conversion: does not exist in peer-type
-	out.ContainerLogsMaxSize = in.ContainerLogsMaxSize
 	return nil
 }
 
@@ -587,7 +586,7 @@ func autoConvert_kubeone_KubeOneCluster_To_v1alpha1_KubeOneCluster(in *kubeone.K
 	out.SystemPackages = (*SystemPackages)(unsafe.Pointer(in.SystemPackages))
 	// WARNING: in.AssetConfiguration requires manual conversion: does not exist in peer-type
 	// WARNING: in.RegistryConfiguration requires manual conversion: does not exist in peer-type
-	out.ContainerLogsMaxSize = in.ContainerLogsMaxSize
+	// WARNING: in.KubeletConfiguration requires manual conversion: does not exist in peer-type
 	return nil
 }
 

@@ -63,8 +63,14 @@ type KubeOneCluster struct {
 	AssetConfiguration AssetConfiguration `json:"assetConfiguration,omitempty"`
 	// RegistryConfiguration configures how Docker images are pulled from an image registry
 	RegistryConfiguration *RegistryConfiguration `json:"registryConfiguration,omitempty"`
-	// ContainerLogsMaxSize is the maximum size of container logs. Defaults to 10MB.
-	ContainerLogsMaxSize string `json:"containerLogsMaxSize,omitempty"`
+	// KubeletConfiguration configures the kubelet
+	KubeletConfiguration KubeletConfiguration `json:"kubeletConfiguration"`
+}
+
+// kubeletConfiguration
+type KubeletConfiguration struct {
+	// ContainerLogsMaxSize is the maximum size of container logs. Defaults to 100Mi.
+	ContainerLogMaxSize string `json:"containerLogMaxSize,omitempty"`
 }
 
 // ContainerRuntimeConfig

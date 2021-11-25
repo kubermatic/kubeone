@@ -18,7 +18,6 @@ package kubeone
 
 import (
 	"encoding/json"
-
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -63,8 +62,14 @@ type KubeOneCluster struct {
 	AssetConfiguration AssetConfiguration `json:"assetConfiguration,omitempty"`
 	// RegistryConfiguration configures how Docker images are pulled from an image registry
 	RegistryConfiguration *RegistryConfiguration `json:"registryConfiguration,omitempty"`
-	// ContainerLogsMaxSize is the maximum size of container logs. Defaults to 10MB.
-	ContainerLogsMaxSize string `json:"containerLogsMaxSize,omitempty"`
+	// KubeletConfiguration configures the kubelet
+	KubeletConfiguration KubeletConfiguration `json:"kubeletConfiguration"`
+}
+
+// KubeletConfiguration
+type KubeletConfiguration struct {
+	// ContainerLogsMaxSize is the maximum size of container logs. Defaults to 100Mi.
+	ContainerLogMaxSize string `json:"containerLogMaxSize,omitempty"`
 }
 
 // ContainerRuntimeConfig
