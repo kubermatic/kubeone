@@ -278,7 +278,7 @@ func createAndPrintManifest(printOptions *printOpts) error {
 	cfg := &yamled.Document{}
 
 	// API data
-	cfg.Set(yamled.Path{"apiVersion"}, "kubeone.io/v1beta1")
+	cfg.Set(yamled.Path{"apiVersion"}, "kubeone.k8c.io/v1beta2")
 	cfg.Set(yamled.Path{"kind"}, "KubeOneCluster")
 
 	// Cluster name
@@ -496,7 +496,7 @@ func validateAndPrintConfig(cfgYaml interface{}) error {
 }
 
 const exampleManifest = `
-apiVersion: kubeone.io/v1beta1
+apiVersion: kubeone.k8c.io/v1beta2
 kind: KubeOneCluster
 name: {{ .ClusterName }}
 
