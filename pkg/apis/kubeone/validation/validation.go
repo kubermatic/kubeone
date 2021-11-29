@@ -21,13 +21,13 @@ import (
 	"crypto/x509"
 	"net"
 	"reflect"
-	"regexp"
 	"strings"
 
 	"github.com/Masterminds/semver/v3"
 
 	"k8c.io/kubeone/pkg/apis/kubeone"
 
+	"k8s.io/apimachinery/pkg/util/validation"
 	"k8s.io/apimachinery/pkg/util/validation/field"
 )
 
@@ -64,14 +64,11 @@ func ValidateKubeOneCluster(c kubeone.KubeOneCluster) field.ErrorList {
 func ValidateName(name string, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
-	if len(name) == 0 {
-		allErrs = append(allErrs, field.Required(fldPath, "cluster name `.name` is a required field."))
+	errs := validation.IsDNS1123Subdomain(name)
+	for _, err := range errs {
+		allErrs = append(allErrs, field.Invalid(fldPath, name, err))
 	}
-	clusterNameRegex := regexp.MustCompile(`^[0-9a-z-]+$`)
-	if !clusterNameRegex.MatchString(name) {
-		allErrs = append(allErrs, field.Invalid(fldPath, name,
-			".name should be lowercase and can only contain alphanumeric characters and hyphens(-)"))
-	}
+
 	return allErrs
 }
 
