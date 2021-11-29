@@ -245,6 +245,74 @@ func TestValidateKubeOneCluster(t *testing.T) {
 	}
 }
 
+func TestValdiateName(t *testing.T) {
+	tests := []struct {
+		name          string
+		clusterName   string
+		expectedError bool
+	}{
+		{
+			name:          "valid cluster name",
+			clusterName:   "test",
+			expectedError: false,
+		},
+		{
+			name:          "valid cluster name (with periods)",
+			clusterName:   "test-1",
+			expectedError: false,
+		},
+		{
+			name:          "valid cluster name (with dots)",
+			clusterName:   "test.example.com",
+			expectedError: false,
+		},
+		{
+			name:          "valid cluster name (with periods and dots)",
+			clusterName:   "test-1.example.com",
+			expectedError: false,
+		},
+		{
+			name:          "valid cluster name (starts with number)",
+			clusterName:   "1test",
+			expectedError: false,
+		},
+		{
+			name:          "invalid cluster name (empty)",
+			clusterName:   "",
+			expectedError: true,
+		},
+		{
+			name:          "invalid cluster name (underscore)",
+			clusterName:   "test_1.example.com",
+			expectedError: true,
+		},
+		{
+			name:          "invalid cluster name (uppercase)",
+			clusterName:   "Test",
+			expectedError: true,
+		},
+		{
+			name:          "invalid cluster name (starts with dot)",
+			clusterName:   ".test",
+			expectedError: true,
+		},
+		{
+			name:          "invalid cluster name (ends with dot)",
+			clusterName:   "test.",
+			expectedError: true,
+		},
+	}
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			errs := ValidateName(tc.clusterName, nil)
+			if (len(errs) == 0) == tc.expectedError {
+				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
+			}
+		})
+	}
+}
+
 func TestValidateControlPlaneConfig(t *testing.T) {
 	tests := []struct {
 		name               string

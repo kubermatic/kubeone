@@ -19,7 +19,7 @@ variable "cluster_name" {
   type        = string
 
   validation {
-    condition     = can(regex("^[0-9a-z-]+$", var.cluster_name))
+    condition     = can(regex("^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$", var.cluster_name))
     error_message = "Value of cluster_name should be lowercase and can only contain alphanumeric characters and hyphens(-)."
   }
 }
