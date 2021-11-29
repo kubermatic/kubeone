@@ -48,7 +48,7 @@ var (
 		resources.AddonCSIAwsEBS:          "",
 		resources.AddonCSIAzureDisk:       "",
 		resources.AddonCSIAzureFile:       "",
-		resources.AddonCSIHetnzer:         "",
+		resources.AddonCSIHetzner:         "",
 		resources.AddonCSIOpenStackCinder: "",
 		resources.AddonCSIVsphere:         "",
 		resources.AddonMachineController:  "",
@@ -139,7 +139,7 @@ func collectAddons(s *state.State) (addonsToDeploy []addonAction) {
 				name: resources.AddonCCMHetzner,
 			},
 			addonAction{
-				name: resources.AddonCSIHetnzer,
+				name: resources.AddonCSIHetzner,
 			},
 		)
 	case s.Cluster.CloudProvider.Openstack != nil:

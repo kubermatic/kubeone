@@ -34,7 +34,7 @@ const (
 	AddonCSIAwsEBS          = "csi-aws-ebs"
 	AddonCSIAzureDisk       = "csi-azuredisk"
 	AddonCSIAzureFile       = "csi-azurefile"
-	AddonCSIHetnzer         = "csi-hetzner"
+	AddonCSIHetzner         = "csi-hetzner"
 	AddonCSIOpenStackCinder = "csi-openstack-cinder"
 	AddonCSIVsphere         = "csi-vsphere"
 	AddonCNICanal           = "cni-canal"
