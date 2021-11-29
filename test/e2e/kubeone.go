@@ -27,6 +27,7 @@ import (
 
 	kubeoneinternal "k8c.io/kubeone/pkg/apis/kubeone"
 	kubeonev1beta1 "k8c.io/kubeone/pkg/apis/kubeone/v1beta1"
+	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
 	"k8c.io/kubeone/test/e2e/testutil"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -50,7 +51,7 @@ func NewKubeone(kubeoneDir, configurationFilePath string) *Kubeone {
 }
 
 // CreateConfig creates a KubeOneCluster manifest
-func (k1 *Kubeone) CreateConfig(
+func (k1 *Kubeone) CreateV1Beta1Config(
 	kubernetesVersion string,
 	providerName string,
 	providerExternal bool,
@@ -115,6 +116,74 @@ func (k1 *Kubeone) CreateConfig(
 			return errors.Wrap(err, "failed to generate asset configuration for eks-d cluster")
 		}
 		k1Cluster.AssetConfiguration = *assetConfig
+	}
+
+	k1Config, err := kyaml.Marshal(&k1Cluster)
+	if err != nil {
+		return errors.Wrap(err, "unable to marshal kubeone KubeOneCluster")
+	}
+
+	err = ioutil.WriteFile(k1.ConfigurationFilePath, k1Config, 0600)
+	return errors.Wrap(err, "failed to write KubeOne configuration manifest")
+}
+
+// CreateConfig creates a KubeOneCluster manifest
+func (k1 *Kubeone) CreateV1Beta2Config(
+	kubernetesVersion string,
+	providerName string,
+	providerExternal bool,
+	clusterNetworkPod string,
+	clusterNetworkService string,
+	credentialsFile string,
+	containerRuntime kubeoneinternal.ContainerRuntimeConfig,
+) error {
+	k1Cluster := kubeonev1beta2.KubeOneCluster{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: kubeonev1beta2.SchemeGroupVersion.String(),
+			Kind:       "KubeOneCluster",
+		},
+	}
+
+	kubeonev1beta2.SetObjectDefaults_KubeOneCluster(&k1Cluster)
+
+	k1Cluster.CloudProvider = kubeonev1beta2.CloudProviderSpec{
+		External: providerExternal,
+	}
+
+	if err := kubeonev1beta2.SetCloudProvider(&k1Cluster.CloudProvider, providerName); err != nil {
+		return errors.Wrap(err, "failed to set cloud provider")
+	}
+
+	k1Cluster.Versions = kubeonev1beta2.VersionConfig{
+		Kubernetes: kubernetesVersion,
+	}
+
+	k1Cluster.ClusterNetwork = kubeonev1beta2.ClusterNetworkConfig{
+		PodSubnet:     clusterNetworkPod,
+		ServiceSubnet: clusterNetworkService,
+	}
+
+	switch {
+	case containerRuntime.Containerd != nil:
+		k1Cluster.ContainerRuntime.Containerd = &kubeonev1beta2.ContainerRuntimeContainerd{}
+		k1Cluster.ContainerRuntime.Docker = nil
+	case containerRuntime.Docker != nil:
+		k1Cluster.ContainerRuntime.Containerd = nil
+		k1Cluster.ContainerRuntime.Docker = &kubeonev1beta2.ContainerRuntimeDocker{}
+	}
+
+	if credentialsFile != "" {
+		ymlbuf, err := ioutil.ReadFile(credentialsFile)
+		if err != nil {
+			return errors.Wrap(err, "unable to read credentials file")
+		}
+
+		credentials := map[string]string{}
+		if err = yaml.Unmarshal(ymlbuf, &credentials); err != nil {
+			return errors.Wrap(err, "unable to unmarshal credentials file from yaml")
+		}
+
+		k1Cluster.CloudProvider.CloudConfig = credentials["cloudConfig"]
 	}
 
 	k1Config, err := kyaml.Marshal(&k1Cluster)

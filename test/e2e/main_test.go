@@ -27,6 +27,7 @@ import (
 	"github.com/Masterminds/semver/v3"
 	"github.com/pkg/errors"
 
+	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
 	"k8c.io/kubeone/test/e2e/provisioner"
 
 	corev1 "k8s.io/api/core/v1"
@@ -45,6 +46,7 @@ var (
 	testOSControlPlane   string
 	testOSWorkers        string
 	testClusterType      string
+	testConfigAPIVersion string
 
 	testEksdEtcdVersion          string
 	testEksdCoreDNSVersion       string
@@ -62,6 +64,7 @@ func init() {
 	flag.StringVar(&testOSControlPlane, "os-control-plane", "", "Operating system to use for control plane nodes")
 	flag.StringVar(&testOSWorkers, "os-workers", "", "Operating system to use for worker nodes")
 	flag.StringVar(&testClusterType, "cluster-type", "kubernetes", "Cluster type to test (kubernetes or eksd)")
+	flag.StringVar(&testConfigAPIVersion, "config-api-version", kubeonev1beta2.SchemeGroupVersion.Version, "KubeOneCluster API version to be used for testing (v1beta1 or v1beta2)")
 
 	flag.StringVar(&testEksdEtcdVersion, "eksd-etcd-version", "", "Etcd version to use for EKS-D clusters")
 	flag.StringVar(&testEksdCoreDNSVersion, "eksd-coredns-version", "", "CoreDNS version to use for EKS-D clusters")
