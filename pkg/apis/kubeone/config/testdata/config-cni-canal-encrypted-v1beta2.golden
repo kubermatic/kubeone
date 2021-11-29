@@ -1,9 +1,10 @@
-apiVersion: kubeone.io/v1alpha1
+apiVersion: kubeone.k8c.io/v1beta2
 kind: KubeOneCluster
 name: test
 versions:
   kubernetes: 1.18.2
 cloudProvider:
-  name: "hetzner"
+  aws: {}
 clusterNetwork:
-  networkID: "test-network"
+  cni:
+    canal: {}

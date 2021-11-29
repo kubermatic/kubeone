@@ -1,0 +1,116 @@
+apiVersion: kubeone.k8c.io/v1beta2
+kind: KubeOneCluster
+name: test
+versions:
+  kubernetes: 1.18.2
+clusterNetwork:
+  podSubnet: 10.244.0.0/16
+  serviceSubnet: 10.96.0.0/12
+  serviceDomainName: cluster.local
+  nodePortRange: 30000-32767
+  cni:
+    canal: {}
+cloudProvider:
+  external: false
+  cloudConfig: cloud-config
+  aws: {}
+features:
+  podSecurityPolicy:
+    enable: false
+  staticAuditLog:
+    enable: false
+    config:
+      policyFilePath: ""
+      logPath: /var/log/kubernetes/audit.log
+      logMaxAge: 30
+      logMaxBackup: 3
+      logMaxSize: 100
+  dynamicAuditLog:
+    enable: false
+  metricsServer:
+    enable: true
+  openidConnect:
+    enable: false
+    config:
+      issuerUrl: ""
+      clientId: kubernetes
+      usernameClaim: sub
+      usernamePrefix: 'oidc:'
+      groupsClaim: groups
+      groupsPrefix: 'oidc:'
+      signingAlgs: RS256
+      requiredClaim: ""
+      caFile: ""
+systemPackages:
+  configureRepositories: true
+addons:
+  enable: false
+  path: ./addons
+apiEndpoint:
+  host: localhost
+  port: 6443
+machineController:
+  deploy: true
+proxy:
+  http: http-proxy
+  https: https-proxy
+  noProxy: no-proxy
+controlPlane:
+  hosts:
+  - publicAddress: 1.2.3.4
+    privateAddress: 172.18.0.1
+    bastion: 4.3.2.1
+    bastionPort: 22
+    bastionUser: root
+    sshPort: 22
+    sshUsername: ubuntu
+    sshPrivateKeyFile: /home/me/.ssh/id_rsa
+    sshAgentSocket: env:SSH_AUTH_SOCK
+staticWorkers:
+  hosts:
+  - publicAddress: 1.2.3.5
+    privateAddress: 172.18.0.2
+    bastion: 4.3.2.1
+    bastionPort: 22
+    bastionUser: root
+    sshPort: 22
+    sshUsername: ubuntu
+    sshPrivateKeyFile: /home/me/.ssh/id_rsa
+    sshAgentSocket: env:SSH_AUTH_SOCK
+dynamicWorkers:
+- name: fra1-a
+  replicas: 1
+  providerSpec:
+    labels:
+      mylabel: fra1-a
+    cloudProviderSpec:
+      instanceType: t3.medium
+      diskSize: 50
+      diskType: gp2
+    operatingSystem: ubuntu
+    operatingSystemSpec:
+      distUpgradeOnBoot: true
+- name: fra1-b
+  replicas: 1
+  providerSpec:
+    labels:
+      mylabel: fra1-b
+    cloudProviderSpec:
+      instanceType: t3.medium
+      diskSize: 50
+      diskType: gp2
+    operatingSystem: ubuntu
+    operatingSystemSpec:
+      distUpgradeOnBoot: true
+- name: fra1-c
+  replicas: 1
+  providerSpec:
+    labels:
+      mylabel: fra1-c
+    cloudProviderSpec:
+      instanceType: t3.medium
+      diskSize: 50
+      diskType: gp2
+    operatingSystem: ubuntu
+    operatingSystemSpec:
+      distUpgradeOnBoot: true
