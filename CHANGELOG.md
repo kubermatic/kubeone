@@ -1,5 +1,106 @@
 # Changelog
 
+# [v1.4.0-alpha.0](https://github.com/kubermatic/kubeone/releases/tag/v1.4.0-alpha.0) - 2021-11-29
+
+## Attention Needed
+
+* [**BREAKING**] GCP: Default operating system for control plane instances is now Ubuntu 20.04 ([#1576](https://github.com/kubermatic/kubeone/pull/1576))
+  * Make sure to bind `control_plane_image_family` to the image you're currently using or Terraform might recreate all your control plane instances
+* [**BREAKING**] Azure: Default VM type is changed to `Standard_F2` ([#1528](https://github.com/kubermatic/kubeone/pull/1528))
+  * Make sure to bind `control_plane_vm_size` and `worker_vm_size` to the VM size you're currently using or Terraform might recreate all your instances
+
+## Added
+
+### Features
+
+* Add CCM/CSI migration support for clusters with the static worker nodes ([#1544](https://github.com/kubermatic/kubeone/pull/1544))
+* Add CCM/CSI migration support for the Azure clusters ([#1610](https://github.com/kubermatic/kubeone/pull/1610))
+* Automatically create cloud-config Secret for all providers if external cloud controller manager (`.cloudProvider.external`) is enabled ([#1575](https://github.com/kubermatic/kubeone/pull/1575))
+* Add support for Cilium CNI ([#1560](https://github.com/kubermatic/kubeone/pull/1560), [#1629](https://github.com/kubermatic/kubeone/pull/1629))
+* Add support for additional Subject Alternative Names (SANs) for the Kubernetes API server ([#1599](https://github.com/kubermatic/kubeone/pull/1599), [#1603](https://github.com/kubermatic/kubeone/pull/1603), [#1606](https://github.com/kubermatic/kubeone/pull/1606))
+* Add a new `MachineAnnotations` field in the API used to define annotations in `MachineDeployment.Spec.Template.Spec.Annotations` ([#1601](https://github.com/kubermatic/kubeone/pull/1601))
+* Add a new `--create-machine-deployments` flag to the `kubeone apply` command used to control should KubeOne create initial MachineDeployment objects when provisioning the cluster (default is `true`) ([#1617](https://github.com/kubermatic/kubeone/pull/1617))
+
+### Addons
+
+* Integrate the AWS CCM addon with KubeOne ([#1585](https://github.com/kubermatic/kubeone/pull/1585))
+  * The AWS CCM is now deployed if the external cloud provider (`.cloudProvider.external`) is enabled
+  * This option cannot be enabled for existing AWS clusters running in-tree cloud provider, instead, those clusters must go through the CCM/CSI migration process
+* Add the AWS EBS CSI driver addon ([#1597](https://github.com/kubermatic/kubeone/pull/1597))
+  * Automatically deploy the AWS EBS CSI driver addon if external cloud controller manager (`.cloudProvider.external`) is enabled
+  * Add default StorageClass for AWS EBS CSI driver to the `default-storage-class` embedded addon
+* Integrate the Azure CCM addon with KubeOne ([#1561](https://github.com/kubermatic/kubeone/pull/1561), [#1579](https://github.com/kubermatic/kubeone/pull/1579))
+  * The Azure CCM is now deployed if the external cloud provider (`.cloudProvider.external`) is enabled
+  * This option cannot be enabled for existing Azure clusters running in-tree cloud provider, instead, those clusters must go through the CCM/CSI migration process
+* Add the AzureFile CSI driver addon ([#1575](https://github.com/kubermatic/kubeone/pull/1575), [#1579](https://github.com/kubermatic/kubeone/pull/1579))
+  * Automatically deploy the AzureFile CSI driver addon if external cloud controller manager (`.cloudProvider.external`) is enabled
+  * Add default StorageClass for AzureFile CSI driver to the `default-storage-class` embedded addon
+* Add the AzureDisk CSI driver addon ([#1577](https://github.com/kubermatic/kubeone/pull/1577))
+  * Automatically deploy the AzureDisk CSI driver addon if external cloud controller manager (`.cloudProvider.external`) is enabled
+  * Add default StorageClass for AzureDisk CSI driver to the `default-storage-class` embedded addon
+
+### Other
+
+* Add a deprecation warning for PodSecurityPolicies ([#1595](https://github.com/kubermatic/kubeone/pull/1595))
+
+## Changed
+
+### General
+
+* Validate the cluster name to ensure it's a correct DNS subdomain (RFC 1123) ([#1641](https://github.com/kubermatic/kubeone/pull/1641), [#1646](https://github.com/kubermatic/kubeone/pull/1646), [#1648](https://github.com/kubermatic/kubeone/pull/1648))
+* Create MachineDeployments only for newly-provisioned clusters ([#1627](https://github.com/kubermatic/kubeone/pull/1627))
+* Show warning about LBs on CCM migration for OpenStack clusters ([#1627](https://github.com/kubermatic/kubeone/pull/1627))
+* Change default Kubernetes version in the example configuration to v1.22.3 ([#1605](https://github.com/kubermatic/kubeone/pull/1605))
+
+### Fixed
+
+* Force drain nodes to remove standalone pods ([#1627](https://github.com/kubermatic/kubeone/pull/1627))
+* Check for minor version when choosing kubeadm API version ([#1627](https://github.com/kubermatic/kubeone/pull/1627))
+* Provide `--cluster-name` flag to the OpenStack external CCM (read PR description for more details) ([#1619](https://github.com/kubermatic/kubeone/pull/1619))
+* Enable ip_tables related kernel modules and disable `nm-cloud-setup` tool on AWS for RHEL machines ([#1607](https://github.com/kubermatic/kubeone/pull/1607))
+* Properly pass machine-controllers args ([#1594](https://github.com/kubermatic/kubeone/pull/1594))
+  * This fixes the issue causing machine-controller and machine-controller-webhook deployments to run with incorrect flags
+  * If you created your cluster with KubeOne 1.2 or older, and already upgraded to KubeOne 1.3, we recommend running kubeone apply again with KubeOne 1.3.2 or newer to properly reconcile machine-controller deployments
+* Fix `yum versionlock delete containerd.io` error ([#1600](https://github.com/kubermatic/kubeone/pull/1600))
+* Ensure containerd/docker be upgraded automatically when running kubeone apply ([#1589](https://github.com/kubermatic/kubeone/pull/1589))
+* Edit SELinux config file only if file exists ([#1532](https://github.com/kubermatic/kubeone/pull/1532))
+
+### Addons
+
+* Add new "required" addons template function ([#1618](https://github.com/kubermatic/kubeone/pull/1618))
+* Replace critical-pod annotation with priorityClassName ([#1627](https://github.com/kubermatic/kubeone/pull/1627))
+* Default image in the cluster-autoscaler addon and allow the image to be overridden using addon parameters ([#1552](https://github.com/kubermatic/kubeone/pull/1552))
+* Minor improvements to OpenStack CCM and CSI addons. OpenStack CSI controller can now be scheduled on control plane nodes ([#1531](https://github.com/kubermatic/kubeone/pull/1531))
+* Deploy default StorageClass for GCP clusters if the `default-storage-class` addon is enabled ([#1638](https://github.com/kubermatic/kubeone/pull/1638))
+
+### Terraform Configs
+
+* [**BREAKING**] GCP: Default operating system for control plane instances is now Ubuntu 20.04 ([#1576](https://github.com/kubermatic/kubeone/pull/1576))
+  * Make sure to bind `control_plane_image_family` to the image you're currently using or Terraform might recreate all your control plane instances
+* [**BREAKING**] Azure: Default VM type is changed to `Standard_F2` ([#1528](https://github.com/kubermatic/kubeone/pull/1528))
+  * Make sure to bind `control_plane_vm_size` and `worker_vm_size` to the VM size you're currently using or Terraform might recreate all your instances
+* OpenStack: Open NodePorts by default ([#1530](https://github.com/kubermatic/kubeone/pull/1530))
+* AWS: Open NodePorts by default ([#1535](https://github.com/kubermatic/kubeone/pull/1535))
+* GCE: Open NodePorts by default ([#1529](https://github.com/kubermatic/kubeone/pull/1529))
+* Hetzner: Create Firewall by default ([#1533](https://github.com/kubermatic/kubeone/pull/1533))
+* Azure: Open NodePorts by default ([#1528](https://github.com/kubermatic/kubeone/pull/1528))
+* Fix keepalived script in Terraform configs for vSphere to assume yes when updating repos ([#1537](https://github.com/kubermatic/kubeone/pull/1537))
+* Add additional Availability Set used for worker nodes to Terraform configs for Azure ([#1556](https://github.com/kubermatic/kubeone/pull/1556))
+  * Make sure to check the [production recommendations for Azure clusters](https://docs.kubermatic.com/kubeone/master/cheat_sheets/production_recommendations/#azure) for more information about how this additional availability set is used
+
+### Updated
+
+* Update machine-controller to v1.37.0 ([#1647](https://github.com/kubermatic/kubeone/pull/1647))
+  * machine-controller is now using Ubuntu 20.04 instead of 18.04 by default for all newly-created Machines on AWS, Azure, DO, GCE, Hetzner, Openstack and Equinix Metal
+* Update Hetzner Cloud Controller Manager to v1.12.0 ([#1583](https://github.com/kubermatic/kubeone/pull/1583))
+* Update Go to 1.17.1 ([#1534](https://github.com/kubermatic/kubeone/pull/1534), [#1541](https://github.com/kubermatic/kubeone/pull/1541), [#1542](https://github.com/kubermatic/kubeone/pull/1542), [#1545](https://github.com/kubermatic/kubeone/pull/1545))
+
+## Removed
+
+* Remove the PodPresets feature ([#1593](https://github.com/kubermatic/kubeone/pull/1593))
+  * If you're still using this feature, make sure to migrate away before upgrading to this KubeOne release
+* Remove Ansible examples ([#1633](https://github.com/kubermatic/kubeone/pull/1633))
+
 # [v1.3.2](https://github.com/kubermatic/kubeone/releases/tag/v1.3.2) - 2021-11-18
 
 ## Changed
