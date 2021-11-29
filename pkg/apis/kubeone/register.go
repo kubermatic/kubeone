@@ -22,7 +22,7 @@ import (
 )
 
 // GroupName is the name of the group used by this API
-const GroupName = "kubeone.io"
+const GroupName = "kubeone.k8c.io"
 
 // SchemeGroupVersion is group version used to register API objects
 var SchemeGroupVersion = schema.GroupVersion{Group: GroupName, Version: runtime.APIVersionInternal}
