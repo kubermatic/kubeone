@@ -194,10 +194,6 @@ func TestClusterUpgrade(t *testing.T) {
 				installFlags = append(installFlags, "-c", "/tmp/credentials.yaml")
 			}
 
-			sleepTime := 2 * time.Minute
-			t.Logf("sleep %s", sleepTime)
-			time.Sleep(sleepTime)
-
 			err = target.Install(tf, installFlags)
 			if err != nil {
 				t.Fatalf("failed to install cluster ('kubeone install'): %v", err)

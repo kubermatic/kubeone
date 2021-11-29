@@ -20,7 +20,6 @@ import (
 	"fmt"
 	"strings"
 	"testing"
-	"time"
 
 	"k8c.io/kubeone/test/e2e/provisioner"
 	"k8c.io/kubeone/test/e2e/testutil"
@@ -269,10 +268,6 @@ func TestClusterConformance(t *testing.T) { //nolint:gocyclo
 			if tc.provider == provisioner.OpenStack {
 				installFlags = append(installFlags, "-c", "/tmp/credentials.yaml")
 			}
-
-			sleepTime := 2 * time.Minute
-			t.Logf("sleep %s", sleepTime)
-			time.Sleep(sleepTime)
 
 			err = target.Install(tf, installFlags)
 			if err != nil {
