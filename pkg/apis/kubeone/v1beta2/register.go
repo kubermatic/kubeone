@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The KubeOne Authors.
+Copyright 2021 The KubeOne Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package v1alpha1
+package v1beta2
 
 import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -23,10 +23,10 @@ import (
 )
 
 // GroupName is the name of the group used by this API
-const GroupName = "kubeone.io"
+const GroupName = "kubeone.k8c.io"
 
 // SchemeGroupVersion is group version used to register API objects
-var SchemeGroupVersion = schema.GroupVersion{Group: GroupName, Version: "v1alpha1"}
+var SchemeGroupVersion = schema.GroupVersion{Group: GroupName, Version: "v1beta2"}
 
 var (
 	// SchemeBuilder points to a list of functions added to Scheme

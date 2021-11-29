@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The KubeOne Authors.
+Copyright 2021 The KubeOne Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,11 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package v1alpha1
+package v1beta2
 
 import (
 	"strings"
 
+	"github.com/Masterminds/semver/v3"
+
+	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 )
 
@@ -33,6 +36,8 @@ const (
 	DefaultNodePortRange = "30000-32767"
 	// DefaultStaticNoProxy defined static NoProxy
 	DefaultStaticNoProxy = "127.0.0.1/8,localhost"
+	// DefaultCanalMTU defines default VXLAN MTU for Canal CNI
+	DefaultCanalMTU = 1450
 )
 
 func addDefaultingFuncs(scheme *runtime.Scheme) error {
@@ -43,52 +48,66 @@ func SetDefaults_KubeOneCluster(obj *KubeOneCluster) {
 	SetDefaults_Hosts(obj)
 	SetDefaults_APIEndpoints(obj)
 	SetDefaults_Versions(obj)
+	SetDefaults_ContainerRuntime(obj)
 	SetDefaults_ClusterNetwork(obj)
 	SetDefaults_Proxy(obj)
 	SetDefaults_MachineController(obj)
 	SetDefaults_SystemPackages(obj)
+	SetDefaults_AssetConfiguration(obj)
 	SetDefaults_Features(obj)
+	SetDefaults_Addons(obj)
 }
 
 func SetDefaults_Hosts(obj *KubeOneCluster) {
 	// No hosts, so skip defaulting
-	if len(obj.Hosts) == 0 {
+	if len(obj.ControlPlane.Hosts) == 0 {
 		return
 	}
 
 	setDefaultLeader := true
 
 	// Define a unique ID for each host
-	for idx := range obj.Hosts {
-		if setDefaultLeader && obj.Hosts[idx].IsLeader {
+	for idx := range obj.ControlPlane.Hosts {
+		if setDefaultLeader && obj.ControlPlane.Hosts[idx].IsLeader {
 			// override setting default leader, as explicit leader already
 			// defined
 			setDefaultLeader = false
 		}
-		obj.Hosts[idx].ID = idx
-		defaultHostConfig(&obj.Hosts[idx])
+		obj.ControlPlane.Hosts[idx].ID = idx
+		defaultHostConfig(&obj.ControlPlane.Hosts[idx])
+		if obj.ControlPlane.Hosts[idx].Taints == nil {
+			obj.ControlPlane.Hosts[idx].Taints = []corev1.Taint{
+				{
+					Effect: corev1.TaintEffectNoSchedule,
+					Key:    "node-role.kubernetes.io/master",
+				},
+			}
+		}
 	}
 	if setDefaultLeader {
 		// In absence of explicitly defined leader set the first host to be the
 		// default leader
-		obj.Hosts[0].IsLeader = true
+		obj.ControlPlane.Hosts[0].IsLeader = true
 	}
 
-	for idx := range obj.StaticWorkers {
+	for idx := range obj.StaticWorkers.Hosts {
 		// continue assinging IDs after control plane hosts. This way every node gets a unique ID regardless of the different host slices
-		obj.StaticWorkers[idx].ID = idx + len(obj.Hosts)
-		defaultHostConfig(&obj.StaticWorkers[idx])
+		obj.StaticWorkers.Hosts[idx].ID = idx + len(obj.ControlPlane.Hosts)
+		defaultHostConfig(&obj.StaticWorkers.Hosts[idx])
+		if obj.StaticWorkers.Hosts[idx].Taints == nil {
+			obj.StaticWorkers.Hosts[idx].Taints = []corev1.Taint{}
+		}
 	}
 }
 
 func SetDefaults_APIEndpoints(obj *KubeOneCluster) {
 	// If no API endpoint is provided, assume the public address is an endpoint
 	if len(obj.APIEndpoint.Host) == 0 {
-		if len(obj.Hosts) == 0 {
+		if len(obj.ControlPlane.Hosts) == 0 {
 			// No hosts, so can't default to the first one
 			return
 		}
-		obj.APIEndpoint.Host = obj.Hosts[0].PublicAddress
+		obj.APIEndpoint.Host = obj.ControlPlane.Hosts[0].PublicAddress
 	}
 	obj.APIEndpoint.Port = defaulti(obj.APIEndpoint.Port, 6443)
 }
@@ -98,15 +117,54 @@ func SetDefaults_Versions(obj *KubeOneCluster) {
 	obj.Versions.Kubernetes = strings.TrimPrefix(obj.Versions.Kubernetes, "v")
 }
 
+func SetDefaults_ContainerRuntime(obj *KubeOneCluster) {
+	switch {
+	case obj.ContainerRuntime.Docker != nil:
+		return
+	case obj.ContainerRuntime.Containerd != nil:
+		return
+	}
+
+	actualVer, err := semver.NewVersion(obj.Versions.Kubernetes)
+	if err != nil {
+		return
+	}
+
+	gteKube122Condition, _ := semver.NewConstraint(">= 1.22")
+	if gteKube122Condition.Check(actualVer) {
+		obj.ContainerRuntime.Containerd = &ContainerRuntimeContainerd{}
+	}
+}
+
 func SetDefaults_ClusterNetwork(obj *KubeOneCluster) {
 	obj.ClusterNetwork.PodSubnet = defaults(obj.ClusterNetwork.PodSubnet, DefaultPodSubnet)
 	obj.ClusterNetwork.ServiceSubnet = defaults(obj.ClusterNetwork.ServiceSubnet, DefaultServiceSubnet)
 	obj.ClusterNetwork.ServiceDomainName = defaults(obj.ClusterNetwork.ServiceDomainName, DefaultServiceDNS)
 	obj.ClusterNetwork.NodePortRange = defaults(obj.ClusterNetwork.NodePortRange, DefaultNodePortRange)
+
+	defaultCanal := &CanalSpec{MTU: DefaultCanalMTU}
+	switch {
+	case obj.CloudProvider.AWS != nil:
+		defaultCanal.MTU = defaulti(defaultCanal.MTU, 8951) // 9001 AWS Jumbo Frame - 50 VXLAN bytes
+	case obj.CloudProvider.GCE != nil:
+		defaultCanal.MTU = defaulti(defaultCanal.MTU, 1410) // GCE specific 1460 bytes - 50 VXLAN bytes
+	case obj.CloudProvider.Hetzner != nil:
+		defaultCanal.MTU = defaulti(defaultCanal.MTU, 1400) // Hetzner specific 1450 bytes - 50 VXLAN bytes
+	case obj.CloudProvider.Openstack != nil:
+		defaultCanal.MTU = defaulti(defaultCanal.MTU, 1400) // Openstack specific 1450 bytes - 50 VXLAN bytes
+	}
+
 	if obj.ClusterNetwork.CNI == nil {
 		obj.ClusterNetwork.CNI = &CNI{
-			Provider: CNIProviderCanal,
+			Canal: defaultCanal,
 		}
+	}
+	if obj.ClusterNetwork.CNI.Canal != nil && obj.ClusterNetwork.CNI.Canal.MTU == 0 {
+		obj.ClusterNetwork.CNI.Canal.MTU = defaultCanal.MTU
+	}
+
+	if obj.ClusterNetwork.CNI.Cilium != nil && obj.ClusterNetwork.CNI.Cilium.KubeProxyReplacement == "" {
+		obj.ClusterNetwork.CNI.Cilium.KubeProxyReplacement = "disabled"
 	}
 }
 
@@ -132,10 +190,6 @@ func SetDefaults_MachineController(obj *KubeOneCluster) {
 			Deploy: true,
 		}
 	}
-
-	if obj.MachineController.Provider == "" {
-		obj.MachineController.Provider = obj.CloudProvider.Name
-	}
 }
 
 func SetDefaults_SystemPackages(obj *KubeOneCluster) {
@@ -144,6 +198,31 @@ func SetDefaults_SystemPackages(obj *KubeOneCluster) {
 			ConfigureRepositories: true,
 		}
 	}
+}
+
+func SetDefaults_AssetConfiguration(obj *KubeOneCluster) {
+	if obj.RegistryConfiguration == nil || obj.RegistryConfiguration.OverwriteRegistry == "" {
+		// We default AssetConfiguration only if RegistryConfiguration.OverwriteRegistry
+		// is used
+		return
+	}
+
+	obj.AssetConfiguration.Kubernetes.ImageRepository = defaults(
+		obj.AssetConfiguration.Kubernetes.ImageRepository,
+		obj.RegistryConfiguration.OverwriteRegistry,
+	)
+	obj.AssetConfiguration.CoreDNS.ImageRepository = defaults(
+		obj.AssetConfiguration.CoreDNS.ImageRepository,
+		obj.RegistryConfiguration.OverwriteRegistry,
+	)
+	obj.AssetConfiguration.Etcd.ImageRepository = defaults(
+		obj.AssetConfiguration.Etcd.ImageRepository,
+		obj.RegistryConfiguration.OverwriteRegistry,
+	)
+	obj.AssetConfiguration.MetricsServer.ImageRepository = defaults(
+		obj.AssetConfiguration.MetricsServer.ImageRepository,
+		obj.RegistryConfiguration.OverwriteRegistry,
+	)
 }
 
 func SetDefaults_Features(obj *KubeOneCluster) {
@@ -198,7 +277,7 @@ func defaultHostConfig(obj *HostConfig) {
 	obj.BastionUser = defaults(obj.BastionUser, obj.SSHUsername)
 }
 
-func defaults(input string, defaultValue string) string {
+func defaults(input, defaultValue string) string {
 	if input != "" {
 		return input
 	}

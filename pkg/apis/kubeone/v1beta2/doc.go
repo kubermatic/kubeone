@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The KubeOne Authors.
+Copyright 2021 The KubeOne Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -15,9 +15,9 @@ limitations under the License.
 */
 
 // +k8s:defaulter-gen=TypeMeta
-// +groupName=kubeone.io
+// +groupName=kubeone.k8c.io
 // +k8s:deepcopy-gen=package
 // +k8s:conversion-gen=k8c.io/kubeone/pkg/apis/kubeone
 
-// Package v1alpha1 defines the v1alpha1 version of KubeOneCluster API
-package v1alpha1
+// Package v1beta2 defines the v1beta2 version of KubeOneCluster API
+package v1beta2

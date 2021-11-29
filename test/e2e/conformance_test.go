@@ -22,6 +22,8 @@ import (
 	"testing"
 	"time"
 
+	kubeonev1beta1 "k8c.io/kubeone/pkg/apis/kubeone/v1beta1"
+	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
 	"k8c.io/kubeone/test/e2e/provisioner"
 	"k8c.io/kubeone/test/e2e/testutil"
 
@@ -46,6 +48,7 @@ func TestClusterConformance(t *testing.T) { //nolint:gocyclo
 		providerExternal      bool
 		scenario              string
 		configFilePath        string
+		configAPIVersion      string
 		expectedNumberOfNodes int
 	}{
 		{
@@ -133,6 +136,11 @@ func TestClusterConformance(t *testing.T) { //nolint:gocyclo
 				t.Fatal("-target-version must be set")
 			}
 
+			if testConfigAPIVersion != kubeonev1beta1.SchemeGroupVersion.Version &&
+				testConfigAPIVersion != kubeonev1beta2.SchemeGroupVersion.Version {
+				t.Fatal("-config-api-version must be v1beta1 or v1beta2")
+			}
+
 			if err := ValidateOperatingSystem(testOSControlPlane); err != nil {
 				t.Fatal(err)
 			}
@@ -205,17 +213,32 @@ func TestClusterConformance(t *testing.T) { //nolint:gocyclo
 				clusterNetworkService = clusterNetworkServiceCIDR
 			}
 
-			err = target.CreateConfig(testTargetVersion,
-				tc.provider,
-				tc.providerExternal,
-				clusterNetworkPod,
-				clusterNetworkService,
-				testCredentialsFile,
-				testContainerRuntime.ContainerRuntimeConfig(),
-				eksdConfig,
-			)
-			if err != nil {
-				t.Fatalf("failed to create KubeOneCluster manifest: %v", err)
+			switch testConfigAPIVersion {
+			case kubeonev1beta1.SchemeGroupVersion.Version:
+				err = target.CreateV1Beta1Config(testTargetVersion,
+					tc.provider,
+					tc.providerExternal,
+					clusterNetworkPod,
+					clusterNetworkService,
+					testCredentialsFile,
+					testContainerRuntime.ContainerRuntimeConfig(),
+					eksdConfig,
+				)
+				if err != nil {
+					t.Fatalf("failed to create KubeOneCluster manifest: %v", err)
+				}
+			case kubeonev1beta2.SchemeGroupVersion.Version:
+				err = target.CreateV1Beta2Config(testTargetVersion,
+					tc.provider,
+					tc.providerExternal,
+					clusterNetworkPod,
+					clusterNetworkService,
+					testCredentialsFile,
+					testContainerRuntime.ContainerRuntimeConfig(),
+				)
+				if err != nil {
+					t.Fatalf("failed to create KubeOneCluster manifest: %v", err)
+				}
 			}
 
 			// Ensure cleanup at the end

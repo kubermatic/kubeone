@@ -1,0 +1,73 @@
+apiVersion: kubeone.k8c.io/v1beta2
+kind: KubeOneCluster
+name: test
+versions:
+  kubernetes: 1.18.2
+cloudProvider:
+  aws: {}
+apiEndpoint:
+  host: test-api-lb
+clusterNetwork:
+  cni:
+    canal: {}
+controlPlane:
+  hosts:
+  - privateAddress: 1.1.1.1
+    sshUsername: ubuntu
+    bastion: 1.1.1.10
+    bastionPort: 22
+    bastionUser: ubuntu
+    hostname: ip-1-1-1-1.eu-west-3.compute.internal
+  - privateAddress: 1.1.1.2
+    sshUsername: ubuntu
+    bastion: 1.1.1.10
+    bastionPort: 22
+    bastionUser: ubuntu
+    hostname: ip-1-1-1-2.eu-west-3.compute.internal
+    taints: []
+  - privateAddress: 1.1.1.3
+    sshUsername: ubuntu
+    bastion: 1.1.1.10
+    bastionPort: 22
+    bastionUser: ubuntu
+    hostname: ip-1-1-1-3.eu-west-3.compute.internal
+staticWorkers:
+  hosts:
+  - privateAddress: 1.1.1.4
+    sshUsername: ubuntu
+    bastion: 1.1.1.10
+    bastionPort: 22
+    bastionUser: ubuntu
+    hostname: ip-1-1-1-4.eu-west-3.compute.internal
+    taints: []
+  - privateAddress: 1.1.1.5
+    sshUsername: ubuntu
+    bastion: 1.1.1.10
+    bastionPort: 22
+    bastionUser: ubuntu
+    hostname: ip-1-1-1-5.eu-west-3.compute.internal
+dynamicWorkers:
+- name: test-1-eu-west-3a
+  replicas: 3
+  providerSpec:
+    cloudProviderSpec:
+      ami: ami
+      assignPublicIP: true
+      availabilityZone: eu-west-3a
+      diskIops: 500
+      diskSize: 50
+      diskType: gp2
+      ebsVolumeEncrypted: false
+      instanceProfile: host
+      instanceType: t3.medium
+      isSpotInstance: false
+      region: eu-west-3
+      securityGroupIDs:
+      - sg-id
+      subnetId: subnet-id
+      tags:
+        test-1-workers: ""
+      vpcId: vpc-id
+    operatingSystem: ubuntu
+    operatingSystemSpec:
+      distUpgradeOnBoot: false
