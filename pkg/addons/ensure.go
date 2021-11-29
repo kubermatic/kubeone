@@ -23,6 +23,7 @@ import (
 
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/resources"
+	"k8c.io/kubeone/pkg/templates/weave"
 )
 
 const (
@@ -55,6 +56,141 @@ var (
 		resources.AddonNodeLocalDNS:       "",
 	}
 )
+
+type addonAction struct {
+	name      string
+	supportFn func() error
+}
+
+func collectAddons(s *state.State) (addonsToDeploy []addonAction) {
+	if s.Cluster.Features.MetricsServer.Enable {
+		addonsToDeploy = append(addonsToDeploy, addonAction{
+			name: resources.AddonMetricsServer,
+		})
+	}
+
+	switch {
+	case s.Cluster.ClusterNetwork.CNI.Canal != nil:
+		addonsToDeploy = append(addonsToDeploy, addonAction{
+			name: resources.AddonCNICanal,
+		})
+	case s.Cluster.ClusterNetwork.CNI.Cilium != nil:
+		addonsToDeploy = append(addonsToDeploy, addonAction{
+			name: resources.AddonCNICilium,
+		})
+	case s.Cluster.ClusterNetwork.CNI.WeaveNet != nil:
+		addonsToDeploy = append(addonsToDeploy, addonAction{
+			name: resources.AddonCNIWeavenet,
+			supportFn: func() error {
+				if s.Cluster.ClusterNetwork.CNI.WeaveNet.Encrypted {
+					if err := weave.EnsureSecret(s); err != nil {
+						return err
+					}
+				}
+
+				return nil
+			},
+		})
+	}
+
+	addonsToDeploy = append(addonsToDeploy, addonAction{
+		name: resources.AddonNodeLocalDNS,
+	})
+
+	if s.Cluster.MachineController.Deploy {
+		addonsToDeploy = append(addonsToDeploy, addonAction{
+			name: resources.AddonMachineController,
+		})
+	}
+
+	if !s.Cluster.CloudProvider.External {
+		return
+	}
+
+	switch {
+	case s.Cluster.CloudProvider.AWS != nil:
+		addonsToDeploy = append(addonsToDeploy,
+			addonAction{
+				name: resources.AddonCCMAws,
+			},
+			addonAction{
+				name: resources.AddonCSIAwsEBS,
+			},
+		)
+	case s.Cluster.CloudProvider.Azure != nil:
+		addonsToDeploy = append(addonsToDeploy,
+			addonAction{
+				name: resources.AddonCCMAzure,
+			},
+			addonAction{
+				name: resources.AddonCSIAzureDisk,
+			},
+			addonAction{
+				name: resources.AddonCSIAzureFile,
+			},
+		)
+	case s.Cluster.CloudProvider.DigitalOcean != nil:
+		addonsToDeploy = append(addonsToDeploy, addonAction{
+			name: resources.AddonCCMDigitalOcean,
+		})
+	case s.Cluster.CloudProvider.Hetzner != nil:
+		addonsToDeploy = append(addonsToDeploy,
+			addonAction{
+				name: resources.AddonCCMHetzner,
+			},
+			addonAction{
+				name: resources.AddonCSIHetnzer,
+			},
+		)
+	case s.Cluster.CloudProvider.Openstack != nil:
+		addonsToDeploy = append(addonsToDeploy,
+			addonAction{
+				name: resources.AddonCCMOpenStack,
+			},
+			addonAction{
+				name: resources.AddonCSIOpenStackCinder,
+			},
+		)
+
+	case s.Cluster.CloudProvider.Vsphere != nil:
+		addonsToDeploy = append(addonsToDeploy,
+			addonAction{
+				name: resources.AddonCCMVsphere,
+				supportFn: func() error {
+					return migrateVsphereAddon(s)
+				},
+			},
+			addonAction{
+				name: resources.AddonCSIVsphere,
+			},
+		)
+	case s.Cluster.CloudProvider.Packet != nil:
+		addonsToDeploy = append(addonsToDeploy, addonAction{
+			name: resources.AddonCCMPacket,
+		})
+	default:
+		s.Logger.Infof("CSI driver for %q not yet supported, skipping", s.Cluster.CloudProvider.CloudProviderName())
+	}
+
+	return
+}
+
+func Ensure(s *state.State) error {
+	addonsToDeploy := collectAddons(s)
+
+	for _, add := range addonsToDeploy {
+		if add.supportFn != nil {
+			if err := add.supportFn(); err != nil {
+				return err
+			}
+		}
+		if err := EnsureAddonByName(s, add.name); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
 
 // EnsureUserAddons deploys addons that are provided by the user and that are
 // not embedded.
@@ -97,7 +233,6 @@ func EnsureUserAddons(s *state.State) error {
 		}
 
 		if embeddedAddon.Delete {
-			s.Logger.Infof("Deleting addon %q...", embeddedAddon.Name)
 			if err := applier.loadAndDeleteAddon(s, applier.EmbededFS, embeddedAddon.Name); err != nil {
 				return errors.Wrapf(err, "failed to load and delete the addon %q", embeddedAddon.Name)
 			}
@@ -110,8 +245,6 @@ func EnsureUserAddons(s *state.State) error {
 	}
 
 	for addonName := range combinedAddons {
-		s.Logger.Infof("Applying addon %q...", addonName)
-
 		if err := EnsureAddonByName(s, addonName); err != nil {
 			return errors.Wrapf(err, "failed to load and apply the addon %q", addonName)
 		}

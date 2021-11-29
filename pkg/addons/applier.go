@@ -196,6 +196,8 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 
 // loadAndApplyAddon parses the addons manifests and runs kubectl apply.
 func (a *applier) loadAndApplyAddon(s *state.State, fsys fs.FS, addonName string) error {
+	s.Logger.Infof("Applying addon %s...", addonName)
+
 	manifest, err := a.getManifestsFromDirectory(s, fsys, addonName)
 	if err != nil {
 		return errors.WithStack(err)
@@ -217,6 +219,8 @@ func (a *applier) loadAndApplyAddon(s *state.State, fsys fs.FS, addonName string
 
 // loadAndApplyAddon parses the addons manifests and runs kubectl apply.
 func (a *applier) loadAndDeleteAddon(s *state.State, fsys fs.FS, addonName string) error {
+	s.Logger.Infof("Deleting addon %q...", addonName)
+
 	manifest, err := a.getManifestsFromDirectory(s, fsys, addonName)
 	if err != nil {
 		return errors.WithStack(err)

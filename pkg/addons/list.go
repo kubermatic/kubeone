@@ -31,14 +31,17 @@ import (
 	"k8c.io/kubeone/pkg/tabwriter"
 )
 
+const (
+	addonStatusActive     = "active"
+	addonStatusDeactivate = "deactivate"
+)
+
 type addonItem struct {
 	Name   string `json:"name"`
 	Status string `json:"status"`
 }
 
 func List(s *state.State, outputFormat string) error {
-	var localFS fs.FS
-
 	switch outputFormat {
 	case "table", "json":
 	default:
@@ -46,51 +49,6 @@ func List(s *state.State, outputFormat string) error {
 	}
 
 	combinedAddons := map[string]addonItem{}
-
-	if s.Cluster.Addons.Enabled() {
-		addonsPath, err := s.Cluster.Addons.RelativePath(s.ManifestFilePath)
-		if err != nil {
-			return errors.Wrap(err, "failed to get addons path")
-		}
-
-		localFS = os.DirFS(addonsPath)
-
-		if localFS != nil {
-			customAddons, err := fs.ReadDir(localFS, ".")
-			if err != nil {
-				return errors.Wrap(err, "failed to read addons directory")
-			}
-
-			for _, useraddon := range customAddons {
-				if !useraddon.IsDir() {
-					continue
-				}
-
-				combinedAddons[useraddon.Name()] = addonItem{
-					Name:   useraddon.Name(),
-					Status: "active",
-				}
-			}
-		}
-
-		for _, embeddedAddon := range s.Cluster.Addons.Addons {
-			if _, ok := embeddedAddons[embeddedAddon.Name]; ok {
-				continue
-			}
-
-			combinedAddons[embeddedAddon.Name] = addonItem{
-				Name:   embeddedAddon.Name,
-				Status: "install",
-			}
-
-			if embeddedAddon.Delete {
-				combinedAddons[embeddedAddon.Name] = addonItem{
-					Name:   embeddedAddon.Name,
-					Status: "delete",
-				}
-			}
-		}
-	}
 
 	embeddedEntries, err := fs.ReadDir(embeddedaddons.FS, ".")
 	if err != nil {
@@ -105,6 +63,44 @@ func List(s *state.State, outputFormat string) error {
 		combinedAddons[addon.Name()] = addonItem{
 			Name:   addon.Name(),
 			Status: "",
+		}
+	}
+
+	if s.Cluster.Addons.Enabled() {
+		addonsPath, err := s.Cluster.Addons.RelativePath(s.ManifestFilePath)
+		if err != nil {
+			return errors.Wrap(err, "failed to get addons path")
+		}
+
+		localFS := os.DirFS(addonsPath)
+		customAddons, err := fs.ReadDir(localFS, ".")
+		if err != nil {
+			return errors.Wrap(err, "failed to read addons directory")
+		}
+
+		for _, useraddon := range customAddons {
+			if !useraddon.IsDir() {
+				continue
+			}
+
+			combinedAddons[useraddon.Name()] = addonItem{
+				Name:   useraddon.Name(),
+				Status: addonStatusActive,
+			}
+		}
+
+		for _, embeddedAddon := range s.Cluster.Addons.Addons {
+			combinedAddons[embeddedAddon.Name] = addonItem{
+				Name:   embeddedAddon.Name,
+				Status: addonStatusActive,
+			}
+
+			if embeddedAddon.Delete {
+				combinedAddons[embeddedAddon.Name] = addonItem{
+					Name:   embeddedAddon.Name,
+					Status: addonStatusDeactivate,
+				}
+			}
 		}
 	}
 
