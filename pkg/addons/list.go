@@ -33,7 +33,8 @@ import (
 
 const (
 	addonStatusActive     = "active"
-	addonStatusDeactivate = "deactivate"
+	addonStatusInactive   = "inactive"
+	addonStatusDeactivate = "prune"
 )
 
 type addonItem struct {
@@ -62,8 +63,19 @@ func List(s *state.State, outputFormat string) error {
 
 		combinedAddons[addon.Name()] = addonItem{
 			Name:   addon.Name(),
-			Status: "",
+			Status: addonStatusInactive,
 		}
+	}
+
+	activeAddons := collectAddons(s)
+	for _, activeAddon := range activeAddons {
+		add, ok := combinedAddons[activeAddon.name]
+		if !ok {
+			continue
+		}
+
+		add.Status = addonStatusActive
+		combinedAddons[activeAddon.name] = add
 	}
 
 	if s.Cluster.Addons.Enabled() {
