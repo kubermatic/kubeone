@@ -62,6 +62,7 @@ type addonAction struct {
 	supportFn func() error
 }
 
+//nolint:nakedret
 func collectAddons(s *state.State) (addonsToDeploy []addonAction) {
 	if s.Cluster.Features.MetricsServer.Enable {
 		addonsToDeploy = append(addonsToDeploy, addonAction{
