@@ -88,6 +88,10 @@ verify-codegen: vendor
 verify-boilerplate:
 	./hack/verify-boilerplate.sh
 
+.PHONE: verify-apidocs
+verify-apidocs:
+	./hack/verify-apidocs.sh
+
 .PHONY: shfmt
 shfmt:
 	shfmt -w -sr -i 2 hack
