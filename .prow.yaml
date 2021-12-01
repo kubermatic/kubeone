@@ -49,7 +49,7 @@ presubmits:
           command:
             - make
           args:
-            - verify-codegen
+            - verify-apidocs
           resources:
             requests:
               memory: 512Mi
