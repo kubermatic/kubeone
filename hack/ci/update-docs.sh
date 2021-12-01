@@ -14,8 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-### Updates the docs repository by copying over a couple of generated
-### files, like CRD examples and the Prometheus runbook.
+### Updates the docs repository by copying over the API references.
 
 set -euo pipefail
 
