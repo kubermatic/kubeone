@@ -32,14 +32,16 @@ import (
 )
 
 const (
-	addonStatusActive     = "active"
-	addonStatusInactive   = "inactive"
-	addonStatusDeactivate = "prune"
+	addonStatusInstall  = addonStatus("install")
+	addonStatusInactive = addonStatus("inactive")
+	addonStatusDelete   = addonStatus("delete")
 )
 
+type addonStatus string
+
 type addonItem struct {
-	Name   string `json:"name"`
-	Status string `json:"status"`
+	Name   string      `json:"name"`
+	Status addonStatus `json:"status"`
 }
 
 func List(s *state.State, outputFormat string) error {
@@ -74,7 +76,7 @@ func List(s *state.State, outputFormat string) error {
 			continue
 		}
 
-		add.Status = addonStatusActive
+		add.Status = addonStatusInstall
 		combinedAddons[activeAddon.name] = add
 	}
 
@@ -97,20 +99,20 @@ func List(s *state.State, outputFormat string) error {
 
 			combinedAddons[useraddon.Name()] = addonItem{
 				Name:   useraddon.Name(),
-				Status: addonStatusActive,
+				Status: addonStatusInstall,
 			}
 		}
 
 		for _, embeddedAddon := range s.Cluster.Addons.Addons {
 			combinedAddons[embeddedAddon.Name] = addonItem{
 				Name:   embeddedAddon.Name,
-				Status: addonStatusActive,
+				Status: addonStatusInstall,
 			}
 
 			if embeddedAddon.Delete {
 				combinedAddons[embeddedAddon.Name] = addonItem{
 					Name:   embeddedAddon.Name,
-					Status: addonStatusDeactivate,
+					Status: addonStatusDelete,
 				}
 			}
 		}
