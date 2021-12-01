@@ -26,10 +26,8 @@ import (
 	"k8c.io/kubeone/pkg/features"
 	"k8c.io/kubeone/pkg/kubeconfig"
 	"k8c.io/kubeone/pkg/state"
-	"k8c.io/kubeone/pkg/templates/csi"
 	"k8c.io/kubeone/pkg/templates/externalccm"
 	"k8c.io/kubeone/pkg/templates/machinecontroller"
-	"k8c.io/kubeone/pkg/templates/resources"
 )
 
 type Tasks []Task
@@ -202,20 +200,17 @@ func WithResources(t Tasks) Tasks {
 				ErrMsg: "failed to download Kubernetes PKI from the leader",
 			},
 			{
-				Fn: func(s *state.State) error {
-					s.Logger.Infoln("Ensure node local DNS cache...")
-					return addons.EnsureAddonByName(s, resources.AddonNodeLocalDNS)
-				},
-				ErrMsg:      "failed to deploy nodelocaldns",
-				Description: "ensure nodelocaldns",
-			},
-			{
 				Fn:     features.Activate,
 				ErrMsg: "failed to activate features",
 			},
 			{
 				Fn:     patchCoreDNS,
 				ErrMsg: "failed to patch CoreDNS",
+			},
+			{
+				Fn:          addons.Ensure,
+				ErrMsg:      "failed to apply addons",
+				Description: "ensure embedded addons",
 			},
 			{
 				Fn:          ensureCNI,
@@ -232,7 +227,7 @@ func WithResources(t Tasks) Tasks {
 			{
 				Fn:          addons.EnsureUserAddons,
 				ErrMsg:      "failed to apply addons",
-				Description: "ensure addons",
+				Description: "ensure custom addons",
 				Predicate:   func(s *state.State) bool { return s.Cluster.Addons != nil && s.Cluster.Addons.Enable },
 			},
 			{
@@ -247,24 +242,12 @@ func WithResources(t Tasks) Tasks {
 				Predicate:   func(s *state.State) bool { return s.Cluster.CloudProvider.External },
 			},
 			{
-				Fn:          csi.Ensure,
-				ErrMsg:      "failed to ensure CSI driver",
-				Description: "ensure CSI driver",
-				Predicate:   func(s *state.State) bool { return s.Cluster.CloudProvider.External },
-			},
-			{
 				Fn:     joinStaticWorkerNodes,
 				ErrMsg: "failed to join worker nodes to the cluster",
 			},
 			{
 				Fn:     labelNodeOSes,
 				ErrMsg: "failed to label nodes with their OS",
-			},
-			{
-				Fn:          machinecontroller.Ensure,
-				ErrMsg:      "failed to ensure machine-controller",
-				Description: "ensure machine-controller",
-				Predicate:   func(s *state.State) bool { return s.Cluster.MachineController.Deploy },
 			},
 			{
 				Fn:     machinecontroller.WaitReady,
@@ -333,15 +316,10 @@ func WithContainerDMigration(t Tasks) Tasks {
 			},
 			{
 				Fn: func(s *state.State) error {
-					if err := machinecontroller.Ensure(s); err != nil {
-						return err
-					}
-
 					s.Logger.Warn("Now please rolling restart your machineDeployments to get containerd")
 					s.Logger.Warn("see more at: https://docs.kubermatic.com/kubeone/v1.3/cheat_sheets/rollout_machinedeployment/")
 					return nil
 				},
-				ErrMsg:    "failed to ensure machine-controller",
 				Predicate: func(s *state.State) bool { return s.Cluster.MachineController.Deploy },
 			},
 		}...)

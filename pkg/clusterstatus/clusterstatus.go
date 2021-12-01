@@ -47,7 +47,7 @@ func Print(s *state.State) error {
 		return errors.Wrap(err, "unable to get cluster status")
 	}
 
-	printer := tabwriter.GetNewTabWriter(os.Stdout)
+	printer := tabwriter.New(os.Stdout)
 	defer printer.Flush()
 
 	headers := clusterStatusHeader()

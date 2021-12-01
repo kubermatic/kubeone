@@ -17,8 +17,10 @@ limitations under the License.
 package addons
 
 import (
+	"fmt"
 	"io/fs"
 	"os"
+	"strings"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/pkg/errors"
@@ -27,6 +29,7 @@ import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/certificate"
 	"k8c.io/kubeone/pkg/credentials"
+	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/images"
 	"k8c.io/kubeone/pkg/templates/resources"
@@ -187,8 +190,94 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 	return &applier{
 		TemplateData: data,
 		LocalFS:      localFS,
-		EmbededFS:    embeddedaddons.F,
+		EmbededFS:    embeddedaddons.FS,
 	}, nil
+}
+
+// loadAndApplyAddon parses the addons manifests and runs kubectl apply.
+func (a *applier) loadAndApplyAddon(s *state.State, fsys fs.FS, addonName string) error {
+	s.Logger.Infof("Applying addon %s...", addonName)
+
+	manifest, err := a.getManifestsFromDirectory(s, fsys, addonName)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	if len(strings.TrimSpace(manifest)) == 0 {
+		if len(addonName) != 0 {
+			s.Logger.Warnf("Addon directory %q is empty, skipping...", addonName)
+		}
+
+		return nil
+	}
+
+	return errors.Wrap(
+		runKubectlApply(s, manifest, addonName),
+		"failed to apply addons",
+	)
+}
+
+// loadAndApplyAddon parses the addons manifests and runs kubectl apply.
+func (a *applier) loadAndDeleteAddon(s *state.State, fsys fs.FS, addonName string) error {
+	s.Logger.Infof("Deleting addon %q...", addonName)
+
+	manifest, err := a.getManifestsFromDirectory(s, fsys, addonName)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	if len(strings.TrimSpace(manifest)) == 0 {
+		if len(addonName) != 0 {
+			s.Logger.Warnf("Addon directory %q is empty, skipping...", addonName)
+		}
+
+		return nil
+	}
+
+	return errors.Wrap(
+		runKubectlDelete(s, manifest, addonName),
+		"failed to apply addons",
+	)
+}
+
+// runKubectlApply runs kubectl apply command
+func runKubectlApply(s *state.State, manifest string, addonName string) error {
+	return s.RunTaskOnLeader(func(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
+		var (
+			cmd            = fmt.Sprintf(kubectlApplyScript, addonLabel, addonName)
+			stdin          = strings.NewReader(manifest)
+			stdout, stderr strings.Builder
+		)
+
+		_, err := conn.POpen(cmd, stdin, &stdout, &stderr)
+		if s.Verbose {
+			fmt.Printf("+ %s\n", cmd)
+			fmt.Printf("%s", stderr.String())
+			fmt.Printf("%s", stdout.String())
+		}
+
+		return err
+	})
+}
+
+// runKubectlDelete runs kubectl delete command
+func runKubectlDelete(s *state.State, manifest string, addonName string) error {
+	return s.RunTaskOnLeader(func(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
+		var (
+			cmd            = fmt.Sprintf(kubectlDeleteScript, addonLabel, addonName)
+			stdin          = strings.NewReader(manifest)
+			stdout, stderr strings.Builder
+		)
+
+		_, err := conn.POpen(cmd, stdin, &stdout, &stderr)
+		if s.Verbose {
+			fmt.Printf("+ %s\n", cmd)
+			fmt.Printf("%s", stderr.String())
+			fmt.Printf("%s", stdout.String())
+		}
+
+		return err
+	})
 }
 
 type internalImages struct {

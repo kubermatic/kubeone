@@ -42,10 +42,6 @@ func Activate(s *state.State) error {
 		return errors.Wrap(err, "failed to install PodSecurityPolicy")
 	}
 
-	if err := installMetricsServer(s.Cluster.Features.MetricsServer.Enable, s); err != nil {
-		return errors.Wrap(err, "failed to install metrics-server")
-	}
-
 	if err := installPodNodeSelector(s.Context, s.DynamicClient, s.Cluster.Features.PodNodeSelector); err != nil {
 		return errors.Wrap(err, "failed to install podNodeSelector")
 	}

@@ -48,7 +48,7 @@ const (
 	OpenStackTenantID       = "OS_TENANT_ID"
 	OpenStackTenantName     = "OS_TENANT_NAME"
 	OpenStackUserName       = "OS_USERNAME"
-	PacketAPIKey            = "PACKET_AUTH_TOKEN"
+	PacketAPIKey            = "PACKET_AUTH_TOKEN" //nolint:gosec
 	PacketProjectID         = "PACKET_PROJECT_ID"
 	VSphereAddress          = "VSPHERE_SERVER"
 	VSpherePassword         = "VSPHERE_PASSWORD"
@@ -63,7 +63,7 @@ const (
 	GoogleServiceAccountKeyMC = "GOOGLE_SERVICE_ACCOUNT"
 	HetznerTokenKeyMC         = "HZ_TOKEN"
 	OpenStackUserNameMC       = "OS_USER_NAME"
-	PacketAPIKeyMC            = "PACKET_API_KEY"
+	PacketAPIKeyMC            = "PACKET_API_KEY" //nolint:gosec
 	VSphereAddressMC          = "VSPHERE_ADDRESS"
 	VSphereUsernameMC         = "VSPHERE_USERNAME"
 )

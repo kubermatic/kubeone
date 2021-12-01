@@ -10,7 +10,7 @@ require (
 	github.com/aws/aws-sdk-go v1.36.2
 	github.com/docker/distribution v2.7.1+incompatible
 	github.com/dominodatalab/os-release v0.0.0-20190522011736-bcdb4a3e3c2f
-	github.com/google/go-cmp v0.5.5
+	github.com/iancoleman/orderedmap v0.2.0
 	github.com/imdario/mergo v0.3.12
 	github.com/koron-go/prefixw v0.0.0-20181013140428-271b207a7572
 	github.com/kubermatic/machine-controller v1.33.0
@@ -63,6 +63,7 @@ require (
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/btree v1.0.1 // indirect
+	github.com/google/go-cmp v0.5.5 // indirect
 	github.com/google/gofuzz v1.1.0 // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
 	github.com/google/uuid v1.1.2 // indirect
