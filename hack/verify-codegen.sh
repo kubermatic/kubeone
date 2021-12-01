@@ -16,8 +16,6 @@
 
 set -eu -o pipefail
 
-export GOFLAGS=-mod=vendor
-
 cd $(dirname "${BASH_SOURCE}")/..
 
 DIFFROOT="pkg"

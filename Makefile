@@ -89,7 +89,8 @@ verify-boilerplate:
 	./hack/verify-boilerplate.sh
 
 .PHONE: verify-apidocs
-verify-apidocs:
+verify-apidocs: GOFLAGS = -mod=readonly
+verify-apidocs: vendor
 	./hack/verify-apidocs.sh
 
 .PHONY: shfmt
