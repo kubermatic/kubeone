@@ -44,7 +44,8 @@ EOF
 EOF
 
   find ./pkg/apis/kubeone/"${version}" -name '*types.go' -print0 |
-    xargs go run ./hack/apidoc-gen/main.go -section-link="#${version}" >> "${docfile}"
+    xargs -0 go run ./hack/apidoc-gen/main.go -section-link="#${version}" >> "${docfile}"
 }
 
 genVersionedDoc "v1beta1"
+genVersionedDoc "v1beta2"
