@@ -444,7 +444,9 @@ type SystemPackages struct {
 
 // AssetConfiguration controls how assets (e.g. CNI, Kubelet, kube-apiserver, and more)
 // are pulled.
-// The AssetConfiguration API is an alpha API currently working only on Amazon Linux 2.
+// The AssetConfiguration API is a deprecated API, planned to be remmoved in
+// KubeOne 1.4. Currently, configuring BinaryAssets working only on
+// Amazon Linux 2.
 type AssetConfiguration struct {
 	// Kubernetes configures the image registry and repository for the core Kubernetes
 	// images (kube-apiserver, kube-controller-manager, kube-scheduler, and kube-proxy).
