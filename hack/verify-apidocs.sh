@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2019 The KubeOne Authors.
+# Copyright 2021 The KubeOne Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ set -eu -o pipefail
 
 cd $(dirname "${BASH_SOURCE}")/..
 
-DIFFROOT="pkg"
-TMP_DIFFROOT="_tmp/pkg"
+DIFFROOT="docs/api_reference"
+TMP_DIFFROOT="_tmp/docs/api_reference"
 _tmp="_tmp"
 
 cleanup() {
@@ -32,14 +32,14 @@ cleanup
 mkdir --parents "${TMP_DIFFROOT}"
 cp --archive "${DIFFROOT}"/* "${TMP_DIFFROOT}"
 
-./hack/update-codegen.sh
-echo "diffing ${DIFFROOT} against freshly generated codegen"
+./hack/update-apidocs.sh
+echo "diffing ${DIFFROOT} against freshly generated apidocs"
 ret=0
-diff -Naupr "${DIFFROOT}" "${TMP_DIFFROOT}" || ret=$?
+diff --ignore-matching-lines='^date =.*' -Naupr "${DIFFROOT}" "${TMP_DIFFROOT}" || ret=$?
 cp -a "${TMP_DIFFROOT}"/* "${DIFFROOT}"
 if [[ $ret -eq 0 ]]; then
   echo "${DIFFROOT} up to date."
 else
-  echo "${DIFFROOT} is out of date. Please run hack/update-codegen.sh"
+  echo "${DIFFROOT} is out of date. Please run hack/update-apidocs.sh"
   exit 1
 fi

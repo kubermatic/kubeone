@@ -36,6 +36,27 @@ presubmits:
             limits:
               memory: 1Gi
               cpu: 1
+  - name: pull-kubeone-verify-apidocs
+    run_if_changed: "(pkg/apis/kubeone|hack/)"
+    decorate: true
+    clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
+    path_alias: k8c.io/kubeone
+    labels:
+      preset-goproxy: "true"
+    spec:
+      containers:
+        - image: golang:1.17.1
+          command:
+            - make
+          args:
+            - verify-apidocs
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: 500m
+            limits:
+              memory: 1Gi
+              cpu: 1
   - name: pull-kubeone-license-validation
     always_run: true
     decorate: true

@@ -1,9 +1,9 @@
 +++
-title = "v1beta1 API Reference"
+title = "v1beta2 API Reference"
 date = 2021-12-01T19:11:08+01:00
 weight = 11
 +++
-## v1beta1
+## v1beta2
 
 * [APIEndpoint](#apiendpoint)
 * [AWSSpec](#awsspec)
@@ -69,7 +69,7 @@ APIEndpoint is the endpoint used to communicate with the Kubernetes API
 | port | Port is the port used to reach to the API. Default value is 6443. | int | false |
 | alternativeNames | AlternativeNames is a list of Subject Alternative Names for the API Server signing cert. | []string | false |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### AWSSpec
 
@@ -78,7 +78,7 @@ AWSSpec defines the AWS cloud provider
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### Addon
 
@@ -90,7 +90,7 @@ Addon config
 | params | Params to the addon, to render the addon using text/template, this will override globalParams | map[string]string | false |
 | delete | Delete flag to ensure the named addon with all its contents to be deleted | bool | false |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### Addons
 
@@ -103,7 +103,7 @@ Addons config
 | globalParams | GlobalParams to the addon, to render all addons using text/template | map[string]string | false |
 | addons | Addons is a list of config options for named addon | [][Addon](#addon) | false |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### AssetConfiguration
 
@@ -122,7 +122,7 @@ The AssetConfiguration API is an alpha API currently working only on Amazon Linu
 | nodeBinaries | NodeBinaries configures the source for downloading the Kubernetes Node Binaries tarball (e.g. kubernetes-node-linux-amd64.tar.gz). The tarball must have .tar.gz as the extension and must contain the following files: - kubernetes/node/bin/kubelet - kubernetes/node/bin/kubeadm If not specified, kubelet and kubeadm packages will be installed. Default: none | [BinaryAsset](#binaryasset) | false |
 | kubectl | Kubectl configures the source for downloading the Kubectl binary. If not specified, kubelet package will be installed. Default: none | [BinaryAsset](#binaryasset) | false |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### AzureSpec
 
@@ -131,7 +131,7 @@ AzureSpec defines the Azure cloud provider
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### BinaryAsset
 
@@ -141,7 +141,7 @@ BinaryAsset is used to customize the URL of the binary asset
 | ----- | ----------- | ------ | -------- |
 | url | URL from where to download the binary | string | false |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### CNI
 
@@ -154,7 +154,7 @@ CNI config. Only one CNI provider must be used at the single time.
 | weaveNet | WeaveNet | *[WeaveNetSpec](#weavenetspec) | false |
 | external | External | *[ExternalCNISpec](#externalcnispec) | false |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### CanalSpec
 
@@ -164,7 +164,7 @@ CanalSpec defines the Canal CNI plugin
 | ----- | ----------- | ------ | -------- |
 | mtu | MTU automatically detected based on the cloudProvider default value is 1450 | int | false |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### CiliumSpec
 
@@ -175,7 +175,7 @@ CiliumSpec defines the Cilium CNI plugin
 | kubeProxyReplacement | KubeProxyReplacement defines weather cilium relies on underlying Kernel support to replace kube-proxy functionality by eBPF (strict), or disables a subset of those features so cilium does not bail out if the kernel support is missing (disabled). default is \"disabled\" | KubeProxyReplacementType | true |
 | enableHubble | EnableHubble to deploy Hubble relay and UI default value is false | bool | true |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### CloudProviderSpec
 
@@ -197,7 +197,7 @@ Only one cloud provider must be defined at the single time.
 | vsphere | Vsphere | *[VsphereSpec](#vspherespec) | false |
 | none | None | *[NoneSpec](#nonespec) | false |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### ClusterNetworkConfig
 
@@ -212,7 +212,7 @@ ClusterNetworkConfig describes the cluster network
 | cni | CNI default value is {canal: {mtu: 1450}} | *[CNI](#cni) | false |
 | kubeProxy | KubeProxy config | *[KubeProxyConfig](#kubeproxyconfig) | false |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### ContainerRuntimeConfig
 
@@ -223,7 +223,7 @@ ContainerRuntimeConfig
 | docker |  | *[ContainerRuntimeDocker](#containerruntimedocker) | false |
 | containerd |  | *[ContainerRuntimeContainerd](#containerruntimecontainerd) | false |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### ContainerRuntimeContainerd
 
@@ -232,7 +232,7 @@ ContainerRuntimeContainerd defines docker container runtime
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### ContainerRuntimeDocker
 
@@ -241,7 +241,7 @@ ContainerRuntimeDocker defines docker container runtime
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### ControlPlaneConfig
 
@@ -251,7 +251,7 @@ ControlPlaneConfig defines control plane nodes
 | ----- | ----------- | ------ | -------- |
 | hosts | Hosts array of all control plane hosts. | [][HostConfig](#hostconfig) | true |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### DNSConfig
 
@@ -261,7 +261,7 @@ DNSConfig contains a machine's DNS configuration
 | ----- | ----------- | ------ | -------- |
 | servers | Servers | []string | true |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### DigitalOceanSpec
 
@@ -270,7 +270,7 @@ DigitalOceanSpec defines the DigitalOcean cloud provider
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### DynamicAuditLog
 
@@ -280,7 +280,7 @@ DynamicAuditLog feature flag
 | ----- | ----------- | ------ | -------- |
 | enable | Enable Default value is false. | bool | false |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### DynamicWorkerConfig
 
@@ -292,7 +292,7 @@ DynamicWorkerConfig describes a set of worker machines
 | replicas | Replicas | *int | true |
 | providerSpec | Config | [ProviderSpec](#providerspec) | true |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### EncryptionProviders
 
@@ -303,7 +303,7 @@ Encryption Providers feature flag
 | enable | Enable | bool | true |
 | customEncryptionConfiguration | CustomEncryptionConfiguration | string | true |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### ExternalCNISpec
 
@@ -313,7 +313,7 @@ It's up to the user's responsibility to deploy the external CNI plugin manually 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### Features
 
@@ -330,7 +330,7 @@ Features controls what features will be enabled on the cluster
 | openidConnect | OpenIDConnect | *[OpenIDConnect](#openidconnect) | false |
 | encryptionProviders | Encryption Providers | *[EncryptionProviders](#encryptionproviders) | false |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### GCESpec
 
@@ -339,7 +339,7 @@ GCESpec defines the GCE cloud provider
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### HetznerSpec
 
@@ -349,7 +349,7 @@ HetznerSpec defines the Hetzner cloud provider
 | ----- | ----------- | ------ | -------- |
 | networkID | NetworkID | string | false |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### HostConfig
 
@@ -370,7 +370,7 @@ HostConfig describes a single control plane node.
 | isLeader | IsLeader indicates this host as a session leader. Default value is populated at the runtime. | bool | false |
 | taints | Taints if not provided (i.e. nil) defaults to TaintEffectNoSchedule, with key node-role.kubernetes.io/master for control plane nodes. Explicitly empty (i.e. []corev1.Taint{}) means no taints will be applied (this is default for worker nodes). | [][corev1.Taint](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#taint-v1-core) | false |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### IPTables
 
@@ -379,7 +379,7 @@ IPTables
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### IPVSConfig
 
@@ -394,7 +394,7 @@ IPVSConfig contains different options to configure IPVS kube-proxy mode
 | tcpFinTimeout | tcpFinTimeout is the timeout value used for IPVS TCP sessions after receiving a FIN. The default value is 0, which preserves the current timeout value on the system. | metav1.Duration | true |
 | udpTimeout | udpTimeout is the timeout value used for IPVS UDP packets. The default value is 0, which preserves the current timeout value on the system. | metav1.Duration | true |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### ImageAsset
 
@@ -405,7 +405,7 @@ ImageAsset is used to customize the image repository and the image tag
 | imageRepository | ImageRepository customizes the registry/repository | string | false |
 | imageTag | ImageTag customizes the image tag | string | false |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### KubeOneCluster
 
@@ -431,7 +431,7 @@ KubeOneCluster is KubeOne Cluster API Schema
 | assetConfiguration | AssetConfiguration configures how are binaries and container images downloaded | [AssetConfiguration](#assetconfiguration) | false |
 | registryConfiguration | RegistryConfiguration configures how Docker images are pulled from an image registry | *[RegistryConfiguration](#registryconfiguration) | false |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### KubeProxyConfig
 
@@ -443,7 +443,7 @@ KubeProxyConfig defines configured kube-proxy mode, default is iptables mode
 | ipvs | IPVS config | *[IPVSConfig](#ipvsconfig) | true |
 | iptables | IPTables config | *[IPTables](#iptables) | true |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### MachineControllerConfig
 
@@ -453,7 +453,7 @@ MachineControllerConfig configures kubermatic machine-controller deployment
 | ----- | ----------- | ------ | -------- |
 | deploy | Deploy | bool | false |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### MetricsServer
 
@@ -463,7 +463,7 @@ MetricsServer feature flag
 | ----- | ----------- | ------ | -------- |
 | enable | Enable deployment of metrics-server. Default value is true. | bool | false |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### NoneSpec
 
@@ -472,7 +472,7 @@ NoneSpec defines a none provider
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### OpenIDConnect
 
@@ -483,7 +483,7 @@ OpenIDConnect feature flag
 | enable | Enable | bool | false |
 | config | Config | [OpenIDConnectConfig](#openidconnectconfig) | true |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### OpenIDConnectConfig
 
@@ -501,7 +501,7 @@ OpenIDConnectConfig config
 | signingAlgs | SigningAlgs | string | true |
 | caFile | CAFile | string | true |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### OpenstackSpec
 
@@ -510,7 +510,7 @@ OpenstackSpec defines the Openstack provider
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### PacketSpec
 
@@ -519,7 +519,7 @@ PacketSpec defines the Packet cloud provider
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### PodNodeSelector
 
@@ -530,7 +530,7 @@ PodNodeSelector feature flag
 | enable | Enable | bool | false |
 | config | Config | [PodNodeSelectorConfig](#podnodeselectorconfig) | true |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### PodNodeSelectorConfig
 
@@ -540,7 +540,7 @@ PodNodeSelectorConfig config
 | ----- | ----------- | ------ | -------- |
 | configFilePath | ConfigFilePath is a path on the local file system to the PodNodeSelector configuration file. ConfigFilePath is a required field. More info: https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#podnodeselector | string | true |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### PodPresets
 
@@ -551,7 +551,7 @@ The PodPresets feature is obsolete and has been removed
 | ----- | ----------- | ------ | -------- |
 | enable | Enable | bool | false |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### PodSecurityPolicy
 
@@ -563,7 +563,7 @@ Kubernetes 1.24 reaches EOL.
 | ----- | ----------- | ------ | -------- |
 | enable | Enable | bool | false |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### ProviderSpec
 
@@ -582,7 +582,7 @@ ProviderSpec describes a worker node
 | network | Network | *[ProviderStaticNetworkConfig](#providerstaticnetworkconfig) | false |
 | overwriteCloudConfig | OverwriteCloudConfig | *string | false |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### ProviderStaticNetworkConfig
 
@@ -594,7 +594,7 @@ ProviderStaticNetworkConfig contains a machine's static network configuration
 | gateway | Gateway | string | true |
 | dns | DNS | [DNSConfig](#dnsconfig) | true |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### ProxyConfig
 
@@ -606,7 +606,7 @@ ProxyConfig configures proxy for the Docker daemon and is used by KubeOne script
 | https | HTTPS | string | false |
 | noProxy | NoProxy | string | false |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### RegistryConfiguration
 
@@ -618,7 +618,7 @@ KubeOne and kubeadm are pulled from an image registry
 | overwriteRegistry | OverwriteRegistry specifies a custom Docker registry which will be used for all images required for KubeOne and kubeadm. This also applies to addons deployed by KubeOne. This field doesn't modify the user/organization part of the image. For example, if OverwriteRegistry is set to 127.0.0.1:5000/example, image called calico/cni would translate to 127.0.0.1:5000/example/calico/cni. Default: \"\" | string | false |
 | insecureRegistry | InsecureRegistry configures Docker to threat the registry specified in OverwriteRegistry as an insecure registry. This is also propagated to the worker nodes managed by machine-controller and/or KubeOne. | bool | false |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### StaticAuditLog
 
@@ -629,7 +629,7 @@ StaticAuditLog feature flag
 | enable | Enable | bool | false |
 | config | Config | [StaticAuditLogConfig](#staticauditlogconfig) | true |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### StaticAuditLogConfig
 
@@ -643,7 +643,7 @@ StaticAuditLogConfig config
 | logMaxBackup | LogMaxBackup is maximum number of audit log files to retain. Default value is 3. | int | false |
 | logMaxSize | LogMaxSize is maximum size in megabytes of audit log file before it gets rotated. Default value is 100. | int | false |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### StaticWorkersConfig
 
@@ -653,7 +653,7 @@ StaticWorkersConfig defines static worker nodes provisioned by KubeOne and kubea
 | ----- | ----------- | ------ | -------- |
 | hosts | Hosts | [][HostConfig](#hostconfig) | false |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### SystemPackages
 
@@ -663,7 +663,7 @@ SystemPackages controls configurations of APT/YUM
 | ----- | ----------- | ------ | -------- |
 | configureRepositories | ConfigureRepositories (true by default) is a flag to control automatic configuration of kubeadm / docker repositories. | bool | false |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### VersionConfig
 
@@ -673,7 +673,7 @@ VersionConfig describes the versions of components that are installed on the mac
 | ----- | ----------- | ------ | -------- |
 | kubernetes |  | string | true |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### VsphereSpec
 
@@ -682,7 +682,7 @@ VsphereSpec defines the vSphere provider
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
 
 ### WeaveNetSpec
 
@@ -692,4 +692,4 @@ WeaveNetSpec defines the WeaveNet CNI plugin
 | ----- | ----------- | ------ | -------- |
 | encrypted | Encrypted | bool | false |
 
-[Back to Group](#v1beta1)
+[Back to Group](#v1beta2)
