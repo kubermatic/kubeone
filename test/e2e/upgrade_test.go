@@ -84,8 +84,8 @@ func TestClusterUpgrade(t *testing.T) { //nolint:gocyclo
 			expectedNumberOfNodes: 4, // 3 control planes + 3 workers
 		},
 		{
-			name:                  "upgrade k8s cluster on Packet",
-			provider:              provisioner.Packet,
+			name:                  "upgrade k8s cluster on Equinix Metal",
+			provider:              provisioner.EquinixMetal,
 			providerExternal:      true,
 			initialConfigPath:     "../../test/e2e/testdata/config_packet_initial.yaml",
 			targetConfigPath:      "../../test/e2e/testdata/config_packet_target.yaml",

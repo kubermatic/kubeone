@@ -89,7 +89,7 @@ func TestClusterConformance(t *testing.T) { //nolint:gocyclo
 		{
 			name:                  "verify k8s cluster deployment on Equinix Metal",
 			clusterType:           clusterTypeKubernetes,
-			provider:              provisioner.Packet,
+			provider:              provisioner.EquinixMetal,
 			providerExternal:      true,
 			scenario:              NodeConformance,
 			configFilePath:        "../../test/e2e/testdata/config_equinix_metal.yaml",

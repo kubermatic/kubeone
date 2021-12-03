@@ -40,7 +40,7 @@ var (
 		resources.AddonCCMDigitalOcean:    "",
 		resources.AddonCCMHetzner:         "",
 		resources.AddonCCMOpenStack:       "",
-		resources.AddonCCMEquinixMetal:          "",
+		resources.AddonCCMEquinixMetal:    "",
 		resources.AddonCCMVsphere:         "",
 		resources.AddonCNICanal:           "",
 		resources.AddonCNICilium:          "",
@@ -165,7 +165,7 @@ func collectAddons(s *state.State) (addonsToDeploy []addonAction) {
 				name: resources.AddonCSIVsphere,
 			},
 		)
-	case s.Cluster.CloudProvider.Packet != nil:
+	case s.Cluster.CloudProvider.EquinixMetal != nil:
 		addonsToDeploy = append(addonsToDeploy, addonAction{
 			name: resources.AddonCCMEquinixMetal,
 		})

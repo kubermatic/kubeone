@@ -48,8 +48,8 @@ const (
 	OpenStackTenantID       = "OS_TENANT_ID"
 	OpenStackTenantName     = "OS_TENANT_NAME"
 	OpenStackUserName       = "OS_USERNAME"
-	EquinixMetalAPIKey            = "EQUINIX_METAL_AUTH_TOKEN" //nolint:gosec
-	EquinixMetalProjectID         = "EQUINIX_METAL_PROJECT_ID"
+	EquinixMetalAPIKey      = "EQUINIX_METAL_AUTH_TOKEN" //nolint:gosec
+	EquinixMetalProjectID   = "EQUINIX_METAL_PROJECT_ID"
 	VSphereAddress          = "VSPHERE_SERVER"
 	VSpherePassword         = "VSPHERE_PASSWORD"
 	VSphereUsername         = "VSPHERE_USER"
@@ -64,9 +64,9 @@ const (
 	HetznerTokenKeyMC         = "HZ_TOKEN"
 	OpenStackUserNameMC       = "OS_USER_NAME"
 	// TODO Update this when Packet has been revamped to Equinix Metal in machine-controller
-	PacketAPIKeyMC            = "PACKET_API_KEY" //nolint:gosec
-	VSphereAddressMC          = "VSPHERE_ADDRESS"
-	VSphereUsernameMC         = "VSPHERE_USERNAME"
+	PacketAPIKeyMC    = "PACKET_API_KEY" //nolint:gosec
+	VSphereAddressMC  = "VSPHERE_ADDRESS"
+	VSphereUsernameMC = "VSPHERE_USERNAME"
 )
 
 var (
@@ -87,8 +87,8 @@ var (
 		OpenStackTenantID,
 		OpenStackTenantName,
 		OpenStackUserName,
-		PacketAPIKey,
-		PacketProjectID,
+		EquinixMetalAPIKey,
+		EquinixMetalProjectID,
 		VSphereAddress,
 		VSpherePassword,
 		VSphereUsername,
