@@ -157,9 +157,9 @@ func ValidateCloudProviderSpec(p kubeone.CloudProviderSpec, fldPath *field.Path)
 		}
 		providerFound = true
 	}
-	if p.Packet != nil {
+	if p.EquinixMetal != nil {
 		if providerFound {
-			allErrs = append(allErrs, field.Forbidden(fldPath.Child("packet"), "only one provider can be used at the same time"))
+			allErrs = append(allErrs, field.Forbidden(fldPath.Child("equinixMetal"), "only one provider can be used at the same time"))
 		}
 		providerFound = true
 	}

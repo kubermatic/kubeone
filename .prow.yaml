@@ -664,9 +664,9 @@ presubmits:
             requests:
               cpu: 1
   #########################################################
-  # E2E/Conformance tests (Packet, 1.19-1.22)
+  # E2E/Conformance tests (Equinix Metal, 1.19-1.22)
   #########################################################
-  - name: pull-kubeone-e2e-packet-conformance-1.19
+  - name: pull-kubeone-e2e-equinix-metal-conformance-1.19
     always_run: false
     decorate: true
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
@@ -683,7 +683,7 @@ presubmits:
             - e2e-test
           env:
             - name: PROVIDER
-              value: "packet"
+              value: "equinix-metal"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.19.14"
             - name: KUBEONE_TEST_RUN
@@ -691,7 +691,7 @@ presubmits:
           resources:
             requests:
               cpu: 1
-  - name: pull-kubeone-e2e-packet-conformance-1.20
+  - name: pull-kubeone-e2e-equinix-metal-conformance-1.20
     always_run: false
     decorate: true
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
@@ -708,7 +708,7 @@ presubmits:
             - e2e-test
           env:
             - name: PROVIDER
-              value: "packet"
+              value: "equinix-metal"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.20.10"
             - name: KUBEONE_TEST_RUN
@@ -716,7 +716,7 @@ presubmits:
           resources:
             requests:
               cpu: 1
-  - name: pull-kubeone-e2e-packet-conformance-1.21
+  - name: pull-kubeone-ewe-equinix-metal-conformance-1.21
     always_run: false
     decorate: true
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
@@ -733,7 +733,7 @@ presubmits:
             - e2e-test
           env:
             - name: PROVIDER
-              value: "packet"
+              value: "equinix-metal"
             - name: TEST_CLUSTER_TARGET_VERSION
               value: "1.21.4"
             - name: KUBEONE_TEST_RUN
@@ -741,7 +741,7 @@ presubmits:
           resources:
             requests:
               cpu: 1
-  - name: pull-kubeone-e2e-packet-conformance-1.22
+  - name: pull-kubeone-ewe-equinix-metal-conformance-1.22
     always_run: false
     decorate: true
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
@@ -758,7 +758,7 @@ presubmits:
             - e2e-test
           env:
             - name: PROVIDER
-              value: "packet"
+              value: "equinix-metal"
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
@@ -1246,9 +1246,9 @@ presubmits:
             - name: TF_VAR_project
               value: "kubeone-terraform-test"
   #########################################################
-  # E2E/Upgrade tests (Packet)
+  # E2E/Upgrade tests (Equinix Metal)
   #########################################################
-  - name: pull-kubeone-e2e-packet-upgrade-1.19-1.20
+  - name: pull-kubeone-ewe-equinix-metal-upgrade-1.19-1.20
     always_run: false
     decorate: true
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
@@ -1265,7 +1265,7 @@ presubmits:
             - e2e-test
           env:
             - name: PROVIDER
-              value: "packet"
+              value: "equinix-metal"
             - name: TEST_CLUSTER_INITIAL_VERSION
               value: "1.19.14"
             - name: TEST_CLUSTER_TARGET_VERSION
@@ -1274,7 +1274,7 @@ presubmits:
               valut: "120m"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterUpgrade"
-  - name: pull-kubeone-e2e-packet-upgrade-1.20-1.21
+  - name: pull-kubeone-ewe-equinix-metal-upgrade-1.20-1.21
     always_run: false
     decorate: true
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
@@ -1291,7 +1291,7 @@ presubmits:
             - e2e-test
           env:
             - name: PROVIDER
-              value: "packet"
+              value: "equinix-metal"
             - name: TEST_CLUSTER_INITIAL_VERSION
               value: "1.20.10"
             - name: TEST_CLUSTER_TARGET_VERSION
@@ -1300,7 +1300,7 @@ presubmits:
               valut: "120m"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterUpgrade"
-  - name: pull-kubeone-e2e-packet-upgrade-1.21-1.22
+  - name: pull-kubeone-ewe-equinix-metal-upgrade-1.21-1.22
     always_run: false
     decorate: true
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
@@ -1317,7 +1317,7 @@ presubmits:
             - e2e-test
           env:
             - name: PROVIDER
-              value: "packet"
+              value: "equinix-metal"
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_INITIAL_VERSION

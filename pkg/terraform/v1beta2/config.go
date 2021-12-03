@@ -259,8 +259,8 @@ func (c *Config) Apply(cluster *kubeonev1beta2.KubeOneCluster) error {
 			err = c.updateHetznerWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
 		case cluster.CloudProvider.Openstack != nil:
 			err = c.updateOpenStackWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
-		case cluster.CloudProvider.Packet != nil:
-			err = c.updatePacketWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
+		case cluster.CloudProvider.EquinixMetal != nil:
+			err = c.updateEquinixMetalWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
 		case cluster.CloudProvider.Vsphere != nil:
 			err = c.updateVSphereWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
 		default:
@@ -471,19 +471,20 @@ func (c *Config) updateOpenStackWorkerset(existingWorkerSet *kubeonev1beta2.Dyna
 	return nil
 }
 
-func (c *Config) updatePacketWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerConfig, cfg json.RawMessage) error {
-	var packetConfig machinecontroller.PacketSpec
+func (c *Config) updateEquinixMetalWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerConfig, cfg json.RawMessage) error {
+	// TODO Update this when Packet has been re-branded to Equinix Metal in machine-controller
+	var equinixMetalConfig machinecontroller.PacketSpec
 
-	if err := json.Unmarshal(cfg, &packetConfig); err != nil {
+	if err := json.Unmarshal(cfg, &equinixMetalConfig); err != nil {
 		return err
 	}
 
 	flags := []cloudProviderFlags{
-		{key: "projectID", value: packetConfig.ProjectID},
-		{key: "facilities", value: packetConfig.Facilities},
-		{key: "instanceType", value: packetConfig.InstanceType},
-		{key: "billingCycle", value: packetConfig.BillingCycle},
-		{key: "tags", value: packetConfig.Tags},
+		{key: "projectID", value: equinixMetalConfig.ProjectID},
+		{key: "facilities", value: equinixMetalConfig.Facilities},
+		{key: "instanceType", value: equinixMetalConfig.InstanceType},
+		{key: "billingCycle", value: equinixMetalConfig.BillingCycle},
+		{key: "tags", value: equinixMetalConfig.Tags},
 	}
 
 	for _, flag := range flags {

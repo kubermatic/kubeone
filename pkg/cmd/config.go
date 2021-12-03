@@ -141,7 +141,7 @@ func configPrintCmd() *cobra.Command {
 		longFlagName(opts, "CloudProviderName"),
 		shortFlagName(opts, "CloudProviderName"),
 		defaultCloudProviderName,
-		"cloud provider name (aws, digitalocean, gce, hetzner, packet, openstack, vsphere, none)")
+		"cloud provider name (aws, digitalocean, gce, hetzner, equinixmetal, openstack, vsphere, none)")
 
 	// Hosts
 	cmd.Flags().StringVar(&opts.ControlPlaneHosts, longFlagName(opts, "ControlPlaneHosts"), "", "control plane hosts in format of comma-separated key:value list, example: publicAddress:192.168.0.100,privateAddress:192.168.1.100,sshUsername:ubuntu,sshPort:22. Use quoted string of space separated values for multiple hosts")
@@ -234,7 +234,7 @@ The manifest is printed on the standard output.
 func runPrint(printOptions *printOpts) error {
 	if printOptions.FullConfig {
 		switch printOptions.CloudProviderName {
-		case "digitalocean", "packet", "hetzner":
+		case "digitalocean", "equinixmetal", "hetzner":
 			printOptions.CloudProviderExternal = true
 		case "openstack":
 			printOptions.CloudProviderCloudCfg = "<< cloudConfig is required for OpenStack >>"
@@ -308,8 +308,8 @@ func createAndPrintManifest(printOptions *printOpts) error {
 	case "openstack":
 		cfg.Set(yamled.Path{"cloudProvider", "openstack"}, providerVal)
 		cfg.Set(yamled.Path{"cloudProvider", "cloudConfig"}, "<< cloudConfig is required for OpenStack >>\n")
-	case "packet":
-		cfg.Set(yamled.Path{"cloudProvider", "packet"}, providerVal)
+	case "equinixmetal":
+		cfg.Set(yamled.Path{"cloudProvider", "equinixmetal"}, providerVal)
 		cfg.Set(yamled.Path{"cloudProvider", "external"}, true)
 	case "vsphere":
 		cfg.Set(yamled.Path{"cloudProvider", "vsphere"}, providerVal)
@@ -573,7 +573,7 @@ cloudProvider:
   # hetzner:
   #   networkID: ""
   # openstack: {}
-  # packet: {}
+  # equinixmetal: {}
   # vsphere: {}
   # none: {}
   {{ .CloudProviderName }}: {}

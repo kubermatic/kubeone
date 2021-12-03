@@ -40,7 +40,7 @@ var (
 		resources.AddonCCMDigitalOcean:    "",
 		resources.AddonCCMHetzner:         "",
 		resources.AddonCCMOpenStack:       "",
-		resources.AddonCCMPacket:          "",
+		resources.AddonCCMEquinixMetal:          "",
 		resources.AddonCCMVsphere:         "",
 		resources.AddonCNICanal:           "",
 		resources.AddonCNICilium:          "",
@@ -167,7 +167,7 @@ func collectAddons(s *state.State) (addonsToDeploy []addonAction) {
 		)
 	case s.Cluster.CloudProvider.Packet != nil:
 		addonsToDeploy = append(addonsToDeploy, addonAction{
-			name: resources.AddonCCMPacket,
+			name: resources.AddonCCMEquinixMetal,
 		})
 	default:
 		s.Logger.Infof("CSI driver for %q not yet supported, skipping", s.Cluster.CloudProvider.CloudProviderName())

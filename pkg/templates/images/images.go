@@ -120,7 +120,7 @@ const (
 	HetznerCSI
 	OpenstackCCM
 	OpenstackCSI
-	PacketCCM
+	EquinixMetalCCM
 	VsphereCCM
 	VsphereCSIDriver
 	VsphereCSISyncer
@@ -243,8 +243,8 @@ func optionalResources() map[Resource]map[string]string {
 			">= 1.22.0": "docker.io/k8scloudprovider/cinder-csi-plugin:v1.22.0",
 		},
 
-		// Packet CCM
-		PacketCCM: {"*": "docker.io/packethost/packet-ccm:v1.0.0"},
+		// Equinix Metal CCM
+		EquinixMetalCCM: {"*": "docker.io/equinix/cloud-provider-equinix-metal:v3.3.0"},
 
 		// vSphere CCM
 		VsphereCCM: {

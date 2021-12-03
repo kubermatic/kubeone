@@ -14,21 +14,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-provider "packet" {
+provider "metal" {
 }
 
 locals {
   kube_cluster_tag = "kubernetes-cluster:${var.cluster_name}"
 }
 
-resource "packet_ssh_key" "deployer" {
+resource "metal_ssh_key" "deployer" {
   name       = "terraform"
   public_key = file(var.ssh_public_key_file)
 }
 
-resource "packet_device" "control_plane" {
+resource "metal_device" "control_plane" {
   count      = 3
-  depends_on = [packet_ssh_key.deployer]
+  depends_on = [metal_ssh_key.deployer]
 
   hostname         = "${var.cluster_name}-control-plane-${count.index + 1}"
   plan             = var.device_type
@@ -39,8 +39,8 @@ resource "packet_device" "control_plane" {
   tags             = [local.kube_cluster_tag]
 }
 
-resource "packet_device" "lb" {
-  depends_on = [packet_ssh_key.deployer]
+resource "metal_device" "lb" {
+  depends_on = [metal_ssh_key.deployer]
 
   hostname         = "${var.cluster_name}-lb"
   plan             = "t1.small.x86"
@@ -62,18 +62,18 @@ resource "packet_device" "lb" {
 
 locals {
   rendered_lb_config = templatefile("./etc_gobetween.tpl", {
-    lb_targets = packet_device.control_plane.*.access_private_ipv4,
+    lb_targets = metal_device.control_plane.*.access_private_ipv4,
   })
 }
 
 resource "null_resource" "lb_config" {
   triggers = {
-    cluster_instance_ids = join(",", packet_device.control_plane.*.id)
+    cluster_instance_ids = join(",", metal_device.control_plane.*.id)
     config               = local.rendered_lb_config
   }
 
   connection {
-    host = packet_device.lb.access_public_ipv4
+    host = metal_device.lb.access_public_ipv4
   }
 
   provisioner "file" {

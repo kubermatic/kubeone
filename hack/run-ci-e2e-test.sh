@@ -96,8 +96,9 @@ function setup_ci_environment_vars() {
   "hetzner")
     export HCLOUD_TOKEN=${HZ_E2E_TOKEN}
     ;;
-  "packet")
-    export PACKET_AUTH_TOKEN=${PACKET_API_KEY}
+  "equinix-metal")
+    # TODO Update this when preset for equinix metal has been added
+    export EQUINIX_METAL_AUTH_TOKEN=${PACKET_API_KEY}
     export TF_VAR_project_id=${PACKET_PROJECT_ID}
     ;;
   "gce")

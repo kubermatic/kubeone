@@ -258,8 +258,8 @@ func txtFuncMap(overwriteRegistry string) template.FuncMap {
 		return string(buf), err
 	}
 
-	funcs["PacketSecret"] = func(apiKey, projectID string) (string, error) {
-		packetSecret := struct {
+	funcs["EquinixMetalSecret"] = func(apiKey, projectID string) (string, error) {
+		equinixMetalSecret := struct {
 			APIKey    string `json:"apiKey"`
 			ProjectID string `json:"projectID"`
 		}{
@@ -267,7 +267,7 @@ func txtFuncMap(overwriteRegistry string) template.FuncMap {
 			ProjectID: projectID,
 		}
 
-		buf, err := json.Marshal(packetSecret)
+		buf, err := json.Marshal(equinixMetalSecret)
 		return string(buf), err
 	}
 

@@ -177,8 +177,8 @@ type CloudProviderSpec struct {
 	Hetzner *HetznerSpec `json:"hetzner,omitempty"`
 	// Openstack
 	Openstack *OpenstackSpec `json:"openstack,omitempty"`
-	// Packet
-	Packet *PacketSpec `json:"packet,omitempty"`
+	// Equinix Metal
+	EquinixMetal *EquinixMetalSpec `json:"equinixMetal,omitempty"`
 	// Vsphere
 	Vsphere *VsphereSpec `json:"vsphere,omitempty"`
 	// None
@@ -206,8 +206,8 @@ type HetznerSpec struct {
 // OpenstackSpec defines the Openstack provider
 type OpenstackSpec struct{}
 
-// PacketSpec defines the Packet cloud provider
-type PacketSpec struct{}
+// EquinixMetalSpec defines the Equinix Metal cloud provider
+type EquinixMetalSpec struct{}
 
 // VsphereSpec defines the vSphere provider
 type VsphereSpec struct{}
