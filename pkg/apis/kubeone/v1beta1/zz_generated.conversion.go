@@ -258,11 +258,6 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*Features)(nil), (*kubeone.Features)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1beta1_Features_To_kubeone_Features(a.(*Features), b.(*kubeone.Features), scope)
-	}); err != nil {
-		return err
-	}
 	if err := s.AddGeneratedConversionFunc((*kubeone.Features)(nil), (*Features)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_kubeone_Features_To_v1beta1_Features(a.(*kubeone.Features), b.(*Features), scope)
 	}); err != nil {
@@ -555,6 +550,11 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}
 	if err := s.AddGeneratedConversionFunc((*kubeone.WeaveNetSpec)(nil), (*WeaveNetSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_kubeone_WeaveNetSpec_To_v1beta1_WeaveNetSpec(a.(*kubeone.WeaveNetSpec), b.(*WeaveNetSpec), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddConversionFunc((*Features)(nil), (*kubeone.Features)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1beta1_Features_To_kubeone_Features(a.(*Features), b.(*kubeone.Features), scope)
 	}); err != nil {
 		return err
 	}
