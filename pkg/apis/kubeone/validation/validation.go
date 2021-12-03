@@ -402,11 +402,6 @@ func ValidateFeatures(f kubeone.Features, versions kubeone.VersionConfig, fldPat
 	if f.OpenIDConnect != nil && f.OpenIDConnect.Enable {
 		allErrs = append(allErrs, ValidateOIDCConfig(f.OpenIDConnect.Config, fldPath.Child("openidConnect"))...)
 	}
-
-	if f.PodPresets != nil && f.PodPresets.Enable {
-		allErrs = append(allErrs, field.Forbidden(fldPath.Child("podPresets"), "podPresets feature is removed in kubernetes 1.20+ and must be disabled"))
-	}
-
 	return allErrs
 }
 

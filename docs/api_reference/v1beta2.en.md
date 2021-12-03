@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2021-12-03T17:47:44+05:00
+date = 2021-12-03T18:08:12+05:00
 weight = 11
 +++
 ## v1beta2
@@ -26,6 +26,7 @@ weight = 11
 * [DynamicAuditLog](#dynamicauditlog)
 * [DynamicWorkerConfig](#dynamicworkerconfig)
 * [EncryptionProviders](#encryptionproviders)
+* [EquinixMetalSpec](#equinixmetalspec)
 * [ExternalCNISpec](#externalcnispec)
 * [Features](#features)
 * [GCESpec](#gcespec)
@@ -42,10 +43,8 @@ weight = 11
 * [OpenIDConnect](#openidconnect)
 * [OpenIDConnectConfig](#openidconnectconfig)
 * [OpenstackSpec](#openstackspec)
-* [PacketSpec](#packetspec)
 * [PodNodeSelector](#podnodeselector)
 * [PodNodeSelectorConfig](#podnodeselectorconfig)
-* [PodPresets](#podpresets)
 * [PodSecurityPolicy](#podsecuritypolicy)
 * [ProviderSpec](#providerspec)
 * [ProviderStaticNetworkConfig](#providerstaticnetworkconfig)
@@ -333,7 +332,6 @@ Features controls what features will be enabled on the cluster
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | podNodeSelector | PodNodeSelector | *[PodNodeSelector](#podnodeselector) | false |
-| podPresets | PodPresets Obsolete: this feature was removed with Kubernetes 1.20 | *[PodPresets](#podpresets) | false |
 | podSecurityPolicy | PodSecurityPolicy Deprecated: will be removed once Kubernetes 1.24 reaches EOL | *[PodSecurityPolicy](#podsecuritypolicy) | false |
 | staticAuditLog | StaticAuditLog | *[StaticAuditLog](#staticauditlog) | false |
 | dynamicAuditLog | DynamicAuditLog | *[DynamicAuditLog](#dynamicauditlog) | false |
@@ -541,17 +539,6 @@ PodNodeSelectorConfig config
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | configFilePath | ConfigFilePath is a path on the local file system to the PodNodeSelector configuration file. ConfigFilePath is a required field. More info: https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#podnodeselector | string | true |
-
-[Back to Group](#v1beta2)
-
-### PodPresets
-
-PodPresets feature flag
-The PodPresets feature is obsolete and has been removed
-
-| Field | Description | Scheme | Required |
-| ----- | ----------- | ------ | -------- |
-| enable | Enable | bool | false |
 
 [Back to Group](#v1beta2)
 
