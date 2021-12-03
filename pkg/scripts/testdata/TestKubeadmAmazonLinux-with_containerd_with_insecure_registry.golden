@@ -72,10 +72,8 @@ sudo yum install -y \
 
 
 
-sudo yum versionlock delete containerd cri-tools || true
-sudo yum install -y containerd-1.4.* cri-tools-1.13.0
-sudo yum versionlock add containerd cri-tools
 
+sudo mkdir -p $(dirname /etc/containerd/config.toml)
 cat <<EOF | sudo tee /etc/containerd/config.toml
 version = 2
 
@@ -96,11 +94,15 @@ SystemdCgroup = true
 endpoint = ["http://127.0.0.1:5000"]
 [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
 endpoint = ["https://registry-1.docker.io"]
-EOF
 
+EOF
 cat <<EOF | sudo tee /etc/crictl.yaml
 runtime-endpoint: unix:///run/containerd/containerd.sock
 EOF
+
+sudo yum versionlock delete containerd cri-tools || true
+sudo yum install -y containerd-1.4.* cri-tools-1.13.0
+sudo yum versionlock add containerd cri-tools
 
 sudo mkdir -p /etc/systemd/system/containerd.service.d
 cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/environment.conf

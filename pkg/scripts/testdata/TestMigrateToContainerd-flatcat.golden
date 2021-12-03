@@ -4,4 +4,49 @@ sudo systemctl stop kubelet
 sudo docker ps -q | xargs sudo docker stop || true
 sudo docker ps -qa | xargs sudo docker rm || true
 
+
+sudo mkdir -p $(dirname /etc/containerd/config.toml)
+cat <<EOF | sudo tee /etc/containerd/config.toml
+version = 2
+
+[metrics]
+address = "127.0.0.1:1338"
+
+[plugins]
+[plugins."io.containerd.grpc.v1.cri"]
+[plugins."io.containerd.grpc.v1.cri".containerd]
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+runtime_type = "io.containerd.runc.v2"
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+SystemdCgroup = true
+[plugins."io.containerd.grpc.v1.cri".registry]
+[plugins."io.containerd.grpc.v1.cri".registry.mirrors]
+[plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
+endpoint = ["https://registry-1.docker.io"]
+
+EOF
+cat <<EOF | sudo tee /etc/crictl.yaml
+runtime-endpoint: unix:///run/containerd/containerd.sock
+EOF
+
+sudo mkdir -p /etc/systemd/system/containerd.service.d
+cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/environment.conf
+[Service]
+Restart=always
+EnvironmentFile=-/etc/environment
+EOF
+
+
+cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/10-kubeone.conf
+[Service]
+Restart=always
+Environment=CONTAINERD_CONFIG=/etc/containerd/config.toml
+ExecStart=
+ExecStart=/usr/bin/env PATH=${TORCX_BINDIR}:${PATH} ${TORCX_BINDIR}/containerd --config ${CONTAINERD_CONFIG}
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now containerd
+sudo systemctl restart containerd
 sudo systemctl restart kubelet
