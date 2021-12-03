@@ -16,7 +16,10 @@ limitations under the License.
 
 package scripts
 
-import "k8c.io/kubeone/pkg/apis/kubeone"
+import (
+	"k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/containerruntime"
+)
 
 const (
 	kubeadmDebianTemplate = `
@@ -66,7 +69,6 @@ sudo apt-mark unhold kubelet kubeadm kubectl kubernetes-cni
 {{- end }}
 
 {{ if .INSTALL_DOCKER }}
-{{ template "docker-daemon-config" . }}
 {{ template "apt-docker-ce" . }}
 {{ end }}
 
@@ -113,20 +115,25 @@ sudo apt-get remove --purge -y kubernetes-cni || true
 )
 
 func KubeadmDebian(cluster *kubeone.KubeOneCluster, force bool) (string, error) {
-	return Render(kubeadmDebianTemplate, Data{
+	data := Data{
 		"KUBELET":                true,
 		"KUBEADM":                true,
 		"KUBECTL":                true,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
-		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"HTTP_PROXY":             cluster.Proxy.HTTP,
 		"HTTPS_PROXY":            cluster.Proxy.HTTPS,
 		"FORCE":                  force,
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
-	})
+	}
+
+	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
+		return "", err
+	}
+
+	return Render(kubeadmDebianTemplate, data)
 }
 
 func RemoveBinariesDebian() (string, error) {
@@ -134,32 +141,42 @@ func RemoveBinariesDebian() (string, error) {
 }
 
 func UpgradeKubeadmAndCNIDebian(cluster *kubeone.KubeOneCluster) (string, error) {
-	return Render(kubeadmDebianTemplate, Data{
+	data := Data{
 		"UPGRADE":                true,
 		"KUBEADM":                true,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
-		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"HTTP_PROXY":             cluster.Proxy.HTTP,
 		"HTTPS_PROXY":            cluster.Proxy.HTTPS,
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
-	})
+	}
+
+	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
+		return "", err
+	}
+
+	return Render(kubeadmDebianTemplate, data)
 }
 
 func UpgradeKubeletAndKubectlDebian(cluster *kubeone.KubeOneCluster) (string, error) {
-	return Render(kubeadmDebianTemplate, Data{
+	data := Data{
 		"UPGRADE":                true,
 		"KUBELET":                true,
 		"KUBECTL":                true,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
-		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"HTTP_PROXY":             cluster.Proxy.HTTP,
 		"HTTPS_PROXY":            cluster.Proxy.HTTPS,
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
-	})
+	}
+
+	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
+		return "", err
+	}
+
+	return Render(kubeadmDebianTemplate, data)
 }

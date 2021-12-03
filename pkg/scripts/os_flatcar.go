@@ -16,7 +16,10 @@ limitations under the License.
 
 package scripts
 
-import "k8c.io/kubeone/pkg/apis/kubeone"
+import (
+	"k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/containerruntime"
+)
 
 const (
 	kubeadmFlatcarTemplate = `
@@ -37,12 +40,11 @@ curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRI_TOO
 	sudo tar -C /opt/bin -xz
 
 {{ if .INSTALL_DOCKER }}
-{{ template "docker-daemon-config" . }}
-{{ template "flatcar-docker" }}
+{{ template "flatcar-docker" . }}
 {{ end }}
 
 {{ if .INSTALL_CONTAINERD }}
-{{ template "flatcar-containerd" }}
+{{ template "flatcar-containerd" . }}
 {{ end }}
 
 sudo mkdir -p /opt/bin
@@ -176,14 +178,19 @@ sudo systemctl start kubelet
 )
 
 func KubeadmFlatcar(cluster *kubeone.KubeOneCluster) (string, error) {
-	return Render(kubeadmFlatcarTemplate, Data{
+	data := Data{
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
 		"CRITOOLS_VERSION":       defaultCriToolsVersion,
-		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
-	})
+	}
+
+	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
+		return "", err
+	}
+
+	return Render(kubeadmFlatcarTemplate, data)
 }
 
 func RemoveBinariesFlatcar() (string, error) {

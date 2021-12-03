@@ -18,6 +18,9 @@ package scripts
 
 import (
 	"github.com/MakeNowJust/heredoc/v2"
+
+	"k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/containerruntime"
 )
 
 const (
@@ -30,9 +33,7 @@ var migrateToContainerdScriptTemplate = heredoc.Doc(`
 	sudo docker ps -q | xargs sudo docker stop || true
 	sudo docker ps -qa | xargs sudo docker rm || true
 
-	{{ if .GENERATE_CONTAINERD_CONFIG -}}
-	{{ template "containerd-config" . }}
-	{{- end }}
+	{{ template "flatcar-containerd" . }}
 
 	{{- /*
 		/var/lib/kubelet/kubeadm-flags.env should be modified by the caller of
@@ -44,9 +45,12 @@ var migrateToContainerdScriptTemplate = heredoc.Doc(`
 	sudo systemctl restart kubelet
 `)
 
-func MigrateToContainerd(insecureRegistry string, generateContainerdConfig bool) (string, error) {
-	return Render(migrateToContainerdScriptTemplate, Data{
-		"INSECURE_REGISTRY":          insecureRegistry,
-		"GENERATE_CONTAINERD_CONFIG": generateContainerdConfig,
-	})
+func MigrateToContainerd(cluster *kubeone.KubeOneCluster) (string, error) {
+	data := Data{}
+
+	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
+		return "", err
+	}
+
+	return Render(migrateToContainerdScriptTemplate, data)
 }
