@@ -1,6 +1,6 @@
 +++
 title = "v1beta1 API Reference"
-date = 2021-12-02T14:38:54+01:00
+date = 2021-12-03T16:34:53+05:00
 weight = 11
 +++
 ## v1beta1
@@ -322,7 +322,7 @@ Features controls what features will be enabled on the cluster
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | podNodeSelector | PodNodeSelector | *[PodNodeSelector](#podnodeselector) | false |
-| podPresets | PodPresets Obsolete: this feature was removed with Kubernetes 1.20 | *[PodPresets](#podpresets) | false |
+| podPresets | PodPresets Obsolete: this feature has been removed from KubeOne and specifying it will have no effect | *[PodPresets](#podpresets) | false |
 | podSecurityPolicy | PodSecurityPolicy Deprecated: will be removed once Kubernetes 1.24 reaches EOL | *[PodSecurityPolicy](#podsecuritypolicy) | false |
 | staticAuditLog | StaticAuditLog | *[StaticAuditLog](#staticauditlog) | false |
 | dynamicAuditLog | DynamicAuditLog | *[DynamicAuditLog](#dynamicauditlog) | false |

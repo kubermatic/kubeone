@@ -411,7 +411,7 @@ type Features struct {
 	// PodNodeSelector
 	PodNodeSelector *PodNodeSelector `json:"podNodeSelector,omitempty"`
 	// PodPresets
-	// Obsolete: this feature was removed with Kubernetes 1.20
+	// Obsolete: this feature has been removed from KubeOne and specifying it will have no effect
 	PodPresets *PodPresets `json:"podPresets,omitempty"`
 	// PodSecurityPolicy
 	// Deprecated: will be removed once Kubernetes 1.24 reaches EOL
