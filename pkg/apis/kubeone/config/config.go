@@ -17,7 +17,7 @@ limitations under the License.
 package config
 
 import (
-	"io/ioutil"
+	"io"
 	"os"
 	"os/exec"
 
@@ -61,7 +61,7 @@ func LoadKubeOneCluster(clusterCfgPath, tfOutputPath, credentialsFilePath string
 		return nil, errors.New("cluster configuration path not provided")
 	}
 
-	cluster, err := ioutil.ReadFile(clusterCfgPath)
+	cluster, err := os.ReadFile(clusterCfgPath)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to read the given cluster configuration file")
 	}
@@ -70,7 +70,7 @@ func LoadKubeOneCluster(clusterCfgPath, tfOutputPath, credentialsFilePath string
 
 	switch {
 	case tfOutputPath == "-":
-		if tfOutput, err = ioutil.ReadAll(os.Stdin); err != nil {
+		if tfOutput, err = io.ReadAll(os.Stdin); err != nil {
 			return nil, errors.Wrap(err, "unable to read terraform output from stdin")
 		}
 	case isDir(tfOutputPath):
@@ -80,14 +80,14 @@ func LoadKubeOneCluster(clusterCfgPath, tfOutputPath, credentialsFilePath string
 			return nil, errors.Wrapf(err, "unable to read terraform output from the %q directory", tfOutputPath)
 		}
 	case len(tfOutputPath) != 0:
-		if tfOutput, err = ioutil.ReadFile(tfOutputPath); err != nil {
+		if tfOutput, err = os.ReadFile(tfOutputPath); err != nil {
 			return nil, errors.Wrap(err, "unable to read the given terraform output file")
 		}
 	}
 
 	var credentialsFile []byte
 	if len(credentialsFilePath) != 0 {
-		credentialsFile, err = ioutil.ReadFile(credentialsFilePath)
+		credentialsFile, err = os.ReadFile(credentialsFilePath)
 		if err != nil {
 			return nil, errors.Wrap(err, "unable to read the given credentials file")
 		}
