@@ -18,7 +18,6 @@ package credentials
 
 import (
 	"encoding/base64"
-	"io/ioutil"
 	"os"
 	"strings"
 
@@ -201,7 +200,7 @@ func newCredsFinder(credentialsFilePath string) (lookupFunc, error) {
 		return finder, nil
 	}
 
-	buf, err := ioutil.ReadFile(credentialsFilePath)
+	buf, err := os.ReadFile(credentialsFilePath)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to load credentials file")
 	}

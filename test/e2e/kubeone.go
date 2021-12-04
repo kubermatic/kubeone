@@ -19,7 +19,6 @@ package e2e
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"github.com/pkg/errors"
@@ -97,7 +96,7 @@ func (k1 *Kubeone) CreateV1Beta1Config(
 	}
 
 	if credentialsFile != "" {
-		ymlbuf, err := ioutil.ReadFile(credentialsFile)
+		ymlbuf, err := os.ReadFile(credentialsFile)
 		if err != nil {
 			return errors.Wrap(err, "unable to read credentials file")
 		}
@@ -123,7 +122,7 @@ func (k1 *Kubeone) CreateV1Beta1Config(
 		return errors.Wrap(err, "unable to marshal kubeone KubeOneCluster")
 	}
 
-	err = ioutil.WriteFile(k1.ConfigurationFilePath, k1Config, 0600)
+	err = os.WriteFile(k1.ConfigurationFilePath, k1Config, 0600)
 	return errors.Wrap(err, "failed to write KubeOne configuration manifest")
 }
 
@@ -173,7 +172,7 @@ func (k1 *Kubeone) CreateV1Beta2Config(
 	}
 
 	if credentialsFile != "" {
-		ymlbuf, err := ioutil.ReadFile(credentialsFile)
+		ymlbuf, err := os.ReadFile(credentialsFile)
 		if err != nil {
 			return errors.Wrap(err, "unable to read credentials file")
 		}
@@ -191,7 +190,7 @@ func (k1 *Kubeone) CreateV1Beta2Config(
 		return errors.Wrap(err, "unable to marshal kubeone KubeOneCluster")
 	}
 
-	err = ioutil.WriteFile(k1.ConfigurationFilePath, k1Config, 0600)
+	err = os.WriteFile(k1.ConfigurationFilePath, k1Config, 0600)
 	return errors.Wrap(err, "failed to write KubeOne configuration manifest")
 }
 
