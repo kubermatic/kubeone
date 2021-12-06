@@ -36,7 +36,7 @@ spec:
           effect: NoSchedule
           operator: Exists
       containers:
-        - image: { { .InternalImages.Get "EquinixMetalCCM" } }
+        - image: {{ .InternalImages.Get "EquinixMetalCCM" }}
           name: cloud-provider-equinix-metal
           imagePullPolicy: Always
           command:
@@ -170,8 +170,4 @@ metadata:
   namespace: kube-system
 data:
   cloud-sa.json:
-    {
-      {
-        EquinixMetalSecret .Credentials.EQUINIX_METAL_AUTH_TOKEN .Credentials.EQUINIX_METAL_PROJECT_ID | b64enc,
-      },
-    }
+    {{ EquinixMetalSecret .Credentials.METAL_AUTH_TOKEN .Credentials.METAL_PROJECT_ID | b64enc }}

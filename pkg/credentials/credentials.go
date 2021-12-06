@@ -48,8 +48,8 @@ const (
 	OpenStackTenantID       = "OS_TENANT_ID"
 	OpenStackTenantName     = "OS_TENANT_NAME"
 	OpenStackUserName       = "OS_USERNAME"
-	EquinixMetalAPIKey      = "EQUINIX_METAL_AUTH_TOKEN" //nolint:gosec
-	EquinixMetalProjectID   = "EQUINIX_METAL_PROJECT_ID"
+	EquinixMetalAuthToken   = "METAL_AUTH_TOKEN" //nolint:gosec
+	EquinixMetalProjectID   = "METAL_PROJECT_ID"
 	VSphereAddress          = "VSPHERE_SERVER"
 	VSpherePassword         = "VSPHERE_PASSWORD"
 	VSphereUsername         = "VSPHERE_USER"
@@ -87,7 +87,7 @@ var (
 		OpenStackTenantID,
 		OpenStackTenantName,
 		OpenStackUserName,
-		EquinixMetalAPIKey,
+		EquinixMetalAuthToken,
 		EquinixMetalProjectID,
 		VSphereAddress,
 		VSpherePassword,
@@ -167,7 +167,7 @@ func ProviderCredentials(cloudProvider kubeone.CloudProviderSpec, credentialsFil
 		}, openstackValidationFunc)
 	case cloudProvider.EquinixMetal != nil:
 		return credentialsFinder.parseCredentialVariables([]ProviderEnvironmentVariable{
-			{Name: EquinixMetalAPIKey, MachineControllerName: PacketAPIKeyMC},
+			{Name: EquinixMetalAuthToken, MachineControllerName: PacketAPIKeyMC},
 			{Name: EquinixMetalProjectID},
 		}, defaultValidationFunc)
 	case cloudProvider.Vsphere != nil:

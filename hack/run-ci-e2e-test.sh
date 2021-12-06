@@ -98,7 +98,7 @@ function setup_ci_environment_vars() {
     ;;
   "equinix-metal")
     # TODO Update this when preset for equinix metal has been added
-    export EQUINIX_METAL_AUTH_TOKEN=${PACKET_API_KEY}
+    export METAL_AUTH_TOKEN=${PACKET_API_KEY}
     export TF_VAR_project_id=${PACKET_PROJECT_ID}
     ;;
   "gce")

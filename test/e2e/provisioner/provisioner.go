@@ -63,7 +63,7 @@ func CreateProvisioner(testPath string, identifier string, provider string) (Pro
 		creds := verifyCredentials("GOOGLE_CREDENTIALS")
 		return NewDefaultProvisioner(creds, testPath, identifier, provider)
 	case EquinixMetal:
-		creds := verifyCredentials("EQUINIX_METAL_AUTH_TOKEN", "EQUINIX_METAL_PROJECT_ID")
+		creds := verifyCredentials("METAL_AUTH_TOKEN", "METAL_PROJECT_ID")
 		return NewDefaultProvisioner(creds, testPath, identifier, provider)
 	case OpenStack:
 		creds := verifyCredentials("OS_AUTH_URL", "OS_DOMAIN_NAME", "OS_PASSWORD",
