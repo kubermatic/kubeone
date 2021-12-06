@@ -296,14 +296,14 @@ func openstackValidationFunc(creds map[string]string) error {
 	}
 
 	var (
-		appCredsIdOkay        bool
+		appCredsIDOkay        bool
 		appCredsSecretOkay    bool
 		userCredsUsernameOkay bool
 		userCredsPasswordOkay bool
 	)
 
 	if v, ok := creds[OpenStackApplicationCredentialID]; ok && len(v) != 0 {
-		appCredsIdOkay = true
+		appCredsIDOkay = true
 	}
 
 	if v, ok := creds[OpenStackApplicationCredentialSecret]; ok && len(v) != 0 {
@@ -318,13 +318,13 @@ func openstackValidationFunc(creds map[string]string) error {
 		userCredsPasswordOkay = true
 	}
 
-	if (appCredsIdOkay || appCredsSecretOkay) && (userCredsUsernameOkay || userCredsPasswordOkay) {
+	if (appCredsIDOkay || appCredsSecretOkay) && (userCredsUsernameOkay || userCredsPasswordOkay) {
 		return errors.Errorf("both app credentials (%s %s) and user credentials (%s %s) found",
 			OpenStackApplicationCredentialID, OpenStackApplicationCredentialSecret,
 			OpenStackUserName, OpenStackPassword)
 	}
 
-	if (appCredsIdOkay && !appCredsSecretOkay) || (!appCredsIdOkay && appCredsSecretOkay) {
+	if (appCredsIDOkay && !appCredsSecretOkay) || (!appCredsIDOkay && appCredsSecretOkay) {
 		return errors.Errorf("only one of %s, %s is set for application credentials",
 			OpenStackApplicationCredentialID, OpenStackApplicationCredentialSecret)
 	}
@@ -334,7 +334,7 @@ func openstackValidationFunc(creds map[string]string) error {
 			OpenStackUserName, OpenStackPassword)
 	}
 
-	if (!appCredsIdOkay && !appCredsSecretOkay) && (!userCredsUsernameOkay && !userCredsPasswordOkay) {
+	if (!appCredsIDOkay && !appCredsSecretOkay) && (!userCredsUsernameOkay && !userCredsPasswordOkay) {
 		return errors.New("no valid credentials (either application or user) found")
 	}
 
