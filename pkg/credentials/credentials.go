@@ -63,7 +63,7 @@ const (
 	GoogleServiceAccountKeyMC = "GOOGLE_SERVICE_ACCOUNT"
 	HetznerTokenKeyMC         = "HZ_TOKEN"
 	OpenStackUserNameMC       = "OS_USER_NAME"
-	// TODO Update this when Packet has been revamped to Equinix Metal in machine-controller
+	// TODO: Update this when Packet has been revamped to Equinix Metal in machine-controller
 	PacketAPIKeyMC    = "PACKET_API_KEY"    //nolint:gosec
 	PacketProjectIDMC = "PACKET_PROJECT_ID" //nolint:gosec
 	VSphereAddressMC  = "VSPHERE_ADDRESS"

@@ -672,7 +672,7 @@ presubmits:
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     labels:
       preset-goproxy: "true"
-      preset-packet: "true"
+      preset-equinix-metal: "true"
     spec:
       containers:
         - image: kubermatic/kubeone-e2e:v0.1.18
@@ -697,7 +697,7 @@ presubmits:
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     labels:
       preset-goproxy: "true"
-      preset-packet: "true"
+      preset-equinix-metal: "true"
     spec:
       containers:
         - image: kubermatic/kubeone-e2e:v0.1.18
@@ -722,7 +722,7 @@ presubmits:
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     labels:
       preset-goproxy: "true"
-      preset-packet: "true"
+      preset-equinix-metal: "true"
     spec:
       containers:
         - image: kubermatic/kubeone-e2e:v0.1.18
@@ -747,7 +747,7 @@ presubmits:
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     labels:
       preset-goproxy: "true"
-      preset-packet: "true"
+      preset-equinix-metal: "true"
     spec:
       containers:
         - image: kubermatic/kubeone-e2e:v0.1.18
@@ -1254,7 +1254,7 @@ presubmits:
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     labels:
       preset-goproxy: "true"
-      preset-packet: "true"
+      preset-equinix-metal: "true"
     spec:
       containers:
         - image: kubermatic/kubeone-e2e:v0.1.18
@@ -1280,7 +1280,7 @@ presubmits:
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     labels:
       preset-goproxy: "true"
-      preset-packet: "true"
+      preset-equinix-metal: "true"
     spec:
       containers:
         - image: kubermatic/kubeone-e2e:v0.1.18
@@ -1306,7 +1306,7 @@ presubmits:
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     labels:
       preset-goproxy: "true"
-      preset-packet: "true"
+      preset-equinix-metal: "true"
     spec:
       containers:
         - image: kubermatic/kubeone-e2e:v0.1.18

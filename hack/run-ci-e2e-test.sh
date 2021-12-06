@@ -97,9 +97,7 @@ function setup_ci_environment_vars() {
     export HCLOUD_TOKEN=${HZ_E2E_TOKEN}
     ;;
   "equinix-metal")
-    # TODO Update this when preset for equinix metal has been added
-    export METAL_AUTH_TOKEN=${PACKET_API_KEY}
-    export TF_VAR_project_id=${PACKET_PROJECT_ID}
+    export TF_VAR_project_id=${METAL_PROJECT_ID}
     ;;
   "gce")
     GOOGLE_CREDENTIALS=$(base64 -d <<< "${KUBEONE_GOOGLE_SERVICE_ACCOUNT}")
