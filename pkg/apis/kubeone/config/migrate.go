@@ -26,7 +26,7 @@ import (
 	"k8c.io/kubeone/pkg/yamled"
 )
 
-// MigrateOldConfig migrates KubeOneCluster v1alpha1 object to v1beta1
+// MigrateOldConfig migrates KubeOneCluster v1beta1 object to v1beta2
 func MigrateOldConfig(clusterFilePath string) (interface{}, error) {
 	oldConfig, err := loadClusterConfig(clusterFilePath)
 	if err != nil {
@@ -53,6 +53,14 @@ func MigrateOldConfig(clusterFilePath string) (interface{}, error) {
 
 	// The APIVersion has been changed to kubeone.k8c.io/v1beta2
 	oldConfig.Set(yamled.Path{"apiVersion"}, kubeonev1beta2.SchemeGroupVersion.String())
+
+	// Packet has been renamed to Equinix Metal and as a result of this change
+	// .cloudProvider.packet field has been renamed to .cloudProvider.equinixMetal
+	packetSpec, cloudProviderPacketExists := oldConfig.Get(yamled.Path{"cloudProvider", "packet"})
+	if cloudProviderPacketExists {
+		oldConfig.Remove(yamled.Path{"cloudProvider", "packet"})
+		oldConfig.Set(yamled.Path{"cloudProvider", "equinixMetal"}, packetSpec)
+	}
 
 	return oldConfig.Root(), nil
 }
