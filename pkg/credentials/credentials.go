@@ -160,7 +160,7 @@ func ProviderCredentials(cloudProvider kubeone.CloudProviderSpec, credentialsFil
 			{Name: OpenStackAuthURL},
 			{Name: OpenStackUserName, MachineControllerName: OpenStackUserNameMC},
 			{Name: OpenStackPassword},
-			{Name: OpenStackApplicationCredentialID, MachineControllerName: OpenStackUserNameMC},
+			{Name: OpenStackApplicationCredentialID},
 			{Name: OpenStackApplicationCredentialSecret},
 			{Name: OpenStackDomainName},
 			{Name: OpenStackRegionName},
