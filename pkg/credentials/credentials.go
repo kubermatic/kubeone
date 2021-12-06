@@ -296,36 +296,46 @@ func openstackValidationFunc(creds map[string]string) error {
 	}
 
 	var (
-		appCredsInUse  bool
-		userCredsInUse bool
+		appCredsIdOkay        bool
+		appCredsSecretOkay    bool
+		userCredsUsernameOkay bool
+		userCredsPasswordOkay bool
 	)
 
 	if v, ok := creds[OpenStackApplicationCredentialID]; ok && len(v) != 0 {
-		if v, ok := creds[OpenStackApplicationCredentialSecret]; !ok || len(v) == 0 {
-			return errors.Errorf("key %v is required if %v is present", OpenStackApplicationCredentialSecret, OpenStackApplicationCredentialID)
-		}
-		appCredsInUse = true
+		appCredsIdOkay = true
 	}
 
-	if v, ok := creds[OpenStackUserName]; !appCredsInUse && ok && len(v) != 0 {
-		if v, ok := creds[OpenStackPassword]; !ok || len(v) == 0 {
-			return errors.Errorf("key %v is required but is not present", OpenStackPassword)
-		}
-		userCredsInUse = true
+	if v, ok := creds[OpenStackApplicationCredentialSecret]; ok && len(v) != 0 {
+		appCredsSecretOkay = true
 	}
 
-	if !appCredsInUse && !userCredsInUse {
-		return errors.Errorf("no app credentials (%s, %s) or user credentials (%s, %s) found",
+	if v, ok := creds[OpenStackUserName]; ok && len(v) != 0 {
+		userCredsUsernameOkay = true
+	}
+
+	if v, ok := creds[OpenStackPassword]; ok && len(v) != 0 {
+		userCredsPasswordOkay = true
+	}
+
+	if (appCredsIdOkay || appCredsSecretOkay) && (userCredsUsernameOkay || userCredsPasswordOkay) {
+		return errors.Errorf("both app credentials (%s %s) and user credentials (%s %s) found",
 			OpenStackApplicationCredentialID, OpenStackApplicationCredentialSecret,
-			OpenStackUserName, OpenStackPassword,
-		)
+			OpenStackUserName, OpenStackPassword)
 	}
 
-	if appCredsInUse && userCredsInUse {
-		return errors.Errorf("both app credentials (%s, %s) and user credentials (%s, %s) defined",
-			OpenStackApplicationCredentialID, OpenStackApplicationCredentialSecret,
-			OpenStackUserName, OpenStackPassword,
-		)
+	if (appCredsIdOkay && !appCredsSecretOkay) || (!appCredsIdOkay && appCredsSecretOkay) {
+		return errors.Errorf("only one of %s, %s is set for application credentials",
+			OpenStackApplicationCredentialID, OpenStackApplicationCredentialSecret)
+	}
+
+	if (userCredsUsernameOkay && !userCredsPasswordOkay) || (!userCredsUsernameOkay && userCredsPasswordOkay) {
+		return errors.Errorf("only one of %s, %s is set for user credentials",
+			OpenStackUserName, OpenStackPassword)
+	}
+
+	if (!appCredsIdOkay && !appCredsSecretOkay) && (!userCredsUsernameOkay && !userCredsPasswordOkay) {
+		return errors.New("no valid credentials (either application or user) found")
 	}
 
 	if v, ok := creds[OpenStackTenantID]; !ok || len(v) == 0 {
