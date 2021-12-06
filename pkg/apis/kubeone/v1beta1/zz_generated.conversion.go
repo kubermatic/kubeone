@@ -138,16 +138,6 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*CloudProviderSpec)(nil), (*kubeone.CloudProviderSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1beta1_CloudProviderSpec_To_kubeone_CloudProviderSpec(a.(*CloudProviderSpec), b.(*kubeone.CloudProviderSpec), scope)
-	}); err != nil {
-		return err
-	}
-	if err := s.AddGeneratedConversionFunc((*kubeone.CloudProviderSpec)(nil), (*CloudProviderSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_kubeone_CloudProviderSpec_To_v1beta1_CloudProviderSpec(a.(*kubeone.CloudProviderSpec), b.(*CloudProviderSpec), scope)
-	}); err != nil {
-		return err
-	}
 	if err := s.AddGeneratedConversionFunc((*ClusterNetworkConfig)(nil), (*kubeone.ClusterNetworkConfig)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_v1beta1_ClusterNetworkConfig_To_kubeone_ClusterNetworkConfig(a.(*ClusterNetworkConfig), b.(*kubeone.ClusterNetworkConfig), scope)
 	}); err != nil {
@@ -540,6 +530,16 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}
 	if err := s.AddGeneratedConversionFunc((*kubeone.WeaveNetSpec)(nil), (*WeaveNetSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_kubeone_WeaveNetSpec_To_v1beta1_WeaveNetSpec(a.(*kubeone.WeaveNetSpec), b.(*WeaveNetSpec), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddConversionFunc((*kubeone.CloudProviderSpec)(nil), (*CloudProviderSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_kubeone_CloudProviderSpec_To_v1beta1_CloudProviderSpec(a.(*kubeone.CloudProviderSpec), b.(*CloudProviderSpec), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddConversionFunc((*CloudProviderSpec)(nil), (*kubeone.CloudProviderSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1beta1_CloudProviderSpec_To_kubeone_CloudProviderSpec(a.(*CloudProviderSpec), b.(*kubeone.CloudProviderSpec), scope)
 	}); err != nil {
 		return err
 	}
