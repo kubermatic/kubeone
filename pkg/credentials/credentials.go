@@ -31,27 +31,29 @@ import (
 // The environment variable names with credential in them
 const (
 	// Variables that KubeOne (and Terraform) expect to see
-	AWSAccessKeyID          = "AWS_ACCESS_KEY_ID"
-	AWSSecretAccessKey      = "AWS_SECRET_ACCESS_KEY" //nolint:gosec
-	AzureClientID           = "ARM_CLIENT_ID"
-	AzureClientSecret       = "ARM_CLIENT_SECRET" //nolint:gosec
-	AzureTenantID           = "ARM_TENANT_ID"
-	AzureSubscribtionID     = "ARM_SUBSCRIPTION_ID"
-	DigitalOceanTokenKey    = "DIGITALOCEAN_TOKEN"
-	GoogleServiceAccountKey = "GOOGLE_CREDENTIALS"
-	HetznerTokenKey         = "HCLOUD_TOKEN"
-	OpenStackAuthURL        = "OS_AUTH_URL"
-	OpenStackDomainName     = "OS_DOMAIN_NAME"
-	OpenStackPassword       = "OS_PASSWORD"
-	OpenStackRegionName     = "OS_REGION_NAME"
-	OpenStackTenantID       = "OS_TENANT_ID"
-	OpenStackTenantName     = "OS_TENANT_NAME"
-	OpenStackUserName       = "OS_USERNAME"
-	PacketAPIKey            = "PACKET_AUTH_TOKEN" //nolint:gosec
-	PacketProjectID         = "PACKET_PROJECT_ID"
-	VSphereAddress          = "VSPHERE_SERVER"
-	VSpherePassword         = "VSPHERE_PASSWORD"
-	VSphereUsername         = "VSPHERE_USER"
+	AWSAccessKeyID                       = "AWS_ACCESS_KEY_ID"
+	AWSSecretAccessKey                   = "AWS_SECRET_ACCESS_KEY" //nolint:gosec
+	AzureClientID                        = "ARM_CLIENT_ID"
+	AzureClientSecret                    = "ARM_CLIENT_SECRET" //nolint:gosec
+	AzureTenantID                        = "ARM_TENANT_ID"
+	AzureSubscribtionID                  = "ARM_SUBSCRIPTION_ID"
+	DigitalOceanTokenKey                 = "DIGITALOCEAN_TOKEN"
+	GoogleServiceAccountKey              = "GOOGLE_CREDENTIALS"
+	HetznerTokenKey                      = "HCLOUD_TOKEN"
+	OpenStackAuthURL                     = "OS_AUTH_URL"
+	OpenStackDomainName                  = "OS_DOMAIN_NAME"
+	OpenStackPassword                    = "OS_PASSWORD"
+	OpenStackRegionName                  = "OS_REGION_NAME"
+	OpenStackTenantID                    = "OS_TENANT_ID"
+	OpenStackTenantName                  = "OS_TENANT_NAME"
+	OpenStackUserName                    = "OS_USERNAME"
+	OpenStackApplicationCredentialID     = "OS_APPLICATION_CREDENTIAL_ID"
+	OpenStackApplicationCredentialSecret = "OS_APPLICATION_CREDENTIAL_SECRET"
+	PacketAPIKey                         = "PACKET_AUTH_TOKEN" //nolint:gosec
+	PacketProjectID                      = "PACKET_PROJECT_ID"
+	VSphereAddress                       = "VSPHERE_SERVER"
+	VSpherePassword                      = "VSPHERE_PASSWORD"
+	VSphereUsername                      = "VSPHERE_USER"
 
 	// Variables that machine-controller expects
 	AzureClientIDMC           = "AZURE_CLIENT_ID"
@@ -158,6 +160,8 @@ func ProviderCredentials(cloudProvider kubeone.CloudProviderSpec, credentialsFil
 			{Name: OpenStackAuthURL},
 			{Name: OpenStackUserName, MachineControllerName: OpenStackUserNameMC},
 			{Name: OpenStackPassword},
+			{Name: OpenStackApplicationCredentialID, MachineControllerName: OpenStackUserNameMC},
+			{Name: OpenStackApplicationCredentialSecret},
 			{Name: OpenStackDomainName},
 			{Name: OpenStackRegionName},
 			{Name: OpenStackTenantID},
@@ -283,13 +287,45 @@ func defaultValidationFunc(creds map[string]string) error {
 }
 
 func openstackValidationFunc(creds map[string]string) error {
-	for k, v := range creds {
-		if k == OpenStackTenantID || k == OpenStackTenantName {
-			continue
+	alwaysRequired := []string{OpenStackAuthURL, OpenStackDomainName, OpenStackRegionName}
+
+	for _, key := range alwaysRequired {
+		if v, ok := creds[key]; !ok || len(v) == 0 {
+			return errors.Errorf("key %v is required but is not present", key)
 		}
-		if len(v) == 0 {
-			return errors.Errorf("key %v is required but isn't present", k)
+	}
+
+	var (
+		appCredsInUse  bool
+		userCredsInUse bool
+	)
+
+	if v, ok := creds[OpenStackApplicationCredentialID]; ok && len(v) != 0 {
+		if v, ok := creds[OpenStackApplicationCredentialSecret]; !ok || len(v) == 0 {
+			return errors.Errorf("key %v is required if %v is present", OpenStackApplicationCredentialSecret, OpenStackApplicationCredentialID)
 		}
+		appCredsInUse = true
+	}
+
+	if v, ok := creds[OpenStackUserName]; !appCredsInUse && ok && len(v) != 0 {
+		if v, ok := creds[OpenStackPassword]; !ok || len(v) == 0 {
+			return errors.Errorf("key %v is required but is not present", OpenStackPassword)
+		}
+		userCredsInUse = true
+	}
+
+	if !appCredsInUse && !userCredsInUse {
+		return errors.Errorf("no app credentials (%s, %s) or user credentials (%s, %s) found",
+			OpenStackApplicationCredentialID, OpenStackApplicationCredentialSecret,
+			OpenStackUserName, OpenStackPassword,
+		)
+	}
+
+	if appCredsInUse && userCredsInUse {
+		return errors.Errorf("both app credentials (%s, %s) and user credentials (%s, %s) defined",
+			OpenStackApplicationCredentialID, OpenStackApplicationCredentialSecret,
+			OpenStackUserName, OpenStackPassword,
+		)
 	}
 
 	if v, ok := creds[OpenStackTenantID]; !ok || len(v) == 0 {
