@@ -212,11 +212,11 @@ func configMachinedeploymentsCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 Print the manifest for creating MachineDeployment objects.
 
 The manifest contains all MachineDeployments defined in the API/config.
-Note that manifest may include already created MachineDeplyoments.
+Note that manifest may include already created MachineDeployments.
 The manifest is printed on the standard output.
 `,
 		Args:    cobra.ExactArgs(0),
-		Example: `kubeone config machinedeplyoments --manifest mycluster.yaml`,
+		Example: `kubeone config machinedeployments --manifest mycluster.yaml`,
 		RunE: func(_ *cobra.Command, args []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
