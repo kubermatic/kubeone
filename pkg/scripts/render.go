@@ -55,7 +55,7 @@ var (
 		"containerd-systemd-setup": heredoc.Doc(`
 			{{ template "containerd-systemd-environment" . }}
 			sudo systemctl daemon-reload
-			sudo systemctl enable --now containerd
+			sudo systemctl enable containerd
 			sudo systemctl restart containerd
 		`),
 
@@ -93,8 +93,7 @@ var (
 				containerd.io=%s
 			sudo apt-mark hold docker-ce docker-ce-cli containerd.io
 
-			sudo systemctl daemon-reload
-			sudo systemctl enable --now containerd
+			{{ template "containerd-systemd-setup" . -}}
 			sudo systemctl enable --now docker
 			`,
 			defaultDockerVersion,
@@ -122,8 +121,7 @@ var (
 				containerd.io-%s \
 				cri-tools-{{ $CRICTL_VERSION_TO_INSTALL }}
 			sudo yum versionlock add docker cri-tools containerd
-			sudo systemctl daemon-reload
-			sudo systemctl enable --now containerd
+			{{ template "containerd-systemd-setup" . -}}
 			sudo systemctl enable --now docker
 		`,
 			defaultAmazonCrictlVersion,
@@ -164,8 +162,7 @@ var (
 				containerd.io-%s
 			sudo yum versionlock add docker-ce docker-ce-cli containerd.io
 
-			sudo systemctl daemon-reload
-			sudo systemctl enable --now containerd
+			{{ template "containerd-systemd-setup" . -}}
 			sudo systemctl enable --now docker
 			`,
 			defaultDockerVersion,
@@ -187,6 +184,8 @@ var (
 			sudo apt-mark unhold containerd.io || true
 			sudo apt-get install -y containerd.io=%s
 			sudo apt-mark hold containerd.io
+
+			{{ template "containerd-systemd-setup" . -}}
 			`,
 			defaultContainerdVersion,
 		),
@@ -226,8 +225,6 @@ var (
 
 		"flatcar-containerd": heredoc.Doc(`
 			{{ template "container-runtime-daemon-config" . }}
-			{{ template "containerd-systemd-environment" . }}
-
 			cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/10-kubeone.conf
 			[Service]
 			Restart=always
@@ -235,10 +232,7 @@ var (
 			ExecStart=
 			ExecStart=/usr/bin/env PATH=${TORCX_BINDIR}:${PATH} ${TORCX_BINDIR}/containerd --config ${CONTAINERD_CONFIG}
 			EOF
-
-			sudo systemctl daemon-reload
-			sudo systemctl enable --now containerd
-			sudo systemctl restart containerd
+			{{ template "containerd-systemd-setup" . }}
 			`,
 		),
 
