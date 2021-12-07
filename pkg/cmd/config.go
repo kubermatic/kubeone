@@ -573,7 +573,7 @@ cloudProvider:
   # hetzner:
   #   networkID: ""
   # openstack: {}
-  # equinixmetal: {}
+  # equinixMetal: {}
   # vsphere: {}
   # none: {}
   {{ .CloudProviderName }}: {}

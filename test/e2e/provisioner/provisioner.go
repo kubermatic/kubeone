@@ -33,12 +33,17 @@ const (
 	// GCE cloud provider
 	GCE = "gce"
 	// Equinix Metal cloud provider
-	EquinixMetal = "equinix-metal"
+	EquinixMetal = "equinixmetal"
 	// OpenStack provider
 	OpenStack = "openstack"
 
 	// tfStateFileName is name of the Terraform state file
 	tfStateFileName = "terraform.tfstate"
+)
+
+const (
+	// Terraform subdirectory relative path for Equinix Metal provider
+	equinixMetalSubDir = "equinix-metal"
 )
 
 // Provisioner contains cluster management operations such as provision and cleanup
@@ -52,23 +57,23 @@ func CreateProvisioner(testPath string, identifier string, provider string) (Pro
 	switch provider {
 	case AWS:
 		creds := verifyCredentials("AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY")
-		return NewDefaultProvisioner(creds, testPath, identifier, provider)
+		return NewDefaultProvisioner(creds, testPath, identifier, provider, provider)
 	case DigitalOcean:
 		creds := verifyCredentials("DIGITALOCEAN_TOKEN")
-		return NewDefaultProvisioner(creds, testPath, identifier, provider)
+		return NewDefaultProvisioner(creds, testPath, identifier, provider, provider)
 	case Hetzner:
 		creds := verifyCredentials("HCLOUD_TOKEN")
-		return NewDefaultProvisioner(creds, testPath, identifier, provider)
+		return NewDefaultProvisioner(creds, testPath, identifier, provider, provider)
 	case GCE:
 		creds := verifyCredentials("GOOGLE_CREDENTIALS")
-		return NewDefaultProvisioner(creds, testPath, identifier, provider)
+		return NewDefaultProvisioner(creds, testPath, identifier, provider, provider)
 	case EquinixMetal:
 		creds := verifyCredentials("METAL_AUTH_TOKEN", "METAL_PROJECT_ID")
-		return NewDefaultProvisioner(creds, testPath, identifier, provider)
+		return NewDefaultProvisioner(creds, testPath, identifier, provider, equinixMetalSubDir)
 	case OpenStack:
 		creds := verifyCredentials("OS_AUTH_URL", "OS_DOMAIN_NAME", "OS_PASSWORD",
 			"OS_REGION_NAME", "OS_TENANT_NAME", "OS_USERNAME")
-		return NewDefaultProvisioner(creds, testPath, identifier, provider)
+		return NewDefaultProvisioner(creds, testPath, identifier, provider, provider)
 	default:
 		return nil, fmt.Errorf("unsupported provider %v", provider)
 	}
