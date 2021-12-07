@@ -70,7 +70,7 @@ func _() {
 
 const _Resource_name = "CalicoCNICalicoControllerCalicoNodeFlannelCiliumCiliumOperatorHubbleRelayHubbleUIHubbleUIBackendHubbleProxyWeaveNetCNIKubeWeaveNetCNINPCDNSNodeCacheMachineControllerMetricsServerClusterAutoscalerCSIAttacherCSINodeDriverRegistarCSIProvisionerCSISnapshotterCSIResizerCSILivenessProbeAwsCCMAzureCCMAzureCNMAwsEbsCSIAwsEbsCSIAttacherAwsEbsCSILivenessProbeAwsEbsCSINodeDriverRegistrarAwsEbsCSIProvisionerAwsEbsCSIResizerAwsEbsCSISnapshotterAwsEbsCSISnapshotControllerAzureFileCSIAzureFileCSIAttacherAzureFileCSILivenessProbeAzureFileCSINodeDriverRegistarAzureFileCSIProvisionerAzureFileCSIResizerAzureFileCSISnapshotterAzureFileCSISnapshotterControllerAzureDiskCSIAzureDiskCSIAttacherAzureDiskCSILivenessProbeAzureDiskCSINodeDriverRegistarAzureDiskCSIProvisionerAzureDiskCSIResizerAzureDiskCSISnapshotterAzureDiskCSISnapshotterControllerDigitaloceanCCMHetznerCCMHetznerCSIOpenstackCCMOpenstackCSIEquinixMetalCCMVsphereCCMVsphereCSIDriverVsphereCSISyncer"
 
-var _Resource_index = [...]uint16{0, 9, 25, 35, 42, 48, 62, 73, 81, 96, 107, 122, 136, 148, 165, 178, 195, 206, 227, 241, 255, 265, 281, 287, 295, 303, 312, 329, 351, 379, 399, 415, 435, 462, 474, 494, 519, 549, 572, 591, 614, 647, 659, 679, 704, 734, 757, 776, 799, 832, 847, 857, 867, 879, 891, 900, 910, 926, 942}
+var _Resource_index = [...]uint16{0, 9, 25, 35, 42, 48, 62, 73, 81, 96, 107, 122, 136, 148, 165, 178, 195, 206, 227, 241, 255, 265, 281, 287, 295, 303, 312, 329, 351, 379, 399, 415, 435, 462, 474, 494, 519, 549, 572, 591, 614, 647, 659, 679, 704, 734, 757, 776, 799, 832, 847, 857, 867, 879, 891, 906, 916, 932, 948}
 
 func (i Resource) String() string {
 	i -= 1
