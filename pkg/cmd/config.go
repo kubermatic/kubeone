@@ -600,7 +600,24 @@ cloudProvider:
 containerRuntime:
   # Installs containerd container runtime.
   # Default for 1.21+ Kubernetes clusters.
-  # containerd: {}
+  # containerd:
+  #   registry:
+  #     mirrors:
+  #       docker.io:
+  #         endpoints:
+  #         - custom1.tld
+  #         - https://custom2.tld
+  #         - http://custom2.tld
+  #     configs:
+  #       docker.io:
+  #         auth:
+  #           username: ""
+  #           password: ""
+  #           auth: ""
+  #           identitytoken: ""
+  #         tlsConfig:
+  #           insecureSkipVerify: true
+  
   # Installs Docker container runtime.
   # Default for Kubernetes clusters up to 1.20.
   # This option will be removed once Kubernetes 1.21 reaches EOL.

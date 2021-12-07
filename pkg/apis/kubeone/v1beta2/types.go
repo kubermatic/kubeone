@@ -72,10 +72,42 @@ type ContainerRuntimeConfig struct {
 }
 
 // ContainerRuntimeDocker defines docker container runtime
-type ContainerRuntimeDocker struct{}
+type ContainerRuntimeDocker struct {
+	RegistryMirrors []string `json:"registryMirrors"`
+}
 
 // ContainerRuntimeContainerd defines docker container runtime
-type ContainerRuntimeContainerd struct{}
+type ContainerRuntimeContainerd struct {
+	Registry ContainerdRegistry `json:"registry,omitempty"`
+}
+
+type ContainerdRegistry struct {
+	Mirrors map[string]ContainerdRegistryMirror `json:"mirrors,omitempty"`
+	Configs map[string]ContainerdRegistryConfig `json:"configs,omitempty"`
+}
+
+type ContainerdRegistryMirror struct {
+	Endpoint []string `json:"endpoint,omitempty"`
+}
+
+type ContainerdRegistryConfig struct {
+	TLS  ContainerdRegistryConfigTLS  `json:"tls,omitempty"`
+	Auth ContainerdRegistryConfigAuth `json:"auth,omitempty"`
+}
+
+type ContainerdRegistryConfigTLS struct {
+	InsecureSkipVerify bool   `json:"insecureSkipVerify,omitempty"`
+	CAFile             string `json:"caFile,omitempty"`
+	CertFile           string `json:"certFile,omitempty"`
+	KeyFile            string `json:"keyFile,omitempty"`
+}
+
+type ContainerdRegistryConfigAuth struct {
+	Username      string `json:"username,omitempty"`
+	Password      string `json:"password,omitempty"`
+	Auth          string `json:"auth,omitempty"`
+	IdentityToken string `json:"identityToken,omitempty"`
+}
 
 // OperatingSystemName defines the operating system used on instances
 type OperatingSystemName string

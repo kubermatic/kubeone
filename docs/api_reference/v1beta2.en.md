@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2021-12-03T16:34:53+05:00
+date = 2021-12-07T14:57:20+02:00
 weight = 11
 +++
 ## v1beta2
@@ -20,6 +20,11 @@ weight = 11
 * [ContainerRuntimeConfig](#containerruntimeconfig)
 * [ContainerRuntimeContainerd](#containerruntimecontainerd)
 * [ContainerRuntimeDocker](#containerruntimedocker)
+* [ContainerdRegistry](#containerdregistry)
+* [ContainerdRegistryConfig](#containerdregistryconfig)
+* [ContainerdRegistryConfigAuth](#containerdregistryconfigauth)
+* [ContainerdRegistryConfigTLS](#containerdregistryconfigtls)
+* [ContainerdRegistryMirror](#containerdregistrymirror)
 * [ControlPlaneConfig](#controlplaneconfig)
 * [DNSConfig](#dnsconfig)
 * [DigitalOceanSpec](#digitaloceanspec)
@@ -232,6 +237,7 @@ ContainerRuntimeContainerd defines docker container runtime
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
+| registry |  | [ContainerdRegistry](#containerdregistry) | false |
 
 [Back to Group](#v1beta2)
 
@@ -241,6 +247,65 @@ ContainerRuntimeDocker defines docker container runtime
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
+| registryMirrors |  | []string | true |
+
+[Back to Group](#v1beta2)
+
+### ContainerdRegistry
+
+
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| mirrors |  | map[string][ContainerdRegistryMirror](#containerdregistrymirror) | false |
+| configs |  | map[string][ContainerdRegistryConfig](#containerdregistryconfig) | false |
+
+[Back to Group](#v1beta2)
+
+### ContainerdRegistryConfig
+
+
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| tls |  | [ContainerdRegistryConfigTLS](#containerdregistryconfigtls) | false |
+| auth |  | [ContainerdRegistryConfigAuth](#containerdregistryconfigauth) | false |
+
+[Back to Group](#v1beta2)
+
+### ContainerdRegistryConfigAuth
+
+
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| username |  | string | false |
+| password |  | string | false |
+| auth |  | string | false |
+| identityToken |  | string | false |
+
+[Back to Group](#v1beta2)
+
+### ContainerdRegistryConfigTLS
+
+
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| insecureSkipVerify |  | bool | false |
+| caFile |  | string | false |
+| certFile |  | string | false |
+| keyFile |  | string | false |
+
+[Back to Group](#v1beta2)
+
+### ContainerdRegistryMirror
+
+
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| endpoint |  | []string | false |
 
 [Back to Group](#v1beta2)
 
