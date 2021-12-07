@@ -118,7 +118,7 @@ EnvironmentFile=-/etc/environment
 EOF
 
 sudo systemctl daemon-reload
-sudo systemctl enable --now containerd
+sudo systemctl enable containerd
 sudo systemctl restart containerd
 
 
