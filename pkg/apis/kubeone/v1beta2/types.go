@@ -67,15 +67,39 @@ type KubeOneCluster struct {
 
 // ContainerRuntimeConfig
 type ContainerRuntimeConfig struct {
-	Docker     *ContainerRuntimeDocker     `json:"docker,omitempty"`
+	// Dockerd related configurations
+	Docker *ContainerRuntimeDocker `json:"docker,omitempty"`
+
+	// Containerd related configurations
 	Containerd *ContainerRuntimeContainerd `json:"containerd,omitempty"`
 }
 
 // ContainerRuntimeDocker defines docker container runtime
-type ContainerRuntimeDocker struct{}
+type ContainerRuntimeDocker struct {
+	// Configures dockerd with "registry-mirrors"
+	RegistryMirrors []string `json:"registryMirrors"`
+}
 
 // ContainerRuntimeContainerd defines docker container runtime
-type ContainerRuntimeContainerd struct{}
+type ContainerRuntimeContainerd struct {
+	// A map of registries to use to render configs and mirrors for containerd registries
+	Registries map[string]ContainerdRegistry `json:"registries,omitempty"`
+}
+
+// ContainerdRegistry defines endpoints and security for given container registry
+type ContainerdRegistry struct {
+	// List of registry mirrors to use
+	Mirrors []string `json:"mirrors,omitempty"`
+
+	// TLSConfig for the registry
+	TLSConfig *ContainerdTLSConfig `json:"tlsConfig,omitempty"`
+}
+
+// Configures containerd TLS for a registry
+type ContainerdTLSConfig struct {
+	// Don't validate remote TLS certificate
+	InsecureSkipVerify bool `json:"insecureSkipVerify,omitempty"`
+}
 
 // OperatingSystemName defines the operating system used on instances
 type OperatingSystemName string

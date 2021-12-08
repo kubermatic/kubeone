@@ -600,7 +600,19 @@ cloudProvider:
 containerRuntime:
   # Installs containerd container runtime.
   # Default for 1.21+ Kubernetes clusters.
-  # containerd: {}
+  # containerd:
+  #   registries:
+  #     k8s.gcr.io:
+  #       mirrors:
+  #       - https://self-signed.pull-through.cache.tld
+  #       tlsConfig:
+  #         insecureSkipVerify: true
+  #     docker.io:
+  #       mirrors:
+  #       - http://plain-text2.tld
+  #     "*":
+  #       mirrors:
+  #       - https://secure.tld
   # Installs Docker container runtime.
   # Default for Kubernetes clusters up to 1.20.
   # This option will be removed once Kubernetes 1.21 reaches EOL.
