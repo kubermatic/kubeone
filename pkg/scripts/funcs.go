@@ -17,11 +17,6 @@ limitations under the License.
 package scripts
 
 import (
-	"encoding/json"
-	"fmt"
-	"strings"
-
-	"github.com/BurntSushi/toml"
 	"github.com/MakeNowJust/heredoc/v2"
 )
 
@@ -41,13 +36,6 @@ var (
 			exit 1
 			;;
 		esac
-		{{ end }}
-
-		{{ define "docker-daemon-config" }}
-		sudo mkdir -p /etc/docker
-		cat <<EOF | sudo tee /etc/docker/daemon.json
-		{{ dockerCfg .INSECURE_REGISTRY }}
-		EOF
 		{{ end }}
 
 		{{ define "sysctl-k8s" }}
@@ -92,115 +80,3 @@ const (
 	defaultAmazonContainerdVersion = "1.4.*"
 	defaultAmazonCrictlVersion     = "1.13.0"
 )
-
-type dockerConfig struct {
-	ExecOpts           []string          `json:"exec-opts,omitempty"`
-	StorageDriver      string            `json:"storage-driver,omitempty"`
-	LogDriver          string            `json:"log-driver,omitempty"`
-	LogOpts            map[string]string `json:"log-opts,omitempty"`
-	InsecureRegistries []string          `json:"insecure-registries,omitempty"`
-}
-
-func dockerCfg(insecureRegistry string) (string, error) {
-	cfg := dockerConfig{
-		ExecOpts:      []string{"native.cgroupdriver=systemd"},
-		StorageDriver: "overlay2",
-		LogDriver:     "json-file",
-		LogOpts: map[string]string{
-			"max-size": "100m",
-		},
-	}
-	if insecureRegistry != "" {
-		cfg.InsecureRegistries = []string{insecureRegistry}
-	}
-
-	b, err := json.MarshalIndent(cfg, "", "	")
-	if err != nil {
-		return "", err
-	}
-
-	return string(b), nil
-}
-
-type containerdConfig struct {
-	Version int                    `toml:"version"`
-	Metrics *containerdMetrics     `toml:"metrics"`
-	Plugins map[string]interface{} `toml:"plugins"`
-}
-
-type containerdMetrics struct {
-	Address string `toml:"address"`
-}
-
-type containerdCRIPlugin struct {
-	Containerd *containerdCRISettings `toml:"containerd"`
-	Registry   *containerdCRIRegistry `toml:"registry"`
-}
-
-type containerdCRISettings struct {
-	Runtimes map[string]containerdCRIRuntime `toml:"runtimes"`
-}
-
-type containerdCRIRuntime struct {
-	RuntimeType string      `toml:"runtime_type"`
-	Options     interface{} `toml:"options"`
-}
-
-type containerdCRIRuncOptions struct {
-	SystemdCgroup bool
-}
-
-type containerdCRIRegistry struct {
-	Mirrors map[string]containerdMirror `toml:"mirrors"`
-}
-
-type containerdMirror struct {
-	Endpoint []string `toml:"endpoint"`
-}
-
-func containerdCfg(insecureRegistry string) (string, error) {
-	criPlugin := containerdCRIPlugin{
-		Containerd: &containerdCRISettings{
-			Runtimes: map[string]containerdCRIRuntime{
-				"runc": {
-					RuntimeType: "io.containerd.runc.v2",
-					Options: containerdCRIRuncOptions{
-						SystemdCgroup: true,
-					},
-				},
-			},
-		},
-		Registry: &containerdCRIRegistry{
-			Mirrors: map[string]containerdMirror{
-				"docker.io": {
-					Endpoint: []string{"https://registry-1.docker.io"},
-				},
-			},
-		},
-	}
-
-	if insecureRegistry != "" {
-		criPlugin.Registry.Mirrors[insecureRegistry] = containerdMirror{
-			Endpoint: []string{fmt.Sprintf("http://%s", insecureRegistry)},
-		}
-	}
-
-	cfg := containerdConfig{
-		Version: 2,
-		Metrics: &containerdMetrics{
-			// metrics available at http://127.0.0.1:1338/v1/metrics
-			Address: "127.0.0.1:1338",
-		},
-
-		Plugins: map[string]interface{}{
-			"io.containerd.grpc.v1.cri": criPlugin,
-		},
-	}
-
-	var buf strings.Builder
-	enc := toml.NewEncoder(&buf)
-	enc.Indent = ""
-	err := enc.Encode(cfg)
-
-	return buf.String(), err
-}

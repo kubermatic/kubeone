@@ -73,15 +73,7 @@ sudo yum install -y \
 
 
 
-sudo yum install -y yum-utils
-sudo yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
-sudo yum-config-manager --save --setopt=docker-ce-stable.module_hotfixes=true
-
-
-sudo yum versionlock delete containerd.io || true
-sudo yum install -y containerd.io-1.4.*
-sudo yum versionlock add containerd.io
-
+sudo mkdir -p $(dirname /etc/containerd/config.toml)
 cat <<EOF | sudo tee /etc/containerd/config.toml
 version = 2
 
@@ -100,11 +92,21 @@ SystemdCgroup = true
 [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
 [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
 endpoint = ["https://registry-1.docker.io"]
-EOF
 
+EOF
 cat <<EOF | sudo tee /etc/crictl.yaml
 runtime-endpoint: unix:///run/containerd/containerd.sock
 EOF
+
+
+sudo yum install -y yum-utils
+sudo yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+sudo yum-config-manager --save --setopt=docker-ce-stable.module_hotfixes=true
+
+
+sudo yum versionlock delete containerd.io || true
+sudo yum install -y containerd.io-1.4.*
+sudo yum versionlock add containerd.io
 
 sudo mkdir -p /etc/systemd/system/containerd.service.d
 cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/environment.conf
@@ -114,7 +116,7 @@ EnvironmentFile=-/etc/environment
 EOF
 
 sudo systemctl daemon-reload
-sudo systemctl enable --now containerd
+sudo systemctl enable containerd
 sudo systemctl restart containerd
 
 
