@@ -124,6 +124,7 @@ const (
 	VsphereCCM
 	VsphereCSIDriver
 	VsphereCSISyncer
+	VsphereCSIProvisioner
 )
 
 func FindResource(name string) (Resource, error) {
@@ -254,8 +255,9 @@ func optionalResources() map[Resource]map[string]string {
 		},
 
 		// vSphere CSI
-		VsphereCSIDriver: {"*": "gcr.io/cloud-provider-vsphere/csi/release/driver:v2.3.0"},
-		VsphereCSISyncer: {"*": "gcr.io/cloud-provider-vsphere/csi/release/syncer:v2.3.0"},
+		VsphereCSIDriver:      {"*": "gcr.io/cloud-provider-vsphere/csi/release/driver:v2.4.0"},
+		VsphereCSISyncer:      {"*": "gcr.io/cloud-provider-vsphere/csi/release/syncer:v2.4.0"},
+		VsphereCSIProvisioner: {"*": "k8s.gcr.io/sig-storage/csi-provisioner:v3.0.0"},
 
 		// WeaveNet CNI plugin
 		WeaveNetCNIKube: {"*": "docker.io/weaveworks/weave-kube:2.8.1"},
