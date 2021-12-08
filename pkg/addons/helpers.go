@@ -47,8 +47,8 @@ func vSphereService() *corev1.Service {
 	}
 }
 
-// AreEmbeddedAddons checks if all specified addons are embedded addons
-func AreEmbeddedAddons(addons []kubeoneapi.Addon) (bool, error) {
+// EmbeddedAddonsOnly checks if all specified addons are embedded addons
+func EmbeddedAddonsOnly(addons []kubeoneapi.Addon) (bool, error) {
 	// Read the directory entries for embedded addons
 	embeddedAddons, err := fs.ReadDir(embeddedaddons.FS, ".")
 	if err != nil {
@@ -62,7 +62,7 @@ func AreEmbeddedAddons(addons []kubeoneapi.Addon) (bool, error) {
 		for _, embeddedAddon := range embeddedAddons {
 			if embeddedAddon.Name() == addon.Name {
 				embedded = true
-				continue
+				break
 			}
 		}
 		// At each iteration of the outer loop check if the "addon" was a customer/non-embedded addon

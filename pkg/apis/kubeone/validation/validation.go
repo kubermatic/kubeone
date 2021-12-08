@@ -463,10 +463,10 @@ func ValidateAddons(o *kubeone.Addons, fldPath *field.Path) field.ErrorList {
 	}
 	if o.Enable && len(o.Path) == 0 {
 		// Check if only embedded addons are being used; path is not required for embedded addons
-		areEmbeddedAddons, err := addons.AreEmbeddedAddons(o.Addons)
+		embeddedAddonsOnly, err := addons.EmbeddedAddonsOnly(o.Addons)
 		if err != nil {
 			allErrs = append(allErrs, field.Invalid(fldPath, "", "failed to read embedded addons directory"))
-		} else if !areEmbeddedAddons {
+		} else if !embeddedAddonsOnly {
 			allErrs = append(allErrs, field.Invalid(fldPath.Child("path"), "", ".addons.path must be specified when using non-embedded addon(s)"))
 		}
 	}
