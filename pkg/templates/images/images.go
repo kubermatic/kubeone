@@ -200,7 +200,7 @@ func NewResolver(opts ...Opt) *Resolver {
 	// so that we can at least get images that are version-independent.
 	if r.kubernetesVersionGetter == nil {
 		r.kubernetesVersionGetter = func() string {
-			return "0.0.0"
+			return "9.9.9"
 		}
 	}
 

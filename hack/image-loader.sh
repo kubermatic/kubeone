@@ -55,6 +55,7 @@ function fail() {
 
 function retag() {
   local image="$1"
+  local custom_image_name="${2:-}"
 
   # Trim registry
   local local_image
@@ -65,6 +66,9 @@ function retag() {
   # Split into name and tag
   name="$(echo "${local_image}" | cut -d: -f1)"
   tag="$(echo "${local_image}" | cut -d: -f2)"
+  if [ -n "$custom_image_name" ]; then
+    name="$custom_image_name"
+  fi
 
   # Build target image name
   local target_image="${TARGET_REGISTRY}/${name}:${tag}"
@@ -101,30 +105,38 @@ if ! [ -x "$(command -v $kubeadm)" ]; then
 fi
 
 k8simages=$("$kubeadm" config images list --kubernetes-version="$KUBERNETES_VERSION")
-k1images=$(kubeone config images list --filter base)
-optionalimages=$(kubeone config images list --filter optional)
+k1images=$(kubeone config images list --filter=base --kubernetes-version="$KUBERNETES_VERSION")
+optionalimages=$(kubeone config images list --filter=optional --kubernetes-version="$KUBERNETES_VERSION")
 
 for IMAGE in $k8simages; do
-  retag "${IMAGE}"
+  # The CoreDNS image has a different override semantics in Kubernetes 1.21 and
+  # in other Kubernetes minor releases (due to a bug).
+  # The image will be overriden in the following way depending on the
+  # Kubernetes version:
+  #   * 1.21: k8s.gcr.io/coredns/coredns -> custom-registry/coredns/coredns
+  #   * all other releases: k8s.gcr.io/coredns/coredns -> custom-registry/coredns
+  if [[ "$IMAGE" == "k8s.gcr.io/coredns/coredns:"* ]]; then
+    corednsVersion=$(cut -d ':' -f 2 <<< "${IMAGE}")
+    kubernetesMinor=$(cut -d '.' -f 2 <<< "${KUBERNETES_VERSION}")
+    if [ "${kubernetesMinor}" -eq "21" ]; then
+      retag "k8s.gcr.io/coredns/coredns:${corednsVersion}" "coredns/coredns"
+    else
+      retag "k8s.gcr.io/coredns/coredns:${corednsVersion}" "coredns"
+    fi
+  else
+    retag "${IMAGE}"
+  fi
 done
 
-for IMAGE in "${k1images[@]}"; do
+for IMAGE in $k1images; do
   retag "${IMAGE}"
 done
-
-# Pull images needed for machine-controller
-minorVersion=$(cut -d '.' -f 2 <<< "${KUBERNETES_VERSION}")
-if [ "${minorVersion}" -le "18" ]; then
-  retag "k8s.gcr.io/hyperkube-amd64:v${KUBERNETES_VERSION}"
-else
-  retag "quay.io/poseidon/kubelet:v${KUBERNETES_VERSION}"
-fi
 
 if [ "$PULL_OPTIONAL_IMAGES" == "false" ]; then
   echodate "Skipping pulling optional images because PULL_OPTIONAL_IMAGES is set to false."
   exit 0
 fi
 
-for IMAGE in "${optionalimages[@]}"; do
+for IMAGE in $optionalimages; do
   retag "${IMAGE}"
 done
