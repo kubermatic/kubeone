@@ -18,7 +18,7 @@ limitations under the License.
 package testhelper
 
 import (
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -37,12 +37,12 @@ func DiffOutput(t *testing.T, name, output string, update bool) {
 	}
 
 	if update {
-		if errw := ioutil.WriteFile(golden, []byte(output), 0600); errw != nil {
+		if errw := os.WriteFile(golden, []byte(output), 0600); errw != nil {
 			t.Fatalf("failed to write updated fixture: %v", errw)
 		}
 	}
 
-	expected, err := ioutil.ReadFile(golden)
+	expected, err := os.ReadFile(golden)
 	if err != nil {
 		t.Fatalf("failed to read testdata file: %v", err)
 	}

@@ -19,7 +19,6 @@ package testutil
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path"
@@ -51,7 +50,7 @@ func CreateFile(filepath, content string) error {
 	}
 
 	// Create the file.
-	err = ioutil.WriteFile(strings.Join([]string{basepath, filename}, "/"), []byte(content), os.ModePerm)
+	err = os.WriteFile(strings.Join([]string{basepath, filename}, "/"), []byte(content), os.ModePerm)
 	if err != nil {
 		return fmt.Errorf("unable to write data to file")
 	}

@@ -19,7 +19,6 @@ package addons
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path"
 	"strings"
@@ -177,14 +176,10 @@ func TestEnsureAddonsLabelsOnResources(t *testing.T) {
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			addonsDir, err := ioutil.TempDir("/tmp", "kubeone")
-			if err != nil {
-				t.Fatalf("unable to create temporary addons directory: %v", err)
-			}
-			defer os.RemoveAll(addonsDir)
+			addonsDir := t.TempDir()
 
-			if writeErr := ioutil.WriteFile(path.Join(addonsDir, "testManifest.yaml"), []byte(tc.addonManifest), 0600); writeErr != nil {
-				t.Fatalf("unable to create temporary addon manifest: %v", err)
+			if writeErr := os.WriteFile(path.Join(addonsDir, "testManifest.yaml"), []byte(tc.addonManifest), 0600); writeErr != nil {
+				t.Fatalf("unable to create temporary addon manifest: %v", writeErr)
 			}
 
 			td := templateData{
@@ -258,14 +253,10 @@ func TestImageRegistryParsing(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			addonsDir, err := ioutil.TempDir("/tmp", "kubeone")
-			if err != nil {
-				t.Fatalf("unable to create temporary addons directory: %v", err)
-			}
-			defer os.RemoveAll(addonsDir)
+			addonsDir := t.TempDir()
 
-			if writeErr := ioutil.WriteFile(path.Join(addonsDir, "testManifest.yaml"), []byte(tc.inputManifest), 0600); writeErr != nil {
-				t.Fatalf("unable to create temporary addon manifest: %v", err)
+			if writeErr := os.WriteFile(path.Join(addonsDir, "testManifest.yaml"), []byte(tc.inputManifest), 0600); writeErr != nil {
+				t.Fatalf("unable to create temporary addon manifest: %v", writeErr)
 			}
 
 			td := templateData{

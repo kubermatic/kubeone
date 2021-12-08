@@ -71,7 +71,7 @@ sudo yum install -y \
 
 
 
-sudo mkdir -p /etc/docker
+sudo mkdir -p $(dirname /etc/docker/daemon.json)
 cat <<EOF | sudo tee /etc/docker/daemon.json
 {
 	"exec-opts": [
@@ -87,7 +87,9 @@ cat <<EOF | sudo tee /etc/docker/daemon.json
 	]
 }
 EOF
-
+cat <<EOF | sudo tee /etc/crictl.yaml
+runtime-endpoint: unix:///var/run/dockershim.sock
+EOF
 
 sudo yum install -y yum-utils
 sudo yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
@@ -101,8 +103,16 @@ sudo yum install -y \
 	containerd.io-1.4.*
 sudo yum versionlock add docker-ce docker-ce-cli containerd.io
 
+sudo mkdir -p /etc/systemd/system/containerd.service.d
+cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/environment.conf
+[Service]
+Restart=always
+EnvironmentFile=-/etc/environment
+EOF
+
 sudo systemctl daemon-reload
-sudo systemctl enable --now containerd
+sudo systemctl enable containerd
+sudo systemctl restart containerd
 sudo systemctl enable --now docker
 
 

@@ -66,7 +66,7 @@ sudo apt-mark unhold kubelet kubeadm kubectl kubernetes-cni
 
 
 
-sudo mkdir -p /etc/docker
+sudo mkdir -p $(dirname /etc/docker/daemon.json)
 cat <<EOF | sudo tee /etc/docker/daemon.json
 {
 	"exec-opts": [
@@ -78,6 +78,9 @@ cat <<EOF | sudo tee /etc/docker/daemon.json
 		"max-size": "100m"
 	}
 }
+EOF
+cat <<EOF | sudo tee /etc/crictl.yaml
+runtime-endpoint: unix:///var/run/dockershim.sock
 EOF
 
 
@@ -101,8 +104,16 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install \
 	containerd.io=1.4.*
 sudo apt-mark hold docker-ce docker-ce-cli containerd.io
 
+sudo mkdir -p /etc/systemd/system/containerd.service.d
+cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/environment.conf
+[Service]
+Restart=always
+EnvironmentFile=-/etc/environment
+EOF
+
 sudo systemctl daemon-reload
-sudo systemctl enable --now containerd
+sudo systemctl enable containerd
+sudo systemctl restart containerd
 sudo systemctl enable --now docker
 
 
