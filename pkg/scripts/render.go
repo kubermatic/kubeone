@@ -60,7 +60,6 @@ var (
 		`),
 
 		"apt-docker-ce": heredoc.Docf(`
-			{{ template "container-runtime-daemon-config" . }}
 			{{ if .CONFIGURE_REPOSITORIES }}
 			curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 			# Docker provides two different apt repos for ubuntu, bionic and focal. The focal repo currently
@@ -92,7 +91,7 @@ var (
 				docker-ce-cli=5:{{ $DOCKER_VERSION_TO_INSTALL }} \
 				containerd.io=%s
 			sudo apt-mark hold docker-ce docker-ce-cli containerd.io
-
+			{{ template "container-runtime-daemon-config" . }}
 			{{ template "containerd-systemd-setup" . -}}
 			sudo systemctl enable --now docker
 			`,
@@ -103,7 +102,6 @@ var (
 		),
 
 		"yum-docker-ce-amzn": heredoc.Docf(`
-			{{ template "container-runtime-daemon-config" . }}
 			sudo yum versionlock delete docker cri-tools containerd || true
 
 			{{- $CRICTL_VERSION_TO_INSTALL := "%s" }}
@@ -121,6 +119,7 @@ var (
 				containerd.io-%s \
 				cri-tools-{{ $CRICTL_VERSION_TO_INSTALL }}
 			sudo yum versionlock add docker cri-tools containerd
+			{{ template "container-runtime-daemon-config" . }}
 			{{ template "containerd-systemd-setup" . -}}
 			sudo systemctl enable --now docker
 		`,
@@ -132,7 +131,6 @@ var (
 		),
 
 		"yum-docker-ce": heredoc.Docf(`
-			{{ template "container-runtime-daemon-config" . }}
 			{{- if .CONFIGURE_REPOSITORIES }}
 			sudo yum install -y yum-utils
 			sudo yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
@@ -161,7 +159,7 @@ var (
 				docker-ce-cli-{{ $DOCKER_VERSION_TO_INSTALL }} \
 				containerd.io-%s
 			sudo yum versionlock add docker-ce docker-ce-cli containerd.io
-
+			{{ template "container-runtime-daemon-config" . }}
 			{{ template "containerd-systemd-setup" . -}}
 			sudo systemctl enable --now docker
 			`,
@@ -172,7 +170,6 @@ var (
 		),
 
 		"apt-containerd": heredoc.Docf(`
-			{{ template "container-runtime-daemon-config" . }}
 			{{ if .CONFIGURE_REPOSITORIES }}
 			sudo apt-get update
 			sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common lsb-release
@@ -185,13 +182,13 @@ var (
 			sudo apt-get install -y containerd.io=%s
 			sudo apt-mark hold containerd.io
 
+			{{ template "container-runtime-daemon-config" . }}
 			{{ template "containerd-systemd-setup" . -}}
 			`,
 			defaultContainerdVersion,
 		),
 
 		"yum-containerd": heredoc.Docf(`
-			{{ template "container-runtime-daemon-config" . }}
 			{{ if .CONFIGURE_REPOSITORIES }}
 			sudo yum install -y yum-utils
 			sudo yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
@@ -206,17 +203,18 @@ var (
 			sudo yum install -y containerd.io-%s
 			sudo yum versionlock add containerd.io
 
+			{{ template "container-runtime-daemon-config" . }}
 			{{ template "containerd-systemd-setup" . -}}
 			`,
 			defaultContainerdVersion,
 		),
 
 		"yum-containerd-amzn": heredoc.Docf(`
-			{{ template "container-runtime-daemon-config" . }}
 			sudo yum versionlock delete containerd cri-tools || true
 			sudo yum install -y containerd-%s cri-tools-%s
 			sudo yum versionlock add containerd cri-tools
 
+			{{ template "container-runtime-daemon-config" . }}
 			{{ template "containerd-systemd-setup" . -}}
 			`,
 			defaultAmazonContainerdVersion,
