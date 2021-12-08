@@ -147,6 +147,8 @@ metadata:
     component: cloud-controller-manager
     tier: control-plane
   namespace: kube-system
+  annotations:
+    scheduler.alpha.kubernetes.io/critical-pod: ""
 spec:
   selector:
     matchLabels:
@@ -174,6 +176,7 @@ spec:
           effect: NoSchedule
         - key: node-role.kubernetes.io/master
           effect: NoSchedule
+          operator: Exists
         - key: node.kubernetes.io/not-ready
           effect: NoSchedule
           operator: Exists
