@@ -462,6 +462,11 @@ func ValidateAddons(o *kubeone.Addons, fldPath *field.Path) field.ErrorList {
 		return allErrs
 	}
 	if o.Enable && len(o.Path) == 0 {
+		// Addons are enabled, path is empty, and no embedded addon is specified
+		if len(o.Addons) == 0 {
+			allErrs = append(allErrs, field.Invalid(fldPath.Child("enable"), o.Enable, ".addons.enable cannot be set to true without specifying either custom addon path or embedded addon"))
+		}
+
 		// Check if only embedded addons are being used; path is not required for embedded addons
 		embeddedAddonsOnly, err := addons.EmbeddedAddonsOnly(o.Addons)
 		if err != nil {
