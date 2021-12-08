@@ -1548,12 +1548,12 @@ func TestValidateAddons(t *testing.T) {
 			expectedError: false,
 		},
 		{
-			name: "addons enabled, no path set",
+			name: "addons enabled, no path set and no embedded addons specified",
 			addons: &kubeone.Addons{
 				Enable: true,
 				Path:   "",
 			},
-			expectedError: false,
+			expectedError: true,
 		},
 		{
 			name: "embedded addon enabled, no path set",
