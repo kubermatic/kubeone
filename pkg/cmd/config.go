@@ -801,8 +801,8 @@ addons:
   enable: false
   # In case when the relative path is provided, the path is relative
   # to the KubeOne configuration file.
-  # This path must be always provided and the directory must exist, even if
-  # using only embedded addons.
+  # This path is required only if you want to provide custom addons or override
+  # embedded addons.
   path: "./addons"
   # globalParams is a key-value map of values passed to the addons templating engine,
   # to be used in the addons' manifests. The values defined here are passed to all

@@ -22,6 +22,7 @@ import (
 	"github.com/MakeNowJust/heredoc/v2"
 
 	"k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/templates/resources"
 
 	"k8s.io/apimachinery/pkg/util/validation/field"
 )
@@ -1547,12 +1548,25 @@ func TestValidateAddons(t *testing.T) {
 			expectedError: false,
 		},
 		{
-			name: "addons enabled, no path set",
+			name: "addons enabled, no path set and no embedded addons specified",
 			addons: &kubeone.Addons{
 				Enable: true,
 				Path:   "",
 			},
 			expectedError: true,
+		},
+		{
+			name: "embedded addon enabled, no path set",
+			addons: &kubeone.Addons{
+				Enable: true,
+				Path:   "",
+				Addons: []kubeone.Addon{
+					{
+						Name: resources.AddonMachineController,
+					},
+				},
+			},
+			expectedError: false,
 		},
 		{
 			name: "valid addons config (disabled)",
@@ -1570,13 +1584,6 @@ func TestValidateAddons(t *testing.T) {
 			name:          "valid addons config (nil)",
 			addons:        nil,
 			expectedError: false,
-		},
-		{
-			name: "invalid addons config (enabled without path)",
-			addons: &kubeone.Addons{
-				Enable: true,
-			},
-			expectedError: true,
 		},
 	}
 	for _, tc := range tests {
