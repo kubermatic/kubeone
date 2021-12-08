@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2021-12-06T15:05:15+05:00
+date = 2021-12-08T15:09:59+05:00
 weight = 11
 +++
 ## v1beta2
@@ -194,7 +194,7 @@ Only one cloud provider must be defined at the single time.
 | gce | GCE | *[GCESpec](#gcespec) | false |
 | hetzner | Hetzner | *[HetznerSpec](#hetznerspec) | false |
 | openstack | Openstack | *[OpenstackSpec](#openstackspec) | false |
-| equinixMetal | Equinix Metal | *[EquinixMetalSpec](#equinixmetalspec) | false |
+| equinixmetal | Equinix Metal | *[EquinixMetalSpec](#equinixmetalspec) | false |
 | vsphere | Vsphere | *[VsphereSpec](#vspherespec) | false |
 | none | None | *[NoneSpec](#nonespec) | false |
 
