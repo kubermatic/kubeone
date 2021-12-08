@@ -2,19 +2,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: equinix-metal-cloud-controller-manager
+  name: equinixmetal-cloud-controller-manager
   namespace: kube-system
   labels:
-    app: equinix-metal-cloud-controller-manager
+    app: equinixmetal-cloud-controller-manager
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: equinix-metal-cloud-controller-manager
+      app: equinixmetal-cloud-controller-manager
   template:
     metadata:
       labels:
-        app: equinix-metal-cloud-controller-manager
+        app: equinixmetal-cloud-controller-manager
     spec:
       dnsPolicy: Default
       hostNetwork: true

@@ -473,18 +473,18 @@ func (c *Config) updateOpenStackWorkerset(existingWorkerSet *kubeonev1beta2.Dyna
 
 func (c *Config) updateEquinixMetalWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerConfig, cfg json.RawMessage) error {
 	// TODO Update this when Packet has been re-branded to Equinix Metal in machine-controller
-	var equinixMetalConfig machinecontroller.PacketSpec
+	var metalConfig machinecontroller.PacketSpec
 
-	if err := json.Unmarshal(cfg, &equinixMetalConfig); err != nil {
+	if err := json.Unmarshal(cfg, &metalConfig); err != nil {
 		return err
 	}
 
 	flags := []cloudProviderFlags{
-		{key: "projectID", value: equinixMetalConfig.ProjectID},
-		{key: "facilities", value: equinixMetalConfig.Facilities},
-		{key: "instanceType", value: equinixMetalConfig.InstanceType},
-		{key: "billingCycle", value: equinixMetalConfig.BillingCycle},
-		{key: "tags", value: equinixMetalConfig.Tags},
+		{key: "projectID", value: metalConfig.ProjectID},
+		{key: "facilities", value: metalConfig.Facilities},
+		{key: "instanceType", value: metalConfig.InstanceType},
+		{key: "billingCycle", value: metalConfig.BillingCycle},
+		{key: "tags", value: metalConfig.Tags},
 	}
 
 	for _, flag := range flags {

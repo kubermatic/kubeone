@@ -31,13 +31,13 @@ type DefaultProvisioner struct {
 }
 
 // NewDefaultProvisioner creates and initialize universal provisioner
-func NewDefaultProvisioner(creds func() error, testPath, identifier, provider string, terraformSubdir string) (*DefaultProvisioner, error) {
+func NewDefaultProvisioner(creds func() error, testPath, identifier, provider string) (*DefaultProvisioner, error) {
 	if err := creds(); err != nil {
 		return nil, errors.Wrap(err, "unable to validate credentials")
 	}
 
 	terraform := &terraform{
-		terraformDir: fmt.Sprintf("../../examples/terraform/%s/", terraformSubdir),
+		terraformDir: fmt.Sprintf("../../examples/terraform/%s/", provider),
 		identifier:   identifier,
 	}
 

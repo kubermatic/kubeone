@@ -29,7 +29,7 @@ const (
 	AddonCCMDigitalOcean    = "ccm-digitalocean"
 	AddonCCMHetzner         = "ccm-hetzner"
 	AddonCCMOpenStack       = "ccm-openstack"
-	AddonCCMEquinixMetal    = "ccm-equinix-metal"
+	AddonCCMEquinixMetal    = "ccm-equinixmetal"
 	AddonCCMVsphere         = "ccm-vsphere"
 	AddonCSIAwsEBS          = "csi-aws-ebs"
 	AddonCSIAzureDisk       = "csi-azuredisk"

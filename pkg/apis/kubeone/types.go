@@ -177,8 +177,8 @@ type CloudProviderSpec struct {
 	Hetzner *HetznerSpec `json:"hetzner,omitempty"`
 	// Openstack
 	Openstack *OpenstackSpec `json:"openstack,omitempty"`
-	// Equinix Metal
-	EquinixMetal *EquinixMetalSpec `json:"equinixMetal,omitempty"`
+	// EquinixMetal
+	EquinixMetal *EquinixMetalSpec `json:"equinixmetal,omitempty"`
 	// Vsphere
 	Vsphere *VsphereSpec `json:"vsphere,omitempty"`
 	// None

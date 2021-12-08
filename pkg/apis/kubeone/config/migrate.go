@@ -55,11 +55,11 @@ func MigrateOldConfig(clusterFilePath string) (interface{}, error) {
 	oldConfig.Set(yamled.Path{"apiVersion"}, kubeonev1beta2.SchemeGroupVersion.String())
 
 	// Packet has been renamed to Equinix Metal and as a result of this change
-	// .cloudProvider.packet field has been renamed to .cloudProvider.equinixMetal
+	// .cloudProvider.packet field has been renamed to .cloudProvider.equinixmetal
 	packetSpec, cloudProviderPacketExists := oldConfig.Get(yamled.Path{"cloudProvider", "packet"})
 	if cloudProviderPacketExists {
 		oldConfig.Remove(yamled.Path{"cloudProvider", "packet"})
-		oldConfig.Set(yamled.Path{"cloudProvider", "equinixMetal"}, packetSpec)
+		oldConfig.Set(yamled.Path{"cloudProvider", "equinixmetal"}, packetSpec)
 	}
 
 	return oldConfig.Root(), nil

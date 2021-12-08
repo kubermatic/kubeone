@@ -50,12 +50,11 @@ export TF_VAR_subnets_cidr=28
 export SSH_PUBLIC_KEY_FILE="${SSH_PRIVATE_KEY_FILE}.pub"
 export TF_VAR_ssh_public_key_file=${SSH_PUBLIC_KEY_FILE}
 CREDENTIALS_FILE_PATH=""
-TERRAFORM_PROVIDER_PATH=${PROVIDER:-}
 
 function cleanup() {
   set +e
   for try in {1..3}; do
-    cd "${TERRAFORM_DIR}/${TERRAFORM_PROVIDER_PATH}"
+    cd "${TERRAFORM_DIR}/${PROVIDER}"
     echo "Cleaning up terraform state, attempt ${try}"
     # Upstream interpolation bug, but we dont care about the output
     # at destroy time anyways: https://github.com/hashicorp/terraform/issues/17691
@@ -99,7 +98,6 @@ function setup_ci_environment_vars() {
     ;;
   "equinixmetal")
     export TF_VAR_project_id=${METAL_PROJECT_ID}
-    TERRAFORM_PROVIDER_PATH="equinix-metal"
     ;;
   "gce")
     GOOGLE_CREDENTIALS=$(base64 -d <<< "${KUBEONE_GOOGLE_SERVICE_ACCOUNT}")
