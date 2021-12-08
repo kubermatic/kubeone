@@ -32,8 +32,9 @@ import (
 )
 
 type listImagesOpts struct {
-	ManifestFile string `longflag:"manifest" shortflag:"m"`
-	Filter       string `longflag:"filter"`
+	ManifestFile      string `longflag:"manifest" shortflag:"m"`
+	Filter            string `longflag:"filter"`
+	KubernetesVersion string `longflag:"kubernetes-version" shortflag:"k"`
 }
 
 func configImagesCmd(rootFlags *pflag.FlagSet) *cobra.Command {
@@ -62,6 +63,9 @@ func listImagesCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 			# To see optional images list
 			kubeone config images list --filter optional
 
+			# To see images for a specific Kubernetes version
+			kubeone config images list --kubernetes-version=1.23.0
+
 			# To see images list affected by the registryConfiguration configuration (in case if any)
 			kubeone config images list -m mycluster.yaml
 		`),
@@ -82,6 +86,12 @@ func listImagesCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		"none",
 		"images list filter, one of the [none|base|optional]")
 
+	cmd.Flags().StringVar(
+		&opts.KubernetesVersion,
+		longFlagName(opts, "KubernetesVersion"),
+		"",
+		"filter images for a provided kubernetes version")
+
 	return cmd
 }
 
@@ -101,12 +111,12 @@ func listImages(opts *listImagesOpts) error {
 	var resolveropts []images.Opt
 
 	// FOR FUTURE READER: we only attempt to read the ManifestFile, but if it's not there, we don't care.
-	configBuf, err := os.ReadFile(opts.ManifestFile)
-	if err == nil {
+	configBuf, configErr := os.ReadFile(opts.ManifestFile)
+	if configErr == nil {
 		// Custom loading of the config is needed to avoid "normal" validation process, but we here don't care about
 		// validity of the config, the only part that's needed is `.RegistryConfiguration`
 		var conf kubeonev1beta1.KubeOneCluster
-		if err = yaml.Unmarshal(configBuf, &conf); err != nil {
+		if err := yaml.Unmarshal(configBuf, &conf); err != nil {
 			return err
 		}
 
@@ -120,6 +130,15 @@ func listImages(opts *listImagesOpts) error {
 			return conf.Versions.Kubernetes
 		})
 		resolveropts = append(resolveropts, overRegGetter, kubeVerGetter)
+	}
+	if opts.KubernetesVersion != "" {
+		if configErr == nil {
+			return fmt.Errorf("only --manifest or --kubernetes-version can be provided at the same time")
+		}
+		kubeVerGetter := images.WithKubernetesVersionGetter(func() string {
+			return opts.KubernetesVersion
+		})
+		resolveropts = append(resolveropts, kubeVerGetter)
 	}
 
 	imgResolver := images.NewResolver(resolveropts...)
