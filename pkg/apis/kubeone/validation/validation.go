@@ -25,6 +25,7 @@ import (
 
 	"github.com/Masterminds/semver/v3"
 
+	"k8c.io/kubeone/pkg/addons"
 	"k8c.io/kubeone/pkg/apis/kubeone"
 
 	"k8s.io/apimachinery/pkg/util/validation"
@@ -461,7 +462,13 @@ func ValidateAddons(o *kubeone.Addons, fldPath *field.Path) field.ErrorList {
 		return allErrs
 	}
 	if o.Enable && len(o.Path) == 0 {
-		allErrs = append(allErrs, field.Invalid(fldPath.Child("path"), "", ".addons.path must be specified"))
+		// Check if only embedded addons are being used; path is not required for embedded addons
+		areEmbeddedAddons, err := addons.AreEmbeddedAddons(o.Addons)
+		if err != nil {
+			allErrs = append(allErrs, field.Invalid(fldPath, "", "failed to read embedded addons directory"))
+		} else if !areEmbeddedAddons {
+			allErrs = append(allErrs, field.Invalid(fldPath.Child("path"), "", ".addons.path must be specified when using non-embedded addon(s)"))
+		}
 	}
 
 	return allErrs

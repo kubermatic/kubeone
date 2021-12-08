@@ -55,7 +55,6 @@ func SetDefaults_KubeOneCluster(obj *KubeOneCluster) {
 	SetDefaults_SystemPackages(obj)
 	SetDefaults_AssetConfiguration(obj)
 	SetDefaults_Features(obj)
-	SetDefaults_Addons(obj)
 }
 
 func SetDefaults_Hosts(obj *KubeOneCluster) {
@@ -246,12 +245,6 @@ func defaultOpenIDConnect(config *OpenIDConnectConfig) {
 	config.GroupsClaim = defaults(config.GroupsClaim, "groups")
 	config.GroupsPrefix = defaults(config.GroupsPrefix, "oidc:")
 	config.SigningAlgs = defaults(config.SigningAlgs, "RS256")
-}
-
-func SetDefaults_Addons(obj *KubeOneCluster) {
-	if obj.Addons != nil && obj.Addons.Enable {
-		obj.Addons.Path = defaults(obj.Addons.Path, "./addons")
-	}
 }
 
 func defaultStaticAuditLogConfig(obj *StaticAuditLogConfig) {

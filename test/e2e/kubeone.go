@@ -268,7 +268,7 @@ func (k1 *Kubeone) Reset() error {
 		"--destroy-workers",
 		"--manifest", k1.ConfigurationFilePath)
 	if err != nil {
-		return fmt.Errorf("destroing workers failed: %w", err)
+		return fmt.Errorf("destroying workers failed: %w", err)
 	}
 
 	return nil
