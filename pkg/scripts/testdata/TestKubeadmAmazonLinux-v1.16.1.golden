@@ -72,9 +72,8 @@ sudo yum install -y \
 
 sudo yum versionlock delete docker cri-tools containerd || true
 
-
 sudo yum install -y \
-	docker-18.09.* \
+	docker-19.03.* \
 	containerd.io-1.4.* \
 	cri-tools-1.13.0
 sudo yum versionlock add docker cri-tools containerd
