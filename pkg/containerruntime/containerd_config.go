@@ -54,11 +54,20 @@ type containerdCRIRuncOptions struct {
 }
 
 type containerdCRIRegistry struct {
-	Mirrors map[string]containerdMirror `toml:"mirrors"`
+	Mirrors map[string]containerdRegistryMirror `toml:"mirrors"`
+	Configs map[string]containerdRegistryConfig `toml:"configs"`
 }
 
-type containerdMirror struct {
+type containerdRegistryMirror struct {
 	Endpoint []string `toml:"endpoint"`
+}
+
+type containerdRegistryConfig struct {
+	TLS *containerdRegistryTLSConfig `toml:"tls"`
+}
+
+type containerdRegistryTLSConfig struct {
+	InsecureSkipVerify bool `toml:"insecure_skip_verify"`
 }
 
 func marshalContainerdConfig(cluster *kubeone.KubeOneCluster) (string, error) {
@@ -74,7 +83,7 @@ func marshalContainerdConfig(cluster *kubeone.KubeOneCluster) (string, error) {
 			},
 		},
 		Registry: &containerdCRIRegistry{
-			Mirrors: map[string]containerdMirror{
+			Mirrors: map[string]containerdRegistryMirror{
 				"docker.io": {
 					Endpoint: []string{"https://registry-1.docker.io"},
 				},
@@ -82,10 +91,33 @@ func marshalContainerdConfig(cluster *kubeone.KubeOneCluster) (string, error) {
 		},
 	}
 
-	insecureRegistry := cluster.RegistryConfiguration.InsecureRegistryAddress()
-	if insecureRegistry != "" {
-		criPlugin.Registry.Mirrors[insecureRegistry] = containerdMirror{
-			Endpoint: []string{fmt.Sprintf("http://%s", insecureRegistry)},
+	if cluster.RegistryConfiguration != nil {
+		insecureRegistry := cluster.RegistryConfiguration.InsecureRegistryAddress()
+		if insecureRegistry != "" {
+			criPlugin.Registry.Mirrors[insecureRegistry] = containerdRegistryMirror{
+				Endpoint: []string{fmt.Sprintf("http://%s", insecureRegistry)},
+			}
+		}
+	}
+
+	if regs := cluster.ContainerRuntime.Containerd.Registries; regs != nil {
+		criPlugin.Registry = &containerdCRIRegistry{
+			Mirrors: map[string]containerdRegistryMirror{},
+			Configs: map[string]containerdRegistryConfig{},
+		}
+
+		for registryName, registry := range regs {
+			criPlugin.Registry.Mirrors[registryName] = containerdRegistryMirror{
+				Endpoint: registry.Mirrors,
+			}
+
+			if registry.TLSConfig != nil {
+				criPlugin.Registry.Configs[registryName] = containerdRegistryConfig{
+					TLS: &containerdRegistryTLSConfig{
+						InsecureSkipVerify: registry.TLSConfig.InsecureSkipVerify,
+					},
+				}
+			}
 		}
 	}
 
