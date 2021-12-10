@@ -147,8 +147,6 @@ metadata:
     component: cloud-controller-manager
     tier: control-plane
   namespace: kube-system
-  annotations:
-    scheduler.alpha.kubernetes.io/critical-pod: ""
 spec:
   selector:
     matchLabels:
