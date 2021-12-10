@@ -16,7 +16,10 @@ limitations under the License.
 
 package kubeone
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 func TestFeatureGatesString(t *testing.T) {
 	t.Parallel()
@@ -66,6 +69,82 @@ func TestFeatureGatesString(t *testing.T) {
 			got := marshalFeatureGates(tc.featureGates)
 			if got != tc.expected {
 				t.Errorf("TestFeatureGatesString() got = %v, expected %v", got, tc.expected)
+			}
+		})
+	}
+}
+
+func TestContainerRuntimeConfig_MachineControllerFlags(t *testing.T) {
+	type fields struct {
+		Docker     *ContainerRuntimeDocker
+		Containerd *ContainerRuntimeContainerd
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   []string
+	}{
+		{
+			name: "docker empty",
+			fields: fields{
+				Docker: &ContainerRuntimeDocker{},
+			},
+		},
+		{
+			name: "docker with mirrors",
+			fields: fields{
+				Docker: &ContainerRuntimeDocker{
+					RegistryMirrors: []string{"my-registry", "other-registry"},
+				},
+			},
+			want: []string{"-node-registry-mirrors=my-registry,other-registry"},
+		},
+		{
+			name: "containerd empty",
+			fields: fields{
+				Containerd: &ContainerRuntimeContainerd{},
+			},
+		},
+		{
+			name: "containerd with mirrors",
+			fields: fields{
+				Containerd: &ContainerRuntimeContainerd{
+					Registries: map[string]ContainerdRegistry{
+						"docker.io": {
+							Mirrors: []string{
+								"http://registry1",
+								"https://registry2",
+								"registry3",
+							},
+						},
+						"k8s.gcr.io": {
+							Mirrors: []string{
+								"https://insecure.registry",
+							},
+							TLSConfig: &ContainerdTLSConfig{
+								InsecureSkipVerify: true,
+							},
+						},
+					},
+				},
+			},
+			want: []string{
+				"-node-containerd-registry-mirrors=docker.io=http://registry1",
+				"-node-containerd-registry-mirrors=docker.io=https://registry2",
+				"-node-containerd-registry-mirrors=docker.io=registry3",
+				"-node-containerd-registry-mirrors=k8s.gcr.io=https://insecure.registry?insecureSkipVerify=true",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			crc := ContainerRuntimeConfig{
+				Docker:     tt.fields.Docker,
+				Containerd: tt.fields.Containerd,
+			}
+			if got := crc.MachineControllerFlags(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ContainerRuntimeConfig.MachineControllerFlags() = %v, want %v", got, tt.want)
 			}
 		})
 	}

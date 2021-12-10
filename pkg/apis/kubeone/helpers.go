@@ -88,9 +88,11 @@ func (crc ContainerRuntimeConfig) MachineControllerFlags() []string {
 	var mcFlags []string
 	switch {
 	case crc.Docker != nil:
-		mcFlags = append(mcFlags,
-			fmt.Sprintf("-node-registry-mirrors=%s", strings.Join(crc.Docker.RegistryMirrors, ",")),
-		)
+		if len(crc.Docker.RegistryMirrors) > 0 {
+			mcFlags = append(mcFlags,
+				fmt.Sprintf("-node-registry-mirrors=%s", strings.Join(crc.Docker.RegistryMirrors, ",")),
+			)
+		}
 	case crc.Containerd != nil:
 		// example output:
 		// -node-containerd-registry-mirrors=docker.io=custom.tld \
@@ -110,15 +112,14 @@ func (crc ContainerRuntimeConfig) MachineControllerFlags() []string {
 			for _, mirror := range containerdRegistry.Mirrors {
 				mirror := mirror
 				if containerdRegistry.TLSConfig != nil && containerdRegistry.TLSConfig.InsecureSkipVerify {
-					mirror = mirror + "?insecureSkipVerify=true"
+					mirror += "?insecureSkipVerify=true"
 				}
 
 				mcFlags = append(mcFlags,
-					fmt.Sprintf("-node-containerd-registry-mirrors=%s", mirror),
+					fmt.Sprintf("-node-containerd-registry-mirrors=%s=%s", registryName, mirror),
 				)
 			}
 		}
-
 	}
 
 	return mcFlags
