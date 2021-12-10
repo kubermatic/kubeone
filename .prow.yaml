@@ -1607,7 +1607,7 @@ postsubmits:
       preset-docker-push: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/build:go-1.17-node-14-kind-0.11-2
+        - image: quay.io/kubermatic/build:go-1.17-node-16-kind-0.11-3
           command:
             - /bin/bash
             - -c
@@ -1633,7 +1633,7 @@ postsubmits:
       containers:
         # This must match the go version used for building, else go will rightfully
         # not use the cache
-        - image: quay.io/kubermatic/build:go-1.17-node-14-kind-0.11-2
+        - image: quay.io/kubermatic/build:go-1.17-node-16-kind-0.11-3
           command:
             - ./hack/ci/upload-gocache.sh
           resources:
