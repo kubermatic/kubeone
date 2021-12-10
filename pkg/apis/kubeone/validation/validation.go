@@ -224,8 +224,8 @@ func ValidateCloudProviderSupportsKubernetes(c kubeone.KubeOneCluster, fldPath *
 		return allErrs
 	}
 
-	if c.CloudProvider.Vsphere != nil && v.Minor() >= 22 {
-		allErrs = append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, "kubernetes versions 1.22.0 and newer are currently not supported for vsphere clusters"))
+	if c.CloudProvider.Vsphere != nil && v.Minor() >= 23 {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, "kubernetes versions 1.23.0 and newer are currently not supported for vsphere clusters"))
 	}
 
 	return allErrs

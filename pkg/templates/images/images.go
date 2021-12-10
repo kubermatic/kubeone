@@ -124,6 +124,7 @@ const (
 	VsphereCCM
 	VsphereCSIDriver
 	VsphereCSISyncer
+	VsphereCSIProvisioner
 )
 
 func FindResource(name string) (Resource, error) {
@@ -248,14 +249,16 @@ func optionalResources() map[Resource]map[string]string {
 
 		// vSphere CCM
 		VsphereCCM: {
-			"1.19.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.19.0",
+			"1.19.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.19.1",
 			"1.20.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.20.0",
-			">= 1.21.0": "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.21.0",
+			"1.21.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.21.1",
+			">= 1.22.0": "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.22.4",
 		},
 
 		// vSphere CSI
-		VsphereCSIDriver: {"*": "gcr.io/cloud-provider-vsphere/csi/release/driver:v2.3.0"},
-		VsphereCSISyncer: {"*": "gcr.io/cloud-provider-vsphere/csi/release/syncer:v2.3.0"},
+		VsphereCSIDriver:      {"*": "gcr.io/cloud-provider-vsphere/csi/release/driver:v2.4.0"},
+		VsphereCSISyncer:      {"*": "gcr.io/cloud-provider-vsphere/csi/release/syncer:v2.4.0"},
+		VsphereCSIProvisioner: {"*": "k8s.gcr.io/sig-storage/csi-provisioner:v3.0.0"},
 
 		// WeaveNet CNI plugin
 		WeaveNetCNIKube: {"*": "docker.io/weaveworks/weave-kube:2.8.1"},
