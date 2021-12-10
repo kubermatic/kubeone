@@ -36,6 +36,7 @@ RUN /opt/install-kube-tests-binaries.sh
 
 # resulting image
 
+
 FROM golang:1.17.5
 
 ARG version
