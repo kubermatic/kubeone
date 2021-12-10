@@ -262,14 +262,14 @@ func optionalResources() map[Resource]map[string]string {
 		WeaveNetCNINPC:  {"*": "docker.io/weaveworks/weave-npc:2.8.1"},
 
 		// Cilium
-		Cilium:         {"*": "quay.io/cilium/cilium:v1.10.4"},
-		CiliumOperator: {"*": "quay.io/cilium/operator-generic:v1.10.4"},
+		Cilium:         {"*": "quay.io/cilium/cilium:v1.11.0"},
+		CiliumOperator: {"*": "quay.io/cilium/operator-generic:v1.11.0"},
 
 		// Hubble
-		HubbleRelay:     {"*": "quay.io/cilium/hubble-relay:v1.10.4"},
-		HubbleUI:        {"*": "quay.io/cilium/hubble-ui:v0.7.9"},
-		HubbleUIBackend: {"*": "quay.io/cilium/hubble-ui-backend:v0.7.9"},
-		HubbleProxy:     {"*": "docker.io/envoyproxy/envoy:v1.18.2"},
+		HubbleRelay:     {"*": "quay.io/cilium/hubble-relay:v1.11.0"},
+		HubbleUI:        {"*": "quay.io/cilium/hubble-ui:v0.8.3"},
+		HubbleUIBackend: {"*": "quay.io/cilium/hubble-ui-backend:v0.8.3"},
+		HubbleProxy:     {"*": "docker.io/envoyproxy/envoy:v1.18.4"},
 
 		// Cluster-autoscaler addon
 		ClusterAutoscaler: {
