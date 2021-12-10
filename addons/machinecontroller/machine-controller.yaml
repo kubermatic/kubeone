@@ -510,6 +510,9 @@ spec:
             - -node-csr-approver
             - -join-cluster-timeout=15m
             - -node-container-runtime={{ .Config.ContainerRuntime }}
+            {{ range .Config.ContainerRuntime.MachineControllerFlags -}}
+            - {{ . }}
+            {{ end -}}
             {{ with .Config.Proxy.HTTP -}}
             - -node-http-proxy={{ . }}
             {{ end -}}
