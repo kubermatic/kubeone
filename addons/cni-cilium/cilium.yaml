@@ -13,9 +13,10 @@ metadata:
   namespace: kube-system
 ---
 
-{{ if .Config.ClusterNetwork.CNI.Cilium.EnableHubble }}
 {{- $ca := genCA "hubble-ca.cilium.io" 1095 -}}
 {{- $serverCert := genSignedCert "*.default.hubble-grpc.cilium.io" nil (list "*.default.hubble-grpc.cilium.io") 1095 $ca -}}
+
+{{ if .Config.ClusterNetwork.CNI.Cilium.EnableHubble }}
 {{- $cert := genSignedCert "*.hubble-relay.cilium.io" nil (list "*.hubble-relay.cilium.io") 1095 $ca -}}
 
 
@@ -33,16 +34,7 @@ metadata:
   name: "hubble-ui"
   namespace: kube-system
 ---
-# Source: cilium/templates/hubble/tls-helm/ca-secret.yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: hubble-ca-secret
-  namespace: kube-system
-data:
-  ca.crt: {{ $ca.Cert | b64enc }}
-  ca.key: {{ $ca.Key | b64enc }}
----
+
 # Source: cilium/templates/hubble/tls-helm/relay-client-secret.yaml
 apiVersion: v1
 kind: Secret
@@ -54,6 +46,18 @@ data:
   ca.crt: {{ $ca.Cert | b64enc }}
   tls.crt: {{ $cert.Cert | b64enc }}
   tls.key: {{ $cert.Key | b64enc }}
+{{ end }}
+---
+# Source: cilium/templates/hubble/tls-helm/ca-secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: hubble-ca-secret
+  namespace: kube-system
+data:
+  ca.crt: {{ $ca.Cert | b64enc }}
+  ca.key: {{ $ca.Key | b64enc }}
+
 ---
 # Source: cilium/templates/hubble/tls-helm/server-secret.yaml
 apiVersion: v1
@@ -67,7 +71,6 @@ data:
   tls.crt: {{ $serverCert.Cert | b64enc }}
   tls.key: {{ $serverCert.Key | b64enc }}
 ---
-{{ end }}
 
 # Source: cilium/templates/cilium-configmap.yaml
 apiVersion: v1
@@ -762,10 +765,12 @@ spec:
                   name: cilium-config
                   key: custom-cni-conf
                   optional: true
+{{ if eq .Config.ClusterNetwork.CNI.Cilium.KubeProxyReplacement "strict" }}
             - name: KUBERNETES_SERVICE_HOST
               value: "{{ .Config.APIEndpoint.Host }}"
             - name: KUBERNETES_SERVICE_PORT
               value: "{{ .Config.APIEndpoint.Port }}"
+{{ end }}
           lifecycle:
             postStart:
               exec:
@@ -853,10 +858,12 @@ spec:
                   name: cilium-config
                   key: clean-cilium-bpf-state
                   optional: true
+{{ if eq .Config.ClusterNetwork.CNI.Cilium.KubeProxyReplacement "strict" }}
             - name: KUBERNETES_SERVICE_HOST
               value: "{{ .Config.APIEndpoint.Host }}"
             - name: KUBERNETES_SERVICE_PORT
               value: "{{ .Config.APIEndpoint.Port }}"
+{{ end }}
           securityContext:
             privileged: true
           volumeMounts:
@@ -1013,10 +1020,12 @@ spec:
                   key: debug
                   name: cilium-config
                   optional: true
+{{ if eq .Config.ClusterNetwork.CNI.Cilium.KubeProxyReplacement "strict" }}
             - name: KUBERNETES_SERVICE_HOST
               value: "{{ .Config.APIEndpoint.Host }}"
             - name: KUBERNETES_SERVICE_PORT
               value: "{{ .Config.APIEndpoint.Port }}"
+{{ end }}
           livenessProbe:
             httpGet:
               host: "127.0.0.1"
