@@ -510,18 +510,18 @@ spec:
             - -node-csr-approver
             - -join-cluster-timeout=15m
             - -node-container-runtime={{ .Config.ContainerRuntime }}
-            {{ with .Config.Proxy.HTTP }}
+            {{ with .Config.Proxy.HTTP -}}
             - -node-http-proxy={{ . }}
-            {{ end }}
-            {{ with .Config.Proxy.NoProxy }}
+            {{ end -}}
+            {{ with .Config.Proxy.NoProxy -}}
             - -node-no-proxy={{ . }}
-            {{ end }}
-            {{ with .Config.RegistryConfiguration.InsecureRegistryAddress }}
+            {{ end -}}
+            {{ with .Config.RegistryConfiguration.InsecureRegistryAddress -}}
             - -node-insecure-registries={{ . }}
-            {{ end }}
-            {{ if .Config.CABundle }}
+            {{ end -}}
+            {{ if .Config.CABundle -}}
             - -ca-bundle={{ .Resources.CABundleSSLCertFilePath }}
-            {{ end }}
+            {{ end -}}
             - -node-kubelet-repository={{ .Resources.KubeletImageRepository }}
             - -node-pause-image={{ .InternalImages.Get "PauseImage" }}
           env:
