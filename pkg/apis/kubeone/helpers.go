@@ -95,11 +95,14 @@ func (crc ContainerRuntimeConfig) MachineControllerFlags() []string {
 		}
 	case crc.Containerd != nil:
 		// example output:
-		// -node-containerd-registry-mirrors=docker.io=custom.tld \
-		// -node-containerd-registry-mirrors=docker.io=https://secure-custom.tld \
-		// -node-containerd-registry-mirrors=docker.io=https://insecure.tld?insecureSkipVerify=true \
+		// -node-containerd-registry-mirrors=docker.io=custom.tld
+		// -node-containerd-registry-mirrors=docker.io=https://secure-custom.tld
 		// -node-containerd-registry-mirrors=k8s.gcr.io=http://somewhere
-		registryNames := []string{}
+		// -node-insecure-registries=docker.io,k8s.gcr.io
+		var (
+			registryNames []string
+			insecureSet   = map[string]struct{}{}
+		)
 		for registry := range crc.Containerd.Registries {
 			registryNames = append(registryNames, registry)
 		}
@@ -109,16 +112,29 @@ func (crc ContainerRuntimeConfig) MachineControllerFlags() []string {
 
 		for _, registryName := range registryNames {
 			containerdRegistry := crc.Containerd.Registries[registryName]
+			if containerdRegistry.TLSConfig != nil && containerdRegistry.TLSConfig.InsecureSkipVerify {
+				insecureSet[registryName] = struct{}{}
+			}
+
 			for _, mirror := range containerdRegistry.Mirrors {
-				mirror := mirror
-				if containerdRegistry.TLSConfig != nil && containerdRegistry.TLSConfig.InsecureSkipVerify {
-					mirror += "?insecureSkipVerify=true"
-				}
 
 				mcFlags = append(mcFlags,
 					fmt.Sprintf("-node-containerd-registry-mirrors=%s=%s", registryName, mirror),
 				)
 			}
+		}
+
+		if len(insecureSet) > 0 {
+			insecureNames := []string{}
+
+			for insecureName := range insecureSet {
+				insecureNames = append(insecureNames, insecureName)
+			}
+
+			sort.Strings(insecureNames)
+			mcFlags = append(mcFlags,
+				fmt.Sprintf("-node-insecure-registries=%s", strings.Join(insecureNames, ",")),
+			)
 		}
 	}
 

@@ -132,7 +132,8 @@ func TestContainerRuntimeConfig_MachineControllerFlags(t *testing.T) {
 				"-node-containerd-registry-mirrors=docker.io=http://registry1",
 				"-node-containerd-registry-mirrors=docker.io=https://registry2",
 				"-node-containerd-registry-mirrors=docker.io=registry3",
-				"-node-containerd-registry-mirrors=k8s.gcr.io=https://insecure.registry?insecureSkipVerify=true",
+				"-node-containerd-registry-mirrors=k8s.gcr.io=https://insecure.registry",
+				"-node-insecure-registries=k8s.gcr.io",
 			},
 		},
 	}
@@ -144,7 +145,7 @@ func TestContainerRuntimeConfig_MachineControllerFlags(t *testing.T) {
 				Containerd: tt.fields.Containerd,
 			}
 			if got := crc.MachineControllerFlags(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ContainerRuntimeConfig.MachineControllerFlags() = %v, want %v", got, tt.want)
+				t.Errorf("ContainerRuntimeConfig.MachineControllerFlags() = \n%v, \nwant\n%v", got, tt.want)
 			}
 		})
 	}
