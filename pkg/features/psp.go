@@ -73,6 +73,13 @@ func privilegedPSP() *policyv1beta1.PodSecurityPolicy {
 	return &policyv1beta1.PodSecurityPolicy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "privileged",
+			Annotations: map[string]string{
+				// This annotation is required, as control plane components
+				// such as API server use the RuntimeDefault seccomp profile.
+				// Without this annotation, components specifying seccomp
+				// profile cannot get scheduled.
+				"seccomp.security.alpha.kubernetes.io/allowedProfileNames": "*",
+			},
 		},
 		Spec: policyv1beta1.PodSecurityPolicySpec{
 			Privileged:               true,
