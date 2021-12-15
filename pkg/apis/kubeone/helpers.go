@@ -117,7 +117,6 @@ func (crc ContainerRuntimeConfig) MachineControllerFlags() []string {
 			}
 
 			for _, mirror := range containerdRegistry.Mirrors {
-
 				mcFlags = append(mcFlags,
 					fmt.Sprintf("-node-containerd-registry-mirrors=%s=%s", registryName, mirror),
 				)
