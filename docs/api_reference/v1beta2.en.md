@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2021-12-03T16:34:53+05:00
+date = 2021-12-08T19:52:41+02:00
 weight = 11
 +++
 ## v1beta2
@@ -20,6 +20,8 @@ weight = 11
 * [ContainerRuntimeConfig](#containerruntimeconfig)
 * [ContainerRuntimeContainerd](#containerruntimecontainerd)
 * [ContainerRuntimeDocker](#containerruntimedocker)
+* [ContainerdRegistry](#containerdregistry)
+* [ContainerdTLSConfig](#containerdtlsconfig)
 * [ControlPlaneConfig](#controlplaneconfig)
 * [DNSConfig](#dnsconfig)
 * [DigitalOceanSpec](#digitaloceanspec)
@@ -221,8 +223,8 @@ ContainerRuntimeConfig
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
-| docker |  | *[ContainerRuntimeDocker](#containerruntimedocker) | false |
-| containerd |  | *[ContainerRuntimeContainerd](#containerruntimecontainerd) | false |
+| docker | Dockerd related configurations | *[ContainerRuntimeDocker](#containerruntimedocker) | false |
+| containerd | Containerd related configurations | *[ContainerRuntimeContainerd](#containerruntimecontainerd) | false |
 
 [Back to Group](#v1beta2)
 
@@ -232,6 +234,7 @@ ContainerRuntimeContainerd defines docker container runtime
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
+| registries | A map of registries to use to render configs and mirrors for containerd registries | map[string][ContainerdRegistry](#containerdregistry) | false |
 
 [Back to Group](#v1beta2)
 
@@ -241,6 +244,28 @@ ContainerRuntimeDocker defines docker container runtime
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
+| registryMirrors | Configures dockerd with \"registry-mirrors\" | []string | true |
+
+[Back to Group](#v1beta2)
+
+### ContainerdRegistry
+
+ContainerdRegistry defines endpoints and security for given container registry
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| mirrors | List of registry mirrors to use | []string | false |
+| tlsConfig | TLSConfig for the registry | *[ContainerdTLSConfig](#containerdtlsconfig) | false |
+
+[Back to Group](#v1beta2)
+
+### ContainerdTLSConfig
+
+Configures containerd TLS for a registry
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| insecureSkipVerify | Don't validate remote TLS certificate | bool | false |
 
 [Back to Group](#v1beta2)
 

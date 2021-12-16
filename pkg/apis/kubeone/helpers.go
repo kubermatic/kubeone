@@ -84,6 +84,62 @@ func (h *HostConfig) SetLeader(leader bool) {
 	h.IsLeader = leader
 }
 
+func (crc ContainerRuntimeConfig) MachineControllerFlags() []string {
+	var mcFlags []string
+	switch {
+	case crc.Docker != nil:
+		if len(crc.Docker.RegistryMirrors) > 0 {
+			mcFlags = append(mcFlags,
+				fmt.Sprintf("-node-registry-mirrors=%s", strings.Join(crc.Docker.RegistryMirrors, ",")),
+			)
+		}
+	case crc.Containerd != nil:
+		// example output:
+		// -node-containerd-registry-mirrors=docker.io=custom.tld
+		// -node-containerd-registry-mirrors=docker.io=https://secure-custom.tld
+		// -node-containerd-registry-mirrors=k8s.gcr.io=http://somewhere
+		// -node-insecure-registries=docker.io,k8s.gcr.io
+		var (
+			registryNames []string
+			insecureSet   = map[string]struct{}{}
+		)
+		for registry := range crc.Containerd.Registries {
+			registryNames = append(registryNames, registry)
+		}
+
+		// because iterating over map is randomized, we need this to have a "stable" output list
+		sort.Strings(registryNames)
+
+		for _, registryName := range registryNames {
+			containerdRegistry := crc.Containerd.Registries[registryName]
+			if containerdRegistry.TLSConfig != nil && containerdRegistry.TLSConfig.InsecureSkipVerify {
+				insecureSet[registryName] = struct{}{}
+			}
+
+			for _, mirror := range containerdRegistry.Mirrors {
+				mcFlags = append(mcFlags,
+					fmt.Sprintf("-node-containerd-registry-mirrors=%s=%s", registryName, mirror),
+				)
+			}
+		}
+
+		if len(insecureSet) > 0 {
+			insecureNames := []string{}
+
+			for insecureName := range insecureSet {
+				insecureNames = append(insecureNames, insecureName)
+			}
+
+			sort.Strings(insecureNames)
+			mcFlags = append(mcFlags,
+				fmt.Sprintf("-node-insecure-registries=%s", strings.Join(insecureNames, ",")),
+			)
+		}
+	}
+
+	return mcFlags
+}
+
 func (crc ContainerRuntimeConfig) String() string {
 	switch {
 	case crc.Containerd != nil:
