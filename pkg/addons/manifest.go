@@ -22,6 +22,7 @@ import (
 	"encoding/json"
 	"io"
 	"io/fs"
+	"os"
 	"path/filepath"
 	"strings"
 	"text/template"
@@ -39,6 +40,10 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	kyaml "k8s.io/apimachinery/pkg/util/yaml"
 	"sigs.k8s.io/yaml"
+)
+
+const (
+	paramsEnvPrefix = "env:"
 )
 
 func (a *applier) getManifestsFromDirectory(s *state.State, fsys fs.FS, addonName string) (string, error) {
@@ -126,6 +131,17 @@ func (a *applier) loadAddonsManifests(
 		}
 		for k, v := range addonParams {
 			tplDataParams[k] = v
+		}
+
+		// Resolve environment variables in Params
+		for k, v := range tplDataParams {
+			if strings.HasPrefix(v, paramsEnvPrefix) {
+				envName := strings.TrimPrefix(v, paramsEnvPrefix)
+				if env := os.Getenv(envName); len(env) > 0 {
+					tplDataParams[k] = env
+				}
+			}
+
 		}
 
 		tplData := a.TemplateData
