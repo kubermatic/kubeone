@@ -20,6 +20,7 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/fs"
 	"os"
@@ -43,7 +44,7 @@ import (
 )
 
 const (
-	paramsEnvPrefix = "env:"
+	ParamsEnvPrefix = "env:"
 )
 
 func (a *applier) getManifestsFromDirectory(s *state.State, fsys fs.FS, addonName string) (string, error) {
@@ -135,13 +136,14 @@ func (a *applier) loadAddonsManifests(
 
 		// Resolve environment variables in Params
 		for k, v := range tplDataParams {
-			if strings.HasPrefix(v, paramsEnvPrefix) {
-				envName := strings.TrimPrefix(v, paramsEnvPrefix)
-				if env := os.Getenv(envName); len(env) > 0 {
+			if strings.HasPrefix(v, ParamsEnvPrefix) {
+				envName := strings.TrimPrefix(v, ParamsEnvPrefix)
+				if env, ok := os.LookupEnv(envName); ok {
 					tplDataParams[k] = env
+				} else {
+					return nil, fmt.Errorf("failed to get environment variable '%s'", envName)
 				}
 			}
-
 		}
 
 		tplData := a.TemplateData
