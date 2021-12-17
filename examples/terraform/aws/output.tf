@@ -18,7 +18,7 @@ output "kubeone_api" {
   description = "kube-apiserver LB endpoint"
 
   value = {
-    endpoint = aws_elb.control_plane.dns_name
+    endpoint                    = aws_elb.control_plane.dns_name
     apiserver_alternative_names = var.apiserver_alternative_names
   }
 }
@@ -77,7 +77,7 @@ output "kubeone_workers" {
         sshPublicKeys   = local.worker_deploy_ssh_key
         operatingSystem = local.worker_os
         operatingSystemSpec = {
-          distUpgradeOnBoot = false
+          distUpgradeOnBoot   = false
           provisioningUtility = "cloud-init"
         }
         labels = {
@@ -115,7 +115,7 @@ output "kubeone_workers" {
         sshPublicKeys   = local.worker_deploy_ssh_key
         operatingSystem = local.worker_os
         operatingSystemSpec = {
-          distUpgradeOnBoot = false
+          distUpgradeOnBoot   = false
           provisioningUtility = "cloud-init"
         }
         labels = {
@@ -153,7 +153,7 @@ output "kubeone_workers" {
         sshPublicKeys   = local.worker_deploy_ssh_key
         operatingSystem = local.worker_os
         operatingSystemSpec = {
-          distUpgradeOnBoot = false
+          distUpgradeOnBoot   = false
           provisioningUtility = "cloud-init"
         }
         labels = {
