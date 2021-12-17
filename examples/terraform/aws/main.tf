@@ -56,6 +56,11 @@ data "aws_ami" "ami" {
     name   = "virtualization-type"
     values = ["hvm"]
   }
+
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
 }
 
 data "aws_vpc" "selected" {
