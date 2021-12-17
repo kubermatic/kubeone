@@ -20,8 +20,10 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/fs"
+	"os"
 	"path/filepath"
 	"strings"
 	"text/template"
@@ -39,6 +41,10 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	kyaml "k8s.io/apimachinery/pkg/util/yaml"
 	"sigs.k8s.io/yaml"
+)
+
+const (
+	ParamsEnvPrefix = "env:"
 )
 
 func (a *applier) getManifestsFromDirectory(s *state.State, fsys fs.FS, addonName string) (string, error) {
@@ -126,6 +132,18 @@ func (a *applier) loadAddonsManifests(
 		}
 		for k, v := range addonParams {
 			tplDataParams[k] = v
+		}
+
+		// Resolve environment variables in Params
+		for k, v := range tplDataParams {
+			if strings.HasPrefix(v, ParamsEnvPrefix) {
+				envName := strings.TrimPrefix(v, ParamsEnvPrefix)
+				if env, ok := os.LookupEnv(envName); ok {
+					tplDataParams[k] = env
+				} else {
+					return nil, fmt.Errorf("failed to get environment variable '%s'", envName)
+				}
+			}
 		}
 
 		tplData := a.TemplateData
