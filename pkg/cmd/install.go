@@ -134,6 +134,8 @@ func runInstall(opts *installOpts) error {
 		return errors.Wrap(err, "failed to initialize State")
 	}
 
+	s.Logger.Warn("The \"kubeone install\" command is deprecated and will be removed in KubeOne 1.6. Please use \"kubeone apply\" instead.")
+
 	// Validate credentials
 	_, err = credentials.ProviderCredentials(s.Cluster.CloudProvider, opts.CredentialsFile)
 	if err != nil {
