@@ -42,7 +42,7 @@ func ValidateKubeOneCluster(c kubeone.KubeOneCluster) field.ErrorList {
 	allErrs = append(allErrs, ValidateAPIEndpoint(c.APIEndpoint, field.NewPath("apiEndpoint"))...)
 	allErrs = append(allErrs, ValidateCloudProviderSpec(c.CloudProvider, field.NewPath("provider"))...)
 	allErrs = append(allErrs, ValidateVersionConfig(c.Versions, field.NewPath("versions"))...)
-	allErrs = append(allErrs, ValidateCloudProviderSupportsKubernetes(c, field.NewPath(""))...)
+	allErrs = append(allErrs, ValidateKubernetesSupport(c, field.NewPath(""))...)
 	allErrs = append(allErrs, ValidateContainerRuntimeConfig(c.ContainerRuntime, c.Versions, field.NewPath("containerRuntime"))...)
 	allErrs = append(allErrs, ValidateClusterNetworkConfig(c.ClusterNetwork, field.NewPath("clusterNetwork"))...)
 	allErrs = append(allErrs, ValidateStaticWorkersConfig(c.StaticWorkers, field.NewPath("staticWorkers"))...)
@@ -252,7 +252,7 @@ func ValidateVersionConfig(version kubeone.VersionConfig, fldPath *field.Path) f
 	return allErrs
 }
 
-func ValidateCloudProviderSupportsKubernetes(c kubeone.KubeOneCluster, fldPath *field.Path) field.ErrorList {
+func ValidateKubernetesSupport(c kubeone.KubeOneCluster, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	v, err := semver.NewVersion(c.Versions.Kubernetes)
@@ -261,8 +261,21 @@ func ValidateCloudProviderSupportsKubernetes(c kubeone.KubeOneCluster, fldPath *
 		return allErrs
 	}
 
-	if c.CloudProvider.Vsphere != nil && v.Minor() >= 23 {
-		allErrs = append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, "kubernetes versions 1.23.0 and newer are currently not supported for vsphere clusters"))
+	if v.Minor() >= 23 {
+		switch {
+		case c.CloudProvider.Vsphere != nil:
+			allErrs = append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, "kubernetes versions 1.23.0 and newer are currently not supported for vsphere clusters"))
+		case c.ClusterNetwork.KubeProxy != nil && c.ClusterNetwork.KubeProxy.IPVS != nil:
+			if c.ClusterNetwork.CNI != nil && c.ClusterNetwork.CNI.Canal != nil {
+				allErrs = append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, "kubernetes versions 1.23.0 and newer are currently not supported for clusters running kube-proxy in ipvs mode with Canal CNI"))
+			} else if c.ClusterNetwork.CNI != nil && c.ClusterNetwork.CNI.External != nil && c.Addons != nil {
+				for _, addon := range c.Addons.Addons {
+					if addon.Name == "calico-vxlan" {
+						allErrs = append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, "kubernetes versions 1.23.0 and newer are currently not supported for clusters running kube-proxy in ipvs mode with Calico CNI"))
+					}
+				}
+			}
+		}
 	}
 
 	return allErrs
