@@ -201,7 +201,8 @@ func (k1 *Kubeone) Install(tfJSON string, installFlags []string) error {
 		return err
 	}
 
-	flags := []string{"install",
+	flags := []string{"apply",
+		"--auto-approve",
 		"--tfjson", "tf.json",
 		"--manifest", k1.ConfigurationFilePath}
 	if len(installFlags) != 0 {
@@ -218,7 +219,8 @@ func (k1 *Kubeone) Install(tfJSON string, installFlags []string) error {
 
 // Upgrade runs 'kubeone upgrade' command to upgrade the cluster
 func (k1 *Kubeone) Upgrade(upgradeFlags []string) error {
-	flags := []string{"upgrade",
+	flags := []string{"apply",
+		"--auto-approve",
 		"--tfjson", "tf.json",
 		"--upgrade-machine-deployments",
 		"--manifest", k1.ConfigurationFilePath}
