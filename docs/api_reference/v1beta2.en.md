@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2021-12-08T19:52:41+02:00
+date = 2021-12-21T13:30:12+01:00
 weight = 11
 +++
 ## v1beta2
@@ -9,7 +9,6 @@ weight = 11
 * [AWSSpec](#awsspec)
 * [Addon](#addon)
 * [Addons](#addons)
-* [AssetConfiguration](#assetconfiguration)
 * [AzureSpec](#azurespec)
 * [BinaryAsset](#binaryasset)
 * [CNI](#cni)
@@ -103,27 +102,6 @@ Addons config
 | path | Path on the local file system to the directory with addons manifests. | string | false |
 | globalParams | GlobalParams to the addon, to render all addons using text/template | map[string]string | false |
 | addons | Addons is a list of config options for named addon | [][Addon](#addon) | false |
-
-[Back to Group](#v1beta2)
-
-### AssetConfiguration
-
-AssetConfiguration controls how assets (e.g. CNI, Kubelet, kube-apiserver, and more)
-are pulled.
-The AssetConfiguration API is a deprecated API, planned to be remmoved in
-KubeOne 1.4. Currently, configuring BinaryAssets working only on
-Amazon Linux 2.
-
-| Field | Description | Scheme | Required |
-| ----- | ----------- | ------ | -------- |
-| kubernetes | Kubernetes configures the image registry and repository for the core Kubernetes images (kube-apiserver, kube-controller-manager, kube-scheduler, and kube-proxy). Kubernetes respects only ImageRepository (ImageTag is ignored). Default image repository and tag: defaulted dynamically by Kubeadm. Defaults to RegistryConfiguration.OverwriteRegistry if left empty and RegistryConfiguration.OverwriteRegistry is specified. | [ImageAsset](#imageasset) | false |
-| pause | Pause configures the sandbox (pause) image to be used by Kubelet. Default image repository and tag: defaulted dynamically by Kubeadm. Defaults to RegistryConfiguration.OverwriteRegistry if left empty and RegistryConfiguration.OverwriteRegistry is specified. | [ImageAsset](#imageasset) | false |
-| coreDNS | CoreDNS configures the image registry and tag to be used for deploying the CoreDNS component. Default image repository and tag: defaulted dynamically by Kubeadm. Defaults to RegistryConfiguration.OverwriteRegistry if left empty and RegistryConfiguration.OverwriteRegistry is specified. | [ImageAsset](#imageasset) | false |
-| etcd | Etcd configures the image registry and tag to be used for deploying the Etcd component. Default image repository and tag: defaulted dynamically by Kubeadm. Defaults to RegistryConfiguration.OverwriteRegistry if left empty and RegistryConfiguration.OverwriteRegistry is specified. | [ImageAsset](#imageasset) | false |
-| metricsServer | MetricsServer configures the image registry and tag to be used for deploying the metrics-server component. Default image repository and tag: defaulted dynamically by KubeOne. Defaults to RegistryConfiguration.OverwriteRegistry if left empty and RegistryConfiguration.OverwriteRegistry is specified. | [ImageAsset](#imageasset) | false |
-| cni | CNI configures the source for downloading the CNI binaries. If not specified, kubernetes-cni package will be installed. Default: none | [BinaryAsset](#binaryasset) | false |
-| nodeBinaries | NodeBinaries configures the source for downloading the Kubernetes Node Binaries tarball (e.g. kubernetes-node-linux-amd64.tar.gz). The tarball must have .tar.gz as the extension and must contain the following files: - kubernetes/node/bin/kubelet - kubernetes/node/bin/kubeadm If not specified, kubelet and kubeadm packages will be installed. Default: none | [BinaryAsset](#binaryasset) | false |
-| kubectl | Kubectl configures the source for downloading the Kubectl binary. If not specified, kubelet package will be installed. Default: none | [BinaryAsset](#binaryasset) | false |
 
 [Back to Group](#v1beta2)
 
@@ -453,7 +431,6 @@ KubeOneCluster is KubeOne Cluster API Schema
 | features | Features enables and configures additional cluster features. | [Features](#features) | false |
 | addons | Addons are used to deploy additional manifests. | *[Addons](#addons) | false |
 | systemPackages | SystemPackages configure kubeone behaviour regarding OS packages. | *[SystemPackages](#systempackages) | false |
-| assetConfiguration | AssetConfiguration configures how are binaries and container images downloaded | [AssetConfiguration](#assetconfiguration) | false |
 | registryConfiguration | RegistryConfiguration configures how Docker images are pulled from an image registry | *[RegistryConfiguration](#registryconfiguration) | false |
 
 [Back to Group](#v1beta2)
