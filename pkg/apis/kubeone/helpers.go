@@ -344,3 +344,40 @@ func (ads *Addons) RelativePath(manifestFilePath string) (string, error) {
 
 	return addonsPath, nil
 }
+
+// DefaultAssetConfiguration determines what image repository should be used
+// for Kubernetes and metrics-server images. The AssetsConfiguration has the
+// highest priority, then comes the RegistryConfiguration.
+// This function is needed because the AssetsConfiguration API has been removed
+// in the v1beta2 API, so we can't use defaulting
+func (c KubeOneCluster) DefaultAssetConfiguration() {
+	if c.RegistryConfiguration == nil || c.RegistryConfiguration.OverwriteRegistry == "" {
+		// We default AssetConfiguration only if RegistryConfiguration.OverwriteRegistry
+		// is used
+		return
+	}
+
+	c.AssetConfiguration.Kubernetes.ImageRepository = defaults(
+		c.AssetConfiguration.Kubernetes.ImageRepository,
+		c.RegistryConfiguration.OverwriteRegistry,
+	)
+	c.AssetConfiguration.CoreDNS.ImageRepository = defaults(
+		c.AssetConfiguration.CoreDNS.ImageRepository,
+		c.RegistryConfiguration.OverwriteRegistry,
+	)
+	c.AssetConfiguration.Etcd.ImageRepository = defaults(
+		c.AssetConfiguration.Etcd.ImageRepository,
+		c.RegistryConfiguration.OverwriteRegistry,
+	)
+	c.AssetConfiguration.MetricsServer.ImageRepository = defaults(
+		c.AssetConfiguration.MetricsServer.ImageRepository,
+		c.RegistryConfiguration.OverwriteRegistry,
+	)
+}
+
+func defaults(input, defaultValue string) string {
+	if input != "" {
+		return input
+	}
+	return defaultValue
+}
