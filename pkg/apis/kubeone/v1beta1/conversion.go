@@ -42,6 +42,6 @@ func Convert_v1beta1_Features_To_kubeone_Features(in *Features, out *kubeone.Fea
 }
 
 func Convert_kubeone_HostConfig_To_v1beta1_HostConfig(in *kubeone.HostConfig, out *HostConfig, scope conversion.Scope) error {
-	// explicitly skip kubelet conversion omited in autoConvert_kubeone_HostConfig_To_v1beta1_HostConfig
+	// explicitly skip kubelet conversion omitted in autoConvert_kubeone_HostConfig_To_v1beta1_HostConfig
 	return autoConvert_kubeone_HostConfig_To_v1beta1_HostConfig(in, out, scope)
 }

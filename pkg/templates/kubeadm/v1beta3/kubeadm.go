@@ -26,7 +26,6 @@ import (
 
 	bootstraptokenv1 "k8c.io/kubeone/pkg/apis/kubeadm/bootstraptoken/v1"
 	kubeadmv1beta3 "k8c.io/kubeone/pkg/apis/kubeadm/v1beta3"
-	"k8c.io/kubeone/pkg/apis/kubeone"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/certificate"
 	"k8c.io/kubeone/pkg/features"
@@ -423,11 +422,11 @@ func newNodeRegistration(s *state.State, host kubeoneapi.HostConfig) kubeadmv1be
 	}
 
 	if m := host.Kubelet.KubeReserved; m != nil {
-		kubeletCLIFlags["kube-reserved"] = kubeone.MapStringStringToString(m, "=")
+		kubeletCLIFlags["kube-reserved"] = kubeoneapi.MapStringStringToString(m, "=")
 	}
 
 	if m := host.Kubelet.EvictionHard; m != nil {
-		kubeletCLIFlags["eviction-hard"] = kubeone.MapStringStringToString(m, "<")
+		kubeletCLIFlags["eviction-hard"] = kubeoneapi.MapStringStringToString(m, "<")
 	}
 
 	return kubeadmv1beta3.NodeRegistrationOptions{
