@@ -278,11 +278,6 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*kubeone.HostConfig)(nil), (*HostConfig)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_kubeone_HostConfig_To_v1beta1_HostConfig(a.(*kubeone.HostConfig), b.(*HostConfig), scope)
-	}); err != nil {
-		return err
-	}
 	if err := s.AddGeneratedConversionFunc((*IPTables)(nil), (*kubeone.IPTables)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_v1beta1_IPTables_To_kubeone_IPTables(a.(*IPTables), b.(*kubeone.IPTables), scope)
 	}); err != nil {
@@ -550,6 +545,11 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}
 	if err := s.AddConversionFunc((*kubeone.ContainerRuntimeDocker)(nil), (*ContainerRuntimeDocker)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_kubeone_ContainerRuntimeDocker_To_v1beta1_ContainerRuntimeDocker(a.(*kubeone.ContainerRuntimeDocker), b.(*ContainerRuntimeDocker), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddConversionFunc((*kubeone.HostConfig)(nil), (*HostConfig)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_kubeone_HostConfig_To_v1beta1_HostConfig(a.(*kubeone.HostConfig), b.(*HostConfig), scope)
 	}); err != nil {
 		return err
 	}
