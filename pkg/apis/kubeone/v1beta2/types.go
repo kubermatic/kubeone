@@ -151,6 +151,8 @@ type HostConfig struct {
 	// control plane nodes.
 	// Explicitly empty (i.e. []corev1.Taint{}) means no taints will be applied (this is default for worker nodes).
 	Taints []corev1.Taint `json:"taints,omitempty"`
+	// Kubelet
+	Kubelet KubeletConfig `json:"kubelet,omitempty"`
 	// OperatingSystem information populated at the runtime.
 	OperatingSystem OperatingSystemName `json:"-"`
 }
@@ -165,6 +167,19 @@ type ControlPlaneConfig struct {
 type StaticWorkersConfig struct {
 	// Hosts
 	Hosts []HostConfig `json:"hosts,omitempty"`
+}
+
+// KubeletConfig provides some kubelet configration options
+type KubeletConfig struct {
+	// SystemReserved configure --system-reserved command-line flag of the kubelet.
+	// See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/
+	SystemReserved map[string]string `json:"systemReserved,omitempty"`
+	// KubeReserved configure --kube-reserved command-line flag of the kubelet.
+	// See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/
+	KubeReserved map[string]string `json:"kubeReserved,omitempty"`
+	// EvictionHard configure --eviction-hard command-line flag of the kubelet.
+	// See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/
+	EvictionHard map[string]string `json:"evictionHard,omitempty"`
 }
 
 // APIEndpoint is the endpoint used to communicate with the Kubernetes API

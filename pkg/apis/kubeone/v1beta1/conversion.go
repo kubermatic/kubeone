@@ -40,3 +40,8 @@ func Convert_v1beta1_Features_To_kubeone_Features(in *Features, out *kubeone.Fea
 	// The PodPresets field has been dropped from v1beta2 API.
 	return nil
 }
+
+func Convert_kubeone_HostConfig_To_v1beta1_HostConfig(in *kubeone.HostConfig, out *HostConfig, scope conversion.Scope) error {
+	// explicitly skip kubelet conversion omited in autoConvert_kubeone_HostConfig_To_v1beta1_HostConfig
+	return autoConvert_kubeone_HostConfig_To_v1beta1_HostConfig(in, out, scope)
+}
