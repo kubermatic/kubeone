@@ -790,6 +790,13 @@ func TestValidateVersionConfig(t *testing.T) {
 			},
 			expectedError: true,
 		},
+		{
+			name: "not supported eks-d cluster",
+			versionConfig: kubeone.VersionConfig{
+				Kubernetes: "v1.19.9-eks-1-18-1",
+			},
+			expectedError: true,
+		},
 	}
 	for _, tc := range tests {
 		tc := tc

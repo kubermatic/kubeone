@@ -255,6 +255,11 @@ func ValidateVersionConfig(version kubeone.VersionConfig, fldPath *field.Path) f
 func ValidateKubernetesSupport(c kubeone.KubeOneCluster, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
+	if strings.Contains(c.Versions.Kubernetes, "-eks-") {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, "Amazon EKS-D clusters are not supported by KubeOne 1.4+"))
+		return allErrs
+	}
+
 	v, err := semver.NewVersion(c.Versions.Kubernetes)
 	if err != nil {
 		allErrs = append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, ".versions.kubernetes is not a semver string"))
