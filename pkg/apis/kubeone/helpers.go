@@ -381,3 +381,13 @@ func defaults(input, defaultValue string) string {
 	}
 	return defaultValue
 }
+
+func MapStringStringToString(m1 map[string]string, pairSeparator string) string {
+	var pairs []string
+	for k, v := range m1 {
+		pairs = append(pairs, fmt.Sprintf("%s%s%s", k, pairSeparator, v))
+	}
+	sort.Strings(pairs)
+
+	return strings.Join(pairs, ",")
+}

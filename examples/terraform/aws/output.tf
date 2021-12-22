@@ -83,6 +83,13 @@ output "kubeone_workers" {
         labels = {
           isSpotInstance = format("%t", var.initial_machinedeployment_spotinstances)
         }
+        # uncomment to following to set those kubelet parameters. More into at:
+        # https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/
+        # machineAnnotations = {
+        #  "v1.kubelet-config.machine-controller.kubermatic.io/SystemReserved" = "cpu=200m,memory=200Mi"
+        #  "v1.kubelet-config.machine-controller.kubermatic.io/KubeReserved"   = "cpu=200m,memory=300Mi"
+        #  "v1.kubelet-config.machine-controller.kubermatic.io/EvictionHard"   = ""
+        # }
         cloudProviderSpec = {
           # provider specific fields:
           # see example under `cloudProviderSpec` section at:

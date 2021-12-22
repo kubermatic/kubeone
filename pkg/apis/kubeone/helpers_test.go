@@ -150,3 +150,29 @@ func TestContainerRuntimeConfig_MachineControllerFlags(t *testing.T) {
 		})
 	}
 }
+
+func TestMapStringStringToString(t *testing.T) {
+	tests := []struct {
+		name string
+		m1   map[string]string
+		want string
+	}{
+		{
+			m1: map[string]string{
+				"k2": "v2",
+				"k3": "v3",
+				"k1": "v1",
+			},
+			want: "k1=v1,k2=v2,k3=v3",
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			if got := MapStringStringToString(tt.m1, "="); got != tt.want {
+				t.Errorf("MapStringStringToString() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

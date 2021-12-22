@@ -412,14 +412,28 @@ func newNodeIP(host kubeoneapi.HostConfig) string {
 }
 
 func newNodeRegistration(s *state.State, host kubeoneapi.HostConfig) kubeadmv1beta2.NodeRegistrationOptions {
+	kubeletCLIFlags := map[string]string{
+		"node-ip":           newNodeIP(host),
+		"volume-plugin-dir": "/var/lib/kubelet/volumeplugins",
+	}
+
+	if m := host.Kubelet.SystemReserved; m != nil {
+		kubeletCLIFlags["system-reserved"] = kubeoneapi.MapStringStringToString(m, "=")
+	}
+
+	if m := host.Kubelet.KubeReserved; m != nil {
+		kubeletCLIFlags["kube-reserved"] = kubeoneapi.MapStringStringToString(m, "=")
+	}
+
+	if m := host.Kubelet.EvictionHard; m != nil {
+		kubeletCLIFlags["eviction-hard"] = kubeoneapi.MapStringStringToString(m, "<")
+	}
+
 	return kubeadmv1beta2.NodeRegistrationOptions{
-		Name:      host.Hostname,
-		Taints:    host.Taints,
-		CRISocket: s.Cluster.ContainerRuntime.CRISocket(),
-		KubeletExtraArgs: map[string]string{
-			"node-ip":           newNodeIP(host),
-			"volume-plugin-dir": "/var/lib/kubelet/volumeplugins",
-		},
+		Name:             host.Hostname,
+		Taints:           host.Taints,
+		CRISocket:        s.Cluster.ContainerRuntime.CRISocket(),
+		KubeletExtraArgs: kubeletCLIFlags,
 	}
 }
 

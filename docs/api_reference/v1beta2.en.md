@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2021-12-21T13:30:12+01:00
+date = 2021-12-21T21:30:20+02:00
 weight = 11
 +++
 ## v1beta2
@@ -37,6 +37,7 @@ weight = 11
 * [ImageAsset](#imageasset)
 * [KubeOneCluster](#kubeonecluster)
 * [KubeProxyConfig](#kubeproxyconfig)
+* [KubeletConfig](#kubeletconfig)
 * [MachineControllerConfig](#machinecontrollerconfig)
 * [MetricsServer](#metricsserver)
 * [NoneSpec](#nonespec)
@@ -372,6 +373,7 @@ HostConfig describes a single control plane node.
 | hostname | Hostname is the hostname(1) of the host. Default value is populated at the runtime via running `hostname -f` command over ssh. | string | false |
 | isLeader | IsLeader indicates this host as a session leader. Default value is populated at the runtime. | bool | false |
 | taints | Taints if not provided (i.e. nil) defaults to TaintEffectNoSchedule, with key node-role.kubernetes.io/master for control plane nodes. Explicitly empty (i.e. []corev1.Taint{}) means no taints will be applied (this is default for worker nodes). | [][corev1.Taint](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#taint-v1-core) | false |
+| kubelet | Kubelet | [KubeletConfig](#kubeletconfig) | false |
 
 [Back to Group](#v1beta2)
 
@@ -444,6 +446,18 @@ KubeProxyConfig defines configured kube-proxy mode, default is iptables mode
 | skipInstallation | SkipInstallation will skip the installation of kube-proxy default value is false | bool | true |
 | ipvs | IPVS config | *[IPVSConfig](#ipvsconfig) | true |
 | iptables | IPTables config | *[IPTables](#iptables) | true |
+
+[Back to Group](#v1beta2)
+
+### KubeletConfig
+
+KubeletConfig provides some kubelet configration options
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| systemReserved | SystemReserved configure --system-reserved command-line flag of the kubelet. See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/ | map[string]string | false |
+| kubeReserved | KubeReserved configure --kube-reserved command-line flag of the kubelet. See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/ | map[string]string | false |
+| evictionHard | EvictionHard configure --eviction-hard command-line flag of the kubelet. See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/ | map[string]string | false |
 
 [Back to Group](#v1beta2)
 
