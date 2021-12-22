@@ -1593,6 +1593,35 @@ presubmits:
               valut: "120m"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterUpgrade"
+  - name: pull-kubeone-e2e-aws-amzn2-conformance-1.23
+    always_run: false
+    decorate: true
+    clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
+    labels:
+      preset-aws: "true"
+    spec:
+      containers:
+        - image: kubermatic/kubeone-e2e:v0.1.20
+          imagePullPolicy: Always
+          command:
+            - make
+          args:
+            - e2e-test
+          env:
+            - name: PROVIDER
+              value: "aws"
+            - name: CONTAINER_RUNTIME
+              value: containerd
+            - name: TF_VAR_initial_machinedeployment_spotinstances
+              value: "true"
+            - name: TEST_CLUSTER_TARGET_VERSION
+              value: "1.23.1"
+            - name: KUBEONE_TEST_RUN
+              value: "TestClusterConformance"
+            - name: TEST_OS_CONTROL_PLANE
+              value: "amzn2"
+            - name: TEST_OS_WORKERS
+              value: "amzn2"
 postsubmits:
   - name: post-kubeone-push-e2e-image
     run_if_changed: "(hack/images/kubeone-e2e)"
