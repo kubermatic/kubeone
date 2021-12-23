@@ -104,11 +104,11 @@ sudo yum remove -y \
 sudo yum remove -y kubernetes-cni || true
 `
 	disableNMCloudSetup = `
-if systemctl status 'nm-cloud-setup.timer' 2> /dev/null | grep -Fq "Active:"; then
-systemctl stop nm-cloud-setup.timer
-systemctl disable nm-cloud-setup.service
-systemctl disable nm-cloud-setup.timer
-reboot
+if systemctl status 'nm-cloud-setup.timer' 2> /dev/null | grep -Fq "Active: active"; then
+sudo systemctl stop nm-cloud-setup.timer
+sudo systemctl disable nm-cloud-setup.service
+sudo systemctl disable nm-cloud-setup.timer
+sudo reboot
 fi
 `
 )
