@@ -163,18 +163,8 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*kubeone.ContainerRuntimeContainerd)(nil), (*ContainerRuntimeContainerd)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_kubeone_ContainerRuntimeContainerd_To_v1beta1_ContainerRuntimeContainerd(a.(*kubeone.ContainerRuntimeContainerd), b.(*ContainerRuntimeContainerd), scope)
-	}); err != nil {
-		return err
-	}
 	if err := s.AddGeneratedConversionFunc((*ContainerRuntimeDocker)(nil), (*kubeone.ContainerRuntimeDocker)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_v1beta1_ContainerRuntimeDocker_To_kubeone_ContainerRuntimeDocker(a.(*ContainerRuntimeDocker), b.(*kubeone.ContainerRuntimeDocker), scope)
-	}); err != nil {
-		return err
-	}
-	if err := s.AddGeneratedConversionFunc((*kubeone.ContainerRuntimeDocker)(nil), (*ContainerRuntimeDocker)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_kubeone_ContainerRuntimeDocker_To_v1beta1_ContainerRuntimeDocker(a.(*kubeone.ContainerRuntimeDocker), b.(*ContainerRuntimeDocker), scope)
 	}); err != nil {
 		return err
 	}
@@ -275,11 +265,6 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}
 	if err := s.AddGeneratedConversionFunc((*HostConfig)(nil), (*kubeone.HostConfig)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_v1beta1_HostConfig_To_kubeone_HostConfig(a.(*HostConfig), b.(*kubeone.HostConfig), scope)
-	}); err != nil {
-		return err
-	}
-	if err := s.AddGeneratedConversionFunc((*kubeone.HostConfig)(nil), (*HostConfig)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_kubeone_HostConfig_To_v1beta1_HostConfig(a.(*kubeone.HostConfig), b.(*HostConfig), scope)
 	}); err != nil {
 		return err
 	}
@@ -535,6 +520,21 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}
 	if err := s.AddConversionFunc((*kubeone.CloudProviderSpec)(nil), (*CloudProviderSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_kubeone_CloudProviderSpec_To_v1beta1_CloudProviderSpec(a.(*kubeone.CloudProviderSpec), b.(*CloudProviderSpec), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddConversionFunc((*kubeone.ContainerRuntimeContainerd)(nil), (*ContainerRuntimeContainerd)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_kubeone_ContainerRuntimeContainerd_To_v1beta1_ContainerRuntimeContainerd(a.(*kubeone.ContainerRuntimeContainerd), b.(*ContainerRuntimeContainerd), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddConversionFunc((*kubeone.ContainerRuntimeDocker)(nil), (*ContainerRuntimeDocker)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_kubeone_ContainerRuntimeDocker_To_v1beta1_ContainerRuntimeDocker(a.(*kubeone.ContainerRuntimeDocker), b.(*ContainerRuntimeDocker), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddConversionFunc((*kubeone.HostConfig)(nil), (*HostConfig)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_kubeone_HostConfig_To_v1beta1_HostConfig(a.(*kubeone.HostConfig), b.(*HostConfig), scope)
 	}); err != nil {
 		return err
 	}
@@ -878,8 +878,24 @@ func Convert_kubeone_ClusterNetworkConfig_To_v1beta1_ClusterNetworkConfig(in *ku
 }
 
 func autoConvert_v1beta1_ContainerRuntimeConfig_To_kubeone_ContainerRuntimeConfig(in *ContainerRuntimeConfig, out *kubeone.ContainerRuntimeConfig, s conversion.Scope) error {
-	out.Docker = (*kubeone.ContainerRuntimeDocker)(unsafe.Pointer(in.Docker))
-	out.Containerd = (*kubeone.ContainerRuntimeContainerd)(unsafe.Pointer(in.Containerd))
+	if in.Docker != nil {
+		in, out := &in.Docker, &out.Docker
+		*out = new(kubeone.ContainerRuntimeDocker)
+		if err := Convert_v1beta1_ContainerRuntimeDocker_To_kubeone_ContainerRuntimeDocker(*in, *out, s); err != nil {
+			return err
+		}
+	} else {
+		out.Docker = nil
+	}
+	if in.Containerd != nil {
+		in, out := &in.Containerd, &out.Containerd
+		*out = new(kubeone.ContainerRuntimeContainerd)
+		if err := Convert_v1beta1_ContainerRuntimeContainerd_To_kubeone_ContainerRuntimeContainerd(*in, *out, s); err != nil {
+			return err
+		}
+	} else {
+		out.Containerd = nil
+	}
 	return nil
 }
 
@@ -889,8 +905,24 @@ func Convert_v1beta1_ContainerRuntimeConfig_To_kubeone_ContainerRuntimeConfig(in
 }
 
 func autoConvert_kubeone_ContainerRuntimeConfig_To_v1beta1_ContainerRuntimeConfig(in *kubeone.ContainerRuntimeConfig, out *ContainerRuntimeConfig, s conversion.Scope) error {
-	out.Docker = (*ContainerRuntimeDocker)(unsafe.Pointer(in.Docker))
-	out.Containerd = (*ContainerRuntimeContainerd)(unsafe.Pointer(in.Containerd))
+	if in.Docker != nil {
+		in, out := &in.Docker, &out.Docker
+		*out = new(ContainerRuntimeDocker)
+		if err := Convert_kubeone_ContainerRuntimeDocker_To_v1beta1_ContainerRuntimeDocker(*in, *out, s); err != nil {
+			return err
+		}
+	} else {
+		out.Docker = nil
+	}
+	if in.Containerd != nil {
+		in, out := &in.Containerd, &out.Containerd
+		*out = new(ContainerRuntimeContainerd)
+		if err := Convert_kubeone_ContainerRuntimeContainerd_To_v1beta1_ContainerRuntimeContainerd(*in, *out, s); err != nil {
+			return err
+		}
+	} else {
+		out.Containerd = nil
+	}
 	return nil
 }
 
@@ -909,12 +941,8 @@ func Convert_v1beta1_ContainerRuntimeContainerd_To_kubeone_ContainerRuntimeConta
 }
 
 func autoConvert_kubeone_ContainerRuntimeContainerd_To_v1beta1_ContainerRuntimeContainerd(in *kubeone.ContainerRuntimeContainerd, out *ContainerRuntimeContainerd, s conversion.Scope) error {
+	// WARNING: in.Registries requires manual conversion: does not exist in peer-type
 	return nil
-}
-
-// Convert_kubeone_ContainerRuntimeContainerd_To_v1beta1_ContainerRuntimeContainerd is an autogenerated conversion function.
-func Convert_kubeone_ContainerRuntimeContainerd_To_v1beta1_ContainerRuntimeContainerd(in *kubeone.ContainerRuntimeContainerd, out *ContainerRuntimeContainerd, s conversion.Scope) error {
-	return autoConvert_kubeone_ContainerRuntimeContainerd_To_v1beta1_ContainerRuntimeContainerd(in, out, s)
 }
 
 func autoConvert_v1beta1_ContainerRuntimeDocker_To_kubeone_ContainerRuntimeDocker(in *ContainerRuntimeDocker, out *kubeone.ContainerRuntimeDocker, s conversion.Scope) error {
@@ -927,16 +955,22 @@ func Convert_v1beta1_ContainerRuntimeDocker_To_kubeone_ContainerRuntimeDocker(in
 }
 
 func autoConvert_kubeone_ContainerRuntimeDocker_To_v1beta1_ContainerRuntimeDocker(in *kubeone.ContainerRuntimeDocker, out *ContainerRuntimeDocker, s conversion.Scope) error {
+	// WARNING: in.RegistryMirrors requires manual conversion: does not exist in peer-type
 	return nil
 }
 
-// Convert_kubeone_ContainerRuntimeDocker_To_v1beta1_ContainerRuntimeDocker is an autogenerated conversion function.
-func Convert_kubeone_ContainerRuntimeDocker_To_v1beta1_ContainerRuntimeDocker(in *kubeone.ContainerRuntimeDocker, out *ContainerRuntimeDocker, s conversion.Scope) error {
-	return autoConvert_kubeone_ContainerRuntimeDocker_To_v1beta1_ContainerRuntimeDocker(in, out, s)
-}
-
 func autoConvert_v1beta1_ControlPlaneConfig_To_kubeone_ControlPlaneConfig(in *ControlPlaneConfig, out *kubeone.ControlPlaneConfig, s conversion.Scope) error {
-	out.Hosts = *(*[]kubeone.HostConfig)(unsafe.Pointer(&in.Hosts))
+	if in.Hosts != nil {
+		in, out := &in.Hosts, &out.Hosts
+		*out = make([]kubeone.HostConfig, len(*in))
+		for i := range *in {
+			if err := Convert_v1beta1_HostConfig_To_kubeone_HostConfig(&(*in)[i], &(*out)[i], s); err != nil {
+				return err
+			}
+		}
+	} else {
+		out.Hosts = nil
+	}
 	return nil
 }
 
@@ -946,7 +980,17 @@ func Convert_v1beta1_ControlPlaneConfig_To_kubeone_ControlPlaneConfig(in *Contro
 }
 
 func autoConvert_kubeone_ControlPlaneConfig_To_v1beta1_ControlPlaneConfig(in *kubeone.ControlPlaneConfig, out *ControlPlaneConfig, s conversion.Scope) error {
-	out.Hosts = *(*[]HostConfig)(unsafe.Pointer(&in.Hosts))
+	if in.Hosts != nil {
+		in, out := &in.Hosts, &out.Hosts
+		*out = make([]HostConfig, len(*in))
+		for i := range *in {
+			if err := Convert_kubeone_HostConfig_To_v1beta1_HostConfig(&(*in)[i], &(*out)[i], s); err != nil {
+				return err
+			}
+		}
+	} else {
+		out.Hosts = nil
+	}
 	return nil
 }
 
@@ -1184,13 +1228,9 @@ func autoConvert_kubeone_HostConfig_To_v1beta1_HostConfig(in *kubeone.HostConfig
 	out.Hostname = in.Hostname
 	out.IsLeader = in.IsLeader
 	out.Taints = *(*[]v1.Taint)(unsafe.Pointer(&in.Taints))
+	// WARNING: in.Kubelet requires manual conversion: does not exist in peer-type
 	out.OperatingSystem = OperatingSystemName(in.OperatingSystem)
 	return nil
-}
-
-// Convert_kubeone_HostConfig_To_v1beta1_HostConfig is an autogenerated conversion function.
-func Convert_kubeone_HostConfig_To_v1beta1_HostConfig(in *kubeone.HostConfig, out *HostConfig, s conversion.Scope) error {
-	return autoConvert_kubeone_HostConfig_To_v1beta1_HostConfig(in, out, s)
 }
 
 func autoConvert_v1beta1_IPTables_To_kubeone_IPTables(in *IPTables, out *kubeone.IPTables, s conversion.Scope) error {
@@ -1750,7 +1790,17 @@ func Convert_kubeone_StaticAuditLogConfig_To_v1beta1_StaticAuditLogConfig(in *ku
 }
 
 func autoConvert_v1beta1_StaticWorkersConfig_To_kubeone_StaticWorkersConfig(in *StaticWorkersConfig, out *kubeone.StaticWorkersConfig, s conversion.Scope) error {
-	out.Hosts = *(*[]kubeone.HostConfig)(unsafe.Pointer(&in.Hosts))
+	if in.Hosts != nil {
+		in, out := &in.Hosts, &out.Hosts
+		*out = make([]kubeone.HostConfig, len(*in))
+		for i := range *in {
+			if err := Convert_v1beta1_HostConfig_To_kubeone_HostConfig(&(*in)[i], &(*out)[i], s); err != nil {
+				return err
+			}
+		}
+	} else {
+		out.Hosts = nil
+	}
 	return nil
 }
 
@@ -1760,7 +1810,17 @@ func Convert_v1beta1_StaticWorkersConfig_To_kubeone_StaticWorkersConfig(in *Stat
 }
 
 func autoConvert_kubeone_StaticWorkersConfig_To_v1beta1_StaticWorkersConfig(in *kubeone.StaticWorkersConfig, out *StaticWorkersConfig, s conversion.Scope) error {
-	out.Hosts = *(*[]HostConfig)(unsafe.Pointer(&in.Hosts))
+	if in.Hosts != nil {
+		in, out := &in.Hosts, &out.Hosts
+		*out = make([]HostConfig, len(*in))
+		for i := range *in {
+			if err := Convert_kubeone_HostConfig_To_v1beta1_HostConfig(&(*in)[i], &(*out)[i], s); err != nil {
+				return err
+			}
+		}
+	} else {
+		out.Hosts = nil
+	}
 	return nil
 }
 

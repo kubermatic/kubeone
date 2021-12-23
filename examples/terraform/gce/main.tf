@@ -21,6 +21,7 @@ provider "google" {
 
 locals {
   zones_count = length(data.google_compute_zones.available.names)
+  zone_first  = data.google_compute_zones.available.names[0]
 }
 
 data "google_compute_zones" "available" {

@@ -183,8 +183,8 @@ func configMigrateCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		Use:   "migrate",
 		Short: "Migrate the v1alpha1 KubeOneCluster manifest to the v1beta1 version",
 		Long: `
-Migrate the v1alpha1 KubeOneCluster manifest to the v1beta1 version.
-The v1alpha1 version of the KubeOneCluster manifest is deprecated and will be
+Migrate the v1beta1 KubeOneCluster manifest to the v1beta2 version.
+The v1beta1 version of the KubeOneCluster manifest is deprecated and will be
 removed in one of the next versions.
 The new manifest is printed on the standard output.
 `,
@@ -600,7 +600,19 @@ cloudProvider:
 containerRuntime:
   # Installs containerd container runtime.
   # Default for 1.21+ Kubernetes clusters.
-  # containerd: {}
+  # containerd:
+  #   registries:
+  #     k8s.gcr.io:
+  #       mirrors:
+  #       - https://self-signed.pull-through.cache.tld
+  #       tlsConfig:
+  #         insecureSkipVerify: true
+  #     docker.io:
+  #       mirrors:
+  #       - http://plain-text2.tld
+  #     "*":
+  #       mirrors:
+  #       - https://secure.tld
   # Installs Docker container runtime.
   # Default for Kubernetes clusters up to 1.20.
   # This option will be removed once Kubernetes 1.21 reaches EOL.
@@ -801,8 +813,8 @@ addons:
   enable: false
   # In case when the relative path is provided, the path is relative
   # to the KubeOne configuration file.
-  # This path must be always provided and the directory must exist, even if
-  # using only embedded addons.
+  # This path is required only if you want to provide custom addons or override
+  # embedded addons.
   path: "./addons"
   # globalParams is a key-value map of values passed to the addons templating engine,
   # to be used in the addons' manifests. The values defined here are passed to all

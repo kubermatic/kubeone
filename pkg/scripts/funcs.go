@@ -75,8 +75,6 @@ var (
 const (
 	defaultDockerVersion           = "19.03.*"
 	latestDockerVersion            = "20.10.*"
-	defaultLegacyDockerVersion     = "18.09.*"
 	defaultContainerdVersion       = "1.4.*"
 	defaultAmazonContainerdVersion = "1.4.*"
-	defaultAmazonCrictlVersion     = "1.13.0"
 )

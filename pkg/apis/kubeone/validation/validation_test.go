@@ -22,6 +22,7 @@ import (
 	"github.com/MakeNowJust/heredoc/v2"
 
 	"k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/templates/resources"
 
 	"k8s.io/apimachinery/pkg/util/validation/field"
 )
@@ -789,6 +790,13 @@ func TestValidateVersionConfig(t *testing.T) {
 			},
 			expectedError: true,
 		},
+		{
+			name: "not supported eks-d cluster",
+			versionConfig: kubeone.VersionConfig{
+				Kubernetes: "v1.19.9-eks-1-18-1",
+			},
+			expectedError: true,
+		},
 	}
 	for _, tc := range tests {
 		tc := tc
@@ -801,11 +809,13 @@ func TestValidateVersionConfig(t *testing.T) {
 	}
 }
 
-func TestValidateCloudProviderSupportsKubernetes(t *testing.T) {
+func TestValidateKubernetesSupport(t *testing.T) {
 	tests := []struct {
 		name           string
 		providerConfig kubeone.CloudProviderSpec
+		networkConfig  kubeone.ClusterNetworkConfig
 		versionConfig  kubeone.VersionConfig
+		addonsConfig   *kubeone.Addons
 		expectedError  bool
 	}{
 		{
@@ -829,22 +839,110 @@ func TestValidateCloudProviderSupportsKubernetes(t *testing.T) {
 			expectedError: false,
 		},
 		{
-			name: "vSphere 1.21.4 cluster",
+			name: "vSphere 1.22.4 cluster",
 			providerConfig: kubeone.CloudProviderSpec{
 				Vsphere: &kubeone.VsphereSpec{},
 			},
 			versionConfig: kubeone.VersionConfig{
-				Kubernetes: "1.21.4",
+				Kubernetes: "1.22.4",
 			},
 			expectedError: false,
 		},
 		{
-			name: "vSphere 1.22.1 cluster",
+			name: "vSphere 1.23.0 cluster",
 			providerConfig: kubeone.CloudProviderSpec{
 				Vsphere: &kubeone.VsphereSpec{},
 			},
 			versionConfig: kubeone.VersionConfig{
-				Kubernetes: "1.22.1",
+				Kubernetes: "1.23.0",
+			},
+			expectedError: true,
+		},
+		{
+			name: "AWS 1.22.0 cluster with IPVS",
+			providerConfig: kubeone.CloudProviderSpec{
+				AWS: &kubeone.AWSSpec{},
+			},
+			versionConfig: kubeone.VersionConfig{
+				Kubernetes: "1.22.0",
+			},
+			networkConfig: kubeone.ClusterNetworkConfig{
+				CNI: &kubeone.CNI{
+					Canal: &kubeone.CanalSpec{},
+				},
+				KubeProxy: &kubeone.KubeProxyConfig{
+					IPVS: &kubeone.IPVSConfig{},
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "AWS 1.23.0 cluster with IPVS",
+			providerConfig: kubeone.CloudProviderSpec{
+				AWS: &kubeone.AWSSpec{},
+			},
+			versionConfig: kubeone.VersionConfig{
+				Kubernetes: "1.23.0",
+			},
+			networkConfig: kubeone.ClusterNetworkConfig{
+				CNI: &kubeone.CNI{
+					Canal: &kubeone.CanalSpec{},
+				},
+				KubeProxy: &kubeone.KubeProxyConfig{
+					IPVS: &kubeone.IPVSConfig{},
+				},
+			},
+			expectedError: true,
+		},
+		{
+			name: "AWS 1.22.0 cluster with IPVS and calico-vxlan",
+			providerConfig: kubeone.CloudProviderSpec{
+				AWS: &kubeone.AWSSpec{},
+			},
+			versionConfig: kubeone.VersionConfig{
+				Kubernetes: "1.22.0",
+			},
+			networkConfig: kubeone.ClusterNetworkConfig{
+				CNI: &kubeone.CNI{
+					External: &kubeone.ExternalCNISpec{},
+				},
+				KubeProxy: &kubeone.KubeProxyConfig{
+					IPVS: &kubeone.IPVSConfig{},
+				},
+			},
+			addonsConfig: &kubeone.Addons{
+				Enable: true,
+				Addons: []kubeone.Addon{
+					{
+						Name: "calico-vxlan",
+					},
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "AWS 1.23.0 cluster with IPVS and calico-vxlan",
+			providerConfig: kubeone.CloudProviderSpec{
+				AWS: &kubeone.AWSSpec{},
+			},
+			versionConfig: kubeone.VersionConfig{
+				Kubernetes: "1.23.0",
+			},
+			networkConfig: kubeone.ClusterNetworkConfig{
+				CNI: &kubeone.CNI{
+					External: &kubeone.ExternalCNISpec{},
+				},
+				KubeProxy: &kubeone.KubeProxyConfig{
+					IPVS: &kubeone.IPVSConfig{},
+				},
+			},
+			addonsConfig: &kubeone.Addons{
+				Enable: true,
+				Addons: []kubeone.Addon{
+					{
+						Name: "calico-vxlan",
+					},
+				},
 			},
 			expectedError: true,
 		},
@@ -853,11 +951,13 @@ func TestValidateCloudProviderSupportsKubernetes(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			c := kubeone.KubeOneCluster{
-				CloudProvider: tc.providerConfig,
-				Versions:      tc.versionConfig,
+				CloudProvider:  tc.providerConfig,
+				Versions:       tc.versionConfig,
+				ClusterNetwork: tc.networkConfig,
+				Addons:         tc.addonsConfig,
 			}
 
-			errs := ValidateCloudProviderSupportsKubernetes(c, nil)
+			errs := ValidateKubernetesSupport(c, nil)
 			if (len(errs) == 0) == tc.expectedError {
 				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
 			}
@@ -1547,12 +1647,25 @@ func TestValidateAddons(t *testing.T) {
 			expectedError: false,
 		},
 		{
-			name: "addons enabled, no path set",
+			name: "addons enabled, no path set and no embedded addons specified",
 			addons: &kubeone.Addons{
 				Enable: true,
 				Path:   "",
 			},
 			expectedError: true,
+		},
+		{
+			name: "embedded addon enabled, no path set",
+			addons: &kubeone.Addons{
+				Enable: true,
+				Path:   "",
+				Addons: []kubeone.Addon{
+					{
+						Name: resources.AddonMachineController,
+					},
+				},
+			},
+			expectedError: false,
 		},
 		{
 			name: "valid addons config (disabled)",
@@ -1570,13 +1683,6 @@ func TestValidateAddons(t *testing.T) {
 			name:          "valid addons config (nil)",
 			addons:        nil,
 			expectedError: false,
-		},
-		{
-			name: "invalid addons config (enabled without path)",
-			addons: &kubeone.Addons{
-				Enable: true,
-			},
-			expectedError: true,
 		},
 	}
 	for _, tc := range tests {

@@ -1,6 +1,6 @@
 +++
 title = "v1beta1 API Reference"
-date = 2021-12-08T15:09:59+05:00
+date = 2021-12-23T21:13:02+05:00
 weight = 11
 +++
 ## v1beta1
@@ -109,7 +109,9 @@ Addons config
 
 AssetConfiguration controls how assets (e.g. CNI, Kubelet, kube-apiserver, and more)
 are pulled.
-The AssetConfiguration API is an alpha API currently working only on Amazon Linux 2.
+The AssetConfiguration API is a deprecated API removed in the v1beta2 API.
+The AssetConfiguration API will be completely removed in KubeOne 1.6+
+Currently, configuring BinaryAssets works only on Amazon Linux 2.
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |

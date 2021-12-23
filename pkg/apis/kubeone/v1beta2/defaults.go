@@ -53,9 +53,7 @@ func SetDefaults_KubeOneCluster(obj *KubeOneCluster) {
 	SetDefaults_Proxy(obj)
 	SetDefaults_MachineController(obj)
 	SetDefaults_SystemPackages(obj)
-	SetDefaults_AssetConfiguration(obj)
 	SetDefaults_Features(obj)
-	SetDefaults_Addons(obj)
 }
 
 func SetDefaults_Hosts(obj *KubeOneCluster) {
@@ -200,31 +198,6 @@ func SetDefaults_SystemPackages(obj *KubeOneCluster) {
 	}
 }
 
-func SetDefaults_AssetConfiguration(obj *KubeOneCluster) {
-	if obj.RegistryConfiguration == nil || obj.RegistryConfiguration.OverwriteRegistry == "" {
-		// We default AssetConfiguration only if RegistryConfiguration.OverwriteRegistry
-		// is used
-		return
-	}
-
-	obj.AssetConfiguration.Kubernetes.ImageRepository = defaults(
-		obj.AssetConfiguration.Kubernetes.ImageRepository,
-		obj.RegistryConfiguration.OverwriteRegistry,
-	)
-	obj.AssetConfiguration.CoreDNS.ImageRepository = defaults(
-		obj.AssetConfiguration.CoreDNS.ImageRepository,
-		obj.RegistryConfiguration.OverwriteRegistry,
-	)
-	obj.AssetConfiguration.Etcd.ImageRepository = defaults(
-		obj.AssetConfiguration.Etcd.ImageRepository,
-		obj.RegistryConfiguration.OverwriteRegistry,
-	)
-	obj.AssetConfiguration.MetricsServer.ImageRepository = defaults(
-		obj.AssetConfiguration.MetricsServer.ImageRepository,
-		obj.RegistryConfiguration.OverwriteRegistry,
-	)
-}
-
 func SetDefaults_Features(obj *KubeOneCluster) {
 	if obj.Features.MetricsServer == nil {
 		obj.Features.MetricsServer = &MetricsServer{
@@ -246,12 +219,6 @@ func defaultOpenIDConnect(config *OpenIDConnectConfig) {
 	config.GroupsClaim = defaults(config.GroupsClaim, "groups")
 	config.GroupsPrefix = defaults(config.GroupsPrefix, "oidc:")
 	config.SigningAlgs = defaults(config.SigningAlgs, "RS256")
-}
-
-func SetDefaults_Addons(obj *KubeOneCluster) {
-	if obj.Addons != nil && obj.Addons.Enable {
-		obj.Addons.Path = defaults(obj.Addons.Path, "./addons")
-	}
 }
 
 func defaultStaticAuditLogConfig(obj *StaticAuditLogConfig) {

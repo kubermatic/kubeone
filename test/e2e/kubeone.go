@@ -58,7 +58,6 @@ func (k1 *Kubeone) CreateV1Beta1Config(
 	clusterNetworkService string,
 	credentialsFile string,
 	containerRuntime kubeoneinternal.ContainerRuntimeConfig,
-	eksdVersions *eksdVersions,
 ) error {
 	k1Cluster := kubeonev1beta1.KubeOneCluster{
 		TypeMeta: metav1.TypeMeta{
@@ -107,14 +106,6 @@ func (k1 *Kubeone) CreateV1Beta1Config(
 		}
 
 		k1Cluster.CloudProvider.CloudConfig = credentials["cloudConfig"]
-	}
-
-	if eksdVersions != nil {
-		assetConfig, err := genEKSDAssetConfig(eksdVersions)
-		if err != nil {
-			return errors.Wrap(err, "failed to generate asset configuration for eks-d cluster")
-		}
-		k1Cluster.AssetConfiguration = *assetConfig
 	}
 
 	k1Config, err := kyaml.Marshal(&k1Cluster)
@@ -201,7 +192,8 @@ func (k1 *Kubeone) Install(tfJSON string, installFlags []string) error {
 		return err
 	}
 
-	flags := []string{"install",
+	flags := []string{"apply",
+		"--auto-approve",
 		"--tfjson", "tf.json",
 		"--manifest", k1.ConfigurationFilePath}
 	if len(installFlags) != 0 {
@@ -218,7 +210,8 @@ func (k1 *Kubeone) Install(tfJSON string, installFlags []string) error {
 
 // Upgrade runs 'kubeone upgrade' command to upgrade the cluster
 func (k1 *Kubeone) Upgrade(upgradeFlags []string) error {
-	flags := []string{"upgrade",
+	flags := []string{"apply",
+		"--auto-approve",
 		"--tfjson", "tf.json",
 		"--upgrade-machine-deployments",
 		"--manifest", k1.ConfigurationFilePath}
@@ -268,7 +261,7 @@ func (k1 *Kubeone) Reset() error {
 		"--destroy-workers",
 		"--manifest", k1.ConfigurationFilePath)
 	if err != nil {
-		return fmt.Errorf("destroing workers failed: %w", err)
+		return fmt.Errorf("destroying workers failed: %w", err)
 	}
 
 	return nil

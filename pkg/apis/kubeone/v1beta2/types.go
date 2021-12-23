@@ -59,23 +59,45 @@ type KubeOneCluster struct {
 	Addons *Addons `json:"addons,omitempty"`
 	// SystemPackages configure kubeone behaviour regarding OS packages.
 	SystemPackages *SystemPackages `json:"systemPackages,omitempty"`
-	// AssetConfiguration configures how are binaries and container images downloaded
-	AssetConfiguration AssetConfiguration `json:"assetConfiguration,omitempty"`
 	// RegistryConfiguration configures how Docker images are pulled from an image registry
 	RegistryConfiguration *RegistryConfiguration `json:"registryConfiguration,omitempty"`
 }
 
 // ContainerRuntimeConfig
 type ContainerRuntimeConfig struct {
-	Docker     *ContainerRuntimeDocker     `json:"docker,omitempty"`
+	// Dockerd related configurations
+	Docker *ContainerRuntimeDocker `json:"docker,omitempty"`
+
+	// Containerd related configurations
 	Containerd *ContainerRuntimeContainerd `json:"containerd,omitempty"`
 }
 
 // ContainerRuntimeDocker defines docker container runtime
-type ContainerRuntimeDocker struct{}
+type ContainerRuntimeDocker struct {
+	// Configures dockerd with "registry-mirrors"
+	RegistryMirrors []string `json:"registryMirrors"`
+}
 
 // ContainerRuntimeContainerd defines docker container runtime
-type ContainerRuntimeContainerd struct{}
+type ContainerRuntimeContainerd struct {
+	// A map of registries to use to render configs and mirrors for containerd registries
+	Registries map[string]ContainerdRegistry `json:"registries,omitempty"`
+}
+
+// ContainerdRegistry defines endpoints and security for given container registry
+type ContainerdRegistry struct {
+	// List of registry mirrors to use
+	Mirrors []string `json:"mirrors,omitempty"`
+
+	// TLSConfig for the registry
+	TLSConfig *ContainerdTLSConfig `json:"tlsConfig,omitempty"`
+}
+
+// Configures containerd TLS for a registry
+type ContainerdTLSConfig struct {
+	// Don't validate remote TLS certificate
+	InsecureSkipVerify bool `json:"insecureSkipVerify,omitempty"`
+}
 
 // OperatingSystemName defines the operating system used on instances
 type OperatingSystemName string
@@ -129,6 +151,8 @@ type HostConfig struct {
 	// control plane nodes.
 	// Explicitly empty (i.e. []corev1.Taint{}) means no taints will be applied (this is default for worker nodes).
 	Taints []corev1.Taint `json:"taints,omitempty"`
+	// Kubelet
+	Kubelet KubeletConfig `json:"kubelet,omitempty"`
 	// OperatingSystem information populated at the runtime.
 	OperatingSystem OperatingSystemName `json:"-"`
 }
@@ -143,6 +167,19 @@ type ControlPlaneConfig struct {
 type StaticWorkersConfig struct {
 	// Hosts
 	Hosts []HostConfig `json:"hosts,omitempty"`
+}
+
+// KubeletConfig provides some kubelet configuration options
+type KubeletConfig struct {
+	// SystemReserved configure --system-reserved command-line flag of the kubelet.
+	// See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/
+	SystemReserved map[string]string `json:"systemReserved,omitempty"`
+	// KubeReserved configure --kube-reserved command-line flag of the kubelet.
+	// See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/
+	KubeReserved map[string]string `json:"kubeReserved,omitempty"`
+	// EvictionHard configure --eviction-hard command-line flag of the kubelet.
+	// See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/
+	EvictionHard map[string]string `json:"evictionHard,omitempty"`
 }
 
 // APIEndpoint is the endpoint used to communicate with the Kubernetes API
@@ -430,61 +467,6 @@ type SystemPackages struct {
 	// ConfigureRepositories (true by default) is a flag to control automatic
 	// configuration of kubeadm / docker repositories.
 	ConfigureRepositories bool `json:"configureRepositories,omitempty"`
-}
-
-// AssetConfiguration controls how assets (e.g. CNI, Kubelet, kube-apiserver, and more)
-// are pulled.
-// The AssetConfiguration API is a deprecated API, planned to be remmoved in
-// KubeOne 1.4. Currently, configuring BinaryAssets working only on
-// Amazon Linux 2.
-type AssetConfiguration struct {
-	// Kubernetes configures the image registry and repository for the core Kubernetes
-	// images (kube-apiserver, kube-controller-manager, kube-scheduler, and kube-proxy).
-	// Kubernetes respects only ImageRepository (ImageTag is ignored).
-	// Default image repository and tag: defaulted dynamically by Kubeadm.
-	// Defaults to RegistryConfiguration.OverwriteRegistry if left empty
-	// and RegistryConfiguration.OverwriteRegistry is specified.
-	Kubernetes ImageAsset `json:"kubernetes,omitempty"`
-	// Pause configures the sandbox (pause) image to be used by Kubelet.
-	// Default image repository and tag: defaulted dynamically by Kubeadm.
-	// Defaults to RegistryConfiguration.OverwriteRegistry if left empty
-	// and RegistryConfiguration.OverwriteRegistry is specified.
-	Pause ImageAsset `json:"pause,omitempty"`
-	// CoreDNS configures the image registry and tag to be used for deploying
-	// the CoreDNS component.
-	// Default image repository and tag: defaulted dynamically by Kubeadm.
-	// Defaults to RegistryConfiguration.OverwriteRegistry if left empty
-	// and RegistryConfiguration.OverwriteRegistry is specified.
-	CoreDNS ImageAsset `json:"coreDNS,omitempty"`
-	// Etcd configures the image registry and tag to be used for deploying
-	// the Etcd component.
-	// Default image repository and tag: defaulted dynamically by Kubeadm.
-	// Defaults to RegistryConfiguration.OverwriteRegistry if left empty
-	// and RegistryConfiguration.OverwriteRegistry is specified.
-	Etcd ImageAsset `json:"etcd,omitempty"`
-	// MetricsServer configures the image registry and tag to be used for deploying
-	// the metrics-server component.
-	// Default image repository and tag: defaulted dynamically by KubeOne.
-	// Defaults to RegistryConfiguration.OverwriteRegistry if left empty
-	// and RegistryConfiguration.OverwriteRegistry is specified.
-	MetricsServer ImageAsset `json:"metricsServer,omitempty"`
-	// CNI configures the source for downloading the CNI binaries.
-	// If not specified, kubernetes-cni package will be installed.
-	// Default: none
-	CNI BinaryAsset `json:"cni,omitempty"`
-	// NodeBinaries configures the source for downloading the
-	// Kubernetes Node Binaries tarball (e.g. kubernetes-node-linux-amd64.tar.gz).
-	// The tarball must have .tar.gz as the extension and must contain the
-	// following files:
-	// - kubernetes/node/bin/kubelet
-	// - kubernetes/node/bin/kubeadm
-	// If not specified, kubelet and kubeadm packages will be installed.
-	// Default: none
-	NodeBinaries BinaryAsset `json:"nodeBinaries,omitempty"`
-	// Kubectl configures the source for downloading the Kubectl binary.
-	// If not specified, kubelet package will be installed.
-	// Default: none
-	Kubectl BinaryAsset `json:"kubectl,omitempty"`
 }
 
 // ImageAsset is used to customize the image repository and the image tag

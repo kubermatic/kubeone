@@ -101,6 +101,29 @@
   * If you're still using this feature, make sure to migrate away before upgrading to this KubeOne release
 * Remove Ansible examples ([#1633](https://github.com/kubermatic/kubeone/pull/1633))
 
+# [v1.3.3](https://github.com/kubermatic/kubeone/releases/tag/v1.3.3) - 2021-12-16
+
+## Changed
+
+### Fixed
+
+* Allow pods with the seccomp profile defined to get scheduled if the PodSecurityPolicy (PSP) feature is enabled ([#1687](https://github.com/kubermatic/kubeone/pull/1687))
+* Fix the image loader script to support KubeOne 1.3+ and Kubernetes 1.22+ ([#1672](https://github.com/kubermatic/kubeone/pull/1672))
+* The `kubeone config images` command now shows images for the latest Kubernetes version (instead of for the oldest) ([#1672](https://github.com/kubermatic/kubeone/pull/1672))
+* Add a new `--kubernetes-version` flag to the `kubeone config images` command ([#1672](https://github.com/kubermatic/kubeone/pull/1672))
+  * This flag is used to filter images for a particular Kubernetes version. The flag cannot be used along with the KubeOneCluster manifest (`--manifest` flag)
+
+### Addons
+
+* Deploy default StorageClass for GCP clusters if the `default-storage-class` addon is enabled ([#1639](https://github.com/kubermatic/kubeone/pull/1639))
+
+### Updated
+
+* Update machine-controller to v1.37.2 ([#1654](https://github.com/kubermatic/kubeone/pull/1654))
+  * machine-controller is now using Ubuntu 20.04 instead of 18.04 by default for all newly-created Machines on AWS, Azure, DO, GCE, Hetzner, Openstack, and Equinix Metal
+  * This release defaults the provisioning utility for Flatcar machines on AWS to cloud-init (previously ignition). Ignition is currently not working on AWS because of the user data limit
+  * If you have the provisioning utility explicitly set to Ignition, you'll not be able to provision new Flatcar machines on AWS. In that case, manually changing the provisioning utility to cloud-init is required
+
 # [v1.3.2](https://github.com/kubermatic/kubeone/releases/tag/v1.3.2) - 2021-11-18
 
 ## Changed

@@ -60,7 +60,6 @@ var (
 		`),
 
 		"apt-docker-ce": heredoc.Docf(`
-			{{ template "container-runtime-daemon-config" . }}
 			{{ if .CONFIGURE_REPOSITORIES }}
 			curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 			# Docker provides two different apt repos for ubuntu, bionic and focal. The focal repo currently
@@ -73,9 +72,6 @@ var (
 
 			sudo apt-mark unhold docker-ce docker-ce-cli containerd.io || true
 			{{- $DOCKER_VERSION_TO_INSTALL := "%s" }}
-			{{- if semverCompare "< 1.17" .KUBERNETES_VERSION }}
-			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
-			{{- end }}
 
 			{{- if semverCompare ">= 1.21" .KUBERNETES_VERSION }}
 			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
@@ -92,47 +88,37 @@ var (
 				docker-ce-cli=5:{{ $DOCKER_VERSION_TO_INSTALL }} \
 				containerd.io=%s
 			sudo apt-mark hold docker-ce docker-ce-cli containerd.io
-
+			{{ template "container-runtime-daemon-config" . }}
 			{{ template "containerd-systemd-setup" . -}}
 			sudo systemctl enable --now docker
 			`,
 			defaultDockerVersion,
-			defaultLegacyDockerVersion,
 			latestDockerVersion,
 			defaultContainerdVersion,
 		),
 
 		"yum-docker-ce-amzn": heredoc.Docf(`
-			{{ template "container-runtime-daemon-config" . }}
-			sudo yum versionlock delete docker cri-tools containerd || true
+			sudo yum versionlock delete docker containerd || true
 
-			{{- $CRICTL_VERSION_TO_INSTALL := "%s" }}
 			{{- $DOCKER_VERSION_TO_INSTALL := "%s" }}
-			{{- if semverCompare "< 1.17" .KUBERNETES_VERSION }}
-			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
-			{{- end }}
-
 			{{- if semverCompare ">= 1.21" .KUBERNETES_VERSION }}
 			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
 			{{- end }}
 
 			sudo yum install -y \
 				docker-{{ $DOCKER_VERSION_TO_INSTALL }} \
-				containerd.io-%s \
-				cri-tools-{{ $CRICTL_VERSION_TO_INSTALL }}
-			sudo yum versionlock add docker cri-tools containerd
+				containerd.io-%s
+			sudo yum versionlock add docker containerd
+			{{ template "container-runtime-daemon-config" . }}
 			{{ template "containerd-systemd-setup" . -}}
 			sudo systemctl enable --now docker
 		`,
-			defaultAmazonCrictlVersion,
 			defaultDockerVersion,
-			defaultLegacyDockerVersion,
 			latestDockerVersion,
 			defaultContainerdVersion,
 		),
 
 		"yum-docker-ce": heredoc.Docf(`
-			{{ template "container-runtime-daemon-config" . }}
 			{{- if .CONFIGURE_REPOSITORIES }}
 			sudo yum install -y yum-utils
 			sudo yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
@@ -142,16 +128,6 @@ var (
 			sudo yum versionlock delete docker-ce docker-ce-cli containerd.io || true
 
 			{{- $DOCKER_VERSION_TO_INSTALL := "%s" }}
-			{{- if semverCompare "< 1.17" .KUBERNETES_VERSION }}
-			{{- if .CONFIGURE_REPOSITORIES }}
-			# Docker provides two different apt repos for CentOS, 7 and 8. The 8 repo currently
-			# contains only Docker 19.03.14, which is not validated for all Kubernetes version.
-			# Therefore, we use 7 repo which has all Docker versions.
-			sudo sed -i 's/\$releasever/7/g' /etc/yum.repos.d/docker-ce.repo
-			{{- end }}
-			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
-			{{- end }}
-
 			{{- if semverCompare ">= 1.21" .KUBERNETES_VERSION }}
 			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
 			{{- end }}
@@ -161,18 +137,16 @@ var (
 				docker-ce-cli-{{ $DOCKER_VERSION_TO_INSTALL }} \
 				containerd.io-%s
 			sudo yum versionlock add docker-ce docker-ce-cli containerd.io
-
+			{{ template "container-runtime-daemon-config" . }}
 			{{ template "containerd-systemd-setup" . -}}
 			sudo systemctl enable --now docker
 			`,
 			defaultDockerVersion,
-			defaultLegacyDockerVersion,
 			latestDockerVersion,
 			defaultContainerdVersion,
 		),
 
 		"apt-containerd": heredoc.Docf(`
-			{{ template "container-runtime-daemon-config" . }}
 			{{ if .CONFIGURE_REPOSITORIES }}
 			sudo apt-get update
 			sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common lsb-release
@@ -185,13 +159,13 @@ var (
 			sudo apt-get install -y containerd.io=%s
 			sudo apt-mark hold containerd.io
 
+			{{ template "container-runtime-daemon-config" . }}
 			{{ template "containerd-systemd-setup" . -}}
 			`,
 			defaultContainerdVersion,
 		),
 
 		"yum-containerd": heredoc.Docf(`
-			{{ template "container-runtime-daemon-config" . }}
 			{{ if .CONFIGURE_REPOSITORIES }}
 			sudo yum install -y yum-utils
 			sudo yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
@@ -206,21 +180,21 @@ var (
 			sudo yum install -y containerd.io-%s
 			sudo yum versionlock add containerd.io
 
+			{{ template "container-runtime-daemon-config" . }}
 			{{ template "containerd-systemd-setup" . -}}
 			`,
 			defaultContainerdVersion,
 		),
 
 		"yum-containerd-amzn": heredoc.Docf(`
-			{{ template "container-runtime-daemon-config" . }}
-			sudo yum versionlock delete containerd cri-tools || true
-			sudo yum install -y containerd-%s cri-tools-%s
-			sudo yum versionlock add containerd cri-tools
+			sudo yum versionlock delete containerd || true
+			sudo yum install -y containerd-%s
+			sudo yum versionlock add containerd
 
+			{{ template "container-runtime-daemon-config" . }}
 			{{ template "containerd-systemd-setup" . -}}
 			`,
 			defaultAmazonContainerdVersion,
-			defaultAmazonCrictlVersion,
 		),
 
 		"flatcar-containerd": heredoc.Doc(`

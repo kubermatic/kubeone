@@ -84,6 +84,62 @@ func (h *HostConfig) SetLeader(leader bool) {
 	h.IsLeader = leader
 }
 
+func (crc ContainerRuntimeConfig) MachineControllerFlags() []string {
+	var mcFlags []string
+	switch {
+	case crc.Docker != nil:
+		if len(crc.Docker.RegistryMirrors) > 0 {
+			mcFlags = append(mcFlags,
+				fmt.Sprintf("-node-registry-mirrors=%s", strings.Join(crc.Docker.RegistryMirrors, ",")),
+			)
+		}
+	case crc.Containerd != nil:
+		// example output:
+		// -node-containerd-registry-mirrors=docker.io=custom.tld
+		// -node-containerd-registry-mirrors=docker.io=https://secure-custom.tld
+		// -node-containerd-registry-mirrors=k8s.gcr.io=http://somewhere
+		// -node-insecure-registries=docker.io,k8s.gcr.io
+		var (
+			registryNames []string
+			insecureSet   = map[string]struct{}{}
+		)
+		for registry := range crc.Containerd.Registries {
+			registryNames = append(registryNames, registry)
+		}
+
+		// because iterating over map is randomized, we need this to have a "stable" output list
+		sort.Strings(registryNames)
+
+		for _, registryName := range registryNames {
+			containerdRegistry := crc.Containerd.Registries[registryName]
+			if containerdRegistry.TLSConfig != nil && containerdRegistry.TLSConfig.InsecureSkipVerify {
+				insecureSet[registryName] = struct{}{}
+			}
+
+			for _, mirror := range containerdRegistry.Mirrors {
+				mcFlags = append(mcFlags,
+					fmt.Sprintf("-node-containerd-registry-mirrors=%s=%s", registryName, mirror),
+				)
+			}
+		}
+
+		if len(insecureSet) > 0 {
+			insecureNames := []string{}
+
+			for insecureName := range insecureSet {
+				insecureNames = append(insecureNames, insecureName)
+			}
+
+			sort.Strings(insecureNames)
+			mcFlags = append(mcFlags,
+				fmt.Sprintf("-node-insecure-registries=%s", strings.Join(insecureNames, ",")),
+			)
+		}
+	}
+
+	return mcFlags
+}
+
 func (crc ContainerRuntimeConfig) String() string {
 	switch {
 	case crc.Containerd != nil:
@@ -287,4 +343,51 @@ func (ads *Addons) RelativePath(manifestFilePath string) (string, error) {
 	}
 
 	return addonsPath, nil
+}
+
+// DefaultAssetConfiguration determines what image repository should be used
+// for Kubernetes and metrics-server images. The AssetsConfiguration has the
+// highest priority, then comes the RegistryConfiguration.
+// This function is needed because the AssetsConfiguration API has been removed
+// in the v1beta2 API, so we can't use defaulting
+func (c KubeOneCluster) DefaultAssetConfiguration() {
+	if c.RegistryConfiguration == nil || c.RegistryConfiguration.OverwriteRegistry == "" {
+		// We default AssetConfiguration only if RegistryConfiguration.OverwriteRegistry
+		// is used
+		return
+	}
+
+	c.AssetConfiguration.Kubernetes.ImageRepository = defaults(
+		c.AssetConfiguration.Kubernetes.ImageRepository,
+		c.RegistryConfiguration.OverwriteRegistry,
+	)
+	c.AssetConfiguration.CoreDNS.ImageRepository = defaults(
+		c.AssetConfiguration.CoreDNS.ImageRepository,
+		c.RegistryConfiguration.OverwriteRegistry,
+	)
+	c.AssetConfiguration.Etcd.ImageRepository = defaults(
+		c.AssetConfiguration.Etcd.ImageRepository,
+		c.RegistryConfiguration.OverwriteRegistry,
+	)
+	c.AssetConfiguration.MetricsServer.ImageRepository = defaults(
+		c.AssetConfiguration.MetricsServer.ImageRepository,
+		c.RegistryConfiguration.OverwriteRegistry,
+	)
+}
+
+func defaults(input, defaultValue string) string {
+	if input != "" {
+		return input
+	}
+	return defaultValue
+}
+
+func MapStringStringToString(m1 map[string]string, pairSeparator string) string {
+	var pairs []string
+	for k, v := range m1 {
+		pairs = append(pairs, fmt.Sprintf("%s%s%s", k, pairSeparator, v))
+	}
+	sort.Strings(pairs)
+
+	return strings.Join(pairs, ",")
 }

@@ -24,7 +24,7 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-        - image: golang:1.17.1
+        - image: golang:1.17.5
           command:
             - make
           args:
@@ -45,7 +45,7 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-        - image: golang:1.17.1
+        - image: golang:1.17.5
           command:
             - make
           args:
@@ -85,7 +85,7 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-        - image: golang:1.17.1
+        - image: golang:1.17.5
           command:
             - make
           args:
@@ -105,7 +105,7 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-        - image: golang:1.17.1
+        - image: golang:1.17.5
           command:
             - make
           args:
@@ -125,7 +125,7 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-        - image: golangci/golangci-lint:v1.42.1
+        - image: golangci/golangci-lint:v1.43.0
           command:
             - make
           args:
@@ -137,9 +137,9 @@ presubmits:
             limits:
               memory: 2Gi
   #########################################################
-  # E2E/Conformance tests (AWS, 1.19-1.22)
+  # E2E/Conformance tests (AWS, 1.20-1.23)
   #########################################################
-  - name: pull-kubeone-e2e-aws-containerd-conformance-1.19
+  - name: pull-kubeone-e2e-aws-containerd-conformance-1.20
     run_if_changed: "(pkg/|examples/terraform/aws|hack/|test/|addons/)"
     decorate: true
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
@@ -148,7 +148,7 @@ presubmits:
       preset-aws: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -162,13 +162,13 @@ presubmits:
             - name: TF_VAR_initial_machinedeployment_spotinstances
               value: "true"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.19.14"
+              value: "1.20.13"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
             requests:
               cpu: 1
-  - name: pull-kubeone-e2e-aws-flatcar-containerd-conformance-1.19
+  - name: pull-kubeone-e2e-aws-flatcar-containerd-conformance-1.20
     run_if_changed: "(pkg/|examples/terraform/aws|hack/|test/|addons/)"
     decorate: true
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
@@ -177,7 +177,7 @@ presubmits:
       preset-aws: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -199,34 +199,7 @@ presubmits:
             - name: TF_VAR_bastion_user
               value: "core"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.19.14"
-            - name: KUBEONE_TEST_RUN
-              value: "TestClusterConformance"
-          resources:
-            requests:
-              cpu: 1
-  - name: pull-kubeone-e2e-aws-conformance-1.19
-    run_if_changed: "(pkg/|examples/terraform/aws|hack/|test/|addons/)"
-    decorate: true
-    clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
-    labels:
-      preset-goproxy: "true"
-      preset-aws: "true"
-    spec:
-      containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
-          imagePullPolicy: Always
-          command:
-            - make
-          args:
-            - e2e-test
-          env:
-            - name: PROVIDER
-              value: "aws"
-            - name: TF_VAR_initial_machinedeployment_spotinstances
-              value: "true"
-            - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.19.14"
+              value: "1.20.13"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -241,7 +214,7 @@ presubmits:
       preset-aws: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -253,7 +226,7 @@ presubmits:
             - name: TF_VAR_initial_machinedeployment_spotinstances
               value: "true"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.10"
+              value: "1.20.13"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -268,7 +241,7 @@ presubmits:
       preset-aws: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -278,7 +251,7 @@ presubmits:
             - name: PROVIDER
               value: "aws"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.4"
+              value: "1.21.7"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -293,7 +266,7 @@ presubmits:
       preset-aws: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -305,13 +278,13 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.0"
+              value: "1.22.4"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
             requests:
               cpu: 1
-  - name: pull-kubeone-e2e-aws-conformance-1.22-v1beta1
+  - name: pull-kubeone-e2e-aws-conformance-1.23
     run_if_changed: "(pkg/|examples/terraform/aws|hack/|test/|addons/)"
     decorate: true
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
@@ -320,7 +293,7 @@ presubmits:
       preset-aws: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -332,7 +305,34 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.0"
+              value: "1.23.0"
+            - name: KUBEONE_TEST_RUN
+              value: "TestClusterConformance"
+          resources:
+            requests:
+              cpu: 1
+  - name: pull-kubeone-e2e-aws-conformance-1.23-v1beta1
+    run_if_changed: "(pkg/|examples/terraform/aws|hack/|test/|addons/)"
+    decorate: true
+    clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
+    labels:
+      preset-goproxy: "true"
+      preset-aws: "true"
+    spec:
+      containers:
+        - image: kubermatic/kubeone-e2e:v0.1.20
+          imagePullPolicy: Always
+          command:
+            - make
+          args:
+            - e2e-test
+          env:
+            - name: PROVIDER
+              value: "aws"
+            - name: CONTAINER_RUNTIME
+              value: containerd
+            - name: TEST_CLUSTER_TARGET_VERSION
+              value: "1.23.0"
             - name: TEST_CONFIG_API_VERSION
               value: "v1beta1"
             - name: KUBEONE_TEST_RUN
@@ -341,33 +341,8 @@ presubmits:
             requests:
               cpu: 1
   #########################################################
-  # E2E/Conformance tests (DigitalOcean, 1.19-1.22)
+  # E2E/Conformance tests (DigitalOcean, 1.20-1.23)
   #########################################################
-  - name: pull-kubeone-e2e-digitalocean-conformance-1.19
-    always_run: false
-    decorate: true
-    clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
-    labels:
-      preset-goproxy: "true"
-      preset-digitalocean: "true"
-    spec:
-      containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
-          imagePullPolicy: Always
-          command:
-            - make
-          args:
-            - e2e-test
-          env:
-            - name: PROVIDER
-              value: "digitalocean"
-            - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.19.14"
-            - name: KUBEONE_TEST_RUN
-              value: "TestClusterConformance"
-          resources:
-            requests:
-              cpu: 1
   - name: pull-kubeone-e2e-digitalocean-conformance-1.20
     always_run: false
     decorate: true
@@ -377,7 +352,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -387,7 +362,7 @@ presubmits:
             - name: PROVIDER
               value: "digitalocean"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.10"
+              value: "1.20.13"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -402,7 +377,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -412,7 +387,7 @@ presubmits:
             - name: PROVIDER
               value: "digitalocean"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.4"
+              value: "1.21.7"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -427,7 +402,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -439,25 +414,22 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.0"
+              value: "1.22.4"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
             requests:
               cpu: 1
-  #########################################################
-  # E2E/Conformance tests (Hetzner, 1.19-1.22)
-  #########################################################
-  - name: pull-kubeone-e2e-hetzner-conformance-1.19
+  - name: pull-kubeone-e2e-digitalocean-conformance-1.23
     always_run: false
     decorate: true
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     labels:
       preset-goproxy: "true"
-      preset-hetzner: "true"
+      preset-digitalocean: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -465,14 +437,19 @@ presubmits:
             - e2e-test
           env:
             - name: PROVIDER
-              value: "hetzner"
+              value: "digitalocean"
+            - name: CONTAINER_RUNTIME
+              value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.19.14"
+              value: "1.23.0"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
             requests:
               cpu: 1
+  #########################################################
+  # E2E/Conformance tests (Hetzner, 1.20-1.23)
+  #########################################################
   - name: pull-kubeone-e2e-hetzner-conformance-1.20
     always_run: false
     decorate: true
@@ -482,7 +459,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -492,7 +469,7 @@ presubmits:
             - name: PROVIDER
               value: "hetzner"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.10"
+              value: "1.20.13"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -507,7 +484,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -517,7 +494,7 @@ presubmits:
             - name: PROVIDER
               value: "hetzner"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.4"
+              value: "1.21.7"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -532,7 +509,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -544,25 +521,22 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.0"
+              value: "1.22.4"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
             requests:
               cpu: 1
-  #########################################################
-  # E2E/Conformance tests (GCE, 1.19-1.22)
-  #########################################################
-  - name: pull-kubeone-e2e-gce-conformance-1.19
+  - name: pull-kubeone-e2e-hetzner-conformance-1.23
     always_run: false
     decorate: true
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     labels:
       preset-goproxy: "true"
-      preset-gce: "true"
+      preset-hetzner: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -570,16 +544,19 @@ presubmits:
             - e2e-test
           env:
             - name: PROVIDER
-              value: "gce"
+              value: "hetzner"
+            - name: CONTAINER_RUNTIME
+              value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.19.14"
+              value: "1.23.0"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
-            - name: TF_VAR_project
-              value: "kubeone-terraform-test"
           resources:
             requests:
               cpu: 1
+  #########################################################
+  # E2E/Conformance tests (GCE, 1.20-1.23)
+  #########################################################
   - name: pull-kubeone-e2e-gce-conformance-1.20
     always_run: false
     decorate: true
@@ -589,7 +566,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -599,7 +576,7 @@ presubmits:
             - name: PROVIDER
               value: "gce"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.10"
+              value: "1.20.13"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
             - name: TF_VAR_project
@@ -616,7 +593,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -626,7 +603,7 @@ presubmits:
             - name: PROVIDER
               value: "gce"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.4"
+              value: "1.21.7"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
             - name: TF_VAR_project
@@ -643,7 +620,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -655,7 +632,36 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.0"
+              value: "1.22.4"
+            - name: KUBEONE_TEST_RUN
+              value: "TestClusterConformance"
+            - name: TF_VAR_project
+              value: "kubeone-terraform-test"
+          resources:
+            requests:
+              cpu: 1
+  - name: pull-kubeone-e2e-gce-conformance-1.23
+    always_run: false
+    decorate: true
+    clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
+    labels:
+      preset-goproxy: "true"
+      preset-gce: "true"
+    spec:
+      containers:
+        - image: kubermatic/kubeone-e2e:v0.1.20
+          imagePullPolicy: Always
+          command:
+            - make
+          args:
+            - e2e-test
+          env:
+            - name: PROVIDER
+              value: "gce"
+            - name: CONTAINER_RUNTIME
+              value: containerd
+            - name: TEST_CLUSTER_TARGET_VERSION
+              value: "1.23.0"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
             - name: TF_VAR_project
@@ -666,31 +672,6 @@ presubmits:
   #########################################################
   # E2E/Conformance tests (Equinix Metal, 1.19-1.22)
   #########################################################
-  - name: pull-kubeone-e2e-equinix-metal-conformance-1.19
-    always_run: false
-    decorate: true
-    clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
-    labels:
-      preset-goproxy: "true"
-      preset-equinix-metal: "true"
-    spec:
-      containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
-          imagePullPolicy: Always
-          command:
-            - make
-          args:
-            - e2e-test
-          env:
-            - name: PROVIDER
-              value: "equinixmetal"
-            - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.19.14"
-            - name: KUBEONE_TEST_RUN
-              value: "TestClusterConformance"
-          resources:
-            requests:
-              cpu: 1
   - name: pull-kubeone-e2e-equinix-metal-conformance-1.20
     always_run: false
     decorate: true
@@ -700,7 +681,7 @@ presubmits:
       preset-equinix-metal: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -710,7 +691,7 @@ presubmits:
             - name: PROVIDER
               value: "equinixmetal"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.10"
+              value: "1.20.13"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -725,7 +706,7 @@ presubmits:
       preset-equinix-metal: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -735,7 +716,7 @@ presubmits:
             - name: PROVIDER
               value: "equinixmetal"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.4"
+              value: "1.21.7"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -750,7 +731,7 @@ presubmits:
       preset-equinix-metal: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -762,25 +743,22 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.0"
+              value: "1.22.4"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
             requests:
               cpu: 1
-  #########################################################
-  # E2E/Conformance tests (OpenStack, 1.19-1.22)
-  #########################################################
-  - name: pull-kubeone-e2e-openstack-conformance-1.19
+  - name: pull-kubeone-e2e-equinix-metal-conformance-1.23
     always_run: false
     decorate: true
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     labels:
       preset-goproxy: "true"
-      preset-openstack: "true"
+      preset-equinix-metal: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -788,14 +766,19 @@ presubmits:
             - e2e-test
           env:
             - name: PROVIDER
-              value: "openstack"
+              value: "equinixmetal"
+            - name: CONTAINER_RUNTIME
+              value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.19.14"
+              value: "1.23.0"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
             requests:
               cpu: 1
+  #########################################################
+  # E2E/Conformance tests (OpenStack, 1.20-1.23)
+  #########################################################
   - name: pull-kubeone-e2e-openstack-conformance-1.20
     always_run: false
     decorate: true
@@ -805,7 +788,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -815,7 +798,7 @@ presubmits:
             - name: PROVIDER
               value: "openstack"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.10"
+              value: "1.20.13"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -830,7 +813,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -840,7 +823,7 @@ presubmits:
             - name: PROVIDER
               value: "openstack"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.4"
+              value: "1.21.7"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -855,7 +838,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -867,7 +850,34 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.0"
+              value: "1.22.4"
+            - name: KUBEONE_TEST_RUN
+              value: "TestClusterConformance"
+          resources:
+            requests:
+              cpu: 1
+  - name: pull-kubeone-e2e-openstack-conformance-1.23
+    always_run: false
+    decorate: true
+    clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
+    labels:
+      preset-goproxy: "true"
+      preset-openstack: "true"
+    spec:
+      containers:
+        - image: kubermatic/kubeone-e2e:v0.1.20
+          imagePullPolicy: Always
+          command:
+            - make
+          args:
+            - e2e-test
+          env:
+            - name: PROVIDER
+              value: "openstack"
+            - name: CONTAINER_RUNTIME
+              value: containerd
+            - name: TEST_CLUSTER_TARGET_VERSION
+              value: "1.23.0"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -885,7 +895,7 @@ presubmits:
       preset-aws: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -899,9 +909,9 @@ presubmits:
             - name: TF_VAR_initial_machinedeployment_spotinstances
               value: "true"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.19.14"
+              value: "1.19.16"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.10"
+              value: "1.20.13"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -915,7 +925,7 @@ presubmits:
       preset-aws: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -925,9 +935,9 @@ presubmits:
             - name: PROVIDER
               value: "aws"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.19.14"
+              value: "1.19.16"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.10"
+              value: "1.20.13"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -941,7 +951,7 @@ presubmits:
       preset-aws: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -953,9 +963,9 @@ presubmits:
             - name: TF_VAR_initial_machinedeployment_spotinstances
               value: "true"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.20.10"
+              value: "1.20.13"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.4"
+              value: "1.21.7"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -969,7 +979,7 @@ presubmits:
       preset-aws: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -983,9 +993,39 @@ presubmits:
             - name: TF_VAR_initial_machinedeployment_spotinstances
               value: "true"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.21.4"
+              value: "1.21.7"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.0"
+              value: "1.22.4"
+            - name: TEST_TIMEOUT
+              valut: "120m"
+            - name: KUBEONE_TEST_RUN
+              value: "TestClusterUpgrade"
+  - name: pull-kubeone-e2e-aws-upgrade-1.22-1.23
+    run_if_changed: "(pkg/|examples/terraform/aws|hack/|test/|addons/)"
+    decorate: true
+    clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
+    labels:
+      preset-goproxy: "true"
+      preset-aws: "true"
+    spec:
+      containers:
+        - image: kubermatic/kubeone-e2e:v0.1.20
+          imagePullPolicy: Always
+          command:
+            - make
+          args:
+            - e2e-test
+          env:
+            - name: PROVIDER
+              value: "aws"
+            - name: CONTAINER_RUNTIME
+              value: containerd
+            - name: TF_VAR_initial_machinedeployment_spotinstances
+              value: "true"
+            - name: TEST_CLUSTER_INITIAL_VERSION
+              value: "1.22.4"
+            - name: TEST_CLUSTER_TARGET_VERSION
+              value: "1.23.0"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1002,7 +1042,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -1012,9 +1052,9 @@ presubmits:
             - name: PROVIDER
               value: "digitalocean"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.19.14"
+              value: "1.19.16"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.10"
+              value: "1.20.13"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1028,7 +1068,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -1038,9 +1078,9 @@ presubmits:
             - name: PROVIDER
               value: "digitalocean"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.20.10"
+              value: "1.20.13"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.4"
+              value: "1.21.7"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1054,7 +1094,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -1066,9 +1106,37 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.21.4"
+              value: "1.21.7"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.0"
+              value: "1.22.4"
+            - name: TEST_TIMEOUT
+              valut: "120m"
+            - name: KUBEONE_TEST_RUN
+              value: "TestClusterUpgrade"
+  - name: pull-kubeone-e2e-digitalocean-upgrade-1.22-1.23
+    always_run: false
+    decorate: true
+    clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
+    labels:
+      preset-goproxy: "true"
+      preset-digitalocean: "true"
+    spec:
+      containers:
+        - image: kubermatic/kubeone-e2e:v0.1.20
+          imagePullPolicy: Always
+          command:
+            - make
+          args:
+            - e2e-test
+          env:
+            - name: PROVIDER
+              value: "digitalocean"
+            - name: CONTAINER_RUNTIME
+              value: containerd
+            - name: TEST_CLUSTER_INITIAL_VERSION
+              value: "1.22.4"
+            - name: TEST_CLUSTER_TARGET_VERSION
+              value: "1.23.0"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1085,7 +1153,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -1095,9 +1163,9 @@ presubmits:
             - name: PROVIDER
               value: "hetzner"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.19.14"
+              value: "1.19.16"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.10"
+              value: "1.20.13"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1111,7 +1179,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -1121,9 +1189,9 @@ presubmits:
             - name: PROVIDER
               value: "hetzner"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.20.10"
+              value: "1.20.13"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.4"
+              value: "1.21.7"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1137,7 +1205,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -1149,9 +1217,37 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.21.4"
+              value: "1.21.7"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.0"
+              value: "1.22.4"
+            - name: TEST_TIMEOUT
+              valut: "120m"
+            - name: KUBEONE_TEST_RUN
+              value: "TestClusterUpgrade"
+  - name: pull-kubeone-e2e-hetzner-upgrade-1.22-1.23
+    always_run: false
+    decorate: true
+    clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
+    labels:
+      preset-goproxy: "true"
+      preset-hetzner: "true"
+    spec:
+      containers:
+        - image: kubermatic/kubeone-e2e:v0.1.20
+          imagePullPolicy: Always
+          command:
+            - make
+          args:
+            - e2e-test
+          env:
+            - name: PROVIDER
+              value: "hetzner"
+            - name: CONTAINER_RUNTIME
+              value: containerd
+            - name: TEST_CLUSTER_INITIAL_VERSION
+              value: "1.22.4"
+            - name: TEST_CLUSTER_TARGET_VERSION
+              value: "1.23.0"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1168,7 +1264,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -1178,9 +1274,9 @@ presubmits:
             - name: PROVIDER
               value: "gce"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.19.14"
+              value: "1.19.16"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.10"
+              value: "1.20.13"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1196,7 +1292,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -1206,9 +1302,9 @@ presubmits:
             - name: PROVIDER
               value: "gce"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.20.10"
+              value: "1.20.13"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.4"
+              value: "1.21.7"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1224,7 +1320,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -1236,9 +1332,39 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.21.4"
+              value: "1.21.7"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.0"
+              value: "1.22.4"
+            - name: TEST_TIMEOUT
+              valut: "120m"
+            - name: KUBEONE_TEST_RUN
+              value: "TestClusterUpgrade"
+            - name: TF_VAR_project
+              value: "kubeone-terraform-test"
+  - name: pull-kubeone-e2e-gce-upgrade-1.22-1.23
+    always_run: false
+    decorate: true
+    clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
+    labels:
+      preset-goproxy: "true"
+      preset-gce: "true"
+    spec:
+      containers:
+        - image: kubermatic/kubeone-e2e:v0.1.20
+          imagePullPolicy: Always
+          command:
+            - make
+          args:
+            - e2e-test
+          env:
+            - name: PROVIDER
+              value: "gce"
+            - name: CONTAINER_RUNTIME
+              value: containerd
+            - name: TEST_CLUSTER_INITIAL_VERSION
+              value: "1.22.4"
+            - name: TEST_CLUSTER_TARGET_VERSION
+              value: "1.23.0"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1257,7 +1383,7 @@ presubmits:
       preset-equinix-metal: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -1267,9 +1393,9 @@ presubmits:
             - name: PROVIDER
               value: "equinixmetal"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.19.14"
+              value: "1.19.16"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.10"
+              value: "1.20.13"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1283,7 +1409,7 @@ presubmits:
       preset-equinix-metal: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -1293,9 +1419,9 @@ presubmits:
             - name: PROVIDER
               value: "equinixmetal"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.20.10"
+              value: "1.20.13"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.4"
+              value: "1.21.7"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1309,7 +1435,35 @@ presubmits:
       preset-equinix-metal: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
+          imagePullPolicy: Always
+          command:
+            - make
+          args:
+            - e2e-test
+          env:
+            - name: PROVIDER
+              value: "packet"
+            - name: CONTAINER_RUNTIME
+              value: containerd
+            - name: TEST_CLUSTER_INITIAL_VERSION
+              value: "1.21.7"
+            - name: TEST_CLUSTER_TARGET_VERSION
+              value: "1.22.4"
+            - name: TEST_TIMEOUT
+              valut: "120m"
+            - name: KUBEONE_TEST_RUN
+              value: "TestClusterUpgrade"
+  - name: pull-kubeone-e2e-packet-upgrade-1.22-1.23
+    always_run: false
+    decorate: true
+    clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
+    labels:
+      preset-goproxy: "true"
+      preset-packet: "true"
+    spec:
+      containers:
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -1321,9 +1475,9 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.21.4"
+              value: "1.22.4"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.0"
+              value: "1.23.0"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1340,7 +1494,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -1350,9 +1504,9 @@ presubmits:
             - name: PROVIDER
               value: "openstack"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.19.14"
+              value: "1.19.16"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.10"
+              value: "1.20.13"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1366,7 +1520,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -1376,9 +1530,9 @@ presubmits:
             - name: PROVIDER
               value: "openstack"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.20.10"
+              value: "1.20.13"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.4"
+              value: "1.21.7"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1392,7 +1546,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.18
+        - image: kubermatic/kubeone-e2e:v0.1.20
           imagePullPolicy: Always
           command:
             - make
@@ -1404,9 +1558,37 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.21.4"
+              value: "1.21.7"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.0"
+              value: "1.22.4"
+            - name: TEST_TIMEOUT
+              valut: "120m"
+            - name: KUBEONE_TEST_RUN
+              value: "TestClusterUpgrade"
+  - name: pull-kubeone-e2e-openstack-upgrade-1.22-1.23
+    always_run: false
+    decorate: true
+    clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
+    labels:
+      preset-goproxy: "true"
+      preset-openstack: "true"
+    spec:
+      containers:
+        - image: kubermatic/kubeone-e2e:v0.1.20
+          imagePullPolicy: Always
+          command:
+            - make
+          args:
+            - e2e-test
+          env:
+            - name: PROVIDER
+              value: "openstack"
+            - name: CONTAINER_RUNTIME
+              value: containerd
+            - name: TEST_CLUSTER_INITIAL_VERSION
+              value: "1.22.4"
+            - name: TEST_CLUSTER_TARGET_VERSION
+              value: "1.23.0"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1425,7 +1607,7 @@ postsubmits:
       preset-docker-push: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/build:go-1.17-node-14-kind-0.11-0
+        - image: quay.io/kubermatic/build:go-1.17-node-16-kind-0.11-4
           command:
             - /bin/bash
             - -c
@@ -1451,7 +1633,7 @@ postsubmits:
       containers:
         # This must match the go version used for building, else go will rightfully
         # not use the cache
-        - image: quay.io/kubermatic/build:go-1.17-node-14-kind-0.11-1
+        - image: quay.io/kubermatic/build:go-1.17-node-16-kind-0.11-4
           command:
             - ./hack/ci/upload-gocache.sh
           resources:

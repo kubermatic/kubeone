@@ -53,7 +53,6 @@ func SetDefaults_KubeOneCluster(obj *KubeOneCluster) {
 	SetDefaults_Proxy(obj)
 	SetDefaults_MachineController(obj)
 	SetDefaults_SystemPackages(obj)
-	SetDefaults_AssetConfiguration(obj)
 	SetDefaults_Features(obj)
 	SetDefaults_Addons(obj)
 }
@@ -198,31 +197,6 @@ func SetDefaults_SystemPackages(obj *KubeOneCluster) {
 			ConfigureRepositories: true,
 		}
 	}
-}
-
-func SetDefaults_AssetConfiguration(obj *KubeOneCluster) {
-	if obj.RegistryConfiguration == nil || obj.RegistryConfiguration.OverwriteRegistry == "" {
-		// We default AssetConfiguration only if RegistryConfiguration.OverwriteRegistry
-		// is used
-		return
-	}
-
-	obj.AssetConfiguration.Kubernetes.ImageRepository = defaults(
-		obj.AssetConfiguration.Kubernetes.ImageRepository,
-		obj.RegistryConfiguration.OverwriteRegistry,
-	)
-	obj.AssetConfiguration.CoreDNS.ImageRepository = defaults(
-		obj.AssetConfiguration.CoreDNS.ImageRepository,
-		obj.RegistryConfiguration.OverwriteRegistry,
-	)
-	obj.AssetConfiguration.Etcd.ImageRepository = defaults(
-		obj.AssetConfiguration.Etcd.ImageRepository,
-		obj.RegistryConfiguration.OverwriteRegistry,
-	)
-	obj.AssetConfiguration.MetricsServer.ImageRepository = defaults(
-		obj.AssetConfiguration.MetricsServer.ImageRepository,
-		obj.RegistryConfiguration.OverwriteRegistry,
-	)
 }
 
 func SetDefaults_Features(obj *KubeOneCluster) {

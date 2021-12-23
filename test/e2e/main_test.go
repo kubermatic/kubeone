@@ -45,13 +45,7 @@ var (
 	testContainerRuntime containerRuntimeFlag
 	testOSControlPlane   string
 	testOSWorkers        string
-	testClusterType      string
 	testConfigAPIVersion string
-
-	testEksdEtcdVersion          string
-	testEksdCoreDNSVersion       string
-	testEksdMetricsServerVersion string
-	testEksdCNIVersion           string
 )
 
 func init() {
@@ -63,13 +57,7 @@ func init() {
 	flag.StringVar(&testTargetVersion, "target-version", "", "Cluster version to provision for tests")
 	flag.StringVar(&testOSControlPlane, "os-control-plane", "", "Operating system to use for control plane nodes")
 	flag.StringVar(&testOSWorkers, "os-workers", "", "Operating system to use for worker nodes")
-	flag.StringVar(&testClusterType, "cluster-type", "kubernetes", "Cluster type to test (kubernetes or eksd)")
 	flag.StringVar(&testConfigAPIVersion, "config-api-version", kubeonev1beta2.SchemeGroupVersion.Version, "KubeOneCluster API version to be used for testing (v1beta1 or v1beta2)")
-
-	flag.StringVar(&testEksdEtcdVersion, "eksd-etcd-version", "", "Etcd version to use for EKS-D clusters")
-	flag.StringVar(&testEksdCoreDNSVersion, "eksd-coredns-version", "", "CoreDNS version to use for EKS-D clusters")
-	flag.StringVar(&testEksdMetricsServerVersion, "eksd-metrics-server-version", "", "metrics-server version to use for EKS-D clusters")
-	flag.StringVar(&testEksdCNIVersion, "eksd-cni-version", "", "CNI version to use for EKS-D clusters")
 }
 
 func checkEnv(t *testing.T) {

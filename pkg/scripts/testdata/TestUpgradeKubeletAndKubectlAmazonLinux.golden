@@ -70,6 +70,12 @@ sudo yum install -y \
 	rsync
 
 
+sudo yum versionlock delete docker containerd || true
+
+sudo yum install -y \
+	docker-19.03.* \
+	containerd.io-1.4.*
+sudo yum versionlock add docker containerd
 
 sudo mkdir -p $(dirname /etc/docker/daemon.json)
 cat <<EOF | sudo tee /etc/docker/daemon.json
@@ -88,13 +94,6 @@ cat <<EOF | sudo tee /etc/crictl.yaml
 runtime-endpoint: unix:///var/run/dockershim.sock
 EOF
 
-sudo yum versionlock delete docker cri-tools containerd || true
-
-sudo yum install -y \
-	docker-19.03.* \
-	containerd.io-1.4.* \
-	cri-tools-1.13.0
-sudo yum versionlock add docker cri-tools containerd
 sudo mkdir -p /etc/systemd/system/containerd.service.d
 cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/environment.conf
 [Service]

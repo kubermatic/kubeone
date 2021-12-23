@@ -18,7 +18,7 @@ output "kubeone_api" {
   description = "kube-apiserver LB endpoint"
 
   value = {
-    endpoint = aws_elb.control_plane.dns_name
+    endpoint                    = aws_elb.control_plane.dns_name
     apiserver_alternative_names = var.apiserver_alternative_names
   }
 }
@@ -77,12 +77,19 @@ output "kubeone_workers" {
         sshPublicKeys   = local.worker_deploy_ssh_key
         operatingSystem = local.worker_os
         operatingSystemSpec = {
-          distUpgradeOnBoot = false
+          distUpgradeOnBoot   = false
           provisioningUtility = "cloud-init"
         }
         labels = {
           isSpotInstance = format("%t", var.initial_machinedeployment_spotinstances)
         }
+        # uncomment to following to set those kubelet parameters. More into at:
+        # https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/
+        # machineAnnotations = {
+        #  "v1.kubelet-config.machine-controller.kubermatic.io/SystemReserved" = "cpu=200m,memory=200Mi"
+        #  "v1.kubelet-config.machine-controller.kubermatic.io/KubeReserved"   = "cpu=200m,memory=300Mi"
+        #  "v1.kubelet-config.machine-controller.kubermatic.io/EvictionHard"   = ""
+        # }
         cloudProviderSpec = {
           # provider specific fields:
           # see example under `cloudProviderSpec` section at:
@@ -115,7 +122,7 @@ output "kubeone_workers" {
         sshPublicKeys   = local.worker_deploy_ssh_key
         operatingSystem = local.worker_os
         operatingSystemSpec = {
-          distUpgradeOnBoot = false
+          distUpgradeOnBoot   = false
           provisioningUtility = "cloud-init"
         }
         labels = {
@@ -153,7 +160,7 @@ output "kubeone_workers" {
         sshPublicKeys   = local.worker_deploy_ssh_key
         operatingSystem = local.worker_os
         operatingSystemSpec = {
-          distUpgradeOnBoot = false
+          distUpgradeOnBoot   = false
           provisioningUtility = "cloud-init"
         }
         labels = {

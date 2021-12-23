@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2021-12-08T15:09:59+05:00
+date = 2021-12-23T21:13:02+05:00
 weight = 11
 +++
 ## v1beta2
@@ -9,7 +9,6 @@ weight = 11
 * [AWSSpec](#awsspec)
 * [Addon](#addon)
 * [Addons](#addons)
-* [AssetConfiguration](#assetconfiguration)
 * [AzureSpec](#azurespec)
 * [BinaryAsset](#binaryasset)
 * [CNI](#cni)
@@ -20,6 +19,8 @@ weight = 11
 * [ContainerRuntimeConfig](#containerruntimeconfig)
 * [ContainerRuntimeContainerd](#containerruntimecontainerd)
 * [ContainerRuntimeDocker](#containerruntimedocker)
+* [ContainerdRegistry](#containerdregistry)
+* [ContainerdTLSConfig](#containerdtlsconfig)
 * [ControlPlaneConfig](#controlplaneconfig)
 * [DNSConfig](#dnsconfig)
 * [DigitalOceanSpec](#digitaloceanspec)
@@ -37,6 +38,7 @@ weight = 11
 * [ImageAsset](#imageasset)
 * [KubeOneCluster](#kubeonecluster)
 * [KubeProxyConfig](#kubeproxyconfig)
+* [KubeletConfig](#kubeletconfig)
 * [MachineControllerConfig](#machinecontrollerconfig)
 * [MetricsServer](#metricsserver)
 * [NoneSpec](#nonespec)
@@ -101,27 +103,6 @@ Addons config
 | path | Path on the local file system to the directory with addons manifests. | string | false |
 | globalParams | GlobalParams to the addon, to render all addons using text/template | map[string]string | false |
 | addons | Addons is a list of config options for named addon | [][Addon](#addon) | false |
-
-[Back to Group](#v1beta2)
-
-### AssetConfiguration
-
-AssetConfiguration controls how assets (e.g. CNI, Kubelet, kube-apiserver, and more)
-are pulled.
-The AssetConfiguration API is a deprecated API, planned to be remmoved in
-KubeOne 1.4. Currently, configuring BinaryAssets working only on
-Amazon Linux 2.
-
-| Field | Description | Scheme | Required |
-| ----- | ----------- | ------ | -------- |
-| kubernetes | Kubernetes configures the image registry and repository for the core Kubernetes images (kube-apiserver, kube-controller-manager, kube-scheduler, and kube-proxy). Kubernetes respects only ImageRepository (ImageTag is ignored). Default image repository and tag: defaulted dynamically by Kubeadm. Defaults to RegistryConfiguration.OverwriteRegistry if left empty and RegistryConfiguration.OverwriteRegistry is specified. | [ImageAsset](#imageasset) | false |
-| pause | Pause configures the sandbox (pause) image to be used by Kubelet. Default image repository and tag: defaulted dynamically by Kubeadm. Defaults to RegistryConfiguration.OverwriteRegistry if left empty and RegistryConfiguration.OverwriteRegistry is specified. | [ImageAsset](#imageasset) | false |
-| coreDNS | CoreDNS configures the image registry and tag to be used for deploying the CoreDNS component. Default image repository and tag: defaulted dynamically by Kubeadm. Defaults to RegistryConfiguration.OverwriteRegistry if left empty and RegistryConfiguration.OverwriteRegistry is specified. | [ImageAsset](#imageasset) | false |
-| etcd | Etcd configures the image registry and tag to be used for deploying the Etcd component. Default image repository and tag: defaulted dynamically by Kubeadm. Defaults to RegistryConfiguration.OverwriteRegistry if left empty and RegistryConfiguration.OverwriteRegistry is specified. | [ImageAsset](#imageasset) | false |
-| metricsServer | MetricsServer configures the image registry and tag to be used for deploying the metrics-server component. Default image repository and tag: defaulted dynamically by KubeOne. Defaults to RegistryConfiguration.OverwriteRegistry if left empty and RegistryConfiguration.OverwriteRegistry is specified. | [ImageAsset](#imageasset) | false |
-| cni | CNI configures the source for downloading the CNI binaries. If not specified, kubernetes-cni package will be installed. Default: none | [BinaryAsset](#binaryasset) | false |
-| nodeBinaries | NodeBinaries configures the source for downloading the Kubernetes Node Binaries tarball (e.g. kubernetes-node-linux-amd64.tar.gz). The tarball must have .tar.gz as the extension and must contain the following files: - kubernetes/node/bin/kubelet - kubernetes/node/bin/kubeadm If not specified, kubelet and kubeadm packages will be installed. Default: none | [BinaryAsset](#binaryasset) | false |
-| kubectl | Kubectl configures the source for downloading the Kubectl binary. If not specified, kubelet package will be installed. Default: none | [BinaryAsset](#binaryasset) | false |
 
 [Back to Group](#v1beta2)
 
@@ -221,8 +202,8 @@ ContainerRuntimeConfig
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
-| docker |  | *[ContainerRuntimeDocker](#containerruntimedocker) | false |
-| containerd |  | *[ContainerRuntimeContainerd](#containerruntimecontainerd) | false |
+| docker | Dockerd related configurations | *[ContainerRuntimeDocker](#containerruntimedocker) | false |
+| containerd | Containerd related configurations | *[ContainerRuntimeContainerd](#containerruntimecontainerd) | false |
 
 [Back to Group](#v1beta2)
 
@@ -232,6 +213,7 @@ ContainerRuntimeContainerd defines docker container runtime
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
+| registries | A map of registries to use to render configs and mirrors for containerd registries | map[string][ContainerdRegistry](#containerdregistry) | false |
 
 [Back to Group](#v1beta2)
 
@@ -241,6 +223,28 @@ ContainerRuntimeDocker defines docker container runtime
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
+| registryMirrors | Configures dockerd with \"registry-mirrors\" | []string | true |
+
+[Back to Group](#v1beta2)
+
+### ContainerdRegistry
+
+ContainerdRegistry defines endpoints and security for given container registry
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| mirrors | List of registry mirrors to use | []string | false |
+| tlsConfig | TLSConfig for the registry | *[ContainerdTLSConfig](#containerdtlsconfig) | false |
+
+[Back to Group](#v1beta2)
+
+### ContainerdTLSConfig
+
+Configures containerd TLS for a registry
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| insecureSkipVerify | Don't validate remote TLS certificate | bool | false |
 
 [Back to Group](#v1beta2)
 
@@ -378,6 +382,7 @@ HostConfig describes a single control plane node.
 | hostname | Hostname is the hostname(1) of the host. Default value is populated at the runtime via running `hostname -f` command over ssh. | string | false |
 | isLeader | IsLeader indicates this host as a session leader. Default value is populated at the runtime. | bool | false |
 | taints | Taints if not provided (i.e. nil) defaults to TaintEffectNoSchedule, with key node-role.kubernetes.io/master for control plane nodes. Explicitly empty (i.e. []corev1.Taint{}) means no taints will be applied (this is default for worker nodes). | [][corev1.Taint](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#taint-v1-core) | false |
+| kubelet | Kubelet | [KubeletConfig](#kubeletconfig) | false |
 
 [Back to Group](#v1beta2)
 
@@ -437,7 +442,6 @@ KubeOneCluster is KubeOne Cluster API Schema
 | features | Features enables and configures additional cluster features. | [Features](#features) | false |
 | addons | Addons are used to deploy additional manifests. | *[Addons](#addons) | false |
 | systemPackages | SystemPackages configure kubeone behaviour regarding OS packages. | *[SystemPackages](#systempackages) | false |
-| assetConfiguration | AssetConfiguration configures how are binaries and container images downloaded | [AssetConfiguration](#assetconfiguration) | false |
 | registryConfiguration | RegistryConfiguration configures how Docker images are pulled from an image registry | *[RegistryConfiguration](#registryconfiguration) | false |
 
 [Back to Group](#v1beta2)
@@ -451,6 +455,18 @@ KubeProxyConfig defines configured kube-proxy mode, default is iptables mode
 | skipInstallation | SkipInstallation will skip the installation of kube-proxy default value is false | bool | true |
 | ipvs | IPVS config | *[IPVSConfig](#ipvsconfig) | true |
 | iptables | IPTables config | *[IPTables](#iptables) | true |
+
+[Back to Group](#v1beta2)
+
+### KubeletConfig
+
+KubeletConfig provides some kubelet configuration options
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| systemReserved | SystemReserved configure --system-reserved command-line flag of the kubelet. See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/ | map[string]string | false |
+| kubeReserved | KubeReserved configure --kube-reserved command-line flag of the kubelet. See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/ | map[string]string | false |
+| evictionHard | EvictionHard configure --eviction-hard command-line flag of the kubelet. See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/ | map[string]string | false |
 
 [Back to Group](#v1beta2)
 

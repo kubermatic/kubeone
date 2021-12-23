@@ -17,6 +17,10 @@ limitations under the License.
 package addons
 
 import (
+	"io/fs"
+
+	embeddedaddons "k8c.io/kubeone/addons"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/clientutil"
 	"k8c.io/kubeone/pkg/state"
 
@@ -41,4 +45,30 @@ func vSphereService() *corev1.Service {
 			Namespace: metav1.NamespaceSystem,
 		},
 	}
+}
+
+// EmbeddedAddonsOnly checks if all specified addons are embedded addons
+func EmbeddedAddonsOnly(addons []kubeoneapi.Addon) (bool, error) {
+	// Read the directory entries for embedded addons
+	embeddedAddons, err := fs.ReadDir(embeddedaddons.FS, ".")
+	if err != nil {
+		return false, err
+	}
+
+	// Iterate over addons specified in the KubeOneCluster object
+	for _, addon := range addons {
+		embedded := false
+		// Iterate over embedded addons directory to check if the addon exists
+		for _, embeddedAddon := range embeddedAddons {
+			if embeddedAddon.Name() == addon.Name {
+				embedded = true
+				break
+			}
+		}
+		// At each iteration of the outer loop check if the "addon" was a customer/non-embedded addon
+		if !embedded {
+			return false, nil
+		}
+	}
+	return true, nil
 }

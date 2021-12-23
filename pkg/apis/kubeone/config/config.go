@@ -225,6 +225,9 @@ func SetKubeOneClusterDynamicDefaults(cfg *kubeoneapi.KubeOneCluster, credential
 		cfg.CloudProvider.CloudConfig = cc
 	}
 
+	// Default the AssetsConfiguration internal API
+	cfg.DefaultAssetConfiguration()
+
 	return nil
 }
 
