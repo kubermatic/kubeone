@@ -171,7 +171,7 @@ type StaticWorkersConfig struct {
 	Hosts []HostConfig `json:"hosts,omitempty"`
 }
 
-// KubeletConfig provides some kubelet configration options
+// KubeletConfig provides some kubelet configuration options
 type KubeletConfig struct {
 	// SystemReserved configure --system-reserved command-line flag of the kubelet.
 	// See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/

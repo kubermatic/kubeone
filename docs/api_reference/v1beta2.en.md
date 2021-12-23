@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2021-12-21T21:30:20+02:00
+date = 2021-12-23T12:22:34+01:00
 weight = 11
 +++
 ## v1beta2
@@ -451,7 +451,7 @@ KubeProxyConfig defines configured kube-proxy mode, default is iptables mode
 
 ### KubeletConfig
 
-KubeletConfig provides some kubelet configration options
+KubeletConfig provides some kubelet configuration options
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
