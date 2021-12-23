@@ -72,9 +72,9 @@ sudo yum install -y \
 
 
 
-sudo yum versionlock delete containerd cri-tools || true
-sudo yum install -y containerd-1.4.* cri-tools-1.13.0
-sudo yum versionlock add containerd cri-tools
+sudo yum versionlock delete containerd || true
+sudo yum install -y containerd-1.4.*
+sudo yum versionlock add containerd
 
 
 sudo mkdir -p $(dirname /etc/containerd/config.toml)

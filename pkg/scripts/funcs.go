@@ -77,5 +77,4 @@ const (
 	latestDockerVersion            = "20.10.*"
 	defaultContainerdVersion       = "1.4.*"
 	defaultAmazonContainerdVersion = "1.4.*"
-	defaultAmazonCrictlVersion     = "1.13.0"
 )
