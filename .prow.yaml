@@ -670,7 +670,7 @@ presubmits:
             requests:
               cpu: 1
   #########################################################
-  # E2E/Conformance tests (Equinix Metal, 1.19-1.22)
+  # E2E/Conformance tests (Equinix Metal, 1.20-1.23)
   #########################################################
   - name: pull-kubeone-e2e-equinix-metal-conformance-1.20
     always_run: false
