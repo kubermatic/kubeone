@@ -31,6 +31,7 @@ const (
 	OperatingSystemCentOS8 OperatingSystem = "centos"
 	OperatingSystemFlatcar OperatingSystem = "flatcar"
 	OperatingSystemAmazon  OperatingSystem = "amzn2"
+	OperatingSystemRHEL    OperatingSystem = "rhel"
 	OperatingSystemDefault OperatingSystem = ""
 )
 
@@ -45,6 +46,7 @@ func ValidateOperatingSystem(osName string) error {
 		OperatingSystemCentOS7,
 		OperatingSystemCentOS8,
 		OperatingSystemAmazon,
+		OperatingSystemRHEL,
 		OperatingSystemDefault:
 		return nil
 	}
@@ -85,7 +87,7 @@ func sshUsername(osName OperatingSystem) (string, error) {
 		return "centos", nil
 	case OperatingSystemFlatcar:
 		return "core", nil
-	case OperatingSystemAmazon:
+	case OperatingSystemRHEL, OperatingSystemAmazon:
 		return "ec2-user", nil
 	}
 
