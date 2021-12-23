@@ -129,6 +129,7 @@ EOF
 sudo install --owner=0 --group=0 --mode=0755 /tmp/k8s-binaries/kubernetes/node/bin/kubeadm /opt/bin/kubeadm
 sudo ln -sf /opt/bin/kubeadm /usr/bin/
 rm /tmp/k8s-binaries/kubernetes/node/bin/kubeadm
+sudo yum install -y cri-tools
 {{- end }}
 
 {{- if and .KUBECTL .KUBECTL_URL }}

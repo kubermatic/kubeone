@@ -98,25 +98,21 @@ var (
 		),
 
 		"yum-docker-ce-amzn": heredoc.Docf(`
-			sudo yum versionlock delete docker cri-tools containerd || true
+			sudo yum versionlock delete docker containerd || true
 
-			{{- $CRICTL_VERSION_TO_INSTALL := "%s" }}
 			{{- $DOCKER_VERSION_TO_INSTALL := "%s" }}
-			
 			{{- if semverCompare ">= 1.21" .KUBERNETES_VERSION }}
 			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
 			{{- end }}
 
 			sudo yum install -y \
 				docker-{{ $DOCKER_VERSION_TO_INSTALL }} \
-				containerd.io-%s \
-				cri-tools-{{ $CRICTL_VERSION_TO_INSTALL }}
-			sudo yum versionlock add docker cri-tools containerd
+				containerd.io-%s
+			sudo yum versionlock add docker containerd
 			{{ template "container-runtime-daemon-config" . }}
 			{{ template "containerd-systemd-setup" . -}}
 			sudo systemctl enable --now docker
 		`,
-			defaultAmazonCrictlVersion,
 			defaultDockerVersion,
 			latestDockerVersion,
 			defaultContainerdVersion,
@@ -191,15 +187,14 @@ var (
 		),
 
 		"yum-containerd-amzn": heredoc.Docf(`
-			sudo yum versionlock delete containerd cri-tools || true
-			sudo yum install -y containerd-%s cri-tools-%s
-			sudo yum versionlock add containerd cri-tools
+			sudo yum versionlock delete containerd || true
+			sudo yum install -y containerd-%s
+			sudo yum versionlock add containerd
 
 			{{ template "container-runtime-daemon-config" . }}
 			{{ template "containerd-systemd-setup" . -}}
 			`,
 			defaultAmazonContainerdVersion,
-			defaultAmazonCrictlVersion,
 		),
 
 		"flatcar-containerd": heredoc.Doc(`
