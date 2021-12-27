@@ -1,4 +1,7 @@
 project_name: kubeone
+before:
+  hooks:
+    - "bom generate -n https://kubeone.io/kubeone-v{{.Version}}.spdx -o ./kubeone-v{{.Version}}.spdx --dirs=."
 builds:
 - ldflags:
   - "-s -w"
@@ -26,3 +29,6 @@ archives:
       - examples/**/*
       - hack/image-loader.sh
       - addons/**/*
+release:
+  extra_files:
+    - glob: kubeone-v{{.Version}}.spdx
