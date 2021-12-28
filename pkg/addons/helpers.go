@@ -49,7 +49,7 @@ func vSphereService() *corev1.Service {
 }
 
 func migratePacketToEquinixCCM(s *state.State) error {
-	return DeleteAddonByName(s, resources.AddomCCMPacket)
+	return DeleteAddonByName(s, resources.AddonCCMPacket)
 }
 
 // EmbeddedAddonsOnly checks if all specified addons are embedded addons

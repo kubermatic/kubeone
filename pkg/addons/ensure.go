@@ -41,6 +41,7 @@ var (
 		resources.AddonCCMHetzner:         "",
 		resources.AddonCCMOpenStack:       "",
 		resources.AddonCCMEquinixMetal:    "",
+		resources.AddonCCMPacket:          "",
 		resources.AddonCCMVsphere:         "",
 		resources.AddonCNICanal:           "",
 		resources.AddonCNICilium:          "",
@@ -312,7 +313,7 @@ func EnsureAddonByName(s *state.State, addonName string) error {
 	return errors.Errorf("addon %q does not exist", addonName)
 }
 
-// EnsureAddonByName deletes an addon by its name. It's required to keep the
+// DeleteAddonByName deletes an addon by its name. It's required to keep the
 // old addon manifest for this to work, however, it's enough to keep only
 // metadata (i.e. spec is not needed). If the addon is not found in the addons
 // directory, or if the addons are not enabled, it will search

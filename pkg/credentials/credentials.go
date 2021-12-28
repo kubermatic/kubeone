@@ -117,6 +117,9 @@ func Any(credentialsFilePath string) (map[string]string, error) {
 	for _, key := range allKeys {
 		if val := credentialsFinder(key); val != "" {
 			creds[key] = val
+			// NB: We want to use Equinix Metal env vars everywhere, even if
+			// users has PACKET_ env vars on their systems.
+			// TODO: Remove after deprecation period.
 			switch key {
 			case PacketAPIKey:
 				creds[EquinixMetalAuthToken] = val
@@ -275,6 +278,9 @@ func (lookup lookupFunc) equinixmetal() (map[string]string, error) {
 	}
 	if (metalAuthToken != "" && metalProjectID == "") || (metalAuthToken == "" && metalProjectID != "") {
 		return nil, errors.New("both METAL_AUTH_TOKEN and METAL_PROJECT_ID environment variables are required, but found only one")
+	}
+	if packetAPIKey == "" && packetProjectID == "" && metalAuthToken == "" && metalProjectID == "" {
+		return nil, errors.New("METAL_AUTH_TOKEN and METAL_PROJECT_ID environment variables are required")
 	}
 
 	if packetAPIKey != "" && packetProjectID != "" {
