@@ -13,7 +13,7 @@ require (
 	github.com/iancoleman/orderedmap v0.2.0
 	github.com/imdario/mergo v0.3.12
 	github.com/koron-go/prefixw v0.0.0-20181013140428-271b207a7572
-	github.com/kubermatic/machine-controller v1.40.0
+	github.com/kubermatic/machine-controller v1.40.1
 	github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de
 	github.com/pkg/errors v0.9.1
 	github.com/pmezard/go-difflib v1.0.0
@@ -121,11 +121,6 @@ require (
 )
 
 replace (
-	github.com/openshift/api => github.com/openshift/api v0.0.0-20210428205234-a8389931bee7 // Required for machine-controller v1.40.0+
-	github.com/openshift/client-go => github.com/openshift/client-go v0.0.0-20210112165513-ebc401615f47 // Required for machine-controller v1.40.0+
-	github.com/openshift/library-go => github.com/mhenriks/library-go v0.0.0-20210511195009-51ba86622560 // Required for machine-controller v1.40.0+
-	github.com/operator-framework/operator-lifecycle-manager => github.com/operator-framework/operator-lifecycle-manager v0.0.0-20190128024246-5eb7ae5bdb7a // Required for machine-controller v1.40.0+
 	google.golang.org/grpc => google.golang.org/grpc v1.27.1
 	k8s.io/client-go => k8s.io/client-go v0.22.2
-	k8s.io/cluster-bootstrap => k8s.io/cluster-bootstrap v0.22.2 // Make sure to match this version with version above -- required for machine-controller v1.40.0+
 )

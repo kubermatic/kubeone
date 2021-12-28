@@ -908,6 +908,8 @@ github.com/kubermatic/machine-controller v1.33.0/go.mod h1:MBm7nKFUhEBUItiN3IVXS
 github.com/kubermatic/machine-controller v1.36.1/go.mod h1:6BFZEvEMZi8OT8aHOsS7DXYsF6ZSpmsNxsci7OLTTn8=
 github.com/kubermatic/machine-controller v1.40.0 h1:Pe0D0C1GJmR5UchNMKpiVRZePLKqucxQPIVlasP96kQ=
 github.com/kubermatic/machine-controller v1.40.0/go.mod h1:ri4bgd3+w1LIPaNqP1bvSTSpa6RbwSahXztylNhcSeI=
+github.com/kubermatic/machine-controller v1.40.1 h1:+xolKmQZMGDPfOw0KEwUtlXAF+8TsADldW0WeP0BGsU=
+github.com/kubermatic/machine-controller v1.40.1/go.mod h1:5LVcN4tCybGg+55hIHcVzCjNsBJy2PlnXG0xIzKmXGY=
 github.com/kubernetes-csi/csi-lib-utils v0.7.0/go.mod h1:bze+2G9+cmoHxN6+WyG1qT4MDxgZJMLGwc7V4acPNm0=
 github.com/kubernetes-csi/csi-test v2.0.0+incompatible/go.mod h1:YxJ4UiuPWIhMBkxUKY5c267DyA0uDZ/MtAimhx/2TA0=
 github.com/kubernetes-csi/external-snapshotter/v2 v2.1.1/go.mod h1:dV5oB3U62KBdlf9ADWkMmjGd3USauqQtwIm2OZb5mqI=
@@ -2289,10 +2291,13 @@ k8s.io/utils v0.0.0-20210819203725-bdf08cb9a70a/go.mod h1:jPW/WVKK9YHAvNhRxK0md/
 knative.dev/caching v0.0.0-20190719140829-2032732871ff/go.mod h1:dHXFU6CGlLlbzaWc32g80cR92iuBSpsslDNBWI8C7eg=
 knative.dev/eventing-contrib v0.6.1-0.20190723221543-5ce18048c08b/go.mod h1:SnXZgSGgMSMLNFTwTnpaOH7hXDzTFtw0J8OmHflNx3g=
 knative.dev/pkg v0.0.0-20191111150521-6d806b998379/go.mod h1:pgODObA1dTyhNoFxPZTTjNWfx6F0aKsKzn+vaT9XO/Q=
+kubevirt.io/api v0.48.1/go.mod h1:RoYMmFt76vWvFtw/FSiL0YUHZ2Ao6UfXlgpZAQnRswo=
 kubevirt.io/client-go v0.30.0/go.mod h1:JY7hQq+SUT0aLvleXrW/+28fDfZ6BPe4E6f8FyC8jkY=
 kubevirt.io/containerized-data-importer v1.10.6/go.mod h1:qF594BtRRkruyrqLwt3zbLCWdPIQNs1qWh4LR1cOzy0=
 kubevirt.io/containerized-data-importer v1.40.0/go.mod h1:IlhJj5CBgyzXSfgrPBDmHqCmadEl19Vs04YE3fgtsf8=
+kubevirt.io/containerized-data-importer-api v1.41.0/go.mod h1:0xadDFtaMd8iy+/oD2+dYoPxACZ/YizKqay5QIrQ6cw=
 kubevirt.io/controller-lifecycle-operator-sdk v0.2.1-0.20210723143736-64585ea1d1bd/go.mod h1:ZJhLceiY2Gl5CXFGSp5eMGt/sksOiJP0289nAZFCQf0=
+kubevirt.io/controller-lifecycle-operator-sdk v0.2.1/go.mod h1:ZJhLceiY2Gl5CXFGSp5eMGt/sksOiJP0289nAZFCQf0=
 kubevirt.io/qe-tools v0.1.6/go.mod h1:PJyH/YXC4W0AmxfheDmXWMbLNsMSboVGXKpMAwfKzVE=
 modernc.org/cc v1.0.0/go.mod h1:1Sk4//wdnYJiUIxnW8ddKpaOJCF37yAdqYnkxUpaYxw=
 modernc.org/golex v1.0.0/go.mod h1:b/QX9oBD/LhixY6NDh+IdGv17hgB+51fET1i2kPSmvk=
