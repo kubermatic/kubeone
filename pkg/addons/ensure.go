@@ -166,9 +166,14 @@ func collectAddons(s *state.State) (addonsToDeploy []addonAction) {
 			},
 		)
 	case s.Cluster.CloudProvider.EquinixMetal != nil:
-		addonsToDeploy = append(addonsToDeploy, addonAction{
-			name: resources.AddonCCMEquinixMetal,
-		})
+		addonsToDeploy = append(addonsToDeploy,
+			addonAction{
+				name: resources.AddonCCMEquinixMetal,
+				supportFn: func() error {
+					return migratePacketToEquinixCCM(s)
+				},
+			},
+		)
 	default:
 		s.Logger.Infof("CSI driver for %q not yet supported, skipping", s.Cluster.CloudProvider.CloudProviderName())
 	}
@@ -298,6 +303,56 @@ func EnsureAddonByName(s *state.State, addonName string) error {
 		}
 		if a.Name() == addonName {
 			if err := applier.loadAndApplyAddon(s, applier.EmbededFS, a.Name()); err != nil {
+				return errors.Wrap(err, "failed to load and apply embedded addon")
+			}
+			return nil
+		}
+	}
+
+	return errors.Errorf("addon %q does not exist", addonName)
+}
+
+// EnsureAddonByName deletes an addon by its name. It's required to keep the
+// old addon manifest for this to work, however, it's enough to keep only
+// metadata (i.e. spec is not needed). If the addon is not found in the addons
+// directory, or if the addons are not enabled, it will search
+// for the embedded addons.
+func DeleteAddonByName(s *state.State, addonName string) error {
+	applier, err := newAddonsApplier(s)
+	if err != nil {
+		return err
+	}
+
+	if applier.LocalFS != nil {
+		addons, lErr := fs.ReadDir(applier.LocalFS, ".")
+		if lErr != nil {
+			return errors.Wrap(lErr, "failed to read addons directory")
+		}
+
+		for _, a := range addons {
+			if !a.IsDir() {
+				continue
+			}
+			if a.Name() == addonName {
+				if err := applier.loadAndDeleteAddon(s, applier.LocalFS, a.Name()); err != nil {
+					return errors.Wrap(err, "failed to load and apply addon")
+				}
+				return nil
+			}
+		}
+	}
+
+	addons, eErr := fs.ReadDir(applier.EmbededFS, ".")
+	if eErr != nil {
+		return errors.Wrap(eErr, "failed to read embedded addons")
+	}
+
+	for _, a := range addons {
+		if !a.IsDir() {
+			continue
+		}
+		if a.Name() == addonName {
+			if err := applier.loadAndDeleteAddon(s, applier.EmbededFS, a.Name()); err != nil {
 				return errors.Wrap(err, "failed to load and apply embedded addon")
 			}
 			return nil

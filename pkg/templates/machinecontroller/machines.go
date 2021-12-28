@@ -99,20 +99,12 @@ func createMachineDeployment(cluster *kubeoneapi.KubeOneCluster, workerset kubeo
 
 	workerset.Config.CloudProviderSpec = cloudProviderSpecJSON
 
-	// Machine Controller expects the cloudProviderName to be "packet" instead of "equinixmetal"
-	// Hence we are adding this temporary fix that should solve this issue
-	// TODO: Update this when Packet has been revamped to Equinix Metal in machine-controller
-	cloudProvider := cluster.CloudProvider.CloudProviderName()
-	if cloudProvider == "equinixmetal" {
-		cloudProvider = "packet"
-	}
-
 	encoded, err := json.Marshal(struct {
 		kubeoneapi.ProviderSpec
 		CloudProvider string `json:"cloudProvider"`
 	}{
 		ProviderSpec:  workerset.Config,
-		CloudProvider: cloudProvider,
+		CloudProvider: cluster.CloudProvider.CloudProviderName(),
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to JSON marshal providerSpec")

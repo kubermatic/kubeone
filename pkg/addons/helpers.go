@@ -23,6 +23,7 @@ import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/clientutil"
 	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/templates/resources"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -45,6 +46,10 @@ func vSphereService() *corev1.Service {
 			Namespace: metav1.NamespaceSystem,
 		},
 	}
+}
+
+func migratePacketToEquinixCCM(s *state.State) error {
+	return DeleteAddonByName(s, resources.AddomCCMPacket)
 }
 
 // EmbeddedAddonsOnly checks if all specified addons are embedded addons

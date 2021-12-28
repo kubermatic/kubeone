@@ -57,7 +57,6 @@ output "kubeone_workers" {
         cloudProviderSpec = {
           # provider specific fields:
           # see example under `cloudProviderSpec` section at:
-          # TODO Update this when Packet has been revamped to Equinix Metal in machine-controller
           # https://github.com/kubermatic/machine-controller/blob/master/examples/packet-machinedeployment.yaml
           projectID    = var.project_id
           facilities   = [var.facility]

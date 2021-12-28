@@ -1,0 +1,35 @@
+# TODO: Remove this after deprecation period.
+# This manifest contains only metadata and is used to remove the Packet CCM
+# deployment from the cluster.
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: packet-cloud-controller-manager
+  namespace: kube-system
+  labels:
+    app: packet-cloud-controller-manager
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cloud-controller-manager
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  annotations:
+    rbac.authorization.kubernetes.io/autoupdate: "true"
+  name: system:cloud-controller-manager
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: system:cloud-controller-manager
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: packet-cloud-config
+  namespace: kube-system

@@ -472,8 +472,7 @@ func (c *Config) updateOpenStackWorkerset(existingWorkerSet *kubeonev1beta2.Dyna
 }
 
 func (c *Config) updateEquinixMetalWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerConfig, cfg json.RawMessage) error {
-	// TODO Update this when Packet has been re-branded to Equinix Metal in machine-controller
-	var metalConfig machinecontroller.PacketSpec
+	var metalConfig machinecontroller.EquinixMetalSpec
 
 	if err := json.Unmarshal(cfg, &metalConfig); err != nil {
 		return err
