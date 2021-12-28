@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2021-12-23T12:22:34+01:00
+date = 2021-12-23T21:13:02+05:00
 weight = 11
 +++
 ## v1beta2
@@ -27,6 +27,7 @@ weight = 11
 * [DynamicAuditLog](#dynamicauditlog)
 * [DynamicWorkerConfig](#dynamicworkerconfig)
 * [EncryptionProviders](#encryptionproviders)
+* [EquinixMetalSpec](#equinixmetalspec)
 * [ExternalCNISpec](#externalcnispec)
 * [Features](#features)
 * [GCESpec](#gcespec)
@@ -44,7 +45,6 @@ weight = 11
 * [OpenIDConnect](#openidconnect)
 * [OpenIDConnectConfig](#openidconnectconfig)
 * [OpenstackSpec](#openstackspec)
-* [PacketSpec](#packetspec)
 * [PodNodeSelector](#podnodeselector)
 * [PodNodeSelectorConfig](#podnodeselectorconfig)
 * [PodSecurityPolicy](#podsecuritypolicy)
@@ -175,7 +175,7 @@ Only one cloud provider must be defined at the single time.
 | gce | GCE | *[GCESpec](#gcespec) | false |
 | hetzner | Hetzner | *[HetznerSpec](#hetznerspec) | false |
 | openstack | Openstack | *[OpenstackSpec](#openstackspec) | false |
-| packet | Packet | *[PacketSpec](#packetspec) | false |
+| equinixmetal | Equinix Metal | *[EquinixMetalSpec](#equinixmetalspec) | false |
 | vsphere | Vsphere | *[VsphereSpec](#vspherespec) | false |
 | none | None | *[NoneSpec](#nonespec) | false |
 
@@ -307,6 +307,15 @@ Encryption Providers feature flag
 | ----- | ----------- | ------ | -------- |
 | enable | Enable | bool | true |
 | customEncryptionConfiguration | CustomEncryptionConfiguration | string | true |
+
+[Back to Group](#v1beta2)
+
+### EquinixMetalSpec
+
+EquinixMetalSpec defines the Equinix Metal cloud provider
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
 
 [Back to Group](#v1beta2)
 
@@ -522,15 +531,6 @@ OpenIDConnectConfig config
 ### OpenstackSpec
 
 OpenstackSpec defines the Openstack provider
-
-| Field | Description | Scheme | Required |
-| ----- | ----------- | ------ | -------- |
-
-[Back to Group](#v1beta2)
-
-### PacketSpec
-
-PacketSpec defines the Packet cloud provider
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |

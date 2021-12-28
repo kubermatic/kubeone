@@ -75,7 +75,7 @@ func readyToCompleteCCMMigration(s *state.State) error {
 
 	migrated := true
 	for i := range machines.Items {
-		flag := common.GetKubeletFlags(&machines.Items[i])[common.ExternalCloudProviderKubeletFlag]
+		flag := common.GetKubeletFlags(machines.Items[i].Annotations)[common.ExternalCloudProviderKubeletFlag]
 		if boolFlag, err := strconv.ParseBool(flag); !boolFlag || err != nil {
 			migrated = false
 			break

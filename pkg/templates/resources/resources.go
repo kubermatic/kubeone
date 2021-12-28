@@ -29,7 +29,8 @@ const (
 	AddonCCMDigitalOcean    = "ccm-digitalocean"
 	AddonCCMHetzner         = "ccm-hetzner"
 	AddonCCMOpenStack       = "ccm-openstack"
-	AddonCCMPacket          = "ccm-packet"
+	AddonCCMEquinixMetal    = "ccm-equinixmetal"
+	AddonCCMPacket          = "ccm-packet" // TODO: Remove after deprecation period.
 	AddonCCMVsphere         = "ccm-vsphere"
 	AddonCSIAwsEBS          = "csi-aws-ebs"
 	AddonCSIAzureDisk       = "csi-azuredisk"

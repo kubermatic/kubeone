@@ -4,4 +4,4 @@ name: test
 versions:
   kubernetes: 1.18.2
 cloudProvider:
-  packet: {}
+  equinixmetal: {}

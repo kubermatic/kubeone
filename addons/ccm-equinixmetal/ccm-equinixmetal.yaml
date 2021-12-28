@@ -1,0 +1,173 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: equinixmetal-cloud-controller-manager
+  namespace: kube-system
+  labels:
+    app: equinixmetal-cloud-controller-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: equinixmetal-cloud-controller-manager
+  template:
+    metadata:
+      labels:
+        app: equinixmetal-cloud-controller-manager
+    spec:
+      dnsPolicy: Default
+      hostNetwork: true
+      serviceAccountName: cloud-controller-manager
+      priorityClassName: system-cluster-critical
+      tolerations:
+        # this taint is set by all kubelets running `--cloud-provider=external`
+        # so we should tolerate it to schedule the Equinix Metal ccm
+        - key: "node.cloudprovider.kubernetes.io/uninitialized"
+          value: "true"
+          effect: "NoSchedule"
+        - key: "CriticalAddonsOnly"
+          operator: "Exists"
+        # cloud controller manager should be able to run on masters
+        - key: "node-role.kubernetes.io/master"
+          effect: NoSchedule
+          operator: Exists
+        - key: "node-role.kubernetes.io/control-plane"
+          effect: NoSchedule
+          operator: Exists
+      containers:
+        - image: {{ .InternalImages.Get "EquinixMetalCCM" }}
+          name: cloud-provider-equinix-metal
+          imagePullPolicy: Always
+          command:
+            - "./cloud-provider-equinix-metal"
+            - "--cloud-provider=equinixmetal"
+            - "--leader-elect=false"
+            - "--authentication-skip-lookup=true"
+            - "--provider-config=/etc/cloud-sa/cloud-sa.json"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 50Mi
+          volumeMounts:
+            - name: cloud-sa-volume
+              readOnly: true
+              mountPath: "/etc/cloud-sa"
+      volumes:
+        - name: cloud-sa-volume
+          secret:
+            secretName: metal-cloud-config
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cloud-controller-manager
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  annotations:
+    rbac.authorization.kubernetes.io/autoupdate: "true"
+  name: system:cloud-controller-manager
+rules:
+  - apiGroups:
+      # reason: so ccm can read the information about the kube-system namespace
+      - ""
+    resources:
+      - namespaces
+    verbs:
+      - get
+  - apiGroups:
+      # reason: so ccm can monitor and update endpoints, used for control plane loadbalancer
+      - ""
+    resources:
+      - endpoints
+    verbs:
+      - create
+      - get
+      - list
+      - watch
+      - update
+  - apiGroups:
+      # reason: so ccm can read and update nodes and annotations
+      - ""
+    resources:
+      - nodes
+    verbs:
+      - "*"
+  - apiGroups:
+      # reason: so ccm can update the status of nodes
+      - ""
+    resources:
+      - nodes/status
+    verbs:
+      - patch
+  - apiGroups:
+      # reason: so ccm can manage services for loadbalancer
+      - ""
+    resources:
+      - services
+    verbs:
+      - get
+      - list
+      - patch
+      - update
+      - watch
+      - create
+  - apiGroups:
+      # reason: so ccm can update the status of services for loadbalancer
+      - ""
+    resources:
+      - services/status
+    verbs:
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      # reason: so ccm can read and update configmap/metallb-system:config
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - create
+      - get
+      - list
+      - watch
+      - update
+      - patch
+  - apiGroups:
+      # reason: so ccm can read and update events
+      - ""
+    resources:
+      - events
+    verbs:
+      - create
+      - get
+      - list
+      - watch
+      - update
+      - patch
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: system:cloud-controller-manager
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:cloud-controller-manager
+subjects:
+  - kind: ServiceAccount
+    name: cloud-controller-manager
+    namespace: kube-system
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: metal-cloud-config
+  namespace: kube-system
+data:
+  cloud-sa.json:
+    {{ EquinixMetalSecret .Credentials.METAL_AUTH_TOKEN .Credentials.METAL_PROJECT_ID | b64enc }}

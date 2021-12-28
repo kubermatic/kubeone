@@ -499,9 +499,9 @@ func TestValidateCloudProviderSpec(t *testing.T) {
 			expectedError: false,
 		},
 		{
-			name: "valid Packet provider config",
+			name: "valid Equinix Metal provider config",
 			providerConfig: kubeone.CloudProviderSpec{
-				Packet: &kubeone.PacketSpec{},
+				EquinixMetal: &kubeone.EquinixMetalSpec{},
 			},
 			expectedError: false,
 		},
@@ -578,10 +578,10 @@ func TestValidateCloudProviderSpec(t *testing.T) {
 			expectedError: true,
 		},
 		{
-			name: "AWS and Packet specified at the same time",
+			name: "AWS and Equinix Metal specified at the same time",
 			providerConfig: kubeone.CloudProviderSpec{
-				AWS:    &kubeone.AWSSpec{},
-				Packet: &kubeone.PacketSpec{},
+				AWS:          &kubeone.AWSSpec{},
+				EquinixMetal: &kubeone.EquinixMetalSpec{},
 			},
 			expectedError: true,
 		},

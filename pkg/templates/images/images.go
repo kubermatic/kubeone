@@ -120,7 +120,7 @@ const (
 	HetznerCSI
 	OpenstackCCM
 	OpenstackCSI
-	PacketCCM
+	EquinixMetalCCM
 	VsphereCCM
 	VsphereCSIDriver
 	VsphereCSISyncer
@@ -144,7 +144,7 @@ func baseResources() map[Resource]map[string]string {
 		CalicoNode:        {"*": "docker.io/calico/node:v3.19.1"},
 		DNSNodeCache:      {"*": "k8s.gcr.io/k8s-dns-node-cache:1.15.13"},
 		Flannel:           {"*": "quay.io/coreos/flannel:v0.13.0"},
-		MachineController: {"*": "docker.io/kubermatic/machine-controller:v1.39.1"},
+		MachineController: {"*": "docker.io/kubermatic/machine-controller:v1.40.1"},
 		MetricsServer:     {"*": "k8s.gcr.io/metrics-server/metrics-server:v0.5.0"},
 	}
 }
@@ -244,8 +244,8 @@ func optionalResources() map[Resource]map[string]string {
 			">= 1.22.0": "docker.io/k8scloudprovider/cinder-csi-plugin:v1.22.0",
 		},
 
-		// Packet CCM
-		PacketCCM: {"*": "docker.io/packethost/packet-ccm:v1.0.0"},
+		// Equinix Metal CCM
+		EquinixMetalCCM: {"*": "docker.io/equinix/cloud-provider-equinix-metal:v3.3.0"},
 
 		// vSphere CCM
 		VsphereCCM: {

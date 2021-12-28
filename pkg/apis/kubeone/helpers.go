@@ -201,8 +201,8 @@ func (p CloudProviderSpec) CloudProviderName() string {
 		return "hetzner"
 	case p.Openstack != nil:
 		return "openstack"
-	case p.Packet != nil:
-		return "packet"
+	case p.EquinixMetal != nil:
+		return "equinixmetal"
 	case p.Vsphere != nil:
 		return "vsphere"
 	case p.None != nil:

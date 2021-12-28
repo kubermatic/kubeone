@@ -78,11 +78,11 @@ func TestClusterConformance(t *testing.T) { //nolint:gocyclo
 			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
 		},
 		{
-			name:                  "verify k8s cluster deployment on Packet",
-			provider:              provisioner.Packet,
+			name:                  "verify k8s cluster deployment on Equinix Metal",
+			provider:              provisioner.EquinixMetal,
 			providerExternal:      true,
 			scenario:              NodeConformance,
-			configFilePath:        "../../test/e2e/testdata/config_packet.yaml",
+			configFilePath:        "../../test/e2e/testdata/config_equinix_metal.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
 		},
 		{

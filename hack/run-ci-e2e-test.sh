@@ -91,9 +91,8 @@ function setup_ci_environment_vars() {
   "hetzner")
     export HCLOUD_TOKEN=${HZ_E2E_TOKEN}
     ;;
-  "packet")
-    export PACKET_AUTH_TOKEN=${PACKET_API_KEY}
-    export TF_VAR_project_id=${PACKET_PROJECT_ID}
+  "equinixmetal")
+    export TF_VAR_project_id=${METAL_PROJECT_ID}
     ;;
   "gce")
     GOOGLE_CREDENTIALS=$(base64 -d <<< "${KUBEONE_GOOGLE_SERVICE_ACCOUNT}")
