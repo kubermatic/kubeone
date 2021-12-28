@@ -66,20 +66,20 @@ func Ensure(s *state.State) error {
 	}
 
 	secret := credentialsSecret(creds)
-	if err := clientutil.CreateOrUpdate(context.Background(), s.DynamicClient, secret); err != nil {
+	if err := clientutil.CreateOrReplace(context.Background(), s.DynamicClient, secret); err != nil {
 		return errors.Wrap(err, "failed to ensure credentials secret")
 	}
 
 	if s.Cluster.CloudProvider.CloudConfig != "" {
 		cloudCfgSecret := cloudConfigSecret(s.Cluster.CloudProvider.CloudConfig)
-		if err := clientutil.CreateOrUpdate(context.Background(), s.DynamicClient, cloudCfgSecret); err != nil {
+		if err := clientutil.CreateOrReplace(context.Background(), s.DynamicClient, cloudCfgSecret); err != nil {
 			return errors.Wrap(err, "failed to ensure cloud-config secret")
 		}
 	}
 
 	if s.Cluster.CloudProvider.Vsphere != nil {
 		vsecret := vsphereSecret(creds)
-		if err := clientutil.CreateOrUpdate(context.Background(), s.DynamicClient, vsecret); err != nil {
+		if err := clientutil.CreateOrReplace(context.Background(), s.DynamicClient, vsecret); err != nil {
 			return errors.Wrap(err, "failed to ensure vsphere credentials secret")
 		}
 	}
