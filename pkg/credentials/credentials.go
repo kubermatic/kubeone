@@ -51,9 +51,12 @@ const (
 	OpenStackApplicationCredentialSecret = "OS_APPLICATION_CREDENTIAL_SECRET"
 	EquinixMetalAuthToken                = "METAL_AUTH_TOKEN" //nolint:gosec
 	EquinixMetalProjectID                = "METAL_PROJECT_ID"
-	VSphereAddress                       = "VSPHERE_SERVER"
-	VSpherePassword                      = "VSPHERE_PASSWORD"
-	VSphereUsername                      = "VSPHERE_USER"
+	// TODO: Remove Packet env vars after deprecation period.
+	PacketAPIKey    = "PACKET_API_KEY"    //nolint:gosec
+	PacketProjectID = "PACKET_PROJECT_ID" //nolint:gosec
+	VSphereAddress  = "VSPHERE_SERVER"
+	VSpherePassword = "VSPHERE_PASSWORD"
+	VSphereUsername = "VSPHERE_USER"
 
 	// Variables that machine-controller expects
 	AzureClientIDMC           = "AZURE_CLIENT_ID"
@@ -64,11 +67,8 @@ const (
 	GoogleServiceAccountKeyMC = "GOOGLE_SERVICE_ACCOUNT"
 	HetznerTokenKeyMC         = "HZ_TOKEN"
 	OpenStackUserNameMC       = "OS_USER_NAME"
-	// TODO: Update this when Packet has been revamped to Equinix Metal in machine-controller
-	PacketAPIKeyMC    = "PACKET_API_KEY"    //nolint:gosec
-	PacketProjectIDMC = "PACKET_PROJECT_ID" //nolint:gosec
-	VSphereAddressMC  = "VSPHERE_ADDRESS"
-	VSphereUsernameMC = "VSPHERE_USERNAME"
+	VSphereAddressMC          = "VSPHERE_ADDRESS"
+	VSphereUsernameMC         = "VSPHERE_USERNAME"
 )
 
 var (
@@ -91,6 +91,8 @@ var (
 		OpenStackUserName,
 		EquinixMetalAuthToken,
 		EquinixMetalProjectID,
+		PacketAPIKey,
+		PacketProjectID,
 		VSphereAddress,
 		VSpherePassword,
 		VSphereUsername,
@@ -115,6 +117,12 @@ func Any(credentialsFilePath string) (map[string]string, error) {
 	for _, key := range allKeys {
 		if val := credentialsFinder(key); val != "" {
 			creds[key] = val
+			switch key {
+			case PacketAPIKey:
+				creds[EquinixMetalAuthToken] = val
+			case PacketProjectID:
+				creds[EquinixMetalProjectID] = val
+			}
 		}
 	}
 
@@ -170,10 +178,7 @@ func ProviderCredentials(cloudProvider kubeone.CloudProviderSpec, credentialsFil
 			{Name: OpenStackTenantName},
 		}, openstackValidationFunc)
 	case cloudProvider.EquinixMetal != nil:
-		return credentialsFinder.parseCredentialVariables([]ProviderEnvironmentVariable{
-			{Name: EquinixMetalAuthToken, MachineControllerName: PacketAPIKeyMC},
-			{Name: EquinixMetalProjectID, MachineControllerName: PacketProjectIDMC},
-		}, defaultValidationFunc)
+		return credentialsFinder.equinixmetal()
 	case cloudProvider.Vsphere != nil:
 		vscreds, err := credentialsFinder.parseCredentialVariables([]ProviderEnvironmentVariable{
 			{Name: VSphereAddress, MachineControllerName: VSphereAddressMC},
@@ -252,6 +257,34 @@ func (lookup lookupFunc) aws() (map[string]string, error) {
 	creds[AWSAccessKeyID] = configCreds.AccessKeyID
 	creds[AWSSecretAccessKey] = configCreds.SecretAccessKey
 
+	return creds, nil
+}
+
+func (lookup lookupFunc) equinixmetal() (map[string]string, error) {
+	creds := make(map[string]string)
+	packetAPIKey := lookup(PacketAPIKey)
+	packetProjectID := lookup(PacketProjectID)
+	metalAuthToken := lookup(EquinixMetalAuthToken)
+	metalProjectID := lookup(EquinixMetalProjectID)
+
+	if packetAPIKey != "" && packetProjectID != "" && metalAuthToken != "" && metalProjectID != "" {
+		return nil, errors.New("found both PACKET_ and METAL_ environment variables, but only one can be used")
+	}
+	if (packetAPIKey != "" && packetProjectID == "") || (packetAPIKey == "" && packetProjectID != "") {
+		return nil, errors.New("both PACKET_API_KEY and PACKET_PROJECT_ID environment variables are required, but found only one")
+	}
+	if (metalAuthToken != "" && metalProjectID == "") || (metalAuthToken == "" && metalProjectID != "") {
+		return nil, errors.New("both METAL_AUTH_TOKEN and METAL_PROJECT_ID environment variables are required, but found only one")
+	}
+
+	if packetAPIKey != "" && packetProjectID != "" {
+		creds[EquinixMetalAuthToken] = packetAPIKey
+		creds[EquinixMetalProjectID] = packetProjectID
+		return creds, nil
+	}
+
+	creds[EquinixMetalAuthToken] = metalAuthToken
+	creds[EquinixMetalProjectID] = metalProjectID
 	return creds, nil
 }
 
