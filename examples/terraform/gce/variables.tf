@@ -35,7 +35,6 @@ variable "worker_os" {
 
   # valid choices are:
   # * ubuntu
-  # * centos
   default = "ubuntu"
   type    = string
 }
