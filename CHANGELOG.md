@@ -1,5 +1,88 @@
 # Changelog
 
+# [v1.4.0-beta.0](https://github.com/kubermatic/kubeone/releases/tag/v1.4.0-alpha.0) - 2022-01-04
+
+## Attention Needed
+
+* KubeOne 1.4.0-beta.0 introduces the new KubeOneCluster v1beta2 API
+  * The new v1beta2 API is still under-development and might be changed before the KubeOne 1.4.0 release
+  * We recommend and highly encourage testing the new API, but considering that the API might be changed before the final release, we don't recommend migrating production clusters to the new API yet
+  * The migration for existing KubeOneCluster manifests is not yet available
+  * The `kubeone config print` command now uses the new v1beta2 API
+  * The existing KubeOneCluster v1beta1 API is considered as deprecated and will be removed in KubeOne 1.6+
+  * Highlights:
+    * The API group has been changed from `kubeone.io` to `kubeone.k8c.io`
+    * The AssetConfiguration API has been removed from the v1beta2 API. The AssetConfiguration API can still be used with the v1beta1 API, but we highly recommend migrating away because the v1beta1 API is deprecated
+    * The PodPresets feature has been removed from the v1beta2 API because Kubernetes removed support for PodPresets in Kubernetes 1.20
+    * Packet (`packet`) cloud provider has been rebranded to Equinix Metal (`equinixmetal`). The existing Packet cluster will work with `equinixmetal` cloud provider, however, manual migration steps are required if you want to use new Terraform configs for Equinix Metal
+    * A new ContainerRuntime API has been added to the v1beta2 API in order to support configuring mirror registries. This API is still work-in-progress and will mostly like be extended before the final release
+* `kubeone install` and `kubeone upgrade` commands are considered as deprecated in favor of `kubeone apply`
+  * `install` and `upgrade` commands will be removed in KubeOne 1.6+
+  * We highly encourage switching to `kubeone apply`. The `apply` command has the same semantics and works in the same way as `install`/`upgrade`, with some additional checks to ensure each requested operation is safe for the cluster
+* Support for Amazon EKS-D clusters has been removed starting from this release
+
+## Known Issues
+
+* It's not possible to run kube-proxy in IPVS mode on Kubernetes 1.23 clusters using Canal/Calico CNI. Trying to upgrade existing 1.22 clusters using IPVS to 1.23 will result in a validation error from KubeOne
+  * More information about this issue can be found in the following Calico ticket: https://github.com/projectcalico/calico/issues/5011
+
+## Added
+
+### API
+
+* Add the KubeOneCluster v1beta2 API and change the API group to `kubeone.k8c.io` ([#1649](https://github.com/kubermatic/kubeone/pull/1649))
+  * Make `kubeone config print` command use the new `kubeone.k8c.io/v1beta2` API ([#1651](https://github.com/kubermatic/kubeone/pull/1651))
+  * Add the new ContainerRuntime API with support for mirror registries ([#1674](https://github.com/kubermatic/kubeone/pull/1674))
+  * Addons directory path (`.addons.path`) is not required when using only embedded addons ([#1668](https://github.com/kubermatic/kubeone/pull/1668))
+  * Addons directory path (`.addons.path`) is not defaulted to `./addons` any longer ([#1668](https://github.com/kubermatic/kubeone/pull/1668))
+  * Add the KubeletConfig API used to configure `systemReserved`, `kubeReserved`, and `evictionHard` Kubelet options ([#1698](https://github.com/kubermatic/kubeone/pull/1698))
+  * Remove the PodPresets feature ([#1662](https://github.com/kubermatic/kubeone/pull/1662))
+  * Remove the AssetConfiguration API ([#1699](https://github.com/kubermatic/kubeone/pull/1699))
+  * Rebrand Packet (`packet`) to Equinix Metal (`equinixmetal`) and support migrating existing Packet clusters to Equinix Metal 
+  clusters ([#1663](https://github.com/kubermatic/kubeone/pull/1663))
+
+### Features
+
+* Add support for Kubernetes 1.23 ([#1678](https://github.com/kubermatic/kubeone/pull/1678))
+* Add `kubeone addons list` command used to list available and enabled addons ([#1642](https://github.com/kubermatic/kubeone/pull/1642))
+* Add support for OpenStack Application Credentials ([#1666](https://github.com/kubermatic/kubeone/pull/1666))
+* Add a new `--kubernetes-version` flag to the `kubeone config images` command ([#1671](https://github.com/kubermatic/kubeone/pull/1671))
+  * This flag is used to filter images for a particular Kubernetes version. The flag cannot be used along with the KubeOneCluster manifest (`--manifest` flag)
+* Addon parameters can be resolved into environment variable contents if the `env:` prefix is set in the parameter value ([#1691](https://github.com/kubermatic/kubeone/pull/1691))
+
+## Changed
+
+### General
+
+* Improve installation scripts used to install container runtime ([#1664](https://github.com/kubermatic/kubeone/pull/1664))
+
+### Fixed
+
+* Fix issues when disabling nm-cloud-setup on RHEL ([#1706](https://github.com/kubermatic/kubeone/pull/1706))
+* cri-tools is now installed automatically as a dependency of kubeadm on Amazon Linux 2. This fixes provisioning issues on Amazon Linux 2 with newer Kubernetes versions. ([#1701](https://github.com/kubermatic/kubeone/pull/1701))
+* Fix the image loader script to support KubeOne 1.3+ and Kubernetes 1.22+ ([#1671](https://github.com/kubermatic/kubeone/pull/1671))
+* The `kubeone config images` command now shows images for the latest Kubernetes version (instead of for the oldest) ([#1671](https://github.com/kubermatic/kubeone/pull/1671))
+* Allow pods with the seccomp profile defined to get scheduled if the PodSecurityPolicy (PSP) feature is enabled ([#1686](https://github.com/kubermatic/kubeone/pull/1686))
+
+### Addons
+
+* Update the cluster-autoscaler addon to match the upstream manifest ([#1713](https://github.com/kubermatic/kubeone/pull/1713))
+
+### Terraform Configs
+
+* Automatically determine GCE zone for the initial MachineDeployment ([#1703](https://github.com/kubermatic/kubeone/pull/1703))
+* Fix AMI filter in Terraform configs for AWS to always use `x86_64` images ([#1692](https://github.com/kubermatic/kubeone/pull/1692))
+
+### Updated
+
+* Update Cilium CNI addon to v1.11.0 ([#1681](https://github.com/kubermatic/kubeone/pull/1681))
+* Update vSphere CSI driver addon to v2.4.0. This change introduces Kubernetes 1.22 support for vSphere clusters ([#1675](https://github.com/kubermatic/kubeone/pull/1675))
+* Update Go to 1.17.5 ([#1689](https://github.com/kubermatic/kubeone/pull/1689))
+
+## Removed
+
+* Remove support for Amazon EKS-D clusters ([#1699](https://github.com/kubermatic/kubeone/pull/1699))
+
 # [v1.4.0-alpha.0](https://github.com/kubermatic/kubeone/releases/tag/v1.4.0-alpha.0) - 2021-11-29
 
 ## Attention Needed
