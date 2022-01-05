@@ -182,7 +182,7 @@ type KubeletConfig struct {
 	// EvictionHard configure --eviction-hard command-line flag of the kubelet.
 	// See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/
 	EvictionHard map[string]string `json:"evictionHard,omitempty"`
-	//ContainerLogsMaxSize configure --container-logs-max-size command-line flag of the kubelet. Defaults to 100Mi.
+	// ContainerLogsMaxSize configure --container-logs-max-size command-line flag of the kubelet. Defaults to 100Mi.
 	// See more at: https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/
 	ContainerLogMaxSize string `json:"containerLogMaxSize,omitempty"`
 }

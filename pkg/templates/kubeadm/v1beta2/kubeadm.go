@@ -431,8 +431,6 @@ func newNodeRegistration(s *state.State, host kubeoneapi.HostConfig) kubeadmv1be
 
 	if m := host.Kubelet.ContainerLogMaxSize; m != "" {
 		kubeletCLIFlags["container-log-max-size"] = m
-	} else {
-		kubeletCLIFlags["container-log-max-size"] = "100Mi"
 	}
 
 	return kubeadmv1beta2.NodeRegistrationOptions{
