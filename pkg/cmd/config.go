@@ -501,7 +501,7 @@ kind: KubeOneCluster
 name: {{ .ClusterName }}
 
 versions:
- kubernetes: "{{ .KubernetesVersion }}"
+  kubernetes: "{{ .KubernetesVersion }}"
 
 clusterNetwork:
   # the subnet used for pods (default: 10.244.0.0/16)
