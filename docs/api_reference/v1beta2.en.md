@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2021-12-23T21:13:02+05:00
+date = 2022-01-05T16:38:05+04:00
 weight = 11
 +++
 ## v1beta2
@@ -467,6 +467,7 @@ KubeletConfig provides some kubelet configuration options
 | systemReserved | SystemReserved configure --system-reserved command-line flag of the kubelet. See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/ | map[string]string | false |
 | kubeReserved | KubeReserved configure --kube-reserved command-line flag of the kubelet. See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/ | map[string]string | false |
 | evictionHard | EvictionHard configure --eviction-hard command-line flag of the kubelet. See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/ | map[string]string | false |
+| containerLogMaxSize | ContainerLogMaxSize configure --container-log-max-size command-line flag of the kubelet. Default value is 100Mi See more at: https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/ | string | false |
 
 [Back to Group](#v1beta2)
 
