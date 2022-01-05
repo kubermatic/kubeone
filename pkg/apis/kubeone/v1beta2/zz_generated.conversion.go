@@ -1421,6 +1421,7 @@ func autoConvert_v1beta2_KubeletConfig_To_kubeone_KubeletConfig(in *KubeletConfi
 	out.SystemReserved = *(*map[string]string)(unsafe.Pointer(&in.SystemReserved))
 	out.KubeReserved = *(*map[string]string)(unsafe.Pointer(&in.KubeReserved))
 	out.EvictionHard = *(*map[string]string)(unsafe.Pointer(&in.EvictionHard))
+	out.ContainerLogMaxSize = in.ContainerLogMaxSize
 	return nil
 }
 
@@ -1433,6 +1434,7 @@ func autoConvert_kubeone_KubeletConfig_To_v1beta2_KubeletConfig(in *kubeone.Kube
 	out.SystemReserved = *(*map[string]string)(unsafe.Pointer(&in.SystemReserved))
 	out.KubeReserved = *(*map[string]string)(unsafe.Pointer(&in.KubeReserved))
 	out.EvictionHard = *(*map[string]string)(unsafe.Pointer(&in.EvictionHard))
+	out.ContainerLogMaxSize = in.ContainerLogMaxSize
 	return nil
 }
 
