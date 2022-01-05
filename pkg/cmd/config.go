@@ -55,8 +55,7 @@ type printOpts struct {
 	CloudProviderExternal bool
 	CloudProviderCloudCfg string
 
-	ContainerLogMaxSize string `longflag:"container-log-max-size"`
-	ControlPlaneHosts   string `longflag:"control-plane-hosts"`
+	ControlPlaneHosts string `longflag:"control-plane-hosts"`
 
 	APIEndpointHost             string   `longflag:"api-endpoint-host"`
 	APIEndpointPort             int      `longflag:"api-endpoint-port"`
@@ -174,9 +173,6 @@ func configPrintCmd() *cobra.Command {
 
 	// MachineController
 	cmd.Flags().BoolVar(&opts.DeployMachineController, longFlagName(opts, "DeployMachineController"), true, "deploy kubermatic machine-controller")
-
-	// Kubelet Configuration
-	cmd.Flags().StringVar(&opts.ContainerLogMaxSize, longFlagName(opts, "ContainerLogMaxSize"), "100Mi", "Container Log Max Size")
 
 	return cmd
 }
@@ -366,10 +362,6 @@ func createAndPrintManifest(printOptions *printOpts) error {
 		cfg.Set(yamled.Path{"proxy", "noProxy"}, printOptions.NoProxy)
 	}
 
-	// Kubelet Configuration
-	if printOptions.ContainerLogMaxSize == "" {
-		cfg.Set(yamled.Path{"kubeletConfiguration", "containerLogMaxSize"}, printOptions.ContainerLogMaxSize)
-	}
 	// Features
 	printFeatures(cfg, printOptions)
 
