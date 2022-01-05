@@ -88,7 +88,17 @@ type HetznerSpec struct {
 	Labels     map[string]string `json:"labels,omitempty"`
 }
 
+// EquinixMetalSpec holds cloudprovider spec for Equinix Metal
+type EquinixMetalSpec struct {
+	ProjectID    string   `json:"projectID"`
+	BillingCycle string   `json:"billingCycle"`
+	Facilities   []string `json:"facilities"`
+	InstanceType string   `json:"instanceType"`
+	Tags         []string `json:"tags,omitempty"`
+}
+
 // PacketSpec holds cloudprovider spec for Packet
+// TODO: Remove after deprecation period.
 type PacketSpec struct {
 	ProjectID    string   `json:"projectID"`
 	BillingCycle string   `json:"billingCycle"`

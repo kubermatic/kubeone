@@ -18,7 +18,7 @@ package configupload
 
 import (
 	"io"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -60,7 +60,7 @@ func (c *Configuration) AddFilePath(filename, filePath, manifestFilePath string)
 		filePath = filepath.Join(manifestAbsPath, filePath)
 	}
 
-	b, err := ioutil.ReadFile(filePath)
+	b, err := os.ReadFile(filePath)
 	if err != nil {
 		return errors.Wrap(err, "unable to open given file")
 	}

@@ -32,8 +32,8 @@ const (
 	Hetzner = "hetzner"
 	// GCE cloud provider
 	GCE = "gce"
-	// Packet cloud provider
-	Packet = "packet"
+	// Equinix Metal cloud provider
+	EquinixMetal = "equinixmetal"
 	// OpenStack provider
 	OpenStack = "openstack"
 
@@ -62,8 +62,8 @@ func CreateProvisioner(testPath string, identifier string, provider string) (Pro
 	case GCE:
 		creds := verifyCredentials("GOOGLE_CREDENTIALS")
 		return NewDefaultProvisioner(creds, testPath, identifier, provider)
-	case Packet:
-		creds := verifyCredentials("PACKET_AUTH_TOKEN", "PACKET_PROJECT_ID")
+	case EquinixMetal:
+		creds := verifyCredentials("METAL_AUTH_TOKEN", "METAL_PROJECT_ID")
 		return NewDefaultProvisioner(creds, testPath, identifier, provider)
 	case OpenStack:
 		creds := verifyCredentials("OS_AUTH_URL", "OS_DOMAIN_NAME", "OS_PASSWORD",

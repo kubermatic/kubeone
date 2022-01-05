@@ -1,6 +1,6 @@
 +++
 title = "v1beta1 API Reference"
-date = 2021-10-29T14:08:40+05:00
+date = 2021-12-23T21:13:02+05:00
 weight = 11
 +++
 ## v1beta1
@@ -109,7 +109,9 @@ Addons config
 
 AssetConfiguration controls how assets (e.g. CNI, Kubelet, kube-apiserver, and more)
 are pulled.
-The AssetConfiguration API is an alpha API currently working only on Amazon Linux 2.
+The AssetConfiguration API is a deprecated API removed in the v1beta2 API.
+The AssetConfiguration API will be completely removed in KubeOne 1.6+
+Currently, configuring BinaryAssets works only on Amazon Linux 2.
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
@@ -322,7 +324,7 @@ Features controls what features will be enabled on the cluster
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | podNodeSelector | PodNodeSelector | *[PodNodeSelector](#podnodeselector) | false |
-| podPresets | PodPresets Obsolete: this feature was removed with Kubernetes 1.20 | *[PodPresets](#podpresets) | false |
+| podPresets | PodPresets Obsolete: this feature has been removed from KubeOne and specifying it will have no effect | *[PodPresets](#podpresets) | false |
 | podSecurityPolicy | PodSecurityPolicy Deprecated: will be removed once Kubernetes 1.24 reaches EOL | *[PodSecurityPolicy](#podsecuritypolicy) | false |
 | staticAuditLog | StaticAuditLog | *[StaticAuditLog](#staticauditlog) | false |
 | dynamicAuditLog | DynamicAuditLog | *[DynamicAuditLog](#dynamicauditlog) | false |

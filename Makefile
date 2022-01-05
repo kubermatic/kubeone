@@ -88,6 +88,11 @@ verify-codegen: vendor
 verify-boilerplate:
 	./hack/verify-boilerplate.sh
 
+.PHONE: verify-apidocs
+verify-apidocs: GOFLAGS = -mod=readonly
+verify-apidocs: vendor
+	./hack/verify-apidocs.sh
+
 .PHONY: shfmt
 shfmt:
 	shfmt -w -sr -i 2 hack

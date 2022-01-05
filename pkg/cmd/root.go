@@ -108,18 +108,19 @@ func newRoot() *cobra.Command {
 		"debug output with stacktrace")
 
 	rootCmd.AddCommand(
-		installCmd(fs),
 		applyCmd(fs),
-		upgradeCmd(fs),
-		resetCmd(fs),
-		kubeconfigCmd(fs),
-		configCmd(fs),
-		versionCmd(),
-		statusCmd(fs),
-		proxyCmd(fs),
-		migrateCmd(fs),
+		addonsCmd(fs),
 		completionCmd(rootCmd),
+		configCmd(fs),
 		documentCmd(rootCmd),
+		installCmd(fs),
+		kubeconfigCmd(fs),
+		migrateCmd(fs),
+		proxyCmd(fs),
+		resetCmd(fs),
+		statusCmd(fs),
+		upgradeCmd(fs),
+		versionCmd(),
 	)
 
 	return rootCmd

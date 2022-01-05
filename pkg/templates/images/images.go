@@ -120,10 +120,11 @@ const (
 	HetznerCSI
 	OpenstackCCM
 	OpenstackCSI
-	PacketCCM
+	EquinixMetalCCM
 	VsphereCCM
 	VsphereCSIDriver
 	VsphereCSISyncer
+	VsphereCSIProvisioner
 )
 
 func FindResource(name string) (Resource, error) {
@@ -143,7 +144,7 @@ func baseResources() map[Resource]map[string]string {
 		CalicoNode:        {"*": "docker.io/calico/node:v3.19.1"},
 		DNSNodeCache:      {"*": "k8s.gcr.io/k8s-dns-node-cache:1.15.13"},
 		Flannel:           {"*": "quay.io/coreos/flannel:v0.13.0"},
-		MachineController: {"*": "docker.io/kubermatic/machine-controller:v1.36.0"},
+		MachineController: {"*": "docker.io/kubermatic/machine-controller:v1.40.1"},
 		MetricsServer:     {"*": "k8s.gcr.io/metrics-server/metrics-server:v0.5.0"},
 	}
 }
@@ -243,33 +244,35 @@ func optionalResources() map[Resource]map[string]string {
 			">= 1.22.0": "docker.io/k8scloudprovider/cinder-csi-plugin:v1.22.0",
 		},
 
-		// Packet CCM
-		PacketCCM: {"*": "docker.io/packethost/packet-ccm:v1.0.0"},
+		// Equinix Metal CCM
+		EquinixMetalCCM: {"*": "docker.io/equinix/cloud-provider-equinix-metal:v3.3.0"},
 
 		// vSphere CCM
 		VsphereCCM: {
-			"1.19.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.19.0",
+			"1.19.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.19.1",
 			"1.20.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.20.0",
-			">= 1.21.0": "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.21.0",
+			"1.21.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.21.1",
+			">= 1.22.0": "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.22.4",
 		},
 
 		// vSphere CSI
-		VsphereCSIDriver: {"*": "gcr.io/cloud-provider-vsphere/csi/release/driver:v2.3.0"},
-		VsphereCSISyncer: {"*": "gcr.io/cloud-provider-vsphere/csi/release/syncer:v2.3.0"},
+		VsphereCSIDriver:      {"*": "gcr.io/cloud-provider-vsphere/csi/release/driver:v2.4.0"},
+		VsphereCSISyncer:      {"*": "gcr.io/cloud-provider-vsphere/csi/release/syncer:v2.4.0"},
+		VsphereCSIProvisioner: {"*": "k8s.gcr.io/sig-storage/csi-provisioner:v3.0.0"},
 
 		// WeaveNet CNI plugin
 		WeaveNetCNIKube: {"*": "docker.io/weaveworks/weave-kube:2.8.1"},
 		WeaveNetCNINPC:  {"*": "docker.io/weaveworks/weave-npc:2.8.1"},
 
 		// Cilium
-		Cilium:         {"*": "quay.io/cilium/cilium:v1.10.4"},
-		CiliumOperator: {"*": "quay.io/cilium/operator-generic:v1.10.4"},
+		Cilium:         {"*": "quay.io/cilium/cilium:v1.11.0"},
+		CiliumOperator: {"*": "quay.io/cilium/operator-generic:v1.11.0"},
 
 		// Hubble
-		HubbleRelay:     {"*": "quay.io/cilium/hubble-relay:v1.10.4"},
-		HubbleUI:        {"*": "quay.io/cilium/hubble-ui:v0.7.9"},
-		HubbleUIBackend: {"*": "quay.io/cilium/hubble-ui-backend:v0.7.9"},
-		HubbleProxy:     {"*": "docker.io/envoyproxy/envoy:v1.18.2"},
+		HubbleRelay:     {"*": "quay.io/cilium/hubble-relay:v1.11.0"},
+		HubbleUI:        {"*": "quay.io/cilium/hubble-ui:v0.8.3"},
+		HubbleUIBackend: {"*": "quay.io/cilium/hubble-ui-backend:v0.8.3"},
+		HubbleProxy:     {"*": "docker.io/envoyproxy/envoy:v1.18.4"},
 
 		// Cluster-autoscaler addon
 		ClusterAutoscaler: {
@@ -316,7 +319,7 @@ func NewResolver(opts ...Opt) *Resolver {
 	// so that we can at least get images that are version-independent.
 	if r.kubernetesVersionGetter == nil {
 		r.kubernetesVersionGetter = func() string {
-			return "0.0.0"
+			return "9.9.9"
 		}
 	}
 

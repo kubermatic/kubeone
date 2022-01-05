@@ -18,10 +18,10 @@ package e2e
 
 import (
 	"fmt"
-	"strings"
 	"testing"
-	"time"
 
+	kubeonev1beta1 "k8c.io/kubeone/pkg/apis/kubeone/v1beta1"
+	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
 	"k8c.io/kubeone/test/e2e/provisioner"
 	"k8c.io/kubeone/test/e2e/testutil"
 
@@ -33,24 +33,20 @@ import (
 const (
 	clusterNetworkPodCIDR     = "192.168.0.0/16"
 	clusterNetworkServiceCIDR = "172.16.0.0/12"
-
-	clusterTypeKubernetes = "kubernetes"
-	clusterTypeEksd       = "eksd"
 )
 
 func TestClusterConformance(t *testing.T) { //nolint:gocyclo
 	testcases := []struct {
 		name                  string
-		clusterType           string
 		provider              string
 		providerExternal      bool
 		scenario              string
 		configFilePath        string
+		configAPIVersion      string
 		expectedNumberOfNodes int
 	}{
 		{
 			name:                  "verify k8s cluster deployment on AWS",
-			clusterType:           clusterTypeKubernetes,
 			provider:              provisioner.AWS,
 			providerExternal:      false,
 			scenario:              NodeConformance,
@@ -59,7 +55,6 @@ func TestClusterConformance(t *testing.T) { //nolint:gocyclo
 		},
 		{
 			name:                  "verify k8s cluster deployment on DO",
-			clusterType:           clusterTypeKubernetes,
 			provider:              provisioner.DigitalOcean,
 			providerExternal:      true,
 			scenario:              NodeConformance,
@@ -68,7 +63,6 @@ func TestClusterConformance(t *testing.T) { //nolint:gocyclo
 		},
 		{
 			name:                  "verify k8s cluster deployment on Hetzner",
-			clusterType:           clusterTypeKubernetes,
 			provider:              provisioner.Hetzner,
 			providerExternal:      true,
 			scenario:              NodeConformance,
@@ -77,7 +71,6 @@ func TestClusterConformance(t *testing.T) { //nolint:gocyclo
 		},
 		{
 			name:                  "verify k8s cluster deployment on GCE",
-			clusterType:           clusterTypeKubernetes,
 			provider:              provisioner.GCE,
 			providerExternal:      false,
 			scenario:              NodeConformance,
@@ -85,31 +78,20 @@ func TestClusterConformance(t *testing.T) { //nolint:gocyclo
 			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
 		},
 		{
-			name:                  "verify k8s cluster deployment on Packet",
-			clusterType:           clusterTypeKubernetes,
-			provider:              provisioner.Packet,
+			name:                  "verify k8s cluster deployment on Equinix Metal",
+			provider:              provisioner.EquinixMetal,
 			providerExternal:      true,
 			scenario:              NodeConformance,
-			configFilePath:        "../../test/e2e/testdata/config_packet.yaml",
+			configFilePath:        "../../test/e2e/testdata/config_equinix_metal.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
 		},
 		{
 			name:                  "verify k8s cluster deployment on OpenStack",
-			clusterType:           clusterTypeKubernetes,
 			provider:              provisioner.OpenStack,
 			providerExternal:      true,
 			scenario:              NodeConformance,
 			configFilePath:        "../../test/e2e/testdata/config_os.yaml",
 			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
-		},
-		{
-			name:                  "verify eks-d cluster deployment on AWS",
-			clusterType:           clusterTypeEksd,
-			provider:              provisioner.AWS,
-			providerExternal:      false,
-			scenario:              NodeConformance,
-			configFilePath:        "../../test/e2e/testdata/config_aws.yaml",
-			expectedNumberOfNodes: 6, // 3 control planes + 3 static workers
 		},
 	}
 
@@ -121,7 +103,7 @@ func TestClusterConformance(t *testing.T) { //nolint:gocyclo
 
 			// Only run selected test suite.
 			// Test options are controlled using flags.
-			if testProvider != tc.provider || testClusterType != tc.clusterType {
+			if testProvider != tc.provider {
 				t.SkipNow()
 			}
 
@@ -131,6 +113,11 @@ func TestClusterConformance(t *testing.T) { //nolint:gocyclo
 
 			if len(testTargetVersion) == 0 {
 				t.Fatal("-target-version must be set")
+			}
+
+			if testConfigAPIVersion != kubeonev1beta1.SchemeGroupVersion.Version &&
+				testConfigAPIVersion != kubeonev1beta2.SchemeGroupVersion.Version {
+				t.Fatal("-config-api-version must be v1beta1 or v1beta2")
 			}
 
 			if err := ValidateOperatingSystem(testOSControlPlane); err != nil {
@@ -143,33 +130,6 @@ func TestClusterConformance(t *testing.T) { //nolint:gocyclo
 
 			osControlPlane := OperatingSystem(testOSControlPlane)
 			osWorkers := OperatingSystem(testOSWorkers)
-
-			var eksdConfig *eksdVersions
-			if tc.clusterType == clusterTypeEksd {
-				if len(testEksdEtcdVersion) == 0 {
-					t.Fatal("-eksd-etcd-version must be set for eks-d cluster")
-				}
-				if len(testEksdCoreDNSVersion) == 0 {
-					t.Fatal("-eksd-coredns-version must be set for eks-d cluster")
-				}
-				if len(testEksdMetricsServerVersion) == 0 {
-					t.Fatal("-eksd-metrics-server-version must be set for eks-d cluster")
-				}
-				if len(testEksdCNIVersion) == 0 {
-					t.Fatal("-eksd-cni-version must be set for eks-d cluster")
-				}
-				if osControlPlane != OperatingSystemAmazon {
-					t.Fatal("eks-d clusters are currently supported only on Amazon Linux 2")
-				}
-
-				eksdConfig = &eksdVersions{
-					Eksd:          testTargetVersion,
-					Etcd:          testEksdEtcdVersion,
-					CoreDNS:       testEksdCoreDNSVersion,
-					MetricsServer: testEksdMetricsServerVersion,
-					CNI:           testEksdCNIVersion,
-				}
-			}
 
 			t.Logf("Running conformance tests for Kubernetes v%s...", testTargetVersion)
 
@@ -205,17 +165,31 @@ func TestClusterConformance(t *testing.T) { //nolint:gocyclo
 				clusterNetworkService = clusterNetworkServiceCIDR
 			}
 
-			err = target.CreateConfig(testTargetVersion,
-				tc.provider,
-				tc.providerExternal,
-				clusterNetworkPod,
-				clusterNetworkService,
-				testCredentialsFile,
-				testContainerRuntime.ContainerRuntimeConfig(),
-				eksdConfig,
-			)
-			if err != nil {
-				t.Fatalf("failed to create KubeOneCluster manifest: %v", err)
+			switch testConfigAPIVersion {
+			case kubeonev1beta1.SchemeGroupVersion.Version:
+				err = target.CreateV1Beta1Config(testTargetVersion,
+					tc.provider,
+					tc.providerExternal,
+					clusterNetworkPod,
+					clusterNetworkService,
+					testCredentialsFile,
+					testContainerRuntime.ContainerRuntimeConfig(),
+				)
+				if err != nil {
+					t.Fatalf("failed to create KubeOneCluster manifest: %v", err)
+				}
+			case kubeonev1beta2.SchemeGroupVersion.Version:
+				err = target.CreateV1Beta2Config(testTargetVersion,
+					tc.provider,
+					tc.providerExternal,
+					clusterNetworkPod,
+					clusterNetworkService,
+					testCredentialsFile,
+					testContainerRuntime.ContainerRuntimeConfig(),
+				)
+				if err != nil {
+					t.Fatalf("failed to create KubeOneCluster manifest: %v", err)
+				}
 			}
 
 			// Ensure cleanup at the end
@@ -249,14 +223,6 @@ func TestClusterConformance(t *testing.T) { //nolint:gocyclo
 				args = append(args, "-var", "control_plane_target_pool_members_count=1")
 			}
 
-			if tc.clusterType == clusterTypeEksd {
-				eksdFlags, flagsErr := EksdTerraformFlags(tc.provider)
-				if flagsErr != nil {
-					t.Fatalf("failed to parse eks-d terraform flags: %v", err)
-				}
-				args = append(args, eksdFlags...)
-			}
-
 			tf, err := pr.Provision(args...)
 			if err != nil {
 				t.Fatalf("failed to provision the infrastructure: %v", err)
@@ -269,10 +235,6 @@ func TestClusterConformance(t *testing.T) { //nolint:gocyclo
 			if tc.provider == provisioner.OpenStack {
 				installFlags = append(installFlags, "-c", "/tmp/credentials.yaml")
 			}
-
-			sleepTime := 2 * time.Minute
-			t.Logf("sleep %s", sleepTime)
-			time.Sleep(sleepTime)
 
 			err = target.Install(tf, installFlags)
 			if err != nil {
@@ -310,14 +272,6 @@ func TestClusterConformance(t *testing.T) { //nolint:gocyclo
 					}
 				}
 
-				if tc.clusterType == clusterTypeEksd {
-					eksdFlags, flagsErr := EksdTerraformFlags(tc.provider)
-					if flagsErr != nil {
-						t.Fatalf("failed to parse eks-d terraform flags: %v", err)
-					}
-					args = append(args, eksdFlags...)
-				}
-
 				_, err = pr.Provision(args...)
 				if err != nil {
 					t.Fatalf("failed to provision the infrastructure: %v", err)
@@ -348,12 +302,7 @@ func TestClusterConformance(t *testing.T) { //nolint:gocyclo
 				t.Fatalf("version mismatch: %v", err)
 			}
 
-			kubeVersion := testTargetVersion
-			if tc.clusterType == clusterTypeEksd {
-				kubeVersion = strings.Split(testTargetVersion, "-eks-")[0]
-			}
-
-			clusterVerifier := NewKubetest(kubeVersion, "../../_build", map[string]string{
+			clusterVerifier := NewKubetest(testTargetVersion, "../../_build", map[string]string{
 				"KUBERNETES_CONFORMANCE_TEST": "y",
 			})
 

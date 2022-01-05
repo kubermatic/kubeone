@@ -1,0 +1,13 @@
+apiVersion: kubeone.k8c.io/v1beta2
+kind: KubeOneCluster
+name: test
+versions:
+  kubernetes: 1.18.2
+cloudProvider:
+  external: true
+  cloudConfig: |-
+    test1=test-val-1
+
+    [test-key]
+    test-key-1=test-key-val-1
+  openstack: {}

@@ -66,21 +66,6 @@ sudo apt-mark unhold kubelet kubeadm kubectl kubernetes-cni
 
 
 
-sudo mkdir -p /etc/docker
-cat <<EOF | sudo tee /etc/docker/daemon.json
-{
-	"exec-opts": [
-		"native.cgroupdriver=systemd"
-	],
-	"storage-driver": "overlay2",
-	"log-driver": "json-file",
-	"log-opts": {
-		"max-size": "100m"
-	}
-}
-EOF
-
-
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 # Docker provides two different apt repos for ubuntu, bionic and focal. The focal repo currently
 # contains only Docker 19.03.14, which is not validated for all Kubernetes version.
@@ -101,8 +86,33 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install \
 	containerd.io=1.4.*
 sudo apt-mark hold docker-ce docker-ce-cli containerd.io
 
+sudo mkdir -p $(dirname /etc/docker/daemon.json)
+cat <<EOF | sudo tee /etc/docker/daemon.json
+{
+	"exec-opts": [
+		"native.cgroupdriver=systemd"
+	],
+	"storage-driver": "overlay2",
+	"log-driver": "json-file",
+	"log-opts": {
+		"max-size": "100m"
+	}
+}
+EOF
+cat <<EOF | sudo tee /etc/crictl.yaml
+runtime-endpoint: unix:///var/run/dockershim.sock
+EOF
+
+sudo mkdir -p /etc/systemd/system/containerd.service.d
+cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/environment.conf
+[Service]
+Restart=always
+EnvironmentFile=-/etc/environment
+EOF
+
 sudo systemctl daemon-reload
-sudo systemctl enable --now containerd
+sudo systemctl enable containerd
+sudo systemctl restart containerd
 sudo systemctl enable --now docker
 
 

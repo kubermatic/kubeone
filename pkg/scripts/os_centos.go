@@ -16,7 +16,10 @@ limitations under the License.
 
 package scripts
 
-import "k8c.io/kubeone/pkg/apis/kubeone"
+import (
+	"k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/containerruntime"
+)
 
 const (
 	kubeadmCentOSTemplate = `
@@ -62,7 +65,6 @@ sudo yum install -y \
 	rsync
 
 {{ if .INSTALL_DOCKER }}
-{{ template "docker-daemon-config" . }}
 {{ template "yum-docker-ce" . }}
 {{ end }}
 
@@ -102,11 +104,11 @@ sudo yum remove -y \
 sudo yum remove -y kubernetes-cni || true
 `
 	disableNMCloudSetup = `
-if systemctl status 'nm-cloud-setup.timer' 2> /dev/null | grep -Fq "Active:"; then
-systemctl stop nm-cloud-setup.timer
-systemctl disable nm-cloud-setup.service
-systemctl disable nm-cloud-setup.timer
-reboot
+if systemctl status 'nm-cloud-setup.timer' 2> /dev/null | grep -Fq "Active: active"; then
+sudo systemctl stop nm-cloud-setup.timer
+sudo systemctl disable nm-cloud-setup.service
+sudo systemctl disable nm-cloud-setup.timer
+sudo reboot
 fi
 `
 )
@@ -117,19 +119,24 @@ func KubeadmCentOS(cluster *kubeone.KubeOneCluster, force bool) (string, error) 
 		proxy = cluster.Proxy.HTTP
 	}
 
-	return Render(kubeadmCentOSTemplate, Data{
+	data := Data{
 		"KUBELET":                true,
 		"KUBEADM":                true,
 		"KUBECTL":                true,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
-		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"PROXY":                  proxy,
 		"FORCE":                  force,
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
-	})
+	}
+
+	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
+		return "", err
+	}
+
+	return Render(kubeadmCentOSTemplate, data)
 }
 
 func RemoveBinariesCentOS() (string, error) {
@@ -142,17 +149,22 @@ func UpgradeKubeadmAndCNICentOS(cluster *kubeone.KubeOneCluster) (string, error)
 		proxy = cluster.Proxy.HTTP
 	}
 
-	return Render(kubeadmCentOSTemplate, Data{
+	data := Data{
 		"UPGRADE":                true,
 		"KUBEADM":                true,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
-		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"PROXY":                  proxy,
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
-	})
+	}
+
+	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
+		return "", err
+	}
+
+	return Render(kubeadmCentOSTemplate, data)
 }
 
 func UpgradeKubeletAndKubectlCentOS(cluster *kubeone.KubeOneCluster) (string, error) {
@@ -161,18 +173,23 @@ func UpgradeKubeletAndKubectlCentOS(cluster *kubeone.KubeOneCluster) (string, er
 		proxy = cluster.Proxy.HTTP
 	}
 
-	return Render(kubeadmCentOSTemplate, Data{
+	data := Data{
 		"UPGRADE":                true,
 		"KUBELET":                true,
 		"KUBECTL":                true,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
-		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"PROXY":                  proxy,
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
-	})
+	}
+
+	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
+		return "", err
+	}
+
+	return Render(kubeadmCentOSTemplate, data)
 }
 
 func DisableNMCloudSetup() (string, error) {

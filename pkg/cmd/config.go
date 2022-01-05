@@ -142,7 +142,7 @@ func configPrintCmd() *cobra.Command {
 		longFlagName(opts, "CloudProviderName"),
 		shortFlagName(opts, "CloudProviderName"),
 		defaultCloudProviderName,
-		"cloud provider name (aws, digitalocean, gce, hetzner, packet, openstack, vsphere, none)")
+		"cloud provider name (aws, digitalocean, gce, hetzner, equinixmetal, openstack, vsphere, none)")
 
 	// Hosts
 	cmd.Flags().StringVar(&opts.ControlPlaneHosts, longFlagName(opts, "ControlPlaneHosts"), "", "control plane hosts in format of comma-separated key:value list, example: publicAddress:192.168.0.100,privateAddress:192.168.1.100,sshUsername:ubuntu,sshPort:22. Use quoted string of space separated values for multiple hosts")
@@ -187,8 +187,8 @@ func configMigrateCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		Use:   "migrate",
 		Short: "Migrate the v1alpha1 KubeOneCluster manifest to the v1beta1 version",
 		Long: `
-Migrate the v1alpha1 KubeOneCluster manifest to the v1beta1 version.
-The v1alpha1 version of the KubeOneCluster manifest is deprecated and will be
+Migrate the v1beta1 KubeOneCluster manifest to the v1beta2 version.
+The v1beta1 version of the KubeOneCluster manifest is deprecated and will be
 removed in one of the next versions.
 The new manifest is printed on the standard output.
 `,
@@ -216,11 +216,11 @@ func configMachinedeploymentsCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 Print the manifest for creating MachineDeployment objects.
 
 The manifest contains all MachineDeployments defined in the API/config.
-Note that manifest may include already created MachineDeplyoments.
+Note that manifest may include already created MachineDeployments.
 The manifest is printed on the standard output.
 `,
 		Args:    cobra.ExactArgs(0),
-		Example: `kubeone config machinedeplyoments --manifest mycluster.yaml`,
+		Example: `kubeone config machinedeployments --manifest mycluster.yaml`,
 		RunE: func(_ *cobra.Command, args []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
@@ -238,7 +238,7 @@ The manifest is printed on the standard output.
 func runPrint(printOptions *printOpts) error {
 	if printOptions.FullConfig {
 		switch printOptions.CloudProviderName {
-		case "digitalocean", "packet", "hetzner":
+		case "digitalocean", "equinixmetal", "hetzner":
 			printOptions.CloudProviderExternal = true
 		case "openstack":
 			printOptions.CloudProviderCloudCfg = "<< cloudConfig is required for OpenStack >>"
@@ -282,7 +282,7 @@ func createAndPrintManifest(printOptions *printOpts) error {
 	cfg := &yamled.Document{}
 
 	// API data
-	cfg.Set(yamled.Path{"apiVersion"}, "kubeone.io/v1beta1")
+	cfg.Set(yamled.Path{"apiVersion"}, "kubeone.k8c.io/v1beta2")
 	cfg.Set(yamled.Path{"kind"}, "KubeOneCluster")
 
 	// Cluster name
@@ -312,8 +312,8 @@ func createAndPrintManifest(printOptions *printOpts) error {
 	case "openstack":
 		cfg.Set(yamled.Path{"cloudProvider", "openstack"}, providerVal)
 		cfg.Set(yamled.Path{"cloudProvider", "cloudConfig"}, "<< cloudConfig is required for OpenStack >>\n")
-	case "packet":
-		cfg.Set(yamled.Path{"cloudProvider", "packet"}, providerVal)
+	case "equinixmetal":
+		cfg.Set(yamled.Path{"cloudProvider", "equinixmetal"}, providerVal)
 		cfg.Set(yamled.Path{"cloudProvider", "external"}, true)
 	case "vsphere":
 		cfg.Set(yamled.Path{"cloudProvider", "vsphere"}, providerVal)
@@ -504,7 +504,7 @@ func validateAndPrintConfig(cfgYaml interface{}) error {
 }
 
 const exampleManifest = `
-apiVersion: kubeone.io/v1beta1
+apiVersion: kubeone.k8c.io/v1beta2
 kind: KubeOneCluster
 name: {{ .ClusterName }}
 
@@ -581,7 +581,7 @@ cloudProvider:
   # hetzner:
   #   networkID: ""
   # openstack: {}
-  # packet: {}
+  # equinixmetal: {}
   # vsphere: {}
   # none: {}
   {{ .CloudProviderName }}: {}
@@ -608,7 +608,19 @@ cloudProvider:
 containerRuntime:
   # Installs containerd container runtime.
   # Default for 1.21+ Kubernetes clusters.
-  # containerd: {}
+  # containerd:
+  #   registries:
+  #     k8s.gcr.io:
+  #       mirrors:
+  #       - https://self-signed.pull-through.cache.tld
+  #       tlsConfig:
+  #         insecureSkipVerify: true
+  #     docker.io:
+  #       mirrors:
+  #       - http://plain-text2.tld
+  #     "*":
+  #       mirrors:
+  #       - https://secure.tld
   # Installs Docker container runtime.
   # Default for Kubernetes clusters up to 1.20.
   # This option will be removed once Kubernetes 1.21 reaches EOL.
@@ -809,8 +821,8 @@ addons:
   enable: false
   # In case when the relative path is provided, the path is relative
   # to the KubeOne configuration file.
-  # This path must be always provided and the directory must exist, even if
-  # using only embedded addons.
+  # This path is required only if you want to provide custom addons or override
+  # embedded addons.
   path: "./addons"
   # globalParams is a key-value map of values passed to the addons templating engine,
   # to be used in the addons' manifests. The values defined here are passed to all

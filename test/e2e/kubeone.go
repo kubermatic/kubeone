@@ -19,7 +19,6 @@ package e2e
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"github.com/pkg/errors"
@@ -27,6 +26,7 @@ import (
 
 	kubeoneinternal "k8c.io/kubeone/pkg/apis/kubeone"
 	kubeonev1beta1 "k8c.io/kubeone/pkg/apis/kubeone/v1beta1"
+	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
 	"k8c.io/kubeone/test/e2e/testutil"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -50,7 +50,7 @@ func NewKubeone(kubeoneDir, configurationFilePath string) *Kubeone {
 }
 
 // CreateConfig creates a KubeOneCluster manifest
-func (k1 *Kubeone) CreateConfig(
+func (k1 *Kubeone) CreateV1Beta1Config(
 	kubernetesVersion string,
 	providerName string,
 	providerExternal bool,
@@ -58,7 +58,6 @@ func (k1 *Kubeone) CreateConfig(
 	clusterNetworkService string,
 	credentialsFile string,
 	containerRuntime kubeoneinternal.ContainerRuntimeConfig,
-	eksdVersions *eksdVersions,
 ) error {
 	k1Cluster := kubeonev1beta1.KubeOneCluster{
 		TypeMeta: metav1.TypeMeta{
@@ -96,7 +95,7 @@ func (k1 *Kubeone) CreateConfig(
 	}
 
 	if credentialsFile != "" {
-		ymlbuf, err := ioutil.ReadFile(credentialsFile)
+		ymlbuf, err := os.ReadFile(credentialsFile)
 		if err != nil {
 			return errors.Wrap(err, "unable to read credentials file")
 		}
@@ -109,12 +108,72 @@ func (k1 *Kubeone) CreateConfig(
 		k1Cluster.CloudProvider.CloudConfig = credentials["cloudConfig"]
 	}
 
-	if eksdVersions != nil {
-		assetConfig, err := genEKSDAssetConfig(eksdVersions)
+	k1Config, err := kyaml.Marshal(&k1Cluster)
+	if err != nil {
+		return errors.Wrap(err, "unable to marshal kubeone KubeOneCluster")
+	}
+
+	err = os.WriteFile(k1.ConfigurationFilePath, k1Config, 0600)
+	return errors.Wrap(err, "failed to write KubeOne configuration manifest")
+}
+
+// CreateConfig creates a KubeOneCluster manifest
+func (k1 *Kubeone) CreateV1Beta2Config(
+	kubernetesVersion string,
+	providerName string,
+	providerExternal bool,
+	clusterNetworkPod string,
+	clusterNetworkService string,
+	credentialsFile string,
+	containerRuntime kubeoneinternal.ContainerRuntimeConfig,
+) error {
+	k1Cluster := kubeonev1beta2.KubeOneCluster{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: kubeonev1beta2.SchemeGroupVersion.String(),
+			Kind:       "KubeOneCluster",
+		},
+	}
+
+	kubeonev1beta2.SetObjectDefaults_KubeOneCluster(&k1Cluster)
+
+	k1Cluster.CloudProvider = kubeonev1beta2.CloudProviderSpec{
+		External: providerExternal,
+	}
+
+	if err := kubeonev1beta2.SetCloudProvider(&k1Cluster.CloudProvider, providerName); err != nil {
+		return errors.Wrap(err, "failed to set cloud provider")
+	}
+
+	k1Cluster.Versions = kubeonev1beta2.VersionConfig{
+		Kubernetes: kubernetesVersion,
+	}
+
+	k1Cluster.ClusterNetwork = kubeonev1beta2.ClusterNetworkConfig{
+		PodSubnet:     clusterNetworkPod,
+		ServiceSubnet: clusterNetworkService,
+	}
+
+	switch {
+	case containerRuntime.Containerd != nil:
+		k1Cluster.ContainerRuntime.Containerd = &kubeonev1beta2.ContainerRuntimeContainerd{}
+		k1Cluster.ContainerRuntime.Docker = nil
+	case containerRuntime.Docker != nil:
+		k1Cluster.ContainerRuntime.Containerd = nil
+		k1Cluster.ContainerRuntime.Docker = &kubeonev1beta2.ContainerRuntimeDocker{}
+	}
+
+	if credentialsFile != "" {
+		ymlbuf, err := os.ReadFile(credentialsFile)
 		if err != nil {
-			return errors.Wrap(err, "failed to generate asset configuration for eks-d cluster")
+			return errors.Wrap(err, "unable to read credentials file")
 		}
-		k1Cluster.AssetConfiguration = *assetConfig
+
+		credentials := map[string]string{}
+		if err = yaml.Unmarshal(ymlbuf, &credentials); err != nil {
+			return errors.Wrap(err, "unable to unmarshal credentials file from yaml")
+		}
+
+		k1Cluster.CloudProvider.CloudConfig = credentials["cloudConfig"]
 	}
 
 	k1Config, err := kyaml.Marshal(&k1Cluster)
@@ -122,7 +181,7 @@ func (k1 *Kubeone) CreateConfig(
 		return errors.Wrap(err, "unable to marshal kubeone KubeOneCluster")
 	}
 
-	err = ioutil.WriteFile(k1.ConfigurationFilePath, k1Config, 0600)
+	err = os.WriteFile(k1.ConfigurationFilePath, k1Config, 0600)
 	return errors.Wrap(err, "failed to write KubeOne configuration manifest")
 }
 
@@ -133,7 +192,8 @@ func (k1 *Kubeone) Install(tfJSON string, installFlags []string) error {
 		return err
 	}
 
-	flags := []string{"install",
+	flags := []string{"apply",
+		"--auto-approve",
 		"--tfjson", "tf.json",
 		"--manifest", k1.ConfigurationFilePath}
 	if len(installFlags) != 0 {
@@ -150,7 +210,8 @@ func (k1 *Kubeone) Install(tfJSON string, installFlags []string) error {
 
 // Upgrade runs 'kubeone upgrade' command to upgrade the cluster
 func (k1 *Kubeone) Upgrade(upgradeFlags []string) error {
-	flags := []string{"upgrade",
+	flags := []string{"apply",
+		"--auto-approve",
 		"--tfjson", "tf.json",
 		"--upgrade-machine-deployments",
 		"--manifest", k1.ConfigurationFilePath}
@@ -200,7 +261,7 @@ func (k1 *Kubeone) Reset() error {
 		"--destroy-workers",
 		"--manifest", k1.ConfigurationFilePath)
 	if err != nil {
-		return fmt.Errorf("destroing workers failed: %w", err)
+		return fmt.Errorf("destroying workers failed: %w", err)
 	}
 
 	return nil

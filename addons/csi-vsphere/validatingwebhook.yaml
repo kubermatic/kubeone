@@ -128,7 +128,7 @@ spec:
           imagePullPolicy: "Always"
           env:
             - name: WEBHOOK_CONFIG_PATH
-              value: "/etc/webhook/webhook.config"
+              value: "/run/secrets/tls/webhook.config"
             - name: LOGGER_LEVEL
               value: "PRODUCTION" # Options: DEVELOPMENT, PRODUCTION
             - name: CSI_NAMESPACE
@@ -139,7 +139,7 @@ spec:
 {{ caBundleEnvVar | indent 12 }}
 {{ end }}
           volumeMounts:
-            - mountPath: /etc/webhook
+            - mountPath: /run/secrets/tls
               name: webhook-certs
               readOnly: true
 {{ if .Config.CABundle }}

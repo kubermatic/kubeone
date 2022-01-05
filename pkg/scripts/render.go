@@ -28,24 +28,34 @@ import (
 
 var (
 	containerRuntimeTemplates = map[string]string{
-		"containerd-config": heredoc.Doc(`
-			cat <<EOF | sudo tee /etc/containerd/config.toml
-			{{ containerdCfg .INSECURE_REGISTRY -}}
+		"container-runtime-daemon-config": heredoc.Doc(`
+			{{- if .CONTAINER_RUNTIME_CONFIG_PATH }}
+			sudo mkdir -p $(dirname {{ .CONTAINER_RUNTIME_CONFIG_PATH }})
+			cat <<EOF | sudo tee {{ .CONTAINER_RUNTIME_CONFIG_PATH }}
+			{{ .CONTAINER_RUNTIME_CONFIG }}
 			EOF
+			{{- end }}
 
+			{{- if .CONTAINER_RUNTIME_SOCKET }}
 			cat <<EOF | sudo tee /etc/crictl.yaml
-			runtime-endpoint: unix:///run/containerd/containerd.sock
+			runtime-endpoint: unix://{{ .CONTAINER_RUNTIME_SOCKET }}
 			EOF
+			{{- end }}
+		`),
 
+		"containerd-systemd-environment": heredoc.Doc(`
 			sudo mkdir -p /etc/systemd/system/containerd.service.d
 			cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/environment.conf
 			[Service]
 			Restart=always
 			EnvironmentFile=-/etc/environment
 			EOF
+		`),
 
+		"containerd-systemd-setup": heredoc.Doc(`
+			{{ template "containerd-systemd-environment" . }}
 			sudo systemctl daemon-reload
-			sudo systemctl enable --now containerd
+			sudo systemctl enable containerd
 			sudo systemctl restart containerd
 		`),
 
@@ -62,9 +72,6 @@ var (
 
 			sudo apt-mark unhold docker-ce docker-ce-cli containerd.io || true
 			{{- $DOCKER_VERSION_TO_INSTALL := "%s" }}
-			{{- if semverCompare "< 1.17" .KUBERNETES_VERSION }}
-			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
-			{{- end }}
 
 			{{- if semverCompare ">= 1.21" .KUBERNETES_VERSION }}
 			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
@@ -81,47 +88,32 @@ var (
 				docker-ce-cli=5:{{ $DOCKER_VERSION_TO_INSTALL }} \
 				containerd.io=%s
 			sudo apt-mark hold docker-ce docker-ce-cli containerd.io
-
-			sudo systemctl daemon-reload
-			sudo systemctl enable --now containerd
+			{{ template "container-runtime-daemon-config" . }}
+			{{ template "containerd-systemd-setup" . -}}
 			sudo systemctl enable --now docker
 			`,
 			defaultDockerVersion,
-			defaultLegacyDockerVersion,
 			latestDockerVersion,
 			defaultContainerdVersion,
 		),
 
 		"yum-docker-ce-amzn": heredoc.Docf(`
-			sudo yum versionlock delete docker cri-tools containerd || true
+			sudo yum versionlock delete docker containerd || true
 
-			{{- $CRICTL_VERSION_TO_INSTALL := "%s" }}
 			{{- $DOCKER_VERSION_TO_INSTALL := "%s" }}
-			{{- if semverCompare "< 1.17" .KUBERNETES_VERSION }}
-			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
-			{{- end }}
-
 			{{- if semverCompare ">= 1.21" .KUBERNETES_VERSION }}
 			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
 			{{- end }}
 
 			sudo yum install -y \
 				docker-{{ $DOCKER_VERSION_TO_INSTALL }} \
-				containerd.io-%s \
-				cri-tools-{{ $CRICTL_VERSION_TO_INSTALL }}
-			sudo yum versionlock add docker cri-tools containerd
-
-			cat <<EOF | sudo tee /etc/crictl.yaml
-			runtime-endpoint: unix:///var/run/dockershim.sock
-			EOF
-
-			sudo systemctl daemon-reload
-			sudo systemctl enable --now containerd
+				containerd.io-%s
+			sudo yum versionlock add docker containerd
+			{{ template "container-runtime-daemon-config" . }}
+			{{ template "containerd-systemd-setup" . -}}
 			sudo systemctl enable --now docker
 		`,
-			defaultAmazonCrictlVersion,
 			defaultDockerVersion,
-			defaultLegacyDockerVersion,
 			latestDockerVersion,
 			defaultContainerdVersion,
 		),
@@ -136,16 +128,6 @@ var (
 			sudo yum versionlock delete docker-ce docker-ce-cli containerd.io || true
 
 			{{- $DOCKER_VERSION_TO_INSTALL := "%s" }}
-			{{- if semverCompare "< 1.17" .KUBERNETES_VERSION }}
-			{{- if .CONFIGURE_REPOSITORIES }}
-			# Docker provides two different apt repos for CentOS, 7 and 8. The 8 repo currently
-			# contains only Docker 19.03.14, which is not validated for all Kubernetes version.
-			# Therefore, we use 7 repo which has all Docker versions.
-			sudo sed -i 's/\$releasever/7/g' /etc/yum.repos.d/docker-ce.repo
-			{{- end }}
-			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
-			{{- end }}
-
 			{{- if semverCompare ">= 1.21" .KUBERNETES_VERSION }}
 			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
 			{{- end }}
@@ -155,26 +137,13 @@ var (
 				docker-ce-cli-{{ $DOCKER_VERSION_TO_INSTALL }} \
 				containerd.io-%s
 			sudo yum versionlock add docker-ce docker-ce-cli containerd.io
-
-			sudo systemctl daemon-reload
-			sudo systemctl enable --now containerd
+			{{ template "container-runtime-daemon-config" . }}
+			{{ template "containerd-systemd-setup" . -}}
 			sudo systemctl enable --now docker
 			`,
 			defaultDockerVersion,
-			defaultLegacyDockerVersion,
 			latestDockerVersion,
 			defaultContainerdVersion,
-		),
-
-		"flatcar-docker": heredoc.Doc(`
-			cat <<EOF | sudo tee /etc/crictl.yaml
-			runtime-endpoint: unix:///var/run/dockershim.sock
-			EOF
-
-			sudo systemctl daemon-reload
-			sudo systemctl enable --now docker
-			sudo systemctl restart docker
-			`,
 		),
 
 		"apt-containerd": heredoc.Docf(`
@@ -190,7 +159,8 @@ var (
 			sudo apt-get install -y containerd.io=%s
 			sudo apt-mark hold containerd.io
 
-			{{ template "containerd-config" . -}}
+			{{ template "container-runtime-daemon-config" . }}
+			{{ template "containerd-systemd-setup" . -}}
 			`,
 			defaultContainerdVersion,
 		),
@@ -210,37 +180,43 @@ var (
 			sudo yum install -y containerd.io-%s
 			sudo yum versionlock add containerd.io
 
-			{{ template "containerd-config" . -}}
+			{{ template "container-runtime-daemon-config" . }}
+			{{ template "containerd-systemd-setup" . -}}
 			`,
 			defaultContainerdVersion,
 		),
 
 		"yum-containerd-amzn": heredoc.Docf(`
-			sudo yum versionlock delete containerd cri-tools || true
-			sudo yum install -y containerd-%s cri-tools-%s
-			sudo yum versionlock add containerd cri-tools
+			sudo yum versionlock delete containerd || true
+			sudo yum install -y containerd-%s
+			sudo yum versionlock add containerd
 
-			{{ template "containerd-config" . -}}
+			{{ template "container-runtime-daemon-config" . }}
+			{{ template "containerd-systemd-setup" . -}}
 			`,
 			defaultAmazonContainerdVersion,
-			defaultAmazonCrictlVersion,
 		),
 
 		"flatcar-containerd": heredoc.Doc(`
-			cat <<EOF | sudo tee /etc/crictl.yaml
-			runtime-endpoint: unix:///run/containerd/containerd.sock
-			EOF
-
+			{{ template "container-runtime-daemon-config" . }}
 			sudo mkdir -p /etc/systemd/system/containerd.service.d
-			cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/environment.conf
+			cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/10-kubeone.conf
 			[Service]
 			Restart=always
-			EnvironmentFile=-/etc/environment
+			Environment=CONTAINERD_CONFIG=/etc/containerd/config.toml
+			ExecStart=
+			ExecStart=/usr/bin/env PATH=\${TORCX_BINDIR}:\${PATH} \${TORCX_BINDIR}/containerd --config \${CONTAINERD_CONFIG}
 			EOF
+			{{ template "containerd-systemd-setup" . }}
+			`,
+		),
 
+		"flatcar-docker": heredoc.Doc(`
+			{{ template "container-runtime-daemon-config" . }}
+			{{ template "containerd-systemd-environment" . }}
 			sudo systemctl daemon-reload
-			sudo systemctl enable --now containerd
-			sudo systemctl restart containerd
+			sudo systemctl enable --now docker
+			sudo systemctl restart docker
 			`,
 		),
 	}
@@ -253,10 +229,9 @@ func Render(cmd string, variables map[string]interface{}) (string, error) {
 	tpl := template.New("base").
 		Funcs(sprig.TxtFuncMap()).
 		Funcs(template.FuncMap{
-			"required":      requiredTemplateFunc,
-			"dockerCfg":     dockerCfg,
-			"containerdCfg": containerdCfg,
-		})
+			"required": requiredTemplateFunc,
+		}).
+		Funcs(sprig.TxtFuncMap())
 
 	_, err := tpl.New("library").Parse(libraryTemplate)
 	if err != nil {

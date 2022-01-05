@@ -25,6 +25,8 @@ import (
 	"github.com/Masterminds/semver/v3"
 	"github.com/pkg/errors"
 
+	kubeonev1beta1 "k8c.io/kubeone/pkg/apis/kubeone/v1beta1"
+	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
 	"k8c.io/kubeone/test/e2e/provisioner"
 	"k8c.io/kubeone/test/e2e/testutil"
 
@@ -40,7 +42,7 @@ const (
 	delayUpgrade          = 2 * time.Minute
 )
 
-func TestClusterUpgrade(t *testing.T) {
+func TestClusterUpgrade(t *testing.T) { //nolint:gocyclo
 	testcases := []struct {
 		name                  string
 		provider              string
@@ -82,8 +84,8 @@ func TestClusterUpgrade(t *testing.T) {
 			expectedNumberOfNodes: 4, // 3 control planes + 3 workers
 		},
 		{
-			name:                  "upgrade k8s cluster on Packet",
-			provider:              provisioner.Packet,
+			name:                  "upgrade k8s cluster on Equinix Metal",
+			provider:              provisioner.EquinixMetal,
 			providerExternal:      true,
 			initialConfigPath:     "../../test/e2e/testdata/config_packet_initial.yaml",
 			targetConfigPath:      "../../test/e2e/testdata/config_packet_target.yaml",
@@ -117,6 +119,11 @@ func TestClusterUpgrade(t *testing.T) {
 
 			if len(testTargetVersion) == 0 {
 				t.Fatal("-target-version must be set")
+			}
+
+			if testConfigAPIVersion != kubeonev1beta1.SchemeGroupVersion.Version &&
+				testConfigAPIVersion != kubeonev1beta2.SchemeGroupVersion.Version {
+				t.Fatal("-config-api-version must be v1beta1 or v1beta2")
 			}
 
 			if testProvider != tc.provider {
@@ -156,17 +163,31 @@ func TestClusterUpgrade(t *testing.T) {
 				clusterNetworkService = clusterNetworkServiceCIDR
 			}
 
-			err = target.CreateConfig(testInitialVersion,
-				tc.provider,
-				tc.providerExternal,
-				clusterNetworkPod,
-				clusterNetworkService,
-				testCredentialsFile,
-				testContainerRuntime.ContainerRuntimeConfig(),
-				nil,
-			)
-			if err != nil {
-				t.Fatalf("failed to create KubeOneCluster manifest: %v", err)
+			switch testConfigAPIVersion {
+			case kubeonev1beta1.SchemeGroupVersion.Version:
+				err = target.CreateV1Beta1Config(testInitialVersion,
+					tc.provider,
+					tc.providerExternal,
+					clusterNetworkPod,
+					clusterNetworkService,
+					testCredentialsFile,
+					testContainerRuntime.ContainerRuntimeConfig(),
+				)
+				if err != nil {
+					t.Fatalf("failed to create KubeOneCluster manifest: %v", err)
+				}
+			case kubeonev1beta2.SchemeGroupVersion.Version:
+				err = target.CreateV1Beta2Config(testInitialVersion,
+					tc.provider,
+					tc.providerExternal,
+					clusterNetworkPod,
+					clusterNetworkService,
+					testCredentialsFile,
+					testContainerRuntime.ContainerRuntimeConfig(),
+				)
+				if err != nil {
+					t.Fatalf("failed to create KubeOneCluster manifest: %v", err)
+				}
 			}
 
 			// Ensure cleanup at the end
@@ -193,10 +214,6 @@ func TestClusterUpgrade(t *testing.T) {
 			if tc.provider == provisioner.OpenStack {
 				installFlags = append(installFlags, "-c", "/tmp/credentials.yaml")
 			}
-
-			sleepTime := 2 * time.Minute
-			t.Logf("sleep %s", sleepTime)
-			time.Sleep(sleepTime)
 
 			err = target.Install(tf, installFlags)
 			if err != nil {
@@ -262,17 +279,31 @@ func TestClusterUpgrade(t *testing.T) {
 				clusterNetworkService = "172.16.0.0/12"
 			}
 
-			err = target.CreateConfig(testTargetVersion,
-				tc.provider,
-				tc.providerExternal,
-				clusterNetworkPod,
-				clusterNetworkService,
-				testCredentialsFile,
-				testContainerRuntime.ContainerRuntimeConfig(),
-				nil,
-			)
-			if err != nil {
-				t.Fatalf("failed to create KubeOneCluster manifest: %v", err)
+			switch testConfigAPIVersion {
+			case "v1beta1":
+				err = target.CreateV1Beta1Config(testTargetVersion,
+					tc.provider,
+					tc.providerExternal,
+					clusterNetworkPod,
+					clusterNetworkService,
+					testCredentialsFile,
+					testContainerRuntime.ContainerRuntimeConfig(),
+				)
+				if err != nil {
+					t.Fatalf("failed to create KubeOneCluster manifest: %v", err)
+				}
+			case "v1beta2":
+				err = target.CreateV1Beta2Config(testTargetVersion,
+					tc.provider,
+					tc.providerExternal,
+					clusterNetworkPod,
+					clusterNetworkService,
+					testCredentialsFile,
+					testContainerRuntime.ContainerRuntimeConfig(),
+				)
+				if err != nil {
+					t.Fatalf("failed to create KubeOneCluster manifest: %v", err)
+				}
 			}
 
 			// Run 'kubeone upgrade'

@@ -1,11 +1,11 @@
-  # Source: cilium/templates/cilium-agent-serviceaccount.yaml
+# Source: cilium/templates/cilium-agent/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: "cilium"
   namespace: kube-system
 ---
-# Source: cilium/templates/cilium-operator-serviceaccount.yaml
+# Source: cilium/templates/cilium-operator/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -13,26 +13,29 @@ metadata:
   namespace: kube-system
 ---
 
-{{ if .Config.ClusterNetwork.CNI.Cilium.EnableHubble }}
 {{- $ca := genCA "hubble-ca.cilium.io" 1095 -}}
 {{- $serverCert := genSignedCert "*.default.hubble-grpc.cilium.io" nil (list "*.default.hubble-grpc.cilium.io") 1095 $ca -}}
+
+{{ if .Config.ClusterNetwork.CNI.Cilium.EnableHubble }}
 {{- $cert := genSignedCert "*.hubble-relay.cilium.io" nil (list "*.hubble-relay.cilium.io") 1095 $ca -}}
 
-# Source: cilium/templates/hubble-relay-serviceaccount.yaml
+
+# Source: cilium/templates/hubble-relay/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: "hubble-relay"
   namespace: kube-system
 ---
-# Source: cilium/templates/hubble-ui-serviceaccount.yaml
+# Source: cilium/templates/hubble-ui/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: "hubble-ui"
   namespace: kube-system
 ---
-# Source: cilium/templates/hubble-relay-client-tls-secret.yaml
+
+# Source: cilium/templates/hubble/tls-helm/relay-client-secret.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -43,8 +46,20 @@ data:
   ca.crt: {{ $ca.Cert | b64enc }}
   tls.crt: {{ $cert.Cert | b64enc }}
   tls.key: {{ $cert.Key | b64enc }}
+{{ end }}
 ---
-# Source: cilium/templates/hubble-server-secret.yaml
+# Source: cilium/templates/hubble/tls-helm/ca-secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: hubble-ca-secret
+  namespace: kube-system
+data:
+  ca.crt: {{ $ca.Cert | b64enc }}
+  ca.key: {{ $ca.Key | b64enc }}
+
+---
+# Source: cilium/templates/hubble/tls-helm/server-secret.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -56,21 +71,6 @@ data:
   tls.crt: {{ $serverCert.Cert | b64enc }}
   tls.key: {{ $serverCert.Key | b64enc }}
 ---
-# Source: cilium/templates/hubble-ca-configmap.yaml
-# NOTE: the hubble-ca-cert ConfigMap is deprecated and will be removed in v1.11
-# The Hubble CA certificate can be found in both the hubble-server-certs and
-# hubble-relay-client-certs Secrets under the ca.crt key.
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: hubble-ca-cert
-  namespace: kube-system
-data:
-  ca.crt: |-
-{{ $ca.Cert | indent 6 }}
-
----
-{{ end }}
 
 # Source: cilium/templates/cilium-configmap.yaml
 apiVersion: v1
@@ -85,13 +85,15 @@ data:
   # - "crd" stores identities in kubernetes as CRDs (custom resource definition).
   #   These can be queried with:
   #     kubectl get ciliumid
-  # - "kvstore" stores identities in a kvstore, etcd or consul, that is
+  # - "kvstore" stores identities in an etcd kvstore, that is
   #   configured below. Cilium versions before 1.6 supported only the kvstore
   #   backend. Upgrades from these older cilium versions should continue using
   #   the kvstore by commenting out the identity-allocation-mode below, or
   #   setting it to "kvstore".
   identity-allocation-mode: crd
   cilium-endpoint-gc-interval: "5m0s"
+  # Disable the usage of CiliumEndpoint CRD
+  disable-endpoint-crd: "false"
 
   # If you want to run cilium in debug mode change this value to true
   debug: "false"
@@ -178,7 +180,6 @@ data:
 
   enable-ipv4-masquerade: "true"
   enable-ipv6-masquerade: "true"
-  enable-bpf-masquerade: "true"
 
   enable-xt-socket-fallback: "true"
   install-iptables-rules: "true"
@@ -195,6 +196,7 @@ data:
   node-port-bind-protection: "true"
   enable-auto-protect-node-port-range: "true"
   enable-session-affinity: "true"
+  enable-l2-neigh-discovery: "true"
   enable-endpoint-health-checking: "true"
   enable-health-checking: "true"
   enable-well-known-identities: "false"
@@ -219,6 +221,7 @@ data:
   cluster-pool-ipv4-mask-size: "24"
   disable-cnp-status-updates: "true"
   cgroup-root: "/run/cilium/cgroupv2"
+  enable-k8s-terminating-endpoint: "true"
 ---
 
 {{ if .Config.ClusterNetwork.CNI.Cilium.EnableHubble }}
@@ -241,7 +244,7 @@ data:
     tls-hubble-server-ca-files: /var/lib/hubble-relay/tls/hubble-server-ca.crt
     disable-server-tls: true
 ---
-# Source: cilium/templates/hubble-ui-configmap.yaml
+# Source: cilium/templates/hubble-ui/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -321,210 +324,210 @@ data:
                           address: 127.0.0.1
                           port_value: 8090
 ---
-
 {{- end }}
-# Source: cilium/templates/cilium-agent-clusterrole.yaml
+# Source: cilium/templates/cilium-agent/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: cilium
 rules:
-- apiGroups:
-  - networking.k8s.io
-  resources:
-  - networkpolicies
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - discovery.k8s.io
-  resources:
-  - endpointslices
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - namespaces
-  - services
-  - nodes
-  - endpoints
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - pods
-  - pods/finalizers
-  verbs:
-  - get
-  - list
-  - watch
-  - update
-  - delete
-- apiGroups:
-  - ""
-  resources:
-  - nodes
-  verbs:
-  - get
-  - list
-  - watch
-  - update
-- apiGroups:
-  - ""
-  resources:
-  - nodes
-  - nodes/status
-  verbs:
-  - patch
-- apiGroups:
-  - apiextensions.k8s.io
-  resources:
-  - customresourcedefinitions
-  verbs:
-  # Deprecated for removal in v1.10
-  - create
-  - list
-  - watch
-  - update
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - networkpolicies
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - discovery.k8s.io
+    resources:
+      - endpointslices
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+      - services
+      - nodes
+      - endpoints
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - pods/finalizers
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+      - delete
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+      - nodes/status
+    verbs:
+      - patch
+  - apiGroups:
+      - apiextensions.k8s.io
+    resources:
+      - customresourcedefinitions
+    verbs:
+      # Deprecated for removal in v1.10
+      - create
+      - list
+      - watch
+      - update
 
-  # This is used when validating policies in preflight. This will need to stay
-  # until we figure out how to avoid "get" inside the preflight, and then
-  # should be removed ideally.
-  - get
-- apiGroups:
-  - cilium.io
-  resources:
-  - ciliumnetworkpolicies
-  - ciliumnetworkpolicies/status
-  - ciliumnetworkpolicies/finalizers
-  - ciliumclusterwidenetworkpolicies
-  - ciliumclusterwidenetworkpolicies/status
-  - ciliumclusterwidenetworkpolicies/finalizers
-  - ciliumendpoints
-  - ciliumendpoints/status
-  - ciliumendpoints/finalizers
-  - ciliumnodes
-  - ciliumnodes/status
-  - ciliumnodes/finalizers
-  - ciliumidentities
-  - ciliumidentities/finalizers
-  - ciliumlocalredirectpolicies
-  - ciliumlocalredirectpolicies/status
-  - ciliumlocalredirectpolicies/finalizers
-  - ciliumegressnatpolicies
-  verbs:
-  - '*'
+      # This is used when validating policies in preflight. This will need to stay
+      # until we figure out how to avoid "get" inside the preflight, and then
+      # should be removed ideally.
+      - get
+  - apiGroups:
+      - cilium.io
+    resources:
+      - ciliumnetworkpolicies
+      - ciliumnetworkpolicies/status
+      - ciliumnetworkpolicies/finalizers
+      - ciliumclusterwidenetworkpolicies
+      - ciliumclusterwidenetworkpolicies/status
+      - ciliumclusterwidenetworkpolicies/finalizers
+      - ciliumendpoints
+      - ciliumendpoints/status
+      - ciliumendpoints/finalizers
+      - ciliumnodes
+      - ciliumnodes/status
+      - ciliumnodes/finalizers
+      - ciliumidentities
+      - ciliumidentities/finalizers
+      - ciliumlocalredirectpolicies
+      - ciliumlocalredirectpolicies/status
+      - ciliumlocalredirectpolicies/finalizers
+      - ciliumegressnatpolicies
+      - ciliumendpointslices
+    verbs:
+      - '*'
 ---
-# Source: cilium/templates/cilium-operator-clusterrole.yaml
+# Source: cilium/templates/cilium-operator/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: cilium-operator
 rules:
-- apiGroups:
-  - ""
-  resources:
-  # to automatically delete [core|kube]dns pods so that are starting to being
-  # managed by Cilium
-  - pods
-  verbs:
-  - get
-  - list
-  - watch
-  - delete
-- apiGroups:
-  - discovery.k8s.io
-  resources:
-  - endpointslices
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - services
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  # to perform LB IP allocation for BGP
-  - services/status
-  verbs:
-  - update
-- apiGroups:
-  - ""
-  resources:
-  # to perform the translation of a CNP that contains `ToGroup` to its endpoints
-  - services
-  - endpoints
-  # to check apiserver connectivity
-  - namespaces
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - cilium.io
-  resources:
-  - ciliumnetworkpolicies
-  - ciliumnetworkpolicies/status
-  - ciliumnetworkpolicies/finalizers
-  - ciliumclusterwidenetworkpolicies
-  - ciliumclusterwidenetworkpolicies/status
-  - ciliumclusterwidenetworkpolicies/finalizers
-  - ciliumendpoints
-  - ciliumendpoints/status
-  - ciliumendpoints/finalizers
-  - ciliumnodes
-  - ciliumnodes/status
-  - ciliumnodes/finalizers
-  - ciliumidentities
-  - ciliumidentities/status
-  - ciliumidentities/finalizers
-  - ciliumlocalredirectpolicies
-  - ciliumlocalredirectpolicies/status
-  - ciliumlocalredirectpolicies/finalizers
-  verbs:
-  - '*'
-- apiGroups:
-  - apiextensions.k8s.io
-  resources:
-  - customresourcedefinitions
-  verbs:
-  - create
-  - get
-  - list
-  - update
-  - watch
-# For cilium-operator running in HA mode.
-#
-# Cilium operator running in HA mode requires the use of ResourceLock for Leader Election
-# between multiple running instances.
-# The preferred way of doing this is to use LeasesResourceLock as edits to Leases are less
-# common and fewer objects in the cluster watch "all Leases".
-- apiGroups:
-  - coordination.k8s.io
-  resources:
-  - leases
-  verbs:
-  - create
-  - get
-  - update
+  - apiGroups:
+      - ""
+    resources:
+      # to automatically delete [core|kube]dns pods so that are starting to being
+      # managed by Cilium
+      - pods
+    verbs:
+      - get
+      - list
+      - watch
+      - delete
+  - apiGroups:
+      - discovery.k8s.io
+    resources:
+      - endpointslices
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - services
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      # to perform LB IP allocation for BGP
+      - services/status
+    verbs:
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      # to perform the translation of a CNP that contains `ToGroup` to its endpoints
+      - services
+      - endpoints
+      # to check apiserver connectivity
+      - namespaces
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - cilium.io
+    resources:
+      - ciliumnetworkpolicies
+      - ciliumnetworkpolicies/status
+      - ciliumnetworkpolicies/finalizers
+      - ciliumclusterwidenetworkpolicies
+      - ciliumclusterwidenetworkpolicies/status
+      - ciliumclusterwidenetworkpolicies/finalizers
+      - ciliumendpoints
+      - ciliumendpoints/status
+      - ciliumendpoints/finalizers
+      - ciliumnodes
+      - ciliumnodes/status
+      - ciliumnodes/finalizers
+      - ciliumidentities
+      - ciliumendpointslices
+      - ciliumidentities/status
+      - ciliumidentities/finalizers
+      - ciliumlocalredirectpolicies
+      - ciliumlocalredirectpolicies/status
+      - ciliumlocalredirectpolicies/finalizers
+    verbs:
+      - '*'
+  - apiGroups:
+      - apiextensions.k8s.io
+    resources:
+      - customresourcedefinitions
+    verbs:
+      - create
+      - get
+      - list
+      - update
+      - watch
+  # For cilium-operator running in HA mode.
+  #
+  # Cilium operator running in HA mode requires the use of ResourceLock for Leader Election
+  # between multiple running instances.
+  # The preferred way of doing this is to use LeasesResourceLock as edits to Leases are less
+  # common and fewer objects in the cluster watch "all Leases".
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    verbs:
+      - create
+      - get
+      - update
 ---
-
 {{ if .Config.ClusterNetwork.CNI.Cilium.EnableHubble }}
-# Source: cilium/templates/hubble-ui-clusterrole.yaml
+# Source: cilium/templates/hubble-ui/clusterrole.yaml
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -569,7 +572,7 @@ rules:
       - watch
 ---
 {{ end }}
-# Source: cilium/templates/cilium-agent-clusterrolebinding.yaml
+# Source: cilium/templates/cilium-agent/clusterrolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -579,11 +582,11 @@ roleRef:
   kind: ClusterRole
   name: cilium
 subjects:
-- kind: ServiceAccount
-  name: "cilium"
-  namespace: kube-system
+  - kind: ServiceAccount
+    name: "cilium"
+    namespace: kube-system
 ---
-# Source: cilium/templates/cilium-operator-clusterrolebinding.yaml
+# Source: cilium/templates/cilium-operator/clusterrolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -593,13 +596,12 @@ roleRef:
   kind: ClusterRole
   name: cilium-operator
 subjects:
-- kind: ServiceAccount
-  name: "cilium-operator"
-  namespace: kube-system
+  - kind: ServiceAccount
+    name: "cilium-operator"
+    namespace: kube-system
 ---
-
 {{ if .Config.ClusterNetwork.CNI.Cilium.EnableHubble }}
-# Source: cilium/templates/hubble-ui-clusterrolebinding.yaml
+# Source: cilium/templates/hubble-ui/clusterrolebinding.yaml
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -609,11 +611,11 @@ roleRef:
   kind: ClusterRole
   name: hubble-ui
 subjects:
-- kind: ServiceAccount
-  namespace: kube-system
-  name: "hubble-ui"
+  - kind: ServiceAccount
+    name: "hubble-ui"
+    namespace: kube-system
 ---
-# Source: cilium/templates/hubble-relay-service.yaml
+# Source: cilium/templates/hubble-relay/service.yaml
 kind: Service
 apiVersion: v1
 metadata:
@@ -626,37 +628,36 @@ spec:
   selector:
     k8s-app: hubble-relay
   ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 4245
+    - protocol: TCP
+      port: 80
+      targetPort: 4245
 ---
-# Source: cilium/templates/hubble-ui-service.yaml
+# Source: cilium/templates/hubble-ui/service.yaml
 kind: Service
 apiVersion: v1
 metadata:
   name: hubble-ui
+  namespace: kube-system
   labels:
     k8s-app: hubble-ui
-  namespace: kube-system
 spec:
+  type: ClusterIP
   selector:
     k8s-app: hubble-ui
   ports:
     - name: http
       port: 80
       targetPort: 8081
-  type: ClusterIP
 ---
 {{- end }}
-
-# Source: cilium/templates/cilium-agent-daemonset.yaml
+# Source: cilium/templates/cilium-agent/daemonset.yaml
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  labels:
-    k8s-app: cilium
   name: cilium
   namespace: kube-system
+  labels:
+    k8s-app: cilium
 spec:
   selector:
     matchLabels:
@@ -674,289 +675,293 @@ spec:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
-            - matchExpressions:
-              - key: kubernetes.io/os
-                operator: In
-                values:
-                - linux
-            - matchExpressions:
-              - key: beta.kubernetes.io/os
-                operator: In
-                values:
-                - linux
+              - matchExpressions:
+                  - key: kubernetes.io/os
+                    operator: In
+                    values:
+                      - linux
+              - matchExpressions:
+                  - key: beta.kubernetes.io/os
+                    operator: In
+                    values:
+                      - linux
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchExpressions:
-              - key: k8s-app
-                operator: In
-                values:
-                - cilium
-            topologyKey: kubernetes.io/hostname
+            - labelSelector:
+                matchExpressions:
+                  - key: k8s-app
+                    operator: In
+                    values:
+                      - cilium
+              topologyKey: kubernetes.io/hostname
       containers:
-      - args:
-        - --config-dir=/tmp/cilium/config-map
-        command:
-        - cilium-agent
-        startupProbe:
-          httpGet:
-            host: '127.0.0.1'
-            path: /healthz
-            port: 9876
-            scheme: HTTP
-            httpHeaders:
-            - name: "brief"
-              value: "true"
-          failureThreshold: 105
-          periodSeconds: 2
-          successThreshold: 1
-        livenessProbe:
-          httpGet:
-            host: '127.0.0.1'
-            path: /healthz
-            port: 9876
-            scheme: HTTP
-            httpHeaders:
-            - name: "brief"
-              value: "true"
-          failureThreshold: 10
-          periodSeconds: 30
-          successThreshold: 1
-          timeoutSeconds: 5
-        readinessProbe:
-          httpGet:
-            host: '127.0.0.1'
-            path: /healthz
-            port: 9876
-            scheme: HTTP
-            httpHeaders:
-            - name: "brief"
-              value: "true"
-          failureThreshold: 3
-          periodSeconds: 30
-          successThreshold: 1
-          timeoutSeconds: 5
-        env:
-        - name: K8S_NODE_NAME
-          valueFrom:
-            fieldRef:
-              apiVersion: v1
-              fieldPath: spec.nodeName
-        - name: CILIUM_K8S_NAMESPACE
-          valueFrom:
-            fieldRef:
-              apiVersion: v1
-              fieldPath: metadata.namespace
-        - name: CILIUM_CLUSTERMESH_CONFIG
-          value: /var/lib/cilium/clustermesh/
-        - name: CILIUM_CNI_CHAINING_MODE
-          valueFrom:
-            configMapKeyRef:
-              key: cni-chaining-mode
-              name: cilium-config
-              optional: true
-        - name: CILIUM_CUSTOM_CNI_CONF
-          valueFrom:
-            configMapKeyRef:
-              key: custom-cni-conf
-              name: cilium-config
-              optional: true
-        - name: KUBERNETES_SERVICE_HOST
-          value: "{{ .Config.APIEndpoint.Host }}"
-        - name: KUBERNETES_SERVICE_PORT
-          value: "{{ .Config.APIEndpoint.Port }}"
-        image: {{ .InternalImages.Get "Cilium" }}
-        imagePullPolicy: IfNotPresent
-        lifecycle:
-          postStart:
-            exec:
-              command:
-              - "/cni-install.sh"
-              - "--enable-debug=false"
-              - "--cni-exclusive=true"
-          preStop:
-            exec:
-              command:
-              - /cni-uninstall.sh
-        name: cilium-agent
-        securityContext:
-          capabilities:
-            add:
-            - NET_ADMIN
-            - SYS_MODULE
-          privileged: true
-        volumeMounts:
-        - mountPath: /sys/fs/bpf
-          name: bpf-maps
-        - mountPath: /var/run/cilium
-          name: cilium-run
-        - mountPath: /host/opt/cni/bin
-          name: cni-path
-        - mountPath: /host/etc/cni/net.d
-          name: etc-cni-netd
-        - mountPath: /var/lib/cilium/clustermesh
-          name: clustermesh-secrets
-          readOnly: true
-        - mountPath: /tmp/cilium/config-map
-          name: cilium-config-path
-          readOnly: true
-          # Needed to be able to load kernel modules
-        - mountPath: /lib/modules
-          name: lib-modules
-          readOnly: true
-        - mountPath: /run/xtables.lock
-          name: xtables-lock
-        - mountPath: /var/lib/cilium/tls/hubble
-          name: hubble-tls
-          readOnly: true
+        - name: cilium-agent
+          image: {{ .InternalImages.Get "Cilium" }}
+          imagePullPolicy: IfNotPresent
+          command:
+            - cilium-agent
+          args:
+            - --config-dir=/tmp/cilium/config-map
+          startupProbe:
+            httpGet:
+              host: "127.0.0.1"
+              path: /healthz
+              port: 9876
+              scheme: HTTP
+              httpHeaders:
+                - name: "brief"
+                  value: "true"
+            failureThreshold: 105
+            periodSeconds: 2
+            successThreshold: 1
+          livenessProbe:
+            httpGet:
+              host: "127.0.0.1"
+              path: /healthz
+              port: 9876
+              scheme: HTTP
+              httpHeaders:
+                - name: "brief"
+                  value: "true"
+            periodSeconds: 30
+            successThreshold: 1
+            failureThreshold: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              host: "127.0.0.1"
+              path: /healthz
+              port: 9876
+              scheme: HTTP
+              httpHeaders:
+                - name: "brief"
+                  value: "true"
+            periodSeconds: 30
+            successThreshold: 1
+            failureThreshold: 3
+            timeoutSeconds: 5
+          env:
+            - name: K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: CILIUM_K8S_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: CILIUM_CLUSTERMESH_CONFIG
+              value: /var/lib/cilium/clustermesh/
+            - name: CILIUM_CNI_CHAINING_MODE
+              valueFrom:
+                configMapKeyRef:
+                  name: cilium-config
+                  key: cni-chaining-mode
+                  optional: true
+            - name: CILIUM_CUSTOM_CNI_CONF
+              valueFrom:
+                configMapKeyRef:
+                  name: cilium-config
+                  key: custom-cni-conf
+                  optional: true
+{{ if eq .Config.ClusterNetwork.CNI.Cilium.KubeProxyReplacement "strict" }}
+            - name: KUBERNETES_SERVICE_HOST
+              value: "{{ .Config.APIEndpoint.Host }}"
+            - name: KUBERNETES_SERVICE_PORT
+              value: "{{ .Config.APIEndpoint.Port }}"
+{{ end }}
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - "/cni-install.sh"
+                  - "--enable-debug=false"
+                  - "--cni-exclusive=true"
+            preStop:
+              exec:
+                command:
+                  - /cni-uninstall.sh
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: bpf-maps
+              mountPath: /sys/fs/bpf
+              mountPropagation: Bidirectional
+            - name: cilium-run
+              mountPath: /var/run/cilium
+            - name: cni-path
+              mountPath: /host/opt/cni/bin
+            - name: etc-cni-netd
+              mountPath: /host/etc/cni/net.d
+            - name: clustermesh-secrets
+              mountPath: /var/lib/cilium/clustermesh
+              readOnly: true
+            - name: cilium-config-path
+              mountPath: /tmp/cilium/config-map
+              readOnly: true
+              # Needed to be able to load kernel modules
+            - name: lib-modules
+              mountPath: /lib/modules
+              readOnly: true
+            - name: xtables-lock
+              mountPath: /run/xtables.lock
+            - name: hubble-tls
+              mountPath: /var/lib/cilium/tls/hubble
+              readOnly: true
       hostNetwork: true
       initContainers:
-      # Required to mount cgroup2 filesystem on the underlying Kubernetes node.
-      # We use nsenter command with host's cgroup and mount namespaces enabled.
-      - name: mount-cgroup
-        env:
-          - name: CGROUP_ROOT
-            value: /run/cilium/cgroupv2
-          - name: BIN_PATH
-            value: /opt/cni/bin
-        command:
-          - sh
-          - -c
-          # The statically linked Go program binary is invoked to avoid any
-          # dependency on utilities like sh and mount that can be missing on certain
-          # distros installed on the underlying host. Copy the binary to the
-          # same directory where we install cilium cni plugin so that exec permissions
-          # are available.
-          - 'cp /usr/bin/cilium-mount /hostbin/cilium-mount && nsenter --cgroup=/hostproc/1/ns/cgroup --mount=/hostproc/1/ns/mnt "${BIN_PATH}/cilium-mount" $CGROUP_ROOT; rm /hostbin/cilium-mount'
-        image: {{ .InternalImages.Get "Cilium" }}
-        imagePullPolicy: IfNotPresent
-        volumeMounts:
-          - mountPath: /hostproc
-            name: hostproc
-          - mountPath: /hostbin
-            name: cni-path
-        securityContext:
-          privileged: true
-      - command:
-        - /init-container.sh
-        env:
-        - name: CILIUM_ALL_STATE
-          valueFrom:
-            configMapKeyRef:
-              key: clean-cilium-state
-              name: cilium-config
-              optional: true
-        - name: CILIUM_BPF_STATE
-          valueFrom:
-            configMapKeyRef:
-              key: clean-cilium-bpf-state
-              name: cilium-config
-              optional: true
-        - name: KUBERNETES_SERVICE_HOST
-          value: "{{ .Config.APIEndpoint.Host }}"
-        - name: KUBERNETES_SERVICE_PORT
-          value: "{{ .Config.APIEndpoint.Port }}"
-        image: {{ .InternalImages.Get "Cilium" }}
-        imagePullPolicy: IfNotPresent
-        name: clean-cilium-state
-        securityContext:
-          capabilities:
-            add:
-            - NET_ADMIN
-          privileged: true
-        volumeMounts:
-        - mountPath: /sys/fs/bpf
-          name: bpf-maps
-          # Required to mount cgroup filesystem from the host to cilium agent pod
-        - mountPath: /run/cilium/cgroupv2
-          name: cilium-cgroup
-          mountPropagation: HostToContainer
-        - mountPath: /var/run/cilium
-          name: cilium-run
-        resources:
-          requests:
-            cpu: 100m
-            memory: 100Mi
+        # Required to mount cgroup2 filesystem on the underlying Kubernetes node.
+        # We use nsenter command with host's cgroup and mount namespaces enabled.
+        - name: mount-cgroup
+          image: {{ .InternalImages.Get "Cilium" }}
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: CGROUP_ROOT
+              value: /run/cilium/cgroupv2
+            - name: BIN_PATH
+              value: /opt/cni/bin
+          command:
+            - sh
+            - -ec
+            # The statically linked Go program binary is invoked to avoid any
+            # dependency on utilities like sh and mount that can be missing on certain
+            # distros installed on the underlying host. Copy the binary to the
+            # same directory where we install cilium cni plugin so that exec permissions
+            # are available.
+            - |
+              cp /usr/bin/cilium-mount /hostbin/cilium-mount;
+              nsenter --cgroup=/hostproc/1/ns/cgroup --mount=/hostproc/1/ns/mnt "${BIN_PATH}/cilium-mount" $CGROUP_ROOT;
+              rm /hostbin/cilium-mount
+          volumeMounts:
+            - name: hostproc
+              mountPath: /hostproc
+            - name: cni-path
+              mountPath: /hostbin
+          securityContext:
+            privileged: true
+        - name: clean-cilium-state
+          image: {{ .InternalImages.Get "Cilium" }}
+          imagePullPolicy: IfNotPresent
+          command:
+            - /init-container.sh
+          env:
+            - name: CILIUM_ALL_STATE
+              valueFrom:
+                configMapKeyRef:
+                  name: cilium-config
+                  key: clean-cilium-state
+                  optional: true
+            - name: CILIUM_BPF_STATE
+              valueFrom:
+                configMapKeyRef:
+                  name: cilium-config
+                  key: clean-cilium-bpf-state
+                  optional: true
+{{ if eq .Config.ClusterNetwork.CNI.Cilium.KubeProxyReplacement "strict" }}
+            - name: KUBERNETES_SERVICE_HOST
+              value: "{{ .Config.APIEndpoint.Host }}"
+            - name: KUBERNETES_SERVICE_PORT
+              value: "{{ .Config.APIEndpoint.Port }}"
+{{ end }}
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: bpf-maps
+              mountPath: /sys/fs/bpf
+              # Required to mount cgroup filesystem from the host to cilium agent pod
+            - name: cilium-cgroup
+              mountPath: /run/cilium/cgroupv2
+              mountPropagation: HostToContainer
+            - name: cilium-run
+              mountPath: /var/run/cilium
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
       restartPolicy: Always
       priorityClassName: system-node-critical
       serviceAccount: "cilium"
       serviceAccountName: "cilium"
       terminationGracePeriodSeconds: 1
       tolerations:
-      - operator: Exists
+        - operator: Exists
       volumes:
         # To keep state between restarts / upgrades
-      - hostPath:
-          path: /var/run/cilium
-          type: DirectoryOrCreate
-        name: cilium-run
-        # To keep state between restarts / upgrades for bpf maps
-      - hostPath:
-          path: /sys/fs/bpf
-          type: DirectoryOrCreate
-        name: bpf-maps
-      # To mount cgroup2 filesystem on the host
-      - hostPath:
-          path: /proc
-          type: Directory
-        name: hostproc
-      # To keep state between restarts / upgrades for cgroup2 filesystem
-      - hostPath:
-          path: /run/cilium/cgroupv2
-          type: DirectoryOrCreate
-        name: cilium-cgroup
-      # To install cilium cni plugin in the host
-      - hostPath:
-          path:  /opt/cni/bin
-          type: DirectoryOrCreate
-        name: cni-path
-        # To install cilium cni configuration in the host
-      - hostPath:
-          path: /etc/cni/net.d
-          type: DirectoryOrCreate
-        name: etc-cni-netd
-        # To be able to load kernel modules
-      - hostPath:
-          path: /lib/modules
-        name: lib-modules
-        # To access iptables concurrently with other processes (e.g. kube-proxy)
-      - hostPath:
-          path: /run/xtables.lock
-          type: FileOrCreate
-        name: xtables-lock
-        # To read the clustermesh configuration
-      - name: clustermesh-secrets
-        secret:
-          defaultMode: 420
-          optional: true
-          secretName: cilium-clustermesh
-        # To read the configuration from the config map
-      - configMap:
-          name: cilium-config
-        name: cilium-config-path
-      - name: hubble-tls
-        projected:
-          sources:
-          - secret:
-              name: hubble-server-certs
-              items:
-                - key: ca.crt
-                  path: client-ca.crt
-                - key: tls.crt
-                  path: server.crt
-                - key: tls.key
-                  path: server.key
-              optional: true
+        - name: cilium-run
+          hostPath:
+            path: /var/run/cilium
+            type: DirectoryOrCreate
+          # To keep state between restarts / upgrades for bpf maps
+        - name: bpf-maps
+          hostPath:
+            path: /sys/fs/bpf
+            type: DirectoryOrCreate
+        # To mount cgroup2 filesystem on the host
+        - name: hostproc
+          hostPath:
+            path: /proc
+            type: Directory
+        # To keep state between restarts / upgrades for cgroup2 filesystem
+        - name: cilium-cgroup
+          hostPath:
+            path: /run/cilium/cgroupv2
+            type: DirectoryOrCreate
+        # To install cilium cni plugin in the host
+        - name: cni-path
+          hostPath:
+            path:  /opt/cni/bin
+            type: DirectoryOrCreate
+          # To install cilium cni configuration in the host
+        - name: etc-cni-netd
+          hostPath:
+            path: /etc/cni/net.d
+            type: DirectoryOrCreate
+          # To be able to load kernel modules
+        - name: lib-modules
+          hostPath:
+            path: /lib/modules
+          # To access iptables concurrently with other processes (e.g. kube-proxy)
+        - name: xtables-lock
+          hostPath:
+            path: /run/xtables.lock
+            type: FileOrCreate
+          # To read the clustermesh configuration
+        - name: clustermesh-secrets
+          secret:
+            secretName: cilium-clustermesh
+            # note: the leading zero means this number is in octal representation: do not remove it
+            defaultMode: 0400
+            optional: true
+          # To read the configuration from the config map
+        - name: cilium-config-path
+          configMap:
+            name: cilium-config
+        - name: hubble-tls
+          projected:
+            # note: the leading zero means this number is in octal representation: do not remove it
+            defaultMode: 0400
+            sources:
+              - secret:
+                  name: hubble-server-certs
+                  optional: true
+                  items:
+                    - key: ca.crt
+                      path: client-ca.crt
+                    - key: tls.crt
+                      path: server.crt
+                    - key: tls.key
+                      path: server.key
 ---
-# Source: cilium/templates/cilium-operator-deployment.yaml
+# Source: cilium/templates/cilium-operator/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: cilium-operator
+  namespace: kube-system
   labels:
     io.cilium/app: operator
     name: cilium-operator
-  name: cilium-operator
-  namespace: kube-system
 spec:
   # See docs on ServerCapabilities.LeasesResourceLock in file pkg/k8s/version/version.go
   # for more details.
@@ -982,82 +987,81 @@ spec:
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchExpressions:
-              - key: io.cilium/app
-                operator: In
-                values:
-                - operator
-            topologyKey: kubernetes.io/hostname
+            - labelSelector:
+                matchExpressions:
+                  - key: io.cilium/app
+                    operator: In
+                    values:
+                      - operator
+              topologyKey: kubernetes.io/hostname
       containers:
-      - args:
-        - --config-dir=/tmp/cilium/config-map
-        - --debug=$(CILIUM_DEBUG)
-        command:
-        - cilium-operator-generic
-        env:
-        - name: K8S_NODE_NAME
-          valueFrom:
-            fieldRef:
-              apiVersion: v1
-              fieldPath: spec.nodeName
-        - name: CILIUM_K8S_NAMESPACE
-          valueFrom:
-            fieldRef:
-              apiVersion: v1
-              fieldPath: metadata.namespace
-        - name: CILIUM_DEBUG
-          valueFrom:
-            configMapKeyRef:
-              key: debug
-              name: cilium-config
-              optional: true
-        - name: KUBERNETES_SERVICE_HOST
-          value: "{{ .Config.APIEndpoint.Host }}"
-        - name: KUBERNETES_SERVICE_PORT
-          value: "{{ .Config.APIEndpoint.Port }}"
-        image: {{ .InternalImages.Get "CiliumOperator" }}
-        imagePullPolicy: IfNotPresent
-        name: cilium-operator
-        livenessProbe:
-          httpGet:
-            host: '127.0.0.1'
-            path: /healthz
-            port: 9234
-            scheme: HTTP
-          initialDelaySeconds: 60
-          periodSeconds: 10
-          timeoutSeconds: 3
-        volumeMounts:
-        - mountPath: /tmp/cilium/config-map
-          name: cilium-config-path
-          readOnly: true
+        - name: cilium-operator
+          image: {{ .InternalImages.Get "CiliumOperator" }}
+          imagePullPolicy: IfNotPresent
+          command:
+            - cilium-operator-generic
+          args:
+            - --config-dir=/tmp/cilium/config-map
+            - --debug=$(CILIUM_DEBUG)
+          env:
+            - name: K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: CILIUM_K8S_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: CILIUM_DEBUG
+              valueFrom:
+                configMapKeyRef:
+                  key: debug
+                  name: cilium-config
+                  optional: true
+{{ if eq .Config.ClusterNetwork.CNI.Cilium.KubeProxyReplacement "strict" }}
+            - name: KUBERNETES_SERVICE_HOST
+              value: "{{ .Config.APIEndpoint.Host }}"
+            - name: KUBERNETES_SERVICE_PORT
+              value: "{{ .Config.APIEndpoint.Port }}"
+{{ end }}
+          livenessProbe:
+            httpGet:
+              host: "127.0.0.1"
+              path: /healthz
+              port: 9234
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 3
+          volumeMounts:
+            - name: cilium-config-path
+              mountPath: /tmp/cilium/config-map
+              readOnly: true
       hostNetwork: true
       restartPolicy: Always
       priorityClassName: system-cluster-critical
       serviceAccount: "cilium-operator"
       serviceAccountName: "cilium-operator"
       tolerations:
-      - operator: Exists
+        - operator: Exists
       volumes:
         # To read the configuration from the config map
-      - configMap:
-          name: cilium-config
-        name: cilium-config-path
+        - name: cilium-config-path
+          configMap:
+            name: cilium-config
 ---
-
 {{ if .Config.ClusterNetwork.CNI.Cilium.EnableHubble }}
-
-# Source: cilium/templates/hubble-relay-deployment.yaml
+# Source: cilium/templates/hubble-relay/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: hubble-relay
+  namespace: kube-system
   labels:
     k8s-app: hubble-relay
-  namespace: kube-system
 spec:
-
   replicas: 1
   selector:
     matchLabels:
@@ -1075,13 +1079,13 @@ spec:
       affinity:
         podAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchExpressions:
-                - key: "k8s-app"
-                  operator: In
-                  values:
-                    - cilium
-            topologyKey: "kubernetes.io/hostname"
+            - labelSelector:
+                matchExpressions:
+                  - key: "k8s-app"
+                    operator: In
+                    values:
+                      - cilium
+              topologyKey: "kubernetes.io/hostname"
       containers:
         - name: hubble-relay
           image: {{ .InternalImages.Get "HubbleRelay" }}
@@ -1100,52 +1104,55 @@ spec:
             tcpSocket:
               port: grpc
           volumeMounts:
-          - mountPath: /var/run/cilium
-            name: hubble-sock-dir
-            readOnly: true
-          - mountPath: /etc/hubble-relay
-            name: config
-            readOnly: true
-          - mountPath: /var/lib/hubble-relay/tls
-            name: tls
-            readOnly: true
+            - name: hubble-sock-dir
+              mountPath: /var/run/cilium
+              readOnly: true
+            - name: config
+              mountPath: /etc/hubble-relay
+              readOnly: true
+            - name: tls
+              mountPath: /var/lib/hubble-relay/tls
+              readOnly: true
       restartPolicy: Always
+      priorityClassName:
       serviceAccount: "hubble-relay"
       serviceAccountName: "hubble-relay"
       automountServiceAccountToken: false
       terminationGracePeriodSeconds: 0
       volumes:
-      - configMap:
-          name: hubble-relay-config
-          items:
-          - key: config.yaml
-            path: config.yaml
-        name: config
-      - hostPath:
-          path: /var/run/cilium
-          type: Directory
-        name: hubble-sock-dir
-      - projected:
-          sources:
-          - secret:
-              name: hubble-relay-client-certs
-              items:
-                - key: ca.crt
-                  path: hubble-server-ca.crt
-                - key: tls.crt
-                  path: client.crt
-                - key: tls.key
-                  path: client.key
-        name: tls
+        - name: config
+          configMap:
+            name: hubble-relay-config
+            items:
+              - key: config.yaml
+                path: config.yaml
+        - name: hubble-sock-dir
+          hostPath:
+            path: /var/run/cilium
+            type: Directory
+        - name: tls
+          projected:
+            # note: the leading zero means this number is in octal representation: do not remove it
+            defaultMode: 0400
+            sources:
+              - secret:
+                  name: hubble-relay-client-certs
+                  items:
+                    - key: ca.crt
+                      path: hubble-server-ca.crt
+                    - key: tls.crt
+                      path: client.crt
+                    - key: tls.key
+                      path: client.key
 ---
-# Source: cilium/templates/hubble-ui-deployment.yaml
+# Source: cilium/templates/hubble-ui/deployment.yaml
 kind: Deployment
 apiVersion: apps/v1
 metadata:
+  name: hubble-ui
   namespace: kube-system
   labels:
     k8s-app: hubble-ui
-  name: hubble-ui
 spec:
   replicas: 1
   selector:
@@ -1159,6 +1166,7 @@ spec:
     spec:
       securityContext:
         runAsUser: 1001
+      priorityClassName:
       serviceAccount: "hubble-ui"
       serviceAccountName: "hubble-ui"
       containers:
@@ -1166,10 +1174,8 @@ spec:
           image: {{ .InternalImages.Get "HubbleUI" }}
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 8080
-              name: http
-          resources:
-            {}
+            - name: http
+              containerPort: 8080
         - name: backend
           image: {{ .InternalImages.Get "HubbleUIBackend" }}
           imagePullPolicy: IfNotPresent
@@ -1179,26 +1185,21 @@ spec:
             - name: FLOWS_API_ADDR
               value: "hubble-relay:80"
           ports:
-            - containerPort: 8090
-              name: grpc
-          resources:
-            {}
+            - name: grpc
+              containerPort: 8090
+          volumeMounts:
         - name: proxy
           image: {{ .InternalImages.Get "HubbleProxy" }}
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 8081
-              name: http
-          resources:
-            {}
-          command: ["envoy"]
+            - name: http
+              containerPort: 8081
+          command: [envoy]
           args:
-            [
-              "-c",
-              "/etc/envoy.yaml",
-              "-l",
-              "info"
-            ]
+            - -c
+            - /etc/envoy.yaml
+            - -l
+            - info
           volumeMounts:
             - name: hubble-ui-envoy-yaml
               mountPath: /etc/envoy.yaml
@@ -1207,5 +1208,4 @@ spec:
         - name: hubble-ui-envoy-yaml
           configMap:
             name: hubble-ui-envoy
-
 {{- end }}

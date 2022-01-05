@@ -19,7 +19,6 @@ package ssh
 import (
 	"context"
 	"io"
-	"io/ioutil"
 	"net"
 	"os"
 	"strconv"
@@ -84,7 +83,7 @@ func validateOptions(o Opts) (Opts, error) {
 	}
 
 	if len(o.KeyFile) > 0 {
-		content, err := ioutil.ReadFile(o.KeyFile)
+		content, err := os.ReadFile(o.KeyFile)
 		if err != nil {
 			return o, errors.Wrapf(err, "failed to read keyfile %q", o.KeyFile)
 		}

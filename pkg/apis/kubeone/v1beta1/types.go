@@ -411,7 +411,7 @@ type Features struct {
 	// PodNodeSelector
 	PodNodeSelector *PodNodeSelector `json:"podNodeSelector,omitempty"`
 	// PodPresets
-	// Obsolete: this feature was removed with Kubernetes 1.20
+	// Obsolete: this feature has been removed from KubeOne and specifying it will have no effect
 	PodPresets *PodPresets `json:"podPresets,omitempty"`
 	// PodSecurityPolicy
 	// Deprecated: will be removed once Kubernetes 1.24 reaches EOL
@@ -444,7 +444,9 @@ type SystemPackages struct {
 
 // AssetConfiguration controls how assets (e.g. CNI, Kubelet, kube-apiserver, and more)
 // are pulled.
-// The AssetConfiguration API is an alpha API currently working only on Amazon Linux 2.
+// The AssetConfiguration API is a deprecated API removed in the v1beta2 API.
+// The AssetConfiguration API will be completely removed in KubeOne 1.6+
+// Currently, configuring BinaryAssets works only on Amazon Linux 2.
 type AssetConfiguration struct {
 	// Kubernetes configures the image registry and repository for the core Kubernetes
 	// images (kube-apiserver, kube-controller-manager, kube-scheduler, and kube-proxy).

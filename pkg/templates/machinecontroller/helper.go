@@ -22,7 +22,6 @@ import (
 
 	"github.com/pkg/errors"
 
-	"k8c.io/kubeone/pkg/addons"
 	"k8c.io/kubeone/pkg/clientutil"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/resources"
@@ -38,14 +37,6 @@ import (
 )
 
 const appLabelKey = "app"
-
-// Ensure install/update machine-controller
-func Ensure(s *state.State) error {
-	s.Logger.Infoln("Installing machine-controller...")
-
-	err := addons.EnsureAddonByName(s, resources.AddonMachineController)
-	return errors.Wrap(err, "failed to deploy machine-controller")
-}
 
 // WaitReady waits for machine-controller and its webhook to became ready
 func WaitReady(s *state.State) error {

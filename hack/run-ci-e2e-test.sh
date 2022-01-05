@@ -28,15 +28,11 @@ PROVIDER=${PROVIDER:-"PROVIDER-MISSING"}
 CONTAINER_RUNTIME=${CONTAINER_RUNTIME:-}
 KUBETESTS_ROOT=$(realpath "${KUBETESTS_ROOT:-"/opt/kube-test"}")
 KUBEONE_TEST_RUN=${KUBEONE_TEST_RUN:-}
+TEST_CONFIG_API_VERSION=${TEST_CONFIG_API_VERSION:-"v1beta2"}
 TEST_CLUSTER_TARGET_VERSION=${TEST_CLUSTER_TARGET_VERSION:-}
 TEST_CLUSTER_INITIAL_VERSION=${TEST_CLUSTER_INITIAL_VERSION:-}
 TEST_OS_CONTROL_PLANE=${TEST_OS_CONTROL_PLANE:-}
 TEST_OS_WORKERS=${TEST_OS_WORKERS:-}
-TEST_CLUSTER_TYPE=${TEST_CLUSTER_TYPE:-"kubernetes"}
-TEST_EKS_D_ETCD_VERSION=${TEST_EKS_D_ETCD_VERSION:-}
-TEST_EKS_D_COREDNS_VERSION=${TEST_EKS_D_COREDNS_VERSION:-}
-TEST_EKS_D_METRICS_SERVER_VERSION=${TEST_EKS_D_METRICS_SERVER_VERSION:-}
-TEST_EKS_D_CNI_VERSION=${TEST_EKS_D_CNI_VERSION:-}
 TEST_TIMEOUT=${TEST_TIMEOUT:-"60m"}
 PATH=$PATH:$(go env GOPATH)/bin
 TERRAFORM_DIR=$PWD/examples/terraform
@@ -95,9 +91,8 @@ function setup_ci_environment_vars() {
   "hetzner")
     export HCLOUD_TOKEN=${HZ_E2E_TOKEN}
     ;;
-  "packet")
-    export PACKET_AUTH_TOKEN=${PACKET_API_KEY}
-    export TF_VAR_project_id=${PACKET_PROJECT_ID}
+  "equinixmetal")
+    export TF_VAR_project_id=${METAL_PROJECT_ID}
     ;;
   "gce")
     GOOGLE_CREDENTIALS=$(base64 -d <<< "${KUBEONE_GOOGLE_SERVICE_ACCOUNT}")
@@ -181,11 +176,7 @@ function runE2E() {
     -os-workers="${TEST_OS_WORKERS}" \
     -target-version="${TEST_CLUSTER_TARGET_VERSION}" \
     -initial-version="${TEST_CLUSTER_INITIAL_VERSION}" \
-    -cluster-type="${TEST_CLUSTER_TYPE}" \
-    -eksd-etcd-version="${TEST_EKS_D_ETCD_VERSION}" \
-    -eksd-coredns-version="${TEST_EKS_D_COREDNS_VERSION}" \
-    -eksd-metrics-server-version="${TEST_EKS_D_METRICS_SERVER_VERSION}" \
-    -eksd-cni-version="${TEST_EKS_D_CNI_VERSION}"
+    -config-api-version="${TEST_CONFIG_API_VERSION}"
 }
 
 if [ -n "${RUNNING_IN_CI}" ]; then

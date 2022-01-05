@@ -18,6 +18,7 @@ package tasks
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/pkg/errors"
 
@@ -123,10 +124,19 @@ func disableNMCloudSetup(s *state.State, node *kubeoneapi.HostConfig, _ ssh.Conn
 				return err
 			}
 
-			s.Logger.Infoln("Disable nm-cloud-setup...the node will be rebooted...")
-			_, _, err = s.Runner.RunRaw(cmd)
+			s.Logger.Infoln("Disable nm-cloud-setup... the node will be rebooted...")
+			// Intentionally ignore error because restarting machines causes
+			// the connection to error
+			_, _, _ = s.Runner.RunRaw(cmd)
 
-			return err
+			timeout := 1 * time.Minute
+			s.Logger.Infof("Waiting for %s before proceeding to give machines time to boot up...", timeout)
+			time.Sleep(timeout)
+
+			// NB: In some cases, KubeOne might not be able to re-use SSH connections
+			// after rebooting nodes. Because of that, we close all connections here,
+			// and then KubeOne will automatically reinitialize them on the next task.
+			s.Runner.Conn.Close()
 		}
 	}
 

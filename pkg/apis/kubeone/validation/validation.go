@@ -19,15 +19,17 @@ package validation
 import (
 	"bytes"
 	"crypto/x509"
+	"fmt"
 	"net"
 	"reflect"
-	"regexp"
 	"strings"
 
 	"github.com/Masterminds/semver/v3"
 
+	"k8c.io/kubeone/pkg/addons"
 	"k8c.io/kubeone/pkg/apis/kubeone"
 
+	"k8s.io/apimachinery/pkg/util/validation"
 	"k8s.io/apimachinery/pkg/util/validation/field"
 )
 
@@ -40,7 +42,7 @@ func ValidateKubeOneCluster(c kubeone.KubeOneCluster) field.ErrorList {
 	allErrs = append(allErrs, ValidateAPIEndpoint(c.APIEndpoint, field.NewPath("apiEndpoint"))...)
 	allErrs = append(allErrs, ValidateCloudProviderSpec(c.CloudProvider, field.NewPath("provider"))...)
 	allErrs = append(allErrs, ValidateVersionConfig(c.Versions, field.NewPath("versions"))...)
-	allErrs = append(allErrs, ValidateCloudProviderSupportsKubernetes(c, field.NewPath(""))...)
+	allErrs = append(allErrs, ValidateKubernetesSupport(c, field.NewPath(""))...)
 	allErrs = append(allErrs, ValidateContainerRuntimeConfig(c.ContainerRuntime, c.Versions, field.NewPath("containerRuntime"))...)
 	allErrs = append(allErrs, ValidateClusterNetworkConfig(c.ClusterNetwork, field.NewPath("clusterNetwork"))...)
 	allErrs = append(allErrs, ValidateStaticWorkersConfig(c.StaticWorkers, field.NewPath("staticWorkers"))...)
@@ -56,6 +58,42 @@ func ValidateKubeOneCluster(c kubeone.KubeOneCluster) field.ErrorList {
 	allErrs = append(allErrs, ValidateFeatures(c.Features, c.Versions, field.NewPath("features"))...)
 	allErrs = append(allErrs, ValidateAddons(c.Addons, field.NewPath("addons"))...)
 	allErrs = append(allErrs, ValidateRegistryConfiguration(c.RegistryConfiguration, field.NewPath("registryConfiguration"))...)
+	allErrs = append(allErrs,
+		ValidateContainerRuntimeVSRegistryConfiguration(
+			c.ContainerRuntime,
+			field.NewPath("containerRuntime"),
+			c.RegistryConfiguration,
+			field.NewPath("registryConfiguration"),
+		)...)
+
+	return allErrs
+}
+
+func ValidateContainerRuntimeVSRegistryConfiguration(
+	cr kubeone.ContainerRuntimeConfig,
+	crFldPath *field.Path,
+	rc *kubeone.RegistryConfiguration,
+	rcFldPath *field.Path,
+) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	switch {
+	case rc == nil:
+	case cr.Containerd != nil && cr.Containerd.Registries != nil:
+		containerdRegistriesField := crFldPath.Child("containerd", "registries")
+		allErrs = append(allErrs, field.Invalid(
+			containerdRegistriesField,
+			"",
+			fmt.Sprintf("can't have both %s and %s set", rcFldPath.String(), containerdRegistriesField.String()),
+		))
+	case cr.Docker != nil && cr.Docker.RegistryMirrors != nil:
+		dockerRegistryMirrorsField := crFldPath.Child("docker", "registryMirrors")
+		allErrs = append(allErrs, field.Invalid(
+			dockerRegistryMirrorsField,
+			"",
+			fmt.Sprintf("can't have both %s and %s set", rcFldPath.String(), dockerRegistryMirrorsField.String()),
+		))
+	}
 
 	return allErrs
 }
@@ -64,14 +102,11 @@ func ValidateKubeOneCluster(c kubeone.KubeOneCluster) field.ErrorList {
 func ValidateName(name string, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
-	if len(name) == 0 {
-		allErrs = append(allErrs, field.Required(fldPath, "cluster name `.name` is a required field."))
+	errs := validation.IsDNS1123Subdomain(name)
+	for _, err := range errs {
+		allErrs = append(allErrs, field.Invalid(fldPath, name, err))
 	}
-	clusterNameRegex := regexp.MustCompile(`^[0-9a-z-]+$`)
-	if !clusterNameRegex.MatchString(name) {
-		allErrs = append(allErrs, field.Invalid(fldPath, "",
-			".name should be lowercase and can only contain alphanumeric characters and hyphens(-)"))
-	}
+
 	return allErrs
 }
 
@@ -160,9 +195,9 @@ func ValidateCloudProviderSpec(p kubeone.CloudProviderSpec, fldPath *field.Path)
 		}
 		providerFound = true
 	}
-	if p.Packet != nil {
+	if p.EquinixMetal != nil {
 		if providerFound {
-			allErrs = append(allErrs, field.Forbidden(fldPath.Child("packet"), "only one provider can be used at the same time"))
+			allErrs = append(allErrs, field.Forbidden(fldPath.Child("equinixmetal"), "only one provider can be used at the same time"))
 		}
 		providerFound = true
 	}
@@ -217,8 +252,13 @@ func ValidateVersionConfig(version kubeone.VersionConfig, fldPath *field.Path) f
 	return allErrs
 }
 
-func ValidateCloudProviderSupportsKubernetes(c kubeone.KubeOneCluster, fldPath *field.Path) field.ErrorList {
+func ValidateKubernetesSupport(c kubeone.KubeOneCluster, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
+
+	if strings.Contains(c.Versions.Kubernetes, "-eks-") {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, "Amazon EKS-D clusters are not supported by KubeOne 1.4+"))
+		return allErrs
+	}
 
 	v, err := semver.NewVersion(c.Versions.Kubernetes)
 	if err != nil {
@@ -226,8 +266,21 @@ func ValidateCloudProviderSupportsKubernetes(c kubeone.KubeOneCluster, fldPath *
 		return allErrs
 	}
 
-	if c.CloudProvider.Vsphere != nil && v.Minor() >= 22 {
-		allErrs = append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, "kubernetes versions 1.22.0 and newer are currently not supported for vsphere clusters"))
+	if v.Minor() >= 23 {
+		switch {
+		case c.CloudProvider.Vsphere != nil:
+			allErrs = append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, "kubernetes versions 1.23.0 and newer are currently not supported for vsphere clusters"))
+		case c.ClusterNetwork.KubeProxy != nil && c.ClusterNetwork.KubeProxy.IPVS != nil:
+			if c.ClusterNetwork.CNI != nil && c.ClusterNetwork.CNI.Canal != nil {
+				allErrs = append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, "kubernetes versions 1.23.0 and newer are currently not supported for clusters running kube-proxy in ipvs mode with Canal CNI"))
+			} else if c.ClusterNetwork.CNI != nil && c.ClusterNetwork.CNI.External != nil && c.Addons != nil {
+				for _, addon := range c.Addons.Addons {
+					if addon.Name == "calico-vxlan" {
+						allErrs = append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, "kubernetes versions 1.23.0 and newer are currently not supported for clusters running kube-proxy in ipvs mode with Calico CNI"))
+					}
+				}
+			}
+		}
 	}
 
 	return allErrs
@@ -405,11 +458,6 @@ func ValidateFeatures(f kubeone.Features, versions kubeone.VersionConfig, fldPat
 	if f.OpenIDConnect != nil && f.OpenIDConnect.Enable {
 		allErrs = append(allErrs, ValidateOIDCConfig(f.OpenIDConnect.Config, fldPath.Child("openidConnect"))...)
 	}
-
-	if f.PodPresets != nil && f.PodPresets.Enable {
-		allErrs = append(allErrs, field.Forbidden(fldPath.Child("podPresets"), "podPresets feature is removed in kubernetes 1.20+ and must be disabled"))
-	}
-
 	return allErrs
 }
 
@@ -469,7 +517,18 @@ func ValidateAddons(o *kubeone.Addons, fldPath *field.Path) field.ErrorList {
 		return allErrs
 	}
 	if o.Enable && len(o.Path) == 0 {
-		allErrs = append(allErrs, field.Invalid(fldPath.Child("path"), "", ".addons.path must be specified"))
+		// Addons are enabled, path is empty, and no embedded addon is specified
+		if len(o.Addons) == 0 {
+			allErrs = append(allErrs, field.Invalid(fldPath.Child("enable"), o.Enable, ".addons.enable cannot be set to true without specifying either custom addon path or embedded addon"))
+		}
+
+		// Check if only embedded addons are being used; path is not required for embedded addons
+		embeddedAddonsOnly, err := addons.EmbeddedAddonsOnly(o.Addons)
+		if err != nil {
+			allErrs = append(allErrs, field.Invalid(fldPath, "", "failed to read embedded addons directory"))
+		} else if !embeddedAddonsOnly {
+			allErrs = append(allErrs, field.Invalid(fldPath.Child("path"), "", ".addons.path must be specified when using non-embedded addon(s)"))
+		}
 	}
 
 	return allErrs

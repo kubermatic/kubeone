@@ -24,7 +24,7 @@ import (
 
 	yaml "gopkg.in/yaml.v2"
 
-	kubeonev1beta1 "k8c.io/kubeone/pkg/apis/kubeone/v1beta1"
+	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
 	"k8c.io/kubeone/pkg/testhelper"
 
 	kyaml "sigs.k8s.io/yaml"
@@ -58,7 +58,7 @@ func TestMigrateOldConfig(t *testing.T) {
 			name: "config-openstack",
 		},
 		{
-			name: "config-packet",
+			name: "config-equinix-metal",
 		},
 		{
 			name: "config-vsphere",
@@ -92,7 +92,7 @@ func TestMigrateOldConfig(t *testing.T) {
 	for _, tc := range testcases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			newConfigYAML, err := MigrateOldConfig(filepath.Join("testdata", tc.name+"-v1alpha1.yaml"))
+			newConfigYAML, err := MigrateOldConfig(filepath.Join("testdata", tc.name+"-v1beta1.yaml"))
 			if err != nil {
 				t.Errorf("error converting old config: %v", err)
 			}
@@ -105,13 +105,13 @@ func TestMigrateOldConfig(t *testing.T) {
 			}
 
 			// Validate new config by unmarshaling
-			newConfig := &kubeonev1beta1.KubeOneCluster{}
+			newConfig := &kubeonev1beta2.KubeOneCluster{}
 			err = kyaml.UnmarshalStrict(buffer.Bytes(), &newConfig)
 			if err != nil {
 				t.Errorf("failed to decode new config: %v", err)
 			}
 
-			testhelper.DiffOutput(t, tc.name+"-v1beta1.golden", buffer.String(), *update)
+			testhelper.DiffOutput(t, tc.name+"-v1beta2.golden", buffer.String(), *update)
 		})
 	}
 }

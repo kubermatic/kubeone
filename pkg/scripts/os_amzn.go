@@ -16,7 +16,10 @@ limitations under the License.
 
 package scripts
 
-import "k8c.io/kubeone/pkg/apis/kubeone"
+import (
+	"k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/containerruntime"
+)
 
 const (
 	kubeadmAmazonLinuxTemplate = `
@@ -62,7 +65,6 @@ sudo yum install -y \
 	rsync
 
 {{ if .INSTALL_DOCKER }}
-{{ template "docker-daemon-config" . }}
 {{ template "yum-docker-ce-amzn" . }}
 {{ end }}
 
@@ -127,6 +129,7 @@ EOF
 sudo install --owner=0 --group=0 --mode=0755 /tmp/k8s-binaries/kubernetes/node/bin/kubeadm /opt/bin/kubeadm
 sudo ln -sf /opt/bin/kubeadm /usr/bin/
 rm /tmp/k8s-binaries/kubernetes/node/bin/kubeadm
+sudo yum install -y cri-tools
 {{- end }}
 
 {{- if and .KUBECTL .KUBECTL_URL }}
@@ -192,9 +195,7 @@ func KubeadmAmazonLinux(cluster *kubeone.KubeOneCluster, force bool) (string, er
 		proxy = cluster.Proxy.HTTP
 	}
 
-	useKubernetesRepo := cluster.AssetConfiguration.NodeBinaries.URL == ""
-
-	return Render(kubeadmAmazonLinuxTemplate, Data{
+	data := Data{
 		"KUBELET":                true,
 		"KUBEADM":                true,
 		"KUBECTL":                true,
@@ -204,13 +205,18 @@ func KubeadmAmazonLinux(cluster *kubeone.KubeOneCluster, force bool) (string, er
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
-		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"PROXY":                  proxy,
 		"FORCE":                  force,
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
-		"USE_KUBERNETES_REPO":    useKubernetesRepo,
-	})
+		"USE_KUBERNETES_REPO":    cluster.AssetConfiguration.NodeBinaries.URL == "",
+	}
+
+	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
+		return "", err
+	}
+
+	return Render(kubeadmAmazonLinuxTemplate, data)
 }
 
 func RemoveBinariesAmazonLinux() (string, error) {
@@ -223,9 +229,7 @@ func UpgradeKubeadmAndCNIAmazonLinux(cluster *kubeone.KubeOneCluster) (string, e
 		proxy = cluster.Proxy.HTTP
 	}
 
-	useKubernetesRepo := cluster.AssetConfiguration.NodeBinaries.URL == ""
-
-	return Render(kubeadmAmazonLinuxTemplate, Data{
+	data := Data{
 		"UPGRADE":                true,
 		"KUBEADM":                true,
 		"NODE_BINARIES_URL":      cluster.AssetConfiguration.NodeBinaries.URL,
@@ -233,12 +237,17 @@ func UpgradeKubeadmAndCNIAmazonLinux(cluster *kubeone.KubeOneCluster) (string, e
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
-		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"PROXY":                  proxy,
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
-		"USE_KUBERNETES_REPO":    useKubernetesRepo,
-	})
+		"USE_KUBERNETES_REPO":    cluster.AssetConfiguration.NodeBinaries.URL == "",
+	}
+
+	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
+		return "", err
+	}
+
+	return Render(kubeadmAmazonLinuxTemplate, data)
 }
 
 func UpgradeKubeletAndKubectlAmazonLinux(cluster *kubeone.KubeOneCluster) (string, error) {
@@ -247,9 +256,7 @@ func UpgradeKubeletAndKubectlAmazonLinux(cluster *kubeone.KubeOneCluster) (strin
 		proxy = cluster.Proxy.HTTP
 	}
 
-	useKubernetesRepo := cluster.AssetConfiguration.NodeBinaries.URL == ""
-
-	return Render(kubeadmAmazonLinuxTemplate, Data{
+	data := Data{
 		"UPGRADE":                true,
 		"KUBELET":                true,
 		"KUBECTL":                true,
@@ -258,10 +265,15 @@ func UpgradeKubeletAndKubectlAmazonLinux(cluster *kubeone.KubeOneCluster) (strin
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
-		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"PROXY":                  proxy,
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
-		"USE_KUBERNETES_REPO":    useKubernetesRepo,
-	})
+		"USE_KUBERNETES_REPO":    cluster.AssetConfiguration.NodeBinaries.URL == "",
+	}
+
+	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
+		return "", err
+	}
+
+	return Render(kubeadmAmazonLinuxTemplate, data)
 }

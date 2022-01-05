@@ -19,7 +19,7 @@ package apiserverstatus
 import (
 	"crypto/tls"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
@@ -70,7 +70,7 @@ func apiserverHealth(t http.RoundTripper, nodeAddress string) (bool, error) {
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return false, err
 	}

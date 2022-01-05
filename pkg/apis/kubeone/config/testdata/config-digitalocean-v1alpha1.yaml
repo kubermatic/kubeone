@@ -1,8 +1,0 @@
-apiVersion: kubeone.io/v1alpha1
-kind: KubeOneCluster
-name: test
-versions:
-  kubernetes: 1.18.2
-cloudProvider:
-  name: "digitalocean"
-  external: true

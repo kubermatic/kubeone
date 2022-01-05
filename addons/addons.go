@@ -19,4 +19,4 @@ package addons
 import "embed"
 
 //go:embed *
-var F embed.FS
+var FS embed.FS

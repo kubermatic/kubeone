@@ -70,8 +70,14 @@ sudo yum install -y \
 	rsync
 
 
+sudo yum versionlock delete docker containerd || true
 
-sudo mkdir -p /etc/docker
+sudo yum install -y \
+	docker-19.03.* \
+	containerd.io-1.4.*
+sudo yum versionlock add docker containerd
+
+sudo mkdir -p $(dirname /etc/docker/daemon.json)
 cat <<EOF | sudo tee /etc/docker/daemon.json
 {
 	"exec-opts": [
@@ -84,22 +90,20 @@ cat <<EOF | sudo tee /etc/docker/daemon.json
 	}
 }
 EOF
-
-sudo yum versionlock delete docker cri-tools containerd || true
-
-
-sudo yum install -y \
-	docker-18.09.* \
-	containerd.io-1.4.* \
-	cri-tools-1.13.0
-sudo yum versionlock add docker cri-tools containerd
-
 cat <<EOF | sudo tee /etc/crictl.yaml
 runtime-endpoint: unix:///var/run/dockershim.sock
 EOF
 
+sudo mkdir -p /etc/systemd/system/containerd.service.d
+cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/environment.conf
+[Service]
+Restart=always
+EnvironmentFile=-/etc/environment
+EOF
+
 sudo systemctl daemon-reload
-sudo systemctl enable --now containerd
+sudo systemctl enable containerd
+sudo systemctl restart containerd
 sudo systemctl enable --now docker
 
 
@@ -152,6 +156,7 @@ EOF
 sudo install --owner=0 --group=0 --mode=0755 /tmp/k8s-binaries/kubernetes/node/bin/kubeadm /opt/bin/kubeadm
 sudo ln -sf /opt/bin/kubeadm /usr/bin/
 rm /tmp/k8s-binaries/kubernetes/node/bin/kubeadm
+sudo yum install -y cri-tools
 curl -L --output /tmp/k8s-binaries/kubectl http://127.0.0.1/kubectl.tar.gz
 sudo install --owner=0 --group=0 --mode=0755 /tmp/k8s-binaries/kubectl /opt/bin/kubectl
 sudo ln -sf /opt/bin/kubectl /usr/bin/

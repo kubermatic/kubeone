@@ -16,8 +16,6 @@
 
 set -eu -o pipefail
 
-export GOFLAGS=-mod=vendor
-
 cd $(dirname "${BASH_SOURCE}")/..
 
 DIFFROOT="pkg"
@@ -31,8 +29,8 @@ trap "cleanup" EXIT SIGINT
 
 cleanup
 
-mkdir -p "${TMP_DIFFROOT}"
-cp -a "${DIFFROOT}"/* "${TMP_DIFFROOT}"
+mkdir --parents "${TMP_DIFFROOT}"
+cp --archive "${DIFFROOT}"/* "${TMP_DIFFROOT}"
 
 ./hack/update-codegen.sh
 echo "diffing ${DIFFROOT} against freshly generated codegen"
