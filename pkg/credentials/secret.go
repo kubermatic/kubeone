@@ -33,9 +33,12 @@ import (
 
 const (
 	// SecretNameMC is name of the secret which contains the cloud provider credentials for machine-controller
-	SecretNameMC = "machine-controller-credentials"
+	SecretNameMC = "kubeone-machine-controller-credentials"
 	// SecretNameCCM is name of the secret which contains the cloud provider credentials for CCM
-	SecretNameCCM = "ccm-credentials"
+	SecretNameCCM = "kubeone-ccm-credentials" //nolint:gosec
+	// SecretNameLegacy is name of the secret created by earlier KubeOne versions, but not used anymore
+	// This secret will be removed for all clusters when running kubeone apply the next time
+	SecretNameLegacy = "cloud-provider-credentials"
 	// SecretNamespace is namespace of the credentials secret
 	SecretNamespace = "kube-system"
 	// VsphereSecretName is name of the secret which contains the vSphere credentials
@@ -58,6 +61,16 @@ func Ensure(s *state.State) error {
 	if !s.Cluster.MachineController.Deploy && !s.Cluster.CloudProvider.External {
 		s.Logger.Info("Skipping creating credentials secret because both machine-controller and external CCM are disabled.")
 		return nil
+	}
+
+	oldSecret := &corev1.Secret{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      SecretNameLegacy,
+			Namespace: SecretNamespace,
+		},
+	}
+	if err := clientutil.DeleteIfExists(s.Context, s.DynamicClient, oldSecret); err != nil {
+		return errors.Wrap(err, "unable to remove cloud-provider-credentials secret")
 	}
 
 	s.Logger.Infoln("Creating machine-controller credentials secret...")
