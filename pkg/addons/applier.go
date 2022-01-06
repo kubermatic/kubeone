@@ -88,12 +88,12 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		return nil, errors.Wrap(err, "unable to fetch credentials")
 	}
 
-	credsCCM, err := credentials.ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.CredentialsTypeCCM)
+	credsCCM, err := credentials.ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.TypeCCM)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to fetch cloud provider credentials")
 	}
 
-	envVarsMC, err := credentials.EnvVarBindings(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.SecretNameMC, credentials.CredentialsTypeMC)
+	envVarsMC, err := credentials.EnvVarBindings(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.SecretNameMC, credentials.TypeMC)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to fetch env var bindings for credentials")
 	}

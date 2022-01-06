@@ -28,13 +28,13 @@ import (
 	"k8c.io/kubeone/pkg/apis/kubeone"
 )
 
-// CredentialsType is a type of credentials that should be fetched
-type CredentialsType string //nolint:revive
+// Type is a type of credentials that should be fetched
+type Type string
 
 const (
-	CredentialsTypeUniversal CredentialsType = ""
-	CredentialsTypeCCM       CredentialsType = "CCM"
-	CredentialsTypeMC        CredentialsType = "MC"
+	TypeUniversal Type = ""
+	TypeCCM       Type = "CCM"
+	TypeMC        Type = "MC"
 )
 
 // The environment variable names with credential in them
@@ -116,7 +116,7 @@ type ProviderEnvironmentVariable struct {
 }
 
 func Any(credentialsFilePath string) (map[string]string, error) {
-	credentialsFinder, err := newCredsFinder(credentialsFilePath, CredentialsTypeUniversal)
+	credentialsFinder, err := newCredsFinder(credentialsFilePath, TypeUniversal)
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +142,7 @@ func Any(credentialsFilePath string) (map[string]string, error) {
 }
 
 // ProviderCredentials implements fetching credentials for each supported provider
-func ProviderCredentials(cloudProvider kubeone.CloudProviderSpec, credentialsFilePath string, credentialsType CredentialsType) (map[string]string, error) {
+func ProviderCredentials(cloudProvider kubeone.CloudProviderSpec, credentialsFilePath string, credentialsType Type) (map[string]string, error) {
 	credentialsFinder, err := newCredsFinder(credentialsFilePath, credentialsType)
 	if err != nil {
 		return nil, err
@@ -210,11 +210,11 @@ func ProviderCredentials(cloudProvider kubeone.CloudProviderSpec, credentialsFil
 	return nil, errors.New("no provider matched")
 }
 
-func newCredsFinder(credentialsFilePath string, credentialsType CredentialsType) (lookupFunc, error) {
+func newCredsFinder(credentialsFilePath string, credentialsType Type) (lookupFunc, error) {
 	staticMap := map[string]string{}
 	finder := func(name string) string {
 		switch {
-		case credentialsType != CredentialsTypeUniversal:
+		case credentialsType != TypeUniversal:
 			typedName := string(credentialsType) + "_" + name
 			if val := os.Getenv(typedName); val != "" {
 				return val

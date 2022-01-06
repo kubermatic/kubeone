@@ -179,9 +179,9 @@ func confirmCommand(autoApprove bool) (bool, error) {
 }
 
 func validateCredentials(s *state.State, credentialsFile string) error {
-	_, universalErr := credentials.ProviderCredentials(s.Cluster.CloudProvider, credentialsFile, credentials.CredentialsTypeUniversal)
-	_, mcErr := credentials.ProviderCredentials(s.Cluster.CloudProvider, credentialsFile, credentials.CredentialsTypeMC)
-	_, ccmErr := credentials.ProviderCredentials(s.Cluster.CloudProvider, credentialsFile, credentials.CredentialsTypeCCM)
+	_, universalErr := credentials.ProviderCredentials(s.Cluster.CloudProvider, credentialsFile, credentials.TypeUniversal)
+	_, mcErr := credentials.ProviderCredentials(s.Cluster.CloudProvider, credentialsFile, credentials.TypeMC)
+	_, ccmErr := credentials.ProviderCredentials(s.Cluster.CloudProvider, credentialsFile, credentials.TypeCCM)
 
 	switch {
 	case universalErr != nil && mcErr != nil && ccmErr != nil:

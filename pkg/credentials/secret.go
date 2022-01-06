@@ -62,7 +62,7 @@ func Ensure(s *state.State) error {
 
 	s.Logger.Infoln("Creating machine-controller credentials secret...")
 
-	mcCreds, err := ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, CredentialsTypeMC)
+	mcCreds, err := ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, TypeMC)
 	if err != nil {
 		return errors.Wrap(err, "unable to fetch cloud provider credentials")
 	}
@@ -82,7 +82,7 @@ func Ensure(s *state.State) error {
 	if s.Cluster.CloudProvider.External && s.Cluster.CloudProvider.Vsphere == nil {
 		s.Logger.Infoln("Creating CCM credentials secret...")
 
-		ccmCreds, err := ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, CredentialsTypeCCM)
+		ccmCreds, err := ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, TypeCCM)
 		if err != nil {
 			return errors.Wrap(err, "unable to fetch cloud provider credentials")
 		}
@@ -94,7 +94,7 @@ func Ensure(s *state.State) error {
 	} else if s.Cluster.CloudProvider.Vsphere != nil {
 		s.Logger.Infoln("Creating vSphere CCM credentials secret...")
 
-		ccmCreds, err := ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, CredentialsTypeCCM)
+		ccmCreds, err := ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, TypeCCM)
 		if err != nil {
 			return errors.Wrap(err, "unable to fetch cloud provider credentials")
 		}
@@ -108,7 +108,7 @@ func Ensure(s *state.State) error {
 	return nil
 }
 
-func EnvVarBindings(cloudProviderSpec kubeoneapi.CloudProviderSpec, credentialsFilePath, secretName string, credentialsType CredentialsType) ([]corev1.EnvVar, error) {
+func EnvVarBindings(cloudProviderSpec kubeoneapi.CloudProviderSpec, credentialsFilePath, secretName string, credentialsType Type) ([]corev1.EnvVar, error) {
 	creds, err := ProviderCredentials(cloudProviderSpec, credentialsFilePath, credentialsType)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to fetch cloud provider credentials")
