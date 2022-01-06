@@ -61,6 +61,7 @@ type templateData struct {
 	Config                              *kubeoneapi.KubeOneCluster
 	Certificates                        map[string]string
 	Credentials                         map[string]string
+	CredentialsCCM                      map[string]string
 	CCMClusterName                      string
 	CSIMigration                        bool
 	CSIMigrationFeatureGates            string
@@ -87,12 +88,17 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		return nil, errors.Wrap(err, "unable to fetch credentials")
 	}
 
-	envVars, err := credentials.EnvVarBindings(s.Cluster.CloudProvider, s.CredentialsFilePath)
+	credsCCM, err := credentials.ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.CredentialsTypeCCM)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to fetch cloud provider credentials")
+	}
+
+	envVarsMC, err := credentials.EnvVarBindings(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.SecretNameMC, credentials.CredentialsTypeMC)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to fetch env var bindings for credentials")
 	}
 
-	credsEnvVars, err := yaml.Marshal(envVars)
+	credsEnvVarsMC, err := yaml.Marshal(envVarsMC)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to convert env var bindings for credentials to yaml")
 	}
@@ -159,10 +165,11 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 			"KubernetesCA":                 mcCertsMap[resources.KubernetesCACertName],
 		},
 		Credentials:                         creds,
+		CredentialsCCM:                      credsCCM,
 		CCMClusterName:                      s.LiveCluster.CCMClusterName,
 		CSIMigration:                        csiMigration,
 		CSIMigrationFeatureGates:            csiMigrationFeatureGates,
-		MachineControllerCredentialsEnvVars: string(credsEnvVars),
+		MachineControllerCredentialsEnvVars: string(credsEnvVarsMC),
 		InternalImages: &internalImages{
 			pauseImage: s.PauseImage,
 			resolver:   s.Images.Get,
