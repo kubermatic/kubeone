@@ -35,7 +35,7 @@ const (
 	// SecretNameMC is name of the secret which contains the cloud provider credentials for machine-controller
 	SecretNameMC = "kubeone-machine-controller-credentials"
 	// SecretNameCCM is name of the secret which contains the cloud provider credentials for CCM
-	SecretNameCCM = "kubeone-ccm-credentials"
+	SecretNameCCM = "kubeone-ccm-credentials" //nolint:gosec
 	// SecretNameLegacy is name of the secret created by earlier KubeOne versions, but not used anymore
 	// This secret will be removed for all clusters when running kubeone apply the next time
 	SecretNameLegacy = "cloud-provider-credentials"
