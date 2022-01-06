@@ -32,8 +32,10 @@ import (
 )
 
 const (
-	// SecretName is name of the secret which contains the cloud provider credentials
-	SecretName = "cloud-provider-credentials"
+	// SecretNameMC is name of the secret which contains the cloud provider credentials for machine-controller
+	SecretNameMC = "machine-controller-credentials"
+	// SecretNameCCM is name of the secret which contains the cloud provider credentials for CCM
+	SecretNameCCM = "ccm-credentials"
 	// SecretNamespace is namespace of the credentials secret
 	SecretNamespace = "kube-system"
 	// VsphereSecretName is name of the secret which contains the vSphere credentials
@@ -58,16 +60,16 @@ func Ensure(s *state.State) error {
 		return nil
 	}
 
-	s.Logger.Infoln("Creating credentials secret...")
+	s.Logger.Infoln("Creating machine-controller credentials secret...")
 
-	creds, err := ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath)
+	mcCreds, err := ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, TypeMC)
 	if err != nil {
 		return errors.Wrap(err, "unable to fetch cloud provider credentials")
 	}
 
-	secret := credentialsSecret(creds)
-	if err := clientutil.CreateOrReplace(context.Background(), s.DynamicClient, secret); err != nil {
-		return errors.Wrap(err, "failed to ensure credentials secret")
+	mcSecret := credentialsSecret(SecretNameMC, mcCreds)
+	if createErr := clientutil.CreateOrReplace(context.Background(), s.DynamicClient, mcSecret); createErr != nil {
+		return errors.Wrap(createErr, "failed to ensure credentials secret")
 	}
 
 	if s.Cluster.CloudProvider.CloudConfig != "" {
@@ -77,8 +79,27 @@ func Ensure(s *state.State) error {
 		}
 	}
 
-	if s.Cluster.CloudProvider.Vsphere != nil {
-		vsecret := vsphereSecret(creds)
+	if s.Cluster.CloudProvider.External && s.Cluster.CloudProvider.Vsphere == nil {
+		s.Logger.Infoln("Creating CCM credentials secret...")
+
+		ccmCreds, err := ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, TypeCCM)
+		if err != nil {
+			return errors.Wrap(err, "unable to fetch cloud provider credentials")
+		}
+
+		ccmSecret := credentialsSecret(SecretNameCCM, ccmCreds)
+		if createErr := clientutil.CreateOrReplace(context.Background(), s.DynamicClient, ccmSecret); createErr != nil {
+			return errors.Wrap(createErr, "failed to ensure credentials secret")
+		}
+	} else if s.Cluster.CloudProvider.Vsphere != nil {
+		s.Logger.Infoln("Creating vSphere CCM credentials secret...")
+
+		ccmCreds, err := ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, TypeCCM)
+		if err != nil {
+			return errors.Wrap(err, "unable to fetch cloud provider credentials")
+		}
+
+		vsecret := vsphereSecret(ccmCreds)
 		if err := clientutil.CreateOrReplace(context.Background(), s.DynamicClient, vsecret); err != nil {
 			return errors.Wrap(err, "failed to ensure vsphere credentials secret")
 		}
@@ -87,8 +108,8 @@ func Ensure(s *state.State) error {
 	return nil
 }
 
-func EnvVarBindings(cloudProviderSpec kubeoneapi.CloudProviderSpec, credentialsFilePath string) ([]corev1.EnvVar, error) {
-	creds, err := ProviderCredentials(cloudProviderSpec, credentialsFilePath)
+func EnvVarBindings(cloudProviderSpec kubeoneapi.CloudProviderSpec, credentialsFilePath, secretName string, credentialsType Type) ([]corev1.EnvVar, error) {
+	creds, err := ProviderCredentials(cloudProviderSpec, credentialsFilePath, credentialsType)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to fetch cloud provider credentials")
 	}
@@ -101,7 +122,7 @@ func EnvVarBindings(cloudProviderSpec kubeoneapi.CloudProviderSpec, credentialsF
 			ValueFrom: &corev1.EnvVarSource{
 				SecretKeyRef: &corev1.SecretKeySelector{
 					LocalObjectReference: corev1.LocalObjectReference{
-						Name: SecretName,
+						Name: secretName,
 					},
 					Key: k,
 				},
@@ -112,10 +133,10 @@ func EnvVarBindings(cloudProviderSpec kubeoneapi.CloudProviderSpec, credentialsF
 	return env, nil
 }
 
-func credentialsSecret(credentials map[string]string) *corev1.Secret {
+func credentialsSecret(secretName string, credentials map[string]string) *corev1.Secret {
 	return &corev1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      SecretName,
+			Name:      secretName,
 			Namespace: SecretNamespace,
 		},
 		Type:       corev1.SecretTypeOpaque,

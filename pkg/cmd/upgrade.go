@@ -22,7 +22,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
-	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/tasks"
 )
@@ -93,9 +92,8 @@ func runUpgrade(opts *upgradeOpts) error {
 	s.Logger.Warn("The \"kubeone upgrade\" command is deprecated and will be removed in KubeOne 1.6. Please use \"kubeone apply\" instead.")
 
 	// Validate credentials
-	_, err = credentials.ProviderCredentials(s.Cluster.CloudProvider, opts.CredentialsFile)
-	if err != nil {
-		return errors.Wrap(err, "failed to validate credentials")
+	if vErr := validateCredentials(s, opts.CredentialsFile); vErr != nil {
+		return vErr
 	}
 
 	// Probe the cluster for the actual state and the needed tasks.
