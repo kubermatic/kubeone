@@ -170,4 +170,4 @@ metadata:
   namespace: kube-system
 data:
   cloud-sa.json:
-    {{ EquinixMetalSecret .Credentials.METAL_AUTH_TOKEN .Credentials.METAL_PROJECT_ID | b64enc }}
+    {{ EquinixMetalSecret .CredentialsCCM.METAL_AUTH_TOKEN .CredentialsCCM.METAL_PROJECT_ID | b64enc }}
