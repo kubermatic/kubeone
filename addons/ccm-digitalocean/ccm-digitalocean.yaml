@@ -47,7 +47,7 @@ spec:
           - name: DO_ACCESS_TOKEN
             valueFrom:
               secretKeyRef:
-                name: ccm-credentials
+                name: kubeone-ccm-credentials
                 key: DO_TOKEN
 
 ---

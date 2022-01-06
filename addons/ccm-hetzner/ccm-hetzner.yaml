@@ -77,7 +77,7 @@ spec:
             - name: HCLOUD_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: ccm-credentials
+                  name: kubeone-ccm-credentials
                   key: HZ_TOKEN
             {{ if .Config.CloudProvider.Hetzner.NetworkID -}}
             - name: HCLOUD_LOAD_BALANCERS_USE_PRIVATE_IP
