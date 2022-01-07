@@ -70,6 +70,6 @@ func Convert_kubeone_HostConfig_To_v1beta1_HostConfig(in *kubeone.HostConfig, ou
 	return autoConvert_kubeone_HostConfig_To_v1beta1_HostConfig(in, out, scope)
 }
 func Convert_kubeone_KubeletConfiguration_To_v1beta1_KubeletConfiguration(in *kubeone.KubeletConfiguration, out *KubeletConfiguration, scope conversion.Scope) error {
-	//skip conversion
+	// skip conversion
 	return nil
 }
