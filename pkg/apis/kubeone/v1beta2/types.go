@@ -61,6 +61,15 @@ type KubeOneCluster struct {
 	SystemPackages *SystemPackages `json:"systemPackages,omitempty"`
 	// RegistryConfiguration configures how Docker images are pulled from an image registry
 	RegistryConfiguration *RegistryConfiguration `json:"registryConfiguration,omitempty"`
+	// KubeletConfiguration configures the kubelet
+	KubeletConfiguration KubeletConfiguration `json:"kubeletConfiguration"`
+}
+
+// KubeletConfiguration
+type KubeletConfiguration struct {
+	// ContainerLogsMaxSize configure --container-logs-max-size command-line flag of the kubelet. Defaults to 100Mi.
+	// See more at: https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/
+	ContainerLogMaxSize string `json:"containerLogMaxSize,omitempty"`
 }
 
 // ContainerRuntimeConfig
@@ -180,9 +189,6 @@ type KubeletConfig struct {
 	// EvictionHard configure --eviction-hard command-line flag of the kubelet.
 	// See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/
 	EvictionHard map[string]string `json:"evictionHard,omitempty"`
-	// ContainerLogMaxSize configure --container-log-max-size command-line flag of the kubelet. Default value is 100Mi
-	// See more at: https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/
-	ContainerLogMaxSize string `json:"containerLogMaxSize,omitempty"`
 }
 
 // APIEndpoint is the endpoint used to communicate with the Kubernetes API

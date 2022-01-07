@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2022-01-05T16:38:05+04:00
+date = 2022-01-07T18:00:12+04:00
 weight = 11
 +++
 ## v1beta2
@@ -39,6 +39,7 @@ weight = 11
 * [KubeOneCluster](#kubeonecluster)
 * [KubeProxyConfig](#kubeproxyconfig)
 * [KubeletConfig](#kubeletconfig)
+* [KubeletConfiguration](#kubeletconfiguration)
 * [MachineControllerConfig](#machinecontrollerconfig)
 * [MetricsServer](#metricsserver)
 * [NoneSpec](#nonespec)
@@ -443,6 +444,7 @@ KubeOneCluster is KubeOne Cluster API Schema
 | addons | Addons are used to deploy additional manifests. | *[Addons](#addons) | false |
 | systemPackages | SystemPackages configure kubeone behaviour regarding OS packages. | *[SystemPackages](#systempackages) | false |
 | registryConfiguration | RegistryConfiguration configures how Docker images are pulled from an image registry | *[RegistryConfiguration](#registryconfiguration) | false |
+| kubeletConfiguration | KubeletConfiguration configures the kubelet | [KubeletConfiguration](#kubeletconfiguration) | true |
 
 [Back to Group](#v1beta2)
 
@@ -467,7 +469,16 @@ KubeletConfig provides some kubelet configuration options
 | systemReserved | SystemReserved configure --system-reserved command-line flag of the kubelet. See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/ | map[string]string | false |
 | kubeReserved | KubeReserved configure --kube-reserved command-line flag of the kubelet. See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/ | map[string]string | false |
 | evictionHard | EvictionHard configure --eviction-hard command-line flag of the kubelet. See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/ | map[string]string | false |
-| containerLogMaxSize | ContainerLogMaxSize configure --container-log-max-size command-line flag of the kubelet. Default value is 100Mi See more at: https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/ | string | false |
+
+[Back to Group](#v1beta2)
+
+### KubeletConfiguration
+
+KubeletConfiguration
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| containerLogMaxSize | ContainerLogsMaxSize configure --container-logs-max-size command-line flag of the kubelet. Defaults to 100Mi. See more at: https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/ | string | false |
 
 [Back to Group](#v1beta2)
 

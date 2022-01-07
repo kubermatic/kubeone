@@ -71,9 +71,6 @@ func SetDefaults_Hosts(obj *KubeOneCluster) {
 			// defined
 			setDefaultLeader = false
 		}
-		if obj.ControlPlane.Hosts[idx].Kubelet.ContainerLogMaxSize == "" {
-			obj.ControlPlane.Hosts[idx].Kubelet.ContainerLogMaxSize = "100Mi"
-		}
 		obj.ControlPlane.Hosts[idx].ID = idx
 		defaultHostConfig(&obj.ControlPlane.Hosts[idx])
 		if obj.ControlPlane.Hosts[idx].Taints == nil {
@@ -136,7 +133,6 @@ func SetDefaults_ContainerRuntime(obj *KubeOneCluster) {
 		obj.ContainerRuntime.Containerd = &ContainerRuntimeContainerd{}
 	}
 }
-
 func SetDefaults_ClusterNetwork(obj *KubeOneCluster) {
 	obj.ClusterNetwork.PodSubnet = defaults(obj.ClusterNetwork.PodSubnet, DefaultPodSubnet)
 	obj.ClusterNetwork.ServiceSubnet = defaults(obj.ClusterNetwork.ServiceSubnet, DefaultServiceSubnet)

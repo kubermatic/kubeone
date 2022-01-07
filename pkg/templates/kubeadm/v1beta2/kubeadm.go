@@ -166,10 +166,11 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 			APIVersion: "kubelet.config.k8s.io/v1beta1",
 			Kind:       "KubeletConfiguration",
 		},
-		CgroupDriver:       "systemd",
-		ReadOnlyPort:       0,
-		RotateCertificates: true,
-		ClusterDNS:         []string{resources.NodeLocalDNSVirtualIP},
+		CgroupDriver:        "systemd",
+		ReadOnlyPort:        0,
+		RotateCertificates:  true,
+		ClusterDNS:          []string{resources.NodeLocalDNSVirtualIP},
+		ContainerLogMaxSize: getContainerLogMaxSize(cluster.KubeletConfiguration.ContainerLogMaxSize),
 		Authentication: kubeletconfigv1beta1.KubeletAuthentication{
 			Anonymous: kubeletconfigv1beta1.KubeletAnonymousAuthentication{
 				Enabled: &bfalse,
@@ -357,10 +358,11 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Obje
 			APIVersion: "kubelet.config.k8s.io/v1beta1",
 			Kind:       "KubeletConfiguration",
 		},
-		CgroupDriver:       "systemd",
-		ReadOnlyPort:       0,
-		RotateCertificates: true,
-		ClusterDNS:         []string{resources.NodeLocalDNSVirtualIP},
+		CgroupDriver:        "systemd",
+		ReadOnlyPort:        0,
+		RotateCertificates:  true,
+		ClusterDNS:          []string{resources.NodeLocalDNSVirtualIP},
+		ContainerLogMaxSize: getContainerLogMaxSize(cluster.KubeletConfiguration.ContainerLogMaxSize),
 		Authentication: kubeletconfigv1beta1.KubeletAuthentication{
 			Anonymous: kubeletconfigv1beta1.KubeletAnonymousAuthentication{
 				Enabled: &bfalse,
@@ -429,10 +431,6 @@ func newNodeRegistration(s *state.State, host kubeoneapi.HostConfig) kubeadmv1be
 		kubeletCLIFlags["eviction-hard"] = kubeoneapi.MapStringStringToString(m, "<")
 	}
 
-	if m := host.Kubelet.ContainerLogMaxSize; m != "" {
-		kubeletCLIFlags["container-log-max-size"] = m
-	}
-
 	return kubeadmv1beta2.NodeRegistrationOptions{
 		Name:             host.Hostname,
 		Taints:           host.Taints,
@@ -471,4 +469,12 @@ func kubeProxyConfiguration(s *state.State) *kubeproxyv1alpha1.KubeProxyConfigur
 	}
 
 	return kubeProxyConfig
+}
+
+func getContainerLogMaxSize(value string) string {
+	if value == "" {
+		return "100Mi"
+	}
+
+	return value
 }

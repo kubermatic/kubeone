@@ -48,8 +48,9 @@ const (
 type printOpts struct {
 	FullConfig bool `longflag:"full" shortflag:"f"`
 
-	ClusterName       string `longflag:"cluster-name" shortflag:"n"`
-	KubernetesVersion string `longflag:"kubernetes-version" shortflag:"k"`
+	ClusterName         string `longflag:"cluster-name" shortflag:"n"`
+	KubernetesVersion   string `longflag:"kubernetes-version" shortflag:"k"`
+	ContainerLogMaxSize string `longflag:"container-log-max-size"`
 
 	CloudProviderName     string `longflag:"provider" shortflag:"p"`
 	CloudProviderExternal bool
@@ -135,6 +136,13 @@ func configPrintCmd() *cobra.Command {
 		shortFlagName(opts, "KubernetesVersion"),
 		defaultKubernetesVersion,
 		"Kubernetes version")
+
+	cmd.Flags().StringVarP(
+		&opts.ContainerLogMaxSize,
+		longFlagName(opts, "ContainerLogMaxSize"),
+		shortFlagName(opts, "ContainerLogMaxSize"),
+		"100Mi",
+		"ContainerLogMaxSize")
 
 	cmd.Flags().StringVarP(
 		&opts.CloudProviderName,
@@ -288,6 +296,8 @@ func createAndPrintManifest(printOptions *printOpts) error {
 
 	// Version
 	cfg.Set(yamled.Path{"versions", "kubernetes"}, printOptions.KubernetesVersion)
+
+	cfg.Set(yamled.Path{"kubeletConfiguration", "ContainerLogMaxSize"}, printOptions.ContainerLogMaxSize)
 
 	// Provider
 	var providerVal struct{}
@@ -502,6 +512,8 @@ name: {{ .ClusterName }}
 
 versions:
   kubernetes: "{{ .KubernetesVersion }}"
+kubeletConfiguration:
+ containerLogMaxSize: "{{ .ContainerLogMaxSize }}"
 
 clusterNetwork:
   # the subnet used for pods (default: 10.244.0.0/16)

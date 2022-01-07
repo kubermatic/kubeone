@@ -1,6 +1,6 @@
 +++
 title = "v1beta1 API Reference"
-date = 2022-01-05T16:38:05+04:00
+date = 2022-01-07T18:00:12+04:00
 weight = 11
 +++
 ## v1beta1
@@ -36,6 +36,7 @@ weight = 11
 * [ImageAsset](#imageasset)
 * [KubeOneCluster](#kubeonecluster)
 * [KubeProxyConfig](#kubeproxyconfig)
+* [KubeletConfiguration](#kubeletconfiguration)
 * [MachineControllerConfig](#machinecontrollerconfig)
 * [MetricsServer](#metricsserver)
 * [NoneSpec](#nonespec)
@@ -432,6 +433,7 @@ KubeOneCluster is KubeOne Cluster API Schema
 | systemPackages | SystemPackages configure kubeone behaviour regarding OS packages. | *[SystemPackages](#systempackages) | false |
 | assetConfiguration | AssetConfiguration configures how are binaries and container images downloaded | [AssetConfiguration](#assetconfiguration) | false |
 | registryConfiguration | RegistryConfiguration configures how Docker images are pulled from an image registry | *[RegistryConfiguration](#registryconfiguration) | false |
+| kubeletConfiguration | KubeletConfiguration configures the kubelet | [KubeletConfiguration](#kubeletconfiguration) | false |
 
 [Back to Group](#v1beta1)
 
@@ -444,6 +446,15 @@ KubeProxyConfig defines configured kube-proxy mode, default is iptables mode
 | skipInstallation | SkipInstallation will skip the installation of kube-proxy default value is false | bool | true |
 | ipvs | IPVS config | *[IPVSConfig](#ipvsconfig) | true |
 | iptables | IPTables config | *[IPTables](#iptables) | true |
+
+[Back to Group](#v1beta1)
+
+### KubeletConfiguration
+
+Kubele
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
 
 [Back to Group](#v1beta1)
 
