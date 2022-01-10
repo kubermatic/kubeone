@@ -88,6 +88,24 @@ type HetznerSpec struct {
 	Labels     map[string]string `json:"labels,omitempty"`
 }
 
+// NutanixSpec holds cloudprovider spec for Nutanix
+type NutanixSpec struct {
+	ClusterName string  `json:"clusterName"`
+	ProjectName *string `json:"projectName,omitempty"`
+	SubnetName  string  `json:"subnetName"`
+	ImageName   string  `json:"imageName"`
+
+	// VM sizing configuration
+	CPUs           int64  `json:"cpus"`
+	CPUCores       *int64 `json:"cpuCores,omitempty"`
+	CPUPassthrough *bool  `json:"cpuPassthrough,omitempty"`
+	MemoryMB       int64  `json:"memoryMB"`
+	DiskSize       *int64 `json:"diskSize,omitempty"`
+
+	// Metadata related configuration
+	Categories map[string]string `json:"categories,omitempty"`
+}
+
 // EquinixMetalSpec holds cloudprovider spec for Equinix Metal
 type EquinixMetalSpec struct {
 	ProjectID    string   `json:"projectID"`
