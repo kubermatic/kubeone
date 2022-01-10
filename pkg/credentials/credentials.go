@@ -49,6 +49,13 @@ const (
 	DigitalOceanTokenKey                 = "DIGITALOCEAN_TOKEN"
 	GoogleServiceAccountKey              = "GOOGLE_CREDENTIALS"
 	HetznerTokenKey                      = "HCLOUD_TOKEN"
+	NutanixEndpoint                      = "NUTANIX_ENDPOINT"
+	NutanixPort                          = "NUTANIX_PORT"
+	NutanixUsername                      = "NUTANIX_USERNAME"
+	NutanixPassword                      = "NUTANIX_PASSWORD"
+	NutanixAllowInsecure                 = "NUTANIX_ALLOW_INSECURE"
+	NutanixProxyURL                      = "NUTANIX_PROXY_URL"
+	NutanixClusterName                   = "NUTANIX_CLUSTER_NAME"
 	OpenStackAuthURL                     = "OS_AUTH_URL"
 	OpenStackDomainName                  = "OS_DOMAIN_NAME"
 	OpenStackPassword                    = "OS_PASSWORD"
@@ -91,6 +98,13 @@ var (
 		DigitalOceanTokenKey,
 		GoogleServiceAccountKey,
 		HetznerTokenKey,
+		NutanixEndpoint,
+		NutanixPort,
+		NutanixUsername,
+		NutanixPassword,
+		NutanixAllowInsecure,
+		NutanixProxyURL,
+		NutanixClusterName,
 		OpenStackAuthURL,
 		OpenStackDomainName,
 		OpenStackPassword,
@@ -177,6 +191,16 @@ func ProviderCredentials(cloudProvider kubeone.CloudProviderSpec, credentialsFil
 		return credentialsFinder.parseCredentialVariables([]ProviderEnvironmentVariable{
 			{Name: HetznerTokenKey, MachineControllerName: HetznerTokenKeyMC},
 		}, defaultValidationFunc)
+	case cloudProvider.Nutanix != nil:
+		return credentialsFinder.parseCredentialVariables([]ProviderEnvironmentVariable{
+			{Name: NutanixEndpoint},
+			{Name: NutanixPort},
+			{Name: NutanixUsername},
+			{Name: NutanixPassword},
+			{Name: NutanixAllowInsecure},
+			{Name: NutanixProxyURL},
+			{Name: NutanixClusterName},
+		}, nutanixValidationFunc)
 	case cloudProvider.Openstack != nil:
 		return credentialsFinder.parseCredentialVariables([]ProviderEnvironmentVariable{
 			{Name: OpenStackAuthURL},
@@ -345,6 +369,18 @@ func defaultValidationFunc(creds map[string]string) error {
 			return errors.Errorf("key %v is required but isn't present", k)
 		}
 	}
+	return nil
+}
+
+func nutanixValidationFunc(creds map[string]string) error {
+	alwaysRequired := []string{NutanixEndpoint, NutanixPort, NutanixUsername, NutanixPassword}
+
+	for _, key := range alwaysRequired {
+		if v, ok := creds[key]; !ok || len(v) == 0 {
+			return errors.Errorf("key %v is required but is not present", key)
+		}
+	}
+
 	return nil
 }
 
