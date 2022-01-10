@@ -33,7 +33,7 @@ output "kubeone_hosts" {
   value = {
     control_plane = {
       cluster_name         = var.cluster_name
-      cloud_provider       = "none"
+      cloud_provider       = "nutanix"
       private_address      = nutanix_virtual_machine.control_plane.*.nic_list.0.ip_endpoint_list.0.ip
       ssh_agent_socket     = var.ssh_agent_socket
       ssh_port             = var.ssh_port
@@ -49,6 +49,42 @@ output "kubeone_hosts" {
 output "kubeone_workers" {
   description = "Workers definitions, that will be transformed into MachineDeployment object"
 
-  value = {}
+  value = {
+    # following outputs will be parsed by kubeone and automatically merged into
+    # corresponding (by name) worker definition
+    "${var.cluster_name}-pool1" = {
+      replicas     = var.initial_machinedeployment_replicas
+      providerSpec = {
+        sshPublicKeys       = [file(var.ssh_public_key_file)]
+        operatingSystem     = var.worker_os
+        operatingSystemSpec = {
+          distUpgradeOnBoot   = false
+        }
+        # uncomment to following to set those kubelet parameters. More into at:
+        # https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/
+        # machineAnnotations = {
+        #  "v1.kubelet-config.machine-controller.kubermatic.io/SystemReserved" = "cpu=200m,memory=200Mi"
+        #  "v1.kubelet-config.machine-controller.kubermatic.io/KubeReserved"   = "cpu=200m,memory=300Mi"
+        #  "v1.kubelet-config.machine-controller.kubermatic.io/EvictionHard"   = ""
+        # }
+        cloudProviderSpec = {
+          # provider specific fields:
+          # see example under `cloudProviderSpec` section at:
+          # https://github.com/kubermatic/machine-controller/blob/master/examples/nutanix-machinedeployment.yaml
+          clusterName = var.nutanix_cluster_name
+          projectName = var.project_name
+          subnetName  = var.subnet_name
+          imageName   = var.image_name
+          cpus        = var.worker_sockets
+          cpuCores    = var.worker_vcpus
+          memoryMB    = var.worker_memory_size
+          diskSize    = var.worker_disk_size
+          categories  = {
+            "KubeOneCluster" = var.cluster_name
+          }
+        }
+      }
+    }
+  }
 }
 
