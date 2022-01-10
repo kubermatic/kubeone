@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2021-12-23T21:13:02+05:00
+date = 2022-01-10T17:50:56+01:00
 weight = 11
 +++
 ## v1beta2
@@ -42,6 +42,7 @@ weight = 11
 * [MachineControllerConfig](#machinecontrollerconfig)
 * [MetricsServer](#metricsserver)
 * [NoneSpec](#nonespec)
+* [NutanixSpec](#nutanixspec)
 * [OpenIDConnect](#openidconnect)
 * [OpenIDConnectConfig](#openidconnectconfig)
 * [OpenstackSpec](#openstackspec)
@@ -174,6 +175,7 @@ Only one cloud provider must be defined at the single time.
 | digitalocean | DigitalOcean | *[DigitalOceanSpec](#digitaloceanspec) | false |
 | gce | GCE | *[GCESpec](#gcespec) | false |
 | hetzner | Hetzner | *[HetznerSpec](#hetznerspec) | false |
+| nutanix | Nutanix | *[NutanixSpec](#nutanixspec) | false |
 | openstack | Openstack | *[OpenstackSpec](#openstackspec) | false |
 | equinixmetal | Equinix Metal | *[EquinixMetalSpec](#equinixmetalspec) | false |
 | vsphere | Vsphere | *[VsphereSpec](#vspherespec) | false |
@@ -493,6 +495,15 @@ MetricsServer feature flag
 ### NoneSpec
 
 NoneSpec defines a none provider
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+
+[Back to Group](#v1beta2)
+
+### NutanixSpec
+
+NutanixSpec defines the Nutanix provider
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
