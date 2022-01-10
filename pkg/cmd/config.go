@@ -610,6 +610,9 @@ containerRuntime:
   #     docker.io:
   #       mirrors:
   #       - http://plain-text2.tld
+  #       auth:
+  #         username: "uzer"
+  #         password: "myc00lp455w0rd"
   #     "*":
   #       mirrors:
   #       - https://secure.tld

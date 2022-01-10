@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2022-01-10T17:50:56+01:00
+date = 2022-01-11T11:06:38+02:00
 weight = 11
 +++
 ## v1beta2
@@ -20,6 +20,7 @@ weight = 11
 * [ContainerRuntimeContainerd](#containerruntimecontainerd)
 * [ContainerRuntimeDocker](#containerruntimedocker)
 * [ContainerdRegistry](#containerdregistry)
+* [ContainerdRegistryAuthConfig](#containerdregistryauthconfig)
 * [ContainerdTLSConfig](#containerdtlsconfig)
 * [ControlPlaneConfig](#controlplaneconfig)
 * [DNSConfig](#dnsconfig)
@@ -237,6 +238,20 @@ ContainerdRegistry defines endpoints and security for given container registry
 | ----- | ----------- | ------ | -------- |
 | mirrors | List of registry mirrors to use | []string | false |
 | tlsConfig | TLSConfig for the registry | *[ContainerdTLSConfig](#containerdtlsconfig) | false |
+| auth | Registry authentication | *[ContainerdRegistryAuthConfig](#containerdregistryauthconfig) | false |
+
+[Back to Group](#v1beta2)
+
+### ContainerdRegistryAuthConfig
+
+Containerd per-registry credentials config
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| username |  | string | false |
+| password |  | string | false |
+| auth |  | string | false |
+| identityToken |  | string | false |
 
 [Back to Group](#v1beta2)
 
