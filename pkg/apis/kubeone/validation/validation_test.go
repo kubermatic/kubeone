@@ -491,6 +491,13 @@ func TestValidateCloudProviderSpec(t *testing.T) {
 			expectedError: false,
 		},
 		{
+			name: "valid Nutanix provider config",
+			providerConfig: kubeone.CloudProviderSpec{
+				Nutanix: &kubeone.NutanixSpec{},
+			},
+			expectedError: false,
+		},
+		{
 			name: "valid OpenStack provider config",
 			providerConfig: kubeone.CloudProviderSpec{
 				Openstack:   &kubeone.OpenstackSpec{},
