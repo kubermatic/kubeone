@@ -5,6 +5,8 @@ versions:
   kubernetes: 1.18.2
 cloudProvider:
   aws: {}
-clusterNetwork:
-  cni:
-    weaveNet: {}
+features:
+  podPresets:
+    enable: true
+  encryptionProviders:
+    enable: true

@@ -1,73 +1,80 @@
 apiVersion: kubeone.k8c.io/v1beta2
 kind: KubeOneCluster
-name: test
+name: demo-cluster
 versions:
   kubernetes: 1.18.2
+clusterNetwork:
+  podSubnet: ""
+  serviceSubnet: ""
+  serviceDomainName: ""
+  nodePortRange: ""
+  kubeProxy:
+    ipvs:
+      scheduler: rr
+      strictArp: false
+      tcpTimeout: "0"
+      tcpFinTimeout: "0"
+      udpTimeout: "0"
+      excludeCIDRs: []
+    iptables: {}
+  cni:
+    canal:
+      mtu: 1450
 cloudProvider:
   aws: {}
-apiEndpoint:
-  host: test-api-lb
-clusterNetwork:
-  cni:
-    canal: {}
-controlPlane:
-  hosts:
-  - privateAddress: 1.1.1.1
-    sshUsername: ubuntu
-    bastion: 1.1.1.10
-    bastionPort: 22
-    bastionUser: ubuntu
-    hostname: ip-1-1-1-1.eu-west-3.compute.internal
-  - privateAddress: 1.1.1.2
-    sshUsername: ubuntu
-    bastion: 1.1.1.10
-    bastionPort: 22
-    bastionUser: ubuntu
-    hostname: ip-1-1-1-2.eu-west-3.compute.internal
-    taints: []
-  - privateAddress: 1.1.1.3
-    sshUsername: ubuntu
-    bastion: 1.1.1.10
-    bastionPort: 22
-    bastionUser: ubuntu
-    hostname: ip-1-1-1-3.eu-west-3.compute.internal
-staticWorkers:
-  hosts:
-  - privateAddress: 1.1.1.4
-    sshUsername: ubuntu
-    bastion: 1.1.1.10
-    bastionPort: 22
-    bastionUser: ubuntu
-    hostname: ip-1-1-1-4.eu-west-3.compute.internal
-    taints: []
-  - privateAddress: 1.1.1.5
-    sshUsername: ubuntu
-    bastion: 1.1.1.10
-    bastionPort: 22
-    bastionUser: ubuntu
-    hostname: ip-1-1-1-5.eu-west-3.compute.internal
-dynamicWorkers:
-- name: test-1-eu-west-3a
-  replicas: 3
-  providerSpec:
-    cloudProviderSpec:
-      ami: ami
-      assignPublicIP: true
-      availabilityZone: eu-west-3a
-      diskIops: 500
-      diskSize: 50
-      diskType: gp2
-      ebsVolumeEncrypted: false
-      instanceProfile: host
-      instanceType: t3.medium
-      isSpotInstance: false
-      region: eu-west-3
-      securityGroupIDs:
-      - sg-id
-      subnetId: subnet-id
-      tags:
-        test-1-workers: ""
-      vpcId: vpc-id
-    operatingSystem: ubuntu
-    operatingSystemSpec:
-      distUpgradeOnBoot: false
+  external: false
+  cloudConfig: ""
+  csiConfig: ""
+containerRuntime: null
+features:
+  podNodeSelector:
+    enable: false
+    config:
+      configFilePath: ""
+  podSecurityPolicy:
+    enable: false
+  staticAuditLog:
+    enable: false
+    config:
+      policyFilePath: ""
+      logPath: /var/log/kubernetes/audit.log
+      logMaxAge: 30
+      logMaxBackup: 3
+      logMaxSize: 100
+  dynamicAuditLog:
+    enable: false
+  metricsServer:
+    enable: true
+  openidConnect:
+    enable: false
+    config:
+      issuerUrl: ""
+      clientId: kubernetes
+      usernameClaim: sub
+      usernamePrefix: 'oidc:'
+      groupsClaim: groups
+      groupsPrefix: 'oidc:'
+      signingAlgs: RS256
+      requiredClaim: ""
+      caFile: ""
+  encryptionProviders:
+    enable: false
+    customEncryptionConfiguration: ""
+caBundle: ""
+systemPackages:
+  configureRepositories: true
+registryConfiguration:
+  overwriteRegistry: ""
+  insecureRegistry: false
+addons:
+  enable: false
+  path: ./addons
+  globalParams:
+    key: value
+  addons:
+  - name: ""
+    delete: false
+    params:
+      key: value
+machineController:
+  deploy: true
