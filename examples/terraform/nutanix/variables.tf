@@ -84,12 +84,6 @@ variable "bastion_user" {
 
 # Provider specific settings
 
-variable "allow_insecure" {
-  default     = false
-  description = "Allow insecure access to the Nutanix API"
-  type        = bool
-}
-
 variable "nutanix_cluster_name" {
   description = "Name of the Nutanix Cluster which will be used for this Kubernetes cluster"
   type        = string

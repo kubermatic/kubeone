@@ -70,6 +70,14 @@ func TestClusterConformance(t *testing.T) { //nolint:gocyclo
 			expectedNumberOfNodes: 4, // 3 control planes + 1 worker
 		},
 		{
+			name:                  "verify k8s cluster deployment on Nutanix",
+			provider:              provisioner.Nutanix,
+			providerExternal:      false,
+			scenario:              NodeConformance,
+			configFilePath:        "../../test/e2e/testdata/config_nutanix.yaml",
+			expectedNumberOfNodes: 4, // 3 control planes + 1 workers
+		},
+		{
 			name:                  "verify k8s cluster deployment on GCE",
 			provider:              provisioner.GCE,
 			providerExternal:      false,

@@ -91,6 +91,19 @@ function setup_ci_environment_vars() {
   "hetzner")
     export HCLOUD_TOKEN=${HZ_E2E_TOKEN}
     ;;
+  "nutanix")
+    export NUTANIX_ENDPOINT=${NUTANIX_E2E_ENDPOINT}
+    export NUTANIX_USERNAME=${NUTANIX_E2E_USERNAME}
+    export NUTANIX_PASSWORD=${NUTANIX_E2E_PASSWORD}
+    export NUTANIX_PORT=9440
+    export NUTANIX_INSECURE=${NUTANIX_E2E_ALLOW_INSECURE}
+    export NUTANIX_ALLOW_INSECURE=${NUTANIX_E2E_ALLOW_INSECURE}
+    export NUTANIX_PROXY_URL="http://${NUTANIX_E2E_PROXY_USERNAME}:${NUTANIX_E2E_PROXY_PASSWORD}@10.240.20.100:${NUTANIX_E2E_PROXY_PORT}/"
+    export TF_VAR_nutanix_cluster_name=${NUTANIX_E2E_CLUSTER_NAME}
+    export TF_VAR_project_name=${NUTANIX_E2E_PROJECT_NAME}
+    export TF_VAR_subnet_name=${NUTANIX_E2E_SUBNET_NAME}
+    export TF_VAR_image_name="machine-controller-e2e-ubuntu"
+    ;;
   "equinixmetal")
     export TF_VAR_project_id=${METAL_PROJECT_ID}
     ;;

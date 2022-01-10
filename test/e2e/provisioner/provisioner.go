@@ -30,6 +30,8 @@ const (
 	DigitalOcean = "digitalocean"
 	// Hetzner cloud provider
 	Hetzner = "hetzner"
+	// Nutanix cloud provider
+	Nutanix = "nutanix"
 	// GCE cloud provider
 	GCE = "gce"
 	// Equinix Metal cloud provider
@@ -58,6 +60,9 @@ func CreateProvisioner(testPath string, identifier string, provider string) (Pro
 		return NewDefaultProvisioner(creds, testPath, identifier, provider)
 	case Hetzner:
 		creds := verifyCredentials("HCLOUD_TOKEN")
+		return NewDefaultProvisioner(creds, testPath, identifier, provider)
+	case Nutanix:
+		creds := verifyCredentials("NUTANIX_ENDPOINT", "NUTANIX_USERNAME", "NUTANIX_PASSWORD", "NUTANIX_PORT", "NUTANIX_INSECURE", "NUTANIX_ALLOW_INSECURE", "NUTANIX_PROXY_URL")
 		return NewDefaultProvisioner(creds, testPath, identifier, provider)
 	case GCE:
 		creds := verifyCredentials("GOOGLE_CREDENTIALS")
