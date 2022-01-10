@@ -52,6 +52,7 @@ resource "nutanix_virtual_machine" "control_plane" {
   project_reference = {
     kind = "project"
     uuid = data.nutanix_project.project.metadata.uuid
+    name = var.project_name
   }
 
   num_vcpus_per_socket = var.control_plane_vcpus
@@ -88,6 +89,7 @@ resource "nutanix_virtual_machine" "lb" {
   project_reference = {
     kind = "project"
     uuid = data.nutanix_project.project.metadata.uuid
+    name = var.project_name
   }
 
   num_vcpus_per_socket = var.bastion_vcpus

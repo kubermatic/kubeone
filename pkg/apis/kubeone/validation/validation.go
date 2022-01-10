@@ -186,6 +186,12 @@ func ValidateCloudProviderSpec(p kubeone.CloudProviderSpec, fldPath *field.Path)
 		}
 		providerFound = true
 	}
+	if p.Nutanix != nil {
+		if providerFound {
+			allErrs = append(allErrs, field.Forbidden(fldPath.Child("nutanix"), "only one provider can be used at the same time"))
+		}
+		providerFound = true
+	}
 	if p.Openstack != nil {
 		if providerFound {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("openstack"), "only one provider can be used at the same time"))

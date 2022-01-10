@@ -34,6 +34,8 @@ func SetCloudProvider(cp *CloudProviderSpec, name string) error {
 		cp.GCE = &GCESpec{}
 	case "hetzner":
 		cp.Hetzner = &HetznerSpec{}
+	case "nutanix":
+		cp.Nutanix = &NutanixSpec{}
 	case "openstack":
 		cp.Openstack = &OpenstackSpec{}
 	case "equinixmetal", "packet":

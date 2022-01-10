@@ -44,6 +44,7 @@ See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_allow_insecure"></a> [allow\_insecure](#input\_allow\_insecure) | Allow insecure access to the Nutanix API | `bool` | `false` | no |
 | <a name="input_apiserver_alternative_names"></a> [apiserver\_alternative\_names](#input\_apiserver\_alternative\_names) | subject alternative names for the API Server signing cert. | `list(string)` | `[]` | no |
 | <a name="input_bastion_disk_size"></a> [bastion\_disk\_size](#input\_bastion\_disk\_size) | Disk size size, in Mib, for bastion/LB node | `number` | `102400` | no |
 | <a name="input_bastion_memory_size"></a> [bastion\_memory\_size](#input\_bastion\_memory\_size) | Memory size, in Mib, for bastion/LB node | `number` | `4096` | no |
@@ -59,13 +60,18 @@ See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
 | <a name="input_image_name"></a> [image\_name](#input\_image\_name) | Image to be used for instances (control plane, bastion/LB, workers) | `string` | n/a | yes |
 | <a name="input_initial_machinedeployment_replicas"></a> [initial\_machinedeployment\_replicas](#input\_initial\_machinedeployment\_replicas) | number of replicas per MachineDeployment | `number` | `1` | no |
 | <a name="input_nutanix_cluster_name"></a> [nutanix\_cluster\_name](#input\_nutanix\_cluster\_name) | Name of the Nutanix Cluster which will be used for this Kubernetes cluster | `string` | n/a | yes |
-| <a name="input_project_id"></a> [project\_id](#input\_project\_id) | ID of the Nutanix Project | `string` | n/a | yes |
+| <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Name of the Nutanix Project | `string` | n/a | yes |
 | <a name="input_ssh_agent_socket"></a> [ssh\_agent\_socket](#input\_ssh\_agent\_socket) | SSH Agent socket, default to grab from $SSH\_AUTH\_SOCK | `string` | `"env:SSH_AUTH_SOCK"` | no |
 | <a name="input_ssh_port"></a> [ssh\_port](#input\_ssh\_port) | SSH port to be used to provision instances | `number` | `22` | no |
 | <a name="input_ssh_private_key_file"></a> [ssh\_private\_key\_file](#input\_ssh\_private\_key\_file) | SSH private key file used to access instances | `string` | `""` | no |
 | <a name="input_ssh_public_key_file"></a> [ssh\_public\_key\_file](#input\_ssh\_public\_key\_file) | SSH public key file | `string` | `"~/.ssh/id_rsa.pub"` | no |
 | <a name="input_ssh_username"></a> [ssh\_username](#input\_ssh\_username) | SSH user, used only in output | `string` | `"ubuntu"` | no |
 | <a name="input_subnet_name"></a> [subnet\_name](#input\_subnet\_name) | Name of the subnet | `string` | n/a | yes |
+| <a name="input_worker_disk_size"></a> [worker\_disk\_size](#input\_worker\_disk\_size) | Disk size size, in Gb, for worker nodes | `number` | `50` | no |
+| <a name="input_worker_memory_size"></a> [worker\_memory\_size](#input\_worker\_memory\_size) | Memory size, in Mib, for worker nodes | `number` | `4096` | no |
+| <a name="input_worker_os"></a> [worker\_os](#input\_worker\_os) | OS to run on worker machines, default to var.os | `string` | `"ubuntu"` | no |
+| <a name="input_worker_sockets"></a> [worker\_sockets](#input\_worker\_sockets) | Number of sockets for worker nodes | `number` | `1` | no |
+| <a name="input_worker_vcpus"></a> [worker\_vcpus](#input\_worker\_vcpus) | Number of vCPUs per socket for worker nodes | `number` | `2` | no |
 
 ## Outputs
 

@@ -30,6 +30,16 @@ variable "apiserver_alternative_names" {
   type        = list(string)
 }
 
+variable "worker_os" {
+  description = "OS to run on worker machines, default to var.os"
+
+  # valid choices are:
+  # * ubuntu
+  # * centos
+  default = "ubuntu"
+  type    = string
+}
+
 variable "ssh_public_key_file" {
   description = "SSH public key file"
   default     = "~/.ssh/id_rsa.pub"
@@ -148,9 +158,32 @@ variable "bastion_disk_size" {
   type        = number
 }
 
+variable "worker_vcpus" {
+  default     = 2
+  description = "Number of vCPUs per socket for worker nodes"
+  type        = number
+}
+
+variable "worker_sockets" {
+  default     = 1
+  description = "Number of sockets for worker nodes"
+  type        = number
+}
+
+variable "worker_memory_size" {
+  default     = 4096
+  description = "Memory size, in Mib, for worker nodes"
+  type        = number
+}
+
+variable "worker_disk_size" {
+  default     = 50
+  description = "Disk size size, in Gb, for worker nodes"
+  type        = number
+}
+
 variable "initial_machinedeployment_replicas" {
   default     = 1
   description = "number of replicas per MachineDeployment"
   type        = number
-
 }
