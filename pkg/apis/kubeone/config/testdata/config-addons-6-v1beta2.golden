@@ -4,5 +4,7 @@ name: test
 versions:
   kubernetes: 1.18.2
 cloudProvider:
-  external: true
-  digitalocean: {}
+  aws: {}
+addons:
+  enable: true
+  path: ./custom-addons

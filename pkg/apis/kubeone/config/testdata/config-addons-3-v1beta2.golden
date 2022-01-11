@@ -4,4 +4,7 @@ name: test
 versions:
   kubernetes: 1.18.2
 cloudProvider:
-  hetzner: {}
+  aws: {}
+addons:
+  enable: true
+  path: ./addons
