@@ -130,10 +130,10 @@ func marshalContainerdConfig(cluster *kubeone.KubeOneCluster) (string, error) {
 			if registry.Auth != nil {
 				regConfig := criPlugin.Registry.Configs[registryName]
 				regConfig.Auth = &containerdRegistryAuth{
-					Username:      regConfig.Auth.Username,
-					Password:      regConfig.Auth.Password,
-					Auth:          regConfig.Auth.Auth,
-					IdentityToken: regConfig.Auth.IdentityToken,
+					Username:      registry.Auth.Username,
+					Password:      registry.Auth.Password,
+					Auth:          registry.Auth.Auth,
+					IdentityToken: registry.Auth.IdentityToken,
 				}
 				criPlugin.Registry.Configs[registryName] = regConfig
 			}
