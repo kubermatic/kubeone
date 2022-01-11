@@ -29,7 +29,7 @@ import (
 )
 
 const (
-	credentialSecretName = "kube-system/kubeone-registry-credentials"
+	credentialSecretName = "kube-system/kubeone-registry-credentials" //nolint:gosec
 )
 
 // Leader returns the first configured host. Only call this after
