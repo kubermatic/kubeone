@@ -28,6 +28,15 @@ import (
 	"k8c.io/kubeone/pkg/apis/kubeone"
 )
 
+// Type is a type of credentials that should be fetched
+type Type string
+
+const (
+	TypeUniversal Type = ""
+	TypeCCM       Type = "CCM"
+	TypeMC        Type = "MC"
+)
+
 // The environment variable names with credential in them
 const (
 	// Variables that KubeOne (and Terraform) expect to see
@@ -40,6 +49,13 @@ const (
 	DigitalOceanTokenKey                 = "DIGITALOCEAN_TOKEN"
 	GoogleServiceAccountKey              = "GOOGLE_CREDENTIALS"
 	HetznerTokenKey                      = "HCLOUD_TOKEN"
+	NutanixEndpoint                      = "NUTANIX_ENDPOINT"
+	NutanixPort                          = "NUTANIX_PORT"
+	NutanixUsername                      = "NUTANIX_USERNAME"
+	NutanixPassword                      = "NUTANIX_PASSWORD"
+	NutanixAllowInsecure                 = "NUTANIX_ALLOW_INSECURE"
+	NutanixProxyURL                      = "NUTANIX_PROXY_URL"
+	NutanixClusterName                   = "NUTANIX_CLUSTER_NAME"
 	OpenStackAuthURL                     = "OS_AUTH_URL"
 	OpenStackDomainName                  = "OS_DOMAIN_NAME"
 	OpenStackPassword                    = "OS_PASSWORD"
@@ -82,6 +98,13 @@ var (
 		DigitalOceanTokenKey,
 		GoogleServiceAccountKey,
 		HetznerTokenKey,
+		NutanixEndpoint,
+		NutanixPort,
+		NutanixUsername,
+		NutanixPassword,
+		NutanixAllowInsecure,
+		NutanixProxyURL,
+		NutanixClusterName,
 		OpenStackAuthURL,
 		OpenStackDomainName,
 		OpenStackPassword,
@@ -107,7 +130,7 @@ type ProviderEnvironmentVariable struct {
 }
 
 func Any(credentialsFilePath string) (map[string]string, error) {
-	credentialsFinder, err := newCredsFinder(credentialsFilePath)
+	credentialsFinder, err := newCredsFinder(credentialsFilePath, TypeUniversal)
 	if err != nil {
 		return nil, err
 	}
@@ -133,8 +156,8 @@ func Any(credentialsFilePath string) (map[string]string, error) {
 }
 
 // ProviderCredentials implements fetching credentials for each supported provider
-func ProviderCredentials(cloudProvider kubeone.CloudProviderSpec, credentialsFilePath string) (map[string]string, error) {
-	credentialsFinder, err := newCredsFinder(credentialsFilePath)
+func ProviderCredentials(cloudProvider kubeone.CloudProviderSpec, credentialsFilePath string, credentialsType Type) (map[string]string, error) {
+	credentialsFinder, err := newCredsFinder(credentialsFilePath, credentialsType)
 	if err != nil {
 		return nil, err
 	}
@@ -168,6 +191,16 @@ func ProviderCredentials(cloudProvider kubeone.CloudProviderSpec, credentialsFil
 		return credentialsFinder.parseCredentialVariables([]ProviderEnvironmentVariable{
 			{Name: HetznerTokenKey, MachineControllerName: HetznerTokenKeyMC},
 		}, defaultValidationFunc)
+	case cloudProvider.Nutanix != nil:
+		return credentialsFinder.parseCredentialVariables([]ProviderEnvironmentVariable{
+			{Name: NutanixEndpoint},
+			{Name: NutanixPort},
+			{Name: NutanixUsername},
+			{Name: NutanixPassword},
+			{Name: NutanixAllowInsecure},
+			{Name: NutanixProxyURL},
+			{Name: NutanixClusterName},
+		}, nutanixValidationFunc)
 	case cloudProvider.Openstack != nil:
 		return credentialsFinder.parseCredentialVariables([]ProviderEnvironmentVariable{
 			{Name: OpenStackAuthURL},
@@ -201,13 +234,25 @@ func ProviderCredentials(cloudProvider kubeone.CloudProviderSpec, credentialsFil
 	return nil, errors.New("no provider matched")
 }
 
-func newCredsFinder(credentialsFilePath string) (lookupFunc, error) {
+func newCredsFinder(credentialsFilePath string, credentialsType Type) (lookupFunc, error) {
 	staticMap := map[string]string{}
 	finder := func(name string) string {
-		if val := os.Getenv(name); val != "" {
-			return val
+		switch {
+		case credentialsType != TypeUniversal:
+			typedName := string(credentialsType) + "_" + name
+			if val := os.Getenv(typedName); val != "" {
+				return val
+			}
+			if val, ok := staticMap[typedName]; ok && val != "" {
+				return val
+			}
+			fallthrough
+		default:
+			if val := os.Getenv(name); val != "" {
+				return val
+			}
+			return staticMap[name]
 		}
-		return staticMap[name]
 	}
 
 	if credentialsFilePath == "" {
@@ -324,6 +369,18 @@ func defaultValidationFunc(creds map[string]string) error {
 			return errors.Errorf("key %v is required but isn't present", k)
 		}
 	}
+	return nil
+}
+
+func nutanixValidationFunc(creds map[string]string) error {
+	alwaysRequired := []string{NutanixEndpoint, NutanixPort, NutanixUsername, NutanixPassword}
+
+	for _, key := range alwaysRequired {
+		if v, ok := creds[key]; !ok || len(v) == 0 {
+			return errors.Errorf("key %v is required but is not present", key)
+		}
+	}
+
 	return nil
 }
 

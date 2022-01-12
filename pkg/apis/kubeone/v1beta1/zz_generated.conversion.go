@@ -850,6 +850,7 @@ func autoConvert_kubeone_CloudProviderSpec_To_v1beta1_CloudProviderSpec(in *kube
 	out.DigitalOcean = (*DigitalOceanSpec)(unsafe.Pointer(in.DigitalOcean))
 	out.GCE = (*GCESpec)(unsafe.Pointer(in.GCE))
 	out.Hetzner = (*HetznerSpec)(unsafe.Pointer(in.Hetzner))
+	// WARNING: in.Nutanix requires manual conversion: does not exist in peer-type
 	out.Openstack = (*OpenstackSpec)(unsafe.Pointer(in.Openstack))
 	// WARNING: in.EquinixMetal requires manual conversion: does not exist in peer-type
 	out.Vsphere = (*VsphereSpec)(unsafe.Pointer(in.Vsphere))

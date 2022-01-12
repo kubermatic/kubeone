@@ -5,6 +5,6 @@ versions:
   kubernetes: 1.18.2
 cloudProvider:
   aws: {}
-clusterNetwork:
-  cni:
-    external: {}
+features:
+  podPresets:
+    enable: false

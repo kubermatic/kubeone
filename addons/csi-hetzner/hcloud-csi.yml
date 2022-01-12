@@ -170,7 +170,7 @@ spec:
             - name: HCLOUD_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: cloud-provider-credentials
+                  name: kubeone-ccm-credentials
                   key: HZ_TOKEN
           volumeMounts:
             - name: socket-dir
@@ -259,7 +259,7 @@ spec:
             - name: HCLOUD_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: cloud-provider-credentials
+                  name: kubeone-ccm-credentials
                   key: HZ_TOKEN
             - name: KUBE_NODE_NAME
               valueFrom:

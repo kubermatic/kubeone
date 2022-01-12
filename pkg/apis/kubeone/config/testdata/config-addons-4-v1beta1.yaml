@@ -5,7 +5,6 @@ versions:
   kubernetes: 1.18.2
 cloudProvider:
   aws: {}
-clusterNetwork:
-  cni:
-    weaveNet:
-      encrypted: true
+addons:
+  enable: true
+  path: ""

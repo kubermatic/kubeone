@@ -32,6 +32,7 @@ import (
 	"k8c.io/kubeone/pkg/addons"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/apis/kubeone/config"
+	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/state"
 )
 
@@ -175,4 +176,23 @@ func confirmCommand(autoApprove bool) (bool, error) {
 	fmt.Println()
 
 	return strings.Trim(confirmation, "\n") == yes, nil
+}
+
+func validateCredentials(s *state.State, credentialsFile string) error {
+	_, universalErr := credentials.ProviderCredentials(s.Cluster.CloudProvider, credentialsFile, credentials.TypeUniversal)
+	_, mcErr := credentials.ProviderCredentials(s.Cluster.CloudProvider, credentialsFile, credentials.TypeMC)
+	_, ccmErr := credentials.ProviderCredentials(s.Cluster.CloudProvider, credentialsFile, credentials.TypeCCM)
+
+	switch {
+	case universalErr != nil && mcErr != nil && ccmErr != nil:
+		// No credentials found
+		fallthrough
+	case mcErr == nil && ccmErr != nil && universalErr != nil:
+		// MC credentials found, but no CCM or universal credentials
+		fallthrough
+	case ccmErr == nil && mcErr != nil && universalErr != nil: // CCM credentials found, but no MC or universal credentials
+		return errors.Wrap(universalErr, "failed to validate credentials")
+	default:
+		return nil
+	}
 }

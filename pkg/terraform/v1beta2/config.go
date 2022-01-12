@@ -257,6 +257,8 @@ func (c *Config) Apply(cluster *kubeonev1beta2.KubeOneCluster) error {
 			err = c.updateGCEWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
 		case cluster.CloudProvider.Hetzner != nil:
 			err = c.updateHetznerWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
+		case cluster.CloudProvider.Nutanix != nil:
+			err = c.updateNutanixWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
 		case cluster.CloudProvider.Openstack != nil:
 			err = c.updateOpenStackWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
 		case cluster.CloudProvider.EquinixMetal != nil:
@@ -430,6 +432,35 @@ func (c *Config) updateHetznerWorkerset(existingWorkerSet *kubeonev1beta2.Dynami
 		{key: "image", value: hetznerConfig.Image},
 		{key: "networks", value: hetznerConfig.Networks},
 		{key: "labels", value: hetznerConfig.Labels},
+	}
+
+	for _, flag := range flags {
+		if err := setWorkersetFlag(existingWorkerSet, flag.key, flag.value); err != nil {
+			return errors.WithStack(err)
+		}
+	}
+
+	return nil
+}
+
+func (c *Config) updateNutanixWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerConfig, cfg json.RawMessage) error {
+	var nutanixConfig machinecontroller.NutanixSpec
+
+	if err := json.Unmarshal(cfg, &nutanixConfig); err != nil {
+		return err
+	}
+
+	flags := []cloudProviderFlags{
+		{key: "clusterName", value: nutanixConfig.ClusterName},
+		{key: "projectName", value: nutanixConfig.ProjectName},
+		{key: "subnetName", value: nutanixConfig.SubnetName},
+		{key: "imageName", value: nutanixConfig.ImageName},
+		{key: "cpus", value: nutanixConfig.CPUs},
+		{key: "cpuCores", value: nutanixConfig.CPUCores},
+		{key: "cpuPassthrough", value: nutanixConfig.CPUPassthrough},
+		{key: "memoryMB", value: nutanixConfig.MemoryMB},
+		{key: "diskSize", value: nutanixConfig.DiskSize},
+		{key: "categories", value: nutanixConfig.Categories},
 	}
 
 	for _, flag := range flags {

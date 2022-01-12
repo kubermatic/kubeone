@@ -221,6 +221,8 @@ type CloudProviderSpec struct {
 	GCE *GCESpec `json:"gce,omitempty"`
 	// Hetzner
 	Hetzner *HetznerSpec `json:"hetzner,omitempty"`
+	// Nutanix
+	Nutanix *NutanixSpec `json:"nutanix,omitempty"`
 	// Openstack
 	Openstack *OpenstackSpec `json:"openstack,omitempty"`
 	// Equinix Metal
@@ -248,6 +250,9 @@ type HetznerSpec struct {
 	// NetworkID
 	NetworkID string `json:"networkID,omitempty"`
 }
+
+// NutanixSpec defines the Nutanix provider
+type NutanixSpec struct{}
 
 // OpenstackSpec defines the Openstack provider
 type OpenstackSpec struct{}
