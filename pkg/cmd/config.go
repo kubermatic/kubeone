@@ -611,8 +611,11 @@ containerRuntime:
   #       mirrors:
   #       - http://plain-text2.tld
   #       auth:
-  #         username: "uzer"
+  #         # all of the following fields are optional
+  #         username: "u5er"
   #         password: "myc00lp455w0rd"
+  #         auth: "base64(user:password)"
+  #         identityToken: ""
   #     "*":
   #       mirrors:
   #       - https://secure.tld
