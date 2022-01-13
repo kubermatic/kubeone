@@ -63,7 +63,15 @@ type containerdRegistryMirror struct {
 }
 
 type containerdRegistryConfig struct {
-	TLS *containerdRegistryTLSConfig `toml:"tls"`
+	TLS  *containerdRegistryTLSConfig `toml:"tls"`
+	Auth *containerdRegistryAuth      `toml:"auth"`
+}
+
+type containerdRegistryAuth struct {
+	Username      string `toml:"username"`
+	Password      string `toml:"password"`
+	Auth          string `toml:"auth"`
+	IdentityToken string `toml:"identitytoken"`
 }
 
 type containerdRegistryTLSConfig struct {
@@ -117,6 +125,17 @@ func marshalContainerdConfig(cluster *kubeone.KubeOneCluster) (string, error) {
 						InsecureSkipVerify: registry.TLSConfig.InsecureSkipVerify,
 					},
 				}
+			}
+
+			if registry.Auth != nil {
+				regConfig := criPlugin.Registry.Configs[registryName]
+				regConfig.Auth = &containerdRegistryAuth{
+					Username:      registry.Auth.Username,
+					Password:      registry.Auth.Password,
+					Auth:          registry.Auth.Auth,
+					IdentityToken: registry.Auth.IdentityToken,
+				}
+				criPlugin.Registry.Configs[registryName] = regConfig
 			}
 		}
 	}

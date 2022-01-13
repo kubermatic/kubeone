@@ -93,6 +93,17 @@ type ContainerdRegistry struct {
 
 	// TLSConfig for the registry
 	TLSConfig *ContainerdTLSConfig `json:"tlsConfig,omitempty"`
+
+	// Registry authentication
+	Auth *ContainerdRegistryAuthConfig `json:"auth,omitempty"`
+}
+
+// Containerd per-registry credentials config
+type ContainerdRegistryAuthConfig struct {
+	Username      string `json:"username,omitempty"`
+	Password      string `json:"password,omitempty"`
+	Auth          string `json:"auth,omitempty"`
+	IdentityToken string `json:"identityToken,omitempty"`
 }
 
 // Configures containerd TLS for a registry

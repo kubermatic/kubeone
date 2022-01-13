@@ -62,6 +62,8 @@ curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRI_TOO
 
 
 sudo mkdir -p $(dirname /etc/docker/daemon.json)
+sudo touch /etc/docker/daemon.json
+sudo chmod 600 /etc/docker/daemon.json
 cat <<EOF | sudo tee /etc/docker/daemon.json
 {
 	"exec-opts": [

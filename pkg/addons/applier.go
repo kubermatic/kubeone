@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"io/fs"
 	"os"
+	"sort"
 	"strings"
 
 	"github.com/MakeNowJust/heredoc/v2"
@@ -66,9 +67,15 @@ type templateData struct {
 	CSIMigration                        bool
 	CSIMigrationFeatureGates            string
 	MachineControllerCredentialsEnvVars string
+	RegistryCredentials                 []registryCredentialsContainer
 	InternalImages                      *internalImages
 	Resources                           map[string]string
 	Params                              map[string]string
+}
+
+type registryCredentialsContainer struct {
+	RegistryName string
+	Auth         kubeoneapi.ContainerdRegistryAuthConfig
 }
 
 func newAddonsApplier(s *state.State) (*applier, error) {
@@ -155,6 +162,28 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		}
 	}
 
+	regCredentials := []registryCredentialsContainer{}
+
+	if s.Cluster.ContainerRuntime.Containerd != nil {
+		regNames := []string{}
+
+		for reg := range s.Cluster.ContainerRuntime.Containerd.Registries {
+			regNames = append(regNames, reg)
+		}
+
+		sort.Strings(regNames)
+
+		for _, reg := range regNames {
+			regConfig := s.Cluster.ContainerRuntime.Containerd.Registries[reg]
+			if regConfig.Auth != nil {
+				regCredentials = append(regCredentials, registryCredentialsContainer{
+					RegistryName: reg,
+					Auth:         *regConfig.Auth,
+				})
+			}
+		}
+	}
+
 	data := templateData{
 		Config: s.Cluster,
 		Certificates: map[string]string{
@@ -170,6 +199,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		CSIMigration:                        csiMigration,
 		CSIMigrationFeatureGates:            csiMigrationFeatureGates,
 		MachineControllerCredentialsEnvVars: string(credsEnvVarsMC),
+		RegistryCredentials:                 regCredentials,
 		InternalImages: &internalImages{
 			pauseImage: s.PauseImage,
 			resolver:   s.Images.Get,

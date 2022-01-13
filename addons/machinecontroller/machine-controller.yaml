@@ -646,6 +646,20 @@ data:
   "ca.crt": |
 {{ .Certificates.KubernetesCA | b64enc | indent 4 }}
 
+{{ if .RegistryCredentials }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: kubeone-registry-credentials
+  namespace: kube-system
+data:
+{{ range .RegistryCredentials }}
+  {{ .RegistryName }}: |
+{{ mustToRawJson .Auth | b64enc | indent 4 }}
+{{ end }}
+{{ end }}
+
 ---
 apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration

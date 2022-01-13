@@ -86,6 +86,8 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install \
 sudo apt-mark hold docker-ce docker-ce-cli containerd.io
 
 sudo mkdir -p $(dirname /etc/docker/daemon.json)
+sudo touch /etc/docker/daemon.json
+sudo chmod 600 /etc/docker/daemon.json
 cat <<EOF | sudo tee /etc/docker/daemon.json
 {
 	"exec-opts": [
