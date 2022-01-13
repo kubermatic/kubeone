@@ -84,6 +84,8 @@ sudo yum versionlock add containerd.io
 
 
 sudo mkdir -p $(dirname /etc/containerd/config.toml)
+sudo touch /etc/containerd/config.toml
+sudo chmod 600 /etc/containerd/config.toml
 cat <<EOF | sudo tee /etc/containerd/config.toml
 version = 2
 

@@ -78,6 +78,8 @@ sudo yum install -y \
 sudo yum versionlock add docker containerd
 
 sudo mkdir -p $(dirname /etc/docker/daemon.json)
+sudo touch /etc/docker/daemon.json
+sudo chmod 600 /etc/docker/daemon.json
 cat <<EOF | sudo tee /etc/docker/daemon.json
 {
 	"exec-opts": [

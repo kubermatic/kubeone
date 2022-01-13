@@ -31,6 +31,8 @@ var (
 		"container-runtime-daemon-config": heredoc.Doc(`
 			{{- if .CONTAINER_RUNTIME_CONFIG_PATH }}
 			sudo mkdir -p $(dirname {{ .CONTAINER_RUNTIME_CONFIG_PATH }})
+			sudo touch {{ .CONTAINER_RUNTIME_CONFIG_PATH }}
+			sudo chmod 600 {{ .CONTAINER_RUNTIME_CONFIG_PATH }}
 			cat <<EOF | sudo tee {{ .CONTAINER_RUNTIME_CONFIG_PATH }}
 			{{ .CONTAINER_RUNTIME_CONFIG }}
 			EOF
