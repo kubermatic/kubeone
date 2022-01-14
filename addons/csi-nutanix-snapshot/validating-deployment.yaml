@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: snapshot-validation-deployment
+  namespace: kube-system
+  labels:
+    app: snapshot-validation
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: snapshot-validation
+  template:
+    metadata:
+      labels:
+        app: snapshot-validation
+    spec:
+      containers:
+      - name: snapshot-validation
+        image: {{ .InternalImages.Get "NutanixCSISnapshotValidationWebhook" }}
+        imagePullPolicy: IfNotPresent
+        args:
+          - --tls-cert-file=/etc/snapshot-validation-webhook/certs/tls.crt
+          - --tls-private-key-file=/etc/snapshot-validation-webhook/certs/tls.key
+          - --v=2
+          - --port=8443
+        ports:
+        - containerPort: 8443
+        securityContext:
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1000
+        volumeMounts:
+          - name: snapshot-validation-webhook-certs
+            mountPath: /etc/snapshot-validation-webhook/certs
+            readOnly: true
+      volumes:
+        - name: snapshot-validation-webhook-certs
+          secret:
+            secretName: nutanix-webhook-certs
+      nodeSelector:
+        node-role.kubernetes.io/master: ""
+      priorityClassName: system-cluster-critical
+      tolerations:
+        - key: "node-role.kubernetes.io/master"
+          operator: "Exists"
+          effect: "NoSchedule"
+        - key: "node-role.kubernetes.io/controlplane"
+          operator: "Exists"
+          effect: "NoSchedule"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: snapshot-validation-service
+  namespace: kube-system
+spec:
+  selector:
+    app: snapshot-validation
+  ports:
+    - name: webhook
+      protocol: TCP
+      port: 443
+      targetPort: 8443
