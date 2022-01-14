@@ -141,7 +141,7 @@ parameters:
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
 metadata:
-  name: default
+  name: ntnx-csi
   annotations:
     storageclass.kubernetes.io/is-default-class: "true"
 provisioner: csi.nutanix.com
