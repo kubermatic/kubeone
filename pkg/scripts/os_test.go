@@ -41,6 +41,12 @@ func withKubeVersion(ver string) genClusterOpts {
 	}
 }
 
+func withNutanixCloudProvider(cls *kubeone.KubeOneCluster) {
+	cls.CloudProvider = kubeone.CloudProviderSpec{
+		Nutanix: &kubeone.NutanixSpec{},
+	}
+}
+
 func withProxy(proxy string) genClusterOpts {
 	return func(cls *kubeone.KubeOneCluster) {
 		cls.Proxy.HTTPS = proxy
@@ -143,6 +149,12 @@ func TestKubeadmDebian(t *testing.T) {
 			name: "with containerd with insecure registry",
 			args: args{
 				cluster: genCluster(withContainerd, withInsecureRegistry("127.0.0.1:5000")),
+			},
+		},
+		{
+			name: "nutanix cluster",
+			args: args{
+				cluster: genCluster(withNutanixCloudProvider),
 			},
 		},
 	}
@@ -260,6 +272,12 @@ func TestKubeadmCentOS(t *testing.T) {
 			name: "with containerd with insecure registry",
 			args: args{
 				cluster: genCluster(withContainerd, withInsecureRegistry("127.0.0.1:5000")),
+			},
+		},
+		{
+			name: "nutanix cluster",
+			args: args{
+				cluster: genCluster(withNutanixCloudProvider),
 			},
 		},
 	}

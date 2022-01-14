@@ -54,3 +54,7 @@ func MigrateToContainerd(cluster *kubeone.KubeOneCluster) (string, error) {
 
 	return Render(migrateToContainerdScriptTemplate, data)
 }
+
+func installISCSIAndNFS(cluster *kubeone.KubeOneCluster) bool {
+	return cluster.CloudProvider.Nutanix != nil
+}
