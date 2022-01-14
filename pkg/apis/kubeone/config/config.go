@@ -168,7 +168,7 @@ func DefaultedV1Beta1KubeOneCluster(versionedCluster *kubeonev1beta1.KubeOneClus
 	}
 
 	// Check for deprecated fields/features for a cluster
-	checkClusterForDeprecations(*internalCluster, logger)
+	checkClusterFeatures(*internalCluster, logger)
 
 	return internalCluster, nil
 }
@@ -206,7 +206,7 @@ func DefaultedV1Beta2KubeOneCluster(versionedCluster *kubeonev1beta2.KubeOneClus
 	}
 
 	// Check for deprecated fields/features for a cluster
-	checkClusterForDeprecations(*internalCluster, logger)
+	checkClusterFeatures(*internalCluster, logger)
 
 	return internalCluster, nil
 }
@@ -236,9 +236,13 @@ func isDir(dirname string) bool {
 	return statErr == nil && stat.Mode().IsDir()
 }
 
-// checkClusterForDeprecations with check clusters for usage of deprecated fields, flags etc. and print a warning if any are found
-func checkClusterForDeprecations(c kubeoneapi.KubeOneCluster, logger logrus.FieldLogger) {
+// checkClusterFeatures checks clusters for usage of alpha and deprecated fields, flags etc. and print a warning if any are found
+func checkClusterFeatures(c kubeoneapi.KubeOneCluster, logger logrus.FieldLogger) {
 	if c.Features.PodSecurityPolicy != nil && c.Features.PodSecurityPolicy.Enable {
 		logger.Warnf("PodSecurityPolicy is deprecated and will be removed with Kubernetes 1.25 release")
+	}
+	if c.CloudProvider.Nutanix != nil {
+		logger.Warnf("Nutanix support is considered as alpha, so the implementation might be changed in the future")
+		logger.Warnf("Nutanix support is planned to graduate to beta/stable in KubeOne 1.5+")
 	}
 }
