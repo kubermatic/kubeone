@@ -57,21 +57,27 @@ func _() {
 	_ = x[AzureDiskCSIResizer-47]
 	_ = x[AzureDiskCSISnapshotter-48]
 	_ = x[AzureDiskCSISnapshotterController-49]
-	_ = x[DigitaloceanCCM-50]
-	_ = x[HetznerCCM-51]
-	_ = x[HetznerCSI-52]
-	_ = x[OpenstackCCM-53]
-	_ = x[OpenstackCSI-54]
-	_ = x[EquinixMetalCCM-55]
-	_ = x[VsphereCCM-56]
-	_ = x[VsphereCSIDriver-57]
-	_ = x[VsphereCSISyncer-58]
-	_ = x[VsphereCSIProvisioner-59]
+	_ = x[NutanixCSILivenessProbe-50]
+	_ = x[NutanixCSI-51]
+	_ = x[NutanixCSIProvisioner-52]
+	_ = x[NutanixCSIRegistrar-53]
+	_ = x[NutanixCSIResizer-54]
+	_ = x[NutanixCSISnapshotter-55]
+	_ = x[DigitaloceanCCM-56]
+	_ = x[HetznerCCM-57]
+	_ = x[HetznerCSI-58]
+	_ = x[OpenstackCCM-59]
+	_ = x[OpenstackCSI-60]
+	_ = x[EquinixMetalCCM-61]
+	_ = x[VsphereCCM-62]
+	_ = x[VsphereCSIDriver-63]
+	_ = x[VsphereCSISyncer-64]
+	_ = x[VsphereCSIProvisioner-65]
 }
 
-const _Resource_name = "CalicoCNICalicoControllerCalicoNodeFlannelCiliumCiliumOperatorHubbleRelayHubbleUIHubbleUIBackendHubbleProxyWeaveNetCNIKubeWeaveNetCNINPCDNSNodeCacheMachineControllerMetricsServerClusterAutoscalerCSIAttacherCSINodeDriverRegistarCSIProvisionerCSISnapshotterCSIResizerCSILivenessProbeAwsCCMAzureCCMAzureCNMAwsEbsCSIAwsEbsCSIAttacherAwsEbsCSILivenessProbeAwsEbsCSINodeDriverRegistrarAwsEbsCSIProvisionerAwsEbsCSIResizerAwsEbsCSISnapshotterAwsEbsCSISnapshotControllerAzureFileCSIAzureFileCSIAttacherAzureFileCSILivenessProbeAzureFileCSINodeDriverRegistarAzureFileCSIProvisionerAzureFileCSIResizerAzureFileCSISnapshotterAzureFileCSISnapshotterControllerAzureDiskCSIAzureDiskCSIAttacherAzureDiskCSILivenessProbeAzureDiskCSINodeDriverRegistarAzureDiskCSIProvisionerAzureDiskCSIResizerAzureDiskCSISnapshotterAzureDiskCSISnapshotterControllerDigitaloceanCCMHetznerCCMHetznerCSIOpenstackCCMOpenstackCSIEquinixMetalCCMVsphereCCMVsphereCSIDriverVsphereCSISyncerVsphereCSIProvisioner"
+const _Resource_name = "CalicoCNICalicoControllerCalicoNodeFlannelCiliumCiliumOperatorHubbleRelayHubbleUIHubbleUIBackendHubbleProxyWeaveNetCNIKubeWeaveNetCNINPCDNSNodeCacheMachineControllerMetricsServerClusterAutoscalerCSIAttacherCSINodeDriverRegistarCSIProvisionerCSISnapshotterCSIResizerCSILivenessProbeAwsCCMAzureCCMAzureCNMAwsEbsCSIAwsEbsCSIAttacherAwsEbsCSILivenessProbeAwsEbsCSINodeDriverRegistrarAwsEbsCSIProvisionerAwsEbsCSIResizerAwsEbsCSISnapshotterAwsEbsCSISnapshotControllerAzureFileCSIAzureFileCSIAttacherAzureFileCSILivenessProbeAzureFileCSINodeDriverRegistarAzureFileCSIProvisionerAzureFileCSIResizerAzureFileCSISnapshotterAzureFileCSISnapshotterControllerAzureDiskCSIAzureDiskCSIAttacherAzureDiskCSILivenessProbeAzureDiskCSINodeDriverRegistarAzureDiskCSIProvisionerAzureDiskCSIResizerAzureDiskCSISnapshotterAzureDiskCSISnapshotterControllerNutanixCSILivenessProbeNutanixCSINutanixCSIProvisionerNutanixCSIRegistrarNutanixCSIResizerNutanixCSISnapshotterDigitaloceanCCMHetznerCCMHetznerCSIOpenstackCCMOpenstackCSIEquinixMetalCCMVsphereCCMVsphereCSIDriverVsphereCSISyncerVsphereCSIProvisioner"
 
-var _Resource_index = [...]uint16{0, 9, 25, 35, 42, 48, 62, 73, 81, 96, 107, 122, 136, 148, 165, 178, 195, 206, 227, 241, 255, 265, 281, 287, 295, 303, 312, 329, 351, 379, 399, 415, 435, 462, 474, 494, 519, 549, 572, 591, 614, 647, 659, 679, 704, 734, 757, 776, 799, 832, 847, 857, 867, 879, 891, 906, 916, 932, 948, 969}
+var _Resource_index = [...]uint16{0, 9, 25, 35, 42, 48, 62, 73, 81, 96, 107, 122, 136, 148, 165, 178, 195, 206, 227, 241, 255, 265, 281, 287, 295, 303, 312, 329, 351, 379, 399, 415, 435, 462, 474, 494, 519, 549, 572, 591, 614, 647, 659, 679, 704, 734, 757, 776, 799, 832, 855, 865, 886, 905, 922, 943, 958, 968, 978, 990, 1002, 1017, 1027, 1043, 1059, 1080}
 
 func (i Resource) String() string {
 	i -= 1

@@ -114,6 +114,14 @@ const (
 	AzureDiskCSISnapshotter
 	AzureDiskCSISnapshotterController
 
+	// Nutanix CSI
+	NutanixCSILivenessProbe
+	NutanixCSI
+	NutanixCSIProvisioner
+	NutanixCSIRegistrar
+	NutanixCSIResizer
+	NutanixCSISnapshotter
+
 	// CCMs and CSI plugins
 	DigitaloceanCCM
 	HetznerCCM
@@ -259,6 +267,14 @@ func optionalResources() map[Resource]map[string]string {
 		VsphereCSIDriver:      {"*": "gcr.io/cloud-provider-vsphere/csi/release/driver:v2.4.0"},
 		VsphereCSISyncer:      {"*": "gcr.io/cloud-provider-vsphere/csi/release/syncer:v2.4.0"},
 		VsphereCSIProvisioner: {"*": "k8s.gcr.io/sig-storage/csi-provisioner:v3.0.0"},
+
+		// Nutanix CSI
+		NutanixCSI:              {"*": "quay.io/karbon/ntnx-csi:v2.5.0"},
+		NutanixCSILivenessProbe: {"*": "k8s.gcr.io/sig-storage/livenessprobe:v2.3.0"},
+		NutanixCSIProvisioner:   {"*": "k8s.gcr.io/sig-storage/csi-provisioner:v2.2.2"},
+		NutanixCSIRegistrar:     {"*": "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.2.0"},
+		NutanixCSIResizer:       {"*": "k8s.gcr.io/sig-storage/csi-resizer:v1.2.0"},
+		NutanixCSISnapshotter:   {"*": "k8s.gcr.io/sig-storage/csi-snapshotter:v4.2.1"},
 
 		// WeaveNet CNI plugin
 		WeaveNetCNIKube: {"*": "docker.io/weaveworks/weave-kube:2.8.1"},
