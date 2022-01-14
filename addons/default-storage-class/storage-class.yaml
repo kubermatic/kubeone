@@ -137,6 +137,29 @@ parameters:
   type: pd-ssd
 {{ end }}
 
+{{ if eq .Config.CloudProvider.CloudProviderName "nutanix" }}
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: default
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+provisioner: csi.nutanix.com
+parameters:
+  storageType: NutanixVolumes
+  csi.storage.k8s.io/provisioner-secret-name: ntnx-secret
+  csi.storage.k8s.io/provisioner-secret-namespace: kube-system
+  csi.storage.k8s.io/node-publish-secret-name: ntnx-secret
+  csi.storage.k8s.io/node-publish-secret-namespace: kube-system
+  csi.storage.k8s.io/controller-expand-secret-name: ntnx-secret
+  csi.storage.k8s.io/controller-expand-secret-namespace: kube-system
+  storageContainer: {{ default "Default" .Params.storageContainer | quote }}
+  csi.storage.k8s.io/fstype: {{ default "xfs" .Params.fsType | quote }}
+  isSegmentedIscsiNetwork: {{ default "false" .Params.isSegmentedIscsiNetwork | quote }}
+allowVolumeExpansion: true
+reclaimPolicy: Delete
+{{ end }}
+
 {{ if eq .Config.CloudProvider.CloudProviderName "hetzner" }}
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
