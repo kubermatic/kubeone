@@ -224,6 +224,10 @@ func SetKubeOneClusterDynamicDefaults(cfg *kubeoneapi.KubeOneCluster, credential
 	if cc, ok := credentials["cloudConfig"]; ok {
 		cfg.CloudProvider.CloudConfig = cc
 	}
+	// Source csi-config from the credentials file if it's present
+	if cc, ok := credentials["csiConfig"]; ok {
+		cfg.CloudProvider.CSIConfig = cc
+	}
 
 	// Default the AssetsConfiguration internal API
 	cfg.DefaultAssetConfiguration()
