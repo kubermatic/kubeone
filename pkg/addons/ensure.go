@@ -207,30 +207,27 @@ func EnsureUserAddons(s *state.State) error {
 		return err
 	}
 
-	if applier.LocalFS == nil {
-		s.Logger.Infoln("Skipping applying addons because addons are not enabled...")
-		return nil
-	}
-
 	s.Logger.Infof("Applying user provided addons...")
-
-	customAddons, err := fs.ReadDir(applier.LocalFS, ".")
-	if err != nil {
-		return errors.Wrap(err, "failed to read addons directory")
-	}
-
 	combinedAddons := map[string]string{}
-	for _, useraddon := range customAddons {
-		if !useraddon.IsDir() {
-			continue
+
+	if applier.LocalFS != nil {
+		customAddons, err := fs.ReadDir(applier.LocalFS, ".")
+		if err != nil {
+			return errors.Wrap(err, "failed to read addons directory")
 		}
 
-		if _, ok := embeddedAddons[useraddon.Name()]; ok {
-			continue
-		}
+		for _, useraddon := range customAddons {
+			if !useraddon.IsDir() {
+				continue
+			}
 
-		if _, ok := combinedAddons[useraddon.Name()]; !ok {
-			combinedAddons[useraddon.Name()] = ""
+			if _, ok := embeddedAddons[useraddon.Name()]; ok {
+				continue
+			}
+
+			if _, ok := combinedAddons[useraddon.Name()]; !ok {
+				combinedAddons[useraddon.Name()] = ""
+			}
 		}
 	}
 
@@ -257,9 +254,11 @@ func EnsureUserAddons(s *state.State) error {
 		}
 	}
 
-	s.Logger.Info("Applying addons from the root directory...")
-	if err := applier.loadAndApplyAddon(s, applier.LocalFS, ""); err != nil {
-		return errors.Wrap(err, "failed to load and apply addons from the root directory")
+	if applier.LocalFS != nil {
+		s.Logger.Info("Applying addons from the root directory...")
+		if err := applier.loadAndApplyAddon(s, applier.LocalFS, ""); err != nil {
+			return errors.Wrap(err, "failed to load and apply addons from the root directory")
+		}
 	}
 
 	return nil
