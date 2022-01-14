@@ -224,6 +224,21 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		data.Certificates["vSphereCSIWebhookKey"] = vsphereCSICertsMap[resources.TLSKeyName]
 	}
 
+	if s.Cluster.CloudProvider.Nutanix != nil {
+		nutanixCSICertsMap, err := certificate.NewSignedTLSCert(
+			resources.NutanixCSIWebhookName,
+			resources.NutanixCSIWebhookNamespace,
+			s.Cluster.ClusterNetwork.ServiceDomainName,
+			kubeCAPrivateKey,
+			kubeCACert,
+		)
+		if err != nil {
+			return nil, err
+		}
+		data.Certificates["NutanixCSIWebhookCert"] = nutanixCSICertsMap[resources.TLSCertName]
+		data.Certificates["NutanixCSIWebhookKey"] = nutanixCSICertsMap[resources.TLSKeyName]
+	}
+
 	return &applier{
 		TemplateData: data,
 		LocalFS:      localFS,
