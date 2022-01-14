@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: csi-metrics-service
+  namespace: kube-system
+  labels:
+    app: csi-provisioner-ntnx-plugin
+spec:
+  type: ClusterIP
+  selector:
+    app: csi-provisioner-ntnx-plugin
+  ports:
+    - name: provisioner
+      port: 9809
+      targetPort: 9809
+      protocol: TCP
+    - name: resizer
+      port: 9810
+      targetPort: 9810
+      protocol: TCP
