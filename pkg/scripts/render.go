@@ -17,7 +17,6 @@ limitations under the License.
 package scripts
 
 import (
-	"fmt"
 	"strings"
 	"text/template"
 
@@ -230,9 +229,6 @@ type Data map[string]interface{}
 func Render(cmd string, variables map[string]interface{}) (string, error) {
 	tpl := template.New("base").
 		Funcs(sprig.TxtFuncMap()).
-		Funcs(template.FuncMap{
-			"required": requiredTemplateFunc,
-		}).
 		Funcs(sprig.TxtFuncMap())
 
 	_, err := tpl.New("library").Parse(libraryTemplate)
@@ -262,17 +258,4 @@ func Render(cmd string, variables map[string]interface{}) (string, error) {
 	}
 
 	return buf.String(), nil
-}
-
-func requiredTemplateFunc(warn string, input interface{}) (interface{}, error) {
-	switch val := input.(type) {
-	case nil:
-		return val, fmt.Errorf(warn)
-	case string:
-		if val == "" {
-			return val, fmt.Errorf(warn)
-		}
-	}
-
-	return input, nil
 }
