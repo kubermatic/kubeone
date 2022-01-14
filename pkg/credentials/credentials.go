@@ -53,9 +53,12 @@ const (
 	NutanixPort                          = "NUTANIX_PORT"
 	NutanixUsername                      = "NUTANIX_USERNAME"
 	NutanixPassword                      = "NUTANIX_PASSWORD"
-	NutanixAllowInsecure                 = "NUTANIX_ALLOW_INSECURE"
+	NutanixInsecure                      = "NUTANIX_INSECURE"
 	NutanixProxyURL                      = "NUTANIX_PROXY_URL"
 	NutanixClusterName                   = "NUTANIX_CLUSTER_NAME"
+	NutanixPEEndpoint                    = "NUTANIX_PE_ENDPOINT"
+	NutanixPEUsername                    = "NUTANIX_PE_USERNAME"
+	NutanixPEPassword                    = "NUTANIX_PE_PASSWORD" //nolint:gosec
 	OpenStackAuthURL                     = "OS_AUTH_URL"
 	OpenStackDomainName                  = "OS_DOMAIN_NAME"
 	OpenStackPassword                    = "OS_PASSWORD"
@@ -102,9 +105,12 @@ var (
 		NutanixPort,
 		NutanixUsername,
 		NutanixPassword,
-		NutanixAllowInsecure,
+		NutanixInsecure,
 		NutanixProxyURL,
 		NutanixClusterName,
+		NutanixPEEndpoint,
+		NutanixPEUsername,
+		NutanixPEPassword,
 		OpenStackAuthURL,
 		OpenStackDomainName,
 		OpenStackPassword,
@@ -197,9 +203,12 @@ func ProviderCredentials(cloudProvider kubeone.CloudProviderSpec, credentialsFil
 			{Name: NutanixPort},
 			{Name: NutanixUsername},
 			{Name: NutanixPassword},
-			{Name: NutanixAllowInsecure},
+			{Name: NutanixInsecure},
 			{Name: NutanixProxyURL},
 			{Name: NutanixClusterName},
+			{Name: NutanixPEEndpoint},
+			{Name: NutanixPEUsername},
+			{Name: NutanixPEPassword},
 		}, nutanixValidationFunc)
 	case cloudProvider.Openstack != nil:
 		return credentialsFinder.parseCredentialVariables([]ProviderEnvironmentVariable{
@@ -373,7 +382,15 @@ func defaultValidationFunc(creds map[string]string) error {
 }
 
 func nutanixValidationFunc(creds map[string]string) error {
-	alwaysRequired := []string{NutanixEndpoint, NutanixPort, NutanixUsername, NutanixPassword}
+	alwaysRequired := []string{
+		NutanixEndpoint,
+		NutanixPort,
+		NutanixUsername,
+		NutanixPassword,
+		NutanixPEEndpoint,
+		NutanixPEUsername,
+		NutanixPEPassword,
+	}
 
 	for _, key := range alwaysRequired {
 		if v, ok := creds[key]; !ok || len(v) == 0 {
