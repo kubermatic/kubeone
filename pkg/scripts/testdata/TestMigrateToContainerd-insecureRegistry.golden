@@ -35,13 +35,12 @@ runtime-endpoint: unix:///run/containerd/containerd.sock
 EOF
 
 sudo mkdir -p /etc/systemd/system/containerd.service.d
-cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/10-kubeone.conf
+cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/environment.conf
 [Service]
 Restart=always
-Environment=CONTAINERD_CONFIG=/etc/containerd/config.toml
-ExecStart=
-ExecStart=/usr/bin/env PATH=\${TORCX_BINDIR}:\${PATH} \${TORCX_BINDIR}/containerd --config \${CONTAINERD_CONFIG}
+EnvironmentFile=-/etc/environment
 EOF
+
 sudo mkdir -p /etc/systemd/system/containerd.service.d
 cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/environment.conf
 [Service]
@@ -52,5 +51,4 @@ EOF
 sudo systemctl daemon-reload
 sudo systemctl enable containerd
 sudo systemctl restart containerd
-
 sudo systemctl restart kubelet

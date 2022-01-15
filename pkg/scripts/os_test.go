@@ -180,13 +180,15 @@ func TestMigrateToContainerd(t *testing.T) {
 		name             string
 		insecureRegistry string
 		mirrors          []string
+		osName           kubeone.OperatingSystemName
 		err              error
 	}{
 		{
 			name: "simple",
 		},
 		{
-			name: "flatcat",
+			name:   "flatcar",
+			osName: kubeone.OperatingSystemNameFlatcar,
 		},
 		{
 			name:             "insecureRegistry",
@@ -202,7 +204,7 @@ func TestMigrateToContainerd(t *testing.T) {
 				withContainerd,
 			)
 
-			got, err := MigrateToContainerd(&cls)
+			got, err := MigrateToContainerd(&cls, &kubeone.HostConfig{OperatingSystem: tt.osName})
 			if err != tt.err {
 				t.Errorf("MigrateToContainerd() error = %v, wantErr %v", err, tt.err)
 				return
