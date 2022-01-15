@@ -200,14 +200,7 @@ var (
 
 		"flatcar-containerd": heredoc.Doc(`
 			{{ template "container-runtime-daemon-config" . }}
-			sudo mkdir -p /etc/systemd/system/containerd.service.d
-			cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/10-kubeone.conf
-			[Service]
-			Restart=always
-			Environment=CONTAINERD_CONFIG=/etc/containerd/config.toml
-			ExecStart=
-			ExecStart=/usr/bin/env PATH=\${TORCX_BINDIR}:\${PATH} \${TORCX_BINDIR}/containerd --config \${CONTAINERD_CONFIG}
-			EOF
+			{{ template "flatcar-systemd-drop-in" . }}
 			{{ template "containerd-systemd-setup" . }}
 			`,
 		),
@@ -220,6 +213,17 @@ var (
 			sudo systemctl restart docker
 			`,
 		),
+
+		"flatcar-systemd-drop-in": heredoc.Doc(`
+			sudo mkdir -p /etc/systemd/system/containerd.service.d
+			cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/10-kubeone.conf
+			[Service]
+			Restart=always
+			Environment=CONTAINERD_CONFIG=/etc/containerd/config.toml
+			ExecStart=
+			ExecStart=/usr/bin/env PATH=\${TORCX_BINDIR}:\${PATH} \${TORCX_BINDIR}/containerd --config \${CONTAINERD_CONFIG}
+			EOF
+		`),
 	}
 )
 

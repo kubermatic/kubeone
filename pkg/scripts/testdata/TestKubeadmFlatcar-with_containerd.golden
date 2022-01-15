@@ -98,6 +98,7 @@ Environment=CONTAINERD_CONFIG=/etc/containerd/config.toml
 ExecStart=
 ExecStart=/usr/bin/env PATH=\${TORCX_BINDIR}:\${PATH} \${TORCX_BINDIR}/containerd --config \${CONTAINERD_CONFIG}
 EOF
+
 sudo mkdir -p /etc/systemd/system/containerd.service.d
 cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/environment.conf
 [Service]
