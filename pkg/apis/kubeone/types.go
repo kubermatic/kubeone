@@ -69,7 +69,7 @@ type KubeOneCluster struct {
 
 // KubeletConfiguration
 type KubeletConfiguration struct {
-	// ContainerLogsMaxSize configure --container-logs-max-size command-line flag of the kubelet. Defaults to 100Mi.
+	// ContainerLogMaxSize configures the maximum size of container log file before it is rotated
 	// See more at: https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/
 	ContainerLogMaxSize string `json:"containerLogMaxSize,omitempty"`
 }
