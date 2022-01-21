@@ -17,13 +17,14 @@ limitations under the License.
 package config
 
 import (
+	"fmt"
 	"io"
 	"os"
 	"os/exec"
+	"reflect"
 
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-	"gopkg.in/yaml.v2"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	kubeonescheme "k8c.io/kubeone/pkg/apis/kubeone/scheme"
@@ -34,6 +35,7 @@ import (
 	terraformv1beta2 "k8c.io/kubeone/pkg/terraform/v1beta2"
 
 	"k8s.io/apimachinery/pkg/runtime"
+	"sigs.k8s.io/yaml"
 )
 
 const (
@@ -212,7 +214,7 @@ func DefaultedV1Beta2KubeOneCluster(versionedCluster *kubeonev1beta2.KubeOneClus
 }
 
 // SetKubeOneClusterDynamicDefaults sets the dynamic defaults for a given KubeOneCluster object
-func SetKubeOneClusterDynamicDefaults(cfg *kubeoneapi.KubeOneCluster, credentialsFile []byte) error {
+func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, credentialsFile []byte) error {
 	// Parse the credentials file
 	credentials := make(map[string]string)
 	err := yaml.Unmarshal(credentialsFile, &credentials)
@@ -222,15 +224,61 @@ func SetKubeOneClusterDynamicDefaults(cfg *kubeoneapi.KubeOneCluster, credential
 
 	// Source cloud-config from the credentials file if it's present
 	if cc, ok := credentials["cloudConfig"]; ok {
-		cfg.CloudProvider.CloudConfig = cc
+		cluster.CloudProvider.CloudConfig = cc
 	}
 	// Source csi-config from the credentials file if it's present
 	if cc, ok := credentials["csiConfig"]; ok {
-		cfg.CloudProvider.CSIConfig = cc
+		cluster.CloudProvider.CSIConfig = cc
+	}
+
+	if ra, ok := credentials["registriesAuth"]; ok {
+		if err := setRegistriesAuth(cluster, ra); err != nil {
+			return fmt.Errorf("failed to parse registriesAuth from credentials file: %w", err)
+		}
 	}
 
 	// Default the AssetsConfiguration internal API
-	cfg.DefaultAssetConfiguration()
+	cluster.DefaultAssetConfiguration()
+
+	return nil
+}
+
+func setRegistriesAuth(cluster *kubeoneapi.KubeOneCluster, buf string) error {
+	var (
+		containerdConfig kubeonev1beta2.ContainerRuntimeContainerd
+		typeMeta         runtime.TypeMeta
+	)
+
+	if err := yaml.Unmarshal([]byte(buf), &typeMeta); err != nil {
+		return err
+	}
+
+	if typeMeta.APIVersion != kubeonev1beta2.SchemeGroupVersion.String() {
+		return fmt.Errorf("only %q apiVersion is supported in registriesAuth", kubeonev1beta2.SchemeGroupVersion.String())
+	}
+
+	containerdConfigKind := reflect.TypeOf(containerdConfig).Name()
+	if typeMeta.Kind != containerdConfigKind {
+		return fmt.Errorf("only %q kind is supported in registriesAuth", containerdConfigKind)
+	}
+
+	if err := yaml.Unmarshal([]byte(buf), &containerdConfig); err != nil {
+		return err
+	}
+
+	if cluster.ContainerRuntime.Containerd == nil {
+		return fmt.Errorf(".ContainerRuntime.Containerd should be set")
+	}
+
+	if cluster.ContainerRuntime.Containerd.Registries == nil {
+		cluster.ContainerRuntime.Containerd.Registries = map[string]kubeoneapi.ContainerdRegistry{}
+	}
+
+	for registryName, registryInfo := range containerdConfig.Registries {
+		internalRegistry := cluster.ContainerRuntime.Containerd.Registries[registryName]
+		internalRegistry.Auth = (*kubeoneapi.ContainerdRegistryAuthConfig)(registryInfo.Auth)
+		cluster.ContainerRuntime.Containerd.Registries[registryName] = internalRegistry
+	}
 
 	return nil
 }
