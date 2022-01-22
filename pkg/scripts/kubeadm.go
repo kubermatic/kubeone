@@ -57,8 +57,8 @@ var (
 		sudo rm -rf /etc/kubeone
 	`)
 
-	kubeadmUpgradeLeaderScriptTemplate = heredoc.Doc(`
-		sudo {{ .KUBEADM_UPGRADE }} --config={{ .WORK_DIR }}/cfg/master_0.yaml
+	kubeadmUpgradeScriptTemplate = heredoc.Doc(`
+		sudo {{ .KUBEADM_UPGRADE }}{{ if .LEADER }} --config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml{{ end }}
 	`)
 
 	kubeadmPauseImageVersionScriptTemplate = heredoc.Doc(`
@@ -110,10 +110,12 @@ func KubeadmReset(verboseFlag, workdir string) (string, error) {
 	})
 }
 
-func KubeadmUpgradeLeader(kubeadmCmd, workdir string) (string, error) {
-	return Render(kubeadmUpgradeLeaderScriptTemplate, map[string]interface{}{
+func KubeadmUpgrade(kubeadmCmd, workdir string, leader bool, nodeID int) (string, error) {
+	return Render(kubeadmUpgradeScriptTemplate, map[string]interface{}{
 		"KUBEADM_UPGRADE": kubeadmCmd,
 		"WORK_DIR":        workdir,
+		"NODE_ID":         nodeID,
+		"LEADER":          leader,
 	})
 }
 

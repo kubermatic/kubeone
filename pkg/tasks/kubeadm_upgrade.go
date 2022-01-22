@@ -24,13 +24,13 @@ import (
 	"k8c.io/kubeone/pkg/templates/kubeadm"
 )
 
-func upgradeLeaderControlPlane(s *state.State) error {
+func upgradeLeaderControlPlane(s *state.State, nodeID int) error {
 	kadm, err := kubeadm.New(s.Cluster.Versions.Kubernetes)
 	if err != nil {
 		return errors.Wrap(err, "failed to init kubeadm")
 	}
 
-	cmd, err := scripts.KubeadmUpgradeLeader(kadm.UpgradeLeaderCommand(), s.WorkDir)
+	cmd, err := scripts.KubeadmUpgrade(kadm.UpgradeLeaderCommand(), s.WorkDir, true, nodeID)
 	if err != nil {
 		return err
 	}
@@ -40,13 +40,18 @@ func upgradeLeaderControlPlane(s *state.State) error {
 	return err
 }
 
-func upgradeFollowerControlPlane(s *state.State) error {
+func upgradeFollowerControlPlane(s *state.State, nodeID int) error {
 	kadm, err := kubeadm.New(s.Cluster.Versions.Kubernetes)
 	if err != nil {
 		return errors.Wrap(err, "failed to init kubadm")
 	}
 
-	_, _, err = s.Runner.Run(`sudo `+kadm.UpgradeFollowerCommand(), nil)
+	cmd, err := scripts.KubeadmUpgrade(kadm.UpgradeFollowerCommand(), s.WorkDir, false, nodeID)
+	if err != nil {
+		return err
+	}
+
+	_, _, err = s.Runner.RunRaw(cmd)
 	return err
 }
 

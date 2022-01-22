@@ -51,13 +51,17 @@ func upgradeLeaderExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh
 		return errors.Wrap(err, "failed to drain follower control plane node")
 	}
 
+	if err := setupProxy(logger, s); err != nil {
+		return err
+	}
+
 	logger.Infoln("Upgrading kubeadm binary on the leader control plane...")
 	if err := upgradeKubeadmAndCNIBinaries(s, *node); err != nil {
 		return errors.Wrap(err, "failed to upgrade kubernetes binaries on leader control plane")
 	}
 
 	logger.Infoln("Running 'kubeadm upgrade' on leader control plane node...")
-	if err := upgradeLeaderControlPlane(s); err != nil {
+	if err := upgradeLeaderControlPlane(s, node.ID); err != nil {
 		return errors.Wrap(err, "failed to run 'kubeadm upgrade' on leader control plane")
 	}
 

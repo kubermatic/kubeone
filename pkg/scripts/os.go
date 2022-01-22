@@ -34,7 +34,6 @@ var migrateToContainerdScriptTemplate = heredoc.Doc(`
 	sudo docker ps -qa | xargs sudo docker rm || true
 
 	{{ template "container-runtime-daemon-config" . }}
-	{{ template "containerd-systemd-environment" . }}
 	{{ if .IS_FLATCAR -}}
 	{{ template "flatcar-systemd-drop-in" . }}
 	{{ end -}}

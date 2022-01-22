@@ -21,22 +21,14 @@ import (
 )
 
 const (
-	daemonsProxyScript = `
-sudo mkdir -p /etc/systemd/system/docker.service.d
-cat <<EOF | sudo tee /etc/systemd/system/docker.service.d/http-proxy.conf
+	daemonsEnvironmentScriptTemplate = `
+{{- range .SYSTEMD_SERVICES }}
+sudo mkdir -p /etc/systemd/system/{{ . }}.service.d
+cat <<EOF | sudo tee /etc/systemd/system/{{ . }}.service.d/http-proxy.conf
 [Service]
-EnvironmentFile=/etc/kubeone/proxy-env
+EnvironmentFile=/etc/environment
 EOF
-
-sudo mkdir -p /etc/systemd/system/kubelet.service.d
-cat <<EOF | sudo tee /etc/systemd/system/kubelet.service.d/http-proxy.conf
-[Service]
-EnvironmentFile=/etc/kubeone/proxy-env
-EOF
-
-sudo systemctl daemon-reload
-if sudo systemctl status docker &>/dev/null; then sudo systemctl restart docker; fi
-if sudo systemctl status kubelet &>/dev/null; then sudo systemctl restart kubelet; fi
+{{ end }}
 `
 
 	environmentFileCmd = `
@@ -77,6 +69,8 @@ func EnvironmentFile(cluster *kubeone.KubeOneCluster) (string, error) {
 	})
 }
 
-func DaemonsProxy() (string, error) {
-	return Render(daemonsProxyScript, nil)
+func DaemonsEnvironmentDropIn(daemons ...string) (string, error) {
+	return Render(daemonsEnvironmentScriptTemplate, Data{
+		"SYSTEMD_SERVICES": daemons,
+	})
 }
