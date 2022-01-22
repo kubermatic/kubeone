@@ -29,9 +29,13 @@ cat <<EOF | sudo tee /etc/systemd/system/{{ . }}.service.d/http-proxy.conf
 EnvironmentFile=/etc/environment
 EOF
 {{ end }}
+sudo systemctl daemon-reload
+{{- range .SYSTEMD_SERVICES }}
+if sudo systemctl status {{ . }} &>/dev/null; then sudo systemctl restart {{ . }}; fi
+{{- end }}
 `
 
-	environmentFileCmd = `
+	environmentFileScriptTemplate = `
 sudo mkdir -p /etc/kubeone
 cat <<EOF | sudo tee /etc/kubeone/proxy-env
 {{ with .HTTP_PROXY -}}
@@ -62,7 +66,7 @@ sudo tee /etc/environment < $envtmp
 )
 
 func EnvironmentFile(cluster *kubeone.KubeOneCluster) (string, error) {
-	return Render(environmentFileCmd, Data{
+	return Render(environmentFileScriptTemplate, Data{
 		"HTTP_PROXY":  cluster.Proxy.HTTP,
 		"HTTPS_PROXY": cluster.Proxy.HTTPS,
 		"NO_PROXY":    cluster.Proxy.NoProxy,

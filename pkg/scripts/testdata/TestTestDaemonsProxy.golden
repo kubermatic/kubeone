@@ -19,3 +19,7 @@ cat <<EOF | sudo tee /etc/systemd/system/kubelet.service.d/http-proxy.conf
 EnvironmentFile=/etc/environment
 EOF
 
+sudo systemctl daemon-reload
+if sudo systemctl status docker &>/dev/null; then sudo systemctl restart docker; fi
+if sudo systemctl status containerd &>/dev/null; then sudo systemctl restart containerd; fi
+if sudo systemctl status kubelet &>/dev/null; then sudo systemctl restart kubelet; fi
