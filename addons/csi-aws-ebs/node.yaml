@@ -5,6 +5,7 @@ kind: DaemonSet
 apiVersion: apps/v1
 metadata:
   name: ebs-csi-node
+  namespace: kube-system
   labels:
     app.kubernetes.io/name: aws-ebs-csi-driver
 spec:
@@ -36,11 +37,7 @@ spec:
       serviceAccountName: ebs-csi-node-sa
       priorityClassName: system-node-critical
       tolerations:
-        - key: CriticalAddonsOnly
-          operator: Exists
         - operator: Exists
-          effect: NoExecute
-          tolerationSeconds: 300
       containers:
         - name: ebs-plugin
           securityContext:

@@ -157,3 +157,4 @@ spec:
             path: /sys/class/scsi_host/
             type: Directory
           name: scsi-host-dir
+---
