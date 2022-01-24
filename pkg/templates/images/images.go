@@ -302,7 +302,8 @@ func optionalResources() map[Resource]map[string]string {
 			"1.19.x":    "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.19.0",
 			"1.20.x":    "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.20.0",
 			"1.21.x":    "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.21.0",
-			">= 1.22.0": "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.22.0",
+			"1.22.x":    "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.22.0",
+			">= 1.23.0": "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.23.0",
 		},
 	}
 }
