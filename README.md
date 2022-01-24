@@ -1,6 +1,9 @@
 # Kubermatic KubeOne
 
-<p align="center"><img src="docs/img/kubeone-logo-text.png" width="700px" /></p>
+<p align="center">
+  <img src="docs/img/kubeone-logo-text.png#gh-light-mode-only" width="700px" />
+  <img src="docs/img/kubeone-logo-text-dark.png#gh-dark-mode-only" width="700px" />
+</p>
 
 [![KubeOne Report Card](https://goreportcard.com/badge/github.com/kubermatic/kubeone)](https://goreportcard.com/report/github.com/kubermatic/kubeone)
 
@@ -51,9 +54,9 @@ care of setting up a production ready Highly Available cluster!
 ### Native Support For The Most Popular Providers
 
 KubeOne natively supports the most popular providers, including AWS, Azure,
-DigitalOcean, GCP, Hetzner Cloud, OpenStack, and VMware vSphere. The natively
-supported providers enjoy additional features such as integration with Terraform
-and Kubermatic machine-controller.
+DigitalOcean, GCP, Hetzner Cloud, Nutanix, OpenStack, and VMware vSphere. The
+natively supported providers enjoy additional features such as integration with
+Terraform and Kubermatic machine-controller.
 
 ### Kubernetes Conformance Certified
 

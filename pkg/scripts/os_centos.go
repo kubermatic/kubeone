@@ -62,7 +62,15 @@ sudo yum install -y \
 	ebtables \
 	socat \
 	iproute-tc \
+	{{- if .INSTALL_ISCSI_AND_NFS }}
+	iscsi-initiator-utils \
+	nfs-utils \
+	{{- end }}
 	rsync
+
+{{- if .INSTALL_ISCSI_AND_NFS }}
+sudo systemctl enable --now iscsid
+{{- end }}
 
 {{ if .INSTALL_DOCKER }}
 {{ template "yum-docker-ce" . }}
@@ -130,6 +138,7 @@ func KubeadmCentOS(cluster *kubeone.KubeOneCluster, force bool) (string, error) 
 		"FORCE":                  force,
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
+		"INSTALL_ISCSI_AND_NFS":  installISCSIAndNFS(cluster),
 	}
 
 	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
@@ -158,6 +167,7 @@ func UpgradeKubeadmAndCNICentOS(cluster *kubeone.KubeOneCluster) (string, error)
 		"PROXY":                  proxy,
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
+		"INSTALL_ISCSI_AND_NFS":  installISCSIAndNFS(cluster),
 	}
 
 	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
@@ -183,6 +193,7 @@ func UpgradeKubeletAndKubectlCentOS(cluster *kubeone.KubeOneCluster) (string, er
 		"PROXY":                  proxy,
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
+		"INSTALL_ISCSI_AND_NFS":  installISCSIAndNFS(cluster),
 	}
 
 	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {

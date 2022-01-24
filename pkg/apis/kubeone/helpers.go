@@ -28,6 +28,10 @@ import (
 	"github.com/pkg/errors"
 )
 
+const (
+	credentialSecretName = "kube-system/kubeone-registry-credentials" //nolint:gosec
+)
+
 // Leader returns the first configured host. Only call this after
 // validating the cluster config to ensure a leader exists.
 func (c KubeOneCluster) Leader() (HostConfig, error) {
@@ -100,9 +104,11 @@ func (crc ContainerRuntimeConfig) MachineControllerFlags() []string {
 		// -node-containerd-registry-mirrors=k8s.gcr.io=http://somewhere
 		// -node-insecure-registries=docker.io,k8s.gcr.io
 		var (
-			registryNames []string
-			insecureSet   = map[string]struct{}{}
+			registryNames                 []string
+			insecureSet                   = map[string]struct{}{}
+			registryCredentialsSecretFlag bool
 		)
+
 		for registry := range crc.Containerd.Registries {
 			registryNames = append(registryNames, registry)
 		}
@@ -121,6 +127,16 @@ func (crc ContainerRuntimeConfig) MachineControllerFlags() []string {
 					fmt.Sprintf("-node-containerd-registry-mirrors=%s=%s", registryName, mirror),
 				)
 			}
+
+			if containerdRegistry.Auth != nil {
+				registryCredentialsSecretFlag = true
+			}
+		}
+
+		if registryCredentialsSecretFlag {
+			mcFlags = append(mcFlags,
+				fmt.Sprintf("-node-registry-credentials-secret=%s", credentialSecretName),
+			)
 		}
 
 		if len(insecureSet) > 0 {

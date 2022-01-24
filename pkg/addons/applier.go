@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"io/fs"
 	"os"
+	"sort"
 	"strings"
 
 	"github.com/MakeNowJust/heredoc/v2"
@@ -66,15 +67,21 @@ type templateData struct {
 	CSIMigration                        bool
 	CSIMigrationFeatureGates            string
 	MachineControllerCredentialsEnvVars string
+	RegistryCredentials                 []registryCredentialsContainer
 	InternalImages                      *internalImages
 	Resources                           map[string]string
 	Params                              map[string]string
 }
 
+type registryCredentialsContainer struct {
+	RegistryName string
+	Auth         kubeoneapi.ContainerdRegistryAuthConfig
+}
+
 func newAddonsApplier(s *state.State) (*applier, error) {
 	var localFS fs.FS
 
-	if s.Cluster.Addons.Enabled() {
+	if s.Cluster.Addons.Enabled() && s.Cluster.Addons.Path != "" {
 		addonsPath, err := s.Cluster.Addons.RelativePath(s.ManifestFilePath)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get addons path")
@@ -155,6 +162,28 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		}
 	}
 
+	regCredentials := []registryCredentialsContainer{}
+
+	if s.Cluster.ContainerRuntime.Containerd != nil {
+		regNames := []string{}
+
+		for reg := range s.Cluster.ContainerRuntime.Containerd.Registries {
+			regNames = append(regNames, reg)
+		}
+
+		sort.Strings(regNames)
+
+		for _, reg := range regNames {
+			regConfig := s.Cluster.ContainerRuntime.Containerd.Registries[reg]
+			if regConfig.Auth != nil {
+				regCredentials = append(regCredentials, registryCredentialsContainer{
+					RegistryName: reg,
+					Auth:         *regConfig.Auth,
+				})
+			}
+		}
+	}
+
 	data := templateData{
 		Config: s.Cluster,
 		Certificates: map[string]string{
@@ -170,6 +199,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		CSIMigration:                        csiMigration,
 		CSIMigrationFeatureGates:            csiMigrationFeatureGates,
 		MachineControllerCredentialsEnvVars: string(credsEnvVarsMC),
+		RegistryCredentials:                 regCredentials,
 		InternalImages: &internalImages{
 			pauseImage: s.PauseImage,
 			resolver:   s.Images.Get,
@@ -192,6 +222,21 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		}
 		data.Certificates["vSphereCSIWebhookCert"] = vsphereCSICertsMap[resources.TLSCertName]
 		data.Certificates["vSphereCSIWebhookKey"] = vsphereCSICertsMap[resources.TLSKeyName]
+	}
+
+	if s.Cluster.CloudProvider.Nutanix != nil {
+		nutanixCSICertsMap, err := certificate.NewSignedTLSCert(
+			resources.NutanixCSIWebhookName,
+			resources.NutanixCSIWebhookNamespace,
+			s.Cluster.ClusterNetwork.ServiceDomainName,
+			kubeCAPrivateKey,
+			kubeCACert,
+		)
+		if err != nil {
+			return nil, err
+		}
+		data.Certificates["NutanixCSIWebhookCert"] = nutanixCSICertsMap[resources.TLSCertName]
+		data.Certificates["NutanixCSIWebhookKey"] = nutanixCSICertsMap[resources.TLSKeyName]
 	}
 
 	return &applier{

@@ -4,15 +4,22 @@ export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
 sudo mkdir -p /etc/systemd/system/docker.service.d
 cat <<EOF | sudo tee /etc/systemd/system/docker.service.d/http-proxy.conf
 [Service]
-EnvironmentFile=/etc/kubeone/proxy-env
+EnvironmentFile=/etc/environment
+EOF
+
+sudo mkdir -p /etc/systemd/system/containerd.service.d
+cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/http-proxy.conf
+[Service]
+EnvironmentFile=/etc/environment
 EOF
 
 sudo mkdir -p /etc/systemd/system/kubelet.service.d
 cat <<EOF | sudo tee /etc/systemd/system/kubelet.service.d/http-proxy.conf
 [Service]
-EnvironmentFile=/etc/kubeone/proxy-env
+EnvironmentFile=/etc/environment
 EOF
 
 sudo systemctl daemon-reload
 if sudo systemctl status docker &>/dev/null; then sudo systemctl restart docker; fi
+if sudo systemctl status containerd &>/dev/null; then sudo systemctl restart containerd; fi
 if sudo systemctl status kubelet &>/dev/null; then sudo systemctl restart kubelet; fi

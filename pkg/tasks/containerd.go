@@ -100,7 +100,7 @@ func migrateToContainerdTask(s *state.State, node *kubeone.HostConfig, conn ssh.
 		return err
 	}
 
-	migrateScript, err := scripts.MigrateToContainerd(s.Cluster)
+	migrateScript, err := scripts.MigrateToContainerd(s.Cluster, node)
 	if err != nil {
 		return err
 	}

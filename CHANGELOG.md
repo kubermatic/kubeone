@@ -1,6 +1,44 @@
 # Changelog
 
-# [v1.4.0-beta.0](https://github.com/kubermatic/kubeone/releases/tag/v1.4.0-alpha.0) - 2022-01-04
+# [v1.4.0-beta.1](https://github.com/kubermatic/kubeone/releases/tag/v1.4.0-beta.1) - 2022-01-14
+
+## Attention Needed
+
+* **[BREAKING]** The `cloud-provider-credentials` Secret is removed by KubeOne because KubeOne does not use it any longer. If you have any workloads NOT created by KubeOne that use this Secret, please migrate before upgrading KubeOne. Instead, KubeOne now creates `kubeone-machine-controller-credentials` and `kubeone-ccm-credentials` Secrets used by machine-controller and external CCM ([#1717](https://github.com/kubermatic/kubeone/pull/1717), [#1718](https://github.com/kubermatic/kubeone/pull/1718))
+
+## Added
+
+* Add experimental/alpha support for Nutanix ([#1723](https://github.com/kubermatic/kubeone/pull/1723), [#1725](https://github.com/kubermatic/kubeone/pull/1725), [#1733](https://github.com/kubermatic/kubeone/pull/1733))
+  * Support for Nutanix is experimental, so implementation and relevant addons might be changed until it doesn't graduate to beta/stable
+* Add the Nutanix CSI driver addon. The addon is deployed manually, on-demand, by enabling the `csi-nutanix` embedded addon (see the PR description for more details and examples) ([#1733](https://github.com/kubermatic/kubeone/pull/1733), [#1734](https://github.com/kubermatic/kubeone/pull/1734))
+* Add the default StorageClass for the Nutanix CSI driver. The StorageClass can be deployed by enabling the `default-storage-class` embedded addon (see the PR description for more details and examples) ([#1733](https://github.com/kubermatic/kubeone/pull/1733))
+* Add the Registry Credentials configuration to the RegistryConfiguration API ([#1724](https://github.com/kubermatic/kubeone/pull/1724))
+* Add support for different credentials for machine-controller and CCM. Environment variables can be prefixed with `MC_` for machine-controller credentials and `CCM_` for CCM credentials ([#1717](https://github.com/kubermatic/kubeone/pull/1717))
+
+## Changed
+
+### General
+
+* **[BREAKING]** The `cloud-provider-credentials` Secret is removed by KubeOne because KubeOne does not use it any longer. If you have any workloads NOT created by KubeOne that use this Secret, please migrate before upgrading KubeOne. Instead, KubeOne now creates `kubeone-machine-controller-credentials` and `kubeone-ccm-credentials` Secrets used by machine-controller and external CCM ([#1717](https://github.com/kubermatic/kubeone/pull/1717), [#1718](https://github.com/kubermatic/kubeone/pull/1718))
+
+### Fixed
+
+* Fix a bug with the addons applier applying all files when the addons path is not provided ([#1733](https://github.com/kubermatic/kubeone/pull/1733))
+
+### Addons
+
+* Fix control plane tolerations in Azure CCM and CSI addons (`node-role.kubernetes.io/master` doesn't have a value) ([#1733](https://github.com/kubermatic/kubeone/pull/1733))
+* Add node affinity to the cluster-autoscaler addon ([#1716](https://github.com/kubermatic/kubeone/pull/1716))
+
+### Terraform Configs
+
+* Remove `centos` choice from the GCE Terraform example configs as it's unsupported ([#1712](https://github.com/kubermatic/kubeone/pull/1712))
+
+### Updated
+
+* Update machine-controller to v1.42.0 ([#1733](https://github.com/kubermatic/kubeone/pull/1733))
+
+# [v1.4.0-beta.0](https://github.com/kubermatic/kubeone/releases/tag/v1.4.0-beta.0) - 2022-01-04
 
 ## Attention Needed
 

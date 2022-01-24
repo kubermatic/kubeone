@@ -41,6 +41,12 @@ func withKubeVersion(ver string) genClusterOpts {
 	}
 }
 
+func withNutanixCloudProvider(cls *kubeone.KubeOneCluster) {
+	cls.CloudProvider = kubeone.CloudProviderSpec{
+		Nutanix: &kubeone.NutanixSpec{},
+	}
+}
+
 func withProxy(proxy string) genClusterOpts {
 	return func(cls *kubeone.KubeOneCluster) {
 		cls.Proxy.HTTPS = proxy
@@ -145,6 +151,12 @@ func TestKubeadmDebian(t *testing.T) {
 				cluster: genCluster(withContainerd, withInsecureRegistry("127.0.0.1:5000")),
 			},
 		},
+		{
+			name: "nutanix cluster",
+			args: args{
+				cluster: genCluster(withNutanixCloudProvider),
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -168,13 +180,15 @@ func TestMigrateToContainerd(t *testing.T) {
 		name             string
 		insecureRegistry string
 		mirrors          []string
+		osName           kubeone.OperatingSystemName
 		err              error
 	}{
 		{
 			name: "simple",
 		},
 		{
-			name: "flatcat",
+			name:   "flatcar",
+			osName: kubeone.OperatingSystemNameFlatcar,
 		},
 		{
 			name:             "insecureRegistry",
@@ -190,7 +204,7 @@ func TestMigrateToContainerd(t *testing.T) {
 				withContainerd,
 			)
 
-			got, err := MigrateToContainerd(&cls)
+			got, err := MigrateToContainerd(&cls, &kubeone.HostConfig{OperatingSystem: tt.osName})
 			if err != tt.err {
 				t.Errorf("MigrateToContainerd() error = %v, wantErr %v", err, tt.err)
 				return
@@ -260,6 +274,12 @@ func TestKubeadmCentOS(t *testing.T) {
 			name: "with containerd with insecure registry",
 			args: args{
 				cluster: genCluster(withContainerd, withInsecureRegistry("127.0.0.1:5000")),
+			},
+		},
+		{
+			name: "nutanix cluster",
+			args: args{
+				cluster: genCluster(withNutanixCloudProvider),
 			},
 		},
 	}

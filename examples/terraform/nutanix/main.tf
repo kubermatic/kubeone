@@ -14,9 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-provider "nutanix" {
-  insecure = var.allow_insecure
-}
+provider "nutanix" {}
 
 data "nutanix_cluster" "cluster" {
   name = var.nutanix_cluster_name

@@ -1,3 +1,0 @@
-set -xeu pipefail
-export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
-sudo kubeadm upgrade node --certificate-renewal=true --config=test-wd/cfg/master_0.yaml

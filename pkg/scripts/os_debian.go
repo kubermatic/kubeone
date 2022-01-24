@@ -49,7 +49,15 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--
 	curl \
 	gnupg \
 	lsb-release \
+	{{- if .INSTALL_ISCSI_AND_NFS }}
+	open-iscsi \
+	nfs-common \
+	{{- end }}
 	rsync
+
+{{- if .INSTALL_ISCSI_AND_NFS }}
+sudo systemctl enable --now iscsid
+{{- end }}
 
 {{- if .CONFIGURE_REPOSITORIES }}
 curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
@@ -127,6 +135,7 @@ func KubeadmDebian(cluster *kubeone.KubeOneCluster, force bool) (string, error) 
 		"FORCE":                  force,
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
+		"INSTALL_ISCSI_AND_NFS":  installISCSIAndNFS(cluster),
 	}
 
 	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
@@ -151,6 +160,7 @@ func UpgradeKubeadmAndCNIDebian(cluster *kubeone.KubeOneCluster) (string, error)
 		"HTTPS_PROXY":            cluster.Proxy.HTTPS,
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
+		"INSTALL_ISCSI_AND_NFS":  installISCSIAndNFS(cluster),
 	}
 
 	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
@@ -172,6 +182,7 @@ func UpgradeKubeletAndKubectlDebian(cluster *kubeone.KubeOneCluster) (string, er
 		"HTTPS_PROXY":            cluster.Proxy.HTTPS,
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
+		"INSTALL_ISCSI_AND_NFS":  installISCSIAndNFS(cluster),
 	}
 
 	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {

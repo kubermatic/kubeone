@@ -49,29 +49,37 @@ func _() {
 	_ = x[AzureFileCSIResizer-39]
 	_ = x[AzureFileCSISnapshotter-40]
 	_ = x[AzureFileCSISnapshotterController-41]
-	_ = x[AzureDiskCSI-42]
-	_ = x[AzureDiskCSIAttacher-43]
-	_ = x[AzureDiskCSILivenessProbe-44]
-	_ = x[AzureDiskCSINodeDriverRegistar-45]
-	_ = x[AzureDiskCSIProvisioner-46]
-	_ = x[AzureDiskCSIResizer-47]
-	_ = x[AzureDiskCSISnapshotter-48]
-	_ = x[AzureDiskCSISnapshotterController-49]
-	_ = x[DigitaloceanCCM-50]
-	_ = x[HetznerCCM-51]
-	_ = x[HetznerCSI-52]
-	_ = x[OpenstackCCM-53]
-	_ = x[OpenstackCSI-54]
-	_ = x[EquinixMetalCCM-55]
-	_ = x[VsphereCCM-56]
-	_ = x[VsphereCSIDriver-57]
-	_ = x[VsphereCSISyncer-58]
-	_ = x[VsphereCSIProvisioner-59]
+	_ = x[NutanixCSISnapshotController-42]
+	_ = x[NutanixCSISnapshotValidationWebhook-43]
+	_ = x[AzureDiskCSI-44]
+	_ = x[AzureDiskCSIAttacher-45]
+	_ = x[AzureDiskCSILivenessProbe-46]
+	_ = x[AzureDiskCSINodeDriverRegistar-47]
+	_ = x[AzureDiskCSIProvisioner-48]
+	_ = x[AzureDiskCSIResizer-49]
+	_ = x[AzureDiskCSISnapshotter-50]
+	_ = x[AzureDiskCSISnapshotterController-51]
+	_ = x[NutanixCSILivenessProbe-52]
+	_ = x[NutanixCSI-53]
+	_ = x[NutanixCSIProvisioner-54]
+	_ = x[NutanixCSIRegistrar-55]
+	_ = x[NutanixCSIResizer-56]
+	_ = x[NutanixCSISnapshotter-57]
+	_ = x[DigitaloceanCCM-58]
+	_ = x[HetznerCCM-59]
+	_ = x[HetznerCSI-60]
+	_ = x[OpenstackCCM-61]
+	_ = x[OpenstackCSI-62]
+	_ = x[EquinixMetalCCM-63]
+	_ = x[VsphereCCM-64]
+	_ = x[VsphereCSIDriver-65]
+	_ = x[VsphereCSISyncer-66]
+	_ = x[VsphereCSIProvisioner-67]
 }
 
-const _Resource_name = "CalicoCNICalicoControllerCalicoNodeFlannelCiliumCiliumOperatorHubbleRelayHubbleUIHubbleUIBackendHubbleProxyWeaveNetCNIKubeWeaveNetCNINPCDNSNodeCacheMachineControllerMetricsServerClusterAutoscalerCSIAttacherCSINodeDriverRegistarCSIProvisionerCSISnapshotterCSIResizerCSILivenessProbeAwsCCMAzureCCMAzureCNMAwsEbsCSIAwsEbsCSIAttacherAwsEbsCSILivenessProbeAwsEbsCSINodeDriverRegistrarAwsEbsCSIProvisionerAwsEbsCSIResizerAwsEbsCSISnapshotterAwsEbsCSISnapshotControllerAzureFileCSIAzureFileCSIAttacherAzureFileCSILivenessProbeAzureFileCSINodeDriverRegistarAzureFileCSIProvisionerAzureFileCSIResizerAzureFileCSISnapshotterAzureFileCSISnapshotterControllerAzureDiskCSIAzureDiskCSIAttacherAzureDiskCSILivenessProbeAzureDiskCSINodeDriverRegistarAzureDiskCSIProvisionerAzureDiskCSIResizerAzureDiskCSISnapshotterAzureDiskCSISnapshotterControllerDigitaloceanCCMHetznerCCMHetznerCSIOpenstackCCMOpenstackCSIEquinixMetalCCMVsphereCCMVsphereCSIDriverVsphereCSISyncerVsphereCSIProvisioner"
+const _Resource_name = "CalicoCNICalicoControllerCalicoNodeFlannelCiliumCiliumOperatorHubbleRelayHubbleUIHubbleUIBackendHubbleProxyWeaveNetCNIKubeWeaveNetCNINPCDNSNodeCacheMachineControllerMetricsServerClusterAutoscalerCSIAttacherCSINodeDriverRegistarCSIProvisionerCSISnapshotterCSIResizerCSILivenessProbeAwsCCMAzureCCMAzureCNMAwsEbsCSIAwsEbsCSIAttacherAwsEbsCSILivenessProbeAwsEbsCSINodeDriverRegistrarAwsEbsCSIProvisionerAwsEbsCSIResizerAwsEbsCSISnapshotterAwsEbsCSISnapshotControllerAzureFileCSIAzureFileCSIAttacherAzureFileCSILivenessProbeAzureFileCSINodeDriverRegistarAzureFileCSIProvisionerAzureFileCSIResizerAzureFileCSISnapshotterAzureFileCSISnapshotterControllerNutanixCSISnapshotControllerNutanixCSISnapshotValidationWebhookAzureDiskCSIAzureDiskCSIAttacherAzureDiskCSILivenessProbeAzureDiskCSINodeDriverRegistarAzureDiskCSIProvisionerAzureDiskCSIResizerAzureDiskCSISnapshotterAzureDiskCSISnapshotterControllerNutanixCSILivenessProbeNutanixCSINutanixCSIProvisionerNutanixCSIRegistrarNutanixCSIResizerNutanixCSISnapshotterDigitaloceanCCMHetznerCCMHetznerCSIOpenstackCCMOpenstackCSIEquinixMetalCCMVsphereCCMVsphereCSIDriverVsphereCSISyncerVsphereCSIProvisioner"
 
-var _Resource_index = [...]uint16{0, 9, 25, 35, 42, 48, 62, 73, 81, 96, 107, 122, 136, 148, 165, 178, 195, 206, 227, 241, 255, 265, 281, 287, 295, 303, 312, 329, 351, 379, 399, 415, 435, 462, 474, 494, 519, 549, 572, 591, 614, 647, 659, 679, 704, 734, 757, 776, 799, 832, 847, 857, 867, 879, 891, 906, 916, 932, 948, 969}
+var _Resource_index = [...]uint16{0, 9, 25, 35, 42, 48, 62, 73, 81, 96, 107, 122, 136, 148, 165, 178, 195, 206, 227, 241, 255, 265, 281, 287, 295, 303, 312, 329, 351, 379, 399, 415, 435, 462, 474, 494, 519, 549, 572, 591, 614, 647, 675, 710, 722, 742, 767, 797, 820, 839, 862, 895, 918, 928, 949, 968, 985, 1006, 1021, 1031, 1041, 1053, 1065, 1080, 1090, 1106, 1122, 1143}
 
 func (i Resource) String() string {
 	i -= 1
