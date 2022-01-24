@@ -48,9 +48,8 @@ const (
 type printOpts struct {
 	FullConfig bool `longflag:"full" shortflag:"f"`
 
-	ClusterName         string `longflag:"cluster-name" shortflag:"n"`
-	KubernetesVersion   string `longflag:"kubernetes-version" shortflag:"k"`
-	ContainerLogMaxSize string `longflag:"container-log-max-size"`
+	ClusterName       string `longflag:"cluster-name" shortflag:"n"`
+	KubernetesVersion string `longflag:"kubernetes-version" shortflag:"k"`
 
 	CloudProviderName     string `longflag:"provider" shortflag:"p"`
 	CloudProviderExternal bool
@@ -80,6 +79,8 @@ type printOpts struct {
 	EnableEncryptionProviders bool `longflag:"enable-encryption-providers"`
 
 	DeployMachineController bool `longflag:"deploy-machine-controller"`
+
+	ContainerLogMaxSize string `longflag:"container-log-max-size"`
 }
 
 // configCmd setups the config command
@@ -138,13 +139,6 @@ func configPrintCmd() *cobra.Command {
 		"Kubernetes version")
 
 	cmd.Flags().StringVarP(
-		&opts.ContainerLogMaxSize,
-		longFlagName(opts, "ContainerLogMaxSize"),
-		shortFlagName(opts, "ContainerLogMaxSize"),
-		"100Mi",
-		"ContainerLogMaxSize")
-
-	cmd.Flags().StringVarP(
 		&opts.CloudProviderName,
 		longFlagName(opts, "CloudProviderName"),
 		shortFlagName(opts, "CloudProviderName"),
@@ -181,6 +175,14 @@ func configPrintCmd() *cobra.Command {
 
 	// MachineController
 	cmd.Flags().BoolVar(&opts.DeployMachineController, longFlagName(opts, "DeployMachineController"), true, "deploy kubermatic machine-controller")
+
+	// LoggingConfig
+	cmd.Flags().StringVarP(
+		&opts.ContainerLogMaxSize,
+		longFlagName(opts, "ContainerLogMaxSize"),
+		shortFlagName(opts, "ContainerLogMaxSize"),
+		"100Mi",
+		"ContainerLogMaxSize")
 
 	return cmd
 }
@@ -297,8 +299,6 @@ func createAndPrintManifest(printOptions *printOpts) error {
 	// Version
 	cfg.Set(yamled.Path{"versions", "kubernetes"}, printOptions.KubernetesVersion)
 
-	cfg.Set(yamled.Path{"kubeletConfiguration", "ContainerLogMaxSize"}, printOptions.ContainerLogMaxSize)
-
 	// Provider
 	var providerVal struct{}
 	switch printOptions.CloudProviderName {
@@ -379,6 +379,8 @@ func createAndPrintManifest(printOptions *printOpts) error {
 	if !printOptions.DeployMachineController {
 		cfg.Set(yamled.Path{"machineController", "deploy"}, printOptions.DeployMachineController)
 	}
+
+	cfg.Set(yamled.Path{"loggingConfig", "ContainerLogMaxSize"}, printOptions.ContainerLogMaxSize)
 
 	// Print the manifest
 	err := validateAndPrintConfig(cfg)
@@ -512,8 +514,6 @@ name: {{ .ClusterName }}
 
 versions:
   kubernetes: "{{ .KubernetesVersion }}"
-kubeletConfiguration:
- containerLogMaxSize: "{{ .ContainerLogMaxSize }}"
 
 clusterNetwork:
   # the subnet used for pods (default: 10.244.0.0/16)
@@ -978,4 +978,7 @@ machineController:
 #     operatingSystem: 'ubuntu'
 #     operatingSystemSpec:
 #       distUpgradeOnBoot: true
+
+loggingConfig:
+ containerLogMaxSize: "{{ .ContainerLogMaxSize }}"
 `

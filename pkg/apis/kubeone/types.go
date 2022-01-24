@@ -18,7 +18,6 @@ package kubeone
 
 import (
 	"encoding/json"
-
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -63,12 +62,12 @@ type KubeOneCluster struct {
 	AssetConfiguration AssetConfiguration `json:"assetConfiguration,omitempty"`
 	// RegistryConfiguration configures how Docker images are pulled from an image registry
 	RegistryConfiguration *RegistryConfiguration `json:"registryConfiguration,omitempty"`
-	// KubeletConfiguration configures the kubelet
-	KubeletConfiguration KubeletConfiguration `json:"kubeletConfiguration"`
+	// LoggingConfig configures the Kubelet's log configuration
+	LoggingConfig LoggingConfig `json:"loggingConfig,omitempty"`
 }
 
-// KubeletConfiguration
-type KubeletConfiguration struct {
+// LoggingConfig
+type LoggingConfig struct {
 	// ContainerLogMaxSize configures the maximum size of container log file before it is rotated
 	// See more at: https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/
 	ContainerLogMaxSize string `json:"containerLogMaxSize,omitempty"`
@@ -223,8 +222,6 @@ type CloudProviderSpec struct {
 	GCE *GCESpec `json:"gce,omitempty"`
 	// Hetzner
 	Hetzner *HetznerSpec `json:"hetzner,omitempty"`
-	// Nutanix
-	Nutanix *NutanixSpec `json:"nutanix,omitempty"`
 	// Openstack
 	Openstack *OpenstackSpec `json:"openstack,omitempty"`
 	// EquinixMetal
@@ -252,9 +249,6 @@ type HetznerSpec struct {
 	// NetworkID
 	NetworkID string `json:"networkID,omitempty"`
 }
-
-// NutanixSpec defines the Nutanix provider
-type NutanixSpec struct{}
 
 // OpenstackSpec defines the Openstack provider
 type OpenstackSpec struct{}

@@ -69,7 +69,7 @@ func Convert_kubeone_HostConfig_To_v1beta1_HostConfig(in *kubeone.HostConfig, ou
 	// explicitly skip kubelet conversion omitted in autoConvert_kubeone_HostConfig_To_v1beta1_HostConfig
 	return autoConvert_kubeone_HostConfig_To_v1beta1_HostConfig(in, out, scope)
 }
-func Convert_kubeone_KubeletConfiguration_To_v1beta1_KubeletConfiguration(in *kubeone.KubeletConfiguration, out *KubeletConfiguration, scope conversion.Scope) error {
+func Convert_kubeone_LoggingConfig_To_v1beta1_LoggingConfig(in *kubeone.LoggingConfig, out *kubeone.LoggingConfig, scope conversion.Scope) error {
 	// skip conversion
 	return nil
 }

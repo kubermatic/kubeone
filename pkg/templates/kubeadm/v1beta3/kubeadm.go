@@ -170,7 +170,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		ReadOnlyPort:        0,
 		RotateCertificates:  true,
 		ClusterDNS:          []string{resources.NodeLocalDNSVirtualIP},
-		ContainerLogMaxSize: getContainerLogMaxSize(cluster.KubeletConfiguration.ContainerLogMaxSize),
+		ContainerLogMaxSize: cluster.LoggingConfig.ContainerLogMaxSize,
 		Authentication: kubeletconfigv1beta1.KubeletAuthentication{
 			Anonymous: kubeletconfigv1beta1.KubeletAnonymousAuthentication{
 				Enabled: &bfalse,
@@ -362,7 +362,7 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Obje
 		ReadOnlyPort:        0,
 		RotateCertificates:  true,
 		ClusterDNS:          []string{resources.NodeLocalDNSVirtualIP},
-		ContainerLogMaxSize: getContainerLogMaxSize(cluster.KubeletConfiguration.ContainerLogMaxSize),
+		ContainerLogMaxSize: cluster.LoggingConfig.ContainerLogMaxSize,
 		Authentication: kubeletconfigv1beta1.KubeletAuthentication{
 			Anonymous: kubeletconfigv1beta1.KubeletAnonymousAuthentication{
 				Enabled: &bfalse,
@@ -469,12 +469,4 @@ func kubeProxyConfiguration(s *state.State) *kubeproxyv1alpha1.KubeProxyConfigur
 	}
 
 	return kubeProxyConfig
-}
-
-func getContainerLogMaxSize(value string) string {
-	if value == "" {
-		return "100Mi"
-	}
-
-	return value
 }
