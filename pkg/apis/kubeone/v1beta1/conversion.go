@@ -69,3 +69,8 @@ func Convert_kubeone_HostConfig_To_v1beta1_HostConfig(in *kubeone.HostConfig, ou
 	// explicitly skip kubelet conversion omitted in autoConvert_kubeone_HostConfig_To_v1beta1_HostConfig
 	return autoConvert_kubeone_HostConfig_To_v1beta1_HostConfig(in, out, scope)
 }
+
+func Convert_kubeone_KubeOneCluster_To_v1beta1_KubeOneCluster(in *kubeone.KubeOneCluster, out *KubeOneCluster, s conversion.Scope) error {
+	// LoggingConfig was introduced only in new v1beta2 API, so we skip it here
+	return autoConvert_kubeone_KubeOneCluster_To_v1beta1_KubeOneCluster(in, out, s)
+}
