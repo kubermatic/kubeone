@@ -13,9 +13,14 @@ run:
 linters:
   disable-all: true
   enable:
+  - asciicheck
+  - bidichk
   - bodyclose
   - deadcode
+  - durationcheck
   - errcheck
+  - errname
+  # - errorlint
   - exportloopref
   - goconst
   - gocritic
@@ -29,13 +34,19 @@ linters:
   - misspell
   - nakedret
   - revive
+  - noctx
+  # - nolintlint
+  # - predeclared
+  # - promlinter
   - staticcheck
   - structcheck
   - stylecheck
+  # - tenv
   - unconvert
   - unparam
   - unused
   - varcheck
+  # - wastedassign
   - whitespace
 
 linters-settings:
