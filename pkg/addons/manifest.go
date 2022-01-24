@@ -261,6 +261,19 @@ func txtFuncMap(overwriteRegistry string) template.FuncMap {
 		return registry
 	}
 
+	funcs["required"] = func(warn string, input interface{}) (interface{}, error) {
+		switch val := input.(type) {
+		case nil:
+			return val, fmt.Errorf(warn)
+		case string:
+			if val == "" {
+				return val, fmt.Errorf(warn)
+			}
+		}
+
+		return input, nil
+	}
+
 	funcs["caBundleEnvVar"] = func() (string, error) {
 		buf, err := yaml.Marshal([]corev1.EnvVar{cabundle.EnvVar()})
 		return string(buf), err

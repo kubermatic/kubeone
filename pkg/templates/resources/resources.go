@@ -61,6 +61,9 @@ const (
 
 	VsphereCSIWebhookName      = "vsphere-webhook-svc"
 	VsphereCSIWebhookNamespace = metav1.NamespaceSystem
+
+	NutanixCSIWebhookName      = "snapshot-validation-service"
+	NutanixCSIWebhookNamespace = metav1.NamespaceSystem
 )
 
 const (

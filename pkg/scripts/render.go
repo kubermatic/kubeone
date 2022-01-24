@@ -17,7 +17,6 @@ limitations under the License.
 package scripts
 
 import (
-	"fmt"
 	"strings"
 	"text/template"
 
@@ -31,6 +30,8 @@ var (
 		"container-runtime-daemon-config": heredoc.Doc(`
 			{{- if .CONTAINER_RUNTIME_CONFIG_PATH }}
 			sudo mkdir -p $(dirname {{ .CONTAINER_RUNTIME_CONFIG_PATH }})
+			sudo touch {{ .CONTAINER_RUNTIME_CONFIG_PATH }}
+			sudo chmod 600 {{ .CONTAINER_RUNTIME_CONFIG_PATH }}
 			cat <<EOF | sudo tee {{ .CONTAINER_RUNTIME_CONFIG_PATH }}
 			{{ .CONTAINER_RUNTIME_CONFIG }}
 			EOF
@@ -43,17 +44,7 @@ var (
 			{{- end }}
 		`),
 
-		"containerd-systemd-environment": heredoc.Doc(`
-			sudo mkdir -p /etc/systemd/system/containerd.service.d
-			cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/environment.conf
-			[Service]
-			Restart=always
-			EnvironmentFile=-/etc/environment
-			EOF
-		`),
-
 		"containerd-systemd-setup": heredoc.Doc(`
-			{{ template "containerd-systemd-environment" . }}
 			sudo systemctl daemon-reload
 			sudo systemctl enable containerd
 			sudo systemctl restart containerd
@@ -199,6 +190,20 @@ var (
 
 		"flatcar-containerd": heredoc.Doc(`
 			{{ template "container-runtime-daemon-config" . }}
+			{{ template "flatcar-systemd-drop-in" . }}
+			{{ template "containerd-systemd-setup" . }}
+			`,
+		),
+
+		"flatcar-docker": heredoc.Doc(`
+			{{ template "container-runtime-daemon-config" . }}
+			sudo systemctl daemon-reload
+			sudo systemctl enable --now docker
+			sudo systemctl restart docker
+			`,
+		),
+
+		"flatcar-systemd-drop-in": heredoc.Doc(`
 			sudo mkdir -p /etc/systemd/system/containerd.service.d
 			cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/10-kubeone.conf
 			[Service]
@@ -207,18 +212,7 @@ var (
 			ExecStart=
 			ExecStart=/usr/bin/env PATH=\${TORCX_BINDIR}:\${PATH} \${TORCX_BINDIR}/containerd --config \${CONTAINERD_CONFIG}
 			EOF
-			{{ template "containerd-systemd-setup" . }}
-			`,
-		),
-
-		"flatcar-docker": heredoc.Doc(`
-			{{ template "container-runtime-daemon-config" . }}
-			{{ template "containerd-systemd-environment" . }}
-			sudo systemctl daemon-reload
-			sudo systemctl enable --now docker
-			sudo systemctl restart docker
-			`,
-		),
+		`),
 	}
 )
 
@@ -228,9 +222,6 @@ type Data map[string]interface{}
 func Render(cmd string, variables map[string]interface{}) (string, error) {
 	tpl := template.New("base").
 		Funcs(sprig.TxtFuncMap()).
-		Funcs(template.FuncMap{
-			"required": requiredTemplateFunc,
-		}).
 		Funcs(sprig.TxtFuncMap())
 
 	_, err := tpl.New("library").Parse(libraryTemplate)
@@ -260,17 +251,4 @@ func Render(cmd string, variables map[string]interface{}) (string, error) {
 	}
 
 	return buf.String(), nil
-}
-
-func requiredTemplateFunc(warn string, input interface{}) (interface{}, error) {
-	switch val := input.(type) {
-	case nil:
-		return val, fmt.Errorf(warn)
-	case string:
-		if val == "" {
-			return val, fmt.Errorf(warn)
-		}
-	}
-
-	return input, nil
 }

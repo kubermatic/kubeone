@@ -62,6 +62,8 @@ curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRI_TOO
 
 
 sudo mkdir -p $(dirname /etc/docker/daemon.json)
+sudo touch /etc/docker/daemon.json
+sudo chmod 600 /etc/docker/daemon.json
 cat <<EOF | sudo tee /etc/docker/daemon.json
 {
 	"exec-opts": [
@@ -76,13 +78,6 @@ cat <<EOF | sudo tee /etc/docker/daemon.json
 EOF
 cat <<EOF | sudo tee /etc/crictl.yaml
 runtime-endpoint: unix:///var/run/dockershim.sock
-EOF
-
-sudo mkdir -p /etc/systemd/system/containerd.service.d
-cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/environment.conf
-[Service]
-Restart=always
-EnvironmentFile=-/etc/environment
 EOF
 
 sudo systemctl daemon-reload

@@ -53,6 +53,10 @@ func upgradeStaticWorkersExecutor(s *state.State, node *kubeoneapi.HostConfig, c
 		return errors.Wrap(err, "failed to drain follower control plane node")
 	}
 
+	if err := setupProxy(logger, s); err != nil {
+		return err
+	}
+
 	logger.Infoln("Upgrading Kubernetes binaries on static worker node...")
 	if err := upgradeKubeadmAndCNIBinaries(s, *node); err != nil {
 		return errors.Wrap(err, "failed to upgrade kubernetes binaries on static worker node")
