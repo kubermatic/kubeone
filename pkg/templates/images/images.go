@@ -185,13 +185,15 @@ func optionalResources() map[Resource]map[string]string {
 			"1.19.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v0.6.0",
 			"1.20.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v0.7.8",
 			"1.21.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.0.5",
-			">= 1.22.0": "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.1.1",
+			"1.22.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.1.1",
+			">= 1.23.0": "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.23.2",
 		},
 		AzureCNM: {
 			"1.19.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v0.6.0",
 			"1.20.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v0.7.8",
 			"1.21.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.0.5",
-			">= 1.22.0": "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.1.1",
+			"1.22.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.1.1",
+			">= 1.23.0": "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.23.2",
 		},
 
 		// AWS EBS CSI driver
