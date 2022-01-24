@@ -616,7 +616,8 @@ func detectCCMMigrationStatus(s *state.State) (*state.CCMStatus, error) {
 	}
 
 	ccmLabel := k8sAppLabel
-	ccmLabelValue := ""
+	var ccmLabelValue string
+
 	switch {
 	case s.Cluster.CloudProvider.Azure != nil:
 		ccmLabelValue = "azure-cloud-controller-manager"

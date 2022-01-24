@@ -35,18 +35,17 @@ linters:
   - nakedret
   - revive
   - noctx
-  # - nolintlint
-  # - predeclared
-  # - promlinter
+  - nolintlint
+  - predeclared
   - staticcheck
   - structcheck
   - stylecheck
-  # - tenv
+  - tenv
   - unconvert
   - unparam
   - unused
   - varcheck
-  # - wastedassign
+  - wastedassign
   - whitespace
 
 linters-settings:
