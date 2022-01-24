@@ -223,10 +223,10 @@ func optionalResources() map[Resource]map[string]string {
 		AzureFileCSISnapshotterController: {"*": "mcr.microsoft.com/oss/kubernetes-csi/snapshot-controller:v3.0.3"},
 
 		// AzureDisk CSI driver
-		AzureDiskCSI:                      {"*": "mcr.microsoft.com/k8s/csi/azuredisk-csi:v1.8.0"},
+		AzureDiskCSI:                      {"*": "mcr.microsoft.com/k8s/csi/azuredisk-csi:v1.10.0"},
 		AzureDiskCSIAttacher:              {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-attacher:v3.3.0"},
-		AzureDiskCSILivenessProbe:         {"*": "mcr.microsoft.com/oss/kubernetes-csi/livenessprobe:v2.4.0"},
-		AzureDiskCSINodeDriverRegistar:    {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-node-driver-registrar:v2.3.0"},
+		AzureDiskCSILivenessProbe:         {"*": "mcr.microsoft.com/oss/kubernetes-csi/livenessprobe:v2.5.0"},
+		AzureDiskCSINodeDriverRegistar:    {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-node-driver-registrar:v2.4.0"},
 		AzureDiskCSIProvisioner:           {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-provisioner:v2.2.2"},
 		AzureDiskCSIResizer:               {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-resizer:v1.3.0"},
 		AzureDiskCSISnapshotter:           {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-snapshotter:v3.0.3"},
