@@ -195,9 +195,9 @@ func optionalResources() map[Resource]map[string]string {
 		},
 
 		// AWS EBS CSI driver
-		AwsEbsCSI:                    {"*": "k8s.gcr.io/provider-aws/aws-ebs-csi-driver:v1.4.0"},
+		AwsEbsCSI:                    {"*": "k8s.gcr.io/provider-aws/aws-ebs-csi-driver:v1.5.0"},
 		AwsEbsCSIAttacher:            {"*": "k8s.gcr.io/sig-storage/csi-attacher:v3.1.0"},
-		AwsEbsCSILivenessProbe:       {"*": "k8s.gcr.io/sig-storage/livenessprobe:v2.2.0"},
+		AwsEbsCSILivenessProbe:       {"*": "k8s.gcr.io/sig-storage/livenessprobe:v2.4.0"},
 		AwsEbsCSINodeDriverRegistrar: {"*": "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.1.0"},
 		AwsEbsCSIProvisioner:         {"*": "k8s.gcr.io/sig-storage/csi-provisioner:v2.1.1"},
 		AwsEbsCSIResizer:             {"*": "k8s.gcr.io/sig-storage/csi-resizer:v1.1.0"},

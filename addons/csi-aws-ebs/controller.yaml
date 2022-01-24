@@ -5,7 +5,6 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: ebs-csi-controller
-  namespace: kube-system
   labels:
     app.kubernetes.io/name: aws-ebs-csi-driver
 spec:
@@ -22,21 +21,14 @@ spec:
     spec:
       nodeSelector:
         kubernetes.io/os: linux
-        node-role.kubernetes.io/master: ""
       serviceAccountName: ebs-csi-controller-sa
       priorityClassName: system-cluster-critical
       tolerations:
         - key: CriticalAddonsOnly
           operator: Exists
-        - key: "node-role.kubernetes.io/master"
-          operator: "Exists"
-          effect: "NoSchedule"
-        - key: "node-role.kubernetes.io/controlplane"
-          operator: "Exists"
-          effect: "NoSchedule"
         - operator: Exists
           effect: NoExecute
-          tolerationSeconds: 300
+          tolerationSeconds: 300 
       containers:
         - name: ebs-plugin
           image: "{{ .InternalImages.Get "AwsEbsCSI" }}"
