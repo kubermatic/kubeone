@@ -245,12 +245,13 @@ func TestKubeadmReset(t *testing.T) {
 	}
 }
 
-func TestKubeadmUpgradeLeader(t *testing.T) {
+func TestKubeadmUpgrade(t *testing.T) {
 	t.Parallel()
 
 	type args struct {
 		kubeadmCmd string
 		workdir    string
+		leader     bool
 	}
 	tests := []struct {
 		name string
@@ -261,7 +262,15 @@ func TestKubeadmUpgradeLeader(t *testing.T) {
 			name: "v1beta2",
 			args: args{
 				workdir:    "test-wd",
-				kubeadmCmd: "kubeadm upgrade node --certificate-renewal=true",
+				kubeadmCmd: "kubeadm upgrade node",
+			},
+		},
+		{
+			name: "leader",
+			args: args{
+				workdir:    "some",
+				kubeadmCmd: "kubeadm upgrade apply -y --certificate-renewal=true v1.1.1",
+				leader:     true,
 			},
 		},
 	}
@@ -269,7 +278,7 @@ func TestKubeadmUpgradeLeader(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := KubeadmUpgradeLeader(tt.args.kubeadmCmd, tt.args.workdir)
+			got, err := KubeadmUpgrade(tt.args.kubeadmCmd, tt.args.workdir, tt.args.leader, 0)
 			if err != tt.err {
 				t.Errorf("KubeadmUpgradeLeader() error = %v, wantErr %v", err, tt.err)
 				return

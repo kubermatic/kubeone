@@ -44,17 +44,7 @@ var (
 			{{- end }}
 		`),
 
-		"containerd-systemd-environment": heredoc.Doc(`
-			sudo mkdir -p /etc/systemd/system/containerd.service.d
-			cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/environment.conf
-			[Service]
-			Restart=always
-			EnvironmentFile=-/etc/environment
-			EOF
-		`),
-
 		"containerd-systemd-setup": heredoc.Doc(`
-			{{ template "containerd-systemd-environment" . }}
 			sudo systemctl daemon-reload
 			sudo systemctl enable containerd
 			sudo systemctl restart containerd
@@ -207,7 +197,6 @@ var (
 
 		"flatcar-docker": heredoc.Doc(`
 			{{ template "container-runtime-daemon-config" . }}
-			{{ template "containerd-systemd-environment" . }}
 			sudo systemctl daemon-reload
 			sudo systemctl enable --now docker
 			sudo systemctl restart docker

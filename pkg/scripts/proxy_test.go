@@ -81,10 +81,10 @@ func TestEnvironmentFile(t *testing.T) {
 	}
 }
 
-func TestDaemonsProxy(t *testing.T) {
+func TestTestDaemonsProxy(t *testing.T) {
 	t.Parallel()
 
-	got, err := DaemonsProxy()
+	got, err := DaemonsEnvironmentDropIn("docker", "containerd", "kubelet")
 	if err != nil {
 		t.Errorf("DaemonsProxy() error = %v", err)
 		return

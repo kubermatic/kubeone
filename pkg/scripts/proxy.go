@@ -21,25 +21,21 @@ import (
 )
 
 const (
-	daemonsProxyScript = `
-sudo mkdir -p /etc/systemd/system/docker.service.d
-cat <<EOF | sudo tee /etc/systemd/system/docker.service.d/http-proxy.conf
+	daemonsEnvironmentScriptTemplate = `
+{{- range .SYSTEMD_SERVICES }}
+sudo mkdir -p /etc/systemd/system/{{ . }}.service.d
+cat <<EOF | sudo tee /etc/systemd/system/{{ . }}.service.d/http-proxy.conf
 [Service]
-EnvironmentFile=/etc/kubeone/proxy-env
+EnvironmentFile=/etc/environment
 EOF
-
-sudo mkdir -p /etc/systemd/system/kubelet.service.d
-cat <<EOF | sudo tee /etc/systemd/system/kubelet.service.d/http-proxy.conf
-[Service]
-EnvironmentFile=/etc/kubeone/proxy-env
-EOF
-
+{{ end }}
 sudo systemctl daemon-reload
-if sudo systemctl status docker &>/dev/null; then sudo systemctl restart docker; fi
-if sudo systemctl status kubelet &>/dev/null; then sudo systemctl restart kubelet; fi
+{{- range .SYSTEMD_SERVICES }}
+if sudo systemctl status {{ . }} &>/dev/null; then sudo systemctl restart {{ . }}; fi
+{{- end }}
 `
 
-	environmentFileCmd = `
+	environmentFileScriptTemplate = `
 sudo mkdir -p /etc/kubeone
 cat <<EOF | sudo tee /etc/kubeone/proxy-env
 {{ with .HTTP_PROXY -}}
@@ -70,13 +66,15 @@ sudo tee /etc/environment < $envtmp
 )
 
 func EnvironmentFile(cluster *kubeone.KubeOneCluster) (string, error) {
-	return Render(environmentFileCmd, Data{
+	return Render(environmentFileScriptTemplate, Data{
 		"HTTP_PROXY":  cluster.Proxy.HTTP,
 		"HTTPS_PROXY": cluster.Proxy.HTTPS,
 		"NO_PROXY":    cluster.Proxy.NoProxy,
 	})
 }
 
-func DaemonsProxy() (string, error) {
-	return Render(daemonsProxyScript, nil)
+func DaemonsEnvironmentDropIn(daemons ...string) (string, error) {
+	return Render(daemonsEnvironmentScriptTemplate, Data{
+		"SYSTEMD_SERVICES": daemons,
+	})
 }
