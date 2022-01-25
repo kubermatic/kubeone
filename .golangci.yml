@@ -20,7 +20,7 @@ linters:
   - durationcheck
   - errcheck
   - errname
-  # - errorlint
+  - errorlint
   - exportloopref
   - goconst
   - gocritic
