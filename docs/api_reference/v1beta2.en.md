@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2022-01-11T11:06:38+02:00
+date = 2022-01-25T07:36:12+04:00
 weight = 11
 +++
 ## v1beta2
@@ -40,7 +40,7 @@ weight = 11
 * [KubeOneCluster](#kubeonecluster)
 * [KubeProxyConfig](#kubeproxyconfig)
 * [KubeletConfig](#kubeletconfig)
-* [KubeletConfiguration](#kubeletconfiguration)
+* [LoggingConfig](#loggingconfig)
 * [MachineControllerConfig](#machinecontrollerconfig)
 * [MetricsServer](#metricsserver)
 * [NoneSpec](#nonespec)
@@ -461,7 +461,7 @@ KubeOneCluster is KubeOne Cluster API Schema
 | addons | Addons are used to deploy additional manifests. | *[Addons](#addons) | false |
 | systemPackages | SystemPackages configure kubeone behaviour regarding OS packages. | *[SystemPackages](#systempackages) | false |
 | registryConfiguration | RegistryConfiguration configures how Docker images are pulled from an image registry | *[RegistryConfiguration](#registryconfiguration) | false |
-| kubeletConfiguration | KubeletConfiguration configures the kubelet | [KubeletConfiguration](#kubeletconfiguration) | true |
+| loggingConfig | LoggingConfig configures the Kubelet's log configuration | [LoggingConfig](#loggingconfig) | false |
 
 [Back to Group](#v1beta2)
 
@@ -489,13 +489,13 @@ KubeletConfig provides some kubelet configuration options
 
 [Back to Group](#v1beta2)
 
-### KubeletConfiguration
+### LoggingConfig
 
-KubeletConfiguration
+LoggingConfig
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
-| containerLogMaxSize | ContainerLogsMaxSize configure --container-logs-max-size command-line flag of the kubelet. Defaults to 100Mi. See more at: https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/ | string | false |
+| containerLogMaxSize | ContainerLogMaxSize configures the maximum size of container log file before it is rotated See more at: https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/ | string | false |
 
 [Back to Group](#v1beta2)
 

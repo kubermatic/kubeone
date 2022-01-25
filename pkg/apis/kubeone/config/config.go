@@ -237,9 +237,9 @@ func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, creden
 		}
 	}
 
-	// check if the container log max size is set, if not set it to the of 100Mi
-	if cfg.LoggingConfig.ContainerLogMaxSize == "" {
-		cfg.LoggingConfig.ContainerLogMaxSize = "100Mi"
+	// check if the container log max size is not set, if not set it
+	if cluster.LoggingConfig.ContainerLogMaxSize == "" {
+		cluster.LoggingConfig.ContainerLogMaxSize = "100Mi"
 	}
 
 	// Default the AssetsConfiguration internal API
