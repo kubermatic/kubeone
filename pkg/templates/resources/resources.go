@@ -35,6 +35,7 @@ const (
 	AddonCSIAwsEBS          = "csi-aws-ebs"
 	AddonCSIAzureDisk       = "csi-azuredisk"
 	AddonCSIAzureFile       = "csi-azurefile"
+	AddonCSIDigitalOcean    = "csi-digitalocean"
 	AddonCSIHetzner         = "csi-hetzner"
 	AddonCSIOpenStackCinder = "csi-openstack-cinder"
 	AddonCSIVsphere         = "csi-vsphere"
@@ -64,6 +65,9 @@ const (
 
 	NutanixCSIWebhookName      = "snapshot-validation-service"
 	NutanixCSIWebhookNamespace = metav1.NamespaceSystem
+
+	DigitalOceanCSIWebhookName      = "snapshot-validation-service"
+	DigitalOceanCSIWebhookNamespace = metav1.NamespaceSystem
 )
 
 const (

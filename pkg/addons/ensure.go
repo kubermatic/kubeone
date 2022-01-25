@@ -49,6 +49,7 @@ var (
 		resources.AddonCSIAwsEBS:          "",
 		resources.AddonCSIAzureDisk:       "",
 		resources.AddonCSIAzureFile:       "",
+		resources.AddonCSIDigitalOcean:    "",
 		resources.AddonCSIHetzner:         "",
 		resources.AddonCSIOpenStackCinder: "",
 		resources.AddonCSIVsphere:         "",
@@ -132,9 +133,14 @@ func collectAddons(s *state.State) (addonsToDeploy []addonAction) {
 			},
 		)
 	case s.Cluster.CloudProvider.DigitalOcean != nil:
-		addonsToDeploy = append(addonsToDeploy, addonAction{
-			name: resources.AddonCCMDigitalOcean,
-		})
+		addonsToDeploy = append(addonsToDeploy,
+			addonAction{
+				name: resources.AddonCCMDigitalOcean,
+			},
+			addonAction{
+				name: resources.AddonCSIDigitalOcean,
+			},
+		)
 	case s.Cluster.CloudProvider.Hetzner != nil:
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
