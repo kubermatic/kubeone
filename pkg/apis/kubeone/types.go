@@ -63,7 +63,7 @@ type KubeOneCluster struct {
 	AssetConfiguration AssetConfiguration `json:"assetConfiguration,omitempty"`
 	// RegistryConfiguration configures how Docker images are pulled from an image registry
 	RegistryConfiguration *RegistryConfiguration `json:"registryConfiguration,omitempty"`
-	// LoggingConfig configures the Kubelet's log configuration
+	// LoggingConfig configures the Kubelet's log rotation
 	LoggingConfig LoggingConfig `json:"loggingConfig,omitempty"`
 }
 
