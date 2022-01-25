@@ -244,7 +244,7 @@ func optionalResources() map[Resource]map[string]string {
 		AzureDiskCSISnapshotterController: {"*": "mcr.microsoft.com/oss/kubernetes-csi/snapshot-controller:v3.0.3"},
 
 		// DigitalOcean CCM
-		DigitaloceanCCM: {"*": "docker.io/digitalocean/digitalocean-cloud-controller-manager:v0.1.33"},
+		DigitaloceanCCM: {"*": "docker.io/digitalocean/digitalocean-cloud-controller-manager:v0.1.36"},
 
 		DigitalOceanCSI:                          {"*": "docker.io/digitalocean/do-csi-plugin:v3.0.0"},
 		DigitalOceanCSIAlpine:                    {"*": "docker.io/alpine:3"},
@@ -257,7 +257,7 @@ func optionalResources() map[Resource]map[string]string {
 		DigitalOceanCSISnapshotter:               {"*": "k8s.gcr.io/sig-storage/csi-snapshotter:v3.0.3"},
 
 		// Hetzner CCM
-		HetznerCCM: {"*": "docker.io/hetznercloud/hcloud-cloud-controller-manager:v1.12.0"},
+		HetznerCCM: {"*": "docker.io/hetznercloud/hcloud-cloud-controller-manager:v1.12.1"},
 
 		// Hetzner CSI
 		HetznerCSI: {"*": "docker.io/hetznercloud/hcloud-csi-driver:1.6.0"},
