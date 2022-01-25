@@ -182,7 +182,7 @@ func saveCABundleOnControlPlane(s *state.State, _ *kubeoneapi.HostConfig, conn s
 }
 
 func approvePendingCSR(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
-	s.Logger.Infof("Looking for CSRs for %q to approve...", node.Hostname)
+	s.Logger.Infof("Looking for CSRs to approve...")
 
 	// Need to wait for the second CSR to appear
 	time.Sleep(20 * time.Second)
