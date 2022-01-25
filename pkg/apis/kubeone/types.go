@@ -67,7 +67,7 @@ type KubeOneCluster struct {
 	LoggingConfig LoggingConfig `json:"loggingConfig,omitempty"`
 }
 
-// LoggingConfig
+// LoggingConfig configures the Kubelet's log rotation
 type LoggingConfig struct {
 	// ContainerLogMaxSize configures the maximum size of container log file before it is rotated
 	// See more at: https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/
