@@ -208,8 +208,10 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		Params:    params,
 	}
 
+	// Certs for CSI plugins
+	switch {
 	// Certs for vsphere-csi-webhook (deployed only if CSIMigration is enabled)
-	if csiMigration && s.Cluster.CloudProvider.Vsphere != nil {
+	case csiMigration && s.Cluster.CloudProvider.Vsphere != nil:
 		vsphereCSICertsMap, err := certificate.NewSignedTLSCert(
 			resources.VsphereCSIWebhookName,
 			resources.VsphereCSIWebhookNamespace,
@@ -222,9 +224,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		}
 		data.Certificates["vSphereCSIWebhookCert"] = vsphereCSICertsMap[resources.TLSCertName]
 		data.Certificates["vSphereCSIWebhookKey"] = vsphereCSICertsMap[resources.TLSKeyName]
-	}
-
-	if s.Cluster.CloudProvider.Nutanix != nil {
+	case s.Cluster.CloudProvider.Nutanix != nil:
 		nutanixCSICertsMap, err := certificate.NewSignedTLSCert(
 			resources.NutanixCSIWebhookName,
 			resources.NutanixCSIWebhookNamespace,
@@ -237,6 +237,19 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		}
 		data.Certificates["NutanixCSIWebhookCert"] = nutanixCSICertsMap[resources.TLSCertName]
 		data.Certificates["NutanixCSIWebhookKey"] = nutanixCSICertsMap[resources.TLSKeyName]
+	case s.Cluster.CloudProvider.DigitalOcean != nil && s.Cluster.CloudProvider.External:
+		digitaloceanCSICertsMap, err := certificate.NewSignedTLSCert(
+			resources.DigitalOceanCSIWebhookName,
+			resources.DigitalOceanCSIWebhookNamespace,
+			s.Cluster.ClusterNetwork.ServiceDomainName,
+			kubeCAPrivateKey,
+			kubeCACert,
+		)
+		if err != nil {
+			return nil, err
+		}
+		data.Certificates["DigitalOceanCSIWebhookCert"] = digitaloceanCSICertsMap[resources.TLSCertName]
+		data.Certificates["DigitalOceanCSIWebhookKey"] = digitaloceanCSICertsMap[resources.TLSKeyName]
 	}
 
 	return &applier{

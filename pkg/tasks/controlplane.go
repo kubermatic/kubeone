@@ -46,7 +46,11 @@ func joinControlPlaneNodeInternal(s *state.State, node *kubeoneapi.HostConfig, c
 	}
 
 	_, _, err = s.Runner.RunRaw(cmd)
-	return err
+	if err != nil {
+		return err
+	}
+
+	return approvePendingCSR(s, node, conn)
 }
 
 func kubeadmCertsExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
@@ -77,7 +81,6 @@ func initKubernetesLeader(s *state.State) error {
 		}
 
 		_, _, err = s.Runner.RunRaw(cmd)
-
 		return err
 	})
 }

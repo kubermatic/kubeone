@@ -172,3 +172,25 @@ provisioner: csi.hetzner.cloud
 volumeBindingMode: WaitForFirstConsumer
 allowVolumeExpansion: true
 {{ end }}
+
+{{ if eq .Config.CloudProvider.CloudProviderName "digitalocean" }}
+{{ if .Config.CloudProvider.External }}
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: do-block-storage
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+provisioner: dobs.csi.digitalocean.com
+allowVolumeExpansion: true
+---
+kind: VolumeSnapshotClass
+apiVersion: snapshot.storage.k8s.io/v1beta1
+metadata:
+  name: do-block-storage
+  annotations:
+    snapshot.storage.kubernetes.io/is-default-class: "true"
+driver: dobs.csi.digitalocean.com
+deletionPolicy: Delete
+{{ end }}
+{{ end }}

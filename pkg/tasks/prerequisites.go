@@ -20,10 +20,12 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/runner"
 	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
@@ -37,7 +39,22 @@ import (
 func installPrerequisites(s *state.State) error {
 	s.Logger.Infoln("Installing prerequisites...")
 
-	return s.RunTaskOnAllNodes(installPrerequisitesOnNode, state.RunParallel)
+	if err := s.RunTaskOnAllNodes(installPrerequisitesOnNode, state.RunParallel); err != nil {
+		return fmt.Errorf("failed to install prerequisites: %w", err)
+	}
+
+	return s.RunTaskOnAllNodes(func(ctx *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+		ctx.Logger.Info("Pre-pull images")
+
+		_, _, err := ctx.Runner.Run(
+			heredoc.Doc(`
+				sudo kubeadm config images pull --kubernetes-version {{ .KUBERNETES_VERSION }}
+			`), runner.TemplateVariables{
+				"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
+			})
+
+		return err
+	}, state.RunParallel)
 }
 
 func generateConfigurationFiles(s *state.State) error {
