@@ -153,6 +153,12 @@ func WithFullInstall(t Tasks) Tasks {
 			},
 			{Fn: initKubernetesLeader, ErrMsg: "failed to init kubernetes on leader"},
 			{Fn: kubeconfig.BuildKubernetesClientset, ErrMsg: "failed to build kubernetes clientset"},
+			{
+				Fn: func(s *state.State) error {
+					return s.RunTaskOnLeader(approvePendingCSR)
+				},
+				ErrMsg: "failed to approve leader's kubelet CSR",
+			},
 			{Fn: repairClusterIfNeeded, ErrMsg: "failed to repair cluster"},
 			{Fn: joinControlplaneNode, ErrMsg: "failed to join other masters a cluster"},
 			{Fn: restartKubeAPIServer, ErrMsg: "failed to restart unhealthy kube-apiserver"},

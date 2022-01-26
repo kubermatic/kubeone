@@ -169,6 +169,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		CgroupDriver:       "systemd",
 		ReadOnlyPort:       0,
 		RotateCertificates: true,
+		ServerTLSBootstrap: true,
 		ClusterDNS:         []string{resources.NodeLocalDNSVirtualIP},
 		Authentication: kubeletconfigv1beta1.KubeletAuthentication{
 			Anonymous: kubeletconfigv1beta1.KubeletAnonymousAuthentication{
@@ -360,6 +361,7 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Obje
 		CgroupDriver:       "systemd",
 		ReadOnlyPort:       0,
 		RotateCertificates: true,
+		ServerTLSBootstrap: true,
 		ClusterDNS:         []string{resources.NodeLocalDNSVirtualIP},
 		Authentication: kubeletconfigv1beta1.KubeletAuthentication{
 			Anonymous: kubeletconfigv1beta1.KubeletAnonymousAuthentication{

@@ -95,7 +95,7 @@ func safeguard(s *state.State) error {
 			}
 
 			return errors.Errorf(
-				"Container runtime on node %q is %q, but %q is configured. %s.",
+				"container runtime on node %q is %q, but %q is configured. %s",
 				node.Name,
 				nodesContainerRuntime,
 				configuredClusterContainerRuntime,

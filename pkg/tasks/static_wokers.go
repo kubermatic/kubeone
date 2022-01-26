@@ -37,5 +37,9 @@ func joinStaticWorkerInternal(s *state.State, node *kubeoneapi.HostConfig, conn 
 	}
 
 	_, _, err = s.Runner.RunRaw(cmd)
-	return err
+	if err != nil {
+		return err
+	}
+
+	return approvePendingCSR(s, node, conn)
 }
