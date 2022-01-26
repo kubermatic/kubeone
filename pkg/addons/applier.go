@@ -25,6 +25,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/pkg/errors"
+	corev1 "k8s.io/api/core/v1"
 
 	embeddedaddons "k8c.io/kubeone/addons"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
@@ -114,7 +115,8 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 
 	var credsEnvVarsOSM []byte
 	if s.Cluster.AddonOperatingSystemManagerEnabled() {
-		envVarsOSM, err := credentials.EnvVarBindings(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.SecretNameOSM, credentials.TypeOSM)
+		var envVarsOSM []corev1.EnvVar
+		envVarsOSM, err = credentials.EnvVarBindings(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.SecretNameOSM, credentials.TypeOSM)
 		if err != nil {
 			return nil, errors.Wrap(err, "unable to fetch env var bindings for credentials")
 		}

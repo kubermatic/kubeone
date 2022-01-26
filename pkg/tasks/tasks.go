@@ -216,9 +216,9 @@ func WithResources(t Tasks) Tasks {
 				ErrMsg: "failed to patch CoreDNS",
 			},
 			{
-				Fn:          cloudinitsettings.Ensure,
-				ErrMsg:      "failed to create/configure cloud-init-settings namespace",
-				Predicate:   func(s *state.State) bool { return s.Cluster.AddonOperatingSystemManagerEnabled() },
+				Fn:        cloudinitsettings.Ensure,
+				ErrMsg:    "failed to create/configure cloud-init-settings namespace",
+				Predicate: func(s *state.State) bool { return s.Cluster.AddonOperatingSystemManagerEnabled() },
 			},
 			{
 				Fn:          addons.Ensure,
@@ -267,9 +267,9 @@ func WithResources(t Tasks) Tasks {
 				ErrMsg: "failed to wait for machine-controller",
 			},
 			{
-				Fn:          operatingsystemmanager.WaitReady,
-				ErrMsg:      "failed to wait for operating-system-manager",
-				Predicate:   func(s *state.State) bool { return s.Cluster.AddonOperatingSystemManagerEnabled() },
+				Fn:        operatingsystemmanager.WaitReady,
+				ErrMsg:    "failed to wait for operating-system-manager",
+				Predicate: func(s *state.State) bool { return s.Cluster.AddonOperatingSystemManagerEnabled() },
 			},
 			{
 				Fn:          upgradeMachineDeployments,
