@@ -277,6 +277,21 @@ rules:
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: machine-controller-webhook
+  namespace: kube-system
+rules:
+  - apiGroups:
+      - operatingsystemmanager.k8c.io
+    resources:
+      - operatingsystemprofiles
+    verbs:
+      - get
+      - list
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: machine-controller
@@ -318,6 +333,21 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: machine-controller
+    namespace: kube-system
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: machine-controller-webhook
+  namespace: kube-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: machine-controller-webhook
+subjects:
+  - kind: ServiceAccount
+    name: machine-controller-webhook
     namespace: kube-system
 
 ---
@@ -463,6 +493,13 @@ metadata:
   namespace: kube-system
 
 ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: machine-controller-webhook
+  namespace: kube-system
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -525,6 +562,9 @@ spec:
             {{ if .Config.CABundle -}}
             - -ca-bundle={{ .Resources.CABundleSSLCertFilePath }}
             {{ end -}}
+            {{ if .AddonOperatingSystemManagerEnabled -}}
+            - -use-osm
+            {{ end -}}
             - -node-kubelet-repository={{ .Resources.KubeletImageRepository }}
             - -node-pause-image={{ .InternalImages.Get "PauseImage" }}
           env:
@@ -583,7 +623,7 @@ spec:
           effect: NoSchedule
         - key: "CriticalAddonsOnly"
           operator: Exists
-      serviceAccountName: machine-controller
+      serviceAccountName: machine-controller-webhook
       containers:
         - image: "{{ .InternalImages.Get "MachineController" }}"
           imagePullPolicy: IfNotPresent
@@ -594,11 +634,15 @@ spec:
             - -logtostderr
             - -v=4
             - -listen-address=0.0.0.0:9876
+            - -namespace=kube-system
             {{ if .Config.CloudProvider.External }}
             - -node-external-cloud-provider
             {{ end }}
             {{ if .CSIMigrationFeatureGates }}
             - -node-kubelet-feature-gates={{ .CSIMigrationFeatureGates }}
+            {{ end }}
+            {{ if .AddonOperatingSystemManagerEnabled }}
+            - -use-osm
             {{ end }}
           env:
             - name: HTTPS_PROXY

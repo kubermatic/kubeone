@@ -32,10 +32,12 @@ import (
 )
 
 const (
-	// SecretNameMC is name of the secret which contains the cloud provider credentials for machine-controller
-	SecretNameMC = "kubeone-machine-controller-credentials"
 	// SecretNameCCM is name of the secret which contains the cloud provider credentials for CCM
 	SecretNameCCM = "kubeone-ccm-credentials" //nolint:gosec
+	// SecretNameMC is name of the secret which contains the cloud provider credentials for machine-controller
+	SecretNameMC = "kubeone-machine-controller-credentials"
+	// SecretNameOSM is name of the secret which contains the cloud provider credentials for operating-system-manager
+	SecretNameOSM = "kubeone-operating-system-manager-credentials"
 	// SecretNameLegacy is name of the secret created by earlier KubeOne versions, but not used anymore
 	// This secret will be removed for all clusters when running kubeone apply the next time
 	SecretNameLegacy = "cloud-provider-credentials"
@@ -58,7 +60,7 @@ func Ensure(s *state.State) error {
 		s.Logger.Info("Skipping creating credentials secret because cloud provider is none.")
 		return nil
 	}
-	if !s.Cluster.MachineController.Deploy && !s.Cluster.CloudProvider.External {
+	if !s.Cluster.MachineController.Deploy && !s.Cluster.CloudProvider.External && !s.Cluster.AddonOperatingSystemManagerEnabled() {
 		s.Logger.Info("Skipping creating credentials secret because both machine-controller and external CCM are disabled.")
 		return nil
 	}
@@ -75,14 +77,21 @@ func Ensure(s *state.State) error {
 
 	s.Logger.Infoln("Creating machine-controller credentials secret...")
 
-	mcCreds, err := ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, TypeMC)
+	providerCreds, err := ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, TypeMC)
 	if err != nil {
 		return errors.Wrap(err, "unable to fetch cloud provider credentials")
 	}
 
-	mcSecret := credentialsSecret(SecretNameMC, mcCreds)
+	mcSecret := credentialsSecret(SecretNameMC, providerCreds)
 	if createErr := clientutil.CreateOrReplace(context.Background(), s.DynamicClient, mcSecret); createErr != nil {
-		return errors.Wrap(createErr, "failed to ensure credentials secret")
+		return errors.Wrap(createErr, "failed to ensure credentials secret for machine-controller")
+	}
+
+	if s.Cluster.AddonOperatingSystemManagerEnabled() {
+		osmSecret := credentialsSecret(SecretNameOSM, providerCreds)
+		if createErr := clientutil.CreateOrReplace(context.Background(), s.DynamicClient, osmSecret); createErr != nil {
+			return errors.Wrap(createErr, "failed to ensure credentials secret for operating-system-manager")
+		}
 	}
 
 	if s.Cluster.CloudProvider.CloudConfig != "" {

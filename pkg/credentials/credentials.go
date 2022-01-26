@@ -35,6 +35,7 @@ const (
 	TypeUniversal Type = ""
 	TypeCCM       Type = "CCM"
 	TypeMC        Type = "MC"
+	TypeOSM       Type = "OSM"
 )
 
 // The environment variable names with credential in them

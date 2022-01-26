@@ -66,6 +66,7 @@ const (
 	DNSNodeCache
 	MachineController
 	MetricsServer
+	OperatingSystemManager
 
 	// Addons
 	ClusterAutoscaler
@@ -328,6 +329,8 @@ func optionalResources() map[Resource]map[string]string {
 			"1.22.x":    "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.22.0",
 			">= 1.23.0": "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.23.0",
 		},
+		// operating-system-manager addon
+		OperatingSystemManager: {"*": "quay.io/kubermatic/operating-system-manager:v0.3.9"},
 	}
 }
 

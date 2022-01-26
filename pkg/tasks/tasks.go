@@ -21,6 +21,7 @@ import (
 
 	"k8c.io/kubeone/pkg/addons"
 	"k8c.io/kubeone/pkg/certificate"
+	"k8c.io/kubeone/pkg/cloudinitsettings"
 	"k8c.io/kubeone/pkg/clusterstatus"
 	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/features"
@@ -28,6 +29,7 @@ import (
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/externalccm"
 	"k8c.io/kubeone/pkg/templates/machinecontroller"
+	"k8c.io/kubeone/pkg/templates/operatingsystemmanager"
 )
 
 type Tasks []Task
@@ -214,6 +216,11 @@ func WithResources(t Tasks) Tasks {
 				ErrMsg: "failed to patch CoreDNS",
 			},
 			{
+				Fn:          cloudinitsettings.Ensure,
+				ErrMsg:      "failed to create/configure cloud-init-settings namespace",
+				Predicate:   func(s *state.State) bool { return s.Cluster.AddonOperatingSystemManagerEnabled() },
+			},
+			{
 				Fn:          addons.Ensure,
 				ErrMsg:      "failed to apply addons",
 				Description: "ensure embedded addons",
@@ -258,6 +265,11 @@ func WithResources(t Tasks) Tasks {
 			{
 				Fn:     machinecontroller.WaitReady,
 				ErrMsg: "failed to wait for machine-controller",
+			},
+			{
+				Fn:          operatingsystemmanager.WaitReady,
+				ErrMsg:      "failed to wait for operating-system-manager",
+				Predicate:   func(s *state.State) bool { return s.Cluster.AddonOperatingSystemManagerEnabled() },
 			},
 			{
 				Fn:          upgradeMachineDeployments,

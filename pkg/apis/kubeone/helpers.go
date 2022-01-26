@@ -26,6 +26,7 @@ import (
 
 	"github.com/Masterminds/semver/v3"
 	"github.com/pkg/errors"
+	"k8c.io/kubeone/pkg/templates/resources"
 )
 
 const (
@@ -86,6 +87,17 @@ func (h *HostConfig) SetOperatingSystem(os OperatingSystemName) {
 // SetLeader sets is the given host leader
 func (h *HostConfig) SetLeader(leader bool) {
 	h.IsLeader = leader
+}
+
+func (c KubeOneCluster) AddonOperatingSystemManagerEnabled() bool {
+	if c.Addons.Enabled() {
+		for _, embeddedAddon := range c.Addons.Addons {
+			if embeddedAddon.Name == resources.AddonOperatingSystemManager {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 func (crc ContainerRuntimeConfig) MachineControllerFlags() []string {
