@@ -2,8 +2,9 @@ package containerruntime
 
 import (
 	"encoding/json"
-	"k8c.io/kubeone/pkg/apis/kubeone"
 	"testing"
+
+	"k8c.io/kubeone/pkg/apis/kubeone"
 )
 
 func Test_marshalDockerConfig(t *testing.T) {
