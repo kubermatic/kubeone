@@ -986,5 +986,5 @@ machineController:
 #       distUpgradeOnBoot: true
 
 loggingConfig:
- containerLogMaxSize: "{{ .ContainerLogMaxSize }}"
+  containerLogMaxSize: "{{ .ContainerLogMaxSize }}"
 `
