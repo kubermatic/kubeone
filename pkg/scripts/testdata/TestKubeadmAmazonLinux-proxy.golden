@@ -88,7 +88,7 @@ cat <<EOF | sudo tee /etc/docker/daemon.json
 	"storage-driver": "overlay2",
 	"log-driver": "json-file",
 	"log-opts": {
-		"max-size": "100m"
+		"max-size": ""
 	}
 }
 EOF
