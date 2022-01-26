@@ -34,9 +34,9 @@ type dockerConfig struct {
 
 func marshalDockerConfig(cluster *kubeone.KubeOneCluster) (string, error) {
 	logSize := strings.ToLower(cluster.LoggingConfig.ContainerLogMaxSize)
-	logSize = strings.Replace(logSize, "ki", "k", -1)
-	logSize = strings.Replace(logSize, "mi", "m", -1)
-	logSize = strings.Replace(logSize, "gi", "g", -1)
+	logSize = strings.ReplaceAll(logSize, "ki", "k")
+	logSize = strings.ReplaceAll(logSize, "mi", "m")
+	logSize = strings.ReplaceAll(logSize, "gi", "g")
 
 	cfg := dockerConfig{
 		ExecOpts:      []string{"native.cgroupdriver=systemd"},
