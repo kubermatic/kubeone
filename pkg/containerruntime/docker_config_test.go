@@ -39,10 +39,8 @@ func Test_marshalDockerConfig(t *testing.T) {
 			err = json.Unmarshal([]byte(got), &cfg)
 			if err != nil {
 				t.Errorf("marshalDockerConfig() error = %v,", err)
-
 			}
 			gotLogSize := cfg.LogOpts["max-size"]
-
 			if gotLogSize != tt.want {
 				t.Errorf("marshalDockerConfig() got = %v, want %v", got, tt.want)
 			}
