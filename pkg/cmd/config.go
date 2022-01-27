@@ -380,7 +380,7 @@ func createAndPrintManifest(printOptions *printOpts) error {
 		cfg.Set(yamled.Path{"machineController", "deploy"}, printOptions.DeployMachineController)
 	}
 
-	cfg.Set(yamled.Path{"loggingConfig", "ContainerLogMaxSize"}, printOptions.ContainerLogMaxSize)
+	cfg.Set(yamled.Path{"loggingConfig", "containerLogMaxSize"}, printOptions.ContainerLogMaxSize)
 
 	// Print the manifest
 	err := validateAndPrintConfig(cfg)
