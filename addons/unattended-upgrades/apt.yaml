@@ -55,3 +55,5 @@ spec:
             apt-get install -y --no-install-recommends \
               apt-utils \
               unattended-upgrades
+            echo unattended-upgrades unattended-upgrades/enable_auto_updates boolean true | debconf-set-selections
+            dpkg-reconfigure -f noninteractive unattended-upgrades
