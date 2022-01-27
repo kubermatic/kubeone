@@ -60,7 +60,7 @@ func Ensure(s *state.State) error {
 		s.Logger.Info("Skipping creating credentials secret because cloud provider is none.")
 		return nil
 	}
-	if !s.Cluster.MachineController.Deploy && !s.Cluster.CloudProvider.External && !s.Cluster.AddonOperatingSystemManagerEnabled() {
+	if !s.Cluster.MachineController.Deploy && !s.Cluster.CloudProvider.External && !s.Cluster.OperatingSystemManagerEnabled() {
 		s.Logger.Info("Skipping creating credentials secret because both machine-controller and external CCM are disabled.")
 		return nil
 	}
@@ -87,7 +87,7 @@ func Ensure(s *state.State) error {
 		return errors.Wrap(createErr, "failed to ensure credentials secret for machine-controller")
 	}
 
-	if s.Cluster.AddonOperatingSystemManagerEnabled() {
+	if s.Cluster.OperatingSystemManagerEnabled() {
 		osmSecret := credentialsSecret(SecretNameOSM, providerCreds)
 		if createErr := clientutil.CreateOrReplace(context.Background(), s.DynamicClient, osmSecret); createErr != nil {
 			return errors.Wrap(createErr, "failed to ensure credentials secret for operating-system-manager")

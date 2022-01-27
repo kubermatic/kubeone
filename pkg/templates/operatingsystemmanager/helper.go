@@ -35,7 +35,7 @@ const appLabelKey = "app"
 
 // WaitReady waits for operating-system-manager and its webhook to become ready
 func WaitReady(s *state.State) error {
-	if !s.Cluster.AddonOperatingSystemManagerEnabled() {
+	if !s.Cluster.OperatingSystemManagerEnabled() {
 		return nil
 	}
 

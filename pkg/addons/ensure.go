@@ -35,28 +35,27 @@ var (
 	// embeddedAddons is a list of addons that are embedded in the KubeOne
 	// binary. Those addons are skipped when applying a user-provided addon with the same name.
 	embeddedAddons = map[string]string{
-		resources.AddonCCMAws:                 "",
-		resources.AddonCCMAzure:               "",
-		resources.AddonCCMDigitalOcean:        "",
-		resources.AddonCCMHetzner:             "",
-		resources.AddonCCMOpenStack:           "",
-		resources.AddonCCMEquinixMetal:        "",
-		resources.AddonCCMPacket:              "",
-		resources.AddonCCMVsphere:             "",
-		resources.AddonCNICanal:               "",
-		resources.AddonCNICilium:              "",
-		resources.AddonCNIWeavenet:            "",
-		resources.AddonCSIAwsEBS:              "",
-		resources.AddonCSIAzureDisk:           "",
-		resources.AddonCSIAzureFile:           "",
-		resources.AddonCSIDigitalOcean:        "",
-		resources.AddonCSIHetzner:             "",
-		resources.AddonCSIOpenStackCinder:     "",
-		resources.AddonCSIVsphere:             "",
-		resources.AddonMachineController:      "",
-		resources.AddonOperatingSystemManager: "",
-		resources.AddonMetricsServer:          "",
-		resources.AddonNodeLocalDNS:           "",
+		resources.AddonCCMAws:             "",
+		resources.AddonCCMAzure:           "",
+		resources.AddonCCMDigitalOcean:    "",
+		resources.AddonCCMHetzner:         "",
+		resources.AddonCCMOpenStack:       "",
+		resources.AddonCCMEquinixMetal:    "",
+		resources.AddonCCMPacket:          "",
+		resources.AddonCCMVsphere:         "",
+		resources.AddonCNICanal:           "",
+		resources.AddonCNICilium:          "",
+		resources.AddonCNIWeavenet:        "",
+		resources.AddonCSIAwsEBS:          "",
+		resources.AddonCSIAzureDisk:       "",
+		resources.AddonCSIAzureFile:       "",
+		resources.AddonCSIDigitalOcean:    "",
+		resources.AddonCSIHetzner:         "",
+		resources.AddonCSIOpenStackCinder: "",
+		resources.AddonCSIVsphere:         "",
+		resources.AddonMachineController:  "",
+		resources.AddonMetricsServer:      "",
+		resources.AddonNodeLocalDNS:       "",
 	}
 )
 
@@ -104,12 +103,6 @@ func collectAddons(s *state.State) (addonsToDeploy []addonAction) {
 	if s.Cluster.MachineController.Deploy {
 		addonsToDeploy = append(addonsToDeploy, addonAction{
 			name: resources.AddonMachineController,
-		})
-	}
-
-	if s.Cluster.AddonOperatingSystemManagerEnabled() {
-		addonsToDeploy = append(addonsToDeploy, addonAction{
-			name: resources.AddonOperatingSystemManager,
 		})
 	}
 

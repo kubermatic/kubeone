@@ -68,7 +68,7 @@ type templateData struct {
 	CSIMigration                             bool
 	CSIMigrationFeatureGates                 string
 	MachineControllerCredentialsEnvVars      string
-	AddonOperatingSystemManagerEnabled       bool
+	OperatingSystemManagerEnabled            bool
 	OperatingSystemManagerCredentialsEnvVars string
 	RegistryCredentials                      []registryCredentialsContainer
 	InternalImages                           *internalImages
@@ -114,7 +114,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 	}
 
 	var credsEnvVarsOSM []byte
-	if s.Cluster.AddonOperatingSystemManagerEnabled() {
+	if s.Cluster.OperatingSystemManagerEnabled() {
 		var envVarsOSM []corev1.EnvVar
 		envVarsOSM, err = credentials.EnvVarBindings(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.SecretNameOSM, credentials.TypeOSM)
 		if err != nil {
@@ -216,7 +216,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		CSIMigration:                        csiMigration,
 		CSIMigrationFeatureGates:            csiMigrationFeatureGates,
 		MachineControllerCredentialsEnvVars: string(credsEnvVarsMC),
-		AddonOperatingSystemManagerEnabled:  s.Cluster.AddonOperatingSystemManagerEnabled(),
+		OperatingSystemManagerEnabled:       s.Cluster.OperatingSystemManagerEnabled(),
 		RegistryCredentials:                 regCredentials,
 		InternalImages: &internalImages{
 			pauseImage: s.PauseImage,
@@ -271,7 +271,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 	}
 
 	// Certs for operating-system-manager-webhook
-	if s.Cluster.AddonOperatingSystemManagerEnabled() {
+	if s.Cluster.OperatingSystemManagerEnabled() {
 		osmCertsMap, err := certificate.NewSignedTLSCert(
 			resources.OperatingSystemManagerWebhookName,
 			resources.OperatingSystemManagerNamespace,

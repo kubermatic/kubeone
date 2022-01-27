@@ -90,7 +90,7 @@ func (h *HostConfig) SetLeader(leader bool) {
 	h.IsLeader = leader
 }
 
-func (c KubeOneCluster) AddonOperatingSystemManagerEnabled() bool {
+func (c KubeOneCluster) OperatingSystemManagerEnabled() bool {
 	if c.Addons.Enabled() {
 		for _, embeddedAddon := range c.Addons.Addons {
 			if embeddedAddon.Name == resources.AddonOperatingSystemManager {

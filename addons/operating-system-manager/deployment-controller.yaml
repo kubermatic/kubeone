@@ -28,6 +28,8 @@ spec:
           effect: NoSchedule
         - key: "CriticalAddonsOnly"
           operator: Exists
+        - key: "node-role.kubernetes.io/control-plane"
+          effect: NoSchedule
       serviceAccountName: operating-system-manager
       containers:
         - name: operating-system-manager

@@ -275,6 +275,7 @@ rules:
       - list
       - watch
 
+{{ if .OperatingSystemManagerEnabled }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -289,6 +290,7 @@ rules:
     verbs:
       - get
       - list
+{{ end }}
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -335,6 +337,7 @@ subjects:
     name: machine-controller
     namespace: kube-system
 
+{{ if .OperatingSystemManagerEnabled }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -349,6 +352,7 @@ subjects:
   - kind: ServiceAccount
     name: machine-controller-webhook
     namespace: kube-system
+{{ end}}
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -562,7 +566,7 @@ spec:
             {{ if .Config.CABundle -}}
             - -ca-bundle={{ .Resources.CABundleSSLCertFilePath }}
             {{ end -}}
-            {{ if .AddonOperatingSystemManagerEnabled -}}
+            {{ if .OperatingSystemManagerEnabled -}}
             - -use-osm
             {{ end -}}
             - -node-kubelet-repository={{ .Resources.KubeletImageRepository }}
@@ -641,7 +645,7 @@ spec:
             {{ if .CSIMigrationFeatureGates }}
             - -node-kubelet-feature-gates={{ .CSIMigrationFeatureGates }}
             {{ end }}
-            {{ if .AddonOperatingSystemManagerEnabled }}
+            {{ if .OperatingSystemManagerEnabled }}
             - -use-osm
             {{ end }}
           env:
