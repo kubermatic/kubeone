@@ -182,10 +182,9 @@ func saveCABundleOnControlPlane(s *state.State, _ *kubeoneapi.HostConfig, conn s
 }
 
 func approvePendingCSR(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
-	s.Logger.Infof("Looking for CSRs to approve...")
-
-	// Need to wait for the second CSR to appear
-	time.Sleep(20 * time.Second)
+	sleepTime := 20 * time.Second
+	s.Logger.Infof("Waiting %s for CSRs to approve...", sleepTime)
+	time.Sleep(sleepTime)
 
 	csrList := certificatesv1.CertificateSigningRequestList{}
 	if err := s.DynamicClient.List(s.Context, &csrList); err != nil {
@@ -235,26 +234,26 @@ func approvePendingCSR(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Con
 
 func validateCSR(spec certificatesv1.CertificateSigningRequestSpec, node *kubeoneapi.HostConfig) error {
 	if fmt.Sprintf("%s:%s", nodeUser, node.Hostname) != spec.Username {
-		return errors.New("")
+		return fmt.Errorf("CSR username %q and node hostname %q do not match", spec.Username, node.Hostname)
 	}
 
 	if !sets.NewString(spec.Groups...).HasAll(groupNodes, groupAuthenticated) {
-		return errors.New("")
+		return errors.New("CSR groups is expecter to be an authenticated node")
 	}
 
 	for _, usage := range spec.Usages {
 		if !isUsageInUsageList(usage, allowedUsages) {
-			return errors.New("")
+			return errors.New("CSR usages is invalid")
 		}
 	}
 
 	csrBlock, rest := pem.Decode(spec.Request)
 	if csrBlock == nil {
-		return fmt.Errorf("no certificate request found for the given CSR")
+		return errors.New("no certificate request found for the given CSR")
 	}
 
 	if len(rest) != 0 {
-		return fmt.Errorf("found more than one PEM encoded block in the result")
+		return errors.New("found more than one PEM encoded block in the result")
 	}
 
 	certReq, err := x509.ParseCertificateRequest(csrBlock.Bytes)
