@@ -34,15 +34,15 @@ func Test_marshalDockerConfig(t *testing.T) {
 			got, err := marshalDockerConfig(tt.cluster)
 			if err != nil {
 				t.Errorf("marshalDockerConfig() error = %v,", err)
-				return
 			}
 			cfg := dockerConfig{}
 			err = json.Unmarshal([]byte(got), &cfg)
+			if err != nil {
+				t.Errorf("marshalDockerConfig() error = %v,", err)
+
+			}
 			gotLogSize := cfg.LogOpts["max-size"]
 
-			if err != nil {
-				t.Errorf("failed to unmarshal docker config: %v", err)
-			}
 			if gotLogSize != tt.want {
 				t.Errorf("marshalDockerConfig() got = %v, want %v", got, tt.want)
 			}

@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2022-01-26T15:22:37+04:00
+date = 2022-01-28T02:22:19+04:00
 weight = 11
 +++
 ## v1beta2
@@ -491,7 +491,7 @@ KubeletConfig provides some kubelet configuration options
 
 ### LoggingConfig
 
-LoggingConfig
+LoggingConfig configures the Kubelet's log rotation
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
