@@ -41,7 +41,7 @@ func Test_marshalDockerConfig(t *testing.T) {
 			gotLogSize := cfg.LogOpts["max-size"]
 
 			if err != nil {
-				return
+				t.Errorf("failed to unmarshal docker config: %v", err)
 			}
 			if gotLogSize != tt.want {
 				t.Errorf("marshalDockerConfig() got = %v, want %v", got, tt.want)
