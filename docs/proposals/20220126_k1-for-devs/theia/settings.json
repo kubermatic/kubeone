@@ -1,0 +1,9 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/.training.yaml": true,
+        "**/.task.yaml": true,
+        "**/.task.md": true,
+        ".theia": true
+    }
+}

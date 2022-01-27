@@ -1,0 +1,13 @@
+node_modules
+lib
+plugins
+src-gen
+Dockerfile
+.gitignore
+Makefile
+README.md
+installed_plugins.md
+excluded_plugins.md
+yarn-error.log
+yarn.lock
+README.md
