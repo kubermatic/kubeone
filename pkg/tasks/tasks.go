@@ -21,7 +21,6 @@ import (
 
 	"k8c.io/kubeone/pkg/addons"
 	"k8c.io/kubeone/pkg/certificate"
-	"k8c.io/kubeone/pkg/cloudinitsettings"
 	"k8c.io/kubeone/pkg/clusterstatus"
 	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/features"
@@ -214,11 +213,6 @@ func WithResources(t Tasks) Tasks {
 			{
 				Fn:     patchCoreDNS,
 				ErrMsg: "failed to patch CoreDNS",
-			},
-			{
-				Fn:        cloudinitsettings.Ensure,
-				ErrMsg:    "failed to create/configure cloud-init-settings namespace",
-				Predicate: func(s *state.State) bool { return s.Cluster.OperatingSystemManagerEnabled() },
 			},
 			{
 				Fn:          addons.Ensure,

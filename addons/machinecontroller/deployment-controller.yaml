@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: machine-controller
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: machine-controller
+  template:
+    metadata:
+      annotations:
+        "prometheus.io/scrape": "true"
+        "prometheus.io/port": "8080"
+        "prometheus.io/path": "/metrics"
+        "caBundle-hash": "{{ .Config.CABundle | sha256sum }}"
+      labels:
+        app: machine-controller
+    spec:
+      nodeSelector:
+        node-role.kubernetes.io/master: ""
+      tolerations:
+        - key: "node-role.kubernetes.io/master"
+          operator: Exists
+          effect: NoSchedule
+        - key: "node.cloudprovider.kubernetes.io/uninitialized"
+          value: "true"
+          effect: NoSchedule
+        - key: "CriticalAddonsOnly"
+          operator: Exists
+      serviceAccountName: machine-controller
+      containers:
+        - name: machine-controller
+          image: "{{ .InternalImages.Get "MachineController" }}"
+          imagePullPolicy: IfNotPresent
+          command:
+            - /usr/local/bin/machine-controller
+          args:
+            - -logtostderr
+            - -v=4
+            - -health-probe-address=0.0.0.0:8085
+            - -metrics-address=0.0.0.0:8080
+            - -cluster-dns={{ .Resources.NodeLocalDNSVirtualIP }}
+            - -node-csr-approver
+            - -join-cluster-timeout=15m
+            - -node-container-runtime={{ .Config.ContainerRuntime }}
+            {{ range .Config.ContainerRuntime.MachineControllerFlags -}}
+            - {{ . }}
+            {{ end -}}
+            {{ with .Config.Proxy.HTTP -}}
+            - -node-http-proxy={{ . }}
+            {{ end -}}
+            {{ with .Config.Proxy.NoProxy -}}
+            - -node-no-proxy={{ . }}
+            {{ end -}}
+            {{ with .Config.RegistryConfiguration.InsecureRegistryAddress -}}
+            - -node-insecure-registries={{ . }}
+            {{ end -}}
+            {{ if .Config.CABundle -}}
+            - -ca-bundle={{ .Resources.CABundleSSLCertFilePath }}
+            {{ end -}}
+            {{ if .OperatingSystemManagerEnabled -}}
+            - -use-osm
+            {{ end -}}
+            - -node-kubelet-repository={{ .Resources.KubeletImageRepository }}
+            - -node-pause-image={{ .InternalImages.Get "PauseImage" }}
+          env:
+            - name: HTTPS_PROXY
+              value: "{{ .Config.Proxy.HTTPS }}"
+            - name: NO_PROXY
+              value: "{{ .Config.Proxy.NoProxy }}"
+{{ .MachineControllerCredentialsEnvVars | indent 12 }}
+{{ if .Config.CABundle }}
+{{ caBundleEnvVar | indent 12 }}
+{{ end }}
+          ports:
+            - containerPort: 8085
+          livenessProbe:
+            httpGet:
+              path: /readyz
+              port: 8085
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8085
+            periodSeconds: 5
+{{ if .Config.CABundle }}
+          volumeMounts:
+{{ caBundleVolumeMount | indent 12 }}
+      volumes:
+{{ caBundleVolume | indent 8 }}
+{{ end }}
