@@ -237,6 +237,16 @@ func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, creden
 		}
 	}
 
+	// Default ContainerLogMaxSize.
+	// NB: We intentionally default here because LoggingConfig is not available in
+	// the v1beta1 API. If we would default in the v1beta2 API instead, this value would
+	// be empty when converting from v1beta1 to internal. This means that v1beta1 API
+	// users would depend on default values provided by Docker/upstream, which are
+	// different than our default values, so we want to avoid this.
+	if cluster.LoggingConfig.ContainerLogMaxSize == "" {
+		cluster.LoggingConfig.ContainerLogMaxSize = "100Mi"
+	}
+
 	// Default the AssetsConfiguration internal API
 	cluster.DefaultAssetConfiguration()
 

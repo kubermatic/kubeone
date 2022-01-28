@@ -79,6 +79,8 @@ type printOpts struct {
 	EnableEncryptionProviders bool `longflag:"enable-encryption-providers"`
 
 	DeployMachineController bool `longflag:"deploy-machine-controller"`
+
+	ContainerLogMaxSize string `longflag:"container-log-max-size"`
 }
 
 // configCmd setups the config command
@@ -173,6 +175,14 @@ func configPrintCmd() *cobra.Command {
 
 	// MachineController
 	cmd.Flags().BoolVar(&opts.DeployMachineController, longFlagName(opts, "DeployMachineController"), true, "deploy kubermatic machine-controller")
+
+	// LoggingConfig
+	cmd.Flags().StringVarP(
+		&opts.ContainerLogMaxSize,
+		longFlagName(opts, "ContainerLogMaxSize"),
+		shortFlagName(opts, "ContainerLogMaxSize"),
+		"100Mi",
+		"ContainerLogMaxSize")
 
 	return cmd
 }
@@ -369,6 +379,8 @@ func createAndPrintManifest(printOptions *printOpts) error {
 	if !printOptions.DeployMachineController {
 		cfg.Set(yamled.Path{"machineController", "deploy"}, printOptions.DeployMachineController)
 	}
+
+	cfg.Set(yamled.Path{"loggingConfig", "containerLogMaxSize"}, printOptions.ContainerLogMaxSize)
 
 	// Print the manifest
 	err := validateAndPrintConfig(cfg)
@@ -972,4 +984,7 @@ machineController:
 #     operatingSystem: 'ubuntu'
 #     operatingSystemSpec:
 #       distUpgradeOnBoot: true
+
+loggingConfig:
+  containerLogMaxSize: "{{ .ContainerLogMaxSize }}"
 `

@@ -61,6 +61,15 @@ type KubeOneCluster struct {
 	SystemPackages *SystemPackages `json:"systemPackages,omitempty"`
 	// RegistryConfiguration configures how Docker images are pulled from an image registry
 	RegistryConfiguration *RegistryConfiguration `json:"registryConfiguration,omitempty"`
+	// LoggingConfig configures the Kubelet's log configuration
+	LoggingConfig LoggingConfig `json:"loggingConfig,omitempty"`
+}
+
+// LoggingConfig configures the Kubelet's log rotation
+type LoggingConfig struct {
+	// ContainerLogMaxSize configures the maximum size of container log file before it is rotated
+	// See more at: https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/
+	ContainerLogMaxSize string `json:"containerLogMaxSize,omitempty"`
 }
 
 // ContainerRuntimeConfig

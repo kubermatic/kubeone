@@ -18,6 +18,7 @@ package containerruntime
 
 import (
 	"encoding/json"
+	"strings"
 
 	"k8c.io/kubeone/pkg/apis/kubeone"
 )
@@ -32,12 +33,17 @@ type dockerConfig struct {
 }
 
 func marshalDockerConfig(cluster *kubeone.KubeOneCluster) (string, error) {
+	logSize := strings.ToLower(cluster.LoggingConfig.ContainerLogMaxSize)
+	logSize = strings.ReplaceAll(logSize, "ki", "k")
+	logSize = strings.ReplaceAll(logSize, "mi", "m")
+	logSize = strings.ReplaceAll(logSize, "gi", "g")
+
 	cfg := dockerConfig{
 		ExecOpts:      []string{"native.cgroupdriver=systemd"},
 		StorageDriver: "overlay2",
 		LogDriver:     "json-file",
 		LogOpts: map[string]string{
-			"max-size": "100m",
+			"max-size": logSize,
 		},
 	}
 

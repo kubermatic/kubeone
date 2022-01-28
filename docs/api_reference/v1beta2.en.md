@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2022-01-11T11:06:38+02:00
+date = 2022-01-28T02:22:19+04:00
 weight = 11
 +++
 ## v1beta2
@@ -40,6 +40,7 @@ weight = 11
 * [KubeOneCluster](#kubeonecluster)
 * [KubeProxyConfig](#kubeproxyconfig)
 * [KubeletConfig](#kubeletconfig)
+* [LoggingConfig](#loggingconfig)
 * [MachineControllerConfig](#machinecontrollerconfig)
 * [MetricsServer](#metricsserver)
 * [NoneSpec](#nonespec)
@@ -460,6 +461,7 @@ KubeOneCluster is KubeOne Cluster API Schema
 | addons | Addons are used to deploy additional manifests. | *[Addons](#addons) | false |
 | systemPackages | SystemPackages configure kubeone behaviour regarding OS packages. | *[SystemPackages](#systempackages) | false |
 | registryConfiguration | RegistryConfiguration configures how Docker images are pulled from an image registry | *[RegistryConfiguration](#registryconfiguration) | false |
+| loggingConfig | LoggingConfig configures the Kubelet's log configuration | [LoggingConfig](#loggingconfig) | false |
 
 [Back to Group](#v1beta2)
 
@@ -484,6 +486,16 @@ KubeletConfig provides some kubelet configuration options
 | systemReserved | SystemReserved configure --system-reserved command-line flag of the kubelet. See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/ | map[string]string | false |
 | kubeReserved | KubeReserved configure --kube-reserved command-line flag of the kubelet. See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/ | map[string]string | false |
 | evictionHard | EvictionHard configure --eviction-hard command-line flag of the kubelet. See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/ | map[string]string | false |
+
+[Back to Group](#v1beta2)
+
+### LoggingConfig
+
+LoggingConfig configures the Kubelet's log rotation
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| containerLogMaxSize | ContainerLogMaxSize configures the maximum size of container log file before it is rotated See more at: https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/ | string | false |
 
 [Back to Group](#v1beta2)
 

@@ -101,6 +101,9 @@ func genCluster(opts ...genClusterOpts) kubeone.KubeOneCluster {
 			HTTPS:   "http://https.proxy",
 			NoProxy: ".local",
 		},
+		LoggingConfig: kubeone.LoggingConfig{
+			ContainerLogMaxSize: "100Mi",
+		},
 	}
 
 	for _, fn := range opts {
