@@ -96,6 +96,7 @@ cat <<EOF | sudo tee /etc/docker/daemon.json
 	"storage-driver": "overlay2",
 	"log-driver": "json-file",
 	"log-opts": {
+		"max-files": "5",
 		"max-size": "100m"
 	},
 	"insecure-registries": [

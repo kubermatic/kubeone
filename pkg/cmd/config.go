@@ -32,6 +32,7 @@ import (
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/apis/kubeone/config"
+	"k8c.io/kubeone/pkg/containerruntime"
 	"k8c.io/kubeone/pkg/templates/machinecontroller"
 	"k8c.io/kubeone/pkg/yamled"
 
@@ -181,13 +182,13 @@ func configPrintCmd() *cobra.Command {
 	cmd.Flags().StringVar(
 		&opts.ContainerLogMaxSize,
 		longFlagName(opts, "ContainerLogMaxSize"),
-		"100Mi",
+		containerruntime.DefaultContainerLogMaxSize,
 		"ContainerLogMaxSize")
 
 	cmd.Flags().Int32Var(
 		&opts.ContainerLogMaxFiles,
 		longFlagName(opts, "ContainerLogMaxFiles"),
-		5,
+		containerruntime.DefaultContainerLogMaxFiles,
 		"ContainerLogMaxFiles")
 	return cmd
 }
@@ -994,5 +995,5 @@ machineController:
 
 loggingConfig:
   containerLogMaxSize: "{{ .ContainerLogMaxSize }}"
-  containerLogMaxFiles: "{{ .ContainerLogMaxFiles }}"
+  containerLogMaxFiles: {{ .ContainerLogMaxFiles }}
 `
