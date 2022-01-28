@@ -75,6 +75,19 @@ func Ensure(s *state.State) error {
 		return errors.Wrap(err, "unable to remove cloud-provider-credentials secret")
 	}
 
+	// Ensure that we remove credentials secret for OSM if it's queued for deletion
+	if s.Cluster.OperatingSystemManagerQueuedForDeletion() {
+		osmSecret := &corev1.Secret{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      SecretNameOSM,
+				Namespace: SecretNamespace,
+			},
+		}
+		if err := clientutil.DeleteIfExists(s.Context, s.DynamicClient, osmSecret); err != nil {
+			return errors.Wrapf(err, "unable to remove %v secret", SecretNameOSM)
+		}
+	}
+
 	s.Logger.Infoln("Creating machine-controller credentials secret...")
 
 	providerCreds, err := ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, TypeMC)

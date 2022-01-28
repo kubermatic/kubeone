@@ -93,7 +93,18 @@ func (h *HostConfig) SetLeader(leader bool) {
 func (c KubeOneCluster) OperatingSystemManagerEnabled() bool {
 	if c.Addons.Enabled() {
 		for _, embeddedAddon := range c.Addons.Addons {
-			if embeddedAddon.Name == resources.AddonOperatingSystemManager {
+			if embeddedAddon.Name == resources.AddonOperatingSystemManager && !embeddedAddon.Delete {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func (c KubeOneCluster) OperatingSystemManagerQueuedForDeletion() bool {
+	if c.Addons.Enabled() {
+		for _, embeddedAddon := range c.Addons.Addons {
+			if embeddedAddon.Name == resources.AddonOperatingSystemManager && embeddedAddon.Delete {
 				return true
 			}
 		}

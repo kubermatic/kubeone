@@ -4,11 +4,15 @@ metadata:
   name: operating-system-manager-webhook-serving-cert
   namespace: kube-system
 data:
+{{ if .Certificates.OperatingSystemManagerWebhookCert }}
   "cert.pem": |
 {{ .Certificates.OperatingSystemManagerWebhookCert | b64enc | indent 4 }}
+{{ end }}
+{{ if .Certificates.OperatingSystemManagerWebhookKey }}
   "key.pem": |
 {{ .Certificates.OperatingSystemManagerWebhookKey | b64enc | indent 4 }}
   "ca.crt": |
+{{ end }}
 {{ .Certificates.KubernetesCA | b64enc | indent 4 }}
 ---
 apiVersion: v1
