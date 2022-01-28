@@ -89,8 +89,9 @@ func setupProxyTunnel(opts *proxyOpts) error {
 
 			if terr := handleTunneling(w, r, s, tunn); terr != nil {
 				code := http.StatusInternalServerError
-				if err1, ok := err.(*httpError); ok {
-					code = err1.code
+				var errHTTP *httpError
+				if errors.As(err, &errHTTP) {
+					code = errHTTP.code
 				}
 				http.Error(w, err.Error(), code)
 			}

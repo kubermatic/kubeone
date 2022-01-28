@@ -17,6 +17,7 @@ limitations under the License.
 package scripts
 
 import (
+	"errors"
 	"testing"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
@@ -168,7 +169,7 @@ func TestKubeadmDebian(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			got, err := KubeadmDebian(&tt.args.cluster, false)
-			if err != tt.err {
+			if !errors.Is(err, tt.err) {
 				t.Errorf("KubeadmDebian() error = %v, wantErr %v", err, tt.err)
 
 				return
@@ -212,7 +213,7 @@ func TestMigrateToContainerd(t *testing.T) {
 			)
 
 			got, err := MigrateToContainerd(&cls, &kubeoneapi.HostConfig{OperatingSystem: tt.osName})
-			if err != tt.err {
+			if !errors.Is(err, tt.err) {
 				t.Errorf("MigrateToContainerd() error = %v, wantErr %v", err, tt.err)
 
 				return
@@ -297,7 +298,7 @@ func TestKubeadmCentOS(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			got, err := KubeadmCentOS(&tt.args.cluster, tt.args.force)
-			if err != tt.err {
+			if !errors.Is(err, tt.err) {
 				t.Errorf("KubeadmCentOS() error = %v, wantErr %v", err, tt.err)
 
 				return
@@ -398,7 +399,7 @@ func TestKubeadmAmazonLinux(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			got, err := KubeadmAmazonLinux(&tt.args.cluster, tt.args.force)
-			if err != tt.err {
+			if !errors.Is(err, tt.err) {
 				t.Errorf("KubeadmAmazonLinux() error = %v, wantErr %v", err, tt.err)
 
 				return
@@ -463,7 +464,7 @@ func TestKubeadmFlatcar(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			got, err := KubeadmFlatcar(&tt.args.cluster)
-			if err != tt.err {
+			if !errors.Is(err, tt.err) {
 				t.Errorf("KubeadmFlatcar() error = %v, wantErr %v", err, tt.err)
 
 				return

@@ -23,6 +23,7 @@ linters:
   - errcheck
   - errchkjson
   - errname
+  - errorlint
   - exhaustive
   - exportloopref
   - forcetypeassert
@@ -65,7 +66,6 @@ linters-settings:
     local-prefixes: k8c.io/kubeone
   importas:
     no-unaliased: true
-    # no-extra-aliases: true
     alias:
     - pkg: k8c.io/kubeone/pkg/apis/kubeone
       alias: kubeoneapi

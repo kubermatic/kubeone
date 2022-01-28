@@ -30,7 +30,7 @@ type Document struct {
 func Load(r io.Reader) (*Document, error) {
 	var data yaml.MapSlice
 	if err := yaml.NewDecoder(r).Decode(&data); err != nil {
-		return nil, fmt.Errorf("failed to decode input YAML: %v", err)
+		return nil, fmt.Errorf("failed to decode input YAML: %w", err)
 	}
 
 	return NewFromMapSlice(data)

@@ -150,7 +150,7 @@ func TestOpenstackValidationFunc(t *testing.T) {
 				if err.Error() != tt.err.Error() {
 					t.Errorf("expected error = '%v', got error = '%v'", tt.err.Error(), err.Error())
 				}
-			} else if err != tt.err {
+			} else if !errors.Is(err, tt.err) {
 				t.Errorf("%s: expected error = %v, got error = %v", tt.name, tt.err, err)
 			}
 		})

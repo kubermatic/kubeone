@@ -165,7 +165,7 @@ func (a *applier) loadAddonsManifests(
 		for {
 			b, err := reader.Read()
 			if err != nil {
-				if err == io.EOF {
+				if errors.Is(err, io.EOF) {
 					break
 				}
 

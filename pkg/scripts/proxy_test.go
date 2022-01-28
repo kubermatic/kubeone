@@ -17,6 +17,7 @@ limitations under the License.
 package scripts
 
 import (
+	"errors"
 	"testing"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
@@ -72,7 +73,7 @@ func TestEnvironmentFile(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			got, err := EnvironmentFile(tt.args.cluster)
-			if err != tt.err {
+			if !errors.Is(err, tt.err) {
 				t.Errorf("EnvironmentFile() error = %v, wantErr %v", err, tt.err)
 
 				return

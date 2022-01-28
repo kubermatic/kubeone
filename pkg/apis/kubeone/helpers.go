@@ -101,6 +101,7 @@ func (c KubeOneCluster) OperatingSystemManagerEnabled() bool {
 			}
 		}
 	}
+
 	return false
 }
 
@@ -112,6 +113,7 @@ func (c KubeOneCluster) OperatingSystemManagerQueuedForDeletion() bool {
 			}
 		}
 	}
+
 	return false
 }
 

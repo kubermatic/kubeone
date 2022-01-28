@@ -271,8 +271,9 @@ func (c *connection) POpen(cmd string, stdin io.Reader, stdout io.Writer, stderr
 	exitCode := 0
 	if err = sess.Run(cmd); err != nil {
 		exitCode = -1
-		if exitErr, ok := err.(*ssh.ExitError); ok {
-			exitCode = exitErr.ExitStatus()
+		var errSSH *ssh.ExitError
+		if errors.As(err, &errSSH) {
+			exitCode = errSSH.ExitStatus()
 		}
 	}
 
