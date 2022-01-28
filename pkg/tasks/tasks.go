@@ -127,6 +127,7 @@ func WithFullInstall(t Tasks) Tasks {
 			{
 				Fn: func(s *state.State) error {
 					s.Logger.Infoln("Configuring certs and etcd on control plane node...")
+
 					return s.RunTaskOnLeader(kubeadmCertsExecutor)
 				},
 				ErrMsg: "failed to provision certs and etcd on leader",
@@ -134,6 +135,7 @@ func WithFullInstall(t Tasks) Tasks {
 			{
 				Fn: func(s *state.State) error {
 					s.Logger.Info("Downloading PKI...")
+
 					return s.RunTaskOnLeader(certificate.DownloadKubePKI)
 				},
 				ErrMsg: "failed to download Kubernetes PKI from the leader",
@@ -141,6 +143,7 @@ func WithFullInstall(t Tasks) Tasks {
 			{
 				Fn: func(s *state.State) error {
 					s.Logger.Info("Uploading PKI...")
+
 					return s.RunTaskOnFollowers(certificate.UploadKubePKI, state.RunParallel)
 				},
 				ErrMsg: "failed to upload Kubernetes PKI",
@@ -148,6 +151,7 @@ func WithFullInstall(t Tasks) Tasks {
 			{
 				Fn: func(s *state.State) error {
 					s.Logger.Infoln("Configuring certs and etcd on consecutive control plane node...")
+
 					return s.RunTaskOnFollowers(kubeadmCertsExecutor, state.RunParallel)
 				},
 				ErrMsg: "failed to provision certs and etcd on followers",
@@ -202,6 +206,7 @@ func WithResources(t Tasks) Tasks {
 			{
 				Fn: func(s *state.State) error {
 					s.Logger.Info("Downloading PKI...")
+
 					return s.RunTaskOnLeader(certificate.DownloadKubePKI)
 				},
 				ErrMsg: "failed to download Kubernetes PKI from the leader",
@@ -286,6 +291,7 @@ func WithUpgrade(t Tasks) Tasks {
 			{
 				Fn: func(s *state.State) error {
 					s.Logger.Info("Downloading PKI...")
+
 					return s.RunTaskOnLeader(certificate.DownloadKubePKI)
 				},
 				ErrMsg: "failed to download Kubernetes PKI from the leader",
@@ -322,6 +328,7 @@ func WithContainerDMigration(t Tasks) Tasks {
 			{
 				Fn: func(s *state.State) error {
 					s.Logger.Info("Downloading PKI...")
+
 					return s.RunTaskOnLeader(certificate.DownloadKubePKI)
 				},
 				ErrMsg: "failed to download Kubernetes PKI from the leader",
@@ -330,6 +337,7 @@ func WithContainerDMigration(t Tasks) Tasks {
 				Fn: func(s *state.State) error {
 					s.Logger.Warn("Now please rolling restart your machineDeployments to get containerd")
 					s.Logger.Warn("see more at: https://docs.kubermatic.com/kubeone/v1.3/cheat_sheets/rollout_machinedeployment/")
+
 					return nil
 				},
 				Predicate: func(s *state.State) bool { return s.Cluster.MachineController.Deploy },
@@ -375,6 +383,7 @@ func WithDisableEncryptionProviders(t Tasks, customConfig bool) Tasks {
 			},
 		}...)
 	}
+
 	return t.append(Tasks{
 		{
 			Fn:          fetchEncryptionProvidersFile,
@@ -497,6 +506,7 @@ func WithCCMCSIMigration(t Tasks) Tasks {
 					s.Logger.Warn("Now please rolling restart your machineDeployments to migrate to ccm/csi")
 					s.Logger.Warn("see more at: https://docs.kubermatic.com/kubeone/v1.3/cheat_sheets/rollout_machinedeployment/")
 					s.Logger.Warn("Once you're done, please run this command again with the '--complete' flag to finish migration")
+
 					return nil
 				},
 				ErrMsg:    "failed to show next steps",

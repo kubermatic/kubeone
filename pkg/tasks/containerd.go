@@ -20,7 +20,7 @@ import (
 	"errors"
 	"time"
 
-	"k8c.io/kubeone/pkg/apis/kubeone"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
@@ -80,7 +80,7 @@ func migrateToContainerd(s *state.State) error {
 	return s.RunTaskOnAllNodes(migrateToContainerdTask, state.RunSequentially)
 }
 
-func migrateToContainerdTask(s *state.State, node *kubeone.HostConfig, conn ssh.Connection) error {
+func migrateToContainerdTask(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	s.Logger.Info("Migrating container runtime to containerd")
 
 	err := updateRemoteFile(s, kubeadmEnvFlagsFile, func(content []byte) ([]byte, error) {
@@ -94,6 +94,7 @@ func migrateToContainerdTask(s *state.State, node *kubeone.HostConfig, conn ssh.
 		}
 
 		buf := marshalKubeletFlags(kubeletFlags)
+
 		return buf, nil
 	})
 	if err != nil {
@@ -125,12 +126,14 @@ func migrateToContainerdTask(s *state.State, node *kubeone.HostConfig, conn ssh.
 
 			if pod.Status.Phase != corev1.PodRunning {
 				s.Logger.Debugf("Pod %s/%s is not running", pod.Namespace, pod.Name)
+
 				return false, nil
 			}
 
 			for _, podcond := range pod.Status.Conditions {
 				if podcond.Type == corev1.PodReady && podcond.Status != corev1.ConditionTrue {
 					s.Logger.Debugf("Pod %s/%s is not ready", pod.Namespace, pod.Name)
+
 					return false, nil
 				}
 			}
@@ -138,12 +141,14 @@ func migrateToContainerdTask(s *state.State, node *kubeone.HostConfig, conn ssh.
 			for _, condstatus := range pod.Status.ContainerStatuses {
 				if !condstatus.Ready {
 					s.Logger.Debugf("Container %s in pod %s/%s is not ready", condstatus.Name, pod.Namespace, pod.Name)
+
 					return false, nil
 				}
 			}
 		}
 
 		s.Logger.Debugf("All pods on %s Node are ready", node.Hostname)
+
 		return true, nil
 	})
 

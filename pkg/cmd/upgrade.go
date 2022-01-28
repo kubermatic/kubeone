@@ -40,6 +40,7 @@ func (opts *upgradeOpts) BuildState() (*state.State, error) {
 
 	s.ForceUpgrade = opts.ForceUpgrade
 	s.UpgradeMachineDeployments = opts.UpgradeMachineDeployments
+
 	return s, nil
 }
 
@@ -62,6 +63,7 @@ func upgradeCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 			}
 
 			opts.globalOptions = *gopts
+
 			return runUpgrade(opts)
 		},
 	}

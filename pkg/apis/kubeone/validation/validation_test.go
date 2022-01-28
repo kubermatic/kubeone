@@ -21,7 +21,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 
-	"k8c.io/kubeone/pkg/apis/kubeone"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/templates/resources"
 
 	"k8s.io/apimachinery/pkg/util/validation/field"
@@ -30,15 +30,15 @@ import (
 func TestValidateKubeOneCluster(t *testing.T) {
 	tests := []struct {
 		name          string
-		cluster       kubeone.KubeOneCluster
+		cluster       kubeoneapi.KubeOneCluster
 		expectedError bool
 	}{
 		{
 			name: "valid KubeOneCluster config",
-			cluster: kubeone.KubeOneCluster{
+			cluster: kubeoneapi.KubeOneCluster{
 				Name: "test",
-				ControlPlane: kubeone.ControlPlaneConfig{
-					Hosts: []kubeone.HostConfig{
+				ControlPlane: kubeoneapi.ControlPlaneConfig{
+					Hosts: []kubeoneapi.HostConfig{
 						{
 							PublicAddress:  "1.1.1.1",
 							PrivateAddress: "10.0.0.1",
@@ -53,20 +53,20 @@ func TestValidateKubeOneCluster(t *testing.T) {
 						},
 					},
 				},
-				APIEndpoint: kubeone.APIEndpoint{
+				APIEndpoint: kubeoneapi.APIEndpoint{
 					Host: "localhost",
 					Port: 6443,
 				},
-				CloudProvider: kubeone.CloudProviderSpec{
-					AWS: &kubeone.AWSSpec{},
+				CloudProvider: kubeoneapi.CloudProviderSpec{
+					AWS: &kubeoneapi.AWSSpec{},
 				},
-				Versions: kubeone.VersionConfig{
+				Versions: kubeoneapi.VersionConfig{
 					Kubernetes: "1.22.1",
 				},
-				MachineController: &kubeone.MachineControllerConfig{
+				MachineController: &kubeoneapi.MachineControllerConfig{
 					Deploy: true,
 				},
-				DynamicWorkers: []kubeone.DynamicWorkerConfig{
+				DynamicWorkers: []kubeoneapi.DynamicWorkerConfig{
 					{
 						Name:     "test-1",
 						Replicas: intPtr(3),
@@ -85,10 +85,10 @@ func TestValidateKubeOneCluster(t *testing.T) {
 		},
 		{
 			name: "MachineDeployment provided without machine-controller deployed",
-			cluster: kubeone.KubeOneCluster{
+			cluster: kubeoneapi.KubeOneCluster{
 				Name: "test",
-				ControlPlane: kubeone.ControlPlaneConfig{
-					Hosts: []kubeone.HostConfig{
+				ControlPlane: kubeoneapi.ControlPlaneConfig{
+					Hosts: []kubeoneapi.HostConfig{
 						{
 							PublicAddress:  "1.1.1.1",
 							PrivateAddress: "10.0.0.1",
@@ -103,20 +103,20 @@ func TestValidateKubeOneCluster(t *testing.T) {
 						},
 					},
 				},
-				APIEndpoint: kubeone.APIEndpoint{
+				APIEndpoint: kubeoneapi.APIEndpoint{
 					Host: "localhost",
 					Port: 6443,
 				},
-				CloudProvider: kubeone.CloudProviderSpec{
-					AWS: &kubeone.AWSSpec{},
+				CloudProvider: kubeoneapi.CloudProviderSpec{
+					AWS: &kubeoneapi.AWSSpec{},
 				},
-				Versions: kubeone.VersionConfig{
+				Versions: kubeoneapi.VersionConfig{
 					Kubernetes: "1.22.1",
 				},
-				MachineController: &kubeone.MachineControllerConfig{
+				MachineController: &kubeoneapi.MachineControllerConfig{
 					Deploy: false,
 				},
-				DynamicWorkers: []kubeone.DynamicWorkerConfig{
+				DynamicWorkers: []kubeoneapi.DynamicWorkerConfig{
 					{
 						Name:     "test-1",
 						Replicas: intPtr(3),
@@ -135,10 +135,10 @@ func TestValidateKubeOneCluster(t *testing.T) {
 		},
 		{
 			name: "cluster name missing",
-			cluster: kubeone.KubeOneCluster{
+			cluster: kubeoneapi.KubeOneCluster{
 				Name: "",
-				ControlPlane: kubeone.ControlPlaneConfig{
-					Hosts: []kubeone.HostConfig{
+				ControlPlane: kubeoneapi.ControlPlaneConfig{
+					Hosts: []kubeoneapi.HostConfig{
 						{
 							PublicAddress:  "1.1.1.1",
 							PrivateAddress: "10.0.0.1",
@@ -153,20 +153,20 @@ func TestValidateKubeOneCluster(t *testing.T) {
 						},
 					},
 				},
-				APIEndpoint: kubeone.APIEndpoint{
+				APIEndpoint: kubeoneapi.APIEndpoint{
 					Host: "localhost",
 					Port: 6443,
 				},
-				CloudProvider: kubeone.CloudProviderSpec{
-					AWS: &kubeone.AWSSpec{},
+				CloudProvider: kubeoneapi.CloudProviderSpec{
+					AWS: &kubeoneapi.AWSSpec{},
 				},
-				Versions: kubeone.VersionConfig{
+				Versions: kubeoneapi.VersionConfig{
 					Kubernetes: "1.22.1",
 				},
-				MachineController: &kubeone.MachineControllerConfig{
+				MachineController: &kubeoneapi.MachineControllerConfig{
 					Deploy: true,
 				},
-				DynamicWorkers: []kubeone.DynamicWorkerConfig{
+				DynamicWorkers: []kubeoneapi.DynamicWorkerConfig{
 					{
 						Name:     "test-1",
 						Replicas: intPtr(3),
@@ -185,10 +185,10 @@ func TestValidateKubeOneCluster(t *testing.T) {
 		},
 		{
 			name: "vSphere 1.22.0 cluster",
-			cluster: kubeone.KubeOneCluster{
+			cluster: kubeoneapi.KubeOneCluster{
 				Name: "test",
-				ControlPlane: kubeone.ControlPlaneConfig{
-					Hosts: []kubeone.HostConfig{
+				ControlPlane: kubeoneapi.ControlPlaneConfig{
+					Hosts: []kubeoneapi.HostConfig{
 						{
 							PublicAddress:  "1.1.1.1",
 							PrivateAddress: "10.0.0.1",
@@ -203,20 +203,20 @@ func TestValidateKubeOneCluster(t *testing.T) {
 						},
 					},
 				},
-				APIEndpoint: kubeone.APIEndpoint{
+				APIEndpoint: kubeoneapi.APIEndpoint{
 					Host: "localhost",
 					Port: 6443,
 				},
-				CloudProvider: kubeone.CloudProviderSpec{
-					Vsphere: &kubeone.VsphereSpec{},
+				CloudProvider: kubeoneapi.CloudProviderSpec{
+					Vsphere: &kubeoneapi.VsphereSpec{},
 				},
-				Versions: kubeone.VersionConfig{
+				Versions: kubeoneapi.VersionConfig{
 					Kubernetes: "1.22.1",
 				},
-				MachineController: &kubeone.MachineControllerConfig{
+				MachineController: &kubeoneapi.MachineControllerConfig{
 					Deploy: true,
 				},
-				DynamicWorkers: []kubeone.DynamicWorkerConfig{
+				DynamicWorkers: []kubeoneapi.DynamicWorkerConfig{
 					{
 						Name:     "test-1",
 						Replicas: intPtr(3),
@@ -317,13 +317,13 @@ func TestValdiateName(t *testing.T) {
 func TestValidateControlPlaneConfig(t *testing.T) {
 	tests := []struct {
 		name               string
-		controlPlaneConfig kubeone.ControlPlaneConfig
+		controlPlaneConfig kubeoneapi.ControlPlaneConfig
 		expectedError      bool
 	}{
 		{
 			name: "valid ControlPlane config",
-			controlPlaneConfig: kubeone.ControlPlaneConfig{
-				Hosts: []kubeone.HostConfig{
+			controlPlaneConfig: kubeoneapi.ControlPlaneConfig{
+				Hosts: []kubeoneapi.HostConfig{
 					{
 						PublicAddress:  "1.1.1.1",
 						PrivateAddress: "10.0.0.1",
@@ -342,8 +342,8 @@ func TestValidateControlPlaneConfig(t *testing.T) {
 		},
 		{
 			name: "invalid host config",
-			controlPlaneConfig: kubeone.ControlPlaneConfig{
-				Hosts: []kubeone.HostConfig{
+			controlPlaneConfig: kubeoneapi.ControlPlaneConfig{
+				Hosts: []kubeoneapi.HostConfig{
 					{
 						PublicAddress:  "1.1.1.1",
 						PrivateAddress: "10.0.0.1",
@@ -362,14 +362,14 @@ func TestValidateControlPlaneConfig(t *testing.T) {
 		},
 		{
 			name: "no hosts provided",
-			controlPlaneConfig: kubeone.ControlPlaneConfig{
-				Hosts: []kubeone.HostConfig{},
+			controlPlaneConfig: kubeoneapi.ControlPlaneConfig{
+				Hosts: []kubeoneapi.HostConfig{},
 			},
 			expectedError: true,
 		},
 		{
 			name:               "no hosts field present",
-			controlPlaneConfig: kubeone.ControlPlaneConfig{},
+			controlPlaneConfig: kubeoneapi.ControlPlaneConfig{},
 			expectedError:      true,
 		},
 	}
@@ -387,12 +387,12 @@ func TestValidateControlPlaneConfig(t *testing.T) {
 func TestValidateAPIEndpoint(t *testing.T) {
 	tests := []struct {
 		name          string
-		apiEndpoint   kubeone.APIEndpoint
+		apiEndpoint   kubeoneapi.APIEndpoint
 		expectedError bool
 	}{
 		{
 			name: "valid apiEndpoint config (localhost:6443)",
-			apiEndpoint: kubeone.APIEndpoint{
+			apiEndpoint: kubeoneapi.APIEndpoint{
 				Host: "localhost",
 				Port: 6443,
 			},
@@ -400,7 +400,7 @@ func TestValidateAPIEndpoint(t *testing.T) {
 		},
 		{
 			name: "valid apiEndpoint config (example.com:443)",
-			apiEndpoint: kubeone.APIEndpoint{
+			apiEndpoint: kubeoneapi.APIEndpoint{
 				Host: "example.com",
 				Port: 443,
 			},
@@ -408,21 +408,21 @@ func TestValidateAPIEndpoint(t *testing.T) {
 		},
 		{
 			name: "no host specified",
-			apiEndpoint: kubeone.APIEndpoint{
+			apiEndpoint: kubeoneapi.APIEndpoint{
 				Port: 6443,
 			},
 			expectedError: true,
 		},
 		{
 			name: "no port specified",
-			apiEndpoint: kubeone.APIEndpoint{
+			apiEndpoint: kubeoneapi.APIEndpoint{
 				Host: "localhost",
 			},
 			expectedError: true,
 		},
 		{
 			name: "port lower than 0",
-			apiEndpoint: kubeone.APIEndpoint{
+			apiEndpoint: kubeoneapi.APIEndpoint{
 				Host: "localhost",
 				Port: -1,
 			},
@@ -430,7 +430,7 @@ func TestValidateAPIEndpoint(t *testing.T) {
 		},
 		{
 			name: "port greater than 65535",
-			apiEndpoint: kubeone.APIEndpoint{
+			apiEndpoint: kubeoneapi.APIEndpoint{
 				Host: "localhost",
 				Port: 65536,
 			},
@@ -451,86 +451,86 @@ func TestValidateAPIEndpoint(t *testing.T) {
 func TestValidateCloudProviderSpec(t *testing.T) {
 	tests := []struct {
 		name           string
-		providerConfig kubeone.CloudProviderSpec
+		providerConfig kubeoneapi.CloudProviderSpec
 		expectedError  bool
 	}{
 		{
 			name: "valid AWS provider config",
-			providerConfig: kubeone.CloudProviderSpec{
-				AWS: &kubeone.AWSSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				AWS: &kubeoneapi.AWSSpec{},
 			},
 			expectedError: false,
 		},
 		{
 			name: "valid Azure provider config",
-			providerConfig: kubeone.CloudProviderSpec{
-				Azure:       &kubeone.AzureSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Azure:       &kubeoneapi.AzureSpec{},
 				CloudConfig: "cloud-config",
 			},
 			expectedError: false,
 		},
 		{
 			name: "valid DigitalOcean provider config",
-			providerConfig: kubeone.CloudProviderSpec{
-				DigitalOcean: &kubeone.DigitalOceanSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				DigitalOcean: &kubeoneapi.DigitalOceanSpec{},
 			},
 			expectedError: false,
 		},
 		{
 			name: "valid GCE provider config",
-			providerConfig: kubeone.CloudProviderSpec{
-				GCE: &kubeone.GCESpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				GCE: &kubeoneapi.GCESpec{},
 			},
 			expectedError: false,
 		},
 		{
 			name: "valid Hetzner provider config",
-			providerConfig: kubeone.CloudProviderSpec{
-				Hetzner: &kubeone.HetznerSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Hetzner: &kubeoneapi.HetznerSpec{},
 			},
 			expectedError: false,
 		},
 		{
 			name: "valid Nutanix provider config",
-			providerConfig: kubeone.CloudProviderSpec{
-				Nutanix: &kubeone.NutanixSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Nutanix: &kubeoneapi.NutanixSpec{},
 			},
 			expectedError: false,
 		},
 		{
 			name: "valid OpenStack provider config",
-			providerConfig: kubeone.CloudProviderSpec{
-				Openstack:   &kubeone.OpenstackSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Openstack:   &kubeoneapi.OpenstackSpec{},
 				CloudConfig: "cloud-config",
 			},
 			expectedError: false,
 		},
 		{
 			name: "valid Equinix Metal provider config",
-			providerConfig: kubeone.CloudProviderSpec{
-				EquinixMetal: &kubeone.EquinixMetalSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				EquinixMetal: &kubeoneapi.EquinixMetalSpec{},
 			},
 			expectedError: false,
 		},
 		{
 			name: "valid vSphere provider config",
-			providerConfig: kubeone.CloudProviderSpec{
-				Vsphere:     &kubeone.VsphereSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Vsphere:     &kubeoneapi.VsphereSpec{},
 				CloudConfig: "cloud-config",
 			},
 			expectedError: false,
 		},
 		{
 			name: "valid None provider config",
-			providerConfig: kubeone.CloudProviderSpec{
-				None: &kubeone.NoneSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				None: &kubeoneapi.NoneSpec{},
 			},
 			expectedError: false,
 		},
 		{
 			name: "valid OpenStack provider config with external CCM and cloudConfig",
-			providerConfig: kubeone.CloudProviderSpec{
-				AWS:         &kubeone.AWSSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				AWS:         &kubeoneapi.AWSSpec{},
 				CloudConfig: "cloud-config",
 				External:    true,
 			},
@@ -538,126 +538,126 @@ func TestValidateCloudProviderSpec(t *testing.T) {
 		},
 		{
 			name: "valid DigitalOcean provider config with external CCM",
-			providerConfig: kubeone.CloudProviderSpec{
-				AWS:      &kubeone.AWSSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				AWS:      &kubeoneapi.AWSSpec{},
 				External: true,
 			},
 			expectedError: false,
 		},
 		{
 			name: "AWS and Azure specified at the same time",
-			providerConfig: kubeone.CloudProviderSpec{
-				AWS:   &kubeone.AWSSpec{},
-				Azure: &kubeone.AzureSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				AWS:   &kubeoneapi.AWSSpec{},
+				Azure: &kubeoneapi.AzureSpec{},
 			},
 			expectedError: true,
 		},
 		{
 			name: "AWS and DigitalOcean specified at the same time",
-			providerConfig: kubeone.CloudProviderSpec{
-				AWS:          &kubeone.AWSSpec{},
-				DigitalOcean: &kubeone.DigitalOceanSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				AWS:          &kubeoneapi.AWSSpec{},
+				DigitalOcean: &kubeoneapi.DigitalOceanSpec{},
 			},
 			expectedError: true,
 		},
 		{
 			name: "AWS and GCE specified at the same time",
-			providerConfig: kubeone.CloudProviderSpec{
-				AWS: &kubeone.AWSSpec{},
-				GCE: &kubeone.GCESpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				AWS: &kubeoneapi.AWSSpec{},
+				GCE: &kubeoneapi.GCESpec{},
 			},
 			expectedError: true,
 		},
 		{
 			name: "AWS and Hetzner specified at the same time",
-			providerConfig: kubeone.CloudProviderSpec{
-				AWS:     &kubeone.AWSSpec{},
-				Hetzner: &kubeone.HetznerSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				AWS:     &kubeoneapi.AWSSpec{},
+				Hetzner: &kubeoneapi.HetznerSpec{},
 			},
 			expectedError: true,
 		},
 		{
 			name: "AWS and OpenStack specified at the same time",
-			providerConfig: kubeone.CloudProviderSpec{
-				AWS:       &kubeone.AWSSpec{},
-				Openstack: &kubeone.OpenstackSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				AWS:       &kubeoneapi.AWSSpec{},
+				Openstack: &kubeoneapi.OpenstackSpec{},
 			},
 			expectedError: true,
 		},
 		{
 			name: "AWS and Equinix Metal specified at the same time",
-			providerConfig: kubeone.CloudProviderSpec{
-				AWS:          &kubeone.AWSSpec{},
-				EquinixMetal: &kubeone.EquinixMetalSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				AWS:          &kubeoneapi.AWSSpec{},
+				EquinixMetal: &kubeoneapi.EquinixMetalSpec{},
 			},
 			expectedError: true,
 		},
 		{
 			name: "AWS and vSphere specified at the same time",
-			providerConfig: kubeone.CloudProviderSpec{
-				AWS:     &kubeone.AWSSpec{},
-				Vsphere: &kubeone.VsphereSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				AWS:     &kubeoneapi.AWSSpec{},
+				Vsphere: &kubeoneapi.VsphereSpec{},
 			},
 			expectedError: true,
 		},
 		{
 			name: "AWS and None specified at the same time",
-			providerConfig: kubeone.CloudProviderSpec{
-				AWS:  &kubeone.AWSSpec{},
-				None: &kubeone.NoneSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				AWS:  &kubeoneapi.AWSSpec{},
+				None: &kubeoneapi.NoneSpec{},
 			},
 			expectedError: true,
 		},
 		{
 			name: "AWS, Azure, and DigitalOcean specified at the same time",
-			providerConfig: kubeone.CloudProviderSpec{
-				AWS:          &kubeone.AWSSpec{},
-				Azure:        &kubeone.AzureSpec{},
-				DigitalOcean: &kubeone.DigitalOceanSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				AWS:          &kubeoneapi.AWSSpec{},
+				Azure:        &kubeoneapi.AzureSpec{},
+				DigitalOcean: &kubeoneapi.DigitalOceanSpec{},
 			},
 			expectedError: true,
 		},
 		{
 			name: "Azure provider config without cloudConfig",
-			providerConfig: kubeone.CloudProviderSpec{
-				Azure: &kubeone.AzureSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Azure: &kubeoneapi.AzureSpec{},
 			},
 			expectedError: true,
 		},
 		{
 			name: "Nutanix provider config with external enabled",
-			providerConfig: kubeone.CloudProviderSpec{
-				Nutanix:  &kubeone.NutanixSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Nutanix:  &kubeoneapi.NutanixSpec{},
 				External: true,
 			},
 			expectedError: true,
 		},
 		{
 			name: "OpenStack provider config without cloudConfig",
-			providerConfig: kubeone.CloudProviderSpec{
-				Openstack: &kubeone.OpenstackSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Openstack: &kubeoneapi.OpenstackSpec{},
 			},
 			expectedError: true,
 		},
 		{
 			name: "vSphere provider config without cloudConfig",
-			providerConfig: kubeone.CloudProviderSpec{
-				Vsphere: &kubeone.VsphereSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Vsphere: &kubeoneapi.VsphereSpec{},
 			},
 			expectedError: true,
 		},
 		{
 			name: "vSphere provider config without csiConfig",
-			providerConfig: kubeone.CloudProviderSpec{
-				Vsphere:     &kubeone.VsphereSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Vsphere:     &kubeoneapi.VsphereSpec{},
 				CloudConfig: "test",
 			},
 			expectedError: false,
 		},
 		{
 			name: "vSphere provider config with csiConfig",
-			providerConfig: kubeone.CloudProviderSpec{
-				Vsphere:     &kubeone.VsphereSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Vsphere:     &kubeoneapi.VsphereSpec{},
 				External:    true,
 				CloudConfig: "test",
 				CSIConfig:   "test",
@@ -666,8 +666,8 @@ func TestValidateCloudProviderSpec(t *testing.T) {
 		},
 		{
 			name: "vSphere provider config with csiConfig (external disabled)",
-			providerConfig: kubeone.CloudProviderSpec{
-				Vsphere:     &kubeone.VsphereSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Vsphere:     &kubeoneapi.VsphereSpec{},
 				External:    false,
 				CloudConfig: "test",
 				CSIConfig:   "test",
@@ -676,16 +676,16 @@ func TestValidateCloudProviderSpec(t *testing.T) {
 		},
 		{
 			name: "OpenStack provider config without csiConfig",
-			providerConfig: kubeone.CloudProviderSpec{
-				Openstack:   &kubeone.OpenstackSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Openstack:   &kubeoneapi.OpenstackSpec{},
 				CloudConfig: "test",
 			},
 			expectedError: false,
 		},
 		{
 			name: "OpenStack provider config with csiConfig",
-			providerConfig: kubeone.CloudProviderSpec{
-				Openstack:   &kubeone.OpenstackSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Openstack:   &kubeoneapi.OpenstackSpec{},
 				CloudConfig: "test",
 				CSIConfig:   "test",
 			},
@@ -693,7 +693,7 @@ func TestValidateCloudProviderSpec(t *testing.T) {
 		},
 		{
 			name:           "no provider specified",
-			providerConfig: kubeone.CloudProviderSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{},
 			expectedError:  true,
 		},
 	}
@@ -711,103 +711,103 @@ func TestValidateCloudProviderSpec(t *testing.T) {
 func TestValidateVersionConfig(t *testing.T) {
 	tests := []struct {
 		name          string
-		versionConfig kubeone.VersionConfig
+		versionConfig kubeoneapi.VersionConfig
 		expectedError bool
 	}{
 		{
 			name: "valid version config (1.22.1)",
-			versionConfig: kubeone.VersionConfig{
+			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "1.22.1",
 			},
 			expectedError: false,
 		},
 		{
 			name: "valid version config (1.22.0)",
-			versionConfig: kubeone.VersionConfig{
+			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "1.22.2",
 			},
 			expectedError: false,
 		},
 		{
 			name: "valid version config (1.21.4)",
-			versionConfig: kubeone.VersionConfig{
+			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "1.21.4",
 			},
 			expectedError: false,
 		},
 		{
 			name: "valid version config (1.21.0)",
-			versionConfig: kubeone.VersionConfig{
+			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "1.21.0",
 			},
 			expectedError: false,
 		},
 		{
 			name: "valid version config (1.20.10)",
-			versionConfig: kubeone.VersionConfig{
+			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "1.20.10",
 			},
 			expectedError: false,
 		},
 		{
 			name: "valid version config (1.20.0)",
-			versionConfig: kubeone.VersionConfig{
+			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "1.20.0",
 			},
 			expectedError: false,
 		},
 		{
 			name: "valid version config (1.19.0)",
-			versionConfig: kubeone.VersionConfig{
+			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "1.19.0",
 			},
 			expectedError: false,
 		},
 		{
 			name: "not supported kubernetes version (1.18.19)",
-			versionConfig: kubeone.VersionConfig{
+			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "1.18.19",
 			},
 			expectedError: true,
 		},
 		{
 			name: "not supported kubernetes version (1.18.0)",
-			versionConfig: kubeone.VersionConfig{
+			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "1.18.0",
 			},
 			expectedError: true,
 		},
 		{
 			name: "not supported kubernetes version (1.17.0)",
-			versionConfig: kubeone.VersionConfig{
+			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "1.17.0",
 			},
 			expectedError: true,
 		},
 		{
 			name: "invalid kubernetes version (2.0.0)",
-			versionConfig: kubeone.VersionConfig{
+			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "2.0.0",
 			},
 			expectedError: true,
 		},
 		{
 			name: "kubernetes version with a leading 'v'",
-			versionConfig: kubeone.VersionConfig{
+			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "v1.22.1",
 			},
 			expectedError: true,
 		},
 		{
 			name: "invalid semver kubernetes version",
-			versionConfig: kubeone.VersionConfig{
+			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "version-1.19.0",
 			},
 			expectedError: true,
 		},
 		{
 			name: "not supported eks-d cluster",
-			versionConfig: kubeone.VersionConfig{
+			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "v1.19.9-eks-1-18-1",
 			},
 			expectedError: true,
@@ -827,107 +827,107 @@ func TestValidateVersionConfig(t *testing.T) {
 func TestValidateKubernetesSupport(t *testing.T) {
 	tests := []struct {
 		name           string
-		providerConfig kubeone.CloudProviderSpec
-		networkConfig  kubeone.ClusterNetworkConfig
-		versionConfig  kubeone.VersionConfig
-		addonsConfig   *kubeone.Addons
+		providerConfig kubeoneapi.CloudProviderSpec
+		networkConfig  kubeoneapi.ClusterNetworkConfig
+		versionConfig  kubeoneapi.VersionConfig
+		addonsConfig   *kubeoneapi.Addons
 		expectedError  bool
 	}{
 		{
 			name: "AWS 1.21.4 cluster",
-			providerConfig: kubeone.CloudProviderSpec{
-				AWS: &kubeone.AWSSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				AWS: &kubeoneapi.AWSSpec{},
 			},
-			versionConfig: kubeone.VersionConfig{
+			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "1.21.4",
 			},
 			expectedError: false,
 		},
 		{
 			name: "AWS 1.22.1 cluster",
-			providerConfig: kubeone.CloudProviderSpec{
-				AWS: &kubeone.AWSSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				AWS: &kubeoneapi.AWSSpec{},
 			},
-			versionConfig: kubeone.VersionConfig{
+			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "1.22.1",
 			},
 			expectedError: false,
 		},
 		{
 			name: "vSphere 1.22.4 cluster",
-			providerConfig: kubeone.CloudProviderSpec{
-				Vsphere: &kubeone.VsphereSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Vsphere: &kubeoneapi.VsphereSpec{},
 			},
-			versionConfig: kubeone.VersionConfig{
+			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "1.22.4",
 			},
 			expectedError: false,
 		},
 		{
 			name: "vSphere 1.23.0 cluster",
-			providerConfig: kubeone.CloudProviderSpec{
-				Vsphere: &kubeone.VsphereSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Vsphere: &kubeoneapi.VsphereSpec{},
 			},
-			versionConfig: kubeone.VersionConfig{
+			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "1.23.0",
 			},
 			expectedError: true,
 		},
 		{
 			name: "AWS 1.22.0 cluster with IPVS",
-			providerConfig: kubeone.CloudProviderSpec{
-				AWS: &kubeone.AWSSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				AWS: &kubeoneapi.AWSSpec{},
 			},
-			versionConfig: kubeone.VersionConfig{
+			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "1.22.0",
 			},
-			networkConfig: kubeone.ClusterNetworkConfig{
-				CNI: &kubeone.CNI{
-					Canal: &kubeone.CanalSpec{},
+			networkConfig: kubeoneapi.ClusterNetworkConfig{
+				CNI: &kubeoneapi.CNI{
+					Canal: &kubeoneapi.CanalSpec{},
 				},
-				KubeProxy: &kubeone.KubeProxyConfig{
-					IPVS: &kubeone.IPVSConfig{},
+				KubeProxy: &kubeoneapi.KubeProxyConfig{
+					IPVS: &kubeoneapi.IPVSConfig{},
 				},
 			},
 			expectedError: false,
 		},
 		{
 			name: "AWS 1.23.0 cluster with IPVS",
-			providerConfig: kubeone.CloudProviderSpec{
-				AWS: &kubeone.AWSSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				AWS: &kubeoneapi.AWSSpec{},
 			},
-			versionConfig: kubeone.VersionConfig{
+			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "1.23.0",
 			},
-			networkConfig: kubeone.ClusterNetworkConfig{
-				CNI: &kubeone.CNI{
-					Canal: &kubeone.CanalSpec{},
+			networkConfig: kubeoneapi.ClusterNetworkConfig{
+				CNI: &kubeoneapi.CNI{
+					Canal: &kubeoneapi.CanalSpec{},
 				},
-				KubeProxy: &kubeone.KubeProxyConfig{
-					IPVS: &kubeone.IPVSConfig{},
+				KubeProxy: &kubeoneapi.KubeProxyConfig{
+					IPVS: &kubeoneapi.IPVSConfig{},
 				},
 			},
 			expectedError: true,
 		},
 		{
 			name: "AWS 1.22.0 cluster with IPVS and calico-vxlan",
-			providerConfig: kubeone.CloudProviderSpec{
-				AWS: &kubeone.AWSSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				AWS: &kubeoneapi.AWSSpec{},
 			},
-			versionConfig: kubeone.VersionConfig{
+			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "1.22.0",
 			},
-			networkConfig: kubeone.ClusterNetworkConfig{
-				CNI: &kubeone.CNI{
-					External: &kubeone.ExternalCNISpec{},
+			networkConfig: kubeoneapi.ClusterNetworkConfig{
+				CNI: &kubeoneapi.CNI{
+					External: &kubeoneapi.ExternalCNISpec{},
 				},
-				KubeProxy: &kubeone.KubeProxyConfig{
-					IPVS: &kubeone.IPVSConfig{},
+				KubeProxy: &kubeoneapi.KubeProxyConfig{
+					IPVS: &kubeoneapi.IPVSConfig{},
 				},
 			},
-			addonsConfig: &kubeone.Addons{
+			addonsConfig: &kubeoneapi.Addons{
 				Enable: true,
-				Addons: []kubeone.Addon{
+				Addons: []kubeoneapi.Addon{
 					{
 						Name: "calico-vxlan",
 					},
@@ -937,23 +937,23 @@ func TestValidateKubernetesSupport(t *testing.T) {
 		},
 		{
 			name: "AWS 1.23.0 cluster with IPVS and calico-vxlan",
-			providerConfig: kubeone.CloudProviderSpec{
-				AWS: &kubeone.AWSSpec{},
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				AWS: &kubeoneapi.AWSSpec{},
 			},
-			versionConfig: kubeone.VersionConfig{
+			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "1.23.0",
 			},
-			networkConfig: kubeone.ClusterNetworkConfig{
-				CNI: &kubeone.CNI{
-					External: &kubeone.ExternalCNISpec{},
+			networkConfig: kubeoneapi.ClusterNetworkConfig{
+				CNI: &kubeoneapi.CNI{
+					External: &kubeoneapi.ExternalCNISpec{},
 				},
-				KubeProxy: &kubeone.KubeProxyConfig{
-					IPVS: &kubeone.IPVSConfig{},
+				KubeProxy: &kubeoneapi.KubeProxyConfig{
+					IPVS: &kubeoneapi.IPVSConfig{},
 				},
 			},
-			addonsConfig: &kubeone.Addons{
+			addonsConfig: &kubeoneapi.Addons{
 				Enable: true,
-				Addons: []kubeone.Addon{
+				Addons: []kubeoneapi.Addon{
 					{
 						Name: "calico-vxlan",
 					},
@@ -965,7 +965,7 @@ func TestValidateKubernetesSupport(t *testing.T) {
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			c := kubeone.KubeOneCluster{
+			c := kubeoneapi.KubeOneCluster{
 				CloudProvider:  tc.providerConfig,
 				Versions:       tc.versionConfig,
 				ClusterNetwork: tc.networkConfig,
@@ -983,47 +983,47 @@ func TestValidateKubernetesSupport(t *testing.T) {
 func TestValidateContainerRuntimeConfig(t *testing.T) {
 	tests := []struct {
 		name             string
-		containerRuntime kubeone.ContainerRuntimeConfig
-		versions         kubeone.VersionConfig
+		containerRuntime kubeoneapi.ContainerRuntimeConfig
+		versions         kubeoneapi.VersionConfig
 		expectedError    bool
 	}{
 		{
 			name:             "only docker defined",
-			containerRuntime: kubeone.ContainerRuntimeConfig{Docker: &kubeone.ContainerRuntimeDocker{}},
-			versions:         kubeone.VersionConfig{Kubernetes: "1.20"},
+			containerRuntime: kubeoneapi.ContainerRuntimeConfig{Docker: &kubeoneapi.ContainerRuntimeDocker{}},
+			versions:         kubeoneapi.VersionConfig{Kubernetes: "1.20"},
 			expectedError:    false,
 		},
 		{
 			name:             "docker with kubernetes 1.22+",
-			containerRuntime: kubeone.ContainerRuntimeConfig{Docker: &kubeone.ContainerRuntimeDocker{}},
-			versions:         kubeone.VersionConfig{Kubernetes: "1.22"},
+			containerRuntime: kubeoneapi.ContainerRuntimeConfig{Docker: &kubeoneapi.ContainerRuntimeDocker{}},
+			versions:         kubeoneapi.VersionConfig{Kubernetes: "1.22"},
 			expectedError:    true,
 		},
 		{
 			name:             "only containerd defined",
-			containerRuntime: kubeone.ContainerRuntimeConfig{Containerd: &kubeone.ContainerRuntimeContainerd{}},
-			versions:         kubeone.VersionConfig{Kubernetes: "1.20"},
+			containerRuntime: kubeoneapi.ContainerRuntimeConfig{Containerd: &kubeoneapi.ContainerRuntimeContainerd{}},
+			versions:         kubeoneapi.VersionConfig{Kubernetes: "1.20"},
 			expectedError:    false,
 		},
 		{
 			name: "both defined",
-			containerRuntime: kubeone.ContainerRuntimeConfig{
-				Docker:     &kubeone.ContainerRuntimeDocker{},
-				Containerd: &kubeone.ContainerRuntimeContainerd{},
+			containerRuntime: kubeoneapi.ContainerRuntimeConfig{
+				Docker:     &kubeoneapi.ContainerRuntimeDocker{},
+				Containerd: &kubeoneapi.ContainerRuntimeContainerd{},
 			},
-			versions:      kubeone.VersionConfig{Kubernetes: "1.20"},
+			versions:      kubeoneapi.VersionConfig{Kubernetes: "1.20"},
 			expectedError: true,
 		},
 		{
 			name:             "non defined",
-			containerRuntime: kubeone.ContainerRuntimeConfig{},
-			versions:         kubeone.VersionConfig{Kubernetes: "1.20"},
+			containerRuntime: kubeoneapi.ContainerRuntimeConfig{},
+			versions:         kubeoneapi.VersionConfig{Kubernetes: "1.20"},
 			expectedError:    false,
 		},
 		{
 			name:             "non defined, 1.21+",
-			containerRuntime: kubeone.ContainerRuntimeConfig{},
-			versions:         kubeone.VersionConfig{Kubernetes: "1.21"},
+			containerRuntime: kubeoneapi.ContainerRuntimeConfig{},
+			versions:         kubeoneapi.VersionConfig{Kubernetes: "1.21"},
 			expectedError:    false,
 		},
 	}
@@ -1042,12 +1042,12 @@ func TestValidateContainerRuntimeConfig(t *testing.T) {
 func TestValidateClusterNetworkConfig(t *testing.T) {
 	tests := []struct {
 		name                 string
-		clusterNetworkConfig kubeone.ClusterNetworkConfig
+		clusterNetworkConfig kubeoneapi.ClusterNetworkConfig
 		expectedError        bool
 	}{
 		{
 			name: "valid network config",
-			clusterNetworkConfig: kubeone.ClusterNetworkConfig{
+			clusterNetworkConfig: kubeoneapi.ClusterNetworkConfig{
 				PodSubnet:     "192.168.1.0/24",
 				ServiceSubnet: "192.168.0.0/24",
 			},
@@ -1055,23 +1055,23 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 		},
 		{
 			name: "valid network config with cni config",
-			clusterNetworkConfig: kubeone.ClusterNetworkConfig{
+			clusterNetworkConfig: kubeoneapi.ClusterNetworkConfig{
 				PodSubnet:     "192.168.1.0/24",
 				ServiceSubnet: "192.168.0.0/24",
-				CNI: &kubeone.CNI{
-					Canal: &kubeone.CanalSpec{MTU: 1500},
+				CNI: &kubeoneapi.CNI{
+					Canal: &kubeoneapi.CanalSpec{MTU: 1500},
 				},
 			},
 			expectedError: false,
 		},
 		{
 			name:                 "empty network config",
-			clusterNetworkConfig: kubeone.ClusterNetworkConfig{},
+			clusterNetworkConfig: kubeoneapi.ClusterNetworkConfig{},
 			expectedError:        false,
 		},
 		{
 			name: "invalid pod subnet",
-			clusterNetworkConfig: kubeone.ClusterNetworkConfig{
+			clusterNetworkConfig: kubeoneapi.ClusterNetworkConfig{
 				PodSubnet:     "192.168.1.0",
 				ServiceSubnet: "192.168.0.0/24",
 			},
@@ -1079,7 +1079,7 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 		},
 		{
 			name: "invalid service subnet (non-CIDR)",
-			clusterNetworkConfig: kubeone.ClusterNetworkConfig{
+			clusterNetworkConfig: kubeoneapi.ClusterNetworkConfig{
 				PodSubnet:     "192.168.1.0/24",
 				ServiceSubnet: "192.168.0.0",
 			},
@@ -1087,10 +1087,10 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 		},
 		{
 			name: "invalid cni config",
-			clusterNetworkConfig: kubeone.ClusterNetworkConfig{
-				CNI: &kubeone.CNI{
-					Canal:    &kubeone.CanalSpec{},
-					WeaveNet: &kubeone.WeaveNetSpec{},
+			clusterNetworkConfig: kubeoneapi.ClusterNetworkConfig{
+				CNI: &kubeoneapi.CNI{
+					Canal:    &kubeoneapi.CanalSpec{},
+					WeaveNet: &kubeoneapi.WeaveNetSpec{},
 				},
 			},
 			expectedError: true,
@@ -1110,27 +1110,27 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 func TestValidateCNIConfig(t *testing.T) {
 	tests := []struct {
 		name          string
-		cniConfig     *kubeone.CNI
+		cniConfig     *kubeoneapi.CNI
 		expectedError bool
 	}{
 		{
 			name: "valid Canal CNI config",
-			cniConfig: &kubeone.CNI{
-				Canal: &kubeone.CanalSpec{MTU: 1500},
+			cniConfig: &kubeoneapi.CNI{
+				Canal: &kubeoneapi.CanalSpec{MTU: 1500},
 			},
 			expectedError: false,
 		},
 		{
 			name: "valid WeaveNet CNI config",
-			cniConfig: &kubeone.CNI{
-				WeaveNet: &kubeone.WeaveNetSpec{},
+			cniConfig: &kubeoneapi.CNI{
+				WeaveNet: &kubeoneapi.WeaveNetSpec{},
 			},
 			expectedError: false,
 		},
 		{
 			name: "valid WeaveNet CNI config with encryption enabled",
-			cniConfig: &kubeone.CNI{
-				WeaveNet: &kubeone.WeaveNetSpec{
+			cniConfig: &kubeoneapi.CNI{
+				WeaveNet: &kubeoneapi.WeaveNetSpec{
 					Encrypted: true,
 				},
 			},
@@ -1138,38 +1138,38 @@ func TestValidateCNIConfig(t *testing.T) {
 		},
 		{
 			name: "valid External CNI config",
-			cniConfig: &kubeone.CNI{
-				External: &kubeone.ExternalCNISpec{},
+			cniConfig: &kubeoneapi.CNI{
+				External: &kubeoneapi.ExternalCNISpec{},
 			},
 			expectedError: false,
 		},
 		{
 			name: "Canal and WeaveNet specified at the same time",
-			cniConfig: &kubeone.CNI{
-				Canal:    &kubeone.CanalSpec{},
-				WeaveNet: &kubeone.WeaveNetSpec{},
+			cniConfig: &kubeoneapi.CNI{
+				Canal:    &kubeoneapi.CanalSpec{},
+				WeaveNet: &kubeoneapi.WeaveNetSpec{},
 			},
 			expectedError: true,
 		},
 		{
 			name: "Canal and External specified at the same time",
-			cniConfig: &kubeone.CNI{
-				Canal:    &kubeone.CanalSpec{},
-				External: &kubeone.ExternalCNISpec{},
+			cniConfig: &kubeoneapi.CNI{
+				Canal:    &kubeoneapi.CanalSpec{},
+				External: &kubeoneapi.ExternalCNISpec{},
 			},
 			expectedError: true,
 		},
 		{
 			name: "WeaveNet and External specified at the same time",
-			cniConfig: &kubeone.CNI{
-				WeaveNet: &kubeone.WeaveNetSpec{},
-				External: &kubeone.ExternalCNISpec{},
+			cniConfig: &kubeoneapi.CNI{
+				WeaveNet: &kubeoneapi.WeaveNetSpec{},
+				External: &kubeoneapi.ExternalCNISpec{},
 			},
 			expectedError: true,
 		},
 		{
 			name:          "no CNI config specified",
-			cniConfig:     &kubeone.CNI{},
+			cniConfig:     &kubeoneapi.CNI{},
 			expectedError: true,
 		},
 	}
@@ -1187,13 +1187,13 @@ func TestValidateCNIConfig(t *testing.T) {
 func TestValidateStaticWorkersConfig(t *testing.T) {
 	tests := []struct {
 		name                string
-		staticWorkersConfig kubeone.StaticWorkersConfig
+		staticWorkersConfig kubeoneapi.StaticWorkersConfig
 		expectedError       bool
 	}{
 		{
 			name: "valid StaticWorkers config",
-			staticWorkersConfig: kubeone.StaticWorkersConfig{
-				Hosts: []kubeone.HostConfig{
+			staticWorkersConfig: kubeoneapi.StaticWorkersConfig{
+				Hosts: []kubeoneapi.HostConfig{
 					{
 						PublicAddress:  "1.1.1.1",
 						PrivateAddress: "10.0.0.1",
@@ -1212,20 +1212,20 @@ func TestValidateStaticWorkersConfig(t *testing.T) {
 		},
 		{
 			name: "no hosts provided",
-			staticWorkersConfig: kubeone.StaticWorkersConfig{
-				Hosts: []kubeone.HostConfig{},
+			staticWorkersConfig: kubeoneapi.StaticWorkersConfig{
+				Hosts: []kubeoneapi.HostConfig{},
 			},
 			expectedError: false,
 		},
 		{
 			name:                "no hosts field present",
-			staticWorkersConfig: kubeone.StaticWorkersConfig{},
+			staticWorkersConfig: kubeoneapi.StaticWorkersConfig{},
 			expectedError:       false,
 		},
 		{
 			name: "invalid host config",
-			staticWorkersConfig: kubeone.StaticWorkersConfig{
-				Hosts: []kubeone.HostConfig{
+			staticWorkersConfig: kubeoneapi.StaticWorkersConfig{
+				Hosts: []kubeoneapi.HostConfig{
 					{
 						PublicAddress:  "1.1.1.1",
 						PrivateAddress: "10.0.0.1",
@@ -1257,12 +1257,12 @@ func TestValidateStaticWorkersConfig(t *testing.T) {
 func TestValidateDynamicWorkerConfig(t *testing.T) {
 	tests := []struct {
 		name                string
-		dynamicWorkerConfig []kubeone.DynamicWorkerConfig
+		dynamicWorkerConfig []kubeoneapi.DynamicWorkerConfig
 		expectedError       bool
 	}{
 		{
 			name: "valid worker config",
-			dynamicWorkerConfig: []kubeone.DynamicWorkerConfig{
+			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
 				{
 					Name:     "test-1",
 					Replicas: intPtr(3),
@@ -1280,12 +1280,12 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 		},
 		{
 			name:                "valid worker config (no worker defined)",
-			dynamicWorkerConfig: []kubeone.DynamicWorkerConfig{},
+			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{},
 			expectedError:       false,
 		},
 		{
 			name: "invalid worker config (replicas not provided)",
-			dynamicWorkerConfig: []kubeone.DynamicWorkerConfig{
+			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
 				{
 					Name:     "test-1",
 					Replicas: intPtr(3),
@@ -1298,7 +1298,7 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 		},
 		{
 			name: "invalid worker config (no name given)",
-			dynamicWorkerConfig: []kubeone.DynamicWorkerConfig{
+			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
 				{
 					Replicas: intPtr(3),
 				},
@@ -1387,97 +1387,97 @@ func TestValidateCABundle(t *testing.T) {
 func TestValidateFeatures(t *testing.T) {
 	tests := []struct {
 		name          string
-		features      kubeone.Features
-		versions      kubeone.VersionConfig
+		features      kubeoneapi.Features
+		versions      kubeoneapi.VersionConfig
 		expectedError bool
 	}{
 		{
 			name: "psp and auditing enabled",
-			features: kubeone.Features{
-				PodSecurityPolicy: &kubeone.PodSecurityPolicy{
+			features: kubeoneapi.Features{
+				PodSecurityPolicy: &kubeoneapi.PodSecurityPolicy{
 					Enable: true,
 				},
-				DynamicAuditLog: &kubeone.DynamicAuditLog{
+				DynamicAuditLog: &kubeoneapi.DynamicAuditLog{
 					Enable: true,
 				},
 			},
-			versions: kubeone.VersionConfig{
+			versions: kubeoneapi.VersionConfig{
 				Kubernetes: "1.20.2",
 			},
 			expectedError: false,
 		},
 		{
 			name: "metrics server disabled",
-			features: kubeone.Features{
-				MetricsServer: &kubeone.MetricsServer{
+			features: kubeoneapi.Features{
+				MetricsServer: &kubeoneapi.MetricsServer{
 					Enable: false,
 				},
 			},
-			versions: kubeone.VersionConfig{
+			versions: kubeoneapi.VersionConfig{
 				Kubernetes: "1.20.2",
 			},
 			expectedError: false,
 		},
 		{
 			name:     "no feature configured",
-			features: kubeone.Features{},
-			versions: kubeone.VersionConfig{
+			features: kubeoneapi.Features{},
+			versions: kubeoneapi.VersionConfig{
 				Kubernetes: "1.20.2",
 			},
 			expectedError: false,
 		},
 		{
 			name: "oidc enabled",
-			features: kubeone.Features{
-				OpenIDConnect: &kubeone.OpenIDConnect{
+			features: kubeoneapi.Features{
+				OpenIDConnect: &kubeoneapi.OpenIDConnect{
 					Enable: true,
-					Config: kubeone.OpenIDConnectConfig{
+					Config: kubeoneapi.OpenIDConnectConfig{
 						IssuerURL:     "test.cluster.local",
 						ClientID:      "123",
 						RequiredClaim: "test",
 					},
 				},
 			},
-			versions: kubeone.VersionConfig{
+			versions: kubeoneapi.VersionConfig{
 				Kubernetes: "1.20.2",
 			},
 			expectedError: false,
 		},
 		{
 			name: "invalid staticAudit config",
-			features: kubeone.Features{
-				StaticAuditLog: &kubeone.StaticAuditLog{
+			features: kubeoneapi.Features{
+				StaticAuditLog: &kubeoneapi.StaticAuditLog{
 					Enable: true,
-					Config: kubeone.StaticAuditLogConfig{},
+					Config: kubeoneapi.StaticAuditLogConfig{},
 				},
 			},
-			versions: kubeone.VersionConfig{
+			versions: kubeoneapi.VersionConfig{
 				Kubernetes: "1.20.2",
 			},
 			expectedError: true,
 		},
 		{
 			name: "invalid oidc config",
-			features: kubeone.Features{
-				OpenIDConnect: &kubeone.OpenIDConnect{
+			features: kubeoneapi.Features{
+				OpenIDConnect: &kubeoneapi.OpenIDConnect{
 					Enable: true,
-					Config: kubeone.OpenIDConnectConfig{},
+					Config: kubeoneapi.OpenIDConnectConfig{},
 				},
 			},
-			versions: kubeone.VersionConfig{
+			versions: kubeoneapi.VersionConfig{
 				Kubernetes: "1.20.2",
 			},
 			expectedError: true,
 		},
 		{
 			name: "invalid podNodeSelector config",
-			features: kubeone.Features{
-				PodNodeSelector: &kubeone.PodNodeSelector{
+			features: kubeoneapi.Features{
+				PodNodeSelector: &kubeoneapi.PodNodeSelector{
 					Enable: true,
-					Config: kubeone.PodNodeSelectorConfig{},
+					Config: kubeoneapi.PodNodeSelectorConfig{},
 				},
 			},
-			versions: kubeone.VersionConfig{
+			versions: kubeoneapi.VersionConfig{
 				Kubernetes: "1.20.2",
 			},
 			expectedError: true,
@@ -1498,19 +1498,19 @@ func TestValidateFeatures(t *testing.T) {
 func TestValidatePodNodeSelectorConfig(t *testing.T) {
 	tests := []struct {
 		name                  string
-		podNodeSelectorConfig kubeone.PodNodeSelectorConfig
+		podNodeSelectorConfig kubeoneapi.PodNodeSelectorConfig
 		expectedError         bool
 	}{
 		{
 			name: "valid podNodeSelector config",
-			podNodeSelectorConfig: kubeone.PodNodeSelectorConfig{
+			podNodeSelectorConfig: kubeoneapi.PodNodeSelectorConfig{
 				ConfigFilePath: "./podnodeselector.yaml",
 			},
 			expectedError: false,
 		},
 		{
 			name:                  "invalid podNodeSelector config",
-			podNodeSelectorConfig: kubeone.PodNodeSelectorConfig{},
+			podNodeSelectorConfig: kubeoneapi.PodNodeSelectorConfig{},
 			expectedError:         true,
 		},
 	}
@@ -1528,12 +1528,12 @@ func TestValidatePodNodeSelectorConfig(t *testing.T) {
 func TestValidateStaticAuditLogConfig(t *testing.T) {
 	tests := []struct {
 		name                 string
-		staticAuditLogConfig kubeone.StaticAuditLogConfig
+		staticAuditLogConfig kubeoneapi.StaticAuditLogConfig
 		expectedError        bool
 	}{
 		{
 			name: "valid staticAuditLog config",
-			staticAuditLogConfig: kubeone.StaticAuditLogConfig{
+			staticAuditLogConfig: kubeoneapi.StaticAuditLogConfig{
 				PolicyFilePath: "/etc/kubernetes/policy.yaml",
 				LogPath:        "/var/log/kubernetes",
 				LogMaxAge:      10,
@@ -1544,7 +1544,7 @@ func TestValidateStaticAuditLogConfig(t *testing.T) {
 		},
 		{
 			name: "policy file path missing",
-			staticAuditLogConfig: kubeone.StaticAuditLogConfig{
+			staticAuditLogConfig: kubeoneapi.StaticAuditLogConfig{
 				LogPath:      "/var/log/kubernetes",
 				LogMaxAge:    10,
 				LogMaxBackup: 10,
@@ -1554,7 +1554,7 @@ func TestValidateStaticAuditLogConfig(t *testing.T) {
 		},
 		{
 			name: "log file path missing",
-			staticAuditLogConfig: kubeone.StaticAuditLogConfig{
+			staticAuditLogConfig: kubeoneapi.StaticAuditLogConfig{
 				PolicyFilePath: "/etc/kubernetes/policy.yaml",
 				LogMaxAge:      10,
 				LogMaxBackup:   10,
@@ -1564,7 +1564,7 @@ func TestValidateStaticAuditLogConfig(t *testing.T) {
 		},
 		{
 			name: "log max age set to 0",
-			staticAuditLogConfig: kubeone.StaticAuditLogConfig{
+			staticAuditLogConfig: kubeoneapi.StaticAuditLogConfig{
 				PolicyFilePath: "/etc/kubernetes/policy.yaml",
 				LogPath:        "/var/log/kubernetes",
 				LogMaxAge:      0,
@@ -1575,7 +1575,7 @@ func TestValidateStaticAuditLogConfig(t *testing.T) {
 		},
 		{
 			name: "log max backup set to 0",
-			staticAuditLogConfig: kubeone.StaticAuditLogConfig{
+			staticAuditLogConfig: kubeoneapi.StaticAuditLogConfig{
 				PolicyFilePath: "/etc/kubernetes/policy.yaml",
 				LogPath:        "/var/log/kubernetes",
 				LogMaxAge:      10,
@@ -1586,7 +1586,7 @@ func TestValidateStaticAuditLogConfig(t *testing.T) {
 		},
 		{
 			name: "log max size set to 0",
-			staticAuditLogConfig: kubeone.StaticAuditLogConfig{
+			staticAuditLogConfig: kubeoneapi.StaticAuditLogConfig{
 				PolicyFilePath: "/etc/kubernetes/policy.yaml",
 				LogPath:        "/var/log/kubernetes",
 				LogMaxAge:      10,
@@ -1610,12 +1610,12 @@ func TestValidateStaticAuditLogConfig(t *testing.T) {
 func TestValidateOIDCConfig(t *testing.T) {
 	tests := []struct {
 		name          string
-		oidcConfig    kubeone.OpenIDConnectConfig
+		oidcConfig    kubeoneapi.OpenIDConnectConfig
 		expectedError bool
 	}{
 		{
 			name: "valid oidc config",
-			oidcConfig: kubeone.OpenIDConnectConfig{
+			oidcConfig: kubeoneapi.OpenIDConnectConfig{
 				IssuerURL: "test.cluster.local",
 				ClientID:  "test",
 			},
@@ -1623,14 +1623,14 @@ func TestValidateOIDCConfig(t *testing.T) {
 		},
 		{
 			name: "no issuer url",
-			oidcConfig: kubeone.OpenIDConnectConfig{
+			oidcConfig: kubeoneapi.OpenIDConnectConfig{
 				ClientID: "test",
 			},
 			expectedError: true,
 		},
 		{
 			name: "no client id",
-			oidcConfig: kubeone.OpenIDConnectConfig{
+			oidcConfig: kubeoneapi.OpenIDConnectConfig{
 				IssuerURL: "test.cluster.local",
 			},
 			expectedError: true,
@@ -1650,12 +1650,12 @@ func TestValidateOIDCConfig(t *testing.T) {
 func TestValidateAddons(t *testing.T) {
 	tests := []struct {
 		name          string
-		addons        *kubeone.Addons
+		addons        *kubeoneapi.Addons
 		expectedError bool
 	}{
 		{
 			name: "valid addons config (enabled)",
-			addons: &kubeone.Addons{
+			addons: &kubeoneapi.Addons{
 				Enable: true,
 				Path:   "./addons",
 			},
@@ -1663,7 +1663,7 @@ func TestValidateAddons(t *testing.T) {
 		},
 		{
 			name: "addons enabled, no path set and no embedded addons specified",
-			addons: &kubeone.Addons{
+			addons: &kubeoneapi.Addons{
 				Enable: true,
 				Path:   "",
 			},
@@ -1671,10 +1671,10 @@ func TestValidateAddons(t *testing.T) {
 		},
 		{
 			name: "embedded addon enabled, no path set",
-			addons: &kubeone.Addons{
+			addons: &kubeoneapi.Addons{
 				Enable: true,
 				Path:   "",
-				Addons: []kubeone.Addon{
+				Addons: []kubeoneapi.Addon{
 					{
 						Name: resources.AddonMachineController,
 					},
@@ -1684,14 +1684,14 @@ func TestValidateAddons(t *testing.T) {
 		},
 		{
 			name: "valid addons config (disabled)",
-			addons: &kubeone.Addons{
+			addons: &kubeoneapi.Addons{
 				Enable: false,
 			},
 			expectedError: false,
 		},
 		{
 			name:          "valid addons config (empty)",
-			addons:        &kubeone.Addons{},
+			addons:        &kubeoneapi.Addons{},
 			expectedError: false,
 		},
 		{
@@ -1715,12 +1715,12 @@ func TestValidateAddons(t *testing.T) {
 func TestValidateHostConfig(t *testing.T) {
 	tests := []struct {
 		name          string
-		hostConfig    []kubeone.HostConfig
+		hostConfig    []kubeoneapi.HostConfig
 		expectedError bool
 	}{
 		{
 			name: "host config with ip addresses",
-			hostConfig: []kubeone.HostConfig{
+			hostConfig: []kubeoneapi.HostConfig{
 				{
 					PublicAddress:     "192.168.1.1",
 					PrivateAddress:    "192.168.0.1",
@@ -1733,7 +1733,7 @@ func TestValidateHostConfig(t *testing.T) {
 		},
 		{
 			name: "host config with dns domain",
-			hostConfig: []kubeone.HostConfig{
+			hostConfig: []kubeoneapi.HostConfig{
 				{
 					PublicAddress:     "cluster-test.public.local",
 					PrivateAddress:    "cluster-test.private.local",
@@ -1746,7 +1746,7 @@ func TestValidateHostConfig(t *testing.T) {
 		},
 		{
 			name: "no public address provided",
-			hostConfig: []kubeone.HostConfig{
+			hostConfig: []kubeoneapi.HostConfig{
 				{
 					PublicAddress:     "",
 					PrivateAddress:    "cluster-test.private.local",
@@ -1759,7 +1759,7 @@ func TestValidateHostConfig(t *testing.T) {
 		},
 		{
 			name: "no private address provided",
-			hostConfig: []kubeone.HostConfig{
+			hostConfig: []kubeoneapi.HostConfig{
 				{
 					PublicAddress:     "cluster-test.public.local",
 					PrivateAddress:    "",
@@ -1772,7 +1772,7 @@ func TestValidateHostConfig(t *testing.T) {
 		},
 		{
 			name: "no private key file and agent provided",
-			hostConfig: []kubeone.HostConfig{
+			hostConfig: []kubeoneapi.HostConfig{
 				{
 					PublicAddress:     "cluster-test.public.local",
 					PrivateAddress:    "cluster-test.private.local",
@@ -1785,7 +1785,7 @@ func TestValidateHostConfig(t *testing.T) {
 		},
 		{
 			name: "no username provided",
-			hostConfig: []kubeone.HostConfig{
+			hostConfig: []kubeoneapi.HostConfig{
 				{
 					PublicAddress:     "cluster-test.public.local",
 					PrivateAddress:    "cluster-test.private.local",
@@ -1798,7 +1798,7 @@ func TestValidateHostConfig(t *testing.T) {
 		},
 		{
 			name: "one valid host config and one invalid host config (no username)",
-			hostConfig: []kubeone.HostConfig{
+			hostConfig: []kubeoneapi.HostConfig{
 				{
 					PublicAddress:     "192.168.1.1",
 					PrivateAddress:    "192.168.0.1",
@@ -1818,7 +1818,7 @@ func TestValidateHostConfig(t *testing.T) {
 		},
 		{
 			name: "two leaders at the same time",
-			hostConfig: []kubeone.HostConfig{
+			hostConfig: []kubeoneapi.HostConfig{
 				{
 					PublicAddress:     "192.168.1.1",
 					PrivateAddress:    "192.168.0.1",
@@ -1854,19 +1854,19 @@ func TestValidateHostConfig(t *testing.T) {
 func TestValidateRegistryConfiguration(t *testing.T) {
 	tests := []struct {
 		name                  string
-		registryConfiguration *kubeone.RegistryConfiguration
+		registryConfiguration *kubeoneapi.RegistryConfiguration
 		expectedError         bool
 	}{
 		{
 			name: "valid registry config (overwrite registry)",
-			registryConfiguration: &kubeone.RegistryConfiguration{
+			registryConfiguration: &kubeoneapi.RegistryConfiguration{
 				OverwriteRegistry: "127.0.0.1:5000",
 			},
 			expectedError: false,
 		},
 		{
 			name: "valid registry config (overwrite registry and insecure)",
-			registryConfiguration: &kubeone.RegistryConfiguration{
+			registryConfiguration: &kubeoneapi.RegistryConfiguration{
 				OverwriteRegistry: "127.0.0.1:5000",
 				InsecureRegistry:  true,
 			},
@@ -1874,7 +1874,7 @@ func TestValidateRegistryConfiguration(t *testing.T) {
 		},
 		{
 			name:                  "valid registry config (empty)",
-			registryConfiguration: &kubeone.RegistryConfiguration{},
+			registryConfiguration: &kubeoneapi.RegistryConfiguration{},
 			expectedError:         false,
 		},
 		{
@@ -1884,7 +1884,7 @@ func TestValidateRegistryConfiguration(t *testing.T) {
 		},
 		{
 			name: "invalid registry config (insecure registry without overwrite registry)",
-			registryConfiguration: &kubeone.RegistryConfiguration{
+			registryConfiguration: &kubeoneapi.RegistryConfiguration{
 				InsecureRegistry: true,
 			},
 			expectedError: true,
@@ -1905,18 +1905,18 @@ func TestValidateRegistryConfiguration(t *testing.T) {
 func TestValidateAssetConfiguration(t *testing.T) {
 	tests := []struct {
 		name               string
-		assetConfiguration *kubeone.AssetConfiguration
+		assetConfiguration *kubeoneapi.AssetConfiguration
 		expectedError      bool
 	}{
 		{
 			name:               "empty asset configuration",
-			assetConfiguration: &kubeone.AssetConfiguration{},
+			assetConfiguration: &kubeoneapi.AssetConfiguration{},
 			expectedError:      false,
 		},
 		{
 			name: "kubernetes image configured",
-			assetConfiguration: &kubeone.AssetConfiguration{
-				Kubernetes: kubeone.ImageAsset{
+			assetConfiguration: &kubeoneapi.AssetConfiguration{
+				Kubernetes: kubeoneapi.ImageAsset{
 					ImageRepository: "127.0.0.1:5000",
 				},
 			},
@@ -1924,8 +1924,8 @@ func TestValidateAssetConfiguration(t *testing.T) {
 		},
 		{
 			name: "kubernetes image and tag configured",
-			assetConfiguration: &kubeone.AssetConfiguration{
-				Kubernetes: kubeone.ImageAsset{
+			assetConfiguration: &kubeoneapi.AssetConfiguration{
+				Kubernetes: kubeoneapi.ImageAsset{
 					ImageRepository: "127.0.0.1:5000",
 					ImageTag:        "test",
 				},
@@ -1934,8 +1934,8 @@ func TestValidateAssetConfiguration(t *testing.T) {
 		},
 		{
 			name: "kubernetes tag configured",
-			assetConfiguration: &kubeone.AssetConfiguration{
-				Kubernetes: kubeone.ImageAsset{
+			assetConfiguration: &kubeoneapi.AssetConfiguration{
+				Kubernetes: kubeoneapi.ImageAsset{
 					ImageTag: "test",
 				},
 			},
@@ -1943,8 +1943,8 @@ func TestValidateAssetConfiguration(t *testing.T) {
 		},
 		{
 			name: "pause image configured",
-			assetConfiguration: &kubeone.AssetConfiguration{
-				Pause: kubeone.ImageAsset{
+			assetConfiguration: &kubeoneapi.AssetConfiguration{
+				Pause: kubeoneapi.ImageAsset{
 					ImageRepository: "127.0.0.1:5000",
 					ImageTag:        "3.2",
 				},
@@ -1953,8 +1953,8 @@ func TestValidateAssetConfiguration(t *testing.T) {
 		},
 		{
 			name: "pause image configured (repository missing)",
-			assetConfiguration: &kubeone.AssetConfiguration{
-				Pause: kubeone.ImageAsset{
+			assetConfiguration: &kubeoneapi.AssetConfiguration{
+				Pause: kubeoneapi.ImageAsset{
 					ImageTag: "3.2",
 				},
 			},
@@ -1962,8 +1962,8 @@ func TestValidateAssetConfiguration(t *testing.T) {
 		},
 		{
 			name: "pause image configured (tag missing)",
-			assetConfiguration: &kubeone.AssetConfiguration{
-				Pause: kubeone.ImageAsset{
+			assetConfiguration: &kubeoneapi.AssetConfiguration{
+				Pause: kubeoneapi.ImageAsset{
 					ImageRepository: "127.0.0.1:5000",
 				},
 			},
@@ -1971,8 +1971,8 @@ func TestValidateAssetConfiguration(t *testing.T) {
 		},
 		{
 			name: "coredns image and tag configured",
-			assetConfiguration: &kubeone.AssetConfiguration{
-				CoreDNS: kubeone.ImageAsset{
+			assetConfiguration: &kubeoneapi.AssetConfiguration{
+				CoreDNS: kubeoneapi.ImageAsset{
 					ImageRepository: "127.0.0.1:5000",
 					ImageTag:        "test",
 				},
@@ -1981,8 +1981,8 @@ func TestValidateAssetConfiguration(t *testing.T) {
 		},
 		{
 			name: "coredns image configured",
-			assetConfiguration: &kubeone.AssetConfiguration{
-				CoreDNS: kubeone.ImageAsset{
+			assetConfiguration: &kubeoneapi.AssetConfiguration{
+				CoreDNS: kubeoneapi.ImageAsset{
 					ImageRepository: "127.0.0.1:5000",
 				},
 			},
@@ -1990,8 +1990,8 @@ func TestValidateAssetConfiguration(t *testing.T) {
 		},
 		{
 			name: "coredns tag configured",
-			assetConfiguration: &kubeone.AssetConfiguration{
-				CoreDNS: kubeone.ImageAsset{
+			assetConfiguration: &kubeoneapi.AssetConfiguration{
+				CoreDNS: kubeoneapi.ImageAsset{
 					ImageTag: "test",
 				},
 			},
@@ -1999,8 +1999,8 @@ func TestValidateAssetConfiguration(t *testing.T) {
 		},
 		{
 			name: "etcd image and tag configured",
-			assetConfiguration: &kubeone.AssetConfiguration{
-				Etcd: kubeone.ImageAsset{
+			assetConfiguration: &kubeoneapi.AssetConfiguration{
+				Etcd: kubeoneapi.ImageAsset{
 					ImageRepository: "127.0.0.1:5000",
 					ImageTag:        "test",
 				},
@@ -2009,8 +2009,8 @@ func TestValidateAssetConfiguration(t *testing.T) {
 		},
 		{
 			name: "etcd image configured",
-			assetConfiguration: &kubeone.AssetConfiguration{
-				Etcd: kubeone.ImageAsset{
+			assetConfiguration: &kubeoneapi.AssetConfiguration{
+				Etcd: kubeoneapi.ImageAsset{
 					ImageRepository: "127.0.0.1:5000",
 				},
 			},
@@ -2018,8 +2018,8 @@ func TestValidateAssetConfiguration(t *testing.T) {
 		},
 		{
 			name: "etcd tag configured",
-			assetConfiguration: &kubeone.AssetConfiguration{
-				Etcd: kubeone.ImageAsset{
+			assetConfiguration: &kubeoneapi.AssetConfiguration{
+				Etcd: kubeoneapi.ImageAsset{
 					ImageTag: "test",
 				},
 			},
@@ -2027,8 +2027,8 @@ func TestValidateAssetConfiguration(t *testing.T) {
 		},
 		{
 			name: "metrics-server image and tag configured",
-			assetConfiguration: &kubeone.AssetConfiguration{
-				MetricsServer: kubeone.ImageAsset{
+			assetConfiguration: &kubeoneapi.AssetConfiguration{
+				MetricsServer: kubeoneapi.ImageAsset{
 					ImageRepository: "127.0.0.1:5000",
 					ImageTag:        "test",
 				},
@@ -2037,8 +2037,8 @@ func TestValidateAssetConfiguration(t *testing.T) {
 		},
 		{
 			name: "metrics-server image configured",
-			assetConfiguration: &kubeone.AssetConfiguration{
-				MetricsServer: kubeone.ImageAsset{
+			assetConfiguration: &kubeoneapi.AssetConfiguration{
+				MetricsServer: kubeoneapi.ImageAsset{
 					ImageRepository: "127.0.0.1:5000",
 				},
 			},
@@ -2046,8 +2046,8 @@ func TestValidateAssetConfiguration(t *testing.T) {
 		},
 		{
 			name: "metrics-server tag configured",
-			assetConfiguration: &kubeone.AssetConfiguration{
-				MetricsServer: kubeone.ImageAsset{
+			assetConfiguration: &kubeoneapi.AssetConfiguration{
+				MetricsServer: kubeoneapi.ImageAsset{
 					ImageTag: "test",
 				},
 			},
@@ -2055,14 +2055,14 @@ func TestValidateAssetConfiguration(t *testing.T) {
 		},
 		{
 			name: "cni, node binaries, and kubectl configured",
-			assetConfiguration: &kubeone.AssetConfiguration{
-				CNI: kubeone.BinaryAsset{
+			assetConfiguration: &kubeoneapi.AssetConfiguration{
+				CNI: kubeoneapi.BinaryAsset{
 					URL: "https://127.0.0.1/cni",
 				},
-				NodeBinaries: kubeone.BinaryAsset{
+				NodeBinaries: kubeoneapi.BinaryAsset{
 					URL: "https://127.0.0.1/kubernetes-node-linux-amd64.tar.gz",
 				},
-				Kubectl: kubeone.BinaryAsset{
+				Kubectl: kubeoneapi.BinaryAsset{
 					URL: "https://127.0.0.1/kubectl",
 				},
 			},
@@ -2070,11 +2070,11 @@ func TestValidateAssetConfiguration(t *testing.T) {
 		},
 		{
 			name: "binary assets configured (node binaries missing)",
-			assetConfiguration: &kubeone.AssetConfiguration{
-				CNI: kubeone.BinaryAsset{
+			assetConfiguration: &kubeoneapi.AssetConfiguration{
+				CNI: kubeoneapi.BinaryAsset{
 					URL: "https://127.0.0.1/cni",
 				},
-				Kubectl: kubeone.BinaryAsset{
+				Kubectl: kubeoneapi.BinaryAsset{
 					URL: "https://127.0.0.1/kubectl",
 				},
 			},

@@ -36,5 +36,6 @@ func saveKubeconfig(s *state.State) error {
 
 	fileName := fmt.Sprintf("%s-kubeconfig", s.Cluster.Name)
 	err = os.WriteFile(fileName, kc, 0600)
+
 	return errors.Wrap(err, "error saving kubeconfig file to the local machine")
 }

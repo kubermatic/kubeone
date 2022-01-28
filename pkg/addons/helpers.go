@@ -67,6 +67,7 @@ func EmbeddedAddonsOnly(addons []kubeoneapi.Addon) (bool, error) {
 		for _, embeddedAddon := range embeddedAddons {
 			if embeddedAddon.Name() == addon.Name {
 				embedded = true
+
 				break
 			}
 		}
@@ -75,5 +76,6 @@ func EmbeddedAddonsOnly(addons []kubeoneapi.Addon) (bool, error) {
 			return false, nil
 		}
 	}
+
 	return true, nil
 }

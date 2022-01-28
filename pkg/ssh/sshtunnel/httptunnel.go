@@ -23,13 +23,13 @@ import (
 
 	"github.com/pkg/errors"
 
-	"k8c.io/kubeone/pkg/apis/kubeone"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/ssh"
 )
 
 // NewHTTPTransport initialize net/http Transport that will use SSH tunnel as
 // transport
-func NewHTTPTransport(connector *ssh.Connector, target kubeone.HostConfig, tlsConfig *tls.Config) (http.RoundTripper, error) {
+func NewHTTPTransport(connector *ssh.Connector, target kubeoneapi.HostConfig, tlsConfig *tls.Config) (http.RoundTripper, error) {
 	tunn, err := connector.Tunnel(target)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get SSH tunnel")

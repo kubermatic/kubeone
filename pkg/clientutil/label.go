@@ -27,7 +27,7 @@ const (
 
 func AddLabels(labels map[string]string, objects ...runtime.Object) []runtime.Object {
 	for i := range objects {
-		metaobj := objects[i].(metav1.Object)
+		metaobj, _ := objects[i].(metav1.Object)
 		existingLabels := metaobj.GetLabels()
 		copyLabels := map[string]string{}
 
@@ -40,7 +40,7 @@ func AddLabels(labels map[string]string, objects ...runtime.Object) []runtime.Ob
 		}
 
 		metaobj.SetLabels(copyLabels)
-		objects[i] = metaobj.(runtime.Object)
+		objects[i], _ = metaobj.(runtime.Object)
 	}
 
 	return objects

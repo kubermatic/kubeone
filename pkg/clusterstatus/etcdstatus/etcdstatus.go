@@ -64,6 +64,7 @@ func MemberList(s *state.State) (*clientv3.MemberListResponse, error) {
 	defer etcdcli.Close()
 
 	etcdRing, err := etcdcli.MemberList(s.Context)
+
 	return etcdRing, errors.Wrap(err, "failed etcd/clientv3.MemberList")
 }
 
@@ -97,6 +98,7 @@ func Get(s *state.State, node kubeoneapi.HostConfig, etcdRing *clientv3.MemberLi
 	for _, mem := range etcdRing.Members {
 		if mem.Name == node.Hostname {
 			status.Member = true
+
 			break
 		}
 	}

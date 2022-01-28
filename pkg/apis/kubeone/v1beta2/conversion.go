@@ -17,15 +17,16 @@ limitations under the License.
 package v1beta2
 
 import (
-	"k8c.io/kubeone/pkg/apis/kubeone"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 
 	conversion "k8s.io/apimachinery/pkg/conversion"
 )
 
-func Convert_kubeone_KubeOneCluster_To_v1beta2_KubeOneCluster(in *kubeone.KubeOneCluster, out *KubeOneCluster, scope conversion.Scope) error {
+func Convert_kubeone_KubeOneCluster_To_v1beta2_KubeOneCluster(in *kubeoneapi.KubeOneCluster, out *KubeOneCluster, scope conversion.Scope) error {
 	// AssetsConfiguration has been removed in the v1beta2 API
 	if err := autoConvert_kubeone_KubeOneCluster_To_v1beta2_KubeOneCluster(in, out, scope); err != nil {
 		return err
 	}
+
 	return nil
 }

@@ -17,7 +17,7 @@ limitations under the License.
 package scripts
 
 import (
-	"k8c.io/kubeone/pkg/apis/kubeone"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/containerruntime"
 )
 
@@ -121,7 +121,7 @@ fi
 `
 )
 
-func KubeadmCentOS(cluster *kubeone.KubeOneCluster, force bool) (string, error) {
+func KubeadmCentOS(cluster *kubeoneapi.KubeOneCluster, force bool) (string, error) {
 	proxy := cluster.Proxy.HTTPS
 	if proxy == "" {
 		proxy = cluster.Proxy.HTTP
@@ -152,7 +152,7 @@ func RemoveBinariesCentOS() (string, error) {
 	return Render(removeBinariesCentOSScriptTemplate, Data{})
 }
 
-func UpgradeKubeadmAndCNICentOS(cluster *kubeone.KubeOneCluster) (string, error) {
+func UpgradeKubeadmAndCNICentOS(cluster *kubeoneapi.KubeOneCluster) (string, error) {
 	proxy := cluster.Proxy.HTTPS
 	if proxy == "" {
 		proxy = cluster.Proxy.HTTP
@@ -177,7 +177,7 @@ func UpgradeKubeadmAndCNICentOS(cluster *kubeone.KubeOneCluster) (string, error)
 	return Render(kubeadmCentOSTemplate, data)
 }
 
-func UpgradeKubeletAndKubectlCentOS(cluster *kubeone.KubeOneCluster) (string, error) {
+func UpgradeKubeletAndKubectlCentOS(cluster *kubeoneapi.KubeOneCluster) (string, error) {
 	proxy := cluster.Proxy.HTTPS
 	if proxy == "" {
 		proxy = cluster.Proxy.HTTP

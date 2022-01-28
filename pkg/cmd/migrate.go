@@ -31,9 +31,9 @@ func migrateCmd(fs *pflag.FlagSet) *cobra.Command {
 		Use:   "migrate",
 		Short: "Commands for running different migrations",
 	}
-
 	cmd.AddCommand(migrateToContainerdCmd(fs))
 	cmd.AddCommand(migrateToCCMCSICmd(fs))
+
 	return cmd
 }
 
@@ -203,6 +203,7 @@ func runMigrateToCCMCSI(opts *migrateCCMOptions) error {
 
 	if !confirm {
 		s.Logger.Println("Operation canceled.")
+
 		return nil
 	}
 

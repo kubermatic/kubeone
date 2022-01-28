@@ -23,13 +23,13 @@ import (
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 
-	"k8c.io/kubeone/pkg/apis/kubeone"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/ssh"
 )
 
 // NewGRPCDialer initialize gRPC dialer that will use ssh tunnel as
 // transport
-func NewGRPCDialer(connector *ssh.Connector, target kubeone.HostConfig) (grpc.DialOption, error) {
+func NewGRPCDialer(connector *ssh.Connector, target kubeoneapi.HostConfig) (grpc.DialOption, error) {
 	tunnel, err := connector.Tunnel(target)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to establish SSH tunnel")

@@ -50,6 +50,7 @@ func ValidateOperatingSystem(osName string) error {
 		OperatingSystemDefault:
 		return nil
 	}
+
 	return errors.New("failed to validate operating system")
 }
 
@@ -76,6 +77,7 @@ func ControlPlaneImageFlags(provider string, osName OperatingSystem) ([]string, 
 			}, nil
 		}
 	}
+
 	return nil, errors.New("custom operating system is not supported for selected provider")
 }
 
@@ -89,6 +91,7 @@ func sshUsername(osName OperatingSystem) (string, error) {
 		return "core", nil
 	case OperatingSystemRHEL, OperatingSystemAmazon:
 		return "ec2-user", nil
+	case OperatingSystemDefault:
 	}
 
 	return "", errors.New("operating system not matched")

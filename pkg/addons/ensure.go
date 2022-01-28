@@ -246,6 +246,7 @@ func EnsureUserAddons(s *state.State) error {
 			if err := applier.loadAndDeleteAddon(s, applier.EmbededFS, embeddedAddon.Name); err != nil {
 				return errors.Wrapf(err, "failed to load and delete the addon %q", embeddedAddon.Name)
 			}
+
 			continue
 		}
 
@@ -293,6 +294,7 @@ func EnsureAddonByName(s *state.State, addonName string) error {
 				if err := applier.loadAndApplyAddon(s, applier.LocalFS, a.Name()); err != nil {
 					return errors.Wrap(err, "failed to load and apply addon")
 				}
+
 				return nil
 			}
 		}
@@ -311,6 +313,7 @@ func EnsureAddonByName(s *state.State, addonName string) error {
 			if err := applier.loadAndApplyAddon(s, applier.EmbededFS, a.Name()); err != nil {
 				return errors.Wrap(err, "failed to load and apply embedded addon")
 			}
+
 			return nil
 		}
 	}
@@ -343,6 +346,7 @@ func DeleteAddonByName(s *state.State, addonName string) error {
 				if err := applier.loadAndDeleteAddon(s, applier.LocalFS, a.Name()); err != nil {
 					return errors.Wrap(err, "failed to load and apply addon")
 				}
+
 				return nil
 			}
 		}
@@ -361,6 +365,7 @@ func DeleteAddonByName(s *state.State, addonName string) error {
 			if err := applier.loadAndDeleteAddon(s, applier.EmbededFS, a.Name()); err != nil {
 				return errors.Wrap(err, "failed to load and apply embedded addon")
 			}
+
 			return nil
 		}
 	}

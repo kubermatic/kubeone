@@ -46,6 +46,7 @@ func (opts *resetOpts) BuildState() (*state.State, error) {
 
 	s.DestroyWorkers = opts.DestroyWorkers
 	s.RemoveBinaries = opts.RemoveBinaries
+
 	return s, nil
 }
 
@@ -68,8 +69,8 @@ func resetCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 			if err != nil {
 				return errors.Wrap(err, "unable to get global flags")
 			}
-
 			opts.globalOptions = *gopts
+
 			return runReset(opts)
 		},
 	}
@@ -146,6 +147,7 @@ func runReset(opts *resetOpts) error {
 
 	if !confirm {
 		s.Logger.Println("Operation canceled.")
+
 		return nil
 	}
 

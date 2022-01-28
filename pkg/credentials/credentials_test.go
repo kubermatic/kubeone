@@ -144,6 +144,7 @@ func TestOpenstackValidationFunc(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			err := openstackValidationFunc(tt.creds)
 			if tt.err != nil && err != nil {
 				if err.Error() != tt.err.Error() {

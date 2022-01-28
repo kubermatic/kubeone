@@ -55,6 +55,7 @@ func setValueInMapSlice(m yaml.MapSlice, key interface{}, value interface{}) yam
 	for idx, item := range m {
 		if item.Key == key {
 			m[idx].Value = value
+
 			return m
 		}
 	}

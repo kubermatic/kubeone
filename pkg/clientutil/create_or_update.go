@@ -40,7 +40,7 @@ func CreateOrUpdate(ctx context.Context, c client.Client, obj client.Object, upd
 		update(c, obj)
 	}
 
-	existing := obj.DeepCopyObject().(client.Object)
+	existing, _ := obj.DeepCopyObject().(client.Object)
 	key := client.ObjectKey{
 		Name:      existing.GetName(),
 		Namespace: existing.GetNamespace(),
@@ -79,7 +79,7 @@ func CreateOrReplace(ctx context.Context, c client.Client, obj client.Object, up
 	}
 
 	// Object exists already, time to update it
-	existingObj := obj.DeepCopyObject().(client.Object)
+	existingObj, _ := obj.DeepCopyObject().(client.Object)
 	key := client.ObjectKey{
 		Name:      obj.GetName(),
 		Namespace: obj.GetNamespace(),

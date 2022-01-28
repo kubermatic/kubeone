@@ -66,6 +66,7 @@ func TestFeatureGatesString(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			got := marshalFeatureGates(tc.featureGates)
 			if got != tc.expected {
 				t.Errorf("TestFeatureGatesString() got = %v, expected %v", got, tc.expected)

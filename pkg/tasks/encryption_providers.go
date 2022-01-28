@@ -92,6 +92,7 @@ func uploadIdentityFirstEncryptionConfiguration(s *state.State) error {
 		return err
 	}
 	s.Configuration.AddFile("cfg/encryption-providers.yaml", config)
+
 	return s.RunTaskOnControlPlane(pushEncryptionConfigurationOnNode, state.RunParallel)
 }
 
@@ -113,6 +114,7 @@ func uploadEncryptionConfigurationWithNewKey(s *state.State) error {
 	}
 
 	s.Configuration.AddFile("cfg/encryption-providers.yaml", config)
+
 	return s.RunTaskOnControlPlane(pushEncryptionConfigurationOnNode, state.RunParallel)
 }
 
@@ -131,6 +133,7 @@ func uploadEncryptionConfigurationWithoutOldKey(s *state.State) error {
 		return err
 	}
 	s.Configuration.AddFile("cfg/encryption-providers.yaml", config)
+
 	return s.RunTaskOnControlPlane(pushEncryptionConfigurationOnNode, state.RunParallel)
 }
 
@@ -145,6 +148,7 @@ func pushEncryptionConfigurationOnNode(s *state.State, node *kubeoneapi.HostConf
 	}
 
 	_, _, err = s.Runner.RunRaw(cmd)
+
 	return err
 }
 
@@ -167,15 +171,18 @@ func rewriteClusterSecrets(s *state.State) error {
 			return errors.WithStack(updateErr)
 		}
 	}
+
 	return nil
 }
 
 func removeEncryptionProviderFile(s *state.State) error {
 	s.Logger.Infof("Removing EncryptionProviders configuration file...")
+
 	return s.RunTaskOnControlPlane(func(s *state.State, _ *kubeoneapi.HostConfig, _ ssh.Connection) error {
 		cmd := scripts.DeleteEncryptionProvidersConfig(s.GetEncryptionProviderConfigName())
 
 		_, _, err := s.Runner.RunRaw(cmd)
+
 		return err
 	}, state.RunParallel)
 }
@@ -186,5 +193,6 @@ func rewriteSecret(s *state.State, name, namespace string) error {
 	if err := s.DynamicClient.Get(s.Context, types.NamespacedName{Name: name, Namespace: namespace}, &secret); err != nil {
 		return err
 	}
+
 	return s.DynamicClient.Update(s.Context, &secret, &dynclient.UpdateOptions{})
 }

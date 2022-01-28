@@ -19,7 +19,7 @@ package scripts
 import (
 	"testing"
 
-	"k8c.io/kubeone/pkg/apis/kubeone"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/testhelper"
 )
 
@@ -27,7 +27,7 @@ func TestEnvironmentFile(t *testing.T) {
 	t.Parallel()
 
 	type args struct {
-		cluster *kubeone.KubeOneCluster
+		cluster *kubeoneapi.KubeOneCluster
 	}
 	tests := []struct {
 		name string
@@ -36,20 +36,20 @@ func TestEnvironmentFile(t *testing.T) {
 	}{
 		{
 			name: "empty-proxy",
-			args: args{cluster: &kubeone.KubeOneCluster{}},
+			args: args{cluster: &kubeoneapi.KubeOneCluster{}},
 		},
 		{
 			name: "http-proxy",
-			args: args{cluster: &kubeone.KubeOneCluster{
-				Proxy: kubeone.ProxyConfig{
+			args: args{cluster: &kubeoneapi.KubeOneCluster{
+				Proxy: kubeoneapi.ProxyConfig{
 					HTTP: "http://http.proxy",
 				},
 			}},
 		},
 		{
 			name: "http-https-proxy",
-			args: args{cluster: &kubeone.KubeOneCluster{
-				Proxy: kubeone.ProxyConfig{
+			args: args{cluster: &kubeoneapi.KubeOneCluster{
+				Proxy: kubeoneapi.ProxyConfig{
 					HTTP:  "http://http.proxy",
 					HTTPS: "http://https.proxy",
 				},
@@ -57,8 +57,8 @@ func TestEnvironmentFile(t *testing.T) {
 		},
 		{
 			name: "http-https-no-proxy",
-			args: args{cluster: &kubeone.KubeOneCluster{
-				Proxy: kubeone.ProxyConfig{
+			args: args{cluster: &kubeoneapi.KubeOneCluster{
+				Proxy: kubeoneapi.ProxyConfig{
 					HTTP:    "http://http.proxy",
 					HTTPS:   "http://https.proxy",
 					NoProxy: ".local",
@@ -70,9 +70,11 @@ func TestEnvironmentFile(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			got, err := EnvironmentFile(tt.args.cluster)
 			if err != tt.err {
 				t.Errorf("EnvironmentFile() error = %v, wantErr %v", err, tt.err)
+
 				return
 			}
 
@@ -87,6 +89,7 @@ func TestTestDaemonsProxy(t *testing.T) {
 	got, err := DaemonsEnvironmentDropIn("docker", "containerd", "kubelet")
 	if err != nil {
 		t.Errorf("DaemonsProxy() error = %v", err)
+
 		return
 	}
 

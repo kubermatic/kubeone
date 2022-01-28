@@ -42,6 +42,7 @@ func (c KubeOneCluster) Leader() (HostConfig, error) {
 			return host, nil
 		}
 	}
+
 	return HostConfig{}, errors.New("leader not found")
 }
 
@@ -49,6 +50,7 @@ func (c KubeOneCluster) RandomHost() HostConfig {
 	//nolint:gosec
 	// G404: Use of weak random number generator (math/rand instead of crypto/rand) (gosec)
 	n := rand.Int31n(int32(len(c.ControlPlane.Hosts)))
+
 	return c.ControlPlane.Hosts[n]
 }
 
@@ -61,6 +63,7 @@ func (c KubeOneCluster) Followers() []HostConfig {
 			followers = append(followers, h)
 		}
 	}
+
 	return followers
 }
 
@@ -323,16 +326,19 @@ func (c KubeOneCluster) InTreePluginUnregisterFeatureGate() []string {
 		if lessThan21.Check(ver) {
 			return []string{"CSIMigrationAzureDiskComplete", "CSIMigrationAzureFileComplete"}
 		}
+
 		return []string{"InTreePluginAzureDiskUnregister", "InTreePluginAzureFileUnregister"}
 	case c.CloudProvider.Openstack != nil:
 		if lessThan21.Check(ver) {
 			return []string{"CSIMigrationOpenStackComplete"}
 		}
+
 		return []string{"InTreePluginOpenStackUnregister"}
 	case c.CloudProvider.Vsphere != nil:
 		if lessThan21.Check(ver) {
 			return []string{"CSIMigrationvSphereComplete"}
 		}
+
 		return []string{"InTreePluginvSphereUnregister"}
 	}
 
@@ -346,6 +352,7 @@ func marshalFeatureGates(fgm map[string]bool) string {
 	}
 
 	sort.Strings(keys)
+
 	return strings.Join(keys, ",")
 }
 
@@ -355,6 +362,7 @@ func (r *RegistryConfiguration) ImageRegistry(defaultRegistry string) string {
 	if r != nil && r.OverwriteRegistry != "" {
 		return r.OverwriteRegistry
 	}
+
 	return defaultRegistry
 }
 
@@ -365,6 +373,7 @@ func (r *RegistryConfiguration) InsecureRegistryAddress() string {
 	if r != nil && r.InsecureRegistry {
 		insecureRegistry = r.OverwriteRegistry
 	}
+
 	return insecureRegistry
 }
 
@@ -421,6 +430,7 @@ func defaults(input, defaultValue string) string {
 	if input != "" {
 		return input
 	}
+
 	return defaultValue
 }
 

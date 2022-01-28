@@ -65,6 +65,7 @@ func Run(s *state.State, nodes corev1.NodeList) error {
 func verifyMatchNodes(hosts []kubeoneapi.HostConfig, nodes corev1.NodeList, logger logrus.FieldLogger, verbose bool) []error {
 	if len(nodes.Items) != len(hosts) {
 		logger.Errorf("Mismatch between nodes in the cluster (%d) and nodes defined in the manifest (%d).", len(nodes.Items), len(hosts))
+
 		return []error{errors.Errorf("expected %d cluster nodes but got %d", len(nodes.Items), len(hosts))}
 	}
 
@@ -84,6 +85,7 @@ func verifyMatchNodes(hosts []kubeoneapi.HostConfig, nodes corev1.NodeList, logg
 							logger.Infof("Found endpoint %q (type %s) for the node %q.", addr.Address, addr.Type, node.ObjectMeta.Name)
 						}
 					}
+				case corev1.NodeExternalDNS, corev1.NodeHostName, corev1.NodeInternalDNS:
 				}
 			}
 		}

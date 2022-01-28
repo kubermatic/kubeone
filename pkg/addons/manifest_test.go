@@ -176,6 +176,7 @@ func TestEnsureAddonsLabelsOnResources(t *testing.T) {
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			addonsDir := t.TempDir()
 
 			if writeErr := os.WriteFile(path.Join(addonsDir, "testManifest.yaml"), []byte(tc.addonManifest), 0600); writeErr != nil {

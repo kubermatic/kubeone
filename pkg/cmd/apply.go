@@ -203,6 +203,7 @@ func runApply(opts *applyOpts) error {
 	if !s.LiveCluster.Healthy() {
 		if opts.RotateEncryptionKey {
 			s.Logger.Errorln("cluster is not healthy, encryption key rotation is not supported")
+
 			return errors.New("cluster is not healthy, encryption key rotation is not supported")
 		}
 
@@ -231,6 +232,7 @@ func runApply(opts *applyOpts) error {
 		for _, node := range s.LiveCluster.ControlPlane {
 			if !node.IsInCluster {
 				runRepair = true
+
 				break
 			}
 		}
@@ -239,6 +241,7 @@ func runApply(opts *applyOpts) error {
 			for _, node := range s.LiveCluster.StaticWorkers {
 				if !node.IsInCluster {
 					runRepair = true
+
 					break
 				}
 			}
@@ -249,6 +252,7 @@ func runApply(opts *applyOpts) error {
 			s.Logger.Warnf("Requested version: %s\n", s.Cluster.Versions.Kubernetes)
 			s.Logger.Warnf("Highest version: %s\n", higherVer)
 			s.Logger.Warnf("Use version %s to repair the cluster, then run apply with the new version\n", higherVer)
+
 			return errors.New("repair and upgrade are not supported at the same time")
 		}
 
@@ -272,6 +276,7 @@ func runApply(opts *applyOpts) error {
 			s.Cluster.Features.EncryptionProviders.CustomEncryptionConfiguration != "" {
 			return errors.New("key rotation of custom providers file is not supported")
 		}
+
 		return runApplyRotateKey(s, opts)
 	}
 
@@ -324,6 +329,7 @@ func runApplyInstall(s *state.State, opts *applyOpts) error { // Print the expec
 
 	if !confirm {
 		s.Logger.Println("Operation canceled.")
+
 		return nil
 	}
 
@@ -343,6 +349,7 @@ func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
 	upgradeNeeded, err := s.LiveCluster.UpgradeNeeded()
 	if err != nil {
 		s.Logger.Errorf("Upgrade not allowed: %v\n", err)
+
 		return err
 	}
 
@@ -428,6 +435,7 @@ func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
 
 	if !confirm {
 		s.Logger.Println("Operation canceled.")
+
 		return nil
 	}
 
@@ -437,10 +445,12 @@ func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
 func runApplyRotateKey(s *state.State, opts *applyOpts) error {
 	if !opts.ForceUpgrade {
 		s.Logger.Error("rotating encryption keys requires the --force-upgrade flag")
+
 		return errors.New("rotating encryption keys requires the --force-upgrade flag")
 	}
 	if !s.EncryptionEnabled() {
 		s.Logger.Error("rotating encryption keys failed: Encryption Providers support is not enabled")
+
 		return errors.New("rotating encryption keys failed: Encryption Providers support is not enabled")
 	}
 
@@ -460,8 +470,10 @@ func runApplyRotateKey(s *state.State, opts *applyOpts) error {
 
 	if !confirm {
 		s.Logger.Println("Operation canceled.")
+
 		return nil
 	}
+
 	return errors.Wrap(tasksToRun.Run(s), "failed to reconcile the cluster")
 }
 
@@ -503,6 +515,7 @@ func boolStr(b bool) string {
 	if b {
 		return yes
 	}
+
 	return "no"
 }
 
@@ -510,6 +523,7 @@ func resolveInt(i *int) int {
 	if i == nil {
 		return 0
 	}
+
 	return *i
 }
 
@@ -517,5 +531,6 @@ func printVersion(version *semver.Version) string {
 	if version == nil {
 		return "unknown"
 	}
+
 	return version.String()
 }

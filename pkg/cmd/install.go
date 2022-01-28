@@ -94,6 +94,7 @@ func installCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 			}
 
 			opts.globalOptions = *gopts
+
 			return runInstall(opts)
 		},
 	}

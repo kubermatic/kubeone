@@ -66,12 +66,13 @@ func (c *Configuration) AddFilePath(filename, filePath, manifestFilePath string)
 	}
 
 	c.AddFile(filename, string(b))
+
 	return nil
 }
 
 // UploadTo directory all the files
 func (c *Configuration) UploadTo(conn ssh.Connection, directory string) error {
-	sshfs := sshiofs.New(conn).(sshiofs.MkdirFS)
+	sshfs, _ := sshiofs.New(conn).(sshiofs.MkdirFS)
 
 	for filename, content := range c.files {
 		target := filepath.Join(directory, filename)
@@ -88,7 +89,7 @@ func (c *Configuration) UploadTo(conn ssh.Connection, directory string) error {
 		}
 		defer f.Close()
 
-		file := f.(sshiofs.ExtendedFile)
+		file, _ := f.(sshiofs.ExtendedFile)
 		if err = file.Truncate(0); err != nil {
 			return err
 		}

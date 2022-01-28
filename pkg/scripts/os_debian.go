@@ -17,7 +17,7 @@ limitations under the License.
 package scripts
 
 import (
-	"k8c.io/kubeone/pkg/apis/kubeone"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/containerruntime"
 )
 
@@ -122,7 +122,7 @@ sudo apt-get remove --purge -y kubernetes-cni || true
 `
 )
 
-func KubeadmDebian(cluster *kubeone.KubeOneCluster, force bool) (string, error) {
+func KubeadmDebian(cluster *kubeoneapi.KubeOneCluster, force bool) (string, error) {
 	data := Data{
 		"KUBELET":                true,
 		"KUBEADM":                true,
@@ -149,7 +149,7 @@ func RemoveBinariesDebian() (string, error) {
 	return Render(removeBinariesDebianScriptTemplate, Data{})
 }
 
-func UpgradeKubeadmAndCNIDebian(cluster *kubeone.KubeOneCluster) (string, error) {
+func UpgradeKubeadmAndCNIDebian(cluster *kubeoneapi.KubeOneCluster) (string, error) {
 	data := Data{
 		"UPGRADE":                true,
 		"KUBEADM":                true,
@@ -170,7 +170,7 @@ func UpgradeKubeadmAndCNIDebian(cluster *kubeone.KubeOneCluster) (string, error)
 	return Render(kubeadmDebianTemplate, data)
 }
 
-func UpgradeKubeletAndKubectlDebian(cluster *kubeone.KubeOneCluster) (string, error) {
+func UpgradeKubeletAndKubectlDebian(cluster *kubeoneapi.KubeOneCluster) (string, error) {
 	data := Data{
 		"UPGRADE":                true,
 		"KUBELET":                true,

@@ -106,5 +106,6 @@ func GetCertificateSANs(host string, alternativeNames []string) []string {
 	for _, name := range alternativeNames {
 		certSANS = append(certSANS, strings.ToLower(name))
 	}
+
 	return certSANS
 }

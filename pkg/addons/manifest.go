@@ -58,6 +58,7 @@ func (a *applier) getManifestsFromDirectory(s *state.State, fsys fs.FS, addonNam
 		for _, addon := range s.Cluster.Addons.Addons {
 			if addon.Name == addonName {
 				addonParams = addon.Params
+
 				break
 			}
 		}
@@ -108,6 +109,7 @@ func (a *applier) loadAddonsManifests(
 			if verbose {
 				logger.Infof("Skipping file %q because it's not .yaml/.yml/.json file\n", file.Name())
 			}
+
 			continue
 		}
 
@@ -166,6 +168,7 @@ func (a *applier) loadAddonsManifests(
 				if err == io.EOF {
 					break
 				}
+
 				return nil, errors.Wrapf(err, "failed reading from YAML reader for manifest %s", file.Name())
 			}
 
@@ -258,6 +261,7 @@ func txtFuncMap(overwriteRegistry string) template.FuncMap {
 		if overwriteRegistry != "" {
 			return overwriteRegistry
 		}
+
 		return registry
 	}
 
@@ -276,16 +280,19 @@ func txtFuncMap(overwriteRegistry string) template.FuncMap {
 
 	funcs["caBundleEnvVar"] = func() (string, error) {
 		buf, err := yaml.Marshal([]corev1.EnvVar{cabundle.EnvVar()})
+
 		return string(buf), err
 	}
 
 	funcs["caBundleVolume"] = func() (string, error) {
 		buf, err := yaml.Marshal([]corev1.Volume{cabundle.Volume()})
+
 		return string(buf), err
 	}
 
 	funcs["caBundleVolumeMount"] = func() (string, error) {
 		buf, err := yaml.Marshal([]corev1.VolumeMount{cabundle.VolumeMount()})
+
 		return string(buf), err
 	}
 
@@ -299,6 +306,7 @@ func txtFuncMap(overwriteRegistry string) template.FuncMap {
 		}
 
 		buf, err := json.Marshal(equinixMetalSecret)
+
 		return string(buf), err
 	}
 

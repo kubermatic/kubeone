@@ -109,6 +109,7 @@ func installPrerequisitesOnNode(s *state.State, node *kubeoneapi.HostConfig, _ s
 	}
 
 	logger.Infoln("Installing kubeadm...")
+
 	return errors.Wrap(installKubeadm(s, *node), "failed to install kubeadm")
 }
 
@@ -289,5 +290,6 @@ func containerRuntimeEnvironment(s *state.State) error {
 	}
 
 	_, _, err = s.Runner.RunRaw(cmd)
+
 	return err
 }

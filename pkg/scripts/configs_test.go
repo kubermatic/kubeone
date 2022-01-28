@@ -37,9 +37,11 @@ func TestSaveCloudConfig(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			got, err := SaveCloudConfig(tt.workdir)
 			if err != tt.wantErr {
 				t.Errorf("SaveCloudConfig() error = %v, wantErr %v", err, tt.wantErr)
+
 				return
 			}
 
@@ -63,9 +65,11 @@ func TestSaveAuditPolicyConfig(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			got, err := SaveAuditPolicyConfig(tt.workdir)
 			if err != tt.err {
 				t.Errorf("SaveAuditPolicyConfig() error = %v, wantErr %v", err, tt.err)
+
 				return
 			}
 

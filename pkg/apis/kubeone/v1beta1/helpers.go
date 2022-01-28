@@ -45,5 +45,6 @@ func SetCloudProvider(cp *CloudProviderSpec, name string) error {
 	default:
 		return errors.Errorf("provider %q is not supported", name)
 	}
+
 	return nil
 }

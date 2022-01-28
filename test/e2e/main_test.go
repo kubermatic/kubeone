@@ -61,6 +61,7 @@ func init() {
 }
 
 func checkEnv(t *testing.T) {
+	t.Helper()
 	_, runThisTest := os.LookupEnv("KUBEONE_TEST_RUN")
 	if !runThisTest {
 		t.Skip("set KUBEONE_TEST_RUN to run this test")
@@ -69,6 +70,7 @@ func checkEnv(t *testing.T) {
 
 func setupTearDown(p provisioner.Provisioner, k *Kubeone) func(t *testing.T) {
 	return func(t *testing.T) {
+		t.Helper()
 		t.Log("cleanup ....")
 
 		errKubeone := k.Reset()
@@ -85,11 +87,14 @@ func setupTearDown(p provisioner.Provisioner, k *Kubeone) func(t *testing.T) {
 }
 
 func waitForNodesReady(t *testing.T, client dynclient.Client, expectedNumberOfNodes int) error {
+	t.Helper()
+
 	return wait.Poll(5*time.Second, 10*time.Minute, func() (bool, error) {
 		nodes := corev1.NodeList{}
 
 		if err := client.List(context.Background(), &nodes); err != nil {
 			t.Logf("error: %v", err)
+
 			return false, nil
 		}
 
@@ -104,6 +109,7 @@ func waitForNodesReady(t *testing.T, client dynclient.Client, expectedNumberOfNo
 				}
 			}
 		}
+
 		return true, nil
 	})
 }
@@ -166,5 +172,6 @@ func parseContainerImageVersion(image string) (*semver.Version, error) {
 	if len(ver) != 2 {
 		return nil, errors.Errorf("invalid container image format: %s", image)
 	}
+
 	return semver.NewVersion(ver[1])
 }

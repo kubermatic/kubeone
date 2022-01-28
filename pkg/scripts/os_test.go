@@ -19,89 +19,89 @@ package scripts
 import (
 	"testing"
 
-	"k8c.io/kubeone/pkg/apis/kubeone"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/testhelper"
 )
 
-type genClusterOpts func(*kubeone.KubeOneCluster)
+type genClusterOpts func(*kubeoneapi.KubeOneCluster)
 
-func withContainerd(cls *kubeone.KubeOneCluster) {
-	cls.ContainerRuntime.Containerd = &kubeone.ContainerRuntimeContainerd{}
+func withContainerd(cls *kubeoneapi.KubeOneCluster) {
+	cls.ContainerRuntime.Containerd = &kubeoneapi.ContainerRuntimeContainerd{}
 	cls.ContainerRuntime.Docker = nil
 }
 
-func withDocker(cls *kubeone.KubeOneCluster) {
+func withDocker(cls *kubeoneapi.KubeOneCluster) {
 	cls.ContainerRuntime.Containerd = nil
-	cls.ContainerRuntime.Docker = &kubeone.ContainerRuntimeDocker{}
+	cls.ContainerRuntime.Docker = &kubeoneapi.ContainerRuntimeDocker{}
 }
 
 func withKubeVersion(ver string) genClusterOpts {
-	return func(cls *kubeone.KubeOneCluster) {
+	return func(cls *kubeoneapi.KubeOneCluster) {
 		cls.Versions.Kubernetes = ver
 	}
 }
 
-func withNutanixCloudProvider(cls *kubeone.KubeOneCluster) {
-	cls.CloudProvider = kubeone.CloudProviderSpec{
-		Nutanix: &kubeone.NutanixSpec{},
+func withNutanixCloudProvider(cls *kubeoneapi.KubeOneCluster) {
+	cls.CloudProvider = kubeoneapi.CloudProviderSpec{
+		Nutanix: &kubeoneapi.NutanixSpec{},
 	}
 }
 
 func withProxy(proxy string) genClusterOpts {
-	return func(cls *kubeone.KubeOneCluster) {
+	return func(cls *kubeoneapi.KubeOneCluster) {
 		cls.Proxy.HTTPS = proxy
 		cls.Proxy.HTTP = proxy
 	}
 }
 
 func withRegistry(registry string) genClusterOpts {
-	return func(cls *kubeone.KubeOneCluster) {
-		cls.RegistryConfiguration = &kubeone.RegistryConfiguration{
+	return func(cls *kubeoneapi.KubeOneCluster) {
+		cls.RegistryConfiguration = &kubeoneapi.RegistryConfiguration{
 			OverwriteRegistry: registry,
 		}
 	}
 }
 
 func withInsecureRegistry(registry string) genClusterOpts {
-	return func(cls *kubeone.KubeOneCluster) {
-		cls.RegistryConfiguration = &kubeone.RegistryConfiguration{
+	return func(cls *kubeoneapi.KubeOneCluster) {
+		cls.RegistryConfiguration = &kubeoneapi.RegistryConfiguration{
 			OverwriteRegistry: registry,
 			InsecureRegistry:  true,
 		}
 	}
 }
 
-func withDefaultAssetConfiguration(cls *kubeone.KubeOneCluster) {
-	cls.AssetConfiguration = kubeone.AssetConfiguration{
-		Kubernetes: kubeone.ImageAsset{
+func withDefaultAssetConfiguration(cls *kubeoneapi.KubeOneCluster) {
+	cls.AssetConfiguration = kubeoneapi.AssetConfiguration{
+		Kubernetes: kubeoneapi.ImageAsset{
 			ImageRepository: "k8s.gcr.io",
 		},
-		CNI: kubeone.BinaryAsset{
+		CNI: kubeoneapi.BinaryAsset{
 			URL: "http://127.0.0.1/cni.tar.gz",
 		},
-		NodeBinaries: kubeone.BinaryAsset{
+		NodeBinaries: kubeoneapi.BinaryAsset{
 			URL: "http://127.0.0.1/node.tar.gz",
 		},
-		Kubectl: kubeone.BinaryAsset{
+		Kubectl: kubeoneapi.BinaryAsset{
 			URL: "http://127.0.0.1/kubectl.tar.gz",
 		},
 	}
 }
 
-func genCluster(opts ...genClusterOpts) kubeone.KubeOneCluster {
-	cls := &kubeone.KubeOneCluster{
-		Versions: kubeone.VersionConfig{
+func genCluster(opts ...genClusterOpts) kubeoneapi.KubeOneCluster {
+	cls := &kubeoneapi.KubeOneCluster{
+		Versions: kubeoneapi.VersionConfig{
 			Kubernetes: "1.17.4",
 		},
-		SystemPackages: &kubeone.SystemPackages{
+		SystemPackages: &kubeoneapi.SystemPackages{
 			ConfigureRepositories: true,
 		},
-		Proxy: kubeone.ProxyConfig{
+		Proxy: kubeoneapi.ProxyConfig{
 			HTTP:    "http://http.proxy",
 			HTTPS:   "http://https.proxy",
 			NoProxy: ".local",
 		},
-		LoggingConfig: kubeone.LoggingConfig{
+		LoggingConfig: kubeoneapi.LoggingConfig{
 			ContainerLogMaxSize:  "100Mi",
 			ContainerLogMaxFiles: 5,
 		},
@@ -118,7 +118,7 @@ func TestKubeadmDebian(t *testing.T) {
 	t.Parallel()
 
 	type args struct {
-		cluster kubeone.KubeOneCluster
+		cluster kubeoneapi.KubeOneCluster
 	}
 	tests := []struct {
 		name string
@@ -166,9 +166,11 @@ func TestKubeadmDebian(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			got, err := KubeadmDebian(&tt.args.cluster, false)
 			if err != tt.err {
 				t.Errorf("KubeadmDebian() error = %v, wantErr %v", err, tt.err)
+
 				return
 			}
 
@@ -184,7 +186,7 @@ func TestMigrateToContainerd(t *testing.T) {
 		name             string
 		insecureRegistry string
 		mirrors          []string
-		osName           kubeone.OperatingSystemName
+		osName           kubeoneapi.OperatingSystemName
 		err              error
 	}{
 		{
@@ -192,7 +194,7 @@ func TestMigrateToContainerd(t *testing.T) {
 		},
 		{
 			name:   "flatcar",
-			osName: kubeone.OperatingSystemNameFlatcar,
+			osName: kubeoneapi.OperatingSystemNameFlatcar,
 		},
 		{
 			name:             "insecureRegistry",
@@ -203,14 +205,16 @@ func TestMigrateToContainerd(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			cls := genCluster(
 				withInsecureRegistry(tt.insecureRegistry),
 				withContainerd,
 			)
 
-			got, err := MigrateToContainerd(&cls, &kubeone.HostConfig{OperatingSystem: tt.osName})
+			got, err := MigrateToContainerd(&cls, &kubeoneapi.HostConfig{OperatingSystem: tt.osName})
 			if err != tt.err {
 				t.Errorf("MigrateToContainerd() error = %v, wantErr %v", err, tt.err)
+
 				return
 			}
 
@@ -223,7 +227,7 @@ func TestKubeadmCentOS(t *testing.T) {
 	t.Parallel()
 
 	type args struct {
-		cluster kubeone.KubeOneCluster
+		cluster kubeoneapi.KubeOneCluster
 		force   bool
 	}
 	tests := []struct {
@@ -291,9 +295,11 @@ func TestKubeadmCentOS(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			got, err := KubeadmCentOS(&tt.args.cluster, tt.args.force)
 			if err != tt.err {
 				t.Errorf("KubeadmCentOS() error = %v, wantErr %v", err, tt.err)
+
 				return
 			}
 
@@ -306,7 +312,7 @@ func TestKubeadmAmazonLinux(t *testing.T) {
 	t.Parallel()
 
 	type args struct {
-		cluster kubeone.KubeOneCluster
+		cluster kubeoneapi.KubeOneCluster
 		force   bool
 	}
 	tests := []struct {
@@ -390,9 +396,11 @@ func TestKubeadmAmazonLinux(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			got, err := KubeadmAmazonLinux(&tt.args.cluster, tt.args.force)
 			if err != tt.err {
 				t.Errorf("KubeadmAmazonLinux() error = %v, wantErr %v", err, tt.err)
+
 				return
 			}
 
@@ -405,7 +413,7 @@ func TestKubeadmFlatcar(t *testing.T) {
 	t.Parallel()
 
 	type args struct {
-		cluster kubeone.KubeOneCluster
+		cluster kubeoneapi.KubeOneCluster
 	}
 	tests := []struct {
 		name string
@@ -453,9 +461,11 @@ func TestKubeadmFlatcar(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			got, err := KubeadmFlatcar(&tt.args.cluster)
 			if err != tt.err {
 				t.Errorf("KubeadmFlatcar() error = %v, wantErr %v", err, tt.err)
+
 				return
 			}
 
@@ -470,6 +480,7 @@ func TestRemoveBinariesDebian(t *testing.T) {
 	got, err := RemoveBinariesDebian()
 	if err != nil {
 		t.Errorf("RemoveBinariesDebian() error = %v", err)
+
 		return
 	}
 
@@ -482,6 +493,7 @@ func TestRemoveBinariesCentOS(t *testing.T) {
 	got, err := RemoveBinariesCentOS()
 	if err != nil {
 		t.Errorf("RemoveBinariesCentOS() error = %v", err)
+
 		return
 	}
 
@@ -494,6 +506,7 @@ func TestRemoveBinariesAmazonLinux(t *testing.T) {
 	got, err := RemoveBinariesAmazonLinux()
 	if err != nil {
 		t.Errorf("RemoveBinariesAmazonLinux() error = %v", err)
+
 		return
 	}
 
@@ -506,6 +519,7 @@ func TestRemoveBinariesFlatcar(t *testing.T) {
 	got, err := RemoveBinariesFlatcar()
 	if err != nil {
 		t.Errorf("RemoveBinariesFlatcar() error = %v", err)
+
 		return
 	}
 
@@ -519,6 +533,7 @@ func TestUpgradeKubeadmAndCNIDebian(t *testing.T) {
 	got, err := UpgradeKubeadmAndCNIDebian(&cls)
 	if err != nil {
 		t.Errorf("UpgradeKubeadmAndCNIDebian() error = %v", err)
+
 		return
 	}
 
@@ -532,6 +547,7 @@ func TestUpgradeKubeadmAndCNICentOS(t *testing.T) {
 	got, err := UpgradeKubeadmAndCNICentOS(&cls)
 	if err != nil {
 		t.Errorf("UpgradeKubeadmAndCNICentOS() error = %v", err)
+
 		return
 	}
 
@@ -545,6 +561,7 @@ func TestUpgradeKubeadmAndCNIAmazonLinux(t *testing.T) {
 	got, err := UpgradeKubeadmAndCNIAmazonLinux(&cls)
 	if err != nil {
 		t.Errorf("UpgradeKubeadmAndCNIAmazonLinux() error = %v", err)
+
 		return
 	}
 
@@ -557,6 +574,7 @@ func TestUpgradeKubeadmAndCNIFlatcar(t *testing.T) {
 	got, err := UpgradeKubeadmAndCNIFlatcar("v1.17.4")
 	if err != nil {
 		t.Errorf("UpgradeKubeadmAndCNIFlatcar() error = %v", err)
+
 		return
 	}
 
@@ -570,6 +588,7 @@ func TestUpgradeKubeletAndKubectlDebian(t *testing.T) {
 	got, err := UpgradeKubeletAndKubectlDebian(&cls)
 	if err != nil {
 		t.Errorf("UpgradeKubeletAndKubectlDebian() error = %v", err)
+
 		return
 	}
 
@@ -583,6 +602,7 @@ func TestUpgradeKubeletAndKubectlCentOS(t *testing.T) {
 	got, err := UpgradeKubeletAndKubectlCentOS(&cls)
 	if err != nil {
 		t.Errorf("UpgradeKubeletAndKubectlCentOS() error = %v", err)
+
 		return
 	}
 
@@ -596,6 +616,7 @@ func TestUpgradeKubeletAndKubectlAmazonLinux(t *testing.T) {
 	got, err := UpgradeKubeletAndKubectlAmazonLinux(&cls)
 	if err != nil {
 		t.Errorf("UpgradeKubeletAndKubectlAmazonLinux() error = %v", err)
+
 		return
 	}
 
@@ -608,6 +629,7 @@ func TestUpgradeKubeletAndKubectlFlatcar(t *testing.T) {
 	got, err := UpgradeKubeletAndKubectlFlatcar("v1.17.4")
 	if err != nil {
 		t.Errorf("UpgradeKubeletAndKubectlFlatcar() error = %v", err)
+
 		return
 	}
 

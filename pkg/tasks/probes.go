@@ -217,6 +217,7 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Conne
 			foundHost = &host
 			idx = i
 			controlPlane = true
+
 			break
 		}
 	}
@@ -226,6 +227,7 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Conne
 			if host.Config.Hostname == node.Hostname {
 				foundHost = &host
 				idx = i
+
 				break
 			}
 		}
@@ -278,6 +280,7 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Conne
 		s.LiveCluster.StaticWorkers[idx] = *foundHost
 	}
 	s.LiveCluster.Lock.Unlock()
+
 	return nil
 }
 
@@ -308,6 +311,7 @@ func investigateCluster(s *state.State) error {
 		s.Logger.Errorln("Failed to elect leader.")
 		s.Logger.Errorln("Quorum is mostly like lost, manual cluster repair might be needed.")
 		s.Logger.Errorln("Consider the KubeOne documentation for further steps.")
+
 		return errors.New("leader not elected, quorum mostly like lost")
 	}
 
@@ -359,6 +363,7 @@ func investigateCluster(s *state.State) error {
 				if node.Name == s.LiveCluster.ControlPlane[i].Config.Hostname {
 					s.LiveCluster.ControlPlane[i].IsInCluster = true
 					found = true
+
 					break
 				}
 			}
@@ -368,6 +373,7 @@ func investigateCluster(s *state.State) error {
 			for i := range s.LiveCluster.StaticWorkers {
 				if node.Name == s.LiveCluster.StaticWorkers[i].Config.Hostname {
 					s.LiveCluster.StaticWorkers[i].IsInCluster = true
+
 					break
 				}
 			}
@@ -568,6 +574,7 @@ func detectEncryptionProvidersEnabled(s *state.State) (ees encryptionEnabledStat
 			}
 		}
 	}
+
 	return ees, nil
 }
 
@@ -627,6 +634,7 @@ func detectCCMMigrationStatus(s *state.State) (*state.CCMStatus, error) {
 		ccmLabelValue = "vsphere-cloud-controller-manager"
 	default:
 		status.ExternalCCMDeployed = false
+
 		return status, nil
 	}
 

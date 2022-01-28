@@ -100,6 +100,7 @@ func longFlagName(obj interface{}, fieldName string) string {
 func shortFlagName(obj interface{}, fieldName string) string {
 	elem := reflect.TypeOf(obj).Elem()
 	field, _ := elem.FieldByName(fieldName)
+
 	return field.Tag.Get("shortflag")
 }
 

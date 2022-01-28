@@ -17,7 +17,7 @@ limitations under the License.
 package scripts
 
 import (
-	"k8c.io/kubeone/pkg/apis/kubeone"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/containerruntime"
 )
 
@@ -189,7 +189,7 @@ sudo systemctl daemon-reload
 `
 )
 
-func KubeadmAmazonLinux(cluster *kubeone.KubeOneCluster, force bool) (string, error) {
+func KubeadmAmazonLinux(cluster *kubeoneapi.KubeOneCluster, force bool) (string, error) {
 	proxy := cluster.Proxy.HTTPS
 	if proxy == "" {
 		proxy = cluster.Proxy.HTTP
@@ -223,7 +223,7 @@ func RemoveBinariesAmazonLinux() (string, error) {
 	return Render(removeBinariesAmazonLinuxScriptTemplate, Data{})
 }
 
-func UpgradeKubeadmAndCNIAmazonLinux(cluster *kubeone.KubeOneCluster) (string, error) {
+func UpgradeKubeadmAndCNIAmazonLinux(cluster *kubeoneapi.KubeOneCluster) (string, error) {
 	proxy := cluster.Proxy.HTTPS
 	if proxy == "" {
 		proxy = cluster.Proxy.HTTP
@@ -250,7 +250,7 @@ func UpgradeKubeadmAndCNIAmazonLinux(cluster *kubeone.KubeOneCluster) (string, e
 	return Render(kubeadmAmazonLinuxTemplate, data)
 }
 
-func UpgradeKubeletAndKubectlAmazonLinux(cluster *kubeone.KubeOneCluster) (string, error) {
+func UpgradeKubeletAndKubectlAmazonLinux(cluster *kubeoneapi.KubeOneCluster) (string, error) {
 	proxy := cluster.Proxy.HTTPS
 	if proxy == "" {
 		proxy = cluster.Proxy.HTTP
