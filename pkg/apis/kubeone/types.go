@@ -72,6 +72,9 @@ type LoggingConfig struct {
 	// ContainerLogMaxSize configures the maximum size of container log file before it is rotated
 	// See more at: https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/
 	ContainerLogMaxSize string `json:"containerLogMaxSize,omitempty"`
+	// ContainerLogMaxFiles configures the maximum number of container log files that can be present for a container
+	// See more at: https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/
+	ContainerLogMaxFiles int32 `json:"containerLogMaxFiles,omitempty"`
 }
 
 // ContainerRuntimeConfig

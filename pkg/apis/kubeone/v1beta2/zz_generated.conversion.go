@@ -1509,6 +1509,7 @@ func Convert_kubeone_KubeletConfig_To_v1beta2_KubeletConfig(in *kubeone.KubeletC
 
 func autoConvert_v1beta2_LoggingConfig_To_kubeone_LoggingConfig(in *LoggingConfig, out *kubeone.LoggingConfig, s conversion.Scope) error {
 	out.ContainerLogMaxSize = in.ContainerLogMaxSize
+	out.ContainerLogMaxFiles = in.ContainerLogMaxFiles
 	return nil
 }
 
@@ -1519,6 +1520,7 @@ func Convert_v1beta2_LoggingConfig_To_kubeone_LoggingConfig(in *LoggingConfig, o
 
 func autoConvert_kubeone_LoggingConfig_To_v1beta2_LoggingConfig(in *kubeone.LoggingConfig, out *LoggingConfig, s conversion.Scope) error {
 	out.ContainerLogMaxSize = in.ContainerLogMaxSize
+	out.ContainerLogMaxFiles = in.ContainerLogMaxFiles
 	return nil
 }
 

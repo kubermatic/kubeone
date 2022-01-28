@@ -18,6 +18,7 @@ package containerruntime
 
 import (
 	"encoding/json"
+	"strconv"
 	"strings"
 
 	"k8c.io/kubeone/pkg/apis/kubeone"
@@ -33,6 +34,7 @@ type dockerConfig struct {
 }
 
 func marshalDockerConfig(cluster *kubeone.KubeOneCluster) (string, error) {
+	// Parse log max size to ensure that it has the correct units
 	logSize := strings.ToLower(cluster.LoggingConfig.ContainerLogMaxSize)
 	logSize = strings.ReplaceAll(logSize, "ki", "k")
 	logSize = strings.ReplaceAll(logSize, "mi", "m")
@@ -44,6 +46,7 @@ func marshalDockerConfig(cluster *kubeone.KubeOneCluster) (string, error) {
 		LogDriver:     "json-file",
 		LogOpts: map[string]string{
 			"max-size": logSize,
+			"max-file": strconv.Itoa(int(cluster.LoggingConfig.ContainerLogMaxFiles)),
 		},
 	}
 
