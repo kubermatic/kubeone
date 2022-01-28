@@ -1,0 +1,148 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: operating-system-manager-webhook-serving-cert
+  namespace: kube-system
+data:
+{{ if .Certificates.OperatingSystemManagerWebhookCert }}
+  "cert.pem": |
+{{ .Certificates.OperatingSystemManagerWebhookCert | b64enc | indent 4 }}
+{{ end }}
+{{ if .Certificates.OperatingSystemManagerWebhookKey }}
+  "key.pem": |
+{{ .Certificates.OperatingSystemManagerWebhookKey | b64enc | indent 4 }}
+  "ca.crt": |
+{{ end }}
+{{ .Certificates.KubernetesCA | b64enc | indent 4 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: operating-system-manager-webhook
+  namespace: kube-system
+spec:
+  ports:
+    - port: 443
+      protocol: TCP
+      targetPort: 9876
+  selector:
+    app: operating-system-manager-webhook
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: operating-system-manager-webhook
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: operating-system-manager-webhook
+  template:
+    metadata:
+      labels:
+        app: operating-system-manager-webhook
+    spec:
+      nodeSelector:
+        node-role.kubernetes.io/master: ""
+      tolerations:
+        - key: "node-role.kubernetes.io/master"
+          operator: Exists
+          effect: NoSchedule
+        - key: "node.cloudprovider.kubernetes.io/uninitialized"
+          value: "true"
+          effect: NoSchedule
+        - key: "CriticalAddonsOnly"
+          operator: Exists
+        - key: "node-role.kubernetes.io/control-plane"
+          effect: NoSchedule
+      serviceAccountName: operating-system-manager-webhook
+      containers:
+        - image: "{{ .InternalImages.Get "OperatingSystemManager" }}"
+          imagePullPolicy: IfNotPresent
+          name: operating-system-manager-webhook
+          command:
+            - /usr/local/bin/webhook
+          args:
+            - -logtostderr
+            - -v=4
+            - -listen-address=0.0.0.0:9876
+            - -namespace=kube-system
+          volumeMounts:
+            - name: operating-system-manager-webhook-serving-cert
+              mountPath: /tmp/cert
+              readOnly: true
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 9876
+              scheme: HTTPS
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 9876
+              scheme: HTTPS
+            periodSeconds: 5
+          resources:
+            limits:
+              cpu: 500m
+              memory: 256Mi
+            requests:
+              cpu: 50m
+              memory: 64Mi
+      volumes:
+        - name: operating-system-manager-webhook-serving-cert
+          secret:
+            secretName: operating-system-manager-webhook-serving-cert
+            defaultMode: 0444
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: operatingsystemmanager.k8c.io
+webhooks:
+  - name: operatingsystemprofiles.operatingsystemmanager.k8c.io
+    failurePolicy: Fail
+    sideEffects: None
+    admissionReviewVersions: ["v1", "v1beta1"]
+    rules:
+      - apiGroups:
+          - "operatingsystemmanager.k8c.io"
+        apiVersions:
+          - v1alpha1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - operatingsystemprofiles
+    clientConfig:
+      service:
+        namespace: kube-system
+        name: operating-system-manager-webhook
+        path: /operatingsystemprofile
+      caBundle: |
+{{ .Certificates.KubernetesCA | b64enc | indent 8 }}
+  - name: operatingsystemconfigs.operatingsystemmanager.k8c.io
+    failurePolicy: Fail
+    sideEffects: None
+    admissionReviewVersions: ["v1", "v1beta1"]
+    rules:
+      - apiGroups:
+          - "operatingsystemmanager.k8c.io"
+        apiVersions:
+          - v1alpha1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - operatingsystemconfigs
+    clientConfig:
+      service:
+        namespace: kube-system
+        name: operating-system-manager-webhook
+        path: /operatingsystemconfig
+      caBundle: |
+{{ .Certificates.KubernetesCA | b64enc | indent 8 }}

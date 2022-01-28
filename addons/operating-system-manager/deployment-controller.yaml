@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: operating-system-manager
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: operating-system-manager
+  template:
+    metadata:
+      annotations:
+        "prometheus.io/scrape": "true"
+        "prometheus.io/port": "8080"
+        "prometheus.io/path": "/metrics"
+      labels:
+        app: operating-system-manager
+    spec:
+      nodeSelector:
+        node-role.kubernetes.io/master: ""
+      tolerations:
+        - key: "node-role.kubernetes.io/master"
+          operator: Exists
+          effect: NoSchedule
+        - key: "node.cloudprovider.kubernetes.io/uninitialized"
+          value: "true"
+          effect: NoSchedule
+        - key: "CriticalAddonsOnly"
+          operator: Exists
+        - key: "node-role.kubernetes.io/control-plane"
+          effect: NoSchedule
+      serviceAccountName: operating-system-manager
+      containers:
+        - name: operating-system-manager
+          image: "{{ .InternalImages.Get "OperatingSystemManager" }}"
+          imagePullPolicy: IfNotPresent
+          command:
+            - /usr/local/bin/osm-controller
+          args:
+            - -logtostderr
+            - -v=4
+            - -health-probe-address=0.0.0.0:8085
+            - -metrics-address=0.0.0.0:8080
+            - -cluster-dns={{ .Resources.NodeLocalDNSVirtualIP }}
+            - -namespace=kube-system
+            - -container-runtime={{ .Config.ContainerRuntime }}
+            - -pause-image={{ .InternalImages.Get "PauseImage" }}
+            {{ range .Config.ContainerRuntime.MachineControllerFlags -}}
+            - {{ . }}
+            {{ end -}}
+            {{ with .Config.RegistryConfiguration.InsecureRegistryAddress -}}
+            - -node-insecure-registries={{ . }}
+            {{ end -}}
+            {{ with .Config.Proxy.HTTP }}
+            - -node-http-proxy={{ . }}
+            {{ end }}
+            {{ with .Config.Proxy.NoProxy }}
+            - -node-no-proxy={{ . }}
+            {{ end }}
+          env:
+            - name: HTTPS_PROXY
+              value: "{{ .Config.Proxy.HTTPS }}"
+            - name: NO_PROXY
+              value: "{{ .Config.Proxy.NoProxy }}"
+{{ .OperatingSystemManagerCredentialsEnvVars | indent 12 }}
+          ports:
+            - containerPort: 8085
+          livenessProbe:
+            httpGet:
+              path: /readyz
+              port: 8085
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8085
+            periodSeconds: 5
+          resources:
+            limits:
+              cpu: "2"
+              memory: 512Mi
+            requests:
+              cpu: 50m
+              memory: 128Mi

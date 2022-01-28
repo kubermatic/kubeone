@@ -28,6 +28,7 @@ import (
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/externalccm"
 	"k8c.io/kubeone/pkg/templates/machinecontroller"
+	"k8c.io/kubeone/pkg/templates/operatingsystemmanager"
 )
 
 type Tasks []Task
@@ -258,6 +259,11 @@ func WithResources(t Tasks) Tasks {
 			{
 				Fn:     machinecontroller.WaitReady,
 				ErrMsg: "failed to wait for machine-controller",
+			},
+			{
+				Fn:        operatingsystemmanager.WaitReady,
+				ErrMsg:    "failed to wait for operating-system-manager",
+				Predicate: func(s *state.State) bool { return s.Cluster.OperatingSystemManagerEnabled() },
 			},
 			{
 				Fn:          upgradeMachineDeployments,

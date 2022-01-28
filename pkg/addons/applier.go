@@ -25,6 +25,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/pkg/errors"
+	corev1 "k8s.io/api/core/v1"
 
 	embeddedaddons "k8c.io/kubeone/addons"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
@@ -59,18 +60,20 @@ type applier struct {
 
 // TemplateData is data available in the addons render template
 type templateData struct {
-	Config                              *kubeoneapi.KubeOneCluster
-	Certificates                        map[string]string
-	Credentials                         map[string]string
-	CredentialsCCM                      map[string]string
-	CCMClusterName                      string
-	CSIMigration                        bool
-	CSIMigrationFeatureGates            string
-	MachineControllerCredentialsEnvVars string
-	RegistryCredentials                 []registryCredentialsContainer
-	InternalImages                      *internalImages
-	Resources                           map[string]string
-	Params                              map[string]string
+	Config                                   *kubeoneapi.KubeOneCluster
+	Certificates                             map[string]string
+	Credentials                              map[string]string
+	CredentialsCCM                           map[string]string
+	CCMClusterName                           string
+	CSIMigration                             bool
+	CSIMigrationFeatureGates                 string
+	MachineControllerCredentialsEnvVars      string
+	OperatingSystemManagerEnabled            bool
+	OperatingSystemManagerCredentialsEnvVars string
+	RegistryCredentials                      []registryCredentialsContainer
+	InternalImages                           *internalImages
+	Resources                                map[string]string
+	Params                                   map[string]string
 }
 
 type registryCredentialsContainer struct {
@@ -108,6 +111,20 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 	credsEnvVarsMC, err := yaml.Marshal(envVarsMC)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to convert env var bindings for credentials to yaml")
+	}
+
+	var credsEnvVarsOSM []byte
+	if s.Cluster.OperatingSystemManagerEnabled() {
+		var envVarsOSM []corev1.EnvVar
+		envVarsOSM, err = credentials.EnvVarBindings(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.SecretNameOSM, credentials.TypeOSM)
+		if err != nil {
+			return nil, errors.Wrap(err, "unable to fetch env var bindings for credentials")
+		}
+
+		credsEnvVarsOSM, err = yaml.Marshal(envVarsOSM)
+		if err != nil {
+			return nil, errors.Wrap(err, "unable to convert env var bindings for credentials to yaml")
+		}
 	}
 
 	kubeCAPrivateKey, kubeCACert, err := certificate.CAKeyPair(s.Configuration)
@@ -199,6 +216,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		CSIMigration:                        csiMigration,
 		CSIMigrationFeatureGates:            csiMigrationFeatureGates,
 		MachineControllerCredentialsEnvVars: string(credsEnvVarsMC),
+		OperatingSystemManagerEnabled:       s.Cluster.OperatingSystemManagerEnabled(),
 		RegistryCredentials:                 regCredentials,
 		InternalImages: &internalImages{
 			pauseImage: s.PauseImage,
@@ -252,6 +270,23 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		data.Certificates["DigitalOceanCSIWebhookKey"] = digitaloceanCSICertsMap[resources.TLSKeyName]
 	}
 
+	// Certs for operating-system-manager-webhook
+	if s.Cluster.OperatingSystemManagerEnabled() {
+		osmCertsMap, err := certificate.NewSignedTLSCert(
+			resources.OperatingSystemManagerWebhookName,
+			resources.OperatingSystemManagerNamespace,
+			s.Cluster.ClusterNetwork.ServiceDomainName,
+			kubeCAPrivateKey,
+			kubeCACert,
+		)
+		if err != nil {
+			return nil, err
+		}
+		data.Certificates["OperatingSystemManagerWebhookCert"] = osmCertsMap[resources.TLSCertName]
+		data.Certificates["OperatingSystemManagerWebhookKey"] = osmCertsMap[resources.TLSKeyName]
+		data.OperatingSystemManagerCredentialsEnvVars = string(credsEnvVarsOSM)
+	}
+
 	return &applier{
 		TemplateData: data,
 		LocalFS:      localFS,
@@ -267,7 +302,6 @@ func (a *applier) loadAndApplyAddon(s *state.State, fsys fs.FS, addonName string
 	if err != nil {
 		return errors.WithStack(err)
 	}
-
 	if len(strings.TrimSpace(manifest)) == 0 {
 		if len(addonName) != 0 {
 			s.Logger.Warnf("Addon directory %q is empty, skipping...", addonName)

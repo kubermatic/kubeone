@@ -310,8 +310,10 @@ func runApplyInstall(s *state.State, opts *applyOpts) error { // Print the expec
 		fmt.Printf("\t+ ensure machinedeployment %q with %d replica(s) exists\n", node.Name, resolveInt(node.Replicas))
 	}
 
-	if s.Cluster.Addons != nil && s.Cluster.Addons.Enable {
-		fmt.Printf("\t+ apply addons defined in %q\n", s.Cluster.Addons.Path)
+	if s.Cluster.Addons.Enabled() && s.Cluster.Addons.Path != "" {
+		fmt.Printf("\t+ apply embedded and custom addons defined in %q\n", s.Cluster.Addons.Path)
+	} else if s.Cluster.Addons.Enabled() {
+		fmt.Print("\t+ apply embedded addons")
 	}
 
 	fmt.Println()

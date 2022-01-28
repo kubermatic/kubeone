@@ -38,7 +38,7 @@ import (
 
 const appLabelKey = "app"
 
-// WaitReady waits for machine-controller and its webhook to became ready
+// WaitReady waits for machine-controller and its webhook to become ready
 func WaitReady(s *state.State) error {
 	if !s.Cluster.MachineController.Deploy {
 		return nil
@@ -178,7 +178,7 @@ func WaitDestroy(s *state.State) error {
 	})
 }
 
-// waitForMachineController waits for machine-controller-webhook to become running
+// waitForMachineController waits for machine-controller to become running
 func waitForMachineController(ctx context.Context, client dynclient.Client) error {
 	condFn := clientutil.PodsReadyCondition(ctx, client, dynclient.ListOptions{
 		Namespace: resources.MachineControllerNameSpace,

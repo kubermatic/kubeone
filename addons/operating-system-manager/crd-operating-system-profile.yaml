@@ -1,0 +1,241 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: operatingsystemprofiles.operatingsystemmanager.k8c.io
+spec:
+  group: operatingsystemmanager.k8c.io
+  names:
+    kind: OperatingSystemProfile
+    listKind: OperatingSystemProfileList
+    plural: operatingsystemprofiles
+    singular: operatingsystemprofile
+    shortNames:
+      - osp
+  scope: Namespaced
+  versions:
+    - name: v1alpha1
+      storage: true
+      served: true
+      schema:
+        openAPIV3Schema:
+          description: OperatingSystemProfile is the object that represents the OperatingSystemProfile
+          type: object
+          required:
+            - spec
+          properties:
+            apiVersion:
+              description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+              type: string
+            kind:
+              description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+              type: string
+            metadata:
+              type: object
+            spec:
+              description: OperatingSystemProfileSpec represents the operating system configuration spec.
+              type: object
+              required:
+                - osName
+                - osVersion
+                - supportedCloudProviders
+                - supportedContainerRuntimes
+                - version
+              properties:
+                files:
+                  description: Files is a list of files that should exist in the instance
+                  type: array
+                  items:
+                    description: File is a file that should get written to the host's file system. The content can either be inlined or referenced from a secret in the same namespace.
+                    type: object
+                    required:
+                      - content
+                      - path
+                    properties:
+                      content:
+                        description: Content describe the file's content.
+                        type: object
+                        properties:
+                          inline:
+                            description: Inline is a struct that contains information about the inlined data.
+                            type: object
+                            required:
+                              - data
+                            properties:
+                              data:
+                                description: Data is the file's data.
+                                type: string
+                              encoding:
+                                description: Encoding is the file's encoding (e.g. base64).
+                                type: string
+                      path:
+                        description: Path is the path of the file system where the file should get written to.
+                        type: string
+                      permissions:
+                        description: Permissions describes with which permissions the file should get written to the file system. Should be defaulted to octal 0644.
+                        type: integer
+                        format: int32
+                modules:
+                  description: CloudInitModules field contains the optional cloud-init modules which are supported by OSM
+                  type: object
+                  properties:
+                    bootcmd:
+                      description: BootCMD module runs arbitrary commands very early in the boot process, only slightly after a boothook would run.
+                      type: array
+                      items:
+                        type: string
+                    rh_subscription:
+                      description: RHSubscription registers a Red Hat system either by username and password or activation and org
+                      type: object
+                      additionalProperties:
+                        type: string
+                    runcmd:
+                      description: RunCMD Run arbitrary commands at a rc.local like level with output to the console.
+                      type: array
+                      items:
+                        type: string
+                osName:
+                  description: 'OSType represent the operating system name e.g: ubuntu'
+                  type: string
+                  enum:
+                    - flatcar
+                    - rhel
+                    - centos
+                    - ubuntu
+                    - sles
+                    - amzn2
+                osVersion:
+                  description: OSVersion the version of the operating system
+                  type: string
+                supportedCloudProviders:
+                  description: SupportedCloudProviders represent the cloud providers that support the given operating system version
+                  type: array
+                  items:
+                    description: CloudProviderSpec contains the os/image reference for a specific supported cloud provider
+                    type: object
+                    required:
+                      - name
+                    properties:
+                      name:
+                        description: Name represents the name of the supported cloud provider
+                        type: string
+                        enum:
+                          - aws
+                          - azure
+                          - digitalocean
+                          - gce
+                          - hetzner
+                          - kubevirt
+                          - linode
+                          - openstack
+                          - equinixmetal
+                          - vsphere
+                          - fake
+                          - alibaba
+                          - anexia
+                          - scaleway
+                          - baremetal
+                          - external
+                      spec:
+                        description: Spec represents the os/image reference in the supported cloud provider
+                        type: object
+                        x-kubernetes-preserve-unknown-fields: true
+                supportedContainerRuntimes:
+                  description: SupportedContainerRuntimes represents the container runtimes supported by the given OS
+                  type: array
+                  items:
+                    description: ContainerRuntimeSpec aggregates information about a specific container runtime
+                    type: object
+                    required:
+                      - files
+                      - name
+                    properties:
+                      files:
+                        description: Files to add to the main files list when the containerRuntime is selected
+                        type: array
+                        items:
+                          description: File is a file that should get written to the host's file system. The content can either be inlined or referenced from a secret in the same namespace.
+                          type: object
+                          required:
+                            - content
+                            - path
+                          properties:
+                            content:
+                              description: Content describe the file's content.
+                              type: object
+                              properties:
+                                inline:
+                                  description: Inline is a struct that contains information about the inlined data.
+                                  type: object
+                                  required:
+                                    - data
+                                  properties:
+                                    data:
+                                      description: Data is the file's data.
+                                      type: string
+                                    encoding:
+                                      description: Encoding is the file's encoding (e.g. base64).
+                                      type: string
+                            path:
+                              description: Path is the path of the file system where the file should get written to.
+                              type: string
+                            permissions:
+                              description: Permissions describes with which permissions the file should get written to the file system. Should be defaulted to octal 0644.
+                              type: integer
+                              format: int32
+                      name:
+                        description: Name of the Container runtime
+                        type: string
+                        enum:
+                          - docker
+                          - containerd
+                      templates:
+                        description: Templates to add to the available templates when the containerRuntime is selected
+                        type: object
+                        additionalProperties:
+                          type: string
+                templates:
+                  description: Templates to be included in units and files
+                  type: object
+                  additionalProperties:
+                    type: string
+                units:
+                  description: Units a list of the systemd unit files which will run on the instance
+                  type: array
+                  items:
+                    description: Unit is a systemd unit used for the operating system config.
+                    type: object
+                    required:
+                      - name
+                    properties:
+                      content:
+                        description: Content is the unit's content.
+                        type: string
+                      dropIns:
+                        description: DropIns is a list of drop-ins for this unit.
+                        type: array
+                        items:
+                          description: DropIn is a drop-in configuration for a systemd unit.
+                          type: object
+                          required:
+                            - content
+                            - name
+                          properties:
+                            content:
+                              description: Content is the content of the drop-in.
+                              type: string
+                            name:
+                              description: Name is the name of the drop-in.
+                              type: string
+                      enable:
+                        description: Enable describes whether the unit is enabled or not.
+                        type: boolean
+                      mask:
+                        description: Mask describes whether the unit is masked or not.
+                        type: boolean
+                      name:
+                        description: Name is the name of a unit.
+                        type: string
+                version:
+                  description: Version is the version of the operating System Profile
+                  type: string
+                  pattern: v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$
