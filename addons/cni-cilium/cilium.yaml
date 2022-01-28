@@ -464,18 +464,6 @@ spec:
         - cilium-agent
         args:
         - --config-dir=/tmp/cilium/config-map
-        startupProbe:
-          httpGet:
-            host: "127.0.0.1"
-            path: /healthz
-            port: 9876
-            scheme: HTTP
-            httpHeaders:
-            - name: "brief"
-              value: "true"
-          failureThreshold: 105
-          periodSeconds: 2
-          successThreshold: 1
         livenessProbe:
           httpGet:
             host: "127.0.0.1"
@@ -485,6 +473,12 @@ spec:
             httpHeaders:
             - name: "brief"
               value: "true"
+          # The initial delay for the liveness probe is intentionally large to
+          # avoid an endless kill & restart cycle if in the event that the initial
+          # bootstrapping takes longer than expected.
+          # Starting from Kubernetes 1.20, we are using startupProbe instead
+          # of this field.
+          initialDelaySeconds: 120
           periodSeconds: 30
           successThreshold: 1
           failureThreshold: 10
@@ -498,6 +492,7 @@ spec:
             httpHeaders:
             - name: "brief"
               value: "true"
+          initialDelaySeconds: 5
           periodSeconds: 30
           successThreshold: 1
           failureThreshold: 3
@@ -980,43 +975,43 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: hubble-ui
 rules:
-  - apiGroups:
-      - networking.k8s.io
-    resources:
-      - networkpolicies
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - ""
-    resources:
-      - componentstatuses
-      - endpoints
-      - namespaces
-      - nodes
-      - pods
-      - services
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - apiextensions.k8s.io
-    resources:
-      - customresourcedefinitions
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - cilium.io
-    resources:
-      - "*"
-    verbs:
-      - get
-      - list
-      - watch
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - networkpolicies
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - componentstatuses
+  - endpoints
+  - namespaces
+  - nodes
+  - pods
+  - services
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - cilium.io
+  resources:
+  - "*"
+  verbs:
+  - get
+  - list
+  - watch
 ---
 # Source: cilium/templates/hubble/tls-cronjob/clusterrolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -1059,9 +1054,9 @@ spec:
   selector:
     k8s-app: hubble-relay
   ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 4245
+  - protocol: TCP
+    port: 80
+    targetPort: 4245
 ---
 # Source: cilium/templates/hubble-ui/service.yaml
 kind: Service
@@ -1106,13 +1101,13 @@ spec:
       affinity:
         podAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                  - key: "k8s-app"
-                    operator: In
-                    values:
-                      - cilium
-              topologyKey: "kubernetes.io/hostname"
+          - labelSelector:
+              matchExpressions:
+                - key: "k8s-app"
+                  operator: In
+                  values:
+                    - cilium
+            topologyKey: "kubernetes.io/hostname"
       containers:
         - name: hubble-relay
           image: {{ .InternalImages.Get "HubbleRelay" }}
@@ -1131,15 +1126,15 @@ spec:
             tcpSocket:
               port: grpc
           volumeMounts:
-            - name: hubble-sock-dir
-              mountPath: /var/run/cilium
-              readOnly: true
-            - name: config
-              mountPath: /etc/hubble-relay
-              readOnly: true
-            - name: tls
-              mountPath: /var/lib/hubble-relay/tls
-              readOnly: true
+          - name: hubble-sock-dir
+            mountPath: /var/run/cilium
+            readOnly: true
+          - name: config
+            mountPath: /etc/hubble-relay
+            readOnly: true
+          - name: tls
+            mountPath: /var/lib/hubble-relay/tls
+            readOnly: true
       restartPolicy: Always
       priorityClassName:
       serviceAccount: "hubble-relay"
@@ -1147,30 +1142,30 @@ spec:
       automountServiceAccountToken: false
       terminationGracePeriodSeconds: 0
       volumes:
-        - name: config
-          configMap:
-            name: hubble-relay-config
-            items:
-              - key: config.yaml
-                path: config.yaml
-        - name: hubble-sock-dir
-          hostPath:
-            path: /var/run/cilium
-            type: Directory
-        - name: tls
-          projected:
-            # note: the leading zero means this number is in octal representation: do not remove it
-            defaultMode: 0400
-            sources:
-              - secret:
-                  name: hubble-relay-client-certs
-                  items:
-                    - key: ca.crt
-                      path: hubble-server-ca.crt
-                    - key: tls.crt
-                      path: client.crt
-                    - key: tls.key
-                      path: client.key
+      - name: config
+        configMap:
+          name: hubble-relay-config
+          items:
+          - key: config.yaml
+            path: config.yaml
+      - name: hubble-sock-dir
+        hostPath:
+          path: /var/run/cilium
+          type: Directory
+      - name: tls
+        projected:
+          # note: the leading zero means this number is in octal representation: do not remove it
+          defaultMode: 0400
+          sources:
+          - secret:
+              name: hubble-relay-client-certs
+              items:
+                - key: ca.crt
+                  path: hubble-server-ca.crt
+                - key: tls.crt
+                  path: client.crt
+                - key: tls.key
+                  path: client.key
 ---
 # Source: cilium/templates/hubble-ui/deployment.yaml
 kind: Deployment
@@ -1197,44 +1192,44 @@ spec:
       serviceAccount: "hubble-ui"
       serviceAccountName: "hubble-ui"
       containers:
-        - name: frontend
-          image: {{ .InternalImages.Get "HubbleUI" }}
-          imagePullPolicy: IfNotPresent
-          ports:
-            - name: http
-              containerPort: 8080
-        - name: backend
-          image: {{ .InternalImages.Get "HubbleUIBackend" }}
-          imagePullPolicy: IfNotPresent
-          env:
-            - name: EVENTS_SERVER_PORT
-              value: "8090"
-            - name: FLOWS_API_ADDR
-              value: "hubble-relay:80"
-          ports:
-            - name: grpc
-              containerPort: 8090
-          volumeMounts:
-        - name: proxy
-          image: {{ .InternalImages.Get "HubbleProxy" }}
-          imagePullPolicy: IfNotPresent
-          ports:
-            - name: http
-              containerPort: 8081
-          command: [envoy]
-          args:
-            - -c
-            - /etc/envoy.yaml
-            - -l
-            - info
-          volumeMounts:
-            - name: hubble-ui-envoy-yaml
-              mountPath: /etc/envoy.yaml
-              subPath: envoy.yaml
-      volumes:
+      - name: frontend
+        image: {{ .InternalImages.Get "HubbleUI" }}
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: http
+          containerPort: 8080
+      - name: backend
+        image: {{ .InternalImages.Get "HubbleUIBackend" }}
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: EVENTS_SERVER_PORT
+          value: "8090"
+        - name: FLOWS_API_ADDR
+          value: "hubble-relay:80"
+        ports:
+        - name: grpc
+          containerPort: 8090
+        volumeMounts:
+      - name: proxy
+        image: {{ .InternalImages.Get "HubbleProxy" }}
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: http
+          containerPort: 8081
+        command: [envoy]
+        args:
+        - -c
+        - /etc/envoy.yaml
+        - -l
+        - info
+        volumeMounts:
         - name: hubble-ui-envoy-yaml
-          configMap:
-            name: hubble-ui-envoy
+          mountPath: /etc/envoy.yaml
+          subPath: envoy.yaml
+      volumes:
+      - name: hubble-ui-envoy-yaml
+        configMap:
+          name: hubble-ui-envoy
 ---
 # Source: cilium/templates/hubble/tls-cronjob/job.yaml
 apiVersion: batch/v1
@@ -1252,7 +1247,7 @@ spec:
     spec:
       containers:
         - name: certgen
-          image: "quay.io/cilium/certgen:v0.1.5"
+          image: {{ .InternalImages.Get "CertGen" }}
           imagePullPolicy: IfNotPresent
           command:
             - "/usr/bin/cilium-certgen"
@@ -1294,7 +1289,7 @@ spec:
         spec:
           containers:
             - name: certgen
-              image: "quay.io/cilium/certgen:v0.1.5"
+              image: {{ .InternalImages.Get "CertGen" }}
               imagePullPolicy: IfNotPresent
               command:
                 - "/usr/bin/cilium-certgen"

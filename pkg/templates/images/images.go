@@ -57,6 +57,7 @@ const (
 	HubbleUI
 	HubbleUIBackend
 	HubbleProxy
+	CertGen
 
 	// WeaveNet CNI
 	WeaveNetCNIKube
@@ -312,14 +313,15 @@ func optionalResources() map[Resource]map[string]string {
 		WeaveNetCNINPC:  {"*": "docker.io/weaveworks/weave-npc:2.8.1"},
 
 		// Cilium
-		Cilium:         {"*": "quay.io/cilium/cilium:v1.11.0"},
-		CiliumOperator: {"*": "quay.io/cilium/operator-generic:v1.11.0"},
+		Cilium:         {"*": "quay.io/cilium/cilium:v1.11.1"},
+		CiliumOperator: {"*": "quay.io/cilium/operator-generic:v1.11.1"},
 
 		// Hubble
-		HubbleRelay:     {"*": "quay.io/cilium/hubble-relay:v1.11.0"},
-		HubbleUI:        {"*": "quay.io/cilium/hubble-ui:v0.8.3"},
-		HubbleUIBackend: {"*": "quay.io/cilium/hubble-ui-backend:v0.8.3"},
+		HubbleRelay:     {"*": "quay.io/cilium/hubble-relay:v1.11.1"},
+		HubbleUI:        {"*": "quay.io/cilium/hubble-ui:v0.8.5"},
+		HubbleUIBackend: {"*": "quay.io/cilium/hubble-ui-backend:v0.8.5"},
 		HubbleProxy:     {"*": "docker.io/envoyproxy/envoy:v1.18.4"},
+		CertGen:         {"*": "quay.io/cilium/certgen:v0.1.5"},
 
 		// Cluster-autoscaler addon
 		ClusterAutoscaler: {
