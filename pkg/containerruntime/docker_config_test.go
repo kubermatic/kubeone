@@ -25,24 +25,34 @@ import (
 
 func Test_marshalDockerConfig(t *testing.T) {
 	tests := []struct {
-		name    string
-		cluster *kubeone.KubeOneCluster
-		want    string
+		name             string
+		cluster          *kubeone.KubeOneCluster
+		expectedMaxSize  string
+		expectedMaxFiles string
 	}{
 		{
-			name:    "Should be convert 100Mi to 100m",
-			cluster: genCluster(withContainerLogMaxSize("100Mi")),
-			want:    "100m",
+			name:             "Should be convert 100Mi to 100m",
+			cluster:          genCluster(withContainerLogMaxSize("100Mi")),
+			expectedMaxSize:  "100m",
+			expectedMaxFiles: "0",
 		},
 		{
-			name:    "Should be convert 100Ki to 100k",
-			cluster: genCluster(withContainerLogMaxSize("100Ki")),
-			want:    "100k",
+			name:             "Should be convert 100Ki to 100k",
+			cluster:          genCluster(withContainerLogMaxSize("100Ki")),
+			expectedMaxSize:  "100k",
+			expectedMaxFiles: "0",
 		},
 		{
-			name:    "Should be convert 100Gi to 100g",
-			cluster: genCluster(withContainerLogMaxSize("100Gi")),
-			want:    "100g",
+			name:             "Should be convert 100Gi to 100g",
+			cluster:          genCluster(withContainerLogMaxSize("100Gi")),
+			expectedMaxSize:  "100g",
+			expectedMaxFiles: "0",
+		},
+		{
+			name:             "Should set max-files to 10 and max-size to 100m",
+			cluster:          genCluster(withContainerLogMaxSize("100m"), withContainerLogMaxFiles(10)),
+			expectedMaxSize:  "100m",
+			expectedMaxFiles: "10",
 		},
 	}
 	for _, tt := range tests {
@@ -56,9 +66,14 @@ func Test_marshalDockerConfig(t *testing.T) {
 			if err != nil {
 				t.Errorf("marshalDockerConfig() error = %v,", err)
 			}
-			gotLogSize := cfg.LogOpts["max-size"]
-			if gotLogSize != tt.want {
-				t.Errorf("marshalDockerConfig() got = %v, want %v", got, tt.want)
+			maxSize := cfg.LogOpts["max-size"]
+			if maxSize != tt.expectedMaxSize {
+				t.Errorf("marshalDockerConfig() got = %v, want %v", got, tt.expectedMaxSize)
+			}
+
+			maxFiles := cfg.LogOpts["max-files"]
+			if maxFiles != tt.expectedMaxFiles {
+				t.Errorf("marshalDockerConfig() got = %v, want %v", got, tt.expectedMaxFiles)
 			}
 		})
 	}
@@ -67,5 +82,11 @@ func Test_marshalDockerConfig(t *testing.T) {
 func withContainerLogMaxSize(logSize string) clusterOpts {
 	return func(cls *kubeone.KubeOneCluster) {
 		cls.LoggingConfig.ContainerLogMaxSize = logSize
+	}
+}
+
+func withContainerLogMaxFiles(logFiles int32) clusterOpts {
+	return func(cls *kubeone.KubeOneCluster) {
+		cls.LoggingConfig.ContainerLogMaxFiles = logFiles
 	}
 }

@@ -80,7 +80,8 @@ type printOpts struct {
 
 	DeployMachineController bool `longflag:"deploy-machine-controller"`
 
-	ContainerLogMaxSize string `longflag:"container-log-max-size"`
+	ContainerLogMaxSize  string `longflag:"container-log-max-size"`
+	ContainerLogMaxFiles int32  `longflag:"container-log-max-files"`
 }
 
 // configCmd setups the config command
@@ -177,13 +178,17 @@ func configPrintCmd() *cobra.Command {
 	cmd.Flags().BoolVar(&opts.DeployMachineController, longFlagName(opts, "DeployMachineController"), true, "deploy kubermatic machine-controller")
 
 	// LoggingConfig
-	cmd.Flags().StringVarP(
+	cmd.Flags().StringVar(
 		&opts.ContainerLogMaxSize,
 		longFlagName(opts, "ContainerLogMaxSize"),
-		shortFlagName(opts, "ContainerLogMaxSize"),
 		"100Mi",
 		"ContainerLogMaxSize")
 
+	cmd.Flags().Int32Var(
+		&opts.ContainerLogMaxFiles,
+		longFlagName(opts, "ContainerLogMaxFiles"),
+		5,
+		"ContainerLogMaxFiles")
 	return cmd
 }
 
@@ -380,7 +385,9 @@ func createAndPrintManifest(printOptions *printOpts) error {
 		cfg.Set(yamled.Path{"machineController", "deploy"}, printOptions.DeployMachineController)
 	}
 
+	// Logging configuration
 	cfg.Set(yamled.Path{"loggingConfig", "containerLogMaxSize"}, printOptions.ContainerLogMaxSize)
+	cfg.Set(yamled.Path{"loggingConfig", "containerLogMaxFiles"}, printOptions.ContainerLogMaxFiles)
 
 	// Print the manifest
 	err := validateAndPrintConfig(cfg)
@@ -987,4 +994,5 @@ machineController:
 
 loggingConfig:
   containerLogMaxSize: "{{ .ContainerLogMaxSize }}"
+  containerLogMaxFiles: "{{ .ContainerLogMaxFiles }}"
 `

@@ -47,5 +47,4 @@ EOF
     xargs -0 go run ./hack/apidoc-gen/main.go -section-link="#${version}" >> "${docfile}"
 }
 
-genVersionedDoc "v1beta1"
 genVersionedDoc "v1beta2"

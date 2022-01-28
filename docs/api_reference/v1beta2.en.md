@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2022-01-28T02:22:19+04:00
+date = 2022-01-28T16:22:51+05:00
 weight = 11
 +++
 ## v1beta2
@@ -496,6 +496,7 @@ LoggingConfig configures the Kubelet's log rotation
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | containerLogMaxSize | ContainerLogMaxSize configures the maximum size of container log file before it is rotated See more at: https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/ | string | false |
+| containerLogMaxFiles | ContainerLogMaxFiles configures the maximum number of container log files that can be present for a container See more at: https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/ | int32 | false |
 
 [Back to Group](#v1beta2)
 

@@ -102,7 +102,8 @@ func genCluster(opts ...genClusterOpts) kubeone.KubeOneCluster {
 			NoProxy: ".local",
 		},
 		LoggingConfig: kubeone.LoggingConfig{
-			ContainerLogMaxSize: "100Mi",
+			ContainerLogMaxSize:  "100Mi",
+			ContainerLogMaxFiles: 5,
 		},
 	}
 
