@@ -20,11 +20,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strconv"
 
 	"github.com/pkg/errors"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/clientutil"
+	"k8c.io/kubeone/pkg/containerruntime"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates"
 
@@ -124,9 +126,11 @@ func createMachineDeployment(cluster *kubeoneapi.KubeOneCluster, workerset kubeo
 		maxUnavailable = intstr.FromInt(1)
 	}
 
+	machineAnnotations := getKubeletConfigurationAnnotations(cluster)
+
 	return &clusterv1alpha1.MachineDeployment{
 		ObjectMeta: metav1.ObjectMeta{
-			Annotations: workerset.Config.Annotations,
+			Annotations: labels.Merge(workerset.Config.Annotations, machineAnnotations),
 			Namespace:   metav1.NamespaceSystem,
 			Name:        workerset.Name,
 		},
@@ -146,8 +150,9 @@ func createMachineDeployment(cluster *kubeoneapi.KubeOneCluster, workerset kubeo
 			MinReadySeconds: &minReadySeconds,
 			Template: clusterv1alpha1.MachineTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
-					Labels:    labels.Merge(workerset.Config.Labels, workersetNameLabels),
-					Namespace: metav1.NamespaceSystem,
+					Labels:      labels.Merge(workerset.Config.Labels, workersetNameLabels),
+					Namespace:   metav1.NamespaceSystem,
+					Annotations: machineAnnotations,
 				},
 				Spec: clusterv1alpha1.MachineSpec{
 					ObjectMeta: metav1.ObjectMeta{
@@ -165,6 +170,21 @@ func createMachineDeployment(cluster *kubeoneapi.KubeOneCluster, workerset kubeo
 			},
 		},
 	}, nil
+}
+
+func getKubeletConfigurationAnnotations(cluster *kubeoneapi.KubeOneCluster) map[string]string {
+	annotations := make(map[string]string)
+
+	// Logging configuration can be passed on to machine's provisioning configuration(user-data) by annotating machines
+	// For more details and confiugrations: https://github.com/kubermatic/machine-controller/pkg/apis/cluster/common/consts.go#L149
+	// There is not need to propagate logging configuration via annotations if default or empty values are set
+	if cluster.LoggingConfig.ContainerLogMaxSize != "" && cluster.LoggingConfig.ContainerLogMaxSize != containerruntime.DefaultContainerLogMaxSize {
+		annotations[clustercommon.KubeletConfigAnnotationPrefixV1+"/"+clustercommon.ContainerLogMaxSizeKubeletConfig] = cluster.LoggingConfig.ContainerLogMaxSize
+	}
+	if cluster.LoggingConfig.ContainerLogMaxFiles != containerruntime.DefaultContainerLogMaxFiles {
+		annotations[clustercommon.KubeletConfigAnnotationPrefixV1+"/"+clustercommon.ContainerLogMaxFilesKubeletConfig] = strconv.Itoa(int(cluster.LoggingConfig.ContainerLogMaxFiles))
+	}
+	return annotations
 }
 
 func machineSpec(cluster *kubeoneapi.KubeOneCluster, workerset kubeoneapi.DynamicWorkerConfig, provider kubeoneapi.CloudProviderSpec) (map[string]interface{}, error) {
