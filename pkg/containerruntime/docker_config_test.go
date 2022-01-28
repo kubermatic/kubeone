@@ -49,7 +49,7 @@ func Test_marshalDockerConfig(t *testing.T) {
 			expectedMaxFiles: "0",
 		},
 		{
-			name:             "Should set max-files to 10 and max-size to 100m",
+			name:             "Should set max-file to 10 and max-size to 100m",
 			cluster:          genCluster(withContainerLogMaxSize("100m"), withContainerLogMaxFiles(10)),
 			expectedMaxSize:  "100m",
 			expectedMaxFiles: "10",
@@ -71,7 +71,7 @@ func Test_marshalDockerConfig(t *testing.T) {
 				t.Errorf("marshalDockerConfig() got = %v, want %v", got, tt.expectedMaxSize)
 			}
 
-			maxFiles := cfg.LogOpts["max-files"]
+			maxFiles := cfg.LogOpts["max-file"]
 			if maxFiles != tt.expectedMaxFiles {
 				t.Errorf("marshalDockerConfig() got = %v, want %v", got, tt.expectedMaxFiles)
 			}

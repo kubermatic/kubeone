@@ -45,8 +45,8 @@ func marshalDockerConfig(cluster *kubeone.KubeOneCluster) (string, error) {
 		StorageDriver: "overlay2",
 		LogDriver:     "json-file",
 		LogOpts: map[string]string{
-			"max-size":  logSize,
-			"max-files": strconv.Itoa(int(cluster.LoggingConfig.ContainerLogMaxFiles)),
+			"max-size": logSize,
+			"max-file": strconv.Itoa(int(cluster.LoggingConfig.ContainerLogMaxFiles)),
 		},
 	}
 
