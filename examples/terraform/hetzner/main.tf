@@ -98,12 +98,22 @@ resource "hcloud_server_network" "control_plane" {
   subnet_id = hcloud_network_subnet.kubeone.id
 }
 
+resource "hcloud_placement_group" "control_plane" {
+  name = var.cluster_name
+  type = "spread"
+
+  labels = {
+    "kubeone_cluster_name" = var.cluster_name
+  }
+}
+
 resource "hcloud_server" "control_plane" {
   count       = var.control_plane_replicas
   name        = "${var.cluster_name}-control-plane-${count.index + 1}"
   server_type = var.control_plane_type
   image       = var.image
   location    = var.datacenter
+  placement_group_id = hcloud_placement_group.control_plane.id
 
   ssh_keys = [
     hcloud_ssh_key.kubeone.id,
