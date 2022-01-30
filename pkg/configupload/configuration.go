@@ -72,7 +72,7 @@ func (c *Configuration) AddFilePath(filename, filePath, manifestFilePath string)
 
 // UploadTo directory all the files
 func (c *Configuration) UploadTo(conn ssh.Connection, directory string) error {
-	sshfs, _ := sshiofs.New(conn).(sshiofs.MkdirFS)
+	sshfs := sshiofs.New(conn)
 
 	for filename, content := range c.files {
 		target := filepath.Join(directory, filename)

@@ -17,7 +17,6 @@ limitations under the License.
 package runner
 
 import (
-	"io/fs"
 	"os"
 
 	"github.com/koron-go/prefixw"
@@ -41,7 +40,7 @@ type Runner struct {
 // TemplateVariables is a render context for templates
 type TemplateVariables map[string]interface{}
 
-func (r *Runner) NewFS() fs.FS {
+func (r *Runner) NewFS() sshiofs.MkdirFS {
 	return sshiofs.New(r.Conn)
 }
 

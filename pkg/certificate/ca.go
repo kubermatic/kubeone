@@ -73,7 +73,7 @@ func DownloadKubePKI(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connecti
 }
 
 func UploadKubePKI(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
-	sshfs, _ := s.Runner.NewFS().(sshiofs.MkdirFS)
+	sshfs := s.Runner.NewFS()
 
 	for _, fname := range kubernetesPKIFiles() {
 		buf, found := s.Configuration.KubernetesPKI[fname]

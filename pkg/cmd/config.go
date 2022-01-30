@@ -190,6 +190,7 @@ func configPrintCmd() *cobra.Command {
 		longFlagName(opts, "ContainerLogMaxFiles"),
 		containerruntime.DefaultContainerLogMaxFiles,
 		"ContainerLogMaxFiles")
+
 	return cmd
 }
 
