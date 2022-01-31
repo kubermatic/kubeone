@@ -18,7 +18,7 @@ func _() {
 	_ = x[HubbleUI-8]
 	_ = x[HubbleUIBackend-9]
 	_ = x[HubbleProxy-10]
-	_ = x[CertGen-11]
+	_ = x[CiliumCertGen-11]
 	_ = x[WeaveNetCNIKube-12]
 	_ = x[WeaveNetCNINPC-13]
 	_ = x[DNSNodeCache-14]
@@ -88,9 +88,9 @@ func _() {
 	_ = x[VsphereCSIProvisioner-78]
 }
 
-const _Resource_name = "CalicoCNICalicoControllerCalicoNodeFlannelCiliumCiliumOperatorHubbleRelayHubbleUIHubbleUIBackendHubbleProxyCertGenWeaveNetCNIKubeWeaveNetCNINPCDNSNodeCacheMachineControllerMetricsServerOperatingSystemManagerClusterAutoscalerCSIAttacherCSINodeDriverRegistarCSIProvisionerCSISnapshotterCSIResizerCSILivenessProbeAwsCCMAzureCCMAzureCNMAwsEbsCSIAwsEbsCSIAttacherAwsEbsCSILivenessProbeAwsEbsCSINodeDriverRegistrarAwsEbsCSIProvisionerAwsEbsCSIResizerAwsEbsCSISnapshotterAwsEbsCSISnapshotControllerAzureFileCSIAzureFileCSIAttacherAzureFileCSILivenessProbeAzureFileCSINodeDriverRegistarAzureFileCSIProvisionerAzureFileCSIResizerAzureFileCSISnapshotterAzureFileCSISnapshotterControllerNutanixCSISnapshotControllerNutanixCSISnapshotValidationWebhookAzureDiskCSIAzureDiskCSIAttacherAzureDiskCSILivenessProbeAzureDiskCSINodeDriverRegistarAzureDiskCSIProvisionerAzureDiskCSIResizerAzureDiskCSISnapshotterAzureDiskCSISnapshotterControllerNutanixCSILivenessProbeNutanixCSINutanixCSIProvisionerNutanixCSIRegistrarNutanixCSIResizerNutanixCSISnapshotterDigitalOceanCSIDigitalOceanCSIAlpineDigitalOceanCSIAttacherDigitalOceanCSINodeDriverRegistarDigitalOceanCSIProvisionerDigitalOceanCSIResizerDigitalOceanCSISnapshotControllerDigitalOceanCSISnapshotValidationWebhookDigitalOceanCSISnapshotterDigitaloceanCCMHetznerCCMHetznerCSIOpenstackCCMOpenstackCSIEquinixMetalCCMVsphereCCMVsphereCSIDriverVsphereCSISyncerVsphereCSIProvisioner"
+const _Resource_name = "CalicoCNICalicoControllerCalicoNodeFlannelCiliumCiliumOperatorHubbleRelayHubbleUIHubbleUIBackendHubbleProxyCiliumCertGenWeaveNetCNIKubeWeaveNetCNINPCDNSNodeCacheMachineControllerMetricsServerOperatingSystemManagerClusterAutoscalerCSIAttacherCSINodeDriverRegistarCSIProvisionerCSISnapshotterCSIResizerCSILivenessProbeAwsCCMAzureCCMAzureCNMAwsEbsCSIAwsEbsCSIAttacherAwsEbsCSILivenessProbeAwsEbsCSINodeDriverRegistrarAwsEbsCSIProvisionerAwsEbsCSIResizerAwsEbsCSISnapshotterAwsEbsCSISnapshotControllerAzureFileCSIAzureFileCSIAttacherAzureFileCSILivenessProbeAzureFileCSINodeDriverRegistarAzureFileCSIProvisionerAzureFileCSIResizerAzureFileCSISnapshotterAzureFileCSISnapshotterControllerNutanixCSISnapshotControllerNutanixCSISnapshotValidationWebhookAzureDiskCSIAzureDiskCSIAttacherAzureDiskCSILivenessProbeAzureDiskCSINodeDriverRegistarAzureDiskCSIProvisionerAzureDiskCSIResizerAzureDiskCSISnapshotterAzureDiskCSISnapshotterControllerNutanixCSILivenessProbeNutanixCSINutanixCSIProvisionerNutanixCSIRegistrarNutanixCSIResizerNutanixCSISnapshotterDigitalOceanCSIDigitalOceanCSIAlpineDigitalOceanCSIAttacherDigitalOceanCSINodeDriverRegistarDigitalOceanCSIProvisionerDigitalOceanCSIResizerDigitalOceanCSISnapshotControllerDigitalOceanCSISnapshotValidationWebhookDigitalOceanCSISnapshotterDigitaloceanCCMHetznerCCMHetznerCSIOpenstackCCMOpenstackCSIEquinixMetalCCMVsphereCCMVsphereCSIDriverVsphereCSISyncerVsphereCSIProvisioner"
 
-var _Resource_index = [...]uint16{0, 9, 25, 35, 42, 48, 62, 73, 81, 96, 107, 114, 129, 143, 155, 172, 185, 207, 224, 235, 256, 270, 284, 294, 310, 316, 324, 332, 341, 358, 380, 408, 428, 444, 464, 491, 503, 523, 548, 578, 601, 620, 643, 676, 704, 739, 751, 771, 796, 826, 849, 868, 891, 924, 947, 957, 978, 997, 1014, 1035, 1050, 1071, 1094, 1127, 1153, 1175, 1208, 1248, 1274, 1289, 1299, 1309, 1321, 1333, 1348, 1358, 1374, 1390, 1411}
+var _Resource_index = [...]uint16{0, 9, 25, 35, 42, 48, 62, 73, 81, 96, 107, 120, 135, 149, 161, 178, 191, 213, 230, 241, 262, 276, 290, 300, 316, 322, 330, 338, 347, 364, 386, 414, 434, 450, 470, 497, 509, 529, 554, 584, 607, 626, 649, 682, 710, 745, 757, 777, 802, 832, 855, 874, 897, 930, 953, 963, 984, 1003, 1020, 1041, 1056, 1077, 1100, 1133, 1159, 1181, 1214, 1254, 1280, 1295, 1305, 1315, 1327, 1339, 1354, 1364, 1380, 1396, 1417}
 
 func (i Resource) String() string {
 	i -= 1

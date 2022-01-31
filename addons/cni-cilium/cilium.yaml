@@ -1247,7 +1247,7 @@ spec:
     spec:
       containers:
         - name: certgen
-          image: {{ .InternalImages.Get "CertGen" }}
+          image: {{ .InternalImages.Get "CiliumCertGen" }}
           imagePullPolicy: IfNotPresent
           command:
             - "/usr/bin/cilium-certgen"
@@ -1289,7 +1289,7 @@ spec:
         spec:
           containers:
             - name: certgen
-              image: {{ .InternalImages.Get "CertGen" }}
+              image: {{ .InternalImages.Get "CiliumCertGen" }}
               imagePullPolicy: IfNotPresent
               command:
                 - "/usr/bin/cilium-certgen"
