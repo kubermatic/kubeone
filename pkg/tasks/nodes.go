@@ -129,6 +129,7 @@ func labelNodeOSes(s *state.State) error {
 			}
 
 			node.Labels["v1.kubeone.io/operating-system"] = string(host.OperatingSystem)
+
 			return s.DynamicClient.Update(s.Context, &node)
 		})
 
@@ -150,7 +151,7 @@ func patchStaticPods(s *state.State) error {
 			return err
 		}
 		defer f.Close()
-		mgrPodManifest := f.(sshiofs.ExtendedFile)
+		mgrPodManifest, _ := f.(sshiofs.ExtendedFile)
 
 		kubeManagerBuf, err := io.ReadAll(mgrPodManifest)
 		if err != nil {

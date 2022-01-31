@@ -35,6 +35,7 @@ func (res Resource) namedReference(kubernetesVersionGetter func() string) refere
 		sv, _ := semver.NewConstraint(ver)
 		if sv.Check(kubeVer) {
 			named, _ := reference.ParseNormalizedNamed(img)
+
 			return named
 		}
 	}
@@ -344,6 +345,7 @@ func allResources() map[Resource]map[string]string {
 	for k, v := range optionalResources() {
 		ret[k] = v
 	}
+
 	return ret
 }
 
@@ -400,6 +402,7 @@ func (r *Resolver) List(lf ListFilter) []string {
 		fn = baseResources
 	case ListFilterOpional:
 		fn = optionalResources
+	case ListFilterNone:
 	}
 
 	for res := range fn() {
@@ -410,6 +413,7 @@ func (r *Resolver) List(lf ListFilter) []string {
 	}
 
 	sort.Strings(list)
+
 	return list
 }
 
@@ -427,7 +431,7 @@ type GetOpt func(ref string) string
 func WithDomain(domain string) GetOpt {
 	return func(ref string) string {
 		named, _ := reference.ParseNormalizedNamed(ref)
-		nt := named.(reference.NamedTagged)
+		nt, _ := named.(reference.NamedTagged)
 		path := reference.Path(named)
 
 		return domain + "/" + path + ":" + nt.Tag()
@@ -437,6 +441,7 @@ func WithDomain(domain string) GetOpt {
 func WithTag(tag string) GetOpt {
 	return func(ref string) string {
 		named, _ := reference.ParseNormalizedNamed(ref)
+
 		return named.Name() + ":" + tag
 	}
 }

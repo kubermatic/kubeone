@@ -255,6 +255,7 @@ func defaults(input, defaultValue string) string {
 	if input != "" {
 		return input
 	}
+
 	return defaultValue
 }
 
@@ -262,5 +263,6 @@ func defaulti(input, defaultValue int) int {
 	if input != 0 {
 		return input
 	}
+
 	return defaultValue
 }

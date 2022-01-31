@@ -60,6 +60,7 @@ func TestParseContainerImageVersionValid(t *testing.T) {
 	for _, tc := range testcases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			ver, err := parseContainerImageVersion(tc.image)
 			if err != nil {
 				t.Fatal(err)
@@ -98,6 +99,7 @@ func TestParseContainerImageVersionInvalid(t *testing.T) {
 	for _, tc := range testcases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			_, err := parseContainerImageVersion(tc.image)
 			if err.Error() != tc.expectedError.Error() {
 				t.Fatal(err)
@@ -173,6 +175,7 @@ func TestCheckVersionSkewValid(t *testing.T) {
 	for _, tc := range testcases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			err := checkVersionSkew(tc.desiredVersion, tc.currentVersion, tc.diff)
 			if err != nil {
 				t.Fatal(err)
@@ -254,6 +257,7 @@ func TestCheckVersionSkewInvalid(t *testing.T) {
 	for _, tc := range testcases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			err := checkVersionSkew(tc.desiredVersion, tc.currentVersion, tc.diff)
 			if err == nil {
 				t.Fatalf("expected error but test succeed instead")

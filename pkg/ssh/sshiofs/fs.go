@@ -26,13 +26,9 @@ import (
 	"k8c.io/kubeone/pkg/ssh"
 )
 
-func New(conn ssh.Connection) fs.FS {
+func New(conn ssh.Connection) MkdirFS {
 	return &sshfs{conn: conn}
 }
-
-var (
-	_ MkdirFS = &sshfs{}
-)
 
 type sshfs struct {
 	conn ssh.Connection

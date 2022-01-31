@@ -109,12 +109,14 @@ func (s *State) KubeadmVerboseFlag() string {
 	if s.Verbose {
 		return "--v=6"
 	}
+
 	return ""
 }
 
 // Clone returns a shallow copy of the State.
 func (s *State) Clone() *State {
 	newState := *s
+
 	return &newState
 }
 
@@ -129,6 +131,7 @@ func (s *State) ShouldEnableInTreeCloudProvider() bool {
 		// CCM for the specified provider yet
 		return s.Cluster.CloudProvider.CloudProviderInTree()
 	}
+
 	return s.LiveCluster.CCMStatus.InTreeCloudProviderEnabled && !s.CCMMigrationComplete
 }
 
@@ -144,6 +147,7 @@ func (s *State) ShouldEnableCSIMigration() bool {
 		//  * KubeOne supports CSI plugin for specified provider
 		return s.Cluster.CloudProvider.CSIMigrationSupported() && s.Cluster.CloudProvider.External
 	}
+
 	return s.LiveCluster.CCMStatus.CSIMigrationEnabled || s.CCMMigration
 }
 
@@ -159,6 +163,7 @@ func (s *State) ShouldUnregisterInTreeCloudProvider() bool {
 		// support CSI migration.
 		return s.ShouldEnableCSIMigration()
 	}
+
 	return s.LiveCluster.CCMStatus.InTreeCloudProviderUnregistered || s.CCMMigrationComplete
 }
 
@@ -185,6 +190,7 @@ func (s *State) GetEncryptionProviderConfigName() string {
 		s.LiveCluster.EncryptionConfiguration.Custom {
 		return customEncryptionProvidersFile
 	}
+
 	return defaultEncryptionProvidersFile
 }
 
@@ -206,6 +212,7 @@ func (s *State) GetKMSSocketPath() (string, error) {
 			if p.KMS == nil {
 				continue
 			}
+
 			return path.Clean(strings.ReplaceAll(p.KMS.Endpoint, "unix:", "")), nil
 		}
 	}

@@ -64,6 +64,7 @@ func genPassword() (string, error) {
 	if err != nil {
 		return "", errors.Wrap(err, "failed to read random bytes")
 	}
+
 	return base64.StdEncoding.EncodeToString(pi), nil
 }
 

@@ -17,7 +17,7 @@ limitations under the License.
 package scripts
 
 import (
-	"k8c.io/kubeone/pkg/apis/kubeone"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/containerruntime"
 )
 
@@ -177,7 +177,7 @@ sudo systemctl start kubelet
 `
 )
 
-func KubeadmFlatcar(cluster *kubeone.KubeOneCluster) (string, error) {
+func KubeadmFlatcar(cluster *kubeoneapi.KubeOneCluster) (string, error) {
 	data := Data{
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,

@@ -78,6 +78,7 @@ func readyToCompleteCCMMigration(s *state.State) error {
 		flag := common.GetKubeletFlags(machines.Items[i].Annotations)[common.ExternalCloudProviderKubeletFlag]
 		if boolFlag, err := strconv.ParseBool(flag); !boolFlag || err != nil {
 			migrated = false
+
 			break
 		}
 	}
@@ -264,8 +265,8 @@ func ccmMigrationUpdateKubeletFlags(s *state.State) error {
 
 		kubeletFlags["--cloud-provider"] = "external"
 		delete(kubeletFlags, "--cloud-config")
-
 		buf := marshalKubeletFlags(kubeletFlags)
+
 		return buf, nil
 	})
 }
@@ -295,6 +296,7 @@ func waitForStaticPodReady(s *state.State, timeout time.Duration, staticPodName,
 			if s.Verbose {
 				s.Logger.Debugf("Failed to get pod %q: %v", staticPodName, err)
 			}
+
 			return false, nil
 		}
 
@@ -303,6 +305,7 @@ func waitForStaticPodReady(s *state.State, timeout time.Duration, staticPodName,
 			if s.Verbose {
 				s.Logger.Debugf("Pod %q is not yet running", staticPodName)
 			}
+
 			return false, nil
 		}
 
@@ -312,11 +315,13 @@ func waitForStaticPodReady(s *state.State, timeout time.Duration, staticPodName,
 				if s.Verbose {
 					s.Logger.Debugf("Pod %q is not yet ready", staticPodName)
 				}
+
 				return false, nil
 			} else if cond.Type == corev1.ContainersReady && cond.Status != corev1.ConditionTrue {
 				if s.Verbose {
 					s.Logger.Debugf("Containers for pod %q are not yet ready", staticPodName)
 				}
+
 				return false, nil
 			}
 		}

@@ -88,5 +88,6 @@ func HackIssue321InitDynamicClient(s *state.State) error {
 	}
 
 	s.DynamicClient, err = client.New(s.RESTConfig, client.Options{})
+
 	return errors.Wrap(err, "unable to build dynamic client")
 }

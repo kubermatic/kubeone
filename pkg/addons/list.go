@@ -142,7 +142,7 @@ func List(s *state.State, outputFormat string) error {
 
 		for _, k := range omap.Keys() {
 			v, _ := omap.Get(k)
-			addon := v.(addonItem)
+			addon, _ := v.(addonItem)
 			fmt.Fprintf(tab, "%s\t%s\t", addon.Name, addon.Status)
 			fmt.Fprintln(tab, "")
 		}

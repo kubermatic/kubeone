@@ -17,6 +17,7 @@ limitations under the License.
 package apiserverstatus
 
 import (
+	"context"
 	"crypto/tls"
 	"fmt"
 	"io"
@@ -45,7 +46,7 @@ func Get(s *state.State, node kubeoneapi.HostConfig) (*Report, error) {
 		}, err
 	}
 
-	health, err := apiserverHealth(roundTripper, node.PrivateAddress)
+	health, err := apiserverHealth(s.Context, roundTripper, node.PrivateAddress)
 	if err != nil {
 		return &Report{
 			Health: false,
@@ -56,9 +57,9 @@ func Get(s *state.State, node kubeoneapi.HostConfig) (*Report, error) {
 }
 
 // apiserverHealth checks is API server healthy
-func apiserverHealth(t http.RoundTripper, nodeAddress string) (bool, error) {
+func apiserverHealth(ctx context.Context, t http.RoundTripper, nodeAddress string) (bool, error) {
 	endpoint := fmt.Sprintf(healthzEndpoint, nodeAddress)
-	request, err := http.NewRequest("GET", endpoint, nil)
+	request, err := http.NewRequestWithContext(ctx, "GET", endpoint, nil)
 	if err != nil {
 		return false, err
 	}

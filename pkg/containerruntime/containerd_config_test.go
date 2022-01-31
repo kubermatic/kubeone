@@ -20,7 +20,7 @@ import (
 	"flag"
 	"testing"
 
-	"k8c.io/kubeone/pkg/apis/kubeone"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/testhelper"
 )
 
@@ -31,7 +31,7 @@ var (
 func Test_marshalContainerdConfig(t *testing.T) {
 	tests := []struct {
 		name    string
-		cluster *kubeone.KubeOneCluster
+		cluster *kubeoneapi.KubeOneCluster
 	}{
 		{
 			name:    "simple",
@@ -39,14 +39,14 @@ func Test_marshalContainerdConfig(t *testing.T) {
 		},
 		{
 			name: "override insecure registry",
-			cluster: genCluster(withRegistryConfiguration(kubeone.RegistryConfiguration{
+			cluster: genCluster(withRegistryConfiguration(kubeoneapi.RegistryConfiguration{
 				OverwriteRegistry: "some.registry",
 				InsecureRegistry:  true,
 			})),
 		},
 		{
 			name: "docker.io mirror registry",
-			cluster: genCluster(withContainerdRegistry(map[string]kubeone.ContainerdRegistry{
+			cluster: genCluster(withContainerdRegistry(map[string]kubeoneapi.ContainerdRegistry{
 				"docker.io": {
 					Mirrors: []string{"https://custom.secure.registry"},
 				},
@@ -54,13 +54,13 @@ func Test_marshalContainerdConfig(t *testing.T) {
 		},
 		{
 			name: "multi registry mirrors",
-			cluster: genCluster(withContainerdRegistry(map[string]kubeone.ContainerdRegistry{
+			cluster: genCluster(withContainerdRegistry(map[string]kubeoneapi.ContainerdRegistry{
 				"k8s.gcr.io": {
 					Mirrors: []string{"https://some"},
 				},
 				"*": {
 					Mirrors: []string{"https://custom.insecure.registry"},
-					TLSConfig: &kubeone.ContainerdTLSConfig{
+					TLSConfig: &kubeoneapi.ContainerdTLSConfig{
 						InsecureSkipVerify: true,
 					},
 				},
@@ -81,13 +81,13 @@ func Test_marshalContainerdConfig(t *testing.T) {
 	}
 }
 
-type clusterOpts func(*kubeone.KubeOneCluster)
+type clusterOpts func(*kubeoneapi.KubeOneCluster)
 
-func genCluster(opts ...clusterOpts) *kubeone.KubeOneCluster {
-	cls := &kubeone.KubeOneCluster{
+func genCluster(opts ...clusterOpts) *kubeoneapi.KubeOneCluster {
+	cls := &kubeoneapi.KubeOneCluster{
 		RegistryConfiguration: nil,
-		ContainerRuntime: kubeone.ContainerRuntimeConfig{
-			Containerd: &kubeone.ContainerRuntimeContainerd{},
+		ContainerRuntime: kubeoneapi.ContainerRuntimeConfig{
+			Containerd: &kubeoneapi.ContainerRuntimeContainerd{},
 		},
 	}
 
@@ -98,14 +98,14 @@ func genCluster(opts ...clusterOpts) *kubeone.KubeOneCluster {
 	return cls
 }
 
-func withRegistryConfiguration(regCfg kubeone.RegistryConfiguration) clusterOpts {
-	return func(cls *kubeone.KubeOneCluster) {
+func withRegistryConfiguration(regCfg kubeoneapi.RegistryConfiguration) clusterOpts {
+	return func(cls *kubeoneapi.KubeOneCluster) {
 		cls.RegistryConfiguration = &regCfg
 	}
 }
 
-func withContainerdRegistry(regCfg map[string]kubeone.ContainerdRegistry) clusterOpts {
-	return func(cls *kubeone.KubeOneCluster) {
+func withContainerdRegistry(regCfg map[string]kubeoneapi.ContainerdRegistry) clusterOpts {
+	return func(cls *kubeoneapi.KubeOneCluster) {
 		cls.ContainerRuntime.Containerd.Registries = regCfg
 	}
 }

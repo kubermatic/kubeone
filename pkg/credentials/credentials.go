@@ -25,7 +25,7 @@ import (
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
 
-	"k8c.io/kubeone/pkg/apis/kubeone"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 )
 
 // Type is a type of credentials that should be fetched
@@ -163,7 +163,7 @@ func Any(credentialsFilePath string) (map[string]string, error) {
 }
 
 // ProviderCredentials implements fetching credentials for each supported provider
-func ProviderCredentials(cloudProvider kubeone.CloudProviderSpec, credentialsFilePath string, credentialsType Type) (map[string]string, error) {
+func ProviderCredentials(cloudProvider kubeoneapi.CloudProviderSpec, credentialsFilePath string, credentialsType Type) (map[string]string, error) {
 	credentialsFinder, err := newCredsFinder(credentialsFilePath, credentialsType)
 	if err != nil {
 		return nil, err
@@ -193,6 +193,7 @@ func ProviderCredentials(cloudProvider kubeone.CloudProviderSpec, credentialsFil
 		// encode it before sending to secret to be consumed by
 		// machine-controller, as machine-controller assumes it will be double encoded
 		gsa[GoogleServiceAccountKeyMC] = base64.StdEncoding.EncodeToString([]byte(gsa[GoogleServiceAccountKeyMC]))
+
 		return gsa, nil
 	case cloudProvider.Hetzner != nil:
 		return credentialsFinder.parseCredentialVariables([]ProviderEnvironmentVariable{
@@ -236,6 +237,7 @@ func ProviderCredentials(cloudProvider kubeone.CloudProviderSpec, credentialsFil
 		}
 		// force scheme, as machine-controller requires it while terraform does not
 		vscreds[VSphereAddressMC] = "https://" + vscreds[VSphereAddressMC]
+
 		return vscreds, nil
 	case cloudProvider.None != nil:
 		return map[string]string{}, nil
@@ -256,11 +258,13 @@ func newCredsFinder(credentialsFilePath string, credentialsType Type) (lookupFun
 			if val, ok := staticMap[typedName]; ok && val != "" {
 				return val
 			}
+
 			fallthrough
 		default:
 			if val := os.Getenv(name); val != "" {
 				return val
 			}
+
 			return staticMap[name]
 		}
 	}
@@ -292,6 +296,7 @@ func (lookup lookupFunc) aws() (map[string]string, error) {
 	if accessKeyID != "" && secretAccessKey != "" {
 		creds[AWSAccessKeyID] = accessKeyID
 		creds[AWSSecretAccessKey] = secretAccessKey
+
 		return creds, nil
 	}
 
@@ -341,11 +346,13 @@ func (lookup lookupFunc) equinixmetal() (map[string]string, error) {
 	if packetAPIKey != "" && packetProjectID != "" {
 		creds[EquinixMetalAuthToken] = packetAPIKey
 		creds[EquinixMetalProjectID] = packetProjectID
+
 		return creds, nil
 	}
 
 	creds[EquinixMetalAuthToken] = metalAuthToken
 	creds[EquinixMetalProjectID] = metalProjectID
+
 	return creds, nil
 }
 
@@ -379,6 +386,7 @@ func defaultValidationFunc(creds map[string]string) error {
 			return errors.Errorf("key %v is required but isn't present", k)
 		}
 	}
+
 	return nil
 }
 

@@ -27,7 +27,7 @@ import (
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"google.golang.org/grpc"
 
-	"k8c.io/kubeone/pkg/apis/kubeone"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/ssh/sshiofs"
 	"k8c.io/kubeone/pkg/ssh/sshtunnel"
@@ -36,7 +36,7 @@ import (
 
 // NewClientConfig returns etcd clientv3 Config configured with TLS certificates
 // and tunneled over SSH
-func NewClientConfig(s *state.State, host kubeone.HostConfig) (*clientv3.Config, error) {
+func NewClientConfig(s *state.State, host kubeoneapi.HostConfig) (*clientv3.Config, error) {
 	sshconn, err := s.Connector.Connect(host)
 	if err != nil {
 		return nil, err

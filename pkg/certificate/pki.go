@@ -57,6 +57,7 @@ func encodeCertPEM(cert *x509.Certificate) []byte {
 		Type:  CertificateBlockType,
 		Bytes: cert.Raw,
 	}
+
 	return pem.EncodeToMemory(&block)
 }
 
@@ -70,6 +71,7 @@ func EncodePublicKeyPEM(key *rsa.PublicKey) ([]byte, error) {
 		Type:  PublicKeyBlockType,
 		Bytes: der,
 	}
+
 	return pem.EncodeToMemory(&block), nil
 }
 
@@ -79,6 +81,7 @@ func encodePrivateKeyPEM(key *rsa.PrivateKey) []byte {
 		Type:  RSAPrivateKeyBlockType,
 		Bytes: x509.MarshalPKCS1PrivateKey(key),
 	}
+
 	return pem.EncodeToMemory(&block)
 }
 
@@ -117,5 +120,6 @@ func newSignedCert(cfg *certutil.Config, key crypto.Signer, caCert *x509.Certifi
 	if err != nil {
 		return nil, err
 	}
+
 	return x509.ParseCertificate(certDERBytes)
 }

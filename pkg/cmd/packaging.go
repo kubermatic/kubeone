@@ -43,9 +43,11 @@ func completionCmd(rootCmd *cobra.Command) *cobra.Command {
 			case "zsh":
 				err = rootCmd.GenZshCompletion(os.Stdout)
 			}
+
 			return
 		},
 	}
+
 	return cmd
 }
 
@@ -75,9 +77,11 @@ func documentCmd(rootCmd *cobra.Command) *cobra.Command {
 			case "yaml":
 				err = doc.GenYamlTree(rootCmd, path)
 			}
+
 			return
 		},
 	}
 	cmd.Flags().StringVarP(&path, "output-dir", "o", "/tmp/", "Directory to populate with documentation")
+
 	return cmd
 }

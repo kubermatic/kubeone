@@ -47,6 +47,7 @@ func (sf *sshfile) Stat() (fs.FileInfo, error) {
 
 	fi, err := newSSHFileInfo(sf.name, sf.conn)
 	sf.fi = fi
+
 	return fi, err
 }
 
@@ -109,6 +110,7 @@ func (sf *sshfile) Read(p []byte) (int, error) {
 
 	n, err := stdout.Read(p)
 	sf.cursor += int64(n)
+
 	return n, err
 }
 
@@ -127,6 +129,7 @@ func (sf *sshfile) Write(p []byte) (int, error) {
 
 	n, err := stdout.Write(p)
 	sf.cursor += int64(n)
+
 	return n, err
 }
 
@@ -146,6 +149,7 @@ func (sf *sshfile) Seek(offset int64, whence int) (int64, error) {
 func (sf *sshfile) Close() error {
 	sf.cursor = 0
 	sf.fi = nil
+
 	return nil
 }
 

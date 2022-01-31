@@ -24,6 +24,7 @@ import (
 
 func TestShouldEnableInTreeCloudProvider(t *testing.T) {
 	t.Parallel()
+
 	tests := []struct {
 		name                 string
 		cluster              *kubeoneapi.KubeOneCluster
@@ -168,6 +169,7 @@ func TestShouldEnableInTreeCloudProvider(t *testing.T) {
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			s := &State{
 				Cluster:     tc.cluster,
 				LiveCluster: tc.liveCluster,
@@ -182,6 +184,7 @@ func TestShouldEnableInTreeCloudProvider(t *testing.T) {
 
 func TestShouldEnableCSIMigration(t *testing.T) {
 	t.Parallel()
+
 	tests := []struct {
 		name         string
 		cluster      *kubeoneapi.KubeOneCluster
@@ -342,6 +345,7 @@ func TestShouldEnableCSIMigration(t *testing.T) {
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			s := &State{
 				Cluster:      tc.cluster,
 				LiveCluster:  tc.liveCluster,
@@ -357,6 +361,7 @@ func TestShouldEnableCSIMigration(t *testing.T) {
 
 func TestShouldUnregisterInTreeProvider(t *testing.T) {
 	t.Parallel()
+
 	tests := []struct {
 		name                 string
 		cluster              *kubeoneapi.KubeOneCluster
@@ -517,6 +522,8 @@ func TestShouldUnregisterInTreeProvider(t *testing.T) {
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
 			s := &State{
 				Cluster:              tc.cluster,
 				LiveCluster:          tc.liveCluster,

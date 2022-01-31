@@ -19,6 +19,7 @@ package yamled
 import "testing"
 
 func assertPath(t *testing.T, value Path, expected Path) {
+	t.Helper()
 	if len(value) != len(expected) {
 		t.Fatalf("Expected path of length %d but got %d elements.", len(expected), len(value))
 	}

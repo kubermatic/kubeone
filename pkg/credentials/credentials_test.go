@@ -144,12 +144,13 @@ func TestOpenstackValidationFunc(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			err := openstackValidationFunc(tt.creds)
 			if tt.err != nil && err != nil {
 				if err.Error() != tt.err.Error() {
 					t.Errorf("expected error = '%v', got error = '%v'", tt.err.Error(), err.Error())
 				}
-			} else if err != tt.err {
+			} else if !errors.Is(err, tt.err) {
 				t.Errorf("%s: expected error = %v, got error = %v", tt.name, tt.err, err)
 			}
 		})

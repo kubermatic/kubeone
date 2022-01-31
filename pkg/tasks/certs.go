@@ -61,6 +61,7 @@ func renewControlPlaneCerts(s *state.State) error {
 	if !s.ForceUpgrade {
 		s.Logger.Warn("Your control-plane certificates are about to expire in less then 90 days")
 		s.Logger.Warn("To renew them without changing kubernetes version run `kubeone apply --force-upgrade`")
+
 		return nil
 	}
 	s.Logger.Warn("Your control-plane certificates are about to expire in less then 90 days")
@@ -79,6 +80,7 @@ func renewControlPlaneCerts(s *state.State) error {
 	err := s.RunTaskOnControlPlane(
 		func(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 			_, _, err := s.Runner.RunRaw(renewCmd)
+
 			return err
 		},
 		state.RunParallel,
@@ -156,8 +158,8 @@ func ensureCABundleConfigMap(s *state.State) error {
 	}
 
 	s.Logger.Infoln("Creating ca-bundle configMap...")
-
 	cm := cabundle.ConfigMap(s.Cluster.CABundle)
+
 	return clientutil.CreateOrUpdate(s.Context, s.DynamicClient, cm)
 }
 
@@ -178,6 +180,7 @@ func saveCABundleOnControlPlane(s *state.State, _ *kubeoneapi.HostConfig, conn s
 	}
 
 	_, _, err = s.Runner.RunRaw(cmd)
+
 	return err
 }
 
@@ -282,5 +285,6 @@ func isUsageInUsageList(usage certificatesv1.KeyUsage, usageList []certificatesv
 			return true
 		}
 	}
+
 	return false
 }

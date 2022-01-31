@@ -17,6 +17,7 @@ limitations under the License.
 package scripts
 
 import (
+	"errors"
 	"testing"
 
 	"k8c.io/kubeone/pkg/testhelper"
@@ -55,9 +56,11 @@ func TestCCMMigrationRegenerateControlPlaneManifests(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			got, err := CCMMigrationRegenerateControlPlaneManifests(tt.args.workdir, tt.args.nodeID, tt.args.verboseFlag)
-			if err != tt.err {
+			if !errors.Is(err, tt.err) {
 				t.Errorf("TestCCMMigrationRegenerateControlPlaneManifests() error = %v, wantErr %v", err, tt.err)
+
 				return
 			}
 
@@ -99,9 +102,11 @@ func TestCCMMigrationUpdateKubeletConfig(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			got, err := CCMMigrationUpdateKubeletConfig(tt.args.workdir, tt.args.nodeID, tt.args.verboseFlag)
-			if err != tt.err {
+			if !errors.Is(err, tt.err) {
 				t.Errorf("CCMMigrationUpdateKubeletConfig() error = %v, wantErr %v", err, tt.err)
+
 				return
 			}
 

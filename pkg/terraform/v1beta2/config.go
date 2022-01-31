@@ -158,6 +158,7 @@ type cloudProviderFlags struct {
 // NewConfigFromJSON creates a new config object from json
 func NewConfigFromJSON(j []byte) (c *Config, err error) {
 	c = &Config{}
+
 	return c, json.Unmarshal(j, c)
 }
 
@@ -229,6 +230,7 @@ func (c *Config) Apply(cluster *kubeonev1beta2.KubeOneCluster) error {
 		for idx, workerset := range cluster.DynamicWorkers {
 			if workerset.Name == workersetName {
 				existingWorkerSet = &cluster.DynamicWorkers[idx]
+
 				break
 			}
 		}
@@ -239,6 +241,7 @@ func (c *Config) Apply(cluster *kubeonev1beta2.KubeOneCluster) error {
 			// no existing workerset found, use what we have from terraform
 			workersetValue.Name = workersetName
 			cluster.DynamicWorkers = append(cluster.DynamicWorkers, workersetValue)
+
 			continue
 		}
 

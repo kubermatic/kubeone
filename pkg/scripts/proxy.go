@@ -17,7 +17,7 @@ limitations under the License.
 package scripts
 
 import (
-	"k8c.io/kubeone/pkg/apis/kubeone"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 )
 
 const (
@@ -65,7 +65,7 @@ sudo tee /etc/environment < $envtmp
 `
 )
 
-func EnvironmentFile(cluster *kubeone.KubeOneCluster) (string, error) {
+func EnvironmentFile(cluster *kubeoneapi.KubeOneCluster) (string, error) {
 	return Render(environmentFileScriptTemplate, Data{
 		"HTTP_PROXY":  cluster.Proxy.HTTP,
 		"HTTPS_PROXY": cluster.Proxy.HTTPS,

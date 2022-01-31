@@ -42,8 +42,8 @@ func configImagesCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		Use:   "images",
 		Short: "images manipulations",
 	}
-
 	cmd.AddCommand(listImagesCmd(rootFlags))
+
 	return cmd
 }
 
@@ -124,6 +124,7 @@ func listImages(opts *listImagesOpts) error {
 			if rc := conf.RegistryConfiguration; rc != nil {
 				return rc.OverwriteRegistry
 			}
+
 			return ""
 		})
 		kubeVerGetter := images.WithKubernetesVersionGetter(func() string {

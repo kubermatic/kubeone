@@ -95,8 +95,10 @@ func verifyVersion(logger logrus.FieldLogger, version string, nodes *corev1.Node
 	if reqVer.Compare(kubelet) == 0 {
 		if force {
 			logger.Warningf("upgrading to the same kubernetes version")
+
 			return nil
 		}
+
 		return errors.New("unable to upgrade to the same version")
 	}
 
@@ -173,6 +175,7 @@ func parseContainerImageVersion(image string) (*semver.Version, error) {
 	if len(ver) != 2 {
 		return nil, errors.Errorf("invalid container image format: %s", image)
 	}
+
 	return semver.NewVersion(ver[1])
 }
 
@@ -193,5 +196,6 @@ func checkVersionSkew(reqVer, currVer *semver.Version, diff uint64) error {
 	if reqVer.Minor()-currVer.Minor() > diff {
 		return errors.Errorf("version skew check failed: component can be only %d minor version older than requested version", diff)
 	}
+
 	return nil
 }

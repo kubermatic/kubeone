@@ -83,13 +83,15 @@ func setupProxyTunnel(opts *proxyOpts) error {
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			if r.Method != http.MethodConnect {
 				http.Error(w, "bad request", http.StatusBadRequest)
+
 				return
 			}
 
 			if terr := handleTunneling(w, r, s, tunn); terr != nil {
 				code := http.StatusInternalServerError
-				if err1, ok := err.(*httpError); ok {
-					code = err1.code
+				var errHTTP *httpError
+				if errors.As(err, &errHTTP) {
+					code = errHTTP.code
 				}
 				http.Error(w, err.Error(), code)
 			}
@@ -115,6 +117,7 @@ func handleTunneling(w http.ResponseWriter, r *http.Request, s *state.State, tun
 	destConn, err := tunn.TunnelTo(s.Context, "tcp4", r.Host)
 	if err != nil {
 		tunn.Close()
+
 		return &httpError{err: err, code: http.StatusServiceUnavailable}
 	}
 
@@ -149,5 +152,6 @@ func iocopy(dst io.WriteCloser, src io.ReadCloser) error {
 	defer src.Close()
 
 	_, err := io.Copy(dst, src)
+
 	return err
 }

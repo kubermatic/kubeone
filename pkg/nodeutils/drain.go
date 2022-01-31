@@ -99,5 +99,6 @@ type loggerIoWriter func(format string, args ...interface{})
 
 func (lw loggerIoWriter) Write(p []byte) (n int, err error) {
 	lw("%s", p)
+
 	return len(p), nil
 }

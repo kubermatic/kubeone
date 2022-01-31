@@ -13,10 +13,20 @@ run:
 linters:
   disable-all: true
   enable:
+  - asciicheck
+  - bidichk
   - bodyclose
+  - contextcheck
   - deadcode
+  - dogsled
+  - durationcheck
   - errcheck
+  - errchkjson
+  - errname
+  - errorlint
+  - exhaustive
   - exportloopref
+  - forcetypeassert
   - goconst
   - gocritic
   - gocyclo
@@ -25,17 +35,28 @@ linters:
   - gosec
   - gosimple
   - govet
+  - importas
   - ineffassign
+  - makezero
   - misspell
   - nakedret
+  - nilnil
+  - nlreturn
+  - noctx
+  - nolintlint
+  - predeclared
   - revive
   - staticcheck
   - structcheck
   - stylecheck
+  - tenv
+  - thelper
+  - tparallel
   - unconvert
   - unparam
   - unused
   - varcheck
+  - wastedassign
   - whitespace
 
 linters-settings:
@@ -43,6 +64,17 @@ linters-settings:
     check-shadowing: true
   goimports:
     local-prefixes: k8c.io/kubeone
+  importas:
+    no-unaliased: true
+    alias:
+    - pkg: k8c.io/kubeone/pkg/apis/kubeone
+      alias: kubeoneapi
+    - pkg: k8c.io/kubeone/pkg/apis/(\w+)/(v[\w\d]+)
+      alias: $1$2
+    - pkg: k8s.io/apimachinery/pkg/apis/meta/v1
+      alias: metav1
+    - pkg: k8s.io/api/(\w+)/(v[\w\d]+)
+      alias: $1$2
 
 issues:
   exclude-rules:

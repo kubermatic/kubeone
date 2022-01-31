@@ -190,6 +190,7 @@ func configPrintCmd() *cobra.Command {
 		longFlagName(opts, "ContainerLogMaxFiles"),
 		containerruntime.DefaultContainerLogMaxFiles,
 		"ContainerLogMaxFiles")
+
 	return cmd
 }
 
@@ -448,6 +449,7 @@ func parseControlPlaneHosts(cfg *yamled.Document, hostList string) error {
 					return errors.Wrap(err, "unable to convert ssh port to integer")
 				}
 				h[val[0]] = portInt
+
 				continue
 			}
 			h[val[0]] = val[1]

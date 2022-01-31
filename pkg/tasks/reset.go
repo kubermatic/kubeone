@@ -46,13 +46,16 @@ func destroyWorkers(s *state.State) error {
 		lastErr = kubeconfig.BuildKubernetesClientset(s)
 		if lastErr != nil {
 			s.Logger.Warn("Unable to connect to the control plane API. Retrying...")
+
 			return false, nil
 		}
+
 		return true, nil
 	})
 	if lastErr != nil {
 		s.Logger.Warn("Unable to connect to the control plane API and destroy worker nodes")
 		s.Logger.Warn("You can skip destroying worker nodes and destroy them manually using `--destroy-workers=false`")
+
 		return errors.Wrap(lastErr, "unable to build kubernetes clientset")
 	}
 
@@ -60,6 +63,7 @@ func destroyWorkers(s *state.State) error {
 	lastErr = wait.ExponentialBackoff(defaultRetryBackoff(3), condFn)
 	if lastErr != nil {
 		s.Logger.Info("Skipping deleting worker nodes because machine-controller CRDs are not deployed")
+
 		return nil
 	}
 
@@ -67,8 +71,10 @@ func destroyWorkers(s *state.State) error {
 		lastErr = machinecontroller.DestroyWorkers(s)
 		if lastErr != nil {
 			s.Logger.Warn("Unable to destroy worker nodes. Retrying...")
+
 			return false, nil
 		}
+
 		return true, nil
 	})
 	if lastErr != nil {
@@ -79,8 +85,10 @@ func destroyWorkers(s *state.State) error {
 		lastErr = machinecontroller.WaitDestroy(s)
 		if lastErr != nil {
 			s.Logger.Warn("Waiting for all machines to be deleted...")
+
 			return false, nil
 		}
+
 		return true, nil
 	})
 	if lastErr != nil {
@@ -105,6 +113,7 @@ func resetNode(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) er
 	}
 
 	_, _, err = s.Runner.RunRaw(cmd)
+
 	return err
 }
 
@@ -114,6 +123,7 @@ func removeBinariesAllNodes(s *state.State) error {
 	}
 
 	s.Logger.Infoln("Removing binaries from nodes...")
+
 	return s.RunTaskOnAllNodes(removeBinaries, state.RunParallel)
 }
 
@@ -143,6 +153,7 @@ func removeBinariesDebian(s *state.State) error {
 	}
 
 	_, _, err = s.Runner.RunRaw(cmd)
+
 	return errors.WithStack(err)
 }
 
@@ -153,6 +164,7 @@ func removeBinariesCentOS(s *state.State) error {
 	}
 
 	_, _, err = s.Runner.RunRaw(cmd)
+
 	return errors.WithStack(err)
 }
 
@@ -163,6 +175,7 @@ func removeBinariesAmazonLinux(s *state.State) error {
 	}
 
 	_, _, err = s.Runner.RunRaw(cmd)
+
 	return errors.WithStack(err)
 }
 
@@ -173,5 +186,6 @@ func removeBinariesFlatcar(s *state.State) error {
 	}
 
 	_, _, err = s.Runner.RunRaw(cmd)
+
 	return errors.WithStack(err)
 }

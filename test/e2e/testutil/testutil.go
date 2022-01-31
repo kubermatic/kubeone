@@ -54,6 +54,7 @@ func CreateFile(filepath, content string) error {
 	if err != nil {
 		return fmt.Errorf("unable to write data to file")
 	}
+
 	return nil
 }
 

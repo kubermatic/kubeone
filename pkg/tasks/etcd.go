@@ -75,6 +75,7 @@ func repairClusterIfNeeded(s *state.State) error {
 			endpointURL, uerr := url.Parse(endpoint)
 			if uerr != nil {
 				s.Logger.Errorf("failed to parse etcd clientURL: %v", uerr)
+
 				continue
 			}
 
@@ -127,7 +128,7 @@ func repairClusterIfNeeded(s *state.State) error {
 
 		if deleteThisNode {
 			s.Logger.Warnf("Removing kubernets Node object %q, for it's not alive", node.Name)
-			if err = s.DynamicClient.Delete(ctx, node.DeepCopyObject().(dynclient.Object)); err != nil {
+			if err = s.DynamicClient.Delete(ctx, node.DeepCopy()); err != nil {
 				return errors.WithStack(err)
 			}
 		}

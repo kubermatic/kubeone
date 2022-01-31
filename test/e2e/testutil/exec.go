@@ -85,6 +85,7 @@ func (e *Exec) build() *exec.Cmd {
 func WithArgs(args ...string) ExecOpt {
 	return func(e *Exec) *Exec {
 		e.Args = args
+
 		return e
 	}
 }
@@ -92,6 +93,7 @@ func WithArgs(args ...string) ExecOpt {
 func StdoutTo(stdout io.Writer) ExecOpt {
 	return func(e *Exec) *Exec {
 		e.Stdout = stdout
+
 		return e
 	}
 }
@@ -99,6 +101,7 @@ func StdoutTo(stdout io.Writer) ExecOpt {
 func StderrTo(stderr io.Writer) ExecOpt {
 	return func(e *Exec) *Exec {
 		e.Stderr = stderr
+
 		return e
 	}
 }
@@ -106,6 +109,7 @@ func StderrTo(stderr io.Writer) ExecOpt {
 func InDir(dir string) ExecOpt {
 	return func(e *Exec) *Exec {
 		e.Cwd = dir
+
 		return e
 	}
 }
@@ -120,6 +124,7 @@ func WithMapEnv(env map[string]string) ExecOpt {
 
 		sort.Strings(maptosliceEnv)
 		e.Env = append(e.Env, maptosliceEnv...)
+
 		return e
 	}
 }
@@ -127,6 +132,7 @@ func WithMapEnv(env map[string]string) ExecOpt {
 func WithEnv(env []string) ExecOpt {
 	return func(e *Exec) *Exec {
 		e.Env = append(e.Env, env...)
+
 		return e
 	}
 }
@@ -134,6 +140,7 @@ func WithEnv(env []string) ExecOpt {
 func WithEnvs(envs ...string) ExecOpt {
 	return func(e *Exec) *Exec {
 		e.Env = append(e.Env, envs...)
+
 		return e
 	}
 }
@@ -141,6 +148,7 @@ func WithEnvs(envs ...string) ExecOpt {
 func LogFunc(logf func(string, ...interface{})) ExecOpt {
 	return func(e *Exec) *Exec {
 		e.Logf = logf
+
 		return e
 	}
 }

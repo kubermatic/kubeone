@@ -34,6 +34,7 @@ func generateAESCBCSecret() (string, error) {
 	if _, err := rand.Reader.Read(buf); err != nil {
 		return "", err
 	}
+
 	return base64.StdEncoding.EncodeToString(buf), nil
 }
 
@@ -42,6 +43,7 @@ func NewEncyrptionProvidersConfig(s *state.State) (*apiserverconfigv1.Encryption
 	if err != nil {
 		return nil, err
 	}
+
 	return &apiserverconfigv1.EncryptionConfiguration{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "apiserver.config.k8s.io/v1",
@@ -83,6 +85,7 @@ func UpdateEncryptionConfigDecryptOnly(config *apiserverconfigv1.EncryptionConfi
 			AESCBC: config.Resources[0].Providers[0].AESCBC,
 		},
 	}
+
 	return nil
 }
 
@@ -108,6 +111,7 @@ func UpdateEncryptionConfigWithNewKey(config *apiserverconfigv1.EncryptionConfig
 			Identity: &apiserverconfigv1.IdentityConfiguration{},
 		},
 	}
+
 	return nil
 }
 

@@ -20,13 +20,16 @@ import (
 	"encoding/json"
 	"testing"
 
-	"k8c.io/kubeone/pkg/apis/kubeone"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 )
 
 func Test_marshalDockerConfig(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name             string
-		cluster          *kubeone.KubeOneCluster
+		cluster          *kubeoneapi.KubeOneCluster
+		want             string
 		expectedMaxSize  string
 		expectedMaxFiles string
 	}{
@@ -55,8 +58,11 @@ func Test_marshalDockerConfig(t *testing.T) {
 			expectedMaxFiles: "10",
 		},
 	}
+
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			got, err := marshalDockerConfig(tt.cluster)
 			if err != nil {
 				t.Errorf("marshalDockerConfig() error = %v,", err)
@@ -80,13 +86,13 @@ func Test_marshalDockerConfig(t *testing.T) {
 }
 
 func withContainerLogMaxSize(logSize string) clusterOpts {
-	return func(cls *kubeone.KubeOneCluster) {
+	return func(cls *kubeoneapi.KubeOneCluster) {
 		cls.LoggingConfig.ContainerLogMaxSize = logSize
 	}
 }
 
 func withContainerLogMaxFiles(logFiles int32) clusterOpts {
-	return func(cls *kubeone.KubeOneCluster) {
+	return func(cls *kubeoneapi.KubeOneCluster) {
 		cls.LoggingConfig.ContainerLogMaxFiles = logFiles
 	}
 }

@@ -58,10 +58,12 @@ const (
 func Ensure(s *state.State) error {
 	if s.Cluster.CloudProvider.None != nil {
 		s.Logger.Info("Skipping creating credentials secret because cloud provider is none.")
+
 		return nil
 	}
 	if !s.Cluster.MachineController.Deploy && !s.Cluster.CloudProvider.External && !s.Cluster.OperatingSystemManagerEnabled() {
 		s.Logger.Info("Skipping creating credentials secret because both machine-controller and external CCM are disabled.")
+
 		return nil
 	}
 

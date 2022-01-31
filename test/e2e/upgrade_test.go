@@ -370,6 +370,7 @@ func waitForNodesUpgraded(client dynclient.Client, targetVersion string) error {
 				return false, nil
 			}
 		}
+
 		return true, nil
 	})
 }

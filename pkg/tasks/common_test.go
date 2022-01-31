@@ -99,6 +99,7 @@ func Test_unmarshalKubeletFlags(t *testing.T) {
 			got, err := unmarshalKubeletFlags(tt.buf)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("unmarshalKubeletFlags() error = %v, wantErr %v", err, tt.wantErr)
+
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {

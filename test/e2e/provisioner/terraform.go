@@ -47,7 +47,7 @@ func (p *terraform) initAndApply(applyArgs ...string) (string, error) {
 
 	err := p.run(initCmd...)
 	if err != nil {
-		return "", fmt.Errorf("terraform init command failed: %v", err)
+		return "", fmt.Errorf("terraform init command failed: %w", err)
 	}
 
 	args := []string{"apply", "-auto-approve"}
@@ -63,7 +63,7 @@ func (p *terraform) initAndApply(applyArgs ...string) (string, error) {
 		// runs of terraform apply, so terraform always tries to create the same CIDR.
 		destroyErr := p.destroy()
 		if destroyErr != nil {
-			return "", fmt.Errorf("terraform destroy command failed: %v", destroyErr)
+			return "", fmt.Errorf("terraform destroy command failed: %w", destroyErr)
 		}
 		applyErr = p.run(args...)
 		if applyErr == nil {
@@ -73,7 +73,7 @@ func (p *terraform) initAndApply(applyArgs ...string) (string, error) {
 	}
 
 	if applyErr != nil {
-		return "", fmt.Errorf("terraform apply command failed: %v", applyErr)
+		return "", fmt.Errorf("terraform apply command failed: %w", applyErr)
 	}
 
 	return p.getTFJson()

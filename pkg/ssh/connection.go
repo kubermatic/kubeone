@@ -163,6 +163,7 @@ func NewConnection(connector *Connector, o Opts) (Connection, error) {
 		signers, signersErr := agentClient.Signers()
 		if signersErr != nil {
 			socket.Close()
+
 			return nil, errors.Wrap(signersErr, "error when creating signer for SSH agent")
 		}
 
@@ -222,6 +223,7 @@ func NewConnection(connector *Connector, o Opts) (Connection, error) {
 	}
 
 	sshConn.sshclient = ssh.NewClient(ncc, chans, reqs)
+
 	return sshConn, nil
 }
 
@@ -236,6 +238,7 @@ func (c *connection) TunnelTo(_ context.Context, network, addr string) (net.Conn
 			netconn.Close()
 		}()
 	}
+
 	return netconn, err
 }
 
@@ -268,8 +271,9 @@ func (c *connection) POpen(cmd string, stdin io.Reader, stdout io.Writer, stderr
 	exitCode := 0
 	if err = sess.Run(cmd); err != nil {
 		exitCode = -1
-		if exitErr, ok := err.(*ssh.ExitError); ok {
-			exitCode = exitErr.ExitStatus()
+		var errSSH *ssh.ExitError
+		if errors.As(err, &errSSH) {
+			exitCode = errSSH.ExitStatus()
 		}
 	}
 

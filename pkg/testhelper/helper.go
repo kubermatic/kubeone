@@ -27,10 +27,13 @@ import (
 )
 
 func FSGoldenName(t *testing.T) string {
+	t.Helper()
+
 	return strings.ReplaceAll(t.Name(), "/", "-") + ".golden"
 }
 
 func DiffOutput(t *testing.T, name, output string, update bool) {
+	t.Helper()
 	golden, err := filepath.Abs(filepath.Join("testdata", name))
 	if err != nil {
 		t.Fatalf("failed to get absolute path to testdata file: %v", err)

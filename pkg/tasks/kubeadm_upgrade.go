@@ -52,6 +52,7 @@ func upgradeFollowerControlPlane(s *state.State, nodeID int) error {
 	}
 
 	_, _, err = s.Runner.RunRaw(cmd)
+
 	return err
 }
 
@@ -62,5 +63,6 @@ func upgradeStaticWorker(s *state.State) error {
 	}
 
 	_, _, err = s.Runner.Run(`sudo `+kadm.UpgradeStaticWorkerCommand(), nil)
+
 	return err
 }

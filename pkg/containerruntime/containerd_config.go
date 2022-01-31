@@ -22,7 +22,7 @@ import (
 
 	"github.com/BurntSushi/toml"
 
-	"k8c.io/kubeone/pkg/apis/kubeone"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 )
 
 type containerdConfig struct {
@@ -78,7 +78,7 @@ type containerdRegistryTLSConfig struct {
 	InsecureSkipVerify bool `toml:"insecure_skip_verify"`
 }
 
-func marshalContainerdConfig(cluster *kubeone.KubeOneCluster) (string, error) {
+func marshalContainerdConfig(cluster *kubeoneapi.KubeOneCluster) (string, error) {
 	criPlugin := containerdCRIPlugin{
 		Containerd: &containerdCRISettings{
 			Runtimes: map[string]containerdCRIRuntime{

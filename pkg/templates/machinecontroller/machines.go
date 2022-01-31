@@ -184,6 +184,7 @@ func getKubeletConfigurationAnnotations(cluster *kubeoneapi.KubeOneCluster) map[
 	if cluster.LoggingConfig.ContainerLogMaxFiles != containerruntime.DefaultContainerLogMaxFiles {
 		annotations[clustercommon.KubeletConfigAnnotationPrefixV1+"/"+clustercommon.ContainerLogMaxFilesKubeletConfig] = strconv.Itoa(int(cluster.LoggingConfig.ContainerLogMaxFiles))
 	}
+
 	return annotations
 }
 

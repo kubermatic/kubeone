@@ -19,7 +19,7 @@ package scripts
 import (
 	"github.com/MakeNowJust/heredoc/v2"
 
-	"k8c.io/kubeone/pkg/apis/kubeone"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/containerruntime"
 )
 
@@ -49,9 +49,9 @@ var migrateToContainerdScriptTemplate = heredoc.Doc(`
 	sudo systemctl restart kubelet
 `)
 
-func MigrateToContainerd(cluster *kubeone.KubeOneCluster, node *kubeone.HostConfig) (string, error) {
+func MigrateToContainerd(cluster *kubeoneapi.KubeOneCluster, node *kubeoneapi.HostConfig) (string, error) {
 	data := Data{
-		"IS_FLATCAR": node.OperatingSystem == kubeone.OperatingSystemNameFlatcar,
+		"IS_FLATCAR": node.OperatingSystem == kubeoneapi.OperatingSystemNameFlatcar,
 	}
 
 	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
@@ -61,6 +61,6 @@ func MigrateToContainerd(cluster *kubeone.KubeOneCluster, node *kubeone.HostConf
 	return Render(migrateToContainerdScriptTemplate, data)
 }
 
-func installISCSIAndNFS(cluster *kubeone.KubeOneCluster) bool {
+func installISCSIAndNFS(cluster *kubeoneapi.KubeOneCluster) bool {
 	return cluster.CloudProvider.Nutanix != nil
 }

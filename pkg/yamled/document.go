@@ -30,7 +30,7 @@ type Document struct {
 func Load(r io.Reader) (*Document, error) {
 	var data yaml.MapSlice
 	if err := yaml.NewDecoder(r).Decode(&data); err != nil {
-		return nil, fmt.Errorf("failed to decode input YAML: %v", err)
+		return nil, fmt.Errorf("failed to decode input YAML: %w", err)
 	}
 
 	return NewFromMapSlice(data)
@@ -74,9 +74,10 @@ func (d *Document) Get(path Path) (interface{}, bool) {
 				}
 
 				for _, item := range node {
-					if item.Key.(string) == sstep {
+					if realItem, _ := item.Key.(string); realItem == sstep {
 						stepFound = true
 						result = item.Value
+
 						break
 					}
 				}
@@ -210,6 +211,7 @@ func (d *Document) setInternal(path Path, newValue interface{}) bool {
 		// check if we are really in a map
 		if m, ok := target.(map[string]interface{}); ok {
 			m[key] = newValue
+
 			return d.setInternal(parentPath, m)
 		}
 
@@ -228,16 +230,19 @@ func (d *Document) setInternal(path Path, newValue interface{}) bool {
 func (d *Document) setRoot(newValue interface{}) bool {
 	if asserted, ok := newValue.(yaml.MapSlice); ok {
 		d.root = asserted
+
 		return true
 	}
 
 	if asserted, ok := newValue.(*yaml.MapSlice); ok {
 		d.root = *asserted
+
 		return true
 	}
 
 	if asserted, ok := newValue.(map[string]interface{}); ok {
 		d.root = makeMapSlice(asserted)
+
 		return true
 	}
 
@@ -286,6 +291,7 @@ func (d *Document) Remove(path Path) bool {
 		// check if we are really in a map
 		if m, ok := parent.(map[string]interface{}); ok {
 			delete(m, key)
+
 			return d.setInternal(parentPath, m)
 		}
 

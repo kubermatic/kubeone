@@ -24,7 +24,7 @@ import (
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
 
-	kubeoneinternal "k8c.io/kubeone/pkg/apis/kubeone"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	kubeonev1beta1 "k8c.io/kubeone/pkg/apis/kubeone/v1beta1"
 	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
 	"k8c.io/kubeone/test/e2e/testutil"
@@ -57,7 +57,7 @@ func (k1 *Kubeone) CreateV1Beta1Config(
 	clusterNetworkPod string,
 	clusterNetworkService string,
 	credentialsFile string,
-	containerRuntime kubeoneinternal.ContainerRuntimeConfig,
+	containerRuntime kubeoneapi.ContainerRuntimeConfig,
 ) error {
 	k1Cluster := kubeonev1beta1.KubeOneCluster{
 		TypeMeta: metav1.TypeMeta{
@@ -114,6 +114,7 @@ func (k1 *Kubeone) CreateV1Beta1Config(
 	}
 
 	err = os.WriteFile(k1.ConfigurationFilePath, k1Config, 0600)
+
 	return errors.Wrap(err, "failed to write KubeOne configuration manifest")
 }
 
@@ -125,7 +126,7 @@ func (k1 *Kubeone) CreateV1Beta2Config(
 	clusterNetworkPod string,
 	clusterNetworkService string,
 	credentialsFile string,
-	containerRuntime kubeoneinternal.ContainerRuntimeConfig,
+	containerRuntime kubeoneapi.ContainerRuntimeConfig,
 ) error {
 	k1Cluster := kubeonev1beta2.KubeOneCluster{
 		TypeMeta: metav1.TypeMeta{
@@ -182,6 +183,7 @@ func (k1 *Kubeone) CreateV1Beta2Config(
 	}
 
 	err = os.WriteFile(k1.ConfigurationFilePath, k1Config, 0600)
+
 	return errors.Wrap(err, "failed to write KubeOne configuration manifest")
 }
 

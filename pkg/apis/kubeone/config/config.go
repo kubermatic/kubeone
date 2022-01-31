@@ -126,12 +126,14 @@ func BytesToKubeOneCluster(cluster, tfOutput, credentialsFile []byte, logger log
 		if err := runtime.DecodeInto(kubeonescheme.Codecs.UniversalDecoder(), cluster, v1beta1Cluster); err != nil {
 			return nil, err
 		}
+
 		return DefaultedV1Beta1KubeOneCluster(v1beta1Cluster, tfOutput, credentialsFile, logger)
 	case kubeonev1beta2.SchemeGroupVersion.String():
 		v1beta2Cluster := &kubeonev1beta2.KubeOneCluster{}
 		if err := runtime.DecodeInto(kubeonescheme.Codecs.UniversalDecoder(), cluster, v1beta2Cluster); err != nil {
 			return nil, err
 		}
+
 		return DefaultedV1Beta2KubeOneCluster(v1beta2Cluster, tfOutput, credentialsFile, logger)
 	default:
 		return nil, errors.Errorf("invalid api version %q", typeMeta.APIVersion)
@@ -299,6 +301,7 @@ func setRegistriesAuth(cluster *kubeoneapi.KubeOneCluster, buf string) error {
 
 func isDir(dirname string) bool {
 	stat, statErr := os.Stat(dirname)
+
 	return statErr == nil && stat.Mode().IsDir()
 }
 

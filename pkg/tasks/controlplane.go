@@ -29,6 +29,7 @@ const kubeadmPhaseKubeProxy = "addon/kube-proxy"
 
 func joinControlplaneNode(s *state.State) error {
 	s.Logger.Infoln("Joining controlplane node...")
+
 	return s.RunTaskOnFollowers(joinControlPlaneNodeInternal, state.RunSequentially)
 }
 
@@ -67,6 +68,7 @@ func kubeadmCertsExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh.
 
 func initKubernetesLeader(s *state.State) error {
 	s.Logger.Infoln("Initializing Kubernetes on leader...")
+
 	return s.RunTaskOnLeader(func(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 		var skipPhase string
 		if s.Cluster.ClusterNetwork.KubeProxy != nil && s.Cluster.ClusterNetwork.KubeProxy.SkipInstallation {
@@ -81,6 +83,7 @@ func initKubernetesLeader(s *state.State) error {
 		}
 
 		_, _, err = s.Runner.RunRaw(cmd)
+
 		return err
 	})
 }

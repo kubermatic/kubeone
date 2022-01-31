@@ -21,7 +21,7 @@ import (
 	"strconv"
 	"strings"
 
-	"k8c.io/kubeone/pkg/apis/kubeone"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 )
 
 type dockerConfig struct {
@@ -33,7 +33,7 @@ type dockerConfig struct {
 	RegistryMirrors    []string          `json:"registry-mirrors,omitempty"`
 }
 
-func marshalDockerConfig(cluster *kubeone.KubeOneCluster) (string, error) {
+func marshalDockerConfig(cluster *kubeoneapi.KubeOneCluster) (string, error) {
 	// Parse log max size to ensure that it has the correct units
 	logSize := strings.ToLower(cluster.LoggingConfig.ContainerLogMaxSize)
 	logSize = strings.ReplaceAll(logSize, "ki", "k")
