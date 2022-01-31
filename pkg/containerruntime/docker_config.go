@@ -33,8 +33,8 @@ type dockerConfig struct {
 	RegistryMirrors    []string          `json:"registry-mirrors,omitempty"`
 }
 
-// Parse log max size to ensure that it has the correct units
 func marshalDockerConfig(cluster *kubeoneapi.KubeOneCluster) (string, error) {
+	// Parse log max size to ensure that it has the correct units
 	logSize := strings.ToLower(cluster.LoggingConfig.ContainerLogMaxSize)
 	logSize = strings.ReplaceAll(logSize, "ki", "k")
 	logSize = strings.ReplaceAll(logSize, "mi", "m")
