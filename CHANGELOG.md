@@ -1,5 +1,48 @@
 # Changelog
 
+# [v1.4.0-rc.0](https://github.com/kubermatic/kubeone/releases/tag/v1.4.0-rc.0) - 2022-02-01
+
+## Added
+
+* Add experimental/alpha-level support for [Kubermatic Operating System Manager (OSM)](https://github.com/kubermatic/operating-system-manager) ([#1748](https://github.com/kubermatic/kubeone/pull/1748))
+* Add ability to change the container log maximum size (defaults to 100Mi) ([#1644](https://github.com/kubermatic/kubeone/pull/1644))
+* Add ability to change the container log maximum files (defaults to 5) ([#1759](https://github.com/kubermatic/kubeone/pull/1759))
+* Add the DigitalOcean CSI driver. The CSI driver is deployed automatically if `.cloudProvider.external` is enabled ([#1754](https://github.com/kubermatic/kubeone/pull/1754))
+* Add the default StorageClass and VolumeSnapshotClass for the DigitalOcean CSI driver. The StorageClass and VolumeSnapshotClass can be deployed by enabling the default-storage-class embedded addon ([#1754](https://github.com/kubermatic/kubeone/pull/1754))
+* Generate and approve CSRs for control plane and static workers nodes. Enable the server TLS bootstrap for control plane and static worker nodes ([#1750](https://github.com/kubermatic/kubeone/pull/1750), [#1758](https://github.com/kubermatic/kubeone/pull/1758))
+* Source `.cloudProvider.csiConfig` from the credentials file if present ([#1739](https://github.com/kubermatic/kubeone/pull/1739))
+* Fetch containerd auth config from the credentials file if present ([#1745](https://github.com/kubermatic/kubeone/pull/1745))
+
+## Changed
+
+### Fixed
+
+* Fix Docker to containerd migration on non-Flatcar operating systems ([#1743](https://github.com/kubermatic/kubeone/pull/1743))
+* Fix propagation of proxy config to machines and Kubernetes components ([#1746](https://github.com/kubermatic/kubeone/pull/1746))
+
+### Addons
+
+* Replace Hubble static certificate with CronJob generation ([#1752](https://github.com/kubermatic/kubeone/pull/1752))
+* Make template function `required` available to addons manifest templates ([#1737](https://github.com/kubermatic/kubeone/pull/1737))
+* Ensure unattended-upgrades in dpkg is active ([#1756](https://github.com/kubermatic/kubeone/pull/1756))
+
+### Terraform Configs
+
+* Create a placement group for control plane nodes in Terraform configs for Hetzner ([#1762](https://github.com/kubermatic/kubeone/pull/1762))
+
+### Updated
+
+* Update images in order to support Kubernetes 1.23 ([#1751](https://github.com/kubermatic/kubeone/pull/1751), [#1753](https://github.com/kubermatic/kubeone/pull/1753))
+  * Update AWS External Cloud Controller Manager (CCM) to v1.23.0-alpha.0 for Kubernetes 1.23 clusters
+  * Update Azure External Cloud Controller Manager (CCM) to v1.23.2 for Kubernetes 1.23 clusters
+  * Update AWS EBS CSI driver to v1.5.0
+  * Update AzureFile CSI driver to v1.9.0
+  * Update AzureDisk CSI driver to v1.10.0
+  * Update OpenStack External Cloud Controller Manager (CCM) to v1.23.0 for Kubernetes 1.23 clusters
+  * Update the DigitalOcean External Cloud Controller Manager (CCM) to v0.1.36
+  * Update the Hetzner External Cloud Controller Manager (CCM) to v1.12.1
+* Update Cilium to v1.11.1 ([#1752](https://github.com/kubermatic/kubeone/pull/1752))
+
 # [v1.4.0-beta.1](https://github.com/kubermatic/kubeone/releases/tag/v1.4.0-beta.1) - 2022-01-14
 
 ## Attention Needed
