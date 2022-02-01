@@ -42,6 +42,7 @@
   * Update the DigitalOcean External Cloud Controller Manager (CCM) to v0.1.36
   * Update the Hetzner External Cloud Controller Manager (CCM) to v1.12.1
 * Update Cilium to v1.11.1 ([#1752](https://github.com/kubermatic/kubeone/pull/1752))
+* Update machine-controller to v1.42.2 ([#1748](https://github.com/kubermatic/kubeone/pull/1748))
 
 # [v1.4.0-beta.1](https://github.com/kubermatic/kubeone/releases/tag/v1.4.0-beta.1) - 2022-01-14
 
