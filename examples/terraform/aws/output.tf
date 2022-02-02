@@ -74,6 +74,9 @@ output "kubeone_workers" {
     "${var.cluster_name}-${local.zoneA}" = {
       replicas = var.initial_machinedeployment_replicas
       providerSpec = {
+        annotations = {
+          "k8c.io/operating-system-profile" = var.ami_filters[var.os].osp_name
+        }
         sshPublicKeys   = local.worker_deploy_ssh_key
         operatingSystem = local.worker_os
         operatingSystemSpec = {
@@ -119,6 +122,9 @@ output "kubeone_workers" {
     "${var.cluster_name}-${local.zoneB}" = {
       replicas = var.initial_machinedeployment_replicas
       providerSpec = {
+        annotations = {
+          "k8c.io/operating-system-profile" = var.ami_filters[var.os].osp_name
+        }
         sshPublicKeys   = local.worker_deploy_ssh_key
         operatingSystem = local.worker_os
         operatingSystemSpec = {
@@ -157,6 +163,9 @@ output "kubeone_workers" {
     "${var.cluster_name}-${local.zoneC}" = {
       replicas = var.initial_machinedeployment_replicas
       providerSpec = {
+        annotations = {
+          "k8c.io/operating-system-profile" = var.ami_filters[var.os].osp_name
+        }
         sshPublicKeys   = local.worker_deploy_ssh_key
         operatingSystem = local.worker_os
         operatingSystemSpec = {

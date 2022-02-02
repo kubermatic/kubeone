@@ -333,7 +333,7 @@ func optionalResources() map[Resource]map[string]string {
 			">= 1.23.0": "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.23.0",
 		},
 		// operating-system-manager addon
-		OperatingSystemManager: {"*": "quay.io/kubermatic/operating-system-manager:v0.4.0"},
+		OperatingSystemManager: {"*": "quay.io/kubermatic/operating-system-manager:v0.4.1"},
 	}
 }
 
