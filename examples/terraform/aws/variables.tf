@@ -147,31 +147,37 @@ variable "ami_filters" {
   type = map(object({
     owners     = list(string)
     image_name = list(string)
+    osp_name   = string
   }))
   default = {
     ubuntu = {
       owners     = ["099720109477"] # Canonical
       image_name = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+      osp_name   = "osp-ubuntu"
     }
 
     centos = {
       owners     = ["125523088429"] # CentOS
-      image_name = ["CentOS 8.2.* x86_64"]
+      image_name = ["CentOS 8.* x86_64"]
+      osp_name   = "osp-centos8"
     }
 
     flatcar = {
       owners     = ["075585003325"] # Kinvolk
       image_name = ["Flatcar-stable-*-hvm"]
+      osp_name   = "osp-flatcar"
     }
 
     rhel = {
       owners     = ["309956199498"] # Red Hat
       image_name = ["RHEL-8*_HVM-*-x86_64-*"]
+      osp_name   = "osp-rhel"
     }
 
     amzn2 = {
       owners     = ["137112412989"] # Amazon
       image_name = ["amzn2-ami-hvm-2.0.*-x86_64-gp2"]
+      osp_name   = "osp-amzn2"
     }
   }
 }
