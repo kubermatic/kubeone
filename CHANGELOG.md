@@ -1,6 +1,10 @@
 # Changelog
 
-# [v1.4.0-rc.0](https://github.com/kubermatic/kubeone/releases/tag/v1.4.0-rc.0) - 2022-02-01
+# [v1.4.0-rc.0](https://github.com/kubermatic/kubeone/releases/tag/v1.4.0-rc.0) - 2022-02-03
+
+## Attention Needed
+
+* CentOS 8 has reached End-Of-Life (EOL) on January 31st, 2022. It will no longer receive any updates (including security updates). Support for CentOS 8 in KubeOne is deprecated and will be removed in a future release. We strongly recommend migrating to another operating system or CentOS distribution as soon as possible.
 
 ## Added
 
@@ -17,6 +21,7 @@
 
 ### Fixed
 
+* Change baseurl to `vault.centos.org` for CentOS 8 ([#1767](https://github.com/kubermatic/kubeone/pull/1767))
 * Fix Docker to containerd migration on non-Flatcar operating systems ([#1743](https://github.com/kubermatic/kubeone/pull/1743))
 * Fix propagation of proxy config to machines and Kubernetes components ([#1746](https://github.com/kubermatic/kubeone/pull/1746))
 
@@ -32,6 +37,9 @@
 
 ### Updated
 
+* Update Canal CNI to v3.22.0 ([#1797](https://github.com/kubermatic/kubeone/pull/1797))
+* Update Cilium to v1.11.1 ([#1752](https://github.com/kubermatic/kubeone/pull/1752))
+* Update Calico VXLAN addon to v3.22.0 ([#1797](https://github.com/kubermatic/kubeone/pull/1797))
 * Update images in order to support Kubernetes 1.23 ([#1751](https://github.com/kubermatic/kubeone/pull/1751), [#1753](https://github.com/kubermatic/kubeone/pull/1753))
   * Update AWS External Cloud Controller Manager (CCM) to v1.23.0-alpha.0 for Kubernetes 1.23 clusters
   * Update Azure External Cloud Controller Manager (CCM) to v1.23.2 for Kubernetes 1.23 clusters
@@ -41,7 +49,6 @@
   * Update OpenStack External Cloud Controller Manager (CCM) to v1.23.0 for Kubernetes 1.23 clusters
   * Update the DigitalOcean External Cloud Controller Manager (CCM) to v0.1.36
   * Update the Hetzner External Cloud Controller Manager (CCM) to v1.12.1
-* Update Cilium to v1.11.1 ([#1752](https://github.com/kubermatic/kubeone/pull/1752))
 * Update machine-controller to v1.42.2 ([#1748](https://github.com/kubermatic/kubeone/pull/1748))
 
 # [v1.4.0-beta.1](https://github.com/kubermatic/kubeone/releases/tag/v1.4.0-beta.1) - 2022-01-14
