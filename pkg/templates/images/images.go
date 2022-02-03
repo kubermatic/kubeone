@@ -168,7 +168,7 @@ func baseResources() map[Resource]map[string]string {
 		CalicoNode:        {"*": "docker.io/calico/node:v3.22.0"},
 		DNSNodeCache:      {"*": "k8s.gcr.io/k8s-dns-node-cache:1.15.13"},
 		Flannel:           {"*": "quay.io/coreos/flannel:v0.13.0"},
-		MachineController: {"*": "docker.io/kubermatic/machine-controller:v1.42.2"},
+		MachineController: {"*": "docker.io/kubermatic/machine-controller:v1.42.4"},
 		MetricsServer:     {"*": "k8s.gcr.io/metrics-server/metrics-server:v0.5.0"},
 	}
 }
@@ -333,7 +333,7 @@ func optionalResources() map[Resource]map[string]string {
 			">= 1.23.0": "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.23.0",
 		},
 		// operating-system-manager addon
-		OperatingSystemManager: {"*": "quay.io/kubermatic/operating-system-manager:v0.4.0"},
+		OperatingSystemManager: {"*": "quay.io/kubermatic/operating-system-manager:v0.4.1"},
 	}
 }
 
