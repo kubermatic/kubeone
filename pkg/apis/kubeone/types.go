@@ -178,8 +178,8 @@ type HostConfig struct {
 	Taints []corev1.Taint `json:"taints,omitempty"`
 	// Kubelet
 	Kubelet KubeletConfig `json:"kubelet,omitempty"`
-	// OperatingSystem information populated at the runtime.
-	OperatingSystem OperatingSystemName `json:"-"`
+	// OperatingSystem information, can be populated at the runtime.
+	OperatingSystem OperatingSystemName `json:"operatingSystem,omitempty"`
 }
 
 // ControlPlaneConfig defines control plane nodes

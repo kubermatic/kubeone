@@ -84,8 +84,31 @@ func (h *HostConfig) SetHostname(hostname string) {
 }
 
 // SetOperatingSystem sets the operating system for the given host
-func (h *HostConfig) SetOperatingSystem(os OperatingSystemName) {
-	h.OperatingSystem = os
+func (h *HostConfig) SetOperatingSystem(os OperatingSystemName) error {
+	if h.OperatingSystem.IsValid() {
+		h.OperatingSystem = os
+
+		return nil
+	}
+
+	return errors.Errorf("unknown operating system %q", os)
+}
+
+func (osName OperatingSystemName) IsValid() bool {
+	// linter exhaustive will make sure this switch is iterating over all current and future possibilities
+	switch osName {
+	case OperatingSystemNameUbuntu:
+	case OperatingSystemNameDebian:
+	case OperatingSystemNameCentOS:
+	case OperatingSystemNameRHEL:
+	case OperatingSystemNameAmazon:
+	case OperatingSystemNameFlatcar:
+	case OperatingSystemNameUnknown:
+	default:
+		return false
+	}
+
+	return true
 }
 
 // SetLeader sets is the given host leader

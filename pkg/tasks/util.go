@@ -74,15 +74,17 @@ func determineOS(s *state.State) error {
 	s.Logger.Infoln("Determine operating system...")
 
 	return s.RunTaskOnAllNodes(func(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+		if node.OperatingSystem == kubeoneapi.OperatingSystemNameUnknown {
+			return nil
+		}
+
 		buf, err := fs.ReadFile(sshiofs.New(conn), "/etc/os-release")
 		if err != nil {
 			return err
 		}
-
 		osrData := osrelease.Parse(string(buf))
-		node.SetOperatingSystem(kubeoneapi.OperatingSystemName(osrData.ID))
 
-		return nil
+		return node.SetOperatingSystem(kubeoneapi.OperatingSystemName(osrData.ID))
 	}, state.RunParallel)
 }
 
