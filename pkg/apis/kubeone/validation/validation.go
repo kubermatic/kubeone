@@ -268,6 +268,7 @@ func ValidateVersionConfig(version kubeoneapi.VersionConfig, fldPath *field.Path
 	lowerConstraint, err := semver.NewConstraint(lowerVersionConstraint)
 	if err != nil {
 		allErrs = append(allErrs, field.InternalError(fldPath.Child("kubernetes"), fmt.Errorf("failed to parse constraint: %w", err)))
+
 		return allErrs
 	}
 
@@ -277,16 +278,24 @@ func ValidateVersionConfig(version kubeoneapi.VersionConfig, fldPath *field.Path
 		for _, err := range errs {
 			allErrs = append(allErrs, field.InternalError(fldPath.Child("kubernetes"), fmt.Errorf("failed to validate version against constraint: %w", err)))
 		}
+
 		return allErrs
 	}
 
 	upperConstraint, err := semver.NewConstraint(upperVersionConstraint)
+	if err != nil {
+		allErrs = append(allErrs, field.InternalError(fldPath.Child("kubernetes"), fmt.Errorf("failed to parse constraint: %w", err)))
+
+		return allErrs
+	}
+
 	if ok, errs := upperConstraint.Validate(v); len(errs) == 0 && !ok {
 		allErrs = append(allErrs, field.Invalid(fldPath.Child("kubernetes"), version, fmt.Sprintf("kubernetes version does not satisfy version constraint '%s'. This version is not yet supported. Please refer to the Compatibility section of docs for more details.", upperVersionConstraint)))
 	} else if len(errs) > 0 {
 		for _, err := range errs {
 			allErrs = append(allErrs, field.InternalError(fldPath.Child("kubernetes"), fmt.Errorf("failed to validate version against constraint: %w", err)))
 		}
+
 		return allErrs
 	}
 
