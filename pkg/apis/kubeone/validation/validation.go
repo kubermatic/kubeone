@@ -33,6 +33,13 @@ import (
 	"k8s.io/apimachinery/pkg/util/validation/field"
 )
 
+const (
+	// lowerVersionConstraint defines a semver constraint that validates Kubernetes versions against a lower bound
+	lowerVersionConstraint = ">= 1.20"
+	// upperVersionConstraint defines a semver constraint that validates Kubernetes versions against an upper bound
+	upperVersionConstraint = "<= 1.23"
+)
+
 // ValidateKubeOneCluster validates the KubeOneCluster object
 func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 	allErrs := field.ErrorList{}
@@ -253,11 +260,34 @@ func ValidateVersionConfig(version kubeoneapi.VersionConfig, fldPath *field.Path
 
 		return allErrs
 	}
-	if v.Major() != 1 || v.Minor() < 19 {
-		allErrs = append(allErrs, field.Invalid(fldPath.Child("kubernetes"), version, "kubernetes versions lower than 1.19 are not supported. You need to use an older KubeOne version to upgrade your cluster to v1.19. Please refer to the Compatibility section of docs for more details."))
-	}
+
 	if strings.HasPrefix(version.Kubernetes, "v") {
 		allErrs = append(allErrs, field.Invalid(fldPath.Child("kubernetes"), version, ".versions.kubernetes can't start with a leading 'v'"))
+	}
+
+	lowerConstraint, err := semver.NewConstraint(lowerVersionConstraint)
+	if err != nil {
+		allErrs = append(allErrs, field.InternalError(fldPath.Child("kubernetes"), fmt.Errorf("failed to parse constraint: %w", err)))
+		return allErrs
+	}
+
+	if ok, errs := lowerConstraint.Validate(v); len(errs) == 0 && !ok {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("kubernetes"), version, fmt.Sprintf("kubernetes version does not satisfy version constraint '%s'. You need to use an older KubeOne version to upgrade your cluster to a supported version. Please refer to the Compatibility section of docs for more details.", lowerVersionConstraint)))
+	} else if len(errs) > 0 {
+		for _, err := range errs {
+			allErrs = append(allErrs, field.InternalError(fldPath.Child("kubernetes"), fmt.Errorf("failed to validate version against constraint: %w", err)))
+		}
+		return allErrs
+	}
+
+	upperConstraint, err := semver.NewConstraint(upperVersionConstraint)
+	if ok, errs := upperConstraint.Validate(v); len(errs) == 0 && !ok {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("kubernetes"), version, fmt.Sprintf("kubernetes version does not satisfy version constraint '%s'. This version is not yet supported. Please refer to the Compatibility section of docs for more details.", upperVersionConstraint)))
+	} else if len(errs) > 0 {
+		for _, err := range errs {
+			allErrs = append(allErrs, field.InternalError(fldPath.Child("kubernetes"), fmt.Errorf("failed to validate version against constraint: %w", err)))
+		}
+		return allErrs
 	}
 
 	return allErrs
