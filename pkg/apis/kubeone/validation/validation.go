@@ -40,6 +40,11 @@ const (
 	upperVersionConstraint = "<= 1.23"
 )
 
+var (
+	lowerConstraint = mustParseConstraint(lowerVersionConstraint)
+	upperConstraint = mustParseConstraint(upperVersionConstraint)
+)
+
 // ValidateKubeOneCluster validates the KubeOneCluster object
 func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 	allErrs := field.ErrorList{}
@@ -263,20 +268,6 @@ func ValidateVersionConfig(version kubeoneapi.VersionConfig, fldPath *field.Path
 
 	if strings.HasPrefix(version.Kubernetes, "v") {
 		allErrs = append(allErrs, field.Invalid(fldPath.Child("kubernetes"), version, ".versions.kubernetes can't start with a leading 'v'"))
-	}
-
-	lowerConstraint, err := semver.NewConstraint(lowerVersionConstraint)
-	if err != nil {
-		allErrs = append(allErrs, field.InternalError(fldPath.Child("kubernetes"), fmt.Errorf("failed to parse constraint: %w", err)))
-
-		return allErrs
-	}
-
-	upperConstraint, err := semver.NewConstraint(upperVersionConstraint)
-	if err != nil {
-		allErrs = append(allErrs, field.InternalError(fldPath.Child("kubernetes"), fmt.Errorf("failed to parse constraint: %w", err)))
-
-		return allErrs
 	}
 
 	if valid, errs := lowerConstraint.Validate(v); !valid {
@@ -648,4 +639,12 @@ func ValidateAssetConfiguration(a *kubeoneapi.AssetConfiguration, fldPath *field
 	}
 
 	return allErrs
+}
+
+func mustParseConstraint(constraint string) *semver.Constraints {
+	result, err := semver.NewConstraint(constraint)
+	if err != nil {
+		panic(err)
+	}
+	return result
 }
