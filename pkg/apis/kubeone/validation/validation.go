@@ -646,5 +646,6 @@ func mustParseConstraint(constraint string) *semver.Constraints {
 	if err != nil {
 		panic(err)
 	}
+
 	return result
 }
