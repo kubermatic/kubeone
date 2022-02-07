@@ -43,7 +43,7 @@ func installPrerequisites(s *state.State) error {
 		return fmt.Errorf("failed to install prerequisites: %w", err)
 	}
 
-	return s.RunTaskOnAllNodes(func(ctx *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+	return s.RunTaskOnControlPlane(func(ctx *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Info("Pre-pull images")
 
 		_, _, err := ctx.Runner.Run(
