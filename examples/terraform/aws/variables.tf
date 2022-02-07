@@ -157,9 +157,9 @@ variable "ami_filters" {
     }
 
     centos = {
-      owners     = ["125523088429"] # CentOS
-      image_name = ["CentOS 8.* x86_64"]
-      osp_name   = "osp-centos8"
+      owners     = ["792107900819"] # RockyLinux
+      image_name = ["Rocky-8-ec2-*.x86_64"]
+      osp_name   = "osp-centos"
     }
 
     flatcar = {
