@@ -218,3 +218,9 @@ variable "worker_deploy_ssh_key" {
   default     = true
   type        = bool
 }
+
+variable "control_plane_vm_count" {
+  description = "Number of control plane instances"
+  default     = 3
+  type        = number
+}
