@@ -19,6 +19,7 @@ package validation
 import (
 	"bytes"
 	"crypto/x509"
+	"fmt"
 	"net"
 	"reflect"
 	"strings"
@@ -34,7 +35,7 @@ const (
 	// lowerVersionConstraint defines a semver constraint that validates Kubernetes versions against a lower bound
 	lowerVersionConstraint = ">= 1.19"
 	// upperVersionConstraint defines a semver constraint that validates Kubernetes versions against an upper bound
-	upperVersionConstraint = "<= 1.23"
+	upperVersionConstraint = "<= 1.22"
 )
 
 var (
