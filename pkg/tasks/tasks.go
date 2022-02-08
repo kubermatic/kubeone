@@ -334,6 +334,11 @@ func WithContainerDMigration(t Tasks) Tasks {
 				ErrMsg: "failed to download Kubernetes PKI from the leader",
 			},
 			{
+				Fn:          addons.Ensure,
+				ErrMsg:      "failed to apply addons",
+				Description: "ensure embedded addons",
+			},
+			{
 				Fn: func(s *state.State) error {
 					s.Logger.Warn("Now please rolling restart your machineDeployments to get containerd")
 					s.Logger.Warn("see more at: https://docs.kubermatic.com/kubeone/v1.3/cheat_sheets/rollout_machinedeployment/")
