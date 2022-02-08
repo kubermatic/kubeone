@@ -185,6 +185,8 @@ func saveCABundleOnControlPlane(s *state.State, _ *kubeoneapi.HostConfig, conn s
 }
 
 func approvePendingCSR(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+	approveErr := errors.Errorf("no CSR found for node %q", node.Hostname)
+
 	sleepTime := 20 * time.Second
 	s.Logger.Infof("Waiting %s for CSRs to approve...", sleepTime)
 	time.Sleep(sleepTime)
@@ -205,6 +207,11 @@ func approvePendingCSR(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Con
 			continue
 		}
 
+		if fmt.Sprintf("%s:%s", nodeUser, node.Hostname) != csr.Spec.Username {
+			// that's not the CSR we are looking for
+			continue
+		}
+
 		var approved bool
 		for _, cond := range csr.Status.Conditions {
 			if cond.Type == certificatesv1.CertificateApproved && cond.Status == corev1.ConditionTrue {
@@ -212,12 +219,16 @@ func approvePendingCSR(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Con
 			}
 		}
 		if approved {
+			// CSR matched but it's already approved, no need to raise an error
+			approveErr = nil
+
 			continue
 		}
 
-		if err := validateCSR(csr.Spec, node); err != nil {
+		if err := validateCSR(csr.Spec); err != nil {
 			return fmt.Errorf("failed to validate CSR: %w", err)
 		}
+		approveErr = nil
 
 		csr := csr.DeepCopy()
 		csr.Status.Conditions = append(csr.Status.Conditions, certificatesv1.CertificateSigningRequestCondition{
@@ -227,19 +238,16 @@ func approvePendingCSR(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Con
 		})
 
 		s.Logger.Infof("Approve pending CSR %q for username %q", csr.Name, csr.Spec.Username)
-		if _, err := certClient.UpdateApproval(s.Context, csr.Name, csr, metav1.UpdateOptions{}); err != nil {
+		_, err := certClient.UpdateApproval(s.Context, csr.Name, csr, metav1.UpdateOptions{})
+		if err != nil {
 			return fmt.Errorf("failed to approve CSR %q: %w", csr.Name, err)
 		}
 	}
 
-	return nil
+	return approveErr
 }
 
-func validateCSR(spec certificatesv1.CertificateSigningRequestSpec, node *kubeoneapi.HostConfig) error {
-	if fmt.Sprintf("%s:%s", nodeUser, node.Hostname) != spec.Username {
-		return fmt.Errorf("CSR username %q and node hostname %q do not match", spec.Username, node.Hostname)
-	}
-
+func validateCSR(spec certificatesv1.CertificateSigningRequestSpec) error {
 	if !sets.NewString(spec.Groups...).HasAll(groupNodes, groupAuthenticated) {
 		return errors.New("CSR groups is expecter to be an authenticated node")
 	}
