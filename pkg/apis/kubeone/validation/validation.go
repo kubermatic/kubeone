@@ -28,6 +28,7 @@ import (
 
 	"k8c.io/kubeone/pkg/addons"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/semverutil"
 
 	"k8s.io/apimachinery/pkg/util/validation"
 	"k8s.io/apimachinery/pkg/util/validation/field"
@@ -41,8 +42,8 @@ const (
 )
 
 var (
-	lowerConstraint = mustParseConstraint(lowerVersionConstraint)
-	upperConstraint = mustParseConstraint(upperVersionConstraint)
+	lowerConstraint = semverutil.MustParseConstraint(lowerVersionConstraint)
+	upperConstraint = semverutil.MustParseConstraint(upperVersionConstraint)
 )
 
 // ValidateKubeOneCluster validates the KubeOneCluster object
@@ -639,13 +640,4 @@ func ValidateAssetConfiguration(a *kubeoneapi.AssetConfiguration, fldPath *field
 	}
 
 	return allErrs
-}
-
-func mustParseConstraint(constraint string) *semver.Constraints {
-	result, err := semver.NewConstraint(constraint)
-	if err != nil {
-		panic(err)
-	}
-
-	return result
 }
