@@ -1008,9 +1008,9 @@ func TestValidateContainerRuntimeConfig(t *testing.T) {
 			expectedError:    false,
 		},
 		{
-			name:             "docker with kubernetes 1.22+",
+			name:             "docker with kubernetes 1.24+",
 			containerRuntime: kubeoneapi.ContainerRuntimeConfig{Docker: &kubeoneapi.ContainerRuntimeDocker{}},
-			versions:         kubeoneapi.VersionConfig{Kubernetes: "1.22"},
+			versions:         kubeoneapi.VersionConfig{Kubernetes: "1.24"},
 			expectedError:    true,
 		},
 		{
