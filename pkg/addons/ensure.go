@@ -19,8 +19,10 @@ package addons
 import (
 	"io/fs"
 
+	"github.com/Masterminds/semver/v3"
 	"github.com/pkg/errors"
 
+	"k8c.io/kubeone/pkg/semverutil"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/resources"
 	"k8c.io/kubeone/pkg/templates/weave"
@@ -29,6 +31,9 @@ import (
 const (
 	// addonLabel is applied to all objects deployed using addons
 	addonLabel = "kubeone.io/addon"
+
+	// greaterThan23Constraint defines a semver constraint that validates Kubernetes versions is greater than 1.23
+	greaterThan23Constraint = ">= 1.23"
 )
 
 var (
@@ -57,6 +62,8 @@ var (
 		resources.AddonMetricsServer:      "",
 		resources.AddonNodeLocalDNS:       "",
 	}
+
+	greaterThan23 = semverutil.MustParseConstraint(greaterThan23Constraint)
 )
 
 type addonAction struct {
@@ -106,20 +113,37 @@ func collectAddons(s *state.State) (addonsToDeploy []addonAction) {
 		})
 	}
 
+	// Special case for AWS
+	if s.Cluster.CloudProvider.AWS != nil {
+		if s.Cluster.CloudProvider.External {
+			addonsToDeploy = append(addonsToDeploy,
+				addonAction{
+					name: resources.AddonCCMAws,
+				},
+				addonAction{
+					name: resources.AddonCSIAwsEBS,
+				},
+			)
+		} else {
+			// since k8s 1.23 CSIMigrationAWS is turn by default and require installation of AWS EBS CSI driver even if
+			// we don't use external ccm (https://github.com/kubernetes/kubernetes/pull/106098)
+			k8sVersion := semver.MustParse(s.Cluster.Versions.Kubernetes)
+
+			if greaterThan23.Check(k8sVersion) {
+				addonsToDeploy = append(addonsToDeploy,
+					addonAction{
+						name: resources.AddonCSIAwsEBS,
+					},
+				)
+			}
+		}
+	}
+
 	if !s.Cluster.CloudProvider.External {
 		return
 	}
 
 	switch {
-	case s.Cluster.CloudProvider.AWS != nil:
-		addonsToDeploy = append(addonsToDeploy,
-			addonAction{
-				name: resources.AddonCCMAws,
-			},
-			addonAction{
-				name: resources.AddonCSIAwsEBS,
-			},
-		)
 	case s.Cluster.CloudProvider.Azure != nil:
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
