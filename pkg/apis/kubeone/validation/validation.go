@@ -338,9 +338,9 @@ func ValidateContainerRuntimeConfig(cr kubeoneapi.ContainerRuntimeConfig, versio
 
 	if cr.Docker != nil {
 		kubeVer, _ := semver.NewVersion(versions.Kubernetes)
-		gteKube122Condition, _ := semver.NewConstraint(">= 1.22")
-		if gteKube122Condition.Check(kubeVer) {
-			allErrs = append(allErrs, field.Invalid(fldPath, cr.Docker, "kubernetes v1.22+ require containerd container runtime"))
+		gteKube124Condition, _ := semver.NewConstraint(">= 1.24")
+		if gteKube124Condition.Check(kubeVer) {
+			allErrs = append(allErrs, field.Invalid(fldPath, cr.Docker, "kubernetes v1.24+ requires containerd container runtime"))
 		}
 	}
 

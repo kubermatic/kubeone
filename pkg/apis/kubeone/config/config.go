@@ -314,4 +314,8 @@ func checkClusterFeatures(c kubeoneapi.KubeOneCluster, logger logrus.FieldLogger
 		logger.Warnf("Nutanix support is considered as alpha, so the implementation might be changed in the future")
 		logger.Warnf("Nutanix support is planned to graduate to beta/stable in KubeOne 1.5+")
 	}
+
+	if c.ContainerRuntime.Docker != nil {
+		logger.Warnf("Support for docker will be removed with Kubernetes 1.24 release. It is recommended to switch to containerd as container runtime using `kubeone migrate to-containerd`")
+	}
 }
