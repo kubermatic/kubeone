@@ -261,25 +261,23 @@ func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, creden
 
 func setRegistriesAuth(cluster *kubeoneapi.KubeOneCluster, buf string) error {
 	var (
-		containerdConfig kubeonev1beta2.ContainerRuntimeContainerd
-		typeMeta         runtime.TypeMeta
+		registriesAuth struct {
+			runtime.TypeMeta                          `json:",inline"`
+			kubeonev1beta2.ContainerRuntimeContainerd `json:",inline"`
+		}
 	)
 
-	if err := yaml.Unmarshal([]byte(buf), &typeMeta); err != nil {
+	if err := yaml.UnmarshalStrict([]byte(buf), &registriesAuth); err != nil {
 		return err
 	}
 
-	if typeMeta.APIVersion != kubeonev1beta2.SchemeGroupVersion.String() {
+	if registriesAuth.APIVersion != kubeonev1beta2.SchemeGroupVersion.String() {
 		return fmt.Errorf("only %q apiVersion is supported in registriesAuth", kubeonev1beta2.SchemeGroupVersion.String())
 	}
 
-	containerdConfigKind := reflect.TypeOf(containerdConfig).Name()
-	if typeMeta.Kind != containerdConfigKind {
+	containerdConfigKind := reflect.TypeOf(registriesAuth.ContainerRuntimeContainerd).Name()
+	if registriesAuth.Kind != containerdConfigKind {
 		return fmt.Errorf("only %q kind is supported in registriesAuth", containerdConfigKind)
-	}
-
-	if err := yaml.Unmarshal([]byte(buf), &containerdConfig); err != nil {
-		return err
 	}
 
 	if cluster.ContainerRuntime.Containerd == nil {
@@ -290,7 +288,7 @@ func setRegistriesAuth(cluster *kubeoneapi.KubeOneCluster, buf string) error {
 		cluster.ContainerRuntime.Containerd.Registries = map[string]kubeoneapi.ContainerdRegistry{}
 	}
 
-	for registryName, registryInfo := range containerdConfig.Registries {
+	for registryName, registryInfo := range registriesAuth.Registries {
 		internalRegistry := cluster.ContainerRuntime.Containerd.Registries[registryName]
 		internalRegistry.Auth = (*kubeoneapi.ContainerdRegistryAuthConfig)(registryInfo.Auth)
 		cluster.ContainerRuntime.Containerd.Registries[registryName] = internalRegistry

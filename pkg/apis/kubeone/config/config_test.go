@@ -90,6 +90,30 @@ func Test_setRegistriesAuth(t *testing.T) {
 			wantErr:        true,
 		},
 		{
+			name: "borked fields (strict)",
+			args: args{
+				cluster: &kubeoneapi.KubeOneCluster{
+					ContainerRuntime: kubeoneapi.ContainerRuntimeConfig{
+						Containerd: &kubeoneapi.ContainerRuntimeContainerd{},
+					},
+				},
+				buf: heredoc.Doc(`
+					apiVersion: kubeone.k8c.io/v1beta2
+					kind: ContainerRuntimeContainerd
+					registries:
+					  auth:
+					    some.tld:
+					      username: root
+				`),
+			},
+			exampleCluster: &kubeoneapi.KubeOneCluster{
+				ContainerRuntime: kubeoneapi.ContainerRuntimeConfig{
+					Containerd: &kubeoneapi.ContainerRuntimeContainerd{},
+				},
+			},
+			wantErr: true,
+		},
+		{
 			name: "simple",
 			args: args{
 				cluster: &kubeoneapi.KubeOneCluster{
