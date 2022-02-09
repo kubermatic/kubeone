@@ -90,7 +90,9 @@ func safeguard(s *state.State) error {
 
 		if nodesContainerRuntime != configuredClusterContainerRuntime {
 			errMsg := "Migration is not supported yet"
-			if cr.Containerd != nil {
+			if nodesContainerRuntime == "docker" {
+				errMsg = "Support for docker will be removed with Kubernetes 1.24 release. It is recommended to switch to containerd as container runtime using `kubeone migrate to-containerd`. To continue using Docker please specify ContainerRuntime explicitly in KubeOneCluster manifest"
+			} else if cr.Containerd != nil {
 				errMsg = "Use `kubeone migrate to-containerd`"
 			}
 
@@ -174,10 +176,10 @@ func runProbes(s *state.State) error {
 		return nil
 	}
 
-	gteKube121Condition, _ := semver.NewConstraint(">= 1.21")
+	gteKube124Condition, _ := semver.NewConstraint(">= 1.24")
 
 	switch {
-	case gteKube121Condition.Check(s.LiveCluster.ExpectedVersion):
+	case gteKube124Condition.Check(s.LiveCluster.ExpectedVersion):
 		s.Cluster.ContainerRuntime.Containerd = &kubeoneapi.ContainerRuntimeContainerd{}
 
 		if s.LiveCluster.IsProvisioned() {

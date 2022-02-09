@@ -617,7 +617,7 @@ cloudProvider:
 # Only one container runtime can be present at the time.
 #
 # Note: Kubernetes has announced deprecation of Docker (dockershim) support.
-# It's expected that the Docker support will be removed in Kubernetes 1.22.
+# It's expected that the Docker support will be removed in Kubernetes 1.24.
 # It's highly advised to use containerd for all newly created clusters.
 containerRuntime:
   # Installs containerd container runtime.
@@ -643,7 +643,7 @@ containerRuntime:
   #       - https://secure.tld
   # Installs Docker container runtime.
   # Default for Kubernetes clusters up to 1.20.
-  # This option will be removed once Kubernetes 1.21 reaches EOL.
+  # This option will be removed once Kubernetes 1.23 reaches EOL.
   # docker: {}
 
 features:
