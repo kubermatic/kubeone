@@ -113,6 +113,8 @@ func collectAddons(s *state.State) (addonsToDeploy []addonAction) {
 		})
 	}
 
+	k8sVersion := semver.MustParse(s.Cluster.Versions.Kubernetes)
+
 	// Special case for AWS
 	if s.Cluster.CloudProvider.AWS != nil {
 		if s.Cluster.CloudProvider.External {
@@ -124,18 +126,45 @@ func collectAddons(s *state.State) (addonsToDeploy []addonAction) {
 					name: resources.AddonCSIAwsEBS,
 				},
 			)
-		} else {
-			// since k8s 1.23 CSIMigrationAWS is turn by default and require installation of AWS EBS CSI driver even if
+		} else if greaterThan23.Check(k8sVersion) {
+			// since k8s 1.23 CSIMigrationAWS is turned on by default and requires installation of AWS EBS CSI driver even if
 			// we don't use external ccm (https://github.com/kubernetes/kubernetes/pull/106098)
-			k8sVersion := semver.MustParse(s.Cluster.Versions.Kubernetes)
 
-			if greaterThan23.Check(k8sVersion) {
-				addonsToDeploy = append(addonsToDeploy,
-					addonAction{
-						name: resources.AddonCSIAwsEBS,
-					},
-				)
-			}
+			addonsToDeploy = append(addonsToDeploy,
+				addonAction{
+					name: resources.AddonCSIAwsEBS,
+				},
+			)
+		}
+	}
+
+	// Special case for AZURE
+	if s.Cluster.CloudProvider.Azure != nil {
+		if s.Cluster.CloudProvider.External {
+			addonsToDeploy = append(addonsToDeploy,
+				addonAction{
+					name: resources.AddonCCMAzure,
+				},
+				addonAction{
+					name: resources.AddonCSIAzureDisk,
+				},
+				addonAction{
+					name: resources.AddonCSIAzureFile,
+				},
+			)
+		} else if greaterThan23.Check(k8sVersion) {
+			// since k8s 1.23 CSIMigrationAzureDisk is turned on by default and requires installation of AzureDisk CSI driver
+			// even if we don't use external ccm
+			// note: in 1.23 CSIMigrationAzureFile is still turn off by default
+
+			addonsToDeploy = append(addonsToDeploy,
+				addonAction{
+					name: resources.AddonCSIAzureDisk,
+				},
+				addonAction{
+					name: resources.AddonCSIAzureFile,
+				},
+			)
 		}
 	}
 
@@ -144,18 +173,6 @@ func collectAddons(s *state.State) (addonsToDeploy []addonAction) {
 	}
 
 	switch {
-	case s.Cluster.CloudProvider.Azure != nil:
-		addonsToDeploy = append(addonsToDeploy,
-			addonAction{
-				name: resources.AddonCCMAzure,
-			},
-			addonAction{
-				name: resources.AddonCSIAzureDisk,
-			},
-			addonAction{
-				name: resources.AddonCSIAzureFile,
-			},
-		)
 	case s.Cluster.CloudProvider.DigitalOcean != nil:
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
