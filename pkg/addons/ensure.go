@@ -115,48 +115,20 @@ func collectAddons(s *state.State) (addonsToDeploy []addonAction) {
 
 	k8sVersion := semver.MustParse(s.Cluster.Versions.Kubernetes)
 
-	// Special case for AWS
-	if s.Cluster.CloudProvider.AWS != nil {
-		if s.Cluster.CloudProvider.External {
-			addonsToDeploy = append(addonsToDeploy,
-				addonAction{
-					name: resources.AddonCCMAws,
-				},
-				addonAction{
-					name: resources.AddonCSIAwsEBS,
-				},
-			)
-		} else if greaterThan23.Check(k8sVersion) {
-			// since k8s 1.23 CSIMigrationAWS is turned on by default and requires installation of AWS EBS CSI driver even if
-			// we don't use external ccm (https://github.com/kubernetes/kubernetes/pull/106098)
-
+	// We deploy available CSI drivers un-conditionally for k8s v1.23+
+	//
+	// CSIMigration, if applicable, for the cloud providers is turned on by default and requires installation of CSI drviers even if we
+	// don't use external CCM. Although mount operations would fall-back to in-tree solution if CSI driver is not available. Fallback support
+	// for provision operations is NOT supported by in-tree solution.
+	if !s.Cluster.CloudProvider.External && greaterThan23.Check(k8sVersion) {
+		switch {
+		case s.Cluster.CloudProvider.AWS != nil:
 			addonsToDeploy = append(addonsToDeploy,
 				addonAction{
 					name: resources.AddonCSIAwsEBS,
 				},
 			)
-		}
-	}
-
-	// Special case for AZURE
-	if s.Cluster.CloudProvider.Azure != nil {
-		if s.Cluster.CloudProvider.External {
-			addonsToDeploy = append(addonsToDeploy,
-				addonAction{
-					name: resources.AddonCCMAzure,
-				},
-				addonAction{
-					name: resources.AddonCSIAzureDisk,
-				},
-				addonAction{
-					name: resources.AddonCSIAzureFile,
-				},
-			)
-		} else if greaterThan23.Check(k8sVersion) {
-			// since k8s 1.23 CSIMigrationAzureDisk is turned on by default and requires installation of AzureDisk CSI driver
-			// even if we don't use external ccm
-			// note: in 1.23 CSIMigrationAzureFile is still turn off by default
-
+		case s.Cluster.CloudProvider.Azure != nil:
 			addonsToDeploy = append(addonsToDeploy,
 				addonAction{
 					name: resources.AddonCSIAzureDisk,
@@ -165,14 +137,61 @@ func collectAddons(s *state.State) (addonsToDeploy []addonAction) {
 					name: resources.AddonCSIAzureFile,
 				},
 			)
-		}
-	}
+		case s.Cluster.CloudProvider.DigitalOcean != nil:
+			addonsToDeploy = append(addonsToDeploy,
+				addonAction{
+					name: resources.AddonCSIDigitalOcean,
+				},
+			)
+		case s.Cluster.CloudProvider.Hetzner != nil:
+			addonsToDeploy = append(addonsToDeploy,
+				addonAction{
+					name: resources.AddonCSIHetzner,
+				},
+			)
+		case s.Cluster.CloudProvider.Openstack != nil:
+			addonsToDeploy = append(addonsToDeploy,
+				addonAction{
+					name: resources.AddonCSIOpenStackCinder,
+				},
+			)
 
-	if !s.Cluster.CloudProvider.External {
+		case s.Cluster.CloudProvider.Vsphere != nil:
+			addonsToDeploy = append(addonsToDeploy,
+				addonAction{
+					name: resources.AddonCSIVsphere,
+				},
+			)
+		default:
+			s.Logger.Infof("CSI driver for %q not yet supported, skipping", s.Cluster.CloudProvider.CloudProviderName())
+		}
+
 		return
 	}
 
+	// External cloud provider
 	switch {
+	case s.Cluster.CloudProvider.AWS != nil:
+		addonsToDeploy = append(addonsToDeploy,
+			addonAction{
+				name: resources.AddonCCMAws,
+			},
+			addonAction{
+				name: resources.AddonCSIAwsEBS,
+			},
+		)
+	case s.Cluster.CloudProvider.Azure != nil:
+		addonsToDeploy = append(addonsToDeploy,
+			addonAction{
+				name: resources.AddonCCMAzure,
+			},
+			addonAction{
+				name: resources.AddonCSIAzureDisk,
+			},
+			addonAction{
+				name: resources.AddonCSIAzureFile,
+			},
+		)
 	case s.Cluster.CloudProvider.DigitalOcean != nil:
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
