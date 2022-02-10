@@ -1,6 +1,7 @@
 # See the OWNERS docs: https://git.k8s.io/community/contributors/guide/owners.md
 
 approvers:
+  - ahmedwaleedmalik
   - kron4eg
   - moelsayed
   - xmudrii
@@ -10,6 +11,7 @@ approvers:
   - moadqassem
 
 reviewers:
+  - ahmedwaleedmalik
   - kron4eg
   - moelsayed
   - xmudrii
