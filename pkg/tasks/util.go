@@ -50,6 +50,8 @@ func determineHostname(s *state.State) error {
 
 	return s.RunTaskOnAllNodes(func(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 		if node.Hostname != "" {
+			s.Logger.Debugf("Hostname is already set to %q", node.Hostname)
+
 			return nil
 		}
 
@@ -64,6 +66,7 @@ func determineHostname(s *state.State) error {
 			return err
 		}
 
+		s.Logger.Debugf("Hostname is detected: %q", stdout)
 		node.SetHostname(stdout)
 
 		return nil
@@ -74,15 +77,21 @@ func determineOS(s *state.State) error {
 	s.Logger.Infoln("Determine operating system...")
 
 	return s.RunTaskOnAllNodes(func(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+		if node.OperatingSystem != kubeoneapi.OperatingSystemNameUnknown {
+			s.Logger.Debugf("Operating system is already set to %q", node.OperatingSystem)
+
+			return nil
+		}
+
 		buf, err := fs.ReadFile(sshiofs.New(conn), "/etc/os-release")
 		if err != nil {
 			return err
 		}
 
 		osrData := osrelease.Parse(string(buf))
-		node.SetOperatingSystem(kubeoneapi.OperatingSystemName(osrData.ID))
+		s.Logger.Debugf("Operating system detected: %q", osrData.ID)
 
-		return nil
+		return node.SetOperatingSystem(kubeoneapi.OperatingSystemName(osrData.ID))
 	}, state.RunParallel)
 }
 

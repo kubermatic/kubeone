@@ -299,7 +299,7 @@ func runApplyInstall(s *state.State, opts *applyOpts) error { // Print the expec
 
 	for _, node := range s.LiveCluster.StaticWorkers {
 		if !node.IsInCluster {
-			fmt.Printf("\t+ join worker node %q (%s)\n", node.Config.Hostname, node.Config.PrivateAddress)
+			fmt.Printf("\t+ join static worker node %q (%s)\n", node.Config.Hostname, node.Config.PrivateAddress)
 		}
 	}
 
