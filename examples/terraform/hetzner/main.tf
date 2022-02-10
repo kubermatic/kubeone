@@ -108,11 +108,11 @@ resource "hcloud_placement_group" "control_plane" {
 }
 
 resource "hcloud_server" "control_plane" {
-  count       = var.control_plane_replicas
-  name        = "${var.cluster_name}-control-plane-${count.index + 1}"
-  server_type = var.control_plane_type
-  image       = var.image
-  location    = var.datacenter
+  count              = var.control_plane_replicas
+  name               = "${var.cluster_name}-control-plane-${count.index + 1}"
+  server_type        = var.control_plane_type
+  image              = var.image
+  location           = var.datacenter
   placement_group_id = hcloud_placement_group.control_plane.id
 
   ssh_keys = [
