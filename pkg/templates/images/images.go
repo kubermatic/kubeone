@@ -23,7 +23,7 @@ import (
 	"sort"
 
 	"github.com/Masterminds/semver/v3"
-	"github.com/docker/distribution/reference"
+	"github.com/distribution/distribution/v3/reference"
 )
 
 type Resource int
