@@ -270,12 +270,6 @@ func WithResources(t Tasks) Tasks {
 				ErrMsg:    "failed to wait for operating-system-manager",
 				Predicate: func(s *state.State) bool { return s.Cluster.OperatingSystemManagerEnabled() },
 			},
-			{
-				Fn:          upgradeMachineDeployments,
-				ErrMsg:      "failed to upgrade MachineDeployments",
-				Description: "upgrade MachineDeployments",
-				Predicate:   func(s *state.State) bool { return s.UpgradeMachineDeployments },
-			},
 		}...,
 	)
 }
