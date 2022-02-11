@@ -56,6 +56,7 @@ var (
 		resources.AddonCSIAzureFile:       "",
 		resources.AddonCSIDigitalOcean:    "",
 		resources.AddonCSIHetzner:         "",
+		resources.AddonCSINutanix:         "",
 		resources.AddonCSIOpenStackCinder: "",
 		resources.AddonCSIVsphere:         "",
 		resources.AddonMachineController:  "",
@@ -348,6 +349,13 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
 				name: resources.AddonCSIHetzner,
+			},
+		)
+	// Install CSI driver unconditionally
+	case s.Cluster.CloudProvider.Nutanix != nil:
+		addonsToDeploy = append(addonsToDeploy,
+			addonAction{
+				name: resources.AddonCSINutanix,
 			},
 		)
 	// Install CSI driver unconditionally
