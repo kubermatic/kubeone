@@ -37,6 +37,7 @@ const (
 	AddonCSIAzureFile           = "csi-azurefile"
 	AddonCSIDigitalOcean        = "csi-digitalocean"
 	AddonCSIHetzner             = "csi-hetzner"
+	AddonCSINutanix             = "csi-nutanix"
 	AddonCSIOpenStackCinder     = "csi-openstack-cinder"
 	AddonCSIVsphere             = "csi-vsphere"
 	AddonCNICanal               = "cni-canal"
