@@ -592,6 +592,9 @@ func ValidateHostConfig(hosts []kubeoneapi.HostConfig, fldPath *field.Path) fiel
 		if len(h.SSHUsername) == 0 {
 			allErrs = append(allErrs, field.Required(fldPath, "no SSH username given"))
 		}
+		if !h.OperatingSystem.IsValid() {
+			allErrs = append(allErrs, field.Invalid(fldPath.Child("operatingSystem"), h.OperatingSystem, "invalid operatingSystem provided"))
+		}
 	}
 
 	return allErrs

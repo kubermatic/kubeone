@@ -1852,6 +1852,34 @@ func TestValidateHostConfig(t *testing.T) {
 			},
 			expectedError: true,
 		},
+		{
+			name: "valid OS",
+			hostConfig: []kubeoneapi.HostConfig{
+				{
+					PublicAddress:     "192.168.1.1",
+					PrivateAddress:    "192.168.0.1",
+					SSHPrivateKeyFile: "test",
+					SSHAgentSocket:    "test",
+					SSHUsername:       "root",
+					OperatingSystem:   kubeoneapi.OperatingSystemNameCentOS,
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "invalid OS",
+			hostConfig: []kubeoneapi.HostConfig{
+				{
+					PublicAddress:     "192.168.1.1",
+					PrivateAddress:    "192.168.0.1",
+					SSHPrivateKeyFile: "test",
+					SSHAgentSocket:    "test",
+					SSHUsername:       "root",
+					OperatingSystem:   kubeoneapi.OperatingSystemName("non-existing"),
+				},
+			},
+			expectedError: true,
+		},
 	}
 
 	for _, tc := range tests {
