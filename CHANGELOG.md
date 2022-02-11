@@ -1,5 +1,49 @@
 # Changelog
 
+# [v1.4.0-rc.1](https://github.com/kubermatic/kubeone/releases/tag/v1.4.0-rc.1) - 2022-02-11
+
+## Attention Needed
+
+* Unconditionally deploy AWS, AzureDisk, AzureFile, and vSphere CSI drivers if the Kubernetes version is 1.23 or newer ([#1831](https://github.com/kubermatic/kubeone/pull/1831))
+  * Those providers have the CSI migration enabled by default in Kubernetes 1.23, so the CSI driver will be used for all volumes operations
+* Unconditionally deploy DigitalOcean, Hetzner, Nutanix, and OpenStack Cinder CSI drivers ([#1831](https://github.com/kubermatic/kubeone/pull/1831))
+  * OpenStack has the CSI migration enabled by default since Kubernetes 1.18, so the CSI driver will be used for all operations
+* The default AMI for CentOS in Terraform configs for AWS has been changed to Rocky Linux. If you use the new Terraform configs with an existing cluster, make sure to bind the AMI as described in [the production recommendations document](https://docs.kubermatic.com/kubeone/master/cheat_sheets/production_recommendations/) ([#1809](https://github.com/kubermatic/kubeone/pull/1809))
+
+## Added
+
+* Include darwin/arm64 and linux/arm64 builds in release artifacts ([#1821](https://github.com/kubermatic/kubeone/pull/1821))
+* Allow providing operating system via the API ([#1809](https://github.com/kubermatic/kubeone/pull/1809))
+
+## Changed
+
+### General
+
+* Increase the minimum Kubernetes version to 1.20 ([#1818](https://github.com/kubermatic/kubeone/pull/1818))
+* Validate the Kubernetes version against supported versions constraints ([#1808](https://github.com/kubermatic/kubeone/pull/1808))
+* Allow Docker as a container runtime up to Kubernetes v1.24 (previously up to v1.22) ([#1826](https://github.com/kubermatic/kubeone/pull/1826))
+* Unconditionally deploy AWS, AzureDisk, AzureFile, and vSphere CSI drivers if the Kubernetes version is 1.23 or newer ([#1831](https://github.com/kubermatic/kubeone/pull/1831))
+  * Those providers have the CSI migration enabled by default in Kubernetes 1.23, so the CSI driver will be used for all volumes operations
+* Unconditionally deploy DigitalOcean, Hetzner, Nutanix, and OpenStack Cinder CSI drivers ([#1831](https://github.com/kubermatic/kubeone/pull/1831))
+  * OpenStack has the CSI migration enabled by default since Kubernetes 1.18, so the CSI driver will be used for all operations
+
+### Fixed
+
+* Restore missing addons deploy after containerd migration ([#1824](https://github.com/kubermatic/kubeone/pull/1824))
+* Select correct CSR to approve ([#1813](https://github.com/kubermatic/kubeone/pull/1813))
+
+### Terraform Configs
+
+* Add the `control_plane_vm_count` variable to the AWS configs used to control the number of control plane nodes (defaults to 3) ([#1810](https://github.com/kubermatic/kubeone/pull/1810))
+* Update the Terraform provider for OpenStack to version 1.47.0 ([#1816](https://github.com/kubermatic/kubeone/pull/1816))
+* Set Ubuntu 20.04 as the default image for OpenStack ([#1816](https://github.com/kubermatic/kubeone/pull/1816))
+* The default AMI for CentOS in Terraform configs for AWS has been changed to Rocky Linux. If you use the new Terraform configs with an existing cluster, make sure to bind the AMI as described in [the production recommendations document](https://docs.kubermatic.com/kubeone/master/cheat_sheets/production_recommendations/) ([#1809](https://github.com/kubermatic/kubeone/pull/1809))
+
+### Updated
+
+* Update DigitalOcean CSI to v4.0.0 ([#1820](https://github.com/kubermatic/kubeone/pull/1820))
+* Update machine-controller to v1.43.0 ([#1834](https://github.com/kubermatic/kubeone/pull/1834))
+
 # [v1.4.0-rc.0](https://github.com/kubermatic/kubeone/releases/tag/v1.4.0-rc.0) - 2022-02-03
 
 ## Attention Needed
