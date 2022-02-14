@@ -314,8 +314,8 @@ func txtFuncMap(overwriteRegistry string) template.FuncMap {
 		cfg := vsphereCSIWebhookConfigWrapper{
 			WebHookConfig: vsphereCSIWebhookConfig{
 				Port:     "8443",
-				CertFile: "/etc/webhook/cert.pem",
-				KeyFile:  "/etc/webhook/key.pem",
+				CertFile: "/run/secrets/tls/cert.pem",
+				KeyFile:  "/run/secrets/tls/key.pem",
 			},
 		}
 
