@@ -23,6 +23,7 @@ provider "vsphere" {
 
 locals {
   resource_pool_id = var.resource_pool_name == "" ? data.vsphere_compute_cluster.cluster.resource_pool_id : data.vsphere_resource_pool.pool[0].id
+  hostnames        = formatlist("${var.cluster_name}-cp-%d", [1, 2, 3])
 }
 
 data "vsphere_datacenter" "dc" {
@@ -105,7 +106,7 @@ resource "vsphere_virtual_machine" "control_plane" {
               path       = "/etc/hostname"
               mode       = 420
               contents = {
-                source = "data:,${var.cluster_name}-cp-${count.index + 1}"
+                source = "data:,${local.hostnames[count.index]}"
               }
             }
           ]

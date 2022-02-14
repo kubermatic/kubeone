@@ -33,7 +33,7 @@ variable "apiserver_alternative_names" {
 variable "worker_os" {
   description = "OS to run on worker machines"
 
-  default = "flarcar"
+  default = "flatcar"
   type    = string
 }
 
