@@ -40,10 +40,10 @@ output "kubeone_hosts" {
       ssh_agent_socket     = var.ssh_agent_socket
       ssh_port             = var.ssh_port
       ssh_private_key_file = var.ssh_private_key_file
-      ssh_user             = var.ssh_username
+      ssh_user             = local.ssh_username
       bastion              = aws_instance.bastion.public_ip
       bastion_port         = var.bastion_port
-      bastion_user         = var.bastion_user
+      bastion_user         = local.bastion_user
     }
   }
 }
@@ -59,10 +59,10 @@ output "kubeone_static_workers" {
       ssh_agent_socket     = var.ssh_agent_socket
       ssh_port             = var.ssh_port
       ssh_private_key_file = var.ssh_private_key_file
-      ssh_user             = var.ssh_username
+      ssh_user             = local.ssh_username
       bastion              = aws_instance.bastion.public_ip
       bastion_port         = var.bastion_port
-      bastion_user         = var.bastion_user
+      bastion_user         = local.bastion_user
     }
   }
 }
