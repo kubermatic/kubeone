@@ -66,6 +66,7 @@ func ControlPlaneImageFlags(provider string, osName OperatingSystem) ([]string, 
 		case osName == OperatingSystemCentOS7:
 			return []string{
 				"-var", fmt.Sprintf("ami=%s", AWSCentOS7AMI),
+				"-var", "os=centos",
 				"-var", fmt.Sprintf("ssh_username=%s", user),
 				"-var", fmt.Sprintf("bastion_user=%s", user),
 			}, nil
