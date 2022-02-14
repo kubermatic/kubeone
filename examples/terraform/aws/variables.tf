@@ -131,7 +131,7 @@ variable "os" {
   # * centos
   # * rhel
   # * flatcar
-  # * amzn2
+  # * amzn
   default = "ubuntu"
   type    = string
 }
@@ -174,7 +174,7 @@ variable "ami_filters" {
       osp_name   = "osp-rhel"
     }
 
-    amzn2 = {
+    amzn = {
       owners     = ["137112412989"] # Amazon
       image_name = ["amzn2-ami-hvm-2.0.*-x86_64-gp2"]
       osp_name   = "osp-amzn2"
