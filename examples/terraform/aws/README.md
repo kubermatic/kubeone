@@ -11,14 +11,15 @@ use the configs and how to provision a Kubernetes cluster using KubeOne.
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.12.10 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 3.45.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
-| <a name="provider_random"></a> [random](#provider\_random) | n/a |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 3.45.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.1.0 |
 
 ## Modules
 
@@ -55,18 +56,19 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_ami"></a> [ami](#input\_ami) | AMI ID, use it to fixate control-plane AMI in order to avoid force-recreation it at later times | `string` | `""` | no |
-| <a name="input_ami_filters"></a> [ami\_filters](#input\_ami\_filters) | map with AMI filters | `map` | <pre>{<br>  "amazon_linux2": {<br>    "image_name": [<br>      "amzn2-ami-hvm-2.0.*-x86_64-gp2"<br>    ],<br>    "owners": [<br>      "137112412989"<br>    ]<br>  },<br>  "centos": {<br>    "image_name": [<br>      "CentOS 8.2.* x86_64"<br>    ],<br>    "owners": [<br>      "125523088429"<br>    ]<br>  },<br>  "flatcar": {<br>    "image_name": [<br>      "Flatcar-stable-*-hvm"<br>    ],<br>    "owners": [<br>      "075585003325"<br>    ]<br>  },<br>  "rhel": {<br>    "image_name": [<br>      "RHEL-8*_HVM-*-x86_64-*"<br>    ],<br>    "owners": [<br>      "309956199498"<br>    ]<br>  },<br>  "ubuntu": {<br>    "image_name": [<br>      "ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"<br>    ],<br>    "owners": [<br>      "099720109477"<br>    ]<br>  }<br>}</pre> | no |
+| <a name="input_ami_filters"></a> [ami\_filters](#input\_ami\_filters) | map with AMI filters | <pre>map(object({<br>    owners     = list(string)<br>    image_name = list(string)<br>    osp_name   = string<br>  }))</pre> | <pre>{<br>  "amzn2": {<br>    "image_name": [<br>      "amzn2-ami-hvm-2.0.*-x86_64-gp2"<br>    ],<br>    "osp_name": "osp-amzn2",<br>    "owners": [<br>      "137112412989"<br>    ]<br>  },<br>  "centos": {<br>    "image_name": [<br>      "Rocky-8-ec2-*.x86_64"<br>    ],<br>    "osp_name": "osp-centos",<br>    "owners": [<br>      "792107900819"<br>    ]<br>  },<br>  "flatcar": {<br>    "image_name": [<br>      "Flatcar-stable-*-hvm"<br>    ],<br>    "osp_name": "osp-flatcar",<br>    "owners": [<br>      "075585003325"<br>    ]<br>  },<br>  "rhel": {<br>    "image_name": [<br>      "RHEL-8*_HVM-*-x86_64-*"<br>    ],<br>    "osp_name": "osp-rhel",<br>    "owners": [<br>      "309956199498"<br>    ]<br>  },<br>  "ubuntu": {<br>    "image_name": [<br>      "ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"<br>    ],<br>    "osp_name": "osp-ubuntu",<br>    "owners": [<br>      "099720109477"<br>    ]<br>  }<br>}</pre> | no |
+| <a name="input_apiserver_alternative_names"></a> [apiserver\_alternative\_names](#input\_apiserver\_alternative\_names) | subject alternative names for the API Server signing cert. | `list(string)` | `[]` | no |
 | <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | AWS region to speak to | `string` | `"eu-west-3"` | no |
 | <a name="input_bastion_port"></a> [bastion\_port](#input\_bastion\_port) | Bastion SSH port | `number` | `22` | no |
 | <a name="input_bastion_type"></a> [bastion\_type](#input\_bastion\_type) | instance type for bastion | `string` | `"t3.nano"` | no |
 | <a name="input_bastion_user"></a> [bastion\_user](#input\_bastion\_user) | Bastion SSH username | `string` | `"ubuntu"` | no |
-| <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the cluster | `any` | n/a | yes |
+| <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the cluster | `string` | n/a | yes |
 | <a name="input_control_plane_type"></a> [control\_plane\_type](#input\_control\_plane\_type) | AWS instance type | `string` | `"t3.medium"` | no |
+| <a name="input_control_plane_vm_count"></a> [control\_plane\_vm\_count](#input\_control\_plane\_vm\_count) | Number of control plane instances | `number` | `3` | no |
 | <a name="input_control_plane_volume_size"></a> [control\_plane\_volume\_size](#input\_control\_plane\_volume\_size) | Size of the EBS volume, in Gb | `number` | `100` | no |
 | <a name="input_initial_machinedeployment_replicas"></a> [initial\_machinedeployment\_replicas](#input\_initial\_machinedeployment\_replicas) | number of replicas per MachineDeployment | `number` | `1` | no |
 | <a name="input_initial_machinedeployment_spotinstances"></a> [initial\_machinedeployment\_spotinstances](#input\_initial\_machinedeployment\_spotinstances) | use spot instances for initial machine-deployment | `bool` | `false` | no |
 | <a name="input_internal_api_lb"></a> [internal\_api\_lb](#input\_internal\_api\_lb) | make kubernetes API loadbalancer internal (reachible only from inside the VPC) | `bool` | `false` | no |
-| <a name="input_open_nodeports"></a> [open\_nodeports](#input\_open\_nodeports) | open NodePorts flag | `bool` | `false` | no |
 | <a name="input_os"></a> [os](#input\_os) | Operating System to use in AMI filtering and MachineDeployment | `string` | `"ubuntu"` | no |
 | <a name="input_ssh_agent_socket"></a> [ssh\_agent\_socket](#input\_ssh\_agent\_socket) | SSH Agent socket, default to grab from $SSH\_AUTH\_SOCK | `string` | `"env:SSH_AUTH_SOCK"` | no |
 | <a name="input_ssh_port"></a> [ssh\_port](#input\_ssh\_port) | SSH port to be used to provision instances | `number` | `22` | no |
@@ -76,6 +78,7 @@ No modules.
 | <a name="input_static_workers_count"></a> [static\_workers\_count](#input\_static\_workers\_count) | number of static workers | `number` | `0` | no |
 | <a name="input_subnets_cidr"></a> [subnets\_cidr](#input\_subnets\_cidr) | CIDR mask bits per subnet | `number` | `24` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC to use ('default' for default VPC) | `string` | `"default"` | no |
+| <a name="input_worker_deploy_ssh_key"></a> [worker\_deploy\_ssh\_key](#input\_worker\_deploy\_ssh\_key) | add provided ssh public key to MachineDeployments | `bool` | `true` | no |
 | <a name="input_worker_os"></a> [worker\_os](#input\_worker\_os) | OS to run on worker machines, default to var.os | `string` | `""` | no |
 | <a name="input_worker_type"></a> [worker\_type](#input\_worker\_type) | instance type for workers | `string` | `"t3.medium"` | no |
 
