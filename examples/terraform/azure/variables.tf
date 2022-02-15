@@ -101,3 +101,9 @@ variable "initial_machinedeployment_replicas" {
   default     = 1
   type        = number
 }
+
+variable "public_ip_wait_timeout" {
+  description = "Time to wait until resolving data.azurerm_public_ip.control_plane"
+  default     = "90s"
+  type        = string
+}

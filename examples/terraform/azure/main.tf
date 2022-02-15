@@ -268,15 +268,16 @@ resource "azurerm_virtual_machine" "control_plane" {
 }
 
 # Hack to ensure we get access to public ip in first attempt
-resource "time_sleep" "wait_30_seconds" {
+resource "time_sleep" "public_ip_wait_timeout" {
   depends_on      = [azurerm_virtual_machine.control_plane]
-  create_duration = "30s"
+  create_duration = var.public_ip_wait_timeout
 }
 
 data "azurerm_public_ip" "control_plane" {
   depends_on = [
-    time_sleep.wait_30_seconds
+    time_sleep.public_ip_wait_timeout
   ]
+
   count               = var.control_plane_vm_count
   name                = "${var.cluster_name}-cp-${count.index}"
   resource_group_name = azurerm_resource_group.rg.name
