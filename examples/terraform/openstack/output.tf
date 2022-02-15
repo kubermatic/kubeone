@@ -23,6 +23,10 @@ output "kubeone_api" {
   }
 }
 
+output "ssh_commands" {
+  value = formatlist("ssh -J ${var.bastion_user}@${openstack_networking_floatingip_v2.lb.address} ${var.ssh_username}@%s", openstack_compute_instance_v2.control_plane.*.access_ip_v4)
+}
+
 output "kubeone_hosts" {
   description = "Control plane endpoints to SSH to"
 
