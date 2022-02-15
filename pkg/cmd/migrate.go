@@ -193,6 +193,7 @@ func runMigrateToCCMCSI(opts *migrateCCMOptions) error {
 	if s.Cluster.CloudProvider.Openstack != nil {
 		s.Logger.Warnln("The OpenStack external CCM uses Octavia Load Balancers by default.")
 		s.Logger.Warnln("If you currently use Neutron Load Balancers, migrating to the external CCM/CSI will cause *ALL* Load Balancers to be recreated!")
+		s.Logger.Warnln("The existing Neutron Load Balancers will **NOT** be removed automatically. Instead, those Load Balancers must be removed manually!")
 		s.Logger.Warnln("Make sure to check documentation for more details.")
 	}
 
