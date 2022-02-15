@@ -26,13 +26,14 @@ import (
 type OperatingSystem string
 
 const (
-	OperatingSystemUbuntu  OperatingSystem = "ubuntu"
-	OperatingSystemCentOS7 OperatingSystem = "centos7"
-	OperatingSystemCentOS8 OperatingSystem = "centos"
-	OperatingSystemFlatcar OperatingSystem = "flatcar"
-	OperatingSystemAmazon  OperatingSystem = "amzn2"
-	OperatingSystemRHEL    OperatingSystem = "rhel"
-	OperatingSystemDefault OperatingSystem = ""
+	OperatingSystemUbuntu   OperatingSystem = "ubuntu"
+	OperatingSystemCentOS7  OperatingSystem = "centos7"
+	OperatingSystemCentOS8  OperatingSystem = "centos"
+	OperatingSystemFlatcar  OperatingSystem = "flatcar"
+	OperatingSystemAmazon   OperatingSystem = "amzn"
+	OperatingSystemAmazonMC OperatingSystem = "amzn2"
+	OperatingSystemRHEL     OperatingSystem = "rhel"
+	OperatingSystemDefault  OperatingSystem = ""
 )
 
 const (
@@ -46,6 +47,7 @@ func ValidateOperatingSystem(osName string) error {
 		OperatingSystemCentOS7,
 		OperatingSystemCentOS8,
 		OperatingSystemAmazon,
+		OperatingSystemAmazonMC,
 		OperatingSystemRHEL,
 		OperatingSystemDefault:
 		return nil
