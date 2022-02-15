@@ -1,5 +1,8 @@
+{{ $version := semver .Config.Versions.Kubernetes }}
+{{ $csi := or .Config.CloudProvider.External (ge $version.Minor 23) }}
+
 {{ if eq .Config.CloudProvider.CloudProviderName "azure" }}
-{{ if .Config.CloudProvider.External }}
+{{ if $csi }}
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
@@ -26,12 +29,15 @@ parameters:
   skuName: Standard_LRS
 reclaimPolicy: Delete
 volumeBindingMode: Immediate
-{{ else }}
+---
+{{ end }}
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
+{{ if not $csi }}
   annotations:
     storageclass.beta.kubernetes.io/is-default-class: "true"
+{{ end }}
   labels:
     kubernetes.io/cluster-service: "true"
   name: standard
@@ -40,10 +46,9 @@ parameters:
   kind: Managed
   storageaccounttype: Standard_LRS
 {{ end }}
-{{ end }}
 
 {{ if eq .Config.CloudProvider.CloudProviderName "aws" }}
-{{ if .Config.CloudProvider.External }}
+{{ if $csi }}
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
 metadata:
@@ -56,12 +61,15 @@ provisioner: ebs.csi.aws.com
 parameters:
   type: gp2
 volumeBindingMode: WaitForFirstConsumer
-{{ else }}
+---
+{{ end }}
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
+{{ if not $csi }}
   annotations:
     storageclass.beta.kubernetes.io/is-default-class: "true"
+{{ end }}
   labels:
     kubernetes.io/cluster-service: "true"
   name: standard-v2
@@ -70,10 +78,9 @@ parameters:
   type: gp2
 volumeBindingMode: WaitForFirstConsumer
 {{ end }}
-{{ end }}
 
 {{ if eq .Config.CloudProvider.CloudProviderName "vsphere" }}
-{{ if .Config.CloudProvider.External }}
+{{ if $csi }}
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
@@ -83,12 +90,15 @@ metadata:
     kubernetes.io/cluster-service: "true"
   name: vsphere-csi
 provisioner: csi.vsphere.vmware.com
-{{ else }}
+---
+{{ end }}
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
+{{ if not $csi }}
   annotations:
     storageclass.beta.kubernetes.io/is-default-class: "true"
+{{ end }}
   labels:
     kubernetes.io/cluster-service: "true"
   name: standard
@@ -96,10 +106,8 @@ provisioner: kubernetes.io/vsphere-volume
 parameters:
   diskformat: thin
 {{ end }}
-{{ end }}
 
 {{ if eq .Config.CloudProvider.CloudProviderName "openstack" }}
-{{ if .Config.CloudProvider.External }}
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
@@ -110,17 +118,14 @@ metadata:
   name: cinder-csi
 provisioner: cinder.csi.openstack.org
 volumeBindingMode: WaitForFirstConsumer
-{{ else }}
+---
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  annotations:
-    storageclass.beta.kubernetes.io/is-default-class: "true"
   labels:
     kubernetes.io/cluster-service: "true"
   name: standard
 provisioner: kubernetes.io/cinder
-{{ end }}
 {{ end }}
 
 {{ if eq .Config.CloudProvider.CloudProviderName "gce" }}
@@ -174,7 +179,6 @@ allowVolumeExpansion: true
 {{ end }}
 
 {{ if eq .Config.CloudProvider.CloudProviderName "digitalocean" }}
-{{ if .Config.CloudProvider.External }}
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
 metadata:
@@ -192,5 +196,4 @@ metadata:
     snapshot.storage.kubernetes.io/is-default-class: "true"
 driver: dobs.csi.digitalocean.com
 deletionPolicy: Delete
-{{ end }}
 {{ end }}
