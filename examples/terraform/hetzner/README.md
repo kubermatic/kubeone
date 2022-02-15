@@ -19,7 +19,7 @@ See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
 | cluster\_name | prefix for cloud resources | string | n/a | yes |
 | control\_plane\_type |  | string | `"cx21"` | no |
 | datacenter |  | string | `"fsn1"` | no |
-| image |  | string | `"ubuntu-18.04"` | no |
+| image |  | string | `"ubuntu-20.04"` | no |
 | lb\_type |  | string | `"lb11"` | no |
 | ssh\_agent\_socket | SSH Agent socket, default to grab from $SSH_AUTH_SOCK | string | `"env:SSH_AUTH_SOCK"` | no |
 | ssh\_port | SSH port to be used to provision instances | string | `"22"` | no |
