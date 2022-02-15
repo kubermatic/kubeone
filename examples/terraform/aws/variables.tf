@@ -149,6 +149,7 @@ variable "ami_filters" {
     image_name   = list(string)
     osp_name     = string
     ssh_username = string
+    worker_os    = string
   }))
   default = {
     ubuntu = {
@@ -156,6 +157,7 @@ variable "ami_filters" {
       image_name   = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
       osp_name     = "osp-ubuntu"
       ssh_username = "ubuntu"
+      worker_os    = "ubuntu"
     }
 
     centos = {
@@ -163,6 +165,7 @@ variable "ami_filters" {
       image_name   = ["Rocky-8-ec2-*.x86_64"]
       osp_name     = "osp-centos"
       ssh_username = "rocky"
+      worker_os    = "centos"
     }
 
     flatcar = {
@@ -170,6 +173,7 @@ variable "ami_filters" {
       image_name   = ["Flatcar-stable-*-hvm"]
       osp_name     = "osp-flatcar"
       ssh_username = "core"
+      worker_os    = "flatcar"
     }
 
     rhel = {
@@ -177,6 +181,7 @@ variable "ami_filters" {
       image_name   = ["RHEL-8*_HVM-*-x86_64-*"]
       osp_name     = "osp-rhel"
       ssh_username = "ec2-user"
+      worker_os    = "rhel"
     }
 
     amzn = {
@@ -184,6 +189,7 @@ variable "ami_filters" {
       image_name   = ["amzn2-ami-hvm-2.0.*-x86_64-gp2"]
       osp_name     = "osp-amzn2"
       ssh_username = "ec2-user"
+      worker_os    = "amzn2"
     }
   }
 }
