@@ -115,8 +115,8 @@ You can find more information about deploying addons in the
 [addon]: ./cluster-autoscaler.yaml
 [autoscaler]: https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler
 [machine-controller]: https://github.com/kubermatic/machine-controller
-[docs-concepts]: https://docs.kubermatic.com/kubeone/v1.0/concepts/
-[docs-machinedeployment]: https://docs.kubermatic.com/kubeone/v1.0/concepts/#machinedeployments
+[docs-concepts]: https://docs.kubermatic.com/kubeone/master/architecture/concepts/
+[docs-machinedeployment]: https://docs.kubermatic.com/kubeone/master/architecture/concepts/#machinedeployments
 [recommended-autoscaler-versions]: https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler#releases
 [autoscaler-releases]: https://github.com/kubernetes/autoscaler/releases
-[using-addons]: https://docs.kubermatic.com/kubeone/v1.0/advanced/addons/
+[using-addons]: https://docs.kubermatic.com/kubeone/master/guides/addons/
