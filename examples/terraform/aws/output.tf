@@ -24,7 +24,7 @@ output "kubeone_api" {
 }
 
 output "ssh_commands" {
-  value = formatlist("ssh -J ${var.bastion_user}@${aws_instance.bastion.public_ip} ${var.ssh_username}@%s", aws_instance.control_plane.*.private_ip)
+  value = formatlist("ssh -J ${local.bastion_user}@${aws_instance.bastion.public_ip} ${local.ssh_username}@%s", aws_instance.control_plane.*.private_ip)
 }
 
 output "kubeone_hosts" {
