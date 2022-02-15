@@ -57,7 +57,7 @@ variable "ssh_port" {
 
 variable "ssh_username" {
   description = "SSH user, used only in output"
-  default     = "ubuntu"
+  default     = ""
   type        = string
 }
 
@@ -81,7 +81,7 @@ variable "bastion_port" {
 
 variable "bastion_user" {
   description = "Bastion SSH username"
-  default     = "ubuntu"
+  default     = ""
   type        = string
 }
 
