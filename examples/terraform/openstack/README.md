@@ -19,7 +19,7 @@ See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
 | cluster\_name | Name of the cluster | string | n/a | yes |
 | control\_plane\_flavor | OpenStack instance flavor for the control plane nodes | string | `"m1.small"` | no |
 | external\_network\_name | OpenStack external network name | string | n/a | yes |
-| image | image name to use | string | `"Ubuntu 18.04"` | no |
+| image | image name to use | string | `"Ubuntu 20.04"` | no |
 | lb\_flavor | OpenStack instance flavor for the LoadBalancer node | string | `"m1.micro"` | no |
 | ssh\_agent\_socket | SSH Agent socket, default to grab from $SSH_AUTH_SOCK | string | `"env:SSH_AUTH_SOCK"` | no |
 | ssh\_port | SSH port to be used to provision instances | string | `"22"` | no |
