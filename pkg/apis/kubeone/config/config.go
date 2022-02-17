@@ -66,7 +66,7 @@ func LoadKubeOneCluster(clusterCfgPath, tfOutputPath, credentialsFilePath string
 
 	cluster, err := os.ReadFile(clusterCfgPath)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to read the given cluster configuration file")
+		return nil, errors.Wrapf(err, "reading %q cluster configuration file", clusterCfgPath)
 	}
 
 	var tfOutput []byte
@@ -74,17 +74,17 @@ func LoadKubeOneCluster(clusterCfgPath, tfOutputPath, credentialsFilePath string
 	switch {
 	case tfOutputPath == "-":
 		if tfOutput, err = io.ReadAll(os.Stdin); err != nil {
-			return nil, errors.Wrap(err, "unable to read terraform output from stdin")
+			return nil, errors.Wrap(err, "reading terraform output from stdin")
 		}
 	case isDir(tfOutputPath):
 		cmd := exec.Command("terraform", "output", "-json")
 		cmd.Dir = tfOutputPath
 		if tfOutput, err = cmd.Output(); err != nil {
-			return nil, errors.Wrapf(err, "unable to read terraform output from the %q directory", tfOutputPath)
+			return nil, errors.Wrapf(err, "reading terraform output from the %q directory", tfOutputPath)
 		}
 	case len(tfOutputPath) != 0:
 		if tfOutput, err = os.ReadFile(tfOutputPath); err != nil {
-			return nil, errors.Wrap(err, "unable to read the given terraform output file")
+			return nil, errors.Wrapf(err, "reading %q terraform output file", tfOutputPath)
 		}
 	}
 
@@ -92,7 +92,7 @@ func LoadKubeOneCluster(clusterCfgPath, tfOutputPath, credentialsFilePath string
 	if len(credentialsFilePath) != 0 {
 		credentialsFile, err = os.ReadFile(credentialsFilePath)
 		if err != nil {
-			return nil, errors.Wrap(err, "unable to read the given credentials file")
+			return nil, errors.Wrapf(err, "reading %q credentials file", credentialsFilePath)
 		}
 	}
 
@@ -104,7 +104,7 @@ func BytesToKubeOneCluster(cluster, tfOutput, credentialsFile []byte, logger log
 	// Get the GVK from the given KubeOneCluster manifest
 	typeMeta := runtime.TypeMeta{}
 	if err := yaml.Unmarshal(cluster, &typeMeta); err != nil {
-		return nil, errors.Wrap(err, "failed to unmarshal cluster typeMeta")
+		return nil, errors.Wrap(err, "unmarshal cluster typeMeta")
 	}
 	if len(typeMeta.APIVersion) == 0 || len(typeMeta.Kind) == 0 {
 		return nil, errors.New("apiVersion and kind must be present in the manifest")
@@ -116,7 +116,7 @@ func BytesToKubeOneCluster(cluster, tfOutput, credentialsFile []byte, logger log
 		return nil, errors.Errorf("provided apiVersion %q is not supported", typeMeta.APIVersion)
 	}
 	if _, ok := DeprecatedAPIs[typeMeta.APIVersion]; ok {
-		logger.Warningf("The provided APIVersion %q is deprecated. Please use \"kubeone config migrate\" command to migrate to the latest version.", typeMeta.APIVersion)
+		logger.Warningf(`The provided APIVersion %q is deprecated. Please use "kubeone config migrate" command to migrate to the latest version.`, typeMeta.APIVersion)
 	}
 
 	// Parse the cluster bytes depending on the GVK
@@ -147,10 +147,10 @@ func DefaultedV1Beta1KubeOneCluster(versionedCluster *kubeonev1beta1.KubeOneClus
 	if tfOutput != nil {
 		tfConfig, err := terraformv1beta1.NewConfigFromJSON(tfOutput)
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to parse Terraform config")
+			return nil, errors.Wrap(err, "parsing Terraform config")
 		}
 		if err := tfConfig.Apply(versionedCluster); err != nil {
-			return nil, errors.Wrap(err, "failed to apply Terraform config to the KubeOneCluster object")
+			return nil, errors.Wrap(err, "applying Terraform config to the KubeOneCluster object")
 		}
 	}
 
@@ -158,18 +158,18 @@ func DefaultedV1Beta1KubeOneCluster(versionedCluster *kubeonev1beta1.KubeOneClus
 
 	kubeonescheme.Scheme.Default(versionedCluster)
 	if err := kubeonescheme.Scheme.Convert(versionedCluster, internalCluster, nil); err != nil {
-		return nil, errors.Wrap(err, "failed to convert versioned cluster object to internal object")
+		return nil, errors.Wrap(err, "converting versioned cluster object to internal object")
 	}
 
 	// Apply the dynamic defaults
 	err := SetKubeOneClusterDynamicDefaults(internalCluster, credentialsFile)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to apply dynamic defaults")
+		return nil, errors.Wrap(err, "applying dynamic defaults")
 	}
 
 	// Validate the configuration
 	if err := kubeonevalidation.ValidateKubeOneCluster(*internalCluster).ToAggregate(); err != nil {
-		return nil, errors.Wrap(err, "unable to validate the given KubeOneCluster object")
+		return nil, errors.Wrap(err, "validating the given KubeOneCluster object")
 	}
 
 	// Check for deprecated fields/features for a cluster
@@ -185,10 +185,10 @@ func DefaultedV1Beta2KubeOneCluster(versionedCluster *kubeonev1beta2.KubeOneClus
 	if tfOutput != nil {
 		tfConfig, err := terraformv1beta2.NewConfigFromJSON(tfOutput)
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to parse Terraform config")
+			return nil, errors.Wrap(err, "parsing Terraform config")
 		}
 		if err := tfConfig.Apply(versionedCluster); err != nil {
-			return nil, errors.Wrap(err, "failed to apply Terraform config to the KubeOneCluster object")
+			return nil, errors.Wrap(err, "applying Terraform config to the KubeOneCluster object")
 		}
 	}
 
@@ -196,18 +196,18 @@ func DefaultedV1Beta2KubeOneCluster(versionedCluster *kubeonev1beta2.KubeOneClus
 
 	kubeonescheme.Scheme.Default(versionedCluster)
 	if err := kubeonescheme.Scheme.Convert(versionedCluster, internalCluster, nil); err != nil {
-		return nil, errors.Wrap(err, "failed to convert versioned cluster object to internal object")
+		return nil, errors.Wrap(err, "converting versioned cluster object to internal object")
 	}
 
 	// Apply the dynamic defaults
 	err := SetKubeOneClusterDynamicDefaults(internalCluster, credentialsFile)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to apply dynamic defaults")
+		return nil, errors.Wrap(err, "applying dynamic defaults")
 	}
 
 	// Validate the configuration
 	if err := kubeonevalidation.ValidateKubeOneCluster(*internalCluster).ToAggregate(); err != nil {
-		return nil, errors.Wrap(err, "unable to validate the given KubeOneCluster object")
+		return nil, errors.Wrap(err, "validating the given KubeOneCluster object")
 	}
 
 	// Check for deprecated fields/features for a cluster
@@ -220,9 +220,9 @@ func DefaultedV1Beta2KubeOneCluster(versionedCluster *kubeonev1beta2.KubeOneClus
 func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, credentialsFile []byte) error {
 	// Parse the credentials file
 	credentials := make(map[string]string)
-	err := yaml.Unmarshal(credentialsFile, &credentials)
-	if err != nil {
-		return errors.Wrap(err, "unable to convert credentials file to yaml")
+
+	if err := yaml.Unmarshal(credentialsFile, &credentials); err != nil {
+		return errors.Wrap(err, "unmarshalling credentials file from yaml")
 	}
 
 	// Source cloud-config from the credentials file if it's present
@@ -236,7 +236,7 @@ func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, creden
 
 	if ra, ok := credentials["registriesAuth"]; ok {
 		if err := setRegistriesAuth(cluster, ra); err != nil {
-			return fmt.Errorf("failed to parse registriesAuth from credentials file: %w", err)
+			return fmt.Errorf("parsing registriesAuth from credentials file: %w", err)
 		}
 	}
 
