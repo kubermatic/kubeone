@@ -104,6 +104,11 @@ func createMachineDeployment(cluster *kubeoneapi.KubeOneCluster, workerset kubeo
 	encoded, err := json.Marshal(struct {
 		kubeoneapi.ProviderSpec
 		CloudProvider string `json:"cloudProvider"`
+
+		// cut out those field from original ProviderSpec
+		// we use them, but they should NOT end up in the resulted machineDeployment
+		Annotations        bool `json:"annotations,omitempty"`
+		MachineAnnotations bool `json:"machineAnnotations,omitempty"`
 	}{
 		ProviderSpec:  workerset.Config,
 		CloudProvider: cluster.CloudProvider.CloudProviderName(),
