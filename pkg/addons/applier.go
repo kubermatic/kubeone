@@ -25,7 +25,6 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/pkg/errors"
-	corev1 "k8s.io/api/core/v1"
 
 	embeddedaddons "k8c.io/kubeone/addons"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
@@ -36,6 +35,7 @@ import (
 	"k8c.io/kubeone/pkg/templates/images"
 	"k8c.io/kubeone/pkg/templates/resources"
 
+	corev1 "k8s.io/api/core/v1"
 	"sigs.k8s.io/yaml"
 )
 

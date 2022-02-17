@@ -227,7 +227,11 @@ func (output *Config) Apply(cluster *kubeonev1beta2.KubeOneCluster) error {
 	cpHosts := cp.hostsSpec.toHostConfigs(idIncrementer, isLeader, untainer)
 
 	if len(cpHosts) > 0 {
-		cluster.ControlPlane.Hosts = cpHosts
+		mergedHosts, err := mergeHosts(cluster.ControlPlane.Hosts, cpHosts)
+		if err != nil {
+			return err
+		}
+		cluster.ControlPlane.Hosts = mergedHosts
 	}
 
 	var staticWorkerGroupNames []string
@@ -393,4 +397,34 @@ func setWorkersetFlag(w *kubeonev1beta2.DynamicWorkerConfig, name string, value 
 	}
 
 	return nil
+}
+
+func mergeHosts(dst []kubeonev1beta2.HostConfig, src []kubeonev1beta2.HostConfig) ([]kubeonev1beta2.HostConfig, error) {
+	hostsToMergeFrom := map[string]kubeonev1beta2.HostConfig{}
+	hostsToMergeTo := map[string]kubeonev1beta2.HostConfig{}
+
+	for i := range src {
+		hostsToMergeFrom[src[i].PrivateAddress] = src[i]
+	}
+
+	for i := range dst {
+		hostsToMergeTo[dst[i].PrivateAddress] = dst[i]
+	}
+
+	for i := range dst {
+		if host, found := hostsToMergeFrom[dst[i].PrivateAddress]; found {
+			if err := mergo.Merge(&host, dst[i]); err != nil {
+				return nil, err
+			}
+			dst[i] = host
+		}
+	}
+
+	for i := range src {
+		if _, found := hostsToMergeTo[src[i].PrivateAddress]; !found {
+			dst = append(dst, src[i])
+		}
+	}
+
+	return dst, nil
 }

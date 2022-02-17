@@ -182,6 +182,8 @@ func DefaultedV1Beta1KubeOneCluster(versionedCluster *kubeonev1beta1.KubeOneClus
 // object while sourcing information from Terraform output, applying default values and validating the KubeOneCluster
 // object
 func DefaultedV1Beta2KubeOneCluster(versionedCluster *kubeonev1beta2.KubeOneCluster, tfOutput, credentialsFile []byte, logger logrus.FieldLogger) (*kubeoneapi.KubeOneCluster, error) {
+	kubeonescheme.Scheme.Default(versionedCluster)
+
 	if tfOutput != nil {
 		tfConfig, err := terraformv1beta2.NewConfigFromJSON(tfOutput)
 		if err != nil {

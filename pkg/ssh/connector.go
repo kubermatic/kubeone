@@ -24,9 +24,10 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"k8s.io/client-go/util/homedir"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+
+	"k8s.io/client-go/util/homedir"
 )
 
 // Connector holds a map of Connections
