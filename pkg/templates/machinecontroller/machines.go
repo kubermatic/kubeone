@@ -109,6 +109,8 @@ func createMachineDeployment(cluster *kubeoneapi.KubeOneCluster, workerset kubeo
 		// we use them, but they should NOT end up in the resulted machineDeployment
 		Annotations        bool `json:"annotations,omitempty"`
 		MachineAnnotations bool `json:"machineAnnotations,omitempty"`
+		Labels             bool `json:"labels,omitempty"`
+		Taints             bool `json:"taints,omitempty"`
 	}{
 		ProviderSpec:  workerset.Config,
 		CloudProvider: cluster.CloudProvider.CloudProviderName(),
