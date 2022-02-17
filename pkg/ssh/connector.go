@@ -18,10 +18,13 @@ package ssh
 
 import (
 	"context"
+	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 
 	"github.com/pkg/errors"
+	"k8s.io/client-go/util/homedir"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 )
@@ -90,11 +93,17 @@ func (c *Connector) forgetConnection(conn *connection) {
 }
 
 func sshOpts(host kubeoneapi.HostConfig) Opts {
+	privateKeyFile := host.SSHPrivateKeyFile
+	// Expand ~/ as path to the home directory
+	if strings.HasPrefix(privateKeyFile, "~/") {
+		privateKeyFile = filepath.Join(homedir.HomeDir(), privateKeyFile[2:])
+	}
+
 	return Opts{
 		Username:    host.SSHUsername,
 		Port:        host.SSHPort,
 		Hostname:    host.PublicAddress,
-		KeyFile:     host.SSHPrivateKeyFile,
+		KeyFile:     privateKeyFile,
 		AgentSocket: host.SSHAgentSocket,
 		Timeout:     10 * time.Second,
 		Bastion:     host.Bastion,

@@ -165,6 +165,10 @@ func NewConnection(connector *Connector, o Opts) (Connection, error) {
 			socket.Close()
 
 			return nil, errors.Wrap(signersErr, "error when creating signer for SSH agent")
+		} else if len(signers) == 0 {
+			socket.Close()
+
+			return nil, errors.New("could not retrieve signers for SSH agent")
 		}
 
 		authMethods = append(authMethods, ssh.PublicKeys(signers...))
