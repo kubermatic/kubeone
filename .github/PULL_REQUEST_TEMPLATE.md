@@ -5,6 +5,25 @@
 3. If the PR is unfinished, see how to mark it: https://git.k8s.io/community/contributors/guide/pull-requests.md#marking-unfinished-pull-requests
 -->
 
+**What type of PR is this?**
+
+<!--
+Add one of the following kinds:
+/kind bug
+/kind cleanup
+/kind documentation
+/kind feature
+/kind design
+
+Optionally add one or more of the following kinds if applicable:
+/kind api-change
+/kind deprecation
+/kind failing-test
+/kind flake
+/kind regression
+/kind question
+-->
+
 **What this PR does / why we need it**:
 
 **Which issue(s) this PR fixes** *(optional, in `fixes #<issue number>(, fixes #<issue_number>, ...)` format, will close the issue(s) when PR gets merged)*:
