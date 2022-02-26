@@ -93,6 +93,7 @@ func configCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 	}
 
 	cmd.AddCommand(configPrintCmd())
+	cmd.AddCommand(configDumpCmd(rootFlags))
 	cmd.AddCommand(configMigrateCmd(rootFlags))
 	cmd.AddCommand(configMachinedeploymentsCmd(rootFlags))
 	cmd.AddCommand(configImagesCmd(rootFlags))
