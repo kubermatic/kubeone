@@ -30,6 +30,7 @@ import (
 	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
 	"k8c.io/kubeone/pkg/templates"
 
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"sigs.k8s.io/yaml"
 )
@@ -86,35 +87,39 @@ func dumpConfig(opts *configDumpOpts) error {
 		return errors.Wrap(err, "loading KubeOneCluster manifest")
 	}
 
-	// Convert the internal KubeOneCluster manifest to the v1beta2 manifest.
+	// Convert the internal KubeOneCluster manifest to the versioned manifest.
 	// NB: validation works only on the internal representation, so if we want
 	// to validate the merged manifest, we can't avoid this step.
-	var clusterYAML string
+	var objs []runtime.Object
 	switch typeMeta.APIVersion {
 	case kubeonev1beta1.SchemeGroupVersion.String():
 		versionedCluster := &kubeonev1beta1.KubeOneCluster{}
 		if cErr := kubeonescheme.Scheme.Convert(cluster, versionedCluster, nil); cErr != nil {
 			return errors.Wrap(cErr, "converting internal to versioned manifest")
 		}
-
-		// Convert the KubeOneCluster struct to the YAML representation
-		clusterYAML, err = templates.KubernetesToYAML([]runtime.Object{versionedCluster})
-		if err != nil {
-			return errors.Wrap(err, "converting merged manifest to yaml")
+		versionedCluster.TypeMeta = metav1.TypeMeta{
+			APIVersion: kubeonev1beta1.SchemeGroupVersion.String(),
+			Kind:       "KubeOneCluster",
 		}
+		objs = append(objs, versionedCluster)
 	case kubeonev1beta2.SchemeGroupVersion.String():
 		versionedCluster := &kubeonev1beta2.KubeOneCluster{}
 		if cErr := kubeonescheme.Scheme.Convert(cluster, versionedCluster, nil); cErr != nil {
 			return errors.Wrap(cErr, "converting internal to versioned manifest")
 		}
-
-		// Convert the KubeOneCluster struct to the YAML representation
-		clusterYAML, err = templates.KubernetesToYAML([]runtime.Object{versionedCluster})
-		if err != nil {
-			return errors.Wrap(err, "converting merged manifest to yaml")
+		versionedCluster.TypeMeta = metav1.TypeMeta{
+			APIVersion: kubeonev1beta2.SchemeGroupVersion.String(),
+			Kind:       "KubeOneCluster",
 		}
+		objs = append(objs, versionedCluster)
 	default:
 		return errors.New("invalid KubeOneCluster API version")
+	}
+
+	// Convert the KubeOneCluster struct to the YAML representation
+	clusterYAML, err := templates.KubernetesToYAML(objs)
+	if err != nil {
+		return errors.Wrap(err, "converting merged manifest to yaml")
 	}
 
 	fmt.Println(clusterYAML)
