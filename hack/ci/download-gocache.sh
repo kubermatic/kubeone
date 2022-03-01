@@ -51,8 +51,9 @@ if [ -z "${GOCACHE_MINIO_ADDRESS:-}" ]; then
 fi
 
 GOCACHE="$(go env GOCACHE)"
+TARGET_DIRECTORY="${TARGET_DIRECTORY:-$GOCACHE}"
 # Make sure it actually exists
-mkdir -p "${GOCACHE}"
+mkdir -p "${TARGET_DIRECTORY}"
 
 # PULL_BASE_REF is the name of the current branch in case of a post-submit
 # or the name of the base branch in case of a PR.
@@ -100,6 +101,6 @@ TEST_NAME="Download and extract gocache"
 # Passing the Headers as space-separated literals doesn't seem to work
 # in conjunction with the retry func, so we just put them in a file instead
 echo 'Content-Type: application/octet-stream' > /tmp/headers
-retry 5 curl --fail -H @/tmp/headers "${URL}" | tar -C $GOCACHE -xf -
+retry 5 curl --fail -H @/tmp/headers "${URL}" | tar -C $TARGET_DIRECTORY -xf -
 
-echodate "Successfully fetched gocache into $GOCACHE"
+echodate "Successfully fetched gocache into $TARGET_DIRECTORY"
