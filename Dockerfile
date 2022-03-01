@@ -27,7 +27,8 @@ RUN make build
 FROM docker.io/alpine:3.15
 LABEL maintainer="support@kubermatic.com"
 
-RUN apk add --update openssh-client
+# openssh-client is required for the ssh binary and for ssh-agent
+RUN apk add --no-cache openssh-client
 
 COPY --from=builder /go/src/k8c.io/kubeone/dist/kubeone /usr/local/bin/kubeone
 ENTRYPOINT ["/usr/local/bin/kubeone"]
