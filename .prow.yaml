@@ -142,7 +142,6 @@ presubmits:
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     labels:
       preset-goproxy: "true"
-      preset-docker-push-kubermatic: "true"
       preset-docker-mirror: "true"
     spec:
       containers:
@@ -1509,6 +1508,7 @@ postsubmits:
             - |
               set -euo pipefail
               start-docker.sh
+              docker login -u $QUAY_IO_USERNAME -p $QUAY_IO_PASSWORD quay.io
               TAGS="latest $(git tag --points-at HEAD)" ./hack/ci/push-image.sh
           # docker-in-docker needs privileged mode
           securityContext:
