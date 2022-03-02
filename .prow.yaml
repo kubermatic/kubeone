@@ -142,7 +142,6 @@ presubmits:
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     labels:
       preset-goproxy: "true"
-      preset-docker-push-kubermatic: "true"
       preset-docker-mirror: "true"
     spec:
       containers:
