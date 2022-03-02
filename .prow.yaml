@@ -1509,6 +1509,7 @@ postsubmits:
             - |
               set -euo pipefail
               start-docker.sh
+              docker login -u $QUAY_IO_USERNAME -p $QUAY_IO_PASSWORD quay.io
               TAGS="latest $(git tag --points-at HEAD)" ./hack/ci/push-image.sh
           # docker-in-docker needs privileged mode
           securityContext:
