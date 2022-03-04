@@ -76,18 +76,10 @@ func BuildKubernetesClientset(s *state.State) error {
 
 	s.RESTConfig.Dial = tunn.TunnelTo
 
-	return errors.WithStack(HackIssue321InitDynamicClient(s))
-}
-
-// HackIssue321InitDynamicClient initialize controller-runtime/client
-// name comes from: https://github.com/kubernetes-sigs/controller-runtime/issues/321
-func HackIssue321InitDynamicClient(s *state.State) error {
-	var err error
-	if s.RESTConfig == nil {
-		return errors.New("rest config is not initialized")
+	s.DynamicClient, err = client.New(s.RESTConfig, client.Options{})
+	if err != nil {
+		return errors.Wrap(err, "unable to build dynamic client")
 	}
 
-	s.DynamicClient, err = client.New(s.RESTConfig, client.Options{})
-
-	return errors.Wrap(err, "unable to build dynamic client")
+	return nil
 }

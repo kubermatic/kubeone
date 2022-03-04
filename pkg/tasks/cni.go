@@ -17,14 +17,27 @@ limitations under the License.
 package tasks
 
 import (
-	"k8c.io/kubeone/pkg/kubeconfig"
+	"github.com/pkg/errors"
+
 	"k8c.io/kubeone/pkg/state"
+
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 func ensureCNI(s *state.State) error {
+	var err error
 	if s.Cluster.ClusterNetwork.CNI.External != nil {
 		s.Logger.Infoln("External CNI plugin will be used")
 	}
 
-	return kubeconfig.HackIssue321InitDynamicClient(s)
+	if s.RESTConfig == nil {
+		return errors.New("rest config is not initialized")
+	}
+
+	s.DynamicClient, err = client.New(s.RESTConfig, client.Options{})
+	if err != nil {
+		return errors.Wrap(err, "unable to build dynamic client")
+	}
+
+	return nil
 }

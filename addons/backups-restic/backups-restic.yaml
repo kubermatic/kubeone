@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: s3-credentials
+  name: backup-restic-s3-credentials
   namespace: kube-system
 type: Opaque
 data:
@@ -118,12 +118,12 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: AWS_ACCESS_KEY_ID
-                  name: s3-credentials
+                  name: backup-restic-s3-credentials
             - name: AWS_SECRET_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
                   key: AWS_SECRET_ACCESS_KEY
-                  name: s3-credentials
+                  name: backup-restic-s3-credentials
             volumeMounts:
             - mountPath: /backup
               name: etcd-backup
