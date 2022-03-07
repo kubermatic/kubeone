@@ -13,3 +13,4 @@ terraform.tfvars
 !*kubeconfig/
 /vendor
 download-gocache
+.vscode

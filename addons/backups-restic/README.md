@@ -22,7 +22,7 @@ You need to replace the following values with the actual ones:
 * `<<AWS_DEFAULT_REGION>>` - default AWS region
 
 Credentials are fetched automatically if you are deploying on AWS. If you want to use
-non-default credentials or you're not deploying on AWS, update the `s3-credentials`
+non-default credentials or you're not deploying on AWS, update the `kubeone-backups-credentials`
 secret (`AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` keys).
 
 [backups-addon]: (./backups-restic.yaml)
