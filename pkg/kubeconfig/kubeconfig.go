@@ -20,8 +20,7 @@ import (
 	"io/fs"
 	"os"
 
-	"github.com/pkg/errors"
-
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/ssh/sshiofs"
 	"k8c.io/kubeone/pkg/state"
@@ -44,10 +43,10 @@ func Download(s *state.State) ([]byte, error) {
 		return nil, err
 	}
 
-	return CatKubernetesAdminConf(conn)
+	return catKubernetesAdminConf(conn)
 }
 
-func CatKubernetesAdminConf(conn ssh.Connection) ([]byte, error) {
+func catKubernetesAdminConf(conn ssh.Connection) ([]byte, error) {
 	return fs.ReadFile(sshiofs.New(conn), "/etc/kubernetes/admin.conf")
 }
 
@@ -57,12 +56,12 @@ func BuildKubernetesClientset(s *state.State) error {
 
 	kubeconfig, err := Download(s)
 	if err != nil {
-		return errors.Wrap(err, "unable to download kubeconfig")
+		return fail.KubeClient(err, "downloading kubeconfig")
 	}
 
 	s.RESTConfig, err = clientcmd.RESTConfigFromKubeConfig(kubeconfig)
 	if err != nil {
-		return errors.Wrap(err, "unable to build config from kubeconfig bytes")
+		return fail.KubeClient(err, "building config from kubeconfig")
 	}
 
 	s.RESTConfig.WarningHandler = rest.NewWarningWriter(os.Stderr, rest.WarningWriterOptions{
@@ -71,14 +70,14 @@ func BuildKubernetesClientset(s *state.State) error {
 
 	tunn, err := s.Connector.Tunnel(s.Cluster.RandomHost())
 	if err != nil {
-		return errors.Wrap(err, "failed to get SSH tunnel")
+		return fail.KubeClient(err, "getting SSH tunnel")
 	}
 
 	s.RESTConfig.Dial = tunn.TunnelTo
 
 	s.DynamicClient, err = client.New(s.RESTConfig, client.Options{})
 	if err != nil {
-		return errors.Wrap(err, "unable to build dynamic client")
+		return fail.KubeClient(err, "building dynamic kubernetes client")
 	}
 
 	return nil

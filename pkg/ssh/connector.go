@@ -27,6 +27,7 @@ import (
 	"k8s.io/client-go/util/homedir"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/fail"
 )
 
 // Connector holds a map of Connections
@@ -53,7 +54,10 @@ func (c *Connector) Tunnel(host kubeoneapi.HostConfig) (Tunneler, error) {
 
 	tunn, ok := conn.(Tunneler)
 	if !ok {
-		err = errors.New("unable to assert Tunneler")
+		err = fail.RuntimeError{
+			Op:  "tunneler interface",
+			Err: errors.New("unable to assert"),
+		}
 	}
 
 	return tunn, err

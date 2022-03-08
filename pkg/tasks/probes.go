@@ -28,6 +28,7 @@ import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/clusterstatus/apiserverstatus"
 	"k8c.io/kubeone/pkg/clusterstatus/etcdstatus"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/kubeconfig"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
@@ -65,16 +66,19 @@ func safeguard(s *state.State) error {
 		var kubeProxyDs appsv1.DaemonSet
 		if err := s.DynamicClient.Get(s.Context, KubeProxyObjectKey, &kubeProxyDs); err != nil {
 			if !k8serrors.IsNotFound(err) {
-				return err
+				return fail.KubeClient(err, "getting kube-proxy daemonset")
 			}
 		} else {
-			return errors.New(".clusterNetwork.kubeProxy.skipInstallation is enabled, but kube-proxy was already installed and requires manual deletion")
+			return fail.RuntimeError{
+				Err: errors.New("is enabled but kube-proxy was already installed and requires manual deletion"),
+				Op:  ".clusterNetwork.kubeProxy.skipInstallation",
+			}
 		}
 	}
 
 	var nodes corev1.NodeList
 	if err := s.DynamicClient.List(s.Context, &nodes); err != nil {
-		return err
+		return fail.KubeClient(err, "listing nodes")
 	}
 
 	cr := s.Cluster.ContainerRuntime
@@ -96,13 +100,15 @@ func safeguard(s *state.State) error {
 				errMsg = "Use `kubeone migrate to-containerd`"
 			}
 
-			return errors.Errorf(
-				"container runtime on node %q is %q, but %q is configured. %s",
-				node.Name,
-				nodesContainerRuntime,
-				configuredClusterContainerRuntime,
-				errMsg,
-			)
+			return fail.RuntimeError{
+				Err: errors.Errorf("on node %q is %q, but %q is configured. %s",
+					node.Name,
+					nodesContainerRuntime,
+					configuredClusterContainerRuntime,
+					errMsg,
+				),
+				Op: "container runtime",
+			}
 		}
 	}
 
@@ -112,12 +118,18 @@ func safeguard(s *state.State) error {
 	if st != nil {
 		if s.Cluster.CloudProvider.External {
 			if st.InTreeCloudProviderEnabled && !st.ExternalCCMDeployed {
-				return errors.New(".cloudProvider.external enabled, but cluster is using in-tree provider. run ccm/csi migration by running 'kubeone migrate to-ccm-csi'")
+				return fail.RuntimeError{
+					Err: errors.New("cluster is using in-tree provider. run ccm/csi migration by running 'kubeone migrate to-ccm-csi'"),
+					Op:  ".cloudProvider.external is enabled",
+				}
 			}
 		} else {
 			if st.ExternalCCMDeployed {
 				// Block disabling .cloudProvider.external
-				return errors.New(".cloudProvider.external is disabled, but external ccm is deployed")
+				return fail.RuntimeError{
+					Err: errors.New("external ccm is deployed"),
+					Op:  ".cloudProvider.external is disabled",
+				}
 			}
 		}
 	}
@@ -128,7 +140,7 @@ func safeguard(s *state.State) error {
 func runProbes(s *state.State) error {
 	expectedVersion, err := semver.NewVersion(s.Cluster.Versions.Kubernetes)
 	if err != nil {
-		return err
+		return fail.ConfigValidation(err)
 	}
 
 	s.LiveCluster = &state.Cluster{
@@ -314,7 +326,10 @@ func investigateCluster(s *state.State) error {
 		s.Logger.Errorln("Quorum is mostly like lost, manual cluster repair might be needed.")
 		s.Logger.Errorln("Consider the KubeOne documentation for further steps.")
 
-		return errors.New("leader not elected, quorum mostly like lost")
+		return fail.RuntimeError{
+			Err: errors.New("quorum mostly like lost"),
+			Op:  "leader electing",
+		}
 	}
 
 	etcdMembers, err := etcdstatus.MemberList(s)
@@ -342,7 +357,7 @@ func investigateCluster(s *state.State) error {
 	// Get the node list
 	nodes := corev1.NodeList{}
 	if err = s.DynamicClient.List(s.Context, &nodes, &dynclient.ListOptions{}); err != nil {
-		return errors.Wrap(err, "unable to list nodes")
+		return fail.KubeClient(err, "listing nodes")
 	}
 
 	// Parse the node list
@@ -555,15 +570,16 @@ type encryptionEnabledStatus struct {
 
 func detectEncryptionProvidersEnabled(s *state.State) (ees encryptionEnabledStatus, err error) {
 	if s.DynamicClient == nil {
-		return ees, errors.New("kubernetes dynamic client is not initialized")
+		return ees, fail.NoKubeClient()
 	}
+
 	pods := corev1.PodList{}
 	err = s.DynamicClient.List(s.Context, &pods, &dynclient.ListOptions{
 		Namespace: "kube-system",
 		LabelSelector: labels.SelectorFromSet(map[string]string{
 			"component": "kube-apiserver"})})
 	if err != nil {
-		return ees, errors.Wrap(err, "unable to list pods")
+		return ees, fail.KubeClient(err, "listing kube-apiserver pods")
 	}
 
 	for _, pod := range pods.Items {
@@ -582,7 +598,7 @@ func detectEncryptionProvidersEnabled(s *state.State) (ees encryptionEnabledStat
 
 func detectCCMMigrationStatus(s *state.State) (*state.CCMStatus, error) {
 	if s.DynamicClient == nil {
-		return nil, errors.New("kubernetes dynamic client is not initialized")
+		return nil, fail.NoKubeClient()
 	}
 
 	pods := corev1.PodList{}
@@ -593,7 +609,7 @@ func detectCCMMigrationStatus(s *state.State) (*state.CCMStatus, error) {
 		}),
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to list kube-controller-manager pods")
+		return nil, fail.KubeClient(err, "listing kube-controller-manager pods")
 	}
 
 	// This uses regex so we can easily match any CSIMigration feature gate
@@ -648,7 +664,7 @@ func detectCCMMigrationStatus(s *state.State) (*state.CCMStatus, error) {
 		}),
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to list kube-controller-manager pods")
+		return nil, fail.KubeClient(err, "listing CCM pods")
 	}
 	if len(pods.Items) > 0 {
 		status.ExternalCCMDeployed = true
@@ -707,11 +723,13 @@ func detectClusterName(s *state.State) (string, error) {
 		}),
 	})
 	if err != nil {
-		return "", err
+		return "", fail.KubeClient(err, "openstack CCM pod listing")
 	}
+
 	if len(pods.Items) == 0 || len(pods.Items[0].Spec.Containers) == 0 {
 		return "", errors.New("unable to detect ccm pod/container")
 	}
+
 	for _, container := range pods.Items[0].Spec.Containers {
 		if container.Name != openstackCCMAppLabelValue {
 			continue

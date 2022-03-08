@@ -23,11 +23,11 @@ import (
 	"io/fs"
 	"time"
 
-	"github.com/pkg/errors"
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"google.golang.org/grpc"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/ssh/sshiofs"
 	"k8c.io/kubeone/pkg/ssh/sshtunnel"
@@ -39,17 +39,17 @@ import (
 func NewClientConfig(s *state.State, host kubeoneapi.HostConfig) (*clientv3.Config, error) {
 	sshconn, err := s.Connector.Connect(host)
 	if err != nil {
-		return nil, err
+		return nil, fail.Etcd(err, "open connection")
 	}
 
 	grpcDialer, err := sshtunnel.NewGRPCDialer(s.Connector, host)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to create grpc tunnel dialer")
+		return nil, fail.Etcd(err, "gRPC dialing")
 	}
 
 	tlsConf, err := LoadTLSConfig(sshconn)
 	if err != nil {
-		return nil, err
+		return nil, fail.Etcd(err, "TLS config creating")
 	}
 
 	return &clientv3.Config{
@@ -90,7 +90,7 @@ func LoadTLSConfig(conn ssh.Connection) (*tls.Config, error) {
 	// Add certificate and key to the TLS config
 	cert, err := tls.X509KeyPair(certPem, keyPem)
 	if err != nil {
-		return nil, err
+		return nil, fail.Runtime(err, "x509 certificate keypair parsing")
 	}
 
 	// Add CA certificate to the TLS config
