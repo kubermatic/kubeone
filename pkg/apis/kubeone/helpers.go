@@ -426,7 +426,7 @@ func (ads *Addons) RelativePath(manifestFilePath string) (string, error) {
 // highest priority, then comes the RegistryConfiguration.
 // This function is needed because the AssetsConfiguration API has been removed
 // in the v1beta2 API, so we can't use defaulting
-func (c KubeOneCluster) DefaultAssetConfiguration() {
+func (c *KubeOneCluster) DefaultAssetConfiguration() {
 	if c.RegistryConfiguration == nil || c.RegistryConfiguration.OverwriteRegistry == "" {
 		// We default AssetConfiguration only if RegistryConfiguration.OverwriteRegistry
 		// is used
