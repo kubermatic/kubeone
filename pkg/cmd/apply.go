@@ -28,6 +28,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/tasks"
 
@@ -52,7 +53,7 @@ type applyOpts struct {
 func (opts *applyOpts) BuildState() (*state.State, error) {
 	s, err := opts.globalOptions.BuildState()
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to build state")
+		return nil, err
 	}
 
 	s.BackupFile = opts.BackupFile
@@ -74,16 +75,19 @@ func (opts *applyOpts) BuildState() (*state.State, error) {
 	// existing, zero byte backup)
 	stat, err := os.Stat(s.BackupFile)
 	if err != nil && stat != nil && stat.Size() > 0 {
-		return nil, errors.Errorf("backup %s already exists, refusing to overwrite", opts.BackupFile)
+		return nil, fail.RuntimeError{
+			Op:  fmt.Sprintf("checking backup file %s existance", opts.BackupFile),
+			Err: errors.Errorf("refusing to overwrite"),
+		}
 	}
 
 	// try to write to the file before doing anything else
 	f, err := os.OpenFile(s.BackupFile, os.O_RDWR|os.O_CREATE, 0600)
 	if err != nil {
-		return nil, errors.Wrapf(err, "cannot open %q for writing", opts.BackupFile)
+		return nil, fail.Runtime(err, "opening backup file for write")
 	}
 
-	return s, f.Close()
+	return s, fail.Runtime(f.Close(), "closing backup file")
 }
 
 func applyCmd(rootFlags *pflag.FlagSet) *cobra.Command {
@@ -103,7 +107,7 @@ func applyCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		RunE: func(_ *cobra.Command, args []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
-				return errors.Wrap(err, "unable to get global flags")
+				return err
 			}
 
 			opts.globalOptions = *gopts
@@ -168,7 +172,7 @@ func applyCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 func runApply(opts *applyOpts) error {
 	s, err := opts.BuildState()
 	if err != nil {
-		return errors.Wrap(err, "failed to initialize State")
+		return err
 	}
 
 	// Validate credentials
@@ -202,9 +206,10 @@ func runApply(opts *applyOpts) error {
 
 	if !s.LiveCluster.Healthy() {
 		if opts.RotateEncryptionKey {
-			s.Logger.Errorln("cluster is not healthy, encryption key rotation is not supported")
-
-			return errors.New("cluster is not healthy, encryption key rotation is not supported")
+			return fail.RuntimeError{
+				Op:  "checking encryption key rotation",
+				Err: errors.New("cluster is not healthy, encryption key rotation is not supported"),
+			}
 		}
 
 		brokenHosts := s.LiveCluster.BrokenHosts()

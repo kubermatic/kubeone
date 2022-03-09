@@ -16,7 +16,9 @@ limitations under the License.
 
 package fail
 
-import "github.com/pkg/errors"
+import (
+	"github.com/pkg/errors"
+)
 
 // ConfigValidation is a shortcut to quickly construct ConfigError
 func ConfigValidation(err error) error {

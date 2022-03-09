@@ -24,7 +24,6 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
 	"golang.org/x/term"
@@ -33,6 +32,7 @@ import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/apis/kubeone/config"
 	"k8c.io/kubeone/pkg/credentials"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 )
 
@@ -50,13 +50,14 @@ func (opts *globalOptions) BuildState() (*state.State, error) {
 	rootContext := context.Background()
 	s, err := state.New(rootContext)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to initialize State")
+		return nil, err
 	}
+
 	s.Logger = newLogger(opts.Verbose)
 
 	cluster, err := loadClusterConfig(opts.ManifestFile, opts.TerraformState, opts.CredentialsFile, s.Logger)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to load cluster")
+		return nil, err
 	}
 
 	s.Cluster = cluster
@@ -68,18 +69,19 @@ func (opts *globalOptions) BuildState() (*state.State, error) {
 	if s.Cluster.Addons.Enabled() {
 		addonsPath, err := s.Cluster.Addons.RelativePath(s.ManifestFilePath)
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to get addons path")
+			return nil, err
 		}
 
 		// Check if only embedded addons are being used; path is not required for embedded addons and no validation is required
 		embeddedAddonsOnly, err := addons.EmbeddedAddonsOnly(s.Cluster.Addons.Addons)
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to read embedded addons directory")
+			return nil, err
 		}
+
 		// If custom addons are being used then addons path is required and should be a valid directory
 		if !embeddedAddonsOnly {
 			if _, err := os.Stat(addonsPath); os.IsNotExist(err) {
-				return nil, errors.Wrapf(err, "failed to validate addons path, make sure that directory %q exists", s.Cluster.Addons.Path)
+				return nil, fail.Runtime(err, "checking addons directory")
 			}
 		}
 	}
@@ -109,25 +111,25 @@ func persistentGlobalOptions(fs *pflag.FlagSet) (*globalOptions, error) {
 
 	manifestFile, err := fs.GetString(longFlagName(gf, "ManifestFile"))
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, fail.Runtime(err, "getting global flags")
 	}
 	gf.ManifestFile = manifestFile
 
 	verbose, err := fs.GetBool(longFlagName(gf, "Verbose"))
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, fail.Runtime(err, "getting global flags")
 	}
 	gf.Verbose = verbose
 
 	tfjson, err := fs.GetString(longFlagName(gf, "TerraformState"))
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, fail.Runtime(err, "getting global flags")
 	}
 	gf.TerraformState = tfjson
 
 	creds, err := fs.GetString(longFlagName(gf, "CredentialsFile"))
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, fail.Runtime(err, "getting global flags")
 	}
 	gf.CredentialsFile = creds
 
@@ -149,12 +151,12 @@ func newLogger(verbose bool) *logrus.Logger {
 }
 
 func loadClusterConfig(filename, terraformOutputPath, credentialsFilePath string, logger logrus.FieldLogger) (*kubeoneapi.KubeOneCluster, error) {
-	a, err := config.LoadKubeOneCluster(filename, terraformOutputPath, credentialsFilePath, logger)
+	cls, err := config.LoadKubeOneCluster(filename, terraformOutputPath, credentialsFilePath, logger)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to load a given KubeOneCluster object")
+		return nil, err
 	}
 
-	return a, nil
+	return cls, nil
 }
 
 func confirmCommand(autoApprove bool) (bool, error) {
@@ -163,7 +165,7 @@ func confirmCommand(autoApprove bool) (bool, error) {
 	}
 
 	if !term.IsTerminal(int(os.Stdin.Fd())) || !term.IsTerminal(int(os.Stdout.Fd())) {
-		return false, errors.New("not running in the terminal")
+		return false, fail.Runtime(fmt.Errorf("not running in the terminal"), "terminal detecting")
 	}
 
 	reader := bufio.NewReader(os.Stdin)
@@ -171,7 +173,7 @@ func confirmCommand(autoApprove bool) (bool, error) {
 
 	confirmation, err := reader.ReadString('\n')
 	if err != nil {
-		return false, err
+		return false, fail.Runtime(err, "reading confirmation")
 	}
 
 	fmt.Println()
@@ -192,7 +194,7 @@ func validateCredentials(s *state.State, credentialsFile string) error {
 		// MC credentials found, but no CCM or universal credentials
 		fallthrough
 	case ccmErr == nil && mcErr != nil && universalErr != nil: // CCM credentials found, but no MC or universal credentials
-		return errors.Wrap(universalErr, "failed to validate credentials")
+		return fail.ConfigValidation(universalErr)
 	default:
 		return nil
 	}

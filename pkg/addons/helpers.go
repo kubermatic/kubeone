@@ -22,6 +22,7 @@ import (
 	embeddedaddons "k8c.io/kubeone/addons"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/clientutil"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/resources"
 
@@ -57,7 +58,7 @@ func EmbeddedAddonsOnly(addons []kubeoneapi.Addon) (bool, error) {
 	// Read the directory entries for embedded addons
 	embeddedAddons, err := fs.ReadDir(embeddedaddons.FS, ".")
 	if err != nil {
-		return false, err
+		return false, fail.Runtime(err, "reading embedded addons directory")
 	}
 
 	// Iterate over addons specified in the KubeOneCluster object

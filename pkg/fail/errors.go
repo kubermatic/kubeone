@@ -18,6 +18,7 @@ package fail
 
 import (
 	"fmt"
+	"strings"
 )
 
 // RuntimeError wraps kubernetes client related errors
@@ -28,7 +29,7 @@ type RuntimeError struct {
 
 func (e RuntimeError) Error() string {
 	if e.Op != "" {
-		return fmt.Sprintf("%s: %s", e.Op, e.Err)
+		return fmt.Sprintf("%s:\n\t%s", e.Op, e.Err)
 	}
 
 	return e.Err.Error()
@@ -42,7 +43,7 @@ type EtcdError struct {
 	Op  string
 }
 
-func (e EtcdError) Error() string { return fmt.Sprintf("%s: %s", e.Op, e.Err) }
+func (e EtcdError) Error() string { return fmt.Sprintf("%s:\n\t%s", e.Op, e.Err) }
 func (e EtcdError) Unwrap() error { return e.Err }
 
 // KubeClientError wraps kubernetes client related errors
@@ -51,7 +52,7 @@ type KubeClientError struct {
 	Op  string
 }
 
-func (e KubeClientError) Error() string { return fmt.Sprintf("%s: %s", e.Op, e.Err) }
+func (e KubeClientError) Error() string { return fmt.Sprintf("%s:\n\t%s", e.Op, e.Err) }
 func (e KubeClientError) Unwrap() error { return e.Err }
 
 // SSHError wraps SSH related errors
@@ -60,7 +61,7 @@ type SSHError struct {
 	Op  string
 }
 
-func (e SSHError) Error() string { return fmt.Sprintf("%s: %s", e.Op, e.Err) }
+func (e SSHError) Error() string { return fmt.Sprintf("%s:\n\t%s", e.Op, e.Err) }
 func (e SSHError) Unwrap() error { return e.Err }
 
 // ConnectionError wraps connections related errors
@@ -69,7 +70,10 @@ type ConnectionError struct {
 	Target string
 }
 
-func (e ConnectionError) Error() string { return fmt.Sprintf("connecting to %s: %s", e.Target, e.Err) }
+func (e ConnectionError) Error() string {
+	return fmt.Sprintf("connecting to %s:\n\t%s", e.Target, e.Err)
+}
+
 func (e ConnectionError) Unwrap() error { return e.Err }
 
 // ConfigError wraps configuration related errors
@@ -78,5 +82,30 @@ type ConfigError struct {
 	Op  string
 }
 
-func (e ConfigError) Error() string { return fmt.Sprintf("%s: %s", e.Op, e.Err) }
+func (e ConfigError) Error() string { return fmt.Sprintf("%s:\n\t%s", e.Op, e.Err) }
 func (e ConfigError) Unwrap() error { return e.Err }
+
+// CredentialsError wraps cloud provider credentials related errors
+type CredentialsError struct {
+	Err      error
+	Op       string
+	Provider string
+}
+
+func (e CredentialsError) Error() string {
+	var res strings.Builder
+
+	if e.Provider != "" {
+		fmt.Fprintf(&res, "provider: %s\n", e.Provider)
+	}
+
+	if e.Op != "" {
+		fmt.Fprintf(&res, "%s:\n\t", e.Op)
+	}
+
+	res.WriteString(e.Err.Error())
+
+	return res.String()
+}
+
+func (e CredentialsError) Unwrap() error { return e.Err }

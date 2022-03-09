@@ -417,10 +417,7 @@ func (ads *Addons) RelativePath(manifestFilePath string) (string, error) {
 	if !filepath.IsAbs(addonsPath) && manifestFilePath != "" {
 		manifestAbsPath, err := filepath.Abs(filepath.Dir(manifestFilePath))
 		if err != nil {
-			return "", fail.ConfigError{
-				Op:  "filepath",
-				Err: errors.Wrap(err, "unable to get absolute path to the cluster manifest"),
-			}
+			return "", fail.Runtime(err, "getting absolute path to the cluster manifest")
 		}
 		addonsPath = filepath.Join(manifestAbsPath, addonsPath)
 	}

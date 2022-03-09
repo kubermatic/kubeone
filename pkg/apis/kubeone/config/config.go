@@ -32,6 +32,7 @@ import (
 	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
 	kubeonevalidation "k8c.io/kubeone/pkg/apis/kubeone/validation"
 	"k8c.io/kubeone/pkg/containerruntime"
+	"k8c.io/kubeone/pkg/fail"
 	terraformv1beta1 "k8c.io/kubeone/pkg/terraform/v1beta1"
 	terraformv1beta2 "k8c.io/kubeone/pkg/terraform/v1beta2"
 
@@ -61,12 +62,12 @@ var (
 // parsed from the versioned KubeOneCluster manifest, Terraform output and credentials file
 func LoadKubeOneCluster(clusterCfgPath, tfOutputPath, credentialsFilePath string, logger logrus.FieldLogger) (*kubeoneapi.KubeOneCluster, error) {
 	if len(clusterCfgPath) == 0 {
-		return nil, errors.New("cluster configuration path not provided")
+		return nil, fail.Runtime(fmt.Errorf("is not provided"), "cluster configuration path")
 	}
 
 	cluster, err := os.ReadFile(clusterCfgPath)
 	if err != nil {
-		return nil, errors.Wrapf(err, "reading %q cluster configuration file", clusterCfgPath)
+		return nil, fail.Runtime(err, "reading cluster configuration")
 	}
 
 	var tfOutput []byte
@@ -74,17 +75,17 @@ func LoadKubeOneCluster(clusterCfgPath, tfOutputPath, credentialsFilePath string
 	switch {
 	case tfOutputPath == "-":
 		if tfOutput, err = io.ReadAll(os.Stdin); err != nil {
-			return nil, errors.Wrap(err, "reading terraform output from stdin")
+			return nil, fail.Runtime(err, "reading terraform output from stdin")
 		}
 	case isDir(tfOutputPath):
 		cmd := exec.Command("terraform", "output", "-json")
 		cmd.Dir = tfOutputPath
 		if tfOutput, err = cmd.Output(); err != nil {
-			return nil, errors.Wrapf(err, "reading terraform output from the %q directory", tfOutputPath)
+			return nil, fail.Runtime(err, "reading terraform output")
 		}
 	case len(tfOutputPath) != 0:
 		if tfOutput, err = os.ReadFile(tfOutputPath); err != nil {
-			return nil, errors.Wrapf(err, "reading %q terraform output file", tfOutputPath)
+			return nil, fail.Runtime(err, "reading terraform output file")
 		}
 	}
 
@@ -92,7 +93,7 @@ func LoadKubeOneCluster(clusterCfgPath, tfOutputPath, credentialsFilePath string
 	if len(credentialsFilePath) != 0 {
 		credentialsFile, err = os.ReadFile(credentialsFilePath)
 		if err != nil {
-			return nil, errors.Wrapf(err, "reading %q credentials file", credentialsFilePath)
+			return nil, fail.Runtime(err, "reading credentials file")
 		}
 	}
 
