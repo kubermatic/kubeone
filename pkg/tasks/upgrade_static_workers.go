@@ -85,5 +85,5 @@ func upgradeStaticWorkersExecutor(s *state.State, node *kubeoneapi.HostConfig, c
 		return errors.Wrap(err, "failed to unlabel static worker node node")
 	}
 
-	return nil
+	return approvePendingCSR(s, node, conn)
 }
