@@ -83,5 +83,5 @@ func upgradeLeaderExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh
 		return errors.Wrap(err, "failed to unlabel leader control plane node")
 	}
 
-	return nil
+	return approvePendingCSR(s, node, conn)
 }

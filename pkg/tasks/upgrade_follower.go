@@ -83,5 +83,5 @@ func upgradeFollowerExecutor(s *state.State, node *kubeoneapi.HostConfig, conn s
 		return errors.Wrap(err, "failed to unlabel follower control plane node")
 	}
 
-	return nil
+	return approvePendingCSR(s, node, conn)
 }
