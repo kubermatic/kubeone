@@ -17,10 +17,13 @@ limitations under the License.
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
+
+	"k8c.io/kubeone/pkg/fail"
 
 	clusterv1alpha1 "github.com/kubermatic/machine-controller/pkg/apis/cluster/v1alpha1"
 
@@ -50,15 +53,26 @@ func Execute() {
 	rootCmd := newRoot()
 
 	if err := rootCmd.Execute(); err != nil {
-		debug, _ := rootCmd.PersistentFlags().GetBool(longFlagName(&globalOptions{}, "Debug"))
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
+		exitCode := fail.ExitCode(err)
 
+		debug, _ := rootCmd.PersistentFlags().GetBool(longFlagName(&globalOptions{}, "Debug"))
 		if debug {
-			fmt.Printf("%+v\n", err)
-		} else {
-			fmt.Println(err)
+			var targetErr error
+
+			for err != nil {
+				targetErr = err
+				// errors wrapped by the github.com/pkg/errors are satisfying fmt.Formatter interface
+				if _, ok := err.(fmt.Formatter); ok {
+					break
+				}
+				err = errors.Unwrap(err)
+			}
+
+			fmt.Fprintf(os.Stderr, "\n%+v\n", targetErr)
 		}
 
-		os.Exit(-1)
+		os.Exit(exitCode)
 	}
 }
 
