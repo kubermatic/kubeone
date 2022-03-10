@@ -29,13 +29,14 @@ type RuntimeError struct {
 
 func (e RuntimeError) Error() string {
 	if e.Op != "" {
-		return fmt.Sprintf("%s:\n\t%s", e.Op, e.Err)
+		return fmt.Sprintf("runtime: %s\n%s", e.Op, e.Err)
 	}
 
 	return e.Err.Error()
 }
 
 func (e RuntimeError) Unwrap() error { return e.Err }
+func (e RuntimeError) exitCode() int { return runtimeErrorExitCode }
 
 // EtcdError wraps etcd client related errors
 type EtcdError struct {
@@ -43,8 +44,9 @@ type EtcdError struct {
 	Op  string
 }
 
-func (e EtcdError) Error() string { return fmt.Sprintf("%s:\n\t%s", e.Op, e.Err) }
+func (e EtcdError) Error() string { return fmt.Sprintf("etcd: %s\n%s", e.Op, e.Err) }
 func (e EtcdError) Unwrap() error { return e.Err }
+func (e EtcdError) exitCode() int { return etcdErrorExitCode }
 
 // KubeClientError wraps kubernetes client related errors
 type KubeClientError struct {
@@ -52,8 +54,9 @@ type KubeClientError struct {
 	Op  string
 }
 
-func (e KubeClientError) Error() string { return fmt.Sprintf("%s:\n\t%s", e.Op, e.Err) }
+func (e KubeClientError) Error() string { return fmt.Sprintf("kubernetes: %s\n%s", e.Op, e.Err) }
 func (e KubeClientError) Unwrap() error { return e.Err }
+func (e KubeClientError) exitCode() int { return kubeClientErrorExitCode }
 
 // SSHError wraps SSH related errors
 type SSHError struct {
@@ -61,8 +64,9 @@ type SSHError struct {
 	Op  string
 }
 
-func (e SSHError) Error() string { return fmt.Sprintf("%s:\n\t%s", e.Op, e.Err) }
+func (e SSHError) Error() string { return fmt.Sprintf("ssh: %s\n%s", e.Op, e.Err) }
 func (e SSHError) Unwrap() error { return e.Err }
+func (e SSHError) exitCode() int { return sshErrorExitCode }
 
 // ConnectionError wraps connections related errors
 type ConnectionError struct {
@@ -71,10 +75,11 @@ type ConnectionError struct {
 }
 
 func (e ConnectionError) Error() string {
-	return fmt.Sprintf("connecting to %s:\n\t%s", e.Target, e.Err)
+	return fmt.Sprintf("connection to: %s\n%s", e.Target, e.Err)
 }
 
 func (e ConnectionError) Unwrap() error { return e.Err }
+func (e ConnectionError) exitCode() int { return connectionErrorExitCode }
 
 // ConfigError wraps configuration related errors
 type ConfigError struct {
@@ -82,8 +87,9 @@ type ConfigError struct {
 	Op  string
 }
 
-func (e ConfigError) Error() string { return fmt.Sprintf("%s:\n\t%s", e.Op, e.Err) }
+func (e ConfigError) Error() string { return fmt.Sprintf("configuration %s\n%s", e.Op, e.Err) }
 func (e ConfigError) Unwrap() error { return e.Err }
+func (e ConfigError) exitCode() int { return configErrorExitCode }
 
 // CredentialsError wraps cloud provider credentials related errors
 type CredentialsError struct {
@@ -94,13 +100,14 @@ type CredentialsError struct {
 
 func (e CredentialsError) Error() string {
 	var res strings.Builder
+	fmt.Fprintf(&res, "credentials:\n")
+
+	if e.Op != "" {
+		fmt.Fprintf(&res, "%s:\n", e.Op)
+	}
 
 	if e.Provider != "" {
 		fmt.Fprintf(&res, "provider: %s\n", e.Provider)
-	}
-
-	if e.Op != "" {
-		fmt.Fprintf(&res, "%s:\n\t", e.Op)
 	}
 
 	res.WriteString(e.Err.Error())
@@ -109,3 +116,4 @@ func (e CredentialsError) Error() string {
 }
 
 func (e CredentialsError) Unwrap() error { return e.Err }
+func (e CredentialsError) exitCode() int { return configErrorExitCode }

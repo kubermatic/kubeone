@@ -22,13 +22,17 @@ import (
 
 // ConfigValidation is a shortcut to quickly construct ConfigError
 func ConfigValidation(err error) error {
+	return Config(err, "validation")
+}
+
+func Config(err error, op string) error {
 	if err == nil {
 		return nil
 	}
 
 	return ConfigError{
 		Err: errors.WithStack(err),
-		Op:  "validating",
+		Op:  op,
 	}
 }
 
