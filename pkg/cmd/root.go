@@ -17,10 +17,10 @@ limitations under the License.
 package cmd
 
 import (
-	"errors"
 	"fmt"
 	"os"
 
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"k8c.io/kubeone/pkg/fail"
@@ -58,18 +58,12 @@ func Execute() {
 
 		debug, _ := rootCmd.PersistentFlags().GetBool(longFlagName(&globalOptions{}, "Debug"))
 		if debug {
-			var targetErr error
+			var formatterErr fmt.Formatter
 
-			for err != nil {
-				targetErr = err
-				// errors wrapped by the github.com/pkg/errors are satisfying fmt.Formatter interface
-				if _, ok := err.(fmt.Formatter); ok {
-					break
-				}
-				err = errors.Unwrap(err)
+			// errors wrapped by the github.com/pkg/errors are satisfying fmt.Formatter interface
+			if errors.As(err, &formatterErr) {
+				fmt.Fprintf(os.Stderr, "---stacktrace---\n%+v\n", formatterErr)
 			}
-
-			fmt.Fprintf(os.Stderr, "\n%+v\n", targetErr)
 		}
 
 		os.Exit(exitCode)

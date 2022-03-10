@@ -16,6 +16,8 @@ limitations under the License.
 
 package fail
 
+import "errors"
+
 const (
 	defaultExitCode         = 1
 	runtimeErrorExitCode    = 10
@@ -45,7 +47,8 @@ func ExitCode(err error) int {
 		return 0
 	}
 
-	if exiter, ok := err.(exitCoder); ok {
+	var exiter exitCoder
+	if errors.As(err, &exiter) {
 		return exiter.exitCode()
 	}
 

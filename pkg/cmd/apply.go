@@ -76,7 +76,7 @@ func (opts *applyOpts) BuildState() (*state.State, error) {
 	stat, err := os.Stat(s.BackupFile)
 	if err != nil && stat != nil && stat.Size() > 0 {
 		return nil, fail.RuntimeError{
-			Op:  fmt.Sprintf("checking backup file %s existance", opts.BackupFile),
+			Op:  fmt.Sprintf("checking backup file %s existence", opts.BackupFile),
 			Err: errors.Errorf("refusing to overwrite"),
 		}
 	}
