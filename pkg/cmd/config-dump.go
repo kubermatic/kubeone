@@ -43,9 +43,10 @@ func configDumpCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 	opts := &configDumpOpts{}
 
 	cmd := &cobra.Command{
-		Use:     "dump",
-		Short:   "Merge the KubeOneCluster manifest with the Terraform state and dump it to the stdout",
-		Example: `kubeone config dump -m kubeone.yaml -t tf.json`,
+		Use:           "dump",
+		Short:         "Merge the KubeOneCluster manifest with the Terraform state and dump it to the stdout",
+		SilenceErrors: true,
+		Example:       `kubeone config dump -m kubeone.yaml -t tf.json`,
 		RunE: func(*cobra.Command, []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {

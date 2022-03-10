@@ -51,7 +51,8 @@ func versionCmd() *cobra.Command {
 		Long: heredoc.Doc(`
 			Prints the exact version number, as embedded by the build system.
 		`),
-		Args: cobra.ExactArgs(0),
+		SilenceErrors: true,
+		Args:          cobra.ExactArgs(0),
 		RunE: func(_ *cobra.Command, _ []string) error {
 			ownver := k8sversion.Info{
 				GitVersion: version,

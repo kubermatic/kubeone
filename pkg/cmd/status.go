@@ -36,7 +36,8 @@ func statusCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 			This command takes KubeOne manifest which contains information about hosts. It's possible to source information about
 			hosts from Terraform output, using the '--tfjson' flag.
 		`),
-		Example: `kubeone status -m mycluster.yaml -t terraformoutput.json`,
+		Example:       `kubeone status -m mycluster.yaml -t terraformoutput.json`,
+		SilenceErrors: true,
 		RunE: func(_ *cobra.Command, _ []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
