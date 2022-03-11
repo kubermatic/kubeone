@@ -19,6 +19,8 @@ package credentials
 import (
 	"errors"
 	"testing"
+
+	"k8c.io/kubeone/pkg/fail"
 )
 
 func TestOpenstackValidationFunc(t *testing.T) {
@@ -147,7 +149,11 @@ func TestOpenstackValidationFunc(t *testing.T) {
 			t.Parallel()
 			err := openstackValidationFunc(tt.creds)
 			if tt.err != nil && err != nil {
-				if err.Error() != tt.err.Error() {
+				var credsErr fail.CredentialsError
+				if !errors.As(err, &credsErr) {
+					t.Errorf("extected %T error type", credsErr)
+				}
+				if credsErr.Err.Error() != tt.err.Error() {
 					t.Errorf("expected error = '%v', got error = '%v'", tt.err.Error(), err.Error())
 				}
 			} else if !errors.Is(err, tt.err) {
