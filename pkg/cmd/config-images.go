@@ -21,11 +21,11 @@ import (
 	"os"
 
 	"github.com/MakeNowJust/heredoc/v2"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
 	kubeonev1beta1 "k8c.io/kubeone/pkg/apis/kubeone/v1beta1"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/templates/images"
 
 	"sigs.k8s.io/yaml"
@@ -73,7 +73,7 @@ func listImagesCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		RunE: func(*cobra.Command, []string) error {
 			manifestFile, err := rootFlags.GetString(longFlagName(opts, "ManifestFile"))
 			if err != nil {
-				return errors.WithStack(err)
+				return fail.Runtime(err, "getting ManifestFile flag")
 			}
 			opts.ManifestFile = manifestFile
 

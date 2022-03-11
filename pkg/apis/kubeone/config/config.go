@@ -123,14 +123,14 @@ func BytesToKubeOneCluster(cluster, tfOutput, credentialsFile []byte, logger log
 	// Parse the cluster bytes depending on the GVK
 	switch typeMeta.APIVersion {
 	case kubeonev1beta1.SchemeGroupVersion.String():
-		v1beta1Cluster := &kubeonev1beta1.KubeOneCluster{}
+		v1beta1Cluster := kubeonev1beta1.NewKubeOneCluster()
 		if err := runtime.DecodeInto(kubeonescheme.Codecs.UniversalDecoder(), cluster, v1beta1Cluster); err != nil {
 			return nil, fail.Config(err, fmt.Sprintf("decoding %s", v1beta1Cluster.GroupVersionKind()))
 		}
 
 		return DefaultedV1Beta1KubeOneCluster(v1beta1Cluster, tfOutput, credentialsFile, logger)
 	case kubeonev1beta2.SchemeGroupVersion.String():
-		v1beta2Cluster := &kubeonev1beta2.KubeOneCluster{}
+		v1beta2Cluster := kubeonev1beta2.NewKubeOneCluster()
 		if err := runtime.DecodeInto(kubeonescheme.Codecs.UniversalDecoder(), cluster, v1beta2Cluster); err != nil {
 			return nil, fail.Config(err, fmt.Sprintf("decoding %s", v1beta2Cluster.GroupVersionKind()))
 		}

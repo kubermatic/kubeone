@@ -17,9 +17,9 @@ limitations under the License.
 package templates
 
 import (
-	"bytes"
+	"strings"
 
-	"github.com/pkg/errors"
+	"k8c.io/kubeone/pkg/fail"
 
 	"k8s.io/apimachinery/pkg/runtime"
 	"sigs.k8s.io/yaml"
@@ -33,7 +33,7 @@ import (
 // multi-document YAML string (separated with "---" between each
 // item).
 func KubernetesToYAML(data []runtime.Object, auxiliaries ...string) (string, error) {
-	var buffer bytes.Buffer
+	var buffer strings.Builder
 
 	for _, item := range data {
 		var (
@@ -43,21 +43,21 @@ func KubernetesToYAML(data []runtime.Object, auxiliaries ...string) (string, err
 
 		encodedItem, err = yaml.Marshal(item)
 		if err != nil {
-			return "", errors.Wrap(err, "failed to marshal item")
+			return "", fail.Runtime(err, "marshalling runtime.Object")
 		}
 
 		if _, err := buffer.Write(encodedItem); err != nil {
-			return "", errors.Wrap(err, "failed to write into buffer")
+			return "", fail.Runtime(err, "writing runtime.Object into buffer")
 		}
 
 		if _, err := buffer.WriteString("\n---\n"); err != nil {
-			return "", errors.Wrap(err, "failed to write into buffer")
+			return "", fail.Runtime(err, "writing into buffer")
 		}
 	}
 
 	for _, item := range auxiliaries {
 		if _, err := buffer.WriteString(item + "\n---\n"); err != nil {
-			return "", errors.Wrap(err, "failed to write into buffer")
+			return "", fail.Runtime(err, "failed to write into buffer")
 		}
 	}
 

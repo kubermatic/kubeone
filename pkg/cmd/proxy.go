@@ -52,7 +52,7 @@ func proxyCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		RunE: func(*cobra.Command, []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
-				return errors.Wrap(err, "unable to get global flags")
+				return err
 			}
 			opts.globalOptions = *gopts
 

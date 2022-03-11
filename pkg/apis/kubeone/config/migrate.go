@@ -30,7 +30,7 @@ import (
 func MigrateOldConfig(clusterFilePath string) (interface{}, error) {
 	oldConfig, err := loadClusterConfig(clusterFilePath)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to parse the old config")
+		return nil, err
 	}
 
 	// Check is kubeone.io/v1beta1 config provided

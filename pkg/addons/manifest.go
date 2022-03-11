@@ -34,6 +34,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"k8c.io/kubeone/pkg/certificate/cabundle"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
@@ -92,7 +93,7 @@ func (a *applier) loadAddonsManifests(
 
 	files, err := fs.ReadDir(fsys, filepath.Join(".", addonName))
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to read the addons directory %s", addonName)
+		return nil, fail.Runtime(err, "reading addons directory")
 	}
 
 	for _, file := range files {
@@ -119,12 +120,12 @@ func (a *applier) loadAddonsManifests(
 
 		manifestBytes, err := fs.ReadFile(fsys, filePath)
 		if err != nil {
-			return nil, errors.Wrapf(err, "failed to load addon %s", file.Name())
+			return nil, fail.Runtime(err, "reading addon")
 		}
 
 		tpl, err := template.New("addons-base").Funcs(txtFuncMap(overwriteRegistry)).Parse(string(manifestBytes))
 		if err != nil {
-			return nil, errors.Wrapf(err, "failed to template addons manifest %s", file.Name())
+			return nil, fail.Runtime(err, fmt.Sprintf("parsing addons manifest template %q", file.Name()))
 		}
 
 		// Make a copy and merge Params
@@ -143,7 +144,10 @@ func (a *applier) loadAddonsManifests(
 				if env, ok := os.LookupEnv(envName); ok {
 					tplDataParams[k] = env
 				} else {
-					return nil, fmt.Errorf("failed to get environment variable '%s'", envName)
+					return nil, fail.RuntimeError{
+						Op:  "resolving template data environment variables",
+						Err: fmt.Errorf("%q not found", envName),
+					}
 				}
 			}
 		}
@@ -153,12 +157,12 @@ func (a *applier) loadAddonsManifests(
 
 		buf := bytes.NewBuffer([]byte{})
 		if err := tpl.Execute(buf, tplData); err != nil {
-			return nil, errors.Wrapf(err, "failed to template addons manifest %s", file.Name())
+			return nil, fail.Runtime(err, fmt.Sprintf("executing addons manifest template %q", file.Name()))
 		}
 
 		trim := strings.TrimSpace(buf.String())
 		if len(trim) == 0 {
-			logger.Infof("Addons manifest '%s' is empty after parsing. Skipping.\n", file.Name())
+			logger.Infof("Addons manifest %q is empty after parsing. Skipping.\n", file.Name())
 		}
 
 		reader := kyaml.NewYAMLReader(bufio.NewReader(buf))
@@ -169,7 +173,7 @@ func (a *applier) loadAddonsManifests(
 					break
 				}
 
-				return nil, errors.Wrapf(err, "failed reading from YAML reader for manifest %s", file.Name())
+				return nil, fail.Runtime(err, fmt.Sprintf("reading YAML reader for manifest %q", file.Name()))
 			}
 
 			b = bytes.TrimSpace(b)
@@ -180,7 +184,7 @@ func (a *applier) loadAddonsManifests(
 			decoder := kyaml.NewYAMLToJSONDecoder(bytes.NewBuffer(b))
 			raw := runtime.RawExtension{}
 			if err := decoder.Decode(&raw); err != nil {
-				return nil, errors.Wrapf(err, "failed to decode manifest %s", file.Name())
+				return nil, fail.Runtime(err, fmt.Sprintf("unmarshalling manifest %q", file.Name()))
 			}
 
 			if len(raw.Raw) == 0 {
@@ -202,7 +206,7 @@ func ensureAddonsLabelsOnResources(manifests []runtime.RawExtension, addonName s
 	for _, m := range manifests {
 		parsedUnstructuredObj := &metav1unstructured.Unstructured{}
 		if _, _, err := metav1unstructured.UnstructuredJSONScheme.Decode(m.Raw, nil, parsedUnstructuredObj); err != nil {
-			return nil, errors.Wrapf(err, "failed to parse unstructured fields")
+			return nil, fail.Runtime(err, "parsing unstructured fields")
 		}
 
 		existingLabels := parsedUnstructuredObj.GetLabels()
@@ -214,14 +218,14 @@ func ensureAddonsLabelsOnResources(manifests []runtime.RawExtension, addonName s
 
 		jsonBuffer := &bytes.Buffer{}
 		if err := metav1unstructured.UnstructuredJSONScheme.Encode(parsedUnstructuredObj, jsonBuffer); err != nil {
-			return nil, errors.Wrap(err, "encoding json failed")
+			return nil, fail.Runtime(err, "marshalling unstructured fields")
 		}
 
 		// Must be encoded back to YAML, otherwise kubectl fails to apply because it tries to parse the whole
 		// thing as json
 		yamlBytes, err := yaml.JSONToYAML(jsonBuffer.Bytes())
 		if err != nil {
-			return nil, err
+			return nil, fail.Runtime(err, "recoding JSON to YAML")
 		}
 
 		rawManifests = append(rawManifests, bytes.NewBuffer(yamlBytes))

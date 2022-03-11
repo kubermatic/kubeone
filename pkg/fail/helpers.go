@@ -25,6 +25,13 @@ func ConfigValidation(err error) error {
 	return Config(err, "validation")
 }
 
+func NewConfigError(op string, format string, args ...interface{}) error {
+	return ConfigError{
+		Op:  op,
+		Err: errors.Errorf(format, args...),
+	}
+}
+
 func Config(err error, op string) error {
 	if err == nil {
 		return nil

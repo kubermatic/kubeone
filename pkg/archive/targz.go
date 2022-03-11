@@ -22,6 +22,8 @@ import (
 	"os"
 
 	"github.com/pkg/errors"
+
+	"k8c.io/kubeone/pkg/fail"
 )
 
 type tarGzip struct {
@@ -49,7 +51,10 @@ func NewTarGzip(filename string) (Archive, error) {
 
 func (tgz tarGzip) Add(file string, content string) error {
 	if tgz.arch == nil {
-		return errors.New("archive has already been closed")
+		return fail.RuntimeError{
+			Op:  "adding file to archive",
+			Err: errors.New("archive has already been closed"),
+		}
 	}
 
 	hdr := &tar.Header{
@@ -59,11 +64,11 @@ func (tgz tarGzip) Add(file string, content string) error {
 	}
 
 	if err := tgz.arch.WriteHeader(hdr); err != nil {
-		return errors.Wrap(err, "failed to write tar file header")
+		return fail.Runtime(err, "writing tar file header")
 	}
 
 	if _, err := tgz.arch.Write([]byte(content)); err != nil {
-		return errors.Wrap(err, "failed to write tar file data")
+		return fail.Runtime(err, "writing tar file data")
 	}
 
 	return nil

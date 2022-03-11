@@ -26,6 +26,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/tasks"
 )
@@ -41,7 +42,7 @@ type installOpts struct {
 func (opts *installOpts) BuildState() (*state.State, error) {
 	s, err := opts.globalOptions.BuildState()
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to build state")
+		return nil, err
 	}
 
 	s.ForceInstall = opts.Force
@@ -61,13 +62,16 @@ func (opts *installOpts) BuildState() (*state.State, error) {
 	// existing, zero byte backup)
 	stat, err := os.Stat(s.BackupFile)
 	if err != nil && stat != nil && stat.Size() > 0 {
-		return nil, errors.Errorf("backup %s already exists, refusing to overwrite", opts.BackupFile)
+		return nil, fail.RuntimeError{
+			Op:  fmt.Sprintf("checking backup file %s existence", opts.BackupFile),
+			Err: errors.New("refusing to overwrite"),
+		}
 	}
 
 	// try to write to the file before doing anything else
 	f, err := os.OpenFile(s.BackupFile, os.O_RDWR|os.O_CREATE, 0600)
 	if err != nil {
-		return nil, errors.Wrapf(err, "cannot open %q for writing", opts.BackupFile)
+		return nil, fail.Runtime(err, "opening backup file for write")
 	}
 
 	return s, f.Close()
@@ -91,7 +95,7 @@ func installCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		RunE: func(_ *cobra.Command, args []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
-				return errors.Wrap(err, "unable to get global flags")
+				return err
 			}
 
 			opts.globalOptions = *gopts
@@ -132,18 +136,18 @@ func installCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 func runInstall(opts *installOpts) error {
 	s, err := opts.BuildState()
 	if err != nil {
-		return errors.Wrap(err, "failed to initialize State")
+		return err
 	}
 
 	s.Logger.Warn("The \"kubeone install\" command is deprecated and will be removed in KubeOne 1.6. Please use \"kubeone apply\" instead.")
 
 	// Validate credentials
-	if vErr := validateCredentials(s, opts.CredentialsFile); vErr != nil {
-		return vErr
+	if err = validateCredentials(s, opts.CredentialsFile); err != nil {
+		return err
 	}
 
 	if opts.NoInit {
-		return errors.Wrap(tasks.WithBinariesOnly(nil).Run(s), "failed to install kubernetes binaries")
+		return tasks.WithBinariesOnly(nil).Run(s)
 	}
 
 	// Probe the cluster for the actual state and the needed tasks.
@@ -154,5 +158,5 @@ func runInstall(opts *installOpts) error {
 		return err
 	}
 
-	return errors.Wrap(tasks.WithFullInstall(nil).Run(s), "failed to install the cluster")
+	return tasks.WithFullInstall(nil).Run(s)
 }

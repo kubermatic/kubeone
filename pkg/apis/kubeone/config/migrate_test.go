@@ -98,7 +98,7 @@ func TestMigrateOldConfig(t *testing.T) {
 			}
 
 			// Validate new config by unmarshaling
-			newConfig := &kubeonev1beta2.KubeOneCluster{}
+			newConfig := kubeonev1beta2.NewKubeOneCluster()
 			err = kyaml.UnmarshalStrict(buffer.Bytes(), &newConfig)
 			if err != nil {
 				t.Errorf("failed to decode new config: %v", err)

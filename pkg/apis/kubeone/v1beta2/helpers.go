@@ -20,6 +20,8 @@ import (
 	"fmt"
 
 	"k8c.io/kubeone/pkg/fail"
+
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // SetCloudProvider parses the string representation of the provider
@@ -51,4 +53,14 @@ func SetCloudProvider(cp *CloudProviderSpec, name string) error {
 	}
 
 	return nil
+}
+
+// NewKubeOneCluster initialize KubeOneCluster with correct typeMeta
+func NewKubeOneCluster() *KubeOneCluster {
+	return &KubeOneCluster{
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "KubeOneCluster",
+			APIVersion: SchemeGroupVersion.String(),
+		},
+	}
 }
