@@ -35,6 +35,8 @@ import (
 
 	"github.com/pkg/errors"
 
+	"k8c.io/kubeone/pkg/fail"
+
 	certutil "k8s.io/client-go/util/cert"
 )
 
@@ -97,10 +99,17 @@ func newSignedCert(cfg *certutil.Config, key crypto.Signer, caCert *x509.Certifi
 		return nil, err
 	}
 	if len(cfg.CommonName) == 0 {
-		return nil, errors.New("must specify a CommonName")
+		return nil, fail.RuntimeError{
+			Op:  "checking requested CommonName",
+			Err: errors.New("must specify a CommonName"),
+		}
 	}
+
 	if len(cfg.Usages) == 0 {
-		return nil, errors.New("must specify at least one ExtKeyUsage")
+		return nil, fail.RuntimeError{
+			Op:  "checking certificate ExtKeyUsage",
+			Err: errors.New("must specify at least one ExtKeyUsage"),
+		}
 	}
 
 	certTmpl := x509.Certificate{
@@ -116,10 +125,13 @@ func newSignedCert(cfg *certutil.Config, key crypto.Signer, caCert *x509.Certifi
 		KeyUsage:     x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature,
 		ExtKeyUsage:  cfg.Usages,
 	}
+
 	certDERBytes, err := x509.CreateCertificate(rand.Reader, &certTmpl, caCert, key.Public(), caKey)
 	if err != nil {
-		return nil, err
+		return nil, fail.Runtime(err, "creating ASN.1 DER x509 certificate")
 	}
 
-	return x509.ParseCertificate(certDERBytes)
+	cert, err := x509.ParseCertificate(certDERBytes)
+
+	return cert, fail.Runtime(err, "parsing ASN.1 DEP x509 certificate")
 }
