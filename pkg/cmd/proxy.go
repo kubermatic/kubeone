@@ -26,6 +26,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
 )
@@ -101,7 +102,7 @@ func setupProxyTunnel(opts *proxyOpts) error {
 	fmt.Println("SSH tunnel started, please open another terminal and setup environment")
 	fmt.Printf("export HTTPS_PROXY=http://%s\n", opts.ListenAddr)
 
-	return server.ListenAndServe()
+	return fail.Runtime(server.ListenAndServe(), "listening proxy port")
 }
 
 type httpError struct {

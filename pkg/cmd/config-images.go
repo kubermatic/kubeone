@@ -21,6 +21,7 @@ import (
 	"os"
 
 	"github.com/MakeNowJust/heredoc/v2"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
@@ -106,7 +107,10 @@ func listImages(opts *listImagesOpts) error {
 	case "optional":
 		listFilter = images.ListFilterOpional
 	default:
-		return fmt.Errorf("--filter can be only one of [none|base|optional]")
+		return fail.RuntimeError{
+			Op:  "checking filter flag",
+			Err: errors.New("--filter can be only one of [none|base|optional]"),
+		}
 	}
 
 	var resolveropts []images.Opt
@@ -135,7 +139,10 @@ func listImages(opts *listImagesOpts) error {
 	}
 	if opts.KubernetesVersion != "" {
 		if configErr == nil {
-			return fmt.Errorf("only --manifest or --kubernetes-version can be provided at the same time")
+			return fail.RuntimeError{
+				Op:  "checking --manifest or --kubernetes-version flags",
+				Err: fmt.Errorf("only one of ether can be provided at the same time"),
+			}
 		}
 		kubeVerGetter := images.WithKubernetesVersionGetter(func() string {
 			return opts.KubernetesVersion
