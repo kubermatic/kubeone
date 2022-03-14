@@ -51,16 +51,16 @@ func CreateOrUpdate(ctx context.Context, c client.Client, obj client.Object, upd
 
 	switch {
 	case k8serrors.IsNotFound(err):
-		return fail.KubeClient(err, "creating %T: %s", obj, key)
+		return fail.KubeClient(err, "creating %T %s", obj, key)
 	case err != nil:
-		return fail.KubeClient(err, "getting %T: %s", obj, key)
+		return fail.KubeClient(err, "getting %T %s", obj, key)
 	}
 
 	if err = mergo.Merge(obj, existing); err != nil {
 		return fail.Runtime(err, "merging updated %T %s with existing", obj, key)
 	}
 
-	return fail.KubeClient(c.Update(ctx, obj), "updating %T: %s", obj, key)
+	return fail.KubeClient(c.Update(ctx, obj), "updating %T %s", obj, key)
 }
 
 // CreateOrReplace makes it easy to "replace" objects

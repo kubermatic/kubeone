@@ -21,6 +21,7 @@ import (
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/clientutil"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/templates/kubeadm/kubeadmargs"
 
 	corev1 "k8s.io/api/core/v1"
@@ -67,7 +68,7 @@ func annotateKubeSystemNamespace(ctx context.Context, c client.Client) error {
 	}
 
 	if err := c.Get(ctx, key, &ns); err != nil {
-		return err
+		return fail.KubeClient(err, "getting %T %s", ns, key)
 	}
 	if ns.Annotations == nil {
 		ns.Annotations = map[string]string{}
@@ -84,7 +85,7 @@ func annotateKubeSystemNamespace(ctx context.Context, c client.Client) error {
 func deletePendingPods(ctx context.Context, c client.Client) error {
 	podList := &corev1.PodList{}
 	if err := c.List(ctx, podList, client.InNamespace(metav1.NamespaceSystem)); err != nil {
-		return err
+		return fail.KubeClient(err, "listing kube-system pods")
 	}
 
 	errs := []error{}
@@ -96,5 +97,5 @@ func deletePendingPods(ctx context.Context, c client.Client) error {
 		}
 	}
 
-	return utilerrors.NewAggregate(errs)
+	return fail.KubeClient(utilerrors.NewAggregate(errs), "deleting pending kube-system pods")
 }

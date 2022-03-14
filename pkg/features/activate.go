@@ -17,8 +17,6 @@ limitations under the License.
 package features
 
 import (
-	"github.com/pkg/errors"
-
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/kubeadm/kubeadmargs"
@@ -39,11 +37,11 @@ func Activate(s *state.State) error {
 	s.Logger.Info("Activating additional features...")
 
 	if err := installKubeSystemPSP(s.Cluster.Features.PodSecurityPolicy, s); err != nil {
-		return errors.Wrap(err, "failed to install PodSecurityPolicy")
+		return err
 	}
 
 	if err := installPodNodeSelector(s.Context, s.DynamicClient, s.Cluster.Features.PodNodeSelector); err != nil {
-		return errors.Wrap(err, "failed to install podNodeSelector")
+		return err
 	}
 
 	return nil
