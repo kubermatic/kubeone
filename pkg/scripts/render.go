@@ -22,7 +22,8 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/Masterminds/sprig/v3"
-	"github.com/pkg/errors"
+
+	"k8c.io/kubeone/pkg/fail"
 )
 
 var (
@@ -225,19 +226,19 @@ func Render(cmd string, variables map[string]interface{}) (string, error) {
 
 	_, err := tpl.New("library").Parse(libraryTemplate)
 	if err != nil {
-		return "", err
+		return "", fail.Runtime(err, "parsing library template")
 	}
 
 	for tplName, tplBody := range containerRuntimeTemplates {
 		_, err = tpl.New(tplName).Parse(tplBody)
 		if err != nil {
-			return "", err
+			return "", fail.Runtime(err, "parsing %s template", tplName)
 		}
 	}
 
 	_, err = tpl.Parse(cmd)
 	if err != nil {
-		return "", errors.Wrap(err, "failed to parse script template")
+		return "", fail.Runtime(err, "parsing command template")
 	}
 
 	var buf strings.Builder
@@ -246,7 +247,7 @@ func Render(cmd string, variables map[string]interface{}) (string, error) {
 	buf.WriteString("\n")
 
 	if err := tpl.Execute(&buf, variables); err != nil {
-		return "", errors.Wrap(err, "failed to render script template")
+		return "", fail.Runtime(err, "rendering template")
 	}
 
 	return buf.String(), nil
