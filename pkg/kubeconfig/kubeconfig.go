@@ -56,7 +56,7 @@ func BuildKubernetesClientset(s *state.State) error {
 
 	kubeconfig, err := Download(s)
 	if err != nil {
-		return fail.KubeClient(err, "downloading kubeconfig")
+		return err
 	}
 
 	s.RESTConfig, err = clientcmd.RESTConfigFromKubeConfig(kubeconfig)
