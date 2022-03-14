@@ -21,11 +21,10 @@ import (
 	"os"
 	"strings"
 
-	"github.com/pkg/errors"
-
 	"k8c.io/kubeone/pkg/clusterstatus/apiserverstatus"
 	"k8c.io/kubeone/pkg/clusterstatus/etcdstatus"
 	"k8c.io/kubeone/pkg/clusterstatus/preflightstatus"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/tabwriter"
 
@@ -44,7 +43,7 @@ type nodeStatus struct {
 func Print(s *state.State) error {
 	status, err := getClusterStatus(s)
 	if err != nil {
-		return errors.Wrap(err, "unable to get cluster status")
+		return err
 	}
 
 	printer := tabwriter.New(os.Stdout)
@@ -89,7 +88,7 @@ func clusterStatusHeader() []string {
 
 func getClusterStatus(s *state.State) ([]nodeStatus, error) {
 	if s.DynamicClient == nil {
-		return nil, errors.New("kubernetes client not initialized")
+		return nil, fail.NoKubeClient()
 	}
 
 	// Get node list
@@ -99,7 +98,7 @@ func getClusterStatus(s *state.State) ([]nodeStatus, error) {
 	}
 
 	if err := s.DynamicClient.List(s.Context, &nodes, &nodeListOpts); err != nil {
-		return nil, errors.Wrap(err, "unable to list nodes")
+		return nil, fail.KubeClient(err, "listing nodes")
 	}
 
 	// Run preflight checks
@@ -112,7 +111,7 @@ func getClusterStatus(s *state.State) ([]nodeStatus, error) {
 
 	etcdRing, err := etcdstatus.MemberList(s)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get etcd ring")
+		return nil, err
 	}
 
 	for _, host := range s.Cluster.ControlPlane.Hosts {
