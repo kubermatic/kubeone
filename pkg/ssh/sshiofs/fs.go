@@ -23,6 +23,7 @@ import (
 	"strings"
 	"time"
 
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/ssh"
 )
 
@@ -118,11 +119,11 @@ func newSSHFileInfo(name string, conn ssh.Connection) (fs.FileInfo, error) {
 
 	exitCode, err := conn.POpen(cmd, nil, &stdout, &stderr)
 	if exitCode != 0 || err != nil {
-		return nil, &fs.PathError{
+		return nil, fail.Runtime(&fs.PathError{
 			Op:   "stat",
 			Path: name,
-			Err:  fmt.Errorf("%s %s %w", stderr.String(), err.Error(), fs.ErrNotExist),
-		}
+			Err:  err,
+		}, "stat file")
 	}
 
 	var (
@@ -133,19 +134,31 @@ func newSSHFileInfo(name string, conn ssh.Connection) (fs.FileInfo, error) {
 
 	fia := strings.Split(stdout.String(), " ")
 	if len(fia) != 3 {
-		return nil, fs.ErrInvalid
+		return nil, fail.Runtime(fs.ErrInvalid, "wrong number of stat output")
 	}
 
 	if _, err = fmt.Sscanf(fia[0], "%d", &size); err != nil {
-		return nil, err
+		return nil, fail.Runtime(&fs.PathError{
+			Err:  err,
+			Path: name,
+			Op:   "stat",
+		}, "scanning file size")
 	}
 
 	if _, err = fmt.Sscanf(fia[1], "%x", &mode); err != nil {
-		return nil, err
+		return nil, fail.Runtime(&fs.PathError{
+			Err:  err,
+			Path: name,
+			Op:   "stat",
+		}, "scanning file mode")
 	}
 
 	if _, err = fmt.Sscanf(fia[2], "%d", &modTime); err != nil {
-		return nil, err
+		return nil, fail.Runtime(&fs.PathError{
+			Err:  err,
+			Path: name,
+			Op:   "stat",
+		}, "scanning file modtime")
 	}
 
 	return &fileInfo{

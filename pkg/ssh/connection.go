@@ -88,7 +88,7 @@ func validateOptions(o Opts) (Opts, error) {
 	if len(o.KeyFile) > 0 {
 		content, err := os.ReadFile(o.KeyFile)
 		if err != nil {
-			return o, errors.Wrapf(err, "reading keyfile %q", o.KeyFile)
+			return o, fail.Config(err, "reading SSH private key")
 		}
 
 		o.PrivateKey = string(content)
@@ -141,7 +141,7 @@ func NewConnection(connector *Connector, o Opts) (Connection, error) {
 		if parseErr != nil {
 			return nil, fail.SSHError{
 				Op:  "parsing private key",
-				Err: fmt.Errorf("given SSH key could not be parsed (note that password-protected keys are not supported): %w", parseErr),
+				Err: errors.Errorf("given SSH key could not be parsed (note that password-protected keys are not supported): %w", parseErr),
 			}
 		}
 
@@ -163,7 +163,7 @@ func NewConnection(connector *Connector, o Opts) (Connection, error) {
 		if dialErr != nil {
 			return nil, fail.SSHError{
 				Op:  "agent unix dialing",
-				Err: fmt.Errorf("could not open socket %q: %w", addr, dialErr),
+				Err: errors.Errorf("could not open socket %q: %w", addr, dialErr),
 			}
 		}
 
@@ -299,15 +299,30 @@ func (c *connection) POpen(cmd string, stdin io.Reader, stdout io.Writer, stderr
 	}
 
 	// preserve original error
-	return exitCode, fail.SSH(err, "executing")
+	return exitCode, fail.SSH(err, "popen")
 }
 
 func (c *connection) Exec(cmd string) (string, string, int, error) {
-	var stdoutBuf, stderrBuf strings.Builder
+	var (
+		stdoutBuf, stderrBuf strings.Builder
+		returnErr            error
+	)
 
 	exitCode, err := c.POpen(cmd, nil, &stdoutBuf, &stderrBuf)
 
-	return strings.TrimSpace(stdoutBuf.String()), stderrBuf.String(), exitCode, err
+	stdout := strings.TrimSpace(stdoutBuf.String())
+	stderr := stderrBuf.String()
+
+	if err != nil {
+		returnErr = fail.SSHError{
+			Err:    err,
+			Op:     "exec",
+			Stderr: stderr,
+			Cmd:    cmd,
+		}
+	}
+
+	return stdout, stderr, exitCode, returnErr
 }
 
 func (c *connection) session() (*ssh.Session, error) {
