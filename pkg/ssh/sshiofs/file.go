@@ -159,6 +159,6 @@ func (sf *sshfile) pathError(op, stdout, stderr string, err error) *fs.PathError
 	return &fs.PathError{
 		Path: sf.name,
 		Op:   op,
-		Err:  errors.Errorf("%w: %v %v", err, stderr, stdout),
+		Err:  errors.Wrapf(err, "%v %v", stderr, stdout),
 	}
 }

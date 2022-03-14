@@ -18,9 +18,9 @@ package kubeadm
 
 import (
 	"github.com/Masterminds/semver/v3"
-	"github.com/pkg/errors"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 )
 
@@ -41,7 +41,7 @@ type Kubedm interface {
 func New(ver string) (Kubedm, error) {
 	sver, err := semver.NewVersion(ver)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to parse version")
+		return nil, fail.Config(err, "parsing kubeadm semver")
 	}
 
 	switch {

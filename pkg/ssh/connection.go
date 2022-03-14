@@ -141,7 +141,7 @@ func NewConnection(connector *Connector, o Opts) (Connection, error) {
 		if parseErr != nil {
 			return nil, fail.SSHError{
 				Op:  "parsing private key",
-				Err: errors.Errorf("given SSH key could not be parsed (note that password-protected keys are not supported): %w", parseErr),
+				Err: errors.Wrap(parseErr, "SSH key could not be parsed (note that password-protected keys are not supported)"),
 			}
 		}
 
@@ -163,7 +163,7 @@ func NewConnection(connector *Connector, o Opts) (Connection, error) {
 		if dialErr != nil {
 			return nil, fail.SSHError{
 				Op:  "agent unix dialing",
-				Err: errors.Errorf("could not open socket %q: %w", addr, dialErr),
+				Err: errors.Wrapf(dialErr, "could not open socket %q", addr),
 			}
 		}
 

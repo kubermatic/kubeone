@@ -20,9 +20,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/pkg/errors"
-
 	"k8c.io/kubeone/pkg/clientutil"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/resources"
 
@@ -42,15 +41,15 @@ func WaitReady(s *state.State) error {
 	s.Logger.Infoln("Waiting for operating-system-manager to come up...")
 
 	if err := waitForWebhook(s.Context, s.DynamicClient); err != nil {
-		return errors.Wrap(err, "operating-system-manager-webhook did not come up")
+		return err
 	}
 
 	if err := waitForController(s.Context, s.DynamicClient); err != nil {
-		return errors.Wrap(err, "operating-system-manager did not come up")
+		return err
 	}
 
 	if err := waitForCRDs(s); err != nil {
-		return errors.Wrap(err, "operating-system-manager CRDs did not come up")
+		return err
 	}
 
 	return nil
@@ -61,7 +60,7 @@ func waitForCRDs(s *state.State) error {
 	condFn := clientutil.CRDsReadyCondition(s.Context, s.DynamicClient, CRDNames())
 	err := wait.Poll(5*time.Second, 3*time.Minute, condFn)
 
-	return errors.Wrap(err, "failed waiting for CRDs to become ready and established")
+	return fail.KubeClient(err, "waiting for OSM CRDs to became ready")
 }
 
 // waitForController waits for operating-system-manager controller to become running
@@ -73,7 +72,7 @@ func waitForController(ctx context.Context, client dynclient.Client) error {
 		}),
 	})
 
-	return wait.Poll(5*time.Second, 3*time.Minute, condFn)
+	return fail.KubeClient(wait.Poll(5*time.Second, 3*time.Minute, condFn), "waiting for OSM controller to became ready")
 }
 
 // waitForWebhook waits for operating-system-manager-webhook to become running
@@ -85,7 +84,7 @@ func waitForWebhook(ctx context.Context, client dynclient.Client) error {
 		}),
 	})
 
-	return wait.Poll(5*time.Second, 3*time.Minute, condFn)
+	return fail.KubeClient(wait.Poll(5*time.Second, 3*time.Minute, condFn), "waiting for OSM webhook to became ready")
 }
 
 func CRDNames() []string {

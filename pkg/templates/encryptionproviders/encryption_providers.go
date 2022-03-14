@@ -22,6 +22,7 @@ import (
 	"errors"
 	"fmt"
 
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -32,7 +33,7 @@ import (
 func generateAESCBCSecret() (string, error) {
 	buf := make([]byte, 32)
 	if _, err := rand.Reader.Read(buf); err != nil {
-		return "", err
+		return "", fail.Runtime(err, "reading random generator")
 	}
 
 	return base64.StdEncoding.EncodeToString(buf), nil
@@ -74,7 +75,7 @@ func NewEncyrptionProvidersConfig(s *state.State) (*apiserverconfigv1.Encryption
 
 func UpdateEncryptionConfigDecryptOnly(config *apiserverconfigv1.EncryptionConfiguration) error {
 	if config.Resources[0].Providers[0].AESCBC == nil {
-		return errors.New("empty AESCBC key configuration")
+		return fail.Config(errors.New("empty AESCBC key configuration"), "sanity check")
 	}
 
 	config.Resources[0].Providers = []apiserverconfigv1.ProviderConfiguration{
