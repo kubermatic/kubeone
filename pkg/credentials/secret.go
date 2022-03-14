@@ -21,8 +21,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/pkg/errors"
-
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/clientutil"
 	"k8c.io/kubeone/pkg/state"
@@ -74,7 +72,7 @@ func Ensure(s *state.State) error {
 		},
 	}
 	if err := clientutil.DeleteIfExists(s.Context, s.DynamicClient, oldSecret); err != nil {
-		return errors.Wrap(err, "unable to remove cloud-provider-credentials secret")
+		return err
 	}
 
 	// Ensure that we remove credentials secret for OSM if it's queued for deletion
@@ -86,7 +84,7 @@ func Ensure(s *state.State) error {
 			},
 		}
 		if err := clientutil.DeleteIfExists(s.Context, s.DynamicClient, osmSecret); err != nil {
-			return errors.Wrapf(err, "unable to remove %v secret", SecretNameOSM)
+			return err
 		}
 	}
 
@@ -94,25 +92,25 @@ func Ensure(s *state.State) error {
 
 	providerCreds, err := ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, TypeMC)
 	if err != nil {
-		return errors.Wrap(err, "unable to fetch cloud provider credentials")
+		return err
 	}
 
 	mcSecret := credentialsSecret(SecretNameMC, providerCreds)
-	if createErr := clientutil.CreateOrReplace(context.Background(), s.DynamicClient, mcSecret); createErr != nil {
-		return errors.Wrap(createErr, "failed to ensure credentials secret for machine-controller")
+	if err = clientutil.CreateOrReplace(context.Background(), s.DynamicClient, mcSecret); err != nil {
+		return err
 	}
 
 	if s.Cluster.OperatingSystemManagerEnabled() {
 		osmSecret := credentialsSecret(SecretNameOSM, providerCreds)
-		if createErr := clientutil.CreateOrReplace(context.Background(), s.DynamicClient, osmSecret); createErr != nil {
-			return errors.Wrap(createErr, "failed to ensure credentials secret for operating-system-manager")
+		if err := clientutil.CreateOrReplace(context.Background(), s.DynamicClient, osmSecret); err != nil {
+			return err
 		}
 	}
 
 	if s.Cluster.CloudProvider.CloudConfig != "" {
 		cloudCfgSecret := cloudConfigSecret(s.Cluster.CloudProvider.CloudConfig)
 		if err := clientutil.CreateOrReplace(context.Background(), s.DynamicClient, cloudCfgSecret); err != nil {
-			return errors.Wrap(err, "failed to ensure cloud-config secret")
+			return err
 		}
 	}
 
@@ -121,24 +119,24 @@ func Ensure(s *state.State) error {
 
 		ccmCreds, err := ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, TypeCCM)
 		if err != nil {
-			return errors.Wrap(err, "unable to fetch cloud provider credentials")
+			return err
 		}
 
 		ccmSecret := credentialsSecret(SecretNameCCM, ccmCreds)
 		if createErr := clientutil.CreateOrReplace(context.Background(), s.DynamicClient, ccmSecret); createErr != nil {
-			return errors.Wrap(createErr, "failed to ensure credentials secret")
+			return createErr
 		}
 	} else if s.Cluster.CloudProvider.Vsphere != nil {
 		s.Logger.Infoln("Creating vSphere CCM credentials secret...")
 
 		ccmCreds, err := ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, TypeCCM)
 		if err != nil {
-			return errors.Wrap(err, "unable to fetch cloud provider credentials")
+			return err
 		}
 
 		vsecret := vsphereSecret(ccmCreds)
 		if err := clientutil.CreateOrReplace(context.Background(), s.DynamicClient, vsecret); err != nil {
-			return errors.Wrap(err, "failed to ensure vsphere credentials secret")
+			return err
 		}
 	}
 
@@ -148,7 +146,7 @@ func Ensure(s *state.State) error {
 func EnvVarBindings(cloudProviderSpec kubeoneapi.CloudProviderSpec, credentialsFilePath, secretName string, credentialsType Type) ([]corev1.EnvVar, error) {
 	creds, err := ProviderCredentials(cloudProviderSpec, credentialsFilePath, credentialsType)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to fetch cloud provider credentials")
+		return nil, err
 	}
 
 	env := make([]corev1.EnvVar, 0)

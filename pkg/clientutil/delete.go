@@ -29,12 +29,9 @@ import (
 func DeleteIfExists(ctx context.Context, c client.Client, obj client.Object) error {
 	err := c.Delete(ctx, obj)
 
-	switch {
-	case k8serrors.IsNotFound(err):
-		return nil
-	case err != nil:
+	if !k8serrors.IsNotFound(err) {
 		return fail.KubeClient(err, "deleting %T %s", obj, client.ObjectKeyFromObject(obj))
-	default:
-		return nil
 	}
+
+	return nil
 }
