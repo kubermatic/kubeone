@@ -23,6 +23,7 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/ssh/sshiofs"
@@ -46,13 +47,21 @@ func (r *Runner) NewFS() sshiofs.MkdirFS {
 
 func (r *Runner) RunRaw(cmd string) (string, string, error) {
 	if r.Conn == nil {
-		return "", "", errors.New("runner is not tied to an opened SSH connection")
+		return "", "", fail.SSHError{
+			Op:  "checking SSH connection",
+			Err: errors.New("runner has no open SSH connection"),
+		}
 	}
 
 	if !r.Verbose {
 		stdout, stderr, _, err := r.Conn.Exec(cmd)
 		if err != nil {
-			err = errors.Wrap(err, stderr)
+			err = fail.SSHError{
+				Op:     "running",
+				Err:    errors.WithStack(err),
+				Cmd:    cmd,
+				Stderr: stderr,
+			}
 		}
 
 		return stdout, stderr, err

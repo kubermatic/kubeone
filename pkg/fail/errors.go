@@ -60,11 +60,30 @@ func (e KubeClientError) exitCode() int { return kubeClientErrorExitCode }
 
 // SSHError wraps SSH related errors
 type SSHError struct {
-	Err error
-	Op  string
+	Err    error
+	Op     string
+	Cmd    string
+	Stderr string
 }
 
-func (e SSHError) Error() string { return fmt.Sprintf("ssh: %s\n%s", e.Op, e.Err) }
+func (e SSHError) Error() string {
+	var (
+		format = "ssh: %s\n%s"
+		args   = []interface{}{e.Op, e.Err}
+	)
+	if e.Cmd != "" {
+		format += "\n%s"
+		args = append(args, e.Cmd)
+	}
+
+	if e.Stderr != "" {
+		format += "\nstderr: %s"
+		args = append(args, e.Stderr)
+	}
+
+	return fmt.Sprintf(format, args...)
+}
+
 func (e SSHError) Unwrap() error { return e.Err }
 func (e SSHError) exitCode() int { return sshErrorExitCode }
 
