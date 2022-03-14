@@ -17,6 +17,8 @@ limitations under the License.
 package fail
 
 import (
+	"fmt"
+
 	"github.com/pkg/errors"
 )
 
@@ -68,13 +70,13 @@ func Connection(err error, target string) error {
 }
 
 // KubeClient is a shortcut to quickly construct KubeClientError
-func KubeClient(err error, op string) error {
+func KubeClient(err error, op string, args ...interface{}) error {
 	if err == nil {
 		return nil
 	}
 
 	return KubeClientError{
-		Op:  op,
+		Op:  fmt.Sprintf(op, args...),
 		Err: errors.WithStack(err),
 	}
 }
@@ -100,13 +102,13 @@ func Etcd(err error, op string) error {
 }
 
 // Runtime is a shortcut to quickly construct RuntimeError
-func Runtime(err error, op string) error {
+func Runtime(err error, op string, args ...interface{}) error {
 	if err == nil {
 		return nil
 	}
 
 	return RuntimeError{
-		Op:  op,
+		Op:  fmt.Sprintf(op, args...),
 		Err: errors.WithStack(err),
 	}
 }

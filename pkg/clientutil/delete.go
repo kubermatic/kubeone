@@ -19,7 +19,7 @@ package clientutil
 import (
 	"context"
 
-	"github.com/pkg/errors"
+	"k8c.io/kubeone/pkg/fail"
 
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -33,7 +33,7 @@ func DeleteIfExists(ctx context.Context, c client.Client, obj client.Object) err
 	case k8serrors.IsNotFound(err):
 		return nil
 	case err != nil:
-		return errors.Wrapf(err, "failed to delete %T object", obj)
+		return fail.KubeClient(err, "deleting %T %s", obj, client.ObjectKeyFromObject(obj))
 	default:
 		return nil
 	}

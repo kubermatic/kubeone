@@ -19,7 +19,7 @@ package clientutil
 import (
 	"context"
 
-	"github.com/pkg/errors"
+	"k8c.io/kubeone/pkg/fail"
 
 	corev1 "k8s.io/api/core/v1"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
@@ -33,7 +33,7 @@ func PodsReadyCondition(ctx context.Context, c dynclient.Client, listOpts dyncli
 		podsList := corev1.PodList{}
 
 		if err := c.List(ctx, &podsList, &listOpts); err != nil {
-			return false, errors.Wrapf(err, "failed to list pods")
+			return false, fail.KubeClient(err, "listing pods")
 		}
 
 		return allPodsAreRunningAndReady(&podsList), nil
