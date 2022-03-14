@@ -22,6 +22,7 @@ import (
 	"strings"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/fail"
 )
 
 type dockerConfig struct {
@@ -56,9 +57,6 @@ func marshalDockerConfig(cluster *kubeoneapi.KubeOneCluster) (string, error) {
 	}
 
 	b, err := json.MarshalIndent(cfg, "", "	")
-	if err != nil {
-		return "", err
-	}
 
-	return string(b), nil
+	return string(b), fail.Runtime(err, "encoding docker config")
 }
