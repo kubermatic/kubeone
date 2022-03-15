@@ -17,10 +17,11 @@ limitations under the License.
 package yamled
 
 import (
-	"fmt"
 	"io"
 
 	yaml "gopkg.in/yaml.v2"
+
+	"k8c.io/kubeone/pkg/fail"
 )
 
 type Document struct {
@@ -30,7 +31,7 @@ type Document struct {
 func Load(r io.Reader) (*Document, error) {
 	var data yaml.MapSlice
 	if err := yaml.NewDecoder(r).Decode(&data); err != nil {
-		return nil, fmt.Errorf("failed to decode input YAML: %w", err)
+		return nil, fail.Runtime(err, "unmarshal YAML input")
 	}
 
 	return NewFromMapSlice(data)
