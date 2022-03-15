@@ -18,12 +18,14 @@ package v1beta1
 
 import (
 	"encoding/json"
+	"fmt"
 	"sort"
 
 	"github.com/imdario/mergo"
 	"github.com/pkg/errors"
 
 	kubeonev1beta1 "k8c.io/kubeone/pkg/apis/kubeone/v1beta1"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/templates/machinecontroller"
 
 	corev1 "k8s.io/api/core/v1"
@@ -159,7 +161,7 @@ type cloudProviderFlags struct {
 func NewConfigFromJSON(j []byte) (c *Config, err error) {
 	c = &Config{}
 
-	return c, json.Unmarshal(j, c)
+	return c, fail.Config(json.Unmarshal(j, c), "terraform json unmarshal")
 }
 
 // Apply adds the terraform configuration options to the given
@@ -178,10 +180,10 @@ func (c *Config) Apply(cluster *kubeonev1beta1.KubeOneCluster) error {
 	if cp.CloudProvider != nil {
 		cloudProvider := &kubeonev1beta1.CloudProviderSpec{}
 		if err := kubeonev1beta1.SetCloudProvider(cloudProvider, *cp.CloudProvider); err != nil {
-			return errors.Wrap(err, "failed to set cloud provider")
+			return err
 		}
 		if err := mergo.Merge(&cluster.CloudProvider, cloudProvider); err != nil {
-			return errors.Wrap(err, "failed to merge cloud provider structs")
+			return fail.Runtime(err, "merging terraform to Cluster")
 		}
 	}
 
@@ -212,7 +214,7 @@ func (c *Config) Apply(cluster *kubeonev1beta1.KubeOneCluster) error {
 	}
 
 	if err := mergo.Merge(&cluster.Proxy, &c.Proxy.Value); err != nil {
-		return errors.Wrap(err, "failed to merge proxy settings")
+		return fail.Config(err, "merging proxy settings")
 	}
 
 	if len(cp.NetworkID) > 0 && cluster.CloudProvider.Hetzner != nil {
@@ -267,11 +269,11 @@ func (c *Config) Apply(cluster *kubeonev1beta1.KubeOneCluster) error {
 		case cluster.CloudProvider.Vsphere != nil:
 			err = c.updateVSphereWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
 		default:
-			return errors.Errorf("unknown provider")
+			return fail.Config(fmt.Errorf("unknown provider"), "updating workers configs from terraform state")
 		}
 
 		if err != nil {
-			return errors.Wrapf(err, "failed to update provider-specific config for workerset %q from terraform config", workersetName)
+			return err
 		}
 	}
 
@@ -297,7 +299,7 @@ func (c *Config) updateAWSWorkerset(existingWorkerSet *kubeonev1beta1.DynamicWor
 	var awsCloudConfig machinecontroller.AWSSpec
 
 	if err := json.Unmarshal(cfg, &awsCloudConfig); err != nil {
-		return errors.WithStack(err)
+		return fail.Config(err, "unmarshalling DynamicWorkerConfig AWS spec")
 	}
 
 	flags := []cloudProviderFlags{
@@ -320,7 +322,7 @@ func (c *Config) updateAWSWorkerset(existingWorkerSet *kubeonev1beta1.DynamicWor
 
 	for _, flag := range flags {
 		if err := setWorkersetFlag(existingWorkerSet, flag.key, flag.value); err != nil {
-			return errors.WithStack(err)
+			return err
 		}
 	}
 
@@ -571,7 +573,7 @@ func setWorkersetFlag(w *kubeonev1beta1.DynamicWorkerConfig, name string, value 
 			return nil
 		}
 	default:
-		return errors.New("unsupported type")
+		return fail.Runtime(fmt.Errorf("unsupported type %T %v", value, value), "reading terraform values")
 	}
 
 	// update CloudProviderSpec ONLY IF given terraform output is absent in
@@ -579,7 +581,7 @@ func setWorkersetFlag(w *kubeonev1beta1.DynamicWorkerConfig, name string, value 
 	jsonSpec := make(map[string]interface{})
 	if w.Config.CloudProviderSpec != nil {
 		if err := json.Unmarshal(w.Config.CloudProviderSpec, &jsonSpec); err != nil {
-			return errors.Wrap(err, "unable to parse the provided cloud provider")
+			return fail.Config(err, "reading CloudProviderSpec")
 		}
 	}
 
@@ -590,7 +592,7 @@ func setWorkersetFlag(w *kubeonev1beta1.DynamicWorkerConfig, name string, value 
 	var err error
 	w.Config.CloudProviderSpec, err = json.Marshal(jsonSpec)
 	if err != nil {
-		return errors.Wrap(err, "unable to update the cloud provider spec")
+		return fail.Config(err, "updating cloud provider spec")
 	}
 
 	return nil

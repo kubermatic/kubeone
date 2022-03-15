@@ -23,12 +23,13 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"strings"
 
-	"github.com/pkg/errors"
 	clientv3 "go.etcd.io/etcd/client/v3"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/etcdutil"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/ssh/sshtunnel"
 	"k8c.io/kubeone/pkg/state"
 )
@@ -59,13 +60,16 @@ func MemberList(s *state.State) (*clientv3.MemberListResponse, error) {
 	etcdcfg.Endpoints = etcdEndpoints
 	etcdcli, err := clientv3.New(*etcdcfg)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to connect to etcd cluster")
+		return nil, fail.Connection(err, strings.Join(etcdEndpoints, ","))
 	}
 	defer etcdcli.Close()
 
 	etcdRing, err := etcdcli.MemberList(s.Context)
+	if err != nil {
+		return nil, fail.Etcd(err, "member listing")
+	}
 
-	return etcdRing, errors.Wrap(err, "failed etcd/clientv3.MemberList")
+	return etcdRing, nil
 }
 
 // Get analyzes health of an etcd cluster member
@@ -112,7 +116,7 @@ func memberHealth(ctx context.Context, t http.RoundTripper, nodeAddress string) 
 
 	request, err := http.NewRequestWithContext(ctx, "GET", endpoint, nil)
 	if err != nil {
-		return false, err
+		return false, fail.Etcd(err, "new request to get members health list")
 	}
 
 	request.Header.Set("Content-type", "application/json")
@@ -120,22 +124,24 @@ func memberHealth(ctx context.Context, t http.RoundTripper, nodeAddress string) 
 	httpClient := http.Client{Transport: t}
 	resp, err := httpClient.Do(request)
 	if err != nil {
-		return false, err
+		return false, fail.Etcd(err, "getting members health list")
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return false, err
+		return false, fail.Etcd(err, "reading members health response")
 	}
 
-	h := &struct {
+	healthStatus := struct {
 		Health string `json:"health"`
 	}{}
 
-	if err = json.Unmarshal(body, &h); err != nil {
-		return false, err
+	if err = json.Unmarshal(body, &healthStatus); err != nil {
+		return false, fail.Etcd(err, "JSON unmarshalling members health response")
 	}
 
-	return strconv.ParseBool(h.Health)
+	b, err := strconv.ParseBool(healthStatus.Health)
+
+	return b, fail.Etcd(err, "parsing JSON reply")
 }

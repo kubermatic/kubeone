@@ -27,6 +27,7 @@ import (
 	"github.com/Masterminds/semver/v3"
 	"github.com/pkg/errors"
 
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/templates/resources"
 )
 
@@ -43,7 +44,10 @@ func (c KubeOneCluster) Leader() (HostConfig, error) {
 		}
 	}
 
-	return HostConfig{}, errors.New("leader not found")
+	return HostConfig{}, fail.ConfigError{
+		Op:  "leader",
+		Err: errors.New("not found"),
+	}
 }
 
 func (c KubeOneCluster) RandomHost() HostConfig {
@@ -91,7 +95,7 @@ func (h *HostConfig) SetOperatingSystem(os OperatingSystemName) error {
 		return nil
 	}
 
-	return errors.Errorf("unknown operating system %q", os)
+	return fail.ConfigValidation(fmt.Errorf("unknown operating system %q", os))
 }
 
 func (osName OperatingSystemName) IsValid() bool {
@@ -226,7 +230,7 @@ func (crc *ContainerRuntimeConfig) UnmarshalText(text []byte) error {
 	case bytes.Equal(text, []byte("containerd")):
 		*crc = ContainerRuntimeConfig{Containerd: &ContainerRuntimeContainerd{}}
 	default:
-		return fmt.Errorf("unknown container runtime: %q", text)
+		return fail.ConfigValidation(fmt.Errorf("unknown container runtime: %q", text))
 	}
 
 	return nil
@@ -327,7 +331,7 @@ func (c KubeOneCluster) CSIMigrationFeatureGates(complete bool) (map[string]bool
 			"CSIMigrationvSphere": true,
 		}
 	default:
-		return nil, "", errors.New("csi migration is not supported for selected provider")
+		return nil, "", fail.ConfigValidation(fmt.Errorf("csi migration is not supported for selected provider"))
 	}
 
 	if complete {
@@ -413,7 +417,7 @@ func (ads *Addons) RelativePath(manifestFilePath string) (string, error) {
 	if !filepath.IsAbs(addonsPath) && manifestFilePath != "" {
 		manifestAbsPath, err := filepath.Abs(filepath.Dir(manifestFilePath))
 		if err != nil {
-			return "", errors.Wrap(err, "unable to get absolute path to the cluster manifest")
+			return "", fail.Runtime(err, "getting absolute path to the cluster manifest")
 		}
 		addonsPath = filepath.Join(manifestAbsPath, addonsPath)
 	}

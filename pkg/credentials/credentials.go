@@ -26,6 +26,7 @@ import (
 	"gopkg.in/yaml.v2"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/fail"
 )
 
 // Type is a type of credentials that should be fetched
@@ -188,7 +189,7 @@ func ProviderCredentials(cloudProvider kubeoneapi.CloudProviderSpec, credentials
 			{Name: GoogleServiceAccountKey, MachineControllerName: GoogleServiceAccountKeyMC},
 		}, defaultValidationFunc)
 		if err != nil {
-			return nil, errors.WithStack(err)
+			return nil, err
 		}
 		// encode it before sending to secret to be consumed by
 		// machine-controller, as machine-controller assumes it will be double encoded
@@ -233,7 +234,7 @@ func ProviderCredentials(cloudProvider kubeoneapi.CloudProviderSpec, credentials
 			{Name: VSpherePassword},
 		}, defaultValidationFunc)
 		if err != nil {
-			return nil, errors.WithStack(err)
+			return nil, err
 		}
 		// force scheme, as machine-controller requires it while terraform does not
 		vscreds[VSphereAddressMC] = "https://" + vscreds[VSphereAddressMC]
@@ -243,7 +244,11 @@ func ProviderCredentials(cloudProvider kubeoneapi.CloudProviderSpec, credentials
 		return map[string]string{}, nil
 	}
 
-	return nil, errors.New("no provider matched")
+	return nil, fail.CredentialsError{
+		Op:       "lookup",
+		Provider: "unknown",
+		Err:      errors.New("unknown provider"),
+	}
 }
 
 func newCredsFinder(credentialsFilePath string, credentialsType Type) (lookupFunc, error) {
@@ -275,11 +280,11 @@ func newCredsFinder(credentialsFilePath string, credentialsType Type) (lookupFun
 
 	buf, err := os.ReadFile(credentialsFilePath)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to load credentials file")
+		return nil, fail.Runtime(err, "loading credentials file")
 	}
 
 	if err = yaml.Unmarshal(buf, &staticMap); err != nil {
-		return nil, errors.Wrap(err, "unable to unmarshal credentials file")
+		return nil, fail.Runtime(err, "unmarshalling credentials file")
 	}
 
 	return finder, nil
@@ -304,7 +309,11 @@ func (lookup lookupFunc) aws() (map[string]string, error) {
 		// no profile is specified, we refuse to totally implicitly use shared
 		// credentials. This is needed as a precaution, to avoid accidental
 		// exposure of credentials not meant for sharing with cluster.
-		return nil, errors.New("no ENV credentials found, AWS_PROFILE is empty")
+		return nil, fail.CredentialsError{
+			Op:       "lookup",
+			Provider: "AWS",
+			Err:      errors.New("no ENV credentials found, AWS_PROFILE is empty"),
+		}
 	}
 
 	// If env fails resort to config file
@@ -313,7 +322,11 @@ func (lookup lookupFunc) aws() (map[string]string, error) {
 	// will error out in case when ether ID or KEY are missing from shared file
 	configCreds, err := sharedCredsProvider.Get()
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, fail.CredentialsError{
+			Op:       "lookup",
+			Provider: "AWS",
+			Err:      errors.WithStack(err),
+		}
 	}
 
 	// safe to assume credentials were found
@@ -331,16 +344,35 @@ func (lookup lookupFunc) equinixmetal() (map[string]string, error) {
 	metalProjectID := lookup(EquinixMetalProjectID)
 
 	if packetAPIKey != "" && packetProjectID != "" && metalAuthToken != "" && metalProjectID != "" {
-		return nil, errors.New("found both PACKET_ and METAL_ environment variables, but only one can be used")
+		return nil, fail.CredentialsError{
+			Op:       "lookup",
+			Provider: "Equinixmetal",
+			Err:      errors.New("found both PACKET_ and METAL_ environment variables, but only one can be used"),
+		}
 	}
+
 	if (packetAPIKey != "" && packetProjectID == "") || (packetAPIKey == "" && packetProjectID != "") {
-		return nil, errors.New("both PACKET_API_KEY and PACKET_PROJECT_ID environment variables are required, but found only one")
+		return nil, fail.CredentialsError{
+			Op:       "lookup",
+			Provider: "Equinixmetal",
+			Err:      errors.New("both PACKET_API_KEY and PACKET_PROJECT_ID environment variables are required, but found only one"),
+		}
 	}
+
 	if (metalAuthToken != "" && metalProjectID == "") || (metalAuthToken == "" && metalProjectID != "") {
-		return nil, errors.New("both METAL_AUTH_TOKEN and METAL_PROJECT_ID environment variables are required, but found only one")
+		return nil, fail.CredentialsError{
+			Op:       "lookup",
+			Provider: "Equinixmetal",
+			Err:      errors.New("both METAL_AUTH_TOKEN and METAL_PROJECT_ID environment variables are required, but found only one"),
+		}
 	}
+
 	if packetAPIKey == "" && packetProjectID == "" && metalAuthToken == "" && metalProjectID == "" {
-		return nil, errors.New("METAL_AUTH_TOKEN and METAL_PROJECT_ID environment variables are required")
+		return nil, fail.CredentialsError{
+			Op:       "lookup",
+			Provider: "Equinixmetal",
+			Err:      errors.New("METAL_AUTH_TOKEN and METAL_PROJECT_ID environment variables are required"),
+		}
 	}
 
 	if packetAPIKey != "" && packetProjectID != "" {
@@ -364,7 +396,7 @@ func (lookup lookupFunc) parseCredentialVariables(envVars []ProviderEnvironmentV
 
 	// Validate credentials using given validation function
 	if err := validationFunc(creds); err != nil {
-		return nil, errors.Wrap(err, "unable to validate credentials")
+		return nil, err
 	}
 
 	// Prepare credentials to be used by machine-controller
@@ -383,7 +415,10 @@ func (lookup lookupFunc) parseCredentialVariables(envVars []ProviderEnvironmentV
 func defaultValidationFunc(creds map[string]string) error {
 	for k, v := range creds {
 		if len(v) == 0 {
-			return errors.Errorf("key %v is required but isn't present", k)
+			return fail.CredentialsError{
+				Op:  "validating",
+				Err: errors.Errorf("key %v is required but isn't present", k),
+			}
 		}
 	}
 
@@ -403,7 +438,11 @@ func nutanixValidationFunc(creds map[string]string) error {
 
 	for _, key := range alwaysRequired {
 		if v, ok := creds[key]; !ok || len(v) == 0 {
-			return errors.Errorf("key %v is required but is not present", key)
+			return fail.CredentialsError{
+				Op:       "validating",
+				Provider: "Nutanix",
+				Err:      errors.Errorf("key %v is required but is not present", key),
+			}
 		}
 	}
 
@@ -415,7 +454,11 @@ func openstackValidationFunc(creds map[string]string) error {
 
 	for _, key := range alwaysRequired {
 		if v, ok := creds[key]; !ok || len(v) == 0 {
-			return errors.Errorf("key %v is required but is not present", key)
+			return fail.CredentialsError{
+				Op:       "validating",
+				Provider: "Openstack",
+				Err:      errors.Errorf("key %v is required but is not present", key),
+			}
 		}
 	}
 
@@ -443,28 +486,62 @@ func openstackValidationFunc(creds map[string]string) error {
 	}
 
 	if (appCredsIDOkay || appCredsSecretOkay) && (userCredsUsernameOkay || userCredsPasswordOkay) {
-		return errors.Errorf("both app credentials (%s %s) and user credentials (%s %s) found",
-			OpenStackApplicationCredentialID, OpenStackApplicationCredentialSecret,
-			OpenStackUserName, OpenStackPassword)
+		return fail.CredentialsError{
+			Op:       "validating",
+			Provider: "Openstack",
+			Err: errors.Errorf(
+				"both app credentials (%s %s) and user credentials (%s %s) found",
+				OpenStackApplicationCredentialID,
+				OpenStackApplicationCredentialSecret,
+				OpenStackUserName,
+				OpenStackPassword,
+			),
+		}
 	}
 
 	if (appCredsIDOkay && !appCredsSecretOkay) || (!appCredsIDOkay && appCredsSecretOkay) {
-		return errors.Errorf("only one of %s, %s is set for application credentials",
-			OpenStackApplicationCredentialID, OpenStackApplicationCredentialSecret)
+		return fail.CredentialsError{
+			Op:       "validating",
+			Provider: "Openstack",
+			Err: errors.Errorf(
+				"only one of %s, %s is set for application credentials",
+				OpenStackApplicationCredentialID,
+				OpenStackApplicationCredentialSecret,
+			),
+		}
 	}
 
 	if (userCredsUsernameOkay && !userCredsPasswordOkay) || (!userCredsUsernameOkay && userCredsPasswordOkay) {
-		return errors.Errorf("only one of %s, %s is set for user credentials",
-			OpenStackUserName, OpenStackPassword)
+		return fail.CredentialsError{
+			Op:       "validating",
+			Provider: "Openstack",
+			Err: errors.Errorf(
+				"only one of %s, %s is set for user credentials",
+				OpenStackUserName,
+				OpenStackPassword,
+			),
+		}
 	}
 
 	if (!appCredsIDOkay && !appCredsSecretOkay) && (!userCredsUsernameOkay && !userCredsPasswordOkay) {
-		return errors.New("no valid credentials (either application or user) found")
+		return fail.CredentialsError{
+			Op:       "validating",
+			Provider: "Openstack",
+			Err:      errors.New("no valid credentials (either application or user) found"),
+		}
 	}
 
 	if v, ok := creds[OpenStackTenantID]; !ok || len(v) == 0 {
 		if v, ok := creds[OpenStackTenantName]; !ok || len(v) == 0 {
-			return errors.Errorf("key %v or %v is required but isn't present", OpenStackTenantID, OpenStackTenantName)
+			return fail.CredentialsError{
+				Op:       "validating",
+				Provider: "Openstack",
+				Err: errors.Errorf(
+					"key %v or %v is required but isn't present",
+					OpenStackTenantID,
+					OpenStackTenantName,
+				),
+			}
 		}
 	}
 

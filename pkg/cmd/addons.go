@@ -17,7 +17,6 @@ limitations under the License.
 package cmd
 
 import (
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
@@ -46,18 +45,19 @@ func addonsListCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 	opts := &addonsListOpts{}
 
 	cmd := &cobra.Command{
-		Use:     "list",
-		Short:   "List addons",
-		Example: `kubeone -m mycluster.yaml -t terraformoutput.json addons list`,
+		Use:           "list",
+		Short:         "List addons",
+		SilenceErrors: true,
+		Example:       `kubeone -m mycluster.yaml -t terraformoutput.json addons list`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
-				return errors.Wrap(err, "unable to get global flags")
+				return err
 			}
 
 			s, err := gopts.BuildState()
 			if err != nil {
-				return errors.Wrap(err, "failed to initialize State")
+				return err
 			}
 
 			return addons.List(s, opts.OutputFormat)

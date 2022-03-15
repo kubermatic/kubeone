@@ -25,6 +25,7 @@ import (
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/configupload"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/runner"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/templates/images"
@@ -71,7 +72,7 @@ func New(ctx context.Context) (*State, error) {
 		}),
 	)
 
-	return s, err
+	return s, fail.Runtime(err, "generating bootstrapToken")
 }
 
 // State holds together currently test flags and parsed info, along with
@@ -203,7 +204,7 @@ func (s *State) GetKMSSocketPath() (string, error) {
 	} else {
 		err := kyaml.UnmarshalStrict([]byte(s.Cluster.Features.EncryptionProviders.CustomEncryptionConfiguration), config)
 		if err != nil {
-			return "", err
+			return "", fail.Runtime(err, "unmarshaling customEncryptionConfiguration")
 		}
 	}
 

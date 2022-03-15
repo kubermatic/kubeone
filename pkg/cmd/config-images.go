@@ -69,6 +69,7 @@ func listImagesCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 			# To see images list affected by the registryConfiguration configuration (in case if any)
 			kubeone config images list -m mycluster.yaml
 		`),
+		SilenceErrors: true,
 		RunE: func(*cobra.Command, []string) error {
 			manifestFile, err := rootFlags.GetString(longFlagName(opts, "ManifestFile"))
 			if err != nil {

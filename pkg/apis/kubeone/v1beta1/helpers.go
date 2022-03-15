@@ -17,7 +17,9 @@ limitations under the License.
 package v1beta1
 
 import (
-	"github.com/pkg/errors"
+	"fmt"
+
+	"k8c.io/kubeone/pkg/fail"
 )
 
 // SetCloudProvider parses the string representation of the provider
@@ -43,7 +45,7 @@ func SetCloudProvider(cp *CloudProviderSpec, name string) error {
 	case "none":
 		cp.None = &NoneSpec{}
 	default:
-		return errors.Errorf("provider %q is not supported", name)
+		return fail.ConfigValidation(fmt.Errorf("provider %q is not supported", name))
 	}
 
 	return nil

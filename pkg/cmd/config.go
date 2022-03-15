@@ -112,8 +112,9 @@ func configPrintCmd() *cobra.Command {
 			customize the configuration manifest. For the full reference of the
 			configuration manifest, run the print command with --full flag.
 		`),
-		Args:    cobra.ExactArgs(0),
-		Example: fmt.Sprintf("kubeone config print --provider digitalocean --kubernetes-version %s --cluster-name example", defaultKubernetesVersion),
+		Args:          cobra.ExactArgs(0),
+		Example:       fmt.Sprintf("kubeone config print --provider digitalocean --kubernetes-version %s --cluster-name example", defaultKubernetesVersion),
+		SilenceErrors: true,
 		RunE: func(_ *cobra.Command, args []string) error {
 			return runPrint(opts)
 		},
@@ -206,8 +207,9 @@ The v1beta1 version of the KubeOneCluster manifest is deprecated and will be
 removed in one of the next versions.
 The new manifest is printed on the standard output.
 `,
-		Args:    cobra.ExactArgs(0),
-		Example: `kubeone config migrate --manifest mycluster.yaml`,
+		Args:          cobra.ExactArgs(0),
+		Example:       `kubeone config migrate --manifest mycluster.yaml`,
+		SilenceErrors: true,
 		RunE: func(_ *cobra.Command, args []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
@@ -233,8 +235,9 @@ The manifest contains all MachineDeployments defined in the API/config.
 Note that manifest may include already created MachineDeployments.
 The manifest is printed on the standard output.
 `,
-		Args:    cobra.ExactArgs(0),
-		Example: `kubeone config machinedeployments --manifest mycluster.yaml`,
+		Args:          cobra.ExactArgs(0),
+		Example:       `kubeone config machinedeployments --manifest mycluster.yaml`,
+		SilenceErrors: true,
 		RunE: func(_ *cobra.Command, args []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {

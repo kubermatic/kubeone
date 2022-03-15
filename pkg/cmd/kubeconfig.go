@@ -38,7 +38,8 @@ func kubeconfigCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 			This command takes KubeOne manifest which contains information about hosts. It's possible to source information about
 			hosts from Terraform output, using the '--tfjson' flag.
 		`),
-		Example: `kubeone kubeconfig -m mycluster.yaml -t terraformoutput.json`,
+		Example:       `kubeone kubeconfig -m mycluster.yaml -t terraformoutput.json`,
+		SilenceErrors: true,
 		RunE: func(_ *cobra.Command, args []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
