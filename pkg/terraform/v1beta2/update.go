@@ -20,9 +20,8 @@ import (
 	"bytes"
 	"encoding/json"
 
-	"github.com/pkg/errors"
-
 	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/templates/machinecontroller"
 )
 
@@ -30,14 +29,14 @@ func unmarshalStrict(buf []byte, obj interface{}) error {
 	dec := json.NewDecoder(bytes.NewReader(buf))
 	dec.DisallowUnknownFields()
 
-	return dec.Decode(obj)
+	return fail.Runtime(dec.Decode(obj), "strict unmarshal of %T", obj)
 }
 
 func updateAWSWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerConfig, cfg json.RawMessage) error {
 	var awsCloudConfig machinecontroller.AWSSpec
 
 	if err := unmarshalStrict(cfg, &awsCloudConfig); err != nil {
-		return errors.WithStack(err)
+		return fail.Config(err, "unmarshalling DynamicWorkerConfig AWS spec")
 	}
 
 	flags := []cloudProviderFlags{
@@ -60,7 +59,7 @@ func updateAWSWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerConfig, c
 
 	for _, flag := range flags {
 		if err := setWorkersetFlag(existingWorkerSet, flag.key, flag.value); err != nil {
-			return errors.WithStack(err)
+			return err
 		}
 	}
 
@@ -71,7 +70,7 @@ func updateAzureWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerConfig,
 	var azureCloudConfig machinecontroller.AzureSpec
 
 	if err := unmarshalStrict(cfg, &azureCloudConfig); err != nil {
-		return errors.WithStack(err)
+		return fail.Config(err, "unmarshalling DynamicWorkerConfig Azure spec")
 	}
 
 	flags := []cloudProviderFlags{
@@ -94,7 +93,7 @@ func updateAzureWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerConfig,
 
 	for _, flag := range flags {
 		if err := setWorkersetFlag(existingWorkerSet, flag.key, flag.value); err != nil {
-			return errors.WithStack(err)
+			return err
 		}
 	}
 
@@ -105,7 +104,7 @@ func updateGCEWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerConfig, c
 	var gceCloudConfig machinecontroller.GCESpec
 
 	if err := unmarshalStrict(cfg, &gceCloudConfig); err != nil {
-		return errors.WithStack(err)
+		return fail.Config(err, "unmarshalling DynamicWorkerConfig GCE spec")
 	}
 
 	flags := []cloudProviderFlags{
@@ -126,7 +125,7 @@ func updateGCEWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerConfig, c
 
 	for _, flag := range flags {
 		if err := setWorkersetFlag(existingWorkerSet, flag.key, flag.value); err != nil {
-			return errors.WithStack(err)
+			return err
 		}
 	}
 
@@ -137,7 +136,7 @@ func updateDigitalOceanWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorker
 	var doCloudConfig machinecontroller.DigitalOceanSpec
 
 	if err := unmarshalStrict(cfg, &doCloudConfig); err != nil {
-		return errors.WithStack(err)
+		return fail.Config(err, "unmarshalling DynamicWorkerConfig DigitalOcean spec")
 	}
 
 	flags := []cloudProviderFlags{
@@ -152,7 +151,7 @@ func updateDigitalOceanWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorker
 
 	for _, flag := range flags {
 		if err := setWorkersetFlag(existingWorkerSet, flag.key, flag.value); err != nil {
-			return errors.WithStack(err)
+			return err
 		}
 	}
 
@@ -163,7 +162,7 @@ func updateHetznerWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerConfi
 	var hetznerConfig machinecontroller.HetznerSpec
 
 	if err := unmarshalStrict(cfg, &hetznerConfig); err != nil {
-		return errors.WithStack(err)
+		return fail.Config(err, "unmarshalling DynamicWorkerConfig Hetzner spec")
 	}
 
 	flags := []cloudProviderFlags{
@@ -177,7 +176,7 @@ func updateHetznerWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerConfi
 
 	for _, flag := range flags {
 		if err := setWorkersetFlag(existingWorkerSet, flag.key, flag.value); err != nil {
-			return errors.WithStack(err)
+			return err
 		}
 	}
 
@@ -188,7 +187,7 @@ func updateNutanixWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerConfi
 	var nutanixConfig machinecontroller.NutanixSpec
 
 	if err := unmarshalStrict(cfg, &nutanixConfig); err != nil {
-		return errors.WithStack(err)
+		return fail.Config(err, "unmarshalling DynamicWorkerConfig Nutanix spec")
 	}
 
 	flags := []cloudProviderFlags{
@@ -206,7 +205,7 @@ func updateNutanixWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerConfi
 
 	for _, flag := range flags {
 		if err := setWorkersetFlag(existingWorkerSet, flag.key, flag.value); err != nil {
-			return errors.WithStack(err)
+			return err
 		}
 	}
 
@@ -217,7 +216,7 @@ func updateOpenStackWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerCon
 	var openstackConfig machinecontroller.OpenStackSpec
 
 	if err := unmarshalStrict(cfg, &openstackConfig); err != nil {
-		return errors.WithStack(err)
+		return fail.Config(err, "unmarshalling DynamicWorkerConfig OpenStack spec")
 	}
 
 	flags := []cloudProviderFlags{
@@ -236,7 +235,7 @@ func updateOpenStackWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerCon
 
 	for _, flag := range flags {
 		if err := setWorkersetFlag(existingWorkerSet, flag.key, flag.value); err != nil {
-			return errors.WithStack(err)
+			return err
 		}
 	}
 
@@ -247,7 +246,7 @@ func updateEquinixMetalWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorker
 	var metalConfig machinecontroller.EquinixMetalSpec
 
 	if err := unmarshalStrict(cfg, &metalConfig); err != nil {
-		return errors.WithStack(err)
+		return fail.Config(err, "unmarshalling DynamicWorkerConfig EquinixMetal spec")
 	}
 
 	flags := []cloudProviderFlags{
@@ -260,7 +259,7 @@ func updateEquinixMetalWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorker
 
 	for _, flag := range flags {
 		if err := setWorkersetFlag(existingWorkerSet, flag.key, flag.value); err != nil {
-			return errors.WithStack(err)
+			return err
 		}
 	}
 
@@ -271,7 +270,7 @@ func updateVSphereWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerConfi
 	var vsphereConfig machinecontroller.VSphereSpec
 
 	if err := unmarshalStrict(cfg, &vsphereConfig); err != nil {
-		return errors.WithStack(err)
+		return fail.Config(err, "unmarshalling DynamicWorkerConfig vSphere spec")
 	}
 
 	flags := []cloudProviderFlags{
@@ -291,7 +290,7 @@ func updateVSphereWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerConfi
 
 	for _, flag := range flags {
 		if err := setWorkersetFlag(existingWorkerSet, flag.key, flag.value); err != nil {
-			return errors.WithStack(err)
+			return err
 		}
 	}
 
