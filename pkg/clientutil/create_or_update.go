@@ -51,6 +51,8 @@ func CreateOrUpdate(ctx context.Context, c client.Client, obj client.Object, upd
 
 	switch {
 	case k8serrors.IsNotFound(err):
+		err = c.Create(ctx, obj)
+
 		return fail.KubeClient(err, "creating %T %s", obj, key)
 	case err != nil:
 		return fail.KubeClient(err, "getting %T %s", obj, key)
