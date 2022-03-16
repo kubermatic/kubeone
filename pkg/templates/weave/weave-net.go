@@ -20,8 +20,6 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 
-	"github.com/pkg/errors"
-
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 
@@ -59,7 +57,7 @@ func genPassword() (string, error) {
 	pi := make([]byte, 32)
 	_, err := rand.Reader.Read(pi)
 	if err != nil {
-		return "", errors.Wrap(err, "failed to read random bytes")
+		return "", fail.Runtime(err, "reading random bytes")
 	}
 
 	return base64.StdEncoding.EncodeToString(pi), nil

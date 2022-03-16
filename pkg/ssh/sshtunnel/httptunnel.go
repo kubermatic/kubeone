@@ -21,8 +21,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/pkg/errors"
-
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/ssh"
 )
@@ -32,7 +30,7 @@ import (
 func NewHTTPTransport(connector *ssh.Connector, target kubeoneapi.HostConfig, tlsConfig *tls.Config) (http.RoundTripper, error) {
 	tunn, err := connector.Tunnel(target)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get SSH tunnel")
+		return nil, err
 	}
 
 	return &http.Transport{
