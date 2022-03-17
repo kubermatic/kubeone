@@ -18,6 +18,7 @@ package config
 
 import (
 	"bytes"
+	"errors"
 	"flag"
 	"path/filepath"
 	"testing"
@@ -25,6 +26,7 @@ import (
 	yaml "gopkg.in/yaml.v2"
 
 	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/testhelper"
 
 	kyaml "sigs.k8s.io/yaml"
@@ -84,7 +86,14 @@ func TestMigrateOldConfig(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			newConfigYAML, err := MigrateOldConfig(filepath.Join("testdata", tc.name+"-v1beta1.yaml"))
 			if err != nil {
-				if err.Error() == tc.err {
+				errMsg := err.Error()
+
+				var cfgErr fail.ConfigError
+				if errors.As(err, &cfgErr) {
+					errMsg = cfgErr.Err.Error()
+				}
+
+				if errMsg == tc.err {
 					return
 				}
 				t.Errorf("error converting old config: %v", err)
@@ -98,7 +107,7 @@ func TestMigrateOldConfig(t *testing.T) {
 			}
 
 			// Validate new config by unmarshaling
-			newConfig := &kubeonev1beta2.KubeOneCluster{}
+			newConfig := kubeonev1beta2.NewKubeOneCluster()
 			err = kyaml.UnmarshalStrict(buffer.Bytes(), &newConfig)
 			if err != nil {
 				t.Errorf("failed to decode new config: %v", err)

@@ -26,6 +26,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
 )
@@ -52,7 +53,7 @@ func proxyCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		RunE: func(*cobra.Command, []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
-				return errors.Wrap(err, "unable to get global flags")
+				return err
 			}
 			opts.globalOptions = *gopts
 
@@ -101,7 +102,7 @@ func setupProxyTunnel(opts *proxyOpts) error {
 	fmt.Println("SSH tunnel started, please open another terminal and setup environment")
 	fmt.Printf("export HTTPS_PROXY=http://%s\n", opts.ListenAddr)
 
-	return server.ListenAndServe()
+	return fail.Runtime(server.ListenAndServe(), "listening proxy port")
 }
 
 type httpError struct {

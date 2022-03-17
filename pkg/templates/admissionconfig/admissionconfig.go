@@ -18,11 +18,11 @@ package admissionconfig
 
 import (
 	"github.com/Masterminds/semver/v3"
-	"github.com/pkg/errors"
 
 	apiserverv1 "k8c.io/kubeone/pkg/apis/apiserver/v1"
 	apiserverv1alpha1 "k8c.io/kubeone/pkg/apis/apiserver/v1alpha1"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/templates"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -33,11 +33,11 @@ import (
 func NewAdmissionConfig(k8sVersion string, podNodeSelectorFeature *kubeoneapi.PodNodeSelector) (string, error) {
 	sver, err := semver.NewVersion(k8sVersion)
 	if err != nil {
-		return "", errors.Wrap(err, "failed to parse version")
+		return "", fail.Runtime(err, "parsing kubernetes semver")
 	}
 	c, err := semver.NewConstraint("< 1.17.0")
 	if err != nil {
-		return "", errors.Wrap(err, "failed to parse the semver constraint")
+		return "", fail.Runtime(err, "parsing semver constraint")
 	}
 
 	var admissionCfg []runtime.Object

@@ -22,12 +22,12 @@ import (
 	"time"
 
 	"github.com/Masterminds/semver/v3"
-	"github.com/pkg/errors"
 
 	bootstraptokenv1 "k8c.io/kubeone/pkg/apis/kubeadm/bootstraptoken/v1"
 	kubeadmv1beta3 "k8c.io/kubeone/pkg/apis/kubeadm/v1beta3"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/certificate"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/features"
 	"k8c.io/kubeone/pkg/kubeflags"
 	"k8c.io/kubeone/pkg/state"
@@ -51,7 +51,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 	cluster := s.Cluster
 	kubeSemVer, err := semver.NewVersion(cluster.Versions.Kubernetes)
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to parse generate config, wrong kubernetes version %s", cluster.Versions.Kubernetes)
+		return nil, fail.Config(err, "parsing kubernetes semver")
 	}
 
 	nodeRegistration := newNodeRegistration(s, host)
@@ -63,7 +63,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 
 	bootstrapToken, err := bootstraptokenv1.NewBootstrapTokenString(s.JoinToken)
 	if err != nil {
-		return nil, err
+		return nil, fail.Runtime(err, "generating kubeadm bootstrap token")
 	}
 
 	controlPlaneEndpoint := fmt.Sprintf("%s:%d", cluster.APIEndpoint.Host, cluster.APIEndpoint.Port)

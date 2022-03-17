@@ -17,12 +17,12 @@ limitations under the License.
 package config
 
 import (
+	"fmt"
 	"os"
-
-	"github.com/pkg/errors"
 
 	kubeonev1beta1 "k8c.io/kubeone/pkg/apis/kubeone/v1beta1"
 	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/yamled"
 )
 
@@ -30,25 +30,26 @@ import (
 func MigrateOldConfig(clusterFilePath string) (interface{}, error) {
 	oldConfig, err := loadClusterConfig(clusterFilePath)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to parse the old config")
+		return nil, fail.Runtime(err, "loading cluster config to migrate")
 	}
 
 	// Check is kubeone.io/v1beta1 config provided
 	apiVersion, apiVersionExists := oldConfig.GetString(yamled.Path{"apiVersion"})
 	if !apiVersionExists {
-		return nil, errors.New("apiVersion not present in the manifest")
+		return nil, fail.Config(fmt.Errorf("apiVersion not present in the manifest"), "checking apiVersion presence")
 	}
+
 	if apiVersion != kubeonev1beta1.SchemeGroupVersion.String() {
-		return nil, errors.Errorf("migration is available only for %q API, but %q is given", kubeonev1beta1.SchemeGroupVersion.String(), apiVersion)
+		return nil, fail.Config(fmt.Errorf("migration is available only for %q API, but %q is given", kubeonev1beta1.SchemeGroupVersion.String(), apiVersion), "checking apiVersion compatibility")
 	}
 
 	// Ensure kind is KubeOneCluster
 	kind, kindExists := oldConfig.GetString(yamled.Path{"kind"})
 	if !kindExists {
-		return nil, errors.New("kind not present in the manifest")
+		return nil, fail.ConfigValidation(fmt.Errorf("kind not present in the manifest"))
 	}
 	if kind != KubeOneClusterKind {
-		return nil, errors.Errorf("migration is available only for kind %q, but %q is given", KubeOneClusterKind, kind)
+		return nil, fail.ConfigValidation(fmt.Errorf("migration is available only for kind %q, but %q is given", KubeOneClusterKind, kind))
 	}
 
 	// The APIVersion has been changed to kubeone.k8c.io/v1beta2
@@ -62,7 +63,7 @@ func MigrateOldConfig(clusterFilePath string) (interface{}, error) {
 	//     script or by using the RegistryConfiguration API (registry mirrors)
 	_, assetConfigExists := oldConfig.Get(yamled.Path{"assetConfiguration"})
 	if assetConfigExists {
-		return nil, errors.New("the AssetConfiguration API has been removed from the v1beta2 API, please check the docs for information on how to migrate")
+		return nil, fail.ConfigValidation(fmt.Errorf("the AssetConfiguration API has been removed from the v1beta2 API, please check the docs for information on how to migrate"))
 	}
 
 	// Packet has been renamed to Equinix Metal and as a result of this change
@@ -98,7 +99,7 @@ func MigrateOldConfig(clusterFilePath string) (interface{}, error) {
 func loadClusterConfig(oldConfigPath string) (*yamled.Document, error) {
 	f, err := os.Open(oldConfigPath)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to open file")
+		return nil, fail.Runtime(err, "open manifest file")
 	}
 	defer f.Close()
 

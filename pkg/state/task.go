@@ -40,7 +40,7 @@ func (s *State) runTask(node *kubeoneapi.HostConfig, task NodeTask) error {
 	// because we want to re-use it for future tasks)
 	conn, err = s.Connector.Connect(*node)
 	if err != nil {
-		return errors.Wrapf(err, "failed to connect to %s", node.PublicAddress)
+		return err
 	}
 
 	s.Runner = &runner.Runner{

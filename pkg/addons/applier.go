@@ -24,12 +24,12 @@ import (
 	"strings"
 
 	"github.com/MakeNowJust/heredoc/v2"
-	"github.com/pkg/errors"
 
 	embeddedaddons "k8c.io/kubeone/addons"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/certificate"
 	"k8c.io/kubeone/pkg/credentials"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/images"
@@ -87,7 +87,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 	if s.Cluster.Addons.Enabled() && s.Cluster.Addons.Path != "" {
 		addonsPath, err := s.Cluster.Addons.RelativePath(s.ManifestFilePath)
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to get addons path")
+			return nil, err
 		}
 
 		localFS = os.DirFS(addonsPath)
@@ -95,22 +95,22 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 
 	creds, err := credentials.Any(s.CredentialsFilePath)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to fetch credentials")
+		return nil, err
 	}
 
 	credsCCM, err := credentials.ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.TypeCCM)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to fetch cloud provider credentials")
+		return nil, err
 	}
 
 	envVarsMC, err := credentials.EnvVarBindings(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.SecretNameMC, credentials.TypeMC)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to fetch env var bindings for credentials")
+		return nil, err
 	}
 
 	credsEnvVarsMC, err := yaml.Marshal(envVarsMC)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to convert env var bindings for credentials to yaml")
+		return nil, fail.Runtime(err, "marshalling machine-controller credentials env variables")
 	}
 
 	var credsEnvVarsOSM []byte
@@ -118,18 +118,18 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		var envVarsOSM []corev1.EnvVar
 		envVarsOSM, err = credentials.EnvVarBindings(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.SecretNameOSM, credentials.TypeOSM)
 		if err != nil {
-			return nil, errors.Wrap(err, "unable to fetch env var bindings for credentials")
+			return nil, err
 		}
 
 		credsEnvVarsOSM, err = yaml.Marshal(envVarsOSM)
 		if err != nil {
-			return nil, errors.Wrap(err, "unable to convert env var bindings for credentials to yaml")
+			return nil, fail.Runtime(err, "marshalling OSM credentials env variables")
 		}
 	}
 
 	kubeCAPrivateKey, kubeCACert, err := certificate.CAKeyPair(s.Configuration)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to load CA keypair")
+		return nil, err
 	}
 
 	// We want this to be true in two cases:
@@ -300,8 +300,9 @@ func (a *applier) loadAndApplyAddon(s *state.State, fsys fs.FS, addonName string
 
 	manifest, err := a.getManifestsFromDirectory(s, fsys, addonName)
 	if err != nil {
-		return errors.WithStack(err)
+		return err
 	}
+
 	if len(strings.TrimSpace(manifest)) == 0 {
 		if len(addonName) != 0 {
 			s.Logger.Warnf("Addon directory %q is empty, skipping...", addonName)
@@ -310,10 +311,7 @@ func (a *applier) loadAndApplyAddon(s *state.State, fsys fs.FS, addonName string
 		return nil
 	}
 
-	return errors.Wrap(
-		runKubectlApply(s, manifest, addonName),
-		"failed to apply addons",
-	)
+	return runKubectlApply(s, manifest, addonName)
 }
 
 // loadAndApplyAddon parses the addons manifests and runs kubectl apply.
@@ -322,7 +320,7 @@ func (a *applier) loadAndDeleteAddon(s *state.State, fsys fs.FS, addonName strin
 
 	manifest, err := a.getManifestsFromDirectory(s, fsys, addonName)
 	if err != nil {
-		return errors.WithStack(err)
+		return err
 	}
 
 	if len(strings.TrimSpace(manifest)) == 0 {
@@ -333,10 +331,7 @@ func (a *applier) loadAndDeleteAddon(s *state.State, fsys fs.FS, addonName strin
 		return nil
 	}
 
-	return errors.Wrap(
-		runKubectlDelete(s, manifest, addonName),
-		"failed to apply addons",
-	)
+	return runKubectlDelete(s, manifest, addonName)
 }
 
 // runKubectlApply runs kubectl apply command

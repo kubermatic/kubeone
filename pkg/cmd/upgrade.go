@@ -18,7 +18,6 @@ package cmd
 
 import (
 	"github.com/MakeNowJust/heredoc/v2"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
@@ -35,7 +34,7 @@ type upgradeOpts struct {
 func (opts *upgradeOpts) BuildState() (*state.State, error) {
 	s, err := opts.globalOptions.BuildState()
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to build state")
+		return nil, err
 	}
 
 	s.ForceUpgrade = opts.ForceUpgrade
@@ -60,7 +59,7 @@ func upgradeCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		RunE: func(_ *cobra.Command, _ []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
-				return errors.Wrap(err, "unable to get global flags")
+				return err
 			}
 
 			opts.globalOptions = *gopts
@@ -89,14 +88,14 @@ func upgradeCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 func runUpgrade(opts *upgradeOpts) error {
 	s, err := opts.BuildState()
 	if err != nil {
-		return errors.Wrap(err, "failed to initialize State")
+		return err
 	}
 
 	s.Logger.Warn("The \"kubeone upgrade\" command is deprecated and will be removed in KubeOne 1.6. Please use \"kubeone apply\" instead.")
 
 	// Validate credentials
-	if vErr := validateCredentials(s, opts.CredentialsFile); vErr != nil {
-		return vErr
+	if err = validateCredentials(s, opts.CredentialsFile); err != nil {
+		return err
 	}
 
 	// Probe the cluster for the actual state and the needed tasks.
@@ -107,5 +106,5 @@ func runUpgrade(opts *upgradeOpts) error {
 		return err
 	}
 
-	return errors.Wrap(tasks.WithUpgrade(nil).Run(s), "failed to upgrade cluster")
+	return tasks.WithUpgrade(nil).Run(s)
 }

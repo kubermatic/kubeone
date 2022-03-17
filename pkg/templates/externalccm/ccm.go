@@ -20,8 +20,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/pkg/errors"
-
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
@@ -38,7 +37,7 @@ func Ensure(s *state.State) error {
 		return nil
 	}
 
-	return errors.Wrap(waitForInitializedNodes(s), "failed waiting for nodes to be initialized by CCM")
+	return waitForInitializedNodes(s)
 }
 
 func waitForInitializedNodes(s *state.State) error {
@@ -50,7 +49,7 @@ func waitForInitializedNodes(s *state.State) error {
 		nodes := corev1.NodeList{}
 
 		if err := s.DynamicClient.List(ctx, &nodes); err != nil {
-			return false, err
+			return false, fail.KubeClient(err, "listing Nodes")
 		}
 
 		for _, node := range nodes.Items {

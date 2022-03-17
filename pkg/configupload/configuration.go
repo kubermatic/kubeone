@@ -25,6 +25,7 @@ import (
 	"github.com/pkg/errors"
 
 	"k8c.io/kubeone/pkg/archive"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/ssh/sshiofs"
 )
@@ -55,14 +56,14 @@ func (c *Configuration) AddFilePath(filename, filePath, manifestFilePath string)
 	if !filepath.IsAbs(filePath) && manifestFilePath != "" {
 		manifestAbsPath, err := filepath.Abs(filepath.Dir(manifestFilePath))
 		if err != nil {
-			return errors.Wrap(err, "unable to get absolute path to the cluster manifest")
+			return fail.Runtime(err, "getting absolut path to the manifest file")
 		}
 		filePath = filepath.Join(manifestAbsPath, filePath)
 	}
 
 	b, err := os.ReadFile(filePath)
 	if err != nil {
-		return errors.Wrap(err, "unable to open given file")
+		return fail.Runtime(err, "reading file")
 	}
 
 	c.AddFile(filename, string(b))
@@ -101,7 +102,7 @@ func (c *Configuration) UploadTo(conn ssh.Connection, directory string) error {
 
 		_, err = io.Copy(file, strings.NewReader(content))
 		if err != nil {
-			return errors.Wrapf(err, "failed to write remote file %s", filename)
+			return fail.Runtime(err, "copying to %s file", target)
 		}
 
 		if err := file.Chmod(0600); err != nil {
@@ -116,21 +117,21 @@ func (c *Configuration) UploadTo(conn ssh.Connection, directory string) error {
 func (c *Configuration) Backup(target string) error {
 	archive, err := archive.NewTarGzip(target)
 	if err != nil {
-		return errors.Wrap(err, "failed to open archive")
+		return err
 	}
 	defer archive.Close()
 
 	for filename, content := range c.files {
 		err = archive.Add(filename, content)
 		if err != nil {
-			return errors.Wrapf(err, "failed to add %s to archive", filename)
+			return err
 		}
 	}
 
 	for filename, content := range c.KubernetesPKI {
 		err = archive.Add(strings.TrimPrefix(filename, "/"), string(content))
 		if err != nil {
-			return errors.Wrapf(err, "failed to add %s to archive", filename)
+			return err
 		}
 	}
 
@@ -141,7 +142,14 @@ func (c *Configuration) Backup(target string) error {
 func (c *Configuration) Get(filename string) (string, error) {
 	content, ok := c.files[filename]
 	if !ok {
-		return "", errors.Errorf("could not find file %s", filename)
+		return "", fail.RuntimeError{
+			Op: "getting file from internal configuration store",
+			Err: &os.PathError{
+				Op:   "read",
+				Path: filename,
+				Err:  errors.New("no such file or directory"),
+			},
+		}
 	}
 
 	return content, nil

@@ -18,12 +18,13 @@ package v1beta2
 
 import (
 	"encoding/json"
+	"fmt"
 	"sort"
 
 	"github.com/imdario/mergo"
-	"github.com/pkg/errors"
 
 	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/templates/machinecontroller"
 
 	corev1 "k8s.io/api/core/v1"
@@ -182,17 +183,17 @@ func NewConfigFromJSON(buf []byte) (*Config, error) {
 	// cat off all the excessive fields from the terraform output JSON that will prevent otherwise strict unmarshalling
 	// of our known fields
 	if err := json.Unmarshal(buf, &wholeTFOutput); err != nil {
-		return nil, err
+		return nil, fail.Runtime(err, "unmarshal terraform output")
 	}
 
 	strictBuf, err := json.Marshal(wholeTFOutput)
 	if err != nil {
-		return nil, err
+		return nil, fail.Runtime(err, "marshal terraform output")
 	}
 
 	output := &Config{}
 
-	return output, unmarshalStrict(strictBuf, output)
+	return output, fail.Runtime(unmarshalStrict(strictBuf, output), "reading terraform output")
 }
 
 // Apply adds the terraform configuration options to the given cluster config.
@@ -210,10 +211,10 @@ func (output *Config) Apply(cluster *kubeonev1beta2.KubeOneCluster) error {
 	if cp.CloudProvider != nil {
 		cloudProvider := &kubeonev1beta2.CloudProviderSpec{}
 		if err := kubeonev1beta2.SetCloudProvider(cloudProvider, *cp.CloudProvider); err != nil {
-			return errors.Wrap(err, "setting cloud provider")
+			return err
 		}
 		if err := mergo.Merge(&cluster.CloudProvider, cloudProvider); err != nil {
-			return errors.Wrap(err, "merging cloud provider structs")
+			return fail.Runtime(err, "merging cloud provider structs")
 		}
 	}
 
@@ -244,7 +245,7 @@ func (output *Config) Apply(cluster *kubeonev1beta2.KubeOneCluster) error {
 	}
 
 	if err := mergo.Merge(&cluster.Proxy, &output.Proxy.Value); err != nil {
-		return errors.Wrap(err, "merging proxy settings")
+		return fail.Runtime(err, "merging proxy settings")
 	}
 
 	if len(cp.NetworkID) > 0 && cluster.CloudProvider.Hetzner != nil {
@@ -301,11 +302,11 @@ func (output *Config) Apply(cluster *kubeonev1beta2.KubeOneCluster) error {
 		case cluster.CloudProvider.Vsphere != nil:
 			err = updateVSphereWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
 		default:
-			return errors.Errorf("unknown provider")
+			err = fail.Runtime(fmt.Errorf("unknown"), "checking provider")
 		}
 
 		if err != nil {
-			return errors.Wrapf(err, "updating provider-specific config for workerset %q from terraform output", workersetName)
+			return err
 		}
 	}
 
@@ -370,7 +371,7 @@ func setWorkersetFlag(w *kubeonev1beta2.DynamicWorkerConfig, name string, value 
 			return nil
 		}
 	default:
-		return errors.New("unsupported type")
+		return fail.Runtime(fmt.Errorf("unsupported type %T %v", value, value), "reading terraform values")
 	}
 
 	// update CloudProviderSpec ONLY IF given terraform output is absent in
@@ -378,7 +379,7 @@ func setWorkersetFlag(w *kubeonev1beta2.DynamicWorkerConfig, name string, value 
 	jsonSpec := make(map[string]interface{})
 	if w.Config.CloudProviderSpec != nil {
 		if err := json.Unmarshal(w.Config.CloudProviderSpec, &jsonSpec); err != nil {
-			return errors.Wrap(err, "parsing the provided cloud provider")
+			return fail.Config(err, "reading CloudProviderSpec")
 		}
 	}
 
@@ -389,7 +390,7 @@ func setWorkersetFlag(w *kubeonev1beta2.DynamicWorkerConfig, name string, value 
 	var err error
 	w.Config.CloudProviderSpec, err = json.Marshal(jsonSpec)
 	if err != nil {
-		return errors.Wrap(err, "updating the cloud provider spec")
+		return fail.Config(err, "updating cloud provider spec")
 	}
 
 	return nil

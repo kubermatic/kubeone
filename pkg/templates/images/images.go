@@ -24,6 +24,8 @@ import (
 
 	"github.com/Masterminds/semver/v3"
 	"github.com/distribution/distribution/v3/reference"
+
+	"k8c.io/kubeone/pkg/fail"
 )
 
 type Resource int
@@ -158,7 +160,7 @@ func FindResource(name string) (Resource, error) {
 		}
 	}
 
-	return 0, fmt.Errorf("no such resource: %q", name)
+	return 0, fail.Runtime(fmt.Errorf("no such resource"), "image lookup %q", name)
 }
 
 func baseResources() map[Resource]map[string]string {

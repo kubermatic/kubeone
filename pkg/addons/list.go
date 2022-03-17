@@ -27,6 +27,7 @@ import (
 	"github.com/pkg/errors"
 
 	embeddedaddons "k8c.io/kubeone/addons"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/tabwriter"
 )
@@ -48,14 +49,17 @@ func List(s *state.State, outputFormat string) error {
 	switch outputFormat {
 	case "table", "json":
 	default:
-		return errors.Errorf("wrong format: %q", outputFormat)
+		return fail.RuntimeError{
+			Op:  "validating output format",
+			Err: errors.Errorf("wrong format: %q", outputFormat),
+		}
 	}
 
 	combinedAddons := map[string]addonItem{}
 
 	embeddedEntries, err := fs.ReadDir(embeddedaddons.FS, ".")
 	if err != nil {
-		return err
+		return fail.Runtime(err, "reading embedded addons directory")
 	}
 
 	for _, addon := range embeddedEntries {
@@ -83,13 +87,13 @@ func List(s *state.State, outputFormat string) error {
 	if s.Cluster.Addons.Enabled() {
 		addonsPath, err := s.Cluster.Addons.RelativePath(s.ManifestFilePath)
 		if err != nil {
-			return errors.Wrap(err, "failed to get addons path")
+			return err
 		}
 
 		localFS := os.DirFS(addonsPath)
 		customAddons, err := fs.ReadDir(localFS, ".")
 		if err != nil {
-			return errors.Wrap(err, "failed to read addons directory")
+			return fail.Runtime(err, "reading local addons directory")
 		}
 
 		for _, useraddon := range customAddons {
@@ -129,7 +133,7 @@ func List(s *state.State, outputFormat string) error {
 	case "json":
 		buf, err := json.Marshal(omap)
 		if err != nil {
-			return err
+			return fail.Runtime(err, "marshalling addons list")
 		}
 
 		fmt.Printf("%s\n", buf)

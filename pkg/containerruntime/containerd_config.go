@@ -23,6 +23,7 @@ import (
 	"github.com/BurntSushi/toml"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/fail"
 )
 
 type containerdConfig struct {
@@ -157,5 +158,5 @@ func marshalContainerdConfig(cluster *kubeoneapi.KubeOneCluster) (string, error)
 	enc.Indent = ""
 	err := enc.Encode(cfg)
 
-	return buf.String(), err
+	return buf.String(), fail.Runtime(err, "encoding containerd config")
 }

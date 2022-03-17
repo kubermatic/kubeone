@@ -33,6 +33,7 @@ import (
 	"k8c.io/kubeone/pkg/apis/kubeone/config"
 	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
 	"k8c.io/kubeone/pkg/containerruntime"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/templates/machinecontroller"
 	"k8c.io/kubeone/pkg/yamled"
 
@@ -213,7 +214,7 @@ The new manifest is printed on the standard output.
 		RunE: func(_ *cobra.Command, args []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
-				return errors.Wrap(err, "unable to get global flags")
+				return err
 			}
 
 			return runMigrate(gopts)
@@ -241,7 +242,7 @@ The manifest is printed on the standard output.
 		RunE: func(_ *cobra.Command, args []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
-				return errors.Wrap(err, "unable to get global flags")
+				return err
 			}
 
 			return runGenerateMachineDeployments(gopts)
@@ -267,19 +268,19 @@ func runPrint(printOptions *printOpts) error {
 
 		tmpl, err := template.New("example-manifest").Parse(exampleManifest)
 		if err != nil {
-			return errors.Wrap(err, "unable to parse the example manifest template")
+			return fail.Runtime(err, "parsing example-manifest template")
 		}
 
 		var buffer bytes.Buffer
 		err = tmpl.Execute(&buffer, printOptions)
 		if err != nil {
-			return errors.Wrap(err, "unable to run the example manifest template")
+			return fail.Runtime(err, "executing example-manifest template")
 		}
 
-		cfg := &kubeonev1beta2.KubeOneCluster{}
+		cfg := kubeonev1beta2.NewKubeOneCluster()
 		err = kyaml.UnmarshalStrict(buffer.Bytes(), &cfg)
 		if err != nil {
-			return errors.Wrap(err, "failed to decode new config")
+			return fail.Runtime(err, "testing marshal/unmarshal")
 		}
 
 		fmt.Println(buffer.String())
@@ -287,12 +288,7 @@ func runPrint(printOptions *printOpts) error {
 		return nil
 	}
 
-	err := createAndPrintManifest(printOptions)
-	if err != nil {
-		return errors.Wrap(err, "unable to create example manifest")
-	}
-
-	return nil
+	return createAndPrintManifest(printOptions)
 }
 
 func createAndPrintManifest(printOptions *printOpts) error {
@@ -342,7 +338,7 @@ func createAndPrintManifest(printOptions *printOpts) error {
 	// Hosts
 	if len(printOptions.ControlPlaneHosts) != 0 {
 		if err := parseControlPlaneHosts(cfg, printOptions.ControlPlaneHosts); err != nil {
-			return errors.Wrap(err, "unable to parse provided hosts")
+			return err
 		}
 	}
 
@@ -396,12 +392,7 @@ func createAndPrintManifest(printOptions *printOpts) error {
 	cfg.Set(yamled.Path{"loggingConfig", "containerLogMaxFiles"}, printOptions.ContainerLogMaxFiles)
 
 	// Print the manifest
-	err := validateAndPrintConfig(cfg)
-	if err != nil {
-		return errors.Wrap(err, "unable to validate and print config")
-	}
-
-	return nil
+	return validateAndPrintConfig(cfg)
 }
 
 func printFeatures(cfg *yamled.Document, printOptions *printOpts) {
@@ -444,14 +435,18 @@ func parseControlPlaneHosts(cfg *yamled.Document, hostList string) error {
 		for _, field := range fields {
 			val := strings.Split(field, ":")
 			if len(val) != 2 {
-				return errors.New("incorrect format of host variable")
+				return fail.RuntimeError{
+					Op:  "parsing host variable",
+					Err: errors.New("incorrect format"),
+				}
 			}
 
 			if val[0] == "sshPort" {
 				portInt, err := strconv.Atoi(val[1])
 				if err != nil {
-					return errors.Wrap(err, "unable to convert ssh port to integer")
+					return fail.Runtime(err, "parsing sshPort")
 				}
+
 				h[val[0]] = portInt
 
 				continue
@@ -470,27 +465,22 @@ func runMigrate(opts *globalOptions) error {
 	// Convert old config yaml to new config yaml
 	newConfigYAML, err := config.MigrateOldConfig(opts.ManifestFile)
 	if err != nil {
-		return errors.Wrap(err, "unable to migrate the provided configuration")
+		return err
 	}
 
-	err = validateAndPrintConfig(newConfigYAML)
-	if err != nil {
-		return errors.Wrap(err, "unable to validate and print config")
-	}
-
-	return nil
+	return validateAndPrintConfig(newConfigYAML)
 }
 
 // runGenerateMachineDeployments generates the MachineDeployments manifest
 func runGenerateMachineDeployments(opts *globalOptions) error {
 	s, err := opts.BuildState()
 	if err != nil {
-		return errors.Wrap(err, "failed to initialize State")
+		return err
 	}
 
 	manifest, err := machinecontroller.GenerateMachineDeploymentsManifest(s)
 	if err != nil {
-		return errors.Wrap(err, "failed to generate machinedeployments manifest")
+		return err
 	}
 
 	fmt.Println(manifest)
@@ -501,21 +491,22 @@ func runGenerateMachineDeployments(opts *globalOptions) error {
 func validateAndPrintConfig(cfgYaml interface{}) error {
 	// Validate new config by unmarshaling
 	var buffer bytes.Buffer
+
 	err := yaml.NewEncoder(&buffer).Encode(cfgYaml)
 	if err != nil {
-		return errors.Wrap(err, "failed to encode new config as YAML")
+		return fail.Runtime(err, "marshalling new config as YAML")
 	}
 
-	cfg := &kubeonev1beta2.KubeOneCluster{}
+	cfg := kubeonev1beta2.NewKubeOneCluster()
 	err = kyaml.UnmarshalStrict(buffer.Bytes(), &cfg)
 	if err != nil {
-		return errors.Wrap(err, "failed to decode new config")
+		return fail.Runtime(err, "testing marshal/unmarshal")
 	}
 
 	// Print new config yaml
 	err = yaml.NewEncoder(os.Stdout).Encode(cfgYaml)
 	if err != nil {
-		return errors.Wrap(err, "failed to encode new config as YAML")
+		return fail.Runtime(err, "marshalling new config as YAML")
 	}
 
 	return nil

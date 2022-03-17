@@ -28,9 +28,9 @@ import (
 	kubeonescheme "k8c.io/kubeone/pkg/apis/kubeone/scheme"
 	kubeonev1beta1 "k8c.io/kubeone/pkg/apis/kubeone/v1beta1"
 	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/templates"
 
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"sigs.k8s.io/yaml"
 )
@@ -50,7 +50,7 @@ func configDumpCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		RunE: func(*cobra.Command, []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
-				return errors.Wrap(err, "unable to get global flags")
+				return err
 			}
 
 			opts.globalOptions = *gopts
@@ -72,11 +72,12 @@ func dumpConfig(opts *configDumpOpts) error {
 	// the v1beta2 API).
 	manifest, err := os.ReadFile(opts.ManifestFile)
 	if err != nil {
-		return errors.Wrap(err, "reading KubeOneCluster manifest file")
+		return fail.Runtime(err, "reading KubeOneCluster manifest file")
 	}
+
 	typeMeta := runtime.TypeMeta{}
-	if uErr := yaml.Unmarshal(manifest, &typeMeta); uErr != nil {
-		return errors.Wrap(uErr, "unmarshaling cluster typeMeta")
+	if err = yaml.Unmarshal(manifest, &typeMeta); err != nil {
+		return fail.Runtime(err, "unmarshaling cluster typeMeta")
 	}
 
 	// Load the KubeOneCluster manifest.
@@ -85,7 +86,7 @@ func dumpConfig(opts *configDumpOpts) error {
 	// then validates it.
 	cluster, err := config.LoadKubeOneCluster(opts.ManifestFile, opts.TerraformState, opts.CredentialsFile, logger)
 	if err != nil {
-		return errors.Wrap(err, "loading KubeOneCluster manifest")
+		return err
 	}
 
 	// Convert the internal KubeOneCluster manifest to the versioned manifest.
@@ -94,33 +95,30 @@ func dumpConfig(opts *configDumpOpts) error {
 	var objs []runtime.Object
 	switch typeMeta.APIVersion {
 	case kubeonev1beta1.SchemeGroupVersion.String():
-		versionedCluster := &kubeonev1beta1.KubeOneCluster{}
+		versionedCluster := kubeonev1beta1.NewKubeOneCluster()
 		if cErr := kubeonescheme.Scheme.Convert(cluster, versionedCluster, nil); cErr != nil {
-			return errors.Wrap(cErr, "converting internal to versioned manifest")
+			return fail.Config(cErr, fmt.Sprintf("converting %s to internal object", versionedCluster.GroupVersionKind()))
 		}
-		versionedCluster.TypeMeta = metav1.TypeMeta{
-			APIVersion: kubeonev1beta1.SchemeGroupVersion.String(),
-			Kind:       "KubeOneCluster",
-		}
+
 		objs = append(objs, versionedCluster)
 	case kubeonev1beta2.SchemeGroupVersion.String():
-		versionedCluster := &kubeonev1beta2.KubeOneCluster{}
+		versionedCluster := kubeonev1beta2.NewKubeOneCluster()
 		if cErr := kubeonescheme.Scheme.Convert(cluster, versionedCluster, nil); cErr != nil {
-			return errors.Wrap(cErr, "converting internal to versioned manifest")
+			return fail.Config(cErr, fmt.Sprintf("converting %s to internal object", versionedCluster.GroupVersionKind()))
 		}
-		versionedCluster.TypeMeta = metav1.TypeMeta{
-			APIVersion: kubeonev1beta2.SchemeGroupVersion.String(),
-			Kind:       "KubeOneCluster",
-		}
+
 		objs = append(objs, versionedCluster)
 	default:
-		return errors.New("invalid KubeOneCluster API version")
+		return fail.ConfigError{
+			Op:  "checking KubeOneCluster apiVersion",
+			Err: errors.New("invalid"),
+		}
 	}
 
 	// Convert the KubeOneCluster struct to the YAML representation
 	clusterYAML, err := templates.KubernetesToYAML(objs)
 	if err != nil {
-		return errors.Wrap(err, "converting merged manifest to yaml")
+		return err
 	}
 
 	fmt.Println(clusterYAML)

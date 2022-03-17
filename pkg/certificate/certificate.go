@@ -21,11 +21,13 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/pkg/errors"
 
 	"k8c.io/kubeone/pkg/configupload"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/templates/resources"
 
 	certutil "k8s.io/client-go/util/cert"
@@ -36,31 +38,45 @@ import (
 func CAKeyPair(config *configupload.Configuration) (*rsa.PrivateKey, *x509.Certificate, error) {
 	caCert, found := config.KubernetesPKI[KubernetesCACertPath]
 	if !found {
-		return nil, nil, fmt.Errorf("%q not found", KubernetesCACertPath)
+		return nil, nil, fail.RuntimeError{
+			Op: "getting CA certificate from internal kubernetes PKI",
+			Err: errors.WithStack(&os.PathError{
+				Op:   "read",
+				Path: KubernetesCACertPath,
+				Err:  fmt.Errorf("not found"),
+			}),
+		}
 	}
 
 	caKey, found := config.KubernetesPKI[KubernetesCAKeyPath]
 	if !found {
-		return nil, nil, fmt.Errorf("%q not found", KubernetesCAKeyPath)
+		return nil, nil, fail.RuntimeError{
+			Op: "getting CA key from internal kubernetes PKI",
+			Err: errors.WithStack(&os.PathError{
+				Op:   "read",
+				Path: KubernetesCAKeyPath,
+				Err:  fmt.Errorf("not found"),
+			}),
+		}
 	}
 
 	certs, err := certutil.ParseCertsPEM(caCert)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, fail.Runtime(err, "parsing kubernetes CA certificate PEM")
 	}
 
 	if len(certs) == 0 {
-		return nil, nil, errors.New("ca.crt does not contain at least one valid certificate")
+		return nil, nil, fail.Runtime(fmt.Errorf("does not contain at least one valid certificate"), "parsing kubernetes CA certificate PEM")
 	}
 
 	possibleKey, err := keyutil.ParsePrivateKeyPEM(caKey)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, fail.Runtime(err, "parsing kubernetes CA key")
 	}
 
 	rsaKey, ok := possibleKey.(*rsa.PrivateKey)
 	if !ok {
-		return nil, nil, errors.New("private key is not a RSA private key")
+		return nil, nil, fail.Runtime(fmt.Errorf("private key is not a RSA private key"), "parsing kubernetes CA key")
 	}
 
 	return rsaKey, certs[0], nil
@@ -77,7 +93,7 @@ func NewSignedTLSCert(name, namespace, domain string, caKey crypto.Signer, caCer
 
 	newKPKey, err := newPrivateKey()
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to generate private key")
+		return nil, fail.Runtime(err, "generating RSA private key")
 	}
 
 	certCfg := certutil.Config{
@@ -90,7 +106,7 @@ func NewSignedTLSCert(name, namespace, domain string, caKey crypto.Signer, caCer
 
 	newKPCert, err := newSignedCert(&certCfg, newKPKey, caCert, caKey)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to generate certificate")
+		return nil, fail.Runtime(err, "generating certificate")
 	}
 
 	return map[string]string{

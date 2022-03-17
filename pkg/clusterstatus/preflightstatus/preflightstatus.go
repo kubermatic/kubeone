@@ -17,10 +17,13 @@ limitations under the License.
 package preflightstatus
 
 import (
+	"fmt"
+
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
@@ -66,7 +69,10 @@ func verifyMatchNodes(hosts []kubeoneapi.HostConfig, nodes corev1.NodeList, logg
 	if len(nodes.Items) != len(hosts) {
 		logger.Errorf("Mismatch between nodes in the cluster (%d) and nodes defined in the manifest (%d).", len(nodes.Items), len(hosts))
 
-		return []error{errors.Errorf("expected %d cluster nodes but got %d", len(nodes.Items), len(hosts))}
+		return []error{fail.RuntimeError{
+			Op:  "checking match between Nodes and Hosts",
+			Err: errors.Errorf("expected %d cluster nodes but got %d", len(nodes.Items), len(hosts)),
+		}}
 	}
 
 	nodesFound := map[string]bool{}
@@ -95,7 +101,10 @@ func verifyMatchNodes(hosts []kubeoneapi.HostConfig, nodes corev1.NodeList, logg
 
 	for nodeName, found := range nodesFound {
 		if !found {
-			errs = append(errs, errors.Errorf("unable to match node %q to machines defined in the manifest", nodeName))
+			errs = append(errs, fail.RuntimeError{
+				Op:  "matching found Nodes",
+				Err: errors.Errorf("unable to match node %q to machines defined in the manifest", nodeName),
+			})
 		}
 	}
 
@@ -121,7 +130,10 @@ func verifyNodesReady(nodes corev1.NodeList, logger logrus.FieldLogger, verbose 
 		}
 
 		if !found {
-			errs = append(errs, errors.Errorf("node %q is not ready", n.ObjectMeta.Name))
+			errs = append(errs, fail.RuntimeError{
+				Op:  fmt.Sprintf("checking %q node readiness", n.ObjectMeta.Name),
+				Err: errors.New("not ready"),
+			})
 		}
 	}
 
@@ -136,7 +148,10 @@ func verifyNoUpgradeLabels(nodes corev1.NodeList, logger logrus.FieldLogger, ver
 		_, ok := n.ObjectMeta.Labels[LabelUpgradeLock]
 		if ok {
 			logger.Errorf("Upgrade is in progress on the node %q (label %q is present).", n.ObjectMeta.Name, LabelUpgradeLock)
-			errs = append(errs, errors.Errorf("label %q is present on node %q", LabelUpgradeLock, n.ObjectMeta.Name))
+			errs = append(errs, fail.RuntimeError{
+				Op:  fmt.Sprintf("checking presence of %q label on node %q", LabelUpgradeLock, n.ObjectMeta.Name),
+				Err: errors.New("label is present"),
+			})
 		}
 
 		if verbose && !ok {

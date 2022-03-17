@@ -20,7 +20,8 @@ import (
 	"context"
 
 	"github.com/imdario/mergo"
-	"github.com/pkg/errors"
+
+	"k8c.io/kubeone/pkg/fail"
 
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -50,16 +51,18 @@ func CreateOrUpdate(ctx context.Context, c client.Client, obj client.Object, upd
 
 	switch {
 	case k8serrors.IsNotFound(err):
-		return errors.Wrapf(c.Create(ctx, obj), "failed to create %T", obj)
+		err = c.Create(ctx, obj)
+
+		return fail.KubeClient(err, "creating %T %s", obj, key)
 	case err != nil:
-		return errors.Wrapf(err, "failed to get %T object", obj)
+		return fail.KubeClient(err, "getting %T %s", obj, key)
 	}
 
 	if err = mergo.Merge(obj, existing); err != nil {
-		return errors.Wrap(err, "failed to merge objects")
+		return fail.Runtime(err, "merging updated %T %s with existing", obj, key)
 	}
 
-	return errors.Wrapf(c.Update(ctx, obj), "failed to update %T object", obj)
+	return fail.KubeClient(c.Update(ctx, obj), "updating %T %s", obj, key)
 }
 
 // CreateOrReplace makes it easy to "replace" objects
@@ -73,20 +76,18 @@ func CreateOrReplace(ctx context.Context, c client.Client, obj client.Object, up
 		return nil // success!
 	}
 
+	key := client.ObjectKeyFromObject(obj)
+
 	// Object does not exist already, but creating failed for another reason
 	if !k8serrors.IsAlreadyExists(err) {
-		return errors.Wrap(err, "failed to create object")
+		return fail.KubeClient(err, "creating %T %s", obj, key)
 	}
 
 	// Object exists already, time to update it
 	existingObj, _ := obj.DeepCopyObject().(client.Object)
-	key := client.ObjectKey{
-		Name:      obj.GetName(),
-		Namespace: obj.GetNamespace(),
-	}
 
 	if err = c.Get(ctx, key, existingObj); err != nil {
-		return errors.Wrap(err, "failed to retrieve existing object")
+		return fail.KubeClient(err, "getting %T %s", obj, key)
 	}
 
 	// do not use mergo to merge the existing into the new object,
@@ -97,5 +98,5 @@ func CreateOrReplace(ctx context.Context, c client.Client, obj client.Object, up
 	obj.SetResourceVersion(existingObj.GetResourceVersion())
 	obj.SetGeneration(existingObj.GetGeneration())
 
-	return errors.Wrap(c.Update(ctx, obj), "failed to update object")
+	return fail.Runtime(c.Update(ctx, obj), "updating %T %s", obj, key)
 }

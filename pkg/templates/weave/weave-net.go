@@ -20,8 +20,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 
-	"github.com/pkg/errors"
-
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
@@ -34,7 +33,7 @@ import (
 func EnsureSecret(s *state.State) error {
 	pass, err := genPassword()
 	if err != nil {
-		return errors.Wrap(err, "failed to generate random password")
+		return err
 	}
 
 	sec := weaveSecret(pass)
@@ -42,27 +41,23 @@ func EnsureSecret(s *state.State) error {
 		Name:      sec.GetName(),
 		Namespace: sec.GetNamespace(),
 	}
-
 	secCopy := sec.DeepCopy()
+
 	err = s.DynamicClient.Get(s.Context, key, secCopy)
-	switch {
-	case k8serrors.IsNotFound(err):
+	if k8serrors.IsNotFound(err) {
 		err = s.DynamicClient.Create(s.Context, sec)
-		if err != nil {
-			return errors.Wrap(err, "failed to create weave-net Secret")
-		}
-	case err != nil:
-		return errors.Wrap(err, "failed to get weave-net Secret")
+
+		return fail.KubeClient(err, "creating %T %s", sec, key)
 	}
 
-	return nil
+	return fail.KubeClient(err, "getting %T %s", sec, key)
 }
 
 func genPassword() (string, error) {
 	pi := make([]byte, 32)
 	_, err := rand.Reader.Read(pi)
 	if err != nil {
-		return "", errors.Wrap(err, "failed to read random bytes")
+		return "", fail.Runtime(err, "reading random bytes")
 	}
 
 	return base64.StdEncoding.EncodeToString(pi), nil

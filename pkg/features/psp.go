@@ -19,8 +19,6 @@ package features
 import (
 	"context"
 
-	"github.com/pkg/errors"
-
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/clientutil"
 	"k8c.io/kubeone/pkg/state"
@@ -60,7 +58,7 @@ func installKubeSystemPSP(psp *kubeoneapi.PodSecurityPolicy, s *state.State) err
 
 	for _, obj := range k8sobjects {
 		if err := clientutil.CreateOrUpdate(ctx, s.DynamicClient, obj); err != nil {
-			return errors.Wrap(err, "failed to ensure PodSecurityPolicy role binding")
+			return err
 		}
 	}
 

@@ -17,11 +17,13 @@ limitations under the License.
 package addons
 
 import (
+	"fmt"
 	"io/fs"
 
 	"github.com/Masterminds/semver/v3"
 	"github.com/pkg/errors"
 
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/semverutil"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/resources"
@@ -154,7 +156,7 @@ func EnsureUserAddons(s *state.State) error {
 	if applier.LocalFS != nil {
 		customAddons, err := fs.ReadDir(applier.LocalFS, ".")
 		if err != nil {
-			return errors.Wrap(err, "failed to read addons directory")
+			return fail.Runtime(err, "reading local addons directory")
 		}
 
 		for _, useraddon := range customAddons {
@@ -179,7 +181,7 @@ func EnsureUserAddons(s *state.State) error {
 
 		if embeddedAddon.Delete {
 			if err := applier.loadAndDeleteAddon(s, applier.EmbededFS, embeddedAddon.Name); err != nil {
-				return errors.Wrapf(err, "failed to load and delete the addon %q", embeddedAddon.Name)
+				return err
 			}
 
 			continue
@@ -192,14 +194,14 @@ func EnsureUserAddons(s *state.State) error {
 
 	for addonName := range combinedAddons {
 		if err := EnsureAddonByName(s, addonName); err != nil {
-			return errors.Wrapf(err, "failed to load and apply the addon %q", addonName)
+			return err
 		}
 	}
 
 	if applier.LocalFS != nil {
 		s.Logger.Info("Applying addons from the root directory...")
 		if err := applier.loadAndApplyAddon(s, applier.LocalFS, ""); err != nil {
-			return errors.Wrap(err, "failed to load and apply addons from the root directory")
+			return err
 		}
 	}
 
@@ -218,7 +220,7 @@ func EnsureAddonByName(s *state.State, addonName string) error {
 	if applier.LocalFS != nil {
 		addons, lErr := fs.ReadDir(applier.LocalFS, ".")
 		if lErr != nil {
-			return errors.Wrap(lErr, "failed to read addons directory")
+			return fail.Runtime(lErr, "reading local addons directory")
 		}
 
 		for _, a := range addons {
@@ -227,7 +229,7 @@ func EnsureAddonByName(s *state.State, addonName string) error {
 			}
 			if a.Name() == addonName {
 				if err := applier.loadAndApplyAddon(s, applier.LocalFS, a.Name()); err != nil {
-					return errors.Wrap(err, "failed to load and apply addon")
+					return err
 				}
 
 				return nil
@@ -237,7 +239,7 @@ func EnsureAddonByName(s *state.State, addonName string) error {
 
 	addons, eErr := fs.ReadDir(applier.EmbededFS, ".")
 	if eErr != nil {
-		return errors.Wrap(eErr, "failed to read embedded addons")
+		return fail.Runtime(eErr, "reading embedded addons directory")
 	}
 
 	for _, a := range addons {
@@ -246,14 +248,17 @@ func EnsureAddonByName(s *state.State, addonName string) error {
 		}
 		if a.Name() == addonName {
 			if err := applier.loadAndApplyAddon(s, applier.EmbededFS, a.Name()); err != nil {
-				return errors.Wrap(err, "failed to load and apply embedded addon")
+				return err
 			}
 
 			return nil
 		}
 	}
 
-	return errors.Errorf("addon %q does not exist", addonName)
+	return fail.RuntimeError{
+		Op:  fmt.Sprintf("installing %q addon", addonName),
+		Err: errors.New("addon does not exist"),
+	}
 }
 
 // DeleteAddonByName deletes an addon by its name. It's required to keep the
@@ -270,7 +275,7 @@ func DeleteAddonByName(s *state.State, addonName string) error {
 	if applier.LocalFS != nil {
 		addons, lErr := fs.ReadDir(applier.LocalFS, ".")
 		if lErr != nil {
-			return errors.Wrap(lErr, "failed to read addons directory")
+			return fail.Runtime(lErr, "reading local addons directory")
 		}
 
 		for _, a := range addons {
@@ -279,7 +284,7 @@ func DeleteAddonByName(s *state.State, addonName string) error {
 			}
 			if a.Name() == addonName {
 				if err := applier.loadAndDeleteAddon(s, applier.LocalFS, a.Name()); err != nil {
-					return errors.Wrap(err, "failed to load and apply addon")
+					return err
 				}
 
 				return nil
@@ -289,7 +294,7 @@ func DeleteAddonByName(s *state.State, addonName string) error {
 
 	addons, eErr := fs.ReadDir(applier.EmbededFS, ".")
 	if eErr != nil {
-		return errors.Wrap(eErr, "failed to read embedded addons")
+		return fail.Runtime(eErr, "reading embedded addons directory")
 	}
 
 	for _, a := range addons {
@@ -298,14 +303,17 @@ func DeleteAddonByName(s *state.State, addonName string) error {
 		}
 		if a.Name() == addonName {
 			if err := applier.loadAndDeleteAddon(s, applier.EmbededFS, a.Name()); err != nil {
-				return errors.Wrap(err, "failed to load and apply embedded addon")
+				return err
 			}
 
 			return nil
 		}
 	}
 
-	return errors.Errorf("addon %q does not exist", addonName)
+	return fail.RuntimeError{
+		Op:  fmt.Sprintf("installing %q addon", addonName),
+		Err: errors.New("addon does not exist"),
+	}
 }
 
 func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction {

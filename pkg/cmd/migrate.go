@@ -22,6 +22,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/tasks"
 )
@@ -49,7 +50,7 @@ func migrateToContainerdCmd(fs *pflag.FlagSet) *cobra.Command {
 		RunE: func(_ *cobra.Command, _ []string) error {
 			gopts, err := persistentGlobalOptions(fs)
 			if err != nil {
-				return errors.Wrap(err, "unable to get global flags")
+				return err
 			}
 
 			return runMigrateToContainerd(gopts)
@@ -60,7 +61,7 @@ func migrateToContainerdCmd(fs *pflag.FlagSet) *cobra.Command {
 func runMigrateToContainerd(opts *globalOptions) error {
 	s, err := opts.BuildState()
 	if err != nil {
-		return errors.Wrap(err, "failed to initialize State")
+		return err
 	}
 
 	// Probe the cluster for the actual state and the needed tasks.
@@ -72,13 +73,20 @@ func runMigrateToContainerd(opts *globalOptions) error {
 	}
 
 	if !s.LiveCluster.IsProvisioned() {
-		return errors.New("the target cluster is not provisioned")
-	}
-	if !s.LiveCluster.Healthy() {
-		return errors.New("the target cluster is not healthy, please run 'kubeone apply' first")
+		return fail.RuntimeError{
+			Op:  "containerd migration",
+			Err: errors.New("the target cluster is not provisioned"),
+		}
 	}
 
-	return errors.Wrap(tasks.WithContainerDMigration(nil).Run(s), "failed to get cluster status")
+	if !s.LiveCluster.Healthy() {
+		return fail.RuntimeError{
+			Op:  "containerd migration",
+			Err: errors.New("the target cluster is not healthy, please run 'kubeone apply' first"),
+		}
+	}
+
+	return tasks.WithContainerDMigration(nil).Run(s)
 }
 
 type migrateCCMOptions struct {
@@ -90,7 +98,7 @@ type migrateCCMOptions struct {
 func (opts *migrateCCMOptions) buildCCMMigrationState() (*state.State, error) {
 	s, err := opts.globalOptions.BuildState()
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to build state")
+		return nil, err
 	}
 
 	s.CCMMigration = true
@@ -135,7 +143,7 @@ func migrateToCCMCSICmd(fs *pflag.FlagSet) *cobra.Command {
 		RunE: func(_ *cobra.Command, _ []string) error {
 			gopts, err := persistentGlobalOptions(fs)
 			if err != nil {
-				return errors.Wrap(err, "unable to get global flags")
+				return err
 			}
 
 			opts.globalOptions = *gopts
@@ -164,12 +172,12 @@ func migrateToCCMCSICmd(fs *pflag.FlagSet) *cobra.Command {
 func runMigrateToCCMCSI(opts *migrateCCMOptions) error {
 	s, err := opts.buildCCMMigrationState()
 	if err != nil {
-		return errors.Wrap(err, "failed to initialize State")
+		return err
 	}
 
 	// Validate credentials
-	if vErr := validateCredentials(s, opts.CredentialsFile); vErr != nil {
-		return vErr
+	if err = validateCredentials(s, opts.CredentialsFile); err != nil {
+		return err
 	}
 
 	// Probe the cluster for the actual state and the needed tasks.
@@ -181,10 +189,17 @@ func runMigrateToCCMCSI(opts *migrateCCMOptions) error {
 	}
 
 	if !s.LiveCluster.IsProvisioned() {
-		return errors.New("the target cluster is not provisioned")
+		return fail.RuntimeError{
+			Op:  "migrating CCM/CSI",
+			Err: errors.New("the target cluster is not provisioned"),
+		}
 	}
+
 	if !s.LiveCluster.Healthy() {
-		return errors.New("the target cluster is not healthy, please run 'kubeone apply' first")
+		return fail.RuntimeError{
+			Op:  "migrating CCM/CSI",
+			Err: errors.New("the target cluster is not healthy, please run 'kubeone apply' first"),
+		}
 	}
 
 	s.Logger.Warnln("This command will migrate your cluster from in-tree cloud provider to the external CCM and CSI plugin.")
@@ -208,5 +223,5 @@ func runMigrateToCCMCSI(opts *migrateCCMOptions) error {
 		return nil
 	}
 
-	return errors.Wrap(tasks.WithCCMCSIMigration(nil).Run(s), "failed to migrate to ccm/csi")
+	return tasks.WithCCMCSIMigration(nil).Run(s)
 }

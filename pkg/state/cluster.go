@@ -24,6 +24,7 @@ import (
 	"github.com/Masterminds/semver/v3"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/fail"
 
 	apiserverconfigv1 "k8s.io/apiserver/pkg/apis/config/v1"
 	"k8s.io/client-go/rest"
@@ -218,7 +219,7 @@ func (c *Cluster) UpgradeNeeded() (bool, error) {
 		if verDiff > 0 {
 			return true, nil
 		} else if verDiff < 0 {
-			return false, errors.New("cluster downgrades are disallowed")
+			return false, fail.Config(errors.New("cluster downgrades are disallowed"), "sanity check")
 		}
 	}
 
@@ -227,7 +228,7 @@ func (c *Cluster) UpgradeNeeded() (bool, error) {
 		if verDiff > 0 {
 			return true, nil
 		} else if verDiff < 0 {
-			return false, errors.New("cluster downgrades are disallowed")
+			return false, fail.Config(errors.New("cluster downgrades are disallowed"), "sanity check")
 		}
 	}
 

@@ -77,7 +77,7 @@ func (opts *applyOpts) BuildState() (*state.State, error) {
 	if err != nil && stat != nil && stat.Size() > 0 {
 		return nil, fail.RuntimeError{
 			Op:  fmt.Sprintf("checking backup file %s existence", opts.BackupFile),
-			Err: errors.Errorf("refusing to overwrite"),
+			Err: errors.New("refusing to overwrite"),
 		}
 	}
 
@@ -259,7 +259,7 @@ func runApply(opts *applyOpts) error {
 			s.Logger.Warnf("Highest version: %s\n", higherVer)
 			s.Logger.Warnf("Use version %s to repair the cluster, then run apply with the new version\n", higherVer)
 
-			return errors.New("repair and upgrade are not supported at the same time")
+			return fail.ConfigValidation(fmt.Errorf("repair and upgrade are not supported at the same time"))
 		}
 
 		if runRepair {
@@ -267,7 +267,7 @@ func runApply(opts *applyOpts) error {
 		}
 
 		if len(brokenHosts) > 0 {
-			return errors.New("broken host(s) found, remove it manually")
+			return fail.NewConfigError("broken hosts check", "broken host(s) found, remove it manually")
 		}
 
 		return nil
@@ -275,12 +275,12 @@ func runApply(opts *applyOpts) error {
 
 	if opts.RotateEncryptionKey {
 		if !s.EncryptionEnabled() {
-			return errors.New("Encryption Providers support is not enabled for this cluster")
+			return fail.ConfigValidation(fmt.Errorf("encryption Providers support is not enabled for this cluster"))
 		}
 
 		if s.Cluster.Features.EncryptionProviders != nil &&
 			s.Cluster.Features.EncryptionProviders.CustomEncryptionConfiguration != "" {
-			return errors.New("key rotation of custom providers file is not supported")
+			return fail.ConfigValidation(fmt.Errorf("key rotation of custom providers file is not supported"))
 		}
 
 		return runApplyRotateKey(s, opts)
@@ -340,10 +340,10 @@ func runApplyInstall(s *state.State, opts *applyOpts) error { // Print the expec
 	}
 
 	if opts.NoInit {
-		return errors.Wrap(tasks.WithBinariesOnly(nil).Run(s), "failed to install kubernetes binaries")
+		return tasks.WithBinariesOnly(nil).Run(s)
 	}
 
-	return errors.Wrap(tasks.WithFullInstall(nil).Run(s), "failed to install the cluster")
+	return tasks.WithFullInstall(nil).Run(s)
 }
 
 func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
@@ -445,19 +445,19 @@ func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
 		return nil
 	}
 
-	return errors.Wrap(tasksToRun.Run(s), "failed to reconcile the cluster")
+	return tasksToRun.Run(s)
 }
 
 func runApplyRotateKey(s *state.State, opts *applyOpts) error {
 	if !opts.ForceUpgrade {
 		s.Logger.Error("rotating encryption keys requires the --force-upgrade flag")
 
-		return errors.New("rotating encryption keys requires the --force-upgrade flag")
+		return fail.ConfigValidation(fmt.Errorf("rotating encryption keys requires the --force-upgrade flag"))
 	}
 	if !s.EncryptionEnabled() {
 		s.Logger.Error("rotating encryption keys failed: Encryption Providers support is not enabled")
 
-		return errors.New("rotating encryption keys failed: Encryption Providers support is not enabled")
+		return fail.ConfigValidation(fmt.Errorf("rotating encryption keys failed: Encryption Providers support is not enabled"))
 	}
 
 	fmt.Println("The following actions will be taken: ")
@@ -480,7 +480,7 @@ func runApplyRotateKey(s *state.State, opts *applyOpts) error {
 		return nil
 	}
 
-	return errors.Wrap(tasksToRun.Run(s), "failed to reconcile the cluster")
+	return tasksToRun.Run(s)
 }
 
 func printHostInformation(host state.Host) {
