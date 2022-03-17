@@ -185,8 +185,7 @@ func saveCABundleOnControlPlane(s *state.State, _ *kubeoneapi.HostConfig, conn s
 }
 
 func approvePendingCSR(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
-	approveErr := errors.Errorf("no CSR found for node %q", node.Hostname)
-
+	var csrFound bool
 	sleepTime := 20 * time.Second
 	s.Logger.Infof("Waiting %s for CSRs to approve...", sleepTime)
 	time.Sleep(sleepTime)
@@ -219,8 +218,8 @@ func approvePendingCSR(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Con
 			}
 		}
 		if approved {
-			// CSR matched but it's already approved, no need to raise an error
-			approveErr = nil
+			// CSR matched but it's already approved
+			csrFound = true
 
 			continue
 		}
@@ -228,7 +227,7 @@ func approvePendingCSR(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Con
 		if err := validateCSR(csr.Spec); err != nil {
 			return fmt.Errorf("failed to validate CSR: %w", err)
 		}
-		approveErr = nil
+		csrFound = true
 
 		csr := csr.DeepCopy()
 		csr.Status.Conditions = append(csr.Status.Conditions, certificatesv1.CertificateSigningRequestCondition{
@@ -244,7 +243,11 @@ func approvePendingCSR(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Con
 		}
 	}
 
-	return approveErr
+	if !csrFound {
+		s.Logger.Info("No CSR found for node %q, assuming it was garbage-collected", node.Hostname)
+	}
+
+	return nil
 }
 
 func validateCSR(spec certificatesv1.CertificateSigningRequestSpec) error {
