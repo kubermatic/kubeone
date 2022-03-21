@@ -19,6 +19,7 @@ package scripts
 import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/containerruntime"
+	"k8c.io/kubeone/pkg/fail"
 )
 
 const (
@@ -142,11 +143,15 @@ func KubeadmDebian(cluster *kubeoneapi.KubeOneCluster, force bool) (string, erro
 		return "", err
 	}
 
-	return Render(kubeadmDebianTemplate, data)
+	result, err := Render(kubeadmDebianTemplate, data)
+
+	return result, fail.Runtime(err, "rendering kubeadmDebianTemplate script")
 }
 
 func RemoveBinariesDebian() (string, error) {
-	return Render(removeBinariesDebianScriptTemplate, Data{})
+	result, err := Render(removeBinariesDebianScriptTemplate, Data{})
+
+	return result, fail.Runtime(err, "rendering removeBinariesDebianScriptTemplate script")
 }
 
 func UpgradeKubeadmAndCNIDebian(cluster *kubeoneapi.KubeOneCluster) (string, error) {
@@ -167,7 +172,9 @@ func UpgradeKubeadmAndCNIDebian(cluster *kubeoneapi.KubeOneCluster) (string, err
 		return "", err
 	}
 
-	return Render(kubeadmDebianTemplate, data)
+	result, err := Render(kubeadmDebianTemplate, data)
+
+	return result, fail.Runtime(err, "rendering kubeadmDebianTemplate script")
 }
 
 func UpgradeKubeletAndKubectlDebian(cluster *kubeoneapi.KubeOneCluster) (string, error) {
@@ -189,5 +196,7 @@ func UpgradeKubeletAndKubectlDebian(cluster *kubeoneapi.KubeOneCluster) (string,
 		return "", err
 	}
 
-	return Render(kubeadmDebianTemplate, data)
+	result, err := Render(kubeadmDebianTemplate, data)
+
+	return result, fail.Runtime(err, "rendering kubeadmDebianTemplate script")
 }

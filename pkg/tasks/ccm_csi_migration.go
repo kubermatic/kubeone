@@ -21,9 +21,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/pkg/errors"
-
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/nodeutils"
 	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/ssh"
@@ -46,18 +45,21 @@ const (
 
 func ccmMigrationValidateConfig(s *state.State) error {
 	if !s.Cluster.CloudProvider.External {
-		return errors.New(".cloudProvider.external must be enabled to start the migration")
+		return fail.NewConfigError("validation", ".cloudProvider.external must be enabled to start the migration")
 	}
+
 	if !s.Cluster.CloudProvider.CSIMigrationSupported() {
-		return errors.New("ccm/csi migration is not supported for the specified provider")
+		return fail.NewConfigError("validation", "ccm/csi migration is not supported for the specified provider")
 	}
+
 	if !s.LiveCluster.CCMStatus.InTreeCloudProviderEnabled {
-		return errors.New("the cluster is already running external ccm")
+		return fail.NewConfigError("validation", "the cluster is already running external ccm")
 	} else if s.LiveCluster.CCMStatus.ExternalCCMDeployed && !s.CCMMigrationComplete {
-		return errors.New("the ccm/csi migration is currently in progress, run command with --complete to finish it")
+		return fail.NewConfigError("validation", "the ccm/csi migration is currently in progress, run command with --complete to finish it")
 	}
+
 	if s.Cluster.CloudProvider.Vsphere != nil && s.Cluster.CloudProvider.CSIConfig == "" {
-		return errors.New("the ccm/csi migration for vsphere requires providing csi configuration using .cloudProvider.csiConfig field")
+		return fail.NewConfigError("validation", "the ccm/csi migration for vsphere requires providing csi configuration using .cloudProvider.csiConfig field")
 	}
 
 	return nil
@@ -65,12 +67,12 @@ func ccmMigrationValidateConfig(s *state.State) error {
 
 func readyToCompleteCCMMigration(s *state.State) error {
 	if s.DynamicClient == nil {
-		return errors.New("clientset not initialized")
+		return fail.NoKubeClient()
 	}
 
 	machines := clusterv1alpha1.MachineList{}
 	if err := s.DynamicClient.List(s.Context, &machines); err != nil {
-		return errors.Wrap(err, "failed to list machines")
+		return fail.KubeClient(err, "getting %T", machines)
 	}
 
 	migrated := true
@@ -84,7 +86,7 @@ func readyToCompleteCCMMigration(s *state.State) error {
 	}
 
 	if !migrated {
-		return errors.New("not all machines are rolled-out or migration not started yet")
+		return fail.NewRuntimeError("checking CCM migration readiness status", "not all machines are rolled-out or migration not started yet")
 	}
 
 	return nil
@@ -109,7 +111,7 @@ func ccmMigrationRegenerateControlPlaneManifestsInternal(s *state.State, node *k
 	}
 	_, _, err = s.Runner.RunRaw(cmd)
 	if err != nil {
-		return err
+		return fail.SSH(err, "regenerate contorl-plane manifests for CCM migration")
 	}
 
 	timeout := 30 * time.Second
@@ -120,13 +122,13 @@ func ccmMigrationRegenerateControlPlaneManifestsInternal(s *state.State, node *k
 	logger.Infof("Waiting up to %s for API server to become healthy...", timeout)
 	err = waitForStaticPodReady(s, timeout, apiserverPodName, metav1.NamespaceSystem)
 	if err != nil {
-		return errors.Wrapf(err, "API server failed to come up for %s", timeout)
+		return err
 	}
 
 	logger.Infof("Waiting up to %s for kube-controller-manager roll-out...", timeout)
 	err = waitForStaticPodReady(s, timeout, controllerManagerPodName, metav1.NamespaceSystem)
 	if err != nil {
-		return errors.Wrapf(err, "API server failed to come up for %s", timeout)
+		return err
 	}
 
 	return nil
@@ -144,12 +146,12 @@ func ccmMigrationUpdateControlPlaneKubeletConfigInternal(s *state.State, node *k
 
 	logger.Infoln("Cordoning node...")
 	if err := drainer.Cordon(s.Context, node.Hostname, true); err != nil {
-		return errors.Wrap(err, "failed to cordon follower control plane node")
+		return err
 	}
 
 	logger.Infoln("Draining node...")
 	if err := drainer.Drain(s.Context, node.Hostname); err != nil {
-		return errors.Wrap(err, "failed to drain follower control plane node")
+		return err
 	}
 
 	logger.Info("Updating Kubelet config...")
@@ -159,18 +161,18 @@ func ccmMigrationUpdateControlPlaneKubeletConfigInternal(s *state.State, node *k
 	}
 	_, _, err = s.Runner.RunRaw(cmd)
 	if err != nil {
-		return err
+		return fail.SSH(err, "updating kubelet config for CCM migration")
 	}
 
 	timeout := 2 * time.Minute
 	logger.Debugf("Waiting up to %s for Kubelet to become running...", timeout)
 	if err := waitForKubeletReady(conn, timeout); err != nil {
-		return errors.Wrapf(err, "kubelet failed to start for %s", timeout)
+		return err
 	}
 
 	logger.Infoln("Uncordoning node...")
 	if err := drainer.Cordon(s.Context, node.Hostname, false); err != nil {
-		return errors.Wrap(err, "failed to uncordon follower control plane node")
+		return err
 	}
 
 	return nil
@@ -188,12 +190,12 @@ func ccmMigrationUpdateStaticWorkersKubeletConfigInternal(s *state.State, node *
 
 	logger.Infoln("Cordoning node...")
 	if err := drainer.Cordon(s.Context, node.Hostname, true); err != nil {
-		return errors.Wrap(err, "failed to cordon follower control plane node")
+		return err
 	}
 
 	logger.Infoln("Draining node...")
 	if err := drainer.Drain(s.Context, node.Hostname); err != nil {
-		return errors.Wrap(err, "failed to drain follower control plane node")
+		return err
 	}
 
 	// Update kubelet config and flags
@@ -214,18 +216,18 @@ func ccmMigrationUpdateStaticWorkersKubeletConfigInternal(s *state.State, node *
 
 	_, _, err = s.Runner.RunRaw(script)
 	if err != nil {
-		return err
+		return fail.SSH(err, "restarting kubelet for CCM migration")
 	}
 
 	timeout := 2 * time.Minute
 	logger.Debugf("Waiting up to %s for Kubelet to become running...", timeout)
 	if err := waitForKubeletReady(conn, timeout); err != nil {
-		return errors.Wrapf(err, "kubelet failed to start for %s", timeout)
+		return err
 	}
 
 	logger.Infoln("Uncordoning node...")
 	if err := drainer.Cordon(s.Context, node.Hostname, false); err != nil {
-		return errors.Wrap(err, "failed to uncordon follower control plane node")
+		return err
 	}
 
 	return nil
@@ -271,30 +273,31 @@ func ccmMigrationUpdateKubeletFlags(s *state.State) error {
 	})
 }
 
-func waitForStaticPodReady(s *state.State, timeout time.Duration, staticPodName, staticPodNamespace string) error {
+func waitForStaticPodReady(s *state.State, timeout time.Duration, podName, podNamespace string) error {
 	if s.DynamicClient == nil {
-		return errors.New("clientset not initialized")
+		return fail.NoKubeClient()
 	}
-	if staticPodName == "" || staticPodNamespace == "" {
-		return errors.New("static pod name and namespace are required")
+
+	if podName == "" || podNamespace == "" {
+		return fail.KubeClient(fmt.Errorf("static pod name and namespace are required"), "waiting for static pods")
 	}
 
 	return wait.PollImmediate(5*time.Second, timeout, func() (bool, error) {
 		if s.Verbose {
-			s.Logger.Debugf("Waiting for pod %q to become healthy...", staticPodName)
+			s.Logger.Debugf("Waiting for pod %q to become healthy...", podName)
 		}
 
 		pod := corev1.Pod{}
 		key := client.ObjectKey{
-			Name:      staticPodName,
-			Namespace: staticPodNamespace,
+			Name:      podName,
+			Namespace: podNamespace,
 		}
 		err := s.DynamicClient.Get(s.Context, key, &pod)
 		if err != nil {
 			// NB: We're intentionally ignoring error here to prevent failures while
 			// Kubelet is rolling-out the static pod.
 			if s.Verbose {
-				s.Logger.Debugf("Failed to get pod %q: %v", staticPodName, err)
+				s.Logger.Debugf("Failed to get pod %q: %v", podName, err)
 			}
 
 			return false, nil
@@ -303,7 +306,7 @@ func waitForStaticPodReady(s *state.State, timeout time.Duration, staticPodName,
 		// Ensure pod is running
 		if pod.Status.Phase != corev1.PodRunning {
 			if s.Verbose {
-				s.Logger.Debugf("Pod %q is not yet running", staticPodName)
+				s.Logger.Debugf("Pod %q is not yet running", podName)
 			}
 
 			return false, nil
@@ -313,13 +316,13 @@ func waitForStaticPodReady(s *state.State, timeout time.Duration, staticPodName,
 		for _, cond := range pod.Status.Conditions {
 			if cond.Type == corev1.PodReady && cond.Status != corev1.ConditionTrue {
 				if s.Verbose {
-					s.Logger.Debugf("Pod %q is not yet ready", staticPodName)
+					s.Logger.Debugf("Pod %q is not yet ready", podName)
 				}
 
 				return false, nil
 			} else if cond.Type == corev1.ContainersReady && cond.Status != corev1.ConditionTrue {
 				if s.Verbose {
-					s.Logger.Debugf("Containers for pod %q are not yet ready", staticPodName)
+					s.Logger.Debugf("Containers for pod %q are not yet ready", podName)
 				}
 
 				return false, nil
@@ -331,7 +334,7 @@ func waitForStaticPodReady(s *state.State, timeout time.Duration, staticPodName,
 }
 
 func waitForKubeletReady(conn ssh.Connection, timeout time.Duration) error {
-	return wait.PollImmediate(5*time.Second, timeout, func() (bool, error) {
+	err := wait.PollImmediate(5*time.Second, timeout, func() (bool, error) {
 		kubeletStatus, sErr := systemdStatus(conn, "kubelet")
 		if sErr != nil {
 			return false, sErr
@@ -343,31 +346,35 @@ func waitForKubeletReady(conn ssh.Connection, timeout time.Duration) error {
 
 		return false, nil
 	})
+
+	return fail.Runtime(err, "waiting for kubelet readiness")
 }
 
 func migrateOpenStackPVs(s *state.State) error {
 	if s.DynamicClient == nil {
-		return errors.New("dynamic client is not initialized")
+		return fail.NoKubeClient()
 	}
 
 	s.Logger.Infof("Patching OpenStack PersistentVolumes with annotation \"%s=%s\"...", provisionedByAnnotation, provisionedByOpenStackCSICinder)
 
 	pvList := corev1.PersistentVolumeList{}
 	if err := s.DynamicClient.List(s.Context, &pvList, &client.ListOptions{}); err != nil {
-		return errors.Wrap(err, "failed to list persistentvolumes")
+		return fail.KubeClient(err, "getting %T", pvList)
 	}
 
 	for i, pv := range pvList.Items {
+		pv := pv
 		if pv.Annotations[provisionedByAnnotation] == provisionedByOpenStackInTreeCinder {
+			pvKey := client.ObjectKeyFromObject(&pv)
 			if s.Verbose {
-				s.Logger.Debugf("Patching PersistentVolume \"%s/%s\"...", pv.Namespace, pv.Name)
+				s.Logger.Debugf("Patching PersistentVolume %q...", pvKey)
 			}
 
 			oldPv := pv.DeepCopy()
 			pv.Annotations[provisionedByAnnotation] = provisionedByOpenStackCSICinder
 
 			if err := s.DynamicClient.Patch(s.Context, &pvList.Items[i], client.MergeFrom(oldPv)); err != nil {
-				return errors.Wrapf(err, "failed to patch persistnetvolume %q with annotation \"%s=%s\"", pv.Name, provisionedByAnnotation, provisionedByOpenStackCSICinder)
+				return fail.KubeClient(err, "patching %T %s", pv, pvKey)
 			}
 		}
 	}

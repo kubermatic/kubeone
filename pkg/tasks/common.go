@@ -25,6 +25,7 @@ import (
 
 	"github.com/pkg/errors"
 
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/ssh/sshiofs"
 	"k8c.io/kubeone/pkg/state"
 
@@ -48,17 +49,20 @@ func updateRemoteFile(s *state.State, filePath string, modifier func(content []b
 
 	buf, err := io.ReadAll(f)
 	if err != nil {
-		return err
+		return fail.Runtime(err, "reading %q file", filePath)
 	}
 
 	buf, err = modifier(buf)
 	if err != nil {
-		return err
+		return fail.Runtime(err, "updating remote file %q", filePath)
 	}
 
 	fw, ok := f.(sshiofs.ExtendedFile)
 	if !ok {
-		return errors.New("file is not writable")
+		return fail.RuntimeError{
+			Op:  "checking if file satisfy sshiofs.ExtendedFile interface",
+			Err: errors.New("file is not writable"),
+		}
 	}
 
 	if err = fw.Truncate(0); err != nil {
@@ -70,7 +74,7 @@ func updateRemoteFile(s *state.State, filePath string, modifier func(content []b
 	}
 
 	if _, err = io.Copy(fw, bytes.NewBuffer(buf)); err != nil {
-		return err
+		return fail.Runtime(err, "copying data into %q", filePath)
 	}
 
 	return nil
@@ -80,7 +84,10 @@ func unmarshalKubeletFlags(buf []byte) (map[string]string, error) {
 	// throw away KUBELET_KUBEADM_ARGS=
 	s1 := strings.SplitN(string(buf), "=", 2)
 	if len(s1) != 2 {
-		return nil, errors.New("can't parse: wrong split length")
+		return nil, fail.RuntimeError{
+			Op:  "splitting kubelet kubeadm args",
+			Err: errors.New("can't parse: wrong split length"),
+		}
 	}
 
 	envValue := strings.Trim(s1[1], `"`)
@@ -90,7 +97,10 @@ func unmarshalKubeletFlags(buf []byte) (map[string]string, error) {
 	for _, flg := range flagsvalues {
 		fl := strings.SplitN(flg, "=", 2)
 		if len(fl) != 2 {
-			return nil, errors.New("wrong split length")
+			return nil, fail.RuntimeError{
+				Op:  "splitting kubelet args",
+				Err: errors.New("wrong split length"),
+			}
 		}
 		kubeletflagsMap[fl[0]] = fl[1]
 	}
@@ -113,7 +123,7 @@ func unmarshalKubeletConfig(configBytes []byte) (*kubeletconfigv1beta1.KubeletCo
 	var config kubeletconfigv1beta1.KubeletConfiguration
 	err := yaml.Unmarshal(configBytes, &config)
 	if err != nil {
-		return nil, err
+		return nil, fail.Runtime(err, "unmarshalling %T", config)
 	}
 
 	return &config, nil
@@ -122,7 +132,7 @@ func unmarshalKubeletConfig(configBytes []byte) (*kubeletconfigv1beta1.KubeletCo
 func marshalKubeletConfig(config *kubeletconfigv1beta1.KubeletConfiguration) ([]byte, error) {
 	encodedCfg, err := yaml.Marshal(config)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to marshal kubelet config")
+		return nil, fail.Runtime(err, "marshalling %T", config)
 	}
 
 	return encodedCfg, nil

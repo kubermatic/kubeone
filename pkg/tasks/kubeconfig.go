@@ -20,8 +20,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/pkg/errors"
-
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/kubeconfig"
 	"k8c.io/kubeone/pkg/state"
 )
@@ -37,5 +36,5 @@ func saveKubeconfig(s *state.State) error {
 	fileName := fmt.Sprintf("%s-kubeconfig", s.Cluster.Name)
 	err = os.WriteFile(fileName, kc, 0600)
 
-	return errors.Wrap(err, "error saving kubeconfig file to the local machine")
+	return fail.Runtime(err, "saving kubeconfig file")
 }

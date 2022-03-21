@@ -18,6 +18,7 @@ package tasks
 
 import (
 	"context"
+	"fmt"
 	"io/fs"
 	"time"
 
@@ -25,6 +26,7 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/ssh/sshiofs"
@@ -113,7 +115,7 @@ func labelNode(client dynclient.Client, host *kubeoneapi.HostConfig) error {
 		return err
 	})
 
-	return errors.Wrapf(retErr, "failed to label node %q with label %q", host.Hostname, labelUpgradeLock)
+	return fail.KubeClient(retErr, "marking node %q with label %q", host.Hostname, labelUpgradeLock)
 }
 
 func unlabelNode(client dynclient.Client, host *kubeoneapi.HostConfig) error {
@@ -134,7 +136,7 @@ func unlabelNode(client dynclient.Client, host *kubeoneapi.HostConfig) error {
 		return err
 	})
 
-	return errors.Wrapf(retErr, "failed to remove label %s from node %s", labelUpgradeLock, host.Hostname)
+	return fail.KubeClient(retErr, "removing label %s from node %s", labelUpgradeLock, host.Hostname)
 }
 
 type runOnOSFn func(*state.State) error
@@ -142,8 +144,11 @@ type runOnOSFn func(*state.State) error
 func runOnOS(s *state.State, osname kubeoneapi.OperatingSystemName, fnMap map[kubeoneapi.OperatingSystemName]runOnOSFn) error {
 	fn, ok := fnMap[osname]
 	if !ok {
-		return errors.Errorf("%q is not a supported operating system", osname)
+		return fail.RuntimeError{
+			Err: errors.New("is not a supported"),
+			Op:  fmt.Sprintf("checking %q operating system", osname),
+		}
 	}
 
-	return errors.WithStack(fn(s))
+	return fn(s)
 }

@@ -78,7 +78,7 @@ func safeguard(s *state.State) error {
 
 	var nodes corev1.NodeList
 	if err := s.DynamicClient.List(s.Context, &nodes); err != nil {
-		return fail.KubeClient(err, "listing nodes")
+		return fail.KubeClient(err, "getting %T", nodes)
 	}
 
 	cr := s.Cluster.ContainerRuntime
@@ -357,7 +357,7 @@ func investigateCluster(s *state.State) error {
 	// Get the node list
 	nodes := corev1.NodeList{}
 	if err = s.DynamicClient.List(s.Context, &nodes, &dynclient.ListOptions{}); err != nil {
-		return fail.KubeClient(err, "listing nodes")
+		return fail.KubeClient(err, "getting %T", nodes)
 	}
 
 	// Parse the node list
@@ -399,7 +399,7 @@ func investigateCluster(s *state.State) error {
 	s.LiveCluster.Lock.Unlock()
 	encryptionEnabled, err := detectEncryptionProvidersEnabled(s)
 	if err != nil {
-		return errors.Wrap(err, "failed to check for EncryptionProviders")
+		return err
 	}
 	if encryptionEnabled.Enabled {
 		s.LiveCluster.Lock.Lock()
@@ -407,13 +407,13 @@ func investigateCluster(s *state.State) error {
 		s.LiveCluster.Lock.Unlock()
 		// no need to lock around FetchEncryptionProvidersFile because it handles locking internally.
 		if fErr := fetchEncryptionProvidersFile(s); fErr != nil {
-			return errors.Wrap(fErr, "failed to fetch EncryptionProviders configuration")
+			return err
 		}
 	}
 
 	ccmStatus, err := detectCCMMigrationStatus(s)
 	if err != nil {
-		return errors.Wrap(err, "failed to check is in-tree cloud provider enabled")
+		return err
 	}
 	if ccmStatus != nil {
 		s.LiveCluster.Lock.Lock()
@@ -529,13 +529,13 @@ func systemdUnitExecStartPath(conn ssh.Connection, unitName string) (string, err
 func systemdStatus(conn ssh.Connection, service string) (uint64, error) {
 	out, _, _, err := conn.Exec(fmt.Sprintf(systemdShowStatusCMD, service))
 	if err != nil {
-		return 0, err
+		return 0, fail.Runtime(err, "ckecking %q systemd service status", service)
 	}
 
 	out = strings.ReplaceAll(out, "=", ": ")
 	m := map[string]string{}
 	if err = yaml.Unmarshal([]byte(out), &m); err != nil {
-		return 0, err
+		return 0, fail.Runtime(err, "unmarshalling systemd status %q", service)
 	}
 
 	var status uint64
@@ -727,7 +727,10 @@ func detectClusterName(s *state.State) (string, error) {
 	}
 
 	if len(pods.Items) == 0 || len(pods.Items[0].Spec.Containers) == 0 {
-		return "", errors.New("unable to detect ccm pod/container")
+		return "", fail.RuntimeError{
+			Op:  "checking containers of openstack CCM pods",
+			Err: errors.New("no containers found"),
+		}
 	}
 
 	for _, container := range pods.Items[0].Spec.Containers {

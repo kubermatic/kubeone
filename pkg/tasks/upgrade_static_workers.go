@@ -19,8 +19,6 @@ package tasks
 import (
 	"time"
 
-	"github.com/pkg/errors"
-
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/nodeutils"
 	"k8c.io/kubeone/pkg/ssh"
@@ -38,19 +36,19 @@ func upgradeStaticWorkersExecutor(s *state.State, node *kubeoneapi.HostConfig, c
 	logger.Infoln("Labeling static worker node...")
 
 	if err := labelNode(s.DynamicClient, node); err != nil {
-		return errors.Wrap(err, "failed to label static worker node")
+		return err
 	}
 
 	drainer := nodeutils.NewDrainer(s.RESTConfig, logger)
 
 	logger.Infoln("Cordoning static worker node...")
 	if err := drainer.Cordon(s.Context, node.Hostname, true); err != nil {
-		return errors.Wrap(err, "failed to cordon follower control plane node")
+		return err
 	}
 
 	logger.Infoln("Draining static worker node...")
 	if err := drainer.Drain(s.Context, node.Hostname); err != nil {
-		return errors.Wrap(err, "failed to drain follower control plane node")
+		return err
 	}
 
 	if err := setupProxy(logger, s); err != nil {
@@ -59,22 +57,22 @@ func upgradeStaticWorkersExecutor(s *state.State, node *kubeoneapi.HostConfig, c
 
 	logger.Infoln("Upgrading Kubernetes binaries on static worker node...")
 	if err := upgradeKubeadmAndCNIBinaries(s, *node); err != nil {
-		return errors.Wrap(err, "failed to upgrade kubernetes binaries on static worker node")
+		return err
 	}
 
 	logger.Infoln("Running 'kubeadm upgrade' on the static worker node...")
 	if err := upgradeStaticWorker(s); err != nil {
-		return errors.Wrap(err, "failed to upgrade static worker node")
+		return err
 	}
 
 	logger.Infoln("Upgrading kubernetes system binaries on the static worker node...")
 	if err := upgradeKubeletAndKubectlBinaries(s, *node); err != nil {
-		return errors.Wrap(err, "failed to upgrade kubernetes system binaries on the static worker node")
+		return err
 	}
 
 	logger.Infoln("Uncordoning static worker node...")
 	if err := drainer.Cordon(s.Context, node.Hostname, false); err != nil {
-		return errors.Wrap(err, "failed to uncordon follower control plane node")
+		return err
 	}
 
 	logger.Infof("Waiting %v to ensure all components are up...", timeoutNodeUpgrade)
@@ -82,7 +80,7 @@ func upgradeStaticWorkersExecutor(s *state.State, node *kubeoneapi.HostConfig, c
 
 	logger.Infoln("Unlabeling static worker node...")
 	if err := unlabelNode(s.DynamicClient, node); err != nil {
-		return errors.Wrap(err, "failed to unlabel static worker node node")
+		return err
 	}
 
 	return approvePendingCSR(s, node, conn)

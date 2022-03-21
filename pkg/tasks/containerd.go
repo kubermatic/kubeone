@@ -17,10 +17,11 @@ limitations under the License.
 package tasks
 
 import (
-	"errors"
+	"fmt"
 	"time"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
@@ -42,7 +43,7 @@ var (
 
 func validateContainerdInConfig(s *state.State) error {
 	if s.Cluster.ContainerRuntime.Containerd == nil {
-		return errors.New("containerd must be enabled in config")
+		return fail.ConfigValidation(fmt.Errorf("containerd must be enabled in config"))
 	}
 
 	return nil
@@ -52,7 +53,7 @@ func patchCRISocketAnnotation(s *state.State) error {
 	var nodes corev1.NodeList
 
 	if err := s.DynamicClient.List(s.Context, &nodes); err != nil {
-		return err
+		return fail.KubeClient(err, "getting %T", nodes)
 	}
 
 	for _, node := range nodes.Items {
@@ -68,7 +69,7 @@ func patchCRISocketAnnotation(s *state.State) error {
 			node.Annotations[kubeadmCRISocket] = "unix:///run/containerd/containerd.sock"
 
 			if err := s.DynamicClient.Update(s.Context, &node); err != nil {
-				return err
+				return fail.KubeClient(err, "updating node")
 			}
 		}
 	}
@@ -108,7 +109,7 @@ func migrateToContainerdTask(s *state.State, node *kubeoneapi.HostConfig, conn s
 
 	_, _, err = s.Runner.RunRaw(migrateScript)
 	if err != nil {
-		return err
+		return fail.SSH(err, "migrating to containerd")
 	}
 
 	s.Logger.Infof("Waiting all pods on %q to became Ready...", node.Hostname)
@@ -116,7 +117,7 @@ func migrateToContainerdTask(s *state.State, node *kubeoneapi.HostConfig, conn s
 		var podsList corev1.PodList
 
 		if perr := s.DynamicClient.List(s.Context, &podsList); perr != nil {
-			return false, err
+			return false, fail.KubeClient(err, "getting %T", podsList)
 		}
 
 		for _, pod := range podsList.Items {
@@ -152,5 +153,5 @@ func migrateToContainerdTask(s *state.State, node *kubeoneapi.HostConfig, conn s
 		return true, nil
 	})
 
-	return err
+	return fail.KubeClient(err, "waiting all pods on %q to became Ready...", node.Hostname)
 }

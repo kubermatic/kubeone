@@ -16,7 +16,11 @@ limitations under the License.
 
 package scripts
 
-import "github.com/MakeNowJust/heredoc/v2"
+import (
+	"github.com/MakeNowJust/heredoc/v2"
+
+	"k8c.io/kubeone/pkg/fail"
+)
 
 var (
 	ccmMigrationRegenerateControlPlaneManifests = heredoc.Doc(`
@@ -38,21 +42,27 @@ var (
 )
 
 func CCMMigrationRegenerateControlPlaneManifests(workdir string, nodeID int, verboseFlag string) (string, error) {
-	return Render(ccmMigrationRegenerateControlPlaneManifests, Data{
+	result, err := Render(ccmMigrationRegenerateControlPlaneManifests, Data{
 		"WORK_DIR": workdir,
 		"NODE_ID":  nodeID,
 		"VERBOSE":  verboseFlag,
 	})
+
+	return result, fail.Runtime(err, "rendering ccmMigrationRegenerateControlPlaneManifests script")
 }
 
 func CCMMigrationUpdateKubeletConfig(workdir string, nodeID int, verboseFlag string) (string, error) {
-	return Render(ccmMigrationUpdateKubeletConfig, Data{
+	result, err := Render(ccmMigrationUpdateKubeletConfig, Data{
 		"WORK_DIR": workdir,
 		"NODE_ID":  nodeID,
 		"VERBOSE":  verboseFlag,
 	})
+
+	return result, fail.Runtime(err, "rendering ccmMigrationUpdateKubeletConfig")
 }
 
 func CCMMigrationRestartKubelet() (string, error) {
-	return Render(ccmMigrationRestartKubelet, Data{})
+	result, err := Render(ccmMigrationRestartKubelet, Data{})
+
+	return result, fail.Runtime(err, "rendering ccmMigrationRestartKubelet script")
 }

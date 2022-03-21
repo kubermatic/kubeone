@@ -39,7 +39,7 @@ type Task struct {
 	Fn          func(*state.State) error
 	Predicate   func(*state.State) bool
 	Description string
-	ErrMsg      string
+	Operation   string
 	Retries     int
 }
 

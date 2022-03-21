@@ -46,13 +46,13 @@ func Config(err error, op string) error {
 }
 
 // SSH is a shortcut to quickly construct SSHError
-func SSH(err error, op string) error {
+func SSH(err error, op string, args ...interface{}) error {
 	if err == nil {
 		return nil
 	}
 
 	return SSHError{
-		Op:  op,
+		Op:  fmt.Sprintf(op, args...),
 		Err: errors.WithStack(err),
 	}
 }
@@ -90,13 +90,13 @@ func NoKubeClient() error {
 }
 
 // Etcd is a shortcut to quickly construct EtcdError
-func Etcd(err error, op string) error {
+func Etcd(err error, op string, args ...interface{}) error {
 	if err == nil {
 		return nil
 	}
 
 	return EtcdError{
-		Op:  op,
+		Op:  fmt.Sprintf(op, args...),
 		Err: errors.WithStack(err),
 	}
 }
@@ -110,5 +110,12 @@ func Runtime(err error, op string, args ...interface{}) error {
 	return RuntimeError{
 		Op:  fmt.Sprintf(op, args...),
 		Err: errors.WithStack(err),
+	}
+}
+
+func NewRuntimeError(op string, format string, args ...interface{}) error {
+	return RuntimeError{
+		Op:  op,
+		Err: errors.Errorf(format, args...),
 	}
 }

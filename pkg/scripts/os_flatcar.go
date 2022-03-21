@@ -19,6 +19,7 @@ package scripts
 import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/containerruntime"
+	"k8c.io/kubeone/pkg/fail"
 )
 
 const (
@@ -190,22 +191,30 @@ func KubeadmFlatcar(cluster *kubeoneapi.KubeOneCluster) (string, error) {
 		return "", err
 	}
 
-	return Render(kubeadmFlatcarTemplate, data)
+	result, err := Render(kubeadmFlatcarTemplate, data)
+
+	return result, fail.Runtime(err, "rendering kubeadmFlatcarTemplate script")
 }
 
 func RemoveBinariesFlatcar() (string, error) {
-	return Render(removeBinariesFlatcarScriptTemplate, nil)
+	result, err := Render(removeBinariesFlatcarScriptTemplate, nil)
+
+	return result, fail.Runtime(err, "rendering removeBinariesFlatcarScriptTemplate script")
 }
 
 func UpgradeKubeadmAndCNIFlatcar(k8sVersion string) (string, error) {
-	return Render(upgradeKubeadmAndCNIFlatcarScriptTemplate, Data{
+	result, err := Render(upgradeKubeadmAndCNIFlatcarScriptTemplate, Data{
 		"KUBERNETES_VERSION":     k8sVersion,
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
 	})
+
+	return result, fail.Runtime(err, "rendering upgradeKubeadmAndCNIFlatcarScriptTemplate script")
 }
 
 func UpgradeKubeletAndKubectlFlatcar(k8sVersion string) (string, error) {
-	return Render(upgradeKubeletAndKubectlFlatcarScriptTemplate, Data{
+	result, err := Render(upgradeKubeletAndKubectlFlatcarScriptTemplate, Data{
 		"KUBERNETES_VERSION": k8sVersion,
 	})
+
+	return result, fail.Runtime(err, "rendering upgradeKubeletAndKubectlFlatcarScriptTemplate script")
 }

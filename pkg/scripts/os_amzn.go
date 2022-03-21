@@ -19,6 +19,7 @@ package scripts
 import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/containerruntime"
+	"k8c.io/kubeone/pkg/fail"
 )
 
 const (
@@ -216,11 +217,15 @@ func KubeadmAmazonLinux(cluster *kubeoneapi.KubeOneCluster, force bool) (string,
 		return "", err
 	}
 
-	return Render(kubeadmAmazonLinuxTemplate, data)
+	result, err := Render(kubeadmAmazonLinuxTemplate, data)
+
+	return result, fail.Runtime(err, "rendering kubeadmAmazonLinuxTemplate script")
 }
 
 func RemoveBinariesAmazonLinux() (string, error) {
-	return Render(removeBinariesAmazonLinuxScriptTemplate, Data{})
+	result, err := Render(removeBinariesAmazonLinuxScriptTemplate, Data{})
+
+	return result, fail.Runtime(err, "rendering removeBinariesAmazonLinuxScriptTemplate script")
 }
 
 func UpgradeKubeadmAndCNIAmazonLinux(cluster *kubeoneapi.KubeOneCluster) (string, error) {
@@ -247,7 +252,9 @@ func UpgradeKubeadmAndCNIAmazonLinux(cluster *kubeoneapi.KubeOneCluster) (string
 		return "", err
 	}
 
-	return Render(kubeadmAmazonLinuxTemplate, data)
+	result, err := Render(kubeadmAmazonLinuxTemplate, data)
+
+	return result, fail.Runtime(err, "rendering kubeadmAmazonLinuxTemplate script")
 }
 
 func UpgradeKubeletAndKubectlAmazonLinux(cluster *kubeoneapi.KubeOneCluster) (string, error) {
@@ -275,5 +282,7 @@ func UpgradeKubeletAndKubectlAmazonLinux(cluster *kubeoneapi.KubeOneCluster) (st
 		return "", err
 	}
 
-	return Render(kubeadmAmazonLinuxTemplate, data)
+	result, err := Render(kubeadmAmazonLinuxTemplate, data)
+
+	return result, fail.Runtime(err, "rendering kubeadmAmazonLinuxTemplate script")
 }

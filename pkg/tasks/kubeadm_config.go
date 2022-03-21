@@ -19,9 +19,8 @@ package tasks
 import (
 	"fmt"
 
-	"github.com/pkg/errors"
-
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
@@ -29,7 +28,7 @@ import (
 )
 
 func determinePauseImage(s *state.State) error {
-	if s.Cluster.RegistryConfiguration == nil || s.Cluster.RegistryConfiguration.OverwriteRegistry == "" {
+	if rc := s.Cluster.RegistryConfiguration; rc == nil || rc.OverwriteRegistry == "" {
 		return nil
 	}
 
@@ -46,31 +45,31 @@ func determinePauseImageExecutor(s *state.State, node *kubeoneapi.HostConfig, co
 
 	out, _, err := s.Runner.RunRaw(cmd)
 	if err != nil {
-		return err
+		return fail.SSH(err, "getting kubeadm PauseImage version")
 	}
 
 	s.PauseImage = s.Cluster.RegistryConfiguration.ImageRegistry("k8s.gcr.io") + "/pause:" + out
 
-	return err
+	return nil
 }
 
 func generateKubeadm(s *state.State) error {
 	s.Logger.Infoln("Generating kubeadm config file...")
 
 	if err := determinePauseImage(s); err != nil {
-		return errors.Wrap(err, "failed to determine pause image")
+		return err
 	}
 
 	kubeadmProvider, err := kubeadm.New(s.Cluster.Versions.Kubernetes)
 	if err != nil {
-		return errors.Wrap(err, "failed to init kubeadm")
+		return err
 	}
 
 	for idx := range s.Cluster.ControlPlane.Hosts {
 		node := s.Cluster.ControlPlane.Hosts[idx]
 		kubeadmConf, err := kubeadmProvider.Config(s, node)
 		if err != nil {
-			return errors.Wrap(err, "failed to create kubeadm configuration")
+			return err
 		}
 
 		s.Configuration.AddFile(fmt.Sprintf("cfg/master_%d.yaml", node.ID), kubeadmConf)
@@ -80,7 +79,7 @@ func generateKubeadm(s *state.State) error {
 		node := s.Cluster.StaticWorkers.Hosts[idx]
 		kubeadmConf, err := kubeadmProvider.ConfigWorker(s, node)
 		if err != nil {
-			return errors.Wrap(err, "failed to create kubeadm configuration")
+			return err
 		}
 
 		s.Configuration.AddFile(fmt.Sprintf("cfg/worker_%d.yaml", node.ID), kubeadmConf)
@@ -90,5 +89,5 @@ func generateKubeadm(s *state.State) error {
 }
 
 func uploadKubeadmToNode(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
-	return errors.Wrap(s.Configuration.UploadTo(conn, s.WorkDir), "failed to upload")
+	return s.Configuration.UploadTo(conn, s.WorkDir)
 }

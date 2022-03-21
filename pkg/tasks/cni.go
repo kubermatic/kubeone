@@ -19,6 +19,7 @@ package tasks
 import (
 	"github.com/pkg/errors"
 
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -31,12 +32,15 @@ func ensureCNI(s *state.State) error {
 	}
 
 	if s.RESTConfig == nil {
-		return errors.New("rest config is not initialized")
+		return fail.KubeClientError{
+			Op:  "ensure CNI",
+			Err: errors.New("rest config is not initialized"),
+		}
 	}
 
 	s.DynamicClient, err = client.New(s.RESTConfig, client.Options{})
 	if err != nil {
-		return errors.Wrap(err, "unable to build dynamic client")
+		return fail.KubeClient(err, "create kubernetes dynamic client")
 	}
 
 	return nil

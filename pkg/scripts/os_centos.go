@@ -19,6 +19,7 @@ package scripts
 import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/containerruntime"
+	"k8c.io/kubeone/pkg/fail"
 )
 
 const (
@@ -151,11 +152,15 @@ func KubeadmCentOS(cluster *kubeoneapi.KubeOneCluster, force bool) (string, erro
 		return "", err
 	}
 
-	return Render(kubeadmCentOSTemplate, data)
+	result, err := Render(kubeadmCentOSTemplate, data)
+
+	return result, fail.Runtime(err, "rendering kubeadmCentOSTemplate script")
 }
 
 func RemoveBinariesCentOS() (string, error) {
-	return Render(removeBinariesCentOSScriptTemplate, Data{})
+	result, err := Render(removeBinariesCentOSScriptTemplate, Data{})
+
+	return result, fail.Runtime(err, "rendering removeBinariesCentOSScriptTemplate script")
 }
 
 func UpgradeKubeadmAndCNICentOS(cluster *kubeoneapi.KubeOneCluster) (string, error) {
@@ -180,7 +185,9 @@ func UpgradeKubeadmAndCNICentOS(cluster *kubeoneapi.KubeOneCluster) (string, err
 		return "", err
 	}
 
-	return Render(kubeadmCentOSTemplate, data)
+	result, err := Render(kubeadmCentOSTemplate, data)
+
+	return result, fail.Runtime(err, "rendering kubeadmCentOSTemplate script")
 }
 
 func UpgradeKubeletAndKubectlCentOS(cluster *kubeoneapi.KubeOneCluster) (string, error) {
@@ -206,9 +213,13 @@ func UpgradeKubeletAndKubectlCentOS(cluster *kubeoneapi.KubeOneCluster) (string,
 		return "", err
 	}
 
-	return Render(kubeadmCentOSTemplate, data)
+	result, err := Render(kubeadmCentOSTemplate, data)
+
+	return result, fail.Runtime(err, "rendering kubeadmCentOSTemplate script")
 }
 
 func DisableNMCloudSetup() (string, error) {
-	return Render(disableNMCloudSetup, nil)
+	result, err := Render(disableNMCloudSetup, nil)
+
+	return result, fail.Runtime(err, "rendering disableNMCloudSetup script")
 }

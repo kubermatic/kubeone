@@ -17,8 +17,7 @@ limitations under the License.
 package tasks
 
 import (
-	"github.com/pkg/errors"
-
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/machinecontroller"
 
@@ -48,7 +47,7 @@ func createMachineDeployments(s *state.State) error {
 	s.Logger.Warnln("KubeOne will not manage MachineDeployments objects besides initially creating them and optionally upgrading them...")
 	s.Logger.Warnf("For more info about MachineDeployments see: %s", machineDeploymentsDocsLink)
 
-	return errors.Wrap(machinecontroller.CreateMachineDeployments(s), "failed to deploy Machines")
+	return machinecontroller.CreateMachineDeployments(s)
 }
 
 func upgradeMachineDeployments(s *state.State) error {
@@ -67,7 +66,7 @@ func upgradeMachineDeployments(s *state.State) error {
 		dynclient.InNamespace(metav1.NamespaceSystem),
 	)
 	if err != nil {
-		return errors.Wrap(err, "failed to list MachineDeployments")
+		return fail.KubeClient(err, "getting %T", machineDeployments)
 	}
 
 	for _, md := range machineDeployments.Items {
@@ -75,7 +74,7 @@ func upgradeMachineDeployments(s *state.State) error {
 
 		retErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
 			machine := clusterv1alpha1.MachineDeployment{}
-			if err := s.DynamicClient.Get(s.Context, machineKey, &machine); err != nil {
+			if err = s.DynamicClient.Get(s.Context, machineKey, &machine); err != nil {
 				return err
 			}
 
@@ -85,7 +84,7 @@ func upgradeMachineDeployments(s *state.State) error {
 		})
 
 		if retErr != nil {
-			return errors.Wrapf(retErr, "failed to update MachineDeployment %s", md.Name)
+			return fail.KubeClient(err, "updating %T %s", md, machineKey)
 		}
 	}
 

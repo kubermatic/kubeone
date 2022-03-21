@@ -17,8 +17,7 @@ limitations under the License.
 package tasks
 
 import (
-	"github.com/pkg/errors"
-
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/kubeadm"
@@ -27,7 +26,7 @@ import (
 func upgradeLeaderControlPlane(s *state.State, nodeID int) error {
 	kadm, err := kubeadm.New(s.Cluster.Versions.Kubernetes)
 	if err != nil {
-		return errors.Wrap(err, "failed to init kubeadm")
+		return err
 	}
 
 	cmd, err := scripts.KubeadmUpgrade(kadm.UpgradeLeaderCommand(), s.WorkDir, true, nodeID)
@@ -37,13 +36,13 @@ func upgradeLeaderControlPlane(s *state.State, nodeID int) error {
 
 	_, _, err = s.Runner.RunRaw(cmd)
 
-	return err
+	return fail.SSH(err, "running kubeadm upgrade on control plane leader")
 }
 
 func upgradeFollowerControlPlane(s *state.State, nodeID int) error {
 	kadm, err := kubeadm.New(s.Cluster.Versions.Kubernetes)
 	if err != nil {
-		return errors.Wrap(err, "failed to init kubadm")
+		return err
 	}
 
 	cmd, err := scripts.KubeadmUpgrade(kadm.UpgradeFollowerCommand(), s.WorkDir, false, nodeID)
@@ -53,16 +52,16 @@ func upgradeFollowerControlPlane(s *state.State, nodeID int) error {
 
 	_, _, err = s.Runner.RunRaw(cmd)
 
-	return err
+	return fail.SSH(err, "running kubeadm upgrade on control plane follower")
 }
 
 func upgradeStaticWorker(s *state.State) error {
 	kadm, err := kubeadm.New(s.Cluster.Versions.Kubernetes)
 	if err != nil {
-		return errors.Wrap(err, "failed to init kubadm")
+		return err
 	}
 
 	_, _, err = s.Runner.Run(`sudo `+kadm.UpgradeStaticWorkerCommand(), nil)
 
-	return err
+	return fail.SSH(err, "running kubeadm upgrade on static worker")
 }
