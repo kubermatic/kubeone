@@ -19,11 +19,11 @@ package tasks
 import (
 	"net/url"
 
-	"github.com/pkg/errors"
 	clientv3 "go.etcd.io/etcd/client/v3"
 
 	"k8c.io/kubeone/pkg/clusterstatus/preflightstatus"
 	"k8c.io/kubeone/pkg/etcdutil"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
@@ -37,17 +37,17 @@ func repairClusterIfNeeded(s *state.State) error {
 
 	leader, err := s.Cluster.Leader()
 	if err != nil {
-		return errors.WithStack(err)
+		return err
 	}
 
 	etcdcfg, err := etcdutil.NewClientConfig(s, leader)
 	if err != nil {
-		return errors.WithStack(err)
+		return err
 	}
 
 	etcdcli, err := clientv3.New(*etcdcfg)
 	if err != nil {
-		return errors.WithStack(err)
+		return fail.Etcd(err, "initializing new clientv3")
 	}
 	defer etcdcli.Close()
 
@@ -55,7 +55,7 @@ func repairClusterIfNeeded(s *state.State) error {
 
 	etcdRing, err := etcdcli.MemberList(ctx)
 	if err != nil {
-		return errors.WithStack(err)
+		return fail.Etcd(err, "getting members list")
 	}
 
 	knownHostsIdentities := sets.NewString()
@@ -102,7 +102,7 @@ func repairClusterIfNeeded(s *state.State) error {
 		knownEtcdMembersIdentities.Delete(memberName)
 		s.Logger.Warnf("removing etcd member %q, for it's not alive", memberName)
 		if _, err = etcdcli.MemberRemove(ctx, memberID); err != nil {
-			return errors.WithStack(err)
+			return fail.Etcd(err, "removing %d member", memberID)
 		}
 	}
 
@@ -112,7 +112,7 @@ func repairClusterIfNeeded(s *state.State) error {
 	}
 
 	if err = s.DynamicClient.List(ctx, &nodes, &nodeListOpts); err != nil {
-		return errors.WithStack(err)
+		return fail.KubeClient(err, "getting %T", nodes)
 	}
 
 	for _, node := range nodes.Items {
@@ -129,7 +129,7 @@ func repairClusterIfNeeded(s *state.State) error {
 		if deleteThisNode {
 			s.Logger.Warnf("Removing kubernets Node object %q, for it's not alive", node.Name)
 			if err = s.DynamicClient.Delete(ctx, node.DeepCopy()); err != nil {
-				return errors.WithStack(err)
+				return fail.KubeClient(err, "deleting %s Node", node.Name)
 			}
 		}
 	}

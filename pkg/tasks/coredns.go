@@ -19,8 +19,7 @@ package tasks
 import (
 	"context"
 
-	"github.com/pkg/errors"
-
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 
 	appsv1 "k8s.io/api/apps/v1"
@@ -37,19 +36,19 @@ func patchCoreDNS(s *state.State) error {
 	s.Logger.Infoln("Patching coreDNS with uninitialized toleration...")
 
 	if s.DynamicClient == nil {
-		return errors.New("kubernetes client not initialized")
+		return fail.NoKubeClient()
 	}
 
 	ctx := context.Background()
-	dep := &appsv1.Deployment{}
+	dep := appsv1.Deployment{}
 	key := client.ObjectKey{
 		Name:      "coredns",
 		Namespace: metav1.NamespaceSystem,
 	}
 
-	err := s.DynamicClient.Get(ctx, key, dep)
+	err := s.DynamicClient.Get(ctx, key, &dep)
 	if err != nil {
-		return errors.Wrap(err, "failed to get coredns deployment")
+		return fail.KubeClient(err, "getting %T %s", dep, key)
 	}
 
 	dep.Spec.Template.Spec.Tolerations = append(dep.Spec.Template.Spec.Tolerations,
@@ -60,5 +59,7 @@ func patchCoreDNS(s *state.State) error {
 		},
 	)
 
-	return errors.Wrap(s.DynamicClient.Update(ctx, dep), "failed to update coredns deployment")
+	err = s.DynamicClient.Update(ctx, &dep)
+
+	return fail.KubeClient(err, "updating %T %s", dep, key)
 }

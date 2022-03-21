@@ -21,10 +21,10 @@ import (
 	"time"
 
 	"github.com/MakeNowJust/heredoc/v2"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/runner"
 	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/ssh"
@@ -40,7 +40,7 @@ func installPrerequisites(s *state.State) error {
 	s.Logger.Infoln("Installing prerequisites...")
 
 	if err := s.RunTaskOnAllNodes(installPrerequisitesOnNode, state.RunParallel); err != nil {
-		return fmt.Errorf("failed to install prerequisites: %w", err)
+		return err
 	}
 
 	return s.RunTaskOnControlPlane(func(ctx *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
@@ -53,7 +53,7 @@ func installPrerequisites(s *state.State) error {
 				"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
 			})
 
-		return err
+		return fail.SSH(err, "pre-pull kubeadm images")
 	}, state.RunParallel)
 }
 
@@ -62,18 +62,18 @@ func generateConfigurationFiles(s *state.State) error {
 
 	if s.Cluster.Features.StaticAuditLog != nil && s.Cluster.Features.StaticAuditLog.Enable {
 		if err := s.Configuration.AddFilePath("cfg/audit-policy.yaml", s.Cluster.Features.StaticAuditLog.Config.PolicyFilePath, s.ManifestFilePath); err != nil {
-			return errors.Wrap(err, "unable to add policy file")
+			return err
 		}
 	}
 	if s.Cluster.Features.PodNodeSelector != nil && s.Cluster.Features.PodNodeSelector.Enable {
 		admissionCfg, err := admissionconfig.NewAdmissionConfig(s.Cluster.Versions.Kubernetes, s.Cluster.Features.PodNodeSelector)
 		if err != nil {
-			return errors.Wrap(err, "failed to generate admissionconfiguration manifest")
+			return err
 		}
 		s.Configuration.AddFile("cfg/admission-config.yaml", admissionCfg)
 
 		if err := s.Configuration.AddFilePath("cfg/podnodeselector.yaml", s.Cluster.Features.PodNodeSelector.Config.ConfigFilePath, s.ManifestFilePath); err != nil {
-			return errors.Wrap(err, "failed to add podnodeselector config file")
+			return err
 		}
 	}
 
@@ -110,18 +110,18 @@ func installPrerequisitesOnNode(s *state.State, node *kubeoneapi.HostConfig, _ s
 
 	logger.Infoln("Installing kubeadm...")
 
-	return errors.Wrap(installKubeadm(s, *node), "failed to install kubeadm")
+	return installKubeadm(s, *node)
 }
 
 func setupProxy(logger *logrus.Entry, s *state.State) error {
 	logger.Infoln("Creating environment file...")
 	if err := createEnvironmentFile(s); err != nil {
-		return errors.Wrap(err, "failed to create environment file")
+		return err
 	}
 
 	logger.Infoln("Configuring proxy...")
 	if err := containerRuntimeEnvironment(s); err != nil {
-		return errors.Wrap(err, "failed to configure proxy for docker daemon")
+		return err
 	}
 
 	return nil
@@ -135,7 +135,7 @@ func createEnvironmentFile(s *state.State) error {
 
 	_, _, err = s.Runner.RunRaw(cmd)
 
-	return err
+	return fail.Runtime(err, "configuring /etc/environment")
 }
 
 func disableNMCloudSetup(s *state.State, node *kubeoneapi.HostConfig, _ ssh.Connection) error {
@@ -190,7 +190,7 @@ func installKubeadmDebian(s *state.State) error {
 
 	_, _, err = s.Runner.RunRaw(cmd)
 
-	return errors.WithStack(err)
+	return fail.SSH(err, "installing kubeadm")
 }
 
 func installKubeadmCentOS(s *state.State) error {
@@ -201,7 +201,7 @@ func installKubeadmCentOS(s *state.State) error {
 
 	_, _, err = s.Runner.RunRaw(cmd)
 
-	return errors.WithStack(err)
+	return fail.SSH(err, "installing kubeadm")
 }
 
 func installKubeadmAmazonLinux(s *state.State) error {
@@ -212,7 +212,7 @@ func installKubeadmAmazonLinux(s *state.State) error {
 
 	_, _, err = s.Runner.RunRaw(cmd)
 
-	return errors.WithStack(err)
+	return fail.SSH(err, "installing kubeadm")
 }
 
 func installKubeadmFlatcar(s *state.State) error {
@@ -223,7 +223,7 @@ func installKubeadmFlatcar(s *state.State) error {
 
 	_, _, err = s.Runner.RunRaw(cmd)
 
-	return errors.WithStack(err)
+	return fail.SSH(err, "installing kubeadm")
 }
 
 func uploadConfigurationFiles(s *state.State) error {
@@ -234,7 +234,7 @@ func uploadConfigurationFilesToNode(s *state.State, _ *kubeoneapi.HostConfig, co
 	s.Logger.Infoln("Uploading config files...")
 
 	if err := s.Configuration.UploadTo(conn, s.WorkDir); err != nil {
-		return errors.Wrap(err, "failed to upload")
+		return err
 	}
 
 	cmd, err := scripts.SaveCloudConfig(s.WorkDir)
@@ -245,7 +245,7 @@ func uploadConfigurationFilesToNode(s *state.State, _ *kubeoneapi.HostConfig, co
 	// move config files to their permanent locations
 	_, _, err = s.Runner.RunRaw(cmd)
 	if err != nil {
-		return err
+		return fail.SSH(err, "saving cloud-config")
 	}
 
 	cmd, err = scripts.SaveAuditPolicyConfig(s.WorkDir)
@@ -254,7 +254,7 @@ func uploadConfigurationFilesToNode(s *state.State, _ *kubeoneapi.HostConfig, co
 	}
 	_, _, err = s.Runner.RunRaw(cmd)
 	if err != nil {
-		return err
+		return fail.SSH(err, "saving audit-policy")
 	}
 
 	cmd, err = scripts.SavePodNodeSelectorConfig(s.WorkDir)
@@ -263,7 +263,7 @@ func uploadConfigurationFilesToNode(s *state.State, _ *kubeoneapi.HostConfig, co
 	}
 	_, _, err = s.Runner.RunRaw(cmd)
 	if err != nil {
-		return err
+		return fail.SSH(err, "saving podnodeselector config")
 	}
 
 	cmd, err = scripts.SaveEncryptionProvidersConfig(s.WorkDir, s.GetEncryptionProviderConfigName())
@@ -272,7 +272,7 @@ func uploadConfigurationFilesToNode(s *state.State, _ *kubeoneapi.HostConfig, co
 	}
 	_, _, err = s.Runner.RunRaw(cmd)
 	if err != nil {
-		return err
+		return fail.SSH(err, "saving encryption providers config")
 	}
 
 	return nil
@@ -291,5 +291,5 @@ func containerRuntimeEnvironment(s *state.State) error {
 
 	_, _, err = s.Runner.RunRaw(cmd)
 
-	return err
+	return fail.SSH(err, "configuring systemd environment drop-ins")
 }

@@ -18,6 +18,7 @@ package tasks
 
 import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
@@ -38,7 +39,7 @@ func joinStaticWorkerInternal(s *state.State, node *kubeoneapi.HostConfig, conn 
 
 	_, _, err = s.Runner.RunRaw(cmd)
 	if err != nil {
-		return err
+		return fail.Runtime(err, "joining static worker %s", node.PublicAddress)
 	}
 
 	return approvePendingCSR(s, node, conn)

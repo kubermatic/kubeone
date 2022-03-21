@@ -24,6 +24,7 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/ssh/sshiofs"
@@ -66,19 +67,24 @@ func fetchEncryptionProvidersFile(s *state.State) error {
 	err = kyaml.UnmarshalStrict(config, s.LiveCluster.EncryptionConfiguration.Config)
 	s.LiveCluster.Lock.Unlock()
 
-	return err
+	return fail.Runtime(err, "unmarshalling EncryptionConfiguration")
 }
 
 func uploadIdentityFirstEncryptionConfiguration(s *state.State) error {
 	s.Logger.Infof("Uploading EncryptionProviders configuration file...")
 
-	if s.LiveCluster.EncryptionConfiguration == nil ||
-		s.LiveCluster.EncryptionConfiguration.Config == nil {
-		return errors.New("failed to read live cluster encryption providers configuration")
+	if ec := s.LiveCluster.EncryptionConfiguration; ec == nil || ec.Config == nil {
+		return fail.RuntimeError{
+			Op:  "validating live cluster encryption providers configuration",
+			Err: errors.New("failed to read"),
+		}
 	}
 
 	if s.LiveCluster.EncryptionConfiguration.Custom {
-		return errors.New("overriding custom encryption providers configuration is not supported")
+		return fail.RuntimeError{
+			Op:  "validating custom encryption providers configuration",
+			Err: errors.New("overriding is not supported"),
+		}
 	}
 
 	oldConfig := s.LiveCluster.EncryptionConfiguration.Config.DeepCopy()
@@ -99,9 +105,11 @@ func uploadIdentityFirstEncryptionConfiguration(s *state.State) error {
 func uploadEncryptionConfigurationWithNewKey(s *state.State) error {
 	s.Logger.Infof("Uploading EncryptionProviders configuration file...")
 
-	if s.LiveCluster.EncryptionConfiguration == nil ||
-		s.LiveCluster.EncryptionConfiguration.Config == nil {
-		return errors.New("failed to read live cluster encryption providers configuration")
+	if ec := s.LiveCluster.EncryptionConfiguration; ec == nil || ec.Config == nil {
+		return fail.RuntimeError{
+			Op:  "validating live cluster encryption providers configuration",
+			Err: errors.New("failed to read"),
+		}
 	}
 
 	if err := encryptionproviders.UpdateEncryptionConfigWithNewKey(s.LiveCluster.EncryptionConfiguration.Config); err != nil {
@@ -121,9 +129,11 @@ func uploadEncryptionConfigurationWithNewKey(s *state.State) error {
 func uploadEncryptionConfigurationWithoutOldKey(s *state.State) error {
 	s.Logger.Infof("Uploading EncryptionProviders configuration file...")
 
-	if s.LiveCluster.EncryptionConfiguration == nil ||
-		s.LiveCluster.EncryptionConfiguration.Config == nil {
-		return errors.New("failed to read live cluster encryption providers configuration")
+	if ec := s.LiveCluster.EncryptionConfiguration; ec == nil || ec.Config == nil {
+		return fail.RuntimeError{
+			Op:  "validating live cluster encryption providers configuration",
+			Err: errors.New("failed to read"),
+		}
 	}
 
 	encryptionproviders.UpdateEncryptionConfigRemoveOldKey(s.LiveCluster.EncryptionConfiguration.Config)
@@ -149,7 +159,7 @@ func pushEncryptionConfigurationOnNode(s *state.State, node *kubeoneapi.HostConf
 
 	_, _, err = s.Runner.RunRaw(cmd)
 
-	return err
+	return fail.SSH(err, "saving encryption providers config")
 }
 
 func rewriteClusterSecrets(s *state.State) error {
@@ -157,18 +167,22 @@ func rewriteClusterSecrets(s *state.State) error {
 	secrets := corev1.SecretList{}
 	err := s.DynamicClient.List(context.Background(), &secrets, &dynclient.ListOptions{})
 	if err != nil {
-		return err
+		return fail.KubeClient(err, "getting %T", secrets)
 	}
 
 	for _, secret := range secrets.Items {
 		name := secret.Name
 		namespace := secret.Namespace
+		key := types.NamespacedName{
+			Namespace: namespace,
+			Name:      name,
+		}
 
 		updateErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
 			return rewriteSecret(s, name, namespace)
 		})
 		if updateErr != nil {
-			return errors.WithStack(updateErr)
+			return fail.KubeClient(updateErr, "updating %T %s", secret, key)
 		}
 	}
 
@@ -183,7 +197,7 @@ func removeEncryptionProviderFile(s *state.State) error {
 
 		_, _, err := s.Runner.RunRaw(cmd)
 
-		return err
+		return fail.SSH(err, "deleting encryption providers config")
 	}, state.RunParallel)
 }
 
@@ -194,5 +208,5 @@ func rewriteSecret(s *state.State, name, namespace string) error {
 		return err
 	}
 
-	return s.DynamicClient.Update(s.Context, &secret, &dynclient.UpdateOptions{})
+	return s.DynamicClient.Update(s.Context, &secret)
 }

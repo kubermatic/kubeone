@@ -21,6 +21,8 @@ import (
 	"testing"
 
 	"github.com/Masterminds/semver/v3"
+
+	corev1 "k8s.io/api/core/v1"
 )
 
 func TestParseContainerImageVersionValid(t *testing.T) {
@@ -61,7 +63,7 @@ func TestParseContainerImageVersionValid(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			ver, err := parseContainerImageVersion(tc.image)
+			ver, err := parseContainerImageVersion(corev1.Container{Image: tc.image})
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -100,7 +102,7 @@ func TestParseContainerImageVersionInvalid(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			_, err := parseContainerImageVersion(tc.image)
+			_, err := parseContainerImageVersion(corev1.Container{Image: tc.image})
 			if err.Error() != tc.expectedError.Error() {
 				t.Fatal(err)
 			}

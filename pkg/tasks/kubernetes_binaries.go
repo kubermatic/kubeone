@@ -17,9 +17,8 @@ limitations under the License.
 package tasks
 
 import (
-	"github.com/pkg/errors"
-
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/state"
 )
@@ -54,7 +53,7 @@ func upgradeKubeletAndKubectlBinariesDebian(s *state.State) error {
 
 	_, _, err = s.Runner.RunRaw(cmd)
 
-	return errors.WithStack(err)
+	return fail.SSH(err, "upgrading kubelet and kubectl")
 }
 
 func upgradeKubeletAndKubectlBinariesFlatcar(s *state.State) error {
@@ -65,7 +64,7 @@ func upgradeKubeletAndKubectlBinariesFlatcar(s *state.State) error {
 
 	_, _, err = s.Runner.RunRaw(cmd)
 
-	return errors.WithStack(err)
+	return fail.SSH(err, "upgrading kubelet and kubectl")
 }
 
 func upgradeKubeletAndKubectlBinariesCentOS(s *state.State) error {
@@ -76,7 +75,7 @@ func upgradeKubeletAndKubectlBinariesCentOS(s *state.State) error {
 
 	_, _, err = s.Runner.RunRaw(cmd)
 
-	return errors.WithStack(err)
+	return fail.SSH(err, "upgrading kubelet and kubectl")
 }
 
 func upgradeKubeletAndKubectlBinariesAmazonLinux(s *state.State) error {
@@ -87,7 +86,7 @@ func upgradeKubeletAndKubectlBinariesAmazonLinux(s *state.State) error {
 
 	_, _, err = s.Runner.RunRaw(cmd)
 
-	return errors.WithStack(err)
+	return fail.SSH(err, "upgrading kubelet and kubectl")
 }
 
 func upgradeKubeadmAndCNIBinariesDebian(s *state.State) error {
@@ -98,7 +97,7 @@ func upgradeKubeadmAndCNIBinariesDebian(s *state.State) error {
 
 	_, _, err = s.Runner.RunRaw(cmd)
 
-	return errors.WithStack(err)
+	return fail.SSH(err, "upgrading kubeadm and CNI plugins")
 }
 
 func upgradeKubeadmAndCNIBinariesCentOS(s *state.State) error {
@@ -109,7 +108,7 @@ func upgradeKubeadmAndCNIBinariesCentOS(s *state.State) error {
 
 	_, _, err = s.Runner.RunRaw(cmd)
 
-	return errors.WithStack(err)
+	return fail.SSH(err, "upgrading kubeadm and CNI plugins")
 }
 
 func upgradeKubeadmAndCNIBinariesAmazonLinux(s *state.State) error {
@@ -120,7 +119,7 @@ func upgradeKubeadmAndCNIBinariesAmazonLinux(s *state.State) error {
 
 	_, _, err = s.Runner.RunRaw(cmd)
 
-	return errors.WithStack(err)
+	return fail.SSH(err, "upgrading kubeadm and CNI plugins")
 }
 
 func upgradeKubeadmAndCNIBinariesFlatcar(s *state.State) error {
@@ -131,5 +130,5 @@ func upgradeKubeadmAndCNIBinariesFlatcar(s *state.State) error {
 
 	_, _, err = s.Runner.RunRaw(cmd)
 
-	return errors.WithStack(err)
+	return fail.SSH(err, "upgrading kubeadm and CNI plugins")
 }

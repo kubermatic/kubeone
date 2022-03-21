@@ -29,6 +29,7 @@ import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/certificate/cabundle"
 	"k8c.io/kubeone/pkg/clientutil"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/kubeconfig"
 	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/ssh"
@@ -81,7 +82,7 @@ func renewControlPlaneCerts(s *state.State) error {
 		func(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 			_, _, err := s.Runner.RunRaw(renewCmd)
 
-			return err
+			return fail.SSH(err, "running %q on %s node", renewCmd, node.PublicAddress)
 		},
 		state.RunParallel,
 	)
@@ -100,12 +101,12 @@ func fetchCert(sshfs fs.FS, filename string) (*x509.Certificate, error) {
 
 	pemBlock, rest := pem.Decode(buf)
 	if len(rest) != 0 {
-		return nil, errors.New("returned non-zero rest")
+		return nil, fail.Runtime(fmt.Errorf("returned non-zero rest"), "PEM decoding %q certificate", filename)
 	}
 
 	cert, err := x509.ParseCertificate(pemBlock.Bytes)
 	if err != nil {
-		return nil, err
+		return nil, fail.Runtime(err, "parsing %q certificate", filename)
 	}
 
 	return cert, nil
@@ -154,7 +155,7 @@ func earliestCertExpiry(conn ssh.Connection) (time.Time, error) {
 
 func ensureCABundleConfigMap(s *state.State) error {
 	if s.DynamicClient == nil {
-		return errors.New("kubernetes client not initialized")
+		return fail.NoKubeClient()
 	}
 
 	s.Logger.Infoln("Creating ca-bundle configMap...")
@@ -171,7 +172,7 @@ func saveCABundle(s *state.State) error {
 
 func saveCABundleOnControlPlane(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	if err := s.Configuration.UploadTo(conn, s.WorkDir); err != nil {
-		return errors.Wrap(err, "failed to upload")
+		return err
 	}
 
 	cmd, err := scripts.SaveCABundle(s.WorkDir)
@@ -181,7 +182,7 @@ func saveCABundleOnControlPlane(s *state.State, _ *kubeoneapi.HostConfig, conn s
 
 	_, _, err = s.Runner.RunRaw(cmd)
 
-	return err
+	return fail.SSH(err, "save CABundle")
 }
 
 func approvePendingCSR(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
@@ -192,12 +193,12 @@ func approvePendingCSR(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Con
 
 	csrList := certificatesv1.CertificateSigningRequestList{}
 	if err := s.DynamicClient.List(s.Context, &csrList); err != nil {
-		return err
+		return fail.KubeClient(err, "getting %T", csrList)
 	}
 
 	certv1Client, err := certificatesv1client.NewForConfig(s.RESTConfig)
 	if err != nil {
-		return err
+		return fail.KubeClient(err, "creating certificates v1client")
 	}
 	certClient := certv1Client.CertificateSigningRequests()
 
@@ -225,7 +226,7 @@ func approvePendingCSR(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Con
 		}
 
 		if err := validateCSR(csr.Spec); err != nil {
-			return fmt.Errorf("failed to validate CSR: %w", err)
+			return err
 		}
 		csrFound = true
 
@@ -239,7 +240,7 @@ func approvePendingCSR(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Con
 		s.Logger.Infof("Approve pending CSR %q for username %q", csr.Name, csr.Spec.Username)
 		_, err := certClient.UpdateApproval(s.Context, csr.Name, csr, metav1.UpdateOptions{})
 		if err != nil {
-			return fmt.Errorf("failed to approve CSR %q: %w", csr.Name, err)
+			return fail.KubeClient(err, "approving CSR %q", csr.Name)
 		}
 	}
 
@@ -252,39 +253,48 @@ func approvePendingCSR(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Con
 
 func validateCSR(spec certificatesv1.CertificateSigningRequestSpec) error {
 	if !sets.NewString(spec.Groups...).HasAll(groupNodes, groupAuthenticated) {
-		return errors.New("CSR groups is expecter to be an authenticated node")
+		return fail.Runtime(errors.New("CSR groups is expecter to be an authenticated node"), "")
 	}
 
 	for _, usage := range spec.Usages {
 		if !isUsageInUsageList(usage, allowedUsages) {
-			return errors.New("CSR usages is invalid")
+			return fail.Runtime(errors.New("CSR usages is invalid"), "")
 		}
 	}
 
 	csrBlock, rest := pem.Decode(spec.Request)
 	if csrBlock == nil {
-		return errors.New("no certificate request found for the given CSR")
+		return fail.Runtime(errors.New("no certificate request found for the given CSR"), "")
 	}
 
 	if len(rest) != 0 {
-		return errors.New("found more than one PEM encoded block in the result")
+		return fail.Runtime(errors.New("found more than one PEM encoded block in the result"), "")
 	}
 
 	certReq, err := x509.ParseCertificateRequest(csrBlock.Bytes)
 	if err != nil {
-		return err
+		return fail.Runtime(err, "parsing kubelet %q CSR", spec.Username)
 	}
 
 	if certReq.Subject.CommonName != spec.Username {
-		return fmt.Errorf("commonName %q is different then CSR username %q", certReq.Subject.CommonName, spec.Username)
+		return fail.RuntimeError{
+			Op:  "checking match between CSR subject CN and CSR username",
+			Err: errors.Errorf("commonName %q is different then CSR username %q", certReq.Subject.CommonName, spec.Username),
+		}
 	}
 
 	if len(certReq.Subject.Organization) != 1 {
-		return fmt.Errorf("expected only one organization but got %d instead", len(certReq.Subject.Organization))
+		return fail.RuntimeError{
+			Op:  "checking match between CSR subject CN and CSR username",
+			Err: errors.Errorf("expected only one organization but got %d instead", len(certReq.Subject.Organization)),
+		}
 	}
 
 	if certReq.Subject.Organization[0] != groupNodes {
-		return fmt.Errorf("organization %q doesn't match node group %q", certReq.Subject.Organization[0], groupNodes)
+		return fail.RuntimeError{
+			Op:  "checking match between CSR subject CN and CSR username",
+			Err: errors.Errorf("organization %q doesn't match node group %q", certReq.Subject.Organization[0], groupNodes),
+		}
 	}
 
 	return nil

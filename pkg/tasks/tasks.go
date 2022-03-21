@@ -17,12 +17,11 @@ limitations under the License.
 package tasks
 
 import (
-	"github.com/pkg/errors"
-
 	"k8c.io/kubeone/pkg/addons"
 	"k8c.io/kubeone/pkg/certificate"
 	"k8c.io/kubeone/pkg/clusterstatus"
 	"k8c.io/kubeone/pkg/credentials"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/features"
 	"k8c.io/kubeone/pkg/kubeconfig"
 	"k8c.io/kubeone/pkg/state"
@@ -39,7 +38,7 @@ func (t Tasks) Run(s *state.State) error {
 			continue
 		}
 		if err := step.Run(s); err != nil {
-			return errors.Wrap(err, step.ErrMsg)
+			return fail.Runtime(err, step.Operation)
 		}
 	}
 
@@ -75,7 +74,7 @@ func (t Tasks) prepend(newtasks ...Task) Tasks {
 func WithBinariesOnly(t Tasks) Tasks {
 	return WithHostnameOSAndProbes(t).
 		append(
-			Task{Fn: installPrerequisites, ErrMsg: "failed to install prerequisites"},
+			Task{Fn: installPrerequisites, Operation: "installing prerequisites"},
 		)
 }
 
@@ -84,22 +83,22 @@ func WithBinariesOnly(t Tasks) Tasks {
 //  * detect hostnames  on all cluster hosts
 func WithHostnameOS(t Tasks) Tasks {
 	return t.prepend(
-		Task{Fn: determineHostname, ErrMsg: "failed to detect hostname"},
-		Task{Fn: determineOS, ErrMsg: "failed to detect OS"},
+		Task{Fn: determineHostname, Operation: "detecting hostname"},
+		Task{Fn: determineOS, Operation: "detecting OS"},
 	)
 }
 
 // WithProbes will run different probes over the defined cluster
 func WithProbes(t Tasks) Tasks {
 	return t.append(
-		Task{Fn: runProbes, ErrMsg: "probes failed"},
+		Task{Fn: runProbes, Operation: "running probes"},
 	)
 }
 
 func WithProbesAndSafeguard(t Tasks) Tasks {
 	return t.append(
-		Task{Fn: runProbes, ErrMsg: "probes failed"},
-		Task{Fn: safeguard, ErrMsg: "probes analysis failed"},
+		Task{Fn: runProbes, Operation: "running probes"},
+		Task{Fn: safeguard, Operation: "checking safeguards"},
 	)
 }
 
@@ -115,11 +114,11 @@ func WithFullInstall(t Tasks) Tasks {
 			Fn: func(s *state.State) error {
 				return s.RunTaskOnAllNodes(disableNMCloudSetup, state.RunParallel)
 			},
-			ErrMsg: "failed to disable nm-cloud-setup",
+			Operation: "disabling nm-cloud-setup",
 		},
 		{
-			Fn:     installPrerequisites,
-			ErrMsg: "failed to install prerequisites",
+			Fn:        installPrerequisites,
+			Operation: "installing prerequisites",
 		},
 	}...).
 		append(kubernetesConfigFiles()...).
@@ -130,7 +129,7 @@ func WithFullInstall(t Tasks) Tasks {
 
 					return s.RunTaskOnLeader(kubeadmCertsExecutor)
 				},
-				ErrMsg: "failed to provision certs and etcd on leader",
+				Operation: "provisioning certificates on the leader",
 			},
 			{
 				Fn: func(s *state.State) error {
@@ -138,7 +137,7 @@ func WithFullInstall(t Tasks) Tasks {
 
 					return s.RunTaskOnLeader(certificate.DownloadKubePKI)
 				},
-				ErrMsg: "failed to download Kubernetes PKI from the leader",
+				Operation: "downloading Kubernetes PKI from the leader",
 			},
 			{
 				Fn: func(s *state.State) error {
@@ -146,7 +145,7 @@ func WithFullInstall(t Tasks) Tasks {
 
 					return s.RunTaskOnFollowers(certificate.UploadKubePKI, state.RunParallel)
 				},
-				ErrMsg: "failed to upload Kubernetes PKI",
+				Operation: "uploading Kubernetes PKI",
 			},
 			{
 				Fn: func(s *state.State) error {
@@ -154,25 +153,25 @@ func WithFullInstall(t Tasks) Tasks {
 
 					return s.RunTaskOnFollowers(kubeadmCertsExecutor, state.RunParallel)
 				},
-				ErrMsg: "failed to provision certs and etcd on followers",
+				Operation: "provisioning certificates on the followers",
 			},
-			{Fn: initKubernetesLeader, ErrMsg: "failed to init kubernetes on leader"},
-			{Fn: kubeconfig.BuildKubernetesClientset, ErrMsg: "failed to build kubernetes clientset"},
+			{Fn: initKubernetesLeader, Operation: "initializing kubernetes on leader"},
+			{Fn: kubeconfig.BuildKubernetesClientset, Operation: "building kubernetes clientset"},
 			{
 				Fn: func(s *state.State) error {
 					return s.RunTaskOnLeader(approvePendingCSR)
 				},
-				ErrMsg: "failed to approve leader's kubelet CSR",
+				Operation: "approving leader's kubelet CSR",
 			},
-			{Fn: repairClusterIfNeeded, ErrMsg: "failed to repair cluster"},
-			{Fn: joinControlplaneNode, ErrMsg: "failed to join other masters a cluster"},
-			{Fn: restartKubeAPIServer, ErrMsg: "failed to restart unhealthy kube-apiserver"},
+			{Fn: repairClusterIfNeeded, Operation: "repairing cluster"},
+			{Fn: joinControlplaneNode, Operation: "joining followers control plane nodes"},
+			{Fn: restartKubeAPIServer, Operation: "restarting unhealthy kube-apiserver"},
 		}...).
 		append(WithResources(nil)...).
 		append(
 			Task{
 				Fn:        createMachineDeployments,
-				ErrMsg:    "failed to create worker machines",
+				Operation: "creating worker machines",
 				Predicate: func(s *state.State) bool { return !s.LiveCluster.IsProvisioned() },
 			},
 		)
@@ -188,20 +187,20 @@ func WithResources(t Tasks) Tasks {
 				},
 			},
 			{
-				Fn:     patchStaticPods,
-				ErrMsg: "failed to patch static pods",
+				Fn:        patchStaticPods,
+				Operation: "patching static pods",
 			},
 			{
 				Fn:          renewControlPlaneCerts,
-				ErrMsg:      "failed to renew certificates",
+				Operation:   "renewing certificates",
 				Description: "renew all certificates",
 				Predicate: func(s *state.State) bool {
 					return s.LiveCluster.CertsToExpireInLessThen90Days()
 				},
 			},
 			{
-				Fn:     saveKubeconfig,
-				ErrMsg: "failed to save kubeconfig to the local machine",
+				Fn:        saveKubeconfig,
+				Operation: "saving kubeconfig",
 			},
 			{
 				Fn: func(s *state.State) error {
@@ -209,65 +208,65 @@ func WithResources(t Tasks) Tasks {
 
 					return s.RunTaskOnLeader(certificate.DownloadKubePKI)
 				},
-				ErrMsg: "failed to download Kubernetes PKI from the leader",
+				Operation: "downloading Kubernetes PKI from the leader",
 			},
 			{
-				Fn:     features.Activate,
-				ErrMsg: "failed to activate features",
+				Fn:        features.Activate,
+				Operation: "activating features",
 			},
 			{
-				Fn:     patchCoreDNS,
-				ErrMsg: "failed to patch CoreDNS",
+				Fn:        patchCoreDNS,
+				Operation: "patching CoreDNS",
 			},
 			{
 				Fn:          addons.Ensure,
-				ErrMsg:      "failed to apply addons",
+				Operation:   "applying addons",
 				Description: "ensure embedded addons",
 			},
 			{
 				Fn:          ensureCNI,
-				ErrMsg:      "failed to install cni plugin",
+				Operation:   "installing CNI plugin",
 				Description: "ensure CNI",
 				Predicate:   func(s *state.State) bool { return s.Cluster.ClusterNetwork.CNI.External == nil },
 			},
 			{
 				Fn:          ensureCABundleConfigMap,
-				ErrMsg:      "failed to ensure caBundle configMap",
+				Operation:   "ensuring caBundle configMap",
 				Description: "ensure caBundle configMap",
 				Predicate:   func(s *state.State) bool { return s.Cluster.CABundle != "" },
 			},
 			{
 				Fn:          addons.EnsureUserAddons,
-				ErrMsg:      "failed to apply addons",
+				Operation:   "applying addons",
 				Description: "ensure custom addons",
 				Predicate:   func(s *state.State) bool { return s.Cluster.Addons != nil && s.Cluster.Addons.Enable },
 			},
 			{
 				Fn:          credentials.Ensure,
-				ErrMsg:      "failed to ensure credentials secret",
+				Operation:   "ensuring credentials secret",
 				Description: "ensure credential",
 			},
 			{
 				Fn:          externalccm.Ensure,
-				ErrMsg:      "failed to ensure external CCM",
+				Operation:   "ensuring external CCM",
 				Description: "ensure external CCM",
 				Predicate:   func(s *state.State) bool { return s.Cluster.CloudProvider.External },
 			},
 			{
-				Fn:     joinStaticWorkerNodes,
-				ErrMsg: "failed to join worker nodes to the cluster",
+				Fn:        joinStaticWorkerNodes,
+				Operation: "joining static worker nodes to the cluster",
 			},
 			{
-				Fn:     labelNodeOSes,
-				ErrMsg: "failed to label nodes with their OS",
+				Fn:        labelNodeOSes,
+				Operation: "labelling nodes with their OS",
 			},
 			{
-				Fn:     machinecontroller.WaitReady,
-				ErrMsg: "failed to wait for machine-controller",
+				Fn:        machinecontroller.WaitReady,
+				Operation: "waiting for machine-controller",
 			},
 			{
 				Fn:        operatingsystemmanager.WaitReady,
-				ErrMsg:    "failed to wait for operating-system-manager",
+				Operation: "waiting for operating-system-manager",
 				Predicate: func(s *state.State) bool { return s.Cluster.OperatingSystemManagerEnabled() },
 			},
 		}...,
@@ -278,26 +277,26 @@ func WithUpgrade(t Tasks) Tasks {
 	return WithHostnameOSAndProbes(t).
 		append(kubernetesConfigFiles()...). // this, in the upgrade process where config rails are handled
 		append(Tasks{
-			{Fn: kubeconfig.BuildKubernetesClientset, ErrMsg: "failed to build kubernetes clientset"},
-			{Fn: runPreflightChecks, ErrMsg: "preflight checks failed", Retries: 1},
-			{Fn: upgradeLeader, ErrMsg: "failed to upgrade leader control plane"},
-			{Fn: upgradeFollower, ErrMsg: "failed to upgrade follower control plane"},
+			{Fn: kubeconfig.BuildKubernetesClientset, Operation: "building kubernetes clientset"},
+			{Fn: runPreflightChecks, Operation: "checking preflight safetynet", Retries: 1},
+			{Fn: upgradeLeader, Operation: "upgrading leader control plane"},
+			{Fn: upgradeFollower, Operation: "upgrading follower control plane"},
 			{
 				Fn: func(s *state.State) error {
 					s.Logger.Info("Downloading PKI...")
 
 					return s.RunTaskOnLeader(certificate.DownloadKubePKI)
 				},
-				ErrMsg: "failed to download Kubernetes PKI from the leader",
+				Operation: "downloading Kubernetes PKI from the leader",
 			},
 		}...).
 		append(WithResources(nil)...).
 		append(
-			Task{Fn: restartKubeAPIServer, ErrMsg: "failed to restart unhealthy kube-apiserver"},
-			Task{Fn: upgradeStaticWorkers, ErrMsg: "unable to upgrade static worker nodes"},
+			Task{Fn: restartKubeAPIServer, Operation: "restarting unhealthy kube-apiserver"},
+			Task{Fn: upgradeStaticWorkers, Operation: "upgrading static worker nodes"},
 			Task{
 				Fn:          upgradeMachineDeployments,
-				ErrMsg:      "failed to upgrade MachineDeployments",
+				Operation:   "upgrading MachineDeployments",
 				Description: "upgrade MachineDeployments",
 				Predicate:   func(s *state.State) bool { return s.UpgradeMachineDeployments },
 			},
@@ -306,30 +305,30 @@ func WithUpgrade(t Tasks) Tasks {
 
 func WithReset(t Tasks) Tasks {
 	return t.append(Tasks{
-		{Fn: destroyWorkers, ErrMsg: "failed to destroy workers"},
-		{Fn: resetAllNodes, ErrMsg: "failed to reset nodes"},
-		{Fn: removeBinariesAllNodes, ErrMsg: "failed to remove binaries from nodes"},
+		{Fn: destroyWorkers, Operation: "destroying workers"},
+		{Fn: resetAllNodes, Operation: "resetting all nodes"},
+		{Fn: removeBinariesAllNodes, Operation: "removing kubernetes binaries from nodes"},
 	}...)
 }
 
 func WithContainerDMigration(t Tasks) Tasks {
 	return WithHostnameOS(t).
 		append(Tasks{
-			{Fn: validateContainerdInConfig, ErrMsg: "failed to validate config", Retries: 1},
-			{Fn: kubeconfig.BuildKubernetesClientset, ErrMsg: "failed to build kubernetes clientset"},
-			{Fn: migrateToContainerd, ErrMsg: "failed to migrate to containerd"},
-			{Fn: patchCRISocketAnnotation, ErrMsg: "failed to patch Node objects"},
+			{Fn: validateContainerdInConfig, Operation: "validating config", Retries: 1},
+			{Fn: kubeconfig.BuildKubernetesClientset, Operation: "building kubernetes clientset"},
+			{Fn: migrateToContainerd, Operation: "migrating to containerd"},
+			{Fn: patchCRISocketAnnotation, Operation: "patching Node objects"},
 			{
 				Fn: func(s *state.State) error {
 					s.Logger.Info("Downloading PKI...")
 
 					return s.RunTaskOnLeader(certificate.DownloadKubePKI)
 				},
-				ErrMsg: "failed to download Kubernetes PKI from the leader",
+				Operation: "downloading Kubernetes PKI from the leader",
 			},
 			{
 				Fn:          addons.Ensure,
-				ErrMsg:      "failed to apply addons",
+				Operation:   "applying addons",
 				Description: "ensure embedded addons",
 			},
 			{
@@ -339,6 +338,7 @@ func WithContainerDMigration(t Tasks) Tasks {
 
 					return nil
 				},
+				Operation: "deploying machine-controller",
 				Predicate: func(s *state.State) bool { return s.Cluster.MachineController.Deploy },
 			},
 		}...)
@@ -347,16 +347,16 @@ func WithContainerDMigration(t Tasks) Tasks {
 func WithClusterStatus(t Tasks) Tasks {
 	return WithHostnameOS(t).
 		append(Tasks{
-			{Fn: kubeconfig.BuildKubernetesClientset, ErrMsg: "failed to build kubernetes clientset"},
-			{Fn: clusterstatus.Print, ErrMsg: "failed to get cluster status"},
+			{Fn: kubeconfig.BuildKubernetesClientset, Operation: "building kubernetes clientset"},
+			{Fn: clusterstatus.Print, Operation: "getting cluster status"},
 		}...)
 }
 
 func kubernetesConfigFiles() Tasks {
 	return Tasks{
-		{Fn: generateKubeadm, ErrMsg: "failed to generate kubeadm config files"},
-		{Fn: generateConfigurationFiles, ErrMsg: "failed to generate config files"},
-		{Fn: uploadConfigurationFiles, ErrMsg: "failed to upload config files"},
+		{Fn: generateKubeadm, Operation: "generating kubeadm config files"},
+		{Fn: generateConfigurationFiles, Operation: "generating config files"},
+		{Fn: uploadConfigurationFiles, Operation: "uploading config files"},
 	}
 }
 
@@ -366,18 +366,18 @@ func WithDisableEncryptionProviders(t Tasks, customConfig bool) Tasks {
 		return t.append(Tasks{
 			{
 				Fn:          removeEncryptionProviderFile,
-				ErrMsg:      "failed to remove encryption providers configuration",
+				Operation:   "removing encryption providers configuration",
 				Description: "remove old Encryption Providers configuration file",
 			},
 			{
 				Fn:          ensureRestartKubeAPIServer,
-				ErrMsg:      "failed to restart KubeAPI",
+				Operation:   "restarting KubeAPI",
 				Description: "restart KubeAPI containers",
 			},
 
 			{
 				Fn:          rewriteClusterSecrets,
-				ErrMsg:      "failed to rewrite cluster secrets",
+				Operation:   "rewriting cluster secrets",
 				Description: "rewrite all cluster secrets",
 			},
 		}...)
@@ -386,25 +386,25 @@ func WithDisableEncryptionProviders(t Tasks, customConfig bool) Tasks {
 	return t.append(Tasks{
 		{
 			Fn:          fetchEncryptionProvidersFile,
-			ErrMsg:      "failed to fetch EncryptionProviders config",
+			Operation:   "fetching EncryptionProviders config",
 			Description: "fetch current Encryption Providers configuration file "},
 		{
 			Fn:          uploadIdentityFirstEncryptionConfiguration,
-			ErrMsg:      "failed to upload encryption providers configuration",
+			Operation:   "uploading encryption providers configuration",
 			Description: "upload updated Encryption Providers configuration file"},
 		{
 			Fn:          ensureRestartKubeAPIServer,
-			ErrMsg:      "failed to restart KubeAPI",
+			Operation:   "restarting kube-apiserver pods",
 			Description: "restart KubeAPI containers",
 		},
 		{
 			Fn:          rewriteClusterSecrets,
-			ErrMsg:      "failed to rewrite cluster secrets",
+			Operation:   "rewriting cluster secrets",
 			Description: "rewrite all cluster secrets",
 		},
 		{
 			Fn:          removeEncryptionProviderFile,
-			ErrMsg:      "failed to remove encryption providers configuration",
+			Operation:   "removing encryption providers configuration",
 			Description: "remove old Encryption Providers configuration file",
 		},
 	}...)
@@ -414,7 +414,7 @@ func WithRewriteSecrets(t Tasks) Tasks {
 	return t.append(
 		Task{
 			Fn:          rewriteClusterSecrets,
-			ErrMsg:      "failed to rewrite cluster secrets",
+			Operation:   "rewriting cluster secrets",
 			Description: "rewrite all cluster secrets",
 		})
 }
@@ -423,12 +423,12 @@ func WithCustomEncryptionConfigUpdated(t Tasks) Tasks {
 	return t.append(Tasks{
 		{
 			Fn:          ensureRestartKubeAPIServer,
-			ErrMsg:      "failed to restart KubeAPI",
+			Operation:   "restarting KubeAPI",
 			Description: "restart KubeAPI containers",
 		},
 		{
 			Fn:          rewriteClusterSecrets,
-			ErrMsg:      "failed to rewrite cluster secrets",
+			Operation:   "rewriting cluster secrets",
 			Description: "rewrite all cluster secrets",
 		},
 	}...)
@@ -439,32 +439,32 @@ func WithRotateKey(t Tasks) Tasks {
 		append(Tasks{
 			{
 				Fn:          fetchEncryptionProvidersFile,
-				ErrMsg:      "failed to fetch EncryptionProviders config",
+				Operation:   "fetching EncryptionProviders config",
 				Description: "fetch current Encryption Providers configuration file ",
 			},
 			{
 				Fn:          uploadEncryptionConfigurationWithNewKey,
-				ErrMsg:      "failed to upload encryption providers configuration",
+				Operation:   "uploading encryption providers configuration",
 				Description: "upload updated Encryption Providers configuration file",
 			},
 			{
 				Fn:          ensureRestartKubeAPIServer,
-				ErrMsg:      "failed to restart KubeAPI",
+				Operation:   "restarting KubeAPI",
 				Description: "restart KubeAPI containers",
 			},
 			{
 				Fn:          rewriteClusterSecrets,
-				ErrMsg:      "failed to rewrite cluster secrets",
+				Operation:   "rewriting cluster secrets",
 				Description: "rewrite all cluster secrets",
 			},
 			{
 				Fn:          uploadEncryptionConfigurationWithoutOldKey,
-				ErrMsg:      "failed to upload encryption providers configuration",
+				Operation:   "uploading encryption providers configuration",
 				Description: "upload updated Encryption Providers configuration file",
 			},
 			{
 				Fn:          ensureRestartKubeAPIServer,
-				ErrMsg:      "failed to restart KubeAPI",
+				Operation:   "restarting kube-apiserver pods",
 				Description: "restart KubeAPI containers",
 			},
 		}...)
@@ -472,10 +472,10 @@ func WithRotateKey(t Tasks) Tasks {
 
 func WithCCMCSIMigration(t Tasks) Tasks {
 	return t.append(Tasks{
-		{Fn: ccmMigrationValidateConfig, ErrMsg: "failed to validate config", Retries: 1},
+		{Fn: ccmMigrationValidateConfig, Operation: "validating config", Retries: 1},
 		{
-			Fn:     readyToCompleteCCMMigration,
-			ErrMsg: "failed to validate readiness to complete migration",
+			Fn:        readyToCompleteCCMMigration,
+			Operation: "validating readiness to complete migration",
 			Predicate: func(s *state.State) bool {
 				return s.CCMMigrationComplete
 			},
@@ -483,11 +483,11 @@ func WithCCMCSIMigration(t Tasks) Tasks {
 	}...).
 		append(kubernetesConfigFiles()...).
 		append(
-			Task{Fn: ccmMigrationRegenerateControlPlaneManifests, ErrMsg: "failed to regenerate static pod manifests"},
-			Task{Fn: ccmMigrationUpdateControlPlaneKubeletConfig, ErrMsg: "failed to update kubelet config on control plane nodes"},
+			Task{Fn: ccmMigrationRegenerateControlPlaneManifests, Operation: "regenerating static pod manifests"},
+			Task{Fn: ccmMigrationUpdateControlPlaneKubeletConfig, Operation: "updating kubelet config on control plane nodes"},
 			Task{
-				Fn:     ccmMigrationUpdateStaticWorkersKubeletConfig,
-				ErrMsg: "failed to update kubelet config on static worker nodes",
+				Fn:        ccmMigrationUpdateStaticWorkersKubeletConfig,
+				Operation: "updating kubelet config on static worker nodes",
 				Predicate: func(s *state.State) bool {
 					return len(s.Cluster.StaticWorkers.Hosts) > 0
 				},
@@ -497,7 +497,7 @@ func WithCCMCSIMigration(t Tasks) Tasks {
 		append(
 			Task{
 				Fn:        migrateOpenStackPVs,
-				ErrMsg:    "failed to migrate openstack persistentvolumes",
+				Operation: "migrating openstack persistentvolumes",
 				Predicate: func(s *state.State) bool { return s.Cluster.CloudProvider.Openstack != nil },
 			},
 			Task{
@@ -508,7 +508,7 @@ func WithCCMCSIMigration(t Tasks) Tasks {
 
 					return nil
 				},
-				ErrMsg:    "failed to show next steps",
+				Operation: "show next steps",
 				Predicate: func(s *state.State) bool { return s.Cluster.MachineController.Deploy && !s.CCMMigrationComplete },
 			},
 		)

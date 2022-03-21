@@ -20,6 +20,7 @@ import (
 	"time"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
@@ -48,7 +49,7 @@ func joinControlPlaneNodeInternal(s *state.State, node *kubeoneapi.HostConfig, c
 
 	_, _, err = s.Runner.RunRaw(cmd)
 	if err != nil {
-		return err
+		return fail.SSH(err, "joining control plane node %q", node.PublicAddress)
 	}
 
 	return approvePendingCSR(s, node, conn)
@@ -63,7 +64,7 @@ func kubeadmCertsExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh.
 
 	_, _, err = s.Runner.RunRaw(cmd)
 
-	return err
+	return fail.SSH(err, "generating kubeadm certificates")
 }
 
 func initKubernetesLeader(s *state.State) error {
@@ -84,6 +85,6 @@ func initKubernetesLeader(s *state.State) error {
 
 		_, _, err = s.Runner.RunRaw(cmd)
 
-		return err
+		return fail.SSH(err, "initializing kubeadm cluster")
 	})
 }

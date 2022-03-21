@@ -19,8 +19,6 @@ package tasks
 import (
 	"time"
 
-	"github.com/pkg/errors"
-
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/nodeutils"
 	"k8c.io/kubeone/pkg/ssh"
@@ -36,19 +34,19 @@ func upgradeLeaderExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh
 
 	logger.Infoln("Labeling leader control plane...")
 	if err := labelNode(s.DynamicClient, node); err != nil {
-		return errors.Wrap(err, "failed to label leader control plane node")
+		return err
 	}
 
 	drainer := nodeutils.NewDrainer(s.RESTConfig, logger)
 
 	logger.Infoln("Cordoning leader control plane...")
 	if err := drainer.Cordon(s.Context, node.Hostname, true); err != nil {
-		return errors.Wrap(err, "failed to cordon follower control plane node")
+		return err
 	}
 
 	logger.Infoln("Draining leader control plane...")
 	if err := drainer.Drain(s.Context, node.Hostname); err != nil {
-		return errors.Wrap(err, "failed to drain follower control plane node")
+		return err
 	}
 
 	if err := setupProxy(logger, s); err != nil {
@@ -57,22 +55,22 @@ func upgradeLeaderExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh
 
 	logger.Infoln("Upgrading kubeadm binary on the leader control plane...")
 	if err := upgradeKubeadmAndCNIBinaries(s, *node); err != nil {
-		return errors.Wrap(err, "failed to upgrade kubernetes binaries on leader control plane")
+		return err
 	}
 
 	logger.Infoln("Running 'kubeadm upgrade' on leader control plane node...")
 	if err := upgradeLeaderControlPlane(s, node.ID); err != nil {
-		return errors.Wrap(err, "failed to run 'kubeadm upgrade' on leader control plane")
+		return err
 	}
 
 	logger.Infoln("Upgrading kubernetes system binaries on the leader control plane...")
 	if err := upgradeKubeletAndKubectlBinaries(s, *node); err != nil {
-		return errors.Wrap(err, "failed to upgrade kubernetes system binaries on leader control plane")
+		return err
 	}
 
 	logger.Infoln("Uncordoning leader control plane...")
 	if err := drainer.Cordon(s.Context, node.Hostname, false); err != nil {
-		return errors.Wrap(err, "failed to uncordon follower control plane node")
+		return err
 	}
 
 	logger.Infof("Waiting %v to ensure all components are up...", timeoutNodeUpgrade)
@@ -80,7 +78,7 @@ func upgradeLeaderExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh
 
 	logger.Infoln("Unlabeling leader control plane...")
 	if err := unlabelNode(s.DynamicClient, node); err != nil {
-		return errors.Wrap(err, "failed to unlabel leader control plane node")
+		return err
 	}
 
 	return approvePendingCSR(s, node, conn)

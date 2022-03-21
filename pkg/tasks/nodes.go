@@ -21,10 +21,9 @@ import (
 	"io"
 	"path/filepath"
 
-	"github.com/pkg/errors"
-
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/certificate/cabundle"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/ssh/sshiofs"
@@ -78,21 +77,21 @@ func ensureRestartKubeAPIServerOnOS(s *state.State, node kubeoneapi.HostConfig) 
 func restartKubeAPIServerCrictl(s *state.State) error {
 	cmd, err := scripts.RestartKubeAPIServerCrictl(false)
 	if err != nil {
-		return errors.WithStack(err)
+		return err
 	}
 	_, _, err = s.Runner.RunRaw(cmd)
 
-	return errors.WithStack(err)
+	return fail.SSH(err, "restarting kubeapi-server pod")
 }
 
 func ensureRestartKubeAPIServerCrictl(s *state.State) error {
 	cmd, err := scripts.RestartKubeAPIServerCrictl(true)
 	if err != nil {
-		return errors.WithStack(err)
+		return err
 	}
 	_, _, err = s.Runner.RunRaw(cmd)
 
-	return errors.WithStack(err)
+	return fail.SSH(err, "restarting kubeapi-server pod")
 }
 
 func labelNodeOSes(s *state.State) error {
@@ -100,7 +99,7 @@ func labelNodeOSes(s *state.State) error {
 	nodeList := corev1.NodeList{}
 
 	if err := s.DynamicClient.List(s.Context, &nodeList); err != nil {
-		return err
+		return fail.KubeClient(err, "getting %T", nodeList)
 	}
 
 	for _, node := range nodeList.Items {
@@ -134,7 +133,7 @@ func labelNodeOSes(s *state.State) error {
 		})
 
 		if updateErr != nil {
-			return updateErr
+			return fail.KubeClient(updateErr, "updating %s Node", nodeName)
 		}
 	}
 
@@ -160,7 +159,7 @@ func patchStaticPods(s *state.State) error {
 
 		pod := corev1.Pod{}
 		if err = yaml.Unmarshal(kubeManagerBuf, &pod); err != nil {
-			return errors.Wrap(err, "failed to unmarshal kube-controller-manager.yaml")
+			return fail.Runtime(err, "unmarshalling kube-controller-manager.yaml")
 		}
 
 		cacertDir := cabundle.OriginalCertsDir
@@ -195,7 +194,7 @@ func patchStaticPods(s *state.State) error {
 
 		buf, err := yaml.Marshal(&pod)
 		if err != nil {
-			return errors.Wrap(err, "failed to marshal kube-controller-manager.yaml")
+			return fail.Runtime(err, "marshalling kube-controller-manager.yaml")
 		}
 
 		if err = mgrPodManifest.Truncate(0); err != nil {
@@ -208,6 +207,6 @@ func patchStaticPods(s *state.State) error {
 
 		_, err = io.Copy(mgrPodManifest, bytes.NewBuffer(buf))
 
-		return errors.Wrap(err, "failed to write kube-controller-manager.yaml")
+		return fail.Runtime(err, "writing kube-controller-manager.yaml")
 	}, state.RunParallel)
 }

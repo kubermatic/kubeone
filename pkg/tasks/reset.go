@@ -17,10 +17,9 @@ limitations under the License.
 package tasks
 
 import (
-	"github.com/pkg/errors"
-
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/clientutil"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/kubeconfig"
 	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/ssh"
@@ -56,7 +55,7 @@ func destroyWorkers(s *state.State) error {
 		s.Logger.Warn("Unable to connect to the control plane API and destroy worker nodes")
 		s.Logger.Warn("You can skip destroying worker nodes and destroy them manually using `--destroy-workers=false`")
 
-		return errors.Wrap(lastErr, "unable to build kubernetes clientset")
+		return lastErr
 	}
 
 	condFn := clientutil.CRDsReadyCondition(s.Context, s.DynamicClient, machinecontroller.CRDNames())
@@ -78,7 +77,7 @@ func destroyWorkers(s *state.State) error {
 		return true, nil
 	})
 	if lastErr != nil {
-		return errors.Wrap(lastErr, "unable to delete all worker nodes")
+		return lastErr
 	}
 
 	_ = wait.ExponentialBackoff(defaultRetryBackoff(3), func() (bool, error) {
@@ -92,7 +91,7 @@ func destroyWorkers(s *state.State) error {
 		return true, nil
 	})
 	if lastErr != nil {
-		return errors.Wrap(lastErr, "error waiting for machines to be deleted")
+		return lastErr
 	}
 
 	return nil
@@ -104,7 +103,7 @@ func resetAllNodes(s *state.State) error {
 	return s.RunTaskOnAllNodes(resetNode, state.RunSequentially)
 }
 
-func resetNode(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func resetNode(s *state.State, host *kubeoneapi.HostConfig, conn ssh.Connection) error {
 	s.Logger.Infoln("Resetting node...")
 
 	cmd, err := scripts.KubeadmReset(s.KubeadmVerboseFlag(), s.WorkDir)
@@ -114,7 +113,7 @@ func resetNode(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) er
 
 	_, _, err = s.Runner.RunRaw(cmd)
 
-	return err
+	return fail.Runtime(err, "resetting host %q", host.PublicAddress)
 }
 
 func removeBinariesAllNodes(s *state.State) error {
@@ -133,7 +132,7 @@ func removeBinaries(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connec
 
 	// Determine operating system
 	if err = determineOS(s); err != nil {
-		return errors.Wrap(err, "failed to determine operating system")
+		return err
 	}
 
 	return runOnOS(s, node.OperatingSystem, map[kubeoneapi.OperatingSystemName]runOnOSFn{
@@ -154,7 +153,7 @@ func removeBinariesDebian(s *state.State) error {
 
 	_, _, err = s.Runner.RunRaw(cmd)
 
-	return errors.WithStack(err)
+	return fail.Runtime(err, "removing kubernetes binaries")
 }
 
 func removeBinariesCentOS(s *state.State) error {
@@ -165,7 +164,7 @@ func removeBinariesCentOS(s *state.State) error {
 
 	_, _, err = s.Runner.RunRaw(cmd)
 
-	return errors.WithStack(err)
+	return fail.Runtime(err, "removing kubernetes binaries")
 }
 
 func removeBinariesAmazonLinux(s *state.State) error {
@@ -176,7 +175,7 @@ func removeBinariesAmazonLinux(s *state.State) error {
 
 	_, _, err = s.Runner.RunRaw(cmd)
 
-	return errors.WithStack(err)
+	return fail.Runtime(err, "removing kubernetes binaries")
 }
 
 func removeBinariesFlatcar(s *state.State) error {
@@ -187,5 +186,5 @@ func removeBinariesFlatcar(s *state.State) error {
 
 	_, _, err = s.Runner.RunRaw(cmd)
 
-	return errors.WithStack(err)
+	return fail.Runtime(err, "removing kubernetes binaries")
 }
