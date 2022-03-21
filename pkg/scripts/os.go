@@ -21,6 +21,7 @@ import (
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/containerruntime"
+	"k8c.io/kubeone/pkg/fail"
 )
 
 const (
@@ -58,7 +59,9 @@ func MigrateToContainerd(cluster *kubeoneapi.KubeOneCluster, node *kubeoneapi.Ho
 		return "", err
 	}
 
-	return Render(migrateToContainerdScriptTemplate, data)
+	result, err := Render(migrateToContainerdScriptTemplate, data)
+
+	return result, fail.Runtime(err, "rendering migrateToContainerdScriptTemplate script")
 }
 
 func installISCSIAndNFS(cluster *kubeoneapi.KubeOneCluster) bool {

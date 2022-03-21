@@ -16,7 +16,11 @@ limitations under the License.
 
 package scripts
 
-import "github.com/MakeNowJust/heredoc/v2"
+import (
+	"github.com/MakeNowJust/heredoc/v2"
+
+	"k8c.io/kubeone/pkg/fail"
+)
 
 var (
 	kubeadmJoinScriptTemplate = heredoc.Doc(`
@@ -69,31 +73,37 @@ var (
 )
 
 func KubeadmJoin(workdir string, nodeID int, verboseFlag string) (string, error) {
-	return Render(kubeadmJoinScriptTemplate, Data{
+	result, err := Render(kubeadmJoinScriptTemplate, Data{
 		"WORK_DIR": workdir,
 		"NODE_ID":  nodeID,
 		"VERBOSE":  verboseFlag,
 	})
+
+	return result, fail.Runtime(err, "rendering kubeadmJoinScriptTemplate script")
 }
 
 func KubeadmJoinWorker(workdir string, nodeID int, verboseFlag string) (string, error) {
-	return Render(kubeadmWorkerJoinScriptTemplate, Data{
+	result, err := Render(kubeadmWorkerJoinScriptTemplate, Data{
 		"WORK_DIR": workdir,
 		"NODE_ID":  nodeID,
 		"VERBOSE":  verboseFlag,
 	})
+
+	return result, fail.Runtime(err, "rendering kubeadmWorkerJoinScriptTemplate script")
 }
 
 func KubeadmCert(workdir string, nodeID int, verboseFlag string) (string, error) {
-	return Render(kubeadmCertScriptTemplate, Data{
+	result, err := Render(kubeadmCertScriptTemplate, Data{
 		"WORK_DIR": workdir,
 		"NODE_ID":  nodeID,
 		"VERBOSE":  verboseFlag,
 	})
+
+	return result, fail.Runtime(err, "rendering kubeadmCertScriptTemplate script")
 }
 
 func KubeadmInit(workdir string, nodeID int, verboseFlag, token, tokenTTL string, skipPhases string) (string, error) {
-	return Render(kubeadmInitScriptTemplate, Data{
+	result, err := Render(kubeadmInitScriptTemplate, Data{
 		"WORK_DIR":       workdir,
 		"NODE_ID":        nodeID,
 		"VERBOSE":        verboseFlag,
@@ -101,26 +111,34 @@ func KubeadmInit(workdir string, nodeID int, verboseFlag, token, tokenTTL string
 		"TOKEN_DURATION": tokenTTL,
 		"SKIP_PHASE":     skipPhases,
 	})
+
+	return result, fail.Runtime(err, "rendering kubeadmInitScriptTemplate script")
 }
 
 func KubeadmReset(verboseFlag, workdir string) (string, error) {
-	return Render(kubeadmResetScriptTemplate, Data{
+	result, err := Render(kubeadmResetScriptTemplate, Data{
 		"VERBOSE":  verboseFlag,
 		"WORK_DIR": workdir,
 	})
+
+	return result, fail.Runtime(err, "rendering kubeadmResetScriptTemplate script")
 }
 
 func KubeadmUpgrade(kubeadmCmd, workdir string, leader bool, nodeID int) (string, error) {
-	return Render(kubeadmUpgradeScriptTemplate, map[string]interface{}{
+	result, err := Render(kubeadmUpgradeScriptTemplate, map[string]interface{}{
 		"KUBEADM_UPGRADE": kubeadmCmd,
 		"WORK_DIR":        workdir,
 		"NODE_ID":         nodeID,
 		"LEADER":          leader,
 	})
+
+	return result, fail.Runtime(err, "rendering kubeadmUpgradeScriptTemplate script")
 }
 
 func KubeadmPauseImageVersion(kubernetesVersion string) (string, error) {
-	return Render(kubeadmPauseImageVersionScriptTemplate, map[string]interface{}{
+	result, err := Render(kubeadmPauseImageVersionScriptTemplate, map[string]interface{}{
 		"KUBERNETES_VERSION": kubernetesVersion,
 	})
+
+	return result, fail.Runtime(err, "rendering kubeadmPauseImageVersionScriptTemplate script")
 }

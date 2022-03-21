@@ -53,7 +53,7 @@ func (dr *drainer) Drain(ctx context.Context, nodeName string) error {
 		return err
 	}
 
-	return drain.RunNodeDrain(drainerHelper, nodeName)
+	return fail.KubeClient(drain.RunNodeDrain(drainerHelper, nodeName), "draining %q node", nodeName)
 }
 
 func (dr *drainer) Cordon(ctx context.Context, nodeName string, desired bool) error {
@@ -67,7 +67,12 @@ func (dr *drainer) Cordon(ctx context.Context, nodeName string, desired bool) er
 		return fail.KubeClient(err, "getting Node %s", nodeName)
 	}
 
-	return fail.KubeClient(drain.RunCordonOrUncordon(drainerHelper, node, desired), "un/cordon Node %s", nodeName)
+	op := "cordon Node %s"
+	if !desired {
+		op = "uncordon Node %s"
+	}
+
+	return fail.KubeClient(drain.RunCordonOrUncordon(drainerHelper, node, desired), op, nodeName)
 }
 
 func (dr *drainer) drainHelper(ctx context.Context) (*drain.Helper, error) {

@@ -18,6 +18,7 @@ package scripts
 
 import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/fail"
 )
 
 const (
@@ -66,15 +67,19 @@ sudo tee /etc/environment < $envtmp
 )
 
 func EnvironmentFile(cluster *kubeoneapi.KubeOneCluster) (string, error) {
-	return Render(environmentFileScriptTemplate, Data{
+	result, err := Render(environmentFileScriptTemplate, Data{
 		"HTTP_PROXY":  cluster.Proxy.HTTP,
 		"HTTPS_PROXY": cluster.Proxy.HTTPS,
 		"NO_PROXY":    cluster.Proxy.NoProxy,
 	})
+
+	return result, fail.Runtime(err, "rendering environmentFileScriptTemplate script")
 }
 
 func DaemonsEnvironmentDropIn(daemons ...string) (string, error) {
-	return Render(daemonsEnvironmentScriptTemplate, Data{
+	result, err := Render(daemonsEnvironmentScriptTemplate, Data{
 		"SYSTEMD_SERVICES": daemons,
 	})
+
+	return result, fail.Runtime(err, "rendering daemonsEnvironmentScriptTemplate script")
 }

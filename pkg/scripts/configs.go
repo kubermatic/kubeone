@@ -20,6 +20,7 @@ import (
 	"github.com/MakeNowJust/heredoc/v2"
 
 	"k8c.io/kubeone/pkg/certificate/cabundle"
+	"k8c.io/kubeone/pkg/fail"
 )
 
 var (
@@ -69,28 +70,36 @@ var (
 )
 
 func SaveCloudConfig(workdir string) (string, error) {
-	return Render(cloudConfigScriptTemplate, Data{
+	result, err := Render(cloudConfigScriptTemplate, Data{
 		"WORK_DIR": workdir,
 	})
+
+	return result, fail.Runtime(err, "rendering cloudConfigScriptTemplate script")
 }
 
 func SaveAuditPolicyConfig(workdir string) (string, error) {
-	return Render(auditPolicyScriptTemplate, Data{
+	result, err := Render(auditPolicyScriptTemplate, Data{
 		"WORK_DIR": workdir,
 	})
+
+	return result, fail.Runtime(err, "rendering auditPolicyScriptTemplate script")
 }
 
 func SavePodNodeSelectorConfig(workdir string) (string, error) {
-	return Render(podNodeSelectorConfigTemplate, Data{
+	result, err := Render(podNodeSelectorConfigTemplate, Data{
 		"WORK_DIR": workdir,
 	})
+
+	return result, fail.Runtime(err, "rendering script")
 }
 
 func SaveEncryptionProvidersConfig(workdir, fileName string) (string, error) {
-	return Render(encryptionProvidersConfigTemplate, Data{
+	result, err := Render(encryptionProvidersConfigTemplate, Data{
 		"WORK_DIR":  workdir,
 		"FILE_NAME": fileName,
 	})
+
+	return result, fail.Runtime(err, "rendering encryptionProvidersConfigTemplate script")
 }
 
 func DeleteEncryptionProvidersConfig(fileName string) string {
@@ -98,9 +107,11 @@ func DeleteEncryptionProvidersConfig(fileName string) string {
 }
 
 func SaveCABundle(workdir string) (string, error) {
-	return Render(caBundleTemplate, Data{
+	result, err := Render(caBundleTemplate, Data{
 		"CA_BUNDLE_FILENAME": cabundle.FileName,
 		"CA_CERTS_DIR":       cabundle.CustomCertsDir,
 		"WORK_DIR":           workdir,
 	})
+
+	return result, fail.Runtime(err, "rendering caBundleTemplate script")
 }
