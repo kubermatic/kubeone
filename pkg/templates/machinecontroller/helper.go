@@ -27,8 +27,10 @@ import (
 
 	clusterv1alpha1 "github.com/kubermatic/machine-controller/pkg/apis/cluster/v1alpha1"
 
+	admissionregistrationv1 "k8s.io/api/admissionregistration/v1"
 	corev1 "k8s.io/api/core/v1"
 	errorsutil "k8s.io/apimachinery/pkg/api/errors"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/util/retry"
@@ -44,6 +46,10 @@ func WaitReady(s *state.State) error {
 	}
 
 	s.Logger.Infoln("Waiting for machine-controller to come up...")
+
+	if err := cleanupStaleResources(s.Context, s.DynamicClient); err != nil {
+		return err
+	}
 
 	if err := waitForWebhook(s.Context, s.DynamicClient); err != nil {
 		return err
@@ -208,6 +214,25 @@ func waitForWebhook(ctx context.Context, client dynclient.Client) error {
 	})
 
 	return fail.KubeClient(wait.Poll(5*time.Second, 3*time.Minute, condFn), "waiting for machine-controller webhook to became ready")
+}
+
+func cleanupStaleResources(ctx context.Context, client dynclient.Client) error {
+	tryToRemove := []dynclient.Object{
+		&admissionregistrationv1.MutatingWebhookConfiguration{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      "machine-controller.kubermatic.io",
+				Namespace: metav1.NamespaceSystem,
+			},
+		},
+	}
+
+	for _, obj := range tryToRemove {
+		if err := clientutil.DeleteIfExists(ctx, client, obj); err != nil {
+			return fail.KubeClient(err, "deleting %T %s", obj, dynclient.ObjectKeyFromObject(obj))
+		}
+	}
+
+	return nil
 }
 
 func CRDNames() []string {
