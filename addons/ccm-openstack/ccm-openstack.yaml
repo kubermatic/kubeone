@@ -206,6 +206,9 @@ spec:
             - mountPath: /etc/ssl/certs
               name: ca-certs
               readOnly: true
+            - mountPath: /usr/share/ca-certificates
+              name: usr-ca-certs
+              readOnly: true
             - mountPath: /etc/config
               name: cloud-config-volume
               readOnly: true
@@ -225,6 +228,10 @@ spec:
         hostPath:
           path: /etc/ssl/certs
           type: DirectoryOrCreate
+      - hostPath:
+          path: /usr/share/ca-certificates
+          type: DirectoryOrCreate
+        name: usr-ca-certs
       - name: cloud-config-volume
         secret:
           secretName: cloud-config
