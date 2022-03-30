@@ -3,6 +3,8 @@ kind: Deployment
 metadata:
   name: machine-controller
   namespace: kube-system
+  labels:
+    app: machine-controller
 spec:
   replicas: 1
   selector:

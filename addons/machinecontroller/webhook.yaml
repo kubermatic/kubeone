@@ -46,6 +46,8 @@ kind: Deployment
 metadata:
   name: machine-controller-webhook
   namespace: kube-system
+  labels:
+    app: machine-controller-webhook
 spec:
   replicas: 1
   selector:

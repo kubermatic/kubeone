@@ -310,6 +310,8 @@ kind: Deployment
 metadata:
   name: flatcar-linux-update-operator
   namespace: reboot-coordinator
+  labels:
+    app: flatcar-linux-update-operator
 spec:
   replicas: 1
   selector:

@@ -4,6 +4,8 @@ apiVersion: apps/v1
 metadata:
   name: csi-snapshot-controller
   namespace: kube-system
+  labels:
+    app: csi-snapshot-controller
 spec:
   replicas: 1
   selector:

@@ -4,6 +4,8 @@ apiVersion: apps/v1
 metadata:
   name: csi-azuredisk-controller
   namespace: kube-system
+  labels:
+    app: csi-azuredisk-controller
 spec:
   replicas: 2
   selector:
