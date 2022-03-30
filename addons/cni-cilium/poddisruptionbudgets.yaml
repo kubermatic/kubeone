@@ -14,6 +14,8 @@ spec:
     matchLabels:
       name: cilium-operator
 ---
+
+{{ if .Config.ClusterNetwork.CNI.Cilium.EnableHubble }}
 {{- if ge $version.Minor 21 }}
 apiVersion: policy/v1
 {{- else }}
@@ -43,3 +45,4 @@ spec:
   selector:
     matchLabels:
       k8s-app: hubble-ui
+{{ end }}
