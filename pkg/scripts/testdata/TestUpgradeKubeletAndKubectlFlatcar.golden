@@ -1,4 +1,4 @@
-set -xeu pipefail
+set -xeuo pipefail
 export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
 
 source /etc/kubeone/proxy-env
