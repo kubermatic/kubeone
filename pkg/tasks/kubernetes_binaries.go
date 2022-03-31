@@ -57,7 +57,7 @@ func upgradeKubeletAndKubectlBinariesDebian(s *state.State) error {
 }
 
 func upgradeKubeletAndKubectlBinariesFlatcar(s *state.State) error {
-	cmd, err := scripts.UpgradeKubeletAndKubectlFlatcar(s.Cluster.Versions.Kubernetes)
+	cmd, err := scripts.UpgradeKubeletAndKubectlFlatcar(s.Cluster)
 	if err != nil {
 		return err
 	}
@@ -123,7 +123,7 @@ func upgradeKubeadmAndCNIBinariesAmazonLinux(s *state.State) error {
 }
 
 func upgradeKubeadmAndCNIBinariesFlatcar(s *state.State) error {
-	cmd, err := scripts.UpgradeKubeadmAndCNIFlatcar(s.Cluster.Versions.Kubernetes)
+	cmd, err := scripts.UpgradeKubeadmAndCNIFlatcar(s.Cluster)
 	if err != nil {
 		return err
 	}

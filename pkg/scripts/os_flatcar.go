@@ -107,6 +107,14 @@ sudo systemctl daemon-reload
 	upgradeKubeadmAndCNIFlatcarScriptTemplate = `
 {{ template "detect-host-cpu-architecture" }}
 
+{{- if .INSTALL_DOCKER -}}
+{{ template "flatcar-docker" . }}
+{{ end }}
+
+{{- if .INSTALL_CONTAINERD -}}
+{{ template "flatcar-containerd" . }}
+{{ end }}
+
 source /etc/kubeone/proxy-env
 
 sudo mkdir -p /opt/cni/bin
@@ -130,6 +138,14 @@ sudo chmod +x kubeadm
 source /etc/kubeone/proxy-env
 
 {{ template "detect-host-cpu-architecture" }}
+
+{{- if .INSTALL_DOCKER -}}
+{{ template "flatcar-docker" . }}
+{{ end }}
+
+{{- if .INSTALL_CONTAINERD -}}
+{{ template "flatcar-containerd" . }}
+{{ end }}
 
 RELEASE="v{{ .KUBERNETES_VERSION }}"
 sudo mkdir -p /var/tmp/kube-binaries
@@ -202,19 +218,35 @@ func RemoveBinariesFlatcar() (string, error) {
 	return result, fail.Runtime(err, "rendering removeBinariesFlatcarScriptTemplate script")
 }
 
-func UpgradeKubeadmAndCNIFlatcar(k8sVersion string) (string, error) {
-	result, err := Render(upgradeKubeadmAndCNIFlatcarScriptTemplate, Data{
-		"KUBERNETES_VERSION":     k8sVersion,
+func UpgradeKubeadmAndCNIFlatcar(cluster *kubeoneapi.KubeOneCluster) (string, error) {
+	data := Data{
+		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
-	})
+		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
+		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
+	}
+
+	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
+		return "", err
+	}
+
+	result, err := Render(upgradeKubeadmAndCNIFlatcarScriptTemplate, data)
 
 	return result, fail.Runtime(err, "rendering upgradeKubeadmAndCNIFlatcarScriptTemplate script")
 }
 
-func UpgradeKubeletAndKubectlFlatcar(k8sVersion string) (string, error) {
-	result, err := Render(upgradeKubeletAndKubectlFlatcarScriptTemplate, Data{
-		"KUBERNETES_VERSION": k8sVersion,
-	})
+func UpgradeKubeletAndKubectlFlatcar(cluster *kubeoneapi.KubeOneCluster) (string, error) {
+	data := Data{
+		"KUBERNETES_VERSION": cluster.Versions.Kubernetes,
+		"INSTALL_DOCKER":     cluster.ContainerRuntime.Docker,
+		"INSTALL_CONTAINERD": cluster.ContainerRuntime.Containerd,
+	}
+
+	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
+		return "", err
+	}
+
+	result, err := Render(upgradeKubeletAndKubectlFlatcarScriptTemplate, data)
 
 	return result, fail.Runtime(err, "rendering upgradeKubeletAndKubectlFlatcarScriptTemplate script")
 }
