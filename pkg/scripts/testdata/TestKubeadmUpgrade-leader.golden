@@ -1,3 +1,3 @@
-set -xeu pipefail
+set -xeuo pipefail
 export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
 sudo kubeadm upgrade apply -y --certificate-renewal=true v1.1.1 --config=some/cfg/master_0.yaml

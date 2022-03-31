@@ -1,4 +1,4 @@
-set -xeu pipefail
+set -xeuo pipefail
 export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
 if sudo test -f "./subdir/test/cfg/audit-policy.yaml"; then
 	sudo mkdir -p /etc/kubernetes/audit

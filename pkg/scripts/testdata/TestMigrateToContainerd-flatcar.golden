@@ -1,4 +1,4 @@
-set -xeu pipefail
+set -xeuo pipefail
 export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
 sudo systemctl stop kubelet
 sudo docker ps -q | xargs sudo docker stop || true

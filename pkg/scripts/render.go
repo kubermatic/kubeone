@@ -242,7 +242,7 @@ func Render(cmd string, variables map[string]interface{}) (string, error) {
 	}
 
 	var buf strings.Builder
-	buf.WriteString("set -xeu pipefail\n")
+	buf.WriteString("set -xeuo pipefail\n")
 	buf.WriteString(`export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"`)
 	buf.WriteString("\n")
 
