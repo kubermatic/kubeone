@@ -223,7 +223,7 @@ func cleanupStaleResources(ctx context.Context, client dynclient.Client) error {
 
 	for _, obj := range tryToRemove {
 		if err := clientutil.DeleteIfExists(ctx, client, obj); err != nil {
-			return fail.KubeClient(err, "deleting %T %s", obj, dynclient.ObjectKeyFromObject(obj))
+			return errors.Wrapf(err, "deleting %T %s", obj, dynclient.ObjectKeyFromObject(obj))
 		}
 	}
 
