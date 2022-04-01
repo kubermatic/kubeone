@@ -572,7 +572,8 @@ func TestUpgradeKubeadmAndCNIAmazonLinux(t *testing.T) {
 func TestUpgradeKubeadmAndCNIFlatcar(t *testing.T) {
 	t.Parallel()
 
-	got, err := UpgradeKubeadmAndCNIFlatcar("v1.17.4")
+	cls := genCluster(withDocker)
+	got, err := UpgradeKubeadmAndCNIFlatcar(&cls)
 	if err != nil {
 		t.Errorf("UpgradeKubeadmAndCNIFlatcar() error = %v", err)
 
@@ -627,7 +628,8 @@ func TestUpgradeKubeletAndKubectlAmazonLinux(t *testing.T) {
 func TestUpgradeKubeletAndKubectlFlatcar(t *testing.T) {
 	t.Parallel()
 
-	got, err := UpgradeKubeletAndKubectlFlatcar("v1.17.4")
+	cls := genCluster(withDocker)
+	got, err := UpgradeKubeletAndKubectlFlatcar(&cls)
 	if err != nil {
 		t.Errorf("UpgradeKubeletAndKubectlFlatcar() error = %v", err)
 
