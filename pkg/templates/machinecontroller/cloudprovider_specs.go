@@ -18,21 +18,28 @@ package machinecontroller
 
 // AWSSpec holds cloudprovider spec for AWS
 type AWSSpec struct {
-	AMI                string            `json:"ami"`
-	AssignPublicIP     *bool             `json:"assignPublicIP"`
-	AvailabilityZone   string            `json:"availabilityZone"`
-	DiskIops           *int              `json:"diskIops,omitempty"`
-	DiskSize           *int              `json:"diskSize"`
-	DiskType           string            `json:"diskType"`
-	EBSVolumeEncrypted bool              `json:"ebsVolumeEncrypted"`
-	InstanceProfile    string            `json:"instanceProfile"`
-	InstanceType       *string           `json:"instanceType"`
-	IsSpotInstance     *bool             `json:"isSpotInstance,omitempty"`
-	Region             string            `json:"region"`
-	SecurityGroupIDs   []string          `json:"securityGroupIDs"`
-	SubnetID           string            `json:"subnetId"`
-	Tags               map[string]string `json:"tags"`
-	VPCID              string            `json:"vpcId"`
+	AMI                string                 `json:"ami"`
+	AssignPublicIP     *bool                  `json:"assignPublicIP"`
+	AvailabilityZone   string                 `json:"availabilityZone"`
+	DiskIops           *int                   `json:"diskIops,omitempty"`
+	DiskSize           *int                   `json:"diskSize"`
+	DiskType           string                 `json:"diskType"`
+	EBSVolumeEncrypted bool                   `json:"ebsVolumeEncrypted"`
+	InstanceProfile    string                 `json:"instanceProfile"`
+	InstanceType       *string                `json:"instanceType"`
+	IsSpotInstance     *bool                  `json:"isSpotInstance,omitempty"`
+	SpotInstanceConfig *AWSSpotInstanceConfig `json:"spotInstanceConfig,omitempty"`
+	Region             string                 `json:"region"`
+	SecurityGroupIDs   []string               `json:"securityGroupIDs"`
+	SubnetID           string                 `json:"subnetId"`
+	Tags               map[string]string      `json:"tags"`
+	VPCID              string                 `json:"vpcId"`
+}
+
+type AWSSpotInstanceConfig struct {
+	MaxPrice             string `json:"maxPrice,omitempty"`
+	PersistentRequest    bool   `json:"persistentRequest,omitempty"`
+	InterruptionBehavior string `json:"interruptionBehavior,omitempty"`
 }
 
 // DigitalOceanSpec holds cloudprovider spec for DigitalOcean

@@ -113,6 +113,10 @@ output "kubeone_workers" {
           ## Only applicable if diskType = io1
           diskIops           = 500
           isSpotInstance     = var.initial_machinedeployment_spotinstances
+          ## Only applicable if isSpotInstance is true
+          spotInstanceConfig = {
+            maxPrice = var.initial_machinedeployment_spotinstances_max_price
+          }
           ebsVolumeEncrypted = false
           tags = {
             "${var.cluster_name}-workers" = ""
@@ -154,6 +158,10 @@ output "kubeone_workers" {
           ## Only applicable if diskType = io1
           diskIops           = 500
           isSpotInstance     = var.initial_machinedeployment_spotinstances
+          ## Only applicable if isSpotInstance is true
+          spotInstanceConfig = {
+            maxPrice = var.initial_machinedeployment_spotinstances_max_price
+          }
           ebsVolumeEncrypted = false
           tags = {
             "${var.cluster_name}-workers" = ""
@@ -195,6 +203,10 @@ output "kubeone_workers" {
           ## Only applicable if diskType = io1
           diskIops           = 500
           isSpotInstance     = var.initial_machinedeployment_spotinstances
+          ## Only applicable if isSpotInstance is true
+          spotInstanceConfig = {
+            maxPrice = var.initial_machinedeployment_spotinstances_max_price
+          }
           ebsVolumeEncrypted = false
           tags = {
             "${var.cluster_name}-workers" = ""

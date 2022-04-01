@@ -225,6 +225,13 @@ variable "initial_machinedeployment_spotinstances" {
   type        = bool
 }
 
+variable "initial_machinedeployment_spotinstances_max_price" {
+  description = "used to specify max spot instance price for initial machine-deployment"
+# we intentionally set minimum max price to ensure that user specifies it explicitly
+  default     = "0.01"
+  type        = string
+}
+
 variable "worker_deploy_ssh_key" {
   description = "add provided ssh public key to MachineDeployments"
   default     = true
@@ -232,7 +239,7 @@ variable "worker_deploy_ssh_key" {
 }
 
 variable "control_plane_vm_count" {
-  description = "Number of control plane instances"
+  description = "number of control plane instances"
   default     = 3
   type        = number
 }
