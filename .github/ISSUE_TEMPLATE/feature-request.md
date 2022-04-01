@@ -7,6 +7,10 @@ labels: sig/cluster-management, kind/feature
 
 <!-- Please use this template if you want to submit a new feature request.-->
 
-**What feature would you like to be added?**
+### User Story
 
-**What are use cases of the feature?**
+### Acceptance criteria
+
+### Current workaround
+
+### Metric to be improved
