@@ -11,11 +11,11 @@ If you're reporting a security issue, please check the guidelines for reporting 
 Thanks!
 -->
 
-### What happened?
+### What happened
 
-### What should happen?
+### Expected behavior
 
-### How to reproduce?
+### How to reproduce
 
 ### Environment
 - KubeOne version (`kubeone version`): 
