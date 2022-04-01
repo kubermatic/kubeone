@@ -19,11 +19,41 @@ esac
 
 source /etc/kubeone/proxy-env
 
+
+
+sudo mkdir -p $(dirname /etc/docker/daemon.json)
+sudo touch /etc/docker/daemon.json
+sudo chmod 600 /etc/docker/daemon.json
+cat <<EOF | sudo tee /etc/docker/daemon.json
+{
+	"exec-opts": [
+		"native.cgroupdriver=systemd"
+	],
+	"storage-driver": "overlay2",
+	"log-driver": "json-file",
+	"log-opts": {
+		"max-file": "5",
+		"max-size": "100m"
+	}
+}
+EOF
+cat <<EOF | sudo tee /etc/crictl.yaml
+runtime-endpoint: unix:///var/run/dockershim.sock
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now docker
+sudo systemctl restart docker
+
+
+
+
+
 sudo mkdir -p /opt/cni/bin
 curl -L "https://github.com/containernetworking/plugins/releases/download/v0.8.7/cni-plugins-linux-${HOST_ARCH}-v0.8.7.tgz" |
 	sudo tar -C /opt/cni/bin -xz
 
-RELEASE="vv1.17.4"
+RELEASE="v1.17.4"
 
 sudo mkdir -p /var/tmp/kube-binaries
 cd /var/tmp/kube-binaries
