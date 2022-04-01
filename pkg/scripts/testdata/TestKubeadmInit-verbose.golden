@@ -1,4 +1,4 @@
-set -xeu pipefail
+set -xeuo pipefail
 export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
 if [[ -f /etc/kubernetes/admin.conf ]]; then
 	sudo kubeadm --v=6 token create 123098 --ttl 1h

@@ -1,4 +1,4 @@
-set -xeu pipefail
+set -xeuo pipefail
 export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
 
 sudo mkdir -p /etc/systemd/system/docker.service.d
