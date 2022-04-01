@@ -1,5 +1,26 @@
 # Changelog
 
+# [v1.4.1](https://github.com/kubermatic/kubeone/releases/tag/v1.4.1) - 2022-04-01
+
+## Attention Needed
+
+This patch release enables the etcd corruption checks on every etcd member that is running etcd 3.5 (which applies to all Kubernetes 1.22+ clusters). This change is a [recommendation from the etcd maintainers](https://groups.google.com/a/kubernetes.io/g/dev/c/B7gJs88XtQc/m/rSgNOzV2BwAJ) due to issues in etcd 3.5 that can cause data consistency issues. The changes in this patch release will prevent corrupted etcd members from joining or staying in the etcd ring.
+
+## Changes by Kind
+
+### Bug or Regression
+
+- Approve pending CSRs when upgrading control plane and static worker nodes ([#1888](https://github.com/kubermatic/kubeone/pull/1888))
+- Enable the etcd integrity checks (on startup and every 4 hours) for Kubernetes 1.22+ clusters. See [the official etcd announcement for more details](https://groups.google.com/a/kubernetes.io/g/dev/c/B7gJs88XtQc/m/rSgNOzV2BwAJ). ([#1909](https://github.com/kubermatic/kubeone/pull/1909))
+- Fix CSR approving issue for existing nodes with already approved and GCed CSRs ([#1897](https://github.com/kubermatic/kubeone/pull/1897))
+- Fix missing snapshot CRDs for Openstack CSI ([#1913](https://github.com/kubermatic/kubeone/pull/1913))
+- Ensure old machine-controller MutatingWebhookConfiguration is deleted ([#1913](https://github.com/kubermatic/kubeone/pull/1913))
+- Fix overwriteRegistry not overwriting the Kubernetes control plane images ([#1885](https://github.com/kubermatic/kubeone/pull/1885))
+- Mount /usr/share/ca-certificates to the OpenStack CCM pod to fix the OpenStack CCM pod CrashLooping on Flatcar Linux ([#1905](https://github.com/kubermatic/kubeone/pull/1905))
+- Fix the GoBetween script failing to install the zip package on Flatcar Linux ([#1905](https://github.com/kubermatic/kubeone/pull/1905))
+- Expand path to SSH private key file ([#1859](https://github.com/kubermatic/kubeone/pull/1859))
+- Fix an issue with `kubeone config migrate` failing to migrate configs with the `containerRuntime` block ([#1861](https://github.com/kubermatic/kubeone/pull/1861))
+
 # [v1.4.0](https://github.com/kubermatic/kubeone/releases/tag/v1.4.0) - 2022-02-16
 
 ## Attention Needed
