@@ -16,8 +16,6 @@
 
 set -eu -o pipefail
 
-export GOFLAGS=-mod=vendor
-
 # The code generation script takes the following arguments:
 # * generators (we use only deepcopy, conversion and defaulter)
 # * output path for clientset (we don't generate clienset, therefore it's empty)
@@ -25,7 +23,7 @@ export GOFLAGS=-mod=vendor
 # * the external types dir
 # * group and versions to generate code for
 cd $(dirname ${BASH_SOURCE})/..
-bash vendor/k8s.io/code-generator/generate-internal-groups.sh \
+bash hack/vendor/k8s.io/code-generator/generate-internal-groups.sh \
   "deepcopy,conversion,defaulter" "" ./pkg/apis ./pkg/apis \
   "kubeone:v1beta1,v1beta2" \
   --go-header-file hack/boilerplate/boilerplate.generatego.txt

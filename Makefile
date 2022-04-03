@@ -38,7 +38,7 @@ build: dist/kubeone
 
 .PHONY: vendor
 vendor: buildenv
-	go mod vendor
+	cd hack && go mod vendor
 
 dist/kubeone: buildenv download-gocache
 	go build -ldflags='$(GOLDFLAGS)' -v -o $@ .
