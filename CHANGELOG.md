@@ -1,6 +1,6 @@
 # Changelog
 
-# [v1.4.1](https://github.com/kubermatic/kubeone/releases/tag/v1.4.1) - 2022-04-01
+# [v1.4.1](https://github.com/kubermatic/kubeone/releases/tag/v1.4.1) - 2022-04-04
 
 ## Attention Needed
 
