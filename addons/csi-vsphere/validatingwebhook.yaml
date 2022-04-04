@@ -86,6 +86,8 @@ apiVersion: apps/v1
 metadata:
   name: vsphere-csi-webhook
   namespace: kube-system
+  labels:
+    app: vsphere-csi-webhook
 spec:
   replicas: 1
   selector:

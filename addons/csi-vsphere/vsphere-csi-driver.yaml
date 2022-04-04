@@ -188,6 +188,8 @@ apiVersion: apps/v1
 metadata:
   name: vsphere-csi-controller
   namespace: kube-system
+  labels:
+    app: vsphere-csi-controller
 spec:
   replicas: 1
   selector:

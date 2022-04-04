@@ -1,0 +1,15 @@
+{{ $version := semver .Config.Versions.Kubernetes }}
+{{- if ge $version.Minor 21 }}
+apiVersion: policy/v1
+{{- else }}
+apiVersion: policy/v1beta1
+{{- end }}
+kind: PodDisruptionBudget
+metadata:
+  name: equinixmetal-cloud-controller-manager
+  namespace: kube-system
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: equinixmetal-cloud-controller-manager

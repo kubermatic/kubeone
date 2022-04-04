@@ -1,0 +1,48 @@
+{{ $version := semver .Config.Versions.Kubernetes }}
+{{- if ge $version.Minor 21 }}
+apiVersion: policy/v1
+{{- else }}
+apiVersion: policy/v1beta1
+{{- end }}
+kind: PodDisruptionBudget
+metadata:
+  name: cilium-operator
+  namespace: kube-system
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      name: cilium-operator
+---
+
+{{ if .Config.ClusterNetwork.CNI.Cilium.EnableHubble }}
+{{- if ge $version.Minor 21 }}
+apiVersion: policy/v1
+{{- else }}
+apiVersion: policy/v1beta1
+{{- end }}
+kind: PodDisruptionBudget
+metadata:
+  name: hubble-relay
+  namespace: kube-system
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      k8s-app: hubble-relay
+---
+{{- if ge $version.Minor 21 }}
+apiVersion: policy/v1
+{{- else }}
+apiVersion: policy/v1beta1
+{{- end }}
+kind: PodDisruptionBudget
+metadata:
+  name: hubble-ui
+  namespace: kube-system
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      k8s-app: hubble-ui
+{{ end }}

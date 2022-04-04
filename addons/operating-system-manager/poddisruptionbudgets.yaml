@@ -1,0 +1,30 @@
+{{ $version := semver .Config.Versions.Kubernetes }}
+{{- if ge $version.Minor 21 }}
+apiVersion: policy/v1
+{{- else }}
+apiVersion: policy/v1beta1
+{{- end }}
+kind: PodDisruptionBudget
+metadata:
+  name: operating-system-manager
+  namespace: kube-system
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: operating-system-manager
+---
+{{- if ge $version.Minor 21 }}
+apiVersion: policy/v1
+{{- else }}
+apiVersion: policy/v1beta1
+{{- end }}
+kind: PodDisruptionBudget
+metadata:
+  name: operating-system-manager-webhook
+  namespace: kube-system
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: operating-system-manager-webhook
