@@ -9,7 +9,7 @@ metadata:
   name: flatcar-linux-update-operator
   namespace: kube-system
 spec:
-  minAvailable: 1
+  maxUnavailable: 1
   selector:
     matchLabels:
       app: flatcar-linux-update-operator

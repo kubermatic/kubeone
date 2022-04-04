@@ -9,7 +9,7 @@ metadata:
   name: csi-azuredisk-controller
   namespace: kube-system
 spec:
-  minAvailable: 1
+  maxUnavailable: 1
   selector:
     matchLabels:
       app: csi-azuredisk-controller
@@ -24,7 +24,7 @@ metadata:
   name: csi-snapshot-controller
   namespace: kube-system
 spec:
-  minAvailable: 1
+  maxUnavailable: 1
   selector:
     matchLabels:
       app: csi-snapshot-controller

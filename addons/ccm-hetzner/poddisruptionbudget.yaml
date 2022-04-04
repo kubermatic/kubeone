@@ -9,7 +9,7 @@ metadata:
   name: hcloud-cloud-controller-manager
   namespace: kube-system
 spec:
-  minAvailable: 1
+  maxUnavailable: 1
   selector:
     matchLabels:
       app: hcloud-cloud-controller-manager

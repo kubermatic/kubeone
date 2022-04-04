@@ -9,7 +9,7 @@ metadata:
   name: vsphere-csi-webhook
   namespace: kube-system
 spec:
-  minAvailable: 1
+  maxUnavailable: 1
   selector:
     matchLabels:
       app: vsphere-csi-webhook
@@ -24,7 +24,7 @@ metadata:
   name: vsphere-csi-controller
   namespace: kube-system
 spec:
-  minAvailable: 1
+  maxUnavailable: 1
   selector:
     matchLabels:
       app: vsphere-csi-controller

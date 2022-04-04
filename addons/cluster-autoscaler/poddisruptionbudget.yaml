@@ -9,7 +9,7 @@ metadata:
   name: cluster-autoscaler
   namespace: kube-system
 spec:
-  minAvailable: 1
+  maxUnavailable: 1
   selector:
     matchLabels:
       app: cluster-autoscaler
