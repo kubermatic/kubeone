@@ -4212,7 +4212,7 @@ spec:
             privileged: true
           resources:
             requests:
-              cpu: 250m
+              cpu: {{ default .Params.RequestsCPU "250m" }}
           lifecycle:
             preStop:
               exec:
