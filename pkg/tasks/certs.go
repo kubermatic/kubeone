@@ -245,7 +245,7 @@ func approvePendingCSR(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Con
 	}
 
 	if !csrFound {
-		s.Logger.Info("No CSR found for node %q, assuming it was garbage-collected", node.Hostname)
+		s.Logger.Infof("No CSR found for node %q, assuming it was garbage-collected", node.Hostname)
 	}
 
 	return nil
