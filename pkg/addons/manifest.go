@@ -269,67 +269,74 @@ func txtFuncMap(overwriteRegistry string) template.FuncMap {
 		return registry
 	}
 
-	funcs["required"] = func(warn string, input interface{}) (interface{}, error) {
-		switch val := input.(type) {
-		case nil:
-			return val, fmt.Errorf(warn)
-		case string:
-			if val == "" {
-				return val, fmt.Errorf(warn)
-			}
-		}
-
-		return input, nil
-	}
-
-	funcs["caBundleEnvVar"] = func() (string, error) {
-		buf, err := yaml.Marshal([]corev1.EnvVar{cabundle.EnvVar()})
-
-		return string(buf), err
-	}
-
-	funcs["caBundleVolume"] = func() (string, error) {
-		buf, err := yaml.Marshal([]corev1.Volume{cabundle.Volume()})
-
-		return string(buf), err
-	}
-
-	funcs["caBundleVolumeMount"] = func() (string, error) {
-		buf, err := yaml.Marshal([]corev1.VolumeMount{cabundle.VolumeMount()})
-
-		return string(buf), err
-	}
-
-	funcs["EquinixMetalSecret"] = func(apiKey, projectID string) (string, error) {
-		equinixMetalSecret := struct {
-			APIKey    string `json:"apiKey"`
-			ProjectID string `json:"projectID"`
-		}{
-			APIKey:    apiKey,
-			ProjectID: projectID,
-		}
-
-		buf, err := json.Marshal(equinixMetalSecret)
-
-		return string(buf), err
-	}
-
-	funcs["vSphereCSIWebhookConfig"] = func() (string, error) {
-		cfg := vsphereCSIWebhookConfigWrapper{
-			WebHookConfig: vsphereCSIWebhookConfig{
-				Port:     "8443",
-				CertFile: "/run/secrets/tls/cert.pem",
-				KeyFile:  "/run/secrets/tls/key.pem",
-			},
-		}
-
-		var buf strings.Builder
-		enc := toml.NewEncoder(&buf)
-		enc.Indent = ""
-		err := enc.Encode(cfg)
-
-		return buf.String(), err
-	}
+	funcs["required"] = requiredTemplateFunc
+	funcs["caBundleEnvVar"] = caBundleEnvVarTemplateFunc
+	funcs["caBundleVolume"] = caBundleVolumeTemplateFunc
+	funcs["caBundleVolumeMount"] = caBundleVolumeMountTemplateFunc
+	funcs["EquinixMetalSecret"] = equinixMetalSecretTemplateFunc
+	funcs["vSphereCSIWebhookConfig"] = vSphereCSIWebhookConfigTemplateFunc
 
 	return funcs
+}
+
+func requiredTemplateFunc(warn string, input interface{}) (interface{}, error) {
+	switch val := input.(type) {
+	case nil:
+		return val, fmt.Errorf(warn)
+	case string:
+		if val == "" {
+			return val, fmt.Errorf(warn)
+		}
+	}
+
+	return input, nil
+}
+
+func caBundleEnvVarTemplateFunc() (string, error) {
+	buf, err := yaml.Marshal([]corev1.EnvVar{cabundle.EnvVar()})
+
+	return string(buf), err
+}
+
+func caBundleVolumeTemplateFunc() (string, error) {
+	buf, err := yaml.Marshal([]corev1.Volume{cabundle.Volume()})
+
+	return string(buf), err
+}
+
+func caBundleVolumeMountTemplateFunc() (string, error) {
+	buf, err := yaml.Marshal([]corev1.VolumeMount{cabundle.VolumeMount()})
+
+	return string(buf), err
+}
+
+func equinixMetalSecretTemplateFunc(apiKey, projectID string) (string, error) {
+	equinixMetalSecret := struct {
+		APIKey    string `json:"apiKey"`
+		ProjectID string `json:"projectID"`
+	}{
+		APIKey:    apiKey,
+		ProjectID: projectID,
+	}
+
+	buf, err := json.Marshal(equinixMetalSecret)
+
+	return string(buf), err
+}
+
+func vSphereCSIWebhookConfigTemplateFunc() (string, error) {
+	cfg := vsphereCSIWebhookConfigWrapper{
+		WebHookConfig: vsphereCSIWebhookConfig{
+			Port:     "8443",
+			CertFile: "/run/secrets/tls/cert.pem",
+			KeyFile:  "/run/secrets/tls/key.pem",
+		},
+	}
+
+	var buf strings.Builder
+	enc := toml.NewEncoder(&buf)
+	enc.Indent = ""
+	err := enc.Encode(cfg)
+
+	return buf.String(), err
 }
