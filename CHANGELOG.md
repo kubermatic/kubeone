@@ -1,6 +1,6 @@
 # Changelog
 
-# [v1.4.1](https://github.com/kubermatic/kubeone/releases/tag/v1.4.1) - 2022-04-01
+# [v1.4.1](https://github.com/kubermatic/kubeone/releases/tag/v1.4.1) - 2022-04-04
 
 ## Attention Needed
 
@@ -10,6 +10,7 @@ This patch release enables the etcd corruption checks on every etcd member that 
 
 ### Bug or Regression
 
+- Regenerate container runtime configurations based on kubeone.yaml during control-plane upgrades on Flatcar Linux nodes, not only on the initial installation. ([#1918](https://github.com/kubermatic/kubeone/pull/1918))
 - Approve pending CSRs when upgrading control plane and static worker nodes ([#1888](https://github.com/kubermatic/kubeone/pull/1888))
 - Enable the etcd integrity checks (on startup and every 4 hours) for Kubernetes 1.22+ clusters. See [the official etcd announcement for more details](https://groups.google.com/a/kubernetes.io/g/dev/c/B7gJs88XtQc/m/rSgNOzV2BwAJ). ([#1909](https://github.com/kubermatic/kubeone/pull/1909))
 - Fix CSR approving issue for existing nodes with already approved and GCed CSRs ([#1897](https://github.com/kubermatic/kubeone/pull/1897))
