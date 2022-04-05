@@ -311,8 +311,10 @@ func runApplyInstall(s *state.State, opts *applyOpts) error { // Print the expec
 		fmt.Println("\t! force-install option provided: force install new binary versions (!dangerous!)")
 	}
 
-	for _, node := range s.Cluster.DynamicWorkers {
-		fmt.Printf("\t+ ensure machinedeployment %q with %d replica(s) exists\n", node.Name, resolveInt(node.Replicas))
+	if !s.LiveCluster.IsProvisioned() {
+		for _, node := range s.Cluster.DynamicWorkers {
+			fmt.Printf("\t+ ensure machinedeployment %q with %d replica(s) exists\n", node.Name, resolveInt(node.Replicas))
+		}
 	}
 
 	if s.Cluster.Addons.Enabled() && s.Cluster.Addons.Path != "" {
