@@ -5,11 +5,11 @@ metadata:
   namespace: kube-system
 data:
 {{ if .Certificates.OperatingSystemManagerWebhookCert }}
-  "cert.pem": |
+  "tls.crt": |
 {{ .Certificates.OperatingSystemManagerWebhookCert | b64enc | indent 4 }}
 {{ end }}
 {{ if .Certificates.OperatingSystemManagerWebhookKey }}
-  "key.pem": |
+  "tls.key": |
 {{ .Certificates.OperatingSystemManagerWebhookKey | b64enc | indent 4 }}
   "ca.crt": |
 {{ end }}
@@ -22,9 +22,10 @@ metadata:
   namespace: kube-system
 spec:
   ports:
-    - port: 443
+    - name: 443-9443
+      port: 443
       protocol: TCP
-      targetPort: 9876
+      targetPort: 9443
   selector:
     app: operating-system-manager-webhook
   type: ClusterIP
@@ -69,28 +70,30 @@ spec:
           args:
             - -logtostderr
             - -v=4
-            - -listen-address=0.0.0.0:9876
             - -namespace=kube-system
           volumeMounts:
             - name: operating-system-manager-webhook-serving-cert
-              mountPath: /tmp/cert
+              mountPath: /tmp/k8s-webhook-server/serving-certs
               readOnly: true
+          ports:
+            - containerPort: 9443
+              name: webhook-server
+              protocol: TCP
           livenessProbe:
             httpGet:
               path: /healthz
-              port: 9876
-              scheme: HTTPS
-            initialDelaySeconds: 5
-            periodSeconds: 5
+              port: 8081
+            initialDelaySeconds: 15
+            periodSeconds: 20
           readinessProbe:
             httpGet:
-              path: /healthz
-              port: 9876
-              scheme: HTTPS
-            periodSeconds: 5
+              path: /readyz
+              port: 8081
+            initialDelaySeconds: 5
+            periodSeconds: 10
           resources:
             limits:
-              cpu: 500m
+              cpu: 200m
               memory: 256Mi
             requests:
               cpu: 50m
