@@ -148,7 +148,14 @@ var (
 			{{ end }}
 
 			sudo apt-mark unhold containerd.io || true
-			sudo apt-get install -y containerd.io=%s
+			sudo DEBIAN_FRONTEND=noninteractive apt-get install \
+				--option "Dpkg::Options::=--force-confold" \
+				--no-install-recommends \
+				{{- if .FORCE }}
+				--allow-downgrades \
+				{{- end }}
+				-y \
+				containerd.io=%s
 			sudo apt-mark hold containerd.io
 
 			{{ template "container-runtime-daemon-config" . }}
