@@ -179,8 +179,6 @@ presubmits:
               value: "aws"
             - name: CONTAINER_RUNTIME
               value: containerd
-            - name: TF_VAR_initial_machinedeployment_spotinstances
-              value: "true"
             - name: TF_VAR_initial_machinedeployment_spotinstances_max_price
               value: "0.138"
             - name: TEST_CLUSTER_TARGET_VERSION
@@ -245,8 +243,6 @@ presubmits:
           env:
             - name: PROVIDER
               value: "aws"
-            - name: TF_VAR_initial_machinedeployment_spotinstances
-              value: "true"
             - name: TF_VAR_initial_machinedeployment_spotinstances_max_price
               value: "0.138"
             - name: TEST_CLUSTER_TARGET_VERSION
@@ -930,8 +926,6 @@ presubmits:
               value: "aws"
             - name: CONTAINER_RUNTIME
               value: containerd
-            - name: TF_VAR_initial_machinedeployment_spotinstances
-              value: "true"
             - name: TF_VAR_initial_machinedeployment_spotinstances_max_price
               value: "0.138"
             - name: TEST_CLUSTER_INITIAL_VERSION
@@ -960,8 +954,6 @@ presubmits:
           env:
             - name: PROVIDER
               value: "aws"
-            - name: TF_VAR_initial_machinedeployment_spotinstances
-              value: "true"
             - name: TF_VAR_initial_machinedeployment_spotinstances_max_price
               value: "0.138"
             - name: TEST_CLUSTER_INITIAL_VERSION
@@ -992,8 +984,6 @@ presubmits:
               value: "aws"
             - name: CONTAINER_RUNTIME
               value: containerd
-            - name: TF_VAR_initial_machinedeployment_spotinstances
-              value: "true"
             - name: TF_VAR_initial_machinedeployment_spotinstances_max_price
               value: "0.138"
             - name: TEST_CLUSTER_INITIAL_VERSION
@@ -1024,8 +1014,8 @@ presubmits:
               value: "aws"
             - name: CONTAINER_RUNTIME
               value: containerd
-            - name: TF_VAR_initial_machinedeployment_spotinstances
-              value: "true"
+            - name: TF_VAR_initial_machinedeployment_spotinstances_max_price
+              value: "0.138"
             - name: TEST_CLUSTER_INITIAL_VERSION
               value: "1.22.4"
             - name: TEST_CLUSTER_TARGET_VERSION

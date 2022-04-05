@@ -219,17 +219,11 @@ variable "static_workers_count" {
   type        = number
 }
 
-variable "initial_machinedeployment_spotinstances" {
-  description = "use spot instances for initial machine-deployment"
-  default     = false
-  type        = bool
-}
-
 variable "initial_machinedeployment_spotinstances_max_price" {
   description = "used to specify max spot instance price for initial machine-deployment"
-# we intentionally set minimum max price to ensure that user specifies it explicitly
-  default     = "0.01"
-  type        = string
+  # we intentionally set minimum max price to ensure that user specifies it explicitly
+  default     = 0
+  type        = number
 }
 
 variable "worker_deploy_ssh_key" {
