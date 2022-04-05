@@ -563,6 +563,18 @@ Check out the [Upgrading from 1.3 to 1.4 tutorial](https://docs.kubermatic.com/k
   * If you're still using this feature, make sure to migrate away before upgrading to this KubeOne release
 * Remove Ansible examples ([#1633](https://github.com/kubermatic/kubeone/pull/1633))
 
+# [v1.3.4](https://github.com/kubermatic/kubeone/releases/tag/v1.3.4) - 2022-04-05
+
+## Attention Needed
+
+This patch release enables the etcd corruption checks on every etcd member that is running etcd 3.5 (which applies to all Kubernetes 1.22+ clusters). This change is a [recommendation from the etcd maintainers](https://groups.google.com/a/kubernetes.io/g/dev/c/B7gJs88XtQc/m/rSgNOzV2BwAJ) due to issues in etcd 3.5 that can cause data consistency issues. The changes in this patch release will prevent corrupted etcd members from joining or staying in the etcd ring.
+
+## Changed
+
+* Enable the etcd integrity checks (on startup and every 4 hours) for Kubernetes 1.22+ clusters. See [the official etcd announcement for more details](https://groups.google.com/a/kubernetes.io/g/dev/c/B7gJs88XtQc/m/rSgNOzV2BwAJ). ([#1928](https://github.com/kubermatic/kubeone/pull/1928))
+* Validate Kubernetes version against supported versions constraints. The minimum supported version is 1.19, and the maximum supported version is 1.22 ([#1817](https://github.com/kubermatic/kubeone/pull/1817))
+* Fix AMI filter in Terraform configs for AWS to always use `x86_64` images ([#1692](https://github.com/kubermatic/kubeone/pull/1692))
+
 # [v1.3.3](https://github.com/kubermatic/kubeone/releases/tag/v1.3.3) - 2021-12-16
 
 ## Changed
