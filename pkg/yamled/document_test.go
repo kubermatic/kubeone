@@ -17,7 +17,9 @@ limitations under the License.
 package yamled
 
 import (
+	"fmt"
 	"os"
+	"sort"
 	"strings"
 	"testing"
 
@@ -410,6 +412,11 @@ func TestFillTwoNewRootKeys(t *testing.T) {
 		t.Fatal("should have been able to fill in stuff")
 	}
 
+	// as Fill is iterating over a map we don't have ordering guarantees, we
+	// sort the document to have a predictable output
+	sort.Slice(doc.root, func(i, j int) bool {
+		return fmt.Sprintf("%s", doc.root[i].Key) < fmt.Sprintf("%s", doc.root[j].Key)
+	})
 	assertEqualYAML(t, doc, expected)
 }
 
