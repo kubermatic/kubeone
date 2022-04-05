@@ -1,6 +1,6 @@
 foo: bar
 ###
-foo: bar
-newKey: new value
 anotherKey:
   subKey: 42
+foo: bar
+newKey: new value
