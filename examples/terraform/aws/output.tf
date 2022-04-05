@@ -115,7 +115,7 @@ output "kubeone_workers" {
           isSpotInstance     = local.initial_machinedeployment_spotinstances
           ## Only applicable if isSpotInstance is true
           spotInstanceConfig = {
-            maxPrice = "var.initial_machinedeployment_spotinstances_max_price"
+            maxPrice = format("%f", var.initial_machinedeployment_spotinstances_max_price)
           }
           ebsVolumeEncrypted = false
           tags = {
@@ -160,7 +160,7 @@ output "kubeone_workers" {
           isSpotInstance     = local.initial_machinedeployment_spotinstances
           ## Only applicable if isSpotInstance is true
           spotInstanceConfig = {
-            maxPrice = "var.initial_machinedeployment_spotinstances_max_price"
+            maxPrice = format("%f", var.initial_machinedeployment_spotinstances_max_price)
           }
           ebsVolumeEncrypted = false
           tags = {
@@ -205,7 +205,7 @@ output "kubeone_workers" {
           isSpotInstance     = local.initial_machinedeployment_spotinstances
           ## Only applicable if isSpotInstance is true
           spotInstanceConfig = {
-            maxPrice = "var.initial_machinedeployment_spotinstances_max_price"
+            maxPrice = format("%f", var.initial_machinedeployment_spotinstances_max_price)
           }
           ebsVolumeEncrypted = false
           tags = {
