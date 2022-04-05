@@ -30,7 +30,6 @@ import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/features"
 	"k8c.io/kubeone/pkg/kubeflags"
-	"k8c.io/kubeone/pkg/semverutil"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/kubeadm/kubeadmargs"
 	"k8c.io/kubeone/pkg/templates/resources"
@@ -52,12 +51,13 @@ const (
 	greaterOrEqualThan122 = ">= 1.22.0"
 )
 
-var (
-	etcdIntegrityCheckConstraint = semverutil.MustParseConstraint(greaterOrEqualThan122)
-)
-
 // NewConfig returns all required configs to init a cluster via a set of v1beta3 configs
 func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, error) {
+	etcdIntegrityCheckConstraint, err := semver.NewConstraint(greaterOrEqualThan122)
+	if err != nil {
+		return nil, err
+	}
+
 	cluster := s.Cluster
 	kubeSemVer, err := semver.NewVersion(cluster.Versions.Kubernetes)
 	if err != nil {
