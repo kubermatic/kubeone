@@ -450,17 +450,7 @@ func nutanixValidationFunc(creds map[string]string) error {
 }
 
 func openstackValidationFunc(creds map[string]string) error {
-	alwaysRequired := []string{OpenStackAuthURL, OpenStackDomainName, OpenStackRegionName}
-
-	for _, key := range alwaysRequired {
-		if v, ok := creds[key]; !ok || len(v) == 0 {
-			return fail.CredentialsError{
-				Op:       "validating",
-				Provider: "Openstack",
-				Err:      errors.Errorf("key %v is required but is not present", key),
-			}
-		}
-	}
+	alwaysRequired := []string{OpenStackAuthURL, OpenStackRegionName}
 
 	var (
 		appCredsIDOkay        bool
@@ -472,9 +462,23 @@ func openstackValidationFunc(creds map[string]string) error {
 	if v, ok := creds[OpenStackApplicationCredentialID]; ok && len(v) != 0 {
 		appCredsIDOkay = true
 	}
-
 	if v, ok := creds[OpenStackApplicationCredentialSecret]; ok && len(v) != 0 {
 		appCredsSecretOkay = true
+	}
+
+	// Domain name is only required when using default credentials i.e. username and password
+	if !appCredsIDOkay && !appCredsSecretOkay {
+		alwaysRequired = append(alwaysRequired, OpenStackDomainName)
+	}
+
+	for _, key := range alwaysRequired {
+		if v, ok := creds[key]; !ok || len(v) == 0 {
+			return fail.CredentialsError{
+				Op:       "validating",
+				Provider: "Openstack",
+				Err:      errors.Errorf("key %v is required but is not present", key),
+			}
+		}
 	}
 
 	if v, ok := creds[OpenStackUserName]; ok && len(v) != 0 {
