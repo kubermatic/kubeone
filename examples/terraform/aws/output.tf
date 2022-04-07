@@ -86,7 +86,7 @@ output "kubeone_workers" {
           provisioningUtility = "cloud-init"
         }
         labels = {
-          isSpotInstance = format("%t", var.initial_machinedeployment_spotinstances)
+          isSpotInstance = format("%t", local.initial_machinedeployment_spotinstances)
         }
         # uncomment to following to set those kubelet parameters. More into at:
         # https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/
@@ -112,7 +112,11 @@ output "kubeone_workers" {
           diskType         = "gp2"
           ## Only applicable if diskType = io1
           diskIops           = 500
-          isSpotInstance     = var.initial_machinedeployment_spotinstances
+          isSpotInstance     = local.initial_machinedeployment_spotinstances
+          ## Only applicable if isSpotInstance is true
+          spotInstanceConfig = {
+            maxPrice = format("%f", var.initial_machinedeployment_spotinstances_max_price)
+          }
           ebsVolumeEncrypted = false
           tags = {
             "${var.cluster_name}-workers" = ""
@@ -134,7 +138,7 @@ output "kubeone_workers" {
           provisioningUtility = "cloud-init"
         }
         labels = {
-          isSpotInstance = format("%t", var.initial_machinedeployment_spotinstances)
+          isSpotInstance = format("%t", local.initial_machinedeployment_spotinstances)
         }
         cloudProviderSpec = {
           # provider specific fields:
@@ -153,7 +157,11 @@ output "kubeone_workers" {
           diskType         = "gp2"
           ## Only applicable if diskType = io1
           diskIops           = 500
-          isSpotInstance     = var.initial_machinedeployment_spotinstances
+          isSpotInstance     = local.initial_machinedeployment_spotinstances
+          ## Only applicable if isSpotInstance is true
+          spotInstanceConfig = {
+            maxPrice = format("%f", var.initial_machinedeployment_spotinstances_max_price)
+          }
           ebsVolumeEncrypted = false
           tags = {
             "${var.cluster_name}-workers" = ""
@@ -175,7 +183,7 @@ output "kubeone_workers" {
           provisioningUtility = "cloud-init"
         }
         labels = {
-          isSpotInstance = format("%t", var.initial_machinedeployment_spotinstances)
+          isSpotInstance = format("%t", local.initial_machinedeployment_spotinstances)
         }
         cloudProviderSpec = {
           # provider specific fields:
@@ -194,7 +202,11 @@ output "kubeone_workers" {
           diskType         = "gp2"
           ## Only applicable if diskType = io1
           diskIops           = 500
-          isSpotInstance     = var.initial_machinedeployment_spotinstances
+          isSpotInstance     = local.initial_machinedeployment_spotinstances
+          ## Only applicable if isSpotInstance is true
+          spotInstanceConfig = {
+            maxPrice = format("%f", var.initial_machinedeployment_spotinstances_max_price)
+          }
           ebsVolumeEncrypted = false
           tags = {
             "${var.cluster_name}-workers" = ""
