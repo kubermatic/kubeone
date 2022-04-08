@@ -81,15 +81,9 @@ type registryCredentialsContainer struct {
 }
 
 func newAddonsApplier(s *state.State) (*applier, error) {
-	var localFS fs.FS
-
-	if s.Cluster.Addons.Enabled() && s.Cluster.Addons.Path != "" {
-		addonsPath, err := s.Cluster.Addons.RelativePath(s.ManifestFilePath)
-		if err != nil {
-			return nil, err
-		}
-
-		localFS = os.DirFS(addonsPath)
+	localFS, err := addonsLocalFS(s.Cluster.Addons, s.ManifestFilePath)
+	if err != nil {
+		return nil, err
 	}
 
 	creds, err := credentials.Any(s.CredentialsFilePath)
@@ -97,19 +91,9 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		return nil, err
 	}
 
-	var credsEnvVarsMC []byte
-
-	if s.Cluster.MachineController.Deploy {
-		credsMC, mcCredsErr := credentials.ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.TypeMC)
-		if mcCredsErr != nil {
-			return nil, mcCredsErr
-		}
-
-		envVarsMC := credentials.EnvVarBindings(credentials.SecretNameMC, credsMC)
-		credsEnvVarsMC, mcCredsErr = yaml.Marshal(envVarsMC)
-		if mcCredsErr != nil {
-			return nil, fail.Runtime(mcCredsErr, "marshalling machine-controller credentials env variables")
-		}
+	credsEnvVarsMC, err := mcCredentialsEnvVars(s)
+	if err != nil {
+		return nil, err
 	}
 
 	kubeCAPrivateKey, kubeCACert, err := certificate.CAKeyPair(s.Configuration)
@@ -164,28 +148,6 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		}
 	}
 
-	regCredentials := []registryCredentialsContainer{}
-
-	if s.Cluster.ContainerRuntime.Containerd != nil {
-		regNames := []string{}
-
-		for reg := range s.Cluster.ContainerRuntime.Containerd.Registries {
-			regNames = append(regNames, reg)
-		}
-
-		sort.Strings(regNames)
-
-		for _, reg := range regNames {
-			regConfig := s.Cluster.ContainerRuntime.Containerd.Registries[reg]
-			if regConfig.Auth != nil {
-				regCredentials = append(regCredentials, registryCredentialsContainer{
-					RegistryName: reg,
-					Auth:         *regConfig.Auth,
-				})
-			}
-		}
-	}
-
 	credsCCM, err := credentials.ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.TypeCCM)
 	if err != nil {
 		return nil, err
@@ -207,7 +169,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		CSIMigrationFeatureGates:            csiMigrationFeatureGates,
 		MachineControllerCredentialsEnvVars: string(credsEnvVarsMC),
 		OperatingSystemManagerEnabled:       s.Cluster.OperatingSystemManagerEnabled(),
-		RegistryCredentials:                 regCredentials,
+		RegistryCredentials:                 containerdRegistryCredentials(s.Cluster.ContainerRuntime.Containerd),
 		InternalImages: &internalImages{
 			pauseImage: s.PauseImage,
 			resolver:   s.Images.Get,
@@ -294,6 +256,69 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		LocalFS:      localFS,
 		EmbededFS:    embeddedaddons.FS,
 	}, nil
+}
+
+func containerdRegistryCredentials(containerdConfig *kubeoneapi.ContainerRuntimeContainerd) []registryCredentialsContainer {
+	if containerdConfig == nil {
+		return nil
+	}
+
+	var (
+		regCredentials []registryCredentialsContainer
+		regNames       []string
+	)
+
+	for reg := range containerdConfig.Registries {
+		regNames = append(regNames, reg)
+	}
+
+	sort.Strings(regNames)
+
+	for _, reg := range regNames {
+		regConfig := containerdConfig.Registries[reg]
+		if regConfig.Auth != nil {
+			regCredentials = append(regCredentials, registryCredentialsContainer{
+				RegistryName: reg,
+				Auth:         *regConfig.Auth,
+			})
+		}
+	}
+
+	return regCredentials
+}
+
+func mcCredentialsEnvVars(s *state.State) ([]byte, error) {
+	var credsEnvVarsMC []byte
+
+	if s.Cluster.MachineController.Deploy {
+		credsMC, err := credentials.ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.TypeMC)
+		if err != nil {
+			return nil, err
+		}
+
+		envVarsMC := credentials.EnvVarBindings(credentials.SecretNameMC, credsMC)
+		credsEnvVarsMC, err = yaml.Marshal(envVarsMC)
+		if err != nil {
+			return nil, fail.Runtime(err, "marshalling machine-controller credentials env variables")
+		}
+	}
+
+	return credsEnvVarsMC, nil
+}
+
+func addonsLocalFS(clusterAddons *kubeoneapi.Addons, manifestFilePath string) (fs.FS, error) {
+	var localFS fs.FS
+
+	if clusterAddons.Enabled() && clusterAddons.Path != "" {
+		addonsPath, err := clusterAddons.RelativePath(manifestFilePath)
+		if err != nil {
+			return nil, err
+		}
+
+		localFS = os.DirFS(addonsPath)
+	}
+
+	return localFS, nil
 }
 
 // loadAndApplyAddon parses the addons manifests and runs kubectl apply.

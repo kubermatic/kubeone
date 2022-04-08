@@ -92,3 +92,6 @@ issues:
 
   - path: pkg/scripts
     text: "`registry` always receives `\"127.0.0.1:5000\"`"
+
+  - path: pkg/credentials
+    text: "cyclomatic complexity 34 of func `openstackValidationFunc` is high"
