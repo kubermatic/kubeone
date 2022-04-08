@@ -1,0 +1,102 @@
+name: "Bug Report"
+description: "Report a bug related to Kubermatic KubeOne"
+labels: ["sig/cluster-management", "kind/bug"]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: |
+        Try to provide as much information as possible. If you're reporting a security issue, please check the
+        guidelines for reporting security issues https://github.com/kubermatic/kubeone/blob/master/CONTRIBUTING.md#reporting-a-security-vulnerability
+    validations:
+      required: true
+  
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: |
+        What did you expected to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How to reproduce the issue?
+      description: |
+        Please provide as much information as possible, so we can reproduce the issue on our own.
+    validations:
+      required: true
+  
+  - type: textarea
+    id: k1-version
+    attributes:
+      label: What KubeOne version are you using?
+      description: |
+        Please provide output of kubeone version here.
+      value: |
+        <details>
+
+        ```console
+        $ kubeone version
+        # paste output here
+        ```
+
+        </details>
+    validations:
+      required: true
+
+  - type: textarea
+    id: k1-manifest
+    attributes:
+      label: Provide your KubeOneCluster manifest here (if applicable)
+      description: |
+        Providing the KubeOneCluster manifest will help us reproduce the issue.
+        Please make sure to redact all secrets (e.g. passwords, URLs...)!
+      value: |
+        <details>
+
+        ```yaml
+        # paste manifest here
+        ```
+
+        </details>
+    validations:
+      required: false
+  
+  - type: dropdown
+    id: cloud-provider
+    attributes:
+      label: What cloud provider are you running on?
+      options:
+        - AWS
+        - Azure
+        - DigitalOcean
+        - GCP
+        - Hetzner Cloud
+        - Nutanix
+        - OpenStack
+        - Equinix Metal (Packet)
+        - VMware vSphere
+        - Other (e.g. baremetal or non-natively supported provider)
+    validations:
+      required: false
+  
+  - type: input
+    id: operating-system
+    attributes:
+      label: What operating system are you running in your cluster?
+      placeholder: Ubuntu 20.04, CentOS 7, Rocky Linux 8, Flatcar Linux, ...
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-information
+    attributes:
+      label: Additional information
+      description: |
+        Additional information about the bug you're reporting (optional).
+    validations:
+      required: false
