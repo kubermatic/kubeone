@@ -35,7 +35,6 @@ import (
 	"k8c.io/kubeone/pkg/templates/images"
 	"k8c.io/kubeone/pkg/templates/resources"
 
-	corev1 "k8s.io/api/core/v1"
 	"sigs.k8s.io/yaml"
 )
 
@@ -98,32 +97,18 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		return nil, err
 	}
 
-	credsCCM, err := credentials.ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.TypeCCM)
-	if err != nil {
-		return nil, err
-	}
+	var credsEnvVarsMC []byte
 
-	envVarsMC, err := credentials.EnvVarBindings(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.SecretNameMC, credentials.TypeMC)
-	if err != nil {
-		return nil, err
-	}
-
-	credsEnvVarsMC, err := yaml.Marshal(envVarsMC)
-	if err != nil {
-		return nil, fail.Runtime(err, "marshalling machine-controller credentials env variables")
-	}
-
-	var credsEnvVarsOSM []byte
-	if s.Cluster.OperatingSystemManagerEnabled() {
-		var envVarsOSM []corev1.EnvVar
-		envVarsOSM, err = credentials.EnvVarBindings(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.SecretNameOSM, credentials.TypeOSM)
-		if err != nil {
-			return nil, err
+	if s.Cluster.MachineController.Deploy {
+		credsMC, mcCredsErr := credentials.ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.TypeMC)
+		if mcCredsErr != nil {
+			return nil, mcCredsErr
 		}
 
-		credsEnvVarsOSM, err = yaml.Marshal(envVarsOSM)
-		if err != nil {
-			return nil, fail.Runtime(err, "marshalling OSM credentials env variables")
+		envVarsMC := credentials.EnvVarBindings(credentials.SecretNameMC, credsMC)
+		credsEnvVarsMC, mcCredsErr = yaml.Marshal(envVarsMC)
+		if mcCredsErr != nil {
+			return nil, fail.Runtime(mcCredsErr, "marshalling machine-controller credentials env variables")
 		}
 	}
 
@@ -199,6 +184,11 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 				})
 			}
 		}
+	}
+
+	credsCCM, err := credentials.ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.TypeCCM)
+	if err != nil {
+		return nil, err
 	}
 
 	data := templateData{
@@ -282,6 +272,18 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		if err != nil {
 			return nil, err
 		}
+
+		credsOSM, err := credentials.ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.TypeOSM)
+		if err != nil {
+			return nil, err
+		}
+
+		envVarsOSM := credentials.EnvVarBindings(credentials.SecretNameOSM, credsOSM)
+		credsEnvVarsOSM, err := yaml.Marshal(envVarsOSM)
+		if err != nil {
+			return nil, fail.Runtime(err, "marshalling OSM credentials env variables")
+		}
+
 		data.Certificates["OperatingSystemManagerWebhookCert"] = osmCertsMap[resources.TLSCertName]
 		data.Certificates["OperatingSystemManagerWebhookKey"] = osmCertsMap[resources.TLSKeyName]
 		data.OperatingSystemManagerCredentialsEnvVars = string(credsEnvVarsOSM)
