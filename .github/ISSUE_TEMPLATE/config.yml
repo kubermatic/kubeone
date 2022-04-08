@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Support Request
+    url: https://github.com/kubermatic/kubeone/discussions
+    about: Please use GitHub Discussions if you have questions about Kubermatic KubeOne.
+  - name: Report a Security Issue
+    url: https://github.com/kubermatic/kubeone/blob/master/CONTRIBUTING.md#reporting-a-security-vulnerability
+    about: Please follow the process for reporting security issues.
