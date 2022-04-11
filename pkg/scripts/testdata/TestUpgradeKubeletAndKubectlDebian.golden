@@ -81,9 +81,9 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install \
 	--option "Dpkg::Options::=--force-confold" \
 	--no-install-recommends \
 	-y \
-	docker-ce=5:19.03.* \
-	docker-ce-cli=5:19.03.* \
-	containerd.io=1.4.*
+	docker-ce=5:'19.03.*' \
+	docker-ce-cli=5:'19.03.*' \
+	containerd.io='1.4.*'
 sudo apt-mark hold docker-ce docker-ce-cli containerd.io
 
 sudo mkdir -p $(dirname /etc/docker/daemon.json)

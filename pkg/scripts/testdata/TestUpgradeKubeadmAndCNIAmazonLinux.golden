@@ -73,8 +73,8 @@ sudo yum install -y \
 sudo yum versionlock delete docker containerd || true
 
 sudo yum install -y \
-	docker-19.03.* \
-	containerd.io-1.4.*
+	docker-'19.03.*' \
+	containerd.io-'1.4.*'
 sudo yum versionlock add docker containerd
 
 sudo mkdir -p $(dirname /etc/docker/daemon.json)
