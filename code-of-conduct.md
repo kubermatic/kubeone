@@ -1,4 +1,4 @@
-# Loodse Community Code of Conduct
+# Kubermatic Community Code of Conduct
 
 ## Contributor Code of Conduct
 
@@ -32,6 +32,6 @@ Conduct may be permanently removed from the project team.
 This code of conduct applies both within project spaces and in public spaces
 when an individual is representing the project or its community.
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported by contacting the Loodse Conduct Committee via coc@loodse.com.
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported by contacting the Kubermatic Conduct Committee via coc@kubermatic.com.
 
 This Code of Conduct is adapted from the [CNCF Code of Conduct](https://github.com/cncf/foundation/blob/master/code-of-conduct.md) and [Contributor Covenant](http://contributor-covenant.org/version/1/2/0/), version 1.2.0.
