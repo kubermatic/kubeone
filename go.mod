@@ -122,7 +122,4 @@ require (
 	sigs.k8s.io/structured-merge-diff/v4 v4.1.2 // indirect
 )
 
-replace (
-	google.golang.org/grpc => google.golang.org/grpc v1.27.1
-	k8s.io/client-go => k8s.io/client-go v0.22.2
-)
+replace k8s.io/client-go => k8s.io/client-go v0.22.2

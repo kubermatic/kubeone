@@ -95,6 +95,3 @@ issues:
 
   - path: pkg/credentials
     text: "cyclomatic complexity 34 of func `openstackValidationFunc` is high"
-
-  - path: pkg/addons
-    text: "cyclomatic complexity 34 of func `newAddonsApplier` is high"
