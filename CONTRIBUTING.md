@@ -1,6 +1,6 @@
 # KubeOne Contributing Guide <!-- omit in toc -->
 
-This documents explains how to contribute to KubeOne, how to find what to work on, and what practices are we following along the way. Loodse projects are [Apache 2.0 licensed](LICENSE) and accept contributions via GitHub Pull Requests.
+This documents explains how to contribute to KubeOne, how to find what to work on, and what practices are we following along the way. Kubermatic projects are [Apache 2.0 licensed](LICENSE) and accept contributions via GitHub Pull Requests.
 
 ## Table of Contents <!-- omit in toc -->
 
@@ -43,7 +43,7 @@ Check out [the project structure document](docs/project_structure.md) to learn m
 By contributing to this project you agree to the Developer Certificate of Origin (DCO).
 This document was created by the Linux Kernel community and is a simple statement that you, as a contributor, have the legal right to make the contribution. See the [DCO](DCO) file for details.
 
-Any copyright notices in this repository should specify the authors as "the Loodse KubeOne project contributors".
+Any copyright notices in this repository should specify the authors as "The KubeOne Authors".
 
 To sign your work, just add a line like this at the end of your commit message:
 
@@ -199,4 +199,4 @@ Please avoid emailing maintainers found in the MAINTAINERS file directly. They a
 
 ### Reporting a Security Vulnerability
 
-Due to their public nature, GitHub and mailing lists are not appropriate places for reporting vulnerabilities. If you suspect you have found a security vulnerability in KubeOne, please do not file a GitHub issue, but instead email security@loodse.com with the full details, including steps to reproduce the issue.
+Due to their public nature, GitHub and mailing lists are not appropriate places for reporting vulnerabilities. If you suspect you have found a security vulnerability in KubeOne, please do not file a GitHub issue, but instead email security@kubermatic.com with the full details, including steps to reproduce the issue.
