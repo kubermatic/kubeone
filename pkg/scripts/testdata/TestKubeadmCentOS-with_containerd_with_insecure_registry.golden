@@ -85,7 +85,7 @@ sudo yum-config-manager --save --setopt=docker-ce-stable.module_hotfixes=true
 
 
 sudo yum versionlock delete containerd.io || true
-sudo yum install -y containerd.io-1.4.*
+sudo yum install -y containerd.io-'1.4.*'
 sudo yum versionlock add containerd.io
 
 
