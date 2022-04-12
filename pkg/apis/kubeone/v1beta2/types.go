@@ -609,19 +609,19 @@ type OpenIDConnectConfig struct {
 	// IssuerURL
 	IssuerURL string `json:"issuerUrl"`
 	// ClientID
-	ClientID string `json:"clientId"`
+	ClientID string `json:"clientId,omitempty"`
 	// UsernameClaim
-	UsernameClaim string `json:"usernameClaim"`
-	// UsernamePrefix
-	UsernamePrefix string `json:"usernamePrefix"`
+	UsernameClaim string `json:"usernameClaim,omitempty"`
+	// UsernamePrefix. The value `-` can be used to disable all prefixing.
+	UsernamePrefix string `json:"usernamePrefix,omitempty"`
 	// GroupsClaim
-	GroupsClaim string `json:"groupsClaim"`
-	// GroupsPrefix
-	GroupsPrefix string `json:"groupsPrefix"`
+	GroupsClaim string `json:"groupsClaim,omitempty"`
+	// GroupsPrefix. The value `-` can be used to disable all prefixing.
+	GroupsPrefix string `json:"groupsPrefix,omitempty"`
 	// RequiredClaim
 	RequiredClaim string `json:"requiredClaim"`
 	// SigningAlgs
-	SigningAlgs string `json:"signingAlgs"`
+	SigningAlgs string `json:"signingAlgs,omitempty"`
 	// CAFile
 	CAFile string `json:"caFile"`
 }

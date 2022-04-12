@@ -31,7 +31,17 @@ func activateKubeadmOIDC(feature *kubeoneapi.OpenIDConnect, args *kubeadmargs.Ar
 	optionalMapSet(args.APIServer.ExtraArgs, "oidc-username-claim", feature.Config.UsernameClaim)
 	optionalMapSet(args.APIServer.ExtraArgs, "oidc-username-prefix", feature.Config.UsernamePrefix)
 	optionalMapSet(args.APIServer.ExtraArgs, "oidc-groups-claim", feature.Config.GroupsClaim)
-	optionalMapSet(args.APIServer.ExtraArgs, "oidc-groups-prefix", feature.Config.GroupsPrefix)
+
+	// While we have to handle the "-" value for GroupsPrefix, the same is done by the kube-apiserver for the
+	// UsernamePrefix. This is why there is no `if feature.Config.UsernamePrefix != "-" { ... }`
+	//
+	// Docs at the https://kubernetes.io/docs/reference/command-line-tools-reference/kube-apiserver/ says:
+	// `--oidc-username-prefix string` If provided, all usernames will be prefixed with this value. If not provided,
+	// username claims other than 'email' are prefixed by the issuer URL to avoid clashes. To skip any prefixing,
+	// provide the value '-'.
+	if feature.Config.GroupsPrefix != "-" {
+		optionalMapSet(args.APIServer.ExtraArgs, "oidc-groups-prefix", feature.Config.GroupsPrefix)
+	}
 	optionalMapSet(args.APIServer.ExtraArgs, "oidc-required-claim", feature.Config.RequiredClaim)
 	optionalMapSet(args.APIServer.ExtraArgs, "oidc-signing-algs", feature.Config.SigningAlgs)
 	optionalMapSet(args.APIServer.ExtraArgs, "oidc-ca-file", feature.Config.CAFile)
