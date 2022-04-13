@@ -39,14 +39,16 @@ func upgradeLeaderExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh
 
 	drainer := nodeutils.NewDrainer(s.RESTConfig, logger)
 
-	logger.Infoln("Cordoning leader control plane...")
-	if err := drainer.Cordon(s.Context, node.Hostname, true); err != nil {
-		return err
-	}
+	if len(s.Cluster.ControlPlane.Hosts) > 1 {
+		logger.Infoln("Cordoning leader control plane...")
+		if err := drainer.Cordon(s.Context, node.Hostname, true); err != nil {
+			return err
+		}
 
-	logger.Infoln("Draining leader control plane...")
-	if err := drainer.Drain(s.Context, node.Hostname); err != nil {
-		return err
+		logger.Infoln("Draining leader control plane...")
+		if err := drainer.Drain(s.Context, node.Hostname); err != nil {
+			return err
+		}
 	}
 
 	if err := setupProxy(logger, s); err != nil {
@@ -68,9 +70,11 @@ func upgradeLeaderExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh
 		return err
 	}
 
-	logger.Infoln("Uncordoning leader control plane...")
-	if err := drainer.Cordon(s.Context, node.Hostname, false); err != nil {
-		return err
+	if len(s.Cluster.ControlPlane.Hosts) > 1 {
+		logger.Infoln("Uncordoning leader control plane...")
+		if err := drainer.Cordon(s.Context, node.Hostname, false); err != nil {
+			return err
+		}
 	}
 
 	logger.Infof("Waiting %v to ensure all components are up...", timeoutNodeUpgrade)
