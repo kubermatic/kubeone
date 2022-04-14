@@ -116,6 +116,10 @@ sudo systemctl daemon-reload
 sudo systemctl enable containerd
 sudo systemctl restart containerd
 sudo systemctl enable --now docker
+if systemctl status kubelet 2>&1 > /dev/null; then
+	sudo systemctl restart kubelet
+	sleep 10
+fi
 
 
 

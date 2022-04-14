@@ -86,8 +86,8 @@ func verifyVersion(logger logrus.FieldLogger, version string, nodes *corev1.Node
 	}
 
 	if verbose {
-		fmt.Printf("Kubelet version on the control plane node: %s", kubelet.String())
-		fmt.Printf("Requested version: %s", reqVer.String())
+		fmt.Printf("Kubelet version on the control plane node: %s\n", kubelet.String())
+		fmt.Printf("Requested version: %s\n", reqVer.String())
 	}
 
 	if reqVer.Compare(kubelet) < 0 {

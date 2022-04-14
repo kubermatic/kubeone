@@ -83,6 +83,10 @@ var (
 			{{ template "container-runtime-daemon-config" . }}
 			{{ template "containerd-systemd-setup" . -}}
 			sudo systemctl enable --now docker
+			if systemctl status kubelet 2>&1 > /dev/null; then
+				sudo systemctl restart kubelet
+				sleep 10
+			fi
 			`,
 			defaultDockerVersion,
 			latestDockerVersion,
@@ -104,6 +108,10 @@ var (
 			{{ template "container-runtime-daemon-config" . }}
 			{{ template "containerd-systemd-setup" . -}}
 			sudo systemctl enable --now docker
+			if systemctl status kubelet 2>&1 > /dev/null; then
+				sudo systemctl restart kubelet
+				sleep 10
+			fi
 		`,
 			defaultDockerVersion,
 			latestDockerVersion,
@@ -132,6 +140,10 @@ var (
 			{{ template "container-runtime-daemon-config" . }}
 			{{ template "containerd-systemd-setup" . -}}
 			sudo systemctl enable --now docker
+			if systemctl status kubelet 2>&1 > /dev/null; then
+				sudo systemctl restart kubelet
+				sleep 10
+			fi
 			`,
 			defaultDockerVersion,
 			latestDockerVersion,
@@ -208,6 +220,10 @@ var (
 			sudo systemctl daemon-reload
 			sudo systemctl enable --now docker
 			sudo systemctl restart docker
+			if systemctl status kubelet 2>&1 > /dev/null; then
+				sudo systemctl restart kubelet
+				sleep 10
+			fi			
 			`,
 		),
 
