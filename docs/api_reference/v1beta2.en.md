@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2022-02-04T17:38:06+02:00
+date = 2022-04-12T14:49:46+03:00
 weight = 11
 +++
 ## v1beta2
@@ -557,13 +557,13 @@ OpenIDConnectConfig config
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | issuerUrl | IssuerURL | string | true |
-| clientId | ClientID | string | true |
-| usernameClaim | UsernameClaim | string | true |
-| usernamePrefix | UsernamePrefix | string | true |
-| groupsClaim | GroupsClaim | string | true |
-| groupsPrefix | GroupsPrefix | string | true |
+| clientId | ClientID | string | false |
+| usernameClaim | UsernameClaim | string | false |
+| usernamePrefix | UsernamePrefix. The value `-` can be used to disable all prefixing. | string | false |
+| groupsClaim | GroupsClaim | string | false |
+| groupsPrefix | GroupsPrefix. The value `-` can be used to disable all prefixing. | string | false |
 | requiredClaim | RequiredClaim | string | true |
-| signingAlgs | SigningAlgs | string | true |
+| signingAlgs | SigningAlgs | string | false |
 | caFile | CAFile | string | true |
 
 [Back to Group](#v1beta2)
