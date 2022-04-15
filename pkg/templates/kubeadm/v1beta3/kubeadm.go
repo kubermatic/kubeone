@@ -64,12 +64,16 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		return nil, errors.Wrapf(err, "failed to parse generate config, wrong kubernetes version %s", cluster.Versions.Kubernetes)
 	}
 
+	etcdImageTag := cluster.AssetConfiguration.Etcd.ImageTag
 	etcdExtraArgs := map[string]string{}
 	if etcdIntegrityCheckConstraint.Check(kubeSemVer) {
-		// This is required because etcd v3.5 (used for Kubernetes 1.22+)
+		// This is required because etcd v3.5-[0-2] (used for Kubernetes 1.22+)
 		// has an issue with the data integrity.
 		// See https://groups.google.com/a/kubernetes.io/g/dev/c/B7gJs88XtQc/m/rSgNOzV2BwAJ
 		// for more details.
+		if etcdImageTag == "" {
+			etcdImageTag = "3.5.3-0"
+		}
 		etcdExtraArgs["experimental-initial-corrupt-check"] = "true"
 		etcdExtraArgs["experimental-corrupt-check-time"] = "240m"
 	}
@@ -168,7 +172,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 			Local: &kubeadmv1beta3.LocalEtcd{
 				ImageMeta: kubeadmv1beta3.ImageMeta{
 					ImageRepository: cluster.AssetConfiguration.Etcd.ImageRepository,
-					ImageTag:        cluster.AssetConfiguration.Etcd.ImageTag,
+					ImageTag:        etcdImageTag,
 				},
 				ExtraArgs: etcdExtraArgs,
 			},
