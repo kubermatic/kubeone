@@ -104,9 +104,16 @@ func runReset(opts *resetOpts) error {
 		return err
 	}
 
-	// We intentionally ignore error because "kubeone reset" might also be used
-	// on clusters that are not yet provisioned or broken
-	_ = kubeconfig.BuildKubernetesClientset(s)
+	if opts.DestroyWorkers {
+		if cErr := kubeconfig.BuildKubernetesClientset(s); cErr != nil {
+			s.Logger.Errorln("Failed to build the Kubernetes clientset.")
+			s.Logger.Warnln("Unable to list and delete machine-controller managed nodes.")
+			s.Logger.Warnln("You can skip this phase by using '--destroy-workers=false' flag.")
+			s.Logger.Warnln("If there are worker nodes in the cluster, you might have to delete them manually.")
+
+			return cErr
+		}
+	}
 
 	s.Logger.Warnln("This command will PERMANENTLY destroy the Kubernetes cluster running on the following nodes:")
 
@@ -117,7 +124,7 @@ func runReset(opts *resetOpts) error {
 		fmt.Printf("\t- reset static worker nodes %q (%s)\n", node.Hostname, node.PrivateAddress)
 	}
 
-	if s.DynamicClient != nil {
+	if opts.DestroyWorkers {
 		// Gather information about machine-controller managed nodes
 		machines := clusterv1alpha1.MachineList{}
 		if err = s.DynamicClient.List(s.Context, &machines); err != nil {
@@ -132,10 +139,8 @@ func runReset(opts *resetOpts) error {
 			}
 		}
 	} else {
-		s.Logger.Warnln("Failed to list machine-controller managed Machines.")
-		s.Logger.Warnln("Worker nodes might not be deleted.")
+		s.Logger.Warnln("KubeOne will NOT remove machine-controller managed Machines.")
 		s.Logger.Warnln("If there are worker nodes in the cluster, you might have to delete them manually.")
-		s.Logger.Warnln("You can ignore this warning if the cluster isn't provisioned.")
 	}
 
 	fmt.Printf("\nAfter the command is complete, there's NO way to recover the cluster or its data!\n")
