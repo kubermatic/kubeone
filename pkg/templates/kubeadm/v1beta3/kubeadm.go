@@ -52,7 +52,7 @@ const (
 )
 
 // NewConfig returns all required configs to init a cluster via a set of v1beta3 configs
-func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, error) {
+func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, error) { //nolint:gocyclo
 	etcdIntegrityCheckConstraint, err := semver.NewConstraint(greaterOrEqualThan122)
 	if err != nil {
 		return nil, err
