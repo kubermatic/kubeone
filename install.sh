@@ -21,7 +21,7 @@ set -eu
 # What OS is used
 OS="$(uname | tr '[:upper:]' '[:lower:]')"
 # Find out what's the latest version
-VERSION="$(curl -w '%{url_effective}' -I -L -s -S https://github.com/kubermatic/kubeone/releases/latest -o /dev/null | sed -e 's|.*/v||')"
+VERSION="$(curl -s -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/kubermatic/kubeone/releases | sed -n 's/^\s*"tag_name": "v\([^"]*\)",$/\1/p' | sort -V | tail -1)"
 # Download URL for the latest version
 URL="https://github.com/kubermatic/kubeone/releases/download/v${VERSION}/kubeone_${VERSION}_${OS}_amd64.zip"
 
