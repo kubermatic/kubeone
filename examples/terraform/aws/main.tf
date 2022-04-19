@@ -234,7 +234,7 @@ resource "aws_key_pair" "deployer" {
 
 ##################################### IAM ######################################
 resource "aws_iam_role" "role" {
-  name = "${var.cluster_name}-host"
+  name = "kubeone-${var.cluster_name}-host"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -251,12 +251,12 @@ resource "aws_iam_role" "role" {
 }
 
 resource "aws_iam_instance_profile" "profile" {
-  name = "${var.cluster_name}-host"
+  name = "kubeone-${var.cluster_name}-host"
   role = aws_iam_role.role.name
 }
 
 resource "aws_iam_role_policy" "policy" {
-  name = "${var.cluster_name}-host"
+  name = "kubeone-${var.cluster_name}-host"
   role = aws_iam_role.role.id
 
   policy = jsonencode({
