@@ -1,0 +1,102 @@
+postsubmits:
+  - name: post-kubeone-push-e2e-image
+    run_if_changed: "(hack/images/kubeone-e2e)"
+    clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
+    decorate: true
+    reporter_config:
+      slack:
+        channel: dev-kubeone
+    branches:
+      - ^master$
+    labels:
+      preset-docker-push: "true"
+    spec:
+      containers:
+        - image: quay.io/kubermatic/build:go-1.17-node-16-kind-0.11-4
+          command:
+            - /bin/bash
+            - -c
+            - |
+              set -euo pipefail
+              start-docker.sh
+              docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+              cd ./hack/images/kubeone-e2e
+              ./release.sh
+          # docker-in-docker needs privileged mode
+          securityContext:
+            privileged: true
+          resources:
+            requests:
+              cpu: 100m
+              memory: 1Gi
+  - name: post-kubeone-push-image
+    clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
+    decorate: true
+    reporter_config:
+      slack:
+        channel: dev-kubeone
+    branches:
+      - ^master$
+      - ^v\d+\.\d+\.\d+.*
+    labels:
+      preset-goproxy: "true"
+      preset-docker-push-kubermatic: "true"
+      preset-docker-mirror: "true"
+    spec:
+      containers:
+        - image: quay.io/kubermatic/build:go-1.17-node-16-kind-0.11-4
+          command:
+            - /bin/bash
+            - -c
+            - |
+              set -euo pipefail
+              start-docker.sh
+              docker login -u $QUAY_IO_USERNAME -p $QUAY_IO_PASSWORD quay.io
+              TAGS="latest $(git tag --points-at HEAD)" ./hack/ci/push-image.sh
+          # docker-in-docker needs privileged mode
+          securityContext:
+            privileged: true
+          env:
+            - name: NOMOCK
+              value: "true"
+  - name: post-kubeone-upload-gocache-amd64
+    decorate: true
+    clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
+    branches:
+      - ^master$
+    spec:
+      containers:
+        # This must match the go version used for building, else go will rightfully
+        # not use the cache
+        - image: quay.io/kubermatic/build:go-1.17-node-16-kind-0.11-4
+          command:
+            - ./hack/ci/upload-gocache.sh
+          resources:
+            requests:
+              # Make sure we get a node exclusively so this is fast and we do not disturb others
+              cpu: 3500m
+              memory: 6Gi
+            limits:
+              cpu: 4
+  - name: post-kubeone-upload-gocache-arm64
+    decorate: true
+    clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
+    branches:
+      - ^master$
+    spec:
+      containers:
+        # This must match the go version used for building, else go will rightfully
+        # not use the cache
+        - image: quay.io/kubermatic/build:go-1.17-node-16-kind-0.11-4
+          command:
+            - ./hack/ci/upload-gocache.sh
+          env:
+            - name: GOARCH
+              value: arm64
+          resources:
+            requests:
+              # Make sure we get a node exclusively so this is fast and we do not disturb others
+              cpu: 3500m
+              memory: 6Gi
+            limits:
+              cpu: 4

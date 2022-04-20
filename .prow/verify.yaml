@@ -1,0 +1,158 @@
+presubmits:
+  #########################################################
+  # verify, build, and unit tests
+  #########################################################
+  - name: pull-kubeone-verify-boilerplate
+    always_run: true
+    decorate: true
+    clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
+    labels:
+      preset-goproxy: "true"
+    spec:
+      containers:
+        - image: quay.io/kubermatic-labs/boilerplate:v0.2.0
+          command:
+            - make
+          args:
+            - verify-boilerplate
+  - name: pull-kubeone-verify-codegen
+    always_run: true
+    decorate: true
+    clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
+    path_alias: k8c.io/kubeone
+    labels:
+      preset-goproxy: "true"
+    spec:
+      containers:
+        - image: golang:1.17.5
+          command:
+            - make
+          args:
+            - verify-codegen
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: 500m
+            limits:
+              memory: 1Gi
+              cpu: 1
+  - name: pull-kubeone-verify-apidocs
+    run_if_changed: "(pkg/apis/kubeone|hack/)"
+    decorate: true
+    clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
+    path_alias: k8c.io/kubeone
+    labels:
+      preset-goproxy: "true"
+    spec:
+      containers:
+        - image: golang:1.17.5
+          command:
+            - make
+          args:
+            - verify-apidocs
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: 500m
+            limits:
+              memory: 1Gi
+              cpu: 1
+  - name: pull-kubeone-license-validation
+    always_run: true
+    decorate: true
+    clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
+    labels:
+      preset-goproxy: "true"
+    spec:
+      containers:
+        - image: quay.io/kubermatic/wwhrd:0.4.0-2
+          command:
+            - make
+          args:
+            - verify-licence
+          resources:
+            requests:
+              memory: 1Gi
+              cpu: 1
+            limits:
+              memory: 2Gi
+              cpu: 2
+  - name: pull-kubeone-build
+    always_run: true
+    decorate: true
+    clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
+    labels:
+      preset-goproxy: "true"
+    spec:
+      containers:
+        - image: golang:1.17.5
+          command:
+            - make
+          args:
+            - build
+          resources:
+            requests:
+              memory: 1Gi
+              cpu: 1
+            limits:
+              memory: 2Gi
+              cpu: 2
+  - name: pull-kubeone-test
+    always_run: true
+    decorate: true
+    clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
+    labels:
+      preset-goproxy: "true"
+    spec:
+      containers:
+        - image: golang:1.17.5
+          command:
+            - make
+          args:
+            - test
+          resources:
+            requests:
+              memory: 1Gi
+              cpu: 1
+            limits:
+              memory: 2Gi
+              cpu: 2
+  - name: pull-kubeone-lint
+    always_run: true
+    decorate: true
+    clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
+    labels:
+      preset-goproxy: "true"
+    spec:
+      containers:
+        - image: golangci/golangci-lint:v1.44.0
+          command:
+            - make
+          args:
+            - lint
+          resources:
+            requests:
+              memory: 1Gi
+              cpu: 4
+            limits:
+              memory: 2Gi
+  - name: pull-kubeone-build-image
+    always_run: true
+    decorate: true
+    clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
+    labels:
+      preset-goproxy: "true"
+      preset-docker-mirror: "true"
+    spec:
+      containers:
+        - image: quay.io/kubermatic/build:go-1.17-node-16-kind-0.11-4
+          command:
+            - /bin/bash
+            - -c
+            - |
+              set -euo pipefail
+              start-docker.sh
+              ./hack/ci/push-image.sh
+          # docker-in-docker needs privileged mode
+          securityContext:
+            privileged: true
