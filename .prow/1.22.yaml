@@ -164,7 +164,7 @@ presubmits:
             requests:
               cpu: 1
   - name: pull-kubeone-e2e-aws-upgrade-1.22-1.23
-    run_if_changed: "(pkg/|examples/terraform/aws|hack/|test/|addons/)"
+    always_run: false
     decorate: true
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     labels:
