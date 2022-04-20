@@ -1,0 +1,21 @@
+periodics:
+  - name: periodic-kubeone-verify-boilerplate
+    cron: "30 13 * * 1-5"
+    decorate: true
+    reporter_config:
+      slack:
+        channel: dev-kubeone
+    extra_refs:
+      - org: kubermatic
+        repo: kubeone
+        base_ref: master
+        clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
+    labels:
+      preset-goproxy: "true"
+    spec:
+      containers:
+        - image: quay.io/kubermatic-labs/boilerplate:v0.2.0
+          command:
+            - make
+          args:
+            - verify-boilerplate
