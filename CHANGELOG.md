@@ -2,10 +2,21 @@
 
 # [v1.4.2](https://github.com/kubermatic/kubeone/releases/tag/v1.4.2) - 2022-04-25
 
-## Changed
+## Updated
 
-* Upgrade machine-controller to v1.43.1 ([#1982](https://github.com/kubermatic/kubeone/pull/1982))
-* Bump flannel image to v0.15.1 ([#1993](https://github.com/kubermatic/kubeone/pull/1993))
+- Upgrade machine-controller to v1.43.1 ([#1982](https://github.com/kubermatic/kubeone/pull/1982))
+- Bump flannel image to v0.15.1 ([#1993](https://github.com/kubermatic/kubeone/pull/1993))
+
+### Feature
+
+- Domain is not required when using application credentials ([#1938](https://github.com/kubermatic/kubeone/pull/1938)
+
+### Bug or Regression
+
+- Fixed an issue with containerd upgrade on deb based distros ([#1935](https://github.com/kubermatic/kubeone/pull/1935)
+- Show "Ensure MachineDeployments" as an action to be taken only when provisioning a cluster for the first time ([#1931](https://github.com/kubermatic/kubeone/pull/1931)
+- Deploy etcd v3.5.3 for clusters running Kubernetes 1.22 or newer. etcd v3.5.3 includes a fix for the data inconsistency issues announced by the etcd maintainers: https://groups.google.com/a/kubernetes.io/g/dev/c/B7gJs88XtQc/m/rSgNOzV2BwAJ
+  To upgrade etcd for an existing cluster, you need to force upgrade the cluster as described here: https://docs.kubermatic.com/kubeone/v1.4/guides/etcd_corruption/#enabling-etcd-corruption-checks ([#1952](https://github.com/kubermatic/kubeone/pull/1952)
 
 # [v1.4.1](https://github.com/kubermatic/kubeone/releases/tag/v1.4.1) - 2022-04-04
 
