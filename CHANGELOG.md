@@ -1,5 +1,12 @@
 # Changelog
 
+# [v1.4.2](https://github.com/kubermatic/kubeone/releases/tag/v1.4.2) - 2022-04-25
+
+## Changed
+
+* Upgrade machine-controller to v1.43.1 ([#1982](https://github.com/kubermatic/kubeone/pull/1982))
+* Bump flannel image to v0.15.1 ([#1993](https://github.com/kubermatic/kubeone/pull/1993))
+
 # [v1.4.1](https://github.com/kubermatic/kubeone/releases/tag/v1.4.1) - 2022-04-04
 
 ## Attention Needed
@@ -77,7 +84,7 @@ Check out the [Upgrading from 1.3 to 1.4 tutorial](https://docs.kubermatic.com/k
   * Allow providing operating system via the API ([#1809](https://github.com/kubermatic/kubeone/pull/1809))
   * Remove the PodPresets feature ([#1662](https://github.com/kubermatic/kubeone/pull/1662))
   * Remove the AssetConfiguration API ([#1699](https://github.com/kubermatic/kubeone/pull/1699))
-  * Rebrand Packet (`packet`) to Equinix Metal (`equinixmetal`) and support migrating existing Packet clusters to Equinix Metal 
+  * Rebrand Packet (`packet`) to Equinix Metal (`equinixmetal`) and support migrating existing Packet clusters to Equinix Metal
   clusters ([#1663](https://github.com/kubermatic/kubeone/pull/1663))
 
 ### Features
@@ -417,7 +424,7 @@ Check out the [Upgrading from 1.3 to 1.4 tutorial](https://docs.kubermatic.com/k
   * Add the KubeletConfig API used to configure `systemReserved`, `kubeReserved`, and `evictionHard` Kubelet options ([#1698](https://github.com/kubermatic/kubeone/pull/1698))
   * Remove the PodPresets feature ([#1662](https://github.com/kubermatic/kubeone/pull/1662))
   * Remove the AssetConfiguration API ([#1699](https://github.com/kubermatic/kubeone/pull/1699))
-  * Rebrand Packet (`packet`) to Equinix Metal (`equinixmetal`) and support migrating existing Packet clusters to Equinix Metal 
+  * Rebrand Packet (`packet`) to Equinix Metal (`equinixmetal`) and support migrating existing Packet clusters to Equinix Metal
   clusters ([#1663](https://github.com/kubermatic/kubeone/pull/1663))
 
 ### Features
@@ -1867,7 +1874,7 @@ to the CNI plugin. The fix has been already merged and will be included in the u
 
 * This alpha version fixes the provisioning failures caused by `docker-ce-cli` version mismatch. The older alpha release are not working anymore ([#896](https://github.com/kubermatic/kubeone/pull/896))
 * `machine-controller` must be updated to v1.14.0 or newer on existing clusters or otherwise newly created worker nodes will not work properly. The `machine-controller` can be updated on one of the following ways:
-  * (Recommended) Run `kubeone upgrade -f` with the exact same config that's currently running 
+  * (Recommended) Run `kubeone upgrade -f` with the exact same config that's currently running
   * Run `kubeone install` with the exact same config that's currently running
   * Update the `machine-controller` and `machine-controller-webhook` deployments manually
 * This release introduces the new KubeOneCluster v1beta1 API. The v1alpha1 API has been deprecated.
@@ -1977,7 +1984,7 @@ to the CNI plugin. The fix has been already merged and will be included in the u
 
 * This version fixes the provisioning failures caused by `docker-ce-cli` version mismatch. The older releases are not working anymore ([#907](https://github.com/kubermatic/kubeone/pull/907))
 * `machine-controller` must be updated to v1.11.3 on existing clusters or otherwise newly created worker nodes will not work properly. The `machine-controller` can be updated on one of the following ways:
-  * (Recommended) Run `kubeone upgrade -f` with the exact same config that's currently running 
+  * (Recommended) Run `kubeone upgrade -f` with the exact same config that's currently running
   * Run `kubeone install` with the exact same config that's currently running
   * Update the `machine-controller` and `machine-controller-webhook` deployments manually
 
@@ -2176,7 +2183,7 @@ to the CNI plugin. The fix has been already merged and will be included in the u
 
 * Kubernetes 1.13 clusters are not supported as of this release because 1.13 isn't supported by the upstream anymore
   * It remains possible to upgrade 1.13 clusters to 1.14 and is strongly advised
-  * Currently, it also remains possible to provision 1.13 clusters, but that can be dropped at any time and it'll not be fixed if it stops working 
+  * Currently, it also remains possible to provision 1.13 clusters, but that can be dropped at any time and it'll not be fixed if it stops working
 * KubeOne now uses Go modules! :tada: ([#550](https://github.com/kubermatic/kubeone/pull/550))
   * This should not introduce any breaking changes
   * If you're using `go get` to obtain KubeOne, you have to enable support for Go modules by setting the `GO111MODULE` environment variable to `on`
@@ -2518,4 +2525,3 @@ many new possibilities, like API versioning.
 
 * Remove support for Kubernetes 1.12 ([#184](https://github.com/kubermatic/kubeone/pull/184))
 * Remove API fields related to Etcd ([#194](https://github.com/kubermatic/kubeone/pull/194))
-
