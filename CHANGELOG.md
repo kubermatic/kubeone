@@ -23,6 +23,7 @@
 ## Updated
 
 - Upgrade machine-controller to v1.37.3 ([#1984](https://github.com/kubermatic/kubeone/pull/1984))
+  - This fixes an issue where the machine-controller would not wait for the volumeAttachments deletion before deleting the node.
 - Deploy etcd v3.5.3 for clusters running Kubernetes 1.22 or newer. etcd v3.5.3 includes a fix for the data inconsistency issues announced by the etcd maintainers: https://groups.google.com/a/kubernetes.io/g/dev/c/B7gJs88XtQc/m/rSgNOzV2BwAJ
   To upgrade etcd for an existing cluster, you need to force upgrade the cluster as described here: https://docs.kubermatic.com/kubeone/v1.4/guides/etcd_corruption/#enabling-etcd-corruption-checks ([#1953](https://github.com/kubermatic/kubeone/pull/1953)
 
