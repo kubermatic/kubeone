@@ -1,22 +1,28 @@
 # Changelog
 
-# [v1.4.2](https://github.com/kubermatic/kubeone/releases/tag/v1.4.2) - 2022-04-25
+# [v1.4.2](https://github.com/kubermatic/kubeone/releases/tag/v1.4.2) - 2022-04-26
+
+## Attention Needed
+
+This patch releases updates etcd to v3.5.3 which includes a fix for the data inconsistency issues reported earlier (https://groups.google.com/a/kubernetes.io/g/dev/c/B7gJs88XtQc/m/rSgNOzV2BwAJ). To upgrade etcd for an existing cluster, you need to [force upgrade the cluster as described here](https://docs.kubermatic.com/kubeone/v1.4/guides/etcd_corruption/#enabling-etcd-corruption-checks). If you're running Kubernetes 1.22 or newer, we strongly recommend upgrading etcd **as soon as possible**.
 
 ## Updated
 
-- Upgrade machine-controller to v1.43.1 ([#1982](https://github.com/kubermatic/kubeone/pull/1982))
+- Upgrade machine-controller to v1.43.2 ([#2001](https://github.com/kubermatic/kubeone/pull/2001))
+  - This fixes an issue where the machine-controller would not wait for the volumeAttachments deletion before deleting the node.
+  - This fixes an issue for flatcar regarding disabling auto-update when FlatcarConfig.DisableUpdateEngine is set to true.
+- Deploy etcd v3.5.3 for clusters running Kubernetes 1.22 or newer. etcd v3.5.3 includes a fix for [the data inconsistency issues announced by the etcd maintainers](https://groups.google.com/a/kubernetes.io/g/dev/c/B7gJs88XtQc/m/rSgNOzV2BwAJ. To upgrade etcd) for an existing cluster, you need to [force upgrade the cluster as described here](https://docs.kubermatic.com/kubeone/v1.4/guides/etcd_corruption/#enabling-etcd-corruption-checks) ([#1952](https://github.com/kubermatic/kubeone/pull/1952))
 - Bump flannel image to v0.15.1 ([#1993](https://github.com/kubermatic/kubeone/pull/1993))
+  - This fixes an issue with flannel causing iptables segfaults
 
 ### Feature
 
-- Domain is not required when using application credentials ([#1938](https://github.com/kubermatic/kubeone/pull/1938)
+- Domain is not required when using application credentials ([#1938](https://github.com/kubermatic/kubeone/pull/1938))
 
 ### Bug or Regression
 
-- Fixed an issue with containerd upgrade on deb based distros ([#1935](https://github.com/kubermatic/kubeone/pull/1935)
-- Show "Ensure MachineDeployments" as an action to be taken only when provisioning a cluster for the first time ([#1931](https://github.com/kubermatic/kubeone/pull/1931)
-- Deploy etcd v3.5.3 for clusters running Kubernetes 1.22 or newer. etcd v3.5.3 includes a fix for the data inconsistency issues announced by the etcd maintainers: https://groups.google.com/a/kubernetes.io/g/dev/c/B7gJs88XtQc/m/rSgNOzV2BwAJ
-  To upgrade etcd for an existing cluster, you need to force upgrade the cluster as described here: https://docs.kubermatic.com/kubeone/v1.4/guides/etcd_corruption/#enabling-etcd-corruption-checks ([#1952](https://github.com/kubermatic/kubeone/pull/1952)
+- Fixed an issue with containerd upgrade on deb based distros ([#1935](https://github.com/kubermatic/kubeone/pull/1935))
+- Show "Ensure MachineDeployments" as an action to be taken only when provisioning a cluster for the first time ([#1931](https://github.com/kubermatic/kubeone/pull/1931))
 
 # [v1.4.1](https://github.com/kubermatic/kubeone/releases/tag/v1.4.1) - 2022-04-04
 
@@ -580,6 +586,18 @@ Check out the [Upgrading from 1.3 to 1.4 tutorial](https://docs.kubermatic.com/k
 * Remove the PodPresets feature ([#1593](https://github.com/kubermatic/kubeone/pull/1593))
   * If you're still using this feature, make sure to migrate away before upgrading to this KubeOne release
 * Remove Ansible examples ([#1633](https://github.com/kubermatic/kubeone/pull/1633))
+
+# [v1.3.5](https://github.com/kubermatic/kubeone/releases/tag/v1.3.5) - 2022-04-26
+
+## Attention Needed
+
+This patch releases updates etcd to v3.5.3 which includes a fix for the data inconsistency issues reported earlier (https://groups.google.com/a/kubernetes.io/g/dev/c/B7gJs88XtQc/m/rSgNOzV2BwAJ). To upgrade etcd for an existing cluster, you need to [force upgrade the cluster as described here](https://docs.kubermatic.com/kubeone/v1.4/guides/etcd_corruption/#enabling-etcd-corruption-checks). If you're running Kubernetes 1.22 or newer, we strongly recommend upgrading etcd **as soon as possible**.
+
+## Updated
+
+- Upgrade machine-controller to v1.37.3 ([#1984](https://github.com/kubermatic/kubeone/pull/1984))
+  - This fixes an issue where the machine-controller would not wait for the volumeAttachments deletion before deleting the node.
+- Deploy etcd v3.5.3 for clusters running Kubernetes 1.22 or newer. etcd v3.5.3 includes a fix for [the data inconsistency issues announced by the etcd maintainers](https://groups.google.com/a/kubernetes.io/g/dev/c/B7gJs88XtQc/m/rSgNOzV2BwAJ. To upgrade etcd) for an existing cluster, you need to [force upgrade the cluster as described here](https://docs.kubermatic.com/kubeone/v1.4/guides/etcd_corruption/#enabling-etcd-corruption-checks) ([#1953](https://github.com/kubermatic/kubeone/pull/1953))
 
 # [v1.3.4](https://github.com/kubermatic/kubeone/releases/tag/v1.3.4) - 2022-04-05
 
