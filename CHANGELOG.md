@@ -1,5 +1,17 @@
 # Changelog
 
+# [v1.3.5](https://github.com/kubermatic/kubeone/releases/tag/v1.3.5) - 2022-04-26
+
+## Attention Needed
+
+This patch releases updates etcd to v3.5.3 which includes a fix for the data inconsistency issues reported earlier (https://groups.google.com/a/kubernetes.io/g/dev/c/B7gJs88XtQc/m/rSgNOzV2BwAJ). To upgrade etcd for an existing cluster, you need to [force upgrade the cluster as described here](https://docs.kubermatic.com/kubeone/v1.4/guides/etcd_corruption/#enabling-etcd-corruption-checks). If you're running Kubernetes 1.22 or newer, we strongly recommend upgrading etcd **as soon as possible**.
+
+## Updated
+
+- Upgrade machine-controller to v1.37.3 ([#1984](https://github.com/kubermatic/kubeone/pull/1984))
+  - This fixes an issue where the machine-controller would not wait for the volumeAttachments deletion before deleting the node.
+- Deploy etcd v3.5.3 for clusters running Kubernetes 1.22 or newer. etcd v3.5.3 includes a fix for [the data inconsistency issues announced by the etcd maintainers](https://groups.google.com/a/kubernetes.io/g/dev/c/B7gJs88XtQc/m/rSgNOzV2BwAJ. To upgrade etcd) for an existing cluster, you need to [force upgrade the cluster as described here](https://docs.kubermatic.com/kubeone/v1.4/guides/etcd_corruption/#enabling-etcd-corruption-checks) ([#1953](https://github.com/kubermatic/kubeone/pull/1953)
+
 # [v1.3.4](https://github.com/kubermatic/kubeone/releases/tag/v1.3.4) - 2022-04-05
 
 ## Attention Needed
@@ -1304,7 +1316,7 @@ to the CNI plugin. The fix has been already merged and will be included in the u
 
 * This alpha version fixes the provisioning failures caused by `docker-ce-cli` version mismatch. The older alpha release are not working anymore ([#896](https://github.com/kubermatic/kubeone/pull/896))
 * `machine-controller` must be updated to v1.14.0 or newer on existing clusters or otherwise newly created worker nodes will not work properly. The `machine-controller` can be updated on one of the following ways:
-  * (Recommended) Run `kubeone upgrade -f` with the exact same config that's currently running 
+  * (Recommended) Run `kubeone upgrade -f` with the exact same config that's currently running
   * Run `kubeone install` with the exact same config that's currently running
   * Update the `machine-controller` and `machine-controller-webhook` deployments manually
 * This release introduces the new KubeOneCluster v1beta1 API. The v1alpha1 API has been deprecated.
@@ -1414,7 +1426,7 @@ to the CNI plugin. The fix has been already merged and will be included in the u
 
 * This version fixes the provisioning failures caused by `docker-ce-cli` version mismatch. The older releases are not working anymore ([#907](https://github.com/kubermatic/kubeone/pull/907))
 * `machine-controller` must be updated to v1.11.3 on existing clusters or otherwise newly created worker nodes will not work properly. The `machine-controller` can be updated on one of the following ways:
-  * (Recommended) Run `kubeone upgrade -f` with the exact same config that's currently running 
+  * (Recommended) Run `kubeone upgrade -f` with the exact same config that's currently running
   * Run `kubeone install` with the exact same config that's currently running
   * Update the `machine-controller` and `machine-controller-webhook` deployments manually
 
@@ -1613,7 +1625,7 @@ to the CNI plugin. The fix has been already merged and will be included in the u
 
 * Kubernetes 1.13 clusters are not supported as of this release because 1.13 isn't supported by the upstream anymore
   * It remains possible to upgrade 1.13 clusters to 1.14 and is strongly advised
-  * Currently, it also remains possible to provision 1.13 clusters, but that can be dropped at any time and it'll not be fixed if it stops working 
+  * Currently, it also remains possible to provision 1.13 clusters, but that can be dropped at any time and it'll not be fixed if it stops working
 * KubeOne now uses Go modules! :tada: ([#550](https://github.com/kubermatic/kubeone/pull/550))
   * This should not introduce any breaking changes
   * If you're using `go get` to obtain KubeOne, you have to enable support for Go modules by setting the `GO111MODULE` environment variable to `on`
@@ -1955,4 +1967,3 @@ many new possibilities, like API versioning.
 
 * Remove support for Kubernetes 1.12 ([#184](https://github.com/kubermatic/kubeone/pull/184))
 * Remove API fields related to Etcd ([#194](https://github.com/kubermatic/kubeone/pull/194))
-
