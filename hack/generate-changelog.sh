@@ -23,7 +23,7 @@
 ###
 ### Currently, there are no release-notes binaries, so you have to build it
 ### manually. This can be done by cloning https://github.com/kubernetes/release
-### and running make compile-release-tools (note: this will include other
+### and running make generate-tools (note: this will include other
 ### Kubernetes tools as well, e.g. krel, cip-mm...).
 ###
 ### Usage:
