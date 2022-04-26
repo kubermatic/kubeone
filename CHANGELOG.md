@@ -6,23 +6,21 @@
 
 This patch releases updates etcd to v3.5.3 which includes a fix for the data inconsistency issues reported earlier (https://groups.google.com/a/kubernetes.io/g/dev/c/B7gJs88XtQc/m/rSgNOzV2BwAJ). To upgrade etcd for an existing cluster, you need to [force upgrade the cluster as described here](https://docs.kubermatic.com/kubeone/v1.4/guides/etcd_corruption/#enabling-etcd-corruption-checks). If you're running Kubernetes 1.22 or newer, we strongly recommend upgrading etcd **as soon as possible**.
 
-## Updated
-
-- Upgrade machine-controller to v1.43.2 ([#2001](https://github.com/kubermatic/kubeone/pull/2001))
-  - This fixes an issue where the machine-controller would not wait for the volumeAttachments deletion before deleting the node.
-  - This fixes an issue for flatcar regarding disabling auto-update when FlatcarConfig.DisableUpdateEngine is set to true.
-- Deploy etcd v3.5.3 for clusters running Kubernetes 1.22 or newer. etcd v3.5.3 includes a fix for [the data inconsistency issues announced by the etcd maintainers](https://groups.google.com/a/kubernetes.io/g/dev/c/B7gJs88XtQc/m/rSgNOzV2BwAJ. To upgrade etcd) for an existing cluster, you need to [force upgrade the cluster as described here](https://docs.kubermatic.com/kubeone/v1.4/guides/etcd_corruption/#enabling-etcd-corruption-checks) ([#1952](https://github.com/kubermatic/kubeone/pull/1952))
-- Bump flannel image to v0.15.1 ([#1993](https://github.com/kubermatic/kubeone/pull/1993))
-  - This fixes an issue with flannel causing iptables segfaults
+## Changes by Kind
 
 ### Feature
 
-- Domain is not required when using application credentials ([#1938](https://github.com/kubermatic/kubeone/pull/1938))
+- Domain is not required when using application credentials ([#1938](https://github.com/kubermatic/kubeone/pull/1938), [@ahmedwaleedmalik](https://github.com/ahmedwaleedmalik))
 
 ### Bug or Regression
 
-- Fixed an issue with containerd upgrade on deb based distros ([#1935](https://github.com/kubermatic/kubeone/pull/1935))
-- Show "Ensure MachineDeployments" as an action to be taken only when provisioning a cluster for the first time ([#1931](https://github.com/kubermatic/kubeone/pull/1931))
+- Bump flannel image to v0.15.1 ([#1993](https://github.com/kubermatic/kubeone/pull/1993), [@ahmedwaleedmalik](https://github.com/ahmedwaleedmalik))
+- Deploy etcd v3.5.3 for clusters running Kubernetes 1.22 or newer. etcd v3.5.3 includes a fix for [the data inconsistency issues announced by the etcd maintainers](https://groups.google.com/a/kubernetes.io/g/dev/c/B7gJs88XtQc/m/rSgNOzV2BwAJ. To upgrade etcd) for an existing cluster, you need to [force upgrade the cluster as described here](https://docs.kubermatic.com/kubeone/v1.4/guides/etcd_corruption/#enabling-etcd-corruption-checks) ([#1953](https://github.com/kubermatic/kubeone/pull/1953)
+- Fixes containerd upgrade on deb based distros ([#1935](https://github.com/kubermatic/kubeone/pull/1935), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Show "Ensure MachineDeployments" as an action to be taken only when provisioning a cluster for the first time ([#1931](https://github.com/kubermatic/kubeone/pull/1931), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Update machine-controller to v1.43.2 ([#2001](https://github.com/kubermatic/kubeone/pull/2001), [@kron4eg](https://github.com/kron4eg))
+  - Fixes an issue where the machine-controller would not wait for the volumeAttachments deletion before deleting the node
+  - Fixes an issue where masked services on Flatcar are not properly stopped when provisioning a Flatcar node
 
 # [v1.4.1](https://github.com/kubermatic/kubeone/releases/tag/v1.4.1) - 2022-04-04
 
