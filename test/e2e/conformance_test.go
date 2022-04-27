@@ -17,11 +17,13 @@ limitations under the License.
 package e2e
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
 	kubeonev1beta1 "k8c.io/kubeone/pkg/apis/kubeone/v1beta1"
 	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
+	"k8c.io/kubeone/test/e2e/cloudprovider"
 	"k8c.io/kubeone/test/e2e/provisioner"
 	"k8c.io/kubeone/test/e2e/testutil"
 
@@ -314,6 +316,12 @@ func TestClusterConformance(t *testing.T) { //nolint:gocyclo
 			}
 			if err = clusterVerifier.Verify(tc.scenario, skipTests); err != nil {
 				t.Fatalf("e2e tests failed: %v", err)
+			}
+
+			// Run (custom) CloudProvider tests
+			t.Log("Running custom cloud provider tests...")
+			if err = cloudprovider.RunCloudProviderTests(context.Background(), t, client, tc.provider); err != nil {
+				t.Fatalf("e2e cloud provider tests failed: %v", err)
 			}
 		})
 	}
