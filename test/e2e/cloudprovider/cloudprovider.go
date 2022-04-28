@@ -235,6 +235,11 @@ func exposePVC(ctx context.Context, t *testing.T, client ctrlruntimeclient.Clien
 			},
 		},
 	}
+	if cloudProvider == provisioner.Hetzner {
+		svc.Annotations = map[string]string{
+			"load-balancer.hetzner.cloud/location": "nbg1",
+		}
+	}
 
 	if err := client.Create(ctx, svc); err != nil {
 		return fmt.Errorf("failed to create namespace: %w", err)
