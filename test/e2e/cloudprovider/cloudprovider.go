@@ -84,6 +84,7 @@ func createPVCWithStorage(ctx context.Context, t *testing.T, client ctrlruntimec
 
 	if !supportsStorage(cloudProvider) {
 		t.Logf("Skipping storage tests because cloud provider %q is not supported.", cloudProvider)
+		return nil
 	}
 
 	t.Log("Testing storage support...")
@@ -210,6 +211,7 @@ func exposePVC(ctx context.Context, t *testing.T, client ctrlruntimeclient.Clien
 
 	if !supportsLoadBalancer(cloudProvider) {
 		t.Logf("Skipping load balancer tests because cloud provider %q is not supported.", cloudProvider)
+		return nil
 	}
 
 	t.Log("Testing Load Balancer support...")
