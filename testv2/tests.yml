@@ -1,0 +1,13 @@
+- infrastructure: aws_centos
+  kubernetesVersions:
+    - v1.21.12
+    - v1.22.9
+    - v1.23.6
+  scenarios:
+    - name: install_containerd
+    - name: upgrade_containerd
+      params:
+        - from: v1.21.12
+          to: v1.22.9
+        - from: v1.22.9
+          to: v1.23.6
