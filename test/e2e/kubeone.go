@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
@@ -108,9 +109,29 @@ func (k1 *Kubeone) CreateV1Beta1Config(
 		k1Cluster.CloudProvider.CloudConfig = credentials["cloudConfig"]
 	}
 
+	addonsPath := filepath.Join(k1.Dir, "addons")
+	addonsPathAbs, err := filepath.Abs(addonsPath)
+	if err != nil {
+		return errors.Wrap(err, "failed to get absolute addons path")
+	}
+
+	k1Cluster.Addons = &kubeonev1beta1.Addons{
+		Enable: true,
+		Path:   addonsPathAbs,
+		Addons: []kubeonev1beta1.Addon{
+			{
+				Name: "default-storage-class",
+			},
+		},
+	}
+
 	k1Config, err := kyaml.Marshal(&k1Cluster)
 	if err != nil {
 		return errors.Wrap(err, "unable to marshal kubeone KubeOneCluster")
+	}
+
+	if mkErr := os.MkdirAll(addonsPathAbs, 0755); mkErr != nil {
+		return errors.Wrapf(mkErr, "failed to create directory %q", addonsPathAbs)
 	}
 
 	err = os.WriteFile(k1.ConfigurationFilePath, k1Config, 0600)
@@ -175,6 +196,15 @@ func (k1 *Kubeone) CreateV1Beta2Config(
 		}
 
 		k1Cluster.CloudProvider.CloudConfig = credentials["cloudConfig"]
+	}
+
+	k1Cluster.Addons = &kubeonev1beta2.Addons{
+		Enable: true,
+		Addons: []kubeonev1beta2.Addon{
+			{
+				Name: "default-storage-class",
+			},
+		},
 	}
 
 	k1Config, err := kyaml.Marshal(&k1Cluster)
