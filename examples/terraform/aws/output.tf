@@ -74,7 +74,7 @@ output "kubeone_workers" {
     # following outputs will be parsed by kubeone and automatically merged into
     # corresponding (by name) worker definition
     "${var.cluster_name}-${local.zoneA}" = {
-      replicas = var.initial_machinedeployment_replicas
+      replicas = 1
       providerSpec = {
         annotations = {
           "k8c.io/operating-system-profile" = var.ami_filters[var.os].osp_name
@@ -126,7 +126,7 @@ output "kubeone_workers" {
     }
 
     "${var.cluster_name}-${local.zoneB}" = {
-      replicas = var.initial_machinedeployment_replicas
+      replicas = 0
       providerSpec = {
         annotations = {
           "k8c.io/operating-system-profile" = var.ami_filters[var.os].osp_name
@@ -171,7 +171,7 @@ output "kubeone_workers" {
     }
 
     "${var.cluster_name}-${local.zoneC}" = {
-      replicas = var.initial_machinedeployment_replicas
+      replicas = 0
       providerSpec = {
         annotations = {
           "k8c.io/operating-system-profile" = var.ami_filters[var.os].osp_name

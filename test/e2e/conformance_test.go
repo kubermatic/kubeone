@@ -53,7 +53,7 @@ func TestClusterConformance(t *testing.T) { //nolint:gocyclo
 			providerExternal:      false,
 			scenario:              NodeConformance,
 			configFilePath:        "../../test/e2e/testdata/config_aws.yaml",
-			expectedNumberOfNodes: 6, // 3 control planes + 3 workers
+			expectedNumberOfNodes: 4, // 3 control planes + 3 workers
 		},
 		{
 			name:                  "verify k8s cluster deployment on DO",
