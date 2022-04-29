@@ -14,7 +14,7 @@
 
 # building image
 
-FROM golang:1.17.5 as builder
+FROM golang:1.18.1 as builder
 
 RUN apt-get update && apt-get install -y \
     unzip
@@ -37,7 +37,7 @@ RUN /opt/install-kube-tests-binaries.sh
 # resulting image
 
 
-FROM golang:1.17.5
+FROM golang:1.18.1
 
 ARG version
 
