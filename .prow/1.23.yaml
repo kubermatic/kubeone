@@ -8,7 +8,7 @@ presubmits:
       preset-aws: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.20
+        - image: quay.io/kubermatic/build:go-1.18-node-16-kind-0.12-1
           imagePullPolicy: Always
           command:
             - make

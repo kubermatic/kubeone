@@ -108,11 +108,11 @@ func findKubetest(basedir, version string) (string, error) {
 	}
 
 	for _, kubetestVersion := range kubetestVersionsToTry {
-		candidateKubetestDir := fmt.Sprintf("%s/kubernetes-%s", basedir, kubetestVersion)
-		fileToCheck := filepath.Join(candidateKubetestDir, "kubernetes/version")
+		candidateKubetestDir := fmt.Sprintf("%s/%s", basedir, kubetestVersion)
+		fileToCheck := filepath.Join(candidateKubetestDir, "version")
 
 		if _, err := os.Stat(fileToCheck); err == nil {
-			return filepath.Clean(filepath.Join(candidateKubetestDir, "kubernetes")), nil
+			return filepath.Clean(candidateKubetestDir), nil
 		}
 	}
 
