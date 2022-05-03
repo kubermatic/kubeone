@@ -175,9 +175,10 @@ type cloudProviderFlags struct {
 // NewConfigFromJSON creates a new config object from json
 func NewConfigFromJSON(buf []byte) (*Config, error) {
 	wholeTFOutput := struct {
-		KubeoneAPI     interface{} `json:"kubeone_api"`
-		KubeoneHosts   interface{} `json:"kubeone_hosts"`
-		KubeoneWorkers interface{} `json:"kubeone_workers"`
+		KubeoneAPI           interface{} `json:"kubeone_api"`
+		KubeoneHosts         interface{} `json:"kubeone_hosts"`
+		KubeoneWorkers       interface{} `json:"kubeone_workers"`
+		KubeoneStaticWorkers interface{} `json:"kubeone_static_workers"`
 	}{}
 
 	// cat off all the excessive fields from the terraform output JSON that will prevent otherwise strict unmarshalling
