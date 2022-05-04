@@ -69,9 +69,5 @@ func ValidateCommon() error {
 		return errors.New("the terraform client is not available, please install")
 	}
 
-	if ok := IsCommandAvailable("kubetest"); !ok {
-		return errors.New("the kubetest is not available, please install: 'go get -u k8s.io/test-infra/kubetest'")
-	}
-
 	return nil
 }
