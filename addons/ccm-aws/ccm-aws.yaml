@@ -145,12 +145,14 @@ spec:
               cpu: 200m
       hostNetwork: true
       nodeSelector:
-        node-role.kubernetes.io/master: ""
+        node-role.kubernetes.io/control-plane: ""
       serviceAccountName: cloud-controller-manager
       tolerations:
         - effect: NoSchedule
           key: node.cloudprovider.kubernetes.io/uninitialized
           value: "true"
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/control-plane
         - effect: NoSchedule
           key: node-role.kubernetes.io/master
   updateStrategy:
