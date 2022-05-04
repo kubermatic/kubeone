@@ -38,7 +38,7 @@ import (
 )
 
 const (
-	labelControlPlaneNode = "node-role.kubernetes.io/master"
+	labelControlPlaneNode = "node-role.kubernetes.io/control-plane"
 	delayUpgrade          = 2 * time.Minute
 )
 
