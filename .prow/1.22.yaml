@@ -8,7 +8,7 @@ presubmits:
       preset-aws: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.20
+        - image: kubermatic/kubeone-e2e:v0.1.22
           imagePullPolicy: Always
           command:
             - make
@@ -20,7 +20,7 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.4"
+              value: "1.22.9"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -35,7 +35,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.20
+        - image: kubermatic/kubeone-e2e:v0.1.22
           imagePullPolicy: Always
           command:
             - make
@@ -47,7 +47,7 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.4"
+              value: "1.22.9"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -62,7 +62,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.20
+        - image: kubermatic/kubeone-e2e:v0.1.22
           imagePullPolicy: Always
           command:
             - make
@@ -74,7 +74,7 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.4"
+              value: "1.22.9"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -89,7 +89,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.20
+        - image: kubermatic/kubeone-e2e:v0.1.22
           imagePullPolicy: Always
           command:
             - make
@@ -101,7 +101,7 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.4"
+              value: "1.22.9"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
             - name: TF_VAR_project
@@ -118,7 +118,7 @@ presubmits:
       preset-equinix-metal: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.20
+        - image: kubermatic/kubeone-e2e:v0.1.22
           imagePullPolicy: Always
           command:
             - make
@@ -130,7 +130,7 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.4"
+              value: "1.22.9"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -145,7 +145,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.20
+        - image: kubermatic/kubeone-e2e:v0.1.22
           imagePullPolicy: Always
           command:
             - make
@@ -157,7 +157,7 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.4"
+              value: "1.22.9"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -172,7 +172,7 @@ presubmits:
       preset-aws: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.20
+        - image: kubermatic/kubeone-e2e:v0.1.22
           imagePullPolicy: Always
           command:
             - make
@@ -184,9 +184,9 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.22.4"
+              value: "1.22.9"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.23.0"
+              value: "1.23.6"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -200,7 +200,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.20
+        - image: kubermatic/kubeone-e2e:v0.1.22
           imagePullPolicy: Always
           command:
             - make
@@ -212,9 +212,9 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.22.4"
+              value: "1.22.9"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.23.0"
+              value: "1.23.6"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -228,7 +228,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.20
+        - image: kubermatic/kubeone-e2e:v0.1.22
           imagePullPolicy: Always
           command:
             - make
@@ -240,9 +240,9 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.22.4"
+              value: "1.22.9"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.23.0"
+              value: "1.23.6"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -256,7 +256,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.20
+        - image: kubermatic/kubeone-e2e:v0.1.22
           imagePullPolicy: Always
           command:
             - make
@@ -268,9 +268,9 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.22.4"
+              value: "1.22.9"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.23.0"
+              value: "1.23.6"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -286,7 +286,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: kubermatic/kubeone-e2e:v0.1.20
+        - image: kubermatic/kubeone-e2e:v0.1.22
           imagePullPolicy: Always
           command:
             - make
@@ -298,9 +298,9 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.22.4"
+              value: "1.22.9"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.23.0"
+              value: "1.23.6"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
