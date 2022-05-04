@@ -18,7 +18,7 @@ presubmits:
             - name: PROVIDER
               value: "aws"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.7"
+              value: "1.21.12"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -43,7 +43,7 @@ presubmits:
             - name: PROVIDER
               value: "digitalocean"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.7"
+              value: "1.21.12"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -68,7 +68,7 @@ presubmits:
             - name: PROVIDER
               value: "hetzner"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.7"
+              value: "1.21.12"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -93,7 +93,7 @@ presubmits:
             - name: PROVIDER
               value: "gce"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.7"
+              value: "1.21.12"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
             - name: TF_VAR_project
@@ -120,7 +120,7 @@ presubmits:
             - name: PROVIDER
               value: "equinixmetal"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.7"
+              value: "1.21.12"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -145,7 +145,7 @@ presubmits:
             - name: PROVIDER
               value: "openstack"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.7"
+              value: "1.21.12"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -172,9 +172,9 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.21.7"
+              value: "1.21.12"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.4"
+              value: "1.22.9"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -200,9 +200,9 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.21.7"
+              value: "1.21.12"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.4"
+              value: "1.22.9"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -228,9 +228,9 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.21.7"
+              value: "1.21.12"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.4"
+              value: "1.22.9"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -256,9 +256,9 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.21.7"
+              value: "1.21.12"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.4"
+              value: "1.22.9"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -286,9 +286,9 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.21.7"
+              value: "1.21.12"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.4"
+              value: "1.22.9"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -314,9 +314,9 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.21.7"
+              value: "1.21.12"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.4"
+              value: "1.22.9"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
