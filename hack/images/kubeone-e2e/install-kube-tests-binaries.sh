@@ -20,6 +20,7 @@ declare -A full_versions
 full_versions["1.21"]="v1.21.12"
 full_versions["1.22"]="v1.22.9"
 full_versions["1.23"]="v1.23.6"
+full_versions["1.24"]="v1.24.0"
 
 root_dir=${KUBETESTS_ROOT:-"/opt/kube-test"}
 tmp_root=${TMP_ROOT:-"/tmp/get-kube"}
