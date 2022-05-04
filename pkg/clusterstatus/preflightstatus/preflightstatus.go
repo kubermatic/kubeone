@@ -31,7 +31,7 @@ import (
 )
 
 const (
-	LabelControlPlaneNode = "node-role.kubernetes.io/master"
+	LabelControlPlaneNode = "node-role.kubernetes.io/control-plane"
 	LabelUpgradeLock      = "kubeone.io/upgrade-in-progress"
 )
 

@@ -22,7 +22,7 @@ spec:
     spec:
       nodeSelector:
         kubernetes.io/os: linux
-        node-role.kubernetes.io/master: ""
+        node-role.kubernetes.io/control-plane: ""
       serviceAccountName: ebs-csi-controller-sa
       priorityClassName: system-cluster-critical
       tolerations:
@@ -31,7 +31,7 @@ spec:
         - key: "node-role.kubernetes.io/master"
           operator: "Exists"
           effect: "NoSchedule"
-        - key: "node-role.kubernetes.io/controlplane"
+        - key: "node-role.kubernetes.io/control-plane"
           operator: "Exists"
           effect: "NoSchedule"
         - operator: Exists

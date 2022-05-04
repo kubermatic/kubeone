@@ -35,8 +35,11 @@ spec:
           hostNetwork: true
           dnsPolicy: ClusterFirstWithHostNet
           nodeSelector:
-            node-role.kubernetes.io/master: ""
+            node-role.kubernetes.io/control-plane: ""
           tolerations:
+          - key: node-role.kubernetes.io/control-plane
+            effect: NoSchedule
+            operator: Exists
           - key: node-role.kubernetes.io/master
             effect: NoSchedule
             operator: Exists

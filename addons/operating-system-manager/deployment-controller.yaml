@@ -20,7 +20,7 @@ spec:
         app: operating-system-manager
     spec:
       nodeSelector:
-        node-role.kubernetes.io/master: ""
+        node-role.kubernetes.io/control-plane: ""
       tolerations:
         - key: "node-role.kubernetes.io/master"
           operator: Exists

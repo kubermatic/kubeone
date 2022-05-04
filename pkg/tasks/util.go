@@ -41,7 +41,7 @@ import (
 
 const (
 	labelUpgradeLock      = "kubeone.io/upgrade-in-progress"
-	labelControlPlaneNode = "node-role.kubernetes.io/master"
+	labelControlPlaneNode = "node-role.kubernetes.io/control-plane"
 	// timeoutNodeUpgrade is time for how long kubeone will wait after finishing the upgrade
 	// process on the node
 	timeoutNodeUpgrade = 30 * time.Second

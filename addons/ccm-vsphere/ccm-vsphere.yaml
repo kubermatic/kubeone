@@ -165,13 +165,16 @@ spec:
     spec:
       priorityClassName: system-cluster-critical
       nodeSelector:
-        node-role.kubernetes.io/master: ""
+        node-role.kubernetes.io/control-plane: ""
       securityContext:
         runAsUser: 1001
       tolerations:
         - key: node.cloudprovider.kubernetes.io/uninitialized
           value: "true"
           effect: NoSchedule
+        - key: node-role.kubernetes.io/control-plane
+          effect: NoSchedule
+          operator: Exists
         - key: node-role.kubernetes.io/master
           effect: NoSchedule
           operator: Exists
