@@ -51,6 +51,27 @@ const (
 	AddonNodeLocalDNS           = "nodelocaldns"
 )
 
+func CloudAddons() []string {
+	return []string{
+		AddonCCMAws,
+		AddonCCMAzure,
+		AddonCCMDigitalOcean,
+		AddonCCMHetzner,
+		AddonCCMOpenStack,
+		AddonCCMEquinixMetal,
+		AddonCCMPacket,
+		AddonCCMVsphere,
+		AddonCSIAwsEBS,
+		AddonCSIAzureDisk,
+		AddonCSIAzureFile,
+		AddonCSIDigitalOcean,
+		AddonCSIHetzner,
+		AddonCSINutanix,
+		AddonCSIOpenStackCinder,
+		AddonCSIVsphere,
+	}
+}
+
 const (
 	NodeLocalDNSVirtualIP = "169.254.20.10"
 )

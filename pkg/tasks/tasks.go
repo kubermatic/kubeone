@@ -223,6 +223,7 @@ func WithResources(t Tasks) Tasks {
 				Fn:          credentials.Ensure,
 				Operation:   "ensuring credentials secret",
 				Description: "ensure credential",
+				Predicate:   func(s *state.State) bool { return s.Cluster.CloudProvider.SecretProviderClassName == "" },
 			},
 			{
 				Fn:          addons.Ensure,

@@ -36,11 +36,16 @@ import (
 	"k8c.io/kubeone/pkg/certificate/cabundle"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/templates/resources"
 
+	appsv1 "k8s.io/api/apps/v1"
+	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1unstructured "k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/util/sets"
 	kyaml "k8s.io/apimachinery/pkg/util/yaml"
+	"k8s.io/utils/pointer"
 	"sigs.k8s.io/yaml"
 )
 
@@ -68,6 +73,22 @@ func (a *applier) getManifestsFromDirectory(s *state.State, fsys fs.FS, addonNam
 	manifests, err := a.loadAddonsManifests(fsys, addonName, addonParams, s.Logger, s.Verbose, overwriteRegistry)
 	if err != nil {
 		return "", err
+	}
+
+	if s.Cluster.CloudProvider.SecretProviderClassName != "" {
+		addonsToMutate := sets.NewString(
+			append(
+				resources.CloudAddons(),
+				resources.AddonOperatingSystemManager,
+				resources.AddonMachineController,
+			)...,
+		)
+
+		if addonsToMutate.Has(addonName) {
+			if err = addSecretCSIVolume(manifests, s.Cluster.CloudProvider.SecretProviderClassName); err != nil {
+				return "", err
+			}
+		}
 	}
 
 	rawManifests, err := ensureAddonsLabelsOnResources(manifests, addonName)
@@ -160,14 +181,13 @@ func (a *applier) loadAddonsManifests(
 			return nil, fail.Runtime(err, fmt.Sprintf("executing addons manifest template %q", file.Name()))
 		}
 
-		trim := strings.TrimSpace(buf.String())
-		if len(trim) == 0 {
+		if len(bytes.TrimSpace(buf.Bytes())) == 0 {
 			logger.Infof("Addons manifest %q is empty after parsing. Skipping.\n", file.Name())
 		}
 
 		reader := kyaml.NewYAMLReader(bufio.NewReader(buf))
 		for {
-			b, err := reader.Read()
+			yamlDoc, err := reader.Read()
 			if err != nil {
 				if errors.Is(err, io.EOF) {
 					break
@@ -176,12 +196,12 @@ func (a *applier) loadAddonsManifests(
 				return nil, fail.Runtime(err, fmt.Sprintf("reading YAML reader for manifest %q", file.Name()))
 			}
 
-			b = bytes.TrimSpace(b)
-			if len(b) == 0 {
+			yamlDoc = bytes.TrimSpace(yamlDoc)
+			if len(yamlDoc) == 0 {
 				continue
 			}
 
-			decoder := kyaml.NewYAMLToJSONDecoder(bytes.NewBuffer(b))
+			decoder := kyaml.NewYAMLToJSONDecoder(bytes.NewBuffer(yamlDoc))
 			raw := runtime.RawExtension{}
 			if err := decoder.Decode(&raw); err != nil {
 				return nil, fail.Runtime(err, fmt.Sprintf("unmarshalling manifest %q", file.Name()))
@@ -203,9 +223,9 @@ func (a *applier) loadAddonsManifests(
 func ensureAddonsLabelsOnResources(manifests []runtime.RawExtension, addonName string) ([]*bytes.Buffer, error) {
 	var rawManifests []*bytes.Buffer
 
-	for _, m := range manifests {
+	for _, rawManifest := range manifests {
 		parsedUnstructuredObj := &metav1unstructured.Unstructured{}
-		if _, _, err := metav1unstructured.UnstructuredJSONScheme.Decode(m.Raw, nil, parsedUnstructuredObj); err != nil {
+		if _, _, err := metav1unstructured.UnstructuredJSONScheme.Decode(rawManifest.Raw, nil, parsedUnstructuredObj); err != nil {
 			return nil, fail.Runtime(err, "parsing unstructured fields")
 		}
 
@@ -339,4 +359,108 @@ func vSphereCSIWebhookConfigTemplateFunc() (string, error) {
 	err := enc.Encode(cfg)
 
 	return buf.String(), err
+}
+
+func addSecretCSIVolume(docs []runtime.RawExtension, secretProviderClassName string) error {
+	volume := corev1.Volume{
+		Name: "secrets-store",
+		VolumeSource: corev1.VolumeSource{
+			CSI: &corev1.CSIVolumeSource{
+				Driver:   "secrets-store.csi.k8s.io",
+				ReadOnly: pointer.Bool(true),
+				VolumeAttributes: map[string]string{
+					"secretProviderClass": secretProviderClassName,
+				},
+			},
+		},
+	}
+
+	volumeMount := corev1.VolumeMount{
+		Name:      "secrets-store",
+		MountPath: "/mnt/secrets-store",
+		ReadOnly:  true,
+	}
+
+	for i := range docs {
+		ubject := metav1unstructured.Unstructured{}
+		_, _, err := metav1unstructured.UnstructuredJSONScheme.Decode(docs[i].Raw, nil, &ubject)
+		if err != nil {
+			return err
+		}
+
+		switch ubject.GroupVersionKind().GroupKind() {
+		case appsv1.SchemeGroupVersion.WithKind("Deployment").GroupKind():
+			var obj appsv1.Deployment
+			err = repackObject(&obj, &docs[i], func() {
+				obj.Spec.Template.Spec = addVolumeToPodSpec(obj.Spec.Template.Spec, volume, volumeMount)
+			})
+		case appsv1.SchemeGroupVersion.WithKind("StatefulSet").GroupKind():
+			var obj appsv1.StatefulSet
+			err = repackObject(&obj, &docs[i], func() {
+				obj.Spec.Template.Spec = addVolumeToPodSpec(obj.Spec.Template.Spec, volume, volumeMount)
+			})
+		case appsv1.SchemeGroupVersion.WithKind("DaemonSet").GroupKind():
+			var obj appsv1.DaemonSet
+			err = repackObject(&obj, &docs[i], func() {
+				obj.Spec.Template.Spec = addVolumeToPodSpec(obj.Spec.Template.Spec, volume, volumeMount)
+			})
+		case appsv1.SchemeGroupVersion.WithKind("ReplicaSet").GroupKind():
+			var obj appsv1.ReplicaSet
+			err = repackObject(&obj, &docs[i], func() {
+				obj.Spec.Template.Spec = addVolumeToPodSpec(obj.Spec.Template.Spec, volume, volumeMount)
+			})
+		case corev1.SchemeGroupVersion.WithKind("Pod").GroupKind():
+			var obj corev1.Pod
+			err = repackObject(&obj, &docs[i], func() {
+				obj.Spec = addVolumeToPodSpec(obj.Spec, volume, volumeMount)
+			})
+		case batchv1.SchemeGroupVersion.WithKind("Job").GroupKind():
+			var obj batchv1.Job
+			err = repackObject(&obj, &docs[i], func() {
+				obj.Spec.Template.Spec = addVolumeToPodSpec(obj.Spec.Template.Spec, volume, volumeMount)
+			})
+		case batchv1.SchemeGroupVersion.WithKind("CronJob").GroupKind():
+			var obj batchv1.CronJob
+			err = repackObject(&obj, &docs[i], func() {
+				obj.Spec.JobTemplate.Spec.Template.Spec = addVolumeToPodSpec(obj.Spec.JobTemplate.Spec.Template.Spec, volume, volumeMount)
+			})
+		}
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func repackObject(kubeobject runtime.Object, obj *runtime.RawExtension, mutator func()) error {
+	if err := yaml.Unmarshal(obj.Raw, kubeobject); err != nil {
+		return err
+	}
+
+	mutator()
+
+	buf, err := yaml.Marshal(kubeobject)
+	if err != nil {
+		return err
+	}
+
+	js, err := yaml.YAMLToJSON(buf)
+	if err != nil {
+		return err
+	}
+
+	obj.Raw = js
+
+	return nil
+}
+
+func addVolumeToPodSpec(podSpec corev1.PodSpec, volume corev1.Volume, volumeMount corev1.VolumeMount) corev1.PodSpec {
+	podSpec.Volumes = append(podSpec.Volumes, volume)
+	for i := range podSpec.Containers {
+		podSpec.Containers[i].VolumeMounts = append(podSpec.Containers[i].VolumeMounts, volumeMount)
+	}
+
+	return podSpec
 }
