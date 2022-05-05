@@ -79,7 +79,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install \
 	--option "Dpkg::Options::=--force-confold" \
 	--no-install-recommends \
 	-y \
-	containerd.io='1.4.*'
+	containerd.io='1.5.*'
 sudo apt-mark hold containerd.io
 
 
