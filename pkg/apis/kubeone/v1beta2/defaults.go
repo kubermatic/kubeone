@@ -64,6 +64,12 @@ func SetDefaults_Hosts(obj *KubeOneCluster) {
 
 	setDefaultLeader := true
 
+	gteKube124Condition, _ := semver.NewConstraint(">= 1.24")
+	actualVer, err := semver.NewVersion(obj.Versions.Kubernetes)
+	if err != nil {
+		return
+	}
+
 	// Define a unique ID for each host
 	for idx := range obj.ControlPlane.Hosts {
 		if setDefaultLeader && obj.ControlPlane.Hosts[idx].IsLeader {
@@ -79,6 +85,12 @@ func SetDefaults_Hosts(obj *KubeOneCluster) {
 					Effect: corev1.TaintEffectNoSchedule,
 					Key:    "node-role.kubernetes.io/master",
 				},
+			}
+			if gteKube124Condition.Check(actualVer) {
+				obj.ControlPlane.Hosts[idx].Taints = append(obj.ControlPlane.Hosts[idx].Taints, corev1.Taint{
+					Effect: corev1.TaintEffectNoSchedule,
+					Key:    "node-role.kubernetes.io/control-plane",
+				})
 			}
 		}
 	}

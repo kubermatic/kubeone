@@ -125,8 +125,11 @@ type HostConfig struct {
 	// IsLeader indicates this host as a session leader.
 	// Default value is populated at the runtime.
 	IsLeader bool `json:"isLeader,omitempty"`
-	// Taints if not provided (i.e. nil) defaults to TaintEffectNoSchedule, with key node-role.kubernetes.io/master for
-	// control plane nodes.
+	// Taints are taints applied to nodes. If not provided (i.e. nil) for control plane nodes,
+	// it defaults to:
+	//   * For Kubernetes 1.23 and older: TaintEffectNoSchedule with key node-role.kubernetes.io/master
+	//   * For Kubernetes 1.24 and newer: TaintEffectNoSchedule with keys
+	//     node-role.kubernetes.io/control-plane and node-role.kubernetes.io/master
 	// Explicitly empty (i.e. []corev1.Taint{}) means no taints will be applied (this is default for worker nodes).
 	Taints []corev1.Taint `json:"taints,omitempty"`
 	// OperatingSystem information populated at the runtime.

@@ -807,10 +807,12 @@ addons:
 #     # prefixed with "env:" to refer to an environment variable.
 #     sshPrivateKeyFile: '/home/me/.ssh/id_rsa'
 #     sshAgentSocket: 'env:SSH_AUTH_SOCK'
-#     # Taints is used to apply taints to the node.
-#     # If not provided defaults to TaintEffectNoSchedule, with key
-#     # node-role.kubernetes.io/master for control plane nodes.
-#     # Explicitly empty (i.e. taints: {}) means no taints will be applied.
+#     # Taints are taints applied to nodes. If not provided (i.e. nil) for control plane nodes,
+#     # it defaults to:
+#     #   * For Kubernetes 1.23 and older: TaintEffectNoSchedule with key node-role.kubernetes.io/master
+#     #   * For Kubernetes 1.24 and newer: TaintEffectNoSchedule with keys
+#     #     node-role.kubernetes.io/control-plane and node-role.kubernetes.io/master
+#     # Explicitly empty (i.e. []corev1.Taint{}) means no taints will be applied (this is default for worker nodes).
 #     taints:
 #     - key: "node-role.kubernetes.io/master"
 #       effect: "NoSchedule"
