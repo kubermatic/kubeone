@@ -115,7 +115,7 @@ var (
 		`,
 			defaultDockerVersion,
 			latestDockerVersion,
-			defaultContainerdVersion,
+			defaultAmazonContainerdVersion,
 		),
 
 		"yum-docker-ce": heredoc.Docf(`
