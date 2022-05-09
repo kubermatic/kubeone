@@ -26,14 +26,14 @@ func (tf *terraformBin) init(name string) error {
 	return tf.run("init")
 }
 
-func (tf *terraformBin) apply(additionaArgs ...string) error {
+func (tf *terraformBin) apply() error {
 	args := []string{"apply", "-auto-approve"}
 
 	for _, arg := range append(tf.vars, fmt.Sprintf("cluster_name=%s", tf.name)) {
 		args = append(args, "-var", arg)
 	}
 
-	return tf.run(append(args, additionaArgs...)...)
+	return tf.run(args...)
 }
 
 func (tf *terraformBin) destroy() error {

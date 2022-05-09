@@ -1,9 +1,14 @@
 package e2e
 
 import (
+	"bytes"
+	"fmt"
 	"os"
 
+	"k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/test/e2e/testutil"
+
+	"sigs.k8s.io/yaml"
 )
 
 type kubeoneBin struct {
@@ -32,12 +37,39 @@ func (k1 *kubeoneBin) Apply() error {
 	return k1.run("apply", "--auto-approve")
 }
 
-func (k1 *kubeoneBin) Kubeconfig() error {
-	return k1.run("kubeconfig")
+func (k1 *kubeoneBin) Kubeconfig() ([]byte, error) {
+	var buf bytes.Buffer
+
+	args := k1.globalFlags()
+	exe := k1.build(append(args, "kubeconfig")...)
+	testutil.StdoutTo(&buf)(exe)
+
+	if err := exe.Run(); err != nil {
+		return nil, fmt.Errorf("fetching kubeconfig failed: %w", err)
+	}
+
+	return buf.Bytes(), nil
 }
 
 func (k1 *kubeoneBin) Reset() error {
 	return k1.run("reset", "--auto-approve", "--destroy-workers")
+}
+
+func (k1 *kubeoneBin) Manifest() (*kubeone.KubeOneCluster, error) {
+	var buf bytes.Buffer
+
+	args := k1.globalFlags()
+	exe := k1.build(append(args, "config", "dump")...)
+	testutil.StdoutTo(&buf)(exe)
+
+	if err := exe.Run(); err != nil {
+		return nil, fmt.Errorf("fetching kubeconfig failed: %w", err)
+	}
+
+	var k1Manifest kubeone.KubeOneCluster
+	err := yaml.UnmarshalStrict(buf.Bytes(), &k1Manifest)
+
+	return &k1Manifest, err
 }
 
 func (k1 *kubeoneBin) run(args ...string) error {
