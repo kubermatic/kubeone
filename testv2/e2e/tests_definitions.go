@@ -49,8 +49,22 @@ var (
 			manifestTemplatePath: "testdata/containerd_simple.yaml",
 		},
 		"conformance_containerd": nil,
-		"weave_cni":              nil,
-		"calico":                 nil,
+		"calico_containerd": &install{
+			name:                 "calico_containerd",
+			manifestTemplatePath: "testdata/containerd_calico.yaml",
+		},
+		"calico_docker": &install{
+			name:                 "calico_docker",
+			manifestTemplatePath: "testdata/docker_calico.yaml",
+		},
+		"weave_containerd": &install{
+			name:                 "weave_containerd",
+			manifestTemplatePath: "testdata/containerd_weave.yaml",
+		},
+		"weave_docker": &install{
+			name:                 "weave_docker",
+			manifestTemplatePath: "testdata/docker_weave.yaml",
+		},
 	}
 )
 

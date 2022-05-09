@@ -105,3 +105,4 @@ fmt: shfmt prowfmt
 
 gogenerate:
 	go generate ./pkg/...
+	go run ./testv2/generator -file testv2/tests.yml -output-type go -output testv2/e2e/tests_test.go

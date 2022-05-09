@@ -10,6 +10,190 @@ func TestStub(t *testing.T) {
 	t.Skip("stub is skipped")
 }
 
+func TestAwsDefaultsInstallContainerdV1_21_12(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.12")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultsInstallContainerdV1_22_9(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultsInstallContainerdV1_23_6(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.6")
+	scenario.Run(t)
+}
+
+
+func TestAwsDefaultsUpgradeContainerdFromV1_21_12_ToV1_22_9(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.12", "v1.22.9")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultsUpgradeContainerdFromV1_22_9_ToV1_23_6(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9", "v1.23.6")
+	scenario.Run(t)
+}
+
+
+func TestAwsDefaultsInstallDockerV1_21_12(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.12")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultsInstallDockerV1_22_9(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultsInstallDockerV1_23_6(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.6")
+	scenario.Run(t)
+}
+
+
+func TestAwsDefaultsUpgradeDockerFromV1_21_12_ToV1_22_9(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["upgrade_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.12", "v1.22.9")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultsUpgradeDockerFromV1_22_9_ToV1_23_6(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["upgrade_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9", "v1.23.6")
+	scenario.Run(t)
+}
+
+
+func TestAwsDefaultsCalicoContainerdV1_21_12(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["calico_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.12")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultsCalicoContainerdV1_22_9(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["calico_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultsCalicoContainerdV1_23_6(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["calico_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.6")
+	scenario.Run(t)
+}
+
+
+func TestAwsDefaultsCalicoDockerV1_21_12(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["calico_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.12")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultsCalicoDockerV1_22_9(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["calico_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultsCalicoDockerV1_23_6(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["calico_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.6")
+	scenario.Run(t)
+}
+
+
+func TestAwsDefaultsWeaveContainerdV1_21_12(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["weave_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.12")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultsWeaveContainerdV1_22_9(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["weave_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultsWeaveContainerdV1_23_6(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["weave_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.6")
+	scenario.Run(t)
+}
+
+
+func TestAwsDefaultsWeaveDockerV1_21_12(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["weave_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.12")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultsWeaveDockerV1_22_9(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["weave_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultsWeaveDockerV1_23_6(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["weave_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.6")
+	scenario.Run(t)
+}
+
+
 func TestAwsCentosInstallContainerdV1_21_12(t *testing.T) {
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["install_containerd"]
@@ -46,6 +230,48 @@ func TestAwsCentosUpgradeContainerdFromV1_21_12_ToV1_22_9(t *testing.T) {
 func TestAwsCentosUpgradeContainerdFromV1_22_9_ToV1_23_6(t *testing.T) {
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9", "v1.23.6")
+	scenario.Run(t)
+}
+
+
+func TestAwsCentosInstallDockerV1_21_12(t *testing.T) {
+	infra := Infrastructures["aws_centos"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.12")
+	scenario.Run(t)
+}
+
+func TestAwsCentosInstallDockerV1_22_9(t *testing.T) {
+	infra := Infrastructures["aws_centos"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9")
+	scenario.Run(t)
+}
+
+func TestAwsCentosInstallDockerV1_23_6(t *testing.T) {
+	infra := Infrastructures["aws_centos"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.6")
+	scenario.Run(t)
+}
+
+
+func TestAwsCentosUpgradeDockerFromV1_21_12_ToV1_22_9(t *testing.T) {
+	infra := Infrastructures["aws_centos"]
+	scenario := Scenarios["upgrade_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.12", "v1.22.9")
+	scenario.Run(t)
+}
+
+func TestAwsCentosUpgradeDockerFromV1_22_9_ToV1_23_6(t *testing.T) {
+	infra := Infrastructures["aws_centos"]
+	scenario := Scenarios["upgrade_docker"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.9", "v1.23.6")
 	scenario.Run(t)
