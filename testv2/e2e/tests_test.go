@@ -33,3 +33,20 @@ func TestAwsCentosInstallContainerdV1_23_6(t *testing.T) {
 	scenario.SetVersions("v1.23.6")
 	scenario.Run(t)
 }
+
+
+func TestAwsCentosUpgradeContainerdFromV1_21_12_ToV1_22_9(t *testing.T) {
+	infra := Infrastructures["aws_centos"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.12", "v1.22.9")
+	scenario.Run(t)
+}
+
+func TestAwsCentosUpgradeContainerdFromV1_22_9_ToV1_23_6(t *testing.T) {
+	infra := Infrastructures["aws_centos"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9", "v1.23.6")
+	scenario.Run(t)
+}
