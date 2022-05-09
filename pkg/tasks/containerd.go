@@ -31,7 +31,8 @@ import (
 )
 
 const (
-	kubeadmCRISocket = "kubeadm.alpha.kubernetes.io/cri-socket"
+	kubeadmCRISocket  = "kubeadm.alpha.kubernetes.io/cri-socket"
+	networkPluginFlag = "--network-plugin"
 )
 
 var (
@@ -89,6 +90,10 @@ func migrateToContainerdTask(s *state.State, node *kubeoneapi.HostConfig, conn s
 		if err != nil {
 			return nil, err
 		}
+
+		// --network-plugin flag is not used with containerd and has been
+		// removed in Kubernetes 1.24
+		delete(kubeletFlags, networkPluginFlag)
 
 		for k, v := range containerdKubeletFlags {
 			kubeletFlags[k] = v
