@@ -17,10 +17,14 @@ limitations under the License.
 package tasks
 
 import (
-	"github.com/Masterminds/semver/v3"
-
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/semverutil"
 	"k8c.io/kubeone/pkg/state"
+)
+
+var (
+	version124 = semverutil.MustParseConstraint("1.24.*")
+	version123 = semverutil.MustParseConstraint("1.23.*")
 )
 
 // removeNetworkPluginFlagKubelet removes --network-plugin flag from Kubelet
@@ -28,10 +32,6 @@ import (
 // This function is executed only when upgrading cluster from 1.23 to 1.24.
 // TODO: Remove this function after dropping support for Kubernetes 1.23.
 func removeNetworkPluginFlagKubelet(s *state.State, node kubeoneapi.HostConfig) error {
-	version124, _ := semver.NewConstraint("1.24.*")
-	version123, _ := semver.NewConstraint("1.23.*")
-
-	// Migrate Kubelet config only when upgrading the cluster to 1.24
 	needed := false
 	if !version124.Check(s.LiveCluster.ExpectedVersion) {
 		return nil
