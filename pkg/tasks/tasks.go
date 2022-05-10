@@ -357,6 +357,7 @@ func kubernetesConfigFiles() Tasks {
 		{Fn: generateKubeadm, ErrMsg: "failed to generate kubeadm config files"},
 		{Fn: generateConfigurationFiles, ErrMsg: "failed to generate config files"},
 		{Fn: uploadConfigurationFiles, ErrMsg: "failed to upload config files"},
+		{Fn: prePullImages, ErrMsg: "failed to pre-pull images"},
 	}
 }
 
