@@ -124,6 +124,7 @@ func WithFullInstall(t Tasks) Tasks {
 	}...).
 		append(kubernetesConfigFiles()...).
 		append(Tasks{
+			{Fn: prePullImages, ErrMsg: "failed to pre-pull images"},
 			{
 				Fn: func(s *state.State) error {
 					s.Logger.Infoln("Configuring certs and etcd on control plane node...")

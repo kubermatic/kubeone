@@ -43,14 +43,20 @@ func installPrerequisites(s *state.State) error {
 		return fmt.Errorf("failed to install prerequisites: %w", err)
 	}
 
+	return nil
+}
+
+func prePullImages(s *state.State) error {
 	return s.RunTaskOnControlPlane(func(ctx *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Info("Pre-pull images")
 
 		_, _, err := ctx.Runner.Run(
 			heredoc.Doc(`
-				sudo kubeadm config images pull --kubernetes-version {{ .KUBERNETES_VERSION }}
+				sudo kubeadm config images pull \
+					--config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
 			`), runner.TemplateVariables{
-				"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
+				"NODE_ID":  node.ID,
+				"WORK_DIR": s.WorkDir,
 			})
 
 		return err
