@@ -357,6 +357,7 @@ func kubernetesConfigFiles() Tasks {
 		{Fn: generateKubeadm, Operation: "generating kubeadm config files"},
 		{Fn: generateConfigurationFiles, Operation: "generating config files"},
 		{Fn: uploadConfigurationFiles, Operation: "uploading config files"},
+		{Fn: prePullImages, Operation: "pre-pull images"},
 	}
 }
 

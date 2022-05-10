@@ -39,18 +39,20 @@ import (
 func installPrerequisites(s *state.State) error {
 	s.Logger.Infoln("Installing prerequisites...")
 
-	if err := s.RunTaskOnAllNodes(installPrerequisitesOnNode, state.RunParallel); err != nil {
-		return err
-	}
+	return s.RunTaskOnAllNodes(installPrerequisitesOnNode, state.RunParallel)
+}
 
+func prePullImages(s *state.State) error {
 	return s.RunTaskOnControlPlane(func(ctx *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
 		ctx.Logger.Info("Pre-pull images")
 
 		_, _, err := ctx.Runner.Run(
 			heredoc.Doc(`
-				sudo kubeadm config images pull --kubernetes-version {{ .KUBERNETES_VERSION }}
+				sudo kubeadm config images pull \
+					--config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
 			`), runner.TemplateVariables{
-				"KUBERNETES_VERSION": ctx.Cluster.Versions.Kubernetes,
+				"NODE_ID":  node.ID,
+				"WORK_DIR": s.WorkDir,
 			})
 
 		return fail.SSH(err, "pre-pull kubeadm images")
