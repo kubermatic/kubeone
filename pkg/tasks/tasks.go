@@ -123,6 +123,7 @@ func WithFullInstall(t Tasks) Tasks {
 	}...).
 		append(kubernetesConfigFiles()...).
 		append(Tasks{
+			{Fn: prePullImages, Operation: "pre-pull images"},
 			{
 				Fn: func(s *state.State) error {
 					s.Logger.Infoln("Configuring certs and etcd on control plane node...")
@@ -357,7 +358,6 @@ func kubernetesConfigFiles() Tasks {
 		{Fn: generateKubeadm, Operation: "generating kubeadm config files"},
 		{Fn: generateConfigurationFiles, Operation: "generating config files"},
 		{Fn: uploadConfigurationFiles, Operation: "uploading config files"},
-		{Fn: prePullImages, Operation: "pre-pull images"},
 	}
 }
 
