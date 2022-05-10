@@ -53,6 +53,10 @@ func upgradeLeaderExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh
 		return err
 	}
 
+	if err := removeNetworkPluginFlagKubelet(s, *node); err != nil {
+		return err
+	}
+
 	logger.Infoln("Upgrading kubeadm binary on the leader control plane...")
 	if err := upgradeKubeadmAndCNIBinaries(s, *node); err != nil {
 		return err

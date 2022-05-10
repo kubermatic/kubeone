@@ -53,6 +53,10 @@ func upgradeFollowerExecutor(s *state.State, node *kubeoneapi.HostConfig, conn s
 		return err
 	}
 
+	if err := removeNetworkPluginFlagKubelet(s, *node); err != nil {
+		return err
+	}
+
 	logger.Infoln("Upgrading Kubernetes binaries on follower control plane...")
 	if err := upgradeKubeadmAndCNIBinaries(s, *node); err != nil {
 		return err
