@@ -158,7 +158,7 @@ func (scenario *install) GenerateTests(wr io.Writer) error {
 }
 
 const installScenarioTemplate = `
-{{ range . }}
+{{- range . }}
 func Test{{.InfraTitle}}{{.ScenarioTitle}}{{.VersionTitle}}(t *testing.T) {
 	infra := Infrastructures["{{.Infra}}"]
 	scenario := Scenarios["{{.Scenario}}"]

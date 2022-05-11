@@ -9,7 +9,6 @@ import (
 func TestStub(t *testing.T) {
 	t.Skip("stub is skipped")
 }
-
 func TestAwsDefaultsInstallContainerdV1_21_12(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["install_containerd"]
@@ -34,7 +33,6 @@ func TestAwsDefaultsInstallContainerdV1_23_6(t *testing.T) {
 	scenario.Run(t)
 }
 
-
 func TestAwsDefaultsUpgradeContainerdFromV1_21_12_ToV1_22_9(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["upgrade_containerd"]
@@ -50,7 +48,6 @@ func TestAwsDefaultsUpgradeContainerdFromV1_22_9_ToV1_23_6(t *testing.T) {
 	scenario.SetVersions("v1.22.9", "v1.23.6")
 	scenario.Run(t)
 }
-
 
 func TestAwsDefaultsInstallDockerV1_21_12(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
@@ -76,7 +73,6 @@ func TestAwsDefaultsInstallDockerV1_23_6(t *testing.T) {
 	scenario.Run(t)
 }
 
-
 func TestAwsDefaultsUpgradeDockerFromV1_21_12_ToV1_22_9(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["upgrade_docker"]
@@ -92,7 +88,6 @@ func TestAwsDefaultsUpgradeDockerFromV1_22_9_ToV1_23_6(t *testing.T) {
 	scenario.SetVersions("v1.22.9", "v1.23.6")
 	scenario.Run(t)
 }
-
 
 func TestAwsDefaultsCalicoContainerdV1_21_12(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
@@ -118,7 +113,6 @@ func TestAwsDefaultsCalicoContainerdV1_23_6(t *testing.T) {
 	scenario.Run(t)
 }
 
-
 func TestAwsDefaultsCalicoDockerV1_21_12(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["calico_docker"]
@@ -142,7 +136,6 @@ func TestAwsDefaultsCalicoDockerV1_23_6(t *testing.T) {
 	scenario.SetVersions("v1.23.6")
 	scenario.Run(t)
 }
-
 
 func TestAwsDefaultsWeaveContainerdV1_21_12(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
@@ -168,7 +161,6 @@ func TestAwsDefaultsWeaveContainerdV1_23_6(t *testing.T) {
 	scenario.Run(t)
 }
 
-
 func TestAwsDefaultsWeaveDockerV1_21_12(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["weave_docker"]
@@ -192,7 +184,6 @@ func TestAwsDefaultsWeaveDockerV1_23_6(t *testing.T) {
 	scenario.SetVersions("v1.23.6")
 	scenario.Run(t)
 }
-
 
 func TestAwsCentosInstallContainerdV1_21_12(t *testing.T) {
 	infra := Infrastructures["aws_centos"]
@@ -218,7 +209,6 @@ func TestAwsCentosInstallContainerdV1_23_6(t *testing.T) {
 	scenario.Run(t)
 }
 
-
 func TestAwsCentosUpgradeContainerdFromV1_21_12_ToV1_22_9(t *testing.T) {
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["upgrade_containerd"]
@@ -234,7 +224,6 @@ func TestAwsCentosUpgradeContainerdFromV1_22_9_ToV1_23_6(t *testing.T) {
 	scenario.SetVersions("v1.22.9", "v1.23.6")
 	scenario.Run(t)
 }
-
 
 func TestAwsCentosInstallDockerV1_21_12(t *testing.T) {
 	infra := Infrastructures["aws_centos"]
@@ -260,7 +249,6 @@ func TestAwsCentosInstallDockerV1_23_6(t *testing.T) {
 	scenario.Run(t)
 }
 
-
 func TestAwsCentosUpgradeDockerFromV1_21_12_ToV1_22_9(t *testing.T) {
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["upgrade_docker"]
@@ -276,7 +264,6 @@ func TestAwsCentosUpgradeDockerFromV1_22_9_ToV1_23_6(t *testing.T) {
 	scenario.SetVersions("v1.22.9", "v1.23.6")
 	scenario.Run(t)
 }
-
 
 func TestAwsRhelInstallContainerdV1_21_12(t *testing.T) {
 	infra := Infrastructures["aws_rhel"]
@@ -302,7 +289,6 @@ func TestAwsRhelInstallContainerdV1_23_6(t *testing.T) {
 	scenario.Run(t)
 }
 
-
 func TestAwsRhelUpgradeContainerdFromV1_21_12_ToV1_22_9(t *testing.T) {
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["upgrade_containerd"]
@@ -318,7 +304,6 @@ func TestAwsRhelUpgradeContainerdFromV1_22_9_ToV1_23_6(t *testing.T) {
 	scenario.SetVersions("v1.22.9", "v1.23.6")
 	scenario.Run(t)
 }
-
 
 func TestAwsRhelInstallDockerV1_21_12(t *testing.T) {
 	infra := Infrastructures["aws_rhel"]
@@ -344,7 +329,6 @@ func TestAwsRhelInstallDockerV1_23_6(t *testing.T) {
 	scenario.Run(t)
 }
 
-
 func TestAwsRhelUpgradeDockerFromV1_21_12_ToV1_22_9(t *testing.T) {
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["upgrade_docker"]
@@ -360,7 +344,6 @@ func TestAwsRhelUpgradeDockerFromV1_22_9_ToV1_23_6(t *testing.T) {
 	scenario.SetVersions("v1.22.9", "v1.23.6")
 	scenario.Run(t)
 }
-
 
 func TestAwsFlatcarInstallContainerdV1_21_12(t *testing.T) {
 	infra := Infrastructures["aws_flatcar"]
@@ -386,7 +369,6 @@ func TestAwsFlatcarInstallContainerdV1_23_6(t *testing.T) {
 	scenario.Run(t)
 }
 
-
 func TestAwsFlatcarUpgradeContainerdFromV1_21_12_ToV1_22_9(t *testing.T) {
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["upgrade_containerd"]
@@ -402,7 +384,6 @@ func TestAwsFlatcarUpgradeContainerdFromV1_22_9_ToV1_23_6(t *testing.T) {
 	scenario.SetVersions("v1.22.9", "v1.23.6")
 	scenario.Run(t)
 }
-
 
 func TestAwsFlatcarInstallDockerV1_21_12(t *testing.T) {
 	infra := Infrastructures["aws_flatcar"]
@@ -428,7 +409,6 @@ func TestAwsFlatcarInstallDockerV1_23_6(t *testing.T) {
 	scenario.Run(t)
 }
 
-
 func TestAwsFlatcarUpgradeDockerFromV1_21_12_ToV1_22_9(t *testing.T) {
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["upgrade_docker"]
@@ -444,7 +424,6 @@ func TestAwsFlatcarUpgradeDockerFromV1_22_9_ToV1_23_6(t *testing.T) {
 	scenario.SetVersions("v1.22.9", "v1.23.6")
 	scenario.Run(t)
 }
-
 
 func TestAwsAmznInstallContainerdV1_21_12(t *testing.T) {
 	infra := Infrastructures["aws_amzn"]
@@ -470,7 +449,6 @@ func TestAwsAmznInstallContainerdV1_23_6(t *testing.T) {
 	scenario.Run(t)
 }
 
-
 func TestAwsAmznUpgradeContainerdFromV1_21_12_ToV1_22_9(t *testing.T) {
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["upgrade_containerd"]
@@ -486,7 +464,6 @@ func TestAwsAmznUpgradeContainerdFromV1_22_9_ToV1_23_6(t *testing.T) {
 	scenario.SetVersions("v1.22.9", "v1.23.6")
 	scenario.Run(t)
 }
-
 
 func TestAwsAmznInstallDockerV1_21_12(t *testing.T) {
 	infra := Infrastructures["aws_amzn"]
@@ -511,7 +488,6 @@ func TestAwsAmznInstallDockerV1_23_6(t *testing.T) {
 	scenario.SetVersions("v1.23.6")
 	scenario.Run(t)
 }
-
 
 func TestAwsAmznUpgradeDockerFromV1_21_12_ToV1_22_9(t *testing.T) {
 	infra := Infrastructures["aws_amzn"]

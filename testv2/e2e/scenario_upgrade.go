@@ -91,7 +91,7 @@ func (scenario *upgrade) GenerateTests(wr io.Writer) error {
 }
 
 const upgradeScenarioTemplate = `
-{{ range . }}
+{{- range . }}
 func Test{{ .InfraTitle }}{{ .ScenarioTitle }}{{ .VersionTitle }}(t *testing.T) {
 	infra := Infrastructures["{{ .Infra }}"]
 	scenario := Scenarios["{{ .Scenario }}"]
