@@ -194,6 +194,15 @@ rules:
       - "list"
       - "get"
       - "watch"
+  # volumeAttachments permissions are needed by vsphere clusters
+  - apiGroups:
+      - "storage.k8s.io"
+    resources:
+      - "volumeattachments"
+    verbs:
+      - "list"
+      - "get"
+      - "watch"
   - apiGroups:
       - ""
     resources:
