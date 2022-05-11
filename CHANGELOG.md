@@ -1,5 +1,14 @@
 # Changelog
 
+# [v1.4.3](https://github.com/kubermatic/kubeone/releases/tag/v1.4.2) - 2022-05-11
+
+## Changes by Kind
+
+### Bug or Regression
+
+- Add missing VolumeAttachments permissions to machine-controller ([#2032](https://github.com/kubermatic/kubeone/pull/2032), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Provide registry configuration to kubeadm when pre-pulling images ([#2028](https://github.com/kubermatic/kubeone/pull/2028), [@kron4eg](https://github.com/kron4eg))
+
 # [v1.4.2](https://github.com/kubermatic/kubeone/releases/tag/v1.4.2) - 2022-04-26
 
 ## Attention Needed
