@@ -154,6 +154,7 @@ func WithEnvs(envs ...string) ExecOpt {
 func WithDryRun() ExecOpt {
 	return func(e *Exec) *Exec {
 		e.dryRun = true
+
 		return e
 	}
 }
