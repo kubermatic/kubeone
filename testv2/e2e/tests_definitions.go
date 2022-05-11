@@ -28,6 +28,42 @@ var (
 				},
 			},
 		},
+		"aws_rhel": {
+			name: "aws_rhel",
+			terraform: terraformBin{
+				path: "../../examples/terraform/aws",
+				vars: []string{
+					"subnets_cidr=27",
+					"os=rhel",
+					"ssh_username=ec2-user",
+					"bastion_user=ec2-user",
+				},
+			},
+		},
+		"aws_flatcar": {
+			name: "aws_flatcar",
+			terraform: terraformBin{
+				path: "../../examples/terraform/aws",
+				vars: []string{
+					"subnets_cidr=27",
+					"os=flatcar",
+					"ssh_username=core",
+					"bastion_user=core",
+				},
+			},
+		},
+		"aws_amzn": {
+			name: "aws_amzn",
+			terraform: terraformBin{
+				path: "../../examples/terraform/aws",
+				vars: []string{
+					"subnets_cidr=27",
+					"os=amzn",
+					"ssh_username=ec2-user",
+					"bastion_user=ec2-user",
+				},
+			},
+		},
 	}
 
 	Scenarios = map[string]Scenario{

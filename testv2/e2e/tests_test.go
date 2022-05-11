@@ -276,3 +276,255 @@ func TestAwsCentosUpgradeDockerFromV1_22_9_ToV1_23_6(t *testing.T) {
 	scenario.SetVersions("v1.22.9", "v1.23.6")
 	scenario.Run(t)
 }
+
+
+func TestAwsRhelInstallContainerdV1_21_12(t *testing.T) {
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.12")
+	scenario.Run(t)
+}
+
+func TestAwsRhelInstallContainerdV1_22_9(t *testing.T) {
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9")
+	scenario.Run(t)
+}
+
+func TestAwsRhelInstallContainerdV1_23_6(t *testing.T) {
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.6")
+	scenario.Run(t)
+}
+
+
+func TestAwsRhelUpgradeContainerdFromV1_21_12_ToV1_22_9(t *testing.T) {
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.12", "v1.22.9")
+	scenario.Run(t)
+}
+
+func TestAwsRhelUpgradeContainerdFromV1_22_9_ToV1_23_6(t *testing.T) {
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9", "v1.23.6")
+	scenario.Run(t)
+}
+
+
+func TestAwsRhelInstallDockerV1_21_12(t *testing.T) {
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.12")
+	scenario.Run(t)
+}
+
+func TestAwsRhelInstallDockerV1_22_9(t *testing.T) {
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9")
+	scenario.Run(t)
+}
+
+func TestAwsRhelInstallDockerV1_23_6(t *testing.T) {
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.6")
+	scenario.Run(t)
+}
+
+
+func TestAwsRhelUpgradeDockerFromV1_21_12_ToV1_22_9(t *testing.T) {
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["upgrade_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.12", "v1.22.9")
+	scenario.Run(t)
+}
+
+func TestAwsRhelUpgradeDockerFromV1_22_9_ToV1_23_6(t *testing.T) {
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["upgrade_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9", "v1.23.6")
+	scenario.Run(t)
+}
+
+
+func TestAwsFlatcarInstallContainerdV1_21_12(t *testing.T) {
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.12")
+	scenario.Run(t)
+}
+
+func TestAwsFlatcarInstallContainerdV1_22_9(t *testing.T) {
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9")
+	scenario.Run(t)
+}
+
+func TestAwsFlatcarInstallContainerdV1_23_6(t *testing.T) {
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.6")
+	scenario.Run(t)
+}
+
+
+func TestAwsFlatcarUpgradeContainerdFromV1_21_12_ToV1_22_9(t *testing.T) {
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.12", "v1.22.9")
+	scenario.Run(t)
+}
+
+func TestAwsFlatcarUpgradeContainerdFromV1_22_9_ToV1_23_6(t *testing.T) {
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9", "v1.23.6")
+	scenario.Run(t)
+}
+
+
+func TestAwsFlatcarInstallDockerV1_21_12(t *testing.T) {
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.12")
+	scenario.Run(t)
+}
+
+func TestAwsFlatcarInstallDockerV1_22_9(t *testing.T) {
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9")
+	scenario.Run(t)
+}
+
+func TestAwsFlatcarInstallDockerV1_23_6(t *testing.T) {
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.6")
+	scenario.Run(t)
+}
+
+
+func TestAwsFlatcarUpgradeDockerFromV1_21_12_ToV1_22_9(t *testing.T) {
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["upgrade_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.12", "v1.22.9")
+	scenario.Run(t)
+}
+
+func TestAwsFlatcarUpgradeDockerFromV1_22_9_ToV1_23_6(t *testing.T) {
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["upgrade_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9", "v1.23.6")
+	scenario.Run(t)
+}
+
+
+func TestAwsAmznInstallContainerdV1_21_12(t *testing.T) {
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.12")
+	scenario.Run(t)
+}
+
+func TestAwsAmznInstallContainerdV1_22_9(t *testing.T) {
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9")
+	scenario.Run(t)
+}
+
+func TestAwsAmznInstallContainerdV1_23_6(t *testing.T) {
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.6")
+	scenario.Run(t)
+}
+
+
+func TestAwsAmznUpgradeContainerdFromV1_21_12_ToV1_22_9(t *testing.T) {
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.12", "v1.22.9")
+	scenario.Run(t)
+}
+
+func TestAwsAmznUpgradeContainerdFromV1_22_9_ToV1_23_6(t *testing.T) {
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9", "v1.23.6")
+	scenario.Run(t)
+}
+
+
+func TestAwsAmznInstallDockerV1_21_12(t *testing.T) {
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.12")
+	scenario.Run(t)
+}
+
+func TestAwsAmznInstallDockerV1_22_9(t *testing.T) {
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9")
+	scenario.Run(t)
+}
+
+func TestAwsAmznInstallDockerV1_23_6(t *testing.T) {
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.6")
+	scenario.Run(t)
+}
+
+
+func TestAwsAmznUpgradeDockerFromV1_21_12_ToV1_22_9(t *testing.T) {
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["upgrade_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.12", "v1.22.9")
+	scenario.Run(t)
+}
+
+func TestAwsAmznUpgradeDockerFromV1_22_9_ToV1_23_6(t *testing.T) {
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["upgrade_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9", "v1.23.6")
+	scenario.Run(t)
+}

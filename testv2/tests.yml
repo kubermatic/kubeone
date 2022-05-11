@@ -49,3 +49,54 @@
       params:
         - upgradeTo: v1.22.9
         - upgradeTo: v1.23.6
+
+- infrastructure: aws_rhel
+  kubernetesVersions:
+    - v1.21.12
+    - v1.22.9
+    - v1.23.6
+  scenarios:
+    - name: install_containerd
+    - name: upgrade_containerd
+      params:
+        - upgradeTo: v1.22.9
+        - upgradeTo: v1.23.6
+    - name: install_docker
+    - name: upgrade_docker
+      params:
+        - upgradeTo: v1.22.9
+        - upgradeTo: v1.23.6
+
+- infrastructure: aws_flatcar
+  kubernetesVersions:
+    - v1.21.12
+    - v1.22.9
+    - v1.23.6
+  scenarios:
+    - name: install_containerd
+    - name: upgrade_containerd
+      params:
+        - upgradeTo: v1.22.9
+        - upgradeTo: v1.23.6
+    - name: install_docker
+    - name: upgrade_docker
+      params:
+        - upgradeTo: v1.22.9
+        - upgradeTo: v1.23.6
+
+- infrastructure: aws_amzn
+  kubernetesVersions:
+    - v1.21.12
+    - v1.22.9
+    - v1.23.6
+  scenarios:
+    - name: install_containerd
+    - name: upgrade_containerd
+      params:
+        - upgradeTo: v1.22.9
+        - upgradeTo: v1.23.6
+    - name: install_docker
+    - name: upgrade_docker
+      params:
+        - upgradeTo: v1.22.9
+        - upgradeTo: v1.23.6
