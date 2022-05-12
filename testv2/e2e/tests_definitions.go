@@ -9,6 +9,10 @@ var (
 	Infrastructures = map[string]Infra{
 		"aws_defaults": {
 			name: "aws_defaults",
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-aws":     "true",
+			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/aws",
 				vars: []string{
@@ -18,6 +22,10 @@ var (
 		},
 		"aws_centos": {
 			name: "aws_centos",
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-aws":     "true",
+			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/aws",
 				vars: []string{
@@ -30,6 +38,10 @@ var (
 		},
 		"aws_rhel": {
 			name: "aws_rhel",
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-aws":     "true",
+			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/aws",
 				vars: []string{
@@ -42,6 +54,10 @@ var (
 		},
 		"aws_flatcar": {
 			name: "aws_flatcar",
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-aws":     "true",
+			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/aws",
 				vars: []string{
@@ -54,6 +70,10 @@ var (
 		},
 		"aws_amzn": {
 			name: "aws_amzn",
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-aws":     "true",
+			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/aws",
 				vars: []string{
@@ -107,12 +127,20 @@ var (
 type Infra struct {
 	name      string
 	terraform terraformBin
+	labels    map[string]string
 }
 
+type GeneratorType int
+
+const (
+	GeneratorTypeGo   = 1
+	GeneratorTypeYAML = 2
+)
+
 type Scenario interface {
-	SetInfra(Infra)
-	SetVersions(...string)
-	SetParams([]map[string]string)
-	GenerateTests(io.Writer) error
+	SetInfra(infrastructure Infra)
+	SetVersions(version ...string)
+	SetParams(params []map[string]string)
+	GenerateTests(output io.Writer, testType GeneratorType) error
 	Run(*testing.T)
 }

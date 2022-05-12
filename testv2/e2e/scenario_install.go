@@ -1,6 +1,7 @@
 package e2e
 
 import (
+	"fmt"
 	"io"
 	"testing"
 	"text/template"
@@ -8,6 +9,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/tools/clientcmd"
 	ctrlruntimeclient "sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/yaml"
 )
 
 type install struct {
@@ -135,40 +137,80 @@ func (scenario *install) Run(t *testing.T) {
 	}
 }
 
-func (scenario *install) GenerateTests(wr io.Writer) error {
+func (scenario *install) GenerateTests(wr io.Writer, generatorType GeneratorType) error {
 	type templateData struct {
-		Infra         string
-		InfraTitle    string
-		Scenario      string
-		ScenarioTitle string
-		Version       string
-		VersionTitle  string
+		TestTitle string
+		Infra     string
+		Scenario  string
+		Version   string
 	}
 
-	var data []templateData
+	var (
+		data     []templateData
+		prowJobs []ProwJob
+	)
 
 	for _, version := range scenario.versions {
+		testTitle := fmt.Sprintf("Test%s%s%s",
+			titleize(scenario.infra.name),
+			scenario.Title(),
+			titleize(version),
+		)
+
 		data = append(data, templateData{
-			Infra:         scenario.infra.name,
-			InfraTitle:    titleize(scenario.infra.name),
-			Scenario:      scenario.name,
-			ScenarioTitle: scenario.Title(),
-			Version:       version,
-			VersionTitle:  titleize(version),
+			TestTitle: testTitle,
+			Infra:     scenario.infra.name,
+			Scenario:  scenario.name,
+			Version:   version,
 		})
+
+		prowJobName := fmt.Sprintf("pull-%s-%s-%s",
+			scenario.infra.name,
+			scenario.name,
+			version,
+		)
+
+		prowJobs = append(prowJobs,
+			newProwJob(
+				prowJobName,
+				scenario.infra.labels,
+				testTitle,
+			),
+		)
 	}
 
-	tpl, err := template.New("").Parse(installScenarioTemplate)
-	if err != nil {
-		return err
+	switch generatorType {
+	case GeneratorTypeGo:
+		tpl, err := template.New("").Parse(installScenarioTemplate)
+		if err != nil {
+			return err
+		}
+
+		return tpl.Execute(wr, data)
+	case GeneratorTypeYAML:
+		buf, err := yaml.Marshal(prowJobs)
+		if err != nil {
+			return err
+		}
+
+		n, err := wr.Write(buf)
+		if err != nil {
+			return err
+		}
+
+		if n != len(buf) {
+			return fmt.Errorf("wrong number of bytes written, expected %d, wrote %d", len(buf), n)
+		}
+
+		return nil
 	}
 
-	return tpl.Execute(wr, data)
+	return fmt.Errorf("unknown generator type %d", generatorType)
 }
 
 const installScenarioTemplate = `
 {{- range . }}
-func Test{{.InfraTitle}}{{.ScenarioTitle}}{{.VersionTitle}}(t *testing.T) {
+func {{.TestTitle}}(t *testing.T) {
 	infra := Infrastructures["{{.Infra}}"]
 	scenario := Scenarios["{{.Scenario}}"]
 	scenario.SetInfra(infra)

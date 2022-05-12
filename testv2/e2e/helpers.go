@@ -13,6 +13,7 @@ import (
 	"github.com/Masterminds/semver/v3"
 
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/util/rand"
 	"k8s.io/apimachinery/pkg/util/wait"
@@ -22,6 +23,8 @@ import (
 
 const (
 	labelControlPlaneNode = "node-role.kubernetes.io/control-plane"
+	prowImage             = "kubermatic/kubeone-e2e:v0.1.22"
+	k1CloneURI            = "ssh://git@github.com/kubermatic/kubeone.git"
 )
 
 func titleize(s string) string {
@@ -183,4 +186,47 @@ func parseContainerImageVersion(image string) (*semver.Version, error) {
 	}
 
 	return semver.NewVersion(ver[1])
+}
+
+type ProwJob struct {
+	Name      string            `json:"name"`
+	AlwaysRun bool              `json:"always_run"`
+	Optional  bool              `json:"optional,omitempty"`
+	Decorate  bool              `json:"decorate"`
+	CloneURI  string            `json:"clone_uri"`
+	PathAlias string            `json:"path_alias,omitempty"`
+	Labels    map[string]string `json:"labels"`
+	Spec      *corev1.PodSpec   `json:"spec"`
+}
+
+func newProwJob(prowJobName string, labels map[string]string, testTitle string) ProwJob {
+	return ProwJob{
+		Name:      prowJobName,
+		AlwaysRun: false,
+		Optional:  true,
+		Decorate:  true,
+		CloneURI:  k1CloneURI,
+		Labels:    labels,
+		Spec: &corev1.PodSpec{
+			Containers: []corev1.Container{
+				{
+					Image:           prowImage,
+					ImagePullPolicy: corev1.PullAlways,
+					Command: []string{
+						"go",
+						"test",
+						"-v",
+						"./testv2/e2e/...",
+						"-run",
+						fmt.Sprintf("^%s$", testTitle),
+					},
+					Resources: corev1.ResourceRequirements{
+						Requests: corev1.ResourceList{
+							corev1.ResourceCPU: resource.MustParse("1"),
+						},
+					},
+				},
+			},
+		},
+	}
 }

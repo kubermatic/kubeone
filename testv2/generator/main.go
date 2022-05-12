@@ -48,7 +48,7 @@ func TestStub(t *testing.T) {
 func main() {
 	flag.StringVar(&filePathFlag, "file", "", "path to the YAML file with tests definitions to generate")
 	flag.StringVar(&packageNameFlag, "package", "e2e", "the name of the generated Go package")
-	flag.StringVar(&outputType, "output-type", "", "the type of the generator output (yaml|go)")
+	flag.StringVar(&outputType, "type", "", "the type of the generator output (yaml|go)")
 	flag.StringVar(&outputFileFlag, "output", "-", "the name of the file to write to, - for stdout")
 	flag.Parse()
 
@@ -56,8 +56,17 @@ func main() {
 		log.Fatal("-file argument in required")
 	}
 
-	if outputType == "" {
-		log.Fatal("-output-type argument is required")
+	var generatorType e2e.GeneratorType
+
+	switch outputType {
+	case "":
+		log.Fatal("-type argument is required")
+	case "go":
+		generatorType = e2e.GeneratorTypeGo
+	case "yaml":
+		generatorType = e2e.GeneratorTypeYAML
+	default:
+		log.Fatalf("-type=%s argument is invalid", outputType)
 	}
 
 	var outputBuf io.ReadWriter = &bytes.Buffer{}
@@ -77,13 +86,15 @@ func main() {
 		log.Fatal(err)
 	}
 
-	err = template.Must(template.New("").Parse(fileHeader)).Execute(outputBuf, struct {
-		PackageName string
-	}{
-		PackageName: packageNameFlag,
-	})
-	if err != nil {
-		log.Fatal(err)
+	if generatorType == e2e.GeneratorTypeGo {
+		err = template.Must(template.New("").Parse(fileHeader)).Execute(outputBuf, struct {
+			PackageName string
+		}{
+			PackageName: packageNameFlag,
+		})
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	for _, genTest := range getTests {
@@ -102,7 +113,7 @@ func main() {
 			scenario.SetVersions(genTest.KubernetesVersions...)
 			scenario.SetParams(genScenario.Params)
 
-			if err = scenario.GenerateTests(outputBuf); err != nil {
+			if err = scenario.GenerateTests(outputBuf, generatorType); err != nil {
 				log.Fatal(err)
 			}
 		}

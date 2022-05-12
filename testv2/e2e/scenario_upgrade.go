@@ -5,6 +5,8 @@ import (
 	"io"
 	"testing"
 	"text/template"
+
+	"sigs.k8s.io/yaml"
 )
 
 type upgrade struct {
@@ -33,7 +35,7 @@ func (scenario *upgrade) Run(t *testing.T) {
 	t.Helper()
 }
 
-func (scenario *upgrade) GenerateTests(wr io.Writer) error {
+func (scenario *upgrade) GenerateTests(wr io.Writer, generatorType GeneratorType) error {
 	if len(scenario.params) != len(scenario.versions)-1 {
 		return fmt.Errorf("expected %d params with versions to upgrade to", len(scenario.versions)-1)
 	}
@@ -59,40 +61,82 @@ func (scenario *upgrade) GenerateTests(wr io.Writer) error {
 	}
 
 	type templateData struct {
-		Infra         string
-		InfraTitle    string
-		Scenario      string
-		ScenarioTitle string
-		FromVersion   string
-		ToVersion     string
-		VersionTitle  string
+		Infra       string
+		Scenario    string
+		FromVersion string
+		ToVersion   string
+		TestTitle   string
 	}
 
-	var data []templateData
+	var (
+		data     []templateData
+		prowJobs []ProwJob
+	)
 
 	for _, up := range upgrades {
+		testTitle := fmt.Sprintf("Test%s%sFrom%s_To%s",
+			titleize(scenario.infra.name),
+			scenario.Title(),
+			titleize(up.From),
+			titleize(up.To),
+		)
+
 		data = append(data, templateData{
-			Infra:         scenario.infra.name,
-			InfraTitle:    titleize(scenario.infra.name),
-			Scenario:      scenario.name,
-			ScenarioTitle: scenario.Title(),
-			FromVersion:   up.From,
-			ToVersion:     up.To,
-			VersionTitle:  fmt.Sprintf("From%s_To%s", titleize(up.From), titleize(up.To)),
+			TestTitle:   testTitle,
+			Infra:       scenario.infra.name,
+			Scenario:    scenario.name,
+			FromVersion: up.From,
+			ToVersion:   up.To,
 		})
+
+		prowJobName := fmt.Sprintf("pull-%s-%s-from-%s-to-%s",
+			scenario.infra.name,
+			scenario.name,
+			up.From,
+			up.To,
+		)
+
+		prowJobs = append(prowJobs,
+			newProwJob(
+				prowJobName,
+				scenario.infra.labels,
+				testTitle,
+			),
+		)
 	}
 
-	tpl, err := template.New("").Parse(upgradeScenarioTemplate)
-	if err != nil {
-		return err
+	switch generatorType {
+	case GeneratorTypeGo:
+		tpl, err := template.New("").Parse(upgradeScenarioTemplate)
+		if err != nil {
+			return err
+		}
+
+		return tpl.Execute(wr, data)
+	case GeneratorTypeYAML:
+		buf, err := yaml.Marshal(prowJobs)
+		if err != nil {
+			return err
+		}
+
+		n, err := wr.Write(buf)
+		if err != nil {
+			return err
+		}
+
+		if n != len(buf) {
+			return fmt.Errorf("wrong number of bytes written, expected %d, wrote %d", len(buf), n)
+		}
+
+		return nil
 	}
 
-	return tpl.Execute(wr, data)
+	return fmt.Errorf("unknown generator type %d", generatorType)
 }
 
 const upgradeScenarioTemplate = `
 {{- range . }}
-func Test{{ .InfraTitle }}{{ .ScenarioTitle }}{{ .VersionTitle }}(t *testing.T) {
+func {{ .TestTitle }}(t *testing.T) {
 	infra := Infrastructures["{{ .Infra }}"]
 	scenario := Scenarios["{{ .Scenario }}"]
 	scenario.SetInfra(infra)

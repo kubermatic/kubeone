@@ -1,0 +1,1426 @@
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_defaults-install_containerd-v1.21.12
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsDefaultsInstallContainerdV1_21_12$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_defaults-install_containerd-v1.22.9
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsDefaultsInstallContainerdV1_22_9$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_defaults-install_containerd-v1.23.6
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsDefaultsInstallContainerdV1_23_6$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_defaults-upgrade_containerd-from-v1.21.12-to-v1.22.9
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsDefaultsUpgradeContainerdFromV1_21_12_ToV1_22_9$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_defaults-upgrade_containerd-from-v1.22.9-to-v1.23.6
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsDefaultsUpgradeContainerdFromV1_22_9_ToV1_23_6$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_defaults-install_docker-v1.21.12
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsDefaultsInstallDockerV1_21_12$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_defaults-install_docker-v1.22.9
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsDefaultsInstallDockerV1_22_9$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_defaults-install_docker-v1.23.6
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsDefaultsInstallDockerV1_23_6$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_defaults-upgrade_docker-from-v1.21.12-to-v1.22.9
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsDefaultsUpgradeDockerFromV1_21_12_ToV1_22_9$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_defaults-upgrade_docker-from-v1.22.9-to-v1.23.6
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsDefaultsUpgradeDockerFromV1_22_9_ToV1_23_6$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_defaults-calico_containerd-v1.21.12
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsDefaultsCalicoContainerdV1_21_12$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_defaults-calico_containerd-v1.22.9
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsDefaultsCalicoContainerdV1_22_9$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_defaults-calico_containerd-v1.23.6
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsDefaultsCalicoContainerdV1_23_6$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_defaults-calico_docker-v1.21.12
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsDefaultsCalicoDockerV1_21_12$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_defaults-calico_docker-v1.22.9
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsDefaultsCalicoDockerV1_22_9$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_defaults-calico_docker-v1.23.6
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsDefaultsCalicoDockerV1_23_6$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_defaults-weave_containerd-v1.21.12
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsDefaultsWeaveContainerdV1_21_12$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_defaults-weave_containerd-v1.22.9
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsDefaultsWeaveContainerdV1_22_9$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_defaults-weave_containerd-v1.23.6
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsDefaultsWeaveContainerdV1_23_6$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_defaults-weave_docker-v1.21.12
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsDefaultsWeaveDockerV1_21_12$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_defaults-weave_docker-v1.22.9
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsDefaultsWeaveDockerV1_22_9$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_defaults-weave_docker-v1.23.6
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsDefaultsWeaveDockerV1_23_6$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_centos-install_containerd-v1.21.12
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsCentosInstallContainerdV1_21_12$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_centos-install_containerd-v1.22.9
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsCentosInstallContainerdV1_22_9$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_centos-install_containerd-v1.23.6
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsCentosInstallContainerdV1_23_6$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_centos-upgrade_containerd-from-v1.21.12-to-v1.22.9
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsCentosUpgradeContainerdFromV1_21_12_ToV1_22_9$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_centos-upgrade_containerd-from-v1.22.9-to-v1.23.6
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsCentosUpgradeContainerdFromV1_22_9_ToV1_23_6$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_centos-install_docker-v1.21.12
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsCentosInstallDockerV1_21_12$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_centos-install_docker-v1.22.9
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsCentosInstallDockerV1_22_9$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_centos-install_docker-v1.23.6
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsCentosInstallDockerV1_23_6$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_centos-upgrade_docker-from-v1.21.12-to-v1.22.9
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsCentosUpgradeDockerFromV1_21_12_ToV1_22_9$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_centos-upgrade_docker-from-v1.22.9-to-v1.23.6
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsCentosUpgradeDockerFromV1_22_9_ToV1_23_6$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_rhel-install_containerd-v1.21.12
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsRhelInstallContainerdV1_21_12$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_rhel-install_containerd-v1.22.9
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsRhelInstallContainerdV1_22_9$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_rhel-install_containerd-v1.23.6
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsRhelInstallContainerdV1_23_6$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_rhel-upgrade_containerd-from-v1.21.12-to-v1.22.9
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsRhelUpgradeContainerdFromV1_21_12_ToV1_22_9$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_rhel-upgrade_containerd-from-v1.22.9-to-v1.23.6
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsRhelUpgradeContainerdFromV1_22_9_ToV1_23_6$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_rhel-install_docker-v1.21.12
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsRhelInstallDockerV1_21_12$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_rhel-install_docker-v1.22.9
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsRhelInstallDockerV1_22_9$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_rhel-install_docker-v1.23.6
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsRhelInstallDockerV1_23_6$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_rhel-upgrade_docker-from-v1.21.12-to-v1.22.9
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsRhelUpgradeDockerFromV1_21_12_ToV1_22_9$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_rhel-upgrade_docker-from-v1.22.9-to-v1.23.6
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsRhelUpgradeDockerFromV1_22_9_ToV1_23_6$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_flatcar-install_containerd-v1.21.12
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsFlatcarInstallContainerdV1_21_12$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_flatcar-install_containerd-v1.22.9
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsFlatcarInstallContainerdV1_22_9$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_flatcar-install_containerd-v1.23.6
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsFlatcarInstallContainerdV1_23_6$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_flatcar-upgrade_containerd-from-v1.21.12-to-v1.22.9
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsFlatcarUpgradeContainerdFromV1_21_12_ToV1_22_9$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_flatcar-upgrade_containerd-from-v1.22.9-to-v1.23.6
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsFlatcarUpgradeContainerdFromV1_22_9_ToV1_23_6$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_flatcar-install_docker-v1.21.12
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsFlatcarInstallDockerV1_21_12$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_flatcar-install_docker-v1.22.9
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsFlatcarInstallDockerV1_22_9$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_flatcar-install_docker-v1.23.6
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsFlatcarInstallDockerV1_23_6$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_flatcar-upgrade_docker-from-v1.21.12-to-v1.22.9
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsFlatcarUpgradeDockerFromV1_21_12_ToV1_22_9$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_flatcar-upgrade_docker-from-v1.22.9-to-v1.23.6
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsFlatcarUpgradeDockerFromV1_22_9_ToV1_23_6$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_amzn-install_containerd-v1.21.12
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsAmznInstallContainerdV1_21_12$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_amzn-install_containerd-v1.22.9
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsAmznInstallContainerdV1_22_9$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_amzn-install_containerd-v1.23.6
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsAmznInstallContainerdV1_23_6$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_amzn-upgrade_containerd-from-v1.21.12-to-v1.22.9
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsAmznUpgradeContainerdFromV1_21_12_ToV1_22_9$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_amzn-upgrade_containerd-from-v1.22.9-to-v1.23.6
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsAmznUpgradeContainerdFromV1_22_9_ToV1_23_6$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_amzn-install_docker-v1.21.12
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsAmznInstallDockerV1_21_12$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_amzn-install_docker-v1.22.9
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsAmznInstallDockerV1_22_9$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_amzn-install_docker-v1.23.6
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsAmznInstallDockerV1_23_6$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_amzn-upgrade_docker-from-v1.21.12-to-v1.22.9
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsAmznUpgradeDockerFromV1_21_12_ToV1_22_9$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-aws_amzn-upgrade_docker-from-v1.22.9-to-v1.23.6
+  optional: true
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -run
+      - ^TestAwsAmznUpgradeDockerFromV1_22_9_ToV1_23_6$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
