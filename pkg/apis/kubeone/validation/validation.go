@@ -298,21 +298,8 @@ func ValidateKubernetesSupport(c kubeoneapi.KubeOneCluster, fldPath *field.Path)
 		return append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, ".versions.kubernetes is not a semver string"))
 	}
 
-	if v.Minor() >= 23 {
-		switch {
-		case c.CloudProvider.Vsphere != nil:
-			allErrs = append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, "kubernetes versions 1.23.0 and newer are currently not supported for vsphere clusters"))
-		case c.ClusterNetwork.KubeProxy != nil && c.ClusterNetwork.KubeProxy.IPVS != nil:
-			if c.ClusterNetwork.CNI != nil && c.ClusterNetwork.CNI.Canal != nil {
-				allErrs = append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, "kubernetes versions 1.23.0 and newer are currently not supported for clusters running kube-proxy in ipvs mode with Canal CNI"))
-			} else if c.ClusterNetwork.CNI != nil && c.ClusterNetwork.CNI.External != nil && c.Addons != nil {
-				for _, addon := range c.Addons.Addons {
-					if addon.Name == "calico-vxlan" {
-						allErrs = append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, "kubernetes versions 1.23.0 and newer are currently not supported for clusters running kube-proxy in ipvs mode with Calico CNI"))
-					}
-				}
-			}
-		}
+	if v.Minor() >= 23 && c.CloudProvider.Vsphere != nil {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, "kubernetes versions 1.23.0 and newer are currently not supported for vsphere clusters"))
 	}
 
 	return allErrs
