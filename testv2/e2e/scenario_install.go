@@ -7,7 +7,7 @@ import (
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/tools/clientcmd"
-	cntr "sigs.k8s.io/controller-runtime/pkg/client"
+	ctrlruntimeclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 type install struct {
@@ -16,6 +16,7 @@ type install struct {
 	versions             []string
 	params               []map[string]string
 	infra                Infra
+	hook                 func()
 }
 
 func (scenario install) Title() string { return titleize(scenario.name) }
@@ -58,6 +59,14 @@ func (scenario *install) Run(t *testing.T) {
 		t.Fatalf("terraform apply failed: %v", err)
 	}
 
+	defer func() {
+		if err := retryFn(func() error {
+			return scenario.infra.terraform.destroy()
+		}); err != nil {
+			t.Fatalf("terraform destroy failed: %v", err)
+		}
+	}()
+
 	k1 := kubeoneBin{
 		bin:          "kubeone",
 		dir:          scenario.infra.terraform.path,
@@ -68,6 +77,14 @@ func (scenario *install) Run(t *testing.T) {
 	if err := k1.Apply(); err != nil {
 		t.Fatalf("kubeone apply failed: %v", err)
 	}
+
+	defer func() {
+		if err := retryFn(func() error {
+			return k1.Reset()
+		}); err != nil {
+			t.Fatalf("terraform destroy failed: %v", err)
+		}
+	}()
 
 	kubeoneManifest, err := k1.Manifest()
 	if err != nil {
@@ -100,7 +117,7 @@ func (scenario *install) Run(t *testing.T) {
 		t.Fatalf("unable to build clientset from kubeconfig bytes: %v", err)
 	}
 
-	client, err := cntr.New(restConfig, cntr.Options{})
+	client, err := ctrlruntimeclient.New(restConfig, ctrlruntimeclient.Options{})
 	if err != nil {
 		t.Fatalf("failed to init dynamic client: %s", err)
 	}
@@ -113,16 +130,8 @@ func (scenario *install) Run(t *testing.T) {
 		t.Fatalf("version mismatch: %v", err)
 	}
 
-	if err := retryFn(func() error {
-		return k1.Reset()
-	}); err != nil {
-		t.Fatalf("terraform destroy failed: %v", err)
-	}
-
-	if err := retryFn(func() error {
-		return scenario.infra.terraform.destroy()
-	}); err != nil {
-		t.Fatalf("terraform destroy failed: %v", err)
+	if scenario.hook != nil {
+		scenario.hook()
 	}
 }
 
