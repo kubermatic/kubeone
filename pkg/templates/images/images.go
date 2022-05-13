@@ -151,6 +151,11 @@ const (
 	VsphereCSIDriver
 	VsphereCSISyncer
 	VsphereCSIProvisioner
+
+	// Calico VXLAN
+	CalicoVXLANCNI
+	CalicoVXLANController
+	CalicoVXLANNode
 )
 
 func FindResource(name string) (Resource, error) {
@@ -165,9 +170,9 @@ func FindResource(name string) (Resource, error) {
 
 func baseResources() map[Resource]map[string]string {
 	return map[Resource]map[string]string{
-		CalicoCNI:         {"*": "docker.io/calico/cni:v3.22.2"},
-		CalicoController:  {"*": "docker.io/calico/kube-controllers:v3.22.2"},
-		CalicoNode:        {"*": "docker.io/calico/node:v3.22.2"},
+		CalicoCNI:         {"*": "quay.io/calico/cni:v3.22.2"},
+		CalicoController:  {"*": "quay.io/calico/kube-controllers:v3.22.2"},
+		CalicoNode:        {"*": "quay.io/calico/node:v3.22.2"},
 		DNSNodeCache:      {"*": "k8s.gcr.io/k8s-dns-node-cache:1.15.13"},
 		Flannel:           {"*": "quay.io/coreos/flannel:v0.15.1"},
 		MachineController: {"*": "quay.io/kubermatic/machine-controller:v1.49.0"},
@@ -318,6 +323,11 @@ func optionalResources() map[Resource]map[string]string {
 		// Cilium
 		Cilium:         {"*": "quay.io/cilium/cilium:v1.11.1"},
 		CiliumOperator: {"*": "quay.io/cilium/operator-generic:v1.11.1"},
+
+		// Calico VXLAN
+		CalicoVXLANCNI:        {"*": "quay.io/calico/cni:v3.22.2"},
+		CalicoVXLANController: {"*": "quay.io/calico/kube-controllers:v3.22.2"},
+		CalicoVXLANNode:       {"*": "quay.io/calico/node:v3.22.2"},
 
 		// Hubble
 		HubbleRelay:     {"*": "quay.io/cilium/hubble-relay:v1.11.1"},
