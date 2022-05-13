@@ -180,15 +180,9 @@ func (scenario *install) GenerateTests(wr io.Writer, generatorType GeneratorType
 			Version:   version,
 		})
 
-		prowJobName := fmt.Sprintf("pull-%s-%s-%s",
-			scenario.infra.name,
-			scenario.name,
-			version,
-		)
-
 		prowJobs = append(prowJobs,
 			newProwJob(
-				prowJobName,
+				pullProwJobName(scenario.infra.name, scenario.name, version),
 				scenario.infra.labels,
 				testTitle,
 			),

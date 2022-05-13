@@ -246,3 +246,7 @@ func newProwJob(prowJobName string, labels map[string]string, testTitle string) 
 		},
 	}
 }
+
+func pullProwJobName(in ...string) string {
+	return fmt.Sprintf("pull-kubeone-e2e-%s", strings.ReplaceAll(strings.Join(in, "-"), "_", "-"))
+}

@@ -105,16 +105,9 @@ func (scenario *upgrade) GenerateTests(wr io.Writer, generatorType GeneratorType
 			ToVersion:   up.To,
 		})
 
-		prowJobName := fmt.Sprintf("pull-%s-%s-from-%s-to-%s",
-			scenario.infra.name,
-			scenario.name,
-			up.From,
-			up.To,
-		)
-
 		prowJobs = append(prowJobs,
 			newProwJob(
-				prowJobName,
+				pullProwJobName(scenario.infra.name, scenario.name, "from", up.From, "to", up.To),
 				scenario.infra.labels,
 				testTitle,
 			),

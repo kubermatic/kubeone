@@ -14,6 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+//go:generate go run ../generator -file ../tests.yml -type go -output ./tests_test.go
+//go:generate go run ../generator -file ../tests.yml -type yaml -output ./prow.yaml
+
 package e2e
 
 import (
