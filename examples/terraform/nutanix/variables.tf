@@ -148,7 +148,7 @@ variable "bastion_memory_size" {
 
 variable "bastion_disk_size" {
   default     = 102400
-  description = "Disk size size, in Mib, for bastion/LB node"
+  description = "Disk size, in Mib, for bastion/LB node"
   type        = number
 }
 
