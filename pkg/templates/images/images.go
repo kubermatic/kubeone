@@ -151,6 +151,11 @@ const (
 	VsphereCSIDriver
 	VsphereCSISyncer
 	VsphereCSIProvisioner
+
+	// Calico VXLAN
+	CalicoVXLANCNI
+	CalicoVXLANController
+	CalicoVXLANNode
 )
 
 func FindResource(name string) (Resource, error) {
@@ -318,6 +323,11 @@ func optionalResources() map[Resource]map[string]string {
 		// Cilium
 		Cilium:         {"*": "quay.io/cilium/cilium:v1.11.1"},
 		CiliumOperator: {"*": "quay.io/cilium/operator-generic:v1.11.1"},
+
+		// Calico VXLAN
+		CalicoVXLANCNI:        {"*": "quay.io/calico/cni:v3.22.2"},
+		CalicoVXLANController: {"*": "quay.io/calico/kube-controllers:v3.22.2"},
+		CalicoVXLANNode:       {"*": "quay.io/calico/node:v3.22.2"},
 
 		// Hubble
 		HubbleRelay:     {"*": "quay.io/cilium/hubble-relay:v1.11.1"},
