@@ -22,10 +22,9 @@ Kubernetes versions, and supported operating systems) can be found in the
 
 For a quick start, you should check the following documents:
 
-* [Prerequisites][docs-prerequisistes] to prepare your environment
-* [Infrastructure][docs-infrastructure] to create the infrastructure to be used
-  for your cluster
-* [Provisioning][docs-provisioning] to provision the Kubernetes cluster
+* [Architecture][docs-concepts] to get familiar with the concepts of KubeOne.
+* [Prerequisites][docs-prerequisistes] to get kubeone locally.
+* [Provisioning][docs-provisioning] to provision the Kubernetes cluster.
 
 ## Installing KubeOne
 
@@ -54,9 +53,9 @@ care of setting up a production ready Highly Available cluster!
 ### Native Support For The Most Popular Providers
 
 KubeOne natively supports the most popular providers, including AWS, Azure,
-DigitalOcean, GCP, Hetzner Cloud, Nutanix, OpenStack, and VMware vSphere. The
-natively supported providers enjoy additional features such as integration with
-Terraform and Kubermatic machine-controller.
+DigitalOcean, GCP, Hetzner Cloud, Nutanix, OpenStack, and VMware vSphere. 
+The natively supported providers enjoy additional features such as integration
+with Terraform and Kubermatic machine-controller.
 
 ### Kubernetes Conformance Certified
 
@@ -116,11 +115,11 @@ See [the list of releases][changelog] to find out about feature changes.
 [cluster-api]: https://github.com/kubernetes-sigs/cluster-api
 [machine-controller]: https://github.com/kubermatic/machine-controller
 [docs]: https://docs.kubermatic.com/kubeone/
-[docs-compatibility]: https://docs.kubermatic.com/kubeone/v1.2/compatibility_info/
-[docs-prerequisistes]: https://docs.kubermatic.com/kubeone/v1.2/prerequisites/
-[docs-infrastructure]: https://docs.kubermatic.com/kubeone/v1.2/infrastructure/
-[docs-provisioning]: https://docs.kubermatic.com/kubeone/v1.2/provisioning/
-[docs-install]: https://docs.kubermatic.com/kubeone/v1.2/getting_kubeone/
+[docs-architecture]: https://docs.kubermatic.com/kubeone/v1.4/architecture/
+[docs-concepts]: https://docs.kubermatic.com/kubeone/v1.4/architecture/concepts/
+[docs-compatibility]: https://docs.kubermatic.com/kubeone/v1.4/architecture/compatibility/
+[docs-prerequisites]: https://docs.kubermatic.com/kubeone/v1.4/getting_kubeone/
+[docs-provisioning]: https://docs.kubermatic.com/kubeone/v1.4/tutorials/creating_clusters/
 [contributing-guide]: https://github.com/kubermatic/KubeOne/blob/master/CONTRIBUTING.md
 [k8s-slack-kubeone]: https://kubernetes.slack.com/messages/CNEV2UMT7
 [k8s-slack]: http://slack.k8s.io/
