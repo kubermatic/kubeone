@@ -43,6 +43,7 @@ data:
   #   setting it to "kvstore".
   identity-allocation-mode: crd
   cilium-endpoint-gc-interval: "5m0s"
+  nodes-gc-interval: "5m0s"
   # Disable the usage of CiliumEndpoint CRD
   disable-endpoint-crd: "false"
 
@@ -151,6 +152,7 @@ data:
   enable-auto-protect-node-port-range: "true"
   enable-session-affinity: "true"
   enable-l2-neigh-discovery: "true"
+  arping-refresh-period: "30s"
   enable-endpoint-health-checking: "true"
   enable-health-checking: "true"
   enable-well-known-identities: "false"
@@ -176,6 +178,10 @@ data:
   disable-cnp-status-updates: "true"
   cgroup-root: "/run/cilium/cgroupv2"
   enable-k8s-terminating-endpoint: "true"
+  annotate-k8s-node: "true"
+  remove-cilium-node-taints: "true"
+  set-cilium-is-up-condition: "true"
+  unmanaged-pod-watcher-interval: "15"
 ---
 # Source: cilium/templates/cilium-agent/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -204,38 +210,19 @@ rules:
   resources:
   - namespaces
   - services
-  - nodes
-  - endpoints
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - ""
-  resources:
   - pods
-  - pods/finalizers
-  verbs:
-  - get
-  - list
-  - watch
-  - update
-  - delete
-- apiGroups:
-  - ""
-  resources:
+  - endpoints
   - nodes
   verbs:
   - get
   - list
   - watch
-  - update
 - apiGroups:
   - ""
   resources:
-  - nodes
   - nodes/status
   verbs:
+  # To annotate the k8s node with Cilium's metadata
   - patch
 - apiGroups:
   - apiextensions.k8s.io
@@ -257,21 +244,15 @@ rules:
   resources:
   - ciliumnetworkpolicies
   - ciliumnetworkpolicies/status
-  - ciliumnetworkpolicies/finalizers
   - ciliumclusterwidenetworkpolicies
   - ciliumclusterwidenetworkpolicies/status
-  - ciliumclusterwidenetworkpolicies/finalizers
   - ciliumendpoints
   - ciliumendpoints/status
-  - ciliumendpoints/finalizers
   - ciliumnodes
   - ciliumnodes/status
-  - ciliumnodes/finalizers
   - ciliumidentities
-  - ciliumidentities/finalizers
   - ciliumlocalredirectpolicies
   - ciliumlocalredirectpolicies/status
-  - ciliumlocalredirectpolicies/finalizers
   - ciliumegressnatpolicies
   - ciliumendpointslices
   verbs:
@@ -286,14 +267,30 @@ rules:
 - apiGroups:
   - ""
   resources:
-  # to automatically delete [core|kube]dns pods so that are starting to being
-  # managed by Cilium
   - pods
   verbs:
   - get
   - list
   - watch
+  # to automatically delete [core|kube]dns pods so that are starting to being
+  # managed by Cilium
   - delete
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  # To remove node taints
+  - nodes
+  # To set NetworkUnavailable false on startup
+  - nodes/status
+  verbs:
+  - patch
 - apiGroups:
   - discovery.k8s.io
   resources:
@@ -464,6 +461,18 @@ spec:
         - cilium-agent
         args:
         - --config-dir=/tmp/cilium/config-map
+        startupProbe:
+          httpGet:
+            host: "127.0.0.1"
+            path: /healthz
+            port: 9876
+            scheme: HTTP
+            httpHeaders:
+            - name: "brief"
+              value: "true"
+          failureThreshold: 105
+          periodSeconds: 2
+          successThreshold: 1
         livenessProbe:
           httpGet:
             host: "127.0.0.1"
@@ -473,12 +482,6 @@ spec:
             httpHeaders:
             - name: "brief"
               value: "true"
-          # The initial delay for the liveness probe is intentionally large to
-          # avoid an endless kill & restart cycle if in the event that the initial
-          # bootstrapping takes longer than expected.
-          # Starting from Kubernetes 1.20, we are using startupProbe instead
-          # of this field.
-          initialDelaySeconds: 120
           periodSeconds: 30
           successThreshold: 1
           failureThreshold: 10
@@ -492,7 +495,6 @@ spec:
             httpHeaders:
             - name: "brief"
               value: "true"
-          initialDelaySeconds: 5
           periodSeconds: 30
           successThreshold: 1
           failureThreshold: 3
@@ -816,13 +818,6 @@ spec:
 {{ if .Config.ClusterNetwork.CNI.Cilium.EnableHubble }}
 
 ---
-# Source: cilium/templates/hubble/tls-cronjob/serviceaccount.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: "hubble-generate-certs"
-  namespace: kube-system
----
 # Source: cilium/templates/hubble-relay/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
@@ -835,6 +830,13 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: "hubble-ui"
+  namespace: kube-system
+---
+# Source: cilium/templates/hubble/tls-cronjob/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: "hubble-generate-certs"
   namespace: kube-system
 ---
 # Source: cilium/templates/hubble-relay/configmap.yaml
@@ -1188,6 +1190,8 @@ spec:
     spec:
       securityContext:
         runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
       priorityClassName:
       serviceAccount: "hubble-ui"
       serviceAccountName: "hubble-ui"
