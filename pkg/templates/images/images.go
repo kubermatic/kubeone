@@ -321,8 +321,8 @@ func optionalResources() map[Resource]map[string]string {
 		WeaveNetCNINPC:  {"*": "docker.io/weaveworks/weave-npc:2.8.1"},
 
 		// Cilium
-		Cilium:         {"*": "quay.io/cilium/cilium:v1.11.1"},
-		CiliumOperator: {"*": "quay.io/cilium/operator-generic:v1.11.1"},
+		Cilium:         {"*": "quay.io/cilium/cilium:v1.11.5@sha256:79e66c3c2677e9ecc3fd5b2ed8e4ea7e49cf99ed6ee181f2ef43400c4db5eef0"},
+		CiliumOperator: {"*": "quay.io/cilium/operator-generic:v1.11.5@sha256:8ace281328b27d4216218c604d720b9a63a8aec2bd1996057c79ab0168f9d6d8"},
 
 		// Calico VXLAN
 		CalicoVXLANCNI:        {"*": "quay.io/calico/cni:v3.22.2"},
@@ -330,10 +330,10 @@ func optionalResources() map[Resource]map[string]string {
 		CalicoVXLANNode:       {"*": "quay.io/calico/node:v3.22.2"},
 
 		// Hubble
-		HubbleRelay:     {"*": "quay.io/cilium/hubble-relay:v1.11.1"},
-		HubbleUI:        {"*": "quay.io/cilium/hubble-ui:v0.8.5"},
-		HubbleUIBackend: {"*": "quay.io/cilium/hubble-ui-backend:v0.8.5"},
-		HubbleProxy:     {"*": "docker.io/envoyproxy/envoy:v1.18.4"},
+		HubbleRelay:     {"*": "quay.io/cilium/hubble-relay:v1.11.5@sha256:8498f27a9c85ff74e56e18cfce4f0ccfae6f55d4134d708d364d273f3043f817"},
+		HubbleUI:        {"*": "quay.io/cilium/hubble-ui:v0.8.5@sha256:4eaca1ec1741043cfba6066a165b3bf251590cf4ac66371c4f63fbed2224ebb4"},
+		HubbleUIBackend: {"*": "quay.io/cilium/hubble-ui-backend:v0.8.5@sha256:2bce50cf6c32719d072706f7ceccad654bfa907b2745a496da99610776fe31ed"},
+		HubbleProxy:     {"*": "docker.io/envoyproxy/envoy:v1.18.4@sha256:e5c2bb2870d0e59ce917a5100311813b4ede96ce4eb0c6bfa879e3fbe3e83935"},
 		CiliumCertGen:   {"*": "quay.io/cilium/certgen:v0.1.5"},
 
 		// Cluster-autoscaler addon
