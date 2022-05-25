@@ -65,9 +65,18 @@ spec:
       labels:
         app: snapshot-validation
     spec:
+      nodeSelector:
+        node-role.kubernetes.io/control-plane: ""
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+        - key: node-role.kubernetes.io/master
+          operator: Exists
+          effect: NoSchedule
       containers:
         - name: snapshot-validation
-          image: image: {{ .InternalImages.Get "VsphereCSISnapshotValidationWebhook" }} # change the image if you wish to use your own custom validation server image
+          image: {{ .InternalImages.Get "VsphereCSISnapshotValidationWebhook" }} # change the image if you wish to use your own custom validation server image
           imagePullPolicy: IfNotPresent
           args: ['--tls-cert-file=/run/secrets/tls/tls.crt', '--tls-private-key-file=/run/secrets/tls/tls.key']
           ports:

@@ -109,7 +109,7 @@ metadata:
 rules:
   - apiGroups: ["cns.vmware.com"]
     resources: ["csinodetopologies"]
-    verbs: ["create", "watch"]
+    verbs: ["create", "watch", "get", "patch"]
   - apiGroups: [""]
     resources: ["nodes"]
     verbs: ["get"]
