@@ -91,6 +91,15 @@ metadata:
   name: vsphere-csi
 provisioner: csi.vsphere.vmware.com
 ---
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshotClass
+metadata:
+  name: vsphere-csi
+  annotations:
+    snapshot.storage.kubernetes.io/is-default-class: "true"
+driver: csi.vsphere.vmware.com
+deletionPolicy: Delete
+---
 {{ end }}
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
