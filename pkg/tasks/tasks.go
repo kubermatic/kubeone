@@ -220,6 +220,11 @@ func WithResources(t Tasks) Tasks {
 				Operation: "patching CoreDNS",
 			},
 			{
+				Fn:          credentials.Ensure,
+				Operation:   "ensuring credentials secret",
+				Description: "ensure credential",
+			},
+			{
 				Fn:          addons.Ensure,
 				Operation:   "applying addons",
 				Description: "ensure embedded addons",
@@ -241,11 +246,6 @@ func WithResources(t Tasks) Tasks {
 				Operation:   "applying addons",
 				Description: "ensure custom addons",
 				Predicate:   func(s *state.State) bool { return s.Cluster.Addons != nil && s.Cluster.Addons.Enable },
-			},
-			{
-				Fn:          credentials.Ensure,
-				Operation:   "ensuring credentials secret",
-				Description: "ensure credential",
 			},
 			{
 				Fn:          externalccm.Ensure,
