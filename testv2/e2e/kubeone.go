@@ -36,7 +36,7 @@ type kubeoneBin struct {
 }
 
 func (k1 *kubeoneBin) globalFlags() []string {
-	args := []string{"--verbose", "--tfjson", k1.tfjsonPath}
+	args := []string{"--tfjson", k1.tfjsonPath}
 
 	if k1.manifestPath != "" {
 		args = append(args, "--manifest", k1.manifestPath)
@@ -68,7 +68,7 @@ func (k1 *kubeoneBin) Kubeconfig() ([]byte, error) {
 }
 
 func (k1 *kubeoneBin) Reset() error {
-	return k1.run("reset", "--auto-approve", "--destroy-workers")
+	return k1.run("reset", "--auto-approve", "--destroy-workers", "--remove-binaries")
 }
 
 func (k1 *kubeoneBin) Manifest() (*kubeone.KubeOneCluster, error) {
@@ -79,7 +79,7 @@ func (k1 *kubeoneBin) Manifest() (*kubeone.KubeOneCluster, error) {
 	testutil.StdoutTo(&buf)(exe)
 
 	if err := exe.Run(); err != nil {
-		return nil, fmt.Errorf("fetching kubeconfig failed: %w", err)
+		return nil, fmt.Errorf("rendering manifest failed: %w", err)
 	}
 
 	var k1Manifest kubeone.KubeOneCluster
