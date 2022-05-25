@@ -47,6 +47,11 @@ webhooks:
         apiVersions: ["v1", "v1beta1"]
         operations:  ["CREATE", "UPDATE"]
         resources:   ["storageclasses"]
+      - apiGroups:   [""]
+        apiVersions: ["v1", "v1beta1"]
+        operations:  ["UPDATE", "DELETE"]
+        resources:   ["persistentvolumeclaims"]
+        scope: "Namespaced"
     sideEffects: None
     admissionReviewVersions: ["v1"]
     failurePolicy: Fail
@@ -56,6 +61,31 @@ apiVersion: v1
 metadata:
   name: vsphere-csi-webhook
   namespace: kube-system
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: vsphere-csi-webhook-cluster-role
+rules:
+  - apiGroups: ["snapshot.storage.k8s.io"]
+    resources: ["volumesnapshots"]
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["persistentvolumes"]
+    verbs: ["get"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: vsphere-csi-webhook-cluster-role-binding
+subjects:
+  - kind: ServiceAccount
+    name: vsphere-csi-webhook
+    namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: vsphere-csi-webhook-cluster-role
+  apiGroup: rbac.authorization.k8s.io
 ---
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
@@ -86,8 +116,6 @@ apiVersion: apps/v1
 metadata:
   name: vsphere-csi-webhook
   namespace: kube-system
-  labels:
-    app: vsphere-csi-webhook
 spec:
   replicas: 1
   selector:

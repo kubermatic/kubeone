@@ -156,9 +156,17 @@ const (
 	OpenstackCCM
 	EquinixMetalCCM
 	VsphereCCM
+
+	// vSphere CSI
 	VsphereCSIDriver
 	VsphereCSISyncer
+	VsphereCSIAttacher
+	VsphereCSILivenessProbe
+	VsphereCSINodeDriverRegistar
 	VsphereCSIProvisioner
+	VsphereCSIResizer
+	VsphereCSISnapshotter
+	VsphereCSISnapshotValidationWebhook
 
 	// Calico VXLAN
 	CalicoVXLANCNI
@@ -303,16 +311,22 @@ func optionalResources() map[Resource]map[string]string {
 
 		// vSphere CCM
 		VsphereCCM: {
-			"1.19.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.19.1",
-			"1.20.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.20.0",
-			"1.21.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.21.1",
-			">= 1.22.0": "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.22.4",
+			"1.20.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.20.1",
+			"1.21.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.21.3",
+			"1.22.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.22.6",
+			">= 1.23.0": "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.23.0",
 		},
 
 		// vSphere CSI
-		VsphereCSIDriver:      {"*": "gcr.io/cloud-provider-vsphere/csi/release/driver:v2.4.0"},
-		VsphereCSISyncer:      {"*": "gcr.io/cloud-provider-vsphere/csi/release/syncer:v2.4.0"},
-		VsphereCSIProvisioner: {"*": "k8s.gcr.io/sig-storage/csi-provisioner:v3.0.0"},
+		VsphereCSIDriver:                    {"*": "gcr.io/cloud-provider-vsphere/csi/release/driver:v2.5.1"},
+		VsphereCSISyncer:                    {"*": "gcr.io/cloud-provider-vsphere/csi/release/syncer:v2.5.1"},
+		VsphereCSIAttacher:                  {"*": "k8s.gcr.io/sig-storage/csi-attacher:v3.4.0"},
+		VsphereCSILivenessProbe:             {"*": "k8s.gcr.io/sig-storage/livenessprobe:v2.6.0"},
+		VsphereCSINodeDriverRegistar:        {"*": "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.5.0"},
+		VsphereCSIProvisioner:               {"*": "k8s.gcr.io/sig-storage/csi-provisioner:v3.1.0"},
+		VsphereCSIResizer:                   {"*": "k8s.gcr.io/sig-storage/csi-resizer:v1.4.0"},
+		VsphereCSISnapshotter:               {"*": "k8s.gcr.io/sig-storage/csi-snapshotter:v5.0.1"},
+		VsphereCSISnapshotValidationWebhook: {"*": "k8s.gcr.io/sig-storage/snapshot-validation-webhook:v5.0.1"},
 
 		// Nutanix CSI
 		NutanixCSI:                          {"*": "quay.io/karbon/ntnx-csi:v2.5.0"},
