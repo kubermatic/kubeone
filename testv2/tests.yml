@@ -1,102 +1,142 @@
-- infrastructure: aws_defaults
-  kubernetesVersions:
-    - v1.21.12
-    - v1.22.9
-    - v1.23.6
-  scenarios:
-    - name: install_containerd
-    - name: upgrade_containerd
-      params:
-        - upgradeTo: v1.22.9
-        - upgradeTo: v1.23.6
-    - name: install_docker
-    - name: upgrade_docker
-      params:
-        - upgradeTo: v1.22.9
-        - upgradeTo: v1.23.6
+- scenario: install_containerd
+  initVersion: v1.21.12
+  infrastructures:
+    - name: aws_defaults
+      alwaysRun: true
+    - name: aws_centos
+    - name: aws_rhel
+    - name: aws_flatcar
+    - name: aws_amzn
 
-- infrastructure: aws_defaults
-  kubernetesVersions:
-    - v1.21.12
-    - v1.22.9
-    - v1.23.6
-  scenarios:
-    - name: calico_containerd
-    - name: calico_docker
+- scenario: install_containerd
+  initVersion: v1.22.9
+  infrastructures:
+    - name: aws_defaults
+      alwaysRun: true
+    - name: aws_centos
+    - name: aws_rhel
+    - name: aws_flatcar
+    - name: aws_amzn
 
-- infrastructure: aws_defaults
-  kubernetesVersions:
-    - v1.21.12
-    - v1.22.9
-    - v1.23.6
-  scenarios:
-    - name: weave_containerd
-    - name: weave_docker
+- scenario: install_containerd
+  initVersion: v1.23.6
+  infrastructures:
+    - name: aws_defaults
+      alwaysRun: true
+    - name: aws_centos
+    - name: aws_rhel
+    - name: aws_flatcar
+    - name: aws_amzn
 
-- infrastructure: aws_centos
-  kubernetesVersions:
-    - v1.21.12
-    - v1.22.9
-    - v1.23.6
-  scenarios:
-    - name: install_containerd
-    - name: upgrade_containerd
-      params:
-        - upgradeTo: v1.22.9
-        - upgradeTo: v1.23.6
-    - name: install_docker
-    - name: upgrade_docker
-      params:
-        - upgradeTo: v1.22.9
-        - upgradeTo: v1.23.6
+- scenario: install_docker
+  initVersion: v1.21.12
+  infrastructures:
+    - name: aws_defaults
+      alwaysRun: true
+    - name: aws_centos
+    - name: aws_rhel
+    - name: aws_flatcar
+    - name: aws_amzn
 
-- infrastructure: aws_rhel
-  kubernetesVersions:
-    - v1.21.12
-    - v1.22.9
-    - v1.23.6
-  scenarios:
-    - name: install_containerd
-    - name: upgrade_containerd
-      params:
-        - upgradeTo: v1.22.9
-        - upgradeTo: v1.23.6
-    - name: install_docker
-    - name: upgrade_docker
-      params:
-        - upgradeTo: v1.22.9
-        - upgradeTo: v1.23.6
+- scenario: install_docker
+  initVersion: v1.22.9
+  infrastructures:
+    - name: aws_defaults
+      alwaysRun: true
+    - name: aws_centos
+    - name: aws_rhel
+    - name: aws_flatcar
+    - name: aws_amzn
 
-- infrastructure: aws_flatcar
-  kubernetesVersions:
-    - v1.21.12
-    - v1.22.9
-    - v1.23.6
-  scenarios:
-    - name: install_containerd
-    - name: upgrade_containerd
-      params:
-        - upgradeTo: v1.22.9
-        - upgradeTo: v1.23.6
-    - name: install_docker
-    - name: upgrade_docker
-      params:
-        - upgradeTo: v1.22.9
-        - upgradeTo: v1.23.6
+- scenario: upgrade_containerd
+  initVersion: v1.21.12
+  upgradedVersion: v1.22.9
+  infrastructures:
+    - name: aws_defaults
+    - name: aws_centos
+    - name: aws_rhel
+    - name: aws_flatcar
+    - name: aws_amzn
 
-- infrastructure: aws_amzn
-  kubernetesVersions:
-    - v1.21.12
-    - v1.22.9
-    - v1.23.6
-  scenarios:
-    - name: install_containerd
-    - name: upgrade_containerd
-      params:
-        - upgradeTo: v1.22.9
-        - upgradeTo: v1.23.6
-    - name: install_docker
-    - name: upgrade_docker
-      params:
-        - upgradeTo: v1.22.9
-        - upgradeTo: v1.23.6
+- scenario: upgrade_containerd
+  initVersion: v1.22.9
+  upgradedVersion: v1.23.6
+  infrastructures:
+    - name: aws_defaults
+    - name: aws_centos
+    - name: aws_rhel
+    - name: aws_flatcar
+    - name: aws_amzn
+
+- scenario: upgrade_docker
+  initVersion: v1.21.12
+  upgradedVersion: v1.22.9
+  infrastructures:
+    - name: aws_defaults
+    - name: aws_centos
+    - name: aws_rhel
+    - name: aws_flatcar
+    - name: aws_amzn
+
+- scenario: calico_containerd
+  initVersion: v1.22.9
+  infrastructures:
+    - name: aws_defaults
+    - name: aws_centos
+    - name: aws_rhel
+    - name: aws_flatcar
+    - name: aws_amzn
+
+- scenario: calico_docker
+  initVersion: v1.22.9
+  infrastructures:
+    - name: aws_defaults
+    - name: aws_centos
+    - name: aws_rhel
+    - name: aws_flatcar
+    - name: aws_amzn
+
+- scenario: weave_containerd
+  initVersion: v1.22.9
+  infrastructures:
+    - name: aws_defaults
+    - name: aws_centos
+    - name: aws_rhel
+    - name: aws_flatcar
+    - name: aws_amzn
+
+- scenario: weave_docker
+  initVersion: v1.22.9
+  infrastructures:
+    - name: aws_defaults
+    - name: aws_centos
+    - name: aws_rhel
+    - name: aws_flatcar
+    - name: aws_amzn
+
+- scenario: conformance_containerd
+  initVersion: v1.21.12
+  infrastructures:
+    - name: aws_defaults
+    - name: aws_centos
+    - name: aws_rhel
+    - name: aws_flatcar
+    - name: aws_amzn
+
+- scenario: conformance_containerd
+  initVersion: v1.22.9
+  infrastructures:
+    - name: aws_defaults
+    - name: aws_centos
+    - name: aws_rhel
+    - name: aws_flatcar
+    - name: aws_amzn
+
+- scenario: conformance_containerd
+  initVersion: v1.23.6
+  infrastructures:
+    - name: aws_defaults
+    - name: aws_centos
+    - name: aws_rhel
+    - name: aws_flatcar
+    - name: aws_amzn

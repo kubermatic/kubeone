@@ -32,17 +32,17 @@ import (
 	"sigs.k8s.io/yaml"
 )
 
-type KubeoneTest struct {
-	Infrastructure     string     `json:"infrastructure"`
-	KubernetesVersions []string   `json:"kubernetesVersions"`
-	Scenarios          []Scenario `json:"scenarios"`
+type Infrastructure struct {
+	Name      string `json:"name"`
+	AlwaysRun bool   `json:"alwaysRun"`
+	Optional  bool   `json:"optional"`
 }
 
-type Infra struct{}
-
-type Scenario struct {
-	Name   string              `json:"name"`
-	Params []map[string]string `json:"params"`
+type KubeoneTest struct {
+	Scenario        string           `json:"scenario"`
+	InitVersion     string           `json:"initVersion"`
+	UpgradedVersion string           `json:"upgradedVersion"`
+	Infrastructures []Infrastructure `json:"infrastructures"`
 }
 
 var (
@@ -123,22 +123,30 @@ func main() {
 	}
 
 	for _, genTest := range getTests {
-		infra, ok := e2e.Infrastructures[genTest.Infrastructure]
+		scenario, ok := e2e.Scenarios[genTest.Scenario]
 		if !ok {
-			log.Fatalf("%q infra is not defined", genTest.Infrastructure)
+			log.Fatalf("%q scenario is not defined", genTest.Scenario)
 		}
 
-		for _, genScenario := range genTest.Scenarios {
-			scenario, ok := e2e.Scenarios[genScenario.Name]
+		for _, genInfra := range genTest.Infrastructures {
+			infra, ok := e2e.Infrastructures[genInfra.Name]
 			if !ok {
-				log.Fatalf("%q scenario is not defined", genScenario.Name)
+				log.Fatalf("%q infra is not defined", genInfra.Name)
 			}
 
 			scenario.SetInfra(infra)
-			scenario.SetVersions(genTest.KubernetesVersions...)
-			scenario.SetParams(genScenario.Params)
+			versions := []string{genTest.InitVersion}
+			if genTest.UpgradedVersion != "" {
+				versions = append(versions, genTest.UpgradedVersion)
+			}
+			scenario.SetVersions(versions...)
 
-			if err = scenario.GenerateTests(outputBuf, generatorType); err != nil {
+			cfg := e2e.ProwConfig{
+				AlwaysRun: genInfra.AlwaysRun,
+				Optional:  genInfra.Optional,
+			}
+
+			if err = scenario.GenerateTests(outputBuf, generatorType, cfg); err != nil {
 				log.Fatal(err)
 			}
 		}

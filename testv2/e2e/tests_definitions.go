@@ -106,37 +106,43 @@ var (
 	}
 
 	Scenarios = map[string]Scenario{
-		"install_docker": &install{
+		"install_docker": &scenarioInstall{
 			name:                 "install_docker",
 			manifestTemplatePath: "testdata/docker_simple.yaml",
 		},
-		"upgrade_docker": &upgrade{
+		"upgrade_docker": &scenarioUpgrade{
 			name:                 "upgrade_docker",
 			manifestTemplatePath: "testdata/containerd_simple.yaml",
 		},
-		"conformance_docker": nil,
-		"install_containerd": &install{
+		"conformance_docker": &scenarioConformance{
+			name:                 "conformance_docker",
+			manifestTemplatePath: "testdata/containerd_simple.yaml",
+		},
+		"install_containerd": &scenarioInstall{
 			name:                 "install_containerd",
 			manifestTemplatePath: "testdata/containerd_simple.yaml",
 		},
-		"upgrade_containerd": &upgrade{
+		"upgrade_containerd": &scenarioUpgrade{
 			name:                 "upgrade_containerd",
 			manifestTemplatePath: "testdata/containerd_simple.yaml",
 		},
-		"conformance_containerd": nil,
-		"calico_containerd": &install{
+		"conformance_containerd": &scenarioConformance{
+			name:                 "conformance_containerd",
+			manifestTemplatePath: "testdata/containerd_simple.yaml",
+		},
+		"calico_containerd": &scenarioInstall{
 			name:                 "calico_containerd",
 			manifestTemplatePath: "testdata/containerd_calico.yaml",
 		},
-		"calico_docker": &install{
+		"calico_docker": &scenarioInstall{
 			name:                 "calico_docker",
 			manifestTemplatePath: "testdata/docker_calico.yaml",
 		},
-		"weave_containerd": &install{
+		"weave_containerd": &scenarioInstall{
 			name:                 "weave_containerd",
 			manifestTemplatePath: "testdata/containerd_weave.yaml",
 		},
-		"weave_docker": &install{
+		"weave_docker": &scenarioInstall{
 			name:                 "weave_docker",
 			manifestTemplatePath: "testdata/docker_weave.yaml",
 		},
@@ -158,8 +164,12 @@ const (
 
 type Scenario interface {
 	SetInfra(infrastructure Infra)
-	SetVersions(version ...string)
-	SetParams(params []map[string]string)
-	GenerateTests(output io.Writer, testType GeneratorType) error
+	SetVersions(versions ...string)
+	GenerateTests(output io.Writer, testType GeneratorType, cfg ProwConfig) error
 	Run(*testing.T)
+}
+
+type ProwConfig struct {
+	AlwaysRun bool
+	Optional  bool
 }

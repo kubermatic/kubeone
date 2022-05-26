@@ -25,42 +25,49 @@ import (
 	"sigs.k8s.io/yaml"
 )
 
-type upgrade struct {
+type scenarioUpgrade struct {
 	name                 string
 	manifestTemplatePath string
 	versions             []string
-	params               []map[string]string
 	infra                Infra
 }
 
-func (scenario upgrade) Title() string { return titleize(scenario.name) }
+func (scenario scenarioUpgrade) Title() string { return titleize(scenario.name) }
 
-func (scenario *upgrade) SetInfra(infra Infra) {
+func (scenario *scenarioUpgrade) SetInfra(infra Infra) {
 	scenario.infra = infra
 }
 
-func (scenario *upgrade) SetVersions(versions ...string) {
+func (scenario *scenarioUpgrade) SetVersions(versions ...string) {
 	scenario.versions = versions
 }
 
-func (scenario *upgrade) SetParams(params []map[string]string) {
-	scenario.params = params
-}
-
-func (scenario *upgrade) Run(t *testing.T) {
+func (scenario *scenarioUpgrade) Run(t *testing.T) {
 	t.Helper()
-}
 
-func (scenario *upgrade) GenerateTests(wr io.Writer, generatorType GeneratorType) error {
-	if len(scenario.params) != len(scenario.versions)-1 {
-		return fmt.Errorf("expected %d params with versions to upgrade to", len(scenario.versions)-1)
+	install := scenarioInstall{
+		name:                 scenario.name,
+		manifestTemplatePath: scenario.manifestTemplatePath,
+		infra:                scenario.infra,
+		versions:             scenario.versions,
 	}
 
-	var upgradeToVersions []string
-	for _, param := range scenario.params {
-		for _, v := range param {
-			upgradeToVersions = append(upgradeToVersions, v)
-		}
+	install.install(t)
+	scenario.upgrade(t)
+	scenario.test(t)
+}
+
+func (scenario *scenarioUpgrade) upgrade(t *testing.T) {
+	// TODO: add upgrade logic
+}
+
+func (scenario *scenarioUpgrade) test(t *testing.T) {
+	// TODO: add some testings
+}
+
+func (scenario *scenarioUpgrade) GenerateTests(wr io.Writer, generatorType GeneratorType, cfg ProwConfig) error {
+	if len(scenario.versions) != 2 {
+		return fmt.Errorf("expected only 2 versions")
 	}
 
 	type upgradeFromTo struct {
@@ -68,12 +75,9 @@ func (scenario *upgrade) GenerateTests(wr io.Writer, generatorType GeneratorType
 		To   string
 	}
 
-	upgrades := []upgradeFromTo{}
-	for i, upVersion := range upgradeToVersions {
-		upgrades = append(upgrades, upgradeFromTo{
-			To:   upVersion,
-			From: scenario.versions[i],
-		})
+	up := upgradeFromTo{
+		From: scenario.versions[0],
+		To:   scenario.versions[1],
 	}
 
 	type templateData struct {
@@ -89,30 +93,29 @@ func (scenario *upgrade) GenerateTests(wr io.Writer, generatorType GeneratorType
 		prowJobs []ProwJob
 	)
 
-	for _, up := range upgrades {
-		testTitle := fmt.Sprintf("Test%s%sFrom%s_To%s",
-			titleize(scenario.infra.name),
-			scenario.Title(),
-			titleize(up.From),
-			titleize(up.To),
-		)
+	testTitle := fmt.Sprintf("Test%s%sFrom%s_To%s",
+		titleize(scenario.infra.name),
+		scenario.Title(),
+		titleize(up.From),
+		titleize(up.To),
+	)
 
-		data = append(data, templateData{
-			TestTitle:   testTitle,
-			Infra:       scenario.infra.name,
-			Scenario:    scenario.name,
-			FromVersion: up.From,
-			ToVersion:   up.To,
-		})
+	data = append(data, templateData{
+		TestTitle:   testTitle,
+		Infra:       scenario.infra.name,
+		Scenario:    scenario.name,
+		FromVersion: up.From,
+		ToVersion:   up.To,
+	})
 
-		prowJobs = append(prowJobs,
-			newProwJob(
-				pullProwJobName(scenario.infra.name, scenario.name, "from", up.From, "to", up.To),
-				scenario.infra.labels,
-				testTitle,
-			),
-		)
-	}
+	prowJobs = append(prowJobs,
+		newProwJob(
+			pullProwJobName(scenario.infra.name, scenario.name, "from", up.From, "to", up.To),
+			scenario.infra.labels,
+			testTitle,
+			cfg,
+		),
+	)
 
 	switch generatorType {
 	case GeneratorTypeGo:

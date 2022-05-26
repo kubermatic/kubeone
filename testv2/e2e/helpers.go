@@ -207,19 +207,19 @@ func parseContainerImageVersion(image string) (*semver.Version, error) {
 type ProwJob struct {
 	Name      string            `json:"name"`
 	AlwaysRun bool              `json:"always_run"`
-	Optional  bool              `json:"optional,omitempty"`
+	Optional  bool              `json:"optional"`
 	Decorate  bool              `json:"decorate"`
 	CloneURI  string            `json:"clone_uri"`
 	PathAlias string            `json:"path_alias,omitempty"`
-	Labels    map[string]string `json:"labels"`
+	Labels    map[string]string `json:"labels,omitempty"`
 	Spec      *corev1.PodSpec   `json:"spec"`
 }
 
-func newProwJob(prowJobName string, labels map[string]string, testTitle string) ProwJob {
+func newProwJob(prowJobName string, labels map[string]string, testTitle string, settings ProwConfig) ProwJob {
 	return ProwJob{
 		Name:      prowJobName,
-		AlwaysRun: false,
-		Optional:  true,
+		AlwaysRun: settings.AlwaysRun,
+		Optional:  settings.Optional,
 		Decorate:  true,
 		CloneURI:  k1CloneURI,
 		Labels:    labels,
