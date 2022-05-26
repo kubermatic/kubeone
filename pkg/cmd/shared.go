@@ -148,9 +148,7 @@ func newLogger(verbose bool, format string) *logrus.Logger {
 
 	switch format {
 	case "json":
-		logger.Formatter = &logrus.JSONFormatter{
-			TimestampFormat: "15:04:05 MST",
-		}
+		logger.Formatter = &logrus.JSONFormatter{}
 	default:
 		logger.Formatter = &logrus.TextFormatter{
 			FullTimestamp:   true,
