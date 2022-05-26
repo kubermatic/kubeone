@@ -35,6 +35,10 @@ spec:
         - key: "node-role.kubernetes.io/control-plane"
           effect: NoSchedule
           operator: Exists
+        # Needed to let CCM come up and assign the EIP
+        - key: "node.kubernetes.io/not-ready"
+          effect: NoSchedule
+          operator: Exists
       containers:
         - image: {{ .InternalImages.Get "EquinixMetalCCM" }}
           name: cloud-provider-equinix-metal
@@ -44,7 +48,7 @@ spec:
             - "--cloud-provider=equinixmetal"
             - "--leader-elect=false"
             - "--authentication-skip-lookup=true"
-            - "--provider-config=/etc/cloud-sa/cloud-sa.json"
+            - "--cloud-config=/etc/cloud-sa/cloud-sa.json"
           resources:
             requests:
               cpu: 100m
@@ -71,84 +75,85 @@ metadata:
     rbac.authorization.kubernetes.io/autoupdate: "true"
   name: system:cloud-controller-manager
 rules:
-  - apiGroups:
-      # reason: so ccm can read the information about the kube-system namespace
-      - ""
-    resources:
-      - namespaces
-    verbs:
-      - get
-  - apiGroups:
-      # reason: so ccm can monitor and update endpoints, used for control plane loadbalancer
-      - ""
-    resources:
-      - endpoints
-    verbs:
-      - create
-      - get
-      - list
-      - watch
-      - update
-  - apiGroups:
-      # reason: so ccm can read and update nodes and annotations
-      - ""
-    resources:
-      - nodes
-    verbs:
-      - "*"
-  - apiGroups:
-      # reason: so ccm can update the status of nodes
-      - ""
-    resources:
-      - nodes/status
-    verbs:
-      - patch
-  - apiGroups:
-      # reason: so ccm can manage services for loadbalancer
-      - ""
-    resources:
-      - services
-    verbs:
-      - get
-      - list
-      - patch
-      - update
-      - watch
-      - create
-  - apiGroups:
-      # reason: so ccm can update the status of services for loadbalancer
-      - ""
-    resources:
-      - services/status
-    verbs:
-      - list
-      - patch
-      - update
-      - watch
-  - apiGroups:
-      # reason: so ccm can read and update configmap/metallb-system:config
-      - ""
-    resources:
-      - configmaps
-    verbs:
-      - create
-      - get
-      - list
-      - watch
-      - update
-      - patch
-  - apiGroups:
-      # reason: so ccm can read and update events
-      - ""
-    resources:
-      - events
-    verbs:
-      - create
-      - get
-      - list
-      - watch
-      - update
-      - patch
+- apiGroups:
+  # reason: so ccm can read the information about the kube-system namespace
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - get
+- apiGroups:
+  # reason: so ccm can monitor and update endpoints, used for control plane loadbalancer
+  - ""
+  resources:
+  - endpoints
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - update
+  - patch
+- apiGroups:
+  # reason: so ccm can read and update nodes and annotations
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - '*'
+- apiGroups:
+  # reason: so ccm can update the status of nodes
+  - ""
+  resources:
+  - nodes/status
+  verbs:
+  - patch
+- apiGroups:
+  # reason: so ccm can manage services for loadbalancer
+  - ""
+  resources:
+  - services
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+  - watch
+  - create
+- apiGroups:
+  # reason: so ccm can update the status of services for loadbalancer
+  - ""
+  resources:
+  - services/status
+  verbs:
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  # reason: so ccm can read and update configmap/metallb-system:config
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - update
+  - patch
+- apiGroups:
+  # reason: so ccm can read and update events
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - update
+  - patch
 ---
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1

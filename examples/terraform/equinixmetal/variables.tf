@@ -92,8 +92,14 @@ variable "lb_operating_system" {
 }
 
 variable "device_type" {
-  default     = "t1.small.x86"
+  default     = "c3.small.x86"
   description = "type (size) of the device"
+  type        = string
+}
+
+variable "lb_device_type" {
+  default     = "c3.small.x86"
+  description = "type (size) of the load balancer device"
   type        = string
 }
 

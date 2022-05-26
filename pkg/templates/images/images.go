@@ -291,7 +291,7 @@ func optionalResources() map[Resource]map[string]string {
 		},
 
 		// Equinix Metal CCM
-		EquinixMetalCCM: {"*": "docker.io/equinix/cloud-provider-equinix-metal:v3.3.0"},
+		EquinixMetalCCM: {"*": "docker.io/equinix/cloud-provider-equinix-metal:v3.4.2"},
 
 		// vSphere CCM
 		VsphereCCM: {
