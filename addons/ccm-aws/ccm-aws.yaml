@@ -1,91 +1,114 @@
+# helm template aws-cloud-controller-manager aws-cloud-controller-manager/aws-cloud-controller-manager
+---
+# Source: aws-cloud-controller-manager/templates/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: cloud-controller-manager
   namespace: kube-system
 ---
+# Source: aws-cloud-controller-manager/templates/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: system:cloud-controller-manager
 rules:
   - apiGroups:
-      - ""
+    - ""
     resources:
-      - events
+    - events
     verbs:
-      - create
-      - patch
-      - update
+    - create
+    - patch
+    - update
   - apiGroups:
-      - ""
+    - ""
     resources:
-      - nodes
+    - nodes
     verbs:
-      - get
-      - list
-      - patch
-      - update
-      - watch
+    - '*'
   - apiGroups:
-      - ""
+    - ""
     resources:
-      - nodes/status
+    - nodes/status
     verbs:
-      - patch
+    - patch
   - apiGroups:
-      - ""
+    - ""
     resources:
-      - services
+    - services
     verbs:
-      - list
-      - patch
-      - update
-      - watch
+    - list
+    - patch
+    - update
+    - watch
   - apiGroups:
-      - ""
+    - ""
     resources:
-      - services/status
+    - services/status
     verbs:
-      - patch
-      - update
+    - list
+    - patch
+    - update
+    - watch
   - apiGroups:
-      - ""
+    - ""
     resources:
-      - serviceaccounts
+    - serviceaccounts
     verbs:
-      - create
+    - create
   - apiGroups:
-      - ""
+    - ""
     resources:
-      - endpoints
+    - persistentvolumes
     verbs:
-      - create
-      - get
-      - list
-      - update
-      - watch
+    - get
+    - list
+    - update
+    - watch
   - apiGroups:
-      - coordination.k8s.io
+    - ""
     resources:
-      - leases
+    - endpoints
     verbs:
-      - create
-      - get
-      - list
-      - update
-      - watch
+    - create
+    - get
+    - list
+    - watch
+    - update
   - apiGroups:
-      - ""
-    resourceNames:
-      - node-controller
-      - service-controller
-      - route-controller
+    - coordination.k8s.io
     resources:
-      - serviceaccounts/token
+    - leases
     verbs:
-      - create
+    - create
+    - get
+    - list
+    - watch
+    - update
+  - apiGroups:
+    - ""
+    resources:
+    - serviceaccounts/token
+    verbs:
+    - create
 ---
+# Source: aws-cloud-controller-manager/templates/cluserrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: system:cloud-controller-manager
+roleRef:
+  kind: ClusterRole
+  name: system:cloud-controller-manager
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+- apiGroup: ""
+  kind: ServiceAccount
+  name: cloud-controller-manager
+  namespace: kube-system
+---
+# Source: aws-cloud-controller-manager/templates/rolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -96,64 +119,52 @@ roleRef:
   kind: Role
   name: extension-apiserver-authentication-reader
 subjects:
-  - apiGroup: ""
-    kind: ServiceAccount
-    name: cloud-controller-manager
-    namespace: kube-system
+- apiGroup: ""
+  kind: ServiceAccount
+  name: cloud-controller-manager
+  namespace: kube-system
 ---
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: system:cloud-controller-manager
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: system:cloud-controller-manager
-subjects:
-  - apiGroup: ""
-    kind: ServiceAccount
-    name: cloud-controller-manager
-    namespace: kube-system
----
+# Source: aws-cloud-controller-manager/templates/daemonset.yaml
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  labels:
-    k8s-app: aws-cloud-controller-manager
   name: aws-cloud-controller-manager
+  labels:
+    k8s-app:  aws-cloud-controller-manager
   namespace: kube-system
 spec:
   selector:
     matchLabels:
       k8s-app: aws-cloud-controller-manager
+  updateStrategy:
+    type: RollingUpdate
   template:
     metadata:
+      name: aws-cloud-controller-manager
       labels:
         k8s-app: aws-cloud-controller-manager
     spec:
-      containers:
-        - args:
-            - --cluster-name={{ .Config.Name }}
-            - --cloud-provider=aws
-            - --use-service-account-credentials=false
-            - --configure-cloud-routes=false
-            - --v=2
-          image: "{{ .InternalImages.Get "AwsCCM" }}"
-          name: aws-cloud-controller-manager
-          resources:
-            requests:
-              cpu: 200m
-      hostNetwork: true
-      nodeSelector:
-        node-role.kubernetes.io/control-plane: ""
-      serviceAccountName: cloud-controller-manager
       tolerations:
         - effect: NoSchedule
           key: node.cloudprovider.kubernetes.io/uninitialized
           value: "true"
         - effect: NoSchedule
-          key: node-role.kubernetes.io/control-plane
-        - effect: NoSchedule
           key: node-role.kubernetes.io/master
-  updateStrategy:
-    type: RollingUpdate
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/control-plane
+      nodeSelector:
+        node-role.kubernetes.io/control-plane: ""
+      priorityClassName: system-node-critical
+      serviceAccountName: cloud-controller-manager
+      containers:
+        - name: aws-cloud-controller-manager
+          image: "{{ .InternalImages.Get "AwsCCM" }}"
+          args:
+            - --cluster-name={{ .Config.Name }}
+            - --cloud-provider=aws
+            - --use-service-account-credentials=false
+            - --configure-cloud-routes=false
+            - --v=2
+          resources:
+            requests:
+              cpu: 200m
