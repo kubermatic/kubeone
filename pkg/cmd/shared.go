@@ -44,6 +44,7 @@ type globalOptions struct {
 	CredentialsFile string `longflag:"credentials" shortflag:"c"`
 	Verbose         bool   `longflag:"verbose" shortflag:"v"`
 	Debug           bool   `longflag:"debug" shortflag:"d"`
+	LogFormat       string `longflag:"log-format" shortflag:"l"`
 }
 
 func (opts *globalOptions) BuildState() (*state.State, error) {
@@ -53,7 +54,7 @@ func (opts *globalOptions) BuildState() (*state.State, error) {
 		return nil, err
 	}
 
-	s.Logger = newLogger(opts.Verbose)
+	s.Logger = newLogger(opts.Verbose, opts.LogFormat)
 
 	cluster, err := loadClusterConfig(opts.ManifestFile, opts.TerraformState, opts.CredentialsFile, s.Logger)
 	if err != nil {
@@ -133,14 +134,28 @@ func persistentGlobalOptions(fs *pflag.FlagSet) (*globalOptions, error) {
 	}
 	gf.CredentialsFile = creds
 
+	logFormat, err := fs.GetString(longFlagName(gf, "LogFormat"))
+	if err != nil {
+		return nil, fail.Runtime(err, "getting global flags")
+	}
+	gf.LogFormat = logFormat
+
 	return gf, nil
 }
 
-func newLogger(verbose bool) *logrus.Logger {
+func newLogger(verbose bool, format string) *logrus.Logger {
 	logger := logrus.New()
-	logger.Formatter = &logrus.TextFormatter{
-		FullTimestamp:   true,
-		TimestampFormat: "15:04:05 MST",
+
+	switch format {
+	case "json":
+		logger.Formatter = &logrus.JSONFormatter{
+			TimestampFormat: "15:04:05 MST",
+		}
+	default:
+		logger.Formatter = &logrus.TextFormatter{
+			FullTimestamp:   true,
+			TimestampFormat: "15:04:05 MST",
+		}
 	}
 
 	if verbose {

@@ -63,7 +63,7 @@ func configDumpCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 }
 
 func dumpConfig(opts *configDumpOpts) error {
-	logger := newLogger(opts.Verbose)
+	logger := newLogger(opts.Verbose, opts.LogFormat)
 
 	// Read the TypeMeta. We need the API version, so we can convert the
 	// internal representation to the original API version.

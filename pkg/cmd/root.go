@@ -115,6 +115,12 @@ func newRoot() *cobra.Command {
 		false,
 		"debug output with stacktrace")
 
+	fs.StringVarP(&opts.LogFormat,
+		longFlagName(opts, "LogFormat"),
+		shortFlagName(opts, "LogFormat"),
+		"text",
+		"format for logging")
+
 	rootCmd.AddCommand(
 		applyCmd(fs),
 		addonsCmd(fs),
