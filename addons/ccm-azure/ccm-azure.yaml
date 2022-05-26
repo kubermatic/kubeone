@@ -142,6 +142,7 @@ spec:
   replicas: 1
   selector:
     matchLabels:
+      tier: control-plane
       component: azure-cloud-controller-manager
   strategy:
     type: Recreate
@@ -150,28 +151,26 @@ spec:
       name: azure-cloud-controller-manager
       namespace: kube-system
       labels:
+        tier: control-plane
         component: azure-cloud-controller-manager
     spec:
       priorityClassName: system-node-critical
       hostNetwork: true
       serviceAccountName: cloud-controller-manager
-      tolerations:
-        - key: node-role.kubernetes.io/control-plane
-          effect: NoSchedule
-        - key: node-role.kubernetes.io/master
-          effect: NoSchedule
-        - key: "node.cloudprovider.kubernetes.io/uninitialized"
-          value: "true"
-          effect: "NoSchedule"
       nodeSelector:
         node-role.kubernetes.io/control-plane: ""
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
+        - key: node-role.kubernetes.io/control-plane
+          effect: NoSchedule
       containers:
         - name: cloud-controller-manager
           image: "{{ .InternalImages.Get "AzureCCM" }}"
           imagePullPolicy: IfNotPresent
           command: ["cloud-controller-manager"]
           args:
-            - "--allocate-node-cidrs=true"
+            - "--allocate-node-cidrs=true" # "false" for Azure CNI and "true" for other network plugins
             - "--cloud-config=/etc/kubernetes/cloud-config"
             - "--cloud-provider=azure"
             - "--cluster-cidr={{.Config.ClusterNetwork.PodSubnet }}"
@@ -180,7 +179,7 @@ spec:
             - "--configure-cloud-routes=true" # "false" for Azure CNI and "true" for other network plugins
             - "--leader-elect=true"
             - "--route-reconciliation-period=10s"
-            - "--v=2"
+            - "--v=4"
             - "--port=10267"
           resources:
             requests:
@@ -235,12 +234,12 @@ metadata:
     kubernetes.io/cluster-service: "true"
     addonmanager.kubernetes.io/mode: Reconcile
 rules:
-  - apiGroups: [""]
-    resources: ["nodes"]
-    verbs: ["watch", "list", "get", "update", "patch"]
-  - apiGroups: [""]
-    resources: ["nodes/status"]
-    verbs: ["patch"]
+- apiGroups: [""]
+  resources: ["nodes"]
+  verbs: ["watch","list","get","update", "patch"]
+- apiGroups: [""]
+  resources: ["nodes/status"]
+  verbs: ["patch"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -255,9 +254,9 @@ roleRef:
   kind: ClusterRole
   name: cloud-node-manager
 subjects:
-  - kind: ServiceAccount
-    name: cloud-node-manager
-    namespace: kube-system
+- kind: ServiceAccount
+  name: cloud-node-manager
+  namespace: kube-system
 ---
 apiVersion: apps/v1
 kind: DaemonSet
@@ -281,41 +280,41 @@ spec:
     spec:
       priorityClassName: system-node-critical
       serviceAccountName: cloud-node-manager
-      hostNetwork: true # required to fetch correct hostname
+      hostNetwork: true   # required to fetch correct hostname
       nodeSelector:
         kubernetes.io/os: linux
       tolerations:
-        - key: CriticalAddonsOnly
-          operator: Exists
-        - key: node-role.kubernetes.io/control-plane
-          operator: Exists
-          effect: NoSchedule
-        - key: node-role.kubernetes.io/master
-          operator: Exists
-          effect: NoSchedule
-        - operator: "Exists"
-          effect: NoExecute
-        - operator: "Exists"
-          effect: NoSchedule
+      - key: CriticalAddonsOnly
+        operator: Exists
+      - key: node-role.kubernetes.io/master
+        operator: Equal
+        value: "true"
+        effect: NoSchedule
+      - key: node-role.kubernetes.io/control-plane
+        operator: Equal
+        value: "true"
+        effect: NoSchedule
+      - operator: "Exists"
+        effect: NoExecute
+      - operator: "Exists"
+        effect: NoSchedule
       containers:
-        - name: cloud-node-manager
-          image: "{{ .InternalImages.Get "AzureCNM" }}"
-          imagePullPolicy: IfNotPresent
-          command:
-            - cloud-node-manager
-            - --node-name=$(NODE_NAME)
-            {{ if ge $version.Minor 20 }}
-            - --wait-routes=true # only set to true when --configure-cloud-routes=true in cloud-controller-manager.
-            {{ end }}
-          env:
-            - name: NODE_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: spec.nodeName
-          resources:
-            requests:
-              cpu: 50m
-              memory: 50Mi
-            limits:
-              cpu: 2000m
-              memory: 512Mi
+      - name: cloud-node-manager
+        image: "{{ .InternalImages.Get "AzureCNM" }}"
+        imagePullPolicy: IfNotPresent
+        command:
+        - cloud-node-manager
+        - --node-name=$(NODE_NAME)
+        - --wait-routes=true   # only set to true when --configure-cloud-routes=true in cloud-controller-manager.
+        env:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        resources:
+          requests:
+            cpu: 50m
+            memory: 50Mi
+          limits:
+            cpu: 2000m
+            memory: 512Mi
