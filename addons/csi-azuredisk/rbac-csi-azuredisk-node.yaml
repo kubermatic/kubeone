@@ -10,11 +10,13 @@ kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: csi-azuredisk-node-secret-role
-  namespace: kube-system
 rules:
   - apiGroups: [""]
     resources: ["secrets"]
     verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["get"]
 
 ---
 kind: ClusterRoleBinding

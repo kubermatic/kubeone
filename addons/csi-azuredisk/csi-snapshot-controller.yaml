@@ -7,7 +7,7 @@ metadata:
   labels:
     app: csi-snapshot-controller
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: csi-snapshot-controller
@@ -22,20 +22,22 @@ spec:
       priorityClassName: system-cluster-critical
       tolerations:
         - key: "node-role.kubernetes.io/master"
-          operator: "Exists"
+          operator: "Equal"
+          value: "true"
           effect: "NoSchedule"
         - key: "node-role.kubernetes.io/control-plane"
-          operator: "Exists"
+          operator: "Equal"
+          value: "true"
           effect: "NoSchedule"
       containers:
         - name: csi-snapshot-controller
           image: "{{ .InternalImages.Get "AzureDiskCSISnapshotterController" }}"
           args:
             - "--v=2"
-            - "--leader-election=false"
+            - "--leader-election=true"
+            - "--leader-election-namespace=kube-system"
           resources:
             limits:
-              cpu: 100m
               memory: 100Mi
             requests:
               cpu: 10m

@@ -4,11 +4,12 @@ kind: CSIDriver
 metadata:
   name: file.csi.azure.com
   annotations:
-    csiDriver: v1.7.0
-    snapshot: v3.0.3
+    csiDriver: v1.18.0
+    snapshot: v5.0.1
 spec:
   attachRequired: false
   podInfoOnMount: true
   volumeLifecycleModes:
     - Persistent
     - Ephemeral
+  fsGroupPolicy: ReadWriteOnceWithFSType

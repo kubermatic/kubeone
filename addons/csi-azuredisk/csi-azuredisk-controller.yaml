@@ -25,6 +25,9 @@ spec:
         - key: "node-role.kubernetes.io/master"
           operator: "Exists"
           effect: "NoSchedule"
+        - key: "node-role.kubernetes.io/controlplane"
+          operator: "Exists"
+          effect: "NoSchedule"
         - key: "node-role.kubernetes.io/control-plane"
           operator: "Exists"
           effect: "NoSchedule"
@@ -37,6 +40,7 @@ spec:
             - "--v=2"
             - "--timeout=15s"
             - "--leader-election"
+            - "--leader-election-namespace=kube-system"
             - "--worker-threads=40"
             - "--extra-create-metadata=true"
             - "--strict-topology=true"
@@ -59,6 +63,7 @@ spec:
             - "-csi-address=$(ADDRESS)"
             - "-timeout=600s"
             - "-leader-election"
+            - "--leader-election-namespace=kube-system"
             - "-worker-threads=500"
           env:
             - name: ADDRESS
@@ -77,6 +82,7 @@ spec:
           args:
             - "-csi-address=$(ADDRESS)"
             - "-leader-election"
+            - "--leader-election-namespace=kube-system"
             - "--v=2"
           env:
             - name: ADDRESS
@@ -96,8 +102,10 @@ spec:
             - "-csi-address=$(ADDRESS)"
             - "-v=2"
             - "-leader-election"
+            - "--leader-election-namespace=kube-system"
             - '-handle-volume-inuse-error=false'
-            - "-timeout=60s"
+            - '-feature-gates=RecoverVolumeExpansionFailure=true'
+            - "-timeout=240s"
           env:
             - name: ADDRESS
               value: /csi/csi.sock
@@ -134,7 +142,8 @@ spec:
             - "--endpoint=$(CSI_ENDPOINT)"
             - "--metrics-address=0.0.0.0:29604"
             - "--user-agent-suffix=OSS-kubectl"
-            - "--disable-avset-nodes=true"
+            - "--disable-avset-nodes=false"
+            - "--allow-empty-cloud-config=false"
             - "--cloud-config-secret-name=cloud-config"
             - "--cloud-config-secret-namespace=kube-system"
           ports:
