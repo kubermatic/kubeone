@@ -48,7 +48,7 @@ spec:
             - "--cloud-provider=equinixmetal"
             - "--leader-elect=false"
             - "--authentication-skip-lookup=true"
-            - "--provider-config=/etc/cloud-sa/cloud-sa.json"
+            - "--cloud-config=/etc/cloud-sa/cloud-sa.json"
           resources:
             requests:
               cpu: 100m
