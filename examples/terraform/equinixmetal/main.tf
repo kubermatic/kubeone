@@ -43,7 +43,7 @@ resource "metal_device" "lb" {
   depends_on = [metal_ssh_key.deployer]
 
   hostname         = "${var.cluster_name}-lb"
-  plan             = "t1.small.x86"
+  plan             = var.lb_device_type
   facilities       = [var.facility]
   operating_system = var.lb_operating_system
   billing_cycle    = "hourly"
