@@ -30,6 +30,7 @@ type scenarioUpgrade struct {
 	manifestTemplatePath string
 	versions             []string
 	infra                Infra
+	install              *scenarioInstall
 }
 
 func (scenario scenarioUpgrade) Title() string { return titleize(scenario.name) }
@@ -45,23 +46,25 @@ func (scenario *scenarioUpgrade) SetVersions(versions ...string) {
 func (scenario *scenarioUpgrade) Run(t *testing.T) {
 	t.Helper()
 
-	install := scenarioInstall{
+	scenario.install = &scenarioInstall{
 		name:                 scenario.name,
 		manifestTemplatePath: scenario.manifestTemplatePath,
 		infra:                scenario.infra,
 		versions:             scenario.versions,
 	}
 
-	install.install(t)
+	scenario.install.install(t)
 	scenario.upgrade(t)
 	scenario.test(t)
 }
 
 func (scenario *scenarioUpgrade) upgrade(t *testing.T) {
-	// TODO: add upgrade logic
+	t.Helper()
 }
 
 func (scenario *scenarioUpgrade) test(t *testing.T) {
+	t.Helper()
+
 	// TODO: add some testings
 }
 

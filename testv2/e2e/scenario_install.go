@@ -47,11 +47,14 @@ func (scenario *scenarioInstall) SetVersions(versions ...string) {
 }
 
 func (scenario *scenarioInstall) Run(t *testing.T) {
+	t.Helper()
+
 	scenario.install(t)
 	scenario.test(t)
 }
 
 func (scenario *scenarioInstall) test(t *testing.T) {
+	t.Helper()
 	// TODO: add some testings
 }
 
@@ -76,6 +79,8 @@ func (scenario *scenarioInstall) renderedManifest(t *testing.T) string {
 }
 
 func (scenario *scenarioInstall) kubeoneBin(t *testing.T) *kubeoneBin {
+	t.Helper()
+
 	return &kubeoneBin{
 		bin:          "kubeone",
 		dir:          scenario.infra.terraform.path,
@@ -145,7 +150,7 @@ func (scenario *scenarioInstall) install(t *testing.T) {
 		return nil
 	}
 
-	if err := retryFn(fetchKubeconfig); err != nil {
+	if err = retryFn(fetchKubeconfig); err != nil {
 		t.Fatalf("kubeone kubeconfig failed: %v", err)
 	}
 

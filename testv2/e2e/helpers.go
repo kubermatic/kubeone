@@ -27,6 +27,8 @@ import (
 	"time"
 
 	"github.com/Masterminds/semver/v3"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -46,7 +48,8 @@ const (
 func titleize(s string) string {
 	s = strings.ReplaceAll(s, "_", " ")
 	s = strings.ReplaceAll(s, ".", "_")
-	s = strings.Title(s)
+	s = cases.Title(language.English).String(s)
+
 	return strings.ReplaceAll(s, " ", "")
 }
 
@@ -95,7 +98,7 @@ func renderManifest(tmpDir, templatePath string, data manifestData) (string, err
 		"required": requiredTemplateFunc,
 	})
 
-	if err := tpl.Execute(&buf, data); err != nil {
+	if err = tpl.Execute(&buf, data); err != nil {
 		return "", err
 	}
 

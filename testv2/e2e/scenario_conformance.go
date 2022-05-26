@@ -55,5 +55,6 @@ func (scenario *scenarioConformance) Run(t *testing.T) {
 }
 
 func (scenario *scenarioConformance) test(t *testing.T) {
+	t.Helper()
 	// TODO: add sonobuoy test launch
 }

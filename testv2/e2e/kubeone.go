@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"os"
 
-	"k8c.io/kubeone/pkg/apis/kubeone"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/test/e2e/testutil"
 
 	"sigs.k8s.io/yaml"
@@ -71,7 +71,7 @@ func (k1 *kubeoneBin) Reset() error {
 	return k1.run("reset", "--auto-approve", "--destroy-workers", "--remove-binaries")
 }
 
-func (k1 *kubeoneBin) Manifest() (*kubeone.KubeOneCluster, error) {
+func (k1 *kubeoneBin) Manifest() (*kubeoneapi.KubeOneCluster, error) {
 	var buf bytes.Buffer
 
 	args := k1.globalFlags()
@@ -82,7 +82,7 @@ func (k1 *kubeoneBin) Manifest() (*kubeone.KubeOneCluster, error) {
 		return nil, fmt.Errorf("rendering manifest failed: %w", err)
 	}
 
-	var k1Manifest kubeone.KubeOneCluster
+	var k1Manifest kubeoneapi.KubeOneCluster
 	err := yaml.UnmarshalStrict(buf.Bytes(), &k1Manifest)
 
 	return &k1Manifest, err
