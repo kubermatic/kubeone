@@ -50,13 +50,19 @@ type Exec struct {
 	Env     []string
 	Stderr  io.Writer
 	Stdout  io.Writer
+
+	dryRun bool
 }
 
 func (e *Exec) Run() error {
 	cmd := e.build()
 
 	if e.Logf != nil {
-		e.Logf("%v", cmd.Args)
+		e.Logf("in dir: %s, %v", e.Cwd, cmd.Args)
+	}
+
+	if e.dryRun {
+		return nil
 	}
 
 	return cmd.Run()
@@ -145,6 +151,14 @@ func WithEnvs(envs ...string) ExecOpt {
 	}
 }
 
+func WithDryRun() ExecOpt {
+	return func(e *Exec) *Exec {
+		e.dryRun = true
+
+		return e
+	}
+}
+
 func LogFunc(logf func(string, ...interface{})) ExecOpt {
 	return func(e *Exec) *Exec {
 		e.Logf = logf
@@ -155,7 +169,7 @@ func LogFunc(logf func(string, ...interface{})) ExecOpt {
 
 func DebugTo(w io.Writer) ExecOpt {
 	return LogFunc(func(format string, a ...interface{}) {
-		fmt.Fprintf(w, "\n +"+format+"\n", a)
+		fmt.Fprintf(w, "\n +"+format+"\n", a...)
 	})
 }
 
