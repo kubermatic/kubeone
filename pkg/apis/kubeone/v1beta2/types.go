@@ -248,6 +248,8 @@ type CloudProviderSpec struct {
 	Openstack *OpenstackSpec `json:"openstack,omitempty"`
 	// Equinix Metal
 	EquinixMetal *EquinixMetalSpec `json:"equinixmetal,omitempty"`
+	// VMware Cloud Director
+	VMwareCloudDirector *VMwareCloudDirectorSpec `json:"vmwareCloudDirector,omitempty"`
 	// Vsphere
 	Vsphere *VsphereSpec `json:"vsphere,omitempty"`
 	// None
@@ -280,6 +282,9 @@ type OpenstackSpec struct{}
 
 // EquinixMetalSpec defines the Equinix Metal cloud provider
 type EquinixMetalSpec struct{}
+
+// VMwareCloudDirectorSpec defines the VMware Cloud Director provider
+type VMwareCloudDirectorSpec struct{}
 
 // VsphereSpec defines the vSphere provider
 type VsphereSpec struct{}

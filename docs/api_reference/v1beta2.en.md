@@ -59,6 +59,7 @@ weight = 11
 * [StaticAuditLogConfig](#staticauditlogconfig)
 * [StaticWorkersConfig](#staticworkersconfig)
 * [SystemPackages](#systempackages)
+* [VMwareCloudDirectorSpec](#vmwareclouddirectorspec)
 * [VersionConfig](#versionconfig)
 * [VsphereSpec](#vspherespec)
 * [WeaveNetSpec](#weavenetspec)
@@ -180,6 +181,7 @@ Only one cloud provider must be defined at the single time.
 | nutanix | Nutanix | *[NutanixSpec](#nutanixspec) | false |
 | openstack | Openstack | *[OpenstackSpec](#openstackspec) | false |
 | equinixmetal | Equinix Metal | *[EquinixMetalSpec](#equinixmetalspec) | false |
+| vmwareCloudDirector | VMware Cloud Director | *[VMwareCloudDirectorSpec](#vmwareclouddirectorspec) | false |
 | vsphere | Vsphere | *[VsphereSpec](#vspherespec) | false |
 | none | None | *[NoneSpec](#nonespec) | false |
 
@@ -710,6 +712,15 @@ SystemPackages controls configurations of APT/YUM
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | configureRepositories | ConfigureRepositories (true by default) is a flag to control automatic configuration of kubeadm / docker repositories. | bool | false |
+
+[Back to Group](#v1beta2)
+
+### VMwareCloudDirectorSpec
+
+VMwareCloudDirectorSpec defines the VMware Cloud Director provider
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
 
 [Back to Group](#v1beta2)
 

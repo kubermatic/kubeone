@@ -514,6 +514,13 @@ func TestValidateCloudProviderSpec(t *testing.T) {
 			expectedError: false,
 		},
 		{
+			name: "valid VMware Cloud Director provider config",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				VMwareCloudDirector: &kubeoneapi.VMwareCloudDirectorSpec{},
+			},
+			expectedError: false,
+		},
+		{
 			name: "valid vSphere provider config",
 			providerConfig: kubeoneapi.CloudProviderSpec{
 				Vsphere:     &kubeoneapi.VsphereSpec{},

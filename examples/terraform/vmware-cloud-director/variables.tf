@@ -125,7 +125,7 @@ variable "control_plane_disk_size" {
 
 variable "control_plane_disk_storage_profile" {
   description = "Name of storage profile to use for disks"
-  default     = "Intermediate"
+  default     = ""
   type        = string
 }
 
@@ -154,10 +154,31 @@ variable "network_interface_type" {
   }
 }
 
-variable "network_subnet" {
-  description = "Subnet for the routed network specified using CIDR notation"
-  default     = "192.168.1.0/24"
+variable "gateway_ip" {
+  description = "Gateway IP for the routed network"
+  default     = "192.168.1.1"
   type        = string
+}
+
+variable "dhcp_start_address" {
+  description = "Starting address for the DHCP IP Pool range"
+  default     = "192.168.1.2"
+  type        = string
+
+  validation {
+    condition     = can(regex("^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$", var.dhcp_start_address))
+    error_message = "Invalid DHCP start address."
+  }
+}
+
+variable "dhcp_end_address" {
+  description = "Last address for the DHCP IP Pool range"
+  default     = "192.168.1.50"
+  type        = string
+  validation {
+    condition     = can(regex("^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$", var.dhcp_end_address))
+    error_message = "Invalid DHCP end address."
+  }
 }
 
 variable "network_dns_server_1" {
@@ -178,4 +199,53 @@ variable "network_dns_server_2" {
     condition     = length(var.network_dns_server_2) == 0 || can(regex("^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$", var.network_dns_server_2))
     error_message = "Invalid DNS server provided."
   }
+}
+
+variable "initial_machinedeployment_replicas" {
+  default     = 1
+  description = "number of replicas per MachineDeployment"
+  type        = number
+}
+
+variable "worker_os" {
+  description = "OS to run on worker machines"
+
+  # valid choices are:
+  # * ubuntu
+  # * flatcar
+  default = "ubuntu"
+  type    = string
+  validation {
+    condition     = can(regex("^ubuntu$|^flatcar$", var.worker_os))
+    error_message = "Unsupported OS specified for worker machines."
+  }
+}
+variable "worker_memory" {
+  description = "Memory size of each worker VM in MB"
+  default     = 4096
+  type        = number
+}
+
+variable "worker_cpus" {
+  description = "Number of CPUs for the worker VMs"
+  default     = 2
+  type        = number
+}
+
+variable "worker_cpu_cores" {
+  description = "Number of cores per socket for the worker VMs"
+  default     = 1
+  type        = number
+}
+
+variable "worker_disk_size" {
+  description = "Disk size for worker VMs in MB"
+  default     = 51200 # 50 GiB
+  type        = number
+}
+
+variable "worker_disk_storage_profile" {
+  description = "Name of storage profile to use for worker VMs attached disks"
+  default     = ""
+  type        = string
 }

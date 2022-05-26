@@ -279,6 +279,8 @@ func (p CloudProviderSpec) CloudProviderName() string {
 		return "equinixmetal"
 	case p.Vsphere != nil:
 		return "vsphere"
+	case p.VMwareCloudDirector != nil:
+		return "vmware-cloud-director"
 	case p.None != nil:
 		return "none"
 	}

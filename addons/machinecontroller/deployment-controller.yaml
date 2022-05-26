@@ -68,6 +68,9 @@ spec:
             {{ if .OperatingSystemManagerEnabled -}}
             - -use-osm
             {{ end -}}
+            {{ if .Config.CloudProvider.External }}
+            - -node-external-cloud-provider
+            {{ end }}
             - -node-kubelet-repository={{ .Resources.KubeletImageRepository }}
             - -node-pause-image={{ .InternalImages.Get "PauseImage" }}
           env:

@@ -43,11 +43,11 @@ resource "vcd_network_routed" "network" {
 
   interface_type = var.network_interface_type
 
-  gateway = cidrhost(var.network_subnet, 1)
+  gateway = var.gateway_ip
 
   dhcp_pool {
-    start_address = cidrhost(var.network_subnet, 2)
-    end_address   = cidrhost(var.network_subnet, 50)
+    start_address = var.dhcp_start_address
+    end_address   = var.dhcp_end_address
   }
 
   dns1 = var.network_dns_server_1
@@ -81,8 +81,8 @@ resource "vcd_vapp_org_network" "network" {
 resource "vcd_vapp_vm" "control_plane" {
   count         = 3
   vapp_name     = vcd_vapp.cluster.name
-  name          = "${var.cluster_name}-master-${count.index + 1}"
-  computer_name = "${var.cluster_name}-master-${count.index + 1}"
+  name          = "${var.cluster_name}-cp-${count.index + 1}"
+  computer_name = "${var.cluster_name}-cp-${count.index + 1}"
 
   metadata = {
     provisioner  = "Kubeone"
@@ -91,8 +91,8 @@ resource "vcd_vapp_vm" "control_plane" {
   }
 
   guest_properties = {
-    "instance-id" = "${var.cluster_name}-master-${count.index + 1}"
-    "hostname"    = "${var.cluster_name}-master-${count.index + 1}"
+    "instance-id" = "${var.cluster_name}-cp-${count.index + 1}"
+    "hostname"    = "${var.cluster_name}-cp-${count.index + 1}"
     "public-keys" = file(var.ssh_public_key_file)
   }
 
@@ -196,7 +196,7 @@ resource "vcd_nsxv_snat" "rule_internet" {
   network_type = "ext"
   network_name = local.external_network
 
-  original_address   = var.network_subnet
+  original_address   = "${var.gateway_ip}/24"
   translated_address = local.public_ip
 }
 
@@ -250,8 +250,8 @@ resource "vcd_lb_service_monitor" "lb_monitor" {
   name        = "${var.cluster_name}-control-plane-monitor"
   interval    = 15
   timeout     = 20
-  max_retries = 3
-  type        = "http"
+  max_retries = 5
+  type        = "https"
   method      = "GET"
   url         = "/healthz"
 }
@@ -285,13 +285,13 @@ resource "vcd_lb_virtual_server" "lb" {
   ip_address     = local.public_ip
   protocol       = "tcp"
   port           = 6443
+  enable_acceleration = true
   app_profile_id = vcd_lb_app_profile.app_profile.id
   server_pool_id = vcd_lb_server_pool.control_plane.id
 }
 
 # Create the firewall rule to allow access to API server
 resource "vcd_nsxv_firewall_rule" "rule_kube_apiserver" {
-  count        = var.expose_kube_apiserver ? 1 : 0
   edge_gateway = data.vcd_edgegateway.edge_gateway.name
   name         = "${var.cluster_name}-firewall-rule-kube-apiserver"
 

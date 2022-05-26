@@ -186,3 +186,30 @@ type AzureImageReference struct {
 	Sku       string `json:"sku,omitempty"`
 	Version   string `json:"version,omitempty"`
 }
+
+// VMWareCloudDirectorSpec represents VMware Cloud Director specific configuration.
+type VMWareCloudDirectorSpec struct {
+	// Provider configuration.
+	Organization string `json:"organization"`
+	VDC          string `json:"vdc"`
+
+	// VM configuration.
+	VApp     string `json:"vapp"`
+	Template string `json:"template"`
+	Catalog  string `json:"catalog"`
+
+	// Network configuration.
+	Network string `json:"network"`
+
+	// Compute configuration.
+	CPUs     int64 `json:"cpus"`
+	CPUCores int64 `json:"cpuCores"`
+	MemoryMB int64 `json:"memoryMB"`
+
+	// Storage configuration.
+	DiskSizeGB     *int64  `json:"diskSizeGB,omitempty"`
+	StorageProfile *string `json:"storageProfile,omitempty"`
+
+	// Metadata configuration.
+	Metadata *map[string]string `json:"metadata,omitempty"`
+}

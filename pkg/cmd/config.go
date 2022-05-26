@@ -328,6 +328,9 @@ func createAndPrintManifest(printOptions *printOpts) error {
 	case "equinixmetal":
 		cfg.Set(yamled.Path{"cloudProvider", "equinixmetal"}, providerVal)
 		cfg.Set(yamled.Path{"cloudProvider", "external"}, true)
+	case "vmware-cloud-director":
+		cfg.Set(yamled.Path{"cloudProvider", "vmware-cloud-director"}, providerVal)
+		cfg.Set(yamled.Path{"cloudProvider", "external"}, true)
 	case "vsphere":
 		cfg.Set(yamled.Path{"cloudProvider", "vsphere"}, providerVal)
 		cfg.Set(yamled.Path{"cloudProvider", "cloudConfig"}, "<< cloudConfig is required for vSphere >>\n")
