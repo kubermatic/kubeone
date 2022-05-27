@@ -1,7 +1,7 @@
 # This YAML file contains driver-registrar & csi driver nodeplugin API objects,
 # which are necessary to run csi nodeplugin for cinder.
 {{ $version := semver .Config.Versions.Kubernetes }}
-
+---
 kind: DaemonSet
 apiVersion: apps/v1
 metadata:
@@ -22,7 +22,7 @@ spec:
       hostNetwork: true
       containers:
         - name: node-driver-registrar
-          image: {{ .InternalImages.Get "CSINodeDriverRegistar" }}
+          image: {{ .InternalImages.Get "OpenstackCSINodeDriverRegistar" }}
           args:
             - "--csi-address=$(ADDRESS)"
             - "--kubelet-registration-path=$(DRIVER_REG_SOCK_PATH)"
@@ -49,7 +49,7 @@ spec:
             - name: registration-dir
               mountPath: /registration
         - name: liveness-probe
-          image: {{ .InternalImages.Get "CSILivenessProbe" }}
+          image: {{ .InternalImages.Get "OpenstackCSILivenessProbe" }}
           args:
             - --csi-address=/csi/csi.sock
           volumeMounts:

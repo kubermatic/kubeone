@@ -76,24 +76,30 @@ func _() {
 	_ = x[DigitalOceanCSISnapshotController-66]
 	_ = x[DigitalOceanCSISnapshotValidationWebhook-67]
 	_ = x[DigitalOceanCSISnapshotter-68]
-	_ = x[DigitaloceanCCM-69]
-	_ = x[HetznerCCM-70]
-	_ = x[HetznerCSI-71]
-	_ = x[OpenstackCCM-72]
-	_ = x[OpenstackCSI-73]
-	_ = x[EquinixMetalCCM-74]
-	_ = x[VsphereCCM-75]
-	_ = x[VsphereCSIDriver-76]
-	_ = x[VsphereCSISyncer-77]
-	_ = x[VsphereCSIProvisioner-78]
-	_ = x[CalicoVXLANCNI-79]
-	_ = x[CalicoVXLANController-80]
-	_ = x[CalicoVXLANNode-81]
+	_ = x[OpenstackCSI-69]
+	_ = x[OpenstackCSINodeDriverRegistar-70]
+	_ = x[OpenstackCSILivenessProbe-71]
+	_ = x[OpenstackCSIAttacher-72]
+	_ = x[OpenstackCSIProvisioner-73]
+	_ = x[OpenstackCSIResizer-74]
+	_ = x[OpenstackCSISnapshotter-75]
+	_ = x[DigitaloceanCCM-76]
+	_ = x[HetznerCCM-77]
+	_ = x[HetznerCSI-78]
+	_ = x[OpenstackCCM-79]
+	_ = x[EquinixMetalCCM-80]
+	_ = x[VsphereCCM-81]
+	_ = x[VsphereCSIDriver-82]
+	_ = x[VsphereCSISyncer-83]
+	_ = x[VsphereCSIProvisioner-84]
+	_ = x[CalicoVXLANCNI-85]
+	_ = x[CalicoVXLANController-86]
+	_ = x[CalicoVXLANNode-87]
 }
 
-const _Resource_name = "CalicoCNICalicoControllerCalicoNodeFlannelCiliumCiliumOperatorHubbleRelayHubbleUIHubbleUIBackendHubbleProxyCiliumCertGenWeaveNetCNIKubeWeaveNetCNINPCDNSNodeCacheMachineControllerMetricsServerOperatingSystemManagerClusterAutoscalerCSIAttacherCSINodeDriverRegistarCSIProvisionerCSISnapshotterCSIResizerCSILivenessProbeAwsCCMAzureCCMAzureCNMAwsEbsCSIAwsEbsCSIAttacherAwsEbsCSILivenessProbeAwsEbsCSINodeDriverRegistrarAwsEbsCSIProvisionerAwsEbsCSIResizerAwsEbsCSISnapshotterAwsEbsCSISnapshotControllerAzureFileCSIAzureFileCSIAttacherAzureFileCSILivenessProbeAzureFileCSINodeDriverRegistarAzureFileCSIProvisionerAzureFileCSIResizerAzureFileCSISnapshotterAzureFileCSISnapshotterControllerAzureDiskCSIAzureDiskCSIAttacherAzureDiskCSILivenessProbeAzureDiskCSINodeDriverRegistarAzureDiskCSIProvisionerAzureDiskCSIResizerAzureDiskCSISnapshotterAzureDiskCSISnapshotterControllerNutanixCSILivenessProbeNutanixCSINutanixCSIProvisionerNutanixCSIRegistrarNutanixCSIResizerNutanixCSISnapshotterNutanixCSISnapshotControllerNutanixCSISnapshotValidationWebhookDigitalOceanCSIDigitalOceanCSIAlpineDigitalOceanCSIAttacherDigitalOceanCSINodeDriverRegistarDigitalOceanCSIProvisionerDigitalOceanCSIResizerDigitalOceanCSISnapshotControllerDigitalOceanCSISnapshotValidationWebhookDigitalOceanCSISnapshotterDigitaloceanCCMHetznerCCMHetznerCSIOpenstackCCMOpenstackCSIEquinixMetalCCMVsphereCCMVsphereCSIDriverVsphereCSISyncerVsphereCSIProvisionerCalicoVXLANCNICalicoVXLANControllerCalicoVXLANNode"
+const _Resource_name = "CalicoCNICalicoControllerCalicoNodeFlannelCiliumCiliumOperatorHubbleRelayHubbleUIHubbleUIBackendHubbleProxyCiliumCertGenWeaveNetCNIKubeWeaveNetCNINPCDNSNodeCacheMachineControllerMetricsServerOperatingSystemManagerClusterAutoscalerCSIAttacherCSINodeDriverRegistarCSIProvisionerCSISnapshotterCSIResizerCSILivenessProbeAwsCCMAzureCCMAzureCNMAwsEbsCSIAwsEbsCSIAttacherAwsEbsCSILivenessProbeAwsEbsCSINodeDriverRegistrarAwsEbsCSIProvisionerAwsEbsCSIResizerAwsEbsCSISnapshotterAwsEbsCSISnapshotControllerAzureFileCSIAzureFileCSIAttacherAzureFileCSILivenessProbeAzureFileCSINodeDriverRegistarAzureFileCSIProvisionerAzureFileCSIResizerAzureFileCSISnapshotterAzureFileCSISnapshotterControllerAzureDiskCSIAzureDiskCSIAttacherAzureDiskCSILivenessProbeAzureDiskCSINodeDriverRegistarAzureDiskCSIProvisionerAzureDiskCSIResizerAzureDiskCSISnapshotterAzureDiskCSISnapshotterControllerNutanixCSILivenessProbeNutanixCSINutanixCSIProvisionerNutanixCSIRegistrarNutanixCSIResizerNutanixCSISnapshotterNutanixCSISnapshotControllerNutanixCSISnapshotValidationWebhookDigitalOceanCSIDigitalOceanCSIAlpineDigitalOceanCSIAttacherDigitalOceanCSINodeDriverRegistarDigitalOceanCSIProvisionerDigitalOceanCSIResizerDigitalOceanCSISnapshotControllerDigitalOceanCSISnapshotValidationWebhookDigitalOceanCSISnapshotterOpenstackCSIOpenstackCSINodeDriverRegistarOpenstackCSILivenessProbeOpenstackCSIAttacherOpenstackCSIProvisionerOpenstackCSIResizerOpenstackCSISnapshotterDigitaloceanCCMHetznerCCMHetznerCSIOpenstackCCMEquinixMetalCCMVsphereCCMVsphereCSIDriverVsphereCSISyncerVsphereCSIProvisionerCalicoVXLANCNICalicoVXLANControllerCalicoVXLANNode"
 
-var _Resource_index = [...]uint16{0, 9, 25, 35, 42, 48, 62, 73, 81, 96, 107, 120, 135, 149, 161, 178, 191, 213, 230, 241, 262, 276, 290, 300, 316, 322, 330, 338, 347, 364, 386, 414, 434, 450, 470, 497, 509, 529, 554, 584, 607, 626, 649, 682, 694, 714, 739, 769, 792, 811, 834, 867, 890, 900, 921, 940, 957, 978, 1006, 1041, 1056, 1077, 1100, 1133, 1159, 1181, 1214, 1254, 1280, 1295, 1305, 1315, 1327, 1339, 1354, 1364, 1380, 1396, 1417, 1431, 1452, 1467}
+var _Resource_index = [...]uint16{0, 9, 25, 35, 42, 48, 62, 73, 81, 96, 107, 120, 135, 149, 161, 178, 191, 213, 230, 241, 262, 276, 290, 300, 316, 322, 330, 338, 347, 364, 386, 414, 434, 450, 470, 497, 509, 529, 554, 584, 607, 626, 649, 682, 694, 714, 739, 769, 792, 811, 834, 867, 890, 900, 921, 940, 957, 978, 1006, 1041, 1056, 1077, 1100, 1133, 1159, 1181, 1214, 1254, 1280, 1292, 1322, 1347, 1367, 1390, 1409, 1432, 1447, 1457, 1467, 1479, 1494, 1504, 1520, 1536, 1557, 1571, 1592, 1607}
 
 func (i Resource) String() string {
 	i -= 1
