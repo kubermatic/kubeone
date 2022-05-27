@@ -90,6 +90,8 @@ spec:
             - "--nodeid=$(KUBE_NODE_NAME)"
             - "--metrics-address=0.0.0.0:29605"
             - "--enable-perf-optimization=true"
+            - "--allow-empty-cloud-config=true"
+            - "--get-node-info-from-labels=false"
             - "--cloud-config-secret-name=cloud-config"
             - "--cloud-config-secret-namespace=kube-system"
           ports:
@@ -124,8 +126,8 @@ spec:
               name: device-dir
             - mountPath: /sys/bus/scsi/devices
               name: sys-devices-dir
-            - mountPath: /sys/class/scsi_host/
-              name: scsi-host-dir
+            - mountPath: /sys/class/
+              name: sys-class
           resources:
             limits:
               memory: 200Mi
@@ -154,7 +156,6 @@ spec:
             type: Directory
           name: sys-devices-dir
         - hostPath:
-            path: /sys/class/scsi_host/
+            path: /sys/class/
             type: Directory
-          name: scsi-host-dir
----
+          name: sys-class
