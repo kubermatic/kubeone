@@ -1,6 +1,6 @@
 # Changelog
 
-# [v1.4.3](https://github.com/kubermatic/kubeone/releases/tag/v1.4.2) - 2022-05-11
+# [v1.4.3](https://github.com/kubermatic/kubeone/releases/tag/v1.4.3) - 2022-05-11
 
 ## Changes by Kind
 
