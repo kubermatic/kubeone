@@ -136,13 +136,11 @@ metadata:
   name: azure-cloud-controller-manager
   namespace: kube-system
   labels:
-    tier: control-plane
     component: azure-cloud-controller-manager
 spec:
   replicas: 1
   selector:
     matchLabels:
-      tier: control-plane
       component: azure-cloud-controller-manager
   strategy:
     type: Recreate
@@ -151,7 +149,6 @@ spec:
       name: azure-cloud-controller-manager
       namespace: kube-system
       labels:
-        tier: control-plane
         component: azure-cloud-controller-manager
     spec:
       priorityClassName: system-node-critical
