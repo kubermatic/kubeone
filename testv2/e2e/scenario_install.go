@@ -98,6 +98,8 @@ func (scenario *scenarioInstall) install(t *testing.T) {
 }
 
 func (scenario *scenarioInstall) test(t *testing.T) {
+	t.Helper()
+
 	data := manifestData{VERSION: scenario.versions[0]}
 	k1 := newKubeoneBin(
 		scenario.infra.terraform.path,
