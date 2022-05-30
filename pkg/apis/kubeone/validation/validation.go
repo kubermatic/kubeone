@@ -293,15 +293,6 @@ func ValidateKubernetesSupport(c kubeoneapi.KubeOneCluster, fldPath *field.Path)
 		return append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, "Amazon EKS-D clusters are not supported by KubeOne 1.4+"))
 	}
 
-	v, err := semver.NewVersion(c.Versions.Kubernetes)
-	if err != nil {
-		return append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, ".versions.kubernetes is not a semver string"))
-	}
-
-	if v.Minor() >= 23 && c.CloudProvider.Vsphere != nil {
-		allErrs = append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, "kubernetes versions 1.23.0 and newer are currently not supported for vsphere clusters"))
-	}
-
 	return allErrs
 }
 
