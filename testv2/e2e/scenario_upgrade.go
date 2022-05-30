@@ -60,12 +60,37 @@ func (scenario *scenarioUpgrade) Run(t *testing.T) {
 
 func (scenario *scenarioUpgrade) upgrade(t *testing.T) {
 	t.Helper()
+
+	k1 := newKubeoneBin(
+		scenario.infra.terraform.path,
+		renderManifest(t,
+			scenario.manifestTemplatePath,
+			manifestData{
+				VERSION: scenario.versions[1],
+			},
+		),
+	)
+
+	if err := k1.Apply(); err != nil {
+		t.Fatalf("kubeone apply failed: %v", err)
+	}
 }
 
 func (scenario *scenarioUpgrade) test(t *testing.T) {
 	t.Helper()
 
-	// TODO: add some testings
+	data := manifestData{
+		VERSION: scenario.versions[1],
+	}
+	k1 := newKubeoneBin(
+		scenario.infra.terraform.path,
+		renderManifest(t,
+			scenario.manifestTemplatePath,
+			data,
+		),
+	)
+
+	basicTest(t, k1, data)
 }
 
 func (scenario *scenarioUpgrade) GenerateTests(wr io.Writer, generatorType GeneratorType, cfg ProwConfig) error {

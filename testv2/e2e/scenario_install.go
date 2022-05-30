@@ -22,9 +22,6 @@ import (
 	"testing"
 	"text/template"
 
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/tools/clientcmd"
-	ctrlruntimeclient "sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/yaml"
 )
 
@@ -50,43 +47,17 @@ func (scenario *scenarioInstall) Run(t *testing.T) {
 	t.Helper()
 
 	scenario.install(t)
-	scenario.test(t)
-}
 
-func (scenario *scenarioInstall) test(t *testing.T) {
-	t.Helper()
-	// TODO: add some testings
-}
+	data := manifestData{VERSION: scenario.versions[0]}
+	k1 := newKubeoneBin(
+		scenario.infra.terraform.path,
+		renderManifest(t,
+			scenario.manifestTemplatePath,
+			data,
+		),
+	)
 
-func (scenario *scenarioInstall) renderedManifest(t *testing.T) string {
-	t.Helper()
-
-	if scenario.manifestPath == "" {
-		tmpDir := t.TempDir()
-		data := manifestData{
-			VERSION: scenario.versions[0],
-		}
-
-		manifestPath, err := renderManifest(tmpDir, scenario.manifestTemplatePath, data)
-		if err != nil {
-			t.Fatalf("failed to render kubeone manifest: %v", err)
-		}
-
-		scenario.manifestPath = manifestPath
-	}
-
-	return scenario.manifestPath
-}
-
-func (scenario *scenarioInstall) kubeoneBin(t *testing.T) *kubeoneBin {
-	t.Helper()
-
-	return &kubeoneBin{
-		bin:          "kubeone",
-		dir:          scenario.infra.terraform.path,
-		tfjsonPath:   ".",
-		manifestPath: scenario.renderedManifest(t),
-	}
+	basicTest(t, k1, data)
 }
 
 func (scenario *scenarioInstall) install(t *testing.T) {
@@ -114,7 +85,15 @@ func (scenario *scenarioInstall) install(t *testing.T) {
 		}
 	})
 
-	k1 := scenario.kubeoneBin(t)
+	k1 := newKubeoneBin(
+		scenario.infra.terraform.path,
+		renderManifest(t,
+			scenario.manifestTemplatePath,
+			manifestData{
+				VERSION: scenario.versions[0],
+			},
+		),
+	)
 
 	if err := k1.Apply(); err != nil {
 		t.Fatalf("kubeone apply failed: %v", err)
@@ -127,50 +106,6 @@ func (scenario *scenarioInstall) install(t *testing.T) {
 			t.Fatalf("terraform destroy failed: %v", err)
 		}
 	})
-
-	kubeoneManifest, err := k1.Manifest()
-	if err != nil {
-		t.Fatalf("failed to get manifest API")
-	}
-
-	numberOfNodesToWait := len(kubeoneManifest.ControlPlane.Hosts) + len(kubeoneManifest.StaticWorkers.Hosts)
-	for _, worker := range kubeoneManifest.DynamicWorkers {
-		if worker.Replicas != nil {
-			numberOfNodesToWait += *worker.Replicas
-		}
-	}
-
-	var kubeconfig []byte
-	fetchKubeconfig := func() error {
-		kubeconfig, err = k1.Kubeconfig()
-		if err != nil {
-			return err
-		}
-
-		return nil
-	}
-
-	if err = retryFn(fetchKubeconfig); err != nil {
-		t.Fatalf("kubeone kubeconfig failed: %v", err)
-	}
-
-	restConfig, err := clientcmd.RESTConfigFromKubeConfig(kubeconfig)
-	if err != nil {
-		t.Fatalf("unable to build clientset from kubeconfig bytes: %v", err)
-	}
-
-	client, err := ctrlruntimeclient.New(restConfig, ctrlruntimeclient.Options{})
-	if err != nil {
-		t.Fatalf("failed to init dynamic client: %s", err)
-	}
-
-	if err = waitForNodesReady(t, client, numberOfNodesToWait); err != nil {
-		t.Fatalf("failed to bring up all nodes up: %v", err)
-	}
-
-	if err = verifyVersion(client, metav1.NamespaceSystem, scenario.versions[0]); err != nil {
-		t.Fatalf("version mismatch: %v", err)
-	}
 }
 
 func (scenario *scenarioInstall) GenerateTests(wr io.Writer, generatorType GeneratorType, cfg ProwConfig) error {

@@ -32,11 +32,14 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/util/rand"
 	"k8s.io/apimachinery/pkg/util/wait"
+	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/util/retry"
 	cntr "sigs.k8s.io/controller-runtime/pkg/client"
+	ctrlruntimeclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 const (
@@ -83,37 +86,50 @@ func requiredTemplateFunc(warn string, input interface{}) (interface{}, error) {
 	return input, nil
 }
 
+func newKubeoneBin(terraformPath, manifestPath string) *kubeoneBin {
+	return &kubeoneBin{
+		bin:          "kubeone",
+		dir:          terraformPath,
+		tfjsonPath:   ".",
+		manifestPath: manifestPath,
+	}
+}
+
 type manifestData struct {
 	VERSION string
 }
 
-func renderManifest(tmpDir, templatePath string, data manifestData) (string, error) {
+func renderManifest(t *testing.T, templatePath string, data manifestData) string {
+	t.Helper()
+
+	tmpDir := t.TempDir()
+
 	var buf bytes.Buffer
 
 	tpl, err := template.New("").Parse(templatePath)
 	if err != nil {
-		return "", err
+		t.Fatal(err)
 	}
 	tpl.Funcs(template.FuncMap{
 		"required": requiredTemplateFunc,
 	})
 
 	if err = tpl.Execute(&buf, data); err != nil {
-		return "", err
+		t.Fatal(err)
 	}
 
 	manifest, err := os.CreateTemp(tmpDir, "kubeone-*.yaml")
 	if err != nil {
-		return "", err
+		t.Fatal(err)
 	}
 	defer manifest.Close()
 
 	manifestPath := manifest.Name()
 	if err := os.WriteFile(manifestPath, buf.Bytes(), 0600); err != nil {
-		return "", err
+		t.Fatal(err)
 	}
 
-	return manifestPath, nil
+	return manifestPath
 }
 
 func waitForNodesReady(t *testing.T, client cntr.Client, expectedNumberOfNodes int) error {
@@ -250,4 +266,52 @@ func newProwJob(prowJobName string, labels map[string]string, testTitle string, 
 
 func pullProwJobName(in ...string) string {
 	return fmt.Sprintf("pull-kubeone-e2e-%s", strings.ReplaceAll(strings.Join(in, "-"), "_", "-"))
+}
+
+func basicTest(t *testing.T, k1 *kubeoneBin, data manifestData) {
+	t.Helper()
+
+	kubeoneManifest, err := k1.Manifest()
+	if err != nil {
+		t.Fatalf("failed to get manifest API")
+	}
+
+	numberOfNodesToWait := len(kubeoneManifest.ControlPlane.Hosts) + len(kubeoneManifest.StaticWorkers.Hosts)
+	for _, worker := range kubeoneManifest.DynamicWorkers {
+		if worker.Replicas != nil {
+			numberOfNodesToWait += *worker.Replicas
+		}
+	}
+
+	var kubeconfig []byte
+	fetchKubeconfig := func() error {
+		kubeconfig, err = k1.Kubeconfig()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}
+
+	if err = retryFn(fetchKubeconfig); err != nil {
+		t.Fatalf("kubeone kubeconfig failed: %v", err)
+	}
+
+	restConfig, err := clientcmd.RESTConfigFromKubeConfig(kubeconfig)
+	if err != nil {
+		t.Fatalf("unable to build clientset from kubeconfig bytes: %v", err)
+	}
+
+	client, err := ctrlruntimeclient.New(restConfig, ctrlruntimeclient.Options{})
+	if err != nil {
+		t.Fatalf("failed to init dynamic client: %s", err)
+	}
+
+	if err = waitForNodesReady(t, client, numberOfNodesToWait); err != nil {
+		t.Fatalf("failed to bring up all nodes up: %v", err)
+	}
+
+	if err = verifyVersion(client, metav1.NamespaceSystem, data.VERSION); err != nil {
+		t.Fatalf("version mismatch: %v", err)
+	}
 }
