@@ -23,7 +23,7 @@ Kubernetes versions, and supported operating systems) can be found in the
 For a quick start, you should check the following documents:
 
 * [Architecture][docs-concepts] to get familiar with the concepts of KubeOne.
-* [Prerequisites][docs-prerequisistes] to get kubeone locally.
+* [Prerequisites][docs-prerequisites] to get kubeone locally.
 * [Provisioning][docs-provisioning] to provision the Kubernetes cluster.
 
 ## Installing KubeOne
