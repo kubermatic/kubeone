@@ -2,30 +2,19 @@
 # external-attacher, external-provisioner, external-snapshotter
 # external-resize, liveness-probe
 {{ $version := semver .Config.Versions.Kubernetes }}
-
-kind: Service
-apiVersion: v1
-metadata:
-  name: csi-cinder-controller-service
-  namespace: kube-system
-  labels:
-    app: csi-cinder-controllerplugin
-spec:
-  selector:
-    app: csi-cinder-controllerplugin
-  ports:
-    - name: dummy
-      port: 12345
-
 ---
-kind: StatefulSet
+kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: csi-cinder-controllerplugin
   namespace: kube-system
 spec:
-  serviceName: "csi-cinder-controller-service"
   replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
   selector:
     matchLabels:
       app: csi-cinder-controllerplugin
@@ -42,10 +31,11 @@ spec:
           effect: NoSchedule
       containers:
         - name: csi-attacher
-          image: {{ .InternalImages.Get "CSIAttacher" }}
+          image: {{ .InternalImages.Get "OpenstackCSIAttacher" }}
           args:
             - "--csi-address=$(ADDRESS)"
             - "--timeout=3m"
+            - "--leader-election=true"
           env:
             - name: ADDRESS
               value: /var/lib/csi/sockets/pluginproxy/csi.sock
@@ -54,19 +44,14 @@ spec:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
         - name: csi-provisioner
-          image: {{ .InternalImages.Get "CSIProvisioner" }}
+          image: {{ .InternalImages.Get "OpenstackCSIProvisioner" }}
           args:
             - "--csi-address=$(ADDRESS)"
             - "--timeout=3m"
-{{ if ge $version.Minor 21 }}
-            # --default-fstype and --feature-gates is only used since CSI v1.21.0
             - "--default-fstype=ext4"
             - "--feature-gates=Topology=true"
-{{ end }}
-{{ if ge $version.Minor 20 }}
-            # --extra-create-metadata is only used since CSI v1.20.0
             - "--extra-create-metadata"
-{{ end }}
+            - "--leader-election=true"
           env:
             - name: ADDRESS
               value: /var/lib/csi/sockets/pluginproxy/csi.sock
@@ -75,14 +60,12 @@ spec:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
         - name: csi-snapshotter
-          image: {{ .InternalImages.Get "CSISnapshotter" }}
+          image: {{ .InternalImages.Get "OpenstackCSISnapshotter" }}
           args:
             - "--csi-address=$(ADDRESS)"
             - "--timeout=3m"
-{{ if ge $version.Minor 20 }}
-            # --extra-create-metadata is only used since CSI v1.20.0
             - "--extra-create-metadata"
-{{ end }}
+            - "--leader-election=true"
           env:
             - name: ADDRESS
               value: /var/lib/csi/sockets/pluginproxy/csi.sock
@@ -91,11 +74,12 @@ spec:
             - mountPath: /var/lib/csi/sockets/pluginproxy/
               name: socket-dir
         - name: csi-resizer
-          image: {{ .InternalImages.Get "CSIResizer" }}
+          image: {{ .InternalImages.Get "OpenstackCSIResizer" }}
           args:
             - "--csi-address=$(ADDRESS)"
             - "--timeout=3m"
             - "--handle-volume-inuse-error=false"
+            - "--leader-election=true"
           env:
             - name: ADDRESS
               value: /var/lib/csi/sockets/pluginproxy/csi.sock
@@ -104,7 +88,7 @@ spec:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
         - name: liveness-probe
-          image: {{ .InternalImages.Get "CSILivenessProbe" }}
+          image: {{ .InternalImages.Get "OpenstackCSILivenessProbe" }}
           args:
             - "--csi-address=$(ADDRESS)"
           env:

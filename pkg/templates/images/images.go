@@ -140,12 +140,20 @@ const (
 	DigitalOceanCSISnapshotValidationWebhook
 	DigitalOceanCSISnapshotter
 
+	// OpenStack CSI
+	OpenstackCSI
+	OpenstackCSINodeDriverRegistar
+	OpenstackCSILivenessProbe
+	OpenstackCSIAttacher
+	OpenstackCSIProvisioner
+	OpenstackCSIResizer
+	OpenstackCSISnapshotter
+
 	// CCMs and CSI plugins
 	DigitaloceanCCM
 	HetznerCCM
 	HetznerCSI
 	OpenstackCCM
-	OpenstackCSI
 	EquinixMetalCCM
 	VsphereCCM
 	VsphereCSIDriver
@@ -268,21 +276,27 @@ func optionalResources() map[Resource]map[string]string {
 
 		// OpenStack CCM
 		OpenstackCCM: {
-			"1.19.x":    "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.19.2",
 			"1.20.x":    "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.20.2",
 			"1.21.x":    "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.21.0",
 			"1.22.x":    "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.22.0",
-			">= 1.23.0": "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.23.0",
+			"1.23.x":    "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.23.1",
+			">= 1.24.0": "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.24.0",
 		},
 
 		// OpenStack CSI
 		OpenstackCSI: {
-			"1.19.x":    "docker.io/k8scloudprovider/cinder-csi-plugin:v1.19.0",
 			"1.20.x":    "docker.io/k8scloudprovider/cinder-csi-plugin:v1.20.3",
 			"1.21.x":    "docker.io/k8scloudprovider/cinder-csi-plugin:v1.21.0",
 			"1.22.x":    "docker.io/k8scloudprovider/cinder-csi-plugin:v1.22.0",
-			">= 1.23.0": "docker.io/k8scloudprovider/cinder-csi-plugin:v1.23.0",
+			"1.23.x":    "docker.io/k8scloudprovider/cinder-csi-plugin:v1.23.0",
+			">= 1.24.0": "docker.io/k8scloudprovider/cinder-csi-plugin:v1.24.0",
 		},
+		OpenstackCSINodeDriverRegistar: {"*": "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.5.0"},
+		OpenstackCSILivenessProbe:      {"*": "k8s.gcr.io/sig-storage/livenessprobe:v2.6.0"},
+		OpenstackCSIAttacher:           {"*": "k8s.gcr.io/sig-storage/csi-attacher:v3.4.0"},
+		OpenstackCSIProvisioner:        {"*": "k8s.gcr.io/sig-storage/csi-provisioner:v3.1.0"},
+		OpenstackCSIResizer:            {"*": "k8s.gcr.io/sig-storage/csi-resizer:v1.4.0"},
+		OpenstackCSISnapshotter:        {"*": "k8s.gcr.io/sig-storage/csi-snapshotter:v5.0.1"},
 
 		// Equinix Metal CCM
 		EquinixMetalCCM: {"*": "docker.io/equinix/cloud-provider-equinix-metal:v3.4.2"},
