@@ -232,12 +232,10 @@ func newProwJob(prowJobName string, labels map[string]string, testTitle string, 
 					Image:           prowImage,
 					ImagePullPolicy: corev1.PullAlways,
 					Command: []string{
-						"go",
-						"test",
-						"-v",
+						"go", "test", "-v",
 						"./testv2/e2e/...",
-						"-run",
-						fmt.Sprintf("^%s$", testTitle),
+						"-tags", "e2e",
+						"-run", fmt.Sprintf("^%s$", testTitle),
 					},
 					Resources: corev1.ResourceRequirements{
 						Requests: corev1.ResourceList{
