@@ -148,6 +148,8 @@ const (
 	OpenstackCSIProvisioner
 	OpenstackCSIResizer
 	OpenstackCSISnapshotter
+	OpenstackCSISnapshotController
+	OpenstackCSISnapshotWebhook
 
 	// CCMs and CSI plugins
 	DigitaloceanCCM
@@ -334,6 +336,8 @@ func optionalResources() map[Resource]map[string]string {
 		OpenstackCSIProvisioner:        {"*": "k8s.gcr.io/sig-storage/csi-provisioner:v3.1.0"},
 		OpenstackCSIResizer:            {"*": "k8s.gcr.io/sig-storage/csi-resizer:v1.4.0"},
 		OpenstackCSISnapshotter:        {"*": "k8s.gcr.io/sig-storage/csi-snapshotter:v5.0.1"},
+		OpenstackCSISnapshotController: {"*": "k8s.gcr.io/sig-storage/snapshot-controller:v5.0.1"},
+		OpenstackCSISnapshotWebhook:    {"*": "k8s.gcr.io/sig-storage/snapshot-validation-webhook:v5.0.1"},
 
 		// Equinix Metal CCM
 		EquinixMetalCCM: {"*": "docker.io/equinix/cloud-provider-equinix-metal:v3.4.3"},
