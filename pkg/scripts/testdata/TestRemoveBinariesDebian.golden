@@ -7,3 +7,6 @@ sudo apt-get remove --purge -y \
 	kubectl \
 	kubelet
 sudo apt-get remove --purge -y kubernetes-cni || true
+sudo rm -rf /opt/cni
+sudo rm -f /etc/systemd/system/kubelet.service /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+sudo systemctl daemon-reload
