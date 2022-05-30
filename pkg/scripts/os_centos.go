@@ -117,6 +117,9 @@ sudo yum remove -y \
 	kubeadm \
 	kubectl
 sudo yum remove -y kubernetes-cni || true
+sudo rm -rf /opt/cni
+sudo rm -f /etc/systemd/system/kubelet.service /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+sudo systemctl daemon-reload
 `
 	disableNMCloudSetup = `
 if systemctl status 'nm-cloud-setup.timer' 2> /dev/null | grep -Fq "Active: active"; then

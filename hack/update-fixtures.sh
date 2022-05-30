@@ -18,6 +18,6 @@
 # build KubeOne releases. The scripts should be run only in the Kubermatic CI
 # environment, as it requires GitHub credentials.
 
-go test -v ./... -update || go test -v ./...
+go test -v ./pkg/... -update || go test -v ./...
 
 if [[ $? -eq 0 ]]; then echo "Successfully updated fixtures"; else "Failed to update fixtures"; fi
