@@ -56,5 +56,21 @@ func (scenario *scenarioConformance) Run(t *testing.T) {
 
 func (scenario *scenarioConformance) test(t *testing.T) {
 	t.Helper()
-	// TODO: add sonobuoy test launch
+
+	sb := sonobuoyBin{
+		dir: scenario.infra.terraform.path,
+	}
+
+	if err := sb.Run(sonobuoyConformance); err != nil {
+		t.Fatalf("sonobuoy run failed: %v", err)
+	}
+
+	if err := sb.Wait(); err != nil {
+		t.Fatalf("sonobuoy wait failed: %v", err)
+	}
+
+	if err := sb.Retrive(); err != nil {
+		t.Fatalf("sonobuoy retrive failed: %v", err)
+	}
+
 }
