@@ -28,7 +28,6 @@ import (
 type scenarioInstall struct {
 	name                 string
 	manifestTemplatePath string
-	manifestPath         string
 	versions             []string
 	infra                Infra
 }

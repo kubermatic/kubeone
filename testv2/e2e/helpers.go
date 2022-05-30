@@ -38,7 +38,6 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/util/retry"
-	cntr "sigs.k8s.io/controller-runtime/pkg/client"
 	ctrlruntimeclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -132,7 +131,7 @@ func renderManifest(t *testing.T, templatePath string, data manifestData) string
 	return manifestPath
 }
 
-func waitForNodesReady(t *testing.T, client cntr.Client, expectedNumberOfNodes int) error {
+func waitForNodesReady(t *testing.T, client ctrlruntimeclient.Client, expectedNumberOfNodes int) error {
 	t.Helper()
 
 	return wait.Poll(5*time.Second, 10*time.Minute, func() (bool, error) {
@@ -160,14 +159,14 @@ func waitForNodesReady(t *testing.T, client cntr.Client, expectedNumberOfNodes i
 	})
 }
 
-func verifyVersion(client cntr.Client, namespace string, targetVersion string) error {
+func verifyVersion(client ctrlruntimeclient.Client, namespace string, targetVersion string) error {
 	reqVer, err := semver.NewVersion(targetVersion)
 	if err != nil {
 		return fmt.Errorf("desired version is invalid: %w", err)
 	}
 
 	nodes := corev1.NodeList{}
-	nodeListOpts := cntr.ListOptions{
+	nodeListOpts := ctrlruntimeclient.ListOptions{
 		LabelSelector: labels.SelectorFromSet(map[string]string{
 			labelControlPlaneNode: "",
 		}),
@@ -189,7 +188,7 @@ func verifyVersion(client cntr.Client, namespace string, targetVersion string) e
 	}
 
 	apiserverPods := corev1.PodList{}
-	podsListOpts := cntr.ListOptions{
+	podsListOpts := ctrlruntimeclient.ListOptions{
 		Namespace: namespace,
 		LabelSelector: labels.SelectorFromSet(map[string]string{
 			"component": "kube-apiserver",
