@@ -46,17 +46,7 @@ func (scenario *scenarioInstall) Run(t *testing.T) {
 	t.Helper()
 
 	scenario.install(t)
-
-	data := manifestData{VERSION: scenario.versions[0]}
-	k1 := newKubeoneBin(
-		scenario.infra.terraform.path,
-		renderManifest(t,
-			scenario.manifestTemplatePath,
-			data,
-		),
-	)
-
-	basicTest(t, k1, data)
+	scenario.test(t)
 }
 
 func (scenario *scenarioInstall) install(t *testing.T) {
@@ -105,6 +95,19 @@ func (scenario *scenarioInstall) install(t *testing.T) {
 			t.Fatalf("terraform destroy failed: %v", err)
 		}
 	})
+}
+
+func (scenario *scenarioInstall) test(t *testing.T) {
+	data := manifestData{VERSION: scenario.versions[0]}
+	k1 := newKubeoneBin(
+		scenario.infra.terraform.path,
+		renderManifest(t,
+			scenario.manifestTemplatePath,
+			data,
+		),
+	)
+
+	basicTest(t, k1, data)
 }
 
 func (scenario *scenarioInstall) GenerateTests(wr io.Writer, generatorType GeneratorType, cfg ProwConfig) error {
