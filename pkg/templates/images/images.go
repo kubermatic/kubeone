@@ -166,6 +166,7 @@ const (
 	VsphereCSIProvisioner
 	VsphereCSIResizer
 	VsphereCSISnapshotter
+	VsphereCSISnapshotController
 	VsphereCSISnapshotValidationWebhook
 
 	// Calico VXLAN
@@ -326,6 +327,7 @@ func optionalResources() map[Resource]map[string]string {
 		VsphereCSIProvisioner:               {"*": "k8s.gcr.io/sig-storage/csi-provisioner:v3.1.0"},
 		VsphereCSIResizer:                   {"*": "k8s.gcr.io/sig-storage/csi-resizer:v1.4.0"},
 		VsphereCSISnapshotter:               {"*": "k8s.gcr.io/sig-storage/csi-snapshotter:v5.0.1"},
+		VsphereCSISnapshotController:        {"*": "k8s.gcr.io/sig-storage/snapshot-controller:v5.0.1"},
 		VsphereCSISnapshotValidationWebhook: {"*": "k8s.gcr.io/sig-storage/snapshot-validation-webhook:v5.0.1"},
 
 		// Nutanix CSI
