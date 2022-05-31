@@ -181,10 +181,10 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 	// Certs for CSI plugins
 	switch {
 	// Certs for vsphere-csi-webhook (deployed only if CSIMigration is enabled)
-	case csiMigration && s.Cluster.CloudProvider.Vsphere != nil:
-		vsphereCSICertsMap, err := certificate.NewSignedTLSCert(
-			resources.VsphereCSIWebhookName,
-			resources.VsphereCSIWebhookNamespace,
+	case s.Cluster.CloudProvider.Vsphere != nil:
+		vsphereCSISnapshotCertsMap, err := certificate.NewSignedTLSCert(
+			resources.VsphereCSISnapshotValidatingWebhookName,
+			resources.VsphereCSISnapshotValidatingWebhookNamespace,
 			s.Cluster.ClusterNetwork.ServiceDomainName,
 			kubeCAPrivateKey,
 			kubeCACert,
@@ -192,8 +192,23 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		if err != nil {
 			return nil, err
 		}
-		data.Certificates["vSphereCSIWebhookCert"] = vsphereCSICertsMap[resources.TLSCertName]
-		data.Certificates["vSphereCSIWebhookKey"] = vsphereCSICertsMap[resources.TLSKeyName]
+		data.Certificates["vSphereCSIWebhookCert"] = vsphereCSISnapshotCertsMap[resources.TLSCertName]
+		data.Certificates["vSphereCSIWebhookKey"] = vsphereCSISnapshotCertsMap[resources.TLSKeyName]
+
+		if csiMigration {
+			vsphereCSICertsMap, err := certificate.NewSignedTLSCert(
+				resources.VsphereCSIWebhookName,
+				resources.VsphereCSIWebhookNamespace,
+				s.Cluster.ClusterNetwork.ServiceDomainName,
+				kubeCAPrivateKey,
+				kubeCACert,
+			)
+			if err != nil {
+				return nil, err
+			}
+			data.Certificates["vSphereCSIWebhookCert"] = vsphereCSICertsMap[resources.TLSCertName]
+			data.Certificates["vSphereCSIWebhookKey"] = vsphereCSICertsMap[resources.TLSKeyName]
+		}
 	case s.Cluster.CloudProvider.Nutanix != nil:
 		nutanixCSICertsMap, err := certificate.NewSignedTLSCert(
 			resources.NutanixCSIWebhookName,

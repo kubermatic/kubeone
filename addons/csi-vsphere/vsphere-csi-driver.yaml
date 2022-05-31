@@ -1,3 +1,4 @@
+# Source: https://github.com/kubernetes-sigs/vsphere-csi-driver/blob/v2.5.1/manifests/vanilla/vsphere-csi-driver.yaml
 ---
 apiVersion: v1
 kind: Secret
@@ -28,8 +29,11 @@ metadata:
   name: vsphere-csi-controller-role
 rules:
   - apiGroups: [""]
-    resources: ["nodes", "persistentvolumeclaims", "pods", "configmaps"]
+    resources: ["nodes", "pods", "configmaps"]
     verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["persistentvolumeclaims"]
+    verbs: ["get", "list", "watch", "update"]
   - apiGroups: [""]
     resources: ["persistentvolumeclaims/status"]
     verbs: ["patch"]
@@ -71,7 +75,7 @@ rules:
     verbs: [ "watch", "get", "list" ]
   - apiGroups: [ "snapshot.storage.k8s.io" ]
     resources: [ "volumesnapshotcontents" ]
-    verbs: [ "create", "get", "list", "watch", "update", "delete" ]
+    verbs: [ "create", "get", "list", "watch", "update", "delete", "patch"]
   - apiGroups: [ "snapshot.storage.k8s.io" ]
     resources: [ "volumesnapshotcontents/status" ]
     verbs: [ "update", "patch" ]
@@ -105,7 +109,7 @@ metadata:
 rules:
   - apiGroups: ["cns.vmware.com"]
     resources: ["csinodetopologies"]
-    verbs: ["create", "watch"]
+    verbs: ["create", "watch", "get", "patch"]
   - apiGroups: [""]
     resources: ["nodes"]
     verbs: ["get"]
@@ -158,6 +162,9 @@ data:
   "improved-volume-topology": "true"
   "block-volume-snapshot": "false"
   "csi-windows-support": "false"
+  "use-csinode-id": "true"
+  "pv-to-backingdiskobjectid-mapping": "false"
+  "cnsmgr-suspend-create-volume": "false"
 kind: ConfigMap
 metadata:
   name: internal-feature-states.csi.vsphere.vmware.com
@@ -191,7 +198,12 @@ metadata:
   labels:
     app: vsphere-csi-controller
 spec:
-  replicas: 1
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 0
   selector:
     matchLabels:
       app: vsphere-csi-controller
@@ -204,6 +216,16 @@ spec:
         "caBundle-hash": "{{ .Config.CABundle | sha256sum }}"
         "csiConfig-hash": "{{ .Config.CloudProvider.CSIConfig | sha256sum }}"
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "app"
+                    operator: In
+                    values:
+                      - vsphere-csi-controller
+              topologyKey: "kubernetes.io/hostname"
       serviceAccountName: vsphere-csi-controller
       nodeSelector:
         node-role.kubernetes.io/control-plane: ""
@@ -227,7 +249,7 @@ spec:
       dnsPolicy: "Default"
       containers:
         - name: csi-attacher
-          image: {{ .InternalImages.Get "CSIAttacher" }}
+          image: {{ .InternalImages.Get "VsphereCSIAttacher" }}
           args:
             - "--v=4"
             - "--timeout=300s"
@@ -242,7 +264,7 @@ spec:
             - mountPath: /csi
               name: socket-dir
         - name: csi-resizer
-          image: {{ .InternalImages.Get "CSIResizer" }}
+          image: {{ .InternalImages.Get "VsphereCSIResizer" }}
           args:
             - "--v=4"
             - "--timeout=300s"
@@ -313,7 +335,7 @@ spec:
             periodSeconds: 5
             failureThreshold: 3
         - name: liveness-probe
-          image: {{ .InternalImages.Get "CSILivenessProbe" }}
+          image: {{ .InternalImages.Get "VsphereCSILivenessProbe" }}
           args:
             - "--v=4"
             - "--csi-address=/csi/csi.sock"
@@ -375,6 +397,21 @@ spec:
           volumeMounts:
             - mountPath: /csi
               name: socket-dir
+        - name: csi-snapshotter
+          image: {{ .InternalImages.Get "VsphereCSISnapshotter" }}
+          args:
+            - "--v=4"
+            - "--kube-api-qps=100"
+            - "--kube-api-burst=100"
+            - "--timeout=300s"
+            - "--csi-address=$(ADDRESS)"
+            - "--leader-election"
+          env:
+            - name: ADDRESS
+              value: /csi/csi.sock
+          volumeMounts:
+            - mountPath: /csi
+              name: socket-dir
       volumes:
         - name: vsphere-config-volume
           secret:
@@ -407,12 +444,14 @@ spec:
         "caBundle-hash": "{{ .Config.CABundle | sha256sum }}"
         "csiConfig-hash": "{{ .Config.CloudProvider.CSIConfig | sha256sum }}"
     spec:
+      nodeSelector:
+        kubernetes.io/os: linux
       serviceAccountName: vsphere-csi-node
       hostNetwork: true
       dnsPolicy: "ClusterFirstWithHostNet"
       containers:
         - name: node-driver-registrar
-          image: {{ .InternalImages.Get "CSINodeDriverRegistar" }}
+          image: {{ .InternalImages.Get "VsphereCSINodeDriverRegistar" }}
           args:
             - "--v=5"
             - "--csi-address=$(ADDRESS)"
@@ -430,9 +469,9 @@ spec:
           livenessProbe:
             exec:
               command:
-                - /csi-node-driver-registrar
-                - --kubelet-registration-path=/var/lib/kubelet/plugins/csi.vsphere.vmware.com/csi.sock
-                - --mode=kubelet-registration-probe
+              - /csi-node-driver-registrar
+              - --kubelet-registration-path=/var/lib/kubelet/plugins/csi.vsphere.vmware.com/csi.sock
+              - --mode=kubelet-registration-probe
             initialDelaySeconds: 3
         - name: vsphere-csi-node
           image: {{ .InternalImages.Get "VsphereCSIDriver" }}
@@ -502,7 +541,7 @@ spec:
             periodSeconds: 5
             failureThreshold: 3
         - name: liveness-probe
-          image: {{ .InternalImages.Get "CSILivenessProbe" }}
+          image: {{ .InternalImages.Get "VsphereCSILivenessProbe" }}
           args:
             - "--v=4"
             - "--csi-address=/csi/csi.sock"

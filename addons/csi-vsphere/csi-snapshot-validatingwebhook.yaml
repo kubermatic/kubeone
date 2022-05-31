@@ -1,0 +1,101 @@
+# Requires k8s 1.20+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: vsphere-csi-snapshot-webhook-certs
+  namespace: kube-system
+data:
+  "tls.crt": |
+{{ .Certificates.vSphereCSIWebhookCert | b64enc | indent 4 }}
+  "tls.key": |
+{{ .Certificates.vSphereCSIWebhookKey | b64enc | indent 4 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: snapshot-validation-service
+  namespace: kube-system
+spec:
+  selector:
+    app: snapshot-validation
+  ports:
+    - protocol: TCP
+      port: 443 # Change if needed
+      targetPort: 443 # Change if the webserver image expects a different port
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: "validation-webhook.snapshot.storage.k8s.io"
+webhooks:
+  - name: "validation-webhook.snapshot.storage.k8s.io"
+    rules:
+      - apiGroups:   ["snapshot.storage.k8s.io"]
+        apiVersions: ["v1", "v1beta1"]
+        operations:  ["CREATE", "UPDATE"]
+        resources:   ["volumesnapshots", "volumesnapshotcontents"]
+        scope:       "*"
+    clientConfig:
+      service:
+        namespace: kube-system
+        name: "snapshot-validation-service"
+        path: "/volumesnapshot"
+      caBundle: |
+{{ .Certificates.KubernetesCA | b64enc | indent 8 }}
+    admissionReviewVersions: ["v1"]
+    sideEffects: None
+    failurePolicy: Ignore # We recommend switching to Fail only after successful installation of the webhook server and webhook.
+    timeoutSeconds: 2 # This will affect the latency and performance. Finetune this value based on your application's tolerance.
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: snapshot-validation-deployment
+  namespace: kube-system
+  labels:
+    app: snapshot-validation
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: snapshot-validation
+  template:
+    metadata:
+      labels:
+        app: snapshot-validation
+    spec:
+      nodeSelector:
+        node-role.kubernetes.io/control-plane: ""
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+        - key: node-role.kubernetes.io/master
+          operator: Exists
+          effect: NoSchedule
+      containers:
+        - name: snapshot-validation
+          image: {{ .InternalImages.Get "VsphereCSISnapshotValidationWebhook" }} # change the image if you wish to use your own custom validation server image
+          imagePullPolicy: IfNotPresent
+          args: ['--tls-cert-file=/run/secrets/tls/tls.crt', '--tls-private-key-file=/run/secrets/tls/tls.key']
+          ports:
+            - containerPort: 443 # change the port as needed
+{{ if .Config.CABundle }}
+          env:
+{{ caBundleEnvVar | indent 12 }}
+{{ end }}
+          volumeMounts:
+            - name: webhook-certs
+              mountPath: /run/secrets/tls
+              readOnly: true
+{{ if .Config.CABundle }}
+{{ caBundleVolumeMount | indent 12 }}
+{{ end }}
+      volumes:
+        - name: webhook-certs
+          secret:
+            secretName: vsphere-csi-snapshot-webhook-certs
+{{ if .Config.CABundle }}
+{{ caBundleVolume | indent 8 }}
+{{ end }}
