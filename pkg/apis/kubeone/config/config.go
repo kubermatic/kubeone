@@ -256,6 +256,19 @@ func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, creden
 	// Default the AssetsConfiguration internal API
 	cluster.DefaultAssetConfiguration()
 
+	// Copy MachineAnnotations to NodeAnnotations.
+	// MachineAnnotations has been deprecated in favor of NodeAnnotations.
+	// This is supposed to handle renaming of MachineAnnotations to
+	// NodeAnnotations in non backwards-compatibility breaking way.
+	for i, workerset := range cluster.DynamicWorkers {
+		// NB: We don't want to allow both MachineAnnotations and NodeAnnotations
+		// to be set, so we explicitly handle this scenario here and in validation.
+		if len(workerset.Config.MachineAnnotations) > 0 && len(workerset.Config.NodeAnnotations) == 0 {
+			cluster.DynamicWorkers[i].Config.NodeAnnotations = cluster.DynamicWorkers[i].Config.MachineAnnotations
+			cluster.DynamicWorkers[i].Config.MachineAnnotations = nil
+		}
+	}
+
 	return nil
 }
 
