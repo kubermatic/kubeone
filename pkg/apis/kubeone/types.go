@@ -436,8 +436,17 @@ type ProviderSpec struct {
 	// Annotations set MachineDeployment.ObjectMeta.Annotations
 	Annotations map[string]string `json:"annotations,omitempty"`
 	// MachineAnnotations set MachineDeployment.Spec.Template.Spec.ObjectMeta.Annotations
-	// a way to annotate resulted Nodes
+	// as a way to annotate resulting Nodes
+	// Deprecated: Use NodeAnnotations instead.
 	MachineAnnotations map[string]string `json:"machineAnnotations,omitempty"`
+	// NodeAnnotations set MachineDeployment.Spec.Template.Spec.ObjectMeta.Annotations
+	// as a way to annotate resulting Nodes
+	NodeAnnotations map[string]string `json:"nodeAnnotations,omitempty"`
+	// MachineObjectAnnotations set MachineDeployment.Spec.Template.Metadata.Annotations
+	// as a way to annotate resulting Machine objects. Those annotations are not
+	// propagated to Node objects. If you want to annotate resulting Nodes as well,
+	// see NodeAnnotations
+	MachineObjectAnnotations map[string]string `json:"machineObjectAnnotations,omitempty"`
 	// Labels
 	Labels map[string]string `json:"labels,omitempty"`
 	// Taints

@@ -108,10 +108,12 @@ func createMachineDeployment(cluster *kubeoneapi.KubeOneCluster, workerset kubeo
 
 		// cut out those field from original ProviderSpec
 		// we use them, but they should NOT end up in the resulted machineDeployment
-		Annotations        bool `json:"annotations,omitempty"`
-		MachineAnnotations bool `json:"machineAnnotations,omitempty"`
-		Labels             bool `json:"labels,omitempty"`
-		Taints             bool `json:"taints,omitempty"`
+		Annotations              bool `json:"annotations,omitempty"`
+		MachineAnnotations       bool `json:"machineAnnotations,omitempty"`
+		NodeAnnotations          bool `json:"nodeAnnotations,omitempty"`
+		MachineObjectAnnotations bool `json:"machineObjectAnnotations,omitempty"`
+		Labels                   bool `json:"labels,omitempty"`
+		Taints                   bool `json:"taints,omitempty"`
 	}{
 		ProviderSpec:  workerset.Config,
 		CloudProvider: cluster.CloudProvider.CloudProviderName(),
@@ -160,11 +162,11 @@ func createMachineDeployment(cluster *kubeoneapi.KubeOneCluster, workerset kubeo
 				ObjectMeta: metav1.ObjectMeta{
 					Labels:      labels.Merge(workerset.Config.Labels, workersetNameLabels),
 					Namespace:   metav1.NamespaceSystem,
-					Annotations: machineAnnotations,
+					Annotations: labels.Merge(workerset.Config.MachineObjectAnnotations, machineAnnotations),
 				},
 				Spec: clusterv1alpha1.MachineSpec{
 					ObjectMeta: metav1.ObjectMeta{
-						Annotations: workerset.Config.MachineAnnotations,
+						Annotations: workerset.Config.NodeAnnotations,
 						Labels:      labels.Merge(workerset.Config.Labels, workersetNameLabels),
 					},
 					Versions: clusterv1alpha1.MachineVersionInfo{

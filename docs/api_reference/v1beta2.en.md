@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2022-05-05T10:18:47+02:00
+date = 2022-05-31T21:25:27+02:00
 weight = 11
 +++
 ## v1beta2
@@ -618,7 +618,9 @@ ProviderSpec describes a worker node
 | ----- | ----------- | ------ | -------- |
 | cloudProviderSpec | CloudProviderSpec | [json.RawMessage](https://golang.org/pkg/encoding/json/#RawMessage) | true |
 | annotations | Annotations set MachineDeployment.ObjectMeta.Annotations | map[string]string | false |
-| machineAnnotations | MachineAnnotations set MachineDeployment.Spec.Template.Spec.ObjectMeta.Annotations a way to annotate resulted Nodes | map[string]string | false |
+| machineAnnotations | MachineAnnotations set MachineDeployment.Spec.Template.Spec.ObjectMeta.Annotations as a way to annotate resulting Nodes Deprecated: Use NodeAnnotations instead. | map[string]string | false |
+| nodeAnnotations | NodeAnnotations set MachineDeployment.Spec.Template.Spec.ObjectMeta.Annotations as a way to annotate resulting Nodes | map[string]string | false |
+| machineObjectAnnotations | MachineObjectAnnotations set MachineDeployment.Spec.Template.Metadata.Annotations as a way to annotate resulting Machine objects. Those annotations are not propagated to Node objects. If you want to annotate resulting Nodes as well, see NodeAnnotations | map[string]string | false |
 | labels | Labels | map[string]string | false |
 | taints | Taints | [][corev1.Taint](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#taint-v1-core) | false |
 | sshPublicKeys | SSHPublicKeys | []string | false |
