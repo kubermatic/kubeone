@@ -19,13 +19,13 @@ package fail
 import "errors"
 
 const (
-	defaultExitCode         = 1
-	runtimeErrorExitCode    = 10
-	etcdErrorExitCode       = 11
-	kubeClientErrorExitCode = 12
-	sshErrorExitCode        = 13
-	connectionErrorExitCode = 14
-	configErrorExitCode     = 15
+	DefaultExitCode         = 1
+	RuntimeErrorExitCode    = 10
+	EtcdErrorExitCode       = 11
+	KubeClientErrorExitCode = 12
+	SSHErrorExitCode        = 13
+	ConnectionErrorExitCode = 14
+	ConfigErrorExitCode     = 15
 )
 
 type exitCoder interface {
@@ -52,5 +52,5 @@ func ExitCode(err error) int {
 		return exiter.exitCode()
 	}
 
-	return defaultExitCode
+	return DefaultExitCode
 }
