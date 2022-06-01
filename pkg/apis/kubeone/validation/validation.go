@@ -576,6 +576,9 @@ func ValidateHostConfig(hosts []kubeoneapi.HostConfig, fldPath *field.Path) fiel
 		if !h.OperatingSystem.IsValid() {
 			allErrs = append(allErrs, field.Invalid(fldPath.Child("operatingSystem"), h.OperatingSystem, "invalid operatingSystem provided"))
 		}
+		if h.Kubelet.MaxPods != nil && *h.Kubelet.MaxPods <= 0 {
+			allErrs = append(allErrs, field.Invalid(fldPath.Child("kubelet").Child("maxPods"), h.Kubelet.MaxPods, "maxPods must be a positive number"))
+		}
 	}
 
 	return allErrs
