@@ -20,6 +20,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/imdario/mergo"
 
@@ -83,17 +84,25 @@ type controlPlane struct {
 }
 
 type hostsSpec struct {
-	PublicAddress     []string `json:"public_address"`
-	PrivateAddress    []string `json:"private_address"`
-	Hostnames         []string `json:"hostnames"`
-	OperatingSystem   string   `json:"operating_system"`
-	SSHUser           string   `json:"ssh_user"`
-	SSHPort           int      `json:"ssh_port"`
-	SSHPrivateKeyFile string   `json:"ssh_private_key_file"`
-	SSHAgentSocket    string   `json:"ssh_agent_socket"`
-	Bastion           string   `json:"bastion"`
-	BastionPort       int      `json:"bastion_port"`
-	BastionUser       string   `json:"bastion_user"`
+	PublicAddress     []string    `json:"public_address"`
+	PrivateAddress    []string    `json:"private_address"`
+	Hostnames         []string    `json:"hostnames"`
+	OperatingSystem   string      `json:"operating_system"`
+	SSHUser           string      `json:"ssh_user"`
+	SSHPort           int         `json:"ssh_port"`
+	SSHPrivateKeyFile string      `json:"ssh_private_key_file"`
+	SSHAgentSocket    string      `json:"ssh_agent_socket"`
+	Bastion           string      `json:"bastion"`
+	BastionPort       int         `json:"bastion_port"`
+	BastionUser       string      `json:"bastion_user"`
+	Kubelet           kubeletSpec `json:"kubelet,omitempty"`
+}
+
+type kubeletSpec struct {
+	SystemReserved string `json:"system_reserved"`
+	KubeReserved   string `json:"kube_reserved"`
+	EvictionHard   string `json:"eviction_hard"`
+	MaxPods        *int32 `json:"max_pods,omitempty"`
 }
 
 type hostConfigsOpts func([]kubeonev1beta2.HostConfig)
@@ -315,7 +324,7 @@ func (output *Config) Apply(cluster *kubeonev1beta2.KubeOneCluster) error {
 }
 
 func newHostConfig(publicIP, privateIP, hostname string, hs *hostsSpec) kubeonev1beta2.HostConfig {
-	return kubeonev1beta2.HostConfig{
+	hc := kubeonev1beta2.HostConfig{
 		Bastion:           hs.Bastion,
 		BastionPort:       hs.BastionPort,
 		BastionUser:       hs.BastionUser,
@@ -327,7 +336,12 @@ func newHostConfig(publicIP, privateIP, hostname string, hs *hostsSpec) kubeonev
 		SSHPrivateKeyFile: hs.SSHPrivateKeyFile,
 		SSHUsername:       hs.SSHUser,
 		SSHPort:           hs.SSHPort,
+		Kubelet:           kubeonev1beta2.KubeletConfig{},
 	}
+
+	parseKubeletResourceParams(hs.Kubelet, &hc.Kubelet)
+
+	return hc
 }
 
 func setWorkersetFlag(w *kubeonev1beta2.DynamicWorkerConfig, name string, value interface{}) error {
@@ -395,4 +409,41 @@ func setWorkersetFlag(w *kubeonev1beta2.DynamicWorkerConfig, name string, value 
 	}
 
 	return nil
+}
+
+func parseKubeletResourceParams(ks kubeletSpec, kc *kubeonev1beta2.KubeletConfig) {
+	if len(ks.KubeReserved) > 0 {
+		kc.KubeReserved = map[string]string{}
+		for _, krPair := range strings.Split(ks.KubeReserved, ",") {
+			krKV := strings.SplitN(krPair, "=", 2)
+			if len(krKV) != 2 {
+				continue
+			}
+			kc.KubeReserved[krKV[0]] = krKV[1]
+		}
+	}
+
+	if len(ks.SystemReserved) > 0 {
+		kc.SystemReserved = map[string]string{}
+		for _, srPair := range strings.Split(ks.SystemReserved, ",") {
+			srKV := strings.SplitN(srPair, "=", 2)
+			if len(srKV) != 2 {
+				continue
+			}
+			kc.SystemReserved[srKV[0]] = srKV[1]
+		}
+	}
+
+	if len(ks.EvictionHard) > 0 {
+		kc.EvictionHard = map[string]string{}
+		for _, ehPair := range strings.Split(ks.EvictionHard, ",") {
+			ehKV := strings.SplitN(ehPair, "<", 2)
+			if len(ehKV) != 2 {
+				continue
+			}
+			kc.EvictionHard[ehKV[0]] = ehKV[1]
+		}
+	}
+
+	kc.MaxPods = ks.MaxPods
 }
