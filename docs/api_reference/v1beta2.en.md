@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2022-05-31T21:25:27+02:00
+date = 2022-06-01T15:38:49+02:00
 weight = 11
 +++
 ## v1beta2
@@ -487,6 +487,7 @@ KubeletConfig provides some kubelet configuration options
 | systemReserved | SystemReserved configure --system-reserved command-line flag of the kubelet. See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/ | map[string]string | false |
 | kubeReserved | KubeReserved configure --kube-reserved command-line flag of the kubelet. See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/ | map[string]string | false |
 | evictionHard | EvictionHard configure --eviction-hard command-line flag of the kubelet. See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/ | map[string]string | false |
+| maxPods | MaxPods configures maximum number of pods per node. If not provided, default value provided by kubelet will be used (max. 110 pods per node) | *int32 | false |
 
 [Back to Group](#v1beta2)
 

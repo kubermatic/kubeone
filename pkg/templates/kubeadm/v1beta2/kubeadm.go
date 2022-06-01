@@ -181,6 +181,10 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		FeatureGates: map[string]bool{},
 	}
 
+	if host.Kubelet.MaxPods != nil {
+		kubeletConfig.MaxPods = *host.Kubelet.MaxPods
+	}
+
 	if cluster.AssetConfiguration.Pause.ImageRepository != "" {
 		nodeRegistration.KubeletExtraArgs["pod-infra-container-image"] = cluster.AssetConfiguration.Pause.ImageRepository + "/pause:" + cluster.AssetConfiguration.Pause.ImageTag
 	}
@@ -373,6 +377,10 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Obje
 			},
 		},
 		FeatureGates: map[string]bool{},
+	}
+
+	if host.Kubelet.MaxPods != nil {
+		kubeletConfig.MaxPods = *host.Kubelet.MaxPods
 	}
 
 	if cluster.AssetConfiguration.Pause.ImageRepository != "" {

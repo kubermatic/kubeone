@@ -44,6 +44,14 @@ output "kubeone_hosts" {
       bastion              = aws_instance.bastion.public_ip
       bastion_port         = var.bastion_port
       bastion_user         = local.bastion_user
+      # uncomment to following to set those kubelet parameters. More into at:
+      # https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/
+      # kubelet            = {
+      #   system_reserved = "cpu=200m,memory=200Mi"
+      #   kube_reserved   = "cpu=200m,memory=300Mi"
+      #   eviction_hard   = ""
+      #   max_pods        = 110
+      # }
     }
   }
 }

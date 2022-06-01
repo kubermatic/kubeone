@@ -64,19 +64,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		return nil, fail.Config(err, "parsing kubernetes semver")
 	}
 
-	etcdImageTag := cluster.AssetConfiguration.Etcd.ImageTag
-	etcdExtraArgs := map[string]string{}
-	if etcdIntegrityCheckConstraint.Check(kubeSemVer) {
-		// This is required because etcd v3.5-[0-2] (used for Kubernetes 1.22+)
-		// has an issue with the data integrity.
-		// See https://groups.google.com/a/kubernetes.io/g/dev/c/B7gJs88XtQc/m/rSgNOzV2BwAJ
-		// for more details.
-		if etcdImageTag == "" {
-			etcdImageTag = "3.5.3-0"
-		}
-		etcdExtraArgs["experimental-initial-corrupt-check"] = "true"
-		etcdExtraArgs["experimental-corrupt-check-time"] = "240m"
-	}
+	etcdImageTag, etcdExtraArgs := etcdVersionCorruptCheckExtraArgs(kubeSemVer, cluster.AssetConfiguration.Etcd.ImageTag)
 
 	nodeRegistration := newNodeRegistration(s, host)
 	nodeRegistration.IgnorePreflightErrors = []string{
@@ -204,6 +192,10 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 			},
 		},
 		FeatureGates: map[string]bool{},
+	}
+
+	if host.Kubelet.MaxPods != nil {
+		kubeletConfig.MaxPods = *host.Kubelet.MaxPods
 	}
 
 	if cluster.AssetConfiguration.Pause.ImageRepository != "" {
@@ -400,6 +392,10 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Obje
 		FeatureGates: map[string]bool{},
 	}
 
+	if host.Kubelet.MaxPods != nil {
+		kubeletConfig.MaxPods = *host.Kubelet.MaxPods
+	}
+
 	if cluster.AssetConfiguration.Pause.ImageRepository != "" {
 		nodeRegistration.KubeletExtraArgs["pod-infra-container-image"] = cluster.AssetConfiguration.Pause.ImageRepository + "/pause:" + cluster.AssetConfiguration.Pause.ImageTag
 	}
@@ -498,4 +494,21 @@ func kubeProxyConfiguration(s *state.State) *kubeproxyv1alpha1.KubeProxyConfigur
 	}
 
 	return kubeProxyConfig
+}
+
+func etcdVersionCorruptCheckExtraArgs(kubeSemVer *semver.Version, etcdImageTag string) (string, map[string]string) {
+	etcdExtraArgs := map[string]string{}
+	if etcdIntegrityCheckConstraint.Check(kubeSemVer) {
+		// This is required because etcd v3.5-[0-2] (used for Kubernetes 1.22+)
+		// has an issue with the data integrity.
+		// See https://groups.google.com/a/kubernetes.io/g/dev/c/B7gJs88XtQc/m/rSgNOzV2BwAJ
+		// for more details.
+		if etcdImageTag == "" {
+			etcdImageTag = "3.5.3-0"
+		}
+		etcdExtraArgs["experimental-initial-corrupt-check"] = "true"
+		etcdExtraArgs["experimental-corrupt-check-time"] = "240m"
+	}
+
+	return etcdImageTag, etcdExtraArgs
 }
