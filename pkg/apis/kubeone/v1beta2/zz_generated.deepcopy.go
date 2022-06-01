@@ -864,6 +864,11 @@ func (in *KubeletConfig) DeepCopyInto(out *KubeletConfig) {
 			(*out)[key] = val
 		}
 	}
+	if in.MaxPods != nil {
+		in, out := &in.MaxPods, &out.MaxPods
+		*out = new(int32)
+		**out = **in
+	}
 	return
 }
 

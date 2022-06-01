@@ -819,6 +819,18 @@ addons:
 #     taints:
 #     - key: "node-role.kubernetes.io/master"
 #       effect: "NoSchedule"
+#     # kubelet is used to control kubelet configuration
+#     # uncomment the following to set those kubelet parameters. More into at:
+#     # https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/#     
+#     # kubelet:
+#     #   systemReserved:
+#     #     cpu: 200m
+#     #     memory: 200Mi
+#     #   kubeReserved:
+#     #     cpu: 200m
+#     #     memory: 300Mi
+#     #   evictionHard: {}
+#     #   maxPods: 110
 
 # A list of static workers, not managed by MachineController.
 # The list of nodes can be overwritten by providing Terraform output.
@@ -841,6 +853,18 @@ addons:
 #     # taints:
 #     # - key: ""
 #     #   effect: ""
+#     # kubelet is used to control kubelet configuration
+#     # uncomment the following to set those kubelet parameters. More into at:
+#     # https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/#     
+#     # kubelet:
+#     #   systemReserved:
+#     #     cpu: 200m
+#     #     memory: 200Mi
+#     #   kubeReserved:
+#     #     cpu: 200m
+#     #     memory: 300Mi
+#     #   evictionHard: {}
+#     #   maxPods: 110
 
 # The API server can also be overwritten by Terraform. Provide the
 # external address of your load balancer or the public addresses of
