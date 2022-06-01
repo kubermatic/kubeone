@@ -150,25 +150,39 @@ type VSphereSpec struct {
 
 // AzureSpec holds cloudprovider spec for Azure
 type AzureSpec struct {
-	AssignPublicIP    bool              `json:"assignPublicIP"`
-	AvailabilitySet   string            `json:"availabilitySet"`
-	Location          string            `json:"location"`
-	ResourceGroup     string            `json:"resourceGroup"`
-	RouteTableName    string            `json:"routeTableName"`
-	SecurityGroupName string            `json:"securityGroupName"`
-	Zones             []string          `json:"zones"`
-	ImagePlan         *AzureImagePlan   `json:"imagePlan"`
-	SubnetName        string            `json:"subnetName"`
-	Tags              map[string]string `json:"tags"`
-	VMSize            string            `json:"vmSize"`
-	VNetName          string            `json:"vnetName"`
-	ImageID           string            `json:"imageID"`
-	OSDiskSize        int               `json:"osDiskSize"`
-	DataDiskSize      int               `json:"dataDiskSize"`
+	Location              string               `json:"location"`
+	ResourceGroup         string               `json:"resourceGroup"`
+	VNetResourceGroup     string               `json:"vnetResourceGroup"`
+	VMSize                string               `json:"vmSize"`
+	VNetName              string               `json:"vnetName"`
+	SubnetName            string               `json:"subnetName"`
+	LoadBalancerSku       string               `json:"loadBalancerSku"`
+	RouteTableName        string               `json:"routeTableName"`
+	AvailabilitySet       string               `json:"availabilitySet"`
+	AssignAvailabilitySet *bool                `json:"assignAvailabilitySet,omitempty"`
+	SecurityGroupName     string               `json:"securityGroupName"`
+	Zones                 []string             `json:"zones"`
+	ImagePlan             *AzureImagePlan      `json:"imagePlan"`
+	ImageReference        *AzureImageReference `json:"imageReference,omitempty"`
+
+	ImageID        string            `json:"imageID"`
+	OSDiskSize     int               `json:"osDiskSize"`
+	OSDiskSKU      *string           `json:"osDiskSKU,omitempty"`
+	DataDiskSize   int               `json:"dataDiskSize"`
+	DataDiskSKU    *string           `json:"dataDiskSKU,omitempty"`
+	AssignPublicIP bool              `json:"assignPublicIP"`
+	Tags           map[string]string `json:"tags"`
 }
 
 type AzureImagePlan struct {
 	Name      string `json:"name,omitempty"`
 	Publisher string `json:"publisher,omitempty"`
 	Product   string `json:"product,omitempty"`
+}
+
+type AzureImageReference struct {
+	Publisher string `json:"publisher,omitempty"`
+	Offer     string `json:"offer,omitempty"`
+	Sku       string `json:"sku,omitempty"`
+	Version   string `json:"version,omitempty"`
 }
