@@ -434,6 +434,9 @@ func ValidateDynamicWorkerConfig(workerset []kubeoneapi.DynamicWorkerConfig, fld
 		if w.Replicas == nil || *w.Replicas < 0 {
 			allErrs = append(allErrs, field.Invalid(fldPath.Child("replicas"), w.Replicas, ".dynamicWorkers.replicas must be specified and >= 0"))
 		}
+		if len(w.Config.MachineAnnotations) > 0 && len(w.Config.NodeAnnotations) > 0 {
+			allErrs = append(allErrs, field.Invalid(fldPath.Child("machineAnnotations"), w.Config.MachineAnnotations, "machineAnnotations has been replaced with nodeAnnotations, only one of those two can be set"))
+		}
 	}
 
 	return allErrs

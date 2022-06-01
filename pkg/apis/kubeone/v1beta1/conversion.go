@@ -76,3 +76,8 @@ func Convert_kubeone_KubeOneCluster_To_v1beta1_KubeOneCluster(in *kubeoneapi.Kub
 	// LoggingConfig was introduced only in new v1beta2 API, so we skip it here
 	return autoConvert_kubeone_KubeOneCluster_To_v1beta1_KubeOneCluster(in, out, s)
 }
+
+func Convert_kubeone_ProviderSpec_To_v1beta1_ProviderSpec(in *kubeoneapi.ProviderSpec, out *ProviderSpec, s conversion.Scope) error {
+	// NodeAnnotations and MachineObjectAnnotations were introduced only in new v1beta2 API, so we skip them here
+	return autoConvert_kubeone_ProviderSpec_To_v1beta1_ProviderSpec(in, out, s)
+}

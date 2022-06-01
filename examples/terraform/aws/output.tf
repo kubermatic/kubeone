@@ -88,12 +88,18 @@ output "kubeone_workers" {
         labels = {
           isSpotInstance = format("%t", var.initial_machinedeployment_spotinstances)
         }
+        # nodeAnnotations are applied on resulting Node objects
+        # nodeAnnotations = {
+        #   "key" = "value"
+        # }
+        # machineObjectAnnotations are applied on resulting Machine objects
         # uncomment to following to set those kubelet parameters. More into at:
         # https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/
-        # machineAnnotations = {
-        #  "v1.kubelet-config.machine-controller.kubermatic.io/SystemReserved" = "cpu=200m,memory=200Mi"
-        #  "v1.kubelet-config.machine-controller.kubermatic.io/KubeReserved"   = "cpu=200m,memory=300Mi"
-        #  "v1.kubelet-config.machine-controller.kubermatic.io/EvictionHard"   = ""
+        # machineObjectAnnotations = {
+        #   "v1.kubelet-config.machine-controller.kubermatic.io/SystemReserved" = "cpu=200m,memory=200Mi"
+        #   "v1.kubelet-config.machine-controller.kubermatic.io/KubeReserved"   = "cpu=200m,memory=300Mi"
+        #   "v1.kubelet-config.machine-controller.kubermatic.io/EvictionHard"   = ""
+        #   "v1.kubelet-config.machine-controller.kubermatic.io/MaxPods"        = "110"
         # }
         cloudProviderSpec = {
           # provider specific fields:
@@ -136,6 +142,19 @@ output "kubeone_workers" {
         labels = {
           isSpotInstance = format("%t", var.initial_machinedeployment_spotinstances)
         }
+        # nodeAnnotations are applied on resulting Node objects
+        # nodeAnnotations = {
+        #   "key" = "value"
+        # }
+        # machineObjectAnnotations are applied on resulting Machine objects
+        # uncomment to following to set those kubelet parameters. More into at:
+        # https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/
+        # machineObjectAnnotations = {
+        #   "v1.kubelet-config.machine-controller.kubermatic.io/SystemReserved" = "cpu=200m,memory=200Mi"
+        #   "v1.kubelet-config.machine-controller.kubermatic.io/KubeReserved"   = "cpu=200m,memory=300Mi"
+        #   "v1.kubelet-config.machine-controller.kubermatic.io/EvictionHard"   = ""
+        #   "v1.kubelet-config.machine-controller.kubermatic.io/MaxPods"        = "110"
+        # }
         cloudProviderSpec = {
           # provider specific fields:
           # see example under `cloudProviderSpec` section at:
@@ -177,6 +196,19 @@ output "kubeone_workers" {
         labels = {
           isSpotInstance = format("%t", var.initial_machinedeployment_spotinstances)
         }
+        # nodeAnnotations are applied on resulting Node objects
+        # nodeAnnotations = {
+        #   "key" = "value"
+        # }
+        # machineObjectAnnotations are applied on resulting Machine objects
+        # uncomment to following to set those kubelet parameters. More into at:
+        # https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/
+        # machineObjectAnnotations = {
+        #   "v1.kubelet-config.machine-controller.kubermatic.io/SystemReserved" = "cpu=200m,memory=200Mi"
+        #   "v1.kubelet-config.machine-controller.kubermatic.io/KubeReserved"   = "cpu=200m,memory=300Mi"
+        #   "v1.kubelet-config.machine-controller.kubermatic.io/EvictionHard"   = ""
+        #   "v1.kubelet-config.machine-controller.kubermatic.io/MaxPods"        = "110"
+        # }
         cloudProviderSpec = {
           # provider specific fields:
           # see example under `cloudProviderSpec` section at:
