@@ -1,63 +1,4 @@
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: node-local-dns
-  namespace: kube-system
-  labels:
-    addonmanager.kubernetes.io/mode: Reconcile
-    kubeone.io/component: nodelocaldns
-data:
-  Corefile: |
-    {{ .Config.ClusterNetwork.ServiceDomainName }}:53 {
-      errors
-      cache {
-        success 9984 30
-        denial 9984 5
-      }
-      reload
-      loop
-      bind __PILLAR__LOCAL__DNS__
-      forward . __PILLAR__CLUSTER__DNS__ {
-        force_tcp
-      }
-      prometheus :9253
-      health __PILLAR__LOCAL__DNS__:8080
-    }
-    in-addr.arpa:53 {
-      errors
-      cache 30
-      reload
-      loop
-      bind __PILLAR__LOCAL__DNS__
-      forward . __PILLAR__CLUSTER__DNS__ {
-        force_tcp
-      }
-      prometheus :9253
-    }
-    ip6.arpa:53 {
-      errors
-      cache 30
-      reload
-      loop
-      bind __PILLAR__LOCAL__DNS__
-      forward . __PILLAR__CLUSTER__DNS__ {
-        force_tcp
-      }
-      prometheus :9253
-    }
-    .:53 {
-      errors
-      cache 30
-      reload
-      loop
-      bind __PILLAR__LOCAL__DNS__
-      forward . __PILLAR__UPSTREAM__SERVERS__ {
-        force_tcp
-      }
-      prometheus :9253
-    }
----
-apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: node-local-dns
@@ -65,7 +6,6 @@ metadata:
   labels:
     kubernetes.io/cluster-service: "true"
     addonmanager.kubernetes.io/mode: Reconcile
-    kubeone.io/component: nodelocaldns
 ---
 apiVersion: v1
 kind: Service
@@ -77,7 +17,6 @@ metadata:
     kubernetes.io/cluster-service: "true"
     addonmanager.kubernetes.io/mode: Reconcile
     kubernetes.io/name: "KubeDNSUpstream"
-    kubeone.io/component: nodelocaldns
 spec:
   ports:
   - name: dns
@@ -91,6 +30,62 @@ spec:
   selector:
     k8s-app: kube-dns
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: node-local-dns
+  namespace: kube-system
+  labels:
+    addonmanager.kubernetes.io/mode: Reconcile
+data:
+  Corefile: |
+    {{ .Config.ClusterNetwork.ServiceDomainName }}:53 {
+      errors
+      cache {
+        success 9984 30
+        denial 9984 5
+      }
+      reload
+      loop
+      bind __PILLAR__LOCAL__DNS__ __PILLAR__DNS__SERVER__
+      forward . __PILLAR__CLUSTER__DNS__ {
+              force_tcp
+      }
+      prometheus :9253
+      health __PILLAR__LOCAL__DNS__:8080
+      }
+    in-addr.arpa:53 {
+        errors
+        cache 30
+        reload
+        loop
+        bind __PILLAR__LOCAL__DNS__ __PILLAR__DNS__SERVER__
+        forward . __PILLAR__CLUSTER__DNS__ {
+                force_tcp
+        }
+        prometheus :9253
+        }
+    ip6.arpa:53 {
+        errors
+        cache 30
+        reload
+        loop
+        bind __PILLAR__LOCAL__DNS__ __PILLAR__DNS__SERVER__
+        forward . __PILLAR__CLUSTER__DNS__ {
+                force_tcp
+        }
+        prometheus :9253
+        }
+    .:53 {
+        errors
+        cache 30
+        reload
+        loop
+        bind __PILLAR__LOCAL__DNS__ __PILLAR__DNS__SERVER__
+        forward . __PILLAR__UPSTREAM__SERVERS__
+        prometheus :9253
+        }
+---
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -100,7 +95,6 @@ metadata:
     k8s-app: node-local-dns
     kubernetes.io/cluster-service: "true"
     addonmanager.kubernetes.io/mode: Reconcile
-    kubeone.io/component: nodelocaldns
 spec:
   updateStrategy:
     rollingUpdate:
@@ -112,13 +106,21 @@ spec:
     metadata:
       labels:
         k8s-app: node-local-dns
+      annotations:
+        prometheus.io/port: "9253"
+        prometheus.io/scrape: "true"
     spec:
       priorityClassName: system-node-critical
       serviceAccountName: node-local-dns
       hostNetwork: true
       dnsPolicy: Default  # Don't use cluster DNS.
       tolerations:
-      - operator: "Exists"
+      - key: "CriticalAddonsOnly"
+        operator: "Exists"
+      - effect: "NoExecute"
+        operator: "Exists"
+      - effect: "NoSchedule"
+        operator: "Exists"
       containers:
       - name: node-cache
         image: {{ .InternalImages.Get "DNSNodeCache" }}
@@ -132,6 +134,7 @@ spec:
           requests:
             cpu: 25m
             memory: 5Mi
+        args: [ "-localip", "__PILLAR__LOCAL__DNS__,__PILLAR__DNS__SERVER__", "-conf", "/etc/Corefile", "-upstreamsvc", "kube-dns-upstream" ]
         securityContext:
           privileged: true
         ports:
@@ -175,6 +178,8 @@ spec:
             - key: Corefile
               path: Corefile.base
 ---
+# A headless service is a service with a service IP but instead of load-balancing it will return the IPs of our associated Pods.
+# We use this to expose metrics to Prometheus.
 apiVersion: v1
 kind: Service
 metadata:
@@ -183,7 +188,6 @@ metadata:
     prometheus.io/scrape: "true"
   labels:
     k8s-app: node-local-dns
-    kubeone.io/component: nodelocaldns
   name: node-local-dns
   namespace: kube-system
 spec:

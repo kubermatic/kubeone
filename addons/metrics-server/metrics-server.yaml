@@ -50,14 +50,15 @@ kind: ClusterRole
 metadata:
   name: system:metrics-server
 rules:
-  - apiGroups:
-      - ""
+  - apiGroups: [""]
+    resources:
+      - nodes/metrics
+    verbs:
+      - get
+  - apiGroups: [""]
     resources:
       - pods
       - nodes
-      - nodes/stats
-      - namespaces
-      - configmaps
     verbs:
       - get
       - list
@@ -137,6 +138,7 @@ spec:
         image: {{ .InternalImages.Get "MetricsServer" }}
         imagePullPolicy: IfNotPresent
         args:
+          - --secure-port=4443
           - --kubelet-insecure-tls
           - --kubelet-preferred-address-types=InternalIP,InternalDNS,ExternalDNS,ExternalIP
           - --kubelet-use-node-status-port
@@ -152,7 +154,7 @@ spec:
             memory: 512Mi
         ports:
         - name: https
-          containerPort: 443
+          containerPort: 4443
           protocol: TCP
         readinessProbe:
           httpGet:
@@ -173,26 +175,27 @@ spec:
           readOnlyRootFilesystem: true
           runAsNonRoot: true
           runAsUser: 1000
+          allowPrivilegeEscalation: false
         volumeMounts:
         - name: tmp-dir
           mountPath: /tmp
         - name: metrics-server-serving-cert
           mountPath: /etc/serving-cert
           readOnly: true
+      nodeSelector:
+        kubernetes.io/os: linux
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: metrics-server
   namespace: kube-system
-  labels:
-    kubernetes.io/name: Metrics-server
-    kubernetes.io/cluster-service: "true"
 spec:
   selector:
     k8s-app: metrics-server
   type: ClusterIP
   ports:
-  - port: 443
+  - name: https
+    port: 443
     protocol: TCP
-    targetPort: 443
+    targetPort: https
