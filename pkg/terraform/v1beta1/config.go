@@ -335,21 +335,27 @@ func (c *Config) updateAzureWorkerset(existingWorkerSet *kubeonev1beta1.DynamicW
 	}
 
 	flags := []cloudProviderFlags{
-		{key: "assignPublicIP", value: azureCloudConfig.AssignPublicIP},
-		{key: "availabilitySet", value: azureCloudConfig.AvailabilitySet},
 		{key: "location", value: azureCloudConfig.Location},
 		{key: "resourceGroup", value: azureCloudConfig.ResourceGroup},
+		{key: "vnetResourceGroup", value: azureCloudConfig.VNetResourceGroup},
+		{key: "vmSize", value: azureCloudConfig.VMSize},
+		{key: "vnetName", value: azureCloudConfig.VNetName},
+		{key: "subnetName", value: azureCloudConfig.SubnetName},
+		{key: "loadBalancerSku", value: azureCloudConfig.LoadBalancerSku},
 		{key: "routeTableName", value: azureCloudConfig.RouteTableName},
+		{key: "availabilitySet", value: azureCloudConfig.AvailabilitySet},
+		{key: "assignAvailabilitySet", value: azureCloudConfig.AssignAvailabilitySet},
 		{key: "securityGroupName", value: azureCloudConfig.SecurityGroupName},
 		{key: "zones", value: azureCloudConfig.Zones},
 		{key: "imagePlan", value: azureCloudConfig.ImagePlan},
-		{key: "subnetName", value: azureCloudConfig.SubnetName},
-		{key: "tags", value: azureCloudConfig.Tags},
-		{key: "vmSize", value: azureCloudConfig.VMSize},
-		{key: "vnetName", value: azureCloudConfig.VNetName},
+		{key: "imageReference", value: azureCloudConfig.ImageReference},
 		{key: "imageID", value: azureCloudConfig.ImageID},
 		{key: "osDiskSize", value: azureCloudConfig.OSDiskSize},
+		{key: "osDiskSKU", value: azureCloudConfig.OSDiskSKU},
 		{key: "dataDiskSize", value: azureCloudConfig.DataDiskSize},
+		{key: "dataDiskSKU", value: azureCloudConfig.DataDiskSKU},
+		{key: "assignPublicIP", value: azureCloudConfig.AssignPublicIP},
+		{key: "tags", value: azureCloudConfig.Tags},
 	}
 
 	for _, flag := range flags {
