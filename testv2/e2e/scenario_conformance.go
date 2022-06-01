@@ -69,8 +69,7 @@ func (scenario *scenarioConformance) test(t *testing.T) {
 		t.Fatalf("sonobuoy wait failed: %v", err)
 	}
 
-	if err := sb.Retrive(); err != nil {
-		t.Fatalf("sonobuoy retrive failed: %v", err)
+	if err := sb.Retrieve(); err != nil {
+		t.Fatalf("sonobuoy retrieve failed: %v", err)
 	}
-
 }

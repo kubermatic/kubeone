@@ -34,7 +34,6 @@ type sonobuoyReport struct {
 type sonobuoyMode string
 
 const (
-	sonobuoyQuick           sonobuoyMode = "quick"
 	sonobuoyConformance     sonobuoyMode = "conformance"
 	sonobuoyConformanceLite sonobuoyMode = "conformance-lite"
 )
@@ -55,8 +54,8 @@ func (sbb *sonobuoyBin) Wait() error {
 	return sbb.run("wait")
 }
 
-func (sbb *sonobuoyBin) Retrive() error {
-	return sbb.run("retrive", "--filename", sonobuoyResultsFile)
+func (sbb *sonobuoyBin) Retrieve() error {
+	return sbb.run("retrieve", "--filename", sonobuoyResultsFile)
 }
 
 func (sbb *sonobuoyBin) Results() ([]sonobuoyReport, error) {
