@@ -193,7 +193,7 @@ func baseResources() map[Resource]map[string]string {
 		DNSNodeCache:      {"*": "k8s.gcr.io/k8s-dns-node-cache:1.15.13"},
 		Flannel:           {"*": "quay.io/coreos/flannel:v0.15.1"},
 		MachineController: {"*": "quay.io/kubermatic/machine-controller:v1.51.0"},
-		MetricsServer:     {"*": "k8s.gcr.io/metrics-server/metrics-server:v0.5.0"},
+		MetricsServer:     {"*": "k8s.gcr.io/metrics-server/metrics-server:v0.6.1"},
 	}
 }
 
