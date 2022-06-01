@@ -27,14 +27,18 @@ import (
 	"time"
 
 	"github.com/Masterminds/semver/v3"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/util/rand"
 	"k8s.io/apimachinery/pkg/util/wait"
+	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/util/retry"
-	cntr "sigs.k8s.io/controller-runtime/pkg/client"
+	ctrlruntimeclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 const (
@@ -46,7 +50,8 @@ const (
 func titleize(s string) string {
 	s = strings.ReplaceAll(s, "_", " ")
 	s = strings.ReplaceAll(s, ".", "_")
-	s = strings.Title(s)
+	s = cases.Title(language.English).String(s)
+
 	return strings.ReplaceAll(s, " ", "")
 }
 
@@ -80,40 +85,53 @@ func requiredTemplateFunc(warn string, input interface{}) (interface{}, error) {
 	return input, nil
 }
 
+func newKubeoneBin(terraformPath, manifestPath string) *kubeoneBin {
+	return &kubeoneBin{
+		bin:          "kubeone",
+		dir:          terraformPath,
+		tfjsonPath:   ".",
+		manifestPath: manifestPath,
+	}
+}
+
 type manifestData struct {
 	VERSION string
 }
 
-func renderManifest(tmpDir, templatePath string, data manifestData) (string, error) {
+func renderManifest(t *testing.T, templatePath string, data manifestData) string {
+	t.Helper()
+
+	tmpDir := t.TempDir()
+
 	var buf bytes.Buffer
 
 	tpl, err := template.New("").Parse(templatePath)
 	if err != nil {
-		return "", err
+		t.Fatal(err)
 	}
 	tpl.Funcs(template.FuncMap{
 		"required": requiredTemplateFunc,
 	})
 
-	if err := tpl.Execute(&buf, data); err != nil {
-		return "", err
+	if err = tpl.Execute(&buf, data); err != nil {
+		t.Fatal(err)
 	}
 
 	manifest, err := os.CreateTemp(tmpDir, "kubeone-*.yaml")
 	if err != nil {
-		return "", err
+		t.Fatal(err)
 	}
 	defer manifest.Close()
 
 	manifestPath := manifest.Name()
 	if err := os.WriteFile(manifestPath, buf.Bytes(), 0600); err != nil {
-		return "", err
+		t.Fatal(err)
 	}
 
-	return manifestPath, nil
+	return manifestPath
 }
 
-func waitForNodesReady(t *testing.T, client cntr.Client, expectedNumberOfNodes int) error {
+func waitForNodesReady(t *testing.T, client ctrlruntimeclient.Client, expectedNumberOfNodes int) error {
 	t.Helper()
 
 	return wait.Poll(5*time.Second, 10*time.Minute, func() (bool, error) {
@@ -141,14 +159,14 @@ func waitForNodesReady(t *testing.T, client cntr.Client, expectedNumberOfNodes i
 	})
 }
 
-func verifyVersion(client cntr.Client, namespace string, targetVersion string) error {
+func verifyVersion(client ctrlruntimeclient.Client, namespace string, targetVersion string) error {
 	reqVer, err := semver.NewVersion(targetVersion)
 	if err != nil {
 		return fmt.Errorf("desired version is invalid: %w", err)
 	}
 
 	nodes := corev1.NodeList{}
-	nodeListOpts := cntr.ListOptions{
+	nodeListOpts := ctrlruntimeclient.ListOptions{
 		LabelSelector: labels.SelectorFromSet(map[string]string{
 			labelControlPlaneNode: "",
 		}),
@@ -170,7 +188,7 @@ func verifyVersion(client cntr.Client, namespace string, targetVersion string) e
 	}
 
 	apiserverPods := corev1.PodList{}
-	podsListOpts := cntr.ListOptions{
+	podsListOpts := ctrlruntimeclient.ListOptions{
 		Namespace: namespace,
 		LabelSelector: labels.SelectorFromSet(map[string]string{
 			"component": "kube-apiserver",
@@ -229,12 +247,10 @@ func newProwJob(prowJobName string, labels map[string]string, testTitle string, 
 					Image:           prowImage,
 					ImagePullPolicy: corev1.PullAlways,
 					Command: []string{
-						"go",
-						"test",
-						"-v",
+						"go", "test", "-v",
 						"./testv2/e2e/...",
-						"-run",
-						fmt.Sprintf("^%s$", testTitle),
+						"-tags", "e2e",
+						"-run", fmt.Sprintf("^%s$", testTitle),
 					},
 					Resources: corev1.ResourceRequirements{
 						Requests: corev1.ResourceList{
@@ -249,4 +265,52 @@ func newProwJob(prowJobName string, labels map[string]string, testTitle string, 
 
 func pullProwJobName(in ...string) string {
 	return fmt.Sprintf("pull-kubeone-e2e-%s", strings.ReplaceAll(strings.Join(in, "-"), "_", "-"))
+}
+
+func basicTest(t *testing.T, k1 *kubeoneBin, data manifestData) {
+	t.Helper()
+
+	kubeoneManifest, err := k1.Manifest()
+	if err != nil {
+		t.Fatalf("failed to get manifest API")
+	}
+
+	numberOfNodesToWait := len(kubeoneManifest.ControlPlane.Hosts) + len(kubeoneManifest.StaticWorkers.Hosts)
+	for _, worker := range kubeoneManifest.DynamicWorkers {
+		if worker.Replicas != nil {
+			numberOfNodesToWait += *worker.Replicas
+		}
+	}
+
+	var kubeconfig []byte
+	fetchKubeconfig := func() error {
+		kubeconfig, err = k1.Kubeconfig()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}
+
+	if err = retryFn(fetchKubeconfig); err != nil {
+		t.Fatalf("kubeone kubeconfig failed: %v", err)
+	}
+
+	restConfig, err := clientcmd.RESTConfigFromKubeConfig(kubeconfig)
+	if err != nil {
+		t.Fatalf("unable to build clientset from kubeconfig bytes: %v", err)
+	}
+
+	client, err := ctrlruntimeclient.New(restConfig, ctrlruntimeclient.Options{})
+	if err != nil {
+		t.Fatalf("failed to init dynamic client: %s", err)
+	}
+
+	if err = waitForNodesReady(t, client, numberOfNodesToWait); err != nil {
+		t.Fatalf("failed to bring up all nodes up: %v", err)
+	}
+
+	if err = verifyVersion(client, metav1.NamespaceSystem, data.VERSION); err != nil {
+		t.Fatalf("version mismatch: %v", err)
+	}
 }

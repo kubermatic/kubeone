@@ -30,6 +30,7 @@ type scenarioUpgrade struct {
 	manifestTemplatePath string
 	versions             []string
 	infra                Infra
+	install              *scenarioInstall
 }
 
 func (scenario scenarioUpgrade) Title() string { return titleize(scenario.name) }
@@ -45,24 +46,51 @@ func (scenario *scenarioUpgrade) SetVersions(versions ...string) {
 func (scenario *scenarioUpgrade) Run(t *testing.T) {
 	t.Helper()
 
-	install := scenarioInstall{
+	scenario.install = &scenarioInstall{
 		name:                 scenario.name,
 		manifestTemplatePath: scenario.manifestTemplatePath,
 		infra:                scenario.infra,
 		versions:             scenario.versions,
 	}
 
-	install.install(t)
+	scenario.install.install(t)
 	scenario.upgrade(t)
 	scenario.test(t)
 }
 
 func (scenario *scenarioUpgrade) upgrade(t *testing.T) {
-	// TODO: add upgrade logic
+	t.Helper()
+
+	k1 := newKubeoneBin(
+		scenario.infra.terraform.path,
+		renderManifest(t,
+			scenario.manifestTemplatePath,
+			manifestData{
+				VERSION: scenario.versions[1],
+			},
+		),
+	)
+
+	if err := k1.Apply(); err != nil {
+		t.Fatalf("kubeone apply failed: %v", err)
+	}
 }
 
 func (scenario *scenarioUpgrade) test(t *testing.T) {
-	// TODO: add some testings
+	t.Helper()
+
+	data := manifestData{
+		VERSION: scenario.versions[1],
+	}
+	k1 := newKubeoneBin(
+		scenario.infra.terraform.path,
+		renderManifest(t,
+			scenario.manifestTemplatePath,
+			data,
+		),
+	)
+
+	basicTest(t, k1, data)
 }
 
 func (scenario *scenarioUpgrade) GenerateTests(wr io.Writer, generatorType GeneratorType, cfg ProwConfig) error {

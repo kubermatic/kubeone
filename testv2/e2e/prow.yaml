@@ -15,6 +15,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsDefaultsInstallContainerdV1_21_12$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -38,6 +40,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsCentosInstallContainerdV1_21_12$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -61,6 +65,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsRhelInstallContainerdV1_21_12$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -84,6 +90,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsFlatcarInstallContainerdV1_21_12$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -107,6 +115,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsAmznInstallContainerdV1_21_12$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -130,6 +140,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsDefaultsInstallContainerdV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -153,6 +165,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsCentosInstallContainerdV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -176,6 +190,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsRhelInstallContainerdV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -199,6 +215,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsFlatcarInstallContainerdV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -222,6 +240,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsAmznInstallContainerdV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -245,6 +265,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsDefaultsInstallContainerdV1_23_6$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -268,6 +290,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsCentosInstallContainerdV1_23_6$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -291,6 +315,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsRhelInstallContainerdV1_23_6$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -314,6 +340,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsFlatcarInstallContainerdV1_23_6$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -337,6 +365,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsAmznInstallContainerdV1_23_6$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -360,6 +390,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsDefaultsInstallDockerV1_21_12$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -383,6 +415,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsCentosInstallDockerV1_21_12$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -406,6 +440,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsRhelInstallDockerV1_21_12$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -429,6 +465,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsFlatcarInstallDockerV1_21_12$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -452,6 +490,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsAmznInstallDockerV1_21_12$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -475,6 +515,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsDefaultsInstallDockerV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -498,6 +540,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsCentosInstallDockerV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -521,6 +565,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsRhelInstallDockerV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -544,6 +590,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsFlatcarInstallDockerV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -567,6 +615,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsAmznInstallDockerV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -590,6 +640,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsDefaultsUpgradeContainerdFromV1_21_12_ToV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -613,6 +665,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsCentosUpgradeContainerdFromV1_21_12_ToV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -636,6 +690,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsRhelUpgradeContainerdFromV1_21_12_ToV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -659,6 +715,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsFlatcarUpgradeContainerdFromV1_21_12_ToV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -682,6 +740,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsAmznUpgradeContainerdFromV1_21_12_ToV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -705,6 +765,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsDefaultsUpgradeContainerdFromV1_22_9_ToV1_23_6$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -728,6 +790,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsCentosUpgradeContainerdFromV1_22_9_ToV1_23_6$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -751,6 +815,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsRhelUpgradeContainerdFromV1_22_9_ToV1_23_6$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -774,6 +840,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsFlatcarUpgradeContainerdFromV1_22_9_ToV1_23_6$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -797,6 +865,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsAmznUpgradeContainerdFromV1_22_9_ToV1_23_6$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -820,6 +890,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsDefaultsUpgradeDockerFromV1_21_12_ToV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -843,6 +915,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsCentosUpgradeDockerFromV1_21_12_ToV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -866,6 +940,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsRhelUpgradeDockerFromV1_21_12_ToV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -889,6 +965,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsFlatcarUpgradeDockerFromV1_21_12_ToV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -912,6 +990,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsAmznUpgradeDockerFromV1_21_12_ToV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -935,6 +1015,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsDefaultsCalicoContainerdV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -958,6 +1040,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsCentosCalicoContainerdV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -981,6 +1065,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsRhelCalicoContainerdV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -1004,6 +1090,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsFlatcarCalicoContainerdV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -1027,6 +1115,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsAmznCalicoContainerdV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -1050,6 +1140,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsDefaultsCalicoDockerV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -1073,6 +1165,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsCentosCalicoDockerV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -1096,6 +1190,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsRhelCalicoDockerV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -1119,6 +1215,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsFlatcarCalicoDockerV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -1142,6 +1240,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsAmznCalicoDockerV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -1165,6 +1265,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsDefaultsWeaveContainerdV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -1188,6 +1290,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsCentosWeaveContainerdV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -1211,6 +1315,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsRhelWeaveContainerdV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -1234,6 +1340,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsFlatcarWeaveContainerdV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -1257,6 +1365,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsAmznWeaveContainerdV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -1280,6 +1390,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsDefaultsWeaveDockerV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -1303,6 +1415,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsCentosWeaveDockerV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -1326,6 +1440,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsRhelWeaveDockerV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -1349,6 +1465,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsFlatcarWeaveDockerV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
@@ -1372,6 +1490,8 @@ presubmits:
       - test
       - -v
       - ./testv2/e2e/...
+      - -tags
+      - e2e
       - -run
       - ^TestAwsAmznWeaveDockerV1_22_9$
       image: kubermatic/kubeone-e2e:v0.1.22
