@@ -17,11 +17,12 @@ limitations under the License.
 package e2e
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
-	"sync"
 
 	"k8c.io/kubeone/test/e2e/testutil"
 )
@@ -59,38 +60,43 @@ func (sbb *sonobuoyBin) Retrieve() error {
 }
 
 func (sbb *sonobuoyBin) Results() ([]sonobuoyReport, error) {
-	rpipe, wpipe, _ := os.Pipe()
-	failedCases := []sonobuoyReport{}
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	rpipe, wpipe, err := os.Pipe()
+	if err != nil {
+		return nil, err
+	}
 
 	exe := sbb.build("results", sonobuoyResultsFile, "--mode", "detailed", "--plugin", "e2e")
-	testutil.StdoutTo(wpipe)(exe)
-	var (
-		runErr error
-		wg     sync.WaitGroup
-	)
+	cmd := exe.BuildCmd(ctx)
+	cmd.Stdout = wpipe
+	if err := cmd.Start(); err != nil {
+		return nil, err
+	}
 
-	wg.Add(1)
+	var waitErr error
 	go func() {
-		runErr = exe.Run()
-		wg.Done()
+		waitErr = cmd.Wait()
+		_ = wpipe.Close() // send EOF to break the reading loop (with EOF), ignore the error
 	}()
 
 	dec := json.NewDecoder(rpipe)
-
+	failedCases := []sonobuoyReport{}
 	for {
 		var rep sonobuoyReport
-		if err := dec.Decode(&rep); err == io.EOF {
+		if err := dec.Decode(&rep); errors.Is(err, io.EOF) {
 			break
 		} else if err != nil {
 			return nil, err
 		}
 		if rep.Status == "failed" {
+			// we are interested only in failed test cases
 			failedCases = append(failedCases, rep)
 		}
 	}
 
-	wg.Wait()
-	return failedCases, runErr
+	return failedCases, waitErr
 }
 
 func (sbb *sonobuoyBin) run(args ...string) error {
