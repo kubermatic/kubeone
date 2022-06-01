@@ -194,8 +194,8 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		FeatureGates: map[string]bool{},
 	}
 
-	if host.Kubelet.MaxPods != 0 {
-		kubeletConfig.MaxPods = host.Kubelet.MaxPods
+	if host.Kubelet.MaxPods != nil {
+		kubeletConfig.MaxPods = *host.Kubelet.MaxPods
 	}
 
 	if cluster.AssetConfiguration.Pause.ImageRepository != "" {
@@ -392,8 +392,8 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Obje
 		FeatureGates: map[string]bool{},
 	}
 
-	if host.Kubelet.MaxPods != 0 {
-		kubeletConfig.MaxPods = host.Kubelet.MaxPods
+	if host.Kubelet.MaxPods != nil {
+		kubeletConfig.MaxPods = *host.Kubelet.MaxPods
 	}
 
 	if cluster.AssetConfiguration.Pause.ImageRepository != "" {

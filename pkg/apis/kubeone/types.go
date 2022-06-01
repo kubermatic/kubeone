@@ -209,9 +209,9 @@ type KubeletConfig struct {
 	// See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/
 	EvictionHard map[string]string `json:"evictionHard,omitempty"`
 	// MaxPods configures maximum number of pods per node.
-	// Default value is 0, which means that default value provided by kubelet will
-	// be used (max. 110 pods per node)
-	MaxPods int32 `json:"maxPods,omitempty"`
+	// If not provided, default value provided by kubelet will be used
+	// (max. 110 pods per node)
+	MaxPods *int32 `json:"maxPods,omitempty"`
 }
 
 // APIEndpoint is the endpoint used to communicate with the Kubernetes API

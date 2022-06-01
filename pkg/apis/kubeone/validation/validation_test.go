@@ -25,6 +25,7 @@ import (
 	"k8c.io/kubeone/pkg/templates/resources"
 
 	"k8s.io/apimachinery/pkg/util/validation/field"
+	"k8s.io/utils/pointer"
 )
 
 func TestValidateKubeOneCluster(t *testing.T) {
@@ -1828,6 +1829,54 @@ func TestValidateHostConfig(t *testing.T) {
 					SSHAgentSocket:    "test",
 					SSHUsername:       "root",
 					OperatingSystem:   kubeoneapi.OperatingSystemName("non-existing"),
+				},
+			},
+			expectedError: true,
+		},
+		{
+			name: "kubelet.maxPods valid",
+			hostConfig: []kubeoneapi.HostConfig{
+				{
+					PublicAddress:     "192.168.1.1",
+					PrivateAddress:    "192.168.0.1",
+					SSHPrivateKeyFile: "test",
+					SSHAgentSocket:    "test",
+					SSHUsername:       "root",
+					Kubelet: kubeoneapi.KubeletConfig{
+						MaxPods: pointer.Int32Ptr(110),
+					},
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "kubelet.maxPods zero (invalid)",
+			hostConfig: []kubeoneapi.HostConfig{
+				{
+					PublicAddress:     "192.168.1.1",
+					PrivateAddress:    "192.168.0.1",
+					SSHPrivateKeyFile: "test",
+					SSHAgentSocket:    "test",
+					SSHUsername:       "root",
+					Kubelet: kubeoneapi.KubeletConfig{
+						MaxPods: pointer.Int32Ptr(0),
+					},
+				},
+			},
+			expectedError: true,
+		},
+		{
+			name: "kubelet.maxPods negative (invalid)",
+			hostConfig: []kubeoneapi.HostConfig{
+				{
+					PublicAddress:     "192.168.1.1",
+					PrivateAddress:    "192.168.0.1",
+					SSHPrivateKeyFile: "test",
+					SSHAgentSocket:    "test",
+					SSHUsername:       "root",
+					Kubelet: kubeoneapi.KubeletConfig{
+						MaxPods: pointer.Int32Ptr(-10),
+					},
 				},
 			},
 			expectedError: true,
