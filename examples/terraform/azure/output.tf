@@ -81,10 +81,10 @@ output "kubeone_workers" {
           # imageID = ""
           # Size of the operating system disk (optional)
           # osDiskSize = 100
-          # osDiskSKU = 100
+          # osDiskSKU  = "Standard_LRS"
           # Size of the data disk (optional)
           # dataDiskSize = 100
-          # dataDiskSKU = 100
+          # dataDiskSKU  = "Standard_LRS"
           tags = {
             "${var.cluster_name}-workers" = "pool1"
           }
