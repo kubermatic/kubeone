@@ -17,6 +17,7 @@ limitations under the License.
 package testutil
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"os"
@@ -55,11 +56,7 @@ type Exec struct {
 }
 
 func (e *Exec) Run() error {
-	cmd := e.build()
-
-	if e.Logf != nil {
-		e.Logf("in dir: %s, %v", e.Cwd, cmd.Args)
-	}
+	cmd := e.BuildCmd(context.Background())
 
 	if e.dryRun {
 		return nil
@@ -68,8 +65,8 @@ func (e *Exec) Run() error {
 	return cmd.Run()
 }
 
-func (e *Exec) build() *exec.Cmd {
-	cmd := exec.Command(e.Command, e.Args...) //nolint:gosec
+func (e *Exec) BuildCmd(ctx context.Context) *exec.Cmd {
+	cmd := exec.CommandContext(ctx, e.Command, e.Args...) //nolint:gosec
 	cmd.Dir = e.Cwd
 
 	if len(e.Env) != 0 {
@@ -83,6 +80,10 @@ func (e *Exec) build() *exec.Cmd {
 
 	if e.Stderr != nil {
 		cmd.Stderr = e.Stderr
+	}
+
+	if e.Logf != nil {
+		e.Logf("in dir: %s, %v", e.Cwd, cmd.Args)
 	}
 
 	return cmd

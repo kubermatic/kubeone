@@ -1500,3 +1500,503 @@ presubmits:
       resources:
         requests:
           cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-defaults-conformance-containerd-v1.21.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -tags
+      - e2e
+      - -run
+      - ^TestAwsDefaultsConformanceContainerdV1_21_12$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-centos-conformance-containerd-v1.21.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -tags
+      - e2e
+      - -run
+      - ^TestAwsCentosConformanceContainerdV1_21_12$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-rhel-conformance-containerd-v1.21.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -tags
+      - e2e
+      - -run
+      - ^TestAwsRhelConformanceContainerdV1_21_12$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-flatcar-conformance-containerd-v1.21.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -tags
+      - e2e
+      - -run
+      - ^TestAwsFlatcarConformanceContainerdV1_21_12$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-amzn-conformance-containerd-v1.21.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -tags
+      - e2e
+      - -run
+      - ^TestAwsAmznConformanceContainerdV1_21_12$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-defaults-conformance-containerd-v1.22.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -tags
+      - e2e
+      - -run
+      - ^TestAwsDefaultsConformanceContainerdV1_22_9$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-centos-conformance-containerd-v1.22.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -tags
+      - e2e
+      - -run
+      - ^TestAwsCentosConformanceContainerdV1_22_9$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-rhel-conformance-containerd-v1.22.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -tags
+      - e2e
+      - -run
+      - ^TestAwsRhelConformanceContainerdV1_22_9$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-flatcar-conformance-containerd-v1.22.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -tags
+      - e2e
+      - -run
+      - ^TestAwsFlatcarConformanceContainerdV1_22_9$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-amzn-conformance-containerd-v1.22.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -tags
+      - e2e
+      - -run
+      - ^TestAwsAmznConformanceContainerdV1_22_9$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-defaults-conformance-containerd-v1.23.6
+  optional: false
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -tags
+      - e2e
+      - -run
+      - ^TestAwsDefaultsConformanceContainerdV1_23_6$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-centos-conformance-containerd-v1.23.6
+  optional: false
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -tags
+      - e2e
+      - -run
+      - ^TestAwsCentosConformanceContainerdV1_23_6$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-rhel-conformance-containerd-v1.23.6
+  optional: false
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -tags
+      - e2e
+      - -run
+      - ^TestAwsRhelConformanceContainerdV1_23_6$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-flatcar-conformance-containerd-v1.23.6
+  optional: false
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -tags
+      - e2e
+      - -run
+      - ^TestAwsFlatcarConformanceContainerdV1_23_6$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-amzn-conformance-containerd-v1.23.6
+  optional: false
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -tags
+      - e2e
+      - -run
+      - ^TestAwsAmznConformanceContainerdV1_23_6$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-defaults-conformance-containerd-v1.24.1
+  optional: false
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -tags
+      - e2e
+      - -run
+      - ^TestAwsDefaultsConformanceContainerdV1_24_1$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-centos-conformance-containerd-v1.24.1
+  optional: false
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -tags
+      - e2e
+      - -run
+      - ^TestAwsCentosConformanceContainerdV1_24_1$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-rhel-conformance-containerd-v1.24.1
+  optional: false
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -tags
+      - e2e
+      - -run
+      - ^TestAwsRhelConformanceContainerdV1_24_1$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-flatcar-conformance-containerd-v1.24.1
+  optional: false
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -tags
+      - e2e
+      - -run
+      - ^TestAwsFlatcarConformanceContainerdV1_24_1$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-amzn-conformance-containerd-v1.24.1
+  optional: false
+  spec:
+    containers:
+    - command:
+      - go
+      - test
+      - -v
+      - ./testv2/e2e/...
+      - -tags
+      - e2e
+      - -run
+      - ^TestAwsAmznConformanceContainerdV1_24_1$
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"

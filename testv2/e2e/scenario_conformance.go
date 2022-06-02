@@ -36,8 +36,15 @@ func (scenario *scenarioConformance) SetVersions(versions ...string) {
 	scenario.versions = versions
 }
 
-func (scenario *scenarioConformance) GenerateTests(output io.Writer, testType GeneratorType, cfg ProwConfig) error {
-	return nil
+func (scenario *scenarioConformance) GenerateTests(wr io.Writer, generatorType GeneratorType, cfg ProwConfig) error {
+	install := scenarioInstall{
+		name:                 scenario.name,
+		manifestTemplatePath: scenario.manifestTemplatePath,
+		infra:                scenario.infra,
+		versions:             scenario.versions,
+	}
+
+	return install.GenerateTests(wr, generatorType, cfg)
 }
 
 func (scenario *scenarioConformance) Run(t *testing.T) {
@@ -56,5 +63,18 @@ func (scenario *scenarioConformance) Run(t *testing.T) {
 
 func (scenario *scenarioConformance) test(t *testing.T) {
 	t.Helper()
-	// TODO: add sonobuoy test launch
+
+	data := manifestData{VERSION: scenario.versions[0]}
+	k1 := newKubeoneBin(
+		scenario.infra.terraform.path,
+		renderManifest(t,
+			scenario.manifestTemplatePath,
+			manifestData{
+				VERSION: scenario.versions[0],
+			},
+		),
+	)
+
+	basicTest(t, k1, data)
+	sonobuoyRun(t, k1, sonobuoyConformance)
 }
