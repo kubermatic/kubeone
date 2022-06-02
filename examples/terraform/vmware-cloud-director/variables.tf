@@ -77,18 +77,6 @@ variable "ssh_agent_socket" {
   type        = string
 }
 
-variable "bastion_port" {
-  description = "Bastion SSH port"
-  default     = 22
-  type        = number
-}
-
-variable "bastion_user" {
-  description = "Bastion SSH username"
-  default     = "ubuntu"
-  type        = string
-}
-
 variable "catalog_name" {
   description = "Name of catalog that contains vApp templates"
   type        = string
@@ -119,7 +107,7 @@ variable "control_plane_cpu_cores" {
 
 variable "control_plane_disk_size" {
   description = "Disk size in MB"
-  default     = 51200 # 50 GiB
+  default     = 25600 # 24 GiB
   type        = number
 }
 
@@ -127,20 +115,6 @@ variable "control_plane_disk_storage_profile" {
   description = "Name of storage profile to use for disks"
   default     = ""
   type        = string
-}
-
-variable "external_network_ip" {
-  type    = string
-  default = ""
-  validation {
-    condition     = length(var.external_network_ip) == 0 || can(regex("^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$", var.external_network_ip))
-    error_message = "Invalid DNS server provided."
-  }
-  description = <<EOF
-External network IP for bastion host and loadbalancer, allows outbound traffic from the edge gateway.
-This should be a public IP from the IP pool assigned to the edge gateway that is connected to the vApp network using a routed network.
-Defaults to default/primary external address for the edge gateway.
-EOF
 }
 
 variable "network_interface_type" {
@@ -201,6 +175,25 @@ variable "network_dns_server_2" {
   }
 }
 
+variable "external_network_name" {
+  description = "Name of the external network to be used to send traffic to the external networks. Defaults to edge gateway's default external network."
+  default     = ""
+  type        = string
+}
+
+variable "external_network_ip" {
+  default = ""
+  type    = string
+  validation {
+    condition     = length(var.external_network_ip) == 0 || can(regex("^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$", var.external_network_ip))
+    error_message = "Invalid extenral network IP provided."
+  }
+  description = <<EOF
+IP address to which source addresses (the virtual machines) on outbound packets are translated to when they send traffic to the external network.
+Defaults to default external network IP for the edge gateway.
+EOF
+}
+
 variable "initial_machinedeployment_replicas" {
   default     = 1
   description = "number of replicas per MachineDeployment"
@@ -240,7 +233,7 @@ variable "worker_cpu_cores" {
 
 variable "worker_disk_size" {
   description = "Disk size for worker VMs in MB"
-  default     = 51200 # 50 GiB
+  default     = 25600 # 25 GiB
   type        = number
 }
 

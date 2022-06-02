@@ -18,13 +18,9 @@ output "kubeone_api" {
   description = "kube-apiserver LB endpoint"
 
   value = {
-    endpoint                    = local.public_ip
+    endpoint                    = vcd_vapp_vm.control_plane.0.network.0.ip
     apiserver_alternative_names = var.apiserver_alternative_names
   }
-}
-
-output "ssh_commands" {
-  value = formatlist("ssh -J ${var.bastion_user}@${local.public_ip} ${var.ssh_username}@%s", vcd_vapp_vm.control_plane.*.network.0.ip)
 }
 
 output "kubeone_hosts" {
@@ -40,9 +36,6 @@ output "kubeone_hosts" {
       ssh_port             = var.ssh_port
       ssh_private_key_file = var.ssh_private_key_file
       ssh_user             = var.ssh_username
-      bastion              = local.public_ip
-      bastion_port         = var.bastion_port
-      bastion_user         = var.bastion_user
     }
   }
 }
@@ -72,17 +65,18 @@ output "kubeone_workers" {
           # provider specific fields:
           # see example under `cloudProviderSpec` section at:
           # https://github.com/kubermatic/machine-controller/blob/master/examples/nutanix-machinedeployment.yaml
-          organization = var.vcd_org_name
-          vdc          = var.vcd_vdc_name
-          vapp         = vcd_vapp.cluster.name
-          catalog      = var.catalog_name
-          template     = var.template_name
-          network      = vcd_vapp_org_network.network.org_network_name
-          cpus         = var.worker_cpus
-          cpuCores     = var.worker_cpu_cores
-          memoryMB     = var.worker_memory
-          diskSizeGB   = var.worker_disk_size
-          storageProfile = var.worker_disk_storage_profile
+          organization     = var.vcd_org_name
+          vdc              = var.vcd_vdc_name
+          vapp             = vcd_vapp.cluster.name
+          catalog          = var.catalog_name
+          template         = var.template_name
+          network          = vcd_vapp_org_network.network.org_network_name
+          cpus             = var.worker_cpus
+          cpuCores         = var.worker_cpu_cores
+          memoryMB         = var.worker_memory
+          diskSizeGB       = var.worker_disk_size
+          storageProfile   = var.worker_disk_storage_profile
+          ipAllocationMode = "DHCP"
           metadata = {
             "KubeOneCluster" = var.cluster_name
           }

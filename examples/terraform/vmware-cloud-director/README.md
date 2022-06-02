@@ -9,7 +9,9 @@ use the configs and how to provision a Kubernetes cluster using KubeOne.
 
 ## Setup
 
-In this setup, we assume that a dedicated org VDC has been created. It's connected to an external network using an edge gateway. Moreever, for exposing the Kubernetes API server, we need a public IP address and load balancer should be enabled at the edge gateway.
+In this setup, we assume that a dedicated org VDC has been created. It's connected to an external network using an edge gateway. NSX-V is enabled in the infrastructure since the sample configs only support NSX-V, for now.
+
+The kube-apiserver will be assigned the private IP address of the first control plane VM.
 
 ## Requirements
 
@@ -49,12 +51,13 @@ Following environment variables or terraform variables can be used to authentica
 | vcd\_vdc\_name | Name of the virutal datacenter | string | n/a | yes |
 | vcd\_edge\_gateway\_name | Name of the edge gateway defined for the VDC | string | n/a | yes |
 | catalog\_name | Name of catalog that contains vApp templates | string | n/a | yes |
-| template\_name | Name of the vApp template to use for bastion and master VMs | string | n/a | yes |
-| external\_network\_ip | External network IP for bastion host and loadbalancer, allows outbound traffic from the edge gateway. | string | `Primary address of edge gateway` | yes |
+| template\_name | Name of the vApp template to use for master VMs | string | n/a | yes |
+| external\_network\_name | Name of the network used for external connectivity, defaults to edge gateway's default external network | string | n/a | no |
+| external\_network\_ip | SNAT address to allows outbound traffic, defaults to edge gateway's default external network IP | string | n/a | no |
 | control\_plane\_memory | Memory size of each control plane node in MB | number | `4096` | no |
 | control\_plane\_cpus | Number of CPUs for the control plane VMs | number | `2` | no |
 | control\_plane\_cpu\_cores | Number of cores per socket for the control plane VMs | number | `1` | no |
-| control\_plane\_disk\_size | Disk size for control plane VMs in MB | number | `51200` | no |
+| control\_plane\_disk\_size | Disk size for control plane VMs in MB | number | `25600` | no |
 | control\_plane\_disk\_storage_profile | Name of storage profile to use for disks | string | `""` | no |
 | network\_interface\_type | Type of interface for the routed network | string | `internal` | no |
 | gateway\_ip | Gateway IP for the routed network | string | `192.168.1.1` | no |
@@ -68,20 +71,17 @@ Following environment variables or terraform variables can be used to authentica
 | ssh\_private\_key\_file | SSH private key file used to access instances | string | `""` | no |
 | ssh\_public\_key\_file | SSH public key file | string | `"~/.ssh/id_rsa.pub"` | no |
 | ssh\_username | SSH user, used only in output | string | `"ubuntu"` | no |
-| bastion\_port | Bastion SSH port | number | `22` | no |
-| bastion\_username | Bastion SSH user | string | `ubuntu` | no |
 | worker\_os | OS to run on worker machines | string | `ubuntu` | no |
 | worker\_memory | Number of replicas per MachineDeployment | number | `1` | no |
 | worker\_cpus | Number of CPUs for the worker VMs | number | `2` | no |
 | worker\_cpu\_cores | Number of cores per socket for the worker VMs | number | `1` | no |
-| worker\_disk\_size | Disk size for worker VMs in MB | number | `51200` | no |
+| worker\_disk\_size | Disk size for worker VMs in MB | number | `25600` | no |
 | worker\_disk\_storage\_profile | Name of storage profile to use for worker VMs attached disks | string | `""` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_kubeone_api"></a> [kubeone\_api](#output\_kubeone\_api) | kube-apiserver LB endpoint |
-| <a name="output_ssh_commands"></a> [ssh\_commands](#output\_ssh\_commands) | n/a |
+| <a name="output_kubeone_api"></a> [kubeone\_api](#output\_kubeone\_api) | kube-apiserver endpoint, virutal IP of first control plane VM |
 | <a name="output_kubeone_hosts"></a> [kubeone\_hosts](#output\_kubeone\_hosts) | Control plane endpoints to SSH to |
 | <a name="output_kubeone_workers"></a> [kubeone\_workers](#output\_kubeone\_workers) | Workers definitions, that will be transformed into MachineDeployment object |

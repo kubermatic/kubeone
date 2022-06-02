@@ -25,8 +25,8 @@ provider "vcd" {
 }
 
 locals {
-  external_network = element([for net in data.vcd_edgegateway.edge_gateway.external_network : net.name if tolist(net.subnet)[0].use_for_default_route], 0)
-  public_ip        = var.external_network_ip == "" ? data.vcd_edgegateway.edge_gateway.default_external_network_ip : var.external_network_ip
+  external_network_name = var.external_network_name == "" ? element([for net in data.vcd_edgegateway.edge_gateway.external_network : net.name if tolist(net.subnet)[0].use_for_default_route], 0) : var.external_network_name
+  external_network_ip   = var.external_network_ip == "" ? data.vcd_edgegateway.edge_gateway.default_external_network_ip : var.external_network_ip
 }
 
 # Existing edge gateway in VDC
@@ -194,119 +194,8 @@ resource "vcd_nsxv_firewall_rule" "rule_internet" {
 resource "vcd_nsxv_snat" "rule_internet" {
   edge_gateway = data.vcd_edgegateway.edge_gateway.name
   network_type = "ext"
-  network_name = local.external_network
+  network_name = local.external_network_name
 
   original_address   = "${var.gateway_ip}/24"
-  translated_address = local.public_ip
-}
-
-# Create the firewall rule to allow SSH from the Internet
-resource "vcd_nsxv_firewall_rule" "rule_ssh_bastion" {
-  edge_gateway = data.vcd_edgegateway.edge_gateway.name
-  name         = "${var.cluster_name}-firewall-rule-ssh"
-
-  action = "accept"
-
-  source {
-    ip_addresses = ["any"]
-  }
-
-  destination {
-    ip_addresses = [local.public_ip]
-  }
-
-  service {
-    protocol = "tcp"
-    port     = 22
-  }
-}
-
-# Create DNAT rule to allow SSH from the Internet
-resource "vcd_nsxv_dnat" "rule_ssh_bastion" {
-  edge_gateway = data.vcd_edgegateway.edge_gateway.name
-  network_type = "ext"
-  network_name = local.external_network
-
-  original_address = local.public_ip
-  original_port    = 22
-
-  translated_address = vcd_vapp_vm.bastion.network[0].ip
-  translated_port    = 22
-  protocol           = "tcp"
-}
-
-#################################### Loadbalancer ####################################
-
-resource "vcd_lb_app_profile" "app_profile" {
-  edge_gateway = data.vcd_edgegateway.edge_gateway.name
-
-  name = "${var.cluster_name}-app-profile"
-  type = "tcp"
-}
-
-resource "vcd_lb_service_monitor" "lb_monitor" {
-  edge_gateway = data.vcd_edgegateway.edge_gateway.name
-
-  name        = "${var.cluster_name}-control-plane-monitor"
-  interval    = 15
-  timeout     = 20
-  max_retries = 5
-  type        = "https"
-  method      = "GET"
-  url         = "/healthz"
-}
-
-resource "vcd_lb_server_pool" "control_plane" {
-  edge_gateway = data.vcd_edgegateway.edge_gateway.name
-
-  name                = "${var.cluster_name}-control-plane"
-  algorithm           = "round-robin"
-  enable_transparency = "true"
-
-  monitor_id = vcd_lb_service_monitor.lb_monitor.id
-
-  dynamic "member" {
-    for_each = vcd_vapp_vm.control_plane
-    content {
-      condition    = "enabled"
-      name         = member.value.name
-      ip_address   = member.value.network[0].ip
-      port         = 6443
-      monitor_port = 6443
-      weight       = 1
-    }
-  }
-}
-
-resource "vcd_lb_virtual_server" "lb" {
-  edge_gateway = data.vcd_edgegateway.edge_gateway.name
-
-  name           = "${var.cluster_name}-control-plane"
-  ip_address     = local.public_ip
-  protocol       = "tcp"
-  port           = 6443
-  enable_acceleration = true
-  app_profile_id = vcd_lb_app_profile.app_profile.id
-  server_pool_id = vcd_lb_server_pool.control_plane.id
-}
-
-# Create the firewall rule to allow access to API server
-resource "vcd_nsxv_firewall_rule" "rule_kube_apiserver" {
-  edge_gateway = data.vcd_edgegateway.edge_gateway.name
-  name         = "${var.cluster_name}-firewall-rule-kube-apiserver"
-
-  action = "accept"
-
-  source {
-    ip_addresses = ["any"]
-  }
-
-  destination {
-    ip_addresses = [local.public_ip]
-  }
-
-  service {
-    protocol = "tcp"
-    port     = 6443
-  }
+  translated_address = local.external_network_ip
 }

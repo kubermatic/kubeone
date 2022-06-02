@@ -199,7 +199,8 @@ type VMWareCloudDirectorSpec struct {
 	Catalog  string `json:"catalog"`
 
 	// Network configuration.
-	Network string `json:"network"`
+	Network          string `json:"network"`
+	IPAllocationMode string `json:"ipAllocationMode"`
 
 	// Compute configuration.
 	CPUs     int64 `json:"cpus"`

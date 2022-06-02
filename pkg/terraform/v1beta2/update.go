@@ -291,6 +291,7 @@ func updateVMwareCloudDirectorWorkerset(existingWorkerSet *kubeonev1beta2.Dynami
 		{key: "memoryMB", value: config.MemoryMB},
 		{key: "diskSizeGB", value: config.DiskSizeGB},
 		{key: "storageProfile", value: config.StorageProfile},
+		{key: "ipAllocationMode", value: config.IPAllocationMode},
 		{key: "metadata", value: config.Metadata},
 	}
 
