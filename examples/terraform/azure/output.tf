@@ -59,27 +59,32 @@ output "kubeone_workers" {
           # provider specific fields:
           # see example under `cloudProviderSpec` section at: 
           # https://github.com/kubermatic/machine-controller/blob/master/examples/azure-machinedeployment.yaml
-          assignPublicIP    = true
-          availabilitySet   = azurerm_availability_set.avset_workers.name
-          location          = var.location
-          resourceGroup     = azurerm_resource_group.rg.name
-          routeTableName    = azurerm_route_table.rt.name
-          securityGroupName = azurerm_network_security_group.sg.name
-          subnetName        = azurerm_subnet.subnet.name
-          vmSize            = var.worker_vm_size
-          vnetName          = azurerm_virtual_network.vpc.name
-          # Custom Image ID (optional)
-          # imageID = ""
-          # Size of the operating system disk (optional)
-          # osDiskSize = 100
-          # Size of the data disk (optional)
-          # dataDiskSize = 100
+          location                = var.location
+          resourceGroup           = azurerm_resource_group.rg.name
+          # vnetResourceGroup     = ""
+          vmSize                  = var.worker_vm_size
+          vnetName                = azurerm_virtual_network.vpc.name
+          subnetName              = azurerm_subnet.subnet.name
+          # loadBalancerSku       = ""
+          routeTableName          = azurerm_route_table.rt.name
+          availabilitySet         = azurerm_availability_set.avset_workers.name
+          # assignAvailabilitySet = true/false
+          securityGroupName       = azurerm_network_security_group.sg.name
+          assignPublicIP          = true
           # Zones (optional)
           # Represents Availability Zones is a high-availability offering
           # that protects your applications and data from datacenter failures.
           # zones = {
           #   "1"
           # }
+          # Custom Image ID (optional)
+          # imageID = ""
+          # Size of the operating system disk (optional)
+          # osDiskSize = 100
+          # osDiskSKU  = "Standard_LRS"
+          # Size of the data disk (optional)
+          # dataDiskSize = 100
+          # dataDiskSKU  = "Standard_LRS"
           tags = {
             "${var.cluster_name}-workers" = "pool1"
           }
