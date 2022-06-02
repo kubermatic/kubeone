@@ -64,19 +64,17 @@ func (scenario *scenarioConformance) Run(t *testing.T) {
 func (scenario *scenarioConformance) test(t *testing.T) {
 	t.Helper()
 
-	sb := sonobuoyBin{
-		dir: scenario.infra.terraform.path,
-	}
+	data := manifestData{VERSION: scenario.versions[0]}
+	k1 := newKubeoneBin(
+		scenario.infra.terraform.path,
+		renderManifest(t,
+			scenario.manifestTemplatePath,
+			manifestData{
+				VERSION: scenario.versions[0],
+			},
+		),
+	)
 
-	if err := sb.Run(sonobuoyConformance); err != nil {
-		t.Fatalf("sonobuoy run failed: %v", err)
-	}
-
-	if err := sb.Wait(); err != nil {
-		t.Fatalf("sonobuoy wait failed: %v", err)
-	}
-
-	if err := sb.Retrieve(); err != nil {
-		t.Fatalf("sonobuoy retrieve failed: %v", err)
-	}
+	basicTest(t, k1, data)
+	sonobuoyRun(t, k1, sonobuoyConformance)
 }

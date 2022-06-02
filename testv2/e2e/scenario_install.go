@@ -110,6 +110,7 @@ func (scenario *scenarioInstall) test(t *testing.T) {
 	)
 
 	basicTest(t, k1, data)
+	sonobuoyRun(t, k1, sonobuoyConformanceLite)
 }
 
 func (scenario *scenarioInstall) GenerateTests(wr io.Writer, generatorType GeneratorType, cfg ProwConfig) error {

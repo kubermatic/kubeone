@@ -67,6 +67,25 @@ func (k1 *kubeoneBin) Kubeconfig() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
+func (k1 *kubeoneBin) KubeconfigPath(tmpDir string) (string, error) {
+	kubeconfig, err := os.CreateTemp(tmpDir, "kubeconfig-*")
+	if err != nil {
+		return "", err
+	}
+	defer kubeconfig.Close()
+
+	buf, err := k1.Kubeconfig()
+	if err != nil {
+		return "", err
+	}
+
+	if err := os.WriteFile(kubeconfig.Name(), buf, 0600); err != nil {
+		return "", err
+	}
+
+	return kubeconfig.Name(), nil
+}
+
 func (k1 *kubeoneBin) Reset() error {
 	return k1.run("reset", "--auto-approve", "--destroy-workers", "--remove-binaries")
 }
