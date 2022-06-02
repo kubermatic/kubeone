@@ -1,5 +1,22 @@
 # Changelog
 
+# [v1.4.4](https://github.com/kubermatic/kubeone/releases/tag/v1.4.4) - 2022-06-02
+
+## Changes by Kind
+
+### Feature
+
+- Add MaxPods field to the KubeletConfig used to control the maximum number of pods per node ([#2080](https://github.com/kubermatic/kubeone/pull/2080), [@xmudrii](https://github.com/xmudrii))
+- Update machine-controller to v1.43.3 ([#2080](https://github.com/kubermatic/kubeone/pull/2080), [@xmudrii](https://github.com/xmudrii))
+- Add `machineObjectAnnotations` field to DynamicWorkerNodes used to apply annotations to resulting Machine objects. Add `nodeAnnotations` field to DynamicWorkerNodes Config as a replacement for deprecated `machineAnnotations` field ([#2077](https://github.com/kubermatic/kubeone/pull/2077), [@xmudrii](https://github.com/xmudrii))
+- Update Canal and Calico VXLAN addons to v3.22.2. This allows users to use kube-proxy in IPVS mode on AMD64 clusters running Kubernetes 1.23 and newer. It currently remains impossible to use kube-proxy in IPVS mode on ARM64 clusters running Kubernetes 1.23 and newer. ([#2042](https://github.com/kubermatic/kubeone/pull/2042), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Update Terraform integration for Azure with new fields ([#2085](https://github.com/kubermatic/kubeone/pull/2085), [@xmudrii](https://github.com/xmudrii))
+- Update vSphere CCM to v1.23.0 for Kubernetes 1.23 clusters. Add support for Kubernetes 1.23 on vSphere ([#2069](https://github.com/kubermatic/kubeone/pull/2069), [@xmudrii](https://github.com/xmudrii))
+
+### Bug or Regression
+
+- Migrate AzureDisk CSIDriver to set fsGroupPolicy to File ([#2086](https://github.com/kubermatic/kubeone/pull/2086), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
 # [v1.4.3](https://github.com/kubermatic/kubeone/releases/tag/v1.4.3) - 2022-05-11
 
 ## Changes by Kind
