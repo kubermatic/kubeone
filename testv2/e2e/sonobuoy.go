@@ -28,8 +28,15 @@ import (
 )
 
 type sonobuoyReport struct {
-	Name   string `json:"name"`
-	Status string `json:"status"`
+	Name    string                 `json:"name"`
+	Status  string                 `json:"status"`
+	Details *sonobuoyReportDetails `json:"details,omitempty"`
+	Items   []sonobuoyReport       `json:"items,omitempty"`
+}
+
+type sonobuoyReportDetails struct {
+	Stdout   string   `json:"stdout,omitempty"`
+	Messages []string `json:"messages,omitempty"`
 }
 
 type sonobuoyMode string
@@ -113,8 +120,6 @@ func (sbb *sonobuoyBin) build(args ...string) *testutil.Exec {
 		testutil.WithEnv(os.Environ()),
 		testutil.InDir(sbb.dir),
 		testutil.WithDryRun(),
-		testutil.StdoutTo(os.Stdout),
-		testutil.StderrTo(os.Stderr),
 		testutil.StdoutDebug,
 	)
 }

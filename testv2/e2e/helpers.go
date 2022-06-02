@@ -19,6 +19,7 @@ package e2e
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"strings"
@@ -336,5 +337,18 @@ func sonobuoyRun(t *testing.T, k1 *kubeoneBin, mode sonobuoyMode) {
 
 	if err := sb.Retrieve(); err != nil {
 		t.Fatalf("sonobuoy retrieve failed: %v", err)
+	}
+
+	report, err := sb.Results()
+	if err != nil {
+		t.Fatalf("sonobuoy results failed: %v", err)
+	}
+
+	if len(report) > 0 {
+		var buf strings.Builder
+		enc := json.NewEncoder(&buf)
+		enc.SetIndent("", "  ")
+		_ = enc.Encode(report)
+		t.Fatalf("some e2e tests failed:\n%s", buf.String())
 	}
 }
