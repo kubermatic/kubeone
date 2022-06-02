@@ -314,10 +314,11 @@ func basicTest(t *testing.T, k1 *kubeoneBin, data manifestData) {
 	if err = verifyVersion(client, metav1.NamespaceSystem, data.VERSION); err != nil {
 		t.Fatalf("version mismatch: %v", err)
 	}
-
 }
 
 func sonobuoyRun(t *testing.T, k1 *kubeoneBin, mode sonobuoyMode) {
+	t.Helper()
+
 	kubeconfigPath, err := k1.KubeconfigPath(t.TempDir())
 	if err != nil {
 		t.Fatalf("fetching kubeconfig failed")
@@ -327,15 +328,15 @@ func sonobuoyRun(t *testing.T, k1 *kubeoneBin, mode sonobuoyMode) {
 		kubeconfig: kubeconfigPath,
 	}
 
-	if err := sb.Run(mode); err != nil {
+	if err = sb.Run(mode); err != nil {
 		t.Fatalf("sonobuoy run failed: %v", err)
 	}
 
-	if err := sb.Wait(); err != nil {
+	if err = sb.Wait(); err != nil {
 		t.Fatalf("sonobuoy wait failed: %v", err)
 	}
 
-	if err := sb.Retrieve(); err != nil {
+	if err = sb.Retrieve(); err != nil {
 		t.Fatalf("sonobuoy retrieve failed: %v", err)
 	}
 
@@ -346,9 +347,12 @@ func sonobuoyRun(t *testing.T, k1 *kubeoneBin, mode sonobuoyMode) {
 
 	if len(report) > 0 {
 		var buf strings.Builder
+
 		enc := json.NewEncoder(&buf)
 		enc.SetIndent("", "  ")
-		_ = enc.Encode(report)
+		if err = enc.Encode(report); err != nil {
+			t.Errorf("failed to json encode sonobuoy report: %v", err)
+		}
 		t.Fatalf("some e2e tests failed:\n%s", buf.String())
 	}
 }
