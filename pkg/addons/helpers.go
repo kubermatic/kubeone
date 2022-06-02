@@ -26,12 +26,26 @@ import (
 	"k8c.io/kubeone/pkg/templates/resources"
 
 	corev1 "k8s.io/api/core/v1"
+	storagev1 "k8s.io/api/storage/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 const (
-	vSphereDeploymentName = "vsphere-cloud-controller-manager"
+	azureDiskCSIDriverName = "disk.csi.azure.com"
+	vSphereDeploymentName  = "vsphere-cloud-controller-manager"
 )
+
+func migrateAzureDiskCSIDriver(s *state.State) error {
+	return clientutil.DeleteIfExists(s.Context, s.DynamicClient, azureDiskCSIDriver())
+}
+
+func azureDiskCSIDriver() *storagev1.CSIDriver {
+	return &storagev1.CSIDriver{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: azureDiskCSIDriverName,
+		},
+	}
+}
 
 func migrateVsphereAddon(s *state.State) error {
 	return clientutil.DeleteIfExists(s.Context, s.DynamicClient, vSphereService())

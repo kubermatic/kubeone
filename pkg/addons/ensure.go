@@ -331,6 +331,9 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
 				name: resources.AddonCSIAzureDisk,
+				supportFn: func() error {
+					return migrateAzureDiskCSIDriver(s)
+				},
 			},
 			addonAction{
 				name: resources.AddonCSIAzureFile,
