@@ -141,7 +141,7 @@ func createPVCWithStorage(ctx context.Context, t *testing.T, client ctrlruntimec
 								PeriodSeconds:       5,
 								TimeoutSeconds:      1,
 								FailureThreshold:    1,
-								Handler: corev1.Handler{
+								ProbeHandler: corev1.ProbeHandler{
 									Exec: &corev1.ExecAction{
 										Command: []string{
 											"cat",
