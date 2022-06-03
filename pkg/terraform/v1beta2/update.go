@@ -272,6 +272,38 @@ func updateEquinixMetalWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorker
 	return nil
 }
 
+func updateVMwareCloudDirectorWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerConfig, cfg json.RawMessage) error {
+	var config machinecontroller.VMWareCloudDirectorSpec
+
+	if err := unmarshalStrict(cfg, &config); err != nil {
+		return fail.Config(err, "unmarshalling DynamicWorkerConfig VMware Cloud Director spec")
+	}
+
+	flags := []cloudProviderFlags{
+		{key: "organization", value: config.Organization},
+		{key: "vdc", value: config.VDC},
+		{key: "vapp", value: config.CPUs},
+		{key: "catalog", value: config.Catalog},
+		{key: "template", value: config.Template},
+		{key: "network", value: config.Network},
+		{key: "cpus", value: config.CPUs},
+		{key: "cpuCores", value: config.CPUCores},
+		{key: "memoryMB", value: config.MemoryMB},
+		{key: "diskSizeGB", value: config.DiskSizeGB},
+		{key: "storageProfile", value: config.StorageProfile},
+		{key: "ipAllocationMode", value: config.IPAllocationMode},
+		{key: "metadata", value: config.Metadata},
+	}
+
+	for _, flag := range flags {
+		if err := setWorkersetFlag(existingWorkerSet, flag.key, flag.value); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func updateVSphereWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerConfig, cfg json.RawMessage) error {
 	var vsphereConfig machinecontroller.VSphereSpec
 

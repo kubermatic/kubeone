@@ -224,6 +224,15 @@ func ValidateCloudProviderSpec(p kubeoneapi.CloudProviderSpec, fldPath *field.Pa
 		}
 		providerFound = true
 	}
+	if p.VMwareCloudDirector != nil {
+		if providerFound {
+			allErrs = append(allErrs, field.Forbidden(fldPath.Child("vmwareCloudDirector"), "only one provider can be used at the same time"))
+		}
+		providerFound = true
+		if p.External {
+			allErrs = append(allErrs, field.Forbidden(fldPath.Child("external"), "external cloud provider is not supported for VMware Cloud Director clusters"))
+		}
+	}
 	if p.Vsphere != nil {
 		if providerFound {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("vsphere"), "only one provider can be used at the same time"))

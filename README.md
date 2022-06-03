@@ -23,7 +23,7 @@ Kubernetes versions, and supported operating systems) can be found in the
 For a quick start, you should check the following documents:
 
 * [Architecture][docs-concepts] to get familiar with the concepts of KubeOne.
-* [Prerequisites][docs-prerequisites] to get kubeone locally.
+* [Getting KubeOne][docs-getting-kubeone] to download and install KubeOne locally.
 * [Provisioning][docs-provisioning] to provision the Kubernetes cluster.
 
 ## Installing KubeOne
@@ -53,7 +53,7 @@ care of setting up a production ready Highly Available cluster!
 ### Native Support For The Most Popular Providers
 
 KubeOne natively supports the most popular providers, including AWS, Azure,
-DigitalOcean, GCP, Hetzner Cloud, Nutanix, OpenStack, and VMware vSphere. 
+DigitalOcean, GCP, Hetzner Cloud, Nutanix, OpenStack, VMware Cloud Director, and VMware vSphere.
 The natively supported providers enjoy additional features such as integration
 with Terraform and Kubermatic machine-controller.
 
@@ -118,7 +118,7 @@ See [the list of releases][changelog] to find out about feature changes.
 [docs-architecture]: https://docs.kubermatic.com/kubeone/v1.4/architecture/
 [docs-concepts]: https://docs.kubermatic.com/kubeone/v1.4/architecture/concepts/
 [docs-compatibility]: https://docs.kubermatic.com/kubeone/v1.4/architecture/compatibility/
-[docs-prerequisites]: https://docs.kubermatic.com/kubeone/v1.4/getting_kubeone/
+[docs-getting-kubeone]: https://docs.kubermatic.com/kubeone/v1.4/getting_kubeone/
 [docs-provisioning]: https://docs.kubermatic.com/kubeone/v1.4/tutorials/creating_clusters/
 [contributing-guide]: https://github.com/kubermatic/KubeOne/blob/master/CONTRIBUTING.md
 [k8s-slack-kubeone]: https://kubernetes.slack.com/messages/CNEV2UMT7

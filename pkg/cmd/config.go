@@ -328,6 +328,9 @@ func createAndPrintManifest(printOptions *printOpts) error {
 	case "equinixmetal":
 		cfg.Set(yamled.Path{"cloudProvider", "equinixmetal"}, providerVal)
 		cfg.Set(yamled.Path{"cloudProvider", "external"}, true)
+	case "vmwareCloudDirector":
+		cfg.Set(yamled.Path{"cloudProvider", "vmwareCloudDirector"}, providerVal)
+		cfg.Set(yamled.Path{"cloudProvider", "external"}, true)
 	case "vsphere":
 		cfg.Set(yamled.Path{"cloudProvider", "vsphere"}, providerVal)
 		cfg.Set(yamled.Path{"cloudProvider", "cloudConfig"}, "<< cloudConfig is required for vSphere >>\n")
@@ -818,7 +821,7 @@ addons:
 #       effect: "NoSchedule"
 #     # kubelet is used to control kubelet configuration
 #     # uncomment the following to set those kubelet parameters. More into at:
-#     # https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/#     
+#     # https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/#
 #     # kubelet:
 #     #   systemReserved:
 #     #     cpu: 200m
@@ -852,7 +855,7 @@ addons:
 #     #   effect: ""
 #     # kubelet is used to control kubelet configuration
 #     # uncomment the following to set those kubelet parameters. More into at:
-#     # https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/#     
+#     # https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/#
 #     # kubelet:
 #     #   systemReserved:
 #     #     cpu: 200m

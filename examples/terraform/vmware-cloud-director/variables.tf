@@ -47,6 +47,12 @@ variable "apiserver_alternative_names" {
   type        = list(string)
 }
 
+variable "kubeapi_hostname" {
+  description = "DNS name for the kube-apiserver"
+  default     = ""
+  type        = string
+}
+
 variable "ssh_public_key_file" {
   description = "SSH public key file"
   default     = "~/.ssh/id_rsa.pub"
@@ -74,18 +80,6 @@ variable "ssh_private_key_file" {
 variable "ssh_agent_socket" {
   description = "SSH Agent socket, default to grab from $SSH_AUTH_SOCK"
   default     = "env:SSH_AUTH_SOCK"
-  type        = string
-}
-
-variable "bastion_port" {
-  description = "Bastion SSH port"
-  default     = 22
-  type        = number
-}
-
-variable "bastion_user" {
-  description = "Bastion SSH username"
-  default     = "ubuntu"
   type        = string
 }
 
@@ -119,28 +113,14 @@ variable "control_plane_cpu_cores" {
 
 variable "control_plane_disk_size" {
   description = "Disk size in MB"
-  default     = 51200 # 50 GiB
+  default     = 25600 # 24 GiB
   type        = number
 }
 
 variable "control_plane_disk_storage_profile" {
   description = "Name of storage profile to use for disks"
-  default     = "Intermediate"
+  default     = ""
   type        = string
-}
-
-variable "external_network_ip" {
-  type    = string
-  default = ""
-  validation {
-    condition     = length(var.external_network_ip) == 0 || can(regex("^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$", var.external_network_ip))
-    error_message = "Invalid DNS server provided."
-  }
-  description = <<EOF
-External network IP for bastion host and loadbalancer, allows outbound traffic from the edge gateway.
-This should be a public IP from the IP pool assigned to the edge gateway that is connected to the vApp network using a routed network.
-Defaults to default/primary external address for the edge gateway.
-EOF
 }
 
 variable "network_interface_type" {
@@ -154,10 +134,31 @@ variable "network_interface_type" {
   }
 }
 
-variable "network_subnet" {
-  description = "Subnet for the routed network specified using CIDR notation"
-  default     = "192.168.1.0/24"
+variable "gateway_ip" {
+  description = "Gateway IP for the routed network"
+  default     = "192.168.1.1"
   type        = string
+}
+
+variable "dhcp_start_address" {
+  description = "Starting address for the DHCP IP Pool range"
+  default     = "192.168.1.2"
+  type        = string
+
+  validation {
+    condition     = can(regex("^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$", var.dhcp_start_address))
+    error_message = "Invalid DHCP start address."
+  }
+}
+
+variable "dhcp_end_address" {
+  description = "Last address for the DHCP IP Pool range"
+  default     = "192.168.1.50"
+  type        = string
+  validation {
+    condition     = can(regex("^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$", var.dhcp_end_address))
+    error_message = "Invalid DHCP end address."
+  }
 }
 
 variable "network_dns_server_1" {
@@ -178,4 +179,72 @@ variable "network_dns_server_2" {
     condition     = length(var.network_dns_server_2) == 0 || can(regex("^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$", var.network_dns_server_2))
     error_message = "Invalid DNS server provided."
   }
+}
+
+variable "external_network_name" {
+  description = "Name of the external network to be used to send traffic to the external networks. Defaults to edge gateway's default external network."
+  default     = ""
+  type        = string
+}
+
+variable "external_network_ip" {
+  default = ""
+  type    = string
+  validation {
+    condition     = length(var.external_network_ip) == 0 || can(regex("^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$", var.external_network_ip))
+    error_message = "Invalid extenral network IP provided."
+  }
+  description = <<EOF
+IP address to which source addresses (the virtual machines) on outbound packets are translated to when they send traffic to the external network.
+Defaults to default external network IP for the edge gateway.
+EOF
+}
+
+variable "initial_machinedeployment_replicas" {
+  default     = 1
+  description = "number of replicas per MachineDeployment"
+  type        = number
+}
+
+variable "worker_os" {
+  description = "OS to run on worker machines"
+
+  # valid choices are:
+  # * ubuntu
+  # * flatcar
+  default = "ubuntu"
+  type    = string
+  validation {
+    condition     = can(regex("^ubuntu$|^flatcar$", var.worker_os))
+    error_message = "Unsupported OS specified for worker machines."
+  }
+}
+variable "worker_memory" {
+  description = "Memory size of each worker VM in MB"
+  default     = 4096
+  type        = number
+}
+
+variable "worker_cpus" {
+  description = "Number of CPUs for the worker VMs"
+  default     = 2
+  type        = number
+}
+
+variable "worker_cpu_cores" {
+  description = "Number of cores per socket for the worker VMs"
+  default     = 1
+  type        = number
+}
+
+variable "worker_disk_size" {
+  description = "Disk size for worker VMs in MB"
+  default     = 25600 # 25 GiB
+  type        = number
+}
+
+variable "worker_disk_storage_profile" {
+  description = "Name of storage profile to use for worker VMs attached disks"
+  default     = ""
+  type        = string
 }

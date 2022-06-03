@@ -78,6 +78,13 @@ const (
 	VSphereAddress  = "VSPHERE_SERVER"
 	VSpherePassword = "VSPHERE_PASSWORD"
 	VSphereUsername = "VSPHERE_USER"
+	// VMware Cloud Director Credentials
+	VMwareCloudDirectorUsername     = "VCD_USER"
+	VMwareCloudDirectorPassword     = "VCD_PASSWORD"
+	VMwareCloudDirectorOrganization = "VCD_ORG"
+	VMwareCloudDirectorURL          = "VCD_URL"
+	VMwareCloudDirectorVDC          = "VCD_VDC"
+	VMwareCloudDirectorSkipTLS      = "VCD_ALLOW_UNVERIFIED_SSL"
 
 	// Variables that machine-controller expects
 	AzureClientIDMC           = "AZURE_CLIENT_ID"
@@ -127,6 +134,12 @@ var (
 		VSphereAddress,
 		VSpherePassword,
 		VSphereUsername,
+		VMwareCloudDirectorUsername,
+		VMwareCloudDirectorPassword,
+		VMwareCloudDirectorOrganization,
+		VMwareCloudDirectorURL,
+		VMwareCloudDirectorVDC,
+		VMwareCloudDirectorSkipTLS,
 	}
 )
 
@@ -227,6 +240,15 @@ func ProviderCredentials(cloudProvider kubeoneapi.CloudProviderSpec, credentials
 		}, openstackValidationFunc)
 	case cloudProvider.EquinixMetal != nil:
 		return credentialsFinder.equinixmetal()
+	case cloudProvider.VMwareCloudDirector != nil:
+		return credentialsFinder.parseCredentialVariables([]ProviderEnvironmentVariable{
+			{Name: VMwareCloudDirectorUsername},
+			{Name: VMwareCloudDirectorPassword},
+			{Name: VMwareCloudDirectorOrganization},
+			{Name: VMwareCloudDirectorURL},
+			{Name: VMwareCloudDirectorVDC},
+			{Name: VMwareCloudDirectorSkipTLS},
+		}, vmwareCloudDirectorValidationFunc)
 	case cloudProvider.Vsphere != nil:
 		vscreds, err := credentialsFinder.parseCredentialVariables([]ProviderEnvironmentVariable{
 			{Name: VSphereAddress, MachineControllerName: VSphereAddressMC},
@@ -545,6 +567,27 @@ func openstackValidationFunc(creds map[string]string) error {
 					OpenStackTenantID,
 					OpenStackTenantName,
 				),
+			}
+		}
+	}
+
+	return nil
+}
+
+func vmwareCloudDirectorValidationFunc(creds map[string]string) error {
+	alwaysRequired := []string{
+		VMwareCloudDirectorUsername,
+		VMwareCloudDirectorPassword,
+		VMwareCloudDirectorOrganization,
+		VMwareCloudDirectorURL,
+		VMwareCloudDirectorVDC}
+
+	for _, key := range alwaysRequired {
+		if v, ok := creds[key]; !ok || len(v) == 0 {
+			return fail.CredentialsError{
+				Op:       "validating",
+				Provider: "VMware Cloud Director",
+				Err:      errors.Errorf("key %v is required but is not present", key),
 			}
 		}
 	}

@@ -843,6 +843,7 @@ func autoConvert_kubeone_CloudProviderSpec_To_v1beta1_CloudProviderSpec(in *kube
 	// WARNING: in.Nutanix requires manual conversion: does not exist in peer-type
 	out.Openstack = (*OpenstackSpec)(unsafe.Pointer(in.Openstack))
 	// WARNING: in.EquinixMetal requires manual conversion: does not exist in peer-type
+	// WARNING: in.VMwareCloudDirector requires manual conversion: does not exist in peer-type
 	out.Vsphere = (*VsphereSpec)(unsafe.Pointer(in.Vsphere))
 	out.None = (*NoneSpec)(unsafe.Pointer(in.None))
 	return nil

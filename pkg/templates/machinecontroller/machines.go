@@ -116,7 +116,7 @@ func createMachineDeployment(cluster *kubeoneapi.KubeOneCluster, workerset kubeo
 		Taints                   bool `json:"taints,omitempty"`
 	}{
 		ProviderSpec:  workerset.Config,
-		CloudProvider: cluster.CloudProvider.CloudProviderName(),
+		CloudProvider: cluster.CloudProvider.MachineControllerCloudProvider(),
 	})
 	if err != nil {
 		return nil, fail.Runtime(err, "marshalling reduced providerSpec")

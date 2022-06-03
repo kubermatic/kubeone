@@ -309,6 +309,8 @@ func (output *Config) Apply(cluster *kubeonev1beta2.KubeOneCluster) error {
 			err = updateOpenStackWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
 		case cluster.CloudProvider.EquinixMetal != nil:
 			err = updateEquinixMetalWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
+		case cluster.CloudProvider.VMwareCloudDirector != nil:
+			err = updateVMwareCloudDirectorWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
 		case cluster.CloudProvider.Vsphere != nil:
 			err = updateVSphereWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
 		default:
