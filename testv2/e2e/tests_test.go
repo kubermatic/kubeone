@@ -489,3 +489,163 @@ func TestAwsAmznWeaveDockerV1_22_9(t *testing.T) {
 	scenario.SetVersions("v1.22.9")
 	scenario.Run(t)
 }
+
+func TestAwsDefaultsConformanceContainerdV1_21_12(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["conformance_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.12")
+	scenario.Run(t)
+}
+
+func TestAwsCentosConformanceContainerdV1_21_12(t *testing.T) {
+	infra := Infrastructures["aws_centos"]
+	scenario := Scenarios["conformance_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.12")
+	scenario.Run(t)
+}
+
+func TestAwsRhelConformanceContainerdV1_21_12(t *testing.T) {
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["conformance_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.12")
+	scenario.Run(t)
+}
+
+func TestAwsFlatcarConformanceContainerdV1_21_12(t *testing.T) {
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["conformance_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.12")
+	scenario.Run(t)
+}
+
+func TestAwsAmznConformanceContainerdV1_21_12(t *testing.T) {
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["conformance_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.12")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultsConformanceContainerdV1_22_9(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["conformance_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9")
+	scenario.Run(t)
+}
+
+func TestAwsCentosConformanceContainerdV1_22_9(t *testing.T) {
+	infra := Infrastructures["aws_centos"]
+	scenario := Scenarios["conformance_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9")
+	scenario.Run(t)
+}
+
+func TestAwsRhelConformanceContainerdV1_22_9(t *testing.T) {
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["conformance_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9")
+	scenario.Run(t)
+}
+
+func TestAwsFlatcarConformanceContainerdV1_22_9(t *testing.T) {
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["conformance_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9")
+	scenario.Run(t)
+}
+
+func TestAwsAmznConformanceContainerdV1_22_9(t *testing.T) {
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["conformance_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultsConformanceContainerdV1_23_6(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["conformance_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.6")
+	scenario.Run(t)
+}
+
+func TestAwsCentosConformanceContainerdV1_23_6(t *testing.T) {
+	infra := Infrastructures["aws_centos"]
+	scenario := Scenarios["conformance_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.6")
+	scenario.Run(t)
+}
+
+func TestAwsRhelConformanceContainerdV1_23_6(t *testing.T) {
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["conformance_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.6")
+	scenario.Run(t)
+}
+
+func TestAwsFlatcarConformanceContainerdV1_23_6(t *testing.T) {
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["conformance_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.6")
+	scenario.Run(t)
+}
+
+func TestAwsAmznConformanceContainerdV1_23_6(t *testing.T) {
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["conformance_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.6")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultsConformanceContainerdV1_24_1(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["conformance_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.1")
+	scenario.Run(t)
+}
+
+func TestAwsCentosConformanceContainerdV1_24_1(t *testing.T) {
+	infra := Infrastructures["aws_centos"]
+	scenario := Scenarios["conformance_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.1")
+	scenario.Run(t)
+}
+
+func TestAwsRhelConformanceContainerdV1_24_1(t *testing.T) {
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["conformance_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.1")
+	scenario.Run(t)
+}
+
+func TestAwsFlatcarConformanceContainerdV1_24_1(t *testing.T) {
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["conformance_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.1")
+	scenario.Run(t)
+}
+
+func TestAwsAmznConformanceContainerdV1_24_1(t *testing.T) {
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["conformance_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.1")
+	scenario.Run(t)
+}

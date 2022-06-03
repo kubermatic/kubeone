@@ -30,7 +30,6 @@ type scenarioUpgrade struct {
 	manifestTemplatePath string
 	versions             []string
 	infra                Infra
-	install              *scenarioInstall
 }
 
 func (scenario scenarioUpgrade) Title() string { return titleize(scenario.name) }
@@ -46,14 +45,14 @@ func (scenario *scenarioUpgrade) SetVersions(versions ...string) {
 func (scenario *scenarioUpgrade) Run(t *testing.T) {
 	t.Helper()
 
-	scenario.install = &scenarioInstall{
+	install := &scenarioInstall{
 		name:                 scenario.name,
 		manifestTemplatePath: scenario.manifestTemplatePath,
 		infra:                scenario.infra,
 		versions:             scenario.versions,
 	}
 
-	scenario.install.install(t)
+	install.install(t)
 	scenario.upgrade(t)
 	scenario.test(t)
 }
@@ -91,6 +90,7 @@ func (scenario *scenarioUpgrade) test(t *testing.T) {
 	)
 
 	basicTest(t, k1, data)
+	sonobuoyRun(t, k1, sonobuoyConformanceLite)
 }
 
 func (scenario *scenarioUpgrade) GenerateTests(wr io.Writer, generatorType GeneratorType, cfg ProwConfig) error {
