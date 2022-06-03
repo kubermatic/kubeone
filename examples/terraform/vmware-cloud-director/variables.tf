@@ -47,6 +47,12 @@ variable "apiserver_alternative_names" {
   type        = list(string)
 }
 
+variable "kubeapi_hostname" {
+  description = "DNS name for the kube-apiserver"
+  default     = ""
+  type        = string
+}
+
 variable "ssh_public_key_file" {
   description = "SSH public key file"
   default     = "~/.ssh/id_rsa.pub"

@@ -65,7 +65,8 @@ Following environment variables or terraform variables can be used to authentica
 | dhcp\_end\_address | Last address for the DHCP IP Pool range | string | `192.168.1.50` | no |
 | network\_dns\_server\_1 | Primary DNS server for the routed network | string | `""` | no |
 | network\_dns\_server\_2 | Secondary DNS server for the routed network | string | `""` | no |
-| apiserver\_alternative\_names | subject alternative names for the API Server signing cert. | list(string) | `[]` | no |
+| apiserver\_alternative\_names | Subject alternative names for the API Server signing cert. | list(string) | `[]` | no |
+| kubeapi\_hostname | DNS name for the kube-apiserver. | string | `""` | no |
 | ssh\_agent\_socket | SSH Agent socket, default to grab from $SSH_AUTH_SOCK | string | `"env:SSH_AUTH_SOCK"` | no |
 | ssh\_port | SSH port to be used to provision instances | string | `"22"` | no |
 | ssh\_private\_key\_file | SSH private key file used to access instances | string | `""` | no |
