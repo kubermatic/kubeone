@@ -87,7 +87,7 @@ resource "vcd_vapp_vm" "control_plane" {
   metadata = {
     provisioner  = "Kubeone"
     cluster_name = "${var.cluster_name}"
-    role         = "master"
+    role         = "control-plane"
   }
 
   guest_properties = {
@@ -122,47 +122,6 @@ resource "vcd_vapp_vm" "control_plane" {
     bus_number      = 0
     unit_number     = 0
     storage_profile = var.control_plane_disk_storage_profile
-  }
-
-  depends_on = [vcd_vapp_org_network.network]
-}
-
-# Create VMs for bastion host
-resource "vcd_vapp_vm" "bastion" {
-  vapp_name     = vcd_vapp.cluster.name
-  name          = "${var.cluster_name}-bastion"
-  computer_name = "${var.cluster_name}-bastion"
-
-  metadata = {
-    provisioner  = "Kubeone"
-    cluster_name = "${var.cluster_name}"
-    role         = "bastion"
-  }
-
-  guest_properties = {
-    "instance-id" = "${var.cluster_name}-bastion"
-    "hostname"    = "${var.cluster_name}-bastion"
-    "public-keys" = file(var.ssh_public_key_file)
-  }
-
-  catalog_name  = var.catalog_name
-  template_name = var.template_name
-
-  # resource allocation for the VM
-  memory                 = 2048
-  cpus                   = 1
-  cpu_cores              = 1
-  cpu_hot_add_enabled    = false
-  memory_hot_add_enabled = false
-
-  # Wait upto 5 minutes for IP addresses to be assigned
-  network_dhcp_wait_seconds = 300
-
-  network {
-    type               = "org"
-    name               = vcd_vapp_org_network.network.org_network_name
-    ip_allocation_mode = "DHCP"
-    is_primary         = true
   }
 
   depends_on = [vcd_vapp_org_network.network]

@@ -280,12 +280,23 @@ func (p CloudProviderSpec) CloudProviderName() string {
 	case p.Vsphere != nil:
 		return "vsphere"
 	case p.VMwareCloudDirector != nil:
-		return "vmware-cloud-director"
+		return "vmwareCloudDirector"
 	case p.None != nil:
 		return "none"
 	}
 
 	return ""
+}
+
+// MachineControllerCloudProvider returns name of the cloud provider for machine-controller
+// It handles special cases where the cloud provider name in KubeOne might differ to that required in machine-controller.
+func (p CloudProviderSpec) MachineControllerCloudProvider() string {
+	switch {
+	case p.VMwareCloudDirector != nil:
+		return "vmware-cloud-director"
+	default:
+		return p.CloudProviderName()
+	}
 }
 
 // CloudProviderInTree detects is there in-tree cloud provider implementation for specified provider.
