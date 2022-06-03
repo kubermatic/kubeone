@@ -67,3 +67,7 @@ func MigrateToContainerd(cluster *kubeoneapi.KubeOneCluster, node *kubeoneapi.Ho
 func installISCSIAndNFS(cluster *kubeoneapi.KubeOneCluster) bool {
 	return cluster.CloudProvider.Nutanix != nil
 }
+
+func ciliumCNI(cluster *kubeoneapi.KubeOneCluster) bool {
+	return cluster.ClusterNetwork.CNI != nil && cluster.ClusterNetwork.CNI.Cilium != nil
+}
