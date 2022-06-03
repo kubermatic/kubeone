@@ -60,9 +60,9 @@ var (
 		EOF
 		{{- if .CILIUM }}
 		cat <<EOF | sudo tee /etc/sysctl.d/99-zzz-override_cilium.conf
-		# Disable rp_filter on Cilium interfaces since it may cause mangled packets to be dropped
-		net.ipv4.conf.lxc*.rp_filter = 0
-		net.ipv4.conf.cilium_*.rp_filter = 0
+		# Disable rp_filter on ALL interfaces since it may cause mangled packets to be dropped
+		# https://github.com/cilium/cilium/blob/v1.11.1/pkg/datapath/loader/base.go#L244
+		net.ipv4.conf.all.rp_filter = 0
 		EOF
 		{{ end }}
 		sudo sysctl --system
