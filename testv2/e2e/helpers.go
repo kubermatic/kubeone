@@ -17,11 +17,15 @@ limitations under the License.
 package e2e
 
 import (
+	"archive/zip"
 	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"text/template"
@@ -39,6 +43,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/util/retry"
+	k8spath "k8s.io/utils/path"
 	ctrlruntimeclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -86,13 +91,94 @@ func requiredTemplateFunc(warn string, input interface{}) (interface{}, error) {
 	return input, nil
 }
 
-func newKubeoneBin(terraformPath, manifestPath string) *kubeoneBin {
-	return &kubeoneBin{
+func downloadKubeone(t *testing.T, version string) string {
+	binPath := filepath.Join(t.TempDir(), fmt.Sprintf("kubeone-%s", version))
+	binPathZip := fmt.Sprintf("%s.zip", binPath)
+	exists, err := k8spath.Exists(k8spath.CheckSymlinkOnly, binPath)
+	if err != nil {
+		t.Fatalf("checking if kubeone already downloaded: %v", err)
+	}
+
+	if exists {
+		return binPath
+	}
+
+	const urlTemplate = "https://github.com/kubermatic/kubeone/releases/download/v%s/kubeone_%s_linux_amd64.zip"
+	downloadURL := fmt.Sprintf(urlTemplate, version, version)
+
+	req, err := http.NewRequest("GET", downloadURL, nil)
+	if err != nil {
+		t.Fatalf("building http request to download kubeone: %v", err)
+	}
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatalf("http request to download kubeone: %v", err)
+	}
+	defer resp.Body.Close()
+
+	zipBin, err := os.OpenFile(binPathZip, os.O_CREATE|os.O_WRONLY, 0600)
+	if err != nil {
+		t.Fatalf("open kubeone destination file: %v", err)
+	}
+	defer zipBin.Close()
+
+	_, err = io.Copy(zipBin, resp.Body)
+	if err != nil {
+		t.Fatalf("downloading kubeone: %v", err)
+	}
+
+	fi, err := zipBin.Stat()
+	if err != nil {
+		t.Fatalf("file stat: %v", err)
+	}
+
+	unzip, err := zip.NewReader(zipBin, fi.Size())
+	if err != nil {
+		t.Fatalf("opening zip file for reading: %v", err)
+	}
+
+	zipK1Bin, err := unzip.Open("kubeone")
+	if err != nil {
+		t.Fatalf("opening kubeone file from zip archive: %v", err)
+	}
+	defer zipK1Bin.Close()
+
+	k1Bin, err := os.OpenFile(binPath, os.O_CREATE|os.O_WRONLY, 0750)
+	if err != nil {
+		t.Fatalf("open kubeone destination file: %v", err)
+	}
+	defer k1Bin.Close()
+
+	_, err = io.Copy(k1Bin, zipK1Bin)
+	if err != nil {
+		t.Fatalf("extractive kubeone from zip: %v", err)
+	}
+
+	return binPath
+}
+
+type kubeoneBinOpts func(*kubeoneBin)
+
+func withKubeoneBin(bin string) kubeoneBinOpts {
+	return func(kb *kubeoneBin) {
+		kb.bin = bin
+	}
+}
+
+func newKubeoneBin(terraformPath, manifestPath string, opts ...kubeoneBinOpts) *kubeoneBin {
+	k1 := &kubeoneBin{
 		bin:          "kubeone",
 		dir:          terraformPath,
 		tfjsonPath:   ".",
 		manifestPath: manifestPath,
 	}
+
+	for _, mod := range opts {
+		mod(k1)
+	}
+
+	return k1
 }
 
 type manifestData struct {

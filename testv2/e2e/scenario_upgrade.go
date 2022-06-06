@@ -25,11 +25,14 @@ import (
 	"sigs.k8s.io/yaml"
 )
 
+const kubeoneVersionToInit = "1.4.3"
+
 type scenarioUpgrade struct {
 	name                 string
 	manifestTemplatePath string
 	versions             []string
 	infra                Infra
+	kubeoneInitVersion   string
 }
 
 func (scenario scenarioUpgrade) Title() string { return titleize(scenario.name) }
@@ -68,6 +71,7 @@ func (scenario *scenarioUpgrade) upgrade(t *testing.T) {
 				VERSION: scenario.versions[1],
 			},
 		),
+		withKubeoneBin(downloadKubeone(t, kubeoneVersionToInit)),
 	)
 
 	if err := k1.Apply(); err != nil {
