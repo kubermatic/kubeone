@@ -1976,6 +1976,8 @@ func Convert_kubeone_SystemPackages_To_v1beta2_SystemPackages(in *kubeone.System
 }
 
 func autoConvert_v1beta2_VMwareCloudDirectorSpec_To_kubeone_VMwareCloudDirectorSpec(in *VMwareCloudDirectorSpec, out *kubeone.VMwareCloudDirectorSpec, s conversion.Scope) error {
+	out.VApp = in.VApp
+	out.StorageProfile = in.StorageProfile
 	return nil
 }
 
@@ -1985,6 +1987,8 @@ func Convert_v1beta2_VMwareCloudDirectorSpec_To_kubeone_VMwareCloudDirectorSpec(
 }
 
 func autoConvert_kubeone_VMwareCloudDirectorSpec_To_v1beta2_VMwareCloudDirectorSpec(in *kubeone.VMwareCloudDirectorSpec, out *VMwareCloudDirectorSpec, s conversion.Scope) error {
+	out.VApp = in.VApp
+	out.StorageProfile = in.StorageProfile
 	return nil
 }
 
