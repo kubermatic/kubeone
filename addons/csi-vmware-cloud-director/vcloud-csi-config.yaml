@@ -13,5 +13,4 @@ data:
       vdc: {{ required "Please provide VCD_VDC" .Credentials.VCD_VDC }}
       vAppName: {{ .Config.CloudProvider.VMwareCloudDirector.VApp }}
     clusterid: {{ .Config.Name }}
-immutable: true
 ---
