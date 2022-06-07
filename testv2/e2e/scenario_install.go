@@ -30,6 +30,15 @@ type scenarioInstall struct {
 	manifestTemplatePath string
 	versions             []string
 	infra                Infra
+	kubeonePath          string
+}
+
+func (scenario scenarioInstall) KubeonePath() string {
+	if scenario.kubeonePath != "" {
+		return scenario.kubeonePath
+	}
+
+	return kubeoneDistPath
 }
 
 func (scenario scenarioInstall) Title() string { return titleize(scenario.name) }
@@ -44,6 +53,10 @@ func (scenario *scenarioInstall) SetVersions(versions ...string) {
 
 func (scenario *scenarioInstall) Run(t *testing.T) {
 	t.Helper()
+
+	if err := makeBin("build").Run(); err != nil {
+		t.Fatalf("building kubeone: %v", err)
+	}
 
 	scenario.install(t)
 	scenario.test(t)
@@ -82,6 +95,7 @@ func (scenario *scenarioInstall) install(t *testing.T) {
 				VERSION: scenario.versions[0],
 			},
 		),
+		withKubeoneBin(scenario.KubeonePath()),
 	)
 
 	if err := k1.Apply(); err != nil {

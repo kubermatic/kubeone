@@ -35,6 +35,8 @@ import (
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 
+	"k8c.io/kubeone/test/e2e/testutil"
+
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -51,6 +53,7 @@ const (
 	labelControlPlaneNode = "node-role.kubernetes.io/control-plane"
 	prowImage             = "kubermatic/kubeone-e2e:v0.1.22"
 	k1CloneURI            = "ssh://git@github.com/kubermatic/kubeone.git"
+	kubeoneDistPath       = "../../dist/kubeone"
 )
 
 func titleize(s string) string {
@@ -91,9 +94,19 @@ func requiredTemplateFunc(warn string, input interface{}) (interface{}, error) {
 	return input, nil
 }
 
+func makeBin(args ...string) *testutil.Exec {
+	return testutil.NewExec("make",
+		testutil.WithArgs(args...),
+		testutil.WithEnv(os.Environ()),
+		testutil.InDir(filepath.Clean("../../")),
+		testutil.StdoutDebug,
+	)
+}
+
 func downloadKubeone(t *testing.T, version string) string {
 	binPath := filepath.Join(t.TempDir(), fmt.Sprintf("kubeone-%s", version))
-	binPathZip := fmt.Sprintf("%s.zip", binPath)
+	zipPath := fmt.Sprintf("%s.zip", binPath)
+
 	exists, err := k8spath.Exists(k8spath.CheckSymlinkOnly, binPath)
 	if err != nil {
 		t.Fatalf("checking if kubeone already downloaded: %v", err)
@@ -117,7 +130,7 @@ func downloadKubeone(t *testing.T, version string) string {
 	}
 	defer resp.Body.Close()
 
-	zipBin, err := os.OpenFile(binPathZip, os.O_CREATE|os.O_WRONLY, 0600)
+	zipBin, err := os.OpenFile(zipPath, os.O_CREATE|os.O_WRONLY, 0600)
 	if err != nil {
 		t.Fatalf("open kubeone destination file: %v", err)
 	}
@@ -138,11 +151,11 @@ func downloadKubeone(t *testing.T, version string) string {
 		t.Fatalf("opening zip file for reading: %v", err)
 	}
 
-	zipK1Bin, err := unzip.Open("kubeone")
+	unzipK1Bin, err := unzip.Open("kubeone")
 	if err != nil {
 		t.Fatalf("opening kubeone file from zip archive: %v", err)
 	}
-	defer zipK1Bin.Close()
+	defer unzipK1Bin.Close()
 
 	k1Bin, err := os.OpenFile(binPath, os.O_CREATE|os.O_WRONLY, 0750)
 	if err != nil {
@@ -150,7 +163,7 @@ func downloadKubeone(t *testing.T, version string) string {
 	}
 	defer k1Bin.Close()
 
-	_, err = io.Copy(k1Bin, zipK1Bin)
+	_, err = io.Copy(k1Bin, unzipK1Bin)
 	if err != nil {
 		t.Fatalf("extractive kubeone from zip: %v", err)
 	}
@@ -168,7 +181,7 @@ func withKubeoneBin(bin string) kubeoneBinOpts {
 
 func newKubeoneBin(terraformPath, manifestPath string, opts ...kubeoneBinOpts) *kubeoneBin {
 	k1 := &kubeoneBin{
-		bin:          "kubeone",
+		bin:          filepath.Clean(kubeoneDistPath),
 		dir:          terraformPath,
 		tfjsonPath:   ".",
 		manifestPath: manifestPath,
