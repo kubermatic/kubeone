@@ -284,7 +284,13 @@ type OpenstackSpec struct{}
 type EquinixMetalSpec struct{}
 
 // VMwareCloudDirectorSpec defines the VMware Cloud Director provider
-type VMwareCloudDirectorSpec struct{}
+type VMwareCloudDirectorSpec struct {
+	// VApp is the name of vApp for VMs.
+	VApp string `json:"vApp,omitempty"`
+
+	// StorageProfile is the name of storage profile to be used for disks.
+	StorageProfile string `json:"storageProfile"`
+}
 
 // VsphereSpec defines the vSphere provider
 type VsphereSpec struct{}

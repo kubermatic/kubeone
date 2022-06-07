@@ -75,11 +75,13 @@ type Config struct {
 }
 
 type controlPlane struct {
-	ClusterName   string  `json:"cluster_name"`
-	CloudProvider *string `json:"cloud_provider"`
-	LeaderIP      string  `json:"leader_ip"`
-	Untaint       bool    `json:"untaint"`
-	NetworkID     string  `json:"network_id"`
+	ClusterName    string  `json:"cluster_name"`
+	CloudProvider  *string `json:"cloud_provider"`
+	LeaderIP       string  `json:"leader_ip"`
+	Untaint        bool    `json:"untaint"`
+	NetworkID      string  `json:"network_id"`
+	VAppName       string  `json:"vapp_name"`
+	StorageProfile string  `json:"storage_profile"`
 	hostsSpec
 }
 
@@ -261,6 +263,20 @@ func (output *Config) Apply(cluster *kubeonev1beta2.KubeOneCluster) error {
 	if len(cp.NetworkID) > 0 && cluster.CloudProvider.Hetzner != nil {
 		// NetworkID is used only for Hetzner
 		cluster.CloudProvider.Hetzner.NetworkID = cp.NetworkID
+	}
+
+	if cluster.CloudProvider.VMwareCloudDirector != nil {
+		// VAppName is used only for VMware Cloud Director.
+		if len(cp.VAppName) > 0 {
+			cluster.CloudProvider.VMwareCloudDirector.VApp = cp.VAppName
+		} else {
+			cluster.CloudProvider.VMwareCloudDirector.VApp = cluster.Name
+		}
+
+		// Set StorageProfile.
+		if len(cp.StorageProfile) > 0 {
+			cluster.CloudProvider.VMwareCloudDirector.VApp = cp.VAppName
+		}
 	}
 
 	// Walk through all configued workersets from terraform and apply their config

@@ -217,6 +217,6 @@ metadata:
 provisioner: named-disk.csi.cloud-director.vmware.com
 reclaimPolicy: Delete
 parameters:
-  storageProfile: {{ default "*" .Params.storageProfile | quote }}
+  storageProfile: {{ default .Config.CloudProvider.VMwareCloudDirector.StorageProfile .Params.storageProfile | quote }}
   filesystem: {{ default "ext4" .Params.filesystem | quote }}
 {{ end }}

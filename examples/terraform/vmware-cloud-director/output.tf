@@ -36,6 +36,8 @@ output "kubeone_hosts" {
       ssh_port             = var.ssh_port
       ssh_private_key_file = var.ssh_private_key_file
       ssh_user             = var.ssh_username
+      vapp_name            = vcd_vapp.cluster.name
+      storage_profile      = var.worker_disk_storage_profile
     }
   }
 }
