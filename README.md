@@ -40,7 +40,7 @@ Terraform configs, addons, and helper scripts in your current working
 directory.
 
 For other installation methods, check the
-[Getting KubeOne guide][docs-install] on our documentation website.
+[Getting KubeOne guide][docs-getting-kubeone] on our documentation website.
 
 ## Features
 
