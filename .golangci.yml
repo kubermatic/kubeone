@@ -50,7 +50,6 @@ linters:
   - structcheck
   - stylecheck
   - tenv
-  - thelper
   - tparallel
   - unconvert
   - unparam

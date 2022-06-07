@@ -52,8 +52,6 @@ func (scenario *scenarioInstall) SetVersions(versions ...string) {
 }
 
 func (scenario *scenarioInstall) Run(t *testing.T) {
-	t.Helper()
-
 	if err := makeBin("build").Run(); err != nil {
 		t.Fatalf("building kubeone: %v", err)
 	}
@@ -63,8 +61,6 @@ func (scenario *scenarioInstall) Run(t *testing.T) {
 }
 
 func (scenario *scenarioInstall) install(t *testing.T) {
-	t.Helper()
-
 	if len(scenario.versions) != 1 {
 		t.Fatalf("only 1 version is expected to be set, got %v", scenario.versions)
 	}
@@ -112,8 +108,6 @@ func (scenario *scenarioInstall) install(t *testing.T) {
 }
 
 func (scenario *scenarioInstall) test(t *testing.T) {
-	t.Helper()
-
 	data := manifestData{VERSION: scenario.versions[0]}
 	k1 := newKubeoneBin(
 		scenario.infra.terraform.path,

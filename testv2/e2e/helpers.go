@@ -199,8 +199,6 @@ type manifestData struct {
 }
 
 func renderManifest(t *testing.T, templatePath string, data manifestData) string {
-	t.Helper()
-
 	tmpDir := t.TempDir()
 
 	var buf bytes.Buffer
@@ -232,8 +230,6 @@ func renderManifest(t *testing.T, templatePath string, data manifestData) string
 }
 
 func waitForNodesReady(t *testing.T, client ctrlruntimeclient.Client, expectedNumberOfNodes int) error {
-	t.Helper()
-
 	return wait.Poll(5*time.Second, 10*time.Minute, func() (bool, error) {
 		nodes := corev1.NodeList{}
 
@@ -368,8 +364,6 @@ func pullProwJobName(in ...string) string {
 }
 
 func basicTest(t *testing.T, k1 *kubeoneBin, data manifestData) {
-	t.Helper()
-
 	kubeoneManifest, err := k1.Manifest()
 	if err != nil {
 		t.Fatalf("failed to get manifest API")
@@ -416,8 +410,6 @@ func basicTest(t *testing.T, k1 *kubeoneBin, data manifestData) {
 }
 
 func sonobuoyRun(t *testing.T, k1 *kubeoneBin, mode sonobuoyMode) {
-	t.Helper()
-
 	kubeconfigPath, err := k1.KubeconfigPath(t.TempDir())
 	if err != nil {
 		t.Fatalf("fetching kubeconfig failed")
