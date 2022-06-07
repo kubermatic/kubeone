@@ -157,6 +157,9 @@ const (
 	EquinixMetalCCM
 	VsphereCCM
 
+	// VMwareCloud Director CSI
+	VMwareCloudDirectorCSI
+
 	// vSphere CSI
 	VsphereCSIDriver
 	VsphereCSISyncer
@@ -317,6 +320,9 @@ func optionalResources() map[Resource]map[string]string {
 			"1.22.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.22.6",
 			">= 1.23.0": "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.23.0",
 		},
+
+		// VMware Cloud Director CSI
+		VMwareCloudDirectorCSI: {"*": "projects.registry.vmware.com/vmware-cloud-director/cloud-director-named-disk-csi-driver:1.2.0.latest"},
 
 		// vSphere CSI
 		VsphereCSIDriver:                    {"*": "gcr.io/cloud-provider-vsphere/csi/release/driver:v2.5.1"},
