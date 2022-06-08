@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2022-06-01T15:38:49+02:00
+date = 2022-06-07T19:50:42+05:00
 weight = 11
 +++
 ## v1beta2
@@ -721,6 +721,8 @@ VMwareCloudDirectorSpec defines the VMware Cloud Director provider
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
+| vApp | VApp is the name of vApp for VMs. | string | false |
+| storageProfile | StorageProfile is the name of storage profile to be used for disks. | string | true |
 
 [Back to Group](#v1beta2)
 

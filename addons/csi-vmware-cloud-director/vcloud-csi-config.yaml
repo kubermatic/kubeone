@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vcloud-csi-configmap
+  namespace: kube-system
+data:
+  # host shouldn't have the `/api` suffix.
+  vcloud-csi-config.yaml: |+
+    vcd:
+      host: {{ required "Please provide VCD_URL" (trimSuffix "/api" .Credentials.VCD_URL) }}
+      org: {{ required "Please provide VCD_ORG" .Credentials.VCD_ORG }}
+      vdc: {{ required "Please provide VCD_VDC" .Credentials.VCD_VDC }}
+      vAppName: {{ .Config.CloudProvider.VMwareCloudDirector.VApp }}
+    clusterid: {{ .Config.Name }}
+---

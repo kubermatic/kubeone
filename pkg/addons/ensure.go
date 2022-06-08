@@ -42,28 +42,29 @@ var (
 	// embeddedAddons is a list of addons that are embedded in the KubeOne
 	// binary. Those addons are skipped when applying a user-provided addon with the same name.
 	embeddedAddons = map[string]string{
-		resources.AddonCCMAws:             "",
-		resources.AddonCCMAzure:           "",
-		resources.AddonCCMDigitalOcean:    "",
-		resources.AddonCCMHetzner:         "",
-		resources.AddonCCMOpenStack:       "",
-		resources.AddonCCMEquinixMetal:    "",
-		resources.AddonCCMPacket:          "",
-		resources.AddonCCMVsphere:         "",
-		resources.AddonCNICanal:           "",
-		resources.AddonCNICilium:          "",
-		resources.AddonCNIWeavenet:        "",
-		resources.AddonCSIAwsEBS:          "",
-		resources.AddonCSIAzureDisk:       "",
-		resources.AddonCSIAzureFile:       "",
-		resources.AddonCSIDigitalOcean:    "",
-		resources.AddonCSIHetzner:         "",
-		resources.AddonCSINutanix:         "",
-		resources.AddonCSIOpenStackCinder: "",
-		resources.AddonCSIVsphere:         "",
-		resources.AddonMachineController:  "",
-		resources.AddonMetricsServer:      "",
-		resources.AddonNodeLocalDNS:       "",
+		resources.AddonCCMAws:                 "",
+		resources.AddonCCMAzure:               "",
+		resources.AddonCCMDigitalOcean:        "",
+		resources.AddonCCMHetzner:             "",
+		resources.AddonCCMOpenStack:           "",
+		resources.AddonCCMEquinixMetal:        "",
+		resources.AddonCCMPacket:              "",
+		resources.AddonCCMVsphere:             "",
+		resources.AddonCNICanal:               "",
+		resources.AddonCNICilium:              "",
+		resources.AddonCNIWeavenet:            "",
+		resources.AddonCSIAwsEBS:              "",
+		resources.AddonCSIAzureDisk:           "",
+		resources.AddonCSIAzureFile:           "",
+		resources.AddonCSIDigitalOcean:        "",
+		resources.AddonCSIHetzner:             "",
+		resources.AddonCSINutanix:             "",
+		resources.AddonCSIOpenStackCinder:     "",
+		resources.AddonCSIVMwareCloudDirector: "",
+		resources.AddonCSIVsphere:             "",
+		resources.AddonMachineController:      "",
+		resources.AddonMetricsServer:          "",
+		resources.AddonNodeLocalDNS:           "",
 	}
 
 	greaterThan23 = semverutil.MustParseConstraint(greaterThan23Constraint)
@@ -376,7 +377,13 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 				name: resources.AddonCSIOpenStackCinder,
 			},
 		)
-
+	// Install CSI driver unconditionally
+	case s.Cluster.CloudProvider.VMwareCloudDirector != nil:
+		addonsToDeploy = append(addonsToDeploy,
+			addonAction{
+				name: resources.AddonCSIVMwareCloudDirector,
+			},
+		)
 	// Install CSI driver only if external cloud provider is used
 	case s.Cluster.CloudProvider.Vsphere != nil && s.Cluster.CloudProvider.External:
 		addonsToDeploy = append(addonsToDeploy,

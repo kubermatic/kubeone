@@ -39,6 +39,7 @@ const (
 	AddonCSIHetzner             = "csi-hetzner"
 	AddonCSINutanix             = "csi-nutanix"
 	AddonCSIOpenStackCinder     = "csi-openstack-cinder"
+	AddonCSIVMwareCloudDirector = "csi-vmware-cloud-director"
 	AddonCSIVsphere             = "csi-vsphere"
 	AddonCNICanal               = "cni-canal"
 	AddonCNICilium              = "cni-cilium"
