@@ -21,10 +21,11 @@ import (
 	"fmt"
 	"os"
 
-	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
-	"k8c.io/kubeone/test/e2e/testutil"
+	"github.com/sirupsen/logrus"
 
-	"sigs.k8s.io/yaml"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/apis/kubeone/config"
+	"k8c.io/kubeone/test/e2e/testutil"
 )
 
 type kubeoneBin struct {
@@ -105,10 +106,10 @@ func (k1 *kubeoneBin) Manifest() (*kubeoneapi.KubeOneCluster, error) {
 		return nil, fmt.Errorf("rendering manifest failed: %w", err)
 	}
 
-	var k1Manifest kubeoneapi.KubeOneCluster
-	err := yaml.UnmarshalStrict(buf.Bytes(), &k1Manifest)
+	logger := logrus.New()
+	k1Manifest, err := config.BytesToKubeOneCluster(buf.Bytes(), nil, nil, logger)
 
-	return &k1Manifest, err
+	return k1Manifest, err
 }
 
 func (k1 *kubeoneBin) run(args ...string) error {
