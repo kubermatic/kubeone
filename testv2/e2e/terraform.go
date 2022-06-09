@@ -17,7 +17,6 @@ limitations under the License.
 package e2e
 
 import (
-	"fmt"
 	"os"
 
 	"k8c.io/kubeone/test/e2e/testutil"
@@ -45,7 +44,7 @@ func (tf *terraformBin) init(name string) error {
 func (tf *terraformBin) apply() error {
 	args := []string{"apply", "-auto-approve"}
 
-	for _, arg := range append(tf.vars, fmt.Sprintf("cluster_name=%s", tf.name)) {
+	for _, arg := range tf.vars {
 		args = append(args, "-var", arg)
 	}
 

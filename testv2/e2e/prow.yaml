@@ -11,14 +11,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsDefaultsInstallContainerdV1_21_12$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsDefaultsInstallContainerdV1_21_12
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -36,14 +33,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsCentosInstallContainerdV1_21_12$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsCentosInstallContainerdV1_21_12
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -61,14 +55,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsRhelInstallContainerdV1_21_12$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsRhelInstallContainerdV1_21_12
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -86,14 +77,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsFlatcarInstallContainerdV1_21_12$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsFlatcarInstallContainerdV1_21_12
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -111,14 +99,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsAmznInstallContainerdV1_21_12$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsAmznInstallContainerdV1_21_12
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -136,14 +121,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsDefaultsInstallContainerdV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsDefaultsInstallContainerdV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -161,14 +143,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsCentosInstallContainerdV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsCentosInstallContainerdV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -186,14 +165,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsRhelInstallContainerdV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsRhelInstallContainerdV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -211,14 +187,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsFlatcarInstallContainerdV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsFlatcarInstallContainerdV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -236,14 +209,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsAmznInstallContainerdV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsAmznInstallContainerdV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -261,14 +231,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsDefaultsInstallContainerdV1_23_6$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsDefaultsInstallContainerdV1_23_6
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -286,14 +253,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsCentosInstallContainerdV1_23_6$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsCentosInstallContainerdV1_23_6
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -311,14 +275,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsRhelInstallContainerdV1_23_6$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsRhelInstallContainerdV1_23_6
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -336,14 +297,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsFlatcarInstallContainerdV1_23_6$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsFlatcarInstallContainerdV1_23_6
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -361,14 +319,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsAmznInstallContainerdV1_23_6$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsAmznInstallContainerdV1_23_6
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -386,14 +341,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsDefaultsInstallDockerV1_21_12$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsDefaultsInstallDockerV1_21_12
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -411,14 +363,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsCentosInstallDockerV1_21_12$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsCentosInstallDockerV1_21_12
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -436,14 +385,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsRhelInstallDockerV1_21_12$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsRhelInstallDockerV1_21_12
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -461,14 +407,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsFlatcarInstallDockerV1_21_12$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsFlatcarInstallDockerV1_21_12
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -486,14 +429,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsAmznInstallDockerV1_21_12$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsAmznInstallDockerV1_21_12
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -511,14 +451,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsDefaultsInstallDockerV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsDefaultsInstallDockerV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -536,14 +473,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsCentosInstallDockerV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsCentosInstallDockerV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -561,14 +495,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsRhelInstallDockerV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsRhelInstallDockerV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -586,14 +517,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsFlatcarInstallDockerV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsFlatcarInstallDockerV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -611,14 +539,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsAmznInstallDockerV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsAmznInstallDockerV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -636,14 +561,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsDefaultsUpgradeContainerdFromV1_21_12_ToV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsDefaultsUpgradeContainerdFromV1_21_12_ToV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -661,14 +583,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsCentosUpgradeContainerdFromV1_21_12_ToV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsCentosUpgradeContainerdFromV1_21_12_ToV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -686,14 +605,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsRhelUpgradeContainerdFromV1_21_12_ToV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsRhelUpgradeContainerdFromV1_21_12_ToV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -711,14 +627,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsFlatcarUpgradeContainerdFromV1_21_12_ToV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsFlatcarUpgradeContainerdFromV1_21_12_ToV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -736,14 +649,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsAmznUpgradeContainerdFromV1_21_12_ToV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsAmznUpgradeContainerdFromV1_21_12_ToV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -761,14 +671,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsDefaultsUpgradeContainerdFromV1_22_9_ToV1_23_6$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsDefaultsUpgradeContainerdFromV1_22_9_ToV1_23_6
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -786,14 +693,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsCentosUpgradeContainerdFromV1_22_9_ToV1_23_6$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsCentosUpgradeContainerdFromV1_22_9_ToV1_23_6
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -811,14 +715,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsRhelUpgradeContainerdFromV1_22_9_ToV1_23_6$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsRhelUpgradeContainerdFromV1_22_9_ToV1_23_6
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -836,14 +737,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsFlatcarUpgradeContainerdFromV1_22_9_ToV1_23_6$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsFlatcarUpgradeContainerdFromV1_22_9_ToV1_23_6
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -861,14 +759,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsAmznUpgradeContainerdFromV1_22_9_ToV1_23_6$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsAmznUpgradeContainerdFromV1_22_9_ToV1_23_6
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -886,14 +781,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsDefaultsUpgradeDockerFromV1_21_12_ToV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsDefaultsUpgradeDockerFromV1_21_12_ToV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -911,14 +803,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsCentosUpgradeDockerFromV1_21_12_ToV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsCentosUpgradeDockerFromV1_21_12_ToV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -936,14 +825,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsRhelUpgradeDockerFromV1_21_12_ToV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsRhelUpgradeDockerFromV1_21_12_ToV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -961,14 +847,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsFlatcarUpgradeDockerFromV1_21_12_ToV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsFlatcarUpgradeDockerFromV1_21_12_ToV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -986,14 +869,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsAmznUpgradeDockerFromV1_21_12_ToV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsAmznUpgradeDockerFromV1_21_12_ToV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1011,14 +891,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsDefaultsCalicoContainerdV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsDefaultsCalicoContainerdV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1036,14 +913,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsCentosCalicoContainerdV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsCentosCalicoContainerdV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1061,14 +935,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsRhelCalicoContainerdV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsRhelCalicoContainerdV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1086,14 +957,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsFlatcarCalicoContainerdV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsFlatcarCalicoContainerdV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1111,14 +979,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsAmznCalicoContainerdV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsAmznCalicoContainerdV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1136,14 +1001,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsDefaultsCalicoDockerV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsDefaultsCalicoDockerV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1161,14 +1023,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsCentosCalicoDockerV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsCentosCalicoDockerV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1186,14 +1045,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsRhelCalicoDockerV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsRhelCalicoDockerV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1211,14 +1067,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsFlatcarCalicoDockerV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsFlatcarCalicoDockerV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1236,14 +1089,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsAmznCalicoDockerV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsAmznCalicoDockerV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1261,14 +1111,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsDefaultsWeaveContainerdV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsDefaultsWeaveContainerdV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1286,14 +1133,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsCentosWeaveContainerdV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsCentosWeaveContainerdV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1311,14 +1155,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsRhelWeaveContainerdV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsRhelWeaveContainerdV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1336,14 +1177,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsFlatcarWeaveContainerdV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsFlatcarWeaveContainerdV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1361,14 +1199,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsAmznWeaveContainerdV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsAmznWeaveContainerdV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1386,14 +1221,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsDefaultsWeaveDockerV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsDefaultsWeaveDockerV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1411,14 +1243,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsCentosWeaveDockerV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsCentosWeaveDockerV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1436,14 +1265,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsRhelWeaveDockerV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsRhelWeaveDockerV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1461,14 +1287,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsFlatcarWeaveDockerV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsFlatcarWeaveDockerV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1486,14 +1309,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsAmznWeaveDockerV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsAmznWeaveDockerV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1511,14 +1331,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsDefaultsConformanceContainerdV1_21_12$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsDefaultsConformanceContainerdV1_21_12
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1536,14 +1353,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsCentosConformanceContainerdV1_21_12$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsCentosConformanceContainerdV1_21_12
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1561,14 +1375,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsRhelConformanceContainerdV1_21_12$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsRhelConformanceContainerdV1_21_12
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1586,14 +1397,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsFlatcarConformanceContainerdV1_21_12$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsFlatcarConformanceContainerdV1_21_12
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1611,14 +1419,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsAmznConformanceContainerdV1_21_12$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsAmznConformanceContainerdV1_21_12
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1636,14 +1441,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsDefaultsConformanceContainerdV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsDefaultsConformanceContainerdV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1661,14 +1463,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsCentosConformanceContainerdV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsCentosConformanceContainerdV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1686,14 +1485,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsRhelConformanceContainerdV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsRhelConformanceContainerdV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1711,14 +1507,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsFlatcarConformanceContainerdV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsFlatcarConformanceContainerdV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1736,14 +1529,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsAmznConformanceContainerdV1_22_9$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsAmznConformanceContainerdV1_22_9
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1761,14 +1551,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsDefaultsConformanceContainerdV1_23_6$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsDefaultsConformanceContainerdV1_23_6
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1786,14 +1573,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsCentosConformanceContainerdV1_23_6$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsCentosConformanceContainerdV1_23_6
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1811,14 +1595,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsRhelConformanceContainerdV1_23_6$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsRhelConformanceContainerdV1_23_6
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1836,14 +1617,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsFlatcarConformanceContainerdV1_23_6$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsFlatcarConformanceContainerdV1_23_6
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1861,14 +1639,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsAmznConformanceContainerdV1_23_6$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsAmznConformanceContainerdV1_23_6
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1886,14 +1661,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsDefaultsConformanceContainerdV1_24_1$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsDefaultsConformanceContainerdV1_24_1
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1911,14 +1683,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsCentosConformanceContainerdV1_24_1$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsCentosConformanceContainerdV1_24_1
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1936,14 +1705,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsRhelConformanceContainerdV1_24_1$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsRhelConformanceContainerdV1_24_1
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1961,14 +1727,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsFlatcarConformanceContainerdV1_24_1$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsFlatcarConformanceContainerdV1_24_1
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1986,14 +1749,11 @@ presubmits:
   spec:
     containers:
     - command:
-      - go
-      - test
-      - -v
-      - ./testv2/e2e/...
-      - -tags
-      - e2e
-      - -run
-      - ^TestAwsAmznConformanceContainerdV1_24_1$
+      - ./testv2/go-test-e2e.sh
+      - TestAwsAmznConformanceContainerdV1_24_1
+      env:
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""

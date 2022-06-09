@@ -154,6 +154,7 @@ func (scenario *scenarioInstall) GenerateTests(wr io.Writer, generatorType Gener
 			scenario.infra.labels,
 			testTitle,
 			cfg,
+			scenario.infra.provider,
 		),
 	)
 

@@ -329,7 +329,7 @@ type ProwJob struct {
 	Spec      *corev1.PodSpec   `json:"spec"`
 }
 
-func newProwJob(prowJobName string, labels map[string]string, testTitle string, settings ProwConfig) ProwJob {
+func newProwJob(prowJobName string, labels map[string]string, testTitle string, settings ProwConfig, provider string) ProwJob {
 	return ProwJob{
 		Name:      prowJobName,
 		AlwaysRun: settings.AlwaysRun,
@@ -343,10 +343,14 @@ func newProwJob(prowJobName string, labels map[string]string, testTitle string, 
 					Image:           prowImage,
 					ImagePullPolicy: corev1.PullAlways,
 					Command: []string{
-						"go", "test", "-v",
-						"./testv2/e2e/...",
-						"-tags", "e2e",
-						"-run", fmt.Sprintf("^%s$", testTitle),
+						"./testv2/go-test-e2e.sh",
+						testTitle,
+					},
+					Env: []corev1.EnvVar{
+						{
+							Name:  "PROVIDER",
+							Value: provider,
+						},
 					},
 					Resources: corev1.ResourceRequirements{
 						Requests: corev1.ResourceList{
