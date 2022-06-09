@@ -216,6 +216,9 @@ func TestClusterConformance(t *testing.T) { //nolint:gocyclo
 				case osWorkers == OperatingSystemCentOS7:
 					args = append(args, "-var", fmt.Sprintf("worker_os=%s", "centos"))
 					args = append(args, "-var", fmt.Sprintf("ami=%s", AWSCentOS7AMI))
+				case osWorkers == OperatingSystemUbuntu:
+					args = append(args, "-var", fmt.Sprintf("worker_os=%s", "ubuntu"))
+					args = append(args, "-var", fmt.Sprintf("ami=%s", AWSUbuntu2004AMI))
 				default:
 					args = append(args, "-var", fmt.Sprintf("worker_os=%s", osWorkers))
 				}
@@ -269,6 +272,9 @@ func TestClusterConformance(t *testing.T) { //nolint:gocyclo
 					case osWorkers == OperatingSystemCentOS7:
 						args = append(args, "-var", fmt.Sprintf("worker_os=%s", "centos"))
 						args = append(args, "-var", fmt.Sprintf("ami=%s", AWSCentOS7AMI))
+					case osWorkers == OperatingSystemUbuntu:
+						args = append(args, "-var", fmt.Sprintf("worker_os=%s", "ubuntu"))
+						args = append(args, "-var", fmt.Sprintf("ami=%s", AWSUbuntu2004AMI))
 					default:
 						args = append(args, "-var", fmt.Sprintf("worker_os=%s", osWorkers))
 					}

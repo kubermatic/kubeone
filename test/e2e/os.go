@@ -38,6 +38,8 @@ const (
 
 const (
 	AWSCentOS7AMI = "ami-04552009264cbe9f4"
+	// TODO: Remove this when https://github.com/kubermatic/kubermatic/issues/10022 is marked as resolved.
+	AWSUbuntu2004AMI = "ami-092f628832a8d22a5" // ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-20220523
 )
 
 func ValidateOperatingSystem(osName string) error {
@@ -66,6 +68,11 @@ func ControlPlaneImageFlags(provider string, osName OperatingSystem) ([]string, 
 				"-var", "os=centos",
 				"-var", "ssh_username=centos",
 				"-var", "bastion_user=centos",
+			}, nil
+		case osName == OperatingSystemUbuntu:
+			return []string{
+				"-var", fmt.Sprintf("ami=%s", AWSUbuntu2004AMI),
+				"-var", "os=ubuntu",
 			}, nil
 		default:
 			return []string{
