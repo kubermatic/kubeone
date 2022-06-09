@@ -56,7 +56,7 @@ type sonobuoyBin struct {
 }
 
 func (sbb *sonobuoyBin) Run(mode sonobuoyMode) error {
-	return sbb.run("run", fmt.Sprintf("-mode=%s", mode))
+	return sbb.run("run", fmt.Sprintf("--mode=%s", mode))
 }
 
 func (sbb *sonobuoyBin) Wait() error {
@@ -77,9 +77,6 @@ func (sbb *sonobuoyBin) Results() ([]sonobuoyReport, error) {
 	}
 
 	exe := sbb.build("results", sonobuoyResultsFile, "--mode", "detailed", "--plugin", "e2e")
-	if sbb.kubeconfig != "" {
-		testutil.WithEnvs(fmt.Sprintf("KUBECONFIG=%s", sbb.kubeconfig))(exe)
-	}
 	cmd := exe.BuildCmd(ctx)
 	cmd.Stdout = wpipe
 	if err := cmd.Start(); err != nil {
@@ -115,10 +112,16 @@ func (sbb *sonobuoyBin) run(args ...string) error {
 }
 
 func (sbb *sonobuoyBin) build(args ...string) *testutil.Exec {
-	return testutil.NewExec("sonobuoy",
+	exe := testutil.NewExec("sonobuoy",
 		testutil.WithArgs(args...),
 		testutil.WithEnv(os.Environ()),
 		testutil.InDir(sbb.dir),
 		testutil.StdoutDebug,
 	)
+
+	if sbb.kubeconfig != "" {
+		testutil.WithEnvs(fmt.Sprintf("KUBECONFIG=%s", sbb.kubeconfig))(exe)
+	}
+
+	return exe
 }
