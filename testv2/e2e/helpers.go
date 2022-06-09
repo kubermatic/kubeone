@@ -390,7 +390,7 @@ func pullProwJobName(in ...string) string {
 func basicTest(t *testing.T, k1 *kubeoneBin, data manifestData) {
 	kubeoneManifest, err := k1.Manifest()
 	if err != nil {
-		t.Fatalf("failed to get manifest API")
+		t.Fatalf("failed to get manifest API: %v", err)
 	}
 
 	numberOfNodesToWait := len(kubeoneManifest.ControlPlane.Hosts) + len(kubeoneManifest.StaticWorkers.Hosts)
