@@ -208,19 +208,26 @@ type manifestData struct {
 }
 
 func renderManifest(t *testing.T, templatePath string, data manifestData) string {
-	tmpDir := t.TempDir()
+	var (
+		outBuf bytes.Buffer
+		tmpDir = t.TempDir()
+	)
 
-	var buf bytes.Buffer
-
-	tpl, err := template.New("").Parse(templatePath)
+	templateContent, err := os.ReadFile(templatePath)
 	if err != nil {
 		t.Fatal(err)
 	}
-	tpl.Funcs(template.FuncMap{
-		"required": requiredTemplateFunc,
-	})
 
-	if err = tpl.Execute(&buf, data); err != nil {
+	tpl, err := template.New("").
+		Funcs(template.FuncMap{
+			"required": requiredTemplateFunc,
+		}).
+		Parse(string(templateContent))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if err = tpl.Execute(&outBuf, data); err != nil {
 		t.Fatal(err)
 	}
 
@@ -231,7 +238,7 @@ func renderManifest(t *testing.T, templatePath string, data manifestData) string
 	defer manifest.Close()
 
 	manifestPath := manifest.Name()
-	if err := os.WriteFile(manifestPath, buf.Bytes(), 0600); err != nil {
+	if err := os.WriteFile(manifestPath, outBuf.Bytes(), 0600); err != nil {
 		t.Fatal(err)
 	}
 
