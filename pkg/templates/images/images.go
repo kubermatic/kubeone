@@ -187,12 +187,14 @@ func FindResource(name string) (Resource, error) {
 
 func baseResources() map[Resource]map[string]string {
 	return map[Resource]map[string]string{
-		CalicoCNI:         {"*": "quay.io/calico/cni:v3.22.2"},
-		CalicoController:  {"*": "quay.io/calico/kube-controllers:v3.22.2"},
-		CalicoNode:        {"*": "quay.io/calico/node:v3.22.2"},
-		DNSNodeCache:      {"*": "registry.k8s.io/dns/k8s-dns-node-cache:1.21.1"},
-		Flannel:           {"*": "quay.io/coreos/flannel:v0.15.1"},
-		MachineController: {"*": "quay.io/kubermatic/machine-controller:v1.51.0"},
+		CalicoCNI:        {"*": "quay.io/calico/cni:v3.22.2"},
+		CalicoController: {"*": "quay.io/calico/kube-controllers:v3.22.2"},
+		CalicoNode:       {"*": "quay.io/calico/node:v3.22.2"},
+		DNSNodeCache:     {"*": "registry.k8s.io/dns/k8s-dns-node-cache:1.21.1"},
+		Flannel:          {"*": "quay.io/coreos/flannel:v0.15.1"},
+		// TODO: Semver tag should be used for releases.
+		// Reference: https://github.com/kubermatic/machine-controller/commit/f53b35a4aa73efc15007b792902c2214e4a642f9
+		MachineController: {"*": "quay.io/kubermatic/machine-controller:f53b35a4aa73efc15007b792902c2214e4a642f9"},
 		MetricsServer:     {"*": "k8s.gcr.io/metrics-server/metrics-server:v0.6.1"},
 	}
 }
@@ -369,7 +371,9 @@ func optionalResources() map[Resource]map[string]string {
 			">= 1.24.0": "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.24.0",
 		},
 		// operating-system-manager addon
-		OperatingSystemManager: {"*": "quay.io/kubermatic/operating-system-manager:v0.4.2"},
+		// TODO: Semver tag should be used for releases.
+		// Reference: https://github.com/kubermatic/operating-system-manager/commit/2b912313fb7fdabcda0a59c765c3593b7e29568a
+		OperatingSystemManager: {"*": "quay.io/kubermatic/operating-system-manager:2b912313fb7fdabcda0a59c765c3593b7e29568a"},
 	}
 }
 
