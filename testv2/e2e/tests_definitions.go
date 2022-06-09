@@ -28,11 +28,13 @@ import (
 var (
 	Infrastructures = map[string]Infra{
 		"aws_defaults": {
-			name:     "aws_defaults",
-			provider: "aws",
+			name: "aws_defaults",
 			labels: map[string]string{
 				"preset-goproxy": "true",
 				"preset-aws":     "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "aws",
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/aws",
@@ -42,8 +44,10 @@ var (
 			},
 		},
 		"aws_centos": {
-			name:     "aws_centos",
-			provider: "aws",
+			name: "aws_centos",
+			environ: map[string]string{
+				"PROVIDER": "aws",
+			},
 			labels: map[string]string{
 				"preset-goproxy": "true",
 				"preset-aws":     "true",
@@ -59,8 +63,10 @@ var (
 			},
 		},
 		"aws_rhel": {
-			name:     "aws_rhel",
-			provider: "aws",
+			name: "aws_rhel",
+			environ: map[string]string{
+				"PROVIDER": "aws",
+			},
 			labels: map[string]string{
 				"preset-goproxy": "true",
 				"preset-aws":     "true",
@@ -76,8 +82,10 @@ var (
 			},
 		},
 		"aws_flatcar": {
-			name:     "aws_flatcar",
-			provider: "aws",
+			name: "aws_flatcar",
+			environ: map[string]string{
+				"PROVIDER": "aws",
+			},
 			labels: map[string]string{
 				"preset-goproxy": "true",
 				"preset-aws":     "true",
@@ -93,8 +101,10 @@ var (
 			},
 		},
 		"aws_amzn": {
-			name:     "aws_amzn",
-			provider: "aws",
+			name: "aws_amzn",
+			environ: map[string]string{
+				"PROVIDER": "aws",
+			},
 			labels: map[string]string{
 				"preset-goproxy": "true",
 				"preset-aws":     "true",
@@ -161,7 +171,7 @@ var (
 
 type Infra struct {
 	name      string
-	provider  string
+	environ   map[string]string
 	terraform terraformBin
 	labels    map[string]string
 }
@@ -183,4 +193,5 @@ type Scenario interface {
 type ProwConfig struct {
 	AlwaysRun bool
 	Optional  bool
+	Environ   map[string]string
 }

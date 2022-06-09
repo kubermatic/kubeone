@@ -338,7 +338,16 @@ type ProwJob struct {
 	Spec      *corev1.PodSpec   `json:"spec"`
 }
 
-func newProwJob(prowJobName string, labels map[string]string, testTitle string, settings ProwConfig, provider string) ProwJob {
+func newProwJob(prowJobName string, labels map[string]string, testTitle string, settings ProwConfig) ProwJob {
+	var env []corev1.EnvVar
+
+	for k, v := range settings.Environ {
+		env = append(env, corev1.EnvVar{
+			Name:  k,
+			Value: v,
+		})
+	}
+
 	return ProwJob{
 		Name:      prowJobName,
 		AlwaysRun: settings.AlwaysRun,
@@ -355,12 +364,7 @@ func newProwJob(prowJobName string, labels map[string]string, testTitle string, 
 						"./testv2/go-test-e2e.sh",
 						testTitle,
 					},
-					Env: []corev1.EnvVar{
-						{
-							Name:  "PROVIDER",
-							Value: provider,
-						},
-					},
+					Env: env,
 					Resources: corev1.ResourceRequirements{
 						Requests: corev1.ResourceList{
 							corev1.ResourceCPU: resource.MustParse("1"),

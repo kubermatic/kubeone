@@ -148,13 +148,14 @@ func (scenario *scenarioInstall) GenerateTests(wr io.Writer, generatorType Gener
 		Version:   version,
 	})
 
+	cfg.Environ = scenario.infra.environ
+
 	prowJobs = append(prowJobs,
 		newProwJob(
 			pullProwJobName(scenario.infra.name, scenario.name, version),
 			scenario.infra.labels,
 			testTitle,
 			cfg,
-			scenario.infra.provider,
 		),
 	)
 
