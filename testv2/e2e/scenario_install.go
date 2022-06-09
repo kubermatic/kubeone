@@ -71,10 +71,6 @@ func (scenario *scenarioInstall) install(t *testing.T) {
 		t.Fatalf("terraform init failed: %v", err)
 	}
 
-	if err := retryFn(scenario.infra.terraform.apply); err != nil {
-		t.Fatalf("terraform apply failed: %v", err)
-	}
-
 	t.Cleanup(func() {
 		if err := retryFn(func() error {
 			return scenario.infra.terraform.destroy()
@@ -82,6 +78,10 @@ func (scenario *scenarioInstall) install(t *testing.T) {
 			t.Fatalf("terraform destroy failed: %v", err)
 		}
 	})
+
+	if err := retryFn(scenario.infra.terraform.apply); err != nil {
+		t.Fatalf("terraform apply failed: %v", err)
+	}
 
 	k1 := newKubeoneBin(
 		scenario.infra.terraform.path,
@@ -94,10 +94,6 @@ func (scenario *scenarioInstall) install(t *testing.T) {
 		withKubeoneBin(scenario.KubeonePath()),
 	)
 
-	if err := k1.Apply(); err != nil {
-		t.Fatalf("kubeone apply failed: %v", err)
-	}
-
 	t.Cleanup(func() {
 		if err := retryFn(func() error {
 			return k1.Reset()
@@ -105,6 +101,10 @@ func (scenario *scenarioInstall) install(t *testing.T) {
 			t.Fatalf("terraform destroy failed: %v", err)
 		}
 	})
+
+	if err := k1.Apply(); err != nil {
+		t.Fatalf("kubeone apply failed: %v", err)
+	}
 }
 
 func (scenario *scenarioInstall) test(t *testing.T) {
