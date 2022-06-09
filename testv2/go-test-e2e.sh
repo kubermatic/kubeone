@@ -38,6 +38,7 @@ export TF_VAR_ssh_public_key_file=${SSH_PUBLIC_KEY_FILE}
 
 function cleanup() {
   test -d "$BUILD_DIR" && rm -rf "$BUILD_DIR"
+  ssh-agent -k || true
 }
 trap cleanup EXIT
 
