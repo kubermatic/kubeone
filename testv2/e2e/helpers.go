@@ -56,6 +56,15 @@ const (
 	kubeoneDistPath       = "../../dist/kubeone"
 )
 
+func getKubeoneDistPath() string {
+	cwd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+
+	return filepath.Clean(filepath.Join(cwd, kubeoneDistPath))
+}
+
 func titleize(s string) string {
 	s = strings.ReplaceAll(s, "_", " ")
 	s = strings.ReplaceAll(s, ".", "_")
@@ -181,7 +190,7 @@ func withKubeoneBin(bin string) kubeoneBinOpts {
 
 func newKubeoneBin(terraformPath, manifestPath string, opts ...kubeoneBinOpts) *kubeoneBin {
 	k1 := &kubeoneBin{
-		bin:          filepath.Clean(kubeoneDistPath),
+		bin:          getKubeoneDistPath(),
 		dir:          terraformPath,
 		tfjsonPath:   ".",
 		manifestPath: manifestPath,

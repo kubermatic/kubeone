@@ -38,7 +38,7 @@ func (scenario scenarioInstall) KubeonePath() string {
 		return scenario.kubeonePath
 	}
 
-	return kubeoneDistPath
+	return getKubeoneDistPath()
 }
 
 func (scenario scenarioInstall) Title() string { return titleize(scenario.name) }
