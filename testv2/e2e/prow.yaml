@@ -1326,13 +1326,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-conformance-ubuntu-conformance-containerd-v1.21.12
+  name: pull-kubeone-e2e-aws-long-timeout-default-conformance-containerd-v1.21.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsConformanceUbuntuConformanceContainerdV1_21_12
+      - TestAwsLongTimeoutDefaultConformanceContainerdV1_21_12
       env:
       - name: PROVIDER
         value: aws
@@ -1350,13 +1350,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-conformance-ubuntu-conformance-containerd-v1.22.9
+  name: pull-kubeone-e2e-aws-long-timeout-default-conformance-containerd-v1.22.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsConformanceUbuntuConformanceContainerdV1_22_9
+      - TestAwsLongTimeoutDefaultConformanceContainerdV1_22_9
       env:
       - name: PROVIDER
         value: aws
@@ -1374,13 +1374,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-conformance-ubuntu-conformance-containerd-v1.23.6
+  name: pull-kubeone-e2e-aws-long-timeout-default-conformance-containerd-v1.23.6
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsConformanceUbuntuConformanceContainerdV1_23_6
+      - TestAwsLongTimeoutDefaultConformanceContainerdV1_23_6
       env:
       - name: PROVIDER
         value: aws
@@ -1398,18 +1398,18 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-conformance-ubuntu-conformance-containerd-v1.24.1
+  name: pull-kubeone-e2e-aws-long-timeout-default-conformance-containerd-v1.24.1
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsConformanceUbuntuConformanceContainerdV1_24_1
+      - TestAwsLongTimeoutDefaultConformanceContainerdV1_24_1
       env:
-      - name: PROVIDER
-        value: aws
       - name: TEST_TIMEOUT
         value: 120m
+      - name: PROVIDER
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""

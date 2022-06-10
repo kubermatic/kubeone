@@ -117,19 +117,19 @@
 - scenario: conformance_containerd
   initVersion: v1.21.12
   infrastructures:
-    - name: aws_conformance_ubuntu
+    - name: aws_long_timeout_default
 
 - scenario: conformance_containerd
   initVersion: v1.22.9
   infrastructures:
-    - name: aws_conformance_ubuntu
+    - name: aws_long_timeout_default
 
 - scenario: conformance_containerd
   initVersion: v1.23.6
   infrastructures:
-    - name: aws_conformance_ubuntu
+    - name: aws_long_timeout_default
 
 - scenario: conformance_containerd
   initVersion: v1.24.1
   infrastructures:
-    - name: aws_conformance_ubuntu
+    - name: aws_long_timeout_default

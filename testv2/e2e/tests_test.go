@@ -490,32 +490,32 @@ func TestAwsAmznWeaveDockerV1_22_9(t *testing.T) {
 	scenario.Run(t)
 }
 
-func TestAwsConformanceUbuntuConformanceContainerdV1_21_12(t *testing.T) {
-	infra := Infrastructures["aws_conformance_ubuntu"]
+func TestAwsLongTimeoutDefaultConformanceContainerdV1_21_12(t *testing.T) {
+	infra := Infrastructures["aws_long_timeout_default"]
 	scenario := Scenarios["conformance_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.21.12")
 	scenario.Run(t)
 }
 
-func TestAwsConformanceUbuntuConformanceContainerdV1_22_9(t *testing.T) {
-	infra := Infrastructures["aws_conformance_ubuntu"]
+func TestAwsLongTimeoutDefaultConformanceContainerdV1_22_9(t *testing.T) {
+	infra := Infrastructures["aws_long_timeout_default"]
 	scenario := Scenarios["conformance_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.9")
 	scenario.Run(t)
 }
 
-func TestAwsConformanceUbuntuConformanceContainerdV1_23_6(t *testing.T) {
-	infra := Infrastructures["aws_conformance_ubuntu"]
+func TestAwsLongTimeoutDefaultConformanceContainerdV1_23_6(t *testing.T) {
+	infra := Infrastructures["aws_long_timeout_default"]
 	scenario := Scenarios["conformance_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.23.6")
 	scenario.Run(t)
 }
 
-func TestAwsConformanceUbuntuConformanceContainerdV1_24_1(t *testing.T) {
-	infra := Infrastructures["aws_conformance_ubuntu"]
+func TestAwsLongTimeoutDefaultConformanceContainerdV1_24_1(t *testing.T) {
+	infra := Infrastructures["aws_long_timeout_default"]
 	scenario := Scenarios["conformance_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.24.1")

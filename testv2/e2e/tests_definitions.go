@@ -119,8 +119,8 @@ var (
 				},
 			},
 		},
-		"aws_conformance_ubuntu": {
-			name: "aws_conformance_ubuntu",
+		"aws_long_timeout_default": {
+			name: "aws_long_timeout_default",
 			labels: map[string]string{
 				"preset-goproxy": "true",
 				"preset-aws":     "true",
