@@ -43,24 +43,6 @@ type kubeoneBin struct {
 	verbose         bool
 }
 
-func (k1 *kubeoneBin) globalFlags() []string {
-	args := []string{"--tfjson", k1.tfjsonPath}
-
-	if k1.verbose {
-		args = append(args, "--verbose")
-	}
-
-	if k1.manifestPath != "" {
-		args = append(args, "--manifest", k1.manifestPath)
-	}
-
-	if k1.credentialsPath != "" {
-		args = append(args, "--credentials", k1.credentialsPath)
-	}
-
-	return args
-}
-
 func (k1 *kubeoneBin) Apply() error {
 	return k1.run("apply", "--auto-approve")
 }
@@ -79,7 +61,46 @@ func (k1 *kubeoneBin) Kubeconfig() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (k1 *kubeoneBin) KubeconfigPath(tmpDir string) (string, error) {
+func (k1 *kubeoneBin) Reset() error {
+	return k1.run("reset", "--auto-approve", "--destroy-workers", "--remove-binaries")
+}
+
+func (k1 *kubeoneBin) ClusterManifest() (*kubeoneapi.KubeOneCluster, error) {
+	var buf bytes.Buffer
+
+	args := k1.globalFlags()
+	exe := k1.build(append(args, "config", "dump")...)
+	testutil.StdoutTo(&buf)(exe)
+
+	if err := exe.Run(); err != nil {
+		return nil, fmt.Errorf("rendering manifest failed: %w", err)
+	}
+
+	logger := logrus.New()
+	k1Manifest, err := config.BytesToKubeOneCluster(buf.Bytes(), nil, nil, logger)
+
+	return k1Manifest, err
+}
+
+func (k1 *kubeoneBin) globalFlags() []string {
+	args := []string{"--tfjson", k1.tfjsonPath}
+
+	if k1.verbose {
+		args = append(args, "--verbose")
+	}
+
+	if k1.manifestPath != "" {
+		args = append(args, "--manifest", k1.manifestPath)
+	}
+
+	if k1.credentialsPath != "" {
+		args = append(args, "--credentials", k1.credentialsPath)
+	}
+
+	return args
+}
+
+func (k1 *kubeoneBin) kubeconfigPath(tmpDir string) (string, error) {
 	kubeconfig, err := os.CreateTemp(tmpDir, "kubeconfig-*")
 	if err != nil {
 		return "", err
@@ -96,27 +117,6 @@ func (k1 *kubeoneBin) KubeconfigPath(tmpDir string) (string, error) {
 	}
 
 	return kubeconfig.Name(), nil
-}
-
-func (k1 *kubeoneBin) Reset() error {
-	return k1.run("reset", "--auto-approve", "--destroy-workers", "--remove-binaries")
-}
-
-func (k1 *kubeoneBin) Manifest() (*kubeoneapi.KubeOneCluster, error) {
-	var buf bytes.Buffer
-
-	args := k1.globalFlags()
-	exe := k1.build(append(args, "config", "dump")...)
-	testutil.StdoutTo(&buf)(exe)
-
-	if err := exe.Run(); err != nil {
-		return nil, fmt.Errorf("rendering manifest failed: %w", err)
-	}
-
-	logger := logrus.New()
-	k1Manifest, err := config.BytesToKubeOneCluster(buf.Bytes(), nil, nil, logger)
-
-	return k1Manifest, err
 }
 
 func (k1 *kubeoneBin) run(args ...string) error {

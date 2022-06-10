@@ -30,29 +30,41 @@ var (
 )
 
 type terraformBin struct {
-	name string
-	path string
-	vars []string
+	path    string
+	vars    []string
+	varFile string
 }
 
-func (tf *terraformBin) init(name string) error {
-	tf.name = name
-
+func (tf *terraformBin) Init() error {
 	return tf.run("init")
 }
 
-func (tf *terraformBin) apply() error {
+func (tf *terraformBin) Apply() error {
 	args := []string{"apply", "-auto-approve"}
+	args = append(args, tf.varFlags()...)
+
+	return tf.run(args...)
+}
+
+func (tf *terraformBin) Destroy() error {
+	args := []string{"destroy", "-auto-approve"}
+	args = append(args, tf.varFlags()...)
+
+	return tf.run(args...)
+}
+
+func (tf *terraformBin) varFlags() []string {
+	var args []string
 
 	for _, arg := range tf.vars {
 		args = append(args, "-var", arg)
 	}
 
-	return tf.run(args...)
-}
+	if tf.varFile != "" {
+		args = append(args, "-var-file", mustAbsolutePath(tf.varFile))
+	}
 
-func (tf *terraformBin) destroy() error {
-	return tf.run("destroy", "-auto-approve")
+	return args
 }
 
 func (tf *terraformBin) run(args ...string) error {

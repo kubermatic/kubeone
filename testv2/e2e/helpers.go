@@ -41,7 +41,6 @@ import (
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
-	"k8s.io/apimachinery/pkg/util/rand"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/util/retry"
@@ -53,16 +52,29 @@ const (
 	labelControlPlaneNode = "node-role.kubernetes.io/control-plane"
 	prowImage             = "kubermatic/kubeone-e2e:v0.1.22"
 	k1CloneURI            = "ssh://git@github.com/kubermatic/kubeone.git"
-	kubeoneDistPath       = "../../dist/kubeone"
 )
 
-func getKubeoneDistPath() string {
+func mustGetwd() string {
 	cwd, err := os.Getwd()
 	if err != nil {
 		panic(err)
 	}
+	return cwd
+}
 
-	return filepath.Clean(filepath.Join(cwd, kubeoneDistPath))
+func mustAbsolutePath(file string) string {
+	if !strings.HasPrefix(file, "/") {
+		// find the absolute path to the file
+		file = filepath.Join(mustGetwd(), file)
+	}
+
+	return filepath.Clean(file)
+}
+
+func getKubeoneDistPath() string {
+	const distPath = "../../dist/kubeone"
+
+	return mustAbsolutePath(distPath)
 }
 
 func titleize(s string) string {
@@ -71,15 +83,6 @@ func titleize(s string) string {
 	s = cases.Title(language.English).String(s)
 
 	return strings.ReplaceAll(s, " ", "")
-}
-
-func clusterName() string {
-	name, found := os.LookupEnv("BUILD_ID")
-	if !found {
-		name = rand.String(10)
-	}
-
-	return fmt.Sprintf("k1-%s", name)
 }
 
 func trueRetriable(error) bool {
@@ -398,7 +401,7 @@ func pullProwJobName(in ...string) string {
 }
 
 func basicTest(t *testing.T, k1 *kubeoneBin, data manifestData) {
-	kubeoneManifest, err := k1.Manifest()
+	kubeoneManifest, err := k1.ClusterManifest()
 	if err != nil {
 		t.Fatalf("failed to get manifest API: %v", err)
 	}
@@ -444,13 +447,14 @@ func basicTest(t *testing.T, k1 *kubeoneBin, data manifestData) {
 }
 
 func sonobuoyRun(t *testing.T, k1 *kubeoneBin, mode sonobuoyMode) {
-	kubeconfigPath, err := k1.KubeconfigPath(t.TempDir())
+	kubeconfigPath, err := k1.kubeconfigPath(t.TempDir())
 	if err != nil {
 		t.Fatalf("fetching kubeconfig failed")
 	}
 
 	sb := sonobuoyBin{
 		kubeconfig: kubeconfigPath,
+		dir:        t.TempDir(),
 	}
 
 	if err = sb.Run(mode); err != nil {

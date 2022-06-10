@@ -27,6 +27,8 @@ import (
 	"k8c.io/kubeone/test/e2e/testutil"
 )
 
+const sonobuoyResultsFile = "results.tar.gz"
+
 type sonobuoyReport struct {
 	Name    string                 `json:"name"`
 	Status  string                 `json:"status"`
@@ -44,10 +46,6 @@ type sonobuoyMode string
 const (
 	sonobuoyConformance     sonobuoyMode = "conformance"
 	sonobuoyConformanceLite sonobuoyMode = "conformance-lite"
-)
-
-const (
-	sonobuoyResultsFile = "results.tar.gz"
 )
 
 type sonobuoyBin struct {

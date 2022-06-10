@@ -65,21 +65,19 @@ func (scenario *scenarioInstall) install(t *testing.T) {
 		t.Fatalf("only 1 version is expected to be set, got %v", scenario.versions)
 	}
 
-	clusterName := clusterName()
-
-	if err := scenario.infra.terraform.init(clusterName); err != nil {
+	if err := scenario.infra.terraform.Init(); err != nil {
 		t.Fatalf("terraform init failed: %v", err)
 	}
 
 	t.Cleanup(func() {
 		if err := retryFn(func() error {
-			return scenario.infra.terraform.destroy()
+			return scenario.infra.terraform.Destroy()
 		}); err != nil {
 			t.Fatalf("terraform destroy failed: %v", err)
 		}
 	})
 
-	if err := retryFn(scenario.infra.terraform.apply); err != nil {
+	if err := retryFn(scenario.infra.terraform.Apply); err != nil {
 		t.Fatalf("terraform apply failed: %v", err)
 	}
 

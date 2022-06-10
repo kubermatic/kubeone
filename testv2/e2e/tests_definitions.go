@@ -135,6 +135,20 @@ var (
 				},
 			},
 		},
+		"openstack_default": {
+			name: "openstack_default",
+			labels: map[string]string{
+				"preset-goproxy":   "true",
+				"preset-openstack": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "openstack",
+			},
+			terraform: terraformBin{
+				path:    "../../examples/terraform/openstack_default",
+				varFile: "testdata/openstack_vars.tfvar",
+			},
+		},
 	}
 
 	Scenarios = map[string]Scenario{
