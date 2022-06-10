@@ -68,6 +68,7 @@ No modules.
 | <a name="input_control_plane_volume_size"></a> [control\_plane\_volume\_size](#input\_control\_plane\_volume\_size) | Size of the EBS volume, in Gb | `number` | `100` | no |
 | <a name="input_initial_machinedeployment_replicas"></a> [initial\_machinedeployment\_replicas](#input\_initial\_machinedeployment\_replicas) | number of replicas per MachineDeployment | `number` | `1` | no |
 | <a name="input_initial_machinedeployment_spotinstances_max_price"></a> [initial\_machinedeployment\_spotinstances\_max\_price](#input\_initial\_machinedeployment\_spotinstances\_max\_price) | Max price for spot instances, when specified spot instances will be used for initial machine-deployment | `number` | `0` | no |
+| <a name="initial_machinedeployment_operating_system_profile"></a> [initial\_machinedeployment\_operating\_system\_profile](#input\_initial\_machinedeployment\_operating\_system\_profile) | Name of operating system profile for MachineDeployment, only applicable if operatng-system-manager addon is enabled | `string` | `""` | no |
 | <a name="input_internal_api_lb"></a> [internal\_api\_lb](#input\_internal\_api\_lb) | make kubernetes API loadbalancer internal (reachible only from inside the VPC) | `bool` | `false` | no |
 | <a name="input_os"></a> [os](#input\_os) | Operating System to use in AMI filtering and MachineDeployment | `string` | `"ubuntu"` | no |
 | <a name="input_ssh_agent_socket"></a> [ssh\_agent\_socket](#input\_ssh\_agent\_socket) | SSH Agent socket, default to grab from $SSH\_AUTH\_SOCK | `string` | `"env:SSH_AUTH_SOCK"` | no |

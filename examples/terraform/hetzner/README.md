@@ -20,6 +20,7 @@ See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
 | control\_plane\_type |  | string | `"cx21"` | no |
 | datacenter |  | string | `"fsn1"` | no |
 | image |  | string | `"ubuntu-20.04"` | no |
+| initial\_machinedeployments\_operating\_system\_profiles | Name of operating system profile for MachineDeployments, only applicable if operatng-system-manager addon is enabled | string | `""` | no |
 | lb\_type |  | string | `"lb11"` | no |
 | ssh\_agent\_socket | SSH Agent socket, default to grab from $SSH_AUTH_SOCK | string | `"env:SSH_AUTH_SOCK"` | no |
 | ssh\_port | SSH port to be used to provision instances | string | `"22"` | no |

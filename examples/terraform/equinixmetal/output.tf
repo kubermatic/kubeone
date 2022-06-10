@@ -18,7 +18,7 @@ output "kubeone_api" {
   description = "kube-apiserver LB endpoint"
 
   value = {
-    endpoint = metal_device.lb.access_public_ipv4
+    endpoint                    = metal_device.lb.access_public_ipv4
     apiserver_alternative_names = var.apiserver_alternative_names
   }
 }
@@ -49,6 +49,9 @@ output "kubeone_workers" {
     "${var.cluster_name}-pool1" = {
       replicas = 1
       providerSpec = {
+        annotations = {
+          "k8c.io/operating-system-profile" = var.initial_machinedeployment_operating_system_profile
+        }
         sshPublicKeys   = [file(var.ssh_public_key_file)]
         operatingSystem = var.worker_os
         operatingSystemSpec = {

@@ -248,3 +248,12 @@ variable "worker_disk_storage_profile" {
   default     = ""
   type        = string
 }
+
+variable "initial_machinedeployment_operating_system_profile" {
+  default     = ""
+  type        = string
+  description = <<EOF
+Name of operating system profile for MachineDeployments, only applicable if operatng-system-manager addon is enabled.
+If not specified, the default value will be added by machine-controller addon.
+EOF
+}

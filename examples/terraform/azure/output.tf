@@ -18,7 +18,7 @@ output "kubeone_api" {
   description = "kube-apiserver LB endpoint"
 
   value = {
-    endpoint = azurerm_public_ip.lbip.ip_address
+    endpoint                    = azurerm_public_ip.lbip.ip_address
     apiserver_alternative_names = var.apiserver_alternative_names
   }
 }
@@ -50,6 +50,9 @@ output "kubeone_workers" {
     "${var.cluster_name}-pool1" = {
       replicas = var.initial_machinedeployment_replicas
       providerSpec = {
+        annotations = {
+          "k8c.io/operating-system-profile" = var.initial_machinedeployment_operating_system_profile
+        }
         sshPublicKeys   = [file(var.ssh_public_key_file)]
         operatingSystem = var.worker_os
         operatingSystemSpec = {
@@ -57,20 +60,20 @@ output "kubeone_workers" {
         }
         cloudProviderSpec = {
           # provider specific fields:
-          # see example under `cloudProviderSpec` section at: 
+          # see example under `cloudProviderSpec` section at:
           # https://github.com/kubermatic/machine-controller/blob/master/examples/azure-machinedeployment.yaml
-          location                = var.location
-          resourceGroup           = azurerm_resource_group.rg.name
+          location      = var.location
+          resourceGroup = azurerm_resource_group.rg.name
           # vnetResourceGroup     = ""
-          vmSize                  = var.worker_vm_size
-          vnetName                = azurerm_virtual_network.vpc.name
-          subnetName              = azurerm_subnet.subnet.name
+          vmSize     = var.worker_vm_size
+          vnetName   = azurerm_virtual_network.vpc.name
+          subnetName = azurerm_subnet.subnet.name
           # loadBalancerSku       = ""
-          routeTableName          = azurerm_route_table.rt.name
-          availabilitySet         = azurerm_availability_set.avset_workers.name
+          routeTableName  = azurerm_route_table.rt.name
+          availabilitySet = azurerm_availability_set.avset_workers.name
           # assignAvailabilitySet = true/false
-          securityGroupName       = azurerm_network_security_group.sg.name
-          assignPublicIP          = true
+          securityGroupName = azurerm_network_security_group.sg.name
+          assignPublicIP    = true
           # Zones (optional)
           # Represents Availability Zones is a high-availability offering
           # that protects your applications and data from datacenter failures.
@@ -93,4 +96,3 @@ output "kubeone_workers" {
     }
   }
 }
-

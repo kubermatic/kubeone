@@ -21,6 +21,7 @@ use the configs and how to provision a Kubernetes cluster using KubeOne.
 | ssh\_username | SSH user, used only in output | string | `"ubuntu"` | no |
 | worker\_os | OS to run on worker machines | string | `"ubuntu"` | no |
 | worker\_vm\_size |  | string | `"Standard_B2s"` | no |
+| initial\_machinedeployments\_operating\_system\_profiles | Name of operating system profile for MachineDeployments, only applicable if operatng-system-manager addon is enabled | string | `""` | no |
 
 ## Outputs
 
@@ -29,4 +30,3 @@ use the configs and how to provision a Kubernetes cluster using KubeOne.
 | kubeone\_api | kube-apiserver LB endpoint |
 | kubeone\_hosts | Control plane endpoints to SSH to |
 | kubeone\_workers | Workers definitions, that will be transformed into MachineDeployment object |
-

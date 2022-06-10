@@ -14,7 +14,7 @@ use the configs and how to provision a Kubernetes cluster using KubeOne.
 
 ## How to prepare a template
 
-See https://github.com/kubermatic/machine-controller/blob/master/docs/vsphere.md
+See <https://github.com/kubermatic/machine-controller/blob/master/docs/vsphere.md>
 
 ## Kubernetes API Server Load Balancing
 
@@ -77,6 +77,7 @@ No modules.
 | <a name="input_worker_disk"></a> [worker\_disk](#input\_worker\_disk) | disk size of each worker node in GB | `number` | `10` | no |
 | <a name="input_worker_memory"></a> [worker\_memory](#input\_worker\_memory) | memory size of each worker node in MB | `number` | `2048` | no |
 | <a name="input_worker_os"></a> [worker\_os](#input\_worker\_os) | OS to run on worker machines | `string` | `"flarcar"` | no |
+| <a name="initial_machinedeployment_operating_system_profile"></a> [initial\_machinedeployment\_operating\_system\_profile](#input\_initial\_machinedeployment\_operating\_system\_profile) | Name of operating system profile for MachineDeployment, only applicable if operatng-system-manager addon is enabled | `string` | `""` | no |
 
 ## Outputs
 

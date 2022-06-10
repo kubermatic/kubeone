@@ -162,3 +162,12 @@ variable "vrrp_router_id" {
   description = "vrrp router id for API virtual IP. Must be unique in used subnet"
   type        = number
 }
+
+variable "initial_machinedeployment_operating_system_profile" {
+  default     = ""
+  type        = string
+  description = <<EOF
+Name of operating system profile for MachineDeployments, only applicable if operatng-system-manager addon is enabled.
+If not specified, the default value will be added by machine-controller addon.
+EOF
+}

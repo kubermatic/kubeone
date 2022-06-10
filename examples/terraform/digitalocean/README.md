@@ -14,6 +14,7 @@ use the configs and how to provision a Kubernetes cluster using KubeOne.
 | cluster\_name | Name of the cluster | string | n/a | yes |
 | control\_plane\_droplet\_image | Image to use for provisioning control plane droplets | string | `"ubuntu-18-04-x64"` | no |
 | control\_plane\_size | Size of control plane nodes | string | `"s-2vcpu-4gb"` | no |
+| initial\_machinedeployments\_operating\_system\_profiles | Name of operating system profile for MachineDeployments, only applicable if operatng-system-manager addon is enabled | string | `""` | no |
 | region | Region to speak to | string | `"fra1"` | no |
 | ssh\_agent\_socket | SSH Agent socket, default to grab from $SSH_AUTH_SOCK | string | `"env:SSH_AUTH_SOCK"` | no |
 | ssh\_port | SSH port to be used to provision instances | string | `"22"` | no |
