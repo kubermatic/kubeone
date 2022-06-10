@@ -117,35 +117,19 @@
 - scenario: conformance_containerd
   initVersion: v1.21.12
   infrastructures:
-    - name: aws_defaults
-    - name: aws_centos
-    - name: aws_rhel
-    - name: aws_flatcar
-    - name: aws_amzn
+    - name: aws_conformance_ubuntu
 
 - scenario: conformance_containerd
   initVersion: v1.22.9
   infrastructures:
-    - name: aws_defaults
-    - name: aws_centos
-    - name: aws_rhel
-    - name: aws_flatcar
-    - name: aws_amzn
+    - name: aws_conformance_ubuntu
 
 - scenario: conformance_containerd
   initVersion: v1.23.6
   infrastructures:
-    - name: aws_defaults
-    - name: aws_centos
-    - name: aws_rhel
-    - name: aws_flatcar
-    - name: aws_amzn
+    - name: aws_conformance_ubuntu
 
 - scenario: conformance_containerd
   initVersion: v1.24.1
   infrastructures:
-    - name: aws_defaults
-    - name: aws_centos
-    - name: aws_rhel
-    - name: aws_flatcar
-    - name: aws_amzn
+    - name: aws_conformance_ubuntu

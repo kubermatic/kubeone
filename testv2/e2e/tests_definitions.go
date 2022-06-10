@@ -119,6 +119,23 @@ var (
 				},
 			},
 		},
+		"aws_conformance_ubuntu": {
+			name: "aws_conformance_ubuntu",
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-aws":     "true",
+			},
+			environ: map[string]string{
+				"PROVIDER":     "aws",
+				"TEST_TIMEOUT": "120m",
+			},
+			terraform: terraformBin{
+				path: "../../examples/terraform/aws",
+				vars: []string{
+					"subnets_cidr=27",
+				},
+			},
+		},
 	}
 
 	Scenarios = map[string]Scenario{
