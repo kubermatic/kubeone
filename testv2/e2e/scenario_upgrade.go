@@ -62,8 +62,18 @@ func (scenario *scenarioUpgrade) Run(t *testing.T) {
 	scenario.test(t)
 }
 
-func (scenario *scenarioUpgrade) upgrade(t *testing.T) {
-	k1 := newKubeoneBin(
+func (scenario *scenarioUpgrade) kubeone(t *testing.T) *kubeoneBin {
+	var k1Opts []kubeoneBinOpts
+
+	if *kubeoneVerboseFlag {
+		k1Opts = append(k1Opts, withKubeoneVerbose)
+	}
+
+	if *credentialsFlag != "" {
+		k1Opts = append(k1Opts, withKubeoneCredentials(*credentialsFlag))
+	}
+
+	return newKubeoneBin(
 		scenario.infra.terraform.path,
 		renderManifest(t,
 			scenario.manifestTemplatePath,
@@ -71,7 +81,12 @@ func (scenario *scenarioUpgrade) upgrade(t *testing.T) {
 				VERSION: scenario.versions[1],
 			},
 		),
+		k1Opts...,
 	)
+}
+
+func (scenario *scenarioUpgrade) upgrade(t *testing.T) {
+	k1 := scenario.kubeone(t)
 
 	if err := k1.Apply(); err != nil {
 		t.Fatalf("kubeone apply failed: %v", err)
@@ -79,15 +94,9 @@ func (scenario *scenarioUpgrade) upgrade(t *testing.T) {
 }
 
 func (scenario *scenarioUpgrade) test(t *testing.T) {
-	data := manifestData{
-		VERSION: scenario.versions[1],
-	}
-	k1 := newKubeoneBin(
-		scenario.infra.terraform.path,
-		renderManifest(t,
-			scenario.manifestTemplatePath,
-			data,
-		),
+	var (
+		data = manifestData{VERSION: scenario.versions[1]}
+		k1   = scenario.kubeone(t)
 	)
 
 	basicTest(t, k1, data)

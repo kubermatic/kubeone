@@ -83,16 +83,7 @@ func (scenario *scenarioInstall) install(t *testing.T) {
 		t.Fatalf("terraform apply failed: %v", err)
 	}
 
-	k1 := newKubeoneBin(
-		scenario.infra.terraform.path,
-		renderManifest(t,
-			scenario.manifestTemplatePath,
-			manifestData{
-				VERSION: scenario.versions[0],
-			},
-		),
-		withKubeoneBin(scenario.KubeonePath()),
-	)
+	k1 := scenario.kubeone(t)
 
 	t.Cleanup(func() {
 		if err := retryFn(func() error {
@@ -107,14 +98,35 @@ func (scenario *scenarioInstall) install(t *testing.T) {
 	}
 }
 
-func (scenario *scenarioInstall) test(t *testing.T) {
-	data := manifestData{VERSION: scenario.versions[0]}
-	k1 := newKubeoneBin(
+func (scenario *scenarioInstall) kubeone(t *testing.T) *kubeoneBin {
+	var k1Opts = []kubeoneBinOpts{
+		withKubeoneBin(scenario.KubeonePath()),
+	}
+
+	if *kubeoneVerboseFlag {
+		k1Opts = append(k1Opts, withKubeoneVerbose)
+	}
+
+	if *credentialsFlag != "" {
+		k1Opts = append(k1Opts, withKubeoneCredentials(*credentialsFlag))
+	}
+
+	return newKubeoneBin(
 		scenario.infra.terraform.path,
 		renderManifest(t,
 			scenario.manifestTemplatePath,
-			data,
+			manifestData{
+				VERSION: scenario.versions[0],
+			},
 		),
+		k1Opts...,
+	)
+}
+
+func (scenario *scenarioInstall) test(t *testing.T) {
+	var (
+		data = manifestData{VERSION: scenario.versions[0]}
+		k1   = scenario.kubeone(t)
 	)
 
 	basicTest(t, k1, data)

@@ -18,6 +18,7 @@ package e2e
 
 import (
 	"bytes"
+	"flag"
 	"fmt"
 	"os"
 
@@ -28,18 +29,24 @@ import (
 	"k8c.io/kubeone/test/e2e/testutil"
 )
 
+var (
+	kubeoneVerboseFlag = flag.Bool("kubeone-verbose", false, "run kubeone actions with --verbose flag")
+	credentialsFlag    = flag.String("credentials", "", "run kubeone with --credentials flag")
+)
+
 type kubeoneBin struct {
 	bin             string
 	dir             string
 	tfjsonPath      string
 	manifestPath    string
 	credentialsPath string
+	verbose         bool
 }
 
 func (k1 *kubeoneBin) globalFlags() []string {
 	args := []string{"--tfjson", k1.tfjsonPath}
 
-	if *kubeoneVerboseFlag {
+	if k1.verbose {
 		args = append(args, "--verbose")
 	}
 

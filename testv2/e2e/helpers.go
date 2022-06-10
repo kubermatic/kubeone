@@ -188,6 +188,16 @@ func withKubeoneBin(bin string) kubeoneBinOpts {
 	}
 }
 
+func withKubeoneVerbose(kb *kubeoneBin) {
+	kb.verbose = true
+}
+
+func withKubeoneCredentials(credentialsPath string) kubeoneBinOpts {
+	return func(kb *kubeoneBin) {
+		kb.credentialsPath = credentialsPath
+	}
+}
+
 func newKubeoneBin(terraformPath, manifestPath string, opts ...kubeoneBinOpts) *kubeoneBin {
 	k1 := &kubeoneBin{
 		bin:          getKubeoneDistPath(),

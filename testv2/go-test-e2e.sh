@@ -30,7 +30,7 @@ TEST_TIMEOUT=${TEST_TIMEOUT:-"60m"}
 SSH_PRIVATE_KEY_FILE=${SSH_PRIVATE_KEY_FILE:-"${BUILD_DIR}/ssh_key_kubeone_e2e"}
 PATH=$PATH:$(go env GOPATH)/bin
 SSH_PUBLIC_KEY_FILE="${SSH_PRIVATE_KEY_FILE}.pub"
-# CREDENTIALS_FILE_PATH="${BUILD_DIR}/credentials.yaml"
+CREDENTIALS_FILE_PATH=""
 
 export PATH
 export TF_VAR_cluster_name=k1-${BUILD_ID}
@@ -88,9 +88,8 @@ function setup_ci_environment_vars() {
     export OS_TENANT_NAME=${OS_TENANT_NAME}
     export OS_USERNAME=${OS_USERNAME}
     export OS_PASSWORD=${OS_PASSWORD}
-    # export TF_VAR_external_network_name="ext-net"
-    # export TF_VAR_subnet_cidr="10.0.42.0/24"
-    # echo "${OS_K1_CREDENTIALS}" > "${CREDENTIALS_FILE_PATH}"
+    CREDENTIALS_FILE_PATH="${BUILD_DIR}/credentials.yaml"
+    echo "${OS_K1_CREDENTIALS}" > "${CREDENTIALS_FILE_PATH}"
     ;;
   *)
     echo "unknown provider ${PROVIDER}"
@@ -106,8 +105,14 @@ fi
 generate_ssh_key "${SSH_PRIVATE_KEY_FILE}"
 ssh_agent "${SSH_PRIVATE_KEY_FILE}"
 
+go_test_args=("$@")
+
+if [ -n "${CREDENTIALS_FILE_PATH}" ]; then
+  go_test_args+=("-credentials" "${CREDENTIALS_FILE_PATH}")
+fi
+
 go test -v \
-  ./testv2/e2e/... \
+  ./testv2/e2e \
   -tags e2e \
   -timeout "$TEST_TIMEOUT" \
-  -run "$@"
+  -run "${go_test_args[@]}"

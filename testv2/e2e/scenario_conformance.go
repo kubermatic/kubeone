@@ -61,6 +61,17 @@ func (scenario *scenarioConformance) Run(t *testing.T) {
 
 func (scenario *scenarioConformance) test(t *testing.T) {
 	data := manifestData{VERSION: scenario.versions[0]}
+
+	var k1Opts []kubeoneBinOpts
+
+	if *kubeoneVerboseFlag {
+		k1Opts = append(k1Opts, withKubeoneVerbose)
+	}
+
+	if *credentialsFlag != "" {
+		k1Opts = append(k1Opts, withKubeoneCredentials(*credentialsFlag))
+	}
+
 	k1 := newKubeoneBin(
 		scenario.infra.terraform.path,
 		renderManifest(t,
@@ -69,6 +80,7 @@ func (scenario *scenarioConformance) test(t *testing.T) {
 				VERSION: scenario.versions[0],
 			},
 		),
+		k1Opts...,
 	)
 
 	basicTest(t, k1, data)
