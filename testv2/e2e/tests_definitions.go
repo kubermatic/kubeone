@@ -145,7 +145,7 @@ var (
 				"PROVIDER": "openstack",
 			},
 			terraform: terraformBin{
-				path:    "../../examples/terraform/openstack_default",
+				path:    "../../examples/terraform/openstack",
 				varFile: "testdata/openstack_vars.tfvar",
 			},
 		},

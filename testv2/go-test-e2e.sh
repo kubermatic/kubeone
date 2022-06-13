@@ -47,7 +47,7 @@ function generate_ssh_key() {
 
   if [ ! -f "${private_ssh_key_file}" ]; then
     echo "Generating SSH key pair"
-    ssh-keygen -t ed25519 -f "${private_ssh_key_file}" -N ''
+    ssh-keygen -f "${private_ssh_key_file}" -N ''
     chmod 400 "${private_ssh_key_file}"
   fi
 }
