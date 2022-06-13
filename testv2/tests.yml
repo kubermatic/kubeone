@@ -7,6 +7,7 @@
     - name: aws_rhel
     - name: aws_flatcar
     - name: aws_amzn
+    - name: openstack_default
 
 - scenario: install_containerd
   initVersion: v1.22.9
@@ -17,6 +18,7 @@
     - name: aws_rhel
     - name: aws_flatcar
     - name: aws_amzn
+    - name: openstack_default
 
 - scenario: install_containerd
   initVersion: v1.23.6
@@ -27,6 +29,7 @@
     - name: aws_rhel
     - name: aws_flatcar
     - name: aws_amzn
+    - name: openstack_default
 
 - scenario: install_docker
   initVersion: v1.21.12
@@ -37,6 +40,7 @@
     - name: aws_rhel
     - name: aws_flatcar
     - name: aws_amzn
+    - name: openstack_default
 
 - scenario: install_docker
   initVersion: v1.22.9
@@ -47,6 +51,7 @@
     - name: aws_rhel
     - name: aws_flatcar
     - name: aws_amzn
+    - name: openstack_default
 
 - scenario: upgrade_containerd
   initVersion: v1.21.12
@@ -57,6 +62,7 @@
     - name: aws_rhel
     - name: aws_flatcar
     - name: aws_amzn
+    - name: openstack_default
 
 - scenario: upgrade_containerd
   initVersion: v1.22.9
@@ -67,6 +73,7 @@
     - name: aws_rhel
     - name: aws_flatcar
     - name: aws_amzn
+    - name: openstack_default
 
 - scenario: upgrade_docker
   initVersion: v1.21.12
@@ -77,6 +84,7 @@
     - name: aws_rhel
     - name: aws_flatcar
     - name: aws_amzn
+    - name: openstack_default
 
 - scenario: calico_containerd
   initVersion: v1.22.9
@@ -86,6 +94,7 @@
     - name: aws_rhel
     - name: aws_flatcar
     - name: aws_amzn
+    - name: openstack_default
 
 - scenario: calico_docker
   initVersion: v1.22.9
@@ -95,6 +104,7 @@
     - name: aws_rhel
     - name: aws_flatcar
     - name: aws_amzn
+    - name: openstack_default
 
 - scenario: weave_containerd
   initVersion: v1.22.9
@@ -104,6 +114,7 @@
     - name: aws_rhel
     - name: aws_flatcar
     - name: aws_amzn
+    - name: openstack_default
 
 - scenario: weave_docker
   initVersion: v1.22.9
@@ -113,6 +124,7 @@
     - name: aws_rhel
     - name: aws_flatcar
     - name: aws_amzn
+    - name: openstack_default
 
 - scenario: conformance_containerd
   initVersion: v1.21.12

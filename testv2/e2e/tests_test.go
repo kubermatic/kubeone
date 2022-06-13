@@ -50,6 +50,14 @@ func TestAwsAmznInstallContainerdV1_21_12(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestOpenstackDefaultInstallContainerdV1_21_12(t *testing.T) {
+	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.12")
+	scenario.Run(t)
+}
+
 func TestAwsDefaultsInstallContainerdV1_22_9(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["install_containerd"]
@@ -84,6 +92,14 @@ func TestAwsFlatcarInstallContainerdV1_22_9(t *testing.T) {
 
 func TestAwsAmznInstallContainerdV1_22_9(t *testing.T) {
 	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackDefaultInstallContainerdV1_22_9(t *testing.T) {
+	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.9")
@@ -130,6 +146,14 @@ func TestAwsAmznInstallContainerdV1_23_6(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestOpenstackDefaultInstallContainerdV1_23_6(t *testing.T) {
+	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.6")
+	scenario.Run(t)
+}
+
 func TestAwsDefaultsInstallDockerV1_21_12(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["install_docker"]
@@ -164,6 +188,14 @@ func TestAwsFlatcarInstallDockerV1_21_12(t *testing.T) {
 
 func TestAwsAmznInstallDockerV1_21_12(t *testing.T) {
 	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackDefaultInstallDockerV1_21_12(t *testing.T) {
+	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["install_docker"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.21.12")
@@ -210,6 +242,14 @@ func TestAwsAmznInstallDockerV1_22_9(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestOpenstackDefaultInstallDockerV1_22_9(t *testing.T) {
+	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9")
+	scenario.Run(t)
+}
+
 func TestAwsDefaultsUpgradeContainerdFromV1_21_12_ToV1_22_9(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["upgrade_containerd"]
@@ -244,6 +284,14 @@ func TestAwsFlatcarUpgradeContainerdFromV1_21_12_ToV1_22_9(t *testing.T) {
 
 func TestAwsAmznUpgradeContainerdFromV1_21_12_ToV1_22_9(t *testing.T) {
 	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.12", "v1.22.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackDefaultUpgradeContainerdFromV1_21_12_ToV1_22_9(t *testing.T) {
+	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.21.12", "v1.22.9")
@@ -290,6 +338,14 @@ func TestAwsAmznUpgradeContainerdFromV1_22_9_ToV1_23_6(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestOpenstackDefaultUpgradeContainerdFromV1_22_9_ToV1_23_6(t *testing.T) {
+	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9", "v1.23.6")
+	scenario.Run(t)
+}
+
 func TestAwsDefaultsUpgradeDockerFromV1_21_12_ToV1_22_9(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["upgrade_docker"]
@@ -324,6 +380,14 @@ func TestAwsFlatcarUpgradeDockerFromV1_21_12_ToV1_22_9(t *testing.T) {
 
 func TestAwsAmznUpgradeDockerFromV1_21_12_ToV1_22_9(t *testing.T) {
 	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["upgrade_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.12", "v1.22.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackDefaultUpgradeDockerFromV1_21_12_ToV1_22_9(t *testing.T) {
+	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["upgrade_docker"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.21.12", "v1.22.9")
@@ -370,6 +434,14 @@ func TestAwsAmznCalicoContainerdV1_22_9(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestOpenstackDefaultCalicoContainerdV1_22_9(t *testing.T) {
+	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["calico_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9")
+	scenario.Run(t)
+}
+
 func TestAwsDefaultsCalicoDockerV1_22_9(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["calico_docker"]
@@ -404,6 +476,14 @@ func TestAwsFlatcarCalicoDockerV1_22_9(t *testing.T) {
 
 func TestAwsAmznCalicoDockerV1_22_9(t *testing.T) {
 	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["calico_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackDefaultCalicoDockerV1_22_9(t *testing.T) {
+	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["calico_docker"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.9")
@@ -450,6 +530,14 @@ func TestAwsAmznWeaveContainerdV1_22_9(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestOpenstackDefaultWeaveContainerdV1_22_9(t *testing.T) {
+	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["weave_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9")
+	scenario.Run(t)
+}
+
 func TestAwsDefaultsWeaveDockerV1_22_9(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["weave_docker"]
@@ -484,6 +572,14 @@ func TestAwsFlatcarWeaveDockerV1_22_9(t *testing.T) {
 
 func TestAwsAmznWeaveDockerV1_22_9(t *testing.T) {
 	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["weave_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackDefaultWeaveDockerV1_22_9(t *testing.T) {
+	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["weave_docker"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.9")
