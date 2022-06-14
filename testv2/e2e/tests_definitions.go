@@ -135,6 +135,84 @@ var (
 				},
 			},
 		},
+		"azure_default": {
+			name: "azure_default",
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-azure":   "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "azure",
+			},
+			terraform: terraformBin{
+				path: "../../examples/terraform/azure",
+			},
+		},
+		"digitalocean_default": {
+			name: "digitalocean_default",
+			labels: map[string]string{
+				"preset-goproxy":      "true",
+				"preset-digitalocean": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "digitalocean",
+			},
+			terraform: terraformBin{
+				path: "../../examples/terraform/digitalocean",
+			},
+		},
+		"equinixmetal_default": {
+			name: "equinixmetal_default",
+			labels: map[string]string{
+				"preset-goproxy":      "true",
+				"preset-equinixmetal": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "equinixmetal",
+			},
+			terraform: terraformBin{
+				path: "../../examples/terraform/equinixmetal",
+			},
+		},
+		// "gce_default": {
+		// 	name: "gce_default",
+		// 	labels: map[string]string{
+		// 		"preset-goproxy": "true",
+		// 		"preset-gce":     "true",
+		// 	},
+		// 	environ: map[string]string{
+		// 		"PROVIDER": "gce",
+		// 	},
+		// 	terraform: terraformBin{
+		// 		path: "../../examples/terraform/gce",
+		// 	},
+		// },
+		"hetzner_default": {
+			name: "hetzner_default",
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-hetzner": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "hetzner",
+			},
+			terraform: terraformBin{
+				path: "../../examples/terraform/hetzner",
+			},
+		},
+		// "nutanix_default": {
+		// 	name: "nutanix_default",
+		// 	labels: map[string]string{
+		// 		"preset-goproxy": "true",
+		// 		"preset-nutanix": "true",
+		// 	},
+		// 	environ: map[string]string{
+		// 		"PROVIDER": "nutanix",
+		// 	},
+		// 	terraform: terraformBin{
+		// 		path: "../../examples/terraform/nutanix",
+		// 	},
+		// },
 		"openstack_default": {
 			name: "openstack_default",
 			labels: map[string]string{
@@ -147,6 +225,47 @@ var (
 			terraform: terraformBin{
 				path:    "../../examples/terraform/openstack",
 				varFile: "testdata/openstack_vars.tfvars",
+			},
+		},
+		// "vcd_default": {
+		// 	name: "vcd_default",
+		// 	labels: map[string]string{
+		// 		"preset-goproxy": "true",
+		// 		"preset-vcd":     "true",
+		// 	},
+		// 	environ: map[string]string{
+		// 		"PROVIDER": "vcd",
+		// 	},
+		// 	terraform: terraformBin{
+		// 		path: "../../examples/terraform/vmware-cloud-director",
+		// 	},
+		// },
+		"vsphere_default": {
+			name: "vsphere_default",
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-vsphere": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "vsphere",
+			},
+			terraform: terraformBin{
+				path:    "../../examples/terraform/vsphere",
+				varFile: "testdata/vsphere_default.tfvars",
+			},
+		},
+		"vsphere_flatcar": {
+			name: "vsphere_flatcar",
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-vsphere": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "vsphere",
+			},
+			terraform: terraformBin{
+				path:    "../../examples/terraform/vsphere_flatcar",
+				varFile: "testdata/vsphere_flatcar.tfvars",
 			},
 		},
 	}
