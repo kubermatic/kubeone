@@ -198,6 +198,9 @@ var (
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/hetzner",
+				vars: []string{
+					"workers_replicas=3",
+				},
 			},
 		},
 		// "nutanix_default": {
