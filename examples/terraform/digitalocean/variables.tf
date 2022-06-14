@@ -78,6 +78,12 @@ variable "region" {
   type        = string
 }
 
+variable "workers_replicas" {
+  default     = 1
+  type        = number
+  description = "number of MachineDeploymen replicas"
+}
+
 variable "control_plane_droplet_image" {
   description = "Image to use for provisioning control plane droplets"
   default     = "ubuntu-18-04-x64"
