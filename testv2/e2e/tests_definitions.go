@@ -146,7 +146,7 @@ var (
 			},
 			terraform: terraformBin{
 				path:    "../../examples/terraform/openstack",
-				varFile: "testdata/openstack_vars.tfvar",
+				varFile: "testdata/openstack_vars.tfvars",
 			},
 		},
 	}
