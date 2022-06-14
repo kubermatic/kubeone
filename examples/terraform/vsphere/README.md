@@ -14,7 +14,7 @@ use the configs and how to provision a Kubernetes cluster using KubeOne.
 
 ## How to prepare a template
 
-See https://github.com/kubermatic/machine-controller/blob/master/docs/vsphere.md
+See <https://github.com/kubermatic/machine-controller/blob/master/docs/vsphere.md>
 
 ## Kubernetes API Server Load Balancing
 
@@ -32,6 +32,7 @@ See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
 | datastore\_name | datastore name | string | `"datastore1"` | no |
 | dc\_name | datacenter name | string | `"dc-1"` | no |
 | disk\_size | disk size | string | `"50"` | no |
+| initial\_machinedeployments\_operating\_system\_profiles | Name of operating system profile for MachineDeployments, only applicable if operatng-system-manager addon is enabled | string | `""` | no |
 | network\_name | network name | string | `"public"` | no |
 | ssh\_agent\_socket | SSH Agent socket, default to grab from $SSH_AUTH_SOCK | string | `"env:SSH_AUTH_SOCK"` | no |
 | ssh\_port | SSH port to be used to provision instances | string | `"22"` | no |
@@ -51,4 +52,3 @@ See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
 | kubeone\_api | kube-apiserver endpoint. Either configured virtual IP or first node |
 | kubeone\_hosts | Control plane endpoints to SSH to |
 | kubeone\_workers | Workers definitions, that will be transformed into MachineDeployment object |
-

@@ -118,3 +118,12 @@ variable "network_zone" {
   description = "network zone to use for private network"
   type        = string
 }
+
+variable "initial_machinedeployment_operating_system_profile" {
+  default     = ""
+  type        = string
+  description = <<EOF
+Name of operating system profile for MachineDeployments, only applicable if operatng-system-manager addon is enabled.
+If not specified, the default value will be added by machine-controller addon.
+EOF
+}

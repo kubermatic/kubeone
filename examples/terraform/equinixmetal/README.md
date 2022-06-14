@@ -20,6 +20,7 @@ See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
 | control\_plane\_operating\_system | Image to use for control plane provisioning | string | `"ubuntu_18_04"` | no |
 | device\_type | type (size) of the device | string | `"t1.small.x86"` | no |
 | facility | Facility (datacenter) | string | `"ams1"` | no |
+| initial\_machinedeployments\_operating\_system\_profiles | Name of operating system profile for MachineDeployments, only applicable if operatng-system-manager addon is enabled | string | `""` | no |
 | lb\_operating\_system | Image to use for loadbalancer provisioning | string | `"ubuntu_18_04"` | no |
 | project\_id | project ID | string | n/a | yes |
 | ssh\_agent\_socket | SSH Agent socket, default to grab from $SSH_AUTH_SOCK | string | `"env:SSH_AUTH_SOCK"` | no |

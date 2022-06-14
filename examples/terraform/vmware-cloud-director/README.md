@@ -78,6 +78,7 @@ Following environment variables or terraform variables can be used to authentica
 | worker\_cpu\_cores | Number of cores per socket for the worker VMs | number | `1` | no |
 | worker\_disk\_size | Disk size for worker VMs in MB | number | `25600` | no |
 | worker\_disk\_storage\_profile | Name of storage profile to use for worker VMs attached disks | string | `""` | no |
+| initial\_machinedeployments\_operating\_system\_profiles | Name of operating system profile for MachineDeployments, only applicable if operatng-system-manager addon is enabled | string | `""` | no |
 
 ## Outputs
 

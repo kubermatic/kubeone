@@ -132,3 +132,12 @@ variable "subnet_dns_servers" {
   type    = list(string)
   default = ["8.8.8.8", "8.8.4.4"]
 }
+
+variable "initial_machinedeployment_operating_system_profile" {
+  default     = ""
+  type        = string
+  description = <<EOF
+Name of operating system profile for MachineDeployments, only applicable if operatng-system-manager addon is enabled.
+If not specified, the default value will be added by machine-controller addon.
+EOF
+}

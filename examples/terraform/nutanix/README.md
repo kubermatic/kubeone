@@ -72,6 +72,7 @@ See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
 | <a name="input_worker_os"></a> [worker\_os](#input\_worker\_os) | OS to run on worker machines, default to var.os | `string` | `"ubuntu"` | no |
 | <a name="input_worker_sockets"></a> [worker\_sockets](#input\_worker\_sockets) | Number of sockets for worker nodes | `number` | `1` | no |
 | <a name="input_worker_vcpus"></a> [worker\_vcpus](#input\_worker\_vcpus) | Number of vCPUs per socket for worker nodes | `number` | `2` | no |
+| <a name="initial_machinedeployment_operating_system_profile"></a> [initial\_machinedeployment\_operating\_system\_profile](#input\_initial\_machinedeployment\_operating\_system\_profile) | Name of operating system profile for MachineDeployment, only applicable if operatng-system-manager addon is enabled | `string` | `""` | no |
 
 ## Outputs
 

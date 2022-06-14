@@ -85,7 +85,7 @@ output "kubeone_workers" {
       replicas = var.initial_machinedeployment_replicas
       providerSpec = {
         annotations = {
-          "k8c.io/operating-system-profile" = var.ami_filters[var.os].osp_name
+          "k8c.io/operating-system-profile" = local.initial_machinedeployment_operating_system_profile
         }
         sshPublicKeys   = local.worker_deploy_ssh_key
         operatingSystem = local.worker_os
@@ -125,8 +125,8 @@ output "kubeone_workers" {
           diskSize         = 50
           diskType         = "gp2"
           ## Only applicable if diskType = io1
-          diskIops           = 500
-          isSpotInstance     = local.initial_machinedeployment_spotinstances
+          diskIops       = 500
+          isSpotInstance = local.initial_machinedeployment_spotinstances
           ## Only applicable if isSpotInstance is true
           spotInstanceConfig = {
             maxPrice = format("%f", var.initial_machinedeployment_spotinstances_max_price)
@@ -143,7 +143,7 @@ output "kubeone_workers" {
       replicas = var.initial_machinedeployment_replicas
       providerSpec = {
         annotations = {
-          "k8c.io/operating-system-profile" = var.ami_filters[var.os].osp_name
+          "k8c.io/operating-system-profile" = local.initial_machinedeployment_operating_system_profile
         }
         sshPublicKeys   = local.worker_deploy_ssh_key
         operatingSystem = local.worker_os
@@ -183,8 +183,8 @@ output "kubeone_workers" {
           diskSize         = 50
           diskType         = "gp2"
           ## Only applicable if diskType = io1
-          diskIops           = 500
-          isSpotInstance     = local.initial_machinedeployment_spotinstances
+          diskIops       = 500
+          isSpotInstance = local.initial_machinedeployment_spotinstances
           ## Only applicable if isSpotInstance is true
           spotInstanceConfig = {
             maxPrice = format("%f", var.initial_machinedeployment_spotinstances_max_price)
@@ -201,7 +201,7 @@ output "kubeone_workers" {
       replicas = var.initial_machinedeployment_replicas
       providerSpec = {
         annotations = {
-          "k8c.io/operating-system-profile" = var.ami_filters[var.os].osp_name
+          "k8c.io/operating-system-profile" = local.initial_machinedeployment_operating_system_profile
         }
         sshPublicKeys   = local.worker_deploy_ssh_key
         operatingSystem = local.worker_os
@@ -241,8 +241,8 @@ output "kubeone_workers" {
           diskSize         = 50
           diskType         = "gp2"
           ## Only applicable if diskType = io1
-          diskIops           = 500
-          isSpotInstance     = local.initial_machinedeployment_spotinstances
+          diskIops       = 500
+          isSpotInstance = local.initial_machinedeployment_spotinstances
           ## Only applicable if isSpotInstance is true
           spotInstanceConfig = {
             maxPrice = format("%f", var.initial_machinedeployment_spotinstances_max_price)

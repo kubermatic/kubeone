@@ -11,11 +11,13 @@ use the configs and how to provision a Kubernetes cluster using KubeOne.
 
 ### Credentials
 
-Per https://www.terraform.io/docs/providers/google/provider_reference.html#configuration-reference
+Per <https://www.terraform.io/docs/providers/google/provider_reference.html#configuration-reference>
 either of the following ENV variables should be accessible:
+
 * `GOOGLE_CREDENTIALS`
 * `GOOGLE_CLOUD_KEYFILE_JSON`
 * `GCLOUD_KEYFILE_JSON`
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
@@ -27,6 +29,7 @@ either of the following ENV variables should be accessible:
 | control\_plane\_target\_pool\_members\_count |  | string | `"3"` | no |
 | control\_plane\_type | GCE instance type | string | `"n1-standard-2"` | no |
 | control\_plane\_volume\_size | Size of the boot volume, in GB | string | `"100"` | no |
+| initial\_machinedeployments\_operating\_system\_profiles | Name of operating system profile for MachineDeployments, only applicable if operatng-system-manager addon is enabled | string | `""` | no |
 | project | Project to be used for all resources | string | n/a | yes |
 | region | GCP region to speak to | string | `"europe-west3"` | no |
 | ssh\_agent\_socket | SSH Agent socket, default to grab from $SSH_AUTH_SOCK | string | `"env:SSH_AUTH_SOCK"` | no |
@@ -44,4 +47,3 @@ either of the following ENV variables should be accessible:
 | kubeone\_api | kube-apiserver LB endpoint |
 | kubeone\_hosts | Control plane endpoints to SSH to |
 | kubeone\_workers | Workers definitions, that will be transformed into MachineDeployment object |
-

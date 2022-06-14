@@ -222,8 +222,8 @@ variable "static_workers_count" {
 variable "initial_machinedeployment_spotinstances_max_price" {
   description = "used to specify max spot instance price for initial machine-deployment"
   # we intentionally set minimum max price to ensure that user specifies it explicitly
-  default     = 0
-  type        = number
+  default = 0
+  type    = number
 }
 
 variable "worker_deploy_ssh_key" {
@@ -236,4 +236,13 @@ variable "control_plane_vm_count" {
   description = "number of control plane instances"
   default     = 3
   type        = number
+}
+
+variable "initial_machinedeployment_operating_system_profile" {
+  default     = ""
+  type        = string
+  description = <<EOF
+Name of operating system profile for MachineDeployments, only applicable if operatng-system-manager addon is enabled.
+If not specified default is used based on the OS specified for workers.
+EOF
 }
