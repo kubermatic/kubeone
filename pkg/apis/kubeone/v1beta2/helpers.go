@@ -34,20 +34,27 @@ func SetCloudProvider(cp *CloudProviderSpec, name string) error {
 		cp.Azure = &AzureSpec{}
 	case "digitalocean":
 		cp.DigitalOcean = &DigitalOceanSpec{}
+		cp.External = true
 	case "gce":
 		cp.GCE = &GCESpec{}
 	case "hetzner":
 		cp.Hetzner = &HetznerSpec{}
+		cp.External = true
 	case "nutanix":
 		cp.Nutanix = &NutanixSpec{}
+		cp.External = true
 	case "openstack":
 		cp.Openstack = &OpenstackSpec{}
+		cp.External = true
 	case "equinixmetal", "packet":
 		cp.EquinixMetal = &EquinixMetalSpec{}
+		cp.External = true
 	case "vmwareCloudDirector":
 		cp.VMwareCloudDirector = &VMwareCloudDirectorSpec{}
+		cp.External = true
 	case "vsphere":
 		cp.Vsphere = &VsphereSpec{}
+		cp.External = true
 	case "none":
 		cp.None = &NoneSpec{}
 	default:
