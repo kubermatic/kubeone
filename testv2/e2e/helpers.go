@@ -26,6 +26,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"testing"
 	"text/template"
@@ -367,6 +368,10 @@ func newProwJob(prowJobName string, labels map[string]string, testTitle string, 
 			Value: v,
 		})
 	}
+
+	sort.Slice(env, func(i, j int) bool {
+		return env[i].Name < env[j].Name
+	})
 
 	return ProwJob{
 		Name:      prowJobName,
