@@ -165,7 +165,7 @@ func downloadKubeone(t *testing.T, version string) string {
 
 	_, err = io.Copy(k1Bin, unzipK1Bin)
 	if err != nil {
-		t.Fatalf("extractive kubeone from zip: %v", err)
+		t.Fatalf("extracting kubeone from zip: %v", err)
 	}
 
 	return binPath
