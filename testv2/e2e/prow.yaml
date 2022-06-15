@@ -158,7 +158,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-equinixmetal: "true"
+    preset-equinix-metal: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-equinixmetal-default-install-containerd-v1.21.12
   optional: false
@@ -422,7 +422,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-equinixmetal: "true"
+    preset-equinix-metal: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-equinixmetal-default-install-containerd-v1.22.9
   optional: false
@@ -686,7 +686,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-equinixmetal: "true"
+    preset-equinix-metal: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-equinixmetal-default-install-containerd-v1.23.6
   optional: false
@@ -950,7 +950,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-equinixmetal: "true"
+    preset-equinix-metal: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-equinixmetal-default-install-docker-v1.21.12
   optional: false
@@ -1214,7 +1214,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-equinixmetal: "true"
+    preset-equinix-metal: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-equinixmetal-default-install-docker-v1.22.9
   optional: false
@@ -1478,7 +1478,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-equinixmetal: "true"
+    preset-equinix-metal: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-equinixmetal-default-upgrade-containerd-from-v1.21.12-to-v1.22.9
   optional: false
@@ -1742,7 +1742,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-equinixmetal: "true"
+    preset-equinix-metal: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-equinixmetal-default-upgrade-containerd-from-v1.22.9-to-v1.23.6
   optional: false
@@ -2006,7 +2006,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-equinixmetal: "true"
+    preset-equinix-metal: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-equinixmetal-default-upgrade-docker-from-v1.21.12-to-v1.22.9
   optional: false
@@ -2270,7 +2270,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-equinixmetal: "true"
+    preset-equinix-metal: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-equinixmetal-default-calico-containerd-v1.22.9
   optional: false
@@ -2534,7 +2534,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-equinixmetal: "true"
+    preset-equinix-metal: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-equinixmetal-default-calico-docker-v1.22.9
   optional: false
@@ -2798,7 +2798,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-equinixmetal: "true"
+    preset-equinix-metal: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-equinixmetal-default-weave-containerd-v1.22.9
   optional: false
@@ -3062,7 +3062,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-equinixmetal: "true"
+    preset-equinix-metal: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-equinixmetal-default-weave-docker-v1.22.9
   optional: false

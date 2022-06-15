@@ -167,8 +167,8 @@ var (
 		"equinixmetal_default": {
 			name: "equinixmetal_default",
 			labels: map[string]string{
-				"preset-goproxy":      "true",
-				"preset-equinixmetal": "true",
+				"preset-goproxy":       "true",
+				"preset-equinix-metal": "true",
 			},
 			environ: map[string]string{
 				"PROVIDER": "equinixmetal",
