@@ -65,7 +65,6 @@ func (tf *terraformBin) build(args ...string) *testutil.Exec {
 		testutil.WithArgs(args...),
 		testutil.WithEnv(append(os.Environ(), defaultTFEnvironment...)),
 		testutil.InDir(tf.path),
-		testutil.WithDryRun(),
 		testutil.StdoutDebug,
 	)
 }

@@ -119,7 +119,6 @@ func (sbb *sonobuoyBin) build(args ...string) *testutil.Exec {
 		testutil.WithArgs(args...),
 		testutil.WithEnv(os.Environ()),
 		testutil.InDir(sbb.dir),
-		testutil.WithDryRun(),
 		testutil.StdoutDebug,
 	)
 }

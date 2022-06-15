@@ -48,8 +48,6 @@ func (scenario *scenarioConformance) GenerateTests(wr io.Writer, generatorType G
 }
 
 func (scenario *scenarioConformance) Run(t *testing.T) {
-	t.Helper()
-
 	install := scenarioInstall{
 		name:                 scenario.name,
 		manifestTemplatePath: scenario.manifestTemplatePath,
@@ -62,8 +60,6 @@ func (scenario *scenarioConformance) Run(t *testing.T) {
 }
 
 func (scenario *scenarioConformance) test(t *testing.T) {
-	t.Helper()
-
 	data := manifestData{VERSION: scenario.versions[0]}
 	k1 := newKubeoneBin(
 		scenario.infra.terraform.path,

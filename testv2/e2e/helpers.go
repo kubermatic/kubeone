@@ -17,11 +17,15 @@ limitations under the License.
 package e2e
 
 import (
+	"archive/zip"
 	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"text/template"
@@ -31,6 +35,8 @@ import (
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 
+	"k8c.io/kubeone/test/e2e/testutil"
+
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -39,6 +45,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/util/retry"
+	k8spath "k8s.io/utils/path"
 	ctrlruntimeclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -46,6 +53,7 @@ const (
 	labelControlPlaneNode = "node-role.kubernetes.io/control-plane"
 	prowImage             = "kubermatic/kubeone-e2e:v0.1.22"
 	k1CloneURI            = "ssh://git@github.com/kubermatic/kubeone.git"
+	kubeoneDistPath       = "../../dist/kubeone"
 )
 
 func titleize(s string) string {
@@ -86,13 +94,104 @@ func requiredTemplateFunc(warn string, input interface{}) (interface{}, error) {
 	return input, nil
 }
 
-func newKubeoneBin(terraformPath, manifestPath string) *kubeoneBin {
-	return &kubeoneBin{
-		bin:          "kubeone",
+func makeBin(args ...string) *testutil.Exec {
+	return testutil.NewExec("make",
+		testutil.WithArgs(args...),
+		testutil.WithEnv(os.Environ()),
+		testutil.InDir(filepath.Clean("../../")),
+		testutil.StdoutDebug,
+	)
+}
+
+func downloadKubeone(t *testing.T, version string) string {
+	binPath := filepath.Join(t.TempDir(), fmt.Sprintf("kubeone-%s", version))
+	zipPath := fmt.Sprintf("%s.zip", binPath)
+
+	exists, err := k8spath.Exists(k8spath.CheckSymlinkOnly, binPath)
+	if err != nil {
+		t.Fatalf("checking if kubeone already downloaded: %v", err)
+	}
+
+	if exists {
+		return binPath
+	}
+
+	const urlTemplate = "https://github.com/kubermatic/kubeone/releases/download/v%s/kubeone_%s_linux_amd64.zip"
+	downloadURL := fmt.Sprintf(urlTemplate, version, version)
+
+	req, err := http.NewRequest("GET", downloadURL, nil)
+	if err != nil {
+		t.Fatalf("building http request to download kubeone: %v", err)
+	}
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatalf("http request to download kubeone: %v", err)
+	}
+	defer resp.Body.Close()
+
+	zipBin, err := os.OpenFile(zipPath, os.O_CREATE|os.O_WRONLY, 0600)
+	if err != nil {
+		t.Fatalf("open kubeone destination file: %v", err)
+	}
+	defer zipBin.Close()
+
+	_, err = io.Copy(zipBin, resp.Body)
+	if err != nil {
+		t.Fatalf("downloading kubeone: %v", err)
+	}
+
+	fi, err := zipBin.Stat()
+	if err != nil {
+		t.Fatalf("file stat: %v", err)
+	}
+
+	unzip, err := zip.NewReader(zipBin, fi.Size())
+	if err != nil {
+		t.Fatalf("opening zip file for reading: %v", err)
+	}
+
+	unzipK1Bin, err := unzip.Open("kubeone")
+	if err != nil {
+		t.Fatalf("opening kubeone file from zip archive: %v", err)
+	}
+	defer unzipK1Bin.Close()
+
+	k1Bin, err := os.OpenFile(binPath, os.O_CREATE|os.O_WRONLY, 0750)
+	if err != nil {
+		t.Fatalf("open kubeone destination file: %v", err)
+	}
+	defer k1Bin.Close()
+
+	_, err = io.Copy(k1Bin, unzipK1Bin)
+	if err != nil {
+		t.Fatalf("extracting kubeone from zip: %v", err)
+	}
+
+	return binPath
+}
+
+type kubeoneBinOpts func(*kubeoneBin)
+
+func withKubeoneBin(bin string) kubeoneBinOpts {
+	return func(kb *kubeoneBin) {
+		kb.bin = bin
+	}
+}
+
+func newKubeoneBin(terraformPath, manifestPath string, opts ...kubeoneBinOpts) *kubeoneBin {
+	k1 := &kubeoneBin{
+		bin:          filepath.Clean(kubeoneDistPath),
 		dir:          terraformPath,
 		tfjsonPath:   ".",
 		manifestPath: manifestPath,
 	}
+
+	for _, mod := range opts {
+		mod(k1)
+	}
+
+	return k1
 }
 
 type manifestData struct {
@@ -100,8 +199,6 @@ type manifestData struct {
 }
 
 func renderManifest(t *testing.T, templatePath string, data manifestData) string {
-	t.Helper()
-
 	tmpDir := t.TempDir()
 
 	var buf bytes.Buffer
@@ -133,8 +230,6 @@ func renderManifest(t *testing.T, templatePath string, data manifestData) string
 }
 
 func waitForNodesReady(t *testing.T, client ctrlruntimeclient.Client, expectedNumberOfNodes int) error {
-	t.Helper()
-
 	return wait.Poll(5*time.Second, 10*time.Minute, func() (bool, error) {
 		nodes := corev1.NodeList{}
 
@@ -269,8 +364,6 @@ func pullProwJobName(in ...string) string {
 }
 
 func basicTest(t *testing.T, k1 *kubeoneBin, data manifestData) {
-	t.Helper()
-
 	kubeoneManifest, err := k1.Manifest()
 	if err != nil {
 		t.Fatalf("failed to get manifest API")
@@ -317,8 +410,6 @@ func basicTest(t *testing.T, k1 *kubeoneBin, data manifestData) {
 }
 
 func sonobuoyRun(t *testing.T, k1 *kubeoneBin, mode sonobuoyMode) {
-	t.Helper()
-
 	kubeconfigPath, err := k1.KubeconfigPath(t.TempDir())
 	if err != nil {
 		t.Fatalf("fetching kubeconfig failed")

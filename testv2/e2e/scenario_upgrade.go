@@ -25,6 +25,8 @@ import (
 	"sigs.k8s.io/yaml"
 )
 
+const kubeoneVersionToInit = "1.4.4"
+
 type scenarioUpgrade struct {
 	name                 string
 	manifestTemplatePath string
@@ -43,13 +45,16 @@ func (scenario *scenarioUpgrade) SetVersions(versions ...string) {
 }
 
 func (scenario *scenarioUpgrade) Run(t *testing.T) {
-	t.Helper()
+	if err := makeBin("build").Run(); err != nil {
+		t.Fatalf("building kubeone: %v", err)
+	}
 
 	install := &scenarioInstall{
 		name:                 scenario.name,
 		manifestTemplatePath: scenario.manifestTemplatePath,
 		infra:                scenario.infra,
 		versions:             scenario.versions,
+		kubeonePath:          downloadKubeone(t, kubeoneVersionToInit),
 	}
 
 	install.install(t)
@@ -58,8 +63,6 @@ func (scenario *scenarioUpgrade) Run(t *testing.T) {
 }
 
 func (scenario *scenarioUpgrade) upgrade(t *testing.T) {
-	t.Helper()
-
 	k1 := newKubeoneBin(
 		scenario.infra.terraform.path,
 		renderManifest(t,
@@ -76,8 +79,6 @@ func (scenario *scenarioUpgrade) upgrade(t *testing.T) {
 }
 
 func (scenario *scenarioUpgrade) test(t *testing.T) {
-	t.Helper()
-
 	data := manifestData{
 		VERSION: scenario.versions[1],
 	}

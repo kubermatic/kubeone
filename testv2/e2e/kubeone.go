@@ -38,6 +38,10 @@ type kubeoneBin struct {
 func (k1 *kubeoneBin) globalFlags() []string {
 	args := []string{"--tfjson", k1.tfjsonPath}
 
+	if *kubeoneVerboseFlag {
+		args = append(args, "--verbose")
+	}
+
 	if k1.manifestPath != "" {
 		args = append(args, "--manifest", k1.manifestPath)
 	}
@@ -121,7 +125,6 @@ func (k1 *kubeoneBin) build(args ...string) *testutil.Exec {
 		testutil.WithArgs(args...),
 		testutil.WithEnv(os.Environ()),
 		testutil.InDir(k1.dir),
-		testutil.WithDryRun(),
 		testutil.StdoutDebug,
 	)
 }

@@ -20,6 +20,7 @@ limitations under the License.
 package e2e
 
 import (
+	"flag"
 	"io"
 	"testing"
 )
@@ -147,6 +148,10 @@ var (
 			manifestTemplatePath: "testdata/docker_weave.yaml",
 		},
 	}
+)
+
+var (
+	kubeoneVerboseFlag = flag.Bool("kubeone-verbose", false, "run kubeone actions with --verbose flag")
 )
 
 type Infra struct {
