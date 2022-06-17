@@ -180,19 +180,6 @@ var (
 				},
 			},
 		},
-		// "gce_default": {
-		// 	name: "gce_default",
-		// 	labels: map[string]string{
-		// 		"preset-goproxy": "true",
-		// 		"preset-gce":     "true",
-		// 	},
-		// 	environ: map[string]string{
-		// 		"PROVIDER": "gce",
-		// 	},
-		// 	terraform: terraformBin{
-		// 		path: "../../examples/terraform/gce",
-		// 	},
-		// },
 		"hetzner_default": {
 			name: "hetzner_default",
 			labels: map[string]string{
@@ -209,19 +196,6 @@ var (
 				},
 			},
 		},
-		// "nutanix_default": {
-		// 	name: "nutanix_default",
-		// 	labels: map[string]string{
-		// 		"preset-goproxy": "true",
-		// 		"preset-nutanix": "true",
-		// 	},
-		// 	environ: map[string]string{
-		// 		"PROVIDER": "nutanix",
-		// 	},
-		// 	terraform: terraformBin{
-		// 		path: "../../examples/terraform/nutanix",
-		// 	},
-		// },
 		"openstack_default": {
 			name: "openstack_default",
 			labels: map[string]string{

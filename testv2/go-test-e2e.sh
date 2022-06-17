@@ -97,12 +97,36 @@ function setup_ci_environment_vars() {
     export VSPHERE_PASSWORD=${VSPHERE_E2E_PASSWORD}
     export TF_VAR_ssh_bastion_host=${VSPHERE_E2E_TEST_SSH_JUMPHOST}
     export TF_VAR_ssh_bastion_username=${VSPHERE_E2E_TEST_SSH_USERNAME}
+    CREDENTIALS_FILE_PATH="${BUILD_DIR}/credentials.yaml"
+
+cat > "${CREDENTIALS_FILE_PATH}" <<EOL
+cloudConfig: |
+  [Global]
+  secret-name = "vsphere-ccm-credentials"
+  secret-namespace = "kube-system"
+  port = "443"
+  insecure-flag = "0"
+
+  [VirtualCenter "${VSPHERE_SERVER}"]
+
+  [Workspace]
+  server = "${VSPHERE_SERVER}"
+  datacenter = "dc-1"
+  default-datastore = "HS-FreeNAS"
+  resourcepool-path = ""
+  folder = ""
+
+  [Disk]
+  scsicontrollertype = pvscsi
+
+  [Network]
+  public-network = "VM Network"
+EOL
 
     ssh_bastion_key="${BUILD_DIR}/ssh_bastion_key"
     echo "${VSPHERE_E2E_TEST_SSH_PRIVATE_KEY}" > "$ssh_bastion_key"
     chmod 600 "${ssh_bastion_key}"
     ssh-add "${ssh_bastion_key}"
-    ssh-add -l
     ;;
   *)
     echo "unknown provider ${PROVIDER}"
@@ -111,12 +135,12 @@ function setup_ci_environment_vars() {
   esac
 }
 
+generate_ssh_key "${SSH_PRIVATE_KEY_FILE}"
+ssh_agent "${SSH_PRIVATE_KEY_FILE}"
+
 if [ -n "${RUNNING_IN_CI}" ]; then
   setup_ci_environment_vars
 fi
-
-generate_ssh_key "${SSH_PRIVATE_KEY_FILE}"
-ssh_agent "${SSH_PRIVATE_KEY_FILE}"
 
 go_test_args=("$@")
 
