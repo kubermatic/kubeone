@@ -50,8 +50,8 @@ func (scenario *scenarioUpgrade) Run(t *testing.T) {
 	}
 
 	install := &scenarioInstall{
-		name:                 scenario.name,
-		manifestTemplatePath: scenario.manifestTemplatePath,
+		Name:                 scenario.name,
+		ManifestTemplatePath: scenario.manifestTemplatePath,
 		infra:                scenario.infra,
 		versions:             scenario.versions,
 		kubeonePath:          downloadKubeone(t, kubeoneVersionToInit),

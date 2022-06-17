@@ -38,8 +38,8 @@ func (scenario *scenarioConformance) SetVersions(versions ...string) {
 
 func (scenario *scenarioConformance) GenerateTests(wr io.Writer, generatorType GeneratorType, cfg ProwConfig) error {
 	install := scenarioInstall{
-		name:                 scenario.name,
-		manifestTemplatePath: scenario.manifestTemplatePath,
+		Name:                 scenario.name,
+		ManifestTemplatePath: scenario.manifestTemplatePath,
 		infra:                scenario.infra,
 		versions:             scenario.versions,
 	}
@@ -49,8 +49,8 @@ func (scenario *scenarioConformance) GenerateTests(wr io.Writer, generatorType G
 
 func (scenario *scenarioConformance) Run(t *testing.T) {
 	install := scenarioInstall{
-		name:                 scenario.name,
-		manifestTemplatePath: scenario.manifestTemplatePath,
+		Name:                 scenario.name,
+		ManifestTemplatePath: scenario.manifestTemplatePath,
 		infra:                scenario.infra,
 		versions:             scenario.versions,
 	}

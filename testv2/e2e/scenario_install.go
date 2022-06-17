@@ -26,11 +26,12 @@ import (
 )
 
 type scenarioInstall struct {
-	name                 string
-	manifestTemplatePath string
-	versions             []string
-	infra                Infra
-	kubeonePath          string
+	Name                 string
+	ManifestTemplatePath string
+
+	versions    []string
+	infra       Infra
+	kubeonePath string
 }
 
 func (scenario scenarioInstall) KubeonePath() string {
@@ -41,7 +42,7 @@ func (scenario scenarioInstall) KubeonePath() string {
 	return getKubeoneDistPath()
 }
 
-func (scenario scenarioInstall) Title() string { return titleize(scenario.name) }
+func (scenario scenarioInstall) Title() string { return titleize(scenario.Name) }
 
 func (scenario *scenarioInstall) SetInfra(infra Infra) {
 	scenario.infra = infra
@@ -112,7 +113,7 @@ func (scenario *scenarioInstall) kubeone(t *testing.T) *kubeoneBin {
 	return newKubeoneBin(
 		scenario.infra.terraform.path,
 		renderManifest(t,
-			scenario.manifestTemplatePath,
+			scenario.ManifestTemplatePath,
 			manifestData{
 				VERSION: scenario.versions[0],
 			},
@@ -154,7 +155,7 @@ func (scenario *scenarioInstall) GenerateTests(wr io.Writer, generatorType Gener
 	data = append(data, templateData{
 		TestTitle: testTitle,
 		Infra:     scenario.infra.name,
-		Scenario:  scenario.name,
+		Scenario:  scenario.Name,
 		Version:   version,
 	})
 
@@ -162,7 +163,7 @@ func (scenario *scenarioInstall) GenerateTests(wr io.Writer, generatorType Gener
 
 	prowJobs = append(prowJobs,
 		newProwJob(
-			pullProwJobName(scenario.infra.name, scenario.name, version),
+			pullProwJobName(scenario.infra.name, scenario.Name, version),
 			scenario.infra.labels,
 			testTitle,
 			cfg,

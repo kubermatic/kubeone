@@ -281,8 +281,8 @@ var (
 
 	Scenarios = map[string]Scenario{
 		"install_docker": &scenarioInstall{
-			name:                 "install_docker",
-			manifestTemplatePath: "testdata/docker_simple.yaml",
+			Name:                 "install_docker",
+			ManifestTemplatePath: "testdata/docker_simple.yaml",
 		},
 		"upgrade_docker": &scenarioUpgrade{
 			name:                 "upgrade_docker",
@@ -293,8 +293,8 @@ var (
 			manifestTemplatePath: "testdata/containerd_simple.yaml",
 		},
 		"install_containerd": &scenarioInstall{
-			name:                 "install_containerd",
-			manifestTemplatePath: "testdata/containerd_simple.yaml",
+			Name:                 "install_containerd",
+			ManifestTemplatePath: "testdata/containerd_simple.yaml",
 		},
 		"upgrade_containerd": &scenarioUpgrade{
 			name:                 "upgrade_containerd",
@@ -305,20 +305,20 @@ var (
 			manifestTemplatePath: "testdata/containerd_simple.yaml",
 		},
 		"calico_containerd": &scenarioInstall{
-			name:                 "calico_containerd",
-			manifestTemplatePath: "testdata/containerd_calico.yaml",
+			Name:                 "calico_containerd",
+			ManifestTemplatePath: "testdata/containerd_calico.yaml",
 		},
 		"calico_docker": &scenarioInstall{
-			name:                 "calico_docker",
-			manifestTemplatePath: "testdata/docker_calico.yaml",
+			Name:                 "calico_docker",
+			ManifestTemplatePath: "testdata/docker_calico.yaml",
 		},
 		"weave_containerd": &scenarioInstall{
-			name:                 "weave_containerd",
-			manifestTemplatePath: "testdata/containerd_weave.yaml",
+			Name:                 "weave_containerd",
+			ManifestTemplatePath: "testdata/containerd_weave.yaml",
 		},
 		"weave_docker": &scenarioInstall{
-			name:                 "weave_docker",
-			manifestTemplatePath: "testdata/docker_weave.yaml",
+			Name:                 "weave_docker",
+			ManifestTemplatePath: "testdata/docker_weave.yaml",
 		},
 	}
 )
