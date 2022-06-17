@@ -72,6 +72,19 @@ variable "ssh_agent_socket" {
 
 # provider specific settings
 
+variable "ssh_bastion_host" {
+  type = string
+}
+
+variable "ssh_bastion_port" {
+  type    = number
+  default = 22
+}
+
+variable "ssh_bastion_username" {
+  type = string
+}
+
 variable "dc_name" {
   default     = "dc-1"
   description = "datacenter name"

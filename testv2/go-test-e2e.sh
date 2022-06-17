@@ -91,6 +91,19 @@ function setup_ci_environment_vars() {
     CREDENTIALS_FILE_PATH="${BUILD_DIR}/credentials.yaml"
     echo "${OS_K1_CREDENTIALS}" > "${CREDENTIALS_FILE_PATH}"
     ;;
+  "vsphere")
+    export VSPHERE_SERVER="${VSPHERE_E2E_ADDRESS/http*:\/\//}"
+    export VSPHERE_USER=${VSPHERE_E2E_USERNAME}
+    export VSPHERE_PASSWORD=${VSPHERE_E2E_PASSWORD}
+    export TF_VAR_ssh_bastion_host=${VSPHERE_E2E_TEST_SSH_JUMPHOST}
+    export TF_VAR_ssh_bastion_username=${VSPHERE_E2E_TEST_SSH_USERNAME}
+
+    ssh_bastion_key="${BUILD_DIR}/ssh_bastion_key"
+    echo "${VSPHERE_E2E_TEST_SSH_PRIVATE_KEY}" > "$ssh_bastion_key"
+    chmod 600 "${ssh_bastion_key}"
+    ssh-add "${ssh_bastion_key}"
+    ssh-add -l
+    ;;
   *)
     echo "unknown provider ${PROVIDER}"
     exit 1
