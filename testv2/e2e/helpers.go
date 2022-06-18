@@ -36,6 +36,7 @@ import (
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 
+	"k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/test/e2e/testutil"
 
 	corev1 "k8s.io/api/core/v1"
@@ -43,6 +44,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/util/wait"
+	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/util/retry"
 	k8spath "k8s.io/utils/path"
@@ -406,9 +408,43 @@ func pullProwJobName(in ...string) string {
 }
 
 func basicTest(t *testing.T, k1 *kubeoneBin, data manifestData) {
-	kubeoneManifest, err := k1.ClusterManifest()
-	if err != nil {
+	var (
+		kubeoneManifest *kubeone.KubeOneCluster
+		err             error
+		kubeconfig      []byte
+		restConfig      *rest.Config
+	)
+
+	fetchKubeoneManifest := func() error {
+		kubeoneManifest, err = k1.ClusterManifest()
+		return err
+	}
+
+	if err := retryFn(fetchKubeoneManifest); err != nil {
 		t.Fatalf("failed to get manifest API: %v", err)
+	}
+
+	fetchKubeconfig := func() error {
+		kubeconfig, err = k1.Kubeconfig()
+		return err
+	}
+
+	if err = retryFn(fetchKubeconfig); err != nil {
+		t.Fatalf("kubeone kubeconfig failed: %v", err)
+	}
+
+	initKubeRestConfig := func() error {
+		restConfig, err = clientcmd.RESTConfigFromKubeConfig(kubeconfig)
+		return err
+	}
+
+	if err = retryFn(initKubeRestConfig); err != nil {
+		t.Fatalf("unable to build clientset from kubeconfig bytes: %v", err)
+	}
+
+	client, err := ctrlruntimeclient.New(restConfig, ctrlruntimeclient.Options{})
+	if err != nil {
+		t.Fatalf("failed to init dynamic client: %s", err)
 	}
 
 	numberOfNodesToWait := len(kubeoneManifest.ControlPlane.Hosts) + len(kubeoneManifest.StaticWorkers.Hosts)
@@ -416,30 +452,6 @@ func basicTest(t *testing.T, k1 *kubeoneBin, data manifestData) {
 		if worker.Replicas != nil {
 			numberOfNodesToWait += *worker.Replicas
 		}
-	}
-
-	var kubeconfig []byte
-	fetchKubeconfig := func() error {
-		kubeconfig, err = k1.Kubeconfig()
-		if err != nil {
-			return err
-		}
-
-		return nil
-	}
-
-	if err = retryFn(fetchKubeconfig); err != nil {
-		t.Fatalf("kubeone kubeconfig failed: %v", err)
-	}
-
-	restConfig, err := clientcmd.RESTConfigFromKubeConfig(kubeconfig)
-	if err != nil {
-		t.Fatalf("unable to build clientset from kubeconfig bytes: %v", err)
-	}
-
-	client, err := ctrlruntimeclient.New(restConfig, ctrlruntimeclient.Options{})
-	if err != nil {
-		t.Fatalf("failed to init dynamic client: %s", err)
 	}
 
 	if err = waitForNodesReady(t, client, numberOfNodesToWait); err != nil {
