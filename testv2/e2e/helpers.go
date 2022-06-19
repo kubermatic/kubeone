@@ -37,6 +37,7 @@ import (
 	"golang.org/x/text/language"
 
 	"k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/test/e2e/testutil"
 
 	corev1 "k8s.io/api/core/v1"
@@ -441,6 +442,17 @@ func basicTest(t *testing.T, k1 *kubeoneBin, data manifestData) {
 	if err = retryFn(initKubeRestConfig); err != nil {
 		t.Fatalf("unable to build clientset from kubeconfig bytes: %v", err)
 	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	connector := ssh.NewConnector(ctx)
+	tun, err := connector.Tunnel(kubeoneManifest.RandomHost())
+	if err != nil {
+		t.Fatalf("creating SSH tunnel: %v", err)
+	}
+
+	restConfig.Dial = tun.TunnelTo
 
 	client, err := ctrlruntimeclient.New(restConfig, ctrlruntimeclient.Options{})
 	if err != nil {
