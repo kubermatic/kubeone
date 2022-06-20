@@ -114,7 +114,7 @@ cloudConfig: |
   datacenter = "dc-1"
   default-datastore = "HS-FreeNAS"
   resourcepool-path = ""
-  folder = ""
+  folder = "kubeone-e2e"
 
   [Disk]
   scsicontrollertype = pvscsi
