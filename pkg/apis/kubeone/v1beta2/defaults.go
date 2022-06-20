@@ -49,6 +49,7 @@ func SetDefaults_KubeOneCluster(obj *KubeOneCluster) {
 	SetDefaults_APIEndpoints(obj)
 	SetDefaults_Versions(obj)
 	SetDefaults_ContainerRuntime(obj)
+	SetDefaults_CloudProvider_External(obj)
 	SetDefaults_ClusterNetwork(obj)
 	SetDefaults_Proxy(obj)
 	SetDefaults_MachineController(obj)
@@ -143,6 +144,22 @@ func SetDefaults_ContainerRuntime(obj *KubeOneCluster) {
 	gteKube122Condition, _ := semver.NewConstraint(">= 1.22")
 	if gteKube122Condition.Check(actualVer) {
 		obj.ContainerRuntime.Containerd = &ContainerRuntimeContainerd{}
+	}
+}
+
+func SetDefaults_CloudProvider_External(obj *KubeOneCluster) {
+	switch {
+	case obj.CloudProvider.DigitalOcean != nil:
+		obj.CloudProvider.External = true
+	case obj.CloudProvider.Hetzner != nil:
+		obj.CloudProvider.External = true
+	// // TODO: enable those cases when we'll have corresponding CCMs
+	// case obj.CloudProvider.Nutanix != nil:
+	// 	obj.CloudProvider.External = true
+	// case obj.CloudProvider.VMwareCloudDirector != nil:
+	// 	obj.CloudProvider.External = true
+	case obj.CloudProvider.Openstack != nil:
+		obj.CloudProvider.External = true
 	}
 }
 
