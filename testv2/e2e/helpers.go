@@ -36,7 +36,7 @@ import (
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 
-	"k8c.io/kubeone/pkg/apis/kubeone"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/test/e2e/testutil"
 
@@ -63,6 +63,7 @@ func mustGetwd() string {
 	if err != nil {
 		panic(err)
 	}
+
 	return cwd
 }
 
@@ -410,7 +411,7 @@ func pullProwJobName(in ...string) string {
 
 func basicTest(t *testing.T, k1 *kubeoneBin, data manifestData) {
 	var (
-		kubeoneManifest *kubeone.KubeOneCluster
+		kubeoneManifest *kubeoneapi.KubeOneCluster
 		err             error
 		kubeconfig      []byte
 		restConfig      *rest.Config
@@ -418,15 +419,17 @@ func basicTest(t *testing.T, k1 *kubeoneBin, data manifestData) {
 
 	fetchKubeoneManifest := func() error {
 		kubeoneManifest, err = k1.ClusterManifest()
+
 		return err
 	}
 
-	if err := retryFn(fetchKubeoneManifest); err != nil {
+	if err = retryFn(fetchKubeoneManifest); err != nil {
 		t.Fatalf("failed to get manifest API: %v", err)
 	}
 
 	fetchKubeconfig := func() error {
 		kubeconfig, err = k1.Kubeconfig()
+
 		return err
 	}
 
@@ -436,6 +439,7 @@ func basicTest(t *testing.T, k1 *kubeoneBin, data manifestData) {
 
 	initKubeRestConfig := func() error {
 		restConfig, err = clientcmd.RESTConfigFromKubeConfig(kubeconfig)
+
 		return err
 	}
 
