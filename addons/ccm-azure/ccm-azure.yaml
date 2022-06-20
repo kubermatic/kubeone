@@ -167,10 +167,9 @@ spec:
           imagePullPolicy: IfNotPresent
           command: ["cloud-controller-manager"]
           args:
-            - "--allocate-node-cidrs=true" # "false" for Azure CNI and "true" for other network plugins
+            - "--allocate-node-cidrs=false" # "false" as we use IPAM in kube-controller-manager
             - "--cloud-config=/etc/kubernetes/cloud-config"
             - "--cloud-provider=azure"
-            - "--cluster-cidr={{.Config.ClusterNetwork.PodSubnet }}"
             - "--cluster-name={{ .Config.Name }}"
             - "--controllers=*,-cloud-node" # disable cloud-node controller
             - "--configure-cloud-routes=true" # "false" for Azure CNI and "true" for other network plugins
