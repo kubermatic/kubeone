@@ -485,9 +485,21 @@ func sonobuoyRun(t *testing.T, k1 *kubeoneBin, mode sonobuoyMode) {
 		t.Fatalf("fetching kubeconfig failed")
 	}
 
+	// launch kubeone proxy, to have a HTTPS proxy through the SSH tunnel
+	// to open access to the kubeapi behind the bastion host
+	proxyCtx, killProxy := context.WithCancel(context.Background())
+	proxyURL, err := k1.AsyncProxy(proxyCtx)
+	if err != nil {
+		t.Fatalf("starting kubeone proxy: %v", err)
+	}
+	defer killProxy()
+
+	t.Logf("kubeone proxy is running on %s", proxyURL)
+
 	sb := sonobuoyBin{
 		kubeconfig: kubeconfigPath,
 		dir:        t.TempDir(),
+		proxyURL:   proxyURL,
 	}
 
 	if err = sb.Run(mode); err != nil {

@@ -51,6 +51,7 @@ const (
 type sonobuoyBin struct {
 	dir        string
 	kubeconfig string
+	proxyURL   string
 }
 
 func (sbb *sonobuoyBin) Run(mode sonobuoyMode) error {
@@ -119,6 +120,14 @@ func (sbb *sonobuoyBin) build(args ...string) *testutil.Exec {
 
 	if sbb.kubeconfig != "" {
 		testutil.WithEnvs(fmt.Sprintf("KUBECONFIG=%s", sbb.kubeconfig))(exe)
+	}
+
+	if sbb.proxyURL != "" {
+		proxies := []string{
+			fmt.Sprintf("HTTPS_PROXY=%s", sbb.proxyURL),
+			fmt.Sprintf("HTTP_PROXY=%s", sbb.proxyURL),
+		}
+		testutil.WithEnv(proxies)(exe)
 	}
 
 	return exe
