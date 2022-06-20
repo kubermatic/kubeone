@@ -18,8 +18,11 @@ package e2e
 
 import (
 	"bytes"
+	"context"
 	"flag"
 	"fmt"
+	"net"
+	"net/url"
 	"os"
 
 	"github.com/sirupsen/logrus"
@@ -63,6 +66,33 @@ func (k1 *kubeoneBin) Kubeconfig() ([]byte, error) {
 
 func (k1 *kubeoneBin) Reset() error {
 	return k1.run("reset", "--auto-approve", "--destroy-workers", "--remove-binaries")
+}
+
+func (k1 *kubeoneBin) AsyncProxy(ctx context.Context) (string, error) {
+	list, err := net.Listen("tcp4", "127.0.0.1:0")
+	if err != nil {
+		return "", err
+	}
+
+	hostPort := list.Addr().String()
+	if err = list.Close(); err != nil {
+		return "", err
+	}
+
+	proxyURL := url.URL{
+		Scheme: "http",
+		Host:   hostPort,
+	}
+
+	cmd := k1.build("proxy", "--listen", hostPort).BuildCmd(ctx)
+	if err = cmd.Start(); err != nil {
+		return "", err
+	}
+	go func() {
+		_ = cmd.Wait()
+	}()
+
+	return proxyURL.String(), nil
 }
 
 func (k1 *kubeoneBin) ClusterManifest() (*kubeoneapi.KubeOneCluster, error) {
@@ -120,7 +150,7 @@ func (k1 *kubeoneBin) kubeconfigPath(tmpDir string) (string, error) {
 }
 
 func (k1 *kubeoneBin) run(args ...string) error {
-	return k1.build(append(k1.globalFlags(), args...)...).Run()
+	return k1.build(args...).Run()
 }
 
 func (k1 *kubeoneBin) build(args ...string) *testutil.Exec {
@@ -130,7 +160,7 @@ func (k1 *kubeoneBin) build(args ...string) *testutil.Exec {
 	}
 
 	return testutil.NewExec(bin,
-		testutil.WithArgs(args...),
+		testutil.WithArgs(append(k1.globalFlags(), args...)...),
 		testutil.WithEnv(os.Environ()),
 		testutil.InDir(k1.dir),
 		testutil.StdoutDebug,
