@@ -13,19 +13,6 @@ In this setup, we assume that a dedicated org VDC has been created. It's connect
 
 The kube-apiserver will be assigned the private IP address of the first control plane VM.
 
-## Requirements
-
-| Name | Version |
-|------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0 |
-| <a name="requirement_vcd"></a> [vcd](#requirement\_vcd) | ~> 3.6.0 |
-
-## Providers
-
-| Name | Version |
-|------|---------|
-| <a name="provider_vcd"></a> [vcd](#provider\_vcd) | 3.6.0 |
-
 ### Credentials
 
 Following environment variables or terraform variables can be used to authenticate with the provider:
@@ -42,48 +29,78 @@ Following environment variables or terraform variables can be used to authentica
 - <https://registry.terraform.io/providers/vmware/vcd/latest/docs#connecting-as-sys-admin-with-default-org-and-vdc>
 - <https://registry.terraform.io/providers/vmware/vcd/latest/docs#argument-reference>
 
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0 |
+| <a name="requirement_vcd"></a> [vcd](#requirement\_vcd) | 3.6.0 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_vcd"></a> [vcd](#provider\_vcd) | 3.6.0 |
+
+## Modules
+
+No modules.
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [vcd_network_routed.network](https://registry.terraform.io/providers/vmware/vcd/3.6.0/docs/resources/network_routed) | resource |
+| [vcd_nsxv_firewall_rule.rule_internet](https://registry.terraform.io/providers/vmware/vcd/3.6.0/docs/resources/nsxv_firewall_rule) | resource |
+| [vcd_nsxv_snat.rule_internet](https://registry.terraform.io/providers/vmware/vcd/3.6.0/docs/resources/nsxv_snat) | resource |
+| [vcd_vapp.cluster](https://registry.terraform.io/providers/vmware/vcd/3.6.0/docs/resources/vapp) | resource |
+| [vcd_vapp_org_network.network](https://registry.terraform.io/providers/vmware/vcd/3.6.0/docs/resources/vapp_org_network) | resource |
+| [vcd_vapp_vm.control_plane](https://registry.terraform.io/providers/vmware/vcd/3.6.0/docs/resources/vapp_vm) | resource |
+| [vcd_edgegateway.edge_gateway](https://registry.terraform.io/providers/vmware/vcd/3.6.0/docs/data-sources/edgegateway) | data source |
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|:----:|:-----:|:-----:|
-| cluster\_name | Name of the cluster | string | n/a | yes |
-| vcd\_org\_name | Name of the vcd organization | string | n/a | yes |
-| vcd\_vdc\_name | Name of the virutal datacenter | string | n/a | yes |
-| vcd\_edge\_gateway\_name | Name of the edge gateway defined for the VDC | string | n/a | yes |
-| catalog\_name | Name of catalog that contains vApp templates | string | n/a | yes |
-| template\_name | Name of the vApp template to use for master VMs | string | n/a | yes |
-| external\_network\_name | Name of the network used for external connectivity, defaults to edge gateway's default external network | string | n/a | no |
-| external\_network\_ip | SNAT address to allows outbound traffic, defaults to edge gateway's default external network IP | string | n/a | no |
-| control\_plane\_memory | Memory size of each control plane node in MB | number | `4096` | no |
-| control\_plane\_cpus | Number of CPUs for the control plane VMs | number | `2` | no |
-| control\_plane\_cpu\_cores | Number of cores per socket for the control plane VMs | number | `1` | no |
-| control\_plane\_disk\_size | Disk size for control plane VMs in MB | number | `25600` | no |
-| control\_plane\_disk\_storage_profile | Name of storage profile to use for disks | string | `""` | no |
-| network\_interface\_type | Type of interface for the routed network | string | `internal` | no |
-| gateway\_ip | Gateway IP for the routed network | string | `192.168.1.1` | no |
-| dhcp\_start\_address | Starting address for the DHCP IP Pool range | string | `192.168.1.2` | no |
-| dhcp\_end\_address | Last address for the DHCP IP Pool range | string | `192.168.1.50` | no |
-| network\_dns\_server\_1 | Primary DNS server for the routed network | string | `""` | no |
-| network\_dns\_server\_2 | Secondary DNS server for the routed network | string | `""` | no |
-| apiserver\_alternative\_names | Subject alternative names for the API Server signing cert. | list(string) | `[]` | no |
-| kubeapi\_hostname | DNS name for the kube-apiserver. | string | `""` | no |
-| ssh\_agent\_socket | SSH Agent socket, default to grab from $SSH_AUTH_SOCK | string | `"env:SSH_AUTH_SOCK"` | no |
-| ssh\_port | SSH port to be used to provision instances | string | `"22"` | no |
-| ssh\_private\_key\_file | SSH private key file used to access instances | string | `""` | no |
-| ssh\_public\_key\_file | SSH public key file | string | `"~/.ssh/id_rsa.pub"` | no |
-| ssh\_username | SSH user, used only in output | string | `"ubuntu"` | no |
-| worker\_os | OS to run on worker machines | string | `ubuntu` | no |
-| worker\_memory | Number of replicas per MachineDeployment | number | `1` | no |
-| worker\_cpus | Number of CPUs for the worker VMs | number | `2` | no |
-| worker\_cpu\_cores | Number of cores per socket for the worker VMs | number | `1` | no |
-| worker\_disk\_size | Disk size for worker VMs in MB | number | `25600` | no |
-| worker\_disk\_storage\_profile | Name of storage profile to use for worker VMs attached disks | string | `""` | no |
-| initial\_machinedeployments\_operating\_system\_profiles | Name of operating system profile for MachineDeployments, only applicable if operatng-system-manager addon is enabled | string | `""` | no |
+|------|-------------|------|---------|:--------:|
+| <a name="input_apiserver_alternative_names"></a> [apiserver\_alternative\_names](#input\_apiserver\_alternative\_names) | Subject alternative names for the API Server signing certificate | `list(string)` | `[]` | no |
+| <a name="input_catalog_name"></a> [catalog\_name](#input\_catalog\_name) | Name of catalog that contains vApp templates | `string` | n/a | yes |
+| <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the cluster | `string` | n/a | yes |
+| <a name="input_control_plane_cpu_cores"></a> [control\_plane\_cpu\_cores](#input\_control\_plane\_cpu\_cores) | Number of cores per socket for the control plane VMs | `number` | `1` | no |
+| <a name="input_control_plane_cpus"></a> [control\_plane\_cpus](#input\_control\_plane\_cpus) | Number of CPUs for the control plane VMs | `number` | `2` | no |
+| <a name="input_control_plane_disk_size"></a> [control\_plane\_disk\_size](#input\_control\_plane\_disk\_size) | Disk size in MB | `number` | `25600` | no |
+| <a name="input_control_plane_disk_storage_profile"></a> [control\_plane\_disk\_storage\_profile](#input\_control\_plane\_disk\_storage\_profile) | Name of storage profile to use for disks | `string` | `""` | no |
+| <a name="input_control_plane_memory"></a> [control\_plane\_memory](#input\_control\_plane\_memory) | Memory size of each control plane node in MB | `number` | `4096` | no |
+| <a name="input_dhcp_end_address"></a> [dhcp\_end\_address](#input\_dhcp\_end\_address) | Last address for the DHCP IP Pool range | `string` | `"192.168.1.50"` | no |
+| <a name="input_dhcp_start_address"></a> [dhcp\_start\_address](#input\_dhcp\_start\_address) | Starting address for the DHCP IP Pool range | `string` | `"192.168.1.2"` | no |
+| <a name="input_external_network_ip"></a> [external\_network\_ip](#input\_external\_network\_ip) | IP address to which source addresses (the virtual machines) on outbound packets are translated to when they send traffic to the external network.<br>Defaults to default external network IP for the edge gateway. | `string` | `""` | no |
+| <a name="input_external_network_name"></a> [external\_network\_name](#input\_external\_network\_name) | Name of the external network to be used to send traffic to the external networks. Defaults to edge gateway's default external network. | `string` | `""` | no |
+| <a name="input_gateway_ip"></a> [gateway\_ip](#input\_gateway\_ip) | Gateway IP for the routed network | `string` | `"192.168.1.1"` | no |
+| <a name="input_initial_machinedeployment_operating_system_profile"></a> [initial\_machinedeployment\_operating\_system\_profile](#input\_initial\_machinedeployment\_operating\_system\_profile) | Name of operating system profile for MachineDeployments, only applicable if operatng-system-manager addon is enabled.<br>If not specified, the default value will be added by machine-controller addon. | `string` | `""` | no |
+| <a name="input_initial_machinedeployment_replicas"></a> [initial\_machinedeployment\_replicas](#input\_initial\_machinedeployment\_replicas) | number of replicas per MachineDeployment | `number` | `1` | no |
+| <a name="input_kubeapi_hostname"></a> [kubeapi\_hostname](#input\_kubeapi\_hostname) | DNS name for the kube-apiserver | `string` | `""` | no |
+| <a name="input_network_dns_server_1"></a> [network\_dns\_server\_1](#input\_network\_dns\_server\_1) | Primary DNS server for the routed network | `string` | `""` | no |
+| <a name="input_network_dns_server_2"></a> [network\_dns\_server\_2](#input\_network\_dns\_server\_2) | Secondary DNS server for the routed network. | `string` | `""` | no |
+| <a name="input_network_interface_type"></a> [network\_interface\_type](#input\_network\_interface\_type) | Type of interface for the routed network | `string` | `"internal"` | no |
+| <a name="input_ssh_agent_socket"></a> [ssh\_agent\_socket](#input\_ssh\_agent\_socket) | SSH Agent socket, default to grab from $SSH\_AUTH\_SOCK | `string` | `"env:SSH_AUTH_SOCK"` | no |
+| <a name="input_ssh_port"></a> [ssh\_port](#input\_ssh\_port) | SSH port to be used to provision instances | `number` | `22` | no |
+| <a name="input_ssh_private_key_file"></a> [ssh\_private\_key\_file](#input\_ssh\_private\_key\_file) | SSH private key file used to access instances | `string` | `""` | no |
+| <a name="input_ssh_public_key_file"></a> [ssh\_public\_key\_file](#input\_ssh\_public\_key\_file) | SSH public key file | `string` | `"~/.ssh/id_rsa.pub"` | no |
+| <a name="input_ssh_username"></a> [ssh\_username](#input\_ssh\_username) | SSH user, used only in output | `string` | `"ubuntu"` | no |
+| <a name="input_template_name"></a> [template\_name](#input\_template\_name) | Name of the vApp template to use | `string` | n/a | yes |
+| <a name="input_vcd_edge_gateway_name"></a> [vcd\_edge\_gateway\_name](#input\_vcd\_edge\_gateway\_name) | Name of the Edge Gateway | `string` | n/a | yes |
+| <a name="input_vcd_org_name"></a> [vcd\_org\_name](#input\_vcd\_org\_name) | Organization name for the vCloud Director setup | `string` | n/a | yes |
+| <a name="input_vcd_vdc_name"></a> [vcd\_vdc\_name](#input\_vcd\_vdc\_name) | Virtual datacenter name | `string` | n/a | yes |
+| <a name="input_worker_cpu_cores"></a> [worker\_cpu\_cores](#input\_worker\_cpu\_cores) | Number of cores per socket for the worker VMs | `number` | `1` | no |
+| <a name="input_worker_cpus"></a> [worker\_cpus](#input\_worker\_cpus) | Number of CPUs for the worker VMs | `number` | `2` | no |
+| <a name="input_worker_disk_size"></a> [worker\_disk\_size](#input\_worker\_disk\_size) | Disk size for worker VMs in MB | `number` | `25600` | no |
+| <a name="input_worker_disk_storage_profile"></a> [worker\_disk\_storage\_profile](#input\_worker\_disk\_storage\_profile) | Name of storage profile to use for worker VMs attached disks | `string` | `""` | no |
+| <a name="input_worker_memory"></a> [worker\_memory](#input\_worker\_memory) | Memory size of each worker VM in MB | `number` | `4096` | no |
+| <a name="input_worker_os"></a> [worker\_os](#input\_worker\_os) | OS to run on worker machines | `string` | `"ubuntu"` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_kubeone_api"></a> [kubeone\_api](#output\_kubeone\_api) | kube-apiserver endpoint, virutal IP of first control plane VM |
+| <a name="output_kubeone_api"></a> [kubeone\_api](#output\_kubeone\_api) | kube-apiserver LB endpoint |
 | <a name="output_kubeone_hosts"></a> [kubeone\_hosts](#output\_kubeone\_hosts) | Control plane endpoints to SSH to |
 | <a name="output_kubeone_workers"></a> [kubeone\_workers](#output\_kubeone\_workers) | Workers definitions, that will be transformed into MachineDeployment object |

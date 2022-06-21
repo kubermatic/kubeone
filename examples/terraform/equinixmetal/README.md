@@ -12,28 +12,57 @@ See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
 [docs-infrastructure]: https://docs.kubermatic.com/kubeone/master/guides/using_terraform_configs/
 [docs-tf-loadbalancer]: https://docs.kubermatic.com/kubeone/master/examples/ha_load_balancing/
 
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0 |
+| <a name="requirement_metal"></a> [metal](#requirement\_metal) | ~> 3.2.0 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_metal"></a> [metal](#provider\_metal) | 3.2.2 |
+| <a name="provider_null"></a> [null](#provider\_null) | 3.1.1 |
+
+## Modules
+
+No modules.
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [metal_device.control_plane](https://registry.terraform.io/providers/equinix/metal/latest/docs/resources/device) | resource |
+| [metal_device.lb](https://registry.terraform.io/providers/equinix/metal/latest/docs/resources/device) | resource |
+| [metal_ssh_key.deployer](https://registry.terraform.io/providers/equinix/metal/latest/docs/resources/ssh_key) | resource |
+| [null_resource.lb_config](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|:----:|:-----:|:-----:|
-| cluster\_name | Name of the cluster | string | n/a | yes |
-| control\_plane\_operating\_system | Image to use for control plane provisioning | string | `"ubuntu_18_04"` | no |
-| device\_type | type (size) of the device | string | `"t1.small.x86"` | no |
-| facility | Facility (datacenter) | string | `"ams1"` | no |
-| initial\_machinedeployments\_operating\_system\_profiles | Name of operating system profile for MachineDeployments, only applicable if operatng-system-manager addon is enabled | string | `""` | no |
-| lb\_operating\_system | Image to use for loadbalancer provisioning | string | `"ubuntu_18_04"` | no |
-| project\_id | project ID | string | n/a | yes |
-| ssh\_agent\_socket | SSH Agent socket, default to grab from $SSH_AUTH_SOCK | string | `"env:SSH_AUTH_SOCK"` | no |
-| ssh\_port | SSH port to be used to provision instances | string | `"22"` | no |
-| ssh\_private\_key\_file | SSH private key file used to access instances | string | `""` | no |
-| ssh\_public\_key\_file | SSH public key file | string | `"~/.ssh/id_rsa.pub"` | no |
-| ssh\_username | SSH user, used only in output | string | `"root"` | no |
-| worker\_os | OS to run on worker machines | string | `"ubuntu"` | no |
+|------|-------------|------|---------|:--------:|
+| <a name="input_apiserver_alternative_names"></a> [apiserver\_alternative\_names](#input\_apiserver\_alternative\_names) | subject alternative names for the API Server signing cert. | `list(string)` | `[]` | no |
+| <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the cluster | `string` | n/a | yes |
+| <a name="input_control_plane_operating_system"></a> [control\_plane\_operating\_system](#input\_control\_plane\_operating\_system) | Image to use for control plane provisioning | `string` | `"ubuntu_18_04"` | no |
+| <a name="input_device_type"></a> [device\_type](#input\_device\_type) | type (size) of the device | `string` | `"c3.small.x86"` | no |
+| <a name="input_facility"></a> [facility](#input\_facility) | Facility (datacenter) | `string` | `"ams1"` | no |
+| <a name="input_initial_machinedeployment_operating_system_profile"></a> [initial\_machinedeployment\_operating\_system\_profile](#input\_initial\_machinedeployment\_operating\_system\_profile) | Name of operating system profile for MachineDeployments, only applicable if operatng-system-manager addon is enabled.<br>If not specified, the default value will be added by machine-controller addon. | `string` | `""` | no |
+| <a name="input_lb_device_type"></a> [lb\_device\_type](#input\_lb\_device\_type) | type (size) of the load balancer device | `string` | `"c3.small.x86"` | no |
+| <a name="input_lb_operating_system"></a> [lb\_operating\_system](#input\_lb\_operating\_system) | Image to use for loadbalancer provisioning | `string` | `"ubuntu_18_04"` | no |
+| <a name="input_project_id"></a> [project\_id](#input\_project\_id) | project ID | `string` | n/a | yes |
+| <a name="input_ssh_agent_socket"></a> [ssh\_agent\_socket](#input\_ssh\_agent\_socket) | SSH Agent socket, default to grab from $SSH\_AUTH\_SOCK | `string` | `"env:SSH_AUTH_SOCK"` | no |
+| <a name="input_ssh_port"></a> [ssh\_port](#input\_ssh\_port) | SSH port to be used to provision instances | `number` | `22` | no |
+| <a name="input_ssh_private_key_file"></a> [ssh\_private\_key\_file](#input\_ssh\_private\_key\_file) | SSH private key file used to access instances | `string` | `""` | no |
+| <a name="input_ssh_public_key_file"></a> [ssh\_public\_key\_file](#input\_ssh\_public\_key\_file) | SSH public key file | `string` | `"~/.ssh/id_rsa.pub"` | no |
+| <a name="input_ssh_username"></a> [ssh\_username](#input\_ssh\_username) | SSH user, used only in output | `string` | `"root"` | no |
+| <a name="input_worker_os"></a> [worker\_os](#input\_worker\_os) | OS to run on worker machines | `string` | `"ubuntu"` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| kubeone\_api | kube-apiserver LB endpoint |
-| kubeone\_hosts | Control plane endpoints to SSH to |
-| kubeone\_workers | Workers definitions, that will be transformed into MachineDeployment object |
+| <a name="output_kubeone_api"></a> [kubeone\_api](#output\_kubeone\_api) | kube-apiserver LB endpoint |
+| <a name="output_kubeone_hosts"></a> [kubeone\_hosts](#output\_kubeone\_hosts) | Control plane endpoints to SSH to |
+| <a name="output_kubeone_workers"></a> [kubeone\_workers](#output\_kubeone\_workers) | Workers definitions, that will be transformed into MachineDeployment object |
