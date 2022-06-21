@@ -24,7 +24,7 @@ either of the following ENV variables should be accessible:
 |------|-------------|:----:|:-----:|:-----:|
 | cluster\_name | Name of the cluster | string | n/a | yes |
 | cluster\_network\_cidr | Cluster network subnet cidr | string | `"10.240.0.0/24"` | no |
-| control\_plane\_image\_family | Image family to use for provisioning instances | string | `"ubuntu-1804-lts"` | no |
+| control\_plane\_image\_family | Image family to use for provisioning instances | string | `"ubuntu-2004-lts"` | no |
 | control\_plane\_image\_project | Project of the image to use for provisioning instances | string | `"ubuntu-os-cloud"` | no |
 | control\_plane\_target\_pool\_members\_count |  | string | `"3"` | no |
 | control\_plane\_type | GCE instance type | string | `"n1-standard-2"` | no |
