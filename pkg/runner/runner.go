@@ -62,6 +62,8 @@ func (r *Runner) RunRaw(cmd string) (string, string, error) {
 				Cmd:    cmd,
 				Stderr: stderr,
 			}
+			r.Conn.Close()
+			r.Conn = nil
 		}
 
 		return stdout, stderr, err
@@ -75,6 +77,11 @@ func (r *Runner) RunRaw(cmd string) (string, string, error) {
 
 	// run the command
 	_, err := r.Conn.POpen(cmd, nil, stdout, stderr)
+
+	if err != nil {
+		r.Conn.Close()
+		r.Conn = nil
+	}
 
 	return stdout.String(), stderr.String(), err
 }
