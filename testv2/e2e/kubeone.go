@@ -68,15 +68,15 @@ func (k1 *kubeoneBin) Reset() error {
 	return k1.run("reset", "--auto-approve", "--destroy-workers", "--remove-binaries")
 }
 
-func (k1 *kubeoneBin) AsyncProxy(ctx context.Context) (string, error) {
+func (k1 *kubeoneBin) AsyncProxy(ctx context.Context) (string, func() error, error) {
 	list, err := net.Listen("tcp4", "127.0.0.1:0")
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
 
 	hostPort := list.Addr().String()
 	if err = list.Close(); err != nil {
-		return "", err
+		return "", nil, err
 	}
 
 	proxyURL := url.URL{
@@ -86,13 +86,10 @@ func (k1 *kubeoneBin) AsyncProxy(ctx context.Context) (string, error) {
 
 	cmd := k1.build("proxy", "--listen", hostPort).BuildCmd(ctx)
 	if err = cmd.Start(); err != nil {
-		return "", err
+		return "", nil, err
 	}
-	go func() {
-		_ = cmd.Wait()
-	}()
 
-	return proxyURL.String(), nil
+	return proxyURL.String(), cmd.Wait, nil
 }
 
 func (k1 *kubeoneBin) ClusterManifest() (*kubeoneapi.KubeOneCluster, error) {

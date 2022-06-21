@@ -264,7 +264,10 @@ func renderManifest(t *testing.T, templatePath string, data manifestData) string
 }
 
 func waitForNodesReady(t *testing.T, client ctrlruntimeclient.Client, expectedNumberOfNodes int) error {
-	return wait.Poll(5*time.Second, 10*time.Minute, func() (bool, error) {
+	waitTimeout := 10 * time.Minute
+	t.Logf("waiting maximum %s for %d nodes to be ready", waitTimeout, expectedNumberOfNodes)
+
+	return wait.Poll(5*time.Second, waitTimeout, func() (bool, error) {
 		nodes := corev1.NodeList{}
 
 		if err := client.List(context.Background(), &nodes); err != nil {
@@ -488,13 +491,22 @@ func sonobuoyRun(t *testing.T, k1 *kubeoneBin, mode sonobuoyMode) {
 	// launch kubeone proxy, to have a HTTPS proxy through the SSH tunnel
 	// to open access to the kubeapi behind the bastion host
 	proxyCtx, killProxy := context.WithCancel(context.Background())
-	proxyURL, err := k1.AsyncProxy(proxyCtx)
+	proxyURL, waitK1, err := k1.AsyncProxy(proxyCtx)
 	if err != nil {
 		t.Fatalf("starting kubeone proxy: %v", err)
 	}
+	defer func() {
+		waitErr := waitK1()
+		if waitErr != nil {
+			t.Logf("wait kubeone proxy: %v", waitErr)
+		}
+	}()
 	defer killProxy()
 
 	t.Logf("kubeone proxy is running on %s", proxyURL)
+
+	// let kubeone proxy start and open the port
+	time.Sleep(5 * time.Second)
 
 	sb := sonobuoyBin{
 		kubeconfig: kubeconfigPath,
@@ -510,7 +522,8 @@ func sonobuoyRun(t *testing.T, k1 *kubeoneBin, mode sonobuoyMode) {
 		t.Fatalf("sonobuoy wait failed: %v", err)
 	}
 
-	if err = sb.Retrieve(); err != nil {
+	err = retryFn(sb.Retrieve)
+	if err != nil {
 		t.Fatalf("sonobuoy retrieve failed: %v", err)
 	}
 
