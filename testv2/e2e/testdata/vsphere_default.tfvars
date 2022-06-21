@@ -5,3 +5,5 @@ worker_os                          = "ubuntu"
 folder_name                        = "kubeone-e2e"
 ssh_username                       = "ubuntu"
 initial_machinedeployment_replicas = 3
+control_plane_memory               = 4096
+worker_memory                      = 4096
