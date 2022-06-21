@@ -70,20 +70,25 @@ variable "ssh_agent_socket" {
   type        = string
 }
 
-# provider specific settings
-
 variable "ssh_bastion_host" {
+  description = "ssh jumphost (bastion) hostname"
+  default = ""
   type = string
 }
 
 variable "ssh_bastion_port" {
+  description = "ssh jumphost (bastion) port"
   type    = number
   default = 22
 }
 
 variable "ssh_bastion_username" {
+  description = "ssh jumphost (bastion) username"
+  default = ""
   type = string
 }
+
+# provider specific settings
 
 variable "dc_name" {
   default     = "dc-1"
