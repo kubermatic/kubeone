@@ -26,7 +26,7 @@ const (
 source /etc/kubeone/proxy-env
 
 {{ template "detect-host-cpu-architecture" }}
-{{ template "sysctl-k8s" }}
+{{ template "sysctl-k8s" . }}
 {{ template "journald-config" }}
 
 sudo mkdir -p /opt/cni/bin /etc/kubernetes/pki /etc/kubernetes/manifests
@@ -200,6 +200,7 @@ func KubeadmFlatcar(cluster *kubeoneapi.KubeOneCluster) (string, error) {
 		"CRITOOLS_VERSION":       defaultCriToolsVersion,
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
+		"CILIUM":                 ciliumCNI(cluster),
 	}
 
 	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
