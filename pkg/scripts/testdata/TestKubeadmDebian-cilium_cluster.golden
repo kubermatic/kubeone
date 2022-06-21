@@ -1,0 +1,89 @@
+set -xeuo pipefail
+export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
+
+sudo swapoff -a
+sudo sed -i '/.*swap.*/d' /etc/fstab
+sudo systemctl disable --now ufw || true
+
+source /etc/kubeone/proxy-env
+
+
+cat <<EOF | sudo tee /etc/modules-load.d/containerd.conf
+overlay
+br_netfilter
+ip_tables
+EOF
+sudo modprobe overlay
+sudo modprobe br_netfilter
+sudo modprobe ip_tables
+sudo mkdir -p /etc/sysctl.d
+cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+fs.inotify.max_user_watches         = 1048576
+kernel.panic                        = 10
+kernel.panic_on_oops                = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables  = 1
+net.ipv4.ip_forward                 = 1
+net.netfilter.nf_conntrack_max      = 1000000
+vm.overcommit_memory                = 1
+EOF
+cat <<EOF | sudo tee /etc/sysctl.d/99-zzz-override_cilium.conf
+# Disable rp_filter on ALL interfaces since it may cause mangled packets to be dropped
+# https://github.com/cilium/cilium/blob/v1.11.1/pkg/datapath/loader/base.go#L244
+net.ipv4.conf.all.rp_filter = 0
+EOF
+
+sudo sysctl --system
+
+
+sudo mkdir -p /etc/systemd/journald.conf.d
+cat <<EOF | sudo tee /etc/systemd/journald.conf.d/max_disk_use.conf
+[Journal]
+SystemMaxUse=5G
+EOF
+sudo systemctl force-reload systemd-journald
+
+
+sudo mkdir -p /etc/apt/apt.conf.d
+cat <<EOF | sudo tee /etc/apt/apt.conf.d/proxy.conf
+Acquire::https::Proxy "http://https.proxy";
+Acquire::http::Proxy "http://http.proxy";
+EOF
+
+sudo apt-get update
+sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--force-confold" -y --no-install-recommends \
+	apt-transport-https \
+	ca-certificates \
+	curl \
+	gnupg \
+	lsb-release \
+	rsync
+curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+
+# You'd think that kubernetes-$(lsb_release -sc) belongs there instead, but the debian repo
+# contains neither kubeadm nor kubelet, and the docs themselves suggest using xenial repo.
+echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+sudo apt-get update
+
+kube_ver="1.17.4*"
+cni_ver="0.8.7*"
+
+
+
+
+
+sudo DEBIAN_FRONTEND=noninteractive apt-get install \
+	--option "Dpkg::Options::=--force-confold" \
+	--no-install-recommends \
+	-y \
+	kubelet=${kube_ver} \
+	kubeadm=${kube_ver} \
+	kubectl=${kube_ver} \
+	kubernetes-cni=${cni_ver}
+
+sudo apt-mark hold kubelet kubeadm kubectl kubernetes-cni
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now kubelet
+sudo systemctl restart kubelet
