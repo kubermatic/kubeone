@@ -29,7 +29,7 @@ sudo systemctl disable --now ufw || true
 
 source /etc/kubeone/proxy-env
 
-{{ template "sysctl-k8s" }}
+{{ template "sysctl-k8s" . }}
 {{ template "journald-config" }}
 
 sudo mkdir -p /etc/apt/apt.conf.d
@@ -136,6 +136,7 @@ func KubeadmDebian(cluster *kubeoneapi.KubeOneCluster, force bool) (string, erro
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 		"INSTALL_ISCSI_AND_NFS":  installISCSIAndNFS(cluster),
+		"CILIUM":                 ciliumCNI(cluster),
 	}
 
 	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
@@ -161,6 +162,7 @@ func UpgradeKubeadmAndCNIDebian(cluster *kubeoneapi.KubeOneCluster) (string, err
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 		"INSTALL_ISCSI_AND_NFS":  installISCSIAndNFS(cluster),
+		"CILIUM":                 ciliumCNI(cluster),
 	}
 
 	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
@@ -183,6 +185,7 @@ func UpgradeKubeletAndKubectlDebian(cluster *kubeoneapi.KubeOneCluster) (string,
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 		"INSTALL_ISCSI_AND_NFS":  installISCSIAndNFS(cluster),
+		"CILIUM":                 ciliumCNI(cluster),
 	}
 
 	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
