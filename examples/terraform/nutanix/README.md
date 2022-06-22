@@ -23,8 +23,12 @@ See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
 
 | Name | Version |
 |------|---------|
-| <a name="provider_null"></a> [null](#provider\_null) | 3.1.0 |
+| <a name="provider_null"></a> [null](#provider\_null) | n/a |
 | <a name="provider_nutanix"></a> [nutanix](#provider\_nutanix) | 1.2.2 |
+
+## Modules
+
+No modules.
 
 ## Resources
 
@@ -44,9 +48,8 @@ See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_allow_insecure"></a> [allow\_insecure](#input\_allow\_insecure) | Allow insecure access to the Nutanix API | `bool` | `false` | no |
 | <a name="input_apiserver_alternative_names"></a> [apiserver\_alternative\_names](#input\_apiserver\_alternative\_names) | subject alternative names for the API Server signing cert. | `list(string)` | `[]` | no |
-| <a name="input_bastion_disk_size"></a> [bastion\_disk\_size](#input\_bastion\_disk\_size) | Disk size size, in Mib, for bastion/LB node | `number` | `102400` | no |
+| <a name="input_bastion_disk_size"></a> [bastion\_disk\_size](#input\_bastion\_disk\_size) | Disk size, in Mib, for bastion/LB node | `number` | `102400` | no |
 | <a name="input_bastion_memory_size"></a> [bastion\_memory\_size](#input\_bastion\_memory\_size) | Memory size, in Mib, for bastion/LB node | `number` | `4096` | no |
 | <a name="input_bastion_port"></a> [bastion\_port](#input\_bastion\_port) | Bastion SSH port | `number` | `22` | no |
 | <a name="input_bastion_sockets"></a> [bastion\_sockets](#input\_bastion\_sockets) | Number of sockets for bastion/LB node | `number` | `1` | no |
@@ -58,6 +61,7 @@ See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
 | <a name="input_control_plane_sockets"></a> [control\_plane\_sockets](#input\_control\_plane\_sockets) | Number of sockets for control plane nodes | `number` | `1` | no |
 | <a name="input_control_plane_vcpus"></a> [control\_plane\_vcpus](#input\_control\_plane\_vcpus) | Number of vCPUs per socket for control plane nodes | `number` | `2` | no |
 | <a name="input_image_name"></a> [image\_name](#input\_image\_name) | Image to be used for instances (control plane, bastion/LB, workers) | `string` | n/a | yes |
+| <a name="input_initial_machinedeployment_operating_system_profile"></a> [initial\_machinedeployment\_operating\_system\_profile](#input\_initial\_machinedeployment\_operating\_system\_profile) | Name of operating system profile for MachineDeployments, only applicable if operatng-system-manager addon is enabled.<br>If not specified, the default value will be added by machine-controller addon. | `string` | `""` | no |
 | <a name="input_initial_machinedeployment_replicas"></a> [initial\_machinedeployment\_replicas](#input\_initial\_machinedeployment\_replicas) | number of replicas per MachineDeployment | `number` | `1` | no |
 | <a name="input_nutanix_cluster_name"></a> [nutanix\_cluster\_name](#input\_nutanix\_cluster\_name) | Name of the Nutanix Cluster which will be used for this Kubernetes cluster | `string` | n/a | yes |
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Name of the Nutanix Project | `string` | n/a | yes |
@@ -72,7 +76,6 @@ See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
 | <a name="input_worker_os"></a> [worker\_os](#input\_worker\_os) | OS to run on worker machines, default to var.os | `string` | `"ubuntu"` | no |
 | <a name="input_worker_sockets"></a> [worker\_sockets](#input\_worker\_sockets) | Number of sockets for worker nodes | `number` | `1` | no |
 | <a name="input_worker_vcpus"></a> [worker\_vcpus](#input\_worker\_vcpus) | Number of vCPUs per socket for worker nodes | `number` | `2` | no |
-| <a name="initial_machinedeployment_operating_system_profile"></a> [initial\_machinedeployment\_operating\_system\_profile](#input\_initial\_machinedeployment\_operating\_system\_profile) | Name of operating system profile for MachineDeployment, only applicable if operatng-system-manager addon is enabled | `string` | `""` | no |
 
 ## Outputs
 

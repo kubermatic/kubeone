@@ -7,27 +7,54 @@ use the configs and how to provision a Kubernetes cluster using KubeOne.
 
 [docs-infrastructure]: https://docs.kubermatic.com/kubeone/master/guides/using_terraform_configs/
 
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0 |
+| <a name="requirement_digitalocean"></a> [digitalocean](#requirement\_digitalocean) | ~> 2.9.0 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_digitalocean"></a> [digitalocean](#provider\_digitalocean) | 2.9.0 |
+
+## Modules
+
+No modules.
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [digitalocean_droplet.control_plane](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/resources/droplet) | resource |
+| [digitalocean_loadbalancer.control_plane](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/resources/loadbalancer) | resource |
+| [digitalocean_ssh_key.deployer](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/resources/ssh_key) | resource |
+| [digitalocean_tag.kube_cluster_tag](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/resources/tag) | resource |
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|:----:|:-----:|:-----:|
-| cluster\_name | Name of the cluster | string | n/a | yes |
-| control\_plane\_droplet\_image | Image to use for provisioning control plane droplets | string | `"ubuntu-18-04-x64"` | no |
-| control\_plane\_size | Size of control plane nodes | string | `"s-2vcpu-4gb"` | no |
-| initial\_machinedeployments\_operating\_system\_profiles | Name of operating system profile for MachineDeployments, only applicable if operatng-system-manager addon is enabled | string | `""` | no |
-| region | Region to speak to | string | `"fra1"` | no |
-| ssh\_agent\_socket | SSH Agent socket, default to grab from $SSH_AUTH_SOCK | string | `"env:SSH_AUTH_SOCK"` | no |
-| ssh\_port | SSH port to be used to provision instances | string | `"22"` | no |
-| ssh\_private\_key\_file | SSH private key file used to access instances | string | `""` | no |
-| ssh\_public\_key\_file | SSH public key file | string | `"~/.ssh/id_rsa.pub"` | no |
-| ssh\_username | SSH user, used only in output | string | `"root"` | no |
-| worker\_os | OS to run on worker machines | string | `"ubuntu"` | no |
-| worker\_size | Size of worker nodes | string | `"s-2vcpu-4gb"` | no |
+|------|-------------|------|---------|:--------:|
+| <a name="input_apiserver_alternative_names"></a> [apiserver\_alternative\_names](#input\_apiserver\_alternative\_names) | subject alternative names for the API Server signing cert. | `list(string)` | `[]` | no |
+| <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the cluster | `string` | n/a | yes |
+| <a name="input_control_plane_droplet_image"></a> [control\_plane\_droplet\_image](#input\_control\_plane\_droplet\_image) | Image to use for provisioning control plane droplets | `string` | `"ubuntu-18-04-x64"` | no |
+| <a name="input_control_plane_size"></a> [control\_plane\_size](#input\_control\_plane\_size) | Size of control plane nodes | `string` | `"s-2vcpu-4gb"` | no |
+| <a name="input_initial_machinedeployment_operating_system_profile"></a> [initial\_machinedeployment\_operating\_system\_profile](#input\_initial\_machinedeployment\_operating\_system\_profile) | Name of operating system profile for MachineDeployments, only applicable if operatng-system-manager addon is enabled.<br>If not specified, the default value will be added by machine-controller addon. | `string` | `""` | no |
+| <a name="input_region"></a> [region](#input\_region) | Region to speak to | `string` | `"fra1"` | no |
+| <a name="input_ssh_agent_socket"></a> [ssh\_agent\_socket](#input\_ssh\_agent\_socket) | SSH Agent socket, default to grab from $SSH\_AUTH\_SOCK | `string` | `"env:SSH_AUTH_SOCK"` | no |
+| <a name="input_ssh_port"></a> [ssh\_port](#input\_ssh\_port) | SSH port to be used to provision instances | `number` | `22` | no |
+| <a name="input_ssh_private_key_file"></a> [ssh\_private\_key\_file](#input\_ssh\_private\_key\_file) | SSH private key file used to access instances | `string` | `""` | no |
+| <a name="input_ssh_public_key_file"></a> [ssh\_public\_key\_file](#input\_ssh\_public\_key\_file) | SSH public key file | `string` | `"~/.ssh/id_rsa.pub"` | no |
+| <a name="input_ssh_username"></a> [ssh\_username](#input\_ssh\_username) | SSH user, used only in output | `string` | `"root"` | no |
+| <a name="input_worker_os"></a> [worker\_os](#input\_worker\_os) | OS to run on worker machines | `string` | `"ubuntu"` | no |
+| <a name="input_worker_size"></a> [worker\_size](#input\_worker\_size) | Size of worker nodes | `string` | `"s-2vcpu-4gb"` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| kubeone\_api | kube-apiserver LB endpoint |
-| kubeone\_hosts | Control plane endpoints to SSH to |
-| kubeone\_workers | Workers definitions, that will be transformed into MachineDeployment object |
+| <a name="output_kubeone_api"></a> [kubeone\_api](#output\_kubeone\_api) | kube-apiserver LB endpoint |
+| <a name="output_kubeone_hosts"></a> [kubeone\_hosts](#output\_kubeone\_hosts) | Control plane endpoints to SSH to |
+| <a name="output_kubeone_workers"></a> [kubeone\_workers](#output\_kubeone\_workers) | Workers definitions, that will be transformed into MachineDeployment object |
