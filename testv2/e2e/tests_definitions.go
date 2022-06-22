@@ -146,6 +146,9 @@ var (
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/azure",
+				vars: []string{
+					"initial_machinedeployment_replicas=3",
+				},
 			},
 		},
 		"digitalocean_default": {
