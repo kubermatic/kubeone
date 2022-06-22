@@ -68,6 +68,33 @@ function setup_ci_environment_vars() {
     export AWS_ACCESS_KEY_ID=${AWS_E2E_TESTS_KEY_ID}
     export AWS_SECRET_ACCESS_KEY=${AWS_E2E_TESTS_SECRET}
     ;;
+  "azure")
+    export ARM_CLIENT_ID=${AZURE_E2E_TESTS_CLIENT_ID}
+    export ARM_CLIENT_SECRET=${AZURE_E2E_TESTS_CLIENT_SECRET}
+    export ARM_SUBSCRIPTION_ID=${AZURE_E2E_TESTS_SUBSCRIPTION_ID}
+    export ARM_TENANT_ID=${AZURE_E2E_TESTS_TENANT_ID}
+    CREDENTIALS_FILE_PATH="${BUILD_DIR}/credentials.yaml"
+
+    cat > "${CREDENTIALS_FILE_PATH}" << EOL
+cloudConfig: |
+  {
+    "aadClientId": "${ARM_CLIENT_ID}",
+    "aadClientSecret": "${ARM_CLIENT_SECRET}",
+    "subscriptionId": "${ARM_SUBSCRIPTION_ID}",
+    "tenantId": "${ARM_TENANT_ID}",
+    "resourceGroup": "${TF_VAR_cluster_name}-rg",
+    "location": "westeurope",
+    "subnetName": "${TF_VAR_cluster_name}-subnet",
+    "routeTableName": "",
+    "securityGroupName": "${TF_VAR_cluster_name}-sg",
+    "vnetName": "${TF_VAR_cluster_name}-vpc",
+    "primaryAvailabilitySetName": "${TF_VAR_cluster_name}-avset",
+    "useInstanceMetadata": true,
+    "useManagedIdentityExtension": false,
+    "userAssignedIdentityID": ""
+  }
+EOL
+    ;;
   "digitalocean")
     export DIGITALOCEAN_TOKEN=${DO_E2E_TESTS_TOKEN}
     ;;
@@ -99,7 +126,7 @@ function setup_ci_environment_vars() {
     export TF_VAR_ssh_bastion_username=${VSPHERE_E2E_TEST_SSH_USERNAME}
     CREDENTIALS_FILE_PATH="${BUILD_DIR}/credentials.yaml"
 
-cat > "${CREDENTIALS_FILE_PATH}" <<EOL
+    cat > "${CREDENTIALS_FILE_PATH}" << EOL
 cloudConfig: |
   [Global]
   secret-name = "vsphere-ccm-credentials"
