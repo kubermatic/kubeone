@@ -126,6 +126,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: azure
+      - name: TEST_TIMEOUT
+        value: 120m
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -390,6 +392,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: azure
+      - name: TEST_TIMEOUT
+        value: 120m
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -654,6 +658,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: azure
+      - name: TEST_TIMEOUT
+        value: 120m
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -918,6 +924,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: azure
+      - name: TEST_TIMEOUT
+        value: 120m
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1182,6 +1190,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: azure
+      - name: TEST_TIMEOUT
+        value: 120m
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1446,6 +1456,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: azure
+      - name: TEST_TIMEOUT
+        value: 120m
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1710,6 +1722,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: azure
+      - name: TEST_TIMEOUT
+        value: 120m
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -1974,6 +1988,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: azure
+      - name: TEST_TIMEOUT
+        value: 120m
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -2238,6 +2254,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: azure
+      - name: TEST_TIMEOUT
+        value: 120m
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -2502,6 +2520,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: azure
+      - name: TEST_TIMEOUT
+        value: 120m
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -2766,6 +2786,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: azure
+      - name: TEST_TIMEOUT
+        value: 120m
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""
@@ -3030,6 +3052,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: azure
+      - name: TEST_TIMEOUT
+        value: 120m
       image: kubermatic/kubeone-e2e:v0.1.22
       imagePullPolicy: Always
       name: ""

@@ -142,7 +142,8 @@ var (
 				"preset-azure":   "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "azure",
+				"PROVIDER":     "azure",
+				"TEST_TIMEOUT": "120m",
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/azure",
