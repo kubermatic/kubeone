@@ -28,7 +28,7 @@ See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0 |
-| <a name="requirement_vsphere"></a> [vsphere](#requirement\_vsphere) | ~> 2.0.1 |
+| <a name="requirement_vsphere"></a> [vsphere](#requirement\_vsphere) | ~> 2.1.1 |
 
 ## Providers
 
@@ -71,6 +71,9 @@ No modules.
 | <a name="input_network_name"></a> [network\_name](#input\_network\_name) | network name | `string` | `"public"` | no |
 | <a name="input_resource_pool_name"></a> [resource\_pool\_name](#input\_resource\_pool\_name) | cluster resource pool name | `string` | `""` | no |
 | <a name="input_ssh_agent_socket"></a> [ssh\_agent\_socket](#input\_ssh\_agent\_socket) | SSH Agent socket, default to grab from $SSH\_AUTH\_SOCK | `string` | `"env:SSH_AUTH_SOCK"` | no |
+| <a name="input_ssh_bastion_host"></a> [ssh\_bastion\_host](#input\_ssh\_bastion\_host) | ssh jumphost (bastion) hostname | `string` | `""` | no |
+| <a name="input_ssh_bastion_port"></a> [ssh\_bastion\_port](#input\_ssh\_bastion\_port) | ssh jumphost (bastion) port | `number` | `22` | no |
+| <a name="input_ssh_bastion_username"></a> [ssh\_bastion\_username](#input\_ssh\_bastion\_username) | ssh jumphost (bastion) username | `string` | `""` | no |
 | <a name="input_ssh_port"></a> [ssh\_port](#input\_ssh\_port) | SSH port to be used to provision instances | `number` | `22` | no |
 | <a name="input_ssh_private_key_file"></a> [ssh\_private\_key\_file](#input\_ssh\_private\_key\_file) | SSH private key file used to access instances | `string` | `""` | no |
 | <a name="input_ssh_public_key_file"></a> [ssh\_public\_key\_file](#input\_ssh\_public\_key\_file) | SSH public key file | `string` | `"~/.ssh/id_rsa.pub"` | no |
