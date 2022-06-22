@@ -19,6 +19,7 @@ package v1beta2
 import (
 	"fmt"
 	"path/filepath"
+	"strconv"
 	"time"
 
 	"github.com/Masterminds/semver/v3"
@@ -179,10 +180,6 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 			},
 		},
 		FeatureGates: map[string]bool{},
-	}
-
-	if host.Kubelet.MaxPods != nil {
-		kubeletConfig.MaxPods = *host.Kubelet.MaxPods
 	}
 
 	if cluster.AssetConfiguration.Pause.ImageRepository != "" {
@@ -379,10 +376,6 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Obje
 		FeatureGates: map[string]bool{},
 	}
 
-	if host.Kubelet.MaxPods != nil {
-		kubeletConfig.MaxPods = *host.Kubelet.MaxPods
-	}
-
 	if cluster.AssetConfiguration.Pause.ImageRepository != "" {
 		nodeRegistration.KubeletExtraArgs["pod-infra-container-image"] = cluster.AssetConfiguration.Pause.ImageRepository + "/pause:" + cluster.AssetConfiguration.Pause.ImageTag
 	}
@@ -441,6 +434,9 @@ func newNodeRegistration(s *state.State, host kubeoneapi.HostConfig) kubeadmv1be
 
 	if m := host.Kubelet.EvictionHard; m != nil {
 		kubeletCLIFlags["eviction-hard"] = kubeoneapi.MapStringStringToString(m, "<")
+	}
+	if m := host.Kubelet.MaxPods; m != nil {
+		kubeletCLIFlags["max-pods"] = strconv.Itoa(int(*m))
 	}
 
 	return kubeadmv1beta2.NodeRegistrationOptions{
