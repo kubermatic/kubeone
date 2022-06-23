@@ -96,6 +96,12 @@ variable "worker_size" {
   type        = string
 }
 
+variable "initial_machinedeployment_replicas" {
+  description = "Number of replicas per MachineDeployment"
+  default     = 1
+  type        = number
+}
+
 variable "initial_machinedeployment_operating_system_profile" {
   default     = ""
   type        = string

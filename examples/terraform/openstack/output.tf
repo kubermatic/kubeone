@@ -54,7 +54,7 @@ output "kubeone_workers" {
     # following outputs will be parsed by kubeone and automatically merged into
     # corresponding (by name) worker definition
     "${var.cluster_name}-pool1" = {
-      replicas = 1
+      replicas = var.initial_machinedeployment_replicas
       providerSpec = {
         annotations = {
           "k8c.io/operating-system-profile" = var.initial_machinedeployment_operating_system_profile
