@@ -1,0 +1,20 @@
+# GCE Quickstart Terraform configs
+
+The GCE Quickstart Terraform configs can be used to create the needed
+infrastructure for a Kubernetes HA cluster. Check out the following
+[Creating Infrastructure guide][docs-infrastructure] to learn more about how to
+use the configs and how to provision a Kubernetes cluster using KubeOne.
+
+[docs-infrastructure]: https://docs.kubermatic.com/kubeone/master/guides/using_terraform_configs/
+
+## GCE Provider configuration
+
+### Credentials
+
+Per <https://www.terraform.io/docs/providers/google/provider_reference.html#configuration-reference>
+either of the following ENV variables should be accessible:
+
+* `GOOGLE_CREDENTIALS`
+* `GOOGLE_CLOUD_KEYFILE_JSON`
+* `GCLOUD_KEYFILE_JSON`
+
