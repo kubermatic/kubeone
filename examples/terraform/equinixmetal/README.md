@@ -49,6 +49,7 @@ No modules.
 | <a name="input_device_type"></a> [device\_type](#input\_device\_type) | type (size) of the device | `string` | `"c3.small.x86"` | no |
 | <a name="input_facility"></a> [facility](#input\_facility) | Facility (datacenter) | `string` | `"ams1"` | no |
 | <a name="input_initial_machinedeployment_operating_system_profile"></a> [initial\_machinedeployment\_operating\_system\_profile](#input\_initial\_machinedeployment\_operating\_system\_profile) | Name of operating system profile for MachineDeployments, only applicable if operatng-system-manager addon is enabled.<br>If not specified, the default value will be added by machine-controller addon. | `string` | `""` | no |
+| <a name="input_initial_machinedeployment_replicas"></a> [initial\_machinedeployment\_replicas](#input\_initial\_machinedeployment\_replicas) | Number of replicas per MachineDeployment | `number` | `1` | no |
 | <a name="input_lb_device_type"></a> [lb\_device\_type](#input\_lb\_device\_type) | type (size) of the load balancer device | `string` | `"c3.small.x86"` | no |
 | <a name="input_lb_operating_system"></a> [lb\_operating\_system](#input\_lb\_operating\_system) | Image to use for loadbalancer provisioning | `string` | `"ubuntu_18_04"` | no |
 | <a name="input_project_id"></a> [project\_id](#input\_project\_id) | project ID | `string` | n/a | yes |

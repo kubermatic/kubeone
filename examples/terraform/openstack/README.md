@@ -67,6 +67,7 @@ No modules.
 | <a name="input_image"></a> [image](#input\_image) | image name to use | `string` | `""` | no |
 | <a name="input_image_properties_query"></a> [image\_properties\_query](#input\_image\_properties\_query) | in absense of var.image, this will be used to query API for the image | `map(any)` | <pre>{<br>  "os_distro": "ubuntu",<br>  "os_version": "20.04"<br>}</pre> | no |
 | <a name="input_initial_machinedeployment_operating_system_profile"></a> [initial\_machinedeployment\_operating\_system\_profile](#input\_initial\_machinedeployment\_operating\_system\_profile) | Name of operating system profile for MachineDeployments, only applicable if operatng-system-manager addon is enabled.<br>If not specified, the default value will be added by machine-controller addon. | `string` | `""` | no |
+| <a name="input_initial_machinedeployment_replicas"></a> [initial\_machinedeployment\_replicas](#input\_initial\_machinedeployment\_replicas) | Number of replicas per MachineDeployment | `number` | `1` | no |
 | <a name="input_lb_flavor"></a> [lb\_flavor](#input\_lb\_flavor) | OpenStack instance flavor for the LoadBalancer node | `string` | `"m1.tiny"` | no |
 | <a name="input_ssh_agent_socket"></a> [ssh\_agent\_socket](#input\_ssh\_agent\_socket) | SSH Agent socket, default to grab from $SSH\_AUTH\_SOCK | `string` | `"env:SSH_AUTH_SOCK"` | no |
 | <a name="input_ssh_port"></a> [ssh\_port](#input\_ssh\_port) | SSH port to be used to provision instances | `number` | `22` | no |

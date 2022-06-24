@@ -1,0 +1,31 @@
+# VMware Cloud Director Quickstart Terraform Configs
+
+The VMware Cloud Director  Quickstart Terraform configs can be used to create the needed
+infrastructure for a Kubernetes HA cluster. Check out the following
+[Creating Infrastructure guide][docs-infrastructure] to learn more about how to
+use the configs and how to provision a Kubernetes cluster using KubeOne.
+
+[docs-infrastructure]: https://docs.kubermatic.com/kubeone/master/guides/using_terraform_configs/
+
+## Setup
+
+In this setup, we assume that a dedicated org VDC has been created. It's connected to an external network using an edge gateway. NSX-V is enabled in the infrastructure since the sample configs only support NSX-V, for now.
+
+The kube-apiserver will be assigned the private IP address of the first control plane VM.
+
+### Credentials
+
+Following environment variables or terraform variables can be used to authenticate with the provider:
+
+| Environment Variable | Terraform Variable |
+|------|---------|
+| VCD_USER | vcd.user |
+| VCD_PASSWORD | vcd.user |
+| VCD_ORG | vcd.org |
+| VCD_URL | vcd.url |
+
+#### References
+
+- <https://registry.terraform.io/providers/vmware/vcd/latest/docs#connecting-as-sys-admin-with-default-org-and-vdc>
+- <https://registry.terraform.io/providers/vmware/vcd/latest/docs#argument-reference>
+

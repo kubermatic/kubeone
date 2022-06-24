@@ -18,8 +18,8 @@ use the configs and how to provision a Kubernetes cluster using KubeOne.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 2.63.0 |
-| <a name="provider_time"></a> [time](#provider\_time) | n/a |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 3.10.0 |
+| <a name="provider_time"></a> [time](#provider\_time) | 0.7.2 |
 
 ## Modules
 

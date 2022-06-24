@@ -66,6 +66,7 @@ No modules.
 | <a name="input_control_plane_type"></a> [control\_plane\_type](#input\_control\_plane\_type) | GCE instance type | `string` | `"n1-standard-2"` | no |
 | <a name="input_control_plane_volume_size"></a> [control\_plane\_volume\_size](#input\_control\_plane\_volume\_size) | Size of the boot volume, in GB | `number` | `100` | no |
 | <a name="input_initial_machinedeployment_operating_system_profile"></a> [initial\_machinedeployment\_operating\_system\_profile](#input\_initial\_machinedeployment\_operating\_system\_profile) | Name of operating system profile for MachineDeployments, only applicable if operatng-system-manager addon is enabled.<br>If not specified, the default value will be added by machine-controller addon. | `string` | `""` | no |
+| <a name="input_initial_machinedeployment_replicas"></a> [initial\_machinedeployment\_replicas](#input\_initial\_machinedeployment\_replicas) | Number of replicas per MachineDeployment | `number` | `1` | no |
 | <a name="input_project"></a> [project](#input\_project) | Project to be used for all resources | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | GCP region to speak to | `string` | `"europe-west3"` | no |
 | <a name="input_ssh_agent_socket"></a> [ssh\_agent\_socket](#input\_ssh\_agent\_socket) | SSH Agent socket, default to grab from $SSH\_AUTH\_SOCK | `string` | `"env:SSH_AUTH_SOCK"` | no |
