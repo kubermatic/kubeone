@@ -87,9 +87,10 @@ variable "worker_type" {
   type    = string
 }
 
-variable "workers_replicas" {
-  default = 1
-  type    = number
+variable "initial_machinedeployment_replicas" {
+  description = "Number of replicas per MachineDeployment"
+  default     = 1
+  type        = number
 }
 
 variable "lb_type" {
