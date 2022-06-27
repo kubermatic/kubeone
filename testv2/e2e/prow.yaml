@@ -44,7 +44,7 @@ presubmits:
       resources:
         requests:
           cpu: "1"
-- always_run: true
+- always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
@@ -310,7 +310,7 @@ presubmits:
       resources:
         requests:
           cpu: "1"
-- always_run: true
+- always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
@@ -576,7 +576,7 @@ presubmits:
       resources:
         requests:
           cpu: "1"
-- always_run: true
+- always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
@@ -804,6 +804,272 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-amzn-install-containerd-v1.24.2
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAwsAmznInstallContainerdV1_24_2
+      env:
+      - name: PROVIDER
+        value: aws
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-centos-install-containerd-v1.24.2
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAwsCentosInstallContainerdV1_24_2
+      env:
+      - name: PROVIDER
+        value: aws
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-defaults-install-containerd-v1.24.2
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAwsDefaultsInstallContainerdV1_24_2
+      env:
+      - name: PROVIDER
+        value: aws
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-flatcar-install-containerd-v1.24.2
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAwsFlatcarInstallContainerdV1_24_2
+      env:
+      - name: PROVIDER
+        value: aws
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-rhel-install-containerd-v1.24.2
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAwsRhelInstallContainerdV1_24_2
+      env:
+      - name: PROVIDER
+        value: aws
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-azure-default-install-containerd-v1.24.2
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAzureDefaultInstallContainerdV1_24_2
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-digitalocean: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-digitalocean-default-install-containerd-v1.24.2
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestDigitaloceanDefaultInstallContainerdV1_24_2
+      env:
+      - name: PROVIDER
+        value: digitalocean
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-default-install-containerd-v1.24.2
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestEquinixmetalDefaultInstallContainerdV1_24_2
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-default-install-containerd-v1.24.2
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestHetznerDefaultInstallContainerdV1_24_2
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-default-install-containerd-v1.24.2
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestOpenstackDefaultInstallContainerdV1_24_2
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-default-install-containerd-v1.24.2
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestVsphereDefaultInstallContainerdV1_24_2
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-flatcar-install-containerd-v1.24.2
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestVsphereFlatcarInstallContainerdV1_24_2
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.22
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-install-docker-v1.21.14
   optional: false
   spec:
@@ -842,7 +1108,7 @@ presubmits:
       resources:
         requests:
           cpu: "1"
-- always_run: true
+- always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
@@ -1108,7 +1374,7 @@ presubmits:
       resources:
         requests:
           cpu: "1"
-- always_run: true
+- always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
@@ -1374,7 +1640,7 @@ presubmits:
       resources:
         requests:
           cpu: "1"
-- always_run: true
+- always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
@@ -1640,7 +1906,7 @@ presubmits:
       resources:
         requests:
           cpu: "1"
-- always_run: true
+- always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
@@ -1906,7 +2172,7 @@ presubmits:
       resources:
         requests:
           cpu: "1"
-- always_run: true
+- always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
@@ -2172,7 +2438,7 @@ presubmits:
       resources:
         requests:
           cpu: "1"
-- always_run: true
+- always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
@@ -2438,7 +2704,7 @@ presubmits:
       resources:
         requests:
           cpu: "1"
-- always_run: true
+- always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
@@ -2704,7 +2970,7 @@ presubmits:
       resources:
         requests:
           cpu: "1"
-- always_run: true
+- always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
@@ -2970,7 +3236,7 @@ presubmits:
       resources:
         requests:
           cpu: "1"
-- always_run: true
+- always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:

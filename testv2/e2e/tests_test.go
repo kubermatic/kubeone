@@ -298,6 +298,102 @@ func TestVsphereFlatcarInstallContainerdV1_23_8(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestAwsAmznInstallContainerdV1_24_2(t *testing.T) {
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.2")
+	scenario.Run(t)
+}
+
+func TestAwsCentosInstallContainerdV1_24_2(t *testing.T) {
+	infra := Infrastructures["aws_centos"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.2")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultsInstallContainerdV1_24_2(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.2")
+	scenario.Run(t)
+}
+
+func TestAwsFlatcarInstallContainerdV1_24_2(t *testing.T) {
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.2")
+	scenario.Run(t)
+}
+
+func TestAwsRhelInstallContainerdV1_24_2(t *testing.T) {
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.2")
+	scenario.Run(t)
+}
+
+func TestAzureDefaultInstallContainerdV1_24_2(t *testing.T) {
+	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.2")
+	scenario.Run(t)
+}
+
+func TestDigitaloceanDefaultInstallContainerdV1_24_2(t *testing.T) {
+	infra := Infrastructures["digitalocean_default"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.2")
+	scenario.Run(t)
+}
+
+func TestEquinixmetalDefaultInstallContainerdV1_24_2(t *testing.T) {
+	infra := Infrastructures["equinixmetal_default"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.2")
+	scenario.Run(t)
+}
+
+func TestHetznerDefaultInstallContainerdV1_24_2(t *testing.T) {
+	infra := Infrastructures["hetzner_default"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.2")
+	scenario.Run(t)
+}
+
+func TestOpenstackDefaultInstallContainerdV1_24_2(t *testing.T) {
+	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.2")
+	scenario.Run(t)
+}
+
+func TestVsphereDefaultInstallContainerdV1_24_2(t *testing.T) {
+	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.2")
+	scenario.Run(t)
+}
+
+func TestVsphereFlatcarInstallContainerdV1_24_2(t *testing.T) {
+	infra := Infrastructures["vsphere_flatcar"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.2")
+	scenario.Run(t)
+}
+
 func TestAwsAmznInstallDockerV1_21_14(t *testing.T) {
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["install_docker"]

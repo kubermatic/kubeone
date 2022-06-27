@@ -4,7 +4,6 @@
     - name: aws_amzn
     - name: aws_centos
     - name: aws_defaults
-      alwaysRun: true
     - name: aws_flatcar
     - name: aws_rhel
     - name: azure_default
@@ -21,7 +20,6 @@
     - name: aws_amzn
     - name: aws_centos
     - name: aws_defaults
-      alwaysRun: true
     - name: aws_flatcar
     - name: aws_rhel
     - name: azure_default
@@ -38,7 +36,22 @@
     - name: aws_amzn
     - name: aws_centos
     - name: aws_defaults
-      alwaysRun: true
+    - name: aws_flatcar
+    - name: aws_rhel
+    - name: azure_default
+    - name: digitalocean_default
+    - name: equinixmetal_default
+    - name: hetzner_default
+    - name: openstack_default
+    - name: vsphere_default
+    - name: vsphere_flatcar
+
+- scenario: install_containerd
+  initVersion: v1.24.2
+  infrastructures:
+    - name: aws_amzn
+    - name: aws_centos
+    - name: aws_defaults
     - name: aws_flatcar
     - name: aws_rhel
     - name: azure_default
@@ -55,7 +68,6 @@
     - name: aws_amzn
     - name: aws_centos
     - name: aws_defaults
-      alwaysRun: true
     - name: aws_flatcar
     - name: aws_rhel
     - name: azure_default
@@ -72,7 +84,6 @@
     - name: aws_amzn
     - name: aws_centos
     - name: aws_defaults
-      alwaysRun: true
     - name: aws_flatcar
     - name: aws_rhel
     - name: azure_default
@@ -90,7 +101,6 @@
     - name: aws_amzn
     - name: aws_centos
     - name: aws_defaults
-      alwaysRun: true
     - name: aws_flatcar
     - name: aws_rhel
     - name: azure_default
@@ -108,7 +118,6 @@
     - name: aws_amzn
     - name: aws_centos
     - name: aws_defaults
-      alwaysRun: true
     - name: aws_flatcar
     - name: aws_rhel
     - name: azure_default
@@ -126,7 +135,6 @@
     - name: aws_amzn
     - name: aws_centos
     - name: aws_defaults
-      alwaysRun: true
     - name: aws_flatcar
     - name: aws_rhel
     - name: azure_default
@@ -143,7 +151,6 @@
     - name: aws_amzn
     - name: aws_centos
     - name: aws_defaults
-      alwaysRun: true
     - name: aws_flatcar
     - name: aws_rhel
     - name: azure_default
@@ -160,7 +167,6 @@
     - name: aws_amzn
     - name: aws_centos
     - name: aws_defaults
-      alwaysRun: true
     - name: aws_flatcar
     - name: aws_rhel
     - name: azure_default
@@ -177,7 +183,6 @@
     - name: aws_amzn
     - name: aws_centos
     - name: aws_defaults
-      alwaysRun: true
     - name: aws_flatcar
     - name: aws_rhel
     - name: azure_default
@@ -194,7 +199,6 @@
     - name: aws_amzn
     - name: aws_centos
     - name: aws_defaults
-      alwaysRun: true
     - name: aws_flatcar
     - name: aws_rhel
     - name: azure_default
