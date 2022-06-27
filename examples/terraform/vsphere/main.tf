@@ -110,9 +110,9 @@ resource "vsphere_virtual_machine" "control_plane" {
     type         = "ssh"
     host         = self.default_ip_address
     user         = var.ssh_username
-    bastion_host = var.ssh_bastion_host
-    bastion_port = var.ssh_bastion_port
-    bastion_user = var.ssh_bastion_username
+    bastion_host = var.bastion_host
+    bastion_port = var.bastion_port
+    bastion_user = var.bastion_username
   }
 
   provisioner "remote-exec" {
@@ -136,9 +136,9 @@ resource "null_resource" "keepalived_config" {
     type         = "ssh"
     user         = var.ssh_username
     host         = vsphere_virtual_machine.control_plane[count.index].default_ip_address
-    bastion_host = var.ssh_bastion_host
-    bastion_port = var.ssh_bastion_port
-    bastion_user = var.ssh_bastion_username
+    bastion_host = var.bastion_host
+    bastion_port = var.bastion_port
+    bastion_user = var.bastion_username
   }
 
   provisioner "file" {

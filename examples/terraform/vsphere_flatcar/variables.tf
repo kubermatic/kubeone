@@ -67,19 +67,19 @@ variable "ssh_agent_socket" {
   type        = string
 }
 
-variable "ssh_bastion_host" {
+variable "bastion_host" {
   description = "ssh jumphost (bastion) hostname"
   default = ""
   type = string
 }
 
-variable "ssh_bastion_port" {
+variable "bastion_port" {
   description = "ssh jumphost (bastion) port"
   type    = number
   default = 22
 }
 
-variable "ssh_bastion_username" {
+variable "bastion_username" {
   description = "ssh jumphost (bastion) username"
   default = ""
   type = string

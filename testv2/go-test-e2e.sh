@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2019 The KubeOne Authors.
+# Copyright 2022 The KubeOne Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -122,8 +122,8 @@ EOL
     export VSPHERE_SERVER="${VSPHERE_E2E_ADDRESS/http*:\/\//}"
     export VSPHERE_USER=${VSPHERE_E2E_USERNAME}
     export VSPHERE_PASSWORD=${VSPHERE_E2E_PASSWORD}
-    export TF_VAR_ssh_bastion_host=${VSPHERE_E2E_TEST_SSH_JUMPHOST}
-    export TF_VAR_ssh_bastion_username=${VSPHERE_E2E_TEST_SSH_USERNAME}
+    export TF_VAR_bastion_host=${VSPHERE_E2E_TEST_SSH_JUMPHOST}
+    export TF_VAR_bastion_username=${VSPHERE_E2E_TEST_SSH_USERNAME}
     CREDENTIALS_FILE_PATH="${BUILD_DIR}/credentials.yaml"
 
     cat > "${CREDENTIALS_FILE_PATH}" << EOL
@@ -150,10 +150,10 @@ cloudConfig: |
   public-network = "VM Network"
 EOL
 
-    ssh_bastion_key="${BUILD_DIR}/ssh_bastion_key"
-    echo "${VSPHERE_E2E_TEST_SSH_PRIVATE_KEY}" > "$ssh_bastion_key"
-    chmod 600 "${ssh_bastion_key}"
-    ssh-add "${ssh_bastion_key}"
+    bastion_key="${BUILD_DIR}/bastion_key"
+    echo "${VSPHERE_E2E_TEST_SSH_PRIVATE_KEY}" > "$bastion_key"
+    chmod 600 "${bastion_key}"
+    ssh-add "${bastion_key}"
     ;;
   *)
     echo "unknown provider ${PROVIDER}"
