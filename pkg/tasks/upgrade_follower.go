@@ -53,7 +53,7 @@ func upgradeFollowerExecutor(s *state.State, node *kubeoneapi.HostConfig, conn s
 		return err
 	}
 
-	if err := removeNetworkPluginFlagKubelet(s, *node); err != nil {
+	if err := updateKubeadmFlagsEnv(s, node); err != nil {
 		return err
 	}
 
