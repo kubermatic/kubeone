@@ -18,13 +18,23 @@ package e2e
 
 import (
 	"bytes"
+	"context"
+	"flag"
 	"fmt"
+	"net"
+	"net/url"
 	"os"
 
-	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
-	"k8c.io/kubeone/test/e2e/testutil"
+	"github.com/sirupsen/logrus"
 
-	"sigs.k8s.io/yaml"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/apis/kubeone/config"
+	"k8c.io/kubeone/test/e2e/testutil"
+)
+
+var (
+	kubeoneVerboseFlag = flag.Bool("kubeone-verbose", false, "run kubeone actions with --verbose flag")
+	credentialsFlag    = flag.String("credentials", "", "run kubeone with --credentials flag")
 )
 
 type kubeoneBin struct {
@@ -33,24 +43,7 @@ type kubeoneBin struct {
 	tfjsonPath      string
 	manifestPath    string
 	credentialsPath string
-}
-
-func (k1 *kubeoneBin) globalFlags() []string {
-	args := []string{"--tfjson", k1.tfjsonPath}
-
-	if *kubeoneVerboseFlag {
-		args = append(args, "--verbose")
-	}
-
-	if k1.manifestPath != "" {
-		args = append(args, "--manifest", k1.manifestPath)
-	}
-
-	if k1.credentialsPath != "" {
-		args = append(args, "--credentials", k1.credentialsPath)
-	}
-
-	return args
+	verbose         bool
 }
 
 func (k1 *kubeoneBin) Apply() error {
@@ -71,7 +64,70 @@ func (k1 *kubeoneBin) Kubeconfig() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (k1 *kubeoneBin) KubeconfigPath(tmpDir string) (string, error) {
+func (k1 *kubeoneBin) Reset() error {
+	return k1.run("reset", "--auto-approve", "--destroy-workers", "--remove-binaries")
+}
+
+func (k1 *kubeoneBin) AsyncProxy(ctx context.Context) (string, func() error, error) {
+	list, err := net.Listen("tcp4", "127.0.0.1:0")
+	if err != nil {
+		return "", nil, err
+	}
+
+	hostPort := list.Addr().String()
+	if err = list.Close(); err != nil {
+		return "", nil, err
+	}
+
+	proxyURL := url.URL{
+		Scheme: "http",
+		Host:   hostPort,
+	}
+
+	cmd := k1.build("proxy", "--listen", hostPort).BuildCmd(ctx)
+	if err = cmd.Start(); err != nil {
+		return "", nil, err
+	}
+
+	return proxyURL.String(), cmd.Wait, nil
+}
+
+func (k1 *kubeoneBin) ClusterManifest() (*kubeoneapi.KubeOneCluster, error) {
+	var buf bytes.Buffer
+
+	args := k1.globalFlags()
+	exe := k1.build(append(args, "config", "dump")...)
+	testutil.StdoutTo(&buf)(exe)
+
+	if err := exe.Run(); err != nil {
+		return nil, fmt.Errorf("rendering manifest failed: %w", err)
+	}
+
+	logger := logrus.New()
+	k1Manifest, err := config.BytesToKubeOneCluster(buf.Bytes(), nil, nil, logger)
+
+	return k1Manifest, err
+}
+
+func (k1 *kubeoneBin) globalFlags() []string {
+	args := []string{"--tfjson", k1.tfjsonPath}
+
+	if k1.verbose {
+		args = append(args, "--verbose")
+	}
+
+	if k1.manifestPath != "" {
+		args = append(args, "--manifest", k1.manifestPath)
+	}
+
+	if k1.credentialsPath != "" {
+		args = append(args, "--credentials", k1.credentialsPath)
+	}
+
+	return args
+}
+
+func (k1 *kubeoneBin) kubeconfigPath(tmpDir string) (string, error) {
 	kubeconfig, err := os.CreateTemp(tmpDir, "kubeconfig-*")
 	if err != nil {
 		return "", err
@@ -90,29 +146,8 @@ func (k1 *kubeoneBin) KubeconfigPath(tmpDir string) (string, error) {
 	return kubeconfig.Name(), nil
 }
 
-func (k1 *kubeoneBin) Reset() error {
-	return k1.run("reset", "--auto-approve", "--destroy-workers", "--remove-binaries")
-}
-
-func (k1 *kubeoneBin) Manifest() (*kubeoneapi.KubeOneCluster, error) {
-	var buf bytes.Buffer
-
-	args := k1.globalFlags()
-	exe := k1.build(append(args, "config", "dump")...)
-	testutil.StdoutTo(&buf)(exe)
-
-	if err := exe.Run(); err != nil {
-		return nil, fmt.Errorf("rendering manifest failed: %w", err)
-	}
-
-	var k1Manifest kubeoneapi.KubeOneCluster
-	err := yaml.UnmarshalStrict(buf.Bytes(), &k1Manifest)
-
-	return &k1Manifest, err
-}
-
 func (k1 *kubeoneBin) run(args ...string) error {
-	return k1.build(append(k1.globalFlags(), args...)...).Run()
+	return k1.build(args...).Run()
 }
 
 func (k1 *kubeoneBin) build(args ...string) *testutil.Exec {
@@ -122,7 +157,7 @@ func (k1 *kubeoneBin) build(args ...string) *testutil.Exec {
 	}
 
 	return testutil.NewExec(bin,
-		testutil.WithArgs(args...),
+		testutil.WithArgs(append(k1.globalFlags(), args...)...),
 		testutil.WithEnv(os.Environ()),
 		testutil.InDir(k1.dir),
 		testutil.StdoutDebug,

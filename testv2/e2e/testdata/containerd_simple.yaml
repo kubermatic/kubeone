@@ -1,7 +1,8 @@
 apiVersion: kubeone.k8c.io/v1beta2
 kind: KubeOneCluster
+
 versions:
-  kubernetes: "{{ required .VERSION }}"
+  kubernetes: "{{ required ".VERSION is required" .VERSION }}"
     
 containerRuntime:
   containerd: {}

@@ -1,151 +1,230 @@
 - scenario: install_containerd
-  initVersion: v1.21.12
+  initVersion: v1.21.14
   infrastructures:
-    - name: aws_defaults
-      alwaysRun: true
-    - name: aws_centos
-    - name: aws_rhel
-    - name: aws_flatcar
     - name: aws_amzn
+    - name: aws_centos
+    - name: aws_defaults
+    - name: aws_flatcar
+    - name: aws_rhel
+    - name: azure_default
+    - name: digitalocean_default
+    - name: equinixmetal_default
+    - name: hetzner_default
+    - name: openstack_default
+    - name: vsphere_default
+    - name: vsphere_flatcar
 
 - scenario: install_containerd
-  initVersion: v1.22.9
+  initVersion: v1.22.11
   infrastructures:
-    - name: aws_defaults
-      alwaysRun: true
-    - name: aws_centos
-    - name: aws_rhel
-    - name: aws_flatcar
     - name: aws_amzn
+    - name: aws_centos
+    - name: aws_defaults
+    - name: aws_flatcar
+    - name: aws_rhel
+    - name: azure_default
+    - name: digitalocean_default
+    - name: equinixmetal_default
+    - name: hetzner_default
+    - name: openstack_default
+    - name: vsphere_default
+    - name: vsphere_flatcar
 
 - scenario: install_containerd
-  initVersion: v1.23.6
+  initVersion: v1.23.8
   infrastructures:
-    - name: aws_defaults
-      alwaysRun: true
-    - name: aws_centos
-    - name: aws_rhel
-    - name: aws_flatcar
     - name: aws_amzn
+    - name: aws_centos
+    - name: aws_defaults
+    - name: aws_flatcar
+    - name: aws_rhel
+    - name: azure_default
+    - name: digitalocean_default
+    - name: equinixmetal_default
+    - name: hetzner_default
+    - name: openstack_default
+    - name: vsphere_default
+    - name: vsphere_flatcar
+
+- scenario: install_containerd
+  initVersion: v1.24.2
+  infrastructures:
+    - name: aws_amzn
+    - name: aws_centos
+    - name: aws_defaults
+    - name: aws_flatcar
+    - name: aws_rhel
+    - name: azure_default
+    - name: digitalocean_default
+    - name: equinixmetal_default
+    - name: hetzner_default
+    - name: openstack_default
+    - name: vsphere_default
+    - name: vsphere_flatcar
 
 - scenario: install_docker
-  initVersion: v1.21.12
+  initVersion: v1.21.14
   infrastructures:
-    - name: aws_defaults
-      alwaysRun: true
-    - name: aws_centos
-    - name: aws_rhel
-    - name: aws_flatcar
     - name: aws_amzn
+    - name: aws_centos
+    - name: aws_defaults
+    - name: aws_flatcar
+    - name: aws_rhel
+    - name: azure_default
+    - name: digitalocean_default
+    - name: equinixmetal_default
+    - name: hetzner_default
+    - name: openstack_default
+    - name: vsphere_default
+    - name: vsphere_flatcar
 
 - scenario: install_docker
-  initVersion: v1.22.9
+  initVersion: v1.22.11
   infrastructures:
-    - name: aws_defaults
-      alwaysRun: true
-    - name: aws_centos
-    - name: aws_rhel
-    - name: aws_flatcar
     - name: aws_amzn
+    - name: aws_centos
+    - name: aws_defaults
+    - name: aws_flatcar
+    - name: aws_rhel
+    - name: azure_default
+    - name: digitalocean_default
+    - name: equinixmetal_default
+    - name: hetzner_default
+    - name: openstack_default
+    - name: vsphere_default
+    - name: vsphere_flatcar
 
 - scenario: upgrade_containerd
-  initVersion: v1.21.12
-  upgradedVersion: v1.22.9
+  initVersion: v1.21.14
+  upgradedVersion: v1.22.11
   infrastructures:
-    - name: aws_defaults
-    - name: aws_centos
-    - name: aws_rhel
-    - name: aws_flatcar
     - name: aws_amzn
+    - name: aws_centos
+    - name: aws_defaults
+    - name: aws_flatcar
+    - name: aws_rhel
+    - name: azure_default
+    - name: digitalocean_default
+    - name: equinixmetal_default
+    - name: hetzner_default
+    - name: openstack_default
+    - name: vsphere_default
+    - name: vsphere_flatcar
 
 - scenario: upgrade_containerd
-  initVersion: v1.22.9
-  upgradedVersion: v1.23.6
+  initVersion: v1.22.11
+  upgradedVersion: v1.23.8
   infrastructures:
-    - name: aws_defaults
-    - name: aws_centos
-    - name: aws_rhel
-    - name: aws_flatcar
     - name: aws_amzn
+    - name: aws_centos
+    - name: aws_defaults
+    - name: aws_flatcar
+    - name: aws_rhel
+    - name: azure_default
+    - name: digitalocean_default
+    - name: equinixmetal_default
+    - name: hetzner_default
+    - name: openstack_default
+    - name: vsphere_default
+    - name: vsphere_flatcar
 
 - scenario: upgrade_docker
-  initVersion: v1.21.12
-  upgradedVersion: v1.22.9
+  initVersion: v1.21.14
+  upgradedVersion: v1.22.11
   infrastructures:
-    - name: aws_defaults
-    - name: aws_centos
-    - name: aws_rhel
-    - name: aws_flatcar
     - name: aws_amzn
+    - name: aws_centos
+    - name: aws_defaults
+    - name: aws_flatcar
+    - name: aws_rhel
+    - name: azure_default
+    - name: digitalocean_default
+    - name: equinixmetal_default
+    - name: hetzner_default
+    - name: openstack_default
+    - name: vsphere_default
+    - name: vsphere_flatcar
 
 - scenario: calico_containerd
-  initVersion: v1.22.9
+  initVersion: v1.22.11
   infrastructures:
-    - name: aws_defaults
-    - name: aws_centos
-    - name: aws_rhel
-    - name: aws_flatcar
     - name: aws_amzn
+    - name: aws_centos
+    - name: aws_defaults
+    - name: aws_flatcar
+    - name: aws_rhel
+    - name: azure_default
+    - name: digitalocean_default
+    - name: equinixmetal_default
+    - name: hetzner_default
+    - name: openstack_default
+    - name: vsphere_default
+    - name: vsphere_flatcar
 
 - scenario: calico_docker
-  initVersion: v1.22.9
+  initVersion: v1.22.11
   infrastructures:
-    - name: aws_defaults
-    - name: aws_centos
-    - name: aws_rhel
-    - name: aws_flatcar
     - name: aws_amzn
+    - name: aws_centos
+    - name: aws_defaults
+    - name: aws_flatcar
+    - name: aws_rhel
+    - name: azure_default
+    - name: digitalocean_default
+    - name: equinixmetal_default
+    - name: hetzner_default
+    - name: openstack_default
+    - name: vsphere_default
+    - name: vsphere_flatcar
 
 - scenario: weave_containerd
-  initVersion: v1.22.9
+  initVersion: v1.22.11
   infrastructures:
-    - name: aws_defaults
-    - name: aws_centos
-    - name: aws_rhel
-    - name: aws_flatcar
     - name: aws_amzn
+    - name: aws_centos
+    - name: aws_defaults
+    - name: aws_flatcar
+    - name: aws_rhel
+    - name: azure_default
+    - name: digitalocean_default
+    - name: equinixmetal_default
+    - name: hetzner_default
+    - name: openstack_default
+    - name: vsphere_default
+    - name: vsphere_flatcar
 
 - scenario: weave_docker
-  initVersion: v1.22.9
+  initVersion: v1.22.11
   infrastructures:
-    - name: aws_defaults
-    - name: aws_centos
-    - name: aws_rhel
-    - name: aws_flatcar
     - name: aws_amzn
+    - name: aws_centos
+    - name: aws_defaults
+    - name: aws_flatcar
+    - name: aws_rhel
+    - name: azure_default
+    - name: digitalocean_default
+    - name: equinixmetal_default
+    - name: hetzner_default
+    - name: openstack_default
+    - name: vsphere_default
+    - name: vsphere_flatcar
 
 - scenario: conformance_containerd
-  initVersion: v1.21.12
+  initVersion: v1.21.14
   infrastructures:
-    - name: aws_defaults
-    - name: aws_centos
-    - name: aws_rhel
-    - name: aws_flatcar
-    - name: aws_amzn
+    - name: aws_long_timeout_default
 
 - scenario: conformance_containerd
-  initVersion: v1.22.9
+  initVersion: v1.22.11
   infrastructures:
-    - name: aws_defaults
-    - name: aws_centos
-    - name: aws_rhel
-    - name: aws_flatcar
-    - name: aws_amzn
+    - name: aws_long_timeout_default
 
 - scenario: conformance_containerd
-  initVersion: v1.23.6
+  initVersion: v1.23.8
   infrastructures:
-    - name: aws_defaults
-    - name: aws_centos
-    - name: aws_rhel
-    - name: aws_flatcar
-    - name: aws_amzn
+    - name: aws_long_timeout_default
 
 - scenario: conformance_containerd
   initVersion: v1.24.1
   infrastructures:
-    - name: aws_defaults
-    - name: aws_centos
-    - name: aws_rhel
-    - name: aws_flatcar
-    - name: aws_amzn
+    - name: aws_long_timeout_default

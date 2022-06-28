@@ -27,6 +27,8 @@ import (
 	"k8c.io/kubeone/test/e2e/testutil"
 )
 
+const sonobuoyResultsFile = "results.tar.gz"
+
 type sonobuoyReport struct {
 	Name    string                 `json:"name"`
 	Status  string                 `json:"status"`
@@ -46,17 +48,14 @@ const (
 	sonobuoyConformanceLite sonobuoyMode = "conformance-lite"
 )
 
-const (
-	sonobuoyResultsFile = "results.tar.gz"
-)
-
 type sonobuoyBin struct {
 	dir        string
 	kubeconfig string
+	proxyURL   string
 }
 
 func (sbb *sonobuoyBin) Run(mode sonobuoyMode) error {
-	return sbb.run("run", fmt.Sprintf("-mode=%s", mode))
+	return sbb.run("run", fmt.Sprintf("--mode=%s", mode))
 }
 
 func (sbb *sonobuoyBin) Wait() error {
@@ -77,9 +76,6 @@ func (sbb *sonobuoyBin) Results() ([]sonobuoyReport, error) {
 	}
 
 	exe := sbb.build("results", sonobuoyResultsFile, "--mode", "detailed", "--plugin", "e2e")
-	if sbb.kubeconfig != "" {
-		testutil.WithEnvs(fmt.Sprintf("KUBECONFIG=%s", sbb.kubeconfig))(exe)
-	}
 	cmd := exe.BuildCmd(ctx)
 	cmd.Stdout = wpipe
 	if err := cmd.Start(); err != nil {
@@ -115,10 +111,24 @@ func (sbb *sonobuoyBin) run(args ...string) error {
 }
 
 func (sbb *sonobuoyBin) build(args ...string) *testutil.Exec {
-	return testutil.NewExec("sonobuoy",
+	exe := testutil.NewExec("sonobuoy",
 		testutil.WithArgs(args...),
 		testutil.WithEnv(os.Environ()),
 		testutil.InDir(sbb.dir),
 		testutil.StdoutDebug,
 	)
+
+	if sbb.kubeconfig != "" {
+		testutil.WithEnvs(fmt.Sprintf("KUBECONFIG=%s", sbb.kubeconfig))(exe)
+	}
+
+	if sbb.proxyURL != "" {
+		proxies := []string{
+			fmt.Sprintf("HTTPS_PROXY=%s", sbb.proxyURL),
+			fmt.Sprintf("HTTP_PROXY=%s", sbb.proxyURL),
+		}
+		testutil.WithEnv(proxies)(exe)
+	}
+
+	return exe
 }

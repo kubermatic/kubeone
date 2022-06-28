@@ -26,6 +26,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"testing"
 	"text/template"
@@ -35,14 +36,16 @@ import (
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/test/e2e/testutil"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
-	"k8s.io/apimachinery/pkg/util/rand"
 	"k8s.io/apimachinery/pkg/util/wait"
+	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/util/retry"
 	k8spath "k8s.io/utils/path"
@@ -51,10 +54,33 @@ import (
 
 const (
 	labelControlPlaneNode = "node-role.kubernetes.io/control-plane"
-	prowImage             = "kubermatic/kubeone-e2e:v0.1.22"
+	prowImage             = "kubermatic/kubeone-e2e:v0.1.23"
 	k1CloneURI            = "ssh://git@github.com/kubermatic/kubeone.git"
-	kubeoneDistPath       = "../../dist/kubeone"
 )
+
+func mustGetwd() string {
+	cwd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+
+	return cwd
+}
+
+func mustAbsolutePath(file string) string {
+	if !strings.HasPrefix(file, "/") {
+		// find the absolute path to the file
+		file = filepath.Join(mustGetwd(), file)
+	}
+
+	return filepath.Clean(file)
+}
+
+func getKubeoneDistPath() string {
+	const distPath = "../../dist/kubeone"
+
+	return mustAbsolutePath(distPath)
+}
 
 func titleize(s string) string {
 	s = strings.ReplaceAll(s, "_", " ")
@@ -62,15 +88,6 @@ func titleize(s string) string {
 	s = cases.Title(language.English).String(s)
 
 	return strings.ReplaceAll(s, " ", "")
-}
-
-func clusterName() string {
-	name, found := os.LookupEnv("BUILD_ID")
-	if !found {
-		name = rand.String(10)
-	}
-
-	return fmt.Sprintf("k1-%s", name)
 }
 
 func trueRetriable(error) bool {
@@ -179,9 +196,19 @@ func withKubeoneBin(bin string) kubeoneBinOpts {
 	}
 }
 
+func withKubeoneVerbose(kb *kubeoneBin) {
+	kb.verbose = true
+}
+
+func withKubeoneCredentials(credentialsPath string) kubeoneBinOpts {
+	return func(kb *kubeoneBin) {
+		kb.credentialsPath = credentialsPath
+	}
+}
+
 func newKubeoneBin(terraformPath, manifestPath string, opts ...kubeoneBinOpts) *kubeoneBin {
 	k1 := &kubeoneBin{
-		bin:          filepath.Clean(kubeoneDistPath),
+		bin:          getKubeoneDistPath(),
 		dir:          terraformPath,
 		tfjsonPath:   ".",
 		manifestPath: manifestPath,
@@ -199,19 +226,26 @@ type manifestData struct {
 }
 
 func renderManifest(t *testing.T, templatePath string, data manifestData) string {
-	tmpDir := t.TempDir()
+	var (
+		outBuf bytes.Buffer
+		tmpDir = t.TempDir()
+	)
 
-	var buf bytes.Buffer
-
-	tpl, err := template.New("").Parse(templatePath)
+	templateContent, err := os.ReadFile(templatePath)
 	if err != nil {
 		t.Fatal(err)
 	}
-	tpl.Funcs(template.FuncMap{
-		"required": requiredTemplateFunc,
-	})
 
-	if err = tpl.Execute(&buf, data); err != nil {
+	tpl, err := template.New("").
+		Funcs(template.FuncMap{
+			"required": requiredTemplateFunc,
+		}).
+		Parse(string(templateContent))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if err = tpl.Execute(&outBuf, data); err != nil {
 		t.Fatal(err)
 	}
 
@@ -222,7 +256,7 @@ func renderManifest(t *testing.T, templatePath string, data manifestData) string
 	defer manifest.Close()
 
 	manifestPath := manifest.Name()
-	if err := os.WriteFile(manifestPath, buf.Bytes(), 0600); err != nil {
+	if err := os.WriteFile(manifestPath, outBuf.Bytes(), 0600); err != nil {
 		t.Fatal(err)
 	}
 
@@ -230,7 +264,10 @@ func renderManifest(t *testing.T, templatePath string, data manifestData) string
 }
 
 func waitForNodesReady(t *testing.T, client ctrlruntimeclient.Client, expectedNumberOfNodes int) error {
-	return wait.Poll(5*time.Second, 10*time.Minute, func() (bool, error) {
+	waitTimeout := 10 * time.Minute
+	t.Logf("waiting maximum %s for %d nodes to be ready", waitTimeout, expectedNumberOfNodes)
+
+	return wait.Poll(5*time.Second, waitTimeout, func() (bool, error) {
 		nodes := corev1.NodeList{}
 
 		if err := client.List(context.Background(), &nodes); err != nil {
@@ -330,6 +367,19 @@ type ProwJob struct {
 }
 
 func newProwJob(prowJobName string, labels map[string]string, testTitle string, settings ProwConfig) ProwJob {
+	var env []corev1.EnvVar
+
+	for k, v := range settings.Environ {
+		env = append(env, corev1.EnvVar{
+			Name:  k,
+			Value: v,
+		})
+	}
+
+	sort.Slice(env, func(i, j int) bool {
+		return env[i].Name < env[j].Name
+	})
+
 	return ProwJob{
 		Name:      prowJobName,
 		AlwaysRun: settings.AlwaysRun,
@@ -343,11 +393,10 @@ func newProwJob(prowJobName string, labels map[string]string, testTitle string, 
 					Image:           prowImage,
 					ImagePullPolicy: corev1.PullAlways,
 					Command: []string{
-						"go", "test", "-v",
-						"./testv2/e2e/...",
-						"-tags", "e2e",
-						"-run", fmt.Sprintf("^%s$", testTitle),
+						"./testv2/go-test-e2e.sh",
+						testTitle,
 					},
+					Env: env,
 					Resources: corev1.ResourceRequirements{
 						Requests: corev1.ResourceList{
 							corev1.ResourceCPU: resource.MustParse("1"),
@@ -364,9 +413,57 @@ func pullProwJobName(in ...string) string {
 }
 
 func basicTest(t *testing.T, k1 *kubeoneBin, data manifestData) {
-	kubeoneManifest, err := k1.Manifest()
+	var (
+		kubeoneManifest *kubeoneapi.KubeOneCluster
+		err             error
+		kubeconfig      []byte
+		restConfig      *rest.Config
+	)
+
+	fetchKubeoneManifest := func() error {
+		kubeoneManifest, err = k1.ClusterManifest()
+
+		return err
+	}
+
+	if err = retryFn(fetchKubeoneManifest); err != nil {
+		t.Fatalf("failed to get manifest API: %v", err)
+	}
+
+	fetchKubeconfig := func() error {
+		kubeconfig, err = k1.Kubeconfig()
+
+		return err
+	}
+
+	if err = retryFn(fetchKubeconfig); err != nil {
+		t.Fatalf("kubeone kubeconfig failed: %v", err)
+	}
+
+	initKubeRestConfig := func() error {
+		restConfig, err = clientcmd.RESTConfigFromKubeConfig(kubeconfig)
+
+		return err
+	}
+
+	if err = retryFn(initKubeRestConfig); err != nil {
+		t.Fatalf("unable to build clientset from kubeconfig bytes: %v", err)
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	connector := ssh.NewConnector(ctx)
+	tun, err := connector.Tunnel(kubeoneManifest.RandomHost())
 	if err != nil {
-		t.Fatalf("failed to get manifest API")
+		t.Fatalf("creating SSH tunnel: %v", err)
+	}
+
+	restConfig.Dial = tun.TunnelTo
+
+	client, err := ctrlruntimeclient.New(restConfig, ctrlruntimeclient.Options{})
+	if err != nil {
+		t.Fatalf("failed to init dynamic client: %s", err)
 	}
 
 	numberOfNodesToWait := len(kubeoneManifest.ControlPlane.Hosts) + len(kubeoneManifest.StaticWorkers.Hosts)
@@ -374,30 +471,6 @@ func basicTest(t *testing.T, k1 *kubeoneBin, data manifestData) {
 		if worker.Replicas != nil {
 			numberOfNodesToWait += *worker.Replicas
 		}
-	}
-
-	var kubeconfig []byte
-	fetchKubeconfig := func() error {
-		kubeconfig, err = k1.Kubeconfig()
-		if err != nil {
-			return err
-		}
-
-		return nil
-	}
-
-	if err = retryFn(fetchKubeconfig); err != nil {
-		t.Fatalf("kubeone kubeconfig failed: %v", err)
-	}
-
-	restConfig, err := clientcmd.RESTConfigFromKubeConfig(kubeconfig)
-	if err != nil {
-		t.Fatalf("unable to build clientset from kubeconfig bytes: %v", err)
-	}
-
-	client, err := ctrlruntimeclient.New(restConfig, ctrlruntimeclient.Options{})
-	if err != nil {
-		t.Fatalf("failed to init dynamic client: %s", err)
 	}
 
 	if err = waitForNodesReady(t, client, numberOfNodesToWait); err != nil {
@@ -410,13 +483,35 @@ func basicTest(t *testing.T, k1 *kubeoneBin, data manifestData) {
 }
 
 func sonobuoyRun(t *testing.T, k1 *kubeoneBin, mode sonobuoyMode) {
-	kubeconfigPath, err := k1.KubeconfigPath(t.TempDir())
+	kubeconfigPath, err := k1.kubeconfigPath(t.TempDir())
 	if err != nil {
 		t.Fatalf("fetching kubeconfig failed")
 	}
 
+	// launch kubeone proxy, to have a HTTPS proxy through the SSH tunnel
+	// to open access to the kubeapi behind the bastion host
+	proxyCtx, killProxy := context.WithCancel(context.Background())
+	proxyURL, waitK1, err := k1.AsyncProxy(proxyCtx)
+	if err != nil {
+		t.Fatalf("starting kubeone proxy: %v", err)
+	}
+	defer func() {
+		waitErr := waitK1()
+		if waitErr != nil {
+			t.Logf("wait kubeone proxy: %v", waitErr)
+		}
+	}()
+	defer killProxy()
+
+	t.Logf("kubeone proxy is running on %s", proxyURL)
+
+	// let kubeone proxy start and open the port
+	time.Sleep(5 * time.Second)
+
 	sb := sonobuoyBin{
 		kubeconfig: kubeconfigPath,
+		dir:        t.TempDir(),
+		proxyURL:   proxyURL,
 	}
 
 	if err = sb.Run(mode); err != nil {
@@ -427,7 +522,8 @@ func sonobuoyRun(t *testing.T, k1 *kubeoneBin, mode sonobuoyMode) {
 		t.Fatalf("sonobuoy wait failed: %v", err)
 	}
 
-	if err = sb.Retrieve(); err != nil {
+	err = retryFn(sb.Retrieve)
+	if err != nil {
 		t.Fatalf("sonobuoy retrieve failed: %v", err)
 	}
 

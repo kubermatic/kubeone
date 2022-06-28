@@ -26,11 +26,12 @@ import (
 )
 
 type scenarioInstall struct {
-	name                 string
-	manifestTemplatePath string
-	versions             []string
-	infra                Infra
-	kubeonePath          string
+	Name                 string
+	ManifestTemplatePath string
+
+	versions    []string
+	infra       Infra
+	kubeonePath string
 }
 
 func (scenario scenarioInstall) KubeonePath() string {
@@ -38,10 +39,10 @@ func (scenario scenarioInstall) KubeonePath() string {
 		return scenario.kubeonePath
 	}
 
-	return kubeoneDistPath
+	return getKubeoneDistPath()
 }
 
-func (scenario scenarioInstall) Title() string { return titleize(scenario.name) }
+func (scenario scenarioInstall) Title() string { return titleize(scenario.Name) }
 
 func (scenario *scenarioInstall) SetInfra(infra Infra) {
 	scenario.infra = infra
@@ -65,38 +66,23 @@ func (scenario *scenarioInstall) install(t *testing.T) {
 		t.Fatalf("only 1 version is expected to be set, got %v", scenario.versions)
 	}
 
-	clusterName := clusterName()
-
-	if err := scenario.infra.terraform.init(clusterName); err != nil {
+	if err := scenario.infra.terraform.Init(); err != nil {
 		t.Fatalf("terraform init failed: %v", err)
-	}
-
-	if err := retryFn(scenario.infra.terraform.apply); err != nil {
-		t.Fatalf("terraform apply failed: %v", err)
 	}
 
 	t.Cleanup(func() {
 		if err := retryFn(func() error {
-			return scenario.infra.terraform.destroy()
+			return scenario.infra.terraform.Destroy()
 		}); err != nil {
 			t.Fatalf("terraform destroy failed: %v", err)
 		}
 	})
 
-	k1 := newKubeoneBin(
-		scenario.infra.terraform.path,
-		renderManifest(t,
-			scenario.manifestTemplatePath,
-			manifestData{
-				VERSION: scenario.versions[0],
-			},
-		),
-		withKubeoneBin(scenario.KubeonePath()),
-	)
-
-	if err := k1.Apply(); err != nil {
-		t.Fatalf("kubeone apply failed: %v", err)
+	if err := retryFn(scenario.infra.terraform.Apply); err != nil {
+		t.Fatalf("terraform apply failed: %v", err)
 	}
+
+	k1 := scenario.kubeone(t)
 
 	t.Cleanup(func() {
 		if err := retryFn(func() error {
@@ -105,16 +91,41 @@ func (scenario *scenarioInstall) install(t *testing.T) {
 			t.Fatalf("terraform destroy failed: %v", err)
 		}
 	})
+
+	if err := k1.Apply(); err != nil {
+		t.Fatalf("kubeone apply failed: %v", err)
+	}
+}
+
+func (scenario *scenarioInstall) kubeone(t *testing.T) *kubeoneBin {
+	var k1Opts = []kubeoneBinOpts{
+		withKubeoneBin(scenario.KubeonePath()),
+	}
+
+	if *kubeoneVerboseFlag {
+		k1Opts = append(k1Opts, withKubeoneVerbose)
+	}
+
+	if *credentialsFlag != "" {
+		k1Opts = append(k1Opts, withKubeoneCredentials(*credentialsFlag))
+	}
+
+	return newKubeoneBin(
+		scenario.infra.terraform.path,
+		renderManifest(t,
+			scenario.ManifestTemplatePath,
+			manifestData{
+				VERSION: scenario.versions[0],
+			},
+		),
+		k1Opts...,
+	)
 }
 
 func (scenario *scenarioInstall) test(t *testing.T) {
-	data := manifestData{VERSION: scenario.versions[0]}
-	k1 := newKubeoneBin(
-		scenario.infra.terraform.path,
-		renderManifest(t,
-			scenario.manifestTemplatePath,
-			data,
-		),
+	var (
+		data = manifestData{VERSION: scenario.versions[0]}
+		k1   = scenario.kubeone(t)
 	)
 
 	basicTest(t, k1, data)
@@ -144,13 +155,15 @@ func (scenario *scenarioInstall) GenerateTests(wr io.Writer, generatorType Gener
 	data = append(data, templateData{
 		TestTitle: testTitle,
 		Infra:     scenario.infra.name,
-		Scenario:  scenario.name,
+		Scenario:  scenario.Name,
 		Version:   version,
 	})
 
+	cfg.Environ = scenario.infra.environ
+
 	prowJobs = append(prowJobs,
 		newProwJob(
-			pullProwJobName(scenario.infra.name, scenario.name, version),
+			pullProwJobName(scenario.infra.name, scenario.Name, version),
 			scenario.infra.labels,
 			testTitle,
 			cfg,
