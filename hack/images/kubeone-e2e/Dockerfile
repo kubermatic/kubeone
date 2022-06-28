@@ -14,14 +14,20 @@
 
 # building image
 
-FROM golang:1.18.1 as builder
+FROM golang:1.18.3 as builder
 
 RUN apt-get update && apt-get install -y \
     unzip
 
-ENV TERRAFORM_VERSION "1.1.0"
+WORKDIR /download
+
+ENV TERRAFORM_VERSION "1.2.3"
 RUN curl -fL https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip | funzip >/usr/local/bin/terraform
 RUN chmod +x /usr/local/bin/terraform
+
+ENV SONOBUOY_VERSION "0.56.7"
+RUN curl -fL https://github.com/vmware-tanzu/sonobuoy/releases/download/v${SONOBUOY_VERSION}/sonobuoy_${SONOBUOY_VERSION}_linux_amd64.tar.gz | tar vxz
+RUN chmod +x sonobuoy
 
 COPY install-kube-tests-binaries.sh /opt/install-kube-tests-binaries.sh
 RUN /opt/install-kube-tests-binaries.sh
@@ -29,7 +35,7 @@ RUN /opt/install-kube-tests-binaries.sh
 # resulting image
 
 
-FROM golang:1.18.1
+FROM golang:1.18.3
 
 ARG version
 
@@ -42,4 +48,5 @@ ENV KUBETESTS_ROOT "/opt/kube-test"
 ENV USER root
 
 COPY --from=builder /usr/local/bin/terraform /usr/local/bin/terraform
+COPY --from=builder /download/sonobuoy /usr/local/bin/sonobuoy
 COPY --from=builder ${KUBETESTS_ROOT} ${KUBETESTS_ROOT}
