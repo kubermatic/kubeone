@@ -123,6 +123,7 @@ func newRoot() *cobra.Command {
 
 	rootCmd.AddCommand(
 		applyCmd(fs),
+		localCmd(fs),
 		addonsCmd(fs),
 		completionCmd(rootCmd),
 		configCmd(fs),

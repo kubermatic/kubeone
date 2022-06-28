@@ -85,8 +85,12 @@ func applyCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 			}
 
 			opts.globalOptions = *gopts
+			st, err := opts.BuildState()
+			if err != nil {
+				return err
+			}
 
-			return runApply(opts)
+			return runApply(st, opts)
 		},
 	}
 
@@ -143,42 +147,37 @@ func applyCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 	return cmd
 }
 
-func runApply(opts *applyOpts) error {
-	s, err := opts.BuildState()
-	if err != nil {
-		return err
-	}
-
+func runApply(st *state.State, opts *applyOpts) error {
 	// Validate credentials
-	if vErr := validateCredentials(s, opts.CredentialsFile); vErr != nil {
-		return vErr
+	if err := validateCredentials(st, opts.CredentialsFile); err != nil {
+		return err
 	}
 
 	// Probe the cluster for the actual state and the needed tasks.
 	probbing := tasks.WithHostnameOS(nil)
 	probbing = tasks.WithProbesAndSafeguard(probbing)
 
-	if err = probbing.Run(s); err != nil {
+	if err := probbing.Run(st); err != nil {
 		return err
 	}
 
-	if s.Verbose {
+	if st.Verbose {
 		// Print information about hosts collected by probes
-		for _, host := range s.LiveCluster.ControlPlane {
+		for _, host := range st.LiveCluster.ControlPlane {
 			printHostInformation(host)
 		}
 
-		for _, host := range s.LiveCluster.StaticWorkers {
+		for _, host := range st.LiveCluster.StaticWorkers {
 			printHostInformation(host)
 		}
 	}
 
 	// Reconcile the cluster based on the probe status
-	if !s.LiveCluster.IsProvisioned() {
-		return runApplyInstall(s, opts)
+	if !st.LiveCluster.IsProvisioned() {
+		return runApplyInstall(st, opts)
 	}
 
-	if !s.LiveCluster.Healthy() {
+	if !st.LiveCluster.Healthy() {
 		if opts.RotateEncryptionKey {
 			return fail.RuntimeError{
 				Op:  "checking encryption key rotation",
@@ -186,29 +185,29 @@ func runApply(opts *applyOpts) error {
 			}
 		}
 
-		brokenHosts := s.LiveCluster.BrokenHosts()
+		brokenHosts := st.LiveCluster.BrokenHosts()
 		if len(brokenHosts) > 0 {
 			for _, node := range brokenHosts {
-				s.Logger.Errorf("Host %q is broken and needs to be manually removed\n", node)
+				st.Logger.Errorf("Host %q is broken and needs to be manually removed\n", node)
 			}
 
-			s.Logger.Warnf("Hosts must be removed in a correct order to preserve the Etcd quorum.")
-			s.Logger.Warnf("Loss of the Etcd quorum can cause loss of all data!!!")
-			s.Logger.Warnf("After removing the recommended hosts, run 'kubeone apply' before removing any other host.")
+			st.Logger.Warnf("Hosts must be removed in a correct order to preserve the Etcd quorum.")
+			st.Logger.Warnf("Loss of the Etcd quorum can cause loss of all data!!!")
+			st.Logger.Warnf("After removing the recommended hosts, run 'kubeone apply' before removing any other host.")
 
-			safeToDelete := s.LiveCluster.SafeToDeleteHosts()
+			safeToDelete := st.LiveCluster.SafeToDeleteHosts()
 			if len(safeToDelete) > 0 {
-				s.Logger.Warnf("The recommended removal order:")
+				st.Logger.Warnf("The recommended removal order:")
 				for _, safe := range safeToDelete {
-					s.Logger.Warnf("- %q", safe)
+					st.Logger.Warnf("- %q", safe)
 				}
 			} else {
-				s.Logger.Warnf("No other broken node can be removed without losing quorum.")
+				st.Logger.Warnf("No other broken node can be removed without losing quorum.")
 			}
 		}
 
 		runRepair := false
-		for _, node := range s.LiveCluster.ControlPlane {
+		for _, node := range st.LiveCluster.ControlPlane {
 			if !node.IsInCluster {
 				runRepair = true
 
@@ -217,7 +216,7 @@ func runApply(opts *applyOpts) error {
 		}
 
 		if !runRepair {
-			for _, node := range s.LiveCluster.StaticWorkers {
+			for _, node := range st.LiveCluster.StaticWorkers {
 				if !node.IsInCluster {
 					runRepair = true
 
@@ -226,17 +225,17 @@ func runApply(opts *applyOpts) error {
 			}
 		}
 
-		if safeRepair, higherVer := s.LiveCluster.SafeToRepair(s.Cluster.Versions.Kubernetes); !safeRepair {
-			s.Logger.Errorln("Repair and upgrade are not supported at the same time!")
-			s.Logger.Warnf("Requested version: %s\n", s.Cluster.Versions.Kubernetes)
-			s.Logger.Warnf("Highest version: %s\n", higherVer)
-			s.Logger.Warnf("Use version %s to repair the cluster, then run apply with the new version\n", higherVer)
+		if safeRepair, higherVer := st.LiveCluster.SafeToRepair(st.Cluster.Versions.Kubernetes); !safeRepair {
+			st.Logger.Errorln("Repair and upgrade are not supported at the same time!")
+			st.Logger.Warnf("Requested version: %s\n", st.Cluster.Versions.Kubernetes)
+			st.Logger.Warnf("Highest version: %s\n", higherVer)
+			st.Logger.Warnf("Use version %s to repair the cluster, then run apply with the new version\n", higherVer)
 
 			return fail.ConfigValidation(fmt.Errorf("repair and upgrade are not supported at the same time"))
 		}
 
 		if runRepair {
-			return runApplyInstall(s, opts)
+			return runApplyInstall(st, opts)
 		}
 
 		if len(brokenHosts) > 0 {
@@ -247,19 +246,19 @@ func runApply(opts *applyOpts) error {
 	}
 
 	if opts.RotateEncryptionKey {
-		if !s.EncryptionEnabled() {
+		if !st.EncryptionEnabled() {
 			return fail.ConfigValidation(fmt.Errorf("encryption Providers support is not enabled for this cluster"))
 		}
 
-		if s.Cluster.Features.EncryptionProviders != nil &&
-			s.Cluster.Features.EncryptionProviders.CustomEncryptionConfiguration != "" {
+		if st.Cluster.Features.EncryptionProviders != nil &&
+			st.Cluster.Features.EncryptionProviders.CustomEncryptionConfiguration != "" {
 			return fail.ConfigValidation(fmt.Errorf("key rotation of custom providers file is not supported"))
 		}
 
-		return runApplyRotateKey(s, opts)
+		return runApplyRotateKey(st, opts)
 	}
 
-	return runApplyUpgradeIfNeeded(s, opts)
+	return runApplyUpgradeIfNeeded(st, opts)
 }
 
 func runApplyInstall(s *state.State, opts *applyOpts) error { // Print the expected changes
