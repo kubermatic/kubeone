@@ -164,3 +164,14 @@ resource "null_resource" "keepalived_config" {
   }
 }
 
+/*
+vSphere DRS requires a vSphere Enterprise Plus license. Toggle variable value off if you don't have it.
+An anti-affinity rule places a control_plane machines across different hosts within a cluster, and is useful for preventing single points of failure. 
+*/
+
+resource "vsphere_compute_cluster_vm_anti_affinity_rule" "vm_anti_affinity_rule" {
+  count               = var.is_vsphere_enterprise_plus_license ? 1 : 0
+  name                = "vm-anti-affinity-rule"
+  compute_cluster_id  = data.vsphere_compute_cluster.cluster.id
+  virtual_machine_ids = [for k, v in vsphere_virtual_machine.control_plane : v.id]
+}
