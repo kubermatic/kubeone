@@ -18,8 +18,6 @@ package cmd
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
 	"reflect"
 
 	"github.com/MakeNowJust/heredoc/v2"
@@ -56,38 +54,13 @@ func (opts *applyOpts) BuildState() (*state.State, error) {
 		return nil, err
 	}
 
-	s.BackupFile = opts.BackupFile
+	s.BackupFile = defaultBackupPath(opts.BackupFile, opts.ManifestFile, s.Cluster.Name)
 	s.ForceInstall = opts.ForceInstall
 	s.ForceUpgrade = opts.ForceUpgrade
 	s.UpgradeMachineDeployments = opts.UpgradeMachineDeployments
 	s.CreateMachineDeployments = opts.CreateMachineDeployments
 
-	if s.BackupFile == "" {
-		fullPath, _ := filepath.Abs(opts.ManifestFile)
-		clusterName := s.Cluster.Name
-		s.BackupFile = filepath.Join(filepath.Dir(fullPath), fmt.Sprintf("%s.tar.gz", clusterName))
-	}
-
-	// refuse to overwrite existing backups (NB: since we attempt to
-	// write to the file later on to check for write permissions, we
-	// inadvertently create a zero byte file even if the first step
-	// of the installer fails; for this reason it's okay to find an
-	// existing, zero byte backup)
-	stat, err := os.Stat(s.BackupFile)
-	if err != nil && stat != nil && stat.Size() > 0 {
-		return nil, fail.RuntimeError{
-			Op:  fmt.Sprintf("checking backup file %s existence", opts.BackupFile),
-			Err: errors.New("refusing to overwrite"),
-		}
-	}
-
-	// try to write to the file before doing anything else
-	f, err := os.OpenFile(s.BackupFile, os.O_RDWR|os.O_CREATE, 0600)
-	if err != nil {
-		return nil, fail.Runtime(err, "opening backup file for write")
-	}
-
-	return s, fail.Runtime(f.Close(), "closing backup file")
+	return s, initBackup(s.BackupFile)
 }
 
 func applyCmd(rootFlags *pflag.FlagSet) *cobra.Command {

@@ -21,9 +21,11 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
 
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
 	"golang.org/x/term"
@@ -216,4 +218,36 @@ func validateCredentials(s *state.State, credentialsFile string) error {
 	default:
 		return nil
 	}
+}
+
+func initBackup(backupPath string) error {
+	// refuse to overwrite existing backups (NB: since we attempt to
+	// write to the file later on to check for write permissions, we
+	// inadvertently create a zero byte file even if the first step
+	// of the installer fails; for this reason it's okay to find an
+	// existing, zero byte backup)
+	fi, err := os.Stat(backupPath)
+	if err != nil && fi != nil && fi.Size() > 0 {
+		return fail.RuntimeError{
+			Op:  fmt.Sprintf("checking backup file %s existence", backupPath),
+			Err: errors.New("refusing to overwrite"),
+		}
+	}
+
+	// try to write to the file before doing anything else
+	backup, err := os.OpenFile(backupPath, os.O_RDWR|os.O_CREATE, 0600)
+	if err != nil {
+		return fail.Runtime(err, "opening backup file for write")
+	}
+
+	return fail.Runtime(backup.Close(), "closing backup file")
+}
+
+func defaultBackupPath(backupPath, manifestPath, clusterName string) string {
+	if backupPath == "" {
+		fullPath, _ := filepath.Abs(manifestPath)
+		backupPath = filepath.Join(filepath.Dir(fullPath), fmt.Sprintf("%s.tar.gz", clusterName))
+	}
+
+	return backupPath
 }
