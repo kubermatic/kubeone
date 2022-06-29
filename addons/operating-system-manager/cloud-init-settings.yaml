@@ -17,6 +17,7 @@ kind: Secret
 type: kubernetes.io/service-account-token
 metadata:
   name: cloud-init-getter-token
+  namespace: cloud-init-settings
   annotations:
     kubernetes.io/service-account.name: "cloud-init-getter"
 ---
