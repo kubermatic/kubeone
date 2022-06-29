@@ -1,7 +1,6 @@
-# cloud-init-settings is a dedicated namespace for storing provisioing configurations for machines. That are later consumed by machine-controller
+# cloud-init-settings is a dedicated namespace for storing bootstrap and provisioning configurations for machines.
 # The dedicated and restricted service-account, cloud-init-getter is then used in order to reach, authenticate and be autorized by the API server to fetch those
 # provisioning configurations for the machines
-{{ if .OperatingSystemManagerEnabled }}
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -12,6 +11,14 @@ kind: ServiceAccount
 metadata:
   name: cloud-init-getter
   namespace: cloud-init-settings
+---
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/service-account-token
+metadata:
+  name: cloud-init-getter-token
+  annotations:
+    kubernetes.io/service-account.name: "cloud-init-getter"
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -40,4 +47,3 @@ subjects:
   - kind: ServiceAccount
     name: cloud-init-getter
     namespace: cloud-init-settings
-{{ end }}

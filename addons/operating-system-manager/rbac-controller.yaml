@@ -21,6 +21,7 @@ rules:
       - ""
     resources:
       - configmaps
+      - secrets
     verbs:
       - create
       - update
@@ -51,6 +52,36 @@ rules:
       - delete
 ---
 apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: operating-system-manager
+  namespace: kube-public
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    resourceNames:
+      - cluster-info
+    verbs:
+      - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: operating-system-manager
+  namespace: default
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - endpoints
+    resourceNames:
+      - kubernetes
+    verbs:
+      - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: operating-system-manager
@@ -68,6 +99,34 @@ kind: RoleBinding
 metadata:
   name: operating-system-manager
   namespace: cloud-init-settings
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: operating-system-manager
+subjects:
+  - kind: ServiceAccount
+    name: operating-system-manager
+    namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: operating-system-manager
+  namespace: kube-public
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: operating-system-manager
+subjects:
+  - kind: ServiceAccount
+    name: operating-system-manager
+    namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: operating-system-manager
+  namespace: default
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
