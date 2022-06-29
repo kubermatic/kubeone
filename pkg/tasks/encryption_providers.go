@@ -24,9 +24,9 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/scripts"
-	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/ssh/sshiofs"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates"
@@ -147,7 +147,7 @@ func uploadEncryptionConfigurationWithoutOldKey(s *state.State) error {
 	return s.RunTaskOnControlPlane(pushEncryptionConfigurationOnNode, state.RunParallel)
 }
 
-func pushEncryptionConfigurationOnNode(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func pushEncryptionConfigurationOnNode(s *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
 	err := s.Configuration.UploadTo(conn, s.WorkDir)
 	if err != nil {
 		return err
@@ -192,7 +192,7 @@ func rewriteClusterSecrets(s *state.State) error {
 func removeEncryptionProviderFile(s *state.State) error {
 	s.Logger.Infof("Removing EncryptionProviders configuration file...")
 
-	return s.RunTaskOnControlPlane(func(s *state.State, _ *kubeoneapi.HostConfig, _ ssh.Connection) error {
+	return s.RunTaskOnControlPlane(func(s *state.State, _ *kubeoneapi.HostConfig, _ executor.Interface) error {
 		cmd := scripts.DeleteEncryptionProvidersConfig(s.GetEncryptionProviderConfigName())
 
 		_, _, err := s.Runner.RunRaw(cmd)

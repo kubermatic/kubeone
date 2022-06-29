@@ -161,6 +161,10 @@ func runApply(st *state.State, opts *applyOpts) error {
 		return err
 	}
 
+	if true {
+		return nil
+	}
+
 	if st.Verbose {
 		// Print information about hosts collected by probes
 		for _, host := range st.LiveCluster.ControlPlane {

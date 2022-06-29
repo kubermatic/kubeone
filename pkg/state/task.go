@@ -21,20 +21,20 @@ import (
 	"sync"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/runner"
-	"k8c.io/kubeone/pkg/ssh"
 
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
 )
 
 // NodeTask is a task that is specifically tailored to run on a single node.
-type NodeTask func(ctx *State, node *kubeoneapi.HostConfig, conn ssh.Connection) error
+type NodeTask func(ctx *State, node *kubeoneapi.HostConfig, conn executor.Interface) error
 
 func (s *State) runTask(node *kubeoneapi.HostConfig, task NodeTask) error {
 	var (
 		err  error
-		conn ssh.Connection
+		conn executor.Interface
 	)
 
 	// connect to the host (and do not close connection
@@ -45,10 +45,10 @@ func (s *State) runTask(node *kubeoneapi.HostConfig, task NodeTask) error {
 	}
 
 	s.Runner = &runner.Runner{
-		Conn:    conn,
-		Verbose: s.Verbose,
-		OS:      node.OperatingSystem,
-		Prefix:  fmt.Sprintf("[%s] ", node.PublicAddress),
+		Executor: conn,
+		Verbose:  s.Verbose,
+		OS:       node.OperatingSystem,
+		Prefix:   fmt.Sprintf("[%s] ", node.PublicAddress),
 	}
 
 	return fail.Runtime(task(s, node, conn), "")

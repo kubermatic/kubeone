@@ -26,9 +26,9 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/scripts"
-	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/ssh/sshiofs"
 	"k8c.io/kubeone/pkg/state"
 
@@ -50,7 +50,7 @@ const (
 func determineHostname(s *state.State) error {
 	s.Logger.Infoln("Determine hostname...")
 
-	return s.RunTaskOnAllNodes(func(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+	return s.RunTaskOnAllNodes(func(s *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
 		if node.Hostname != "" {
 			s.Logger.Debugf("Hostname is already set to %q", node.Hostname)
 
@@ -78,7 +78,7 @@ func determineHostname(s *state.State) error {
 func determineOS(s *state.State) error {
 	s.Logger.Infoln("Determine operating system...")
 
-	return s.RunTaskOnAllNodes(func(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+	return s.RunTaskOnAllNodes(func(s *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
 		if node.OperatingSystem != kubeoneapi.OperatingSystemNameUnknown {
 			s.Logger.Debugf("Operating system is already set to %q", node.OperatingSystem)
 

@@ -29,10 +29,10 @@ import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/certificate/cabundle"
 	"k8c.io/kubeone/pkg/clientutil"
+	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/kubeconfig"
 	"k8c.io/kubeone/pkg/scripts"
-	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/ssh/sshiofs"
 	"k8c.io/kubeone/pkg/state"
 
@@ -79,7 +79,7 @@ func renewControlPlaneCerts(s *state.State) error {
 	}
 
 	err := s.RunTaskOnControlPlane(
-		func(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+		func(s *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
 			_, _, err := s.Runner.RunRaw(renewCmd)
 
 			return fail.SSH(err, "running %q on %s node", renewCmd, node.PublicAddress)
@@ -120,7 +120,7 @@ func timeBefore(t1 time.Time, t2 time.Time) bool {
 	return t1.Before(t2)
 }
 
-func earliestCertExpiry(conn ssh.Connection) (time.Time, error) {
+func earliestCertExpiry(conn executor.Interface) (time.Time, error) {
 	var (
 		earliestCertExpirationTime time.Time
 
@@ -170,7 +170,7 @@ func saveCABundle(s *state.State) error {
 	return s.RunTaskOnControlPlane(saveCABundleOnControlPlane, state.RunParallel)
 }
 
-func saveCABundleOnControlPlane(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func saveCABundleOnControlPlane(s *state.State, _ *kubeoneapi.HostConfig, conn executor.Interface) error {
 	if err := s.Configuration.UploadTo(conn, s.WorkDir); err != nil {
 		return err
 	}
@@ -185,7 +185,7 @@ func saveCABundleOnControlPlane(s *state.State, _ *kubeoneapi.HostConfig, conn s
 	return fail.SSH(err, "save CABundle")
 }
 
-func approvePendingCSR(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func approvePendingCSR(s *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
 	var csrFound bool
 	sleepTime := 20 * time.Second
 	s.Logger.Infof("Waiting %s for CSRs to approve...", sleepTime)

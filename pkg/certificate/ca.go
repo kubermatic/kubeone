@@ -24,7 +24,7 @@ import (
 	"path"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
-	"k8c.io/kubeone/pkg/ssh"
+	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/ssh/sshiofs"
 	"k8c.io/kubeone/pkg/state"
 )
@@ -47,7 +47,7 @@ func kubernetesPKIFiles() []string {
 	}
 }
 
-func DownloadKubePKI(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func DownloadKubePKI(s *state.State, _ *kubeoneapi.HostConfig, conn executor.Interface) error {
 	sshfs := s.Runner.NewFS()
 
 	for _, fname := range kubernetesPKIFiles() {
@@ -72,7 +72,7 @@ func DownloadKubePKI(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connecti
 	return nil
 }
 
-func UploadKubePKI(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func UploadKubePKI(s *state.State, _ *kubeoneapi.HostConfig, conn executor.Interface) error {
 	sshfs := s.Runner.NewFS()
 
 	for _, fname := range kubernetesPKIFiles() {

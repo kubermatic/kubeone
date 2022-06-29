@@ -20,8 +20,8 @@ import (
 	"io/fs"
 	"os"
 
+	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
-	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/ssh/sshiofs"
 	"k8c.io/kubeone/pkg/state"
 
@@ -46,7 +46,7 @@ func Download(s *state.State) ([]byte, error) {
 	return catKubernetesAdminConf(conn)
 }
 
-func catKubernetesAdminConf(conn ssh.Connection) ([]byte, error) {
+func catKubernetesAdminConf(conn executor.Interface) ([]byte, error) {
 	return fs.ReadFile(sshiofs.New(conn), "/etc/kubernetes/admin.conf")
 }
 

@@ -28,9 +28,9 @@ import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/clusterstatus/apiserverstatus"
 	"k8c.io/kubeone/pkg/clusterstatus/etcdstatus"
+	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/kubeconfig"
-	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
 
 	appsv1 "k8s.io/api/apps/v1"
@@ -217,7 +217,7 @@ func kubeletVersionCmdGenerator(execPath string) string {
 	return fmt.Sprintf("%s --version | awk '{print $2}'", execPath)
 }
 
-func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
 	var (
 		idx          int
 		foundHost    *state.Host
@@ -424,9 +424,9 @@ func investigateCluster(s *state.State) error {
 	return nil
 }
 
-type systemdUnitInfoOpt func(component *state.ComponentStatus, conn ssh.Connection) error
+type systemdUnitInfoOpt func(component *state.ComponentStatus, conn executor.Interface) error
 
-func systemdUnitInfo(name string, conn ssh.Connection, opts ...systemdUnitInfoOpt) (state.ComponentStatus, error) {
+func systemdUnitInfo(name string, conn executor.Interface, opts ...systemdUnitInfoOpt) (state.ComponentStatus, error) {
 	var (
 		compStatus = state.ComponentStatus{Name: name}
 		err        error
@@ -451,7 +451,7 @@ func systemdUnitInfo(name string, conn ssh.Connection, opts ...systemdUnitInfoOp
 	return compStatus, nil
 }
 
-func withFlatcarContainerRuntimeVersion(component *state.ComponentStatus, conn ssh.Connection) error {
+func withFlatcarContainerRuntimeVersion(component *state.ComponentStatus, conn executor.Interface) error {
 	cmd := versionCmdGenerator(fmt.Sprintf("/run/torcx/bin/%s", component.Name))
 
 	out, _, _, err := conn.Exec(cmd)
@@ -470,7 +470,7 @@ func withFlatcarContainerRuntimeVersion(component *state.ComponentStatus, conn s
 }
 
 func withComponentVersion(versionCmdGenerator func(string) string) systemdUnitInfoOpt {
-	return func(component *state.ComponentStatus, conn ssh.Connection) error {
+	return func(component *state.ComponentStatus, conn executor.Interface) error {
 		execPath, err := systemdUnitExecStartPath(conn, component.Name)
 		if err != nil {
 			return err
@@ -492,7 +492,7 @@ func withComponentVersion(versionCmdGenerator func(string) string) systemdUnitIn
 	}
 }
 
-func detectKubeletInitialized(host *state.Host, conn ssh.Connection) error {
+func detectKubeletInitialized(host *state.Host, conn executor.Interface) error {
 	_, _, exitcode, err := conn.Exec(kubeletInitializedCMD)
 	if err != nil && exitcode <= 0 {
 		// If there's an error and exit code is 0, there's mostly like a connection
@@ -507,7 +507,7 @@ func detectKubeletInitialized(host *state.Host, conn ssh.Connection) error {
 	return nil
 }
 
-func systemdUnitExecStartPath(conn ssh.Connection, unitName string) (string, error) {
+func systemdUnitExecStartPath(conn executor.Interface, unitName string) (string, error) {
 	out, _, _, err := conn.Exec(fmt.Sprintf(systemdShowExecStartCMD, unitName))
 	if err != nil {
 		return "", err
@@ -526,7 +526,7 @@ func systemdUnitExecStartPath(conn ssh.Connection, unitName string) (string, err
 	return "", errors.Errorf("ExecStart not found in %q systemd unit", unitName)
 }
 
-func systemdStatus(conn ssh.Connection, service string) (uint64, error) {
+func systemdStatus(conn executor.Interface, service string) (uint64, error) {
 	out, _, _, err := conn.Exec(fmt.Sprintf(systemdShowStatusCMD, service))
 	if err != nil {
 		return 0, fail.Runtime(err, "ckecking %q systemd service status", service)

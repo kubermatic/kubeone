@@ -26,7 +26,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"k8c.io/kubeone/pkg/ssh"
+	"k8c.io/kubeone/pkg/executor"
 )
 
 var (
@@ -36,7 +36,7 @@ var (
 )
 
 type sshfile struct {
-	conn   ssh.Connection
+	conn   executor.Interface
 	name   string
 	cursor int64
 	fi     fs.FileInfo

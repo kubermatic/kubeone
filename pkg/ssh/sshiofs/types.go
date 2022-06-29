@@ -17,33 +17,11 @@ limitations under the License.
 package sshiofs
 
 import (
-	"io"
-	"io/fs"
+	"k8c.io/kubeone/pkg/executor"
 )
 
 // ExtendedFile extends fs.File bringing it closer in abilities to the os.File.
-type ExtendedFile interface {
-	fs.File
-	io.Writer
-	io.Seeker
-
-	// Chmod changes the mode of the file to mode. If there is an error, it will be of type *fs.PathError.
-	Chmod(mode fs.FileMode) error
-
-	// Chown changes the numeric uid and gid of the named file. If there is an error, it will be of type *fs.PathError.
-	Chown(uid, gid int) error
-
-	// Truncate changes the size of the file. It does not change the I/O offset. If there is an error, it will be of
-	// type *fs.PathError.
-	Truncate(size int64) error
-}
+type ExtendedFile = executor.ExtendedFile
 
 // MkdirFS is the interface implemented by a file system that provides mkdir capabilities.
-type MkdirFS interface {
-	fs.FS
-
-	// MkdirAll creates a directory named path, along with any necessary parents, and returns nil, or else returns an
-	// error. The permission bits perm (before umask) are used for last directory that MkdirAll creates. If path is
-	// already a directory, MkdirAll does nothing and returns nil.
-	MkdirAll(path string, perm fs.FileMode) error
-}
+type MkdirFS = executor.MkdirFS

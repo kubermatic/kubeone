@@ -20,9 +20,9 @@ import (
 	"fmt"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/scripts"
-	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/kubeadm"
 )
@@ -37,7 +37,7 @@ func determinePauseImage(s *state.State) error {
 	return s.RunTaskOnLeader(determinePauseImageExecutor)
 }
 
-func determinePauseImageExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func determinePauseImageExecutor(s *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
 	cmd, err := scripts.KubeadmPauseImageVersion(s.Cluster.Versions.Kubernetes)
 	if err != nil {
 		return err
@@ -88,6 +88,6 @@ func generateKubeadm(s *state.State) error {
 	return s.RunTaskOnAllNodes(uploadKubeadmToNode, state.RunParallel)
 }
 
-func uploadKubeadmToNode(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func uploadKubeadmToNode(s *state.State, _ *kubeoneapi.HostConfig, conn executor.Interface) error {
 	return s.Configuration.UploadTo(conn, s.WorkDir)
 }

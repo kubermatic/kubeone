@@ -23,16 +23,16 @@ import (
 	"strings"
 	"time"
 
+	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
-	"k8c.io/kubeone/pkg/ssh"
 )
 
-func New(conn ssh.Connection) MkdirFS {
+func New(conn executor.Interface) executor.MkdirFS {
 	return &sshfs{conn: conn}
 }
 
 type sshfs struct {
-	conn ssh.Connection
+	conn executor.Interface
 }
 
 func (sfs *sshfs) Open(name string) (fs.File, error) {
@@ -109,7 +109,7 @@ func (sfs *sshfs) ReadFile(name string) ([]byte, error) {
 // 	return nil, nil
 // }
 
-func newSSHFileInfo(name string, conn ssh.Connection) (fs.FileInfo, error) {
+func newSSHFileInfo(name string, conn executor.Interface) (fs.FileInfo, error) {
 	const cmdTpl = "sudo stat --printf='%%s %%f %%Y' %q"
 
 	var (

@@ -25,8 +25,8 @@ import (
 	"github.com/pkg/errors"
 
 	"k8c.io/kubeone/pkg/archive"
+	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
-	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/ssh/sshiofs"
 )
 
@@ -72,7 +72,7 @@ func (c *Configuration) AddFilePath(filename, filePath, manifestFilePath string)
 }
 
 // UploadTo directory all the files
-func (c *Configuration) UploadTo(conn ssh.Connection, directory string) error {
+func (c *Configuration) UploadTo(conn executor.Interface, directory string) error {
 	sshfs := sshiofs.New(conn)
 
 	for filename, content := range c.files {

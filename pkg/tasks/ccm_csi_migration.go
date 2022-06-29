@@ -22,10 +22,10 @@ import (
 	"time"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/nodeutils"
 	"k8c.io/kubeone/pkg/scripts"
-	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
 
 	"github.com/kubermatic/machine-controller/pkg/apis/cluster/common"
@@ -96,7 +96,7 @@ func ccmMigrationRegenerateControlPlaneManifests(s *state.State) error {
 	return s.RunTaskOnControlPlane(ccmMigrationRegenerateControlPlaneManifestsInternal, state.RunSequentially)
 }
 
-func ccmMigrationRegenerateControlPlaneManifestsInternal(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func ccmMigrationRegenerateControlPlaneManifestsInternal(s *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
 	logger := s.Logger.WithField("node", node.PublicAddress)
 	logger.Info("Regenerating Kubernetes API server and kube-controller-manager manifests...")
 
@@ -138,7 +138,7 @@ func ccmMigrationUpdateControlPlaneKubeletConfig(s *state.State) error {
 	return s.RunTaskOnControlPlane(ccmMigrationUpdateControlPlaneKubeletConfigInternal, state.RunSequentially)
 }
 
-func ccmMigrationUpdateControlPlaneKubeletConfigInternal(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func ccmMigrationUpdateControlPlaneKubeletConfigInternal(s *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
 	logger := s.Logger.WithField("node", node.PublicAddress)
 	logger.Info("Updating config and restarting Kubelet...")
 
@@ -182,7 +182,7 @@ func ccmMigrationUpdateStaticWorkersKubeletConfig(s *state.State) error {
 	return s.RunTaskOnStaticWorkers(ccmMigrationUpdateStaticWorkersKubeletConfigInternal, state.RunSequentially)
 }
 
-func ccmMigrationUpdateStaticWorkersKubeletConfigInternal(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func ccmMigrationUpdateStaticWorkersKubeletConfigInternal(s *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
 	logger := s.Logger.WithField("node", node.PublicAddress)
 	logger.Info("Updating config and restarting Kubelet...")
 
@@ -333,7 +333,7 @@ func waitForStaticPodReady(s *state.State, timeout time.Duration, podName, podNa
 	})
 }
 
-func waitForKubeletReady(conn ssh.Connection, timeout time.Duration) error {
+func waitForKubeletReady(conn executor.Interface, timeout time.Duration) error {
 	err := wait.PollImmediate(5*time.Second, timeout, func() (bool, error) {
 		kubeletStatus, sErr := systemdStatus(conn, "kubelet")
 		if sErr != nil {

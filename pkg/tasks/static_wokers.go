@@ -18,9 +18,9 @@ package tasks
 
 import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/scripts"
-	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
 )
 
@@ -28,7 +28,7 @@ func joinStaticWorkerNodes(s *state.State) error {
 	return s.RunTaskOnStaticWorkers(joinStaticWorkerInternal, state.RunParallel)
 }
 
-func joinStaticWorkerInternal(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func joinStaticWorkerInternal(s *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
 	logger := s.Logger.WithField("node", node.PublicAddress)
 
 	logger.Info("Joining worker node")
