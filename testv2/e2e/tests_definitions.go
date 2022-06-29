@@ -298,6 +298,10 @@ var (
 			Name:                 "weave_docker",
 			ManifestTemplatePath: "testdata/docker_weave.yaml",
 		},
+		"install_operating_system_manager": &scenarioInstall{
+			Name:                 "install_operating_system_manager",
+			ManifestTemplatePath: "testdata/operating_system_manager.yaml",
+		},
 	}
 )
 

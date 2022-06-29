@@ -1289,3 +1289,27 @@ func TestAwsLongTimeoutDefaultConformanceContainerdV1_24_1(t *testing.T) {
 	scenario.SetVersions("v1.24.1")
 	scenario.Run(t)
 }
+
+func TestAwsDefaultsInstallOperatingSystemManagerV1_22_11(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["install_operating_system_manager"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultsInstallOperatingSystemManagerV1_23_8(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["install_operating_system_manager"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.8")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultsInstallOperatingSystemManagerV1_24_1(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["install_operating_system_manager"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.1")
+	scenario.Run(t)
+}
