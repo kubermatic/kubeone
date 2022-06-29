@@ -80,6 +80,25 @@ var (
 				},
 			},
 		},
+		"aws_rockylinux": {
+			name: "aws_rockylinux",
+			environ: map[string]string{
+				"PROVIDER": "aws",
+			},
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-aws":     "true",
+			},
+			terraform: terraformBin{
+				path: "../../examples/terraform/aws",
+				vars: []string{
+					"subnets_cidr=27",
+					"os=rockylinux",
+					"ssh_username=rocky",
+					"bastion_user=rocky",
+				},
+			},
+		},
 		"aws_flatcar": {
 			name: "aws_flatcar",
 			environ: map[string]string{

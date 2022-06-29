@@ -6,6 +6,7 @@
     - name: aws_defaults
     - name: aws_flatcar
     - name: aws_rhel
+    - name: aws_rockylinux
     - name: azure_default
     - name: digitalocean_default
     - name: equinixmetal_default
@@ -22,6 +23,7 @@
     - name: aws_defaults
     - name: aws_flatcar
     - name: aws_rhel
+    - name: aws_rockylinux
     - name: azure_default
     - name: digitalocean_default
     - name: equinixmetal_default
@@ -38,6 +40,7 @@
     - name: aws_defaults
     - name: aws_flatcar
     - name: aws_rhel
+    - name: aws_rockylinux
     - name: azure_default
     - name: digitalocean_default
     - name: equinixmetal_default
@@ -54,6 +57,7 @@
     - name: aws_defaults
     - name: aws_flatcar
     - name: aws_rhel
+    - name: aws_rockylinux
     - name: azure_default
     - name: digitalocean_default
     - name: equinixmetal_default
@@ -70,6 +74,7 @@
     - name: aws_defaults
     - name: aws_flatcar
     - name: aws_rhel
+    - name: aws_rockylinux
     - name: azure_default
     - name: digitalocean_default
     - name: equinixmetal_default
@@ -86,6 +91,7 @@
     - name: aws_defaults
     - name: aws_flatcar
     - name: aws_rhel
+    - name: aws_rockylinux
     - name: azure_default
     - name: digitalocean_default
     - name: equinixmetal_default
@@ -103,6 +109,7 @@
     - name: aws_defaults
     - name: aws_flatcar
     - name: aws_rhel
+    - name: aws_rockylinux
     - name: azure_default
     - name: digitalocean_default
     - name: equinixmetal_default
@@ -120,6 +127,7 @@
     - name: aws_defaults
     - name: aws_flatcar
     - name: aws_rhel
+    - name: aws_rockylinux
     - name: azure_default
     - name: digitalocean_default
     - name: equinixmetal_default
@@ -137,6 +145,7 @@
     - name: aws_defaults
     - name: aws_flatcar
     - name: aws_rhel
+    - name: aws_rockylinux
     - name: azure_default
     - name: digitalocean_default
     - name: equinixmetal_default
@@ -153,6 +162,7 @@
     - name: aws_defaults
     - name: aws_flatcar
     - name: aws_rhel
+    - name: aws_rockylinux
     - name: azure_default
     - name: digitalocean_default
     - name: equinixmetal_default
@@ -169,6 +179,7 @@
     - name: aws_defaults
     - name: aws_flatcar
     - name: aws_rhel
+    - name: aws_rockylinux
     - name: azure_default
     - name: digitalocean_default
     - name: equinixmetal_default
@@ -185,6 +196,7 @@
     - name: aws_defaults
     - name: aws_flatcar
     - name: aws_rhel
+    - name: aws_rockylinux
     - name: azure_default
     - name: digitalocean_default
     - name: equinixmetal_default
@@ -201,6 +213,7 @@
     - name: aws_defaults
     - name: aws_flatcar
     - name: aws_rhel
+    - name: aws_rockylinux
     - name: azure_default
     - name: digitalocean_default
     - name: equinixmetal_default

@@ -15,9 +15,9 @@ This addon provides bunch of DaemonSets and operators:
 
 * **Debian/Ubuntu**
   DaemonSet that will install `unattended-upgrades`
-* **RHEL/CentOS/Amazon Linux 2**
+* **RHEL/CentOS/Rocky Linux/Amazon Linux 2**
   DaemonSet that will install and configure `yum-cron`/`dnf-automatic`
-* **Debian/Ubuntu/RHEL/CentOS/Amazon Linux 2**
+* **Debian/Ubuntu/RHEL/CentOS/Rocky Linux/Amazon Linux 2**
   [Kured](https://github.com/weaveworks/kured) (DaemonSet and operator) that
   will orchestrate node rebootes in case when it's required (kernel upgrades)
 * **Flatcar Linux**

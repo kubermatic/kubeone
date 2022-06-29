@@ -175,12 +175,13 @@ func disableNMCloudSetup(s *state.State, node *kubeoneapi.HostConfig, _ ssh.Conn
 
 func installKubeadm(s *state.State, node kubeoneapi.HostConfig) error {
 	return runOnOS(s, node.OperatingSystem, map[kubeoneapi.OperatingSystemName]runOnOSFn{
-		kubeoneapi.OperatingSystemNameAmazon:  installKubeadmAmazonLinux,
-		kubeoneapi.OperatingSystemNameCentOS:  installKubeadmCentOS,
-		kubeoneapi.OperatingSystemNameDebian:  installKubeadmDebian,
-		kubeoneapi.OperatingSystemNameFlatcar: installKubeadmFlatcar,
-		kubeoneapi.OperatingSystemNameRHEL:    installKubeadmCentOS,
-		kubeoneapi.OperatingSystemNameUbuntu:  installKubeadmDebian,
+		kubeoneapi.OperatingSystemNameAmazon:     installKubeadmAmazonLinux,
+		kubeoneapi.OperatingSystemNameCentOS:     installKubeadmCentOS,
+		kubeoneapi.OperatingSystemNameDebian:     installKubeadmDebian,
+		kubeoneapi.OperatingSystemNameFlatcar:    installKubeadmFlatcar,
+		kubeoneapi.OperatingSystemNameRHEL:       installKubeadmCentOS,
+		kubeoneapi.OperatingSystemNameRockyLinux: installKubeadmCentOS,
+		kubeoneapi.OperatingSystemNameUbuntu:     installKubeadmDebian,
 	})
 }
 

@@ -136,12 +136,13 @@ func removeBinaries(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connec
 	}
 
 	return runOnOS(s, node.OperatingSystem, map[kubeoneapi.OperatingSystemName]runOnOSFn{
-		kubeoneapi.OperatingSystemNameAmazon:  removeBinariesAmazonLinux,
-		kubeoneapi.OperatingSystemNameCentOS:  removeBinariesCentOS,
-		kubeoneapi.OperatingSystemNameDebian:  removeBinariesDebian,
-		kubeoneapi.OperatingSystemNameFlatcar: removeBinariesFlatcar,
-		kubeoneapi.OperatingSystemNameRHEL:    removeBinariesCentOS,
-		kubeoneapi.OperatingSystemNameUbuntu:  removeBinariesDebian,
+		kubeoneapi.OperatingSystemNameAmazon:     removeBinariesAmazonLinux,
+		kubeoneapi.OperatingSystemNameCentOS:     removeBinariesCentOS,
+		kubeoneapi.OperatingSystemNameDebian:     removeBinariesDebian,
+		kubeoneapi.OperatingSystemNameFlatcar:    removeBinariesFlatcar,
+		kubeoneapi.OperatingSystemNameRHEL:       removeBinariesCentOS,
+		kubeoneapi.OperatingSystemNameRockyLinux: removeBinariesCentOS,
+		kubeoneapi.OperatingSystemNameUbuntu:     removeBinariesDebian,
 	})
 }
 

@@ -26,6 +26,7 @@ spec:
                 - amzn
                 - centos
                 - rhel
+                - rockylinux
             - matchExpressions:
               - key: v1.kubeone.io/operating-system
                 operator: In
@@ -33,6 +34,7 @@ spec:
                 - amzn
                 - centos
                 - rhel
+                - rockylinux
       tolerations:
       - key: node-role.kubernetes.io/control-plane
         effect: NoSchedule
@@ -67,7 +69,7 @@ spec:
               sed -i 's/update_cmd = default/update_cmd = security/' /etc/yum/yum-cron.conf
               systemctl enable --now yum-cron
               ;;
-            centos8 | rhel8*)
+            centos8 | rhel8* | rocky8*)
               dnf install -y dnf-automatic
               sed -i 's/apply_updates = no/apply_updates = yes/' /etc/dnf/automatic.conf
               sed -i 's/upgrade_type = default/upgrade_type = security/' /etc/dnf/automatic.conf

@@ -36,6 +36,7 @@ variable "worker_os" {
   # valid choices are:
   # * ubuntu
   # * centos
+  # * rockylinux
   default = "ubuntu"
   type    = string
 }
