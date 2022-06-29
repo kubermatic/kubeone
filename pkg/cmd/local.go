@@ -63,6 +63,7 @@ func (opts *localOpts) BuildState() (*state.State, error) {
 			return nil, err
 		}
 
+		convertToLocalCluster(cluster, s.Logger)
 	} else {
 		cluster = generateLocalCluster(s.Logger)
 	}
@@ -121,6 +122,9 @@ func localCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 			return runLocal(opts)
 		},
 	}
+
+	manifestFlag := rootFlags.Lookup("manifest")
+	manifestFlag.DefValue = ""
 
 	cmd.Flags().BoolVarP(
 		&opts.AutoApprove,
@@ -217,4 +221,14 @@ func generateLocalCluster(logger logrus.FieldLogger) *kubeoneapi.KubeOneCluster 
 	}
 
 	return internalCluster
+}
+
+func convertToLocalCluster(in *kubeoneapi.KubeOneCluster, logger logrus.FieldLogger) {
+	genCluster := generateLocalCluster(logger)
+
+	in.Name = genCluster.Name
+	in.ControlPlane = genCluster.ControlPlane
+	in.CloudProvider = genCluster.CloudProvider
+	in.MachineController = genCluster.MachineController
+	in.Versions = genCluster.Versions
 }
