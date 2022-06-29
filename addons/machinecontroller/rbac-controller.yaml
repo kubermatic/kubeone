@@ -158,8 +158,6 @@ rules:
   - apiGroups:
       - "cluster.k8s.io"
     resources:
-      - "clusters"
-      - "clusters/status"
       - "machinedeployments"
       - "machinedeployments/status"
       - "machines"
