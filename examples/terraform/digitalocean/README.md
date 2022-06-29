@@ -18,7 +18,7 @@ use the configs and how to provision a Kubernetes cluster using KubeOne.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_digitalocean"></a> [digitalocean](#provider\_digitalocean) | 2.9.0 |
+| <a name="provider_digitalocean"></a> [digitalocean](#provider\_digitalocean) | ~> 2.9.0 |
 
 ## Modules
 

@@ -23,8 +23,8 @@ See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
 
 | Name | Version |
 |------|---------|
-| <a name="provider_null"></a> [null](#provider\_null) | 3.1.1 |
-| <a name="provider_openstack"></a> [openstack](#provider\_openstack) | 1.47.0 |
+| <a name="provider_null"></a> [null](#provider\_null) | n/a |
+| <a name="provider_openstack"></a> [openstack](#provider\_openstack) | ~> 1.47.0 |
 
 ## Modules
 

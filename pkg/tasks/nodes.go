@@ -54,23 +54,25 @@ func ensureRestartKubeAPIServer(s *state.State) error {
 
 func restartKubeAPIServerOnOS(s *state.State, node kubeoneapi.HostConfig) error {
 	return runOnOS(s, node.OperatingSystem, map[kubeoneapi.OperatingSystemName]runOnOSFn{
-		kubeoneapi.OperatingSystemNameAmazon:  restartKubeAPIServerCrictl,
-		kubeoneapi.OperatingSystemNameCentOS:  restartKubeAPIServerCrictl,
-		kubeoneapi.OperatingSystemNameDebian:  restartKubeAPIServerCrictl,
-		kubeoneapi.OperatingSystemNameFlatcar: restartKubeAPIServerCrictl,
-		kubeoneapi.OperatingSystemNameRHEL:    restartKubeAPIServerCrictl,
-		kubeoneapi.OperatingSystemNameUbuntu:  restartKubeAPIServerCrictl,
+		kubeoneapi.OperatingSystemNameAmazon:     restartKubeAPIServerCrictl,
+		kubeoneapi.OperatingSystemNameCentOS:     restartKubeAPIServerCrictl,
+		kubeoneapi.OperatingSystemNameDebian:     restartKubeAPIServerCrictl,
+		kubeoneapi.OperatingSystemNameFlatcar:    restartKubeAPIServerCrictl,
+		kubeoneapi.OperatingSystemNameRHEL:       restartKubeAPIServerCrictl,
+		kubeoneapi.OperatingSystemNameRockyLinux: restartKubeAPIServerCrictl,
+		kubeoneapi.OperatingSystemNameUbuntu:     restartKubeAPIServerCrictl,
 	})
 }
 
 func ensureRestartKubeAPIServerOnOS(s *state.State, node kubeoneapi.HostConfig) error {
 	return runOnOS(s, node.OperatingSystem, map[kubeoneapi.OperatingSystemName]runOnOSFn{
-		kubeoneapi.OperatingSystemNameAmazon:  ensureRestartKubeAPIServerCrictl,
-		kubeoneapi.OperatingSystemNameCentOS:  ensureRestartKubeAPIServerCrictl,
-		kubeoneapi.OperatingSystemNameDebian:  ensureRestartKubeAPIServerCrictl,
-		kubeoneapi.OperatingSystemNameFlatcar: ensureRestartKubeAPIServerCrictl,
-		kubeoneapi.OperatingSystemNameRHEL:    ensureRestartKubeAPIServerCrictl,
-		kubeoneapi.OperatingSystemNameUbuntu:  ensureRestartKubeAPIServerCrictl,
+		kubeoneapi.OperatingSystemNameAmazon:     ensureRestartKubeAPIServerCrictl,
+		kubeoneapi.OperatingSystemNameCentOS:     ensureRestartKubeAPIServerCrictl,
+		kubeoneapi.OperatingSystemNameDebian:     ensureRestartKubeAPIServerCrictl,
+		kubeoneapi.OperatingSystemNameFlatcar:    ensureRestartKubeAPIServerCrictl,
+		kubeoneapi.OperatingSystemNameRHEL:       ensureRestartKubeAPIServerCrictl,
+		kubeoneapi.OperatingSystemNameRockyLinux: ensureRestartKubeAPIServerCrictl,
+		kubeoneapi.OperatingSystemNameUbuntu:     ensureRestartKubeAPIServerCrictl,
 	})
 }
 

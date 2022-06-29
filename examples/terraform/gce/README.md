@@ -29,7 +29,7 @@ either of the following ENV variables should be accessible:
 
 | Name | Version |
 |------|---------|
-| <a name="provider_google"></a> [google](#provider\_google) | 3.71.0 |
+| <a name="provider_google"></a> [google](#provider\_google) | ~> 3.71.0 |
 
 ## Modules
 

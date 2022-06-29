@@ -39,6 +39,7 @@ variable "worker_os" {
   # * flatcar
   # * rhel
   # * amzn2
+  # * rockylinux
   default = ""
   type    = string
 }
@@ -132,6 +133,7 @@ variable "os" {
   # * rhel
   # * flatcar
   # * amzn
+  # * rockylinux
   default = "ubuntu"
   type    = string
 }
@@ -161,10 +163,10 @@ variable "ami_filters" {
     }
 
     centos = {
-      owners       = ["792107900819"] # RockyLinux
-      image_name   = ["Rocky-8-ec2-*.x86_64"]
-      osp_name     = "osp-centos"
-      ssh_username = "rocky"
+      owners       = ["125523088429"]
+      image_name   = ["CentOS 8.* x86_64"]
+      osp_name     = "osp-centos8"
+      ssh_username = "centos"
       worker_os    = "centos"
     }
 
@@ -182,6 +184,14 @@ variable "ami_filters" {
       osp_name     = "osp-rhel"
       ssh_username = "ec2-user"
       worker_os    = "rhel"
+    }
+
+    rockylinux = {
+      owners       = ["792107900819"] # RockyLinux
+      image_name   = ["Rocky-8-ec2-*.x86_64"]
+      osp_name     = "osp-rockylinux"
+      ssh_username = "rocky"
+      worker_os    = "rockylinux"
     }
 
     amzn = {

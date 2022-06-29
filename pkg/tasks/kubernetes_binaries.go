@@ -25,23 +25,25 @@ import (
 
 func upgradeKubeletAndKubectlBinaries(s *state.State, node kubeoneapi.HostConfig) error {
 	return runOnOS(s, node.OperatingSystem, map[kubeoneapi.OperatingSystemName]runOnOSFn{
-		kubeoneapi.OperatingSystemNameAmazon:  upgradeKubeletAndKubectlBinariesAmazonLinux,
-		kubeoneapi.OperatingSystemNameCentOS:  upgradeKubeletAndKubectlBinariesCentOS,
-		kubeoneapi.OperatingSystemNameDebian:  upgradeKubeletAndKubectlBinariesDebian,
-		kubeoneapi.OperatingSystemNameFlatcar: upgradeKubeletAndKubectlBinariesFlatcar,
-		kubeoneapi.OperatingSystemNameRHEL:    upgradeKubeletAndKubectlBinariesCentOS,
-		kubeoneapi.OperatingSystemNameUbuntu:  upgradeKubeletAndKubectlBinariesDebian,
+		kubeoneapi.OperatingSystemNameAmazon:     upgradeKubeletAndKubectlBinariesAmazonLinux,
+		kubeoneapi.OperatingSystemNameCentOS:     upgradeKubeletAndKubectlBinariesCentOS,
+		kubeoneapi.OperatingSystemNameDebian:     upgradeKubeletAndKubectlBinariesDebian,
+		kubeoneapi.OperatingSystemNameFlatcar:    upgradeKubeletAndKubectlBinariesFlatcar,
+		kubeoneapi.OperatingSystemNameRHEL:       upgradeKubeletAndKubectlBinariesCentOS,
+		kubeoneapi.OperatingSystemNameRockyLinux: upgradeKubeletAndKubectlBinariesCentOS,
+		kubeoneapi.OperatingSystemNameUbuntu:     upgradeKubeletAndKubectlBinariesDebian,
 	})
 }
 
 func upgradeKubeadmAndCNIBinaries(s *state.State, node kubeoneapi.HostConfig) error {
 	return runOnOS(s, node.OperatingSystem, map[kubeoneapi.OperatingSystemName]runOnOSFn{
-		kubeoneapi.OperatingSystemNameAmazon:  upgradeKubeadmAndCNIBinariesAmazonLinux,
-		kubeoneapi.OperatingSystemNameCentOS:  upgradeKubeadmAndCNIBinariesCentOS,
-		kubeoneapi.OperatingSystemNameDebian:  upgradeKubeadmAndCNIBinariesDebian,
-		kubeoneapi.OperatingSystemNameFlatcar: upgradeKubeadmAndCNIBinariesFlatcar,
-		kubeoneapi.OperatingSystemNameRHEL:    upgradeKubeadmAndCNIBinariesCentOS,
-		kubeoneapi.OperatingSystemNameUbuntu:  upgradeKubeadmAndCNIBinariesDebian,
+		kubeoneapi.OperatingSystemNameAmazon:     upgradeKubeadmAndCNIBinariesAmazonLinux,
+		kubeoneapi.OperatingSystemNameCentOS:     upgradeKubeadmAndCNIBinariesCentOS,
+		kubeoneapi.OperatingSystemNameDebian:     upgradeKubeadmAndCNIBinariesDebian,
+		kubeoneapi.OperatingSystemNameFlatcar:    upgradeKubeadmAndCNIBinariesFlatcar,
+		kubeoneapi.OperatingSystemNameRHEL:       upgradeKubeadmAndCNIBinariesCentOS,
+		kubeoneapi.OperatingSystemNameRockyLinux: upgradeKubeadmAndCNIBinariesCentOS,
+		kubeoneapi.OperatingSystemNameUbuntu:     upgradeKubeadmAndCNIBinariesDebian,
 	})
 }
 
