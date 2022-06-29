@@ -237,7 +237,6 @@ func cleanupStaleResources(ctx context.Context, client dynclient.Client) error {
 
 func CRDNames() []string {
 	return []string{
-		"clusters.cluster.k8s.io",
 		"machinedeployments.cluster.k8s.io",
 		"machines.cluster.k8s.io",
 		"machinesets.cluster.k8s.io",
