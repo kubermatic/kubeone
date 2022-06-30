@@ -196,3 +196,9 @@ Name of operating system profile for MachineDeployments, only applicable if oper
 If not specified, the default value will be added by machine-controller addon.
 EOF
 }
+
+variable "is_vsphere_enterprise_plus_license" {
+  description = "toogle on/off based on your vsphere enterprise license"
+  type        = bool
+  default     = true
+}
