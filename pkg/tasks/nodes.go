@@ -26,7 +26,6 @@ import (
 	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/scripts"
-	"k8c.io/kubeone/pkg/ssh/sshiofs"
 	"k8c.io/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
@@ -152,7 +151,7 @@ func patchStaticPods(s *state.State) error {
 			return err
 		}
 		defer f.Close()
-		mgrPodManifest, _ := f.(sshiofs.ExtendedFile)
+		mgrPodManifest, _ := f.(executor.ExtendedFile)
 
 		kubeManagerBuf, err := io.ReadAll(mgrPodManifest)
 		if err != nil {

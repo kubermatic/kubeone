@@ -27,9 +27,9 @@ import (
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/executor"
+	"k8c.io/kubeone/pkg/executor/executorfs"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/scripts"
-	"k8c.io/kubeone/pkg/ssh/sshiofs"
 	"k8c.io/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
@@ -85,7 +85,7 @@ func determineOS(s *state.State) error {
 			return nil
 		}
 
-		buf, err := fs.ReadFile(sshiofs.New(conn), "/etc/os-release")
+		buf, err := fs.ReadFile(executorfs.New(conn), "/etc/os-release")
 		if err != nil {
 			return err
 		}

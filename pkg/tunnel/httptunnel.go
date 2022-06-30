@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package sshtunnel
+package tunnel
 
 import (
 	"crypto/tls"
@@ -22,13 +22,13 @@ import (
 	"time"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
-	"k8c.io/kubeone/pkg/ssh"
+	"k8c.io/kubeone/pkg/executor"
 )
 
 // NewHTTPTransport initialize net/http Transport that will use SSH tunnel as
 // transport
-func NewHTTPTransport(connector *ssh.Connector, target kubeoneapi.HostConfig, tlsConfig *tls.Config) (http.RoundTripper, error) {
-	tunn, err := connector.Tunnel(target)
+func NewHTTPTransport(tunneler executor.Adapter, target kubeoneapi.HostConfig, tlsConfig *tls.Config) (http.RoundTripper, error) {
+	tunn, err := tunneler.Tunnel(target)
 	if err != nil {
 		return nil, err
 	}

@@ -73,7 +73,7 @@ func setupProxyTunnel(opts *proxyOpts) error {
 	}
 
 	// Check if we can authenticate via ssh
-	tunn, err := s.Connector.Tunnel(s.Cluster.RandomHost())
+	tunn, err := s.Executor.Tunnel(s.Cluster.RandomHost())
 	if err != nil {
 		return err
 	}

@@ -26,8 +26,8 @@ import (
 
 	"k8c.io/kubeone/pkg/archive"
 	"k8c.io/kubeone/pkg/executor"
+	"k8c.io/kubeone/pkg/executor/executorfs"
 	"k8c.io/kubeone/pkg/fail"
-	"k8c.io/kubeone/pkg/ssh/sshiofs"
 )
 
 // Configuration holds a map of generated files
@@ -73,24 +73,24 @@ func (c *Configuration) AddFilePath(filename, filePath, manifestFilePath string)
 
 // UploadTo directory all the files
 func (c *Configuration) UploadTo(conn executor.Interface, directory string) error {
-	sshfs := sshiofs.New(conn)
+	virtfs := executorfs.New(conn)
 
 	for filename, content := range c.files {
 		target := filepath.Join(directory, filename)
 
 		// ensure the base dir exists
 		dir := filepath.Dir(target)
-		if err := sshfs.MkdirAll(dir, 0700); err != nil {
+		if err := virtfs.MkdirAll(dir, 0700); err != nil {
 			return err
 		}
 
-		f, err := sshfs.Open(target)
+		f, err := virtfs.Open(target)
 		if err != nil {
 			return err
 		}
 		defer f.Close()
 
-		file, _ := f.(sshiofs.ExtendedFile)
+		file, _ := f.(executor.ExtendedFile)
 		if err = file.Truncate(0); err != nil {
 			return err
 		}

@@ -30,10 +30,10 @@ import (
 	"k8c.io/kubeone/pkg/certificate/cabundle"
 	"k8c.io/kubeone/pkg/clientutil"
 	"k8c.io/kubeone/pkg/executor"
+	"k8c.io/kubeone/pkg/executor/executorfs"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/kubeconfig"
 	"k8c.io/kubeone/pkg/scripts"
-	"k8c.io/kubeone/pkg/ssh/sshiofs"
 	"k8c.io/kubeone/pkg/state"
 
 	certificatesv1 "k8s.io/api/certificates/v1"
@@ -93,8 +93,8 @@ func renewControlPlaneCerts(s *state.State) error {
 	return kubeconfig.BuildKubernetesClientset(s)
 }
 
-func fetchCert(sshfs fs.FS, filename string) (*x509.Certificate, error) {
-	buf, err := fs.ReadFile(sshfs, filename)
+func fetchCert(virtfs fs.FS, filename string) (*x509.Certificate, error) {
+	buf, err := fs.ReadFile(virtfs, filename)
 	if err != nil {
 		return nil, err
 	}
@@ -138,9 +138,9 @@ func earliestCertExpiry(conn executor.Interface) (time.Time, error) {
 		}
 	)
 
-	sshfs := sshiofs.New(conn)
+	virtfs := executorfs.New(conn)
 	for _, certName := range certsToCheck {
-		cert, err := fetchCert(sshfs, certName)
+		cert, err := fetchCert(virtfs, certName)
 		if err != nil {
 			return earliestCertExpirationTime, err
 		}

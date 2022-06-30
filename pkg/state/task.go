@@ -39,7 +39,7 @@ func (s *State) runTask(node *kubeoneapi.HostConfig, task NodeTask) error {
 
 	// connect to the host (and do not close connection
 	// because we want to re-use it for future tasks)
-	conn, err = s.Connector.Connect(*node)
+	conn, err = s.Executor.Open(*node)
 	if err != nil {
 		return err
 	}

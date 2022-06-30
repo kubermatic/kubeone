@@ -21,6 +21,8 @@ import (
 	"io"
 	"io/fs"
 	"net"
+
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 )
 
 type Interface interface {
@@ -64,7 +66,7 @@ type MkdirFS interface {
 	MkdirAll(path string, perm fs.FileMode) error
 }
 
-func NewFS(adapter Interface) MkdirFS {
-	// TODO
-	return nil
+type Adapter interface {
+	Open(host kubeoneapi.HostConfig) (Interface, error)
+	Tunnel(host kubeoneapi.HostConfig) (Tunneler, error)
 }

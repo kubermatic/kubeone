@@ -49,7 +49,7 @@ func NewConnector(ctx context.Context) *Connector {
 
 // Tunnel returns established SSH tunnel
 func (c *Connector) Tunnel(host kubeoneapi.HostConfig) (executor.Tunneler, error) {
-	conn, err := c.Connect(host)
+	conn, err := c.Open(host)
 	if err != nil {
 		return nil, err
 	}
@@ -65,8 +65,8 @@ func (c *Connector) Tunnel(host kubeoneapi.HostConfig) (executor.Tunneler, error
 	return tunn, err
 }
 
-// Connect to the node
-func (c *Connector) Connect(host kubeoneapi.HostConfig) (executor.Interface, error) {
+// Open to the node
+func (c *Connector) Open(host kubeoneapi.HostConfig) (executor.Interface, error) {
 	var err error
 
 	c.lock.Lock()

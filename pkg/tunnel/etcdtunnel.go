@@ -1,5 +1,5 @@
 /*
-Copyright 2021 The KubeOne Authors.
+Copyright 2019 The KubeOne Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,14 +14,26 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package sshiofs
+package tunnel
 
 import (
+	"context"
+	"net"
+
+	"google.golang.org/grpc"
+
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/executor"
 )
 
-// ExtendedFile extends fs.File bringing it closer in abilities to the os.File.
-type ExtendedFile = executor.ExtendedFile
+// NewGRPCDialer initialize gRPC dialer that will use ssh tunnel as transport
+func NewGRPCDialer(tunneler executor.Adapter, target kubeoneapi.HostConfig) (grpc.DialOption, error) {
+	tunnel, err := tunneler.Tunnel(target)
+	if err != nil {
+		return nil, err
+	}
 
-// MkdirFS is the interface implemented by a file system that provides mkdir capabilities.
-type MkdirFS = executor.MkdirFS
+	return grpc.WithContextDialer(func(ctx context.Context, addr string) (net.Conn, error) {
+		return tunnel.TunnelTo(ctx, "tcp4", addr)
+	}), nil
+}

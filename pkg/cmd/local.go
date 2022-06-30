@@ -24,16 +24,17 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	corev1 "k8s.io/api/core/v1"
 
 	"k8c.io/kubeone/pkg/addons"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/apis/kubeone/config"
 	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
 	kubeonevalidation "k8c.io/kubeone/pkg/apis/kubeone/validation"
+	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -47,27 +48,32 @@ type localOpts struct {
 }
 
 func (opts *localOpts) BuildState() (*state.State, error) {
+	logger := newLogger(opts.Verbose, opts.LogFormat)
+
+	var (
+		cluster *kubeoneapi.KubeOneCluster
+		err     error
+	)
+
+	if opts.ManifestFile != "" {
+		cluster, err = loadClusterConfig(opts.ManifestFile, "", "", logger)
+		if err != nil {
+			return nil, err
+		}
+		convertToLocalCluster(cluster, logger)
+	} else {
+		cluster = generateLocalCluster(logger)
+	}
 	rootContext := context.Background()
-	s, err := state.New(rootContext)
+
+	localExec := executor.NewLocal(rootContext)
+
+	s, err := state.New(rootContext, state.WithExecutorAdapter(localExec))
 	if err != nil {
 		return nil, err
 	}
 
-	s.Logger = newLogger(opts.Verbose, opts.LogFormat)
-
-	var cluster *kubeoneapi.KubeOneCluster
-
-	if opts.ManifestFile != "" {
-		cluster, err = loadClusterConfig(opts.ManifestFile, "", "", s.Logger)
-		if err != nil {
-			return nil, err
-		}
-
-		convertToLocalCluster(cluster, s.Logger)
-	} else {
-		cluster = generateLocalCluster(s.Logger)
-	}
-
+	s.Logger = logger
 	s.Cluster = cluster
 
 	// Validate Addons path if provided

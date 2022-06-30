@@ -24,9 +24,9 @@ import (
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/executor"
+	"k8c.io/kubeone/pkg/executor/executorfs"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/scripts"
-	"k8c.io/kubeone/pkg/ssh/sshiofs"
 )
 
 // Runner bundles a connection to a host with the verbosity and
@@ -42,7 +42,7 @@ type Runner struct {
 type TemplateVariables map[string]interface{}
 
 func (r *Runner) NewFS() executor.MkdirFS {
-	return sshiofs.New(r.Executor)
+	return executorfs.New(r.Executor)
 }
 
 func (r *Runner) RunRaw(cmd string) (string, string, error) {

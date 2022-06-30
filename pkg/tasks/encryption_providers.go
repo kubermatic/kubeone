@@ -25,9 +25,9 @@ import (
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/executor"
+	"k8c.io/kubeone/pkg/executor/executorfs"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/scripts"
-	"k8c.io/kubeone/pkg/ssh/sshiofs"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates"
 	encryptionproviders "k8c.io/kubeone/pkg/templates/encryptionproviders"
@@ -49,15 +49,15 @@ func fetchEncryptionProvidersFile(s *state.State) error {
 		return err
 	}
 
-	conn, err := s.Connector.Connect(host)
+	conn, err := s.Executor.Open(host)
 	if err != nil {
 		return err
 	}
 
-	sshfs := sshiofs.New(conn)
+	virtfs := executorfs.New(conn)
 	fileName := s.GetEncryptionProviderConfigName()
 
-	config, err := fs.ReadFile(sshfs, path.Join("/etc/kubernetes/encryption-providers", fileName))
+	config, err := fs.ReadFile(virtfs, path.Join("/etc/kubernetes/encryption-providers", fileName))
 	if err != nil {
 		return err
 	}

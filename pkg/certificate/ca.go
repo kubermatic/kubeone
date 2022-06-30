@@ -25,7 +25,6 @@ import (
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/executor"
-	"k8c.io/kubeone/pkg/ssh/sshiofs"
 	"k8c.io/kubeone/pkg/state"
 )
 
@@ -90,7 +89,7 @@ func UploadKubePKI(s *state.State, _ *kubeoneapi.HostConfig, conn executor.Inter
 			return err
 		}
 		defer f.Close()
-		fw, _ := f.(sshiofs.ExtendedFile)
+		fw, _ := f.(executor.ExtendedFile)
 
 		if err = fw.Truncate(0); err != nil {
 			return err
