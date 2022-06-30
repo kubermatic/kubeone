@@ -51,6 +51,7 @@ No modules.
 | [vsphere_network.network](https://registry.terraform.io/providers/hashicorp/vsphere/latest/docs/data-sources/network) | data source |
 | [vsphere_resource_pool.pool](https://registry.terraform.io/providers/hashicorp/vsphere/latest/docs/data-sources/resource_pool) | data source |
 | [vsphere_virtual_machine.template](https://registry.terraform.io/providers/hashicorp/vsphere/latest/docs/data-sources/virtual_machine) | data source |
+| [vsphere_compute_cluster_vm_anti_affinity_rule.vm_anti_affinity_rule](https://registry.terraform.io/providers/hashicorp/vsphere/latest/docs/resources/compute_cluster_vm_anti_affinity_rule) | resource |
 
 ## Inputs
 
@@ -79,6 +80,7 @@ No modules.
 | <a name="input_worker_disk"></a> [worker\_disk](#input\_worker\_disk) | disk size of each worker node in GB | `number` | `10` | no |
 | <a name="input_worker_memory"></a> [worker\_memory](#input\_worker\_memory) | memory size of each worker node in MB | `number` | `2048` | no |
 | <a name="input_worker_os"></a> [worker\_os](#input\_worker\_os) | OS to run on worker machines | `string` | `"flatcar"` | no |
+| <a name="input_is_vsphere_enterprise_plus_license"></a> [is\_vsphere\_enterprise\_plus\_license](#input\_is\_vsphere\_enterprise\_plus\_license) | toogle on/off based on your vsphere enterprise license | `bool` | `"true"` | no |
 
 ## Outputs
 
