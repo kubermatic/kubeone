@@ -83,7 +83,8 @@ func unmarshalKubeletFlags(buf []byte) (map[string]string, error) {
 		return nil, errors.New("can't parse: wrong split length")
 	}
 
-	envValue := strings.Trim(s1[1], `"`)
+	envValue := strings.Trim(s1[1], "\n")
+	envValue = strings.Trim(envValue, `"`)
 	flagsvalues := strings.Split(envValue, " ")
 	kubeletflagsMap := map[string]string{}
 

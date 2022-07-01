@@ -55,6 +55,10 @@ func upgradeLeaderExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh
 		return err
 	}
 
+	if err := updateKubeadmFlagsEnv(s, node); err != nil {
+		return err
+	}
+
 	logger.Infoln("Upgrading kubeadm binary on the leader control plane...")
 	if err := upgradeKubeadmAndCNIBinaries(s, *node); err != nil {
 		return errors.Wrap(err, "failed to upgrade kubernetes binaries on leader control plane")
