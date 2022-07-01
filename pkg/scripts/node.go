@@ -26,7 +26,7 @@ var (
 	hostnameScript = heredoc.Doc(`
 		fqdn=$(hostname -f)
 		[ "$fqdn" = localhost ] && fqdn=$(hostname)
-		echo "$fqdn"
+		echo -n "$fqdn"
 	`)
 
 	restartKubeAPIServerCrictlTemplate = heredoc.Doc(`
