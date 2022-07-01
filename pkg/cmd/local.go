@@ -41,11 +41,12 @@ import (
 
 type localOpts struct {
 	globalOptions
-	AutoApprove  bool   `longflag:"auto-approve" shortflag:"y"`
-	BackupFile   string `longflag:"backup" shortflag:"b"`
-	NoInit       bool   `longflag:"no-init"`
-	ForceInstall bool   `longflag:"force-install"`
-	ForceUpgrade bool   `longflag:"force-upgrade"`
+	AutoApprove       bool   `longflag:"auto-approve" shortflag:"y"`
+	BackupFile        string `longflag:"backup" shortflag:"b"`
+	NoInit            bool   `longflag:"no-init"`
+	ForceInstall      bool   `longflag:"force-install"`
+	ForceUpgrade      bool   `longflag:"force-upgrade"`
+	KubernetesVersion string `longflag:"kubernetes-version"`
 }
 
 func (opts *localOpts) BuildState() (*state.State, error) {
@@ -69,7 +70,7 @@ func (opts *localOpts) BuildState() (*state.State, error) {
 		}
 		convertToLocalCluster(cluster, logger)
 	} else {
-		cluster = generateLocalCluster(logger)
+		cluster = generateLocalCluster(logger, opts.KubernetesVersion)
 	}
 	rootContext := context.Background()
 
@@ -150,6 +151,12 @@ func localCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		"",
 		"path to where the PKI backup .tar.gz file should be placed (default: location of cluster config file)")
 
+	cmd.Flags().StringVar(
+		&opts.KubernetesVersion,
+		longFlagName(opts, "KubernetesVersion"),
+		"1.24.2",
+		"kubernetes version to install when there is no manifest")
+
 	cmd.Flags().BoolVar(
 		&opts.NoInit,
 		longFlagName(opts, "NoInit"),
@@ -189,7 +196,7 @@ func runLocal(opts *localOpts) error {
 	return runApply(st, aopts)
 }
 
-func generateLocalCluster(logger logrus.FieldLogger) *kubeoneapi.KubeOneCluster {
+func generateLocalCluster(logger logrus.FieldLogger, kubeVersion string) *kubeoneapi.KubeOneCluster {
 	ownIP, err := k8net.ChooseHostInterface()
 	if err != nil {
 		panic(err)
@@ -218,7 +225,7 @@ func generateLocalCluster(logger logrus.FieldLogger) *kubeoneapi.KubeOneCluster 
 			Deploy: false,
 		},
 		Versions: kubeonev1beta2.VersionConfig{
-			Kubernetes: "1.24.2",
+			Kubernetes: kubeVersion,
 		},
 	}
 
@@ -239,7 +246,7 @@ func generateLocalCluster(logger logrus.FieldLogger) *kubeoneapi.KubeOneCluster 
 }
 
 func convertToLocalCluster(in *kubeoneapi.KubeOneCluster, logger logrus.FieldLogger) {
-	genCluster := generateLocalCluster(logger)
+	genCluster := generateLocalCluster(logger, in.Versions.Kubernetes)
 
 	in.Name = genCluster.Name
 	in.ControlPlane = genCluster.ControlPlane
