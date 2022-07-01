@@ -47,6 +47,7 @@ type localOpts struct {
 	ForceInstall      bool   `longflag:"force-install"`
 	ForceUpgrade      bool   `longflag:"force-upgrade"`
 	KubernetesVersion string `longflag:"kubernetes-version"`
+	APIEndpoint       string `longflag:"api-endpoint"`
 }
 
 func (opts *localOpts) BuildState() (*state.State, error) {
@@ -70,7 +71,7 @@ func (opts *localOpts) BuildState() (*state.State, error) {
 		}
 		convertToLocalCluster(cluster, logger)
 	} else {
-		cluster = generateLocalCluster(logger, opts.KubernetesVersion)
+		cluster = generateLocalCluster(logger, opts.KubernetesVersion, opts.APIEndpoint)
 	}
 	rootContext := context.Background()
 
@@ -157,6 +158,12 @@ func localCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		"1.24.2",
 		"kubernetes version to install when there is no manifest")
 
+	cmd.Flags().StringVar(
+		&opts.APIEndpoint,
+		longFlagName(opts, "ApiEndpoint"),
+		"",
+		"kube-apiserver endpoint to init, defaut to autodetect")
+
 	cmd.Flags().BoolVar(
 		&opts.NoInit,
 		longFlagName(opts, "NoInit"),
@@ -196,7 +203,7 @@ func runLocal(opts *localOpts) error {
 	return runApply(st, aopts)
 }
 
-func generateLocalCluster(logger logrus.FieldLogger, kubeVersion string) *kubeoneapi.KubeOneCluster {
+func generateLocalCluster(logger logrus.FieldLogger, kubeVersion, apiEndpoint string) *kubeoneapi.KubeOneCluster {
 	ownIP, err := k8net.ChooseHostInterface()
 	if err != nil {
 		panic(err)
@@ -207,7 +214,9 @@ func generateLocalCluster(logger logrus.FieldLogger, kubeVersion string) *kubeon
 			APIVersion: kubeonev1beta2.SchemeGroupVersion.String(),
 			Kind:       "KubeOneCluster",
 		},
-
+		APIEndpoint: kubeonev1beta2.APIEndpoint{
+			Host: apiEndpoint,
+		},
 		Name: "local",
 		ControlPlane: kubeonev1beta2.ControlPlaneConfig{
 			Hosts: []kubeonev1beta2.HostConfig{
@@ -246,7 +255,7 @@ func generateLocalCluster(logger logrus.FieldLogger, kubeVersion string) *kubeon
 }
 
 func convertToLocalCluster(in *kubeoneapi.KubeOneCluster, logger logrus.FieldLogger) {
-	genCluster := generateLocalCluster(logger, in.Versions.Kubernetes)
+	genCluster := generateLocalCluster(logger, in.Versions.Kubernetes, in.APIVersion)
 
 	in.Name = genCluster.Name
 	in.ControlPlane = genCluster.ControlPlane
