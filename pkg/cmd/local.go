@@ -36,6 +36,7 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	k8net "k8s.io/apimachinery/pkg/util/net"
 )
 
 type localOpts struct {
@@ -189,6 +190,11 @@ func runLocal(opts *localOpts) error {
 }
 
 func generateLocalCluster(logger logrus.FieldLogger) *kubeoneapi.KubeOneCluster {
+	ownIP, err := k8net.ChooseHostInterface()
+	if err != nil {
+		panic(err)
+	}
+
 	cls := &kubeonev1beta2.KubeOneCluster{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: kubeonev1beta2.SchemeGroupVersion.String(),
@@ -199,7 +205,7 @@ func generateLocalCluster(logger logrus.FieldLogger) *kubeoneapi.KubeOneCluster 
 		ControlPlane: kubeonev1beta2.ControlPlaneConfig{
 			Hosts: []kubeonev1beta2.HostConfig{
 				{
-					PublicAddress: "localhost",
+					PublicAddress: ownIP.String(),
 					IsLeader:      true,
 					Taints:        []corev1.Taint{},
 				},
