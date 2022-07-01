@@ -51,11 +51,17 @@ func (opts *localOpts) BuildState() (*state.State, error) {
 	logger := newLogger(opts.Verbose, opts.LogFormat)
 
 	var (
-		cluster *kubeoneapi.KubeOneCluster
-		err     error
+		cluster      *kubeoneapi.KubeOneCluster
+		haveManifest bool
+		err          error
 	)
 
-	if opts.ManifestFile != "" {
+	_, err = os.Stat(opts.ManifestFile)
+	if err == nil {
+		haveManifest = true
+	}
+
+	if haveManifest {
 		cluster, err = loadClusterConfig(opts.ManifestFile, "", "", logger)
 		if err != nil {
 			return nil, err
@@ -128,9 +134,6 @@ func localCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 			return runLocal(opts)
 		},
 	}
-
-	manifestFlag := rootFlags.Lookup("manifest")
-	manifestFlag.DefValue = ""
 
 	cmd.Flags().BoolVarP(
 		&opts.AutoApprove,
