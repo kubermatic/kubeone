@@ -23,7 +23,7 @@ See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
 
 | Name | Version |
 |------|---------|
-| <a name="provider_hcloud"></a> [hcloud](#provider\_hcloud) | 1.31.1 |
+| <a name="provider_hcloud"></a> [hcloud](#provider\_hcloud) | ~> 1.31.0 |
 
 ## Modules
 
