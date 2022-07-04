@@ -86,18 +86,19 @@ type controlPlane struct {
 }
 
 type hostsSpec struct {
-	PublicAddress     []string    `json:"public_address"`
-	PrivateAddress    []string    `json:"private_address"`
-	Hostnames         []string    `json:"hostnames"`
-	OperatingSystem   string      `json:"operating_system"`
-	SSHUser           string      `json:"ssh_user"`
-	SSHPort           int         `json:"ssh_port"`
-	SSHPrivateKeyFile string      `json:"ssh_private_key_file"`
-	SSHAgentSocket    string      `json:"ssh_agent_socket"`
-	Bastion           string      `json:"bastion"`
-	BastionPort       int         `json:"bastion_port"`
-	BastionUser       string      `json:"bastion_user"`
-	Kubelet           kubeletSpec `json:"kubelet,omitempty"`
+	PublicAddress     []string          `json:"public_address"`
+	PrivateAddress    []string          `json:"private_address"`
+	Hostnames         []string          `json:"hostnames"`
+	OperatingSystem   string            `json:"operating_system"`
+	SSHUser           string            `json:"ssh_user"`
+	SSHPort           int               `json:"ssh_port"`
+	SSHPrivateKeyFile string            `json:"ssh_private_key_file"`
+	SSHAgentSocket    string            `json:"ssh_agent_socket"`
+	Bastion           string            `json:"bastion"`
+	BastionPort       int               `json:"bastion_port"`
+	BastionUser       string            `json:"bastion_user"`
+	Kubelet           kubeletSpec       `json:"kubelet,omitempty"`
+	Labels            map[string]string `json:"labels"`
 }
 
 type kubeletSpec struct {
@@ -355,6 +356,7 @@ func newHostConfig(publicIP, privateIP, hostname string, hs *hostsSpec) kubeonev
 		SSHUsername:       hs.SSHUser,
 		SSHPort:           hs.SSHPort,
 		Kubelet:           kubeonev1beta2.KubeletConfig{},
+		Labels:            hs.Labels,
 	}
 
 	parseKubeletResourceParams(hs.Kubelet, &hc.Kubelet)

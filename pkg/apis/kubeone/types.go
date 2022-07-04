@@ -31,38 +31,55 @@ type KubeOneCluster struct {
 
 	// Name is the name of the cluster.
 	Name string `json:"name"`
+
 	// ControlPlane describes the control plane nodes and how to access them.
 	ControlPlane ControlPlaneConfig `json:"controlPlane"`
+
 	// APIEndpoint are pairs of address and port used to communicate with the Kubernetes API.
 	APIEndpoint APIEndpoint `json:"apiEndpoint"`
+
 	// CloudProvider configures the cloud provider specific features.
 	CloudProvider CloudProviderSpec `json:"cloudProvider"`
+
 	// Versions defines which Kubernetes version will be installed.
 	Versions VersionConfig `json:"versions"`
+
 	// ContainerRuntime defines which container runtime will be installed
 	ContainerRuntime ContainerRuntimeConfig `json:"containerRuntime,omitempty"`
+
 	// ClusterNetwork configures the in-cluster networking.
 	ClusterNetwork ClusterNetworkConfig `json:"clusterNetwork,omitempty"`
+
 	// Proxy configures proxy used while installing Kubernetes and by the Docker daemon.
 	Proxy ProxyConfig `json:"proxy,omitempty"`
+
 	// StaticWorkers describes the worker nodes that are managed by KubeOne/kubeadm.
 	StaticWorkers StaticWorkersConfig `json:"staticWorkers,omitempty"`
+
 	// DynamicWorkers describes the worker nodes that are managed by Kubermatic machine-controller/Cluster-API.
 	DynamicWorkers []DynamicWorkerConfig `json:"dynamicWorkers,omitempty"`
+
 	// MachineController configures the Kubermatic machine-controller component.
 	MachineController *MachineControllerConfig `json:"machineController,omitempty"`
+
 	// CABundle PEM encoded global CA
 	CABundle string `json:"caBundle,omitempty"`
+
 	// Features enables and configures additional cluster features.
 	Features Features `json:"features,omitempty"`
+
 	// Addons are used to deploy additional manifests.
 	Addons *Addons `json:"addons,omitempty"`
+
 	// SystemPackages configure kubeone behaviour regarding OS packages.
 	SystemPackages *SystemPackages `json:"systemPackages,omitempty"`
+
 	// AssetConfiguration configures how are binaries and container images downloaded
 	AssetConfiguration AssetConfiguration `json:"assetConfiguration,omitempty"`
+
 	// RegistryConfiguration configures how Docker images are pulled from an image registry
 	RegistryConfiguration *RegistryConfiguration `json:"registryConfiguration,omitempty"`
+
 	// LoggingConfig configures the Kubelet's log rotation
 	LoggingConfig LoggingConfig `json:"loggingConfig,omitempty"`
 }
@@ -72,6 +89,7 @@ type LoggingConfig struct {
 	// ContainerLogMaxSize configures the maximum size of container log file before it is rotated
 	// See more at: https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/
 	ContainerLogMaxSize string `json:"containerLogMaxSize,omitempty"`
+
 	// ContainerLogMaxFiles configures the maximum number of container log files that can be present for a container
 	// See more at: https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/
 	ContainerLogMaxFiles int32 `json:"containerLogMaxFiles,omitempty"`
@@ -142,37 +160,49 @@ const (
 type HostConfig struct {
 	// ID automatically assigned at runtime.
 	ID int `json:"-"`
+
 	// PublicAddress is externally accessible IP address from public internet.
 	PublicAddress string `json:"publicAddress"`
+
 	// PrivateAddress is internal RFC-1918 IP address.
 	PrivateAddress string `json:"privateAddress"`
+
 	// SSHPort is port to connect ssh to.
 	// Default value is 22.
 	SSHPort int `json:"sshPort,omitempty"`
+
 	// SSHUsername is system login name.
 	// Default value is "root".
 	SSHUsername string `json:"sshUsername,omitempty"`
+
 	// SSHPrivateKeyFile is path to the file with PRIVATE AND CLEANTEXT ssh key.
 	// Default value is "".
 	SSHPrivateKeyFile string `json:"sshPrivateKeyFile,omitempty"`
+
 	// SSHAgentSocket path (or reference to the environment) to the SSH agent unix domain socket.
 	// Default value is "env:SSH_AUTH_SOCK".
 	SSHAgentSocket string `json:"sshAgentSocket,omitempty"`
+
 	// Bastion is an IP or hostname of the bastion (or jump) host to connect to.
 	// Default value is "".
 	Bastion string `json:"bastion,omitempty"`
+
 	// BastionPort is SSH port to use when connecting to the bastion if it's configured in .Bastion.
 	// Default value is 22.
 	BastionPort int `json:"bastionPort,omitempty"`
+
 	// BastionUser is system login name to use when connecting to bastion host.
 	// Default value is "root".
 	BastionUser string `json:"bastionUser,omitempty"`
+
 	// Hostname is the hostname(1) of the host.
 	// Default value is populated at the runtime via running `hostname -f` command over ssh.
 	Hostname string `json:"hostname,omitempty"`
+
 	// IsLeader indicates this host as a session leader.
 	// Default value is populated at the runtime.
 	IsLeader bool `json:"isLeader,omitempty"`
+
 	// Taints are taints applied to nodes. Those taints are only applied when the node is being provisioned.
 	// If not provided (i.e. nil) for control plane nodes, it defaults to:
 	//   * For Kubernetes 1.23 and older: TaintEffectNoSchedule with key node-role.kubernetes.io/master
@@ -180,8 +210,13 @@ type HostConfig struct {
 	//     node-role.kubernetes.io/control-plane and node-role.kubernetes.io/master
 	// Explicitly empty (i.e. []corev1.Taint{}) means no taints will be applied (this is default for worker nodes).
 	Taints []corev1.Taint `json:"taints,omitempty"`
+
+	// Lables to be used to apply (or remove, with minus sign suffix, see more kubectl help label) lables to/from node
+	Labels map[string]string `json:"labels"`
+
 	// Kubelet
 	Kubelet KubeletConfig `json:"kubelet,omitempty"`
+
 	// OperatingSystem information, can be populated at the runtime.
 	OperatingSystem OperatingSystemName `json:"operatingSystem,omitempty"`
 }
@@ -203,12 +238,15 @@ type KubeletConfig struct {
 	// SystemReserved configure --system-reserved command-line flag of the kubelet.
 	// See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/
 	SystemReserved map[string]string `json:"systemReserved,omitempty"`
+
 	// KubeReserved configure --kube-reserved command-line flag of the kubelet.
 	// See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/
 	KubeReserved map[string]string `json:"kubeReserved,omitempty"`
+
 	// EvictionHard configure --eviction-hard command-line flag of the kubelet.
 	// See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/
 	EvictionHard map[string]string `json:"evictionHard,omitempty"`
+
 	// MaxPods configures maximum number of pods per node.
 	// If not provided, default value provided by kubelet will be used
 	// (max. 110 pods per node)
@@ -219,9 +257,11 @@ type KubeletConfig struct {
 type APIEndpoint struct {
 	// Host is the hostname or IP on which API is running.
 	Host string `json:"host"`
+
 	// Port is the port used to reach to the API.
 	// Default value is 6443.
 	Port int `json:"port,omitempty"`
+
 	// AlternativeNames is a list of Subject Alternative Names for the API Server signing cert.
 	AlternativeNames []string `json:"alternativeNames,omitempty"`
 }
@@ -231,30 +271,43 @@ type APIEndpoint struct {
 type CloudProviderSpec struct {
 	// External
 	External bool `json:"external,omitempty"`
+
 	// CloudConfig
 	CloudConfig string `json:"cloudConfig,omitempty"`
+
 	// CSIConfig
 	CSIConfig string `json:"csiConfig,omitempty"`
+
 	// AWS
 	AWS *AWSSpec `json:"aws,omitempty"`
+
 	// Azure
 	Azure *AzureSpec `json:"azure,omitempty"`
+
 	// DigitalOcean
 	DigitalOcean *DigitalOceanSpec `json:"digitalocean,omitempty"`
+
 	// GCE
 	GCE *GCESpec `json:"gce,omitempty"`
+
 	// Hetzner
 	Hetzner *HetznerSpec `json:"hetzner,omitempty"`
+
 	// Nutanix
 	Nutanix *NutanixSpec `json:"nutanix,omitempty"`
+
 	// Openstack
 	Openstack *OpenstackSpec `json:"openstack,omitempty"`
+
 	// EquinixMetal
 	EquinixMetal *EquinixMetalSpec `json:"equinixmetal,omitempty"`
+
 	// VMware Cloud Director
 	VMwareCloudDirector *VMwareCloudDirectorSpec `json:"vmwareCloudDirector,omitempty"`
+
 	// Vsphere
 	Vsphere *VsphereSpec `json:"vsphere,omitempty"`
+
 	// None
 	None *NoneSpec `json:"none,omitempty"`
 }
@@ -311,18 +364,23 @@ type ClusterNetworkConfig struct {
 	// PodSubnet
 	// default value is "10.244.0.0/16"
 	PodSubnet string `json:"podSubnet,omitempty"`
+
 	// ServiceSubnet
 	// default value is "10.96.0.0/12"
 	ServiceSubnet string `json:"serviceSubnet,omitempty"`
+
 	// ServiceDomainName
 	// default value is "cluster.local"
 	ServiceDomainName string `json:"serviceDomainName,omitempty"`
+
 	// NodePortRange
 	// default value is "30000-32767"
 	NodePortRange string `json:"nodePortRange,omitempty"`
+
 	// CNI
 	// default value is {canal: {mtu: 1450}}
 	CNI *CNI `json:"cni,omitempty"`
+
 	// KubeProxy config
 	KubeProxy *KubeProxyConfig `json:"kubeProxy,omitempty"`
 }
@@ -380,10 +438,13 @@ type IPTables struct{}
 type CNI struct {
 	// Canal
 	Canal *CanalSpec `json:"canal,omitempty"`
+
 	// Cilium
 	Cilium *CiliumSpec `json:"cilium,omitempty"`
+
 	// WeaveNet
 	WeaveNet *WeaveNetSpec `json:"weaveNet,omitempty"`
+
 	// External
 	External *ExternalCNISpec `json:"external,omitempty"`
 }
@@ -429,8 +490,10 @@ type ExternalCNISpec struct{}
 type ProxyConfig struct {
 	// HTTP
 	HTTP string `json:"http,omitempty"`
+
 	// HTTPS
 	HTTPS string `json:"https,omitempty"`
+
 	// NoProxy
 	NoProxy string `json:"noProxy,omitempty"`
 }
@@ -439,8 +502,10 @@ type ProxyConfig struct {
 type DynamicWorkerConfig struct {
 	// Name
 	Name string `json:"name"`
+
 	// Replicas
 	Replicas *int `json:"replicas"`
+
 	// Config
 	Config ProviderSpec `json:"providerSpec"`
 }
@@ -449,32 +514,43 @@ type DynamicWorkerConfig struct {
 type ProviderSpec struct {
 	// CloudProviderSpec
 	CloudProviderSpec json.RawMessage `json:"cloudProviderSpec"`
+
 	// Annotations set MachineDeployment.ObjectMeta.Annotations
 	Annotations map[string]string `json:"annotations,omitempty"`
+
 	// MachineAnnotations set MachineDeployment.Spec.Template.Spec.ObjectMeta.Annotations
 	// as a way to annotate resulting Nodes
 	// Deprecated: Use NodeAnnotations instead.
 	MachineAnnotations map[string]string `json:"machineAnnotations,omitempty"`
+
 	// NodeAnnotations set MachineDeployment.Spec.Template.Spec.ObjectMeta.Annotations
 	// as a way to annotate resulting Nodes
 	NodeAnnotations map[string]string `json:"nodeAnnotations,omitempty"`
+
 	// MachineObjectAnnotations set MachineDeployment.Spec.Template.Metadata.Annotations
 	// as a way to annotate resulting Machine objects. Those annotations are not
 	// propagated to Node objects. If you want to annotate resulting Nodes as well,
 	// see NodeAnnotations
 	MachineObjectAnnotations map[string]string `json:"machineObjectAnnotations,omitempty"`
+
 	// Labels
 	Labels map[string]string `json:"labels,omitempty"`
+
 	// Taints
 	Taints []corev1.Taint `json:"taints,omitempty"`
+
 	// SSHPublicKeys
 	SSHPublicKeys []string `json:"sshPublicKeys,omitempty"`
+
 	// OperatingSystem
 	OperatingSystem string `json:"operatingSystem"`
+
 	// OperatingSystemSpec
 	OperatingSystemSpec json.RawMessage `json:"operatingSystemSpec,omitempty"`
+
 	// Network
 	Network *ProviderStaticNetworkConfig `json:"network,omitempty"`
+
 	// OverwriteCloudConfig
 	OverwriteCloudConfig *string `json:"overwriteCloudConfig,omitempty"`
 }
@@ -489,8 +565,10 @@ type DNSConfig struct {
 type ProviderStaticNetworkConfig struct {
 	// CIDR
 	CIDR string `json:"cidr"`
+
 	// Gateway
 	Gateway string `json:"gateway"`
+
 	// DNS
 	DNS DNSConfig `json:"dns"`
 }
@@ -505,17 +583,23 @@ type MachineControllerConfig struct {
 type Features struct {
 	// PodNodeSelector
 	PodNodeSelector *PodNodeSelector `json:"podNodeSelector,omitempty"`
+
 	// PodSecurityPolicy
 	// Deprecated: will be removed once Kubernetes 1.24 reaches EOL
 	PodSecurityPolicy *PodSecurityPolicy `json:"podSecurityPolicy,omitempty"`
+
 	// StaticAuditLog
 	StaticAuditLog *StaticAuditLog `json:"staticAuditLog,omitempty"`
+
 	// DynamicAuditLog
 	DynamicAuditLog *DynamicAuditLog `json:"dynamicAuditLog,omitempty"`
+
 	// MetricsServer
 	MetricsServer *MetricsServer `json:"metricsServer,omitempty"`
+
 	// OpenIDConnect
 	OpenIDConnect *OpenIDConnect `json:"openidConnect,omitempty"`
+
 	// Encryption Providers
 	EncryptionProviders *EncryptionProviders `json:"encryptionProviders,omitempty"`
 }
@@ -540,33 +624,39 @@ type AssetConfiguration struct {
 	// Defaults to RegistryConfiguration.OverwriteRegistry if left empty
 	// and RegistryConfiguration.OverwriteRegistry is specified.
 	Kubernetes ImageAsset `json:"kubernetes,omitempty"`
+
 	// Pause configures the sandbox (pause) image to be used by Kubelet.
 	// Default image repository and tag: defaulted dynamically by Kubeadm.
 	// Defaults to RegistryConfiguration.OverwriteRegistry if left empty
 	// and RegistryConfiguration.OverwriteRegistry is specified.
 	Pause ImageAsset `json:"pause,omitempty"`
+
 	// CoreDNS configures the image registry and tag to be used for deploying
 	// the CoreDNS component.
 	// Default image repository and tag: defaulted dynamically by Kubeadm.
 	// Defaults to RegistryConfiguration.OverwriteRegistry if left empty
 	// and RegistryConfiguration.OverwriteRegistry is specified.
 	CoreDNS ImageAsset `json:"coreDNS,omitempty"`
+
 	// Etcd configures the image registry and tag to be used for deploying
 	// the Etcd component.
 	// Default image repository and tag: defaulted dynamically by Kubeadm.
 	// Defaults to RegistryConfiguration.OverwriteRegistry if left empty
 	// and RegistryConfiguration.OverwriteRegistry is specified.
 	Etcd ImageAsset `json:"etcd,omitempty"`
+
 	// MetricsServer configures the image registry and tag to be used for deploying
 	// the metrics-server component.
 	// Default image repository and tag: defaulted dynamically by KubeOne.
 	// Defaults to RegistryConfiguration.OverwriteRegistry if left empty
 	// and RegistryConfiguration.OverwriteRegistry is specified.
 	MetricsServer ImageAsset `json:"metricsServer,omitempty"`
+
 	// CNI configures the source for downloading the CNI binaries.
 	// If not specified, kubernetes-cni package will be installed.
 	// Default: none
 	CNI BinaryAsset `json:"cni,omitempty"`
+
 	// NodeBinaries configures the source for downloading the
 	// Kubernetes Node Binaries tarball (e.g. kubernetes-node-linux-amd64.tar.gz).
 	// The tarball must have .tar.gz as the extension and must contain the
@@ -576,6 +666,7 @@ type AssetConfiguration struct {
 	// If not specified, kubelet and kubeadm packages will be installed.
 	// Default: none
 	NodeBinaries BinaryAsset `json:"nodeBinaries,omitempty"`
+
 	// Kubectl configures the source for downloading the Kubectl binary.
 	// If not specified, kubelet package will be installed.
 	// Default: none
@@ -586,6 +677,7 @@ type AssetConfiguration struct {
 type ImageAsset struct {
 	// ImageRepository customizes the registry/repository
 	ImageRepository string `json:"imageRepository,omitempty"`
+
 	// ImageTag customizes the image tag
 	ImageTag string `json:"imageTag,omitempty"`
 }
@@ -607,6 +699,7 @@ type RegistryConfiguration struct {
 	// calico/cni would translate to 127.0.0.1:5000/example/calico/cni.
 	// Default: ""
 	OverwriteRegistry string `json:"overwriteRegistry,omitempty"`
+
 	// InsecureRegistry configures Docker to threat the registry specified
 	// in OverwriteRegistry as an insecure registry. This is also propagated
 	// to the worker nodes managed by machine-controller and/or KubeOne.
@@ -617,6 +710,7 @@ type RegistryConfiguration struct {
 type PodNodeSelector struct {
 	// Enable
 	Enable bool `json:"enable,omitempty"`
+
 	// Config
 	Config PodNodeSelectorConfig `json:"config"`
 }
@@ -642,6 +736,7 @@ type PodSecurityPolicy struct {
 type StaticAuditLog struct {
 	// Enable
 	Enable bool `json:"enable,omitempty"`
+
 	// Config
 	Config StaticAuditLogConfig `json:"config"`
 }
@@ -653,15 +748,19 @@ type StaticAuditLogConfig struct {
 	// PolicyFilePath is a required field.
 	// More info: https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#audit-policy
 	PolicyFilePath string `json:"policyFilePath"`
+
 	// LogPath is path on control plane instances where audit log files are stored.
 	// Default value is /var/log/kubernetes/audit.log
 	LogPath string `json:"logPath,omitempty"`
+
 	// LogMaxAge is maximum number of days to retain old audit log files.
 	// Default value is 30
 	LogMaxAge int `json:"logMaxAge,omitempty"`
+
 	// LogMaxBackup is maximum number of audit log files to retain.
 	// Default value is 3.
 	LogMaxBackup int `json:"logMaxBackup,omitempty"`
+
 	// LogMaxSize is maximum size in megabytes of audit log file before it gets rotated.
 	// Default value is 100.
 	LogMaxSize int `json:"logMaxSize,omitempty"`
@@ -685,6 +784,7 @@ type MetricsServer struct {
 type OpenIDConnect struct {
 	// Enable
 	Enable bool `json:"enable,omitempty"`
+
 	// Config
 	Config OpenIDConnectConfig `json:"config"`
 }
@@ -693,20 +793,28 @@ type OpenIDConnect struct {
 type OpenIDConnectConfig struct {
 	// IssuerURL
 	IssuerURL string `json:"issuerUrl"`
+
 	// ClientID
 	ClientID string `json:"clientId,omitempty"`
+
 	// UsernameClaim
 	UsernameClaim string `json:"usernameClaim,omitempty"`
+
 	// UsernamePrefix. The value `-` can be used to disable all prefixing.
 	UsernamePrefix string `json:"usernamePrefix,omitempty"`
+
 	// GroupsClaim
 	GroupsClaim string `json:"groupsClaim,omitempty"`
+
 	// GroupsPrefix. The value `-` can be used to disable all prefixing.
 	GroupsPrefix string `json:"groupsPrefix,omitempty"`
+
 	// RequiredClaim
 	RequiredClaim string `json:"requiredClaim"`
+
 	// SigningAlgs
 	SigningAlgs string `json:"signingAlgs,omitempty"`
+
 	// CAFile
 	CAFile string `json:"caFile"`
 }
@@ -742,6 +850,7 @@ type Addons struct {
 type EncryptionProviders struct {
 	// Enable
 	Enable bool `json:"enable"`
+
 	// CustomEncryptionConfiguration
 	CustomEncryptionConfiguration string `json:"customEncryptionConfiguration"`
 }

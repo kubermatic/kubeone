@@ -86,6 +86,16 @@ variable "bastion_user" {
   type        = string
 }
 
+variable "control_plane_labels" {
+  description = "custom labels to add (and remove) to control plane"
+  type        = map(string)
+  default = {
+    "custom-label-to-add" = "custom-value"
+    # note the minus sign suffix
+    "custom-label-to-remove-" = ""
+  }
+}
+
 # Provider specific settings
 
 variable "aws_region" {

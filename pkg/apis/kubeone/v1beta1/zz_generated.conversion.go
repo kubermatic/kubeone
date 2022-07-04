@@ -1230,6 +1230,7 @@ func autoConvert_kubeone_HostConfig_To_v1beta1_HostConfig(in *kubeone.HostConfig
 	out.Hostname = in.Hostname
 	out.IsLeader = in.IsLeader
 	out.Taints = *(*[]v1.Taint)(unsafe.Pointer(&in.Taints))
+	// WARNING: in.Labels requires manual conversion: does not exist in peer-type
 	// WARNING: in.Kubelet requires manual conversion: does not exist in peer-type
 	out.OperatingSystem = OperatingSystemName(in.OperatingSystem)
 	return nil
