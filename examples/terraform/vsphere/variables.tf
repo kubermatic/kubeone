@@ -73,20 +73,20 @@ variable "ssh_agent_socket" {
 
 variable "bastion_host" {
   description = "ssh jumphost (bastion) hostname"
-  default = ""
-  type = string
+  default     = ""
+  type        = string
 }
 
 variable "bastion_port" {
   description = "ssh jumphost (bastion) port"
-  type    = number
-  default = 22
+  type        = number
+  default     = 22
 }
 
 variable "bastion_username" {
   description = "ssh jumphost (bastion) username"
-  default = ""
-  type = string
+  default     = ""
+  type        = string
 }
 
 # provider specific settings
@@ -142,6 +142,12 @@ variable "template_name" {
 variable "disk_size" {
   default     = 50
   description = "disk size"
+  type        = number
+}
+
+variable "control_plane_vm_count" {
+  default     = 3
+  description = "number of VMs"
   type        = number
 }
 

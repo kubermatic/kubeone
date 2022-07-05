@@ -57,7 +57,8 @@ data "vsphere_virtual_machine" "template" {
 }
 
 resource "vsphere_virtual_machine" "control_plane" {
-  count            = 3
+  count = var.control_plane_vm_count
+
   name             = "${var.cluster_name}-cp-${count.index + 1}"
   resource_pool_id = local.resource_pool_id
   folder           = var.folder_name
