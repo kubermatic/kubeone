@@ -18,28 +18,14 @@ set -eu -o pipefail
 
 cd $(dirname "${BASH_SOURCE}")/..
 
-DIFFROOT="pkg"
-TMP_DIFFROOT="_tmp/pkg"
-_tmp="_tmp"
-
-cleanup() {
-  rm -rf "${_tmp}"
-}
-trap "cleanup" EXIT SIGINT
-
-cleanup
-
-mkdir --parents "${TMP_DIFFROOT}"
-cp --archive "${DIFFROOT}"/* "${TMP_DIFFROOT}"
-
 ./hack/update-codegen.sh
-echo "diffing ${DIFFROOT} against freshly generated codegen"
+echo "diffing against freshly generated codegen"
 ret=0
-diff -Naupr "${DIFFROOT}" "${TMP_DIFFROOT}" || ret=$?
-cp -a "${TMP_DIFFROOT}"/* "${DIFFROOT}"
+git diff --quiet || ret=$?
+
 if [[ $ret -eq 0 ]]; then
-  echo "${DIFFROOT} up to date."
+  echo "up to date."
 else
-  echo "${DIFFROOT} is out of date. Please run hack/update-codegen.sh"
+  echo "is out of date. Please run hack/update-codegen.sh"
   exit 1
 fi

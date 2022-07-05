@@ -24,8 +24,10 @@ for input in examples/terraform/*/README.md.in; do
   full_target="$dir/$target"
   echo "$full_target"
   cat "$input" > "$dir/$target"
-  $TERRAFORM_DOCS md "$dir" >> "$dir/$target"
+  $TERRAFORM_DOCS --lockfile=false md "$dir" >> "$dir/$target"
 done
+
+make gogenerate
 
 export GOFLAGS=-mod=vendor
 
