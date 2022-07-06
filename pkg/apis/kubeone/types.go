@@ -212,7 +212,7 @@ type HostConfig struct {
 	Taints []corev1.Taint `json:"taints,omitempty"`
 
 	// Lables to be used to apply (or remove, with minus sign suffix, see more kubectl help label) lables to/from node
-	Labels map[string]string `json:"labels"`
+	Labels map[string]string `json:"labels,omitempty"`
 
 	// Kubelet
 	Kubelet KubeletConfig `json:"kubelet,omitempty"`
