@@ -63,6 +63,7 @@ No modules.
 | <a name="input_bastion_type"></a> [bastion\_type](#input\_bastion\_type) | instance type for bastion | `string` | `"t3.nano"` | no |
 | <a name="input_bastion_user"></a> [bastion\_user](#input\_bastion\_user) | Bastion SSH username | `string` | `""` | no |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the cluster | `string` | n/a | yes |
+| <a name="input_control_plane_labels"></a> [control\_plane\_labels](#input\_control\_plane\_labels) | custom labels to add (and remove) to control plane | `map(string)` | <pre>{<br>  "custom-label-to-add": "custom-value",<br>  "custom-label-to-remove-": ""<br>}</pre> | no |
 | <a name="input_control_plane_type"></a> [control\_plane\_type](#input\_control\_plane\_type) | AWS instance type | `string` | `"t3.medium"` | no |
 | <a name="input_control_plane_vm_count"></a> [control\_plane\_vm\_count](#input\_control\_plane\_vm\_count) | number of control plane instances | `number` | `3` | no |
 | <a name="input_control_plane_volume_size"></a> [control\_plane\_volume\_size](#input\_control\_plane\_volume\_size) | Size of the EBS volume, in Gb | `number` | `100` | no |
