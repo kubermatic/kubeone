@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2022-06-07T19:50:42+05:00
+date = 2022-07-06T15:55:07+03:00
 weight = 11
 +++
 ## v1beta2
@@ -180,7 +180,7 @@ Only one cloud provider must be defined at the single time.
 | hetzner | Hetzner | *[HetznerSpec](#hetznerspec) | false |
 | nutanix | Nutanix | *[NutanixSpec](#nutanixspec) | false |
 | openstack | Openstack | *[OpenstackSpec](#openstackspec) | false |
-| equinixmetal | Equinix Metal | *[EquinixMetalSpec](#equinixmetalspec) | false |
+| equinixmetal | EquinixMetal | *[EquinixMetalSpec](#equinixmetalspec) | false |
 | vmwareCloudDirector | VMware Cloud Director | *[VMwareCloudDirectorSpec](#vmwareclouddirectorspec) | false |
 | vsphere | Vsphere | *[VsphereSpec](#vspherespec) | false |
 | none | None | *[NoneSpec](#nonespec) | false |
@@ -401,7 +401,8 @@ HostConfig describes a single control plane node.
 | bastionUser | BastionUser is system login name to use when connecting to bastion host. Default value is \"root\". | string | false |
 | hostname | Hostname is the hostname(1) of the host. Default value is populated at the runtime via running `hostname -f` command over ssh. | string | false |
 | isLeader | IsLeader indicates this host as a session leader. Default value is populated at the runtime. | bool | false |
-| taints | Taints are taints applied to nodes. If not provided (i.e. nil) for control plane nodes, it defaults to:\n  * For Kubernetes 1.23 and older: TaintEffectNoSchedule with key node-role.kubernetes.io/master\n  * For Kubernetes 1.24 and newer: TaintEffectNoSchedule with keys\n    node-role.kubernetes.io/control-plane and node-role.kubernetes.io/master\nExplicitly empty (i.e. []corev1.Taint{}) means no taints will be applied (this is default for worker nodes). | [][corev1.Taint](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#taint-v1-core) | false |
+| taints | Taints are taints applied to nodes. Those taints are only applied when the node is being provisioned. If not provided (i.e. nil) for control plane nodes, it defaults to:\n  * For Kubernetes 1.23 and older: TaintEffectNoSchedule with key node-role.kubernetes.io/master\n  * For Kubernetes 1.24 and newer: TaintEffectNoSchedule with keys\n    node-role.kubernetes.io/control-plane and node-role.kubernetes.io/master\nExplicitly empty (i.e. []corev1.Taint{}) means no taints will be applied (this is default for worker nodes). | [][corev1.Taint](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#taint-v1-core) | false |
+| labels | Lables to be used to apply (or remove, with minus symbol suffix, see more kubectl help label) lables to/from node | map[string]string | false |
 | kubelet | Kubelet | [KubeletConfig](#kubeletconfig) | false |
 | operatingSystem | OperatingSystem information, can be populated at the runtime. | OperatingSystemName | false |
 
@@ -464,7 +465,7 @@ KubeOneCluster is KubeOne Cluster API Schema
 | addons | Addons are used to deploy additional manifests. | *[Addons](#addons) | false |
 | systemPackages | SystemPackages configure kubeone behaviour regarding OS packages. | *[SystemPackages](#systempackages) | false |
 | registryConfiguration | RegistryConfiguration configures how Docker images are pulled from an image registry | *[RegistryConfiguration](#registryconfiguration) | false |
-| loggingConfig | LoggingConfig configures the Kubelet's log configuration | [LoggingConfig](#loggingconfig) | false |
+| loggingConfig | LoggingConfig configures the Kubelet's log rotation | [LoggingConfig](#loggingconfig) | false |
 
 [Back to Group](#v1beta2)
 

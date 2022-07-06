@@ -258,8 +258,8 @@ func WithResources(t Tasks) Tasks {
 				Operation: "joining static worker nodes to the cluster",
 			},
 			{
-				Fn:        labelNodeOSes,
-				Operation: "labelling nodes with their OS",
+				Fn:        labelNodes,
+				Operation: "labeling nodes",
 			},
 			{
 				Fn:        machinecontroller.WaitReady,

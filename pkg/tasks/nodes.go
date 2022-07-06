@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"io"
 	"path/filepath"
+	"strings"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/certificate/cabundle"
@@ -96,7 +97,7 @@ func ensureRestartKubeAPIServerCrictl(s *state.State) error {
 	return fail.SSH(err, "restarting kubeapi-server pod")
 }
 
-func labelNodeOSes(s *state.State) error {
+func labelNodes(s *state.State) error {
 	candidateNodes := sets.NewString()
 	nodeList := corev1.NodeList{}
 
@@ -130,6 +131,16 @@ func labelNodeOSes(s *state.State) error {
 			}
 
 			node.Labels["v1.kubeone.io/operating-system"] = string(host.OperatingSystem)
+
+			for labKey, labVal := range host.Labels {
+				if strings.HasSuffix(labKey, "-") {
+					// drop minus from the suffix
+					labelToDelete := labKey[:len(labKey)-1]
+					delete(node.Labels, labelToDelete)
+				} else {
+					node.Labels[labKey] = labVal
+				}
+			}
 
 			return s.DynamicClient.Update(s.Context, &node)
 		})

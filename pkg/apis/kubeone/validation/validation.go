@@ -597,6 +597,11 @@ func ValidateHostConfig(hosts []kubeoneapi.HostConfig, fldPath *field.Path) fiel
 		if h.Kubelet.MaxPods != nil && *h.Kubelet.MaxPods <= 0 {
 			allErrs = append(allErrs, field.Invalid(fldPath.Child("kubelet").Child("maxPods"), h.Kubelet.MaxPods, "maxPods must be a positive number"))
 		}
+		for labelKey, labelValue := range h.Labels {
+			if strings.HasSuffix(labelKey, "-") && labelValue != "" {
+				allErrs = append(allErrs, field.Invalid(fldPath.Child("labels"), labelValue, "label to remove cannot have value"))
+			}
+		}
 	}
 
 	return allErrs
