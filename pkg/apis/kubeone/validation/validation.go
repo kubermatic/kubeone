@@ -599,7 +599,7 @@ func ValidateHostConfig(hosts []kubeoneapi.HostConfig, fldPath *field.Path) fiel
 		}
 		for labelKey, labelValue := range h.Labels {
 			if strings.HasSuffix(labelKey, "-") && labelValue != "" {
-				allErrs = append(allErrs, field.Invalid(fldPath.Child("labels"), labelValue, "label to remove can not have value"))
+				allErrs = append(allErrs, field.Invalid(fldPath.Child("labels"), labelValue, "label to remove cannot have value"))
 			}
 		}
 	}

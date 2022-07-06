@@ -91,7 +91,7 @@ variable "control_plane_labels" {
   type        = map(string)
   default = {
     "custom-label-to-add" = "custom-value"
-    # note the minus sign suffix
+    # note the minus symbol suffix
     "custom-label-to-remove-" = ""
   }
 }

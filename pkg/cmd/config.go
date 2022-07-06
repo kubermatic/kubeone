@@ -819,6 +819,11 @@ addons:
 #     taints:
 #     - key: "node-role.kubernetes.io/master"
 #       effect: "NoSchedule"
+#     labels:
+#       # to add new custom label
+#       "new-custom-label": "custom-value"
+#       # to delete existing label (use minus symbol with empty value)
+#       "node.kubernetes.io/exclude-from-external-load-balancers-": ""
 #     # kubelet is used to control kubelet configuration
 #     # uncomment the following to set those kubelet parameters. More into at:
 #     # https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/#
