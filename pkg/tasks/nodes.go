@@ -134,14 +134,9 @@ func labelNodes(s *state.State) error {
 
 			for labKey, labVal := range host.Labels {
 				if strings.HasSuffix(labKey, "-") {
-					// additional `if` instead of `if strings.HasSuffix(labKey, "-") && labVal == ""` is used to avoid
-					// entering `else` section when the labVal is not empty.
-					if labVal == "" {
-						// drop minus from the suffix
-						labelToDelete := labKey[:len(labKey)-1]
-						// delete the label
-						delete(node.Labels, labelToDelete)
-					}
+					// drop minus from the suffix
+					labelToDelete := labKey[:len(labKey)-1]
+					delete(node.Labels, labelToDelete)
 				} else {
 					node.Labels[labKey] = labVal
 				}

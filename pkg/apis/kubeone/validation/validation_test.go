@@ -1888,6 +1888,38 @@ func TestValidateHostConfig(t *testing.T) {
 			},
 			expectedError: true,
 		},
+		{
+			name: "incorrect label marked to remove",
+			hostConfig: []kubeoneapi.HostConfig{
+				{
+					PublicAddress:     "192.168.1.1",
+					PrivateAddress:    "192.168.0.1",
+					SSHPrivateKeyFile: "test",
+					SSHAgentSocket:    "test",
+					SSHUsername:       "root",
+					Labels: map[string]string{
+						"label-to-remove-": "this values has to be empty",
+					},
+				},
+			},
+			expectedError: true,
+		},
+		{
+			name: "correct label marked to remove",
+			hostConfig: []kubeoneapi.HostConfig{
+				{
+					PublicAddress:     "192.168.1.1",
+					PrivateAddress:    "192.168.0.1",
+					SSHPrivateKeyFile: "test",
+					SSHAgentSocket:    "test",
+					SSHUsername:       "root",
+					Labels: map[string]string{
+						"label-to-remove-": "",
+					},
+				},
+			},
+			expectedError: false,
+		},
 	}
 
 	for _, tc := range tests {
