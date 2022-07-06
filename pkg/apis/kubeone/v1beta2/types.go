@@ -208,7 +208,7 @@ type HostConfig struct {
 	// Explicitly empty (i.e. []corev1.Taint{}) means no taints will be applied (this is default for worker nodes).
 	Taints []corev1.Taint `json:"taints,omitempty"`
 
-	// Lables to be used to apply (or remove, with minus symbol suffix, see more kubectl help label) lables to/from node
+	// Labels to be used to apply (or remove, with minus symbol suffix, see more kubectl help label) labels to/from node
 	Labels map[string]string `json:"labels,omitempty"`
 
 	// Kubelet
