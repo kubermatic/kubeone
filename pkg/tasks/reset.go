@@ -19,10 +19,10 @@ package tasks
 import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/clientutil"
+	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/kubeconfig"
 	"k8c.io/kubeone/pkg/scripts"
-	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/machinecontroller"
 
@@ -103,7 +103,7 @@ func resetAllNodes(s *state.State) error {
 	return s.RunTaskOnAllNodes(resetNode, state.RunSequentially)
 }
 
-func resetNode(s *state.State, host *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func resetNode(s *state.State, host *kubeoneapi.HostConfig, conn executor.Interface) error {
 	s.Logger.Infoln("Resetting node...")
 
 	cmd, err := scripts.KubeadmReset(s.KubeadmVerboseFlag(), s.WorkDir)
@@ -126,7 +126,7 @@ func removeBinariesAllNodes(s *state.State) error {
 	return s.RunTaskOnAllNodes(removeBinaries, state.RunParallel)
 }
 
-func removeBinaries(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func removeBinaries(s *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
 	s.Logger.Infoln("Removing Kubernetes binaries")
 	var err error
 

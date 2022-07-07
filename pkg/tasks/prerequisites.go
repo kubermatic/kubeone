@@ -24,10 +24,10 @@ import (
 	"github.com/sirupsen/logrus"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/runner"
 	"k8c.io/kubeone/pkg/scripts"
-	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates"
 	"k8c.io/kubeone/pkg/templates/admissionconfig"
@@ -43,7 +43,7 @@ func installPrerequisites(s *state.State) error {
 }
 
 func prePullImages(s *state.State) error {
-	return s.RunTaskOnControlPlane(func(ctx *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+	return s.RunTaskOnControlPlane(func(ctx *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
 		ctx.Logger.Info("Pre-pull images")
 
 		_, _, err := ctx.Runner.Run(
@@ -102,7 +102,7 @@ func generateConfigurationFiles(s *state.State) error {
 	return nil
 }
 
-func installPrerequisitesOnNode(s *state.State, node *kubeoneapi.HostConfig, _ ssh.Connection) error {
+func installPrerequisitesOnNode(s *state.State, node *kubeoneapi.HostConfig, _ executor.Interface) error {
 	logger := s.Logger.WithField("os", node.OperatingSystem)
 
 	err := setupProxy(logger, s)
@@ -140,7 +140,7 @@ func createEnvironmentFile(s *state.State) error {
 	return fail.Runtime(err, "configuring /etc/environment")
 }
 
-func disableNMCloudSetup(s *state.State, node *kubeoneapi.HostConfig, _ ssh.Connection) error {
+func disableNMCloudSetup(s *state.State, node *kubeoneapi.HostConfig, _ executor.Interface) error {
 	if node.OperatingSystem != kubeoneapi.OperatingSystemNameRHEL {
 		return nil
 	}
@@ -166,7 +166,7 @@ func disableNMCloudSetup(s *state.State, node *kubeoneapi.HostConfig, _ ssh.Conn
 			// NB: In some cases, KubeOne might not be able to re-use SSH connections
 			// after rebooting nodes. Because of that, we close all connections here,
 			// and then KubeOne will automatically reinitialize them on the next task.
-			s.Runner.Conn.Close()
+			s.Runner.Executor.Close()
 		}
 	}
 
@@ -233,7 +233,7 @@ func uploadConfigurationFiles(s *state.State) error {
 	return s.RunTaskOnAllNodes(uploadConfigurationFilesToNode, state.RunParallel)
 }
 
-func uploadConfigurationFilesToNode(s *state.State, _ *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func uploadConfigurationFilesToNode(s *state.State, _ *kubeoneapi.HostConfig, conn executor.Interface) error {
 	s.Logger.Infoln("Uploading config files...")
 
 	if err := s.Configuration.UploadTo(conn, s.WorkDir); err != nil {

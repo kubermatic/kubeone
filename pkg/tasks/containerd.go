@@ -21,9 +21,9 @@ import (
 	"time"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/scripts"
-	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
@@ -82,7 +82,7 @@ func migrateToContainerd(s *state.State) error {
 	return s.RunTaskOnAllNodes(migrateToContainerdTask, state.RunSequentially)
 }
 
-func migrateToContainerdTask(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+func migrateToContainerdTask(s *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
 	s.Logger.Info("Migrating container runtime to containerd")
 
 	err := updateRemoteFile(s, kubeadmEnvFlagsFile, func(content []byte) ([]byte, error) {

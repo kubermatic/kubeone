@@ -25,8 +25,8 @@ import (
 
 	"github.com/pkg/errors"
 
+	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
-	"k8c.io/kubeone/pkg/ssh/sshiofs"
 	"k8c.io/kubeone/pkg/state"
 
 	kubeletconfigv1beta1 "k8s.io/kubelet/config/v1beta1"
@@ -57,7 +57,7 @@ func updateRemoteFile(s *state.State, filePath string, modifier func(content []b
 		return fail.Runtime(err, "updating remote file %q", filePath)
 	}
 
-	fw, ok := f.(sshiofs.ExtendedFile)
+	fw, ok := f.(executor.ExtendedFile)
 	if !ok {
 		return fail.RuntimeError{
 			Op:  "checking if file satisfy sshiofs.ExtendedFile interface",

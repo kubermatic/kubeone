@@ -14,27 +14,31 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package sshtunnel
+package tunnel
 
 import (
-	"context"
-	"net"
-
-	"google.golang.org/grpc"
+	"crypto/tls"
+	"net/http"
+	"time"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
-	"k8c.io/kubeone/pkg/ssh"
+	"k8c.io/kubeone/pkg/executor"
 )
 
-// NewGRPCDialer initialize gRPC dialer that will use ssh tunnel as
+// NewHTTPTransport initialize net/http Transport that will use SSH tunnel as
 // transport
-func NewGRPCDialer(connector *ssh.Connector, target kubeoneapi.HostConfig) (grpc.DialOption, error) {
-	tunnel, err := connector.Tunnel(target)
+func NewHTTPTransport(tunneler executor.Adapter, target kubeoneapi.HostConfig, tlsConfig *tls.Config) (http.RoundTripper, error) {
+	tunn, err := tunneler.Tunnel(target)
 	if err != nil {
 		return nil, err
 	}
 
-	return grpc.WithContextDialer(func(ctx context.Context, addr string) (net.Conn, error) {
-		return tunnel.TunnelTo(ctx, "tcp4", addr)
-	}), nil
+	return &http.Transport{
+		DialContext:           tunn.TunnelTo,
+		TLSClientConfig:       tlsConfig,
+		MaxIdleConns:          100,
+		IdleConnTimeout:       90 * time.Second,
+		TLSHandshakeTimeout:   10 * time.Second,
+		ExpectContinueTimeout: 1 * time.Second,
+	}, nil
 }

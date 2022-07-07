@@ -26,8 +26,8 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
+	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
-	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/state"
 )
 
@@ -73,7 +73,7 @@ func setupProxyTunnel(opts *proxyOpts) error {
 	}
 
 	// Check if we can authenticate via ssh
-	tunn, err := s.Connector.Tunnel(s.Cluster.RandomHost())
+	tunn, err := s.Executor.Tunnel(s.Cluster.RandomHost())
 	if err != nil {
 		return err
 	}
@@ -114,7 +114,7 @@ func (e *httpError) Error() string {
 	return fmt.Sprintf("error: %s, code: %d", e.err, e.code)
 }
 
-func handleTunneling(w http.ResponseWriter, r *http.Request, s *state.State, tunn ssh.Tunneler) error {
+func handleTunneling(w http.ResponseWriter, r *http.Request, s *state.State, tunn executor.Tunneler) error {
 	destConn, err := tunn.TunnelTo(s.Context, "tcp4", r.Host)
 	if err != nil {
 		tunn.Close()

@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package sshiofs
+package executorfs
 
 import (
 	"bytes"
@@ -23,19 +23,23 @@ import (
 	"strings"
 	"time"
 
+	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
-	"k8c.io/kubeone/pkg/ssh"
 )
 
-func New(conn ssh.Connection) MkdirFS {
-	return &sshfs{conn: conn}
+var (
+	_ executor.MkdirFS = &virtfs{}
+)
+
+func New(conn executor.Interface) executor.MkdirFS {
+	return &virtfs{conn: conn}
 }
 
-type sshfs struct {
-	conn ssh.Connection
+type virtfs struct {
+	conn executor.Interface
 }
 
-func (sfs *sshfs) Open(name string) (fs.File, error) {
+func (vfs *virtfs) Open(name string) (fs.File, error) {
 	var hadSlashPrefix bool
 	if strings.HasPrefix(name, "/") {
 		name = strings.TrimPrefix(name, "/")
@@ -52,13 +56,13 @@ func (sfs *sshfs) Open(name string) (fs.File, error) {
 		name = "/" + name
 	}
 
-	return &sshfile{
-		conn: sfs.conn,
+	return &virtfile{
+		conn: vfs.conn,
 		name: name,
 	}, nil
 }
 
-func (sfs *sshfs) Glob(pattern string) ([]string, error) {
+func (vfs *virtfs) Glob(pattern string) ([]string, error) {
 	const cmdTpl = `sudo bash -c 'list=(%s); echo ${list[@]}'`
 
 	var (
@@ -66,7 +70,7 @@ func (sfs *sshfs) Glob(pattern string) ([]string, error) {
 		cmd            = fmt.Sprintf(cmdTpl, pattern)
 	)
 
-	_, err := sfs.conn.POpen(cmd, nil, &stdout, &stderr)
+	_, err := vfs.conn.POpen(cmd, nil, &stdout, &stderr)
 	if err != nil {
 		return nil, fmt.Errorf("glob failed: %w, %s %s", err, stdout.String(), stderr.String())
 	}
@@ -74,7 +78,7 @@ func (sfs *sshfs) Glob(pattern string) ([]string, error) {
 	return strings.Split(stdout.String(), " "), nil
 }
 
-func (sfs *sshfs) MkdirAll(path string, perm fs.FileMode) error {
+func (vfs *virtfs) MkdirAll(path string, perm fs.FileMode) error {
 	const cmdTpl = `sudo mkdir --mode=%o --parents %q`
 
 	var (
@@ -82,7 +86,7 @@ func (sfs *sshfs) MkdirAll(path string, perm fs.FileMode) error {
 		cmd            = fmt.Sprintf(cmdTpl, perm, path)
 	)
 
-	_, err := sfs.conn.POpen(cmd, nil, &stdout, &stderr)
+	_, err := vfs.conn.POpen(cmd, nil, &stdout, &stderr)
 	if err != nil {
 		return &fs.PathError{
 			Op:   "mkdir",
@@ -94,9 +98,9 @@ func (sfs *sshfs) MkdirAll(path string, perm fs.FileMode) error {
 	return nil
 }
 
-func (sfs *sshfs) ReadFile(name string) ([]byte, error) {
+func (vfs *virtfs) ReadFile(name string) ([]byte, error) {
 	var buf bytes.Buffer
-	_, err := sfs.conn.POpen(fmt.Sprintf("sudo cat %q", name), nil, &buf, nil)
+	_, err := vfs.conn.POpen(fmt.Sprintf("sudo cat %q", name), nil, &buf, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -104,12 +108,7 @@ func (sfs *sshfs) ReadFile(name string) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-// TODO: implement
-// func (sfs *sshfs) ReadDir(name string) ([]fs.DirEntry, error) {
-// 	return nil, nil
-// }
-
-func newSSHFileInfo(name string, conn ssh.Connection) (fs.FileInfo, error) {
+func newSSHFileInfo(name string, conn executor.Interface) (fs.FileInfo, error) {
 	const cmdTpl = "sudo stat --printf='%%s %%f %%Y' %q"
 
 	var (

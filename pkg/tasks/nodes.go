@@ -24,10 +24,9 @@ import (
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/certificate/cabundle"
+	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/scripts"
-	"k8c.io/kubeone/pkg/ssh"
-	"k8c.io/kubeone/pkg/ssh/sshiofs"
 	"k8c.io/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
@@ -40,7 +39,7 @@ import (
 func restartKubeAPIServer(s *state.State) error {
 	s.Logger.Infoln("Restarting unhealthy API servers if needed...")
 
-	return s.RunTaskOnControlPlane(func(s *state.State, node *kubeoneapi.HostConfig, _ ssh.Connection) error {
+	return s.RunTaskOnControlPlane(func(s *state.State, node *kubeoneapi.HostConfig, _ executor.Interface) error {
 		return restartKubeAPIServerOnOS(s, *node)
 	}, state.RunSequentially)
 }
@@ -48,7 +47,7 @@ func restartKubeAPIServer(s *state.State) error {
 func ensureRestartKubeAPIServer(s *state.State) error {
 	s.Logger.Infoln("Restarting API servers...")
 
-	return s.RunTaskOnControlPlane(func(s *state.State, node *kubeoneapi.HostConfig, _ ssh.Connection) error {
+	return s.RunTaskOnControlPlane(func(s *state.State, node *kubeoneapi.HostConfig, _ executor.Interface) error {
 		return ensureRestartKubeAPIServerOnOS(s, *node)
 	}, state.RunSequentially)
 }
@@ -154,7 +153,7 @@ func labelNodes(s *state.State) error {
 }
 
 func patchStaticPods(s *state.State) error {
-	return s.RunTaskOnControlPlane(func(ctx *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
+	return s.RunTaskOnControlPlane(func(ctx *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
 		s.Logger.Infoln("Patching static pods...")
 
 		sshfs := ctx.Runner.NewFS()
@@ -163,7 +162,7 @@ func patchStaticPods(s *state.State) error {
 			return err
 		}
 		defer f.Close()
-		mgrPodManifest, _ := f.(sshiofs.ExtendedFile)
+		mgrPodManifest, _ := f.(executor.ExtendedFile)
 
 		kubeManagerBuf, err := io.ReadAll(mgrPodManifest)
 		if err != nil {

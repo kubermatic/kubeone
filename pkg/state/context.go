@@ -25,6 +25,7 @@ import (
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/configupload"
+	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/runner"
 	"k8c.io/kubeone/pkg/ssh"
@@ -42,11 +43,19 @@ const (
 	customEncryptionProvidersFile  = "custom-encryption-providers.yaml"
 )
 
-func New(ctx context.Context) (*State, error) {
+type Option func(*State)
+
+func WithExecutorAdapter(adapter executor.Adapter) Option {
+	return func(s *State) {
+		s.Executor = adapter
+	}
+}
+
+func New(ctx context.Context, opts ...Option) (*State, error) {
 	joinToken, err := bootstraputil.GenerateBootstrapToken()
 	s := &State{
 		JoinToken:     joinToken,
-		Connector:     ssh.NewConnector(ctx),
+		Executor:      ssh.NewConnector(ctx),
 		Configuration: configupload.NewConfiguration(),
 		Context:       ctx,
 		WorkDir:       "./kubeone",
@@ -72,6 +81,10 @@ func New(ctx context.Context) (*State, error) {
 		}),
 	)
 
+	for _, opt := range opts {
+		opt(s)
+	}
+
 	return s, fail.Runtime(err, "generating bootstrapToken")
 }
 
@@ -81,7 +94,7 @@ type State struct {
 	Cluster                   *kubeoneapi.KubeOneCluster
 	LiveCluster               *Cluster
 	Logger                    logrus.FieldLogger
-	Connector                 *ssh.Connector
+	Executor                  executor.Adapter
 	Configuration             *configupload.Configuration
 	Images                    *images.Resolver
 	Runner                    *runner.Runner

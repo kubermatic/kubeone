@@ -30,8 +30,8 @@ import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/etcdutil"
 	"k8c.io/kubeone/pkg/fail"
-	"k8c.io/kubeone/pkg/ssh/sshtunnel"
 	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/tunnel"
 )
 
 const (
@@ -74,17 +74,17 @@ func MemberList(s *state.State) (*clientv3.MemberListResponse, error) {
 
 // Get analyzes health of an etcd cluster member
 func Get(s *state.State, node kubeoneapi.HostConfig, etcdRing *clientv3.MemberListResponse) (*Report, error) {
-	sshconn, err := s.Connector.Connect(node)
+	executor, err := s.Executor.Open(node)
 	if err != nil {
 		return nil, err
 	}
 
-	etcdTLSConfig, err := etcdutil.LoadTLSConfig(sshconn)
+	etcdTLSConfig, err := etcdutil.LoadTLSConfig(executor)
 	if err != nil {
 		return nil, err
 	}
 
-	roundTripper, err := sshtunnel.NewHTTPTransport(s.Connector, node, etcdTLSConfig)
+	roundTripper, err := tunnel.NewHTTPTransport(s.Executor, node, etcdTLSConfig)
 	if err != nil {
 		return nil, err
 	}

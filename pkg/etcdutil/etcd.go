@@ -27,27 +27,27 @@ import (
 	"google.golang.org/grpc"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/executor"
+	"k8c.io/kubeone/pkg/executor/executorfs"
 	"k8c.io/kubeone/pkg/fail"
-	"k8c.io/kubeone/pkg/ssh"
-	"k8c.io/kubeone/pkg/ssh/sshiofs"
-	"k8c.io/kubeone/pkg/ssh/sshtunnel"
 	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/tunnel"
 )
 
 // NewClientConfig returns etcd clientv3 Config configured with TLS certificates
 // and tunneled over SSH
 func NewClientConfig(s *state.State, host kubeoneapi.HostConfig) (*clientv3.Config, error) {
-	sshconn, err := s.Connector.Connect(host)
+	conn, err := s.Executor.Open(host)
 	if err != nil {
 		return nil, fail.Etcd(err, "open connection")
 	}
 
-	grpcDialer, err := sshtunnel.NewGRPCDialer(s.Connector, host)
+	grpcDialer, err := tunnel.NewGRPCDialer(s.Executor, host)
 	if err != nil {
 		return nil, fail.Etcd(err, "gRPC dialing")
 	}
 
-	tlsConf, err := LoadTLSConfig(sshconn)
+	tlsConf, err := LoadTLSConfig(conn)
 	if err != nil {
 		return nil, fail.Etcd(err, "TLS config creating")
 	}
@@ -67,22 +67,22 @@ func NewClientConfig(s *state.State, host kubeoneapi.HostConfig) (*clientv3.Conf
 // LoadTLSConfig creates the tls.Config structure used securely connect to etcd,
 // certificates and key are downloaded over SSH from the
 // /etc/kubernetes/pki/etcd/ directory.
-func LoadTLSConfig(conn ssh.Connection) (*tls.Config, error) {
-	sshfs := sshiofs.New(conn)
+func LoadTLSConfig(conn executor.Interface) (*tls.Config, error) {
+	virtfs := executorfs.New(conn)
 	// Download CA
-	caCertPem, err := fs.ReadFile(sshfs, "/etc/kubernetes/pki/etcd/ca.crt")
+	caCertPem, err := fs.ReadFile(virtfs, "/etc/kubernetes/pki/etcd/ca.crt")
 	if err != nil {
 		return nil, err
 	}
 
 	// Download cert
-	certPem, err := fs.ReadFile(sshfs, "/etc/kubernetes/pki/etcd/server.crt")
+	certPem, err := fs.ReadFile(virtfs, "/etc/kubernetes/pki/etcd/server.crt")
 	if err != nil {
 		return nil, err
 	}
 
 	// Download key
-	keyPem, err := fs.ReadFile(sshfs, "/etc/kubernetes/pki/etcd/server.key")
+	keyPem, err := fs.ReadFile(virtfs, "/etc/kubernetes/pki/etcd/server.key")
 	if err != nil {
 		return nil, err
 	}

@@ -20,9 +20,9 @@ import (
 	"io/fs"
 	"os"
 
+	"k8c.io/kubeone/pkg/executor"
+	"k8c.io/kubeone/pkg/executor/executorfs"
 	"k8c.io/kubeone/pkg/fail"
-	"k8c.io/kubeone/pkg/ssh"
-	"k8c.io/kubeone/pkg/ssh/sshiofs"
 	"k8c.io/kubeone/pkg/state"
 
 	"k8s.io/client-go/rest"
@@ -38,7 +38,7 @@ func Download(s *state.State) ([]byte, error) {
 		return nil, err
 	}
 
-	conn, err := s.Connector.Connect(host)
+	conn, err := s.Executor.Open(host)
 	if err != nil {
 		return nil, err
 	}
@@ -46,8 +46,8 @@ func Download(s *state.State) ([]byte, error) {
 	return catKubernetesAdminConf(conn)
 }
 
-func catKubernetesAdminConf(conn ssh.Connection) ([]byte, error) {
-	return fs.ReadFile(sshiofs.New(conn), "/etc/kubernetes/admin.conf")
+func catKubernetesAdminConf(conn executor.Interface) ([]byte, error) {
+	return fs.ReadFile(executorfs.New(conn), "/etc/kubernetes/admin.conf")
 }
 
 // BuildKubernetesClientset builds core kubernetes and apiextensions clientsets
@@ -68,7 +68,7 @@ func BuildKubernetesClientset(s *state.State) error {
 		Deduplicate: true,
 	})
 
-	tunn, err := s.Connector.Tunnel(s.Cluster.RandomHost())
+	tunn, err := s.Executor.Tunnel(s.Cluster.RandomHost())
 	if err != nil {
 		return fail.KubeClient(err, "getting SSH tunnel")
 	}

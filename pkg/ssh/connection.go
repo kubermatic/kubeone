@@ -31,29 +31,15 @@ import (
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
 
+	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
 )
 
 const socketEnvPrefix = "env:"
 
 var (
-	_ Tunneler = &connection{}
+	_ executor.Tunneler = &connection{}
 )
-
-// Connection represents an established connection to an SSH server.
-type Connection interface {
-	Exec(cmd string) (stdout string, stderr string, exitCode int, err error)
-	POpen(cmd string, stdin io.Reader, stdout io.Writer, stderr io.Writer) (exitCode int, err error)
-	io.Closer
-}
-
-// Tunneler interface creates net.Conn originating from the remote ssh host to
-// target `addr`
-type Tunneler interface {
-	// `network` can be tcp, tcp4, tcp6, unix
-	TunnelTo(ctx context.Context, network, addr string) (net.Conn, error)
-	io.Closer
-}
 
 // Opts represents all the possible options for connecting to
 // a remote server via SSH.
@@ -124,7 +110,7 @@ type connection struct {
 
 // NewConnection attempts to create a new SSH connection to the host
 // specified via the given options.
-func NewConnection(connector *Connector, o Opts) (Connection, error) {
+func NewConnection(connector *Connector, o Opts) (executor.Interface, error) {
 	o, err := validateOptions(o)
 	if err != nil {
 		return nil, err

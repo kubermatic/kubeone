@@ -1,5 +1,5 @@
 /*
-Copyright 2021 The KubeOne Authors.
+Copyright 2019 The KubeOne Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,12 +14,30 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package sshiofs
+package executor
 
 import (
+	"context"
 	"io"
 	"io/fs"
+	"net"
+
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 )
+
+type Interface interface {
+	Exec(cmd string) (stdout string, stderr string, exitCode int, err error)
+	POpen(cmd string, stdin io.Reader, stdout io.Writer, stderr io.Writer) (exitCode int, err error)
+	io.Closer
+}
+
+// Tunneler interface creates net.Conn originating from the remote ssh host to
+// target `addr`
+type Tunneler interface {
+	// `network` can be tcp, tcp4, tcp6, unix
+	TunnelTo(ctx context.Context, network, addr string) (net.Conn, error)
+	io.Closer
+}
 
 // ExtendedFile extends fs.File bringing it closer in abilities to the os.File.
 type ExtendedFile interface {
@@ -46,4 +64,9 @@ type MkdirFS interface {
 	// error. The permission bits perm (before umask) are used for last directory that MkdirAll creates. If path is
 	// already a directory, MkdirAll does nothing and returns nil.
 	MkdirAll(path string, perm fs.FileMode) error
+}
+
+type Adapter interface {
+	Open(host kubeoneapi.HostConfig) (Interface, error)
+	Tunnel(host kubeoneapi.HostConfig) (Tunneler, error)
 }
