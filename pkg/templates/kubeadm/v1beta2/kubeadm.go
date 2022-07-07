@@ -32,14 +32,11 @@ import (
 	"k8c.io/kubeone/pkg/kubeflags"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/kubeadm/kubeadmargs"
-	"k8c.io/kubeone/pkg/templates/resources"
+	"k8c.io/kubeone/pkg/templates/kubernetesconfigs"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	componentbasev1alpha1 "k8s.io/component-base/config/v1alpha1"
-	kubeproxyv1alpha1 "k8s.io/kube-proxy/config/v1alpha1"
-	kubeletconfigv1beta1 "k8s.io/kubelet/config/v1beta1"
 )
 
 const (
@@ -161,27 +158,6 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		},
 	}
 
-	bfalse := false
-	kubeletConfig := &kubeletconfigv1beta1.KubeletConfiguration{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "kubelet.config.k8s.io/v1beta1",
-			Kind:       "KubeletConfiguration",
-		},
-		CgroupDriver:         "systemd",
-		ReadOnlyPort:         0,
-		RotateCertificates:   true,
-		ServerTLSBootstrap:   true,
-		ClusterDNS:           []string{resources.NodeLocalDNSVirtualIP},
-		ContainerLogMaxSize:  cluster.LoggingConfig.ContainerLogMaxSize,
-		ContainerLogMaxFiles: &cluster.LoggingConfig.ContainerLogMaxFiles,
-		Authentication: kubeletconfigv1beta1.KubeletAuthentication{
-			Anonymous: kubeletconfigv1beta1.KubeletAnonymousAuthentication{
-				Enabled: &bfalse,
-			},
-		},
-		FeatureGates: map[string]bool{},
-	}
-
 	if cluster.AssetConfiguration.Pause.ImageRepository != "" {
 		nodeRegistration.KubeletExtraArgs["pod-infra-container-image"] = cluster.AssetConfiguration.Pause.ImageRepository + "/pause:" + cluster.AssetConfiguration.Pause.ImageTag
 	}
@@ -217,6 +193,11 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		}
 	}
 
+	var (
+		kubeletFeatureGates map[string]bool
+		featureGatesFlag    string
+	)
+
 	if cluster.CloudProvider.External {
 		if !s.ShouldEnableInTreeCloudProvider() {
 			delete(clusterConfig.APIServer.ExtraArgs, "cloud-provider")
@@ -231,7 +212,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		}
 
 		if s.ShouldEnableCSIMigration() {
-			featureGates, featureGatesFlag, err := s.Cluster.CSIMigrationFeatureGates(s.ShouldUnregisterInTreeCloudProvider())
+			kubeletFeatureGates, featureGatesFlag, err = s.Cluster.CSIMigrationFeatureGates(s.ShouldUnregisterInTreeCloudProvider())
 			if err != nil {
 				return nil, err
 			}
@@ -248,11 +229,6 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 				clusterConfig.ControllerManager.ExtraArgs["feature-gates"] = fmt.Sprintf("%s,%s", clusterConfig.ControllerManager.ExtraArgs["feature-gates"], featureGatesFlag)
 			} else {
 				clusterConfig.ControllerManager.ExtraArgs["feature-gates"] = featureGatesFlag
-			}
-
-			// Kubelet
-			for k, v := range featureGates {
-				kubeletConfig.FeatureGates[k] = v
 			}
 		}
 	}
@@ -301,9 +277,9 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		// Handle external KMS case.
 		if s.LiveCluster.CustomEncryptionEnabled() ||
 			s.Cluster.Features.EncryptionProviders != nil && s.Cluster.Features.EncryptionProviders.CustomEncryptionConfiguration != "" {
-			ksmSocket, err := s.GetKMSSocketPath()
-			if err != nil {
-				return nil, err
+			ksmSocket, socketErr := s.GetKMSSocketPath()
+			if socketErr != nil {
+				return nil, socketErr
 			}
 			if ksmSocket != "" {
 				clusterConfig.APIServer.ExtraVolumes = append(clusterConfig.APIServer.ExtraVolumes, kubeadmv1beta2.HostPathMount{
@@ -325,7 +301,15 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 	initConfig.NodeRegistration = nodeRegistration
 	joinConfig.NodeRegistration = nodeRegistration
 
-	kubeproxyConfig := kubeProxyConfiguration(s)
+	kubeletConfig, err := kubernetesconfigs.NewKubeletConfiguration(s.Cluster, kubeletFeatureGates)
+	if err != nil {
+		return nil, err
+	}
+
+	kubeproxyConfig, err := kubernetesconfigs.NewKubeProxyConfiguration(s.Cluster)
+	if err != nil {
+		return nil, err
+	}
 
 	return []runtime.Object{initConfig, joinConfig, clusterConfig, kubeletConfig, kubeproxyConfig}, nil
 }
@@ -355,27 +339,6 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Obje
 		},
 	}
 
-	bfalse := false
-	kubeletConfig := &kubeletconfigv1beta1.KubeletConfiguration{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "kubelet.config.k8s.io/v1beta1",
-			Kind:       "KubeletConfiguration",
-		},
-		CgroupDriver:         "systemd",
-		ReadOnlyPort:         0,
-		RotateCertificates:   true,
-		ServerTLSBootstrap:   true,
-		ClusterDNS:           []string{resources.NodeLocalDNSVirtualIP},
-		ContainerLogMaxSize:  cluster.LoggingConfig.ContainerLogMaxSize,
-		ContainerLogMaxFiles: &cluster.LoggingConfig.ContainerLogMaxFiles,
-		Authentication: kubeletconfigv1beta1.KubeletAuthentication{
-			Anonymous: kubeletconfigv1beta1.KubeletAnonymousAuthentication{
-				Enabled: &bfalse,
-			},
-		},
-		FeatureGates: map[string]bool{},
-	}
-
 	if cluster.AssetConfiguration.Pause.ImageRepository != "" {
 		nodeRegistration.KubeletExtraArgs["pod-infra-container-image"] = cluster.AssetConfiguration.Pause.ImageRepository + "/pause:" + cluster.AssetConfiguration.Pause.ImageTag
 	}
@@ -391,22 +354,11 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Obje
 		if !s.ShouldEnableInTreeCloudProvider() {
 			nodeRegistration.KubeletExtraArgs["cloud-provider"] = "external"
 		}
-		if s.ShouldEnableCSIMigration() {
-			featureGates, _, err := s.Cluster.CSIMigrationFeatureGates(s.ShouldUnregisterInTreeCloudProvider())
-			if err != nil {
-				return nil, err
-			}
-			for k, v := range featureGates {
-				kubeletConfig.FeatureGates[k] = v
-			}
-		}
 	}
 
 	joinConfig.NodeRegistration = nodeRegistration
 
-	kubeproxyConfig := kubeProxyConfiguration(s)
-
-	return []runtime.Object{joinConfig, kubeletConfig, kubeproxyConfig}, nil
+	return []runtime.Object{joinConfig}, nil
 }
 
 func newNodeIP(host kubeoneapi.HostConfig) string {
@@ -445,36 +397,4 @@ func newNodeRegistration(s *state.State, host kubeoneapi.HostConfig) kubeadmv1be
 		CRISocket:        s.Cluster.ContainerRuntime.CRISocket(),
 		KubeletExtraArgs: kubeletCLIFlags,
 	}
-}
-
-func kubeProxyConfiguration(s *state.State) *kubeproxyv1alpha1.KubeProxyConfiguration {
-	kubeProxyConfig := &kubeproxyv1alpha1.KubeProxyConfiguration{
-		TypeMeta: metav1.TypeMeta{
-			Kind:       "KubeProxyConfiguration",
-			APIVersion: "kubeproxy.config.k8s.io/v1alpha1",
-		},
-		ClusterCIDR: s.Cluster.ClusterNetwork.PodSubnet,
-		ClientConnection: componentbasev1alpha1.ClientConnectionConfiguration{
-			Kubeconfig: "/var/lib/kube-proxy/kubeconfig.conf",
-		},
-	}
-
-	if kbPrx := s.Cluster.ClusterNetwork.KubeProxy; kbPrx != nil {
-		switch {
-		case kbPrx.IPVS != nil:
-			kubeProxyConfig.Mode = kubeproxyv1alpha1.ProxyMode("ipvs")
-			kubeProxyConfig.IPVS = kubeproxyv1alpha1.KubeProxyIPVSConfiguration{
-				StrictARP:     kbPrx.IPVS.StrictARP,
-				Scheduler:     kbPrx.IPVS.Scheduler,
-				ExcludeCIDRs:  kbPrx.IPVS.ExcludeCIDRs,
-				TCPTimeout:    kbPrx.IPVS.TCPTimeout,
-				TCPFinTimeout: kbPrx.IPVS.TCPFinTimeout,
-				UDPTimeout:    kbPrx.IPVS.UDPTimeout,
-			}
-		case kbPrx.IPTables != nil:
-			kubeProxyConfig.Mode = kubeproxyv1alpha1.ProxyMode("iptables")
-		}
-	}
-
-	return kubeProxyConfig
 }
