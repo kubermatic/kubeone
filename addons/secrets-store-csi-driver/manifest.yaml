@@ -9,9 +9,9 @@ metadata:
     app.kubernetes.io/instance: "csi"
     app.kubernetes.io/managed-by: "Helm"
     app.kubernetes.io/name: "secrets-store-csi-driver"
-    app.kubernetes.io/version: "1.1.2"
+    app.kubernetes.io/version: "1.2.0"
     app: secrets-store-csi-driver
-    helm.sh/chart: "secrets-store-csi-driver-1.1.2"
+    helm.sh/chart: "secrets-store-csi-driver-1.2.0"
 ---
 # Source: secrets-store-csi-driver/templates/role-rotation.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -203,9 +203,9 @@ metadata:
     app.kubernetes.io/instance: "csi"
     app.kubernetes.io/managed-by: "Helm"
     app.kubernetes.io/name: "secrets-store-csi-driver"
-    app.kubernetes.io/version: "1.1.2"
+    app.kubernetes.io/version: "1.2.0"
     app: secrets-store-csi-driver
-    helm.sh/chart: "secrets-store-csi-driver-1.1.2"
+    helm.sh/chart: "secrets-store-csi-driver-1.2.0"
 spec:
   selector:
     matchLabels:
@@ -222,9 +222,9 @@ spec:
         app.kubernetes.io/instance: "csi"
         app.kubernetes.io/managed-by: "Helm"
         app.kubernetes.io/name: "secrets-store-csi-driver"
-        app.kubernetes.io/version: "1.1.2"
+        app.kubernetes.io/version: "1.2.0"
         app: secrets-store-csi-driver
-        helm.sh/chart: "secrets-store-csi-driver-1.1.2"
+        helm.sh/chart: "secrets-store-csi-driver-1.2.0"
     spec:
       serviceAccountName: secrets-store-csi-driver
       affinity:
@@ -238,7 +238,7 @@ spec:
                 - virtual-kubelet
       containers:
         - name: node-driver-registrar
-          image: "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.5.0"
+          image: "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.5.1"
           args:
             - --v=5
             - --csi-address=/csi/csi.sock
@@ -251,12 +251,6 @@ spec:
               - --mode=kubelet-registration-probe
             initialDelaySeconds: 30
             timeoutSeconds: 15
-          env:
-          - name: KUBE_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: plugin-dir
@@ -271,12 +265,12 @@ spec:
               cpu: 10m
               memory: 20Mi
         - name: secrets-store
-          image: "k8s.gcr.io/csi-secrets-store/driver:v1.1.2"
+          image: "k8s.gcr.io/csi-secrets-store/driver:v1.2.0"
           args:
             - "--endpoint=$(CSI_ENDPOINT)"
             - "--nodeid=$(KUBE_NODE_NAME)"
-            - "--provider-volume=/etc/kubernetes/secrets-store-csi-providers"
-            - "--additional-provider-volume-paths=/var/run/secrets-store-csi-providers"
+            - "--provider-volume=/var/run/secrets-store-csi-providers"
+            - "--additional-provider-volume-paths=/etc/kubernetes/secrets-store-csi-providers"
             - "--enable-secret-rotation=true"
             - "--metrics-addr=:8095"
             - "--provider-health-check-interval=2m"
@@ -314,9 +308,9 @@ spec:
               mountPath: /var/lib/kubelet/pods
               mountPropagation: Bidirectional
             - name: providers-dir
-              mountPath: /etc/kubernetes/secrets-store-csi-providers
+              mountPath: /var/run/secrets-store-csi-providers
             - name: providers-dir-0
-              mountPath: "/var/run/secrets-store-csi-providers"
+              mountPath: "/etc/kubernetes/secrets-store-csi-providers"
           resources:
             limits:
               cpu: 200m
@@ -325,7 +319,7 @@ spec:
               cpu: 50m
               memory: 100Mi
         - name: liveness-probe
-          image: "k8s.gcr.io/sig-storage/livenessprobe:v2.6.0"
+          image: "k8s.gcr.io/sig-storage/livenessprobe:v2.7.0"
           imagePullPolicy: IfNotPresent
           args:
           - --csi-address=/csi/csi.sock
@@ -357,11 +351,11 @@ spec:
             type: DirectoryOrCreate
         - name: providers-dir
           hostPath:
-            path: /etc/kubernetes/secrets-store-csi-providers
+            path: /var/run/secrets-store-csi-providers
             type: DirectoryOrCreate
         - name: providers-dir-0
           hostPath:
-            path: "/var/run/secrets-store-csi-providers"
+            path: "/etc/kubernetes/secrets-store-csi-providers"
             type: DirectoryOrCreate
       nodeSelector:
         kubernetes.io/os: linux
@@ -396,9 +390,9 @@ metadata:
     app.kubernetes.io/instance: "csi"
     app.kubernetes.io/managed-by: "Helm"
     app.kubernetes.io/name: "secrets-store-csi-driver"
-    app.kubernetes.io/version: "1.1.2"
+    app.kubernetes.io/version: "1.2.0"
     app: secrets-store-csi-driver
-    helm.sh/chart: "secrets-store-csi-driver-1.1.2"
+    helm.sh/chart: "secrets-store-csi-driver-1.2.0"
   annotations:
     helm.sh/hook: pre-install,pre-upgrade
     helm.sh/hook-delete-policy: "hook-succeeded,before-hook-creation"
@@ -415,9 +409,9 @@ metadata:
     app.kubernetes.io/instance: "csi"
     app.kubernetes.io/managed-by: "Helm"
     app.kubernetes.io/name: "secrets-store-csi-driver"
-    app.kubernetes.io/version: "1.1.2"
+    app.kubernetes.io/version: "1.2.0"
     app: secrets-store-csi-driver
-    helm.sh/chart: "secrets-store-csi-driver-1.1.2"
+    helm.sh/chart: "secrets-store-csi-driver-1.2.0"
   annotations:
     helm.sh/hook: pre-upgrade
     helm.sh/hook-delete-policy: "hook-succeeded,before-hook-creation"
@@ -432,9 +426,9 @@ metadata:
     app.kubernetes.io/instance: "csi"
     app.kubernetes.io/managed-by: "Helm"
     app.kubernetes.io/name: "secrets-store-csi-driver"
-    app.kubernetes.io/version: "1.1.2"
+    app.kubernetes.io/version: "1.2.0"
     app: secrets-store-csi-driver
-    helm.sh/chart: "secrets-store-csi-driver-1.1.2"
+    helm.sh/chart: "secrets-store-csi-driver-1.2.0"
   annotations:
     helm.sh/hook: pre-install,pre-upgrade
     helm.sh/hook-delete-policy: "hook-succeeded,before-hook-creation"
@@ -453,9 +447,9 @@ metadata:
     app.kubernetes.io/instance: "csi"
     app.kubernetes.io/managed-by: "Helm"
     app.kubernetes.io/name: "secrets-store-csi-driver"
-    app.kubernetes.io/version: "1.1.2"
+    app.kubernetes.io/version: "1.2.0"
     app: secrets-store-csi-driver
-    helm.sh/chart: "secrets-store-csi-driver-1.1.2"
+    helm.sh/chart: "secrets-store-csi-driver-1.2.0"
   annotations:
     helm.sh/hook: pre-upgrade
     helm.sh/hook-delete-policy: "hook-succeeded,before-hook-creation"
@@ -474,9 +468,9 @@ metadata:
     app.kubernetes.io/instance: "csi"
     app.kubernetes.io/managed-by: "Helm"
     app.kubernetes.io/name: "secrets-store-csi-driver"
-    app.kubernetes.io/version: "1.1.2"
+    app.kubernetes.io/version: "1.2.0"
     app: secrets-store-csi-driver
-    helm.sh/chart: "secrets-store-csi-driver-1.1.2"
+    helm.sh/chart: "secrets-store-csi-driver-1.2.0"
   annotations:
     helm.sh/hook: pre-install,pre-upgrade
     helm.sh/hook-delete-policy: "hook-succeeded,before-hook-creation"
@@ -499,9 +493,9 @@ metadata:
     app.kubernetes.io/instance: "csi"
     app.kubernetes.io/managed-by: "Helm"
     app.kubernetes.io/name: "secrets-store-csi-driver"
-    app.kubernetes.io/version: "1.1.2"
+    app.kubernetes.io/version: "1.2.0"
     app: secrets-store-csi-driver
-    helm.sh/chart: "secrets-store-csi-driver-1.1.2"
+    helm.sh/chart: "secrets-store-csi-driver-1.2.0"
   annotations:
     helm.sh/hook: pre-upgrade
     helm.sh/hook-delete-policy: "hook-succeeded,before-hook-creation"
@@ -525,12 +519,12 @@ metadata:
     app.kubernetes.io/instance: "csi"
     app.kubernetes.io/managed-by: "Helm"
     app.kubernetes.io/name: "secrets-store-csi-driver"
-    app.kubernetes.io/version: "1.1.2"
+    app.kubernetes.io/version: "1.2.0"
     app: secrets-store-csi-driver
-    helm.sh/chart: "secrets-store-csi-driver-1.1.2"
+    helm.sh/chart: "secrets-store-csi-driver-1.2.0"
   annotations:
     helm.sh/hook: pre-install,pre-upgrade
-    helm.sh/hook-weight: "1"
+    helm.sh/hook-weight: "10"
     helm.sh/hook-delete-policy: "hook-succeeded,before-hook-creation"
 spec:
   backoffLimit: 0
@@ -542,7 +536,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: crds-upgrade
-        image: "k8s.gcr.io/csi-secrets-store/driver-crds:v1.1.2"
+        image: "k8s.gcr.io/csi-secrets-store/driver-crds:v1.2.0"
         args:
         - apply
         - -f
@@ -568,12 +562,12 @@ metadata:
     app.kubernetes.io/instance: "csi"
     app.kubernetes.io/managed-by: "Helm"
     app.kubernetes.io/name: "secrets-store-csi-driver"
-    app.kubernetes.io/version: "1.1.2"
+    app.kubernetes.io/version: "1.2.0"
     app: secrets-store-csi-driver
-    helm.sh/chart: "secrets-store-csi-driver-1.1.2"
+    helm.sh/chart: "secrets-store-csi-driver-1.2.0"
   annotations:
     helm.sh/hook: pre-upgrade
-    helm.sh/hook-weight: "2"
+    helm.sh/hook-weight: "20"
     helm.sh/hook-delete-policy: "hook-succeeded,before-hook-creation"
 spec:
   backoffLimit: 0
@@ -585,7 +579,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: crds-keep
-        image: "k8s.gcr.io/csi-secrets-store/driver-crds:v1.1.2"
+        image: "k8s.gcr.io/csi-secrets-store/driver-crds:v1.2.0"
         args:
         - patch
         - crd
