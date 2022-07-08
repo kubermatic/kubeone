@@ -87,6 +87,35 @@ func (e SSHError) Error() string {
 func (e SSHError) Unwrap() error { return e.Err }
 func (e SSHError) exitCode() int { return SSHErrorExitCode }
 
+// ExecError wraps SSH related errors
+type ExecError struct {
+	Err    error
+	Op     string
+	Cmd    string
+	Stderr string
+}
+
+func (e ExecError) Error() string {
+	var (
+		format = "exec: %s\n%s"
+		args   = []interface{}{e.Op, e.Err}
+	)
+	if e.Cmd != "" {
+		format += "\n%s"
+		args = append(args, e.Cmd)
+	}
+
+	if e.Stderr != "" {
+		format += "\nstderr: %s"
+		args = append(args, e.Stderr)
+	}
+
+	return fmt.Sprintf(format, args...)
+}
+
+func (e ExecError) Unwrap() error { return e.Err }
+func (e ExecError) exitCode() int { return ExecErrorExitCode }
+
 // ConnectionError wraps connections related errors
 type ConnectionError struct {
 	Err    error

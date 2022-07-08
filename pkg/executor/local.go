@@ -24,6 +24,7 @@ import (
 	"strings"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/fail"
 )
 
 func NewLocal(ctx context.Context) Adapter {
@@ -54,11 +55,22 @@ type localExec struct {
 }
 
 func (le *localExec) Exec(cmd string) (string, string, int, error) {
-	var stdout, stderr strings.Builder
+	var (
+		stdout, stderr strings.Builder
+		returnErr      error
+	)
 
 	exitcode, err := le.POpen(cmd, nil, &stdout, &stderr)
+	if err != nil {
+		returnErr = fail.ExecError{
+			Err:    err,
+			Op:     "exec",
+			Cmd:    cmd,
+			Stderr: stderr.String(),
+		}
+	}
 
-	return stdout.String(), stderr.String(), exitcode, err
+	return stdout.String(), stderr.String(), exitcode, returnErr
 }
 
 func (le *localExec) POpen(cmd string, stdin io.Reader, stdout io.Writer, stderr io.Writer) (int, error) {

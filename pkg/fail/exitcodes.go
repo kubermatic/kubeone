@@ -26,6 +26,7 @@ const (
 	SSHErrorExitCode        = 13
 	ConnectionErrorExitCode = 14
 	ConfigErrorExitCode     = 15
+	ExecErrorExitCode       = 16
 )
 
 type exitCoder interface {
