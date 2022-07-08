@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2022-07-06T19:10:49+03:00
+date = 2022-07-08T17:05:33+03:00
 weight = 11
 +++
 ## v1beta2
@@ -173,6 +173,7 @@ Only one cloud provider must be defined at the single time.
 | external | External | bool | false |
 | cloudConfig | CloudConfig | string | false |
 | csiConfig | CSIConfig | string | false |
+| secretProviderClassName | SecretProviderClassName | string | false |
 | aws | AWS | *[AWSSpec](#awsspec) | false |
 | azure | Azure | *[AzureSpec](#azurespec) | false |
 | digitalocean | DigitalOcean | *[DigitalOceanSpec](#digitaloceanspec) | false |
