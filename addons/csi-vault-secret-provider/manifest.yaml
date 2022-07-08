@@ -17,7 +17,7 @@ metadata:
   name: vault
   namespace: kube-system
   labels:
-    helm.sh/chart: vault-0.19.0
+    helm.sh/chart: vault-0.20.1
     app.kubernetes.io/name: vault
     app.kubernetes.io/instance: vault
     app.kubernetes.io/managed-by: Helm
@@ -63,7 +63,7 @@ kind: ClusterRoleBinding
 metadata:
   name: vault-server-binding
   labels:
-    helm.sh/chart: vault-0.19.0
+    helm.sh/chart: vault-0.20.1
     app.kubernetes.io/name: vault
     app.kubernetes.io/instance: vault
     app.kubernetes.io/managed-by: Helm
@@ -86,7 +86,6 @@ metadata:
     app.kubernetes.io/name: vault-csi-provider
     app.kubernetes.io/instance: vault
     app.kubernetes.io/managed-by: Helm
-  
 spec:
   updateStrategy:
     type: RollingUpdate
@@ -99,7 +98,6 @@ spec:
       labels:
         app.kubernetes.io/name: vault-csi-provider
         app.kubernetes.io/instance: vault
-      
     spec:
       serviceAccountName: vault-csi-provider
       tolerations:
@@ -112,7 +110,7 @@ spec:
       containers:
         - name: vault-csi-provider
           
-          image: "hashicorp/vault-csi-provider:0.4.0"
+          image: "hashicorp/vault-csi-provider:1.1.0"
           imagePullPolicy: IfNotPresent
           args:
             - --endpoint=/provider/vault.sock
