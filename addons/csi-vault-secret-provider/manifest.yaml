@@ -8,7 +8,6 @@ metadata:
   labels:
     app.kubernetes.io/name: vault-csi-provider
     app.kubernetes.io/instance: vault
-    app.kubernetes.io/managed-by: Helm
 ---
 # Source: vault/templates/server-serviceaccount.yaml
 apiVersion: v1
@@ -20,7 +19,6 @@ metadata:
     helm.sh/chart: vault-0.20.1
     app.kubernetes.io/name: vault
     app.kubernetes.io/instance: vault
-    app.kubernetes.io/managed-by: Helm
 ---
 # Source: vault/templates/csi-clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -30,7 +28,6 @@ metadata:
   labels:
     app.kubernetes.io/name: vault-csi-provider
     app.kubernetes.io/instance: vault
-    app.kubernetes.io/managed-by: Helm
 rules:
 - apiGroups:
   - ""
@@ -47,7 +44,6 @@ metadata:
   labels:
     app.kubernetes.io/name: vault-csi-provider
     app.kubernetes.io/instance: vault
-    app.kubernetes.io/managed-by: Helm
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -66,7 +62,6 @@ metadata:
     helm.sh/chart: vault-0.20.1
     app.kubernetes.io/name: vault
     app.kubernetes.io/instance: vault
-    app.kubernetes.io/managed-by: Helm
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -85,7 +80,6 @@ metadata:
   labels:
     app.kubernetes.io/name: vault-csi-provider
     app.kubernetes.io/instance: vault
-    app.kubernetes.io/managed-by: Helm
 spec:
   updateStrategy:
     type: RollingUpdate

@@ -11,10 +11,9 @@ helm template vault hashicorp/vault \
     > manifest.yaml
 ```
 
-## KubeOne cluster init
+## KubeOne cluster
 
-If you are only creating the cluster, enable corresponding addons in the KubeOne
-manifest:
+Enable corresponding addons in the KubeOne manifest:
 
 ```yaml
 apiVersion: kubeone.k8c.io/v1beta2
@@ -32,7 +31,7 @@ addons:
   - name: csi-vault-secret-provider
 ```
 
-And init the cluster as usually.
+And `kubeone apply` the cluster as usually.
 
 ## Configure Vault
 
@@ -130,7 +129,7 @@ Save this to ./addons/my-secret-provider-class/manifest.yaml
 
 ## Configure KubeOne
 
-`kubeone apply` again but this time with modified config:
+`kubeone apply` again to apply new `my-secret-provider-class` addon:
 
 ```yaml
 apiVersion: kubeone.k8c.io/v1beta2
@@ -150,5 +149,4 @@ addons:
   addons:
   - name: secrets-store-csi-driver
   - name: csi-vault-secret-provider
-  - name: my-secret-provider-class
 ```

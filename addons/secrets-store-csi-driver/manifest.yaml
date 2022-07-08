@@ -7,7 +7,6 @@ metadata:
   namespace: kube-system
   labels:
     app.kubernetes.io/instance: "csi"
-    app.kubernetes.io/managed-by: "Helm"
     app.kubernetes.io/name: "secrets-store-csi-driver"
     app.kubernetes.io/version: "1.2.0"
     app: secrets-store-csi-driver
@@ -201,7 +200,6 @@ metadata:
   namespace: kube-system
   labels:
     app.kubernetes.io/instance: "csi"
-    app.kubernetes.io/managed-by: "Helm"
     app.kubernetes.io/name: "secrets-store-csi-driver"
     app.kubernetes.io/version: "1.2.0"
     app: secrets-store-csi-driver
@@ -220,7 +218,6 @@ spec:
         kubectl.kubernetes.io/default-container: secrets-store
       labels:
         app.kubernetes.io/instance: "csi"
-        app.kubernetes.io/managed-by: "Helm"
         app.kubernetes.io/name: "secrets-store-csi-driver"
         app.kubernetes.io/version: "1.2.0"
         app: secrets-store-csi-driver
@@ -388,7 +385,6 @@ metadata:
   namespace: kube-system
   labels:
     app.kubernetes.io/instance: "csi"
-    app.kubernetes.io/managed-by: "Helm"
     app.kubernetes.io/name: "secrets-store-csi-driver"
     app.kubernetes.io/version: "1.2.0"
     app: secrets-store-csi-driver
@@ -407,7 +403,6 @@ metadata:
   namespace: kube-system
   labels:
     app.kubernetes.io/instance: "csi"
-    app.kubernetes.io/managed-by: "Helm"
     app.kubernetes.io/name: "secrets-store-csi-driver"
     app.kubernetes.io/version: "1.2.0"
     app: secrets-store-csi-driver
@@ -424,7 +419,6 @@ metadata:
   name: csi-secrets-store-csi-driver-upgrade-crds
   labels:
     app.kubernetes.io/instance: "csi"
-    app.kubernetes.io/managed-by: "Helm"
     app.kubernetes.io/name: "secrets-store-csi-driver"
     app.kubernetes.io/version: "1.2.0"
     app: secrets-store-csi-driver
@@ -445,7 +439,6 @@ metadata:
   name: csi-secrets-store-csi-driver-keep-crds
   labels:
     app.kubernetes.io/instance: "csi"
-    app.kubernetes.io/managed-by: "Helm"
     app.kubernetes.io/name: "secrets-store-csi-driver"
     app.kubernetes.io/version: "1.2.0"
     app: secrets-store-csi-driver
@@ -466,7 +459,6 @@ metadata:
   name: csi-secrets-store-csi-driver-upgrade-crds
   labels:
     app.kubernetes.io/instance: "csi"
-    app.kubernetes.io/managed-by: "Helm"
     app.kubernetes.io/name: "secrets-store-csi-driver"
     app.kubernetes.io/version: "1.2.0"
     app: secrets-store-csi-driver
@@ -491,7 +483,6 @@ metadata:
   name: csi-secrets-store-csi-driver-keep-crds
   labels:
     app.kubernetes.io/instance: "csi"
-    app.kubernetes.io/managed-by: "Helm"
     app.kubernetes.io/name: "secrets-store-csi-driver"
     app.kubernetes.io/version: "1.2.0"
     app: secrets-store-csi-driver
@@ -517,7 +508,6 @@ metadata:
   namespace: kube-system
   labels:
     app.kubernetes.io/instance: "csi"
-    app.kubernetes.io/managed-by: "Helm"
     app.kubernetes.io/name: "secrets-store-csi-driver"
     app.kubernetes.io/version: "1.2.0"
     app: secrets-store-csi-driver
@@ -560,7 +550,6 @@ metadata:
   namespace: kube-system
   labels:
     app.kubernetes.io/instance: "csi"
-    app.kubernetes.io/managed-by: "Helm"
     app.kubernetes.io/name: "secrets-store-csi-driver"
     app.kubernetes.io/version: "1.2.0"
     app: secrets-store-csi-driver
