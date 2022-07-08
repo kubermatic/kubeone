@@ -47,21 +47,15 @@ func (r *Runner) NewFS() executor.MkdirFS {
 
 func (r *Runner) RunRaw(cmd string) (string, string, error) {
 	if r.Executor == nil {
-		return "", "", fail.SSHError{
-			Op:  "checking SSH connection",
-			Err: errors.New("runner has no open SSH connection"),
+		return "", "", fail.RuntimeError{
+			Op:  "checking available executor adapter",
+			Err: errors.New("runner has no open adapter"),
 		}
 	}
 
 	if !r.Verbose {
 		stdout, stderr, _, err := r.Executor.Exec(cmd)
 		if err != nil {
-			err = fail.SSHError{
-				Op:     "running",
-				Err:    errors.WithStack(err),
-				Cmd:    cmd,
-				Stderr: stderr,
-			}
 			r.Executor.Close()
 			r.Executor = nil
 		}
