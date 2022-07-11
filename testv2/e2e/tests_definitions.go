@@ -190,7 +190,7 @@ var (
 			terraform: terraformBin{
 				path: "../../examples/terraform/digitalocean",
 				vars: []string{
-					"workers_replicas=3",
+					"disable_kubeapi_loadbalancer=true",
 				},
 			},
 		},

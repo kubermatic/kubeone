@@ -18,7 +18,9 @@ provider "digitalocean" {
 }
 
 locals {
-  kube_cluster_tag = "kubernetes-cluster:${var.cluster_name}"
+  kube_cluster_tag   = "kubernetes-cluster:${var.cluster_name}"
+  kubeapi_endpoint   = var.disable_kubeapi_loadbalancer ? digitalocean_droplet.control_plane.0.ipv4_address_private : digitalocean_loadbalancer.control_plane.0.ip
+  loadbalancer_count = var.disable_kubeapi_loadbalancer ? 0 : 1
 }
 
 resource "digitalocean_tag" "kube_cluster_tag" {
@@ -52,6 +54,8 @@ resource "digitalocean_droplet" "control_plane" {
 }
 
 resource "digitalocean_loadbalancer" "control_plane" {
+  count = local.loadbalancer_count
+
   name   = "${var.cluster_name}-lb"
   region = var.region
 
