@@ -166,7 +166,9 @@ func disableNMCloudSetup(s *state.State, node *kubeoneapi.HostConfig, _ executor
 			// NB: In some cases, KubeOne might not be able to re-use SSH connections
 			// after rebooting nodes. Because of that, we close all connections here,
 			// and then KubeOne will automatically reinitialize them on the next task.
-			s.Runner.Executor.Close()
+			if s.Runner != nil && s.Runner.Executor != nil {
+				s.Runner.Executor.Close()
+			}
 		}
 	}
 
