@@ -37,6 +37,7 @@ const (
 	AddonCSIAzureFile           = "csi-azurefile"
 	AddonCSIDigitalOcean        = "csi-digitalocean"
 	AddonCSIHetzner             = "csi-hetzner"
+	AddonCSIGCPComputePD        = "csi-gcp-compute-persistent"
 	AddonCSINutanix             = "csi-nutanix"
 	AddonCSIOpenStackCinder     = "csi-openstack-cinder"
 	AddonCSIVMwareCloudDirector = "csi-vmware-cloud-director"
@@ -75,6 +76,9 @@ const (
 
 	NutanixCSIWebhookName      = "snapshot-validation-service"
 	NutanixCSIWebhookNamespace = metav1.NamespaceSystem
+
+	GCEComputeCSIWebhookName      = "snapshot-validation-service"
+	GCEComputeCSIWebhookNamespace = metav1.NamespaceSystem
 
 	DigitalOceanCSIWebhookName      = "snapshot-validation-service"
 	DigitalOceanCSIWebhookNamespace = metav1.NamespaceSystem

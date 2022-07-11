@@ -116,7 +116,8 @@ func Ensure(s *state.State) error {
 		}
 	}
 
-	if s.Cluster.CloudProvider.External && s.Cluster.CloudProvider.Vsphere == nil {
+	if (s.Cluster.CloudProvider.External && s.Cluster.CloudProvider.Vsphere == nil) ||
+		s.Cluster.CloudProvider.GCE != nil {
 		s.Logger.Infoln("Creating CCM credentials secret...")
 
 		ccmCreds, err := ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, TypeCCM)

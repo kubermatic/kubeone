@@ -222,6 +222,19 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		}
 		data.Certificates["NutanixCSIWebhookCert"] = nutanixCSICertsMap[resources.TLSCertName]
 		data.Certificates["NutanixCSIWebhookKey"] = nutanixCSICertsMap[resources.TLSKeyName]
+	case s.Cluster.CloudProvider.GCE != nil:
+		gceCSICertsMap, err := certificate.NewSignedTLSCert(
+			resources.GCEComputeCSIWebhookName,
+			resources.GCEComputeCSIWebhookNamespace,
+			s.Cluster.ClusterNetwork.ServiceDomainName,
+			kubeCAPrivateKey,
+			kubeCACert,
+		)
+		if err != nil {
+			return nil, err
+		}
+		data.Certificates["CSIWebhookCert"] = gceCSICertsMap[resources.TLSCertName]
+		data.Certificates["CSIWebhookKey"] = gceCSICertsMap[resources.TLSKeyName]
 	case s.Cluster.CloudProvider.DigitalOcean != nil && s.Cluster.CloudProvider.External:
 		digitaloceanCSICertsMap, err := certificate.NewSignedTLSCert(
 			resources.DigitalOceanCSIWebhookName,

@@ -58,6 +58,7 @@ var (
 		resources.AddonCSIAzureFile:           "",
 		resources.AddonCSIDigitalOcean:        "",
 		resources.AddonCSIHetzner:             "",
+		resources.AddonCSIGCPComputePD:        "",
 		resources.AddonCSINutanix:             "",
 		resources.AddonCSIOpenStackCinder:     "",
 		resources.AddonCSIVMwareCloudDirector: "",
@@ -328,14 +329,14 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 	// for provision operations is NOT supported by in-tree solution.
 
 	switch {
-	// CSI driver is required for k8s v.1.23+
+	// CSI driver is required for k8s v1.23+
 	case s.Cluster.CloudProvider.AWS != nil && (gte23 || s.Cluster.CloudProvider.External):
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
 				name: resources.AddonCSIAwsEBS,
 			},
 		)
-	// CSI driver is required for k8s v.1.23+
+	// CSI driver is required for k8s v1.23+
 	case s.Cluster.CloudProvider.Azure != nil && (gte23 || s.Cluster.CloudProvider.External):
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
@@ -348,7 +349,13 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 				name: resources.AddonCSIAzureFile,
 			},
 		)
-
+		// CSI driver is required for k8s v1.23+
+	case s.Cluster.CloudProvider.GCE != nil && (gte23 || s.Cluster.CloudProvider.External):
+		addonsToDeploy = append(addonsToDeploy,
+			addonAction{
+				name: resources.AddonCSIGCPComputePD,
+			},
+		)
 	// Install CSI driver unconditionally
 	case s.Cluster.CloudProvider.DigitalOcean != nil:
 		addonsToDeploy = append(addonsToDeploy,
