@@ -23,13 +23,13 @@ either of the following ENV variables should be accessible:
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0 |
-| <a name="requirement_google"></a> [google](#requirement\_google) | ~> 3.71.0 |
+| <a name="requirement_google"></a> [google](#requirement\_google) | ~> 4.27.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_google"></a> [google](#provider\_google) | ~> 3.71.0 |
+| <a name="provider_google"></a> [google](#provider\_google) | ~> 4.27.0 |
 
 ## Modules
 
@@ -47,10 +47,10 @@ No modules.
 | [google_compute_forwarding_rule.control_plane](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_forwarding_rule) | resource |
 | [google_compute_http_health_check.control_plane](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_http_health_check) | resource |
 | [google_compute_instance.control_plane](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance) | resource |
-| [google_compute_network.network](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_network) | resource |
-| [google_compute_subnetwork.subnet](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_subnetwork) | resource |
 | [google_compute_target_pool.control_plane_pool](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_target_pool) | resource |
 | [google_compute_image.control_plane_image](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/compute_image) | data source |
+| [google_compute_network.network](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/compute_network) | data source |
+| [google_compute_subnetwork.subnet](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/compute_subnetwork) | data source |
 | [google_compute_zones.available](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/compute_zones) | data source |
 
 ## Inputs
@@ -59,12 +59,12 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_apiserver_alternative_names"></a> [apiserver\_alternative\_names](#input\_apiserver\_alternative\_names) | subject alternative names for the API Server signing cert. | `list(string)` | `[]` | no |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the cluster | `string` | n/a | yes |
-| <a name="input_cluster_network_cidr"></a> [cluster\_network\_cidr](#input\_cluster\_network\_cidr) | Cluster network subnet cidr | `string` | `"10.240.0.0/24"` | no |
 | <a name="input_control_plane_image_family"></a> [control\_plane\_image\_family](#input\_control\_plane\_image\_family) | Image family to use for provisioning instances | `string` | `"ubuntu-2004-lts"` | no |
 | <a name="input_control_plane_image_project"></a> [control\_plane\_image\_project](#input\_control\_plane\_image\_project) | Project of the image to use for provisioning instances | `string` | `"ubuntu-os-cloud"` | no |
 | <a name="input_control_plane_target_pool_members_count"></a> [control\_plane\_target\_pool\_members\_count](#input\_control\_plane\_target\_pool\_members\_count) | n/a | `number` | `3` | no |
 | <a name="input_control_plane_type"></a> [control\_plane\_type](#input\_control\_plane\_type) | GCE instance type | `string` | `"n1-standard-2"` | no |
 | <a name="input_control_plane_volume_size"></a> [control\_plane\_volume\_size](#input\_control\_plane\_volume\_size) | Size of the boot volume, in GB | `number` | `100` | no |
+| <a name="input_disable_kubeapi_loadbalancer"></a> [disable\_kubeapi\_loadbalancer](#input\_disable\_kubeapi\_loadbalancer) | E2E tests specific varible to disable usage of any loadbalancer in front of kubeapi-server | `bool` | `false` | no |
 | <a name="input_initial_machinedeployment_operating_system_profile"></a> [initial\_machinedeployment\_operating\_system\_profile](#input\_initial\_machinedeployment\_operating\_system\_profile) | Name of operating system profile for MachineDeployments, only applicable if operatng-system-manager addon is enabled.<br>If not specified, the default value will be added by machine-controller addon. | `string` | `""` | no |
 | <a name="input_initial_machinedeployment_replicas"></a> [initial\_machinedeployment\_replicas](#input\_initial\_machinedeployment\_replicas) | Number of replicas per MachineDeployment | `number` | `1` | no |
 | <a name="input_project"></a> [project](#input\_project) | Project to be used for all resources | `string` | n/a | yes |

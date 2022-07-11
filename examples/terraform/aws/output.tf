@@ -18,7 +18,7 @@ output "kubeone_api" {
   description = "kube-apiserver LB endpoint"
 
   value = {
-    endpoint                    = aws_elb.control_plane.dns_name
+    endpoint                    = local.kubeapi_endpoint
     apiserver_alternative_names = var.apiserver_alternative_names
   }
 }

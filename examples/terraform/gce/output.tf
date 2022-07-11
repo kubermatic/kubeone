@@ -18,7 +18,7 @@ output "kubeone_api" {
   description = "kube-apiserver LB endpoint"
 
   value = {
-    endpoint                    = google_compute_address.lb_ip.address
+    endpoint                    = local.kubeapi_endpoint
     apiserver_alternative_names = var.apiserver_alternative_names
   }
 }
@@ -65,8 +65,8 @@ output "kubeone_workers" {
           diskSize              = 50
           diskType              = "pd-ssd"
           machineType           = var.workers_type
-          network               = google_compute_network.network.self_link
-          subnetwork            = google_compute_subnetwork.subnet.self_link
+          network               = data.google_compute_network.network.self_link
+          subnetwork            = data.google_compute_subnetwork.subnet.self_link
           zone                  = "${local.zone_first}"
           preemptible           = false
           assignPublicIPAddress = true

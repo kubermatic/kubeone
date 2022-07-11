@@ -38,6 +38,7 @@ var (
 			terraform: terraformBin{
 				path: "../../examples/terraform/aws",
 				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
 					"subnets_cidr=27",
 				},
 			},
@@ -54,6 +55,7 @@ var (
 			terraform: terraformBin{
 				path: "../../examples/terraform/aws",
 				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
 					"subnets_cidr=27",
 					"os=centos",
 					"ssh_username=rocky",
@@ -73,6 +75,7 @@ var (
 			terraform: terraformBin{
 				path: "../../examples/terraform/aws",
 				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
 					"subnets_cidr=27",
 					"os=rhel",
 					"ssh_username=ec2-user",
@@ -93,6 +96,7 @@ var (
 			terraform: terraformBin{
 				path: "../../examples/terraform/aws",
 				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
 					"subnets_cidr=27",
 					"os=rockylinux",
 					"ssh_username=rocky",
@@ -112,6 +116,7 @@ var (
 			terraform: terraformBin{
 				path: "../../examples/terraform/aws",
 				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
 					"subnets_cidr=27",
 					"os=flatcar",
 					"ssh_username=core",
@@ -131,6 +136,7 @@ var (
 			terraform: terraformBin{
 				path: "../../examples/terraform/aws",
 				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
 					"subnets_cidr=27",
 					"os=amzn",
 					"ssh_username=ec2-user",
@@ -168,7 +174,7 @@ var (
 			terraform: terraformBin{
 				path: "../../examples/terraform/azure",
 				vars: []string{
-					"initial_machinedeployment_replicas=3",
+					"disable_kubeapi_loadbalancer=true",
 				},
 			},
 		},
@@ -184,7 +190,7 @@ var (
 			terraform: terraformBin{
 				path: "../../examples/terraform/digitalocean",
 				vars: []string{
-					"workers_replicas=3",
+					"disable_kubeapi_loadbalancer=true",
 				},
 			},
 		},
@@ -199,9 +205,6 @@ var (
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/equinixmetal",
-				vars: []string{
-					"initial_machinedeployment_replicas=3",
-				},
 			},
 		},
 		"hetzner_default": {
@@ -216,7 +219,7 @@ var (
 			terraform: terraformBin{
 				path: "../../examples/terraform/hetzner",
 				vars: []string{
-					"workers_replicas=3",
+					"disable_kubeapi_loadbalancer=true",
 				},
 			},
 		},
@@ -318,9 +321,21 @@ var (
 			Name:                 "weave_docker",
 			ManifestTemplatePath: "testdata/docker_weave.yaml",
 		},
+		"cilium_containerd": &scenarioInstall{
+			Name:                 "cilium_containerd",
+			ManifestTemplatePath: "testdata/containerd_cilium.yaml",
+		},
+		"cilium_docker": &scenarioInstall{
+			Name:                 "cilium_docker",
+			ManifestTemplatePath: "testdata/docker_cilium.yaml",
+		},
 		"install_operating_system_manager": &scenarioInstall{
 			Name:                 "install_operating_system_manager",
 			ManifestTemplatePath: "testdata/operating_system_manager.yaml",
+		},
+		"kube_proxy_ipvs": &scenarioInstall{
+			Name:                 "kube_proxy_ipvs",
+			ManifestTemplatePath: "testdata/kube_proxy_ipvs.yaml",
 		},
 	}
 )

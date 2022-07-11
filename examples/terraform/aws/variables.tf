@@ -96,6 +96,12 @@ variable "control_plane_labels" {
   }
 }
 
+variable "disable_kubeapi_loadbalancer" {
+  type        = bool
+  default     = false
+  description = "E2E tests specific varible to disable usage of any loadbalancer in front of kubeapi-server"
+}
+
 # Provider specific settings
 
 variable "aws_region" {

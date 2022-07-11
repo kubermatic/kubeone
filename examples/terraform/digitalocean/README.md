@@ -41,6 +41,7 @@ No modules.
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the cluster | `string` | n/a | yes |
 | <a name="input_control_plane_droplet_image"></a> [control\_plane\_droplet\_image](#input\_control\_plane\_droplet\_image) | Image to use for provisioning control plane droplets | `string` | `"ubuntu-18-04-x64"` | no |
 | <a name="input_control_plane_size"></a> [control\_plane\_size](#input\_control\_plane\_size) | Size of control plane nodes | `string` | `"s-2vcpu-4gb"` | no |
+| <a name="input_disable_kubeapi_loadbalancer"></a> [disable\_kubeapi\_loadbalancer](#input\_disable\_kubeapi\_loadbalancer) | E2E tests specific varible to disable usage of any loadbalancer in front of kubeapi-server | `bool` | `false` | no |
 | <a name="input_initial_machinedeployment_operating_system_profile"></a> [initial\_machinedeployment\_operating\_system\_profile](#input\_initial\_machinedeployment\_operating\_system\_profile) | Name of operating system profile for MachineDeployments, only applicable if operatng-system-manager addon is enabled.<br>If not specified, the default value will be added by machine-controller addon. | `string` | `""` | no |
 | <a name="input_initial_machinedeployment_replicas"></a> [initial\_machinedeployment\_replicas](#input\_initial\_machinedeployment\_replicas) | Number of replicas per MachineDeployment | `number` | `1` | no |
 | <a name="input_region"></a> [region](#input\_region) | Region to speak to | `string` | `"fra1"` | no |

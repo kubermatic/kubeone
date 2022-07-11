@@ -1362,6 +1362,214 @@ func TestVsphereFlatcarWeaveDockerV1_22_11(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestAwsAmznCiliumContainerdV1_22_11(t *testing.T) {
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["cilium_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestAwsCentosCiliumContainerdV1_22_11(t *testing.T) {
+	infra := Infrastructures["aws_centos"]
+	scenario := Scenarios["cilium_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultsCiliumContainerdV1_22_11(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["cilium_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestAwsFlatcarCiliumContainerdV1_22_11(t *testing.T) {
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["cilium_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestAwsRhelCiliumContainerdV1_22_11(t *testing.T) {
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["cilium_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestAwsRockylinuxCiliumContainerdV1_22_11(t *testing.T) {
+	infra := Infrastructures["aws_rockylinux"]
+	scenario := Scenarios["cilium_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestAzureDefaultCiliumContainerdV1_22_11(t *testing.T) {
+	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["cilium_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestDigitaloceanDefaultCiliumContainerdV1_22_11(t *testing.T) {
+	infra := Infrastructures["digitalocean_default"]
+	scenario := Scenarios["cilium_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestEquinixmetalDefaultCiliumContainerdV1_22_11(t *testing.T) {
+	infra := Infrastructures["equinixmetal_default"]
+	scenario := Scenarios["cilium_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestHetznerDefaultCiliumContainerdV1_22_11(t *testing.T) {
+	infra := Infrastructures["hetzner_default"]
+	scenario := Scenarios["cilium_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestOpenstackDefaultCiliumContainerdV1_22_11(t *testing.T) {
+	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["cilium_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestVsphereDefaultCiliumContainerdV1_22_11(t *testing.T) {
+	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["cilium_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestVsphereFlatcarCiliumContainerdV1_22_11(t *testing.T) {
+	infra := Infrastructures["vsphere_flatcar"]
+	scenario := Scenarios["cilium_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestAwsAmznCiliumDockerV1_22_11(t *testing.T) {
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["cilium_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestAwsCentosCiliumDockerV1_22_11(t *testing.T) {
+	infra := Infrastructures["aws_centos"]
+	scenario := Scenarios["cilium_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultsCiliumDockerV1_22_11(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["cilium_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestAwsFlatcarCiliumDockerV1_22_11(t *testing.T) {
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["cilium_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestAwsRhelCiliumDockerV1_22_11(t *testing.T) {
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["cilium_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestAwsRockylinuxCiliumDockerV1_22_11(t *testing.T) {
+	infra := Infrastructures["aws_rockylinux"]
+	scenario := Scenarios["cilium_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestAzureDefaultCiliumDockerV1_22_11(t *testing.T) {
+	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["cilium_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestDigitaloceanDefaultCiliumDockerV1_22_11(t *testing.T) {
+	infra := Infrastructures["digitalocean_default"]
+	scenario := Scenarios["cilium_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestEquinixmetalDefaultCiliumDockerV1_22_11(t *testing.T) {
+	infra := Infrastructures["equinixmetal_default"]
+	scenario := Scenarios["cilium_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestHetznerDefaultCiliumDockerV1_22_11(t *testing.T) {
+	infra := Infrastructures["hetzner_default"]
+	scenario := Scenarios["cilium_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestOpenstackDefaultCiliumDockerV1_22_11(t *testing.T) {
+	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["cilium_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestVsphereDefaultCiliumDockerV1_22_11(t *testing.T) {
+	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["cilium_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestVsphereFlatcarCiliumDockerV1_22_11(t *testing.T) {
+	infra := Infrastructures["vsphere_flatcar"]
+	scenario := Scenarios["cilium_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
 func TestAwsLongTimeoutDefaultConformanceContainerdV1_21_14(t *testing.T) {
 	infra := Infrastructures["aws_long_timeout_default"]
 	scenario := Scenarios["conformance_containerd"]
@@ -1413,6 +1621,30 @@ func TestAwsDefaultsInstallOperatingSystemManagerV1_23_8(t *testing.T) {
 func TestAwsDefaultsInstallOperatingSystemManagerV1_24_1(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["install_operating_system_manager"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.1")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultsKubeProxyIpvsV1_22_11(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["kube_proxy_ipvs"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultsKubeProxyIpvsV1_23_8(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["kube_proxy_ipvs"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.8")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultsKubeProxyIpvsV1_24_1(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["kube_proxy_ipvs"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.24.1")
 	scenario.Run(t)
