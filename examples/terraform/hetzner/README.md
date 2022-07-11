@@ -54,6 +54,7 @@ No modules.
 | <a name="input_control_plane_replicas"></a> [control\_plane\_replicas](#input\_control\_plane\_replicas) | n/a | `number` | `3` | no |
 | <a name="input_control_plane_type"></a> [control\_plane\_type](#input\_control\_plane\_type) | n/a | `string` | `"cx21"` | no |
 | <a name="input_datacenter"></a> [datacenter](#input\_datacenter) | n/a | `string` | `"nbg1"` | no |
+| <a name="input_disable_kubeapi_loadbalancer"></a> [disable\_kubeapi\_loadbalancer](#input\_disable\_kubeapi\_loadbalancer) | E2E tests specific varible to disable usage of any loadbalancer in front of kubeapi-server | `bool` | `false` | no |
 | <a name="input_image"></a> [image](#input\_image) | n/a | `string` | `"ubuntu-20.04"` | no |
 | <a name="input_initial_machinedeployment_operating_system_profile"></a> [initial\_machinedeployment\_operating\_system\_profile](#input\_initial\_machinedeployment\_operating\_system\_profile) | Name of operating system profile for MachineDeployments, only applicable if operatng-system-manager addon is enabled.<br>If not specified, the default value will be added by machine-controller addon. | `string` | `""` | no |
 | <a name="input_initial_machinedeployment_replicas"></a> [initial\_machinedeployment\_replicas](#input\_initial\_machinedeployment\_replicas) | Number of replicas per MachineDeployment | `number` | `1` | no |
