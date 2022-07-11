@@ -205,9 +205,6 @@ var (
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/equinixmetal",
-				vars: []string{
-					"initial_machinedeployment_replicas=3",
-				},
 			},
 		},
 		"hetzner_default": {

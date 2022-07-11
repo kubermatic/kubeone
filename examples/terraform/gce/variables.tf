@@ -69,6 +69,12 @@ variable "ssh_agent_socket" {
   type        = string
 }
 
+variable "disable_kubeapi_loadbalancer" {
+  type        = bool
+  default     = false
+  description = "E2E tests specific varible to disable usage of any loadbalancer in front of kubeapi-server"
+}
+
 # Provider specific settings
 
 variable "project" {
@@ -114,12 +120,6 @@ variable "control_plane_image_project" {
 variable "workers_type" {
   default     = "n1-standard-2"
   description = "GCE instance type"
-  type        = string
-}
-
-variable "cluster_network_cidr" {
-  default     = "10.240.0.0/24"
-  description = "Cluster network subnet cidr"
   type        = string
 }
 
