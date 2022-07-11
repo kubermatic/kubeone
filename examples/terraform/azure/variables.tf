@@ -71,6 +71,12 @@ variable "ssh_agent_socket" {
   type        = string
 }
 
+variable "disable_kubeapi_loadbalancer" {
+  type        = bool
+  default     = false
+  description = "E2E tests specific varible to disable usage of any loadbalancer in front of kubeapi-server"
+}
+
 # Provider specific settings
 
 variable "location" {
