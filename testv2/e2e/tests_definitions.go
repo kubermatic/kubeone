@@ -77,6 +77,7 @@ var (
 					"os=rhel",
 					"ssh_username=ec2-user",
 					"bastion_user=ec2-user",
+					"bastion_type=t3.micro",
 				},
 			},
 		},
