@@ -38,6 +38,7 @@ var (
 			terraform: terraformBin{
 				path: "../../examples/terraform/aws",
 				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
 					"subnets_cidr=27",
 				},
 			},
@@ -54,6 +55,7 @@ var (
 			terraform: terraformBin{
 				path: "../../examples/terraform/aws",
 				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
 					"subnets_cidr=27",
 					"os=centos",
 					"ssh_username=rocky",
@@ -73,6 +75,7 @@ var (
 			terraform: terraformBin{
 				path: "../../examples/terraform/aws",
 				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
 					"subnets_cidr=27",
 					"os=rhel",
 					"ssh_username=ec2-user",
@@ -93,6 +96,7 @@ var (
 			terraform: terraformBin{
 				path: "../../examples/terraform/aws",
 				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
 					"subnets_cidr=27",
 					"os=rockylinux",
 					"ssh_username=rocky",
@@ -112,6 +116,7 @@ var (
 			terraform: terraformBin{
 				path: "../../examples/terraform/aws",
 				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
 					"subnets_cidr=27",
 					"os=flatcar",
 					"ssh_username=core",
@@ -131,6 +136,7 @@ var (
 			terraform: terraformBin{
 				path: "../../examples/terraform/aws",
 				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
 					"subnets_cidr=27",
 					"os=amzn",
 					"ssh_username=ec2-user",
