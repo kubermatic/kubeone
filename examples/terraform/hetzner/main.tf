@@ -14,6 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+provider "hcloud" {}
+
+locals {
+  kubeapi_endpoint   = var.disable_kubeapi_loadbalancer ? hcloud_server_network.control_plane.0.ip : hcloud_load_balancer.load_balancer.0.ipv4
+  loadbalancer_count = var.disable_kubeapi_loadbalancer ? 0 : 1
+}
+
 resource "hcloud_ssh_key" "kubeone" {
   name       = "kubeone-${var.cluster_name}"
   public_key = file(var.ssh_public_key_file)
@@ -126,11 +133,15 @@ resource "hcloud_server" "control_plane" {
 }
 
 resource "hcloud_load_balancer_network" "load_balancer" {
-  load_balancer_id = hcloud_load_balancer.load_balancer.id
+  count = local.loadbalancer_count
+
+  load_balancer_id = hcloud_load_balancer.load_balancer.0.id
   subnet_id        = hcloud_network_subnet.kubeone.id
 }
 
 resource "hcloud_load_balancer" "load_balancer" {
+  count = local.loadbalancer_count
+
   name               = "${var.cluster_name}-lb"
   load_balancer_type = var.lb_type
   location           = var.datacenter
@@ -142,10 +153,12 @@ resource "hcloud_load_balancer" "load_balancer" {
 }
 
 resource "hcloud_load_balancer_target" "load_balancer_target" {
-  count            = var.control_plane_replicas
-  type             = "server"
-  load_balancer_id = hcloud_load_balancer.load_balancer.id
+  count = local.loadbalancer_count
+
+  type             = "label_selector"
+  load_balancer_id = hcloud_load_balancer.load_balancer.0.id
   server_id        = element(hcloud_server.control_plane.*.id, count.index)
+  label_selector   = "role=api"
   use_private_ip   = true
   depends_on = [
     hcloud_server_network.control_plane,
@@ -154,7 +167,9 @@ resource "hcloud_load_balancer_target" "load_balancer_target" {
 }
 
 resource "hcloud_load_balancer_service" "load_balancer_service" {
-  load_balancer_id = hcloud_load_balancer.load_balancer.id
+  count = local.loadbalancer_count
+
+  load_balancer_id = hcloud_load_balancer.load_balancer.0.id
   protocol         = "tcp"
   listen_port      = 6443
   destination_port = 6443
