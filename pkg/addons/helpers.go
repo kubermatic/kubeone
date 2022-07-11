@@ -31,9 +31,22 @@ import (
 )
 
 const (
-	azureDiskCSIDriverName = "disk.csi.azure.com"
-	vSphereDeploymentName  = "vsphere-cloud-controller-manager"
+	azureDiskCSIDriverName      = "disk.csi.azure.com"
+	gceStandardStorageClassName = "standard"
+	vSphereDeploymentName       = "vsphere-cloud-controller-manager"
 )
+
+func migrateGCEStandardStorageClass(s *state.State) error {
+	return clientutil.DeleteIfExists(s.Context, s.DynamicClient, gceStandardStorageClass())
+}
+
+func gceStandardStorageClass() *storagev1.StorageClass {
+	return &storagev1.StorageClass{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: gceStandardStorageClassName,
+		},
+	}
+}
 
 func migrateAzureDiskCSIDriver(s *state.State) error {
 	return clientutil.DeleteIfExists(s.Context, s.DynamicClient, azureDiskCSIDriver())
