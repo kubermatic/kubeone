@@ -290,3 +290,18 @@
   initVersion: v1.24.1
   infrastructures:
     - name: aws_defaults
+
+- scenario: kube_proxy_ipvs
+  initVersion: v1.22.11
+  infrastructures:
+    - name: aws_defaults
+
+- scenario: kube_proxy_ipvs
+  initVersion: v1.23.8
+  infrastructures:
+    - name: aws_defaults
+
+- scenario: kube_proxy_ipvs
+  initVersion: v1.24.1
+  infrastructures:
+    - name: aws_defaults

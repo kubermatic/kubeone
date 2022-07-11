@@ -330,6 +330,10 @@ var (
 			Name:                 "install_operating_system_manager",
 			ManifestTemplatePath: "testdata/operating_system_manager.yaml",
 		},
+		"kube_proxy_ipvs": &scenarioInstall{
+			Name:                 "kube_proxy_ipvs",
+			ManifestTemplatePath: "testdata/kube_proxy_ipvs.yaml",
+		},
 	}
 )
 

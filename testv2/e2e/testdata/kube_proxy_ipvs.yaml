@@ -1,0 +1,18 @@
+apiVersion: kubeone.k8c.io/v1beta2
+kind: KubeOneCluster
+
+versions:
+  kubernetes: "{{ required ".VERSION is required" .VERSION }}"
+    
+containerRuntime:
+  containerd: {}
+
+clusterNetwork:
+  kubeProxy:
+    ipvs:
+      scheduler: sed
+
+addons:
+  enable: true
+  addons:
+  - name: default-storage-class
