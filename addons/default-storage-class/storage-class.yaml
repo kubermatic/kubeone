@@ -138,15 +138,41 @@ provisioner: kubernetes.io/cinder
 {{ end }}
 
 {{ if eq .Config.CloudProvider.CloudProviderName "gce" }}
+{{ if $csi }}
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   annotations:
     storageclass.beta.kubernetes.io/is-default-class: "true"
+  name: csi-gce
+provisioner: pd.csi.storage.gke.io
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
+parameters:
+  type: pd-ssd
+---
+kind: VolumeSnapshotClass
+apiVersion: snapshot.storage.k8s.io/v1
+metadata:
+  name: csi-gce
+  annotations:
+    snapshot.storage.kubernetes.io/is-default-class: "true"
+driver: pd.csi.storage.gke.io
+deletionPolicy: Delete
+---
+{{ end }}
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+{{ if not $csi }}
+  annotations:
+    storageclass.beta.kubernetes.io/is-default-class: "true"
+{{ end }}
   labels:
     kubernetes.io/cluster-service: "true"
   name: standard
 provisioner: kubernetes.io/gce-pd
+volumeBindingMode: WaitForFirstConsumer
 parameters:
   type: pd-ssd
 {{ end }}
