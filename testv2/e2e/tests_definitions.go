@@ -318,6 +318,14 @@ var (
 			Name:                 "weave_docker",
 			ManifestTemplatePath: "testdata/docker_weave.yaml",
 		},
+		"cilium_containerd": &scenarioInstall{
+			Name:                 "cilium_containerd",
+			ManifestTemplatePath: "testdata/containerd_cilium.yaml",
+		},
+		"cilium_docker": &scenarioInstall{
+			Name:                 "cilium_docker",
+			ManifestTemplatePath: "testdata/docker_cilium.yaml",
+		},
 		"install_operating_system_manager": &scenarioInstall{
 			Name:                 "install_operating_system_manager",
 			ManifestTemplatePath: "testdata/operating_system_manager.yaml",
