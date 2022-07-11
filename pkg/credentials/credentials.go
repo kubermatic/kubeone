@@ -190,9 +190,12 @@ func ProviderCredentials(cloudProvider kubeoneapi.CloudProviderSpec, credentials
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		// encode it before sending to secret to be consumed by
-		// machine-controller, as machine-controller assumes it will be double encoded
-		gsa[GoogleServiceAccountKeyMC] = base64.StdEncoding.EncodeToString([]byte(gsa[GoogleServiceAccountKeyMC]))
+
+		if credentialsType == TypeMC || credentialsType == TypeOSM {
+			// encode it before sending to secret to be consumed by
+			// machine-controller, as machine-controller assumes it will be double encoded
+			gsa[GoogleServiceAccountKeyMC] = base64.StdEncoding.EncodeToString([]byte(gsa[GoogleServiceAccountKeyMC]))
+		}
 
 		return gsa, nil
 	case cloudProvider.Hetzner != nil:

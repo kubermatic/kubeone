@@ -34,6 +34,9 @@ const (
 
 	// greaterThan23Constraint defines a semver constraint that validates Kubernetes versions is greater than 1.23
 	greaterThan23Constraint = ">= 1.23"
+
+	// defaultStorageClass addon defines name of the default-storage-class addon
+	defaultStorageClassAddonName = "default-storage-class"
 )
 
 var (
@@ -56,6 +59,7 @@ var (
 		resources.AddonCSIAzureFile:       "",
 		resources.AddonCSIDigitalOcean:    "",
 		resources.AddonCSIHetzner:         "",
+		resources.AddonCSIGCPComputePD:    "",
 		resources.AddonCSINutanix:         "",
 		resources.AddonCSIOpenStackCinder: "",
 		resources.AddonCSIVsphere:         "",
@@ -191,6 +195,14 @@ func EnsureUserAddons(s *state.State) error {
 	}
 
 	for addonName := range combinedAddons {
+		// NB: We can't migrate StorageClass when applying the CSI driver because
+		// CSI driver is deployed only for Kubernetes 1.23+ clusters, but this
+		// issue affects older clusters as well.
+		if addonName == defaultStorageClassAddonName && s.Cluster.CloudProvider.GCE != nil {
+			if err := migrateGCEStandardStorageClass(s); err != nil {
+				return err
+			}
+		}
 		if err := EnsureAddonByName(s, addonName); err != nil {
 			return errors.Wrapf(err, "failed to load and apply the addon %q", addonName)
 		}
@@ -319,14 +331,14 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 	// for provision operations is NOT supported by in-tree solution.
 
 	switch {
-	// CSI driver is required for k8s v.1.23+
+	// CSI driver is required for k8s v1.23+
 	case s.Cluster.CloudProvider.AWS != nil && (gte23 || s.Cluster.CloudProvider.External):
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
 				name: resources.AddonCSIAwsEBS,
 			},
 		)
-	// CSI driver is required for k8s v.1.23+
+	// CSI driver is required for k8s v1.23+
 	case s.Cluster.CloudProvider.Azure != nil && (gte23 || s.Cluster.CloudProvider.External):
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
@@ -339,7 +351,13 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 				name: resources.AddonCSIAzureFile,
 			},
 		)
-
+		// CSI driver is required for k8s v1.23+
+	case s.Cluster.CloudProvider.GCE != nil && (gte23 || s.Cluster.CloudProvider.External):
+		addonsToDeploy = append(addonsToDeploy,
+			addonAction{
+				name: resources.AddonCSIGCPComputePD,
+			},
+		)
 	// Install CSI driver unconditionally
 	case s.Cluster.CloudProvider.DigitalOcean != nil:
 		addonsToDeploy = append(addonsToDeploy,
