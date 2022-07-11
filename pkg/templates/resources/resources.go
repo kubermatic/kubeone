@@ -77,6 +77,9 @@ const (
 	NutanixCSIWebhookName      = "snapshot-validation-service"
 	NutanixCSIWebhookNamespace = metav1.NamespaceSystem
 
+	GCEComputeCSIWebhookName      = "snapshot-validation-service"
+	GCEComputeCSIWebhookNamespace = metav1.NamespaceSystem
+
 	DigitalOceanCSIWebhookName      = "snapshot-validation-service"
 	DigitalOceanCSIWebhookNamespace = metav1.NamespaceSystem
 )
