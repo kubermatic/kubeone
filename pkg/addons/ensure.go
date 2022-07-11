@@ -36,6 +36,9 @@ const (
 
 	// greaterThan23Constraint defines a semver constraint that validates Kubernetes versions is greater than 1.23
 	greaterThan23Constraint = ">= 1.23"
+
+	// defaultStorageClass addon defines name of the default-storage-class addon
+	defaultStorageClassAddonName = "default-storage-class"
 )
 
 var (
@@ -195,6 +198,14 @@ func EnsureUserAddons(s *state.State) error {
 	}
 
 	for addonName := range combinedAddons {
+		// NB: We can't migrate StorageClass when applying the CSI driver because
+		// CSI driver is deployed only for Kubernetes 1.23+ clusters, but this
+		// issue affects older clusters as well.
+		if addonName == defaultStorageClassAddonName && s.Cluster.CloudProvider.GCE != nil {
+			if err := migrateGCEStandardStorageClass(s); err != nil {
+				return err
+			}
+		}
 		if err := EnsureAddonByName(s, addonName); err != nil {
 			return err
 		}
