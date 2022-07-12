@@ -20,8 +20,21 @@ spec:
       hostNetwork: true
       nodeSelector:
         kubernetes.io/os: linux
+        node-role.kubernetes.io/control-plane: ""
       serviceAccountName: csi-gce-pd-controller-sa
       priorityClassName: csi-gce-pd-controller
+      tolerations:
+        - key: CriticalAddonsOnly
+          operator: Exists
+        - key: "node-role.kubernetes.io/master"
+          operator: "Exists"
+          effect: "NoSchedule"
+        - key: "node-role.kubernetes.io/control-plane"
+          operator: "Exists"
+          effect: "NoSchedule"
+        - operator: Exists
+          effect: NoExecute
+          tolerationSeconds: 300
       containers:
         - name: csi-provisioner
           image: {{ .InternalImages.Get "GCPComputeCSIProvisioner" }}
