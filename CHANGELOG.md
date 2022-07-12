@@ -1,5 +1,21 @@
 # Changelog
 
+# [v1.4.5](https://github.com/kubermatic/kubeone/releases/tag/v1.4.5) - 2022-07-12
+
+## Changes by Kind
+
+### Feature
+
+- Add GCP Compute Persistent Disk CSI driver. The CSI driver is deployed by default for all GCE clusters running Kubernetes 1.23 or newer ([#2141](https://github.com/kubermatic/kubeone/pull/2141), [@xmudrii](https://github.com/xmudrii))
+- Migrate GCE `standard` default StorageClass to set volumeBindingMode to WaitForFirstConsumer. The StorageClass will be automatically recreated the next time you run `kubeone apply` ([#2141](https://github.com/kubermatic/kubeone/pull/2141), [@xmudrii](https://github.com/xmudrii))
+
+### Bug or Regression
+
+- Disable node IPAM in Azure CCM ([#2107](https://github.com/kubermatic/kubeone/pull/2107), [@rastislavs](https://github.com/rastislavs))
+- Disable preserveUnknownFields in all Canal CRDs. This fixes an issue preventing upgrading Canal to v3.22 for KubeOne clusters created with KubeOne 1.2 and older ([#2105](https://github.com/kubermatic/kubeone/pull/2105), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Fix wrong maxPods value on follower control plane nodes and static worker nodes ([#2128](https://github.com/kubermatic/kubeone/pull/2128), [@xmudrii](https://github.com/xmudrii))
+- Set rp_filter=0 on all interfaces when Cilium is used. This fixes an issue with Cilium clusters losing pod connectivity after upgrading the cluster ([#2108](https://github.com/kubermatic/kubeone/pull/2108), [@xmudrii](https://github.com/xmudrii))
+
 # [v1.4.4](https://github.com/kubermatic/kubeone/releases/tag/v1.4.4) - 2022-06-02
 
 ## Changes by Kind
