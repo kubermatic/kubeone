@@ -51,6 +51,21 @@ spec:
       labels:
         app: snapshot-validation
     spec:
+      nodeSelector:
+        kubernetes.io/os: linux
+        node-role.kubernetes.io/control-plane: ""
+      tolerations:
+        - key: CriticalAddonsOnly
+          operator: Exists
+        - key: "node-role.kubernetes.io/master"
+          operator: "Exists"
+          effect: "NoSchedule"
+        - key: "node-role.kubernetes.io/control-plane"
+          operator: "Exists"
+          effect: "NoSchedule"
+        - operator: Exists
+          effect: NoExecute
+          tolerationSeconds: 300
       containers:
       - name: snapshot-validation
         image: {{ .InternalImages.Get "GCPComputeCSISnapshotValidationWebhook" }}
