@@ -204,6 +204,28 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-install-containerd-v1.21.14
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestGceDefaultInstallContainerdV1_21_14
+      env:
+      - name: PROVIDER
+        value: gce
+      image: kubermatic/kubeone-e2e:v0.1.23
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
   name: pull-kubeone-e2e-hetzner-default-install-containerd-v1.21.14
@@ -482,6 +504,28 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.23
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-install-containerd-v1.22.11
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestGceDefaultInstallContainerdV1_22_11
+      env:
+      - name: PROVIDER
+        value: gce
       image: kubermatic/kubeone-e2e:v0.1.23
       imagePullPolicy: Always
       name: ""
@@ -780,6 +824,28 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-install-containerd-v1.23.8
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestGceDefaultInstallContainerdV1_23_8
+      env:
+      - name: PROVIDER
+        value: gce
+      image: kubermatic/kubeone-e2e:v0.1.23
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
   name: pull-kubeone-e2e-hetzner-default-install-containerd-v1.23.8
@@ -1058,6 +1124,28 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.23
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-install-containerd-v1.24.2
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestGceDefaultInstallContainerdV1_24_2
+      env:
+      - name: PROVIDER
+        value: gce
       image: kubermatic/kubeone-e2e:v0.1.23
       imagePullPolicy: Always
       name: ""
@@ -1356,6 +1444,28 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-install-docker-v1.21.14
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestGceDefaultInstallDockerV1_21_14
+      env:
+      - name: PROVIDER
+        value: gce
+      image: kubermatic/kubeone-e2e:v0.1.23
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
   name: pull-kubeone-e2e-hetzner-default-install-docker-v1.21.14
@@ -1634,6 +1744,28 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.23
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-install-docker-v1.22.11
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestGceDefaultInstallDockerV1_22_11
+      env:
+      - name: PROVIDER
+        value: gce
       image: kubermatic/kubeone-e2e:v0.1.23
       imagePullPolicy: Always
       name: ""
@@ -1932,6 +2064,28 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-upgrade-containerd-from-v1.21.14-to-v1.22.11
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestGceDefaultUpgradeContainerdFromV1_21_14_ToV1_22_11
+      env:
+      - name: PROVIDER
+        value: gce
+      image: kubermatic/kubeone-e2e:v0.1.23
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
   name: pull-kubeone-e2e-hetzner-default-upgrade-containerd-from-v1.21.14-to-v1.22.11
@@ -2210,6 +2364,28 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.23
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-upgrade-containerd-from-v1.22.11-to-v1.23.8
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestGceDefaultUpgradeContainerdFromV1_22_11_ToV1_23_8
+      env:
+      - name: PROVIDER
+        value: gce
       image: kubermatic/kubeone-e2e:v0.1.23
       imagePullPolicy: Always
       name: ""
@@ -2508,6 +2684,28 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-upgrade-docker-from-v1.21.14-to-v1.22.11
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestGceDefaultUpgradeDockerFromV1_21_14_ToV1_22_11
+      env:
+      - name: PROVIDER
+        value: gce
+      image: kubermatic/kubeone-e2e:v0.1.23
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
   name: pull-kubeone-e2e-hetzner-default-upgrade-docker-from-v1.21.14-to-v1.22.11
@@ -2786,6 +2984,28 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.23
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-calico-containerd-v1.22.11
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestGceDefaultCalicoContainerdV1_22_11
+      env:
+      - name: PROVIDER
+        value: gce
       image: kubermatic/kubeone-e2e:v0.1.23
       imagePullPolicy: Always
       name: ""
@@ -3084,6 +3304,28 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-calico-docker-v1.22.11
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestGceDefaultCalicoDockerV1_22_11
+      env:
+      - name: PROVIDER
+        value: gce
+      image: kubermatic/kubeone-e2e:v0.1.23
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
   name: pull-kubeone-e2e-hetzner-default-calico-docker-v1.22.11
@@ -3362,6 +3604,28 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.23
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-weave-containerd-v1.22.11
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestGceDefaultWeaveContainerdV1_22_11
+      env:
+      - name: PROVIDER
+        value: gce
       image: kubermatic/kubeone-e2e:v0.1.23
       imagePullPolicy: Always
       name: ""
@@ -3660,6 +3924,28 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-weave-docker-v1.22.11
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestGceDefaultWeaveDockerV1_22_11
+      env:
+      - name: PROVIDER
+        value: gce
+      image: kubermatic/kubeone-e2e:v0.1.23
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
   name: pull-kubeone-e2e-hetzner-default-weave-docker-v1.22.11
@@ -3948,6 +4234,28 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-cilium-containerd-v1.22.11
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestGceDefaultCiliumContainerdV1_22_11
+      env:
+      - name: PROVIDER
+        value: gce
+      image: kubermatic/kubeone-e2e:v0.1.23
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
   name: pull-kubeone-e2e-hetzner-default-cilium-containerd-v1.22.11
@@ -4226,6 +4534,28 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.23
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-cilium-docker-v1.22.11
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestGceDefaultCiliumDockerV1_22_11
+      env:
+      - name: PROVIDER
+        value: gce
       image: kubermatic/kubeone-e2e:v0.1.23
       imagePullPolicy: Always
       name: ""
