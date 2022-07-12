@@ -8,9 +8,9 @@ metadata:
   labels:
     app.kubernetes.io/instance: "csi"
     app.kubernetes.io/name: "secrets-store-csi-driver"
-    app.kubernetes.io/version: "1.2.0"
+    app.kubernetes.io/version: "1.2.1"
     app: secrets-store-csi-driver
-    helm.sh/chart: "secrets-store-csi-driver-1.2.0"
+    helm.sh/chart: "secrets-store-csi-driver-1.2.1"
 ---
 # Source: secrets-store-csi-driver/templates/role-rotation.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -201,9 +201,9 @@ metadata:
   labels:
     app.kubernetes.io/instance: "csi"
     app.kubernetes.io/name: "secrets-store-csi-driver"
-    app.kubernetes.io/version: "1.2.0"
+    app.kubernetes.io/version: "1.2.1"
     app: secrets-store-csi-driver
-    helm.sh/chart: "secrets-store-csi-driver-1.2.0"
+    helm.sh/chart: "secrets-store-csi-driver-1.2.1"
 spec:
   selector:
     matchLabels:
@@ -219,9 +219,9 @@ spec:
       labels:
         app.kubernetes.io/instance: "csi"
         app.kubernetes.io/name: "secrets-store-csi-driver"
-        app.kubernetes.io/version: "1.2.0"
+        app.kubernetes.io/version: "1.2.1"
         app: secrets-store-csi-driver
-        helm.sh/chart: "secrets-store-csi-driver-1.2.0"
+        helm.sh/chart: "secrets-store-csi-driver-1.2.1"
     spec:
       serviceAccountName: secrets-store-csi-driver
       affinity:
@@ -386,9 +386,9 @@ metadata:
   labels:
     app.kubernetes.io/instance: "csi"
     app.kubernetes.io/name: "secrets-store-csi-driver"
-    app.kubernetes.io/version: "1.2.0"
+    app.kubernetes.io/version: "1.2.1"
     app: secrets-store-csi-driver
-    helm.sh/chart: "secrets-store-csi-driver-1.2.0"
+    helm.sh/chart: "secrets-store-csi-driver-1.2.1"
   annotations:
     helm.sh/hook: pre-install,pre-upgrade
     helm.sh/hook-delete-policy: "hook-succeeded,before-hook-creation"
@@ -404,9 +404,9 @@ metadata:
   labels:
     app.kubernetes.io/instance: "csi"
     app.kubernetes.io/name: "secrets-store-csi-driver"
-    app.kubernetes.io/version: "1.2.0"
+    app.kubernetes.io/version: "1.2.1"
     app: secrets-store-csi-driver
-    helm.sh/chart: "secrets-store-csi-driver-1.2.0"
+    helm.sh/chart: "secrets-store-csi-driver-1.2.1"
   annotations:
     helm.sh/hook: pre-upgrade
     helm.sh/hook-delete-policy: "hook-succeeded,before-hook-creation"
@@ -420,9 +420,9 @@ metadata:
   labels:
     app.kubernetes.io/instance: "csi"
     app.kubernetes.io/name: "secrets-store-csi-driver"
-    app.kubernetes.io/version: "1.2.0"
+    app.kubernetes.io/version: "1.2.1"
     app: secrets-store-csi-driver
-    helm.sh/chart: "secrets-store-csi-driver-1.2.0"
+    helm.sh/chart: "secrets-store-csi-driver-1.2.1"
   annotations:
     helm.sh/hook: pre-install,pre-upgrade
     helm.sh/hook-delete-policy: "hook-succeeded,before-hook-creation"
@@ -440,9 +440,9 @@ metadata:
   labels:
     app.kubernetes.io/instance: "csi"
     app.kubernetes.io/name: "secrets-store-csi-driver"
-    app.kubernetes.io/version: "1.2.0"
+    app.kubernetes.io/version: "1.2.1"
     app: secrets-store-csi-driver
-    helm.sh/chart: "secrets-store-csi-driver-1.2.0"
+    helm.sh/chart: "secrets-store-csi-driver-1.2.1"
   annotations:
     helm.sh/hook: pre-upgrade
     helm.sh/hook-delete-policy: "hook-succeeded,before-hook-creation"
@@ -460,9 +460,9 @@ metadata:
   labels:
     app.kubernetes.io/instance: "csi"
     app.kubernetes.io/name: "secrets-store-csi-driver"
-    app.kubernetes.io/version: "1.2.0"
+    app.kubernetes.io/version: "1.2.1"
     app: secrets-store-csi-driver
-    helm.sh/chart: "secrets-store-csi-driver-1.2.0"
+    helm.sh/chart: "secrets-store-csi-driver-1.2.1"
   annotations:
     helm.sh/hook: pre-install,pre-upgrade
     helm.sh/hook-delete-policy: "hook-succeeded,before-hook-creation"
@@ -484,9 +484,9 @@ metadata:
   labels:
     app.kubernetes.io/instance: "csi"
     app.kubernetes.io/name: "secrets-store-csi-driver"
-    app.kubernetes.io/version: "1.2.0"
+    app.kubernetes.io/version: "1.2.1"
     app: secrets-store-csi-driver
-    helm.sh/chart: "secrets-store-csi-driver-1.2.0"
+    helm.sh/chart: "secrets-store-csi-driver-1.2.1"
   annotations:
     helm.sh/hook: pre-upgrade
     helm.sh/hook-delete-policy: "hook-succeeded,before-hook-creation"
@@ -509,9 +509,9 @@ metadata:
   labels:
     app.kubernetes.io/instance: "csi"
     app.kubernetes.io/name: "secrets-store-csi-driver"
-    app.kubernetes.io/version: "1.2.0"
+    app.kubernetes.io/version: "1.2.1"
     app: secrets-store-csi-driver
-    helm.sh/chart: "secrets-store-csi-driver-1.2.0"
+    helm.sh/chart: "secrets-store-csi-driver-1.2.1"
   annotations:
     helm.sh/hook: pre-install,pre-upgrade
     helm.sh/hook-weight: "10"
@@ -551,9 +551,9 @@ metadata:
   labels:
     app.kubernetes.io/instance: "csi"
     app.kubernetes.io/name: "secrets-store-csi-driver"
-    app.kubernetes.io/version: "1.2.0"
+    app.kubernetes.io/version: "1.2.1"
     app: secrets-store-csi-driver
-    helm.sh/chart: "secrets-store-csi-driver-1.2.0"
+    helm.sh/chart: "secrets-store-csi-driver-1.2.1"
   annotations:
     helm.sh/hook: pre-upgrade
     helm.sh/hook-weight: "20"
