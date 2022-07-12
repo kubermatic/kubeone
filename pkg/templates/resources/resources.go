@@ -27,28 +27,28 @@ const (
 	AddonCCMAws                 = "ccm-aws"
 	AddonCCMAzure               = "ccm-azure"
 	AddonCCMDigitalOcean        = "ccm-digitalocean"
+	AddonCCMEquinixMetal        = "ccm-equinixmetal"
 	AddonCCMHetzner             = "ccm-hetzner"
 	AddonCCMOpenStack           = "ccm-openstack"
-	AddonCCMEquinixMetal        = "ccm-equinixmetal"
 	AddonCCMPacket              = "ccm-packet" // TODO: Remove after deprecation period.
 	AddonCCMVsphere             = "ccm-vsphere"
+	AddonCNICanal               = "cni-canal"
+	AddonCNICilium              = "cni-cilium"
+	AddonCNIWeavenet            = "cni-weavenet"
 	AddonCSIAwsEBS              = "csi-aws-ebs"
 	AddonCSIAzureDisk           = "csi-azuredisk"
 	AddonCSIAzureFile           = "csi-azurefile"
 	AddonCSIDigitalOcean        = "csi-digitalocean"
-	AddonCSIHetzner             = "csi-hetzner"
 	AddonCSIGCPComputePD        = "csi-gcp-compute-persistent"
+	AddonCSIHetzner             = "csi-hetzner"
 	AddonCSINutanix             = "csi-nutanix"
 	AddonCSIOpenStackCinder     = "csi-openstack-cinder"
 	AddonCSIVMwareCloudDirector = "csi-vmware-cloud-director"
 	AddonCSIVsphere             = "csi-vsphere"
-	AddonCNICanal               = "cni-canal"
-	AddonCNICilium              = "cni-cilium"
-	AddonCNIWeavenet            = "cni-weavenet"
 	AddonMachineController      = "machinecontroller"
-	AddonOperatingSystemManager = "operating-system-manager"
 	AddonMetricsServer          = "metrics-server"
 	AddonNodeLocalDNS           = "nodelocaldns"
+	AddonOperatingSystemManager = "operating-system-manager"
 )
 
 func CloudAddons() []string {
@@ -56,18 +56,20 @@ func CloudAddons() []string {
 		AddonCCMAws,
 		AddonCCMAzure,
 		AddonCCMDigitalOcean,
+		AddonCCMEquinixMetal,
 		AddonCCMHetzner,
 		AddonCCMOpenStack,
-		AddonCCMEquinixMetal,
 		AddonCCMPacket,
 		AddonCCMVsphere,
 		AddonCSIAwsEBS,
 		AddonCSIAzureDisk,
 		AddonCSIAzureFile,
 		AddonCSIDigitalOcean,
+		AddonCSIGCPComputePD,
 		AddonCSIHetzner,
 		AddonCSINutanix,
 		AddonCSIOpenStackCinder,
+		AddonCSIVMwareCloudDirector,
 		AddonCSIVsphere,
 	}
 }
