@@ -223,6 +223,22 @@ var (
 				},
 			},
 		},
+		"gce_default": {
+			name: "gce_default",
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-gce":     "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "gce",
+			},
+			terraform: terraformBin{
+				path: "../../examples/terraform/gce",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+				},
+			},
+		},
 		"openstack_default": {
 			name: "openstack_default",
 			labels: map[string]string{

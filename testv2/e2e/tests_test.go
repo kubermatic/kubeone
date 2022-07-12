@@ -82,6 +82,14 @@ func TestEquinixmetalDefaultInstallContainerdV1_21_14(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestGceDefaultInstallContainerdV1_21_14(t *testing.T) {
+	infra := Infrastructures["gce_default"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.14")
+	scenario.Run(t)
+}
+
 func TestHetznerDefaultInstallContainerdV1_21_14(t *testing.T) {
 	infra := Infrastructures["hetzner_default"]
 	scenario := Scenarios["install_containerd"]
@@ -180,6 +188,14 @@ func TestDigitaloceanDefaultInstallContainerdV1_22_11(t *testing.T) {
 
 func TestEquinixmetalDefaultInstallContainerdV1_22_11(t *testing.T) {
 	infra := Infrastructures["equinixmetal_default"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestGceDefaultInstallContainerdV1_22_11(t *testing.T) {
+	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.11")
@@ -290,6 +306,14 @@ func TestEquinixmetalDefaultInstallContainerdV1_23_8(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestGceDefaultInstallContainerdV1_23_8(t *testing.T) {
+	infra := Infrastructures["gce_default"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.8")
+	scenario.Run(t)
+}
+
 func TestHetznerDefaultInstallContainerdV1_23_8(t *testing.T) {
 	infra := Infrastructures["hetzner_default"]
 	scenario := Scenarios["install_containerd"]
@@ -388,6 +412,14 @@ func TestDigitaloceanDefaultInstallContainerdV1_24_2(t *testing.T) {
 
 func TestEquinixmetalDefaultInstallContainerdV1_24_2(t *testing.T) {
 	infra := Infrastructures["equinixmetal_default"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.2")
+	scenario.Run(t)
+}
+
+func TestGceDefaultInstallContainerdV1_24_2(t *testing.T) {
+	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.24.2")
@@ -498,6 +530,14 @@ func TestEquinixmetalDefaultInstallDockerV1_21_14(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestGceDefaultInstallDockerV1_21_14(t *testing.T) {
+	infra := Infrastructures["gce_default"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.14")
+	scenario.Run(t)
+}
+
 func TestHetznerDefaultInstallDockerV1_21_14(t *testing.T) {
 	infra := Infrastructures["hetzner_default"]
 	scenario := Scenarios["install_docker"]
@@ -596,6 +636,14 @@ func TestDigitaloceanDefaultInstallDockerV1_22_11(t *testing.T) {
 
 func TestEquinixmetalDefaultInstallDockerV1_22_11(t *testing.T) {
 	infra := Infrastructures["equinixmetal_default"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestGceDefaultInstallDockerV1_22_11(t *testing.T) {
+	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["install_docker"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.11")
@@ -706,6 +754,14 @@ func TestEquinixmetalDefaultUpgradeContainerdFromV1_21_14_ToV1_22_11(t *testing.
 	scenario.Run(t)
 }
 
+func TestGceDefaultUpgradeContainerdFromV1_21_14_ToV1_22_11(t *testing.T) {
+	infra := Infrastructures["gce_default"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.14", "v1.22.11")
+	scenario.Run(t)
+}
+
 func TestHetznerDefaultUpgradeContainerdFromV1_21_14_ToV1_22_11(t *testing.T) {
 	infra := Infrastructures["hetzner_default"]
 	scenario := Scenarios["upgrade_containerd"]
@@ -804,6 +860,14 @@ func TestDigitaloceanDefaultUpgradeContainerdFromV1_22_11_ToV1_23_8(t *testing.T
 
 func TestEquinixmetalDefaultUpgradeContainerdFromV1_22_11_ToV1_23_8(t *testing.T) {
 	infra := Infrastructures["equinixmetal_default"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11", "v1.23.8")
+	scenario.Run(t)
+}
+
+func TestGceDefaultUpgradeContainerdFromV1_22_11_ToV1_23_8(t *testing.T) {
+	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.11", "v1.23.8")
@@ -914,6 +978,14 @@ func TestEquinixmetalDefaultUpgradeDockerFromV1_21_14_ToV1_22_11(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestGceDefaultUpgradeDockerFromV1_21_14_ToV1_22_11(t *testing.T) {
+	infra := Infrastructures["gce_default"]
+	scenario := Scenarios["upgrade_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.14", "v1.22.11")
+	scenario.Run(t)
+}
+
 func TestHetznerDefaultUpgradeDockerFromV1_21_14_ToV1_22_11(t *testing.T) {
 	infra := Infrastructures["hetzner_default"]
 	scenario := Scenarios["upgrade_docker"]
@@ -1012,6 +1084,14 @@ func TestDigitaloceanDefaultCalicoContainerdV1_22_11(t *testing.T) {
 
 func TestEquinixmetalDefaultCalicoContainerdV1_22_11(t *testing.T) {
 	infra := Infrastructures["equinixmetal_default"]
+	scenario := Scenarios["calico_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestGceDefaultCalicoContainerdV1_22_11(t *testing.T) {
+	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["calico_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.11")
@@ -1122,6 +1202,14 @@ func TestEquinixmetalDefaultCalicoDockerV1_22_11(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestGceDefaultCalicoDockerV1_22_11(t *testing.T) {
+	infra := Infrastructures["gce_default"]
+	scenario := Scenarios["calico_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
 func TestHetznerDefaultCalicoDockerV1_22_11(t *testing.T) {
 	infra := Infrastructures["hetzner_default"]
 	scenario := Scenarios["calico_docker"]
@@ -1220,6 +1308,14 @@ func TestDigitaloceanDefaultWeaveContainerdV1_22_11(t *testing.T) {
 
 func TestEquinixmetalDefaultWeaveContainerdV1_22_11(t *testing.T) {
 	infra := Infrastructures["equinixmetal_default"]
+	scenario := Scenarios["weave_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestGceDefaultWeaveContainerdV1_22_11(t *testing.T) {
+	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["weave_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.11")
@@ -1330,6 +1426,14 @@ func TestEquinixmetalDefaultWeaveDockerV1_22_11(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestGceDefaultWeaveDockerV1_22_11(t *testing.T) {
+	infra := Infrastructures["gce_default"]
+	scenario := Scenarios["weave_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
 func TestHetznerDefaultWeaveDockerV1_22_11(t *testing.T) {
 	infra := Infrastructures["hetzner_default"]
 	scenario := Scenarios["weave_docker"]
@@ -1434,6 +1538,14 @@ func TestEquinixmetalDefaultCiliumContainerdV1_22_11(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestGceDefaultCiliumContainerdV1_22_11(t *testing.T) {
+	infra := Infrastructures["gce_default"]
+	scenario := Scenarios["cilium_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
 func TestHetznerDefaultCiliumContainerdV1_22_11(t *testing.T) {
 	infra := Infrastructures["hetzner_default"]
 	scenario := Scenarios["cilium_containerd"]
@@ -1532,6 +1644,14 @@ func TestDigitaloceanDefaultCiliumDockerV1_22_11(t *testing.T) {
 
 func TestEquinixmetalDefaultCiliumDockerV1_22_11(t *testing.T) {
 	infra := Infrastructures["equinixmetal_default"]
+	scenario := Scenarios["cilium_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestGceDefaultCiliumDockerV1_22_11(t *testing.T) {
+	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["cilium_docker"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.11")

@@ -10,6 +10,7 @@
     - name: azure_default
     - name: digitalocean_default
     - name: equinixmetal_default
+    - name: gce_default
     - name: hetzner_default
     - name: openstack_default
     - name: vsphere_default
@@ -27,6 +28,7 @@
     - name: azure_default
     - name: digitalocean_default
     - name: equinixmetal_default
+    - name: gce_default
     - name: hetzner_default
     - name: openstack_default
     - name: vsphere_default
@@ -44,6 +46,7 @@
     - name: azure_default
     - name: digitalocean_default
     - name: equinixmetal_default
+    - name: gce_default
     - name: hetzner_default
     - name: openstack_default
     - name: vsphere_default
@@ -61,6 +64,7 @@
     - name: azure_default
     - name: digitalocean_default
     - name: equinixmetal_default
+    - name: gce_default
     - name: hetzner_default
     - name: openstack_default
     - name: vsphere_default
@@ -78,6 +82,7 @@
     - name: azure_default
     - name: digitalocean_default
     - name: equinixmetal_default
+    - name: gce_default
     - name: hetzner_default
     - name: openstack_default
     - name: vsphere_default
@@ -95,6 +100,7 @@
     - name: azure_default
     - name: digitalocean_default
     - name: equinixmetal_default
+    - name: gce_default
     - name: hetzner_default
     - name: openstack_default
     - name: vsphere_default
@@ -113,6 +119,7 @@
     - name: azure_default
     - name: digitalocean_default
     - name: equinixmetal_default
+    - name: gce_default
     - name: hetzner_default
     - name: openstack_default
     - name: vsphere_default
@@ -131,6 +138,7 @@
     - name: azure_default
     - name: digitalocean_default
     - name: equinixmetal_default
+    - name: gce_default
     - name: hetzner_default
     - name: openstack_default
     - name: vsphere_default
@@ -149,6 +157,7 @@
     - name: azure_default
     - name: digitalocean_default
     - name: equinixmetal_default
+    - name: gce_default
     - name: hetzner_default
     - name: openstack_default
     - name: vsphere_default
@@ -166,6 +175,7 @@
     - name: azure_default
     - name: digitalocean_default
     - name: equinixmetal_default
+    - name: gce_default
     - name: hetzner_default
     - name: openstack_default
     - name: vsphere_default
@@ -183,6 +193,7 @@
     - name: azure_default
     - name: digitalocean_default
     - name: equinixmetal_default
+    - name: gce_default
     - name: hetzner_default
     - name: openstack_default
     - name: vsphere_default
@@ -200,6 +211,7 @@
     - name: azure_default
     - name: digitalocean_default
     - name: equinixmetal_default
+    - name: gce_default
     - name: hetzner_default
     - name: openstack_default
     - name: vsphere_default
@@ -217,6 +229,7 @@
     - name: azure_default
     - name: digitalocean_default
     - name: equinixmetal_default
+    - name: gce_default
     - name: hetzner_default
     - name: openstack_default
     - name: vsphere_default
@@ -234,6 +247,7 @@
     - name: azure_default
     - name: digitalocean_default
     - name: equinixmetal_default
+    - name: gce_default
     - name: hetzner_default
     - name: openstack_default
     - name: vsphere_default
@@ -251,6 +265,7 @@
     - name: azure_default
     - name: digitalocean_default
     - name: equinixmetal_default
+    - name: gce_default
     - name: hetzner_default
     - name: openstack_default
     - name: vsphere_default

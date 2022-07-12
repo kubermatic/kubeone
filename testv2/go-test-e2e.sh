@@ -107,6 +107,14 @@ EOL
   "gce")
     GOOGLE_CREDENTIALS=$(base64 -d <<< "${KUBEONE_GOOGLE_SERVICE_ACCOUNT}")
     export GOOGLE_CREDENTIALS
+    export TF_VAR_project="kubeone-terraform-test"
+
+    CREDENTIALS_FILE_PATH="${BUILD_DIR}/credentials.yaml"    
+    cat > "${CREDENTIALS_FILE_PATH}" << EOL
+cloudConfig: |
+  [global]
+  regional = true
+EOL
     ;;
   "openstack")
     export OS_AUTH_URL=${OS_AUTH_URL}
