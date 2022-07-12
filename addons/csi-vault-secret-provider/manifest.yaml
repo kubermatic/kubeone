@@ -103,8 +103,7 @@ spec:
           operator: Exists
       containers:
         - name: vault-csi-provider
-          
-          image: "hashicorp/vault-csi-provider:1.1.0"
+          image: "{{ .InternalImages.Get "CSIVaultSecretProvider" }}"
           imagePullPolicy: IfNotPresent
           args:
             - --endpoint=/provider/vault.sock
