@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2022-07-06T19:10:49+03:00
+date = 2022-07-13T10:08:43+03:00
 weight = 11
 +++
 ## v1beta2
@@ -10,6 +10,7 @@ weight = 11
 * [Addon](#addon)
 * [Addons](#addons)
 * [AzureSpec](#azurespec)
+* [BaremetalSpec](#baremetalspec)
 * [BinaryAsset](#binaryasset)
 * [CNI](#cni)
 * [CanalSpec](#canalspec)
@@ -119,6 +120,15 @@ AzureSpec defines the Azure cloud provider
 
 [Back to Group](#v1beta2)
 
+### BaremetalSpec
+
+BaremetalSpec defines baremetal provider
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+
+[Back to Group](#v1beta2)
+
 ### BinaryAsset
 
 BinaryAsset is used to customize the URL of the binary asset
@@ -175,6 +185,7 @@ Only one cloud provider must be defined at the single time.
 | csiConfig | CSIConfig | string | false |
 | aws | AWS | *[AWSSpec](#awsspec) | false |
 | azure | Azure | *[AzureSpec](#azurespec) | false |
+| baremetal | Baremetal | *[BaremetalSpec](#baremetalspec) | false |
 | digitalocean | DigitalOcean | *[DigitalOceanSpec](#digitaloceanspec) | false |
 | gce | GCE | *[GCESpec](#gcespec) | false |
 | hetzner | Hetzner | *[HetznerSpec](#hetznerspec) | false |

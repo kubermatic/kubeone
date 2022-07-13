@@ -837,6 +837,7 @@ func autoConvert_kubeone_CloudProviderSpec_To_v1beta1_CloudProviderSpec(in *kube
 	out.CSIConfig = in.CSIConfig
 	out.AWS = (*AWSSpec)(unsafe.Pointer(in.AWS))
 	out.Azure = (*AzureSpec)(unsafe.Pointer(in.Azure))
+	// WARNING: in.Baremetal requires manual conversion: does not exist in peer-type
 	out.DigitalOcean = (*DigitalOceanSpec)(unsafe.Pointer(in.DigitalOcean))
 	out.GCE = (*GCESpec)(unsafe.Pointer(in.GCE))
 	out.Hetzner = (*HetznerSpec)(unsafe.Pointer(in.Hetzner))

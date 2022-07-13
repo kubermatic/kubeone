@@ -281,6 +281,9 @@ type CloudProviderSpec struct {
 	// Azure
 	Azure *AzureSpec `json:"azure,omitempty"`
 
+	// Baremetal
+	Baremetal *BaremetalSpec `json:"baremetal,omitempty"`
+
 	// DigitalOcean
 	DigitalOcean *DigitalOceanSpec `json:"digitalocean,omitempty"`
 
@@ -347,6 +350,9 @@ type VMwareCloudDirectorSpec struct {
 
 // VsphereSpec defines the vSphere provider
 type VsphereSpec struct{}
+
+// BaremetalSpec defines baremetal provider
+type BaremetalSpec struct{}
 
 // NoneSpec defines a none provider
 type NoneSpec struct{}
