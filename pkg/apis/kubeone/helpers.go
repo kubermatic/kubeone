@@ -266,6 +266,8 @@ func (p CloudProviderSpec) CloudProviderName() string {
 		return "aws"
 	case p.Azure != nil:
 		return "azure"
+	case p.Baremetal != nil:
+		return "baremetal"
 	case p.DigitalOcean != nil:
 		return "digitalocean"
 	case p.GCE != nil:

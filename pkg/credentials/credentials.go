@@ -72,6 +72,12 @@ const (
 	OpenStackApplicationCredentialSecret = "OS_APPLICATION_CREDENTIAL_SECRET"
 	EquinixMetalAuthToken                = "METAL_AUTH_TOKEN" //nolint:gosec
 	EquinixMetalProjectID                = "METAL_PROJECT_ID"
+	TinkerBellMetadataServerEndpoint     = "METADATA_SERVER_ENDPOINT"
+	TinkerBellMetadataServerAuthMethod   = "METADATA_SERVER_AUTH_METHOD"
+	TinkerBellMetadataServerUsername     = "METADATA_SERVER_USERNAME"
+	TinkerBellMetadataServerPassword     = "METADATA_SERVER_PASSWORD"
+	TinkerBellMetadataServerToken        = "METADATA_SERVER_TOKEN"
+
 	// TODO: Remove Packet env vars after deprecation period.
 	PacketAPIKey    = "PACKET_API_KEY"    //nolint:gosec
 	PacketProjectID = "PACKET_PROJECT_ID" //nolint:gosec
@@ -196,6 +202,14 @@ func ProviderCredentials(cloudProvider kubeoneapi.CloudProviderSpec, credentials
 	case cloudProvider.DigitalOcean != nil:
 		return credentialsFinder.parseCredentialVariables([]ProviderEnvironmentVariable{
 			{Name: DigitalOceanTokenKey, MachineControllerName: DigitalOceanTokenKeyMC},
+		}, defaultValidationFunc)
+	case cloudProvider.Baremetal != nil:
+		return credentialsFinder.parseCredentialVariables([]ProviderEnvironmentVariable{
+			{Name: TinkerBellMetadataServerEndpoint},
+			{Name: TinkerBellMetadataServerAuthMethod},
+			{Name: TinkerBellMetadataServerUsername},
+			{Name: TinkerBellMetadataServerPassword},
+			{Name: TinkerBellMetadataServerToken},
 		}, defaultValidationFunc)
 	case cloudProvider.GCE != nil:
 		gsa, err := credentialsFinder.parseCredentialVariables([]ProviderEnvironmentVariable{

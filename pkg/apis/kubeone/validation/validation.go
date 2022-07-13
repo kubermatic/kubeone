@@ -182,6 +182,12 @@ func ValidateCloudProviderSpec(p kubeoneapi.CloudProviderSpec, fldPath *field.Pa
 		}
 		providerFound = true
 	}
+	if p.Baremetal != nil {
+		if providerFound {
+			allErrs = append(allErrs, field.Forbidden(fldPath.Child("baremetal"), "only one provider can be used at the same time"))
+		}
+		providerFound = true
+	}
 	if p.DigitalOcean != nil {
 		if providerFound {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("digitalocean"), "only one provider can be used at the same time"))
