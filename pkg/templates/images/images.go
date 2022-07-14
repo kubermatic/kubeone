@@ -157,6 +157,15 @@ const (
 	EquinixMetalCCM
 	VsphereCCM
 
+	// CSI Vault Secret Provider
+	CSIVaultSecretProvider // hashicorp/vault-csi-provider:1.1.0
+
+	// CSI Secrets Driver
+	SecretStoreCSIDriverNodeRegistrar
+	SecretStoreCSIDriver
+	SecretStoreCSIDriverLivenessProbe
+	SecretStoreCSIDriverCRDs
+
 	// VMwareCloud Director CSI
 	VMwareCloudDirectorCSI
 
@@ -397,8 +406,18 @@ func optionalResources() map[Resource]map[string]string {
 			"1.23.x":    "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.23.0",
 			">= 1.24.0": "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.24.0",
 		},
+
 		// operating-system-manager addon
 		OperatingSystemManager: {"*": "quay.io/kubermatic/operating-system-manager:v0.5.0"},
+
+		// CSI Vault Secret Provider
+		CSIVaultSecretProvider: {"*": "docker.io/hashicorp/vault-csi-provider:1.1.0"},
+
+		// CSI Secrets Driver
+		SecretStoreCSIDriverNodeRegistrar: {"*": "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.5.1"},
+		SecretStoreCSIDriver:              {"*": "k8s.gcr.io/csi-secrets-store/driver:v1.2.1"},
+		SecretStoreCSIDriverLivenessProbe: {"*": "k8s.gcr.io/sig-storage/livenessprobe:v2.7.0"},
+		SecretStoreCSIDriverCRDs:          {"*": "k8s.gcr.io/csi-secrets-store/driver-crds:v1.2.1"},
 	}
 }
 

@@ -1,0 +1,543 @@
+---
+# Source: secrets-store-csi-driver/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: secrets-store-csi-driver
+  namespace: kube-system
+  labels:
+    app.kubernetes.io/instance: "csi"
+    app.kubernetes.io/name: "secrets-store-csi-driver"
+    app.kubernetes.io/version: "1.2.1"
+    app: secrets-store-csi-driver
+    helm.sh/chart: "secrets-store-csi-driver-1.2.1"
+---
+# Source: secrets-store-csi-driver/templates/role-rotation.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  name: secretproviderrotation-role
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
+  - list
+  - watch
+---
+# Source: secrets-store-csi-driver/templates/role-secretproviderclasses-admin.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  labels:
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+    rbac.authorization.k8s.io/aggregate-to-edit: "true"
+  name: secretproviderclasses-admin-role
+rules:
+- apiGroups:
+  - secrets-store.csi.x-k8s.io
+  resources:
+  - secretproviderclasses
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+---
+# Source: secrets-store-csi-driver/templates/role-secretproviderclasses-viewer.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  labels:
+    rbac.authorization.k8s.io/aggregate-to-view: "true"
+  name: secretproviderclasses-viewer-role
+rules:
+- apiGroups:
+  - secrets-store.csi.x-k8s.io
+  resources:
+  - secretproviderclasses
+  verbs:
+  - get
+  - list
+  - watch
+---
+# Source: secrets-store-csi-driver/templates/role-syncsecret.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  name: secretprovidersyncing-role
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+---
+# Source: secrets-store-csi-driver/templates/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  name: secretproviderclasses-role
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - secrets-store.csi.x-k8s.io
+  resources:
+  - secretproviderclasses
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - secrets-store.csi.x-k8s.io
+  resources:
+  - secretproviderclasspodstatuses
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - secrets-store.csi.x-k8s.io
+  resources:
+  - secretproviderclasspodstatuses/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - storage.k8s.io
+  resourceNames:
+  - secrets-store.csi.k8s.io
+  resources:
+  - csidrivers
+  verbs:
+  - get
+  - list
+  - watch
+---
+# Source: secrets-store-csi-driver/templates/role-rotation_binding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: secretproviderrotation-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: secretproviderrotation-role
+subjects:
+- kind: ServiceAccount
+  name: secrets-store-csi-driver
+  namespace: kube-system
+---
+# Source: secrets-store-csi-driver/templates/role-syncsecret_binding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: secretprovidersyncing-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: secretprovidersyncing-role
+subjects:
+- kind: ServiceAccount
+  name: secrets-store-csi-driver
+  namespace: kube-system
+---
+# Source: secrets-store-csi-driver/templates/role_binding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: secretproviderclasses-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: secretproviderclasses-role
+subjects:
+- kind: ServiceAccount
+  name: secrets-store-csi-driver
+  namespace: kube-system
+---
+# Source: secrets-store-csi-driver/templates/secrets-store-csi-driver.yaml
+kind: DaemonSet
+apiVersion: apps/v1
+metadata:
+  name: csi-secrets-store-csi-driver
+  namespace: kube-system
+  labels:
+    app.kubernetes.io/instance: "csi"
+    app.kubernetes.io/name: "secrets-store-csi-driver"
+    app.kubernetes.io/version: "1.2.1"
+    app: secrets-store-csi-driver
+    helm.sh/chart: "secrets-store-csi-driver-1.2.1"
+spec:
+  selector:
+    matchLabels:
+      app: secrets-store-csi-driver
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/default-container: secrets-store
+      labels:
+        app.kubernetes.io/instance: "csi"
+        app.kubernetes.io/name: "secrets-store-csi-driver"
+        app.kubernetes.io/version: "1.2.1"
+        app: secrets-store-csi-driver
+        helm.sh/chart: "secrets-store-csi-driver-1.2.1"
+    spec:
+      serviceAccountName: secrets-store-csi-driver
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: type
+                operator: NotIn
+                values:
+                - virtual-kubelet
+      containers:
+        - name: node-driver-registrar
+          image: "{{ .InternalImages.Get "SecretStoreCSIDriverNodeRegistrar" }}"
+          args:
+            - --v=5
+            - --csi-address=/csi/csi.sock
+            - --kubelet-registration-path=/var/lib/kubelet/plugins/csi-secrets-store/csi.sock
+          livenessProbe:
+            exec:
+              command:
+              - /csi-node-driver-registrar
+              - --kubelet-registration-path=/var/lib/kubelet/plugins/csi-secrets-store/csi.sock
+              - --mode=kubelet-registration-probe
+            initialDelaySeconds: 30
+            timeoutSeconds: 15
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: plugin-dir
+              mountPath: /csi
+            - name: registration-dir
+              mountPath: /registration
+          resources:
+            limits:
+              cpu: 100m
+              memory: 100Mi
+            requests:
+              cpu: 10m
+              memory: 20Mi
+        - name: secrets-store
+          image: "{{ .InternalImages.Get "SecretStoreCSIDriver" }}"
+          args:
+            - "--endpoint=$(CSI_ENDPOINT)"
+            - "--nodeid=$(KUBE_NODE_NAME)"
+            - "--provider-volume=/var/run/secrets-store-csi-providers"
+            - "--additional-provider-volume-paths=/etc/kubernetes/secrets-store-csi-providers"
+            - "--enable-secret-rotation=true"
+            - "--metrics-addr=:8095"
+            - "--provider-health-check-interval=2m"
+            - "--max-call-recv-msg-size=4194304"
+          env:
+          - name: CSI_ENDPOINT
+            value: unix:///csi/csi.sock
+          - name: KUBE_NODE_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: spec.nodeName
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            privileged: true
+          ports:
+            - containerPort: 9808
+              name: healthz
+              protocol: TCP
+            - containerPort: 8095
+              name: metrics
+              protocol: TCP
+          livenessProbe:
+              failureThreshold: 5
+              httpGet:
+                path: /healthz
+                port: healthz
+              initialDelaySeconds: 30
+              timeoutSeconds: 10
+              periodSeconds: 15
+          volumeMounts:
+            - name: plugin-dir
+              mountPath: /csi
+            - name: mountpoint-dir
+              mountPath: /var/lib/kubelet/pods
+              mountPropagation: Bidirectional
+            - name: providers-dir
+              mountPath: /var/run/secrets-store-csi-providers
+            - name: providers-dir-0
+              mountPath: "/etc/kubernetes/secrets-store-csi-providers"
+          resources:
+            limits:
+              cpu: 200m
+              memory: 200Mi
+            requests:
+              cpu: 50m
+              memory: 100Mi
+        - name: liveness-probe
+          image: "{{ .InternalImages.Get "SecretStoreCSIDriverLivenessProbe" }}"
+          imagePullPolicy: IfNotPresent
+          args:
+          - --csi-address=/csi/csi.sock
+          - --probe-timeout=3s
+          - --http-endpoint=0.0.0.0:9808
+          - -v=2
+          volumeMounts:
+            - name: plugin-dir
+              mountPath: /csi
+          resources:
+            limits:
+              cpu: 100m
+              memory: 100Mi
+            requests:
+              cpu: 10m
+              memory: 20Mi
+      volumes:
+        - name: mountpoint-dir
+          hostPath:
+            path: /var/lib/kubelet/pods
+            type: DirectoryOrCreate
+        - name: registration-dir
+          hostPath:
+            path: /var/lib/kubelet/plugins_registry/
+            type: Directory
+        - name: plugin-dir
+          hostPath:
+            path: /var/lib/kubelet/plugins/csi-secrets-store/
+            type: DirectoryOrCreate
+        - name: providers-dir
+          hostPath:
+            path: /var/run/secrets-store-csi-providers
+            type: DirectoryOrCreate
+        - name: providers-dir-0
+          hostPath:
+            path: "/etc/kubernetes/secrets-store-csi-providers"
+            type: DirectoryOrCreate
+      nodeSelector:
+        kubernetes.io/os: linux
+      tolerations:
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
+          operator: Exists
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/control-plane
+          operator: Exists
+---
+# Source: secrets-store-csi-driver/templates/csidriver.yaml
+apiVersion: storage.k8s.io/v1
+kind: CSIDriver
+metadata:
+  name: secrets-store.csi.k8s.io
+spec:
+  podInfoOnMount: true
+  attachRequired: false
+  # Added in Kubernetes 1.16 with default mode of Persistent. Secrets store csi driver needs Ephermeral to be set.
+  volumeLifecycleModes: 
+  - Ephemeral
+---
+# Source: secrets-store-csi-driver/templates/crds-upgrade-hook.yaml
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: csi-secrets-store-csi-driver-upgrade-crds
+  namespace: kube-system
+  labels:
+    app.kubernetes.io/instance: "csi"
+    app.kubernetes.io/name: "secrets-store-csi-driver"
+    app.kubernetes.io/version: "1.2.1"
+    app: secrets-store-csi-driver
+    helm.sh/chart: "secrets-store-csi-driver-1.2.1"
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-delete-policy: "hook-succeeded,before-hook-creation"
+    helm.sh/hook-weight: "1"
+---
+# Source: secrets-store-csi-driver/templates/keep-crds-upgrade-hook.yaml
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: csi-secrets-store-csi-driver-keep-crds
+  namespace: kube-system
+  labels:
+    app.kubernetes.io/instance: "csi"
+    app.kubernetes.io/name: "secrets-store-csi-driver"
+    app.kubernetes.io/version: "1.2.1"
+    app: secrets-store-csi-driver
+    helm.sh/chart: "secrets-store-csi-driver-1.2.1"
+  annotations:
+    helm.sh/hook: pre-upgrade
+    helm.sh/hook-delete-policy: "hook-succeeded,before-hook-creation"
+    helm.sh/hook-weight: "2"
+---
+# Source: secrets-store-csi-driver/templates/crds-upgrade-hook.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: csi-secrets-store-csi-driver-upgrade-crds
+  labels:
+    app.kubernetes.io/instance: "csi"
+    app.kubernetes.io/name: "secrets-store-csi-driver"
+    app.kubernetes.io/version: "1.2.1"
+    app: secrets-store-csi-driver
+    helm.sh/chart: "secrets-store-csi-driver-1.2.1"
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-delete-policy: "hook-succeeded,before-hook-creation"
+    helm.sh/hook-weight: "1"
+rules:
+  - apiGroups: ["apiextensions.k8s.io"]
+    resources: ["customresourcedefinitions"]
+    verbs: ["get", "create", "update", "patch"]
+---
+# Source: secrets-store-csi-driver/templates/keep-crds-upgrade-hook.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: csi-secrets-store-csi-driver-keep-crds
+  labels:
+    app.kubernetes.io/instance: "csi"
+    app.kubernetes.io/name: "secrets-store-csi-driver"
+    app.kubernetes.io/version: "1.2.1"
+    app: secrets-store-csi-driver
+    helm.sh/chart: "secrets-store-csi-driver-1.2.1"
+  annotations:
+    helm.sh/hook: pre-upgrade
+    helm.sh/hook-delete-policy: "hook-succeeded,before-hook-creation"
+    helm.sh/hook-weight: "2"
+rules:
+  - apiGroups: ["apiextensions.k8s.io"]
+    resources: ["customresourcedefinitions"]
+    verbs: ["get", "patch"]
+---
+# Source: secrets-store-csi-driver/templates/crds-upgrade-hook.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: csi-secrets-store-csi-driver-upgrade-crds
+  labels:
+    app.kubernetes.io/instance: "csi"
+    app.kubernetes.io/name: "secrets-store-csi-driver"
+    app.kubernetes.io/version: "1.2.1"
+    app: secrets-store-csi-driver
+    helm.sh/chart: "secrets-store-csi-driver-1.2.1"
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-delete-policy: "hook-succeeded,before-hook-creation"
+    helm.sh/hook-weight: "1"
+subjects:
+  - kind: ServiceAccount
+    name: csi-secrets-store-csi-driver-upgrade-crds
+    namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: csi-secrets-store-csi-driver-upgrade-crds
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: secrets-store-csi-driver/templates/keep-crds-upgrade-hook.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: csi-secrets-store-csi-driver-keep-crds
+  labels:
+    app.kubernetes.io/instance: "csi"
+    app.kubernetes.io/name: "secrets-store-csi-driver"
+    app.kubernetes.io/version: "1.2.1"
+    app: secrets-store-csi-driver
+    helm.sh/chart: "secrets-store-csi-driver-1.2.1"
+  annotations:
+    helm.sh/hook: pre-upgrade
+    helm.sh/hook-delete-policy: "hook-succeeded,before-hook-creation"
+    helm.sh/hook-weight: "2"
+subjects:
+  - kind: ServiceAccount
+    name: csi-secrets-store-csi-driver-keep-crds
+    namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: csi-secrets-store-csi-driver-keep-crds
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: secrets-store-csi-driver/templates/crds-upgrade-hook.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: secrets-store-csi-driver-upgrade-crds
+  namespace: kube-system
+  labels:
+    app.kubernetes.io/instance: "csi"
+    app.kubernetes.io/name: "secrets-store-csi-driver"
+    app.kubernetes.io/version: "1.2.1"
+    app: secrets-store-csi-driver
+    helm.sh/chart: "secrets-store-csi-driver-1.2.1"
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "10"
+    helm.sh/hook-delete-policy: "hook-succeeded,before-hook-creation"
+spec:
+  backoffLimit: 0
+  template:
+    metadata:
+      name: csi-secrets-store-csi-driver-upgrade-crds
+    spec:
+      serviceAccountName: csi-secrets-store-csi-driver-upgrade-crds
+      restartPolicy: Never
+      containers:
+      - name: crds-upgrade
+        image: "{{ .InternalImages.Get "SecretStoreCSIDriverCRDs" }}"
+        args:
+        - apply
+        - -f
+        - crds/
+        imagePullPolicy: IfNotPresent
+      nodeSelector:
+        kubernetes.io/os: linux
+      tolerations:
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
+          operator: Exists
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/control-plane
+          operator: Exists

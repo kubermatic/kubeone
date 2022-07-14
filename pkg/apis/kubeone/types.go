@@ -278,6 +278,9 @@ type CloudProviderSpec struct {
 	// CSIConfig
 	CSIConfig string `json:"csiConfig,omitempty"`
 
+	// SecretProviderClassName
+	SecretProviderClassName string `json:"secretProviderClassName,omitempty"`
+
 	// AWS
 	AWS *AWSSpec `json:"aws,omitempty"`
 

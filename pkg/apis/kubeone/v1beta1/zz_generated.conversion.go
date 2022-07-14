@@ -835,6 +835,7 @@ func autoConvert_kubeone_CloudProviderSpec_To_v1beta1_CloudProviderSpec(in *kube
 	out.External = in.External
 	out.CloudConfig = in.CloudConfig
 	out.CSIConfig = in.CSIConfig
+	// WARNING: in.SecretProviderClassName requires manual conversion: does not exist in peer-type
 	out.AWS = (*AWSSpec)(unsafe.Pointer(in.AWS))
 	out.Azure = (*AzureSpec)(unsafe.Pointer(in.Azure))
 	out.DigitalOcean = (*DigitalOceanSpec)(unsafe.Pointer(in.DigitalOcean))

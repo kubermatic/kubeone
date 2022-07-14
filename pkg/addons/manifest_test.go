@@ -21,11 +21,20 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"reflect"
 	"strings"
 	"testing"
 	"text/template"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+
+	appsv1 "k8s.io/api/apps/v1"
+	batchv1 "k8s.io/api/batch/v1"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/utils/pointer"
+	"sigs.k8s.io/yaml"
 )
 
 var testManifests = []string{
@@ -320,6 +329,278 @@ func TestCABundleFuncs(t *testing.T) {
 				t.Errorf("failed to parse template: %v", err)
 			}
 			t.Logf("\n%s", out.String())
+		})
+	}
+}
+
+func mustMarshal(obj runtime.Object) []byte {
+	buf, err := yaml.Marshal(obj)
+	if err != nil {
+		panic(err)
+	}
+
+	buf, err = yaml.YAMLToJSON(buf)
+	if err != nil {
+		panic(err)
+	}
+
+	return buf
+}
+
+func Test_addSecretCSIVolume(t *testing.T) {
+	testPodSpec := corev1.PodSpec{
+		Containers: []corev1.Container{
+			{
+				Name: "container1",
+			},
+		},
+	}
+
+	testPodTemplateSpec := corev1.PodTemplateSpec{
+		Spec: testPodSpec,
+	}
+
+	secretProviderClassName := "something"
+
+	testdataPodSpec := corev1.PodSpec{
+		Containers: []corev1.Container{
+			{
+				Name: "container1",
+				VolumeMounts: []corev1.VolumeMount{
+					{
+						Name:      "secrets-store",
+						MountPath: "/mnt/secrets-store",
+						ReadOnly:  true,
+					},
+				},
+			},
+		},
+		Volumes: []corev1.Volume{
+			{
+				Name: "secrets-store",
+				VolumeSource: corev1.VolumeSource{
+					CSI: &corev1.CSIVolumeSource{
+						Driver:   "secrets-store.csi.k8s.io",
+						ReadOnly: pointer.Bool(true),
+						VolumeAttributes: map[string]string{
+							"secretProviderClass": secretProviderClassName,
+						},
+					},
+				},
+			},
+		},
+	}
+
+	testdata := map[string]runtime.Object{
+		"deployment": &appsv1.Deployment{
+			TypeMeta: metav1.TypeMeta{
+				APIVersion: appsv1.SchemeGroupVersion.String(),
+				Kind:       "Deployment",
+			},
+			Spec: appsv1.DeploymentSpec{
+				Template: testPodTemplateSpec,
+			},
+		},
+		"statefulset": &appsv1.StatefulSet{
+			TypeMeta: metav1.TypeMeta{
+				APIVersion: appsv1.SchemeGroupVersion.String(),
+				Kind:       "StatefulSet",
+			},
+			Spec: appsv1.StatefulSetSpec{
+				Template: testPodTemplateSpec,
+			},
+		},
+		"daemonset": &appsv1.DaemonSet{
+			TypeMeta: metav1.TypeMeta{
+				APIVersion: appsv1.SchemeGroupVersion.String(),
+				Kind:       "DaemonSet",
+			},
+			Spec: appsv1.DaemonSetSpec{
+				Template: testPodTemplateSpec,
+			},
+		},
+		"replicaset": &appsv1.ReplicaSet{
+			TypeMeta: metav1.TypeMeta{
+				APIVersion: appsv1.SchemeGroupVersion.String(),
+				Kind:       "ReplicaSet",
+			},
+			Spec: appsv1.ReplicaSetSpec{
+				Template: testPodTemplateSpec,
+			},
+		},
+		"pod": &corev1.Pod{
+			TypeMeta: metav1.TypeMeta{
+				APIVersion: corev1.SchemeGroupVersion.String(),
+				Kind:       "Pod",
+			},
+			Spec: testPodSpec,
+		},
+		"job": &batchv1.Job{
+			TypeMeta: metav1.TypeMeta{
+				APIVersion: batchv1.SchemeGroupVersion.String(),
+				Kind:       "Job",
+			},
+			Spec: batchv1.JobSpec{
+				Template: testPodTemplateSpec,
+			},
+		},
+		"cronjob": &batchv1.CronJob{
+			TypeMeta: metav1.TypeMeta{
+				APIVersion: batchv1.SchemeGroupVersion.String(),
+				Kind:       "CronJob",
+			},
+			Spec: batchv1.CronJobSpec{
+				JobTemplate: batchv1.JobTemplateSpec{
+					Spec: batchv1.JobSpec{
+						Template: testPodTemplateSpec,
+					},
+				},
+			},
+		},
+	}
+
+	type args struct {
+		docs                    []runtime.RawExtension
+		secretProviderClassName string
+	}
+
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "deployment",
+			args: args{
+				docs: []runtime.RawExtension{
+					{
+						Raw: mustMarshal(testdata["deployment"]),
+					},
+				},
+				secretProviderClassName: secretProviderClassName,
+			},
+		},
+		{
+			name: "statefulset",
+			args: args{
+				docs: []runtime.RawExtension{
+					{
+						Raw: mustMarshal(testdata["statefulset"]),
+					},
+				},
+				secretProviderClassName: secretProviderClassName,
+			},
+		},
+		{
+			name: "daemonset",
+			args: args{
+				docs: []runtime.RawExtension{
+					{
+						Raw: mustMarshal(testdata["daemonset"]),
+					},
+				},
+				secretProviderClassName: secretProviderClassName,
+			},
+		},
+		{
+			name: "replicaset",
+			args: args{
+				docs: []runtime.RawExtension{
+					{
+						Raw: mustMarshal(testdata["replicaset"]),
+					},
+				},
+				secretProviderClassName: secretProviderClassName,
+			},
+		},
+		{
+			name: "pod",
+			args: args{
+				docs: []runtime.RawExtension{
+					{
+						Raw: mustMarshal(testdata["pod"]),
+					},
+				},
+				secretProviderClassName: secretProviderClassName,
+			},
+		},
+		{
+			name: "job",
+			args: args{
+				docs: []runtime.RawExtension{
+					{
+						Raw: mustMarshal(testdata["job"]),
+					},
+				},
+				secretProviderClassName: secretProviderClassName,
+			},
+		},
+		{
+			name: "cronjob",
+			args: args{
+				docs: []runtime.RawExtension{
+					{
+						Raw: mustMarshal(testdata["cronjob"]),
+					},
+				},
+				secretProviderClassName: secretProviderClassName,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := addSecretCSIVolume(tt.args.docs, tt.args.secretProviderClassName)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("addSecretCSIVolume() error = %v, wantErr %v", err, tt.wantErr)
+
+				return
+			}
+
+			switch testdata[tt.name].(type) {
+			case *appsv1.Deployment:
+				var kbject appsv1.Deployment
+				_ = yaml.Unmarshal(tt.args.docs[0].Raw, &kbject)
+				if !reflect.DeepEqual(kbject.Spec.Template.Spec, testdataPodSpec) {
+					t.Errorf("missing volume/volumeMount")
+				}
+			case *appsv1.StatefulSet:
+				var kbject appsv1.StatefulSet
+				_ = yaml.Unmarshal(tt.args.docs[0].Raw, &kbject)
+				if !reflect.DeepEqual(kbject.Spec.Template.Spec, testdataPodSpec) {
+					t.Errorf("missing volume/volumeMount")
+				}
+			case *appsv1.DaemonSet:
+				var kbject appsv1.DaemonSet
+				_ = yaml.Unmarshal(tt.args.docs[0].Raw, &kbject)
+				if !reflect.DeepEqual(kbject.Spec.Template.Spec, testdataPodSpec) {
+					t.Errorf("missing volume/volumeMount")
+				}
+			case *appsv1.ReplicaSet:
+				var kbject appsv1.ReplicaSet
+				_ = yaml.Unmarshal(tt.args.docs[0].Raw, &kbject)
+				if !reflect.DeepEqual(kbject.Spec.Template.Spec, testdataPodSpec) {
+					t.Errorf("missing volume/volumeMount")
+				}
+			case *corev1.Pod:
+				var kbject corev1.Pod
+				_ = yaml.Unmarshal(tt.args.docs[0].Raw, &kbject)
+				if !reflect.DeepEqual(kbject.Spec, testdataPodSpec) {
+					t.Errorf("missing volume/volumeMount")
+				}
+			case *batchv1.Job:
+				var kbject batchv1.Job
+				_ = yaml.Unmarshal(tt.args.docs[0].Raw, &kbject)
+				if !reflect.DeepEqual(kbject.Spec.Template.Spec, testdataPodSpec) {
+					t.Errorf("missing volume/volumeMount")
+				}
+			case *batchv1.CronJob:
+				var kbject batchv1.CronJob
+				_ = yaml.Unmarshal(tt.args.docs[0].Raw, &kbject)
+				if !reflect.DeepEqual(kbject.Spec.JobTemplate.Spec.Template.Spec, testdataPodSpec) {
+					t.Errorf("missing volume/volumeMount")
+				}
+			}
 		})
 	}
 }
