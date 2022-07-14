@@ -8,7 +8,7 @@ tf.json
 *terraform.tfstate*
 .terraform
 .terraform.lock.hcl
-terraform.tfvars
+terraform.tfvars*
 *kubeconfig
 !*kubeconfig/
 /vendor
