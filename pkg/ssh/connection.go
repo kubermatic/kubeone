@@ -236,6 +236,13 @@ func (c *connection) TunnelTo(_ context.Context, network, addr string) (net.Conn
 	// the voided context.Context is voided as a workaround of always Done
 	// context that being passed. Please don't try to <-ctx.Done(), it will
 	// always return immediately
+	if c.sshclient == nil {
+		return nil, fail.SSHError{
+			Err: fail.Connection(errors.New("no SSH connection established"), addr),
+			Op:  "tunneling",
+		}
+	}
+
 	netconn, err := c.sshclient.Dial(network, addr)
 	if err != nil {
 		return nil, fail.SSH(fail.Connection(err, addr), "tunneling")
