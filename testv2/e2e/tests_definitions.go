@@ -269,8 +269,8 @@ var (
 		"vsphere_default": {
 			name: "vsphere_default",
 			labels: map[string]string{
-				"preset-goproxy": "true",
-				"preset-vsphere": "true",
+				"preset-goproxy":        "true",
+				"preset-vsphere-legacy": "true",
 			},
 			environ: map[string]string{
 				"PROVIDER": "vsphere",
@@ -288,8 +288,8 @@ var (
 		"vsphere_flatcar": {
 			name: "vsphere_flatcar",
 			labels: map[string]string{
-				"preset-goproxy": "true",
-				"preset-vsphere": "true",
+				"preset-goproxy":        "true",
+				"preset-vsphere-legacy": "true",
 			},
 			environ: map[string]string{
 				"PROVIDER": "vsphere",
@@ -307,7 +307,7 @@ var (
 		// 	name: "vsphere_rhel",
 		// 	labels: map[string]string{
 		// 		"preset-goproxy": "true",
-		// 		"preset-vsphere": "true",
+		// 		"preset-vsphere-legacy": "true",
 		// 	},
 		// 	environ: map[string]string{
 		// 		"PROVIDER": "vsphere",

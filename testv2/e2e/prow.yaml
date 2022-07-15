@@ -271,7 +271,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
+    preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-default-install-containerd-v1.21.14
   optional: false
   spec:
@@ -293,7 +293,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
+    preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-flatcar-install-containerd-v1.21.14
   optional: false
   spec:
@@ -581,7 +581,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
+    preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-default-install-containerd-v1.22.11
   optional: false
   spec:
@@ -603,7 +603,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
+    preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-flatcar-install-containerd-v1.22.11
   optional: false
   spec:
@@ -891,7 +891,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
+    preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-default-install-containerd-v1.23.8
   optional: false
   spec:
@@ -913,7 +913,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
+    preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-flatcar-install-containerd-v1.23.8
   optional: false
   spec:
@@ -1201,7 +1201,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
+    preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-default-install-containerd-v1.24.2
   optional: false
   spec:
@@ -1223,7 +1223,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
+    preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-flatcar-install-containerd-v1.24.2
   optional: false
   spec:
@@ -1511,7 +1511,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
+    preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-default-install-docker-v1.21.14
   optional: false
   spec:
@@ -1533,7 +1533,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
+    preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-flatcar-install-docker-v1.21.14
   optional: false
   spec:
@@ -1821,7 +1821,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
+    preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-default-install-docker-v1.22.11
   optional: false
   spec:
@@ -1843,7 +1843,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
+    preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-flatcar-install-docker-v1.22.11
   optional: false
   spec:
@@ -2131,7 +2131,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
+    preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-default-upgrade-containerd-from-v1.21.14-to-v1.22.11
   optional: false
   spec:
@@ -2153,7 +2153,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
+    preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-flatcar-upgrade-containerd-from-v1.21.14-to-v1.22.11
   optional: false
   spec:
@@ -2441,7 +2441,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
+    preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-default-upgrade-containerd-from-v1.22.11-to-v1.23.8
   optional: false
   spec:
@@ -2463,7 +2463,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
+    preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-flatcar-upgrade-containerd-from-v1.22.11-to-v1.23.8
   optional: false
   spec:
@@ -2751,7 +2751,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
+    preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-default-upgrade-docker-from-v1.21.14-to-v1.22.11
   optional: false
   spec:
@@ -2773,7 +2773,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
+    preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-flatcar-upgrade-docker-from-v1.21.14-to-v1.22.11
   optional: false
   spec:
@@ -3061,7 +3061,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
+    preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-default-calico-containerd-v1.22.11
   optional: false
   spec:
@@ -3083,7 +3083,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
+    preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-flatcar-calico-containerd-v1.22.11
   optional: false
   spec:
@@ -3371,7 +3371,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
+    preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-default-calico-docker-v1.22.11
   optional: false
   spec:
@@ -3393,7 +3393,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
+    preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-flatcar-calico-docker-v1.22.11
   optional: false
   spec:
@@ -3681,7 +3681,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
+    preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-default-weave-containerd-v1.22.11
   optional: false
   spec:
@@ -3703,7 +3703,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
+    preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-flatcar-weave-containerd-v1.22.11
   optional: false
   spec:
@@ -3991,7 +3991,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
+    preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-default-weave-docker-v1.22.11
   optional: false
   spec:
@@ -4013,7 +4013,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
+    preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-flatcar-weave-docker-v1.22.11
   optional: false
   spec:
@@ -4301,7 +4301,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
+    preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-default-cilium-containerd-v1.22.11
   optional: false
   spec:
@@ -4323,7 +4323,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
+    preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-flatcar-cilium-containerd-v1.22.11
   optional: false
   spec:
@@ -4611,7 +4611,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
+    preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-default-cilium-docker-v1.22.11
   optional: false
   spec:
@@ -4633,7 +4633,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
+    preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-flatcar-cilium-docker-v1.22.11
   optional: false
   spec:
