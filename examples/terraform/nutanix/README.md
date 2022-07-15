@@ -62,7 +62,7 @@ No modules.
 | <a name="input_control_plane_vcpus"></a> [control\_plane\_vcpus](#input\_control\_plane\_vcpus) | Number of vCPUs per socket for control plane nodes | `number` | `2` | no |
 | <a name="input_image_name"></a> [image\_name](#input\_image\_name) | Image to be used for instances (control plane, bastion/LB, workers) | `string` | n/a | yes |
 | <a name="input_initial_machinedeployment_operating_system_profile"></a> [initial\_machinedeployment\_operating\_system\_profile](#input\_initial\_machinedeployment\_operating\_system\_profile) | Name of operating system profile for MachineDeployments, only applicable if operatng-system-manager addon is enabled.<br>If not specified, the default value will be added by machine-controller addon. | `string` | `""` | no |
-| <a name="input_initial_machinedeployment_replicas"></a> [initial\_machinedeployment\_replicas](#input\_initial\_machinedeployment\_replicas) | number of replicas per MachineDeployment | `number` | `1` | no |
+| <a name="input_initial_machinedeployment_replicas"></a> [initial\_machinedeployment\_replicas](#input\_initial\_machinedeployment\_replicas) | number of replicas per MachineDeployment | `number` | `2` | no |
 | <a name="input_nutanix_cluster_name"></a> [nutanix\_cluster\_name](#input\_nutanix\_cluster\_name) | Name of the Nutanix Cluster which will be used for this Kubernetes cluster | `string` | n/a | yes |
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Name of the Nutanix Project | `string` | n/a | yes |
 | <a name="input_ssh_agent_socket"></a> [ssh\_agent\_socket](#input\_ssh\_agent\_socket) | SSH Agent socket, default to grab from $SSH\_AUTH\_SOCK | `string` | `"env:SSH_AUTH_SOCK"` | no |

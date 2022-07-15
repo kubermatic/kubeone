@@ -177,7 +177,7 @@ variable "worker_disk_size" {
 }
 
 variable "initial_machinedeployment_replicas" {
-  default     = 1
+  default     = 2
   description = "number of replicas per MachineDeployment"
   type        = number
 }
