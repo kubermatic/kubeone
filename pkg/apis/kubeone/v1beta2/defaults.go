@@ -53,6 +53,7 @@ func SetDefaults_KubeOneCluster(obj *KubeOneCluster) {
 	SetDefaults_ClusterNetwork(obj)
 	SetDefaults_Proxy(obj)
 	SetDefaults_MachineController(obj)
+	SetDefaults_OperatingSystemManager(obj)
 	SetDefaults_SystemPackages(obj)
 	SetDefaults_Features(obj)
 }
@@ -214,6 +215,15 @@ func SetDefaults_Proxy(obj *KubeOneCluster) {
 func SetDefaults_MachineController(obj *KubeOneCluster) {
 	if obj.MachineController == nil {
 		obj.MachineController = &MachineControllerConfig{
+			Deploy: true,
+		}
+	}
+}
+
+func SetDefaults_OperatingSystemManager(obj *KubeOneCluster) {
+	// OSM can only be used in liaison with machine-controller
+	if obj.OperatingSystemManager == nil && (obj.MachineController != nil && obj.MachineController.Deploy) {
+		obj.OperatingSystemManager = &OperatingSystemManagerConfig{
 			Deploy: true,
 		}
 	}

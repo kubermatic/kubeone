@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2022-07-08T17:05:33+03:00
+date = 2022-07-15T14:02:12+05:00
 weight = 11
 +++
 ## v1beta2
@@ -48,6 +48,7 @@ weight = 11
 * [OpenIDConnect](#openidconnect)
 * [OpenIDConnectConfig](#openidconnectconfig)
 * [OpenstackSpec](#openstackspec)
+* [OperatingSystemManagerConfig](#operatingsystemmanagerconfig)
 * [PodNodeSelector](#podnodeselector)
 * [PodNodeSelectorConfig](#podnodeselectorconfig)
 * [PodSecurityPolicy](#podsecuritypolicy)
@@ -461,6 +462,7 @@ KubeOneCluster is KubeOne Cluster API Schema
 | staticWorkers | StaticWorkers describes the worker nodes that are managed by KubeOne/kubeadm. | [StaticWorkersConfig](#staticworkersconfig) | false |
 | dynamicWorkers | DynamicWorkers describes the worker nodes that are managed by Kubermatic machine-controller/Cluster-API. | [][DynamicWorkerConfig](#dynamicworkerconfig) | false |
 | machineController | MachineController configures the Kubermatic machine-controller component. | *[MachineControllerConfig](#machinecontrollerconfig) | false |
+| operatingSystemManager | OperatingSystemManager configures the Kubermatic operating-system-manager component. | *[OperatingSystemManagerConfig](#operatingsystemmanagerconfig) | false |
 | caBundle | CABundle PEM encoded global CA | string | false |
 | features | Features enables and configures additional cluster features. | [Features](#features) | false |
 | addons | Addons are used to deploy additional manifests. | *[Addons](#addons) | false |
@@ -579,6 +581,16 @@ OpenstackSpec defines the Openstack provider
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
+
+[Back to Group](#v1beta2)
+
+### OperatingSystemManagerConfig
+
+OperatingSystemManagerConfig configures kubermatic operating-system-manager deployment.
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| deploy | Deploy | bool | false |
 
 [Back to Group](#v1beta2)
 

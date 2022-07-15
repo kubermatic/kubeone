@@ -233,6 +233,9 @@ func generateLocalCluster(logger logrus.FieldLogger, kubeVersion, apiEndpoint st
 		MachineController: &kubeonev1beta2.MachineControllerConfig{
 			Deploy: false,
 		},
+		OperatingSystemManager: &kubeonev1beta2.OperatingSystemManagerConfig{
+			Deploy: false,
+		},
 		Versions: kubeonev1beta2.VersionConfig{
 			Kubernetes: kubeVersion,
 		},
@@ -261,5 +264,6 @@ func convertToLocalCluster(in *kubeoneapi.KubeOneCluster, logger logrus.FieldLog
 	in.ControlPlane = genCluster.ControlPlane
 	in.CloudProvider = genCluster.CloudProvider
 	in.MachineController = genCluster.MachineController
+	in.OperatingSystemManager = genCluster.OperatingSystemManager
 	in.Versions = genCluster.Versions
 }

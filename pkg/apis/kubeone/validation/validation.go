@@ -67,6 +67,10 @@ func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 			"machine-controller deployment is disabled, but the configuration still contains dynamic workers"))
 	}
 
+	if c.OperatingSystemManagerEnabled() {
+		allErrs = append(allErrs, ValidateOperatingSystemManager(c.MachineController, field.NewPath("operatingSystemManager"))...)
+	}
+
 	allErrs = append(allErrs, ValidateCABundle(c.CABundle, field.NewPath("caBundle"))...)
 	allErrs = append(allErrs, ValidateFeatures(c.Features, c.Versions, field.NewPath("features"))...)
 	allErrs = append(allErrs, ValidateAddons(c.Addons, field.NewPath("addons"))...)
@@ -647,6 +651,17 @@ func ValidateAssetConfiguration(a *kubeoneapi.AssetConfiguration, fldPath *field
 	}
 	if found != 0 && found != 3 {
 		allErrs = append(allErrs, field.Invalid(fldPath, "", "all binary assets must be specified (cni, nodeBinaries, kubectl)"))
+	}
+
+	return allErrs
+}
+
+// ValidateOperatingSystemManager validates the OperatingSystemManager structure
+func ValidateOperatingSystemManager(mc *kubeoneapi.MachineControllerConfig, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	if mc == nil || !mc.Deploy {
+		allErrs = append(allErrs, field.Invalid(fldPath, "", "machineController needs to be enabled to use operatingSystemManager"))
 	}
 
 	return allErrs

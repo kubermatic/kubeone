@@ -1401,6 +1401,7 @@ func autoConvert_kubeone_KubeOneCluster_To_v1beta1_KubeOneCluster(in *kubeone.Ku
 		out.DynamicWorkers = nil
 	}
 	out.MachineController = (*MachineControllerConfig)(unsafe.Pointer(in.MachineController))
+	// WARNING: in.OperatingSystemManager requires manual conversion: does not exist in peer-type
 	out.CABundle = in.CABundle
 	if err := Convert_kubeone_Features_To_v1beta1_Features(&in.Features, &out.Features, s); err != nil {
 		return err

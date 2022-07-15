@@ -73,11 +73,13 @@ The built-in integration with Terraform, allows you to easily provision your
 infrastructure using Terraform and let KubeOne take all the needed information
 from the Terraform state.
 
-### Integration With Cluster-API and Kubermatic machine-controller
+### Integration With Cluster-API, Kubermatic machine-controller, and operating-system-manager
 
 Manage your worker nodes declaratively by utilizing the [Cluster-API][cluster-api]
 and [Kubermatic machine-controller][machine-controller]. Create, remove,
 upgrade, or scale your worker nodes using kubectl.
+[Kubermatic operating-system-manager][operating-system-manager] is responsibile for
+managing user-data for worker machines in the cluster.
 
 ## Getting Involved
 
@@ -114,6 +116,7 @@ See [the list of releases][changelog] to find out about feature changes.
 [upstream-supported-versions]: https://kubernetes.io/docs/setup/release/version-skew-policy/#supported-versions
 [cluster-api]: https://github.com/kubernetes-sigs/cluster-api
 [machine-controller]: https://github.com/kubermatic/machine-controller
+[operating-system-manager]: https://github.com/kubermatic/operating-system-manager
 [docs]: https://docs.kubermatic.com/kubeone/
 [docs-architecture]: https://docs.kubermatic.com/kubeone/v1.4/architecture/
 [docs-concepts]: https://docs.kubermatic.com/kubeone/v1.4/architecture/concepts/

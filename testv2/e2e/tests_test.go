@@ -1722,30 +1722,6 @@ func TestAwsLongTimeoutDefaultConformanceContainerdV1_24_1(t *testing.T) {
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsInstallOperatingSystemManagerV1_22_11(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
-	scenario := Scenarios["install_operating_system_manager"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
-	scenario.Run(t)
-}
-
-func TestAwsDefaultsInstallOperatingSystemManagerV1_23_8(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
-	scenario := Scenarios["install_operating_system_manager"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
-	scenario.Run(t)
-}
-
-func TestAwsDefaultsInstallOperatingSystemManagerV1_24_1(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
-	scenario := Scenarios["install_operating_system_manager"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.1")
-	scenario.Run(t)
-}
-
 func TestAwsDefaultsKubeProxyIpvsV1_22_11(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["kube_proxy_ipvs"]
@@ -1765,6 +1741,30 @@ func TestAwsDefaultsKubeProxyIpvsV1_23_8(t *testing.T) {
 func TestAwsDefaultsKubeProxyIpvsV1_24_1(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["kube_proxy_ipvs"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.1")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultsLegacyMachineControllerUserdataV1_22_11(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultsLegacyMachineControllerUserdataV1_23_8(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.8")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultsLegacyMachineControllerUserdataV1_24_1(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.24.1")
 	scenario.Run(t)
