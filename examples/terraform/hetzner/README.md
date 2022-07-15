@@ -57,7 +57,7 @@ No modules.
 | <a name="input_disable_kubeapi_loadbalancer"></a> [disable\_kubeapi\_loadbalancer](#input\_disable\_kubeapi\_loadbalancer) | E2E tests specific varible to disable usage of any loadbalancer in front of kubeapi-server | `bool` | `false` | no |
 | <a name="input_image"></a> [image](#input\_image) | n/a | `string` | `"ubuntu-20.04"` | no |
 | <a name="input_initial_machinedeployment_operating_system_profile"></a> [initial\_machinedeployment\_operating\_system\_profile](#input\_initial\_machinedeployment\_operating\_system\_profile) | Name of operating system profile for MachineDeployments, only applicable if operatng-system-manager addon is enabled.<br>If not specified, the default value will be added by machine-controller addon. | `string` | `""` | no |
-| <a name="input_initial_machinedeployment_replicas"></a> [initial\_machinedeployment\_replicas](#input\_initial\_machinedeployment\_replicas) | Number of replicas per MachineDeployment | `number` | `1` | no |
+| <a name="input_initial_machinedeployment_replicas"></a> [initial\_machinedeployment\_replicas](#input\_initial\_machinedeployment\_replicas) | Number of replicas per MachineDeployment | `number` | `2` | no |
 | <a name="input_ip_range"></a> [ip\_range](#input\_ip\_range) | ip range to use for private network | `string` | `"192.168.0.0/16"` | no |
 | <a name="input_lb_type"></a> [lb\_type](#input\_lb\_type) | n/a | `string` | `"lb11"` | no |
 | <a name="input_network_zone"></a> [network\_zone](#input\_network\_zone) | network zone to use for private network | `string` | `"eu-central"` | no |
