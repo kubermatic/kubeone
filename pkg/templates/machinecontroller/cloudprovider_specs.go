@@ -117,6 +117,7 @@ type NutanixSpec struct {
 type EquinixMetalSpec struct {
 	ProjectID    string   `json:"projectID"`
 	BillingCycle string   `json:"billingCycle"`
+	Metro        string   `json:"metro"`
 	Facilities   []string `json:"facilities"`
 	InstanceType string   `json:"instanceType"`
 	Tags         []string `json:"tags,omitempty"`
