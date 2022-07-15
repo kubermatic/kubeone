@@ -75,7 +75,7 @@ output "kubeone_workers" {
           # see example under `cloudProviderSpec` section at:
           # https://github.com/kubermatic/machine-controller/blob/master/examples/equinixmetal-machinedeployment.yaml
           projectID    = var.project_id
-          facilities   = [var.facility]
+          metro        = var.metro
           instanceType = var.device_type
           tags = [
             "${var.cluster_name}-workers-pool1"

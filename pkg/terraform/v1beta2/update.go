@@ -257,6 +257,7 @@ func updateEquinixMetalWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorker
 
 	flags := []cloudProviderFlags{
 		{key: "projectID", value: metalConfig.ProjectID},
+		{key: "metro", value: metalConfig.Metro},
 		{key: "facilities", value: metalConfig.Facilities},
 		{key: "instanceType", value: metalConfig.InstanceType},
 		{key: "billingCycle", value: metalConfig.BillingCycle},
