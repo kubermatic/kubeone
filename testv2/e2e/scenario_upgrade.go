@@ -53,7 +53,7 @@ func (scenario *scenarioUpgrade) Run(t *testing.T) {
 		Name:                 scenario.name,
 		ManifestTemplatePath: scenario.manifestTemplatePath,
 		infra:                scenario.infra,
-		versions:             scenario.versions,
+		versions:             []string{scenario.versions[0]},
 		kubeonePath:          downloadKubeone(t, kubeoneVersionToInit),
 	}
 

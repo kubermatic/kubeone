@@ -147,7 +147,7 @@ func downloadKubeone(t *testing.T, version string) string {
 	}
 	defer resp.Body.Close()
 
-	zipBin, err := os.OpenFile(zipPath, os.O_CREATE|os.O_WRONLY, 0600)
+	zipBin, err := os.OpenFile(zipPath, os.O_CREATE|os.O_RDWR, 0600)
 	if err != nil {
 		t.Fatalf("open kubeone destination file: %v", err)
 	}
