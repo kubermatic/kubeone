@@ -157,11 +157,23 @@ variable "control_plane_memory" {
   type        = number
 }
 
+variable "control_plane_num_cpus" {
+  default     = 2
+  description = "number of cpus of each control plane node"
+  type        = number
+}
+
 variable "worker_memory" {
   default     = 2048
   description = "memory size of each worker node in MB"
   type        = number
 
+}
+
+variable "worker_num_cpus" {
+  default     = 2
+  description = "number of cpus of each workers node"
+  type        = number
 }
 
 variable "worker_disk" {
