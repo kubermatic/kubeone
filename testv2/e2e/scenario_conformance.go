@@ -17,8 +17,10 @@ limitations under the License.
 package e2e
 
 import (
+	"context"
 	"io"
 	"testing"
+	"time"
 )
 
 type scenarioConformance struct {
@@ -83,6 +85,25 @@ func (scenario *scenarioConformance) test(t *testing.T) {
 		k1Opts...,
 	)
 
+	// launch kubeone proxy, to have a HTTPS proxy through the SSH tunnel
+	// to open access to the kubeapi behind the bastion host
+	proxyCtx, killProxy := context.WithCancel(context.Background())
+	proxyURL, waitK1, err := k1.AsyncProxy(proxyCtx)
+	if err != nil {
+		t.Fatalf("starting kubeone proxy: %v", err)
+	}
+	defer func() {
+		waitErr := waitK1()
+		if waitErr != nil {
+			t.Logf("wait kubeone proxy: %v", waitErr)
+		}
+	}()
+	defer killProxy()
+
+	// let kubeone proxy start and open the port
+	time.Sleep(5 * time.Second)
+	t.Logf("kubeone proxy is running on %s", proxyURL)
+
 	basicTest(t, k1, data)
-	sonobuoyRun(t, k1, sonobuoyConformance)
+	sonobuoyRun(t, k1, sonobuoyConformance, proxyURL)
 }
