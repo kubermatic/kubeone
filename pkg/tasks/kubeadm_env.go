@@ -33,13 +33,13 @@ type kubeadmFlagsModifier func(flags map[string]string)
 
 func updateKubeadmFlagsEnv(s *state.State, node *kubeoneapi.HostConfig) error {
 	modifiers := []kubeadmFlagsModifier{
-		updateKubeletNodeValues(s, node),
+		updateKubeletNodeValues(node),
 	}
 	if m := removeNetworkPluginFlagKubelet(s, node); m != nil {
 		modifiers = append(modifiers, m)
 	}
 
-	return updateKubeadmFlagsEnvFile(s, node, modifiers...)
+	return updateKubeadmFlagsEnvFile(s, modifiers...)
 }
 
 // removeNetworkPluginFlagKubelet removes --network-plugin flag from Kubelet
@@ -69,7 +69,7 @@ func removeNetworkPluginFlagKubelet(s *state.State, node *kubeoneapi.HostConfig)
 	}
 }
 
-func updateKubeletNodeValues(s *state.State, node *kubeoneapi.HostConfig) kubeadmFlagsModifier {
+func updateKubeletNodeValues(node *kubeoneapi.HostConfig) kubeadmFlagsModifier {
 	return func(flags map[string]string) {
 		if m := node.Kubelet.SystemReserved; m != nil {
 			flags["--system-reserved"] = kubeoneapi.MapStringStringToString(m, "=")
@@ -88,7 +88,7 @@ func updateKubeletNodeValues(s *state.State, node *kubeoneapi.HostConfig) kubead
 	}
 }
 
-func updateKubeadmFlagsEnvFile(s *state.State, node *kubeoneapi.HostConfig, modifiers ...kubeadmFlagsModifier) error {
+func updateKubeadmFlagsEnvFile(s *state.State, modifiers ...kubeadmFlagsModifier) error {
 	return updateRemoteFile(s, kubeadmEnvFlagsFile, func(content []byte) ([]byte, error) {
 		kubeletFlags, err := unmarshalKubeletFlags(content)
 		if err != nil {
