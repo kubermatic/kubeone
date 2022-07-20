@@ -480,6 +480,9 @@ func ValidateCABundle(caBundle string, fldPath *field.Path) field.ErrorList {
 func ValidateFeatures(f kubeoneapi.Features, versions kubeoneapi.VersionConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
+	if f.CoreDNS != nil && f.CoreDNS.Replicas != nil && *f.CoreDNS.Replicas < 0 {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("coreDNS", "replicas"), *f.CoreDNS.Replicas, "coreDNS replicas cannot be < 0"))
+	}
 	if f.PodNodeSelector != nil && f.PodNodeSelector.Enable {
 		allErrs = append(allErrs, ValidatePodNodeSelectorConfig(f.PodNodeSelector.Config, fldPath.Child("podNodeSelector"))...)
 	}
