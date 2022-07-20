@@ -74,9 +74,9 @@ variable "ssh_agent_socket" {
 
 # Provider specific settings
 
-variable "facility" {
-  default     = "ams1"
-  description = "Facility (datacenter)"
+variable "metro" {
+  default     = "AM"
+  description = "Metro area for cluster"
   type        = string
 }
 
@@ -93,13 +93,13 @@ variable "lb_operating_system" {
 }
 
 variable "device_type" {
-  default     = "c3.small.x86"
+  default     = "m3.small.x86"
   description = "type (size) of the device"
   type        = string
 }
 
 variable "lb_device_type" {
-  default     = "c3.small.x86"
+  default     = "m3.small.x86"
   description = "type (size) of the load balancer device"
   type        = string
 }
@@ -111,7 +111,7 @@ variable "project_id" {
 
 variable "initial_machinedeployment_replicas" {
   description = "Number of replicas per MachineDeployment"
-  default     = 1
+  default     = 2
   type        = number
 }
 

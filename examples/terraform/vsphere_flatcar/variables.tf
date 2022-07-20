@@ -174,7 +174,7 @@ variable "api_vip" {
 
 variable "initial_machinedeployment_replicas" {
   description = "Number of replicas per MachineDeployment"
-  default     = 1
+  default     = 2
   type        = number
 }
 

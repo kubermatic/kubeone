@@ -32,7 +32,7 @@ resource "metal_device" "control_plane" {
 
   hostname         = "${var.cluster_name}-control-plane-${count.index + 1}"
   plan             = var.device_type
-  facilities       = [var.facility]
+  metro            = var.metro
   operating_system = var.control_plane_operating_system
   billing_cycle    = "hourly"
   project_id       = var.project_id
@@ -44,7 +44,7 @@ resource "metal_device" "lb" {
 
   hostname         = "${var.cluster_name}-lb"
   plan             = var.lb_device_type
-  facilities       = [var.facility]
+  metro            = var.metro
   operating_system = var.lb_operating_system
   billing_cycle    = "hourly"
   project_id       = var.project_id

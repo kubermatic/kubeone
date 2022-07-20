@@ -157,8 +157,7 @@ resource "hcloud_load_balancer_target" "load_balancer_target" {
 
   type             = "label_selector"
   load_balancer_id = hcloud_load_balancer.load_balancer.0.id
-  server_id        = element(hcloud_server.control_plane.*.id, count.index)
-  label_selector   = "role=api"
+  label_selector   = "kubeone_cluster_name=${var.cluster_name},role=api"
   use_private_ip   = true
   depends_on = [
     hcloud_server_network.control_plane,
