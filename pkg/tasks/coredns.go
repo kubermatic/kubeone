@@ -29,11 +29,7 @@ import (
 )
 
 func patchCoreDNS(s *state.State) error {
-	if !s.Cluster.CloudProvider.External {
-		return nil
-	}
-
-	s.Logger.Infoln("Patching coreDNS with uninitialized toleration...")
+	s.Logger.Infoln("Patching coreDNS...")
 
 	if s.DynamicClient == nil {
 		return fail.NoKubeClient()
@@ -58,6 +54,26 @@ func patchCoreDNS(s *state.State) error {
 			Effect: corev1.TaintEffectNoSchedule,
 		},
 	)
+
+	if s.Cluster.Features.CoreDNS.Replicas != nil {
+		dep.Spec.Replicas = s.Cluster.Features.CoreDNS.Replicas
+	}
+
+	dep.Spec.Template.Spec.Affinity = &corev1.Affinity{
+		PodAntiAffinity: &corev1.PodAntiAffinity{
+			PreferredDuringSchedulingIgnoredDuringExecution: []corev1.WeightedPodAffinityTerm{
+				{
+					Weight: 10,
+					PodAffinityTerm: corev1.PodAffinityTerm{
+						LabelSelector: &metav1.LabelSelector{
+							MatchLabels: map[string]string{"k8s-app": "kube-dns"},
+						},
+						TopologyKey: corev1.LabelHostname,
+					},
+				},
+			},
+		},
+	}
 
 	err = s.DynamicClient.Update(ctx, &dep)
 
