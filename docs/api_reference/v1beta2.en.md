@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2022-07-08T17:05:33+03:00
+date = 2022-07-20T15:14:03+02:00
 weight = 11
 +++
 ## v1beta2
@@ -23,6 +23,7 @@ weight = 11
 * [ContainerdRegistryAuthConfig](#containerdregistryauthconfig)
 * [ContainerdTLSConfig](#containerdtlsconfig)
 * [ControlPlaneConfig](#controlplaneconfig)
+* [CoreDNS](#coredns)
 * [DNSConfig](#dnsconfig)
 * [DigitalOceanSpec](#digitaloceanspec)
 * [DynamicAuditLog](#dynamicauditlog)
@@ -279,6 +280,17 @@ ControlPlaneConfig defines control plane nodes
 
 [Back to Group](#v1beta2)
 
+### CoreDNS
+
+
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| replicas |  | *int32 | false |
+| deployPodDisruptionBudget |  | *bool | false |
+
+[Back to Group](#v1beta2)
+
 ### DNSConfig
 
 DNSConfig contains a machine's DNS configuration
@@ -356,6 +368,7 @@ Features controls what features will be enabled on the cluster
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
+| coreDNS | CoreDNS | *[CoreDNS](#coredns) | false |
 | podNodeSelector | PodNodeSelector | *[PodNodeSelector](#podnodeselector) | false |
 | podSecurityPolicy | PodSecurityPolicy Deprecated: will be removed once Kubernetes 1.24 reaches EOL | *[PodSecurityPolicy](#podsecuritypolicy) | false |
 | staticAuditLog | StaticAuditLog | *[StaticAuditLog](#staticauditlog) | false |

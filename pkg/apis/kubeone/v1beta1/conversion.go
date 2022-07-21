@@ -22,6 +22,7 @@ import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 
 	conversion "k8s.io/apimachinery/pkg/conversion"
+	"k8s.io/utils/pointer"
 )
 
 func Convert_kubeone_ContainerRuntimeContainerd_To_v1beta1_ContainerRuntimeContainerd(*kubeoneapi.ContainerRuntimeContainerd, *ContainerRuntimeContainerd, conversion.Scope) error {
@@ -39,6 +40,12 @@ func Convert_v1beta1_Features_To_kubeone_Features(in *Features, out *kubeoneapi.
 	if err := autoConvert_v1beta1_Features_To_kubeone_Features(in, out, s); err != nil {
 		return err
 	}
+
+	out.CoreDNS = &kubeoneapi.CoreDNS{
+		Replicas:                  pointer.Int32(2),
+		DeployPodDisruptionBudget: pointer.Bool(true),
+	}
+
 	// The PodPresets field has been dropped from v1beta2 API.
 	return nil
 }
@@ -80,4 +87,9 @@ func Convert_kubeone_KubeOneCluster_To_v1beta1_KubeOneCluster(in *kubeoneapi.Kub
 func Convert_kubeone_ProviderSpec_To_v1beta1_ProviderSpec(in *kubeoneapi.ProviderSpec, out *ProviderSpec, s conversion.Scope) error {
 	// NodeAnnotations and MachineObjectAnnotations were introduced only in new v1beta2 API, so we skip them here
 	return autoConvert_kubeone_ProviderSpec_To_v1beta1_ProviderSpec(in, out, s)
+}
+
+func Convert_kubeone_Features_To_v1beta1_Features(in *kubeoneapi.Features, out *Features, s conversion.Scope) error {
+	// CoreDNS feature is introduced only in the v1beta2 API
+	return autoConvert_kubeone_Features_To_v1beta1_Features(in, out, s)
 }

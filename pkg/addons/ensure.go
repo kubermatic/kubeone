@@ -81,6 +81,12 @@ type addonAction struct {
 
 //nolint:nakedret
 func collectAddons(s *state.State) (addonsToDeploy []addonAction) {
+	if *s.Cluster.Features.CoreDNS.DeployPodDisruptionBudget {
+		addonsToDeploy = append(addonsToDeploy, addonAction{
+			name: resources.AddonCoreDNSPDB,
+		})
+	}
+
 	if s.Cluster.Features.MetricsServer.Enable {
 		addonsToDeploy = append(addonsToDeploy, addonAction{
 			name: resources.AddonMetricsServer,

@@ -1456,6 +1456,42 @@ func TestValidateFeatures(t *testing.T) {
 			},
 			expectedError: true,
 		},
+		{
+			name: "coredns replicas > 0",
+			features: kubeoneapi.Features{
+				CoreDNS: &kubeoneapi.CoreDNS{
+					Replicas: pointer.Int32(2),
+				},
+			},
+			versions: kubeoneapi.VersionConfig{
+				Kubernetes: "1.20.2",
+			},
+			expectedError: false,
+		},
+		{
+			name: "coredns replicas = 0",
+			features: kubeoneapi.Features{
+				CoreDNS: &kubeoneapi.CoreDNS{
+					Replicas: pointer.Int32(0),
+				},
+			},
+			versions: kubeoneapi.VersionConfig{
+				Kubernetes: "1.20.2",
+			},
+			expectedError: false,
+		},
+		{
+			name: "coredns replicas < 0",
+			features: kubeoneapi.Features{
+				CoreDNS: &kubeoneapi.CoreDNS{
+					Replicas: pointer.Int32(-1),
+				},
+			},
+			versions: kubeoneapi.VersionConfig{
+				Kubernetes: "1.20.2",
+			},
+			expectedError: true,
+		},
 	}
 
 	for _, tc := range tests {

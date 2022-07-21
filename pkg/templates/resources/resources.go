@@ -35,6 +35,7 @@ const (
 	AddonCNICanal               = "cni-canal"
 	AddonCNICilium              = "cni-cilium"
 	AddonCNIWeavenet            = "cni-weavenet"
+	AddonCoreDNSPDB             = "coredns-pdb"
 	AddonCSIAwsEBS              = "csi-aws-ebs"
 	AddonCSIAzureDisk           = "csi-azuredisk"
 	AddonCSIAzureFile           = "csi-azurefile"
