@@ -111,6 +111,12 @@ spec:
             - name: secret-cinderplugin
               mountPath: /etc/config
               readOnly: true
+            - mountPath: /etc/ssl/certs
+              name: ca-certs
+              readOnly: true
+            - mountPath: /usr/share/ca-certificates
+              name: usr-ca-certs
+              readOnly: true
 {{ if .Config.CABundle }}
 {{ caBundleVolumeMount | indent 12 }}
 {{ end }}
@@ -134,6 +140,14 @@ spec:
         - name: secret-cinderplugin
           secret:
             secretName: cloud-config
+        - name: ca-certs
+          hostPath:
+            path: /etc/ssl/certs
+            type: DirectoryOrCreate
+        - hostPath:
+            path: /usr/share/ca-certificates
+            type: DirectoryOrCreate
+          name: usr-ca-certs
 {{ if .Config.CABundle }}
 {{ caBundleVolume | indent 8 }}
 {{ end }}

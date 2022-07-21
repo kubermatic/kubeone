@@ -13,7 +13,7 @@ require (
 	github.com/iancoleman/orderedmap v0.2.0
 	github.com/imdario/mergo v0.3.13
 	github.com/koron-go/prefixw v0.0.0-20181013140428-271b207a7572
-	github.com/kubermatic/machine-controller v1.52.0
+	github.com/kubermatic/machine-controller v1.52.1-0.20220721104427-86c60d725de5 // TODO: Update this to a semver tag before release
 	github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de
 	github.com/pkg/errors v0.9.1
 	github.com/pmezard/go-difflib v1.0.0

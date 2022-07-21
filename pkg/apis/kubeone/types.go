@@ -591,31 +591,6 @@ type OperatingSystemManagerConfig struct {
 	Deploy bool `json:"deploy,omitempty"`
 }
 
-// Features controls what features will be enabled on the cluster
-type Features struct {
-	// PodNodeSelector
-	PodNodeSelector *PodNodeSelector `json:"podNodeSelector,omitempty"`
-
-	// PodSecurityPolicy
-	// Deprecated: will be removed once Kubernetes 1.24 reaches EOL
-	PodSecurityPolicy *PodSecurityPolicy `json:"podSecurityPolicy,omitempty"`
-
-	// StaticAuditLog
-	StaticAuditLog *StaticAuditLog `json:"staticAuditLog,omitempty"`
-
-	// DynamicAuditLog
-	DynamicAuditLog *DynamicAuditLog `json:"dynamicAuditLog,omitempty"`
-
-	// MetricsServer
-	MetricsServer *MetricsServer `json:"metricsServer,omitempty"`
-
-	// OpenIDConnect
-	OpenIDConnect *OpenIDConnect `json:"openidConnect,omitempty"`
-
-	// Encryption Providers
-	EncryptionProviders *EncryptionProviders `json:"encryptionProviders,omitempty"`
-}
-
 // SystemPackages controls configurations of APT/YUM
 type SystemPackages struct {
 	// ConfigureRepositories (true by default) is a flag to control automatic
@@ -716,6 +691,39 @@ type RegistryConfiguration struct {
 	// in OverwriteRegistry as an insecure registry. This is also propagated
 	// to the worker nodes managed by machine-controller and/or KubeOne.
 	InsecureRegistry bool `json:"insecureRegistry,omitempty"`
+}
+
+// Features controls what features will be enabled on the cluster
+type Features struct {
+	// CoreDNS
+	CoreDNS *CoreDNS `json:"coreDNS,omitempty"`
+
+	// PodNodeSelector
+	PodNodeSelector *PodNodeSelector `json:"podNodeSelector,omitempty"`
+
+	// PodSecurityPolicy
+	// Deprecated: will be removed once Kubernetes 1.24 reaches EOL
+	PodSecurityPolicy *PodSecurityPolicy `json:"podSecurityPolicy,omitempty"`
+
+	// StaticAuditLog
+	StaticAuditLog *StaticAuditLog `json:"staticAuditLog,omitempty"`
+
+	// DynamicAuditLog
+	DynamicAuditLog *DynamicAuditLog `json:"dynamicAuditLog,omitempty"`
+
+	// MetricsServer
+	MetricsServer *MetricsServer `json:"metricsServer,omitempty"`
+
+	// OpenIDConnect
+	OpenIDConnect *OpenIDConnect `json:"openidConnect,omitempty"`
+
+	// Encryption Providers
+	EncryptionProviders *EncryptionProviders `json:"encryptionProviders,omitempty"`
+}
+
+type CoreDNS struct {
+	Replicas                  *int32 `json:"replicas,omitempty"`
+	DeployPodDisruptionBudget *bool  `json:"deployPodDisruptionBudget,omitempty"`
 }
 
 // PodNodeSelector feature flag

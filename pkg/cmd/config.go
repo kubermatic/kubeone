@@ -645,6 +645,10 @@ containerRuntime:
   # docker: {}
 
 features:
+  # Configure the CoreDNS deployment
+  coreDNS:
+    replicas: 2
+    deployPodDisruptionBudget: true
   # Enable the PodNodeSelector admission plugin in API server.
   # More info: https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#podnodeselector
   podNodeSelector:

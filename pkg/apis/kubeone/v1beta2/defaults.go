@@ -23,6 +23,7 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/utils/pointer"
 )
 
 const (
@@ -238,6 +239,16 @@ func SetDefaults_SystemPackages(obj *KubeOneCluster) {
 }
 
 func SetDefaults_Features(obj *KubeOneCluster) {
+	if obj.Features.CoreDNS == nil {
+		obj.Features.CoreDNS = &CoreDNS{}
+	}
+	if obj.Features.CoreDNS.Replicas == nil {
+		obj.Features.CoreDNS.Replicas = pointer.Int32(2)
+	}
+	if obj.Features.CoreDNS.DeployPodDisruptionBudget == nil {
+		obj.Features.CoreDNS.DeployPodDisruptionBudget = pointer.Bool(true)
+	}
+
 	if obj.Features.MetricsServer == nil {
 		obj.Features.MetricsServer = &MetricsServer{
 			Enable: true,

@@ -209,12 +209,14 @@ func FindResource(name string) (Resource, error) {
 
 func baseResources() map[Resource]map[string]string {
 	return map[Resource]map[string]string{
-		CalicoCNI:         {"*": "quay.io/calico/cni:v3.22.2"},
-		CalicoController:  {"*": "quay.io/calico/kube-controllers:v3.22.2"},
-		CalicoNode:        {"*": "quay.io/calico/node:v3.22.2"},
-		DNSNodeCache:      {"*": "registry.k8s.io/dns/k8s-dns-node-cache:1.21.1"},
-		Flannel:           {"*": "quay.io/coreos/flannel:v0.15.1"},
-		MachineController: {"*": "quay.io/kubermatic/machine-controller:v1.52.0"},
+		CalicoCNI:        {"*": "quay.io/calico/cni:v3.22.2"},
+		CalicoController: {"*": "quay.io/calico/kube-controllers:v3.22.2"},
+		CalicoNode:       {"*": "quay.io/calico/node:v3.22.2"},
+		DNSNodeCache:     {"*": "registry.k8s.io/dns/k8s-dns-node-cache:1.21.1"},
+		Flannel:          {"*": "quay.io/coreos/flannel:v0.15.1"},
+		//  TODO: Update this to a semver tag before release.
+		// Ref: https://github.com/kubermatic/machine-controller/commit/86c60d725de5440977ac5a69159b807cd1c92886
+		MachineController: {"*": "quay.io/kubermatic/machine-controller:86c60d725de5440977ac5a69159b807cd1c92886"},
 		MetricsServer:     {"*": "k8s.gcr.io/metrics-server/metrics-server:v0.6.1"},
 	}
 }
@@ -310,8 +312,8 @@ func optionalResources() map[Resource]map[string]string {
 			"1.20.x":    "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.20.2",
 			"1.21.x":    "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.21.0",
 			"1.22.x":    "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.22.0",
-			"1.23.x":    "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.23.1",
-			">= 1.24.0": "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.24.0",
+			"1.23.x":    "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.23.3",
+			">= 1.24.0": "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.24.2",
 		},
 
 		// OpenStack CSI
@@ -319,8 +321,8 @@ func optionalResources() map[Resource]map[string]string {
 			"1.20.x":    "docker.io/k8scloudprovider/cinder-csi-plugin:v1.20.3",
 			"1.21.x":    "docker.io/k8scloudprovider/cinder-csi-plugin:v1.21.0",
 			"1.22.x":    "docker.io/k8scloudprovider/cinder-csi-plugin:v1.22.0",
-			"1.23.x":    "docker.io/k8scloudprovider/cinder-csi-plugin:v1.23.0",
-			">= 1.24.0": "docker.io/k8scloudprovider/cinder-csi-plugin:v1.24.0",
+			"1.23.x":    "docker.io/k8scloudprovider/cinder-csi-plugin:v1.23.3",
+			">= 1.24.0": "docker.io/k8scloudprovider/cinder-csi-plugin:v1.24.2",
 		},
 		OpenstackCSINodeDriverRegistar: {"*": "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.5.0"},
 		OpenstackCSILivenessProbe:      {"*": "k8s.gcr.io/sig-storage/livenessprobe:v2.6.0"},
@@ -408,7 +410,9 @@ func optionalResources() map[Resource]map[string]string {
 		},
 
 		// operating-system-manager addon
-		OperatingSystemManager: {"*": "quay.io/kubermatic/operating-system-manager:v0.5.0"},
+		//  TODO: Update this to a semver tag before release.
+		// Ref: https://github.com/kubermatic/operating-system-manager/commit/45600227d69e6a105c34ba70ba641e5cd071887e
+		OperatingSystemManager: {"*": "quay.io/kubermatic/operating-system-manager:45600227d69e6a105c34ba70ba641e5cd071887e"},
 
 		// CSI Vault Secret Provider
 		CSIVaultSecretProvider: {"*": "docker.io/hashicorp/vault-csi-provider:1.1.0"},
