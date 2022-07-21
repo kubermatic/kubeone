@@ -1,8 +1,5 @@
-{{ $version := semver .Config.Versions.Kubernetes }}
-{{ $csi := or .Config.CloudProvider.External (ge $version.Minor 23) }}
-
 {{ if eq .Config.CloudProvider.CloudProviderName "azure" }}
-{{ if $csi }}
+{{ if .DeployCSIAddon }}
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
@@ -34,7 +31,7 @@ volumeBindingMode: Immediate
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-{{ if not $csi }}
+{{ if not .DeployCSIAddon }}
   annotations:
     storageclass.beta.kubernetes.io/is-default-class: "true"
 {{ end }}
@@ -48,7 +45,7 @@ parameters:
 {{ end }}
 
 {{ if eq .Config.CloudProvider.CloudProviderName "aws" }}
-{{ if $csi }}
+{{ if .DeployCSIAddon }}
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
 metadata:
@@ -66,7 +63,7 @@ volumeBindingMode: WaitForFirstConsumer
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-{{ if not $csi }}
+{{ if not .DeployCSIAddon }}
   annotations:
     storageclass.beta.kubernetes.io/is-default-class: "true"
 {{ end }}
@@ -80,7 +77,7 @@ volumeBindingMode: WaitForFirstConsumer
 {{ end }}
 
 {{ if eq .Config.CloudProvider.CloudProviderName "vsphere" }}
-{{ if $csi }}
+{{ if .DeployCSIAddon }}
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
@@ -104,7 +101,7 @@ deletionPolicy: Delete
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-{{ if not $csi }}
+{{ if not .DeployCSIAddon }}
   annotations:
     storageclass.beta.kubernetes.io/is-default-class: "true"
 {{ end }}
@@ -138,7 +135,7 @@ provisioner: kubernetes.io/cinder
 {{ end }}
 
 {{ if eq .Config.CloudProvider.CloudProviderName "gce" }}
-{{ if $csi }}
+{{ if .DeployCSIAddon }}
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
@@ -164,7 +161,7 @@ deletionPolicy: Delete
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-{{ if not $csi }}
+{{ if not .DeployCSIAddon }}
   annotations:
     storageclass.beta.kubernetes.io/is-default-class: "true"
 {{ end }}

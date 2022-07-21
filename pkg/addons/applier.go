@@ -66,6 +66,7 @@ type templateData struct {
 	CCMClusterName                           string
 	CSIMigration                             bool
 	CSIMigrationFeatureGates                 string
+	DeployCSIAddon                           bool
 	MachineControllerCredentialsEnvVars      string
 	OperatingSystemManagerEnabled            bool
 	OperatingSystemManagerCredentialsEnvVars string
@@ -153,6 +154,9 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		return nil, err
 	}
 
+	// Check are we deploying the CSI driver
+	deployCSI := len(ensureCSIAddons(s, []addonAction{})) > 0
+
 	data := templateData{
 		Config: s.Cluster,
 		Certificates: map[string]string{
@@ -167,6 +171,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		CCMClusterName:                      s.LiveCluster.CCMClusterName,
 		CSIMigration:                        csiMigration,
 		CSIMigrationFeatureGates:            csiMigrationFeatureGates,
+		DeployCSIAddon:                      deployCSI,
 		MachineControllerCredentialsEnvVars: string(credsEnvVarsMC),
 		OperatingSystemManagerEnabled:       s.Cluster.OperatingSystemManagerEnabled(),
 		RegistryCredentials:                 containerdRegistryCredentials(s.Cluster.ContainerRuntime.Containerd),
