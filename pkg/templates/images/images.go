@@ -337,7 +337,8 @@ func optionalResources() map[Resource]map[string]string {
 			"1.20.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.20.1",
 			"1.21.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.21.3",
 			"1.22.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.22.6",
-			">= 1.23.0": "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.23.0",
+			"1.23.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.23.1",
+			">= 1.24.0": "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.24.0",
 		},
 
 		// VMware Cloud Director CSI
