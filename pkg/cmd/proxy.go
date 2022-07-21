@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/pkg/errors"
@@ -97,6 +98,7 @@ func setupProxyTunnel(opts *proxyOpts) error {
 				http.Error(w, err.Error(), code)
 			}
 		}),
+		ReadHeaderTimeout: 1 * time.Minute,
 	}
 
 	fmt.Println("SSH tunnel started, please open another terminal and setup environment")
