@@ -160,11 +160,14 @@ data:
   "async-query-volume": "true"
   "improved-csi-idempotency": "true"
   "improved-volume-topology": "true"
-  "block-volume-snapshot": "false"
+  "block-volume-snapshot": "true"
   "csi-windows-support": "false"
   "use-csinode-id": "true"
+  "list-volumes": "false"
   "pv-to-backingdiskobjectid-mapping": "false"
   "cnsmgr-suspend-create-volume": "false"
+  "topology-preferential-datastores": "true"
+  "max-pvscsi-targets-per-vm": "false"
 kind: ConfigMap
 metadata:
   name: internal-feature-states.csi.vsphere.vmware.com
@@ -284,7 +287,6 @@ spec:
           args:
             - "--fss-name=internal-feature-states.csi.vsphere.vmware.com"
             - "--fss-namespace=$(CSI_NAMESPACE)"
-            - "--use-gocsi=false"
           imagePullPolicy: "Always"
           env:
             - name: CSI_ENDPOINT
@@ -478,7 +480,6 @@ spec:
           args:
             - "--fss-name=internal-feature-states.csi.vsphere.vmware.com"
             - "--fss-namespace=$(CSI_NAMESPACE)"
-            - "--use-gocsi=false"
           imagePullPolicy: "Always"
           env:
             - name: NODE_NAME
