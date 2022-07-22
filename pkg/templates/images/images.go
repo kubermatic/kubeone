@@ -368,7 +368,7 @@ func optionalResources() map[Resource]map[string]string {
 		// GCP Compute Persistent Disk CSI
 		GCPComputeCSIDriver: {
 			"1.21.x":    "gke.gcr.io/gcp-compute-persistent-disk-csi-driver:v1.4.0",
-			">= 1.22.0": "k8s.gcr.io/cloud-provider-gcp/gcp-compute-persistent-disk-csi-driver:v1.7.1",
+			">= 1.22.0": "k8s.gcr.io/cloud-provider-gcp/gcp-compute-persistent-disk-csi-driver:v1.7.2",
 		},
 		GCPComputeCSIProvisioner:               {"*": "k8s.gcr.io/sig-storage/csi-provisioner:v3.1.0"},
 		GCPComputeCSIAttacher:                  {"*": "k8s.gcr.io/sig-storage/csi-attacher:v3.4.0"},
