@@ -400,10 +400,10 @@ func optionalResources() map[Resource]map[string]string {
 
 		// Cluster-autoscaler addon
 		ClusterAutoscaler: {
-			"1.20.x":    "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.20.2",
-			"1.21.x":    "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.21.2",
-			"1.22.x":    "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.22.2",
-			"1.23.x":    "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.23.0",
+			"1.20.x":    "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.20.3",
+			"1.21.x":    "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.21.3",
+			"1.22.x":    "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.22.3",
+			"1.23.x":    "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.23.1",
 			">= 1.24.0": "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.24.0",
 		},
 
