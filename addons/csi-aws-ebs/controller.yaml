@@ -123,6 +123,7 @@ spec:
           args:
             - --csi-address=$(ADDRESS)
             - --v=2
+            - --handle-volume-inuse-error=false
           env:
             - name: ADDRESS
               value: /var/lib/csi/sockets/pluginproxy/csi.sock
