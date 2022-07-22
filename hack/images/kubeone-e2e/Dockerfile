@@ -14,7 +14,7 @@
 
 # building image
 
-FROM golang:1.18.3 as builder
+FROM golang:1.18.4 as builder
 
 RUN apt-get update && apt-get install -y \
     unzip
@@ -29,13 +29,16 @@ ENV SONOBUOY_VERSION "0.56.7"
 RUN curl -fL https://github.com/vmware-tanzu/sonobuoy/releases/download/v${SONOBUOY_VERSION}/sonobuoy_${SONOBUOY_VERSION}_linux_amd64.tar.gz | tar vxz
 RUN chmod +x sonobuoy
 
+ENV KUBECTL_VERSION="v1.23.9"
+RUN curl --fail -Lo kubectl https://dl.k8s.io/release/$KUBECTL_VERSION/bin/linux/amd64/kubectl
+RUN chmod +x kubectl
+
 COPY install-kube-tests-binaries.sh /opt/install-kube-tests-binaries.sh
 RUN /opt/install-kube-tests-binaries.sh
 
 # resulting image
 
-
-FROM golang:1.18.3
+FROM golang:1.18.4
 
 ARG version
 
@@ -47,6 +50,30 @@ LABEL maintainer="https://github.com/kubermatic/kubeone/blob/master/OWNERS"
 ENV KUBETESTS_ROOT "/opt/kube-test"
 ENV USER root
 
+# install base tools
+RUN apt-get update && \
+    apt-get install -y \
+      apt-transport-https \
+      bash \
+      bash-completion \
+      ca-certificates \
+      curl \
+      git \
+      htop \
+      make \
+      nano \
+      openssh-client \
+      rsync \
+      software-properties-common \
+      unzip \
+      vim \
+      zip
+
+# make bash much more pleasant to use
+COPY bashrc /root/.bashrc
+COPY htoprc /root/.config/htop/htoprc
+
 COPY --from=builder /usr/local/bin/terraform /usr/local/bin/terraform
 COPY --from=builder /download/sonobuoy /usr/local/bin/sonobuoy
+COPY --from=builder /download/kubectl /usr/local/bin/kubectl
 COPY --from=builder ${KUBETESTS_ROOT} ${KUBETESTS_ROOT}
