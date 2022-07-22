@@ -20,7 +20,7 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.24.0"
+              value: "1.24.3"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -47,7 +47,7 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.24.0"
+              value: "1.24.3"
             - name: TEST_CONFIG_API_VERSION
               value: "v1beta1"
             - name: KUBEONE_TEST_RUN
@@ -76,7 +76,7 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.24.0"
+              value: "1.24.3"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -103,7 +103,7 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.24.0"
+              value: "1.24.3"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -130,7 +130,7 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.24.0"
+              value: "1.24.3"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
             - name: TF_VAR_project
@@ -159,7 +159,7 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.24.0"
+              value: "1.24.3"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -186,7 +186,7 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.24.0"
+              value: "1.24.3"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
