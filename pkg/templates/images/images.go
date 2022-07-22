@@ -330,7 +330,7 @@ func optionalResources() map[Resource]map[string]string {
 		OpenstackCSISnapshotter:        {"*": "k8s.gcr.io/sig-storage/csi-snapshotter:v5.0.1"},
 
 		// Equinix Metal CCM
-		EquinixMetalCCM: {"*": "docker.io/equinix/cloud-provider-equinix-metal:v3.4.2"},
+		EquinixMetalCCM: {"*": "docker.io/equinix/cloud-provider-equinix-metal:v3.4.3"},
 
 		// vSphere CCM
 		VsphereCCM: {
