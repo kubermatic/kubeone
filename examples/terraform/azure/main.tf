@@ -20,8 +20,9 @@ provider "azurerm" {
 }
 
 locals {
-  kubeapi_endpoint   = var.disable_kubeapi_loadbalancer ? azurerm_network_interface.control_plane.0.private_ip_address : azurerm_public_ip.lbip.0.ip_address
-  loadbalancer_count = var.disable_kubeapi_loadbalancer ? 0 : 1
+  kubeapi_endpoint                   = var.disable_kubeapi_loadbalancer ? azurerm_network_interface.control_plane.0.private_ip_address : azurerm_public_ip.lbip.0.ip_address
+  loadbalancer_count                 = var.disable_kubeapi_loadbalancer ? 0 : 1
+  nic_address_pool_association_count = local.loadbalancer_count > 0 ? var.control_plane_vm_count : 0
 }
 
 provider "time" {
@@ -228,7 +229,7 @@ resource "azurerm_network_interface" "control_plane" {
 }
 
 resource "azurerm_network_interface_backend_address_pool_association" "control_plane" {
-  count = var.control_plane_vm_count
+  count = local.nic_address_pool_association_count
 
   ip_configuration_name   = "${var.cluster_name}-cp-${count.index}"
   network_interface_id    = element(azurerm_network_interface.control_plane.*.id, count.index)
