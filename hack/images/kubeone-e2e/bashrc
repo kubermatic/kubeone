@@ -1,0 +1,26 @@
+# make sure Prow presets do not influence the current kubeconfig for
+# interactive debugging sessions
+unset KUBECONFIG
+
+source /usr/share/bash-completion/bash_completion
+alias k=kubectl
+source <(kubectl completion bash)
+source <(kubectl completion bash | sed s/kubectl/k/g)
+
+cn() {
+    kubectl config set-context $(kubectl config current-context) --namespace=$1
+}
+
+kcfg() {
+    export KUBECONFIG="$1"
+}
+
+eval "$(ssh-agent)"
+
+# suuuper ugly hack to make "watch" also respect aliases, so "watch k get pods" works
+alias watch='watch '
+alias ls='ls -lh --file-type --group-directories-first'
+alias l='ls -lh --file-type --group-directories-first'
+alias ll='ls -lh --file-type --group-directories-first'
+alias cd..='cd ..'
+alias ..='cd ..'
