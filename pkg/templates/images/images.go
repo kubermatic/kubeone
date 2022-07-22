@@ -233,11 +233,11 @@ func optionalResources() map[Resource]map[string]string {
 		},
 
 		AwsCCM: {
-			"1.20.x":    "k8s.gcr.io/provider-aws/cloud-controller-manager:v1.20.1",
-			"1.21.x":    "k8s.gcr.io/provider-aws/cloud-controller-manager:v1.21.1",
-			"1.22.x":    "k8s.gcr.io/provider-aws/cloud-controller-manager:v1.22.2",
-			"1.23.x":    "k8s.gcr.io/provider-aws/cloud-controller-manager:v1.23.1",
-			">= 1.24.0": "k8s.gcr.io/provider-aws/cloud-controller-manager:v1.24.0",
+			"1.20.x":    "k8s.gcr.io/provider-aws/cloud-controller-manager:v1.20.3",
+			"1.21.x":    "k8s.gcr.io/provider-aws/cloud-controller-manager:v1.21.3",
+			"1.22.x":    "k8s.gcr.io/provider-aws/cloud-controller-manager:v1.22.4",
+			"1.23.x":    "k8s.gcr.io/provider-aws/cloud-controller-manager:v1.23.2",
+			">= 1.24.0": "k8s.gcr.io/provider-aws/cloud-controller-manager:v1.24.1",
 		},
 
 		// Azure CCM
@@ -257,14 +257,14 @@ func optionalResources() map[Resource]map[string]string {
 		},
 
 		// AWS EBS CSI driver
-		AwsEbsCSI:                    {"*": "public.ecr.aws/ebs-csi-driver/aws-ebs-csi-driver:v1.6.2"},
-		AwsEbsCSIAttacher:            {"*": "k8s.gcr.io/sig-storage/csi-attacher:v3.1.0"},
-		AwsEbsCSILivenessProbe:       {"*": "k8s.gcr.io/sig-storage/livenessprobe:v2.4.0"},
-		AwsEbsCSINodeDriverRegistrar: {"*": "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.3.0"},
-		AwsEbsCSIProvisioner:         {"*": "k8s.gcr.io/sig-storage/csi-provisioner:v2.2.2"},
-		AwsEbsCSIResizer:             {"*": "k8s.gcr.io/sig-storage/csi-resizer:v1.1.0"},
-		AwsEbsCSISnapshotter:         {"*": "k8s.gcr.io/sig-storage/csi-snapshotter:v4.2.1"},
-		AwsEbsCSISnapshotController:  {"*": "k8s.gcr.io/sig-storage/snapshot-controller:v4.2.1"},
+		AwsEbsCSI:                    {"*": "public.ecr.aws/ebs-csi-driver/aws-ebs-csi-driver:v1.9.0"},
+		AwsEbsCSIAttacher:            {"*": "k8s.gcr.io/sig-storage/csi-attacher:v3.4.0"},
+		AwsEbsCSILivenessProbe:       {"*": "k8s.gcr.io/sig-storage/livenessprobe:v2.5.0"},
+		AwsEbsCSINodeDriverRegistrar: {"*": "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.5.1"},
+		AwsEbsCSIProvisioner:         {"*": "k8s.gcr.io/sig-storage/csi-provisioner:v3.1.0"},
+		AwsEbsCSIResizer:             {"*": "k8s.gcr.io/sig-storage/csi-resizer:v1.4.0"},
+		AwsEbsCSISnapshotter:         {"*": "k8s.gcr.io/sig-storage/csi-snapshotter:v6.0.1"},
+		AwsEbsCSISnapshotController:  {"*": "k8s.gcr.io/sig-storage/snapshot-controller:v6.0.1"},
 
 		// AzureFile CSI driver
 		AzureFileCSI:                      {"*": "mcr.microsoft.com/k8s/csi/azurefile-csi:v1.18.0"},
