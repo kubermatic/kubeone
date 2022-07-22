@@ -1,22 +1,35 @@
-kind: StatefulSet
+kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: csi-provisioner-ntnx-plugin
+  name: nutanix-csi-controller
   namespace: kube-system
 spec:
-  serviceName: csi-provisioner-ntnx-plugin
-  replicas: 1
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 0
   selector:
     matchLabels:
-      app: csi-provisioner-ntnx-plugin
+      app: nutanix-csi-controller
   template:
     metadata:
       labels:
-        app: csi-provisioner-ntnx-plugin
+        app: nutanix-csi-controller
       annotations:
         "caBundle-hash": "{{ .Config.CABundle | sha256sum }}"
     spec:
-      serviceAccount: csi-provisioner
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: nutanix-csi-controller
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+      serviceAccount: nutanix-csi-controller
       hostNetwork: true
       containers:
         - name: csi-provisioner
@@ -31,7 +44,8 @@ spec:
             - --default-fstype=ext4
             # This is used to collect CSI operation metrics
             - --http-endpoint=:9809
-            - --v=5
+            - --v=2
+            - --leader-election=true
           env:
             - name: ADDRESS
               value: /var/lib/csi/sockets/pluginproxy/csi.sock
@@ -49,10 +63,10 @@ spec:
           image: {{ .InternalImages.Get "NutanixCSIResizer" }}
           imagePullPolicy: IfNotPresent
           args:
-            - --v=5
+            - --v=2
             - --csi-address=$(ADDRESS)
             - --timeout=60s
-            - --leader-election=false
+            - --leader-election=true
             # NTNX CSI dirver supports online volume expansion.
             - --handle-volume-inuse-error=false
             - --http-endpoint=:9810
@@ -67,7 +81,7 @@ spec:
           imagePullPolicy: IfNotPresent
           args:
           - --csi-address=$(ADDRESS)
-          - --leader-election=false
+          - --leader-election=true
           - --logtostderr=true
           - --timeout=300s
           env:
@@ -76,7 +90,7 @@ spec:
           volumeMounts:
           - name: socket-dir
             mountPath: /csi
-        - name: ntnx-csi-plugin
+        - name: nutanix-csi-plugin
           image: {{ .InternalImages.Get "NutanixCSI" }}
           imagePullPolicy: IfNotPresent
           securityContext:
@@ -133,9 +147,9 @@ spec:
           args:
             - --csi-address=/csi/csi.sock
             - --http-endpoint=:9807
+      priorityClassName: system-cluster-critical
       nodeSelector:
         node-role.kubernetes.io/control-plane: ""
-      priorityClassName: system-cluster-critical
       tolerations:
         - key: "node-role.kubernetes.io/master"
           operator: "Exists"
