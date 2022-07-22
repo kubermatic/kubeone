@@ -98,7 +98,7 @@ const (
 	VsphereCSISnapshotValidatingWebhookName      = "snapshot-validation-service"
 	VsphereCSISnapshotValidatingWebhookNamespace = metav1.NamespaceSystem
 
-	NutanixCSIWebhookName      = "snapshot-validation-service"
+	NutanixCSIWebhookName      = "csi-snapshot-webhook"
 	NutanixCSIWebhookNamespace = metav1.NamespaceSystem
 
 	GCEComputeCSIWebhookName      = "snapshot-validation-service"
