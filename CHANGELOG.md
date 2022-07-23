@@ -984,7 +984,7 @@ Check out the [Upgrading from 1.2 to 1.3 tutorial](https://docs.kubermatic.com/k
   * The command can be automatically approved by using the `--auto-approve` flag
 * [**BREAKING/ACTION REQUIRED**] Upgrade Terraform to 1.0.0. The minimum Terraform version as of this KubeOne release is v1.0.0. ([#1368](https://github.com/kubermatic/kubeone/pull/1368))
 * [**BREAKING/ACTION REQUIRED**] Use AdmissionRegistration v1 API for machine-controller-webhook. The minimum supported Kubernetes version is now 1.16. ([#1290](https://github.com/kubermatic/kubeone/pull/1290))
-  * Since AdmissionRegistartion v1 got introduced in Kubernetes 1.16, the minimum Kubernetes version that can be managed by KubeOne is now 1.16. If you're running the Kubernetes clusters running 1.15 or older, please use the older release of KubeOne to upgrade those clusters
+  * Since AdmissionRegistration v1 got introduced in Kubernetes 1.16, the minimum Kubernetes version that can be managed by KubeOne is now 1.16. If you're running the Kubernetes clusters running 1.15 or older, please use the older release of KubeOne to upgrade those clusters
 * KubeOne Addons can now be organized into subdirectories. It currently remains possible to put addons in the root of the addons directory, however, this is option is considered as deprecated as of this release. We highly recommend all users to reorganize their addons into subdirectories, where each subdirectory is for YAML manifests related to one addon.
 
 ## Added
@@ -1384,11 +1384,11 @@ Check out the [Upgrading from 1.2 to 1.3 tutorial](https://docs.kubermatic.com/k
 
 * Implement the OverwriteRegistry functionality ([#1145](https://github.com/kubermatic/kubeone/pull/1145))
   * This PR adds a new top-level API field `registryConfiguration` which controls how images used for components deployed by KubeOne and kubeadm are pulled from an image registry.
-  * The `registryConfiguration.overwriteRegisty` field specifies a custom Docker registry to be used instead of the default one.
-  * The `registryConfiguration.insecureRegistry` field configures Docker to consider the registry specified in `registryConfiguration.overwriteRegisty` as an insecure registry.
-  * For example, if `registryConfiguration.overwriteRegisty` is set to `127.0.0.1:5000`, image called `k8s.gcr.io/kube-apiserver:v1.19.3` would become `127.0.0.1:5000/kube-apiserver:v1.19.3`.
-  * Setting `registryConfiguration.overwriteRegisty` applies to all images deployed by KubeOne and kubeadm, including addons deployed by KubeOne.
-  * Setting `registryConfiguration.overwriteRegisty` applies to worker nodes managed by machine-controller and KubeOne as well.
+  * The `registryConfiguration.overwriteRegistry` field specifies a custom Docker registry to be used instead of the default one.
+  * The `registryConfiguration.insecureRegistry` field configures Docker to consider the registry specified in `registryConfiguration.overwriteRegistry` as an insecure registry.
+  * For example, if `registryConfiguration.overwriteRegistry` is set to `127.0.0.1:5000`, image called `k8s.gcr.io/kube-apiserver:v1.19.3` would become `127.0.0.1:5000/kube-apiserver:v1.19.3`.
+  * Setting `registryConfiguration.overwriteRegistry` applies to all images deployed by KubeOne and kubeadm, including addons deployed by KubeOne.
+  * Setting `registryConfiguration.overwriteRegistry` applies to worker nodes managed by machine-controller and KubeOne as well.
   * You can run `kubeone config print -f` for more details regarding the RegistryConfiguration API.
 * Add external cloud controller manager support for VMware vSphere clusters ([#1159](https://github.com/kubermatic/kubeone/pull/1159))
 
@@ -1433,9 +1433,9 @@ Check out the [Upgrading from 1.2 to 1.3 tutorial](https://docs.kubermatic.com/k
 
 * Implement the OverwriteRegistry functionality ([#1145](https://github.com/kubermatic/kubeone/pull/1145))
   * This PR adds a new top-level API field `registryConfiguration` which controls how images used for components deployed by KubeOne and kubeadm are pulled from an image registry.
-  * The `registryConfiguration.overwriteRegisty` field can be used to specify a custom Docker registry to be used instead of the default one.
-  * For example, if `registryConfiguration.overwriteRegisty` is set to `127.0.0.1:5000`, image called `k8s.gcr.io/kube-apiserver:v1.19.3` would become `127.0.0.1:5000/kube-apiserver:v1.19.3`.
-  * Setting `registryConfiguration.overwriteRegisty` applies to all images deployed by KubeOne and kubeadm, including addons deployed by KubeOne.
+  * The `registryConfiguration.overwriteRegistry` field can be used to specify a custom Docker registry to be used instead of the default one.
+  * For example, if `registryConfiguration.overwriteRegistry` is set to `127.0.0.1:5000`, image called `k8s.gcr.io/kube-apiserver:v1.19.3` would become `127.0.0.1:5000/kube-apiserver:v1.19.3`.
+  * Setting `registryConfiguration.overwriteRegistry` applies to all images deployed by KubeOne and kubeadm, including addons deployed by KubeOne.
   * You can run `kubeone config print -f` for more details regarding the RegistryConfiguration API.
 
 ### Addons
@@ -2533,7 +2533,7 @@ many new possibilities, like API versioning.
 
 * Deploy machine-controller v1.0.7 on the new clusters ([#247](https://github.com/kubermatic/kubeone/pull/247))
 * Automatically download the Kubeconfing file after install ([#248](https://github.com/kubermatic/kubeone/pull/248))
-* Default `--destory-workers` to `true` for the `kubeone reset` command ([#252](https://github.com/kubermatic/kubeone/pull/252))
+* Default `--destroy-workers` to `true` for the `kubeone reset` command ([#252](https://github.com/kubermatic/kubeone/pull/252))
 * Improve OpenStack Terraform scripts ([#253](https://github.com/kubermatic/kubeone/pull/253))
 * The `cloud-config` file for OpenStack is required ([#253](https://github.com/kubermatic/kubeone/pull/253))
 * The environment variable names are changed to match names used by Terraform ([#264](https://github.com/kubermatic/kubeone/pull/264))

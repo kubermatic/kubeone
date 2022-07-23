@@ -56,7 +56,7 @@ func (c *Configuration) AddFilePath(filename, filePath, manifestFilePath string)
 	if !filepath.IsAbs(filePath) && manifestFilePath != "" {
 		manifestAbsPath, err := filepath.Abs(filepath.Dir(manifestFilePath))
 		if err != nil {
-			return fail.Runtime(err, "getting absolut path to the manifest file")
+			return fail.Runtime(err, "getting absolute path to the manifest file")
 		}
 		filePath = filepath.Join(manifestAbsPath, filePath)
 	}

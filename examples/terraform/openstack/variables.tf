@@ -114,7 +114,7 @@ variable "image_properties_query" {
     os_distro  = "ubuntu"
     os_version = "20.04"
   }
-  description = "in absense of var.image, this will be used to query API for the image"
+  description = "in absence of var.image, this will be used to query API for the image"
   type        = map(any)
 }
 
@@ -144,7 +144,7 @@ variable "initial_machinedeployment_operating_system_profile" {
   default     = ""
   type        = string
   description = <<EOF
-Name of operating system profile for MachineDeployments, only applicable if operatng-system-manager addon is enabled.
+Name of operating system profile for MachineDeployments, only applicable if operating-system-manager addon is enabled.
 If not specified, the default value will be added by machine-controller addon.
 EOF
 }

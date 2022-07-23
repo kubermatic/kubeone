@@ -1341,7 +1341,7 @@ func TestValidateCABundle(t *testing.T) {
 		},
 		{
 			name:          "incorrect",
-			caBundle:      "garbadge",
+			caBundle:      "garbage",
 			expectedError: true,
 		},
 	}

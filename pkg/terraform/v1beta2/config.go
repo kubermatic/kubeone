@@ -280,7 +280,7 @@ func (output *Config) Apply(cluster *kubeonev1beta2.KubeOneCluster) error {
 		}
 	}
 
-	// Walk through all configued workersets from terraform and apply their config
+	// Walk through all configured workersets from terraform and apply their config
 	// by either merging it into an existing workerSet or creating a new one
 	for workersetName, workersetValue := range output.KubeOneWorkers.Value {
 		var existingWorkerSet *kubeonev1beta2.DynamicWorkerConfig

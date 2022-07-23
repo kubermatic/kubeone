@@ -86,7 +86,7 @@ func (p *Kubetest) Verify(scenario, skip string) error {
 
 // findKubetest tries to locate existing path to kubetest with specified version
 // by trying to find "<basedir>/kubernetes-<version>/kubernetes/version" file,
-// gradually removing parts of sematic version (e.g. trying versions: [1.16.2,
+// gradually removing parts of semantic version (e.g. trying versions: [1.16.2,
 // 1.16, 1]).
 func findKubetest(basedir, version string) (string, error) {
 	sver, err := semver.NewVersion(version)

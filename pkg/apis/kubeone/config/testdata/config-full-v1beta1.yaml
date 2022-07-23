@@ -319,7 +319,7 @@ machineController:
 # Proxy is used to configure HTTP_PROXY, HTTPS_PROXY and NO_PROXY
 # for Docker daemon and kubelet, and to be used when provisioning cluster
 # (e.g. for curl, apt-get..).
-# Also worker nodes managed by machine-controller will be configred according to
+# Also worker nodes managed by machine-controller will be configured according to
 # proxy settings here. The caveat is that only proxy.http and proxy.noProxy will
 # be used on worker machines.
 # proxy:
