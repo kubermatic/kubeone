@@ -87,7 +87,7 @@ func generateConfigurationFiles(s *state.State) error {
 			config = s.Cluster.Features.EncryptionProviders.CustomEncryptionConfiguration
 			s.Configuration.AddFile(fmt.Sprintf("cfg/%s", configFileName), config)
 		} else if s.ShouldEnableEncryption() { // automatically generate config
-			encryptionProvidersConfig, err := encryptionproviders.NewEncyrptionProvidersConfig(s)
+			encryptionProvidersConfig, err := encryptionproviders.NewEncryptionProvidersConfig(s)
 			if err != nil {
 				return err
 			}

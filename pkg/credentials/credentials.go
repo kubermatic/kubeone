@@ -47,7 +47,7 @@ const (
 	AzureClientID                        = "ARM_CLIENT_ID"
 	AzureClientSecret                    = "ARM_CLIENT_SECRET" //nolint:gosec
 	AzureTenantID                        = "ARM_TENANT_ID"
-	AzureSubscribtionID                  = "ARM_SUBSCRIPTION_ID"
+	AzureSubscriptionID                  = "ARM_SUBSCRIPTION_ID"
 	DigitalOceanTokenKey                 = "DIGITALOCEAN_TOKEN"
 	GoogleServiceAccountKey              = "GOOGLE_CREDENTIALS"
 	HetznerTokenKey                      = "HCLOUD_TOKEN"
@@ -90,7 +90,7 @@ const (
 	AzureClientIDMC           = "AZURE_CLIENT_ID"
 	AzureClientSecretMC       = "AZURE_CLIENT_SECRET" //nolint:gosec
 	AzureTenantIDMC           = "AZURE_TENANT_ID"
-	AzureSubscribtionIDMC     = "AZURE_SUBSCRIPTION_ID"
+	AzureSubscriptionIDMC     = "AZURE_SUBSCRIPTION_ID"
 	DigitalOceanTokenKeyMC    = "DO_TOKEN"
 	GoogleServiceAccountKeyMC = "GOOGLE_SERVICE_ACCOUNT"
 	HetznerTokenKeyMC         = "HZ_TOKEN"
@@ -106,7 +106,7 @@ var (
 		AzureClientID,
 		AzureClientSecret,
 		AzureTenantID,
-		AzureSubscribtionID,
+		AzureSubscriptionID,
 		DigitalOceanTokenKey,
 		GoogleServiceAccountKey,
 		HetznerTokenKey,
@@ -191,7 +191,7 @@ func ProviderCredentials(cloudProvider kubeoneapi.CloudProviderSpec, credentials
 			{Name: AzureClientID, MachineControllerName: AzureClientIDMC},
 			{Name: AzureClientSecret, MachineControllerName: AzureClientSecretMC},
 			{Name: AzureTenantID, MachineControllerName: AzureTenantIDMC},
-			{Name: AzureSubscribtionID, MachineControllerName: AzureSubscribtionIDMC},
+			{Name: AzureSubscriptionID, MachineControllerName: AzureSubscriptionIDMC},
 		}, defaultValidationFunc)
 	case cloudProvider.DigitalOcean != nil:
 		return credentialsFinder.parseCredentialVariables([]ProviderEnvironmentVariable{

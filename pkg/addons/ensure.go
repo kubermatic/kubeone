@@ -191,7 +191,7 @@ func EnsureUserAddons(s *state.State) error {
 		}
 
 		if embeddedAddon.Delete {
-			if err := applier.loadAndDeleteAddon(s, applier.EmbededFS, embeddedAddon.Name); err != nil {
+			if err := applier.loadAndDeleteAddon(s, applier.EmbeddedFS, embeddedAddon.Name); err != nil {
 				return err
 			}
 
@@ -256,7 +256,7 @@ func EnsureAddonByName(s *state.State, addonName string) error {
 		}
 	}
 
-	addons, eErr := fs.ReadDir(applier.EmbededFS, ".")
+	addons, eErr := fs.ReadDir(applier.EmbeddedFS, ".")
 	if eErr != nil {
 		return fail.Runtime(eErr, "reading embedded addons directory")
 	}
@@ -266,7 +266,7 @@ func EnsureAddonByName(s *state.State, addonName string) error {
 			continue
 		}
 		if a.Name() == addonName {
-			if err := applier.loadAndApplyAddon(s, applier.EmbededFS, a.Name()); err != nil {
+			if err := applier.loadAndApplyAddon(s, applier.EmbeddedFS, a.Name()); err != nil {
 				return err
 			}
 
@@ -311,7 +311,7 @@ func DeleteAddonByName(s *state.State, addonName string) error {
 		}
 	}
 
-	addons, eErr := fs.ReadDir(applier.EmbededFS, ".")
+	addons, eErr := fs.ReadDir(applier.EmbeddedFS, ".")
 	if eErr != nil {
 		return fail.Runtime(eErr, "reading embedded addons directory")
 	}
@@ -321,7 +321,7 @@ func DeleteAddonByName(s *state.State, addonName string) error {
 			continue
 		}
 		if a.Name() == addonName {
-			if err := applier.loadAndDeleteAddon(s, applier.EmbededFS, a.Name()); err != nil {
+			if err := applier.loadAndDeleteAddon(s, applier.EmbeddedFS, a.Name()); err != nil {
 				return err
 			}
 

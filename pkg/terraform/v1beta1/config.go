@@ -221,7 +221,7 @@ func (c *Config) Apply(cluster *kubeonev1beta1.KubeOneCluster) error {
 		cluster.CloudProvider.Hetzner.NetworkID = cp.NetworkID
 	}
 
-	// Walk through all configued workersets from terraform and apply their config
+	// Walk through all configured workersets from terraform and apply their config
 	// by either merging it into an existing workerSet or creating a new one
 	for workersetName, workersetValue := range c.KubeOneWorkers.Value {
 		var existingWorkerSet *kubeonev1beta1.DynamicWorkerConfig

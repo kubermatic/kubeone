@@ -39,7 +39,7 @@ func generateAESCBCSecret() (string, error) {
 	return base64.StdEncoding.EncodeToString(buf), nil
 }
 
-func NewEncyrptionProvidersConfig(s *state.State) (*apiserverconfigv1.EncryptionConfiguration, error) {
+func NewEncryptionProvidersConfig(s *state.State) (*apiserverconfigv1.EncryptionConfiguration, error) {
 	secret, err := generateAESCBCSecret()
 	if err != nil {
 		return nil, err

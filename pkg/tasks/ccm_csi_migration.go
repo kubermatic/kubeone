@@ -111,7 +111,7 @@ func ccmMigrationRegenerateControlPlaneManifestsInternal(s *state.State, node *k
 	}
 	_, _, err = s.Runner.RunRaw(cmd)
 	if err != nil {
-		return fail.SSH(err, "regenerate contorl-plane manifests for CCM migration")
+		return fail.SSH(err, "regenerate control-plane manifests for CCM migration")
 	}
 
 	timeout := 30 * time.Second

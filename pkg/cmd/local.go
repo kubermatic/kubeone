@@ -162,7 +162,7 @@ func localCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		&opts.APIEndpoint,
 		longFlagName(opts, "ApiEndpoint"),
 		"",
-		"kube-apiserver endpoint to init, defaut to autodetect")
+		"kube-apiserver endpoint to init, default to autodetect")
 
 	cmd.Flags().BoolVar(
 		&opts.NoInit,

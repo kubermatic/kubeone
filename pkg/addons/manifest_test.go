@@ -239,20 +239,20 @@ func TestCombineManifests(t *testing.T) {
 
 func TestImageRegistryParsing(t *testing.T) {
 	testCases := []struct {
-		name                 string
-		registryConfigurtion *kubeoneapi.RegistryConfiguration
-		inputManifest        string
-		expectedManifest     string
+		name                  string
+		registryConfiguration *kubeoneapi.RegistryConfiguration
+		inputManifest         string
+		expectedManifest      string
 	}{
 		{
-			name:                 "default registry configuration",
-			registryConfigurtion: nil,
-			inputManifest:        testManifest1WithImage,
-			expectedManifest:     testManifest1WithImageParsed,
+			name:                  "default registry configuration",
+			registryConfiguration: nil,
+			inputManifest:         testManifest1WithImage,
+			expectedManifest:      testManifest1WithImageParsed,
 		},
 		{
 			name: "custom registry",
-			registryConfigurtion: &kubeoneapi.RegistryConfiguration{
+			registryConfiguration: &kubeoneapi.RegistryConfiguration{
 				OverwriteRegistry: "127.0.0.1:5000",
 			},
 			inputManifest:    testManifest1WithImage,
@@ -272,13 +272,13 @@ func TestImageRegistryParsing(t *testing.T) {
 			td := templateData{
 				Config: &kubeoneapi.KubeOneCluster{
 					Name:                  "kubeone-test",
-					RegistryConfiguration: tc.registryConfigurtion,
+					RegistryConfiguration: tc.registryConfiguration,
 				},
 			}
 
 			overwriteRegistry := ""
-			if tc.registryConfigurtion != nil && tc.registryConfigurtion.OverwriteRegistry != "" {
-				overwriteRegistry = tc.registryConfigurtion.OverwriteRegistry
+			if tc.registryConfiguration != nil && tc.registryConfiguration.OverwriteRegistry != "" {
+				overwriteRegistry = tc.registryConfiguration.OverwriteRegistry
 			}
 
 			applier := &applier{

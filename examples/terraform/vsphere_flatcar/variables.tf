@@ -182,13 +182,13 @@ variable "initial_machinedeployment_operating_system_profile" {
   default     = ""
   type        = string
   description = <<EOF
-Name of operating system profile for MachineDeployments, only applicable if operatng-system-manager addon is enabled.
+Name of operating system profile for MachineDeployments, only applicable if operating-system-manager addon is enabled.
 If not specified, the default value will be added by machine-controller addon.
 EOF
 }
 
 variable "is_vsphere_enterprise_plus_license" {
-  description = "toogle on/off based on your vsphere enterprise license"
+  description = "toggle on/off based on your vsphere enterprise license"
   type        = bool
   default     = true
 }

@@ -111,7 +111,7 @@ optionalimages=$(kubeone config images list --filter=optional --kubernetes-versi
 for IMAGE in $k8simages; do
   # The CoreDNS image has a different override semantics in Kubernetes 1.21 and
   # in other Kubernetes minor releases (due to a bug).
-  # The image will be overriden in the following way depending on the
+  # The image will be overridden in the following way depending on the
   # Kubernetes version:
   #   * 1.21: k8s.gcr.io/coredns/coredns -> custom-registry/coredns/coredns
   #   * all other releases: k8s.gcr.io/coredns/coredns -> custom-registry/coredns

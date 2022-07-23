@@ -126,7 +126,7 @@ resource "aws_security_group_rule" "ingress_self_allow_all" {
   type              = "ingress"
   security_group_id = aws_security_group.common.id
 
-  description = "allow all incomming traffic from members of this group"
+  description = "allow all incoming traffic from members of this group"
   from_port   = 0
   to_port     = 0
   protocol    = "-1"
@@ -187,7 +187,7 @@ resource "aws_security_group" "ssh" {
   vpc_id      = data.aws_vpc.selected.id
 
   ingress {
-    description = "allow incomming SSH"
+    description = "allow incoming SSH"
     from_port   = var.ssh_port
     to_port     = var.ssh_port
     protocol    = "tcp"
