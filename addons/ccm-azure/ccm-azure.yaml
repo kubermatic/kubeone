@@ -172,7 +172,7 @@ spec:
             - "--cloud-provider=azure"
             - "--cluster-name={{ .Config.Name }}"
             - "--controllers=*,-cloud-node" # disable cloud-node controller
-            - "--configure-cloud-routes=true" # "false" for Azure CNI and "true" for other network plugins
+            - "--configure-cloud-routes=false" # "false" because we use VXLAN overlay
             - "--leader-elect=true"
             - "--route-reconciliation-period=10s"
             - "--v=4"
