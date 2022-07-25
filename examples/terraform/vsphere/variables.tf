@@ -167,7 +167,6 @@ variable "worker_memory" {
   default     = 2048
   description = "memory size of each worker node in MB"
   type        = number
-
 }
 
 variable "worker_num_cpus" {
