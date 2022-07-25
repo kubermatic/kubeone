@@ -209,9 +209,9 @@ func FindResource(name string) (Resource, error) {
 
 func baseResources() map[Resource]map[string]string {
 	return map[Resource]map[string]string{
-		CalicoCNI:         {"*": "quay.io/calico/cni:v3.22.2"},
-		CalicoController:  {"*": "quay.io/calico/kube-controllers:v3.22.2"},
-		CalicoNode:        {"*": "quay.io/calico/node:v3.22.2"},
+		CalicoCNI:         {"*": "quay.io/calico/cni:v3.23.3"},
+		CalicoController:  {"*": "quay.io/calico/kube-controllers:v3.23.3"},
+		CalicoNode:        {"*": "quay.io/calico/node:v3.23.3"},
 		DNSNodeCache:      {"*": "registry.k8s.io/dns/k8s-dns-node-cache:1.21.1"},
 		Flannel:           {"*": "quay.io/coreos/flannel:v0.15.1"},
 		MachineController: {"*": "quay.io/kubermatic/machine-controller:v1.52.0"},
