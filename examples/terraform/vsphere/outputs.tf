@@ -80,7 +80,7 @@ output "kubeone_workers" {
           # https://github.com/kubermatic/machine-controller/blob/master/examples/vsphere-machinedeployment.yaml
           allowInsecure = false
           cluster       = var.compute_cluster_name
-          cpus          = 2
+          cpus          = var.worker_num_cpus
           datacenter    = var.dc_name
           # Either Datastore or DatastoreCluster have to be provided.
           datastore        = var.datastore_name

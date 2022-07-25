@@ -269,31 +269,60 @@ var (
 		"vsphere_default": {
 			name: "vsphere_default",
 			labels: map[string]string{
-				"preset-goproxy": "true",
-				"preset-vsphere": "true",
+				"preset-goproxy":        "true",
+				"preset-vsphere-legacy": "true",
 			},
 			environ: map[string]string{
 				"PROVIDER": "vsphere",
 			},
 			terraform: terraformBin{
 				path:    "../../examples/terraform/vsphere",
-				varFile: "testdata/vsphere_default.tfvars",
+				varFile: "testdata/vsphere.tfvars",
+				vars: []string{
+					"template_name=kubeone-e2e-ubuntu",
+					"worker_os=ubuntu",
+					"ssh_username=ubuntu",
+				},
 			},
 		},
 		"vsphere_flatcar": {
 			name: "vsphere_flatcar",
 			labels: map[string]string{
-				"preset-goproxy": "true",
-				"preset-vsphere": "true",
+				"preset-goproxy":        "true",
+				"preset-vsphere-legacy": "true",
 			},
 			environ: map[string]string{
 				"PROVIDER": "vsphere",
 			},
 			terraform: terraformBin{
 				path:    "../../examples/terraform/vsphere_flatcar",
-				varFile: "testdata/vsphere_flatcar.tfvars",
+				varFile: "testdata/vsphere.tfvars",
+				vars: []string{
+					"template_name=machine-controller-e2e-flatcar",
+				},
 			},
 		},
+		// TODO
+		// "vsphere_rhel": {
+		// 	name: "vsphere_rhel",
+		// 	labels: map[string]string{
+		// 		"preset-goproxy": "true",
+		// 		"preset-vsphere-legacy": "true",
+		// 	},
+		// 	environ: map[string]string{
+		// 		"PROVIDER": "vsphere",
+		// 	},
+		// 	terraform: terraformBin{
+		// 		path:    "../../examples/terraform/vsphere",
+		// 		varFile: "testdata/vsphere.tfvars",
+		// 		vars: []string{
+		// 			"template_name=machine-controller-e2e-rhel",
+		// 			"worker_os=rhel",
+		// 			"ssh_username=rhel",
+		// 			"disk_size=50",
+		// 		},
+		// 	},
+		// },
 	}
 
 	Scenarios = map[string]Scenario{

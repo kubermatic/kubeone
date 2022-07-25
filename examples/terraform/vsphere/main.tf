@@ -63,7 +63,7 @@ resource "vsphere_virtual_machine" "control_plane" {
   resource_pool_id = local.resource_pool_id
   folder           = var.folder_name
   datastore_id     = data.vsphere_datastore.datastore.id
-  num_cpus         = 2
+  num_cpus         = var.control_plane_num_cpus
   memory           = var.control_plane_memory
   guest_id         = data.vsphere_virtual_machine.template.guest_id
   scsi_type        = data.vsphere_virtual_machine.template.scsi_type
