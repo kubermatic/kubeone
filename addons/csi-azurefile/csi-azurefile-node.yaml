@@ -123,7 +123,7 @@ spec:
               name: device-dir
           resources:
             limits:
-              memory: 300Mi
+              memory: 400Mi
             requests:
               cpu: 10m
               memory: 20Mi

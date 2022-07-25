@@ -29,5 +29,5 @@ subjects:
     namespace: kube-system
 roleRef:
   kind: ClusterRole
-  name: csi-azuredisk-node-secret-role
+  name: csi-azuredisk-node-secret-role # IMMUTABLE - do not change, requires migration
   apiGroup: rbac.authorization.k8s.io
