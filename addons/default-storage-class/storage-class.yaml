@@ -221,7 +221,7 @@ provisioner: dobs.csi.digitalocean.com
 allowVolumeExpansion: true
 ---
 kind: VolumeSnapshotClass
-apiVersion: snapshot.storage.k8s.io/v1beta1
+apiVersion: snapshot.storage.k8s.io/v1
 metadata:
   name: do-block-storage
   annotations:
