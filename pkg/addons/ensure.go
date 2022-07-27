@@ -69,6 +69,7 @@ var (
 		resources.AddonMachineController:      "",
 		resources.AddonMetricsServer:          "",
 		resources.AddonNodeLocalDNS:           "",
+		resources.AddonOperatingSystemManager: "",
 	}
 
 	greaterThan23 = semverutil.MustParseConstraint(greaterThan23Constraint)
@@ -124,6 +125,12 @@ func collectAddons(s *state.State) (addonsToDeploy []addonAction) {
 	if s.Cluster.MachineController.Deploy {
 		addonsToDeploy = append(addonsToDeploy, addonAction{
 			name: resources.AddonMachineController,
+		})
+	}
+
+	if s.Cluster.OperatingSystemManagerEnabled() {
+		addonsToDeploy = append(addonsToDeploy, addonAction{
+			name: resources.AddonOperatingSystemManager,
 		})
 	}
 

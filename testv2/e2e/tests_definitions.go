@@ -407,13 +407,13 @@ var (
 			Name:                 "cilium_docker",
 			ManifestTemplatePath: "testdata/docker_cilium.yaml",
 		},
-		"install_operating_system_manager": &scenarioInstall{
-			Name:                 "install_operating_system_manager",
-			ManifestTemplatePath: "testdata/operating_system_manager.yaml",
-		},
 		"kube_proxy_ipvs": &scenarioInstall{
 			Name:                 "kube_proxy_ipvs",
 			ManifestTemplatePath: "testdata/kube_proxy_ipvs.yaml",
+		},
+		"legacy_machine_controller_userdata": &scenarioInstall{
+			Name:                 "legacy_machine_controller_userdata",
+			ManifestTemplatePath: "testdata/legacy_machine_controller_userdata.yaml",
 		},
 	}
 )

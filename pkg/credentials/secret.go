@@ -71,7 +71,7 @@ func Ensure(s *state.State) error {
 	}
 
 	// Ensure that we remove credentials secret for OSM if it's queued for deletion
-	if s.Cluster.OperatingSystemManagerQueuedForDeletion() {
+	if !s.Cluster.OperatingSystemManagerEnabled() {
 		osmSecret := &corev1.Secret{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      SecretNameOSM,

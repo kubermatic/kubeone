@@ -62,6 +62,9 @@ type KubeOneCluster struct {
 	// MachineController configures the Kubermatic machine-controller component.
 	MachineController *MachineControllerConfig `json:"machineController,omitempty"`
 
+	// OperatingSystemManager configures the Kubermatic operating-system-manager component.
+	OperatingSystemManager *OperatingSystemManagerConfig `json:"operatingSystemManager,omitempty"`
+
 	// CABundle PEM encoded global CA
 	CABundle string `json:"caBundle,omitempty"`
 
@@ -578,6 +581,12 @@ type ProviderStaticNetworkConfig struct {
 
 // MachineControllerConfig configures kubermatic machine-controller deployment
 type MachineControllerConfig struct {
+	// Deploy
+	Deploy bool `json:"deploy,omitempty"`
+}
+
+// OperatingSystemManagerConfig configures kubermatic operating-system-manager deployment.
+type OperatingSystemManagerConfig struct {
 	// Deploy
 	Deploy bool `json:"deploy,omitempty"`
 }

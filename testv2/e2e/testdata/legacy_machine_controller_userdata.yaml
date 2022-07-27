@@ -7,7 +7,5 @@ versions:
 containerRuntime:
   containerd: {}
 
-addons:
-  enable: true
-  addons:
-  - name: operating-system-manager
+operatingSystemManager:
+  deploy: false
