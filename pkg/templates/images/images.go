@@ -310,8 +310,8 @@ func optionalResources() map[Resource]map[string]string {
 			"1.20.x":    "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.20.2",
 			"1.21.x":    "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.21.0",
 			"1.22.x":    "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.22.0",
-			"1.23.x":    "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.23.1",
-			">= 1.24.0": "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.24.0",
+			"1.23.x":    "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.23.4",
+			">= 1.24.0": "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.24.2",
 		},
 
 		// OpenStack CSI
@@ -319,8 +319,8 @@ func optionalResources() map[Resource]map[string]string {
 			"1.20.x":    "docker.io/k8scloudprovider/cinder-csi-plugin:v1.20.3",
 			"1.21.x":    "docker.io/k8scloudprovider/cinder-csi-plugin:v1.21.0",
 			"1.22.x":    "docker.io/k8scloudprovider/cinder-csi-plugin:v1.22.0",
-			"1.23.x":    "docker.io/k8scloudprovider/cinder-csi-plugin:v1.23.0",
-			">= 1.24.0": "docker.io/k8scloudprovider/cinder-csi-plugin:v1.24.0",
+			"1.23.x":    "docker.io/k8scloudprovider/cinder-csi-plugin:v1.23.4",
+			">= 1.24.0": "docker.io/k8scloudprovider/cinder-csi-plugin:v1.24.2",
 		},
 		OpenstackCSINodeDriverRegistar: {"*": "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.5.0"},
 		OpenstackCSILivenessProbe:      {"*": "k8s.gcr.io/sig-storage/livenessprobe:v2.6.0"},
