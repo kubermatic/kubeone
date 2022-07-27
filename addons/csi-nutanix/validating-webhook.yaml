@@ -25,7 +25,7 @@ webhooks:
   clientConfig:
     service:
       namespace: kube-system
-      name: "snapshot-validation-service"
+      name: "csi-snapshot-webhook"
       path: "/volumesnapshot"
     caBundle: |
 {{ .Certificates.KubernetesCA | b64enc | indent 6 }}

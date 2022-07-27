@@ -1,0 +1,32 @@
+# RBAC file for the snapshot webhook.
+#
+# The snapshot webhook implements the validation and admission for CSI snapshot functionality.
+
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: csi-snapshot-webhook
+  namespace:  kube-system
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: csi-snapshot-webhook-runner
+rules:
+  - apiGroups: ["snapshot.storage.k8s.io"]
+    resources: ["volumesnapshotclasses"]
+    verbs: ["get", "list", "watch"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: snapshot-webhook-role
+subjects:
+  - kind: ServiceAccount
+    name: csi-snapshot-webhook
+    namespace:  kube-system
+roleRef:
+  kind: ClusterRole
+  name: csi-snapshot-webhook-runner
+  apiGroup: rbac.authorization.k8s.io

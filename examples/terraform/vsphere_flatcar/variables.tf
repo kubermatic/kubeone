@@ -153,11 +153,22 @@ variable "control_plane_memory" {
   type        = number
 }
 
+variable "control_plane_num_cpus" {
+  default     = 2
+  description = "number of cpus of each control plane node"
+  type        = number
+}
+
 variable "worker_memory" {
   default     = 2048
   description = "memory size of each worker node in MB"
   type        = number
+}
 
+variable "worker_num_cpus" {
+  default     = 2
+  description = "number of cpus of each workers node"
+  type        = number
 }
 
 variable "worker_disk" {
@@ -182,13 +193,13 @@ variable "initial_machinedeployment_operating_system_profile" {
   default     = ""
   type        = string
   description = <<EOF
-Name of operating system profile for MachineDeployments, only applicable if operatng-system-manager addon is enabled.
+Name of operating system profile for MachineDeployments, only applicable if operating-system-manager addon is enabled.
 If not specified, the default value will be added by machine-controller addon.
 EOF
 }
 
 variable "is_vsphere_enterprise_plus_license" {
-  description = "toogle on/off based on your vsphere enterprise license"
+  description = "toggle on/off based on your vsphere enterprise license"
   type        = bool
   default     = true
 }

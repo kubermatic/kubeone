@@ -99,7 +99,7 @@ variable "control_plane_labels" {
 variable "disable_kubeapi_loadbalancer" {
   type        = bool
   default     = false
-  description = "E2E tests specific varible to disable usage of any loadbalancer in front of kubeapi-server"
+  description = "E2E tests specific variable to disable usage of any loadbalancer in front of kubeapi-server"
 }
 
 # Provider specific settings
@@ -268,7 +268,7 @@ variable "initial_machinedeployment_operating_system_profile" {
   default     = ""
   type        = string
   description = <<EOF
-Name of operating system profile for MachineDeployments, only applicable if operatng-system-manager addon is enabled.
+Name of operating system profile for MachineDeployments, only applicable if operating-system-manager addon is enabled.
 If not specified default is used based on the OS specified for workers.
 EOF
 }

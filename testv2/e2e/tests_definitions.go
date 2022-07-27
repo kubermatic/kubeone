@@ -269,46 +269,78 @@ var (
 		"vsphere_default": {
 			name: "vsphere_default",
 			labels: map[string]string{
-				"preset-goproxy": "true",
-				"preset-vsphere": "true",
+				"preset-goproxy":        "true",
+				"preset-vsphere-legacy": "true",
 			},
 			environ: map[string]string{
 				"PROVIDER": "vsphere",
 			},
 			terraform: terraformBin{
 				path:    "../../examples/terraform/vsphere",
-				varFile: "testdata/vsphere_default.tfvars",
+				varFile: "testdata/vsphere.tfvars",
+				vars: []string{
+					"template_name=kubeone-e2e-ubuntu",
+					"worker_os=ubuntu",
+					"ssh_username=ubuntu",
+				},
 			},
 		},
 		"vsphere_flatcar": {
 			name: "vsphere_flatcar",
 			labels: map[string]string{
-				"preset-goproxy": "true",
-				"preset-vsphere": "true",
+				"preset-goproxy":        "true",
+				"preset-vsphere-legacy": "true",
 			},
 			environ: map[string]string{
 				"PROVIDER": "vsphere",
 			},
 			terraform: terraformBin{
 				path:    "../../examples/terraform/vsphere_flatcar",
-				varFile: "testdata/vsphere_flatcar.tfvars",
+				varFile: "testdata/vsphere.tfvars",
+				vars: []string{
+					"template_name=machine-controller-e2e-flatcar",
+				},
 			},
 		},
+		// TODO
+		// "vsphere_rhel": {
+		// 	name: "vsphere_rhel",
+		// 	labels: map[string]string{
+		// 		"preset-goproxy": "true",
+		// 		"preset-vsphere-legacy": "true",
+		// 	},
+		// 	environ: map[string]string{
+		// 		"PROVIDER": "vsphere",
+		// 	},
+		// 	terraform: terraformBin{
+		// 		path:    "../../examples/terraform/vsphere",
+		// 		varFile: "testdata/vsphere.tfvars",
+		// 		vars: []string{
+		// 			"template_name=machine-controller-e2e-rhel",
+		// 			"worker_os=rhel",
+		// 			"ssh_username=rhel",
+		// 			"disk_size=50",
+		// 		},
+		// 	},
+		// },
 	}
 
 	Scenarios = map[string]Scenario{
+		// docker
 		"install_docker": &scenarioInstall{
 			Name:                 "install_docker",
 			ManifestTemplatePath: "testdata/docker_simple.yaml",
 		},
 		"upgrade_docker": &scenarioUpgrade{
 			name:                 "upgrade_docker",
-			manifestTemplatePath: "testdata/containerd_simple.yaml",
+			manifestTemplatePath: "testdata/docker_simple.yaml",
 		},
 		"conformance_docker": &scenarioConformance{
 			name:                 "conformance_docker",
-			manifestTemplatePath: "testdata/containerd_simple.yaml",
+			manifestTemplatePath: "testdata/docker_simple.yaml",
 		},
+
+		// containerd
 		"install_containerd": &scenarioInstall{
 			Name:                 "install_containerd",
 			ManifestTemplatePath: "testdata/containerd_simple.yaml",
@@ -321,6 +353,36 @@ var (
 			name:                 "conformance_containerd",
 			manifestTemplatePath: "testdata/containerd_simple.yaml",
 		},
+
+		// docker external
+		"install_docker_external": &scenarioInstall{
+			Name:                 "install_docker_external",
+			ManifestTemplatePath: "testdata/docker_simple_external.yaml",
+		},
+		"upgrade_docker_external": &scenarioUpgrade{
+			name:                 "upgrade_docker_external",
+			manifestTemplatePath: "testdata/docker_simple_external.yaml",
+		},
+		"conformance_docker_external": &scenarioConformance{
+			name:                 "conformance_docker_external",
+			manifestTemplatePath: "testdata/docker_simple_external.yaml",
+		},
+
+		// external containerd
+		"install_containerd_external": &scenarioInstall{
+			Name:                 "install_containerd_external",
+			ManifestTemplatePath: "testdata/containerd_simple_external.yaml",
+		},
+		"upgrade_containerd_external": &scenarioUpgrade{
+			name:                 "upgrade_containerd_external",
+			manifestTemplatePath: "testdata/containerd_simple_external.yaml",
+		},
+		"conformance_containerd_external": &scenarioConformance{
+			name:                 "conformance_containerd_external",
+			manifestTemplatePath: "testdata/containerd_simple_external.yaml",
+		},
+
+		// Various features
 		"calico_containerd": &scenarioInstall{
 			Name:                 "calico_containerd",
 			ManifestTemplatePath: "testdata/containerd_calico.yaml",

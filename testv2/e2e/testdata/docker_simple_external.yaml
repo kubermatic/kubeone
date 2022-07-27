@@ -1,0 +1,16 @@
+apiVersion: kubeone.k8c.io/v1beta2
+kind: KubeOneCluster
+
+versions:
+  kubernetes: "{{ required ".VERSION is required" .VERSION }}"
+
+containerRuntime:
+  docker: {}
+
+addons:
+  enable: true
+  addons:
+  - name: default-storage-class
+
+cloudProvider:
+  external: true

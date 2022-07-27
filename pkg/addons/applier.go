@@ -54,7 +54,7 @@ var (
 type applier struct {
 	TemplateData templateData
 	LocalFS      fs.FS
-	EmbededFS    fs.FS
+	EmbeddedFS   fs.FS
 }
 
 // TemplateData is data available in the addons render template
@@ -287,7 +287,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 	return &applier{
 		TemplateData: data,
 		LocalFS:      localFS,
-		EmbededFS:    embeddedaddons.FS,
+		EmbeddedFS:   embeddedaddons.FS,
 	}, nil
 }
 

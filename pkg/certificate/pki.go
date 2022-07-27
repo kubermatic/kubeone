@@ -53,7 +53,7 @@ const (
 	duration365d           = time.Hour * 24 * 365
 )
 
-// encodeCertPEM returns PEM-endcoded certificate data
+// encodeCertPEM returns PEM-encoded certificate data
 func encodeCertPEM(cert *x509.Certificate) []byte {
 	block := pem.Block{
 		Type:  CertificateBlockType,

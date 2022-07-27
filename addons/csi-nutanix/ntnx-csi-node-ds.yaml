@@ -1,27 +1,31 @@
 kind: DaemonSet
 apiVersion: apps/v1
 metadata:
-  name: csi-node-ntnx-plugin
+  name: nutanix-csi-node
   namespace: kube-system
 spec:
   selector:
     matchLabels:
-      app: csi-node-ntnx-plugin
+      app: nutanix-csi-node
+  updateStrategy:
+    type: "RollingUpdate"
+    rollingUpdate:
+      maxUnavailable: 1
   template:
     metadata:
       labels:
-        app: csi-node-ntnx-plugin
+        app: nutanix-csi-node
       annotations:
         "caBundle-hash": "{{ .Config.CABundle | sha256sum }}"
     spec:
-      serviceAccount: csi-node-ntnx-plugin
+      serviceAccount: nutanix-csi-node
       hostNetwork: true
       containers:
         - name: driver-registrar
           image: {{ .InternalImages.Get "NutanixCSIRegistrar" }}
           imagePullPolicy: IfNotPresent
           args:
-            - --v=5
+            - --v=2
             - --csi-address=$(ADDRESS)
             - --kubelet-registration-path=$(DRIVER_REG_SOCK_PATH)
           env:
@@ -45,7 +49,7 @@ spec:
               mountPath: /csi/
             - name: registration-dir
               mountPath: /registration
-        - name: csi-node-ntnx-plugin
+        - name: nutanix-csi-node
           securityContext:
             privileged: true
             allowPrivilegeEscalation: true
