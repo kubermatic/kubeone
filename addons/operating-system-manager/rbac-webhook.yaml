@@ -3,3 +3,30 @@ kind: ServiceAccount
 metadata:
   name: operating-system-manager-webhook
   namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: operating-system-manager-webhook
+rules:
+  - apiGroups:
+      - "operatingsystemmanager.k8c.io"
+    resources:
+      - "operatingsystemprofiles"
+    verbs:
+      - get
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: operating-system-manager-webhook
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: operating-system-manager-webhook
+subjects:
+  - kind: ServiceAccount
+    name: operating-system-manager-webhook
+    namespace: kube-system

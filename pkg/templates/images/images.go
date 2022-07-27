@@ -215,9 +215,13 @@ func baseResources() map[Resource]map[string]string {
 		DNSNodeCache:     {"*": "registry.k8s.io/dns/k8s-dns-node-cache:1.21.1"},
 		Flannel:          {"*": "quay.io/coreos/flannel:v0.15.1"},
 		//  TODO: Update this to a semver tag before release.
-		// Ref: https://github.com/kubermatic/machine-controller/commit/86c60d725de5440977ac5a69159b807cd1c92886
-		MachineController: {"*": "quay.io/kubermatic/machine-controller:86c60d725de5440977ac5a69159b807cd1c92886"},
+		// Ref: https://github.com/kubermatic/machine-controller/commit/6232612e8ee6fc53c20a125415f8764fd4e81517
+		MachineController: {"*": "quay.io/kubermatic/machine-controller:6232612e8ee6fc53c20a125415f8764fd4e81517"},
 		MetricsServer:     {"*": "k8s.gcr.io/metrics-server/metrics-server:v0.6.1"},
+		// operating-system-manager addon
+		//  TODO: Update this to a semver tag before release.
+		// Ref: https://github.com/kubermatic/operating-system-manager/commit/952f1cd42007d6770b8e2805b0e18247377b14bb
+		OperatingSystemManager: {"*": "quay.io/kubermatic/operating-system-manager:952f1cd42007d6770b8e2805b0e18247377b14bb"},
 	}
 }
 
@@ -408,11 +412,6 @@ func optionalResources() map[Resource]map[string]string {
 			"1.23.x":    "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.23.0",
 			">= 1.24.0": "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.24.0",
 		},
-
-		// operating-system-manager addon
-		//  TODO: Update this to a semver tag before release.
-		// Ref: https://github.com/kubermatic/operating-system-manager/commit/45600227d69e6a105c34ba70ba641e5cd071887e
-		OperatingSystemManager: {"*": "quay.io/kubermatic/operating-system-manager:45600227d69e6a105c34ba70ba641e5cd071887e"},
 
 		// CSI Vault Secret Provider
 		CSIVaultSecretProvider: {"*": "docker.io/hashicorp/vault-csi-provider:1.1.0"},
