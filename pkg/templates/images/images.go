@@ -209,11 +209,11 @@ func FindResource(name string) (Resource, error) {
 
 func baseResources() map[Resource]map[string]string {
 	return map[Resource]map[string]string{
-		CalicoCNI:         {"*": "quay.io/calico/cni:v3.23.3"},
-		CalicoController:  {"*": "quay.io/calico/kube-controllers:v3.23.3"},
-		CalicoNode:        {"*": "quay.io/calico/node:v3.23.3"},
-		DNSNodeCache:      {"*": "registry.k8s.io/dns/k8s-dns-node-cache:1.21.1"},
-		Flannel:           {"*": "quay.io/coreos/flannel:v0.15.1"},
+		CalicoCNI:        {"*": "quay.io/calico/cni:v3.23.3"},
+		CalicoController: {"*": "quay.io/calico/kube-controllers:v3.23.3"},
+		CalicoNode:       {"*": "quay.io/calico/node:v3.23.3"},
+		DNSNodeCache:     {"*": "registry.k8s.io/dns/k8s-dns-node-cache:1.21.1"},
+		Flannel:          {"*": "quay.io/coreos/flannel:v0.15.1"},
 		//  TODO: Update this to a semver tag before release.
 		// Ref: https://github.com/kubermatic/machine-controller/commit/6232612e8ee6fc53c20a125415f8764fd4e81517
 		MachineController: {"*": "quay.io/kubermatic/machine-controller:6232612e8ee6fc53c20a125415f8764fd4e81517"},
