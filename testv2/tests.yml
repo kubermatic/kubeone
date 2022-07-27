@@ -304,7 +304,9 @@
 
 - scenario: legacy_machine_controller_userdata
   initVersion: v1.24.2
-
+  infrastructures:
+    - name: aws_defaults
+    
 - scenario: kube_proxy_ipvs
   initVersion: v1.24.2
   infrastructures:

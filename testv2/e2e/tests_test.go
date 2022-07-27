@@ -1514,6 +1514,14 @@ func TestAwsDefaultsLegacyMachineControllerUserdataV1_23_8(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestAwsDefaultsLegacyMachineControllerUserdataV1_24_2(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.2")
+	scenario.Run(t)
+}
+
 func TestAwsDefaultsKubeProxyIpvsV1_24_2(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["kube_proxy_ipvs"]

@@ -4190,6 +4190,28 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-defaults-legacy-machine-controller-userdata-v1.24.2
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAwsDefaultsLegacyMachineControllerUserdataV1_24_2
+      env:
+      - name: PROVIDER
+        value: aws
+      image: kubermatic/kubeone-e2e:v0.1.24
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-defaults-kube-proxy-ipvs-v1.24.2
   optional: false
   spec:
