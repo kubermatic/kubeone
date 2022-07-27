@@ -626,6 +626,94 @@ func TestVsphereFlatcarUpgradeContainerdFromV1_21_14_ToV1_22_11(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestAwsAmznUpgradeContainerdFromV1_23_8_ToV1_24_2(t *testing.T) {
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.Run(t)
+}
+
+func TestAwsCentosUpgradeContainerdFromV1_23_8_ToV1_24_2(t *testing.T) {
+	infra := Infrastructures["aws_centos"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultsUpgradeContainerdFromV1_23_8_ToV1_24_2(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.Run(t)
+}
+
+func TestAwsFlatcarUpgradeContainerdFromV1_23_8_ToV1_24_2(t *testing.T) {
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.Run(t)
+}
+
+func TestAwsRhelUpgradeContainerdFromV1_23_8_ToV1_24_2(t *testing.T) {
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.Run(t)
+}
+
+func TestAwsRockylinuxUpgradeContainerdFromV1_23_8_ToV1_24_2(t *testing.T) {
+	infra := Infrastructures["aws_rockylinux"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.Run(t)
+}
+
+func TestAzureDefaultUpgradeContainerdFromV1_23_8_ToV1_24_2(t *testing.T) {
+	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.Run(t)
+}
+
+func TestGceDefaultUpgradeContainerdFromV1_23_8_ToV1_24_2(t *testing.T) {
+	infra := Infrastructures["gce_default"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.Run(t)
+}
+
+func TestOpenstackDefaultUpgradeContainerdFromV1_23_8_ToV1_24_2(t *testing.T) {
+	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.Run(t)
+}
+
+func TestVsphereDefaultUpgradeContainerdFromV1_23_8_ToV1_24_2(t *testing.T) {
+	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.Run(t)
+}
+
+func TestVsphereFlatcarUpgradeContainerdFromV1_23_8_ToV1_24_2(t *testing.T) {
+	infra := Infrastructures["vsphere_flatcar"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.Run(t)
+}
+
 func TestAwsAmznUpgradeContainerdFromV1_22_11_ToV1_23_8(t *testing.T) {
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["upgrade_containerd"]
@@ -1354,11 +1442,43 @@ func TestAwsLongTimeoutDefaultConformanceContainerdV1_23_8(t *testing.T) {
 	scenario.Run(t)
 }
 
-func TestAwsLongTimeoutDefaultConformanceContainerdV1_24_1(t *testing.T) {
+func TestAwsLongTimeoutDefaultConformanceContainerdV1_24_2(t *testing.T) {
 	infra := Infrastructures["aws_long_timeout_default"]
 	scenario := Scenarios["conformance_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.1")
+	scenario.SetVersions("v1.24.2")
+	scenario.Run(t)
+}
+
+func TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_21_14(t *testing.T) {
+	infra := Infrastructures["aws_long_timeout_default"]
+	scenario := Scenarios["conformance_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.14")
+	scenario.Run(t)
+}
+
+func TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_22_11(t *testing.T) {
+	infra := Infrastructures["aws_long_timeout_default"]
+	scenario := Scenarios["conformance_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.11")
+	scenario.Run(t)
+}
+
+func TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_23_8(t *testing.T) {
+	infra := Infrastructures["aws_long_timeout_default"]
+	scenario := Scenarios["conformance_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.8")
+	scenario.Run(t)
+}
+
+func TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_24_2(t *testing.T) {
+	infra := Infrastructures["aws_long_timeout_default"]
+	scenario := Scenarios["conformance_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.2")
 	scenario.Run(t)
 }
 
@@ -1378,11 +1498,11 @@ func TestAwsDefaultsInstallOperatingSystemManagerV1_23_8(t *testing.T) {
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsInstallOperatingSystemManagerV1_24_1(t *testing.T) {
+func TestAwsDefaultsInstallOperatingSystemManagerV1_24_2(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["install_operating_system_manager"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.1")
+	scenario.SetVersions("v1.24.2")
 	scenario.Run(t)
 }
 
@@ -1402,11 +1522,11 @@ func TestAwsDefaultsKubeProxyIpvsV1_23_8(t *testing.T) {
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsKubeProxyIpvsV1_24_1(t *testing.T) {
+func TestAwsDefaultsKubeProxyIpvsV1_24_2(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["kube_proxy_ipvs"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.1")
+	scenario.SetVersions("v1.24.2")
 	scenario.Run(t)
 }
 
@@ -2239,6 +2359,110 @@ func TestVsphereFlatcarUpgradeContainerdExternalFromV1_22_11_ToV1_23_8(t *testin
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.11", "v1.23.8")
+	scenario.Run(t)
+}
+
+func TestAwsAmznUpgradeContainerdExternalFromV1_23_8_ToV1_24_2(t *testing.T) {
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.Run(t)
+}
+
+func TestAwsCentosUpgradeContainerdExternalFromV1_23_8_ToV1_24_2(t *testing.T) {
+	infra := Infrastructures["aws_centos"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultsUpgradeContainerdExternalFromV1_23_8_ToV1_24_2(t *testing.T) {
+	infra := Infrastructures["aws_defaults"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.Run(t)
+}
+
+func TestAwsFlatcarUpgradeContainerdExternalFromV1_23_8_ToV1_24_2(t *testing.T) {
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.Run(t)
+}
+
+func TestAwsRhelUpgradeContainerdExternalFromV1_23_8_ToV1_24_2(t *testing.T) {
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.Run(t)
+}
+
+func TestAwsRockylinuxUpgradeContainerdExternalFromV1_23_8_ToV1_24_2(t *testing.T) {
+	infra := Infrastructures["aws_rockylinux"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.Run(t)
+}
+
+func TestAzureDefaultUpgradeContainerdExternalFromV1_23_8_ToV1_24_2(t *testing.T) {
+	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.Run(t)
+}
+
+func TestDigitaloceanDefaultUpgradeContainerdExternalFromV1_23_8_ToV1_24_2(t *testing.T) {
+	infra := Infrastructures["digitalocean_default"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.Run(t)
+}
+
+func TestEquinixmetalDefaultUpgradeContainerdExternalFromV1_23_8_ToV1_24_2(t *testing.T) {
+	infra := Infrastructures["equinixmetal_default"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.Run(t)
+}
+
+func TestHetznerDefaultUpgradeContainerdExternalFromV1_23_8_ToV1_24_2(t *testing.T) {
+	infra := Infrastructures["hetzner_default"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.Run(t)
+}
+
+func TestOpenstackDefaultUpgradeContainerdExternalFromV1_23_8_ToV1_24_2(t *testing.T) {
+	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.Run(t)
+}
+
+func TestVsphereDefaultUpgradeContainerdExternalFromV1_23_8_ToV1_24_2(t *testing.T) {
+	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.Run(t)
+}
+
+func TestVsphereFlatcarUpgradeContainerdExternalFromV1_23_8_ToV1_24_2(t *testing.T) {
+	infra := Infrastructures["vsphere_flatcar"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.8", "v1.24.2")
 	scenario.Run(t)
 }
 
