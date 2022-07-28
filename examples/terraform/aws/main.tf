@@ -34,8 +34,7 @@ locals {
   kubeapi_endpoint      = var.disable_kubeapi_loadbalancer ? aws_instance.control_plane.0.private_ip : aws_elb.control_plane.0.dns_name
   loadbalancer_count    = var.disable_kubeapi_loadbalancer ? 0 : 1
 
-  initial_machinedeployment_spotinstances            = var.initial_machinedeployment_spotinstances_max_price > 0
-  initial_machinedeployment_operating_system_profile = var.initial_machinedeployment_operating_system_profile == "" ? var.ami_filters[var.os].osp_name : var.initial_machinedeployment_operating_system_profile
+  initial_machinedeployment_spotinstances = var.initial_machinedeployment_spotinstances_max_price > 0
 
   subnets = {
     (local.zoneA) = length(aws_subnet.public.*.id) > 0 ? aws_subnet.public[0].id : ""

@@ -165,7 +165,6 @@ variable "ami_filters" {
   type = map(object({
     owners       = list(string)
     image_name   = list(string)
-    osp_name     = string
     ssh_username = string
     worker_os    = string
   }))
@@ -173,7 +172,6 @@ variable "ami_filters" {
     ubuntu = {
       owners       = ["099720109477"] # Canonical
       image_name   = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
-      osp_name     = "osp-ubuntu"
       ssh_username = "ubuntu"
       worker_os    = "ubuntu"
     }
@@ -181,7 +179,6 @@ variable "ami_filters" {
     centos = {
       owners       = ["125523088429"]
       image_name   = ["CentOS 8.* x86_64"]
-      osp_name     = "osp-centos8"
       ssh_username = "centos"
       worker_os    = "centos"
     }
@@ -189,7 +186,6 @@ variable "ami_filters" {
     flatcar = {
       owners       = ["075585003325"] # Kinvolk
       image_name   = ["Flatcar-stable-*-hvm"]
-      osp_name     = "osp-flatcar"
       ssh_username = "core"
       worker_os    = "flatcar"
     }
@@ -197,7 +193,6 @@ variable "ami_filters" {
     rhel = {
       owners       = ["309956199498"] # Red Hat
       image_name   = ["RHEL-8*_HVM-*-x86_64-*"]
-      osp_name     = "osp-rhel"
       ssh_username = "ec2-user"
       worker_os    = "rhel"
     }
@@ -205,7 +200,6 @@ variable "ami_filters" {
     rockylinux = {
       owners       = ["792107900819"] # RockyLinux
       image_name   = ["Rocky-8-ec2-*.x86_64"]
-      osp_name     = "osp-rockylinux"
       ssh_username = "rocky"
       worker_os    = "rockylinux"
     }
@@ -213,7 +207,6 @@ variable "ami_filters" {
     amzn = {
       owners       = ["137112412989"] # Amazon
       image_name   = ["amzn2-ami-hvm-2.0.*-x86_64-gp2"]
-      osp_name     = "osp-amzn2"
       ssh_username = "ec2-user"
       worker_os    = "amzn2"
     }

@@ -86,7 +86,7 @@ output "kubeone_workers" {
       replicas = var.initial_machinedeployment_replicas
       providerSpec = {
         annotations = {
-          "k8c.io/operating-system-profile" = local.initial_machinedeployment_operating_system_profile
+          "k8c.io/operating-system-profile" = var.initial_machinedeployment_operating_system_profile
         }
         sshPublicKeys   = local.worker_deploy_ssh_key
         operatingSystem = local.worker_os
@@ -144,7 +144,7 @@ output "kubeone_workers" {
       replicas = var.initial_machinedeployment_replicas
       providerSpec = {
         annotations = {
-          "k8c.io/operating-system-profile" = local.initial_machinedeployment_operating_system_profile
+          "k8c.io/operating-system-profile" = var.initial_machinedeployment_operating_system_profile
         }
         sshPublicKeys   = local.worker_deploy_ssh_key
         operatingSystem = local.worker_os
@@ -202,7 +202,7 @@ output "kubeone_workers" {
       replicas = var.initial_machinedeployment_replicas
       providerSpec = {
         annotations = {
-          "k8c.io/operating-system-profile" = local.initial_machinedeployment_operating_system_profile
+          "k8c.io/operating-system-profile" = var.initial_machinedeployment_operating_system_profile
         }
         sshPublicKeys   = local.worker_deploy_ssh_key
         operatingSystem = local.worker_os
