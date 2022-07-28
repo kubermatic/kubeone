@@ -171,6 +171,31 @@ func WithFullInstall(t Tasks) Tasks {
 		append(WithResources(nil)...).
 		append(
 			Task{
+				// Node might emit one more CSR for kubelet serving certificates
+				// after external CCM initializes the node. That's because
+				// CCM modifies IP addresses in the Node object to properly set
+				// private and public addresses, DNS names, etc...
+				// To ensure that we approve those CSRs, we need to force kubelet
+				// to generate new CSRs as soon as possible, and then approve
+				// those new CSRs.
+				// NB: We intentionally do this only on FullInstall because in
+				// other cases we already have CCM deployed, so this is not
+				// an issue. Additionally, we do this only for control plane
+				// nodes because static workers are joined after the CCM is
+				// deployed.
+				Fn: func(s *state.State) error {
+					if err := restartKubeletOnControlPlane(s); err != nil {
+						return err
+					}
+
+					return s.RunTaskOnAllNodes(approvePendingCSR, true)
+				},
+				Operation: "removing old and approving new kubelet CSRs",
+				Predicate: func(s *state.State) bool { return s.Cluster.CloudProvider.External },
+			},
+		).
+		append(
+			Task{
 				Fn:        createMachineDeployments,
 				Operation: "creating worker machines",
 				Predicate: func(s *state.State) bool { return !s.LiveCluster.IsProvisioned() },

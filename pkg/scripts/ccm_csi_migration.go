@@ -35,10 +35,6 @@ var (
 		sudo kubeadm {{ .VERBOSE }} init phase kubelet-start \
 			--config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
 	`)
-
-	ccmMigrationRestartKubelet = heredoc.Doc(`
-		sudo systemctl restart kubelet
-	`)
 )
 
 func CCMMigrationRegenerateControlPlaneManifests(workdir string, nodeID int, verboseFlag string) (string, error) {
@@ -59,10 +55,4 @@ func CCMMigrationUpdateKubeletConfig(workdir string, nodeID int, verboseFlag str
 	})
 
 	return result, fail.Runtime(err, "rendering ccmMigrationUpdateKubeletConfig")
-}
-
-func CCMMigrationRestartKubelet() (string, error) {
-	result, err := Render(ccmMigrationRestartKubelet, Data{})
-
-	return result, fail.Runtime(err, "rendering ccmMigrationRestartKubelet script")
 }

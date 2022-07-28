@@ -51,6 +51,10 @@ var (
 		fi
 	{{ end }}
 	`)
+
+	restartKubeletTemplate = heredoc.Doc(`
+		sudo systemctl restart kubelet
+	`)
 )
 
 func Hostname() string {
@@ -63,4 +67,8 @@ func RestartKubeAPIServerCrictl(ensure bool) (string, error) {
 	})
 
 	return result, fail.Runtime(err, "rendering restartKubeAPIServerCrictlTemplate script")
+}
+
+func RestartKubelet() string {
+	return restartKubeletTemplate
 }
