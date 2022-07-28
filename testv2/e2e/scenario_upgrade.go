@@ -30,13 +30,14 @@ import (
 const kubeoneVersionToInit = "1.4.4"
 
 type scenarioUpgrade struct {
-	name                 string
-	manifestTemplatePath string
-	versions             []string
-	infra                Infra
+	Name                 string
+	ManifestTemplatePath string
+
+	versions []string
+	infra    Infra
 }
 
-func (scenario scenarioUpgrade) Title() string { return titleize(scenario.name) }
+func (scenario scenarioUpgrade) Title() string { return titleize(scenario.Name) }
 
 func (scenario *scenarioUpgrade) SetInfra(infra Infra) {
 	scenario.infra = infra
@@ -52,8 +53,8 @@ func (scenario *scenarioUpgrade) Run(t *testing.T) {
 	}
 
 	install := &scenarioInstall{
-		Name:                 scenario.name,
-		ManifestTemplatePath: scenario.manifestTemplatePath,
+		Name:                 scenario.Name,
+		ManifestTemplatePath: scenario.ManifestTemplatePath,
 		infra:                scenario.infra,
 		versions:             []string{scenario.versions[0]},
 		kubeonePath:          downloadKubeone(t, kubeoneVersionToInit),
@@ -78,7 +79,7 @@ func (scenario *scenarioUpgrade) kubeone(t *testing.T) *kubeoneBin {
 	return newKubeoneBin(
 		scenario.infra.terraform.path,
 		renderManifest(t,
-			scenario.manifestTemplatePath,
+			scenario.ManifestTemplatePath,
 			manifestData{
 				VERSION: scenario.versions[1],
 			},
@@ -162,7 +163,7 @@ func (scenario *scenarioUpgrade) GenerateTests(wr io.Writer, generatorType Gener
 	data = append(data, templateData{
 		TestTitle:   testTitle,
 		Infra:       scenario.infra.name,
-		Scenario:    scenario.name,
+		Scenario:    scenario.Name,
 		FromVersion: up.From,
 		ToVersion:   up.To,
 	})
@@ -171,7 +172,7 @@ func (scenario *scenarioUpgrade) GenerateTests(wr io.Writer, generatorType Gener
 
 	prowJobs = append(prowJobs,
 		newProwJob(
-			pullProwJobName(scenario.infra.name, scenario.name, "from", up.From, "to", up.To),
+			pullProwJobName(scenario.infra.name, scenario.Name, "from", up.From, "to", up.To),
 			scenario.infra.labels,
 			testTitle,
 			cfg,

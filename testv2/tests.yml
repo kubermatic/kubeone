@@ -312,6 +312,38 @@
   infrastructures:
     - name: aws_defaults
 
+- scenario: csi_ccm_migration
+  initVersion: v1.21.14
+  infrastructures:
+    - name: openstack_default
+    - name: azure_default
+    - name: vsphere_default
+    - name: vsphere_flatcar
+
+- scenario: csi_ccm_migration
+  initVersion: v1.22.11
+  infrastructures:
+    - name: openstack_default
+    - name: azure_default
+    - name: vsphere_default
+    - name: vsphere_flatcar
+
+- scenario: csi_ccm_migration
+  initVersion: v1.23.8
+  infrastructures:
+    - name: openstack_default
+    - name: azure_default
+    - name: vsphere_default
+    - name: vsphere_flatcar
+
+- scenario: csi_ccm_migration
+  initVersion: v1.24.2
+  infrastructures:
+    - name: openstack_default
+    - name: azure_default
+    - name: vsphere_default
+    - name: vsphere_flatcar
+
 - scenario: install_containerd_external
   initVersion: v1.21.14
   infrastructures:

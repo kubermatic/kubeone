@@ -332,12 +332,12 @@ var (
 			ManifestTemplatePath: "testdata/docker_simple.yaml",
 		},
 		"upgrade_docker": &scenarioUpgrade{
-			name:                 "upgrade_docker",
-			manifestTemplatePath: "testdata/docker_simple.yaml",
+			Name:                 "upgrade_docker",
+			ManifestTemplatePath: "testdata/docker_simple.yaml",
 		},
 		"conformance_docker": &scenarioConformance{
-			name:                 "conformance_docker",
-			manifestTemplatePath: "testdata/docker_simple.yaml",
+			Name:                 "conformance_docker",
+			ManifestTemplatePath: "testdata/docker_simple.yaml",
 		},
 
 		// containerd
@@ -346,12 +346,12 @@ var (
 			ManifestTemplatePath: "testdata/containerd_simple.yaml",
 		},
 		"upgrade_containerd": &scenarioUpgrade{
-			name:                 "upgrade_containerd",
-			manifestTemplatePath: "testdata/containerd_simple.yaml",
+			Name:                 "upgrade_containerd",
+			ManifestTemplatePath: "testdata/containerd_simple.yaml",
 		},
 		"conformance_containerd": &scenarioConformance{
-			name:                 "conformance_containerd",
-			manifestTemplatePath: "testdata/containerd_simple.yaml",
+			Name:                 "conformance_containerd",
+			ManifestTemplatePath: "testdata/containerd_simple.yaml",
 		},
 
 		// docker external
@@ -360,12 +360,12 @@ var (
 			ManifestTemplatePath: "testdata/docker_simple_external.yaml",
 		},
 		"upgrade_docker_external": &scenarioUpgrade{
-			name:                 "upgrade_docker_external",
-			manifestTemplatePath: "testdata/docker_simple_external.yaml",
+			Name:                 "upgrade_docker_external",
+			ManifestTemplatePath: "testdata/docker_simple_external.yaml",
 		},
 		"conformance_docker_external": &scenarioConformance{
-			name:                 "conformance_docker_external",
-			manifestTemplatePath: "testdata/docker_simple_external.yaml",
+			Name:                 "conformance_docker_external",
+			ManifestTemplatePath: "testdata/docker_simple_external.yaml",
 		},
 
 		// external containerd
@@ -374,12 +374,12 @@ var (
 			ManifestTemplatePath: "testdata/containerd_simple_external.yaml",
 		},
 		"upgrade_containerd_external": &scenarioUpgrade{
-			name:                 "upgrade_containerd_external",
-			manifestTemplatePath: "testdata/containerd_simple_external.yaml",
+			Name:                 "upgrade_containerd_external",
+			ManifestTemplatePath: "testdata/containerd_simple_external.yaml",
 		},
 		"conformance_containerd_external": &scenarioConformance{
-			name:                 "conformance_containerd_external",
-			manifestTemplatePath: "testdata/containerd_simple_external.yaml",
+			Name:                 "conformance_containerd_external",
+			ManifestTemplatePath: "testdata/containerd_simple_external.yaml",
 		},
 
 		// Various features
@@ -414,6 +414,11 @@ var (
 		"legacy_machine_controller_userdata": &scenarioInstall{
 			Name:                 "legacy_machine_controller_userdata",
 			ManifestTemplatePath: "testdata/legacy_machine_controller_userdata.yaml",
+		},
+		"csi_ccm_migration": &scenarioMigrateCSIAndCCM{
+			Name:                    "csi_ccm_migration",
+			OldManifestTemplatePath: "testdata/containerd_simple.yaml",
+			NewManifestTemplatePath: "testdata/containerd_simple_external.yaml",
 		},
 	}
 )

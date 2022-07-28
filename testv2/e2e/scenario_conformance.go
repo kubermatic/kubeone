@@ -24,10 +24,11 @@ import (
 )
 
 type scenarioConformance struct {
-	name                 string
-	manifestTemplatePath string
-	versions             []string
-	infra                Infra
+	Name                 string
+	ManifestTemplatePath string
+
+	versions []string
+	infra    Infra
 }
 
 func (scenario *scenarioConformance) SetInfra(infrastructure Infra) {
@@ -40,8 +41,8 @@ func (scenario *scenarioConformance) SetVersions(versions ...string) {
 
 func (scenario *scenarioConformance) GenerateTests(wr io.Writer, generatorType GeneratorType, cfg ProwConfig) error {
 	install := scenarioInstall{
-		Name:                 scenario.name,
-		ManifestTemplatePath: scenario.manifestTemplatePath,
+		Name:                 scenario.Name,
+		ManifestTemplatePath: scenario.ManifestTemplatePath,
 		infra:                scenario.infra,
 		versions:             scenario.versions,
 	}
@@ -51,8 +52,8 @@ func (scenario *scenarioConformance) GenerateTests(wr io.Writer, generatorType G
 
 func (scenario *scenarioConformance) Run(t *testing.T) {
 	install := scenarioInstall{
-		Name:                 scenario.name,
-		ManifestTemplatePath: scenario.manifestTemplatePath,
+		Name:                 scenario.Name,
+		ManifestTemplatePath: scenario.ManifestTemplatePath,
 		infra:                scenario.infra,
 		versions:             scenario.versions,
 	}
@@ -77,7 +78,7 @@ func (scenario *scenarioConformance) test(t *testing.T) {
 	k1 := newKubeoneBin(
 		scenario.infra.terraform.path,
 		renderManifest(t,
-			scenario.manifestTemplatePath,
+			scenario.ManifestTemplatePath,
 			manifestData{
 				VERSION: scenario.versions[0],
 			},
