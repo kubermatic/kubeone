@@ -209,12 +209,7 @@ func ccmMigrationUpdateStaticWorkersKubeletConfigInternal(s *state.State, node *
 
 	// Restart Kubelet
 	logger.Info("Restarting Kubelet...")
-	script, err := scripts.CCMMigrationRestartKubelet()
-	if err != nil {
-		return err
-	}
-
-	_, _, err = s.Runner.RunRaw(script)
+	_, _, err := s.Runner.RunRaw(scripts.RestartKubelet())
 	if err != nil {
 		return fail.SSH(err, "restarting kubelet for CCM migration")
 	}
