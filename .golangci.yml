@@ -93,7 +93,7 @@ issues:
     text: "`registry` always receives `\"127.0.0.1:5000\"`"
 
   - path: pkg/credentials
-    text: "cyclomatic complexity 34 of func `openstackValidationFunc` is high"
+    text: "cyclomatic complexity 36 of func `openstackValidationFunc` is high"
 
   - path: pkg/apis/kubeone
     text: "cyclomatic complexity 31 of func `ValidateCloudProviderSpec` is high"
