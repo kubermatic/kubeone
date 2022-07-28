@@ -48,6 +48,12 @@ spec:
             - -namespace=kube-system
             - -container-runtime={{ .Config.ContainerRuntime }}
             - -pause-image={{ .InternalImages.Get "PauseImage" }}
+            {{ if .Config.CloudProvider.External }}
+            - -external-cloud-provider
+            {{ end }}
+            {{ if .CSIMigrationFeatureGates }}
+            - -node-kubelet-feature-gates={{ .CSIMigrationFeatureGates }}
+            {{ end }}
             {{ range .Config.ContainerRuntime.MachineControllerFlags -}}
             - {{ . }}
             {{ end -}}
