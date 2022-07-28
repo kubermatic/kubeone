@@ -466,9 +466,12 @@ func openstackValidationFunc(creds map[string]string) error {
 		return errors.New("no valid credentials (either application or user) found")
 	}
 
-	if v, ok := creds[OpenStackTenantID]; !ok || len(v) == 0 {
-		if v, ok := creds[OpenStackTenantName]; !ok || len(v) == 0 {
-			return errors.Errorf("key %v or %v is required but isn't present", OpenStackTenantID, OpenStackTenantName)
+	// Tenant ID/Name are not required when using application credentials.
+	if userCredsUsernameOkay && userCredsPasswordOkay {
+		if v, ok := creds[OpenStackTenantID]; !ok || len(v) == 0 {
+			if v, ok := creds[OpenStackTenantName]; !ok || len(v) == 0 {
+				return errors.Errorf("key %v or %v is required but isn't present", OpenStackTenantID, OpenStackTenantName)
+			}
 		}
 	}
 
