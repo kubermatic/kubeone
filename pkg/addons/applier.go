@@ -275,7 +275,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 	}, nil
 }
 
-func webhookCerts(certs map[string]string, prefix, webhookName, webhookNamespace, serviceDomainName string, kubeCAPrivateKey *rsa.PrivateKey, kubeCACert *x509.Certificate) error {
+func webhookCerts(certs map[string]string, prefix, webhookName, webhookNamespace, serviceDomainName string, kubeCAPrivateKey *rsa.PrivateKey, kubeCACert *x509.Certificate) error { //nolint:unparam
 	certsMap, err := certificate.NewSignedTLSCert(
 		webhookName,
 		webhookNamespace,
