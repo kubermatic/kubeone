@@ -61,10 +61,7 @@ spec:
             - "--cloud-provider=hcloud"
             - "--leader-elect=false"
             - "--allow-untagged-cloud"
-            {{ if .Config.CloudProvider.Hetzner.NetworkID -}}
-            - "--allocate-node-cidrs=true"
-            - "--cluster-cidr={{.Config.ClusterNetwork.PodSubnet }}"
-            {{- end }}
+            - "--allocate-node-cidrs=false"
           resources:
             requests:
               cpu: 100m
