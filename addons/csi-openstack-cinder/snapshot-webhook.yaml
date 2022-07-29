@@ -1,0 +1,83 @@
+# Source: https://github.com/kubernetes-csi/external-snapshotter/blob/v5.0.1/deploy/kubernetes/webhook-example/webhook.yaml
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: snapshot-validation-secret
+  namespace: kube-system
+data:
+  "cert.pem": |
+{{ .Certificates.CSIWebhookCert | b64enc | indent 4 }}
+  "key.pem": |
+{{ .Certificates.CSIWebhookKey | b64enc | indent 4 }}
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: "validation-webhook.snapshot.storage.k8s.io"
+  namespace: kube-system
+webhooks:
+- name: "validation-webhook.snapshot.storage.k8s.io"
+  rules:
+  - apiGroups:   ["snapshot.storage.k8s.io"]
+    apiVersions: ["v1", "v1beta1"]
+    operations:  ["CREATE", "UPDATE"]
+    resources:   ["volumesnapshots", "volumesnapshotcontents"]
+    scope:       "*"
+  clientConfig:
+    service:
+      namespace: kube-system
+      name: "snapshot-validation-service"
+      path: "/volumesnapshot"
+    caBundle: |
+{{ .Certificates.KubernetesCA | b64enc | indent 6 }}
+  admissionReviewVersions: ["v1", "v1beta1"]
+  sideEffects: None
+  failurePolicy: Fail
+  timeoutSeconds: 2
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: snapshot-validation-deployment
+  namespace: kube-system
+  labels:
+    app: snapshot-validation
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: snapshot-validation
+  template:
+    metadata:
+      labels:
+        app: snapshot-validation
+    spec:
+      containers:
+      - name: snapshot-validation
+        image: {{ .InternalImages.Get "OpenstackCSISnapshotWebhook" }}
+        imagePullPolicy: IfNotPresent
+        args: ['--tls-cert-file=/etc/snapshot-validation-webhook/certs/cert.pem', '--tls-private-key-file=/etc/snapshot-validation-webhook/certs/key.pem']
+        ports:
+        - containerPort: 443 # change the port as needed
+        volumeMounts:
+          - name: snapshot-validation-webhook-certs
+            mountPath: /etc/snapshot-validation-webhook/certs
+            readOnly: true
+      volumes:
+        - name: snapshot-validation-webhook-certs
+          secret:
+            secretName: snapshot-validation-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: snapshot-validation-service
+  namespace: kube-system # NOTE: change the namespace
+spec:
+  selector:
+    app: snapshot-validation
+  ports:
+    - protocol: TCP
+      port: 443 # Change if needed
+      targetPort: 443 # Change if the webserver image expects a different port

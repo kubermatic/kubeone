@@ -4,13 +4,13 @@ metadata:
   name: operating-system-manager-webhook-serving-cert
   namespace: kube-system
 data:
-{{ if .Certificates.OperatingSystemManagerWebhookCert }}
+{{ if .Certificates.OSMWebhookCert }}
   "tls.crt": |
-{{ .Certificates.OperatingSystemManagerWebhookCert | b64enc | indent 4 }}
+{{ .Certificates.OSMWebhookCert | b64enc | indent 4 }}
 {{ end }}
-{{ if .Certificates.OperatingSystemManagerWebhookKey }}
+{{ if .Certificates.OSMWebhookKey }}
   "tls.key": |
-{{ .Certificates.OperatingSystemManagerWebhookKey | b64enc | indent 4 }}
+{{ .Certificates.OSMWebhookKey | b64enc | indent 4 }}
   "ca.crt": |
 {{ end }}
 {{ .Certificates.KubernetesCA | b64enc | indent 4 }}
