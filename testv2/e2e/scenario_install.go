@@ -22,7 +22,6 @@ import (
 	"io"
 	"testing"
 	"text/template"
-	"time"
 
 	"sigs.k8s.io/yaml"
 )
@@ -130,27 +129,17 @@ func (scenario *scenarioInstall) test(t *testing.T) {
 		k1   = scenario.kubeone(t)
 	)
 
+	basicTest(t, k1, data)
+
 	// launch kubeone proxy, to have a HTTPS proxy through the SSH tunnel
 	// to open access to the kubeapi behind the bastion host
 	proxyCtx, killProxy := context.WithCancel(context.Background())
-	proxyURL, waitK1, err := k1.AsyncProxy(proxyCtx)
-	if err != nil {
-		t.Fatalf("starting kubeone proxy: %v", err)
-	}
-	defer func() {
-		waitErr := waitK1()
-		if waitErr != nil {
-			t.Logf("wait kubeone proxy: %v", waitErr)
-		}
-	}()
 	defer killProxy()
 
-	// let kubeone proxy start and open the port
-	time.Sleep(5 * time.Second)
-	t.Logf("kubeone proxy is running on %s", proxyURL)
-
-	basicTest(t, k1, data)
-	sonobuoyRun(t, k1, sonobuoyConformanceLite, proxyURL)
+	k1.WithProxy(proxyCtx, func(proxyURL string) {
+		t.Logf("kubeone proxy is running on %s", proxyURL)
+		sonobuoyRun(t, k1, sonobuoyConformanceLite, proxyURL)
+	})
 }
 
 func (scenario *scenarioInstall) GenerateTests(wr io.Writer, generatorType GeneratorType, cfg ProwConfig) error {

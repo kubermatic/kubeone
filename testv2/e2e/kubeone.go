@@ -24,6 +24,7 @@ import (
 	"net"
 	"net/url"
 	"os"
+	"time"
 
 	"github.com/sirupsen/logrus"
 
@@ -66,6 +67,24 @@ func (k1 *kubeoneBin) Kubeconfig() ([]byte, error) {
 
 func (k1 *kubeoneBin) Reset() error {
 	return k1.run("reset", "--auto-approve", "--destroy-workers", "--remove-binaries")
+}
+
+func (k1 *kubeoneBin) WithProxy(ctx context.Context, fn func(proxyURL string)) error {
+	proxyURL, waitK1, err := k1.AsyncProxy(ctx)
+	if err != nil {
+		return err
+	}
+
+	var waitErr error
+	defer func() {
+		waitErr = waitK1()
+	}()
+
+	// let kubeone proxy start and open the port
+	time.Sleep(5 * time.Second)
+	fn(proxyURL)
+
+	return waitErr
 }
 
 func (k1 *kubeoneBin) AsyncProxy(ctx context.Context) (string, func() error, error) {
