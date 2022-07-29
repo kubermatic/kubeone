@@ -8,9 +8,9 @@ metadata:
   namespace: kube-system
 data:
   "cert.pem": |
-{{ .Certificates.vSphereCSIWebhookCert | b64enc | indent 4 }}
+{{ .Certificates.CSIMigrationWebhookCert | b64enc | indent 4 }}
   "key.pem": |
-{{ .Certificates.vSphereCSIWebhookKey | b64enc | indent 4 }}
+{{ .Certificates.CSIMigrationWebhookKey | b64enc | indent 4 }}
   "webhook.config": |
 {{ vSphereCSIWebhookConfig | b64enc | indent 4 }}
 

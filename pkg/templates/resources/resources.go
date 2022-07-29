@@ -92,23 +92,10 @@ const (
 	MetricsServerName      = "metrics-server"
 	MetricsServerNamespace = metav1.NamespaceSystem
 
-	OpenstackCSIWebhookName      = "snapshot-validation-service"
-	OpenstackCSIWebhookNamespace = metav1.NamespaceSystem
-
 	VsphereCSIWebhookName      = "vsphere-webhook-svc"
-	VsphereCSIWebhookNamespace = metav1.NamespaceSystem
-
-	VsphereCSISnapshotValidatingWebhookName      = "snapshot-validation-service"
-	VsphereCSISnapshotValidatingWebhookNamespace = metav1.NamespaceSystem
-
 	NutanixCSIWebhookName      = "csi-snapshot-webhook"
-	NutanixCSIWebhookNamespace = metav1.NamespaceSystem
-
-	GCEComputeCSIWebhookName      = "snapshot-validation-service"
-	GCEComputeCSIWebhookNamespace = metav1.NamespaceSystem
-
-	DigitalOceanCSIWebhookName      = "snapshot-validation-service"
-	DigitalOceanCSIWebhookNamespace = metav1.NamespaceSystem
+	GenericCSIWebhookName      = "snapshot-validation-service"
+	GenericCSIWebhookNamespace = metav1.NamespaceSystem
 )
 
 const (

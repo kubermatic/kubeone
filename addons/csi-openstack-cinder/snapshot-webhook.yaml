@@ -7,9 +7,9 @@ metadata:
   namespace: kube-system
 data:
   "cert.pem": |
-{{ .Certificates.OpenstackCSIWebhookCert | b64enc | indent 4 }}
+{{ .Certificates.CSIWebhookCert | b64enc | indent 4 }}
   "key.pem": |
-{{ .Certificates.OpenstackCSIWebhookKey | b64enc | indent 4 }}
+{{ .Certificates.CSIWebhookKey | b64enc | indent 4 }}
 ---
 apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingWebhookConfiguration
