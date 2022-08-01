@@ -57,6 +57,8 @@ spec:
     metadata:
       labels:
         app: machine-controller-webhook
+      annotations:
+        "kubeone.k8c.io/credentials-hash": "{{ .MachineControllerCredentialsHash }}"
     spec:
       nodeSelector:
         node-role.kubernetes.io/control-plane: ""

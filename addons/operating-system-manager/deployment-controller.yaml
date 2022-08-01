@@ -16,6 +16,7 @@ spec:
         "prometheus.io/scrape": "true"
         "prometheus.io/port": "8080"
         "prometheus.io/path": "/metrics"
+        "kubeone.k8c.io/credentials-hash": "{{ .OperatingSystemManagerCredentialsHash }}"
       labels:
         app: operating-system-manager
     spec:

@@ -12,6 +12,8 @@ spec:
     metadata:
       labels:
         app: gcp-compute-persistent-disk-csi-driver
+      annotations:
+        "kubeone.k8c.io/credentials-hash": "{{ .CredentialsCCMHash }}"
     spec:
       # Host network must be used for interaction with Workload Identity in GKE
       # since it replaces GCE Metadata Server with GKE Metadata Server. Remove

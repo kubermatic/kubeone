@@ -39,6 +39,7 @@
 - Enable the etcd integrity checks (on startup and every 4 hours) for Kubernetes 1.22+ clusters. See the official etcd announcement for more details (https://groups.google.com/a/kubernetes.io/g/dev/c/B7gJs88XtQc/m/rSgNOzV2BwAJ). ([#1907](https://github.com/kubermatic/kubeone/pull/1907), [@xmudrii](https://github.com/xmudrii))
 - Add `kubeone local` subcommand used to provision single-node Kubernetes cluster on current machine ([#2125](https://github.com/kubermatic/kubeone/pull/2125), [@kron4eg](https://github.com/kron4eg))
 - Implement the `kubeone config dump` command used to merge the KubeOneCluster manifest with the Terraform output. The resulting (merged) manifest is printed to stdout. ([#1874](https://github.com/kubermatic/kubeone/pull/1874), [@xmudrii](https://github.com/xmudrii))
+- Rollout pods that are using `kubeone-*-credentials` Secrets if credentials are changed ([#2214](https://github.com/kubermatic/kubeone/pull/2214), [@xmudrii](https://github.com/xmudrii))
 - Error reporting in CLI now exists with different codes for different error reasons ([#1882](https://github.com/kubermatic/kubeone/pull/1882), [@kron4eg](https://github.com/kron4eg))
 - More error handling with new error types ([#1890](https://github.com/kubermatic/kubeone/pull/1890), [@kron4eg](https://github.com/kron4eg))
 - Add dedicated error type (and error code) for exec adapter ([#2139](https://github.com/kubermatic/kubeone/pull/2139), [@kron4eg](https://github.com/kron4eg))

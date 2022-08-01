@@ -46,7 +46,7 @@ func Inject(caBundle string, podTpl *corev1.PodTemplateSpec) {
 
 	hsh := sha256.New()
 	hsh.Write([]byte(caBundle))
-	podTpl.Annotations["caBundle-hash"] = fmt.Sprintf("%x", hsh.Sum(nil))
+	podTpl.Annotations["kubeone.k8c.io/cabundle-hash"] = fmt.Sprintf("%x", hsh.Sum(nil))
 	podTpl.Spec.Volumes = append(podTpl.Spec.Volumes, Volume())
 
 	for idx := range podTpl.Spec.Containers {
