@@ -1,28 +1,27 @@
 project_name: kubeone
 builds:
-- ldflags:
-  - "-s -w"
-  - "-extldflags=-zrelro"
-  - "-extldflags=-znow"
-  - "-X k8c.io/kubeone/pkg/cmd.version={{.Version}}"
-  - "-X k8c.io/kubeone/pkg/cmd.commit={{.FullCommit}}"
-  - "-X k8c.io/kubeone/pkg/cmd.date={{.Date}}"
-  env:
-  - "CGO_ENABLED=0"
-  - "GO111MODULE=on"
-  - "GOFLAGS=-mod=readonly -trimpath"
-  goos:
-  - linux
-  - darwin
-  goarch:
-  - amd64
-  - arm64
+  - ldflags:
+      - "-s -w"
+      - "-extldflags=-zrelro"
+      - "-extldflags=-znow"
+      - "-X k8c.io/kubeone/pkg/cmd.version={{.Version}}"
+      - "-X k8c.io/kubeone/pkg/cmd.commit={{.FullCommit}}"
+      - "-X k8c.io/kubeone/pkg/cmd.date={{.Date}}"
+    env:
+      - "CGO_ENABLED=0"
+      - "GO111MODULE=on"
+      - "GOFLAGS=-mod=readonly -trimpath"
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
 archives:
   - id: kubeone
     format: zip
     files:
       - README.md
-      - CHANGELOG.md
       - LICENSE
       - examples/**/*
       - hack/image-loader.sh
