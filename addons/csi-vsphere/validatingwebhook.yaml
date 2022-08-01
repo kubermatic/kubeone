@@ -127,7 +127,7 @@ spec:
         app: vsphere-csi-webhook
         role: vsphere-csi-webhook
       annotations:
-        "caBundle-hash": "{{ .Config.CABundle | sha256sum }}"
+        "kubeone.k8c.io/cabundle-hash": "{{ .Config.CABundle | sha256sum }}"
         "csiConfig-hash": "{{ .Config.CloudProvider.CSIConfig | sha256sum }}"
     spec:
       serviceAccountName: vsphere-csi-webhook

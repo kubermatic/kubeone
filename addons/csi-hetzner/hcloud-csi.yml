@@ -110,7 +110,7 @@ spec:
       labels:
         app: hcloud-csi-controller
       annotations:
-        "credentials-hash": "{{ .CredentialsCCMHash }}"
+        "kubeone.k8c.io/credentials-hash": "{{ .CredentialsCCMHash }}"
     spec:
       serviceAccount: hcloud-csi
       tolerations:
@@ -222,7 +222,7 @@ spec:
       labels:
         app: hcloud-csi
       annotations:
-        "credentials-hash": "{{ .CredentialsCCMHash }}"
+        "kubeone.k8c.io/credentials-hash": "{{ .CredentialsCCMHash }}"
     spec:
       tolerations:
         - effect: NoExecute
