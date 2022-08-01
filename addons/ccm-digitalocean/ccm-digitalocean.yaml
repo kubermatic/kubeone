@@ -14,6 +14,8 @@ spec:
     metadata:
       labels:
         app: digitalocean-cloud-controller-manager
+      annotations:
+        "credentials-hash": "{{ .CredentialsCCMHash }}"
     spec:
       priorityClassName: system-cluster-critical
       dnsPolicy: Default

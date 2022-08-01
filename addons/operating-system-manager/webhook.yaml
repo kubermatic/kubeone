@@ -46,6 +46,8 @@ spec:
     metadata:
       labels:
         app: operating-system-manager-webhook
+      annotations:
+        "credentials-hash": "{{ .OperatingSystemManagerCredentialsHash }}"
     spec:
       nodeSelector:
         node-role.kubernetes.io/control-plane: ""

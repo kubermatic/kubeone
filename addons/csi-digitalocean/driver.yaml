@@ -45,6 +45,7 @@ spec:
     metadata:
       annotations:
         kubectl.kubernetes.io/default-container: csi-do-plugin
+        "credentials-hash": "{{ .CredentialsCCMHash }}"
       labels:
         app: csi-do-controller
         role: csi-do
