@@ -18,7 +18,9 @@ package addons
 
 import (
 	"crypto/rsa"
+	"crypto/sha256"
 	"crypto/x509"
+	"encoding/hex"
 	"fmt"
 	"io/fs"
 	"os"
@@ -69,13 +71,16 @@ type templateData struct {
 	Certificates                             map[string]string
 	Credentials                              map[string]string
 	CredentialsCCM                           map[string]string
+	CredentialsCCMHash                       string
 	CCMClusterName                           string
 	CSIMigration                             bool
 	CSIMigrationFeatureGates                 string
 	DeployCSIAddon                           bool
 	MachineControllerCredentialsEnvVars      string
+	MachineControllerCredentialsHash         string
 	OperatingSystemManagerEnabled            bool
 	OperatingSystemManagerCredentialsEnvVars string
+	OperatingSystemManagerCredentialsHash    string
 	RegistryCredentials                      []registryCredentialsContainer
 	InternalImages                           *internalImages
 	Resources                                map[string]string
@@ -99,6 +104,11 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 	}
 
 	credsEnvVarsMC, err := mcCredentialsEnvVars(s)
+	if err != nil {
+		return nil, err
+	}
+
+	mcCredsHash, err := credentialsHash(s, credentials.TypeMC)
 	if err != nil {
 		return nil, err
 	}
@@ -160,6 +170,11 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		return nil, err
 	}
 
+	credsCCMHash, err := credentialsHash(s, credentials.TypeCCM)
+	if err != nil {
+		return nil, err
+	}
+
 	// Check are we deploying the CSI driver
 	deployCSI := len(ensureCSIAddons(s, []addonAction{})) > 0
 
@@ -174,11 +189,13 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		},
 		Credentials:                         creds,
 		CredentialsCCM:                      credsCCM,
+		CredentialsCCMHash:                  credsCCMHash,
 		CCMClusterName:                      s.LiveCluster.CCMClusterName,
 		CSIMigration:                        csiMigration,
 		CSIMigrationFeatureGates:            csiMigrationFeatureGates,
 		DeployCSIAddon:                      deployCSI,
 		MachineControllerCredentialsEnvVars: string(credsEnvVarsMC),
+		MachineControllerCredentialsHash:    mcCredsHash,
 		OperatingSystemManagerEnabled:       s.Cluster.OperatingSystemManagerEnabled(),
 		RegistryCredentials:                 containerdRegistryCredentials(s.Cluster.ContainerRuntime.Containerd),
 		InternalImages: &internalImages{
@@ -265,7 +282,13 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 			return nil, fail.Runtime(err, "marshalling OSM credentials env variables")
 		}
 
+		osmCredsHash, err := credentialsHash(s, credentials.TypeOSM)
+		if err != nil {
+			return nil, err
+		}
+
 		data.OperatingSystemManagerCredentialsEnvVars = string(credsEnvVarsOSM)
+		data.OperatingSystemManagerCredentialsHash = osmCredsHash
 	}
 
 	return &applier{
@@ -339,6 +362,30 @@ func mcCredentialsEnvVars(s *state.State) ([]byte, error) {
 	}
 
 	return credsEnvVarsMC, nil
+}
+
+func credentialsHash(s *state.State, credsType credentials.Type) (string, error) {
+	creds, err := credentials.ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, credsType)
+	if err != nil {
+		return "", err
+	}
+
+	hash := fmt.Sprintf("kubeone-%s", s.Cluster.CloudProvider.CloudProviderName())
+
+	keys := make([]string, 0, len(creds))
+	for k := range creds {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	for _, k := range keys {
+		hash += fmt.Sprintf("%s%s", k, creds[k])
+	}
+
+	h := sha256.New()
+	h.Write([]byte(hash))
+
+	return hex.EncodeToString(h.Sum(nil)), nil
 }
 
 func addonsLocalFS(clusterAddons *kubeoneapi.Addons, manifestFilePath string) (fs.FS, error) {
