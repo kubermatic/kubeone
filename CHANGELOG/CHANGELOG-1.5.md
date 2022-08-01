@@ -216,3 +216,7 @@
 - OpenStack: Tenant ID or Tenant Name is not required when using application credentials ([#2196](https://github.com/kubermatic/kubeone/pull/2196), [@ahmedwaleedmalik](https://github.com/ahmedwaleedmalik))
 - OpenStack: Mount `/usr/share/ca-certificates` to the OpenStack CCM pod to fix the OpenStack CCM pod CrashLooping on Flatcar Linux ([#1904](https://github.com/kubermatic/kubeone/pull/1904), [@xmudrii](https://github.com/xmudrii))
 - Disable `preserveUnknownFields` in all Canal CRDs. This fixes an issue preventing upgrading Canal to v3.22 for KubeOne clusters created with KubeOne 1.2 and older ([#2103](https://github.com/kubermatic/kubeone/pull/2103), [@xmudrii](https://github.com/xmudrii))
+
+### Other
+
+- Remove changelog from the release archive. Changelogs can be found on GitHub in the [CHANGELOG directory](https://github.com/kubermatic/kubeone/tree/master/CHANGELOG) ([#2213](https://github.com/kubermatic/kubeone/pull/2213), [@xmudrii](https://github.com/xmudrii))
