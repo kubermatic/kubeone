@@ -15,6 +15,7 @@ spec:
         "prometheus.io/port": "8080"
         "prometheus.io/path": "/metrics"
         "caBundle-hash": "{{ .Config.CABundle | sha256sum }}"
+        "credentials-hash": "{{ .MachineControllerCredentialsHash }}"
       labels:
         app: machine-controller
     spec:
