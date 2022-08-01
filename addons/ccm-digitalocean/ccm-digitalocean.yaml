@@ -15,7 +15,7 @@ spec:
       labels:
         app: digitalocean-cloud-controller-manager
       annotations:
-        "credentials-hash": "{{ .CredentialsCCMHash }}"
+        "kubeone.k8c.io/credentials-hash": "{{ .CredentialsCCMHash }}"
     spec:
       priorityClassName: system-cluster-critical
       dnsPolicy: Default

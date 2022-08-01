@@ -56,7 +56,7 @@ spec:
       labels:
         app: machine-controller-webhook
       annotations:
-        "credentials-hash": "{{ .MachineControllerCredentialsHash }}"
+        "kubeone.k8c.io/credentials-hash": "{{ .MachineControllerCredentialsHash }}"
     spec:
       nodeSelector:
         node-role.kubernetes.io/master: ""
