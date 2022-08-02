@@ -13,7 +13,7 @@
 # limitations under the License.
 
 # Sourced from
-# https://github.com/kubernetes-csi/external-snapshotter/tree/release-4.2/client/config/crd
+# https://github.com/kubernetes-csi/external-snapshotter/tree/v5.0.1/client/config/crd
 
 ---
 apiVersion: apiextensions.k8s.io/v1
@@ -30,6 +30,8 @@ spec:
     kind: VolumeSnapshot
     listKind: VolumeSnapshotList
     plural: volumesnapshots
+    shortNames:
+    - vs
     singular: volumesnapshot
   scope: Namespaced
   versions:
@@ -109,7 +111,7 @@ spec:
                 format: date-time
                 type: string
               error:
-                description: error is the last observed error during snapshot creation, if any. This field could be helpful to upper level controllers(i.e., application controller) to decide whether they should continue on waiting for the snapshot to be created based on the type of error reported. The snapshot controller will keep retrying when an error occurs during the snapshot creation. Upon success, this error field will be cleared.
+                description: error is the last observed error during snapshot creation, if any. This field could be helpful to upper level controllers(i.e., application controller) to decide whether they should continue on waiting for the snapshot to be created based on the type of error reported. The snapshot controller will keep retrying when an error occurrs during the snapshot creation. Upon success, this error field will be cleared.
                 properties:
                   message:
                     description: 'message is a string detailing the encountered error during snapshot creation if specified. NOTE: message may be logged, and it should not contain sensitive information.'
@@ -213,7 +215,7 @@ spec:
                 format: date-time
                 type: string
               error:
-                description: error is the last observed error during snapshot creation, if any. This field could be helpful to upper level controllers(i.e., application controller) to decide whether they should continue on waiting for the snapshot to be created based on the type of error reported. The snapshot controller will keep retrying when an error occurs during the snapshot creation. Upon success, this error field will be cleared.
+                description: error is the last observed error during snapshot creation, if any. This field could be helpful to upper level controllers(i.e., application controller) to decide whether they should continue on waiting for the snapshot to be created based on the type of error reported. The snapshot controller will keep retrying when an error occurrs during the snapshot creation. Upon success, this error field will be cleared.
                 properties:
                   message:
                     description: 'message is a string detailing the encountered error during snapshot creation if specified. NOTE: message may be logged, and it should not contain sensitive information.'
@@ -262,6 +264,9 @@ spec:
     kind: VolumeSnapshotContent
     listKind: VolumeSnapshotContentList
     plural: volumesnapshotcontents
+    shortNames:
+    - vsc
+    - vscs
     singular: volumesnapshotcontent
   scope: Cluster
   versions:
@@ -568,6 +573,9 @@ spec:
     kind: VolumeSnapshotClass
     listKind: VolumeSnapshotClassList
     plural: volumesnapshotclasses
+    shortNames:
+    - vsclass
+    - vsclasses
     singular: volumesnapshotclass
   scope: Cluster
   versions:
@@ -668,3 +676,4 @@ status:
     plural: ""
   conditions: []
   storedVersions: []
+
