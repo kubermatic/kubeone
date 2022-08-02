@@ -33,6 +33,8 @@ spec:
     metadata:
       labels:
         app: hcloud-cloud-controller-manager
+      annotations:
+        "kubeone.k8c.io/credentials-hash": "{{ .CredentialsCCMHash }}"
     spec:
       priorityClassName: system-cluster-critical
       serviceAccountName: cloud-controller-manager

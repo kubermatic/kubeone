@@ -12,7 +12,7 @@ spec:
       labels:
         app: csi-node-ntnx-plugin
       annotations:
-        "caBundle-hash": "{{ .Config.CABundle | sha256sum }}"
+        "kubeone.k8c.io/cabundle-hash": "{{ .Config.CABundle | sha256sum }}"
     spec:
       serviceAccount: csi-node-ntnx-plugin
       hostNetwork: true

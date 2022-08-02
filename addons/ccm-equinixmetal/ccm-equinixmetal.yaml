@@ -15,6 +15,8 @@ spec:
     metadata:
       labels:
         app: equinixmetal-cloud-controller-manager
+      annotations:
+        "kubeone.k8c.io/credentials-hash": "{{ .CredentialsCCMHash }}"
     spec:
       dnsPolicy: Default
       hostNetwork: true

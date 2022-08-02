@@ -43,6 +43,8 @@ spec:
     metadata:
       labels:
         app: operating-system-manager-webhook
+      annotations:
+        "kubeone.k8c.io/credentials-hash": "{{ .OperatingSystemManagerCredentialsHash }}"
     spec:
       nodeSelector:
         node-role.kubernetes.io/master: ""

@@ -17,6 +17,8 @@ limitations under the License.
 package addons
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"io/fs"
 	"os"
@@ -64,12 +66,15 @@ type templateData struct {
 	Certificates                             map[string]string
 	Credentials                              map[string]string
 	CredentialsCCM                           map[string]string
+	CredentialsCCMHash                       string
 	CCMClusterName                           string
 	CSIMigration                             bool
 	CSIMigrationFeatureGates                 string
 	MachineControllerCredentialsEnvVars      string
+	MachineControllerCredentialsHash         string
 	OperatingSystemManagerEnabled            bool
 	OperatingSystemManagerCredentialsEnvVars string
+	OperatingSystemManagerCredentialsHash    string
 	RegistryCredentials                      []registryCredentialsContainer
 	InternalImages                           *internalImages
 	Resources                                map[string]string
@@ -103,6 +108,11 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		return nil, errors.Wrap(err, "unable to fetch cloud provider credentials")
 	}
 
+	credsCCMHash, err := credentialsHash(s, credentials.TypeCCM)
+	if err != nil {
+		return nil, err
+	}
+
 	envVarsMC, err := credentials.EnvVarBindings(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.SecretNameMC, credentials.TypeMC)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to fetch env var bindings for credentials")
@@ -113,7 +123,13 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		return nil, errors.Wrap(err, "unable to convert env var bindings for credentials to yaml")
 	}
 
+	mcCredsHash, err := credentialsHash(s, credentials.TypeMC)
+	if err != nil {
+		return nil, err
+	}
+
 	var credsEnvVarsOSM []byte
+	var osmCredsHash string
 	if s.Cluster.OperatingSystemManagerEnabled() {
 		var envVarsOSM []corev1.EnvVar
 		envVarsOSM, err = credentials.EnvVarBindings(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.SecretNameOSM, credentials.TypeOSM)
@@ -124,6 +140,11 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		credsEnvVarsOSM, err = yaml.Marshal(envVarsOSM)
 		if err != nil {
 			return nil, errors.Wrap(err, "unable to convert env var bindings for credentials to yaml")
+		}
+
+		osmCredsHash, err = credentialsHash(s, credentials.TypeOSM)
+		if err != nil {
+			return nil, err
 		}
 	}
 
@@ -210,14 +231,17 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 			"MetricsServerKey":             msCertsMap[resources.TLSKeyName],
 			"KubernetesCA":                 mcCertsMap[resources.KubernetesCACertName],
 		},
-		Credentials:                         creds,
-		CredentialsCCM:                      credsCCM,
-		CCMClusterName:                      s.LiveCluster.CCMClusterName,
-		CSIMigration:                        csiMigration,
-		CSIMigrationFeatureGates:            csiMigrationFeatureGates,
-		MachineControllerCredentialsEnvVars: string(credsEnvVarsMC),
-		OperatingSystemManagerEnabled:       s.Cluster.OperatingSystemManagerEnabled(),
-		RegistryCredentials:                 regCredentials,
+		Credentials:                           creds,
+		CredentialsCCM:                        credsCCM,
+		CredentialsCCMHash:                    credsCCMHash,
+		CCMClusterName:                        s.LiveCluster.CCMClusterName,
+		CSIMigration:                          csiMigration,
+		CSIMigrationFeatureGates:              csiMigrationFeatureGates,
+		MachineControllerCredentialsEnvVars:   string(credsEnvVarsMC),
+		MachineControllerCredentialsHash:      mcCredsHash,
+		OperatingSystemManagerEnabled:         s.Cluster.OperatingSystemManagerEnabled(),
+		OperatingSystemManagerCredentialsHash: osmCredsHash,
+		RegistryCredentials:                   regCredentials,
 		InternalImages: &internalImages{
 			pauseImage: s.PauseImage,
 			resolver:   s.Images.Get,
@@ -305,6 +329,30 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		LocalFS:      localFS,
 		EmbededFS:    embeddedaddons.FS,
 	}, nil
+}
+
+func credentialsHash(s *state.State, credsType credentials.Type) (string, error) {
+	creds, err := credentials.ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, credsType)
+	if err != nil {
+		return "", err
+	}
+
+	hash := fmt.Sprintf("kubeone-%s", s.Cluster.CloudProvider.CloudProviderName())
+
+	keys := make([]string, 0, len(creds))
+	for k := range creds {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	for _, k := range keys {
+		hash += fmt.Sprintf("%s%s", k, creds[k])
+	}
+
+	h := sha256.New()
+	h.Write([]byte(hash))
+
+	return hex.EncodeToString(h.Sum(nil)), nil
 }
 
 // loadAndApplyAddon parses the addons manifests and runs kubectl apply.
