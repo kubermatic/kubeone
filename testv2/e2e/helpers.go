@@ -36,8 +36,6 @@ import (
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 
-	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
-	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/test/e2e/testutil"
 
 	corev1 "k8s.io/api/core/v1"
@@ -45,8 +43,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/util/wait"
-	"k8s.io/client-go/rest"
-	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/util/retry"
 	k8spath "k8s.io/utils/path"
 	ctrlruntimeclient "sigs.k8s.io/controller-runtime/pkg/client"
@@ -136,7 +132,10 @@ func downloadKubeone(t *testing.T, version string) string {
 	const urlTemplate = "https://github.com/kubermatic/kubeone/releases/download/v%s/kubeone_%s_linux_amd64.zip"
 	downloadURL := fmt.Sprintf(urlTemplate, version, version)
 
-	req, err := http.NewRequest("GET", downloadURL, nil)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, "GET", downloadURL, nil)
 	if err != nil {
 		t.Fatalf("building http request to download kubeone: %v", err)
 	}
@@ -412,58 +411,24 @@ func pullProwJobName(in ...string) string {
 	return fmt.Sprintf("pull-kubeone-e2e-%s", strings.ReplaceAll(strings.Join(in, "-"), "_", "-"))
 }
 
-func basicTest(t *testing.T, k1 *kubeoneBin, data manifestData) {
+func waitKubeOneNodesReady(t *testing.T, k1 *kubeoneBin) {
 	var (
-		kubeoneManifest *kubeoneapi.KubeOneCluster
-		err             error
-		kubeconfig      []byte
-		restConfig      *rest.Config
+		client ctrlruntimeclient.Client
+		err    error
 	)
 
-	fetchKubeoneManifest := func() error {
-		kubeoneManifest, err = k1.ClusterManifest()
+	err = retryFn(func() error {
+		client, err = k1.DynamicClient()
 
 		return err
-	}
-
-	if err = retryFn(fetchKubeoneManifest); err != nil {
-		t.Fatalf("failed to get manifest API: %v", err)
-	}
-
-	fetchKubeconfig := func() error {
-		kubeconfig, err = k1.Kubeconfig()
-
-		return err
-	}
-
-	if err = retryFn(fetchKubeconfig); err != nil {
-		t.Fatalf("kubeone kubeconfig failed: %v", err)
-	}
-
-	initKubeRestConfig := func() error {
-		restConfig, err = clientcmd.RESTConfigFromKubeConfig(kubeconfig)
-
-		return err
-	}
-
-	if err = retryFn(initKubeRestConfig); err != nil {
-		t.Fatalf("unable to build clientset from kubeconfig bytes: %v", err)
-	}
-
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	connector := ssh.NewConnector(ctx)
-	tun, err := connector.Tunnel(kubeoneManifest.RandomHost())
+	})
 	if err != nil {
-		t.Fatalf("creating SSH tunnel: %v", err)
+		t.Fatalf("initializing dynamic client: %s", err)
 	}
 
-	restConfig.Dial = tun.TunnelTo
-
-	client, err := ctrlruntimeclient.New(restConfig, ctrlruntimeclient.Options{})
+	kubeoneManifest, err := k1.ClusterManifest()
 	if err != nil {
-		t.Fatalf("failed to init dynamic client: %s", err)
+		t.Fatalf("rendering cluster manifest: %v", err)
 	}
 
 	numberOfNodesToWait := len(kubeoneManifest.ControlPlane.Hosts) + len(kubeoneManifest.StaticWorkers.Hosts)
@@ -474,10 +439,10 @@ func basicTest(t *testing.T, k1 *kubeoneBin, data manifestData) {
 	}
 
 	if err = waitForNodesReady(t, client, numberOfNodesToWait); err != nil {
-		t.Fatalf("failed to bring up all nodes up: %v", err)
+		t.Fatalf("waiting %d nodes to be Ready: %v", numberOfNodesToWait, err)
 	}
 
-	if err = verifyVersion(client, metav1.NamespaceSystem, data.VERSION); err != nil {
+	if err = verifyVersion(client, metav1.NamespaceSystem, kubeoneManifest.Versions.Kubernetes); err != nil {
 		t.Fatalf("version mismatch: %v", err)
 	}
 }

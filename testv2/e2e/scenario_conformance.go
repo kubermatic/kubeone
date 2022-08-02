@@ -63,8 +63,6 @@ func (scenario *scenarioConformance) Run(t *testing.T) {
 }
 
 func (scenario *scenarioConformance) test(t *testing.T) {
-	data := manifestData{VERSION: scenario.versions[0]}
-
 	var k1Opts []kubeoneBinOpts
 
 	if *kubeoneVerboseFlag {
@@ -105,6 +103,6 @@ func (scenario *scenarioConformance) test(t *testing.T) {
 	time.Sleep(5 * time.Second)
 	t.Logf("kubeone proxy is running on %s", proxyURL)
 
-	basicTest(t, k1, data)
+	waitKubeOneNodesReady(t, k1)
 	sonobuoyRun(t, k1, sonobuoyConformance, proxyURL)
 }
