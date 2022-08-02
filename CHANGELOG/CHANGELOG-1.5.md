@@ -57,6 +57,7 @@
 
 - Add CSI snapshot controller and webhook to the Cinder CSI driver ([#2067](https://github.com/kubermatic/kubeone/pull/2067), [@xmudrii](https://github.com/xmudrii))
 - Add missing Snapshot CRDs for Openstack CSI ([#1871](https://github.com/kubermatic/kubeone/pull/1871), [@WeirdMachine](https://github.com/WeirdMachine))
+- Add default VolumeSnapshotClass for OpenStack Cinder CSI ([#2217](https://github.com/kubermatic/kubeone/pull/2217), [@xmudrii](https://github.com/xmudrii))
 - Add CSI snapshot controller and webhook to the vSphere CSI driver. Add the default VolumeSnapshotClass for vSphere ([#2050](https://github.com/kubermatic/kubeone/pull/2050), [@xmudrii](https://github.com/xmudrii))
 - Add GCP Compute Persistent Disk CSI driver. The CSI driver is deployed by default for all GCE clusters running Kubernetes 1.23 or newer. ([#2137](https://github.com/kubermatic/kubeone/pull/2137), [@xmudrii](https://github.com/xmudrii))
 - Add the VMware Cloud Director CSI driver addon. Add default StorageClass for the VMware Cloud Director CSI driver. ([#2092](https://github.com/kubermatic/kubeone/pull/2092), [@ahmedwaleedmalik](https://github.com/ahmedwaleedmalik))
