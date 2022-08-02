@@ -132,6 +132,17 @@ metadata:
     kubernetes.io/cluster-service: "true"
   name: standard
 provisioner: kubernetes.io/cinder
+---
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshotClass
+metadata:
+  name: cinder-csi
+  annotations:
+    snapshot.storage.kubernetes.io/is-default-class: "true"
+driver: cinder.csi.openstack.org
+parameters:
+  force-create: "true" # required by external-snapshotter, otherwise it errors with "volume in-use"
+deletionPolicy: Delete
 {{ end }}
 
 {{ if eq .Config.CloudProvider.CloudProviderName "gce" }}
