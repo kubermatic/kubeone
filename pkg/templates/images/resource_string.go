@@ -76,29 +76,37 @@ func _() {
 	_ = x[DigitalOceanCSISnapshotController-66]
 	_ = x[DigitalOceanCSISnapshotValidationWebhook-67]
 	_ = x[DigitalOceanCSISnapshotter-68]
-	_ = x[DigitaloceanCCM-69]
-	_ = x[HetznerCCM-70]
-	_ = x[HetznerCSI-71]
-	_ = x[OpenstackCCM-72]
-	_ = x[OpenstackCSI-73]
-	_ = x[EquinixMetalCCM-74]
-	_ = x[VsphereCCM-75]
-	_ = x[VsphereCSIDriver-76]
-	_ = x[VsphereCSISyncer-77]
-	_ = x[VsphereCSIProvisioner-78]
-	_ = x[GCPComputeCSIDriver-79]
-	_ = x[GCPComputeCSIProvisioner-80]
-	_ = x[GCPComputeCSIAttacher-81]
-	_ = x[GCPComputeCSIResizer-82]
-	_ = x[GCPComputeCSISnapshotter-83]
-	_ = x[GCPComputeCSISnapshotController-84]
-	_ = x[GCPComputeCSISnapshotValidationWebhook-85]
-	_ = x[GCPComputeCSINodeDriverRegistrar-86]
+	_ = x[OpenstackCSI-69]
+	_ = x[OpenstackCSINodeDriverRegistar-70]
+	_ = x[OpenstackCSILivenessProbe-71]
+	_ = x[OpenstackCSIAttacher-72]
+	_ = x[OpenstackCSIProvisioner-73]
+	_ = x[OpenstackCSIResizer-74]
+	_ = x[OpenstackCSISnapshotter-75]
+	_ = x[OpenstackCSISnapshotController-76]
+	_ = x[OpenstackCSISnapshotWebhook-77]
+	_ = x[DigitaloceanCCM-78]
+	_ = x[HetznerCCM-79]
+	_ = x[HetznerCSI-80]
+	_ = x[OpenstackCCM-81]
+	_ = x[EquinixMetalCCM-82]
+	_ = x[VsphereCCM-83]
+	_ = x[VsphereCSIDriver-84]
+	_ = x[VsphereCSISyncer-85]
+	_ = x[VsphereCSIProvisioner-86]
+	_ = x[GCPComputeCSIDriver-87]
+	_ = x[GCPComputeCSIProvisioner-88]
+	_ = x[GCPComputeCSIAttacher-89]
+	_ = x[GCPComputeCSIResizer-90]
+	_ = x[GCPComputeCSISnapshotter-91]
+	_ = x[GCPComputeCSISnapshotController-92]
+	_ = x[GCPComputeCSISnapshotValidationWebhook-93]
+	_ = x[GCPComputeCSINodeDriverRegistrar-94]
 }
 
-const _Resource_name = "CalicoCNICalicoControllerCalicoNodeFlannelCiliumCiliumOperatorHubbleRelayHubbleUIHubbleUIBackendHubbleProxyCiliumCertGenWeaveNetCNIKubeWeaveNetCNINPCDNSNodeCacheMachineControllerMetricsServerOperatingSystemManagerClusterAutoscalerCSIAttacherCSINodeDriverRegistarCSIProvisionerCSISnapshotterCSIResizerCSILivenessProbeAwsCCMAzureCCMAzureCNMAwsEbsCSIAwsEbsCSIAttacherAwsEbsCSILivenessProbeAwsEbsCSINodeDriverRegistrarAwsEbsCSIProvisionerAwsEbsCSIResizerAwsEbsCSISnapshotterAwsEbsCSISnapshotControllerAzureFileCSIAzureFileCSIAttacherAzureFileCSILivenessProbeAzureFileCSINodeDriverRegistarAzureFileCSIProvisionerAzureFileCSIResizerAzureFileCSISnapshotterAzureFileCSISnapshotterControllerNutanixCSISnapshotControllerNutanixCSISnapshotValidationWebhookAzureDiskCSIAzureDiskCSIAttacherAzureDiskCSILivenessProbeAzureDiskCSINodeDriverRegistarAzureDiskCSIProvisionerAzureDiskCSIResizerAzureDiskCSISnapshotterAzureDiskCSISnapshotterControllerNutanixCSILivenessProbeNutanixCSINutanixCSIProvisionerNutanixCSIRegistrarNutanixCSIResizerNutanixCSISnapshotterDigitalOceanCSIDigitalOceanCSIAlpineDigitalOceanCSIAttacherDigitalOceanCSINodeDriverRegistarDigitalOceanCSIProvisionerDigitalOceanCSIResizerDigitalOceanCSISnapshotControllerDigitalOceanCSISnapshotValidationWebhookDigitalOceanCSISnapshotterDigitaloceanCCMHetznerCCMHetznerCSIOpenstackCCMOpenstackCSIEquinixMetalCCMVsphereCCMVsphereCSIDriverVsphereCSISyncerVsphereCSIProvisionerGCPComputeCSIDriverGCPComputeCSIProvisionerGCPComputeCSIAttacherGCPComputeCSIResizerGCPComputeCSISnapshotterGCPComputeCSISnapshotControllerGCPComputeCSISnapshotValidationWebhookGCPComputeCSINodeDriverRegistrar"
+const _Resource_name = "CalicoCNICalicoControllerCalicoNodeFlannelCiliumCiliumOperatorHubbleRelayHubbleUIHubbleUIBackendHubbleProxyCiliumCertGenWeaveNetCNIKubeWeaveNetCNINPCDNSNodeCacheMachineControllerMetricsServerOperatingSystemManagerClusterAutoscalerCSIAttacherCSINodeDriverRegistarCSIProvisionerCSISnapshotterCSIResizerCSILivenessProbeAwsCCMAzureCCMAzureCNMAwsEbsCSIAwsEbsCSIAttacherAwsEbsCSILivenessProbeAwsEbsCSINodeDriverRegistrarAwsEbsCSIProvisionerAwsEbsCSIResizerAwsEbsCSISnapshotterAwsEbsCSISnapshotControllerAzureFileCSIAzureFileCSIAttacherAzureFileCSILivenessProbeAzureFileCSINodeDriverRegistarAzureFileCSIProvisionerAzureFileCSIResizerAzureFileCSISnapshotterAzureFileCSISnapshotterControllerNutanixCSISnapshotControllerNutanixCSISnapshotValidationWebhookAzureDiskCSIAzureDiskCSIAttacherAzureDiskCSILivenessProbeAzureDiskCSINodeDriverRegistarAzureDiskCSIProvisionerAzureDiskCSIResizerAzureDiskCSISnapshotterAzureDiskCSISnapshotterControllerNutanixCSILivenessProbeNutanixCSINutanixCSIProvisionerNutanixCSIRegistrarNutanixCSIResizerNutanixCSISnapshotterDigitalOceanCSIDigitalOceanCSIAlpineDigitalOceanCSIAttacherDigitalOceanCSINodeDriverRegistarDigitalOceanCSIProvisionerDigitalOceanCSIResizerDigitalOceanCSISnapshotControllerDigitalOceanCSISnapshotValidationWebhookDigitalOceanCSISnapshotterOpenstackCSIOpenstackCSINodeDriverRegistarOpenstackCSILivenessProbeOpenstackCSIAttacherOpenstackCSIProvisionerOpenstackCSIResizerOpenstackCSISnapshotterOpenstackCSISnapshotControllerOpenstackCSISnapshotWebhookDigitaloceanCCMHetznerCCMHetznerCSIOpenstackCCMEquinixMetalCCMVsphereCCMVsphereCSIDriverVsphereCSISyncerVsphereCSIProvisionerGCPComputeCSIDriverGCPComputeCSIProvisionerGCPComputeCSIAttacherGCPComputeCSIResizerGCPComputeCSISnapshotterGCPComputeCSISnapshotControllerGCPComputeCSISnapshotValidationWebhookGCPComputeCSINodeDriverRegistrar"
 
-var _Resource_index = [...]uint16{0, 9, 25, 35, 42, 48, 62, 73, 81, 96, 107, 120, 135, 149, 161, 178, 191, 213, 230, 241, 262, 276, 290, 300, 316, 322, 330, 338, 347, 364, 386, 414, 434, 450, 470, 497, 509, 529, 554, 584, 607, 626, 649, 682, 710, 745, 757, 777, 802, 832, 855, 874, 897, 930, 953, 963, 984, 1003, 1020, 1041, 1056, 1077, 1100, 1133, 1159, 1181, 1214, 1254, 1280, 1295, 1305, 1315, 1327, 1339, 1354, 1364, 1380, 1396, 1417, 1436, 1460, 1481, 1501, 1525, 1556, 1594, 1626}
+var _Resource_index = [...]uint16{0, 9, 25, 35, 42, 48, 62, 73, 81, 96, 107, 120, 135, 149, 161, 178, 191, 213, 230, 241, 262, 276, 290, 300, 316, 322, 330, 338, 347, 364, 386, 414, 434, 450, 470, 497, 509, 529, 554, 584, 607, 626, 649, 682, 710, 745, 757, 777, 802, 832, 855, 874, 897, 930, 953, 963, 984, 1003, 1020, 1041, 1056, 1077, 1100, 1133, 1159, 1181, 1214, 1254, 1280, 1292, 1322, 1347, 1367, 1390, 1409, 1432, 1462, 1489, 1504, 1514, 1524, 1536, 1551, 1561, 1577, 1593, 1614, 1633, 1657, 1678, 1698, 1722, 1753, 1791, 1823}
 
 func (i Resource) String() string {
 	i -= 1
