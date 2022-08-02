@@ -252,6 +252,19 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 
 	// Certs for CSI plugins
 	switch {
+	case s.Cluster.CloudProvider.Openstack != nil:
+		openstackCertsMap, err := certificate.NewSignedTLSCert(
+			resources.OpenstackCSIWebhookName,
+			resources.OpenstackCSIWebhookNamespace,
+			s.Cluster.ClusterNetwork.ServiceDomainName,
+			kubeCAPrivateKey,
+			kubeCACert,
+		)
+		if err != nil {
+			return nil, err
+		}
+		data.Certificates["OpenstackCSIWebhookCert"] = openstackCertsMap[resources.TLSCertName]
+		data.Certificates["OpenstackCSIWebhookKey"] = openstackCertsMap[resources.TLSKeyName]
 	// Certs for vsphere-csi-webhook (deployed only if CSIMigration is enabled)
 	case csiMigration && s.Cluster.CloudProvider.Vsphere != nil:
 		vsphereCSICertsMap, err := certificate.NewSignedTLSCert(

@@ -67,6 +67,9 @@ const (
 	MetricsServerName      = "metrics-server"
 	MetricsServerNamespace = metav1.NamespaceSystem
 
+	OpenstackCSIWebhookName      = "snapshot-validation-service"
+	OpenstackCSIWebhookNamespace = metav1.NamespaceSystem
+
 	VsphereCSIWebhookName      = "vsphere-webhook-svc"
 	VsphereCSIWebhookNamespace = metav1.NamespaceSystem
 
