@@ -159,7 +159,7 @@ func (s *State) ShouldEnableCSIMigration() bool {
 		// 	* .cloudProvider.external is true
 		//  * provider supports CSI migration
 		//  * KubeOne supports CSI plugin for specified provider
-		return s.Cluster.CloudProvider.CSIMigrationSupported() && s.Cluster.CloudProvider.External
+		return s.Cluster.CSIMigrationSupported()
 	}
 
 	return s.LiveCluster.CCMStatus.CSIMigrationEnabled || s.CCMMigration
