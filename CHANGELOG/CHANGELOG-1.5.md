@@ -102,6 +102,7 @@
 - Update Canal and Calico VXLAN to v3.22.2. This allows users to use kube-proxy in IPVS mode on AMD64 clusters running Kubernetes 1.23 and newer ([#2041](https://github.com/kubermatic/kubeone/pull/2041), [@xmudrii](https://github.com/xmudrii))
 - Update Flannel to v0.15.1 to fix an issue with Flannel causing `iptables` segfaults ([#1986](https://github.com/kubermatic/kubeone/pull/1986), [@mfranczy](https://github.com/mfranczy))
 - Switching to `quay.io` from `docker.io` for Calico CNI images ([#2043](https://github.com/kubermatic/kubeone/pull/2043), [@ahmedwaleedmalik](https://github.com/ahmedwaleedmalik))
+- Update Cilium to v1.12.0 ([#2220](https://github.com/kubermatic/kubeone/pull/2220), [@xmudrii](https://github.com/xmudrii))
 - Update Cilium to v1.11.5 ([#2049](https://github.com/kubermatic/kubeone/pull/2049), [@xmudrii](https://github.com/xmudrii))
 
 #### AWS
