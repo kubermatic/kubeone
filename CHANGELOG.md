@@ -1,5 +1,31 @@
 # Changelog
 
+# [v1.4.6](https://github.com/kubermatic/kubeone/releases/tag/v1.4.6) - 2022-08-03
+
+## Changes by Kind
+
+### Feature
+
+- Add missing snapshot controller and webhook for OpenStack Cinder CSI ([#2218](https://github.com/kubermatic/kubeone/pull/2218), [@xmudrii](https://github.com/xmudrii))
+- Rollout pods that are using `kubeone-*-credentials` Secrets if credentials are changed ([#2216](https://github.com/kubermatic/kubeone/pull/2216), [@xmudrii](https://github.com/xmudrii))
+
+### Updates
+
+- Update containerd to v1.5. Escape docker/containerd versions to avoid wildcard matching ([#2228](https://github.com/kubermatic/kubeone/pull/2228), [@xmudrii](https://github.com/xmudrii))
+- Update Canal to v3.22.4 ([#2189](https://github.com/kubermatic/kubeone/pull/2189), [@xmudrii](https://github.com/xmudrii))
+- Update OpenStack CCM and Cinder CSI to v1.23.4 for Kubernetes 1.23 clusters ([#2186](https://github.com/kubermatic/kubeone/pull/2186), [@xmudrii](https://github.com/xmudrii))
+- Update machine-controller to v1.43.6 ([#2227](https://github.com/kubermatic/kubeone/pull/2227), [@xmudrii](https://github.com/xmudrii))
+- Update machine-controller to v1.43.5 ([#2210](https://github.com/kubermatic/kubeone/pull/2210), [@kron4eg](https://github.com/kron4eg))
+- Update machine-controller to v1.43.4. This machine-controller release fixes an issue with finding Node objects by ProviderID ([#2193](https://github.com/kubermatic/kubeone/pull/2193), [@xmudrii](https://github.com/xmudrii))
+
+### Bug or Regression
+
+- Disable `--configure-cloud-routes` on Azure CCM to fix errors when starting the CCM ([#2185](https://github.com/kubermatic/kubeone/pull/2185), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Force regenerating CSRs for Kubelet serving certificates after CCM is deployed. This fixes an issue with Kubelet generating CSRs that are stuck in Pending. ([#2204](https://github.com/kubermatic/kubeone/pull/2204), [@xmudrii](https://github.com/xmudrii))
+- Properly propagate external cloud provider and CSI migration options to OSM ([#2203](https://github.com/kubermatic/kubeone/pull/2203), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Replace `operator: Exists` toleration with the control plane tolerations for metrics-server. This fixes an issue with metrics-server pods breaking eviction ([#2206](https://github.com/kubermatic/kubeone/pull/2206), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Tenant ID or Name is not required when using application credentials ([#2201](https://github.com/kubermatic/kubeone/pull/2201), [@ahmedwaleedmalik](https://github.com/ahmedwaleedmalik))
+
 # [v1.4.5](https://github.com/kubermatic/kubeone/releases/tag/v1.4.5) - 2022-07-12
 
 ## Changes by Kind
