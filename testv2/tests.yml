@@ -315,6 +315,7 @@
 - scenario: csi_ccm_migration
   initVersion: v1.21.14
   infrastructures:
+    - name: aws_defaults 
     - name: openstack_default
     - name: azure_default
     - name: vsphere_default
@@ -323,6 +324,7 @@
 - scenario: csi_ccm_migration
   initVersion: v1.22.11
   infrastructures:
+    - name: aws_defaults  
     - name: openstack_default
     - name: azure_default
     - name: vsphere_default
@@ -331,6 +333,7 @@
 - scenario: csi_ccm_migration
   initVersion: v1.23.8
   infrastructures:
+    - name: aws_defaults  
     - name: openstack_default
     - name: azure_default
     - name: vsphere_default
@@ -339,6 +342,7 @@
 - scenario: csi_ccm_migration
   initVersion: v1.24.2
   infrastructures:
+    - name: aws_defaults
     - name: openstack_default
     - name: azure_default
     - name: vsphere_default
