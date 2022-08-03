@@ -51,6 +51,10 @@ func (scenario *scenarioConformance) GenerateTests(wr io.Writer, generatorType G
 }
 
 func (scenario *scenarioConformance) Run(t *testing.T) {
+	if err := makeBin("build").Run(); err != nil {
+		t.Fatalf("building kubeone: %v", err)
+	}
+
 	install := scenarioInstall{
 		Name:                 scenario.Name,
 		ManifestTemplatePath: scenario.ManifestTemplatePath,

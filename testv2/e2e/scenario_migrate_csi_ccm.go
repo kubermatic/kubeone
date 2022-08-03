@@ -57,6 +57,10 @@ func (scenario *scenarioMigrateCSIAndCCM) GenerateTests(wr io.Writer, generatorT
 }
 
 func (scenario *scenarioMigrateCSIAndCCM) Run(t *testing.T) {
+	if err := makeBin("build").Run(); err != nil {
+		t.Fatalf("building kubeone: %v", err)
+	}
+
 	install := scenarioInstall{
 		Name:                 scenario.Name,
 		ManifestTemplatePath: scenario.OldManifestTemplatePath,
