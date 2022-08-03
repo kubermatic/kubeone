@@ -101,7 +101,7 @@ func (scenario *scenarioMigrateCSIAndCCM) Run(t *testing.T) {
 }
 
 func (scenario *scenarioMigrateCSIAndCCM) migrate(t *testing.T, k1 *kubeoneBin, complete bool) {
-	args := []string{"migrate", "to-ccm-csi"}
+	args := []string{"migrate", "to-ccm-csi", "--auto-approve"}
 	if complete {
 		args = append(args, "--complete")
 	}
