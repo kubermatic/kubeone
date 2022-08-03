@@ -73,7 +73,7 @@ sudo yum install -y \
 
 
 sudo yum versionlock delete containerd || true
-sudo yum install -y containerd-1.4.*
+sudo yum install -y containerd-'1.4.*'
 sudo yum versionlock add containerd
 
 
