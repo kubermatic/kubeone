@@ -1530,46 +1530,6 @@ func TestAwsDefaultsKubeProxyIpvsV1_24_2(t *testing.T) {
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsCsiCcmMigrationV1_21_14(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
-	scenario := Scenarios["csi_ccm_migration"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.21.14")
-	scenario.Run(t)
-}
-
-func TestOpenstackDefaultCsiCcmMigrationV1_21_14(t *testing.T) {
-	infra := Infrastructures["openstack_default"]
-	scenario := Scenarios["csi_ccm_migration"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.21.14")
-	scenario.Run(t)
-}
-
-func TestAzureDefaultCsiCcmMigrationV1_21_14(t *testing.T) {
-	infra := Infrastructures["azure_default"]
-	scenario := Scenarios["csi_ccm_migration"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.21.14")
-	scenario.Run(t)
-}
-
-func TestVsphereDefaultCsiCcmMigrationV1_21_14(t *testing.T) {
-	infra := Infrastructures["vsphere_default"]
-	scenario := Scenarios["csi_ccm_migration"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.21.14")
-	scenario.Run(t)
-}
-
-func TestVsphereFlatcarCsiCcmMigrationV1_21_14(t *testing.T) {
-	infra := Infrastructures["vsphere_flatcar"]
-	scenario := Scenarios["csi_ccm_migration"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.21.14")
-	scenario.Run(t)
-}
-
 func TestAwsDefaultsCsiCcmMigrationV1_22_11(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["csi_ccm_migration"]
