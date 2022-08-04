@@ -4244,7 +4244,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: kubermatic/kubeone-e2e:v0.1.24
+      image: kubermatic/kubeone-e2e:v0.1.25
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4266,7 +4266,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: kubermatic/kubeone-e2e:v0.1.24
+      image: kubermatic/kubeone-e2e:v0.1.25
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4290,7 +4290,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: kubermatic/kubeone-e2e:v0.1.24
+      image: kubermatic/kubeone-e2e:v0.1.25
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4312,7 +4312,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: kubermatic/kubeone-e2e:v0.1.24
+      image: kubermatic/kubeone-e2e:v0.1.25
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4334,7 +4334,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: kubermatic/kubeone-e2e:v0.1.24
+      image: kubermatic/kubeone-e2e:v0.1.25
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4356,7 +4356,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: kubermatic/kubeone-e2e:v0.1.24
+      image: kubermatic/kubeone-e2e:v0.1.25
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4378,7 +4378,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: kubermatic/kubeone-e2e:v0.1.24
+      image: kubermatic/kubeone-e2e:v0.1.25
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4402,7 +4402,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: kubermatic/kubeone-e2e:v0.1.24
+      image: kubermatic/kubeone-e2e:v0.1.25
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4424,7 +4424,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: kubermatic/kubeone-e2e:v0.1.24
+      image: kubermatic/kubeone-e2e:v0.1.25
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4446,7 +4446,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: kubermatic/kubeone-e2e:v0.1.24
+      image: kubermatic/kubeone-e2e:v0.1.25
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4468,7 +4468,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: kubermatic/kubeone-e2e:v0.1.24
+      image: kubermatic/kubeone-e2e:v0.1.25
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4490,7 +4490,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: kubermatic/kubeone-e2e:v0.1.24
+      image: kubermatic/kubeone-e2e:v0.1.25
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4514,7 +4514,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: kubermatic/kubeone-e2e:v0.1.24
+      image: kubermatic/kubeone-e2e:v0.1.25
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4536,7 +4536,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: kubermatic/kubeone-e2e:v0.1.24
+      image: kubermatic/kubeone-e2e:v0.1.25
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4558,7 +4558,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: kubermatic/kubeone-e2e:v0.1.24
+      image: kubermatic/kubeone-e2e:v0.1.25
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4580,7 +4580,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: kubermatic/kubeone-e2e:v0.1.24
+      image: kubermatic/kubeone-e2e:v0.1.25
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4602,7 +4602,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: kubermatic/kubeone-e2e:v0.1.24
+      image: kubermatic/kubeone-e2e:v0.1.25
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4626,7 +4626,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: kubermatic/kubeone-e2e:v0.1.24
+      image: kubermatic/kubeone-e2e:v0.1.25
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4648,7 +4648,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: kubermatic/kubeone-e2e:v0.1.24
+      image: kubermatic/kubeone-e2e:v0.1.25
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4670,7 +4670,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: kubermatic/kubeone-e2e:v0.1.24
+      image: kubermatic/kubeone-e2e:v0.1.25
       imagePullPolicy: Always
       name: ""
       resources:
