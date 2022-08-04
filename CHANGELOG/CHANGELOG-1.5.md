@@ -69,6 +69,7 @@
 
 #### Go
 
+- KubeOne is now built using Go 1.19.0 ([#2226](https://github.com/kubermatic/kubeone/pull/2226), [@xmudrii](https://github.com/xmudrii))
 - KubeOne is now built using Go 1.18.4 ([#2179](https://github.com/kubermatic/kubeone/pull/2179), [@xmudrii](https://github.com/xmudrii))
 - KubeOne is now built using Go 1.18.1 ([#2018](https://github.com/kubermatic/kubeone/pull/2018), [@xmudrii](https://github.com/xmudrii))
 
