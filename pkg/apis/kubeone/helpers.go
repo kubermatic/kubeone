@@ -305,8 +305,16 @@ func (c KubeOneCluster) CSIMigrationSupported() bool {
 }
 
 func (c KubeOneCluster) csiMigrationFeatureGates(complete bool) (map[string]bool, error) {
-	lessThan21Constraint, _ := semver.NewConstraint("< 1.21.0")
-	ver, _ := semver.NewVersion(c.Versions.Kubernetes)
+	lessThan21Constraint, err := semver.NewConstraint("< 1.21.0")
+	if err != nil {
+		return nil, err
+	}
+
+	ver, err := semver.NewVersion(c.Versions.Kubernetes)
+	if err != nil {
+		return nil, err
+	}
+
 	lessThan21 := lessThan21Constraint.Check(ver)
 	featureGates := map[string]bool{}
 

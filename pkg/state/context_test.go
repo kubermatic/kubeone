@@ -199,6 +199,9 @@ func TestShouldEnableCSIMigration(t *testing.T) {
 					Openstack: &kubeoneapi.OpenstackSpec{},
 					External:  false,
 				},
+				Versions: kubeoneapi.VersionConfig{
+					Kubernetes: "v1.22.0",
+				},
 			},
 			liveCluster: &Cluster{
 				CCMStatus: nil,
@@ -212,6 +215,9 @@ func TestShouldEnableCSIMigration(t *testing.T) {
 				CloudProvider: kubeoneapi.CloudProviderSpec{
 					Openstack: &kubeoneapi.OpenstackSpec{},
 					External:  true,
+				},
+				Versions: kubeoneapi.VersionConfig{
+					Kubernetes: "v1.22.0",
 				},
 			},
 			liveCluster: &Cluster{
@@ -227,6 +233,9 @@ func TestShouldEnableCSIMigration(t *testing.T) {
 					Hetzner:  &kubeoneapi.HetznerSpec{},
 					External: false,
 				},
+				Versions: kubeoneapi.VersionConfig{
+					Kubernetes: "v1.22.0",
+				},
 			},
 			liveCluster: &Cluster{
 				CCMStatus: nil,
@@ -240,6 +249,9 @@ func TestShouldEnableCSIMigration(t *testing.T) {
 				CloudProvider: kubeoneapi.CloudProviderSpec{
 					Hetzner:  &kubeoneapi.HetznerSpec{},
 					External: true,
+				},
+				Versions: kubeoneapi.VersionConfig{
+					Kubernetes: "v1.22.0",
 				},
 			},
 			liveCluster: &Cluster{
@@ -255,6 +267,9 @@ func TestShouldEnableCSIMigration(t *testing.T) {
 					Hetzner:  &kubeoneapi.HetznerSpec{},
 					External: false,
 				},
+				Versions: kubeoneapi.VersionConfig{
+					Kubernetes: "v1.22.0",
+				},
 			},
 			liveCluster: &Cluster{
 				CCMStatus: nil,
@@ -269,6 +284,9 @@ func TestShouldEnableCSIMigration(t *testing.T) {
 					Hetzner:  &kubeoneapi.HetznerSpec{},
 					External: true,
 				},
+				Versions: kubeoneapi.VersionConfig{
+					Kubernetes: "v1.22.0",
+				},
 			},
 			liveCluster: &Cluster{
 				CCMStatus: nil,
@@ -282,6 +300,9 @@ func TestShouldEnableCSIMigration(t *testing.T) {
 				CloudProvider: kubeoneapi.CloudProviderSpec{
 					Openstack: &kubeoneapi.OpenstackSpec{},
 					External:  false,
+				},
+				Versions: kubeoneapi.VersionConfig{
+					Kubernetes: "v1.22.0",
 				},
 			},
 			liveCluster: &Cluster{
@@ -299,6 +320,9 @@ func TestShouldEnableCSIMigration(t *testing.T) {
 					Openstack: &kubeoneapi.OpenstackSpec{},
 					External:  true,
 				},
+				Versions: kubeoneapi.VersionConfig{
+					Kubernetes: "v1.22.0",
+				},
 			},
 			liveCluster: &Cluster{
 				CCMStatus: &CCMStatus{
@@ -315,6 +339,9 @@ func TestShouldEnableCSIMigration(t *testing.T) {
 					Openstack: &kubeoneapi.OpenstackSpec{},
 					External:  true,
 				},
+				Versions: kubeoneapi.VersionConfig{
+					Kubernetes: "v1.22.0",
+				},
 			},
 			liveCluster: &Cluster{
 				CCMStatus: &CCMStatus{
@@ -330,6 +357,9 @@ func TestShouldEnableCSIMigration(t *testing.T) {
 				CloudProvider: kubeoneapi.CloudProviderSpec{
 					Openstack: &kubeoneapi.OpenstackSpec{},
 					External:  true,
+				},
+				Versions: kubeoneapi.VersionConfig{
+					Kubernetes: "v1.22.0",
 				},
 			},
 			liveCluster: &Cluster{
@@ -376,6 +406,9 @@ func TestShouldUnregisterInTreeProvider(t *testing.T) {
 					Openstack: &kubeoneapi.OpenstackSpec{},
 					External:  false,
 				},
+				Versions: kubeoneapi.VersionConfig{
+					Kubernetes: "v1.22.0",
+				},
 			},
 			liveCluster: &Cluster{
 				CCMStatus: nil,
@@ -389,6 +422,9 @@ func TestShouldUnregisterInTreeProvider(t *testing.T) {
 				CloudProvider: kubeoneapi.CloudProviderSpec{
 					Openstack: &kubeoneapi.OpenstackSpec{},
 					External:  true,
+				},
+				Versions: kubeoneapi.VersionConfig{
+					Kubernetes: "v1.22.0",
 				},
 			},
 			liveCluster: &Cluster{
@@ -404,6 +440,9 @@ func TestShouldUnregisterInTreeProvider(t *testing.T) {
 					Hetzner:  &kubeoneapi.HetznerSpec{},
 					External: false,
 				},
+				Versions: kubeoneapi.VersionConfig{
+					Kubernetes: "v1.22.0",
+				},
 			},
 			liveCluster: &Cluster{
 				CCMStatus: nil,
@@ -417,6 +456,9 @@ func TestShouldUnregisterInTreeProvider(t *testing.T) {
 				CloudProvider: kubeoneapi.CloudProviderSpec{
 					Hetzner:  &kubeoneapi.HetznerSpec{},
 					External: true,
+				},
+				Versions: kubeoneapi.VersionConfig{
+					Kubernetes: "v1.22.0",
 				},
 			},
 			liveCluster: &Cluster{
@@ -432,6 +474,9 @@ func TestShouldUnregisterInTreeProvider(t *testing.T) {
 					Hetzner:  &kubeoneapi.HetznerSpec{},
 					External: false,
 				},
+				Versions: kubeoneapi.VersionConfig{
+					Kubernetes: "v1.22.0",
+				},
 			},
 			liveCluster: &Cluster{
 				CCMStatus: nil,
@@ -446,6 +491,9 @@ func TestShouldUnregisterInTreeProvider(t *testing.T) {
 					Hetzner:  &kubeoneapi.HetznerSpec{},
 					External: true,
 				},
+				Versions: kubeoneapi.VersionConfig{
+					Kubernetes: "v1.22.0",
+				},
 			},
 			liveCluster: &Cluster{
 				CCMStatus: nil,
@@ -459,6 +507,9 @@ func TestShouldUnregisterInTreeProvider(t *testing.T) {
 				CloudProvider: kubeoneapi.CloudProviderSpec{
 					Openstack: &kubeoneapi.OpenstackSpec{},
 					External:  true,
+				},
+				Versions: kubeoneapi.VersionConfig{
+					Kubernetes: "v1.22.0",
 				},
 			},
 			liveCluster: &Cluster{
@@ -476,6 +527,9 @@ func TestShouldUnregisterInTreeProvider(t *testing.T) {
 					Openstack: &kubeoneapi.OpenstackSpec{},
 					External:  true,
 				},
+				Versions: kubeoneapi.VersionConfig{
+					Kubernetes: "v1.22.0",
+				},
 			},
 			liveCluster: &Cluster{
 				CCMStatus: &CCMStatus{
@@ -492,6 +546,9 @@ func TestShouldUnregisterInTreeProvider(t *testing.T) {
 					Openstack: &kubeoneapi.OpenstackSpec{},
 					External:  true,
 				},
+				Versions: kubeoneapi.VersionConfig{
+					Kubernetes: "v1.22.0",
+				},
 			},
 			liveCluster: &Cluster{
 				CCMStatus: &CCMStatus{
@@ -507,6 +564,9 @@ func TestShouldUnregisterInTreeProvider(t *testing.T) {
 				CloudProvider: kubeoneapi.CloudProviderSpec{
 					Openstack: &kubeoneapi.OpenstackSpec{},
 					External:  true,
+				},
+				Versions: kubeoneapi.VersionConfig{
+					Kubernetes: "v1.22.0",
 				},
 			},
 			liveCluster: &Cluster{
@@ -531,7 +591,7 @@ func TestShouldUnregisterInTreeProvider(t *testing.T) {
 			}
 
 			if got := s.ShouldUnregisterInTreeCloudProvider(); got != tc.want {
-				t.Errorf("State.ShouldUnregisterInTreeProvider() = %v, want %v", got, tc.want)
+				t.Errorf("State.ShouldUnregisterInTreeCloudProvider() = %v, want %v", got, tc.want)
 			}
 		})
 	}
