@@ -24,7 +24,6 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/Masterminds/semver/v3"
 	"github.com/pkg/errors"
 
 	"k8c.io/kubeone/pkg/fail"
@@ -305,59 +304,31 @@ func (c KubeOneCluster) CSIMigrationSupported() bool {
 }
 
 func (c KubeOneCluster) csiMigrationFeatureGates(complete bool) (map[string]bool, error) {
-	lessThan21Constraint, err := semver.NewConstraint("< 1.21.0")
-	if err != nil {
-		return nil, err
-	}
-
-	ver, err := semver.NewVersion(c.Versions.Kubernetes)
-	if err != nil {
-		return nil, err
-	}
-
-	lessThan21 := lessThan21Constraint.Check(ver)
 	featureGates := map[string]bool{}
 
 	switch {
 	case c.CloudProvider.AWS != nil:
 		featureGates["CSIMigrationAWS"] = true
 		if complete {
-			if lessThan21 {
-				featureGates["CSIMigrationAWSComplete"] = true
-			} else {
-				featureGates["InTreePluginAWSUnregister"] = true
-			}
+			featureGates["InTreePluginAWSUnregister"] = true
 		}
 	case c.CloudProvider.Azure != nil:
 		featureGates["CSIMigrationAzureDisk"] = true
 		featureGates["CSIMigrationAzureFile"] = true
 		if complete {
-			if lessThan21 {
-				featureGates["CSIMigrationAzureDiskComplete"] = true
-				featureGates["CSIMigrationAzureFileComplete"] = true
-			} else {
-				featureGates["InTreePluginAzureDiskUnregister"] = true
-				featureGates["InTreePluginAzureFileUnregister"] = true
-			}
+			featureGates["InTreePluginAzureDiskUnregister"] = true
+			featureGates["InTreePluginAzureFileUnregister"] = true
 		}
 	case c.CloudProvider.Openstack != nil:
 		featureGates["CSIMigrationOpenStack"] = true
 		featureGates["ExpandCSIVolumes"] = true
 		if complete {
-			if lessThan21 {
-				featureGates["CSIMigrationOpenStackComplete"] = true
-			} else {
-				featureGates["InTreePluginOpenStackUnregister"] = true
-			}
+			featureGates["InTreePluginOpenStackUnregister"] = true
 		}
 	case c.CloudProvider.Vsphere != nil:
 		featureGates["CSIMigrationvSphere"] = true
 		if complete {
-			if lessThan21 {
-				featureGates["CSIMigrationvSphereComplete"] = true
-			} else {
-				featureGates["InTreePluginvSphereUnregister"] = true
-			}
+			featureGates["InTreePluginvSphereUnregister"] = true
 		}
 	default:
 		return nil, fail.ConfigValidation(fmt.Errorf("csi migration is not supported for selected provider"))

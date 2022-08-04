@@ -627,14 +627,23 @@ func detectCCMMigrationStatus(s *state.State) (*state.CCMStatus, error) {
 				}
 
 				csiFeatureGates, _, _ := s.Cluster.CSIMigrationFeatureGates(true)
+				unregistered := []string{}
+
+				for fg := range csiFeatureGates {
+					if strings.Contains(fg, "Unregister") {
+						unregistered = append(unregistered, fg)
+					}
+				}
 
 				foundUnregister := 0
-				for fg := range csiFeatureGates {
+				for _, fg := range unregistered {
 					if strings.Contains(command, fmt.Sprintf("%s=true", fg)) {
 						foundUnregister++
 					}
+
 				}
-				if len(csiFeatureGates) > 0 && foundUnregister == len(csiFeatureGates) {
+
+				if len(unregistered) > 0 && foundUnregister == len(unregistered) {
 					status.InTreeCloudProviderUnregistered = true
 				}
 			}
