@@ -1,4 +1,4 @@
-# [v1.5.0-beta.0](https://github.com/kubermatic/kubeone/releases/tag/v1.5.0-beta.0) - 2022-08-01
+# [v1.5.0-beta.0](https://github.com/kubermatic/kubeone/releases/tag/v1.5.0-beta.0) - 2022-08-04
 
 ## Changelog since v1.4.0
 
