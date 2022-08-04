@@ -29,8 +29,8 @@ import (
 func defaultRetryBackoff(retries int) wait.Backoff {
 	return wait.Backoff{
 		Steps:    retries,
-		Duration: 5 * time.Second,
-		Factor:   2.0,
+		Duration: 10 * time.Second,
+		Factor:   1.4,
 	}
 }
 
