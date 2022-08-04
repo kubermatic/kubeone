@@ -23,6 +23,7 @@ import (
 	"time"
 
 	clusterv1alpha1 "github.com/kubermatic/machine-controller/pkg/apis/cluster/v1alpha1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	ctrlruntimeclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -94,6 +95,7 @@ func (scenario *scenarioMigrateCSIAndCCM) Run(t *testing.T) {
 	}
 
 	scenario.forceRolloutMachinedeployments(t, client)
+	waitMachinesHasNodes(t, k1New)
 	waitKubeOneNodesReady(t, k1New)
 
 	scenario.migrate(t, k1New, true)
@@ -113,7 +115,7 @@ func (scenario *scenarioMigrateCSIAndCCM) migrate(t *testing.T, k1 *kubeoneBin, 
 
 func (scenario *scenarioMigrateCSIAndCCM) forceRolloutMachinedeployments(t *testing.T, client ctrlruntimeclient.Client) {
 	var machinedeployments clusterv1alpha1.MachineDeploymentList
-	if err := client.List(context.Background(), &machinedeployments); err != nil {
+	if err := client.List(context.Background(), &machinedeployments, ctrlruntimeclient.InNamespace(metav1.NamespaceSystem)); err != nil {
 		t.Error(err)
 	}
 

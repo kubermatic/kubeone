@@ -38,6 +38,8 @@ import (
 
 	"k8c.io/kubeone/test/e2e/testutil"
 
+	clusterv1alpha1 "github.com/kubermatic/machine-controller/pkg/apis/cluster/v1alpha1"
+
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -409,6 +411,46 @@ func newProwJob(prowJobName string, labels map[string]string, testTitle string, 
 
 func pullProwJobName(in ...string) string {
 	return fmt.Sprintf("pull-kubeone-e2e-%s", strings.ReplaceAll(strings.Join(in, "-"), "_", "-"))
+}
+
+func waitMachinesHasNodes(t *testing.T, k1 *kubeoneBin) {
+	var (
+		client                   ctrlruntimeclient.Client
+		someMachinesLacksTheNode bool
+		err                      error
+	)
+
+	err = retryFn(func() error {
+		client, err = k1.DynamicClient()
+
+		return err
+	})
+	if err != nil {
+		t.Fatalf("initializing dynamic client: %s", err)
+	}
+
+	ctx := context.Background()
+
+	waitErr := wait.Poll(15*time.Second, 10*time.Minute, func() (bool, error) {
+		var machineList clusterv1alpha1.MachineList
+
+		err = retryFn(func() error {
+			return client.List(ctx, &machineList, ctrlruntimeclient.InNamespace(metav1.NamespaceSystem))
+		})
+
+		t.Logf("checking %d machines for node reference", len(machineList.Items))
+		for _, machine := range machineList.Items {
+			if machine.Status.NodeRef == nil {
+				t.Logf("machine %q still has no nodeRef", machine.Name)
+				someMachinesLacksTheNode = true
+			}
+		}
+
+		return !someMachinesLacksTheNode, err
+	})
+	if waitErr != nil {
+		t.Fatalf("waiting for machines to get nodes references: %v", waitErr)
+	}
 }
 
 func waitKubeOneNodesReady(t *testing.T, k1 *kubeoneBin) {
