@@ -45,6 +45,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/util/wait"
+	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/util/retry"
 	k8spath "k8s.io/utils/path"
 	ctrlruntimeclient "sigs.k8s.io/controller-runtime/pkg/client"
@@ -55,6 +56,12 @@ const (
 	prowImage             = "kubermatic/kubeone-e2e:v0.1.25"
 	k1CloneURI            = "ssh://git@github.com/kubermatic/kubeone.git"
 )
+
+func init() {
+	if err := clusterv1alpha1.AddToScheme(scheme.Scheme); err != nil {
+		panic(err)
+	}
+}
 
 func mustGetwd() string {
 	cwd, err := os.Getwd()
