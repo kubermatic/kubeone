@@ -640,7 +640,6 @@ func detectCCMMigrationStatus(s *state.State) (*state.CCMStatus, error) {
 					if strings.Contains(command, fmt.Sprintf("%s=true", fg)) {
 						foundUnregister++
 					}
-
 				}
 
 				if len(unregistered) > 0 && foundUnregister == len(unregistered) {
