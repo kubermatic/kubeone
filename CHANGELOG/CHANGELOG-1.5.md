@@ -206,6 +206,7 @@
 - Update `kubeadm-flags.env` file when upgrading static worker nodes ([#2123](https://github.com/kubermatic/kubeone/pull/2123), [@xmudrii](https://github.com/xmudrii))
 - Don't ignore clientset error when resetting cluster ([#1950](https://github.com/kubermatic/kubeone/pull/1950), [@xmudrii](https://github.com/xmudrii))
 - Show "Ensure MachineDeployments" as an action to be taken only when provisioning a cluster for the first time ([#1927](https://github.com/kubermatic/kubeone/pull/1927), [@xmudrii](https://github.com/xmudrii))
+- Lower exponential backoff times ([#2231](https://github.com/kubermatic/kubeone/pull/2231), [@kron4eg](https://github.com/kron4eg))
 
 #### Addons
 
