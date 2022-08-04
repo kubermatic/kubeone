@@ -58,8 +58,7 @@ func (k1 *kubeoneBin) Apply() error {
 func (k1 *kubeoneBin) Kubeconfig() ([]byte, error) {
 	var buf bytes.Buffer
 
-	args := k1.globalFlags()
-	exe := k1.build(append(args, "kubeconfig")...)
+	exe := k1.build("kubeconfig")
 	testutil.StdoutTo(&buf)(exe)
 
 	if err := exe.Run(); err != nil {
@@ -136,8 +135,7 @@ func (k1 *kubeoneBin) AsyncProxy(ctx context.Context) (string, func() error, err
 func (k1 *kubeoneBin) ClusterManifest() (*kubeoneapi.KubeOneCluster, error) {
 	var buf bytes.Buffer
 
-	args := k1.globalFlags()
-	exe := k1.build(append(args, "config", "dump")...)
+	exe := k1.build("config", "dump")
 	testutil.StdoutTo(&buf)(exe)
 
 	if err := exe.Run(); err != nil {

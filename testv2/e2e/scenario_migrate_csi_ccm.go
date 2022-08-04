@@ -120,18 +120,20 @@ func (scenario *scenarioMigrateCSIAndCCM) forceRolloutMachinedeployments(t *test
 	}
 
 	for _, md := range machinedeployments.Items {
-		mdOrig := md.DeepCopy()
-		md := md
+		mdOld := md.DeepCopy()
+		mdNew := md
 
-		md.Spec.Template.Spec.ObjectMeta.Annotations["forceRestart"] = time.Now().String()
+		if mdNew.Spec.Template.Spec.ObjectMeta.Annotations == nil {
+			mdNew.Spec.Template.Spec.ObjectMeta.Annotations = map[string]string{}
+		}
 
-		patch := ctrlruntimeclient.MergeFrom(&md)
+		mdNew.Spec.Template.Spec.ObjectMeta.Annotations["forceRestart"] = time.Now().String()
 
 		err := retryFn(func() error {
-			return client.Patch(context.Background(), mdOrig, patch)
+			return client.Patch(context.Background(), &mdNew, ctrlruntimeclient.MergeFrom(mdOld))
 		})
 		if err != nil {
-			t.Fatalf("forcing machineDeployment %q to rollout: %v", ctrlruntimeclient.ObjectKeyFromObject(&md), err)
+			t.Fatalf("forcing machineDeployment %q to rollout: %v", ctrlruntimeclient.ObjectKeyFromObject(&mdNew), err)
 		}
 	}
 }

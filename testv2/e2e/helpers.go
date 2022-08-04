@@ -422,9 +422,8 @@ func pullProwJobName(in ...string) string {
 
 func waitMachinesHasNodes(t *testing.T, k1 *kubeoneBin) {
 	var (
-		client                   ctrlruntimeclient.Client
-		someMachinesLacksTheNode bool
-		err                      error
+		client ctrlruntimeclient.Client
+		err    error
 	)
 
 	err = retryFn(func() error {
@@ -439,7 +438,10 @@ func waitMachinesHasNodes(t *testing.T, k1 *kubeoneBin) {
 	ctx := context.Background()
 
 	waitErr := wait.Poll(15*time.Second, 10*time.Minute, func() (bool, error) {
-		var machineList clusterv1alpha1.MachineList
+		var (
+			machineList              clusterv1alpha1.MachineList
+			someMachinesLacksTheNode bool
+		)
 
 		err = retryFn(func() error {
 			return client.List(ctx, &machineList, ctrlruntimeclient.InNamespace(metav1.NamespaceSystem))
