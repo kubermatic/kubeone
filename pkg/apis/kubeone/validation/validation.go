@@ -36,7 +36,7 @@ import (
 
 const (
 	// lowerVersionConstraint defines a semver constraint that validates Kubernetes versions against a lower bound
-	lowerVersionConstraint = ">= 1.20"
+	lowerVersionConstraint = ">= 1.22"
 	// upperVersionConstraint defines a semver constraint that validates Kubernetes versions against an upper bound
 	upperVersionConstraint = "<= 1.24"
 )

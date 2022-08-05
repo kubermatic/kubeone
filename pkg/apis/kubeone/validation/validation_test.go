@@ -744,32 +744,32 @@ func TestValidateVersionConfig(t *testing.T) {
 			expectedError: false,
 		},
 		{
-			name: "valid version config (1.21.4)",
+			name: "not supported kubernetes version (1.21.4)",
 			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "1.21.4",
 			},
-			expectedError: false,
+			expectedError: true,
 		},
 		{
-			name: "valid version config (1.21.0)",
+			name: "not supported kubernetes version (1.21.0)",
 			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "1.21.0",
 			},
-			expectedError: false,
+			expectedError: true,
 		},
 		{
-			name: "valid version config (1.20.10)",
+			name: "not supported kubernetes version (1.20.10)",
 			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "1.20.10",
 			},
-			expectedError: false,
+			expectedError: true,
 		},
 		{
-			name: "valid version config (1.20.0)",
+			name: "not supported kubernetes version (1.20.0)",
 			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "1.20.0",
 			},
-			expectedError: false,
+			expectedError: true,
 		},
 		{
 			name: "not supported kubernetes version (1.99.0)",
