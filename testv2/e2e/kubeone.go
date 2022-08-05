@@ -29,7 +29,12 @@ import (
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/apis/kubeone/config"
+	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/test/e2e/testutil"
+
+	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/clientcmd"
+	ctrlruntimeclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 var (
@@ -53,8 +58,7 @@ func (k1 *kubeoneBin) Apply() error {
 func (k1 *kubeoneBin) Kubeconfig() ([]byte, error) {
 	var buf bytes.Buffer
 
-	args := k1.globalFlags()
-	exe := k1.build(append(args, "kubeconfig")...)
+	exe := k1.build("kubeconfig")
 	testutil.StdoutTo(&buf)(exe)
 
 	if err := exe.Run(); err != nil {
@@ -66,6 +70,42 @@ func (k1 *kubeoneBin) Kubeconfig() ([]byte, error) {
 
 func (k1 *kubeoneBin) Reset() error {
 	return k1.run("reset", "--auto-approve", "--destroy-workers", "--remove-binaries")
+}
+
+func (k1 *kubeoneBin) DynamicClient() (ctrlruntimeclient.Client, error) {
+	restConfig, err := k1.RestConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	return ctrlruntimeclient.New(restConfig, ctrlruntimeclient.Options{})
+}
+
+func (k1 *kubeoneBin) RestConfig() (*rest.Config, error) {
+	kubeoneManifest, err := k1.ClusterManifest()
+	if err != nil {
+		return nil, err
+	}
+
+	kubeconfig, err := k1.Kubeconfig()
+	if err != nil {
+		return nil, err
+	}
+
+	restConfig, err := clientcmd.RESTConfigFromKubeConfig(kubeconfig)
+	if err != nil {
+		return nil, err
+	}
+
+	connector := ssh.NewConnector(context.Background())
+	tun, err := connector.Tunnel(kubeoneManifest.RandomHost())
+	if err != nil {
+		return nil, err
+	}
+
+	restConfig.Dial = tun.TunnelTo
+
+	return restConfig, nil
 }
 
 func (k1 *kubeoneBin) AsyncProxy(ctx context.Context) (string, func() error, error) {
@@ -95,8 +135,7 @@ func (k1 *kubeoneBin) AsyncProxy(ctx context.Context) (string, func() error, err
 func (k1 *kubeoneBin) ClusterManifest() (*kubeoneapi.KubeOneCluster, error) {
 	var buf bytes.Buffer
 
-	args := k1.globalFlags()
-	exe := k1.build(append(args, "config", "dump")...)
+	exe := k1.build("config", "dump")
 	testutil.StdoutTo(&buf)(exe)
 
 	if err := exe.Run(); err != nil {

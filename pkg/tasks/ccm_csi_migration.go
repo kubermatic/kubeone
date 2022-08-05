@@ -48,7 +48,7 @@ func ccmMigrationValidateConfig(s *state.State) error {
 		return fail.NewConfigError("validation", ".cloudProvider.external must be enabled to start the migration")
 	}
 
-	if !s.Cluster.CloudProvider.CSIMigrationSupported() {
+	if !s.Cluster.CSIMigrationSupported() {
 		return fail.NewConfigError("validation", "ccm/csi migration is not supported for the specified provider")
 	}
 

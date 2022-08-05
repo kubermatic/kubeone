@@ -24,10 +24,11 @@ import (
 )
 
 type scenarioConformance struct {
-	name                 string
-	manifestTemplatePath string
-	versions             []string
-	infra                Infra
+	Name                 string
+	ManifestTemplatePath string
+
+	versions []string
+	infra    Infra
 }
 
 func (scenario *scenarioConformance) SetInfra(infrastructure Infra) {
@@ -40,8 +41,8 @@ func (scenario *scenarioConformance) SetVersions(versions ...string) {
 
 func (scenario *scenarioConformance) GenerateTests(wr io.Writer, generatorType GeneratorType, cfg ProwConfig) error {
 	install := scenarioInstall{
-		Name:                 scenario.name,
-		ManifestTemplatePath: scenario.manifestTemplatePath,
+		Name:                 scenario.Name,
+		ManifestTemplatePath: scenario.ManifestTemplatePath,
 		infra:                scenario.infra,
 		versions:             scenario.versions,
 	}
@@ -50,9 +51,13 @@ func (scenario *scenarioConformance) GenerateTests(wr io.Writer, generatorType G
 }
 
 func (scenario *scenarioConformance) Run(t *testing.T) {
+	if err := makeBin("build").Run(); err != nil {
+		t.Fatalf("building kubeone: %v", err)
+	}
+
 	install := scenarioInstall{
-		Name:                 scenario.name,
-		ManifestTemplatePath: scenario.manifestTemplatePath,
+		Name:                 scenario.Name,
+		ManifestTemplatePath: scenario.ManifestTemplatePath,
 		infra:                scenario.infra,
 		versions:             scenario.versions,
 	}
@@ -62,8 +67,6 @@ func (scenario *scenarioConformance) Run(t *testing.T) {
 }
 
 func (scenario *scenarioConformance) test(t *testing.T) {
-	data := manifestData{VERSION: scenario.versions[0]}
-
 	var k1Opts []kubeoneBinOpts
 
 	if *kubeoneVerboseFlag {
@@ -77,7 +80,7 @@ func (scenario *scenarioConformance) test(t *testing.T) {
 	k1 := newKubeoneBin(
 		scenario.infra.terraform.path,
 		renderManifest(t,
-			scenario.manifestTemplatePath,
+			scenario.ManifestTemplatePath,
 			manifestData{
 				VERSION: scenario.versions[0],
 			},
@@ -104,6 +107,6 @@ func (scenario *scenarioConformance) test(t *testing.T) {
 	time.Sleep(5 * time.Second)
 	t.Logf("kubeone proxy is running on %s", proxyURL)
 
-	basicTest(t, k1, data)
+	waitKubeOneNodesReady(t, k1)
 	sonobuoyRun(t, k1, sonobuoyConformance, proxyURL)
 }

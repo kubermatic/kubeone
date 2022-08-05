@@ -125,10 +125,7 @@ func (scenario *scenarioInstall) kubeone(t *testing.T) *kubeoneBin {
 }
 
 func (scenario *scenarioInstall) test(t *testing.T) {
-	var (
-		data = manifestData{VERSION: scenario.versions[0]}
-		k1   = scenario.kubeone(t)
-	)
+	k1 := scenario.kubeone(t)
 
 	// launch kubeone proxy, to have a HTTPS proxy through the SSH tunnel
 	// to open access to the kubeapi behind the bastion host
@@ -149,7 +146,7 @@ func (scenario *scenarioInstall) test(t *testing.T) {
 	time.Sleep(5 * time.Second)
 	t.Logf("kubeone proxy is running on %s", proxyURL)
 
-	basicTest(t, k1, data)
+	waitKubeOneNodesReady(t, k1)
 	sonobuoyRun(t, k1, sonobuoyConformanceLite, proxyURL)
 }
 

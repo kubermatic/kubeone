@@ -617,23 +617,32 @@ func detectCCMMigrationStatus(s *state.State) (*state.CCMStatus, error) {
 	csiFlagRegex := regexp.MustCompile(`CSIMigration[a-zA-Z]+=true`)
 	status := &state.CCMStatus{}
 	for _, pod := range pods.Items {
-		for _, c := range pod.Spec.Containers[0].Command {
+		for _, command := range pod.Spec.Containers[0].Command {
 			switch {
-			case strings.HasPrefix(c, "--cloud-provider") && !strings.Contains(c, "external"):
+			case strings.HasPrefix(command, "--cloud-provider") && !strings.Contains(command, "external"):
 				status.InTreeCloudProviderEnabled = true
-			case strings.HasPrefix(c, "--feature-gates"):
-				if csiFlagRegex.MatchString(c) {
+			case strings.HasPrefix(command, "--feature-gates"):
+				if csiFlagRegex.MatchString(command) {
 					status.CSIMigrationEnabled = true
 				}
-				unregister := s.Cluster.InTreePluginUnregisterFeatureGate()
+
+				csiFeatureGates, _, _ := s.Cluster.CSIMigrationFeatureGates(true)
+				unregistered := []string{}
+
+				for fg := range csiFeatureGates {
+					if strings.Contains(fg, "Unregister") {
+						unregistered = append(unregistered, fg)
+					}
+				}
 
 				foundUnregister := 0
-				for _, u := range unregister {
-					if strings.Contains(c, fmt.Sprintf("%s=true", u)) {
+				for _, fg := range unregistered {
+					if strings.Contains(command, fmt.Sprintf("%s=true", fg)) {
 						foundUnregister++
 					}
 				}
-				if len(unregister) > 0 && foundUnregister == len(unregister) {
+
+				if len(unregistered) > 0 && foundUnregister == len(unregistered) {
 					status.InTreeCloudProviderUnregistered = true
 				}
 			}
