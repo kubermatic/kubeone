@@ -194,6 +194,42 @@ var (
 				},
 			},
 		},
+		"digitalocean_centos": {
+			name: "digitalocean_centos",
+			labels: map[string]string{
+				"preset-goproxy":      "true",
+				"preset-digitalocean": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "digitalocean",
+			},
+			terraform: terraformBin{
+				path: "../../examples/terraform/digitalocean",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+					"control_plane_droplet_image=centos-7-x64",
+					"worker_os=centos",
+				},
+			},
+		},
+		"digitalocean_rockylinux": {
+			name: "digitalocean_rockylinux",
+			labels: map[string]string{
+				"preset-goproxy":      "true",
+				"preset-digitalocean": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "digitalocean",
+			},
+			terraform: terraformBin{
+				path: "../../examples/terraform/digitalocean",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+					"control_plane_droplet_image=rockylinux-8-x64",
+					"worker_os=rockylinux",
+				},
+			},
+		},
 		"equinixmetal_default": {
 			name: "equinixmetal_default",
 			labels: map[string]string{

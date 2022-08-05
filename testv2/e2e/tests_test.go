@@ -1434,6 +1434,22 @@ func TestDigitaloceanDefaultInstallContainerdExternalV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestDigitaloceanCentosInstallContainerdExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["digitalocean_centos"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestDigitaloceanRockylinuxInstallContainerdExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["digitalocean_rockylinux"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
 func TestEquinixmetalDefaultInstallContainerdExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["equinixmetal_default"]
 	scenario := Scenarios["install_containerd_external"]
@@ -1532,6 +1548,22 @@ func TestAzureDefaultInstallContainerdExternalV1_23_9(t *testing.T) {
 
 func TestDigitaloceanDefaultInstallContainerdExternalV1_23_9(t *testing.T) {
 	infra := Infrastructures["digitalocean_default"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestDigitaloceanCentosInstallContainerdExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["digitalocean_centos"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestDigitaloceanRockylinuxInstallContainerdExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["digitalocean_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.23.9")
@@ -1642,6 +1674,22 @@ func TestDigitaloceanDefaultInstallContainerdExternalV1_24_3(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestDigitaloceanCentosInstallContainerdExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["digitalocean_centos"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestDigitaloceanRockylinuxInstallContainerdExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["digitalocean_rockylinux"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
 func TestEquinixmetalDefaultInstallContainerdExternalV1_24_3(t *testing.T) {
 	infra := Infrastructures["equinixmetal_default"]
 	scenario := Scenarios["install_containerd_external"]
@@ -1740,6 +1788,22 @@ func TestAzureDefaultInstallDockerExternalV1_22_12(t *testing.T) {
 
 func TestDigitaloceanDefaultInstallDockerExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["digitalocean_default"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestDigitaloceanCentosInstallDockerExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["digitalocean_centos"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestDigitaloceanRockylinuxInstallDockerExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["digitalocean_rockylinux"]
 	scenario := Scenarios["install_docker_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12")
@@ -1850,6 +1914,22 @@ func TestDigitaloceanDefaultUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *t
 	scenario.Run(t)
 }
 
+func TestDigitaloceanCentosUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["digitalocean_centos"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestDigitaloceanRockylinuxUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["digitalocean_rockylinux"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
 func TestEquinixmetalDefaultUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["equinixmetal_default"]
 	scenario := Scenarios["upgrade_containerd_external"]
@@ -1954,6 +2034,22 @@ func TestDigitaloceanDefaultUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *te
 	scenario.Run(t)
 }
 
+func TestDigitaloceanCentosUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T) {
+	infra := Infrastructures["digitalocean_centos"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9", "v1.24.3")
+	scenario.Run(t)
+}
+
+func TestDigitaloceanRockylinuxUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T) {
+	infra := Infrastructures["digitalocean_rockylinux"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9", "v1.24.3")
+	scenario.Run(t)
+}
+
 func TestEquinixmetalDefaultUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T) {
 	infra := Infrastructures["equinixmetal_default"]
 	scenario := Scenarios["upgrade_containerd_external"]
@@ -2052,6 +2148,22 @@ func TestAzureDefaultUpgradeDockerExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
 
 func TestDigitaloceanDefaultUpgradeDockerExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["digitalocean_default"]
+	scenario := Scenarios["upgrade_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestDigitaloceanCentosUpgradeDockerExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["digitalocean_centos"]
+	scenario := Scenarios["upgrade_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestDigitaloceanRockylinuxUpgradeDockerExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["digitalocean_rockylinux"]
 	scenario := Scenarios["upgrade_docker_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12", "v1.23.9")
