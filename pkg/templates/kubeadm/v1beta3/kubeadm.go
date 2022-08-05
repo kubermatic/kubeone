@@ -52,7 +52,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		return nil, fail.Config(err, "parsing kubernetes semver")
 	}
 
-	etcdImageTag, etcdExtraArgs := etcdVersionCorruptCheckExtraArgs(kubeSemVer, cluster.AssetConfiguration.Etcd.ImageTag)
+	etcdImageTag, etcdExtraArgs := etcdVersionCorruptCheckExtraArgs(cluster.AssetConfiguration.Etcd.ImageTag)
 
 	nodeRegistration := newNodeRegistration(s, host)
 	nodeRegistration.IgnorePreflightErrors = []string{
@@ -402,7 +402,7 @@ func newNodeRegistration(s *state.State, host kubeoneapi.HostConfig) kubeadmv1be
 	}
 }
 
-func etcdVersionCorruptCheckExtraArgs(kubeSemVer *semver.Version, etcdImageTag string) (string, map[string]string) {
+func etcdVersionCorruptCheckExtraArgs(etcdImageTag string) (string, map[string]string) {
 	etcdExtraArgs := map[string]string{}
 
 	// This is required because etcd v3.5-[0-2] (used for Kubernetes 1.22+)

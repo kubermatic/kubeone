@@ -23,7 +23,7 @@ import (
 )
 
 var (
-	constrainv122x      = mustConstraint("1.22.x")
+	constrainv122x = mustConstraint("1.22.x")
 )
 
 // DefaultAdmissionControllers return list of default admission controllers for
@@ -34,7 +34,7 @@ func DefaultAdmissionControllers(kubeVersion *semver.Version) string {
 		return strings.Join(defaultAdmissionControllersv122x, ",")
 	default:
 		// return same as for last known release
-		return strings.Join(defaultAdmissionControllersv122x, ",")	
+		return strings.Join(defaultAdmissionControllersv122x, ",")
 	}
 }
 
