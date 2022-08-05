@@ -4032,6 +4032,72 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-centos-install-containerd-external-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestEquinixmetalCentosInstallContainerdExternalV1_22_12
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-rockylinux-install-containerd-external-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestEquinixmetalRockylinuxInstallContainerdExternalV1_22_12
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-flatcar-install-containerd-external-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestEquinixmetalFlatcarInstallContainerdExternalV1_22_12
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
   name: pull-kubeone-e2e-hetzner-default-install-containerd-external-v1.22.12
@@ -4351,6 +4417,72 @@ presubmits:
     - command:
       - ./testv2/go-test-e2e.sh
       - TestEquinixmetalDefaultInstallContainerdExternalV1_23_9
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-centos-install-containerd-external-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestEquinixmetalCentosInstallContainerdExternalV1_23_9
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-rockylinux-install-containerd-external-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestEquinixmetalRockylinuxInstallContainerdExternalV1_23_9
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-flatcar-install-containerd-external-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestEquinixmetalFlatcarInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -4696,6 +4828,72 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-centos-install-containerd-external-v1.24.3
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestEquinixmetalCentosInstallContainerdExternalV1_24_3
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-rockylinux-install-containerd-external-v1.24.3
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestEquinixmetalRockylinuxInstallContainerdExternalV1_24_3
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-flatcar-install-containerd-external-v1.24.3
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestEquinixmetalFlatcarInstallContainerdExternalV1_24_3
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
   name: pull-kubeone-e2e-hetzner-default-install-containerd-external-v1.24.3
@@ -5015,6 +5213,72 @@ presubmits:
     - command:
       - ./testv2/go-test-e2e.sh
       - TestEquinixmetalDefaultInstallDockerExternalV1_22_12
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-centos-install-docker-external-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestEquinixmetalCentosInstallDockerExternalV1_22_12
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-rockylinux-install-docker-external-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestEquinixmetalRockylinuxInstallDockerExternalV1_22_12
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-flatcar-install-docker-external-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestEquinixmetalFlatcarInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -5360,6 +5624,72 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-centos-upgrade-containerd-external-from-v1.22.12-to-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestEquinixmetalCentosUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-rockylinux-upgrade-containerd-external-from-v1.22.12-to-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestEquinixmetalRockylinuxUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-flatcar-upgrade-containerd-external-from-v1.22.12-to-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestEquinixmetalFlatcarUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
   name: pull-kubeone-e2e-hetzner-default-upgrade-containerd-external-from-v1.22.12-to-v1.23.9
@@ -5692,6 +6022,72 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-centos-upgrade-containerd-external-from-v1.23.9-to-v1.24.3
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestEquinixmetalCentosUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-rockylinux-upgrade-containerd-external-from-v1.23.9-to-v1.24.3
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestEquinixmetalRockylinuxUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-flatcar-upgrade-containerd-external-from-v1.23.9-to-v1.24.3
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestEquinixmetalFlatcarUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
   name: pull-kubeone-e2e-hetzner-default-upgrade-containerd-external-from-v1.23.9-to-v1.24.3
@@ -6011,6 +6407,72 @@ presubmits:
     - command:
       - ./testv2/go-test-e2e.sh
       - TestEquinixmetalDefaultUpgradeDockerExternalFromV1_22_12_ToV1_23_9
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-centos-upgrade-docker-external-from-v1.22.12-to-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestEquinixmetalCentosUpgradeDockerExternalFromV1_22_12_ToV1_23_9
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-rockylinux-upgrade-docker-external-from-v1.22.12-to-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestEquinixmetalRockylinuxUpgradeDockerExternalFromV1_22_12_ToV1_23_9
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-flatcar-upgrade-docker-external-from-v1.22.12-to-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestEquinixmetalFlatcarUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: equinixmetal

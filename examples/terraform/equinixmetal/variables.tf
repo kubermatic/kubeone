@@ -37,6 +37,7 @@ variable "worker_os" {
   # * ubuntu
   # * centos
   # * rockylinux
+  # * flatcar
   default = "ubuntu"
   type    = string
 }

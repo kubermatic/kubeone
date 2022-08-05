@@ -243,6 +243,60 @@ var (
 				path: "../../examples/terraform/equinixmetal",
 			},
 		},
+		"equinixmetal_centos": {
+			name: "equinixmetal_centos",
+			labels: map[string]string{
+				"preset-goproxy":       "true",
+				"preset-equinix-metal": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "equinixmetal",
+			},
+			terraform: terraformBin{
+				path: "../../examples/terraform/equinixmetal",
+				vars: []string{
+					"control_plane_operating_system=centos_7",
+					"lb_operating_system=centos_7",
+					"worker_os=centos",
+				},
+			},
+		},
+		"equinixmetal_rockylinux": {
+			name: "equinixmetal_rockylinux",
+			labels: map[string]string{
+				"preset-goproxy":       "true",
+				"preset-equinix-metal": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "equinixmetal",
+			},
+			terraform: terraformBin{
+				path: "../../examples/terraform/equinixmetal",
+				vars: []string{
+					"control_plane_operating_system=rocky_8",
+					"lb_operating_system=rocky_8",
+					"worker_os=rockylinux",
+				},
+			},
+		},
+		"equinixmetal_flatcar": {
+			name: "equinixmetal_flatcar",
+			labels: map[string]string{
+				"preset-goproxy":       "true",
+				"preset-equinix-metal": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "equinixmetal",
+			},
+			terraform: terraformBin{
+				path: "../../examples/terraform/equinixmetal",
+				vars: []string{
+					"control_plane_operating_system=flatcar_stable",
+					"worker_os=flatcar",
+					"ssh_username=core",
+				},
+			},
+		},
 		"hetzner_default": {
 			name: "hetzner_default",
 			labels: map[string]string{
