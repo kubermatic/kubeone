@@ -6,250 +6,6 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-install-containerd-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsAmznInstallContainerdV1_21_14
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-install-containerd-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsCentosInstallContainerdV1_21_14
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-install-containerd-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsInstallContainerdV1_21_14
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-install-containerd-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarInstallContainerdV1_21_14
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-install-containerd-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsRhelInstallContainerdV1_21_14
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-install-containerd-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsRockylinuxInstallContainerdV1_21_14
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-install-containerd-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultInstallContainerdV1_21_14
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-gce: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-gce-default-install-containerd-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestGceDefaultInstallContainerdV1_21_14
-      env:
-      - name: PROVIDER
-        value: gce
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-install-containerd-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultInstallContainerdV1_21_14
-      env:
-      - name: PROVIDER
-        value: openstack
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-install-containerd-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultInstallContainerdV1_21_14
-      env:
-      - name: PROVIDER
-        value: vsphere
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-install-containerd-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarInstallContainerdV1_21_14
-      env:
-      - name: PROVIDER
-        value: vsphere
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-install-containerd-v1.22.11
   optional: false
   spec:
@@ -982,250 +738,6 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-install-docker-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsAmznInstallDockerV1_21_14
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-install-docker-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsCentosInstallDockerV1_21_14
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-install-docker-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsInstallDockerV1_21_14
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-install-docker-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarInstallDockerV1_21_14
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-install-docker-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsRhelInstallDockerV1_21_14
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-install-docker-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsRockylinuxInstallDockerV1_21_14
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-install-docker-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultInstallDockerV1_21_14
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-gce: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-gce-default-install-docker-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestGceDefaultInstallDockerV1_21_14
-      env:
-      - name: PROVIDER
-        value: gce
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-install-docker-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultInstallDockerV1_21_14
-      env:
-      - name: PROVIDER
-        value: openstack
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-install-docker-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultInstallDockerV1_21_14
-      env:
-      - name: PROVIDER
-        value: vsphere
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-install-docker-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarInstallDockerV1_21_14
-      env:
-      - name: PROVIDER
-        value: vsphere
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-install-docker-v1.22.11
   optional: false
   spec:
@@ -1455,250 +967,6 @@ presubmits:
     - command:
       - ./testv2/go-test-e2e.sh
       - TestVsphereFlatcarInstallDockerV1_22_11
-      env:
-      - name: PROVIDER
-        value: vsphere
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-upgrade-containerd-from-v1.21.14-to-v1.22.11
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsAmznUpgradeContainerdFromV1_21_14_ToV1_22_11
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-upgrade-containerd-from-v1.21.14-to-v1.22.11
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsCentosUpgradeContainerdFromV1_21_14_ToV1_22_11
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-upgrade-containerd-from-v1.21.14-to-v1.22.11
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsUpgradeContainerdFromV1_21_14_ToV1_22_11
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-upgrade-containerd-from-v1.21.14-to-v1.22.11
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarUpgradeContainerdFromV1_21_14_ToV1_22_11
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-upgrade-containerd-from-v1.21.14-to-v1.22.11
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsRhelUpgradeContainerdFromV1_21_14_ToV1_22_11
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-upgrade-containerd-from-v1.21.14-to-v1.22.11
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsRockylinuxUpgradeContainerdFromV1_21_14_ToV1_22_11
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-upgrade-containerd-from-v1.21.14-to-v1.22.11
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultUpgradeContainerdFromV1_21_14_ToV1_22_11
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-gce: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-gce-default-upgrade-containerd-from-v1.21.14-to-v1.22.11
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestGceDefaultUpgradeContainerdFromV1_21_14_ToV1_22_11
-      env:
-      - name: PROVIDER
-        value: gce
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-upgrade-containerd-from-v1.21.14-to-v1.22.11
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultUpgradeContainerdFromV1_21_14_ToV1_22_11
-      env:
-      - name: PROVIDER
-        value: openstack
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-upgrade-containerd-from-v1.21.14-to-v1.22.11
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultUpgradeContainerdFromV1_21_14_ToV1_22_11
-      env:
-      - name: PROVIDER
-        value: vsphere
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-upgrade-containerd-from-v1.21.14-to-v1.22.11
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarUpgradeContainerdFromV1_21_14_ToV1_22_11
       env:
       - name: PROVIDER
         value: vsphere
@@ -2202,13 +1470,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-upgrade-docker-from-v1.21.14-to-v1.22.11
+  name: pull-kubeone-e2e-aws-amzn-upgrade-docker-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsAmznUpgradeDockerFromV1_21_14_ToV1_22_11
+      - TestAwsAmznUpgradeDockerFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -2224,13 +1492,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-upgrade-docker-from-v1.21.14-to-v1.22.11
+  name: pull-kubeone-e2e-aws-centos-upgrade-docker-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsCentosUpgradeDockerFromV1_21_14_ToV1_22_11
+      - TestAwsCentosUpgradeDockerFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -2246,13 +1514,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-upgrade-docker-from-v1.21.14-to-v1.22.11
+  name: pull-kubeone-e2e-aws-defaults-upgrade-docker-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsUpgradeDockerFromV1_21_14_ToV1_22_11
+      - TestAwsDefaultsUpgradeDockerFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -2268,13 +1536,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-upgrade-docker-from-v1.21.14-to-v1.22.11
+  name: pull-kubeone-e2e-aws-flatcar-upgrade-docker-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarUpgradeDockerFromV1_21_14_ToV1_22_11
+      - TestAwsFlatcarUpgradeDockerFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -2290,13 +1558,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-upgrade-docker-from-v1.21.14-to-v1.22.11
+  name: pull-kubeone-e2e-aws-rhel-upgrade-docker-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRhelUpgradeDockerFromV1_21_14_ToV1_22_11
+      - TestAwsRhelUpgradeDockerFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -2312,13 +1580,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-upgrade-docker-from-v1.21.14-to-v1.22.11
+  name: pull-kubeone-e2e-aws-rockylinux-upgrade-docker-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRockylinuxUpgradeDockerFromV1_21_14_ToV1_22_11
+      - TestAwsRockylinuxUpgradeDockerFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -2334,13 +1602,13 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-upgrade-docker-from-v1.21.14-to-v1.22.11
+  name: pull-kubeone-e2e-azure-default-upgrade-docker-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultUpgradeDockerFromV1_21_14_ToV1_22_11
+      - TestAzureDefaultUpgradeDockerFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: azure
@@ -2358,13 +1626,13 @@ presubmits:
   labels:
     preset-gce: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-gce-default-upgrade-docker-from-v1.21.14-to-v1.22.11
+  name: pull-kubeone-e2e-gce-default-upgrade-docker-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestGceDefaultUpgradeDockerFromV1_21_14_ToV1_22_11
+      - TestGceDefaultUpgradeDockerFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: gce
@@ -2380,13 +1648,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-upgrade-docker-from-v1.21.14-to-v1.22.11
+  name: pull-kubeone-e2e-openstack-default-upgrade-docker-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultUpgradeDockerFromV1_21_14_ToV1_22_11
+      - TestOpenstackDefaultUpgradeDockerFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: openstack
@@ -2402,13 +1670,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-upgrade-docker-from-v1.21.14-to-v1.22.11
+  name: pull-kubeone-e2e-vsphere-default-upgrade-docker-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultUpgradeDockerFromV1_21_14_ToV1_22_11
+      - TestVsphereDefaultUpgradeDockerFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: vsphere
@@ -2424,13 +1692,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-upgrade-docker-from-v1.21.14-to-v1.22.11
+  name: pull-kubeone-e2e-vsphere-flatcar-upgrade-docker-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarUpgradeDockerFromV1_21_14_ToV1_22_11
+      - TestVsphereFlatcarUpgradeDockerFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: vsphere
@@ -3910,30 +3178,6 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-long-timeout-default-conformance-containerd-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsLongTimeoutDefaultConformanceContainerdV1_21_14
-      env:
-      - name: PROVIDER
-        value: aws
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-long-timeout-default-conformance-containerd-v1.22.11
   optional: false
   spec:
@@ -3989,30 +3233,6 @@ presubmits:
     - command:
       - ./testv2/go-test-e2e.sh
       - TestAwsLongTimeoutDefaultConformanceContainerdV1_24_2
-      env:
-      - name: PROVIDER
-        value: aws
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-long-timeout-default-conformance-containerd-external-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_21_14
       env:
       - name: PROVIDER
         value: aws
@@ -4555,294 +3775,6 @@ presubmits:
     - command:
       - ./testv2/go-test-e2e.sh
       - TestVsphereFlatcarCsiCcmMigrationV1_24_2
-      env:
-      - name: PROVIDER
-        value: vsphere
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-install-containerd-external-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsAmznInstallContainerdExternalV1_21_14
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-install-containerd-external-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsCentosInstallContainerdExternalV1_21_14
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-install-containerd-external-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsInstallContainerdExternalV1_21_14
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-install-containerd-external-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarInstallContainerdExternalV1_21_14
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-install-containerd-external-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsRhelInstallContainerdExternalV1_21_14
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-install-containerd-external-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsRockylinuxInstallContainerdExternalV1_21_14
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-install-containerd-external-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultInstallContainerdExternalV1_21_14
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-digitalocean: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-default-install-containerd-external-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestDigitaloceanDefaultInstallContainerdExternalV1_21_14
-      env:
-      - name: PROVIDER
-        value: digitalocean
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-equinix-metal: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-default-install-containerd-external-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestEquinixmetalDefaultInstallContainerdExternalV1_21_14
-      env:
-      - name: PROVIDER
-        value: equinixmetal
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-default-install-containerd-external-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestHetznerDefaultInstallContainerdExternalV1_21_14
-      env:
-      - name: PROVIDER
-        value: hetzner
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-install-containerd-external-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultInstallContainerdExternalV1_21_14
-      env:
-      - name: PROVIDER
-        value: openstack
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-install-containerd-external-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultInstallContainerdExternalV1_21_14
-      env:
-      - name: PROVIDER
-        value: vsphere
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-install-containerd-external-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarInstallContainerdExternalV1_21_14
       env:
       - name: PROVIDER
         value: vsphere
@@ -5722,294 +4654,6 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-install-docker-external-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsAmznInstallDockerExternalV1_21_14
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-install-docker-external-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsCentosInstallDockerExternalV1_21_14
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-install-docker-external-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsInstallDockerExternalV1_21_14
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-install-docker-external-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarInstallDockerExternalV1_21_14
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-install-docker-external-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsRhelInstallDockerExternalV1_21_14
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-install-docker-external-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsRockylinuxInstallDockerExternalV1_21_14
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-install-docker-external-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultInstallDockerExternalV1_21_14
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-digitalocean: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-default-install-docker-external-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestDigitaloceanDefaultInstallDockerExternalV1_21_14
-      env:
-      - name: PROVIDER
-        value: digitalocean
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-equinix-metal: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-default-install-docker-external-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestEquinixmetalDefaultInstallDockerExternalV1_21_14
-      env:
-      - name: PROVIDER
-        value: equinixmetal
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-default-install-docker-external-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestHetznerDefaultInstallDockerExternalV1_21_14
-      env:
-      - name: PROVIDER
-        value: hetzner
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-install-docker-external-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultInstallDockerExternalV1_21_14
-      env:
-      - name: PROVIDER
-        value: openstack
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-install-docker-external-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultInstallDockerExternalV1_21_14
-      env:
-      - name: PROVIDER
-        value: vsphere
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-install-docker-external-v1.21.14
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarInstallDockerExternalV1_21_14
-      env:
-      - name: PROVIDER
-        value: vsphere
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-install-docker-external-v1.22.11
   optional: false
   spec:
@@ -6283,294 +4927,6 @@ presubmits:
     - command:
       - ./testv2/go-test-e2e.sh
       - TestVsphereFlatcarInstallDockerExternalV1_22_11
-      env:
-      - name: PROVIDER
-        value: vsphere
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-upgrade-containerd-external-from-v1.21.14-to-v1.22.11
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsAmznUpgradeContainerdExternalFromV1_21_14_ToV1_22_11
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-upgrade-containerd-external-from-v1.21.14-to-v1.22.11
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsCentosUpgradeContainerdExternalFromV1_21_14_ToV1_22_11
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-upgrade-containerd-external-from-v1.21.14-to-v1.22.11
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsUpgradeContainerdExternalFromV1_21_14_ToV1_22_11
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-upgrade-containerd-external-from-v1.21.14-to-v1.22.11
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarUpgradeContainerdExternalFromV1_21_14_ToV1_22_11
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-upgrade-containerd-external-from-v1.21.14-to-v1.22.11
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsRhelUpgradeContainerdExternalFromV1_21_14_ToV1_22_11
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-upgrade-containerd-external-from-v1.21.14-to-v1.22.11
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsRockylinuxUpgradeContainerdExternalFromV1_21_14_ToV1_22_11
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-upgrade-containerd-external-from-v1.21.14-to-v1.22.11
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultUpgradeContainerdExternalFromV1_21_14_ToV1_22_11
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-digitalocean: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-default-upgrade-containerd-external-from-v1.21.14-to-v1.22.11
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestDigitaloceanDefaultUpgradeContainerdExternalFromV1_21_14_ToV1_22_11
-      env:
-      - name: PROVIDER
-        value: digitalocean
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-equinix-metal: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-default-upgrade-containerd-external-from-v1.21.14-to-v1.22.11
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestEquinixmetalDefaultUpgradeContainerdExternalFromV1_21_14_ToV1_22_11
-      env:
-      - name: PROVIDER
-        value: equinixmetal
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-default-upgrade-containerd-external-from-v1.21.14-to-v1.22.11
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestHetznerDefaultUpgradeContainerdExternalFromV1_21_14_ToV1_22_11
-      env:
-      - name: PROVIDER
-        value: hetzner
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-upgrade-containerd-external-from-v1.21.14-to-v1.22.11
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultUpgradeContainerdExternalFromV1_21_14_ToV1_22_11
-      env:
-      - name: PROVIDER
-        value: openstack
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-upgrade-containerd-external-from-v1.21.14-to-v1.22.11
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultUpgradeContainerdExternalFromV1_21_14_ToV1_22_11
-      env:
-      - name: PROVIDER
-        value: vsphere
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-upgrade-containerd-external-from-v1.21.14-to-v1.22.11
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarUpgradeContainerdExternalFromV1_21_14_ToV1_22_11
       env:
       - name: PROVIDER
         value: vsphere
@@ -7162,13 +5518,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-upgrade-docker-external-from-v1.21.14-to-v1.22.11
+  name: pull-kubeone-e2e-aws-amzn-upgrade-docker-external-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsAmznUpgradeDockerExternalFromV1_21_14_ToV1_22_11
+      - TestAwsAmznUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -7184,13 +5540,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-upgrade-docker-external-from-v1.21.14-to-v1.22.11
+  name: pull-kubeone-e2e-aws-centos-upgrade-docker-external-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsCentosUpgradeDockerExternalFromV1_21_14_ToV1_22_11
+      - TestAwsCentosUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -7206,13 +5562,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-upgrade-docker-external-from-v1.21.14-to-v1.22.11
+  name: pull-kubeone-e2e-aws-defaults-upgrade-docker-external-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsUpgradeDockerExternalFromV1_21_14_ToV1_22_11
+      - TestAwsDefaultsUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -7228,13 +5584,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-upgrade-docker-external-from-v1.21.14-to-v1.22.11
+  name: pull-kubeone-e2e-aws-flatcar-upgrade-docker-external-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarUpgradeDockerExternalFromV1_21_14_ToV1_22_11
+      - TestAwsFlatcarUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -7250,13 +5606,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-upgrade-docker-external-from-v1.21.14-to-v1.22.11
+  name: pull-kubeone-e2e-aws-rhel-upgrade-docker-external-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRhelUpgradeDockerExternalFromV1_21_14_ToV1_22_11
+      - TestAwsRhelUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -7272,13 +5628,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-upgrade-docker-external-from-v1.21.14-to-v1.22.11
+  name: pull-kubeone-e2e-aws-rockylinux-upgrade-docker-external-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRockylinuxUpgradeDockerExternalFromV1_21_14_ToV1_22_11
+      - TestAwsRockylinuxUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -7294,13 +5650,13 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-upgrade-docker-external-from-v1.21.14-to-v1.22.11
+  name: pull-kubeone-e2e-azure-default-upgrade-docker-external-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultUpgradeDockerExternalFromV1_21_14_ToV1_22_11
+      - TestAzureDefaultUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: azure
@@ -7318,13 +5674,13 @@ presubmits:
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-default-upgrade-docker-external-from-v1.21.14-to-v1.22.11
+  name: pull-kubeone-e2e-digitalocean-default-upgrade-docker-external-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestDigitaloceanDefaultUpgradeDockerExternalFromV1_21_14_ToV1_22_11
+      - TestDigitaloceanDefaultUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: digitalocean
@@ -7340,13 +5696,13 @@ presubmits:
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-default-upgrade-docker-external-from-v1.21.14-to-v1.22.11
+  name: pull-kubeone-e2e-equinixmetal-default-upgrade-docker-external-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestEquinixmetalDefaultUpgradeDockerExternalFromV1_21_14_ToV1_22_11
+      - TestEquinixmetalDefaultUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -7362,13 +5718,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-default-upgrade-docker-external-from-v1.21.14-to-v1.22.11
+  name: pull-kubeone-e2e-hetzner-default-upgrade-docker-external-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestHetznerDefaultUpgradeDockerExternalFromV1_21_14_ToV1_22_11
+      - TestHetznerDefaultUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: hetzner
@@ -7384,13 +5740,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-upgrade-docker-external-from-v1.21.14-to-v1.22.11
+  name: pull-kubeone-e2e-openstack-default-upgrade-docker-external-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultUpgradeDockerExternalFromV1_21_14_ToV1_22_11
+      - TestOpenstackDefaultUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: openstack
@@ -7406,13 +5762,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-upgrade-docker-external-from-v1.21.14-to-v1.22.11
+  name: pull-kubeone-e2e-vsphere-default-upgrade-docker-external-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultUpgradeDockerExternalFromV1_21_14_ToV1_22_11
+      - TestVsphereDefaultUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: vsphere
@@ -7428,13 +5784,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-upgrade-docker-external-from-v1.21.14-to-v1.22.11
+  name: pull-kubeone-e2e-vsphere-flatcar-upgrade-docker-external-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarUpgradeDockerExternalFromV1_21_14_ToV1_22_11
+      - TestVsphereFlatcarUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: vsphere

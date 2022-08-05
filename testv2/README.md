@@ -25,7 +25,7 @@ Example:
 
 ```yaml
 - scenario: install_containerd
-  initVersion: v1.21.14
+  initVersion: v1.23.9
   infrastructures:
     - name: aws_defaults
       alwaysRun: true
@@ -33,7 +33,7 @@ Example:
 ```
 
 This can be "decoded" as an instruction to generate "install_containerd"
-scenario, for kubernetes version v1.21.14 and run it on default aws and openstack
+scenario, for kubernetes version v1.23.9 and run it on default aws and openstack
 infrastructures.
 
 ## Scenario
