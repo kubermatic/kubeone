@@ -31,7 +31,6 @@ import (
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/features"
 	"k8c.io/kubeone/pkg/kubeflags"
-	"k8c.io/kubeone/pkg/semverutil"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/kubeadm/kubeadmargs"
 	"k8c.io/kubeone/pkg/templates/kubernetesconfigs"
@@ -43,15 +42,6 @@ import (
 
 const (
 	bootstrapTokenTTL = 60 * time.Minute
-)
-
-const (
-	// greaterOrEqualThan122 defines a version constraint for the Kubernetes 1.22+ clusters
-	greaterOrEqualThan122 = ">= 1.22.0"
-)
-
-var (
-	etcdIntegrityCheckConstraint = semverutil.MustParseConstraint(greaterOrEqualThan122)
 )
 
 // NewConfig returns all required configs to init a cluster via a set of v1beta3 configs
@@ -414,17 +404,16 @@ func newNodeRegistration(s *state.State, host kubeoneapi.HostConfig) kubeadmv1be
 
 func etcdVersionCorruptCheckExtraArgs(kubeSemVer *semver.Version, etcdImageTag string) (string, map[string]string) {
 	etcdExtraArgs := map[string]string{}
-	if etcdIntegrityCheckConstraint.Check(kubeSemVer) {
-		// This is required because etcd v3.5-[0-2] (used for Kubernetes 1.22+)
-		// has an issue with the data integrity.
-		// See https://groups.google.com/a/kubernetes.io/g/dev/c/B7gJs88XtQc/m/rSgNOzV2BwAJ
-		// for more details.
-		if etcdImageTag == "" {
-			etcdImageTag = "3.5.3-0"
-		}
-		etcdExtraArgs["experimental-initial-corrupt-check"] = "true"
-		etcdExtraArgs["experimental-corrupt-check-time"] = "240m"
+
+	// This is required because etcd v3.5-[0-2] (used for Kubernetes 1.22+)
+	// has an issue with the data integrity.
+	// See https://groups.google.com/a/kubernetes.io/g/dev/c/B7gJs88XtQc/m/rSgNOzV2BwAJ
+	// for more details.
+	if etcdImageTag == "" {
+		etcdImageTag = "3.5.3-0"
 	}
+	etcdExtraArgs["experimental-initial-corrupt-check"] = "true"
+	etcdExtraArgs["experimental-corrupt-check-time"] = "240m"
 
 	return etcdImageTag, etcdExtraArgs
 }

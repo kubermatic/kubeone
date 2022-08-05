@@ -17,10 +17,7 @@ limitations under the License.
 package kubeadm
 
 import (
-	"github.com/Masterminds/semver/v3"
-
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
-	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 )
 
@@ -39,15 +36,5 @@ type Kubedm interface {
 
 // New constructor
 func New(ver string) (Kubedm, error) {
-	sver, err := semver.NewVersion(ver)
-	if err != nil {
-		return nil, fail.Config(err, "parsing kubeadm semver")
-	}
-
-	switch {
-	case sver.Minor() < 22:
-		return &kubeadmv1beta2{version: ver}, nil
-	default:
-		return &kubeadmv1beta3{version: ver}, nil
-	}
+	return &kubeadmv1beta3{version: ver}, nil
 }

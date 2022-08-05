@@ -23,7 +23,6 @@ import (
 	"io/fs"
 	"time"
 
-	"github.com/Masterminds/semver/v3"
 	"github.com/pkg/errors"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
@@ -72,12 +71,7 @@ func renewControlPlaneCerts(s *state.State) error {
 	s.Logger.Infoln("Resetting Kubernetes clientset...")
 	s.DynamicClient = nil
 
-	renewCmd := "sudo kubeadm alpha certs renew all"
-	greaterThen120, _ := semver.NewConstraint(">=1.20")
-	if greaterThen120.Check(s.LiveCluster.ExpectedVersion) {
-		renewCmd = "sudo kubeadm certs renew all"
-	}
-
+	renewCmd := "sudo kubeadm certs renew all"
 	err := s.RunTaskOnControlPlane(
 		func(s *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
 			_, _, err := s.Runner.RunRaw(renewCmd)
