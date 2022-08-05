@@ -1,9 +1,4 @@
-{{ $version := semver .Config.Versions.Kubernetes }}
-{{- if ge $version.Minor 21 }}
 apiVersion: policy/v1
-{{- else }}
-apiVersion: policy/v1beta1
-{{- end }}
 kind: PodDisruptionBudget
 metadata:
   name: cluster-autoscaler
