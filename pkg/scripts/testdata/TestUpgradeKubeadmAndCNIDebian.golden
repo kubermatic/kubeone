@@ -60,7 +60,7 @@ echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/
 
 sudo apt-get update
 
-kube_ver="1.17.4*"
+kube_ver="1.23.9*"
 cni_ver="0.8.7*"
 sudo apt-mark unhold kubelet kubeadm kubectl kubernetes-cni
 
@@ -81,8 +81,8 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install \
 	--option "Dpkg::Options::=--force-confold" \
 	--no-install-recommends \
 	-y \
-	docker-ce=5:'19.03.*' \
-	docker-ce-cli=5:'19.03.*' \
+	docker-ce=5:'20.10.*' \
+	docker-ce-cli=5:'20.10.*' \
 	containerd.io='1.5.*'
 sudo apt-mark hold docker-ce docker-ce-cli containerd.io
 

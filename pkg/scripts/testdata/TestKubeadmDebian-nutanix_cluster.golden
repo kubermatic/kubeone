@@ -63,7 +63,7 @@ echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/
 
 sudo apt-get update
 
-kube_ver="1.17.4*"
+kube_ver="1.23.9*"
 cni_ver="0.8.7*"
 
 

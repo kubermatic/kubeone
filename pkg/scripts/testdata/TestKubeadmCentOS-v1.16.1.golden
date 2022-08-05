@@ -84,8 +84,8 @@ sudo yum-config-manager --save --setopt=docker-ce-stable.module_hotfixes=true >/
 sudo yum versionlock delete docker-ce docker-ce-cli containerd.io || true
 
 sudo yum install -y \
-	docker-ce-'19.03.*' \
-	docker-ce-cli-'19.03.*' \
+	docker-ce-'20.10.*' \
+	docker-ce-cli-'20.10.*' \
 	containerd.io-'1.5.*'
 sudo yum versionlock add docker-ce docker-ce-cli containerd.io
 

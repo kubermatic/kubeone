@@ -63,7 +63,7 @@ sudo systemctl restart containerd
 
 
 
-RELEASE="vv1.17.4"
+RELEASE="v1.23.9"
 sudo mkdir -p /var/tmp/kube-binaries
 cd /var/tmp/kube-binaries
 sudo curl -L --remote-name-all \

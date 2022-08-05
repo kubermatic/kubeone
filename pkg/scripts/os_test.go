@@ -98,7 +98,7 @@ func withDefaultAssetConfiguration(cls *kubeoneapi.KubeOneCluster) {
 func genCluster(opts ...genClusterOpts) kubeoneapi.KubeOneCluster {
 	cls := &kubeoneapi.KubeOneCluster{
 		Versions: kubeoneapi.VersionConfig{
-			Kubernetes: "1.17.4",
+			Kubernetes: "1.23.9",
 		},
 		SystemPackages: &kubeoneapi.SystemPackages{
 			ConfigureRepositories: true,
@@ -268,12 +268,6 @@ func TestKubeadmCentOS(t *testing.T) {
 			},
 		},
 		{
-			name: "v1.16.1",
-			args: args{
-				cluster: genCluster(withDocker, withKubeVersion("1.16.1")),
-			},
-		},
-		{
 			name: "overwrite registry",
 			args: args{
 				cluster: genCluster(withDocker, withRegistry("127.0.0.1:5000")),
@@ -369,11 +363,11 @@ func TestKubeadmAmazonLinux(t *testing.T) {
 			},
 		},
 		{
-			name: "v1.16.1",
+			name: "v1.23.9",
 			args: args{
 				cluster: genCluster(
 					withDocker,
-					withKubeVersion("1.16.1"),
+					withKubeVersion("1.23.9"),
 					withDefaultAssetConfiguration,
 				),
 			},
@@ -612,7 +606,7 @@ func TestUpgradeKubeadmAndCNIFlatcar(t *testing.T) {
 	t.Parallel()
 
 	c := genCluster(
-		withKubeVersion("v1.17.4"),
+		withKubeVersion("1.23.9"),
 		withContainerd,
 		withInsecureRegistry("127.0.0.1:5000"),
 	)
@@ -672,7 +666,7 @@ func TestUpgradeKubeletAndKubectlFlatcar(t *testing.T) {
 	t.Parallel()
 
 	c := genCluster(
-		withKubeVersion("v1.17.4"),
+		withKubeVersion("1.23.9"),
 		withContainerd,
 		withInsecureRegistry("127.0.0.1:5000"),
 	)
