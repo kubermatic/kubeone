@@ -65,10 +65,6 @@ var (
 			sudo apt-mark unhold docker-ce docker-ce-cli containerd.io || true
 			{{- $DOCKER_VERSION_TO_INSTALL := "%s" }}
 
-			{{- if semverCompare ">= 1.21" .KUBERNETES_VERSION }}
-			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
-			{{- end }}
-
 			sudo DEBIAN_FRONTEND=noninteractive apt-get install \
 				--option "Dpkg::Options::=--force-confold" \
 				--no-install-recommends \
@@ -88,7 +84,6 @@ var (
 				sleep 10
 			fi
 			`,
-			defaultDockerVersion,
 			latestDockerVersion,
 			defaultContainerdVersion,
 		),
@@ -97,9 +92,6 @@ var (
 			sudo yum versionlock delete docker containerd || true
 
 			{{- $DOCKER_VERSION_TO_INSTALL := "%s" }}
-			{{- if semverCompare ">= 1.21" .KUBERNETES_VERSION }}
-			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
-			{{- end }}
 
 			sudo yum install -y \
 				docker-{{ $DOCKER_VERSION_TO_INSTALL }} \
@@ -113,7 +105,6 @@ var (
 				sleep 10
 			fi
 		`,
-			defaultDockerVersion,
 			latestDockerVersion,
 			defaultAmazonContainerdVersion,
 		),
@@ -128,9 +119,6 @@ var (
 			sudo yum versionlock delete docker-ce docker-ce-cli containerd.io || true
 
 			{{- $DOCKER_VERSION_TO_INSTALL := "%s" }}
-			{{- if semverCompare ">= 1.21" .KUBERNETES_VERSION }}
-			{{ $DOCKER_VERSION_TO_INSTALL = "%s" }}
-			{{- end }}
 
 			sudo yum install -y \
 				docker-ce-{{ $DOCKER_VERSION_TO_INSTALL }} \
@@ -145,7 +133,6 @@ var (
 				sleep 10
 			fi
 			`,
-			defaultDockerVersion,
 			latestDockerVersion,
 			defaultContainerdVersion,
 		),
