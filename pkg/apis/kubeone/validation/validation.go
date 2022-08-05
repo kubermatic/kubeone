@@ -36,7 +36,7 @@ import (
 
 const (
 	// lowerVersionConstraint defines a semver constraint that validates Kubernetes versions against a lower bound
-	lowerVersionConstraint = ">= 1.20"
+	lowerVersionConstraint = ">= 1.22"
 	// upperVersionConstraint defines a semver constraint that validates Kubernetes versions against an upper bound
 	upperVersionConstraint = "<= 1.24"
 )
@@ -311,7 +311,8 @@ func ValidateKubernetesSupport(c kubeoneapi.KubeOneCluster, fldPath *field.Path)
 		return append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, ".versions.kubernetes is not a semver string"))
 	}
 
-	if v.Minor() >= 25 && c.CloudProvider.Vsphere != nil {
+	// vSphere CCM v1.24 supports Kubernetes 1.24 and 1.25.
+	if v.Minor() >= 26 && c.CloudProvider.Vsphere != nil {
 		allErrs = append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, "kubernetes versions 1.25.0 and newer are currently not supported for vsphere clusters"))
 	}
 

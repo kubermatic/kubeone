@@ -26,13 +26,6 @@ spec:
           args:
             - "--csi-address=$(ADDRESS)"
             - "--kubelet-registration-path=$(DRIVER_REG_SOCK_PATH)"
-{{ if lt $version.Minor 22 }}
-          # This is not used since CSI v1.22.0
-          lifecycle:
-            preStop:
-              exec:
-                command: ["/bin/sh", "-c", "rm -rf /registration/cinder.csi.openstack.org /registration/cinder.csi.openstack.org-reg.sock"]
-{{ end }}
           env:
             - name: ADDRESS
               value: /csi/csi.sock
@@ -66,18 +59,7 @@ spec:
             - /bin/cinder-csi-plugin
             - "--endpoint=$(CSI_ENDPOINT)"
             - "--cloud-config=$(CLOUD_CONFIG)"
-{{ if lt $version.Minor 22 }}
-            # --nodeid is deprecated and no-op starting with CSI 1.22.0
-            - "--nodeid=$(NODE_ID)"
-{{ end }}
           env:
-{{ if lt $version.Minor 22 }}
-            # --nodeid is deprecated and no-op starting with CSI 1.22.0
-            - name: NODE_ID
-              valueFrom:
-                fieldRef:
-                  fieldPath: spec.nodeName
-{{ end }}
             - name: CSI_ENDPOINT
               value: unix://csi/csi.sock
             - name: CLOUD_CONFIG

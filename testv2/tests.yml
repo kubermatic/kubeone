@@ -1,19 +1,4 @@
 - scenario: install_containerd
-  initVersion: v1.21.14
-  infrastructures:
-    - name: aws_amzn
-    - name: aws_centos
-    - name: aws_defaults
-    - name: aws_flatcar
-    - name: aws_rhel
-    - name: aws_rockylinux
-    - name: azure_default
-    - name: gce_default
-    - name: openstack_default
-    - name: vsphere_default
-    - name: vsphere_flatcar
-
-- scenario: install_containerd
   initVersion: v1.22.11
   infrastructures:
     - name: aws_amzn
@@ -59,38 +44,7 @@
     - name: vsphere_flatcar
 
 - scenario: install_docker
-  initVersion: v1.21.14
-  infrastructures:
-    - name: aws_amzn
-    - name: aws_centos
-    - name: aws_defaults
-    - name: aws_flatcar
-    - name: aws_rhel
-    - name: aws_rockylinux
-    - name: azure_default
-    - name: gce_default
-    - name: openstack_default
-    - name: vsphere_default
-    - name: vsphere_flatcar
-
-- scenario: install_docker
   initVersion: v1.22.11
-  infrastructures:
-    - name: aws_amzn
-    - name: aws_centos
-    - name: aws_defaults
-    - name: aws_flatcar
-    - name: aws_rhel
-    - name: aws_rockylinux
-    - name: azure_default
-    - name: gce_default
-    - name: openstack_default
-    - name: vsphere_default
-    - name: vsphere_flatcar
-
-- scenario: upgrade_containerd
-  initVersion: v1.21.14
-  upgradedVersion: v1.22.11
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
@@ -137,8 +91,8 @@
     - name: vsphere_flatcar
 
 - scenario: upgrade_docker
-  initVersion: v1.21.14
-  upgradedVersion: v1.22.11
+  initVersion: v1.22.12
+  upgradedVersion: v1.23.9
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
@@ -243,11 +197,6 @@
     - name: vsphere_flatcar
 
 - scenario: conformance_containerd
-  initVersion: v1.21.14
-  infrastructures:
-    - name: aws_long_timeout_default
-
-- scenario: conformance_containerd
   initVersion: v1.22.11
   infrastructures:
     - name: aws_long_timeout_default
@@ -259,11 +208,6 @@
 
 - scenario: conformance_containerd
   initVersion: v1.24.2
-  infrastructures:
-    - name: aws_long_timeout_default
-
-- scenario: conformance_containerd_external
-  initVersion: v1.21.14
   infrastructures:
     - name: aws_long_timeout_default
 
@@ -340,23 +284,6 @@
     - name: vsphere_flatcar
 
 - scenario: install_containerd_external
-  initVersion: v1.21.14
-  infrastructures:
-    - name: aws_amzn
-    - name: aws_centos
-    - name: aws_defaults
-    - name: aws_flatcar
-    - name: aws_rhel
-    - name: aws_rockylinux
-    - name: azure_default
-    - name: digitalocean_default
-    - name: equinixmetal_default
-    - name: hetzner_default
-    - name: openstack_default
-    - name: vsphere_default
-    - name: vsphere_flatcar
-
-- scenario: install_containerd_external
   initVersion: v1.22.11
   infrastructures:
     - name: aws_amzn
@@ -408,42 +335,7 @@
     - name: vsphere_flatcar
 
 - scenario: install_docker_external
-  initVersion: v1.21.14
-  infrastructures:
-    - name: aws_amzn
-    - name: aws_centos
-    - name: aws_defaults
-    - name: aws_flatcar
-    - name: aws_rhel
-    - name: aws_rockylinux
-    - name: azure_default
-    - name: digitalocean_default
-    - name: equinixmetal_default
-    - name: hetzner_default
-    - name: openstack_default
-    - name: vsphere_default
-    - name: vsphere_flatcar
-
-- scenario: install_docker_external
   initVersion: v1.22.11
-  infrastructures:
-    - name: aws_amzn
-    - name: aws_centos
-    - name: aws_defaults
-    - name: aws_flatcar
-    - name: aws_rhel
-    - name: aws_rockylinux
-    - name: azure_default
-    - name: digitalocean_default
-    - name: equinixmetal_default
-    - name: hetzner_default
-    - name: openstack_default
-    - name: vsphere_default
-    - name: vsphere_flatcar
-
-- scenario: upgrade_containerd_external
-  initVersion: v1.21.14
-  upgradedVersion: v1.22.11
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
@@ -496,8 +388,8 @@
     - name: vsphere_flatcar
 
 - scenario: upgrade_docker_external
-  initVersion: v1.21.14
-  upgradedVersion: v1.22.11
+  initVersion: v1.22.12
+  upgradedVersion: v1.23.9
   infrastructures:
     - name: aws_amzn
     - name: aws_centos

@@ -119,9 +119,9 @@ cd /tmp/k8s-binaries
 
 
 sudo yum install -y \
-	kubelet-1.17.4 \
-	kubeadm-1.17.4 \
-	kubectl-1.17.4 \
+	kubelet-1.23.9 \
+	kubeadm-1.23.9 \
+	kubectl-1.23.9 \
 	kubernetes-cni-0.8.7
 sudo yum versionlock add kubelet kubeadm kubectl kubernetes-cni
 

@@ -134,15 +134,7 @@ func SetDefaults_ContainerRuntime(obj *KubeOneCluster) {
 		return
 	case obj.ContainerRuntime.Containerd != nil:
 		return
-	}
-
-	actualVer, err := semver.NewVersion(obj.Versions.Kubernetes)
-	if err != nil {
-		return
-	}
-
-	gteKube122Condition, _ := semver.NewConstraint(">= 1.22")
-	if gteKube122Condition.Check(actualVer) {
+	default:
 		obj.ContainerRuntime.Containerd = &ContainerRuntimeContainerd{}
 	}
 }
