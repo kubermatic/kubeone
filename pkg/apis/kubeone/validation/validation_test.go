@@ -886,12 +886,12 @@ func TestValidateKubernetesSupport(t *testing.T) {
 			expectedError: false,
 		},
 		{
-			name: "vSphere 1.25.0 cluster",
+			name: "vSphere 1.26.0 cluster",
 			providerConfig: kubeoneapi.CloudProviderSpec{
 				Vsphere: &kubeoneapi.VsphereSpec{},
 			},
 			versionConfig: kubeoneapi.VersionConfig{
-				Kubernetes: "1.25.0",
+				Kubernetes: "1.26.0",
 			},
 			expectedError: true,
 		},
