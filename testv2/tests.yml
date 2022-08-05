@@ -1,5 +1,5 @@
 - scenario: install_containerd
-  initVersion: v1.22.11
+  initVersion: v1.22.12
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
@@ -14,7 +14,7 @@
     - name: vsphere_flatcar
 
 - scenario: install_containerd
-  initVersion: v1.23.8
+  initVersion: v1.23.9
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
@@ -29,7 +29,7 @@
     - name: vsphere_flatcar
 
 - scenario: install_containerd
-  initVersion: v1.24.2
+  initVersion: v1.24.3
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
@@ -44,7 +44,7 @@
     - name: vsphere_flatcar
 
 - scenario: install_docker
-  initVersion: v1.22.11
+  initVersion: v1.22.12
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
@@ -59,8 +59,8 @@
     - name: vsphere_flatcar
 
 - scenario: upgrade_containerd
-  initVersion: v1.23.8
-  upgradedVersion: v1.24.2
+  initVersion: v1.23.9
+  upgradedVersion: v1.24.3
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
@@ -75,8 +75,8 @@
     - name: vsphere_flatcar
 
 - scenario: upgrade_containerd
-  initVersion: v1.22.11
-  upgradedVersion: v1.23.8
+  initVersion: v1.22.12
+  upgradedVersion: v1.23.9
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
@@ -107,7 +107,7 @@
     - name: vsphere_flatcar
 
 - scenario: calico_containerd
-  initVersion: v1.22.11
+  initVersion: v1.22.12
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
@@ -122,7 +122,7 @@
     - name: vsphere_flatcar
 
 - scenario: calico_docker
-  initVersion: v1.22.11
+  initVersion: v1.22.12
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
@@ -137,7 +137,7 @@
     - name: vsphere_flatcar
 
 - scenario: weave_containerd
-  initVersion: v1.22.11
+  initVersion: v1.22.12
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
@@ -152,7 +152,7 @@
     - name: vsphere_flatcar
 
 - scenario: weave_docker
-  initVersion: v1.22.11
+  initVersion: v1.22.12
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
@@ -167,7 +167,7 @@
     - name: vsphere_flatcar
 
 - scenario: cilium_containerd
-  initVersion: v1.22.11
+  initVersion: v1.22.12
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
@@ -182,7 +182,7 @@
     - name: vsphere_flatcar
 
 - scenario: cilium_docker
-  initVersion: v1.22.11
+  initVersion: v1.22.12
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
@@ -197,67 +197,67 @@
     - name: vsphere_flatcar
 
 - scenario: conformance_containerd
-  initVersion: v1.22.11
+  initVersion: v1.22.12
   infrastructures:
     - name: aws_long_timeout_default
 
 - scenario: conformance_containerd
-  initVersion: v1.23.8
+  initVersion: v1.23.9
   infrastructures:
     - name: aws_long_timeout_default
 
 - scenario: conformance_containerd
-  initVersion: v1.24.2
+  initVersion: v1.24.3
   infrastructures:
     - name: aws_long_timeout_default
 
 - scenario: conformance_containerd_external
-  initVersion: v1.22.11
+  initVersion: v1.22.12
   infrastructures:
     - name: aws_long_timeout_default
 
 - scenario: conformance_containerd_external
-  initVersion: v1.23.8
+  initVersion: v1.23.9
   infrastructures:
     - name: aws_long_timeout_default
 
 - scenario: conformance_containerd_external
-  initVersion: v1.24.2
+  initVersion: v1.24.3
   infrastructures:
     - name: aws_long_timeout_default
 
 - scenario: kube_proxy_ipvs
-  initVersion: v1.22.11
+  initVersion: v1.22.12
   infrastructures:
     - name: aws_defaults
 
 - scenario: kube_proxy_ipvs
-  initVersion: v1.23.8
+  initVersion: v1.23.9
   infrastructures:
     - name: aws_defaults
 
 - scenario: legacy_machine_controller_userdata
-  initVersion: v1.22.11
+  initVersion: v1.22.12
   infrastructures:
     - name: aws_defaults
 
 - scenario: legacy_machine_controller_userdata
-  initVersion: v1.23.8
+  initVersion: v1.23.9
   infrastructures:
     - name: aws_defaults
 
 - scenario: legacy_machine_controller_userdata
-  initVersion: v1.24.2
+  initVersion: v1.24.3
   infrastructures:
     - name: aws_defaults
     
 - scenario: kube_proxy_ipvs
-  initVersion: v1.24.2
+  initVersion: v1.24.3
   infrastructures:
     - name: aws_defaults
 
 - scenario: csi_ccm_migration
-  initVersion: v1.22.11
+  initVersion: v1.22.12
   infrastructures:
     - name: aws_defaults  
     - name: openstack_default
@@ -266,7 +266,7 @@
     - name: vsphere_flatcar
 
 - scenario: csi_ccm_migration
-  initVersion: v1.23.8
+  initVersion: v1.23.9
   infrastructures:
     - name: aws_defaults  
     - name: openstack_default
@@ -275,7 +275,7 @@
     - name: vsphere_flatcar
 
 - scenario: csi_ccm_migration
-  initVersion: v1.24.2
+  initVersion: v1.24.3
   infrastructures:
     - name: aws_defaults
     - name: openstack_default
@@ -284,7 +284,7 @@
     - name: vsphere_flatcar
 
 - scenario: install_containerd_external
-  initVersion: v1.22.11
+  initVersion: v1.22.12
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
@@ -301,7 +301,7 @@
     - name: vsphere_flatcar
 
 - scenario: install_containerd_external
-  initVersion: v1.23.8
+  initVersion: v1.23.9
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
@@ -318,7 +318,7 @@
     - name: vsphere_flatcar
 
 - scenario: install_containerd_external
-  initVersion: v1.24.2
+  initVersion: v1.24.3
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
@@ -335,7 +335,7 @@
     - name: vsphere_flatcar
 
 - scenario: install_docker_external
-  initVersion: v1.22.11
+  initVersion: v1.22.12
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
@@ -352,8 +352,8 @@
     - name: vsphere_flatcar
 
 - scenario: upgrade_containerd_external
-  initVersion: v1.22.11
-  upgradedVersion: v1.23.8
+  initVersion: v1.22.12
+  upgradedVersion: v1.23.9
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
@@ -370,8 +370,8 @@
     - name: vsphere_flatcar
 
 - scenario: upgrade_containerd_external
-  initVersion: v1.23.8
-  upgradedVersion: v1.24.2
+  initVersion: v1.23.9
+  upgradedVersion: v1.24.3
   infrastructures:
     - name: aws_amzn
     - name: aws_centos

@@ -10,531 +10,531 @@ import (
 func TestStub(t *testing.T) {
 	t.Skip("stub is skipped")
 }
-func TestAwsAmznInstallContainerdV1_22_11(t *testing.T) {
+func TestAwsAmznInstallContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsCentosInstallContainerdV1_22_11(t *testing.T) {
+func TestAwsCentosInstallContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsInstallContainerdV1_22_11(t *testing.T) {
+func TestAwsDefaultsInstallContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsFlatcarInstallContainerdV1_22_11(t *testing.T) {
+func TestAwsFlatcarInstallContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsRhelInstallContainerdV1_22_11(t *testing.T) {
+func TestAwsRhelInstallContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsRockylinuxInstallContainerdV1_22_11(t *testing.T) {
+func TestAwsRockylinuxInstallContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAzureDefaultInstallContainerdV1_22_11(t *testing.T) {
+func TestAzureDefaultInstallContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestGceDefaultInstallContainerdV1_22_11(t *testing.T) {
+func TestGceDefaultInstallContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestOpenstackDefaultInstallContainerdV1_22_11(t *testing.T) {
+func TestOpenstackDefaultInstallContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestVsphereDefaultInstallContainerdV1_22_11(t *testing.T) {
+func TestVsphereDefaultInstallContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestVsphereFlatcarInstallContainerdV1_22_11(t *testing.T) {
+func TestVsphereFlatcarInstallContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsAmznInstallContainerdV1_23_8(t *testing.T) {
+func TestAwsAmznInstallContainerdV1_23_9(t *testing.T) {
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAwsCentosInstallContainerdV1_23_8(t *testing.T) {
+func TestAwsCentosInstallContainerdV1_23_9(t *testing.T) {
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsInstallContainerdV1_23_8(t *testing.T) {
+func TestAwsDefaultsInstallContainerdV1_23_9(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAwsFlatcarInstallContainerdV1_23_8(t *testing.T) {
+func TestAwsFlatcarInstallContainerdV1_23_9(t *testing.T) {
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAwsRhelInstallContainerdV1_23_8(t *testing.T) {
+func TestAwsRhelInstallContainerdV1_23_9(t *testing.T) {
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAwsRockylinuxInstallContainerdV1_23_8(t *testing.T) {
+func TestAwsRockylinuxInstallContainerdV1_23_9(t *testing.T) {
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAzureDefaultInstallContainerdV1_23_8(t *testing.T) {
+func TestAzureDefaultInstallContainerdV1_23_9(t *testing.T) {
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestGceDefaultInstallContainerdV1_23_8(t *testing.T) {
+func TestGceDefaultInstallContainerdV1_23_9(t *testing.T) {
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestOpenstackDefaultInstallContainerdV1_23_8(t *testing.T) {
+func TestOpenstackDefaultInstallContainerdV1_23_9(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestVsphereDefaultInstallContainerdV1_23_8(t *testing.T) {
+func TestVsphereDefaultInstallContainerdV1_23_9(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestVsphereFlatcarInstallContainerdV1_23_8(t *testing.T) {
+func TestVsphereFlatcarInstallContainerdV1_23_9(t *testing.T) {
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAwsAmznInstallContainerdV1_24_2(t *testing.T) {
+func TestAwsAmznInstallContainerdV1_24_3(t *testing.T) {
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAwsCentosInstallContainerdV1_24_2(t *testing.T) {
+func TestAwsCentosInstallContainerdV1_24_3(t *testing.T) {
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsInstallContainerdV1_24_2(t *testing.T) {
+func TestAwsDefaultsInstallContainerdV1_24_3(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAwsFlatcarInstallContainerdV1_24_2(t *testing.T) {
+func TestAwsFlatcarInstallContainerdV1_24_3(t *testing.T) {
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAwsRhelInstallContainerdV1_24_2(t *testing.T) {
+func TestAwsRhelInstallContainerdV1_24_3(t *testing.T) {
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAwsRockylinuxInstallContainerdV1_24_2(t *testing.T) {
+func TestAwsRockylinuxInstallContainerdV1_24_3(t *testing.T) {
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAzureDefaultInstallContainerdV1_24_2(t *testing.T) {
+func TestAzureDefaultInstallContainerdV1_24_3(t *testing.T) {
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestGceDefaultInstallContainerdV1_24_2(t *testing.T) {
+func TestGceDefaultInstallContainerdV1_24_3(t *testing.T) {
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestOpenstackDefaultInstallContainerdV1_24_2(t *testing.T) {
+func TestOpenstackDefaultInstallContainerdV1_24_3(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestVsphereDefaultInstallContainerdV1_24_2(t *testing.T) {
+func TestVsphereDefaultInstallContainerdV1_24_3(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestVsphereFlatcarInstallContainerdV1_24_2(t *testing.T) {
+func TestVsphereFlatcarInstallContainerdV1_24_3(t *testing.T) {
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAwsAmznInstallDockerV1_22_11(t *testing.T) {
+func TestAwsAmznInstallDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["install_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsCentosInstallDockerV1_22_11(t *testing.T) {
+func TestAwsCentosInstallDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["install_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsInstallDockerV1_22_11(t *testing.T) {
+func TestAwsDefaultsInstallDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["install_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsFlatcarInstallDockerV1_22_11(t *testing.T) {
+func TestAwsFlatcarInstallDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["install_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsRhelInstallDockerV1_22_11(t *testing.T) {
+func TestAwsRhelInstallDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["install_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsRockylinuxInstallDockerV1_22_11(t *testing.T) {
+func TestAwsRockylinuxInstallDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["install_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAzureDefaultInstallDockerV1_22_11(t *testing.T) {
+func TestAzureDefaultInstallDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["install_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestGceDefaultInstallDockerV1_22_11(t *testing.T) {
+func TestGceDefaultInstallDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["install_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestOpenstackDefaultInstallDockerV1_22_11(t *testing.T) {
+func TestOpenstackDefaultInstallDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["install_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestVsphereDefaultInstallDockerV1_22_11(t *testing.T) {
+func TestVsphereDefaultInstallDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["install_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestVsphereFlatcarInstallDockerV1_22_11(t *testing.T) {
+func TestVsphereFlatcarInstallDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["install_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsAmznUpgradeContainerdFromV1_23_8_ToV1_24_2(t *testing.T) {
+func TestAwsAmznUpgradeContainerdFromV1_23_9_ToV1_24_3(t *testing.T) {
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.SetVersions("v1.23.9", "v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAwsCentosUpgradeContainerdFromV1_23_8_ToV1_24_2(t *testing.T) {
+func TestAwsCentosUpgradeContainerdFromV1_23_9_ToV1_24_3(t *testing.T) {
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.SetVersions("v1.23.9", "v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsUpgradeContainerdFromV1_23_8_ToV1_24_2(t *testing.T) {
+func TestAwsDefaultsUpgradeContainerdFromV1_23_9_ToV1_24_3(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.SetVersions("v1.23.9", "v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAwsFlatcarUpgradeContainerdFromV1_23_8_ToV1_24_2(t *testing.T) {
+func TestAwsFlatcarUpgradeContainerdFromV1_23_9_ToV1_24_3(t *testing.T) {
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.SetVersions("v1.23.9", "v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAwsRhelUpgradeContainerdFromV1_23_8_ToV1_24_2(t *testing.T) {
+func TestAwsRhelUpgradeContainerdFromV1_23_9_ToV1_24_3(t *testing.T) {
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.SetVersions("v1.23.9", "v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAwsRockylinuxUpgradeContainerdFromV1_23_8_ToV1_24_2(t *testing.T) {
+func TestAwsRockylinuxUpgradeContainerdFromV1_23_9_ToV1_24_3(t *testing.T) {
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.SetVersions("v1.23.9", "v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAzureDefaultUpgradeContainerdFromV1_23_8_ToV1_24_2(t *testing.T) {
+func TestAzureDefaultUpgradeContainerdFromV1_23_9_ToV1_24_3(t *testing.T) {
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.SetVersions("v1.23.9", "v1.24.3")
 	scenario.Run(t)
 }
 
-func TestGceDefaultUpgradeContainerdFromV1_23_8_ToV1_24_2(t *testing.T) {
+func TestGceDefaultUpgradeContainerdFromV1_23_9_ToV1_24_3(t *testing.T) {
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.SetVersions("v1.23.9", "v1.24.3")
 	scenario.Run(t)
 }
 
-func TestOpenstackDefaultUpgradeContainerdFromV1_23_8_ToV1_24_2(t *testing.T) {
+func TestOpenstackDefaultUpgradeContainerdFromV1_23_9_ToV1_24_3(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.SetVersions("v1.23.9", "v1.24.3")
 	scenario.Run(t)
 }
 
-func TestVsphereDefaultUpgradeContainerdFromV1_23_8_ToV1_24_2(t *testing.T) {
+func TestVsphereDefaultUpgradeContainerdFromV1_23_9_ToV1_24_3(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.SetVersions("v1.23.9", "v1.24.3")
 	scenario.Run(t)
 }
 
-func TestVsphereFlatcarUpgradeContainerdFromV1_23_8_ToV1_24_2(t *testing.T) {
+func TestVsphereFlatcarUpgradeContainerdFromV1_23_9_ToV1_24_3(t *testing.T) {
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.SetVersions("v1.23.9", "v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAwsAmznUpgradeContainerdFromV1_22_11_ToV1_23_8(t *testing.T) {
+func TestAwsAmznUpgradeContainerdFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11", "v1.23.8")
+	scenario.SetVersions("v1.22.12", "v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAwsCentosUpgradeContainerdFromV1_22_11_ToV1_23_8(t *testing.T) {
+func TestAwsCentosUpgradeContainerdFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11", "v1.23.8")
+	scenario.SetVersions("v1.22.12", "v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsUpgradeContainerdFromV1_22_11_ToV1_23_8(t *testing.T) {
+func TestAwsDefaultsUpgradeContainerdFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11", "v1.23.8")
+	scenario.SetVersions("v1.22.12", "v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAwsFlatcarUpgradeContainerdFromV1_22_11_ToV1_23_8(t *testing.T) {
+func TestAwsFlatcarUpgradeContainerdFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11", "v1.23.8")
+	scenario.SetVersions("v1.22.12", "v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAwsRhelUpgradeContainerdFromV1_22_11_ToV1_23_8(t *testing.T) {
+func TestAwsRhelUpgradeContainerdFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11", "v1.23.8")
+	scenario.SetVersions("v1.22.12", "v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAwsRockylinuxUpgradeContainerdFromV1_22_11_ToV1_23_8(t *testing.T) {
+func TestAwsRockylinuxUpgradeContainerdFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11", "v1.23.8")
+	scenario.SetVersions("v1.22.12", "v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAzureDefaultUpgradeContainerdFromV1_22_11_ToV1_23_8(t *testing.T) {
+func TestAzureDefaultUpgradeContainerdFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11", "v1.23.8")
+	scenario.SetVersions("v1.22.12", "v1.23.9")
 	scenario.Run(t)
 }
 
-func TestGceDefaultUpgradeContainerdFromV1_22_11_ToV1_23_8(t *testing.T) {
+func TestGceDefaultUpgradeContainerdFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11", "v1.23.8")
+	scenario.SetVersions("v1.22.12", "v1.23.9")
 	scenario.Run(t)
 }
 
-func TestOpenstackDefaultUpgradeContainerdFromV1_22_11_ToV1_23_8(t *testing.T) {
+func TestOpenstackDefaultUpgradeContainerdFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11", "v1.23.8")
+	scenario.SetVersions("v1.22.12", "v1.23.9")
 	scenario.Run(t)
 }
 
-func TestVsphereDefaultUpgradeContainerdFromV1_22_11_ToV1_23_8(t *testing.T) {
+func TestVsphereDefaultUpgradeContainerdFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11", "v1.23.8")
+	scenario.SetVersions("v1.22.12", "v1.23.9")
 	scenario.Run(t)
 }
 
-func TestVsphereFlatcarUpgradeContainerdFromV1_22_11_ToV1_23_8(t *testing.T) {
+func TestVsphereFlatcarUpgradeContainerdFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11", "v1.23.8")
+	scenario.SetVersions("v1.22.12", "v1.23.9")
 	scenario.Run(t)
 }
 
@@ -626,1371 +626,1371 @@ func TestVsphereFlatcarUpgradeDockerFromV1_22_12_ToV1_23_9(t *testing.T) {
 	scenario.Run(t)
 }
 
-func TestAwsAmznCalicoContainerdV1_22_11(t *testing.T) {
+func TestAwsAmznCalicoContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["calico_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsCentosCalicoContainerdV1_22_11(t *testing.T) {
+func TestAwsCentosCalicoContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["calico_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsCalicoContainerdV1_22_11(t *testing.T) {
+func TestAwsDefaultsCalicoContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["calico_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsFlatcarCalicoContainerdV1_22_11(t *testing.T) {
+func TestAwsFlatcarCalicoContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["calico_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsRhelCalicoContainerdV1_22_11(t *testing.T) {
+func TestAwsRhelCalicoContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["calico_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsRockylinuxCalicoContainerdV1_22_11(t *testing.T) {
+func TestAwsRockylinuxCalicoContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["calico_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAzureDefaultCalicoContainerdV1_22_11(t *testing.T) {
+func TestAzureDefaultCalicoContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["calico_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestGceDefaultCalicoContainerdV1_22_11(t *testing.T) {
+func TestGceDefaultCalicoContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["calico_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestOpenstackDefaultCalicoContainerdV1_22_11(t *testing.T) {
+func TestOpenstackDefaultCalicoContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["calico_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestVsphereDefaultCalicoContainerdV1_22_11(t *testing.T) {
+func TestVsphereDefaultCalicoContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["calico_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestVsphereFlatcarCalicoContainerdV1_22_11(t *testing.T) {
+func TestVsphereFlatcarCalicoContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["calico_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsAmznCalicoDockerV1_22_11(t *testing.T) {
+func TestAwsAmznCalicoDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["calico_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsCentosCalicoDockerV1_22_11(t *testing.T) {
+func TestAwsCentosCalicoDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["calico_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsCalicoDockerV1_22_11(t *testing.T) {
+func TestAwsDefaultsCalicoDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["calico_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsFlatcarCalicoDockerV1_22_11(t *testing.T) {
+func TestAwsFlatcarCalicoDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["calico_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsRhelCalicoDockerV1_22_11(t *testing.T) {
+func TestAwsRhelCalicoDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["calico_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsRockylinuxCalicoDockerV1_22_11(t *testing.T) {
+func TestAwsRockylinuxCalicoDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["calico_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAzureDefaultCalicoDockerV1_22_11(t *testing.T) {
+func TestAzureDefaultCalicoDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["calico_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestGceDefaultCalicoDockerV1_22_11(t *testing.T) {
+func TestGceDefaultCalicoDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["calico_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestOpenstackDefaultCalicoDockerV1_22_11(t *testing.T) {
+func TestOpenstackDefaultCalicoDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["calico_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestVsphereDefaultCalicoDockerV1_22_11(t *testing.T) {
+func TestVsphereDefaultCalicoDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["calico_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestVsphereFlatcarCalicoDockerV1_22_11(t *testing.T) {
+func TestVsphereFlatcarCalicoDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["calico_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsAmznWeaveContainerdV1_22_11(t *testing.T) {
+func TestAwsAmznWeaveContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["weave_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsCentosWeaveContainerdV1_22_11(t *testing.T) {
+func TestAwsCentosWeaveContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["weave_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsWeaveContainerdV1_22_11(t *testing.T) {
+func TestAwsDefaultsWeaveContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["weave_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsFlatcarWeaveContainerdV1_22_11(t *testing.T) {
+func TestAwsFlatcarWeaveContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["weave_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsRhelWeaveContainerdV1_22_11(t *testing.T) {
+func TestAwsRhelWeaveContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["weave_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsRockylinuxWeaveContainerdV1_22_11(t *testing.T) {
+func TestAwsRockylinuxWeaveContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["weave_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAzureDefaultWeaveContainerdV1_22_11(t *testing.T) {
+func TestAzureDefaultWeaveContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["weave_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestGceDefaultWeaveContainerdV1_22_11(t *testing.T) {
+func TestGceDefaultWeaveContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["weave_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestOpenstackDefaultWeaveContainerdV1_22_11(t *testing.T) {
+func TestOpenstackDefaultWeaveContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["weave_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestVsphereDefaultWeaveContainerdV1_22_11(t *testing.T) {
+func TestVsphereDefaultWeaveContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["weave_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestVsphereFlatcarWeaveContainerdV1_22_11(t *testing.T) {
+func TestVsphereFlatcarWeaveContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["weave_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsAmznWeaveDockerV1_22_11(t *testing.T) {
+func TestAwsAmznWeaveDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["weave_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsCentosWeaveDockerV1_22_11(t *testing.T) {
+func TestAwsCentosWeaveDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["weave_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsWeaveDockerV1_22_11(t *testing.T) {
+func TestAwsDefaultsWeaveDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["weave_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsFlatcarWeaveDockerV1_22_11(t *testing.T) {
+func TestAwsFlatcarWeaveDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["weave_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsRhelWeaveDockerV1_22_11(t *testing.T) {
+func TestAwsRhelWeaveDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["weave_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsRockylinuxWeaveDockerV1_22_11(t *testing.T) {
+func TestAwsRockylinuxWeaveDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["weave_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAzureDefaultWeaveDockerV1_22_11(t *testing.T) {
+func TestAzureDefaultWeaveDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["weave_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestGceDefaultWeaveDockerV1_22_11(t *testing.T) {
+func TestGceDefaultWeaveDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["weave_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestOpenstackDefaultWeaveDockerV1_22_11(t *testing.T) {
+func TestOpenstackDefaultWeaveDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["weave_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestVsphereDefaultWeaveDockerV1_22_11(t *testing.T) {
+func TestVsphereDefaultWeaveDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["weave_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestVsphereFlatcarWeaveDockerV1_22_11(t *testing.T) {
+func TestVsphereFlatcarWeaveDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["weave_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsAmznCiliumContainerdV1_22_11(t *testing.T) {
+func TestAwsAmznCiliumContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["cilium_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsCentosCiliumContainerdV1_22_11(t *testing.T) {
+func TestAwsCentosCiliumContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["cilium_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsCiliumContainerdV1_22_11(t *testing.T) {
+func TestAwsDefaultsCiliumContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["cilium_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsFlatcarCiliumContainerdV1_22_11(t *testing.T) {
+func TestAwsFlatcarCiliumContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["cilium_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsRhelCiliumContainerdV1_22_11(t *testing.T) {
+func TestAwsRhelCiliumContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["cilium_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsRockylinuxCiliumContainerdV1_22_11(t *testing.T) {
+func TestAwsRockylinuxCiliumContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["cilium_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAzureDefaultCiliumContainerdV1_22_11(t *testing.T) {
+func TestAzureDefaultCiliumContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["cilium_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestGceDefaultCiliumContainerdV1_22_11(t *testing.T) {
+func TestGceDefaultCiliumContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["cilium_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestOpenstackDefaultCiliumContainerdV1_22_11(t *testing.T) {
+func TestOpenstackDefaultCiliumContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["cilium_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestVsphereDefaultCiliumContainerdV1_22_11(t *testing.T) {
+func TestVsphereDefaultCiliumContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["cilium_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestVsphereFlatcarCiliumContainerdV1_22_11(t *testing.T) {
+func TestVsphereFlatcarCiliumContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["cilium_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsAmznCiliumDockerV1_22_11(t *testing.T) {
+func TestAwsAmznCiliumDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["cilium_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsCentosCiliumDockerV1_22_11(t *testing.T) {
+func TestAwsCentosCiliumDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["cilium_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsCiliumDockerV1_22_11(t *testing.T) {
+func TestAwsDefaultsCiliumDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["cilium_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsFlatcarCiliumDockerV1_22_11(t *testing.T) {
+func TestAwsFlatcarCiliumDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["cilium_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsRhelCiliumDockerV1_22_11(t *testing.T) {
+func TestAwsRhelCiliumDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["cilium_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsRockylinuxCiliumDockerV1_22_11(t *testing.T) {
+func TestAwsRockylinuxCiliumDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["cilium_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAzureDefaultCiliumDockerV1_22_11(t *testing.T) {
+func TestAzureDefaultCiliumDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["cilium_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestGceDefaultCiliumDockerV1_22_11(t *testing.T) {
+func TestGceDefaultCiliumDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["cilium_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestOpenstackDefaultCiliumDockerV1_22_11(t *testing.T) {
+func TestOpenstackDefaultCiliumDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["cilium_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestVsphereDefaultCiliumDockerV1_22_11(t *testing.T) {
+func TestVsphereDefaultCiliumDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["cilium_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestVsphereFlatcarCiliumDockerV1_22_11(t *testing.T) {
+func TestVsphereFlatcarCiliumDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["cilium_docker"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsLongTimeoutDefaultConformanceContainerdV1_22_11(t *testing.T) {
+func TestAwsLongTimeoutDefaultConformanceContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_long_timeout_default"]
 	scenario := Scenarios["conformance_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsLongTimeoutDefaultConformanceContainerdV1_23_8(t *testing.T) {
+func TestAwsLongTimeoutDefaultConformanceContainerdV1_23_9(t *testing.T) {
 	infra := Infrastructures["aws_long_timeout_default"]
 	scenario := Scenarios["conformance_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAwsLongTimeoutDefaultConformanceContainerdV1_24_2(t *testing.T) {
+func TestAwsLongTimeoutDefaultConformanceContainerdV1_24_3(t *testing.T) {
 	infra := Infrastructures["aws_long_timeout_default"]
 	scenario := Scenarios["conformance_containerd"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_22_11(t *testing.T) {
+func TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_long_timeout_default"]
 	scenario := Scenarios["conformance_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_23_8(t *testing.T) {
+func TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_23_9(t *testing.T) {
 	infra := Infrastructures["aws_long_timeout_default"]
 	scenario := Scenarios["conformance_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_24_2(t *testing.T) {
+func TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_24_3(t *testing.T) {
 	infra := Infrastructures["aws_long_timeout_default"]
 	scenario := Scenarios["conformance_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsKubeProxyIpvsV1_22_11(t *testing.T) {
+func TestAwsDefaultsKubeProxyIpvsV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["kube_proxy_ipvs"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsKubeProxyIpvsV1_23_8(t *testing.T) {
+func TestAwsDefaultsKubeProxyIpvsV1_23_9(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["kube_proxy_ipvs"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsLegacyMachineControllerUserdataV1_22_11(t *testing.T) {
+func TestAwsDefaultsLegacyMachineControllerUserdataV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["legacy_machine_controller_userdata"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsLegacyMachineControllerUserdataV1_23_8(t *testing.T) {
+func TestAwsDefaultsLegacyMachineControllerUserdataV1_23_9(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["legacy_machine_controller_userdata"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsLegacyMachineControllerUserdataV1_24_2(t *testing.T) {
+func TestAwsDefaultsLegacyMachineControllerUserdataV1_24_3(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["legacy_machine_controller_userdata"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsKubeProxyIpvsV1_24_2(t *testing.T) {
+func TestAwsDefaultsKubeProxyIpvsV1_24_3(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["kube_proxy_ipvs"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsCsiCcmMigrationV1_22_11(t *testing.T) {
+func TestAwsDefaultsCsiCcmMigrationV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestOpenstackDefaultCsiCcmMigrationV1_22_11(t *testing.T) {
+func TestOpenstackDefaultCsiCcmMigrationV1_22_12(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAzureDefaultCsiCcmMigrationV1_22_11(t *testing.T) {
+func TestAzureDefaultCsiCcmMigrationV1_22_12(t *testing.T) {
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestVsphereDefaultCsiCcmMigrationV1_22_11(t *testing.T) {
+func TestVsphereDefaultCsiCcmMigrationV1_22_12(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestVsphereFlatcarCsiCcmMigrationV1_22_11(t *testing.T) {
+func TestVsphereFlatcarCsiCcmMigrationV1_22_12(t *testing.T) {
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsCsiCcmMigrationV1_23_8(t *testing.T) {
+func TestAwsDefaultsCsiCcmMigrationV1_23_9(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestOpenstackDefaultCsiCcmMigrationV1_23_8(t *testing.T) {
+func TestOpenstackDefaultCsiCcmMigrationV1_23_9(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAzureDefaultCsiCcmMigrationV1_23_8(t *testing.T) {
+func TestAzureDefaultCsiCcmMigrationV1_23_9(t *testing.T) {
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestVsphereDefaultCsiCcmMigrationV1_23_8(t *testing.T) {
+func TestVsphereDefaultCsiCcmMigrationV1_23_9(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestVsphereFlatcarCsiCcmMigrationV1_23_8(t *testing.T) {
+func TestVsphereFlatcarCsiCcmMigrationV1_23_9(t *testing.T) {
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsCsiCcmMigrationV1_24_2(t *testing.T) {
+func TestAwsDefaultsCsiCcmMigrationV1_24_3(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestOpenstackDefaultCsiCcmMigrationV1_24_2(t *testing.T) {
+func TestOpenstackDefaultCsiCcmMigrationV1_24_3(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAzureDefaultCsiCcmMigrationV1_24_2(t *testing.T) {
+func TestAzureDefaultCsiCcmMigrationV1_24_3(t *testing.T) {
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestVsphereDefaultCsiCcmMigrationV1_24_2(t *testing.T) {
+func TestVsphereDefaultCsiCcmMigrationV1_24_3(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestVsphereFlatcarCsiCcmMigrationV1_24_2(t *testing.T) {
+func TestVsphereFlatcarCsiCcmMigrationV1_24_3(t *testing.T) {
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAwsAmznInstallContainerdExternalV1_22_11(t *testing.T) {
+func TestAwsAmznInstallContainerdExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsCentosInstallContainerdExternalV1_22_11(t *testing.T) {
+func TestAwsCentosInstallContainerdExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsInstallContainerdExternalV1_22_11(t *testing.T) {
+func TestAwsDefaultsInstallContainerdExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsFlatcarInstallContainerdExternalV1_22_11(t *testing.T) {
+func TestAwsFlatcarInstallContainerdExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsRhelInstallContainerdExternalV1_22_11(t *testing.T) {
+func TestAwsRhelInstallContainerdExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsRockylinuxInstallContainerdExternalV1_22_11(t *testing.T) {
+func TestAwsRockylinuxInstallContainerdExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAzureDefaultInstallContainerdExternalV1_22_11(t *testing.T) {
+func TestAzureDefaultInstallContainerdExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestDigitaloceanDefaultInstallContainerdExternalV1_22_11(t *testing.T) {
+func TestDigitaloceanDefaultInstallContainerdExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["digitalocean_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestEquinixmetalDefaultInstallContainerdExternalV1_22_11(t *testing.T) {
+func TestEquinixmetalDefaultInstallContainerdExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["equinixmetal_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestHetznerDefaultInstallContainerdExternalV1_22_11(t *testing.T) {
+func TestHetznerDefaultInstallContainerdExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["hetzner_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestOpenstackDefaultInstallContainerdExternalV1_22_11(t *testing.T) {
+func TestOpenstackDefaultInstallContainerdExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestVsphereDefaultInstallContainerdExternalV1_22_11(t *testing.T) {
+func TestVsphereDefaultInstallContainerdExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestVsphereFlatcarInstallContainerdExternalV1_22_11(t *testing.T) {
+func TestVsphereFlatcarInstallContainerdExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsAmznInstallContainerdExternalV1_23_8(t *testing.T) {
+func TestAwsAmznInstallContainerdExternalV1_23_9(t *testing.T) {
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAwsCentosInstallContainerdExternalV1_23_8(t *testing.T) {
+func TestAwsCentosInstallContainerdExternalV1_23_9(t *testing.T) {
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsInstallContainerdExternalV1_23_8(t *testing.T) {
+func TestAwsDefaultsInstallContainerdExternalV1_23_9(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAwsFlatcarInstallContainerdExternalV1_23_8(t *testing.T) {
+func TestAwsFlatcarInstallContainerdExternalV1_23_9(t *testing.T) {
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAwsRhelInstallContainerdExternalV1_23_8(t *testing.T) {
+func TestAwsRhelInstallContainerdExternalV1_23_9(t *testing.T) {
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAwsRockylinuxInstallContainerdExternalV1_23_8(t *testing.T) {
+func TestAwsRockylinuxInstallContainerdExternalV1_23_9(t *testing.T) {
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAzureDefaultInstallContainerdExternalV1_23_8(t *testing.T) {
+func TestAzureDefaultInstallContainerdExternalV1_23_9(t *testing.T) {
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestDigitaloceanDefaultInstallContainerdExternalV1_23_8(t *testing.T) {
+func TestDigitaloceanDefaultInstallContainerdExternalV1_23_9(t *testing.T) {
 	infra := Infrastructures["digitalocean_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestEquinixmetalDefaultInstallContainerdExternalV1_23_8(t *testing.T) {
+func TestEquinixmetalDefaultInstallContainerdExternalV1_23_9(t *testing.T) {
 	infra := Infrastructures["equinixmetal_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestHetznerDefaultInstallContainerdExternalV1_23_8(t *testing.T) {
+func TestHetznerDefaultInstallContainerdExternalV1_23_9(t *testing.T) {
 	infra := Infrastructures["hetzner_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestOpenstackDefaultInstallContainerdExternalV1_23_8(t *testing.T) {
+func TestOpenstackDefaultInstallContainerdExternalV1_23_9(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestVsphereDefaultInstallContainerdExternalV1_23_8(t *testing.T) {
+func TestVsphereDefaultInstallContainerdExternalV1_23_9(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestVsphereFlatcarInstallContainerdExternalV1_23_8(t *testing.T) {
+func TestVsphereFlatcarInstallContainerdExternalV1_23_9(t *testing.T) {
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8")
+	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAwsAmznInstallContainerdExternalV1_24_2(t *testing.T) {
+func TestAwsAmznInstallContainerdExternalV1_24_3(t *testing.T) {
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAwsCentosInstallContainerdExternalV1_24_2(t *testing.T) {
+func TestAwsCentosInstallContainerdExternalV1_24_3(t *testing.T) {
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsInstallContainerdExternalV1_24_2(t *testing.T) {
+func TestAwsDefaultsInstallContainerdExternalV1_24_3(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAwsFlatcarInstallContainerdExternalV1_24_2(t *testing.T) {
+func TestAwsFlatcarInstallContainerdExternalV1_24_3(t *testing.T) {
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAwsRhelInstallContainerdExternalV1_24_2(t *testing.T) {
+func TestAwsRhelInstallContainerdExternalV1_24_3(t *testing.T) {
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAwsRockylinuxInstallContainerdExternalV1_24_2(t *testing.T) {
+func TestAwsRockylinuxInstallContainerdExternalV1_24_3(t *testing.T) {
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAzureDefaultInstallContainerdExternalV1_24_2(t *testing.T) {
+func TestAzureDefaultInstallContainerdExternalV1_24_3(t *testing.T) {
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestDigitaloceanDefaultInstallContainerdExternalV1_24_2(t *testing.T) {
+func TestDigitaloceanDefaultInstallContainerdExternalV1_24_3(t *testing.T) {
 	infra := Infrastructures["digitalocean_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestEquinixmetalDefaultInstallContainerdExternalV1_24_2(t *testing.T) {
+func TestEquinixmetalDefaultInstallContainerdExternalV1_24_3(t *testing.T) {
 	infra := Infrastructures["equinixmetal_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestHetznerDefaultInstallContainerdExternalV1_24_2(t *testing.T) {
+func TestHetznerDefaultInstallContainerdExternalV1_24_3(t *testing.T) {
 	infra := Infrastructures["hetzner_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestOpenstackDefaultInstallContainerdExternalV1_24_2(t *testing.T) {
+func TestOpenstackDefaultInstallContainerdExternalV1_24_3(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestVsphereDefaultInstallContainerdExternalV1_24_2(t *testing.T) {
+func TestVsphereDefaultInstallContainerdExternalV1_24_3(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestVsphereFlatcarInstallContainerdExternalV1_24_2(t *testing.T) {
+func TestVsphereFlatcarInstallContainerdExternalV1_24_3(t *testing.T) {
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.2")
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAwsAmznInstallDockerExternalV1_22_11(t *testing.T) {
+func TestAwsAmznInstallDockerExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["install_docker_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsCentosInstallDockerExternalV1_22_11(t *testing.T) {
+func TestAwsCentosInstallDockerExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["install_docker_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsInstallDockerExternalV1_22_11(t *testing.T) {
+func TestAwsDefaultsInstallDockerExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["install_docker_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsFlatcarInstallDockerExternalV1_22_11(t *testing.T) {
+func TestAwsFlatcarInstallDockerExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["install_docker_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsRhelInstallDockerExternalV1_22_11(t *testing.T) {
+func TestAwsRhelInstallDockerExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["install_docker_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsRockylinuxInstallDockerExternalV1_22_11(t *testing.T) {
+func TestAwsRockylinuxInstallDockerExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["install_docker_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAzureDefaultInstallDockerExternalV1_22_11(t *testing.T) {
+func TestAzureDefaultInstallDockerExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["install_docker_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestDigitaloceanDefaultInstallDockerExternalV1_22_11(t *testing.T) {
+func TestDigitaloceanDefaultInstallDockerExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["digitalocean_default"]
 	scenario := Scenarios["install_docker_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestEquinixmetalDefaultInstallDockerExternalV1_22_11(t *testing.T) {
+func TestEquinixmetalDefaultInstallDockerExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["equinixmetal_default"]
 	scenario := Scenarios["install_docker_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestHetznerDefaultInstallDockerExternalV1_22_11(t *testing.T) {
+func TestHetznerDefaultInstallDockerExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["hetzner_default"]
 	scenario := Scenarios["install_docker_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestOpenstackDefaultInstallDockerExternalV1_22_11(t *testing.T) {
+func TestOpenstackDefaultInstallDockerExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["install_docker_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestVsphereDefaultInstallDockerExternalV1_22_11(t *testing.T) {
+func TestVsphereDefaultInstallDockerExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["install_docker_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestVsphereFlatcarInstallDockerExternalV1_22_11(t *testing.T) {
+func TestVsphereFlatcarInstallDockerExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["install_docker_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11")
+	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsAmznUpgradeContainerdExternalFromV1_22_11_ToV1_23_8(t *testing.T) {
+func TestAwsAmznUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11", "v1.23.8")
+	scenario.SetVersions("v1.22.12", "v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAwsCentosUpgradeContainerdExternalFromV1_22_11_ToV1_23_8(t *testing.T) {
+func TestAwsCentosUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11", "v1.23.8")
+	scenario.SetVersions("v1.22.12", "v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsUpgradeContainerdExternalFromV1_22_11_ToV1_23_8(t *testing.T) {
+func TestAwsDefaultsUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11", "v1.23.8")
+	scenario.SetVersions("v1.22.12", "v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAwsFlatcarUpgradeContainerdExternalFromV1_22_11_ToV1_23_8(t *testing.T) {
+func TestAwsFlatcarUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11", "v1.23.8")
+	scenario.SetVersions("v1.22.12", "v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAwsRhelUpgradeContainerdExternalFromV1_22_11_ToV1_23_8(t *testing.T) {
+func TestAwsRhelUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11", "v1.23.8")
+	scenario.SetVersions("v1.22.12", "v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAwsRockylinuxUpgradeContainerdExternalFromV1_22_11_ToV1_23_8(t *testing.T) {
+func TestAwsRockylinuxUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11", "v1.23.8")
+	scenario.SetVersions("v1.22.12", "v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAzureDefaultUpgradeContainerdExternalFromV1_22_11_ToV1_23_8(t *testing.T) {
+func TestAzureDefaultUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11", "v1.23.8")
+	scenario.SetVersions("v1.22.12", "v1.23.9")
 	scenario.Run(t)
 }
 
-func TestDigitaloceanDefaultUpgradeContainerdExternalFromV1_22_11_ToV1_23_8(t *testing.T) {
+func TestDigitaloceanDefaultUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["digitalocean_default"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11", "v1.23.8")
+	scenario.SetVersions("v1.22.12", "v1.23.9")
 	scenario.Run(t)
 }
 
-func TestEquinixmetalDefaultUpgradeContainerdExternalFromV1_22_11_ToV1_23_8(t *testing.T) {
+func TestEquinixmetalDefaultUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["equinixmetal_default"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11", "v1.23.8")
+	scenario.SetVersions("v1.22.12", "v1.23.9")
 	scenario.Run(t)
 }
 
-func TestHetznerDefaultUpgradeContainerdExternalFromV1_22_11_ToV1_23_8(t *testing.T) {
+func TestHetznerDefaultUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["hetzner_default"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11", "v1.23.8")
+	scenario.SetVersions("v1.22.12", "v1.23.9")
 	scenario.Run(t)
 }
 
-func TestOpenstackDefaultUpgradeContainerdExternalFromV1_22_11_ToV1_23_8(t *testing.T) {
+func TestOpenstackDefaultUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11", "v1.23.8")
+	scenario.SetVersions("v1.22.12", "v1.23.9")
 	scenario.Run(t)
 }
 
-func TestVsphereDefaultUpgradeContainerdExternalFromV1_22_11_ToV1_23_8(t *testing.T) {
+func TestVsphereDefaultUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11", "v1.23.8")
+	scenario.SetVersions("v1.22.12", "v1.23.9")
 	scenario.Run(t)
 }
 
-func TestVsphereFlatcarUpgradeContainerdExternalFromV1_22_11_ToV1_23_8(t *testing.T) {
+func TestVsphereFlatcarUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.11", "v1.23.8")
+	scenario.SetVersions("v1.22.12", "v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAwsAmznUpgradeContainerdExternalFromV1_23_8_ToV1_24_2(t *testing.T) {
+func TestAwsAmznUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T) {
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.SetVersions("v1.23.9", "v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAwsCentosUpgradeContainerdExternalFromV1_23_8_ToV1_24_2(t *testing.T) {
+func TestAwsCentosUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T) {
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.SetVersions("v1.23.9", "v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsUpgradeContainerdExternalFromV1_23_8_ToV1_24_2(t *testing.T) {
+func TestAwsDefaultsUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T) {
 	infra := Infrastructures["aws_defaults"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.SetVersions("v1.23.9", "v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAwsFlatcarUpgradeContainerdExternalFromV1_23_8_ToV1_24_2(t *testing.T) {
+func TestAwsFlatcarUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T) {
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.SetVersions("v1.23.9", "v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAwsRhelUpgradeContainerdExternalFromV1_23_8_ToV1_24_2(t *testing.T) {
+func TestAwsRhelUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T) {
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.SetVersions("v1.23.9", "v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAwsRockylinuxUpgradeContainerdExternalFromV1_23_8_ToV1_24_2(t *testing.T) {
+func TestAwsRockylinuxUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T) {
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.SetVersions("v1.23.9", "v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAzureDefaultUpgradeContainerdExternalFromV1_23_8_ToV1_24_2(t *testing.T) {
+func TestAzureDefaultUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T) {
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.SetVersions("v1.23.9", "v1.24.3")
 	scenario.Run(t)
 }
 
-func TestDigitaloceanDefaultUpgradeContainerdExternalFromV1_23_8_ToV1_24_2(t *testing.T) {
+func TestDigitaloceanDefaultUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T) {
 	infra := Infrastructures["digitalocean_default"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.SetVersions("v1.23.9", "v1.24.3")
 	scenario.Run(t)
 }
 
-func TestEquinixmetalDefaultUpgradeContainerdExternalFromV1_23_8_ToV1_24_2(t *testing.T) {
+func TestEquinixmetalDefaultUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T) {
 	infra := Infrastructures["equinixmetal_default"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.SetVersions("v1.23.9", "v1.24.3")
 	scenario.Run(t)
 }
 
-func TestHetznerDefaultUpgradeContainerdExternalFromV1_23_8_ToV1_24_2(t *testing.T) {
+func TestHetznerDefaultUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T) {
 	infra := Infrastructures["hetzner_default"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.SetVersions("v1.23.9", "v1.24.3")
 	scenario.Run(t)
 }
 
-func TestOpenstackDefaultUpgradeContainerdExternalFromV1_23_8_ToV1_24_2(t *testing.T) {
+func TestOpenstackDefaultUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.SetVersions("v1.23.9", "v1.24.3")
 	scenario.Run(t)
 }
 
-func TestVsphereDefaultUpgradeContainerdExternalFromV1_23_8_ToV1_24_2(t *testing.T) {
+func TestVsphereDefaultUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.SetVersions("v1.23.9", "v1.24.3")
 	scenario.Run(t)
 }
 
-func TestVsphereFlatcarUpgradeContainerdExternalFromV1_23_8_ToV1_24_2(t *testing.T) {
+func TestVsphereFlatcarUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T) {
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.8", "v1.24.2")
+	scenario.SetVersions("v1.23.9", "v1.24.3")
 	scenario.Run(t)
 }
 

@@ -6,13 +6,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-install-containerd-v1.22.11
+  name: pull-kubeone-e2e-aws-amzn-install-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsAmznInstallContainerdV1_22_11
+      - TestAwsAmznInstallContainerdV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -28,13 +28,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-install-containerd-v1.22.11
+  name: pull-kubeone-e2e-aws-centos-install-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsCentosInstallContainerdV1_22_11
+      - TestAwsCentosInstallContainerdV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -50,13 +50,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-install-containerd-v1.22.11
+  name: pull-kubeone-e2e-aws-defaults-install-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsInstallContainerdV1_22_11
+      - TestAwsDefaultsInstallContainerdV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -72,13 +72,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-install-containerd-v1.22.11
+  name: pull-kubeone-e2e-aws-flatcar-install-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarInstallContainerdV1_22_11
+      - TestAwsFlatcarInstallContainerdV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -94,13 +94,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-install-containerd-v1.22.11
+  name: pull-kubeone-e2e-aws-rhel-install-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRhelInstallContainerdV1_22_11
+      - TestAwsRhelInstallContainerdV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -116,13 +116,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-install-containerd-v1.22.11
+  name: pull-kubeone-e2e-aws-rockylinux-install-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRockylinuxInstallContainerdV1_22_11
+      - TestAwsRockylinuxInstallContainerdV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -138,13 +138,13 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-install-containerd-v1.22.11
+  name: pull-kubeone-e2e-azure-default-install-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultInstallContainerdV1_22_11
+      - TestAzureDefaultInstallContainerdV1_22_12
       env:
       - name: PROVIDER
         value: azure
@@ -162,13 +162,13 @@ presubmits:
   labels:
     preset-gce: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-gce-default-install-containerd-v1.22.11
+  name: pull-kubeone-e2e-gce-default-install-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestGceDefaultInstallContainerdV1_22_11
+      - TestGceDefaultInstallContainerdV1_22_12
       env:
       - name: PROVIDER
         value: gce
@@ -184,13 +184,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-install-containerd-v1.22.11
+  name: pull-kubeone-e2e-openstack-default-install-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultInstallContainerdV1_22_11
+      - TestOpenstackDefaultInstallContainerdV1_22_12
       env:
       - name: PROVIDER
         value: openstack
@@ -206,13 +206,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-install-containerd-v1.22.11
+  name: pull-kubeone-e2e-vsphere-default-install-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultInstallContainerdV1_22_11
+      - TestVsphereDefaultInstallContainerdV1_22_12
       env:
       - name: PROVIDER
         value: vsphere
@@ -228,13 +228,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-install-containerd-v1.22.11
+  name: pull-kubeone-e2e-vsphere-flatcar-install-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarInstallContainerdV1_22_11
+      - TestVsphereFlatcarInstallContainerdV1_22_12
       env:
       - name: PROVIDER
         value: vsphere
@@ -250,13 +250,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-install-containerd-v1.23.8
+  name: pull-kubeone-e2e-aws-amzn-install-containerd-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsAmznInstallContainerdV1_23_8
+      - TestAwsAmznInstallContainerdV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -272,13 +272,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-install-containerd-v1.23.8
+  name: pull-kubeone-e2e-aws-centos-install-containerd-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsCentosInstallContainerdV1_23_8
+      - TestAwsCentosInstallContainerdV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -294,13 +294,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-install-containerd-v1.23.8
+  name: pull-kubeone-e2e-aws-defaults-install-containerd-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsInstallContainerdV1_23_8
+      - TestAwsDefaultsInstallContainerdV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -316,13 +316,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-install-containerd-v1.23.8
+  name: pull-kubeone-e2e-aws-flatcar-install-containerd-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarInstallContainerdV1_23_8
+      - TestAwsFlatcarInstallContainerdV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -338,13 +338,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-install-containerd-v1.23.8
+  name: pull-kubeone-e2e-aws-rhel-install-containerd-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRhelInstallContainerdV1_23_8
+      - TestAwsRhelInstallContainerdV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -360,13 +360,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-install-containerd-v1.23.8
+  name: pull-kubeone-e2e-aws-rockylinux-install-containerd-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRockylinuxInstallContainerdV1_23_8
+      - TestAwsRockylinuxInstallContainerdV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -382,13 +382,13 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-install-containerd-v1.23.8
+  name: pull-kubeone-e2e-azure-default-install-containerd-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultInstallContainerdV1_23_8
+      - TestAzureDefaultInstallContainerdV1_23_9
       env:
       - name: PROVIDER
         value: azure
@@ -406,13 +406,13 @@ presubmits:
   labels:
     preset-gce: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-gce-default-install-containerd-v1.23.8
+  name: pull-kubeone-e2e-gce-default-install-containerd-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestGceDefaultInstallContainerdV1_23_8
+      - TestGceDefaultInstallContainerdV1_23_9
       env:
       - name: PROVIDER
         value: gce
@@ -428,13 +428,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-install-containerd-v1.23.8
+  name: pull-kubeone-e2e-openstack-default-install-containerd-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultInstallContainerdV1_23_8
+      - TestOpenstackDefaultInstallContainerdV1_23_9
       env:
       - name: PROVIDER
         value: openstack
@@ -450,13 +450,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-install-containerd-v1.23.8
+  name: pull-kubeone-e2e-vsphere-default-install-containerd-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultInstallContainerdV1_23_8
+      - TestVsphereDefaultInstallContainerdV1_23_9
       env:
       - name: PROVIDER
         value: vsphere
@@ -472,13 +472,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-install-containerd-v1.23.8
+  name: pull-kubeone-e2e-vsphere-flatcar-install-containerd-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarInstallContainerdV1_23_8
+      - TestVsphereFlatcarInstallContainerdV1_23_9
       env:
       - name: PROVIDER
         value: vsphere
@@ -494,13 +494,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-install-containerd-v1.24.2
+  name: pull-kubeone-e2e-aws-amzn-install-containerd-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsAmznInstallContainerdV1_24_2
+      - TestAwsAmznInstallContainerdV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -516,13 +516,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-install-containerd-v1.24.2
+  name: pull-kubeone-e2e-aws-centos-install-containerd-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsCentosInstallContainerdV1_24_2
+      - TestAwsCentosInstallContainerdV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -538,13 +538,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-install-containerd-v1.24.2
+  name: pull-kubeone-e2e-aws-defaults-install-containerd-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsInstallContainerdV1_24_2
+      - TestAwsDefaultsInstallContainerdV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -560,13 +560,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-install-containerd-v1.24.2
+  name: pull-kubeone-e2e-aws-flatcar-install-containerd-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarInstallContainerdV1_24_2
+      - TestAwsFlatcarInstallContainerdV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -582,13 +582,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-install-containerd-v1.24.2
+  name: pull-kubeone-e2e-aws-rhel-install-containerd-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRhelInstallContainerdV1_24_2
+      - TestAwsRhelInstallContainerdV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -604,13 +604,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-install-containerd-v1.24.2
+  name: pull-kubeone-e2e-aws-rockylinux-install-containerd-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRockylinuxInstallContainerdV1_24_2
+      - TestAwsRockylinuxInstallContainerdV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -626,13 +626,13 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-install-containerd-v1.24.2
+  name: pull-kubeone-e2e-azure-default-install-containerd-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultInstallContainerdV1_24_2
+      - TestAzureDefaultInstallContainerdV1_24_3
       env:
       - name: PROVIDER
         value: azure
@@ -650,13 +650,13 @@ presubmits:
   labels:
     preset-gce: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-gce-default-install-containerd-v1.24.2
+  name: pull-kubeone-e2e-gce-default-install-containerd-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestGceDefaultInstallContainerdV1_24_2
+      - TestGceDefaultInstallContainerdV1_24_3
       env:
       - name: PROVIDER
         value: gce
@@ -672,13 +672,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-install-containerd-v1.24.2
+  name: pull-kubeone-e2e-openstack-default-install-containerd-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultInstallContainerdV1_24_2
+      - TestOpenstackDefaultInstallContainerdV1_24_3
       env:
       - name: PROVIDER
         value: openstack
@@ -694,13 +694,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-install-containerd-v1.24.2
+  name: pull-kubeone-e2e-vsphere-default-install-containerd-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultInstallContainerdV1_24_2
+      - TestVsphereDefaultInstallContainerdV1_24_3
       env:
       - name: PROVIDER
         value: vsphere
@@ -716,13 +716,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-install-containerd-v1.24.2
+  name: pull-kubeone-e2e-vsphere-flatcar-install-containerd-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarInstallContainerdV1_24_2
+      - TestVsphereFlatcarInstallContainerdV1_24_3
       env:
       - name: PROVIDER
         value: vsphere
@@ -738,13 +738,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-install-docker-v1.22.11
+  name: pull-kubeone-e2e-aws-amzn-install-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsAmznInstallDockerV1_22_11
+      - TestAwsAmznInstallDockerV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -760,13 +760,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-install-docker-v1.22.11
+  name: pull-kubeone-e2e-aws-centos-install-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsCentosInstallDockerV1_22_11
+      - TestAwsCentosInstallDockerV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -782,13 +782,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-install-docker-v1.22.11
+  name: pull-kubeone-e2e-aws-defaults-install-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsInstallDockerV1_22_11
+      - TestAwsDefaultsInstallDockerV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -804,13 +804,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-install-docker-v1.22.11
+  name: pull-kubeone-e2e-aws-flatcar-install-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarInstallDockerV1_22_11
+      - TestAwsFlatcarInstallDockerV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -826,13 +826,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-install-docker-v1.22.11
+  name: pull-kubeone-e2e-aws-rhel-install-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRhelInstallDockerV1_22_11
+      - TestAwsRhelInstallDockerV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -848,13 +848,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-install-docker-v1.22.11
+  name: pull-kubeone-e2e-aws-rockylinux-install-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRockylinuxInstallDockerV1_22_11
+      - TestAwsRockylinuxInstallDockerV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -870,13 +870,13 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-install-docker-v1.22.11
+  name: pull-kubeone-e2e-azure-default-install-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultInstallDockerV1_22_11
+      - TestAzureDefaultInstallDockerV1_22_12
       env:
       - name: PROVIDER
         value: azure
@@ -894,13 +894,13 @@ presubmits:
   labels:
     preset-gce: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-gce-default-install-docker-v1.22.11
+  name: pull-kubeone-e2e-gce-default-install-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestGceDefaultInstallDockerV1_22_11
+      - TestGceDefaultInstallDockerV1_22_12
       env:
       - name: PROVIDER
         value: gce
@@ -916,13 +916,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-install-docker-v1.22.11
+  name: pull-kubeone-e2e-openstack-default-install-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultInstallDockerV1_22_11
+      - TestOpenstackDefaultInstallDockerV1_22_12
       env:
       - name: PROVIDER
         value: openstack
@@ -938,13 +938,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-install-docker-v1.22.11
+  name: pull-kubeone-e2e-vsphere-default-install-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultInstallDockerV1_22_11
+      - TestVsphereDefaultInstallDockerV1_22_12
       env:
       - name: PROVIDER
         value: vsphere
@@ -960,13 +960,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-install-docker-v1.22.11
+  name: pull-kubeone-e2e-vsphere-flatcar-install-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarInstallDockerV1_22_11
+      - TestVsphereFlatcarInstallDockerV1_22_12
       env:
       - name: PROVIDER
         value: vsphere
@@ -982,13 +982,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-upgrade-containerd-from-v1.23.8-to-v1.24.2
+  name: pull-kubeone-e2e-aws-amzn-upgrade-containerd-from-v1.23.9-to-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsAmznUpgradeContainerdFromV1_23_8_ToV1_24_2
+      - TestAwsAmznUpgradeContainerdFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -1004,13 +1004,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-upgrade-containerd-from-v1.23.8-to-v1.24.2
+  name: pull-kubeone-e2e-aws-centos-upgrade-containerd-from-v1.23.9-to-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsCentosUpgradeContainerdFromV1_23_8_ToV1_24_2
+      - TestAwsCentosUpgradeContainerdFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -1026,13 +1026,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-upgrade-containerd-from-v1.23.8-to-v1.24.2
+  name: pull-kubeone-e2e-aws-defaults-upgrade-containerd-from-v1.23.9-to-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsUpgradeContainerdFromV1_23_8_ToV1_24_2
+      - TestAwsDefaultsUpgradeContainerdFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -1048,13 +1048,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-upgrade-containerd-from-v1.23.8-to-v1.24.2
+  name: pull-kubeone-e2e-aws-flatcar-upgrade-containerd-from-v1.23.9-to-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarUpgradeContainerdFromV1_23_8_ToV1_24_2
+      - TestAwsFlatcarUpgradeContainerdFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -1070,13 +1070,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-upgrade-containerd-from-v1.23.8-to-v1.24.2
+  name: pull-kubeone-e2e-aws-rhel-upgrade-containerd-from-v1.23.9-to-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRhelUpgradeContainerdFromV1_23_8_ToV1_24_2
+      - TestAwsRhelUpgradeContainerdFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -1092,13 +1092,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-upgrade-containerd-from-v1.23.8-to-v1.24.2
+  name: pull-kubeone-e2e-aws-rockylinux-upgrade-containerd-from-v1.23.9-to-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRockylinuxUpgradeContainerdFromV1_23_8_ToV1_24_2
+      - TestAwsRockylinuxUpgradeContainerdFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -1114,13 +1114,13 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-upgrade-containerd-from-v1.23.8-to-v1.24.2
+  name: pull-kubeone-e2e-azure-default-upgrade-containerd-from-v1.23.9-to-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultUpgradeContainerdFromV1_23_8_ToV1_24_2
+      - TestAzureDefaultUpgradeContainerdFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
         value: azure
@@ -1138,13 +1138,13 @@ presubmits:
   labels:
     preset-gce: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-gce-default-upgrade-containerd-from-v1.23.8-to-v1.24.2
+  name: pull-kubeone-e2e-gce-default-upgrade-containerd-from-v1.23.9-to-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestGceDefaultUpgradeContainerdFromV1_23_8_ToV1_24_2
+      - TestGceDefaultUpgradeContainerdFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
         value: gce
@@ -1160,13 +1160,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-upgrade-containerd-from-v1.23.8-to-v1.24.2
+  name: pull-kubeone-e2e-openstack-default-upgrade-containerd-from-v1.23.9-to-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultUpgradeContainerdFromV1_23_8_ToV1_24_2
+      - TestOpenstackDefaultUpgradeContainerdFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
         value: openstack
@@ -1182,13 +1182,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-upgrade-containerd-from-v1.23.8-to-v1.24.2
+  name: pull-kubeone-e2e-vsphere-default-upgrade-containerd-from-v1.23.9-to-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultUpgradeContainerdFromV1_23_8_ToV1_24_2
+      - TestVsphereDefaultUpgradeContainerdFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
         value: vsphere
@@ -1204,13 +1204,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-upgrade-containerd-from-v1.23.8-to-v1.24.2
+  name: pull-kubeone-e2e-vsphere-flatcar-upgrade-containerd-from-v1.23.9-to-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarUpgradeContainerdFromV1_23_8_ToV1_24_2
+      - TestVsphereFlatcarUpgradeContainerdFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
         value: vsphere
@@ -1226,13 +1226,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-upgrade-containerd-from-v1.22.11-to-v1.23.8
+  name: pull-kubeone-e2e-aws-amzn-upgrade-containerd-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsAmznUpgradeContainerdFromV1_22_11_ToV1_23_8
+      - TestAwsAmznUpgradeContainerdFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -1248,13 +1248,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-upgrade-containerd-from-v1.22.11-to-v1.23.8
+  name: pull-kubeone-e2e-aws-centos-upgrade-containerd-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsCentosUpgradeContainerdFromV1_22_11_ToV1_23_8
+      - TestAwsCentosUpgradeContainerdFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -1270,13 +1270,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-upgrade-containerd-from-v1.22.11-to-v1.23.8
+  name: pull-kubeone-e2e-aws-defaults-upgrade-containerd-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsUpgradeContainerdFromV1_22_11_ToV1_23_8
+      - TestAwsDefaultsUpgradeContainerdFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -1292,13 +1292,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-upgrade-containerd-from-v1.22.11-to-v1.23.8
+  name: pull-kubeone-e2e-aws-flatcar-upgrade-containerd-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarUpgradeContainerdFromV1_22_11_ToV1_23_8
+      - TestAwsFlatcarUpgradeContainerdFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -1314,13 +1314,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-upgrade-containerd-from-v1.22.11-to-v1.23.8
+  name: pull-kubeone-e2e-aws-rhel-upgrade-containerd-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRhelUpgradeContainerdFromV1_22_11_ToV1_23_8
+      - TestAwsRhelUpgradeContainerdFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -1336,13 +1336,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-upgrade-containerd-from-v1.22.11-to-v1.23.8
+  name: pull-kubeone-e2e-aws-rockylinux-upgrade-containerd-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRockylinuxUpgradeContainerdFromV1_22_11_ToV1_23_8
+      - TestAwsRockylinuxUpgradeContainerdFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -1358,13 +1358,13 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-upgrade-containerd-from-v1.22.11-to-v1.23.8
+  name: pull-kubeone-e2e-azure-default-upgrade-containerd-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultUpgradeContainerdFromV1_22_11_ToV1_23_8
+      - TestAzureDefaultUpgradeContainerdFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: azure
@@ -1382,13 +1382,13 @@ presubmits:
   labels:
     preset-gce: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-gce-default-upgrade-containerd-from-v1.22.11-to-v1.23.8
+  name: pull-kubeone-e2e-gce-default-upgrade-containerd-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestGceDefaultUpgradeContainerdFromV1_22_11_ToV1_23_8
+      - TestGceDefaultUpgradeContainerdFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: gce
@@ -1404,13 +1404,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-upgrade-containerd-from-v1.22.11-to-v1.23.8
+  name: pull-kubeone-e2e-openstack-default-upgrade-containerd-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultUpgradeContainerdFromV1_22_11_ToV1_23_8
+      - TestOpenstackDefaultUpgradeContainerdFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: openstack
@@ -1426,13 +1426,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-upgrade-containerd-from-v1.22.11-to-v1.23.8
+  name: pull-kubeone-e2e-vsphere-default-upgrade-containerd-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultUpgradeContainerdFromV1_22_11_ToV1_23_8
+      - TestVsphereDefaultUpgradeContainerdFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: vsphere
@@ -1448,13 +1448,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-upgrade-containerd-from-v1.22.11-to-v1.23.8
+  name: pull-kubeone-e2e-vsphere-flatcar-upgrade-containerd-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarUpgradeContainerdFromV1_22_11_ToV1_23_8
+      - TestVsphereFlatcarUpgradeContainerdFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: vsphere
@@ -1714,13 +1714,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-calico-containerd-v1.22.11
+  name: pull-kubeone-e2e-aws-amzn-calico-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsAmznCalicoContainerdV1_22_11
+      - TestAwsAmznCalicoContainerdV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -1736,13 +1736,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-calico-containerd-v1.22.11
+  name: pull-kubeone-e2e-aws-centos-calico-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsCentosCalicoContainerdV1_22_11
+      - TestAwsCentosCalicoContainerdV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -1758,13 +1758,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-calico-containerd-v1.22.11
+  name: pull-kubeone-e2e-aws-defaults-calico-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsCalicoContainerdV1_22_11
+      - TestAwsDefaultsCalicoContainerdV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -1780,13 +1780,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-calico-containerd-v1.22.11
+  name: pull-kubeone-e2e-aws-flatcar-calico-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarCalicoContainerdV1_22_11
+      - TestAwsFlatcarCalicoContainerdV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -1802,13 +1802,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-calico-containerd-v1.22.11
+  name: pull-kubeone-e2e-aws-rhel-calico-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRhelCalicoContainerdV1_22_11
+      - TestAwsRhelCalicoContainerdV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -1824,13 +1824,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-calico-containerd-v1.22.11
+  name: pull-kubeone-e2e-aws-rockylinux-calico-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRockylinuxCalicoContainerdV1_22_11
+      - TestAwsRockylinuxCalicoContainerdV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -1846,13 +1846,13 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-calico-containerd-v1.22.11
+  name: pull-kubeone-e2e-azure-default-calico-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultCalicoContainerdV1_22_11
+      - TestAzureDefaultCalicoContainerdV1_22_12
       env:
       - name: PROVIDER
         value: azure
@@ -1870,13 +1870,13 @@ presubmits:
   labels:
     preset-gce: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-gce-default-calico-containerd-v1.22.11
+  name: pull-kubeone-e2e-gce-default-calico-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestGceDefaultCalicoContainerdV1_22_11
+      - TestGceDefaultCalicoContainerdV1_22_12
       env:
       - name: PROVIDER
         value: gce
@@ -1892,13 +1892,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-calico-containerd-v1.22.11
+  name: pull-kubeone-e2e-openstack-default-calico-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultCalicoContainerdV1_22_11
+      - TestOpenstackDefaultCalicoContainerdV1_22_12
       env:
       - name: PROVIDER
         value: openstack
@@ -1914,13 +1914,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-calico-containerd-v1.22.11
+  name: pull-kubeone-e2e-vsphere-default-calico-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultCalicoContainerdV1_22_11
+      - TestVsphereDefaultCalicoContainerdV1_22_12
       env:
       - name: PROVIDER
         value: vsphere
@@ -1936,13 +1936,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-calico-containerd-v1.22.11
+  name: pull-kubeone-e2e-vsphere-flatcar-calico-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarCalicoContainerdV1_22_11
+      - TestVsphereFlatcarCalicoContainerdV1_22_12
       env:
       - name: PROVIDER
         value: vsphere
@@ -1958,13 +1958,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-calico-docker-v1.22.11
+  name: pull-kubeone-e2e-aws-amzn-calico-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsAmznCalicoDockerV1_22_11
+      - TestAwsAmznCalicoDockerV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -1980,13 +1980,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-calico-docker-v1.22.11
+  name: pull-kubeone-e2e-aws-centos-calico-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsCentosCalicoDockerV1_22_11
+      - TestAwsCentosCalicoDockerV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -2002,13 +2002,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-calico-docker-v1.22.11
+  name: pull-kubeone-e2e-aws-defaults-calico-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsCalicoDockerV1_22_11
+      - TestAwsDefaultsCalicoDockerV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -2024,13 +2024,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-calico-docker-v1.22.11
+  name: pull-kubeone-e2e-aws-flatcar-calico-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarCalicoDockerV1_22_11
+      - TestAwsFlatcarCalicoDockerV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -2046,13 +2046,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-calico-docker-v1.22.11
+  name: pull-kubeone-e2e-aws-rhel-calico-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRhelCalicoDockerV1_22_11
+      - TestAwsRhelCalicoDockerV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -2068,13 +2068,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-calico-docker-v1.22.11
+  name: pull-kubeone-e2e-aws-rockylinux-calico-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRockylinuxCalicoDockerV1_22_11
+      - TestAwsRockylinuxCalicoDockerV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -2090,13 +2090,13 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-calico-docker-v1.22.11
+  name: pull-kubeone-e2e-azure-default-calico-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultCalicoDockerV1_22_11
+      - TestAzureDefaultCalicoDockerV1_22_12
       env:
       - name: PROVIDER
         value: azure
@@ -2114,13 +2114,13 @@ presubmits:
   labels:
     preset-gce: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-gce-default-calico-docker-v1.22.11
+  name: pull-kubeone-e2e-gce-default-calico-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestGceDefaultCalicoDockerV1_22_11
+      - TestGceDefaultCalicoDockerV1_22_12
       env:
       - name: PROVIDER
         value: gce
@@ -2136,13 +2136,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-calico-docker-v1.22.11
+  name: pull-kubeone-e2e-openstack-default-calico-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultCalicoDockerV1_22_11
+      - TestOpenstackDefaultCalicoDockerV1_22_12
       env:
       - name: PROVIDER
         value: openstack
@@ -2158,13 +2158,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-calico-docker-v1.22.11
+  name: pull-kubeone-e2e-vsphere-default-calico-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultCalicoDockerV1_22_11
+      - TestVsphereDefaultCalicoDockerV1_22_12
       env:
       - name: PROVIDER
         value: vsphere
@@ -2180,13 +2180,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-calico-docker-v1.22.11
+  name: pull-kubeone-e2e-vsphere-flatcar-calico-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarCalicoDockerV1_22_11
+      - TestVsphereFlatcarCalicoDockerV1_22_12
       env:
       - name: PROVIDER
         value: vsphere
@@ -2202,13 +2202,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-weave-containerd-v1.22.11
+  name: pull-kubeone-e2e-aws-amzn-weave-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsAmznWeaveContainerdV1_22_11
+      - TestAwsAmznWeaveContainerdV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -2224,13 +2224,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-weave-containerd-v1.22.11
+  name: pull-kubeone-e2e-aws-centos-weave-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsCentosWeaveContainerdV1_22_11
+      - TestAwsCentosWeaveContainerdV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -2246,13 +2246,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-weave-containerd-v1.22.11
+  name: pull-kubeone-e2e-aws-defaults-weave-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsWeaveContainerdV1_22_11
+      - TestAwsDefaultsWeaveContainerdV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -2268,13 +2268,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-weave-containerd-v1.22.11
+  name: pull-kubeone-e2e-aws-flatcar-weave-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarWeaveContainerdV1_22_11
+      - TestAwsFlatcarWeaveContainerdV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -2290,13 +2290,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-weave-containerd-v1.22.11
+  name: pull-kubeone-e2e-aws-rhel-weave-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRhelWeaveContainerdV1_22_11
+      - TestAwsRhelWeaveContainerdV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -2312,13 +2312,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-weave-containerd-v1.22.11
+  name: pull-kubeone-e2e-aws-rockylinux-weave-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRockylinuxWeaveContainerdV1_22_11
+      - TestAwsRockylinuxWeaveContainerdV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -2334,13 +2334,13 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-weave-containerd-v1.22.11
+  name: pull-kubeone-e2e-azure-default-weave-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultWeaveContainerdV1_22_11
+      - TestAzureDefaultWeaveContainerdV1_22_12
       env:
       - name: PROVIDER
         value: azure
@@ -2358,13 +2358,13 @@ presubmits:
   labels:
     preset-gce: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-gce-default-weave-containerd-v1.22.11
+  name: pull-kubeone-e2e-gce-default-weave-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestGceDefaultWeaveContainerdV1_22_11
+      - TestGceDefaultWeaveContainerdV1_22_12
       env:
       - name: PROVIDER
         value: gce
@@ -2380,13 +2380,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-weave-containerd-v1.22.11
+  name: pull-kubeone-e2e-openstack-default-weave-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultWeaveContainerdV1_22_11
+      - TestOpenstackDefaultWeaveContainerdV1_22_12
       env:
       - name: PROVIDER
         value: openstack
@@ -2402,13 +2402,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-weave-containerd-v1.22.11
+  name: pull-kubeone-e2e-vsphere-default-weave-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultWeaveContainerdV1_22_11
+      - TestVsphereDefaultWeaveContainerdV1_22_12
       env:
       - name: PROVIDER
         value: vsphere
@@ -2424,13 +2424,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-weave-containerd-v1.22.11
+  name: pull-kubeone-e2e-vsphere-flatcar-weave-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarWeaveContainerdV1_22_11
+      - TestVsphereFlatcarWeaveContainerdV1_22_12
       env:
       - name: PROVIDER
         value: vsphere
@@ -2446,13 +2446,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-weave-docker-v1.22.11
+  name: pull-kubeone-e2e-aws-amzn-weave-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsAmznWeaveDockerV1_22_11
+      - TestAwsAmznWeaveDockerV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -2468,13 +2468,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-weave-docker-v1.22.11
+  name: pull-kubeone-e2e-aws-centos-weave-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsCentosWeaveDockerV1_22_11
+      - TestAwsCentosWeaveDockerV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -2490,13 +2490,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-weave-docker-v1.22.11
+  name: pull-kubeone-e2e-aws-defaults-weave-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsWeaveDockerV1_22_11
+      - TestAwsDefaultsWeaveDockerV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -2512,13 +2512,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-weave-docker-v1.22.11
+  name: pull-kubeone-e2e-aws-flatcar-weave-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarWeaveDockerV1_22_11
+      - TestAwsFlatcarWeaveDockerV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -2534,13 +2534,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-weave-docker-v1.22.11
+  name: pull-kubeone-e2e-aws-rhel-weave-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRhelWeaveDockerV1_22_11
+      - TestAwsRhelWeaveDockerV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -2556,13 +2556,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-weave-docker-v1.22.11
+  name: pull-kubeone-e2e-aws-rockylinux-weave-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRockylinuxWeaveDockerV1_22_11
+      - TestAwsRockylinuxWeaveDockerV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -2578,13 +2578,13 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-weave-docker-v1.22.11
+  name: pull-kubeone-e2e-azure-default-weave-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultWeaveDockerV1_22_11
+      - TestAzureDefaultWeaveDockerV1_22_12
       env:
       - name: PROVIDER
         value: azure
@@ -2602,13 +2602,13 @@ presubmits:
   labels:
     preset-gce: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-gce-default-weave-docker-v1.22.11
+  name: pull-kubeone-e2e-gce-default-weave-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestGceDefaultWeaveDockerV1_22_11
+      - TestGceDefaultWeaveDockerV1_22_12
       env:
       - name: PROVIDER
         value: gce
@@ -2624,13 +2624,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-weave-docker-v1.22.11
+  name: pull-kubeone-e2e-openstack-default-weave-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultWeaveDockerV1_22_11
+      - TestOpenstackDefaultWeaveDockerV1_22_12
       env:
       - name: PROVIDER
         value: openstack
@@ -2646,13 +2646,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-weave-docker-v1.22.11
+  name: pull-kubeone-e2e-vsphere-default-weave-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultWeaveDockerV1_22_11
+      - TestVsphereDefaultWeaveDockerV1_22_12
       env:
       - name: PROVIDER
         value: vsphere
@@ -2668,13 +2668,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-weave-docker-v1.22.11
+  name: pull-kubeone-e2e-vsphere-flatcar-weave-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarWeaveDockerV1_22_11
+      - TestVsphereFlatcarWeaveDockerV1_22_12
       env:
       - name: PROVIDER
         value: vsphere
@@ -2690,13 +2690,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-cilium-containerd-v1.22.11
+  name: pull-kubeone-e2e-aws-amzn-cilium-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsAmznCiliumContainerdV1_22_11
+      - TestAwsAmznCiliumContainerdV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -2712,13 +2712,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-cilium-containerd-v1.22.11
+  name: pull-kubeone-e2e-aws-centos-cilium-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsCentosCiliumContainerdV1_22_11
+      - TestAwsCentosCiliumContainerdV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -2734,13 +2734,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-cilium-containerd-v1.22.11
+  name: pull-kubeone-e2e-aws-defaults-cilium-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsCiliumContainerdV1_22_11
+      - TestAwsDefaultsCiliumContainerdV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -2756,13 +2756,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-cilium-containerd-v1.22.11
+  name: pull-kubeone-e2e-aws-flatcar-cilium-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarCiliumContainerdV1_22_11
+      - TestAwsFlatcarCiliumContainerdV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -2778,13 +2778,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-cilium-containerd-v1.22.11
+  name: pull-kubeone-e2e-aws-rhel-cilium-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRhelCiliumContainerdV1_22_11
+      - TestAwsRhelCiliumContainerdV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -2800,13 +2800,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-cilium-containerd-v1.22.11
+  name: pull-kubeone-e2e-aws-rockylinux-cilium-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRockylinuxCiliumContainerdV1_22_11
+      - TestAwsRockylinuxCiliumContainerdV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -2822,13 +2822,13 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-cilium-containerd-v1.22.11
+  name: pull-kubeone-e2e-azure-default-cilium-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultCiliumContainerdV1_22_11
+      - TestAzureDefaultCiliumContainerdV1_22_12
       env:
       - name: PROVIDER
         value: azure
@@ -2846,13 +2846,13 @@ presubmits:
   labels:
     preset-gce: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-gce-default-cilium-containerd-v1.22.11
+  name: pull-kubeone-e2e-gce-default-cilium-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestGceDefaultCiliumContainerdV1_22_11
+      - TestGceDefaultCiliumContainerdV1_22_12
       env:
       - name: PROVIDER
         value: gce
@@ -2868,13 +2868,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-cilium-containerd-v1.22.11
+  name: pull-kubeone-e2e-openstack-default-cilium-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultCiliumContainerdV1_22_11
+      - TestOpenstackDefaultCiliumContainerdV1_22_12
       env:
       - name: PROVIDER
         value: openstack
@@ -2890,13 +2890,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-cilium-containerd-v1.22.11
+  name: pull-kubeone-e2e-vsphere-default-cilium-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultCiliumContainerdV1_22_11
+      - TestVsphereDefaultCiliumContainerdV1_22_12
       env:
       - name: PROVIDER
         value: vsphere
@@ -2912,13 +2912,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-cilium-containerd-v1.22.11
+  name: pull-kubeone-e2e-vsphere-flatcar-cilium-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarCiliumContainerdV1_22_11
+      - TestVsphereFlatcarCiliumContainerdV1_22_12
       env:
       - name: PROVIDER
         value: vsphere
@@ -2934,13 +2934,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-cilium-docker-v1.22.11
+  name: pull-kubeone-e2e-aws-amzn-cilium-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsAmznCiliumDockerV1_22_11
+      - TestAwsAmznCiliumDockerV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -2956,13 +2956,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-cilium-docker-v1.22.11
+  name: pull-kubeone-e2e-aws-centos-cilium-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsCentosCiliumDockerV1_22_11
+      - TestAwsCentosCiliumDockerV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -2978,13 +2978,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-cilium-docker-v1.22.11
+  name: pull-kubeone-e2e-aws-defaults-cilium-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsCiliumDockerV1_22_11
+      - TestAwsDefaultsCiliumDockerV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -3000,13 +3000,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-cilium-docker-v1.22.11
+  name: pull-kubeone-e2e-aws-flatcar-cilium-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarCiliumDockerV1_22_11
+      - TestAwsFlatcarCiliumDockerV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -3022,13 +3022,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-cilium-docker-v1.22.11
+  name: pull-kubeone-e2e-aws-rhel-cilium-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRhelCiliumDockerV1_22_11
+      - TestAwsRhelCiliumDockerV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -3044,13 +3044,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-cilium-docker-v1.22.11
+  name: pull-kubeone-e2e-aws-rockylinux-cilium-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRockylinuxCiliumDockerV1_22_11
+      - TestAwsRockylinuxCiliumDockerV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -3066,13 +3066,13 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-cilium-docker-v1.22.11
+  name: pull-kubeone-e2e-azure-default-cilium-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultCiliumDockerV1_22_11
+      - TestAzureDefaultCiliumDockerV1_22_12
       env:
       - name: PROVIDER
         value: azure
@@ -3090,13 +3090,13 @@ presubmits:
   labels:
     preset-gce: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-gce-default-cilium-docker-v1.22.11
+  name: pull-kubeone-e2e-gce-default-cilium-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestGceDefaultCiliumDockerV1_22_11
+      - TestGceDefaultCiliumDockerV1_22_12
       env:
       - name: PROVIDER
         value: gce
@@ -3112,13 +3112,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-cilium-docker-v1.22.11
+  name: pull-kubeone-e2e-openstack-default-cilium-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultCiliumDockerV1_22_11
+      - TestOpenstackDefaultCiliumDockerV1_22_12
       env:
       - name: PROVIDER
         value: openstack
@@ -3134,13 +3134,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-cilium-docker-v1.22.11
+  name: pull-kubeone-e2e-vsphere-default-cilium-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultCiliumDockerV1_22_11
+      - TestVsphereDefaultCiliumDockerV1_22_12
       env:
       - name: PROVIDER
         value: vsphere
@@ -3156,13 +3156,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-cilium-docker-v1.22.11
+  name: pull-kubeone-e2e-vsphere-flatcar-cilium-docker-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarCiliumDockerV1_22_11
+      - TestVsphereFlatcarCiliumDockerV1_22_12
       env:
       - name: PROVIDER
         value: vsphere
@@ -3178,13 +3178,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-long-timeout-default-conformance-containerd-v1.22.11
+  name: pull-kubeone-e2e-aws-long-timeout-default-conformance-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsLongTimeoutDefaultConformanceContainerdV1_22_11
+      - TestAwsLongTimeoutDefaultConformanceContainerdV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -3202,13 +3202,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-long-timeout-default-conformance-containerd-v1.23.8
+  name: pull-kubeone-e2e-aws-long-timeout-default-conformance-containerd-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsLongTimeoutDefaultConformanceContainerdV1_23_8
+      - TestAwsLongTimeoutDefaultConformanceContainerdV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -3226,13 +3226,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-long-timeout-default-conformance-containerd-v1.24.2
+  name: pull-kubeone-e2e-aws-long-timeout-default-conformance-containerd-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsLongTimeoutDefaultConformanceContainerdV1_24_2
+      - TestAwsLongTimeoutDefaultConformanceContainerdV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -3250,13 +3250,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-long-timeout-default-conformance-containerd-external-v1.22.11
+  name: pull-kubeone-e2e-aws-long-timeout-default-conformance-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_22_11
+      - TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -3274,13 +3274,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-long-timeout-default-conformance-containerd-external-v1.23.8
+  name: pull-kubeone-e2e-aws-long-timeout-default-conformance-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_23_8
+      - TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -3298,13 +3298,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-long-timeout-default-conformance-containerd-external-v1.24.2
+  name: pull-kubeone-e2e-aws-long-timeout-default-conformance-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_24_2
+      - TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -3322,13 +3322,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-kube-proxy-ipvs-v1.22.11
+  name: pull-kubeone-e2e-aws-defaults-kube-proxy-ipvs-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsKubeProxyIpvsV1_22_11
+      - TestAwsDefaultsKubeProxyIpvsV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -3344,13 +3344,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-kube-proxy-ipvs-v1.23.8
+  name: pull-kubeone-e2e-aws-defaults-kube-proxy-ipvs-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsKubeProxyIpvsV1_23_8
+      - TestAwsDefaultsKubeProxyIpvsV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -3366,13 +3366,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-legacy-machine-controller-userdata-v1.22.11
+  name: pull-kubeone-e2e-aws-defaults-legacy-machine-controller-userdata-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsLegacyMachineControllerUserdataV1_22_11
+      - TestAwsDefaultsLegacyMachineControllerUserdataV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -3388,13 +3388,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-legacy-machine-controller-userdata-v1.23.8
+  name: pull-kubeone-e2e-aws-defaults-legacy-machine-controller-userdata-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsLegacyMachineControllerUserdataV1_23_8
+      - TestAwsDefaultsLegacyMachineControllerUserdataV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -3410,13 +3410,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-legacy-machine-controller-userdata-v1.24.2
+  name: pull-kubeone-e2e-aws-defaults-legacy-machine-controller-userdata-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsLegacyMachineControllerUserdataV1_24_2
+      - TestAwsDefaultsLegacyMachineControllerUserdataV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -3432,13 +3432,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-kube-proxy-ipvs-v1.24.2
+  name: pull-kubeone-e2e-aws-defaults-kube-proxy-ipvs-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsKubeProxyIpvsV1_24_2
+      - TestAwsDefaultsKubeProxyIpvsV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -3454,13 +3454,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-csi-ccm-migration-v1.22.11
+  name: pull-kubeone-e2e-aws-defaults-csi-ccm-migration-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsCsiCcmMigrationV1_22_11
+      - TestAwsDefaultsCsiCcmMigrationV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -3476,13 +3476,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-csi-ccm-migration-v1.22.11
+  name: pull-kubeone-e2e-openstack-default-csi-ccm-migration-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultCsiCcmMigrationV1_22_11
+      - TestOpenstackDefaultCsiCcmMigrationV1_22_12
       env:
       - name: PROVIDER
         value: openstack
@@ -3498,13 +3498,13 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-csi-ccm-migration-v1.22.11
+  name: pull-kubeone-e2e-azure-default-csi-ccm-migration-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultCsiCcmMigrationV1_22_11
+      - TestAzureDefaultCsiCcmMigrationV1_22_12
       env:
       - name: PROVIDER
         value: azure
@@ -3522,13 +3522,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-csi-ccm-migration-v1.22.11
+  name: pull-kubeone-e2e-vsphere-default-csi-ccm-migration-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultCsiCcmMigrationV1_22_11
+      - TestVsphereDefaultCsiCcmMigrationV1_22_12
       env:
       - name: PROVIDER
         value: vsphere
@@ -3544,13 +3544,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-csi-ccm-migration-v1.22.11
+  name: pull-kubeone-e2e-vsphere-flatcar-csi-ccm-migration-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarCsiCcmMigrationV1_22_11
+      - TestVsphereFlatcarCsiCcmMigrationV1_22_12
       env:
       - name: PROVIDER
         value: vsphere
@@ -3566,13 +3566,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-csi-ccm-migration-v1.23.8
+  name: pull-kubeone-e2e-aws-defaults-csi-ccm-migration-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsCsiCcmMigrationV1_23_8
+      - TestAwsDefaultsCsiCcmMigrationV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -3588,13 +3588,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-csi-ccm-migration-v1.23.8
+  name: pull-kubeone-e2e-openstack-default-csi-ccm-migration-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultCsiCcmMigrationV1_23_8
+      - TestOpenstackDefaultCsiCcmMigrationV1_23_9
       env:
       - name: PROVIDER
         value: openstack
@@ -3610,13 +3610,13 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-csi-ccm-migration-v1.23.8
+  name: pull-kubeone-e2e-azure-default-csi-ccm-migration-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultCsiCcmMigrationV1_23_8
+      - TestAzureDefaultCsiCcmMigrationV1_23_9
       env:
       - name: PROVIDER
         value: azure
@@ -3634,13 +3634,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-csi-ccm-migration-v1.23.8
+  name: pull-kubeone-e2e-vsphere-default-csi-ccm-migration-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultCsiCcmMigrationV1_23_8
+      - TestVsphereDefaultCsiCcmMigrationV1_23_9
       env:
       - name: PROVIDER
         value: vsphere
@@ -3656,13 +3656,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-csi-ccm-migration-v1.23.8
+  name: pull-kubeone-e2e-vsphere-flatcar-csi-ccm-migration-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarCsiCcmMigrationV1_23_8
+      - TestVsphereFlatcarCsiCcmMigrationV1_23_9
       env:
       - name: PROVIDER
         value: vsphere
@@ -3678,13 +3678,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-csi-ccm-migration-v1.24.2
+  name: pull-kubeone-e2e-aws-defaults-csi-ccm-migration-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsCsiCcmMigrationV1_24_2
+      - TestAwsDefaultsCsiCcmMigrationV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -3700,13 +3700,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-csi-ccm-migration-v1.24.2
+  name: pull-kubeone-e2e-openstack-default-csi-ccm-migration-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultCsiCcmMigrationV1_24_2
+      - TestOpenstackDefaultCsiCcmMigrationV1_24_3
       env:
       - name: PROVIDER
         value: openstack
@@ -3722,13 +3722,13 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-csi-ccm-migration-v1.24.2
+  name: pull-kubeone-e2e-azure-default-csi-ccm-migration-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultCsiCcmMigrationV1_24_2
+      - TestAzureDefaultCsiCcmMigrationV1_24_3
       env:
       - name: PROVIDER
         value: azure
@@ -3746,13 +3746,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-csi-ccm-migration-v1.24.2
+  name: pull-kubeone-e2e-vsphere-default-csi-ccm-migration-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultCsiCcmMigrationV1_24_2
+      - TestVsphereDefaultCsiCcmMigrationV1_24_3
       env:
       - name: PROVIDER
         value: vsphere
@@ -3768,13 +3768,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-csi-ccm-migration-v1.24.2
+  name: pull-kubeone-e2e-vsphere-flatcar-csi-ccm-migration-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarCsiCcmMigrationV1_24_2
+      - TestVsphereFlatcarCsiCcmMigrationV1_24_3
       env:
       - name: PROVIDER
         value: vsphere
@@ -3790,13 +3790,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-install-containerd-external-v1.22.11
+  name: pull-kubeone-e2e-aws-amzn-install-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsAmznInstallContainerdExternalV1_22_11
+      - TestAwsAmznInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -3812,13 +3812,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-install-containerd-external-v1.22.11
+  name: pull-kubeone-e2e-aws-centos-install-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsCentosInstallContainerdExternalV1_22_11
+      - TestAwsCentosInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -3834,13 +3834,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-install-containerd-external-v1.22.11
+  name: pull-kubeone-e2e-aws-defaults-install-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsInstallContainerdExternalV1_22_11
+      - TestAwsDefaultsInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -3856,13 +3856,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-install-containerd-external-v1.22.11
+  name: pull-kubeone-e2e-aws-flatcar-install-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarInstallContainerdExternalV1_22_11
+      - TestAwsFlatcarInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -3878,13 +3878,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-install-containerd-external-v1.22.11
+  name: pull-kubeone-e2e-aws-rhel-install-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRhelInstallContainerdExternalV1_22_11
+      - TestAwsRhelInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -3900,13 +3900,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-install-containerd-external-v1.22.11
+  name: pull-kubeone-e2e-aws-rockylinux-install-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRockylinuxInstallContainerdExternalV1_22_11
+      - TestAwsRockylinuxInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -3922,301 +3922,13 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-install-containerd-external-v1.22.11
+  name: pull-kubeone-e2e-azure-default-install-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultInstallContainerdExternalV1_22_11
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-digitalocean: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-default-install-containerd-external-v1.22.11
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestDigitaloceanDefaultInstallContainerdExternalV1_22_11
-      env:
-      - name: PROVIDER
-        value: digitalocean
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-equinix-metal: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-default-install-containerd-external-v1.22.11
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestEquinixmetalDefaultInstallContainerdExternalV1_22_11
-      env:
-      - name: PROVIDER
-        value: equinixmetal
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-default-install-containerd-external-v1.22.11
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestHetznerDefaultInstallContainerdExternalV1_22_11
-      env:
-      - name: PROVIDER
-        value: hetzner
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-install-containerd-external-v1.22.11
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultInstallContainerdExternalV1_22_11
-      env:
-      - name: PROVIDER
-        value: openstack
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-install-containerd-external-v1.22.11
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultInstallContainerdExternalV1_22_11
-      env:
-      - name: PROVIDER
-        value: vsphere
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-install-containerd-external-v1.22.11
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarInstallContainerdExternalV1_22_11
-      env:
-      - name: PROVIDER
-        value: vsphere
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-install-containerd-external-v1.23.8
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsAmznInstallContainerdExternalV1_23_8
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-install-containerd-external-v1.23.8
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsCentosInstallContainerdExternalV1_23_8
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-install-containerd-external-v1.23.8
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsInstallContainerdExternalV1_23_8
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-install-containerd-external-v1.23.8
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarInstallContainerdExternalV1_23_8
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-install-containerd-external-v1.23.8
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsRhelInstallContainerdExternalV1_23_8
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-install-containerd-external-v1.23.8
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAwsRockylinuxInstallContainerdExternalV1_23_8
-      env:
-      - name: PROVIDER
-        value: aws
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-install-containerd-external-v1.23.8
-  optional: false
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultInstallContainerdExternalV1_23_8
+      - TestAzureDefaultInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: azure
@@ -4234,13 +3946,13 @@ presubmits:
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-default-install-containerd-external-v1.23.8
+  name: pull-kubeone-e2e-digitalocean-default-install-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestDigitaloceanDefaultInstallContainerdExternalV1_23_8
+      - TestDigitaloceanDefaultInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: digitalocean
@@ -4256,13 +3968,13 @@ presubmits:
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-default-install-containerd-external-v1.23.8
+  name: pull-kubeone-e2e-equinixmetal-default-install-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestEquinixmetalDefaultInstallContainerdExternalV1_23_8
+      - TestEquinixmetalDefaultInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -4278,13 +3990,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-default-install-containerd-external-v1.23.8
+  name: pull-kubeone-e2e-hetzner-default-install-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestHetznerDefaultInstallContainerdExternalV1_23_8
+      - TestHetznerDefaultInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: hetzner
@@ -4300,13 +4012,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-install-containerd-external-v1.23.8
+  name: pull-kubeone-e2e-openstack-default-install-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultInstallContainerdExternalV1_23_8
+      - TestOpenstackDefaultInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: openstack
@@ -4322,13 +4034,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-install-containerd-external-v1.23.8
+  name: pull-kubeone-e2e-vsphere-default-install-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultInstallContainerdExternalV1_23_8
+      - TestVsphereDefaultInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: vsphere
@@ -4344,13 +4056,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-install-containerd-external-v1.23.8
+  name: pull-kubeone-e2e-vsphere-flatcar-install-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarInstallContainerdExternalV1_23_8
+      - TestVsphereFlatcarInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: vsphere
@@ -4366,13 +4078,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-install-containerd-external-v1.24.2
+  name: pull-kubeone-e2e-aws-amzn-install-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsAmznInstallContainerdExternalV1_24_2
+      - TestAwsAmznInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -4388,13 +4100,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-install-containerd-external-v1.24.2
+  name: pull-kubeone-e2e-aws-centos-install-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsCentosInstallContainerdExternalV1_24_2
+      - TestAwsCentosInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -4410,13 +4122,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-install-containerd-external-v1.24.2
+  name: pull-kubeone-e2e-aws-defaults-install-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsInstallContainerdExternalV1_24_2
+      - TestAwsDefaultsInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -4432,13 +4144,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-install-containerd-external-v1.24.2
+  name: pull-kubeone-e2e-aws-flatcar-install-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarInstallContainerdExternalV1_24_2
+      - TestAwsFlatcarInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -4454,13 +4166,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-install-containerd-external-v1.24.2
+  name: pull-kubeone-e2e-aws-rhel-install-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRhelInstallContainerdExternalV1_24_2
+      - TestAwsRhelInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -4476,13 +4188,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-install-containerd-external-v1.24.2
+  name: pull-kubeone-e2e-aws-rockylinux-install-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRockylinuxInstallContainerdExternalV1_24_2
+      - TestAwsRockylinuxInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -4498,13 +4210,13 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-install-containerd-external-v1.24.2
+  name: pull-kubeone-e2e-azure-default-install-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultInstallContainerdExternalV1_24_2
+      - TestAzureDefaultInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: azure
@@ -4522,13 +4234,13 @@ presubmits:
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-default-install-containerd-external-v1.24.2
+  name: pull-kubeone-e2e-digitalocean-default-install-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestDigitaloceanDefaultInstallContainerdExternalV1_24_2
+      - TestDigitaloceanDefaultInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: digitalocean
@@ -4544,13 +4256,13 @@ presubmits:
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-default-install-containerd-external-v1.24.2
+  name: pull-kubeone-e2e-equinixmetal-default-install-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestEquinixmetalDefaultInstallContainerdExternalV1_24_2
+      - TestEquinixmetalDefaultInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -4566,13 +4278,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-default-install-containerd-external-v1.24.2
+  name: pull-kubeone-e2e-hetzner-default-install-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestHetznerDefaultInstallContainerdExternalV1_24_2
+      - TestHetznerDefaultInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: hetzner
@@ -4588,13 +4300,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-install-containerd-external-v1.24.2
+  name: pull-kubeone-e2e-openstack-default-install-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultInstallContainerdExternalV1_24_2
+      - TestOpenstackDefaultInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: openstack
@@ -4610,13 +4322,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-install-containerd-external-v1.24.2
+  name: pull-kubeone-e2e-vsphere-default-install-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultInstallContainerdExternalV1_24_2
+      - TestVsphereDefaultInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: vsphere
@@ -4632,13 +4344,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-install-containerd-external-v1.24.2
+  name: pull-kubeone-e2e-vsphere-flatcar-install-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarInstallContainerdExternalV1_24_2
+      - TestVsphereFlatcarInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: vsphere
@@ -4654,13 +4366,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-install-docker-external-v1.22.11
+  name: pull-kubeone-e2e-aws-amzn-install-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsAmznInstallDockerExternalV1_22_11
+      - TestAwsAmznInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -4676,13 +4388,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-install-docker-external-v1.22.11
+  name: pull-kubeone-e2e-aws-centos-install-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsCentosInstallDockerExternalV1_22_11
+      - TestAwsCentosInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -4698,13 +4410,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-install-docker-external-v1.22.11
+  name: pull-kubeone-e2e-aws-defaults-install-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsInstallDockerExternalV1_22_11
+      - TestAwsDefaultsInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -4720,13 +4432,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-install-docker-external-v1.22.11
+  name: pull-kubeone-e2e-aws-flatcar-install-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarInstallDockerExternalV1_22_11
+      - TestAwsFlatcarInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -4742,13 +4454,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-install-docker-external-v1.22.11
+  name: pull-kubeone-e2e-aws-rhel-install-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRhelInstallDockerExternalV1_22_11
+      - TestAwsRhelInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -4764,13 +4476,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-install-docker-external-v1.22.11
+  name: pull-kubeone-e2e-aws-rockylinux-install-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRockylinuxInstallDockerExternalV1_22_11
+      - TestAwsRockylinuxInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -4786,13 +4498,13 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-install-docker-external-v1.22.11
+  name: pull-kubeone-e2e-azure-default-install-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultInstallDockerExternalV1_22_11
+      - TestAzureDefaultInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: azure
@@ -4810,13 +4522,13 @@ presubmits:
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-default-install-docker-external-v1.22.11
+  name: pull-kubeone-e2e-digitalocean-default-install-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestDigitaloceanDefaultInstallDockerExternalV1_22_11
+      - TestDigitaloceanDefaultInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: digitalocean
@@ -4832,13 +4544,13 @@ presubmits:
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-default-install-docker-external-v1.22.11
+  name: pull-kubeone-e2e-equinixmetal-default-install-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestEquinixmetalDefaultInstallDockerExternalV1_22_11
+      - TestEquinixmetalDefaultInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -4854,13 +4566,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-default-install-docker-external-v1.22.11
+  name: pull-kubeone-e2e-hetzner-default-install-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestHetznerDefaultInstallDockerExternalV1_22_11
+      - TestHetznerDefaultInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: hetzner
@@ -4876,13 +4588,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-install-docker-external-v1.22.11
+  name: pull-kubeone-e2e-openstack-default-install-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultInstallDockerExternalV1_22_11
+      - TestOpenstackDefaultInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: openstack
@@ -4898,13 +4610,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-install-docker-external-v1.22.11
+  name: pull-kubeone-e2e-vsphere-default-install-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultInstallDockerExternalV1_22_11
+      - TestVsphereDefaultInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: vsphere
@@ -4920,13 +4632,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-install-docker-external-v1.22.11
+  name: pull-kubeone-e2e-vsphere-flatcar-install-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarInstallDockerExternalV1_22_11
+      - TestVsphereFlatcarInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: vsphere
@@ -4942,13 +4654,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-upgrade-containerd-external-from-v1.22.11-to-v1.23.8
+  name: pull-kubeone-e2e-aws-amzn-install-docker-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsAmznUpgradeContainerdExternalFromV1_22_11_ToV1_23_8
+      - TestAwsAmznInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -4964,13 +4676,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-upgrade-containerd-external-from-v1.22.11-to-v1.23.8
+  name: pull-kubeone-e2e-aws-centos-install-docker-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsCentosUpgradeContainerdExternalFromV1_22_11_ToV1_23_8
+      - TestAwsCentosInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -4986,13 +4698,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-upgrade-containerd-external-from-v1.22.11-to-v1.23.8
+  name: pull-kubeone-e2e-aws-defaults-install-docker-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsUpgradeContainerdExternalFromV1_22_11_ToV1_23_8
+      - TestAwsDefaultsInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -5008,13 +4720,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-upgrade-containerd-external-from-v1.22.11-to-v1.23.8
+  name: pull-kubeone-e2e-aws-flatcar-install-docker-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarUpgradeContainerdExternalFromV1_22_11_ToV1_23_8
+      - TestAwsFlatcarInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -5030,13 +4742,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-upgrade-containerd-external-from-v1.22.11-to-v1.23.8
+  name: pull-kubeone-e2e-aws-rhel-install-docker-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRhelUpgradeContainerdExternalFromV1_22_11_ToV1_23_8
+      - TestAwsRhelInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -5052,13 +4764,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-upgrade-containerd-external-from-v1.22.11-to-v1.23.8
+  name: pull-kubeone-e2e-aws-rockylinux-install-docker-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRockylinuxUpgradeContainerdExternalFromV1_22_11_ToV1_23_8
+      - TestAwsRockylinuxInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -5074,13 +4786,13 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-upgrade-containerd-external-from-v1.22.11-to-v1.23.8
+  name: pull-kubeone-e2e-azure-default-install-docker-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultUpgradeContainerdExternalFromV1_22_11_ToV1_23_8
+      - TestAzureDefaultInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
         value: azure
@@ -5098,13 +4810,13 @@ presubmits:
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-default-upgrade-containerd-external-from-v1.22.11-to-v1.23.8
+  name: pull-kubeone-e2e-digitalocean-default-install-docker-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestDigitaloceanDefaultUpgradeContainerdExternalFromV1_22_11_ToV1_23_8
+      - TestDigitaloceanDefaultInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
         value: digitalocean
@@ -5120,13 +4832,13 @@ presubmits:
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-default-upgrade-containerd-external-from-v1.22.11-to-v1.23.8
+  name: pull-kubeone-e2e-equinixmetal-default-install-docker-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestEquinixmetalDefaultUpgradeContainerdExternalFromV1_22_11_ToV1_23_8
+      - TestEquinixmetalDefaultInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -5142,13 +4854,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-default-upgrade-containerd-external-from-v1.22.11-to-v1.23.8
+  name: pull-kubeone-e2e-hetzner-default-install-docker-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestHetznerDefaultUpgradeContainerdExternalFromV1_22_11_ToV1_23_8
+      - TestHetznerDefaultInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
         value: hetzner
@@ -5164,13 +4876,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-upgrade-containerd-external-from-v1.22.11-to-v1.23.8
+  name: pull-kubeone-e2e-openstack-default-install-docker-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultUpgradeContainerdExternalFromV1_22_11_ToV1_23_8
+      - TestOpenstackDefaultInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
         value: openstack
@@ -5186,13 +4898,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-upgrade-containerd-external-from-v1.22.11-to-v1.23.8
+  name: pull-kubeone-e2e-vsphere-default-install-docker-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultUpgradeContainerdExternalFromV1_22_11_ToV1_23_8
+      - TestVsphereDefaultInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
         value: vsphere
@@ -5208,13 +4920,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-upgrade-containerd-external-from-v1.22.11-to-v1.23.8
+  name: pull-kubeone-e2e-vsphere-flatcar-install-docker-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarUpgradeContainerdExternalFromV1_22_11_ToV1_23_8
+      - TestVsphereFlatcarInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
         value: vsphere
@@ -5230,13 +4942,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-upgrade-containerd-external-from-v1.23.8-to-v1.24.2
+  name: pull-kubeone-e2e-aws-amzn-upgrade-containerd-external-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsAmznUpgradeContainerdExternalFromV1_23_8_ToV1_24_2
+      - TestAwsAmznUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -5252,13 +4964,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-upgrade-containerd-external-from-v1.23.8-to-v1.24.2
+  name: pull-kubeone-e2e-aws-centos-upgrade-containerd-external-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsCentosUpgradeContainerdExternalFromV1_23_8_ToV1_24_2
+      - TestAwsCentosUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -5274,13 +4986,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-defaults-upgrade-containerd-external-from-v1.23.8-to-v1.24.2
+  name: pull-kubeone-e2e-aws-defaults-upgrade-containerd-external-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultsUpgradeContainerdExternalFromV1_23_8_ToV1_24_2
+      - TestAwsDefaultsUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -5296,13 +5008,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-upgrade-containerd-external-from-v1.23.8-to-v1.24.2
+  name: pull-kubeone-e2e-aws-flatcar-upgrade-containerd-external-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarUpgradeContainerdExternalFromV1_23_8_ToV1_24_2
+      - TestAwsFlatcarUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -5318,13 +5030,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-upgrade-containerd-external-from-v1.23.8-to-v1.24.2
+  name: pull-kubeone-e2e-aws-rhel-upgrade-containerd-external-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRhelUpgradeContainerdExternalFromV1_23_8_ToV1_24_2
+      - TestAwsRhelUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -5340,13 +5052,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-upgrade-containerd-external-from-v1.23.8-to-v1.24.2
+  name: pull-kubeone-e2e-aws-rockylinux-upgrade-containerd-external-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRockylinuxUpgradeContainerdExternalFromV1_23_8_ToV1_24_2
+      - TestAwsRockylinuxUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -5362,13 +5074,13 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-upgrade-containerd-external-from-v1.23.8-to-v1.24.2
+  name: pull-kubeone-e2e-azure-default-upgrade-containerd-external-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultUpgradeContainerdExternalFromV1_23_8_ToV1_24_2
+      - TestAzureDefaultUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: azure
@@ -5386,13 +5098,13 @@ presubmits:
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-default-upgrade-containerd-external-from-v1.23.8-to-v1.24.2
+  name: pull-kubeone-e2e-digitalocean-default-upgrade-containerd-external-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestDigitaloceanDefaultUpgradeContainerdExternalFromV1_23_8_ToV1_24_2
+      - TestDigitaloceanDefaultUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: digitalocean
@@ -5408,13 +5120,13 @@ presubmits:
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-default-upgrade-containerd-external-from-v1.23.8-to-v1.24.2
+  name: pull-kubeone-e2e-equinixmetal-default-upgrade-containerd-external-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestEquinixmetalDefaultUpgradeContainerdExternalFromV1_23_8_ToV1_24_2
+      - TestEquinixmetalDefaultUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -5430,13 +5142,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-default-upgrade-containerd-external-from-v1.23.8-to-v1.24.2
+  name: pull-kubeone-e2e-hetzner-default-upgrade-containerd-external-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestHetznerDefaultUpgradeContainerdExternalFromV1_23_8_ToV1_24_2
+      - TestHetznerDefaultUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: hetzner
@@ -5452,13 +5164,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-upgrade-containerd-external-from-v1.23.8-to-v1.24.2
+  name: pull-kubeone-e2e-openstack-default-upgrade-containerd-external-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultUpgradeContainerdExternalFromV1_23_8_ToV1_24_2
+      - TestOpenstackDefaultUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: openstack
@@ -5474,13 +5186,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-upgrade-containerd-external-from-v1.23.8-to-v1.24.2
+  name: pull-kubeone-e2e-vsphere-default-upgrade-containerd-external-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultUpgradeContainerdExternalFromV1_23_8_ToV1_24_2
+      - TestVsphereDefaultUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: vsphere
@@ -5496,13 +5208,301 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-upgrade-containerd-external-from-v1.23.8-to-v1.24.2
+  name: pull-kubeone-e2e-vsphere-flatcar-upgrade-containerd-external-from-v1.22.12-to-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarUpgradeContainerdExternalFromV1_23_8_ToV1_24_2
+      - TestVsphereFlatcarUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-amzn-upgrade-containerd-external-from-v1.23.9-to-v1.24.3
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAwsAmznUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
+      env:
+      - name: PROVIDER
+        value: aws
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-centos-upgrade-containerd-external-from-v1.23.9-to-v1.24.3
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAwsCentosUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
+      env:
+      - name: PROVIDER
+        value: aws
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-defaults-upgrade-containerd-external-from-v1.23.9-to-v1.24.3
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAwsDefaultsUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
+      env:
+      - name: PROVIDER
+        value: aws
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-flatcar-upgrade-containerd-external-from-v1.23.9-to-v1.24.3
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAwsFlatcarUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
+      env:
+      - name: PROVIDER
+        value: aws
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-rhel-upgrade-containerd-external-from-v1.23.9-to-v1.24.3
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAwsRhelUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
+      env:
+      - name: PROVIDER
+        value: aws
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-rockylinux-upgrade-containerd-external-from-v1.23.9-to-v1.24.3
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAwsRockylinuxUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
+      env:
+      - name: PROVIDER
+        value: aws
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-azure-default-upgrade-containerd-external-from-v1.23.9-to-v1.24.3
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAzureDefaultUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-digitalocean: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-digitalocean-default-upgrade-containerd-external-from-v1.23.9-to-v1.24.3
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestDigitaloceanDefaultUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
+      env:
+      - name: PROVIDER
+        value: digitalocean
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-default-upgrade-containerd-external-from-v1.23.9-to-v1.24.3
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestEquinixmetalDefaultUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-default-upgrade-containerd-external-from-v1.23.9-to-v1.24.3
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestHetznerDefaultUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-default-upgrade-containerd-external-from-v1.23.9-to-v1.24.3
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestOpenstackDefaultUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere-legacy: "true"
+  name: pull-kubeone-e2e-vsphere-default-upgrade-containerd-external-from-v1.23.9-to-v1.24.3
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestVsphereDefaultUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere-legacy: "true"
+  name: pull-kubeone-e2e-vsphere-flatcar-upgrade-containerd-external-from-v1.23.9-to-v1.24.3
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestVsphereFlatcarUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
         value: vsphere
