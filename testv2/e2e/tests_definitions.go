@@ -597,6 +597,10 @@ var (
 			Name:                 "legacy_machine_controller_userdata",
 			ManifestTemplatePath: "testdata/legacy_machine_controller_userdata.yaml",
 		},
+		"legacy_machine_controller_userdata_external": &scenarioInstall{
+			Name:                 "legacy_machine_controller_userdata_external",
+			ManifestTemplatePath: "testdata/legacy_machine_controller_userdata_external.yaml",
+		},
 		"csi_ccm_migration": &scenarioMigrateCSIAndCCM{
 			Name:                    "csi_ccm_migration",
 			OldManifestTemplatePath: "testdata/containerd_simple.yaml",

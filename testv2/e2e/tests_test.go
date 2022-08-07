@@ -26,8 +26,8 @@ func TestAwsCentosInstallContainerdV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsInstallContainerdV1_22_12(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
+func TestAwsDefaultInstallContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12")
@@ -146,8 +146,8 @@ func TestAwsCentosInstallContainerdV1_23_9(t *testing.T) {
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsInstallContainerdV1_23_9(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
+func TestAwsDefaultInstallContainerdV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.23.9")
@@ -266,8 +266,8 @@ func TestAwsCentosInstallContainerdV1_24_3(t *testing.T) {
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsInstallContainerdV1_24_3(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
+func TestAwsDefaultInstallContainerdV1_24_3(t *testing.T) {
+	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.24.3")
@@ -386,8 +386,8 @@ func TestAwsCentosInstallDockerV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsInstallDockerV1_22_12(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
+func TestAwsDefaultInstallDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["install_docker"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12")
@@ -490,6 +490,126 @@ func TestVsphereFlatcarInstallDockerV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestAwsAmznInstallDockerV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAwsCentosInstallDockerV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_centos"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultInstallDockerV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_default"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAwsFlatcarInstallDockerV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAwsRhelInstallDockerV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAwsRockylinuxInstallDockerV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_rockylinux"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureDefaultInstallDockerV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestGceDefaultInstallDockerV1_23_9(t *testing.T) {
+	infra := Infrastructures["gce_default"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackDefaultInstallDockerV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackCentosInstallDockerV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxInstallDockerV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelInstallDockerV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarInstallDockerV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestVsphereDefaultInstallDockerV1_23_9(t *testing.T) {
+	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestVsphereFlatcarInstallDockerV1_23_9(t *testing.T) {
+	infra := Infrastructures["vsphere_flatcar"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
 func TestAwsAmznUpgradeContainerdFromV1_23_9_ToV1_24_3(t *testing.T) {
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["upgrade_containerd"]
@@ -506,8 +626,8 @@ func TestAwsCentosUpgradeContainerdFromV1_23_9_ToV1_24_3(t *testing.T) {
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsUpgradeContainerdFromV1_23_9_ToV1_24_3(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
+func TestAwsDefaultUpgradeContainerdFromV1_23_9_ToV1_24_3(t *testing.T) {
+	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.23.9", "v1.24.3")
@@ -626,8 +746,8 @@ func TestAwsCentosUpgradeContainerdFromV1_22_12_ToV1_23_9(t *testing.T) {
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsUpgradeContainerdFromV1_22_12_ToV1_23_9(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
+func TestAwsDefaultUpgradeContainerdFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12", "v1.23.9")
@@ -746,8 +866,8 @@ func TestAwsCentosUpgradeDockerFromV1_22_12_ToV1_23_9(t *testing.T) {
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsUpgradeDockerFromV1_22_12_ToV1_23_9(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
+func TestAwsDefaultUpgradeDockerFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["upgrade_docker"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12", "v1.23.9")
@@ -866,8 +986,8 @@ func TestAwsCentosCalicoContainerdV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsCalicoContainerdV1_22_12(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
+func TestAwsDefaultCalicoContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["calico_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12")
@@ -986,8 +1106,8 @@ func TestAwsCentosCalicoDockerV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsCalicoDockerV1_22_12(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
+func TestAwsDefaultCalicoDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["calico_docker"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12")
@@ -1106,8 +1226,8 @@ func TestAwsCentosWeaveContainerdV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsWeaveContainerdV1_22_12(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
+func TestAwsDefaultWeaveContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["weave_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12")
@@ -1226,8 +1346,8 @@ func TestAwsCentosWeaveDockerV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsWeaveDockerV1_22_12(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
+func TestAwsDefaultWeaveDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["weave_docker"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12")
@@ -1346,8 +1466,8 @@ func TestAwsCentosCiliumContainerdV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsCiliumContainerdV1_22_12(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
+func TestAwsDefaultCiliumContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["cilium_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12")
@@ -1466,8 +1586,8 @@ func TestAwsCentosCiliumDockerV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsCiliumDockerV1_22_12(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
+func TestAwsDefaultCiliumDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["cilium_docker"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12")
@@ -1618,56 +1738,392 @@ func TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_24_3(t *testing.T)
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsKubeProxyIpvsV1_22_12(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
+func TestAwsDefaultKubeProxyIpvsV1_22_12(t *testing.T) {
+	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["kube_proxy_ipvs"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsKubeProxyIpvsV1_23_9(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
+func TestAwsDefaultKubeProxyIpvsV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["kube_proxy_ipvs"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsLegacyMachineControllerUserdataV1_22_12(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
+func TestAwsAmznLegacyMachineControllerUserdataV1_22_12(t *testing.T) {
+	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["legacy_machine_controller_userdata"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsLegacyMachineControllerUserdataV1_23_9(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
+func TestAwsCentosLegacyMachineControllerUserdataV1_22_12(t *testing.T) {
+	infra := Infrastructures["aws_centos"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultLegacyMachineControllerUserdataV1_22_12(t *testing.T) {
+	infra := Infrastructures["aws_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAwsFlatcarLegacyMachineControllerUserdataV1_22_12(t *testing.T) {
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAwsRhelLegacyMachineControllerUserdataV1_22_12(t *testing.T) {
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAwsRockylinuxLegacyMachineControllerUserdataV1_22_12(t *testing.T) {
+	infra := Infrastructures["aws_rockylinux"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureDefaultLegacyMachineControllerUserdataV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestGceDefaultLegacyMachineControllerUserdataV1_22_12(t *testing.T) {
+	infra := Infrastructures["gce_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackDefaultLegacyMachineControllerUserdataV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackCentosLegacyMachineControllerUserdataV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxLegacyMachineControllerUserdataV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelLegacyMachineControllerUserdataV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarLegacyMachineControllerUserdataV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestVsphereDefaultLegacyMachineControllerUserdataV1_22_12(t *testing.T) {
+	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestVsphereFlatcarLegacyMachineControllerUserdataV1_22_12(t *testing.T) {
+	infra := Infrastructures["vsphere_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAwsAmznLegacyMachineControllerUserdataV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["legacy_machine_controller_userdata"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsLegacyMachineControllerUserdataV1_24_3(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
+func TestAwsCentosLegacyMachineControllerUserdataV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_centos"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultLegacyMachineControllerUserdataV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAwsFlatcarLegacyMachineControllerUserdataV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAwsRhelLegacyMachineControllerUserdataV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAwsRockylinuxLegacyMachineControllerUserdataV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_rockylinux"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureDefaultLegacyMachineControllerUserdataV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestGceDefaultLegacyMachineControllerUserdataV1_23_9(t *testing.T) {
+	infra := Infrastructures["gce_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackDefaultLegacyMachineControllerUserdataV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackCentosLegacyMachineControllerUserdataV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxLegacyMachineControllerUserdataV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelLegacyMachineControllerUserdataV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarLegacyMachineControllerUserdataV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestVsphereDefaultLegacyMachineControllerUserdataV1_23_9(t *testing.T) {
+	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestVsphereFlatcarLegacyMachineControllerUserdataV1_23_9(t *testing.T) {
+	infra := Infrastructures["vsphere_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAwsAmznLegacyMachineControllerUserdataV1_24_3(t *testing.T) {
+	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["legacy_machine_controller_userdata"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsKubeProxyIpvsV1_24_3(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
+func TestAwsCentosLegacyMachineControllerUserdataV1_24_3(t *testing.T) {
+	infra := Infrastructures["aws_centos"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultLegacyMachineControllerUserdataV1_24_3(t *testing.T) {
+	infra := Infrastructures["aws_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAwsFlatcarLegacyMachineControllerUserdataV1_24_3(t *testing.T) {
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAwsRhelLegacyMachineControllerUserdataV1_24_3(t *testing.T) {
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAwsRockylinuxLegacyMachineControllerUserdataV1_24_3(t *testing.T) {
+	infra := Infrastructures["aws_rockylinux"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAzureDefaultLegacyMachineControllerUserdataV1_24_3(t *testing.T) {
+	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestGceDefaultLegacyMachineControllerUserdataV1_24_3(t *testing.T) {
+	infra := Infrastructures["gce_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestOpenstackDefaultLegacyMachineControllerUserdataV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestOpenstackCentosLegacyMachineControllerUserdataV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxLegacyMachineControllerUserdataV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelLegacyMachineControllerUserdataV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarLegacyMachineControllerUserdataV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestVsphereDefaultLegacyMachineControllerUserdataV1_24_3(t *testing.T) {
+	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestVsphereFlatcarLegacyMachineControllerUserdataV1_24_3(t *testing.T) {
+	infra := Infrastructures["vsphere_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_userdata"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultKubeProxyIpvsV1_24_3(t *testing.T) {
+	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["kube_proxy_ipvs"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsCsiCcmMigrationV1_22_12(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
+func TestAwsDefaultCsiCcmMigrationV1_22_12(t *testing.T) {
+	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12")
@@ -1738,8 +2194,8 @@ func TestVsphereFlatcarCsiCcmMigrationV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsCsiCcmMigrationV1_23_9(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
+func TestAwsDefaultCsiCcmMigrationV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.23.9")
@@ -1810,8 +2266,8 @@ func TestVsphereFlatcarCsiCcmMigrationV1_23_9(t *testing.T) {
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsCsiCcmMigrationV1_24_3(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
+func TestAwsDefaultCsiCcmMigrationV1_24_3(t *testing.T) {
+	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.24.3")
@@ -1898,8 +2354,8 @@ func TestAwsCentosInstallContainerdExternalV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsInstallContainerdExternalV1_22_12(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
+func TestAwsDefaultInstallContainerdExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12")
@@ -2090,8 +2546,8 @@ func TestAwsCentosInstallContainerdExternalV1_23_9(t *testing.T) {
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsInstallContainerdExternalV1_23_9(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
+func TestAwsDefaultInstallContainerdExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.23.9")
@@ -2282,8 +2738,8 @@ func TestAwsCentosInstallContainerdExternalV1_24_3(t *testing.T) {
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsInstallContainerdExternalV1_24_3(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
+func TestAwsDefaultInstallContainerdExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.24.3")
@@ -2474,8 +2930,8 @@ func TestAwsCentosInstallDockerExternalV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsInstallDockerExternalV1_22_12(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
+func TestAwsDefaultInstallDockerExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["install_docker_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12")
@@ -2650,6 +3106,198 @@ func TestVsphereFlatcarInstallDockerExternalV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestAwsAmznInstallDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAwsCentosInstallDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_centos"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultInstallDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_default"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAwsFlatcarInstallDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAwsRhelInstallDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAwsRockylinuxInstallDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_rockylinux"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureDefaultInstallDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestDigitaloceanDefaultInstallDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["digitalocean_default"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestDigitaloceanCentosInstallDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["digitalocean_centos"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestDigitaloceanRockylinuxInstallDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["digitalocean_rockylinux"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestEquinixmetalDefaultInstallDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["equinixmetal_default"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestEquinixmetalCentosInstallDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["equinixmetal_centos"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestEquinixmetalRockylinuxInstallDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["equinixmetal_rockylinux"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestEquinixmetalFlatcarInstallDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["equinixmetal_flatcar"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestHetznerDefaultInstallDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["hetzner_default"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestHetznerCentosInstallDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["hetzner_centos"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestHetznerRockylinuxInstallDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["hetzner_rockylinux"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackDefaultInstallDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackCentosInstallDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxInstallDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelInstallDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarInstallDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestVsphereDefaultInstallDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestVsphereFlatcarInstallDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["vsphere_flatcar"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
 func TestAwsAmznUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["upgrade_containerd_external"]
@@ -2666,8 +3314,8 @@ func TestAwsCentosUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) 
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
+func TestAwsDefaultUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12", "v1.23.9")
@@ -2858,8 +3506,8 @@ func TestAwsCentosUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T) {
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
+func TestAwsDefaultUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T) {
+	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.23.9", "v1.24.3")
@@ -3050,8 +3698,8 @@ func TestAwsCentosUpgradeDockerExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
 	scenario.Run(t)
 }
 
-func TestAwsDefaultsUpgradeDockerExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
-	infra := Infrastructures["aws_defaults"]
+func TestAwsDefaultUpgradeDockerExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["upgrade_docker_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12", "v1.23.9")
@@ -3223,5 +3871,581 @@ func TestVsphereFlatcarUpgradeDockerExternalFromV1_22_12_ToV1_23_9(t *testing.T)
 	scenario := Scenarios["upgrade_docker_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAwsAmznLegacyMachineControllerUserdataExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAwsCentosLegacyMachineControllerUserdataExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["aws_centos"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultLegacyMachineControllerUserdataExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["aws_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAwsFlatcarLegacyMachineControllerUserdataExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAwsRhelLegacyMachineControllerUserdataExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAwsRockylinuxLegacyMachineControllerUserdataExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["aws_rockylinux"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureDefaultLegacyMachineControllerUserdataExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestDigitaloceanDefaultLegacyMachineControllerUserdataExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["digitalocean_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestDigitaloceanCentosLegacyMachineControllerUserdataExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["digitalocean_centos"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestDigitaloceanRockylinuxLegacyMachineControllerUserdataExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["digitalocean_rockylinux"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestEquinixmetalDefaultLegacyMachineControllerUserdataExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["equinixmetal_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestEquinixmetalCentosLegacyMachineControllerUserdataExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["equinixmetal_centos"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestEquinixmetalRockylinuxLegacyMachineControllerUserdataExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["equinixmetal_rockylinux"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestEquinixmetalFlatcarLegacyMachineControllerUserdataExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["equinixmetal_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestHetznerDefaultLegacyMachineControllerUserdataExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["hetzner_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestHetznerCentosLegacyMachineControllerUserdataExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["hetzner_centos"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestHetznerRockylinuxLegacyMachineControllerUserdataExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["hetzner_rockylinux"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackDefaultLegacyMachineControllerUserdataExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackCentosLegacyMachineControllerUserdataExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxLegacyMachineControllerUserdataExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelLegacyMachineControllerUserdataExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarLegacyMachineControllerUserdataExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestVsphereDefaultLegacyMachineControllerUserdataExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestVsphereFlatcarLegacyMachineControllerUserdataExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["vsphere_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAwsAmznLegacyMachineControllerUserdataExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAwsCentosLegacyMachineControllerUserdataExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_centos"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultLegacyMachineControllerUserdataExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAwsFlatcarLegacyMachineControllerUserdataExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAwsRhelLegacyMachineControllerUserdataExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAwsRockylinuxLegacyMachineControllerUserdataExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_rockylinux"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureDefaultLegacyMachineControllerUserdataExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestDigitaloceanDefaultLegacyMachineControllerUserdataExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["digitalocean_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestDigitaloceanCentosLegacyMachineControllerUserdataExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["digitalocean_centos"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestDigitaloceanRockylinuxLegacyMachineControllerUserdataExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["digitalocean_rockylinux"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestEquinixmetalDefaultLegacyMachineControllerUserdataExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["equinixmetal_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestEquinixmetalCentosLegacyMachineControllerUserdataExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["equinixmetal_centos"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestEquinixmetalRockylinuxLegacyMachineControllerUserdataExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["equinixmetal_rockylinux"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestEquinixmetalFlatcarLegacyMachineControllerUserdataExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["equinixmetal_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestHetznerDefaultLegacyMachineControllerUserdataExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["hetzner_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestHetznerCentosLegacyMachineControllerUserdataExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["hetzner_centos"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestHetznerRockylinuxLegacyMachineControllerUserdataExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["hetzner_rockylinux"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackDefaultLegacyMachineControllerUserdataExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackCentosLegacyMachineControllerUserdataExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxLegacyMachineControllerUserdataExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelLegacyMachineControllerUserdataExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarLegacyMachineControllerUserdataExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestVsphereDefaultLegacyMachineControllerUserdataExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestVsphereFlatcarLegacyMachineControllerUserdataExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["vsphere_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAwsAmznLegacyMachineControllerUserdataExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAwsCentosLegacyMachineControllerUserdataExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["aws_centos"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAwsDefaultLegacyMachineControllerUserdataExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["aws_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAwsFlatcarLegacyMachineControllerUserdataExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAwsRhelLegacyMachineControllerUserdataExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAwsRockylinuxLegacyMachineControllerUserdataExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["aws_rockylinux"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAzureDefaultLegacyMachineControllerUserdataExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestDigitaloceanDefaultLegacyMachineControllerUserdataExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["digitalocean_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestDigitaloceanCentosLegacyMachineControllerUserdataExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["digitalocean_centos"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestDigitaloceanRockylinuxLegacyMachineControllerUserdataExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["digitalocean_rockylinux"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestEquinixmetalDefaultLegacyMachineControllerUserdataExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["equinixmetal_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestEquinixmetalCentosLegacyMachineControllerUserdataExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["equinixmetal_centos"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestEquinixmetalRockylinuxLegacyMachineControllerUserdataExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["equinixmetal_rockylinux"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestEquinixmetalFlatcarLegacyMachineControllerUserdataExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["equinixmetal_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestHetznerDefaultLegacyMachineControllerUserdataExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["hetzner_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestHetznerCentosLegacyMachineControllerUserdataExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["hetzner_centos"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestHetznerRockylinuxLegacyMachineControllerUserdataExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["hetzner_rockylinux"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestOpenstackDefaultLegacyMachineControllerUserdataExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestOpenstackCentosLegacyMachineControllerUserdataExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxLegacyMachineControllerUserdataExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelLegacyMachineControllerUserdataExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarLegacyMachineControllerUserdataExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestVsphereDefaultLegacyMachineControllerUserdataExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestVsphereFlatcarLegacyMachineControllerUserdataExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["vsphere_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_userdata_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
