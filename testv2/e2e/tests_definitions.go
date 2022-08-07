@@ -26,8 +26,8 @@ import (
 
 var (
 	Infrastructures = map[string]Infra{
-		"aws_defaults": {
-			name: "aws_defaults",
+		"aws_default": {
+			name: "aws_default",
 			labels: map[string]string{
 				"preset-goproxy": "true",
 				"preset-aws":     "true",

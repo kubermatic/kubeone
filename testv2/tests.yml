@@ -3,7 +3,7 @@
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
-    - name: aws_defaults
+    - name: aws_default
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
@@ -22,7 +22,7 @@
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
-    - name: aws_defaults
+    - name: aws_default
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
@@ -41,7 +41,7 @@
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
-    - name: aws_defaults
+    - name: aws_default
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
@@ -60,7 +60,7 @@
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
-    - name: aws_defaults
+    - name: aws_default
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
@@ -80,7 +80,7 @@
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
-    - name: aws_defaults
+    - name: aws_default
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
@@ -100,7 +100,7 @@
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
-    - name: aws_defaults
+    - name: aws_default
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
@@ -120,7 +120,7 @@
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
-    - name: aws_defaults
+    - name: aws_default
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
@@ -139,7 +139,7 @@
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
-    - name: aws_defaults
+    - name: aws_default
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
@@ -158,7 +158,7 @@
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
-    - name: aws_defaults
+    - name: aws_default
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
@@ -177,7 +177,7 @@
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
-    - name: aws_defaults
+    - name: aws_default
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
@@ -196,7 +196,7 @@
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
-    - name: aws_defaults
+    - name: aws_default
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
@@ -215,7 +215,7 @@
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
-    - name: aws_defaults
+    - name: aws_default
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
@@ -234,7 +234,7 @@
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
-    - name: aws_defaults
+    - name: aws_default
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
@@ -281,37 +281,37 @@
 - scenario: kube_proxy_ipvs
   initVersion: v1.22.12
   infrastructures:
-    - name: aws_defaults
+    - name: aws_default
 
 - scenario: kube_proxy_ipvs
   initVersion: v1.23.9
   infrastructures:
-    - name: aws_defaults
+    - name: aws_default
 
 - scenario: legacy_machine_controller_userdata
   initVersion: v1.22.12
   infrastructures:
-    - name: aws_defaults
+    - name: aws_default
 
 - scenario: legacy_machine_controller_userdata
   initVersion: v1.23.9
   infrastructures:
-    - name: aws_defaults
+    - name: aws_default
 
 - scenario: legacy_machine_controller_userdata
   initVersion: v1.24.3
   infrastructures:
-    - name: aws_defaults
+    - name: aws_default
     
 - scenario: kube_proxy_ipvs
   initVersion: v1.24.3
   infrastructures:
-    - name: aws_defaults
+    - name: aws_default
 
 - scenario: csi_ccm_migration
   initVersion: v1.22.12
   infrastructures:
-    - name: aws_defaults  
+    - name: aws_default  
     - name: openstack_default
     - name: openstack_centos
     - name: openstack_rockylinux
@@ -324,7 +324,7 @@
 - scenario: csi_ccm_migration
   initVersion: v1.23.9
   infrastructures:
-    - name: aws_defaults  
+    - name: aws_default  
     - name: openstack_default
     - name: openstack_centos
     - name: openstack_rockylinux
@@ -337,7 +337,7 @@
 - scenario: csi_ccm_migration
   initVersion: v1.24.3
   infrastructures:
-    - name: aws_defaults
+    - name: aws_default
     - name: openstack_default
     - name: openstack_centos
     - name: openstack_rockylinux
@@ -352,7 +352,7 @@
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
-    - name: aws_defaults
+    - name: aws_default
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
@@ -380,7 +380,7 @@
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
-    - name: aws_defaults
+    - name: aws_default
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
@@ -408,7 +408,7 @@
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
-    - name: aws_defaults
+    - name: aws_default
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
@@ -436,7 +436,7 @@
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
-    - name: aws_defaults
+    - name: aws_default
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
@@ -465,7 +465,7 @@
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
-    - name: aws_defaults
+    - name: aws_default
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
@@ -494,7 +494,7 @@
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
-    - name: aws_defaults
+    - name: aws_default
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
@@ -523,7 +523,7 @@
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
-    - name: aws_defaults
+    - name: aws_default
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
