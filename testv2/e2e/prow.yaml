@@ -4842,13 +4842,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-legacy-machine-controller-userdata-v1.22.12
+  name: pull-kubeone-e2e-aws-amzn-legacy-machine-controller-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsAmznLegacyMachineControllerUserdataV1_22_12
+      - TestAwsAmznLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -4864,13 +4864,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-legacy-machine-controller-userdata-v1.22.12
+  name: pull-kubeone-e2e-aws-centos-legacy-machine-controller-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsCentosLegacyMachineControllerUserdataV1_22_12
+      - TestAwsCentosLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -4886,13 +4886,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-default-legacy-machine-controller-userdata-v1.22.12
+  name: pull-kubeone-e2e-aws-default-legacy-machine-controller-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultLegacyMachineControllerUserdataV1_22_12
+      - TestAwsDefaultLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -4908,13 +4908,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-legacy-machine-controller-userdata-v1.22.12
+  name: pull-kubeone-e2e-aws-flatcar-legacy-machine-controller-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarLegacyMachineControllerUserdataV1_22_12
+      - TestAwsFlatcarLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -4930,13 +4930,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-legacy-machine-controller-userdata-v1.22.12
+  name: pull-kubeone-e2e-aws-rhel-legacy-machine-controller-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRhelLegacyMachineControllerUserdataV1_22_12
+      - TestAwsRhelLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -4952,13 +4952,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-legacy-machine-controller-userdata-v1.22.12
+  name: pull-kubeone-e2e-aws-rockylinux-legacy-machine-controller-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRockylinuxLegacyMachineControllerUserdataV1_22_12
+      - TestAwsRockylinuxLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -4974,13 +4974,13 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-legacy-machine-controller-userdata-v1.22.12
+  name: pull-kubeone-e2e-azure-default-legacy-machine-controller-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultLegacyMachineControllerUserdataV1_22_12
+      - TestAzureDefaultLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
         value: azure
@@ -4998,13 +4998,13 @@ presubmits:
   labels:
     preset-gce: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-gce-default-legacy-machine-controller-userdata-v1.22.12
+  name: pull-kubeone-e2e-gce-default-legacy-machine-controller-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestGceDefaultLegacyMachineControllerUserdataV1_22_12
+      - TestGceDefaultLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
         value: gce
@@ -5020,13 +5020,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-legacy-machine-controller-userdata-v1.22.12
+  name: pull-kubeone-e2e-openstack-default-legacy-machine-controller-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultLegacyMachineControllerUserdataV1_22_12
+      - TestOpenstackDefaultLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
         value: openstack
@@ -5042,13 +5042,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-legacy-machine-controller-userdata-v1.22.12
+  name: pull-kubeone-e2e-openstack-centos-legacy-machine-controller-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackCentosLegacyMachineControllerUserdataV1_22_12
+      - TestOpenstackCentosLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
         value: openstack
@@ -5064,13 +5064,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rockylinux-legacy-machine-controller-userdata-v1.22.12
+  name: pull-kubeone-e2e-openstack-rockylinux-legacy-machine-controller-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackRockylinuxLegacyMachineControllerUserdataV1_22_12
+      - TestOpenstackRockylinuxLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
         value: openstack
@@ -5086,13 +5086,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rhel-legacy-machine-controller-userdata-v1.22.12
+  name: pull-kubeone-e2e-openstack-rhel-legacy-machine-controller-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackRhelLegacyMachineControllerUserdataV1_22_12
+      - TestOpenstackRhelLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
         value: openstack
@@ -5108,13 +5108,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-flatcar-legacy-machine-controller-userdata-v1.22.12
+  name: pull-kubeone-e2e-openstack-flatcar-legacy-machine-controller-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackFlatcarLegacyMachineControllerUserdataV1_22_12
+      - TestOpenstackFlatcarLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
         value: openstack
@@ -5130,13 +5130,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-legacy-machine-controller-userdata-v1.22.12
+  name: pull-kubeone-e2e-vsphere-default-legacy-machine-controller-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultLegacyMachineControllerUserdataV1_22_12
+      - TestVsphereDefaultLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
         value: vsphere
@@ -5152,13 +5152,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-legacy-machine-controller-userdata-v1.22.12
+  name: pull-kubeone-e2e-vsphere-flatcar-legacy-machine-controller-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarLegacyMachineControllerUserdataV1_22_12
+      - TestVsphereFlatcarLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
         value: vsphere
@@ -5174,13 +5174,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-legacy-machine-controller-userdata-v1.23.9
+  name: pull-kubeone-e2e-aws-amzn-legacy-machine-controller-containerd-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsAmznLegacyMachineControllerUserdataV1_23_9
+      - TestAwsAmznLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -5196,13 +5196,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-legacy-machine-controller-userdata-v1.23.9
+  name: pull-kubeone-e2e-aws-centos-legacy-machine-controller-containerd-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsCentosLegacyMachineControllerUserdataV1_23_9
+      - TestAwsCentosLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -5218,13 +5218,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-default-legacy-machine-controller-userdata-v1.23.9
+  name: pull-kubeone-e2e-aws-default-legacy-machine-controller-containerd-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultLegacyMachineControllerUserdataV1_23_9
+      - TestAwsDefaultLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -5240,13 +5240,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-legacy-machine-controller-userdata-v1.23.9
+  name: pull-kubeone-e2e-aws-flatcar-legacy-machine-controller-containerd-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarLegacyMachineControllerUserdataV1_23_9
+      - TestAwsFlatcarLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -5262,13 +5262,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-legacy-machine-controller-userdata-v1.23.9
+  name: pull-kubeone-e2e-aws-rhel-legacy-machine-controller-containerd-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRhelLegacyMachineControllerUserdataV1_23_9
+      - TestAwsRhelLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -5284,13 +5284,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-legacy-machine-controller-userdata-v1.23.9
+  name: pull-kubeone-e2e-aws-rockylinux-legacy-machine-controller-containerd-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRockylinuxLegacyMachineControllerUserdataV1_23_9
+      - TestAwsRockylinuxLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -5306,13 +5306,13 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-legacy-machine-controller-userdata-v1.23.9
+  name: pull-kubeone-e2e-azure-default-legacy-machine-controller-containerd-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultLegacyMachineControllerUserdataV1_23_9
+      - TestAzureDefaultLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
         value: azure
@@ -5330,13 +5330,13 @@ presubmits:
   labels:
     preset-gce: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-gce-default-legacy-machine-controller-userdata-v1.23.9
+  name: pull-kubeone-e2e-gce-default-legacy-machine-controller-containerd-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestGceDefaultLegacyMachineControllerUserdataV1_23_9
+      - TestGceDefaultLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
         value: gce
@@ -5352,13 +5352,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-legacy-machine-controller-userdata-v1.23.9
+  name: pull-kubeone-e2e-openstack-default-legacy-machine-controller-containerd-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultLegacyMachineControllerUserdataV1_23_9
+      - TestOpenstackDefaultLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
         value: openstack
@@ -5374,13 +5374,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-legacy-machine-controller-userdata-v1.23.9
+  name: pull-kubeone-e2e-openstack-centos-legacy-machine-controller-containerd-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackCentosLegacyMachineControllerUserdataV1_23_9
+      - TestOpenstackCentosLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
         value: openstack
@@ -5396,13 +5396,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rockylinux-legacy-machine-controller-userdata-v1.23.9
+  name: pull-kubeone-e2e-openstack-rockylinux-legacy-machine-controller-containerd-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackRockylinuxLegacyMachineControllerUserdataV1_23_9
+      - TestOpenstackRockylinuxLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
         value: openstack
@@ -5418,13 +5418,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rhel-legacy-machine-controller-userdata-v1.23.9
+  name: pull-kubeone-e2e-openstack-rhel-legacy-machine-controller-containerd-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackRhelLegacyMachineControllerUserdataV1_23_9
+      - TestOpenstackRhelLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
         value: openstack
@@ -5440,13 +5440,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-flatcar-legacy-machine-controller-userdata-v1.23.9
+  name: pull-kubeone-e2e-openstack-flatcar-legacy-machine-controller-containerd-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackFlatcarLegacyMachineControllerUserdataV1_23_9
+      - TestOpenstackFlatcarLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
         value: openstack
@@ -5462,13 +5462,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-legacy-machine-controller-userdata-v1.23.9
+  name: pull-kubeone-e2e-vsphere-default-legacy-machine-controller-containerd-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultLegacyMachineControllerUserdataV1_23_9
+      - TestVsphereDefaultLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
         value: vsphere
@@ -5484,13 +5484,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-legacy-machine-controller-userdata-v1.23.9
+  name: pull-kubeone-e2e-vsphere-flatcar-legacy-machine-controller-containerd-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarLegacyMachineControllerUserdataV1_23_9
+      - TestVsphereFlatcarLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
         value: vsphere
@@ -5506,13 +5506,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-legacy-machine-controller-userdata-v1.24.3
+  name: pull-kubeone-e2e-aws-amzn-legacy-machine-controller-containerd-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsAmznLegacyMachineControllerUserdataV1_24_3
+      - TestAwsAmznLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -5528,13 +5528,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-legacy-machine-controller-userdata-v1.24.3
+  name: pull-kubeone-e2e-aws-centos-legacy-machine-controller-containerd-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsCentosLegacyMachineControllerUserdataV1_24_3
+      - TestAwsCentosLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -5550,13 +5550,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-default-legacy-machine-controller-userdata-v1.24.3
+  name: pull-kubeone-e2e-aws-default-legacy-machine-controller-containerd-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultLegacyMachineControllerUserdataV1_24_3
+      - TestAwsDefaultLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -5572,13 +5572,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-legacy-machine-controller-userdata-v1.24.3
+  name: pull-kubeone-e2e-aws-flatcar-legacy-machine-controller-containerd-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarLegacyMachineControllerUserdataV1_24_3
+      - TestAwsFlatcarLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -5594,13 +5594,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-legacy-machine-controller-userdata-v1.24.3
+  name: pull-kubeone-e2e-aws-rhel-legacy-machine-controller-containerd-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRhelLegacyMachineControllerUserdataV1_24_3
+      - TestAwsRhelLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -5616,13 +5616,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-legacy-machine-controller-userdata-v1.24.3
+  name: pull-kubeone-e2e-aws-rockylinux-legacy-machine-controller-containerd-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRockylinuxLegacyMachineControllerUserdataV1_24_3
+      - TestAwsRockylinuxLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -5638,13 +5638,13 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-legacy-machine-controller-userdata-v1.24.3
+  name: pull-kubeone-e2e-azure-default-legacy-machine-controller-containerd-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultLegacyMachineControllerUserdataV1_24_3
+      - TestAzureDefaultLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
         value: azure
@@ -5662,13 +5662,13 @@ presubmits:
   labels:
     preset-gce: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-gce-default-legacy-machine-controller-userdata-v1.24.3
+  name: pull-kubeone-e2e-gce-default-legacy-machine-controller-containerd-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestGceDefaultLegacyMachineControllerUserdataV1_24_3
+      - TestGceDefaultLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
         value: gce
@@ -5684,13 +5684,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-legacy-machine-controller-userdata-v1.24.3
+  name: pull-kubeone-e2e-openstack-default-legacy-machine-controller-containerd-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultLegacyMachineControllerUserdataV1_24_3
+      - TestOpenstackDefaultLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
         value: openstack
@@ -5706,13 +5706,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-legacy-machine-controller-userdata-v1.24.3
+  name: pull-kubeone-e2e-openstack-centos-legacy-machine-controller-containerd-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackCentosLegacyMachineControllerUserdataV1_24_3
+      - TestOpenstackCentosLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
         value: openstack
@@ -5728,13 +5728,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rockylinux-legacy-machine-controller-userdata-v1.24.3
+  name: pull-kubeone-e2e-openstack-rockylinux-legacy-machine-controller-containerd-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackRockylinuxLegacyMachineControllerUserdataV1_24_3
+      - TestOpenstackRockylinuxLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
         value: openstack
@@ -5750,13 +5750,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rhel-legacy-machine-controller-userdata-v1.24.3
+  name: pull-kubeone-e2e-openstack-rhel-legacy-machine-controller-containerd-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackRhelLegacyMachineControllerUserdataV1_24_3
+      - TestOpenstackRhelLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
         value: openstack
@@ -5772,13 +5772,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-flatcar-legacy-machine-controller-userdata-v1.24.3
+  name: pull-kubeone-e2e-openstack-flatcar-legacy-machine-controller-containerd-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackFlatcarLegacyMachineControllerUserdataV1_24_3
+      - TestOpenstackFlatcarLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
         value: openstack
@@ -5794,13 +5794,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-legacy-machine-controller-userdata-v1.24.3
+  name: pull-kubeone-e2e-vsphere-default-legacy-machine-controller-containerd-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultLegacyMachineControllerUserdataV1_24_3
+      - TestVsphereDefaultLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
         value: vsphere
@@ -5816,13 +5816,677 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-legacy-machine-controller-userdata-v1.24.3
+  name: pull-kubeone-e2e-vsphere-flatcar-legacy-machine-controller-containerd-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarLegacyMachineControllerUserdataV1_24_3
+      - TestVsphereFlatcarLegacyMachineControllerContainerdV1_24_3
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-amzn-legacy-machine-controller-docker-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAwsAmznLegacyMachineControllerDockerV1_22_12
+      env:
+      - name: PROVIDER
+        value: aws
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-centos-legacy-machine-controller-docker-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAwsCentosLegacyMachineControllerDockerV1_22_12
+      env:
+      - name: PROVIDER
+        value: aws
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-default-legacy-machine-controller-docker-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAwsDefaultLegacyMachineControllerDockerV1_22_12
+      env:
+      - name: PROVIDER
+        value: aws
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-flatcar-legacy-machine-controller-docker-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAwsFlatcarLegacyMachineControllerDockerV1_22_12
+      env:
+      - name: PROVIDER
+        value: aws
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-rhel-legacy-machine-controller-docker-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAwsRhelLegacyMachineControllerDockerV1_22_12
+      env:
+      - name: PROVIDER
+        value: aws
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-rockylinux-legacy-machine-controller-docker-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAwsRockylinuxLegacyMachineControllerDockerV1_22_12
+      env:
+      - name: PROVIDER
+        value: aws
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-azure-default-legacy-machine-controller-docker-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAzureDefaultLegacyMachineControllerDockerV1_22_12
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-legacy-machine-controller-docker-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestGceDefaultLegacyMachineControllerDockerV1_22_12
+      env:
+      - name: PROVIDER
+        value: gce
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-default-legacy-machine-controller-docker-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestOpenstackDefaultLegacyMachineControllerDockerV1_22_12
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-centos-legacy-machine-controller-docker-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestOpenstackCentosLegacyMachineControllerDockerV1_22_12
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-rockylinux-legacy-machine-controller-docker-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestOpenstackRockylinuxLegacyMachineControllerDockerV1_22_12
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-rhel-legacy-machine-controller-docker-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestOpenstackRhelLegacyMachineControllerDockerV1_22_12
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-flatcar-legacy-machine-controller-docker-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestOpenstackFlatcarLegacyMachineControllerDockerV1_22_12
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere-legacy: "true"
+  name: pull-kubeone-e2e-vsphere-default-legacy-machine-controller-docker-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestVsphereDefaultLegacyMachineControllerDockerV1_22_12
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere-legacy: "true"
+  name: pull-kubeone-e2e-vsphere-flatcar-legacy-machine-controller-docker-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestVsphereFlatcarLegacyMachineControllerDockerV1_22_12
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-amzn-legacy-machine-controller-docker-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAwsAmznLegacyMachineControllerDockerV1_23_9
+      env:
+      - name: PROVIDER
+        value: aws
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-centos-legacy-machine-controller-docker-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAwsCentosLegacyMachineControllerDockerV1_23_9
+      env:
+      - name: PROVIDER
+        value: aws
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-default-legacy-machine-controller-docker-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAwsDefaultLegacyMachineControllerDockerV1_23_9
+      env:
+      - name: PROVIDER
+        value: aws
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-flatcar-legacy-machine-controller-docker-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAwsFlatcarLegacyMachineControllerDockerV1_23_9
+      env:
+      - name: PROVIDER
+        value: aws
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-rhel-legacy-machine-controller-docker-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAwsRhelLegacyMachineControllerDockerV1_23_9
+      env:
+      - name: PROVIDER
+        value: aws
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-rockylinux-legacy-machine-controller-docker-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAwsRockylinuxLegacyMachineControllerDockerV1_23_9
+      env:
+      - name: PROVIDER
+        value: aws
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-azure-default-legacy-machine-controller-docker-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAzureDefaultLegacyMachineControllerDockerV1_23_9
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-legacy-machine-controller-docker-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestGceDefaultLegacyMachineControllerDockerV1_23_9
+      env:
+      - name: PROVIDER
+        value: gce
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-default-legacy-machine-controller-docker-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestOpenstackDefaultLegacyMachineControllerDockerV1_23_9
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-centos-legacy-machine-controller-docker-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestOpenstackCentosLegacyMachineControllerDockerV1_23_9
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-rockylinux-legacy-machine-controller-docker-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestOpenstackRockylinuxLegacyMachineControllerDockerV1_23_9
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-rhel-legacy-machine-controller-docker-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestOpenstackRhelLegacyMachineControllerDockerV1_23_9
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-flatcar-legacy-machine-controller-docker-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestOpenstackFlatcarLegacyMachineControllerDockerV1_23_9
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere-legacy: "true"
+  name: pull-kubeone-e2e-vsphere-default-legacy-machine-controller-docker-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestVsphereDefaultLegacyMachineControllerDockerV1_23_9
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere-legacy: "true"
+  name: pull-kubeone-e2e-vsphere-flatcar-legacy-machine-controller-docker-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestVsphereFlatcarLegacyMachineControllerDockerV1_23_9
       env:
       - name: PROVIDER
         value: vsphere
@@ -10700,13 +11364,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-legacy-machine-controller-userdata-external-v1.22.12
+  name: pull-kubeone-e2e-aws-amzn-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsAmznLegacyMachineControllerUserdataExternalV1_22_12
+      - TestAwsAmznLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -10722,13 +11386,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-legacy-machine-controller-userdata-external-v1.22.12
+  name: pull-kubeone-e2e-aws-centos-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsCentosLegacyMachineControllerUserdataExternalV1_22_12
+      - TestAwsCentosLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -10744,13 +11408,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-default-legacy-machine-controller-userdata-external-v1.22.12
+  name: pull-kubeone-e2e-aws-default-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultLegacyMachineControllerUserdataExternalV1_22_12
+      - TestAwsDefaultLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -10766,13 +11430,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-legacy-machine-controller-userdata-external-v1.22.12
+  name: pull-kubeone-e2e-aws-flatcar-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarLegacyMachineControllerUserdataExternalV1_22_12
+      - TestAwsFlatcarLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -10788,13 +11452,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-legacy-machine-controller-userdata-external-v1.22.12
+  name: pull-kubeone-e2e-aws-rhel-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRhelLegacyMachineControllerUserdataExternalV1_22_12
+      - TestAwsRhelLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -10810,13 +11474,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-legacy-machine-controller-userdata-external-v1.22.12
+  name: pull-kubeone-e2e-aws-rockylinux-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRockylinuxLegacyMachineControllerUserdataExternalV1_22_12
+      - TestAwsRockylinuxLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -10832,13 +11496,13 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-legacy-machine-controller-userdata-external-v1.22.12
+  name: pull-kubeone-e2e-azure-default-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultLegacyMachineControllerUserdataExternalV1_22_12
+      - TestAzureDefaultLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: azure
@@ -10856,13 +11520,13 @@ presubmits:
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-default-legacy-machine-controller-userdata-external-v1.22.12
+  name: pull-kubeone-e2e-digitalocean-default-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestDigitaloceanDefaultLegacyMachineControllerUserdataExternalV1_22_12
+      - TestDigitaloceanDefaultLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: digitalocean
@@ -10878,13 +11542,13 @@ presubmits:
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-centos-legacy-machine-controller-userdata-external-v1.22.12
+  name: pull-kubeone-e2e-digitalocean-centos-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestDigitaloceanCentosLegacyMachineControllerUserdataExternalV1_22_12
+      - TestDigitaloceanCentosLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: digitalocean
@@ -10900,13 +11564,13 @@ presubmits:
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-rockylinux-legacy-machine-controller-userdata-external-v1.22.12
+  name: pull-kubeone-e2e-digitalocean-rockylinux-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestDigitaloceanRockylinuxLegacyMachineControllerUserdataExternalV1_22_12
+      - TestDigitaloceanRockylinuxLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: digitalocean
@@ -10922,13 +11586,13 @@ presubmits:
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-default-legacy-machine-controller-userdata-external-v1.22.12
+  name: pull-kubeone-e2e-equinixmetal-default-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestEquinixmetalDefaultLegacyMachineControllerUserdataExternalV1_22_12
+      - TestEquinixmetalDefaultLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -10944,13 +11608,13 @@ presubmits:
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-centos-legacy-machine-controller-userdata-external-v1.22.12
+  name: pull-kubeone-e2e-equinixmetal-centos-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestEquinixmetalCentosLegacyMachineControllerUserdataExternalV1_22_12
+      - TestEquinixmetalCentosLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -10966,13 +11630,13 @@ presubmits:
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-rockylinux-legacy-machine-controller-userdata-external-v1.22.12
+  name: pull-kubeone-e2e-equinixmetal-rockylinux-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestEquinixmetalRockylinuxLegacyMachineControllerUserdataExternalV1_22_12
+      - TestEquinixmetalRockylinuxLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -10988,13 +11652,13 @@ presubmits:
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-flatcar-legacy-machine-controller-userdata-external-v1.22.12
+  name: pull-kubeone-e2e-equinixmetal-flatcar-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestEquinixmetalFlatcarLegacyMachineControllerUserdataExternalV1_22_12
+      - TestEquinixmetalFlatcarLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -11010,13 +11674,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-default-legacy-machine-controller-userdata-external-v1.22.12
+  name: pull-kubeone-e2e-hetzner-default-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestHetznerDefaultLegacyMachineControllerUserdataExternalV1_22_12
+      - TestHetznerDefaultLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: hetzner
@@ -11032,13 +11696,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-centos-legacy-machine-controller-userdata-external-v1.22.12
+  name: pull-kubeone-e2e-hetzner-centos-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestHetznerCentosLegacyMachineControllerUserdataExternalV1_22_12
+      - TestHetznerCentosLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: hetzner
@@ -11054,13 +11718,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-rockylinux-legacy-machine-controller-userdata-external-v1.22.12
+  name: pull-kubeone-e2e-hetzner-rockylinux-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestHetznerRockylinuxLegacyMachineControllerUserdataExternalV1_22_12
+      - TestHetznerRockylinuxLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: hetzner
@@ -11076,13 +11740,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-legacy-machine-controller-userdata-external-v1.22.12
+  name: pull-kubeone-e2e-openstack-default-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultLegacyMachineControllerUserdataExternalV1_22_12
+      - TestOpenstackDefaultLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: openstack
@@ -11098,13 +11762,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-legacy-machine-controller-userdata-external-v1.22.12
+  name: pull-kubeone-e2e-openstack-centos-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackCentosLegacyMachineControllerUserdataExternalV1_22_12
+      - TestOpenstackCentosLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: openstack
@@ -11120,13 +11784,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rockylinux-legacy-machine-controller-userdata-external-v1.22.12
+  name: pull-kubeone-e2e-openstack-rockylinux-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackRockylinuxLegacyMachineControllerUserdataExternalV1_22_12
+      - TestOpenstackRockylinuxLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: openstack
@@ -11142,13 +11806,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rhel-legacy-machine-controller-userdata-external-v1.22.12
+  name: pull-kubeone-e2e-openstack-rhel-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackRhelLegacyMachineControllerUserdataExternalV1_22_12
+      - TestOpenstackRhelLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: openstack
@@ -11164,13 +11828,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-flatcar-legacy-machine-controller-userdata-external-v1.22.12
+  name: pull-kubeone-e2e-openstack-flatcar-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackFlatcarLegacyMachineControllerUserdataExternalV1_22_12
+      - TestOpenstackFlatcarLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: openstack
@@ -11186,13 +11850,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-legacy-machine-controller-userdata-external-v1.22.12
+  name: pull-kubeone-e2e-vsphere-default-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultLegacyMachineControllerUserdataExternalV1_22_12
+      - TestVsphereDefaultLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: vsphere
@@ -11208,13 +11872,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-legacy-machine-controller-userdata-external-v1.22.12
+  name: pull-kubeone-e2e-vsphere-flatcar-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarLegacyMachineControllerUserdataExternalV1_22_12
+      - TestVsphereFlatcarLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: vsphere
@@ -11230,13 +11894,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-legacy-machine-controller-userdata-external-v1.23.9
+  name: pull-kubeone-e2e-aws-amzn-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsAmznLegacyMachineControllerUserdataExternalV1_23_9
+      - TestAwsAmznLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -11252,13 +11916,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-legacy-machine-controller-userdata-external-v1.23.9
+  name: pull-kubeone-e2e-aws-centos-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsCentosLegacyMachineControllerUserdataExternalV1_23_9
+      - TestAwsCentosLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -11274,13 +11938,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-default-legacy-machine-controller-userdata-external-v1.23.9
+  name: pull-kubeone-e2e-aws-default-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultLegacyMachineControllerUserdataExternalV1_23_9
+      - TestAwsDefaultLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -11296,13 +11960,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-legacy-machine-controller-userdata-external-v1.23.9
+  name: pull-kubeone-e2e-aws-flatcar-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarLegacyMachineControllerUserdataExternalV1_23_9
+      - TestAwsFlatcarLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -11318,13 +11982,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-legacy-machine-controller-userdata-external-v1.23.9
+  name: pull-kubeone-e2e-aws-rhel-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRhelLegacyMachineControllerUserdataExternalV1_23_9
+      - TestAwsRhelLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -11340,13 +12004,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-legacy-machine-controller-userdata-external-v1.23.9
+  name: pull-kubeone-e2e-aws-rockylinux-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRockylinuxLegacyMachineControllerUserdataExternalV1_23_9
+      - TestAwsRockylinuxLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: aws
@@ -11362,13 +12026,13 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-legacy-machine-controller-userdata-external-v1.23.9
+  name: pull-kubeone-e2e-azure-default-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultLegacyMachineControllerUserdataExternalV1_23_9
+      - TestAzureDefaultLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: azure
@@ -11386,13 +12050,13 @@ presubmits:
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-default-legacy-machine-controller-userdata-external-v1.23.9
+  name: pull-kubeone-e2e-digitalocean-default-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestDigitaloceanDefaultLegacyMachineControllerUserdataExternalV1_23_9
+      - TestDigitaloceanDefaultLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: digitalocean
@@ -11408,13 +12072,13 @@ presubmits:
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-centos-legacy-machine-controller-userdata-external-v1.23.9
+  name: pull-kubeone-e2e-digitalocean-centos-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestDigitaloceanCentosLegacyMachineControllerUserdataExternalV1_23_9
+      - TestDigitaloceanCentosLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: digitalocean
@@ -11430,13 +12094,13 @@ presubmits:
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-rockylinux-legacy-machine-controller-userdata-external-v1.23.9
+  name: pull-kubeone-e2e-digitalocean-rockylinux-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestDigitaloceanRockylinuxLegacyMachineControllerUserdataExternalV1_23_9
+      - TestDigitaloceanRockylinuxLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: digitalocean
@@ -11452,13 +12116,13 @@ presubmits:
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-default-legacy-machine-controller-userdata-external-v1.23.9
+  name: pull-kubeone-e2e-equinixmetal-default-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestEquinixmetalDefaultLegacyMachineControllerUserdataExternalV1_23_9
+      - TestEquinixmetalDefaultLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -11474,13 +12138,13 @@ presubmits:
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-centos-legacy-machine-controller-userdata-external-v1.23.9
+  name: pull-kubeone-e2e-equinixmetal-centos-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestEquinixmetalCentosLegacyMachineControllerUserdataExternalV1_23_9
+      - TestEquinixmetalCentosLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -11496,13 +12160,13 @@ presubmits:
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-rockylinux-legacy-machine-controller-userdata-external-v1.23.9
+  name: pull-kubeone-e2e-equinixmetal-rockylinux-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestEquinixmetalRockylinuxLegacyMachineControllerUserdataExternalV1_23_9
+      - TestEquinixmetalRockylinuxLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -11518,13 +12182,13 @@ presubmits:
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-flatcar-legacy-machine-controller-userdata-external-v1.23.9
+  name: pull-kubeone-e2e-equinixmetal-flatcar-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestEquinixmetalFlatcarLegacyMachineControllerUserdataExternalV1_23_9
+      - TestEquinixmetalFlatcarLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -11540,13 +12204,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-default-legacy-machine-controller-userdata-external-v1.23.9
+  name: pull-kubeone-e2e-hetzner-default-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestHetznerDefaultLegacyMachineControllerUserdataExternalV1_23_9
+      - TestHetznerDefaultLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: hetzner
@@ -11562,13 +12226,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-centos-legacy-machine-controller-userdata-external-v1.23.9
+  name: pull-kubeone-e2e-hetzner-centos-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestHetznerCentosLegacyMachineControllerUserdataExternalV1_23_9
+      - TestHetznerCentosLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: hetzner
@@ -11584,13 +12248,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-rockylinux-legacy-machine-controller-userdata-external-v1.23.9
+  name: pull-kubeone-e2e-hetzner-rockylinux-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestHetznerRockylinuxLegacyMachineControllerUserdataExternalV1_23_9
+      - TestHetznerRockylinuxLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: hetzner
@@ -11606,13 +12270,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-legacy-machine-controller-userdata-external-v1.23.9
+  name: pull-kubeone-e2e-openstack-default-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultLegacyMachineControllerUserdataExternalV1_23_9
+      - TestOpenstackDefaultLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: openstack
@@ -11628,13 +12292,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-legacy-machine-controller-userdata-external-v1.23.9
+  name: pull-kubeone-e2e-openstack-centos-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackCentosLegacyMachineControllerUserdataExternalV1_23_9
+      - TestOpenstackCentosLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: openstack
@@ -11650,13 +12314,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rockylinux-legacy-machine-controller-userdata-external-v1.23.9
+  name: pull-kubeone-e2e-openstack-rockylinux-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackRockylinuxLegacyMachineControllerUserdataExternalV1_23_9
+      - TestOpenstackRockylinuxLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: openstack
@@ -11672,13 +12336,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rhel-legacy-machine-controller-userdata-external-v1.23.9
+  name: pull-kubeone-e2e-openstack-rhel-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackRhelLegacyMachineControllerUserdataExternalV1_23_9
+      - TestOpenstackRhelLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: openstack
@@ -11694,13 +12358,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-flatcar-legacy-machine-controller-userdata-external-v1.23.9
+  name: pull-kubeone-e2e-openstack-flatcar-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackFlatcarLegacyMachineControllerUserdataExternalV1_23_9
+      - TestOpenstackFlatcarLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: openstack
@@ -11716,13 +12380,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-legacy-machine-controller-userdata-external-v1.23.9
+  name: pull-kubeone-e2e-vsphere-default-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultLegacyMachineControllerUserdataExternalV1_23_9
+      - TestVsphereDefaultLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: vsphere
@@ -11738,13 +12402,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-legacy-machine-controller-userdata-external-v1.23.9
+  name: pull-kubeone-e2e-vsphere-flatcar-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarLegacyMachineControllerUserdataExternalV1_23_9
+      - TestVsphereFlatcarLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: vsphere
@@ -11760,13 +12424,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-legacy-machine-controller-userdata-external-v1.24.3
+  name: pull-kubeone-e2e-aws-amzn-legacy-machine-controller-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsAmznLegacyMachineControllerUserdataExternalV1_24_3
+      - TestAwsAmznLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -11782,13 +12446,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-legacy-machine-controller-userdata-external-v1.24.3
+  name: pull-kubeone-e2e-aws-centos-legacy-machine-controller-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsCentosLegacyMachineControllerUserdataExternalV1_24_3
+      - TestAwsCentosLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -11804,13 +12468,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-default-legacy-machine-controller-userdata-external-v1.24.3
+  name: pull-kubeone-e2e-aws-default-legacy-machine-controller-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsDefaultLegacyMachineControllerUserdataExternalV1_24_3
+      - TestAwsDefaultLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -11826,13 +12490,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-legacy-machine-controller-userdata-external-v1.24.3
+  name: pull-kubeone-e2e-aws-flatcar-legacy-machine-controller-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarLegacyMachineControllerUserdataExternalV1_24_3
+      - TestAwsFlatcarLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -11848,13 +12512,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-legacy-machine-controller-userdata-external-v1.24.3
+  name: pull-kubeone-e2e-aws-rhel-legacy-machine-controller-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRhelLegacyMachineControllerUserdataExternalV1_24_3
+      - TestAwsRhelLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -11870,13 +12534,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-legacy-machine-controller-userdata-external-v1.24.3
+  name: pull-kubeone-e2e-aws-rockylinux-legacy-machine-controller-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsRockylinuxLegacyMachineControllerUserdataExternalV1_24_3
+      - TestAwsRockylinuxLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: aws
@@ -11892,13 +12556,13 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-legacy-machine-controller-userdata-external-v1.24.3
+  name: pull-kubeone-e2e-azure-default-legacy-machine-controller-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAzureDefaultLegacyMachineControllerUserdataExternalV1_24_3
+      - TestAzureDefaultLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: azure
@@ -11916,13 +12580,13 @@ presubmits:
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-default-legacy-machine-controller-userdata-external-v1.24.3
+  name: pull-kubeone-e2e-digitalocean-default-legacy-machine-controller-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestDigitaloceanDefaultLegacyMachineControllerUserdataExternalV1_24_3
+      - TestDigitaloceanDefaultLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: digitalocean
@@ -11938,13 +12602,13 @@ presubmits:
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-centos-legacy-machine-controller-userdata-external-v1.24.3
+  name: pull-kubeone-e2e-digitalocean-centos-legacy-machine-controller-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestDigitaloceanCentosLegacyMachineControllerUserdataExternalV1_24_3
+      - TestDigitaloceanCentosLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: digitalocean
@@ -11960,13 +12624,13 @@ presubmits:
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-rockylinux-legacy-machine-controller-userdata-external-v1.24.3
+  name: pull-kubeone-e2e-digitalocean-rockylinux-legacy-machine-controller-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestDigitaloceanRockylinuxLegacyMachineControllerUserdataExternalV1_24_3
+      - TestDigitaloceanRockylinuxLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: digitalocean
@@ -11982,13 +12646,13 @@ presubmits:
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-default-legacy-machine-controller-userdata-external-v1.24.3
+  name: pull-kubeone-e2e-equinixmetal-default-legacy-machine-controller-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestEquinixmetalDefaultLegacyMachineControllerUserdataExternalV1_24_3
+      - TestEquinixmetalDefaultLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -12004,13 +12668,13 @@ presubmits:
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-centos-legacy-machine-controller-userdata-external-v1.24.3
+  name: pull-kubeone-e2e-equinixmetal-centos-legacy-machine-controller-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestEquinixmetalCentosLegacyMachineControllerUserdataExternalV1_24_3
+      - TestEquinixmetalCentosLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -12026,13 +12690,13 @@ presubmits:
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-rockylinux-legacy-machine-controller-userdata-external-v1.24.3
+  name: pull-kubeone-e2e-equinixmetal-rockylinux-legacy-machine-controller-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestEquinixmetalRockylinuxLegacyMachineControllerUserdataExternalV1_24_3
+      - TestEquinixmetalRockylinuxLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -12048,13 +12712,13 @@ presubmits:
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-flatcar-legacy-machine-controller-userdata-external-v1.24.3
+  name: pull-kubeone-e2e-equinixmetal-flatcar-legacy-machine-controller-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestEquinixmetalFlatcarLegacyMachineControllerUserdataExternalV1_24_3
+      - TestEquinixmetalFlatcarLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -12070,13 +12734,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-default-legacy-machine-controller-userdata-external-v1.24.3
+  name: pull-kubeone-e2e-hetzner-default-legacy-machine-controller-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestHetznerDefaultLegacyMachineControllerUserdataExternalV1_24_3
+      - TestHetznerDefaultLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: hetzner
@@ -12092,13 +12756,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-centos-legacy-machine-controller-userdata-external-v1.24.3
+  name: pull-kubeone-e2e-hetzner-centos-legacy-machine-controller-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestHetznerCentosLegacyMachineControllerUserdataExternalV1_24_3
+      - TestHetznerCentosLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: hetzner
@@ -12114,13 +12778,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-rockylinux-legacy-machine-controller-userdata-external-v1.24.3
+  name: pull-kubeone-e2e-hetzner-rockylinux-legacy-machine-controller-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestHetznerRockylinuxLegacyMachineControllerUserdataExternalV1_24_3
+      - TestHetznerRockylinuxLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: hetzner
@@ -12136,13 +12800,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-legacy-machine-controller-userdata-external-v1.24.3
+  name: pull-kubeone-e2e-openstack-default-legacy-machine-controller-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultLegacyMachineControllerUserdataExternalV1_24_3
+      - TestOpenstackDefaultLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: openstack
@@ -12158,13 +12822,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-legacy-machine-controller-userdata-external-v1.24.3
+  name: pull-kubeone-e2e-openstack-centos-legacy-machine-controller-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackCentosLegacyMachineControllerUserdataExternalV1_24_3
+      - TestOpenstackCentosLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: openstack
@@ -12180,13 +12844,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rockylinux-legacy-machine-controller-userdata-external-v1.24.3
+  name: pull-kubeone-e2e-openstack-rockylinux-legacy-machine-controller-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackRockylinuxLegacyMachineControllerUserdataExternalV1_24_3
+      - TestOpenstackRockylinuxLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: openstack
@@ -12202,13 +12866,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rhel-legacy-machine-controller-userdata-external-v1.24.3
+  name: pull-kubeone-e2e-openstack-rhel-legacy-machine-controller-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackRhelLegacyMachineControllerUserdataExternalV1_24_3
+      - TestOpenstackRhelLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: openstack
@@ -12224,13 +12888,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-flatcar-legacy-machine-controller-userdata-external-v1.24.3
+  name: pull-kubeone-e2e-openstack-flatcar-legacy-machine-controller-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackFlatcarLegacyMachineControllerUserdataExternalV1_24_3
+      - TestOpenstackFlatcarLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: openstack
@@ -12246,13 +12910,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-legacy-machine-controller-userdata-external-v1.24.3
+  name: pull-kubeone-e2e-vsphere-default-legacy-machine-controller-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereDefaultLegacyMachineControllerUserdataExternalV1_24_3
+      - TestVsphereDefaultLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: vsphere
@@ -12268,13 +12932,13 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-legacy-machine-controller-userdata-external-v1.24.3
+  name: pull-kubeone-e2e-vsphere-flatcar-legacy-machine-controller-containerd-external-v1.24.3
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestVsphereFlatcarLegacyMachineControllerUserdataExternalV1_24_3
+      - TestVsphereFlatcarLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
         value: vsphere

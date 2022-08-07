@@ -593,13 +593,17 @@ var (
 			Name:                 "kube_proxy_ipvs",
 			ManifestTemplatePath: "testdata/kube_proxy_ipvs.yaml",
 		},
-		"legacy_machine_controller_userdata": &scenarioInstall{
-			Name:                 "legacy_machine_controller_userdata",
-			ManifestTemplatePath: "testdata/legacy_machine_controller_userdata.yaml",
+		"legacy_machine_controller_containerd": &scenarioInstall{
+			Name:                 "legacy_machine_controller_containerd",
+			ManifestTemplatePath: "testdata/legacy_machine_controller_containerd.yaml",
 		},
-		"legacy_machine_controller_userdata_external": &scenarioInstall{
-			Name:                 "legacy_machine_controller_userdata_external",
-			ManifestTemplatePath: "testdata/legacy_machine_controller_userdata_external.yaml",
+		"legacy_machine_controller_docker": &scenarioInstall{
+			Name:                 "legacy_machine_controller_docker",
+			ManifestTemplatePath: "testdata/legacy_machine_controller_docker.yaml",
+		},
+		"legacy_machine_controller_containerd_external": &scenarioInstall{
+			Name:                 "legacy_machine_controller_containerd_external",
+			ManifestTemplatePath: "testdata/legacy_machine_controller_containerd_external.yaml",
 		},
 		"csi_ccm_migration": &scenarioMigrateCSIAndCCM{
 			Name:                    "csi_ccm_migration",

@@ -307,7 +307,7 @@
   infrastructures:
     - name: aws_default
 
-- scenario: legacy_machine_controller_userdata
+- scenario: legacy_machine_controller_containerd
   initVersion: v1.22.12
   infrastructures:
     - name: aws_amzn
@@ -326,7 +326,7 @@
     - name: vsphere_default
     - name: vsphere_flatcar
 
-- scenario: legacy_machine_controller_userdata
+- scenario: legacy_machine_controller_containerd
   initVersion: v1.23.9
   infrastructures:
     - name: aws_amzn
@@ -345,7 +345,7 @@
     - name: vsphere_default
     - name: vsphere_flatcar
 
-- scenario: legacy_machine_controller_userdata
+- scenario: legacy_machine_controller_containerd
   initVersion: v1.24.3
   infrastructures:
     - name: aws_amzn
@@ -363,7 +363,45 @@
     - name: openstack_flatcar
     - name: vsphere_default
     - name: vsphere_flatcar
-    
+
+- scenario: legacy_machine_controller_docker
+  initVersion: v1.22.12
+  infrastructures:
+    - name: aws_amzn
+    - name: aws_centos
+    - name: aws_default
+    - name: aws_flatcar
+    - name: aws_rhel
+    - name: aws_rockylinux
+    - name: azure_default
+    - name: gce_default
+    - name: openstack_default
+    - name: openstack_centos
+    - name: openstack_rockylinux
+    - name: openstack_rhel
+    - name: openstack_flatcar
+    - name: vsphere_default
+    - name: vsphere_flatcar
+
+- scenario: legacy_machine_controller_docker
+  initVersion: v1.23.9
+  infrastructures:
+    - name: aws_amzn
+    - name: aws_centos
+    - name: aws_default
+    - name: aws_flatcar
+    - name: aws_rhel
+    - name: aws_rockylinux
+    - name: azure_default
+    - name: gce_default
+    - name: openstack_default
+    - name: openstack_centos
+    - name: openstack_rockylinux
+    - name: openstack_rhel
+    - name: openstack_flatcar
+    - name: vsphere_default
+    - name: vsphere_flatcar
+
 - scenario: kube_proxy_ipvs
   initVersion: v1.24.3
   infrastructures:
@@ -635,7 +673,7 @@
     - name: vsphere_default
     - name: vsphere_flatcar
 
-- scenario: legacy_machine_controller_userdata_external
+- scenario: legacy_machine_controller_containerd_external
   initVersion: v1.22.12
   infrastructures:
     - name: aws_amzn
@@ -663,7 +701,7 @@
     - name: vsphere_default
     - name: vsphere_flatcar
 
-- scenario: legacy_machine_controller_userdata_external
+- scenario: legacy_machine_controller_containerd_external
   initVersion: v1.23.9
   infrastructures:
     - name: aws_amzn
@@ -691,7 +729,7 @@
     - name: vsphere_default
     - name: vsphere_flatcar
 
-- scenario: legacy_machine_controller_userdata_external
+- scenario: legacy_machine_controller_containerd_external
   initVersion: v1.24.3
   infrastructures:
     - name: aws_amzn
