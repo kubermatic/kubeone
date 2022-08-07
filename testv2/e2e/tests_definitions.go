@@ -376,7 +376,63 @@ var (
 			},
 			terraform: terraformBin{
 				path:    "../../examples/terraform/openstack",
-				varFile: "testdata/openstack_vars.tfvars",
+				varFile: "testdata/openstack_ubuntu.tfvars",
+			},
+		},
+		"openstack_centos": {
+			name: "openstack_centos",
+			labels: map[string]string{
+				"preset-goproxy":   "true",
+				"preset-openstack": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "openstack",
+			},
+			terraform: terraformBin{
+				path:    "../../examples/terraform/openstack",
+				varFile: "testdata/openstack_centos.tfvars",
+			},
+		},
+		"openstack_rockylinux": {
+			name: "openstack_rockylinux",
+			labels: map[string]string{
+				"preset-goproxy":   "true",
+				"preset-openstack": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "openstack",
+			},
+			terraform: terraformBin{
+				path:    "../../examples/terraform/openstack",
+				varFile: "testdata/openstack_rockylinux.tfvars",
+			},
+		},
+		"openstack_rhel": {
+			name: "openstack_rhel",
+			labels: map[string]string{
+				"preset-goproxy":   "true",
+				"preset-openstack": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "openstack",
+			},
+			terraform: terraformBin{
+				path:    "../../examples/terraform/openstack",
+				varFile: "testdata/openstack_rhel.tfvars",
+			},
+		},
+		"openstack_flatcar": {
+			name: "openstack_flatcar",
+			labels: map[string]string{
+				"preset-goproxy":   "true",
+				"preset-openstack": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "openstack",
+			},
+			terraform: terraformBin{
+				path:    "../../examples/terraform/openstack",
+				varFile: "testdata/openstack_flatcar.tfvars",
 			},
 		},
 		// "vcd_default": {

@@ -10,6 +10,10 @@
     - name: azure_default
     - name: gce_default
     - name: openstack_default
+    - name: openstack_centos
+    - name: openstack_rockylinux
+    - name: openstack_rhel
+    - name: openstack_flatcar
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -25,6 +29,10 @@
     - name: azure_default
     - name: gce_default
     - name: openstack_default
+    - name: openstack_centos
+    - name: openstack_rockylinux
+    - name: openstack_rhel
+    - name: openstack_flatcar
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -40,6 +48,10 @@
     - name: azure_default
     - name: gce_default
     - name: openstack_default
+    - name: openstack_centos
+    - name: openstack_rockylinux
+    - name: openstack_rhel
+    - name: openstack_flatcar
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -55,6 +67,10 @@
     - name: azure_default
     - name: gce_default
     - name: openstack_default
+    - name: openstack_centos
+    - name: openstack_rockylinux
+    - name: openstack_rhel
+    - name: openstack_flatcar
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -71,6 +87,10 @@
     - name: azure_default
     - name: gce_default
     - name: openstack_default
+    - name: openstack_centos
+    - name: openstack_rockylinux
+    - name: openstack_rhel
+    - name: openstack_flatcar
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -87,6 +107,10 @@
     - name: azure_default
     - name: gce_default
     - name: openstack_default
+    - name: openstack_centos
+    - name: openstack_rockylinux
+    - name: openstack_rhel
+    - name: openstack_flatcar
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -103,6 +127,10 @@
     - name: azure_default
     - name: gce_default
     - name: openstack_default
+    - name: openstack_centos
+    - name: openstack_rockylinux
+    - name: openstack_rhel
+    - name: openstack_flatcar
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -118,6 +146,10 @@
     - name: azure_default
     - name: gce_default
     - name: openstack_default
+    - name: openstack_centos
+    - name: openstack_rockylinux
+    - name: openstack_rhel
+    - name: openstack_flatcar
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -133,6 +165,10 @@
     - name: azure_default
     - name: gce_default
     - name: openstack_default
+    - name: openstack_centos
+    - name: openstack_rockylinux
+    - name: openstack_rhel
+    - name: openstack_flatcar
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -148,6 +184,10 @@
     - name: azure_default
     - name: gce_default
     - name: openstack_default
+    - name: openstack_centos
+    - name: openstack_rockylinux
+    - name: openstack_rhel
+    - name: openstack_flatcar
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -163,6 +203,10 @@
     - name: azure_default
     - name: gce_default
     - name: openstack_default
+    - name: openstack_centos
+    - name: openstack_rockylinux
+    - name: openstack_rhel
+    - name: openstack_flatcar
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -178,6 +222,10 @@
     - name: azure_default
     - name: gce_default
     - name: openstack_default
+    - name: openstack_centos
+    - name: openstack_rockylinux
+    - name: openstack_rhel
+    - name: openstack_flatcar
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -193,6 +241,10 @@
     - name: azure_default
     - name: gce_default
     - name: openstack_default
+    - name: openstack_centos
+    - name: openstack_rockylinux
+    - name: openstack_rhel
+    - name: openstack_flatcar
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -261,6 +313,10 @@
   infrastructures:
     - name: aws_defaults  
     - name: openstack_default
+    - name: openstack_centos
+    - name: openstack_rockylinux
+    - name: openstack_rhel
+    - name: openstack_flatcar
     - name: azure_default
     - name: vsphere_default
     - name: vsphere_flatcar
@@ -270,6 +326,10 @@
   infrastructures:
     - name: aws_defaults  
     - name: openstack_default
+    - name: openstack_centos
+    - name: openstack_rockylinux
+    - name: openstack_rhel
+    - name: openstack_flatcar
     - name: azure_default
     - name: vsphere_default
     - name: vsphere_flatcar
@@ -279,6 +339,10 @@
   infrastructures:
     - name: aws_defaults
     - name: openstack_default
+    - name: openstack_centos
+    - name: openstack_rockylinux
+    - name: openstack_rhel
+    - name: openstack_flatcar
     - name: azure_default
     - name: vsphere_default
     - name: vsphere_flatcar
@@ -304,6 +368,10 @@
     - name: hetzner_centos
     - name: hetzner_rockylinux
     - name: openstack_default
+    - name: openstack_centos
+    - name: openstack_rockylinux
+    - name: openstack_rhel
+    - name: openstack_flatcar
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -328,6 +396,10 @@
     - name: hetzner_centos
     - name: hetzner_rockylinux
     - name: openstack_default
+    - name: openstack_centos
+    - name: openstack_rockylinux
+    - name: openstack_rhel
+    - name: openstack_flatcar
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -352,6 +424,10 @@
     - name: hetzner_centos
     - name: hetzner_rockylinux
     - name: openstack_default
+    - name: openstack_centos
+    - name: openstack_rockylinux
+    - name: openstack_rhel
+    - name: openstack_flatcar
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -376,6 +452,10 @@
     - name: hetzner_centos
     - name: hetzner_rockylinux
     - name: openstack_default
+    - name: openstack_centos
+    - name: openstack_rockylinux
+    - name: openstack_rhel
+    - name: openstack_flatcar
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -401,6 +481,10 @@
     - name: hetzner_centos
     - name: hetzner_rockylinux
     - name: openstack_default
+    - name: openstack_centos
+    - name: openstack_rockylinux
+    - name: openstack_rhel
+    - name: openstack_flatcar
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -426,6 +510,10 @@
     - name: hetzner_centos
     - name: hetzner_rockylinux
     - name: openstack_default
+    - name: openstack_centos
+    - name: openstack_rockylinux
+    - name: openstack_rhel
+    - name: openstack_flatcar
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -451,5 +539,9 @@
     - name: hetzner_centos
     - name: hetzner_rockylinux
     - name: openstack_default
+    - name: openstack_centos
+    - name: openstack_rockylinux
+    - name: openstack_rhel
+    - name: openstack_flatcar
     - name: vsphere_default
     - name: vsphere_flatcar

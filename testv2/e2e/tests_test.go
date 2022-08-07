@@ -82,6 +82,38 @@ func TestOpenstackDefaultInstallContainerdV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestOpenstackCentosInstallContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxInstallContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelInstallContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarInstallContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
 func TestVsphereDefaultInstallContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["install_containerd"]
@@ -164,6 +196,38 @@ func TestGceDefaultInstallContainerdV1_23_9(t *testing.T) {
 
 func TestOpenstackDefaultInstallContainerdV1_23_9(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackCentosInstallContainerdV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxInstallContainerdV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelInstallContainerdV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarInstallContainerdV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.23.9")
@@ -258,6 +322,38 @@ func TestOpenstackDefaultInstallContainerdV1_24_3(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestOpenstackCentosInstallContainerdV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxInstallContainerdV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelInstallContainerdV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarInstallContainerdV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
 func TestVsphereDefaultInstallContainerdV1_24_3(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["install_containerd"]
@@ -340,6 +436,38 @@ func TestGceDefaultInstallDockerV1_22_12(t *testing.T) {
 
 func TestOpenstackDefaultInstallDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackCentosInstallDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxInstallDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelInstallDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarInstallDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["install_docker"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12")
@@ -434,6 +562,38 @@ func TestOpenstackDefaultUpgradeContainerdFromV1_23_9_ToV1_24_3(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestOpenstackCentosUpgradeContainerdFromV1_23_9_ToV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9", "v1.24.3")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxUpgradeContainerdFromV1_23_9_ToV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9", "v1.24.3")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelUpgradeContainerdFromV1_23_9_ToV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9", "v1.24.3")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarUpgradeContainerdFromV1_23_9_ToV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9", "v1.24.3")
+	scenario.Run(t)
+}
+
 func TestVsphereDefaultUpgradeContainerdFromV1_23_9_ToV1_24_3(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["upgrade_containerd"]
@@ -516,6 +676,38 @@ func TestGceDefaultUpgradeContainerdFromV1_22_12_ToV1_23_9(t *testing.T) {
 
 func TestOpenstackDefaultUpgradeContainerdFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackCentosUpgradeContainerdFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxUpgradeContainerdFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelUpgradeContainerdFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarUpgradeContainerdFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12", "v1.23.9")
@@ -610,6 +802,38 @@ func TestOpenstackDefaultUpgradeDockerFromV1_22_12_ToV1_23_9(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestOpenstackCentosUpgradeDockerFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["upgrade_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxUpgradeDockerFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["upgrade_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelUpgradeDockerFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["upgrade_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarUpgradeDockerFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
+	scenario := Scenarios["upgrade_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
 func TestVsphereDefaultUpgradeDockerFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["upgrade_docker"]
@@ -692,6 +916,38 @@ func TestGceDefaultCalicoContainerdV1_22_12(t *testing.T) {
 
 func TestOpenstackDefaultCalicoContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["calico_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackCentosCalicoContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["calico_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxCalicoContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["calico_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelCalicoContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["calico_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarCalicoContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["calico_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12")
@@ -786,6 +1042,38 @@ func TestOpenstackDefaultCalicoDockerV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestOpenstackCentosCalicoDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["calico_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxCalicoDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["calico_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelCalicoDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["calico_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarCalicoDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
+	scenario := Scenarios["calico_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
 func TestVsphereDefaultCalicoDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["calico_docker"]
@@ -868,6 +1156,38 @@ func TestGceDefaultWeaveContainerdV1_22_12(t *testing.T) {
 
 func TestOpenstackDefaultWeaveContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["weave_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackCentosWeaveContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["weave_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxWeaveContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["weave_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelWeaveContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["weave_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarWeaveContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["weave_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12")
@@ -962,6 +1282,38 @@ func TestOpenstackDefaultWeaveDockerV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestOpenstackCentosWeaveDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["weave_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxWeaveDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["weave_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelWeaveDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["weave_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarWeaveDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
+	scenario := Scenarios["weave_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
 func TestVsphereDefaultWeaveDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["weave_docker"]
@@ -1050,6 +1402,38 @@ func TestOpenstackDefaultCiliumContainerdV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestOpenstackCentosCiliumContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["cilium_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxCiliumContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["cilium_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelCiliumContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["cilium_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarCiliumContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
+	scenario := Scenarios["cilium_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
 func TestVsphereDefaultCiliumContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["cilium_containerd"]
@@ -1132,6 +1516,38 @@ func TestGceDefaultCiliumDockerV1_22_12(t *testing.T) {
 
 func TestOpenstackDefaultCiliumDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["cilium_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackCentosCiliumDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["cilium_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxCiliumDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["cilium_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelCiliumDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["cilium_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarCiliumDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["cilium_docker"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12")
@@ -1266,6 +1682,38 @@ func TestOpenstackDefaultCsiCcmMigrationV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestOpenstackCentosCsiCcmMigrationV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxCsiCcmMigrationV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelCsiCcmMigrationV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarCsiCcmMigrationV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
 func TestAzureDefaultCsiCcmMigrationV1_22_12(t *testing.T) {
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["csi_ccm_migration"]
@@ -1306,6 +1754,38 @@ func TestOpenstackDefaultCsiCcmMigrationV1_23_9(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestOpenstackCentosCsiCcmMigrationV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxCsiCcmMigrationV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelCsiCcmMigrationV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarCsiCcmMigrationV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
 func TestAzureDefaultCsiCcmMigrationV1_23_9(t *testing.T) {
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["csi_ccm_migration"]
@@ -1340,6 +1820,38 @@ func TestAwsDefaultsCsiCcmMigrationV1_24_3(t *testing.T) {
 
 func TestOpenstackDefaultCsiCcmMigrationV1_24_3(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestOpenstackCentosCsiCcmMigrationV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxCsiCcmMigrationV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelCsiCcmMigrationV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarCsiCcmMigrationV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.24.3")
@@ -1514,6 +2026,38 @@ func TestOpenstackDefaultInstallContainerdExternalV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestOpenstackCentosInstallContainerdExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxInstallContainerdExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelInstallContainerdExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarInstallContainerdExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
 func TestVsphereDefaultInstallContainerdExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["install_containerd_external"]
@@ -1668,6 +2212,38 @@ func TestHetznerRockylinuxInstallContainerdExternalV1_23_9(t *testing.T) {
 
 func TestOpenstackDefaultInstallContainerdExternalV1_23_9(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackCentosInstallContainerdExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxInstallContainerdExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelInstallContainerdExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarInstallContainerdExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.23.9")
@@ -1834,6 +2410,38 @@ func TestOpenstackDefaultInstallContainerdExternalV1_24_3(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestOpenstackCentosInstallContainerdExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxInstallContainerdExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelInstallContainerdExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarInstallContainerdExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
 func TestVsphereDefaultInstallContainerdExternalV1_24_3(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["install_containerd_external"]
@@ -1988,6 +2596,38 @@ func TestHetznerRockylinuxInstallDockerExternalV1_22_12(t *testing.T) {
 
 func TestOpenstackDefaultInstallDockerExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackCentosInstallDockerExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxInstallDockerExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelInstallDockerExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarInstallDockerExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["install_docker_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12")
@@ -2154,6 +2794,38 @@ func TestOpenstackDefaultUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *test
 	scenario.Run(t)
 }
 
+func TestOpenstackCentosUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
 func TestVsphereDefaultUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["upgrade_containerd_external"]
@@ -2314,6 +2986,38 @@ func TestOpenstackDefaultUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testi
 	scenario.Run(t)
 }
 
+func TestOpenstackCentosUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9", "v1.24.3")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9", "v1.24.3")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9", "v1.24.3")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9", "v1.24.3")
+	scenario.Run(t)
+}
+
 func TestVsphereDefaultUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["upgrade_containerd_external"]
@@ -2468,6 +3172,38 @@ func TestHetznerRockylinuxUpgradeDockerExternalFromV1_22_12_ToV1_23_9(t *testing
 
 func TestOpenstackDefaultUpgradeDockerExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["upgrade_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackCentosUpgradeDockerExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["upgrade_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxUpgradeDockerExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["upgrade_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelUpgradeDockerExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["upgrade_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarUpgradeDockerExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["upgrade_docker_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12", "v1.23.9")
