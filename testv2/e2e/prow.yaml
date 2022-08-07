@@ -12948,3 +12948,443 @@ presubmits:
       resources:
         requests:
           cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-digitalocean: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-digitalocean-default-legacy-machine-controller-docker-external-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestDigitaloceanDefaultLegacyMachineControllerDockerExternalV1_22_12
+      env:
+      - name: PROVIDER
+        value: digitalocean
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-digitalocean: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-digitalocean-centos-legacy-machine-controller-docker-external-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestDigitaloceanCentosLegacyMachineControllerDockerExternalV1_22_12
+      env:
+      - name: PROVIDER
+        value: digitalocean
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-digitalocean: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-digitalocean-rockylinux-legacy-machine-controller-docker-external-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestDigitaloceanRockylinuxLegacyMachineControllerDockerExternalV1_22_12
+      env:
+      - name: PROVIDER
+        value: digitalocean
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-default-legacy-machine-controller-docker-external-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestEquinixmetalDefaultLegacyMachineControllerDockerExternalV1_22_12
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-centos-legacy-machine-controller-docker-external-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestEquinixmetalCentosLegacyMachineControllerDockerExternalV1_22_12
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-rockylinux-legacy-machine-controller-docker-external-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestEquinixmetalRockylinuxLegacyMachineControllerDockerExternalV1_22_12
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-flatcar-legacy-machine-controller-docker-external-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestEquinixmetalFlatcarLegacyMachineControllerDockerExternalV1_22_12
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-default-legacy-machine-controller-docker-external-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestHetznerDefaultLegacyMachineControllerDockerExternalV1_22_12
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-centos-legacy-machine-controller-docker-external-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestHetznerCentosLegacyMachineControllerDockerExternalV1_22_12
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-rockylinux-legacy-machine-controller-docker-external-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestHetznerRockylinuxLegacyMachineControllerDockerExternalV1_22_12
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-digitalocean: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-digitalocean-default-legacy-machine-controller-docker-external-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestDigitaloceanDefaultLegacyMachineControllerDockerExternalV1_23_9
+      env:
+      - name: PROVIDER
+        value: digitalocean
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-digitalocean: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-digitalocean-centos-legacy-machine-controller-docker-external-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestDigitaloceanCentosLegacyMachineControllerDockerExternalV1_23_9
+      env:
+      - name: PROVIDER
+        value: digitalocean
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-digitalocean: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-digitalocean-rockylinux-legacy-machine-controller-docker-external-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestDigitaloceanRockylinuxLegacyMachineControllerDockerExternalV1_23_9
+      env:
+      - name: PROVIDER
+        value: digitalocean
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-default-legacy-machine-controller-docker-external-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestEquinixmetalDefaultLegacyMachineControllerDockerExternalV1_23_9
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-centos-legacy-machine-controller-docker-external-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestEquinixmetalCentosLegacyMachineControllerDockerExternalV1_23_9
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-rockylinux-legacy-machine-controller-docker-external-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestEquinixmetalRockylinuxLegacyMachineControllerDockerExternalV1_23_9
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-flatcar-legacy-machine-controller-docker-external-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestEquinixmetalFlatcarLegacyMachineControllerDockerExternalV1_23_9
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-default-legacy-machine-controller-docker-external-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestHetznerDefaultLegacyMachineControllerDockerExternalV1_23_9
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-centos-legacy-machine-controller-docker-external-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestHetznerCentosLegacyMachineControllerDockerExternalV1_23_9
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-rockylinux-legacy-machine-controller-docker-external-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestHetznerRockylinuxLegacyMachineControllerDockerExternalV1_23_9
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"

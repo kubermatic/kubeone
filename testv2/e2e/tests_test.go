@@ -4689,3 +4689,163 @@ func TestVsphereFlatcarLegacyMachineControllerContainerdExternalV1_24_3(t *testi
 	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
+
+func TestDigitaloceanDefaultLegacyMachineControllerDockerExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["digitalocean_default"]
+	scenario := Scenarios["legacy_machine_controller_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestDigitaloceanCentosLegacyMachineControllerDockerExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["digitalocean_centos"]
+	scenario := Scenarios["legacy_machine_controller_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestDigitaloceanRockylinuxLegacyMachineControllerDockerExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["digitalocean_rockylinux"]
+	scenario := Scenarios["legacy_machine_controller_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestEquinixmetalDefaultLegacyMachineControllerDockerExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["equinixmetal_default"]
+	scenario := Scenarios["legacy_machine_controller_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestEquinixmetalCentosLegacyMachineControllerDockerExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["equinixmetal_centos"]
+	scenario := Scenarios["legacy_machine_controller_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestEquinixmetalRockylinuxLegacyMachineControllerDockerExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["equinixmetal_rockylinux"]
+	scenario := Scenarios["legacy_machine_controller_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestEquinixmetalFlatcarLegacyMachineControllerDockerExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["equinixmetal_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestHetznerDefaultLegacyMachineControllerDockerExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["hetzner_default"]
+	scenario := Scenarios["legacy_machine_controller_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestHetznerCentosLegacyMachineControllerDockerExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["hetzner_centos"]
+	scenario := Scenarios["legacy_machine_controller_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestHetznerRockylinuxLegacyMachineControllerDockerExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["hetzner_rockylinux"]
+	scenario := Scenarios["legacy_machine_controller_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestDigitaloceanDefaultLegacyMachineControllerDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["digitalocean_default"]
+	scenario := Scenarios["legacy_machine_controller_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestDigitaloceanCentosLegacyMachineControllerDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["digitalocean_centos"]
+	scenario := Scenarios["legacy_machine_controller_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestDigitaloceanRockylinuxLegacyMachineControllerDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["digitalocean_rockylinux"]
+	scenario := Scenarios["legacy_machine_controller_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestEquinixmetalDefaultLegacyMachineControllerDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["equinixmetal_default"]
+	scenario := Scenarios["legacy_machine_controller_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestEquinixmetalCentosLegacyMachineControllerDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["equinixmetal_centos"]
+	scenario := Scenarios["legacy_machine_controller_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestEquinixmetalRockylinuxLegacyMachineControllerDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["equinixmetal_rockylinux"]
+	scenario := Scenarios["legacy_machine_controller_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestEquinixmetalFlatcarLegacyMachineControllerDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["equinixmetal_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestHetznerDefaultLegacyMachineControllerDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["hetzner_default"]
+	scenario := Scenarios["legacy_machine_controller_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestHetznerCentosLegacyMachineControllerDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["hetzner_centos"]
+	scenario := Scenarios["legacy_machine_controller_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestHetznerRockylinuxLegacyMachineControllerDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["hetzner_rockylinux"]
+	scenario := Scenarios["legacy_machine_controller_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}

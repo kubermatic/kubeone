@@ -756,3 +756,31 @@
     - name: openstack_flatcar
     - name: vsphere_default
     - name: vsphere_flatcar
+
+- scenario: legacy_machine_controller_docker_external
+  initVersion: v1.22.12
+  infrastructures:
+    - name: digitalocean_default
+    - name: digitalocean_centos
+    - name: digitalocean_rockylinux
+    - name: equinixmetal_default
+    - name: equinixmetal_centos
+    - name: equinixmetal_rockylinux
+    - name: equinixmetal_flatcar
+    - name: hetzner_default
+    - name: hetzner_centos
+    - name: hetzner_rockylinux
+
+- scenario: legacy_machine_controller_docker_external
+  initVersion: v1.23.9
+  infrastructures:
+    - name: digitalocean_default
+    - name: digitalocean_centos
+    - name: digitalocean_rockylinux
+    - name: equinixmetal_default
+    - name: equinixmetal_centos
+    - name: equinixmetal_rockylinux
+    - name: equinixmetal_flatcar
+    - name: hetzner_default
+    - name: hetzner_centos
+    - name: hetzner_rockylinux
