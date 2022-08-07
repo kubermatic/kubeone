@@ -301,6 +301,8 @@
     - name: equinixmetal_rockylinux
     - name: equinixmetal_flatcar
     - name: hetzner_default
+    - name: hetzner_centos
+    - name: hetzner_rockylinux
     - name: openstack_default
     - name: vsphere_default
     - name: vsphere_flatcar
@@ -323,6 +325,8 @@
     - name: equinixmetal_rockylinux
     - name: equinixmetal_flatcar
     - name: hetzner_default
+    - name: hetzner_centos
+    - name: hetzner_rockylinux
     - name: openstack_default
     - name: vsphere_default
     - name: vsphere_flatcar
@@ -345,6 +349,8 @@
     - name: equinixmetal_rockylinux
     - name: equinixmetal_flatcar
     - name: hetzner_default
+    - name: hetzner_centos
+    - name: hetzner_rockylinux
     - name: openstack_default
     - name: vsphere_default
     - name: vsphere_flatcar
@@ -367,6 +373,8 @@
     - name: equinixmetal_rockylinux
     - name: equinixmetal_flatcar
     - name: hetzner_default
+    - name: hetzner_centos
+    - name: hetzner_rockylinux
     - name: openstack_default
     - name: vsphere_default
     - name: vsphere_flatcar
@@ -390,6 +398,8 @@
     - name: equinixmetal_rockylinux
     - name: equinixmetal_flatcar
     - name: hetzner_default
+    - name: hetzner_centos
+    - name: hetzner_rockylinux
     - name: openstack_default
     - name: vsphere_default
     - name: vsphere_flatcar
@@ -413,6 +423,8 @@
     - name: equinixmetal_rockylinux
     - name: equinixmetal_flatcar
     - name: hetzner_default
+    - name: hetzner_centos
+    - name: hetzner_rockylinux
     - name: openstack_default
     - name: vsphere_default
     - name: vsphere_flatcar
@@ -436,6 +448,8 @@
     - name: equinixmetal_rockylinux
     - name: equinixmetal_flatcar
     - name: hetzner_default
+    - name: hetzner_centos
+    - name: hetzner_rockylinux
     - name: openstack_default
     - name: vsphere_default
     - name: vsphere_flatcar

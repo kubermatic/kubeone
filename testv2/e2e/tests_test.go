@@ -1490,6 +1490,22 @@ func TestHetznerDefaultInstallContainerdExternalV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestHetznerCentosInstallContainerdExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["hetzner_centos"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestHetznerRockylinuxInstallContainerdExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["hetzner_rockylinux"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
 func TestOpenstackDefaultInstallContainerdExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["install_containerd_external"]
@@ -1628,6 +1644,22 @@ func TestEquinixmetalFlatcarInstallContainerdExternalV1_23_9(t *testing.T) {
 
 func TestHetznerDefaultInstallContainerdExternalV1_23_9(t *testing.T) {
 	infra := Infrastructures["hetzner_default"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestHetznerCentosInstallContainerdExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["hetzner_centos"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestHetznerRockylinuxInstallContainerdExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["hetzner_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.23.9")
@@ -1778,6 +1810,22 @@ func TestHetznerDefaultInstallContainerdExternalV1_24_3(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestHetznerCentosInstallContainerdExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["hetzner_centos"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestHetznerRockylinuxInstallContainerdExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["hetzner_rockylinux"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
 func TestOpenstackDefaultInstallContainerdExternalV1_24_3(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["install_containerd_external"]
@@ -1916,6 +1964,22 @@ func TestEquinixmetalFlatcarInstallDockerExternalV1_22_12(t *testing.T) {
 
 func TestHetznerDefaultInstallDockerExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["hetzner_default"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestHetznerCentosInstallDockerExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["hetzner_centos"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestHetznerRockylinuxInstallDockerExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["hetzner_rockylinux"]
 	scenario := Scenarios["install_docker_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12")
@@ -2066,6 +2130,22 @@ func TestHetznerDefaultUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testin
 	scenario.Run(t)
 }
 
+func TestHetznerCentosUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["hetzner_centos"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestHetznerRockylinuxUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["hetzner_rockylinux"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
 func TestOpenstackDefaultUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["upgrade_containerd_external"]
@@ -2210,6 +2290,22 @@ func TestHetznerDefaultUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing
 	scenario.Run(t)
 }
 
+func TestHetznerCentosUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T) {
+	infra := Infrastructures["hetzner_centos"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9", "v1.24.3")
+	scenario.Run(t)
+}
+
+func TestHetznerRockylinuxUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T) {
+	infra := Infrastructures["hetzner_rockylinux"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9", "v1.24.3")
+	scenario.Run(t)
+}
+
 func TestOpenstackDefaultUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T) {
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["upgrade_containerd_external"]
@@ -2348,6 +2444,22 @@ func TestEquinixmetalFlatcarUpgradeDockerExternalFromV1_22_12_ToV1_23_9(t *testi
 
 func TestHetznerDefaultUpgradeDockerExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["hetzner_default"]
+	scenario := Scenarios["upgrade_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestHetznerCentosUpgradeDockerExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["hetzner_centos"]
+	scenario := Scenarios["upgrade_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestHetznerRockylinuxUpgradeDockerExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["hetzner_rockylinux"]
 	scenario := Scenarios["upgrade_docker_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12", "v1.23.9")

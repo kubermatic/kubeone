@@ -297,6 +297,22 @@ var (
 				},
 			},
 		},
+		"gce_default": {
+			name: "gce_default",
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-gce":     "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "gce",
+			},
+			terraform: terraformBin{
+				path: "../../examples/terraform/gce",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+				},
+			},
+		},
 		"hetzner_default": {
 			name: "hetzner_default",
 			labels: map[string]string{
@@ -313,19 +329,39 @@ var (
 				},
 			},
 		},
-		"gce_default": {
-			name: "gce_default",
+		"hetzner_centos": {
+			name: "hetzner_centos",
 			labels: map[string]string{
 				"preset-goproxy": "true",
-				"preset-gce":     "true",
+				"preset-hetzner": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "gce",
+				"PROVIDER": "hetzner",
 			},
 			terraform: terraformBin{
-				path: "../../examples/terraform/gce",
+				path: "../../examples/terraform/hetzner",
 				vars: []string{
 					"disable_kubeapi_loadbalancer=true",
+					"image=centos-7",
+					"worker_os=centos",
+				},
+			},
+		},
+		"hetzner_rockylinux": {
+			name: "hetzner_rockylinux",
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-hetzner": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "hetzner",
+			},
+			terraform: terraformBin{
+				path: "../../examples/terraform/hetzner",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+					"image=rocky-8",
+					"worker_os=rockylinux",
 				},
 			},
 		},

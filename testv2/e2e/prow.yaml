@@ -4121,6 +4121,50 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-centos-install-containerd-external-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestHetznerCentosInstallContainerdExternalV1_22_12
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-rockylinux-install-containerd-external-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestHetznerRockylinuxInstallContainerdExternalV1_22_12
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
     preset-openstack: "true"
   name: pull-kubeone-e2e-openstack-default-install-containerd-external-v1.22.12
   optional: false
@@ -4505,6 +4549,50 @@ presubmits:
     - command:
       - ./testv2/go-test-e2e.sh
       - TestHetznerDefaultInstallContainerdExternalV1_23_9
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-centos-install-containerd-external-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestHetznerCentosInstallContainerdExternalV1_23_9
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-rockylinux-install-containerd-external-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestHetznerRockylinuxInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: hetzner
@@ -4917,6 +5005,50 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-centos-install-containerd-external-v1.24.3
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestHetznerCentosInstallContainerdExternalV1_24_3
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-rockylinux-install-containerd-external-v1.24.3
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestHetznerRockylinuxInstallContainerdExternalV1_24_3
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
     preset-openstack: "true"
   name: pull-kubeone-e2e-openstack-default-install-containerd-external-v1.24.3
   optional: false
@@ -5301,6 +5433,50 @@ presubmits:
     - command:
       - ./testv2/go-test-e2e.sh
       - TestHetznerDefaultInstallDockerExternalV1_22_12
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-centos-install-docker-external-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestHetznerCentosInstallDockerExternalV1_22_12
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-rockylinux-install-docker-external-v1.22.12
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestHetznerRockylinuxInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
         value: hetzner
@@ -5713,6 +5889,50 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-centos-upgrade-containerd-external-from-v1.22.12-to-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestHetznerCentosUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-rockylinux-upgrade-containerd-external-from-v1.22.12-to-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestHetznerRockylinuxUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
     preset-openstack: "true"
   name: pull-kubeone-e2e-openstack-default-upgrade-containerd-external-from-v1.22.12-to-v1.23.9
   optional: false
@@ -6111,6 +6331,50 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-centos-upgrade-containerd-external-from-v1.23.9-to-v1.24.3
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestHetznerCentosUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-rockylinux-upgrade-containerd-external-from-v1.23.9-to-v1.24.3
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestHetznerRockylinuxUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
     preset-openstack: "true"
   name: pull-kubeone-e2e-openstack-default-upgrade-containerd-external-from-v1.23.9-to-v1.24.3
   optional: false
@@ -6495,6 +6759,50 @@ presubmits:
     - command:
       - ./testv2/go-test-e2e.sh
       - TestHetznerDefaultUpgradeDockerExternalFromV1_22_12_ToV1_23_9
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-centos-upgrade-docker-external-from-v1.22.12-to-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestHetznerCentosUpgradeDockerExternalFromV1_22_12_ToV1_23_9
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-rockylinux-upgrade-docker-external-from-v1.22.12-to-v1.23.9
+  optional: false
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestHetznerRockylinuxUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
         value: hetzner
