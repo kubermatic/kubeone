@@ -27,7 +27,7 @@ import (
 	"sigs.k8s.io/yaml"
 )
 
-const kubeoneVersionToInit = "1.4.4"
+const kubeoneVersionToInit = "1.4.6"
 
 type scenarioUpgrade struct {
 	Name                 string
@@ -65,7 +65,7 @@ func (scenario *scenarioUpgrade) Run(t *testing.T) {
 	scenario.test(t)
 }
 
-func (scenario *scenarioUpgrade) kubeone(t *testing.T) *kubeoneBin {
+func (scenario *scenarioUpgrade) kubeone(t *testing.T, version string) *kubeoneBin {
 	var k1Opts []kubeoneBinOpts
 
 	if *kubeoneVerboseFlag {
@@ -81,7 +81,7 @@ func (scenario *scenarioUpgrade) kubeone(t *testing.T) *kubeoneBin {
 		renderManifest(t,
 			scenario.ManifestTemplatePath,
 			manifestData{
-				VERSION: scenario.versions[1],
+				VERSION: version,
 			},
 		),
 		k1Opts...,
@@ -89,15 +89,23 @@ func (scenario *scenarioUpgrade) kubeone(t *testing.T) *kubeoneBin {
 }
 
 func (scenario *scenarioUpgrade) upgrade(t *testing.T) {
-	k1 := scenario.kubeone(t)
+	// NB: Due to changed node selectors between Kubernetes 1.23 and 1.24, it's
+	// important to run apply with KubeOne 1.5 before upgrading the cluster,
+	// otherwise upgrade might get stuck due to pods not able to get
+	// rescheduled.
+	k1 := scenario.kubeone(t, scenario.versions[0])
+	if err := k1.Apply(); err != nil {
+		t.Fatalf("kubeone apply failed: %v", err)
+	}
 
+	k1 = scenario.kubeone(t, scenario.versions[1])
 	if err := k1.Apply(); err != nil {
 		t.Fatalf("kubeone apply failed: %v", err)
 	}
 }
 
 func (scenario *scenarioUpgrade) test(t *testing.T) {
-	k1 := scenario.kubeone(t)
+	k1 := scenario.kubeone(t, scenario.versions[1])
 
 	// launch kubeone proxy, to have a HTTPS proxy through the SSH tunnel
 	// to open access to the kubeapi behind the bastion host
@@ -119,6 +127,11 @@ func (scenario *scenarioUpgrade) test(t *testing.T) {
 	t.Logf("kubeone proxy is running on %s", proxyURL)
 
 	waitKubeOneNodesReady(t, k1)
+
+	client := dynamicClientRetriable(t, k1)
+	cpTests := newCloudProviderTests(client, scenario.infra.Provider())
+	cpTests.runWithCleanup(t)
+
 	sonobuoyRun(t, k1, sonobuoyConformanceLite, proxyURL)
 }
 

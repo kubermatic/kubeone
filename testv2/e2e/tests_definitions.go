@@ -624,6 +624,10 @@ type Infra struct {
 	labels    map[string]string
 }
 
+func (i Infra) Provider() string {
+	return i.environ["PROVIDER"]
+}
+
 type GeneratorType int
 
 const (

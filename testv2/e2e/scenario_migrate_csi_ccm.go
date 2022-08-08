@@ -73,6 +73,11 @@ func (scenario *scenarioMigrateCSIAndCCM) Run(t *testing.T) {
 	k1Old := install.kubeone(t)
 	waitKubeOneNodesReady(t, k1Old)
 
+	client := dynamicClientRetriable(t, k1Old)
+	cpTests := newCloudProviderTests(client, scenario.infra.Provider())
+	defer cpTests.cleanUp(t)
+	cpTests.run(t)
+
 	// change to new manifest
 	install.ManifestTemplatePath = scenario.NewManifestTemplatePath
 	k1New := install.kubeone(t)
@@ -80,26 +85,15 @@ func (scenario *scenarioMigrateCSIAndCCM) Run(t *testing.T) {
 	scenario.migrate(t, k1New, false)
 	waitKubeOneNodesReady(t, k1New)
 
-	var (
-		client ctrlruntimeclient.Client
-		err    error
-	)
-
-	err = retryFn(func() error {
-		client, err = k1New.DynamicClient()
-
-		return err
-	})
-	if err != nil {
-		t.Fatalf("initializing dynamic client: %v", err)
-	}
-
 	scenario.forceRolloutMachinedeployments(t, client)
-	waitMachinesHasNodes(t, k1New)
+	waitMachinesHasNodes(t, client)
 	waitKubeOneNodesReady(t, k1New)
 
 	scenario.migrate(t, k1New, true)
 	waitKubeOneNodesReady(t, k1New)
+
+	cpTests.validateStatefulSetReadiness(t)
+	cpTests.validateLoadBalancerReadiness(t)
 }
 
 func (scenario *scenarioMigrateCSIAndCCM) migrate(t *testing.T, k1 *kubeoneBin, complete bool) {

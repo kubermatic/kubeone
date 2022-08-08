@@ -108,5 +108,10 @@ func (scenario *scenarioConformance) test(t *testing.T) {
 	t.Logf("kubeone proxy is running on %s", proxyURL)
 
 	waitKubeOneNodesReady(t, k1)
+
+	client := dynamicClientRetriable(t, k1)
+	cpTests := newCloudProviderTests(client, scenario.infra.Provider())
+	cpTests.runWithCleanup(t)
+
 	sonobuoyRun(t, k1, sonobuoyConformance, proxyURL)
 }
