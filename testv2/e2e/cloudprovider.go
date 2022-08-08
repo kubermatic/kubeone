@@ -29,6 +29,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/apimachinery/pkg/util/wait"
 	ctrlruntimeclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -120,12 +121,12 @@ func (c *cloudProviderTests) createStatefulSetWithStorage(t *testing.T) {
 				Spec: corev1.PodSpec{
 					Containers: []corev1.Container{
 						{
-							Name:  "nginx",
-							Image: "nginx",
+							Name:  "echoserver",
+							Image: "k8s.gcr.io/echoserver:1.10",
 							Ports: []corev1.ContainerPort{
 								{
 									Name:          "web",
-									ContainerPort: 80,
+									ContainerPort: 8080,
 								},
 							},
 						},
@@ -227,9 +228,10 @@ func (c *cloudProviderTests) exposeStatefulSet(t *testing.T) {
 			Selector: cloudProviderPodLabels,
 			Ports: []corev1.ServicePort{
 				{
-					Name:     "web",
-					Protocol: corev1.ProtocolTCP,
-					Port:     80,
+					Name:       "web",
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(8080),
+					Port:       80,
 				},
 			},
 		},
