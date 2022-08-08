@@ -420,7 +420,7 @@ func pullProwJobName(in ...string) string {
 	return fmt.Sprintf("pull-kubeone-e2e-%s", strings.ReplaceAll(strings.Join(in, "-"), "_", "-"))
 }
 
-func waitMachinesHasNodes(t *testing.T, k1 *kubeoneBin) {
+func dynamicClientRetriable(t *testing.T, k1 *kubeoneBin) ctrlruntimeclient.Client {
 	var (
 		client ctrlruntimeclient.Client
 		err    error
@@ -435,6 +435,10 @@ func waitMachinesHasNodes(t *testing.T, k1 *kubeoneBin) {
 		t.Fatalf("initializing dynamic client: %s", err)
 	}
 
+	return client
+}
+
+func waitMachinesHasNodes(t *testing.T, client ctrlruntimeclient.Client) {
 	ctx := context.Background()
 
 	waitErr := wait.Poll(15*time.Second, 10*time.Minute, func() (bool, error) {
@@ -443,7 +447,7 @@ func waitMachinesHasNodes(t *testing.T, k1 *kubeoneBin) {
 			someMachinesLacksTheNode bool
 		)
 
-		err = retryFn(func() error {
+		err := retryFn(func() error {
 			return client.List(ctx, &machineList, ctrlruntimeclient.InNamespace(metav1.NamespaceSystem))
 		})
 
@@ -463,19 +467,7 @@ func waitMachinesHasNodes(t *testing.T, k1 *kubeoneBin) {
 }
 
 func waitKubeOneNodesReady(t *testing.T, k1 *kubeoneBin) {
-	var (
-		client ctrlruntimeclient.Client
-		err    error
-	)
-
-	err = retryFn(func() error {
-		client, err = k1.DynamicClient()
-
-		return err
-	})
-	if err != nil {
-		t.Fatalf("initializing dynamic client: %s", err)
-	}
+	client := dynamicClientRetriable(t, k1)
 
 	kubeoneManifest, err := k1.ClusterManifest()
 	if err != nil {
