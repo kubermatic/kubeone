@@ -26,8 +26,8 @@ import (
 
 var (
 	Infrastructures = map[string]Infra{
-		"aws_defaults": {
-			name: "aws_defaults",
+		"aws_default": {
+			name: "aws_default",
 			labels: map[string]string{
 				"preset-goproxy": "true",
 				"preset-aws":     "true",
@@ -194,6 +194,42 @@ var (
 				},
 			},
 		},
+		"digitalocean_centos": {
+			name: "digitalocean_centos",
+			labels: map[string]string{
+				"preset-goproxy":      "true",
+				"preset-digitalocean": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "digitalocean",
+			},
+			terraform: terraformBin{
+				path: "../../examples/terraform/digitalocean",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+					"control_plane_droplet_image=centos-7-x64",
+					"worker_os=centos",
+				},
+			},
+		},
+		"digitalocean_rockylinux": {
+			name: "digitalocean_rockylinux",
+			labels: map[string]string{
+				"preset-goproxy":      "true",
+				"preset-digitalocean": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "digitalocean",
+			},
+			terraform: terraformBin{
+				path: "../../examples/terraform/digitalocean",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+					"control_plane_droplet_image=rockylinux-8-x64",
+					"worker_os=rockylinux",
+				},
+			},
+		},
 		"equinixmetal_default": {
 			name: "equinixmetal_default",
 			labels: map[string]string{
@@ -207,19 +243,57 @@ var (
 				path: "../../examples/terraform/equinixmetal",
 			},
 		},
-		"hetzner_default": {
-			name: "hetzner_default",
+		"equinixmetal_centos": {
+			name: "equinixmetal_centos",
 			labels: map[string]string{
-				"preset-goproxy": "true",
-				"preset-hetzner": "true",
+				"preset-goproxy":       "true",
+				"preset-equinix-metal": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "hetzner",
+				"PROVIDER": "equinixmetal",
 			},
 			terraform: terraformBin{
-				path: "../../examples/terraform/hetzner",
+				path: "../../examples/terraform/equinixmetal",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
+					"control_plane_operating_system=centos_7",
+					"lb_operating_system=centos_7",
+					"worker_os=centos",
+				},
+			},
+		},
+		"equinixmetal_rockylinux": {
+			name: "equinixmetal_rockylinux",
+			labels: map[string]string{
+				"preset-goproxy":       "true",
+				"preset-equinix-metal": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "equinixmetal",
+			},
+			terraform: terraformBin{
+				path: "../../examples/terraform/equinixmetal",
+				vars: []string{
+					"control_plane_operating_system=rocky_8",
+					"lb_operating_system=rocky_8",
+					"worker_os=rockylinux",
+				},
+			},
+		},
+		"equinixmetal_flatcar": {
+			name: "equinixmetal_flatcar",
+			labels: map[string]string{
+				"preset-goproxy":       "true",
+				"preset-equinix-metal": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "equinixmetal",
+			},
+			terraform: terraformBin{
+				path: "../../examples/terraform/equinixmetal",
+				vars: []string{
+					"control_plane_operating_system=flatcar_stable",
+					"worker_os=flatcar",
+					"ssh_username=core",
 				},
 			},
 		},
@@ -239,6 +313,58 @@ var (
 				},
 			},
 		},
+		"hetzner_default": {
+			name: "hetzner_default",
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-hetzner": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "hetzner",
+			},
+			terraform: terraformBin{
+				path: "../../examples/terraform/hetzner",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+				},
+			},
+		},
+		"hetzner_centos": {
+			name: "hetzner_centos",
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-hetzner": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "hetzner",
+			},
+			terraform: terraformBin{
+				path: "../../examples/terraform/hetzner",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+					"image=centos-7",
+					"worker_os=centos",
+				},
+			},
+		},
+		"hetzner_rockylinux": {
+			name: "hetzner_rockylinux",
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-hetzner": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "hetzner",
+			},
+			terraform: terraformBin{
+				path: "../../examples/terraform/hetzner",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+					"image=rocky-8",
+					"worker_os=rockylinux",
+				},
+			},
+		},
 		"openstack_default": {
 			name: "openstack_default",
 			labels: map[string]string{
@@ -250,7 +376,63 @@ var (
 			},
 			terraform: terraformBin{
 				path:    "../../examples/terraform/openstack",
-				varFile: "testdata/openstack_vars.tfvars",
+				varFile: "testdata/openstack_ubuntu.tfvars",
+			},
+		},
+		"openstack_centos": {
+			name: "openstack_centos",
+			labels: map[string]string{
+				"preset-goproxy":   "true",
+				"preset-openstack": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "openstack",
+			},
+			terraform: terraformBin{
+				path:    "../../examples/terraform/openstack",
+				varFile: "testdata/openstack_centos.tfvars",
+			},
+		},
+		"openstack_rockylinux": {
+			name: "openstack_rockylinux",
+			labels: map[string]string{
+				"preset-goproxy":   "true",
+				"preset-openstack": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "openstack",
+			},
+			terraform: terraformBin{
+				path:    "../../examples/terraform/openstack",
+				varFile: "testdata/openstack_rockylinux.tfvars",
+			},
+		},
+		"openstack_rhel": {
+			name: "openstack_rhel",
+			labels: map[string]string{
+				"preset-goproxy":   "true",
+				"preset-openstack": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "openstack",
+			},
+			terraform: terraformBin{
+				path:    "../../examples/terraform/openstack",
+				varFile: "testdata/openstack_rhel.tfvars",
+			},
+		},
+		"openstack_flatcar": {
+			name: "openstack_flatcar",
+			labels: map[string]string{
+				"preset-goproxy":   "true",
+				"preset-openstack": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "openstack",
+			},
+			terraform: terraformBin{
+				path:    "../../examples/terraform/openstack",
+				varFile: "testdata/openstack_flatcar.tfvars",
 			},
 		},
 		// "vcd_default": {
@@ -411,9 +593,21 @@ var (
 			Name:                 "kube_proxy_ipvs",
 			ManifestTemplatePath: "testdata/kube_proxy_ipvs.yaml",
 		},
-		"legacy_machine_controller_userdata": &scenarioInstall{
-			Name:                 "legacy_machine_controller_userdata",
-			ManifestTemplatePath: "testdata/legacy_machine_controller_userdata.yaml",
+		"legacy_machine_controller_containerd": &scenarioInstall{
+			Name:                 "legacy_machine_controller_containerd",
+			ManifestTemplatePath: "testdata/legacy_machine_controller_containerd.yaml",
+		},
+		"legacy_machine_controller_docker": &scenarioInstall{
+			Name:                 "legacy_machine_controller_docker",
+			ManifestTemplatePath: "testdata/legacy_machine_controller_docker.yaml",
+		},
+		"legacy_machine_controller_containerd_external": &scenarioInstall{
+			Name:                 "legacy_machine_controller_containerd_external",
+			ManifestTemplatePath: "testdata/legacy_machine_controller_containerd_external.yaml",
+		},
+		"legacy_machine_controller_docker_external": &scenarioInstall{
+			Name:                 "legacy_machine_controller_docker_external",
+			ManifestTemplatePath: "testdata/legacy_machine_controller_docker_external.yaml",
 		},
 		"csi_ccm_migration": &scenarioMigrateCSIAndCCM{
 			Name:                    "csi_ccm_migration",
