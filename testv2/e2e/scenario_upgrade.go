@@ -94,6 +94,9 @@ func (scenario *scenarioUpgrade) upgrade(t *testing.T) {
 	// otherwise upgrade might get stuck due to pods not able to get
 	// rescheduled.
 	k1 := scenario.kubeone(t, scenario.versions[0])
+
+	waitKubeOneNodesReady(t, k1)
+
 	if err := k1.Apply(); err != nil {
 		t.Fatalf("kubeone apply failed: %v", err)
 	}
