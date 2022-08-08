@@ -47,14 +47,17 @@ func upgradeCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 	opts := &upgradeOpts{}
 	cmd := &cobra.Command{
 		Use:   "upgrade <manifest>",
-		Short: "Upgrade Kubernetes",
+		Short: "[DEPRECATED] Upgrade Kubernetes",
 		Long: heredoc.Doc(`
+			[DEPRECATED] This command is deprecated, please use kubeone apply instead.
+
 			Upgrade Kubernetes
 
 			This command takes KubeOne manifest which contains information about hosts and how the cluster should be provisioned.
 			It's possible to source information about hosts from Terraform output, using the '--tfjson' flag.
 		`),
 		Example:       `kubeone upgrade -m mycluster.yaml -t terraformoutput.json`,
+		Hidden:        true,
 		SilenceErrors: true,
 		RunE: func(_ *cobra.Command, _ []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
