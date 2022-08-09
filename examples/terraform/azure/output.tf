@@ -36,7 +36,7 @@ output "kubeone_hosts" {
       ssh_agent_socket     = var.ssh_agent_socket
       ssh_port             = var.ssh_port
       ssh_private_key_file = var.ssh_private_key_file
-      ssh_user             = var.ssh_username
+      ssh_user             = local.ssh_username
     }
   }
 }
@@ -54,7 +54,7 @@ output "kubeone_workers" {
           "k8c.io/operating-system-profile" = var.initial_machinedeployment_operating_system_profile
         }
         sshPublicKeys   = [file(var.ssh_public_key_file)]
-        operatingSystem = var.worker_os
+        operatingSystem = local.worker_os
         operatingSystemSpec = {
           distUpgradeOnBoot = false
         }

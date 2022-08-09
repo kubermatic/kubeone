@@ -23,6 +23,8 @@ locals {
   kubeapi_endpoint                   = var.disable_kubeapi_loadbalancer ? azurerm_network_interface.control_plane.0.private_ip_address : azurerm_public_ip.lbip.0.ip_address
   loadbalancer_count                 = var.disable_kubeapi_loadbalancer ? 0 : 1
   nic_address_pool_association_count = local.loadbalancer_count > 0 ? var.control_plane_vm_count : 0
+  worker_os                          = var.worker_os == "" ? var.image_references[var.os].worker_os : var.worker_os
+  ssh_username                       = var.ssh_username == "" ? var.image_references[var.os].ssh_username : var.ssh_username
 }
 
 provider "time" {
@@ -249,10 +251,10 @@ resource "azurerm_virtual_machine" "control_plane" {
   delete_data_disks_on_termination = true
 
   storage_image_reference {
-    publisher = "Canonical"
-    offer     = "0001-com-ubuntu-server-focal"
-    sku       = "20_04-lts"
-    version   = "latest"
+    publisher = var.image_references[var.os].publisher
+    offer     = var.image_references[var.os].offer
+    sku       = var.image_references[var.os].sku
+    version   = var.image_references[var.os].version
   }
 
   storage_os_disk {
@@ -264,7 +266,7 @@ resource "azurerm_virtual_machine" "control_plane" {
 
   os_profile {
     computer_name  = "${var.cluster_name}-cp-${count.index}"
-    admin_username = var.ssh_username
+    admin_username = local.ssh_username
   }
 
   os_profile_linux_config {
@@ -272,7 +274,7 @@ resource "azurerm_virtual_machine" "control_plane" {
 
     ssh_keys {
       key_data = file(var.ssh_public_key_file)
-      path     = "/home/${var.ssh_username}/.ssh/authorized_keys"
+      path     = "/home/${local.ssh_username}/.ssh/authorized_keys"
     }
   }
 
