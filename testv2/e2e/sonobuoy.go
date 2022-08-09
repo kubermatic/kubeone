@@ -44,7 +44,7 @@ type sonobuoyReportDetails struct {
 type sonobuoyMode string
 
 const (
-	sonobuoyConformance     sonobuoyMode = "conformance"
+	sonobuoyConformance     sonobuoyMode = "non-disruptive-conformance"
 	sonobuoyConformanceLite sonobuoyMode = "conformance-lite"
 )
 
