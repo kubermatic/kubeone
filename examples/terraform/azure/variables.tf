@@ -30,6 +30,19 @@ variable "apiserver_alternative_names" {
   type        = list(string)
 }
 
+variable "os" {
+  description = "Operating System to use for finding image reference and in MachineDeployment"
+
+  # valid choices are:
+  # * ubuntu
+  # * centos
+  # * rockylinux
+  # * rhel
+  # * flatcar
+  default = "ubuntu"
+  type    = string
+}
+
 variable "worker_os" {
   description = "OS to run on worker machines"
 
@@ -37,7 +50,9 @@ variable "worker_os" {
   # * ubuntu
   # * centos
   # * rockylinux
-  default = "ubuntu"
+  # * rhel
+  # * flatcar
+  default = ""
   type    = string
 }
 
@@ -55,7 +70,7 @@ variable "ssh_port" {
 
 variable "ssh_username" {
   description = "SSH user, used only in output"
-  default     = "ubuntu"
+  default     = ""
   type        = string
 }
 
@@ -83,6 +98,64 @@ variable "location" {
   description = "Azure datacenter to use"
   default     = "westeurope"
   type        = string
+}
+
+variable "image_references" {
+  description = "map with image references used for control plane"
+  type = map(object({
+    publisher    = string
+    offer        = string
+    sku          = string
+    version      = string
+    ssh_username = string
+    worker_os    = string
+  }))
+  default = {
+    ubuntu = {
+      publisher    = "Canonical"
+      offer        = "0001-com-ubuntu-server-focal"
+      sku          = "20_04-lts"
+      version      = "latest"
+      ssh_username = "ubuntu"
+      worker_os    = "ubuntu"
+    }
+
+    centos = {
+      publisher    = "OpenLogic"
+      offer        = "CentOS"
+      sku          = "7_9"
+      version      = "latest"
+      ssh_username = "centos"
+      worker_os    = "centos"
+    }
+
+    flatcar = {
+      publisher    = "kinvolk"
+      offer        = "flatcar-container-linux"
+      sku          = "stable"
+      version      = "2905.2.5"
+      ssh_username = "core"
+      worker_os    = "flatcar"
+    }
+
+    rhel = {
+      publisher    = "RedHat"
+      offer        = "rhel-byos"
+      sku          = "rhel-lvm85"
+      version      = "8.5.20220316"
+      ssh_username = "root"
+      worker_os    = "rhel"
+    }
+
+    rockylinux = {
+      publisher    = "procomputers"
+      offer        = "rocky-linux-8-5"
+      sku          = "rocky-linux-8-5"
+      version      = "8.5.20211118"
+      ssh_username = "rocky"
+      worker_os    = "rockylinux"
+    }
+  }
 }
 
 variable "control_plane_vm_size" {
