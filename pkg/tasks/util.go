@@ -91,6 +91,10 @@ func determineOS(s *state.State) error {
 		}
 
 		osrData := osrelease.Parse(string(buf))
+		if osrData.ID == "rocky" {
+			// we have to do special case
+			osrData.ID = "rockylinux"
+		}
 		s.Logger.Debugf("Operating system detected: %q", osrData.ID)
 
 		return node.SetOperatingSystem(kubeoneapi.OperatingSystemName(osrData.ID))
