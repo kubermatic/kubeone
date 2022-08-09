@@ -178,7 +178,7 @@ variable "ami_filters" {
 
     centos = {
       owners       = ["125523088429"]
-      image_name   = ["CentOS 8.* x86_64"]
+      image_name   = ["CentOS 7.* x86_64"]
       ssh_username = "centos"
       worker_os    = "centos"
     }
