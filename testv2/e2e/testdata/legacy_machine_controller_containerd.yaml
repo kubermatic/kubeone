@@ -9,3 +9,8 @@ containerRuntime:
 
 operatingSystemManager:
   deploy: false
+
+addons:
+  enable: true
+  addons:
+  - name: default-storage-class
