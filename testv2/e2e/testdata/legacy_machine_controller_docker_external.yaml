@@ -12,3 +12,8 @@ operatingSystemManager:
 
 cloudProvider:
   external: true
+
+addons:
+  enable: true
+  addons:
+  - name: default-storage-class
