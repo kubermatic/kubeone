@@ -353,7 +353,7 @@
     - name: aws_amzn
     - name: aws_centos
     - name: aws_default
-    - name: aws_flatcar
+    - name: aws_flatcar_cloud_init
     - name: aws_rhel
     - name: aws_rockylinux
     - name: azure_default
@@ -777,7 +777,7 @@
     - name: aws_amzn
     - name: aws_centos
     - name: aws_default
-    - name: aws_flatcar
+    - name: aws_flatcar_cloud_init
     - name: aws_rhel
     - name: aws_rockylinux
     - name: azure_default
@@ -805,7 +805,7 @@
     - name: aws_amzn
     - name: aws_centos
     - name: aws_default
-    - name: aws_flatcar
+    - name: aws_flatcar_cloud_init
     - name: aws_rhel
     - name: aws_rockylinux
     - name: azure_default

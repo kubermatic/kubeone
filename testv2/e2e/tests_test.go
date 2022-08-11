@@ -2018,8 +2018,8 @@ func TestAwsDefaultLegacyMachineControllerContainerdV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
-func TestAwsFlatcarLegacyMachineControllerContainerdV1_22_12(t *testing.T) {
-	infra := Infrastructures["aws_flatcar"]
+func TestAwsFlatcarCloudInitLegacyMachineControllerContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["aws_flatcar_cloud_init"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12")
@@ -4762,8 +4762,8 @@ func TestAwsDefaultLegacyMachineControllerContainerdExternalV1_22_12(t *testing.
 	scenario.Run(t)
 }
 
-func TestAwsFlatcarLegacyMachineControllerContainerdExternalV1_22_12(t *testing.T) {
-	infra := Infrastructures["aws_flatcar"]
+func TestAwsFlatcarCloudInitLegacyMachineControllerContainerdExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["aws_flatcar_cloud_init"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12")
@@ -4954,8 +4954,8 @@ func TestAwsDefaultLegacyMachineControllerContainerdExternalV1_23_9(t *testing.T
 	scenario.Run(t)
 }
 
-func TestAwsFlatcarLegacyMachineControllerContainerdExternalV1_23_9(t *testing.T) {
-	infra := Infrastructures["aws_flatcar"]
+func TestAwsFlatcarCloudInitLegacyMachineControllerContainerdExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_flatcar_cloud_init"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.23.9")

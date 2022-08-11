@@ -5572,13 +5572,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-legacy-machine-controller-containerd-v1.22.12
+  name: pull-kubeone-e2e-aws-flatcar-cloud-init-legacy-machine-controller-containerd-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarLegacyMachineControllerContainerdV1_22_12
+      - TestAwsFlatcarCloudInitLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -13154,13 +13154,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-legacy-machine-controller-containerd-external-v1.22.12
+  name: pull-kubeone-e2e-aws-flatcar-cloud-init-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarLegacyMachineControllerContainerdExternalV1_22_12
+      - TestAwsFlatcarCloudInitLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
         value: aws
@@ -13684,13 +13684,13 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-legacy-machine-controller-containerd-external-v1.23.9
+  name: pull-kubeone-e2e-aws-flatcar-cloud-init-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestAwsFlatcarLegacyMachineControllerContainerdExternalV1_23_9
+      - TestAwsFlatcarCloudInitLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
         value: aws

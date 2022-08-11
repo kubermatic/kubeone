@@ -124,6 +124,28 @@ var (
 				},
 			},
 		},
+		"aws_flatcar_cloud_init": {
+			name: "aws_flatcar_cloud_init",
+			environ: map[string]string{
+				"PROVIDER": "aws",
+			},
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-aws":     "true",
+			},
+			terraform: terraformBin{
+				path: "../../examples/terraform/aws",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+					"subnets_cidr=27",
+					"os=flatcar",
+					"ssh_username=core",
+					"bastion_user=core",
+					"provisioning_utility=cloud-init",
+					"worker_deploy_ssh_key=false",
+				},
+			},
+		},
 		"aws_amzn": {
 			name: "aws_amzn",
 			environ: map[string]string{
