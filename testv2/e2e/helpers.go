@@ -287,7 +287,7 @@ func renderManifest(t *testing.T, templatePath string, data manifestData) string
 }
 
 func waitForNodesReady(t *testing.T, client ctrlruntimeclient.Client, expectedNumberOfNodes int) error {
-	waitTimeout := 10 * time.Minute
+	waitTimeout := 20 * time.Minute
 	t.Logf("waiting maximum %s for %d nodes to be ready", waitTimeout, expectedNumberOfNodes)
 
 	return wait.Poll(5*time.Second, waitTimeout, func() (bool, error) {
