@@ -34,9 +34,18 @@ import (
 	ctrlruntimeclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-func supportsCloudProviderTests(provider string) bool {
+func supportsStorageTests(provider string) bool {
 	switch provider {
-	case "aws", "digitalocean", "hetzner", "gce", "openstack":
+	case "aws", "azure", "digitalocean", "gce", "hetzner", "nutanix", "openstack", "vsphere":
+		return true
+	default:
+		return false
+	}
+}
+
+func supportsLoadBalancerTests(provider string) bool {
+	switch provider {
+	case "aws", "azure", "digitalocean", "gce", "hetzner", "openstack":
 		return true
 	default:
 		return false
@@ -71,12 +80,6 @@ func newCloudProviderTests(client ctrlruntimeclient.Client, provider string) *cl
 }
 
 func (c *cloudProviderTests) run(t *testing.T) {
-	if !supportsCloudProviderTests(c.provider) {
-		t.Logf("Skipping cloud provider tests because cloud provider %q is not supported.", c.provider)
-
-		return
-	}
-
 	c.createStatefulSetWithStorage(t)
 	c.exposeStatefulSet(t)
 }
@@ -88,6 +91,12 @@ func (c *cloudProviderTests) runWithCleanup(t *testing.T) {
 }
 
 func (c *cloudProviderTests) createStatefulSetWithStorage(t *testing.T) {
+	if !supportsStorageTests(c.provider) {
+		t.Logf("Skipping cloud provider storage tests because cloud provider %q is not supported.", c.provider)
+
+		return
+	}
+
 	t.Log("Testing storage support...")
 
 	ns := &corev1.Namespace{
@@ -216,12 +225,21 @@ func (c *cloudProviderTests) validateStatefulSetReadiness(t *testing.T) {
 }
 
 func (c *cloudProviderTests) exposeStatefulSet(t *testing.T) {
+	if !supportsLoadBalancerTests(c.provider) {
+		t.Logf("Skipping cloud provider load balancer tests because cloud provider %q is not supported.", c.provider)
+
+		return
+	}
+
 	t.Log("Testing Load Balancer support...")
 
 	svc := &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      cpTestServiceName,
 			Namespace: cpTestNamespaceName,
+			Annotations: map[string]string{
+				"load-balancer.hetzner.cloud/location": "nbg1",
+			},
 		},
 		Spec: corev1.ServiceSpec{
 			Type:     corev1.ServiceTypeLoadBalancer,
@@ -235,11 +253,6 @@ func (c *cloudProviderTests) exposeStatefulSet(t *testing.T) {
 				},
 			},
 		},
-	}
-	if c.provider == "hetzner" {
-		svc.Annotations = map[string]string{
-			"load-balancer.hetzner.cloud/location": "nbg1",
-		}
 	}
 
 	err := retryFn(func() error {

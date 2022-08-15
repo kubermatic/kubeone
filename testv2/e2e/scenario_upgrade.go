@@ -76,6 +76,8 @@ func (scenario *scenarioUpgrade) kubeone(t *testing.T, version string) *kubeoneB
 		k1Opts = append(k1Opts, withKubeoneCredentials(*credentialsFlag))
 	}
 
+	k1Opts = append(k1Opts, withKubeoneUpgradeMachineDeployments)
+
 	return newKubeoneBin(
 		scenario.infra.terraform.path,
 		renderManifest(t,
@@ -129,13 +131,16 @@ func (scenario *scenarioUpgrade) test(t *testing.T) {
 	time.Sleep(5 * time.Second)
 	t.Logf("kubeone proxy is running on %s", proxyURL)
 
+	client := dynamicClientRetriable(t, k1)
+
+	waitMachinesHasNodes(t, client)
 	waitKubeOneNodesReady(t, k1)
 
-	client := dynamicClientRetriable(t, k1)
 	cpTests := newCloudProviderTests(client, scenario.infra.Provider())
 	cpTests.runWithCleanup(t)
 
-	sonobuoyRun(t, k1, sonobuoyConformanceLite, proxyURL)
+	// sonobuoyRun(t, k1, sonobuoyConformanceLite, proxyURL)
+	sonobuoyRun(t, k1, sonobuoyQuick, proxyURL)
 }
 
 func (scenario *scenarioUpgrade) GenerateTests(wr io.Writer, generatorType GeneratorType, cfg ProwConfig) error {

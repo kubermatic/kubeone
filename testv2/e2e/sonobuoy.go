@@ -46,6 +46,7 @@ type sonobuoyMode string
 const (
 	sonobuoyConformance     sonobuoyMode = "non-disruptive-conformance"
 	sonobuoyConformanceLite sonobuoyMode = "conformance-lite"
+	sonobuoyQuick           sonobuoyMode = "quick"
 )
 
 type sonobuoyBin struct {
