@@ -43,16 +43,23 @@ var (
 )
 
 type kubeoneBin struct {
-	bin             string
-	dir             string
-	tfjsonPath      string
-	manifestPath    string
-	credentialsPath string
-	verbose         bool
+	bin                       string
+	dir                       string
+	tfjsonPath                string
+	manifestPath              string
+	credentialsPath           string
+	verbose                   bool
+	upgradeMachineDeployments bool
 }
 
 func (k1 *kubeoneBin) Apply() error {
-	return k1.run("apply", "--auto-approve")
+	args := []string{"apply", "--auto-approve"}
+
+	if k1.upgradeMachineDeployments {
+		args = append(args, "--upgrade-machine-deployments")
+	}
+
+	return k1.run(args...)
 }
 
 func (k1 *kubeoneBin) Kubeconfig() ([]byte, error) {
