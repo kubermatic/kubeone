@@ -139,7 +139,8 @@ func (scenario *scenarioUpgrade) test(t *testing.T) {
 	cpTests := newCloudProviderTests(client, scenario.infra.Provider())
 	cpTests.runWithCleanup(t)
 
-	sonobuoyRun(t, k1, sonobuoyConformanceLite, proxyURL)
+	// sonobuoyRun(t, k1, sonobuoyConformanceLite, proxyURL)
+	sonobuoyRun(t, k1, sonobuoyQuick, proxyURL)
 }
 
 func (scenario *scenarioUpgrade) GenerateTests(wr io.Writer, generatorType GeneratorType, cfg ProwConfig) error {
