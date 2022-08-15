@@ -378,6 +378,8 @@ var (
 					"control_plane_operating_system=flatcar_stable",
 					"worker_os=flatcar",
 					"ssh_username=core",
+					"device_type=c3.small.x86", // Flatcar is not available on m3 instances
+					"metro=AM",                 // c3 instances are not available is AM metro
 				},
 			},
 		},
