@@ -133,7 +133,6 @@ var (
 					"os=flatcar",
 					"ssh_username=core",
 					"bastion_user=core",
-					"provisioning_utility=cloud-init",
 					"worker_deploy_ssh_key=false",
 				},
 			},

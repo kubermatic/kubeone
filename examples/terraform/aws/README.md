@@ -73,7 +73,7 @@ No modules.
 | <a name="input_initial_machinedeployment_spotinstances_max_price"></a> [initial\_machinedeployment\_spotinstances\_max\_price](#input\_initial\_machinedeployment\_spotinstances\_max\_price) | used to specify max spot instance price for initial machine-deployment | `number` | `0` | no |
 | <a name="input_internal_api_lb"></a> [internal\_api\_lb](#input\_internal\_api\_lb) | make kubernetes API loadbalancer internal (reachible only from inside the VPC) | `bool` | `false` | no |
 | <a name="input_os"></a> [os](#input\_os) | Operating System to use in AMI filtering and MachineDeployment | `string` | `"ubuntu"` | no |
-| <a name="input_provisioning_utility"></a> [provisioning\_utility](#input\_provisioning\_utility) | provisioning utility to be used for Flatcar worker nodes | `string` | `"ignition"` | no |
+| <a name="input_provisioning_utility"></a> [provisioning\_utility](#input\_provisioning\_utility) | provisioning utility to be used for Flatcar worker nodes | `string` | `""` | no |
 | <a name="input_ssh_agent_socket"></a> [ssh\_agent\_socket](#input\_ssh\_agent\_socket) | SSH Agent socket, default to grab from $SSH\_AUTH\_SOCK | `string` | `"env:SSH_AUTH_SOCK"` | no |
 | <a name="input_ssh_port"></a> [ssh\_port](#input\_ssh\_port) | SSH port to be used to provision instances | `number` | `22` | no |
 | <a name="input_ssh_private_key_file"></a> [ssh\_private\_key\_file](#input\_ssh\_private\_key\_file) | SSH private key file used to access instances | `string` | `""` | no |
