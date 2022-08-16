@@ -1,3 +1,17 @@
+# [v1.4.7](https://github.com/kubermatic/kubeone/releases/tag/v1.4.7) - 2022-08-16
+
+## Changes by Kind
+
+### Bug or Regression
+
+- Enable `nf_conntrack` (`nf_conntrack_ipv4`) module by default on all operating systems. This fixes an issue with pods unable to reach services running on a host on operating systems that are using the NFT backend. ([#2283](https://github.com/kubermatic/kubeone/pull/2283), [@xmudrii](https://github.com/xmudrii))
+
+### Terraform Integration
+
+#### AWS
+
+- Remove defaulting for the Flatcar provisioning utility in example Terraform configs for AWS (defaulted to cloud-init by machine-controller) ([#2286](https://github.com/kubermatic/kubeone/pull/2286), [@xmudrii](https://github.com/xmudrii))
+
 # [v1.4.6](https://github.com/kubermatic/kubeone/releases/tag/v1.4.6) - 2022-08-03
 
 ## Changes by Kind
