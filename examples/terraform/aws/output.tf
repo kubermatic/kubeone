@@ -91,7 +91,7 @@ output "kubeone_workers" {
         operatingSystem = local.worker_os
         operatingSystemSpec = {
           distUpgradeOnBoot   = false
-          provisioningUtility = "cloud-init"
+          provisioningUtility = ""
         }
         labels = {
           isSpotInstance = format("%t", var.initial_machinedeployment_spotinstances)
@@ -145,7 +145,7 @@ output "kubeone_workers" {
         operatingSystem = local.worker_os
         operatingSystemSpec = {
           distUpgradeOnBoot   = false
-          provisioningUtility = "cloud-init"
+          provisioningUtility = ""
         }
         labels = {
           isSpotInstance = format("%t", var.initial_machinedeployment_spotinstances)
@@ -199,7 +199,7 @@ output "kubeone_workers" {
         operatingSystem = local.worker_os
         operatingSystemSpec = {
           distUpgradeOnBoot   = false
-          provisioningUtility = "cloud-init"
+          provisioningUtility = ""
         }
         labels = {
           isSpotInstance = format("%t", var.initial_machinedeployment_spotinstances)
