@@ -147,7 +147,7 @@ cloudConfig: |
   [Workspace]
   server = "${VSPHERE_SERVER}"
   datacenter = "dc-1"
-  default-datastore = "HS-FreeNAS"
+  default-datastore = "esxi-2-ds"
   resourcepool-path = ""
   folder = "kubeone-e2e"
 

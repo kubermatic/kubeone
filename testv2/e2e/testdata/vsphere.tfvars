@@ -1,4 +1,4 @@
-datastore_name       = "HS-FreeNAS"
+datastore_name       = "esxi-2-ds"
 network_name         = "VM Network"
 folder_name          = "kubeone-e2e"
 control_plane_memory = 4096
