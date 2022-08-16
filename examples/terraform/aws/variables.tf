@@ -259,7 +259,7 @@ variable "control_plane_vm_count" {
 
 variable "provisioning_utility" {
   description = "provisioning utility to be used for Flatcar worker nodes"
-  default     = "ignition"
+  default     = ""
   type        = string
 }
 
