@@ -214,10 +214,6 @@ func withKubeoneCredentials(credentialsPath string) kubeoneBinOpts {
 	}
 }
 
-func withKubeoneUpgradeMachineDeployments(kb *kubeoneBin) {
-	kb.upgradeMachineDeployments = true
-}
-
 func newKubeoneBin(terraformPath, manifestPath string, opts ...kubeoneBinOpts) *kubeoneBin {
 	k1 := &kubeoneBin{
 		bin:          getKubeoneDistPath(),

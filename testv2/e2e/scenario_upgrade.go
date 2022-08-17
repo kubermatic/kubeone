@@ -18,12 +18,19 @@ package e2e
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"testing"
 	"text/template"
 	"time"
 
+	clusterv1alpha1 "github.com/kubermatic/machine-controller/pkg/apis/cluster/v1alpha1"
+	"github.com/kubermatic/machine-controller/pkg/jsonutil"
+	providerconfigtypes "github.com/kubermatic/machine-controller/pkg/providerconfig/types"
+
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	ctrlruntimeclient "sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/yaml"
 )
 
@@ -75,8 +82,6 @@ func (scenario *scenarioUpgrade) kubeone(t *testing.T, version string) *kubeoneB
 	if *credentialsFlag != "" {
 		k1Opts = append(k1Opts, withKubeoneCredentials(*credentialsFlag))
 	}
-
-	k1Opts = append(k1Opts, withKubeoneUpgradeMachineDeployments)
 
 	return newKubeoneBin(
 		scenario.infra.terraform.path,
@@ -133,6 +138,7 @@ func (scenario *scenarioUpgrade) test(t *testing.T) {
 
 	client := dynamicClientRetriable(t, k1)
 
+	scenario.upgradeMachineDeployments(t, client, scenario.versions[1])
 	waitMachinesHasNodes(t, client)
 	waitKubeOneNodesReady(t, k1)
 
@@ -224,6 +230,51 @@ func (scenario *scenarioUpgrade) GenerateTests(wr io.Writer, generatorType Gener
 	}
 
 	return fmt.Errorf("unknown generator type %d", generatorType)
+}
+
+func (scenario *scenarioUpgrade) upgradeMachineDeployments(t *testing.T, client ctrlruntimeclient.Client, kubeletVersion string) {
+	var machinedeployments clusterv1alpha1.MachineDeploymentList
+	if err := client.List(context.Background(), &machinedeployments, ctrlruntimeclient.InNamespace(metav1.NamespaceSystem)); err != nil {
+		t.Error(err)
+	}
+
+	for _, md := range machinedeployments.Items {
+		mdOld := md.DeepCopy()
+		mdNew := md
+
+		md.Spec.Template.Spec.Versions.Kubelet = kubeletVersion
+
+		providerConfig := providerconfigtypes.Config{}
+		if err := jsonutil.StrictUnmarshal(md.Spec.Template.Spec.ProviderSpec.Value.Raw, &providerConfig); err != nil {
+			t.Fatalf("decoding provider config: %v", err)
+		}
+
+		// KubeOne 1.4 has been using cloud-init for Flatcar, but it doesn't work
+		// with OSM, so we have to switch to Ignition.
+		if providerConfig.OperatingSystem == providerconfigtypes.OperatingSystemFlatcar {
+			var osConfig map[string]interface{}
+			if err := json.Unmarshal(providerConfig.OperatingSystemSpec.Raw, &osConfig); err != nil {
+				t.Fatalf("decoding operating system config: %v", err)
+			}
+
+			if v, ok := osConfig["provisioningUtility"]; ok && v == "cloud-init" {
+				osConfig["provisioningUtility"] = "ignition"
+
+				var err error
+				providerConfig.OperatingSystemSpec.Raw, err = json.Marshal(osConfig)
+				if err != nil {
+					t.Fatalf("updating operating system config: %v", err)
+				}
+			}
+		}
+
+		err := retryFn(func() error {
+			return client.Patch(context.Background(), &mdNew, ctrlruntimeclient.MergeFrom(mdOld))
+		})
+		if err != nil {
+			t.Fatalf("upgrading machineDeployment %q: %v", ctrlruntimeclient.ObjectKeyFromObject(&mdNew), err)
+		}
+	}
 }
 
 const upgradeScenarioTemplate = `
