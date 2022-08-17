@@ -92,7 +92,7 @@ No modules.
 | <a name="input_vcd_vdc_name"></a> [vcd\_vdc\_name](#input\_vcd\_vdc\_name) | Virtual datacenter name | `string` | n/a | yes |
 | <a name="input_worker_cpu_cores"></a> [worker\_cpu\_cores](#input\_worker\_cpu\_cores) | Number of cores per socket for the worker VMs | `number` | `1` | no |
 | <a name="input_worker_cpus"></a> [worker\_cpus](#input\_worker\_cpus) | Number of CPUs for the worker VMs | `number` | `2` | no |
-| <a name="input_worker_disk_size"></a> [worker\_disk\_size](#input\_worker\_disk\_size) | Disk size for worker VMs in MB | `number` | `25600` | no |
+| <a name="input_worker_disk_size_gb"></a> [worker\_disk\_size\_gb](#input\_worker\_disk\_size\_gb) | Disk size for worker VMs in GB | `number` | `25` | no |
 | <a name="input_worker_disk_storage_profile"></a> [worker\_disk\_storage\_profile](#input\_worker\_disk\_storage\_profile) | Name of storage profile to use for worker VMs attached disks | `string` | `""` | no |
 | <a name="input_worker_memory"></a> [worker\_memory](#input\_worker\_memory) | Memory size of each worker VM in MB | `number` | `4096` | no |
 | <a name="input_worker_os"></a> [worker\_os](#input\_worker\_os) | OS to run on worker machines | `string` | `"ubuntu"` | no |

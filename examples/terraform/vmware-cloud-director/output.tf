@@ -85,7 +85,7 @@ output "kubeone_workers" {
           cpus             = var.worker_cpus
           cpuCores         = var.worker_cpu_cores
           memoryMB         = var.worker_memory
-          diskSizeGB       = var.worker_disk_size
+          diskSizeGB       = var.worker_disk_size_gb
           storageProfile   = var.worker_disk_storage_profile
           ipAllocationMode = "DHCP"
           metadata = {
