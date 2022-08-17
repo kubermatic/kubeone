@@ -237,9 +237,9 @@ variable "worker_cpu_cores" {
   type        = number
 }
 
-variable "worker_disk_size" {
-  description = "Disk size for worker VMs in MB"
-  default     = 25600 # 25 GiB
+variable "worker_disk_size_gb" {
+  description = "Disk size for worker VMs in GB"
+  default     = 25
   type        = number
 }
 
