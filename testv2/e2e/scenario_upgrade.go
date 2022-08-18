@@ -34,7 +34,7 @@ import (
 	"sigs.k8s.io/yaml"
 )
 
-const kubeoneVersionToInit = "1.4.6"
+const kubeoneVersionToInit = "1.4.7"
 
 type scenarioUpgrade struct {
 	Name                 string
