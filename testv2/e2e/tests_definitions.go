@@ -189,6 +189,78 @@ var (
 				},
 			},
 		},
+		"azure_centos": {
+			name: "azure_centos",
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-azure":   "true",
+			},
+			environ: map[string]string{
+				"PROVIDER":     "azure",
+				"TEST_TIMEOUT": "120m",
+			},
+			terraform: terraformBin{
+				path: "../../examples/terraform/azure",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+					"os=centos",
+				},
+			},
+		},
+		"azure_flatcar": {
+			name: "azure_flatcar",
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-azure":   "true",
+			},
+			environ: map[string]string{
+				"PROVIDER":     "azure",
+				"TEST_TIMEOUT": "120m",
+			},
+			terraform: terraformBin{
+				path: "../../examples/terraform/azure",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+					"os=flatcar",
+				},
+			},
+		},
+		"azure_rhel": {
+			name: "azure_rhel",
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-azure":   "true",
+			},
+			environ: map[string]string{
+				"PROVIDER":     "azure",
+				"TEST_TIMEOUT": "120m",
+			},
+			terraform: terraformBin{
+				path: "../../examples/terraform/azure",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+					"os=rhel",
+				},
+			},
+		},
+		"azure_rockylinux": {
+			name: "azure_rockylinux",
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-azure":   "true",
+			},
+			environ: map[string]string{
+				"PROVIDER":     "azure",
+				"TEST_TIMEOUT": "120m",
+			},
+			terraform: terraformBin{
+				path: "../../examples/terraform/azure",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+					"os=rockylinux",
+				},
+			},
+		},
 		"digitalocean_default": {
 			name: "digitalocean_default",
 			labels: map[string]string{
