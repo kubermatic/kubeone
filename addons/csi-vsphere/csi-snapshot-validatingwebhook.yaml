@@ -4,7 +4,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: vsphere-csi-snapshot-webhook-certs
-  namespace: kube-system
+  namespace: vmware-system-csi
 data:
   "tls.crt": |
 {{ .Certificates.CSIWebhookCert | b64enc | indent 4 }}
@@ -15,7 +15,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: snapshot-validation-service
-  namespace: kube-system
+  namespace: vmware-system-csi
 spec:
   selector:
     app: snapshot-validation
@@ -38,7 +38,7 @@ webhooks:
         scope:       "*"
     clientConfig:
       service:
-        namespace: kube-system
+        namespace: vmware-system-csi
         name: "snapshot-validation-service"
         path: "/volumesnapshot"
       caBundle: |
@@ -52,7 +52,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: snapshot-validation-deployment
-  namespace: kube-system
+  namespace: vmware-system-csi
   labels:
     app: snapshot-validation
 spec:
