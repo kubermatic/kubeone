@@ -66,6 +66,38 @@ func TestAzureDefaultInstallContainerdV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestAzureCentosInstallContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarInstallContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRhelInstallContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxInstallContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
 func TestGceDefaultInstallContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["install_containerd"]
@@ -180,6 +212,38 @@ func TestAwsRockylinuxInstallContainerdV1_23_9(t *testing.T) {
 
 func TestAzureDefaultInstallContainerdV1_23_9(t *testing.T) {
 	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureCentosInstallContainerdV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarInstallContainerdV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureRhelInstallContainerdV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxInstallContainerdV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.23.9")
@@ -306,6 +370,38 @@ func TestAzureDefaultInstallContainerdV1_24_3(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestAzureCentosInstallContainerdV1_24_3(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarInstallContainerdV1_24_3(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAzureRhelInstallContainerdV1_24_3(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxInstallContainerdV1_24_3(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
 func TestGceDefaultInstallContainerdV1_24_3(t *testing.T) {
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["install_containerd"]
@@ -420,6 +516,38 @@ func TestAwsRockylinuxInstallDockerV1_22_12(t *testing.T) {
 
 func TestAzureDefaultInstallDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureCentosInstallDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarInstallDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRhelInstallDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxInstallDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["install_docker"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12")
@@ -546,6 +674,38 @@ func TestAzureDefaultInstallDockerV1_23_9(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestAzureCentosInstallDockerV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarInstallDockerV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureRhelInstallDockerV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxInstallDockerV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
 func TestGceDefaultInstallDockerV1_23_9(t *testing.T) {
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["install_docker"]
@@ -660,6 +820,38 @@ func TestAwsRockylinuxUpgradeContainerdFromV1_23_9_ToV1_24_3(t *testing.T) {
 
 func TestAzureDefaultUpgradeContainerdFromV1_23_9_ToV1_24_3(t *testing.T) {
 	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9", "v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAzureCentosUpgradeContainerdFromV1_23_9_ToV1_24_3(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9", "v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarUpgradeContainerdFromV1_23_9_ToV1_24_3(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9", "v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAzureRhelUpgradeContainerdFromV1_23_9_ToV1_24_3(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9", "v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxUpgradeContainerdFromV1_23_9_ToV1_24_3(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.23.9", "v1.24.3")
@@ -786,6 +978,38 @@ func TestAzureDefaultUpgradeContainerdFromV1_22_12_ToV1_23_9(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestAzureCentosUpgradeContainerdFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarUpgradeContainerdFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureRhelUpgradeContainerdFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxUpgradeContainerdFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
 func TestGceDefaultUpgradeContainerdFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["upgrade_containerd"]
@@ -900,6 +1124,38 @@ func TestAwsRockylinuxUpgradeContainerdFromV1_21_14_ToV1_22_12(t *testing.T) {
 
 func TestAzureDefaultUpgradeContainerdFromV1_21_14_ToV1_22_12(t *testing.T) {
 	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.14", "v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureCentosUpgradeContainerdFromV1_21_14_ToV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.14", "v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarUpgradeContainerdFromV1_21_14_ToV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.14", "v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRhelUpgradeContainerdFromV1_21_14_ToV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.14", "v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxUpgradeContainerdFromV1_21_14_ToV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.21.14", "v1.22.12")
@@ -1026,6 +1282,38 @@ func TestAzureDefaultUpgradeDockerFromV1_22_12_ToV1_23_9(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestAzureCentosUpgradeDockerFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["upgrade_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarUpgradeDockerFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["upgrade_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureRhelUpgradeDockerFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["upgrade_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxUpgradeDockerFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
+	scenario := Scenarios["upgrade_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
 func TestGceDefaultUpgradeDockerFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["upgrade_docker"]
@@ -1140,6 +1428,38 @@ func TestAwsRockylinuxUpgradeDockerFromV1_21_14_ToV1_22_12(t *testing.T) {
 
 func TestAzureDefaultUpgradeDockerFromV1_21_14_ToV1_22_12(t *testing.T) {
 	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["upgrade_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.14", "v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureCentosUpgradeDockerFromV1_21_14_ToV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["upgrade_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.14", "v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarUpgradeDockerFromV1_21_14_ToV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["upgrade_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.14", "v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRhelUpgradeDockerFromV1_21_14_ToV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["upgrade_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.14", "v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxUpgradeDockerFromV1_21_14_ToV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["upgrade_docker"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.21.14", "v1.22.12")
@@ -1266,6 +1586,38 @@ func TestAzureDefaultCalicoContainerdV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestAzureCentosCalicoContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["calico_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarCalicoContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["calico_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRhelCalicoContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["calico_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxCalicoContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
+	scenario := Scenarios["calico_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
 func TestGceDefaultCalicoContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["calico_containerd"]
@@ -1380,6 +1732,38 @@ func TestAwsRockylinuxCalicoDockerV1_22_12(t *testing.T) {
 
 func TestAzureDefaultCalicoDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["calico_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureCentosCalicoDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["calico_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarCalicoDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["calico_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRhelCalicoDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["calico_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxCalicoDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["calico_docker"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12")
@@ -1506,6 +1890,38 @@ func TestAzureDefaultWeaveContainerdV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestAzureCentosWeaveContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["weave_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarWeaveContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["weave_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRhelWeaveContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["weave_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxWeaveContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
+	scenario := Scenarios["weave_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
 func TestGceDefaultWeaveContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["weave_containerd"]
@@ -1620,6 +2036,38 @@ func TestAwsRockylinuxWeaveDockerV1_22_12(t *testing.T) {
 
 func TestAzureDefaultWeaveDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["weave_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureCentosWeaveDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["weave_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarWeaveDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["weave_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRhelWeaveDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["weave_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxWeaveDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["weave_docker"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12")
@@ -1746,6 +2194,38 @@ func TestAzureDefaultCiliumContainerdV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestAzureCentosCiliumContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["cilium_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarCiliumContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["cilium_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRhelCiliumContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["cilium_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxCiliumContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
+	scenario := Scenarios["cilium_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
 func TestGceDefaultCiliumContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["cilium_containerd"]
@@ -1860,6 +2340,38 @@ func TestAwsRockylinuxCiliumDockerV1_22_12(t *testing.T) {
 
 func TestAzureDefaultCiliumDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["cilium_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureCentosCiliumDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["cilium_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarCiliumDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["cilium_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRhelCiliumDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["cilium_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxCiliumDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["cilium_docker"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12")
@@ -2050,6 +2562,38 @@ func TestAzureDefaultLegacyMachineControllerContainerdV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestAzureCentosLegacyMachineControllerContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["legacy_machine_controller_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarLegacyMachineControllerContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRhelLegacyMachineControllerContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["legacy_machine_controller_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxLegacyMachineControllerContainerdV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
+	scenario := Scenarios["legacy_machine_controller_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
 func TestGceDefaultLegacyMachineControllerContainerdV1_22_12(t *testing.T) {
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
@@ -2164,6 +2708,38 @@ func TestAwsRockylinuxLegacyMachineControllerContainerdV1_23_9(t *testing.T) {
 
 func TestAzureDefaultLegacyMachineControllerContainerdV1_23_9(t *testing.T) {
 	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["legacy_machine_controller_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureCentosLegacyMachineControllerContainerdV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["legacy_machine_controller_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarLegacyMachineControllerContainerdV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureRhelLegacyMachineControllerContainerdV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["legacy_machine_controller_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxLegacyMachineControllerContainerdV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.23.9")
@@ -2290,6 +2866,38 @@ func TestAzureDefaultLegacyMachineControllerContainerdV1_24_3(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestAzureCentosLegacyMachineControllerContainerdV1_24_3(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["legacy_machine_controller_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarLegacyMachineControllerContainerdV1_24_3(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAzureRhelLegacyMachineControllerContainerdV1_24_3(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["legacy_machine_controller_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxLegacyMachineControllerContainerdV1_24_3(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
+	scenario := Scenarios["legacy_machine_controller_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
 func TestGceDefaultLegacyMachineControllerContainerdV1_24_3(t *testing.T) {
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
@@ -2410,6 +3018,38 @@ func TestAzureDefaultLegacyMachineControllerDockerV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestAzureCentosLegacyMachineControllerDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["legacy_machine_controller_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarLegacyMachineControllerDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRhelLegacyMachineControllerDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["legacy_machine_controller_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxLegacyMachineControllerDockerV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
+	scenario := Scenarios["legacy_machine_controller_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
 func TestGceDefaultLegacyMachineControllerDockerV1_22_12(t *testing.T) {
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["legacy_machine_controller_docker"]
@@ -2524,6 +3164,38 @@ func TestAwsRockylinuxLegacyMachineControllerDockerV1_23_9(t *testing.T) {
 
 func TestAzureDefaultLegacyMachineControllerDockerV1_23_9(t *testing.T) {
 	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["legacy_machine_controller_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureCentosLegacyMachineControllerDockerV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["legacy_machine_controller_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarLegacyMachineControllerDockerV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureRhelLegacyMachineControllerDockerV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["legacy_machine_controller_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxLegacyMachineControllerDockerV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_docker"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.23.9")
@@ -2658,6 +3330,38 @@ func TestAzureDefaultCsiCcmMigrationV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestAzureCentosCsiCcmMigrationV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarCsiCcmMigrationV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRhelCsiCcmMigrationV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxCsiCcmMigrationV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
 func TestVsphereDefaultCsiCcmMigrationV1_22_12(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["csi_ccm_migration"]
@@ -2724,6 +3428,38 @@ func TestOpenstackFlatcarCsiCcmMigrationV1_23_9(t *testing.T) {
 
 func TestAzureDefaultCsiCcmMigrationV1_23_9(t *testing.T) {
 	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureCentosCsiCcmMigrationV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarCsiCcmMigrationV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureRhelCsiCcmMigrationV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxCsiCcmMigrationV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.23.9")
@@ -2802,6 +3538,38 @@ func TestAzureDefaultCsiCcmMigrationV1_24_3(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestAzureCentosCsiCcmMigrationV1_24_3(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarCsiCcmMigrationV1_24_3(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAzureRhelCsiCcmMigrationV1_24_3(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxCsiCcmMigrationV1_24_3(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
 func TestVsphereDefaultCsiCcmMigrationV1_24_3(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["csi_ccm_migration"]
@@ -2868,6 +3636,38 @@ func TestAwsRockylinuxInstallContainerdExternalV1_22_12(t *testing.T) {
 
 func TestAzureDefaultInstallContainerdExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureCentosInstallContainerdExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarInstallContainerdExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRhelInstallContainerdExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxInstallContainerdExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12")
@@ -3066,6 +3866,38 @@ func TestAzureDefaultInstallContainerdExternalV1_23_9(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestAzureCentosInstallContainerdExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarInstallContainerdExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureRhelInstallContainerdExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxInstallContainerdExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
 func TestDigitaloceanDefaultInstallContainerdExternalV1_23_9(t *testing.T) {
 	infra := Infrastructures["digitalocean_default"]
 	scenario := Scenarios["install_containerd_external"]
@@ -3252,6 +4084,38 @@ func TestAwsRockylinuxInstallContainerdExternalV1_24_3(t *testing.T) {
 
 func TestAzureDefaultInstallContainerdExternalV1_24_3(t *testing.T) {
 	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAzureCentosInstallContainerdExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarInstallContainerdExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAzureRhelInstallContainerdExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxInstallContainerdExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.24.3")
@@ -3450,6 +4314,38 @@ func TestAzureDefaultInstallDockerExternalV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestAzureCentosInstallDockerExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarInstallDockerExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRhelInstallDockerExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxInstallDockerExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
 func TestDigitaloceanDefaultInstallDockerExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["digitalocean_default"]
 	scenario := Scenarios["install_docker_external"]
@@ -3636,6 +4532,38 @@ func TestAwsRockylinuxInstallDockerExternalV1_23_9(t *testing.T) {
 
 func TestAzureDefaultInstallDockerExternalV1_23_9(t *testing.T) {
 	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureCentosInstallDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarInstallDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureRhelInstallDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxInstallDockerExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["install_docker_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.23.9")
@@ -3834,6 +4762,38 @@ func TestAzureDefaultUpgradeContainerdExternalFromV1_21_14_ToV1_22_12(t *testing
 	scenario.Run(t)
 }
 
+func TestAzureCentosUpgradeContainerdExternalFromV1_21_14_ToV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.14", "v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarUpgradeContainerdExternalFromV1_21_14_ToV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.14", "v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRhelUpgradeContainerdExternalFromV1_21_14_ToV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.14", "v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxUpgradeContainerdExternalFromV1_21_14_ToV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.14", "v1.22.12")
+	scenario.Run(t)
+}
+
 func TestDigitaloceanDefaultUpgradeContainerdExternalFromV1_21_14_ToV1_22_12(t *testing.T) {
 	infra := Infrastructures["digitalocean_default"]
 	scenario := Scenarios["upgrade_containerd_external"]
@@ -4020,6 +4980,38 @@ func TestAwsRockylinuxUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing
 
 func TestAzureDefaultUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureCentosUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureRhelUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxUpgradeContainerdExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12", "v1.23.9")
@@ -4218,6 +5210,38 @@ func TestAzureDefaultUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T
 	scenario.Run(t)
 }
 
+func TestAzureCentosUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9", "v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9", "v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAzureRhelUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9", "v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9", "v1.24.3")
+	scenario.Run(t)
+}
+
 func TestDigitaloceanDefaultUpgradeContainerdExternalFromV1_23_9_ToV1_24_3(t *testing.T) {
 	infra := Infrastructures["digitalocean_default"]
 	scenario := Scenarios["upgrade_containerd_external"]
@@ -4404,6 +5428,38 @@ func TestAwsRockylinuxUpgradeDockerExternalFromV1_21_14_ToV1_22_12(t *testing.T)
 
 func TestAzureDefaultUpgradeDockerExternalFromV1_21_14_ToV1_22_12(t *testing.T) {
 	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["upgrade_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.14", "v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureCentosUpgradeDockerExternalFromV1_21_14_ToV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["upgrade_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.14", "v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarUpgradeDockerExternalFromV1_21_14_ToV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["upgrade_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.14", "v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRhelUpgradeDockerExternalFromV1_21_14_ToV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["upgrade_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.21.14", "v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxUpgradeDockerExternalFromV1_21_14_ToV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["upgrade_docker_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.21.14", "v1.22.12")
@@ -4602,6 +5658,38 @@ func TestAzureDefaultUpgradeDockerExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestAzureCentosUpgradeDockerExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["upgrade_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarUpgradeDockerExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["upgrade_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureRhelUpgradeDockerExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["upgrade_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxUpgradeDockerExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
+	scenario := Scenarios["upgrade_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12", "v1.23.9")
+	scenario.Run(t)
+}
+
 func TestDigitaloceanDefaultUpgradeDockerExternalFromV1_22_12_ToV1_23_9(t *testing.T) {
 	infra := Infrastructures["digitalocean_default"]
 	scenario := Scenarios["upgrade_docker_external"]
@@ -4788,6 +5876,38 @@ func TestAwsRockylinuxLegacyMachineControllerContainerdExternalV1_22_12(t *testi
 
 func TestAzureDefaultLegacyMachineControllerContainerdExternalV1_22_12(t *testing.T) {
 	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["legacy_machine_controller_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureCentosLegacyMachineControllerContainerdExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["legacy_machine_controller_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarLegacyMachineControllerContainerdExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRhelLegacyMachineControllerContainerdExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["legacy_machine_controller_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxLegacyMachineControllerContainerdExternalV1_22_12(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12")
@@ -4986,6 +6106,38 @@ func TestAzureDefaultLegacyMachineControllerContainerdExternalV1_23_9(t *testing
 	scenario.Run(t)
 }
 
+func TestAzureCentosLegacyMachineControllerContainerdExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["legacy_machine_controller_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarLegacyMachineControllerContainerdExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureRhelLegacyMachineControllerContainerdExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["legacy_machine_controller_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxLegacyMachineControllerContainerdExternalV1_23_9(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
+	scenario := Scenarios["legacy_machine_controller_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
 func TestDigitaloceanDefaultLegacyMachineControllerContainerdExternalV1_23_9(t *testing.T) {
 	infra := Infrastructures["digitalocean_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
@@ -5172,6 +6324,38 @@ func TestAwsRockylinuxLegacyMachineControllerContainerdExternalV1_24_3(t *testin
 
 func TestAzureDefaultLegacyMachineControllerContainerdExternalV1_24_3(t *testing.T) {
 	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["legacy_machine_controller_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAzureCentosLegacyMachineControllerContainerdExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["azure_centos"]
+	scenario := Scenarios["legacy_machine_controller_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAzureFlatcarLegacyMachineControllerContainerdExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAzureRhelLegacyMachineControllerContainerdExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["legacy_machine_controller_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAzureRockylinuxLegacyMachineControllerContainerdExternalV1_24_3(t *testing.T) {
+	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.24.3")
