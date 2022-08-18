@@ -11,7 +11,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: snapshot-controller
-  namespace: kube-system
+  namespace: vmware-system-csi
 
 ---
 kind: ClusterRole
@@ -58,7 +58,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: snapshot-controller
-    namespace: kube-system
+    namespace: vmware-system-csi
 roleRef:
   kind: ClusterRole
   name: snapshot-controller-runner
@@ -69,7 +69,7 @@ kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: snapshot-controller-leaderelection
-  namespace: kube-system
+  namespace: vmware-system-csi
 rules:
 - apiGroups: ["coordination.k8s.io"]
   resources: ["leases"]
@@ -80,7 +80,7 @@ kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: snapshot-controller-leaderelection
-  namespace: kube-system
+  namespace: vmware-system-csi
 subjects:
   - kind: ServiceAccount
     name: snapshot-controller

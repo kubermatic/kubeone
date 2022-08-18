@@ -2,7 +2,7 @@ apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: vsphere-csi-webhook
-  namespace: kube-system
+  namespace: vmware-system-csi
 spec:
   maxUnavailable: 1
   selector:
@@ -13,7 +13,7 @@ apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: vsphere-csi-controller
-  namespace: kube-system
+  namespace: vmware-system-csi
 spec:
   maxUnavailable: 1
   selector:
