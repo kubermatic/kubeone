@@ -358,7 +358,7 @@ func (c *cloudProviderTests) cleanUp(t *testing.T) {
 		t.Fatalf("error waiting for load balancer service to get removed: %v", err)
 	}
 
-	t.Log("Cleaning up StatefulSet and PVC...")
+	t.Log("Cleaning up StatefulSet...")
 
 	err = wait.Poll(cpTestPollPeriod, cpTestTimeout, func() (done bool, err error) {
 		currentSts := &appsv1.StatefulSet{}
@@ -390,6 +390,39 @@ func (c *cloudProviderTests) cleanUp(t *testing.T) {
 	})
 	if err != nil {
 		t.Fatalf("error waiting for statefulset to get removed: %v", err)
+	}
+
+	t.Log("Cleaning up PVC...")
+
+	err = wait.Poll(cpTestPollPeriod, cpTestTimeout, func() (done bool, err error) {
+		var pvcs corev1.PersistentVolumeClaimList
+		if err := c.client.List(c.ctx, &pvcs, ctrlruntimeclient.InNamespace(cpTestNamespaceName)); err != nil {
+			t.Error(err)
+		}
+
+		if len(pvcs.Items) == 0 {
+			return true, nil
+		}
+
+		for _, pvc := range pvcs.Items {
+			p := pvc
+			if p.ObjectMeta.DeletionTimestamp != nil {
+				continue
+			}
+
+			if err := c.client.Delete(c.ctx, &p); err != nil {
+				// Make error transient so that we try to remove it again and
+				// not leak any resources
+				t.Logf("error removing pvc %q: %v", p.Name, err)
+
+				return false, nil
+			}
+		}
+
+		return false, nil
+	})
+	if err != nil {
+		t.Fatalf("error waiting for pvc to get removed: %v", err)
 	}
 
 	t.Log("Cleaning up successful...")
