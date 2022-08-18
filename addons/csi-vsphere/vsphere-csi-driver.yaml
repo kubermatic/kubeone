@@ -1,10 +1,17 @@
-# Source: https://github.com/kubernetes-sigs/vsphere-csi-driver/blob/v2.5.1/manifests/vanilla/vsphere-csi-driver.yaml
+# Source: https://github.com/kubernetes-sigs/vsphere-csi-driver/blob/v2.6.0/manifests/vanilla/namespace.yaml
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: vmware-system-csi
+
+# Source: https://github.com/kubernetes-sigs/vsphere-csi-driver/blob/v2.6.0/manifests/vanilla/vsphere-csi-driver.yaml
 ---
 apiVersion: v1
 kind: Secret
 metadata:
   name: vsphere-csi-config-secret
-  namespace: kube-system
+  namespace: vmware-system-csi
 data:
   csi-vsphere.conf: |
 {{ .Config.CloudProvider.CSIConfig | b64enc | indent 4 }}
@@ -21,7 +28,7 @@ kind: ServiceAccount
 apiVersion: v1
 metadata:
   name: vsphere-csi-controller
-  namespace: kube-system
+  namespace: vmware-system-csi
 ---
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
@@ -90,7 +97,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: vsphere-csi-controller
-    namespace: kube-system
+    namespace: vmware-system-csi
 roleRef:
   kind: ClusterRole
   name: vsphere-csi-controller-role
@@ -100,7 +107,7 @@ kind: ServiceAccount
 apiVersion: v1
 metadata:
   name: vsphere-csi-node
-  namespace: kube-system
+  namespace: vmware-system-csi
 ---
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
@@ -121,7 +128,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: vsphere-csi-node
-    namespace: kube-system
+    namespace: vmware-system-csi
 roleRef:
   kind: ClusterRole
   name: vsphere-csi-node-cluster-role
@@ -131,7 +138,7 @@ kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: vsphere-csi-node-role
-  namespace: kube-system
+  namespace: vmware-system-csi
 rules:
   - apiGroups: [""]
     resources: ["configmaps"]
@@ -141,11 +148,11 @@ kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: vsphere-csi-node-binding
-  namespace: kube-system
+  namespace: vmware-system-csi
 subjects:
   - kind: ServiceAccount
     name: vsphere-csi-node
-    namespace: kube-system
+    namespace: vmware-system-csi
 roleRef:
   kind: Role
   name: vsphere-csi-node-role
@@ -158,8 +165,8 @@ data:
   "online-volume-extend": "true"
   "trigger-csi-fullsync": "false"
   "async-query-volume": "true"
-  "improved-csi-idempotency": "true"
-  "improved-volume-topology": "true"
+  "improved-csi-idempotency": "false"
+  "improved-volume-topology": "false  "
   "block-volume-snapshot": "true"
   "csi-windows-support": "false"
   "use-csinode-id": "true"
@@ -171,13 +178,13 @@ data:
 kind: ConfigMap
 metadata:
   name: internal-feature-states.csi.vsphere.vmware.com
-  namespace: kube-system
+  namespace: vmware-system-csi
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: vsphere-csi-controller
-  namespace: kube-system
+  namespace: vmware-system-csi
   labels:
     app: vsphere-csi-controller
 spec:
@@ -197,7 +204,7 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: vsphere-csi-controller
-  namespace: kube-system
+  namespace: vmware-system-csi
   labels:
     app: vsphere-csi-controller
 spec:
@@ -428,7 +435,7 @@ kind: DaemonSet
 apiVersion: apps/v1
 metadata:
   name: vsphere-csi-node
-  namespace: kube-system
+  namespace: vmware-system-csi
 spec:
   selector:
     matchLabels:
