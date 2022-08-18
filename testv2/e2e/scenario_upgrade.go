@@ -34,7 +34,7 @@ import (
 	"sigs.k8s.io/yaml"
 )
 
-const kubeoneVersionToInit = "1.4.6"
+const kubeoneVersionToInit = "1.4.7"
 
 type scenarioUpgrade struct {
 	Name                 string
@@ -242,10 +242,10 @@ func (scenario *scenarioUpgrade) upgradeMachineDeployments(t *testing.T, client 
 		mdOld := md.DeepCopy()
 		mdNew := md
 
-		md.Spec.Template.Spec.Versions.Kubelet = kubeletVersion
+		mdNew.Spec.Template.Spec.Versions.Kubelet = kubeletVersion
 
 		providerConfig := providerconfigtypes.Config{}
-		if err := jsonutil.StrictUnmarshal(md.Spec.Template.Spec.ProviderSpec.Value.Raw, &providerConfig); err != nil {
+		if err := jsonutil.StrictUnmarshal(mdNew.Spec.Template.Spec.ProviderSpec.Value.Raw, &providerConfig); err != nil {
 			t.Fatalf("decoding provider config: %v", err)
 		}
 
@@ -265,6 +265,13 @@ func (scenario *scenarioUpgrade) upgradeMachineDeployments(t *testing.T, client 
 				if err != nil {
 					t.Fatalf("updating operating system config: %v", err)
 				}
+
+				b, err := json.Marshal(providerConfig)
+				if err != nil {
+					t.Fatalf("marshalling new provider config")
+				}
+
+				mdNew.Spec.Template.Spec.ProviderSpec.Value.Raw = b
 			}
 		}
 
