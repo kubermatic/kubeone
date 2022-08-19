@@ -103,55 +103,89 @@ variable "location" {
 variable "image_references" {
   description = "map with image references used for control plane"
   type = map(object({
-    publisher    = string
-    offer        = string
-    sku          = string
-    version      = string
+    image = object({
+      publisher = string
+      offer     = string
+      sku       = string
+      version   = string
+    })
+    plan = list(object({
+      name      = string
+      publisher = string
+      product   = string
+    }))
     ssh_username = string
     worker_os    = string
   }))
   default = {
     ubuntu = {
-      publisher    = "Canonical"
-      offer        = "0001-com-ubuntu-server-focal"
-      sku          = "20_04-lts"
-      version      = "latest"
+      image = {
+        publisher = "Canonical"
+        offer     = "0001-com-ubuntu-server-focal"
+        sku       = "20_04-lts"
+        version   = "latest"
+      }
+      plan         = []
       ssh_username = "ubuntu"
       worker_os    = "ubuntu"
     }
 
     centos = {
-      publisher    = "OpenLogic"
-      offer        = "CentOS"
-      sku          = "7_9"
-      version      = "latest"
+      image = {
+        publisher = "OpenLogic"
+        offer     = "CentOS"
+        sku       = "7_9"
+        version   = "latest"
+      }
+      plan         = []
       ssh_username = "centos"
       worker_os    = "centos"
     }
 
     flatcar = {
-      publisher    = "kinvolk"
-      offer        = "flatcar-container-linux"
-      sku          = "stable"
-      version      = "2905.2.5"
+      image = {
+        publisher = "kinvolk"
+        offer     = "flatcar-container-linux"
+        sku       = "stable"
+        version   = "2905.2.5"
+      }
+      plan = [{
+        name      = "stable"
+        publisher = "kinvolk"
+        product   = "flatcar-container-linux"
+      }]
       ssh_username = "core"
       worker_os    = "flatcar"
     }
 
     rhel = {
-      publisher    = "RedHat"
-      offer        = "rhel-byos"
-      sku          = "rhel-lvm85"
-      version      = "8.5.20220316"
-      ssh_username = "root"
+      image = {
+        publisher = "RedHat"
+        offer     = "rhel-byos"
+        sku       = "rhel-lvm85"
+        version   = "8.5.20220316"
+      }
+      plan = [{
+        name      = "rhel-lvm85"
+        publisher = "redhat"
+        product   = "rhel-byos"
+      }]
+      ssh_username = "rhel-user"
       worker_os    = "rhel"
     }
 
     rockylinux = {
-      publisher    = "procomputers"
-      offer        = "rocky-linux-8-5"
-      sku          = "rocky-linux-8-5"
-      version      = "8.5.20211118"
+      image = {
+        publisher = "procomputers"
+        offer     = "rocky-linux-8-5"
+        sku       = "rocky-linux-8-5"
+        version   = "8.5.20211118"
+      }
+      plan = [{
+        name      = "rocky-linux-8-5"
+        publisher = "procomputers"
+        product   = "rocky-linux-8-5"
+      }]
       ssh_username = "rocky"
       worker_os    = "rockylinux"
     }
