@@ -70,6 +70,7 @@ type templateData struct {
 	CCMClusterName                           string
 	CSIMigration                             bool
 	CSIMigrationFeatureGates                 string
+	CalicoIptablesBackend                    string
 	MachineControllerCredentialsEnvVars      string
 	MachineControllerCredentialsHash         string
 	OperatingSystemManagerEnabled            bool
@@ -222,6 +223,15 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		}
 	}
 
+	calicoIptablesBackend := "Auto"
+	for _, cp := range s.LiveCluster.ControlPlane {
+		if cp.Config.OperatingSystem == kubeoneapi.OperatingSystemNameFlatcar {
+			calicoIptablesBackend = "NFT"
+
+			break
+		}
+	}
+
 	data := templateData{
 		Config: s.Cluster,
 		Certificates: map[string]string{
@@ -237,6 +247,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		CCMClusterName:                        s.LiveCluster.CCMClusterName,
 		CSIMigration:                          csiMigration,
 		CSIMigrationFeatureGates:              csiMigrationFeatureGates,
+		CalicoIptablesBackend:                 calicoIptablesBackend,
 		MachineControllerCredentialsEnvVars:   string(credsEnvVarsMC),
 		MachineControllerCredentialsHash:      mcCredsHash,
 		OperatingSystemManagerEnabled:         s.Cluster.OperatingSystemManagerEnabled(),
