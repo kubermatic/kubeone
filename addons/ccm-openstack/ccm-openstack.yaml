@@ -206,6 +206,9 @@ spec:
             - mountPath: /etc/ssl/certs
               name: ca-certs
               readOnly: true
+            - mountPath: /etc/pki
+              name: pki-certs
+              readOnly: true
             - mountPath: /usr/share/ca-certificates
               name: usr-ca-certs
               readOnly: true
@@ -227,6 +230,10 @@ spec:
       - name: ca-certs
         hostPath:
           path: /etc/ssl/certs
+          type: DirectoryOrCreate
+      - name: pki-certs
+        hostPath:
+          path: /etc/pki
           type: DirectoryOrCreate
       - hostPath:
           path: /usr/share/ca-certificates
