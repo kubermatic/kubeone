@@ -30,7 +30,7 @@ source /etc/kubeone/proxy-env
 {{ template "sysctl-k8s" . }}
 {{ template "journald-config" }}
 
-sudo mkdir -p /opt/cni/bin /etc/kubernetes/pki /etc/kubernetes/manifests
+sudo mkdir -p /opt/bin /opt/cni/bin /etc/kubernetes/pki /etc/kubernetes/manifests
 curl -L "https://github.com/containernetworking/plugins/releases/download/v{{ .KUBERNETES_CNI_VERSION }}/cni-plugins-linux-${HOST_ARCH}-v{{ .KUBERNETES_CNI_VERSION }}.tgz" |
 	sudo tar -C /opt/cni/bin -xz
 
@@ -48,7 +48,6 @@ curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRI_TOO
 {{ template "flatcar-containerd" . }}
 {{ end }}
 
-sudo mkdir -p /opt/bin
 cd /opt/bin
 k8s_rel_baseurl=https://storage.googleapis.com/kubernetes-release/release
 for binary in kubeadm kubelet kubectl; do
