@@ -250,11 +250,21 @@ resource "azurerm_virtual_machine" "control_plane" {
   delete_os_disk_on_termination    = true
   delete_data_disks_on_termination = true
 
+  dynamic "plan" {
+    for_each = var.image_references[var.os].plan
+
+    content {
+      name      = plan.value["name"]
+      publisher = plan.value["publisher"]
+      product   = plan.value["product"]
+    }
+  }
+
   storage_image_reference {
-    publisher = var.image_references[var.os].publisher
-    offer     = var.image_references[var.os].offer
-    sku       = var.image_references[var.os].sku
-    version   = var.image_references[var.os].version
+    publisher = var.image_references[var.os].image.publisher
+    offer     = var.image_references[var.os].image.offer
+    sku       = var.image_references[var.os].image.sku
+    version   = var.image_references[var.os].image.version
   }
 
   storage_os_disk {
