@@ -75,6 +75,7 @@ type templateData struct {
 	CCMClusterName                           string
 	CSIMigration                             bool
 	CSIMigrationFeatureGates                 string
+	CalicoIptablesBackend                    string
 	DeployCSIAddon                           bool
 	MachineControllerCredentialsEnvVars      string
 	MachineControllerCredentialsHash         string
@@ -178,6 +179,15 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 	// Check are we deploying the CSI driver
 	deployCSI := len(ensureCSIAddons(s, []addonAction{})) > 0
 
+	calicoIptablesBackend := "Auto"
+	for _, cp := range s.LiveCluster.ControlPlane {
+		if cp.Config.OperatingSystem == kubeoneapi.OperatingSystemNameFlatcar {
+			calicoIptablesBackend = "NFT"
+
+			break
+		}
+	}
+
 	data := templateData{
 		Config: s.Cluster,
 		Certificates: map[string]string{
@@ -193,6 +203,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		CCMClusterName:                      s.LiveCluster.CCMClusterName,
 		CSIMigration:                        csiMigration,
 		CSIMigrationFeatureGates:            csiMigrationFeatureGates,
+		CalicoIptablesBackend:               calicoIptablesBackend,
 		DeployCSIAddon:                      deployCSI,
 		MachineControllerCredentialsEnvVars: string(credsEnvVarsMC),
 		MachineControllerCredentialsHash:    mcCredsHash,
@@ -206,56 +217,8 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		Params:    params,
 	}
 
-	// Certs for CSI plugins
-	switch {
-	case s.Cluster.CloudProvider.DigitalOcean != nil,
-		s.Cluster.CloudProvider.Openstack != nil,
-		s.Cluster.CloudProvider.GCE != nil:
-		if err := webhookCerts(data.Certificates,
-			webhookCertsCSI,
-			resources.GenericCSIWebhookName,
-			resources.GenericCSIWebhookNamespace,
-			s.Cluster.ClusterNetwork.ServiceDomainName,
-			kubeCAPrivateKey,
-			kubeCACert,
-		); err != nil {
-			return nil, err
-		}
-	// Certs for vsphere-csi-webhook (deployed only if CSIMigration is enabled)
-	case s.Cluster.CloudProvider.Vsphere != nil:
-		if err := webhookCerts(data.Certificates,
-			webhookCertsCSI,
-			resources.GenericCSIWebhookName,
-			resources.GenericCSIWebhookNamespace,
-			s.Cluster.ClusterNetwork.ServiceDomainName,
-			kubeCAPrivateKey,
-			kubeCACert,
-		); err != nil {
-			return nil, err
-		}
-		if csiMigration {
-			if err := webhookCerts(data.Certificates,
-				"CSIMigration",
-				resources.VsphereCSIWebhookName,
-				resources.GenericCSIWebhookNamespace,
-				s.Cluster.ClusterNetwork.ServiceDomainName,
-				kubeCAPrivateKey,
-				kubeCACert,
-			); err != nil {
-				return nil, err
-			}
-		}
-	case s.Cluster.CloudProvider.Nutanix != nil:
-		if err := webhookCerts(data.Certificates,
-			webhookCertsCSI,
-			resources.NutanixCSIWebhookName,
-			resources.GenericCSIWebhookNamespace,
-			s.Cluster.ClusterNetwork.ServiceDomainName,
-			kubeCAPrivateKey,
-			kubeCACert,
-		); err != nil {
-			return nil, err
-		}
+	if err := csiWebhookCerts(s, &data, csiMigration, kubeCAPrivateKey, kubeCACert); err != nil {
+		return nil, err
 	}
 
 	// Certs for operating-system-manager-webhook
@@ -296,6 +259,62 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		LocalFS:      localFS,
 		EmbeddedFS:   embeddedaddons.FS,
 	}, nil
+}
+
+func csiWebhookCerts(s *state.State, data *templateData, csiMigration bool, kubeCAPrivateKey *rsa.PrivateKey, kubeCACert *x509.Certificate) error {
+	// Certs for CSI plugins
+	switch {
+	case s.Cluster.CloudProvider.DigitalOcean != nil,
+		s.Cluster.CloudProvider.Openstack != nil,
+		s.Cluster.CloudProvider.GCE != nil:
+		if err := webhookCerts(data.Certificates,
+			webhookCertsCSI,
+			resources.GenericCSIWebhookName,
+			resources.GenericCSIWebhookNamespace,
+			s.Cluster.ClusterNetwork.ServiceDomainName,
+			kubeCAPrivateKey,
+			kubeCACert,
+		); err != nil {
+			return err
+		}
+	// Certs for vsphere-csi-webhook (deployed only if CSIMigration is enabled)
+	case s.Cluster.CloudProvider.Vsphere != nil:
+		if err := webhookCerts(data.Certificates,
+			webhookCertsCSI,
+			resources.GenericCSIWebhookName,
+			resources.GenericCSIWebhookNamespace,
+			s.Cluster.ClusterNetwork.ServiceDomainName,
+			kubeCAPrivateKey,
+			kubeCACert,
+		); err != nil {
+			return err
+		}
+		if csiMigration {
+			if err := webhookCerts(data.Certificates,
+				"CSIMigration",
+				resources.VsphereCSIWebhookName,
+				resources.GenericCSIWebhookNamespace,
+				s.Cluster.ClusterNetwork.ServiceDomainName,
+				kubeCAPrivateKey,
+				kubeCACert,
+			); err != nil {
+				return err
+			}
+		}
+	case s.Cluster.CloudProvider.Nutanix != nil:
+		if err := webhookCerts(data.Certificates,
+			webhookCertsCSI,
+			resources.NutanixCSIWebhookName,
+			resources.GenericCSIWebhookNamespace,
+			s.Cluster.ClusterNetwork.ServiceDomainName,
+			kubeCAPrivateKey,
+			kubeCACert,
+		); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func webhookCerts(certs map[string]string, prefix, webhookName, webhookNamespace, serviceDomainName string, kubeCAPrivateKey *rsa.PrivateKey, kubeCACert *x509.Certificate) error { //nolint:unparam
