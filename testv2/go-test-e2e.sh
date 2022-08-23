@@ -73,6 +73,9 @@ function setup_ci_environment_vars() {
     export ARM_CLIENT_SECRET=${AZURE_E2E_TESTS_CLIENT_SECRET}
     export ARM_SUBSCRIPTION_ID=${AZURE_E2E_TESTS_SUBSCRIPTION_ID}
     export ARM_TENANT_ID=${AZURE_E2E_TESTS_TENANT_ID}
+    export TF_VAR_rhsm_username=${RHEL_SUBSCRIPTION_MANAGER_USER:-""}
+    export TF_VAR_rhsm_password=${RHEL_SUBSCRIPTION_MANAGER_PASSWORD:-""}
+    export TF_VAR_rhsm_offline_token=${REDHAT_SUBSCRIPTIONS_OFFLINE_TOKEN:-""}
     CREDENTIALS_FILE_PATH="${BUILD_DIR}/credentials.yaml"
 
     cat > "${CREDENTIALS_FILE_PATH}" << EOL
