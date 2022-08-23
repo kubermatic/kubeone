@@ -230,6 +230,7 @@ var (
 			labels: map[string]string{
 				"preset-goproxy": "true",
 				"preset-azure":   "true",
+				"preset-rhel":    "true",
 			},
 			environ: map[string]string{
 				"PROVIDER":     "azure",

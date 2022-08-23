@@ -277,6 +277,11 @@ resource "azurerm_virtual_machine" "control_plane" {
   os_profile {
     computer_name  = "${var.cluster_name}-cp-${count.index}"
     admin_username = local.ssh_username
+    custom_data = templatefile("./cloud-config.tftpl", {
+      os            = var.os
+      rhsm_username = var.rhsm_username
+      rhsm_password = var.rhsm_password
+    })
   }
 
   os_profile_linux_config {

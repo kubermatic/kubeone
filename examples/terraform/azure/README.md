@@ -62,6 +62,9 @@ No modules.
 | <a name="input_initial_machinedeployment_replicas"></a> [initial\_machinedeployment\_replicas](#input\_initial\_machinedeployment\_replicas) | Number of replicas per MachineDeployment | `number` | `2` | no |
 | <a name="input_location"></a> [location](#input\_location) | Azure datacenter to use | `string` | `"westeurope"` | no |
 | <a name="input_os"></a> [os](#input\_os) | Operating System to use for finding image reference and in MachineDeployment | `string` | `"ubuntu"` | no |
+| <a name="input_rhsm_offline_token"></a> [rhsm\_offline\_token](#input\_rhsm\_offline\_token) | RHSM offline token | `string` | `""` | no |
+| <a name="input_rhsm_password"></a> [rhsm\_password](#input\_rhsm\_password) | RHSM password | `string` | `""` | no |
+| <a name="input_rhsm_username"></a> [rhsm\_username](#input\_rhsm\_username) | RHSM username | `string` | `""` | no |
 | <a name="input_ssh_agent_socket"></a> [ssh\_agent\_socket](#input\_ssh\_agent\_socket) | SSH Agent socket, default to grab from $SSH\_AUTH\_SOCK | `string` | `"env:SSH_AUTH_SOCK"` | no |
 | <a name="input_ssh_port"></a> [ssh\_port](#input\_ssh\_port) | SSH port to be used to provision instances | `number` | `22` | no |
 | <a name="input_ssh_private_key_file"></a> [ssh\_private\_key\_file](#input\_ssh\_private\_key\_file) | SSH private key file used to access instances | `string` | `""` | no |

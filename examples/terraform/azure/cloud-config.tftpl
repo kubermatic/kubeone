@@ -1,0 +1,7 @@
+#cloud-config
+%{ if os == "rhel" }
+rh_subscription:
+  username: ${rhsm_username}
+  password: '${rhsm_password}'
+  auto-attach: false
+%{ endif }

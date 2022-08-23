@@ -219,6 +219,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-install-containerd-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -666,6 +667,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-install-containerd-v1.23.9
   optional: false
   path_alias: k8c.io/kubeone
@@ -1113,6 +1115,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-install-containerd-v1.24.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -1560,6 +1563,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-install-docker-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -2007,6 +2011,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-install-docker-v1.23.9
   optional: false
   path_alias: k8c.io/kubeone
@@ -2504,6 +2509,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-upgrade-containerd-from-v1.23.9-to-v1.24.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -3046,6 +3052,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-upgrade-containerd-from-v1.22.12-to-v1.23.9
   optional: false
   path_alias: k8c.io/kubeone
@@ -3588,6 +3595,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-upgrade-containerd-from-v1.21.14-to-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -4130,6 +4138,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-upgrade-docker-from-v1.22.12-to-v1.23.9
   optional: false
   path_alias: k8c.io/kubeone
@@ -4672,6 +4681,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-upgrade-docker-from-v1.21.14-to-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -5164,6 +5174,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-calico-containerd-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -5611,6 +5622,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-calico-docker-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -6058,6 +6070,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-weave-containerd-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -6505,6 +6518,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-weave-docker-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -6952,6 +6966,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-cilium-containerd-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -7399,6 +7414,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-cilium-docker-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -8042,6 +8058,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-legacy-machine-controller-containerd-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -8489,6 +8506,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-legacy-machine-controller-containerd-v1.23.9
   optional: false
   path_alias: k8c.io/kubeone
@@ -8936,6 +8954,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-legacy-machine-controller-containerd-v1.24.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -9383,6 +9402,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-legacy-machine-controller-docker-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -9830,6 +9850,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-legacy-machine-controller-docker-v1.23.9
   optional: false
   path_alias: k8c.io/kubeone
@@ -10300,6 +10321,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-csi-ccm-migration-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -10609,6 +10631,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-csi-ccm-migration-v1.23.9
   optional: false
   path_alias: k8c.io/kubeone
@@ -10918,6 +10941,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-csi-ccm-migration-v1.24.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -11227,6 +11251,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-install-containerd-external-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -11881,6 +11906,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-install-containerd-external-v1.23.9
   optional: false
   path_alias: k8c.io/kubeone
@@ -12535,6 +12561,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-install-containerd-external-v1.24.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -13189,6 +13216,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-install-docker-external-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -13843,6 +13871,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-install-docker-external-v1.23.9
   optional: false
   path_alias: k8c.io/kubeone
@@ -14547,6 +14576,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-upgrade-containerd-external-from-v1.21.14-to-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -15341,6 +15371,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-upgrade-containerd-external-from-v1.22.12-to-v1.23.9
   optional: false
   path_alias: k8c.io/kubeone
@@ -16135,6 +16166,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-upgrade-containerd-external-from-v1.23.9-to-v1.24.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -16929,6 +16961,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-upgrade-docker-external-from-v1.21.14-to-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -17723,6 +17756,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-upgrade-docker-external-from-v1.22.12-to-v1.23.9
   optional: false
   path_alias: k8c.io/kubeone
@@ -18467,6 +18501,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -19121,6 +19156,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
   path_alias: k8c.io/kubeone
@@ -19775,6 +19811,7 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
+    preset-rhel: "true"
   name: pull-kubeone-e2e-azure-rhel-legacy-machine-controller-containerd-external-v1.24.3
   optional: false
   path_alias: k8c.io/kubeone

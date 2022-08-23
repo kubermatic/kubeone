@@ -43,6 +43,7 @@ output "kubeone_hosts" {
 
 output "kubeone_workers" {
   description = "Workers definitions, that will be transformed into MachineDeployment object"
+  sensitive   = true
 
   value = {
     # following outputs will be parsed by kubeone and automatically merged into
@@ -56,7 +57,10 @@ output "kubeone_workers" {
         sshPublicKeys   = [file(var.ssh_public_key_file)]
         operatingSystem = local.worker_os
         operatingSystemSpec = {
-          distUpgradeOnBoot = false
+          distUpgradeOnBoot               = false
+          rhelSubscriptionManagerUser     = var.rhsm_username
+          rhelSubscriptionManagerPassword = var.rhsm_password
+          rhsmOfflineToken                = var.rhsm_offline_token
         }
         # nodeAnnotations are applied on resulting Node objects
         # nodeAnnotations = {

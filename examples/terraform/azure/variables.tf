@@ -224,3 +224,25 @@ Name of operating system profile for MachineDeployments, only applicable if oper
 If not specified, the default value will be added by machine-controller addon.
 EOF
 }
+
+# RHEL subscription
+variable "rhsm_username" {
+  description = "RHSM username"
+  default     = ""
+  type        = string
+  sensitive   = true
+}
+
+variable "rhsm_password" {
+  description = "RHSM password"
+  default     = ""
+  type        = string
+  sensitive   = true
+}
+
+variable "rhsm_offline_token" {
+  description = "RHSM offline token"
+  default     = ""
+  type        = string
+  sensitive   = true
+}
