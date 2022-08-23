@@ -466,7 +466,7 @@ func dynamicClientRetriable(t *testing.T, k1 *kubeoneBin) ctrlruntimeclient.Clie
 func waitMachinesHasNodes(t *testing.T, client ctrlruntimeclient.Client) {
 	ctx := context.Background()
 
-	waitErr := wait.Poll(15*time.Second, 10*time.Minute, func() (bool, error) {
+	waitErr := wait.Poll(15*time.Second, 20*time.Minute, func() (bool, error) {
 		var (
 			machineList              clusterv1alpha1.MachineList
 			someMachinesLacksTheNode bool
