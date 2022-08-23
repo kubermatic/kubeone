@@ -54,7 +54,7 @@ EOF
 sudo systemctl force-reload systemd-journald
 
 
-sudo mkdir -p /opt/cni/bin /etc/kubernetes/pki /etc/kubernetes/manifests
+sudo mkdir -p /opt/bin /opt/cni/bin /etc/kubernetes/pki /etc/kubernetes/manifests
 curl -L "https://github.com/containernetworking/plugins/releases/download/v0.8.7/cni-plugins-linux-${HOST_ARCH}-v0.8.7.tgz" |
 	sudo tar -C /opt/cni/bin -xz
 
@@ -111,7 +111,6 @@ sudo systemctl restart containerd
 
 
 
-sudo mkdir -p /opt/bin
 cd /opt/bin
 k8s_rel_baseurl=https://storage.googleapis.com/kubernetes-release/release
 for binary in kubeadm kubelet kubectl; do
