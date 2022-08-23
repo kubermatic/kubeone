@@ -117,15 +117,30 @@ func requiredTemplateFunc(warn string, input interface{}) (interface{}, error) {
 }
 
 func makeBin(args ...string) *testutil.Exec {
+	return makeBinWithPath(filepath.Clean("../../"), args...)
+}
+
+func makeBinWithPath(path string, args ...string) *testutil.Exec {
 	return testutil.NewExec("make",
 		testutil.WithArgs(args...),
 		testutil.WithEnv(os.Environ()),
-		testutil.InDir(filepath.Clean("../../")),
+		testutil.InDir(path),
 		testutil.StdoutDebug,
 	)
 }
 
-func downloadKubeone(t *testing.T, version string) string {
+func kubeoneStableProwExtraRefs(baseRef string) []ProwRef {
+	return []ProwRef{
+		{
+			Org:       "kubermatic",
+			Repo:      "kubeone",
+			BaseRef:   baseRef,
+			PathAlias: "k8c.io/kubeone-stable",
+		},
+	}
+}
+
+func downloadKubeone(t *testing.T, version string) string { //nolint:deadcode,unused
 	binPath := filepath.Join(t.TempDir(), fmt.Sprintf("kubeone-%s", version))
 	zipPath := fmt.Sprintf("%s.zip", binPath)
 
@@ -371,10 +386,18 @@ type ProwJob struct {
 	CloneURI  string            `json:"clone_uri"`
 	PathAlias string            `json:"path_alias,omitempty"`
 	Labels    map[string]string `json:"labels,omitempty"`
+	ExtraRefs []ProwRef         `json:"extra_refs,omitempty"`
 	Spec      *corev1.PodSpec   `json:"spec"`
 }
 
-func newProwJob(prowJobName string, labels map[string]string, testTitle string, settings ProwConfig) ProwJob {
+type ProwRef struct {
+	Org       string `json:"org"`
+	Repo      string `json:"repo"`
+	BaseRef   string `json:"base_ref,omitempty"`
+	PathAlias string `json:"path_alias,omitempty"`
+}
+
+func newProwJob(prowJobName string, labels map[string]string, testTitle string, settings ProwConfig, extraRefs []ProwRef) ProwJob {
 	var env []corev1.EnvVar
 
 	for k, v := range settings.Environ {
@@ -395,6 +418,8 @@ func newProwJob(prowJobName string, labels map[string]string, testTitle string, 
 		Decorate:  true,
 		CloneURI:  k1CloneURI,
 		Labels:    labels,
+		ExtraRefs: extraRefs,
+		PathAlias: "k8c.io/kubeone",
 		Spec: &corev1.PodSpec{
 			Containers: []corev1.Container{
 				{

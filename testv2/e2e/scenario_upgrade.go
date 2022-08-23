@@ -21,6 +21,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"path/filepath"
 	"testing"
 	"text/template"
 	"time"
@@ -34,7 +35,10 @@ import (
 	"sigs.k8s.io/yaml"
 )
 
-const kubeoneVersionToInit = "1.4.7"
+const (
+	kubeoneStableVersion = "1.4.7" //nolint:deadcode,varcheck
+	kubeoneStableBaseRef = "release/v1.4"
+)
 
 type scenarioUpgrade struct {
 	Name                 string
@@ -58,13 +62,16 @@ func (scenario *scenarioUpgrade) Run(t *testing.T) {
 	if err := makeBin("build").Run(); err != nil {
 		t.Fatalf("building kubeone: %v", err)
 	}
+	if err := makeBinWithPath(filepath.Clean("../../../kubeone-stable/"), "build").Run(); err != nil {
+		t.Fatalf("building kubeone-stable: %v", err)
+	}
 
 	install := &scenarioInstall{
 		Name:                 scenario.Name,
 		ManifestTemplatePath: scenario.ManifestTemplatePath,
 		infra:                scenario.infra,
 		versions:             []string{scenario.versions[0]},
-		kubeonePath:          downloadKubeone(t, kubeoneVersionToInit),
+		kubeonePath:          mustAbsolutePath("../../../kubeone-stable/dist/kubeone"),
 	}
 
 	install.install(t)
@@ -200,6 +207,7 @@ func (scenario *scenarioUpgrade) GenerateTests(wr io.Writer, generatorType Gener
 			scenario.infra.labels,
 			testTitle,
 			cfg,
+			kubeoneStableProwExtraRefs(kubeoneStableBaseRef),
 		),
 	)
 
