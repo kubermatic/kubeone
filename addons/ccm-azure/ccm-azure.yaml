@@ -197,6 +197,9 @@ spec:
             - name: etc-ssl
               mountPath: /etc/ssl
               readOnly: true
+            - name: etc-pki
+              mountPath: /etc/pki
+              readOnly: true
             - name: msi
               mountPath: /var/lib/waagent/ManagedIdentity-Settings
               readOnly: true
@@ -207,6 +210,9 @@ spec:
         - name: etc-ssl
           hostPath:
             path: /etc/ssl
+        - name: etc-pki
+          hostPath:
+            path: /etc/pki
         - name: msi
           hostPath:
             path: /var/lib/waagent/ManagedIdentity-Settings
