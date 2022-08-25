@@ -147,7 +147,7 @@ variable "image_references" {
         publisher = "kinvolk"
         offer     = "flatcar-container-linux"
         sku       = "stable"
-        version   = "2905.2.5"
+        version   = "3227.2.1"
       }
       plan = [{
         name      = "stable"
