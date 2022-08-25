@@ -116,11 +116,11 @@ See [the list of releases][changelog] to find out about feature changes.
 [machine-controller]: https://github.com/kubermatic/machine-controller
 [operating-system-manager]: https://github.com/kubermatic/operating-system-manager
 [docs]: https://docs.kubermatic.com/kubeone/
-[docs-architecture]: https://docs.kubermatic.com/kubeone/master/architecture/
-[docs-concepts]: https://docs.kubermatic.com/kubeone/master/architecture/concepts/
-[docs-compatibility]: https://docs.kubermatic.com/kubeone/master/architecture/compatibility/
-[docs-getting-kubeone]: https://docs.kubermatic.com/kubeone/master/getting-kubeone/
-[docs-provisioning]: https://docs.kubermatic.com/kubeone/master/tutorials/creating-clusters/
+[docs-architecture]: https://docs.kubermatic.com/kubeone/v1.5/architecture/
+[docs-concepts]: https://docs.kubermatic.com/kubeone/v1.5/architecture/concepts/
+[docs-compatibility]: https://docs.kubermatic.com/kubeone/v1.5/architecture/compatibility/
+[docs-getting-kubeone]: https://docs.kubermatic.com/kubeone/v1.5/getting-kubeone/
+[docs-provisioning]: https://docs.kubermatic.com/kubeone/v1.5/tutorials/creating-clusters/
 [contributing-guide]: https://github.com/kubermatic/kubeone/blob/master/CONTRIBUTING.md
 [k8s-slack-kubeone]: https://kubernetes.slack.com/messages/CNEV2UMT7
 [k8s-slack]: http://slack.k8s.io/

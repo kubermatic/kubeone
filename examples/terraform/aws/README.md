@@ -5,7 +5,7 @@ infrastructure for a Kubernetes HA cluster. Check out the
 [Creating Infrastructure guide][docs-infrastructure] to learn more about how to
 use the configs and how to provision a Kubernetes cluster using KubeOne.
 
-[docs-infrastructure]: https://docs.kubermatic.com/kubeone/master/guides/using-terraform-configs/
+[docs-infrastructure]: https://docs.kubermatic.com/kubeone/v1.5/guides/using-terraform-configs/
 
 ## Requirements
 
