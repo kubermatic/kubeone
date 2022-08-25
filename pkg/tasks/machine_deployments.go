@@ -29,7 +29,7 @@ import (
 )
 
 const (
-	machineDeploymentsDocsLink = `https://docs.kubermatic.com/kubeone/v1.4/guides/machine_controller/`
+	machineDeploymentsDocsLink = `https://docs.kubermatic.com/kubeone/master/guides/machine-controller/`
 )
 
 func createMachineDeployments(s *state.State) error {

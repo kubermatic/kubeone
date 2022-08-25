@@ -48,4 +48,4 @@ addons:
       MTU: 1400 # custom MTU
 ```
 
-[addon_params]: https://docs.kubermatic.com/kubeone/v1.3/guides/addons/#parameters
+[addon_params]: https://docs.kubermatic.com/kubeone/master/guides/addons/#parameters
