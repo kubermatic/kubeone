@@ -9,7 +9,11 @@
 - The minimum Kubernetes version has been increased to v1.22.0. If you're still using Kubernetes v1.21 or v1.20, you have to upgrade the cluster to v1.22 or newer **before** upgrading to KubeOne 1.5. ([#2236](https://github.com/kubermatic/kubeone/pull/2236), [@xmudrii](https://github.com/xmudrii))
 - Remove defaulting for Flatcar provisioning utility in example Terraform configs for AWS (defaulted to Ignition by machine-controller). If you have Flatcar-based MachineDeployments that use the `cloud-init` provisioning utility, you must change the provisioning utility to `ignition` (or leave it empty) for Operating System Manager (OSM) to work properly ([#2285](https://github.com/kubermatic/kubeone/pull/2285), [@xmudrii](https://github.com/xmudrii))
 - Remove the `hcloud-volumes` StorageClass deployed automatically by Hetzner CSI driver in favor of `hcloud-volumes` StorageClass deployed by the `default-storage-class` addon. If you're using `hcloud-volumes` StorageClass, make sure that you have the `default-storage-class` addon enabled before upgrading to KubeOne 1.5 ([#2269](https://github.com/kubermatic/kubeone/pull/2269), [@xmudrii](https://github.com/xmudrii))
- 
+
+## Known Issues
+
+* Calico VXLAN addon has an issue with broken network connectivity for pods running on the same node. If you're using Calico VXLAN, we recommend staying on KubeOne 1.4 until the issue is not fixed. Follow [#2192](https://github.com/kubermatic/kubeone/issues/2192) for updates.
+
 ## Changes by Kind
 
 ### Deprecation
