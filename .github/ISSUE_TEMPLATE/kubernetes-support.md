@@ -20,7 +20,7 @@ This is a collector issue for Kubernetes 1.2x support in KubeOne. The following 
 * [ ] Update [default admission controllers](https://github.com/kubermatic/kubeone/blob/master/pkg/kubeflags/data.go) if needed <!-- link to the PR -->
 * [ ] Add E2E tests <!-- link to the PR -->
 * [ ] Update daily periodics to use the latest Kubernetes release
-* [ ] Update [the Compatibility Matrix](https://docs.kubermatic.com/kubeone/master/architecture/compatibility/) <!-- link to the PR -->
+* [ ] Update [the Compatibility Matrix](https://docs.kubermatic.com/kubeone/v1.5/architecture/compatibility/) <!-- link to the PR -->
 * [ ] Create an issue to track updating [images](https://github.com/kubermatic/kubeone/blob/master/pkg/templates/images/images.go) <!-- link to the issue -->
 * [ ] Run the full conformance tests suite using [Sonobuoy](https://github.com/vmware-tanzu/sonobuoy)
 
