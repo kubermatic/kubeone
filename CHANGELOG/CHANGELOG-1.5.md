@@ -1,3 +1,62 @@
+# [v1.5.0-rc.0](https://github.com/kubermatic/kubeone/releases/tag/v1.5.0-rc.0) - 2022-08-25
+
+## Changelog since v1.5.0-beta.0
+
+## Urgent Upgrade Notes 
+
+### (No, really, you MUST read this before you upgrade)
+
+- The minimum Kubernetes version has been increased to v1.22.0. If you're still using Kubernetes v1.21 or v1.20, you have to upgrade the cluster to v1.22 or newer **before** upgrading to KubeOne 1.5. ([#2236](https://github.com/kubermatic/kubeone/pull/2236), [@xmudrii](https://github.com/xmudrii))
+- Remove defaulting for Flatcar provisioning utility in example Terraform configs for AWS (defaulted to Ignition by machine-controller). If you have Flatcar-based MachineDeployments that use the `cloud-init` provisioning utility, you must change the provisioning utility to `ignition` (or leave it empty) for Operating System Manager (OSM) to work properly ([#2285](https://github.com/kubermatic/kubeone/pull/2285), [@xmudrii](https://github.com/xmudrii))
+- Remove the `hcloud-volumes` StorageClass deployed automatically by Hetzner CSI driver in favor of `hcloud-volumes` StorageClass deployed by the `default-storage-class` addon. If you're using `hcloud-volumes` StorageClass, make sure that you have the `default-storage-class` addon enabled before upgrading to KubeOne 1.5 ([#2269](https://github.com/kubermatic/kubeone/pull/2269), [@xmudrii](https://github.com/xmudrii))
+ 
+## Changes by Kind
+
+### Deprecation
+
+- We announced with the KubeOne 1.4.0 release that `kubeone install` and `kubeone upgrade` commands are deprecated in favor of `kubeone apply`. This time we're marking those commands as hidden, so they'll not show in the help output. In the next release, we'll completely remove those commands, so we strongly recommend migrating to `kubeone apply` as soon as possible. ([#2258](https://github.com/kubermatic/kubeone/pull/2258), [@kron4eg](https://github.com/kron4eg))
+
+### Feature
+
+#### General
+
+- Introduce additional safeguards in the KubeOne reconciliation process to disallow upgrading to Kubernetes 1.24 if there are pods that use removed master node-role (`node-role.kubernetes.io/master`), and if there are Flatcar-based MachineDeployments that use the `cloud-init` provisioningUtility in a cluster with Operating System Manager (OSM) enabled. ([#2290](https://github.com/kubermatic/kubeone/pull/2290), [@xmudrii](https://github.com/xmudrii))
+
+### Updates
+
+#### machine-controller
+
+- Update machine-controller to v1.54.0 ([#2311](https://github.com/kubermatic/kubeone/pull/2311), [@ahmedwaleedmalik](https://github.com/ahmedwaleedmalik))
+
+#### Operating System Manager (OSM)
+
+- Update operating-system-manager to v1.0.0 ([#2311](https://github.com/kubermatic/kubeone/pull/2311), [@ahmedwaleedmalik](https://github.com/ahmedwaleedmalik))
+
+### Terraform Integration
+
+#### AWS
+
+- Rollback to CentOS 7 in Terraform configs for AWS because CentOS 8 reached EOL ([#2264](https://github.com/kubermatic/kubeone/pull/2264), [@xmudrii](https://github.com/xmudrii))
+
+#### Azure
+
+- Introduce a new `os` variable (defaults to `ubuntu`) in Terraform configs for Azure to allow choosing an operating system other than Ubuntu ([#2266](https://github.com/kubermatic/kubeone/pull/2266), [@xmudrii](https://github.com/xmudrii))
+- Extend example Terraform configs for Azure to automatically subscribe RHEL instances to RHSM (see the PR for more details and instructions on how to opt-out). Important: VMs created by Terraform are **NOT** automatically unregistered on deletion. You have to manually unregister those VMs by running `sudo subscription-manager unregister`. The worker nodes created by machine-controller are automatically unregistered as long as the RHSM Offline Token (`rhsm_offline_token`) is provided. ([#2306](https://github.com/kubermatic/kubeone/pull/2306), [@xmudrii](https://github.com/xmudrii))
+
+#### OpenStack
+
+- Example Terraform configs for OpenStack are no longer attaching a Floating IP address to the initial MachineDeployment. This matches the behavior of not attaching Floating IP addresses to the control plane nodes. ([#2299](https://github.com/kubermatic/kubeone/pull/2299), [@xmudrii](https://github.com/xmudrii))
+
+### Bug or Regression
+
+- Enable `nf_conntrack` (`nf_conntrack_ipv4`) module by default on all operating systems. This fixes an issue with pods unable to reach services running on a host on operating systems that are using the NFT backend. ([#2282](https://github.com/kubermatic/kubeone/pull/2282), [@xmudrii](https://github.com/xmudrii))
+- Set iptables backend (`FELIX_IPTABLESBACKEND`) to `NFT` for Canal and Calico VXLAN on clusters running Flatcar Linux. For non Flatcar clusters, iptables backend is set to Auto, which is the default value and results in Calico determining the iptables backend automatically. The value can be overridden by setting the `iptablesBackend` addon parameter (see the PR description for an example). ([#2301](https://github.com/kubermatic/kubeone/pull/2301), [@xmudrii](https://github.com/xmudrii))
+- Explicitly create `/opt/bin` on Flatcar before trying to untar anything to that directory ([#2302](https://github.com/kubermatic/kubeone/pull/2302), [@xmudrii](https://github.com/xmudrii))
+- Move the vSphere CSI driver to `vmware-system-csi` namespace to fix a bug where the CSI driver requires to run in its dedicated namespace ([#2292](https://github.com/kubermatic/kubeone/pull/2292), [@WeirdMachine](https://github.com/WeirdMachine))
+- Mount `/etc/pki` to the Azure CCM container to fix CrashLoopBackoff on clusters running CentOS 7 and Rocky Linux ([#2308](https://github.com/kubermatic/kubeone/pull/2308), [@xmudrii](https://github.com/xmudrii))
+- Mount `/etc/pki` to the OpenStack CCM container to fix CrashLoopBackoff on clusters running CentOS 7 ([#2299](https://github.com/kubermatic/kubeone/pull/2299), [@xmudrii](https://github.com/xmudrii))
+- Fix Rocky Linux OS detection ([#2267](https://github.com/kubermatic/kubeone/pull/2267), [@kron4eg](https://github.com/kron4eg))
+
 # [v1.5.0-beta.0](https://github.com/kubermatic/kubeone/releases/tag/v1.5.0-beta.0) - 2022-08-04
 
 ## Changelog since v1.4.0
