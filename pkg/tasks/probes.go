@@ -277,7 +277,7 @@ func safeguardFlatcarMachineDeployments(s *state.State) error {
 		s.Logger.Warnf("cloud-init provisioning utility is not supported on Flatcar with Operating System Manager (OSM) enabled.")
 		s.Logger.Warnf("Please migrate your MachineDeployments to \"ignition\" provisioning utility after kubeone apply is done.")
 		s.Logger.Warnf("Not doing so will cause your Machines to never join the cluster.")
-		s.Logger.Warnf("For more details, check out the following document: https://docs.kubermatic.com/kubeone/v1.5/architecture/operating-system-manager/usage/")
+		s.Logger.Warnf("For more details, check out the following document: https://docs.kubermatic.com/kubeone/master/architecture/operating-system-manager/usage/")
 	}
 
 	return nil
