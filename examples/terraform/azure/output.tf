@@ -97,6 +97,7 @@ output "kubeone_workers" {
             sku       = var.image_references[var.os].image.sku
             version   = var.image_references[var.os].image.version
           }
+          imagePlan = length(var.image_references[var.os].plan) > 0 ? var.image_references[var.os].plan[0] : null
           # Zones (optional)
           # Represents Availability Zones is a high-availability offering
           # that protects your applications and data from datacenter failures.
