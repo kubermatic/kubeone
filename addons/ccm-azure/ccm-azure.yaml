@@ -202,6 +202,9 @@ spec:
             - name: etc-pki
               mountPath: /etc/pki
               readOnly: true
+            - name: usr-share-ca-certs
+              mountPath: /usr/share/ca-certificates
+              readOnly: true
             - name: msi
               mountPath: /var/lib/waagent/ManagedIdentity-Settings
               readOnly: true
@@ -215,6 +218,9 @@ spec:
         - name: etc-pki
           hostPath:
             path: /etc/pki
+        - name: usr-share-ca-certs
+          hostPath:
+            path: /usr/share/ca-certificates
         - name: msi
           hostPath:
             path: /var/lib/waagent/ManagedIdentity-Settings
