@@ -91,6 +91,12 @@ output "kubeone_workers" {
           # assignAvailabilitySet = true/false
           securityGroupName = azurerm_network_security_group.sg.name
           assignPublicIP    = true
+          imageReference = {
+            publisher = var.image_references[var.os].image.publisher
+            offer     = var.image_references[var.os].image.offer
+            sku       = var.image_references[var.os].image.sku
+            version   = var.image_references[var.os].image.version
+          }
           # Zones (optional)
           # Represents Availability Zones is a high-availability offering
           # that protects your applications and data from datacenter failures.
