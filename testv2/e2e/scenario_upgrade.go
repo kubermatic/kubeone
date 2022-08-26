@@ -146,7 +146,7 @@ func (scenario *scenarioUpgrade) test(t *testing.T) {
 	client := dynamicClientRetriable(t, k1)
 
 	scenario.upgradeMachineDeployments(t, client, scenario.versions[1])
-	waitMachinesHasNodes(t, client)
+	waitMachinesHasNodes(t, k1, client)
 	waitKubeOneNodesReady(t, k1)
 
 	cpTests := newCloudProviderTests(client, scenario.infra.Provider())
@@ -290,6 +290,10 @@ func (scenario *scenarioUpgrade) upgradeMachineDeployments(t *testing.T, client 
 			t.Fatalf("upgrading machineDeployment %q: %v", ctrlruntimeclient.ObjectKeyFromObject(&mdNew), err)
 		}
 	}
+
+	delay := 10 * time.Second
+	t.Logf("Waiting %s to give machine-controller time to start rolling-out MachineDeployments", delay)
+	time.Sleep(delay)
 }
 
 const upgradeScenarioTemplate = `

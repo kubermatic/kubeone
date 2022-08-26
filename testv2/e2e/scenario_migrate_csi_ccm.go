@@ -86,7 +86,7 @@ func (scenario *scenarioMigrateCSIAndCCM) Run(t *testing.T) {
 	waitKubeOneNodesReady(t, k1New)
 
 	scenario.forceRolloutMachinedeployments(t, client)
-	waitMachinesHasNodes(t, client)
+	waitMachinesHasNodes(t, k1New, client)
 	waitKubeOneNodesReady(t, k1New)
 
 	scenario.migrate(t, k1New, true)
@@ -130,4 +130,8 @@ func (scenario *scenarioMigrateCSIAndCCM) forceRolloutMachinedeployments(t *test
 			t.Fatalf("forcing machineDeployment %q to rollout: %v", ctrlruntimeclient.ObjectKeyFromObject(&mdNew), err)
 		}
 	}
+
+	delay := 10 * time.Second
+	t.Logf("Waiting %s to give machine-controller time to start rolling-out MachineDeployments", delay)
+	time.Sleep(delay)
 }
