@@ -3274,6 +3274,22 @@ func TestAwsDefaultKubeProxyIpvsV1_24_3(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestAwsAmznCsiCcmMigrationV1_22_12(t *testing.T) {
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestAwsCentosCsiCcmMigrationV1_22_12(t *testing.T) {
+	infra := Infrastructures["aws_centos"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
 func TestAwsDefaultCsiCcmMigrationV1_22_12(t *testing.T) {
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["csi_ccm_migration"]
@@ -3282,40 +3298,24 @@ func TestAwsDefaultCsiCcmMigrationV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
-func TestOpenstackDefaultCsiCcmMigrationV1_22_12(t *testing.T) {
-	infra := Infrastructures["openstack_default"]
+func TestAwsFlatcarCsiCcmMigrationV1_22_12(t *testing.T) {
+	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestOpenstackCentosCsiCcmMigrationV1_22_12(t *testing.T) {
-	infra := Infrastructures["openstack_centos"]
+func TestAwsRhelCsiCcmMigrationV1_22_12(t *testing.T) {
+	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12")
 	scenario.Run(t)
 }
 
-func TestOpenstackRockylinuxCsiCcmMigrationV1_22_12(t *testing.T) {
-	infra := Infrastructures["openstack_rockylinux"]
-	scenario := Scenarios["csi_ccm_migration"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.12")
-	scenario.Run(t)
-}
-
-func TestOpenstackRhelCsiCcmMigrationV1_22_12(t *testing.T) {
-	infra := Infrastructures["openstack_rhel"]
-	scenario := Scenarios["csi_ccm_migration"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.22.12")
-	scenario.Run(t)
-}
-
-func TestOpenstackFlatcarCsiCcmMigrationV1_22_12(t *testing.T) {
-	infra := Infrastructures["openstack_flatcar"]
+func TestAwsRockylinuxCsiCcmMigrationV1_22_12(t *testing.T) {
+	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.12")
@@ -3362,6 +3362,46 @@ func TestAzureRockylinuxCsiCcmMigrationV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestOpenstackDefaultCsiCcmMigrationV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackCentosCsiCcmMigrationV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxCsiCcmMigrationV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelCsiCcmMigrationV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarCsiCcmMigrationV1_22_12(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.12")
+	scenario.Run(t)
+}
+
 func TestVsphereDefaultCsiCcmMigrationV1_22_12(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["csi_ccm_migration"]
@@ -3378,6 +3418,22 @@ func TestVsphereFlatcarCsiCcmMigrationV1_22_12(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestAwsAmznCsiCcmMigrationV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestAwsCentosCsiCcmMigrationV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_centos"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
 func TestAwsDefaultCsiCcmMigrationV1_23_9(t *testing.T) {
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["csi_ccm_migration"]
@@ -3386,40 +3442,24 @@ func TestAwsDefaultCsiCcmMigrationV1_23_9(t *testing.T) {
 	scenario.Run(t)
 }
 
-func TestOpenstackDefaultCsiCcmMigrationV1_23_9(t *testing.T) {
-	infra := Infrastructures["openstack_default"]
+func TestAwsFlatcarCsiCcmMigrationV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestOpenstackCentosCsiCcmMigrationV1_23_9(t *testing.T) {
-	infra := Infrastructures["openstack_centos"]
+func TestAwsRhelCsiCcmMigrationV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.23.9")
 	scenario.Run(t)
 }
 
-func TestOpenstackRockylinuxCsiCcmMigrationV1_23_9(t *testing.T) {
-	infra := Infrastructures["openstack_rockylinux"]
-	scenario := Scenarios["csi_ccm_migration"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.9")
-	scenario.Run(t)
-}
-
-func TestOpenstackRhelCsiCcmMigrationV1_23_9(t *testing.T) {
-	infra := Infrastructures["openstack_rhel"]
-	scenario := Scenarios["csi_ccm_migration"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.23.9")
-	scenario.Run(t)
-}
-
-func TestOpenstackFlatcarCsiCcmMigrationV1_23_9(t *testing.T) {
-	infra := Infrastructures["openstack_flatcar"]
+func TestAwsRockylinuxCsiCcmMigrationV1_23_9(t *testing.T) {
+	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.23.9")
@@ -3466,6 +3506,46 @@ func TestAzureRockylinuxCsiCcmMigrationV1_23_9(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestOpenstackDefaultCsiCcmMigrationV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackCentosCsiCcmMigrationV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxCsiCcmMigrationV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelCsiCcmMigrationV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarCsiCcmMigrationV1_23_9(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.9")
+	scenario.Run(t)
+}
+
 func TestVsphereDefaultCsiCcmMigrationV1_23_9(t *testing.T) {
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["csi_ccm_migration"]
@@ -3482,6 +3562,22 @@ func TestVsphereFlatcarCsiCcmMigrationV1_23_9(t *testing.T) {
 	scenario.Run(t)
 }
 
+func TestAwsAmznCsiCcmMigrationV1_24_3(t *testing.T) {
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestAwsCentosCsiCcmMigrationV1_24_3(t *testing.T) {
+	infra := Infrastructures["aws_centos"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
 func TestAwsDefaultCsiCcmMigrationV1_24_3(t *testing.T) {
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["csi_ccm_migration"]
@@ -3490,40 +3586,24 @@ func TestAwsDefaultCsiCcmMigrationV1_24_3(t *testing.T) {
 	scenario.Run(t)
 }
 
-func TestOpenstackDefaultCsiCcmMigrationV1_24_3(t *testing.T) {
-	infra := Infrastructures["openstack_default"]
+func TestAwsFlatcarCsiCcmMigrationV1_24_3(t *testing.T) {
+	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestOpenstackCentosCsiCcmMigrationV1_24_3(t *testing.T) {
-	infra := Infrastructures["openstack_centos"]
+func TestAwsRhelCsiCcmMigrationV1_24_3(t *testing.T) {
+	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.24.3")
 	scenario.Run(t)
 }
 
-func TestOpenstackRockylinuxCsiCcmMigrationV1_24_3(t *testing.T) {
-	infra := Infrastructures["openstack_rockylinux"]
-	scenario := Scenarios["csi_ccm_migration"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.3")
-	scenario.Run(t)
-}
-
-func TestOpenstackRhelCsiCcmMigrationV1_24_3(t *testing.T) {
-	infra := Infrastructures["openstack_rhel"]
-	scenario := Scenarios["csi_ccm_migration"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.24.3")
-	scenario.Run(t)
-}
-
-func TestOpenstackFlatcarCsiCcmMigrationV1_24_3(t *testing.T) {
-	infra := Infrastructures["openstack_flatcar"]
+func TestAwsRockylinuxCsiCcmMigrationV1_24_3(t *testing.T) {
+	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.24.3")
@@ -3564,6 +3644,46 @@ func TestAzureRhelCsiCcmMigrationV1_24_3(t *testing.T) {
 
 func TestAzureRockylinuxCsiCcmMigrationV1_24_3(t *testing.T) {
 	infra := Infrastructures["azure_rockylinux"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestOpenstackDefaultCsiCcmMigrationV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestOpenstackCentosCsiCcmMigrationV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_centos"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestOpenstackRockylinuxCsiCcmMigrationV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestOpenstackRhelCsiCcmMigrationV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.3")
+	scenario.Run(t)
+}
+
+func TestOpenstackFlatcarCsiCcmMigrationV1_24_3(t *testing.T) {
+	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.24.3")

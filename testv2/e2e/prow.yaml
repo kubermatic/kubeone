@@ -10108,6 +10108,52 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-amzn-csi-ccm-migration-v1.22.12
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAwsAmznCsiCcmMigrationV1_22_12
+      env:
+      - name: PROVIDER
+        value: aws
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-centos-csi-ccm-migration-v1.22.12
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAwsCentosCsiCcmMigrationV1_22_12
+      env:
+      - name: PROVIDER
+        value: aws
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-csi-ccm-migration-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -10129,19 +10175,19 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
+    preset-aws: "true"
     preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-csi-ccm-migration-v1.22.12
+  name: pull-kubeone-e2e-aws-flatcar-csi-ccm-migration-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultCsiCcmMigrationV1_22_12
+      - TestAwsFlatcarCsiCcmMigrationV1_22_12
       env:
       - name: PROVIDER
-        value: openstack
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.25
       imagePullPolicy: Always
       name: ""
@@ -10152,19 +10198,19 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
+    preset-aws: "true"
     preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-csi-ccm-migration-v1.22.12
+  name: pull-kubeone-e2e-aws-rhel-csi-ccm-migration-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackCentosCsiCcmMigrationV1_22_12
+      - TestAwsRhelCsiCcmMigrationV1_22_12
       env:
       - name: PROVIDER
-        value: openstack
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.25
       imagePullPolicy: Always
       name: ""
@@ -10175,65 +10221,19 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
+    preset-aws: "true"
     preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rockylinux-csi-ccm-migration-v1.22.12
+  name: pull-kubeone-e2e-aws-rockylinux-csi-ccm-migration-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackRockylinuxCsiCcmMigrationV1_22_12
+      - TestAwsRockylinuxCsiCcmMigrationV1_22_12
       env:
       - name: PROVIDER
-        value: openstack
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rhel-csi-ccm-migration-v1.22.12
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestOpenstackRhelCsiCcmMigrationV1_22_12
-      env:
-      - name: PROVIDER
-        value: openstack
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-flatcar-csi-ccm-migration-v1.22.12
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestOpenstackFlatcarCsiCcmMigrationV1_22_12
-      env:
-      - name: PROVIDER
-        value: openstack
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.25
       imagePullPolicy: Always
       name: ""
@@ -10371,6 +10371,121 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-default-csi-ccm-migration-v1.22.12
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestOpenstackDefaultCsiCcmMigrationV1_22_12
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-centos-csi-ccm-migration-v1.22.12
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestOpenstackCentosCsiCcmMigrationV1_22_12
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-rockylinux-csi-ccm-migration-v1.22.12
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestOpenstackRockylinuxCsiCcmMigrationV1_22_12
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-rhel-csi-ccm-migration-v1.22.12
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestOpenstackRhelCsiCcmMigrationV1_22_12
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-flatcar-csi-ccm-migration-v1.22.12
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestOpenstackFlatcarCsiCcmMigrationV1_22_12
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
     preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-default-csi-ccm-migration-v1.22.12
   optional: false
@@ -10418,6 +10533,52 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-amzn-csi-ccm-migration-v1.23.9
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAwsAmznCsiCcmMigrationV1_23_9
+      env:
+      - name: PROVIDER
+        value: aws
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-centos-csi-ccm-migration-v1.23.9
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAwsCentosCsiCcmMigrationV1_23_9
+      env:
+      - name: PROVIDER
+        value: aws
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-csi-ccm-migration-v1.23.9
   optional: false
   path_alias: k8c.io/kubeone
@@ -10439,19 +10600,19 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
+    preset-aws: "true"
     preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-csi-ccm-migration-v1.23.9
+  name: pull-kubeone-e2e-aws-flatcar-csi-ccm-migration-v1.23.9
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultCsiCcmMigrationV1_23_9
+      - TestAwsFlatcarCsiCcmMigrationV1_23_9
       env:
       - name: PROVIDER
-        value: openstack
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.25
       imagePullPolicy: Always
       name: ""
@@ -10462,19 +10623,19 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
+    preset-aws: "true"
     preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-csi-ccm-migration-v1.23.9
+  name: pull-kubeone-e2e-aws-rhel-csi-ccm-migration-v1.23.9
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackCentosCsiCcmMigrationV1_23_9
+      - TestAwsRhelCsiCcmMigrationV1_23_9
       env:
       - name: PROVIDER
-        value: openstack
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.25
       imagePullPolicy: Always
       name: ""
@@ -10485,65 +10646,19 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
+    preset-aws: "true"
     preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rockylinux-csi-ccm-migration-v1.23.9
+  name: pull-kubeone-e2e-aws-rockylinux-csi-ccm-migration-v1.23.9
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackRockylinuxCsiCcmMigrationV1_23_9
+      - TestAwsRockylinuxCsiCcmMigrationV1_23_9
       env:
       - name: PROVIDER
-        value: openstack
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rhel-csi-ccm-migration-v1.23.9
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestOpenstackRhelCsiCcmMigrationV1_23_9
-      env:
-      - name: PROVIDER
-        value: openstack
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-flatcar-csi-ccm-migration-v1.23.9
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestOpenstackFlatcarCsiCcmMigrationV1_23_9
-      env:
-      - name: PROVIDER
-        value: openstack
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.25
       imagePullPolicy: Always
       name: ""
@@ -10681,6 +10796,121 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-default-csi-ccm-migration-v1.23.9
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestOpenstackDefaultCsiCcmMigrationV1_23_9
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-centos-csi-ccm-migration-v1.23.9
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestOpenstackCentosCsiCcmMigrationV1_23_9
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-rockylinux-csi-ccm-migration-v1.23.9
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestOpenstackRockylinuxCsiCcmMigrationV1_23_9
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-rhel-csi-ccm-migration-v1.23.9
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestOpenstackRhelCsiCcmMigrationV1_23_9
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-flatcar-csi-ccm-migration-v1.23.9
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestOpenstackFlatcarCsiCcmMigrationV1_23_9
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
     preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-default-csi-ccm-migration-v1.23.9
   optional: false
@@ -10728,6 +10958,52 @@ presubmits:
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-amzn-csi-ccm-migration-v1.24.3
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAwsAmznCsiCcmMigrationV1_24_3
+      env:
+      - name: PROVIDER
+        value: aws
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-centos-csi-ccm-migration-v1.24.3
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestAwsCentosCsiCcmMigrationV1_24_3
+      env:
+      - name: PROVIDER
+        value: aws
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws: "true"
+    preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-csi-ccm-migration-v1.24.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -10749,19 +11025,19 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
+    preset-aws: "true"
     preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-csi-ccm-migration-v1.24.3
+  name: pull-kubeone-e2e-aws-flatcar-csi-ccm-migration-v1.24.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackDefaultCsiCcmMigrationV1_24_3
+      - TestAwsFlatcarCsiCcmMigrationV1_24_3
       env:
       - name: PROVIDER
-        value: openstack
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.25
       imagePullPolicy: Always
       name: ""
@@ -10772,19 +11048,19 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
+    preset-aws: "true"
     preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-csi-ccm-migration-v1.24.3
+  name: pull-kubeone-e2e-aws-rhel-csi-ccm-migration-v1.24.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackCentosCsiCcmMigrationV1_24_3
+      - TestAwsRhelCsiCcmMigrationV1_24_3
       env:
       - name: PROVIDER
-        value: openstack
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.25
       imagePullPolicy: Always
       name: ""
@@ -10795,65 +11071,19 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
+    preset-aws: "true"
     preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rockylinux-csi-ccm-migration-v1.24.3
+  name: pull-kubeone-e2e-aws-rockylinux-csi-ccm-migration-v1.24.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./testv2/go-test-e2e.sh
-      - TestOpenstackRockylinuxCsiCcmMigrationV1_24_3
+      - TestAwsRockylinuxCsiCcmMigrationV1_24_3
       env:
       - name: PROVIDER
-        value: openstack
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rhel-csi-ccm-migration-v1.24.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestOpenstackRhelCsiCcmMigrationV1_24_3
-      env:
-      - name: PROVIDER
-        value: openstack
-      image: kubermatic/kubeone-e2e:v0.1.25
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-flatcar-csi-ccm-migration-v1.24.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./testv2/go-test-e2e.sh
-      - TestOpenstackFlatcarCsiCcmMigrationV1_24_3
-      env:
-      - name: PROVIDER
-        value: openstack
+        value: aws
       image: kubermatic/kubeone-e2e:v0.1.25
       imagePullPolicy: Always
       name: ""
@@ -10980,6 +11210,121 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-default-csi-ccm-migration-v1.24.3
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestOpenstackDefaultCsiCcmMigrationV1_24_3
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-centos-csi-ccm-migration-v1.24.3
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestOpenstackCentosCsiCcmMigrationV1_24_3
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-rockylinux-csi-ccm-migration-v1.24.3
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestOpenstackRockylinuxCsiCcmMigrationV1_24_3
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-rhel-csi-ccm-migration-v1.24.3
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestOpenstackRhelCsiCcmMigrationV1_24_3
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: kubermatic/kubeone-e2e:v0.1.25
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-flatcar-csi-ccm-migration-v1.24.3
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./testv2/go-test-e2e.sh
+      - TestOpenstackFlatcarCsiCcmMigrationV1_24_3
+      env:
+      - name: PROVIDER
+        value: openstack
       image: kubermatic/kubeone-e2e:v0.1.25
       imagePullPolicy: Always
       name: ""
