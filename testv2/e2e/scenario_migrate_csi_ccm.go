@@ -85,6 +85,7 @@ func (scenario *scenarioMigrateCSIAndCCM) Run(t *testing.T) {
 	scenario.migrate(t, k1New, false)
 	waitKubeOneNodesReady(t, k1New)
 
+	labelNodesSkipEviction(t, client)
 	scenario.forceRolloutMachinedeployments(t, client)
 	waitMachinesHasNodes(t, k1New, client)
 	waitKubeOneNodesReady(t, k1New)

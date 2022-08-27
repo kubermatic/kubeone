@@ -145,6 +145,7 @@ func (scenario *scenarioUpgrade) test(t *testing.T) {
 
 	client := dynamicClientRetriable(t, k1)
 
+	labelNodesSkipEviction(t, client)
 	scenario.upgradeMachineDeployments(t, client, scenario.versions[1])
 	waitMachinesHasNodes(t, k1, client)
 	waitKubeOneNodesReady(t, k1)

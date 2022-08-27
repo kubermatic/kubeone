@@ -463,6 +463,38 @@ func dynamicClientRetriable(t *testing.T, k1 *kubeoneBin) ctrlruntimeclient.Clie
 	return client
 }
 
+func labelNodesSkipEviction(t *testing.T, client ctrlruntimeclient.Client) {
+	ctx := context.Background()
+
+	var (
+		nodeList corev1.NodeList
+	)
+
+	err := retryFn(func() error {
+		return client.List(ctx, &nodeList, ctrlruntimeclient.HasLabels{"machine-controller/owned-by"})
+	})
+	if err != nil {
+		t.Fatalf("listing nodes: %v", err)
+	}
+
+	for _, node := range nodeList.Items {
+		nodeOld := node.DeepCopy()
+		nodeNew := node
+
+		if nodeNew.Annotations == nil {
+			nodeNew.Annotations = map[string]string{}
+		}
+		nodeNew.Annotations["kubermatic.io/skip-eviction"] = "true"
+
+		err = retryFn(func() error {
+			return client.Patch(context.Background(), &nodeNew, ctrlruntimeclient.MergeFrom(nodeOld))
+		})
+		if err != nil {
+			t.Fatalf("patching node %q to skip eviction: %v", node.Name, err)
+		}
+	}
+}
+
 func waitMachinesHasNodes(t *testing.T, k1 *kubeoneBin, client ctrlruntimeclient.Client) {
 	ctx := context.Background()
 
