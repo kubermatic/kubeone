@@ -225,7 +225,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 
 	calicoIptablesBackend := "Auto"
 	for _, cp := range s.LiveCluster.ControlPlane {
-		if cp.Config.OperatingSystem == kubeoneapi.OperatingSystemNameFlatcar {
+		if cp.Config.OperatingSystem == kubeoneapi.OperatingSystemNameFlatcar || cp.Config.OperatingSystem == kubeoneapi.OperatingSystemNameRHEL {
 			calicoIptablesBackend = "NFT"
 
 			break
