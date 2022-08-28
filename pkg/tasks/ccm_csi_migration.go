@@ -92,55 +92,13 @@ func readyToCompleteCCMMigration(s *state.State) error {
 	return nil
 }
 
-func ccmMigrationRegenerateControlPlaneManifests(s *state.State) error {
-	return s.RunTaskOnControlPlane(ccmMigrationRegenerateControlPlaneManifestsInternal, state.RunSequentially)
+func ccmMigrationRegenerateControlPlaneManifestsAndKubeletConfig(s *state.State) error {
+	return s.RunTaskOnControlPlane(ccmMigrationRegenerateControlPlaneManifestsAndKubeletConfigInternal, state.RunSequentially)
 }
 
-func ccmMigrationRegenerateControlPlaneManifestsInternal(s *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
+func ccmMigrationRegenerateControlPlaneManifestsAndKubeletConfigInternal(s *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
 	logger := s.Logger.WithField("node", node.PublicAddress)
-	logger.Info("Regenerating Kubernetes API server and kube-controller-manager manifests...")
-
-	var (
-		apiserverPodName         = fmt.Sprintf("kube-apiserver-%s", node.Hostname)
-		controllerManagerPodName = fmt.Sprintf("kube-controller-manager-%s", node.Hostname)
-	)
-
-	cmd, err := scripts.CCMMigrationRegenerateControlPlaneManifests(s.WorkDir, node.ID, s.KubeadmVerboseFlag())
-	if err != nil {
-		return err
-	}
-	_, _, err = s.Runner.RunRaw(cmd)
-	if err != nil {
-		return fail.SSH(err, "regenerate control-plane manifests for CCM migration")
-	}
-
-	timeout := 30 * time.Second
-	logger.Infof("Waiting %s for Kubelet to roll-out static pods...", timeout)
-	time.Sleep(timeout)
-
-	timeout = 2 * time.Minute
-	logger.Infof("Waiting up to %s for API server to become healthy...", timeout)
-	err = waitForStaticPodReady(s, timeout, apiserverPodName, metav1.NamespaceSystem)
-	if err != nil {
-		return err
-	}
-
-	logger.Infof("Waiting up to %s for kube-controller-manager roll-out...", timeout)
-	err = waitForStaticPodReady(s, timeout, controllerManagerPodName, metav1.NamespaceSystem)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func ccmMigrationUpdateControlPlaneKubeletConfig(s *state.State) error {
-	return s.RunTaskOnControlPlane(ccmMigrationUpdateControlPlaneKubeletConfigInternal, state.RunSequentially)
-}
-
-func ccmMigrationUpdateControlPlaneKubeletConfigInternal(s *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
-	logger := s.Logger.WithField("node", node.PublicAddress)
-	logger.Info("Updating config and restarting Kubelet...")
+	logger.Info("Starting CCM/CSI migration...")
 
 	drainer := nodeutils.NewDrainer(s.RESTConfig, logger)
 
@@ -154,19 +112,42 @@ func ccmMigrationUpdateControlPlaneKubeletConfigInternal(s *state.State, node *k
 		return err
 	}
 
-	logger.Info("Updating Kubelet config...")
-	cmd, err := scripts.CCMMigrationUpdateKubeletConfig(s.WorkDir, node.ID, s.KubeadmVerboseFlag())
+	logger.Info("Regenerating API server and kube-controller-manager manifests, and Kubelet configuration...")
+
+	cmd, err := scripts.CCMMigrationRegenerateControlPlaneConfigs(s.WorkDir, node.ID, s.KubeadmVerboseFlag())
 	if err != nil {
 		return err
 	}
 	_, _, err = s.Runner.RunRaw(cmd)
 	if err != nil {
-		return fail.SSH(err, "updating kubelet config for CCM migration")
+		return fail.SSH(err, "regenerate control-plane manifests for CCM migration")
 	}
 
-	timeout := 2 * time.Minute
+	var (
+		apiserverPodName         = fmt.Sprintf("kube-apiserver-%s", node.Hostname)
+		controllerManagerPodName = fmt.Sprintf("kube-controller-manager-%s", node.Hostname)
+		timeout                  = 30 * time.Second
+	)
+
+	logger.Debugf("Waiting %s for control plane components to stabilize...", timeout)
+	time.Sleep(timeout)
+
+	timeout = 2 * time.Minute
 	logger.Debugf("Waiting up to %s for Kubelet to become running...", timeout)
-	if err := waitForKubeletReady(conn, timeout); err != nil {
+	err = waitForKubeletReady(conn, timeout)
+	if err != nil {
+		return err
+	}
+
+	logger.Infof("Waiting up to %s for API server to become healthy...", timeout)
+	err = waitForStaticPodReady(s, timeout, apiserverPodName, metav1.NamespaceSystem)
+	if err != nil {
+		return err
+	}
+
+	logger.Infof("Waiting up to %s for kube-controller-manager roll-out...", timeout)
+	err = waitForStaticPodReady(s, timeout, controllerManagerPodName, metav1.NamespaceSystem)
+	if err != nil {
 		return err
 	}
 
