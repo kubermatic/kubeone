@@ -1,0 +1,538 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: vsphere-csi-config-secret
+  namespace: kube-system
+data:
+  csi-vsphere.conf: |
+  {{ .Config.CloudProvider.CSIConfig | b64enc | indent 4 }}
+---
+apiVersion: storage.k8s.io/v1
+kind: CSIDriver
+metadata:
+  name: csi.vsphere.vmware.com
+spec:
+  attachRequired: true
+  podInfoOnMount: false
+---
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: vsphere-csi-controller
+  namespace: kube-system
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: vsphere-csi-controller-role
+rules:
+  - apiGroups: [""]
+    resources: ["nodes", "persistentvolumeclaims", "pods", "configmaps"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["persistentvolumeclaims/status"]
+    verbs: ["patch"]
+  - apiGroups: [""]
+    resources: ["persistentvolumes"]
+    verbs: ["get", "list", "watch", "create", "update", "delete", "patch"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "watch", "list", "delete", "update", "create"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["storageclasses", "csinodes"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["volumeattachments"]
+    verbs: ["get", "list", "watch", "patch"]
+  - apiGroups: ["cns.vmware.com"]
+    resources: ["triggercsifullsyncs"]
+    verbs: ["create", "get", "update", "watch", "list"]
+  - apiGroups: ["cns.vmware.com"]
+    resources: ["cnsvspherevolumemigrations"]
+    verbs: ["create", "get", "list", "watch", "update", "delete"]
+  - apiGroups: ["apiextensions.k8s.io"]
+    resources: ["customresourcedefinitions"]
+    verbs: ["get", "create", "update"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["volumeattachments/status"]
+    verbs: ["patch"]
+  - apiGroups: ["cns.vmware.com"]
+    resources: ["cnsvolumeoperationrequests"]
+    verbs: ["create", "get", "list", "update", "delete"]
+  - apiGroups: [ "snapshot.storage.k8s.io" ]
+    resources: [ "volumesnapshots" ]
+    verbs: [ "get", "list" ]
+  - apiGroups: [ "snapshot.storage.k8s.io" ]
+    resources: [ "volumesnapshotclasses" ]
+    verbs: [ "watch", "get", "list" ]
+  - apiGroups: [ "snapshot.storage.k8s.io" ]
+    resources: [ "volumesnapshotcontents" ]
+    verbs: [ "create", "get", "list", "watch", "update", "delete" ]
+  - apiGroups: [ "snapshot.storage.k8s.io" ]
+    resources: [ "volumesnapshotcontents/status" ]
+    verbs: [ "update", "patch" ]
+  - apiGroups: [ "cns.vmware.com" ]
+    resources: [ "csinodetopologies" ]
+    verbs: ["get", "update", "watch", "list"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: vsphere-csi-controller-binding
+subjects:
+  - kind: ServiceAccount
+    name: vsphere-csi-controller
+    namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: vsphere-csi-controller-role
+  apiGroup: rbac.authorization.k8s.io
+---
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: vsphere-csi-node
+  namespace: kube-system
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: vsphere-csi-node-cluster-role
+rules:
+  - apiGroups: ["cns.vmware.com"]
+    resources: ["csinodetopologies"]
+    verbs: ["create", "watch"]
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["get"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: vsphere-csi-node-cluster-role-binding
+subjects:
+  - kind: ServiceAccount
+    name: vsphere-csi-node
+    namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: vsphere-csi-node-cluster-role
+  apiGroup: rbac.authorization.k8s.io
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: vsphere-csi-node-role
+  namespace: kube-system
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "list", "watch"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: vsphere-csi-node-binding
+  namespace: kube-system
+subjects:
+  - kind: ServiceAccount
+    name: vsphere-csi-node
+    namespace: kube-system
+roleRef:
+  kind: Role
+  name: vsphere-csi-node-role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+data:
+  "csi-migration": "{{ .CSIMigration }}"
+  "csi-auth-check": "true"
+  "online-volume-extend": "true"
+  "trigger-csi-fullsync": "false"
+  "async-query-volume": "true"
+  "improved-csi-idempotency": "true"
+  "improved-volume-topology": "true"
+  "block-volume-snapshot": "false"
+  "csi-windows-support": "false"
+kind: ConfigMap
+metadata:
+  name: internal-feature-states.csi.vsphere.vmware.com
+  namespace: kube-system
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vsphere-csi-controller
+  namespace: kube-system
+  labels:
+    app: vsphere-csi-controller
+spec:
+  ports:
+    - name: ctlr
+      port: 2112
+      targetPort: 2112
+      protocol: TCP
+    - name: syncer
+      port: 2113
+      targetPort: 2113
+      protocol: TCP
+  selector:
+    app: vsphere-csi-controller
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: vsphere-csi-controller
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vsphere-csi-controller
+  template:
+    metadata:
+      labels:
+        app: vsphere-csi-controller
+        role: vsphere-csi
+      annotations:
+        "kubeone.k8c.io/cabundle-hash": "{{ .Config.CABundle | sha256sum }}"
+        "csiConfig-hash": "{{ .Config.CloudProvider.CSIConfig | sha256sum }}"
+    spec:
+      serviceAccountName: vsphere-csi-controller
+      nodeSelector:
+        node-role.kubernetes.io/master: ""
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          operator: Exists
+          effect: NoSchedule
+        # uncomment below toleration if you need an aggressive pod eviction in case when
+        # node becomes not-ready or unreachable. Default is 300 seconds if not specified.
+        #- key: node.kubernetes.io/not-ready
+        #  operator: Exists
+        #  effect: NoExecute
+        #  tolerationSeconds: 30
+        #- key: node.kubernetes.io/unreachable
+        #  operator: Exists
+        #  effect: NoExecute
+        #  tolerationSeconds: 30
+      dnsPolicy: "Default"
+      containers:
+        - name: csi-attacher
+          image: {{ .InternalImages.Get "VsphereCSIAttacher" }}
+          args:
+            - "--v=4"
+            - "--timeout=300s"
+            - "--csi-address=$(ADDRESS)"
+            - "--leader-election"
+            - "--kube-api-qps=100"
+            - "--kube-api-burst=100"
+          env:
+            - name: ADDRESS
+              value: /csi/csi.sock
+          volumeMounts:
+            - mountPath: /csi
+              name: socket-dir
+        - name: csi-resizer
+          image: {{ .InternalImages.Get "VsphereCSIResizer" }}
+          args:
+            - "--v=4"
+            - "--timeout=300s"
+            - "--handle-volume-inuse-error=false"
+            - "--csi-address=$(ADDRESS)"
+            - "--kube-api-qps=100"
+            - "--kube-api-burst=100"
+            - "--leader-election"
+          env:
+            - name: ADDRESS
+              value: /csi/csi.sock
+          volumeMounts:
+            - mountPath: /csi
+              name: socket-dir
+        - name: vsphere-csi-controller
+          image: {{ .InternalImages.Get "VsphereCSIDriver" }}
+          args:
+            - "--fss-name=internal-feature-states.csi.vsphere.vmware.com"
+            - "--fss-namespace=$(CSI_NAMESPACE)"
+            - "--use-gocsi=false"
+          imagePullPolicy: "Always"
+          env:
+            - name: CSI_ENDPOINT
+              value: unix:///csi/csi.sock
+            - name: X_CSI_MODE
+              value: "controller"
+            - name: X_CSI_SPEC_DISABLE_LEN_CHECK
+              value: "true"
+            - name: X_CSI_SERIAL_VOL_ACCESS_TIMEOUT
+              value: 3m
+            - name: VSPHERE_CSI_CONFIG
+              value: "/etc/cloud/csi-vsphere.conf"
+            - name: LOGGER_LEVEL
+              value: "PRODUCTION" # Options: DEVELOPMENT, PRODUCTION
+            - name: INCLUSTER_CLIENT_QPS
+              value: "100"
+            - name: INCLUSTER_CLIENT_BURST
+              value: "100"
+            - name: CSI_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+{{ if .Config.CABundle }}
+{{ caBundleEnvVar | indent 12 }}
+{{ end }}
+          volumeMounts:
+            - mountPath: /etc/cloud
+              name: vsphere-config-volume
+              readOnly: true
+            - mountPath: /csi
+              name: socket-dir
+{{ if .Config.CABundle }}
+{{ caBundleVolumeMount | indent 12 }}
+{{ end }}
+          ports:
+            - name: healthz
+              containerPort: 9808
+              protocol: TCP
+            - name: prometheus
+              containerPort: 2112
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: healthz
+            initialDelaySeconds: 10
+            timeoutSeconds: 3
+            periodSeconds: 5
+            failureThreshold: 3
+        - name: liveness-probe
+          image: {{ .InternalImages.Get "VsphereCSILivenessProbe" }}
+          args:
+            - "--v=4"
+            - "--csi-address=/csi/csi.sock"
+          volumeMounts:
+            - name: socket-dir
+              mountPath: /csi
+        - name: vsphere-syncer
+          image: {{ .InternalImages.Get "VsphereCSISyncer" }}
+          args:
+            - "--leader-election"
+            - "--fss-name=internal-feature-states.csi.vsphere.vmware.com"
+            - "--fss-namespace=$(CSI_NAMESPACE)"
+          imagePullPolicy: "Always"
+          ports:
+            - containerPort: 2113
+              name: prometheus
+              protocol: TCP
+          env:
+            - name: FULL_SYNC_INTERVAL_MINUTES
+              value: "30"
+            - name: VSPHERE_CSI_CONFIG
+              value: "/etc/cloud/csi-vsphere.conf"
+            - name: LOGGER_LEVEL
+              value: "PRODUCTION" # Options: DEVELOPMENT, PRODUCTION
+            - name: INCLUSTER_CLIENT_QPS
+              value: "100"
+            - name: INCLUSTER_CLIENT_BURST
+              value: "100"
+            - name: CSI_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+{{ if .Config.CABundle }}
+{{ caBundleEnvVar | indent 12 }}
+{{ end }}
+          volumeMounts:
+            - mountPath: /etc/cloud
+              name: vsphere-config-volume
+              readOnly: true
+{{ if .Config.CABundle }}
+{{ caBundleVolumeMount | indent 12 }}
+{{ end }}
+        - name: csi-provisioner
+          image: {{ .InternalImages.Get "VsphereCSIProvisioner" }}
+          args:
+            - "--v=4"
+            - "--timeout=300s"
+            - "--csi-address=$(ADDRESS)"
+            - "--kube-api-qps=100"
+            - "--kube-api-burst=100"
+            - "--leader-election"
+            - "--default-fstype=ext4"
+            # needed only for topology aware setup
+            #- "--feature-gates=Topology=true"
+            #- "--strict-topology"
+          env:
+            - name: ADDRESS
+              value: /csi/csi.sock
+          volumeMounts:
+            - mountPath: /csi
+              name: socket-dir
+      volumes:
+        - name: vsphere-config-volume
+          secret:
+            secretName: vsphere-csi-config-secret
+        - name: socket-dir
+          emptyDir: {}
+{{ if .Config.CABundle }}
+{{ caBundleVolume | indent 8 }}
+{{ end }}
+---
+kind: DaemonSet
+apiVersion: apps/v1
+metadata:
+  name: vsphere-csi-node
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      app: vsphere-csi-node
+  updateStrategy:
+    type: "RollingUpdate"
+    rollingUpdate:
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: vsphere-csi-node
+        role: vsphere-csi
+      annotations:
+        "kubeone.k8c.io/cabundle-hash": "{{ .Config.CABundle | sha256sum }}"
+        "csiConfig-hash": "{{ .Config.CloudProvider.CSIConfig | sha256sum }}"
+    spec:
+      serviceAccountName: vsphere-csi-node
+      hostNetwork: true
+      dnsPolicy: "ClusterFirstWithHostNet"
+      containers:
+        - name: node-driver-registrar
+          image: {{ .InternalImages.Get "VsphereCSINodeDriverRegistar" }}
+          args:
+            - "--v=5"
+            - "--csi-address=$(ADDRESS)"
+            - "--kubelet-registration-path=$(DRIVER_REG_SOCK_PATH)"
+          env:
+            - name: ADDRESS
+              value: /csi/csi.sock
+            - name: DRIVER_REG_SOCK_PATH
+              value: /var/lib/kubelet/plugins/csi.vsphere.vmware.com/csi.sock
+          volumeMounts:
+            - name: plugin-dir
+              mountPath: /csi
+            - name: registration-dir
+              mountPath: /registration
+          livenessProbe:
+            exec:
+              command:
+                - /csi-node-driver-registrar
+                - --kubelet-registration-path=/var/lib/kubelet/plugins/csi.vsphere.vmware.com/csi.sock
+                - --mode=kubelet-registration-probe
+            initialDelaySeconds: 3
+        - name: vsphere-csi-node
+          image: {{ .InternalImages.Get "VsphereCSIDriver" }}
+          args:
+            - "--fss-name=internal-feature-states.csi.vsphere.vmware.com"
+            - "--fss-namespace=$(CSI_NAMESPACE)"
+            - "--use-gocsi=false"
+          imagePullPolicy: "Always"
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: CSI_ENDPOINT
+              value: unix:///csi/csi.sock
+            - name: MAX_VOLUMES_PER_NODE
+              value: "59" # Maximum number of volumes that controller can publish to the node. If value is not set or zero Kubernetes decide how many volumes can be published by the controller to the node.
+            - name: X_CSI_MODE
+              value: "node"
+            - name: X_CSI_SPEC_REQ_VALIDATION
+              value: "false"
+            - name: X_CSI_SPEC_DISABLE_LEN_CHECK
+              value: "true"
+            - name: LOGGER_LEVEL
+              value: "PRODUCTION" # Options: DEVELOPMENT, PRODUCTION
+            - name: CSI_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: NODEGETINFO_WATCH_TIMEOUT_MINUTES
+              value: "1"
+{{ if .Config.CABundle }}
+{{ caBundleEnvVar | indent 12 }}
+{{ end }}
+          securityContext:
+            privileged: true
+            capabilities:
+              add: ["SYS_ADMIN"]
+            allowPrivilegeEscalation: true
+          volumeMounts:
+            - name: plugin-dir
+              mountPath: /csi
+            - name: pods-mount-dir
+              mountPath: /var/lib/kubelet
+              # needed so that any mounts setup inside this container are
+              # propagated back to the host machine.
+              mountPropagation: "Bidirectional"
+            - name: device-dir
+              mountPath: /dev
+            - name: blocks-dir
+              mountPath: /sys/block
+            - name: sys-devices-dir
+              mountPath: /sys/devices
+{{ if .Config.CABundle }}
+{{ caBundleVolumeMount | indent 12 }}
+{{ end }}
+          ports:
+            - name: healthz
+              containerPort: 9808
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: healthz
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+            periodSeconds: 5
+            failureThreshold: 3
+        - name: liveness-probe
+          image: {{ .InternalImages.Get "VsphereCSILivenessProbe" }}
+          args:
+            - "--v=4"
+            - "--csi-address=/csi/csi.sock"
+          volumeMounts:
+            - name: plugin-dir
+              mountPath: /csi
+      volumes:
+        - name: registration-dir
+          hostPath:
+            path: /var/lib/kubelet/plugins_registry
+            type: Directory
+        - name: plugin-dir
+          hostPath:
+            path: /var/lib/kubelet/plugins/csi.vsphere.vmware.com
+            type: DirectoryOrCreate
+        - name: pods-mount-dir
+          hostPath:
+            path: /var/lib/kubelet
+            type: Directory
+        - name: device-dir
+          hostPath:
+            path: /dev
+        - name: blocks-dir
+          hostPath:
+            path: /sys/block
+            type: Directory
+        - name: sys-devices-dir
+          hostPath:
+            path: /sys/devices
+            type: Directory
+{{ if .Config.CABundle }}
+{{ caBundleVolume | indent 8 }}
+{{ end }}
+      tolerations:
+        - effect: NoExecute
+          operator: Exists
+        - effect: NoSchedule
+          operator: Exists
