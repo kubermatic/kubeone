@@ -673,17 +673,17 @@ func detectCCMMigrationStatus(s *state.State) (*state.CCMStatus, error) {
 // backwards compatibility.
 //
 // The function works in the following way:
-//   * if the cluster is not provisioned, or if the cluster is not an OpenStack
+//   - if the cluster is not provisioned, or if the cluster is not an OpenStack
 //     cluster, return the KubeOne cluster name
-//   * if it's an existing OpenStack cluster:
-//      * if cluster is running in-tree cloud provider: return the KubeOne
-//        cluster name because the in-tree provider already has the
-//        --cluster-name flag set
-//      * if cluster is running external cloud provider: check if there is
-//        `--cluster-name` flag on the OpenStack CCM. If there is, read the
-//        value and return it, otherwise don't set the OpenStack cluster name,
-//        in which case it defaults to `kubernetes`
-//   * if cluster is migrated to external CCM, return the KubeOne cluster name
+//   - if it's an existing OpenStack cluster:
+//   - if cluster is running in-tree cloud provider: return the KubeOne
+//     cluster name because the in-tree provider already has the
+//     --cluster-name flag set
+//   - if cluster is running external cloud provider: check if there is
+//     `--cluster-name` flag on the OpenStack CCM. If there is, read the
+//     value and return it, otherwise don't set the OpenStack cluster name,
+//     in which case it defaults to `kubernetes`
+//   - if cluster is migrated to external CCM, return the KubeOne cluster name
 //
 // If an operator wants to change the --cluster-name flag on OpenStack external
 // CCM, they need to edit the CCM DaemonSet manually. KubeOne will
