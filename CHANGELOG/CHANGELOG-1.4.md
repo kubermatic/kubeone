@@ -1,3 +1,23 @@
+# [v1.4.8](https://github.com/kubermatic/kubeone/releases/tag/v1.4.8) - 2022-08-29
+
+## Changelog since v1.4.7
+
+## Urgent Upgrade Notes 
+
+### (No, really, you MUST read this before you upgrade)
+
+- Update machine-controller to v1.43.7. This update fixes several issues for RHEL clusters on Azure. If you have RHEL-based MachineDeployments on Azure, we **strongly recommend** upgrading to KubeOne 1.4.8 and rotating those MachineDeployments **BEFORE** upgrading to KubeOne 1.5. **If not done, the Canal CNI update might break the cluster networking when upgrading to KubeOne 1.5.** ([#2333](https://github.com/kubermatic/kubeone/pull/2333), [@xmudrii](https://github.com/xmudrii))
+
+## Changes by Kind
+
+### Bug or Regression
+
+- Mount `/etc/pki` to the OpenStack CCM container to fix CrashLoopBackoff on clusters running CentOS 7 ([#2303](https://github.com/kubermatic/kubeone/pull/2303), [@xmudrii](https://github.com/xmudrii))
+- Explicitly create `/opt/bin` on Flatcar before trying to untar anything to that directory ([#2305](https://github.com/kubermatic/kubeone/pull/2305), [@xmudrii](https://github.com/xmudrii))
+- Mount `/etc/pki` to the Azure CCM container to fix CrashLoopBackoff on clusters running CentOS 7 and Rocky Linux ([#2310](https://github.com/kubermatic/kubeone/pull/2310), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Mount `/usr/share/ca-certificates` to the Azure CCM container to fix CrashLoopBackoff on clusters running Flatcar ([#2334](https://github.com/kubermatic/kubeone/pull/2334), [@xmudrii](https://github.com/xmudrii))
+- Set iptables backend (`FELIX_IPTABLESBACKEND`) to `NFT` for Canal and Calico VXLAN on clusters running Flatcar Linux and RHEL. For non Flatcar/RHEL clusters, iptables backend is set to Auto, which is the default value and results in Calico determining the iptables backend automatically. The value can be overridden by setting the `iptablesBackend` addon parameter (see the PR description for an example). ([#2334](https://github.com/kubermatic/kubeone/pull/2334), [@xmudrii](https://github.com/xmudrii))
+
 # [v1.4.7](https://github.com/kubermatic/kubeone/releases/tag/v1.4.7) - 2022-08-16
 
 ## Changes by Kind
