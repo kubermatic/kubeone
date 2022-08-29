@@ -23,7 +23,7 @@ import (
 	"k8c.io/kubeone/pkg/testhelper"
 )
 
-func TestCCMMigrationRegenerateControlPlaneManifests(t *testing.T) {
+func TestCCMMigrationRegenerateControlPlaneConfigs(t *testing.T) {
 	t.Parallel()
 
 	type args struct {
@@ -57,55 +57,9 @@ func TestCCMMigrationRegenerateControlPlaneManifests(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			got, err := CCMMigrationRegenerateControlPlaneManifests(tt.args.workdir, tt.args.nodeID, tt.args.verboseFlag)
+			got, err := CCMMigrationRegenerateControlPlaneConfigs(tt.args.workdir, tt.args.nodeID, tt.args.verboseFlag)
 			if !errors.Is(err, tt.err) {
-				t.Errorf("TestCCMMigrationRegenerateControlPlaneManifests() error = %v, wantErr %v", err, tt.err)
-
-				return
-			}
-
-			testhelper.DiffOutput(t, testhelper.FSGoldenName(t), got, *updateFlag)
-		})
-	}
-}
-
-func TestCCMMigrationUpdateKubeletConfig(t *testing.T) {
-	t.Parallel()
-
-	type args struct {
-		workdir     string
-		nodeID      int
-		verboseFlag string
-	}
-
-	tests := []struct {
-		name string
-		args args
-		err  error
-	}{
-		{
-			name: "verbose",
-			args: args{
-				workdir:     "test-wd",
-				nodeID:      0,
-				verboseFlag: "--v=6",
-			},
-		},
-		{
-			name: "not-verbose",
-			args: args{
-				workdir: "test-wd",
-			},
-		},
-	}
-
-	for _, tt := range tests {
-		tt := tt
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-			got, err := CCMMigrationUpdateKubeletConfig(tt.args.workdir, tt.args.nodeID, tt.args.verboseFlag)
-			if !errors.Is(err, tt.err) {
-				t.Errorf("CCMMigrationUpdateKubeletConfig() error = %v, wantErr %v", err, tt.err)
+				t.Errorf("TestCCMMigrationRegenerateControlPlaneConfigs() error = %v, wantErr %v", err, tt.err)
 
 				return
 			}
