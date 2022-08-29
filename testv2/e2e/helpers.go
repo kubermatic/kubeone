@@ -287,7 +287,7 @@ func renderManifest(t *testing.T, templatePath string, data manifestData) string
 }
 
 func waitForNodesReady(t *testing.T, client ctrlruntimeclient.Client, expectedNumberOfNodes int) error {
-	waitTimeout := 10 * time.Minute
+	waitTimeout := 20 * time.Minute
 	t.Logf("waiting maximum %s for %d nodes to be ready", waitTimeout, expectedNumberOfNodes)
 
 	return wait.Poll(5*time.Second, waitTimeout, func() (bool, error) {
@@ -463,10 +463,54 @@ func dynamicClientRetriable(t *testing.T, k1 *kubeoneBin) ctrlruntimeclient.Clie
 	return client
 }
 
-func waitMachinesHasNodes(t *testing.T, client ctrlruntimeclient.Client) {
+func labelNodesSkipEviction(t *testing.T, client ctrlruntimeclient.Client) {
 	ctx := context.Background()
 
-	waitErr := wait.Poll(15*time.Second, 10*time.Minute, func() (bool, error) {
+	var (
+		nodeList corev1.NodeList
+	)
+
+	err := retryFn(func() error {
+		return client.List(ctx, &nodeList, ctrlruntimeclient.HasLabels{"machine-controller/owned-by"})
+	})
+	if err != nil {
+		t.Fatalf("listing nodes: %v", err)
+	}
+
+	for _, node := range nodeList.Items {
+		nodeOld := node.DeepCopy()
+		nodeNew := node
+
+		if nodeNew.Annotations == nil {
+			nodeNew.Annotations = map[string]string{}
+		}
+		nodeNew.Annotations["kubermatic.io/skip-eviction"] = "true"
+
+		err = retryFn(func() error {
+			return client.Patch(context.Background(), &nodeNew, ctrlruntimeclient.MergeFrom(nodeOld))
+		})
+		if err != nil {
+			t.Fatalf("patching node %q to skip eviction: %v", node.Name, err)
+		}
+	}
+}
+
+func waitMachinesHasNodes(t *testing.T, k1 *kubeoneBin, client ctrlruntimeclient.Client) {
+	ctx := context.Background()
+
+	kubeoneManifest, err := k1.ClusterManifest()
+	if err != nil {
+		t.Fatalf("rendering cluster manifest: %v", err)
+	}
+
+	numberOfMachinesToWait := 0
+	for _, worker := range kubeoneManifest.DynamicWorkers {
+		if worker.Replicas != nil {
+			numberOfMachinesToWait += *worker.Replicas
+		}
+	}
+
+	waitErr := wait.Poll(15*time.Second, 20*time.Minute, func() (bool, error) {
 		var (
 			machineList              clusterv1alpha1.MachineList
 			someMachinesLacksTheNode bool
@@ -476,8 +520,18 @@ func waitMachinesHasNodes(t *testing.T, client ctrlruntimeclient.Client) {
 			return client.List(ctx, &machineList, ctrlruntimeclient.InNamespace(metav1.NamespaceSystem))
 		})
 
+		if len(machineList.Items) != numberOfMachinesToWait {
+			t.Logf("Found %d Machines, but expected %d...", len(machineList.Items), numberOfMachinesToWait)
+
+			return false, nil
+		}
+
 		t.Logf("checking %d machines for node reference", len(machineList.Items))
 		for _, machine := range machineList.Items {
+			if machine.ObjectMeta.DeletionTimestamp != nil {
+				t.Logf("machine %q is being deleted", machine.Name)
+				someMachinesLacksTheNode = true
+			}
 			if machine.Status.NodeRef == nil {
 				t.Logf("machine %q still has no nodeRef", machine.Name)
 				someMachinesLacksTheNode = true
