@@ -510,8 +510,7 @@ func WithCCMCSIMigration(t Tasks) Tasks {
 	}...).
 		append(kubernetesConfigFiles()...).
 		append(
-			Task{Fn: ccmMigrationRegenerateControlPlaneManifests, Operation: "regenerating static pod manifests"},
-			Task{Fn: ccmMigrationUpdateControlPlaneKubeletConfig, Operation: "updating kubelet config on control plane nodes"},
+			Task{Fn: ccmMigrationRegenerateControlPlaneManifestsAndKubeletConfig, Operation: "regenerating static pod manifests and kubelet config"},
 			Task{
 				Fn:        ccmMigrationUpdateStaticWorkersKubeletConfig,
 				Operation: "updating kubelet config on static worker nodes",
