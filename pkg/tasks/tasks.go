@@ -80,8 +80,8 @@ func WithBinariesOnly(t Tasks) Tasks {
 }
 
 // WithHostnameOS will prepend passed tasks with 2 basic tasks:
-//  * detect OS on all cluster hosts
-//  * detect hostnames  on all cluster hosts
+//   - detect OS on all cluster hosts
+//   - detect hostnames  on all cluster hosts
 func WithHostnameOS(t Tasks) Tasks {
 	return t.prepend(
 		Task{Fn: determineHostname, ErrMsg: "failed to detect hostname"},

@@ -4353,6 +4353,8 @@ spec:
               value: "false"
             - name: FELIX_HEALTHENABLED
               value: "true"
+            - name: FELIX_IPTABLESBACKEND
+              value: "{{ default .CalicoIptablesBackend .Params.iptablesBackend }}"
           securityContext:
             privileged: true
           resources:
