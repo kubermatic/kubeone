@@ -46,6 +46,8 @@ const (
 	AddonCSIOpenStackCinder     = "csi-openstack-cinder"
 	AddonCSIVMwareCloudDirector = "csi-vmware-cloud-director"
 	AddonCSIVsphere             = "csi-vsphere"
+	// AddonCSIVsphereKubeSystem represents the CSI driver deployed to Kube-System Namespace.
+	AddonCSIVsphereKubeSystem   = "csi-vsphere-ks"
 	AddonMachineController      = "machinecontroller"
 	AddonMetricsServer          = "metrics-server"
 	AddonNodeLocalDNS           = "nodelocaldns"
