@@ -1,0 +1,157 @@
+{{ if .CSIMigration }}
+# Requires k8s 1.19+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: vsphere-webhook-certs
+  namespace: kube-system
+data:
+  "cert.pem": |
+  {{ .Certificates.CSIMigrationWebhookCert | b64enc | indent 4 }}
+"key.pem": |
+  {{ .Certificates.CSIMigrationWebhookKey | b64enc | indent 4 }}
+"webhook.config": |
+  {{ vSphereCSIWebhookConfig | b64enc | indent 4 }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vsphere-webhook-svc
+  namespace: kube-system
+  labels:
+    app: vsphere-csi-webhook
+spec:
+  ports:
+    - port: 443
+      targetPort: 8443
+  selector:
+    app: vsphere-csi-webhook
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: validation.csi.vsphere.vmware.com
+webhooks:
+  - name: validation.csi.vsphere.vmware.com
+    clientConfig:
+      service:
+        name: vsphere-webhook-svc
+        namespace: kube-system
+        path: "/validate"
+      caBundle: |
+  {{ .Certificates.KubernetesCA | b64enc | indent 8 }}
+rules:
+  - apiGroups:   ["storage.k8s.io"]
+    apiVersions: ["v1", "v1beta1"]
+    operations:  ["CREATE", "UPDATE"]
+    resources:   ["storageclasses"]
+sideEffects: None
+admissionReviewVersions: ["v1"]
+failurePolicy: Fail
+---
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: vsphere-csi-webhook
+  namespace: kube-system
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: vsphere-csi-webhook-role
+  namespace: kube-system
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "list", "watch"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: vsphere-csi-webhook-role-binding
+  namespace: kube-system
+subjects:
+  - kind: ServiceAccount
+    name: vsphere-csi-webhook
+    namespace: kube-system
+roleRef:
+  kind: Role
+  name: vsphere-csi-webhook-role
+  apiGroup: rbac.authorization.k8s.io
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: vsphere-csi-webhook
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vsphere-csi-webhook
+  template:
+    metadata:
+      labels:
+        app: vsphere-csi-webhook
+        role: vsphere-csi-webhook
+      annotations:
+        "kubeone.k8c.io/cabundle-hash": "{{ .Config.CABundle | sha256sum }}"
+        "csiConfig-hash": "{{ .Config.CloudProvider.CSIConfig | sha256sum }}"
+    spec:
+      serviceAccountName: vsphere-csi-webhook
+      nodeSelector:
+        node-role.kubernetes.io/master: ""
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          operator: Exists
+          effect: NoSchedule
+        # uncomment below toleration if you need an aggressive pod eviction in case when
+        # node becomes not-ready or unreachable. Default is 300 seconds if not specified.
+        #- key: node.kubernetes.io/not-ready
+        #  operator: Exists
+        #  effect: NoExecute
+        #  tolerationSeconds: 30
+        #- key: node.kubernetes.io/unreachable
+        #  operator: Exists
+        #  effect: NoExecute
+        #  tolerationSeconds: 30
+      dnsPolicy: "Default"
+      containers:
+        - name: vsphere-webhook
+          image: {{ .InternalImages.Get "VsphereCSISyncer" }}
+          args:
+            - "--operation-mode=WEBHOOK_SERVER"
+            - "--fss-name=internal-feature-states.csi.vsphere.vmware.com"
+            - "--fss-namespace=$(CSI_NAMESPACE)"
+          imagePullPolicy: "Always"
+          env:
+            - name: WEBHOOK_CONFIG_PATH
+              value: "/run/secrets/tls/webhook.config"
+            - name: LOGGER_LEVEL
+              value: "PRODUCTION" # Options: DEVELOPMENT, PRODUCTION
+            - name: CSI_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+  {{ if .Config.CABundle }}
+  {{ caBundleEnvVar | indent 12 }}
+  {{ end }}
+volumeMounts:
+  - mountPath: /run/secrets/tls
+    name: webhook-certs
+    readOnly: true
+  {{ if .Config.CABundle }}
+  {{ caBundleVolumeMount | indent 12 }}
+  {{ end }}
+volumes:
+  - name: socket-dir
+    emptyDir: {}
+  - name: webhook-certs
+    secret:
+      secretName: vsphere-webhook-certs
+  {{ if .Config.CABundle }}
+  {{ caBundleVolume | indent 8 }}
+  {{ end }}
+  {{ end }}

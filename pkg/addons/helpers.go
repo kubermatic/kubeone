@@ -80,6 +80,10 @@ func migratePacketToEquinixCCM(s *state.State) error {
 	return DeleteAddonByName(s, resources.AddonCCMPacket)
 }
 
+func removeCSIVsphereFromKubeSystem(s *state.State) error {
+	return DeleteAddonByName(s, resources.AddonCSIVsphereKubeSystem)
+}
+
 // EmbeddedAddonsOnly checks if all specified addons are embedded addons
 func EmbeddedAddonsOnly(addons []kubeoneapi.Addon) (bool, error) {
 	// Read the directory entries for embedded addons
