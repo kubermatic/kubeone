@@ -157,6 +157,7 @@ const (
 	OpenstackCCM
 	EquinixMetalCCM
 	VsphereCCM
+	NutanixCCM
 
 	// CSI Vault Secret Provider
 	CSIVaultSecretProvider // hashicorp/vault-csi-provider:1.1.0
@@ -278,6 +279,9 @@ func optionalResources() map[Resource]map[string]string {
 		AzureDiskCSIResizer:               {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-resizer:v1.5.0"},
 		AzureDiskCSISnapshotter:           {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-snapshotter:v5.0.1"},
 		AzureDiskCSISnapshotterController: {"*": "mcr.microsoft.com/oss/kubernetes-csi/snapshot-controller:v5.0.1"},
+
+		// Nutanix CCM
+		NutanixCCM: {"*": "ghcr.io/nutanix-cloud-native/cloud-provider-nutanix/controller:v0.2.0"},
 
 		// DigitalOcean CCM
 		DigitaloceanCCM: {"*": "docker.io/digitalocean/digitalocean-cloud-controller-manager:v0.1.37"},

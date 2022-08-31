@@ -483,6 +483,12 @@ func ensureCCMAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 				},
 			},
 		)
+	case s.Cluster.CloudProvider.Nutanix != nil:
+		addonsToDeploy = append(addonsToDeploy,
+			addonAction{
+				name: resources.AddonCCMNutanix,
+			},
+		)
 	default:
 		s.Logger.Infof("CCM driver for %q not yet supported, skipping", s.Cluster.CloudProvider.CloudProviderName())
 	}
