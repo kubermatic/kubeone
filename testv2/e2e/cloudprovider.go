@@ -303,12 +303,13 @@ func (c *cloudProviderTests) validateLoadBalancerReadiness(t *testing.T) {
 	}
 
 	err = wait.Poll(cpTestPollPeriod, cpTestTimeout, func() (done bool, err error) {
-		resp, err := http.Get(svcAddr) //nolint:gosec
+		resp, err := http.Get(svcAddr) //nolint:gosec,noctx
 		if err != nil {
 			t.Logf("error testing service endpoint: %v", err)
 
 			return false, nil
 		}
+		defer resp.Body.Close()
 
 		if resp.StatusCode == http.StatusOK {
 			return true, nil

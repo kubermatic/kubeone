@@ -17,7 +17,6 @@ linters:
   - bidichk
   - bodyclose
   - contextcheck
-  - deadcode
   - dogsled
   - durationcheck
   - errcheck
@@ -47,14 +46,12 @@ linters:
   - predeclared
   - revive
   - staticcheck
-  - structcheck
   - stylecheck
   - tenv
   - tparallel
   - unconvert
   - unparam
   - unused
-  - varcheck
   - wastedassign
   - whitespace
 
