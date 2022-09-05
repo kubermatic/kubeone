@@ -197,10 +197,9 @@ func SetDefaults_MachineController(obj *KubeOneCluster) {
 }
 
 func SetDefaults_OperatingSystemManager(obj *KubeOneCluster) {
-	// OSM can only be used in liaison with machine-controller
-	if obj.OperatingSystemManager == nil && (obj.MachineController != nil && obj.MachineController.Deploy) {
+	if obj.OperatingSystemManager == nil {
 		obj.OperatingSystemManager = &OperatingSystemManagerConfig{
-			Deploy: true,
+			Deploy: obj.MachineController.Deploy,
 		}
 	}
 }
