@@ -70,15 +70,15 @@ func TestValidateKubeOneCluster(t *testing.T) {
 				DynamicWorkers: []kubeoneapi.DynamicWorkerConfig{
 					{
 						Name:     "test-1",
-						Replicas: intPtr(3),
+						Replicas: pointer.Int(3),
 					},
 					{
 						Name:     "test-2",
-						Replicas: intPtr(5),
+						Replicas: pointer.Int(5),
 					},
 					{
 						Name:     "test-3",
-						Replicas: intPtr(0),
+						Replicas: pointer.Int(0),
 					},
 				},
 			},
@@ -120,15 +120,15 @@ func TestValidateKubeOneCluster(t *testing.T) {
 				DynamicWorkers: []kubeoneapi.DynamicWorkerConfig{
 					{
 						Name:     "test-1",
-						Replicas: intPtr(3),
+						Replicas: pointer.Int(3),
 					},
 					{
 						Name:     "test-2",
-						Replicas: intPtr(5),
+						Replicas: pointer.Int(5),
 					},
 					{
 						Name:     "test-3",
-						Replicas: intPtr(0),
+						Replicas: pointer.Int(0),
 					},
 				},
 			},
@@ -170,15 +170,15 @@ func TestValidateKubeOneCluster(t *testing.T) {
 				DynamicWorkers: []kubeoneapi.DynamicWorkerConfig{
 					{
 						Name:     "test-1",
-						Replicas: intPtr(3),
+						Replicas: pointer.Int(3),
 					},
 					{
 						Name:     "test-2",
-						Replicas: intPtr(5),
+						Replicas: pointer.Int(5),
 					},
 					{
 						Name:     "test-3",
-						Replicas: intPtr(0),
+						Replicas: pointer.Int(0),
 					},
 				},
 			},
@@ -220,15 +220,15 @@ func TestValidateKubeOneCluster(t *testing.T) {
 				DynamicWorkers: []kubeoneapi.DynamicWorkerConfig{
 					{
 						Name:     "test-1",
-						Replicas: intPtr(3),
+						Replicas: pointer.Int(3),
 					},
 					{
 						Name:     "test-2",
-						Replicas: intPtr(5),
+						Replicas: pointer.Int(5),
 					},
 					{
 						Name:     "test-3",
-						Replicas: intPtr(0),
+						Replicas: pointer.Int(0),
 					},
 				},
 			},
@@ -1199,15 +1199,15 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
 				{
 					Name:     "test-1",
-					Replicas: intPtr(3),
+					Replicas: pointer.Int(3),
 				},
 				{
 					Name:     "test-2",
-					Replicas: intPtr(5),
+					Replicas: pointer.Int(5),
 				},
 				{
 					Name:     "test-3",
-					Replicas: intPtr(0),
+					Replicas: pointer.Int(0),
 				},
 			},
 			expectedError: false,
@@ -1222,7 +1222,7 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
 				{
 					Name:     "test-1",
-					Replicas: intPtr(3),
+					Replicas: pointer.Int(3),
 				},
 				{
 					Name: "test-2",
@@ -1234,7 +1234,7 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 			name: "invalid worker config (no name given)",
 			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
 				{
-					Replicas: intPtr(3),
+					Replicas: pointer.Int(3),
 				},
 			},
 			expectedError: true,
@@ -1244,7 +1244,7 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
 				{
 					Name:     "test-1",
-					Replicas: intPtr(3),
+					Replicas: pointer.Int(3),
 					Config: kubeoneapi.ProviderSpec{
 						MachineAnnotations: map[string]string{"test": "test"},
 					},
@@ -1257,7 +1257,7 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
 				{
 					Name:     "test-1",
-					Replicas: intPtr(3),
+					Replicas: pointer.Int(3),
 					Config: kubeoneapi.ProviderSpec{
 						NodeAnnotations: map[string]string{"test": "test"},
 					},
@@ -1270,7 +1270,7 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
 				{
 					Name:     "test-1",
-					Replicas: intPtr(3),
+					Replicas: pointer.Int(3),
 					Config: kubeoneapi.ProviderSpec{
 						MachineAnnotations: map[string]string{"test": "test"},
 						NodeAnnotations:    map[string]string{"test": "test"},
@@ -2209,8 +2209,4 @@ func TestValidateAssetConfiguration(t *testing.T) {
 			}
 		})
 	}
-}
-
-func intPtr(i int) *int {
-	return &i
 }
