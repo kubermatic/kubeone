@@ -676,7 +676,7 @@ func systemdUnitExecStartPath(conn executor.Interface, unitName string) (string,
 func systemdStatus(conn executor.Interface, service string) (uint64, error) {
 	out, _, _, err := conn.Exec(fmt.Sprintf(systemdShowStatusCMD, service))
 	if err != nil {
-		return 0, fail.Runtime(err, "ckecking %q systemd service status", service)
+		return 0, fail.Runtime(err, "checking %q systemd service status", service)
 	}
 
 	out = strings.ReplaceAll(out, "=", ": ")
