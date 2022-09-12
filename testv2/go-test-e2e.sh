@@ -186,8 +186,12 @@ if [ -n "${CREDENTIALS_FILE_PATH}" ]; then
   go_test_args+=("-credentials" "${CREDENTIALS_FILE_PATH}")
 fi
 
-go test -v \
-  ./testv2/e2e \
-  -tags e2e \
-  -timeout "$TEST_TIMEOUT" \
-  -run "${go_test_args[@]}"
+cd testv2/e2e
+
+go test -c . -tags e2e
+
+# to handle OS signals directly, we launch e2e tests using dedicated binary
+exec ./e2e.test \
+  -test.timeout "$TEST_TIMEOUT" \
+  -test.run \
+  "${go_test_args[@]}"

@@ -52,14 +52,14 @@ type kubeoneBin struct {
 	upgradeMachineDeployments bool
 }
 
-func (k1 *kubeoneBin) Apply() error {
+func (k1 *kubeoneBin) Apply(ctx context.Context) error {
 	args := []string{"apply", "--auto-approve"}
 
 	if k1.upgradeMachineDeployments {
 		args = append(args, "--upgrade-machine-deployments")
 	}
 
-	return k1.run(args...)
+	return k1.build(args...).BuildCmd(ctx).Run()
 }
 
 func (k1 *kubeoneBin) Kubeconfig() ([]byte, error) {
