@@ -20,6 +20,7 @@ limitations under the License.
 package e2e
 
 import (
+	"context"
 	"io"
 	"testing"
 )
@@ -723,7 +724,7 @@ type Scenario interface {
 	SetInfra(infrastructure Infra)
 	SetVersions(versions ...string)
 	GenerateTests(output io.Writer, testType GeneratorType, cfg ProwConfig) error
-	Run(*testing.T)
+	Run(context.Context, *testing.T)
 }
 
 type ProwConfig struct {

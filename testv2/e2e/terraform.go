@@ -17,7 +17,10 @@ limitations under the License.
 package e2e
 
 import (
+	"context"
+	"fmt"
 	"os"
+	"syscall"
 
 	"k8c.io/kubeone/test/e2e/testutil"
 )
@@ -39,11 +42,31 @@ func (tf *terraformBin) Init() error {
 	return tf.run("init")
 }
 
-func (tf *terraformBin) Apply() error {
+func (tf *terraformBin) Apply(ctx context.Context) error {
+	if err := ctx.Err(); err != nil {
+		return fmt.Errorf("terraform apply: %w", err)
+	}
+
 	args := []string{"apply", "-auto-approve"}
 	args = append(args, tf.varFlags()...)
+	exe := tf.build(args...).BuildCmd(context.Background()) // ctx is explicitly ignored here, handled in goroutine
 
-	return tf.run(args...)
+	go func() {
+		// instead of passing down the parent context, which will cause SIGKILL of the terraform in case when context is
+		// Done(), resort to gently letting the terraform to quit voluntarily
+		<-ctx.Done()
+		_ = exe.Process.Signal(syscall.SIGTERM)
+	}()
+
+	if err := exe.Run(); err != nil {
+		return err
+	}
+
+	if err := ctx.Err(); err != nil {
+		return fmt.Errorf("terraform apply: %w", err)
+	}
+
+	return nil
 }
 
 func (tf *terraformBin) Destroy() error {

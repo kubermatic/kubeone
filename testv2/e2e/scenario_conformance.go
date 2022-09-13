@@ -50,7 +50,7 @@ func (scenario *scenarioConformance) GenerateTests(wr io.Writer, generatorType G
 	return install.GenerateTests(wr, generatorType, cfg)
 }
 
-func (scenario *scenarioConformance) Run(t *testing.T) {
+func (scenario *scenarioConformance) Run(ctx context.Context, t *testing.T) {
 	if err := makeBin("build").Run(); err != nil {
 		t.Fatalf("building kubeone: %v", err)
 	}
@@ -62,11 +62,11 @@ func (scenario *scenarioConformance) Run(t *testing.T) {
 		versions:             scenario.versions,
 	}
 
-	install.install(t)
-	scenario.test(t)
+	install.install(ctx, t)
+	scenario.test(ctx, t)
 }
 
-func (scenario *scenarioConformance) test(t *testing.T) {
+func (scenario *scenarioConformance) test(ctx context.Context, t *testing.T) {
 	var k1Opts []kubeoneBinOpts
 
 	if *kubeoneVerboseFlag {
@@ -90,7 +90,7 @@ func (scenario *scenarioConformance) test(t *testing.T) {
 
 	// launch kubeone proxy, to have a HTTPS proxy through the SSH tunnel
 	// to open access to the kubeapi behind the bastion host
-	proxyCtx, killProxy := context.WithCancel(context.Background())
+	proxyCtx, killProxy := context.WithCancel(ctx)
 	proxyURL, waitK1, err := k1.AsyncProxy(proxyCtx)
 	if err != nil {
 		t.Fatalf("starting kubeone proxy: %v", err)
@@ -107,11 +107,11 @@ func (scenario *scenarioConformance) test(t *testing.T) {
 	time.Sleep(5 * time.Second)
 	t.Logf("kubeone proxy is running on %s", proxyURL)
 
-	waitKubeOneNodesReady(t, k1)
+	waitKubeOneNodesReady(ctx, t, k1)
 
 	client := dynamicClientRetriable(t, k1)
 	cpTests := newCloudProviderTests(client, scenario.infra.Provider())
 	cpTests.runWithCleanup(t)
 
-	sonobuoyRun(t, k1, sonobuoyConformance, proxyURL)
+	sonobuoyRun(ctx, t, k1, sonobuoyConformance, proxyURL)
 }
