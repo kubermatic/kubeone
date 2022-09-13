@@ -128,7 +128,7 @@ func collectAddons(s *state.State) (addonsToDeploy []addonAction) {
 		})
 	}
 
-	if s.Cluster.OperatingSystemManagerEnabled() {
+	if s.Cluster.OperatingSystemManager.Deploy {
 		addonsToDeploy = append(addonsToDeploy, addonAction{
 			name: resources.AddonOperatingSystemManager,
 		})

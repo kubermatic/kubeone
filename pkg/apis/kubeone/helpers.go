@@ -119,10 +119,6 @@ func (h *HostConfig) SetLeader(leader bool) {
 	h.IsLeader = leader
 }
 
-func (c KubeOneCluster) OperatingSystemManagerEnabled() bool {
-	return c.OperatingSystemManager != nil && c.OperatingSystemManager.Deploy
-}
-
 func (crc ContainerRuntimeConfig) MachineControllerFlags() []string {
 	var mcFlags []string
 	switch {

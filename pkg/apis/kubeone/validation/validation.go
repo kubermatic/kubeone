@@ -67,7 +67,7 @@ func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 			"machine-controller deployment is disabled, but the configuration still contains dynamic workers"))
 	}
 
-	if c.OperatingSystemManagerEnabled() {
+	if c.OperatingSystemManager.Deploy {
 		allErrs = append(allErrs, ValidateOperatingSystemManager(c.MachineController, field.NewPath("operatingSystemManager"))...)
 	}
 

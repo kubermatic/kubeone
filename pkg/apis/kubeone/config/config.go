@@ -268,6 +268,14 @@ func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, creden
 		}
 	}
 
+	// this can be nil if v1beta1 API was used as a source to convert into the internal API, since v1beta1 lacks the
+	// OperatingSystemManager field at all.
+	if cluster.OperatingSystemManager == nil {
+		cluster.OperatingSystemManager = &kubeoneapi.OperatingSystemManagerConfig{
+			Deploy: cluster.MachineController.Deploy,
+		}
+	}
+
 	return nil
 }
 
