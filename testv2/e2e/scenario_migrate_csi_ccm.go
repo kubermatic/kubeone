@@ -57,7 +57,7 @@ func (scenario *scenarioMigrateCSIAndCCM) GenerateTests(wr io.Writer, generatorT
 	return install.GenerateTests(wr, generatorType, cfg)
 }
 
-func (scenario *scenarioMigrateCSIAndCCM) Run(t *testing.T) {
+func (scenario *scenarioMigrateCSIAndCCM) Run(ctx context.Context, t *testing.T) {
 	if err := makeBin("build").Run(); err != nil {
 		t.Fatalf("building kubeone: %v", err)
 	}
@@ -69,9 +69,9 @@ func (scenario *scenarioMigrateCSIAndCCM) Run(t *testing.T) {
 		versions:             scenario.versions,
 	}
 
-	install.install(t)
+	install.install(ctx, t)
 	k1Old := install.kubeone(t)
-	waitKubeOneNodesReady(t, k1Old)
+	waitKubeOneNodesReady(ctx, t, k1Old)
 
 	client := dynamicClientRetriable(t, k1Old)
 	cpTests := newCloudProviderTests(client, scenario.infra.Provider())
@@ -82,28 +82,28 @@ func (scenario *scenarioMigrateCSIAndCCM) Run(t *testing.T) {
 	install.ManifestTemplatePath = scenario.NewManifestTemplatePath
 	k1New := install.kubeone(t)
 
-	scenario.migrate(t, k1New, false)
-	waitKubeOneNodesReady(t, k1New)
+	scenario.migrate(ctx, t, k1New, false)
+	waitKubeOneNodesReady(ctx, t, k1New)
 
 	labelNodesSkipEviction(t, client)
 	scenario.forceRolloutMachinedeployments(t, client)
 	waitMachinesHasNodes(t, k1New, client)
-	waitKubeOneNodesReady(t, k1New)
+	waitKubeOneNodesReady(ctx, t, k1New)
 
-	scenario.migrate(t, k1New, true)
-	waitKubeOneNodesReady(t, k1New)
+	scenario.migrate(ctx, t, k1New, true)
+	waitKubeOneNodesReady(ctx, t, k1New)
 
 	cpTests.validateStatefulSetReadiness(t)
 	cpTests.validateLoadBalancerReadiness(t)
 }
 
-func (scenario *scenarioMigrateCSIAndCCM) migrate(t *testing.T, k1 *kubeoneBin, complete bool) {
+func (scenario *scenarioMigrateCSIAndCCM) migrate(ctx context.Context, t *testing.T, k1 *kubeoneBin, complete bool) {
 	args := []string{"migrate", "to-ccm-csi", "--auto-approve"}
 	if complete {
 		args = append(args, "--complete")
 	}
 
-	if err := k1.run(args...); err != nil {
+	if err := k1.build(args...).BuildCmd(ctx).Run(); err != nil {
 		t.Fatalf("migrating CCM/CSI: %v", err)
 	}
 }

@@ -25,9 +25,11 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"os/signal"
 	"path/filepath"
 	"sort"
 	"strings"
+	"syscall"
 	"testing"
 	"text/template"
 	"time"
@@ -286,14 +288,18 @@ func renderManifest(t *testing.T, templatePath string, data manifestData) string
 	return manifestPath
 }
 
-func waitForNodesReady(t *testing.T, client ctrlruntimeclient.Client, expectedNumberOfNodes int) error {
+func waitForNodesReady(ctx context.Context, t *testing.T, client ctrlruntimeclient.Client, expectedNumberOfNodes int) error {
 	waitTimeout := 20 * time.Minute
 	t.Logf("waiting maximum %s for %d nodes to be ready", waitTimeout, expectedNumberOfNodes)
 
 	return wait.Poll(5*time.Second, waitTimeout, func() (bool, error) {
+		if err := ctx.Err(); err != nil {
+			return false, fmt.Errorf("wait for nodes ready: %w", err)
+		}
+
 		nodes := corev1.NodeList{}
 
-		if err := client.List(context.Background(), &nodes); err != nil {
+		if err := client.List(ctx, &nodes); err != nil {
 			t.Logf("error: %v", err)
 
 			return false, nil
@@ -545,7 +551,7 @@ func waitMachinesHasNodes(t *testing.T, k1 *kubeoneBin, client ctrlruntimeclient
 	}
 }
 
-func waitKubeOneNodesReady(t *testing.T, k1 *kubeoneBin) {
+func waitKubeOneNodesReady(ctx context.Context, t *testing.T, k1 *kubeoneBin) {
 	client := dynamicClientRetriable(t, k1)
 
 	kubeoneManifest, err := k1.ClusterManifest()
@@ -560,7 +566,7 @@ func waitKubeOneNodesReady(t *testing.T, k1 *kubeoneBin) {
 		}
 	}
 
-	if err = waitForNodesReady(t, client, numberOfNodesToWait); err != nil {
+	if err = waitForNodesReady(ctx, t, client, numberOfNodesToWait); err != nil {
 		t.Fatalf("waiting %d nodes to be Ready: %v", numberOfNodesToWait, err)
 	}
 
@@ -569,7 +575,7 @@ func waitKubeOneNodesReady(t *testing.T, k1 *kubeoneBin) {
 	}
 }
 
-func sonobuoyRun(t *testing.T, k1 *kubeoneBin, mode sonobuoyMode, proxyURL string) {
+func sonobuoyRun(ctx context.Context, t *testing.T, k1 *kubeoneBin, mode sonobuoyMode, proxyURL string) {
 	kubeconfigPath, err := k1.kubeconfigPath(t.TempDir())
 	if err != nil {
 		t.Fatalf("fetching kubeconfig failed")
@@ -585,7 +591,7 @@ func sonobuoyRun(t *testing.T, k1 *kubeoneBin, mode sonobuoyMode, proxyURL strin
 		t.Fatalf("sonobuoy run failed: %v", err)
 	}
 
-	if err = sb.Wait(); err != nil {
+	if err = sb.Wait(ctx); err != nil {
 		t.Fatalf("sonobuoy wait failed: %v", err)
 	}
 
@@ -609,4 +615,10 @@ func sonobuoyRun(t *testing.T, k1 *kubeoneBin, mode sonobuoyMode, proxyURL strin
 		}
 		t.Fatalf("some e2e tests failed:\n%s", buf.String())
 	}
+}
+
+func NewSignalContext() context.Context {
+	ctx, _ := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGQUIT, syscall.SIGTERM)
+
+	return ctx
 }

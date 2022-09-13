@@ -54,16 +54,16 @@ func (scenario *scenarioInstall) SetVersions(versions ...string) {
 	scenario.versions = versions
 }
 
-func (scenario *scenarioInstall) Run(t *testing.T) {
+func (scenario *scenarioInstall) Run(ctx context.Context, t *testing.T) {
 	if err := makeBin("build").Run(); err != nil {
 		t.Fatalf("building kubeone: %v", err)
 	}
 
-	scenario.install(t)
-	scenario.test(t)
+	scenario.install(ctx, t)
+	scenario.test(ctx, t)
 }
 
-func (scenario *scenarioInstall) install(t *testing.T) {
+func (scenario *scenarioInstall) install(ctx context.Context, t *testing.T) {
 	if len(scenario.versions) != 1 {
 		t.Fatalf("only 1 version is expected to be set, got %v", scenario.versions)
 	}
@@ -80,7 +80,9 @@ func (scenario *scenarioInstall) install(t *testing.T) {
 		}
 	})
 
-	if err := retryFn(scenario.infra.terraform.Apply); err != nil {
+	if err := retryFn(func() error {
+		return scenario.infra.terraform.Apply(ctx)
+	}); err != nil {
 		t.Fatalf("terraform apply failed: %v", err)
 	}
 
@@ -94,7 +96,7 @@ func (scenario *scenarioInstall) install(t *testing.T) {
 		}
 	})
 
-	if err := k1.Apply(); err != nil {
+	if err := k1.Apply(ctx); err != nil {
 		t.Fatalf("kubeone apply failed: %v", err)
 	}
 }
@@ -124,12 +126,12 @@ func (scenario *scenarioInstall) kubeone(t *testing.T) *kubeoneBin {
 	)
 }
 
-func (scenario *scenarioInstall) test(t *testing.T) {
+func (scenario *scenarioInstall) test(ctx context.Context, t *testing.T) {
 	k1 := scenario.kubeone(t)
 
 	// launch kubeone proxy, to have a HTTPS proxy through the SSH tunnel
 	// to open access to the kubeapi behind the bastion host
-	proxyCtx, killProxy := context.WithCancel(context.Background())
+	proxyCtx, killProxy := context.WithCancel(ctx)
 	proxyURL, waitK1, err := k1.AsyncProxy(proxyCtx)
 	if err != nil {
 		t.Fatalf("starting kubeone proxy: %v", err)
@@ -146,13 +148,13 @@ func (scenario *scenarioInstall) test(t *testing.T) {
 	time.Sleep(5 * time.Second)
 	t.Logf("kubeone proxy is running on %s", proxyURL)
 
-	waitKubeOneNodesReady(t, k1)
+	waitKubeOneNodesReady(ctx, t, k1)
 
 	client := dynamicClientRetriable(t, k1)
 	cpTests := newCloudProviderTests(client, scenario.infra.Provider())
 	cpTests.runWithCleanup(t)
 
-	sonobuoyRun(t, k1, sonobuoyConformanceLite, proxyURL)
+	sonobuoyRun(ctx, t, k1, sonobuoyConformanceLite, proxyURL)
 }
 
 func (scenario *scenarioInstall) GenerateTests(wr io.Writer, generatorType GeneratorType, cfg ProwConfig) error {
@@ -226,11 +228,12 @@ func (scenario *scenarioInstall) GenerateTests(wr io.Writer, generatorType Gener
 const installScenarioTemplate = `
 {{- range . }}
 func {{.TestTitle}}(t *testing.T) {
+	ctx := NewSignalContext()
 	infra := Infrastructures["{{.Infra}}"]
 	scenario := Scenarios["{{.Scenario}}"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("{{.Version}}")
-	scenario.Run(t)
+	scenario.Run(ctx, t)
 }
 {{ end -}}
 `
