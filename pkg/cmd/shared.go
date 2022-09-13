@@ -200,7 +200,7 @@ func validateCredentials(s *state.State, credentialsFile string) error {
 	_, universalErr := credentials.ProviderCredentials(s.Cluster.CloudProvider, credentialsFile, credentials.TypeUniversal)
 
 	var mcErr error
-	if s.Cluster.MachineController.Deploy {
+	if s.Cluster.MachineControllerEnabled() {
 		_, mcErr = credentials.ProviderCredentials(s.Cluster.CloudProvider, credentialsFile, credentials.TypeMC)
 	}
 

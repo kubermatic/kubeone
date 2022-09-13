@@ -60,7 +60,7 @@ func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 	allErrs = append(allErrs, ValidateClusterNetworkConfig(c.ClusterNetwork, field.NewPath("clusterNetwork"))...)
 	allErrs = append(allErrs, ValidateStaticWorkersConfig(c.StaticWorkers, field.NewPath("staticWorkers"))...)
 
-	if c.MachineController != nil && c.MachineController.Deploy {
+	if c.MachineControllerEnabled() {
 		allErrs = append(allErrs, ValidateDynamicWorkerConfig(c.DynamicWorkers, field.NewPath("dynamicWorkers"))...)
 	} else if len(c.DynamicWorkers) > 0 {
 		allErrs = append(allErrs, field.Forbidden(field.NewPath("dynamicWorkers"),

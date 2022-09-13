@@ -41,7 +41,7 @@ const appLabelKey = "app"
 
 // WaitReady waits for machine-controller and its webhook to become ready
 func WaitReady(s *state.State) error {
-	if !s.Cluster.MachineController.Deploy {
+	if !s.Cluster.MachineControllerEnabled() {
 		return nil
 	}
 
@@ -76,7 +76,7 @@ func waitForCRDs(s *state.State) error {
 
 // DestroyWorkers destroys all MachineDeployment, MachineSet and Machine objects
 func DestroyWorkers(s *state.State) error {
-	if !s.Cluster.MachineController.Deploy {
+	if !s.Cluster.MachineControllerEnabled() {
 		s.Logger.Info("Skipping deleting workers because machine-controller is disabled in configuration.")
 
 		return nil

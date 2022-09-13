@@ -367,7 +367,7 @@ func containerdRegistryCredentials(containerdConfig *kubeoneapi.ContainerRuntime
 func mcCredentialsEnvVars(s *state.State) ([]byte, error) {
 	var credsEnvVarsMC []byte
 
-	if s.Cluster.MachineController.Deploy {
+	if s.Cluster.MachineControllerEnabled() {
 		credsMC, err := credentials.ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.TypeMC)
 		if err != nil {
 			return nil, err

@@ -122,7 +122,7 @@ func collectAddons(s *state.State) (addonsToDeploy []addonAction) {
 		name: resources.AddonNodeLocalDNS,
 	})
 
-	if s.Cluster.MachineController.Deploy {
+	if s.Cluster.MachineControllerEnabled() {
 		addonsToDeploy = append(addonsToDeploy, addonAction{
 			name: resources.AddonMachineController,
 		})

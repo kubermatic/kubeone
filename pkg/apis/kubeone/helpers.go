@@ -123,6 +123,10 @@ func (c KubeOneCluster) OperatingSystemManagerEnabled() bool {
 	return c.OperatingSystemManager != nil && c.OperatingSystemManager.Deploy
 }
 
+func (c KubeOneCluster) MachineControllerEnabled() bool {
+	return c.MachineController != nil && c.MachineController.Deploy
+}
+
 func (crc ContainerRuntimeConfig) MachineControllerFlags() []string {
 	var mcFlags []string
 	switch {

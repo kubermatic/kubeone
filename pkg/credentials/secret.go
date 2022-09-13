@@ -83,7 +83,7 @@ func Ensure(s *state.State) error {
 		}
 	}
 
-	if s.Cluster.MachineController.Deploy {
+	if s.Cluster.MachineControllerEnabled() {
 		s.Logger.Infoln("Creating machine-controller credentials secret...")
 
 		providerCreds, err := ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, TypeMC)

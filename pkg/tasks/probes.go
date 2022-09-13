@@ -234,7 +234,7 @@ func safeguardNodeSelectorsAndTolerations(s *state.State) error {
 // This safeguard only warns user about the problem, it doesn't block kubeone apply
 // from reconciling the cluster.
 func safeguardFlatcarMachineDeployments(s *state.State) error {
-	if !s.Cluster.OperatingSystemManager.Deploy || !s.Cluster.MachineController.Deploy {
+	if !s.Cluster.OperatingSystemManagerEnabled() || !s.Cluster.MachineControllerEnabled() {
 		return nil
 	}
 
