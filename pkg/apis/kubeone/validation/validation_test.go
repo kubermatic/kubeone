@@ -67,6 +67,9 @@ func TestValidateKubeOneCluster(t *testing.T) {
 				MachineController: &kubeoneapi.MachineControllerConfig{
 					Deploy: true,
 				},
+				OperatingSystemManager: &kubeoneapi.OperatingSystemManagerConfig{
+					Deploy: true,
+				},
 				DynamicWorkers: []kubeoneapi.DynamicWorkerConfig{
 					{
 						Name:     "test-1",
@@ -115,6 +118,9 @@ func TestValidateKubeOneCluster(t *testing.T) {
 					Kubernetes: "1.22.1",
 				},
 				MachineController: &kubeoneapi.MachineControllerConfig{
+					Deploy: false,
+				},
+				OperatingSystemManager: &kubeoneapi.OperatingSystemManagerConfig{
 					Deploy: false,
 				},
 				DynamicWorkers: []kubeoneapi.DynamicWorkerConfig{
@@ -167,6 +173,9 @@ func TestValidateKubeOneCluster(t *testing.T) {
 				MachineController: &kubeoneapi.MachineControllerConfig{
 					Deploy: true,
 				},
+				OperatingSystemManager: &kubeoneapi.OperatingSystemManagerConfig{
+					Deploy: true,
+				},
 				DynamicWorkers: []kubeoneapi.DynamicWorkerConfig{
 					{
 						Name:     "test-1",
@@ -215,6 +224,9 @@ func TestValidateKubeOneCluster(t *testing.T) {
 					Kubernetes: "1.22.1",
 				},
 				MachineController: &kubeoneapi.MachineControllerConfig{
+					Deploy: true,
+				},
+				OperatingSystemManager: &kubeoneapi.OperatingSystemManagerConfig{
 					Deploy: true,
 				},
 				DynamicWorkers: []kubeoneapi.DynamicWorkerConfig{

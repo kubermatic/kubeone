@@ -294,7 +294,7 @@ func WithResources(t Tasks) Tasks {
 			{
 				Fn:        operatingsystemmanager.WaitReady,
 				Operation: "waiting for operating-system-manager",
-				Predicate: func(s *state.State) bool { return s.Cluster.OperatingSystemManagerEnabled() },
+				Predicate: func(s *state.State) bool { return s.Cluster.OperatingSystemManager.Deploy },
 			},
 		}...,
 	)
