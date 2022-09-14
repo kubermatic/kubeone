@@ -71,7 +71,7 @@ func Ensure(s *state.State) error {
 	}
 
 	// Ensure that we remove credentials secret for OSM if it's queued for deletion
-	if !s.Cluster.OperatingSystemManagerEnabled() {
+	if !s.Cluster.OperatingSystemManager.Deploy {
 		osmSecret := &corev1.Secret{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      SecretNameOSM,
@@ -97,7 +97,7 @@ func Ensure(s *state.State) error {
 		}
 	}
 
-	if s.Cluster.OperatingSystemManagerEnabled() {
+	if s.Cluster.OperatingSystemManager.Deploy {
 		osmCreds, err := ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, TypeOSM)
 		if err != nil {
 			return err
