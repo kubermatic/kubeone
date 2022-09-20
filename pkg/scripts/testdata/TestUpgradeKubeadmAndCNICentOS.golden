@@ -130,7 +130,7 @@ sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni || true
 
 sudo yum install -y \
 	kubeadm-1.23.9 \
-	kubernetes-cni-0.8.7
+	kubernetes-cni-1.1.1
 sudo yum versionlock add kubelet kubeadm kubectl kubernetes-cni
 
 sudo systemctl daemon-reload
