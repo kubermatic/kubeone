@@ -207,7 +207,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		DeployCSIAddon:                      deployCSI,
 		MachineControllerCredentialsEnvVars: string(credsEnvVarsMC),
 		MachineControllerCredentialsHash:    mcCredsHash,
-		OperatingSystemManagerEnabled:       s.Cluster.OperatingSystemManagerEnabled(),
+		OperatingSystemManagerEnabled:       s.Cluster.OperatingSystemManager.Deploy,
 		RegistryCredentials:                 containerdRegistryCredentials(s.Cluster.ContainerRuntime.Containerd),
 		InternalImages: &internalImages{
 			pauseImage: s.PauseImage,
@@ -222,7 +222,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 	}
 
 	// Certs for operating-system-manager-webhook
-	if s.Cluster.OperatingSystemManagerEnabled() {
+	if s.Cluster.OperatingSystemManager.Deploy {
 		if err := webhookCerts(data.Certificates,
 			"OSM",
 			resources.OperatingSystemManagerWebhookName,

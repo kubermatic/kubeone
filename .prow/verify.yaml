@@ -125,7 +125,7 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-        - image: golangci/golangci-lint:v1.47.1
+        - image: golangci/golangci-lint:v1.49.0
           command:
             - make
           args:

@@ -167,6 +167,13 @@ func DefaultedV1Beta1KubeOneCluster(versionedCluster *kubeonev1beta1.KubeOneClus
 		return nil, err
 	}
 
+	// this can be nil if v1beta1 API was used as a source to convert into the internal API, since v1beta1 lacks the
+	// OperatingSystemManager field at all.
+	internalCluster.OperatingSystemManager = &kubeoneapi.OperatingSystemManagerConfig{
+		// but we don't want to enable the OSM for older v1beta1 API
+		Deploy: false,
+	}
+
 	// Validate the configuration
 	if err := kubeonevalidation.ValidateKubeOneCluster(*internalCluster).ToAggregate(); err != nil {
 		return nil, fail.ConfigValidation(err)

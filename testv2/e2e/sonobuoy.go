@@ -56,15 +56,15 @@ type sonobuoyBin struct {
 }
 
 func (sbb *sonobuoyBin) Run(mode sonobuoyMode) error {
-	return sbb.run("run", fmt.Sprintf("--mode=%s", mode))
+	return sbb.run(context.Background(), "run", fmt.Sprintf("--mode=%s", mode))
 }
 
-func (sbb *sonobuoyBin) Wait() error {
-	return sbb.run("wait")
+func (sbb *sonobuoyBin) Wait(ctx context.Context) error {
+	return sbb.run(ctx, "wait")
 }
 
 func (sbb *sonobuoyBin) Retrieve() error {
-	return sbb.run("retrieve", "--filename", sonobuoyResultsFile)
+	return sbb.run(context.Background(), "retrieve", "--filename", sonobuoyResultsFile)
 }
 
 func (sbb *sonobuoyBin) Results() ([]sonobuoyReport, error) {
@@ -107,8 +107,8 @@ func (sbb *sonobuoyBin) Results() ([]sonobuoyReport, error) {
 	return failedCases, waitErr
 }
 
-func (sbb *sonobuoyBin) run(args ...string) error {
-	return sbb.build(args...).Run()
+func (sbb *sonobuoyBin) run(ctx context.Context, args ...string) error {
+	return sbb.build(args...).BuildCmd(ctx).Run()
 }
 
 func (sbb *sonobuoyBin) build(args ...string) *testutil.Exec {

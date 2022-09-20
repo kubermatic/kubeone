@@ -25,7 +25,7 @@ import (
 )
 
 const (
-	defaultKubernetesCNIVersion = "0.8.7"
+	defaultKubernetesCNIVersion = "1.1.1"
 	defaultCriToolsVersion      = "1.21.0"
 )
 

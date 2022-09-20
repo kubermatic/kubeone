@@ -58,7 +58,7 @@ func (scenario *scenarioUpgrade) SetVersions(versions ...string) {
 	scenario.versions = versions
 }
 
-func (scenario *scenarioUpgrade) Run(t *testing.T) {
+func (scenario *scenarioUpgrade) Run(ctx context.Context, t *testing.T) {
 	if err := makeBin("build").Run(); err != nil {
 		t.Fatalf("building kubeone: %v", err)
 	}
@@ -74,9 +74,9 @@ func (scenario *scenarioUpgrade) Run(t *testing.T) {
 		kubeonePath:          mustAbsolutePath("../../../kubeone-stable/dist/kubeone"),
 	}
 
-	install.install(t)
-	scenario.upgrade(t)
-	scenario.test(t)
+	install.install(ctx, t)
+	scenario.upgrade(ctx, t)
+	scenario.test(ctx, t)
 }
 
 func (scenario *scenarioUpgrade) kubeone(t *testing.T, version string) *kubeoneBin {
@@ -102,31 +102,31 @@ func (scenario *scenarioUpgrade) kubeone(t *testing.T, version string) *kubeoneB
 	)
 }
 
-func (scenario *scenarioUpgrade) upgrade(t *testing.T) {
+func (scenario *scenarioUpgrade) upgrade(ctx context.Context, t *testing.T) {
 	// NB: Due to changed node selectors between Kubernetes 1.23 and 1.24, it's
 	// important to run apply with KubeOne 1.5 before upgrading the cluster,
 	// otherwise upgrade might get stuck due to pods not able to get
 	// rescheduled.
 	k1 := scenario.kubeone(t, scenario.versions[0])
 
-	waitKubeOneNodesReady(t, k1)
+	waitKubeOneNodesReady(ctx, t, k1)
 
-	if err := k1.Apply(); err != nil {
+	if err := k1.Apply(ctx); err != nil {
 		t.Fatalf("kubeone apply failed: %v", err)
 	}
 
 	k1 = scenario.kubeone(t, scenario.versions[1])
-	if err := k1.Apply(); err != nil {
+	if err := k1.Apply(ctx); err != nil {
 		t.Fatalf("kubeone apply failed: %v", err)
 	}
 }
 
-func (scenario *scenarioUpgrade) test(t *testing.T) {
+func (scenario *scenarioUpgrade) test(ctx context.Context, t *testing.T) {
 	k1 := scenario.kubeone(t, scenario.versions[1])
 
 	// launch kubeone proxy, to have a HTTPS proxy through the SSH tunnel
 	// to open access to the kubeapi behind the bastion host
-	proxyCtx, killProxy := context.WithCancel(context.Background())
+	proxyCtx, killProxy := context.WithCancel(ctx)
 	proxyURL, waitK1, err := k1.AsyncProxy(proxyCtx)
 	if err != nil {
 		t.Fatalf("starting kubeone proxy: %v", err)
@@ -148,13 +148,13 @@ func (scenario *scenarioUpgrade) test(t *testing.T) {
 	labelNodesSkipEviction(t, client)
 	scenario.upgradeMachineDeployments(t, client, scenario.versions[1])
 	waitMachinesHasNodes(t, k1, client)
-	waitKubeOneNodesReady(t, k1)
+	waitKubeOneNodesReady(ctx, t, k1)
 
 	cpTests := newCloudProviderTests(client, scenario.infra.Provider())
 	cpTests.runWithCleanup(t)
 
 	// sonobuoyRun(t, k1, sonobuoyConformanceLite, proxyURL)
-	sonobuoyRun(t, k1, sonobuoyQuick, proxyURL)
+	sonobuoyRun(ctx, t, k1, sonobuoyQuick, proxyURL)
 }
 
 func (scenario *scenarioUpgrade) GenerateTests(wr io.Writer, generatorType GeneratorType, cfg ProwConfig) error {
@@ -300,11 +300,12 @@ func (scenario *scenarioUpgrade) upgradeMachineDeployments(t *testing.T, client 
 const upgradeScenarioTemplate = `
 {{- range . }}
 func {{ .TestTitle }}(t *testing.T) {
+	ctx := NewSignalContext()
 	infra := Infrastructures["{{ .Infra }}"]
 	scenario := Scenarios["{{ .Scenario }}"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("{{ .FromVersion }}", "{{ .ToVersion }}")
-	scenario.Run(t)
+	scenario.Run(ctx, t)
 }
 {{ end -}}
 `
