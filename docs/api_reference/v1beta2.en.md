@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2022-07-27T18:43:11+05:00
+date = 2022-09-20T17:15:48+03:00
 weight = 11
 +++
 ## v1beta2
@@ -44,6 +44,7 @@ weight = 11
 * [LoggingConfig](#loggingconfig)
 * [MachineControllerConfig](#machinecontrollerconfig)
 * [MetricsServer](#metricsserver)
+* [NodeLocalDNS](#nodelocaldns)
 * [NoneSpec](#nonespec)
 * [NutanixSpec](#nutanixspec)
 * [OpenIDConnect](#openidconnect)
@@ -377,6 +378,7 @@ Features controls what features will be enabled on the cluster
 | metricsServer | MetricsServer | *[MetricsServer](#metricsserver) | false |
 | openidConnect | OpenIDConnect | *[OpenIDConnect](#openidconnect) | false |
 | encryptionProviders | Encryption Providers | *[EncryptionProviders](#encryptionproviders) | false |
+| nodeLocalDNS | NodeLocalDNS config | *[NodeLocalDNS](#nodelocaldns) | false |
 
 [Back to Group](#v1beta2)
 
@@ -538,6 +540,16 @@ MetricsServer feature flag
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | enable | Enable deployment of metrics-server. Default value is true. | bool | false |
+
+[Back to Group](#v1beta2)
+
+### NodeLocalDNS
+
+
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| deploy | Deploy is enabled by default | bool | false |
 
 [Back to Group](#v1beta2)
 

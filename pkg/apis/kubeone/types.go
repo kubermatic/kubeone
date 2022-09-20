@@ -719,6 +719,14 @@ type Features struct {
 
 	// Encryption Providers
 	EncryptionProviders *EncryptionProviders `json:"encryptionProviders,omitempty"`
+
+	// NodeLocalDNS config
+	NodeLocalDNS *NodeLocalDNS `json:"nodeLocalDNS,omitempty"`
+}
+
+type NodeLocalDNS struct {
+	// Deploy is enabled by default
+	Deploy bool `json:"deploy,omitempty"`
 }
 
 type CoreDNS struct {
