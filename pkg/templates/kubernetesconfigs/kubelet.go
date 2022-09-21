@@ -36,7 +36,6 @@ func NewKubeletConfiguration(cluster *kubeoneapi.KubeOneCluster, featureGates ma
 		ReadOnlyPort:         0,
 		RotateCertificates:   true,
 		ServerTLSBootstrap:   true,
-		ClusterDNS:           []string{resources.NodeLocalDNSVirtualIP},
 		ContainerLogMaxSize:  cluster.LoggingConfig.ContainerLogMaxSize,
 		ContainerLogMaxFiles: &cluster.LoggingConfig.ContainerLogMaxFiles,
 		Authentication: kubeletconfigv1beta1.KubeletAuthentication{
@@ -45,6 +44,10 @@ func NewKubeletConfiguration(cluster *kubeoneapi.KubeOneCluster, featureGates ma
 			},
 		},
 		FeatureGates: featureGates,
+	}
+
+	if cluster.Features.NodeLocalDNS.Deploy {
+		kubeletConfig.ClusterDNS = []string{resources.NodeLocalDNSVirtualIP}
 	}
 
 	return dropFields(kubeletConfig, []string{"logging"})

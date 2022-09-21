@@ -174,6 +174,11 @@ func DefaultedV1Beta1KubeOneCluster(versionedCluster *kubeonev1beta1.KubeOneClus
 		Deploy: false,
 	}
 
+	// v1beta1 has no idea about NodeLocalDNS
+	internalCluster.Features.NodeLocalDNS = &kubeoneapi.NodeLocalDNS{
+		Deploy: true,
+	}
+
 	// Validate the configuration
 	if err := kubeonevalidation.ValidateKubeOneCluster(*internalCluster).ToAggregate(); err != nil {
 		return nil, fail.ConfigValidation(err)

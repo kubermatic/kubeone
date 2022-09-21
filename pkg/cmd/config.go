@@ -649,6 +649,11 @@ features:
   coreDNS:
     replicas: 2
     deployPodDisruptionBudget: true
+
+  # nodeLocalDNS allows disabling deployment of node local DNS
+  nodeLocalDNS:
+    deploy: true
+
   # Enable the PodNodeSelector admission plugin in API server.
   # More info: https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#podnodeselector
   podNodeSelector:
