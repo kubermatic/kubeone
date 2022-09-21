@@ -45,7 +45,9 @@ spec:
             - -v=4
             - -health-probe-address=0.0.0.0:8085
             - -metrics-address=0.0.0.0:8080
+            {{ if .Config.Features.NodeLocalDNS.Deploy -}}
             - -cluster-dns={{ .Resources.NodeLocalDNSVirtualIP }}
+            {{ end -}}
             - -namespace=kube-system
             - -container-runtime={{ .Config.ContainerRuntime }}
             - -pause-image={{ .InternalImages.Get "PauseImage" }}
