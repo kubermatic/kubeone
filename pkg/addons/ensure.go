@@ -145,6 +145,16 @@ func collectAddons(s *state.State) (addonsToDeploy []addonAction) {
 	return
 }
 
+func cleanupAddons(s *state.State) error {
+	if !*s.Cluster.Features.CoreDNS.DeployPodDisruptionBudget {
+		if err := DeleteAddonByName(s, resources.AddonCoreDNSPDB); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func Ensure(s *state.State) error {
 	addonsToDeploy := collectAddons(s)
 
@@ -157,6 +167,10 @@ func Ensure(s *state.State) error {
 		if err := EnsureAddonByName(s, add.name); err != nil {
 			return err
 		}
+	}
+
+	if err := cleanupAddons(s); err != nil {
+		return err
 	}
 
 	return nil
