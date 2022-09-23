@@ -38,7 +38,7 @@ import (
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 
-	"k8c.io/kubeone/test/exec"
+	"k8c.io/kubeone/test/testexec"
 
 	clusterv1alpha1 "github.com/kubermatic/machine-controller/pkg/apis/cluster/v1alpha1"
 
@@ -118,16 +118,16 @@ func requiredTemplateFunc(warn string, input interface{}) (interface{}, error) {
 	return input, nil
 }
 
-func makeBin(args ...string) *exec.Exec {
+func makeBin(args ...string) *testexec.Exec {
 	return makeBinWithPath(filepath.Clean("../../"), args...)
 }
 
-func makeBinWithPath(path string, args ...string) *exec.Exec {
-	return exec.NewExec("make",
-		exec.WithArgs(args...),
-		exec.WithEnv(os.Environ()),
-		exec.InDir(path),
-		exec.StdoutDebug,
+func makeBinWithPath(path string, args ...string) *testexec.Exec {
+	return testexec.NewExec("make",
+		testexec.WithArgs(args...),
+		testexec.WithEnv(os.Environ()),
+		testexec.InDir(path),
+		testexec.StdoutDebug,
 	)
 }
 
