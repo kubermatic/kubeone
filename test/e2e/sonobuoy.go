@@ -24,7 +24,7 @@ import (
 	"io"
 	"os"
 
-	"k8c.io/kubeone/test/exec"
+	"k8c.io/kubeone/test/testexec"
 )
 
 const sonobuoyResultsFile = "results.tar.gz"
@@ -111,16 +111,16 @@ func (sbb *sonobuoyBin) run(ctx context.Context, args ...string) error {
 	return sbb.build(args...).BuildCmd(ctx).Run()
 }
 
-func (sbb *sonobuoyBin) build(args ...string) *exec.Exec {
-	exe := exec.NewExec("sonobuoy",
-		exec.WithArgs(args...),
-		exec.WithEnv(os.Environ()),
-		exec.InDir(sbb.dir),
-		exec.StdoutDebug,
+func (sbb *sonobuoyBin) build(args ...string) *testexec.Exec {
+	exe := testexec.NewExec("sonobuoy",
+		testexec.WithArgs(args...),
+		testexec.WithEnv(os.Environ()),
+		testexec.InDir(sbb.dir),
+		testexec.StdoutDebug,
 	)
 
 	if sbb.kubeconfig != "" {
-		exec.WithEnvs(fmt.Sprintf("KUBECONFIG=%s", sbb.kubeconfig))(exe)
+		testexec.WithEnvs(fmt.Sprintf("KUBECONFIG=%s", sbb.kubeconfig))(exe)
 	}
 
 	if sbb.proxyURL != "" {
@@ -128,7 +128,7 @@ func (sbb *sonobuoyBin) build(args ...string) *exec.Exec {
 			fmt.Sprintf("HTTPS_PROXY=%s", sbb.proxyURL),
 			fmt.Sprintf("HTTP_PROXY=%s", sbb.proxyURL),
 		}
-		exec.WithEnv(proxies)(exe)
+		testexec.WithEnv(proxies)(exe)
 	}
 
 	return exe

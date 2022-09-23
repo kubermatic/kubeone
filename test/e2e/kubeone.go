@@ -30,7 +30,7 @@ import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/apis/kubeone/config"
 	"k8c.io/kubeone/pkg/ssh"
-	"k8c.io/kubeone/test/exec"
+	"k8c.io/kubeone/test/testexec"
 
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
@@ -66,7 +66,7 @@ func (k1 *kubeoneBin) Kubeconfig() ([]byte, error) {
 	var buf bytes.Buffer
 
 	exe := k1.build("kubeconfig")
-	exec.StdoutTo(&buf)(exe)
+	testexec.StdoutTo(&buf)(exe)
 
 	if err := exe.Run(); err != nil {
 		return nil, fmt.Errorf("fetching kubeconfig failed: %w", err)
@@ -143,7 +143,7 @@ func (k1 *kubeoneBin) ClusterManifest() (*kubeoneapi.KubeOneCluster, error) {
 	var buf bytes.Buffer
 
 	exe := k1.build("config", "dump")
-	exec.StdoutTo(&buf)(exe)
+	testexec.StdoutTo(&buf)(exe)
 
 	if err := exe.Run(); err != nil {
 		return nil, fmt.Errorf("rendering manifest failed: %w", err)
@@ -196,16 +196,16 @@ func (k1 *kubeoneBin) run(args ...string) error {
 	return k1.build(args...).Run()
 }
 
-func (k1 *kubeoneBin) build(args ...string) *exec.Exec {
+func (k1 *kubeoneBin) build(args ...string) *testexec.Exec {
 	bin := "kubeone"
 	if k1.bin != "" {
 		bin = k1.bin
 	}
 
-	return exec.NewExec(bin,
-		exec.WithArgs(append(k1.globalFlags(), args...)...),
-		exec.WithEnv(os.Environ()),
-		exec.InDir(k1.dir),
-		exec.StdoutDebug,
+	return testexec.NewExec(bin,
+		testexec.WithArgs(append(k1.globalFlags(), args...)...),
+		testexec.WithEnv(os.Environ()),
+		testexec.InDir(k1.dir),
+		testexec.StdoutDebug,
 	)
 }
