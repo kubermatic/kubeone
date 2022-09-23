@@ -46,7 +46,7 @@ presubmits:
       resources:
         requests:
           cpu: "1"
-- always_run: false
+- always_run: true
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
@@ -494,7 +494,7 @@ presubmits:
       resources:
         requests:
           cpu: "1"
-- always_run: false
+- always_run: true
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
@@ -942,7 +942,7 @@ presubmits:
       resources:
         requests:
           cpu: "1"
-- always_run: false
+- always_run: true
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
