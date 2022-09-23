@@ -216,8 +216,8 @@ func baseResources() map[Resource]map[string]string {
 		DNSNodeCache:     {"*": "registry.k8s.io/dns/k8s-dns-node-cache:1.21.1"},
 		Flannel:          {"*": "quay.io/coreos/flannel:v0.15.1"},
 		//  TODO: Update this to a semver tag before release.
-		// Ref: https://github.com/kubermatic/machine-controller/commit/6232612e8ee6fc53c20a125415f8764fd4e81517
-		MachineController:      {"*": "quay.io/kubermatic/machine-controller:9f770ad8a9c10813f15f18f3e08a015cf53a5cee"},
+		// Ref: https://github.com/kubermatic/machine-controller/commit/f405d185a750771118e20c9121c098abe04dc3fc
+		MachineController:      {"*": "quay.io/kubermatic/machine-controller:f405d185a750771118e20c9121c098abe04dc3fc"},
 		MetricsServer:          {"*": "k8s.gcr.io/metrics-server/metrics-server:v0.6.1"},
 		OperatingSystemManager: {"*": "quay.io/kubermatic/operating-system-manager:v1.0.0"},
 	}
