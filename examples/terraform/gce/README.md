@@ -59,7 +59,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_apiserver_alternative_names"></a> [apiserver\_alternative\_names](#input\_apiserver\_alternative\_names) | subject alternative names for the API Server signing cert. | `list(string)` | `[]` | no |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the cluster | `string` | n/a | yes |
-| <a name="input_control_plane_image_family"></a> [control\_plane\_image\_family](#input\_control\_plane\_image\_family) | Image family to use for provisioning instances | `string` | `"ubuntu-2004-lts"` | no |
+| <a name="input_control_plane_image_family"></a> [control\_plane\_image\_family](#input\_control\_plane\_image\_family) | Image family to use for provisioning instances | `string` | `"ubuntu-2204-lts"` | no |
 | <a name="input_control_plane_image_project"></a> [control\_plane\_image\_project](#input\_control\_plane\_image\_project) | Project of the image to use for provisioning instances | `string` | `"ubuntu-os-cloud"` | no |
 | <a name="input_control_plane_target_pool_members_count"></a> [control\_plane\_target\_pool\_members\_count](#input\_control\_plane\_target\_pool\_members\_count) | n/a | `number` | `3` | no |
 | <a name="input_control_plane_type"></a> [control\_plane\_type](#input\_control\_plane\_type) | GCE instance type | `string` | `"n1-standard-2"` | no |

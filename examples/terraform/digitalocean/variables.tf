@@ -87,7 +87,7 @@ variable "region" {
 
 variable "control_plane_droplet_image" {
   description = "Image to use for provisioning control plane droplets"
-  default     = "ubuntu-18-04-x64"
+  default     = "ubuntu-22-04-x64"
   type        = string
 }
 
