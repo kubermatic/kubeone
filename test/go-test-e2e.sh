@@ -186,7 +186,7 @@ if [ -n "${CREDENTIALS_FILE_PATH}" ]; then
   go_test_args+=("-credentials" "${CREDENTIALS_FILE_PATH}")
 fi
 
-cd testv2/e2e
+cd test/e2e
 
 go test -c . -tags e2e
 

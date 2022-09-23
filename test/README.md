@@ -96,5 +96,5 @@ it manually.
 
 ```shell
 export HCLOUD_TOKEN=xxx
-./testv2/go-test-e2e.sh TestHetznerDefaultInstallContainerdV1_22_11
+./test/go-test-e2e.sh TestHetznerDefaultInstallContainerdV1_22_11
 ```

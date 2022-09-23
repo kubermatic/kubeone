@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The KubeOne Authors.
+Copyright 2022 The KubeOne Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -18,307 +18,194 @@ package e2e
 
 import (
 	"bytes"
+	"context"
+	"flag"
 	"fmt"
+	"net"
+	"net/url"
 	"os"
-	"path/filepath"
 
-	"github.com/pkg/errors"
-	"gopkg.in/yaml.v2"
+	"github.com/sirupsen/logrus"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
-	kubeonev1beta1 "k8c.io/kubeone/pkg/apis/kubeone/v1beta1"
-	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
-	"k8c.io/kubeone/test/e2e/testutil"
+	"k8c.io/kubeone/pkg/apis/kubeone/config"
+	"k8c.io/kubeone/pkg/ssh"
+	"k8c.io/kubeone/test/testexec"
 
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	kyaml "sigs.k8s.io/yaml"
+	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/clientcmd"
+	ctrlruntimeclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-// Kubeone is wrapper around KubeOne CLI
-type Kubeone struct {
-	// Dir is a temporary directory for storing test files (e.g. tf.json)
-	Dir string
-	// ConfigurationFilePath is a path to the KubeOneCluster manifest
-	ConfigurationFilePath string
+var (
+	kubeoneVerboseFlag = flag.Bool("kubeone-verbose", false, "run kubeone actions with --verbose flag")
+	credentialsFlag    = flag.String("credentials", "", "run kubeone with --credentials flag")
+)
+
+type kubeoneBin struct {
+	bin                       string
+	dir                       string
+	tfjsonPath                string
+	manifestPath              string
+	credentialsPath           string
+	verbose                   bool
+	upgradeMachineDeployments bool
 }
 
-// NewKubeone creates and initializes the Kubeone structure
-func NewKubeone(kubeoneDir, configurationFilePath string) *Kubeone {
-	return &Kubeone{
-		Dir:                   kubeoneDir,
-		ConfigurationFilePath: configurationFilePath,
+func (k1 *kubeoneBin) Apply(ctx context.Context) error {
+	args := []string{"apply", "--auto-approve"}
+
+	if k1.upgradeMachineDeployments {
+		args = append(args, "--upgrade-machine-deployments")
 	}
+
+	return k1.build(args...).BuildCmd(ctx).Run()
 }
 
-// CreateConfig creates a KubeOneCluster manifest
-func (k1 *Kubeone) CreateV1Beta1Config(
-	kubernetesVersion string,
-	providerName string,
-	providerExternal bool,
-	clusterNetworkPod string,
-	clusterNetworkService string,
-	credentialsFile string,
-	containerRuntime kubeoneapi.ContainerRuntimeConfig,
-) error {
-	k1Cluster := kubeonev1beta1.KubeOneCluster{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: kubeonev1beta1.SchemeGroupVersion.String(),
-			Kind:       "KubeOneCluster",
-		},
-	}
+func (k1 *kubeoneBin) Kubeconfig() ([]byte, error) {
+	var buf bytes.Buffer
 
-	kubeonev1beta1.SetObjectDefaults_KubeOneCluster(&k1Cluster)
-
-	k1Cluster.CloudProvider = kubeonev1beta1.CloudProviderSpec{
-		External: providerExternal,
-	}
-
-	if err := kubeonev1beta1.SetCloudProvider(&k1Cluster.CloudProvider, providerName); err != nil {
-		return errors.Wrap(err, "failed to set cloud provider")
-	}
-
-	k1Cluster.Versions = kubeonev1beta1.VersionConfig{
-		Kubernetes: kubernetesVersion,
-	}
-
-	k1Cluster.ClusterNetwork = kubeonev1beta1.ClusterNetworkConfig{
-		PodSubnet:     clusterNetworkPod,
-		ServiceSubnet: clusterNetworkService,
-	}
-
-	switch {
-	case containerRuntime.Containerd != nil:
-		k1Cluster.ContainerRuntime.Containerd = &kubeonev1beta1.ContainerRuntimeContainerd{}
-		k1Cluster.ContainerRuntime.Docker = nil
-	case containerRuntime.Docker != nil:
-		k1Cluster.ContainerRuntime.Containerd = nil
-		k1Cluster.ContainerRuntime.Docker = &kubeonev1beta1.ContainerRuntimeDocker{}
-	}
-
-	if credentialsFile != "" {
-		ymlbuf, err := os.ReadFile(credentialsFile)
-		if err != nil {
-			return errors.Wrap(err, "unable to read credentials file")
-		}
-
-		credentials := map[string]string{}
-		if err = yaml.Unmarshal(ymlbuf, &credentials); err != nil {
-			return errors.Wrap(err, "unable to unmarshal credentials file from yaml")
-		}
-
-		k1Cluster.CloudProvider.CloudConfig = credentials["cloudConfig"]
-	}
-
-	addonsPath := filepath.Join(k1.Dir, "addons")
-	addonsPathAbs, err := filepath.Abs(addonsPath)
-	if err != nil {
-		return errors.Wrap(err, "failed to get absolute addons path")
-	}
-
-	k1Cluster.Addons = &kubeonev1beta1.Addons{
-		Enable: true,
-		Path:   addonsPathAbs,
-		Addons: []kubeonev1beta1.Addon{
-			{
-				Name: "default-storage-class",
-			},
-		},
-	}
-
-	k1Config, err := kyaml.Marshal(&k1Cluster)
-	if err != nil {
-		return errors.Wrap(err, "unable to marshal kubeone KubeOneCluster")
-	}
-
-	if mkErr := os.MkdirAll(addonsPathAbs, 0755); mkErr != nil {
-		return errors.Wrapf(mkErr, "failed to create directory %q", addonsPathAbs)
-	}
-
-	err = os.WriteFile(k1.ConfigurationFilePath, k1Config, 0600)
-
-	return errors.Wrap(err, "failed to write KubeOne configuration manifest")
-}
-
-// CreateConfig creates a KubeOneCluster manifest
-func (k1 *Kubeone) CreateV1Beta2Config(
-	kubernetesVersion string,
-	providerName string,
-	providerExternal bool,
-	clusterNetworkPod string,
-	clusterNetworkService string,
-	credentialsFile string,
-	containerRuntime kubeoneapi.ContainerRuntimeConfig,
-) error {
-	k1Cluster := kubeonev1beta2.KubeOneCluster{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: kubeonev1beta2.SchemeGroupVersion.String(),
-			Kind:       "KubeOneCluster",
-		},
-	}
-
-	kubeonev1beta2.SetObjectDefaults_KubeOneCluster(&k1Cluster)
-
-	k1Cluster.CloudProvider = kubeonev1beta2.CloudProviderSpec{
-		External: providerExternal,
-	}
-
-	if err := kubeonev1beta2.SetCloudProvider(&k1Cluster.CloudProvider, providerName); err != nil {
-		return errors.Wrap(err, "failed to set cloud provider")
-	}
-
-	k1Cluster.Versions = kubeonev1beta2.VersionConfig{
-		Kubernetes: kubernetesVersion,
-	}
-
-	k1Cluster.ClusterNetwork = kubeonev1beta2.ClusterNetworkConfig{
-		PodSubnet:     clusterNetworkPod,
-		ServiceSubnet: clusterNetworkService,
-	}
-
-	switch {
-	case containerRuntime.Containerd != nil:
-		k1Cluster.ContainerRuntime.Containerd = &kubeonev1beta2.ContainerRuntimeContainerd{}
-		k1Cluster.ContainerRuntime.Docker = nil
-	case containerRuntime.Docker != nil:
-		k1Cluster.ContainerRuntime.Containerd = nil
-		k1Cluster.ContainerRuntime.Docker = &kubeonev1beta2.ContainerRuntimeDocker{}
-	}
-
-	if credentialsFile != "" {
-		ymlbuf, err := os.ReadFile(credentialsFile)
-		if err != nil {
-			return errors.Wrap(err, "unable to read credentials file")
-		}
-
-		credentials := map[string]string{}
-		if err = yaml.Unmarshal(ymlbuf, &credentials); err != nil {
-			return errors.Wrap(err, "unable to unmarshal credentials file from yaml")
-		}
-
-		k1Cluster.CloudProvider.CloudConfig = credentials["cloudConfig"]
-	}
-
-	k1Cluster.Addons = &kubeonev1beta2.Addons{
-		Enable: true,
-		Addons: []kubeonev1beta2.Addon{
-			{
-				Name: "default-storage-class",
-			},
-		},
-	}
-
-	k1Config, err := kyaml.Marshal(&k1Cluster)
-	if err != nil {
-		return errors.Wrap(err, "unable to marshal kubeone KubeOneCluster")
-	}
-
-	err = os.WriteFile(k1.ConfigurationFilePath, k1Config, 0600)
-
-	return errors.Wrap(err, "failed to write KubeOne configuration manifest")
-}
-
-// Install runs 'kubeone install' command to provision the cluster
-func (k1 *Kubeone) Install(tfJSON string, installFlags []string) error {
-	err := k1.storeTFJson(tfJSON)
-	if err != nil {
-		return err
-	}
-
-	flags := []string{"apply",
-		"--auto-approve",
-		"--tfjson", "tf.json",
-		"--manifest", k1.ConfigurationFilePath}
-	if len(installFlags) != 0 {
-		flags = append(flags, installFlags...)
-	}
-
-	err = k1.run(flags...)
-	if err != nil {
-		return fmt.Errorf("k8s cluster deployment failed: %w", err)
-	}
-
-	return nil
-}
-
-// Upgrade runs 'kubeone upgrade' command to upgrade the cluster
-func (k1 *Kubeone) Upgrade(upgradeFlags []string) error {
-	flags := []string{"apply",
-		"--auto-approve",
-		"--tfjson", "tf.json",
-		"--upgrade-machine-deployments",
-		"--manifest", k1.ConfigurationFilePath}
-	if len(upgradeFlags) != 0 {
-		flags = append(flags, upgradeFlags...)
-	}
-
-	err := k1.run(flags...)
-	if err != nil {
-		return fmt.Errorf("k8s cluster upgrade failed: %w", err)
-	}
-
-	return nil
-}
-
-// Kubeconfig runs 'kubeone kubeconfig' command to create and store kubeconfig file
-func (k1 *Kubeone) Kubeconfig() ([]byte, error) {
-	var kubeconfigBuf bytes.Buffer
-
-	exe := k1.build("kubeconfig",
-		"--tfjson", "tf.json",
-		"--manifest", k1.ConfigurationFilePath)
-	testutil.StdoutTo(&kubeconfigBuf)(exe)
+	exe := k1.build("kubeconfig")
+	testexec.StdoutTo(&buf)(exe)
 
 	if err := exe.Run(); err != nil {
-		return nil, fmt.Errorf("creating kubeconfig failed: %w", err)
+		return nil, fmt.Errorf("fetching kubeconfig failed: %w", err)
 	}
 
-	rawKubeconfig := kubeconfigBuf.String()
-	homePath := os.Getenv("HOME")
-	kubeconfigPath := fmt.Sprintf("%s/.kube/config", homePath)
+	return buf.Bytes(), nil
+}
 
-	err := testutil.CreateFile(kubeconfigPath, rawKubeconfig)
+func (k1 *kubeoneBin) Reset() error {
+	return k1.run("reset", "--auto-approve", "--destroy-workers", "--remove-binaries")
+}
+
+func (k1 *kubeoneBin) DynamicClient() (ctrlruntimeclient.Client, error) {
+	restConfig, err := k1.RestConfig()
 	if err != nil {
-		return nil, fmt.Errorf("saving kubeconfig for given path %s failed: %w", kubeconfigPath, err)
+		return nil, err
 	}
 
-	return []byte(rawKubeconfig), nil
+	return ctrlruntimeclient.New(restConfig, ctrlruntimeclient.Options{})
 }
 
-// Reset runs 'kubeone reset' command to destroy worker nodes and unprovision the cluster
-func (k1 *Kubeone) Reset() error {
-	err := k1.run("reset",
-		"-v",
-		"--auto-approve",
-		"--tfjson", "tf.json",
-		"--destroy-workers",
-		"--manifest", k1.ConfigurationFilePath)
+func (k1 *kubeoneBin) RestConfig() (*rest.Config, error) {
+	kubeoneManifest, err := k1.ClusterManifest()
 	if err != nil {
-		return fmt.Errorf("destroying workers failed: %w", err)
+		return nil, err
 	}
 
-	return nil
-}
-
-// storeTFJson saves tf.json in the temporary test directory
-func (k1 *Kubeone) storeTFJson(tfJSON string) error {
-	tfJSONPath := fmt.Sprintf("%s/tf.json", k1.Dir)
-
-	err := testutil.CreateFile(tfJSONPath, tfJSON)
+	kubeconfig, err := k1.Kubeconfig()
 	if err != nil {
-		return fmt.Errorf("saving tf.json for given path %s failed: %w", tfJSONPath, err)
+		return nil, err
 	}
 
-	return nil
+	restConfig, err := clientcmd.RESTConfigFromKubeConfig(kubeconfig)
+	if err != nil {
+		return nil, err
+	}
+
+	connector := ssh.NewConnector(context.Background())
+	tun, err := connector.Tunnel(kubeoneManifest.RandomHost())
+	if err != nil {
+		return nil, err
+	}
+
+	restConfig.Dial = tun.TunnelTo
+
+	return restConfig, nil
 }
 
-func (k1 *Kubeone) build(args ...string) *testutil.Exec {
-	return testutil.NewExec("kubeone",
-		testutil.WithArgs(args...),
-		testutil.WithEnv(os.Environ()),
-		testutil.InDir(k1.Dir),
-	)
+func (k1 *kubeoneBin) AsyncProxy(ctx context.Context) (string, func() error, error) {
+	list, err := net.Listen("tcp4", "127.0.0.1:0")
+	if err != nil {
+		return "", nil, err
+	}
+
+	hostPort := list.Addr().String()
+	if err = list.Close(); err != nil {
+		return "", nil, err
+	}
+
+	proxyURL := url.URL{
+		Scheme: "http",
+		Host:   hostPort,
+	}
+
+	cmd := k1.build("proxy", "--listen", hostPort).BuildCmd(ctx)
+	if err = cmd.Start(); err != nil {
+		return "", nil, err
+	}
+
+	return proxyURL.String(), cmd.Wait, nil
 }
 
-func (k1 *Kubeone) run(args ...string) error {
+func (k1 *kubeoneBin) ClusterManifest() (*kubeoneapi.KubeOneCluster, error) {
+	var buf bytes.Buffer
+
+	exe := k1.build("config", "dump")
+	testexec.StdoutTo(&buf)(exe)
+
+	if err := exe.Run(); err != nil {
+		return nil, fmt.Errorf("rendering manifest failed: %w", err)
+	}
+
+	logger := logrus.New()
+	k1Manifest, err := config.BytesToKubeOneCluster(buf.Bytes(), nil, nil, logger)
+
+	return k1Manifest, err
+}
+
+func (k1 *kubeoneBin) globalFlags() []string {
+	args := []string{"--tfjson", k1.tfjsonPath}
+
+	if k1.verbose {
+		args = append(args, "--verbose")
+	}
+
+	if k1.manifestPath != "" {
+		args = append(args, "--manifest", k1.manifestPath)
+	}
+
+	if k1.credentialsPath != "" {
+		args = append(args, "--credentials", k1.credentialsPath)
+	}
+
+	return args
+}
+
+func (k1 *kubeoneBin) kubeconfigPath(tmpDir string) (string, error) {
+	kubeconfig, err := os.CreateTemp(tmpDir, "kubeconfig-*")
+	if err != nil {
+		return "", err
+	}
+	defer kubeconfig.Close()
+
+	buf, err := k1.Kubeconfig()
+	if err != nil {
+		return "", err
+	}
+
+	if err := os.WriteFile(kubeconfig.Name(), buf, 0600); err != nil {
+		return "", err
+	}
+
+	return kubeconfig.Name(), nil
+}
+
+func (k1 *kubeoneBin) run(args ...string) error {
 	return k1.build(args...).Run()
+}
+
+func (k1 *kubeoneBin) build(args ...string) *testexec.Exec {
+	bin := "kubeone"
+	if k1.bin != "" {
+		bin = k1.bin
+	}
+
+	return testexec.NewExec(bin,
+		testexec.WithArgs(append(k1.globalFlags(), args...)...),
+		testexec.WithEnv(os.Environ()),
+		testexec.InDir(k1.dir),
+		testexec.StdoutDebug,
+	)
 }

@@ -27,7 +27,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 
-	"k8c.io/kubeone/testv2/e2e"
+	"k8c.io/kubeone/test/e2e"
 
 	"sigs.k8s.io/yaml"
 )

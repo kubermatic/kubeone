@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package testutil
+package testexec
 
 import (
 	"context"
@@ -26,9 +26,9 @@ import (
 	"syscall"
 )
 
-type ExecOpt func(*Exec) *Exec
+type Opt func(*Exec) *Exec
 
-func NewExec(command string, opts ...ExecOpt) *Exec {
+func NewExec(command string, opts ...Opt) *Exec {
 	e := &Exec{
 		Command: command,
 		Stderr:  os.Stderr,
@@ -95,7 +95,7 @@ func (e *Exec) BuildCmd(ctx context.Context) *exec.Cmd {
 	return cmd
 }
 
-func WithArgs(args ...string) ExecOpt {
+func WithArgs(args ...string) Opt {
 	return func(e *Exec) *Exec {
 		e.Args = args
 
@@ -103,7 +103,7 @@ func WithArgs(args ...string) ExecOpt {
 	}
 }
 
-func StdoutTo(stdout io.Writer) ExecOpt {
+func StdoutTo(stdout io.Writer) Opt {
 	return func(e *Exec) *Exec {
 		e.Stdout = stdout
 
@@ -111,7 +111,7 @@ func StdoutTo(stdout io.Writer) ExecOpt {
 	}
 }
 
-func StderrTo(stderr io.Writer) ExecOpt {
+func StderrTo(stderr io.Writer) Opt {
 	return func(e *Exec) *Exec {
 		e.Stderr = stderr
 
@@ -119,7 +119,7 @@ func StderrTo(stderr io.Writer) ExecOpt {
 	}
 }
 
-func InDir(dir string) ExecOpt {
+func InDir(dir string) Opt {
 	return func(e *Exec) *Exec {
 		e.Cwd = dir
 
@@ -127,7 +127,7 @@ func InDir(dir string) ExecOpt {
 	}
 }
 
-func WithMapEnv(env map[string]string) ExecOpt {
+func WithMapEnv(env map[string]string) Opt {
 	return func(e *Exec) *Exec {
 		var maptosliceEnv []string
 
@@ -142,7 +142,7 @@ func WithMapEnv(env map[string]string) ExecOpt {
 	}
 }
 
-func WithEnv(env []string) ExecOpt {
+func WithEnv(env []string) Opt {
 	return func(e *Exec) *Exec {
 		e.Env = append(e.Env, env...)
 
@@ -150,7 +150,7 @@ func WithEnv(env []string) ExecOpt {
 	}
 }
 
-func WithEnvs(envs ...string) ExecOpt {
+func WithEnvs(envs ...string) Opt {
 	return func(e *Exec) *Exec {
 		e.Env = append(e.Env, envs...)
 
@@ -158,7 +158,7 @@ func WithEnvs(envs ...string) ExecOpt {
 	}
 }
 
-func WithDryRun() ExecOpt {
+func WithDryRun() Opt {
 	return func(e *Exec) *Exec {
 		e.dryRun = true
 
@@ -166,7 +166,7 @@ func WithDryRun() ExecOpt {
 	}
 }
 
-func LogFunc(logf func(string, ...interface{})) ExecOpt {
+func LogFunc(logf func(string, ...interface{})) Opt {
 	return func(e *Exec) *Exec {
 		e.Logf = logf
 
@@ -174,7 +174,7 @@ func LogFunc(logf func(string, ...interface{})) ExecOpt {
 	}
 }
 
-func DebugTo(w io.Writer) ExecOpt {
+func DebugTo(w io.Writer) Opt {
 	return LogFunc(func(format string, a ...interface{}) {
 		fmt.Fprintf(w, "\n +"+format+"\n", a...)
 	})
