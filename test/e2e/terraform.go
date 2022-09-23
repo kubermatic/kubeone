@@ -22,7 +22,7 @@ import (
 	"os"
 	"syscall"
 
-	"k8c.io/kubeone/test/e2e/testutil"
+	"k8c.io/kubeone/test/exec"
 )
 
 var (
@@ -94,11 +94,11 @@ func (tf *terraformBin) run(args ...string) error {
 	return tf.build(args...).Run()
 }
 
-func (tf *terraformBin) build(args ...string) *testutil.Exec {
-	return testutil.NewExec("terraform",
-		testutil.WithArgs(args...),
-		testutil.WithEnv(append(os.Environ(), defaultTFEnvironment...)),
-		testutil.InDir(tf.path),
-		testutil.StdoutDebug,
+func (tf *terraformBin) build(args ...string) *exec.Exec {
+	return exec.NewExec("terraform",
+		exec.WithArgs(args...),
+		exec.WithEnv(append(os.Environ(), defaultTFEnvironment...)),
+		exec.InDir(tf.path),
+		exec.StdoutDebug,
 	)
 }

@@ -38,7 +38,7 @@ import (
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 
-	"k8c.io/kubeone/test/e2e/testutil"
+	"k8c.io/kubeone/test/exec"
 
 	clusterv1alpha1 "github.com/kubermatic/machine-controller/pkg/apis/cluster/v1alpha1"
 
@@ -118,16 +118,16 @@ func requiredTemplateFunc(warn string, input interface{}) (interface{}, error) {
 	return input, nil
 }
 
-func makeBin(args ...string) *testutil.Exec {
+func makeBin(args ...string) *exec.Exec {
 	return makeBinWithPath(filepath.Clean("../../"), args...)
 }
 
-func makeBinWithPath(path string, args ...string) *testutil.Exec {
-	return testutil.NewExec("make",
-		testutil.WithArgs(args...),
-		testutil.WithEnv(os.Environ()),
-		testutil.InDir(path),
-		testutil.StdoutDebug,
+func makeBinWithPath(path string, args ...string) *exec.Exec {
+	return exec.NewExec("make",
+		exec.WithArgs(args...),
+		exec.WithEnv(os.Environ()),
+		exec.InDir(path),
+		exec.StdoutDebug,
 	)
 }
 
@@ -432,7 +432,7 @@ func newProwJob(prowJobName string, labels map[string]string, testTitle string, 
 					Image:           prowImage,
 					ImagePullPolicy: corev1.PullAlways,
 					Command: []string{
-						"./testv2/go-test-e2e.sh",
+						"./test/go-test-e2e.sh",
 						testTitle,
 					},
 					Env: env,
