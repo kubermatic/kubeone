@@ -12,7 +12,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznInstallContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -35,7 +35,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosInstallContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -46,7 +46,7 @@ presubmits:
       resources:
         requests:
           cpu: "1"
-- always_run: false
+- always_run: true
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
@@ -58,7 +58,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultInstallContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -81,7 +81,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarInstallContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -104,7 +104,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelInstallContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -127,7 +127,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxInstallContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -150,7 +150,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultInstallContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -175,7 +175,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosInstallContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -200,7 +200,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarInstallContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -226,7 +226,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelInstallContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -251,7 +251,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxInstallContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -276,7 +276,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestGceDefaultInstallContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -299,7 +299,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultInstallContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -322,7 +322,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosInstallContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -345,7 +345,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxInstallContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -368,7 +368,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelInstallContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -391,7 +391,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarInstallContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -414,7 +414,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultInstallContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -437,7 +437,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarInstallContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -460,7 +460,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznInstallContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -483,7 +483,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosInstallContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -494,7 +494,7 @@ presubmits:
       resources:
         requests:
           cpu: "1"
-- always_run: false
+- always_run: true
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
@@ -506,7 +506,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultInstallContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -529,7 +529,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarInstallContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -552,7 +552,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelInstallContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -575,7 +575,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxInstallContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -598,7 +598,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultInstallContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -623,7 +623,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosInstallContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -648,7 +648,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarInstallContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -674,7 +674,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelInstallContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -699,7 +699,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxInstallContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -724,7 +724,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestGceDefaultInstallContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -747,7 +747,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultInstallContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -770,7 +770,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosInstallContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -793,7 +793,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxInstallContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -816,7 +816,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelInstallContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -839,7 +839,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarInstallContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -862,7 +862,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultInstallContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -885,7 +885,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarInstallContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -908,7 +908,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznInstallContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -931,7 +931,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosInstallContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -942,7 +942,7 @@ presubmits:
       resources:
         requests:
           cpu: "1"
-- always_run: false
+- always_run: true
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
@@ -954,7 +954,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultInstallContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -977,7 +977,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarInstallContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -1000,7 +1000,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelInstallContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -1023,7 +1023,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxInstallContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -1046,7 +1046,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultInstallContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -1071,7 +1071,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosInstallContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -1096,7 +1096,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarInstallContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -1122,7 +1122,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelInstallContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -1147,7 +1147,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxInstallContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -1172,7 +1172,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestGceDefaultInstallContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -1195,7 +1195,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultInstallContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -1218,7 +1218,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosInstallContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -1241,7 +1241,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxInstallContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -1264,7 +1264,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelInstallContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -1287,7 +1287,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarInstallContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -1310,7 +1310,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultInstallContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -1333,7 +1333,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarInstallContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -1356,7 +1356,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznInstallDockerV1_22_12
       env:
       - name: PROVIDER
@@ -1379,7 +1379,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosInstallDockerV1_22_12
       env:
       - name: PROVIDER
@@ -1402,7 +1402,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultInstallDockerV1_22_12
       env:
       - name: PROVIDER
@@ -1425,7 +1425,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarInstallDockerV1_22_12
       env:
       - name: PROVIDER
@@ -1448,7 +1448,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelInstallDockerV1_22_12
       env:
       - name: PROVIDER
@@ -1471,7 +1471,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxInstallDockerV1_22_12
       env:
       - name: PROVIDER
@@ -1494,7 +1494,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultInstallDockerV1_22_12
       env:
       - name: PROVIDER
@@ -1519,7 +1519,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosInstallDockerV1_22_12
       env:
       - name: PROVIDER
@@ -1544,7 +1544,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarInstallDockerV1_22_12
       env:
       - name: PROVIDER
@@ -1570,7 +1570,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelInstallDockerV1_22_12
       env:
       - name: PROVIDER
@@ -1595,7 +1595,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxInstallDockerV1_22_12
       env:
       - name: PROVIDER
@@ -1620,7 +1620,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestGceDefaultInstallDockerV1_22_12
       env:
       - name: PROVIDER
@@ -1643,7 +1643,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultInstallDockerV1_22_12
       env:
       - name: PROVIDER
@@ -1666,7 +1666,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosInstallDockerV1_22_12
       env:
       - name: PROVIDER
@@ -1689,7 +1689,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxInstallDockerV1_22_12
       env:
       - name: PROVIDER
@@ -1712,7 +1712,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelInstallDockerV1_22_12
       env:
       - name: PROVIDER
@@ -1735,7 +1735,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarInstallDockerV1_22_12
       env:
       - name: PROVIDER
@@ -1758,7 +1758,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultInstallDockerV1_22_12
       env:
       - name: PROVIDER
@@ -1781,7 +1781,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarInstallDockerV1_22_12
       env:
       - name: PROVIDER
@@ -1804,7 +1804,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznInstallDockerV1_23_9
       env:
       - name: PROVIDER
@@ -1827,7 +1827,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosInstallDockerV1_23_9
       env:
       - name: PROVIDER
@@ -1850,7 +1850,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultInstallDockerV1_23_9
       env:
       - name: PROVIDER
@@ -1873,7 +1873,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarInstallDockerV1_23_9
       env:
       - name: PROVIDER
@@ -1896,7 +1896,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelInstallDockerV1_23_9
       env:
       - name: PROVIDER
@@ -1919,7 +1919,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxInstallDockerV1_23_9
       env:
       - name: PROVIDER
@@ -1942,7 +1942,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultInstallDockerV1_23_9
       env:
       - name: PROVIDER
@@ -1967,7 +1967,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosInstallDockerV1_23_9
       env:
       - name: PROVIDER
@@ -1992,7 +1992,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarInstallDockerV1_23_9
       env:
       - name: PROVIDER
@@ -2018,7 +2018,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelInstallDockerV1_23_9
       env:
       - name: PROVIDER
@@ -2043,7 +2043,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxInstallDockerV1_23_9
       env:
       - name: PROVIDER
@@ -2068,7 +2068,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestGceDefaultInstallDockerV1_23_9
       env:
       - name: PROVIDER
@@ -2091,7 +2091,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultInstallDockerV1_23_9
       env:
       - name: PROVIDER
@@ -2114,7 +2114,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosInstallDockerV1_23_9
       env:
       - name: PROVIDER
@@ -2137,7 +2137,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxInstallDockerV1_23_9
       env:
       - name: PROVIDER
@@ -2160,7 +2160,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelInstallDockerV1_23_9
       env:
       - name: PROVIDER
@@ -2183,7 +2183,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarInstallDockerV1_23_9
       env:
       - name: PROVIDER
@@ -2206,7 +2206,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultInstallDockerV1_23_9
       env:
       - name: PROVIDER
@@ -2229,7 +2229,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarInstallDockerV1_23_9
       env:
       - name: PROVIDER
@@ -2257,7 +2257,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznUpgradeContainerdFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -2285,7 +2285,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosUpgradeContainerdFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -2313,7 +2313,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultUpgradeContainerdFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -2341,7 +2341,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarUpgradeContainerdFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -2369,7 +2369,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelUpgradeContainerdFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -2397,7 +2397,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxUpgradeContainerdFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -2425,7 +2425,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultUpgradeContainerdFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -2455,7 +2455,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosUpgradeContainerdFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -2485,7 +2485,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarUpgradeContainerdFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -2516,7 +2516,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelUpgradeContainerdFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -2546,7 +2546,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxUpgradeContainerdFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -2576,7 +2576,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestGceDefaultUpgradeContainerdFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -2604,7 +2604,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultUpgradeContainerdFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -2632,7 +2632,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosUpgradeContainerdFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -2660,7 +2660,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxUpgradeContainerdFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -2688,7 +2688,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelUpgradeContainerdFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -2716,7 +2716,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarUpgradeContainerdFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -2744,7 +2744,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultUpgradeContainerdFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -2772,7 +2772,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarUpgradeContainerdFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -2800,7 +2800,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznUpgradeContainerdFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -2828,7 +2828,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosUpgradeContainerdFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -2856,7 +2856,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultUpgradeContainerdFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -2884,7 +2884,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarUpgradeContainerdFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -2912,7 +2912,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelUpgradeContainerdFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -2940,7 +2940,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxUpgradeContainerdFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -2968,7 +2968,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultUpgradeContainerdFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -2998,7 +2998,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosUpgradeContainerdFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -3028,7 +3028,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarUpgradeContainerdFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -3059,7 +3059,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelUpgradeContainerdFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -3089,7 +3089,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxUpgradeContainerdFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -3119,7 +3119,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestGceDefaultUpgradeContainerdFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -3147,7 +3147,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultUpgradeContainerdFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -3175,7 +3175,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosUpgradeContainerdFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -3203,7 +3203,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxUpgradeContainerdFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -3231,7 +3231,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelUpgradeContainerdFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -3259,7 +3259,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarUpgradeContainerdFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -3287,7 +3287,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultUpgradeContainerdFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -3315,7 +3315,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarUpgradeContainerdFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -3343,7 +3343,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznUpgradeContainerdFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -3371,7 +3371,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosUpgradeContainerdFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -3399,7 +3399,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultUpgradeContainerdFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -3427,7 +3427,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarUpgradeContainerdFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -3455,7 +3455,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelUpgradeContainerdFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -3483,7 +3483,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxUpgradeContainerdFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -3511,7 +3511,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultUpgradeContainerdFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -3541,7 +3541,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosUpgradeContainerdFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -3571,7 +3571,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarUpgradeContainerdFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -3602,7 +3602,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelUpgradeContainerdFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -3632,7 +3632,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxUpgradeContainerdFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -3662,7 +3662,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestGceDefaultUpgradeContainerdFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -3690,7 +3690,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultUpgradeContainerdFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -3718,7 +3718,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosUpgradeContainerdFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -3746,7 +3746,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxUpgradeContainerdFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -3774,7 +3774,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelUpgradeContainerdFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -3802,7 +3802,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarUpgradeContainerdFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -3830,7 +3830,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultUpgradeContainerdFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -3858,7 +3858,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarUpgradeContainerdFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -3886,7 +3886,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznUpgradeDockerFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -3914,7 +3914,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosUpgradeDockerFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -3942,7 +3942,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultUpgradeDockerFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -3970,7 +3970,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarUpgradeDockerFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -3998,7 +3998,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelUpgradeDockerFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -4026,7 +4026,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxUpgradeDockerFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -4054,7 +4054,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultUpgradeDockerFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -4084,7 +4084,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosUpgradeDockerFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -4114,7 +4114,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarUpgradeDockerFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -4145,7 +4145,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelUpgradeDockerFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -4175,7 +4175,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxUpgradeDockerFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -4205,7 +4205,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestGceDefaultUpgradeDockerFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -4233,7 +4233,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultUpgradeDockerFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -4261,7 +4261,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosUpgradeDockerFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -4289,7 +4289,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxUpgradeDockerFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -4317,7 +4317,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelUpgradeDockerFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -4345,7 +4345,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarUpgradeDockerFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -4373,7 +4373,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultUpgradeDockerFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -4401,7 +4401,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarUpgradeDockerFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -4429,7 +4429,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznUpgradeDockerFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -4457,7 +4457,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosUpgradeDockerFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -4485,7 +4485,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultUpgradeDockerFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -4513,7 +4513,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarUpgradeDockerFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -4541,7 +4541,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelUpgradeDockerFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -4569,7 +4569,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxUpgradeDockerFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -4597,7 +4597,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultUpgradeDockerFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -4627,7 +4627,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosUpgradeDockerFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -4657,7 +4657,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarUpgradeDockerFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -4688,7 +4688,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelUpgradeDockerFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -4718,7 +4718,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxUpgradeDockerFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -4748,7 +4748,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestGceDefaultUpgradeDockerFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -4776,7 +4776,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultUpgradeDockerFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -4804,7 +4804,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosUpgradeDockerFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -4832,7 +4832,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxUpgradeDockerFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -4860,7 +4860,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelUpgradeDockerFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -4888,7 +4888,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarUpgradeDockerFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -4916,7 +4916,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultUpgradeDockerFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -4944,7 +4944,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarUpgradeDockerFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -4967,7 +4967,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznCalicoContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -4990,7 +4990,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosCalicoContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -5013,7 +5013,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultCalicoContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -5036,7 +5036,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarCalicoContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -5059,7 +5059,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelCalicoContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -5082,7 +5082,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxCalicoContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -5105,7 +5105,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultCalicoContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -5130,7 +5130,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosCalicoContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -5155,7 +5155,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarCalicoContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -5181,7 +5181,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelCalicoContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -5206,7 +5206,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxCalicoContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -5231,7 +5231,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestGceDefaultCalicoContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -5254,7 +5254,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultCalicoContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -5277,7 +5277,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosCalicoContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -5300,7 +5300,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxCalicoContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -5323,7 +5323,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelCalicoContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -5346,7 +5346,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarCalicoContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -5369,7 +5369,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultCalicoContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -5392,7 +5392,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarCalicoContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -5415,7 +5415,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznCalicoDockerV1_22_12
       env:
       - name: PROVIDER
@@ -5438,7 +5438,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosCalicoDockerV1_22_12
       env:
       - name: PROVIDER
@@ -5461,7 +5461,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultCalicoDockerV1_22_12
       env:
       - name: PROVIDER
@@ -5484,7 +5484,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarCalicoDockerV1_22_12
       env:
       - name: PROVIDER
@@ -5507,7 +5507,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelCalicoDockerV1_22_12
       env:
       - name: PROVIDER
@@ -5530,7 +5530,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxCalicoDockerV1_22_12
       env:
       - name: PROVIDER
@@ -5553,7 +5553,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultCalicoDockerV1_22_12
       env:
       - name: PROVIDER
@@ -5578,7 +5578,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosCalicoDockerV1_22_12
       env:
       - name: PROVIDER
@@ -5603,7 +5603,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarCalicoDockerV1_22_12
       env:
       - name: PROVIDER
@@ -5629,7 +5629,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelCalicoDockerV1_22_12
       env:
       - name: PROVIDER
@@ -5654,7 +5654,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxCalicoDockerV1_22_12
       env:
       - name: PROVIDER
@@ -5679,7 +5679,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestGceDefaultCalicoDockerV1_22_12
       env:
       - name: PROVIDER
@@ -5702,7 +5702,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultCalicoDockerV1_22_12
       env:
       - name: PROVIDER
@@ -5725,7 +5725,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosCalicoDockerV1_22_12
       env:
       - name: PROVIDER
@@ -5748,7 +5748,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxCalicoDockerV1_22_12
       env:
       - name: PROVIDER
@@ -5771,7 +5771,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelCalicoDockerV1_22_12
       env:
       - name: PROVIDER
@@ -5794,7 +5794,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarCalicoDockerV1_22_12
       env:
       - name: PROVIDER
@@ -5817,7 +5817,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultCalicoDockerV1_22_12
       env:
       - name: PROVIDER
@@ -5840,7 +5840,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarCalicoDockerV1_22_12
       env:
       - name: PROVIDER
@@ -5863,7 +5863,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznWeaveContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -5886,7 +5886,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosWeaveContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -5909,7 +5909,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultWeaveContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -5932,7 +5932,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarWeaveContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -5955,7 +5955,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelWeaveContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -5978,7 +5978,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxWeaveContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -6001,7 +6001,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultWeaveContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -6026,7 +6026,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosWeaveContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -6051,7 +6051,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarWeaveContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -6077,7 +6077,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelWeaveContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -6102,7 +6102,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxWeaveContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -6127,7 +6127,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestGceDefaultWeaveContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -6150,7 +6150,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultWeaveContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -6173,7 +6173,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosWeaveContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -6196,7 +6196,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxWeaveContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -6219,7 +6219,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelWeaveContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -6242,7 +6242,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarWeaveContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -6265,7 +6265,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultWeaveContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -6288,7 +6288,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarWeaveContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -6311,7 +6311,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznWeaveDockerV1_22_12
       env:
       - name: PROVIDER
@@ -6334,7 +6334,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosWeaveDockerV1_22_12
       env:
       - name: PROVIDER
@@ -6357,7 +6357,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultWeaveDockerV1_22_12
       env:
       - name: PROVIDER
@@ -6380,7 +6380,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarWeaveDockerV1_22_12
       env:
       - name: PROVIDER
@@ -6403,7 +6403,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelWeaveDockerV1_22_12
       env:
       - name: PROVIDER
@@ -6426,7 +6426,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxWeaveDockerV1_22_12
       env:
       - name: PROVIDER
@@ -6449,7 +6449,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultWeaveDockerV1_22_12
       env:
       - name: PROVIDER
@@ -6474,7 +6474,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosWeaveDockerV1_22_12
       env:
       - name: PROVIDER
@@ -6499,7 +6499,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarWeaveDockerV1_22_12
       env:
       - name: PROVIDER
@@ -6525,7 +6525,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelWeaveDockerV1_22_12
       env:
       - name: PROVIDER
@@ -6550,7 +6550,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxWeaveDockerV1_22_12
       env:
       - name: PROVIDER
@@ -6575,7 +6575,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestGceDefaultWeaveDockerV1_22_12
       env:
       - name: PROVIDER
@@ -6598,7 +6598,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultWeaveDockerV1_22_12
       env:
       - name: PROVIDER
@@ -6621,7 +6621,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosWeaveDockerV1_22_12
       env:
       - name: PROVIDER
@@ -6644,7 +6644,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxWeaveDockerV1_22_12
       env:
       - name: PROVIDER
@@ -6667,7 +6667,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelWeaveDockerV1_22_12
       env:
       - name: PROVIDER
@@ -6690,7 +6690,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarWeaveDockerV1_22_12
       env:
       - name: PROVIDER
@@ -6713,7 +6713,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultWeaveDockerV1_22_12
       env:
       - name: PROVIDER
@@ -6736,7 +6736,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarWeaveDockerV1_22_12
       env:
       - name: PROVIDER
@@ -6759,7 +6759,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznCiliumContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -6782,7 +6782,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosCiliumContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -6805,7 +6805,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultCiliumContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -6828,7 +6828,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarCiliumContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -6851,7 +6851,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelCiliumContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -6874,7 +6874,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxCiliumContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -6897,7 +6897,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultCiliumContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -6922,7 +6922,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosCiliumContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -6947,7 +6947,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarCiliumContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -6973,7 +6973,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelCiliumContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -6998,7 +6998,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxCiliumContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -7023,7 +7023,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestGceDefaultCiliumContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -7046,7 +7046,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultCiliumContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -7069,7 +7069,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosCiliumContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -7092,7 +7092,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxCiliumContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -7115,7 +7115,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelCiliumContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -7138,7 +7138,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarCiliumContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -7161,7 +7161,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultCiliumContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -7184,7 +7184,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarCiliumContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -7207,7 +7207,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznCiliumDockerV1_22_12
       env:
       - name: PROVIDER
@@ -7230,7 +7230,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosCiliumDockerV1_22_12
       env:
       - name: PROVIDER
@@ -7253,7 +7253,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultCiliumDockerV1_22_12
       env:
       - name: PROVIDER
@@ -7276,7 +7276,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarCiliumDockerV1_22_12
       env:
       - name: PROVIDER
@@ -7299,7 +7299,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelCiliumDockerV1_22_12
       env:
       - name: PROVIDER
@@ -7322,7 +7322,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxCiliumDockerV1_22_12
       env:
       - name: PROVIDER
@@ -7345,7 +7345,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultCiliumDockerV1_22_12
       env:
       - name: PROVIDER
@@ -7370,7 +7370,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosCiliumDockerV1_22_12
       env:
       - name: PROVIDER
@@ -7395,7 +7395,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarCiliumDockerV1_22_12
       env:
       - name: PROVIDER
@@ -7421,7 +7421,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelCiliumDockerV1_22_12
       env:
       - name: PROVIDER
@@ -7446,7 +7446,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxCiliumDockerV1_22_12
       env:
       - name: PROVIDER
@@ -7471,7 +7471,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestGceDefaultCiliumDockerV1_22_12
       env:
       - name: PROVIDER
@@ -7494,7 +7494,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultCiliumDockerV1_22_12
       env:
       - name: PROVIDER
@@ -7517,7 +7517,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosCiliumDockerV1_22_12
       env:
       - name: PROVIDER
@@ -7540,7 +7540,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxCiliumDockerV1_22_12
       env:
       - name: PROVIDER
@@ -7563,7 +7563,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelCiliumDockerV1_22_12
       env:
       - name: PROVIDER
@@ -7586,7 +7586,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarCiliumDockerV1_22_12
       env:
       - name: PROVIDER
@@ -7609,7 +7609,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultCiliumDockerV1_22_12
       env:
       - name: PROVIDER
@@ -7632,7 +7632,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarCiliumDockerV1_22_12
       env:
       - name: PROVIDER
@@ -7655,7 +7655,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsLongTimeoutDefaultConformanceContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -7680,7 +7680,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsLongTimeoutDefaultConformanceContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -7705,7 +7705,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsLongTimeoutDefaultConformanceContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -7730,7 +7730,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -7755,7 +7755,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -7780,7 +7780,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -7805,7 +7805,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultKubeProxyIpvsV1_22_12
       env:
       - name: PROVIDER
@@ -7828,7 +7828,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultKubeProxyIpvsV1_23_9
       env:
       - name: PROVIDER
@@ -7851,7 +7851,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -7874,7 +7874,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -7897,7 +7897,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -7920,7 +7920,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarCloudInitLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -7943,7 +7943,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -7966,7 +7966,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -7989,7 +7989,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -8014,7 +8014,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -8039,7 +8039,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -8065,7 +8065,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -8090,7 +8090,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -8115,7 +8115,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestGceDefaultLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -8138,7 +8138,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -8161,7 +8161,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -8184,7 +8184,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -8207,7 +8207,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -8230,7 +8230,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -8253,7 +8253,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -8276,7 +8276,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarLegacyMachineControllerContainerdV1_22_12
       env:
       - name: PROVIDER
@@ -8299,7 +8299,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -8322,7 +8322,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -8345,7 +8345,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -8368,7 +8368,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -8391,7 +8391,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -8414,7 +8414,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -8437,7 +8437,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -8462,7 +8462,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -8487,7 +8487,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -8513,7 +8513,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -8538,7 +8538,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -8563,7 +8563,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestGceDefaultLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -8586,7 +8586,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -8609,7 +8609,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -8632,7 +8632,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -8655,7 +8655,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -8678,7 +8678,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -8701,7 +8701,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -8724,7 +8724,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarLegacyMachineControllerContainerdV1_23_9
       env:
       - name: PROVIDER
@@ -8747,7 +8747,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -8770,7 +8770,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -8793,7 +8793,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -8816,7 +8816,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -8839,7 +8839,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -8862,7 +8862,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -8885,7 +8885,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -8910,7 +8910,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -8935,7 +8935,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -8961,7 +8961,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -8986,7 +8986,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -9011,7 +9011,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestGceDefaultLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -9034,7 +9034,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -9057,7 +9057,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -9080,7 +9080,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -9103,7 +9103,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -9126,7 +9126,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -9149,7 +9149,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -9172,7 +9172,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarLegacyMachineControllerContainerdV1_24_3
       env:
       - name: PROVIDER
@@ -9195,7 +9195,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznLegacyMachineControllerDockerV1_22_12
       env:
       - name: PROVIDER
@@ -9218,7 +9218,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosLegacyMachineControllerDockerV1_22_12
       env:
       - name: PROVIDER
@@ -9241,7 +9241,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultLegacyMachineControllerDockerV1_22_12
       env:
       - name: PROVIDER
@@ -9264,7 +9264,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarLegacyMachineControllerDockerV1_22_12
       env:
       - name: PROVIDER
@@ -9287,7 +9287,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelLegacyMachineControllerDockerV1_22_12
       env:
       - name: PROVIDER
@@ -9310,7 +9310,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxLegacyMachineControllerDockerV1_22_12
       env:
       - name: PROVIDER
@@ -9333,7 +9333,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultLegacyMachineControllerDockerV1_22_12
       env:
       - name: PROVIDER
@@ -9358,7 +9358,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosLegacyMachineControllerDockerV1_22_12
       env:
       - name: PROVIDER
@@ -9383,7 +9383,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarLegacyMachineControllerDockerV1_22_12
       env:
       - name: PROVIDER
@@ -9409,7 +9409,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelLegacyMachineControllerDockerV1_22_12
       env:
       - name: PROVIDER
@@ -9434,7 +9434,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxLegacyMachineControllerDockerV1_22_12
       env:
       - name: PROVIDER
@@ -9459,7 +9459,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestGceDefaultLegacyMachineControllerDockerV1_22_12
       env:
       - name: PROVIDER
@@ -9482,7 +9482,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultLegacyMachineControllerDockerV1_22_12
       env:
       - name: PROVIDER
@@ -9505,7 +9505,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosLegacyMachineControllerDockerV1_22_12
       env:
       - name: PROVIDER
@@ -9528,7 +9528,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxLegacyMachineControllerDockerV1_22_12
       env:
       - name: PROVIDER
@@ -9551,7 +9551,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelLegacyMachineControllerDockerV1_22_12
       env:
       - name: PROVIDER
@@ -9574,7 +9574,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarLegacyMachineControllerDockerV1_22_12
       env:
       - name: PROVIDER
@@ -9597,7 +9597,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultLegacyMachineControllerDockerV1_22_12
       env:
       - name: PROVIDER
@@ -9620,7 +9620,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarLegacyMachineControllerDockerV1_22_12
       env:
       - name: PROVIDER
@@ -9643,7 +9643,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznLegacyMachineControllerDockerV1_23_9
       env:
       - name: PROVIDER
@@ -9666,7 +9666,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosLegacyMachineControllerDockerV1_23_9
       env:
       - name: PROVIDER
@@ -9689,7 +9689,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultLegacyMachineControllerDockerV1_23_9
       env:
       - name: PROVIDER
@@ -9712,7 +9712,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarLegacyMachineControllerDockerV1_23_9
       env:
       - name: PROVIDER
@@ -9735,7 +9735,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelLegacyMachineControllerDockerV1_23_9
       env:
       - name: PROVIDER
@@ -9758,7 +9758,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxLegacyMachineControllerDockerV1_23_9
       env:
       - name: PROVIDER
@@ -9781,7 +9781,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultLegacyMachineControllerDockerV1_23_9
       env:
       - name: PROVIDER
@@ -9806,7 +9806,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosLegacyMachineControllerDockerV1_23_9
       env:
       - name: PROVIDER
@@ -9831,7 +9831,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarLegacyMachineControllerDockerV1_23_9
       env:
       - name: PROVIDER
@@ -9857,7 +9857,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelLegacyMachineControllerDockerV1_23_9
       env:
       - name: PROVIDER
@@ -9882,7 +9882,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxLegacyMachineControllerDockerV1_23_9
       env:
       - name: PROVIDER
@@ -9907,7 +9907,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestGceDefaultLegacyMachineControllerDockerV1_23_9
       env:
       - name: PROVIDER
@@ -9930,7 +9930,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultLegacyMachineControllerDockerV1_23_9
       env:
       - name: PROVIDER
@@ -9953,7 +9953,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosLegacyMachineControllerDockerV1_23_9
       env:
       - name: PROVIDER
@@ -9976,7 +9976,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxLegacyMachineControllerDockerV1_23_9
       env:
       - name: PROVIDER
@@ -9999,7 +9999,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelLegacyMachineControllerDockerV1_23_9
       env:
       - name: PROVIDER
@@ -10022,7 +10022,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarLegacyMachineControllerDockerV1_23_9
       env:
       - name: PROVIDER
@@ -10045,7 +10045,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultLegacyMachineControllerDockerV1_23_9
       env:
       - name: PROVIDER
@@ -10068,7 +10068,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarLegacyMachineControllerDockerV1_23_9
       env:
       - name: PROVIDER
@@ -10091,7 +10091,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultKubeProxyIpvsV1_24_3
       env:
       - name: PROVIDER
@@ -10114,7 +10114,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultCsiCcmMigrationV1_22_12
       env:
       - name: PROVIDER
@@ -10137,7 +10137,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultCsiCcmMigrationV1_22_12
       env:
       - name: PROVIDER
@@ -10160,7 +10160,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosCsiCcmMigrationV1_22_12
       env:
       - name: PROVIDER
@@ -10183,7 +10183,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxCsiCcmMigrationV1_22_12
       env:
       - name: PROVIDER
@@ -10206,7 +10206,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelCsiCcmMigrationV1_22_12
       env:
       - name: PROVIDER
@@ -10229,7 +10229,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarCsiCcmMigrationV1_22_12
       env:
       - name: PROVIDER
@@ -10252,7 +10252,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultCsiCcmMigrationV1_22_12
       env:
       - name: PROVIDER
@@ -10277,7 +10277,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosCsiCcmMigrationV1_22_12
       env:
       - name: PROVIDER
@@ -10302,7 +10302,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarCsiCcmMigrationV1_22_12
       env:
       - name: PROVIDER
@@ -10328,7 +10328,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelCsiCcmMigrationV1_22_12
       env:
       - name: PROVIDER
@@ -10353,7 +10353,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxCsiCcmMigrationV1_22_12
       env:
       - name: PROVIDER
@@ -10378,7 +10378,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultCsiCcmMigrationV1_22_12
       env:
       - name: PROVIDER
@@ -10401,7 +10401,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarCsiCcmMigrationV1_22_12
       env:
       - name: PROVIDER
@@ -10424,7 +10424,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultCsiCcmMigrationV1_23_9
       env:
       - name: PROVIDER
@@ -10447,7 +10447,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultCsiCcmMigrationV1_23_9
       env:
       - name: PROVIDER
@@ -10470,7 +10470,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosCsiCcmMigrationV1_23_9
       env:
       - name: PROVIDER
@@ -10493,7 +10493,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxCsiCcmMigrationV1_23_9
       env:
       - name: PROVIDER
@@ -10516,7 +10516,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelCsiCcmMigrationV1_23_9
       env:
       - name: PROVIDER
@@ -10539,7 +10539,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarCsiCcmMigrationV1_23_9
       env:
       - name: PROVIDER
@@ -10562,7 +10562,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultCsiCcmMigrationV1_23_9
       env:
       - name: PROVIDER
@@ -10587,7 +10587,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosCsiCcmMigrationV1_23_9
       env:
       - name: PROVIDER
@@ -10612,7 +10612,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarCsiCcmMigrationV1_23_9
       env:
       - name: PROVIDER
@@ -10638,7 +10638,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelCsiCcmMigrationV1_23_9
       env:
       - name: PROVIDER
@@ -10663,7 +10663,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxCsiCcmMigrationV1_23_9
       env:
       - name: PROVIDER
@@ -10688,7 +10688,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultCsiCcmMigrationV1_23_9
       env:
       - name: PROVIDER
@@ -10711,7 +10711,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarCsiCcmMigrationV1_23_9
       env:
       - name: PROVIDER
@@ -10734,7 +10734,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultCsiCcmMigrationV1_24_3
       env:
       - name: PROVIDER
@@ -10757,7 +10757,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultCsiCcmMigrationV1_24_3
       env:
       - name: PROVIDER
@@ -10780,7 +10780,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosCsiCcmMigrationV1_24_3
       env:
       - name: PROVIDER
@@ -10803,7 +10803,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxCsiCcmMigrationV1_24_3
       env:
       - name: PROVIDER
@@ -10826,7 +10826,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelCsiCcmMigrationV1_24_3
       env:
       - name: PROVIDER
@@ -10849,7 +10849,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarCsiCcmMigrationV1_24_3
       env:
       - name: PROVIDER
@@ -10872,7 +10872,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultCsiCcmMigrationV1_24_3
       env:
       - name: PROVIDER
@@ -10897,7 +10897,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosCsiCcmMigrationV1_24_3
       env:
       - name: PROVIDER
@@ -10922,7 +10922,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarCsiCcmMigrationV1_24_3
       env:
       - name: PROVIDER
@@ -10948,7 +10948,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelCsiCcmMigrationV1_24_3
       env:
       - name: PROVIDER
@@ -10973,7 +10973,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxCsiCcmMigrationV1_24_3
       env:
       - name: PROVIDER
@@ -10998,7 +10998,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultCsiCcmMigrationV1_24_3
       env:
       - name: PROVIDER
@@ -11021,7 +11021,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarCsiCcmMigrationV1_24_3
       env:
       - name: PROVIDER
@@ -11044,7 +11044,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -11067,7 +11067,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -11090,7 +11090,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -11113,7 +11113,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -11136,7 +11136,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -11159,7 +11159,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -11182,7 +11182,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -11207,7 +11207,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -11232,7 +11232,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -11258,7 +11258,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -11283,7 +11283,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -11308,7 +11308,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanDefaultInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -11331,7 +11331,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanCentosInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -11354,7 +11354,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanRockylinuxInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -11377,7 +11377,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalDefaultInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -11400,7 +11400,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalCentosInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -11423,7 +11423,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalRockylinuxInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -11446,7 +11446,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalFlatcarInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -11469,7 +11469,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerDefaultInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -11492,7 +11492,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerCentosInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -11515,7 +11515,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerRockylinuxInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -11538,7 +11538,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -11561,7 +11561,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -11584,7 +11584,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -11607,7 +11607,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -11630,7 +11630,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -11653,7 +11653,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -11676,7 +11676,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarInstallContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -11699,7 +11699,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -11722,7 +11722,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -11745,7 +11745,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -11768,7 +11768,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -11791,7 +11791,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -11814,7 +11814,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -11837,7 +11837,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -11862,7 +11862,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -11887,7 +11887,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -11913,7 +11913,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -11938,7 +11938,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -11963,7 +11963,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanDefaultInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -11986,7 +11986,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanCentosInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -12009,7 +12009,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanRockylinuxInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -12032,7 +12032,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalDefaultInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -12055,7 +12055,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalCentosInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -12078,7 +12078,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalRockylinuxInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -12101,7 +12101,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalFlatcarInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -12124,7 +12124,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerDefaultInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -12147,7 +12147,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerCentosInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -12170,7 +12170,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerRockylinuxInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -12193,7 +12193,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -12216,7 +12216,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -12239,7 +12239,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -12262,7 +12262,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -12285,7 +12285,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -12308,7 +12308,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -12331,7 +12331,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarInstallContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -12354,7 +12354,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -12377,7 +12377,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -12400,7 +12400,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -12423,7 +12423,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -12446,7 +12446,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -12469,7 +12469,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -12492,7 +12492,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -12517,7 +12517,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -12542,7 +12542,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -12568,7 +12568,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -12593,7 +12593,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -12618,7 +12618,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanDefaultInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -12641,7 +12641,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanCentosInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -12664,7 +12664,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanRockylinuxInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -12687,7 +12687,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalDefaultInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -12710,7 +12710,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalCentosInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -12733,7 +12733,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalRockylinuxInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -12756,7 +12756,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalFlatcarInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -12779,7 +12779,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerDefaultInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -12802,7 +12802,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerCentosInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -12825,7 +12825,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerRockylinuxInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -12848,7 +12848,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -12871,7 +12871,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -12894,7 +12894,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -12917,7 +12917,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -12940,7 +12940,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -12963,7 +12963,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -12986,7 +12986,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarInstallContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -13009,7 +13009,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -13032,7 +13032,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -13055,7 +13055,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -13078,7 +13078,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -13101,7 +13101,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -13124,7 +13124,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -13147,7 +13147,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -13172,7 +13172,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -13197,7 +13197,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -13223,7 +13223,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -13248,7 +13248,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -13273,7 +13273,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanDefaultInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -13296,7 +13296,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanCentosInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -13319,7 +13319,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanRockylinuxInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -13342,7 +13342,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalDefaultInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -13365,7 +13365,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalCentosInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -13388,7 +13388,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalRockylinuxInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -13411,7 +13411,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalFlatcarInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -13434,7 +13434,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerDefaultInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -13457,7 +13457,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerCentosInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -13480,7 +13480,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerRockylinuxInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -13503,7 +13503,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -13526,7 +13526,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -13549,7 +13549,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -13572,7 +13572,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -13595,7 +13595,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -13618,7 +13618,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -13641,7 +13641,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarInstallDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -13664,7 +13664,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznInstallDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -13687,7 +13687,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosInstallDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -13710,7 +13710,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultInstallDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -13733,7 +13733,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarInstallDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -13756,7 +13756,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelInstallDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -13779,7 +13779,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxInstallDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -13802,7 +13802,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultInstallDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -13827,7 +13827,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosInstallDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -13852,7 +13852,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarInstallDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -13878,7 +13878,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelInstallDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -13903,7 +13903,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxInstallDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -13928,7 +13928,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanDefaultInstallDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -13951,7 +13951,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanCentosInstallDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -13974,7 +13974,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanRockylinuxInstallDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -13997,7 +13997,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalDefaultInstallDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -14020,7 +14020,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalCentosInstallDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -14043,7 +14043,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalRockylinuxInstallDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -14066,7 +14066,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalFlatcarInstallDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -14089,7 +14089,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerDefaultInstallDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -14112,7 +14112,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerCentosInstallDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -14135,7 +14135,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerRockylinuxInstallDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -14158,7 +14158,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultInstallDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -14181,7 +14181,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosInstallDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -14204,7 +14204,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxInstallDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -14227,7 +14227,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelInstallDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -14250,7 +14250,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarInstallDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -14273,7 +14273,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultInstallDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -14296,7 +14296,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarInstallDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -14324,7 +14324,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznUpgradeContainerdExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -14352,7 +14352,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosUpgradeContainerdExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -14380,7 +14380,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultUpgradeContainerdExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -14408,7 +14408,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarUpgradeContainerdExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -14436,7 +14436,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelUpgradeContainerdExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -14464,7 +14464,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxUpgradeContainerdExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -14492,7 +14492,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultUpgradeContainerdExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -14522,7 +14522,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosUpgradeContainerdExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -14552,7 +14552,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarUpgradeContainerdExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -14583,7 +14583,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelUpgradeContainerdExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -14613,7 +14613,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxUpgradeContainerdExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -14643,7 +14643,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanDefaultUpgradeContainerdExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -14671,7 +14671,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanCentosUpgradeContainerdExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -14699,7 +14699,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanRockylinuxUpgradeContainerdExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -14727,7 +14727,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalDefaultUpgradeContainerdExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -14755,7 +14755,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalCentosUpgradeContainerdExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -14783,7 +14783,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalRockylinuxUpgradeContainerdExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -14811,7 +14811,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalFlatcarUpgradeContainerdExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -14839,7 +14839,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerDefaultUpgradeContainerdExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -14867,7 +14867,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerCentosUpgradeContainerdExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -14895,7 +14895,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerRockylinuxUpgradeContainerdExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -14923,7 +14923,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultUpgradeContainerdExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -14951,7 +14951,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosUpgradeContainerdExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -14979,7 +14979,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxUpgradeContainerdExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -15007,7 +15007,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelUpgradeContainerdExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -15035,7 +15035,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarUpgradeContainerdExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -15063,7 +15063,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultUpgradeContainerdExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -15091,7 +15091,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarUpgradeContainerdExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -15119,7 +15119,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -15147,7 +15147,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -15175,7 +15175,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -15203,7 +15203,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -15231,7 +15231,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -15259,7 +15259,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -15287,7 +15287,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -15317,7 +15317,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -15347,7 +15347,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -15378,7 +15378,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -15408,7 +15408,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -15438,7 +15438,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanDefaultUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -15466,7 +15466,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanCentosUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -15494,7 +15494,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanRockylinuxUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -15522,7 +15522,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalDefaultUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -15550,7 +15550,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalCentosUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -15578,7 +15578,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalRockylinuxUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -15606,7 +15606,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalFlatcarUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -15634,7 +15634,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerDefaultUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -15662,7 +15662,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerCentosUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -15690,7 +15690,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerRockylinuxUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -15718,7 +15718,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -15746,7 +15746,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -15774,7 +15774,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -15802,7 +15802,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -15830,7 +15830,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -15858,7 +15858,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -15886,7 +15886,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarUpgradeContainerdExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -15914,7 +15914,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -15942,7 +15942,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -15970,7 +15970,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -15998,7 +15998,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -16026,7 +16026,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -16054,7 +16054,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -16082,7 +16082,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -16112,7 +16112,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -16142,7 +16142,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -16173,7 +16173,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -16203,7 +16203,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -16233,7 +16233,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanDefaultUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -16261,7 +16261,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanCentosUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -16289,7 +16289,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanRockylinuxUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -16317,7 +16317,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalDefaultUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -16345,7 +16345,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalCentosUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -16373,7 +16373,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalRockylinuxUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -16401,7 +16401,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalFlatcarUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -16429,7 +16429,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerDefaultUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -16457,7 +16457,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerCentosUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -16485,7 +16485,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerRockylinuxUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -16513,7 +16513,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -16541,7 +16541,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -16569,7 +16569,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -16597,7 +16597,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -16625,7 +16625,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -16653,7 +16653,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -16681,7 +16681,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarUpgradeContainerdExternalFromV1_23_9_ToV1_24_3
       env:
       - name: PROVIDER
@@ -16709,7 +16709,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznUpgradeDockerExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -16737,7 +16737,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosUpgradeDockerExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -16765,7 +16765,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultUpgradeDockerExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -16793,7 +16793,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarUpgradeDockerExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -16821,7 +16821,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelUpgradeDockerExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -16849,7 +16849,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxUpgradeDockerExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -16877,7 +16877,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultUpgradeDockerExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -16907,7 +16907,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosUpgradeDockerExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -16937,7 +16937,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarUpgradeDockerExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -16968,7 +16968,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelUpgradeDockerExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -16998,7 +16998,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxUpgradeDockerExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -17028,7 +17028,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanDefaultUpgradeDockerExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -17056,7 +17056,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanCentosUpgradeDockerExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -17084,7 +17084,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanRockylinuxUpgradeDockerExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -17112,7 +17112,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalDefaultUpgradeDockerExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -17140,7 +17140,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalCentosUpgradeDockerExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -17168,7 +17168,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalRockylinuxUpgradeDockerExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -17196,7 +17196,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalFlatcarUpgradeDockerExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -17224,7 +17224,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerDefaultUpgradeDockerExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -17252,7 +17252,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerCentosUpgradeDockerExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -17280,7 +17280,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerRockylinuxUpgradeDockerExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -17308,7 +17308,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultUpgradeDockerExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -17336,7 +17336,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosUpgradeDockerExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -17364,7 +17364,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxUpgradeDockerExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -17392,7 +17392,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelUpgradeDockerExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -17420,7 +17420,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarUpgradeDockerExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -17448,7 +17448,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultUpgradeDockerExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -17476,7 +17476,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarUpgradeDockerExternalFromV1_21_14_ToV1_22_12
       env:
       - name: PROVIDER
@@ -17504,7 +17504,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -17532,7 +17532,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -17560,7 +17560,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -17588,7 +17588,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -17616,7 +17616,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -17644,7 +17644,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -17672,7 +17672,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -17702,7 +17702,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -17732,7 +17732,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -17763,7 +17763,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -17793,7 +17793,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -17823,7 +17823,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanDefaultUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -17851,7 +17851,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanCentosUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -17879,7 +17879,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanRockylinuxUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -17907,7 +17907,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalDefaultUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -17935,7 +17935,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalCentosUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -17963,7 +17963,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalRockylinuxUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -17991,7 +17991,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalFlatcarUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -18019,7 +18019,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerDefaultUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -18047,7 +18047,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerCentosUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -18075,7 +18075,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerRockylinuxUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -18103,7 +18103,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -18131,7 +18131,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -18159,7 +18159,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -18187,7 +18187,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -18215,7 +18215,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -18243,7 +18243,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -18271,7 +18271,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarUpgradeDockerExternalFromV1_22_12_ToV1_23_9
       env:
       - name: PROVIDER
@@ -18294,7 +18294,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -18317,7 +18317,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -18340,7 +18340,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -18363,7 +18363,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarCloudInitLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -18386,7 +18386,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -18409,7 +18409,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -18432,7 +18432,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -18457,7 +18457,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -18482,7 +18482,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -18508,7 +18508,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -18533,7 +18533,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -18558,7 +18558,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanDefaultLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -18581,7 +18581,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanCentosLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -18604,7 +18604,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanRockylinuxLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -18627,7 +18627,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalDefaultLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -18650,7 +18650,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalCentosLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -18673,7 +18673,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalRockylinuxLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -18696,7 +18696,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalFlatcarLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -18719,7 +18719,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerDefaultLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -18742,7 +18742,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerCentosLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -18765,7 +18765,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerRockylinuxLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -18788,7 +18788,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -18811,7 +18811,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -18834,7 +18834,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -18857,7 +18857,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -18880,7 +18880,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -18903,7 +18903,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -18926,7 +18926,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarLegacyMachineControllerContainerdExternalV1_22_12
       env:
       - name: PROVIDER
@@ -18949,7 +18949,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -18972,7 +18972,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -18995,7 +18995,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -19018,7 +19018,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarCloudInitLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -19041,7 +19041,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -19064,7 +19064,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -19087,7 +19087,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -19112,7 +19112,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -19137,7 +19137,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -19163,7 +19163,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -19188,7 +19188,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -19213,7 +19213,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanDefaultLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -19236,7 +19236,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanCentosLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -19259,7 +19259,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanRockylinuxLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -19282,7 +19282,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalDefaultLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -19305,7 +19305,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalCentosLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -19328,7 +19328,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalRockylinuxLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -19351,7 +19351,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalFlatcarLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -19374,7 +19374,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerDefaultLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -19397,7 +19397,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerCentosLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -19420,7 +19420,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerRockylinuxLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -19443,7 +19443,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -19466,7 +19466,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -19489,7 +19489,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -19512,7 +19512,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -19535,7 +19535,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -19558,7 +19558,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -19581,7 +19581,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarLegacyMachineControllerContainerdExternalV1_23_9
       env:
       - name: PROVIDER
@@ -19604,7 +19604,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsAmznLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -19627,7 +19627,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsCentosLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -19650,7 +19650,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsDefaultLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -19673,7 +19673,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsFlatcarLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -19696,7 +19696,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRhelLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -19719,7 +19719,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAwsRockylinuxLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -19742,7 +19742,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureDefaultLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -19767,7 +19767,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureCentosLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -19792,7 +19792,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureFlatcarLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -19818,7 +19818,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRhelLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -19843,7 +19843,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestAzureRockylinuxLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -19868,7 +19868,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanDefaultLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -19891,7 +19891,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanCentosLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -19914,7 +19914,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanRockylinuxLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -19937,7 +19937,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalDefaultLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -19960,7 +19960,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalCentosLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -19983,7 +19983,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalRockylinuxLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -20006,7 +20006,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalFlatcarLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -20029,7 +20029,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerDefaultLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -20052,7 +20052,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerCentosLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -20075,7 +20075,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerRockylinuxLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -20098,7 +20098,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackDefaultLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -20121,7 +20121,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackCentosLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -20144,7 +20144,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRockylinuxLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -20167,7 +20167,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackRhelLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -20190,7 +20190,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestOpenstackFlatcarLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -20213,7 +20213,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereDefaultLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -20236,7 +20236,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestVsphereFlatcarLegacyMachineControllerContainerdExternalV1_24_3
       env:
       - name: PROVIDER
@@ -20259,7 +20259,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanDefaultLegacyMachineControllerDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -20282,7 +20282,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanCentosLegacyMachineControllerDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -20305,7 +20305,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanRockylinuxLegacyMachineControllerDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -20328,7 +20328,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalDefaultLegacyMachineControllerDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -20351,7 +20351,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalCentosLegacyMachineControllerDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -20374,7 +20374,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalRockylinuxLegacyMachineControllerDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -20397,7 +20397,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalFlatcarLegacyMachineControllerDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -20420,7 +20420,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerDefaultLegacyMachineControllerDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -20443,7 +20443,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerCentosLegacyMachineControllerDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -20466,7 +20466,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerRockylinuxLegacyMachineControllerDockerExternalV1_22_12
       env:
       - name: PROVIDER
@@ -20489,7 +20489,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanDefaultLegacyMachineControllerDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -20512,7 +20512,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanCentosLegacyMachineControllerDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -20535,7 +20535,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestDigitaloceanRockylinuxLegacyMachineControllerDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -20558,7 +20558,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalDefaultLegacyMachineControllerDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -20581,7 +20581,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalCentosLegacyMachineControllerDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -20604,7 +20604,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalRockylinuxLegacyMachineControllerDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -20627,7 +20627,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestEquinixmetalFlatcarLegacyMachineControllerDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -20650,7 +20650,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerDefaultLegacyMachineControllerDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -20673,7 +20673,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerCentosLegacyMachineControllerDockerExternalV1_23_9
       env:
       - name: PROVIDER
@@ -20696,7 +20696,7 @@ presubmits:
   spec:
     containers:
     - command:
-      - ./testv2/go-test-e2e.sh
+      - ./test/go-test-e2e.sh
       - TestHetznerRockylinuxLegacyMachineControllerDockerExternalV1_23_9
       env:
       - name: PROVIDER
