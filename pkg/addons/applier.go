@@ -282,7 +282,7 @@ func csiWebhookCerts(s *state.State, data *templateData, csiMigration bool, kube
 		if err := webhookCerts(data.Certificates,
 			webhookCertsCSI,
 			resources.GenericCSIWebhookName,
-			resources.GenericCSIWebhookNamespace,
+			resources.VsphereCSIWebhookNamespace,
 			s.Cluster.ClusterNetwork.ServiceDomainName,
 			kubeCAPrivateKey,
 			kubeCACert,
@@ -293,7 +293,7 @@ func csiWebhookCerts(s *state.State, data *templateData, csiMigration bool, kube
 			if err := webhookCerts(data.Certificates,
 				"CSIMigration",
 				resources.VsphereCSIWebhookName,
-				resources.GenericCSIWebhookNamespace,
+				resources.VsphereCSIWebhookNamespace,
 				s.Cluster.ClusterNetwork.ServiceDomainName,
 				kubeCAPrivateKey,
 				kubeCACert,
@@ -317,7 +317,7 @@ func csiWebhookCerts(s *state.State, data *templateData, csiMigration bool, kube
 	return nil
 }
 
-func webhookCerts(certs map[string]string, prefix, webhookName, webhookNamespace, serviceDomainName string, kubeCAPrivateKey *rsa.PrivateKey, kubeCACert *x509.Certificate) error { //nolint:unparam
+func webhookCerts(certs map[string]string, prefix, webhookName, webhookNamespace, serviceDomainName string, kubeCAPrivateKey *rsa.PrivateKey, kubeCACert *x509.Certificate) error {
 	certsMap, err := certificate.NewSignedTLSCert(
 		webhookName,
 		webhookNamespace,
