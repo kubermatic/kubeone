@@ -95,6 +95,7 @@ const (
 	MetricsServerNamespace = metav1.NamespaceSystem
 
 	VsphereCSIWebhookName      = "vsphere-webhook-svc"
+	VsphereCSIWebhookNamespace = "vmware-system-csi"
 	NutanixCSIWebhookName      = "csi-snapshot-webhook"
 	GenericCSIWebhookName      = "snapshot-validation-service"
 	GenericCSIWebhookNamespace = metav1.NamespaceSystem
