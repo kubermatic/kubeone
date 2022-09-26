@@ -234,6 +234,11 @@ func SetDefaults_Features(obj *KubeOneCluster) {
 	if obj.Features.OpenIDConnect != nil && obj.Features.OpenIDConnect.Enable {
 		defaultOpenIDConnect(&obj.Features.OpenIDConnect.Config)
 	}
+	if obj.Features.NodeLocalDNS == nil {
+		obj.Features.NodeLocalDNS = &NodeLocalDNS{
+			Deploy: true,
+		}
+	}
 }
 
 func defaultOpenIDConnect(config *OpenIDConnectConfig) {

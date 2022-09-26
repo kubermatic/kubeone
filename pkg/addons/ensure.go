@@ -118,9 +118,11 @@ func collectAddons(s *state.State) (addonsToDeploy []addonAction) {
 		})
 	}
 
-	addonsToDeploy = append(addonsToDeploy, addonAction{
-		name: resources.AddonNodeLocalDNS,
-	})
+	if s.Cluster.Features.NodeLocalDNS.Deploy {
+		addonsToDeploy = append(addonsToDeploy, addonAction{
+			name: resources.AddonNodeLocalDNS,
+		})
+	}
 
 	if s.Cluster.MachineController.Deploy {
 		addonsToDeploy = append(addonsToDeploy, addonAction{

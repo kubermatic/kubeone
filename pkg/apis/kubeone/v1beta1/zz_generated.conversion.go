@@ -1149,6 +1149,7 @@ func autoConvert_kubeone_Features_To_v1beta1_Features(in *kubeone.Features, out 
 	out.MetricsServer = (*MetricsServer)(unsafe.Pointer(in.MetricsServer))
 	out.OpenIDConnect = (*OpenIDConnect)(unsafe.Pointer(in.OpenIDConnect))
 	out.EncryptionProviders = (*EncryptionProviders)(unsafe.Pointer(in.EncryptionProviders))
+	// WARNING: in.NodeLocalDNS requires manual conversion: does not exist in peer-type
 	return nil
 }
 
