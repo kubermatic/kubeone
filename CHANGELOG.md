@@ -1,5 +1,15 @@
 # Changelog
 
+# [v1.4.9](https://github.com/kubermatic/kubeone/releases/tag/v1.4.9) - 2022-09-26
+
+## Changelog since v1.4.8
+
+## Changes by Kind
+
+### Feature
+
+- Update the `kubernetes-cni` package from 0.8.7 to 1.1.1 to support the latest Kubernetes patch releases ([#2358](https://github.com/kubermatic/kubeone/pull/2358), [@xmudrii](https://github.com/xmudrii))
+
 # [v1.4.8](https://github.com/kubermatic/kubeone/releases/tag/v1.4.8) - 2022-08-29
 
 ## Changelog since v1.4.7
