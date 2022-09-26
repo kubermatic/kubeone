@@ -171,7 +171,7 @@ variable "ami_filters" {
   default = {
     ubuntu = {
       owners       = ["099720109477"] # Canonical
-      image_name   = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+      image_name   = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
       ssh_username = "ubuntu"
       worker_os    = "ubuntu"
     }

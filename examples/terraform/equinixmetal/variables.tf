@@ -82,13 +82,13 @@ variable "metro" {
 }
 
 variable "control_plane_operating_system" {
-  default     = "ubuntu_18_04"
+  default     = "ubuntu_22_04"
   description = "Image to use for control plane provisioning"
   type        = string
 }
 
 variable "lb_operating_system" {
-  default     = "ubuntu_18_04"
+  default     = "ubuntu_22_04"
   description = "Image to use for loadbalancer provisioning"
   type        = string
 }

@@ -106,7 +106,7 @@ variable "control_plane_volume_size" {
 }
 
 variable "control_plane_image_family" {
-  default     = "ubuntu-2004-lts"
+  default     = "ubuntu-2204-lts"
   description = "Image family to use for provisioning instances"
   type        = string
 }

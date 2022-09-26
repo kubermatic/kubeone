@@ -111,7 +111,7 @@ variable "datacenter" {
 }
 
 variable "image" {
-  default = "ubuntu-20.04"
+  default = "ubuntu-22.04"
   type    = string
 }
 
