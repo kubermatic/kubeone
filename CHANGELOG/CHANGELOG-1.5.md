@@ -1,3 +1,24 @@
+# [v1.5.1](https://github.com/kubermatic/kubeone/releases/tag/v1.5.1) - 2022-09-26
+
+## Changelog since v1.5.0
+
+## Changes by Kind
+
+### Feature
+
+- Add a new `NodeLocalDNS` field to the KubeOneCluster API used to control should the NodeLocalDNSCache component be deployed or not. Run `kubeone config print --full` for details on how to use this field ([#2377](https://github.com/kubermatic/kubeone/pull/2377), [@kron4eg](https://github.com/kron4eg))
+- Upgrade Cilium from v1.12.0 to v1.12.2 ([#2376](https://github.com/kubermatic/kubeone/pull/2376), [@ahmedwaleedmalik](https://github.com/ahmedwaleedmalik))
+
+### Bug or Regression
+
+- Automatically delete the CoreDNS PodDistruptionBudget if the feature is disabled ([#2365](https://github.com/kubermatic/kubeone/pull/2365), [@xmudrii](https://github.com/xmudrii))
+- Fix NPE when machine-controller deployment is disabled ([#2357](https://github.com/kubermatic/kubeone/pull/2357), [@kron4eg](https://github.com/kron4eg))
+- Fix NPE with Operating System Manager (OSM) when the KubeOneCluster v1beta1 API is used ([#2357](https://github.com/kubermatic/kubeone/pull/2357), [@kron4eg](https://github.com/kron4eg))
+- Explicitly disable Operating System Manager (OSM) when the KubeOneCluster v1beta1 is used ([#2357](https://github.com/kubermatic/kubeone/pull/2357), [@kron4eg](https://github.com/kron4eg))
+- Recreate SSH connection in the case of errors with session ([#2357](https://github.com/kubermatic/kubeone/pull/2357), [@kron4eg](https://github.com/kron4eg))
+- Update the `kubernetes-cni` package from 0.8.7 to 1.1.1 to support the latest Kubernetes patch releases ([#2357](https://github.com/kubermatic/kubeone/pull/2357), [@kron4eg](https://github.com/kron4eg))
+- Use `vmware-system-csi` namespace when generating certs for the vSphere CSI webhooks ([#2374](https://github.com/kubermatic/kubeone/pull/2374), [@xmudrii](https://github.com/xmudrii))
+
 # [v1.5.0](https://github.com/kubermatic/kubeone/releases/tag/v1.5.0) - 2022-08-30
 
 We're happy to announce a new KubeOne minor release — KubeOne 1.5! Please
