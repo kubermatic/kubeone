@@ -91,7 +91,7 @@ sudo yum versionlock delete docker-ce docker-ce-cli containerd.io || true
 sudo yum install -y \
 	docker-ce-'20.10.*' \
 	docker-ce-cli-'20.10.*' \
-	containerd.io-'1.5.*'
+	containerd.io-'1.6.*'
 sudo yum versionlock add docker-ce docker-ce-cli containerd.io
 
 sudo mkdir -p $(dirname /etc/docker/daemon.json)
