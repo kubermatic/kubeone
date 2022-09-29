@@ -41,9 +41,11 @@ output "kubeone_hosts" {
       ssh_port             = var.ssh_port
       ssh_private_key_file = var.ssh_private_key_file
       ssh_user             = local.ssh_username
+      ssh_hosts_keys       = var.ssh_hosts_keys
       bastion              = aws_instance.bastion.public_ip
       bastion_port         = var.bastion_port
       bastion_user         = local.bastion_user
+      bastion_host_key     = var.bastion_host_key
       labels               = var.control_plane_labels
       # uncomment to following to set those kubelet parameters. More into at:
       # https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/

@@ -106,14 +106,16 @@ func sshOpts(host kubeoneapi.HostConfig) Opts {
 	}
 
 	return Opts{
-		Username:    host.SSHUsername,
-		Port:        host.SSHPort,
-		Hostname:    host.PublicAddress,
-		KeyFile:     privateKeyFile,
-		AgentSocket: host.SSHAgentSocket,
-		Timeout:     10 * time.Second,
-		Bastion:     host.Bastion,
-		BastionPort: host.BastionPort,
-		BastionUser: host.BastionUser,
+		Username:             host.SSHUsername,
+		Port:                 host.SSHPort,
+		Hostname:             host.PublicAddress,
+		KeyFile:              privateKeyFile,
+		HostPublicKey:        host.SSHHostPublicKey,
+		AgentSocket:          host.SSHAgentSocket,
+		Timeout:              10 * time.Second,
+		Bastion:              host.Bastion,
+		BastionPort:          host.BastionPort,
+		BastionUser:          host.BastionUser,
+		BastionHostPublicKey: host.BastionHostPublicKey,
 	}
 }

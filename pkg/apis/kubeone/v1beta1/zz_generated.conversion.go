@@ -1221,10 +1221,12 @@ func autoConvert_kubeone_HostConfig_To_v1beta1_HostConfig(in *kubeone.HostConfig
 	out.SSHPort = in.SSHPort
 	out.SSHUsername = in.SSHUsername
 	out.SSHPrivateKeyFile = in.SSHPrivateKeyFile
+	// WARNING: in.SSHHostPublicKey requires manual conversion: does not exist in peer-type
 	out.SSHAgentSocket = in.SSHAgentSocket
 	out.Bastion = in.Bastion
 	out.BastionPort = in.BastionPort
 	out.BastionUser = in.BastionUser
+	// WARNING: in.BastionHostPublicKey requires manual conversion: does not exist in peer-type
 	out.Hostname = in.Hostname
 	out.IsLeader = in.IsLeader
 	out.Taints = *(*[]v1.Taint)(unsafe.Pointer(&in.Taints))

@@ -17,6 +17,7 @@ limitations under the License.
 package ssh
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"io"
@@ -44,18 +45,20 @@ var (
 // Opts represents all the possible options for connecting to
 // a remote server via SSH.
 type Opts struct {
-	Context     context.Context
-	Username    string
-	Password    string
-	Hostname    string
-	Port        int
-	PrivateKey  string
-	KeyFile     string
-	AgentSocket string
-	Timeout     time.Duration
-	Bastion     string
-	BastionPort int
-	BastionUser string
+	Context              context.Context
+	Username             string
+	Password             string
+	Hostname             string
+	Port                 int
+	PrivateKey           string
+	KeyFile              string
+	HostPublicKey        []byte
+	AgentSocket          string
+	Timeout              time.Duration
+	Bastion              string
+	BastionPort          int
+	BastionUser          string
+	BastionHostPublicKey []byte
 }
 
 func validateOptions(o Opts) (Opts, error) {
@@ -110,20 +113,20 @@ type connection struct {
 
 // NewConnection attempts to create a new SSH connection to the host
 // specified via the given options.
-func NewConnection(connector *Connector, o Opts) (executor.Interface, error) {
-	o, err := validateOptions(o)
+func NewConnection(connector *Connector, opts Opts) (executor.Interface, error) {
+	opts, err := validateOptions(opts)
 	if err != nil {
 		return nil, err
 	}
 
 	authMethods := make([]ssh.AuthMethod, 0)
 
-	if len(o.Password) > 0 {
-		authMethods = append(authMethods, ssh.Password(o.Password))
+	if len(opts.Password) > 0 {
+		authMethods = append(authMethods, ssh.Password(opts.Password))
 	}
 
-	if len(o.PrivateKey) > 0 {
-		signer, parseErr := ssh.ParsePrivateKey([]byte(o.PrivateKey))
+	if len(opts.PrivateKey) > 0 {
+		signer, parseErr := ssh.ParsePrivateKey([]byte(opts.PrivateKey))
 		if parseErr != nil {
 			return nil, fail.SSHError{
 				Op:  "parsing private key",
@@ -134,11 +137,11 @@ func NewConnection(connector *Connector, o Opts) (executor.Interface, error) {
 		authMethods = append(authMethods, ssh.PublicKeys(signer))
 	}
 
-	if len(o.AgentSocket) > 0 {
-		addr := o.AgentSocket
+	if len(opts.AgentSocket) > 0 {
+		addr := opts.AgentSocket
 
-		if strings.HasPrefix(o.AgentSocket, socketEnvPrefix) {
-			envName := strings.TrimPrefix(o.AgentSocket, socketEnvPrefix)
+		if strings.HasPrefix(opts.AgentSocket, socketEnvPrefix) {
+			envName := strings.TrimPrefix(opts.AgentSocket, socketEnvPrefix)
 
 			if envAddr := os.Getenv(envName); len(envAddr) > 0 {
 				addr = envAddr
@@ -176,19 +179,27 @@ func NewConnection(connector *Connector, o Opts) (executor.Interface, error) {
 	}
 
 	sshConfig := &ssh.ClientConfig{
-		User:            o.Username,
-		Timeout:         o.Timeout,
+		User:            opts.Username,
+		Timeout:         opts.Timeout,
 		Auth:            authMethods,
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(), //nolint:gosec
 	}
 
-	targetHost := o.Hostname
-	targetPort := strconv.Itoa(o.Port)
+	if opts.HostPublicKey != nil {
+		sshConfig.HostKeyCallback = hostKeyCallback(opts.HostPublicKey)
+	}
 
-	if o.Bastion != "" {
-		targetHost = o.Bastion
-		targetPort = strconv.Itoa(o.BastionPort)
-		sshConfig.User = o.BastionUser
+	targetHost := opts.Hostname
+	targetPort := strconv.Itoa(opts.Port)
+
+	if opts.Bastion != "" {
+		targetHost = opts.Bastion
+		targetPort = strconv.Itoa(opts.BastionPort)
+		sshConfig.User = opts.BastionUser
+
+		if opts.BastionHostPublicKey != nil {
+			sshConfig.HostKeyCallback = hostKeyCallback(opts.BastionHostPublicKey)
+		}
 	}
 
 	// do not use fmt.Sprintf() to allow proper IPv6 handling if hostname is an IP address
@@ -206,14 +217,18 @@ func NewConnection(connector *Connector, o Opts) (executor.Interface, error) {
 		cancel:    cancelFn,
 	}
 
-	if o.Bastion == "" {
+	if opts.Bastion == "" {
 		sshConn.sshclient = client
 		// connection established
 		return sshConn, nil
 	}
 
 	// continue to setup if we are running over bastion
-	endpointBehindBastion := net.JoinHostPort(o.Hostname, strconv.Itoa(o.Port))
+	endpointBehindBastion := net.JoinHostPort(opts.Hostname, strconv.Itoa(opts.Port))
+
+	if opts.HostPublicKey != nil {
+		sshConfig.HostKeyCallback = hostKeyCallback(opts.HostPublicKey)
+	}
 
 	// Dial a connection to the service host, from the bastion
 	conn, err := client.Dial("tcp", endpointBehindBastion)
@@ -221,7 +236,7 @@ func NewConnection(connector *Connector, o Opts) (executor.Interface, error) {
 		return nil, fail.SSH(fail.Connection(err, endpointBehindBastion), "dialing behind the bastion")
 	}
 
-	sshConfig.User = o.Username
+	sshConfig.User = opts.Username
 	ncc, chans, reqs, err := ssh.NewClientConn(conn, endpointBehindBastion, sshConfig)
 	if err != nil {
 		return nil, fail.SSH(fail.Connection(err, endpointBehindBastion), "new client")
@@ -230,6 +245,16 @@ func NewConnection(connector *Connector, o Opts) (executor.Interface, error) {
 	sshConn.sshclient = ssh.NewClient(ncc, chans, reqs)
 
 	return sshConn, nil
+}
+
+func hostKeyCallback(knownKey []byte) ssh.HostKeyCallback {
+	return func(_ string, _ net.Addr, key ssh.PublicKey) error {
+		if !bytes.Equal(key.Marshal(), knownKey) {
+			return fmt.Errorf("ssh: host key mismatch")
+		}
+
+		return nil
+	}
 }
 
 func (c *connection) TunnelTo(_ context.Context, network, addr string) (net.Conn, error) {
