@@ -43,6 +43,8 @@ output "kubeone_hosts" {
       bastion              = openstack_networking_floatingip_v2.lb.address
       bastion_port         = var.bastion_port
       bastion_user         = var.bastion_user
+      ssh_hosts_keys       = var.ssh_hosts_keys
+      bastion_host_key     = var.bastion_host_key
     }
   }
 }

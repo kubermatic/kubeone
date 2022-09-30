@@ -812,6 +812,7 @@ addons:
 #     bastion: '4.3.2.1'
 #     bastionPort: 22  # can be left out if using the default (22)
 #     bastionUser: 'root'  # can be left out if using the default ('root')
+#     # Optional ssh host public key for verification of the connection to the bastion host
 #     bastionHostPublicKey: "AAAAC3NzaC1lZDI1NTE5AAAAIGpmWkI5dl7GB3E1hB9LDuju87x9hX5Umw9fih+xXNU+"
 #     sshPort: 22 # can be left out if using the default (22)
 #     sshUsername: root
@@ -820,6 +821,7 @@ addons:
 #     # prefixed with "env:" to refer to an environment variable.
 #     sshPrivateKeyFile: '/home/me/.ssh/id_rsa'
 #     sshAgentSocket: 'env:SSH_AUTH_SOCK'
+#     # Optional ssh host public key for verification of the connection to the control plane host
 #     sshHostPublicKey: "AAAAC3NzaC1lZDI1NTE5AAAAIPwEDvXiKfvXrysf86VW5dJTKDlQ09e2tV0+T3KeFKmI"
 #     # Taints are taints applied to nodes. If not provided (i.e. nil) for control plane nodes,
 #     # it defaults to:
@@ -865,6 +867,7 @@ addons:
 #     # prefixed with "env:" to refer to an environment variable.
 #     sshPrivateKeyFile: '/home/me/.ssh/id_rsa'
 #     sshAgentSocket: 'env:SSH_AUTH_SOCK'
+#     # Optional ssh host public key for verification of the connection to the static worker host
 #     sshHostPublicKey: "AAAAC3NzaC1lZDI1NTE5AAAAIMBejAkW4AARsZZkC6PqWGuB14fkPzEQoZ4im4TuOkdD"
 #     # Taints is used to apply taints to the node.
 #     # Explicitly empty (i.e. taints: {}) means no taints will be applied.
