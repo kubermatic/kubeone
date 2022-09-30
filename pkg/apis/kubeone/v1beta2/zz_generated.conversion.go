@@ -1326,10 +1326,12 @@ func autoConvert_v1beta2_HostConfig_To_kubeone_HostConfig(in *HostConfig, out *k
 	out.SSHPort = in.SSHPort
 	out.SSHUsername = in.SSHUsername
 	out.SSHPrivateKeyFile = in.SSHPrivateKeyFile
+	out.SSHHostPublicKey = *(*[]byte)(unsafe.Pointer(&in.SSHHostPublicKey))
 	out.SSHAgentSocket = in.SSHAgentSocket
 	out.Bastion = in.Bastion
 	out.BastionPort = in.BastionPort
 	out.BastionUser = in.BastionUser
+	out.BastionHostPublicKey = *(*[]byte)(unsafe.Pointer(&in.BastionHostPublicKey))
 	out.Hostname = in.Hostname
 	out.IsLeader = in.IsLeader
 	out.Taints = *(*[]v1.Taint)(unsafe.Pointer(&in.Taints))
@@ -1353,10 +1355,12 @@ func autoConvert_kubeone_HostConfig_To_v1beta2_HostConfig(in *kubeone.HostConfig
 	out.SSHPort = in.SSHPort
 	out.SSHUsername = in.SSHUsername
 	out.SSHPrivateKeyFile = in.SSHPrivateKeyFile
+	out.SSHHostPublicKey = *(*[]byte)(unsafe.Pointer(&in.SSHHostPublicKey))
 	out.SSHAgentSocket = in.SSHAgentSocket
 	out.Bastion = in.Bastion
 	out.BastionPort = in.BastionPort
 	out.BastionUser = in.BastionUser
+	out.BastionHostPublicKey = *(*[]byte)(unsafe.Pointer(&in.BastionHostPublicKey))
 	out.Hostname = in.Hostname
 	out.IsLeader = in.IsLeader
 	out.Taints = *(*[]v1.Taint)(unsafe.Pointer(&in.Taints))

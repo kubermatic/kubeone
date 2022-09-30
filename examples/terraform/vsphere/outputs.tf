@@ -40,6 +40,8 @@ output "kubeone_hosts" {
       bastion              = var.bastion_host
       bastion_port         = var.bastion_port
       bastion_user         = var.bastion_username
+      ssh_hosts_keys       = var.ssh_hosts_keys
+      bastion_host_key     = var.bastion_host_key
     }
   }
 }

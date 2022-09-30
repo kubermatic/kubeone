@@ -74,6 +74,12 @@ variable "ssh_agent_socket" {
   type        = string
 }
 
+variable "ssh_hosts_keys" {
+  default     = null
+  description = "A list of SSH hosts public keys to verify"
+  type        = list(string)
+}
+
 variable "bastion_port" {
   description = "Bastion SSH port"
   default     = 22
@@ -83,6 +89,12 @@ variable "bastion_port" {
 variable "bastion_user" {
   description = "Bastion SSH username"
   default     = ""
+  type        = string
+}
+
+variable "bastion_host_key" {
+  description = "Bastion SSH host public key"
+  default     = null
   type        = string
 }
 

@@ -42,6 +42,8 @@ output "kubeone_hosts" {
       bastion              = nutanix_virtual_machine.lb.nic_list.0.ip_endpoint_list.0.ip
       bastion_port         = var.bastion_port
       bastion_user         = var.bastion_user
+      ssh_hosts_keys       = var.ssh_hosts_keys
+      bastion_host_key     = var.bastion_host_key
     }
   }
 }
