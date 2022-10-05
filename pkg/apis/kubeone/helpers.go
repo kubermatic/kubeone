@@ -406,6 +406,22 @@ func (ads *Addons) RelativePath(manifestFilePath string) (string, error) {
 // This function is needed because the AssetsConfiguration API has been removed
 // in the v1beta2 API, so we can't use defaulting
 func (c *KubeOneCluster) DefaultAssetConfiguration() {
+	// IMPORTANT: Please pay attention to this part when removing AssetConfiguration.
+	// We allow overriding CoreDNS image in v1beta2 API.
+	// Priorities:
+	//  - 1st: c.Features.CoreDNS.ImageRepository (only v1beta2 API)
+	//         c.AssetConfiguration.CoreDNS.ImageRepository (only v1beta1 API)
+	//  - 2nd: c.RegistryConfiguration.OverwriteRegistry (both APIs)
+	// NOTE: We want to allow configuring CoreDNS ImageRepository even if
+	// OverwriteRegistry is not used (to avoid confusion since CoreDNS.ImageRepository is
+	// decoupled from OverwriteRegistry)
+	if c.Features.CoreDNS != nil {
+		c.AssetConfiguration.CoreDNS.ImageRepository = defaults(
+			c.AssetConfiguration.CoreDNS.ImageRepository, // If we're using v1beta2, this is going to be empty anyways
+			c.Features.CoreDNS.ImageRepository,
+		)
+	}
+
 	if c.RegistryConfiguration == nil || c.RegistryConfiguration.OverwriteRegistry == "" {
 		// We default AssetConfiguration only if RegistryConfiguration.OverwriteRegistry
 		// is used

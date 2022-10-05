@@ -673,6 +673,15 @@ type NodeLocalDNS struct {
 type CoreDNS struct {
 	Replicas                  *int32 `json:"replicas,omitempty"`
 	DeployPodDisruptionBudget *bool  `json:"deployPodDisruptionBudget,omitempty"`
+
+	// ImageRepository allows users to specify the image registry to be used
+	// for CoreDNS. Kubeadm automatically appends `/coredns` at the end, so it's
+	// not necessary to specify it.
+	// By default it's empty, which means it'll be defaulted based on kubeadm
+	// defaults and if overwriteRegistry feature is used.
+	// ImageRepository has the highest priority, meaning that it'll override
+	// overwriteRegistry if specified.
+	ImageRepository string `json:"imageRepository,omitempty"`
 }
 
 // PodNodeSelector feature flag

@@ -649,6 +649,14 @@ features:
   coreDNS:
     replicas: 2
     deployPodDisruptionBudget: true
+    # imageRepository allows users to specify the image registry to be used
+    # for CoreDNS. Kubeadm automatically appends /coredns at the end, so it's
+    # not necessary to specify it.
+    # By default it's empty, which means it'll be defaulted based on kubeadm
+    # defaults and if overwriteRegistry feature is used.
+    # imageRepository has the highest priority, meaning that it'll override
+    # overwriteRegistry if specified.
+    imageRepository: ""
 
   # nodeLocalDNS allows disabling deployment of node local DNS
   nodeLocalDNS:

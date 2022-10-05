@@ -177,3 +177,118 @@ func TestMapStringStringToString(t *testing.T) {
 		})
 	}
 }
+
+func TestDefaultAssetConfiguration(t *testing.T) {
+	tests := []struct {
+		name                       string
+		cluster                    *KubeOneCluster
+		expectedAssetConfiguration AssetConfiguration
+	}{
+		{
+			name:                       "default options",
+			cluster:                    &KubeOneCluster{},
+			expectedAssetConfiguration: AssetConfiguration{},
+		},
+		{
+			name: "overwriteRegistry",
+			cluster: &KubeOneCluster{
+				RegistryConfiguration: &RegistryConfiguration{
+					OverwriteRegistry: "my.corp",
+				},
+			},
+			expectedAssetConfiguration: AssetConfiguration{
+				Kubernetes: ImageAsset{
+					ImageRepository: "my.corp",
+				},
+				CoreDNS: ImageAsset{
+					ImageRepository: "my.corp",
+				},
+				Etcd: ImageAsset{
+					ImageRepository: "my.corp",
+				},
+				MetricsServer: ImageAsset{
+					ImageRepository: "my.corp",
+				},
+			},
+		},
+		{
+			name: "coredns over assetConfiguration (v1beta1)",
+			cluster: &KubeOneCluster{
+				RegistryConfiguration: &RegistryConfiguration{
+					OverwriteRegistry: "my.corp",
+				},
+				AssetConfiguration: AssetConfiguration{
+					CoreDNS: ImageAsset{
+						ImageRepository: "my.corp/coredns",
+					},
+				},
+			},
+			expectedAssetConfiguration: AssetConfiguration{
+				Kubernetes: ImageAsset{
+					ImageRepository: "my.corp",
+				},
+				CoreDNS: ImageAsset{
+					ImageRepository: "my.corp/coredns",
+				},
+				Etcd: ImageAsset{
+					ImageRepository: "my.corp",
+				},
+				MetricsServer: ImageAsset{
+					ImageRepository: "my.corp",
+				},
+			},
+		},
+		{
+			name: "coredns over coreDNS Feature (v1beta2)",
+			cluster: &KubeOneCluster{
+				RegistryConfiguration: &RegistryConfiguration{
+					OverwriteRegistry: "my.corp",
+				},
+				Features: Features{
+					CoreDNS: &CoreDNS{
+						ImageRepository: "my.corp/coredns",
+					},
+				},
+			},
+			expectedAssetConfiguration: AssetConfiguration{
+				Kubernetes: ImageAsset{
+					ImageRepository: "my.corp",
+				},
+				CoreDNS: ImageAsset{
+					ImageRepository: "my.corp/coredns",
+				},
+				Etcd: ImageAsset{
+					ImageRepository: "my.corp",
+				},
+				MetricsServer: ImageAsset{
+					ImageRepository: "my.corp",
+				},
+			},
+		},
+		{
+			name: "coredns over coreDNS Feature without overwriteRegistry (v1beta2)",
+			cluster: &KubeOneCluster{
+				Features: Features{
+					CoreDNS: &CoreDNS{
+						ImageRepository: "my.corp/coredns",
+					},
+				},
+			},
+			expectedAssetConfiguration: AssetConfiguration{
+				CoreDNS: ImageAsset{
+					ImageRepository: "my.corp/coredns",
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			tt.cluster.DefaultAssetConfiguration()
+			if !reflect.DeepEqual(tt.cluster.AssetConfiguration, tt.expectedAssetConfiguration) {
+				t.Errorf("Expected AssetConfiguration=%v, but got=%v", tt.expectedAssetConfiguration, tt.cluster.AssetConfiguration)
+			}
+		})
+	}
+}
