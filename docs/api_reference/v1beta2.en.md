@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2022-09-29T16:34:01+03:00
+date = 2022-10-05T12:04:49+02:00
 weight = 11
 +++
 ## v1beta2
@@ -290,6 +290,7 @@ ControlPlaneConfig defines control plane nodes
 | ----- | ----------- | ------ | -------- |
 | replicas |  | *int32 | false |
 | deployPodDisruptionBudget |  | *bool | false |
+| imageRepository | ImageRepository allows users to specify the image registry to be used for CoreDNS. Kubeadm automatically appends `/coredns` at the end, so it's not necessary to specify it. By default it's empty, which means it'll be defaulted based on kubeadm defaults and if overwriteRegistry feature is used. ImageRepository has the highest priority, meaning that it'll override overwriteRegistry if specified. | string | false |
 
 [Back to Group](#v1beta2)
 

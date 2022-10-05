@@ -1082,6 +1082,7 @@ func Convert_kubeone_ControlPlaneConfig_To_v1beta2_ControlPlaneConfig(in *kubeon
 func autoConvert_v1beta2_CoreDNS_To_kubeone_CoreDNS(in *CoreDNS, out *kubeone.CoreDNS, s conversion.Scope) error {
 	out.Replicas = (*int32)(unsafe.Pointer(in.Replicas))
 	out.DeployPodDisruptionBudget = (*bool)(unsafe.Pointer(in.DeployPodDisruptionBudget))
+	out.ImageRepository = in.ImageRepository
 	return nil
 }
 
@@ -1093,6 +1094,7 @@ func Convert_v1beta2_CoreDNS_To_kubeone_CoreDNS(in *CoreDNS, out *kubeone.CoreDN
 func autoConvert_kubeone_CoreDNS_To_v1beta2_CoreDNS(in *kubeone.CoreDNS, out *CoreDNS, s conversion.Scope) error {
 	out.Replicas = (*int32)(unsafe.Pointer(in.Replicas))
 	out.DeployPodDisruptionBudget = (*bool)(unsafe.Pointer(in.DeployPodDisruptionBudget))
+	out.ImageRepository = in.ImageRepository
 	return nil
 }
 
