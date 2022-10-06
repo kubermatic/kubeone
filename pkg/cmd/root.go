@@ -122,14 +122,15 @@ func newRoot() *cobra.Command {
 		"format for logging")
 
 	rootCmd.AddCommand(
-		applyCmd(fs),
-		localCmd(fs),
 		addonsCmd(fs),
+		applyCmd(fs),
 		completionCmd(rootCmd),
 		configCmd(fs),
 		documentCmd(rootCmd),
+		initCmd(fs),
 		installCmd(fs),
 		kubeconfigCmd(fs),
+		localCmd(fs),
 		migrateCmd(fs),
 		proxyCmd(fs),
 		resetCmd(fs),
