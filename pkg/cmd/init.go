@@ -29,6 +29,7 @@ import (
 	"github.com/spf13/pflag"
 	yamlv2 "gopkg.in/yaml.v2"
 
+	"k8c.io/kubeone/examples"
 	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/yamled"
@@ -223,7 +224,12 @@ func initCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 }
 
 func runInit(opts *initOpts) error {
-	k1config, err := os.OpenFile(filepath.Join(opts.Path, "kubeone.yaml"), os.O_CREATE, 0600)
+	err := os.MkdirAll(opts.Path, 0750)
+	if err != nil {
+		return err
+	}
+
+	k1config, err := os.OpenFile(filepath.Join(opts.Path, "kubeone.yaml"), os.O_CREATE|os.O_WRONLY, 0600)
 	if err != nil {
 		return fail.Runtime(err, "creating manifest file")
 	}
@@ -237,6 +243,13 @@ func runInit(opts *initOpts) error {
 	_, err = io.Copy(k1config, bytes.NewBuffer(ybuf))
 	if err != nil {
 		return fail.Runtime(err, "writing KubeOneCluster")
+	}
+
+	if opts.Terraform {
+		prov := validProviders[opts.Provider.String()]
+		if err = examples.CopyTo(opts.Path, prov.terraformPath); err != nil {
+			return fail.Runtime(err, "copying terraform configuration")
+		}
 	}
 
 	return nil

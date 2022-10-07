@@ -16,7 +16,49 @@ limitations under the License.
 
 package examples
 
-import "embed"
+import (
+	"embed"
+	"io"
+	"io/fs"
+	"os"
+	"path/filepath"
+	"strings"
+)
 
 //go:embed terraform/*
-var TerraformFS embed.FS
+var terraformFS embed.FS
+
+func CopyTo(dst, src string) error {
+	return fs.WalkDir(terraformFS, src, func(fspath string, de fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		dstPartPath := strings.Split(fspath, src)[1]
+		if dstPartPath == "" {
+			// skip it
+			return nil
+		}
+
+		dstFullPath := filepath.Join(dst, dstPartPath)
+		if de.IsDir() {
+			return os.MkdirAll(dstFullPath, de.Type().Perm())
+		}
+
+		fh, err := os.OpenFile(dstFullPath, os.O_CREATE|os.O_WRONLY, 0600)
+		if err != nil {
+			return err
+		}
+		defer fh.Close()
+
+		sourceFileName := filepath.Join(src, de.Name())
+		srcFh, err := terraformFS.Open(sourceFileName)
+		if err != nil {
+			return err
+		}
+
+		_, err = io.Copy(fh, srcFh)
+
+		return err
+	})
+}
