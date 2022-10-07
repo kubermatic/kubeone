@@ -26,7 +26,6 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 	yamlv2 "gopkg.in/yaml.v2"
 
 	"k8c.io/kubeone/examples"
@@ -191,7 +190,7 @@ type initOpts struct {
 	Path      string    `longflag:"path"`
 }
 
-func initCmd(rootFlags *pflag.FlagSet) *cobra.Command {
+func initCmd() *cobra.Command {
 	opts := &initOpts{
 		Provider: oneOfFlag{
 			validSet:     sets.StringKeySet(validProviders),
