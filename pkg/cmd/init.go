@@ -19,6 +19,9 @@ package cmd
 import (
 	"bytes"
 	"fmt"
+	"io"
+	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/MakeNowJust/heredoc/v2"
@@ -27,6 +30,7 @@ import (
 	yamlv2 "gopkg.in/yaml.v2"
 
 	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/yamled"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -219,12 +223,21 @@ func initCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 }
 
 func runInit(opts *initOpts) error {
+	k1config, err := os.OpenFile(filepath.Join(opts.Path, "kubeone.yaml"), os.O_CREATE, 0600)
+	if err != nil {
+		return fail.Runtime(err, "creating manifest file")
+	}
+	defer k1config.Close()
+
 	ybuf, err := genKubeOneClusterYAML(opts)
 	if err != nil {
-		return err
+		return fail.Runtime(err, "generating KubeOneCluster")
 	}
 
-	fmt.Printf("%s", ybuf)
+	_, err = io.Copy(k1config, bytes.NewBuffer(ybuf))
+	if err != nil {
+		return fail.Runtime(err, "writing KubeOneCluster")
+	}
 
 	return nil
 }
