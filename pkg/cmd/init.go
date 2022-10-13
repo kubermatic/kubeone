@@ -46,7 +46,8 @@ type initProvider struct {
 }
 
 var (
-	validProviders = map[string]initProvider{
+	defaultInitVersion = "x.y.z"
+	validProviders     = map[string]initProvider{
 		"aws": {
 			terraformPath: "terraform/aws",
 		},
@@ -79,6 +80,7 @@ var (
 		},
 		"gce": {
 			terraformPath: "terraform/gce",
+			inTree:        true,
 		},
 		"hetzner": {
 			terraformPath: "terraform/hetzner",
@@ -86,6 +88,9 @@ var (
 		"none": {
 			terraformPath: "",
 			inTree:        true,
+		},
+		"nutanix": {
+			terraformPath: "terraform/nutanix",
 		},
 		"openstack": {
 			terraformPath: "terraform/openstack",
@@ -104,6 +109,7 @@ var (
 		},
 		"vmware-cloud-director": {
 			terraformPath: "terraform/vmware-cloud-director",
+			inTree:        true,
 		},
 		"vsphere": {
 			terraformPath: "terraform/vsphere",
@@ -183,11 +189,11 @@ var (
 )
 
 type initOpts struct {
-	Provider  oneOfFlag `longflag:"provider"`
-	Name      string    `longflag:"name"`
-	Version   string    `longflag:"version"`
-	Terraform bool      `longflag:"terraform"`
-	Path      string    `longflag:"path"`
+	Provider          oneOfFlag `longflag:"provider"`
+	ClusterName       string    `longflag:"cluster-name"`
+	KubernetesVersion string    `longflag:"kubernetes-version"`
+	Terraform         bool      `longflag:"terraform"`
+	Path              string    `longflag:"path"`
 }
 
 func initCmd() *cobra.Command {
@@ -213,9 +219,9 @@ func initCmd() *cobra.Command {
 
 	providerUsageText := fmt.Sprintf("provider to initialize, possible values: %s", strings.Join(opts.Provider.PossibleValues(), ", "))
 
-	cmd.Flags().BoolVar(&opts.Terraform, longFlagName(opts, "Terraform"), false, "generate terraform config")
-	cmd.Flags().StringVar(&opts.Name, longFlagName(opts, "Name"), "example", "name of the cluster")
-	cmd.Flags().StringVar(&opts.Version, longFlagName(opts, "version"), "v1.24.5", "kubernetes version")
+	cmd.Flags().BoolVar(&opts.Terraform, longFlagName(opts, "Terraform"), true, "generate terraform config")
+	cmd.Flags().StringVar(&opts.ClusterName, longFlagName(opts, "ClusterName"), "example", "name of the cluster")
+	cmd.Flags().StringVar(&opts.KubernetesVersion, longFlagName(opts, "KubernetesVersion"), defaultInitVersion, "kubernetes version")
 	cmd.Flags().StringVar(&opts.Path, longFlagName(opts, "Path"), ".", "path where to write files")
 	cmd.Flags().Var(&opts.Provider, longFlagName(opts, "Provider"), providerUsageText)
 
@@ -228,7 +234,7 @@ func runInit(opts *initOpts) error {
 		return err
 	}
 
-	k1config, err := os.OpenFile(filepath.Join(opts.Path, "kubeone.yaml"), os.O_CREATE|os.O_WRONLY, 0600)
+	k1config, err := os.Create(filepath.Join(opts.Path, "kubeone.yaml"))
 	if err != nil {
 		return fail.Runtime(err, "creating manifest file")
 	}
@@ -249,6 +255,14 @@ func runInit(opts *initOpts) error {
 		if err = examples.CopyTo(opts.Path, prov.terraformPath); err != nil {
 			return fail.Runtime(err, "copying terraform configuration")
 		}
+
+		tfvars, err := os.Create(filepath.Join(opts.Path, "terraform.tfvars"))
+		if err != nil {
+			return err
+		}
+		defer tfvars.Close()
+
+		fmt.Fprintf(tfvars, "cluster_name=%q\n", opts.ClusterName)
 	}
 
 	return nil
@@ -263,7 +277,7 @@ func genKubeOneClusterYAML(opts *initOpts) ([]byte, error) {
 			Kind:       "KubeOneCluster",
 			APIVersion: kubeonev1beta2.SchemeGroupVersion.Identifier(),
 		},
-		Name: opts.Name,
+		Name: opts.ClusterName,
 		CloudProvider: kubeonev1beta2.CloudProviderSpec{
 			External:    !prov.inTree,
 			CloudConfig: prov.cloudConfig,
@@ -273,7 +287,7 @@ func genKubeOneClusterYAML(opts *initOpts) ([]byte, error) {
 			Containerd: &kubeonev1beta2.ContainerRuntimeContainerd{},
 		},
 		Versions: kubeonev1beta2.VersionConfig{
-			Kubernetes: opts.Version,
+			Kubernetes: opts.KubernetesVersion,
 		},
 		Addons: &kubeonev1beta2.Addons{
 			Enable: true,
@@ -293,13 +307,22 @@ func genKubeOneClusterYAML(opts *initOpts) ([]byte, error) {
 	case "digitalocean":
 		cluster.CloudProvider.DigitalOcean = &kubeonev1beta2.DigitalOceanSpec{}
 	case "equinixmetal":
-		cluster.CloudProvider.DigitalOcean = &kubeonev1beta2.DigitalOceanSpec{}
+		cluster.CloudProvider.EquinixMetal = &kubeonev1beta2.EquinixMetalSpec{}
 	case "gce":
 		cluster.CloudProvider.GCE = &kubeonev1beta2.GCESpec{}
 	case "hetzner":
 		cluster.CloudProvider.Hetzner = &kubeonev1beta2.HetznerSpec{}
 	case "none":
 		cluster.CloudProvider.None = &kubeonev1beta2.NoneSpec{}
+		cluster.Addons = nil
+		cluster.MachineController = &kubeonev1beta2.MachineControllerConfig{
+			Deploy: false,
+		}
+		cluster.OperatingSystemManager = &kubeonev1beta2.OperatingSystemManagerConfig{
+			Deploy: false,
+		}
+	case "nutanix":
+		cluster.CloudProvider.Nutanix = &kubeonev1beta2.NutanixSpec{}
 	case "openstack":
 		cluster.CloudProvider.Openstack = &kubeonev1beta2.OpenstackSpec{}
 	case "vmware-cloud-director":
