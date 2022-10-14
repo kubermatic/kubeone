@@ -76,7 +76,7 @@ output "kubeone_workers" {
         cloudProviderSpec = {
           # provider specific fields:
           # see example under `cloudProviderSpec` section at:
-          # https://github.com/kubermatic/machine-controller/blob/master/examples/gce-machinedeployment.yaml
+          # https://github.com/kubermatic/machine-controller/blob/main/examples/gce-machinedeployment.yaml
           diskSize              = 50
           diskType              = "pd-ssd"
           machineType           = var.workers_type

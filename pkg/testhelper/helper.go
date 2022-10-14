@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// originally copied from https://github.com/kubermatic/machine-controller/blob/master/pkg/test/helper.go
+// originally copied from https://github.com/kubermatic/machine-controller/blob/main/pkg/test/helper.go
 package testhelper
 
 import (

@@ -75,7 +75,7 @@ output "kubeone_workers" {
         cloudProviderSpec = {
           # provider specific fields:
           # see example under `cloudProviderSpec` section at:
-          # https://github.com/kubermatic/machine-controller/blob/master/examples/digitalocean-machinedeployment.yaml
+          # https://github.com/kubermatic/machine-controller/blob/main/examples/digitalocean-machinedeployment.yaml
           region             = var.region
           size               = var.worker_size
           private_networking = true

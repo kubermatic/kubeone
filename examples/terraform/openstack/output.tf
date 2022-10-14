@@ -82,7 +82,7 @@ output "kubeone_workers" {
         cloudProviderSpec = {
           # provider specific fields:
           # see example under `cloudProviderSpec` section at:
-          # https://github.com/kubermatic/machine-controller/blob/master/examples/openstack-machinedeployment.yaml
+          # https://github.com/kubermatic/machine-controller/blob/main/examples/openstack-machinedeployment.yaml
           image          = data.openstack_images_image_v2.image.name
           flavor         = var.worker_flavor
           securityGroups = [openstack_networking_secgroup_v2.securitygroup.name]

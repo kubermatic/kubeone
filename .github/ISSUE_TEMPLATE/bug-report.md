@@ -8,7 +8,7 @@ labels: sig/cluster-management, kind/bug
 
 <!-- Try to provide as much information as possible.
 If you're reporting a security issue, please check the guidelines for reporting security issues:
-https://github.com/kubermatic/kubeone/blob/master/CONTRIBUTING.md#reporting-a-security-vulnerability -->
+https://github.com/kubermatic/kubeone/blob/main/CONTRIBUTING.md#reporting-a-security-vulnerability -->
 
 ### Expected behavior
 

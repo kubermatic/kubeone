@@ -75,7 +75,7 @@ output "kubeone_workers" {
         cloudProviderSpec = {
           # provider specific fields:
           # see example under `cloudProviderSpec` section at:
-          # https://github.com/kubermatic/machine-controller/blob/master/examples/equinixmetal-machinedeployment.yaml
+          # https://github.com/kubermatic/machine-controller/blob/main/examples/equinixmetal-machinedeployment.yaml
           projectID    = var.project_id
           metro        = var.metro
           instanceType = var.device_type

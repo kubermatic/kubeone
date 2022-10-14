@@ -5,7 +5,7 @@ title: Release KubeOne 1.x.y-{alpha,beta,rc}.z
 labels: sig/cluster-management, kind/documentation, priority/high
 ---
 
-<!-- 
+<!--
 * Make sure to uncomment the appropriate section depending on the type of
   release you're cutting.
 * Update the issue with any problems encountered during the release process.
@@ -25,8 +25,8 @@ labels: sig/cluster-management, kind/documentation, priority/high
   * [ ] Update the `branchprotector` rules
   * [ ] Update the `milestone_applier` rules
   * [ ] Enable the Code Freeze
-* [ ] Create docs for the release based on docs for the master branch (copy 
-  `content/kubeone/master` to `content/kubeone/v1.x` in the
+* [ ] Create docs for the release based on docs for the main branch (copy
+  `content/kubeone/main` to `content/kubeone/v1.x` in the
   [docs repo](https://github.com/kubermatic/docs)) (link to the docs PR)
 -->
 

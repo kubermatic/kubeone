@@ -2,7 +2,7 @@
 
 ## Attention Needed
 
-This patch releases updates etcd to v3.5.3 which includes a fix for the data inconsistency issues reported earlier (https://groups.google.com/a/kubernetes.io/g/dev/c/B7gJs88XtQc/m/rSgNOzV2BwAJ). To upgrade etcd for an existing cluster, you need to [force upgrade the cluster as described here](https://docs.kubermatic.com/kubeone/master/guides/etcd-corruption/#enabling-etcd-corruption-checks). If you're running Kubernetes 1.22 or newer, we strongly recommend upgrading etcd **as soon as possible**.
+This patch releases updates etcd to v3.5.3 which includes a fix for the data inconsistency issues reported earlier (https://groups.google.com/a/kubernetes.io/g/dev/c/B7gJs88XtQc/m/rSgNOzV2BwAJ). To upgrade etcd for an existing cluster, you need to [force upgrade the cluster as described here](https://docs.kubermatic.com/kubeone/main/guides/etcd-corruption/#enabling-etcd-corruption-checks). If you're running Kubernetes 1.22 or newer, we strongly recommend upgrading etcd **as soon as possible**.
 
 ## Updated
 
@@ -229,7 +229,7 @@ Check out the [Upgrading from 1.2 to 1.3 tutorial](https://docs.kubermatic.com/k
 
 * [**BREAKING/ACTION REQUIRED**] Increase the minimum Kubernetes version to v1.19.0 ([#1466](https://github.com/kubermatic/kubeone/pull/1466))
   * If you have Kubernetes clusters running v1.18 or older, you need to use an older KubeOne release to upgrade them to v1.19, and then upgrade to KubeOne 1.3.
-  * Check out the [Compatibility guide](https://docs.kubermatic.com/kubeone/master/architecture/compatibility/) for more information about supported Kubernetes versions for each KubeOne release.
+  * Check out the [Compatibility guide](https://docs.kubermatic.com/kubeone/main/architecture/compatibility/) for more information about supported Kubernetes versions for each KubeOne release.
 * [**BREAKING/ACTION REQUIRED**] Add support for CSI plugins for clusters using external cloud provider (i.e. `.cloudProvider.external` is enabled)
   * The Cinder CSI plugin is deployed by default for OpenStack clusters ([#1465](https://github.com/kubermatic/kubeone/pull/1465))
   * The Hetzner CSI plugin is deployed by default for Hetzner clusters
@@ -238,12 +238,12 @@ Check out the [Upgrading from 1.2 to 1.3 tutorial](https://docs.kubermatic.com/k
     * Note: the vSphere CSI plugin requires vSphere version 6.7U3.
   * The default StorageClass is **not** deployed by default. It can be deployed via new Addons API by enabling the `default-storage-class` addon, or manually.
   * **ACTION REQUIRED**: If you already have the CSI plugin deployed, you need to make sure that your CSI plugin deployment is compatible with the KubeOne CSI plugin addon.
-    * You can find the CSI addons in the `addons` directory: https://github.com/kubermatic/kubeone/tree/master/addons
+    * You can find the CSI addons in the `addons` directory: https://github.com/kubermatic/kubeone/tree/main/addons
     * If your CSI plugin deployment is incompatible with the KubeOne CSI addon, you can resolve it in one of the following ways:
       * Delete your CSI deployment and let KubeOne install the CSI driver for you. **Note**: you'll **not** be able to mount volumes until you don't install the CSI driver again.
       * Override the appropriate CSI addon with your deployment manifest. With this way, KubeOne will install the CSI plugin using your manifests. To do this, you need to:
         * Enable addons in the KubeOneCluster manifest (`.addons.enable`) and provide the path to addons directory (`.addons.path`, for example: `./addons`)
-        * Create a subdirectory in the addons directory named same as the CSI addon used by KubeOne, for example `./addons/csi-openstack-cinder` or `./addons/csi-vsphere` (see https://github.com/kubermatic/kubeone/tree/master/addons for addon names)
+        * Create a subdirectory in the addons directory named same as the CSI addon used by KubeOne, for example `./addons/csi-openstack-cinder` or `./addons/csi-vsphere` (see https://github.com/kubermatic/kubeone/tree/main/addons for addon names)
         * Put your CSI deployment manifests in the newly created subdirectory
 
 ## Known Issues
@@ -284,7 +284,7 @@ Check out the [Upgrading from 1.2 to 1.3 tutorial](https://docs.kubermatic.com/k
 
 * [**BREAKING/ACTION REQUIRED**] Increase the minimum Kubernetes version to v1.19.0 ([#1466](https://github.com/kubermatic/kubeone/pull/1466))
   * If you have Kubernetes clusters running v1.18 or older, you need to use an older KubeOne release to upgrade them to v1.19, and then upgrade to KubeOne 1.3.
-  * Check out the [Compatibility guide](https://docs.kubermatic.com/kubeone/master/architecture/compatibility/) for more information about supported Kubernetes versions for each KubeOne release.
+  * Check out the [Compatibility guide](https://docs.kubermatic.com/kubeone/main/architecture/compatibility/) for more information about supported Kubernetes versions for each KubeOne release.
 * Improve the `kubeone reset` output to include more information about the target cluster ([#1474](https://github.com/kubermatic/kubeone/pull/1474))
 
 ### Fixed
