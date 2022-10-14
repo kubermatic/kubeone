@@ -43,9 +43,9 @@ find ../docs/api_reference -name '*.en.md' -print0 | while IFS= read -r -d '' do
   apiVersion=$(basename ${docsPath} | awk -F. '{print $1}')
   echodate "Copying ${apiVersion} docs..."
 
-  mkdir -p content/kubeone/"${KUBEONE_VERSION}"/references/kubeone_cluster_"${apiVersion}"
+  mkdir -p content/kubeone/"${KUBEONE_VERSION}"/references/kubeone-cluster-"${apiVersion}"
   cp ../docs/api_reference/"${apiVersion}".en.md \
-    content/kubeone/"${KUBEONE_VERSION}"/references/kubeone_cluster_"${apiVersion}"/_index.en.md
+    content/kubeone/"${KUBEONE_VERSION}"/references/kubeone-cluster-"${apiVersion}"/_index.en.md
 done
 
 # update repo
