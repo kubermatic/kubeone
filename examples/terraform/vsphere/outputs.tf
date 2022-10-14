@@ -79,7 +79,7 @@ output "kubeone_workers" {
         cloudProviderSpec = {
           # provider specific fields:
           # see example under `cloudProviderSpec` section at:
-          # https://github.com/kubermatic/machine-controller/blob/master/examples/vsphere-machinedeployment.yaml
+          # https://github.com/kubermatic/machine-controller/blob/main/examples/vsphere-machinedeployment.yaml
           allowInsecure = false
           cluster       = var.compute_cluster_name
           cpus          = var.worker_num_cpus

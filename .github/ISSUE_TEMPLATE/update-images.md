@@ -10,12 +10,12 @@ This issue template is supposed to be used a starting point and is mostly like
 NOT up-to-date!
 
 You should first check images.go file and update the list below as appropriate.
-https://github.com/kubermatic/kubeone/blob/master/pkg/templates/images/images.go
+https://github.com/kubermatic/kubeone/blob/main/pkg/templates/images/images.go
 -->
 
 Action items:
 
-- [ ] Update the issue template to add/remove [images](https://github.com/kubermatic/kubeone/blob/master/pkg/templates/images/images.go) as appropriate
+- [ ] Update the issue template to add/remove [images](https://github.com/kubermatic/kubeone/blob/main/pkg/templates/images/images.go) as appropriate
 
 The following components/images should be updated:
 

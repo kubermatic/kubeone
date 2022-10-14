@@ -100,7 +100,7 @@
   * It remains possible to use both APIs with all `kubeone` commands
   * The v1alpha1 manifest can be converted to the v1beta1 manifest using the `kubeone config migrate` command
   * All example configurations have been updated to the v1beta1 API
-  * More information about migrating to the new API and what has been changed can be found in the [API migration document](https://docs.kubermatic.com/kubeone/master/advanced/api_migration/)
+  * More information about migrating to the new API and what has been changed can be found in the [API migration document](https://docs.kubermatic.com/kubeone/main/advanced/api_migration/)
 * Default MTU for the Canal CNI depending on the provider
   * AWS - 8951 (9001 AWS Jumbo Frame - 50 VXLAN bytes)
   * GCE - 1410 (GCE specific 1460 bytes - 50 VXLAN bytes)
@@ -130,7 +130,7 @@ directory. This change might be breaking for some users.
 
 * Implement the `kubeone apply` command
   * The apply command is used to reconcile (install, upgrade, and repair) clusters
-  * More details about how to use the apply command can be found in the [Cluster reconciliation (apply) document](https://docs.kubermatic.com/kubeone/master/advanced/cluster_reconciliation/)
+  * More details about how to use the apply command can be found in the [Cluster reconciliation (apply) document](https://docs.kubermatic.com/kubeone/main/advanced/cluster_reconciliation/)
 * Implement the `kubeone config machinedeployments` command ([#966](https://github.com/kubermatic/kubeone/pull/966))
   * The new command is used to generate a YAML manifest containing all MachineDeployment objects defined in the KubeOne configuration manifest and Terraform output
   * The generated manifest can be used with kubectl if you want to create and modify MachineDeployments once the cluster is created
@@ -146,7 +146,7 @@ directory. This change might be breaking for some users.
   * Detect and delete broken etcd members
   * Detect and delete outdated corev1.Node objects
 * Add ability to provision static worker nodes ([#834](https://github.com/kubermatic/kubeone/pull/834))
-  * Check out [the documentation](https://docs.kubermatic.com/kubeone/master/workers/static_workers/) to learn more about static worker nodes
+  * Check out [the documentation](https://docs.kubermatic.com/kubeone/main/workers/static_workers/) to learn more about static worker nodes
 * Add ability to skip cluster provisioning when running the `install` command using the `--no-init` flag ([#871](https://github.com/kubermatic/kubeone/pull/871))
 * Add support for Kubernetes 1.16.11, 1.17.7, 1.18.4 releases ([#925](https://github.com/kubermatic/kubeone/pull/925))
 * Add support for Ubuntu 20.04 (Focal) ([#1005](https://github.com/kubermatic/kubeone/pull/1005))
@@ -162,7 +162,7 @@ directory. This change might be breaking for some users.
 * Add support for OpenStack external cloud controller manager (CCM) ([#820](https://github.com/kubermatic/kubeone/pull/820))
 * Add ability to change MTU for the Canal CNI using `.clusterNetwork.cni.canal.mtu` field (requires KubeOneCluster v1beta1 API) ([#1005](https://github.com/kubermatic/kubeone/pull/1005))
 * Add the Calico VXLAN addon ([#972](https://github.com/kubermatic/kubeone/pull/972))
-  * More information about how to use this addon can be found on the [docs website](https://docs.kubermatic.com/kubeone/master/using_kubeone/calico-vxlan-addon/)
+  * More information about how to use this addon can be found on the [docs website](https://docs.kubermatic.com/kubeone/main/using_kubeone/calico-vxlan-addon/)
 * Add ability to use an external CNI plugin ([#862](https://github.com/kubermatic/kubeone/pull/862))
 
 ## Changed
@@ -300,13 +300,13 @@ directory. This change might be breaking for some users.
 * Implement the `kubeone apply` command
   * The apply command is used to reconcile (install, upgrade, and repair) clusters
   * The apply command is currently in beta, but we're encouraging everyone to test it and report any issues and bugs
-  * More details about how to use the apply command can be found in the [Cluster reconciliation (apply) document](https://docs.kubermatic.com/kubeone/master/using_kubeone/cluster_reconciliation/)
+  * More details about how to use the apply command can be found in the [Cluster reconciliation (apply) document](https://docs.kubermatic.com/kubeone/main/using_kubeone/cluster_reconciliation/)
 * Implement the `kubeone config machinedeployments` command ([#966](https://github.com/kubermatic/kubeone/pull/966))
   * The new command is used to generate a YAML manifest containing all MachineDeployment objects defined in the KubeOne configuration manifest and Terraform output
   * The generated manifest can be used with kubectl if you want to create and modify MachineDeployments once the cluster is created
 * Add support for CentOS 8 ([#981](https://github.com/kubermatic/kubeone/pull/981))
 * Add the Calico VXLAN addon ([#972](https://github.com/kubermatic/kubeone/pull/972))
-  * More information about how to use this addon can be found on the [docs website](https://docs.kubermatic.com/kubeone/master/using_kubeone/calico-vxlan-addon/)
+  * More information about how to use this addon can be found on the [docs website](https://docs.kubermatic.com/kubeone/main/using_kubeone/calico-vxlan-addon/)
 
 ## Changed
 
@@ -335,7 +335,7 @@ directory. This change might be breaking for some users.
 
 ## Known Issues
 
-* See known issues for the [v1.0.0-beta.1 release](https://github.com/kubermatic/kubeone/blob/master/CHANGELOG.md#known-issues) for more details.
+* See known issues for the [v1.0.0-beta.1 release](https://github.com/kubermatic/kubeone/blob/main/CHANGELOG.md#known-issues) for more details.
 
 ## Added
 

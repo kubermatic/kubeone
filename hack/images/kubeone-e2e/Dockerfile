@@ -45,7 +45,7 @@ ARG version
 LABEL "io.kubeone"="Kubermatic GmbH"
 LABEL version=${version}
 LABEL description="Set of kubernetes binaries to conduct kubeone E2E tests"
-LABEL maintainer="https://github.com/kubermatic/kubeone/blob/master/OWNERS"
+LABEL maintainer="https://github.com/kubermatic/kubeone/blob/main/OWNERS"
 
 ENV KUBETESTS_ROOT "/opt/kube-test"
 ENV USER root

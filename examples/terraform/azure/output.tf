@@ -80,7 +80,7 @@ output "kubeone_workers" {
         cloudProviderSpec = {
           # provider specific fields:
           # see example under `cloudProviderSpec` section at:
-          # https://github.com/kubermatic/machine-controller/blob/master/examples/azure-machinedeployment.yaml
+          # https://github.com/kubermatic/machine-controller/blob/main/examples/azure-machinedeployment.yaml
           location      = var.location
           resourceGroup = azurerm_resource_group.rg.name
           # vnetResourceGroup     = ""

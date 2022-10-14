@@ -81,7 +81,7 @@ output "kubeone_workers" {
         cloudProviderSpec = {
           # provider specific fields:
           # see example under `cloudProviderSpec` section at:
-          # https://github.com/kubermatic/machine-controller/blob/master/examples/hetzner-machinedeployment.yaml
+          # https://github.com/kubermatic/machine-controller/blob/main/examples/hetzner-machinedeployment.yaml
           serverType = var.worker_type
           location   = var.datacenter
           image      = var.image

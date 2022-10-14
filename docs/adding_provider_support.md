@@ -153,8 +153,8 @@ E2E tests for a newly-added provider in the CI pipeline.
 [12]: https://github.com/kubermatic/kubeone/blob/19e5e6bf792ae47d65bd8adf75f390c74159e3de/pkg/util/credentials/credentials.go#L30-L48
 [13]: https://github.com/kubermatic/kubeone/blob/19e5e6bf792ae47d65bd8adf75f390c74159e3de/pkg/util/credentials/credentials.go#L57-L128
 [14]: https://github.com/kubermatic/kubeone/tree/19e5e6bf792ae47d65bd8adf75f390c74159e3de/pkg/terraform
-[15]: https://github.com/kubermatic/machine-controller/tree/master/examples
-[16]: https://github.com/kubermatic/machine-controller/tree/master/pkg/cloudprovider/provider
+[15]: https://github.com/kubermatic/machine-controller/tree/main/examples
+[16]: https://github.com/kubermatic/machine-controller/tree/main/pkg/cloudprovider/provider
 [17]: https://github.com/kubermatic/kubeone/blob/19e5e6bf792ae47d65bd8adf75f390c74159e3de/pkg/templates/machinecontroller/cloudprovider_specs.go#L19-L31
 [18]: https://github.com/kubermatic/kubeone/blob/19e5e6bf792ae47d65bd8adf75f390c74159e3de/pkg/terraform/config.go#L177-L219
 [19]: https://github.com/kubermatic/kubeone/blob/19e5e6bf792ae47d65bd8adf75f390c74159e3de/pkg/terraform/config.go#L145-L162

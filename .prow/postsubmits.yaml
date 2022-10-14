@@ -7,7 +7,7 @@ postsubmits:
       slack:
         channel: dev-kubeone
     branches:
-      - ^master$
+      - ^main$
     labels:
       preset-docker-push: "true"
     spec:
@@ -36,7 +36,7 @@ postsubmits:
       slack:
         channel: dev-kubeone
     branches:
-      - ^master$
+      - ^main$
       - ^v\d+\.\d+\.\d+.*
     labels:
       preset-goproxy: "true"
@@ -63,7 +63,7 @@ postsubmits:
     decorate: true
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     branches:
-      - ^master$
+      - ^main$
     spec:
       containers:
         # This must match the go version used for building, else go will rightfully
@@ -82,7 +82,7 @@ postsubmits:
     decorate: true
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     branches:
-      - ^master$
+      - ^main$
     spec:
       containers:
         # This must match the go version used for building, else go will rightfully

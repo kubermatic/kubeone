@@ -115,7 +115,7 @@ output "kubeone_workers" {
         cloudProviderSpec = {
           # provider specific fields:
           # see example under `cloudProviderSpec` section at:
-          # https://github.com/kubermatic/machine-controller/blob/master/examples/aws-machinedeployment.yaml
+          # https://github.com/kubermatic/machine-controller/blob/main/examples/aws-machinedeployment.yaml
           region           = var.aws_region
           ami              = local.ami
           availabilityZone = local.zoneA
@@ -173,7 +173,7 @@ output "kubeone_workers" {
         cloudProviderSpec = {
           # provider specific fields:
           # see example under `cloudProviderSpec` section at:
-          # https://github.com/kubermatic/machine-controller/blob/master/examples/aws-machinedeployment.yaml
+          # https://github.com/kubermatic/machine-controller/blob/main/examples/aws-machinedeployment.yaml
           region           = var.aws_region
           ami              = local.ami
           availabilityZone = local.zoneB
@@ -231,7 +231,7 @@ output "kubeone_workers" {
         cloudProviderSpec = {
           # provider specific fields:
           # see example under `cloudProviderSpec` section at:
-          # https://github.com/kubermatic/machine-controller/blob/master/examples/aws-machinedeployment.yaml
+          # https://github.com/kubermatic/machine-controller/blob/main/examples/aws-machinedeployment.yaml
           region           = var.aws_region
           ami              = local.ami
           availabilityZone = local.zoneC

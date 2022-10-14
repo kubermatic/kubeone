@@ -30,7 +30,7 @@ upgrading:
 
 ## Changelog since v1.4.0
 
-## Urgent Upgrade Notes 
+## Urgent Upgrade Notes
 
 ### (No, really, you MUST read this before you upgrade)
 
@@ -284,13 +284,13 @@ upgrading:
 
 ### Other
 
-- Remove changelog from the release archive. Changelogs can be found on GitHub in the [CHANGELOG directory](https://github.com/kubermatic/kubeone/tree/master/CHANGELOG) ([#2213](https://github.com/kubermatic/kubeone/pull/2213), [@xmudrii](https://github.com/xmudrii))
+- Remove changelog from the release archive. Changelogs can be found on GitHub in the [CHANGELOG directory](https://github.com/kubermatic/kubeone/tree/main/CHANGELOG) ([#2213](https://github.com/kubermatic/kubeone/pull/2213), [@xmudrii](https://github.com/xmudrii))
 
 # [v1.5.0-rc.0](https://github.com/kubermatic/kubeone/releases/tag/v1.5.0-rc.0) - 2022-08-25
 
 ## Changelog since v1.5.0-beta.0
 
-## Urgent Upgrade Notes 
+## Urgent Upgrade Notes
 
 ### (No, really, you MUST read this before you upgrade)
 
@@ -353,7 +353,7 @@ upgrading:
 
 ## Changelog since v1.4.0
 
-## Urgent Upgrade Notes 
+## Urgent Upgrade Notes
 
 ### (No, really, you MUST read this before you upgrade)
 
@@ -575,4 +575,4 @@ upgrading:
 
 ### Other
 
-- Remove changelog from the release archive. Changelogs can be found on GitHub in the [CHANGELOG directory](https://github.com/kubermatic/kubeone/tree/master/CHANGELOG) ([#2213](https://github.com/kubermatic/kubeone/pull/2213), [@xmudrii](https://github.com/xmudrii))
+- Remove changelog from the release archive. Changelogs can be found on GitHub in the [CHANGELOG directory](https://github.com/kubermatic/kubeone/tree/main/CHANGELOG) ([#2213](https://github.com/kubermatic/kubeone/pull/2213), [@xmudrii](https://github.com/xmudrii))

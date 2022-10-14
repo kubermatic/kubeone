@@ -81,7 +81,7 @@ output "kubeone_workers" {
         cloudProviderSpec = {
           # provider specific fields:
           # see example under `cloudProviderSpec` section at:
-          # https://github.com/kubermatic/machine-controller/blob/master/examples/nutanix-machinedeployment.yaml
+          # https://github.com/kubermatic/machine-controller/blob/main/examples/nutanix-machinedeployment.yaml
           clusterName = var.nutanix_cluster_name
           projectName = var.project_name
           subnetName  = var.subnet_name

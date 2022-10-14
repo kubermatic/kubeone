@@ -14,14 +14,14 @@ use the configs and how to provision a Kubernetes cluster using KubeOne.
 
 ## How to prepare a template
 
-See <https://github.com/kubermatic/machine-controller/blob/master/docs/vsphere.md>
+See <https://github.com/kubermatic/machine-controller/blob/main/docs/vsphere.md>
 
 ## Kubernetes API Server Load Balancing
 
 See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
 
-[docs-infrastructure]: https://docs.kubermatic.com/kubeone/master/guides/using-terraform-configs/
-[docs-tf-loadbalancer]: https://docs.kubermatic.com/kubeone/master/examples/ha-load-balancing/
+[docs-infrastructure]: https://docs.kubermatic.com/kubeone/main/guides/using-terraform-configs/
+[docs-tf-loadbalancer]: https://docs.kubermatic.com/kubeone/main/examples/ha-load-balancing/
 
 ## Requirements
 
