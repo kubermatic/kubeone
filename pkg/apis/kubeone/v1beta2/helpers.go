@@ -57,6 +57,35 @@ func SetCloudProvider(cp *CloudProviderSpec, name string) error {
 	return nil
 }
 
+func (cps *CloudProviderSpec) Name() string {
+	switch {
+	case cps.AWS != nil:
+		return "aws"
+	case cps.Azure != nil:
+		return "azure"
+	case cps.DigitalOcean != nil:
+		return "digitalocean"
+	case cps.GCE != nil:
+		return "gce"
+	case cps.Hetzner != nil:
+		return "hetzner"
+	case cps.Nutanix != nil:
+		return "nutanix"
+	case cps.Openstack != nil:
+		return "openstack"
+	case cps.EquinixMetal != nil:
+		return "equinixmetal"
+	case cps.VMwareCloudDirector != nil:
+		return "vmwareCloudDirector"
+	case cps.Vsphere != nil:
+		return "vsphere"
+	case cps.None != nil:
+		return "none"
+	}
+
+	return "unknown"
+}
+
 // NewKubeOneCluster initialize KubeOneCluster with correct typeMeta
 func NewKubeOneCluster() *KubeOneCluster {
 	return &KubeOneCluster{

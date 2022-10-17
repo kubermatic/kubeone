@@ -23,19 +23,17 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"text/template"
 
 	"github.com/MakeNowJust/heredoc/v2"
+	"github.com/Masterminds/sprig/v3"
 	"github.com/spf13/cobra"
-	yamlv2 "gopkg.in/yaml.v2"
 
 	"k8c.io/kubeone/examples"
 	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
 	"k8c.io/kubeone/pkg/fail"
-	"k8c.io/kubeone/pkg/yamled"
 
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/sets"
-	"sigs.k8s.io/yaml"
 )
 
 type initProvider struct {
@@ -254,7 +252,7 @@ func initCmd() *cobra.Command {
 	providerUsageText := fmt.Sprintf("provider to initialize, possible values: %s", strings.Join(opts.Provider.PossibleValues(), ", "))
 
 	cmd.Flags().BoolVar(&opts.Terraform, longFlagName(opts, "Terraform"), true, "generate terraform config")
-	cmd.Flags().StringVar(&opts.ClusterName, longFlagName(opts, "ClusterName"), "example", "name of the cluster")
+	cmd.Flags().StringVar(&opts.ClusterName, longFlagName(opts, "ClusterName"), "<EXAMPLE-CLUSTER>", "name of the cluster")
 	cmd.Flags().StringVar(&opts.KubernetesVersion, longFlagName(opts, "KubernetesVersion"), defaultKubeVersion, "kubernetes version")
 	cmd.Flags().StringVar(&opts.Path, longFlagName(opts, "Path"), ".", "path where to write files")
 	cmd.Flags().Var(&opts.Provider, longFlagName(opts, "Provider"), providerUsageText)
@@ -263,7 +261,18 @@ func initCmd() *cobra.Command {
 }
 
 func runInit(opts *initOpts) error {
-	err := os.MkdirAll(opts.Path, 0750)
+	ybuf, err := genKubeOneClusterYAML(opts)
+	if err != nil {
+		return fail.Runtime(err, "generating KubeOneCluster")
+	}
+
+	// special case to generate JUST yaml and no terraform
+	if opts.Path == "-" && !opts.Terraform {
+		_, err = fmt.Printf("%s", ybuf)
+		return err
+	}
+
+	err = os.MkdirAll(opts.Path, 0750)
 	if err != nil {
 		return err
 	}
@@ -274,18 +283,13 @@ func runInit(opts *initOpts) error {
 	}
 	defer k1config.Close()
 
-	ybuf, err := genKubeOneClusterYAML(opts)
-	if err != nil {
-		return fail.Runtime(err, "generating KubeOneCluster")
-	}
-
 	_, err = io.Copy(k1config, bytes.NewBuffer(ybuf))
 	if err != nil {
 		return fail.Runtime(err, "writing KubeOneCluster")
 	}
 
-	if opts.Terraform {
-		prov := validProviders[opts.Provider.String()]
+	prov := validProviders[opts.Provider.String()]
+	if opts.Terraform && prov.terraformPath != "" {
 		if err = examples.CopyTo(opts.Path, prov.terraformPath); err != nil {
 			return fail.Runtime(err, "copying terraform configuration")
 		}
@@ -306,16 +310,68 @@ func runInit(opts *initOpts) error {
 	return nil
 }
 
+var (
+	manifestTemplateSource = heredoc.Doc(`
+		apiVersion: {{ .APIVersion }}
+		kind: {{ .Kind }}
+		name: {{ .Name }}
+
+		cloudProvider:
+		  {{ .CloudProvider.Name }}: {}
+
+		  {{- with .CloudProvider.External }}
+		  external: true
+		  {{ end -}}
+
+		  {{- with .CloudProvider.CloudConfig }}
+		  cloudConfig: |
+		{{ . | indent 4 }}
+		  {{ end -}}
+
+		  {{- with .CloudProvider.CSIConfig }}
+		  csiConfig: |
+		{{ . | indent 4 }}
+		  {{ end }}
+
+		containerRuntime:
+		  containerd: {}
+
+		versions:
+		  kubernetes: {{ .Versions.Kubernetes }}
+
+		{{- with .MachineController }}
+		machineController:
+		  deploy: false
+		{{ end -}}
+
+		{{- with .OperatingSystemManager }}
+		operatingSystemManager:
+		  deploy: false
+		{{ end }}
+
+		{{- with .Addons }}
+		addons:
+		  enable: true
+		  addons:
+		  {{- range .Addons }}
+		    - name: {{ .Name }}
+		  {{ end }}
+		{{- end }}
+	`)
+
+	manifestTemplate = template.Must(
+		template.New("manifest").Funcs(sprig.TxtFuncMap()).
+			Parse(manifestTemplateSource),
+	)
+)
+
 func genKubeOneClusterYAML(opts *initOpts) ([]byte, error) {
 	providerName := opts.Provider.String()
 	prov := validProviders[providerName]
 
 	cluster := kubeonev1beta2.KubeOneCluster{
-		TypeMeta: metav1.TypeMeta{
-			Kind:       "KubeOneCluster",
-			APIVersion: kubeonev1beta2.SchemeGroupVersion.Identifier(),
-		},
-		Name: opts.ClusterName,
+		TypeMeta: kubeonev1beta2.NewKubeOneCluster().TypeMeta,
+		Name:     opts.ClusterName,
 		CloudProvider: kubeonev1beta2.CloudProviderSpec{
 			External:    prov.external,
 			CloudConfig: prov.cloudConfig,
@@ -337,21 +393,12 @@ func genKubeOneClusterYAML(opts *initOpts) ([]byte, error) {
 		},
 	}
 
-	switch strings.Split(providerName, "/")[0] {
-	case "aws":
-		cluster.CloudProvider.AWS = &kubeonev1beta2.AWSSpec{}
-	case "azure":
-		cluster.CloudProvider.Azure = &kubeonev1beta2.AzureSpec{}
-	case "digitalocean":
-		cluster.CloudProvider.DigitalOcean = &kubeonev1beta2.DigitalOceanSpec{}
-	case "equinixmetal":
-		cluster.CloudProvider.EquinixMetal = &kubeonev1beta2.EquinixMetalSpec{}
-	case "gce":
-		cluster.CloudProvider.GCE = &kubeonev1beta2.GCESpec{}
-	case "hetzner":
-		cluster.CloudProvider.Hetzner = &kubeonev1beta2.HetznerSpec{}
-	case "none":
-		cluster.CloudProvider.None = &kubeonev1beta2.NoneSpec{}
+	err := kubeonev1beta2.SetCloudProvider(&cluster.CloudProvider, strings.Split(providerName, "/")[0])
+	if err != nil {
+		return nil, err
+	}
+
+	if cluster.CloudProvider.None != nil {
 		cluster.Addons = nil
 		cluster.MachineController = &kubeonev1beta2.MachineControllerConfig{
 			Deploy: false,
@@ -359,41 +406,10 @@ func genKubeOneClusterYAML(opts *initOpts) ([]byte, error) {
 		cluster.OperatingSystemManager = &kubeonev1beta2.OperatingSystemManagerConfig{
 			Deploy: false,
 		}
-	case "nutanix":
-		cluster.CloudProvider.Nutanix = &kubeonev1beta2.NutanixSpec{}
-	case "openstack":
-		cluster.CloudProvider.Openstack = &kubeonev1beta2.OpenstackSpec{}
-	case "vmware-cloud-director":
-		cluster.CloudProvider.VMwareCloudDirector = &kubeonev1beta2.VMwareCloudDirectorSpec{}
-	case "vsphere":
-		cluster.CloudProvider.Vsphere = &kubeonev1beta2.VsphereSpec{}
-	default:
-		return nil, fmt.Errorf("unknown provider")
 	}
 
-	buf, err := yaml.Marshal(&cluster)
-	if err != nil {
-		return nil, err
-	}
+	var buf bytes.Buffer
+	err = manifestTemplate.Execute(&buf, &cluster)
 
-	doc, err := yamled.Load(bytes.NewBuffer(buf))
-	if err != nil {
-		return nil, err
-	}
-
-	toremove := []string{
-		"apiEndpoint",
-		"clusterNetwork",
-		"controlPlane",
-		"hosts",
-		"features",
-		"loggingConfig",
-		"proxy",
-		"staticWorkers",
-	}
-	for _, yamlPath := range toremove {
-		doc.Remove(yamled.Path{yamlPath})
-	}
-
-	return yamlv2.Marshal(doc)
+	return buf.Bytes(), err
 }
