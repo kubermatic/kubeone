@@ -275,7 +275,7 @@ func (oof *oneOfFlag) String() string {
 
 func (oof *oneOfFlag) Set(val string) error {
 	if !oof.validSet.Has(val) {
-		return fmt.Errorf("unknown provider")
+		return fmt.Errorf("unknown value")
 	}
 	oof.value = val
 	oof.valid = true
