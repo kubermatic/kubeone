@@ -39,10 +39,11 @@ import (
 )
 
 type initProvider struct {
-	terraformPath string
-	external      bool
-	cloudConfig   string
-	csiConfig     string
+	terraformPath  string
+	external       bool
+	cloudConfig    string
+	csiConfig      string
+	requiredTFVars []string
 }
 
 var (
@@ -80,9 +81,15 @@ var (
 		"equinixmetal": {
 			terraformPath: "terraform/equinixmetal",
 			external:      true,
+			requiredTFVars: []string{
+				"project_id=",
+			},
 		},
 		"gce": {
 			terraformPath: "terraform/gce",
+			requiredTFVars: []string{
+				"project=",
+			},
 		},
 		"hetzner": {
 			terraformPath: "terraform/hetzner",
@@ -93,10 +100,21 @@ var (
 		},
 		"nutanix": {
 			terraformPath: "terraform/nutanix",
+			requiredTFVars: []string{
+				"nutanix_cluster_name=",
+				"project_name=",
+				"subnet_name=",
+				"image_name=",
+			},
 		},
 		"openstack": {
 			terraformPath: "terraform/openstack",
 			external:      true,
+			requiredTFVars: []string{
+				"external_network_name=",
+				"image=",
+				"subnet_cidr=",
+			},
 			cloudConfig: heredoc.Doc(`
 				[Global]
 				auth-url=<KEYSTONE-URL>
@@ -112,10 +130,22 @@ var (
 		},
 		"vmware-cloud-director": {
 			terraformPath: "terraform/vmware-cloud-director",
+			requiredTFVars: []string{
+				"vcd_vdc_name=",
+				"vcd_edge_gateway_name=",
+				"catalog_name=",
+				"template_name=",
+			},
 		},
 		"vsphere": {
 			terraformPath: "terraform/vsphere",
 			external:      true,
+			requiredTFVars: []string{
+				"datastore_name=",
+				"network_name=",
+				"template_name=",
+				"resource_pool_name=",
+			},
 			cloudConfig: heredoc.Doc(`
 				[Global]
 				secret-name = "vsphere-ccm-credentials"
@@ -267,6 +297,10 @@ func runInit(opts *initOpts) error {
 		defer tfvars.Close()
 
 		fmt.Fprintf(tfvars, "cluster_name=%q\n", opts.ClusterName)
+
+		for _, param := range prov.requiredTFVars {
+			fmt.Fprintf(tfvars, "%s\n", param)
+		}
 	}
 
 	return nil
