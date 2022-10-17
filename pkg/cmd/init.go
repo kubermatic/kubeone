@@ -40,7 +40,7 @@ import (
 
 type initProvider struct {
 	terraformPath string
-	inTree        bool
+	external      bool
 	cloudConfig   string
 	csiConfig     string
 }
@@ -49,9 +49,11 @@ var (
 	validProviders = map[string]initProvider{
 		"aws": {
 			terraformPath: "terraform/aws",
+			external:      true,
 		},
 		"azure": {
 			terraformPath: "terraform/azure",
+			external:      true,
 			cloudConfig: heredoc.Doc(`
 				{
 				    "tenantId": "{{ .Credentials.AZURE_TENANT_ID }}",
@@ -73,26 +75,28 @@ var (
 		},
 		"digitalocean": {
 			terraformPath: "terraform/digitalocean",
+			external:      true,
 		},
 		"equinixmetal": {
 			terraformPath: "terraform/equinixmetal",
+			external:      true,
 		},
 		"gce": {
 			terraformPath: "terraform/gce",
-			inTree:        true,
 		},
 		"hetzner": {
 			terraformPath: "terraform/hetzner",
+			external:      true,
 		},
 		"none": {
 			terraformPath: "",
-			inTree:        true,
 		},
 		"nutanix": {
 			terraformPath: "terraform/nutanix",
 		},
 		"openstack": {
 			terraformPath: "terraform/openstack",
+			external:      true,
 			cloudConfig: heredoc.Doc(`
 				[Global]
 				auth-url=<KEYSTONE-URL>
@@ -108,10 +112,10 @@ var (
 		},
 		"vmware-cloud-director": {
 			terraformPath: "terraform/vmware-cloud-director",
-			inTree:        true,
 		},
 		"vsphere": {
 			terraformPath: "terraform/vsphere",
+			external:      true,
 			cloudConfig: heredoc.Doc(`
 				[Global]
 				secret-name = "vsphere-ccm-credentials"
@@ -149,6 +153,7 @@ var (
 		},
 		"vsphere/flatcar": {
 			terraformPath: "terraform/vsphere_flatcar",
+			external:      true,
 			cloudConfig: heredoc.Doc(`
 				[Global]
 				secret-name = "vsphere-ccm-credentials"
@@ -278,7 +283,7 @@ func genKubeOneClusterYAML(opts *initOpts) ([]byte, error) {
 		},
 		Name: opts.ClusterName,
 		CloudProvider: kubeonev1beta2.CloudProviderSpec{
-			External:    !prov.inTree,
+			External:    prov.external,
 			CloudConfig: prov.cloudConfig,
 			CSIConfig:   prov.csiConfig,
 		},
