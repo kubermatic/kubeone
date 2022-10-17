@@ -40,6 +40,10 @@ import (
 	"k8s.io/apimachinery/pkg/util/sets"
 )
 
+var (
+	defaultKubeVersion = ""
+)
+
 const yes = "yes"
 
 type globalOptions struct {

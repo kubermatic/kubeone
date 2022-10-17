@@ -46,8 +46,7 @@ type initProvider struct {
 }
 
 var (
-	defaultInitVersion = "x.y.z"
-	validProviders     = map[string]initProvider{
+	validProviders = map[string]initProvider{
 		"aws": {
 			terraformPath: "terraform/aws",
 		},
@@ -221,7 +220,7 @@ func initCmd() *cobra.Command {
 
 	cmd.Flags().BoolVar(&opts.Terraform, longFlagName(opts, "Terraform"), true, "generate terraform config")
 	cmd.Flags().StringVar(&opts.ClusterName, longFlagName(opts, "ClusterName"), "example", "name of the cluster")
-	cmd.Flags().StringVar(&opts.KubernetesVersion, longFlagName(opts, "KubernetesVersion"), defaultInitVersion, "kubernetes version")
+	cmd.Flags().StringVar(&opts.KubernetesVersion, longFlagName(opts, "KubernetesVersion"), defaultKubeVersion, "kubernetes version")
 	cmd.Flags().StringVar(&opts.Path, longFlagName(opts, "Path"), ".", "path where to write files")
 	cmd.Flags().Var(&opts.Provider, longFlagName(opts, "Provider"), providerUsageText)
 

@@ -23,7 +23,7 @@ GITCOMMIT=$(shell git log -1 --pretty=format:"%H")
 GITTAG=$(shell git describe --tags --always)
 DEFAULT_STABLE=$(shell curl -SsL https://dl.k8s.io/release/stable-1.24.txt)
 GOLDFLAGS?=-s -w -extldflags=-zrelro -extldflags=-znow \
-	-X k8c.io/kubeone/pkg/cmd.defaultInitVersion=$(DEFAULT_STABLE) \
+	-X k8c.io/kubeone/pkg/cmd.defaultKubeVersion=$(DEFAULT_STABLE) \
 	-X k8c.io/kubeone/pkg/cmd.version=$(GITTAG) \
 	-X k8c.io/kubeone/pkg/cmd.commit=$(GITCOMMIT) \
 	-X k8c.io/kubeone/pkg/cmd.date=$(BUILD_DATE)
