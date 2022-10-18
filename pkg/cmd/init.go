@@ -273,13 +273,19 @@ func initCmd() *cobra.Command {
 }
 
 func runInit(opts *initOpts) error {
+	providerName := opts.Provider.String()
+	clusterName := opts.ClusterName
+
+	if opts.Terraform && providerName != "none" {
+		clusterName = ""
+	}
+
 	ybuf, err := genKubeOneClusterYAML(&genKubeOneClusterYAMLParams{
-		providerName:      opts.Provider.String(),
-		clusterName:       opts.ClusterName,
+		providerName:      providerName,
+		clusterName:       clusterName,
 		kubernetesVersion: opts.KubernetesVersion,
 		validProviders:    validProviders,
 	})
-
 	if err != nil {
 		return fail.Runtime(err, "generating KubeOneCluster")
 	}
@@ -333,7 +339,9 @@ var (
 	manifestTemplateSource = heredoc.Doc(`
 		apiVersion: {{ .APIVersion }}
 		kind: {{ .Kind }}
-		name: {{ .Name }}
+		{{- with .Name}}
+		name: {{ . }}
+		{{- end }}
 
 		cloudProvider:
 		  {{ .CloudProvider.Name }}: {}
