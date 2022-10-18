@@ -37,11 +37,12 @@ import (
 )
 
 type initProvider struct {
-	terraformPath  string
-	external       bool
-	cloudConfig    string
-	csiConfig      string
-	requiredTFVars []string
+	alternativeName string
+	terraformPath   string
+	external        bool
+	cloudConfig     string
+	csiConfig       string
+	requiredTFVars  []string
 }
 
 var (
@@ -127,7 +128,8 @@ var (
 			`),
 		},
 		"vmware-cloud-director": {
-			terraformPath: "terraform/vmware-cloud-director",
+			alternativeName: "vmwareCloudDirector",
+			terraformPath:   "terraform/vmware-cloud-director",
 			requiredTFVars: []string{
 				"vcd_vdc_name=",
 				"vcd_edge_gateway_name=",
@@ -180,8 +182,9 @@ var (
 			`),
 		},
 		"vsphere/flatcar": {
-			terraformPath: "terraform/vsphere_flatcar",
-			external:      true,
+			alternativeName: "vsphere",
+			terraformPath:   "terraform/vsphere_flatcar",
+			external:        true,
 			cloudConfig: heredoc.Doc(`
 				[Global]
 				secret-name = "vsphere-ccm-credentials"
@@ -228,12 +231,16 @@ type initOpts struct {
 	Path              string    `longflag:"path"`
 }
 
+var (
+	initProviderFlag = oneOfFlag{
+		validSet:     sets.StringKeySet(validProviders),
+		defaultValue: "none",
+	}
+)
+
 func initCmd() *cobra.Command {
 	opts := &initOpts{
-		Provider: oneOfFlag{
-			validSet:     sets.StringKeySet(validProviders),
-			defaultValue: "none",
-		},
+		Provider: initProviderFlag,
 	}
 
 	cmd := &cobra.Command{
@@ -261,7 +268,13 @@ func initCmd() *cobra.Command {
 }
 
 func runInit(opts *initOpts) error {
-	ybuf, err := genKubeOneClusterYAML(opts)
+	ybuf, err := genKubeOneClusterYAML(&genKubeOneClusterYAMLParams{
+		providerName:      opts.Provider.String(),
+		clusterName:       opts.ClusterName,
+		kubernetesVersion: opts.KubernetesVersion,
+		validProviders:    validProviders,
+	})
+
 	if err != nil {
 		return fail.Runtime(err, "generating KubeOneCluster")
 	}
@@ -269,6 +282,7 @@ func runInit(opts *initOpts) error {
 	// special case to generate JUST yaml and no terraform
 	if opts.Path == "-" && !opts.Terraform {
 		_, err = fmt.Printf("%s", ybuf)
+
 		return err
 	}
 
@@ -318,28 +332,23 @@ var (
 
 		cloudProvider:
 		  {{ .CloudProvider.Name }}: {}
-
-		  {{- with .CloudProvider.External }}
+		{{- with .CloudProvider.External }}
 		  external: true
-		  {{ end -}}
-
-		  {{- with .CloudProvider.CloudConfig }}
+		{{ end -}}
+		{{- with .CloudProvider.CloudConfig }}
 		  cloudConfig: |
-		{{ . | indent 4 }}
-		  {{ end -}}
-
-		  {{- with .CloudProvider.CSIConfig }}
+		{{ . | indent 4 -}}
+		{{ end -}}
+		{{- with .CloudProvider.CSIConfig }}
 		  csiConfig: |
-		{{ . | indent 4 }}
-		  {{ end }}
-
+		{{ . | indent 4 -}}
+		{{ end }}
 		containerRuntime:
 		  containerd: {}
 
 		versions:
 		  kubernetes: {{ .Versions.Kubernetes }}
-
-		{{- with .MachineController }}
+		{{ with .MachineController }}
 		machineController:
 		  deploy: false
 		{{ end -}}
@@ -353,10 +362,10 @@ var (
 		addons:
 		  enable: true
 		  addons:
-		  {{- range .Addons }}
+		{{- range .Addons }}
 		    - name: {{ .Name }}
-		  {{ end }}
-		{{- end }}
+		{{ end }}
+		{{- end -}}
 	`)
 
 	manifestTemplate = template.Must(
@@ -365,13 +374,19 @@ var (
 	)
 )
 
-func genKubeOneClusterYAML(opts *initOpts) ([]byte, error) {
-	providerName := opts.Provider.String()
-	prov := validProviders[providerName]
+type genKubeOneClusterYAMLParams struct {
+	providerName      string
+	clusterName       string
+	kubernetesVersion string
+	validProviders    map[string]initProvider
+}
+
+func genKubeOneClusterYAML(params *genKubeOneClusterYAMLParams) ([]byte, error) {
+	prov := validProviders[params.providerName]
 
 	cluster := kubeonev1beta2.KubeOneCluster{
 		TypeMeta: kubeonev1beta2.NewKubeOneCluster().TypeMeta,
-		Name:     opts.ClusterName,
+		Name:     params.clusterName,
 		CloudProvider: kubeonev1beta2.CloudProviderSpec{
 			External:    prov.external,
 			CloudConfig: prov.cloudConfig,
@@ -381,7 +396,7 @@ func genKubeOneClusterYAML(opts *initOpts) ([]byte, error) {
 			Containerd: &kubeonev1beta2.ContainerRuntimeContainerd{},
 		},
 		Versions: kubeonev1beta2.VersionConfig{
-			Kubernetes: opts.KubernetesVersion,
+			Kubernetes: params.kubernetesVersion,
 		},
 		Addons: &kubeonev1beta2.Addons{
 			Enable: true,
@@ -393,7 +408,12 @@ func genKubeOneClusterYAML(opts *initOpts) ([]byte, error) {
 		},
 	}
 
-	err := kubeonev1beta2.SetCloudProvider(&cluster.CloudProvider, strings.Split(providerName, "/")[0])
+	providerName := prov.alternativeName
+	if providerName == "" {
+		providerName = params.providerName
+	}
+
+	err := kubeonev1beta2.SetCloudProvider(&cluster.CloudProvider, providerName)
 	if err != nil {
 		return nil, err
 	}

@@ -1,0 +1,30 @@
+apiVersion: kubeone.k8c.io/v1beta2
+kind: KubeOneCluster
+name: example
+
+cloudProvider:
+  openstack: {}
+  external: true
+
+  cloudConfig: |
+    [Global]
+    auth-url=<KEYSTONE-URL>
+    username=<USER>
+    password=<PASSWORD>
+    tenant-id=<TENANT-ID>
+    domain-name=DEFAULT
+    region=<REGION>
+    
+    [LoadBalancer]
+    [BlockStorage]
+    
+containerRuntime:
+  containerd: {}
+
+versions:
+  kubernetes: v1.24.4
+
+addons:
+  enable: true
+  addons:
+    - name: default-storage-class

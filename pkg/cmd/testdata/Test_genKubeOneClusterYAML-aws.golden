@@ -1,0 +1,18 @@
+apiVersion: kubeone.k8c.io/v1beta2
+kind: KubeOneCluster
+name: example
+
+cloudProvider:
+  aws: {}
+  external: true
+
+containerRuntime:
+  containerd: {}
+
+versions:
+  kubernetes: v1.24.4
+
+addons:
+  enable: true
+  addons:
+    - name: default-storage-class
