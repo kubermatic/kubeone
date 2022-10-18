@@ -34,6 +34,7 @@ import (
 	"k8c.io/kubeone/pkg/fail"
 
 	"k8s.io/apimachinery/pkg/util/sets"
+	kyaml "sigs.k8s.io/yaml"
 )
 
 type initProvider struct {
@@ -81,13 +82,13 @@ var (
 			terraformPath: "terraform/equinixmetal",
 			external:      true,
 			requiredTFVars: []string{
-				"project_id=",
+				"project_id = ",
 			},
 		},
 		"gce": {
 			terraformPath: "terraform/gce",
 			requiredTFVars: []string{
-				"project=",
+				"project = ",
 			},
 		},
 		"hetzner": {
@@ -100,19 +101,19 @@ var (
 		"nutanix": {
 			terraformPath: "terraform/nutanix",
 			requiredTFVars: []string{
-				"nutanix_cluster_name=",
-				"project_name=",
-				"subnet_name=",
-				"image_name=",
+				"nutanix_cluster_name = ",
+				"project_name = ",
+				"subnet_name = ",
+				"image_name = ",
 			},
 		},
 		"openstack": {
 			terraformPath: "terraform/openstack",
 			external:      true,
 			requiredTFVars: []string{
-				"external_network_name=",
-				"image=",
-				"subnet_cidr=",
+				"external_network_name = ",
+				"image = ",
+				"subnet_cidr = ",
 			},
 			cloudConfig: heredoc.Doc(`
 				[Global]
@@ -131,20 +132,20 @@ var (
 			alternativeName: "vmwareCloudDirector",
 			terraformPath:   "terraform/vmware-cloud-director",
 			requiredTFVars: []string{
-				"vcd_vdc_name=",
-				"vcd_edge_gateway_name=",
-				"catalog_name=",
-				"template_name=",
+				"vcd_vdc_name = ",
+				"vcd_edge_gateway_name = ",
+				"catalog_name = ",
+				"template_name = ",
 			},
 		},
 		"vsphere": {
 			terraformPath: "terraform/vsphere",
 			external:      true,
 			requiredTFVars: []string{
-				"datastore_name=",
-				"network_name=",
-				"template_name=",
-				"resource_pool_name=",
+				"datastore_name = ",
+				"network_name = ",
+				"template_name = ",
+				"resource_pool_name = ",
 			},
 			cloudConfig: heredoc.Doc(`
 				[Global]
@@ -325,7 +326,7 @@ func runInit(opts *initOpts) error {
 		}
 		defer tfvars.Close()
 
-		fmt.Fprintf(tfvars, "cluster_name=%q\n", opts.ClusterName)
+		fmt.Fprintf(tfvars, "cluster_name = %q\n", opts.ClusterName)
 
 		for _, param := range prov.requiredTFVars {
 			fmt.Fprintf(tfvars, "%s\n", param)
@@ -443,6 +444,14 @@ func genKubeOneClusterYAML(params *genKubeOneClusterYAMLParams) ([]byte, error) 
 
 	var buf bytes.Buffer
 	err = manifestTemplate.Execute(&buf, &cluster)
+	if err != nil {
+		return nil, fail.Runtime(err, "generating kubeone manifest")
+	}
+
+	dummy := kubeonev1beta2.NewKubeOneCluster()
+	if err = kyaml.UnmarshalStrict(buf.Bytes(), &dummy); err != nil {
+		return nil, fail.Runtime(err, "kubeone manifest testing marshal/unmarshal")
+	}
 
 	return buf.Bytes(), err
 }
