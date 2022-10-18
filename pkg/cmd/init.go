@@ -231,18 +231,15 @@ type initOpts struct {
 	Path              string    `longflag:"path"`
 }
 
-var (
-	initProviderFlag = oneOfFlag{
-		validSet:     sets.StringKeySet(validProviders),
-		defaultValue: "none",
-	}
-)
-
 func initCmd() *cobra.Command {
 	opts := &initOpts{
-		Provider: initProviderFlag,
+		Provider: oneOfFlag{
+			validSet:     sets.StringKeySet(validProviders),
+			defaultValue: "none",
+		},
 	}
 
+	clusterNameFlag := longFlagName(opts, "ClusterName")
 	cmd := &cobra.Command{
 		Use:   "init",
 		Short: "init new kubeone cluster configuration",
@@ -252,6 +249,10 @@ func initCmd() *cobra.Command {
 		SilenceErrors: true,
 		Example:       `kubeone init --provider aws`,
 		RunE: func(_ *cobra.Command, args []string) error {
+			if opts.KubernetesVersion == "" {
+				return fail.Runtime(fmt.Errorf("--kubernetes-version is a required flag"), "flag validation")
+			}
+
 			return runInit(opts)
 		},
 	}
@@ -259,10 +260,14 @@ func initCmd() *cobra.Command {
 	providerUsageText := fmt.Sprintf("provider to initialize, possible values: %s", strings.Join(opts.Provider.PossibleValues(), ", "))
 
 	cmd.Flags().BoolVar(&opts.Terraform, longFlagName(opts, "Terraform"), true, "generate terraform config")
-	cmd.Flags().StringVar(&opts.ClusterName, longFlagName(opts, "ClusterName"), "<EXAMPLE-CLUSTER>", "name of the cluster")
+	cmd.Flags().StringVar(&opts.ClusterName, clusterNameFlag, "", "name of the cluster")
 	cmd.Flags().StringVar(&opts.KubernetesVersion, longFlagName(opts, "KubernetesVersion"), defaultKubeVersion, "kubernetes version")
 	cmd.Flags().StringVar(&opts.Path, longFlagName(opts, "Path"), ".", "path where to write files")
 	cmd.Flags().Var(&opts.Provider, longFlagName(opts, "Provider"), providerUsageText)
+
+	if err := cmd.MarkFlagRequired(clusterNameFlag); err != nil {
+		panic(err)
+	}
 
 	return cmd
 }
