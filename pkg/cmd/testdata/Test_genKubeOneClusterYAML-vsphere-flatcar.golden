@@ -1,0 +1,52 @@
+apiVersion: kubeone.k8c.io/v1beta2
+kind: KubeOneCluster
+name: example
+
+cloudProvider:
+  vsphere: {}
+  external: true
+
+  cloudConfig: |
+    [Global]
+    secret-name = "vsphere-ccm-credentials"
+    secret-namespace = "kube-system"
+    port = "443"
+    insecure-flag = "0"
+    
+    [VirtualCenter "<VCENTER-ADDRESS>"]
+    
+    [Workspace]
+    server = "<VCENTER-ADDRESS>"
+    datacenter = "<DATACENTER>"
+    default-datastore="<DATASTORE>"
+    resourcepool-path=""
+    folder = ""
+    
+    [Disk]
+    scsicontrollertype = pvscsi
+    
+    [Network]
+    public-network = "<VM-NETWORK>"
+    
+  csiConfig: |
+    [Global]
+    cluster-id = "<CLUSTER-ID>"
+    cluster-distribution = "<CLUSTER-DISTRIBUTION>"
+    
+    [VirtualCenter "<VCENTER-ADDRESS>"]
+    insecure-flag = "false"
+    user = "<USERNAME>"
+    password = "<PASSWORD>"
+    port = "<PORT>"
+    datacenters = "<DATACENTER>"
+    
+containerRuntime:
+  containerd: {}
+
+versions:
+  kubernetes: v1.24.4
+
+addons:
+  enable: true
+  addons:
+    - name: default-storage-class

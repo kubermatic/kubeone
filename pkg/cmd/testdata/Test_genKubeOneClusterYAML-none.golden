@@ -1,0 +1,17 @@
+apiVersion: kubeone.k8c.io/v1beta2
+kind: KubeOneCluster
+name: example
+
+cloudProvider:
+  none: {}
+containerRuntime:
+  containerd: {}
+
+versions:
+  kubernetes: v1.24.4
+
+machineController:
+  deploy: false
+
+operatingSystemManager:
+  deploy: false

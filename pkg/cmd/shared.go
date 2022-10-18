@@ -36,6 +36,12 @@ import (
 	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
+
+	"k8s.io/apimachinery/pkg/util/sets"
+)
+
+var (
+	defaultKubeVersion = ""
 )
 
 const yes = "yes"
@@ -250,4 +256,37 @@ func defaultBackupPath(backupPath, manifestPath, clusterName string) string {
 	}
 
 	return backupPath
+}
+
+type oneOfFlag struct {
+	validSet     sets.String
+	defaultValue string
+	value        string
+	valid        bool
+}
+
+func (oof *oneOfFlag) String() string {
+	if oof.valid {
+		return oof.value
+	}
+
+	return oof.defaultValue
+}
+
+func (oof *oneOfFlag) Set(val string) error {
+	if !oof.validSet.Has(val) {
+		return fmt.Errorf("unknown value")
+	}
+	oof.value = val
+	oof.valid = true
+
+	return nil
+}
+
+func (*oneOfFlag) Type() string {
+	return "string"
+}
+
+func (oof *oneOfFlag) PossibleValues() []string {
+	return oof.validSet.List()
 }

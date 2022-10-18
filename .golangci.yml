@@ -25,7 +25,6 @@ linters:
   - exhaustive
   - exportloopref
   - forcetypeassert
-  - goconst
   - gocritic
   - gocyclo
   - gofmt

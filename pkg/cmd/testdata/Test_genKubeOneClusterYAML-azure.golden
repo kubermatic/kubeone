@@ -1,0 +1,36 @@
+apiVersion: kubeone.k8c.io/v1beta2
+kind: KubeOneCluster
+name: example
+
+cloudProvider:
+  azure: {}
+  external: true
+
+  cloudConfig: |
+    {
+        "tenantId": "{{ .Credentials.AZURE_TENANT_ID }}",
+        "subscriptionId": "{{ .Credentials.AZURE_SUBSCRIPTION_ID }}",
+        "aadClientId": "{{ .Credentials.AZURE_CLIENT_ID }}",
+        "aadClientSecret": "{{ .Credentials.AZURE_CLIENT_SECRET }}",
+        "resourceGroup": "<RESOURCE-GROUP>",
+        "location": "<LOCATION>",
+        "subnetName": "<SUBNET>",
+        "routeTableName": "",
+        "securityGroupName": "<SECURITY-GROUP>",
+        "vnetName": "<VPC-NAME>",
+        "primaryAvailabilitySetName": "<AVAILABILITY-SET-NAME>",
+        "useInstanceMetadata": true,
+        "useManagedIdentityExtension": false,
+        "userAssignedIdentityID": ""
+    }
+    
+containerRuntime:
+  containerd: {}
+
+versions:
+  kubernetes: v1.24.4
+
+addons:
+  enable: true
+  addons:
+    - name: default-storage-class
