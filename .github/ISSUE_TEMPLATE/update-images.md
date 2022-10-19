@@ -1,6 +1,7 @@
 ---
 name: Update images to support Kubernetes 1.2x
 about: Update components to use versions that support the latest Kubernetes release
+title: Update images to support Kubernetes 1.2x
 labels: sig/cluster-management, kind/feature, Epic
 
 ---
@@ -19,6 +20,17 @@ Action items:
 
 The following components/images should be updated:
 
+### General
+
+- [ ] [Canal CNI](https://github.com/projectcalico/calico) <!-- (PR reference|already the latest) -->
+- [ ] [Calico VXLAN CNI](https://github.com/projectcalico/calico) <!-- (PR reference|already the latest) -->
+- [ ] [Cilium CNI](https://github.com/cilium/cilium) <!-- (PR reference|already the latest) -->
+- [ ] [NodeLocalDNS](https://github.com/kubernetes/kubernetes/blob/master/cluster/addons/dns/nodelocaldns/nodelocaldns.yaml) <!-- (PR reference|already the latest) -->
+- [ ] [metrics-server](https://github.com/kubernetes-sigs/metrics-server) <!-- (PR reference|already the latest) -->
+- [ ] [Cluster Autoscaler](https://github.com/kubernetes/autoscaler) <!-- (PR reference|already the latest) -->
+
+### Cloud provider components
+
 - [ ] [AWS CCM](https://github.com/kubernetes/cloud-provider-aws) <!-- (PR reference|already the latest) -->
 - [ ] [AWS CSI](https://github.com/kubernetes-sigs/aws-ebs-csi-driver) <!-- (PR reference|already the latest) -->
 - [ ] [Azure CCM](https://github.com/kubernetes-sigs/cloud-provider-azure) <!-- (PR reference|already the latest) -->
@@ -34,6 +46,5 @@ The following components/images should be updated:
 - [ ] [OpenStack CSI](https://github.com/kubernetes/cloud-provider-openstack) <!-- (PR reference|already the latest) -->
 - [ ] [vSphere CCM](https://github.com/kubernetes/cloud-provider-vsphere) <!-- (PR reference|already the latest) -->
 - [ ] [vSphere CSI](https://github.com/kubernetes-sigs/vsphere-csi-driver) <!-- (PR reference|already the latest) -->
-- [ ] [Cluster Autoscaler](https://github.com/kubernetes/autoscaler) <!-- (PR reference|already the latest) -->
 
 Relevant to <!-- epic number -->

@@ -21,7 +21,7 @@ export GOFLAGS?=-mod=readonly -trimpath
 BUILD_DATE=$(shell if hash gdate 2>/dev/null; then gdate --rfc-3339=seconds | sed 's/ /T/'; else date --rfc-3339=seconds | sed 's/ /T/'; fi)
 GITCOMMIT=$(shell git log -1 --pretty=format:"%H")
 GITTAG=$(shell git describe --tags --always)
-DEFAULT_STABLE=$(shell curl -SsL https://dl.k8s.io/release/stable-1.24.txt)
+DEFAULT_STABLE=$(shell curl -SsL https://dl.k8s.io/release/stable-1.25.txt)
 GOLDFLAGS?=-s -w -extldflags=-zrelro -extldflags=-znow \
 	-X k8c.io/kubeone/pkg/cmd.defaultKubeVersion=$(DEFAULT_STABLE) \
 	-X k8c.io/kubeone/pkg/cmd.version=$(GITTAG) \
