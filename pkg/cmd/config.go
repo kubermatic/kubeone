@@ -41,8 +41,6 @@ import (
 )
 
 const (
-	// defaultKubernetesVersion is default Kubernetes version for the example configuration file
-	defaultKubernetesVersion = "1.23.9"
 	// defaultCloudProviderName is cloud provider to build the example configuration file for
 	defaultCloudProviderName = "aws"
 )
@@ -114,7 +112,7 @@ func configPrintCmd() *cobra.Command {
 			configuration manifest, run the print command with --full flag.
 		`),
 		Args:          cobra.ExactArgs(0),
-		Example:       fmt.Sprintf("kubeone config print --provider digitalocean --kubernetes-version %s --cluster-name example", defaultKubernetesVersion),
+		Example:       fmt.Sprintf("kubeone config print --provider digitalocean --kubernetes-version %s --cluster-name example", defaultKubeVersion),
 		SilenceErrors: true,
 		RunE: func(_ *cobra.Command, args []string) error {
 			return runPrint(opts)
@@ -140,7 +138,7 @@ func configPrintCmd() *cobra.Command {
 		&opts.KubernetesVersion,
 		longFlagName(opts, "KubernetesVersion"),
 		shortFlagName(opts, "KubernetesVersion"),
-		defaultKubernetesVersion,
+		defaultKubeVersion,
 		"Kubernetes version")
 
 	cmd.Flags().StringVarP(
