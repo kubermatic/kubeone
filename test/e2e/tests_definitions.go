@@ -30,8 +30,8 @@ var (
 		"aws_default": {
 			name: "aws_default",
 			labels: map[string]string{
-				"preset-goproxy": "true",
-				"preset-aws":     "true",
+				"preset-goproxy":         "true",
+				"preset-aws-e2e-kubeone": "true",
 			},
 			environ: map[string]string{
 				"PROVIDER": "aws",
@@ -47,8 +47,8 @@ var (
 		"aws_default_stable": {
 			name: "aws_default_stable",
 			labels: map[string]string{
-				"preset-goproxy": "true",
-				"preset-aws":     "true",
+				"preset-goproxy":         "true",
+				"preset-aws-e2e-kubeone": "true",
 			},
 			environ: map[string]string{
 				"PROVIDER": "aws",
@@ -67,8 +67,8 @@ var (
 				"PROVIDER": "aws",
 			},
 			labels: map[string]string{
-				"preset-goproxy": "true",
-				"preset-aws":     "true",
+				"preset-goproxy":         "true",
+				"preset-aws-e2e-kubeone": "true",
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/aws",
@@ -85,8 +85,8 @@ var (
 				"PROVIDER": "aws",
 			},
 			labels: map[string]string{
-				"preset-goproxy": "true",
-				"preset-aws":     "true",
+				"preset-goproxy":         "true",
+				"preset-aws-e2e-kubeone": "true",
 			},
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/aws",
@@ -103,8 +103,8 @@ var (
 				"PROVIDER": "aws",
 			},
 			labels: map[string]string{
-				"preset-goproxy": "true",
-				"preset-aws":     "true",
+				"preset-goproxy":         "true",
+				"preset-aws-e2e-kubeone": "true",
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/aws",
@@ -122,8 +122,8 @@ var (
 				"PROVIDER": "aws",
 			},
 			labels: map[string]string{
-				"preset-goproxy": "true",
-				"preset-aws":     "true",
+				"preset-goproxy":         "true",
+				"preset-aws-e2e-kubeone": "true",
 			},
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/aws",
@@ -141,8 +141,8 @@ var (
 				"PROVIDER": "aws",
 			},
 			labels: map[string]string{
-				"preset-goproxy": "true",
-				"preset-aws":     "true",
+				"preset-goproxy":         "true",
+				"preset-aws-e2e-kubeone": "true",
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/aws",
@@ -159,8 +159,8 @@ var (
 				"PROVIDER": "aws",
 			},
 			labels: map[string]string{
-				"preset-goproxy": "true",
-				"preset-aws":     "true",
+				"preset-goproxy":         "true",
+				"preset-aws-e2e-kubeone": "true",
 			},
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/aws",
@@ -177,8 +177,8 @@ var (
 				"PROVIDER": "aws",
 			},
 			labels: map[string]string{
-				"preset-goproxy": "true",
-				"preset-aws":     "true",
+				"preset-goproxy":         "true",
+				"preset-aws-e2e-kubeone": "true",
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/aws",
@@ -195,8 +195,8 @@ var (
 				"PROVIDER": "aws",
 			},
 			labels: map[string]string{
-				"preset-goproxy": "true",
-				"preset-aws":     "true",
+				"preset-goproxy":         "true",
+				"preset-aws-e2e-kubeone": "true",
 			},
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/aws",
@@ -213,8 +213,8 @@ var (
 				"PROVIDER": "aws",
 			},
 			labels: map[string]string{
-				"preset-goproxy": "true",
-				"preset-aws":     "true",
+				"preset-goproxy":         "true",
+				"preset-aws-e2e-kubeone": "true",
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/aws",
@@ -234,8 +234,8 @@ var (
 				"PROVIDER": "aws",
 			},
 			labels: map[string]string{
-				"preset-goproxy": "true",
-				"preset-aws":     "true",
+				"preset-goproxy":         "true",
+				"preset-aws-e2e-kubeone": "true",
 			},
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/aws",
@@ -255,8 +255,8 @@ var (
 				"PROVIDER": "aws",
 			},
 			labels: map[string]string{
-				"preset-goproxy": "true",
-				"preset-aws":     "true",
+				"preset-goproxy":         "true",
+				"preset-aws-e2e-kubeone": "true",
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/aws",
@@ -273,8 +273,8 @@ var (
 				"PROVIDER": "aws",
 			},
 			labels: map[string]string{
-				"preset-goproxy": "true",
-				"preset-aws":     "true",
+				"preset-goproxy":         "true",
+				"preset-aws-e2e-kubeone": "true",
 			},
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/aws",
@@ -288,8 +288,8 @@ var (
 		"aws_long_timeout_default": {
 			name: "aws_long_timeout_default",
 			labels: map[string]string{
-				"preset-goproxy": "true",
-				"preset-aws":     "true",
+				"preset-goproxy":         "true",
+				"preset-aws-e2e-kubeone": "true",
 			},
 			environ: map[string]string{
 				"PROVIDER":     "aws",
