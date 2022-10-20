@@ -2692,21 +2692,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-upgrade-containerd-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-aws-amzn-stable-upgrade-containerd-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsAmznUpgradeContainerdFromV1_24_7_ToV1_25_3
+      - TestAwsAmznStableUpgradeContainerdFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: aws
@@ -2720,21 +2720,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-upgrade-containerd-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-aws-centos-stable-upgrade-containerd-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsCentosUpgradeContainerdFromV1_24_7_ToV1_25_3
+      - TestAwsCentosStableUpgradeContainerdFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: aws
@@ -2748,21 +2748,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-default-upgrade-containerd-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-aws-default-stable-upgrade-containerd-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsDefaultUpgradeContainerdFromV1_24_7_ToV1_25_3
+      - TestAwsDefaultStableUpgradeContainerdFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: aws
@@ -2776,21 +2776,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-upgrade-containerd-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-aws-flatcar-stable-upgrade-containerd-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsFlatcarUpgradeContainerdFromV1_24_7_ToV1_25_3
+      - TestAwsFlatcarStableUpgradeContainerdFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: aws
@@ -2804,21 +2804,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-upgrade-containerd-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-aws-rhel-stable-upgrade-containerd-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsRhelUpgradeContainerdFromV1_24_7_ToV1_25_3
+      - TestAwsRhelStableUpgradeContainerdFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: aws
@@ -2832,21 +2832,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-upgrade-containerd-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-aws-rockylinux-stable-upgrade-containerd-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsRockylinuxUpgradeContainerdFromV1_24_7_ToV1_25_3
+      - TestAwsRockylinuxStableUpgradeContainerdFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: aws
@@ -2860,21 +2860,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-upgrade-containerd-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-azure-default-stable-upgrade-containerd-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureDefaultUpgradeContainerdFromV1_24_7_ToV1_25_3
+      - TestAzureDefaultStableUpgradeContainerdFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: azure
@@ -2890,21 +2890,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-upgrade-containerd-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-azure-centos-stable-upgrade-containerd-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureCentosUpgradeContainerdFromV1_24_7_ToV1_25_3
+      - TestAzureCentosStableUpgradeContainerdFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: azure
@@ -2920,21 +2920,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-flatcar-upgrade-containerd-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-azure-flatcar-stable-upgrade-containerd-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureFlatcarUpgradeContainerdFromV1_24_7_ToV1_25_3
+      - TestAzureFlatcarStableUpgradeContainerdFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: azure
@@ -2950,7 +2950,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2958,14 +2958,14 @@ presubmits:
     preset-azure: "true"
     preset-goproxy: "true"
     preset-rhel: "true"
-  name: pull-kubeone-e2e-azure-rhel-upgrade-containerd-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-azure-rhel-stable-upgrade-containerd-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureRhelUpgradeContainerdFromV1_24_7_ToV1_25_3
+      - TestAzureRhelStableUpgradeContainerdFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: azure
@@ -2981,21 +2981,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-rockylinux-upgrade-containerd-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-azure-rockylinux-stable-upgrade-containerd-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureRockylinuxUpgradeContainerdFromV1_24_7_ToV1_25_3
+      - TestAzureRockylinuxStableUpgradeContainerdFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: azure
@@ -3011,21 +3011,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-gce: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-gce-default-upgrade-containerd-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-gce-default-stable-upgrade-containerd-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestGceDefaultUpgradeContainerdFromV1_24_7_ToV1_25_3
+      - TestGceDefaultStableUpgradeContainerdFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: gce
@@ -3039,21 +3039,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-upgrade-containerd-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-openstack-default-stable-upgrade-containerd-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackDefaultUpgradeContainerdFromV1_24_7_ToV1_25_3
+      - TestOpenstackDefaultStableUpgradeContainerdFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: openstack
@@ -3067,21 +3067,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-upgrade-containerd-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-openstack-centos-stable-upgrade-containerd-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackCentosUpgradeContainerdFromV1_24_7_ToV1_25_3
+      - TestOpenstackCentosStableUpgradeContainerdFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: openstack
@@ -3095,7 +3095,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -3123,21 +3123,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rhel-upgrade-containerd-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-openstack-rhel-stable-upgrade-containerd-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackRhelUpgradeContainerdFromV1_24_7_ToV1_25_3
+      - TestOpenstackRhelStableUpgradeContainerdFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: openstack
@@ -3151,21 +3151,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-flatcar-upgrade-containerd-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-openstack-flatcar-stable-upgrade-containerd-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackFlatcarUpgradeContainerdFromV1_24_7_ToV1_25_3
+      - TestOpenstackFlatcarStableUpgradeContainerdFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: openstack
@@ -3179,21 +3179,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-upgrade-containerd-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-vsphere-default-stable-upgrade-containerd-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestVsphereDefaultUpgradeContainerdFromV1_24_7_ToV1_25_3
+      - TestVsphereDefaultStableUpgradeContainerdFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: vsphere
@@ -3207,21 +3207,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-upgrade-containerd-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-vsphere-flatcar-stable-upgrade-containerd-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestVsphereFlatcarUpgradeContainerdFromV1_24_7_ToV1_25_3
+      - TestVsphereFlatcarStableUpgradeContainerdFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: vsphere
@@ -3235,21 +3235,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-upgrade-containerd-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-aws-amzn-stable-upgrade-containerd-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsAmznUpgradeContainerdFromV1_23_13_ToV1_24_7
+      - TestAwsAmznStableUpgradeContainerdFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: aws
@@ -3263,21 +3263,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-upgrade-containerd-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-aws-centos-stable-upgrade-containerd-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsCentosUpgradeContainerdFromV1_23_13_ToV1_24_7
+      - TestAwsCentosStableUpgradeContainerdFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: aws
@@ -3291,21 +3291,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-default-upgrade-containerd-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-aws-default-stable-upgrade-containerd-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsDefaultUpgradeContainerdFromV1_23_13_ToV1_24_7
+      - TestAwsDefaultStableUpgradeContainerdFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: aws
@@ -3319,21 +3319,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-upgrade-containerd-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-aws-flatcar-stable-upgrade-containerd-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsFlatcarUpgradeContainerdFromV1_23_13_ToV1_24_7
+      - TestAwsFlatcarStableUpgradeContainerdFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: aws
@@ -3347,21 +3347,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-upgrade-containerd-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-aws-rhel-stable-upgrade-containerd-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsRhelUpgradeContainerdFromV1_23_13_ToV1_24_7
+      - TestAwsRhelStableUpgradeContainerdFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: aws
@@ -3375,21 +3375,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-upgrade-containerd-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-aws-rockylinux-stable-upgrade-containerd-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsRockylinuxUpgradeContainerdFromV1_23_13_ToV1_24_7
+      - TestAwsRockylinuxStableUpgradeContainerdFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: aws
@@ -3403,21 +3403,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-upgrade-containerd-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-azure-default-stable-upgrade-containerd-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureDefaultUpgradeContainerdFromV1_23_13_ToV1_24_7
+      - TestAzureDefaultStableUpgradeContainerdFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: azure
@@ -3433,21 +3433,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-upgrade-containerd-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-azure-centos-stable-upgrade-containerd-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureCentosUpgradeContainerdFromV1_23_13_ToV1_24_7
+      - TestAzureCentosStableUpgradeContainerdFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: azure
@@ -3463,21 +3463,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-flatcar-upgrade-containerd-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-azure-flatcar-stable-upgrade-containerd-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureFlatcarUpgradeContainerdFromV1_23_13_ToV1_24_7
+      - TestAzureFlatcarStableUpgradeContainerdFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: azure
@@ -3493,7 +3493,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -3501,14 +3501,14 @@ presubmits:
     preset-azure: "true"
     preset-goproxy: "true"
     preset-rhel: "true"
-  name: pull-kubeone-e2e-azure-rhel-upgrade-containerd-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-azure-rhel-stable-upgrade-containerd-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureRhelUpgradeContainerdFromV1_23_13_ToV1_24_7
+      - TestAzureRhelStableUpgradeContainerdFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: azure
@@ -3524,21 +3524,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-rockylinux-upgrade-containerd-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-azure-rockylinux-stable-upgrade-containerd-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureRockylinuxUpgradeContainerdFromV1_23_13_ToV1_24_7
+      - TestAzureRockylinuxStableUpgradeContainerdFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: azure
@@ -3554,21 +3554,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-gce: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-gce-default-upgrade-containerd-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-gce-default-stable-upgrade-containerd-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestGceDefaultUpgradeContainerdFromV1_23_13_ToV1_24_7
+      - TestGceDefaultStableUpgradeContainerdFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: gce
@@ -3582,21 +3582,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-upgrade-containerd-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-openstack-default-stable-upgrade-containerd-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackDefaultUpgradeContainerdFromV1_23_13_ToV1_24_7
+      - TestOpenstackDefaultStableUpgradeContainerdFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: openstack
@@ -3610,21 +3610,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-upgrade-containerd-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-openstack-centos-stable-upgrade-containerd-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackCentosUpgradeContainerdFromV1_23_13_ToV1_24_7
+      - TestOpenstackCentosStableUpgradeContainerdFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: openstack
@@ -3638,7 +3638,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -3666,21 +3666,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rhel-upgrade-containerd-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-openstack-rhel-stable-upgrade-containerd-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackRhelUpgradeContainerdFromV1_23_13_ToV1_24_7
+      - TestOpenstackRhelStableUpgradeContainerdFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: openstack
@@ -3694,21 +3694,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-flatcar-upgrade-containerd-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-openstack-flatcar-stable-upgrade-containerd-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackFlatcarUpgradeContainerdFromV1_23_13_ToV1_24_7
+      - TestOpenstackFlatcarStableUpgradeContainerdFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: openstack
@@ -3722,21 +3722,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-upgrade-containerd-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-vsphere-default-stable-upgrade-containerd-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestVsphereDefaultUpgradeContainerdFromV1_23_13_ToV1_24_7
+      - TestVsphereDefaultStableUpgradeContainerdFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: vsphere
@@ -3750,21 +3750,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-upgrade-containerd-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-vsphere-flatcar-stable-upgrade-containerd-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestVsphereFlatcarUpgradeContainerdFromV1_23_13_ToV1_24_7
+      - TestVsphereFlatcarStableUpgradeContainerdFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: vsphere
@@ -3778,21 +3778,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-upgrade-containerd-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-aws-amzn-stable-upgrade-containerd-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsAmznUpgradeContainerdFromV1_22_15_ToV1_23_13
+      - TestAwsAmznStableUpgradeContainerdFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: aws
@@ -3806,21 +3806,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-upgrade-containerd-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-aws-centos-stable-upgrade-containerd-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsCentosUpgradeContainerdFromV1_22_15_ToV1_23_13
+      - TestAwsCentosStableUpgradeContainerdFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: aws
@@ -3834,21 +3834,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-default-upgrade-containerd-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-aws-default-stable-upgrade-containerd-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsDefaultUpgradeContainerdFromV1_22_15_ToV1_23_13
+      - TestAwsDefaultStableUpgradeContainerdFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: aws
@@ -3862,21 +3862,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-upgrade-containerd-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-aws-flatcar-stable-upgrade-containerd-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsFlatcarUpgradeContainerdFromV1_22_15_ToV1_23_13
+      - TestAwsFlatcarStableUpgradeContainerdFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: aws
@@ -3890,21 +3890,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-upgrade-containerd-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-aws-rhel-stable-upgrade-containerd-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsRhelUpgradeContainerdFromV1_22_15_ToV1_23_13
+      - TestAwsRhelStableUpgradeContainerdFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: aws
@@ -3918,21 +3918,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-upgrade-containerd-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-aws-rockylinux-stable-upgrade-containerd-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsRockylinuxUpgradeContainerdFromV1_22_15_ToV1_23_13
+      - TestAwsRockylinuxStableUpgradeContainerdFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: aws
@@ -3946,21 +3946,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-upgrade-containerd-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-azure-default-stable-upgrade-containerd-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureDefaultUpgradeContainerdFromV1_22_15_ToV1_23_13
+      - TestAzureDefaultStableUpgradeContainerdFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: azure
@@ -3976,21 +3976,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-upgrade-containerd-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-azure-centos-stable-upgrade-containerd-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureCentosUpgradeContainerdFromV1_22_15_ToV1_23_13
+      - TestAzureCentosStableUpgradeContainerdFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: azure
@@ -4006,21 +4006,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-flatcar-upgrade-containerd-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-azure-flatcar-stable-upgrade-containerd-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureFlatcarUpgradeContainerdFromV1_22_15_ToV1_23_13
+      - TestAzureFlatcarStableUpgradeContainerdFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: azure
@@ -4036,7 +4036,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -4044,14 +4044,14 @@ presubmits:
     preset-azure: "true"
     preset-goproxy: "true"
     preset-rhel: "true"
-  name: pull-kubeone-e2e-azure-rhel-upgrade-containerd-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-azure-rhel-stable-upgrade-containerd-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureRhelUpgradeContainerdFromV1_22_15_ToV1_23_13
+      - TestAzureRhelStableUpgradeContainerdFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: azure
@@ -4067,21 +4067,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-rockylinux-upgrade-containerd-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-azure-rockylinux-stable-upgrade-containerd-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureRockylinuxUpgradeContainerdFromV1_22_15_ToV1_23_13
+      - TestAzureRockylinuxStableUpgradeContainerdFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: azure
@@ -4097,21 +4097,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-gce: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-gce-default-upgrade-containerd-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-gce-default-stable-upgrade-containerd-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestGceDefaultUpgradeContainerdFromV1_22_15_ToV1_23_13
+      - TestGceDefaultStableUpgradeContainerdFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: gce
@@ -4125,21 +4125,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-upgrade-containerd-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-openstack-default-stable-upgrade-containerd-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackDefaultUpgradeContainerdFromV1_22_15_ToV1_23_13
+      - TestOpenstackDefaultStableUpgradeContainerdFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: openstack
@@ -4153,21 +4153,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-upgrade-containerd-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-openstack-centos-stable-upgrade-containerd-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackCentosUpgradeContainerdFromV1_22_15_ToV1_23_13
+      - TestOpenstackCentosStableUpgradeContainerdFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: openstack
@@ -4181,7 +4181,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -4209,21 +4209,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rhel-upgrade-containerd-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-openstack-rhel-stable-upgrade-containerd-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackRhelUpgradeContainerdFromV1_22_15_ToV1_23_13
+      - TestOpenstackRhelStableUpgradeContainerdFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: openstack
@@ -4237,21 +4237,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-flatcar-upgrade-containerd-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-openstack-flatcar-stable-upgrade-containerd-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackFlatcarUpgradeContainerdFromV1_22_15_ToV1_23_13
+      - TestOpenstackFlatcarStableUpgradeContainerdFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: openstack
@@ -4265,21 +4265,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-upgrade-containerd-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-vsphere-default-stable-upgrade-containerd-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestVsphereDefaultUpgradeContainerdFromV1_22_15_ToV1_23_13
+      - TestVsphereDefaultStableUpgradeContainerdFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: vsphere
@@ -4293,21 +4293,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-upgrade-containerd-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-vsphere-flatcar-stable-upgrade-containerd-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestVsphereFlatcarUpgradeContainerdFromV1_22_15_ToV1_23_13
+      - TestVsphereFlatcarStableUpgradeContainerdFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: vsphere
@@ -4321,21 +4321,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-upgrade-docker-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-aws-amzn-stable-upgrade-docker-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsAmznUpgradeDockerFromV1_22_15_ToV1_23_13
+      - TestAwsAmznStableUpgradeDockerFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: aws
@@ -4349,21 +4349,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-upgrade-docker-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-aws-centos-stable-upgrade-docker-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsCentosUpgradeDockerFromV1_22_15_ToV1_23_13
+      - TestAwsCentosStableUpgradeDockerFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: aws
@@ -4377,21 +4377,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-default-upgrade-docker-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-aws-default-stable-upgrade-docker-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsDefaultUpgradeDockerFromV1_22_15_ToV1_23_13
+      - TestAwsDefaultStableUpgradeDockerFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: aws
@@ -4405,21 +4405,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-upgrade-docker-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-aws-flatcar-stable-upgrade-docker-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsFlatcarUpgradeDockerFromV1_22_15_ToV1_23_13
+      - TestAwsFlatcarStableUpgradeDockerFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: aws
@@ -4433,21 +4433,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-upgrade-docker-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-aws-rhel-stable-upgrade-docker-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsRhelUpgradeDockerFromV1_22_15_ToV1_23_13
+      - TestAwsRhelStableUpgradeDockerFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: aws
@@ -4461,21 +4461,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-upgrade-docker-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-aws-rockylinux-stable-upgrade-docker-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsRockylinuxUpgradeDockerFromV1_22_15_ToV1_23_13
+      - TestAwsRockylinuxStableUpgradeDockerFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: aws
@@ -4489,21 +4489,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-upgrade-docker-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-azure-default-stable-upgrade-docker-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureDefaultUpgradeDockerFromV1_22_15_ToV1_23_13
+      - TestAzureDefaultStableUpgradeDockerFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: azure
@@ -4519,21 +4519,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-upgrade-docker-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-azure-centos-stable-upgrade-docker-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureCentosUpgradeDockerFromV1_22_15_ToV1_23_13
+      - TestAzureCentosStableUpgradeDockerFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: azure
@@ -4549,21 +4549,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-flatcar-upgrade-docker-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-azure-flatcar-stable-upgrade-docker-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureFlatcarUpgradeDockerFromV1_22_15_ToV1_23_13
+      - TestAzureFlatcarStableUpgradeDockerFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: azure
@@ -4579,7 +4579,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -4587,14 +4587,14 @@ presubmits:
     preset-azure: "true"
     preset-goproxy: "true"
     preset-rhel: "true"
-  name: pull-kubeone-e2e-azure-rhel-upgrade-docker-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-azure-rhel-stable-upgrade-docker-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureRhelUpgradeDockerFromV1_22_15_ToV1_23_13
+      - TestAzureRhelStableUpgradeDockerFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: azure
@@ -4610,21 +4610,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-rockylinux-upgrade-docker-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-azure-rockylinux-stable-upgrade-docker-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureRockylinuxUpgradeDockerFromV1_22_15_ToV1_23_13
+      - TestAzureRockylinuxStableUpgradeDockerFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: azure
@@ -4640,21 +4640,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-gce: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-gce-default-upgrade-docker-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-gce-default-stable-upgrade-docker-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestGceDefaultUpgradeDockerFromV1_22_15_ToV1_23_13
+      - TestGceDefaultStableUpgradeDockerFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: gce
@@ -4668,21 +4668,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-upgrade-docker-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-openstack-default-stable-upgrade-docker-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackDefaultUpgradeDockerFromV1_22_15_ToV1_23_13
+      - TestOpenstackDefaultStableUpgradeDockerFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: openstack
@@ -4696,21 +4696,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-upgrade-docker-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-openstack-centos-stable-upgrade-docker-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackCentosUpgradeDockerFromV1_22_15_ToV1_23_13
+      - TestOpenstackCentosStableUpgradeDockerFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: openstack
@@ -4724,7 +4724,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -4752,21 +4752,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rhel-upgrade-docker-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-openstack-rhel-stable-upgrade-docker-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackRhelUpgradeDockerFromV1_22_15_ToV1_23_13
+      - TestOpenstackRhelStableUpgradeDockerFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: openstack
@@ -4780,21 +4780,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-flatcar-upgrade-docker-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-openstack-flatcar-stable-upgrade-docker-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackFlatcarUpgradeDockerFromV1_22_15_ToV1_23_13
+      - TestOpenstackFlatcarStableUpgradeDockerFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: openstack
@@ -4808,21 +4808,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-upgrade-docker-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-vsphere-default-stable-upgrade-docker-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestVsphereDefaultUpgradeDockerFromV1_22_15_ToV1_23_13
+      - TestVsphereDefaultStableUpgradeDockerFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: vsphere
@@ -4836,21 +4836,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-upgrade-docker-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-vsphere-flatcar-stable-upgrade-docker-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestVsphereFlatcarUpgradeDockerFromV1_22_15_ToV1_23_13
+      - TestVsphereFlatcarStableUpgradeDockerFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: vsphere
@@ -15633,21 +15633,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-aws-amzn-stable-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsAmznUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
+      - TestAwsAmznStableUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: aws
@@ -15661,21 +15661,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-aws-centos-stable-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsCentosUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
+      - TestAwsCentosStableUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: aws
@@ -15689,21 +15689,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-default-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-aws-default-stable-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsDefaultUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
+      - TestAwsDefaultStableUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: aws
@@ -15717,21 +15717,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-aws-flatcar-stable-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsFlatcarUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
+      - TestAwsFlatcarStableUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: aws
@@ -15745,21 +15745,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-aws-rhel-stable-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsRhelUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
+      - TestAwsRhelStableUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: aws
@@ -15773,21 +15773,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-aws-rockylinux-stable-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsRockylinuxUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
+      - TestAwsRockylinuxStableUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: aws
@@ -15801,21 +15801,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-azure-default-stable-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureDefaultUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
+      - TestAzureDefaultStableUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: azure
@@ -15831,21 +15831,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-azure-centos-stable-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureCentosUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
+      - TestAzureCentosStableUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: azure
@@ -15861,21 +15861,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-flatcar-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-azure-flatcar-stable-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureFlatcarUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
+      - TestAzureFlatcarStableUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: azure
@@ -15891,7 +15891,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -15899,14 +15899,14 @@ presubmits:
     preset-azure: "true"
     preset-goproxy: "true"
     preset-rhel: "true"
-  name: pull-kubeone-e2e-azure-rhel-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-azure-rhel-stable-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureRhelUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
+      - TestAzureRhelStableUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: azure
@@ -15922,21 +15922,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-rockylinux-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-azure-rockylinux-stable-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureRockylinuxUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
+      - TestAzureRockylinuxStableUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: azure
@@ -15952,21 +15952,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-default-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-digitalocean-default-stable-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestDigitaloceanDefaultUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
+      - TestDigitaloceanDefaultStableUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: digitalocean
@@ -15980,21 +15980,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-centos-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-digitalocean-centos-stable-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestDigitaloceanCentosUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
+      - TestDigitaloceanCentosStableUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: digitalocean
@@ -16008,21 +16008,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-rockylinux-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-digitalocean-rockylinux-stable-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestDigitaloceanRockylinuxUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
+      - TestDigitaloceanRockylinuxStableUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: digitalocean
@@ -16036,21 +16036,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-default-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-equinixmetal-default-stable-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestEquinixmetalDefaultUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
+      - TestEquinixmetalDefaultStableUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -16064,21 +16064,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-centos-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-equinixmetal-centos-stable-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestEquinixmetalCentosUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
+      - TestEquinixmetalCentosStableUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -16092,21 +16092,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-rockylinux-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-equinixmetal-rockylinux-stable-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestEquinixmetalRockylinuxUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
+      - TestEquinixmetalRockylinuxStableUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -16120,21 +16120,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-flatcar-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-equinixmetal-flatcar-stable-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestEquinixmetalFlatcarUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
+      - TestEquinixmetalFlatcarStableUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -16148,21 +16148,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-default-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-hetzner-default-stable-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestHetznerDefaultUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
+      - TestHetznerDefaultStableUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: hetzner
@@ -16176,21 +16176,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-centos-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-hetzner-centos-stable-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestHetznerCentosUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
+      - TestHetznerCentosStableUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: hetzner
@@ -16204,21 +16204,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-rockylinux-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-hetzner-rockylinux-stable-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestHetznerRockylinuxUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
+      - TestHetznerRockylinuxStableUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: hetzner
@@ -16232,21 +16232,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-openstack-default-stable-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackDefaultUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
+      - TestOpenstackDefaultStableUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: openstack
@@ -16260,21 +16260,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-openstack-centos-stable-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackCentosUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
+      - TestOpenstackCentosStableUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: openstack
@@ -16288,7 +16288,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -16316,21 +16316,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rhel-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-openstack-rhel-stable-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackRhelUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
+      - TestOpenstackRhelStableUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: openstack
@@ -16344,21 +16344,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-flatcar-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-openstack-flatcar-stable-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackFlatcarUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
+      - TestOpenstackFlatcarStableUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: openstack
@@ -16372,21 +16372,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-vsphere-default-stable-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestVsphereDefaultUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
+      - TestVsphereDefaultStableUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: vsphere
@@ -16400,21 +16400,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-vsphere-flatcar-stable-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestVsphereFlatcarUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
+      - TestVsphereFlatcarStableUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: vsphere
@@ -16428,21 +16428,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-aws-amzn-stable-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsAmznUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
+      - TestAwsAmznStableUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: aws
@@ -16456,21 +16456,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-aws-centos-stable-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsCentosUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
+      - TestAwsCentosStableUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: aws
@@ -16484,21 +16484,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-default-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-aws-default-stable-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsDefaultUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
+      - TestAwsDefaultStableUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: aws
@@ -16512,21 +16512,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-aws-flatcar-stable-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsFlatcarUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
+      - TestAwsFlatcarStableUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: aws
@@ -16540,21 +16540,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-aws-rhel-stable-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsRhelUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
+      - TestAwsRhelStableUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: aws
@@ -16568,21 +16568,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-aws-rockylinux-stable-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsRockylinuxUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
+      - TestAwsRockylinuxStableUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: aws
@@ -16596,21 +16596,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-azure-default-stable-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureDefaultUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
+      - TestAzureDefaultStableUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: azure
@@ -16626,21 +16626,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-azure-centos-stable-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureCentosUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
+      - TestAzureCentosStableUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: azure
@@ -16656,21 +16656,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-flatcar-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-azure-flatcar-stable-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureFlatcarUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
+      - TestAzureFlatcarStableUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: azure
@@ -16686,7 +16686,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -16694,14 +16694,14 @@ presubmits:
     preset-azure: "true"
     preset-goproxy: "true"
     preset-rhel: "true"
-  name: pull-kubeone-e2e-azure-rhel-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-azure-rhel-stable-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureRhelUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
+      - TestAzureRhelStableUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: azure
@@ -16717,21 +16717,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-rockylinux-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-azure-rockylinux-stable-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureRockylinuxUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
+      - TestAzureRockylinuxStableUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: azure
@@ -16747,21 +16747,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-default-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-digitalocean-default-stable-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestDigitaloceanDefaultUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
+      - TestDigitaloceanDefaultStableUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: digitalocean
@@ -16775,21 +16775,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-centos-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-digitalocean-centos-stable-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestDigitaloceanCentosUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
+      - TestDigitaloceanCentosStableUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: digitalocean
@@ -16803,21 +16803,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-rockylinux-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-digitalocean-rockylinux-stable-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestDigitaloceanRockylinuxUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
+      - TestDigitaloceanRockylinuxStableUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: digitalocean
@@ -16831,21 +16831,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-default-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-equinixmetal-default-stable-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestEquinixmetalDefaultUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
+      - TestEquinixmetalDefaultStableUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -16859,21 +16859,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-centos-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-equinixmetal-centos-stable-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestEquinixmetalCentosUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
+      - TestEquinixmetalCentosStableUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -16887,21 +16887,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-rockylinux-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-equinixmetal-rockylinux-stable-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestEquinixmetalRockylinuxUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
+      - TestEquinixmetalRockylinuxStableUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -16915,21 +16915,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-flatcar-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-equinixmetal-flatcar-stable-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestEquinixmetalFlatcarUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
+      - TestEquinixmetalFlatcarStableUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -16943,21 +16943,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-default-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-hetzner-default-stable-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestHetznerDefaultUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
+      - TestHetznerDefaultStableUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: hetzner
@@ -16971,21 +16971,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-centos-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-hetzner-centos-stable-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestHetznerCentosUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
+      - TestHetznerCentosStableUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: hetzner
@@ -16999,21 +16999,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-rockylinux-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-hetzner-rockylinux-stable-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestHetznerRockylinuxUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
+      - TestHetznerRockylinuxStableUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: hetzner
@@ -17027,21 +17027,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-openstack-default-stable-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackDefaultUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
+      - TestOpenstackDefaultStableUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: openstack
@@ -17055,21 +17055,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-openstack-centos-stable-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackCentosUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
+      - TestOpenstackCentosStableUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: openstack
@@ -17083,7 +17083,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -17111,21 +17111,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rhel-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-openstack-rhel-stable-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackRhelUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
+      - TestOpenstackRhelStableUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: openstack
@@ -17139,21 +17139,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-flatcar-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-openstack-flatcar-stable-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackFlatcarUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
+      - TestOpenstackFlatcarStableUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: openstack
@@ -17167,21 +17167,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-vsphere-default-stable-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestVsphereDefaultUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
+      - TestVsphereDefaultStableUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: vsphere
@@ -17195,21 +17195,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
+  name: pull-kubeone-e2e-vsphere-flatcar-stable-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestVsphereFlatcarUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
+      - TestVsphereFlatcarStableUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: vsphere
@@ -17223,21 +17223,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-aws-amzn-stable-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsAmznUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
+      - TestAwsAmznStableUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: aws
@@ -17251,21 +17251,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-aws-centos-stable-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsCentosUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
+      - TestAwsCentosStableUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: aws
@@ -17279,21 +17279,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-default-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-aws-default-stable-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsDefaultUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
+      - TestAwsDefaultStableUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: aws
@@ -17307,21 +17307,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-aws-flatcar-stable-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsFlatcarUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
+      - TestAwsFlatcarStableUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: aws
@@ -17335,21 +17335,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-aws-rhel-stable-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsRhelUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
+      - TestAwsRhelStableUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: aws
@@ -17363,21 +17363,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-aws-rockylinux-stable-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsRockylinuxUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
+      - TestAwsRockylinuxStableUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: aws
@@ -17391,21 +17391,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-azure-default-stable-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureDefaultUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
+      - TestAzureDefaultStableUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: azure
@@ -17421,21 +17421,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-azure-centos-stable-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureCentosUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
+      - TestAzureCentosStableUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: azure
@@ -17451,21 +17451,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-flatcar-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-azure-flatcar-stable-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureFlatcarUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
+      - TestAzureFlatcarStableUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: azure
@@ -17481,7 +17481,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -17489,14 +17489,14 @@ presubmits:
     preset-azure: "true"
     preset-goproxy: "true"
     preset-rhel: "true"
-  name: pull-kubeone-e2e-azure-rhel-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-azure-rhel-stable-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureRhelUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
+      - TestAzureRhelStableUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: azure
@@ -17512,21 +17512,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-rockylinux-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-azure-rockylinux-stable-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureRockylinuxUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
+      - TestAzureRockylinuxStableUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: azure
@@ -17542,21 +17542,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-default-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-digitalocean-default-stable-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestDigitaloceanDefaultUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
+      - TestDigitaloceanDefaultStableUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: digitalocean
@@ -17570,21 +17570,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-centos-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-digitalocean-centos-stable-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestDigitaloceanCentosUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
+      - TestDigitaloceanCentosStableUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: digitalocean
@@ -17598,21 +17598,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-rockylinux-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-digitalocean-rockylinux-stable-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestDigitaloceanRockylinuxUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
+      - TestDigitaloceanRockylinuxStableUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: digitalocean
@@ -17626,21 +17626,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-default-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-equinixmetal-default-stable-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestEquinixmetalDefaultUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
+      - TestEquinixmetalDefaultStableUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -17654,21 +17654,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-centos-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-equinixmetal-centos-stable-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestEquinixmetalCentosUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
+      - TestEquinixmetalCentosStableUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -17682,21 +17682,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-rockylinux-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-equinixmetal-rockylinux-stable-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestEquinixmetalRockylinuxUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
+      - TestEquinixmetalRockylinuxStableUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -17710,21 +17710,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-flatcar-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-equinixmetal-flatcar-stable-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestEquinixmetalFlatcarUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
+      - TestEquinixmetalFlatcarStableUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -17738,21 +17738,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-default-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-hetzner-default-stable-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestHetznerDefaultUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
+      - TestHetznerDefaultStableUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: hetzner
@@ -17766,21 +17766,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-centos-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-hetzner-centos-stable-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestHetznerCentosUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
+      - TestHetznerCentosStableUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: hetzner
@@ -17794,21 +17794,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-rockylinux-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-hetzner-rockylinux-stable-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestHetznerRockylinuxUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
+      - TestHetznerRockylinuxStableUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: hetzner
@@ -17822,21 +17822,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-openstack-default-stable-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackDefaultUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
+      - TestOpenstackDefaultStableUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: openstack
@@ -17850,21 +17850,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-openstack-centos-stable-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackCentosUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
+      - TestOpenstackCentosStableUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: openstack
@@ -17878,7 +17878,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -17906,21 +17906,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rhel-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-openstack-rhel-stable-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackRhelUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
+      - TestOpenstackRhelStableUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: openstack
@@ -17934,21 +17934,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-flatcar-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-openstack-flatcar-stable-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackFlatcarUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
+      - TestOpenstackFlatcarStableUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: openstack
@@ -17962,21 +17962,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-vsphere-default-stable-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestVsphereDefaultUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
+      - TestVsphereDefaultStableUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: vsphere
@@ -17990,21 +17990,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
+  name: pull-kubeone-e2e-vsphere-flatcar-stable-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestVsphereFlatcarUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
+      - TestVsphereFlatcarStableUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: vsphere
@@ -18018,21 +18018,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-upgrade-docker-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-aws-amzn-stable-upgrade-docker-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsAmznUpgradeDockerExternalFromV1_22_15_ToV1_23_13
+      - TestAwsAmznStableUpgradeDockerExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: aws
@@ -18046,21 +18046,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-upgrade-docker-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-aws-centos-stable-upgrade-docker-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsCentosUpgradeDockerExternalFromV1_22_15_ToV1_23_13
+      - TestAwsCentosStableUpgradeDockerExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: aws
@@ -18074,21 +18074,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-default-upgrade-docker-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-aws-default-stable-upgrade-docker-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsDefaultUpgradeDockerExternalFromV1_22_15_ToV1_23_13
+      - TestAwsDefaultStableUpgradeDockerExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: aws
@@ -18102,21 +18102,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-upgrade-docker-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-aws-flatcar-stable-upgrade-docker-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsFlatcarUpgradeDockerExternalFromV1_22_15_ToV1_23_13
+      - TestAwsFlatcarStableUpgradeDockerExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: aws
@@ -18130,21 +18130,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-upgrade-docker-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-aws-rhel-stable-upgrade-docker-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsRhelUpgradeDockerExternalFromV1_22_15_ToV1_23_13
+      - TestAwsRhelStableUpgradeDockerExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: aws
@@ -18158,21 +18158,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-aws: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-upgrade-docker-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-aws-rockylinux-stable-upgrade-docker-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsRockylinuxUpgradeDockerExternalFromV1_22_15_ToV1_23_13
+      - TestAwsRockylinuxStableUpgradeDockerExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: aws
@@ -18186,21 +18186,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-upgrade-docker-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-azure-default-stable-upgrade-docker-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureDefaultUpgradeDockerExternalFromV1_22_15_ToV1_23_13
+      - TestAzureDefaultStableUpgradeDockerExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: azure
@@ -18216,21 +18216,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-upgrade-docker-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-azure-centos-stable-upgrade-docker-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureCentosUpgradeDockerExternalFromV1_22_15_ToV1_23_13
+      - TestAzureCentosStableUpgradeDockerExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: azure
@@ -18246,21 +18246,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-flatcar-upgrade-docker-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-azure-flatcar-stable-upgrade-docker-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureFlatcarUpgradeDockerExternalFromV1_22_15_ToV1_23_13
+      - TestAzureFlatcarStableUpgradeDockerExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: azure
@@ -18276,7 +18276,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -18284,14 +18284,14 @@ presubmits:
     preset-azure: "true"
     preset-goproxy: "true"
     preset-rhel: "true"
-  name: pull-kubeone-e2e-azure-rhel-upgrade-docker-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-azure-rhel-stable-upgrade-docker-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureRhelUpgradeDockerExternalFromV1_22_15_ToV1_23_13
+      - TestAzureRhelStableUpgradeDockerExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: azure
@@ -18307,21 +18307,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-rockylinux-upgrade-docker-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-azure-rockylinux-stable-upgrade-docker-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureRockylinuxUpgradeDockerExternalFromV1_22_15_ToV1_23_13
+      - TestAzureRockylinuxStableUpgradeDockerExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: azure
@@ -18337,21 +18337,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-default-upgrade-docker-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-digitalocean-default-stable-upgrade-docker-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestDigitaloceanDefaultUpgradeDockerExternalFromV1_22_15_ToV1_23_13
+      - TestDigitaloceanDefaultStableUpgradeDockerExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: digitalocean
@@ -18365,21 +18365,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-centos-upgrade-docker-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-digitalocean-centos-stable-upgrade-docker-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestDigitaloceanCentosUpgradeDockerExternalFromV1_22_15_ToV1_23_13
+      - TestDigitaloceanCentosStableUpgradeDockerExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: digitalocean
@@ -18393,21 +18393,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-rockylinux-upgrade-docker-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-digitalocean-rockylinux-stable-upgrade-docker-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestDigitaloceanRockylinuxUpgradeDockerExternalFromV1_22_15_ToV1_23_13
+      - TestDigitaloceanRockylinuxStableUpgradeDockerExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: digitalocean
@@ -18421,21 +18421,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-default-upgrade-docker-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-equinixmetal-default-stable-upgrade-docker-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestEquinixmetalDefaultUpgradeDockerExternalFromV1_22_15_ToV1_23_13
+      - TestEquinixmetalDefaultStableUpgradeDockerExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -18449,21 +18449,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-centos-upgrade-docker-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-equinixmetal-centos-stable-upgrade-docker-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestEquinixmetalCentosUpgradeDockerExternalFromV1_22_15_ToV1_23_13
+      - TestEquinixmetalCentosStableUpgradeDockerExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -18477,21 +18477,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-rockylinux-upgrade-docker-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-equinixmetal-rockylinux-stable-upgrade-docker-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestEquinixmetalRockylinuxUpgradeDockerExternalFromV1_22_15_ToV1_23_13
+      - TestEquinixmetalRockylinuxStableUpgradeDockerExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -18505,21 +18505,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-flatcar-upgrade-docker-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-equinixmetal-flatcar-stable-upgrade-docker-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestEquinixmetalFlatcarUpgradeDockerExternalFromV1_22_15_ToV1_23_13
+      - TestEquinixmetalFlatcarStableUpgradeDockerExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -18533,21 +18533,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-default-upgrade-docker-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-hetzner-default-stable-upgrade-docker-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestHetznerDefaultUpgradeDockerExternalFromV1_22_15_ToV1_23_13
+      - TestHetznerDefaultStableUpgradeDockerExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: hetzner
@@ -18561,21 +18561,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-centos-upgrade-docker-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-hetzner-centos-stable-upgrade-docker-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestHetznerCentosUpgradeDockerExternalFromV1_22_15_ToV1_23_13
+      - TestHetznerCentosStableUpgradeDockerExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: hetzner
@@ -18589,21 +18589,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-rockylinux-upgrade-docker-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-hetzner-rockylinux-stable-upgrade-docker-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestHetznerRockylinuxUpgradeDockerExternalFromV1_22_15_ToV1_23_13
+      - TestHetznerRockylinuxStableUpgradeDockerExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: hetzner
@@ -18617,21 +18617,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-upgrade-docker-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-openstack-default-stable-upgrade-docker-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackDefaultUpgradeDockerExternalFromV1_22_15_ToV1_23_13
+      - TestOpenstackDefaultStableUpgradeDockerExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: openstack
@@ -18645,21 +18645,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-upgrade-docker-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-openstack-centos-stable-upgrade-docker-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackCentosUpgradeDockerExternalFromV1_22_15_ToV1_23_13
+      - TestOpenstackCentosStableUpgradeDockerExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: openstack
@@ -18673,7 +18673,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -18701,21 +18701,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rhel-upgrade-docker-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-openstack-rhel-stable-upgrade-docker-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackRhelUpgradeDockerExternalFromV1_22_15_ToV1_23_13
+      - TestOpenstackRhelStableUpgradeDockerExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: openstack
@@ -18729,21 +18729,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-flatcar-upgrade-docker-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-openstack-flatcar-stable-upgrade-docker-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackFlatcarUpgradeDockerExternalFromV1_22_15_ToV1_23_13
+      - TestOpenstackFlatcarStableUpgradeDockerExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: openstack
@@ -18757,21 +18757,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-default-upgrade-docker-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-vsphere-default-stable-upgrade-docker-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestVsphereDefaultUpgradeDockerExternalFromV1_22_15_ToV1_23_13
+      - TestVsphereDefaultStableUpgradeDockerExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: vsphere
@@ -18785,21 +18785,21 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.4
+  - base_ref: release/v1.5
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-upgrade-docker-external-from-v1.22.15-to-v1.23.13
+  name: pull-kubeone-e2e-vsphere-flatcar-stable-upgrade-docker-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestVsphereFlatcarUpgradeDockerExternalFromV1_22_15_ToV1_23_13
+      - TestVsphereFlatcarStableUpgradeDockerExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: vsphere
