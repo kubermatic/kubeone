@@ -395,8 +395,20 @@ func newNodeIP(host kubeoneapi.HostConfig) string {
 
 func newNodeRegistration(s *state.State, host kubeoneapi.HostConfig) kubeadmv1beta3.NodeRegistrationOptions {
 	kubeletCLIFlags := map[string]string{
-		"node-ip":           newNodeIP(host),
 		"volume-plugin-dir": "/var/lib/kubelet/volumeplugins",
+	}
+
+	if s.Cluster.ClusterNetwork.IPFamily == kubeoneapi.DualStack {
+		// If external or in-tree CCM is in use we don't need to set --node-ip
+		// as the cloud provider will know what IPs to return.
+		if !(s.Cluster.CloudProvider.External || s.Cluster.CloudProvider.None == nil) {
+			// TODO: shouldn't these be default interface ips?
+			//   DEFAULT_IFC_IPv4=$(ip -o route get  1 | grep -oP "src \K\S+")
+			//   DEFAULT_IFC_IPv6=$(ip -o -6 route get  1:: | grep -oP "src \K\S+")
+			kubeletCLIFlags["node-ip"] = newNodeIP(host) + "," + host.IPv6Address[0]
+		}
+	} else {
+		kubeletCLIFlags["node-ip"] = newNodeIP(host)
 	}
 
 	if m := host.Kubelet.SystemReserved; m != nil {

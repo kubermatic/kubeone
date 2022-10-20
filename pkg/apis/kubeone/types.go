@@ -167,6 +167,9 @@ type HostConfig struct {
 	// PublicAddress is externally accessible IP address from public internet.
 	PublicAddress string `json:"publicAddress"`
 
+	// IPv6Address
+	IPv6Address []string `json:"IPv6Address"`
+
 	// PrivateAddress is internal RFC-1918 IP address.
 	PrivateAddress string `json:"privateAddress"`
 
@@ -395,7 +398,20 @@ type ClusterNetworkConfig struct {
 
 	// KubeProxy config
 	KubeProxy *KubeProxyConfig `json:"kubeProxy,omitempty"`
+
+	// IPFamily "" | IPv4 | IPv6 | IPv4+IPv6.
+	IPFamily IPFamily `json:"ipFamily,omitempty"`
 }
+
+// IPFamily IPv4 | IPv6 | IPv4+IPv6.
+type IPFamily string
+
+const (
+	Unspecified IPFamily = "" // interpreted as IPv4
+	IPv4        IPFamily = "IPv4"
+	IPv6        IPFamily = "IPv6"
+	DualStack   IPFamily = "IPv4+IPv6"
+)
 
 // KubeProxyConfig defines configured kube-proxy mode, default is iptables mode
 type KubeProxyConfig struct {

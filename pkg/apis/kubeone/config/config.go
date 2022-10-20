@@ -211,6 +211,9 @@ func DefaultedV1Beta2KubeOneCluster(versionedCluster *kubeonev1beta2.KubeOneClus
 		return nil, fail.Config(err, fmt.Sprintf("converting %s to internal object", versionedCluster.GroupVersionKind()))
 	}
 
+	// TODO: why doesn't convert ^ do it?
+	internalCluster.ClusterNetwork.IPFamily = kubeoneapi.IPFamily(versionedCluster.ClusterNetwork.IPFamily)
+
 	// Apply the dynamic defaults
 	if err := SetKubeOneClusterDynamicDefaults(internalCluster, credentialsFile); err != nil {
 		return nil, err

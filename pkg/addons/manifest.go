@@ -295,8 +295,13 @@ func txtFuncMap(overwriteRegistry string) template.FuncMap {
 	funcs["caBundleVolumeMount"] = caBundleVolumeMountTemplateFunc
 	funcs["EquinixMetalSecret"] = equinixMetalSecretTemplateFunc
 	funcs["vSphereCSIWebhookConfig"] = vSphereCSIWebhookConfigTemplateFunc
+	funcs["takeCIDRn"] = takeCIDRn
 
 	return funcs
+}
+
+func takeCIDRn(n int, s string) string {
+	return strings.Split(s, ",")[n]
 }
 
 func requiredTemplateFunc(warn string, input interface{}) (interface{}, error) {

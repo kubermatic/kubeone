@@ -20,7 +20,6 @@ import (
 	"bytes"
 	"crypto/x509"
 	"fmt"
-	"net"
 	"reflect"
 	"strings"
 
@@ -32,6 +31,7 @@ import (
 
 	"k8s.io/apimachinery/pkg/util/validation"
 	"k8s.io/apimachinery/pkg/util/validation/field"
+	netutils "k8s.io/utils/net"
 )
 
 const (
@@ -350,16 +350,44 @@ func ValidateContainerRuntimeConfig(cr kubeoneapi.ContainerRuntimeConfig, versio
 func ValidateClusterNetworkConfig(c kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
-	if len(c.PodSubnet) > 0 {
-		if _, _, err := net.ParseCIDR(c.PodSubnet); err != nil {
-			allErrs = append(allErrs, field.Invalid(fldPath.Child("podSubnet"), c.PodSubnet, ".clusterNetwork.podSubnet must be a valid CIDR string"))
+	subnetCountErr := func(node, subnet string, count int, ipFamily kubeoneapi.IPFamily) *field.Error {
+		return field.Invalid(fldPath.Child(node), subnet, fmt.Sprintf(".clusterNetwork.%s must specify %d subnet(s) for %q IP family.", node, count, ipFamily))
+	}
+
+	invalidFamilyErr := func(node, subnet string, ipFamily kubeoneapi.IPFamily) *field.Error {
+		return field.Invalid(fldPath.Child(node), subnet, fmt.Sprintf(".clusterNetwork.%s must be valid %q subnet.", node, ipFamily))
+	}
+
+	var subnetValidators []func(string) bool
+	switch c.IPFamily {
+	case kubeoneapi.Unspecified, kubeoneapi.IPv4:
+		subnetValidators = append(subnetValidators, netutils.IsIPv4CIDRString)
+	case kubeoneapi.IPv6:
+		subnetValidators = append(subnetValidators, netutils.IsIPv6CIDRString)
+	case kubeoneapi.DualStack:
+		subnetValidators = append(subnetValidators, netutils.IsIPv4CIDRString, netutils.IsIPv6CIDRString)
+	default:
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("ipFamily"), c.IPFamily, "unknown ipFamily"))
+	}
+
+	validateCIDRs := func(node, subnet string) {
+		if len(subnet) == 0 {
+			return
+		}
+		subnets := strings.Split(subnet, ",")
+		if len(subnets) != len(subnetValidators) {
+			allErrs = append(allErrs, subnetCountErr(node, subnet, len(subnetValidators), c.IPFamily))
+		} else {
+			for i, isValid := range subnetValidators {
+				if !isValid(subnets[i]) {
+					allErrs = append(allErrs, invalidFamilyErr(node, subnet, c.IPFamily))
+				}
+			}
 		}
 	}
-	if len(c.ServiceSubnet) > 0 {
-		if _, _, err := net.ParseCIDR(c.ServiceSubnet); err != nil {
-			allErrs = append(allErrs, field.Invalid(fldPath.Child("serviceSubnet"), c.ServiceSubnet, ".clusterNetwork.serviceSubnet must be a valid CIDR string"))
-		}
-	}
+
+	validateCIDRs("podSubnet", c.PodSubnet)
+	validateCIDRs("serviceSubnet", c.ServiceSubnet)
 
 	if c.CNI != nil {
 		allErrs = append(allErrs, ValidateCNI(c.CNI, fldPath.Child("cni"))...)
@@ -586,6 +614,11 @@ func ValidateHostConfig(hosts []kubeoneapi.HostConfig, fldPath *field.Path) fiel
 		}
 		if len(h.PublicAddress) == 0 {
 			allErrs = append(allErrs, field.Required(fldPath, "no public IP/address given"))
+		}
+
+		TODODualstack := false
+		if TODODualstack && len(h.IPv6Address) == 0 {
+			allErrs = append(allErrs, field.Required(fldPath, "no IPv6 address given"))
 		}
 		if len(h.PrivateAddress) == 0 {
 			allErrs = append(allErrs, field.Required(fldPath, "no private IP/address givevn"))
