@@ -36,8 +36,8 @@ import (
 )
 
 const (
-	kubeoneStableVersion = "1.4.7" //nolint:deadcode,varcheck
-	kubeoneStableBaseRef = "release/v1.4"
+	kubeoneStableVersion = "1.5.1" //nolint:deadcode,varcheck
+	kubeoneStableBaseRef = "release/v1.5"
 )
 
 type scenarioUpgrade struct {
