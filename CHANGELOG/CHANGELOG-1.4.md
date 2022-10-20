@@ -1,3 +1,13 @@
+# [v1.4.10](https://github.com/kubermatic/kubeone/releases/tag/v1.4.10) - 2022-09-20
+
+## Changelog since v1.4.9
+
+## Changes by Kind
+
+### Bug or Regression
+
+- Update `golang.org/x/crypto` dependency to a newer version to fix issues with SSH authentication on instances with newer OpenSSH versions ([#2390](https://github.com/kubermatic/kubeone/pull/2390), [@xmudrii](https://github.com/xmudrii))
+
 # [v1.4.9](https://github.com/kubermatic/kubeone/releases/tag/v1.4.9) - 2022-09-26
 
 ## Changelog since v1.4.8

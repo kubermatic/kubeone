@@ -1,3 +1,19 @@
+# [v1.5.2](https://github.com/kubermatic/kubeone/releases/tag/v1.5.2) - 2022-10-20
+
+## Changelog since v1.5.1
+
+## Changes by Kind
+
+### Feature
+
+- Add support for Ubuntu 22.04 ([#2383](https://github.com/kubermatic/kubeone/pull/2383), [@ahmedwaleedmalik](https://github.com/ahmedwaleedmalik))
+
+### Updates
+
+- Update containerd to 1.6. This change affects control plane nodes, static worker nodes, and nodes managed by machine-controller/OSM ([#2388](https://github.com/kubermatic/kubeone/pull/2388), [@ahmedwaleedmalik](https://github.com/ahmedwaleedmalik))
+- Update to machine-controller v1.54.1 ([#2383](https://github.com/kubermatic/kubeone/pull/2383), [@ahmedwaleedmalik](https://github.com/ahmedwaleedmalik))
+- Update Operating System Manager (OSM) to 1.1.1 ([#2388](https://github.com/kubermatic/kubeone/pull/2388), [@ahmedwaleedmalik](https://github.com/ahmedwaleedmalik))
+
 # [v1.5.1](https://github.com/kubermatic/kubeone/releases/tag/v1.5.1) - 2022-09-26
 
 ## Changelog since v1.5.0
