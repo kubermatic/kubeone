@@ -44,6 +44,23 @@ var (
 				},
 			},
 		},
+		"aws_default_stable": {
+			name: "aws_default_stable",
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-aws":     "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "aws",
+			},
+			terraform: terraformBin{
+				path: "../../../kubeone-stable/examples/terraform/aws",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+					"subnets_cidr=27",
+				},
+			},
+		},
 		"aws_centos": {
 			name: "aws_centos",
 			environ: map[string]string{
@@ -55,6 +72,24 @@ var (
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/aws",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+					"subnets_cidr=27",
+					"os=centos",
+				},
+			},
+		},
+		"aws_centos_stable": {
+			name: "aws_centos_stable",
+			environ: map[string]string{
+				"PROVIDER": "aws",
+			},
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-aws":     "true",
+			},
+			terraform: terraformBin{
+				path: "../../../kubeone-stable/examples/terraform/aws",
 				vars: []string{
 					"disable_kubeapi_loadbalancer=true",
 					"subnets_cidr=27",
@@ -81,6 +116,25 @@ var (
 				},
 			},
 		},
+		"aws_rhel_stable": {
+			name: "aws_rhel_stable",
+			environ: map[string]string{
+				"PROVIDER": "aws",
+			},
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-aws":     "true",
+			},
+			terraform: terraformBin{
+				path: "../../../kubeone-stable/examples/terraform/aws",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+					"subnets_cidr=27",
+					"os=rhel",
+					"bastion_type=t3.micro",
+				},
+			},
+		},
 		"aws_rockylinux": {
 			name: "aws_rockylinux",
 			environ: map[string]string{
@@ -99,6 +153,24 @@ var (
 				},
 			},
 		},
+		"aws_rockylinux_stable": {
+			name: "aws_rockylinux_stable",
+			environ: map[string]string{
+				"PROVIDER": "aws",
+			},
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-aws":     "true",
+			},
+			terraform: terraformBin{
+				path: "../../../kubeone-stable/examples/terraform/aws",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+					"subnets_cidr=27",
+					"os=rockylinux",
+				},
+			},
+		},
 		"aws_flatcar": {
 			name: "aws_flatcar",
 			environ: map[string]string{
@@ -110,6 +182,24 @@ var (
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/aws",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+					"subnets_cidr=27",
+					"os=flatcar",
+				},
+			},
+		},
+		"aws_flatcar_stable": {
+			name: "aws_flatcar_stable",
+			environ: map[string]string{
+				"PROVIDER": "aws",
+			},
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-aws":     "true",
+			},
+			terraform: terraformBin{
+				path: "../../../kubeone-stable/examples/terraform/aws",
 				vars: []string{
 					"disable_kubeapi_loadbalancer=true",
 					"subnets_cidr=27",
@@ -138,6 +228,27 @@ var (
 				},
 			},
 		},
+		"aws_flatcar_cloud_init_stable": {
+			name: "aws_flatcar_cloud_init_stable",
+			environ: map[string]string{
+				"PROVIDER": "aws",
+			},
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-aws":     "true",
+			},
+			terraform: terraformBin{
+				path: "../../../kubeone-stable/examples/terraform/aws",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+					"subnets_cidr=27",
+					"os=flatcar",
+					"ssh_username=core",
+					"bastion_user=core",
+					"worker_deploy_ssh_key=false",
+				},
+			},
+		},
 		"aws_amzn": {
 			name: "aws_amzn",
 			environ: map[string]string{
@@ -149,6 +260,24 @@ var (
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/aws",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+					"subnets_cidr=27",
+					"os=amzn",
+				},
+			},
+		},
+		"aws_amzn_stable": {
+			name: "aws_amzn_stable",
+			environ: map[string]string{
+				"PROVIDER": "aws",
+			},
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-aws":     "true",
+			},
+			terraform: terraformBin{
+				path: "../../../kubeone-stable/examples/terraform/aws",
 				vars: []string{
 					"disable_kubeapi_loadbalancer=true",
 					"subnets_cidr=27",
@@ -190,6 +319,23 @@ var (
 				},
 			},
 		},
+		"azure_default_stable": {
+			name: "azure_default_stable",
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-azure":   "true",
+			},
+			environ: map[string]string{
+				"PROVIDER":     "azure",
+				"TEST_TIMEOUT": "120m",
+			},
+			terraform: terraformBin{
+				path: "../../../kubeone-stable/examples/terraform/azure",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+				},
+			},
+		},
 		"azure_centos": {
 			name: "azure_centos",
 			labels: map[string]string{
@@ -208,6 +354,24 @@ var (
 				},
 			},
 		},
+		"azure_centos_stable": {
+			name: "azure_centos_stable",
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-azure":   "true",
+			},
+			environ: map[string]string{
+				"PROVIDER":     "azure",
+				"TEST_TIMEOUT": "120m",
+			},
+			terraform: terraformBin{
+				path: "../../../kubeone-stable/examples/terraform/azure",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+					"os=centos",
+				},
+			},
+		},
 		"azure_flatcar": {
 			name: "azure_flatcar",
 			labels: map[string]string{
@@ -220,6 +384,24 @@ var (
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/azure",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+					"os=flatcar",
+				},
+			},
+		},
+		"azure_flatcar_stable": {
+			name: "azure_flatcar_stable",
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-azure":   "true",
+			},
+			environ: map[string]string{
+				"PROVIDER":     "azure",
+				"TEST_TIMEOUT": "120m",
+			},
+			terraform: terraformBin{
+				path: "../../../kubeone-stable/examples/terraform/azure",
 				vars: []string{
 					"disable_kubeapi_loadbalancer=true",
 					"os=flatcar",
@@ -245,6 +427,25 @@ var (
 				},
 			},
 		},
+		"azure_rhel_stable": {
+			name: "azure_rhel_stable",
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-azure":   "true",
+				"preset-rhel":    "true",
+			},
+			environ: map[string]string{
+				"PROVIDER":     "azure",
+				"TEST_TIMEOUT": "120m",
+			},
+			terraform: terraformBin{
+				path: "../../../kubeone-stable/examples/terraform/azure",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+					"os=rhel",
+				},
+			},
+		},
 		"azure_rockylinux": {
 			name: "azure_rockylinux",
 			labels: map[string]string{
@@ -257,6 +458,24 @@ var (
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/azure",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+					"os=rockylinux",
+				},
+			},
+		},
+		"azure_rockylinux_stable": {
+			name: "azure_rockylinux_stable",
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-azure":   "true",
+			},
+			environ: map[string]string{
+				"PROVIDER":     "azure",
+				"TEST_TIMEOUT": "120m",
+			},
+			terraform: terraformBin{
+				path: "../../../kubeone-stable/examples/terraform/azure",
 				vars: []string{
 					"disable_kubeapi_loadbalancer=true",
 					"os=rockylinux",
@@ -279,6 +498,22 @@ var (
 				},
 			},
 		},
+		"digitalocean_default_stable": {
+			name: "digitalocean_default_stable",
+			labels: map[string]string{
+				"preset-goproxy":      "true",
+				"preset-digitalocean": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "digitalocean",
+			},
+			terraform: terraformBin{
+				path: "../../../kubeone-stable/examples/terraform/digitalocean",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+				},
+			},
+		},
 		"digitalocean_centos": {
 			name: "digitalocean_centos",
 			labels: map[string]string{
@@ -290,6 +525,24 @@ var (
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/digitalocean",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+					"control_plane_droplet_image=centos-7-x64",
+					"worker_os=centos",
+				},
+			},
+		},
+		"digitalocean_centos_stable": {
+			name: "digitalocean_centos_stable",
+			labels: map[string]string{
+				"preset-goproxy":      "true",
+				"preset-digitalocean": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "digitalocean",
+			},
+			terraform: terraformBin{
+				path: "../../../kubeone-stable/examples/terraform/digitalocean",
 				vars: []string{
 					"disable_kubeapi_loadbalancer=true",
 					"control_plane_droplet_image=centos-7-x64",
@@ -315,6 +568,24 @@ var (
 				},
 			},
 		},
+		"digitalocean_rockylinux_stable": {
+			name: "digitalocean_rockylinux_stable",
+			labels: map[string]string{
+				"preset-goproxy":      "true",
+				"preset-digitalocean": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "digitalocean",
+			},
+			terraform: terraformBin{
+				path: "../../../kubeone-stable/examples/terraform/digitalocean",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+					"control_plane_droplet_image=rockylinux-8-x64",
+					"worker_os=rockylinux",
+				},
+			},
+		},
 		"equinixmetal_default": {
 			name: "equinixmetal_default",
 			labels: map[string]string{
@@ -328,6 +599,19 @@ var (
 				path: "../../examples/terraform/equinixmetal",
 			},
 		},
+		"equinixmetal_default_stable": {
+			name: "equinixmetal_default_stable",
+			labels: map[string]string{
+				"preset-goproxy":       "true",
+				"preset-equinix-metal": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "equinixmetal",
+			},
+			terraform: terraformBin{
+				path: "../../../kubeone-stable/examples/terraform/equinixmetal",
+			},
+		},
 		"equinixmetal_centos": {
 			name: "equinixmetal_centos",
 			labels: map[string]string{
@@ -339,6 +623,24 @@ var (
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/equinixmetal",
+				vars: []string{
+					"control_plane_operating_system=centos_7",
+					"lb_operating_system=centos_7",
+					"worker_os=centos",
+				},
+			},
+		},
+		"equinixmetal_centos_stable": {
+			name: "equinixmetal_centos_stable",
+			labels: map[string]string{
+				"preset-goproxy":       "true",
+				"preset-equinix-metal": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "equinixmetal",
+			},
+			terraform: terraformBin{
+				path: "../../../kubeone-stable/examples/terraform/equinixmetal",
 				vars: []string{
 					"control_plane_operating_system=centos_7",
 					"lb_operating_system=centos_7",
@@ -364,6 +666,24 @@ var (
 				},
 			},
 		},
+		"equinixmetal_rockylinux_stable": {
+			name: "equinixmetal_rockylinux_stable",
+			labels: map[string]string{
+				"preset-goproxy":       "true",
+				"preset-equinix-metal": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "equinixmetal",
+			},
+			terraform: terraformBin{
+				path: "../../../kubeone-stable/examples/terraform/equinixmetal",
+				vars: []string{
+					"control_plane_operating_system=rocky_8",
+					"lb_operating_system=rocky_8",
+					"worker_os=rockylinux",
+				},
+			},
+		},
 		"equinixmetal_flatcar": {
 			name: "equinixmetal_flatcar",
 			labels: map[string]string{
@@ -375,6 +695,24 @@ var (
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/equinixmetal",
+				vars: []string{
+					"control_plane_operating_system=flatcar_stable",
+					"worker_os=flatcar",
+					"ssh_username=core",
+				},
+			},
+		},
+		"equinixmetal_flatcar_stable": {
+			name: "equinixmetal_flatcar_stable",
+			labels: map[string]string{
+				"preset-goproxy":       "true",
+				"preset-equinix-metal": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "equinixmetal",
+			},
+			terraform: terraformBin{
+				path: "../../../kubeone-stable/examples/terraform/equinixmetal",
 				vars: []string{
 					"control_plane_operating_system=flatcar_stable",
 					"worker_os=flatcar",
@@ -398,6 +736,22 @@ var (
 				},
 			},
 		},
+		"gce_default_stable": {
+			name: "gce_default_stable",
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-gce":     "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "gce",
+			},
+			terraform: terraformBin{
+				path: "../../../kubeone-stable/examples/terraform/gce",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+				},
+			},
+		},
 		"hetzner_default": {
 			name: "hetzner_default",
 			labels: map[string]string{
@@ -414,6 +768,22 @@ var (
 				},
 			},
 		},
+		"hetzner_default_stable": {
+			name: "hetzner_default_stable",
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-hetzner": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "hetzner",
+			},
+			terraform: terraformBin{
+				path: "../../../kubeone-stable/examples/terraform/hetzner",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+				},
+			},
+		},
 		"hetzner_centos": {
 			name: "hetzner_centos",
 			labels: map[string]string{
@@ -425,6 +795,24 @@ var (
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/hetzner",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+					"image=centos-7",
+					"worker_os=centos",
+				},
+			},
+		},
+		"hetzner_centos_stable": {
+			name: "hetzner_centos_stable",
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-hetzner": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "hetzner",
+			},
+			terraform: terraformBin{
+				path: "../../../kubeone-stable/examples/terraform/hetzner",
 				vars: []string{
 					"disable_kubeapi_loadbalancer=true",
 					"image=centos-7",
@@ -450,6 +838,24 @@ var (
 				},
 			},
 		},
+		"hetzner_rockylinux_stable": {
+			name: "hetzner_rockylinux_stable",
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-hetzner": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "hetzner",
+			},
+			terraform: terraformBin{
+				path: "../../../kubeone-stable/examples/terraform/hetzner",
+				vars: []string{
+					"disable_kubeapi_loadbalancer=true",
+					"image=rocky-8",
+					"worker_os=rockylinux",
+				},
+			},
+		},
 		"openstack_default": {
 			name: "openstack_default",
 			labels: map[string]string{
@@ -461,6 +867,20 @@ var (
 			},
 			terraform: terraformBin{
 				path:    "../../examples/terraform/openstack",
+				varFile: "testdata/openstack_ubuntu.tfvars",
+			},
+		},
+		"openstack_default_stable": {
+			name: "openstack_default_stable",
+			labels: map[string]string{
+				"preset-goproxy":   "true",
+				"preset-openstack": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "openstack",
+			},
+			terraform: terraformBin{
+				path:    "../../../kubeone-stable/examples/terraform/openstack",
 				varFile: "testdata/openstack_ubuntu.tfvars",
 			},
 		},
@@ -478,6 +898,20 @@ var (
 				varFile: "testdata/openstack_centos.tfvars",
 			},
 		},
+		"openstack_centos_stable": {
+			name: "openstack_centos_stable",
+			labels: map[string]string{
+				"preset-goproxy":   "true",
+				"preset-openstack": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "openstack",
+			},
+			terraform: terraformBin{
+				path:    "../../../kubeone-stable/examples/terraform/openstack",
+				varFile: "testdata/openstack_centos.tfvars",
+			},
+		},
 		"openstack_rockylinux": {
 			name: "openstack_rockylinux",
 			labels: map[string]string{
@@ -489,6 +923,20 @@ var (
 			},
 			terraform: terraformBin{
 				path:    "../../examples/terraform/openstack",
+				varFile: "testdata/openstack_rockylinux.tfvars",
+			},
+		},
+		"openstack_rockylinux_stable": {
+			name: "openstack_rockylinux",
+			labels: map[string]string{
+				"preset-goproxy":   "true",
+				"preset-openstack": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "openstack",
+			},
+			terraform: terraformBin{
+				path:    "../../../kubeone-stable/examples/terraform/openstack",
 				varFile: "testdata/openstack_rockylinux.tfvars",
 			},
 		},
@@ -506,6 +954,20 @@ var (
 				varFile: "testdata/openstack_rhel.tfvars",
 			},
 		},
+		"openstack_rhel_stable": {
+			name: "openstack_rhel_stable",
+			labels: map[string]string{
+				"preset-goproxy":   "true",
+				"preset-openstack": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "openstack",
+			},
+			terraform: terraformBin{
+				path:    "../../../kubeone-stable/examples/terraform/openstack",
+				varFile: "testdata/openstack_rhel.tfvars",
+			},
+		},
 		"openstack_flatcar": {
 			name: "openstack_flatcar",
 			labels: map[string]string{
@@ -517,6 +979,20 @@ var (
 			},
 			terraform: terraformBin{
 				path:    "../../examples/terraform/openstack",
+				varFile: "testdata/openstack_flatcar.tfvars",
+			},
+		},
+		"openstack_flatcar_stable": {
+			name: "openstack_flatcar_stable",
+			labels: map[string]string{
+				"preset-goproxy":   "true",
+				"preset-openstack": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "openstack",
+			},
+			terraform: terraformBin{
+				path:    "../../../kubeone-stable/examples/terraform/openstack",
 				varFile: "testdata/openstack_flatcar.tfvars",
 			},
 		},
@@ -552,6 +1028,25 @@ var (
 				},
 			},
 		},
+		"vsphere_default_stable": {
+			name: "vsphere_default_stable",
+			labels: map[string]string{
+				"preset-goproxy":        "true",
+				"preset-vsphere-legacy": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "vsphere",
+			},
+			terraform: terraformBin{
+				path:    "../../../kubeone-stable/examples/terraform/vsphere",
+				varFile: "testdata/vsphere.tfvars",
+				vars: []string{
+					"template_name=kubeone-e2e-ubuntu",
+					"worker_os=ubuntu",
+					"ssh_username=ubuntu",
+				},
+			},
+		},
 		"vsphere_flatcar": {
 			name: "vsphere_flatcar",
 			labels: map[string]string{
@@ -563,6 +1058,23 @@ var (
 			},
 			terraform: terraformBin{
 				path:    "../../examples/terraform/vsphere_flatcar",
+				varFile: "testdata/vsphere.tfvars",
+				vars: []string{
+					"template_name=machine-controller-e2e-flatcar",
+				},
+			},
+		},
+		"vsphere_flatcar_stable": {
+			name: "vsphere_flatcar_stable",
+			labels: map[string]string{
+				"preset-goproxy":        "true",
+				"preset-vsphere-legacy": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "vsphere",
+			},
+			terraform: terraformBin{
+				path:    "../../../kubeone-stable/examples/terraform/vsphere_flatcar",
 				varFile: "testdata/vsphere.tfvars",
 				vars: []string{
 					"template_name=machine-controller-e2e-flatcar",
