@@ -134,6 +134,12 @@ variable "worker_type" {
   type        = string
 }
 
+variable "worker_volume_size" {
+  default     = 50
+  description = "Size of the EBS volume, in Gb"
+  type        = number
+}
+
 variable "bastion_type" {
   default     = "t3.nano"
   description = "instance type for bastion"
