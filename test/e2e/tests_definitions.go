@@ -37,19 +37,8 @@ var (
 				"PROVIDER": "aws",
 			},
 			terraform: terraformBin{
-				path: "../../examples/terraform/aws",
-				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
-					"subnets_cidr=27",
-					// Use smaller instances in Ireland (the cheapest EU region)
-					"aws_region=eu-west-1",
-					"control_plane_type=t3a.small",
-					"control_plane_volume_size=25",
-					"worker_type=t3a.small",
-					"worker_volume_size=25",
-					"bastion_type=t3a.nano",
-					"initial_machinedeployment_spotinstances_max_price=0.0204",
-				},
+				path:    "../../examples/terraform/aws",
+				varFile: "testdata/aws.tfvars",
 			},
 		},
 		"aws_default_stable": {
@@ -62,18 +51,8 @@ var (
 				"PROVIDER": "aws",
 			},
 			terraform: terraformBin{
-				path: "../../../kubeone-stable/examples/terraform/aws",
-				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
-					"subnets_cidr=27",
-					// Use smaller instances in Ireland (the cheapest EU region)
-					"aws_region=eu-west-1",
-					"control_plane_type=t3a.small",
-					"control_plane_volume_size=25",
-					"worker_type=t3a.micro",
-					"bastion_type=t3a.nano",
-					"initial_machinedeployment_spotinstances_max_price=0.0204",
-				},
+				path:    "../../../kubeone-stable/examples/terraform/aws",
+				varFile: "testdata/aws_stable.tfvars",
 			},
 		},
 		"aws_centos": {
@@ -86,19 +65,10 @@ var (
 				"preset-aws-e2e-kubeone": "true",
 			},
 			terraform: terraformBin{
-				path: "../../examples/terraform/aws",
+				path:    "../../examples/terraform/aws",
+				varFile: "testdata/aws.tfvars",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
-					"subnets_cidr=27",
 					"os=centos",
-					// Use smaller instances in Ireland (the cheapest EU region)
-					"aws_region=eu-west-1",
-					"control_plane_type=t3a.small",
-					"control_plane_volume_size=25",
-					"worker_type=t3a.small",
-					"worker_volume_size=25",
-					"bastion_type=t3a.nano",
-					"initial_machinedeployment_spotinstances_max_price=0.0204",
 				},
 			},
 		},
@@ -112,18 +82,10 @@ var (
 				"preset-aws-e2e-kubeone": "true",
 			},
 			terraform: terraformBin{
-				path: "../../../kubeone-stable/examples/terraform/aws",
+				path:    "../../../kubeone-stable/examples/terraform/aws",
+				varFile: "testdata/aws_stable.tfvars",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
-					"subnets_cidr=27",
 					"os=centos",
-					// Use smaller instances in Ireland (the cheapest EU region)
-					"aws_region=eu-west-1",
-					"control_plane_type=t3a.small",
-					"control_plane_volume_size=25",
-					"worker_type=t3a.micro",
-					"bastion_type=t3a.nano",
-					"initial_machinedeployment_spotinstances_max_price=0.0204",
 				},
 			},
 		},
@@ -137,20 +99,15 @@ var (
 				"preset-aws-e2e-kubeone": "true",
 			},
 			terraform: terraformBin{
-				path: "../../examples/terraform/aws",
+				path:    "../../examples/terraform/aws",
+				varFile: "testdata/aws.tfvars",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
-					"subnets_cidr=27",
 					"os=rhel",
-					"bastion_type=t3.micro",
-					// Use smaller instances in Ireland (the cheapest EU region)
-					"aws_region=eu-west-1",
-					"control_plane_type=t3a.small",
+					// NB: command-line flags have priority over terraform.tfvars
+					// so it's safe to override variables like this
+					"bastion_type=t3a.micro",
 					"control_plane_volume_size=50",
-					"worker_type=t3a.small",
 					"worker_volume_size=50",
-					"bastion_type=t3a.nano",
-					"initial_machinedeployment_spotinstances_max_price=0.0204",
 				},
 			},
 		},
@@ -164,18 +121,14 @@ var (
 				"preset-aws-e2e-kubeone": "true",
 			},
 			terraform: terraformBin{
-				path: "../../../kubeone-stable/examples/terraform/aws",
+				path:    "../../../kubeone-stable/examples/terraform/aws",
+				varFile: "testdata/aws_stable.tfvars",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
-					"subnets_cidr=27",
 					"os=rhel",
-					"bastion_type=t3.micro",
-					// Use smaller instances in Ireland (the cheapest EU region)
-					"aws_region=eu-west-1",
-					"control_plane_type=t3a.small",
+					// NB: command-line flags have priority over terraform.tfvars
+					// so it's safe to override variables like this
+					"bastion_type=t3a.micro",
 					"control_plane_volume_size=50",
-					"worker_type=t3a.micro",
-					"initial_machinedeployment_spotinstances_max_price=0.0204",
 				},
 			},
 		},
@@ -189,19 +142,10 @@ var (
 				"preset-aws-e2e-kubeone": "true",
 			},
 			terraform: terraformBin{
-				path: "../../examples/terraform/aws",
+				path:    "../../examples/terraform/aws",
+				varFile: "testdata/aws.tfvars",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
-					"subnets_cidr=27",
 					"os=rockylinux",
-					// Use smaller instances in Ireland (the cheapest EU region)
-					"aws_region=eu-west-1",
-					"control_plane_type=t3a.small",
-					"control_plane_volume_size=25",
-					"worker_type=t3a.small",
-					"worker_volume_size=25",
-					"bastion_type=t3a.nano",
-					"initial_machinedeployment_spotinstances_max_price=0.0204",
 				},
 			},
 		},
@@ -215,18 +159,10 @@ var (
 				"preset-aws-e2e-kubeone": "true",
 			},
 			terraform: terraformBin{
-				path: "../../../kubeone-stable/examples/terraform/aws",
+				path:    "../../../kubeone-stable/examples/terraform/aws",
+				varFile: "testdata/aws_stable.tfvars",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
-					"subnets_cidr=27",
 					"os=rockylinux",
-					// Use smaller instances in Ireland (the cheapest EU region)
-					"aws_region=eu-west-1",
-					"control_plane_type=t3a.small",
-					"control_plane_volume_size=25",
-					"worker_type=t3a.micro",
-					"bastion_type=t3a.nano",
-					"initial_machinedeployment_spotinstances_max_price=0.0204",
 				},
 			},
 		},
@@ -240,19 +176,10 @@ var (
 				"preset-aws-e2e-kubeone": "true",
 			},
 			terraform: terraformBin{
-				path: "../../examples/terraform/aws",
+				path:    "../../examples/terraform/aws",
+				varFile: "testdata/aws.tfvars",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
-					"subnets_cidr=27",
 					"os=flatcar",
-					// Use smaller instances in Ireland (the cheapest EU region)
-					"aws_region=eu-west-1",
-					"control_plane_type=t3a.small",
-					"control_plane_volume_size=25",
-					"worker_type=t3a.small",
-					"worker_volume_size=25",
-					"bastion_type=t3a.nano",
-					"initial_machinedeployment_spotinstances_max_price=0.0204",
 				},
 			},
 		},
@@ -266,18 +193,10 @@ var (
 				"preset-aws-e2e-kubeone": "true",
 			},
 			terraform: terraformBin{
-				path: "../../../kubeone-stable/examples/terraform/aws",
+				path:    "../../../kubeone-stable/examples/terraform/aws",
+				varFile: "testdata/aws_stable.tfvars",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
-					"subnets_cidr=27",
 					"os=flatcar",
-					// Use smaller instances in Ireland (the cheapest EU region)
-					"aws_region=eu-west-1",
-					"control_plane_type=t3a.small",
-					"control_plane_volume_size=25",
-					"worker_type=t3a.micro",
-					"bastion_type=t3a.nano",
-					"initial_machinedeployment_spotinstances_max_price=0.0204",
 				},
 			},
 		},
@@ -291,22 +210,11 @@ var (
 				"preset-aws-e2e-kubeone": "true",
 			},
 			terraform: terraformBin{
-				path: "../../examples/terraform/aws",
+				path:    "../../examples/terraform/aws",
+				varFile: "testdata/aws.tfvars",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
-					"subnets_cidr=27",
 					"os=flatcar",
-					"ssh_username=core",
-					"bastion_user=core",
 					"worker_deploy_ssh_key=false",
-					// Use smaller instances in Ireland (the cheapest EU region)
-					"aws_region=eu-west-1",
-					"control_plane_type=t3a.small",
-					"control_plane_volume_size=25",
-					"worker_type=t3a.small",
-					"worker_volume_size=25",
-					"bastion_type=t3a.nano",
-					"initial_machinedeployment_spotinstances_max_price=0.0204",
 				},
 			},
 		},
@@ -320,21 +228,11 @@ var (
 				"preset-aws-e2e-kubeone": "true",
 			},
 			terraform: terraformBin{
-				path: "../../../kubeone-stable/examples/terraform/aws",
+				path:    "../../../kubeone-stable/examples/terraform/aws",
+				varFile: "testdata/aws_stable.tfvars",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
-					"subnets_cidr=27",
 					"os=flatcar",
-					"ssh_username=core",
-					"bastion_user=core",
 					"worker_deploy_ssh_key=false",
-					// Use smaller instances in Ireland (the cheapest EU region)
-					"aws_region=eu-west-1",
-					"control_plane_type=t3a.small",
-					"control_plane_volume_size=25",
-					"worker_type=t3a.micro",
-					"bastion_type=t3a.nano",
-					"initial_machinedeployment_spotinstances_max_price=0.0204",
 				},
 			},
 		},
@@ -348,19 +246,10 @@ var (
 				"preset-aws-e2e-kubeone": "true",
 			},
 			terraform: terraformBin{
-				path: "../../examples/terraform/aws",
+				path:    "../../examples/terraform/aws",
+				varFile: "testdata/aws.tfvars",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
-					"subnets_cidr=27",
 					"os=amzn",
-					// Use smaller instances in Ireland (the cheapest EU region)
-					"aws_region=eu-west-1",
-					"control_plane_type=t3a.small",
-					"control_plane_volume_size=25",
-					"worker_type=t3a.small",
-					"worker_volume_size=25",
-					"bastion_type=t3a.nano",
-					"initial_machinedeployment_spotinstances_max_price=0.0204",
 				},
 			},
 		},
@@ -374,18 +263,10 @@ var (
 				"preset-aws-e2e-kubeone": "true",
 			},
 			terraform: terraformBin{
-				path: "../../../kubeone-stable/examples/terraform/aws",
+				path:    "../../../kubeone-stable/examples/terraform/aws",
+				varFile: "testdata/aws_stable.tfvars",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
-					"subnets_cidr=27",
 					"os=amzn",
-					// Use smaller instances in Ireland (the cheapest EU region)
-					"aws_region=eu-west-1",
-					"control_plane_type=t3a.small",
-					"control_plane_volume_size=25",
-					"worker_type=t3a.micro",
-					"bastion_type=t3a.nano",
-					"initial_machinedeployment_spotinstances_max_price=0.0204",
 				},
 			},
 		},
@@ -400,10 +281,8 @@ var (
 				"TEST_TIMEOUT": "120m",
 			},
 			terraform: terraformBin{
-				path: "../../examples/terraform/aws",
-				vars: []string{
-					"subnets_cidr=27",
-				},
+				path:    "../../examples/terraform/aws",
+				varFile: "testdata/aws.tfvars",
 			},
 		},
 		"azure_default": {
