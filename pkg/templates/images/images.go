@@ -232,9 +232,10 @@ func optionalResources() map[Resource]map[string]string {
 		CSISnapshotter:        {"*": "k8s.gcr.io/sig-storage/csi-snapshotter:v4.2.0"},
 
 		AwsCCM: {
-			"1.22.x":    "k8s.gcr.io/provider-aws/cloud-controller-manager:v1.22.4",
-			"1.23.x":    "k8s.gcr.io/provider-aws/cloud-controller-manager:v1.23.2",
-			">= 1.24.0": "k8s.gcr.io/provider-aws/cloud-controller-manager:v1.24.1",
+			"1.22.x":    "k8s.gcr.io/provider-aws/cloud-controller-manager:v1.22.6",
+			"1.23.x":    "k8s.gcr.io/provider-aws/cloud-controller-manager:v1.23.5",
+			"1.24.x":    "k8s.gcr.io/provider-aws/cloud-controller-manager:v1.24.2",
+			">= 1.25.0": "k8s.gcr.io/provider-aws/cloud-controller-manager:v1.25.1",
 		},
 
 		// Azure CCM
