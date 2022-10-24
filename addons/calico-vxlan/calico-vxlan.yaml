@@ -4486,7 +4486,7 @@ spec:
             - name: IP6_AUTODETECTION_METHOD
               value: "skip-interface=envoyagent"
             - name: CALICO_IPV6POOL_CIDR
-              value: "{{ takeCIDRn 1 .Cluster.Network.PodCIDRIPv6 }}"
+              value: "{{ takeCIDRn 1 .Config.ClusterNetwork.PodSubnet }}"
             {{ else }}
             # Disable IPv6 on Kubernetes.
             - name: FELIX_IPV6SUPPORT
