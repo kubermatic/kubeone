@@ -87,6 +87,7 @@ No modules.
 | <a name="input_worker_deploy_ssh_key"></a> [worker\_deploy\_ssh\_key](#input\_worker\_deploy\_ssh\_key) | add provided ssh public key to MachineDeployments | `bool` | `true` | no |
 | <a name="input_worker_os"></a> [worker\_os](#input\_worker\_os) | OS to run on worker machines, default to var.os | `string` | `""` | no |
 | <a name="input_worker_type"></a> [worker\_type](#input\_worker\_type) | instance type for workers | `string` | `"t3.medium"` | no |
+| <a name="input_worker_volume_size"></a> [worker\_volume\_size](#input\_worker\_volume\_size) | Size of the EBS volume, in Gb | `number` | `50` | no |
 
 ## Outputs
 

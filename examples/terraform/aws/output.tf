@@ -125,7 +125,7 @@ output "kubeone_workers" {
           subnetId         = local.subnets[local.zoneA]
           instanceType     = var.worker_type
           assignPublicIP   = true
-          diskSize         = 50
+          diskSize         = var.worker_volume_size
           diskType         = "gp2"
           ## Only applicable if diskType = io1
           diskIops       = 500
@@ -183,7 +183,7 @@ output "kubeone_workers" {
           subnetId         = local.subnets[local.zoneB]
           instanceType     = var.worker_type
           assignPublicIP   = true
-          diskSize         = 50
+          diskSize         = var.worker_volume_size
           diskType         = "gp2"
           ## Only applicable if diskType = io1
           diskIops       = 500
@@ -241,7 +241,7 @@ output "kubeone_workers" {
           subnetId         = local.subnets[local.zoneC]
           instanceType     = var.worker_type
           assignPublicIP   = true
-          diskSize         = 50
+          diskSize         = var.worker_volume_size
           diskType         = "gp2"
           ## Only applicable if diskType = io1
           diskIops       = 500
