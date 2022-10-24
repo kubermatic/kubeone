@@ -46,12 +46,13 @@ spec:
           operator: "Exists"
           effect: "NoSchedule"
         - operator: Exists
-          effect: NoExecute
-          tolerationSeconds: 300
+      securityContext:
+        fsGroup: 0
+        runAsGroup: 0
+        runAsNonRoot: false
+        runAsUser: 0
       containers:
         - name: ebs-plugin
-          securityContext:
-            privileged: true
           image: "{{ .InternalImages.Get "AwsEbsCSI" }}"
           imagePullPolicy: IfNotPresent
           args:
@@ -86,6 +87,9 @@ spec:
             timeoutSeconds: 3
             periodSeconds: 10
             failureThreshold: 5
+          securityContext:
+            privileged: true
+            readOnlyRootFilesystem: true
         - name: node-driver-registrar
           image: "{{ .InternalImages.Get "AwsEbsCSINodeDriverRegistrar" }}"
           imagePullPolicy: IfNotPresent
@@ -103,6 +107,9 @@ spec:
               mountPath: /csi
             - name: registration-dir
               mountPath: /registration
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
         - name: liveness-probe
           image: "{{ .InternalImages.Get "AwsEbsCSILivenessProbe" }}"
           imagePullPolicy: IfNotPresent
@@ -111,6 +118,9 @@ spec:
           volumeMounts:
             - name: plugin-dir
               mountPath: /csi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
       volumes:
         - name: kubelet-dir
           hostPath:
