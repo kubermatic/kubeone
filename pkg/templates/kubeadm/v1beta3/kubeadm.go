@@ -315,6 +315,35 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		}
 	}
 
+// FOO
+
+	clusterNetwork := cluster.ClusterNetwork
+    if clusterNetwork.CNI.Cilium == nil {
+    	clusterConfig.ControllerManager.ExtraArgs["allocate-node-cidrs"] = "true"
+		clusterConfig.ControllerManager.ExtraArgs["cluster-cidr"] = clusterNetwork.PodSubnet
+		clusterConfig.ControllerManager.ExtraArgs["service-cluster-ip-range"] = clusterNetwork.ServiceSubnet
+
+    	switch clusterNetwork.IPFamily {
+		case kubeoneapi.Unspecified, kubeoneapi.IPv4:
+			if clusterNetwork.NodeCIDRMaskSizeIPv4 != nil {
+				clusterConfig.ControllerManager.ExtraArgs["node-cidr-mask-size-ipv4"] = fmt.Sprintf("%d", *clusterNetwork.NodeCIDRMaskSizeIPv4)
+			}
+		case kubeoneapi.IPv6:
+			if clusterNetwork.NodeCIDRMaskSizeIPv6 != nil {
+				clusterConfig.ControllerManager.ExtraArgs["node-cidr-mask-size-ipv6"] = fmt.Sprintf("%d",*clusterNetwork.NodeCIDRMaskSizeIPv6)
+			}
+		case kubeoneapi.DualStack:
+			if clusterNetwork.NodeCIDRMaskSizeIPv4 != nil {
+				clusterConfig.ControllerManager.ExtraArgs["node-cidr-mask-size-ipv4"] = fmt.Sprintf("%d",*clusterNetwork.NodeCIDRMaskSizeIPv4)
+			}
+			if clusterNetwork.NodeCIDRMaskSizeIPv6 != nil {
+				clusterConfig.ControllerManager.ExtraArgs["node-cidr-mask-size-ipv6"] = fmt.Sprintf("%d",*clusterNetwork.NodeCIDRMaskSizeIPv6)
+			}
+		default:
+			// TODO: check if this is possible.
+		}
+    }
+
 	args := kubeadmargs.NewFrom(clusterConfig.APIServer.ExtraArgs)
 	features.UpdateKubeadmClusterConfiguration(cluster.Features, args)
 

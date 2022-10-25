@@ -41,7 +41,14 @@ data:
           "mtu": __CNI_MTU__,
           "ipam": {
               "type": "host-local",
+              {{ if eq .Config.ClusterNetwork.IPFamily "IPv4+IPv6" }}
+              "ranges": [
+                  [{"subnet": "usePodCidr"}],
+                  [{"subnet": "usePodCidrIPv6"}]
+              ]
+              {{ else }}
               "subnet": "usePodCidr"
+              {{ end }}
           },
           "policy": {
               "type": "k8s"
@@ -66,6 +73,10 @@ data:
   net-conf.json: |
     {
       "Network": "{{ takeCIDRn 0 .Config.ClusterNetwork.PodSubnet }}",
+      {{ if eq .Config.ClusterNetwork.IPFamily "IPv4+IPv6" }}
+      "EnableIPv6": true,
+      "IPv6Network": "{{ takeCIDRn 1 .Config.ClusterNetwork.PodSubnet }}",
+      {{ end }}
       "Backend": {
         "Type": "vxlan"
       }
@@ -4562,9 +4573,16 @@ spec:
                 fieldRef:
                   fieldPath: metadata.namespace
             - name: FLANNELD_IFACE
+              {{ if eq .Config.ClusterNetwork.IPFamily "IPv4+IPv6" }}
+              valueFrom:
+                configMapKeyRef:
+                  key: canal_iface
+                  name: canal-config
+              {{ else }}
               valueFrom:
                 fieldRef:
                   fieldPath: status.hostIP
+              {{ end }}
             - name: FLANNELD_IP_MASQ
               valueFrom:
                 configMapKeyRef:

@@ -398,6 +398,12 @@ type ClusterNetworkConfig struct {
 
 	// IPFamily "" | IPv4 | IPv6 | IPv4+IPv6.
 	IPFamily IPFamily `json:"ipFamily,omitempty"`
+
+	// NodeCIDRMaskSizeIPv4
+	NodeCIDRMaskSizeIPv4 *int `json:"nodeCIDRMaskSizeIPv4,omitempty"`
+
+	// NodeCIDRMaskSizeIPv6
+	NodeCIDRMaskSizeIPv6 *int `json:"nodeCIDRMaskSizeIPv6,omitempty"`
 }
 
 // IPFamily IPv4 | IPv6 | IPv4+IPv6.
