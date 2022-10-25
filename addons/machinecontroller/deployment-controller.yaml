@@ -84,6 +84,9 @@ spec:
 {{ end }}
           ports:
             - containerPort: 8085
+            - containerPort: 8080
+              name: metrics
+              protocol: TCP
           livenessProbe:
             httpGet:
               path: /readyz
