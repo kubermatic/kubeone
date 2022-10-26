@@ -154,6 +154,7 @@ spec:
           key: node-role.kubernetes.io/control-plane
       nodeSelector:
         node-role.kubernetes.io/control-plane: ""
+      dnsPolicy: Default
       priorityClassName: system-node-critical
       serviceAccountName: cloud-controller-manager
       containers:
