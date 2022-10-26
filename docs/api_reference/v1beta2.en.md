@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2022-10-05T12:04:49+02:00
+date = 2022-10-26T13:26:49+02:00
 weight = 11
 +++
 ## v1beta2
@@ -203,6 +203,9 @@ ClusterNetworkConfig describes the cluster network
 | nodePortRange | NodePortRange default value is \"30000-32767\" | string | false |
 | cni | CNI default value is {canal: {mtu: 1450}} | *[CNI](#cni) | false |
 | kubeProxy | KubeProxy config | *[KubeProxyConfig](#kubeproxyconfig) | false |
+| ipFamily | IPFamily \"\" \| IPv4 \| IPv6 \| IPv4+IPv6. | IPFamily | false |
+| nodeCIDRMaskSizeIPv4 | NodeCIDRMaskSizeIPv4 | *int | false |
+| nodeCIDRMaskSizeIPv6 | NodeCIDRMaskSizeIPv6 | *int | false |
 
 [Back to Group](#v1beta2)
 
@@ -409,6 +412,7 @@ HostConfig describes a single control plane node.
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | publicAddress | PublicAddress is externally accessible IP address from public internet. | string | true |
+| IPv6Address | IPv6AddressList | []string | true |
 | privateAddress | PrivateAddress is internal RFC-1918 IP address. | string | true |
 | sshPort | SSHPort is port to connect ssh to. Default value is 22. | int | false |
 | sshUsername | SSHUsername is system login name. Default value is \"root\". | string | false |
