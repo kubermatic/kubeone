@@ -41,7 +41,7 @@ spec:
             - "--timeout=15s"
             - "--leader-election"
             - "--leader-election-namespace=kube-system"
-            - "--worker-threads=40"
+            - "--worker-threads=50"
             - "--extra-create-metadata=true"
             - "--strict-topology=true"
           env:
@@ -61,7 +61,7 @@ spec:
           args:
             - "-v=2"
             - "-csi-address=$(ADDRESS)"
-            - "-timeout=600s"
+            - "-timeout=1200s"
             - "-leader-election"
             - "--leader-election-namespace=kube-system"
             - "-worker-threads=500"
