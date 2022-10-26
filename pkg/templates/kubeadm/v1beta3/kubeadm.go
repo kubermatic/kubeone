@@ -315,8 +315,6 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		}
 	}
 
-	// FOO
-
 	clusterNetwork := cluster.ClusterNetwork
 	if clusterNetwork.CNI.Cilium == nil {
 		clusterConfig.ControllerManager.ExtraArgs["allocate-node-cidrs"] = "true"
@@ -339,8 +337,6 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 			if clusterNetwork.NodeCIDRMaskSizeIPv6 != nil {
 				clusterConfig.ControllerManager.ExtraArgs["node-cidr-mask-size-ipv6"] = fmt.Sprintf("%d", *clusterNetwork.NodeCIDRMaskSizeIPv6)
 			}
-		default:
-			// TODO: check if this is possible.
 		}
 	}
 
