@@ -331,6 +331,7 @@ func TestValidateControlPlaneConfig(t *testing.T) {
 	tests := []struct {
 		name               string
 		controlPlaneConfig kubeoneapi.ControlPlaneConfig
+		networkConfig      kubeoneapi.ClusterNetworkConfig
 		expectedError      bool
 	}{
 		{
@@ -389,7 +390,7 @@ func TestValidateControlPlaneConfig(t *testing.T) {
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			errs := ValidateControlPlaneConfig(tc.controlPlaneConfig, nil)
+			errs := ValidateControlPlaneConfig(tc.controlPlaneConfig, tc.networkConfig, nil)
 			if (len(errs) == 0) == tc.expectedError {
 				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
 			}
@@ -1143,6 +1144,7 @@ func TestValidateStaticWorkersConfig(t *testing.T) {
 	tests := []struct {
 		name                string
 		staticWorkersConfig kubeoneapi.StaticWorkersConfig
+		networkConfig       kubeoneapi.ClusterNetworkConfig
 		expectedError       bool
 	}{
 		{
@@ -1201,7 +1203,7 @@ func TestValidateStaticWorkersConfig(t *testing.T) {
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			errs := ValidateStaticWorkersConfig(tc.staticWorkersConfig, nil)
+			errs := ValidateStaticWorkersConfig(tc.staticWorkersConfig, tc.networkConfig, nil)
 			if (len(errs) == 0) == tc.expectedError {
 				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
 			}
@@ -1747,6 +1749,7 @@ func TestValidateHostConfig(t *testing.T) {
 	tests := []struct {
 		name          string
 		hostConfig    []kubeoneapi.HostConfig
+		networkConfig kubeoneapi.ClusterNetworkConfig
 		expectedError bool
 	}{
 		{
@@ -1982,7 +1985,7 @@ func TestValidateHostConfig(t *testing.T) {
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			errs := ValidateHostConfig(tc.hostConfig, nil)
+			errs := ValidateHostConfig(tc.hostConfig, tc.networkConfig, nil)
 			if (len(errs) == 0) == tc.expectedError {
 				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
 			}

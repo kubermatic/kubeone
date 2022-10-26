@@ -904,6 +904,9 @@ func autoConvert_v1beta2_ClusterNetworkConfig_To_kubeone_ClusterNetworkConfig(in
 	out.NodePortRange = in.NodePortRange
 	out.CNI = (*kubeone.CNI)(unsafe.Pointer(in.CNI))
 	out.KubeProxy = (*kubeone.KubeProxyConfig)(unsafe.Pointer(in.KubeProxy))
+	out.IPFamily = kubeone.IPFamily(in.IPFamily)
+	out.NodeCIDRMaskSizeIPv4 = (*int)(unsafe.Pointer(in.NodeCIDRMaskSizeIPv4))
+	out.NodeCIDRMaskSizeIPv6 = (*int)(unsafe.Pointer(in.NodeCIDRMaskSizeIPv6))
 	return nil
 }
 
@@ -919,6 +922,9 @@ func autoConvert_kubeone_ClusterNetworkConfig_To_v1beta2_ClusterNetworkConfig(in
 	out.NodePortRange = in.NodePortRange
 	out.CNI = (*CNI)(unsafe.Pointer(in.CNI))
 	out.KubeProxy = (*KubeProxyConfig)(unsafe.Pointer(in.KubeProxy))
+	out.IPFamily = IPFamily(in.IPFamily)
+	out.NodeCIDRMaskSizeIPv4 = (*int)(unsafe.Pointer(in.NodeCIDRMaskSizeIPv4))
+	out.NodeCIDRMaskSizeIPv6 = (*int)(unsafe.Pointer(in.NodeCIDRMaskSizeIPv6))
 	return nil
 }
 
@@ -1324,6 +1330,7 @@ func Convert_kubeone_HetznerSpec_To_v1beta2_HetznerSpec(in *kubeone.HetznerSpec,
 func autoConvert_v1beta2_HostConfig_To_kubeone_HostConfig(in *HostConfig, out *kubeone.HostConfig, s conversion.Scope) error {
 	out.ID = in.ID
 	out.PublicAddress = in.PublicAddress
+	out.IPv6AddressList = *(*[]string)(unsafe.Pointer(&in.IPv6AddressList))
 	out.PrivateAddress = in.PrivateAddress
 	out.SSHPort = in.SSHPort
 	out.SSHUsername = in.SSHUsername
@@ -1353,6 +1360,7 @@ func Convert_v1beta2_HostConfig_To_kubeone_HostConfig(in *HostConfig, out *kubeo
 func autoConvert_kubeone_HostConfig_To_v1beta2_HostConfig(in *kubeone.HostConfig, out *HostConfig, s conversion.Scope) error {
 	out.ID = in.ID
 	out.PublicAddress = in.PublicAddress
+	out.IPv6AddressList = *(*[]string)(unsafe.Pointer(&in.IPv6AddressList))
 	out.PrivateAddress = in.PrivateAddress
 	out.SSHPort = in.SSHPort
 	out.SSHUsername = in.SSHUsername

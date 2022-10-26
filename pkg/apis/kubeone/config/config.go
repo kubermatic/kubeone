@@ -211,11 +211,6 @@ func DefaultedV1Beta2KubeOneCluster(versionedCluster *kubeonev1beta2.KubeOneClus
 		return nil, fail.Config(err, fmt.Sprintf("converting %s to internal object", versionedCluster.GroupVersionKind()))
 	}
 
-	// TODO: why doesn't convert ^ do it?
-	internalCluster.ClusterNetwork.IPFamily = kubeoneapi.IPFamily(versionedCluster.ClusterNetwork.IPFamily)
-	internalCluster.ClusterNetwork.NodeCIDRMaskSizeIPv4 = versionedCluster.ClusterNetwork.NodeCIDRMaskSizeIPv4
-	internalCluster.ClusterNetwork.NodeCIDRMaskSizeIPv6 = versionedCluster.ClusterNetwork.NodeCIDRMaskSizeIPv6
-
 	// Apply the dynamic defaults
 	if err := SetKubeOneClusterDynamicDefaults(internalCluster, credentialsFile); err != nil {
 		return nil, err

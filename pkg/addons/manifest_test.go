@@ -18,6 +18,7 @@ package addons
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"os"
 	"path"
@@ -27,6 +28,7 @@ import (
 	"text/template"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	kubeoneapiv1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
 
 	appsv1 "k8s.io/api/apps/v1"
 	batchv1 "k8s.io/api/batch/v1"
@@ -36,6 +38,29 @@ import (
 	"k8s.io/utils/pointer"
 	"sigs.k8s.io/yaml"
 )
+
+func TestFoo(t *testing.T) {
+	x := 48
+	a := &kubeoneapi.ClusterNetworkConfig{}
+	b := &kubeoneapiv1beta2.ClusterNetworkConfig{
+		IPFamily:             kubeoneapiv1beta2.DualStack,
+		NodeCIDRMaskSizeIPv4: &x,
+	}
+	_, _ = a, b
+
+	err := kubeoneapiv1beta2.Convert_v1beta2_ClusterNetworkConfig_To_kubeone_ClusterNetworkConfig(b, a, nil)
+	fmt.Println(err)
+
+	dump := func(v interface{}) {
+		data, err := json.Marshal(v)
+		fmt.Println("json error", err)
+		fmt.Println(string(data))
+	}
+
+	dump(a)
+	dump(b)
+
+}
 
 var testManifests = []string{
 	`kind: ConfigMap
@@ -96,7 +121,7 @@ metadata:
   spam: {{ takeCIDRn 0 .Config.ClusterNetwork.PodSubnet }}
   {{ else }}
   foo: bar
-  {{ end }} 
+  {{ end }}
   namespace: kube-system
 `
 	testManifest1WithEmptyLabel = `apiVersion: v1
