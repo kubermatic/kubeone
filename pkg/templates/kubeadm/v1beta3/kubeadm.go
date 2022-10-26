@@ -434,7 +434,7 @@ func newNodeRegistration(s *state.State, host kubeoneapi.HostConfig) kubeadmv1be
 			// TODO: shouldn't these be default interface ips?
 			//   DEFAULT_IFC_IPv4=$(ip -o route get  1 | grep -oP "src \K\S+")
 			//   DEFAULT_IFC_IPv6=$(ip -o -6 route get  1:: | grep -oP "src \K\S+")
-			kubeletCLIFlags["node-ip"] = newNodeIP(host) + "," + host.IPv6Address[0]
+			kubeletCLIFlags["node-ip"] = newNodeIP(host) + "," + host.IPv6AddressList[0]
 		}
 	} else {
 		kubeletCLIFlags["node-ip"] = newNodeIP(host)

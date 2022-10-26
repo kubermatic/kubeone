@@ -164,8 +164,8 @@ type HostConfig struct {
 	// PublicAddress is externally accessible IP address from public internet.
 	PublicAddress string `json:"publicAddress"`
 
-	// IPv6Address
-	IPv6Address []string `json:"IPv6Address"`
+	// IPv6AddressList
+	IPv6AddressList []string `json:"IPv6Address"`
 
 	// PrivateAddress is internal RFC-1918 IP address.
 	PrivateAddress string `json:"privateAddress"`

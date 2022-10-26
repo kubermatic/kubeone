@@ -616,7 +616,7 @@ func ValidateHostConfig(hosts []kubeoneapi.HostConfig, clusterNetwork kubeoneapi
 			allErrs = append(allErrs, field.Required(fldPath, "no public IP/address given"))
 		}
 
-		if (clusterNetwork.IPFamily == kubeoneapi.IPv6 || clusterNetwork.IPFamily == kubeoneapi.DualStack) && len(h.IPv6Address) == 0 {
+		if (clusterNetwork.IPFamily == kubeoneapi.IPv6 || clusterNetwork.IPFamily == kubeoneapi.DualStack) && len(h.IPv6AddressList) == 0 {
 			allErrs = append(allErrs, field.Required(fldPath, "no IPv6 address given"))
 		}
 		if len(h.PrivateAddress) == 0 {
