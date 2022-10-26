@@ -18,7 +18,6 @@ package addons
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"os"
 	"path"
@@ -28,7 +27,6 @@ import (
 	"text/template"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
-	kubeoneapiv1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
 
 	appsv1 "k8s.io/api/apps/v1"
 	batchv1 "k8s.io/api/batch/v1"
@@ -38,29 +36,6 @@ import (
 	"k8s.io/utils/pointer"
 	"sigs.k8s.io/yaml"
 )
-
-func TestFoo(t *testing.T) {
-	x := 48
-	a := &kubeoneapi.ClusterNetworkConfig{}
-	b := &kubeoneapiv1beta2.ClusterNetworkConfig{
-		IPFamily:             kubeoneapiv1beta2.DualStack,
-		NodeCIDRMaskSizeIPv4: &x,
-	}
-	_, _ = a, b
-
-	err := kubeoneapiv1beta2.Convert_v1beta2_ClusterNetworkConfig_To_kubeone_ClusterNetworkConfig(b, a, nil)
-	fmt.Println(err)
-
-	dump := func(v interface{}) {
-		data, err := json.Marshal(v)
-		fmt.Println("json error", err)
-		fmt.Println(string(data))
-	}
-
-	dump(a)
-	dump(b)
-
-}
 
 var testManifests = []string{
 	`kind: ConfigMap
@@ -107,23 +82,7 @@ metadata:
   name: test1
   namespace: kube-system
 `
-	testManifest1WithoutLabelDualstack = `apiVersion: v1
-data:
-  foo: bar
-kind: ConfigMap
-metadata:
-  labels:
-    app: test
-    cluster: {{ .Config.Name }}
-  name: test1
-  {{ if eq .Config.ClusterNetwork.IPFamily "IPv4+IPv6" }}
-  spam: {{ takeCIDRn 1 .Config.ClusterNetwork.PodSubnet }}
-  spam: {{ takeCIDRn 0 .Config.ClusterNetwork.PodSubnet }}
-  {{ else }}
-  foo: bar
-  {{ end }}
-  namespace: kube-system
-`
+
 	testManifest1WithEmptyLabel = `apiVersion: v1
 data:
   foo: bar
@@ -236,76 +195,6 @@ func TestEnsureAddonsLabelsOnResources(t *testing.T) {
 			td := templateData{
 				Config: &kubeoneapi.KubeOneCluster{
 					Name: "kubeone-test",
-				},
-			}
-
-			applier := &applier{
-				TemplateData: td,
-				LocalFS:      os.DirFS(addonsDir),
-			}
-
-			manifests, err := applier.loadAddonsManifests(applier.LocalFS, ".", nil, nil, false, "")
-			if err != nil {
-				t.Fatalf("unable to load manifests: %v", err)
-			}
-			if len(manifests) != 1 {
-				t.Fatalf("expected to load 1 manifest, got %d", len(manifests))
-			}
-
-			b, err := ensureAddonsLabelsOnResources(manifests, tc.addonName)
-			if err != nil {
-				t.Fatalf("unable to ensure labels: %v", err)
-			}
-			manifest := b[0].String()
-
-			if manifest != tc.expectedManifest {
-				t.Fatalf("invalid manifest returned. expected \n%s, got \n%s", tc.expectedManifest, manifest)
-			}
-		})
-	}
-}
-
-func TestEnsureAddonsDualstack(t *testing.T) {
-	t.Parallel()
-
-	tests := []struct {
-		name             string
-		addonName        string
-		addonManifest    string
-		expectedManifest string
-	}{
-		{
-			name:             "addon with no name (root directory addons)",
-			addonName:        "",
-			addonManifest:    testManifest1WithoutLabelDualstack,
-			expectedManifest: testManifest1WithEmptyLabel,
-		},
-		//{
-		//	name:             "addon with name",
-		//	addonName:        "test-addon",
-		//	addonManifest:    testManifest1WithoutLabel,
-		//	expectedManifest: testManifest1WithNamedLabel,
-		//},
-	}
-
-	for _, tc := range tests {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-			addonsDir := t.TempDir()
-
-			if writeErr := os.WriteFile(path.Join(addonsDir, "testManifest.yaml"), []byte(tc.addonManifest), 0600); writeErr != nil {
-				t.Fatalf("unable to create temporary addon manifest: %v", writeErr)
-			}
-
-			td := templateData{
-				Config: &kubeoneapi.KubeOneCluster{
-					Name: "kubeone-test",
-					ClusterNetwork: kubeoneapi.ClusterNetworkConfig{
-						PodSubnet:     "172.25.0.0/16,fd01::/48",
-						ServiceSubnet: "10.240.16.0/20,fd02::/120",
-						IPFamily:      kubeoneapi.DualStack,
-					},
 				},
 			}
 
