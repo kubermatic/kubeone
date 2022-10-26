@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2022-10-26T17:34:06+02:00
+date = 2022-10-26T18:11:44+02:00
 weight = 11
 +++
 ## v1beta2
@@ -412,7 +412,7 @@ HostConfig describes a single control plane node.
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | publicAddress | PublicAddress is externally accessible IP address from public internet. | string | true |
-| IPv6Address | IPv6AddressList | []string | true |
+| IPv6AddressList | IPv6AddressList | []string | true |
 | privateAddress | PrivateAddress is internal RFC-1918 IP address. | string | true |
 | sshPort | SSHPort is port to connect ssh to. Default value is 22. | int | false |
 | sshUsername | SSHUsername is system login name. Default value is \"root\". | string | false |
