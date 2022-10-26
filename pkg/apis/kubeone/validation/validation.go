@@ -51,14 +51,14 @@ func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	allErrs = append(allErrs, ValidateName(c.Name, field.NewPath("name"))...)
-	allErrs = append(allErrs, ValidateControlPlaneConfig(c.ControlPlane, field.NewPath("controlPlane"))...)
+	allErrs = append(allErrs, ValidateControlPlaneConfig(c.ControlPlane, c.ClusterNetwork, field.NewPath("controlPlane"))...)
 	allErrs = append(allErrs, ValidateAPIEndpoint(c.APIEndpoint, field.NewPath("apiEndpoint"))...)
 	allErrs = append(allErrs, ValidateCloudProviderSpec(c.CloudProvider, field.NewPath("provider"))...)
 	allErrs = append(allErrs, ValidateVersionConfig(c.Versions, field.NewPath("versions"))...)
 	allErrs = append(allErrs, ValidateKubernetesSupport(c, field.NewPath(""))...)
 	allErrs = append(allErrs, ValidateContainerRuntimeConfig(c.ContainerRuntime, c.Versions, field.NewPath("containerRuntime"))...)
 	allErrs = append(allErrs, ValidateClusterNetworkConfig(c.ClusterNetwork, field.NewPath("clusterNetwork"))...)
-	allErrs = append(allErrs, ValidateStaticWorkersConfig(c.StaticWorkers, field.NewPath("staticWorkers"))...)
+	allErrs = append(allErrs, ValidateStaticWorkersConfig(c.StaticWorkers, c.ClusterNetwork, field.NewPath("staticWorkers"))...)
 
 	if c.MachineController != nil && c.MachineController.Deploy {
 		allErrs = append(allErrs, ValidateDynamicWorkerConfig(c.DynamicWorkers, field.NewPath("dynamicWorkers"))...)
@@ -128,11 +128,11 @@ func ValidateName(name string, fldPath *field.Path) field.ErrorList {
 }
 
 // ValidateControlPlaneConfig validates the ControlPlaneConfig structure
-func ValidateControlPlaneConfig(c kubeoneapi.ControlPlaneConfig, fldPath *field.Path) field.ErrorList {
+func ValidateControlPlaneConfig(c kubeoneapi.ControlPlaneConfig, clusterNetwork kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	if len(c.Hosts) > 0 {
-		allErrs = append(allErrs, ValidateHostConfig(c.Hosts, fldPath.Child("hosts"))...)
+		allErrs = append(allErrs, ValidateHostConfig(c.Hosts, clusterNetwork, fldPath.Child("hosts"))...)
 	} else {
 		allErrs = append(allErrs, field.Invalid(fldPath.Child("hosts"), "",
 			".controlPlane.Hosts is a required field. There must be at least one control plane instance in the cluster."))
@@ -462,11 +462,11 @@ func ValidateCNI(c *kubeoneapi.CNI, fldPath *field.Path) field.ErrorList {
 }
 
 // ValidateStaticWorkersConfig validates the StaticWorkersConfig structure
-func ValidateStaticWorkersConfig(staticWorkers kubeoneapi.StaticWorkersConfig, fldPath *field.Path) field.ErrorList {
+func ValidateStaticWorkersConfig(staticWorkers kubeoneapi.StaticWorkersConfig, clusterNetwork kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	if len(staticWorkers.Hosts) > 0 {
-		allErrs = append(allErrs, ValidateHostConfig(staticWorkers.Hosts, fldPath.Child("hosts"))...)
+		allErrs = append(allErrs, ValidateHostConfig(staticWorkers.Hosts, clusterNetwork, fldPath.Child("hosts"))...)
 	}
 
 	return allErrs
@@ -601,7 +601,7 @@ func ValidateAddons(o *kubeoneapi.Addons, fldPath *field.Path) field.ErrorList {
 }
 
 // ValidateHostConfig validates the HostConfig structure
-func ValidateHostConfig(hosts []kubeoneapi.HostConfig, fldPath *field.Path) field.ErrorList {
+func ValidateHostConfig(hosts []kubeoneapi.HostConfig, clusterNetwork kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	leaderFound := false
@@ -616,8 +616,7 @@ func ValidateHostConfig(hosts []kubeoneapi.HostConfig, fldPath *field.Path) fiel
 			allErrs = append(allErrs, field.Required(fldPath, "no public IP/address given"))
 		}
 
-		TODODualstack := false
-		if TODODualstack && len(h.IPv6Address) == 0 {
+		if (clusterNetwork.IPFamily == kubeoneapi.IPv6 || clusterNetwork.IPFamily == kubeoneapi.DualStack) && len(h.IPv6Address) == 0 {
 			allErrs = append(allErrs, field.Required(fldPath, "no IPv6 address given"))
 		}
 		if len(h.PrivateAddress) == 0 {
