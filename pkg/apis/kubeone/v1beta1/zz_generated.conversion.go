@@ -143,11 +143,6 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*kubeone.ClusterNetworkConfig)(nil), (*ClusterNetworkConfig)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_kubeone_ClusterNetworkConfig_To_v1beta1_ClusterNetworkConfig(a.(*kubeone.ClusterNetworkConfig), b.(*ClusterNetworkConfig), scope)
-	}); err != nil {
-		return err
-	}
 	if err := s.AddGeneratedConversionFunc((*ContainerRuntimeConfig)(nil), (*kubeone.ContainerRuntimeConfig)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_v1beta1_ContainerRuntimeConfig_To_kubeone_ContainerRuntimeConfig(a.(*ContainerRuntimeConfig), b.(*kubeone.ContainerRuntimeConfig), scope)
 	}); err != nil {
@@ -505,6 +500,11 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}
 	if err := s.AddConversionFunc((*kubeone.CloudProviderSpec)(nil), (*CloudProviderSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_kubeone_CloudProviderSpec_To_v1beta1_CloudProviderSpec(a.(*kubeone.CloudProviderSpec), b.(*CloudProviderSpec), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddConversionFunc((*kubeone.ClusterNetworkConfig)(nil), (*ClusterNetworkConfig)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_kubeone_ClusterNetworkConfig_To_v1beta1_ClusterNetworkConfig(a.(*kubeone.ClusterNetworkConfig), b.(*ClusterNetworkConfig), scope)
 	}); err != nil {
 		return err
 	}

@@ -93,3 +93,7 @@ func Convert_kubeone_Features_To_v1beta1_Features(in *kubeoneapi.Features, out *
 	// CoreDNS feature is introduced only in the v1beta2 API
 	return autoConvert_kubeone_Features_To_v1beta1_Features(in, out, s)
 }
+
+func Convert_kubeone_ClusterNetworkConfig_To_v1beta1_ClusterNetworkConfig(in *kubeoneapi.ClusterNetworkConfig, out *ClusterNetworkConfig, s conversion.Scope) error {
+	return autoConvert_kubeone_ClusterNetworkConfig_To_v1beta1_ClusterNetworkConfig(in, out, s)
+}
