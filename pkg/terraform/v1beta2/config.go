@@ -87,7 +87,7 @@ type controlPlane struct {
 
 type hostsSpec struct {
 	PublicAddress     []string          `json:"public_address"`
-	IPv6AddressList   [][]string        `json:"ipv6_address"`
+	IPv6AddressList   [][]string        `json:"ipv6_address_list"`
 	PrivateAddress    []string          `json:"private_address"`
 	Hostnames         []string          `json:"hostnames"`
 	OperatingSystem   string            `json:"operating_system"`

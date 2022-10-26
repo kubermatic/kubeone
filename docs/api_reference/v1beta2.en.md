@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2022-10-26T13:26:49+02:00
+date = 2022-10-26T17:34:06+02:00
 weight = 11
 +++
 ## v1beta2
