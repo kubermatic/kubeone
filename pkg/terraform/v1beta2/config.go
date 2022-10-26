@@ -155,13 +155,22 @@ func (hs *hostsSpec) toHostConfigs(opts ...hostConfigsOpts) []kubeonev1beta2.Hos
 			privateIP = hs.PrivateAddress[i]
 		}
 
-		hosts = append(hosts, newHostConfig(publicIP, privateIP, hs.IPv6AddressList[i], i, hs))
+		var ipv6Addr []string
+		if i < len(hs.IPv6AddressList) {
+			ipv6Addr = hs.IPv6AddressList[i]
+		}
+
+		hosts = append(hosts, newHostConfig(publicIP, privateIP, ipv6Addr, i, hs))
 	}
 
 	if len(hosts) == 0 {
 		// there was no public IPs available
 		for i, privateIP := range hs.PrivateAddress {
-			hosts = append(hosts, newHostConfig("", privateIP, hs.IPv6AddressList[i], i, hs))
+			var ipv6Addr []string
+			if i < len(hs.IPv6AddressList) {
+				ipv6Addr = hs.IPv6AddressList[i]
+			}
+			hosts = append(hosts, newHostConfig("", privateIP, ipv6Addr, i, hs))
 		}
 	}
 
