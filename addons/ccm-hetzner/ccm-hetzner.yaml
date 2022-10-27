@@ -50,8 +50,10 @@ spec:
         # cloud controller manages should be able to run on masters
         - key: "node-role.kubernetes.io/master"
           effect: NoSchedule
+          operator: Exists
         - key: "node-role.kubernetes.io/control-plane"
           effect: NoSchedule
+          operator: Exists
         - key: "node.kubernetes.io/not-ready"
           effect: "NoSchedule"
       hostNetwork: true
@@ -63,7 +65,8 @@ spec:
             - "--cloud-provider=hcloud"
             - "--leader-elect=false"
             - "--allow-untagged-cloud"
-            - "--allocate-node-cidrs=false"
+            - "--allocate-node-cidrs=false" # "false" as we use IPAM in kube-controller-manager
+            - "--configure-cloud-routes=false" # "false" because we use VXLAN overlay
           resources:
             requests:
               cpu: 100m
