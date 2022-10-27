@@ -581,6 +581,10 @@ var (
 			},
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/equinixmetal",
+				vars: []string{
+					"control_plane_operating_system=ubuntu_20_04",
+					"lb_operating_system=ubuntu_20_04",
+				},
 			},
 		},
 		"equinixmetal_centos": {
