@@ -102,7 +102,7 @@ resource "aws_subnet" "public" {
   ipv6_cidr_block = cidrsubnet(
     data.aws_vpc.selected.ipv6_cidr_block,
     local.subnet_newbits,
-    (random_integer.cidr_block.result + count.index) % local.subnet_total, // TODO: fix this hack
+    (random_integer.cidr_block.result + count.index) % local.subnet_total,
   )
 
   assign_ipv6_address_on_creation = true
