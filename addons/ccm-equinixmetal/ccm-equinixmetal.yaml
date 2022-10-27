@@ -1,27 +1,43 @@
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: DaemonSet
 metadata:
-  name: equinixmetal-cloud-controller-manager
+  name: cloud-provider-equinix-metal
   namespace: kube-system
   labels:
-    app: equinixmetal-cloud-controller-manager
+    app: cloud-provider-equinix-metal
 spec:
-  replicas: 1
   selector:
     matchLabels:
-      app: equinixmetal-cloud-controller-manager
+      app: cloud-provider-equinix-metal
   template:
     metadata:
       labels:
-        app: equinixmetal-cloud-controller-manager
-      annotations:
-        "kubeone.k8c.io/credentials-hash": "{{ .CredentialsCCMHash }}"
+        app: cloud-provider-equinix-metal
     spec:
       dnsPolicy: Default
       hostNetwork: true
-      serviceAccountName: cloud-controller-manager
       priorityClassName: system-cluster-critical
+      serviceAccountName: cloud-controller-manager
+      # set node affinity such that it will run only on nodes that have one of (logical OR)
+      # the labels:
+      #   kubernetes.io/role: master
+      #   node-role.kubernetes.io/control-plane
+      #   node-role.kubernetes.io/master
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/role
+                operator: In
+                values: [master]
+            - matchExpressions:
+              - key: node-role.kubernetes.io/control-plane
+                operator: Exists
+            - matchExpressions:
+              - key: node-role.kubernetes.io/master
+                operator: Exists
       tolerations:
         # this taint is set by all kubelets running `--cloud-provider=external`
         # so we should tolerate it to schedule the Equinix Metal ccm
@@ -42,27 +58,28 @@ spec:
           effect: NoSchedule
           operator: Exists
       containers:
-        - image: {{ .InternalImages.Get "EquinixMetalCCM" }}
-          name: cloud-provider-equinix-metal
-          imagePullPolicy: Always
-          command:
-            - "./cloud-provider-equinix-metal"
-            - "--cloud-provider=equinixmetal"
-            - "--leader-elect=false"
-            - "--authentication-skip-lookup=true"
-            - "--cloud-config=/etc/cloud-sa/cloud-sa.json"
-          resources:
-            requests:
-              cpu: 100m
-              memory: 50Mi
-          volumeMounts:
-            - name: cloud-sa-volume
-              readOnly: true
-              mountPath: "/etc/cloud-sa"
+      - image: {{ .InternalImages.Get "EquinixMetalCCM" }}
+        name: cloud-provider-equinix-metal
+        imagePullPolicy: Always
+        command:
+          - "./cloud-provider-equinix-metal"
+          - "--cloud-provider=equinixmetal"
+          - "--leader-elect=true"
+          - "--authentication-skip-lookup=true"
+          - "--cloud-config=/etc/cloud-sa/cloud-sa.json"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 50Mi
+        volumeMounts:
+          - name: cloud-sa-volume
+            readOnly: true
+            mountPath: "/etc/cloud-sa"
       volumes:
         - name: cloud-sa-volume
           secret:
             secretName: metal-cloud-config
+
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -156,6 +173,18 @@ rules:
   - watch
   - update
   - patch
+- apiGroups:
+  # reason: so ccm can use leases
+  - "coordination.k8s.io"
+  resources:
+  - leases
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - update
+  - patch
 ---
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
@@ -166,9 +195,9 @@ roleRef:
   kind: ClusterRole
   name: system:cloud-controller-manager
 subjects:
-  - kind: ServiceAccount
-    name: cloud-controller-manager
-    namespace: kube-system
+- kind: ServiceAccount
+  name: cloud-controller-manager
+  namespace: kube-system
 ---
 kind: Secret
 apiVersion: v1
