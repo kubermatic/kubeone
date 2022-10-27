@@ -38,7 +38,7 @@ var (
 			},
 			terraform: terraformBin{
 				path:    "../../examples/terraform/aws",
-				varFile: "testdata/aws.tfvars",
+				varFile: "testdata/aws_small.tfvars",
 			},
 		},
 		"aws_default_stable": {
@@ -52,7 +52,7 @@ var (
 			},
 			terraform: terraformBin{
 				path:    "../../../kubeone-stable/examples/terraform/aws",
-				varFile: "testdata/aws_stable.tfvars",
+				varFile: "testdata/aws_stable_small.tfvars",
 			},
 		},
 		"aws_centos": {
@@ -66,7 +66,7 @@ var (
 			},
 			terraform: terraformBin{
 				path:    "../../examples/terraform/aws",
-				varFile: "testdata/aws.tfvars",
+				varFile: "testdata/aws_medium.tfvars",
 				vars: []string{
 					"os=centos",
 				},
@@ -83,7 +83,7 @@ var (
 			},
 			terraform: terraformBin{
 				path:    "../../../kubeone-stable/examples/terraform/aws",
-				varFile: "testdata/aws_stable.tfvars",
+				varFile: "testdata/aws_stable_medium.tfvars",
 				vars: []string{
 					"subnets_cidr=27",
 					"os=centos",
@@ -101,13 +101,8 @@ var (
 			},
 			terraform: terraformBin{
 				path:    "../../examples/terraform/aws",
-				varFile: "testdata/aws.tfvars",
+				varFile: "testdata/aws_rhel.tfvars",
 				vars: []string{
-					"os=rhel",
-					// NB: command-line flags have priority over terraform.tfvars
-					// so it's safe to override variables like this
-					"bastion_type=t3.micro",
-					"control_plane_volume_size=50",
 					"worker_volume_size=50",
 				},
 			},
@@ -124,14 +119,6 @@ var (
 			terraform: terraformBin{
 				path:    "../../../kubeone-stable/examples/terraform/aws",
 				varFile: "testdata/aws_stable.tfvars",
-				vars: []string{
-					"subnets_cidr=27",
-					"os=rhel",
-					// NB: command-line flags have priority over terraform.tfvars
-					// so it's safe to override variables like this
-					"bastion_type=t3.micro",
-					"control_plane_volume_size=50",
-				},
 			},
 		},
 		"aws_rockylinux": {
@@ -145,7 +132,7 @@ var (
 			},
 			terraform: terraformBin{
 				path:    "../../examples/terraform/aws",
-				varFile: "testdata/aws.tfvars",
+				varFile: "testdata/aws_medium.tfvars",
 				vars: []string{
 					"os=rockylinux",
 				},
@@ -162,7 +149,7 @@ var (
 			},
 			terraform: terraformBin{
 				path:    "../../../kubeone-stable/examples/terraform/aws",
-				varFile: "testdata/aws_stable.tfvars",
+				varFile: "testdata/aws_stable_medium.tfvars",
 				vars: []string{
 					"subnets_cidr=27",
 					"os=rockylinux",
@@ -180,7 +167,7 @@ var (
 			},
 			terraform: terraformBin{
 				path:    "../../examples/terraform/aws",
-				varFile: "testdata/aws.tfvars",
+				varFile: "testdata/aws_medium.tfvars",
 				vars: []string{
 					"os=flatcar",
 				},
@@ -197,7 +184,7 @@ var (
 			},
 			terraform: terraformBin{
 				path:    "../../../kubeone-stable/examples/terraform/aws",
-				varFile: "testdata/aws_stable.tfvars",
+				varFile: "testdata/aws_stable_medium.tfvars",
 				vars: []string{
 					"subnets_cidr=27",
 					"os=flatcar",
@@ -215,7 +202,7 @@ var (
 			},
 			terraform: terraformBin{
 				path:    "../../examples/terraform/aws",
-				varFile: "testdata/aws.tfvars",
+				varFile: "testdata/aws_medium.tfvars",
 				vars: []string{
 					"os=flatcar",
 					"worker_deploy_ssh_key=false",
@@ -233,7 +220,7 @@ var (
 			},
 			terraform: terraformBin{
 				path:    "../../../kubeone-stable/examples/terraform/aws",
-				varFile: "testdata/aws_stable.tfvars",
+				varFile: "testdata/aws_stable_medium.tfvars",
 				vars: []string{
 					"subnets_cidr=27",
 					"os=flatcar",
@@ -252,7 +239,7 @@ var (
 			},
 			terraform: terraformBin{
 				path:    "../../examples/terraform/aws",
-				varFile: "testdata/aws.tfvars",
+				varFile: "testdata/aws_medium.tfvars",
 				vars: []string{
 					"os=amzn",
 				},
@@ -269,7 +256,7 @@ var (
 			},
 			terraform: terraformBin{
 				path:    "../../../kubeone-stable/examples/terraform/aws",
-				varFile: "testdata/aws_stable.tfvars",
+				varFile: "testdata/aws_stable_medium.tfvars",
 				vars: []string{
 					"subnets_cidr=27",
 					"os=amzn",
@@ -288,7 +275,7 @@ var (
 			},
 			terraform: terraformBin{
 				path:    "../../examples/terraform/aws",
-				varFile: "testdata/aws.tfvars",
+				varFile: "testdata/aws_medium.tfvars",
 			},
 		},
 		"azure_default": {
