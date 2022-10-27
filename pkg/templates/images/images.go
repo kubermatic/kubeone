@@ -311,18 +311,19 @@ func optionalResources() map[Resource]map[string]string {
 
 		// OpenStack CSI
 		OpenstackCSI: {
-			"1.22.x":    "docker.io/k8scloudprovider/cinder-csi-plugin:v1.22.0",
+			"1.22.x":    "docker.io/k8scloudprovider/cinder-csi-plugin:v1.22.2",
 			"1.23.x":    "docker.io/k8scloudprovider/cinder-csi-plugin:v1.23.4",
-			">= 1.24.0": "docker.io/k8scloudprovider/cinder-csi-plugin:v1.24.2",
+			"1.24.x":    "docker.io/k8scloudprovider/cinder-csi-plugin:v1.24.5",
+			">= 1.25.0": "docker.io/k8scloudprovider/cinder-csi-plugin:v1.25.3",
 		},
-		OpenstackCSINodeDriverRegistar: {"*": "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.5.0"},
-		OpenstackCSILivenessProbe:      {"*": "k8s.gcr.io/sig-storage/livenessprobe:v2.6.0"},
+		OpenstackCSINodeDriverRegistar: {"*": "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.5.1"},
+		OpenstackCSILivenessProbe:      {"*": "k8s.gcr.io/sig-storage/livenessprobe:v2.7.0"},
 		OpenstackCSIAttacher:           {"*": "k8s.gcr.io/sig-storage/csi-attacher:v3.4.0"},
 		OpenstackCSIProvisioner:        {"*": "k8s.gcr.io/sig-storage/csi-provisioner:v3.1.0"},
 		OpenstackCSIResizer:            {"*": "k8s.gcr.io/sig-storage/csi-resizer:v1.4.0"},
-		OpenstackCSISnapshotter:        {"*": "k8s.gcr.io/sig-storage/csi-snapshotter:v5.0.1"},
-		OpenstackCSISnapshotController: {"*": "k8s.gcr.io/sig-storage/snapshot-controller:v5.0.1"},
-		OpenstackCSISnapshotWebhook:    {"*": "k8s.gcr.io/sig-storage/snapshot-validation-webhook:v5.0.1"},
+		OpenstackCSISnapshotter:        {"*": "k8s.gcr.io/sig-storage/csi-snapshotter:v6.0.1"},
+		OpenstackCSISnapshotController: {"*": "k8s.gcr.io/sig-storage/snapshot-controller:v6.0.1"},
+		OpenstackCSISnapshotWebhook:    {"*": "k8s.gcr.io/sig-storage/snapshot-validation-webhook:v6.0.1"},
 
 		// Equinix Metal CCM
 		EquinixMetalCCM: {"*": "docker.io/equinix/cloud-provider-equinix-metal:v3.4.3"},

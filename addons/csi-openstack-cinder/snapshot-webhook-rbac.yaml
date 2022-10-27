@@ -1,0 +1,35 @@
+# RBAC file for the snapshot webhook.
+#
+# The snapshot webhook implements the validation and admission for CSI snapshot functionality.
+# It should be installed as part of the base Kubernetes distribution in an appropriate
+# namespace for components implementing base system functionality. For installing with
+# Vanilla Kubernetes, kube-system makes sense for the namespace.
+# Source: https://github.com/kubernetes-csi/external-snapshotter/blob/v6.0.1/deploy/kubernetes/webhook-example/rbac-snapshot-webhook.yaml
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: snapshot-webhook
+  namespace: kube-system
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: snapshot-webhook-runner
+rules:
+  - apiGroups: ["snapshot.storage.k8s.io"]
+    resources: ["volumesnapshotclasses"]
+    verbs: ["get", "list", "watch"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: snapshot-webhook-role
+subjects:
+  - kind: ServiceAccount
+    name: snapshot-webhook
+    namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: snapshot-webhook-runner
+  apiGroup: rbac.authorization.k8s.io

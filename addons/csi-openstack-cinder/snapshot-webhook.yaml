@@ -1,4 +1,4 @@
-# Source: https://github.com/kubernetes-csi/external-snapshotter/blob/v5.0.1/deploy/kubernetes/webhook-example/webhook.yaml
+# Source: https://github.com/kubernetes-csi/external-snapshotter/blob/v6.0.1/deploy/kubernetes/webhook-example/webhook.yaml
 ---
 apiVersion: v1
 kind: Secret
@@ -22,7 +22,7 @@ webhooks:
   - apiGroups:   ["snapshot.storage.k8s.io"]
     apiVersions: ["v1", "v1beta1"]
     operations:  ["CREATE", "UPDATE"]
-    resources:   ["volumesnapshots", "volumesnapshotcontents"]
+    resources:   ["volumesnapshots", "volumesnapshotcontents", "volumesnapshotclasses"]
     scope:       "*"
   clientConfig:
     service:
@@ -53,6 +53,7 @@ spec:
       labels:
         app: snapshot-validation
     spec:
+      serviceAccountName: snapshot-webhook
       containers:
       - name: snapshot-validation
         image: {{ .InternalImages.Get "OpenstackCSISnapshotWebhook" }}
@@ -73,11 +74,11 @@ apiVersion: v1
 kind: Service
 metadata:
   name: snapshot-validation-service
-  namespace: kube-system # NOTE: change the namespace
+  namespace: kube-system
 spec:
   selector:
     app: snapshot-validation
   ports:
     - protocol: TCP
-      port: 443 # Change if needed
-      targetPort: 443 # Change if the webserver image expects a different port
+      port: 443
+      targetPort: 443
