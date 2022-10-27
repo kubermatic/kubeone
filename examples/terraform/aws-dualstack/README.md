@@ -1,7 +1,7 @@
 # AWS Quickstart Terraform configs
 
-The AWS Quickstart Terraform configs can be used to create the needed
-infrastructure for a Kubernetes HA cluster. Check out the
+The AWS Dualstack Quickstart Terraform configs can be used to create the needed
+infrastructure for a Kubernetes HA cluster with dualstack (IPv4+IPv6) support. Check out the
 [Creating Infrastructure guide][docs-infrastructure] to learn more about how to
 use the configs and how to provision a Kubernetes cluster using KubeOne.
 

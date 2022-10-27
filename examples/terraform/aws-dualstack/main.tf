@@ -181,6 +181,22 @@ resource "aws_security_group" "elb" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  egress {
+    description = "allow all outgoing traffic"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  ingress {
+    description = "allow anyone to connect to tcp/6443"
+    from_port   = 6443
+    to_port     = 6443
+    protocol    = "tcp"
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
   tags = tomap({
     "Cluster" = var.cluster_name,
   })
@@ -199,9 +215,39 @@ resource "aws_security_group" "ssh" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    description = "allow incoming SSH IPv6"
+    from_port   = var.ssh_port
+    to_port     = var.ssh_port
+    protocol    = "tcp"
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
   tags = tomap({
     "Cluster" = var.cluster_name,
   })
+}
+
+resource "aws_security_group_rule" "egress_allow_all_ipv6"  {
+  type              = "egress"
+  security_group_id = aws_security_group.common.id
+
+  description = "allow all outgoing traffic"
+  from_port   = 0
+  to_port     = 0
+  protocol    = "-1"
+  ipv6_cidr_blocks = ["::/0"]
+}
+
+resource "aws_security_group_rule" "nodeports_ipv6"  {
+  type              = "ingress"
+  security_group_id = aws_security_group.common.id
+
+  description = "open nodeports"
+  from_port   = 30000
+  to_port     = 32767
+  protocol    = "tcp"
+  ipv6_cidr_blocks = ["::/0"]
 }
 
 ################################## KUBE-API LB #################################
