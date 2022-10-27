@@ -106,7 +106,7 @@ var (
 					"os=rhel",
 					// NB: command-line flags have priority over terraform.tfvars
 					// so it's safe to override variables like this
-					"bastion_type=t3a.micro",
+					"bastion_type=t3.micro",
 					"control_plane_volume_size=50",
 					"worker_volume_size=50",
 				},
@@ -129,7 +129,7 @@ var (
 					"os=rhel",
 					// NB: command-line flags have priority over terraform.tfvars
 					// so it's safe to override variables like this
-					"bastion_type=t3a.micro",
+					"bastion_type=t3.micro",
 					"control_plane_volume_size=50",
 				},
 			},
