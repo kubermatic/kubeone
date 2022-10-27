@@ -303,9 +303,10 @@ func optionalResources() map[Resource]map[string]string {
 
 		// OpenStack CCM
 		OpenstackCCM: {
-			"1.22.x":    "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.22.0",
+			"1.22.x":    "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.22.2",
 			"1.23.x":    "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.23.4",
-			">= 1.24.0": "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.24.2",
+			"1.24.x":    "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.24.5",
+			">= 1.25.0": "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.25.3",
 		},
 
 		// OpenStack CSI
