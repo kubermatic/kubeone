@@ -4121,7 +4121,7 @@ rules:
     resources:
       - endpointslices
     verbs:
-      - watch 
+      - watch
       - list
   - apiGroups: [""]
     resources:
@@ -4483,8 +4483,6 @@ spec:
               value: "true"
             - name: IP6
               value: "autodetect"
-            - name: IP6_AUTODETECTION_METHOD
-              value: "skip-interface=envoyagent"
             - name: CALICO_IPV6POOL_CIDR
               value: "{{ takeCIDRn 1 .Config.ClusterNetwork.PodSubnet }}"
             {{ else }}
