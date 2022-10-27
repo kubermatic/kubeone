@@ -374,6 +374,9 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
 				name: resources.AddonCSIAwsEBS,
+				supportFn: func() error {
+					return migrateAWSCSIDriver(s)
+				},
 			},
 		)
 	// CSI driver is required for k8s v1.23+
