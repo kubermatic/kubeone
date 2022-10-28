@@ -407,7 +407,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-install-containerd-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -855,7 +855,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-install-containerd-v1.23.9
   optional: false
   path_alias: k8c.io/kubeone
@@ -1303,7 +1303,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-install-containerd-v1.24.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -1751,7 +1751,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-install-docker-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -2199,7 +2199,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-install-docker-v1.23.9
   optional: false
   path_alias: k8c.io/kubeone
@@ -2737,7 +2737,7 @@ presubmits:
     repo: kubeone
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-stable-upgrade-containerd-from-v1.23.9-to-v1.24.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -3280,7 +3280,7 @@ presubmits:
     repo: kubeone
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-stable-upgrade-containerd-from-v1.22.12-to-v1.23.9
   optional: false
   path_alias: k8c.io/kubeone
@@ -3823,7 +3823,7 @@ presubmits:
     repo: kubeone
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-stable-upgrade-containerd-from-v1.21.14-to-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -4366,7 +4366,7 @@ presubmits:
     repo: kubeone
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-stable-upgrade-docker-from-v1.22.12-to-v1.23.9
   optional: false
   path_alias: k8c.io/kubeone
@@ -4909,7 +4909,7 @@ presubmits:
     repo: kubeone
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-stable-upgrade-docker-from-v1.21.14-to-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -5362,7 +5362,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-calico-containerd-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -5810,7 +5810,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-calico-docker-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -6258,7 +6258,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-weave-containerd-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -6706,7 +6706,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-weave-docker-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -7154,7 +7154,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-cilium-containerd-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -7602,7 +7602,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-cilium-docker-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -8246,7 +8246,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-legacy-machine-controller-containerd-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -8694,7 +8694,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-legacy-machine-controller-containerd-v1.23.9
   optional: false
   path_alias: k8c.io/kubeone
@@ -9142,7 +9142,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-legacy-machine-controller-containerd-v1.24.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -9590,7 +9590,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-legacy-machine-controller-docker-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -10038,7 +10038,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-legacy-machine-controller-docker-v1.23.9
   optional: false
   path_alias: k8c.io/kubeone
@@ -10371,7 +10371,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-csi-ccm-migration-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -10681,7 +10681,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-csi-ccm-migration-v1.23.9
   optional: false
   path_alias: k8c.io/kubeone
@@ -10991,7 +10991,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-csi-ccm-migration-v1.24.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -11646,7 +11646,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-install-containerd-external-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -12301,7 +12301,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-install-containerd-external-v1.23.9
   optional: false
   path_alias: k8c.io/kubeone
@@ -12956,7 +12956,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-install-containerd-external-v1.24.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -13611,7 +13611,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-install-docker-external-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -14266,7 +14266,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-install-docker-external-v1.23.9
   optional: false
   path_alias: k8c.io/kubeone
@@ -15056,7 +15056,7 @@ presubmits:
     repo: kubeone
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-stable-upgrade-containerd-external-from-v1.21.14-to-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -15851,7 +15851,7 @@ presubmits:
     repo: kubeone
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-stable-upgrade-containerd-external-from-v1.22.12-to-v1.23.9
   optional: false
   path_alias: k8c.io/kubeone
@@ -16646,7 +16646,7 @@ presubmits:
     repo: kubeone
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-stable-upgrade-containerd-external-from-v1.23.9-to-v1.24.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -17441,7 +17441,7 @@ presubmits:
     repo: kubeone
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-stable-upgrade-docker-external-from-v1.21.14-to-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -18236,7 +18236,7 @@ presubmits:
     repo: kubeone
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-stable-upgrade-docker-external-from-v1.22.12-to-v1.23.9
   optional: false
   path_alias: k8c.io/kubeone
@@ -18896,7 +18896,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
   path_alias: k8c.io/kubeone
@@ -19551,7 +19551,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
   path_alias: k8c.io/kubeone
@@ -20206,7 +20206,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-legacy-machine-controller-containerd-external-v1.24.3
   optional: false
   path_alias: k8c.io/kubeone
