@@ -983,8 +983,8 @@ var (
 		"vsphere_default": {
 			name: "vsphere_default",
 			labels: map[string]string{
-				"preset-goproxy":        "true",
-				"preset-vsphere-legacy": "true",
+				"preset-goproxy": "true",
+				"preset-vsphere": "true",
 			},
 			environ: map[string]string{
 				"PROVIDER": "vsphere",
@@ -993,7 +993,7 @@ var (
 				path:    "../../examples/terraform/vsphere",
 				varFile: "testdata/vsphere.tfvars",
 				vars: []string{
-					"template_name=kubeone-e2e-ubuntu",
+					"template_name=k1-ubuntu-jammy",
 					"worker_os=ubuntu",
 					"ssh_username=ubuntu",
 				},
@@ -1002,8 +1002,8 @@ var (
 		"vsphere_default_stable": {
 			name: "vsphere_default_stable",
 			labels: map[string]string{
-				"preset-goproxy":        "true",
-				"preset-vsphere-legacy": "true",
+				"preset-goproxy": "true",
+				"preset-vsphere": "true",
 			},
 			environ: map[string]string{
 				"PROVIDER": "vsphere",
@@ -1012,7 +1012,7 @@ var (
 				path:    "../../../kubeone-stable/examples/terraform/vsphere",
 				varFile: "testdata/vsphere.tfvars",
 				vars: []string{
-					"template_name=kubeone-e2e-ubuntu",
+					"template_name=k1-ubuntu-jammy",
 					"worker_os=ubuntu",
 					"ssh_username=ubuntu",
 				},

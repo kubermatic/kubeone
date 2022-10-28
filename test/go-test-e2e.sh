@@ -130,11 +130,10 @@ EOL
     echo "${OS_K1_CREDENTIALS}" > "${CREDENTIALS_FILE_PATH}"
     ;;
   "vsphere")
+    export VSPHERE_ALLOW_UNVERIFIED_SSL=true
     export VSPHERE_SERVER="${VSPHERE_E2E_ADDRESS/http*:\/\//}"
     export VSPHERE_USER=${VSPHERE_E2E_USERNAME}
     export VSPHERE_PASSWORD=${VSPHERE_E2E_PASSWORD}
-    export TF_VAR_bastion_host=${VSPHERE_E2E_TEST_SSH_JUMPHOST}
-    export TF_VAR_bastion_username=${VSPHERE_E2E_TEST_SSH_USERNAME}
     CREDENTIALS_FILE_PATH="${BUILD_DIR}/credentials.yaml"
 
     cat > "${CREDENTIALS_FILE_PATH}" << EOL
@@ -143,28 +142,39 @@ cloudConfig: |
   secret-name = "vsphere-ccm-credentials"
   secret-namespace = "kube-system"
   port = "443"
-  insecure-flag = "0"
+  insecure-flag = "1"
 
   [VirtualCenter "${VSPHERE_SERVER}"]
 
   [Workspace]
   server = "${VSPHERE_SERVER}"
-  datacenter = "dc-1"
-  default-datastore = "HS-FreeNAS"
-  resourcepool-path = ""
+  datacenter = "Hamburg"
+  default-datastore="alpha1"
+  resourcepool-path=""
   folder = "kubeone-e2e"
 
   [Disk]
   scsicontrollertype = pvscsi
 
   [Network]
-  public-network = "VM Network"
+  public-network = "Default Network"
+csiConfig: |
+  [Global]
+  cluster-id = "k1-${BUILD_ID}"
+  user = "${VSPHERE_USER}"
+  password = "${VSPHERE_PASSWORD}"
+  port = "443"
+  insecure-flag = "1"
+  
+  [VirtualCenter "${VSPHERE_SERVER}"]
+  
+  [Workspace]
+  server = "${VSPHERE_SERVER}"
+  datacenter = "Hamburg"
+  default-datastore="alpha1"
+  resourcepool-path=""
+  folder = "kubeone-e2e"
 EOL
-
-    bastion_key="${BUILD_DIR}/bastion_key"
-    echo "${VSPHERE_E2E_TEST_SSH_PRIVATE_KEY}" > "$bastion_key"
-    chmod 600 "${bastion_key}"
-    ssh-add "${bastion_key}"
     ;;
   *)
     echo "unknown provider ${PROVIDER}"
