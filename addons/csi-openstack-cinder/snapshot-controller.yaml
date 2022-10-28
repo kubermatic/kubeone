@@ -30,7 +30,7 @@ spec:
       labels:
         app: snapshot-controller
     spec:
-      serviceAccount: snapshot-controller
+      serviceAccountName: snapshot-controller
       containers:
         - name: snapshot-controller
           image: {{ .InternalImages.Get "OpenstackCSISnapshotController" }}
