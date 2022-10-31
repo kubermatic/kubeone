@@ -54,9 +54,9 @@ download-gocache:
 	@# Prevent this from getting executed multiple times
 	@touch download-gocache
 
-.PHONY: generate-internal-groups
-generate-internal-groups: GOFLAGS = -mod=readonly
-generate-internal-groups: vendor
+.PHONY: update-codegen
+update-codegen: GOFLAGS = -mod=readonly
+update-codegen: vendor
 	./hack/update-codegen.sh
 
 .PHONY: test
