@@ -12,6 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+SHELL := bash
+.ONESHELL:
+.DELETE_ON_ERROR:
+.SHELLFLAGS := -eu -o pipefail -c
+MAKEFLAGS += --warn-undefined-variables
+MAKEFLAGS += --no-builtin-rules
+
 export GOPATH?=$(shell go env GOPATH)
 export CGO_ENABLED=0
 export GOPROXY?=https://proxy.golang.org

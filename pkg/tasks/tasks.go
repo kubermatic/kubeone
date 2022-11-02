@@ -256,12 +256,6 @@ func WithResources(t Tasks) Tasks {
 				Description: "ensure embedded addons",
 			},
 			{
-				Fn:          ensureCNI,
-				Operation:   "installing CNI plugin",
-				Description: "ensure CNI",
-				Predicate:   func(s *state.State) bool { return s.Cluster.ClusterNetwork.CNI.External == nil },
-			},
-			{
 				Fn:          ensureCABundleConfigMap,
 				Operation:   "ensuring caBundle configMap",
 				Description: "ensure caBundle configMap",
