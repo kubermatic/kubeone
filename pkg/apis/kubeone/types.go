@@ -21,6 +21,7 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
 )
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
@@ -74,6 +75,9 @@ type KubeOneCluster struct {
 	// Addons are used to deploy additional manifests.
 	Addons *Addons `json:"addons,omitempty"`
 
+	// HelmReleases list of instructions of how to deploy helm charts
+	HelmReleases []HelmRelease `json:"helmReleases"`
+
 	// SystemPackages configure kubeone behaviour regarding OS packages.
 	SystemPackages *SystemPackages `json:"systemPackages,omitempty"`
 
@@ -85,6 +89,22 @@ type KubeOneCluster struct {
 
 	// LoggingConfig configures the Kubelet's log rotation
 	LoggingConfig LoggingConfig `json:"loggingConfig,omitempty"`
+}
+
+type HelmRelease struct {
+	Chart       string            `json:"chart"`
+	RepoURL     string            `json:"repoURL"`
+	Version     string            `json:"version,omitempty"`
+	ReleaseName string            `json:"releaseName,omitempty"`
+	Namespace   string            `json:"namespace"`
+	Labels      map[string]string `json:"labels,omitempty"`
+	Values      []HelmValues      `json:"values,omitempty"`
+	Core        bool              `json:"core,omitempty"`
+}
+
+type HelmValues struct {
+	File   string                `json:"file,omitempty"`
+	Inline *runtime.RawExtension `json:"inline,omitempty"`
 }
 
 // LoggingConfig configures the Kubelet's log rotation
