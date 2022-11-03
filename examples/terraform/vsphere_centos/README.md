@@ -1,14 +1,27 @@
-# vSphere Quickstart Terraform configs for Flatcar Linux
+# vSphere Quickstart Terraform configs for CentOS-based operating systems
 
 The vSphere Quickstart Terraform configs can be used to create the needed
 infrastructure for a Kubernetes HA cluster. Check out the following
 [Creating Infrastructure guide][docs-infrastructure] to learn more about how to
 use the configs and how to provision a Kubernetes cluster using KubeOne.
 
-These Terraform configs are supposed to be used with Flatcar Linux.
+These Terraform configs are supposed to be used with CentOS-based operating
+systems (e.g. CentOS 7 and RHEL). It's required that the template VM support
+using [vSphere `guestinfo` datasource][guestinfo] to be able to use these
+configs. For more information on how to prepare a template VM to be used with
+these configs, check out our [CentOS 7 Template VM] guide.
+
+> **Note**
+> You might have to adjust [`cloud-config-metadata.tftpl`](./cloud-config-metadata.tftpl)
+> file depending on your vSphere environment and setup. This file contains the
+> network configuration for VMs. We configure the network to use IPv4 and DHCP,
+> which might not work for all vSphere environments.
 
 We also provide Terraform configs for [Debian-based operating systems](../vsphere)
-and [CentOS-based operating systems](../vsphere_centos).
+and [Flatcar Linux](../vsphere_flatcar).
+
+[CentOS 7 Template VM]: https://docs.kubermatic.com/kubeone/main/guides/vsphere-template-vm/centos/
+[guestinfo]: https://github.com/vmware-archive/cloud-init-vmware-guestinfo
 
 ## Required environment variables
 
@@ -39,6 +52,8 @@ See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
 
 | Name | Version |
 |------|---------|
+| <a name="provider_null"></a> [null](#provider\_null) | n/a |
+| <a name="provider_random"></a> [random](#provider\_random) | n/a |
 | <a name="provider_vsphere"></a> [vsphere](#provider\_vsphere) | ~> 2.1.1 |
 
 ## Modules
@@ -49,6 +64,8 @@ No modules.
 
 | Name | Type |
 |------|------|
+| [null_resource.keepalived_config](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
+| [random_string.keepalived_auth_pass](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
 | [vsphere_compute_cluster_vm_anti_affinity_rule.vm_anti_affinity_rule](https://registry.terraform.io/providers/hashicorp/vsphere/latest/docs/resources/compute_cluster_vm_anti_affinity_rule) | resource |
 | [vsphere_virtual_machine.control_plane](https://registry.terraform.io/providers/hashicorp/vsphere/latest/docs/resources/virtual_machine) | resource |
 | [vsphere_compute_cluster.cluster](https://registry.terraform.io/providers/hashicorp/vsphere/latest/docs/data-sources/compute_cluster) | data source |
@@ -89,12 +106,14 @@ No modules.
 | <a name="input_ssh_port"></a> [ssh\_port](#input\_ssh\_port) | SSH port to be used to provision instances | `number` | `22` | no |
 | <a name="input_ssh_private_key_file"></a> [ssh\_private\_key\_file](#input\_ssh\_private\_key\_file) | SSH private key file used to access instances | `string` | `""` | no |
 | <a name="input_ssh_public_key_file"></a> [ssh\_public\_key\_file](#input\_ssh\_public\_key\_file) | SSH public key file | `string` | `"~/.ssh/id_rsa.pub"` | no |
-| <a name="input_ssh_username"></a> [ssh\_username](#input\_ssh\_username) | SSH user, used only in output | `string` | `"core"` | no |
-| <a name="input_template_name"></a> [template\_name](#input\_template\_name) | template name | `string` | `"flatcar"` | no |
+| <a name="input_ssh_username"></a> [ssh\_username](#input\_ssh\_username) | SSH user, used only in output | `string` | `"root"` | no |
+| <a name="input_template_name"></a> [template\_name](#input\_template\_name) | template name | `string` | `"ubuntu-22.04"` | no |
+| <a name="input_vrrp_interface"></a> [vrrp\_interface](#input\_vrrp\_interface) | network interface for API virtual IP | `string` | `"ens192"` | no |
+| <a name="input_vrrp_router_id"></a> [vrrp\_router\_id](#input\_vrrp\_router\_id) | vrrp router id for API virtual IP. Must be unique in used subnet | `number` | `42` | no |
 | <a name="input_worker_disk"></a> [worker\_disk](#input\_worker\_disk) | disk size of each worker node in GB | `number` | `10` | no |
 | <a name="input_worker_memory"></a> [worker\_memory](#input\_worker\_memory) | memory size of each worker node in MB | `number` | `2048` | no |
 | <a name="input_worker_num_cpus"></a> [worker\_num\_cpus](#input\_worker\_num\_cpus) | number of cpus of each workers node | `number` | `2` | no |
-| <a name="input_worker_os"></a> [worker\_os](#input\_worker\_os) | OS to run on worker machines | `string` | `"flatcar"` | no |
+| <a name="input_worker_os"></a> [worker\_os](#input\_worker\_os) | OS to run on worker machines | `string` | `"ubuntu"` | no |
 
 ## Outputs
 

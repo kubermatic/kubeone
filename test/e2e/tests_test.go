@@ -172,6 +172,15 @@ func TestVsphereDefaultInstallContainerdV1_22_15(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestVsphereCentosInstallContainerdV1_22_15(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.15")
+	scenario.Run(ctx, t)
+}
+
 func TestVsphereFlatcarInstallContainerdV1_22_15(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_flatcar"]
@@ -337,6 +346,15 @@ func TestOpenstackFlatcarInstallContainerdV1_23_13(t *testing.T) {
 func TestVsphereDefaultInstallContainerdV1_23_13(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.13")
+	scenario.Run(ctx, t)
+}
+
+func TestVsphereCentosInstallContainerdV1_23_13(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.23.13")
@@ -514,6 +532,15 @@ func TestVsphereDefaultInstallContainerdV1_24_7(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestVsphereCentosInstallContainerdV1_24_7(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.7")
+	scenario.Run(ctx, t)
+}
+
 func TestVsphereFlatcarInstallContainerdV1_24_7(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_flatcar"]
@@ -679,6 +706,15 @@ func TestOpenstackFlatcarInstallContainerdV1_25_3(t *testing.T) {
 func TestVsphereDefaultInstallContainerdV1_25_3(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.25.3")
+	scenario.Run(ctx, t)
+}
+
+func TestVsphereCentosInstallContainerdV1_25_3(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.25.3")
@@ -856,6 +892,15 @@ func TestVsphereDefaultInstallDockerV1_22_15(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestVsphereCentosInstallDockerV1_22_15(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.15")
+	scenario.Run(ctx, t)
+}
+
 func TestVsphereFlatcarInstallDockerV1_22_15(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_flatcar"]
@@ -1021,6 +1066,15 @@ func TestOpenstackFlatcarInstallDockerV1_23_13(t *testing.T) {
 func TestVsphereDefaultInstallDockerV1_23_13(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["install_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.13")
+	scenario.Run(ctx, t)
+}
+
+func TestVsphereCentosInstallDockerV1_23_13(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos"]
 	scenario := Scenarios["install_docker"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.23.13")
@@ -1198,6 +1252,15 @@ func TestVsphereDefaultStableUpgradeContainerdFromV1_24_7_ToV1_25_3(t *testing.T
 	scenario.Run(ctx, t)
 }
 
+func TestVsphereCentosStableUpgradeContainerdFromV1_24_7_ToV1_25_3(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos_stable"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.7", "v1.25.3")
+	scenario.Run(ctx, t)
+}
+
 func TestVsphereFlatcarStableUpgradeContainerdFromV1_24_7_ToV1_25_3(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_flatcar_stable"]
@@ -1363,6 +1426,15 @@ func TestOpenstackFlatcarStableUpgradeContainerdFromV1_23_13_ToV1_24_7(t *testin
 func TestVsphereDefaultStableUpgradeContainerdFromV1_23_13_ToV1_24_7(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_default_stable"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.13", "v1.24.7")
+	scenario.Run(ctx, t)
+}
+
+func TestVsphereCentosStableUpgradeContainerdFromV1_23_13_ToV1_24_7(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.23.13", "v1.24.7")
@@ -1540,6 +1612,15 @@ func TestVsphereDefaultStableUpgradeContainerdFromV1_22_15_ToV1_23_13(t *testing
 	scenario.Run(ctx, t)
 }
 
+func TestVsphereCentosStableUpgradeContainerdFromV1_22_15_ToV1_23_13(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos_stable"]
+	scenario := Scenarios["upgrade_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.15", "v1.23.13")
+	scenario.Run(ctx, t)
+}
+
 func TestVsphereFlatcarStableUpgradeContainerdFromV1_22_15_ToV1_23_13(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_flatcar_stable"]
@@ -1705,6 +1786,15 @@ func TestOpenstackFlatcarStableUpgradeDockerFromV1_22_15_ToV1_23_13(t *testing.T
 func TestVsphereDefaultStableUpgradeDockerFromV1_22_15_ToV1_23_13(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_default_stable"]
+	scenario := Scenarios["upgrade_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.15", "v1.23.13")
+	scenario.Run(ctx, t)
+}
+
+func TestVsphereCentosStableUpgradeDockerFromV1_22_15_ToV1_23_13(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos_stable"]
 	scenario := Scenarios["upgrade_docker"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.15", "v1.23.13")
@@ -1882,6 +1972,15 @@ func TestVsphereDefaultCalicoContainerdV1_25_3(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestVsphereCentosCalicoContainerdV1_25_3(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos"]
+	scenario := Scenarios["calico_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.25.3")
+	scenario.Run(ctx, t)
+}
+
 func TestVsphereFlatcarCalicoContainerdV1_25_3(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_flatcar"]
@@ -2047,6 +2146,15 @@ func TestOpenstackFlatcarCalicoDockerV1_22_15(t *testing.T) {
 func TestVsphereDefaultCalicoDockerV1_22_15(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["calico_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.15")
+	scenario.Run(ctx, t)
+}
+
+func TestVsphereCentosCalicoDockerV1_22_15(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos"]
 	scenario := Scenarios["calico_docker"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.15")
@@ -2224,6 +2332,15 @@ func TestVsphereDefaultWeaveContainerdV1_25_3(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestVsphereCentosWeaveContainerdV1_25_3(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos"]
+	scenario := Scenarios["weave_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.25.3")
+	scenario.Run(ctx, t)
+}
+
 func TestVsphereFlatcarWeaveContainerdV1_25_3(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_flatcar"]
@@ -2389,6 +2506,15 @@ func TestOpenstackFlatcarWeaveDockerV1_22_15(t *testing.T) {
 func TestVsphereDefaultWeaveDockerV1_22_15(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["weave_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.15")
+	scenario.Run(ctx, t)
+}
+
+func TestVsphereCentosWeaveDockerV1_22_15(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos"]
 	scenario := Scenarios["weave_docker"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.15")
@@ -2566,6 +2692,15 @@ func TestVsphereDefaultCiliumContainerdV1_25_3(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestVsphereCentosCiliumContainerdV1_25_3(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos"]
+	scenario := Scenarios["cilium_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.25.3")
+	scenario.Run(ctx, t)
+}
+
 func TestVsphereFlatcarCiliumContainerdV1_25_3(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_flatcar"]
@@ -2731,6 +2866,15 @@ func TestOpenstackFlatcarCiliumDockerV1_22_15(t *testing.T) {
 func TestVsphereDefaultCiliumDockerV1_22_15(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["cilium_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.15")
+	scenario.Run(ctx, t)
+}
+
+func TestVsphereCentosCiliumDockerV1_22_15(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos"]
 	scenario := Scenarios["cilium_docker"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.15")
@@ -2989,6 +3133,15 @@ func TestVsphereDefaultLegacyMachineControllerContainerdV1_22_15(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestVsphereCentosLegacyMachineControllerContainerdV1_22_15(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos"]
+	scenario := Scenarios["legacy_machine_controller_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.15")
+	scenario.Run(ctx, t)
+}
+
 func TestVsphereFlatcarLegacyMachineControllerContainerdV1_22_15(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_flatcar"]
@@ -3154,6 +3307,15 @@ func TestOpenstackFlatcarLegacyMachineControllerContainerdV1_23_13(t *testing.T)
 func TestVsphereDefaultLegacyMachineControllerContainerdV1_23_13(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["legacy_machine_controller_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.13")
+	scenario.Run(ctx, t)
+}
+
+func TestVsphereCentosLegacyMachineControllerContainerdV1_23_13(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.23.13")
@@ -3331,6 +3493,15 @@ func TestVsphereDefaultLegacyMachineControllerContainerdV1_24_7(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestVsphereCentosLegacyMachineControllerContainerdV1_24_7(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos"]
+	scenario := Scenarios["legacy_machine_controller_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.7")
+	scenario.Run(ctx, t)
+}
+
 func TestVsphereFlatcarLegacyMachineControllerContainerdV1_24_7(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_flatcar"]
@@ -3496,6 +3667,15 @@ func TestOpenstackFlatcarLegacyMachineControllerContainerdV1_25_3(t *testing.T) 
 func TestVsphereDefaultLegacyMachineControllerContainerdV1_25_3(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["legacy_machine_controller_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.25.3")
+	scenario.Run(ctx, t)
+}
+
+func TestVsphereCentosLegacyMachineControllerContainerdV1_25_3(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.25.3")
@@ -3673,6 +3853,15 @@ func TestVsphereDefaultLegacyMachineControllerDockerV1_22_15(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestVsphereCentosLegacyMachineControllerDockerV1_22_15(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos"]
+	scenario := Scenarios["legacy_machine_controller_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.15")
+	scenario.Run(ctx, t)
+}
+
 func TestVsphereFlatcarLegacyMachineControllerDockerV1_22_15(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_flatcar"]
@@ -3844,6 +4033,15 @@ func TestVsphereDefaultLegacyMachineControllerDockerV1_23_13(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestVsphereCentosLegacyMachineControllerDockerV1_23_13(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos"]
+	scenario := Scenarios["legacy_machine_controller_docker"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.13")
+	scenario.Run(ctx, t)
+}
+
 func TestVsphereFlatcarLegacyMachineControllerDockerV1_23_13(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_flatcar"]
@@ -3955,6 +4153,15 @@ func TestAzureRockylinuxCsiCcmMigrationV1_22_15(t *testing.T) {
 func TestVsphereDefaultCsiCcmMigrationV1_22_15(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.15")
+	scenario.Run(ctx, t)
+}
+
+func TestVsphereCentosCsiCcmMigrationV1_22_15(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.15")
@@ -4078,6 +4285,15 @@ func TestVsphereDefaultCsiCcmMigrationV1_23_13(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestVsphereCentosCsiCcmMigrationV1_23_13(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.13")
+	scenario.Run(ctx, t)
+}
+
 func TestVsphereFlatcarCsiCcmMigrationV1_23_13(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_flatcar"]
@@ -4195,6 +4411,15 @@ func TestVsphereDefaultCsiCcmMigrationV1_24_7(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestVsphereCentosCsiCcmMigrationV1_24_7(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.7")
+	scenario.Run(ctx, t)
+}
+
 func TestVsphereFlatcarCsiCcmMigrationV1_24_7(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_flatcar"]
@@ -4306,6 +4531,15 @@ func TestAzureRockylinuxCsiCcmMigrationV1_25_3(t *testing.T) {
 func TestVsphereDefaultCsiCcmMigrationV1_25_3(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.25.3")
+	scenario.Run(ctx, t)
+}
+
+func TestVsphereCentosCsiCcmMigrationV1_25_3(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.25.3")
@@ -4564,6 +4798,15 @@ func TestVsphereDefaultInstallContainerdExternalV1_22_15(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestVsphereCentosInstallContainerdExternalV1_22_15(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.15")
+	scenario.Run(ctx, t)
+}
+
 func TestVsphereFlatcarInstallContainerdExternalV1_22_15(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_flatcar"]
@@ -4810,6 +5053,15 @@ func TestOpenstackFlatcarInstallContainerdExternalV1_23_13(t *testing.T) {
 func TestVsphereDefaultInstallContainerdExternalV1_23_13(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.13")
+	scenario.Run(ctx, t)
+}
+
+func TestVsphereCentosInstallContainerdExternalV1_23_13(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.23.13")
@@ -5068,6 +5320,15 @@ func TestVsphereDefaultInstallContainerdExternalV1_24_7(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestVsphereCentosInstallContainerdExternalV1_24_7(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.7")
+	scenario.Run(ctx, t)
+}
+
 func TestVsphereFlatcarInstallContainerdExternalV1_24_7(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_flatcar"]
@@ -5314,6 +5575,15 @@ func TestOpenstackFlatcarInstallContainerdExternalV1_25_3(t *testing.T) {
 func TestVsphereDefaultInstallContainerdExternalV1_25_3(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.25.3")
+	scenario.Run(ctx, t)
+}
+
+func TestVsphereCentosInstallContainerdExternalV1_25_3(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.25.3")
@@ -5572,6 +5842,15 @@ func TestVsphereDefaultInstallDockerExternalV1_22_15(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestVsphereCentosInstallDockerExternalV1_22_15(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.15")
+	scenario.Run(ctx, t)
+}
+
 func TestVsphereFlatcarInstallDockerExternalV1_22_15(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_flatcar"]
@@ -5818,6 +6097,15 @@ func TestOpenstackFlatcarInstallDockerExternalV1_23_13(t *testing.T) {
 func TestVsphereDefaultInstallDockerExternalV1_23_13(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["install_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.13")
+	scenario.Run(ctx, t)
+}
+
+func TestVsphereCentosInstallDockerExternalV1_23_13(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos"]
 	scenario := Scenarios["install_docker_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.23.13")
@@ -6076,6 +6364,15 @@ func TestVsphereDefaultStableUpgradeContainerdExternalFromV1_22_15_ToV1_23_13(t 
 	scenario.Run(ctx, t)
 }
 
+func TestVsphereCentosStableUpgradeContainerdExternalFromV1_22_15_ToV1_23_13(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos_stable"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.15", "v1.23.13")
+	scenario.Run(ctx, t)
+}
+
 func TestVsphereFlatcarStableUpgradeContainerdExternalFromV1_22_15_ToV1_23_13(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_flatcar_stable"]
@@ -6322,6 +6619,15 @@ func TestOpenstackFlatcarStableUpgradeContainerdExternalFromV1_23_13_ToV1_24_7(t
 func TestVsphereDefaultStableUpgradeContainerdExternalFromV1_23_13_ToV1_24_7(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_default_stable"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.13", "v1.24.7")
+	scenario.Run(ctx, t)
+}
+
+func TestVsphereCentosStableUpgradeContainerdExternalFromV1_23_13_ToV1_24_7(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.23.13", "v1.24.7")
@@ -6580,6 +6886,15 @@ func TestVsphereDefaultStableUpgradeContainerdExternalFromV1_24_7_ToV1_25_3(t *t
 	scenario.Run(ctx, t)
 }
 
+func TestVsphereCentosStableUpgradeContainerdExternalFromV1_24_7_ToV1_25_3(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos_stable"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.7", "v1.25.3")
+	scenario.Run(ctx, t)
+}
+
 func TestVsphereFlatcarStableUpgradeContainerdExternalFromV1_24_7_ToV1_25_3(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_flatcar_stable"]
@@ -6826,6 +7141,15 @@ func TestOpenstackFlatcarStableUpgradeDockerExternalFromV1_22_15_ToV1_23_13(t *t
 func TestVsphereDefaultStableUpgradeDockerExternalFromV1_22_15_ToV1_23_13(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_default_stable"]
+	scenario := Scenarios["upgrade_docker_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.15", "v1.23.13")
+	scenario.Run(ctx, t)
+}
+
+func TestVsphereCentosStableUpgradeDockerExternalFromV1_22_15_ToV1_23_13(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos_stable"]
 	scenario := Scenarios["upgrade_docker_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.22.15", "v1.23.13")
@@ -7084,6 +7408,15 @@ func TestVsphereDefaultLegacyMachineControllerContainerdExternalV1_22_15(t *test
 	scenario.Run(ctx, t)
 }
 
+func TestVsphereCentosLegacyMachineControllerContainerdExternalV1_22_15(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos"]
+	scenario := Scenarios["legacy_machine_controller_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.22.15")
+	scenario.Run(ctx, t)
+}
+
 func TestVsphereFlatcarLegacyMachineControllerContainerdExternalV1_22_15(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_flatcar"]
@@ -7330,6 +7663,15 @@ func TestOpenstackFlatcarLegacyMachineControllerContainerdExternalV1_23_13(t *te
 func TestVsphereDefaultLegacyMachineControllerContainerdExternalV1_23_13(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["legacy_machine_controller_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.23.13")
+	scenario.Run(ctx, t)
+}
+
+func TestVsphereCentosLegacyMachineControllerContainerdExternalV1_23_13(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.23.13")
@@ -7588,6 +7930,15 @@ func TestVsphereDefaultLegacyMachineControllerContainerdExternalV1_24_7(t *testi
 	scenario.Run(ctx, t)
 }
 
+func TestVsphereCentosLegacyMachineControllerContainerdExternalV1_24_7(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos"]
+	scenario := Scenarios["legacy_machine_controller_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.7")
+	scenario.Run(ctx, t)
+}
+
 func TestVsphereFlatcarLegacyMachineControllerContainerdExternalV1_24_7(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_flatcar"]
@@ -7834,6 +8185,15 @@ func TestOpenstackFlatcarLegacyMachineControllerContainerdExternalV1_25_3(t *tes
 func TestVsphereDefaultLegacyMachineControllerContainerdExternalV1_25_3(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["legacy_machine_controller_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.25.3")
+	scenario.Run(ctx, t)
+}
+
+func TestVsphereCentosLegacyMachineControllerContainerdExternalV1_25_3(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["vsphere_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.25.3")

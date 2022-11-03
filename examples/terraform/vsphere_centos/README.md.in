@@ -1,0 +1,43 @@
+# vSphere Quickstart Terraform configs for CentOS-based operating systems
+
+The vSphere Quickstart Terraform configs can be used to create the needed
+infrastructure for a Kubernetes HA cluster. Check out the following
+[Creating Infrastructure guide][docs-infrastructure] to learn more about how to
+use the configs and how to provision a Kubernetes cluster using KubeOne.
+
+These Terraform configs are supposed to be used with CentOS-based operating
+systems (e.g. CentOS 7 and RHEL). It's required that the template VM support
+using [vSphere `guestinfo` datasource][guestinfo] to be able to use these
+configs. For more information on how to prepare a template VM to be used with
+these configs, check out our [CentOS 7 Template VM] guide.
+
+> **Note**
+> You might have to adjust [`cloud-config-metadata.tftpl`](./cloud-config-metadata.tftpl)
+> file depending on your vSphere environment and setup. This file contains the
+> network configuration for VMs. We configure the network to use IPv4 and DHCP,
+> which might not work for all vSphere environments.
+
+We also provide Terraform configs for [Debian-based operating systems](../vsphere)
+and [Flatcar Linux](../vsphere_flatcar).
+
+[CentOS 7 Template VM]: https://docs.kubermatic.com/kubeone/main/guides/vsphere-template-vm/centos/
+[guestinfo]: https://github.com/vmware-archive/cloud-init-vmware-guestinfo
+
+## Required environment variables
+
+* `VSPHERE_USER`
+* `VSPHERE_PASSWORD`
+* `VSPHERE_SERVER`
+* `VSPHERE_ALLOW_UNVERIFIED_SSL`
+
+## How to prepare a template
+
+See <https://github.com/kubermatic/machine-controller/blob/main/docs/vsphere.md>
+
+## Kubernetes API Server Load Balancing
+
+See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
+
+[docs-infrastructure]: https://docs.kubermatic.com/kubeone/main/guides/using-terraform-configs/
+[docs-tf-loadbalancer]: https://docs.kubermatic.com/kubeone/main/examples/ha-load-balancing/
+

@@ -407,7 +407,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-install-containerd-v1.22.15
   optional: false
   path_alias: k8c.io/kubeone
@@ -416,6 +416,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultInstallContainerdV1_22_15
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-install-containerd-v1.22.15
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosInstallContainerdV1_22_15
       env:
       - name: PROVIDER
         value: vsphere
@@ -855,7 +878,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-install-containerd-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
@@ -864,6 +887,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultInstallContainerdV1_23_13
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-install-containerd-v1.23.13
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosInstallContainerdV1_23_13
       env:
       - name: PROVIDER
         value: vsphere
@@ -1303,7 +1349,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-install-containerd-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
@@ -1312,6 +1358,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultInstallContainerdV1_24_7
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-install-containerd-v1.24.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosInstallContainerdV1_24_7
       env:
       - name: PROVIDER
         value: vsphere
@@ -1751,7 +1820,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-install-containerd-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -1760,6 +1829,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultInstallContainerdV1_25_3
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-install-containerd-v1.25.3
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosInstallContainerdV1_25_3
       env:
       - name: PROVIDER
         value: vsphere
@@ -2199,7 +2291,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-install-docker-v1.22.15
   optional: false
   path_alias: k8c.io/kubeone
@@ -2208,6 +2300,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultInstallDockerV1_22_15
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-install-docker-v1.22.15
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosInstallDockerV1_22_15
       env:
       - name: PROVIDER
         value: vsphere
@@ -2647,7 +2762,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-install-docker-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
@@ -2656,6 +2771,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultInstallDockerV1_23_13
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-install-docker-v1.23.13
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosInstallDockerV1_23_13
       env:
       - name: PROVIDER
         value: vsphere
@@ -3185,7 +3323,7 @@ presubmits:
     repo: kubeone
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-stable-upgrade-containerd-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -3194,6 +3332,34 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultStableUpgradeContainerdFromV1_24_7_ToV1_25_3
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  extra_refs:
+  - base_ref: release/v1.5
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-stable-upgrade-containerd-from-v1.24.7-to-v1.25.3
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosStableUpgradeContainerdFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: vsphere
@@ -3728,7 +3894,7 @@ presubmits:
     repo: kubeone
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-stable-upgrade-containerd-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
@@ -3737,6 +3903,34 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultStableUpgradeContainerdFromV1_23_13_ToV1_24_7
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  extra_refs:
+  - base_ref: release/v1.5
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-stable-upgrade-containerd-from-v1.23.13-to-v1.24.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosStableUpgradeContainerdFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: vsphere
@@ -4271,7 +4465,7 @@ presubmits:
     repo: kubeone
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-stable-upgrade-containerd-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
@@ -4280,6 +4474,34 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultStableUpgradeContainerdFromV1_22_15_ToV1_23_13
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  extra_refs:
+  - base_ref: release/v1.5
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-stable-upgrade-containerd-from-v1.22.15-to-v1.23.13
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosStableUpgradeContainerdFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: vsphere
@@ -4814,7 +5036,7 @@ presubmits:
     repo: kubeone
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-stable-upgrade-docker-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
@@ -4823,6 +5045,34 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultStableUpgradeDockerFromV1_22_15_ToV1_23_13
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  extra_refs:
+  - base_ref: release/v1.5
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-stable-upgrade-docker-from-v1.22.15-to-v1.23.13
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosStableUpgradeDockerFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: vsphere
@@ -5267,7 +5517,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-calico-containerd-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -5276,6 +5526,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultCalicoContainerdV1_25_3
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-calico-containerd-v1.25.3
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosCalicoContainerdV1_25_3
       env:
       - name: PROVIDER
         value: vsphere
@@ -5715,7 +5988,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-calico-docker-v1.22.15
   optional: false
   path_alias: k8c.io/kubeone
@@ -5724,6 +5997,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultCalicoDockerV1_22_15
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-calico-docker-v1.22.15
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosCalicoDockerV1_22_15
       env:
       - name: PROVIDER
         value: vsphere
@@ -6163,7 +6459,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-weave-containerd-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -6172,6 +6468,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultWeaveContainerdV1_25_3
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-weave-containerd-v1.25.3
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosWeaveContainerdV1_25_3
       env:
       - name: PROVIDER
         value: vsphere
@@ -6611,7 +6930,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-weave-docker-v1.22.15
   optional: false
   path_alias: k8c.io/kubeone
@@ -6620,6 +6939,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultWeaveDockerV1_22_15
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-weave-docker-v1.22.15
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosWeaveDockerV1_22_15
       env:
       - name: PROVIDER
         value: vsphere
@@ -7059,7 +7401,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-cilium-containerd-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -7068,6 +7410,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultCiliumContainerdV1_25_3
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-cilium-containerd-v1.25.3
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosCiliumContainerdV1_25_3
       env:
       - name: PROVIDER
         value: vsphere
@@ -7507,7 +7872,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-cilium-docker-v1.22.15
   optional: false
   path_alias: k8c.io/kubeone
@@ -7516,6 +7881,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultCiliumDockerV1_22_15
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-cilium-docker-v1.22.15
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosCiliumDockerV1_22_15
       env:
       - name: PROVIDER
         value: vsphere
@@ -8178,7 +8566,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-legacy-machine-controller-containerd-v1.22.15
   optional: false
   path_alias: k8c.io/kubeone
@@ -8187,6 +8575,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultLegacyMachineControllerContainerdV1_22_15
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-legacy-machine-controller-containerd-v1.22.15
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosLegacyMachineControllerContainerdV1_22_15
       env:
       - name: PROVIDER
         value: vsphere
@@ -8626,7 +9037,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-legacy-machine-controller-containerd-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
@@ -8635,6 +9046,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultLegacyMachineControllerContainerdV1_23_13
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-legacy-machine-controller-containerd-v1.23.13
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosLegacyMachineControllerContainerdV1_23_13
       env:
       - name: PROVIDER
         value: vsphere
@@ -9074,7 +9508,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-legacy-machine-controller-containerd-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
@@ -9083,6 +9517,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultLegacyMachineControllerContainerdV1_24_7
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-legacy-machine-controller-containerd-v1.24.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosLegacyMachineControllerContainerdV1_24_7
       env:
       - name: PROVIDER
         value: vsphere
@@ -9522,7 +9979,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-legacy-machine-controller-containerd-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -9531,6 +9988,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultLegacyMachineControllerContainerdV1_25_3
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-legacy-machine-controller-containerd-v1.25.3
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosLegacyMachineControllerContainerdV1_25_3
       env:
       - name: PROVIDER
         value: vsphere
@@ -9970,7 +10450,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-legacy-machine-controller-docker-v1.22.15
   optional: false
   path_alias: k8c.io/kubeone
@@ -9979,6 +10459,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultLegacyMachineControllerDockerV1_22_15
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-legacy-machine-controller-docker-v1.22.15
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosLegacyMachineControllerDockerV1_22_15
       env:
       - name: PROVIDER
         value: vsphere
@@ -10418,7 +10921,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-legacy-machine-controller-docker-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
@@ -10427,6 +10930,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultLegacyMachineControllerDockerV1_23_13
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-legacy-machine-controller-docker-v1.23.13
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosLegacyMachineControllerDockerV1_23_13
       env:
       - name: PROVIDER
         value: vsphere
@@ -10728,7 +11254,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-csi-ccm-migration-v1.22.15
   optional: false
   path_alias: k8c.io/kubeone
@@ -10737,6 +11263,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultCsiCcmMigrationV1_22_15
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-csi-ccm-migration-v1.22.15
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosCsiCcmMigrationV1_22_15
       env:
       - name: PROVIDER
         value: vsphere
@@ -11038,7 +11587,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-csi-ccm-migration-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
@@ -11047,6 +11596,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultCsiCcmMigrationV1_23_13
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-csi-ccm-migration-v1.23.13
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosCsiCcmMigrationV1_23_13
       env:
       - name: PROVIDER
         value: vsphere
@@ -11348,7 +11920,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-csi-ccm-migration-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
@@ -11357,6 +11929,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultCsiCcmMigrationV1_24_7
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-csi-ccm-migration-v1.24.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosCsiCcmMigrationV1_24_7
       env:
       - name: PROVIDER
         value: vsphere
@@ -11658,7 +12253,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-csi-ccm-migration-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -11667,6 +12262,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultCsiCcmMigrationV1_25_3
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-csi-ccm-migration-v1.25.3
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosCsiCcmMigrationV1_25_3
       env:
       - name: PROVIDER
         value: vsphere
@@ -12313,7 +12931,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-install-containerd-external-v1.22.15
   optional: false
   path_alias: k8c.io/kubeone
@@ -12322,6 +12940,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultInstallContainerdExternalV1_22_15
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-install-containerd-external-v1.22.15
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosInstallContainerdExternalV1_22_15
       env:
       - name: PROVIDER
         value: vsphere
@@ -12968,7 +13609,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-install-containerd-external-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
@@ -12977,6 +13618,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultInstallContainerdExternalV1_23_13
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-install-containerd-external-v1.23.13
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosInstallContainerdExternalV1_23_13
       env:
       - name: PROVIDER
         value: vsphere
@@ -13623,7 +14287,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-install-containerd-external-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
@@ -13632,6 +14296,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultInstallContainerdExternalV1_24_7
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-install-containerd-external-v1.24.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosInstallContainerdExternalV1_24_7
       env:
       - name: PROVIDER
         value: vsphere
@@ -14278,7 +14965,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-install-containerd-external-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -14287,6 +14974,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultInstallContainerdExternalV1_25_3
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-install-containerd-external-v1.25.3
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosInstallContainerdExternalV1_25_3
       env:
       - name: PROVIDER
         value: vsphere
@@ -14933,7 +15643,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-install-docker-external-v1.22.15
   optional: false
   path_alias: k8c.io/kubeone
@@ -14942,6 +15652,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultInstallDockerExternalV1_22_15
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-install-docker-external-v1.22.15
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosInstallDockerExternalV1_22_15
       env:
       - name: PROVIDER
         value: vsphere
@@ -15588,7 +16321,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-install-docker-external-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
@@ -15597,6 +16330,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultInstallDockerExternalV1_23_13
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-install-docker-external-v1.23.13
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosInstallDockerExternalV1_23_13
       env:
       - name: PROVIDER
         value: vsphere
@@ -16378,7 +17134,7 @@ presubmits:
     repo: kubeone
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-stable-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
@@ -16387,6 +17143,34 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultStableUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  extra_refs:
+  - base_ref: release/v1.5
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-stable-upgrade-containerd-external-from-v1.22.15-to-v1.23.13
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosStableUpgradeContainerdExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: vsphere
@@ -17173,7 +17957,7 @@ presubmits:
     repo: kubeone
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-stable-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
@@ -17182,6 +17966,34 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultStableUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  extra_refs:
+  - base_ref: release/v1.5
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-stable-upgrade-containerd-external-from-v1.23.13-to-v1.24.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosStableUpgradeContainerdExternalFromV1_23_13_ToV1_24_7
       env:
       - name: PROVIDER
         value: vsphere
@@ -17968,7 +18780,7 @@ presubmits:
     repo: kubeone
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-stable-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -17977,6 +18789,34 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultStableUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  extra_refs:
+  - base_ref: release/v1.5
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-stable-upgrade-containerd-external-from-v1.24.7-to-v1.25.3
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosStableUpgradeContainerdExternalFromV1_24_7_ToV1_25_3
       env:
       - name: PROVIDER
         value: vsphere
@@ -18763,7 +19603,7 @@ presubmits:
     repo: kubeone
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-stable-upgrade-docker-external-from-v1.22.15-to-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
@@ -18772,6 +19612,34 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultStableUpgradeDockerExternalFromV1_22_15_ToV1_23_13
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  extra_refs:
+  - base_ref: release/v1.5
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-stable-upgrade-docker-external-from-v1.22.15-to-v1.23.13
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosStableUpgradeDockerExternalFromV1_22_15_ToV1_23_13
       env:
       - name: PROVIDER
         value: vsphere
@@ -19423,7 +20291,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-legacy-machine-controller-containerd-external-v1.22.15
   optional: false
   path_alias: k8c.io/kubeone
@@ -19432,6 +20300,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultLegacyMachineControllerContainerdExternalV1_22_15
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-legacy-machine-controller-containerd-external-v1.22.15
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosLegacyMachineControllerContainerdExternalV1_22_15
       env:
       - name: PROVIDER
         value: vsphere
@@ -20078,7 +20969,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-legacy-machine-controller-containerd-external-v1.23.13
   optional: false
   path_alias: k8c.io/kubeone
@@ -20087,6 +20978,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultLegacyMachineControllerContainerdExternalV1_23_13
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-legacy-machine-controller-containerd-external-v1.23.13
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosLegacyMachineControllerContainerdExternalV1_23_13
       env:
       - name: PROVIDER
         value: vsphere
@@ -20733,7 +21647,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-legacy-machine-controller-containerd-external-v1.24.7
   optional: false
   path_alias: k8c.io/kubeone
@@ -20742,6 +21656,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultLegacyMachineControllerContainerdExternalV1_24_7
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-legacy-machine-controller-containerd-external-v1.24.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosLegacyMachineControllerContainerdExternalV1_24_7
       env:
       - name: PROVIDER
         value: vsphere
@@ -21388,7 +22325,7 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere-legacy: "true"
+    preset-vsphere: "true"
   name: pull-kubeone-e2e-vsphere-default-legacy-machine-controller-containerd-external-v1.25.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -21397,6 +22334,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultLegacyMachineControllerContainerdExternalV1_25_3
+      env:
+      - name: PROVIDER
+        value: vsphere
+      image: kubermatic/kubeone-e2e:v0.1.26
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-centos-legacy-machine-controller-containerd-external-v1.25.3
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereCentosLegacyMachineControllerContainerdExternalV1_25_3
       env:
       - name: PROVIDER
         value: vsphere
