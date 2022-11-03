@@ -618,7 +618,19 @@ func sonobuoyRun(ctx context.Context, t *testing.T, k1 *kubeoneBin, mode sonobuo
 }
 
 func NewSignalContext() context.Context {
-	ctx, _ := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGQUIT, syscall.SIGTERM)
+	// We use context.WithTimeout because we want to cancel the context
+	// before test timeouts. If we allow the test to timeout, the main test
+	// process will terminate, but other subprocesses that we call will
+	// remain running. For example, we run `sonobuoy wait`-- if it eventually
+	// gets stuck, once the test timeouts, the main test process will terminate,
+	// but `sonobuoy wait` will continue running until the ProwJob doesn't
+	// timeout. This also means, because the main process has been terminated,
+	// there will be NO cleanup, so we'll leak resources.
+	//
+	// 55 minutes has been chosen on basis of default test timeout of 1 hour.
+	// We allow 5 minutes for tests to clean up after themselves.
+	ctx, _ := context.WithTimeout(context.Background(), 55*time.Minute) //nolint:govet
+	sCtx, _ := signal.NotifyContext(ctx, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGTERM)
 
-	return ctx
+	return sCtx
 }
