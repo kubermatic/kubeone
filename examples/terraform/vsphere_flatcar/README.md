@@ -1,9 +1,14 @@
-# vSphere Quickstart Terraform configs
+# vSphere Quickstart Terraform configs for Flatcar Linux
 
 The vSphere Quickstart Terraform configs can be used to create the needed
 infrastructure for a Kubernetes HA cluster. Check out the following
 [Creating Infrastructure guide][docs-infrastructure] to learn more about how to
 use the configs and how to provision a Kubernetes cluster using KubeOne.
+
+These Terraform configs are supposed to be used with Flatcar Linux.
+
+We also provide Terraform configs for [Debian-based operating systems](../vsphere)
+and [CentOS-based operating systems](../vsphere_centos).
 
 ## Required environment variables
 
