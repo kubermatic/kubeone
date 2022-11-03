@@ -145,7 +145,7 @@ presubmits:
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     labels:
       preset-goproxy: "true"
-      preset-aws: "true"
+      preset-aws-e2e-kubeone: "true"
     spec:
       containers:
         - image: kubermatic/kubeone-e2e:v0.1.20
@@ -174,7 +174,7 @@ presubmits:
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     labels:
       preset-goproxy: "true"
-      preset-aws: "true"
+      preset-aws-e2e-kubeone: "true"
     spec:
       containers:
         - image: kubermatic/kubeone-e2e:v0.1.20
@@ -211,7 +211,7 @@ presubmits:
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     labels:
       preset-goproxy: "true"
-      preset-aws: "true"
+      preset-aws-e2e-kubeone: "true"
     spec:
       containers:
         - image: kubermatic/kubeone-e2e:v0.1.20
@@ -238,7 +238,7 @@ presubmits:
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     labels:
       preset-goproxy: "true"
-      preset-aws: "true"
+      preset-aws-e2e-kubeone: "true"
     spec:
       containers:
         - image: kubermatic/kubeone-e2e:v0.1.20
@@ -263,7 +263,7 @@ presubmits:
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     labels:
       preset-goproxy: "true"
-      preset-aws: "true"
+      preset-aws-e2e-kubeone: "true"
     spec:
       containers:
         - image: kubermatic/kubeone-e2e:v0.1.20
@@ -290,7 +290,7 @@ presubmits:
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     labels:
       preset-goproxy: "true"
-      preset-aws: "true"
+      preset-aws-e2e-kubeone: "true"
     spec:
       containers:
         - image: kubermatic/kubeone-e2e:v0.1.20
@@ -317,7 +317,7 @@ presubmits:
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     labels:
       preset-goproxy: "true"
-      preset-aws: "true"
+      preset-aws-e2e-kubeone: "true"
     spec:
       containers:
         - image: kubermatic/kubeone-e2e:v0.1.20
@@ -892,7 +892,7 @@ presubmits:
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     labels:
       preset-goproxy: "true"
-      preset-aws: "true"
+      preset-aws-e2e-kubeone: "true"
     spec:
       containers:
         - image: kubermatic/kubeone-e2e:v0.1.20
@@ -922,7 +922,7 @@ presubmits:
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     labels:
       preset-goproxy: "true"
-      preset-aws: "true"
+      preset-aws-e2e-kubeone: "true"
     spec:
       containers:
         - image: kubermatic/kubeone-e2e:v0.1.20
@@ -950,7 +950,7 @@ presubmits:
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     labels:
       preset-goproxy: "true"
-      preset-aws: "true"
+      preset-aws-e2e-kubeone: "true"
     spec:
       containers:
         - image: kubermatic/kubeone-e2e:v0.1.20
@@ -980,7 +980,7 @@ presubmits:
     clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
     labels:
       preset-goproxy: "true"
-      preset-aws: "true"
+      preset-aws-e2e-kubeone: "true"
     spec:
       containers:
         - image: kubermatic/kubeone-e2e:v0.1.20
