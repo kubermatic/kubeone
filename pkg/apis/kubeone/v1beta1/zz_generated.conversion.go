@@ -1215,7 +1215,7 @@ func Convert_v1beta1_HostConfig_To_kubeone_HostConfig(in *HostConfig, out *kubeo
 func autoConvert_kubeone_HostConfig_To_v1beta1_HostConfig(in *kubeone.HostConfig, out *HostConfig, s conversion.Scope) error {
 	out.ID = in.ID
 	out.PublicAddress = in.PublicAddress
-	// WARNING: in.IPv6AddressList requires manual conversion: does not exist in peer-type
+	// WARNING: in.IPv6Addresses requires manual conversion: does not exist in peer-type
 	out.PrivateAddress = in.PrivateAddress
 	out.SSHPort = in.SSHPort
 	out.SSHUsername = in.SSHUsername

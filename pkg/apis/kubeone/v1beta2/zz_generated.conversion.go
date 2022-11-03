@@ -1330,7 +1330,7 @@ func Convert_kubeone_HetznerSpec_To_v1beta2_HetznerSpec(in *kubeone.HetznerSpec,
 func autoConvert_v1beta2_HostConfig_To_kubeone_HostConfig(in *HostConfig, out *kubeone.HostConfig, s conversion.Scope) error {
 	out.ID = in.ID
 	out.PublicAddress = in.PublicAddress
-	out.IPv6AddressList = *(*[]string)(unsafe.Pointer(&in.IPv6AddressList))
+	out.IPv6Addresses = *(*[]string)(unsafe.Pointer(&in.IPv6Addresses))
 	out.PrivateAddress = in.PrivateAddress
 	out.SSHPort = in.SSHPort
 	out.SSHUsername = in.SSHUsername
@@ -1360,7 +1360,7 @@ func Convert_v1beta2_HostConfig_To_kubeone_HostConfig(in *HostConfig, out *kubeo
 func autoConvert_kubeone_HostConfig_To_v1beta2_HostConfig(in *kubeone.HostConfig, out *HostConfig, s conversion.Scope) error {
 	out.ID = in.ID
 	out.PublicAddress = in.PublicAddress
-	out.IPv6AddressList = *(*[]string)(unsafe.Pointer(&in.IPv6AddressList))
+	out.IPv6Addresses = *(*[]string)(unsafe.Pointer(&in.IPv6Addresses))
 	out.PrivateAddress = in.PrivateAddress
 	out.SSHPort = in.SSHPort
 	out.SSHUsername = in.SSHUsername

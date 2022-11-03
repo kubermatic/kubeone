@@ -87,7 +87,7 @@ type controlPlane struct {
 
 type hostsSpec struct {
 	PublicAddress     []string          `json:"public_address"`
-	IPv6AddressList   [][]string        `json:"ipv6_address_list"`
+	IPv6Addresses     [][]string        `json:"ipv6_addresses"`
 	PrivateAddress    []string          `json:"private_address"`
 	Hostnames         []string          `json:"hostnames"`
 	OperatingSystem   string            `json:"operating_system"`
@@ -156,8 +156,8 @@ func (hs *hostsSpec) toHostConfigs(opts ...hostConfigsOpts) []kubeonev1beta2.Hos
 		}
 
 		var ipv6Addr []string
-		if i < len(hs.IPv6AddressList) {
-			ipv6Addr = hs.IPv6AddressList[i]
+		if i < len(hs.IPv6Addresses) {
+			ipv6Addr = hs.IPv6Addresses[i]
 		}
 
 		hosts = append(hosts, newHostConfig(publicIP, privateIP, ipv6Addr, i, hs))
@@ -167,8 +167,8 @@ func (hs *hostsSpec) toHostConfigs(opts ...hostConfigsOpts) []kubeonev1beta2.Hos
 		// there was no public IPs available
 		for i, privateIP := range hs.PrivateAddress {
 			var ipv6Addr []string
-			if i < len(hs.IPv6AddressList) {
-				ipv6Addr = hs.IPv6AddressList[i]
+			if i < len(hs.IPv6Addresses) {
+				ipv6Addr = hs.IPv6Addresses[i]
 			}
 			hosts = append(hosts, newHostConfig("", privateIP, ipv6Addr, i, hs))
 		}
@@ -360,7 +360,7 @@ func newHostConfig(publicIP, privateIP string, ipv6addr []string, idx int, spec 
 		OperatingSystem:      kubeonev1beta2.OperatingSystemName(spec.OperatingSystem),
 		PrivateAddress:       privateIP,
 		PublicAddress:        publicIP,
-		IPv6AddressList:      ipv6addr,
+		IPv6Addresses:        ipv6addr,
 		SSHAgentSocket:       spec.SSHAgentSocket,
 		SSHPrivateKeyFile:    spec.SSHPrivateKeyFile,
 		SSHUsername:          spec.SSHUser,

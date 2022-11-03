@@ -164,9 +164,9 @@ type HostConfig struct {
 	// PublicAddress is externally accessible IP address from public internet.
 	PublicAddress string `json:"publicAddress"`
 
-	// IPv6AddressList is IPv6 addresses of the node, only the first one will be announced to the k8s control plane.
+	// IPv6Addresses is IPv6 addresses of the node, only the first one will be announced to the k8s control plane.
 	// It is a list because you can request lots of IPv6 addresses (for example in case you want to assign one address per service).
-	IPv6AddressList []string `json:"IPv6AddressList"`
+	IPv6Addresses []string `json:"ipv6Addresses"`
 
 	// PrivateAddress is internal RFC-1918 IP address.
 	PrivateAddress string `json:"privateAddress"`

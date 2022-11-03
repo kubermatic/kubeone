@@ -431,9 +431,9 @@ func newNodeRegistration(s *state.State, host kubeoneapi.HostConfig) kubeadmv1be
 	// as the cloud provider will know what IPs to return.
 	switch {
 	case s.Cluster.ClusterNetwork.IPFamily == kubeoneapi.IPFamilyIPv4IPv6 && !(s.Cluster.CloudProvider.External || s.Cluster.CloudProvider.None == nil):
-		kubeletCLIFlags["node-ip"] = newNodeIP(host) + "," + host.IPv6AddressList[0]
+		kubeletCLIFlags["node-ip"] = newNodeIP(host) + "," + host.IPv6Addresses[0]
 	case s.Cluster.ClusterNetwork.IPFamily == kubeoneapi.IPFamilyIPv6IPv4 && !(s.Cluster.CloudProvider.External || s.Cluster.CloudProvider.None == nil):
-		kubeletCLIFlags["node-ip"] = host.IPv6AddressList[0] + "," + newNodeIP(host)
+		kubeletCLIFlags["node-ip"] = host.IPv6Addresses[0] + "," + newNodeIP(host)
 	default:
 		kubeletCLIFlags["node-ip"] = newNodeIP(host)
 	}
