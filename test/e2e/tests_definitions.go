@@ -56,7 +56,6 @@ var (
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/aws",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
 					"subnets_cidr=27",
 				},
 			},
@@ -91,7 +90,6 @@ var (
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/aws",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
 					"subnets_cidr=27",
 					"os=centos",
 				},
@@ -128,7 +126,6 @@ var (
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/aws",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
 					"subnets_cidr=27",
 					"os=rhel",
 					"bastion_type=t3.micro",
@@ -165,7 +162,6 @@ var (
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/aws",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
 					"subnets_cidr=27",
 					"os=rockylinux",
 				},
@@ -201,7 +197,6 @@ var (
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/aws",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
 					"subnets_cidr=27",
 					"os=flatcar",
 				},
@@ -240,7 +235,6 @@ var (
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/aws",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
 					"subnets_cidr=27",
 					"os=flatcar",
 					"ssh_username=core",
@@ -279,7 +273,6 @@ var (
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/aws",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
 					"subnets_cidr=27",
 					"os=amzn",
 				},
@@ -331,9 +324,6 @@ var (
 			},
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/azure",
-				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
-				},
 			},
 		},
 		"azure_centos": {
@@ -367,7 +357,6 @@ var (
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/azure",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
 					"os=centos",
 				},
 			},
@@ -403,7 +392,6 @@ var (
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/azure",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
 					"os=flatcar",
 				},
 			},
@@ -441,7 +429,6 @@ var (
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/azure",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
 					"os=rhel",
 				},
 			},
@@ -477,7 +464,6 @@ var (
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/azure",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
 					"os=rockylinux",
 				},
 			},
@@ -509,9 +495,6 @@ var (
 			},
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/digitalocean",
-				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
-				},
 			},
 		},
 		"digitalocean_centos": {
@@ -544,7 +527,6 @@ var (
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/digitalocean",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
 					"control_plane_droplet_image=centos-7-x64",
 					"worker_os=centos",
 				},
@@ -580,7 +562,6 @@ var (
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/digitalocean",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
 					"control_plane_droplet_image=rockylinux-8-x64",
 					"worker_os=rockylinux",
 				},
@@ -747,9 +728,6 @@ var (
 			},
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/gce",
-				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
-				},
 			},
 		},
 		"hetzner_default": {
@@ -779,9 +757,6 @@ var (
 			},
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/hetzner",
-				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
-				},
 			},
 		},
 		"hetzner_centos": {
@@ -814,7 +789,6 @@ var (
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/hetzner",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
 					"image=centos-7",
 					"worker_os=centos",
 				},
@@ -850,7 +824,6 @@ var (
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/hetzner",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
 					"image=rocky-8",
 					"worker_os=rockylinux",
 				},
