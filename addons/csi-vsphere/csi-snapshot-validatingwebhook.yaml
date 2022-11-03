@@ -45,7 +45,7 @@ webhooks:
 {{ .Certificates.KubernetesCA | b64enc | indent 8 }}
     admissionReviewVersions: ["v1"]
     sideEffects: None
-    failurePolicy: Ignore # We recommend switching to Fail only after successful installation of the webhook server and webhook.
+    failurePolicy: Fail
     timeoutSeconds: 2 # This will affect the latency and performance. Finetune this value based on your application's tolerance.
 ---
 apiVersion: apps/v1
@@ -76,7 +76,7 @@ spec:
           effect: NoSchedule
       containers:
         - name: snapshot-validation
-          image: {{ .InternalImages.Get "VsphereCSISnapshotValidationWebhook" }} # change the image if you wish to use your own custom validation server image
+          image: {{ .InternalImages.Get "VsphereCSISnapshotValidationWebhook" }}
           imagePullPolicy: IfNotPresent
           args: ['--tls-cert-file=/run/secrets/tls/tls.crt', '--tls-private-key-file=/run/secrets/tls/tls.key']
           ports:

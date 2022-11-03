@@ -4,7 +4,7 @@
 # It should be installed as part of the base Kubernetes distribution in an appropriate
 # namespace for components implementing base system functionality. For installing with
 # Vanilla Kubernetes, kube-system makes sense for the namespace.
-# Source: https://github.com/kubernetes-csi/external-snapshotter/blob/v5.0.1/deploy/kubernetes/snapshot-controller/setup-snapshot-controller.yaml
+# Source: https://github.com/kubernetes-csi/external-snapshotter/blob/v6.0.1/deploy/kubernetes/snapshot-controller/setup-snapshot-controller.yaml
 ---
 kind: Deployment
 apiVersion: apps/v1
@@ -30,7 +30,7 @@ spec:
       labels:
         app: snapshot-controller
     spec:
-      serviceAccount: snapshot-controller
+      serviceAccountName: snapshot-controller
       containers:
         - name: snapshot-controller
           image: {{ .InternalImages.Get "VsphereCSISnapshotController" }}
