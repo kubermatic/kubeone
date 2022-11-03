@@ -402,15 +402,20 @@ func ValidateClusterNetworkConfig(c kubeoneapi.ClusterNetworkConfig, fldPath *fi
 		}
 		podCIDRMaskSize, _ := podCIDRNet.Mask.Size()
 
-		if int(podCIDRMaskSize) >= *nodeCIDRMaskSize {
+		if podCIDRMaskSize >= *nodeCIDRMaskSize {
 			return field.Invalid(fldPath, nodeCIDRMaskSize,
 				fmt.Sprintf("node CIDR mask size (%d) must be longer than the mask size of the pod CIDR (%q)", *nodeCIDRMaskSize, podCIDR))
 		}
+
 		return nil
 	}
 
 	var podCIDRIPv4, podCIDRIPv6 string
 	switch c.IPFamily {
+	case kubeoneapi.IPFamilyIPv4:
+		podCIDRIPv4 = c.PodSubnet
+	case kubeoneapi.IPFamilyIPv6:
+		podCIDRIPv6 = c.PodSubnet
 	case kubeoneapi.IPFamilyIPv4IPv6:
 		parts := strings.Split(c.PodSubnet, ",")
 		podCIDRIPv4, podCIDRIPv6 = parts[0], parts[1]

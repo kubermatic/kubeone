@@ -429,15 +429,12 @@ func newNodeRegistration(s *state.State, host kubeoneapi.HostConfig) kubeadmv1be
 
 	// If external or in-tree CCM is in use we don't need to set --node-ip
 	// as the cloud provider will know what IPs to return.
-	if s.Cluster.ClusterNetwork.IPFamily == kubeoneapi.IPFamilyIPv4IPv6 {
-		if !(s.Cluster.CloudProvider.External || s.Cluster.CloudProvider.None == nil) {
-			kubeletCLIFlags["node-ip"] = newNodeIP(host) + "," + host.IPv6AddressList[0]
-		}
-	} else if s.Cluster.ClusterNetwork.IPFamily == kubeoneapi.IPFamilyIPv6IPv4 {
-		if !(s.Cluster.CloudProvider.External || s.Cluster.CloudProvider.None == nil) {
-			kubeletCLIFlags["node-ip"] = host.IPv6AddressList[0] + "," + newNodeIP(host)
-		}
-	} else {
+	switch {
+	case s.Cluster.ClusterNetwork.IPFamily == kubeoneapi.IPFamilyIPv4IPv6 && !(s.Cluster.CloudProvider.External || s.Cluster.CloudProvider.None == nil):
+		kubeletCLIFlags["node-ip"] = newNodeIP(host) + "," + host.IPv6AddressList[0]
+	case s.Cluster.ClusterNetwork.IPFamily == kubeoneapi.IPFamilyIPv6IPv4 && !(s.Cluster.CloudProvider.External || s.Cluster.CloudProvider.None == nil):
+		kubeletCLIFlags["node-ip"] = host.IPv6AddressList[0] + "," + newNodeIP(host)
+	default:
 		kubeletCLIFlags["node-ip"] = newNodeIP(host)
 	}
 

@@ -1009,7 +1009,7 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 			clusterNetworkConfig: kubeoneapi.ClusterNetworkConfig{
 				PodSubnet:     "192.168.1.0/24",
 				ServiceSubnet: "192.168.0.0/24",
-				IPFamily: kubeoneapi.IPFamilyIPv4,
+				IPFamily:      kubeoneapi.IPFamilyIPv4,
 			},
 			expectedError: false,
 		},
@@ -1018,7 +1018,7 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 			clusterNetworkConfig: kubeoneapi.ClusterNetworkConfig{
 				PodSubnet:     "192.168.1.0/24",
 				ServiceSubnet: "192.168.0.0/24",
-				IPFamily: kubeoneapi.IPFamilyIPv4,
+				IPFamily:      kubeoneapi.IPFamilyIPv4,
 				CNI: &kubeoneapi.CNI{
 					Canal: &kubeoneapi.CanalSpec{MTU: 1500},
 				},
@@ -1026,18 +1026,18 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 			expectedError: false,
 		},
 		{
-			name:                 "empty network config",
+			name: "empty network config",
 			clusterNetworkConfig: kubeoneapi.ClusterNetworkConfig{
 				IPFamily: kubeoneapi.IPFamilyIPv4,
 			},
-			expectedError:        false,
+			expectedError: false,
 		},
 		{
 			name: "invalid pod subnet",
 			clusterNetworkConfig: kubeoneapi.ClusterNetworkConfig{
 				PodSubnet:     "192.168.1.0",
 				ServiceSubnet: "192.168.0.0/24",
-				IPFamily: kubeoneapi.IPFamilyIPv4,
+				IPFamily:      kubeoneapi.IPFamilyIPv4,
 			},
 			expectedError: true,
 		},
@@ -1046,7 +1046,7 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 			clusterNetworkConfig: kubeoneapi.ClusterNetworkConfig{
 				PodSubnet:     "192.168.1.0/24",
 				ServiceSubnet: "192.168.0.0",
-				IPFamily: kubeoneapi.IPFamilyIPv4,
+				IPFamily:      kubeoneapi.IPFamilyIPv4,
 			},
 			expectedError: true,
 		},
