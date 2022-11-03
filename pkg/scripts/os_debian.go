@@ -134,19 +134,8 @@ sudo update-ca-certificates
 
 func WriteCACert(cluster *kubeoneapi.KubeOneCluster, certName, cert string) (string, error) {
 	data := Data{
-		"KUBELET":                true,
-		"KUBEADM":                true,
-		"KUBECTL":                true,
-		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
-		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
-		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
-		"HTTP_PROXY":             cluster.Proxy.HTTP,
-		"HTTPS_PROXY":            cluster.Proxy.HTTPS,
-		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
-		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
-		"INSTALL_ISCSI_AND_NFS":  installISCSIAndNFS(cluster),
-		"CERTIFICATE_DATA":       cert,
-		"CERTIFICATE_NAME":       certName,
+		"CERTIFICATE_DATA": cert,
+		"CERTIFICATE_NAME": certName,
 	}
 	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
 		return "", err
