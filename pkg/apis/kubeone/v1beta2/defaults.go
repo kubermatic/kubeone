@@ -41,6 +41,24 @@ const (
 	DefaultCanalMTU = 1450
 )
 
+const (
+	// DefaultClusterPodsCIDRIPv6 is the default network range from which IPv6 POD networks are allocated.
+	DefaultPodSubnetIPv6 = "fd01::/48"
+	// DefaultClusterServicesCIDRIPv6 is the default network range from which IPv6 service VIPs are allocated.
+	DefaultServiceSubnetIPv6 = "fd02::/120"
+	// DefaultNodeCIDRMaskSizeIPv4 is the default mask size used to address the nodes within provided IPv4 Pods CIDR.
+	DefaultNodeCIDRMaskSizeIPv4 = 24
+	// DefaultNodeCIDRMaskSizeIPv6 is the default mask size used to address the nodes within provided IPv6 Pods CIDR.
+	DefaultNodeCIDRMaskSizeIPv6 = 64
+)
+
+const (
+	// IPv4MatchAnyCIDR is the CIDR used for matching with any IPv4 address.
+	IPv4MatchAnyCIDR = "0.0.0.0/0"
+	// IPv6MatchAnyCIDR is the CIDR used for matching with any IPv6 address.
+	IPv6MatchAnyCIDR = "::/0"
+)
+
 func addDefaultingFuncs(scheme *runtime.Scheme) error {
 	return RegisterDefaults(scheme)
 }
@@ -141,8 +159,30 @@ func SetDefaults_ContainerRuntime(obj *KubeOneCluster) {
 }
 
 func SetDefaults_ClusterNetwork(obj *KubeOneCluster) {
-	obj.ClusterNetwork.PodSubnet = defaults(obj.ClusterNetwork.PodSubnet, DefaultPodSubnet)
-	obj.ClusterNetwork.ServiceSubnet = defaults(obj.ClusterNetwork.ServiceSubnet, DefaultServiceSubnet)
+	if obj.ClusterNetwork.IPFamily == "" {
+		obj.ClusterNetwork.IPFamily = IPFamilyIPv4
+	}
+	switch obj.ClusterNetwork.IPFamily {
+	case IPFamilyIPv4:
+		obj.ClusterNetwork.PodSubnet = defaults(obj.ClusterNetwork.PodSubnet, DefaultPodSubnet)
+		obj.ClusterNetwork.ServiceSubnet = defaults(obj.ClusterNetwork.ServiceSubnet, DefaultServiceSubnet)
+		obj.ClusterNetwork.NodeCIDRMaskSizeIPv4 = defaults(obj.ClusterNetwork.NodeCIDRMaskSizeIPv4, ptr(DefaultNodeCIDRMaskSizeIPv4))
+	case IPFamilyIPv6:
+		obj.ClusterNetwork.PodSubnet = defaults(obj.ClusterNetwork.PodSubnet, DefaultPodSubnetIPv6)
+		obj.ClusterNetwork.ServiceSubnet = defaults(obj.ClusterNetwork.ServiceSubnet, DefaultServiceSubnetIPv6)
+		obj.ClusterNetwork.NodeCIDRMaskSizeIPv6 = defaults(obj.ClusterNetwork.NodeCIDRMaskSizeIPv6, ptr(DefaultNodeCIDRMaskSizeIPv6))
+	case IPFamilyIPv4IPv6:
+		obj.ClusterNetwork.PodSubnet = defaults(obj.ClusterNetwork.PodSubnet, DefaultPodSubnet+","+DefaultPodSubnetIPv6)
+		obj.ClusterNetwork.ServiceSubnet = defaults(obj.ClusterNetwork.ServiceSubnet, DefaultServiceSubnet+","+DefaultServiceSubnetIPv6)
+		obj.ClusterNetwork.NodeCIDRMaskSizeIPv4 = defaults(obj.ClusterNetwork.NodeCIDRMaskSizeIPv4, ptr(DefaultNodeCIDRMaskSizeIPv4))
+		obj.ClusterNetwork.NodeCIDRMaskSizeIPv6 = defaults(obj.ClusterNetwork.NodeCIDRMaskSizeIPv6, ptr(DefaultNodeCIDRMaskSizeIPv6))
+	case IPFamilyIPv6IPv4:
+		obj.ClusterNetwork.PodSubnet = defaults(obj.ClusterNetwork.PodSubnet, DefaultPodSubnetIPv6+","+DefaultPodSubnet)
+		obj.ClusterNetwork.ServiceSubnet = defaults(obj.ClusterNetwork.ServiceSubnet, DefaultServiceSubnetIPv6+","+DefaultServiceSubnet)
+		obj.ClusterNetwork.NodeCIDRMaskSizeIPv4 = defaults(obj.ClusterNetwork.NodeCIDRMaskSizeIPv4, ptr(DefaultNodeCIDRMaskSizeIPv4))
+		obj.ClusterNetwork.NodeCIDRMaskSizeIPv6 = defaults(obj.ClusterNetwork.NodeCIDRMaskSizeIPv6, ptr(DefaultNodeCIDRMaskSizeIPv6))
+	}
+
 	obj.ClusterNetwork.ServiceDomainName = defaults(obj.ClusterNetwork.ServiceDomainName, DefaultServiceDNS)
 	obj.ClusterNetwork.NodePortRange = defaults(obj.ClusterNetwork.NodePortRange, DefaultNodePortRange)
 
@@ -281,4 +321,8 @@ func defaults[T comparable](input, defaultValue T) T {
 	}
 
 	return defaultValue
+}
+
+func ptr[T any](x T) *T {
+	return &x
 }

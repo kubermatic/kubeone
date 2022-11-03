@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"crypto/x509"
 	"fmt"
+	"net"
 	"reflect"
 	"strings"
 
@@ -360,12 +361,14 @@ func ValidateClusterNetworkConfig(c kubeoneapi.ClusterNetworkConfig, fldPath *fi
 
 	var subnetValidators []func(string) bool
 	switch c.IPFamily {
-	case kubeoneapi.Unspecified, kubeoneapi.IPv4:
+	case kubeoneapi.IPFamilyIPv4:
 		subnetValidators = append(subnetValidators, netutils.IsIPv4CIDRString)
-	case kubeoneapi.IPv6:
+	case kubeoneapi.IPFamilyIPv6:
 		subnetValidators = append(subnetValidators, netutils.IsIPv6CIDRString)
-	case kubeoneapi.DualStack:
+	case kubeoneapi.IPFamilyIPv4IPv6:
 		subnetValidators = append(subnetValidators, netutils.IsIPv4CIDRString, netutils.IsIPv6CIDRString)
+	case kubeoneapi.IPFamilyIPv6IPv4:
+		subnetValidators = append(subnetValidators, netutils.IsIPv6CIDRString, netutils.IsIPv4CIDRString)
 	default:
 		allErrs = append(allErrs, field.Invalid(fldPath.Child("ipFamily"), c.IPFamily, "unknown ipFamily"))
 	}
@@ -388,6 +391,43 @@ func ValidateClusterNetworkConfig(c kubeoneapi.ClusterNetworkConfig, fldPath *fi
 
 	validateCIDRs("podSubnet", c.PodSubnet)
 	validateCIDRs("serviceSubnet", c.ServiceSubnet)
+
+	validateNodeCIDRMaskSize := func(nodeCIDRMaskSize *int, podCIDR string, fldPath *field.Path) *field.Error {
+		if podCIDR == "" || nodeCIDRMaskSize == nil {
+			return nil
+		}
+		_, podCIDRNet, err := net.ParseCIDR(podCIDR)
+		if err != nil {
+			return field.Invalid(fldPath, podCIDR, fmt.Sprintf("couldn't parse CIDR %q: %v", podCIDR, err))
+		}
+		podCIDRMaskSize, _ := podCIDRNet.Mask.Size()
+
+		if int(podCIDRMaskSize) >= *nodeCIDRMaskSize {
+			return field.Invalid(fldPath, nodeCIDRMaskSize,
+				fmt.Sprintf("node CIDR mask size (%d) must be longer than the mask size of the pod CIDR (%q)", *nodeCIDRMaskSize, podCIDR))
+		}
+		return nil
+	}
+
+	var podCIDRIPv4, podCIDRIPv6 string
+	switch c.IPFamily {
+	case kubeoneapi.IPFamilyIPv4IPv6:
+		parts := strings.Split(c.PodSubnet, ",")
+		podCIDRIPv4, podCIDRIPv6 = parts[0], parts[1]
+	case kubeoneapi.IPFamilyIPv6IPv4:
+		parts := strings.Split(c.PodSubnet, ",")
+		podCIDRIPv4, podCIDRIPv6 = parts[1], parts[0]
+	}
+
+	err := validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv4, podCIDRIPv4, fldPath.Child("nodeCIDRMaskSizeIPv4"))
+	if err != nil {
+		allErrs = append(allErrs, err)
+	}
+
+	err = validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv6, podCIDRIPv6, fldPath.Child("nodeCIDRMaskSizeIPv6"))
+	if err != nil {
+		allErrs = append(allErrs, err)
+	}
 
 	if c.CNI != nil {
 		allErrs = append(allErrs, ValidateCNI(c.CNI, fldPath.Child("cni"))...)
@@ -616,7 +656,7 @@ func ValidateHostConfig(hosts []kubeoneapi.HostConfig, clusterNetwork kubeoneapi
 			allErrs = append(allErrs, field.Required(fldPath, "no public IP/address given"))
 		}
 
-		if (clusterNetwork.IPFamily == kubeoneapi.IPv6 || clusterNetwork.IPFamily == kubeoneapi.DualStack) && len(h.IPv6AddressList) == 0 {
+		if (clusterNetwork.IPFamily == kubeoneapi.IPFamilyIPv6 || clusterNetwork.IPFamily == kubeoneapi.IPFamilyIPv4IPv6 || clusterNetwork.IPFamily == kubeoneapi.IPFamilyIPv6IPv4) && len(h.IPv6AddressList) == 0 {
 			allErrs = append(allErrs, field.Required(fldPath, "no IPv6 address given"))
 		}
 		if len(h.PrivateAddress) == 0 {

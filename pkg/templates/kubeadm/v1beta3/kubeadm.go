@@ -315,30 +315,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		}
 	}
 
-	clusterNetwork := cluster.ClusterNetwork
-	if clusterNetwork.CNI.Cilium == nil {
-		clusterConfig.ControllerManager.ExtraArgs["allocate-node-cidrs"] = "true"
-		clusterConfig.ControllerManager.ExtraArgs["cluster-cidr"] = clusterNetwork.PodSubnet
-		clusterConfig.ControllerManager.ExtraArgs["service-cluster-ip-range"] = clusterNetwork.ServiceSubnet
-
-		switch clusterNetwork.IPFamily {
-		case kubeoneapi.Unspecified, kubeoneapi.IPv4:
-			if clusterNetwork.NodeCIDRMaskSizeIPv4 != nil {
-				clusterConfig.ControllerManager.ExtraArgs["node-cidr-mask-size-ipv4"] = fmt.Sprintf("%d", *clusterNetwork.NodeCIDRMaskSizeIPv4)
-			}
-		case kubeoneapi.IPv6:
-			if clusterNetwork.NodeCIDRMaskSizeIPv6 != nil {
-				clusterConfig.ControllerManager.ExtraArgs["node-cidr-mask-size-ipv6"] = fmt.Sprintf("%d", *clusterNetwork.NodeCIDRMaskSizeIPv6)
-			}
-		case kubeoneapi.DualStack:
-			if clusterNetwork.NodeCIDRMaskSizeIPv4 != nil {
-				clusterConfig.ControllerManager.ExtraArgs["node-cidr-mask-size-ipv4"] = fmt.Sprintf("%d", *clusterNetwork.NodeCIDRMaskSizeIPv4)
-			}
-			if clusterNetwork.NodeCIDRMaskSizeIPv6 != nil {
-				clusterConfig.ControllerManager.ExtraArgs["node-cidr-mask-size-ipv6"] = fmt.Sprintf("%d", *clusterNetwork.NodeCIDRMaskSizeIPv6)
-			}
-		}
-	}
+	addControllerManagerNetworkArgs(clusterConfig.ControllerManager.ExtraArgs, cluster.ClusterNetwork)
 
 	args := kubeadmargs.NewFrom(clusterConfig.APIServer.ExtraArgs)
 	features.UpdateKubeadmClusterConfiguration(cluster.Features, args)
@@ -360,6 +337,33 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 	}
 
 	return []runtime.Object{initConfig, joinConfig, clusterConfig, kubeletConfig, kubeproxyConfig}, nil
+}
+
+func addControllerManagerNetworkArgs(m map[string]string, clusterNetwork kubeoneapi.ClusterNetworkConfig) {
+	if clusterNetwork.CNI.Cilium != nil {
+		return
+	}
+	m["allocate-node-cidrs"] = "true"
+	m["cluster-cidr"] = clusterNetwork.PodSubnet
+	m["service-cluster-ip-range"] = clusterNetwork.ServiceSubnet
+
+	switch clusterNetwork.IPFamily {
+	case kubeoneapi.IPFamilyIPv4:
+		if clusterNetwork.NodeCIDRMaskSizeIPv4 != nil {
+			m["node-cidr-mask-size-ipv4"] = fmt.Sprintf("%d", *clusterNetwork.NodeCIDRMaskSizeIPv4)
+		}
+	case kubeoneapi.IPFamilyIPv6:
+		if clusterNetwork.NodeCIDRMaskSizeIPv6 != nil {
+			m["node-cidr-mask-size-ipv6"] = fmt.Sprintf("%d", *clusterNetwork.NodeCIDRMaskSizeIPv6)
+		}
+	case kubeoneapi.IPFamilyIPv4IPv6, kubeoneapi.IPFamilyIPv6IPv4:
+		if clusterNetwork.NodeCIDRMaskSizeIPv4 != nil {
+			m["node-cidr-mask-size-ipv4"] = fmt.Sprintf("%d", *clusterNetwork.NodeCIDRMaskSizeIPv4)
+		}
+		if clusterNetwork.NodeCIDRMaskSizeIPv6 != nil {
+			m["node-cidr-mask-size-ipv6"] = fmt.Sprintf("%d", *clusterNetwork.NodeCIDRMaskSizeIPv6)
+		}
+	}
 }
 
 // NewConfig returns all required configs to init a cluster via a set of v13 configs
@@ -423,14 +427,15 @@ func newNodeRegistration(s *state.State, host kubeoneapi.HostConfig) kubeadmv1be
 		"volume-plugin-dir": "/var/lib/kubelet/volumeplugins",
 	}
 
-	if s.Cluster.ClusterNetwork.IPFamily == kubeoneapi.DualStack {
-		// If external or in-tree CCM is in use we don't need to set --node-ip
-		// as the cloud provider will know what IPs to return.
+	// If external or in-tree CCM is in use we don't need to set --node-ip
+	// as the cloud provider will know what IPs to return.
+	if s.Cluster.ClusterNetwork.IPFamily == kubeoneapi.IPFamilyIPv4IPv6 {
 		if !(s.Cluster.CloudProvider.External || s.Cluster.CloudProvider.None == nil) {
-			// TODO: shouldn't these be default interface ips?
-			//   DEFAULT_IFC_IPv4=$(ip -o route get  1 | grep -oP "src \K\S+")
-			//   DEFAULT_IFC_IPv6=$(ip -o -6 route get  1:: | grep -oP "src \K\S+")
 			kubeletCLIFlags["node-ip"] = newNodeIP(host) + "," + host.IPv6AddressList[0]
+		}
+	} else if s.Cluster.ClusterNetwork.IPFamily == kubeoneapi.IPFamilyIPv6IPv4 {
+		if !(s.Cluster.CloudProvider.External || s.Cluster.CloudProvider.None == nil) {
+			kubeletCLIFlags["node-ip"] = host.IPv6AddressList[0] + "," + newNodeIP(host)
 		}
 	} else {
 		kubeletCLIFlags["node-ip"] = newNodeIP(host)
