@@ -4,7 +4,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-install-containerd-v1.22.12
   optional: false
@@ -27,7 +27,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-install-containerd-v1.22.12
   optional: false
@@ -50,7 +50,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-install-containerd-v1.22.12
   optional: false
@@ -73,7 +73,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-install-containerd-v1.22.12
   optional: false
@@ -96,7 +96,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-install-containerd-v1.22.12
   optional: false
@@ -119,7 +119,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-install-containerd-v1.22.12
   optional: false
@@ -452,7 +452,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-install-containerd-v1.23.9
   optional: false
@@ -475,7 +475,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-install-containerd-v1.23.9
   optional: false
@@ -498,7 +498,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-install-containerd-v1.23.9
   optional: false
@@ -521,7 +521,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-install-containerd-v1.23.9
   optional: false
@@ -544,7 +544,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-install-containerd-v1.23.9
   optional: false
@@ -567,7 +567,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-install-containerd-v1.23.9
   optional: false
@@ -900,7 +900,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-install-containerd-v1.24.3
   optional: false
@@ -923,7 +923,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-install-containerd-v1.24.3
   optional: false
@@ -946,7 +946,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-install-containerd-v1.24.3
   optional: false
@@ -969,7 +969,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-install-containerd-v1.24.3
   optional: false
@@ -992,7 +992,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-install-containerd-v1.24.3
   optional: false
@@ -1015,7 +1015,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-install-containerd-v1.24.3
   optional: false
@@ -1348,7 +1348,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-install-docker-v1.22.12
   optional: false
@@ -1371,7 +1371,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-install-docker-v1.22.12
   optional: false
@@ -1394,7 +1394,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-install-docker-v1.22.12
   optional: false
@@ -1417,7 +1417,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-install-docker-v1.22.12
   optional: false
@@ -1440,7 +1440,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-install-docker-v1.22.12
   optional: false
@@ -1463,7 +1463,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-install-docker-v1.22.12
   optional: false
@@ -1796,7 +1796,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-install-docker-v1.23.9
   optional: false
@@ -1819,7 +1819,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-install-docker-v1.23.9
   optional: false
@@ -1842,7 +1842,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-install-docker-v1.23.9
   optional: false
@@ -1865,7 +1865,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-install-docker-v1.23.9
   optional: false
@@ -1888,7 +1888,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-install-docker-v1.23.9
   optional: false
@@ -1911,7 +1911,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-install-docker-v1.23.9
   optional: false
@@ -2249,7 +2249,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-stable-upgrade-containerd-from-v1.23.9-to-v1.24.3
   optional: false
@@ -2277,7 +2277,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-stable-upgrade-containerd-from-v1.23.9-to-v1.24.3
   optional: false
@@ -2305,7 +2305,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-stable-upgrade-containerd-from-v1.23.9-to-v1.24.3
   optional: false
@@ -2333,7 +2333,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-stable-upgrade-containerd-from-v1.23.9-to-v1.24.3
   optional: false
@@ -2361,7 +2361,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-stable-upgrade-containerd-from-v1.23.9-to-v1.24.3
   optional: false
@@ -2389,7 +2389,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-stable-upgrade-containerd-from-v1.23.9-to-v1.24.3
   optional: false
@@ -2792,7 +2792,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-stable-upgrade-containerd-from-v1.22.12-to-v1.23.9
   optional: false
@@ -2820,7 +2820,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-stable-upgrade-containerd-from-v1.22.12-to-v1.23.9
   optional: false
@@ -2848,7 +2848,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-stable-upgrade-containerd-from-v1.22.12-to-v1.23.9
   optional: false
@@ -2876,7 +2876,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-stable-upgrade-containerd-from-v1.22.12-to-v1.23.9
   optional: false
@@ -2904,7 +2904,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-stable-upgrade-containerd-from-v1.22.12-to-v1.23.9
   optional: false
@@ -2932,7 +2932,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-stable-upgrade-containerd-from-v1.22.12-to-v1.23.9
   optional: false
@@ -3335,7 +3335,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-stable-upgrade-containerd-from-v1.21.14-to-v1.22.12
   optional: false
@@ -3363,7 +3363,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-stable-upgrade-containerd-from-v1.21.14-to-v1.22.12
   optional: false
@@ -3391,7 +3391,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-stable-upgrade-containerd-from-v1.21.14-to-v1.22.12
   optional: false
@@ -3419,7 +3419,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-stable-upgrade-containerd-from-v1.21.14-to-v1.22.12
   optional: false
@@ -3447,7 +3447,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-stable-upgrade-containerd-from-v1.21.14-to-v1.22.12
   optional: false
@@ -3475,7 +3475,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-stable-upgrade-containerd-from-v1.21.14-to-v1.22.12
   optional: false
@@ -3878,7 +3878,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-stable-upgrade-docker-from-v1.22.12-to-v1.23.9
   optional: false
@@ -3906,7 +3906,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-stable-upgrade-docker-from-v1.22.12-to-v1.23.9
   optional: false
@@ -3934,7 +3934,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-stable-upgrade-docker-from-v1.22.12-to-v1.23.9
   optional: false
@@ -3962,7 +3962,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-stable-upgrade-docker-from-v1.22.12-to-v1.23.9
   optional: false
@@ -3990,7 +3990,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-stable-upgrade-docker-from-v1.22.12-to-v1.23.9
   optional: false
@@ -4018,7 +4018,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-stable-upgrade-docker-from-v1.22.12-to-v1.23.9
   optional: false
@@ -4421,7 +4421,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-stable-upgrade-docker-from-v1.21.14-to-v1.22.12
   optional: false
@@ -4449,7 +4449,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-stable-upgrade-docker-from-v1.21.14-to-v1.22.12
   optional: false
@@ -4477,7 +4477,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-stable-upgrade-docker-from-v1.21.14-to-v1.22.12
   optional: false
@@ -4505,7 +4505,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-stable-upgrade-docker-from-v1.21.14-to-v1.22.12
   optional: false
@@ -4533,7 +4533,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-stable-upgrade-docker-from-v1.21.14-to-v1.22.12
   optional: false
@@ -4561,7 +4561,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-stable-upgrade-docker-from-v1.21.14-to-v1.22.12
   optional: false
@@ -4959,7 +4959,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-calico-containerd-v1.22.12
   optional: false
@@ -4982,7 +4982,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-calico-containerd-v1.22.12
   optional: false
@@ -5005,7 +5005,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-calico-containerd-v1.22.12
   optional: false
@@ -5028,7 +5028,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-calico-containerd-v1.22.12
   optional: false
@@ -5051,7 +5051,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-calico-containerd-v1.22.12
   optional: false
@@ -5074,7 +5074,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-calico-containerd-v1.22.12
   optional: false
@@ -5407,7 +5407,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-calico-docker-v1.22.12
   optional: false
@@ -5430,7 +5430,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-calico-docker-v1.22.12
   optional: false
@@ -5453,7 +5453,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-calico-docker-v1.22.12
   optional: false
@@ -5476,7 +5476,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-calico-docker-v1.22.12
   optional: false
@@ -5499,7 +5499,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-calico-docker-v1.22.12
   optional: false
@@ -5522,7 +5522,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-calico-docker-v1.22.12
   optional: false
@@ -5855,7 +5855,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-weave-containerd-v1.22.12
   optional: false
@@ -5878,7 +5878,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-weave-containerd-v1.22.12
   optional: false
@@ -5901,7 +5901,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-weave-containerd-v1.22.12
   optional: false
@@ -5924,7 +5924,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-weave-containerd-v1.22.12
   optional: false
@@ -5947,7 +5947,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-weave-containerd-v1.22.12
   optional: false
@@ -5970,7 +5970,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-weave-containerd-v1.22.12
   optional: false
@@ -6303,7 +6303,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-weave-docker-v1.22.12
   optional: false
@@ -6326,7 +6326,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-weave-docker-v1.22.12
   optional: false
@@ -6349,7 +6349,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-weave-docker-v1.22.12
   optional: false
@@ -6372,7 +6372,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-weave-docker-v1.22.12
   optional: false
@@ -6395,7 +6395,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-weave-docker-v1.22.12
   optional: false
@@ -6418,7 +6418,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-weave-docker-v1.22.12
   optional: false
@@ -6751,7 +6751,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-cilium-containerd-v1.22.12
   optional: false
@@ -6774,7 +6774,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-cilium-containerd-v1.22.12
   optional: false
@@ -6797,7 +6797,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-cilium-containerd-v1.22.12
   optional: false
@@ -6820,7 +6820,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-cilium-containerd-v1.22.12
   optional: false
@@ -6843,7 +6843,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-cilium-containerd-v1.22.12
   optional: false
@@ -6866,7 +6866,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-cilium-containerd-v1.22.12
   optional: false
@@ -7199,7 +7199,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-cilium-docker-v1.22.12
   optional: false
@@ -7222,7 +7222,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-cilium-docker-v1.22.12
   optional: false
@@ -7245,7 +7245,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-cilium-docker-v1.22.12
   optional: false
@@ -7268,7 +7268,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-cilium-docker-v1.22.12
   optional: false
@@ -7291,7 +7291,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-cilium-docker-v1.22.12
   optional: false
@@ -7314,7 +7314,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-cilium-docker-v1.22.12
   optional: false
@@ -7647,7 +7647,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-long-timeout-default-conformance-containerd-v1.22.12
   optional: false
@@ -7672,7 +7672,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-long-timeout-default-conformance-containerd-v1.23.9
   optional: false
@@ -7697,7 +7697,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-long-timeout-default-conformance-containerd-v1.24.3
   optional: false
@@ -7722,7 +7722,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-long-timeout-default-conformance-containerd-external-v1.22.12
   optional: false
@@ -7747,7 +7747,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-long-timeout-default-conformance-containerd-external-v1.23.9
   optional: false
@@ -7772,7 +7772,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-long-timeout-default-conformance-containerd-external-v1.24.3
   optional: false
@@ -7797,7 +7797,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-kube-proxy-ipvs-v1.22.12
   optional: false
@@ -7820,7 +7820,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-kube-proxy-ipvs-v1.23.9
   optional: false
@@ -7843,7 +7843,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-legacy-machine-controller-containerd-v1.22.12
   optional: false
@@ -7866,7 +7866,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-legacy-machine-controller-containerd-v1.22.12
   optional: false
@@ -7889,7 +7889,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-legacy-machine-controller-containerd-v1.22.12
   optional: false
@@ -7912,7 +7912,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-cloud-init-legacy-machine-controller-containerd-v1.22.12
   optional: false
@@ -7935,7 +7935,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-legacy-machine-controller-containerd-v1.22.12
   optional: false
@@ -7958,7 +7958,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-legacy-machine-controller-containerd-v1.22.12
   optional: false
@@ -8291,7 +8291,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-legacy-machine-controller-containerd-v1.23.9
   optional: false
@@ -8314,7 +8314,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-legacy-machine-controller-containerd-v1.23.9
   optional: false
@@ -8337,7 +8337,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-legacy-machine-controller-containerd-v1.23.9
   optional: false
@@ -8360,7 +8360,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-legacy-machine-controller-containerd-v1.23.9
   optional: false
@@ -8383,7 +8383,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-legacy-machine-controller-containerd-v1.23.9
   optional: false
@@ -8406,7 +8406,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-legacy-machine-controller-containerd-v1.23.9
   optional: false
@@ -8739,7 +8739,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-legacy-machine-controller-containerd-v1.24.3
   optional: false
@@ -8762,7 +8762,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-legacy-machine-controller-containerd-v1.24.3
   optional: false
@@ -8785,7 +8785,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-legacy-machine-controller-containerd-v1.24.3
   optional: false
@@ -8808,7 +8808,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-legacy-machine-controller-containerd-v1.24.3
   optional: false
@@ -8831,7 +8831,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-legacy-machine-controller-containerd-v1.24.3
   optional: false
@@ -8854,7 +8854,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-legacy-machine-controller-containerd-v1.24.3
   optional: false
@@ -9187,7 +9187,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-legacy-machine-controller-docker-v1.22.12
   optional: false
@@ -9210,7 +9210,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-legacy-machine-controller-docker-v1.22.12
   optional: false
@@ -9233,7 +9233,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-legacy-machine-controller-docker-v1.22.12
   optional: false
@@ -9256,7 +9256,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-legacy-machine-controller-docker-v1.22.12
   optional: false
@@ -9279,7 +9279,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-legacy-machine-controller-docker-v1.22.12
   optional: false
@@ -9302,7 +9302,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-legacy-machine-controller-docker-v1.22.12
   optional: false
@@ -9635,7 +9635,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-legacy-machine-controller-docker-v1.23.9
   optional: false
@@ -9658,7 +9658,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-legacy-machine-controller-docker-v1.23.9
   optional: false
@@ -9681,7 +9681,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-legacy-machine-controller-docker-v1.23.9
   optional: false
@@ -9704,7 +9704,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-legacy-machine-controller-docker-v1.23.9
   optional: false
@@ -9727,7 +9727,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-legacy-machine-controller-docker-v1.23.9
   optional: false
@@ -9750,7 +9750,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-legacy-machine-controller-docker-v1.23.9
   optional: false
@@ -10083,7 +10083,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-kube-proxy-ipvs-v1.24.3
   optional: false
@@ -10106,7 +10106,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-csi-ccm-migration-v1.22.12
   optional: false
@@ -10416,7 +10416,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-csi-ccm-migration-v1.23.9
   optional: false
@@ -10726,7 +10726,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-csi-ccm-migration-v1.24.3
   optional: false
@@ -11036,7 +11036,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-install-containerd-external-v1.22.12
   optional: false
@@ -11059,7 +11059,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-install-containerd-external-v1.22.12
   optional: false
@@ -11082,7 +11082,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-install-containerd-external-v1.22.12
   optional: false
@@ -11105,7 +11105,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-install-containerd-external-v1.22.12
   optional: false
@@ -11128,7 +11128,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-install-containerd-external-v1.22.12
   optional: false
@@ -11151,7 +11151,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-install-containerd-external-v1.22.12
   optional: false
@@ -11691,7 +11691,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-install-containerd-external-v1.23.9
   optional: false
@@ -11714,7 +11714,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-install-containerd-external-v1.23.9
   optional: false
@@ -11737,7 +11737,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-install-containerd-external-v1.23.9
   optional: false
@@ -11760,7 +11760,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-install-containerd-external-v1.23.9
   optional: false
@@ -11783,7 +11783,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-install-containerd-external-v1.23.9
   optional: false
@@ -11806,7 +11806,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-install-containerd-external-v1.23.9
   optional: false
@@ -12346,7 +12346,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-install-containerd-external-v1.24.3
   optional: false
@@ -12369,7 +12369,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-install-containerd-external-v1.24.3
   optional: false
@@ -12392,7 +12392,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-install-containerd-external-v1.24.3
   optional: false
@@ -12415,7 +12415,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-install-containerd-external-v1.24.3
   optional: false
@@ -12438,7 +12438,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-install-containerd-external-v1.24.3
   optional: false
@@ -12461,7 +12461,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-install-containerd-external-v1.24.3
   optional: false
@@ -13001,7 +13001,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-install-docker-external-v1.22.12
   optional: false
@@ -13024,7 +13024,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-install-docker-external-v1.22.12
   optional: false
@@ -13047,7 +13047,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-install-docker-external-v1.22.12
   optional: false
@@ -13070,7 +13070,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-install-docker-external-v1.22.12
   optional: false
@@ -13093,7 +13093,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-install-docker-external-v1.22.12
   optional: false
@@ -13116,7 +13116,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-install-docker-external-v1.22.12
   optional: false
@@ -13656,7 +13656,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-install-docker-external-v1.23.9
   optional: false
@@ -13679,7 +13679,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-install-docker-external-v1.23.9
   optional: false
@@ -13702,7 +13702,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-install-docker-external-v1.23.9
   optional: false
@@ -13725,7 +13725,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-install-docker-external-v1.23.9
   optional: false
@@ -13748,7 +13748,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-install-docker-external-v1.23.9
   optional: false
@@ -13771,7 +13771,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-install-docker-external-v1.23.9
   optional: false
@@ -14316,7 +14316,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-stable-upgrade-containerd-external-from-v1.21.14-to-v1.22.12
   optional: false
@@ -14344,7 +14344,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-stable-upgrade-containerd-external-from-v1.21.14-to-v1.22.12
   optional: false
@@ -14372,7 +14372,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-stable-upgrade-containerd-external-from-v1.21.14-to-v1.22.12
   optional: false
@@ -14400,7 +14400,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-stable-upgrade-containerd-external-from-v1.21.14-to-v1.22.12
   optional: false
@@ -14428,7 +14428,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-stable-upgrade-containerd-external-from-v1.21.14-to-v1.22.12
   optional: false
@@ -14456,7 +14456,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-stable-upgrade-containerd-external-from-v1.21.14-to-v1.22.12
   optional: false
@@ -15111,7 +15111,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-stable-upgrade-containerd-external-from-v1.22.12-to-v1.23.9
   optional: false
@@ -15139,7 +15139,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-stable-upgrade-containerd-external-from-v1.22.12-to-v1.23.9
   optional: false
@@ -15167,7 +15167,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-stable-upgrade-containerd-external-from-v1.22.12-to-v1.23.9
   optional: false
@@ -15195,7 +15195,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-stable-upgrade-containerd-external-from-v1.22.12-to-v1.23.9
   optional: false
@@ -15223,7 +15223,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-stable-upgrade-containerd-external-from-v1.22.12-to-v1.23.9
   optional: false
@@ -15251,7 +15251,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-stable-upgrade-containerd-external-from-v1.22.12-to-v1.23.9
   optional: false
@@ -15906,7 +15906,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-stable-upgrade-containerd-external-from-v1.23.9-to-v1.24.3
   optional: false
@@ -15934,7 +15934,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-stable-upgrade-containerd-external-from-v1.23.9-to-v1.24.3
   optional: false
@@ -15962,7 +15962,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-stable-upgrade-containerd-external-from-v1.23.9-to-v1.24.3
   optional: false
@@ -15990,7 +15990,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-stable-upgrade-containerd-external-from-v1.23.9-to-v1.24.3
   optional: false
@@ -16018,7 +16018,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-stable-upgrade-containerd-external-from-v1.23.9-to-v1.24.3
   optional: false
@@ -16046,7 +16046,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-stable-upgrade-containerd-external-from-v1.23.9-to-v1.24.3
   optional: false
@@ -16701,7 +16701,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-stable-upgrade-docker-external-from-v1.21.14-to-v1.22.12
   optional: false
@@ -16729,7 +16729,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-stable-upgrade-docker-external-from-v1.21.14-to-v1.22.12
   optional: false
@@ -16757,7 +16757,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-stable-upgrade-docker-external-from-v1.21.14-to-v1.22.12
   optional: false
@@ -16785,7 +16785,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-stable-upgrade-docker-external-from-v1.21.14-to-v1.22.12
   optional: false
@@ -16813,7 +16813,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-stable-upgrade-docker-external-from-v1.21.14-to-v1.22.12
   optional: false
@@ -16841,7 +16841,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-stable-upgrade-docker-external-from-v1.21.14-to-v1.22.12
   optional: false
@@ -17496,7 +17496,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-stable-upgrade-docker-external-from-v1.22.12-to-v1.23.9
   optional: false
@@ -17524,7 +17524,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-stable-upgrade-docker-external-from-v1.22.12-to-v1.23.9
   optional: false
@@ -17552,7 +17552,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-stable-upgrade-docker-external-from-v1.22.12-to-v1.23.9
   optional: false
@@ -17580,7 +17580,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-stable-upgrade-docker-external-from-v1.22.12-to-v1.23.9
   optional: false
@@ -17608,7 +17608,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-stable-upgrade-docker-external-from-v1.22.12-to-v1.23.9
   optional: false
@@ -17636,7 +17636,7 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-stable-upgrade-docker-external-from-v1.22.12-to-v1.23.9
   optional: false
@@ -18286,7 +18286,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
@@ -18309,7 +18309,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
@@ -18332,7 +18332,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
@@ -18355,7 +18355,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-cloud-init-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
@@ -18378,7 +18378,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
@@ -18401,7 +18401,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-legacy-machine-controller-containerd-external-v1.22.12
   optional: false
@@ -18941,7 +18941,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
@@ -18964,7 +18964,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
@@ -18987,7 +18987,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
@@ -19010,7 +19010,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-cloud-init-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
@@ -19033,7 +19033,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
@@ -19056,7 +19056,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-legacy-machine-controller-containerd-external-v1.23.9
   optional: false
@@ -19596,7 +19596,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-legacy-machine-controller-containerd-external-v1.24.3
   optional: false
@@ -19619,7 +19619,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-centos-legacy-machine-controller-containerd-external-v1.24.3
   optional: false
@@ -19642,7 +19642,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-legacy-machine-controller-containerd-external-v1.24.3
   optional: false
@@ -19665,7 +19665,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-legacy-machine-controller-containerd-external-v1.24.3
   optional: false
@@ -19688,7 +19688,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-legacy-machine-controller-containerd-external-v1.24.3
   optional: false
@@ -19711,7 +19711,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
-    preset-aws: "true"
+    preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rockylinux-legacy-machine-controller-containerd-external-v1.24.3
   optional: false
