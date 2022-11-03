@@ -35,7 +35,7 @@ output "kubeone_hosts" {
       cluster_name         = var.cluster_name
       cloud_provider       = "none" // intentionally set to none for kubelet --node-ip flag
       private_address      = aws_instance.control_plane.*.private_ip
-      ipv6_address_list    = aws_instance.control_plane.*.ipv6_addresses
+      ipv6_addresses       = aws_instance.control_plane.*.ipv6_addresses
       hostnames            = aws_instance.control_plane.*.private_dns
       operating_system     = var.os
       ssh_agent_socket     = var.ssh_agent_socket
