@@ -17,11 +17,15 @@ limitations under the License.
 package tasks
 
 import (
+	"encoding/pem"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/sirupsen/logrus"
+
+	"crypto/tls"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/executor"
@@ -187,7 +191,41 @@ func installKubeadm(s *state.State, node kubeoneapi.HostConfig) error {
 	})
 }
 
+func decodePem(certInput string) tls.Certificate {
+	var cert tls.Certificate
+	certPEMBlock := []byte(certInput)
+	var certDERBlock *pem.Block
+	for {
+		certDERBlock, certPEMBlock = pem.Decode(certPEMBlock)
+		if certDERBlock == nil {
+			break
+		}
+		if certDERBlock.Type == "CERTIFICATE" {
+			cert.Certificate = append(cert.Certificate, certDERBlock.Bytes)
+		}
+	}
+	return cert
+}
+
 func installKubeadmDebian(s *state.State) error {
+
+	if len(s.Cluster.CABundle) > 0 {
+		caBundle := decodePem(s.Cluster.CABundle)
+		for ix, cert := range caBundle.Certificate {
+			cmd, err := scripts.WriteCACert(s.Cluster, "custom-cert-"+strconv.Itoa(ix), string(cert))
+			if err != nil {
+				return fail.SSH(err, "rendering install ca command")
+			}
+			s.Logger.Debugf("executing command: %s", cmd)
+			_, _, err = s.Runner.RunRaw(cmd)
+			if err != nil {
+				return fail.SSH(err, "installing ca")
+			}
+
+		}
+
+	}
+
 	cmd, err := scripts.KubeadmDebian(s.Cluster, s.ForceInstall)
 	if err != nil {
 		return err
