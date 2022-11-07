@@ -49,12 +49,29 @@ const (
 )
 
 const (
+	// fixedEtcdVersion is an etcd version that doesn't have known data integrity and durability bugs
+	// (see etcdVersionCorruptCheckExtraArgs for more details)
+	fixedEtcdVersion = "3.5.5-0"
+
+	// fixedEtcd123 defines a semver constraint used to check if Kubernetes 1.23 uses fixed etcd version
+	fixedEtcd123 = ">= 1.23.14, < 1.24"
+	// fixedEtcd124 defines a semver constraint used to check if Kubernetes 1.24 uses fixed etcd version
+	fixedEtcd124 = ">= 1.24.8, < 1.25"
+	// fixedEtcd125 defines a semver constraint used to check if Kubernetes 1.25+ uses fixed etcd version
+	fixedEtcd125 = ">= 1.25.4"
+
 	// greaterOrEqualThan122 defines a version constraint for the Kubernetes 1.22+ clusters
 	greaterOrEqualThan122 = ">= 1.22.0"
+	// lowerThan122 defines a version constraint for the Kubernetes 1.21 and older clusters
+	lowerThan122 = "< 1.22.0"
 )
 
 var (
+	fixedEtcd123Constraint       = semverutil.MustParseConstraint(fixedEtcd123)
+	fixedEtcd124Constraint       = semverutil.MustParseConstraint(fixedEtcd124)
+	fixedEtcd125Constraint       = semverutil.MustParseConstraint(fixedEtcd125)
 	etcdIntegrityCheckConstraint = semverutil.MustParseConstraint(greaterOrEqualThan122)
+	lowerThan122Constraint       = semverutil.MustParseConstraint(lowerThan122)
 )
 
 // NewConfig returns all required configs to init a cluster via a set of v1beta3 configs
@@ -492,19 +509,33 @@ func kubeProxyConfiguration(s *state.State) *kubeproxyv1alpha1.KubeProxyConfigur
 	return kubeProxyConfig
 }
 
-func etcdVersionCorruptCheckExtraArgs(kubeSemVer *semver.Version, etcdImageTag string) (string, map[string]string) {
+// etcdVersionCorruptCheckExtraArgs provides etcd version and args to be used.
+// This is required because:
+//   - etcd v3.5.[0-2] has an issue with the data integrity
+//     https://groups.google.com/a/kubernetes.io/g/dev/c/B7gJs88XtQc/m/rSgNOzV2BwAJ
+//   - etcd v3.5.[0-4] has a durability issue affecting single-node (non-HA) etcd clusters
+//     https://groups.google.com/a/kubernetes.io/g/dev/c/7q4tB_Vp3Uc/m/MrHalhCIBAAJ
+func etcdVersionCorruptCheckExtraArgs(kubeVersion *semver.Version, etcdImageTag string) (string, map[string]string) {
 	etcdExtraArgs := map[string]string{}
-	if etcdIntegrityCheckConstraint.Check(kubeSemVer) {
-		// This is required because etcd v3.5-[0-2] (used for Kubernetes 1.22+)
-		// has an issue with the data integrity.
-		// See https://groups.google.com/a/kubernetes.io/g/dev/c/B7gJs88XtQc/m/rSgNOzV2BwAJ
-		// for more details.
-		if etcdImageTag == "" {
-			etcdImageTag = "3.5.3-0"
+	if etcdIntegrityCheckConstraint.Check(kubeVersion) {
+		etcdExtraArgs = map[string]string{
+			"experimental-initial-corrupt-check": "true",
+			"experimental-corrupt-check-time":    "240m",
 		}
-		etcdExtraArgs["experimental-initial-corrupt-check"] = "true"
-		etcdExtraArgs["experimental-corrupt-check-time"] = "240m"
 	}
 
-	return etcdImageTag, etcdExtraArgs
+	switch {
+	case etcdImageTag != "":
+		fallthrough
+	case lowerThan122Constraint.Check(kubeVersion):
+		return etcdImageTag, etcdExtraArgs
+	case fixedEtcd123Constraint.Check(kubeVersion):
+		fallthrough
+	case fixedEtcd124Constraint.Check(kubeVersion):
+		fallthrough
+	case fixedEtcd125Constraint.Check(kubeVersion):
+		return "", etcdExtraArgs
+	default:
+		return fixedEtcdVersion, etcdExtraArgs
+	}
 }
