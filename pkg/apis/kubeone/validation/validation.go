@@ -244,6 +244,9 @@ func ValidateCloudProviderSpec(p kubeoneapi.CloudProviderSpec, fldPath *field.Pa
 		if len(p.CloudConfig) == 0 {
 			allErrs = append(allErrs, field.Required(fldPath.Child("cloudConfig"), ".cloudProvider.cloudConfig is required for vSphere provider"))
 		}
+		if p.External && len(p.CSIConfig) == 0 {
+			allErrs = append(allErrs, field.Required(fldPath.Child("csiConfig"), ".cloudProvider.csiConfig is required for vSphere provider"))
+		}
 		providerFound = true
 	}
 	if p.None != nil {
@@ -257,13 +260,8 @@ func ValidateCloudProviderSpec(p kubeoneapi.CloudProviderSpec, fldPath *field.Pa
 		allErrs = append(allErrs, field.Invalid(fldPath, "", "provider must be specified"))
 	}
 
-	if len(p.CSIConfig) > 0 {
-		if p.Vsphere == nil {
-			allErrs = append(allErrs, field.Invalid(fldPath.Child("csiConfig"), "", ".cloudProvider.csiConfig is currently supported only for vsphere clusters"))
-		}
-		if !p.External {
-			allErrs = append(allErrs, field.Invalid(fldPath.Child("csiConfig"), "", ".cloudProvider.csiConfig is supported only for clusters using external cloud provider (.cloudProvider.external)"))
-		}
+	if p.Vsphere == nil && len(p.CSIConfig) > 0 {
+		allErrs = append(allErrs, field.Forbidden(fldPath.Child("csiConfig"), ".cloudProvider.csiConfig is currently supported only for vsphere clusters"))
 	}
 
 	return allErrs
