@@ -20,6 +20,7 @@
     - name: openstack_rhel
     - name: openstack_flatcar
     - name: vsphere_default
+    - name: vsphere_centos
     - name: vsphere_flatcar
 
 - scenario: install_containerd
@@ -44,6 +45,7 @@
     - name: openstack_rhel
     - name: openstack_flatcar
     - name: vsphere_default
+    - name: vsphere_centos
     - name: vsphere_flatcar
 
 - scenario: install_containerd
@@ -68,6 +70,7 @@
     - name: openstack_rhel
     - name: openstack_flatcar
     - name: vsphere_default
+    - name: vsphere_centos
     - name: vsphere_flatcar
 
 - scenario: install_docker
@@ -91,6 +94,7 @@
     - name: openstack_rhel
     - name: openstack_flatcar
     - name: vsphere_default
+    - name: vsphere_centos
     - name: vsphere_flatcar
 
 - scenario: install_docker
@@ -114,6 +118,7 @@
     - name: openstack_rhel
     - name: openstack_flatcar
     - name: vsphere_default
+    - name: vsphere_centos
     - name: vsphere_flatcar
 
 - scenario: upgrade_containerd
@@ -257,6 +262,7 @@
     - name: openstack_rhel
     - name: openstack_flatcar
     - name: vsphere_default
+    - name: vsphere_centos
     - name: vsphere_flatcar
 
 - scenario: calico_docker
@@ -280,6 +286,7 @@
     - name: openstack_rhel
     - name: openstack_flatcar
     - name: vsphere_default
+    - name: vsphere_centos
     - name: vsphere_flatcar
 
 - scenario: weave_containerd
@@ -303,6 +310,7 @@
     - name: openstack_rhel
     - name: openstack_flatcar
     - name: vsphere_default
+    - name: vsphere_centos
     - name: vsphere_flatcar
 
 - scenario: weave_docker
@@ -326,6 +334,7 @@
     - name: openstack_rhel
     - name: openstack_flatcar
     - name: vsphere_default
+    - name: vsphere_centos
     - name: vsphere_flatcar
 
 - scenario: cilium_containerd
@@ -349,6 +358,7 @@
     - name: openstack_rhel
     - name: openstack_flatcar
     - name: vsphere_default
+    - name: vsphere_centos
     - name: vsphere_flatcar
 
 - scenario: cilium_docker
@@ -372,6 +382,7 @@
     - name: openstack_rhel
     - name: openstack_flatcar
     - name: vsphere_default
+    - name: vsphere_centos
     - name: vsphere_flatcar
 
 - scenario: conformance_containerd
@@ -435,6 +446,7 @@
     - name: openstack_rhel
     - name: openstack_flatcar
     - name: vsphere_default
+    - name: vsphere_centos
     - name: vsphere_flatcar
 
 - scenario: legacy_machine_controller_containerd
@@ -458,6 +470,7 @@
     - name: openstack_rhel
     - name: openstack_flatcar
     - name: vsphere_default
+    - name: vsphere_centos
     - name: vsphere_flatcar
 
 - scenario: legacy_machine_controller_containerd
@@ -481,6 +494,7 @@
     - name: openstack_rhel
     - name: openstack_flatcar
     - name: vsphere_default
+    - name: vsphere_centos
     - name: vsphere_flatcar
 
 - scenario: legacy_machine_controller_docker
@@ -504,6 +518,7 @@
     - name: openstack_rhel
     - name: openstack_flatcar
     - name: vsphere_default
+    - name: vsphere_centos
     - name: vsphere_flatcar
 
 - scenario: legacy_machine_controller_docker
@@ -527,6 +542,7 @@
     - name: openstack_rhel
     - name: openstack_flatcar
     - name: vsphere_default
+    - name: vsphere_centos
     - name: vsphere_flatcar
 
 - scenario: kube_proxy_ipvs
@@ -549,6 +565,7 @@
     - name: azure_rhel
     - name: azure_rockylinux
     - name: vsphere_default
+    - name: vsphere_centos
     - name: vsphere_flatcar
 
 - scenario: csi_ccm_migration
@@ -566,6 +583,7 @@
     - name: azure_rhel
     - name: azure_rockylinux
     - name: vsphere_default
+    - name: vsphere_centos
     - name: vsphere_flatcar
 
 - scenario: csi_ccm_migration
@@ -583,6 +601,7 @@
     - name: azure_rhel
     - name: azure_rockylinux
     - name: vsphere_default
+    - name: vsphere_centos
     - name: vsphere_flatcar
 
 - scenario: install_containerd_external
@@ -615,6 +634,7 @@
     - name: openstack_rhel
     - name: openstack_flatcar
     - name: vsphere_default
+    - name: vsphere_centos
     - name: vsphere_flatcar
 
 - scenario: install_containerd_external
@@ -647,6 +667,7 @@
     - name: openstack_rhel
     - name: openstack_flatcar
     - name: vsphere_default
+    - name: vsphere_centos
     - name: vsphere_flatcar
 
 - scenario: install_containerd_external
@@ -679,6 +700,7 @@
     - name: openstack_rhel
     - name: openstack_flatcar
     - name: vsphere_default
+    - name: vsphere_centos
     - name: vsphere_flatcar
 
 - scenario: install_docker_external
@@ -711,6 +733,7 @@
     - name: openstack_rhel
     - name: openstack_flatcar
     - name: vsphere_default
+    - name: vsphere_centos
     - name: vsphere_flatcar
 
 - scenario: install_docker_external
@@ -743,6 +766,7 @@
     - name: openstack_rhel
     - name: openstack_flatcar
     - name: vsphere_default
+    - name: vsphere_centos
     - name: vsphere_flatcar
 
 - scenario: upgrade_containerd_external
@@ -940,6 +964,7 @@
     - name: openstack_rhel
     - name: openstack_flatcar
     - name: vsphere_default
+    - name: vsphere_centos
     - name: vsphere_flatcar
 
 - scenario: legacy_machine_controller_containerd_external
@@ -972,6 +997,7 @@
     - name: openstack_rhel
     - name: openstack_flatcar
     - name: vsphere_default
+    - name: vsphere_centos
     - name: vsphere_flatcar
 
 - scenario: legacy_machine_controller_containerd_external
@@ -1004,6 +1030,7 @@
     - name: openstack_rhel
     - name: openstack_flatcar
     - name: vsphere_default
+    - name: vsphere_centos
     - name: vsphere_flatcar
 
 - scenario: legacy_machine_controller_docker_external

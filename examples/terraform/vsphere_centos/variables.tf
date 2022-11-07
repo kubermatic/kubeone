@@ -89,6 +89,18 @@ variable "bastion_username" {
   type        = string
 }
 
+variable "ssh_hosts_keys" {
+  default     = null
+  description = "A list of SSH hosts public keys to verify"
+  type        = list(string)
+}
+
+variable "bastion_host_key" {
+  description = "Bastion SSH host public key"
+  default     = null
+  type        = string
+}
+
 # provider specific settings
 
 variable "allow_insecure" {
@@ -140,7 +152,7 @@ variable "compute_cluster_name" {
 }
 
 variable "template_name" {
-  default     = "ubuntu-18.04"
+  default     = "ubuntu-22.04"
   description = "template name"
   type        = string
 }

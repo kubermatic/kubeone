@@ -1,9 +1,19 @@
-# vSphere Quickstart Terraform configs
+# vSphere Quickstart Terraform configs for Debian-based operating system
 
 The vSphere Quickstart Terraform configs can be used to create the needed
 infrastructure for a Kubernetes HA cluster. Check out the following
 [Creating Infrastructure guide][docs-infrastructure] to learn more about how to
 use the configs and how to provision a Kubernetes cluster using KubeOne.
+
+These Terraform configs are supposed to be used with Debian-based operating
+systems that support vApp (e.g. Ubuntu). For more information on how to prepare
+a template VM to be used with these configs, check out our [Ubuntu Template VM]
+guide.
+
+We also provide Terraform configs for [CentOS-based operating systems](../vsphere_centos)
+and [Flatcar Linux](../vsphere_flatcar).
+
+[Ubuntu Template VM]: https://docs.kubermatic.com/kubeone/main/guides/vsphere-template-vm/ubuntu/
 
 ## Required environment variables
 
@@ -61,6 +71,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_allow_insecure"></a> [allow\_insecure](#input\_allow\_insecure) | allow insecure https connection to vCenter | `bool` | `false` | no |
 | <a name="input_api_vip"></a> [api\_vip](#input\_api\_vip) | virtual IP address for Kubernetes API | `string` | `""` | no |
 | <a name="input_apiserver_alternative_names"></a> [apiserver\_alternative\_names](#input\_apiserver\_alternative\_names) | subject alternative names for the API Server signing cert. | `list(string)` | `[]` | no |
 | <a name="input_bastion_host"></a> [bastion\_host](#input\_bastion\_host) | ssh jumphost (bastion) hostname | `string` | `""` | no |

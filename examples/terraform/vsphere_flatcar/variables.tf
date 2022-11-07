@@ -87,6 +87,12 @@ variable "bastion_username" {
 
 # provider specific settings
 
+variable "allow_insecure" {
+  description = "allow insecure https connection to vCenter"
+  default     = false
+  type        = bool
+}
+
 variable "dc_name" {
   default     = "dc-1"
   description = "datacenter name"
