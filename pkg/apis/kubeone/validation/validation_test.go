@@ -248,7 +248,7 @@ func TestValidateKubeOneCluster(t *testing.T) {
 		},
 	}
 
-	twentyFour := 28
+	twentyFour := 24
 	for _, tc := range tests {
 		tc := tc
 		tc.cluster.ClusterNetwork = kubeoneapi.ClusterNetworkConfig{

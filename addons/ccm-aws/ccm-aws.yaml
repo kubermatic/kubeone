@@ -165,6 +165,8 @@ spec:
             - --cloud-provider=aws
             - --use-service-account-credentials=false
             - --configure-cloud-routes=false
+            - --allocate-node-cidrs=true
+            - --cluster-cidr={{ .Config.ClusterNetwork.PodSubnet }}
             - --v=2
           resources:
             requests:

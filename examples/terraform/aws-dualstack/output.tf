@@ -33,7 +33,7 @@ output "kubeone_hosts" {
   value = {
     control_plane = {
       cluster_name         = var.cluster_name
-      cloud_provider       = "none" // intentionally set to none for kubelet --node-ip flag
+      cloud_provider       = "aws"
       private_address      = aws_instance.control_plane.*.private_ip
       ipv6_addresses       = aws_instance.control_plane.*.ipv6_addresses
       hostnames            = aws_instance.control_plane.*.private_dns
