@@ -1020,6 +1020,25 @@ var (
 				},
 			},
 		},
+		"vsphere_centos": {
+			name: "vsphere_centos",
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-vsphere": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "vsphere",
+			},
+			terraform: terraformBin{
+				path:    "../../examples/terraform/vsphere_centos",
+				varFile: "testdata/vsphere.tfvars",
+				vars: []string{
+					"template_name=k1-centos-7",
+					"worker_os=centos",
+					"ssh_username=centos",
+				},
+			},
+		},
 		"vsphere_flatcar": {
 			name: "vsphere_flatcar",
 			labels: map[string]string{
