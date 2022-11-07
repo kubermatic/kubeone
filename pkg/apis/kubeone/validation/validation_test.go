@@ -248,14 +248,19 @@ func TestValidateKubeOneCluster(t *testing.T) {
 		},
 	}
 
+	twentyFour := 28
 	for _, tc := range tests {
 		tc := tc
 		tc.cluster.ClusterNetwork = kubeoneapi.ClusterNetworkConfig{
-			IPFamily: kubeoneapi.IPFamilyIPv4,
+			IPFamily:             kubeoneapi.IPFamilyIPv4,
+			PodSubnet:            "10.20.30.40/16",
+			ServiceSubnet:        "10.30.30.40/16",
+			NodeCIDRMaskSizeIPv4: &twentyFour,
 		}
 		t.Run(tc.name, func(t *testing.T) {
 			errs := ValidateKubeOneCluster(tc.cluster)
 			if (len(errs) == 0) == tc.expectedError {
+				t.Log(errs)
 				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
 			}
 		})
@@ -1007,18 +1012,20 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 		{
 			name: "valid network config",
 			clusterNetworkConfig: kubeoneapi.ClusterNetworkConfig{
-				PodSubnet:     "192.168.1.0/24",
-				ServiceSubnet: "192.168.0.0/24",
-				IPFamily:      kubeoneapi.IPFamilyIPv4,
+				PodSubnet:            "192.168.1.0/16",
+				ServiceSubnet:        "192.168.0.0/16",
+				IPFamily:             kubeoneapi.IPFamilyIPv4,
+				NodeCIDRMaskSizeIPv4: ptr(24),
 			},
 			expectedError: false,
 		},
 		{
 			name: "valid network config with cni config",
 			clusterNetworkConfig: kubeoneapi.ClusterNetworkConfig{
-				PodSubnet:     "192.168.1.0/24",
-				ServiceSubnet: "192.168.0.0/24",
-				IPFamily:      kubeoneapi.IPFamilyIPv4,
+				PodSubnet:            "192.168.1.0/16",
+				ServiceSubnet:        "192.168.0.0/16",
+				IPFamily:             kubeoneapi.IPFamilyIPv4,
+				NodeCIDRMaskSizeIPv4: ptr(24),
 				CNI: &kubeoneapi.CNI{
 					Canal: &kubeoneapi.CanalSpec{MTU: 1500},
 				},
@@ -1026,11 +1033,9 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 			expectedError: false,
 		},
 		{
-			name: "empty network config",
-			clusterNetworkConfig: kubeoneapi.ClusterNetworkConfig{
-				IPFamily: kubeoneapi.IPFamilyIPv4,
-			},
-			expectedError: false,
+			name:                 "empty network config",
+			clusterNetworkConfig: kubeoneapi.ClusterNetworkConfig{},
+			expectedError:        true,
 		},
 		{
 			name: "invalid pod subnet",
@@ -1061,12 +1066,75 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 			},
 			expectedError: true,
 		},
+		{
+			name: "valid ipv6 config",
+			clusterNetworkConfig: kubeoneapi.ClusterNetworkConfig{
+				IPFamily:             kubeoneapi.IPFamilyIPv6,
+				PodSubnet:            "fd01::/48",
+				ServiceSubnet:        "fd02::/120",
+				NodeCIDRMaskSizeIPv6: ptr(64),
+			},
+		},
+		{
+			name: "valid ipv4+ipv6 config",
+			clusterNetworkConfig: kubeoneapi.ClusterNetworkConfig{
+				IPFamily:             kubeoneapi.IPFamilyIPv4IPv6,
+				PodSubnet:            "10.244.0.0/16,fd01::/48",
+				ServiceSubnet:        "10.96.0.0/12,fd02::/120",
+				NodeCIDRMaskSizeIPv4: ptr(24),
+				NodeCIDRMaskSizeIPv6: ptr(64),
+			},
+		},
+		{
+			name: "valid ipv6+ipv4 config",
+			clusterNetworkConfig: kubeoneapi.ClusterNetworkConfig{
+				IPFamily:             kubeoneapi.IPFamilyIPv6IPv4,
+				PodSubnet:            "fd01::/48,10.244.0.0/16",
+				ServiceSubnet:        "fd02::/120,10.96.0.0/12",
+				NodeCIDRMaskSizeIPv4: ptr(24),
+				NodeCIDRMaskSizeIPv6: ptr(64),
+			},
+		},
+		{
+			name: "invalid ipv6+ipv4 config",
+			clusterNetworkConfig: kubeoneapi.ClusterNetworkConfig{
+				IPFamily:             kubeoneapi.IPFamilyIPv6IPv4,
+				PodSubnet:            "10.244.0.0/16,fd01::/48",
+				ServiceSubnet:        "10.96.0.0/12,fd02::/120",
+				NodeCIDRMaskSizeIPv4: ptr(24),
+				NodeCIDRMaskSizeIPv6: ptr(64),
+			},
+			expectedError: true,
+		},
+		{
+			name: "invalid nod cidr mask size",
+			clusterNetworkConfig: kubeoneapi.ClusterNetworkConfig{
+				IPFamily:             kubeoneapi.IPFamilyIPv4IPv6,
+				PodSubnet:            "10.244.0.0/16,fd01::/48",
+				ServiceSubnet:        "10.96.0.0/12,fd02::/120",
+				NodeCIDRMaskSizeIPv4: ptr(16),
+				NodeCIDRMaskSizeIPv6: ptr(48),
+			},
+			expectedError: true,
+		},
+		{
+			name: "invalid number of cidrs",
+			clusterNetworkConfig: kubeoneapi.ClusterNetworkConfig{
+				IPFamily:             kubeoneapi.IPFamilyIPv4IPv6,
+				PodSubnet:            "10.244.0.0/16",
+				ServiceSubnet:        "10.96.0.0/12,fd02::/120",
+				NodeCIDRMaskSizeIPv4: ptr(16),
+				NodeCIDRMaskSizeIPv6: ptr(48),
+			},
+			expectedError: true,
+		},
 	}
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			errs := ValidateClusterNetworkConfig(tc.clusterNetworkConfig, nil)
 			if (len(errs) == 0) == tc.expectedError {
+				t.Log(errs)
 				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
 			}
 		})
@@ -2243,4 +2311,8 @@ func TestValidateAssetConfiguration(t *testing.T) {
 			}
 		})
 	}
+}
+
+func ptr[T any](x T) *T {
+	return &x
 }
