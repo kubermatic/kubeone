@@ -14,7 +14,7 @@
 
 # building image
 
-FROM golang:1.19.2 as builder
+FROM golang:1.19.3 as builder
 
 RUN apt-get update && apt-get install -y \
     unzip
@@ -35,7 +35,7 @@ RUN chmod +x kubectl
 
 # resulting image
 
-FROM golang:1.19.2
+FROM golang:1.19.3
 
 ARG version
 
