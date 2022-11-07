@@ -463,3 +463,91 @@ func MapStringStringToString(m1 map[string]string, pairSeparator string) string 
 
 	return strings.Join(pairs, ",")
 }
+
+func (c ClusterNetworkConfig) HasIPv4() bool {
+	return c.IPFamily == IPFamilyIPv4 || c.IPFamily == IPFamilyIPv4IPv6 || c.IPFamily == IPFamilyIPv6IPv4
+}
+
+func (c ClusterNetworkConfig) HasIPv6() bool {
+	return c.IPFamily == IPFamilyIPv6 || c.IPFamily == IPFamilyIPv4IPv6 || c.IPFamily == IPFamilyIPv6IPv4
+}
+
+func (c ClusterNetworkConfig) PodSubnetIPv4() string {
+	var result string
+	switch c.IPFamily {
+	case IPFamilyIPv4:
+		result = c.PodSubnet
+	case IPFamilyIPv6:
+		result = "unknown"
+	case IPFamilyIPv4IPv6:
+		parts := strings.Split(c.PodSubnet, ",")
+		result = parts[0]
+	case IPFamilyIPv6IPv4:
+		parts := strings.Split(c.PodSubnet, ",")
+		result = parts[1]
+	default:
+		result = "unknown"
+	}
+
+	return result
+}
+
+func (c ClusterNetworkConfig) PodSubnetIPv6() string {
+	var result string
+	switch c.IPFamily {
+	case IPFamilyIPv4:
+		result = "unknown"
+	case IPFamilyIPv6:
+		result = c.PodSubnet
+	case IPFamilyIPv4IPv6:
+		parts := strings.Split(c.PodSubnet, ",")
+		result = parts[1]
+	case IPFamilyIPv6IPv4:
+		parts := strings.Split(c.PodSubnet, ",")
+		result = parts[0]
+	default:
+		result = "unknown"
+	}
+
+	return result
+}
+
+func (c ClusterNetworkConfig) ServiceSubnetIPv4() string {
+	var result string
+	switch c.IPFamily {
+	case IPFamilyIPv4:
+		result = c.ServiceSubnet
+	case IPFamilyIPv6:
+		result = "unknown"
+	case IPFamilyIPv4IPv6:
+		parts := strings.Split(c.ServiceSubnet, ",")
+		result = parts[0]
+	case IPFamilyIPv6IPv4:
+		parts := strings.Split(c.ServiceSubnet, ",")
+		result = parts[1]
+	default:
+		result = "unknown"
+	}
+
+	return result
+}
+
+func (c ClusterNetworkConfig) ServiceSubnetIPv6() string {
+	var result string
+	switch c.IPFamily {
+	case IPFamilyIPv4:
+		result = "unknown"
+	case IPFamilyIPv6:
+		result = c.ServiceSubnet
+	case IPFamilyIPv4IPv6:
+		parts := strings.Split(c.ServiceSubnet, ",")
+		result = parts[1]
+	case IPFamilyIPv6IPv4:
+		parts := strings.Split(c.ServiceSubnet, ",")
+		result = parts[0]
+	default:
+		result = "unknown"
+	}
+
+	return result
+}

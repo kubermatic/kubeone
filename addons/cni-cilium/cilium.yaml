@@ -201,14 +201,13 @@ data:
   hubble-tls-key-file: /var/lib/cilium/tls/hubble/server.key
   hubble-tls-client-ca-files: /var/lib/cilium/tls/hubble/client-ca.crt
   ipam: "cluster-pool"
-{{ if eq .Config.ClusterNetwork.IPFamily "IPv4+IPv6" }}
-  cluster-pool-ipv4-cidr: "{{ takeCIDRn 0 .Config.ClusterNetwork.PodSubnet }}"
+{{ if .Config.ClusterNetwork.HasIPv4 }}
+  cluster-pool-ipv4-cidr: "{{ .Config.ClusterNetwork.PodSubnetIPv4 }}"
   cluster-pool-ipv4-mask-size: "{{ .Config.ClusterNetwork.NodeCIDRMaskSizeIPv4 }}"
-  cluster-pool-ipv6-cidr: "{{ takeCIDRn 1 .Config.ClusterNetwork.PodSubnet }}"
+{{ end }}
+{{ if .Config.ClusterNetwork.HasIPv6 }}
+  cluster-pool-ipv6-cidr: "{{ .Config.ClusterNetwork.PodSubnetIPv6 }}"
   cluster-pool-ipv6-mask-size: "{{ .Config.ClusterNetwork.NodeCIDRMaskSizeIPv6 }}"
-{{ else }}
-  cluster-pool-ipv4-cidr: "{{ .Config.ClusterNetwork.PodSubnet }}"
-  cluster-pool-ipv4-mask-size: "24"
 {{ end }}
   disable-cnp-status-updates: "true"
   enable-vtep: "false"
