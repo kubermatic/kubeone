@@ -472,6 +472,10 @@ func (c ClusterNetworkConfig) HasIPv6() bool {
 	return c.IPFamily == IPFamilyIPv6 || c.IPFamily == IPFamilyIPv4IPv6 || c.IPFamily == IPFamilyIPv6IPv4
 }
 
+func (c IPFamily) IsDualstack() bool {
+	return c == IPFamilyIPv4IPv6 || c == IPFamilyIPv6IPv4
+}
+
 func (c ClusterNetworkConfig) PodSubnetIPv4() string {
 	var result string
 	switch c.IPFamily {
