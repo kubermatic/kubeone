@@ -343,9 +343,6 @@ func addControllerManagerNetworkArgs(m map[string]string, clusterNetwork kubeone
 	if clusterNetwork.CNI.Cilium != nil {
 		return
 	}
-	m["allocate-node-cidrs"] = "true"
-	m["cluster-cidr"] = clusterNetwork.PodSubnet
-	m["service-cluster-ip-range"] = clusterNetwork.ServiceSubnet
 
 	switch clusterNetwork.IPFamily {
 	case kubeoneapi.IPFamilyIPv4:
