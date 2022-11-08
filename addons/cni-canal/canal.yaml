@@ -41,13 +41,17 @@ data:
           "mtu": __CNI_MTU__,
           "ipam": {
               "type": "host-local",
-              {{ if eq .Config.ClusterNetwork.IPFamily "IPv4+IPv6" }}
+              {{ if and .Config.ClusterNetwork.HasIPv4 .Config.ClusterNetwork.HasIPv6 }}
               "ranges": [
                   [{"subnet": "usePodCidr"}],
                   [{"subnet": "usePodCidrIPv6"}]
               ]
               {{ else }}
+              {{ if .Config.ClusterNetwork.HasIPv6 }}
+              "subnet": "usePodCidrIPv6"
+              {{ else }}
               "subnet": "usePodCidr"
+              {{ end }}
               {{ end }}
           },
           "policy": {
@@ -4571,7 +4575,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.namespace
             - name: FLANNELD_IFACE
-              {{ if eq .Config.ClusterNetwork.IPFamily "IPv4+IPv6" }}
+              {{ if .Config.ClusterNetwork.HasIPv6 }}
               valueFrom:
                 configMapKeyRef:
                   key: canal_iface

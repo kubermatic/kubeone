@@ -83,7 +83,7 @@ data:
 
   # Enable IPv6 addressing. If enabled, all endpoints are allocated an IPv6
   # address.
-{{ if eq .Config.ClusterNetwork.IPFamily "IPv4+IPv6" }}
+{{ if .Config.ClusterNetwork.HasIPv6 }}
   enable-ipv6: "true"
 {{ else }}
   enable-ipv6: "false"
