@@ -24,9 +24,15 @@ locals {
   zoneA                 = data.aws_availability_zones.available.names[0]
   zoneB                 = data.aws_availability_zones.available.names[1]
   zoneC                 = data.aws_availability_zones.available.names[2]
+
   vpc_mask              = parseint(split("/", data.aws_vpc.selected.cidr_block)[1], 10)
   subnet_total          = pow(2, var.subnets_cidr - local.vpc_mask)
   subnet_newbits        = var.subnets_cidr - (32 - local.vpc_mask)
+
+  ipv6_vpc_mask  = parseint(split("/",data.aws_vpc.selected.ipv6_cidr_block)[1], 10)
+  ipv6_subnet_total = pow(2, 64 - local.ipv6_vpc_mask)
+  ipv6_subnet_newbits = 64 -  local.ipv6_vpc_mask
+
   worker_os             = var.worker_os == "" ? var.ami_filters[var.os].worker_os : var.worker_os
   worker_deploy_ssh_key = var.worker_deploy_ssh_key ? [aws_key_pair.deployer.public_key] : []
   ssh_username          = var.ssh_username == "" ? var.ami_filters[var.os].ssh_username : var.ssh_username
@@ -85,6 +91,11 @@ resource "random_integer" "cidr_block" {
   max = local.subnet_total - 1
 }
 
+resource "random_integer" "ipv6_cidr_block" {
+  min = 0
+  max = local.ipv6_subnet_total - 1
+}
+
 ############################### NETWORKING SETUP ###############################
 
 resource "aws_subnet" "public" {
@@ -101,8 +112,8 @@ resource "aws_subnet" "public" {
 
   ipv6_cidr_block = cidrsubnet(
     data.aws_vpc.selected.ipv6_cidr_block,
-    local.subnet_newbits,
-    (random_integer.cidr_block.result + count.index) % local.subnet_total,
+    local.ipv6_subnet_newbits,
+    (random_integer.ipv6_cidr_block.result + count.index) % local.ipv6_subnet_total,
   )
 
   assign_ipv6_address_on_creation = true
