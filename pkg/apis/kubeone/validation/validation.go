@@ -351,6 +351,90 @@ func ValidateContainerRuntimeConfig(cr kubeoneapi.ContainerRuntimeConfig, versio
 func ValidateClusterNetworkConfig(c kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
+	allErrs = append(allErrs, validateCIDRs(c, fldPath)...)
+	allErrs = append(allErrs, validateNodeCIDRMaskSize(c, fldPath)...)
+
+	if c.CNI != nil {
+		allErrs = append(allErrs, ValidateCNI(c.CNI, fldPath.Child("cni"))...)
+
+		// validated cilium kube-proxy replacement
+		if c.CNI.Cilium != nil && c.CNI.Cilium.KubeProxyReplacement != kubeoneapi.KubeProxyReplacementDisabled && (c.KubeProxy == nil || !c.KubeProxy.SkipInstallation) {
+			allErrs = append(allErrs, field.Invalid(fldPath.Child("cni"), c.CNI.Cilium.KubeProxyReplacement, ".cilium.kubeProxyReplacement cannot be set with kube-proxy enabled"))
+		}
+	}
+	if c.KubeProxy != nil {
+		allErrs = append(allErrs, ValidateKubeProxy(c.KubeProxy, fldPath.Child("kubeProxy"))...)
+	}
+
+	return allErrs
+}
+
+func validateNodeCIDRMaskSize(c kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	subnetCountErr := func(node, subnet string, count int, ipFamily kubeoneapi.IPFamily) *field.Error {
+		return field.Invalid(fldPath.Child(node), subnet, fmt.Sprintf(".clusterNetwork.%s must specify %d subnet(s) for %q IP family.", node, count, ipFamily))
+	}
+
+	validateNodeCIDRMaskSize := func(nodeCIDRMaskSize *int, podCIDR string, fldPath *field.Path) {
+		if nodeCIDRMaskSize == nil {
+			allErrs = append(allErrs, field.Invalid(fldPath, nodeCIDRMaskSize, "node CIDR mask size must be set"))
+
+			return
+		}
+
+		_, podCIDRNet, err := net.ParseCIDR(podCIDR)
+		if err != nil {
+			allErrs = append(allErrs, field.Invalid(fldPath, podCIDR, fmt.Sprintf("couldn't parse CIDR %q: %v", podCIDR, err)))
+
+			return
+		}
+		podCIDRMaskSize, _ := podCIDRNet.Mask.Size()
+
+		if podCIDRMaskSize >= *nodeCIDRMaskSize {
+			allErrs = append(allErrs, field.Invalid(fldPath, nodeCIDRMaskSize,
+				fmt.Sprintf("node CIDR mask size (%d) must be longer than the mask size of the pod CIDR (%q)", *nodeCIDRMaskSize, podCIDR)))
+
+			return
+		}
+	}
+
+	var podCIDRIPv4, podCIDRIPv6 string
+	switch c.IPFamily {
+	case kubeoneapi.IPFamilyIPv4:
+		podCIDRIPv4 = c.PodSubnet
+		validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv4, podCIDRIPv4, fldPath.Child("nodeCIDRMaskSizeIPv4"))
+	case kubeoneapi.IPFamilyIPv6:
+		podCIDRIPv6 = c.PodSubnet
+		validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv6, podCIDRIPv6, fldPath.Child("nodeCIDRMaskSizeIPv6"))
+	case kubeoneapi.IPFamilyIPv4IPv6:
+		parts := strings.Split(c.PodSubnet, ",")
+		if len(parts) != 2 {
+			allErrs = append(allErrs, subnetCountErr("podSubnet", c.PodSubnet, 2, c.IPFamily))
+
+			break
+		}
+		podCIDRIPv4, podCIDRIPv6 = parts[0], parts[1]
+		validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv4, podCIDRIPv4, fldPath.Child("nodeCIDRMaskSizeIPv4"))
+		validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv6, podCIDRIPv6, fldPath.Child("nodeCIDRMaskSizeIPv6"))
+	case kubeoneapi.IPFamilyIPv6IPv4:
+		parts := strings.Split(c.PodSubnet, ",")
+		if len(parts) != 2 {
+			allErrs = append(allErrs, subnetCountErr("podSubnet", c.PodSubnet, 2, c.IPFamily))
+
+			break
+		}
+		podCIDRIPv4, podCIDRIPv6 = parts[1], parts[0]
+		validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv4, podCIDRIPv4, fldPath.Child("nodeCIDRMaskSizeIPv4"))
+		validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv6, podCIDRIPv6, fldPath.Child("nodeCIDRMaskSizeIPv6"))
+	}
+
+	return allErrs
+}
+
+func validateCIDRs(c kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
 	subnetCountErr := func(node, subnet string, count int, ipFamily kubeoneapi.IPFamily) *field.Error {
 		return field.Invalid(fldPath.Child(node), subnet, fmt.Sprintf(".clusterNetwork.%s must specify %d subnet(s) for %q IP family.", node, count, ipFamily))
 	}
@@ -393,71 +477,6 @@ func ValidateClusterNetworkConfig(c kubeoneapi.ClusterNetworkConfig, fldPath *fi
 
 	validateCIDRs("podSubnet", c.PodSubnet)
 	validateCIDRs("serviceSubnet", c.ServiceSubnet)
-
-	validateNodeCIDRMaskSize := func(nodeCIDRMaskSize *int, podCIDR string, fldPath *field.Path) {
-		if nodeCIDRMaskSize == nil {
-			allErrs = append(allErrs, field.Invalid(fldPath, nodeCIDRMaskSize, "node CIDR mask size must be set"))
-
-			return
-		}
-
-		_, podCIDRNet, err := net.ParseCIDR(podCIDR)
-		if err != nil {
-			allErrs = append(allErrs, field.Invalid(fldPath, podCIDR, fmt.Sprintf("couldn't parse CIDR %q: %v", podCIDR, err)))
-
-			return
-		}
-		podCIDRMaskSize, _ := podCIDRNet.Mask.Size()
-
-		if podCIDRMaskSize >= *nodeCIDRMaskSize {
-			allErrs = append(allErrs, field.Invalid(fldPath, nodeCIDRMaskSize,
-				fmt.Sprintf("node CIDR mask size (%d) must be longer than the mask size of the pod CIDR (%q)", *nodeCIDRMaskSize, podCIDR)))
-
-			return
-		}
-	}
-
-	var podCIDRIPv4, podCIDRIPv6 string
-	switch c.IPFamily {
-	case kubeoneapi.IPFamilyIPv4:
-		podCIDRIPv4 = c.PodSubnet
-		validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv4, podCIDRIPv4, fldPath.Child("nodeCIDRMaskSizeIPv4"))
-	case kubeoneapi.IPFamilyIPv6:
-		podCIDRIPv6 = c.PodSubnet
-		validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv6, podCIDRIPv6, fldPath.Child("nodeCIDRMaskSizeIPv6"))
-	case kubeoneapi.IPFamilyIPv4IPv6:
-		parts := strings.Split(c.PodSubnet, ",")
-		if len(parts) != 2 {
-			allErrs = append(allErrs, subnetCountErr("podSubnet", c.PodSubnet, len(subnetValidators), c.IPFamily))
-
-			break
-		}
-		podCIDRIPv4, podCIDRIPv6 = parts[0], parts[1]
-		validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv4, podCIDRIPv4, fldPath.Child("nodeCIDRMaskSizeIPv4"))
-		validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv6, podCIDRIPv6, fldPath.Child("nodeCIDRMaskSizeIPv6"))
-	case kubeoneapi.IPFamilyIPv6IPv4:
-		parts := strings.Split(c.PodSubnet, ",")
-		if len(parts) != 2 {
-			allErrs = append(allErrs, subnetCountErr("podSubnet", c.PodSubnet, len(subnetValidators), c.IPFamily))
-
-			break
-		}
-		podCIDRIPv4, podCIDRIPv6 = parts[1], parts[0]
-		validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv4, podCIDRIPv4, fldPath.Child("nodeCIDRMaskSizeIPv4"))
-		validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv6, podCIDRIPv6, fldPath.Child("nodeCIDRMaskSizeIPv6"))
-	}
-
-	if c.CNI != nil {
-		allErrs = append(allErrs, ValidateCNI(c.CNI, fldPath.Child("cni"))...)
-
-		// validated cilium kube-proxy replacement
-		if c.CNI.Cilium != nil && c.CNI.Cilium.KubeProxyReplacement != kubeoneapi.KubeProxyReplacementDisabled && (c.KubeProxy == nil || !c.KubeProxy.SkipInstallation) {
-			allErrs = append(allErrs, field.Invalid(fldPath.Child("cni"), c.CNI.Cilium.KubeProxyReplacement, ".cilium.kubeProxyReplacement cannot be set with kube-proxy enabled"))
-		}
-	}
-	if c.KubeProxy != nil {
-		allErrs = append(allErrs, ValidateKubeProxy(c.KubeProxy, fldPath.Child("kubeProxy"))...)
-	}
 
 	return allErrs
 }
