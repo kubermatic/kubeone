@@ -31,7 +31,7 @@ locals {
 
   ipv6_vpc_mask  = parseint(split("/",data.aws_vpc.selected.ipv6_cidr_block)[1], 10)
   ipv6_subnet_total = pow(2, 64 - local.ipv6_vpc_mask)
-  ipv6_subnet_newbits = 64 -  local.ipv6_vpc_mask
+  ipv6_subnet_newbits = 64 - local.ipv6_vpc_mask
 
   worker_os             = var.worker_os == "" ? var.ami_filters[var.os].worker_os : var.worker_os
   worker_deploy_ssh_key = var.worker_deploy_ssh_key ? [aws_key_pair.deployer.public_key] : []

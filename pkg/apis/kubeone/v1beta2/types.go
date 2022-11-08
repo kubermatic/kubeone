@@ -397,7 +397,8 @@ type ClusterNetworkConfig struct {
 	// KubeProxy config
 	KubeProxy *KubeProxyConfig `json:"kubeProxy,omitempty"`
 
-	// IPFamily IPv4 | IPv6 | IPv4+IPv6 | IPv6+IPv4.
+	// IPFamily allows specifying IP family of a cluster.
+	// Valid values are IPv4 | IPv6 | IPv4+IPv6 | IPv6+IPv4.
 	IPFamily IPFamily `json:"ipFamily,omitempty"`
 
 	// NodeCIDRMaskSizeIPv4 is the mask size used to address the nodes within provided IPv4 Pods CIDR. It has to be larger than the provided IPv4 Pods CIDR. Defaults to 24.
@@ -412,10 +413,14 @@ type ClusterNetworkConfig struct {
 type IPFamily string
 
 const (
-	IPFamilyIPv4     IPFamily = "IPv4"      // IPv4 only cluster.
-	IPFamilyIPv6     IPFamily = "IPv6"      // IPv6 only cluster.
-	IPFamilyIPv4IPv6 IPFamily = "IPv4+IPv6" // Dualstack cluster with IPv4 as primary address family.
-	IPFamilyIPv6IPv4 IPFamily = "IPv6+IPv4" // Dualstack cluster with IPv6 as primary address family.
+	// IPv4 only cluster.
+	IPFamilyIPv4 IPFamily = "IPv4"
+	// IPv6 only cluster.
+	IPFamilyIPv6 IPFamily = "IPv6"
+	// Dualstack cluster with IPv4 as primary address family.
+	IPFamilyIPv4IPv6 IPFamily = "IPv4+IPv6"
+	// Dualstack cluster with IPv6 as primary address family.
+	IPFamilyIPv6IPv4 IPFamily = "IPv6+IPv4"
 )
 
 // KubeProxyConfig defines configured kube-proxy mode, default is iptables mode
