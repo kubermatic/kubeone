@@ -17,10 +17,10 @@
 set -euox pipefail
 
 declare -A full_versions
-full_versions["1.20"]="v1.20.13"
-full_versions["1.21"]="v1.21.7"
-full_versions["1.22"]="v1.22.4"
-full_versions["1.23"]="v1.23.0"
+full_versions["1.20"]="v1.20.15"
+full_versions["1.21"]="v1.21.14"
+full_versions["1.22"]="v1.22.15"
+full_versions["1.23"]="v1.23.13"
 
 root_dir=${KUBETESTS_ROOT:-"/opt/kube-test"}
 tmp_root=${TMP_ROOT:-"/tmp/get-kube"}

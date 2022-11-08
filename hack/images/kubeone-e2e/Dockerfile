@@ -14,7 +14,7 @@
 
 # building image
 
-FROM golang:1.17.5 as builder
+FROM golang:1.18.8 as builder
 
 RUN apt-get update && apt-get install -y \
     unzip
@@ -23,21 +23,13 @@ ENV TERRAFORM_VERSION "1.1.0"
 RUN curl -fL https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip | funzip >/usr/local/bin/terraform
 RUN chmod +x /usr/local/bin/terraform
 
-ENV KUBETEST_COMMIT "eb1a87c9083a31f9a9dda7822cb674f9f8d99439"
-ENV KUBETESTS_ROOT "/opt/kube-test"
-ENV GO111MODULE=on
-
-# Install the kubetest binary
-RUN go get -v k8s.io/test-infra/kubetest@${KUBETEST_COMMIT} && \
-    go clean -modcache -cache
-
 COPY install-kube-tests-binaries.sh /opt/install-kube-tests-binaries.sh
 RUN /opt/install-kube-tests-binaries.sh
 
 # resulting image
 
 
-FROM golang:1.17.5
+FROM golang:1.18.8
 
 ARG version
 
@@ -51,5 +43,4 @@ ENV GO111MODULE on
 ENV USER root
 
 COPY --from=builder /usr/local/bin/terraform /usr/local/bin/terraform
-COPY --from=builder /go/bin/kubetest /usr/local/bin/kubetest
 COPY --from=builder ${KUBETESTS_ROOT} ${KUBETESTS_ROOT}
