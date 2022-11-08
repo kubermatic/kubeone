@@ -9,7 +9,7 @@ postsubmits:
     branches:
       - ^master$
     labels:
-      preset-docker-push: "true"
+      preset-docker-push-kubermatic: "true"
     spec:
       containers:
         - image: quay.io/kubermatic/build:go-1.19-node-18-kind-0.17-4
@@ -19,7 +19,7 @@ postsubmits:
             - |
               set -euo pipefail
               start-docker.sh
-              docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+              docker login -u "$QUAY_IO_USERNAME" -p "$QUAY_IO_PASSWORD" quay.io
               cd ./hack/images/kubeone-e2e
               ./release.sh
           # docker-in-docker needs privileged mode
