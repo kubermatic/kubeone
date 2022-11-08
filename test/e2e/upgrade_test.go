@@ -143,7 +143,7 @@ func TestClusterUpgrade(t *testing.T) { //nolint:gocyclo
 			// Create KubeOne target
 			target := NewKubeone(testPath, tc.initialConfigPath)
 
-			// Ensure terraform, kubetest and all needed prerequisites are in place before running test
+			// Ensure terraform, and all needed prerequisites are in place before running test
 			t.Log("Validating prerequisites...")
 
 			err = testutil.ValidateCommon()
