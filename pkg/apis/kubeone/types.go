@@ -416,13 +416,13 @@ type ClusterNetworkConfig struct {
 type IPFamily string
 
 const (
-	// IPv4 only cluster.
+	// IPFamilyIPv4 IPv4 only cluster.
 	IPFamilyIPv4 IPFamily = "IPv4"
-	// IPv6 only cluster.
+	// IPFamilyIPv6 IPv6 only cluster.
 	IPFamilyIPv6 IPFamily = "IPv6"
-	// Dualstack cluster with IPv4 as primary address family.
+	// IPFamilyIPv4IPv6 Dualstack cluster with IPv4 as primary address family.
 	IPFamilyIPv4IPv6 IPFamily = "IPv4+IPv6"
-	// Dualstack cluster with IPv6 as primary address family.
+	// IPFamilyIPv6IPv4 Dualstack cluster with IPv6 as primary address family.
 	IPFamilyIPv6IPv4 IPFamily = "IPv6+IPv4"
 )
 
