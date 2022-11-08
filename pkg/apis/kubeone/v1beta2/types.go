@@ -378,9 +378,17 @@ type ClusterNetworkConfig struct {
 	// default value is "10.244.0.0/16"
 	PodSubnet string `json:"podSubnet,omitempty"`
 
+	// PodSubnetIPv6
+	// default value is ""fd01::/48""
+	PodSubnetIPv6 string `json:"podSubnetIPv6,omitempty"`
+
 	// ServiceSubnet
 	// default value is "10.96.0.0/12"
 	ServiceSubnet string `json:"serviceSubnet,omitempty"`
+
+	// ServiceSubnetIPv6
+	// default value is "fd02::/120"
+	ServiceSubnetIPv6 string `json:"serviceSubnetIPv6,omitempty"`
 
 	// ServiceDomainName
 	// default value is "cluster.local"
@@ -609,6 +617,9 @@ type ProviderStaticNetworkConfig struct {
 
 	// DNS
 	DNS DNSConfig `json:"dns"`
+
+	// IPFamily
+	IPFamily IPFamily `json:"ipFamily"`
 }
 
 // MachineControllerConfig configures kubermatic machine-controller deployment

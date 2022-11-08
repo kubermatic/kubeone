@@ -166,7 +166,18 @@ spec:
             - --use-service-account-credentials=false
             - --configure-cloud-routes=false
             - --allocate-node-cidrs=true
+            {{ if eq .Config.ClusterNetwork.IPFamily "IPv4" }}
             - --cluster-cidr={{ .Config.ClusterNetwork.PodSubnet }}
+            {{ end }}
+            {{ if eq .Config.ClusterNetwork.IPFamily "IPv6" }}
+            - --cluster-cidr={{ .Config.ClusterNetwork.PodSubnetIPv6 }}
+            {{ end }}
+            {{ if eq .Config.ClusterNetwork.IPFamily "IPv4+IPv6" }}
+            - --cluster-cidr={{ printf "%s,%s" .Config.ClusterNetwork.PodSubnet .Config.ClusterNetwork.PodSubnetIPv6 }}
+            {{ end }}
+            {{ if eq .Config.ClusterNetwork.IPFamily "IPv6+IPv4" }}
+            - --cluster-cidr={{ printf "%s,%s" .Config.ClusterNetwork.PodSubnetIPv6 .Config.ClusterNetwork.PodSubnet }}
+            {{ end }}
             - --v=2
           resources:
             requests:

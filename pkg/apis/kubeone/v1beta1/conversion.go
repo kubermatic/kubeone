@@ -97,3 +97,7 @@ func Convert_kubeone_Features_To_v1beta1_Features(in *kubeoneapi.Features, out *
 func Convert_kubeone_ClusterNetworkConfig_To_v1beta1_ClusterNetworkConfig(in *kubeoneapi.ClusterNetworkConfig, out *ClusterNetworkConfig, s conversion.Scope) error {
 	return autoConvert_kubeone_ClusterNetworkConfig_To_v1beta1_ClusterNetworkConfig(in, out, s)
 }
+
+func Convert_kubeone_ProviderStaticNetworkConfig_To_v1beta1_ProviderStaticNetworkConfig(in *kubeoneapi.ProviderStaticNetworkConfig, out *ProviderStaticNetworkConfig, s conversion.Scope) error {
+	return autoConvert_kubeone_ProviderStaticNetworkConfig_To_v1beta1_ProviderStaticNetworkConfig(in, out, s)
+}

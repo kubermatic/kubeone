@@ -372,10 +372,6 @@ func ValidateClusterNetworkConfig(c kubeoneapi.ClusterNetworkConfig, fldPath *fi
 func validateNodeCIDRMaskSize(c kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
-	subnetCountErr := func(node, subnet string, count int, ipFamily kubeoneapi.IPFamily) *field.Error {
-		return field.Invalid(fldPath.Child(node), subnet, fmt.Sprintf(".clusterNetwork.%s must specify %d subnet(s) for %q IP family.", node, count, ipFamily))
-	}
-
 	validateNodeCIDRMaskSize := func(nodeCIDRMaskSize *int, podCIDR string, fldPath *field.Path) {
 		if nodeCIDRMaskSize == nil {
 			allErrs = append(allErrs, field.Invalid(fldPath, nodeCIDRMaskSize, "node CIDR mask size must be set"))
@@ -399,34 +395,17 @@ func validateNodeCIDRMaskSize(c kubeoneapi.ClusterNetworkConfig, fldPath *field.
 		}
 	}
 
-	var podCIDRIPv4, podCIDRIPv6 string
 	switch c.IPFamily {
 	case kubeoneapi.IPFamilyIPv4:
-		podCIDRIPv4 = c.PodSubnet
-		validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv4, podCIDRIPv4, fldPath.Child("nodeCIDRMaskSizeIPv4"))
+		validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv4, c.PodSubnet, fldPath.Child("nodeCIDRMaskSizeIPv4"))
 	case kubeoneapi.IPFamilyIPv6:
-		podCIDRIPv6 = c.PodSubnet
-		validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv6, podCIDRIPv6, fldPath.Child("nodeCIDRMaskSizeIPv6"))
+		validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv6, c.PodSubnetIPv6, fldPath.Child("nodeCIDRMaskSizeIPv6"))
 	case kubeoneapi.IPFamilyIPv4IPv6:
-		parts := strings.Split(c.PodSubnet, ",")
-		if len(parts) != 2 {
-			allErrs = append(allErrs, subnetCountErr("podSubnet", c.PodSubnet, 2, c.IPFamily))
-
-			break
-		}
-		podCIDRIPv4, podCIDRIPv6 = parts[0], parts[1]
-		validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv4, podCIDRIPv4, fldPath.Child("nodeCIDRMaskSizeIPv4"))
-		validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv6, podCIDRIPv6, fldPath.Child("nodeCIDRMaskSizeIPv6"))
+		validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv4, c.PodSubnet, fldPath.Child("nodeCIDRMaskSizeIPv4"))
+		validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv6, c.PodSubnetIPv6, fldPath.Child("nodeCIDRMaskSizeIPv6"))
 	case kubeoneapi.IPFamilyIPv6IPv4:
-		parts := strings.Split(c.PodSubnet, ",")
-		if len(parts) != 2 {
-			allErrs = append(allErrs, subnetCountErr("podSubnet", c.PodSubnet, 2, c.IPFamily))
-
-			break
-		}
-		podCIDRIPv4, podCIDRIPv6 = parts[1], parts[0]
-		validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv4, podCIDRIPv4, fldPath.Child("nodeCIDRMaskSizeIPv4"))
-		validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv6, podCIDRIPv6, fldPath.Child("nodeCIDRMaskSizeIPv6"))
+		validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv4, c.PodSubnet, fldPath.Child("nodeCIDRMaskSizeIPv4"))
+		validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv6, c.PodSubnetIPv6, fldPath.Child("nodeCIDRMaskSizeIPv6"))
 	}
 
 	return allErrs
@@ -435,48 +414,40 @@ func validateNodeCIDRMaskSize(c kubeoneapi.ClusterNetworkConfig, fldPath *field.
 func validateCIDRs(c kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
-	subnetCountErr := func(node, subnet string, count int, ipFamily kubeoneapi.IPFamily) *field.Error {
-		return field.Invalid(fldPath.Child(node), subnet, fmt.Sprintf(".clusterNetwork.%s must specify %d subnet(s) for %q IP family.", node, count, ipFamily))
-	}
-
 	invalidFamilyErr := func(node, subnet string, ipFamily kubeoneapi.IPFamily) *field.Error {
 		return field.Invalid(fldPath.Child(node), subnet, fmt.Sprintf(".clusterNetwork.%s must be valid %q subnet.", node, ipFamily))
 	}
 
-	var subnetValidators []func(string) bool
+	validateCIDR := func(node, subnet string, ipFamily kubeoneapi.IPFamily) {
+		switch ipFamily {
+		case kubeoneapi.IPFamilyIPv4:
+			if !netutils.IsIPv4CIDRString(subnet) {
+				allErrs = append(allErrs, invalidFamilyErr(node, subnet, ipFamily))
+			}
+		case kubeoneapi.IPFamilyIPv6:
+			if !netutils.IsIPv6CIDRString(subnet) {
+				allErrs = append(allErrs, invalidFamilyErr(node, subnet, ipFamily))
+			}
+		case kubeoneapi.IPFamilyIPv4IPv6, kubeoneapi.IPFamilyIPv6IPv4:
+			// just to make linter happy
+		}
+	}
+
 	switch c.IPFamily {
 	case kubeoneapi.IPFamilyIPv4:
-		subnetValidators = append(subnetValidators, netutils.IsIPv4CIDRString)
+		validateCIDR("podSubnet", c.PodSubnet, kubeoneapi.IPFamilyIPv4)
+		validateCIDR("serviceSubnet", c.ServiceSubnet, kubeoneapi.IPFamilyIPv4)
 	case kubeoneapi.IPFamilyIPv6:
-		subnetValidators = append(subnetValidators, netutils.IsIPv6CIDRString)
-	case kubeoneapi.IPFamilyIPv4IPv6:
-		subnetValidators = append(subnetValidators, netutils.IsIPv4CIDRString, netutils.IsIPv6CIDRString)
-	case kubeoneapi.IPFamilyIPv6IPv4:
-		subnetValidators = append(subnetValidators, netutils.IsIPv6CIDRString, netutils.IsIPv4CIDRString)
+		validateCIDR("podSubnetIPv6", c.PodSubnetIPv6, kubeoneapi.IPFamilyIPv6)
+		validateCIDR("serviceSubnetIPv6", c.ServiceSubnetIPv6, kubeoneapi.IPFamilyIPv6)
+	case kubeoneapi.IPFamilyIPv4IPv6, kubeoneapi.IPFamilyIPv6IPv4:
+		validateCIDR("podSubnet", c.PodSubnet, kubeoneapi.IPFamilyIPv4)
+		validateCIDR("serviceSubnet", c.ServiceSubnet, kubeoneapi.IPFamilyIPv4)
+		validateCIDR("podSubnetIPv6", c.PodSubnetIPv6, kubeoneapi.IPFamilyIPv6)
+		validateCIDR("serviceSubnetIPv6", c.ServiceSubnetIPv6, kubeoneapi.IPFamilyIPv6)
 	default:
 		allErrs = append(allErrs, field.Invalid(fldPath.Child("ipFamily"), c.IPFamily, "unknown ipFamily"))
 	}
-
-	validateCIDRs := func(node, subnet string) {
-		if len(subnet) == 0 {
-			allErrs = append(allErrs, subnetCountErr(node, subnet, len(subnetValidators), c.IPFamily))
-
-			return
-		}
-		subnets := strings.Split(subnet, ",")
-		if len(subnets) != len(subnetValidators) {
-			allErrs = append(allErrs, subnetCountErr(node, subnet, len(subnetValidators), c.IPFamily))
-		} else {
-			for i, isValid := range subnetValidators {
-				if !isValid(subnets[i]) {
-					allErrs = append(allErrs, invalidFamilyErr(node, subnet, c.IPFamily))
-				}
-			}
-		}
-	}
-
-	validateCIDRs("podSubnet", c.PodSubnet)
-	validateCIDRs("serviceSubnet", c.ServiceSubnet)
 
 	return allErrs
 }

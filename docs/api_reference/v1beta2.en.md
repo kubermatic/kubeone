@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2022-11-08T15:49:30+01:00
+date = 2022-11-08T18:46:06+01:00
 weight = 11
 +++
 ## v1beta2
@@ -198,7 +198,9 @@ ClusterNetworkConfig describes the cluster network
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | podSubnet | PodSubnet default value is \"10.244.0.0/16\" | string | false |
+| podSubnetIPv6 | PodSubnetIPv6 default value is \"\"fd01::/48\"\" | string | false |
 | serviceSubnet | ServiceSubnet default value is \"10.96.0.0/12\" | string | false |
+| serviceSubnetIPv6 | ServiceSubnetIPv6 default value is \"fd02::/120\" | string | false |
 | serviceDomainName | ServiceDomainName default value is \"cluster.local\" | string | false |
 | nodePortRange | NodePortRange default value is \"30000-32767\" | string | false |
 | cni | CNI default value is {canal: {mtu: 1450}} | *[CNI](#cni) | false |
@@ -689,6 +691,7 @@ ProviderStaticNetworkConfig contains a machine's static network configuration
 | cidr | CIDR | string | true |
 | gateway | Gateway | string | true |
 | dns | DNS | [DNSConfig](#dnsconfig) | true |
+| ipFamily | IPFamily | IPFamily | true |
 
 [Back to Group](#v1beta2)
 

@@ -140,6 +140,9 @@ output "kubeone_workers" {
             "${var.cluster_name}-workers" = ""
           }
         }
+        network = {
+          ipFamily = var.ip_family
+        }
       }
     }
 
@@ -198,6 +201,9 @@ output "kubeone_workers" {
             "${var.cluster_name}-workers" = ""
           }
         }
+        network = {
+          ipFamily = var.ip_family
+        }
       }
     }
 
@@ -255,6 +261,9 @@ output "kubeone_workers" {
           tags = {
             "${var.cluster_name}-workers" = ""
           }
+        }
+        network = {
+          ipFamily = var.ip_family
         }
       }
     }

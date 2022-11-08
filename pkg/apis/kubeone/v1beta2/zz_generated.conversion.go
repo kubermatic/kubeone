@@ -899,7 +899,9 @@ func Convert_kubeone_CloudProviderSpec_To_v1beta2_CloudProviderSpec(in *kubeone.
 
 func autoConvert_v1beta2_ClusterNetworkConfig_To_kubeone_ClusterNetworkConfig(in *ClusterNetworkConfig, out *kubeone.ClusterNetworkConfig, s conversion.Scope) error {
 	out.PodSubnet = in.PodSubnet
+	out.PodSubnetIPv6 = in.PodSubnetIPv6
 	out.ServiceSubnet = in.ServiceSubnet
+	out.ServiceSubnetIPv6 = in.ServiceSubnetIPv6
 	out.ServiceDomainName = in.ServiceDomainName
 	out.NodePortRange = in.NodePortRange
 	out.CNI = (*kubeone.CNI)(unsafe.Pointer(in.CNI))
@@ -917,7 +919,9 @@ func Convert_v1beta2_ClusterNetworkConfig_To_kubeone_ClusterNetworkConfig(in *Cl
 
 func autoConvert_kubeone_ClusterNetworkConfig_To_v1beta2_ClusterNetworkConfig(in *kubeone.ClusterNetworkConfig, out *ClusterNetworkConfig, s conversion.Scope) error {
 	out.PodSubnet = in.PodSubnet
+	out.PodSubnetIPv6 = in.PodSubnetIPv6
 	out.ServiceSubnet = in.ServiceSubnet
+	out.ServiceSubnetIPv6 = in.ServiceSubnetIPv6
 	out.ServiceDomainName = in.ServiceDomainName
 	out.NodePortRange = in.NodePortRange
 	out.CNI = (*CNI)(unsafe.Pointer(in.CNI))
@@ -1929,6 +1933,7 @@ func autoConvert_v1beta2_ProviderStaticNetworkConfig_To_kubeone_ProviderStaticNe
 	if err := Convert_v1beta2_DNSConfig_To_kubeone_DNSConfig(&in.DNS, &out.DNS, s); err != nil {
 		return err
 	}
+	out.IPFamily = kubeone.IPFamily(in.IPFamily)
 	return nil
 }
 
@@ -1943,6 +1948,7 @@ func autoConvert_kubeone_ProviderStaticNetworkConfig_To_v1beta2_ProviderStaticNe
 	if err := Convert_kubeone_DNSConfig_To_v1beta2_DNSConfig(&in.DNS, &out.DNS, s); err != nil {
 		return err
 	}
+	out.IPFamily = IPFamily(in.IPFamily)
 	return nil
 }
 

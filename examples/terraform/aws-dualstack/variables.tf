@@ -129,6 +129,12 @@ variable "vpc_id" {
   type        = string
 }
 
+variable "ip_family" {
+  default     = "IPv4+IPV6"
+  description = "IPFamily of the cluster"
+  type        = string
+}
+
 variable "control_plane_type" {
   default     = "t3.medium"
   description = "AWS instance type"

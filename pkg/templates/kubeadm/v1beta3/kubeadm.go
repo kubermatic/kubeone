@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/Masterminds/semver/v3"
@@ -139,9 +140,15 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 			Kind:       "ClusterConfiguration",
 		},
 		Networking: kubeadmv1beta3.Networking{
-			PodSubnet:     cluster.ClusterNetwork.PodSubnet,
-			ServiceSubnet: cluster.ClusterNetwork.ServiceSubnet,
-			DNSDomain:     cluster.ClusterNetwork.ServiceDomainName,
+			PodSubnet: strings.Join([]string{
+				cluster.ClusterNetwork.PodSubnet,
+				cluster.ClusterNetwork.PodSubnetIPv6,
+			}, ","),
+			ServiceSubnet: strings.Join([]string{
+				cluster.ClusterNetwork.ServiceSubnet,
+				cluster.ClusterNetwork.ServiceSubnetIPv6,
+			}, ","),
+			DNSDomain: cluster.ClusterNetwork.ServiceDomainName,
 		},
 		KubernetesVersion:    cluster.Versions.Kubernetes,
 		ControlPlaneEndpoint: controlPlaneEndpoint,

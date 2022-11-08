@@ -202,7 +202,7 @@ data:
   hubble-tls-client-ca-files: /var/lib/cilium/tls/hubble/client-ca.crt
   ipam: "cluster-pool"
 {{ if .Config.ClusterNetwork.HasIPv4 }}
-  cluster-pool-ipv4-cidr: "{{ .Config.ClusterNetwork.PodSubnetIPv4 }}"
+  cluster-pool-ipv4-cidr: "{{ .Config.ClusterNetwork.PodSubnet }}"
   cluster-pool-ipv4-mask-size: "{{ .Config.ClusterNetwork.NodeCIDRMaskSizeIPv4 }}"
 {{ end }}
 {{ if .Config.ClusterNetwork.HasIPv6 }}
