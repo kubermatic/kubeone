@@ -140,14 +140,14 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 			Kind:       "ClusterConfiguration",
 		},
 		Networking: kubeadmv1beta3.Networking{
-			PodSubnet: strings.Join([]string{
+			PodSubnet: join(
 				cluster.ClusterNetwork.PodSubnet,
 				cluster.ClusterNetwork.PodSubnetIPv6,
-			}, ","),
-			ServiceSubnet: strings.Join([]string{
+			),
+			ServiceSubnet: join(
 				cluster.ClusterNetwork.ServiceSubnet,
 				cluster.ClusterNetwork.ServiceSubnetIPv6,
-			}, ","),
+			),
 			DNSDomain: cluster.ClusterNetwork.ServiceDomainName,
 		},
 		KubernetesVersion:    cluster.Versions.Kubernetes,
@@ -368,6 +368,16 @@ func addControllerManagerNetworkArgs(m map[string]string, clusterNetwork kubeone
 			m["node-cidr-mask-size-ipv6"] = fmt.Sprintf("%d", *clusterNetwork.NodeCIDRMaskSizeIPv6)
 		}
 	}
+}
+
+func join(xs ...string) string {
+	var nonEmpty []string
+	for _, x := range xs {
+		if x != "" {
+			nonEmpty = append(nonEmpty, x)
+		}
+	}
+	return strings.Join(nonEmpty, ",")
 }
 
 // NewConfig returns all required configs to init a cluster via a set of v13 configs
