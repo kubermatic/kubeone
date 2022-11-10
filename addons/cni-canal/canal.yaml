@@ -76,7 +76,9 @@ data:
   # Flannel network configuration. Mounted into the flannel container.
   net-conf.json: |
     {
+      {{ if .Config.ClusterNetwork.HasIPv4 }}
       "Network": "{{ .Config.ClusterNetwork.PodSubnet }}",
+      {{ end }}
       {{ if .Config.ClusterNetwork.HasIPv6 }}
       "EnableIPv6": true,
       "IPv6Network": "{{ .Config.ClusterNetwork.PodSubnetIPv6 }}",
