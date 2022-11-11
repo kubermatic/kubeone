@@ -28,8 +28,9 @@
 ###
 ### Usage:
 ###  The script can be used in the following way:
-###    CHANGELOG_START_REV="v1.4.0-rc.1" \
-###    CHANGELOG_END_SHA="315fd8a12d3452620fcd76e90f0a0bf9e1f4beba" \
+###    CHANGELOG_START_REV="v1.5.2" \
+###    CHANGELOG_END_SHA="6c8a662a94ecf78ea98f3ad8cc899465445e7d86" \
+###    CHANGELOG_BRANCH="release/v1.5" \
 ###    ./hack/generate-changelog.sh
 ###
 ###  The changelog will be saved to the /tmp directory with the random
