@@ -1,3 +1,39 @@
+# [v1.5.3](https://github.com/kubermatic/kubeone/releases/tag/v1.5.3) - 2022-11-11
+
+## Important Registry Change Information
+
+For the next series of KubeOne and KKP patch releases, image references will move from `k8s.gcr.io` to `registry.k8s.io`. This will be done to keep up with [the latest upstream changes](https://github.com/kubernetes/enhancements/tree/master/keps/sig-release/3000-artifact-distribution). Please ensure that any mirrors you use are able to host `registry.k8s.io` and/or that firewall rules are going to allow access to `registry.k8s.io` to pull images before applying the next KubeOne patch releases. **This is not included in this patch release but just a notification of future changes.**
+
+## Important Security Information
+
+**Kubernetes releases prior to 1.25.4, 1.24.8, 1.23.14, and 1.22.16 are affected by two Medium CVEs in kube-apiserver**: [CVE-2022-3162 (Unauthorized read of Custom Resources)](https://groups.google.com/g/kubernetes-announce/c/oR2PUBiODNA/m/tShPgvpUDQAJ) and [CVE-2022-3294 (Node address isn't always verified when proxying)](https://groups.google.com/g/kubernetes-announce/c/eR0ghAXy2H8/m/sCuQQZlVDQAJ). We **strongly recommend** upgrading to 1.25.4, 1.24.8, 1.23.14, or 1.22.16 **as soon as possible**.
+
+## Changelog since v1.5.2
+
+## Changes by Kind
+
+### API Change
+
+- `.cloudProvider.csiConfig` is now a mandatory field for vSphere clusters using the external cloud provider (`.cloudProvider.external: true`). `.cloudProvider.csiConfig` can be specified even if the in-tree provider is used, but the provided CSIConfig is ignored in such cases (a warning about this is printed) ([#2447](https://github.com/kubermatic/kubeone/pull/2447), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+### Feature
+
+- Add `allow_insecure` variable (default `false`) to Terraform configs for vSphere. The value of this variable is propagated to the MachineDeployment template in `output.tf` ([#2449](https://github.com/kubermatic/kubeone/pull/2449), [@xmudrii](https://github.com/xmudrii))
+- Add a new addon parameter called `HubbleIPv6` (`true`/`false`, default: `true`) for Cilium CNI used to enable/disable Hubble UI listening on an IPv6 interface ([#2451](https://github.com/kubermatic/kubeone/pull/2451), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Update OpenStack CCM and CSI to v1.24.5 and v1.22.2 ([#2445](https://github.com/kubermatic/kubeone/pull/2445), [@xmudrii](https://github.com/xmudrii))
+- Update etcd to 3.5.5 or use the version provided by kubeadm if it's newer ([#2443](https://github.com/kubermatic/kubeone/pull/2443), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+### Other (Cleanup or Flake)
+
+- Expose machine-controller metrics port (8080/TCP), so Prometheus ServiceMonitor can be used for scraping ([#2439](https://github.com/kubermatic/kubeone/pull/2439), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Make volume size for worker nodes configurable in Terraform configs for AWS (50 GB by default) ([#2450](https://github.com/kubermatic/kubeone/pull/2450), [@xmudrii](https://github.com/xmudrii))
+
+### Chore
+
+- Rename `generate-internal-groups` Make target to `update-codegen` ([#2450](https://github.com/kubermatic/kubeone/pull/2450), [@xmudrii](https://github.com/xmudrii))
+- KubeOne is now built using Go 1.19.3 ([#2462](https://github.com/kubermatic/kubeone/pull/2462), [@xmudrii](https://github.com/xmudrii))
+- The `kubeone-e2e` image is moved from Docker Hub to Quay (`quay.io/kubermatic/kubeone-e2e`) ([#2464](https://github.com/kubermatic/kubeone/pull/2464), [@xmudrii](https://github.com/xmudrii))
+
 # [v1.5.2](https://github.com/kubermatic/kubeone/releases/tag/v1.5.2) - 2022-10-20
 
 ## Changelog since v1.5.1
