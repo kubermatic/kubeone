@@ -1,4 +1,31 @@
-# [v1.4.10](https://github.com/kubermatic/kubeone/releases/tag/v1.4.10) - 2022-09-20
+# [v1.4.11](https://github.com/kubermatic/kubeone/releases/tag/v1.4.11) - 2022-11-11
+
+## Important Registry Change Information
+
+For the next series of KubeOne and KKP patch releases, image references will move from `k8s.gcr.io` to `registry.k8s.io`. This will be done to keep up with [the latest upstream changes](https://github.com/kubernetes/enhancements/tree/master/keps/sig-release/3000-artifact-distribution). Please ensure that any mirrors you use are able to host `registry.k8s.io` and/or that firewall rules are going to allow access to `registry.k8s.io` to pull images before applying the next KubeOne patch releases. **This is not included in this patch release but just a notification of future changes.**
+
+## Important Security Information
+
+**Kubernetes releases prior to 1.25.4, 1.24.8, 1.23.14, and 1.22.16 are affected by two Medium CVEs in kube-apiserver**: [CVE-2022-3162 (Unauthorized read of Custom Resources)](https://groups.google.com/g/kubernetes-announce/c/oR2PUBiODNA/m/tShPgvpUDQAJ) and [CVE-2022-3294 (Node address isn't always verified when proxying)](https://groups.google.com/g/kubernetes-announce/c/eR0ghAXy2H8/m/sCuQQZlVDQAJ). We **strongly recommend** upgrading to 1.25.4, 1.24.8, 1.23.14, or 1.22.16 **as soon as possible**.
+
+## Changelog since v1.4.10
+
+## Changes by Kind
+
+### Feature
+
+- Update etcd to 3.5.5 for Kubernetes 1.22+ clusters or use the version provided by kubeadm if it's newer ([#2444](https://github.com/kubermatic/kubeone/pull/2444), [@xmudrii](https://github.com/xmudrii))
+
+### Other (Cleanup or Flake)
+
+- Expose machine-controller metrics port (8080/TCP), so Prometheus ServiceMonitor can be used for scraping ([#2440](https://github.com/kubermatic/kubeone/pull/2440), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+### Chore
+
+- KubeOne is now built using Go 1.18.8 ([#2465](https://github.com/kubermatic/kubeone/pull/2465), [@xmudrii](https://github.com/xmudrii))
+- The `kubeone-e2e` image is moved from Docker Hub to Quay (`quay.io/kubermatic/kubeone-e2e`) ([#2465](https://github.com/kubermatic/kubeone/pull/2465), [@xmudrii](https://github.com/xmudrii))
+
+# [v1.4.10](https://github.com/kubermatic/kubeone/releases/tag/v1.4.10) - 2022-10-20
 
 ## Changelog since v1.4.9
 
