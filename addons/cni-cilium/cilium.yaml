@@ -164,10 +164,10 @@ data:
   enable-local-redirect-policy: "false"
 
 {{ if eq .Config.ClusterNetwork.CNI.Cilium.KubeProxyReplacement "strict" }}
-  kube-proxy-replacement:  "strict"
+  kube-proxy-replacement: "strict"
   kube-proxy-replacement-healthz-bind-address: ""
 {{ else }}
-  kube-proxy-replacement:  "disabled"
+  kube-proxy-replacement: "disabled"
 {{ end }}
   bpf-lb-sock: "false"
   enable-health-check-nodeport: "true"
@@ -234,10 +234,10 @@ data:
     cluster-name: default
     peer-service: "hubble-peer.kube-system.svc.cluster.local:443"
     listen-address: :4245
-    dial-timeout:
-    retry-timeout:
-    sort-buffer-len-max:
-    sort-buffer-drain-timeout:
+    dial-timeout: 
+    retry-timeout: 
+    sort-buffer-len-max: 
+    sort-buffer-drain-timeout: 
     tls-client-cert-file: /var/lib/hubble-relay/tls/client.crt
     tls-client-key-file: /var/lib/hubble-relay/tls/client.key
     tls-hubble-server-ca-files: /var/lib/hubble-relay/tls/hubble-server-ca.crt
@@ -1417,6 +1417,7 @@ spec:
             subPath: nginx.conf
           - name: tmp-dir
             mountPath: /tmp
+        terminationMessagePolicy: FallbackToLogsOnError
       - name: backend
         image: {{ .InternalImages.Get "HubbleUIBackend" }}
         imagePullPolicy: IfNotPresent
