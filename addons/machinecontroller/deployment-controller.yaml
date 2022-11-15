@@ -51,6 +51,9 @@ spec:
             - -cluster-dns={{ .Resources.NodeLocalDNSVirtualIP }}
             {{ end -}}
             - -node-csr-approver
+            {{ if .Config.CloudProvider.External }}
+            - -node-external-cloud-provider
+            {{ end }}
             - -join-cluster-timeout=15m
             - -node-container-runtime={{ .Config.ContainerRuntime }}
             {{ range .Config.ContainerRuntime.MachineControllerFlags -}}
