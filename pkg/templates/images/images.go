@@ -362,13 +362,13 @@ func optionalResources() map[Resource]map[string]string {
 		NutanixCSISnapshotValidationWebhook: {"*": "k8s.gcr.io/sig-storage/snapshot-validation-webhook:v6.0.1"},
 
 		// GCP Compute Persistent Disk CSI
-		GCPComputeCSIDriver:                    {"*": "k8s.gcr.io/cloud-provider-gcp/gcp-compute-persistent-disk-csi-driver:v1.7.2"},
+		GCPComputeCSIDriver:                    {"*": "k8s.gcr.io/cloud-provider-gcp/gcp-compute-persistent-disk-csi-driver:v1.8.0"},
 		GCPComputeCSIProvisioner:               {"*": "k8s.gcr.io/sig-storage/csi-provisioner:v3.1.0"},
 		GCPComputeCSIAttacher:                  {"*": "k8s.gcr.io/sig-storage/csi-attacher:v3.4.0"},
 		GCPComputeCSIResizer:                   {"*": "k8s.gcr.io/sig-storage/csi-resizer:v1.4.0"},
-		GCPComputeCSISnapshotter:               {"*": "k8s.gcr.io/sig-storage/csi-snapshotter:v4.0.1"},
-		GCPComputeCSISnapshotController:        {"*": "k8s.gcr.io/sig-storage/snapshot-controller:v4.0.1"},
-		GCPComputeCSISnapshotValidationWebhook: {"*": "k8s.gcr.io/sig-storage/snapshot-validation-webhook:v4.0.1"},
+		GCPComputeCSISnapshotter:               {"*": "k8s.gcr.io/sig-storage/csi-snapshotter:v6.1.0"},
+		GCPComputeCSISnapshotController:        {"*": "k8s.gcr.io/sig-storage/snapshot-controller:v6.1.0"},
+		GCPComputeCSISnapshotValidationWebhook: {"*": "k8s.gcr.io/sig-storage/snapshot-validation-webhook:v6.1.0"},
 		GCPComputeCSINodeDriverRegistrar:       {"*": "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.5.0"},
 
 		// WeaveNet CNI plugin

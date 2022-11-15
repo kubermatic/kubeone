@@ -39,13 +39,6 @@ spec:
               mountPath: /csi
             - name: registration-dir
               mountPath: /registration
-          livenessProbe:
-            initialDelaySeconds: 3
-            exec:
-              command:
-                - /csi-node-driver-registrar
-                - --kubelet-registration-path=/var/lib/kubelet/plugins/pd.csi.storage.gke.io/csi.sock
-                - --mode=kubelet-registration-probe
         - name: gce-pd-driver
           # Don't change base image without changing pdImagePlaceholder in
           # test/k8s-integration/main.go
