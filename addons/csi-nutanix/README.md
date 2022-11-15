@@ -9,4 +9,12 @@ helm template csi nutanix/nutanix-csi-storage \
     --namespace=kube-system \
     --values=generate-values-csi-storage \
     > nutanix-csi-storage.yaml 
+
+helm template csi nutanix/nutanix-csi-snapshot \
+    --namespace=kube-system \
+    --values=generate-values-csi-snapshot \
+    > nutanix-csi-snapshot.yaml 
 ```
+
+**Note:** some manual adjustments are required (e.g. CA certs env/volumes),
+images...
