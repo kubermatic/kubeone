@@ -66,6 +66,7 @@ spec:
         - operator: Exists
           effect: NoExecute
           tolerationSeconds: 300
+      serviceAccountName: snapshot-webhook
       containers:
       - name: snapshot-validation
         image: {{ .InternalImages.Get "GCPComputeCSISnapshotValidationWebhook" }}
