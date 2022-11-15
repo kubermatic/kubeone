@@ -61,12 +61,17 @@ spec:
   selector:
     matchLabels:
       app: snapshot-validation
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
   template:
     metadata:
       labels:
         app: snapshot-validation
     spec:
-      serviceAccountName: snapshot-webhook
+      serviceAccountName: snapshot-validation
       nodeSelector:
         kubernetes.io/os: linux
         node-role.kubernetes.io/control-plane: ""
@@ -101,6 +106,14 @@ spec:
 ---
 
 apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: snapshot-validation
+  namespace: kube-system
+
+---
+
+apiVersion: v1
 kind: Service
 metadata:
   name: snapshot-validation-service
@@ -111,3 +124,29 @@ spec:
   ports:
     - protocol: TCP
       port: 443
+
+---
+
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: snapshot-validation
+rules:
+  - apiGroups: ["snapshot.storage.k8s.io"]
+    resources: ["volumesnapshotclasses"]
+    verbs: ["get", "list", "watch"]
+
+---
+
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: snapshot-validation
+subjects:
+  - kind: ServiceAccount
+    name: snapshot-validation
+    namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: snapshot-validation
+  apiGroup: rbac.authorization.k8s.io
