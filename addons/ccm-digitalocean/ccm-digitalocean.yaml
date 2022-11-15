@@ -17,10 +17,10 @@ spec:
       annotations:
         "kubeone.k8c.io/credentials-hash": "{{ .CredentialsCCMHash }}"
     spec:
-      priorityClassName: system-cluster-critical
       dnsPolicy: Default
       hostNetwork: true
       serviceAccountName: cloud-controller-manager
+      priorityClassName: system-cluster-critical
       tolerations:
         # this taint is set by all kubelets running `--cloud-provider=external`
         # so we should tolerate it to schedule the digitalocean ccm
@@ -30,12 +30,12 @@ spec:
         - key: "CriticalAddonsOnly"
           operator: "Exists"
         # cloud controller manages should be able to run on masters
+        # TODO: remove this when ccm is not supported on k8s <= 1.23
         - key: "node-role.kubernetes.io/master"
-          effect: "NoSchedule"
+          effect: NoSchedule
+        # k8s clusters 1.24+ uses control-plane name instead of master
         - key: "node-role.kubernetes.io/control-plane"
-          effect: "NoSchedule"
-        - key: "node.kubernetes.io/not-ready"
-          effect: "NoSchedule"
+          effect: NoSchedule
       containers:
       - image: {{ .InternalImages.Get "DigitaloceanCCM" }}
         name: digitalocean-cloud-controller-manager
@@ -67,10 +67,6 @@ metadata:
     rbac.authorization.kubernetes.io/autoupdate: "true"
   name: system:cloud-controller-manager
 rules:
-# The following is necessary to support leader election when running DO-CCM on
-# a multi-master cluster. We leave it commented out on the assumption that the
-# typical user is not running a multi-master cluster and therefore does not
-# need the additional permissions.
 - apiGroups:
   - coordination.k8s.io
   resources:
