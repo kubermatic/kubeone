@@ -193,7 +193,7 @@ resource "aws_security_group" "elb" {
   }
 
   egress {
-    description = "allow all outgoing traffic"
+    description = "allow all outgoing traffic (ipv6)"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
