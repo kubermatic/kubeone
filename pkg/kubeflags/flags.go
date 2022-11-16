@@ -22,27 +22,8 @@ import (
 	"github.com/Masterminds/semver/v3"
 )
 
-var (
-	constrainv122x = mustConstraint("1.22.x")
-)
-
 // DefaultAdmissionControllers return list of default admission controllers for
 // given kubernetes version
-func DefaultAdmissionControllers(kubeVersion *semver.Version) string {
-	switch {
-	case constrainv122x.Check(kubeVersion):
-		return strings.Join(defaultAdmissionControllersv122x, ",")
-	default:
-		// return same as for last known release
-		return strings.Join(defaultAdmissionControllersv122x, ",")
-	}
-}
-
-func mustConstraint(c string) *semver.Constraints {
-	constraint, err := semver.NewConstraint(c)
-	if err != nil {
-		panic(err)
-	}
-
-	return constraint
+func DefaultAdmissionControllers(_ *semver.Version) string {
+	return strings.Join(defaultAdmissionControllersv122x, ",")
 }
