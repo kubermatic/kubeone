@@ -19,18 +19,18 @@ provider "aws" {
 }
 
 locals {
-  kube_cluster_tag      = "kubernetes.io/cluster/${var.cluster_name}"
-  ami                   = var.ami == "" ? data.aws_ami.ami.id : var.ami
-  zoneA                 = data.aws_availability_zones.available.names[0]
-  zoneB                 = data.aws_availability_zones.available.names[1]
-  zoneC                 = data.aws_availability_zones.available.names[2]
+  kube_cluster_tag = "kubernetes.io/cluster/${var.cluster_name}"
+  ami              = var.ami == "" ? data.aws_ami.ami.id : var.ami
+  zoneA            = data.aws_availability_zones.available.names[0]
+  zoneB            = data.aws_availability_zones.available.names[1]
+  zoneC            = data.aws_availability_zones.available.names[2]
 
-  vpc_mask              = parseint(split("/", data.aws_vpc.selected.cidr_block)[1], 10)
-  subnet_total          = pow(2, var.subnets_cidr - local.vpc_mask)
-  subnet_newbits        = var.subnets_cidr - (32 - local.vpc_mask)
+  vpc_mask       = parseint(split("/", data.aws_vpc.selected.cidr_block)[1], 10)
+  subnet_total   = pow(2, var.subnets_cidr - local.vpc_mask)
+  subnet_newbits = var.subnets_cidr - (32 - local.vpc_mask)
 
-  ipv6_vpc_mask  = parseint(split("/",data.aws_vpc.selected.ipv6_cidr_block)[1], 10)
-  ipv6_subnet_total = pow(2, 64 - local.ipv6_vpc_mask)
+  ipv6_vpc_mask       = parseint(split("/", data.aws_vpc.selected.ipv6_cidr_block)[1], 10)
+  ipv6_subnet_total   = pow(2, 64 - local.ipv6_vpc_mask)
   ipv6_subnet_newbits = 64 - local.ipv6_vpc_mask
 
   worker_os             = var.worker_os == "" ? var.ami_filters[var.os].worker_os : var.worker_os
@@ -193,18 +193,18 @@ resource "aws_security_group" "elb" {
   }
 
   egress {
-    description = "allow all outgoing traffic (ipv6)"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    description      = "allow all outgoing traffic (ipv6)"
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
     ipv6_cidr_blocks = ["::/0"]
   }
 
   ingress {
-    description = "allow anyone to connect to tcp/6443 over ipv6"
-    from_port   = 6443
-    to_port     = 6443
-    protocol    = "tcp"
+    description      = "allow anyone to connect to tcp/6443 over ipv6"
+    from_port        = 6443
+    to_port          = 6443
+    protocol         = "tcp"
     ipv6_cidr_blocks = ["::/0"]
   }
 
@@ -227,10 +227,10 @@ resource "aws_security_group" "ssh" {
   }
 
   ingress {
-    description = "allow incoming SSH IPv6"
-    from_port   = var.ssh_port
-    to_port     = var.ssh_port
-    protocol    = "tcp"
+    description      = "allow incoming SSH IPv6"
+    from_port        = var.ssh_port
+    to_port          = var.ssh_port
+    protocol         = "tcp"
     ipv6_cidr_blocks = ["::/0"]
   }
 
@@ -239,25 +239,25 @@ resource "aws_security_group" "ssh" {
   })
 }
 
-resource "aws_security_group_rule" "egress_allow_all_ipv6"  {
+resource "aws_security_group_rule" "egress_allow_all_ipv6" {
   type              = "egress"
   security_group_id = aws_security_group.common.id
 
-  description = "allow all outgoing traffic"
-  from_port   = 0
-  to_port     = 0
-  protocol    = "-1"
+  description      = "allow all outgoing traffic"
+  from_port        = 0
+  to_port          = 0
+  protocol         = "-1"
   ipv6_cidr_blocks = ["::/0"]
 }
 
-resource "aws_security_group_rule" "nodeports_ipv6"  {
+resource "aws_security_group_rule" "nodeports_ipv6" {
   type              = "ingress"
   security_group_id = aws_security_group.common.id
 
-  description = "open nodeports"
-  from_port   = 30000
-  to_port     = 32767
-  protocol    = "tcp"
+  description      = "open nodeports"
+  from_port        = 30000
+  to_port          = 32767
+  protocol         = "tcp"
   ipv6_cidr_blocks = ["::/0"]
 }
 
