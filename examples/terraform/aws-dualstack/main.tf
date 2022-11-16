@@ -188,34 +188,20 @@ resource "aws_security_group" "elb" {
   vpc_id      = data.aws_vpc.selected.id
 
   egress {
-    description = "allow all outgoing traffic"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    description = "allow anyone to connect to tcp/6443"
-    from_port   = 6443
-    to_port     = 6443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    description      = "allow all outgoing traffic (ipv6)"
+    description      = "allow all outgoing traffic"
     from_port        = 0
     to_port          = 0
     protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
 
   ingress {
-    description      = "allow anyone to connect to tcp/6443 over ipv6"
+    description      = "allow anyone to connect to tcp/6443"
     from_port        = 6443
     to_port          = 6443
     protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
 
