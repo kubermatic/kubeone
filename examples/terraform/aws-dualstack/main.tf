@@ -153,25 +153,15 @@ resource "aws_security_group_rule" "egress_allow_all" {
   type              = "egress"
   security_group_id = aws_security_group.common.id
 
-  description = "allow all outgoing traffic"
-  from_port   = 0
-  to_port     = 0
-  protocol    = "-1"
-  cidr_blocks = ["0.0.0.0/0"]
+  description      = "allow all outgoing traffic"
+  from_port        = 0
+  to_port          = 0
+  protocol         = "-1"
+  cidr_blocks      = ["0.0.0.0/0"]
+  ipv6_cidr_blocks = ["::/0"]
 }
 
 resource "aws_security_group_rule" "nodeports" {
-  type              = "ingress"
-  security_group_id = aws_security_group.common.id
-
-  description = "open nodeports"
-  from_port   = 30000
-  to_port     = 32767
-  protocol    = "tcp"
-  cidr_blocks = ["0.0.0.0/0"]
-}
-
-resource "aws_security_group_rule" "nodeports_ipv6" {
   type              = "ingress"
   security_group_id = aws_security_group.common.id
 
@@ -179,8 +169,10 @@ resource "aws_security_group_rule" "nodeports_ipv6" {
   from_port        = 30000
   to_port          = 32767
   protocol         = "tcp"
+  cidr_blocks      = ["0.0.0.0/0"]
   ipv6_cidr_blocks = ["::/0"]
 }
+
 
 resource "aws_security_group" "elb" {
   name        = "${var.cluster_name}-api-lb"
@@ -216,18 +208,11 @@ resource "aws_security_group" "ssh" {
   vpc_id      = data.aws_vpc.selected.id
 
   ingress {
-    description = "allow incoming SSH"
-    from_port   = var.ssh_port
-    to_port     = var.ssh_port
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    description      = "allow incoming SSH IPv6"
+    description      = "allow incoming SSH"
     from_port        = var.ssh_port
     to_port          = var.ssh_port
     protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
 
@@ -235,19 +220,6 @@ resource "aws_security_group" "ssh" {
     "Cluster" = var.cluster_name,
   })
 }
-
-resource "aws_security_group_rule" "egress_allow_all_ipv6" {
-  type              = "egress"
-  security_group_id = aws_security_group.common.id
-
-  description      = "allow all outgoing traffic"
-  from_port        = 0
-  to_port          = 0
-  protocol         = "-1"
-  ipv6_cidr_blocks = ["::/0"]
-}
-
-
 
 ################################## KUBE-API LB #################################
 
