@@ -201,7 +201,7 @@ resource "aws_security_group" "elb" {
   }
 
   ingress {
-    description = "allow anyone to connect to tcp/6443"
+    description = "allow anyone to connect to tcp/6443 over ipv6"
     from_port   = 6443
     to_port     = 6443
     protocol    = "tcp"
