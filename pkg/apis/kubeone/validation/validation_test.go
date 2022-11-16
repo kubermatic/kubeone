@@ -62,7 +62,7 @@ func TestValidateKubeOneCluster(t *testing.T) {
 					AWS: &kubeoneapi.AWSSpec{},
 				},
 				Versions: kubeoneapi.VersionConfig{
-					Kubernetes: "1.22.1",
+					Kubernetes: "1.25.4",
 				},
 				MachineController: &kubeoneapi.MachineControllerConfig{
 					Deploy: true,
@@ -115,7 +115,7 @@ func TestValidateKubeOneCluster(t *testing.T) {
 					AWS: &kubeoneapi.AWSSpec{},
 				},
 				Versions: kubeoneapi.VersionConfig{
-					Kubernetes: "1.22.1",
+					Kubernetes: "1.25.4",
 				},
 				MachineController: &kubeoneapi.MachineControllerConfig{
 					Deploy: false,
@@ -168,7 +168,7 @@ func TestValidateKubeOneCluster(t *testing.T) {
 					AWS: &kubeoneapi.AWSSpec{},
 				},
 				Versions: kubeoneapi.VersionConfig{
-					Kubernetes: "1.22.1",
+					Kubernetes: "1.25.4",
 				},
 				MachineController: &kubeoneapi.MachineControllerConfig{
 					Deploy: true,
@@ -194,7 +194,7 @@ func TestValidateKubeOneCluster(t *testing.T) {
 			expectedError: true,
 		},
 		{
-			name: "vSphere 1.22.0 cluster",
+			name: "vSphere 1.25.4 cluster",
 			cluster: kubeoneapi.KubeOneCluster{
 				Name: "test",
 				ControlPlane: kubeoneapi.ControlPlaneConfig{
@@ -221,7 +221,7 @@ func TestValidateKubeOneCluster(t *testing.T) {
 					Vsphere: &kubeoneapi.VsphereSpec{},
 				},
 				Versions: kubeoneapi.VersionConfig{
-					Kubernetes: "1.22.1",
+					Kubernetes: "1.25.4",
 				},
 				MachineController: &kubeoneapi.MachineControllerConfig{
 					Deploy: true,
@@ -744,23 +744,16 @@ func TestValidateVersionConfig(t *testing.T) {
 		expectedError bool
 	}{
 		{
-			name: "valid version config (1.23.1)",
+			name: "valid version config (1.25.4)",
 			versionConfig: kubeoneapi.VersionConfig{
-				Kubernetes: "1.23.1",
+				Kubernetes: "1.25.4",
 			},
 			expectedError: false,
 		},
 		{
-			name: "valid version config (1.22.1)",
+			name: "valid version config (1.25.0)",
 			versionConfig: kubeoneapi.VersionConfig{
-				Kubernetes: "1.22.1",
-			},
-			expectedError: false,
-		},
-		{
-			name: "valid version config (1.22.0)",
-			versionConfig: kubeoneapi.VersionConfig{
-				Kubernetes: "1.22.2",
+				Kubernetes: "1.25.0",
 			},
 			expectedError: false,
 		},
@@ -837,7 +830,7 @@ func TestValidateVersionConfig(t *testing.T) {
 		{
 			name: "kubernetes version with a leading 'v'",
 			versionConfig: kubeoneapi.VersionConfig{
-				Kubernetes: "v1.22.1",
+				Kubernetes: "v1.25.4",
 			},
 			expectedError: true,
 		},
@@ -877,32 +870,32 @@ func TestValidateKubernetesSupport(t *testing.T) {
 		expectedError  bool
 	}{
 		{
-			name: "AWS 1.21.4 cluster",
+			name: "AWS 1.25.4 cluster",
 			providerConfig: kubeoneapi.CloudProviderSpec{
 				AWS: &kubeoneapi.AWSSpec{},
 			},
 			versionConfig: kubeoneapi.VersionConfig{
-				Kubernetes: "1.21.4",
+				Kubernetes: "1.25.4",
 			},
 			expectedError: false,
 		},
 		{
-			name: "AWS 1.22.1 cluster",
+			name: "AWS 1.25.4 cluster",
 			providerConfig: kubeoneapi.CloudProviderSpec{
 				AWS: &kubeoneapi.AWSSpec{},
 			},
 			versionConfig: kubeoneapi.VersionConfig{
-				Kubernetes: "1.22.1",
+				Kubernetes: "1.25.4",
 			},
 			expectedError: false,
 		},
 		{
-			name: "vSphere 1.22.4 cluster",
+			name: "vSphere 1.25.4 cluster",
 			providerConfig: kubeoneapi.CloudProviderSpec{
 				Vsphere: &kubeoneapi.VsphereSpec{},
 			},
 			versionConfig: kubeoneapi.VersionConfig{
-				Kubernetes: "1.22.4",
+				Kubernetes: "1.25.4",
 			},
 			expectedError: false,
 		},
