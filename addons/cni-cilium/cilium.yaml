@@ -83,7 +83,11 @@ data:
 
   # Enable IPv6 addressing. If enabled, all endpoints are allocated an IPv6
   # address.
+{{ if .Config.ClusterNetwork.HasIPv6 }}
+  enable-ipv6: "true"
+{{ else }}
   enable-ipv6: "false"
+{{ end }}
   # Users who wish to specify their own custom CNI configuration file must set
   # custom-cni-conf to "true", otherwise Cilium may overwrite the configuration.
   custom-cni-conf: "false"
@@ -197,8 +201,14 @@ data:
   hubble-tls-key-file: /var/lib/cilium/tls/hubble/server.key
   hubble-tls-client-ca-files: /var/lib/cilium/tls/hubble/client-ca.crt
   ipam: "cluster-pool"
-  cluster-pool-ipv4-cidr: "{{.Config.ClusterNetwork.PodSubnet }}"
-  cluster-pool-ipv4-mask-size: "24"
+{{ if .Config.ClusterNetwork.HasIPv4 }}
+  cluster-pool-ipv4-cidr: "{{ .Config.ClusterNetwork.PodSubnet }}"
+  cluster-pool-ipv4-mask-size: "{{ .Config.ClusterNetwork.NodeCIDRMaskSizeIPv4 }}"
+{{ end }}
+{{ if .Config.ClusterNetwork.HasIPv6 }}
+  cluster-pool-ipv6-cidr: "{{ .Config.ClusterNetwork.PodSubnetIPv6 }}"
+  cluster-pool-ipv6-mask-size: "{{ .Config.ClusterNetwork.NodeCIDRMaskSizeIPv6 }}"
+{{ end }}
   disable-cnp-status-updates: "true"
   enable-vtep: "false"
   vtep-endpoint: ""

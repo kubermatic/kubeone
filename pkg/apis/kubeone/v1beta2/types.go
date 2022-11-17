@@ -164,6 +164,10 @@ type HostConfig struct {
 	// PublicAddress is externally accessible IP address from public internet.
 	PublicAddress string `json:"publicAddress"`
 
+	// IPv6Addresses is IPv6 addresses of the node, only the first one will be announced to the k8s control plane.
+	// It is a list because you can request lots of IPv6 addresses (for example in case you want to assign one address per service).
+	IPv6Addresses []string `json:"ipv6Addresses"`
+
 	// PrivateAddress is internal RFC-1918 IP address.
 	PrivateAddress string `json:"privateAddress"`
 
@@ -374,9 +378,17 @@ type ClusterNetworkConfig struct {
 	// default value is "10.244.0.0/16"
 	PodSubnet string `json:"podSubnet,omitempty"`
 
+	// PodSubnetIPv6
+	// default value is ""fd01::/48""
+	PodSubnetIPv6 string `json:"podSubnetIPv6,omitempty"`
+
 	// ServiceSubnet
 	// default value is "10.96.0.0/12"
 	ServiceSubnet string `json:"serviceSubnet,omitempty"`
+
+	// ServiceSubnetIPv6
+	// default value is "fd02::/120"
+	ServiceSubnetIPv6 string `json:"serviceSubnetIPv6,omitempty"`
 
 	// ServiceDomainName
 	// default value is "cluster.local"
@@ -392,7 +404,32 @@ type ClusterNetworkConfig struct {
 
 	// KubeProxy config
 	KubeProxy *KubeProxyConfig `json:"kubeProxy,omitempty"`
+
+	// IPFamily allows specifying IP family of a cluster.
+	// Valid values are IPv4 | IPv6 | IPv4+IPv6 | IPv6+IPv4.
+	IPFamily IPFamily `json:"ipFamily,omitempty"`
+
+	// NodeCIDRMaskSizeIPv4 is the mask size used to address the nodes within provided IPv4 Pods CIDR. It has to be larger than the provided IPv4 Pods CIDR. Defaults to 24.
+	NodeCIDRMaskSizeIPv4 *int `json:"nodeCIDRMaskSizeIPv4,omitempty"`
+
+	// NodeCIDRMaskSizeIPv6 is the mask size used to address the nodes within provided IPv6 Pods CIDR. It has to be larger than the provided IPv6 Pods CIDR. Defaults to 64.
+	NodeCIDRMaskSizeIPv6 *int `json:"nodeCIDRMaskSizeIPv6,omitempty"`
 }
+
+// IPFamily allows specifying IP family of a cluster.
+// Valid values are IPv4 | IPv6 | IPv4+IPv6 | IPv6+IPv4.
+type IPFamily string
+
+const (
+	// IPFamilyIPv4 IPv4 only cluster.
+	IPFamilyIPv4 IPFamily = "IPv4"
+	// IPFamilyIPv6 IPv6 only cluster.
+	IPFamilyIPv6 IPFamily = "IPv6"
+	// IPFamilyIPv4IPv6 Dualstack cluster with IPv4 as primary address family.
+	IPFamilyIPv4IPv6 IPFamily = "IPv4+IPv6"
+	// IPFamilyIPv6IPv4 Dualstack cluster with IPv6 as primary address family.
+	IPFamilyIPv6IPv4 IPFamily = "IPv6+IPv4"
+)
 
 // KubeProxyConfig defines configured kube-proxy mode, default is iptables mode
 type KubeProxyConfig struct {
@@ -580,6 +617,9 @@ type ProviderStaticNetworkConfig struct {
 
 	// DNS
 	DNS DNSConfig `json:"dns"`
+
+	// IPFamily
+	IPFamily IPFamily `json:"ipFamily"`
 }
 
 // MachineControllerConfig configures kubermatic machine-controller deployment

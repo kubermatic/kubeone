@@ -32,6 +32,7 @@ import (
 
 	"k8s.io/apimachinery/pkg/util/validation"
 	"k8s.io/apimachinery/pkg/util/validation/field"
+	netutils "k8s.io/utils/net"
 )
 
 const (
@@ -51,14 +52,14 @@ func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	allErrs = append(allErrs, ValidateName(c.Name, field.NewPath("name"))...)
-	allErrs = append(allErrs, ValidateControlPlaneConfig(c.ControlPlane, field.NewPath("controlPlane"))...)
+	allErrs = append(allErrs, ValidateControlPlaneConfig(c.ControlPlane, c.ClusterNetwork, field.NewPath("controlPlane"))...)
 	allErrs = append(allErrs, ValidateAPIEndpoint(c.APIEndpoint, field.NewPath("apiEndpoint"))...)
 	allErrs = append(allErrs, ValidateCloudProviderSpec(c.CloudProvider, field.NewPath("provider"))...)
 	allErrs = append(allErrs, ValidateVersionConfig(c.Versions, field.NewPath("versions"))...)
 	allErrs = append(allErrs, ValidateKubernetesSupport(c, field.NewPath(""))...)
 	allErrs = append(allErrs, ValidateContainerRuntimeConfig(c.ContainerRuntime, c.Versions, field.NewPath("containerRuntime"))...)
 	allErrs = append(allErrs, ValidateClusterNetworkConfig(c.ClusterNetwork, field.NewPath("clusterNetwork"))...)
-	allErrs = append(allErrs, ValidateStaticWorkersConfig(c.StaticWorkers, field.NewPath("staticWorkers"))...)
+	allErrs = append(allErrs, ValidateStaticWorkersConfig(c.StaticWorkers, c.ClusterNetwork, field.NewPath("staticWorkers"))...)
 
 	if c.MachineController != nil && c.MachineController.Deploy {
 		allErrs = append(allErrs, ValidateDynamicWorkerConfig(c.DynamicWorkers, field.NewPath("dynamicWorkers"))...)
@@ -128,11 +129,11 @@ func ValidateName(name string, fldPath *field.Path) field.ErrorList {
 }
 
 // ValidateControlPlaneConfig validates the ControlPlaneConfig structure
-func ValidateControlPlaneConfig(c kubeoneapi.ControlPlaneConfig, fldPath *field.Path) field.ErrorList {
+func ValidateControlPlaneConfig(c kubeoneapi.ControlPlaneConfig, clusterNetwork kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	if len(c.Hosts) > 0 {
-		allErrs = append(allErrs, ValidateHostConfig(c.Hosts, fldPath.Child("hosts"))...)
+		allErrs = append(allErrs, ValidateHostConfig(c.Hosts, clusterNetwork, fldPath.Child("hosts"))...)
 	} else {
 		allErrs = append(allErrs, field.Invalid(fldPath.Child("hosts"), "",
 			".controlPlane.Hosts is a required field. There must be at least one control plane instance in the cluster."))
@@ -350,16 +351,8 @@ func ValidateContainerRuntimeConfig(cr kubeoneapi.ContainerRuntimeConfig, versio
 func ValidateClusterNetworkConfig(c kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
-	if len(c.PodSubnet) > 0 {
-		if _, _, err := net.ParseCIDR(c.PodSubnet); err != nil {
-			allErrs = append(allErrs, field.Invalid(fldPath.Child("podSubnet"), c.PodSubnet, ".clusterNetwork.podSubnet must be a valid CIDR string"))
-		}
-	}
-	if len(c.ServiceSubnet) > 0 {
-		if _, _, err := net.ParseCIDR(c.ServiceSubnet); err != nil {
-			allErrs = append(allErrs, field.Invalid(fldPath.Child("serviceSubnet"), c.ServiceSubnet, ".clusterNetwork.serviceSubnet must be a valid CIDR string"))
-		}
-	}
+	allErrs = append(allErrs, validateCIDRs(c, fldPath)...)
+	allErrs = append(allErrs, validateNodeCIDRMaskSize(c, fldPath)...)
 
 	if c.CNI != nil {
 		allErrs = append(allErrs, ValidateCNI(c.CNI, fldPath.Child("cni"))...)
@@ -371,6 +364,86 @@ func ValidateClusterNetworkConfig(c kubeoneapi.ClusterNetworkConfig, fldPath *fi
 	}
 	if c.KubeProxy != nil {
 		allErrs = append(allErrs, ValidateKubeProxy(c.KubeProxy, fldPath.Child("kubeProxy"))...)
+	}
+
+	return allErrs
+}
+
+func validateNodeCIDRMaskSize(c kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	validateNodeCIDRMaskSize := func(nodeCIDRMaskSize *int, podCIDR string, fldPath *field.Path) {
+		if nodeCIDRMaskSize == nil {
+			allErrs = append(allErrs, field.Invalid(fldPath, nodeCIDRMaskSize, "node CIDR mask size must be set"))
+
+			return
+		}
+
+		_, podCIDRNet, err := net.ParseCIDR(podCIDR)
+		if err != nil {
+			allErrs = append(allErrs, field.Invalid(fldPath, podCIDR, fmt.Sprintf("couldn't parse CIDR %q: %v", podCIDR, err)))
+
+			return
+		}
+		podCIDRMaskSize, _ := podCIDRNet.Mask.Size()
+
+		if podCIDRMaskSize >= *nodeCIDRMaskSize {
+			allErrs = append(allErrs, field.Invalid(fldPath, nodeCIDRMaskSize,
+				fmt.Sprintf("node CIDR mask size (%d) must be longer than the mask size of the pod CIDR (%q)", *nodeCIDRMaskSize, podCIDR)))
+
+			return
+		}
+	}
+
+	switch c.IPFamily {
+	case kubeoneapi.IPFamilyIPv4:
+		validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv4, c.PodSubnet, fldPath.Child("nodeCIDRMaskSizeIPv4"))
+	case kubeoneapi.IPFamilyIPv6:
+		validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv6, c.PodSubnetIPv6, fldPath.Child("nodeCIDRMaskSizeIPv6"))
+	case kubeoneapi.IPFamilyIPv4IPv6, kubeoneapi.IPFamilyIPv6IPv4:
+		validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv4, c.PodSubnet, fldPath.Child("nodeCIDRMaskSizeIPv4"))
+		validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv6, c.PodSubnetIPv6, fldPath.Child("nodeCIDRMaskSizeIPv6"))
+	}
+
+	return allErrs
+}
+
+func validateCIDRs(c kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	invalidFamilyErr := func(node, subnet string, ipFamily kubeoneapi.IPFamily) *field.Error {
+		return field.Invalid(fldPath.Child(node), subnet, fmt.Sprintf(".clusterNetwork.%s must be valid %q subnet.", node, ipFamily))
+	}
+
+	validateCIDR := func(node, subnet string, ipFamily kubeoneapi.IPFamily) {
+		switch ipFamily {
+		case kubeoneapi.IPFamilyIPv4:
+			if !netutils.IsIPv4CIDRString(subnet) {
+				allErrs = append(allErrs, invalidFamilyErr(node, subnet, ipFamily))
+			}
+		case kubeoneapi.IPFamilyIPv6:
+			if !netutils.IsIPv6CIDRString(subnet) {
+				allErrs = append(allErrs, invalidFamilyErr(node, subnet, ipFamily))
+			}
+		case kubeoneapi.IPFamilyIPv4IPv6, kubeoneapi.IPFamilyIPv6IPv4:
+			// just to make linter happy
+		}
+	}
+
+	switch c.IPFamily {
+	case kubeoneapi.IPFamilyIPv4:
+		validateCIDR("podSubnet", c.PodSubnet, kubeoneapi.IPFamilyIPv4)
+		validateCIDR("serviceSubnet", c.ServiceSubnet, kubeoneapi.IPFamilyIPv4)
+	case kubeoneapi.IPFamilyIPv6:
+		validateCIDR("podSubnetIPv6", c.PodSubnetIPv6, kubeoneapi.IPFamilyIPv6)
+		validateCIDR("serviceSubnetIPv6", c.ServiceSubnetIPv6, kubeoneapi.IPFamilyIPv6)
+	case kubeoneapi.IPFamilyIPv4IPv6, kubeoneapi.IPFamilyIPv6IPv4:
+		validateCIDR("podSubnet", c.PodSubnet, kubeoneapi.IPFamilyIPv4)
+		validateCIDR("serviceSubnet", c.ServiceSubnet, kubeoneapi.IPFamilyIPv4)
+		validateCIDR("podSubnetIPv6", c.PodSubnetIPv6, kubeoneapi.IPFamilyIPv6)
+		validateCIDR("serviceSubnetIPv6", c.ServiceSubnetIPv6, kubeoneapi.IPFamilyIPv6)
+	default:
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("ipFamily"), c.IPFamily, "unknown ipFamily"))
 	}
 
 	return allErrs
@@ -434,11 +507,11 @@ func ValidateCNI(c *kubeoneapi.CNI, fldPath *field.Path) field.ErrorList {
 }
 
 // ValidateStaticWorkersConfig validates the StaticWorkersConfig structure
-func ValidateStaticWorkersConfig(staticWorkers kubeoneapi.StaticWorkersConfig, fldPath *field.Path) field.ErrorList {
+func ValidateStaticWorkersConfig(staticWorkers kubeoneapi.StaticWorkersConfig, clusterNetwork kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	if len(staticWorkers.Hosts) > 0 {
-		allErrs = append(allErrs, ValidateHostConfig(staticWorkers.Hosts, fldPath.Child("hosts"))...)
+		allErrs = append(allErrs, ValidateHostConfig(staticWorkers.Hosts, clusterNetwork, fldPath.Child("hosts"))...)
 	}
 
 	return allErrs
@@ -573,7 +646,7 @@ func ValidateAddons(o *kubeoneapi.Addons, fldPath *field.Path) field.ErrorList {
 }
 
 // ValidateHostConfig validates the HostConfig structure
-func ValidateHostConfig(hosts []kubeoneapi.HostConfig, fldPath *field.Path) field.ErrorList {
+func ValidateHostConfig(hosts []kubeoneapi.HostConfig, clusterNetwork kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	leaderFound := false
@@ -586,6 +659,10 @@ func ValidateHostConfig(hosts []kubeoneapi.HostConfig, fldPath *field.Path) fiel
 		}
 		if len(h.PublicAddress) == 0 {
 			allErrs = append(allErrs, field.Required(fldPath, "no public IP/address given"))
+		}
+
+		if (clusterNetwork.IPFamily == kubeoneapi.IPFamilyIPv6 || clusterNetwork.IPFamily == kubeoneapi.IPFamilyIPv4IPv6 || clusterNetwork.IPFamily == kubeoneapi.IPFamilyIPv6IPv4) && len(h.IPv6Addresses) == 0 {
+			allErrs = append(allErrs, field.Required(fldPath, "no IPv6 address given"))
 		}
 		if len(h.PrivateAddress) == 0 {
 			allErrs = append(allErrs, field.Required(fldPath, "no private IP/address givevn"))

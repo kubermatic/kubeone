@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/Masterminds/semver/v3"
@@ -139,9 +140,17 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 			Kind:       "ClusterConfiguration",
 		},
 		Networking: kubeadmv1beta3.Networking{
-			PodSubnet:     cluster.ClusterNetwork.PodSubnet,
-			ServiceSubnet: cluster.ClusterNetwork.ServiceSubnet,
-			DNSDomain:     cluster.ClusterNetwork.ServiceDomainName,
+			PodSubnet: join(
+				cluster.ClusterNetwork.IPFamily,
+				cluster.ClusterNetwork.PodSubnet,
+				cluster.ClusterNetwork.PodSubnetIPv6,
+			),
+			ServiceSubnet: join(
+				cluster.ClusterNetwork.IPFamily,
+				cluster.ClusterNetwork.ServiceSubnet,
+				cluster.ClusterNetwork.ServiceSubnetIPv6,
+			),
+			DNSDomain: cluster.ClusterNetwork.ServiceDomainName,
 		},
 		KubernetesVersion:    cluster.Versions.Kubernetes,
 		ControlPlaneEndpoint: controlPlaneEndpoint,
@@ -315,6 +324,8 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		}
 	}
 
+	addControllerManagerNetworkArgs(clusterConfig.ControllerManager.ExtraArgs, cluster.ClusterNetwork)
+
 	args := kubeadmargs.NewFrom(clusterConfig.APIServer.ExtraArgs)
 	features.UpdateKubeadmClusterConfiguration(cluster.Features, args)
 
@@ -335,6 +346,45 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 	}
 
 	return []runtime.Object{initConfig, joinConfig, clusterConfig, kubeletConfig, kubeproxyConfig}, nil
+}
+
+func addControllerManagerNetworkArgs(m map[string]string, clusterNetwork kubeoneapi.ClusterNetworkConfig) {
+	if clusterNetwork.CNI.Cilium != nil {
+		return
+	}
+
+	switch clusterNetwork.IPFamily {
+	case kubeoneapi.IPFamilyIPv4:
+		if clusterNetwork.NodeCIDRMaskSizeIPv4 != nil {
+			m["node-cidr-mask-size-ipv4"] = fmt.Sprintf("%d", *clusterNetwork.NodeCIDRMaskSizeIPv4)
+		}
+	case kubeoneapi.IPFamilyIPv6:
+		if clusterNetwork.NodeCIDRMaskSizeIPv6 != nil {
+			m["node-cidr-mask-size-ipv6"] = fmt.Sprintf("%d", *clusterNetwork.NodeCIDRMaskSizeIPv6)
+		}
+	case kubeoneapi.IPFamilyIPv4IPv6, kubeoneapi.IPFamilyIPv6IPv4:
+		if clusterNetwork.NodeCIDRMaskSizeIPv4 != nil {
+			m["node-cidr-mask-size-ipv4"] = fmt.Sprintf("%d", *clusterNetwork.NodeCIDRMaskSizeIPv4)
+		}
+		if clusterNetwork.NodeCIDRMaskSizeIPv6 != nil {
+			m["node-cidr-mask-size-ipv6"] = fmt.Sprintf("%d", *clusterNetwork.NodeCIDRMaskSizeIPv6)
+		}
+	}
+}
+
+func join(ipFamily kubeoneapi.IPFamily, ipv4Subnet, ipv6Subnet string) string {
+	switch ipFamily {
+	case kubeoneapi.IPFamilyIPv4:
+		return ipv4Subnet
+	case kubeoneapi.IPFamilyIPv6:
+		return ipv6Subnet
+	case kubeoneapi.IPFamilyIPv4IPv6:
+		return strings.Join([]string{ipv4Subnet, ipv6Subnet}, ",")
+	case kubeoneapi.IPFamilyIPv6IPv4:
+		return strings.Join([]string{ipv6Subnet, ipv4Subnet}, ",")
+	default:
+		return "unknown IP family"
+	}
 }
 
 // NewConfig returns all required configs to init a cluster via a set of v13 configs
@@ -395,8 +445,22 @@ func newNodeIP(host kubeoneapi.HostConfig) string {
 
 func newNodeRegistration(s *state.State, host kubeoneapi.HostConfig) kubeadmv1beta3.NodeRegistrationOptions {
 	kubeletCLIFlags := map[string]string{
-		"node-ip":           newNodeIP(host),
 		"volume-plugin-dir": "/var/lib/kubelet/volumeplugins",
+	}
+
+	// If external or in-tree CCM is in use we don't need to set --node-ip
+	// as the cloud provider will know what IPs to return.
+	if s.Cluster.ClusterNetwork.IPFamily.IsDualstack() {
+		if !s.Cluster.CloudProvider.External {
+			switch {
+			case s.Cluster.ClusterNetwork.IPFamily == kubeoneapi.IPFamilyIPv4IPv6:
+				kubeletCLIFlags["node-ip"] = newNodeIP(host) + "," + host.IPv6Addresses[0]
+			case s.Cluster.ClusterNetwork.IPFamily == kubeoneapi.IPFamilyIPv6IPv4:
+				kubeletCLIFlags["node-ip"] = host.IPv6Addresses[0] + "," + newNodeIP(host)
+			}
+		}
+	} else {
+		kubeletCLIFlags["node-ip"] = newNodeIP(host)
 	}
 
 	if m := host.Kubelet.SystemReserved; m != nil {

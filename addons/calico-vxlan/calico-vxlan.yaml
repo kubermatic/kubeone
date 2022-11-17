@@ -4121,7 +4121,7 @@ rules:
     resources:
       - endpointslices
     verbs:
-      - watch 
+      - watch
       - list
   - apiGroups: [""]
     resources:
@@ -4467,20 +4467,31 @@ spec:
                 configMapKeyRef:
                   name: calico-config
                   key: veth_mtu
+            {{ if .Config.ClusterNetwork.HasIPv4 }}
             # The default IPv4 pool to create on startup if none exists. Pod IPs will be
             # chosen from this range. Changing this value after installation will have
             # no effect. This should fall within `--cluster-cidr`.
             - name: CALICO_IPV4POOL_CIDR
               value: "{{ .Config.ClusterNetwork.PodSubnet }}"
+            {{ end }}
             # Disable file logging so `kubectl logs` works.
             - name: CALICO_DISABLE_FILE_LOGGING
               value: "true"
             # Set Felix endpoint to host default action to ACCEPT.
             - name: FELIX_DEFAULTENDPOINTTOHOSTACTION
               value: "ACCEPT"
+            {{ if .Config.ClusterNetwork.HasIPv6 }}
+            - name: FELIX_IPV6SUPPORT
+              value: "true"
+            - name: IP6
+              value: "autodetect"
+            - name: CALICO_IPV6POOL_CIDR
+              value: "{{ .Config.ClusterNetwork.PodSubnetIPv6 }}"
+            {{ else }}
             # Disable IPv6 on Kubernetes.
             - name: FELIX_IPV6SUPPORT
               value: "false"
+            {{ end }}
             - name: FELIX_HEALTHENABLED
               value: "true"
             - name: FELIX_IPTABLESBACKEND

@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2022-10-05T12:04:49+02:00
+date = 2022-11-08T18:46:06+01:00
 weight = 11
 +++
 ## v1beta2
@@ -198,11 +198,16 @@ ClusterNetworkConfig describes the cluster network
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | podSubnet | PodSubnet default value is \"10.244.0.0/16\" | string | false |
+| podSubnetIPv6 | PodSubnetIPv6 default value is \"\"fd01::/48\"\" | string | false |
 | serviceSubnet | ServiceSubnet default value is \"10.96.0.0/12\" | string | false |
+| serviceSubnetIPv6 | ServiceSubnetIPv6 default value is \"fd02::/120\" | string | false |
 | serviceDomainName | ServiceDomainName default value is \"cluster.local\" | string | false |
 | nodePortRange | NodePortRange default value is \"30000-32767\" | string | false |
 | cni | CNI default value is {canal: {mtu: 1450}} | *[CNI](#cni) | false |
 | kubeProxy | KubeProxy config | *[KubeProxyConfig](#kubeproxyconfig) | false |
+| ipFamily | IPFamily allows specifying IP family of a cluster. Valid values are IPv4 \| IPv6 \| IPv4+IPv6 \| IPv6+IPv4. | IPFamily | false |
+| nodeCIDRMaskSizeIPv4 | NodeCIDRMaskSizeIPv4 is the mask size used to address the nodes within provided IPv4 Pods CIDR. It has to be larger than the provided IPv4 Pods CIDR. Defaults to 24. | *int | false |
+| nodeCIDRMaskSizeIPv6 | NodeCIDRMaskSizeIPv6 is the mask size used to address the nodes within provided IPv6 Pods CIDR. It has to be larger than the provided IPv6 Pods CIDR. Defaults to 64. | *int | false |
 
 [Back to Group](#v1beta2)
 
@@ -409,6 +414,7 @@ HostConfig describes a single control plane node.
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | publicAddress | PublicAddress is externally accessible IP address from public internet. | string | true |
+| ipv6Addresses | IPv6Addresses is IPv6 addresses of the node, only the first one will be announced to the k8s control plane. It is a list because you can request lots of IPv6 addresses (for example in case you want to assign one address per service). | []string | true |
 | privateAddress | PrivateAddress is internal RFC-1918 IP address. | string | true |
 | sshPort | SSHPort is port to connect ssh to. Default value is 22. | int | false |
 | sshUsername | SSHUsername is system login name. Default value is \"root\". | string | false |
@@ -685,6 +691,7 @@ ProviderStaticNetworkConfig contains a machine's static network configuration
 | cidr | CIDR | string | true |
 | gateway | Gateway | string | true |
 | dns | DNS | [DNSConfig](#dnsconfig) | true |
+| ipFamily | IPFamily | IPFamily | true |
 
 [Back to Group](#v1beta2)
 

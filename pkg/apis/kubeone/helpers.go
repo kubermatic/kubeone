@@ -463,3 +463,15 @@ func MapStringStringToString(m1 map[string]string, pairSeparator string) string 
 
 	return strings.Join(pairs, ",")
 }
+
+func (c ClusterNetworkConfig) HasIPv4() bool {
+	return c.IPFamily == IPFamilyIPv4 || c.IPFamily == IPFamilyIPv4IPv6 || c.IPFamily == IPFamilyIPv6IPv4
+}
+
+func (c ClusterNetworkConfig) HasIPv6() bool {
+	return c.IPFamily == IPFamilyIPv6 || c.IPFamily == IPFamilyIPv4IPv6 || c.IPFamily == IPFamilyIPv6IPv4
+}
+
+func (c IPFamily) IsDualstack() bool {
+	return c == IPFamilyIPv4IPv6 || c == IPFamilyIPv6IPv4
+}

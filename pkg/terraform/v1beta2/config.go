@@ -87,6 +87,7 @@ type controlPlane struct {
 
 type hostsSpec struct {
 	PublicAddress     []string          `json:"public_address"`
+	IPv6Addresses     [][]string        `json:"ipv6_addresses"`
 	PrivateAddress    []string          `json:"private_address"`
 	Hostnames         []string          `json:"hostnames"`
 	OperatingSystem   string            `json:"operating_system"`
@@ -154,13 +155,22 @@ func (hs *hostsSpec) toHostConfigs(opts ...hostConfigsOpts) []kubeonev1beta2.Hos
 			privateIP = hs.PrivateAddress[i]
 		}
 
-		hosts = append(hosts, newHostConfig(publicIP, privateIP, i, hs))
+		var ipv6Addr []string
+		if i < len(hs.IPv6Addresses) {
+			ipv6Addr = hs.IPv6Addresses[i]
+		}
+
+		hosts = append(hosts, newHostConfig(publicIP, privateIP, ipv6Addr, i, hs))
 	}
 
 	if len(hosts) == 0 {
 		// there was no public IPs available
 		for i, privateIP := range hs.PrivateAddress {
-			hosts = append(hosts, newHostConfig("", privateIP, i, hs))
+			var ipv6Addr []string
+			if i < len(hs.IPv6Addresses) {
+				ipv6Addr = hs.IPv6Addresses[i]
+			}
+			hosts = append(hosts, newHostConfig("", privateIP, ipv6Addr, i, hs))
 		}
 	}
 
@@ -334,7 +344,7 @@ func (output *Config) Apply(cluster *kubeonev1beta2.KubeOneCluster) error {
 	return nil
 }
 
-func newHostConfig(publicIP, privateIP string, idx int, spec *hostsSpec) kubeonev1beta2.HostConfig {
+func newHostConfig(publicIP, privateIP string, ipv6addr []string, idx int, spec *hostsSpec) kubeonev1beta2.HostConfig {
 	var hostname string
 
 	if idx < len(spec.Hostnames) {
@@ -350,6 +360,7 @@ func newHostConfig(publicIP, privateIP string, idx int, spec *hostsSpec) kubeone
 		OperatingSystem:      kubeonev1beta2.OperatingSystemName(spec.OperatingSystem),
 		PrivateAddress:       privateIP,
 		PublicAddress:        publicIP,
+		IPv6Addresses:        ipv6addr,
 		SSHAgentSocket:       spec.SSHAgentSocket,
 		SSHPrivateKeyFile:    spec.SSHPrivateKeyFile,
 		SSHUsername:          spec.SSHUser,
