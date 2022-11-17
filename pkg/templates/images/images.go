@@ -232,7 +232,6 @@ func optionalResources() map[Resource]map[string]string {
 		CSISnapshotter:        {"*": "k8s.gcr.io/sig-storage/csi-snapshotter:v4.2.0"},
 
 		AwsCCM: {
-			"1.22.x":    "k8s.gcr.io/provider-aws/cloud-controller-manager:v1.22.4",
 			"1.23.x":    "k8s.gcr.io/provider-aws/cloud-controller-manager:v1.23.2",
 			"1.24.x":    "k8s.gcr.io/provider-aws/cloud-controller-manager:v1.24.1",
 			">= 1.25.0": "k8s.gcr.io/provider-aws/cloud-controller-manager:v1.25.1",
@@ -240,13 +239,11 @@ func optionalResources() map[Resource]map[string]string {
 
 		// Azure CCM
 		AzureCCM: {
-			"1.22.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.1.24",
 			"1.23.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.23.21",
 			"1.24.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.24.8",
 			">= 1.25.0": "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.25.3",
 		},
 		AzureCNM: {
-			"1.22.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.1.24",
 			"1.23.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.23.21",
 			"1.24.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.24.8",
 			">= 1.25.0": "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.25.3",
@@ -303,7 +300,6 @@ func optionalResources() map[Resource]map[string]string {
 
 		// OpenStack CCM
 		OpenstackCCM: {
-			"1.22.x":    "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.22.2",
 			"1.23.x":    "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.23.4",
 			"1.24.x":    "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.24.5",
 			">= 1.25.0": "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.25.3",
@@ -311,7 +307,6 @@ func optionalResources() map[Resource]map[string]string {
 
 		// OpenStack CSI
 		OpenstackCSI: {
-			"1.22.x":    "docker.io/k8scloudprovider/cinder-csi-plugin:v1.22.2",
 			"1.23.x":    "docker.io/k8scloudprovider/cinder-csi-plugin:v1.23.4",
 			"1.24.x":    "docker.io/k8scloudprovider/cinder-csi-plugin:v1.24.5",
 			">= 1.25.0": "docker.io/k8scloudprovider/cinder-csi-plugin:v1.25.3",
@@ -330,7 +325,6 @@ func optionalResources() map[Resource]map[string]string {
 
 		// vSphere CCM
 		VsphereCCM: {
-			"1.22.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.22.6",
 			"1.23.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.23.2",
 			"1.24.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.24.2",
 			">= 1.25.0": "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.25.0",
@@ -392,7 +386,6 @@ func optionalResources() map[Resource]map[string]string {
 
 		// Cluster-autoscaler addon
 		ClusterAutoscaler: {
-			"1.22.x":    "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.22.3",
 			"1.23.x":    "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.23.1",
 			"1.24.x":    "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.24.0",
 			">= 1.25.0": "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.25.0",
