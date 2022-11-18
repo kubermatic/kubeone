@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2022-11-08T18:46:06+01:00
+date = 2022-11-18T08:01:29+02:00
 weight = 11
 +++
 ## v1beta2
@@ -33,6 +33,8 @@ weight = 11
 * [ExternalCNISpec](#externalcnispec)
 * [Features](#features)
 * [GCESpec](#gcespec)
+* [HelmRelease](#helmrelease)
+* [HelmValues](#helmvalues)
 * [HetznerSpec](#hetznerspec)
 * [HostConfig](#hostconfig)
 * [IPTables](#iptables)
@@ -397,6 +399,32 @@ GCESpec defines the GCE cloud provider
 
 [Back to Group](#v1beta2)
 
+### HelmRelease
+
+
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| chart |  | string | true |
+| repoURL |  | string | true |
+| version |  | string | false |
+| releaseName |  | string | false |
+| namespace |  | string | true |
+| labels |  | map[string]string | false |
+| values |  | [][HelmValues](#helmvalues) | false |
+
+[Back to Group](#v1beta2)
+
+### HelmValues
+
+
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| file |  | string | false |
+
+[Back to Group](#v1beta2)
+
 ### HetznerSpec
 
 HetznerSpec defines the Hetzner cloud provider
@@ -490,6 +518,7 @@ KubeOneCluster is KubeOne Cluster API Schema
 | caBundle | CABundle PEM encoded global CA | string | false |
 | features | Features enables and configures additional cluster features. | [Features](#features) | false |
 | addons | Addons are used to deploy additional manifests. | *[Addons](#addons) | false |
+| helmReleases | HelmReleases list of instructions of how to deploy helm charts | [][HelmRelease](#helmrelease) | false |
 | systemPackages | SystemPackages configure kubeone behaviour regarding OS packages. | *[SystemPackages](#systempackages) | false |
 | registryConfiguration | RegistryConfiguration configures how Docker images are pulled from an image registry | *[RegistryConfiguration](#registryconfiguration) | false |
 | loggingConfig | LoggingConfig configures the Kubelet's log rotation | [LoggingConfig](#loggingconfig) | false |

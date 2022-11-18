@@ -1339,7 +1339,6 @@ func autoConvert_v1beta2_HelmRelease_To_kubeone_HelmRelease(in *HelmRelease, out
 	out.Namespace = in.Namespace
 	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
 	out.Values = *(*[]kubeone.HelmValues)(unsafe.Pointer(&in.Values))
-	out.Core = in.Core
 	return nil
 }
 
@@ -1356,7 +1355,6 @@ func autoConvert_kubeone_HelmRelease_To_v1beta2_HelmRelease(in *kubeone.HelmRele
 	out.Namespace = in.Namespace
 	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
 	out.Values = *(*[]HelmValues)(unsafe.Pointer(&in.Values))
-	out.Core = in.Core
 	return nil
 }
 

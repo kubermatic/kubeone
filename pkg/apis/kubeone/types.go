@@ -76,7 +76,7 @@ type KubeOneCluster struct {
 	Addons *Addons `json:"addons,omitempty"`
 
 	// HelmReleases list of instructions of how to deploy helm charts
-	HelmReleases []HelmRelease `json:"helmReleases"`
+	HelmReleases []HelmRelease `json:"helmReleases,omitempty"`
 
 	// SystemPackages configure kubeone behaviour regarding OS packages.
 	SystemPackages *SystemPackages `json:"systemPackages,omitempty"`
@@ -99,7 +99,6 @@ type HelmRelease struct {
 	Namespace   string            `json:"namespace"`
 	Labels      map[string]string `json:"labels,omitempty"`
 	Values      []HelmValues      `json:"values,omitempty"`
-	Core        bool              `json:"core,omitempty"`
 }
 
 type HelmValues struct {

@@ -75,6 +75,7 @@ func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 	allErrs = append(allErrs, ValidateCABundle(c.CABundle, field.NewPath("caBundle"))...)
 	allErrs = append(allErrs, ValidateFeatures(c.Features, c.Versions, field.NewPath("features"))...)
 	allErrs = append(allErrs, ValidateAddons(c.Addons, field.NewPath("addons"))...)
+	allErrs = append(allErrs, ValidateHelmReleases(c.HelmReleases, field.NewPath("helmReleases"))...)
 	allErrs = append(allErrs, ValidateRegistryConfiguration(c.RegistryConfiguration, field.NewPath("registryConfiguration"))...)
 	allErrs = append(allErrs,
 		ValidateContainerRuntimeVSRegistryConfiguration(
@@ -639,6 +640,26 @@ func ValidateAddons(o *kubeoneapi.Addons, fldPath *field.Path) field.ErrorList {
 			allErrs = append(allErrs, field.Invalid(fldPath, "", "failed to read embedded addons directory"))
 		} else if !embeddedAddonsOnly {
 			allErrs = append(allErrs, field.Invalid(fldPath.Child("path"), "", ".addons.path must be specified when using non-embedded addon(s)"))
+		}
+	}
+
+	return allErrs
+}
+
+func ValidateHelmReleases(helmReleases []kubeoneapi.HelmRelease, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	for _, hr := range helmReleases {
+		if hr.Chart == "" {
+			allErrs = append(allErrs, field.Invalid(fldPath.Child("chart"), hr.Chart, "is a required field"))
+		}
+
+		if hr.RepoURL == "" {
+			allErrs = append(allErrs, field.Invalid(fldPath.Child("repoURL"), hr.RepoURL, "is a required field"))
+		}
+
+		if hr.Namespace == "" {
+			allErrs = append(allErrs, field.Invalid(fldPath.Child("namespace"), hr.Namespace, "is a required field"))
 		}
 	}
 
