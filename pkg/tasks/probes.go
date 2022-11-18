@@ -174,8 +174,13 @@ func safeguardNodeSelectorsAndTolerations(s *state.State) error {
 		return err
 	}
 
+	liveCP := s.LiveCluster.ControlPlane
+	if len(liveCP) == 0 || liveCP[0].Kubelet.Version == nil {
+		return nil
+	}
+
 	// Run safeguard only when upgrading to Kubernetes 1.24.
-	if targetVersion.Minor() == 24 && s.LiveCluster.ControlPlane[0].Kubelet.Version.Minor() == 23 {
+	if targetVersion.Minor() == 24 && liveCP[0].Kubelet.Version.Minor() == 23 {
 		var pods corev1.PodList
 		// List pods in all namespaces
 		if err := s.DynamicClient.List(s.Context, &pods, dynclient.InNamespace("")); err != nil {
