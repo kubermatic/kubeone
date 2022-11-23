@@ -620,7 +620,7 @@ containerRuntime:
   # Default for 1.21+ Kubernetes clusters.
   # containerd:
   #   registries:
-  #     k8s.gcr.io:
+  #     registry.k8s.io:
   #       mirrors:
   #       - https://self-signed.pull-through.cache.tld
   #       tlsConfig:

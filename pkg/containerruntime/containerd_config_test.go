@@ -55,7 +55,7 @@ func Test_marshalContainerdConfig(t *testing.T) {
 		{
 			name: "multi registry mirrors",
 			cluster: genCluster(withContainerdRegistry(map[string]kubeoneapi.ContainerdRegistry{
-				"k8s.gcr.io": {
+				"registry.k8s.io": {
 					Mirrors: []string{"https://some"},
 				},
 				"*": {
