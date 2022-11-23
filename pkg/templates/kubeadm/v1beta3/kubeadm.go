@@ -51,14 +51,18 @@ const (
 const (
 	// fixedEtcdVersion is an etcd version that doesn't have known data integrity and durability bugs
 	// (see etcdVersionCorruptCheckExtraArgs for more details)
-	fixedEtcdVersion = "3.5.5-0"
+	fixedEtcdVersion = "3.5.6-0"
 
+	// NB: Currently no Kubernetes version uses 3.5.6, but to avoid deleting the code
+	// we just use some super high version as a fixed version.
 	// fixedEtcd123 defines a semver constraint used to check if Kubernetes 1.23 uses fixed etcd version
-	fixedEtcd123 = ">= 1.23.14, < 1.24"
+	fixedEtcd123 = ">= 1.23.99, < 1.24"
 	// fixedEtcd124 defines a semver constraint used to check if Kubernetes 1.24 uses fixed etcd version
-	fixedEtcd124 = ">= 1.24.8, < 1.25"
+	fixedEtcd124 = ">= 1.24.99, < 1.25"
 	// fixedEtcd125 defines a semver constraint used to check if Kubernetes 1.25+ uses fixed etcd version
-	fixedEtcd125 = ">= 1.25.4"
+	fixedEtcd125 = ">= 1.25.99, < 1.26"
+	// fixedEtcd126 defines a semver constraint used to check if Kubernetes 1.26+ uses fixed etcd version
+	fixedEtcd126 = ">= 1.26.99"
 
 	// greaterOrEqualThan122 defines a version constraint for the Kubernetes 1.22+ clusters
 	greaterOrEqualThan122 = ">= 1.22.0"
@@ -70,6 +74,7 @@ var (
 	fixedEtcd123Constraint       = semverutil.MustParseConstraint(fixedEtcd123)
 	fixedEtcd124Constraint       = semverutil.MustParseConstraint(fixedEtcd124)
 	fixedEtcd125Constraint       = semverutil.MustParseConstraint(fixedEtcd125)
+	fixedEtcd126Constraint       = semverutil.MustParseConstraint(fixedEtcd126)
 	etcdIntegrityCheckConstraint = semverutil.MustParseConstraint(greaterOrEqualThan122)
 	lowerThan122Constraint       = semverutil.MustParseConstraint(lowerThan122)
 )
@@ -519,8 +524,9 @@ func etcdVersionCorruptCheckExtraArgs(kubeVersion *semver.Version, etcdImageTag 
 	etcdExtraArgs := map[string]string{}
 	if etcdIntegrityCheckConstraint.Check(kubeVersion) {
 		etcdExtraArgs = map[string]string{
-			"experimental-initial-corrupt-check": "true",
-			"experimental-corrupt-check-time":    "240m",
+			"experimental-compact-hash-check-enabled": "true",
+			"experimental-initial-corrupt-check":      "true",
+			"experimental-corrupt-check-time":         "240m",
 		}
 	}
 
@@ -534,6 +540,8 @@ func etcdVersionCorruptCheckExtraArgs(kubeVersion *semver.Version, etcdImageTag 
 	case fixedEtcd124Constraint.Check(kubeVersion):
 		fallthrough
 	case fixedEtcd125Constraint.Check(kubeVersion):
+		fallthrough
+	case fixedEtcd126Constraint.Check(kubeVersion):
 		return "", etcdExtraArgs
 	default:
 		return fixedEtcdVersion, etcdExtraArgs
