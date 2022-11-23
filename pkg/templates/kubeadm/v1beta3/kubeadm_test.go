@@ -25,8 +25,9 @@ import (
 
 func TestEtcdVersionCorruptCheckExtraArgs(t *testing.T) {
 	etcdExtraArgs := map[string]string{
-		"experimental-initial-corrupt-check": "true",
-		"experimental-corrupt-check-time":    "240m",
+		"experimental-compact-hash-check-enabled": "true",
+		"experimental-initial-corrupt-check":      "true",
+		"experimental-corrupt-check-time":         "240m",
 	}
 
 	tests := []struct {
@@ -55,26 +56,32 @@ func TestEtcdVersionCorruptCheckExtraArgs(t *testing.T) {
 			expectedEtcdArgs:     etcdExtraArgs,
 		},
 		{
+			name:                 "unfixed 1.26",
+			kubeVersion:          semver.MustParse("1.26.0"),
+			expectedEtcdImageTag: fixedEtcdVersion,
+			expectedEtcdArgs:     etcdExtraArgs,
+		},
+		{
 			name:                 "fixed 1.23",
-			kubeVersion:          semver.MustParse("1.23.14"),
+			kubeVersion:          semver.MustParse("1.23.99"),
 			expectedEtcdImageTag: "",
 			expectedEtcdArgs:     etcdExtraArgs,
 		},
 		{
 			name:                 "fixed 1.24",
-			kubeVersion:          semver.MustParse("1.24.8"),
+			kubeVersion:          semver.MustParse("1.24.99"),
 			expectedEtcdImageTag: "",
 			expectedEtcdArgs:     etcdExtraArgs,
 		},
 		{
 			name:                 "fixed 1.25",
-			kubeVersion:          semver.MustParse("1.25.4"),
+			kubeVersion:          semver.MustParse("1.25.99"),
 			expectedEtcdImageTag: "",
 			expectedEtcdArgs:     etcdExtraArgs,
 		},
 		{
 			name:                 "fixed 1.26",
-			kubeVersion:          semver.MustParse("1.26.0"),
+			kubeVersion:          semver.MustParse("1.26.99"),
 			expectedEtcdImageTag: "",
 			expectedEtcdArgs:     etcdExtraArgs,
 		},
