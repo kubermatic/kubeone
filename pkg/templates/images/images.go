@@ -169,6 +169,9 @@ const (
 
 	// VMwareCloud Director CSI
 	VMwareCloudDirectorCSI
+	VMwareCloudDirectorCSIAttacher
+	VMwareCloudDirectorCSIProvisioner
+	VMwareCloudDirectorCSINodeDriverRegistrar
 
 	// vSphere CSI
 	VsphereCSIDriver
@@ -331,7 +334,10 @@ func optionalResources() map[Resource]map[string]string {
 		},
 
 		// VMware Cloud Director CSI
-		VMwareCloudDirectorCSI: {"*": "projects.registry.vmware.com/vmware-cloud-director/cloud-director-named-disk-csi-driver:1.2.0.latest"},
+		VMwareCloudDirectorCSI:                    {"*": "projects.registry.vmware.com/vmware-cloud-director/cloud-director-named-disk-csi-driver:1.2.0.latest"},
+		VMwareCloudDirectorCSIAttacher:            {"*": "k8s.gcr.io/sig-storage/csi-attacher:v3.2.1"},
+		VMwareCloudDirectorCSIProvisioner:         {"*": "k8s.gcr.io/sig-storage/csi-provisioner:v2.2.2"},
+		VMwareCloudDirectorCSINodeDriverRegistrar: {"*": "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.2.0"},
 
 		// vSphere CSI
 		VsphereCSIDriver:                    {"*": "gcr.io/cloud-provider-vsphere/csi/release/driver:v2.6.0"},
