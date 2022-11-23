@@ -96,32 +96,35 @@ func _() {
 	_ = x[SecretStoreCSIDriverLivenessProbe-86]
 	_ = x[SecretStoreCSIDriverCRDs-87]
 	_ = x[VMwareCloudDirectorCSI-88]
-	_ = x[VsphereCSIDriver-89]
-	_ = x[VsphereCSISyncer-90]
-	_ = x[VsphereCSIAttacher-91]
-	_ = x[VsphereCSILivenessProbe-92]
-	_ = x[VsphereCSINodeDriverRegistar-93]
-	_ = x[VsphereCSIProvisioner-94]
-	_ = x[VsphereCSIResizer-95]
-	_ = x[VsphereCSISnapshotter-96]
-	_ = x[VsphereCSISnapshotController-97]
-	_ = x[VsphereCSISnapshotValidationWebhook-98]
-	_ = x[GCPComputeCSIDriver-99]
-	_ = x[GCPComputeCSIProvisioner-100]
-	_ = x[GCPComputeCSIAttacher-101]
-	_ = x[GCPComputeCSIResizer-102]
-	_ = x[GCPComputeCSISnapshotter-103]
-	_ = x[GCPComputeCSISnapshotController-104]
-	_ = x[GCPComputeCSISnapshotValidationWebhook-105]
-	_ = x[GCPComputeCSINodeDriverRegistrar-106]
-	_ = x[CalicoVXLANCNI-107]
-	_ = x[CalicoVXLANController-108]
-	_ = x[CalicoVXLANNode-109]
+	_ = x[VMwareCloudDirectorCSIAttacher-89]
+	_ = x[VMwareCloudDirectorCSIProvisioner-90]
+	_ = x[VMwareCloudDirectorCSINodeDriverRegistrar-91]
+	_ = x[VsphereCSIDriver-92]
+	_ = x[VsphereCSISyncer-93]
+	_ = x[VsphereCSIAttacher-94]
+	_ = x[VsphereCSILivenessProbe-95]
+	_ = x[VsphereCSINodeDriverRegistar-96]
+	_ = x[VsphereCSIProvisioner-97]
+	_ = x[VsphereCSIResizer-98]
+	_ = x[VsphereCSISnapshotter-99]
+	_ = x[VsphereCSISnapshotController-100]
+	_ = x[VsphereCSISnapshotValidationWebhook-101]
+	_ = x[GCPComputeCSIDriver-102]
+	_ = x[GCPComputeCSIProvisioner-103]
+	_ = x[GCPComputeCSIAttacher-104]
+	_ = x[GCPComputeCSIResizer-105]
+	_ = x[GCPComputeCSISnapshotter-106]
+	_ = x[GCPComputeCSISnapshotController-107]
+	_ = x[GCPComputeCSISnapshotValidationWebhook-108]
+	_ = x[GCPComputeCSINodeDriverRegistrar-109]
+	_ = x[CalicoVXLANCNI-110]
+	_ = x[CalicoVXLANController-111]
+	_ = x[CalicoVXLANNode-112]
 }
 
-const _Resource_name = "CalicoCNICalicoControllerCalicoNodeFlannelCiliumCiliumOperatorHubbleRelayHubbleUIHubbleUIBackendCiliumCertGenWeaveNetCNIKubeWeaveNetCNINPCDNSNodeCacheMachineControllerMetricsServerOperatingSystemManagerClusterAutoscalerCSIAttacherCSINodeDriverRegistarCSIProvisionerCSISnapshotterCSIResizerCSILivenessProbeAwsCCMAzureCCMAzureCNMAwsEbsCSIAwsEbsCSIAttacherAwsEbsCSILivenessProbeAwsEbsCSINodeDriverRegistrarAwsEbsCSIProvisionerAwsEbsCSIResizerAwsEbsCSISnapshotterAwsEbsCSISnapshotControllerAzureFileCSIAzureFileCSIAttacherAzureFileCSILivenessProbeAzureFileCSINodeDriverRegistarAzureFileCSIProvisionerAzureFileCSIResizerAzureFileCSISnapshotterAzureFileCSISnapshotterControllerAzureDiskCSIAzureDiskCSIAttacherAzureDiskCSILivenessProbeAzureDiskCSINodeDriverRegistarAzureDiskCSIProvisionerAzureDiskCSIResizerAzureDiskCSISnapshotterAzureDiskCSISnapshotterControllerNutanixCSILivenessProbeNutanixCSINutanixCSIProvisionerNutanixCSIRegistrarNutanixCSIResizerNutanixCSISnapshotterNutanixCSISnapshotControllerNutanixCSISnapshotValidationWebhookDigitalOceanCSIDigitalOceanCSIAlpineDigitalOceanCSIAttacherDigitalOceanCSINodeDriverRegistarDigitalOceanCSIProvisionerDigitalOceanCSIResizerDigitalOceanCSISnapshotControllerDigitalOceanCSISnapshotValidationWebhookDigitalOceanCSISnapshotterOpenstackCSIOpenstackCSINodeDriverRegistarOpenstackCSILivenessProbeOpenstackCSIAttacherOpenstackCSIProvisionerOpenstackCSIResizerOpenstackCSISnapshotterOpenstackCSISnapshotControllerOpenstackCSISnapshotWebhookDigitaloceanCCMHetznerCCMHetznerCSIOpenstackCCMEquinixMetalCCMVsphereCCMCSIVaultSecretProviderSecretStoreCSIDriverNodeRegistrarSecretStoreCSIDriverSecretStoreCSIDriverLivenessProbeSecretStoreCSIDriverCRDsVMwareCloudDirectorCSIVsphereCSIDriverVsphereCSISyncerVsphereCSIAttacherVsphereCSILivenessProbeVsphereCSINodeDriverRegistarVsphereCSIProvisionerVsphereCSIResizerVsphereCSISnapshotterVsphereCSISnapshotControllerVsphereCSISnapshotValidationWebhookGCPComputeCSIDriverGCPComputeCSIProvisionerGCPComputeCSIAttacherGCPComputeCSIResizerGCPComputeCSISnapshotterGCPComputeCSISnapshotControllerGCPComputeCSISnapshotValidationWebhookGCPComputeCSINodeDriverRegistrarCalicoVXLANCNICalicoVXLANControllerCalicoVXLANNode"
+const _Resource_name = "CalicoCNICalicoControllerCalicoNodeFlannelCiliumCiliumOperatorHubbleRelayHubbleUIHubbleUIBackendCiliumCertGenWeaveNetCNIKubeWeaveNetCNINPCDNSNodeCacheMachineControllerMetricsServerOperatingSystemManagerClusterAutoscalerCSIAttacherCSINodeDriverRegistarCSIProvisionerCSISnapshotterCSIResizerCSILivenessProbeAwsCCMAzureCCMAzureCNMAwsEbsCSIAwsEbsCSIAttacherAwsEbsCSILivenessProbeAwsEbsCSINodeDriverRegistrarAwsEbsCSIProvisionerAwsEbsCSIResizerAwsEbsCSISnapshotterAwsEbsCSISnapshotControllerAzureFileCSIAzureFileCSIAttacherAzureFileCSILivenessProbeAzureFileCSINodeDriverRegistarAzureFileCSIProvisionerAzureFileCSIResizerAzureFileCSISnapshotterAzureFileCSISnapshotterControllerAzureDiskCSIAzureDiskCSIAttacherAzureDiskCSILivenessProbeAzureDiskCSINodeDriverRegistarAzureDiskCSIProvisionerAzureDiskCSIResizerAzureDiskCSISnapshotterAzureDiskCSISnapshotterControllerNutanixCSILivenessProbeNutanixCSINutanixCSIProvisionerNutanixCSIRegistrarNutanixCSIResizerNutanixCSISnapshotterNutanixCSISnapshotControllerNutanixCSISnapshotValidationWebhookDigitalOceanCSIDigitalOceanCSIAlpineDigitalOceanCSIAttacherDigitalOceanCSINodeDriverRegistarDigitalOceanCSIProvisionerDigitalOceanCSIResizerDigitalOceanCSISnapshotControllerDigitalOceanCSISnapshotValidationWebhookDigitalOceanCSISnapshotterOpenstackCSIOpenstackCSINodeDriverRegistarOpenstackCSILivenessProbeOpenstackCSIAttacherOpenstackCSIProvisionerOpenstackCSIResizerOpenstackCSISnapshotterOpenstackCSISnapshotControllerOpenstackCSISnapshotWebhookDigitaloceanCCMHetznerCCMHetznerCSIOpenstackCCMEquinixMetalCCMVsphereCCMCSIVaultSecretProviderSecretStoreCSIDriverNodeRegistrarSecretStoreCSIDriverSecretStoreCSIDriverLivenessProbeSecretStoreCSIDriverCRDsVMwareCloudDirectorCSIVMwareCloudDirectorCSIAttacherVMwareCloudDirectorCSIProvisionerVMwareCloudDirectorCSINodeDriverRegistrarVsphereCSIDriverVsphereCSISyncerVsphereCSIAttacherVsphereCSILivenessProbeVsphereCSINodeDriverRegistarVsphereCSIProvisionerVsphereCSIResizerVsphereCSISnapshotterVsphereCSISnapshotControllerVsphereCSISnapshotValidationWebhookGCPComputeCSIDriverGCPComputeCSIProvisionerGCPComputeCSIAttacherGCPComputeCSIResizerGCPComputeCSISnapshotterGCPComputeCSISnapshotControllerGCPComputeCSISnapshotValidationWebhookGCPComputeCSINodeDriverRegistrarCalicoVXLANCNICalicoVXLANControllerCalicoVXLANNode"
 
-var _Resource_index = [...]uint16{0, 9, 25, 35, 42, 48, 62, 73, 81, 96, 109, 124, 138, 150, 167, 180, 202, 219, 230, 251, 265, 279, 289, 305, 311, 319, 327, 336, 353, 375, 403, 423, 439, 459, 486, 498, 518, 543, 573, 596, 615, 638, 671, 683, 703, 728, 758, 781, 800, 823, 856, 879, 889, 910, 929, 946, 967, 995, 1030, 1045, 1066, 1089, 1122, 1148, 1170, 1203, 1243, 1269, 1281, 1311, 1336, 1356, 1379, 1398, 1421, 1451, 1478, 1493, 1503, 1513, 1525, 1540, 1550, 1572, 1605, 1625, 1658, 1682, 1704, 1720, 1736, 1754, 1777, 1805, 1826, 1843, 1864, 1892, 1927, 1946, 1970, 1991, 2011, 2035, 2066, 2104, 2136, 2150, 2171, 2186}
+var _Resource_index = [...]uint16{0, 9, 25, 35, 42, 48, 62, 73, 81, 96, 109, 124, 138, 150, 167, 180, 202, 219, 230, 251, 265, 279, 289, 305, 311, 319, 327, 336, 353, 375, 403, 423, 439, 459, 486, 498, 518, 543, 573, 596, 615, 638, 671, 683, 703, 728, 758, 781, 800, 823, 856, 879, 889, 910, 929, 946, 967, 995, 1030, 1045, 1066, 1089, 1122, 1148, 1170, 1203, 1243, 1269, 1281, 1311, 1336, 1356, 1379, 1398, 1421, 1451, 1478, 1493, 1503, 1513, 1525, 1540, 1550, 1572, 1605, 1625, 1658, 1682, 1704, 1734, 1767, 1808, 1824, 1840, 1858, 1881, 1909, 1930, 1947, 1968, 1996, 2031, 2050, 2074, 2095, 2115, 2139, 2170, 2208, 2240, 2254, 2275, 2290}
 
 func (i Resource) String() string {
 	i -= 1
