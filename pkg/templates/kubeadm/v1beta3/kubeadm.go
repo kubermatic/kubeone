@@ -62,6 +62,10 @@ const (
 	fixedEtcd126 = ">= 1.26.99"
 )
 
+const (
+	registryK8sio = "registry.k8s.io"
+)
+
 var (
 	fixedEtcd123Constraint = semverutil.MustParseConstraint(fixedEtcd123)
 	fixedEtcd124Constraint = semverutil.MustParseConstraint(fixedEtcd124)
@@ -168,11 +172,11 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 			ExtraVolumes: []kubeadmv1beta3.HostPathMount{},
 		},
 		ClusterName:     cluster.Name,
-		ImageRepository: cluster.AssetConfiguration.Kubernetes.ImageRepository,
+		ImageRepository: defaults(cluster.AssetConfiguration.Kubernetes.ImageRepository, registryK8sio),
 		Etcd: kubeadmv1beta3.Etcd{
 			Local: &kubeadmv1beta3.LocalEtcd{
 				ImageMeta: kubeadmv1beta3.ImageMeta{
-					ImageRepository: cluster.AssetConfiguration.Etcd.ImageRepository,
+					ImageRepository: defaults(cluster.AssetConfiguration.Etcd.ImageRepository, registryK8sio),
 					ImageTag:        etcdImageTag,
 				},
 				ExtraArgs: etcdExtraArgs,
@@ -180,7 +184,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		},
 		DNS: kubeadmv1beta3.DNS{
 			ImageMeta: kubeadmv1beta3.ImageMeta{
-				ImageRepository: cluster.AssetConfiguration.CoreDNS.ImageRepository,
+				ImageRepository: defaults(cluster.AssetConfiguration.CoreDNS.ImageRepository, fmt.Sprintf("%s/coredns", registryK8sio)),
 				ImageTag:        cluster.AssetConfiguration.CoreDNS.ImageTag,
 			},
 		},
@@ -454,4 +458,12 @@ func etcdVersionCorruptCheckExtraArgs(kubeVersion *semver.Version, etcdImageTag 
 	default:
 		return fixedEtcdVersion, etcdExtraArgs
 	}
+}
+
+func defaults(input, defaultValue string) string {
+	if input != "" {
+		return input
+	}
+
+	return defaultValue
 }
