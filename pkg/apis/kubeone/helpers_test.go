@@ -118,7 +118,7 @@ func TestContainerRuntimeConfig_MachineControllerFlags(t *testing.T) {
 								"registry3",
 							},
 						},
-						"k8s.gcr.io": {
+						"registry.k8s.io": {
 							Mirrors: []string{
 								"https://insecure.registry",
 							},
@@ -133,8 +133,8 @@ func TestContainerRuntimeConfig_MachineControllerFlags(t *testing.T) {
 				"-node-containerd-registry-mirrors=docker.io=http://registry1",
 				"-node-containerd-registry-mirrors=docker.io=https://registry2",
 				"-node-containerd-registry-mirrors=docker.io=registry3",
-				"-node-containerd-registry-mirrors=k8s.gcr.io=https://insecure.registry",
-				"-node-insecure-registries=k8s.gcr.io",
+				"-node-containerd-registry-mirrors=registry.k8s.io=https://insecure.registry",
+				"-node-insecure-registries=registry.k8s.io",
 			},
 		},
 	}
