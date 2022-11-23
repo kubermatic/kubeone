@@ -67,7 +67,7 @@ var (
 
 	kubeadmPauseImageVersionScriptTemplate = heredoc.Doc(`
 		sudo kubeadm config images list --kubernetes-version={{ .KUBERNETES_VERSION }} |
-			grep "k8s.gcr.io/pause" |
+			grep "registry.k8s.io/pause" |
 			cut -d ":" -f2
 	`)
 )
