@@ -21,6 +21,7 @@ import (
 	"crypto/x509"
 	"fmt"
 	"net"
+	"os"
 	"reflect"
 	"strings"
 
@@ -33,6 +34,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/validation"
 	"k8s.io/apimachinery/pkg/util/validation/field"
 	netutils "k8s.io/utils/net"
+	"sigs.k8s.io/yaml"
 )
 
 const (
@@ -660,6 +662,36 @@ func ValidateHelmReleases(helmReleases []kubeoneapi.HelmRelease, fldPath *field.
 
 		if hr.Namespace == "" {
 			allErrs = append(allErrs, field.Invalid(fldPath.Child("namespace"), hr.Namespace, "is a required field"))
+		}
+
+		for idx, helmValues := range hr.Values {
+			fldIdentity := fldPath.Child("values").Index(idx)
+
+			if helmValues.File != "" {
+				err := func() error {
+					valFile, err := os.Open(helmValues.File)
+					if valFile != nil {
+						defer valFile.Close()
+					}
+
+					return err
+				}()
+				if err != nil {
+					allErrs = append(allErrs,
+						field.Invalid(fldIdentity.Child("file"), hr.Values[idx].File, fmt.Sprintf("file is invalid: %v", err)),
+					)
+				}
+			}
+
+			if helmValues.Inline != nil {
+				obj := map[string]any{}
+				err := yaml.Unmarshal(helmValues.Inline.Raw, &obj)
+				if err != nil {
+					allErrs = append(allErrs,
+						field.Invalid(fldIdentity.Child("inline"), hr.Values[idx].File, fmt.Sprintf("inline is not a valid YAML: %v", err)),
+					)
+				}
+			}
 		}
 	}
 
