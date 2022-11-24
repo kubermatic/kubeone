@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2022-11-24T18:08:37+02:00
+date = 2022-11-24T19:11:38+02:00
 weight = 11
 +++
 ## v1beta2
@@ -421,6 +421,7 @@ GCESpec defines the GCE cloud provider
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | file |  | string | false |
+| inline |  | [json.RawMessage](https://golang.org/pkg/encoding/json/#RawMessage) | false |
 
 [Back to Group](#v1beta2)
 
@@ -454,7 +455,7 @@ HostConfig describes a single control plane node.
 | bastionHostPublicKey | BastionHostPublicKey if not empty, will be used to verify bastion SSH public key | []byte | false |
 | hostname | Hostname is the hostname(1) of the host. Default value is populated at the runtime via running `hostname -f` command over ssh. | string | false |
 | isLeader | IsLeader indicates this host as a session leader. Default value is populated at the runtime. | bool | false |
-| taints | Taints are taints applied to nodes. Those taints are only applied when the node is being provisioned. If not provided (i.e. nil) for control plane nodes, it defaults to:\n  * For Kubernetes 1.23 and older: TaintEffectNoSchedule with key node-role.kubernetes.io/master\n  * For Kubernetes 1.24 and newer: TaintEffectNoSchedule with keys\n    node-role.kubernetes.io/control-plane and node-role.kubernetes.io/master\nExplicitly empty (i.e. []corev1.Taint{}) means no taints will be applied (this is default for worker nodes). | [][corev1.Taint](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#taint-v1-core) | false |
+| taints | Taints are taints applied to nodes. Those taints are only applied when the node is being provisioned. If not provided (i.e. nil) for control plane nodes, it defaults to:\n  * For Kubernetes 1.23 and older: TaintEffectNoSchedule with key node-role.kubernetes.io/master\n  * For Kubernetes 1.24 and newer: TaintEffectNoSchedule with keys\n    node-role.kubernetes.io/control-plane and node-role.kubernetes.io/master\nExplicitly empty (i.e. []corev1.Taint{}) means no taints will be applied (this is default for worker nodes). | [][corev1.Taint](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#taint-v1-core) | false |
 | labels | Labels to be used to apply (or remove, with minus symbol suffix, see more kubectl help label) labels to/from node | map[string]string | false |
 | kubelet | Kubelet | [KubeletConfig](#kubeletconfig) | false |
 | operatingSystem | OperatingSystem information, can be populated at the runtime. | OperatingSystemName | false |
@@ -701,7 +702,7 @@ ProviderSpec describes a worker node
 | nodeAnnotations | NodeAnnotations set MachineDeployment.Spec.Template.Spec.ObjectMeta.Annotations as a way to annotate resulting Nodes | map[string]string | false |
 | machineObjectAnnotations | MachineObjectAnnotations set MachineDeployment.Spec.Template.Metadata.Annotations as a way to annotate resulting Machine objects. Those annotations are not propagated to Node objects. If you want to annotate resulting Nodes as well, see NodeAnnotations | map[string]string | false |
 | labels | Labels | map[string]string | false |
-| taints | Taints | [][corev1.Taint](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#taint-v1-core) | false |
+| taints | Taints | [][corev1.Taint](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#taint-v1-core) | false |
 | sshPublicKeys | SSHPublicKeys | []string | false |
 | operatingSystem | OperatingSystem | string | true |
 | operatingSystemSpec | OperatingSystemSpec | [json.RawMessage](https://golang.org/pkg/encoding/json/#RawMessage) | false |
