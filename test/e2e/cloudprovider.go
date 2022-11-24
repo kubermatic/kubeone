@@ -131,7 +131,7 @@ func (c *cloudProviderTests) createStatefulSetWithStorage(t *testing.T) {
 					Containers: []corev1.Container{
 						{
 							Name:  "echoserver",
-							Image: "k8s.gcr.io/echoserver:1.10",
+							Image: "registry.k8s.io/echoserver:1.10",
 							Ports: []corev1.ContainerPort{
 								{
 									Name:          "web",
@@ -141,7 +141,7 @@ func (c *cloudProviderTests) createStatefulSetWithStorage(t *testing.T) {
 						},
 						{
 							Name:  "busybox",
-							Image: "k8s.gcr.io/busybox",
+							Image: "registry.k8s.io/busybox",
 							Args: []string{
 								"/bin/sh",
 								"-c",

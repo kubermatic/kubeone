@@ -47,7 +47,7 @@ spec:
       dnsPolicy: Default
       containers:
         - name: node-driver-registrar
-          image: k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.2.0
+          image: {{ .InternalImages.Get "VMwareCloudDirectorCSINodeDriverRegistrar" }}
           imagePullPolicy: "IfNotPresent"
           args:
             - "--v=5"
