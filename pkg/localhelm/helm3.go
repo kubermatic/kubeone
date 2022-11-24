@@ -65,13 +65,8 @@ func Deploy(st *state.State) error {
 	}
 
 	var helmSettings = helmcli.New()
-
 	cfg, err := newActionConfiguration(helmSettings.Debug)
 	if err != nil {
-		return err
-	}
-
-	if err := cfg.Init(restClientGetter, "kube-system", helmStorageDriver, st.Logger.Debugf); err != nil {
 		return err
 	}
 
@@ -94,6 +89,10 @@ func Deploy(st *state.State) error {
 		}
 		providers := getter.All(helmSettings)
 		vals, err := valueOpts.MergeValues(providers)
+
+		if err := cfg.Init(restClientGetter, rh.Namespace, helmStorageDriver, st.Logger.Debugf); err != nil {
+			return err
+		}
 
 		histClient := helmaction.NewHistory(cfg)
 		histClient.Max = 1
@@ -132,7 +131,6 @@ func Deploy(st *state.State) error {
 			_, err = helmUpgrade.RunWithContext(st.Context, rh.ReleaseName, chartRequested, vals)
 
 			return err
-			// upgrade release
 		default:
 			return err
 		}
