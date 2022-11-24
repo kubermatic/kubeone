@@ -21,7 +21,6 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 )
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
@@ -101,8 +100,8 @@ type HelmRelease struct {
 }
 
 type HelmValues struct {
-	File   string                `json:"file,omitempty"`
-	Inline *runtime.RawExtension `json:"inline,omitempty"`
+	File   string          `json:"file,omitempty"`
+	Inline json.RawMessage `json:"inline,omitempty"`
 }
 
 // LoggingConfig configures the Kubelet's log rotation

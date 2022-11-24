@@ -685,7 +685,7 @@ func ValidateHelmReleases(helmReleases []kubeoneapi.HelmRelease, fldPath *field.
 
 			if helmValues.Inline != nil {
 				obj := map[string]any{}
-				err := yaml.Unmarshal(helmValues.Inline.Raw, &obj)
+				err := yaml.Unmarshal(helmValues.Inline, &obj)
 				if err != nil {
 					allErrs = append(allErrs,
 						field.Invalid(fldIdentity.Child("inline"), hr.Values[idx].File, fmt.Sprintf("inline is not a valid YAML: %v", err)),

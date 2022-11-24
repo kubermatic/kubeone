@@ -88,7 +88,7 @@ func Deploy(st *state.State) error {
 				inlineValuesName := inlineValues.Name()
 				defer os.Remove(inlineValuesName)
 
-				valuesBuf := bytes.NewBuffer(value.Inline.Raw)
+				valuesBuf := bytes.NewBuffer(value.Inline)
 				_, err = io.Copy(inlineValues, valuesBuf)
 				if err != nil {
 					inlineValues.Close()

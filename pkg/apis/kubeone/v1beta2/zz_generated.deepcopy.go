@@ -735,8 +735,8 @@ func (in *HelmValues) DeepCopyInto(out *HelmValues) {
 	*out = *in
 	if in.Inline != nil {
 		in, out := &in.Inline, &out.Inline
-		*out = new(runtime.RawExtension)
-		(*in).DeepCopyInto(*out)
+		*out = make(json.RawMessage, len(*in))
+		copy(*out, *in)
 	}
 	return
 }
