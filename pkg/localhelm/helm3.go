@@ -17,8 +17,10 @@ limitations under the License.
 package localhelm
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 
 	helmaction "helm.sh/helm/v3/pkg/action"
@@ -78,9 +80,24 @@ func Deploy(st *state.State) error {
 			}
 
 			if value.Inline != nil {
-				// TODO: parse inline
-				// serializedInlineValueFile := saveAsFile(value.Inline)
-				// valueFiles = append(valueFiles, serializedInlineValueFile)
+				inlineValues, err := os.CreateTemp("", "inline-helm-values-*")
+				if err != nil {
+					return err
+				}
+
+				inlineValuesName := inlineValues.Name()
+				defer os.Remove(inlineValuesName)
+
+				valuesBuf := bytes.NewBuffer(value.Inline.Raw)
+				_, err = io.Copy(inlineValues, valuesBuf)
+				if err != nil {
+					inlineValues.Close()
+
+					return err
+				}
+
+				inlineValues.Close()
+				valueFiles = append(valueFiles, inlineValuesName)
 			}
 		}
 
