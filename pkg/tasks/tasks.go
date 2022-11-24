@@ -24,6 +24,7 @@ import (
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/features"
 	"k8c.io/kubeone/pkg/kubeconfig"
+	"k8c.io/kubeone/pkg/localhelm"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/externalccm"
 	"k8c.io/kubeone/pkg/templates/machinecontroller"
@@ -254,6 +255,10 @@ func WithResources(t Tasks) Tasks {
 				Fn:          addons.Ensure,
 				Operation:   "applying addons",
 				Description: "ensure embedded addons",
+			},
+			{
+				Fn:        localhelm.Deploy,
+				Operation: "releasing core helm charts",
 			},
 			{
 				Fn:          ensureCABundleConfigMap,
