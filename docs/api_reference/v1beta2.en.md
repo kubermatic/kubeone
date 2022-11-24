@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2022-11-18T08:01:29+02:00
+date = 2022-11-24T18:08:37+02:00
 weight = 11
 +++
 ## v1beta2
@@ -410,7 +410,6 @@ GCESpec defines the GCE cloud provider
 | version |  | string | false |
 | releaseName |  | string | false |
 | namespace |  | string | true |
-| labels |  | map[string]string | false |
 | values |  | [][HelmValues](#helmvalues) | false |
 
 [Back to Group](#v1beta2)

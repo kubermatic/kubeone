@@ -89,13 +89,12 @@ type KubeOneCluster struct {
 }
 
 type HelmRelease struct {
-	Chart       string            `json:"chart"`
-	RepoURL     string            `json:"repoURL"`
-	Version     string            `json:"version,omitempty"`
-	ReleaseName string            `json:"releaseName,omitempty"`
-	Namespace   string            `json:"namespace"`
-	Labels      map[string]string `json:"labels,omitempty"`
-	Values      []HelmValues      `json:"values,omitempty"`
+	Chart       string       `json:"chart"`
+	RepoURL     string       `json:"repoURL"`
+	Version     string       `json:"version,omitempty"`
+	ReleaseName string       `json:"releaseName,omitempty"`
+	Namespace   string       `json:"namespace"`
+	Values      []HelmValues `json:"values,omitempty"`
 }
 
 type HelmValues struct {
