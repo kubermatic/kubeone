@@ -104,7 +104,7 @@ if ! [ -x "$(command -v $kubeadm)" ]; then
   echodate "Done!"
 fi
 
-k8simages=$("$kubeadm" config images list --kubernetes-version="$KUBERNETES_VERSION")
+k8simages=$("$kubeadm" config images list --image-repository=registry.k8s.io --kubernetes-version="$KUBERNETES_VERSION")
 k1images=$(kubeone config images list --filter=base --kubernetes-version="$KUBERNETES_VERSION")
 optionalimages=$(kubeone config images list --filter=optional --kubernetes-version="$KUBERNETES_VERSION")
 
@@ -112,7 +112,7 @@ for IMAGE in $k8simages; do
   # The CoreDNS image has a different override semantics than other images.
   # The image will be overridden in the following way:
   #   registry.k8s.io/coredns/coredns -> custom-registry/coredns
-  if [[ "$IMAGE" == "registry.k8s.io/coredns/coredns:"* ]]; then
+  if [[ "$IMAGE" == "registry.k8s.io/coredns:"* ]]; then
     corednsVersion=$(cut -d ':' -f 2 <<< "${IMAGE}")
     retag "registry.k8s.io/coredns/coredns:${corednsVersion}" "coredns"
   else
