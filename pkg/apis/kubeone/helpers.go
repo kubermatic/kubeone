@@ -132,8 +132,8 @@ func (crc ContainerRuntimeConfig) MachineControllerFlags() []string {
 		// example output:
 		// -node-containerd-registry-mirrors=docker.io=custom.tld
 		// -node-containerd-registry-mirrors=docker.io=https://secure-custom.tld
-		// -node-containerd-registry-mirrors=k8s.gcr.io=http://somewhere
-		// -node-insecure-registries=docker.io,k8s.gcr.io
+		// -node-containerd-registry-mirrors=registry.k8s.io=http://somewhere
+		// -node-insecure-registries=docker.io,registry.k8s.io
 		var (
 			registryNames                 []string
 			insecureSet                   = map[string]struct{}{}

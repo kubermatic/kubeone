@@ -122,7 +122,7 @@ metadata:
   namespace: kube-system
 spec:
   containers:
-  - image: {{ Registry "k8s.gcr.io" }}/kube-apiserver:v1.19.3
+  - image: {{ Registry "registry.k8s.io" }}/kube-apiserver:v1.19.3
 `
 
 	testManifest1WithImageParsed = `apiVersion: v1
@@ -136,7 +136,7 @@ metadata:
   namespace: kube-system
 spec:
   containers:
-  - image: k8s.gcr.io/kube-apiserver:v1.19.3
+  - image: registry.k8s.io/kube-apiserver:v1.19.3
 `
 
 	testManifest1WithCustomImageParsed = `apiVersion: v1

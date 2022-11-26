@@ -48,7 +48,7 @@ func determinePauseImageExecutor(s *state.State, node *kubeoneapi.HostConfig, co
 		return fail.SSH(err, "getting kubeadm PauseImage version")
 	}
 
-	s.PauseImage = s.Cluster.RegistryConfiguration.ImageRegistry("k8s.gcr.io") + "/pause:" + out
+	s.PauseImage = s.Cluster.RegistryConfiguration.ImageRegistry("registry.k8s.io") + "/pause:" + out
 
 	return nil
 }
