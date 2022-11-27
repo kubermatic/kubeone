@@ -110,9 +110,21 @@ optionalimages=$(kubeone config images list --filter=optional --kubernetes-versi
 
 for IMAGE in $k8simages; do
   # The CoreDNS image has a different override semantics than other images.
-  # The image will be overridden in the following way:
-  #   registry.k8s.io/coredns/coredns -> custom-registry/coredns
-  if [[ "$IMAGE" == "registry.k8s.io/coredns:"* ]]; then
+  # If you provide a custom registry, kubeadm will override the CoreDNS image 
+  # in the following way:
+  #   <default-registry>/coredns/coredns -> <custom-registry>/coredns
+  # We have an issue because we enforce `registry.k8s.io` for all Kubernetes versions:
+  #   - for Kubernetes versions that use `k8s.gcr.io` by default,
+  #     the CoreDNS image will be overridden as:
+  #       k8s.gcr.io/coredns/coredns -> registry.k8s.io/coredns
+  #   - for Kubernetes versions that use `registry.k8s.io` by default,
+  #     the CoreDNS image will be overridden as:
+  #       registry.k8s.io/coredns/coredns -> registry.k8s.io/coredns/coredns
+  # This is causing an issue when retagging so in the first case you'll end
+  # up with: `<custom-registry>/coredns:<version>`, but in the second case,
+  # you'll end up with: `<custom-registry>/coredns/coredns:<version>`.
+  # The following if branch is supposed to mitigate this issue.
+  if [[ "$IMAGE" == "registry.k8s.io/coredns"* ]]; then
     corednsVersion=$(cut -d ':' -f 2 <<< "${IMAGE}")
     retag "registry.k8s.io/coredns/coredns:${corednsVersion}" "coredns"
   else
