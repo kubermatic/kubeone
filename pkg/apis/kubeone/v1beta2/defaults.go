@@ -236,9 +236,9 @@ func SetDefaults_OperatingSystemManager(obj *KubeOneCluster) {
 }
 
 func SetDefaults_HelmReleases(obj *KubeOneCluster) {
-	for _, hr := range obj.HelmReleases {
+	for idx, hr := range obj.HelmReleases {
 		if hr.ReleaseName == "" {
-			hr.ReleaseName = hr.Chart
+			obj.HelmReleases[idx].ReleaseName = hr.Chart
 		}
 	}
 }
