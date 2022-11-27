@@ -75,6 +75,8 @@ func Deploy(st *state.State) error {
 	}
 
 	for _, rh := range st.Cluster.HelmReleases {
+		st.Logger.Infof("Deploying helm chart %s as release %s", rh.Chart, rh.ReleaseName)
+
 		var valueFiles []string
 		for _, value := range rh.Values {
 			if value.File != "" {
