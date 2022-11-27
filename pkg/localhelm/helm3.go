@@ -48,14 +48,32 @@ func Deploy(st *state.State) error {
 		return nil
 	}
 
-	konfig, err := kubeconfig.Download(st)
+	konfigBuf, err := kubeconfig.Download(st)
 	if err != nil {
 		return err
 	}
 
+	tmpKubeConf, err := os.CreateTemp("", "konf*")
+	if err != nil {
+		return err
+	}
+	defer func() {
+		name := tmpKubeConf.Name()
+		tmpKubeConf.Close()
+		os.Remove(name)
+	}()
+
+	n, err := tmpKubeConf.Write(konfigBuf)
+	if err != nil {
+		return err
+	}
+	if int(n) != len(konfigBuf) {
+		return fmt.Errorf("incorrect number of bytes written to temp kubeconfig")
+	}
+
 	restClientGetter := &genericclioptions.ConfigFlags{
 		Namespace:  pointer.String("default"),
-		KubeConfig: pointer.String(string(konfig)),
+		KubeConfig: pointer.String(tmpKubeConf.Name()),
 		WrapConfigFn: func(rc *rest.Config) *rest.Config {
 			err := kubeconfig.TunnelRestConfig(st, rc)
 			if err != nil {
