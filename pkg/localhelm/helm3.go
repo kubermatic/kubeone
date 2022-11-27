@@ -67,6 +67,8 @@ func Deploy(st *state.State) error {
 	}
 
 	var helmSettings = helmcli.New()
+	helmSettings.Debug = st.Verbose
+
 	cfg, err := newActionConfiguration(helmSettings.Debug)
 	if err != nil {
 		return err
