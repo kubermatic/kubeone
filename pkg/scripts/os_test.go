@@ -81,7 +81,7 @@ func withInsecureRegistry(registry string) genClusterOpts {
 func withDefaultAssetConfiguration(cls *kubeoneapi.KubeOneCluster) {
 	cls.AssetConfiguration = kubeoneapi.AssetConfiguration{
 		Kubernetes: kubeoneapi.ImageAsset{
-			ImageRepository: "k8s.gcr.io",
+			ImageRepository: "registry.k8s.io",
 		},
 		CNI: kubeoneapi.BinaryAsset{
 			URL: "http://127.0.0.1/cni.tar.gz",
