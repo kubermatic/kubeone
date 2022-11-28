@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2022-11-28T20:04:59+02:00
+date = 2022-11-29T01:20:56+02:00
 weight = 11
 +++
 ## v1beta2
@@ -406,7 +406,7 @@ GCESpec defines the GCE cloud provider
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | chart | Chart is [CHART] part of the `helm upgrade [RELEASE] [CHART]` command. | string | true |
-| repoURL | RepoURL chart repository URL where to locate the requested chart. | string | true |
+| repoURL | RepoURL is a chart repository URL where to locate the requested chart. | string | true |
 | version | Version is --version flag of the `helm upgrade` command. Specify the exact chart version to use. If this is not specified, the latest version is used. | string | false |
 | releaseName | ReleaseName is [RELEASE] part of the `helm upgrade [RELEASE] [CHART]` command. Empty is defaulted to chart. | string | false |
 | namespace | Namespace is --namespace flag of the `helm upgrade` command. A namespace to use for a release. | string | true |
