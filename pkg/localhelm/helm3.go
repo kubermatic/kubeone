@@ -33,6 +33,7 @@ import (
 	"helm.sh/helm/v3/pkg/registry"
 	"helm.sh/helm/v3/pkg/storage/driver"
 
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/kubeconfig"
 	"k8c.io/kubeone/pkg/state"
 
@@ -55,7 +56,7 @@ func Deploy(st *state.State) error {
 
 	tmpKubeConf, err := os.CreateTemp("", "konf*")
 	if err != nil {
-		return err
+		return fail.Runtime(err, "creating temp file for helm kubeconfig")
 	}
 	defer func() {
 		name := tmpKubeConf.Name()
@@ -65,19 +66,19 @@ func Deploy(st *state.State) error {
 
 	n, err := tmpKubeConf.Write(konfigBuf)
 	if err != nil {
-		return err
+		return fail.Runtime(err, "wring temp file for helm kubeconfig")
 	}
-	if int(n) != len(konfigBuf) {
-		return fmt.Errorf("incorrect number of bytes written to temp kubeconfig")
+	if n != len(konfigBuf) {
+		return fail.NewRuntimeError("incorrect number of bytes written to temp kubeconfig", "")
 	}
 
 	restClientGetter := &genericclioptions.ConfigFlags{
 		Namespace:  pointer.String("default"),
 		KubeConfig: pointer.String(tmpKubeConf.Name()),
 		WrapConfigFn: func(rc *rest.Config) *rest.Config {
-			err := kubeconfig.TunnelRestConfig(st, rc)
-			if err != nil {
-				panic(err)
+			tunnelErr := kubeconfig.TunnelRestConfig(st, rc)
+			if tunnelErr != nil {
+				panic(tunnelErr)
 			}
 
 			return rc
@@ -104,7 +105,7 @@ func Deploy(st *state.State) error {
 			if value.Inline != nil {
 				inlineValues, err := os.CreateTemp("", "inline-helm-values-*")
 				if err != nil {
-					return err
+					return fail.Runtime(err, "creating temp file for helm inline values")
 				}
 
 				inlineValuesName := inlineValues.Name()
@@ -115,7 +116,7 @@ func Deploy(st *state.State) error {
 				if err != nil {
 					inlineValues.Close()
 
-					return err
+					return fail.Runtime(err, "copying helm inline values to the temp file")
 				}
 
 				inlineValues.Close()
@@ -128,9 +129,12 @@ func Deploy(st *state.State) error {
 		}
 		providers := getter.All(helmSettings)
 		vals, err := valueOpts.MergeValues(providers)
+		if err != nil {
+			return fail.Runtime(err, "merging helm values")
+		}
 
-		if err := cfg.Init(restClientGetter, rh.Namespace, helmStorageDriver, st.Logger.Debugf); err != nil {
-			return err
+		if err = cfg.Init(restClientGetter, rh.Namespace, helmStorageDriver, st.Logger.Debugf); err != nil {
+			return fail.Runtime(err, "initializing helm action configuration")
 		}
 
 		histClient := helmaction.NewHistory(cfg)
@@ -145,9 +149,9 @@ func Deploy(st *state.State) error {
 			helmInstall.RepoURL = rh.RepoURL
 			helmInstall.Version = rh.Version
 
-			chartRequested, err := getChart(rh.Chart, helmInstall.ChartPathOptions, helmSettings, providers)
-			if err != nil {
-				return err
+			chartRequested, chartErr := getChart(rh.Chart, helmInstall.ChartPathOptions, helmSettings, providers)
+			if chartErr != nil {
+				return chartErr
 			}
 
 			_, err = helmInstall.RunWithContext(st.Context, chartRequested, vals)
@@ -155,23 +159,23 @@ func Deploy(st *state.State) error {
 			return err
 		case err == nil:
 			helmUpgrade := helmaction.NewUpgrade(cfg)
-			helmUpgrade.Namespace = rh.Namespace
-			helmUpgrade.RepoURL = rh.RepoURL
-			helmUpgrade.Version = rh.Version
 			helmUpgrade.Install = true
 			helmUpgrade.DependencyUpdate = true
 			helmUpgrade.MaxHistory = 5
+			helmUpgrade.Namespace = rh.Namespace
+			helmUpgrade.RepoURL = rh.RepoURL
+			helmUpgrade.Version = rh.Version
 
-			chartRequested, err := getChart(rh.Chart, helmUpgrade.ChartPathOptions, helmSettings, providers)
-			if err != nil {
-				return err
+			chartRequested, chartErr := getChart(rh.Chart, helmUpgrade.ChartPathOptions, helmSettings, providers)
+			if chartErr != nil {
+				return chartErr
 			}
 
 			_, err = helmUpgrade.RunWithContext(st.Context, rh.ReleaseName, chartRequested, vals)
 
 			return err
 		default:
-			return err
+			return fail.Runtime(err, "helm releases history")
 		}
 	}
 
@@ -186,7 +190,7 @@ func getChart(
 ) (*chart.Chart, error) {
 	chartPath, err := chartPathOpts.LocateChart(chartName, helmSettings)
 	if err != nil {
-		return nil, err
+		return nil, fail.Runtime(err, "locating helm chart")
 	}
 
 	return newChart(chartPath, chartName, providers, helmSettings)
@@ -195,13 +199,13 @@ func getChart(
 func newChart(chartPath string, chartName string, providers getter.Providers, settings *helmcli.EnvSettings) (*chart.Chart, error) {
 	chartRequested, err := loader.Load(chartPath)
 	if err != nil {
-		return nil, err
+		return nil, fail.Runtime(err, "loading helm chart")
 	}
 
 	switch chartRequested.Metadata.Type {
 	case "", "application":
 	default:
-		panic(fmt.Errorf("%s charts are not installable", chartRequested.Metadata.Type))
+		return nil, fail.ConfigValidation(fmt.Errorf("%s charts are not installable", chartRequested.Metadata.Type))
 	}
 
 	if req := chartRequested.Metadata.Dependencies; req != nil {
@@ -227,28 +231,25 @@ func dependencyUpdate(chartPath string, settings *helmcli.EnvSettings, providers
 		Debug:            settings.Debug,
 	}
 	if err := mgr.Update(); err != nil {
-		return nil, err
+		return nil, fail.Runtime(err, "getting helm chart dependencies")
 	}
 
 	chartRequested, err := loader.Load(chartPath)
 	if err != nil {
-		return nil, err
+		return nil, fail.Runtime(err, "loading helm chart after update")
 	}
 
 	return chartRequested, nil
 }
 
 func newActionConfiguration(debug bool) (*helmaction.Configuration, error) {
-	actionConfig := &helmaction.Configuration{}
 	registryClient, err := registry.NewClient(
 		registry.ClientOptDebug(debug),
 		registry.ClientOptEnableCache(true),
 		registry.ClientOptWriter(os.Stdout),
 	)
-	if err != nil {
-		return nil, err
-	}
-	actionConfig.RegistryClient = registryClient
 
-	return actionConfig, nil
+	return &helmaction.Configuration{
+		RegistryClient: registryClient,
+	}, fail.Runtime(err, "initializing new helm registry client")
 }
