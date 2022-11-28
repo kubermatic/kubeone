@@ -653,15 +653,15 @@ func ValidateHelmReleases(helmReleases []kubeoneapi.HelmRelease, fldPath *field.
 
 	for _, hr := range helmReleases {
 		if hr.Chart == "" {
-			allErrs = append(allErrs, field.Invalid(fldPath.Child("chart"), hr.Chart, "is a required field"))
+			allErrs = append(allErrs, field.Required(fldPath.Child("chart"), hr.Chart))
 		}
 
 		if hr.RepoURL == "" {
-			allErrs = append(allErrs, field.Invalid(fldPath.Child("repoURL"), hr.RepoURL, "is a required field"))
+			allErrs = append(allErrs, field.Required(fldPath.Child("repoURL"), hr.RepoURL))
 		}
 
 		if hr.Namespace == "" {
-			allErrs = append(allErrs, field.Invalid(fldPath.Child("namespace"), hr.Namespace, "is a required field"))
+			allErrs = append(allErrs, field.Required(fldPath.Child("namespace"), hr.Namespace))
 		}
 
 		for idx, helmValues := range hr.Values {
