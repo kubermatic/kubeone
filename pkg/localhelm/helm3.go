@@ -98,8 +98,8 @@ func Deploy(st *state.State) error {
 
 		var valueFiles []string
 		for _, value := range rh.Values {
-			if value.File != "" {
-				valueFiles = append(valueFiles, value.File)
+			if value.ValuesFile != "" {
+				valueFiles = append(valueFiles, value.ValuesFile)
 			}
 
 			if value.Inline != nil {

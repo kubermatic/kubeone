@@ -1362,7 +1362,7 @@ func Convert_kubeone_HelmRelease_To_v1beta2_HelmRelease(in *kubeone.HelmRelease,
 }
 
 func autoConvert_v1beta2_HelmValues_To_kubeone_HelmValues(in *HelmValues, out *kubeone.HelmValues, s conversion.Scope) error {
-	out.File = in.File
+	out.ValuesFile = in.ValuesFile
 	out.Inline = *(*json.RawMessage)(unsafe.Pointer(&in.Inline))
 	return nil
 }
@@ -1373,7 +1373,7 @@ func Convert_v1beta2_HelmValues_To_kubeone_HelmValues(in *HelmValues, out *kubeo
 }
 
 func autoConvert_kubeone_HelmValues_To_v1beta2_HelmValues(in *kubeone.HelmValues, out *HelmValues, s conversion.Scope) error {
-	out.File = in.File
+	out.ValuesFile = in.ValuesFile
 	out.Inline = *(*json.RawMessage)(unsafe.Pointer(&in.Inline))
 	return nil
 }

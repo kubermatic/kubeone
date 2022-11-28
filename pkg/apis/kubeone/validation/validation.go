@@ -667,9 +667,9 @@ func ValidateHelmReleases(helmReleases []kubeoneapi.HelmRelease, fldPath *field.
 		for idx, helmValues := range hr.Values {
 			fldIdentity := fldPath.Child("values").Index(idx)
 
-			if helmValues.File != "" {
+			if helmValues.ValuesFile != "" {
 				err := func() error {
-					valFile, err := os.Open(helmValues.File)
+					valFile, err := os.Open(helmValues.ValuesFile)
 					if valFile != nil {
 						defer valFile.Close()
 					}
@@ -678,7 +678,7 @@ func ValidateHelmReleases(helmReleases []kubeoneapi.HelmRelease, fldPath *field.
 				}()
 				if err != nil {
 					allErrs = append(allErrs,
-						field.Invalid(fldIdentity.Child("file"), hr.Values[idx].File, fmt.Sprintf("file is invalid: %v", err)),
+						field.Invalid(fldIdentity.Child("valuesFile"), hr.Values[idx].ValuesFile, fmt.Sprintf("file is invalid: %v", err)),
 					)
 				}
 			}
@@ -688,7 +688,7 @@ func ValidateHelmReleases(helmReleases []kubeoneapi.HelmRelease, fldPath *field.
 				err := yaml.Unmarshal(helmValues.Inline, &obj)
 				if err != nil {
 					allErrs = append(allErrs,
-						field.Invalid(fldIdentity.Child("inline"), hr.Values[idx].File, fmt.Sprintf("inline is not a valid YAML: %v", err)),
+						field.Invalid(fldIdentity.Child("inline"), hr.Values[idx].Inline, fmt.Sprintf("inline is not a valid YAML: %v", err)),
 					)
 				}
 			}

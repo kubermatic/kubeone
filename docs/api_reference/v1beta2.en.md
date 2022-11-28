@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2022-11-24T19:11:38+02:00
+date = 2022-11-28T20:04:59+02:00
 weight = 11
 +++
 ## v1beta2
@@ -405,23 +405,23 @@ GCESpec defines the GCE cloud provider
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
-| chart |  | string | true |
-| repoURL |  | string | true |
-| version |  | string | false |
-| releaseName |  | string | false |
-| namespace |  | string | true |
-| values |  | [][HelmValues](#helmvalues) | false |
+| chart | Chart is [CHART] part of the `helm upgrade [RELEASE] [CHART]` command. | string | true |
+| repoURL | RepoURL chart repository URL where to locate the requested chart. | string | true |
+| version | Version is --version flag of the `helm upgrade` command. Specify the exact chart version to use. If this is not specified, the latest version is used. | string | false |
+| releaseName | ReleaseName is [RELEASE] part of the `helm upgrade [RELEASE] [CHART]` command. Empty is defaulted to chart. | string | false |
+| namespace | Namespace is --namespace flag of the `helm upgrade` command. A namespace to use for a release. | string | true |
+| values | Values provide optional overrides of the helm values. | [][HelmValues](#helmvalues) | false |
 
 [Back to Group](#v1beta2)
 
 ### HelmValues
 
-
+HelmValues configure inputs to `helm upgrade --install` command analog.
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
-| file |  | string | false |
-| inline |  | [json.RawMessage](https://golang.org/pkg/encoding/json/#RawMessage) | false |
+| valuesFile | ValuesFile is an optional path on the local file system containing helm values to override. An analog of --values flag of the `helm upgrade` command. | string | false |
+| inline | Inline is optionally used as a convinient way to provide short user input overrides to the helm upgrade process. Is written to a temporary file and used as an analog of the `helm upgrade --values=/tmp/inline-helm-values-XXX` command. | [json.RawMessage](https://golang.org/pkg/encoding/json/#RawMessage) | false |
 
 [Back to Group](#v1beta2)
 
@@ -518,7 +518,7 @@ KubeOneCluster is KubeOne Cluster API Schema
 | caBundle | CABundle PEM encoded global CA | string | false |
 | features | Features enables and configures additional cluster features. | [Features](#features) | false |
 | addons | Addons are used to deploy additional manifests. | *[Addons](#addons) | false |
-| helmReleases | HelmReleases list of instructions of how to deploy helm charts | [][HelmRelease](#helmrelease) | false |
+| helmReleases | HelmReleases configure helm charts to reconcile. For each HelmRelease it will run analog of: `helm upgrade --namespace <NAMESPACE> --install --create-namespace <RELEASE> <CHART> [--values=values-override.yaml]` | [][HelmRelease](#helmrelease) | false |
 | systemPackages | SystemPackages configure kubeone behaviour regarding OS packages. | *[SystemPackages](#systempackages) | false |
 | registryConfiguration | RegistryConfiguration configures how Docker images are pulled from an image registry | *[RegistryConfiguration](#registryconfiguration) | false |
 | loggingConfig | LoggingConfig configures the Kubelet's log rotation | [LoggingConfig](#loggingconfig) | false |
