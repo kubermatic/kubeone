@@ -145,6 +145,7 @@ func Deploy(st *state.State) error {
 			helmInstall := helmaction.NewInstall(cfg)
 			helmInstall.DependencyUpdate = true
 			helmInstall.CreateNamespace = true
+			helmInstall.Namespace = rh.Namespace
 			helmInstall.ReleaseName = rh.ReleaseName
 			helmInstall.RepoURL = rh.RepoURL
 			helmInstall.Version = rh.Version
