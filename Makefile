@@ -12,12 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-SHELL := bash
-.ONESHELL:
-.DELETE_ON_ERROR:
-.SHELLFLAGS := -eu -o pipefail -c
-MAKEFLAGS += --warn-undefined-variables
-MAKEFLAGS += --no-builtin-rules
+# follow up on: https://tech.davis-hansson.com/p/make/
+SHELL := bash							# do not rely on /bin/sh, it can be a symlink to anything (sh/bash/dash/busybox/etc).
+.ONESHELL:								# ensures each Make task is ran as one single shell session, rather than one new shell per line.
+.DELETE_ON_ERROR:						# if a Make rule fails, it’s target file is deleted.
+.SHELLFLAGS := -eu -o pipefail -c		# pass strict shell flags, to fail early
+MAKEFLAGS += --warn-undefined-variables	# be loud about missing make variables
+MAKEFLAGS += --no-builtin-rules			# disable magic rules
 
 export GOPATH?=$(shell go env GOPATH)
 export CGO_ENABLED=0
