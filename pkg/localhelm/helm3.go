@@ -54,7 +54,7 @@ func Deploy(st *state.State) error {
 		return err
 	}
 
-	tmpKubeConf, err := os.CreateTemp("", "konf*")
+	tmpKubeConf, err := os.CreateTemp("", "kubeone-kubeconfig-*")
 	if err != nil {
 		return fail.Runtime(err, "creating temp file for helm kubeconfig")
 	}
