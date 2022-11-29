@@ -21,6 +21,7 @@ import (
 	"crypto/x509"
 	"fmt"
 	"net"
+	"os"
 	"reflect"
 	"strings"
 
@@ -33,6 +34,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/validation"
 	"k8s.io/apimachinery/pkg/util/validation/field"
 	netutils "k8s.io/utils/net"
+	"sigs.k8s.io/yaml"
 )
 
 const (
@@ -75,6 +77,7 @@ func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 	allErrs = append(allErrs, ValidateCABundle(c.CABundle, field.NewPath("caBundle"))...)
 	allErrs = append(allErrs, ValidateFeatures(c.Features, c.Versions, field.NewPath("features"))...)
 	allErrs = append(allErrs, ValidateAddons(c.Addons, field.NewPath("addons"))...)
+	allErrs = append(allErrs, ValidateHelmReleases(c.HelmReleases, field.NewPath("helmReleases"))...)
 	allErrs = append(allErrs, ValidateRegistryConfiguration(c.RegistryConfiguration, field.NewPath("registryConfiguration"))...)
 	allErrs = append(allErrs,
 		ValidateContainerRuntimeVSRegistryConfiguration(
@@ -639,6 +642,56 @@ func ValidateAddons(o *kubeoneapi.Addons, fldPath *field.Path) field.ErrorList {
 			allErrs = append(allErrs, field.Invalid(fldPath, "", "failed to read embedded addons directory"))
 		} else if !embeddedAddonsOnly {
 			allErrs = append(allErrs, field.Invalid(fldPath.Child("path"), "", ".addons.path must be specified when using non-embedded addon(s)"))
+		}
+	}
+
+	return allErrs
+}
+
+func ValidateHelmReleases(helmReleases []kubeoneapi.HelmRelease, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	for _, hr := range helmReleases {
+		if hr.Chart == "" {
+			allErrs = append(allErrs, field.Required(fldPath.Child("chart"), hr.Chart))
+		}
+
+		if hr.RepoURL == "" {
+			allErrs = append(allErrs, field.Required(fldPath.Child("repoURL"), hr.RepoURL))
+		}
+
+		if hr.Namespace == "" {
+			allErrs = append(allErrs, field.Required(fldPath.Child("namespace"), hr.Namespace))
+		}
+
+		for idx, helmValues := range hr.Values {
+			fldIdentity := fldPath.Child("values").Index(idx)
+
+			if helmValues.ValuesFile != "" {
+				err := func() error {
+					valFile, err := os.Open(helmValues.ValuesFile)
+					if valFile != nil {
+						defer valFile.Close()
+					}
+
+					return err
+				}()
+				if err != nil {
+					allErrs = append(allErrs,
+						field.Invalid(fldIdentity.Child("valuesFile"), hr.Values[idx].ValuesFile, fmt.Sprintf("file is invalid: %v", err)),
+					)
+				}
+			}
+
+			if helmValues.Inline != nil {
+				obj := map[string]any{}
+				err := yaml.Unmarshal(helmValues.Inline, &obj)
+				if err != nil {
+					allErrs = append(allErrs,
+						field.Invalid(fldIdentity.Child("inline"), hr.Values[idx].Inline, fmt.Sprintf("inline is not a valid YAML: %v", err)),
+					)
+				}
+			}
 		}
 	}
 

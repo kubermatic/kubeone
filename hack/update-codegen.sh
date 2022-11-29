@@ -27,8 +27,6 @@ for input in examples/terraform/*/README.md.in; do
   $TERRAFORM_DOCS --lockfile=false md "$dir" >> "$dir/$target"
 done
 
-make gogenerate
-
 export GOFLAGS=-mod=vendor
 
 # The code generation script takes the following arguments:
@@ -42,3 +40,5 @@ bash vendor/k8s.io/code-generator/generate-internal-groups.sh \
   "deepcopy,conversion,defaulter" "" ./pkg/apis ./pkg/apis \
   "kubeone:v1beta1,v1beta2" \
   --go-header-file hack/boilerplate/boilerplate.generatego.txt
+
+make gogenerate

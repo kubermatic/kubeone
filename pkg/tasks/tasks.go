@@ -24,6 +24,7 @@ import (
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/features"
 	"k8c.io/kubeone/pkg/kubeconfig"
+	"k8c.io/kubeone/pkg/localhelm"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/externalccm"
 	"k8c.io/kubeone/pkg/templates/machinecontroller"
@@ -256,10 +257,8 @@ func WithResources(t Tasks) Tasks {
 				Description: "ensure embedded addons",
 			},
 			{
-				Fn:          ensureCNI,
-				Operation:   "installing CNI plugin",
-				Description: "ensure CNI",
-				Predicate:   func(s *state.State) bool { return s.Cluster.ClusterNetwork.CNI.External == nil },
+				Fn:        localhelm.Deploy,
+				Operation: "releasing core helm charts",
 			},
 			{
 				Fn:          ensureCABundleConfigMap,

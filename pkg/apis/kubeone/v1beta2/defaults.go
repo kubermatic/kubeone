@@ -65,6 +65,7 @@ func SetDefaults_KubeOneCluster(obj *KubeOneCluster) {
 	SetDefaults_Proxy(obj)
 	SetDefaults_MachineController(obj)
 	SetDefaults_OperatingSystemManager(obj)
+	SetDefaults_HelmReleases(obj)
 	SetDefaults_SystemPackages(obj)
 	SetDefaults_Features(obj)
 }
@@ -230,6 +231,14 @@ func SetDefaults_OperatingSystemManager(obj *KubeOneCluster) {
 	if obj.OperatingSystemManager == nil {
 		obj.OperatingSystemManager = &OperatingSystemManagerConfig{
 			Deploy: obj.MachineController.Deploy,
+		}
+	}
+}
+
+func SetDefaults_HelmReleases(obj *KubeOneCluster) {
+	for idx, hr := range obj.HelmReleases {
+		if hr.ReleaseName == "" {
+			obj.HelmReleases[idx].ReleaseName = hr.Chart
 		}
 	}
 }

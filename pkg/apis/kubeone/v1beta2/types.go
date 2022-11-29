@@ -74,6 +74,10 @@ type KubeOneCluster struct {
 	// Addons are used to deploy additional manifests.
 	Addons *Addons `json:"addons,omitempty"`
 
+	// HelmReleases configure helm charts to reconcile. For each HelmRelease it will run analog of: `helm upgrade
+	// --namespace <NAMESPACE> --install --create-namespace <RELEASE> <CHART> [--values=values-override.yaml]`
+	HelmReleases []HelmRelease `json:"helmReleases,omitempty"`
+
 	// SystemPackages configure kubeone behaviour regarding OS packages.
 	SystemPackages *SystemPackages `json:"systemPackages,omitempty"`
 
@@ -82,6 +86,39 @@ type KubeOneCluster struct {
 
 	// LoggingConfig configures the Kubelet's log rotation
 	LoggingConfig LoggingConfig `json:"loggingConfig,omitempty"`
+}
+
+type HelmRelease struct {
+	// Chart is [CHART] part of the `helm upgrade [RELEASE] [CHART]` command.
+	Chart string `json:"chart"`
+
+	// RepoURL is a chart repository URL where to locate the requested chart.
+	RepoURL string `json:"repoURL"`
+
+	// Version is --version flag of the `helm upgrade` command. Specify the exact chart version to use. If this is not
+	// specified, the latest version is used.
+	Version string `json:"version,omitempty"`
+
+	// ReleaseName is [RELEASE] part of the `helm upgrade [RELEASE] [CHART]` command. Empty is defaulted to chart.
+	ReleaseName string `json:"releaseName,omitempty"`
+
+	// Namespace is --namespace flag of the `helm upgrade` command. A namespace to use for a release.
+	Namespace string `json:"namespace"`
+
+	// Values provide optional overrides of the helm values.
+	Values []HelmValues `json:"values,omitempty"`
+}
+
+// HelmValues configure inputs to `helm upgrade --install` command analog.
+type HelmValues struct {
+	// ValuesFile is an optional path on the local file system containing helm values to override. An analog of --values
+	// flag of the `helm upgrade` command.
+	ValuesFile string `json:"valuesFile,omitempty"`
+
+	// Inline is optionally used as a convinient way to provide short user input overrides to the helm upgrade process.
+	// Is written to a temporary file and used as an analog of the `helm upgrade --values=/tmp/inline-helm-values-XXX`
+	// command.
+	Inline json.RawMessage `json:"inline,omitempty"`
 }
 
 // LoggingConfig configures the Kubelet's log rotation

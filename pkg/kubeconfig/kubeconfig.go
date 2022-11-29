@@ -64,7 +64,21 @@ func BuildKubernetesClientset(s *state.State) error {
 		return fail.KubeClient(err, "building config from kubeconfig")
 	}
 
-	s.RESTConfig.WarningHandler = rest.NewWarningWriter(os.Stderr, rest.WarningWriterOptions{
+	err = TunnelRestConfig(s, s.RESTConfig)
+	if err != nil {
+		return err
+	}
+
+	s.DynamicClient, err = client.New(s.RESTConfig, client.Options{})
+	if err != nil {
+		return fail.KubeClient(err, "building dynamic kubernetes client")
+	}
+
+	return nil
+}
+
+func TunnelRestConfig(s *state.State, rc *rest.Config) error {
+	rc.WarningHandler = rest.NewWarningWriter(os.Stderr, rest.WarningWriterOptions{
 		Deduplicate: true,
 	})
 
@@ -73,12 +87,7 @@ func BuildKubernetesClientset(s *state.State) error {
 		return fail.KubeClient(err, "getting SSH tunnel")
 	}
 
-	s.RESTConfig.Dial = tunn.TunnelTo
-
-	s.DynamicClient, err = client.New(s.RESTConfig, client.Options{})
-	if err != nil {
-		return fail.KubeClient(err, "building dynamic kubernetes client")
-	}
+	rc.Dial = tunn.TunnelTo
 
 	return nil
 }

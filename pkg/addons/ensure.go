@@ -80,8 +80,9 @@ type addonAction struct {
 	supportFn func() error
 }
 
-//nolint:nakedret
-func collectAddons(s *state.State) (addonsToDeploy []addonAction) {
+func collectAddons(s *state.State) []addonAction {
+	var addonsToDeploy []addonAction
+
 	if *s.Cluster.Features.CoreDNS.DeployPodDisruptionBudget {
 		addonsToDeploy = append(addonsToDeploy, addonAction{
 			name: resources.AddonCoreDNSPDB,
@@ -142,7 +143,7 @@ func collectAddons(s *state.State) (addonsToDeploy []addonAction) {
 		addonsToDeploy = ensureCCMAddons(s, addonsToDeploy)
 	}
 
-	return
+	return addonsToDeploy
 }
 
 func cleanupAddons(s *state.State) error {
