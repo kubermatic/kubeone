@@ -156,8 +156,9 @@ func Deploy(st *state.State) error {
 			}
 
 			_, err = helmInstall.RunWithContext(st.Context, chartRequested, vals)
-
-			return err
+			if err != nil {
+				return fail.Runtime(err, "installing helm release %q from chart %q", rh.Chart, rh.ReleaseName)
+			}
 		case err == nil:
 			helmUpgrade := helmaction.NewUpgrade(cfg)
 			helmUpgrade.Install = true
@@ -173,8 +174,9 @@ func Deploy(st *state.State) error {
 			}
 
 			_, err = helmUpgrade.RunWithContext(st.Context, rh.ReleaseName, chartRequested, vals)
-
-			return err
+			if err != nil {
+				return fail.Runtime(err, "upgrading helm release %q from chart %q", rh.Chart, rh.ReleaseName)
+			}
 		default:
 			return fail.Runtime(err, "helm releases history")
 		}
