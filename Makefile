@@ -32,13 +32,21 @@ MAKEFLAGS += --warn-undefined-variables
 # disable magic rules
 MAKEFLAGS += --no-builtin-rules
 
+detected_OS := $(shell sh -c 'uname 2>/dev/null || echo Unknown')
+
 export GOPATH?=$(shell go env GOPATH)
 export CGO_ENABLED=0
 export GOPROXY?=https://proxy.golang.org
 export GO111MODULE=on
 export GOFLAGS?=-mod=readonly -trimpath
 
-BUILD_DATE=$(shell if hash gdate 2>/dev/null; then gdate --rfc-3339=seconds | sed 's/ /T/'; else date --rfc-3339=seconds | sed 's/ /T/'; fi)
+ifeq ($(detected_OS),Darwin)
+    BUILD_DATE=$(shell date -Iseconds)
+endif
+ifeq ($(detected_OS),Linux)
+    BUILD_DATE=$(shell if hash gdate 2>/dev/null; then gdate --rfc-3339=seconds | sed 's/ /T/'; else date --rfc-3339=seconds | sed 's/ /T/'; fi)
+endif
+
 GITCOMMIT=$(shell git log -1 --pretty=format:"%H")
 GITTAG=$(shell git describe --tags --always)
 DEFAULT_STABLE=$(shell curl -SsL https://dl.k8s.io/release/stable-1.25.txt)
