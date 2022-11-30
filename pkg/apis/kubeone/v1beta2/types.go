@@ -115,7 +115,7 @@ type HelmValues struct {
 	// flag of the `helm upgrade` command.
 	ValuesFile string `json:"valuesFile,omitempty"`
 
-	// Inline is optionally used as a convinient way to provide short user input overrides to the helm upgrade process.
+	// Inline is optionally used as a convenient way to provide short user input overrides to the helm upgrade process.
 	// Is written to a temporary file and used as an analog of the `helm upgrade --values=/tmp/inline-helm-values-XXX`
 	// command.
 	Inline json.RawMessage `json:"inline,omitempty"`

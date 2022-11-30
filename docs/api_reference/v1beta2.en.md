@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2022-11-29T01:20:56+02:00
+date = 2022-11-30T09:29:15+01:00
 weight = 11
 +++
 ## v1beta2
@@ -421,7 +421,7 @@ HelmValues configure inputs to `helm upgrade --install` command analog.
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | valuesFile | ValuesFile is an optional path on the local file system containing helm values to override. An analog of --values flag of the `helm upgrade` command. | string | false |
-| inline | Inline is optionally used as a convinient way to provide short user input overrides to the helm upgrade process. Is written to a temporary file and used as an analog of the `helm upgrade --values=/tmp/inline-helm-values-XXX` command. | [json.RawMessage](https://golang.org/pkg/encoding/json/#RawMessage) | false |
+| inline | Inline is optionally used as a convenient way to provide short user input overrides to the helm upgrade process. Is written to a temporary file and used as an analog of the `helm upgrade --values=/tmp/inline-helm-values-XXX` command. | [json.RawMessage](https://golang.org/pkg/encoding/json/#RawMessage) | false |
 
 [Back to Group](#v1beta2)
 
