@@ -31,6 +31,7 @@ import (
 	"helm.sh/helm/v3/pkg/downloader"
 	"helm.sh/helm/v3/pkg/getter"
 	"helm.sh/helm/v3/pkg/registry"
+	"helm.sh/helm/v3/pkg/release"
 	"helm.sh/helm/v3/pkg/storage/driver"
 
 	"k8c.io/kubeone/pkg/fail"
@@ -39,10 +40,14 @@ import (
 	"k8c.io/kubeone/pkg/state"
 
 	"k8s.io/cli-runtime/pkg/genericclioptions"
+	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 )
 
-const helmStorageDriver = "secret"
+const (
+	helmStorageDriver = "secret"
+	releasedByKubeone = "released-by-kubeone"
+)
 
 func Deploy(st *state.State) error {
 	if len(st.Cluster.HelmReleases) == 0 {
@@ -93,6 +98,27 @@ func Deploy(st *state.State) error {
 		return err
 	}
 
+	kubeClinet, err := kubernetes.NewForConfig(st.RESTConfig)
+	if err != nil {
+		return fail.Config(err, "init new kubernetes client")
+	}
+
+	// all namespaces
+	releasesToUninstall, err := driver.NewSecrets(kubeClinet.CoreV1().Secrets("")).List(func(rel *release.Release) bool {
+		for _, hr := range st.Cluster.HelmReleases {
+			if rel.Name == hr.ReleaseName && rel.Namespace == hr.Namespace && rel.Chart.Name() == hr.Chart {
+				return false
+			}
+		}
+
+		_, ok := rel.Labels[releasedByKubeone]
+
+		return ok
+	})
+	if err != nil {
+		return err
+	}
+
 	for _, rh := range st.Cluster.HelmReleases {
 		st.Logger.Infof("Deploying helm chart %s as release %s", rh.Chart, rh.ReleaseName)
 
@@ -103,9 +129,9 @@ func Deploy(st *state.State) error {
 			}
 
 			if value.Inline != nil {
-				inlineValues, err := os.CreateTemp("", "inline-helm-values-*")
-				if err != nil {
-					return fail.Runtime(err, "creating temp file for helm inline values")
+				inlineValues, errTmp := os.CreateTemp("", "inline-helm-values-*")
+				if errTmp != nil {
+					return fail.Runtime(errTmp, "creating temp file for helm inline values")
 				}
 
 				inlineValuesName := inlineValues.Name()
@@ -128,9 +154,9 @@ func Deploy(st *state.State) error {
 			ValueFiles: valueFiles,
 		}
 		providers := getter.All(helmSettings)
-		vals, err := valueOpts.MergeValues(providers)
-		if err != nil {
-			return fail.Runtime(err, "merging helm values")
+		vals, errMerge := valueOpts.MergeValues(providers)
+		if errMerge != nil {
+			return fail.Runtime(errMerge, "merging helm values")
 		}
 
 		if err = cfg.Init(restClientGetter, rh.Namespace, helmStorageDriver, st.Logger.Debugf); err != nil {
@@ -155,9 +181,14 @@ func Deploy(st *state.State) error {
 				return chartErr
 			}
 
-			_, err = helmInstall.RunWithContext(st.Context, chartRequested, vals)
-			if err != nil {
-				return fail.Runtime(err, "installing helm release %q from chart %q", rh.Chart, rh.ReleaseName)
+			rel, errInstall := helmInstall.RunWithContext(st.Context, chartRequested, vals)
+			if errInstall != nil {
+				return fail.Runtime(errInstall, "installing helm release %q from chart %q", rh.Chart, rh.ReleaseName)
+			}
+
+			rel.Labels[releasedByKubeone] = "yes"
+			if err = driver.NewSecrets(kubeClinet.CoreV1().Secrets(rh.Namespace)).Update(rel.Name, rel); err != nil {
+				return fail.Runtime(err, "adding kubeone labels to helm release %s/%s", rh.Namespace, rh.ReleaseName)
 			}
 		case err == nil:
 			helmUpgrade := helmaction.NewUpgrade(cfg)
@@ -173,12 +204,28 @@ func Deploy(st *state.State) error {
 				return chartErr
 			}
 
-			_, err = helmUpgrade.RunWithContext(st.Context, rh.ReleaseName, chartRequested, vals)
-			if err != nil {
-				return fail.Runtime(err, "upgrading helm release %q from chart %q", rh.Chart, rh.ReleaseName)
+			rel, errUpgrade := helmUpgrade.RunWithContext(st.Context, rh.ReleaseName, chartRequested, vals)
+			if errUpgrade != nil {
+				return fail.Runtime(errUpgrade, "upgrading helm release %q from chart %q", rh.Chart, rh.ReleaseName)
+			}
+
+			rel.Labels[releasedByKubeone] = "yes"
+			if err = driver.NewSecrets(kubeClinet.CoreV1().Secrets(rh.Namespace)).Update(rel.Name, rel); err != nil {
+				return fail.Runtime(err, "adding kubeone labels to helm release %s/%s", rh.Namespace, rh.ReleaseName)
 			}
 		default:
 			return fail.Runtime(err, "helm releases history")
+		}
+	}
+
+	for _, rel := range releasesToUninstall {
+		if err = cfg.Init(restClientGetter, rel.Namespace, helmStorageDriver, st.Logger.Debugf); err != nil {
+			return fail.Runtime(err, "initializing helm action configuration")
+		}
+
+		helmUninstall := helmaction.NewUninstall(cfg)
+		if _, err = helmUninstall.Run(rel.Name); err != nil {
+			return fail.Runtime(err, "uninstalling helm release %s/%s", rel.Namespace, rel.Name)
 		}
 	}
 
