@@ -52,7 +52,7 @@ import (
 const (
 	helmStorageDriver = "secret"
 	helmStorageType   = "sh.helm.release.v1"
-	releasedByKubeone = "releasedByKubeone"
+	releasedByKubeone = "kubeone.k8c.io/released-by-kubeone"
 )
 
 func Deploy(st *state.State) error {
@@ -120,7 +120,7 @@ func Deploy(st *state.State) error {
 
 		_, found := rel.Labels[releasedByKubeone]
 		if found {
-			st.Logger.Debugf("queue %s/%s v%d helm release to uninstall", rel.Namespace, rel.Name, rel.Version)
+			st.Logger.Infof("queue %s/%s v%d helm release to uninstall", rel.Namespace, rel.Name, rel.Version)
 		}
 
 		return found
@@ -201,7 +201,7 @@ func Deploy(st *state.State) error {
 			return fail.Runtime(err, "uninstalling helm release %s/%s", rel.Namespace, rel.Name)
 		}
 
-		st.Logger.Debugf("uninstalling helm release %s/%s: %s", rel.Namespace, rel.Name, resp.Info)
+		st.Logger.Infof("uninstalling helm release %s/%s: %s", rel.Namespace, rel.Name, resp.Info)
 	}
 
 	return nil
@@ -293,7 +293,7 @@ func addReleaseSecretLabels(ctx context.Context, releaseNamespacedName ctrlrunti
 	if releaseSecret.Labels == nil {
 		releaseSecret.Labels = map[string]string{}
 	}
-	releaseSecret.Labels[releasedByKubeone] = "yes"
+	releaseSecret.Labels[releasedByKubeone] = ""
 	err := dynclient.Patch(ctx, &releaseSecret, ctrlruntimeclient.MergeFrom(releaseSecretOld))
 
 	return fail.Runtime(err, "patching labels of helm release secret %s", releaseNamespacedName)
