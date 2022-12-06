@@ -21,9 +21,10 @@ import (
 
 	"github.com/Masterminds/semver/v3"
 
+	"k8c.io/kubeone/pkg/pointer"
+
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/utils/pointer"
 )
 
 const (
@@ -256,10 +257,10 @@ func SetDefaults_Features(obj *KubeOneCluster) {
 		obj.Features.CoreDNS = &CoreDNS{}
 	}
 	if obj.Features.CoreDNS.Replicas == nil {
-		obj.Features.CoreDNS.Replicas = pointer.Int32(2)
+		obj.Features.CoreDNS.Replicas = pointer.New(int32(2))
 	}
 	if obj.Features.CoreDNS.DeployPodDisruptionBudget == nil {
-		obj.Features.CoreDNS.DeployPodDisruptionBudget = pointer.Bool(true)
+		obj.Features.CoreDNS.DeployPodDisruptionBudget = pointer.New(true)
 	}
 
 	if obj.Features.MetricsServer == nil {

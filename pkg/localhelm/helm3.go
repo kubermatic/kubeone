@@ -35,11 +35,11 @@ import (
 
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/kubeconfig"
+	"k8c.io/kubeone/pkg/pointer"
 	"k8c.io/kubeone/pkg/state"
 
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/client-go/rest"
-	"k8s.io/utils/pointer"
 )
 
 const helmStorageDriver = "secret"
@@ -73,8 +73,8 @@ func Deploy(st *state.State) error {
 	}
 
 	restClientGetter := &genericclioptions.ConfigFlags{
-		Namespace:  pointer.String("default"),
-		KubeConfig: pointer.String(tmpKubeConf.Name()),
+		Namespace:  pointer.New("default"),
+		KubeConfig: pointer.New(tmpKubeConf.Name()),
 		WrapConfigFn: func(rc *rest.Config) *rest.Config {
 			tunnelErr := kubeconfig.TunnelRestConfig(st, rc)
 			if tunnelErr != nil {
