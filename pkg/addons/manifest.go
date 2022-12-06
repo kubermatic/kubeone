@@ -35,6 +35,7 @@ import (
 
 	"k8c.io/kubeone/pkg/certificate/cabundle"
 	"k8c.io/kubeone/pkg/fail"
+	"k8c.io/kubeone/pkg/pointer"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/resources"
 
@@ -45,7 +46,6 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/sets"
 	kyaml "k8s.io/apimachinery/pkg/util/yaml"
-	"k8s.io/utils/pointer"
 	"sigs.k8s.io/yaml"
 )
 
@@ -367,7 +367,7 @@ func addSecretCSIVolume(docs []runtime.RawExtension, secretProviderClassName str
 		VolumeSource: corev1.VolumeSource{
 			CSI: &corev1.CSIVolumeSource{
 				Driver:   "secrets-store.csi.k8s.io",
-				ReadOnly: pointer.Bool(true),
+				ReadOnly: pointer.New(true),
 				VolumeAttributes: map[string]string{
 					"secretProviderClass": secretProviderClassName,
 				},

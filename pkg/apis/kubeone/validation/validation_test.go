@@ -22,10 +22,10 @@ import (
 	"github.com/MakeNowJust/heredoc/v2"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/pointer"
 	"k8c.io/kubeone/pkg/templates/resources"
 
 	"k8s.io/apimachinery/pkg/util/validation/field"
-	"k8s.io/utils/pointer"
 )
 
 func TestValidateKubeOneCluster(t *testing.T) {
@@ -73,15 +73,15 @@ func TestValidateKubeOneCluster(t *testing.T) {
 				DynamicWorkers: []kubeoneapi.DynamicWorkerConfig{
 					{
 						Name:     "test-1",
-						Replicas: pointer.Int(3),
+						Replicas: pointer.New(3),
 					},
 					{
 						Name:     "test-2",
-						Replicas: pointer.Int(5),
+						Replicas: pointer.New(5),
 					},
 					{
 						Name:     "test-3",
-						Replicas: pointer.Int(0),
+						Replicas: pointer.New(0),
 					},
 				},
 			},
@@ -126,15 +126,15 @@ func TestValidateKubeOneCluster(t *testing.T) {
 				DynamicWorkers: []kubeoneapi.DynamicWorkerConfig{
 					{
 						Name:     "test-1",
-						Replicas: pointer.Int(3),
+						Replicas: pointer.New(3),
 					},
 					{
 						Name:     "test-2",
-						Replicas: pointer.Int(5),
+						Replicas: pointer.New(5),
 					},
 					{
 						Name:     "test-3",
-						Replicas: pointer.Int(0),
+						Replicas: pointer.New(0),
 					},
 				},
 			},
@@ -179,15 +179,15 @@ func TestValidateKubeOneCluster(t *testing.T) {
 				DynamicWorkers: []kubeoneapi.DynamicWorkerConfig{
 					{
 						Name:     "test-1",
-						Replicas: pointer.Int(3),
+						Replicas: pointer.New(3),
 					},
 					{
 						Name:     "test-2",
-						Replicas: pointer.Int(5),
+						Replicas: pointer.New(5),
 					},
 					{
 						Name:     "test-3",
-						Replicas: pointer.Int(0),
+						Replicas: pointer.New(0),
 					},
 				},
 			},
@@ -232,15 +232,15 @@ func TestValidateKubeOneCluster(t *testing.T) {
 				DynamicWorkers: []kubeoneapi.DynamicWorkerConfig{
 					{
 						Name:     "test-1",
-						Replicas: pointer.Int(3),
+						Replicas: pointer.New(3),
 					},
 					{
 						Name:     "test-2",
-						Replicas: pointer.Int(5),
+						Replicas: pointer.New(5),
 					},
 					{
 						Name:     "test-3",
-						Replicas: pointer.Int(0),
+						Replicas: pointer.New(0),
 					},
 				},
 			},
@@ -1297,15 +1297,15 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
 				{
 					Name:     "test-1",
-					Replicas: pointer.Int(3),
+					Replicas: pointer.New(3),
 				},
 				{
 					Name:     "test-2",
-					Replicas: pointer.Int(5),
+					Replicas: pointer.New(5),
 				},
 				{
 					Name:     "test-3",
-					Replicas: pointer.Int(0),
+					Replicas: pointer.New(0),
 				},
 			},
 			expectedError: false,
@@ -1320,7 +1320,7 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
 				{
 					Name:     "test-1",
-					Replicas: pointer.Int(3),
+					Replicas: pointer.New(3),
 				},
 				{
 					Name: "test-2",
@@ -1332,7 +1332,7 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 			name: "invalid worker config (no name given)",
 			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
 				{
-					Replicas: pointer.Int(3),
+					Replicas: pointer.New(3),
 				},
 			},
 			expectedError: true,
@@ -1342,7 +1342,7 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
 				{
 					Name:     "test-1",
-					Replicas: pointer.Int(3),
+					Replicas: pointer.New(3),
 					Config: kubeoneapi.ProviderSpec{
 						MachineAnnotations: map[string]string{"test": "test"},
 					},
@@ -1355,7 +1355,7 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
 				{
 					Name:     "test-1",
-					Replicas: pointer.Int(3),
+					Replicas: pointer.New(3),
 					Config: kubeoneapi.ProviderSpec{
 						NodeAnnotations: map[string]string{"test": "test"},
 					},
@@ -1368,7 +1368,7 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
 				{
 					Name:     "test-1",
-					Replicas: pointer.Int(3),
+					Replicas: pointer.New(3),
 					Config: kubeoneapi.ProviderSpec{
 						MachineAnnotations: map[string]string{"test": "test"},
 						NodeAnnotations:    map[string]string{"test": "test"},
@@ -1558,7 +1558,7 @@ func TestValidateFeatures(t *testing.T) {
 			name: "coredns replicas > 0",
 			features: kubeoneapi.Features{
 				CoreDNS: &kubeoneapi.CoreDNS{
-					Replicas: pointer.Int32(2),
+					Replicas: pointer.New(int32(2)),
 				},
 			},
 			versions: kubeoneapi.VersionConfig{
@@ -1570,7 +1570,7 @@ func TestValidateFeatures(t *testing.T) {
 			name: "coredns replicas = 0",
 			features: kubeoneapi.Features{
 				CoreDNS: &kubeoneapi.CoreDNS{
-					Replicas: pointer.Int32(0),
+					Replicas: pointer.New(int32(0)),
 				},
 			},
 			versions: kubeoneapi.VersionConfig{
@@ -1582,7 +1582,7 @@ func TestValidateFeatures(t *testing.T) {
 			name: "coredns replicas < 0",
 			features: kubeoneapi.Features{
 				CoreDNS: &kubeoneapi.CoreDNS{
-					Replicas: pointer.Int32(-1),
+					Replicas: pointer.New(int32(-1)),
 				},
 			},
 			versions: kubeoneapi.VersionConfig{
@@ -1985,7 +1985,7 @@ func TestValidateHostConfig(t *testing.T) {
 					SSHAgentSocket:    "test",
 					SSHUsername:       "root",
 					Kubelet: kubeoneapi.KubeletConfig{
-						MaxPods: pointer.Int32Ptr(110),
+						MaxPods: pointer.New(int32(110)),
 					},
 				},
 			},
@@ -2001,7 +2001,7 @@ func TestValidateHostConfig(t *testing.T) {
 					SSHAgentSocket:    "test",
 					SSHUsername:       "root",
 					Kubelet: kubeoneapi.KubeletConfig{
-						MaxPods: pointer.Int32Ptr(0),
+						MaxPods: pointer.New(int32(0)),
 					},
 				},
 			},
@@ -2017,7 +2017,7 @@ func TestValidateHostConfig(t *testing.T) {
 					SSHAgentSocket:    "test",
 					SSHUsername:       "root",
 					Kubelet: kubeoneapi.KubeletConfig{
-						MaxPods: pointer.Int32Ptr(-10),
+						MaxPods: pointer.New(int32(-10)),
 					},
 				},
 			},

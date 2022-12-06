@@ -27,13 +27,13 @@ import (
 	"text/template"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/pointer"
 
 	appsv1 "k8s.io/api/apps/v1"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/utils/pointer"
 	"sigs.k8s.io/yaml"
 )
 
@@ -381,7 +381,7 @@ func Test_addSecretCSIVolume(t *testing.T) {
 				VolumeSource: corev1.VolumeSource{
 					CSI: &corev1.CSIVolumeSource{
 						Driver:   "secrets-store.csi.k8s.io",
-						ReadOnly: pointer.Bool(true),
+						ReadOnly: pointer.New(true),
 						VolumeAttributes: map[string]string{
 							"secretProviderClass": secretProviderClassName,
 						},
