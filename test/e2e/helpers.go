@@ -55,7 +55,7 @@ import (
 
 const (
 	labelControlPlaneNode = "node-role.kubernetes.io/control-plane"
-	prowImage             = "quay.io/kubermatic/kubeone-e2e:v0.1.27"
+	prowImage             = "quay.io/kubermatic/kubeone-e2e:v0.1.28"
 	k1CloneURI            = "ssh://git@github.com/kubermatic/kubeone.git"
 )
 
