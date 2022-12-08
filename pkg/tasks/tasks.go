@@ -214,6 +214,10 @@ func WithResources(t Tasks) Tasks {
 				},
 			},
 			{
+				Fn:        determinePauseImage,
+				Operation: "determining the pause image",
+			},
+			{
 				Fn:        patchStaticPods,
 				Operation: "patching static pods",
 			},
