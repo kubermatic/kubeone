@@ -25,6 +25,8 @@ import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/runner"
 	"k8c.io/kubeone/pkg/ssh"
+
+	utilerrors "k8s.io/apimachinery/pkg/util/errors"
 )
 
 // NodeTask is a task that is specifically tailored to run on a single node.
@@ -53,12 +55,17 @@ func (s *State) runTask(node *kubeoneapi.HostConfig, task NodeTask) error {
 	return task(s, node, conn)
 }
 
+type stateMutatorFn func(original *State, tmp *State)
+
 // RunTaskOnNodes runs the given task on the given selection of hosts.
-func (s *State) RunTaskOnNodes(nodes []kubeoneapi.HostConfig, task NodeTask, parallel RunModeEnum) error {
-	var err error
+func (s *State) RunTaskOnNodes(nodes []kubeoneapi.HostConfig, task NodeTask, parallel RunModeEnum, stateMutator stateMutatorFn) error {
+	var (
+		stateMutatorLock sync.Mutex
+		errorsLock       sync.Mutex
+		aggregateErrs    []error
+	)
 
 	wg := sync.WaitGroup{}
-	hasErrors := false
 
 	for i := range nodes {
 		ctx := s.Clone()
@@ -67,28 +74,40 @@ func (s *State) RunTaskOnNodes(nodes []kubeoneapi.HostConfig, task NodeTask, par
 		if parallel == RunParallel {
 			wg.Add(1)
 			go func(ctx *State, node *kubeoneapi.HostConfig) {
-				err = ctx.runTask(node, task)
+				err := ctx.runTask(node, task)
 				if err != nil {
 					ctx.Logger.Error(err)
-					hasErrors = true
+
+					errorsLock.Lock()
+					defer errorsLock.Unlock()
+					aggregateErrs = append(aggregateErrs, err)
 				}
+
+				if stateMutator != nil {
+					stateMutatorLock.Lock()
+					stateMutator(s, ctx)
+					stateMutatorLock.Unlock()
+				}
+
 				wg.Done()
 			}(ctx, &nodes[i])
 		} else {
-			err = ctx.runTask(&nodes[i], task)
+			err := ctx.runTask(&nodes[i], task)
 			if err != nil {
+				aggregateErrs = append(aggregateErrs, err)
+
 				break
+			}
+
+			if stateMutator != nil {
+				stateMutator(s, ctx)
 			}
 		}
 	}
 
 	wg.Wait()
 
-	if hasErrors {
-		err = errors.New("at least one of the tasks has encountered an error")
-	}
-
-	return err
+	return utilerrors.NewAggregate(aggregateErrs)
 }
 
 type RunModeEnum bool
@@ -111,6 +130,16 @@ func (s *State) RunTaskOnAllNodes(task NodeTask, parallel RunModeEnum) error {
 
 // RunTaskOnLeader runs the given task on the leader host.
 func (s *State) RunTaskOnLeader(task NodeTask) error {
+	return s.runTaskOnLeader(task, nil)
+}
+
+// RunTaskOnLeaderWithMutator runs the given task on the leader host with a state mutator function.
+func (s *State) RunTaskOnLeaderWithMutator(task NodeTask, stateMutator stateMutatorFn) error {
+	return s.runTaskOnLeader(task, stateMutator)
+}
+
+// RunTaskOnLeader runs the given task on the leader host.
+func (s *State) runTaskOnLeader(task NodeTask, stateMutator stateMutatorFn) error {
 	leader, err := s.Cluster.Leader()
 	if err != nil {
 		return err
@@ -120,18 +149,18 @@ func (s *State) RunTaskOnLeader(task NodeTask) error {
 		leader,
 	}
 
-	return s.RunTaskOnNodes(hosts, task, false)
+	return s.RunTaskOnNodes(hosts, task, false, stateMutator)
 }
 
 // RunTaskOnFollowers runs the given task on the follower hosts.
 func (s *State) RunTaskOnFollowers(task NodeTask, parallel RunModeEnum) error {
-	return s.RunTaskOnNodes(s.Cluster.Followers(), task, parallel)
+	return s.RunTaskOnNodes(s.Cluster.Followers(), task, parallel, nil)
 }
 
 func (s *State) RunTaskOnControlPlane(task NodeTask, parallel RunModeEnum) error {
-	return s.RunTaskOnNodes(s.Cluster.ControlPlane.Hosts, task, parallel)
+	return s.RunTaskOnNodes(s.Cluster.ControlPlane.Hosts, task, parallel, nil)
 }
 
 func (s *State) RunTaskOnStaticWorkers(task NodeTask, parallel RunModeEnum) error {
-	return s.RunTaskOnNodes(s.Cluster.StaticWorkers.Hosts, task, parallel)
+	return s.RunTaskOnNodes(s.Cluster.StaticWorkers.Hosts, task, parallel, nil)
 }

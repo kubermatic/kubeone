@@ -29,13 +29,11 @@ import (
 )
 
 func determinePauseImage(s *state.State) error {
-	if s.Cluster.RegistryConfiguration == nil || s.Cluster.RegistryConfiguration.OverwriteRegistry == "" {
-		return nil
-	}
-
 	s.Logger.Infoln("Determining Kubernetes pause image...")
 
-	return s.RunTaskOnLeader(determinePauseImageExecutor)
+	return s.RunTaskOnLeaderWithMutator(determinePauseImageExecutor, func(original *state.State, tmp *state.State) {
+		original.PauseImage = tmp.PauseImage
+	})
 }
 
 func determinePauseImageExecutor(s *state.State, node *kubeoneapi.HostConfig, conn ssh.Connection) error {
