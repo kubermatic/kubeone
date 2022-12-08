@@ -218,6 +218,10 @@ func WithResources(t Tasks) Tasks {
 				ErrMsg: "failed to patch static pods",
 			},
 			{
+				Fn:     determinePauseImage,
+				ErrMsg: "failed to determine the pause image",
+			},
+			{
 				Fn:          renewControlPlaneCerts,
 				ErrMsg:      "failed to renew certificates",
 				Description: "renew all certificates",
