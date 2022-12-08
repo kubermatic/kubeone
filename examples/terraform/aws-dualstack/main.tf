@@ -304,6 +304,12 @@ resource "aws_iam_role_policy" "policy" {
   })
 }
 
+################################## USER DATA  ##################################
+
+data "template_file" "user_data" {
+  template = file("./cloud_config.yaml")
+}
+
 ############################ CONTROL PLANE INSTANCES ###########################
 
 resource "aws_instance" "control_plane" {
@@ -316,6 +322,7 @@ resource "aws_instance" "control_plane" {
   availability_zone      = data.aws_availability_zones.available.names[count.index]
   subnet_id              = local.subnets[data.aws_availability_zones.available.names[count.index]]
   ebs_optimized          = true
+  user_data              = data.template_file.user_data.rendered
 
   root_block_device {
     volume_type = "gp2"
@@ -338,6 +345,7 @@ resource "aws_instance" "static_workers1" {
   availability_zone      = data.aws_availability_zones.available.names[count.index % length(data.aws_availability_zones.available.names)]
   subnet_id              = local.subnets[data.aws_availability_zones.available.names[count.index % length(data.aws_availability_zones.available.names)]]
   ebs_optimized          = true
+  user_data              = data.template_file.user_data.rendered
 
   root_block_device {
     volume_type = "gp2"
@@ -360,6 +368,7 @@ resource "aws_instance" "bastion" {
   availability_zone           = data.aws_availability_zones.available.names[0]
   subnet_id                   = local.subnets[local.zoneA]
   associate_public_ip_address = true
+  user_data                   = data.template_file.user_data.rendered
 
   root_block_device {
     volume_type = "gp2"

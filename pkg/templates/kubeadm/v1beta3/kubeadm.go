@@ -98,6 +98,13 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 
 	controlPlaneEndpoint := fmt.Sprintf("%s:%d", cluster.APIEndpoint.Host, cluster.APIEndpoint.Port)
 
+	var advertiseAddress string
+	if s.Cluster.ClusterNetwork.IPFamily.IsIPv6Primary() {
+		advertiseAddress = host.IPv6Addresses[0]
+	} else {
+		advertiseAddress = newNodeIP(host)
+	}
+
 	initConfig := &kubeadmv1beta3.InitConfiguration{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "kubeadm.k8s.io/v1beta3",
@@ -119,7 +126,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 			},
 		},
 		LocalAPIEndpoint: kubeadmv1beta3.APIEndpoint{
-			AdvertiseAddress: newNodeIP(host),
+			AdvertiseAddress: advertiseAddress,
 		},
 	}
 
@@ -130,7 +137,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		},
 		ControlPlane: &kubeadmv1beta3.JoinControlPlane{
 			LocalAPIEndpoint: kubeadmv1beta3.APIEndpoint{
-				AdvertiseAddress: newNodeIP(host),
+				AdvertiseAddress: advertiseAddress,
 			},
 		},
 		Discovery: kubeadmv1beta3.Discovery{

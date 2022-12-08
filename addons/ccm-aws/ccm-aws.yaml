@@ -165,7 +165,26 @@ spec:
             - --cloud-provider=aws
             - --use-service-account-credentials=false
             - --configure-cloud-routes=false
+            - --cloud-config=/etc/kubernetes/cloud/config
             - --v=2
           resources:
             requests:
               cpu: 200m
+          volumeMounts:
+            - mountPath: /etc/kubernetes/cloud
+              name: cloud-config
+              readOnly: true
+      volumes:
+        - name: cloud-config
+          secret:
+            defaultMode: 420
+            secretName: cloud-config
+---
+apiVersion: v1
+data:
+  config: {{ awsCCMCloudConfig .Config.Name .Config.ClusterNetwork.IPFamily | b64enc }}
+kind: Secret
+metadata:
+  name: cloud-config
+  namespace: kube-system
+type: Opaque

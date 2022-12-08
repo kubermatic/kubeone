@@ -475,3 +475,7 @@ func (c ClusterNetworkConfig) HasIPv6() bool {
 func (c IPFamily) IsDualstack() bool {
 	return c == IPFamilyIPv4IPv6 || c == IPFamilyIPv6IPv4
 }
+
+func (c IPFamily) IsIPv6Primary() bool {
+	return c == IPFamilyIPv6 || c == IPFamilyIPv6IPv4
+}

@@ -33,6 +33,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/certificate/cabundle"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/pointer"
@@ -295,8 +296,31 @@ func txtFuncMap(overwriteRegistry string) template.FuncMap {
 	funcs["caBundleVolumeMount"] = caBundleVolumeMountTemplateFunc
 	funcs["EquinixMetalSecret"] = equinixMetalSecretTemplateFunc
 	funcs["vSphereCSIWebhookConfig"] = vSphereCSIWebhookConfigTemplateFunc
+	funcs["awsCCMCloudConfig"] = awsCCMCloudConfigTemplateFunc
 
 	return funcs
+}
+
+func awsCCMCloudConfigTemplateFunc(name string, ipFamily kubeoneapi.IPFamily) string {
+	lines := []string{
+		"[global]",
+		fmt.Sprintf("KubernetesClusterID=%q", name),
+	}
+
+	switch ipFamily {
+	case kubeoneapi.IPFamilyIPv4:
+		lines = append(lines, fmt.Sprintf("NodeIPFamilies=%q", "ipv4"))
+	case kubeoneapi.IPFamilyIPv6:
+		lines = append(lines, fmt.Sprintf("NodeIPFamilies=%q", "ipv6"))
+	case kubeoneapi.IPFamilyIPv4IPv6:
+		lines = append(lines, fmt.Sprintf("NodeIPFamilies=%q", "ipv4"))
+		lines = append(lines, fmt.Sprintf("NodeIPFamilies=%q", "ipv6"))
+	case kubeoneapi.IPFamilyIPv6IPv4:
+		lines = append(lines, fmt.Sprintf("NodeIPFamilies=%q", "ipv6"))
+		lines = append(lines, fmt.Sprintf("NodeIPFamilies=%q", "ipv4"))
+	}
+
+	return strings.Join(lines, "\n")
 }
 
 func requiredTemplateFunc(warn string, input interface{}) (interface{}, error) {
