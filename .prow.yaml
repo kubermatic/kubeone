@@ -148,7 +148,7 @@ presubmits:
       preset-aws-e2e-kubeone: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -177,7 +177,7 @@ presubmits:
       preset-aws-e2e-kubeone: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -214,7 +214,7 @@ presubmits:
       preset-aws-e2e-kubeone: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -241,7 +241,7 @@ presubmits:
       preset-aws-e2e-kubeone: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -266,7 +266,7 @@ presubmits:
       preset-aws-e2e-kubeone: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -293,7 +293,7 @@ presubmits:
       preset-aws-e2e-kubeone: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -320,7 +320,7 @@ presubmits:
       preset-aws-e2e-kubeone: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -352,7 +352,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -377,7 +377,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -402,7 +402,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -429,7 +429,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -459,7 +459,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -484,7 +484,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -509,7 +509,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -536,7 +536,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -566,7 +566,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -593,7 +593,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -620,7 +620,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -649,7 +649,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -681,7 +681,7 @@ presubmits:
       preset-equinix-metal: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -706,7 +706,7 @@ presubmits:
       preset-equinix-metal: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -731,7 +731,7 @@ presubmits:
       preset-equinix-metal: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -758,7 +758,7 @@ presubmits:
       preset-equinix-metal: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -788,7 +788,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -813,7 +813,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -838,7 +838,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -865,7 +865,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -895,7 +895,7 @@ presubmits:
       preset-aws-e2e-kubeone: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -925,7 +925,7 @@ presubmits:
       preset-aws-e2e-kubeone: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -953,7 +953,7 @@ presubmits:
       preset-aws-e2e-kubeone: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -983,7 +983,7 @@ presubmits:
       preset-aws-e2e-kubeone: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1016,7 +1016,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1042,7 +1042,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1070,7 +1070,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1101,7 +1101,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1127,7 +1127,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1155,7 +1155,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1186,7 +1186,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1214,7 +1214,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1244,7 +1244,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1277,7 +1277,7 @@ presubmits:
       preset-equinix-metal: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1303,7 +1303,7 @@ presubmits:
       preset-equinix-metal: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1331,7 +1331,7 @@ presubmits:
       preset-packet: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1362,7 +1362,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1388,7 +1388,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1416,7 +1416,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
