@@ -148,7 +148,7 @@ presubmits:
       preset-aws-e2e-kubeone: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -162,7 +162,7 @@ presubmits:
             - name: TF_VAR_initial_machinedeployment_spotinstances
               value: "true"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.13"
+              value: "1.20.15"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -177,7 +177,7 @@ presubmits:
       preset-aws-e2e-kubeone: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -199,7 +199,7 @@ presubmits:
             - name: TF_VAR_bastion_user
               value: "core"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.13"
+              value: "1.20.15"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -214,7 +214,7 @@ presubmits:
       preset-aws-e2e-kubeone: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -226,7 +226,7 @@ presubmits:
             - name: TF_VAR_initial_machinedeployment_spotinstances
               value: "true"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.13"
+              value: "1.20.15"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -241,7 +241,7 @@ presubmits:
       preset-aws-e2e-kubeone: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -251,7 +251,7 @@ presubmits:
             - name: PROVIDER
               value: "aws"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.7"
+              value: "1.21.14"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -266,7 +266,7 @@ presubmits:
       preset-aws-e2e-kubeone: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -278,7 +278,7 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.4"
+              value: "1.22.17"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -293,7 +293,7 @@ presubmits:
       preset-aws-e2e-kubeone: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -305,7 +305,7 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.23.0"
+              value: "1.23.15"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -320,7 +320,7 @@ presubmits:
       preset-aws-e2e-kubeone: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -332,7 +332,7 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.23.0"
+              value: "1.23.15"
             - name: TEST_CONFIG_API_VERSION
               value: "v1beta1"
             - name: KUBEONE_TEST_RUN
@@ -352,7 +352,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -362,7 +362,7 @@ presubmits:
             - name: PROVIDER
               value: "digitalocean"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.13"
+              value: "1.20.15"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -377,7 +377,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -387,7 +387,7 @@ presubmits:
             - name: PROVIDER
               value: "digitalocean"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.7"
+              value: "1.21.14"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -402,7 +402,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -414,7 +414,7 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.4"
+              value: "1.22.17"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -429,7 +429,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -441,7 +441,7 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.23.0"
+              value: "1.23.15"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -459,7 +459,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -469,7 +469,7 @@ presubmits:
             - name: PROVIDER
               value: "hetzner"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.13"
+              value: "1.20.15"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -484,7 +484,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -494,7 +494,7 @@ presubmits:
             - name: PROVIDER
               value: "hetzner"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.7"
+              value: "1.21.14"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -509,7 +509,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -521,7 +521,7 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.4"
+              value: "1.22.17"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -536,7 +536,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -548,7 +548,7 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.23.0"
+              value: "1.23.15"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -566,7 +566,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -576,7 +576,7 @@ presubmits:
             - name: PROVIDER
               value: "gce"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.13"
+              value: "1.20.15"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
             - name: TF_VAR_project
@@ -593,7 +593,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -603,7 +603,7 @@ presubmits:
             - name: PROVIDER
               value: "gce"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.7"
+              value: "1.21.14"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
             - name: TF_VAR_project
@@ -620,7 +620,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -632,7 +632,7 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.4"
+              value: "1.22.17"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
             - name: TF_VAR_project
@@ -649,7 +649,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -661,7 +661,7 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.23.0"
+              value: "1.23.15"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
             - name: TF_VAR_project
@@ -681,7 +681,7 @@ presubmits:
       preset-equinix-metal: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -691,7 +691,7 @@ presubmits:
             - name: PROVIDER
               value: "equinixmetal"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.13"
+              value: "1.20.15"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -706,7 +706,7 @@ presubmits:
       preset-equinix-metal: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -716,7 +716,7 @@ presubmits:
             - name: PROVIDER
               value: "equinixmetal"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.7"
+              value: "1.21.14"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -731,7 +731,7 @@ presubmits:
       preset-equinix-metal: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -743,7 +743,7 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.4"
+              value: "1.22.17"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -758,7 +758,7 @@ presubmits:
       preset-equinix-metal: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -770,7 +770,7 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.23.0"
+              value: "1.23.15"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -788,7 +788,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -798,7 +798,7 @@ presubmits:
             - name: PROVIDER
               value: "openstack"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.20.13"
+              value: "1.20.15"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -813,7 +813,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -823,7 +823,7 @@ presubmits:
             - name: PROVIDER
               value: "openstack"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.7"
+              value: "1.21.14"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -838,7 +838,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -850,7 +850,7 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.4"
+              value: "1.22.17"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -865,7 +865,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -877,7 +877,7 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.23.0"
+              value: "1.23.15"
             - name: KUBEONE_TEST_RUN
               value: "TestClusterConformance"
           resources:
@@ -895,7 +895,7 @@ presubmits:
       preset-aws-e2e-kubeone: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -911,7 +911,7 @@ presubmits:
             - name: TEST_CLUSTER_INITIAL_VERSION
               value: "1.20.15"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.9"
+              value: "1.21.14"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -925,7 +925,7 @@ presubmits:
       preset-aws-e2e-kubeone: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -937,9 +937,9 @@ presubmits:
             - name: TF_VAR_initial_machinedeployment_spotinstances
               value: "true"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.20.13"
+              value: "1.20.15"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.7"
+              value: "1.21.14"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -953,7 +953,7 @@ presubmits:
       preset-aws-e2e-kubeone: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -967,9 +967,9 @@ presubmits:
             - name: TF_VAR_initial_machinedeployment_spotinstances
               value: "true"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.21.7"
+              value: "1.21.14"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.4"
+              value: "1.22.17"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -983,7 +983,7 @@ presubmits:
       preset-aws-e2e-kubeone: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -997,9 +997,9 @@ presubmits:
             - name: TF_VAR_initial_machinedeployment_spotinstances
               value: "true"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.22.4"
+              value: "1.22.17"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.23.0"
+              value: "1.23.15"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1016,7 +1016,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1026,9 +1026,9 @@ presubmits:
             - name: PROVIDER
               value: "digitalocean"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.20.13"
+              value: "1.20.15"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.7"
+              value: "1.21.14"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1042,7 +1042,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1054,9 +1054,9 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.21.7"
+              value: "1.21.14"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.4"
+              value: "1.22.17"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1070,7 +1070,7 @@ presubmits:
       preset-digitalocean: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1082,9 +1082,9 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.22.4"
+              value: "1.22.17"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.23.0"
+              value: "1.23.15"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1101,7 +1101,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1111,9 +1111,9 @@ presubmits:
             - name: PROVIDER
               value: "hetzner"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.20.13"
+              value: "1.20.15"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.7"
+              value: "1.21.14"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1127,7 +1127,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1139,9 +1139,9 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.21.7"
+              value: "1.21.14"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.4"
+              value: "1.22.17"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1155,7 +1155,7 @@ presubmits:
       preset-hetzner: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1167,9 +1167,9 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.22.4"
+              value: "1.22.17"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.23.0"
+              value: "1.23.15"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1186,7 +1186,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1196,9 +1196,9 @@ presubmits:
             - name: PROVIDER
               value: "gce"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.20.13"
+              value: "1.20.15"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.7"
+              value: "1.21.14"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1214,7 +1214,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1226,9 +1226,9 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.21.7"
+              value: "1.21.14"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.4"
+              value: "1.22.17"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1244,7 +1244,7 @@ presubmits:
       preset-gce: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1256,9 +1256,9 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.22.4"
+              value: "1.22.17"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.23.0"
+              value: "1.23.15"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1277,7 +1277,7 @@ presubmits:
       preset-equinix-metal: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1287,9 +1287,9 @@ presubmits:
             - name: PROVIDER
               value: "equinixmetal"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.20.13"
+              value: "1.20.15"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.7"
+              value: "1.21.14"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1303,7 +1303,7 @@ presubmits:
       preset-equinix-metal: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1315,9 +1315,9 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.21.7"
+              value: "1.21.14"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.4"
+              value: "1.22.17"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1331,7 +1331,7 @@ presubmits:
       preset-packet: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1343,9 +1343,9 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.22.4"
+              value: "1.22.17"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.23.0"
+              value: "1.23.15"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1362,7 +1362,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1372,9 +1372,9 @@ presubmits:
             - name: PROVIDER
               value: "openstack"
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.20.13"
+              value: "1.20.15"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.21.7"
+              value: "1.21.14"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1388,7 +1388,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1400,9 +1400,9 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.21.7"
+              value: "1.21.14"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.22.4"
+              value: "1.22.17"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
@@ -1416,7 +1416,7 @@ presubmits:
       preset-openstack: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/kubeone-e2e:v0.1.28-go-1.18
+        - image: quay.io/kubermatic/kubeone-e2e:v0.1.29-go-1.18
           imagePullPolicy: Always
           command:
             - make
@@ -1428,9 +1428,9 @@ presubmits:
             - name: CONTAINER_RUNTIME
               value: containerd
             - name: TEST_CLUSTER_INITIAL_VERSION
-              value: "1.22.4"
+              value: "1.22.17"
             - name: TEST_CLUSTER_TARGET_VERSION
-              value: "1.23.0"
+              value: "1.23.15"
             - name: TEST_TIMEOUT
               valut: "120m"
             - name: KUBEONE_TEST_RUN
