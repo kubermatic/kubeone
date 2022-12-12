@@ -46,7 +46,7 @@ presubmits:
       resources:
         requests:
           cpu: "1"
-- always_run: true
+- always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
@@ -55,6 +55,7 @@ presubmits:
   name: pull-kubeone-e2e-aws-default-install-containerd-v1.23.15
   optional: false
   path_alias: k8c.io/kubeone
+  run_if_changed: (.prow/|addons/|examples/|hack/|pkg/|test/)
   spec:
     containers:
     - command:
@@ -517,7 +518,7 @@ presubmits:
       resources:
         requests:
           cpu: "1"
-- always_run: true
+- always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
@@ -526,6 +527,7 @@ presubmits:
   name: pull-kubeone-e2e-aws-default-install-containerd-v1.24.9
   optional: false
   path_alias: k8c.io/kubeone
+  run_if_changed: (.prow/|addons/|examples/|hack/|pkg/|test/)
   spec:
     containers:
     - command:
@@ -988,7 +990,7 @@ presubmits:
       resources:
         requests:
           cpu: "1"
-- always_run: true
+- always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
@@ -997,6 +999,7 @@ presubmits:
   name: pull-kubeone-e2e-aws-default-install-containerd-v1.25.5
   optional: false
   path_alias: k8c.io/kubeone
+  run_if_changed: (.prow/|addons/|examples/|hack/|pkg/|test/)
   spec:
     containers:
     - command:

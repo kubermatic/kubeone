@@ -385,15 +385,16 @@ func parseContainerImageVersion(image string) (*semver.Version, error) {
 }
 
 type ProwJob struct {
-	Name      string            `json:"name"`
-	AlwaysRun bool              `json:"always_run"`
-	Optional  bool              `json:"optional"`
-	Decorate  bool              `json:"decorate"`
-	CloneURI  string            `json:"clone_uri"`
-	PathAlias string            `json:"path_alias,omitempty"`
-	Labels    map[string]string `json:"labels,omitempty"`
-	ExtraRefs []ProwRef         `json:"extra_refs,omitempty"`
-	Spec      *corev1.PodSpec   `json:"spec"`
+	Name         string            `json:"name"`
+	AlwaysRun    bool              `json:"always_run"`
+	RunIfChanged string            `json:"run_if_changed,omitempty"`
+	Optional     bool              `json:"optional"`
+	Decorate     bool              `json:"decorate"`
+	CloneURI     string            `json:"clone_uri"`
+	PathAlias    string            `json:"path_alias,omitempty"`
+	Labels       map[string]string `json:"labels,omitempty"`
+	ExtraRefs    []ProwRef         `json:"extra_refs,omitempty"`
+	Spec         *corev1.PodSpec   `json:"spec"`
 }
 
 type ProwRef struct {
@@ -418,14 +419,15 @@ func newProwJob(prowJobName string, labels map[string]string, testTitle string, 
 	})
 
 	return ProwJob{
-		Name:      prowJobName,
-		AlwaysRun: settings.AlwaysRun,
-		Optional:  settings.Optional,
-		Decorate:  true,
-		CloneURI:  k1CloneURI,
-		Labels:    labels,
-		ExtraRefs: extraRefs,
-		PathAlias: "k8c.io/kubeone",
+		Name:         prowJobName,
+		AlwaysRun:    settings.AlwaysRun,
+		RunIfChanged: settings.RunIfChanged,
+		Optional:     settings.Optional,
+		Decorate:     true,
+		CloneURI:     k1CloneURI,
+		Labels:       labels,
+		ExtraRefs:    extraRefs,
+		PathAlias:    "k8c.io/kubeone",
 		Spec: &corev1.PodSpec{
 			Containers: []corev1.Container{
 				{
