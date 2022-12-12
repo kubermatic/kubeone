@@ -33,9 +33,10 @@ import (
 )
 
 type Infrastructure struct {
-	Name      string `json:"name"`
-	AlwaysRun bool   `json:"alwaysRun"`
-	Optional  bool   `json:"optional"`
+	Name         string `json:"name"`
+	AlwaysRun    bool   `json:"alwaysRun"`
+	RunIfChanged string `json:"runIfChanged"`
+	Optional     bool   `json:"optional"`
 }
 
 type KubeoneTest struct {
@@ -143,8 +144,9 @@ func main() {
 			scenario.SetVersions(versions...)
 
 			cfg := e2e.ProwConfig{
-				AlwaysRun: genInfra.AlwaysRun,
-				Optional:  genInfra.Optional,
+				AlwaysRun:    genInfra.AlwaysRun,
+				RunIfChanged: genInfra.RunIfChanged,
+				Optional:     genInfra.Optional,
 			}
 
 			if err = scenario.GenerateTests(outputBuf, generatorType, cfg); err != nil {
