@@ -1215,7 +1215,8 @@ type Scenario interface {
 }
 
 type ProwConfig struct {
-	AlwaysRun bool
-	Optional  bool
-	Environ   map[string]string
+	AlwaysRun    bool
+	RunIfChanged string
+	Optional     bool
+	Environ      map[string]string
 }
