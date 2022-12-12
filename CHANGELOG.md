@@ -1,5 +1,33 @@
 # Changelog
 
+# [v1.4.12](https://github.com/kubermatic/kubeone/releases/tag/v1.4.12) - 2022-12-12
+
+## Important Registry Change Information
+
+In November, we announced that we are changing all image references from `k8s.gcr.io` to `registry.k8s.io` to keep up with [the latest upstream changes](https://github.com/kubernetes/enhancements/tree/master/keps/sig-release/3000-artifact-distribution). **This patch release includes this change. Please ensure that any mirrors you use are able to host `registry.k8s.io` and/or that firewall rules are going to allow access to `registry.k8s.io` to pull images before upgrading to this KubeOne patch release.**
+
+The December Kubernetes patch releases (1.25.5, 1.24.9, 1.23.15, and 1.22.17) are enforcing `registry.k8s.io` by default. Please keep this in mind if you're using an older KubeOne patch release with the latest Kubernetes patch releases. We strongly advise that you use KubeOne v1.5.4 or newer with the latest Kubernetes patch releases.
+
+## Changelog since v1.4.11
+
+## Changes by Kind
+
+### API Change
+
+- Image references are changed from `k8s.gcr.io` to `registry.k8s.io`. This is done to keep up with [the latest upstream changes](https://github.com/kubernetes/enhancements/tree/master/keps/sig-release/3000-artifact-distribution). Please ensure that any mirrors you use are able to host `registry.k8s.io` and/or that firewall rules are going to allow access to `registry.k8s.io` to pull images before applying the next KubeOne patch releases. ([#2508](https://github.com/kubermatic/kubeone/pull/2508), [@xmudrii](https://github.com/xmudrii))
+
+### Feature
+
+- KubeOne is now built using Go 1.18.9 ([#2527](https://github.com/kubermatic/kubeone/pull/2527), [@xmudrii](https://github.com/xmudrii))
+- Update etcd to 3.5.6 which includes a fix for [the recently reported data inconsistency issue for a case when etcd crashes during processing defragmentation operation](https://groups.google.com/a/kubernetes.io/g/dev/c/sEVopPxKPDo/m/9ME3CzicBwAJ) ([#2500](https://github.com/kubermatic/kubeone/pull/2500), [@xmudrii](https://github.com/xmudrii))
+- Enable compact hash checks as per [the recommendations from etcd for detecting data corruption](https://etcd.io/docs/v3.5/op-guide/data_corruption/#enabling-data-corruption-detection) ([#2500](https://github.com/kubermatic/kubeone/pull/2500), [@xmudrii](https://github.com/xmudrii))
+- Validate support for Kubernetes patch releases 1.23.15 and 1.22.17 ([#2533](https://github.com/kubermatic/kubeone/pull/2533), [@xmudrii](https://github.com/xmudrii))
+
+### Bug or Regression
+
+- Fix a panic (NPE) when determining if it is safe to repair a cluster when there's no kubelet or kubelet systemd unit on the node ([#2496](https://github.com/kubermatic/kubeone/pull/2496), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Use the pause image from `registry.k8s.io` for all Kubernetes releases ([#2530](https://github.com/kubermatic/kubeone/pull/2530), [@xmudrii](https://github.com/xmudrii))
+
 # [v1.4.11](https://github.com/kubermatic/kubeone/releases/tag/v1.4.11) - 2022-11-11
 
 ## Important Registry Change Information
