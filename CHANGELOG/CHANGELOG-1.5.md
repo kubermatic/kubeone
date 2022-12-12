@@ -1,3 +1,34 @@
+# [v1.5.4](https://github.com/kubermatic/kubeone/releases/tag/v1.5.4) - 2022-12-12
+
+## Important Registry Change Information
+
+In November, we announced that we are changing all image references from `k8s.gcr.io` to `registry.k8s.io` to keep up with [the latest upstream changes](https://github.com/kubernetes/enhancements/tree/master/keps/sig-release/3000-artifact-distribution). **This patch release includes this change. Please ensure that any mirrors you use are able to host `registry.k8s.io` and/or that firewall rules are going to allow access to `registry.k8s.io` to pull images before upgrading to this KubeOne patch release.**
+
+The December Kubernetes patch releases (1.25.5, 1.24.9, 1.23.15, and 1.22.17) are enforcing `registry.k8s.io` by default. Please keep this in mind if you're using an older KubeOne patch release with the latest Kubernetes patch releases. We strongly advise that you use KubeOne v1.5.4 or newer with the latest Kubernetes patch releases.
+
+## Changelog since v1.5.3
+
+## Changes by Kind
+
+### API Change
+
+- Image references are changed from `k8s.gcr.io` to `registry.k8s.io`. This is done to keep up with [the latest upstream changes](https://github.com/kubernetes/enhancements/tree/master/keps/sig-release/3000-artifact-distribution). Please ensure that any mirrors you use are able to host `registry.k8s.io` and/or that firewall rules are going to allow access to `registry.k8s.io` to pull images before applying the next KubeOne patch releases. ([#2505](https://github.com/kubermatic/kubeone/pull/2505), [@xmudrii](https://github.com/xmudrii))
+
+### Feature
+
+- KubeOne is now built using Go 1.19.4 ([#2526](https://github.com/kubermatic/kubeone/pull/2526), [@xmudrii](https://github.com/xmudrii))
+- Update Canal to v3.23.5. This Canal release is supposed to fix an issue where Calico pods are crashing after upgrading from an older Calico version to a newer one (see the [Known Issues](https://docs.kubermatic.com/kubeone/v1.5/known-issues/) document for more details) ([#2539](https://github.com/kubermatic/kubeone/pull/2539), [@xmudrii](https://github.com/xmudrii))
+- Update Cilium to v1.12.3 ([#2534](https://github.com/kubermatic/kubeone/pull/2534), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Update etcd to 3.5.6 which includes a fix for [the recently reported data inconsistency issue for a case when etcd crashes during processing defragmentation operation](https://groups.google.com/a/kubernetes.io/g/dev/c/sEVopPxKPDo/m/9ME3CzicBwAJ) ([#2499](https://github.com/kubermatic/kubeone/pull/2499), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Enable compact hash checks as per [the recommendations from etcd for detecting data corruption](https://etcd.io/docs/v3.5/op-guide/data_corruption/#enabling-data-corruption-detection) ([#2499](https://github.com/kubermatic/kubeone/pull/2499), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Validate support for Kubernetes patch releases 1.24.9, 1.23.15, and 1.22.17. Upgrading to Kubernetes 1.24.9 is strongly advised because it's built with Go 1.18.9 which includes fixes for [CVE-2022-41720 and CVE-2022-41717](https://groups.google.com/g/golang-announce/c/L_3rmdT0BMU/m/yZDrXjIiBQAJ) ([#2532](https://github.com/kubermatic/kubeone/pull/2532), [@xmudrii](https://github.com/xmudrii))
+
+### Bug or Regression
+
+- Fix NPE in probes ([#2484](https://github.com/kubermatic/kubeone/pull/2484), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Fix a panic (NPE) when determining if it is safe to repair a cluster when there's no kubelet or kubelet systemd unit on the node ([#2495](https://github.com/kubermatic/kubeone/pull/2495), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Use the pause image from `registry.k8s.io` for all Kubernetes releases ([#2529](https://github.com/kubermatic/kubeone/pull/2529), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
 # [v1.5.3](https://github.com/kubermatic/kubeone/releases/tag/v1.5.3) - 2022-11-11
 
 ## Important Registry Change Information
