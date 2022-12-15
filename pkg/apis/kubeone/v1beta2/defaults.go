@@ -74,7 +74,7 @@ func SetDefaults_KubeOneCluster(obj *KubeOneCluster) {
 }
 
 func SetDefaults_CloudConfig(obj *KubeOneCluster) {
-	if obj.CloudProvider.AWS != nil {
+	if obj.CloudProvider.AWS != nil && obj.CloudProvider.External {
 		if obj.CloudProvider.CloudConfig == "" {
 			obj.CloudProvider.CloudConfig = defaultAWSCCMCloudConfig(obj.Name, obj.ClusterNetwork.IPFamily)
 		}
