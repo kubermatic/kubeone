@@ -474,6 +474,7 @@ func TestValidateCloudProviderSpec(t *testing.T) {
 	tests := []struct {
 		name           string
 		providerConfig kubeoneapi.CloudProviderSpec
+		networkConfig  kubeoneapi.ClusterNetworkConfig
 		expectedError  bool
 	}{
 		{
@@ -734,11 +735,33 @@ func TestValidateCloudProviderSpec(t *testing.T) {
 			providerConfig: kubeoneapi.CloudProviderSpec{},
 			expectedError:  true,
 		},
+		{
+			name: "AWS IPv6+IPv4 external CCM ",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				AWS:      &kubeoneapi.AWSSpec{},
+				External: true,
+			},
+			networkConfig: kubeoneapi.ClusterNetworkConfig{
+				IPFamily: kubeoneapi.IPFamilyIPv6IPv4,
+			},
+			expectedError: true,
+		},
+		{
+			name: "AWS IPv4",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				AWS:      &kubeoneapi.AWSSpec{},
+				External: true,
+			},
+			networkConfig: kubeoneapi.ClusterNetworkConfig{
+				IPFamily: kubeoneapi.IPFamilyIPv4,
+			},
+			expectedError: false,
+		},
 	}
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			errs := ValidateCloudProviderSpec(tc.providerConfig, nil)
+			errs := ValidateCloudProviderSpec(tc.providerConfig, tc.networkConfig, nil)
 			if (len(errs) == 0) == tc.expectedError {
 				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
 			}

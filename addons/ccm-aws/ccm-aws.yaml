@@ -165,7 +165,17 @@ spec:
             - --cloud-provider=aws
             - --use-service-account-credentials=false
             - --configure-cloud-routes=false
+            - --cloud-config=/etc/kubernetes/cloud/cloud-config
             - --v=2
           resources:
             requests:
               cpu: 200m
+          volumeMounts:
+            - mountPath: /etc/kubernetes/cloud
+              name: cloud-config
+              readOnly: true
+      volumes:
+        - name: cloud-config
+          secret:
+            defaultMode: 420
+            secretName: cloud-config

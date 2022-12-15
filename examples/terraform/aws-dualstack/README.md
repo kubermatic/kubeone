@@ -7,6 +7,33 @@ use the configs and how to provision a Kubernetes cluster using KubeOne.
 
 [docs-infrastructure]: https://docs.kubermatic.com/kubeone/main/guides/using-terraform-configs/
 
+## AWS external CCM cloud-config
+KubeOne will use following cloud-config when provisioning the cluster using external AWS CCM.
+You can [override](https://docs.kubermatic.com/kubeone/main/references/kubeone-cluster-v1beta2/#cloudproviderspec) the cloud-config
+but you must specify all the options shown below. Otherwise CCM fails to initialize nodes with proper IP addresses
+and host network pods don't get dualstack IPs.
+
+#### IPv6+IPv4
+```
+cloudProvider:
+  aws: {}
+  cloudConfig: |
+    [global]
+    KubernetesClusterID=<<CLUSTER NAME>>
+    NodeIPFamilies="ipv6"
+    NodeIPFamilies="ipv4"
+```
+
+#### IPv4+IPv6
+```
+cloudProvider:
+  aws: {}
+  cloudConfig: |
+    [global]
+    KubernetesClusterID=<<CLUSTER NAME>>
+    NodeIPFamilies="ipv4"
+    NodeIPFamilies="ipv6"
+```
 ## Requirements
 
 | Name | Version |
@@ -20,6 +47,7 @@ use the configs and how to provision a Kubernetes cluster using KubeOne.
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.1.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | n/a |
+| <a name="provider_template"></a> [template](#provider\_template) | n/a |
 
 ## Modules
 
@@ -50,6 +78,7 @@ No modules.
 | [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/availability_zones) | data source |
 | [aws_internet_gateway.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/internet_gateway) | data source |
 | [aws_vpc.selected](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
+| [template_file.user_data](https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file) | data source |
 
 ## Inputs
 

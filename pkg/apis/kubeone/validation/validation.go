@@ -56,7 +56,7 @@ func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 	allErrs = append(allErrs, ValidateName(c.Name, field.NewPath("name"))...)
 	allErrs = append(allErrs, ValidateControlPlaneConfig(c.ControlPlane, c.ClusterNetwork, field.NewPath("controlPlane"))...)
 	allErrs = append(allErrs, ValidateAPIEndpoint(c.APIEndpoint, field.NewPath("apiEndpoint"))...)
-	allErrs = append(allErrs, ValidateCloudProviderSpec(c.CloudProvider, field.NewPath("provider"))...)
+	allErrs = append(allErrs, ValidateCloudProviderSpec(c.CloudProvider, c.ClusterNetwork, field.NewPath("provider"))...)
 	allErrs = append(allErrs, ValidateVersionConfig(c.Versions, field.NewPath("versions"))...)
 	allErrs = append(allErrs, ValidateKubernetesSupport(c, field.NewPath(""))...)
 	allErrs = append(allErrs, ValidateContainerRuntimeConfig(c.ContainerRuntime, c.Versions, field.NewPath("containerRuntime"))...)
@@ -174,11 +174,14 @@ func ValidateAPIEndpoint(a kubeoneapi.APIEndpoint, fldPath *field.Path) field.Er
 }
 
 // ValidateCloudProviderSpec validates the CloudProviderSpec structure
-func ValidateCloudProviderSpec(p kubeoneapi.CloudProviderSpec, fldPath *field.Path) field.ErrorList {
+func ValidateCloudProviderSpec(p kubeoneapi.CloudProviderSpec, networkConfig kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	providerFound := false
 	if p.AWS != nil {
+		if networkConfig.IPFamily.IsDualstack() && p.External && len(p.CloudConfig) == 0 {
+			allErrs = append(allErrs, field.Required(fldPath.Child("cloudConfig"), "cloudConfig is required for dualstack clusters for aws provider"))
+		}
 		providerFound = true
 	}
 	if p.Azure != nil {

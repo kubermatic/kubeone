@@ -84,6 +84,10 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 
 	etcdImageTag, etcdExtraArgs := etcdVersionCorruptCheckExtraArgs(kubeSemVer, cluster.AssetConfiguration.Etcd.ImageTag)
 
+	if s.Cluster.ClusterNetwork.HasIPv6() && len(host.IPv6Addresses) == 0 {
+		return nil, fmt.Errorf("host must have ipv6 address for %q family", s.Cluster.ClusterNetwork.IPFamily)
+	}
+
 	nodeRegistration := newNodeRegistration(s, host)
 	nodeRegistration.IgnorePreflightErrors = []string{
 		"DirAvailable--var-lib-etcd",
@@ -97,6 +101,13 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 	}
 
 	controlPlaneEndpoint := fmt.Sprintf("%s:%d", cluster.APIEndpoint.Host, cluster.APIEndpoint.Port)
+
+	var advertiseAddress string
+	if s.Cluster.ClusterNetwork.IPFamily.IsIPv6Primary() {
+		advertiseAddress = host.IPv6Addresses[0]
+	} else {
+		advertiseAddress = newNodeIP(host)
+	}
 
 	initConfig := &kubeadmv1beta3.InitConfiguration{
 		TypeMeta: metav1.TypeMeta{
@@ -119,7 +130,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 			},
 		},
 		LocalAPIEndpoint: kubeadmv1beta3.APIEndpoint{
-			AdvertiseAddress: newNodeIP(host),
+			AdvertiseAddress: advertiseAddress,
 		},
 	}
 
@@ -130,7 +141,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		},
 		ControlPlane: &kubeadmv1beta3.JoinControlPlane{
 			LocalAPIEndpoint: kubeadmv1beta3.APIEndpoint{
-				AdvertiseAddress: newNodeIP(host),
+				AdvertiseAddress: advertiseAddress,
 			},
 		},
 		Discovery: kubeadmv1beta3.Discovery{

@@ -153,3 +153,33 @@ webhooks:
         path: /operatingsystemconfig
       caBundle: |
 {{ .Certificates.KubernetesCA | b64enc | indent 8 }}
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: operating-system-manager.kubermatic.io
+webhooks:
+  - name: operating-system-manager.kubermatic.io-machinedeployments
+    failurePolicy: Fail
+    sideEffects: None
+    admissionReviewVersions:
+      - v1
+      - v1beta1
+    rules:
+      - apiGroups:
+          - cluster.k8s.io
+        apiVersions:
+          - v1alpha1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - machinedeployments
+        scope: '*'
+    clientConfig:
+      service:
+        namespace: kube-system
+        name: operating-system-manager-webhook
+        path: /mutate-v1alpha1-machinedeployment
+      caBundle: |
+{{ .Certificates.KubernetesCA | b64enc | indent 8 }}
