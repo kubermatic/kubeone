@@ -7,6 +7,33 @@ use the configs and how to provision a Kubernetes cluster using KubeOne.
 
 [docs-infrastructure]: https://docs.kubermatic.com/kubeone/main/guides/using-terraform-configs/
 
+## AWS external CCM cloud-config
+KubeOne will use following cloud-config when provisioning the cluster using external AWS CCM.
+You can [override](https://docs.kubermatic.com/kubeone/main/references/kubeone-cluster-v1beta2/#cloudproviderspec) the cloud-config
+but you must specify all the options shown below. Otherwise CCM fails to initialize nodes with proper IP addresses
+and host network pods don't get dualstack IPs.
+
+#### IPv6+IPv4
+```
+cloudProvider:
+  aws: {}
+  cloudConfig: |
+    [global]
+    KubernetesClusterID=<<CLUSTER NAME>>
+    NodeIPFamilies="ipv6"
+    NodeIPFamilies="ipv4"
+```
+
+#### IPv4+IPv6
+```
+cloudProvider:
+  aws: {}
+  cloudConfig: |
+    [global]
+    KubernetesClusterID=<<CLUSTER NAME>>
+    NodeIPFamilies="ipv4"
+    NodeIPFamilies="ipv6"
+```
 ## Requirements
 
 | Name | Version |
