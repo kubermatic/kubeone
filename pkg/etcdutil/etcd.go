@@ -54,6 +54,9 @@ func NewClientConfig(s *state.State, host kubeoneapi.HostConfig) (*clientv3.Conf
 
 	var endpoints []string
 	if s.Cluster.ClusterNetwork.IPFamily.IsIPv6Primary() {
+		if len(host.IPv6Addresses) == 0 {
+			return nil, fmt.Errorf("no ipv6 addresses")
+		}
 		endpoints = []string{fmt.Sprintf("[%s]:2379", host.IPv6Addresses[0])}
 	} else {
 		endpoints = []string{fmt.Sprintf("%s:2379", host.PrivateAddress)}

@@ -84,7 +84,10 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 
 	etcdImageTag, etcdExtraArgs := etcdVersionCorruptCheckExtraArgs(kubeSemVer, cluster.AssetConfiguration.Etcd.ImageTag)
 
-	nodeRegistration := newNodeRegistration(s, host)
+	nodeRegistration, err := newNodeRegistration(s, host)
+	if err != nil {
+		return nil, err
+	}
 	nodeRegistration.IgnorePreflightErrors = []string{
 		"DirAvailable--var-lib-etcd",
 		"DirAvailable--etc-kubernetes-manifests",
@@ -100,6 +103,9 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 
 	var advertiseAddress string
 	if s.Cluster.ClusterNetwork.IPFamily.IsIPv6Primary() {
+		if len(host.IPv6Addresses) == 0 {
+			return nil, fmt.Errorf("no ipv6 addresses")
+		}
 		advertiseAddress = host.IPv6Addresses[0]
 	} else {
 		advertiseAddress = newNodeIP(host)
@@ -348,8 +354,8 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 	clusterConfig.APIServer.ExtraArgs = args.APIServer.ExtraArgs
 	clusterConfig.FeatureGates = args.FeatureGates
 
-	initConfig.NodeRegistration = nodeRegistration
-	joinConfig.NodeRegistration = nodeRegistration
+	initConfig.NodeRegistration = *nodeRegistration
+	joinConfig.NodeRegistration = *nodeRegistration
 
 	kubeletConfig, err := kubernetesconfigs.NewKubeletConfiguration(s.Cluster, kubeletFeatureGates)
 	if err != nil {
@@ -407,7 +413,10 @@ func join(ipFamily kubeoneapi.IPFamily, ipv4Subnet, ipv6Subnet string) string {
 func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, error) {
 	cluster := s.Cluster
 
-	nodeRegistration := newNodeRegistration(s, host)
+	nodeRegistration, err := newNodeRegistration(s, host)
+	if err != nil {
+		return nil, err
+	}
 	nodeRegistration.IgnorePreflightErrors = []string{
 		"DirAvailable--etc-kubernetes-manifests",
 	}
@@ -445,7 +454,7 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Obje
 		}
 	}
 
-	joinConfig.NodeRegistration = nodeRegistration
+	joinConfig.NodeRegistration = *nodeRegistration
 
 	return []runtime.Object{joinConfig}, nil
 }
@@ -459,7 +468,7 @@ func newNodeIP(host kubeoneapi.HostConfig) string {
 	return nodeIP
 }
 
-func newNodeRegistration(s *state.State, host kubeoneapi.HostConfig) kubeadmv1beta3.NodeRegistrationOptions {
+func newNodeRegistration(s *state.State, host kubeoneapi.HostConfig) (*kubeadmv1beta3.NodeRegistrationOptions, error) {
 	kubeletCLIFlags := map[string]string{
 		"volume-plugin-dir": "/var/lib/kubelet/volumeplugins",
 	}
@@ -468,6 +477,9 @@ func newNodeRegistration(s *state.State, host kubeoneapi.HostConfig) kubeadmv1be
 	// as the cloud provider will know what IPs to return.
 	if s.Cluster.ClusterNetwork.IPFamily.IsDualstack() {
 		if !s.Cluster.CloudProvider.External {
+			if len(host.IPv6Addresses) == 0 {
+				return nil, fmt.Errorf("no ipv6 addresses")
+			}
 			switch {
 			case s.Cluster.ClusterNetwork.IPFamily == kubeoneapi.IPFamilyIPv4IPv6:
 				kubeletCLIFlags["node-ip"] = newNodeIP(host) + "," + host.IPv6Addresses[0]
@@ -494,12 +506,12 @@ func newNodeRegistration(s *state.State, host kubeoneapi.HostConfig) kubeadmv1be
 		kubeletCLIFlags["max-pods"] = strconv.Itoa(int(*m))
 	}
 
-	return kubeadmv1beta3.NodeRegistrationOptions{
+	return &kubeadmv1beta3.NodeRegistrationOptions{
 		Name:             host.Hostname,
 		Taints:           host.Taints,
 		CRISocket:        s.Cluster.ContainerRuntime.CRISocket(),
 		KubeletExtraArgs: kubeletCLIFlags,
-	}
+	}, nil
 }
 
 // etcdVersionCorruptCheckExtraArgs provides etcd version and args to be used.
