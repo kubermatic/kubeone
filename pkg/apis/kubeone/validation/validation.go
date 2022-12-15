@@ -180,7 +180,7 @@ func ValidateCloudProviderSpec(p kubeoneapi.CloudProviderSpec, networkConfig kub
 	providerFound := false
 	if p.AWS != nil {
 		if networkConfig.IPFamily.IsDualstack() && len(p.CloudConfig) == 0 {
-			allErrs = append(allErrs, field.Required(fldPath.Child("cloudConfig"), ".cloudProvider.cloudConfig is required for dualstack clusters for aws provider"))
+			allErrs = append(allErrs, field.Required(fldPath.Child("cloudConfig"), "cloudConfig is required for dualstack clusters for aws provider"))
 		}
 		providerFound = true
 	}
