@@ -91,4 +91,7 @@ issues:
     text: "cyclomatic complexity 36 of func `openstackValidationFunc` is high"
 
   - path: pkg/apis/kubeone
-    text: "cyclomatic complexity 32 of func `ValidateCloudProviderSpec` is high"
+    text: "cyclomatic complexity 34 of func `ValidateCloudProviderSpec` is high"
+
+  - path: pkg/templates/kubeadm/v1beta3
+    text: "cyclomatic complexity 32 of func `NewConfig` is high"
