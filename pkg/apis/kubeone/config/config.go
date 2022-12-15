@@ -18,13 +18,12 @@ package config
 
 import (
 	"fmt"
+	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"io"
 	"os"
 	"os/exec"
 	"reflect"
-
-	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	kubeonescheme "k8c.io/kubeone/pkg/apis/kubeone/scheme"
