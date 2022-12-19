@@ -30,6 +30,17 @@ variable "apiserver_alternative_names" {
   type        = list(string)
 }
 
+variable "os" {
+  description = "Operating System to use in image filtering and MachineDeployment"
+
+  # valid choices are:
+  # * ubuntu
+  # * centos
+  # * rockylinux
+  default = "ubuntu"
+  type    = string
+}
+
 variable "worker_os" {
   description = "OS to run on worker machines"
 
@@ -38,7 +49,7 @@ variable "worker_os" {
   # * centos
   # * rockylinux
   # * flatcar
-  default = "ubuntu"
+  default = ""
   type    = string
 }
 
@@ -56,7 +67,7 @@ variable "ssh_port" {
 
 variable "ssh_username" {
   description = "SSH user, used only in output"
-  default     = "root"
+  default     = ""
   type        = string
 }
 
@@ -93,6 +104,40 @@ variable "control_plane_vm_count" {
 
 # Provider specific settings
 
+variable "image_references" {
+  description = "map with images"
+  type = map(object({
+    image_name   = string
+    ssh_username = string
+    worker_os    = string
+  }))
+  default = {
+    ubuntu = {
+      image_name   = "ubuntu_22_04"
+      ssh_username = "root"
+      worker_os    = "ubuntu"
+    }
+
+    centos = {
+      image_name   = "centos_7"
+      ssh_username = "root"
+      worker_os    = "centos"
+    }
+
+    rockylinux = {
+      image_name   = "rocky_8"
+      ssh_username = "root"
+      worker_os    = "rockylinux"
+    }
+
+    flatcar = {
+      image_name   = "flatcar_stable"
+      ssh_username = "core"
+      worker_os    = "flatcar"
+    }
+  }
+}
+
 variable "metro" {
   default     = "AM"
   description = "Metro area for cluster"
@@ -100,7 +145,7 @@ variable "metro" {
 }
 
 variable "control_plane_operating_system" {
-  default     = "ubuntu_22_04"
+  default     = ""
   description = "Image to use for control plane provisioning"
   type        = string
 }
