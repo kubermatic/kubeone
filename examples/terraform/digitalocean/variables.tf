@@ -30,6 +30,18 @@ variable "apiserver_alternative_names" {
   type        = list(string)
 }
 
+variable "os" {
+  description = "Operating System to use in image filtering and MachineDeployment"
+
+  # valid choices are:
+  # * ubuntu
+  # * centos
+  # * rockylinux
+  default = "ubuntu"
+  type    = string
+}
+
+
 variable "worker_os" {
   description = "OS to run on worker machines"
 
@@ -37,7 +49,7 @@ variable "worker_os" {
   # * ubuntu
   # * centos
   # * rockylinux
-  default = "ubuntu"
+  default = ""
   type    = string
 }
 
@@ -55,7 +67,7 @@ variable "ssh_port" {
 
 variable "ssh_username" {
   description = "SSH user, used only in output"
-  default     = "root"
+  default     = ""
   type        = string
 }
 
@@ -97,6 +109,34 @@ variable "control_plane_vm_count" {
 
 # Provider specific settings
 
+variable "image_references" {
+  description = "map with images"
+  type = map(object({
+    image_name   = string
+    ssh_username = string
+    worker_os    = string
+  }))
+  default = {
+    ubuntu = {
+      image_name   = "ubuntu-22-04-x64"
+      ssh_username = "root"
+      worker_os    = "ubuntu"
+    }
+
+    centos = {
+      image_name   = "centos-7-x64"
+      ssh_username = "root"
+      worker_os    = "centos"
+    }
+
+    rockylinux = {
+      image_name   = "rockylinux-8-x64"
+      ssh_username = "root"
+      worker_os    = "rockylinux"
+    }
+  }
+}
+
 variable "region" {
   description = "Region to speak to"
   default     = "fra1"
@@ -105,7 +145,7 @@ variable "region" {
 
 variable "control_plane_droplet_image" {
   description = "Image to use for provisioning control plane droplets"
-  default     = "ubuntu-22-04-x64"
+  default     = ""
   type        = string
 }
 
