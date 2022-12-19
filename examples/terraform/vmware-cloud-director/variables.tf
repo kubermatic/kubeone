@@ -105,6 +105,12 @@ variable "template_name" {
   type        = string
 }
 
+variable "control_plane_vm_count" {
+  description = "number of control plane instances"
+  default     = 3
+  type        = number
+}
+
 variable "control_plane_memory" {
   description = "Memory size of each control plane node in MB"
   default     = 4096

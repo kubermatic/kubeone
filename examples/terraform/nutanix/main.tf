@@ -44,7 +44,7 @@ resource "nutanix_category_value" "category_value" {
 }
 
 resource "nutanix_virtual_machine" "control_plane" {
-  count        = 3
+  count        = var.control_plane_vm_count
   name         = "${var.cluster_name}-cp-${count.index}"
   cluster_uuid = data.nutanix_cluster.cluster.metadata.uuid
   project_reference = {

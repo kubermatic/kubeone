@@ -71,6 +71,7 @@ No modules.
 | <a name="input_control_plane_disk_size"></a> [control\_plane\_disk\_size](#input\_control\_plane\_disk\_size) | Disk size in MB | `number` | `25600` | no |
 | <a name="input_control_plane_disk_storage_profile"></a> [control\_plane\_disk\_storage\_profile](#input\_control\_plane\_disk\_storage\_profile) | Name of storage profile to use for disks | `string` | `""` | no |
 | <a name="input_control_plane_memory"></a> [control\_plane\_memory](#input\_control\_plane\_memory) | Memory size of each control plane node in MB | `number` | `4096` | no |
+| <a name="input_control_plane_vm_count"></a> [control\_plane\_vm\_count](#input\_control\_plane\_vm\_count) | number of control plane instances | `number` | `3` | no |
 | <a name="input_dhcp_end_address"></a> [dhcp\_end\_address](#input\_dhcp\_end\_address) | Last address for the DHCP IP Pool range | `string` | `"192.168.1.50"` | no |
 | <a name="input_dhcp_start_address"></a> [dhcp\_start\_address](#input\_dhcp\_start\_address) | Starting address for the DHCP IP Pool range | `string` | `"192.168.1.2"` | no |
 | <a name="input_external_network_ip"></a> [external\_network\_ip](#input\_external\_network\_ip) | IP address to which source addresses (the virtual machines) on outbound packets are translated to when they send traffic to the external network.<br>Defaults to default external network IP for the edge gateway. | `string` | `""` | no |

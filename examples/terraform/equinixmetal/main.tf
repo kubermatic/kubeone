@@ -27,7 +27,7 @@ resource "metal_ssh_key" "deployer" {
 }
 
 resource "metal_device" "control_plane" {
-  count      = 3
+  count      = var.control_plane_vm_count
   depends_on = [metal_ssh_key.deployer]
 
   hostname         = "${var.cluster_name}-control-plane-${count.index + 1}"

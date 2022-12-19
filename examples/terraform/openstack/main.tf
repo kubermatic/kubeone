@@ -104,7 +104,7 @@ resource "openstack_networking_secgroup_rule_v2" "secgroup_apiserver" {
 }
 
 resource "openstack_compute_instance_v2" "control_plane" {
-  count = 3
+  count = var.control_plane_vm_count
   name  = "${var.cluster_name}-cp-${count.index}"
 
   image_name      = data.openstack_images_image_v2.image.name
@@ -141,7 +141,7 @@ resource "openstack_compute_instance_v2" "lb" {
 }
 
 resource "openstack_networking_port_v2" "control_plane" {
-  count = 3
+  count = var.control_plane_vm_count
   name  = "${var.cluster_name}-control_plane-${count.index}"
 
   admin_state_up     = "true"

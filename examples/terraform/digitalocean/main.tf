@@ -33,7 +33,7 @@ resource "digitalocean_ssh_key" "deployer" {
 }
 
 resource "digitalocean_droplet" "control_plane" {
-  count = 3
+  count = var.control_plane_vm_count
   name  = "${var.cluster_name}-control-plane-${count.index + 1}"
 
   tags = [
