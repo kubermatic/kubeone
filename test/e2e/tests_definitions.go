@@ -498,8 +498,7 @@ var (
 				path: "../../examples/terraform/digitalocean",
 				vars: []string{
 					"disable_kubeapi_loadbalancer=true",
-					"control_plane_droplet_image=centos-7-x64",
-					"worker_os=centos",
+					"os=centos",
 				},
 			},
 		},
@@ -534,8 +533,7 @@ var (
 				path: "../../examples/terraform/digitalocean",
 				vars: []string{
 					"disable_kubeapi_loadbalancer=true",
-					"control_plane_droplet_image=rockylinux-8-x64",
-					"worker_os=rockylinux",
+					"os=rockylinux",
 				},
 			},
 		},
@@ -599,9 +597,8 @@ var (
 			terraform: terraformBin{
 				path: "../../examples/terraform/equinixmetal",
 				vars: []string{
-					"control_plane_operating_system=centos_7",
+					"os=centos",
 					"lb_operating_system=centos_7",
-					"worker_os=centos",
 				},
 			},
 		},
@@ -635,9 +632,8 @@ var (
 			terraform: terraformBin{
 				path: "../../examples/terraform/equinixmetal",
 				vars: []string{
-					"control_plane_operating_system=rocky_8",
+					"os=rockylinux",
 					"lb_operating_system=rocky_8",
-					"worker_os=rockylinux",
 				},
 			},
 		},
@@ -671,9 +667,7 @@ var (
 			terraform: terraformBin{
 				path: "../../examples/terraform/equinixmetal",
 				vars: []string{
-					"control_plane_operating_system=flatcar_stable",
-					"worker_os=flatcar",
-					"ssh_username=core",
+					"os=flatcar",
 				},
 			},
 		},
@@ -772,8 +766,7 @@ var (
 				path: "../../examples/terraform/hetzner",
 				vars: []string{
 					"disable_kubeapi_loadbalancer=true",
-					"image=centos-7",
-					"worker_os=centos",
+					"os=centos",
 				},
 			},
 		},
@@ -808,8 +801,7 @@ var (
 				path: "../../examples/terraform/hetzner",
 				vars: []string{
 					"disable_kubeapi_loadbalancer=true",
-					"image=rocky-8",
-					"worker_os=rockylinux",
+					"os=rockylinux",
 				},
 			},
 		},

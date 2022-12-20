@@ -19,6 +19,9 @@ provider "hcloud" {}
 locals {
   kubeapi_endpoint   = var.disable_kubeapi_loadbalancer ? hcloud_server_network.control_plane.0.ip : hcloud_load_balancer.load_balancer.0.ipv4
   loadbalancer_count = var.disable_kubeapi_loadbalancer ? 0 : 1
+  image              = var.image == "" ? var.image_references[var.os].image_name : var.image
+  worker_os          = var.worker_os == "" ? var.image_references[var.os].worker_os : var.worker_os
+  ssh_username       = var.ssh_username == "" ? var.image_references[var.os].ssh_username : var.ssh_username
 }
 
 resource "hcloud_ssh_key" "kubeone" {
@@ -118,7 +121,7 @@ resource "hcloud_server" "control_plane" {
   count              = var.control_plane_replicas
   name               = "${var.cluster_name}-control-plane-${count.index + 1}"
   server_type        = var.control_plane_type
-  image              = var.image
+  image              = local.image
   location           = var.datacenter
   placement_group_id = hcloud_placement_group.control_plane.id
 

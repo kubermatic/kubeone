@@ -94,6 +94,12 @@ variable "bastion_host_key" {
   type        = string
 }
 
+variable "control_plane_vm_count" {
+  description = "number of control plane instances"
+  default     = 3
+  type        = number
+}
+
 # Provider specific settings
 
 variable "nutanix_cluster_name" {

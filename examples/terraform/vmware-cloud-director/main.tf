@@ -79,7 +79,7 @@ resource "vcd_vapp_org_network" "network" {
 
 # Create VMs for control plane
 resource "vcd_vapp_vm" "control_plane" {
-  count         = 3
+  count         = var.control_plane_vm_count
   vapp_name     = vcd_vapp.cluster.name
   name          = "${var.cluster_name}-cp-${count.index + 1}"
   computer_name = "${var.cluster_name}-cp-${count.index + 1}"
