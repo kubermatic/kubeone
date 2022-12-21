@@ -103,7 +103,7 @@ resource "hcloud_network_subnet" "kubeone" {
 }
 
 resource "hcloud_server_network" "control_plane" {
-  count     = var.control_plane_replicas
+  count     = var.control_plane_vm_count
   server_id = element(hcloud_server.control_plane.*.id, count.index)
   subnet_id = hcloud_network_subnet.kubeone.id
 }
@@ -118,7 +118,7 @@ resource "hcloud_placement_group" "control_plane" {
 }
 
 resource "hcloud_server" "control_plane" {
-  count              = var.control_plane_replicas
+  count              = var.control_plane_vm_count
   name               = "${var.cluster_name}-control-plane-${count.index + 1}"
   server_type        = var.control_plane_type
   image              = local.image

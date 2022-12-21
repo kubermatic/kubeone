@@ -136,8 +136,20 @@ variable "control_plane_type" {
 }
 
 variable "control_plane_replicas" {
-  default = 3
-  type    = number
+  default     = 3
+  type        = number
+  description = "DEPRECATED: use control_plane_vm_count instead"
+
+  validation {
+    condition     = var.control_plane_replicas == 3
+    error_message = "control_plane_replicas is DEPRECATED, please use control_plane_vm_count instead"
+  }
+}
+
+variable "control_plane_vm_count" {
+  default     = 3
+  type        = number
+  description = "Number of control plane nodes in the cluster"
 }
 
 variable "worker_type" {
