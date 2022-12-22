@@ -2,6 +2,9 @@ apiVersion: kubeone.k8c.io/v1beta2
 kind: KubeOneCluster
 name: example
 
+versions:
+  kubernetes: v1.24.4
+
 cloudProvider:
   azure: {}
   external: true
@@ -27,8 +30,6 @@ cloudProvider:
 containerRuntime:
   containerd: {}
 
-versions:
-  kubernetes: v1.24.4
 
 addons:
   enable: true
