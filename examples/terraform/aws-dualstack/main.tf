@@ -42,6 +42,9 @@ locals {
 
   initial_machinedeployment_spotinstances = var.initial_machinedeployment_spotinstances_max_price > 0
 
+  cluster_autoscaler_min_replicas = var.cluster_autoscaler_min_replicas > 0 ? var.cluster_autoscaler_min_replicas : var.initial_machinedeployment_replicas
+  cluster_autoscaler_max_replicas = var.cluster_autoscaler_max_replicas > 0 ? var.cluster_autoscaler_max_replicas : var.initial_machinedeployment_replicas
+
   subnets = {
     (local.zoneA) = length(aws_subnet.public.*.id) > 0 ? aws_subnet.public[0].id : ""
     (local.zoneB) = length(aws_subnet.public.*.id) > 0 ? aws_subnet.public[1].id : ""

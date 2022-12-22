@@ -22,6 +22,9 @@ locals {
   control_plane_operating_system = var.control_plane_operating_system == "" ? var.image_references[var.os].image_name : var.control_plane_operating_system
   worker_os                      = var.worker_os == "" ? var.image_references[var.os].worker_os : var.worker_os
   ssh_username                   = var.ssh_username == "" ? var.image_references[var.os].ssh_username : var.ssh_username
+
+  cluster_autoscaler_min_replicas = var.cluster_autoscaler_min_replicas > 0 ? var.cluster_autoscaler_min_replicas : var.initial_machinedeployment_replicas
+  cluster_autoscaler_max_replicas = var.cluster_autoscaler_max_replicas > 0 ? var.cluster_autoscaler_max_replicas : var.initial_machinedeployment_replicas
 }
 
 resource "metal_ssh_key" "deployer" {

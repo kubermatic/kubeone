@@ -92,6 +92,8 @@ No modules.
 | <a name="input_bastion_port"></a> [bastion\_port](#input\_bastion\_port) | Bastion SSH port | `number` | `22` | no |
 | <a name="input_bastion_type"></a> [bastion\_type](#input\_bastion\_type) | instance type for bastion | `string` | `"t3.nano"` | no |
 | <a name="input_bastion_user"></a> [bastion\_user](#input\_bastion\_user) | Bastion SSH username | `string` | `""` | no |
+| <a name="input_cluster_autoscaler_max_replicas"></a> [cluster\_autoscaler\_max\_replicas](#input\_cluster\_autoscaler\_max\_replicas) | maximum number of replicas per MachineDeployment (requires cluster-autoscaler) | `number` | `0` | no |
+| <a name="input_cluster_autoscaler_min_replicas"></a> [cluster\_autoscaler\_min\_replicas](#input\_cluster\_autoscaler\_min\_replicas) | minimum number of replicas per MachineDeployment (requires cluster-autoscaler) | `number` | `0` | no |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the cluster | `string` | n/a | yes |
 | <a name="input_control_plane_labels"></a> [control\_plane\_labels](#input\_control\_plane\_labels) | custom labels to add (and remove) to control plane | `map(string)` | <pre>{<br>  "custom-label-to-add": "custom-value",<br>  "custom-label-to-remove-": ""<br>}</pre> | no |
 | <a name="input_control_plane_type"></a> [control\_plane\_type](#input\_control\_plane\_type) | AWS instance type | `string` | `"t3.medium"` | no |

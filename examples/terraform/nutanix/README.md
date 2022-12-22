@@ -56,6 +56,8 @@ No modules.
 | <a name="input_bastion_sockets"></a> [bastion\_sockets](#input\_bastion\_sockets) | Number of sockets for bastion/LB node | `number` | `1` | no |
 | <a name="input_bastion_user"></a> [bastion\_user](#input\_bastion\_user) | Bastion SSH username | `string` | `"ubuntu"` | no |
 | <a name="input_bastion_vcpus"></a> [bastion\_vcpus](#input\_bastion\_vcpus) | Number of vCPUs per socket for bastion/LB node | `number` | `1` | no |
+| <a name="input_cluster_autoscaler_max_replicas"></a> [cluster\_autoscaler\_max\_replicas](#input\_cluster\_autoscaler\_max\_replicas) | maximum number of replicas per MachineDeployment (requires cluster-autoscaler) | `number` | `0` | no |
+| <a name="input_cluster_autoscaler_min_replicas"></a> [cluster\_autoscaler\_min\_replicas](#input\_cluster\_autoscaler\_min\_replicas) | minimum number of replicas per MachineDeployment (requires cluster-autoscaler) | `number` | `0` | no |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the cluster | `string` | n/a | yes |
 | <a name="input_control_plane_disk_size"></a> [control\_plane\_disk\_size](#input\_control\_plane\_disk\_size) | Disk size size, in Mib, for control plane nodes | `number` | `102400` | no |
 | <a name="input_control_plane_memory_size"></a> [control\_plane\_memory\_size](#input\_control\_plane\_memory\_size) | Memory size, in Mib, for control plane nodes | `number` | `4096` | no |

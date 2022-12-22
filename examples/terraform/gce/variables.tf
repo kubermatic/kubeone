@@ -147,6 +147,18 @@ variable "initial_machinedeployment_replicas" {
   type        = number
 }
 
+variable "cluster_autoscaler_min_replicas" {
+  default     = 0
+  description = "minimum number of replicas per MachineDeployment (requires cluster-autoscaler)"
+  type        = number
+}
+
+variable "cluster_autoscaler_max_replicas" {
+  default     = 0
+  description = "maximum number of replicas per MachineDeployment (requires cluster-autoscaler)"
+  type        = number
+}
+
 variable "initial_machinedeployment_operating_system_profile" {
   default     = ""
   type        = string

@@ -65,6 +65,8 @@ No modules.
 | <a name="input_apiserver_alternative_names"></a> [apiserver\_alternative\_names](#input\_apiserver\_alternative\_names) | Subject alternative names for the API Server signing certificate | `list(string)` | `[]` | no |
 | <a name="input_bastion_host_key"></a> [bastion\_host\_key](#input\_bastion\_host\_key) | Bastion SSH host public key | `string` | `null` | no |
 | <a name="input_catalog_name"></a> [catalog\_name](#input\_catalog\_name) | Name of catalog that contains vApp templates | `string` | n/a | yes |
+| <a name="input_cluster_autoscaler_max_replicas"></a> [cluster\_autoscaler\_max\_replicas](#input\_cluster\_autoscaler\_max\_replicas) | maximum number of replicas per MachineDeployment (requires cluster-autoscaler) | `number` | `0` | no |
+| <a name="input_cluster_autoscaler_min_replicas"></a> [cluster\_autoscaler\_min\_replicas](#input\_cluster\_autoscaler\_min\_replicas) | minimum number of replicas per MachineDeployment (requires cluster-autoscaler) | `number` | `0` | no |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the cluster | `string` | n/a | yes |
 | <a name="input_control_plane_cpu_cores"></a> [control\_plane\_cpu\_cores](#input\_control\_plane\_cpu\_cores) | Number of cores per socket for the control plane VMs | `number` | `1` | no |
 | <a name="input_control_plane_cpus"></a> [control\_plane\_cpus](#input\_control\_plane\_cpus) | Number of CPUs for the control plane VMs | `number` | `2` | no |

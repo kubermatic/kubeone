@@ -24,6 +24,9 @@ locals {
   ssh_username                = var.ssh_username == "" ? var.image_references[var.os].ssh_username : var.ssh_username
   kubeapi_endpoint            = var.disable_kubeapi_loadbalancer ? digitalocean_droplet.control_plane.0.ipv4_address_private : digitalocean_loadbalancer.control_plane.0.ip
   loadbalancer_count          = var.disable_kubeapi_loadbalancer ? 0 : 1
+
+  cluster_autoscaler_min_replicas = var.cluster_autoscaler_min_replicas > 0 ? var.cluster_autoscaler_min_replicas : var.initial_machinedeployment_replicas
+  cluster_autoscaler_max_replicas = var.cluster_autoscaler_max_replicas > 0 ? var.cluster_autoscaler_max_replicas : var.initial_machinedeployment_replicas
 }
 
 resource "digitalocean_tag" "kube_cluster_tag" {
