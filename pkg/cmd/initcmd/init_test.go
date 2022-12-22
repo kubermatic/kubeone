@@ -42,6 +42,12 @@ func withCNI(cni string) genOptsParams {
 	}
 }
 
+func withTerraformVars(vars map[string]string) genOptsParams {
+	return func(opts *GenerateOpts) {
+		opts.terraformVars = vars
+	}
+}
+
 func withEncryption(opts *GenerateOpts) {
 	opts.enableFeatureEncryption = true
 }
@@ -284,6 +290,39 @@ func TestGenKubeOneClusterYAML(t *testing.T) {
 			}
 
 			testhelper.DiffOutput(t, testhelper.FSGoldenName(t), string(got), *updateFlag)
+		})
+	}
+}
+
+func TestGenTerraformVars(t *testing.T) {
+	tests := []struct {
+		name string
+		vars map[string]string
+	}{
+		{
+			name: "default",
+			vars: map[string]string{},
+		},
+		{
+			name: "one variable",
+			vars: map[string]string{
+				"test": "kubernetes",
+			},
+		},
+		{
+			name: "two variables",
+			vars: map[string]string{
+				"test":       "kubernetes",
+				"kubernetes": "k8s",
+			},
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			got := genTerraformVars(genOpts(withTerraformVars(tt.vars)))
+
+			testhelper.DiffOutput(t, testhelper.FSGoldenName(t), got.String(), *updateFlag)
 		})
 	}
 }
