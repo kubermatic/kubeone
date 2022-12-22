@@ -24,6 +24,9 @@ locals {
   zone_first         = data.google_compute_zones.available.names[0]
   kubeapi_endpoint   = var.disable_kubeapi_loadbalancer ? google_compute_instance.control_plane.0.network_interface.0.network_ip : google_compute_address.lb_ip.0.address
   loadbalancer_count = var.disable_kubeapi_loadbalancer ? 0 : 1
+
+  cluster_autoscaler_min_replicas = var.cluster_autoscaler_min_replicas > 0 ? var.cluster_autoscaler_min_replicas : var.initial_machinedeployment_replicas
+  cluster_autoscaler_max_replicas = var.cluster_autoscaler_max_replicas > 0 ? var.cluster_autoscaler_max_replicas : var.initial_machinedeployment_replicas
 }
 
 data "google_compute_zones" "available" {

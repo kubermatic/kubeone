@@ -224,6 +224,18 @@ variable "initial_machinedeployment_replicas" {
   type        = number
 }
 
+variable "cluster_autoscaler_min_replicas" {
+  default     = 0
+  description = "minimum number of replicas per MachineDeployment (requires cluster-autoscaler)"
+  type        = number
+}
+
+variable "cluster_autoscaler_max_replicas" {
+  default     = 0
+  description = "maximum number of replicas per MachineDeployment (requires cluster-autoscaler)"
+  type        = number
+}
+
 variable "worker_os" {
   description = "OS to run on worker machines"
 

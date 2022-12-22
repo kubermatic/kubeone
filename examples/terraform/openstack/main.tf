@@ -17,6 +17,15 @@ limitations under the License.
 provider "openstack" {
 }
 
+locals {
+  cluster_autoscaler_min_replicas = var.cluster_autoscaler_min_replicas > 0 ? var.cluster_autoscaler_min_replicas : var.initial_machinedeployment_replicas
+  cluster_autoscaler_max_replicas = var.cluster_autoscaler_max_replicas > 0 ? var.cluster_autoscaler_max_replicas : var.initial_machinedeployment_replicas
+
+  rendered_lb_config = templatefile("./etc_gobetween.tpl", {
+    lb_targets = openstack_compute_instance_v2.control_plane.*.access_ip_v4,
+  })
+}
+
 data "openstack_networking_network_v2" "external_network" {
   name     = var.external_network_name
   external = true
@@ -172,12 +181,6 @@ resource "openstack_networking_floatingip_v2" "lb" {
 resource "openstack_networking_floatingip_associate_v2" "lb" {
   floating_ip = openstack_networking_floatingip_v2.lb.address
   port_id     = openstack_networking_port_v2.lb.id
-}
-
-locals {
-  rendered_lb_config = templatefile("./etc_gobetween.tpl", {
-    lb_targets = openstack_compute_instance_v2.control_plane.*.access_ip_v4,
-  })
 }
 
 resource "null_resource" "lb_config" {

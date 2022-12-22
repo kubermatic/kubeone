@@ -250,6 +250,18 @@ variable "initial_machinedeployment_replicas" {
 
 }
 
+variable "cluster_autoscaler_min_replicas" {
+  default     = 0
+  description = "minimum number of replicas per MachineDeployment (requires cluster-autoscaler)"
+  type        = number
+}
+
+variable "cluster_autoscaler_max_replicas" {
+  default     = 0
+  description = "maximum number of replicas per MachineDeployment (requires cluster-autoscaler)"
+  type        = number
+}
+
 variable "static_workers_count" {
   description = "number of static workers"
   default     = 0

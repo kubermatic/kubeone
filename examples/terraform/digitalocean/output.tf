@@ -52,7 +52,9 @@ output "kubeone_workers" {
       replicas = var.initial_machinedeployment_replicas
       providerSpec = {
         annotations = {
-          "k8c.io/operating-system-profile" = var.initial_machinedeployment_operating_system_profile
+          "k8c.io/operating-system-profile"                           = var.initial_machinedeployment_operating_system_profile
+          "cluster.k8s.io/cluster-api-autoscaler-node-group-min-size" = tostring(local.cluster_autoscaler_min_replicas)
+          "cluster.k8s.io/cluster-api-autoscaler-node-group-max-size" = tostring(local.cluster_autoscaler_max_replicas)
         }
         sshPublicKeys   = [digitalocean_ssh_key.deployer.public_key]
         operatingSystem = local.worker_os
