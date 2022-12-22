@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package cmd
+package initcmd
 
 import (
 	"errors"
@@ -34,7 +34,7 @@ func Test_genKubeOneClusterYAML(t *testing.T) {
 	}
 
 	validProvidersNames := []string{}
-	for provName := range validProviders {
+	for provName := range ValidProviders {
 		validProvidersNames = append(validProvidersNames, provName)
 	}
 	sort.Strings(validProvidersNames)
@@ -49,11 +49,11 @@ func Test_genKubeOneClusterYAML(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.providerName, func(t *testing.T) {
-			params := &genKubeOneClusterYAMLParams{
+			params := &GenerateOpts{
 				providerName:      tt.providerName,
 				clusterName:       "example",
 				kubernetesVersion: "v1.24.4",
-				validProviders:    validProviders,
+				validProviders:    ValidProviders,
 			}
 
 			got, err := genKubeOneClusterYAML(params)
