@@ -121,7 +121,7 @@ func InitInteractive(defaultKubeVersion string) (*GenerateOpts, error) {
 	}
 
 	var autoscaler bool
-	if stringSliceIncludes(iOpts.addons, addonClusterAutoscaler) {
+	if sliceIncludes(iOpts.addons, addonClusterAutoscaler) {
 		fmt.Println(messageAddonAutoscaler)
 
 		if err := survey.Ask(questionsAddonAutoscaler, iOpts.addonAutoscaler); err != nil {
@@ -131,7 +131,7 @@ func InitInteractive(defaultKubeVersion string) (*GenerateOpts, error) {
 		autoscaler = true
 	}
 
-	if stringSliceIncludes(iOpts.addons, addonBackupsRestic) {
+	if sliceIncludes(iOpts.addons, addonBackupsRestic) {
 		fmt.Println(messageAddonBackups)
 
 		if err := survey.Ask(questionsAddonBackups, iOpts.addonBackups); err != nil {
@@ -192,15 +192,15 @@ func (opts *interactiveOpts) parseInteractiveOpts() (*GenerateOpts, error) {
 	}
 
 	// Features
-	if stringSliceIncludes(opts.cluster.Features, featureEncryption) {
+	if sliceIncludes(opts.cluster.Features, featureEncryption) {
 		gOpts.enableFeatureEncryption = true
 	}
-	if stringSliceIncludes(opts.cluster.Features, featureCoreDNSPDB) {
+	if sliceIncludes(opts.cluster.Features, featureCoreDNSPDB) {
 		gOpts.enableFeatureCoreDNSPDB = true
 	}
 
 	// Addons
-	if stringSliceIncludes(opts.addons, addonClusterAutoscaler) {
+	if sliceIncludes(opts.addons, addonClusterAutoscaler) {
 		gOpts.enableAddonAutoscaler = true
 		gOpts.terraformVars[tfvarName(opts.addonAutoscaler, "MinReplicas")] = opts.addonAutoscaler.MinReplicas
 		gOpts.terraformVars[tfvarName(opts.addonAutoscaler, "MaxReplicas")] = opts.addonAutoscaler.MaxReplicas
@@ -208,7 +208,7 @@ func (opts *interactiveOpts) parseInteractiveOpts() (*GenerateOpts, error) {
 		// We don't ask for number of worker nodes if cluster-autoscaler is enabled, instead we take minimum replicas
 		opts.terraformVars.WorkerNodesCount = opts.addonAutoscaler.MinReplicas
 	}
-	if stringSliceIncludes(opts.addons, addonBackupsRestic) {
+	if sliceIncludes(opts.addons, addonBackupsRestic) {
 		gOpts.enableAddonBackups = true
 		gOpts.addonBackupsPassword = opts.addonBackups.ResticPassword
 		gOpts.addonBackupsS3Bucket = opts.addonBackups.S3Bucket

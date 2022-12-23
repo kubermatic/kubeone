@@ -17,7 +17,7 @@ limitations under the License.
 package initcmd
 
 import (
-	"github.com/MakeNowJust/heredoc"
+	"github.com/MakeNowJust/heredoc/v2"
 )
 
 type initProvider struct {
