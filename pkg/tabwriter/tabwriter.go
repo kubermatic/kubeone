@@ -34,3 +34,8 @@ const (
 func New(output io.Writer) *tabwriter.Writer {
 	return tabwriter.NewWriter(output, tabwriterMinWidth, tabwriterWidth, tabwriterPadding, tabwriterPadChar, tabwriterFlags)
 }
+
+// New returns a tabwriter that translates tabbed columns in input into properly aligned text.
+func NewWithPadding(output io.Writer, padding int) *tabwriter.Writer {
+	return tabwriter.NewWriter(output, tabwriterMinWidth, tabwriterWidth, 1, tabwriterPadChar, tabwriterFlags)
+}

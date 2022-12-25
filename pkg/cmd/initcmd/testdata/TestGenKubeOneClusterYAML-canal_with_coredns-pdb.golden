@@ -2,15 +2,23 @@ apiVersion: kubeone.k8c.io/v1beta2
 kind: KubeOneCluster
 name: example
 
+versions:
+  kubernetes: v1.24.4
+
 cloudProvider:
-  equinixmetal: {}
+  aws: {}
   external: true
 
 containerRuntime:
   containerd: {}
 
-versions:
-  kubernetes: v1.24.4
+clusterNetwork:
+  cni:
+    canal: {}
+  
+features:
+  coreDNS:
+    deployPodDisruptionBudget: true
 
 addons:
   enable: true

@@ -1,0 +1,3 @@
+cluster_name = "example"
+
+test  = "kubernetes"

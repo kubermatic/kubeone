@@ -3,11 +3,13 @@ module k8c.io/kubeone
 go 1.18
 
 require (
+	github.com/AlecAivazis/survey/v2 v2.3.6
 	github.com/BurntSushi/toml v1.2.1
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/Masterminds/semver/v3 v3.1.1
 	github.com/Masterminds/sprig/v3 v3.2.2
 	github.com/aws/aws-sdk-go v1.44.121
+	github.com/common-nighthawk/go-figure v0.0.0-20210622060536-734e95fb86be
 	github.com/distribution/distribution/v3 v3.0.0-20221021092657-c47a966fded8
 	github.com/dominodatalab/os-release v0.0.0-20190522011736-bcdb4a3e3c2f
 	github.com/iancoleman/orderedmap v0.2.0
@@ -96,6 +98,7 @@ require (
 	github.com/jmoiron/sqlx v1.3.5 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
+	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/lann/builder v0.0.0-20180802200727-47ae307949d0 // indirect
 	github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0 // indirect
@@ -105,6 +108,7 @@ require (
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mattn/go-runewidth v0.0.9 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.2-0.20181231171920-c182affec369 // indirect
+	github.com/mgutz/ansi v0.0.0-20170206155736-9520e82c474b // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect

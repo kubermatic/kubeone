@@ -2,16 +2,16 @@ apiVersion: kubeone.k8c.io/v1beta2
 kind: KubeOneCluster
 name: example
 
-cloudProvider:
-  none: {}
-containerRuntime:
-  containerd: {}
-
 versions:
   kubernetes: v1.24.4
 
-machineController:
-  deploy: false
+cloudProvider:
+  gce: {}
+containerRuntime:
+  containerd: {}
 
-operatingSystemManager:
-  deploy: false
+
+addons:
+  enable: true
+  addons:
+    - name: default-storage-class
