@@ -31,11 +31,11 @@ func clusterNameValidator(val interface{}) error {
 		if errs := kubeonevalidation.ValidateName(str, nil); len(errs) > 0 {
 			return fmt.Errorf("provided value is not a valid cluster name: %w", errs.ToAggregate())
 		}
-	} else {
-		return fmt.Errorf("cluster name must be a valid string, but got %v", reflect.TypeOf(val).Name())
+
+		return nil
 	}
 
-	return nil
+	return fmt.Errorf("cluster name must be a valid string, but got %v", reflect.TypeOf(val).Name())
 }
 
 func kubernetesVersionValidator(val interface{}) error {
@@ -43,6 +43,8 @@ func kubernetesVersionValidator(val interface{}) error {
 		if errs := kubeonevalidation.ValidateVersionConfig(kubeoneapi.VersionConfig{Kubernetes: strings.TrimLeft(str, "v")}, nil); len(errs) > 0 {
 			return fmt.Errorf("provided value is not a valid kubernetes version: %w", errs.ToAggregate())
 		}
+
+		return nil
 	}
 
 	return fmt.Errorf("kubernetes version must be a valid semver, but got %v", reflect.TypeOf(val).Name())

@@ -89,7 +89,7 @@ func NewGenerateOpts(path, providerName, clusterName, kubernetesVersion string, 
 }
 
 func GenerateConfigs(opts *GenerateOpts) error {
-	if !opts.generateTerraform {
+	if opts.clusterName == "" {
 		return fmt.Errorf("cluster name is required")
 	}
 
