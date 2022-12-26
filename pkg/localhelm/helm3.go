@@ -24,6 +24,7 @@ import (
 	"io"
 	"os"
 
+	"github.com/sirupsen/logrus"
 	helmaction "helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/chart/loader"
@@ -32,7 +33,7 @@ import (
 	"helm.sh/helm/v3/pkg/downloader"
 	"helm.sh/helm/v3/pkg/getter"
 	"helm.sh/helm/v3/pkg/registry"
-	"helm.sh/helm/v3/pkg/release"
+	helmrelease "helm.sh/helm/v3/pkg/release"
 	"helm.sh/helm/v3/pkg/storage/driver"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
@@ -83,22 +84,8 @@ func Deploy(st *state.State) error {
 		return fail.NewRuntimeError("incorrect number of bytes written to temp kubeconfig", "")
 	}
 
-	restClientGetter := &genericclioptions.ConfigFlags{
-		Namespace:  pointer.New("default"),
-		KubeConfig: pointer.New(tmpKubeConf.Name()),
-		WrapConfigFn: func(rc *rest.Config) *rest.Config {
-			tunnelErr := kubeconfig.TunnelRestConfig(st, rc)
-			if tunnelErr != nil {
-				panic(tunnelErr)
-			}
-
-			return rc
-		},
-	}
-
-	var helmSettings = helmcli.New()
-	helmSettings.Debug = st.Verbose
-
+	restClientGetter := newRestClientGetter(tmpKubeConf.Name(), st)
+	helmSettings := newHelmSettings(st.Verbose)
 	cfg, err := newActionConfiguration(helmSettings.Debug)
 	if err != nil {
 		return err
@@ -111,29 +98,18 @@ func Deploy(st *state.State) error {
 
 	// all namespaces
 	noNamespaceSecretsClient := kubeClient.CoreV1().Secrets("")
-	releasesToUninstall, err := driver.NewSecrets(noNamespaceSecretsClient).List(func(rel *release.Release) bool {
-		for _, hr := range st.Cluster.HelmReleases {
-			if rel.Name == hr.ReleaseName && rel.Namespace == hr.Namespace && rel.Chart.Name() == hr.Chart {
-				return false
-			}
-		}
-
-		_, found := rel.Labels[releasedByKubeone]
-		if found {
-			st.Logger.Infof("queue %s/%s v%d helm release to uninstall", rel.Namespace, rel.Name, rel.Version)
-		}
-
-		return found
-	})
+	releasesToUninstall, err := driver.
+		NewSecrets(noNamespaceSecretsClient).
+		List(releasesFilterFn(st.Cluster.HelmReleases, st.Logger))
 	if err != nil {
 		return err
 	}
 
-	for _, rh := range st.Cluster.HelmReleases {
-		st.Logger.Infof("Deploying helm chart %s as release %s", rh.Chart, rh.ReleaseName)
+	for _, release := range st.Cluster.HelmReleases {
+		st.Logger.Infof("Deploying helm chart %s as release %s", release.Chart, release.ReleaseName)
 
 		var valueFiles []string
-		for _, value := range rh.Values {
+		for _, value := range release.Values {
 			if value.ValuesFile != "" {
 				valueFiles = append(valueFiles, value.ValuesFile)
 			}
@@ -169,20 +145,20 @@ func Deploy(st *state.State) error {
 			return fail.Runtime(errMerge, "merging helm values")
 		}
 
-		if err = cfg.Init(restClientGetter, rh.Namespace, helmStorageDriver, st.Logger.Debugf); err != nil {
+		if err = cfg.Init(restClientGetter, release.Namespace, helmStorageDriver, st.Logger.Debugf); err != nil {
 			return fail.Runtime(err, "initializing helm action configuration")
 		}
 
 		histClient := helmaction.NewHistory(cfg)
 		histClient.Max = 1
-		_, err = histClient.Run(rh.ReleaseName)
+		_, err = histClient.Run(release.ReleaseName)
 		switch {
 		case errors.Is(err, driver.ErrReleaseNotFound):
-			if err = installRelease(st.Context, cfg, rh, helmSettings, providers, st.DynamicClient, vals); err != nil {
+			if err = installRelease(st.Context, cfg, release, helmSettings, providers, st.DynamicClient, vals); err != nil {
 				return err
 			}
 		case err == nil:
-			if err = upgradeRelease(st.Context, cfg, rh, helmSettings, providers, st.DynamicClient, vals); err != nil {
+			if err = upgradeRelease(st.Context, cfg, release, helmSettings, providers, st.DynamicClient, vals); err != nil {
 				return err
 			}
 		default:
@@ -190,21 +166,46 @@ func Deploy(st *state.State) error {
 		}
 	}
 
-	for _, rel := range releasesToUninstall {
-		if err = cfg.Init(restClientGetter, rel.Namespace, helmStorageDriver, st.Logger.Debugf); err != nil {
-			return fail.Runtime(err, "initializing helm action configuration")
+	return uninstallRelease(releasesToUninstall, cfg, restClientGetter, st.Logger)
+}
+
+func releasesFilterFn(helmReleases []kubeoneapi.HelmRelease, logger logrus.FieldLogger) func(rel *helmrelease.Release) bool {
+	return func(rel *helmrelease.Release) bool {
+		for _, hr := range helmReleases {
+			if rel.Name == hr.ReleaseName && rel.Namespace == hr.Namespace && rel.Chart.Name() == hr.Chart {
+				return false
+			}
 		}
 
-		helmUninstall := helmaction.NewUninstall(cfg)
-		resp, err := helmUninstall.Run(rel.Name)
-		if err != nil {
-			return fail.Runtime(err, "uninstalling helm release %s/%s", rel.Namespace, rel.Name)
+		_, found := rel.Labels[releasedByKubeone]
+		if found {
+			logger.Infof("queue %s/%s v%d helm release to uninstall", rel.Namespace, rel.Name, rel.Version)
 		}
 
-		st.Logger.Infof("uninstalling helm release %s/%s: %s", rel.Namespace, rel.Name, resp.Info)
+		return found
 	}
+}
 
-	return nil
+func newHelmSettings(verbose bool) *helmcli.EnvSettings {
+	helmSettings := helmcli.New()
+	helmSettings.Debug = verbose
+
+	return helmSettings
+}
+
+func newRestClientGetter(kubeConfigFileName string, st *state.State) *genericclioptions.ConfigFlags {
+	return &genericclioptions.ConfigFlags{
+		Namespace:  pointer.New("default"),
+		KubeConfig: pointer.New(kubeConfigFileName),
+		WrapConfigFn: func(rc *rest.Config) *rest.Config {
+			tunnelErr := kubeconfig.TunnelRestConfig(st, rc)
+			if tunnelErr != nil {
+				panic(tunnelErr)
+			}
+
+			return rc
+		},
+	}
 }
 
 func upgradeRelease(
@@ -275,6 +276,29 @@ func installRelease(
 	}
 
 	return addReleaseSecretLabels(ctx, secretObjectKey, dynclient)
+}
+
+func uninstallRelease(
+	toUninstall []*helmrelease.Release,
+	cfg *helmaction.Configuration,
+	restClientGetter *genericclioptions.ConfigFlags,
+	logger logrus.FieldLogger,
+) error {
+	for _, release := range toUninstall {
+		if err := cfg.Init(restClientGetter, release.Namespace, helmStorageDriver, logger.Debugf); err != nil {
+			return fail.Runtime(err, "initializing helm action configuration")
+		}
+
+		helmUninstall := helmaction.NewUninstall(cfg)
+		resp, err := helmUninstall.Run(release.Name)
+		if err != nil {
+			return fail.Runtime(err, "uninstalling helm release %s/%s", release.Namespace, release.Name)
+		}
+
+		logger.Infof("uninstalling helm release %s/%s: %s", release.Namespace, release.Name, resp.Info)
+	}
+
+	return nil
 }
 
 func addReleaseSecretLabels(ctx context.Context, releaseNamespacedName ctrlruntimeclient.ObjectKey, dynclient ctrlruntimeclient.Client) error {
