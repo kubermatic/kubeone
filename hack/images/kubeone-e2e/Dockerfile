@@ -27,12 +27,12 @@ RUN curl -fL https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terra
 RUN chmod +x /usr/local/bin/terraform
 
 # Source: https://github.com/vmware-tanzu/sonobuoy
-ENV SONOBUOY_VERSION "0.56.12"
+ENV SONOBUOY_VERSION "0.56.14"
 RUN curl -fL https://github.com/vmware-tanzu/sonobuoy/releases/download/v${SONOBUOY_VERSION}/sonobuoy_${SONOBUOY_VERSION}_linux_amd64.tar.gz | tar vxz
 RUN chmod +x sonobuoy
 
-# Source: https://dl.k8s.io/release/stable-1.24.txt
-ENV KUBECTL_VERSION="v1.24.8"
+# Source: https://dl.k8s.io/release/stable-1.25.txt
+ENV KUBECTL_VERSION="v1.25.5"
 RUN curl --fail -Lo kubectl https://dl.k8s.io/release/$KUBECTL_VERSION/bin/linux/amd64/kubectl
 RUN chmod +x kubectl
 
