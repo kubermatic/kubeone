@@ -56,12 +56,6 @@ func TestEtcdVersionCorruptCheckExtraArgs(t *testing.T) {
 			expectedEtcdArgs:     etcdExtraArgs,
 		},
 		{
-			name:                 "unfixed 1.26",
-			kubeVersion:          semver.MustParse("1.26.0"),
-			expectedEtcdImageTag: fixedEtcdVersion,
-			expectedEtcdArgs:     etcdExtraArgs,
-		},
-		{
 			name:                 "fixed 1.23",
 			kubeVersion:          semver.MustParse("1.23.99"),
 			expectedEtcdImageTag: "",
