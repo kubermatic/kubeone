@@ -39,9 +39,14 @@ type initOpts struct {
 }
 
 func initCmd() *cobra.Command {
+	validProviders := []string{}
+	for k := range initcmd.ValidProviders {
+		validProviders = append(validProviders, k)
+	}
+
 	opts := &initOpts{
 		Provider: oneOfFlag{
-			validSet:     sets.StringKeySet(initcmd.ValidProviders),
+			validSet:     sets.New(validProviders...),
 			defaultValue: "none",
 		},
 	}
