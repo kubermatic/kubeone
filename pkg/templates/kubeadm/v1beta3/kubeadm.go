@@ -54,13 +54,13 @@ const (
 	// NB: Currently no Kubernetes version uses 3.5.6, but to avoid deleting the code
 	// we just use some super high version as a fixed version.
 	// fixedEtcd123 defines a semver constraint used to check if Kubernetes 1.23 uses fixed etcd version
-	fixedEtcd123 = ">= 1.23.99, < 1.24"
+	fixedEtcd123 = ">= 1.23.15, < 1.24"
 	// fixedEtcd124 defines a semver constraint used to check if Kubernetes 1.24 uses fixed etcd version
-	fixedEtcd124 = ">= 1.24.99, < 1.25"
-	// fixedEtcd125 defines a semver constraint used to check if Kubernetes 1.25+ uses fixed etcd version
-	fixedEtcd125 = ">= 1.25.99, < 1.26"
+	fixedEtcd124 = ">= 1.24.9, < 1.25"
+	// fixedEtcd125 defines a semver constraint used to check if Kubernetes 1.25 uses fixed etcd version
+	fixedEtcd125 = ">= 1.25.5, < 1.26"
 	// fixedEtcd126 defines a semver constraint used to check if Kubernetes 1.26+ uses fixed etcd version
-	fixedEtcd126 = ">= 1.26.99"
+	fixedEtcd126 = ">= 1.26.0"
 )
 
 const (
