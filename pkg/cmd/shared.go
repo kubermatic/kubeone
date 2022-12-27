@@ -23,6 +23,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"sort"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -259,7 +260,7 @@ func defaultBackupPath(backupPath, manifestPath, clusterName string) string {
 }
 
 type oneOfFlag struct {
-	validSet     sets.String
+	validSet     sets.Set[string]
 	defaultValue string
 	value        string
 	valid        bool
@@ -288,5 +289,8 @@ func (*oneOfFlag) Type() string {
 }
 
 func (oof *oneOfFlag) PossibleValues() []string {
-	return oof.validSet.List()
+	l := oof.validSet.UnsortedList()
+	sort.Strings(l)
+
+	return l
 }
