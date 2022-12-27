@@ -54,5 +54,5 @@ func NewKubeProxyConfiguration(cluster *kubeoneapi.KubeOneCluster) (runtime.Obje
 		}
 	}
 
-	return dropFields(kubeProxyConfig, []string{"detectLocal"}, []string{"winkernel"})
+	return dropFields(kubeProxyConfig, []string{"detectLocal"}, []string{"winkernel"}, []string{"iptables", "localhostNodePorts"})
 }
