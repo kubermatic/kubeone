@@ -236,8 +236,9 @@ func optionalResources() map[Resource]map[string]string {
 
 		AwsCCM: {
 			"1.23.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.23.2",
-			"1.24.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.24.1",
-			">= 1.25.0": "registry.k8s.io/provider-aws/cloud-controller-manager:v1.25.1",
+			"1.24.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.24.3",
+			"1.25.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.25.1",
+			">= 1.26.0": "registry.k8s.io/provider-aws/cloud-controller-manager:v1.26.0",
 		},
 
 		// Azure CCM
