@@ -236,8 +236,9 @@ func optionalResources() map[Resource]map[string]string {
 
 		AwsCCM: {
 			"1.23.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.23.2",
-			"1.24.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.24.1",
-			">= 1.25.0": "registry.k8s.io/provider-aws/cloud-controller-manager:v1.25.1",
+			"1.24.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.24.3",
+			"1.25.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.25.1",
+			">= 1.26.0": "registry.k8s.io/provider-aws/cloud-controller-manager:v1.26.0",
 		},
 
 		// Azure CCM
@@ -253,7 +254,7 @@ func optionalResources() map[Resource]map[string]string {
 		},
 
 		// AWS EBS CSI driver
-		AwsEbsCSI:                    {"*": "public.ecr.aws/ebs-csi-driver/aws-ebs-csi-driver:v1.12.1"},
+		AwsEbsCSI:                    {"*": "public.ecr.aws/ebs-csi-driver/aws-ebs-csi-driver:v1.14.0"},
 		AwsEbsCSIAttacher:            {"*": "registry.k8s.io/sig-storage/csi-attacher:v3.4.0"},
 		AwsEbsCSILivenessProbe:       {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.6.0"},
 		AwsEbsCSINodeDriverRegistrar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.5.1"},
