@@ -151,14 +151,15 @@ func Deploy(st *state.State) error {
 
 		histClient := helmaction.NewHistory(cfg)
 		histClient.Max = 1
-		_, err = histClient.Run(release.ReleaseName)
+		existingReleases, err := histClient.Run(release.ReleaseName)
+
 		switch {
 		case errors.Is(err, driver.ErrReleaseNotFound):
 			if err = installRelease(st.Context, cfg, release, helmSettings, providers, st.DynamicClient, vals); err != nil {
 				return err
 			}
 		case err == nil:
-			if err = upgradeRelease(st.Context, cfg, release, helmSettings, providers, st.DynamicClient, vals); err != nil {
+			if err = upgradeRelease(st.Context, cfg, release, helmSettings, providers, st.DynamicClient, vals, existingReleases); err != nil {
 				return err
 			}
 		default:
@@ -208,74 +209,119 @@ func newRestClientGetter(kubeConfigFileName string, st *state.State) *genericcli
 	}
 }
 
+func helmReleasesEqual(rel *helmrelease.Release, oldRels []*helmrelease.Release) bool {
+	for _, existing := range oldRels {
+		if rel.Version == existing.Version && rel.Manifest == existing.Manifest {
+			return true
+		}
+	}
+
+	return false
+}
+
 func upgradeRelease(
 	ctx context.Context,
 	cfg *helmaction.Configuration,
-	rh kubeoneapi.HelmRelease,
+	release kubeoneapi.HelmRelease,
 	helmSettings *helmcli.EnvSettings,
 	providers getter.Providers,
 	dynclient ctrlruntimeclient.Client,
 	vals map[string]interface{},
+	existingHelmReleases []*helmrelease.Release,
 ) error {
-	helmUpgrade := helmaction.NewUpgrade(cfg)
-	helmUpgrade.Install = true
-	helmUpgrade.DependencyUpdate = true
-	helmUpgrade.MaxHistory = 5
-	helmUpgrade.Namespace = rh.Namespace
-	helmUpgrade.RepoURL = rh.RepoURL
-	helmUpgrade.Version = rh.Version
-
-	chartRequested, err := getChart(rh.Chart, helmUpgrade.ChartPathOptions, helmSettings, providers)
+	helmInstall := newHelmInstallClient(cfg, release)
+	helmInstall.DryRun = true
+	dryRunHelmRelease, err := runInstallRelease(ctx, release, helmInstall, helmSettings, providers, vals)
 	if err != nil {
 		return err
 	}
 
-	rel, err := helmUpgrade.RunWithContext(ctx, rh.ReleaseName, chartRequested, vals)
+	if helmReleasesEqual(dryRunHelmRelease, existingHelmReleases) {
+		// Short-circuit and don't run the upgrade
+		return nil
+	}
+
+	helmUpgrade := helmaction.NewUpgrade(cfg)
+	helmUpgrade.Install = true
+	helmUpgrade.DependencyUpdate = true
+	helmUpgrade.MaxHistory = 5
+	helmUpgrade.Namespace = release.Namespace
+	helmUpgrade.RepoURL = release.RepoURL
+	helmUpgrade.Version = release.Version
+
+	chartRequested, err := getChart(release.Chart, helmUpgrade.ChartPathOptions, helmSettings, providers)
 	if err != nil {
-		return fail.Runtime(err, "upgrading helm release %q from chart %q", rh.Chart, rh.ReleaseName)
+		return err
+	}
+
+	rel, err := helmUpgrade.RunWithContext(ctx, release.ReleaseName, chartRequested, vals)
+	if err != nil {
+		return fail.Runtime(err, "upgrading helm release %q from chart %q", release.Chart, release.ReleaseName)
 	}
 
 	secretObjectKey := ctrlruntimeclient.ObjectKey{
 		Name:      makeKey(rel.Name, rel.Version),
-		Namespace: rh.Namespace,
+		Namespace: release.Namespace,
 	}
 
 	return addReleaseSecretLabels(ctx, secretObjectKey, dynclient)
 }
 
+func newHelmInstallClient(cfg *helmaction.Configuration, release kubeoneapi.HelmRelease) *helmaction.Install {
+	helmInstall := helmaction.NewInstall(cfg)
+	helmInstall.DependencyUpdate = true
+	helmInstall.CreateNamespace = true
+	helmInstall.IncludeCRDs = true
+	helmInstall.Namespace = release.Namespace
+	helmInstall.ReleaseName = release.ReleaseName
+	helmInstall.RepoURL = release.RepoURL
+	helmInstall.Version = release.Version
+
+	return helmInstall
+}
+
 func installRelease(
 	ctx context.Context,
 	cfg *helmaction.Configuration,
-	rh kubeoneapi.HelmRelease,
+	release kubeoneapi.HelmRelease,
 	helmSettings *helmcli.EnvSettings,
 	providers getter.Providers,
 	dynclient ctrlruntimeclient.Client,
 	vals map[string]interface{},
 ) error {
-	helmInstall := helmaction.NewInstall(cfg)
-	helmInstall.DependencyUpdate = true
-	helmInstall.CreateNamespace = true
-	helmInstall.Namespace = rh.Namespace
-	helmInstall.ReleaseName = rh.ReleaseName
-	helmInstall.RepoURL = rh.RepoURL
-	helmInstall.Version = rh.Version
-
-	chartRequested, err := getChart(rh.Chart, helmInstall.ChartPathOptions, helmSettings, providers)
+	helmInstall := newHelmInstallClient(cfg, release)
+	rel, err := runInstallRelease(ctx, release, helmInstall, helmSettings, providers, vals)
 	if err != nil {
 		return err
 	}
 
-	rel, err := helmInstall.RunWithContext(ctx, chartRequested, vals)
-	if err != nil {
-		return fail.Runtime(err, "installing helm release %q from chart %q", rh.Chart, rh.ReleaseName)
-	}
-
 	secretObjectKey := ctrlruntimeclient.ObjectKey{
 		Name:      makeKey(rel.Name, rel.Version),
-		Namespace: rh.Namespace,
+		Namespace: release.Namespace,
 	}
 
 	return addReleaseSecretLabels(ctx, secretObjectKey, dynclient)
+}
+
+func runInstallRelease(
+	ctx context.Context,
+	release kubeoneapi.HelmRelease,
+	client *helmaction.Install,
+	helmSettings *helmcli.EnvSettings,
+	providers getter.Providers,
+	vals map[string]interface{},
+) (*helmrelease.Release, error) {
+	chartRequested, err := getChart(release.Chart, client.ChartPathOptions, helmSettings, providers)
+	if err != nil {
+		return nil, err
+	}
+
+	rel, err := client.RunWithContext(ctx, chartRequested, vals)
+	if err != nil {
+		return nil, fail.Runtime(err, "installing helm release %q from chart %q", release.Chart, release.ReleaseName)
+	}
+
+	return rel, nil
 }
 
 func uninstallRelease(
