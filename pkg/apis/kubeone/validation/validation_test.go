@@ -922,16 +922,6 @@ func TestValidateKubernetesSupport(t *testing.T) {
 			expectedError: false,
 		},
 		{
-			name: "vSphere 1.25.4 cluster",
-			providerConfig: kubeoneapi.CloudProviderSpec{
-				Vsphere: &kubeoneapi.VsphereSpec{},
-			},
-			versionConfig: kubeoneapi.VersionConfig{
-				Kubernetes: "1.25.4",
-			},
-			expectedError: false,
-		},
-		{
 			name: "vSphere 1.26.0 cluster",
 			providerConfig: kubeoneapi.CloudProviderSpec{
 				Vsphere: &kubeoneapi.VsphereSpec{},
@@ -939,7 +929,83 @@ func TestValidateKubernetesSupport(t *testing.T) {
 			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "1.26.0",
 			},
+			expectedError: false,
+		},
+		{
+			name: "vSphere 1.27.0 cluster",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Vsphere: &kubeoneapi.VsphereSpec{},
+			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.27.0",
+			},
 			expectedError: true,
+		},
+		{
+			name: "OpenStack 1.25.5 cluster with in-tree cloud provider",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Openstack: &kubeoneapi.OpenstackSpec{},
+				External:  false,
+			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.25.5",
+			},
+			expectedError: false,
+		},
+		{
+			name: "OpenStack 1.25.5 cluster with external cloud provider",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Openstack: &kubeoneapi.OpenstackSpec{},
+				External:  true,
+			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.25.5",
+			},
+			expectedError: false,
+		},
+		{
+			name: "OpenStack 1.26.0 cluster with in-tree cloud provider",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Openstack: &kubeoneapi.OpenstackSpec{},
+				External:  false,
+			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.26.0",
+			},
+			expectedError: true,
+		},
+		{
+			name: "OpenStack 1.26.0 cluster with external cloud provider",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Openstack: &kubeoneapi.OpenstackSpec{},
+				External:  true,
+			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.26.0",
+			},
+			expectedError: false,
+		},
+		{
+			name: "OpenStack 1.27.0 cluster with in-tree cloud provider",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Openstack: &kubeoneapi.OpenstackSpec{},
+				External:  false,
+			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.27.0",
+			},
+			expectedError: true,
+		},
+		{
+			name: "OpenStack 1.27.0 cluster with external cloud provider",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Openstack: &kubeoneapi.OpenstackSpec{},
+				External:  true,
+			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.27.0",
+			},
+			expectedError: false,
 		},
 	}
 	for _, tc := range tests {
