@@ -38,6 +38,8 @@ spec:
             - "--leader-election-namespace=kube-system"
             - "--timeout=300s"
             - "--extra-create-metadata=true"
+            - "--kube-api-qps=50"
+            - "--kube-api-burst=100"
           env:
             - name: ADDRESS
               value: /csi/csi.sock
@@ -58,6 +60,8 @@ spec:
             - "-timeout=120s"
             - "--leader-election"
             - "--leader-election-namespace=kube-system"
+            - "--kube-api-qps=50"
+            - "--kube-api-burst=100"
           env:
             - name: ADDRESS
               value: /csi/csi.sock
