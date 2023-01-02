@@ -41,9 +41,11 @@ spec:
             - "--timeout=15s"
             - "--leader-election"
             - "--leader-election-namespace=kube-system"
-            - "--worker-threads=50"
+            - "--worker-threads=100"
             - "--extra-create-metadata=true"
             - "--strict-topology=true"
+            - "--kube-api-qps=50"
+            - "--kube-api-burst=100"
           env:
             - name: ADDRESS
               value: /csi/csi.sock
@@ -65,6 +67,8 @@ spec:
             - "-leader-election"
             - "--leader-election-namespace=kube-system"
             - "-worker-threads=500"
+            - "-kube-api-qps=50"
+            - "-kube-api-burst=100"
           env:
             - name: ADDRESS
               value: /csi/csi.sock
