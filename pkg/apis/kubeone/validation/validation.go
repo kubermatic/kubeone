@@ -316,9 +316,13 @@ func ValidateKubernetesSupport(c kubeoneapi.KubeOneCluster, fldPath *field.Path)
 		return append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, ".versions.kubernetes is not a semver string"))
 	}
 
-	// vSphere CCM v1.24 supports Kubernetes 1.24 and 1.25.
-	if v.Minor() >= 26 && c.CloudProvider.Vsphere != nil {
-		allErrs = append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, "kubernetes versions 1.25.0 and newer are currently not supported for vsphere clusters"))
+	// vSphere CCM v1.25 supports Kubernetes 1.25 and 1.26.
+	if v.Minor() >= 27 && c.CloudProvider.Vsphere != nil {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, "kubernetes versions 1.27.0 and newer are currently not supported for vsphere clusters"))
+	}
+
+	if v.Minor() >= 26 && c.CloudProvider.Openstack != nil && !c.CloudProvider.External {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, "kubernetes 1.26 and newer doesn't support in-tree cloud provider with openstack"))
 	}
 
 	return allErrs
