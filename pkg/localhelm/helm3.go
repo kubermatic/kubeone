@@ -23,6 +23,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"sort"
 
 	"github.com/sirupsen/logrus"
 	helmaction "helm.sh/helm/v3/pkg/action"
@@ -106,8 +107,6 @@ func Deploy(st *state.State) error {
 	}
 
 	for _, release := range st.Cluster.HelmReleases {
-		st.Logger.Infof("Deploying helm chart %s as release %s", release.Chart, release.ReleaseName)
-
 		var valueFiles []string
 		for _, value := range release.Values {
 			if value.ValuesFile != "" {
@@ -155,11 +154,11 @@ func Deploy(st *state.State) error {
 
 		switch {
 		case errors.Is(err, driver.ErrReleaseNotFound):
-			if err = installRelease(st.Context, cfg, release, helmSettings, providers, st.DynamicClient, vals); err != nil {
+			if err = installRelease(st.Context, cfg, release, helmSettings, providers, st.DynamicClient, vals, st.Logger); err != nil {
 				return err
 			}
 		case err == nil:
-			if err = upgradeRelease(st.Context, cfg, release, helmSettings, providers, st.DynamicClient, vals, existingReleases); err != nil {
+			if err = upgradeRelease(st.Context, cfg, release, helmSettings, providers, st.DynamicClient, vals, existingReleases, st.Logger); err != nil {
 				return err
 			}
 		default:
@@ -210,13 +209,16 @@ func newRestClientGetter(kubeConfigFileName string, st *state.State) *genericcli
 }
 
 func helmReleasesEqual(rel *helmrelease.Release, oldRels []*helmrelease.Release) bool {
-	for _, existing := range oldRels {
-		if rel.Version == existing.Version && rel.Manifest == existing.Manifest {
-			return true
-		}
+	if len(oldRels) == 0 {
+		return false
 	}
 
-	return false
+	sort.Slice(oldRels, func(i, j int) bool {
+		return oldRels[i].Version > oldRels[j].Version
+	})
+	latestHelmRelease := oldRels[0]
+
+	return rel.Manifest == latestHelmRelease.Manifest
 }
 
 func upgradeRelease(
@@ -228,6 +230,7 @@ func upgradeRelease(
 	dynclient ctrlruntimeclient.Client,
 	vals map[string]interface{},
 	existingHelmReleases []*helmrelease.Release,
+	logger logrus.FieldLogger,
 ) error {
 	helmInstall := newHelmInstallClient(cfg, release)
 	helmInstall.DryRun = true
@@ -237,7 +240,8 @@ func upgradeRelease(
 	}
 
 	if helmReleasesEqual(dryRunHelmRelease, existingHelmReleases) {
-		// Short-circuit and don't run the upgrade
+		logger.Infof("Skip upgrading helm chart %s as release %s", release.Chart, release.ReleaseName)
+
 		return nil
 	}
 
@@ -254,6 +258,7 @@ func upgradeRelease(
 		return err
 	}
 
+	logger.Infof("Upgrading helm chart %s as release %s", release.Chart, release.ReleaseName)
 	rel, err := helmUpgrade.RunWithContext(ctx, release.ReleaseName, chartRequested, vals)
 	if err != nil {
 		return fail.Runtime(err, "upgrading helm release %q from chart %q", release.Chart, release.ReleaseName)
@@ -288,7 +293,9 @@ func installRelease(
 	providers getter.Providers,
 	dynclient ctrlruntimeclient.Client,
 	vals map[string]interface{},
+	logger logrus.FieldLogger,
 ) error {
+	logger.Infof("Deploying helm chart %s as release %s", release.Chart, release.ReleaseName)
 	helmInstall := newHelmInstallClient(cfg, release)
 	rel, err := runInstallRelease(ctx, release, helmInstall, helmSettings, providers, vals)
 	if err != nil {
