@@ -220,15 +220,22 @@ func helmReleasesEqual(rel *helmrelease.Release, oldRels []*helmrelease.Release)
 	latestHelmRelease := oldRels[0]
 
 	if rel.Chart.Metadata.Version != latestHelmRelease.Chart.Metadata.Version {
-		// sometimes app version is no changed, but only chart version
 		return false
 	}
 
-	if diff := cmp.Diff(rel.Config, latestHelmRelease.Config); diff != "" {
+	if !cmp.Equal(neverNilMap(rel.Config), neverNilMap(latestHelmRelease.Config)) {
 		return false
 	}
 
 	return rel.Manifest == latestHelmRelease.Manifest
+}
+
+func neverNilMap(m1 map[string]any) map[string]any {
+	if m1 == nil {
+		return map[string]any{}
+	}
+
+	return m1
 }
 
 func upgradeRelease(
