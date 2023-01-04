@@ -265,6 +265,7 @@ func upgradeRelease(
 	helmUpgrade := helmaction.NewUpgrade(cfg)
 	helmUpgrade.Install = true
 	helmUpgrade.DependencyUpdate = true
+	helmUpgrade.ResetValues = true
 	helmUpgrade.MaxHistory = 5
 	helmUpgrade.Namespace = release.Namespace
 	helmUpgrade.RepoURL = release.RepoURL
