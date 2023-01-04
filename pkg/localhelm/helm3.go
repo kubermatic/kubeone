@@ -166,7 +166,7 @@ func Deploy(st *state.State) error {
 		}
 	}
 
-	return uninstallRelease(releasesToUninstall, cfg, restClientGetter, st.Logger)
+	return uninstallReleases(releasesToUninstall, cfg, restClientGetter, st.Logger)
 }
 
 func releasesFilterFn(helmReleases []kubeoneapi.HelmRelease, logger logrus.FieldLogger) func(rel *helmrelease.Release) bool {
@@ -331,7 +331,7 @@ func runInstallRelease(
 	return rel, nil
 }
 
-func uninstallRelease(
+func uninstallReleases(
 	toUninstall []*helmrelease.Release,
 	cfg *helmaction.Configuration,
 	restClientGetter *genericclioptions.ConfigFlags,
@@ -348,7 +348,7 @@ func uninstallRelease(
 			return fail.Runtime(err, "uninstalling helm release %s/%s", release.Namespace, release.Name)
 		}
 
-		logger.Infof("uninstalling helm release %s/%s: %s", release.Namespace, release.Name, resp.Info)
+		logger.Infof("uninstalled helm release %s/%s: %s", release.Namespace, release.Name, resp.Info)
 	}
 
 	return nil
