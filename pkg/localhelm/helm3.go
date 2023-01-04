@@ -25,6 +25,7 @@ import (
 	"os"
 	"sort"
 
+	"github.com/google/go-cmp/cmp"
 	"github.com/sirupsen/logrus"
 	helmaction "helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/chart"
@@ -217,6 +218,15 @@ func helmReleasesEqual(rel *helmrelease.Release, oldRels []*helmrelease.Release)
 		return oldRels[i].Version > oldRels[j].Version
 	})
 	latestHelmRelease := oldRels[0]
+
+	if rel.Chart.Metadata.Version != latestHelmRelease.Chart.Metadata.Version {
+		// sometimes app version is no changed, but only chart version
+		return false
+	}
+
+	if diff := cmp.Diff(rel.Config, latestHelmRelease.Config); diff != "" {
+		return false
+	}
 
 	return rel.Manifest == latestHelmRelease.Manifest
 }
