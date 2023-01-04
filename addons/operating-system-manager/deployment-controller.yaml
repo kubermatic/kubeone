@@ -54,6 +54,9 @@ spec:
             {{ if .Config.CloudProvider.External }}
             - -external-cloud-provider
             {{ end }}
+            {{ if .Config.CABundle -}}
+            - -ca-bundle={{ .Resources.CABundleSSLCertFilePath }}
+            {{ end -}}
             {{ if .CSIMigrationFeatureGates }}
             - -node-kubelet-feature-gates={{ .CSIMigrationFeatureGates }}
             {{ end }}
