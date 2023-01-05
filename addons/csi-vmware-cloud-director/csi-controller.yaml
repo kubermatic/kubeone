@@ -125,6 +125,7 @@ spec:
           imagePullPolicy: IfNotPresent
           args:
             - --csi-address=$(ADDRESS)
+            - --default-fstype=ext4
             - --timeout=300s
             - --v=5
           env:
@@ -145,6 +146,7 @@ spec:
             - /opt/vcloud/bin/cloud-director-named-disk-csi-driver
             - --cloud-config=/etc/kubernetes/vcloud/vcloud-csi-config.yaml
             - --endpoint=$(CSI_ENDPOINT)
+            - --upgrade-rde
             - --v=5
           env:
             - name: NODE_ID
