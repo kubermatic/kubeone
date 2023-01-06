@@ -216,10 +216,10 @@ func baseResources() map[Resource]map[string]string {
 		CalicoCNI:              {"*": "quay.io/calico/cni:v3.23.5"},
 		CalicoController:       {"*": "quay.io/calico/kube-controllers:v3.23.5"},
 		CalicoNode:             {"*": "quay.io/calico/node:v3.23.5"},
-		DNSNodeCache:           {"*": "registry.k8s.io/dns/k8s-dns-node-cache:1.22.13"},
+		DNSNodeCache:           {"*": "registry.k8s.io/dns/k8s-dns-node-cache:1.22.15"},
 		Flannel:                {"*": "quay.io/coreos/flannel:v0.15.1"},
 		MachineController:      {"*": "quay.io/kubermatic/machine-controller:0eaa75744f8306bc5ae7481d73fc21a993e99f0e"},
-		MetricsServer:          {"*": "registry.k8s.io/metrics-server/metrics-server:v0.6.1"},
+		MetricsServer:          {"*": "registry.k8s.io/metrics-server/metrics-server:v0.6.2"},
 		OperatingSystemManager: {"*": "quay.io/kubermatic/operating-system-manager:eff6d0b982b7e2bbc5adafa003f2a7f43568a28b"},
 	}
 }
@@ -397,7 +397,8 @@ func optionalResources() map[Resource]map[string]string {
 		ClusterAutoscaler: {
 			"1.23.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.23.1",
 			"1.24.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.24.0",
-			">= 1.25.0": "registry.k8s.io/autoscaling/cluster-autoscaler:v1.25.0",
+			"1.25.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.25.0",
+			">= 1.26.0": "registry.k8s.io/autoscaling/cluster-autoscaler:v1.26.1",
 		},
 
 		// CSI Vault Secret Provider
