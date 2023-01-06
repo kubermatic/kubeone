@@ -1,6 +1,6 @@
-# Vault CSI driver
+# !!!WARNING!!! USING THIS ADDON IS NOT RECOMMEDED ANYMORE, PLEASE MIGRATE TO HELM RELEASE! Vault CSI driver
 
-See more: 
+See more:
 * https://github.com/hashicorp/vault-csi-provider
 * https://learn.hashicorp.com/tutorials/vault/kubernetes-secret-store-driver
 * https://www.vaultproject.io/docs/auth/kubernetes
@@ -14,27 +14,13 @@ helm template vault hashicorp/vault \
     > manifest.yaml
 ```
 
-## KubeOne cluster
+## Migrating away from static manifest to helm charts managed by KubeOne
 
-Enable corresponding addons in the KubeOne manifest:
+### Delete old artifacts
 
-```yaml
-apiVersion: kubeone.k8c.io/v1beta2
-kind: KubeOneCluster
-versions:
-  kubernetes: 1.23.6
-    
-containerRuntime:
-  containerd: {}
-
-addons:
-  enable: true
-  addons:
-  - name: secrets-store-csi-driver
-  - name: csi-vault-secret-provider
+```bash
+kubectl delete -f manifest.yaml
 ```
-
-And `kubeone apply` the cluster as usually.
 
 ## Configure Vault
 
@@ -95,27 +81,27 @@ spec:
     # required Secret object for machinecontroller and its webhook
     - secretName: kubeone-machine-controller-credentials
       type: Opaque
-      data: 
+      data:
         - objectName: AWS_ACCESS_KEY_ID
-          key: AWS_ACCESS_KEY_ID 
+          key: AWS_ACCESS_KEY_ID
         - objectName: AWS_SECRET_ACCESS_KEY
           key: AWS_SECRET_ACCESS_KEY
     # required Secret object for CCM/CSI
     - secretName: kubeone-ccm-credentials
       type: Opaque
-      data: 
+      data:
         - objectName: AWS_ACCESS_KEY_ID
-          key: AWS_ACCESS_KEY_ID 
+          key: AWS_ACCESS_KEY_ID
         - objectName: AWS_SECRET_ACCESS_KEY
           key: AWS_SECRET_ACCESS_KEY
     # required Secret object for OSM
     - secretName: kubeone-operating-system-manager-credentials
       type: Opaque
-      data: 
+      data:
         - objectName: AWS_ACCESS_KEY_ID
-          key: AWS_ACCESS_KEY_ID 
+          key: AWS_ACCESS_KEY_ID
         - objectName: AWS_SECRET_ACCESS_KEY
-          key: AWS_SECRET_ACCESS_KEY 
+          key: AWS_SECRET_ACCESS_KEY
   parameters:
     vaultAddress: "https://<YOUR_VAULT_ADDRESS>:8200"
     roleName: "kubeone"
@@ -137,11 +123,36 @@ Save this to ./addons/my-secret-provider-class/manifest.yaml
 ```yaml
 apiVersion: kubeone.k8c.io/v1beta2
 kind: KubeOneCluster
+
 versions:
-  kubernetes: 1.23.6
-    
+  kubernetes: 1.25.5
+
 containerRuntime:
   containerd: {}
+
+helmReleases:
+  - chart: secrets-store-csi-driver
+    repoURL: https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts
+    namespace: kube-system
+    version: 1.3.0
+    values:
+      - inline:
+          syncSecret:
+            enabled: true
+          enableSecretRotation: true
+  - releaseName: vault-csi-driver
+    chart: vault
+    repoURL: https://helm.releases.hashicorp.com
+    namespace: kube-system
+    version: 0.23.0
+    values:
+      - inline:
+          server:
+            enabled: false
+          injector:
+            enabled: false
+          csi:
+            enabled: true
 
 cloudProvider:
   secretProviderClassName: "kubeone-credentials"
@@ -149,7 +160,4 @@ cloudProvider:
 addons:
   enable: true
   path: "./addons"
-  addons:
-  - name: secrets-store-csi-driver
-  - name: csi-vault-secret-provider
 ```

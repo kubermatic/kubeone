@@ -114,9 +114,10 @@ spec:
         - key: node-role.kubernetes.io/master
           effect: NoSchedule
       hostPID: true # Facilitate entering the host mount namespace via init
+      restartPolicy: Always
       containers:
         - name: kured
-          image: docker.io/weaveworks/kured:1.6.1
+          image: {{ Registry "ghcr.io" }}/kubereboot/kured:1.12.0
                  # If you find yourself here wondering why there is no
                  # :latest tag on Docker Hub,see the FAQ in the README
           imagePullPolicy: IfNotPresent
@@ -131,22 +132,36 @@ spec:
                   fieldPath: spec.nodeName
           command:
             - /usr/bin/kured
-#            - --alert-filter-regexp=^RebootRequired$
-#            - --blocking-pod-selector=runtime=long,cost=expensive
-#            - --blocking-pod-selector=name=temperamental
-#            - --blocking-pod-selector=...
-#            - --ds-name=kured
-#            - --ds-namespace=kube-system
-#            - --end-time=23:59:59
-#            - --lock-annotation=weave.works/kured-node-lock
+#            - --force-reboot=false
+#            - --drain-grace-period=-1
+#            - --skip-wait-for-delete-timeout=0
+#            - --drain-timeout=0
 #            - --period=1h
+#            - --ds-namespace=kube-system
+#            - --ds-name=kured
+#            - --lock-annotation=weave.works/kured-node-lock
+#            - --lock-ttl=0
 #            - --prometheus-url=http://prometheus.monitoring.svc.cluster.local
-#            - --reboot-days=sun,mon,tue,wed,thu,fri,sat
+#            - --alert-filter-regexp=^RebootRequired$
+#            - --alert-firing-only=false
 #            - --reboot-sentinel=/var/run/reboot-required
+#            - --prefer-no-schedule-taint=""
+#            - --reboot-sentinel-command=""
 #            - --slack-hook-url=https://hooks.slack.com/...
 #            - --slack-username=prod
 #            - --slack-channel=alerting
+#            - --notify-url="" # See also shoutrrr url format
 #            - --message-template-drain=Draining node %s
-#            - --message-template-drain=Rebooting node %s
+#            - --message-template-reboot=Rebooting node %s
+#            - --message-template-uncordon=Node %s rebooted & uncordoned successfully!
+#            - --blocking-pod-selector=runtime=long,cost=expensive
+#            - --blocking-pod-selector=name=temperamental
+#            - --blocking-pod-selector=...
+#            - --reboot-days=sun,mon,tue,wed,thu,fri,sat
+#            - --reboot-delay=90s
 #            - --start-time=0:00
+#            - --end-time=23:59:59
 #            - --time-zone=UTC
+#            - --annotate-nodes=false
+#            - --lock-release-delay=30m
+#            - --log-format=text
