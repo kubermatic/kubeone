@@ -1,4 +1,4 @@
-# !!!WARNING!!! USING THIS ADDON IS NO RECOMMEDED ANYMORE, PLEASE MIGRATE TO HELM RELEASE! Secrets Store CSI Driver
+# !!!WARNING!!! USING THIS ADDON IS NOT RECOMMEDED ANYMORE, PLEASE MIGRATE TO HELM RELEASE! Secrets Store CSI Driver
 
 See more: https://secrets-store-csi-driver.sigs.k8s.io
 
