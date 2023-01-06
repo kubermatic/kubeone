@@ -29,11 +29,6 @@ helmReleases:
     version: 1.3.0
     values:
       - inline:
-          linux:
-            tolerations:
-              - effect: NoSchedule
-                key: node-role.kubernetes.io/control-plane
-                operator: Exists
           syncSecret:
             enabled: true
           enableSecretRotation: true
