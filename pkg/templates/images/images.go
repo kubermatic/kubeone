@@ -74,14 +74,7 @@ const (
 	// Addons
 	ClusterAutoscaler
 
-	// General CSI images (to be removed)
-	CSIAttacher
-	CSINodeDriverRegistar
-	CSIProvisioner
-	CSISnapshotter
-	CSIResizer
-	CSILivenessProbe
-
+	// AWS CCM
 	AwsCCM
 
 	// Azure CCM
@@ -150,10 +143,17 @@ const (
 	OpenstackCSISnapshotController
 	OpenstackCSISnapshotWebhook
 
+	// Hetzner CSI
+	HetznerCSI
+	HetznerCSIAttacher
+	HetznerCSIResizer
+	HetznerCSIProvisioner
+	HetznerCSILivenessProbe
+	HetznerCSINodeDriverRegistar
+
 	// CCMs and CSI plugins
 	DigitaloceanCCM
 	HetznerCCM
-	HetznerCSI
 	OpenstackCCM
 	EquinixMetalCCM
 	VsphereCCM
@@ -226,14 +226,6 @@ func baseResources() map[Resource]map[string]string {
 
 func optionalResources() map[Resource]map[string]string {
 	return map[Resource]map[string]string{
-		// General CSI images (could be used for all providers)
-		CSINodeDriverRegistar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.3.0"},
-		CSILivenessProbe:      {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.4.0"},
-		CSIAttacher:           {"*": "registry.k8s.io/sig-storage/csi-attacher:v3.3.0"},
-		CSIProvisioner:        {"*": "registry.k8s.io/sig-storage/csi-provisioner:v2.2.2"},
-		CSIResizer:            {"*": "registry.k8s.io/sig-storage/csi-resizer:v1.3.0"},
-		CSISnapshotter:        {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v4.2.0"},
-
 		AwsCCM: {
 			"1.23.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.23.2",
 			"1.24.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.24.3",
@@ -302,7 +294,12 @@ func optionalResources() map[Resource]map[string]string {
 		HetznerCCM: {"*": "docker.io/hetznercloud/hcloud-cloud-controller-manager:v1.13.2"},
 
 		// Hetzner CSI
-		HetznerCSI: {"*": "docker.io/hetznercloud/hcloud-csi-driver:1.6.0"},
+		HetznerCSI:                   {"*": "docker.io/hetznercloud/hcloud-csi-driver:2.1.0"},
+		HetznerCSIAttacher:           {"*": "registry.k8s.io/sig-storage/csi-attacher:v3.2.1"},
+		HetznerCSIResizer:            {"*": "registry.k8s.io/sig-storage/csi-resizer:v1.2.0"},
+		HetznerCSIProvisioner:        {"*": "registry.k8s.io/sig-storage/csi-provisioner:v2.2.2"},
+		HetznerCSILivenessProbe:      {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.3.0"},
+		HetznerCSINodeDriverRegistar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.2.0"},
 
 		// OpenStack CCM
 		OpenstackCCM: {

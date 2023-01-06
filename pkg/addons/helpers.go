@@ -34,6 +34,7 @@ import (
 const (
 	awsCSIDriverName            = "ebs.csi.aws.com"
 	azureDiskCSIDriverName      = "disk.csi.azure.com"
+	hetznerCSIDriverName        = "csi.hetzner.cloud"
 	gceStandardStorageClassName = "standard"
 	vSphereDeploymentName       = "vsphere-cloud-controller-manager"
 )
@@ -70,6 +71,18 @@ func azureDiskCSIDriver() *storagev1.CSIDriver {
 	return &storagev1.CSIDriver{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: azureDiskCSIDriverName,
+		},
+	}
+}
+
+func migrateHetznerCSIDriver(s *state.State) error {
+	return clientutil.DeleteIfExists(s.Context, s.DynamicClient, hetznerDiskCSIDriver())
+}
+
+func hetznerDiskCSIDriver() *storagev1.CSIDriver {
+	return &storagev1.CSIDriver{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: hetznerCSIDriverName,
 		},
 	}
 }

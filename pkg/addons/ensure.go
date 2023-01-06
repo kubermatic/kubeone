@@ -412,6 +412,9 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
 				name: resources.AddonCSIHetzner,
+				supportFn: func() error {
+					return migrateHetznerCSIDriver(s)
+				},
 			},
 		)
 	// Install CSI driver unconditionally
