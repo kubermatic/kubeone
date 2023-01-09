@@ -305,23 +305,40 @@ func optionalResources() map[Resource]map[string]string {
 		OpenstackCCM: {
 			"1.23.x":    "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.23.4",
 			"1.24.x":    "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.24.5",
-			">= 1.25.0": "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.25.3",
+			"1.25.x":    "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.25.3",
+			">= 1.26.0": "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.26.0",
 		},
 
 		// OpenStack CSI
 		OpenstackCSI: {
 			"1.23.x":    "docker.io/k8scloudprovider/cinder-csi-plugin:v1.23.4",
 			"1.24.x":    "docker.io/k8scloudprovider/cinder-csi-plugin:v1.24.5",
-			">= 1.25.0": "docker.io/k8scloudprovider/cinder-csi-plugin:v1.25.3",
+			"1.25.x":    "docker.io/k8scloudprovider/cinder-csi-plugin:v1.25.3",
+			">= 1.26.0": "docker.io/k8scloudprovider/cinder-csi-plugin:v1.26.0",
 		},
-		OpenstackCSINodeDriverRegistar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.5.1"},
-		OpenstackCSILivenessProbe:      {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.7.0"},
-		OpenstackCSIAttacher:           {"*": "registry.k8s.io/sig-storage/csi-attacher:v3.4.0"},
-		OpenstackCSIProvisioner:        {"*": "registry.k8s.io/sig-storage/csi-provisioner:v3.1.0"},
-		OpenstackCSIResizer:            {"*": "registry.k8s.io/sig-storage/csi-resizer:v1.4.0"},
-		OpenstackCSISnapshotter:        {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v6.0.1"},
-		OpenstackCSISnapshotController: {"*": "registry.k8s.io/sig-storage/snapshot-controller:v6.0.1"},
-		OpenstackCSISnapshotWebhook:    {"*": "registry.k8s.io/sig-storage/snapshot-validation-webhook:v6.0.1"},
+		OpenstackCSINodeDriverRegistar: {
+			"< 1.26.0":  "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.5.1",
+			">= 1.26.0": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.6.2",
+		},
+		OpenstackCSILivenessProbe: {
+			"< 1.26.0":  "registry.k8s.io/sig-storage/livenessprobe:v2.7.0",
+			">= 1.26.0": "registry.k8s.io/sig-storage/livenessprobe:v2.8.0",
+		},
+		OpenstackCSIAttacher: {
+			"< 1.26.0":  "registry.k8s.io/sig-storage/csi-attacher:v3.4.0",
+			">= 1.26.0": "registry.k8s.io/sig-storage/csi-attacher:v4.0.0",
+		},
+		OpenstackCSIProvisioner: {
+			"< 1.26.0":  "registry.k8s.io/sig-storage/csi-provisioner:v3.1.0",
+			">= 1.26.0": "registry.k8s.io/sig-storage/csi-provisioner:v3.4.0",
+		},
+		OpenstackCSIResizer: {
+			"< 1.26.0":  "registry.k8s.io/sig-storage/csi-resizer:v1.4.0",
+			">= 1.26.0": "registry.k8s.io/sig-storage/csi-resizer:v1.6.0",
+		},
+		OpenstackCSISnapshotter:        {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v6.1.0"},
+		OpenstackCSISnapshotController: {"*": "registry.k8s.io/sig-storage/snapshot-controller:v6.1.0"},
+		OpenstackCSISnapshotWebhook:    {"*": "registry.k8s.io/sig-storage/snapshot-validation-webhook:v6.1.0"},
 
 		// Equinix Metal CCM
 		EquinixMetalCCM: {"*": "ghcr.io/equinix/cloud-provider-equinix-metal:v3.5.0"},

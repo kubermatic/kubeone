@@ -1,6 +1,5 @@
 # This YAML file contains driver-registrar & csi driver nodeplugin API objects,
 # which are necessary to run csi nodeplugin for cinder.
-{{ $version := semver .Config.Versions.Kubernetes }}
 ---
 kind: DaemonSet
 apiVersion: apps/v1
