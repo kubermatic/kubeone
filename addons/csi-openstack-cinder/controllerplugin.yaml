@@ -36,6 +36,9 @@ spec:
             - "--csi-address=$(ADDRESS)"
             - "--timeout=3m"
             - "--leader-election=true"
+            {{ if ge $version.Minor 26 }}
+            - "--default-fstype=ext4"
+            {{ end }}
           env:
             - name: ADDRESS
               value: /var/lib/csi/sockets/pluginproxy/csi.sock

@@ -316,8 +316,6 @@ func (c KubeOneCluster) csiMigrationFeatureGates(complete bool) (map[string]bool
 			featureGates["InTreePluginAzureFileUnregister"] = true
 		}
 	case c.CloudProvider.Openstack != nil:
-		featureGates["CSIMigrationOpenStack"] = true
-		featureGates["ExpandCSIVolumes"] = true
 		if complete {
 			featureGates["InTreePluginOpenStackUnregister"] = true
 		}

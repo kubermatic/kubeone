@@ -67,6 +67,7 @@ data:
   identity-allocation-mode: crd
   cilium-endpoint-gc-interval: "5m0s"
   nodes-gc-interval: "5m0s"
+  skip-cnp-status-startup-clean: "false"
   # Disable the usage of CiliumEndpoint CRD
   disable-endpoint-crd: "false"
 
@@ -1352,7 +1353,7 @@ spec:
             readOnly: true
           terminationMessagePolicy: FallbackToLogsOnError
       restartPolicy: Always
-      priorityClassName:
+      priorityClassName: 
       serviceAccount: "hubble-relay"
       serviceAccountName: "hubble-relay"
       automountServiceAccountToken: false
@@ -1411,7 +1412,7 @@ spec:
         fsGroup: 1001
         runAsGroup: 1001
         runAsUser: 1001
-      priorityClassName:
+      priorityClassName: 
       serviceAccount: "hubble-ui"
       serviceAccountName: "hubble-ui"
       containers:
