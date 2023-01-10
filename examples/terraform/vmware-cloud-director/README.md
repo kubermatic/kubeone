@@ -56,6 +56,8 @@ No modules.
 | [vcd_vapp.cluster](https://registry.terraform.io/providers/vmware/vcd/3.8.1/docs/resources/vapp) | resource |
 | [vcd_vapp_org_network.network](https://registry.terraform.io/providers/vmware/vcd/3.8.1/docs/resources/vapp_org_network) | resource |
 | [vcd_vapp_vm.control_plane](https://registry.terraform.io/providers/vmware/vcd/3.8.1/docs/resources/vapp_vm) | resource |
+| [vcd_catalog.catalog](https://registry.terraform.io/providers/vmware/vcd/3.8.1/docs/data-sources/catalog) | data source |
+| [vcd_catalog_vapp_template.vapp_template](https://registry.terraform.io/providers/vmware/vcd/3.8.1/docs/data-sources/catalog_vapp_template) | data source |
 | [vcd_edgegateway.edge_gateway](https://registry.terraform.io/providers/vmware/vcd/3.8.1/docs/data-sources/edgegateway) | data source |
 
 ## Inputs
