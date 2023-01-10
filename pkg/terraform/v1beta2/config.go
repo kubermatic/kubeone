@@ -278,7 +278,7 @@ func (output *Config) Apply(cluster *kubeonev1beta2.KubeOneCluster) error {
 
 		// Set StorageProfile.
 		if len(cp.StorageProfile) > 0 {
-			cluster.CloudProvider.VMwareCloudDirector.VApp = cp.VAppName
+			cluster.CloudProvider.VMwareCloudDirector.StorageProfile = cp.StorageProfile
 		}
 	}
 
