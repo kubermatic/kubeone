@@ -34,13 +34,13 @@ Following environment variables or terraform variables can be used to authentica
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0 |
-| <a name="requirement_vcd"></a> [vcd](#requirement\_vcd) | 3.6.0 |
+| <a name="requirement_vcd"></a> [vcd](#requirement\_vcd) | 3.8.1 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_vcd"></a> [vcd](#provider\_vcd) | 3.6.0 |
+| <a name="provider_vcd"></a> [vcd](#provider\_vcd) | 3.8.1 |
 
 ## Modules
 
@@ -50,18 +50,19 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [vcd_network_routed.network](https://registry.terraform.io/providers/vmware/vcd/3.6.0/docs/resources/network_routed) | resource |
-| [vcd_nsxv_firewall_rule.rule_internet](https://registry.terraform.io/providers/vmware/vcd/3.6.0/docs/resources/nsxv_firewall_rule) | resource |
-| [vcd_nsxv_snat.rule_internet](https://registry.terraform.io/providers/vmware/vcd/3.6.0/docs/resources/nsxv_snat) | resource |
-| [vcd_vapp.cluster](https://registry.terraform.io/providers/vmware/vcd/3.6.0/docs/resources/vapp) | resource |
-| [vcd_vapp_org_network.network](https://registry.terraform.io/providers/vmware/vcd/3.6.0/docs/resources/vapp_org_network) | resource |
-| [vcd_vapp_vm.control_plane](https://registry.terraform.io/providers/vmware/vcd/3.6.0/docs/resources/vapp_vm) | resource |
-| [vcd_edgegateway.edge_gateway](https://registry.terraform.io/providers/vmware/vcd/3.6.0/docs/data-sources/edgegateway) | data source |
+| [vcd_network_routed.network](https://registry.terraform.io/providers/vmware/vcd/3.8.1/docs/resources/network_routed) | resource |
+| [vcd_nsxv_firewall_rule.rule_internet](https://registry.terraform.io/providers/vmware/vcd/3.8.1/docs/resources/nsxv_firewall_rule) | resource |
+| [vcd_nsxv_snat.rule_internet](https://registry.terraform.io/providers/vmware/vcd/3.8.1/docs/resources/nsxv_snat) | resource |
+| [vcd_vapp.cluster](https://registry.terraform.io/providers/vmware/vcd/3.8.1/docs/resources/vapp) | resource |
+| [vcd_vapp_org_network.network](https://registry.terraform.io/providers/vmware/vcd/3.8.1/docs/resources/vapp_org_network) | resource |
+| [vcd_vapp_vm.control_plane](https://registry.terraform.io/providers/vmware/vcd/3.8.1/docs/resources/vapp_vm) | resource |
+| [vcd_edgegateway.edge_gateway](https://registry.terraform.io/providers/vmware/vcd/3.8.1/docs/data-sources/edgegateway) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_allow_insecure"></a> [allow\_insecure](#input\_allow\_insecure) | allow insecure https connection to VMware Cloud Director API | `bool` | `false` | no |
 | <a name="input_apiserver_alternative_names"></a> [apiserver\_alternative\_names](#input\_apiserver\_alternative\_names) | Subject alternative names for the API Server signing certificate | `list(string)` | `[]` | no |
 | <a name="input_bastion_host_key"></a> [bastion\_host\_key](#input\_bastion\_host\_key) | Bastion SSH host public key | `string` | `null` | no |
 | <a name="input_catalog_name"></a> [catalog\_name](#input\_catalog\_name) | Name of catalog that contains vApp templates | `string` | n/a | yes |
@@ -93,7 +94,7 @@ No modules.
 | <a name="input_ssh_username"></a> [ssh\_username](#input\_ssh\_username) | SSH user, used only in output | `string` | `"ubuntu"` | no |
 | <a name="input_template_name"></a> [template\_name](#input\_template\_name) | Name of the vApp template to use | `string` | n/a | yes |
 | <a name="input_vcd_edge_gateway_name"></a> [vcd\_edge\_gateway\_name](#input\_vcd\_edge\_gateway\_name) | Name of the Edge Gateway | `string` | n/a | yes |
-| <a name="input_vcd_org_name"></a> [vcd\_org\_name](#input\_vcd\_org\_name) | Organization name for the vCloud Director setup | `string` | n/a | yes |
+| <a name="input_vcd_org_name"></a> [vcd\_org\_name](#input\_vcd\_org\_name) | Organization name for the VMware Cloud Director setup | `string` | n/a | yes |
 | <a name="input_vcd_vdc_name"></a> [vcd\_vdc\_name](#input\_vcd\_vdc\_name) | Virtual datacenter name | `string` | n/a | yes |
 | <a name="input_worker_cpu_cores"></a> [worker\_cpu\_cores](#input\_worker\_cpu\_cores) | Number of cores per socket for the worker VMs | `number` | `1` | no |
 | <a name="input_worker_cpus"></a> [worker\_cpus](#input\_worker\_cpus) | Number of CPUs for the worker VMs | `number` | `2` | no |

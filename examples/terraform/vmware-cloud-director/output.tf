@@ -82,6 +82,7 @@ output "kubeone_workers" {
           # https://github.com/kubermatic/machine-controller/blob/main/examples/vmware-cloud-director-machinedeployment.yaml
           organization     = var.vcd_org_name
           vdc              = var.vcd_vdc_name
+          allowInsecure    = var.allow_insecure
           vapp             = vcd_vapp.cluster.name
           catalog          = var.catalog_name
           template         = var.template_name
