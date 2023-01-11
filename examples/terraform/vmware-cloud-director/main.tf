@@ -14,14 +14,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-# Configure the VMware vCloud Director Provider
+# Configure the VMware Cloud Director Provider
 provider "vcd" {
   /*
   See https://registry.terraform.io/providers/vmware/vcd/latest/docs#argument-reference
   for config options reference
   */
-  org = var.vcd_org_name
-  vdc = var.vcd_vdc_name
+  org                  = var.vcd_org_name
+  vdc                  = var.vcd_vdc_name
+  allow_unverified_ssl = var.allow_insecure
 }
 
 locals {
@@ -77,9 +78,18 @@ resource "vcd_vapp_org_network" "network" {
   depends_on = [vcd_vapp.cluster, vcd_network_routed.network]
 }
 
+data "vcd_catalog" "catalog" {
+  name = var.catalog_name
+}
+
+data "vcd_catalog_vapp_template" "vapp_template" {
+  catalog_id = data.vcd_catalog.catalog.id
+  name       = var.template_name
+}
+
 # Create VMs for control plane
 resource "vcd_vapp_vm" "control_plane" {
-  count         = 3
+  count         = var.control_plane_vm_count
   vapp_name     = vcd_vapp.cluster.name
   name          = "${var.cluster_name}-cp-${count.index + 1}"
   computer_name = "${var.cluster_name}-cp-${count.index + 1}"
@@ -96,8 +106,7 @@ resource "vcd_vapp_vm" "control_plane" {
     "public-keys" = file(var.ssh_public_key_file)
   }
 
-  catalog_name  = var.catalog_name
-  template_name = var.template_name
+  vapp_template_id = data.vcd_catalog_vapp_template.vapp_template.id
 
   # resource allocation for the VM
   memory                 = var.control_plane_memory
