@@ -191,26 +191,31 @@ type AzureImageReference struct {
 // VMWareCloudDirectorSpec represents VMware Cloud Director specific configuration.
 type VMWareCloudDirectorSpec struct {
 	// Provider configuration.
-	Organization string `json:"organization"`
-	VDC          string `json:"vdc"`
+	Organization  string `json:"organization"`
+	VDC           string `json:"vdc"`
+	AllowInsecure bool   `json:"allowInsecure"`
 
 	// VM configuration.
-	VApp     string `json:"vapp"`
-	Template string `json:"template"`
-	Catalog  string `json:"catalog"`
+	VApp            string  `json:"vapp"`
+	Template        string  `json:"template"`
+	Catalog         string  `json:"catalog"`
+	PlacementPolicy *string `json:"placementPolicy,omitempty"`
 
 	// Network configuration.
 	Network          string `json:"network"`
 	IPAllocationMode string `json:"ipAllocationMode"`
 
 	// Compute configuration.
-	CPUs     int64 `json:"cpus"`
-	CPUCores int64 `json:"cpuCores"`
-	MemoryMB int64 `json:"memoryMB"`
+	CPUs         int64   `json:"cpus"`
+	CPUCores     int64   `json:"cpuCores"`
+	MemoryMB     int64   `json:"memoryMB"`
+	SizingPolicy *string `json:"sizingPolicy,omitempty"`
 
 	// Storage configuration.
 	DiskSizeGB     *int64  `json:"diskSizeGB,omitempty"`
 	StorageProfile *string `json:"storageProfile,omitempty"`
+	DiskIOPS       *int64  `json:"diskIOPS,omitempty"`
+	DiskBusType    *string `json:"diskBusType,omitempty"`
 
 	// Metadata configuration.
 	Metadata *map[string]string `json:"metadata,omitempty"`

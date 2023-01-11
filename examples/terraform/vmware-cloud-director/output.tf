@@ -80,17 +80,26 @@ output "kubeone_workers" {
           # provider specific fields:
           # see example under `cloudProviderSpec` section at:
           # https://github.com/kubermatic/machine-controller/blob/main/examples/vmware-cloud-director-machinedeployment.yaml
-          organization     = var.vcd_org_name
-          vdc              = var.vcd_vdc_name
-          vapp             = vcd_vapp.cluster.name
-          catalog          = var.catalog_name
-          template         = var.template_name
-          network          = vcd_vapp_org_network.network.org_network_name
-          cpus             = var.worker_cpus
-          cpuCores         = var.worker_cpu_cores
-          memoryMB         = var.worker_memory
-          diskSizeGB       = var.worker_disk_size_gb
-          storageProfile   = var.worker_disk_storage_profile
+          organization   = var.vcd_org_name
+          vdc            = var.vcd_vdc_name
+          allowInsecure  = var.allow_insecure
+          vapp           = vcd_vapp.cluster.name
+          catalog        = var.catalog_name
+          template       = var.template_name
+          network        = vcd_vapp_org_network.network.org_network_name
+          cpus           = var.worker_cpus
+          cpuCores       = var.worker_cpu_cores
+          memoryMB       = var.worker_memory
+          diskSizeGB     = var.worker_disk_size_gb
+          storageProfile = var.worker_disk_storage_profile
+          # Optional: policy to determine VM placement.
+          # placementPolicy = "default"
+          # Optional: sizing policy for VMs.
+          # sizingPolicy = "default"
+          # Optional: IOPS value for disk.
+          # diskIOPS = 0
+          # Optional: bus type for disk, paravirtual by default.
+          # diskBusType = "paravirtual"
           ipAllocationMode = "DHCP"
           metadata = {
             "KubeOneCluster" = var.cluster_name

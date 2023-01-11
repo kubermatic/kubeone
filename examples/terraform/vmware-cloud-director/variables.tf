@@ -14,9 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-# vCloud Director provider configuration
+# VMware Cloud Director provider configuration
 variable "vcd_org_name" {
-  description = "Organization name for the vCloud Director setup"
+  description = "Organization name for the VMware Cloud Director setup"
   type        = string
 }
 
@@ -28,6 +28,12 @@ variable "vcd_vdc_name" {
 variable "vcd_edge_gateway_name" {
   description = "Name of the Edge Gateway"
   type        = string
+}
+
+variable "allow_insecure" {
+  description = "allow insecure https connection to VMware Cloud Director API"
+  default     = false
+  type        = bool
 }
 
 # Cluster specific configuration
