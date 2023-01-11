@@ -87,6 +87,9 @@ spec:
             {{ if .CSIMigrationFeatureGates }}
             - -node-kubelet-feature-gates={{ .CSIMigrationFeatureGates }}
             {{ end }}
+            {{ if .Config.CABundle -}}
+            - -ca-bundle={{ .Resources.CABundleSSLCertFilePath }}
+            {{ end -}}
             {{ if .OperatingSystemManagerEnabled }}
             - -use-osm
             {{ end }}
@@ -103,6 +106,9 @@ spec:
             - name: machinecontroller-webhook-serving-cert
               mountPath: /tmp/cert
               readOnly: true
+{{ if .Config.CABundle }}
+{{ caBundleVolumeMount | indent 12 }}
+{{ end }}
           livenessProbe:
             httpGet:
               path: /healthz
@@ -121,7 +127,9 @@ spec:
           secret:
             secretName: machinecontroller-webhook-serving-cert
             defaultMode: 0444
-
+{{ if .Config.CABundle }}
+{{ caBundleVolume | indent 8 }}
+{{ end }}
 ---
 apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration
