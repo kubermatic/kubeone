@@ -1,3 +1,21 @@
+# [v1.5.5](https://github.com/kubermatic/kubeone/releases/tag/v1.5.5) - 2023-01-17
+
+## Changelog since v1.5.4
+
+## Changes by Kind
+
+### Feature
+
+- Update Terraform provider for VMware Cloud Director to v3.8.1 ([#2584](https://github.com/kubermatic/kubeone/pull/2584), [@ahmedwaleedmalik](https://github.com/ahmedwaleedmalik))
+- Add support for insecure HTTPS connection to the VMware Cloud Director API in example Terraform configs ([#2584](https://github.com/kubermatic/kubeone/pull/2584), [@ahmedwaleedmalik](https://github.com/ahmedwaleedmalik))
+
+### Bug or Regression
+
+- Fix AMI filter for CentOS 7 in Terraform configs for AWS ([#2559](https://github.com/kubermatic/kubeone/pull/2559), [@xmudrii](https://github.com/xmudrii))
+- Fix an issue where custom CA bundle was not being propagated to machine-controller-webhook ([#2587](https://github.com/kubermatic/kubeone/pull/2587), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Remove the leftover `/tmp/k1-etc-environment` file. This fixes an issue with `kubeone apply` failing if the username is changed ([#2563](https://github.com/kubermatic/kubeone/pull/2563), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Run kubeadm with increased verbosity unconditionally. This only changes the behavior if KubeOne is run without the verbose flag but kubeadm fails, in which case kubeadm is going to print more information about the issue ([#2565](https://github.com/kubermatic/kubeone/pull/2565), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
 # [v1.5.4](https://github.com/kubermatic/kubeone/releases/tag/v1.5.4) - 2022-12-12
 
 ## Important Registry Change Information

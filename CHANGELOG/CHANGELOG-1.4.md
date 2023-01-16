@@ -1,3 +1,15 @@
+# [v1.4.13](https://github.com/kubermatic/kubeone/releases/tag/v1.4.13) - 2022-01-17
+
+## Changelog since v1.4.12
+
+## Changes by Kind
+
+### Bug or Regression
+
+- Fix an issue where custom CA bundle was not being propagated to machine-controller-webhook ([#2589](https://github.com/kubermatic/kubeone/pull/2589), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Remove the leftover `/tmp/k1-etc-environment` file. This fixes an issue with `kubeone apply` failing if the username is changed ([#2564](https://github.com/kubermatic/kubeone/pull/2564), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Run kubeadm with increased verbosity unconditionally. This only changes the behavior if KubeOne is run without the verbose flag but kubeadm fails, in which case kubeadm is going to print more information about the issue ([#2566](https://github.com/kubermatic/kubeone/pull/2566), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
 # [v1.4.12](https://github.com/kubermatic/kubeone/releases/tag/v1.4.12) - 2022-12-12
 
 ## Important Registry Change Information
