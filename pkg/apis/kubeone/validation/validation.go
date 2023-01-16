@@ -566,6 +566,13 @@ func ValidateCABundle(caBundle string, fldPath *field.Path) field.ErrorList {
 func ValidateFeatures(f kubeoneapi.Features, versions kubeoneapi.VersionConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
+	v, err := semver.NewVersion(versions.Kubernetes)
+	if err != nil {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("kubernetes"), versions.Kubernetes, ".versions.kubernetes is not a semver string"))
+
+		return allErrs
+	}
+
 	if f.CoreDNS != nil && f.CoreDNS.Replicas != nil && *f.CoreDNS.Replicas < 0 {
 		allErrs = append(allErrs, field.Invalid(fldPath.Child("coreDNS", "replicas"), *f.CoreDNS.Replicas, "coreDNS replicas cannot be < 0"))
 	}
@@ -577,6 +584,9 @@ func ValidateFeatures(f kubeoneapi.Features, versions kubeoneapi.VersionConfig, 
 	}
 	if f.OpenIDConnect != nil && f.OpenIDConnect.Enable {
 		allErrs = append(allErrs, ValidateOIDCConfig(f.OpenIDConnect.Config, fldPath.Child("openidConnect"))...)
+	}
+	if f.PodSecurityPolicy != nil && f.PodSecurityPolicy.Enable && v.Minor() >= 25 {
+		allErrs = append(allErrs, field.Forbidden(fldPath.Child("podSecurityPolicy"), "podSecurityPolicy is not supported on Kubernetes 1.25 and newer"))
 	}
 
 	return allErrs

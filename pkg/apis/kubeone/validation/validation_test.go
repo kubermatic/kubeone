@@ -1568,6 +1568,30 @@ func TestValidateFeatures(t *testing.T) {
 			expectedError: false,
 		},
 		{
+			name: "psp enabled on 1.25",
+			features: kubeoneapi.Features{
+				PodSecurityPolicy: &kubeoneapi.PodSecurityPolicy{
+					Enable: true,
+				},
+			},
+			versions: kubeoneapi.VersionConfig{
+				Kubernetes: "1.25.5",
+			},
+			expectedError: true,
+		},
+		{
+			name: "psp enabled on 1.26",
+			features: kubeoneapi.Features{
+				PodSecurityPolicy: &kubeoneapi.PodSecurityPolicy{
+					Enable: true,
+				},
+			},
+			versions: kubeoneapi.VersionConfig{
+				Kubernetes: "1.26.0",
+			},
+			expectedError: true,
+		},
+		{
 			name: "metrics server disabled",
 			features: kubeoneapi.Features{
 				MetricsServer: &kubeoneapi.MetricsServer{
