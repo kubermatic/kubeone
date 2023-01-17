@@ -1,4 +1,4 @@
-# [v1.4.13](https://github.com/kubermatic/kubeone/releases/tag/v1.4.13) - 2022-01-17
+# [v1.4.13](https://github.com/kubermatic/kubeone/releases/tag/v1.4.13) - 2023-01-17
 
 ## Changelog since v1.4.12
 
